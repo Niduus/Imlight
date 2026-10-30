@@ -117,6 +117,66 @@ internal static class FriendAccess {
         }
     }
 
+    /// <summary>True while the Windows Firewall rule "Let friends connect" made is there (looking needs no permission).</summary>
+    internal static bool HasFirewallRule() {
+        if (!OperatingSystem.IsWindows()) {
+            return false;
+        }
+
+        try {
+            return ProcessRunner.Capture("netsh", ["advfirewall", "firewall", "show", "rule", $"name={FIREWALL_RULE}"])
+                .Contains(FIREWALL_RULE, StringComparison.OrdinalIgnoreCase);
+        }
+        catch (Exception ex) when (ex is Win32Exception or InvalidOperationException) {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Undoes "Let friends connect": the router forgets the server's ports, the firewall rule goes (Windows asks once),
+    /// and the server start stops asking the router. Returns what it did, one line each.
+    /// </summary>
+    internal static async Task<List<string>> TurnOffAsync(string installFolder) {
+        var done = new List<string>();
+        var mark = Path.Combine(installFolder, MARK_FILE);
+        if (File.Exists(mark)) {
+            File.Delete(mark);
+            done.Add("The server start no longer asks your router to open its ports.");
+        }
+
+        try {
+            if (await CloseRouterAsync(Ports(installFolder))) {
+                done.Add("Your router closed the server's ports.");
+            }
+        }
+        catch {
+            // Best effort only: a router lease runs out by itself within a week.
+        }
+
+        if (HasFirewallRule()) {
+            var startInfo = new ProcessStartInfo("cmd.exe", $"/c netsh advfirewall firewall delete rule name=\"{FIREWALL_RULE}\"") {
+                UseShellExecute = true,
+                Verb = "runas",
+                WindowStyle = ProcessWindowStyle.Hidden,
+            };
+            try {
+                using var process = Process.Start(startInfo);
+                if (process is not null) {
+                    await process.WaitForExitAsync();
+                }
+
+                done.Add(HasFirewallRule()
+                    ? "The Windows Firewall rule is still there, because Windows did not take the change."
+                    : "The Windows Firewall rule \"" + FIREWALL_RULE + "\" is gone.");
+            }
+            catch (Win32Exception) {
+                done.Add("The Windows Firewall rule is still there, because Windows asked for permission and it was not given.");
+            }
+        }
+
+        return done;
+    }
+
     // ---------------------------------------------------------------------
     // Windows Firewall
     // ---------------------------------------------------------------------
@@ -201,6 +261,26 @@ internal static class FriendAccess {
         }
 
         return new RouterResult(false, (problems.FirstOrDefault() ?? "The router did not answer.") + " They have to be opened by hand.", null, null);
+    }
+
+    private static async Task<bool> CloseRouterAsync(List<int> ports) {
+        var routers = await FindRoutersAsync();
+        using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(6) };
+        var closed = false;
+        foreach (var (control, service) in routers) {
+            foreach (var port in ports) {
+                var args = $"<NewRemoteHost></NewRemoteHost><NewExternalPort>{port}</NewExternalPort><NewProtocol>TCP</NewProtocol>";
+                try {
+                    await SoapAsync(http, control, service, "DeletePortMapping", args);
+                    closed = true;
+                }
+                catch (Exception ex) when (ex is HttpRequestException or OperationCanceledException or System.Xml.XmlException) {
+                    // Not open on this router.
+                }
+            }
+        }
+
+        return closed;
     }
 
     private static async Task<bool> MapAsync(HttpClient http, Uri control, string service, int port, string homeIp, int lease) {

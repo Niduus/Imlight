@@ -74,17 +74,29 @@ public class Logger {
     private static readonly string s_seqUrl = ConfigurationManager.Settings["Logging.SeqSinkUrl"].AsString()
         ?? "http://localhost:5341";
 
-    public static ILogger Log { get; } = new LoggerConfiguration()
-        .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = GetLogLevel(s_logLevel) })
-        .Enrich.FromLogContext()
-        .Enrich.WithThreadId()
-        .Enrich.WithThreadName()
-        .Enrich.WithEnvironmentName()
-        .Enrich.WithMachineName()
-        .WriteTo.Console(outputTemplate: s_logFormat)
-        .WriteTo.File(s_path, rollingInterval: RollingInterval.Day)
-        .WriteTo.Seq(s_seqUrl)
-        .CreateLogger();
+    // The log stays on this computer: no computer name is added, and Seq only gets it when Seq runs on this computer
+    // (Niduus, 2026-10-30: nothing about a player's server may leave their PC).
+    public static ILogger Log { get; } = CreateLog();
+
+    private static ILogger CreateLog() {
+        var config = new LoggerConfiguration()
+            .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = GetLogLevel(s_logLevel) })
+            .Enrich.FromLogContext()
+            .Enrich.WithThreadId()
+            .Enrich.WithThreadName()
+            .Enrich.WithEnvironmentName()
+            .WriteTo.Console(outputTemplate: s_logFormat)
+            .WriteTo.File(s_path, rollingInterval: RollingInterval.Day);
+        if (IsThisComputer(s_seqUrl)) {
+            config = config.WriteTo.Seq(s_seqUrl);
+        }
+
+        return config.CreateLogger();
+    }
+
+    private static bool IsThisComputer(string url)
+        => Uri.TryCreate(url, UriKind.Absolute, out var uri)
+           && (uri.IsLoopback || (System.Net.IPAddress.TryParse(uri.Host, out var ip) && System.Net.IPAddress.IsLoopback(ip)));
 
     /// <summary>
     /// Returns an array of objects that can be used to format a log message.

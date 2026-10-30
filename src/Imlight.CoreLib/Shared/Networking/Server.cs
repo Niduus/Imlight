@@ -44,7 +44,6 @@
 
 using System;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Imlight.Common;
@@ -76,28 +75,10 @@ public abstract class Server : ReceiveProtocolDispatcher {
         this._serverStartTime = DateTimeOffset.Now.ToUnixTimeSeconds();
         this._factoryProps = factoryProps;
 
-        // Use provided IP if set, otherwise auto-detect.
-        if (!string.IsNullOrWhiteSpace(ip)) {
-            this.Ip = ip;
-        }
-        else {
-#if !DEBUG
-            try {
-                this.Ip = new HttpClient()
-                    .GetStringAsync("https://api.ipify.org/")
-                    .GetAwaiter()
-                    .GetResult();
-            }
-            catch {
-                // If the ipify call fails (offline, timeout, blocked), fall back
-                // to loopback so the server can still start.
-                Logger.Warning("Failed to resolve public IP from ipify.org — falling back to 127.0.0.1.");
-                this.Ip = "127.0.0.1";
-            }
-#else
-            this.Ip = "127.0.0.1";
-#endif
-        }
+        // The address set in Imlight.ini, otherwise this computer. Nothing is looked up online here: ClientAddress gives
+        // home network and internet players the right address when they connect (Niduus, 2026-10-30: the server sent
+        // every start to ipify.org, which nobody needs to know).
+        this.Ip = string.IsNullOrWhiteSpace(ip) ? "127.0.0.1" : ip;
 
         _tcpListenerRef = CreateTcpListener(deferListening);
         _actorFactoryRef = CreateActorFactory();

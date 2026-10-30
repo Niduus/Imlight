@@ -274,6 +274,15 @@ internal static class InstalledCommands {
             Registry.CurrentUser.DeleteSubKeyTree(UNINSTALL_KEY, throwOnMissingSubKey: false);
         }
 
+        // Nothing of Ahziael's stays behind outside its folder either: its temp downloads, and the router ports and
+        // firewall rule "Let friends connect" made (Windows asks once to remove the rule).
+        PrivacyCleanup.Remove([new PrivacyCleanup.Leftovers("temp", PrivacyCleanup.TempLeftovers())]);
+        if (FriendAccess.WasTurnedOn(installFolder) || FriendAccess.HasFirewallRule()) {
+            foreach (var line in FriendAccess.TurnOffAsync(installFolder).GetAwaiter().GetResult()) {
+                Console.WriteLine(line);
+            }
+        }
+
         var self = Environment.ProcessPath is { } path ? Path.GetFullPath(path) : null;
         var failed = 0;
         foreach (var entry in Directory.EnumerateFileSystemEntries(installFolder)) {

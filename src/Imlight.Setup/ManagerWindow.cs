@@ -575,9 +575,7 @@ internal sealed partial class ManagerWindow : Window {
                 WithHint(new DockPanel {
                     Children = {
                         WithDock(Row(Action(Primary("Let friends connect"), LetFriendsConnectAsync),
-                            Action(Plain("Copy address"), () => _publicIp is null
-                                ? throw new PanelException("Your address is not found yet. Check your internet connection.")
-                                : CopyAsync($"{_publicIp} {FriendAccess.Ports(_manager.InstallFolder)[0]}", "Copied your address and login port."))), Dock.Right),
+                            Action(Plain("Copy address"), CopyFriendAddressAsync)), Dock.Right),
                         WithDock(WithCenter(WithMargin(_friendAddressToggle, new Thickness(10, 0, 10, 0))), Dock.Right),
                         WithCenter(_friendAddress),
                     },
@@ -618,10 +616,20 @@ internal sealed partial class ManagerWindow : Window {
             isError: !(result.Firewall && result.Router) || result.SharedAddress);
     }
 
+    private async Task CopyFriendAddressAsync() {
+        _publicIp ??= await FriendAccess.PublicIpAsync();
+        ShowFriendAddress();
+        if (_publicIp is null) {
+            throw new PanelException("Your address could not be found. Check your internet connection.");
+        }
+
+        await CopyAsync($"{_publicIp} {FriendAccess.Ports(_manager.InstallFolder)[0]}", "Copied your address and login port.");
+    }
+
     private void ShowFriendAddress() {
         var port = FriendAccess.Ports(_manager.InstallFolder)[0].ToString();
         _friendAddress.Text = _publicIp is null
-            ? "Your address could not be found. Check your internet connection."
+            ? "Click \"Let friends connect\" or \"Copy address\" to show your address."
             : $"Address: {Reveal(_publicIp, _showFriendAddress)}    Login port: {Reveal(port, _showFriendAddress)}";
         _friendResult.Text = HideIn(string.Join("\n", _friendResultLines), _showFriendAddress ? [] : _friendResultSecrets);
     }
@@ -1321,6 +1329,7 @@ internal sealed partial class ManagerWindow : Window {
                 "How Ahziael looks.",
                 SwitchRow("Moving background", _movingBackground,
                     "The colours behind the panels drift slowly and the server light breathes. They stop while you play.")),
+            PrivacyCard(),
             ServerSourceCard(),
             AuroriumCard(),
             Fold("folder", "Tools", "Files and folders", $"Installed in {_manager.InstallFolder}.",
@@ -1638,7 +1647,11 @@ internal sealed partial class ManagerWindow : Window {
 
     private async Task LoadPlayAsync() {
         RenderServers();
-        _publicIp ??= await FriendAccess.PublicIpAsync();
+        // Looked up online only once friends were let in (Tools > Privacy): opening the Play tab sends nothing anywhere.
+        if (FriendAccess.WasTurnedOn(_manager.InstallFolder)) {
+            _publicIp ??= await FriendAccess.PublicIpAsync();
+        }
+
         ShowFriendAddress();
     }
 
@@ -2765,7 +2778,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Settings"] = ("gear", "Every setting of the server, with what each one does."),
         ["Accounts"] = ("users", "Who can log in to your server, and what they may do."),
         ["Game Files"] = ("folder", "Read the game's data files, without ever changing them."),
-        ["Tools"] = ("wrench", "Update Ahziael, open its folders, or remove it."),
+        ["Tools"] = ("wrench", "Update Ahziael, clean up after it, open its folders, or remove it."),
     };
 
     /// <summary>
