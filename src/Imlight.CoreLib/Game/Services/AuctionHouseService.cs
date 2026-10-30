@@ -331,54 +331,60 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
     private void BuyOrSellMore(WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSEREQUEST message) {
         var wizard = GetActiveWizard();
         var quantity = (int) Math.Clamp(message.quantity, 1u, MAX_MORE);
+        // Buy More (7) never sells. A treasure card's bazaar id is the same as the id of the copies in the book, so Buy
+        // More of a card the player already had sold those copies instead (Niduus, 2026-10-30: Epic and Elucidate
+        // cards that then would not go in the deck).
+        var buying = message.Command == 7;
         foreach (var id in new[] { message.itemGlobalID, message.itemTemplateID }.Where(id => id != 0)) {
-            if (wizard.PetSnackBehavior.HasSnackID(id)) {
-                var snack = wizard.PetSnackBehavior.Snacks.First(s => s.m_globalID.Full == id);
-                var templateId = (ulong) snack.m_templateID;
-                var gold = SellSnack(wizard, id, quantity, out var sold);
-                SendMoreAcknowledgement(templateId, isSell: true, gold, sold);
+            if (!buying) {
+                if (wizard.PetSnackBehavior.HasSnackID(id)) {
+                    var snack = wizard.PetSnackBehavior.Snacks.First(s => s.m_globalID.Full == id);
+                    var templateId = (ulong) snack.m_templateID;
+                    var gold = SellSnack(wizard, id, quantity, out var sold);
+                    SendMoreAcknowledgement(templateId, isSell: true, gold, sold);
 
-                return;
-            }
+                    return;
+                }
 
-            if (wizard.AlchemyBehavior.HasReagentID(id)) {
-                var templateId = (ulong) wizard.AlchemyBehavior.Reagents.First(r => r.m_globalID.Full == id).m_templateID;
-                var gold = SellReagent(wizard, id, quantity, out var sold);
-                SendMoreAcknowledgement(templateId, isSell: true, gold, sold);
+                if (wizard.AlchemyBehavior.HasReagentID(id)) {
+                    var templateId = (ulong) wizard.AlchemyBehavior.Reagents.First(r => r.m_globalID.Full == id).m_templateID;
+                    var gold = SellReagent(wizard, id, quantity, out var sold);
+                    SendMoreAcknowledgement(templateId, isSell: true, gold, sold);
 
-                return;
-            }
+                    return;
+                }
 
-            if (wizard.InventoryBehavior.HasItem(id)) {
-                // The held item and more of the same kind, up to the number asked for; one confirm for the lot.
-                var templateId = (ulong) wizard.InventoryBehavior.GetItem(id).m_templateID;
-                var copies = new[] { id }.Concat((wizard.InventoryBehavior.Items ?? [])
-                        .Where(item => item is not null && (ulong) item.m_templateID == templateId && item.m_globalID.Full != id
-                            && !ItemHelper.IsLocked(item))
-                        .Select(item => item.m_globalID.Full))
-                    .Take(quantity)
-                    .ToList();
-                var goldBefore = wizard.GameStats.m_currentGold;
-                var sold = SellItems(wizard, copies);
-                SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { ClientRequestID = 0, GlobalID = 0, Failure = (sbyte) (sold > 0 ? 0 : 1) });
-                SendMoreAcknowledgement(templateId, isSell: true, wizard.GameStats.m_currentGold - goldBefore, sold);
+                if (wizard.InventoryBehavior.HasItem(id)) {
+                    // The held item and more of the same kind, up to the number asked for; one confirm for the lot.
+                    var templateId = (ulong) wizard.InventoryBehavior.GetItem(id).m_templateID;
+                    var copies = new[] { id }.Concat((wizard.InventoryBehavior.Items ?? [])
+                            .Where(item => item is not null && (ulong) item.m_templateID == templateId && item.m_globalID.Full != id
+                                && !ItemHelper.IsLocked(item))
+                            .Select(item => item.m_globalID.Full))
+                        .Take(quantity)
+                        .ToList();
+                    var goldBefore = wizard.GameStats.m_currentGold;
+                    var sold = SellItems(wizard, copies);
+                    SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { ClientRequestID = 0, GlobalID = 0, Failure = (sbyte) (sold > 0 ? 0 : 1) });
+                    SendMoreAcknowledgement(templateId, isSell: true, wizard.GameStats.m_currentGold - goldBefore, sold);
 
-                return;
-            }
+                    return;
+                }
 
-            // Treasure cards are in the treasure book, by their card id (0x60 << 40 on top of the spell template).
-            if (SellCards(wizard, id, quantity, out var cardsSold) is var cardGold && cardsSold > 0) {
-                SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { ClientRequestID = 0, GlobalID = 0, Failure = 0 });
-                SendMoreAcknowledgement(id, isSell: true, cardGold, cardsSold);
+                // Treasure cards are in the treasure book, by their card id (0x60 << 40 on top of the spell template).
+                if (SellCards(wizard, id, quantity, out var cardsSold) is var cardGold && cardsSold > 0) {
+                    SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPSELLCONFIRM { ClientRequestID = 0, GlobalID = 0, Failure = 0 });
+                    SendMoreAcknowledgement(id, isSell: true, cardGold, cardsSold);
 
-                return;
-            }
+                    return;
+                }
 
-            // Sell More (8) never buys: an id the player does not hold is not sold.
-            if (message.Command == 8) {
-                Logger.Information("Bazaar: Sell More of {0}, which the player does not hold.", Logger.Args(id));
+                // Sell More (8) never buys: an id the player does not hold is not sold.
+                if (message.Command == 8) {
+                    Logger.Information("Bazaar: Sell More of {0}, which the player does not hold.", Logger.Args(id));
 
-                continue;
+                    continue;
+                }
             }
 
             if (BazaarLink.Find(id) is { Kind: BazaarKind.Card or BazaarKind.Snack or BazaarKind.Reagent } stackQuote) {
@@ -386,6 +392,8 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
                 // gets its answer right away instead of after every copy is saved (Niduus, 2026-10-28).
                 var goldBefore = wizard.GameStats.m_currentGold;
                 var bought = BuyStack(wizard, stackQuote, quantity);
+                Logger.Information("Bazaar: {0} bought {1} of {2} x {3}.",
+                    Logger.Args(WizardName(wizard), bought, quantity, stackQuote.Name));
                 SendToSocket(new WIZARD_12_PROTOCOL.MSG_SHOPBUYCONFIRM { Failure = (sbyte) (bought > 0 ? 0 : 1), WebFailure = 0, Credits = 0 });
                 SendMoreAcknowledgement(id, isSell: false, goldBefore - wizard.GameStats.m_currentGold, bought);
                 if (bought > 0 && bought < quantity) {
@@ -601,6 +609,8 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         }
 
         WizardCollection.RemoveTreasureCards(wizard, templateId, sold);
+        Logger.Information("Bazaar: {0} sold {1} of {2} x {3} card.",
+            Logger.Args(WizardName(wizard), sold, quantity, (string) spell.m_name));
         var spellId = (int) StringHash.Compute(spell.m_name);
         for (var i = 0; i < sold; i++) {
             SendToSocket(new WIZARD_12_PROTOCOL.MSG_REMOVETREASURESPELLFROMBOOK { SpellID = spellId, EnchantmentID = 0 });
