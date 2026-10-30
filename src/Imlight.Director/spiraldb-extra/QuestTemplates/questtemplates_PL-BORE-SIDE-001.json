@@ -48,7 +48,7 @@
       "m_zoneExit": false
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -59,7 +59,7 @@
       "m_goalRequirements": null,
       "m_tallyCounter": {
         "m_percentChance": 1.0,
-        "m_descriptor": "Reddín",
+        "m_descriptor": "",
         "m_descriptor2": "",
         "m_count": 0,
         "m_tallyResults": {
@@ -172,11 +172,9 @@
       "m_locationName": "Borealis Peaks",
       "m_goalName": "2_WizardQuestGoalsTalkNPC",
       "m_goalTitle": "WizardQuestGoals_TalkNPC",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Polaris/PL_Z07_BorealisPeaks",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "PL-BORE-NPC06_Reddin_Persona",
+      "m_usePatron": false
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
@@ -336,6 +334,79 @@
   "m_dialogList": {
     "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
     "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "PL-BORE-NPC06_Reddin_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Hey now, stop following me! That's a joke. I'm actually quite happy to see you because I need your assistance. Again. Of course. Ha.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Reddin_POL_19.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "PL-BORE-NPC06_Reddin_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Dufresne's last note said to find him 'on the warm beach in the frozen mountains'. So naturally, I came here to the Borealis Peaks.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Reddin_POL_20.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "PL-BORE-NPC06_Reddin_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I've searched this area, but unless Dufresne and I have vastly different definitions of the word warm, this can't be the right beach.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Reddin_POL_21.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "PL-BORE-NPC06_Reddin_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "If you happen to run across a clue concerning the location of this toasty Snowasis that Dufresne's waiting in, please do let me know.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Reddin_POL_22.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          }
+        ]
+      },
       {
         "m_dialogTag": "Underway",
         "m_dialogEntries": [

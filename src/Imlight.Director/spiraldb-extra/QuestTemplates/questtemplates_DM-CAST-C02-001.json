@@ -123,7 +123,7 @@
       "m_zoneExit": false
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -134,7 +134,7 @@
       "m_goalRequirements": null,
       "m_tallyCounter": {
         "m_percentChance": 1.0,
-        "m_descriptor": "Renfield FlyGob",
+        "m_descriptor": "",
         "m_descriptor2": "",
         "m_count": 0,
         "m_tallyResults": {
@@ -230,11 +230,9 @@
       "m_locationName": "Castle Darkmoor",
       "m_goalName": "4_WizardQuestGoalsTalkNPC",
       "m_goalTitle": "WizardQuestGoals_TalkNPC",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "G14_DM/DM_Z04_LandingZone2",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "G14-DM-Hub2-NPC01_Persona",
+      "m_usePatron": false
     }
   ],
   "m_startResults": {
@@ -320,6 +318,79 @@
   "m_dialogList": {
     "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
     "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "G14-DM-HubNPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Can you hear that? Listen to them, the children of the night. What music they make! All night. Every night. It's enough to drive one mad.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/RenfieldFlyGob_BAA_03.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "G14-DM-HubNPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I shall direct you into Castle Darkmoor's impenetrable depths. But I cannot accompany you. From here you walk a lonely path.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/RenfieldFlyGob_BAA_04.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "G14-DM-HubNPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "You must enter the halls of Castle Darkmoor and find the Secret of the Observatory. Only with it can I guide you to the Death you seek.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/RenfieldFlyGob_BAA_05.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "G14-DM-HubNPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Enter freely and of your own free will.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/RenfieldFlyGob_BAA_06.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          }
+        ]
+      },
       {
         "m_dialogTag": "Underway",
         "m_dialogEntries": [

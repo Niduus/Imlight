@@ -144,7 +144,7 @@
       "m_displayImage1": "GUI/QuestButtons/Quest_EM_BookPile.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "MS_BookPedestalHistory"
+        "EM-SmokingBooks"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -157,7 +157,7 @@
       "m_goalTitle": "WizardQuestGoals_UseItem",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "MS_BookPedestalHistory.AdjRef"
+        "EM-SmokingBooks.AdjRef"
       ],
       "m_itemTotal": 1
     },

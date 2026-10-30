@@ -49,7 +49,7 @@
       "m_bountyType": "BT_MOB_KILL"
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -60,7 +60,7 @@
       "m_goalRequirements": null,
       "m_tallyCounter": {
         "m_percentChance": 1.0,
-        "m_descriptor": "Tatyana",
+        "m_descriptor": "",
         "m_descriptor2": "",
         "m_count": 0,
         "m_tallyResults": {
@@ -122,11 +122,9 @@
       "m_locationName": "Castle Darkmoor",
       "m_goalName": "2_WizardQuestGoalsTalkNPC",
       "m_goalTitle": "WizardQuestGoals_TalkNPC",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "G14_DM/DM_Z06_Bridge",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "G14-DM-Hub3-NPC01_Persona",
+      "m_usePatron": false
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
@@ -191,7 +189,19 @@
     }
   ],
   "m_startResults": {
-    "m_results": []
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "DM_CastleDarkmoor_Instance3",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "Glowy",
+        "m_zoneName": "G14_DM/DM_Z06_Bridge",
+        "m_bShowsObject": false,
+        "m_persist": false,
+        "m_requirements": null
+      }
+    ]
   },
   "m_endResults": {
     "m_results": [
@@ -262,6 +272,96 @@
   "m_dialogList": {
     "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
     "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "G14-DM-Hub3-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Seeker, cross the Bridge to Neverwhere, to reach your final destination. This is where the nightmares of Darkmoor are born.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/Tatyana_BAA_19.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "G14-DM-Hub3-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The von Shanes have controlled this region from time immemorial. You stand before their Grand Mausoleum, a monument to terror and blood.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/Tatyana_BAA_20.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "G14-DM-Hub3-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "However, your foe and nemesis, the Exalted Lord of Death, Malistaire the Undying, has taken over this crypt as his own.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/Tatyana_BAA_21.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "G14-DM-Hub3-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "You must seek out Malistaire and defeat him, in order to answer his challenge and send him back to his final rest.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/Tatyana_BAA_22.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "G14-DM-Hub3-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Should you fail, who knows what horrors he might unleash upon the Spiral?",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/Tatyana_BAA_23.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          }
+        ]
+      },
       {
         "m_dialogTag": "Underway",
         "m_dialogEntries": [
