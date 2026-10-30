@@ -1,0 +1,85 @@
+{
+  "Name": "W404 MS-Pig-War-Warrior-MSBoss-L42 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-War-Warrior-MSBoss-L42: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "87495",
+      "ItemName": "Do-Daga's Staff of Cognition"
+    },
+    {
+      "ItemId": "97456",
+      "ItemName": "Do-Daga's Dagger of Intent"
+    },
+    {
+      "ItemId": "97469",
+      "ItemName": "Kris of the Pensive Ones"
+    },
+    {
+      "ItemId": "97472",
+      "ItemName": "Shortblade of a Daydreamer"
+    },
+    {
+      "ItemId": "97585",
+      "ItemName": "Cap of Preoccupation"
+    },
+    {
+      "ItemId": "97606",
+      "ItemName": "Cap of Dilemma"
+    },
+    {
+      "ItemId": "97633",
+      "ItemName": "Blended Wool Cap"
+    },
+    {
+      "ItemId": "97652",
+      "ItemName": "Do-Daga's Hat of Unrest"
+    },
+    {
+      "ItemId": "97654",
+      "ItemName": "Shroud of Woe"
+    },
+    {
+      "ItemId": "97677",
+      "ItemName": "Shroud of Deliberation"
+    },
+    {
+      "ItemId": "97697",
+      "ItemName": "Ring of Detachment"
+    },
+    {
+      "ItemId": "97702",
+      "ItemName": "Do-Daga's Band"
+    },
+    {
+      "ItemId": "97704",
+      "ItemName": "Band of Hope"
+    },
+    {
+      "ItemId": "97705",
+      "ItemName": "Logical Band"
+    },
+    {
+      "ItemId": "97829",
+      "ItemName": "Do-Daga's Cloak of Disorder"
+    },
+    {
+      "ItemId": "97846",
+      "ItemName": "Do-Daga's Tuned Vest"
+    },
+    {
+      "ItemId": "97983",
+      "ItemName": "Shoes of Watchfulness"
+    },
+    {
+      "ItemId": "98034",
+      "ItemName": "Tormented Sandals"
+    },
+    {
+      "ItemId": "98062",
+      "ItemName": "Boots of Consideration"
+    }
+  ]
+}

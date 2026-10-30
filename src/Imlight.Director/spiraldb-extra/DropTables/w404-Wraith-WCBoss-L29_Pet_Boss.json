@@ -1,0 +1,17 @@
+{
+  "Name": "W404 Wraith-WCBoss-L29 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table Wraith-WCBoss-L29: the pet drops (2), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "100421",
+      "ItemName": "Midnight Sprite"
+    },
+    {
+      "ItemId": "225455",
+      "ItemName": "Blue Banshee"
+    }
+  ]
+}

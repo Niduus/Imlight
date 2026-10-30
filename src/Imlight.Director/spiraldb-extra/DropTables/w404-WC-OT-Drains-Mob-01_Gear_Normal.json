@@ -1,0 +1,181 @@
+{
+  "Name": "W404 WC-OT-Drains-Mob-01 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table WC-OT-Drains-Mob-01: the gear drops (43), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4725",
+      "ItemName": "Simple Dirk"
+    },
+    {
+      "ItemId": "4731",
+      "ItemName": "Ritual Athame"
+    },
+    {
+      "ItemId": "4757",
+      "ItemName": "Flawed Opal Band"
+    },
+    {
+      "ItemId": "4773",
+      "ItemName": "Flawed Pearl Ring"
+    },
+    {
+      "ItemId": "4802",
+      "ItemName": "Soot Stained Boots"
+    },
+    {
+      "ItemId": "4803",
+      "ItemName": "Explorer Boots"
+    },
+    {
+      "ItemId": "4804",
+      "ItemName": "Canvas Wraps"
+    },
+    {
+      "ItemId": "4805",
+      "ItemName": "Adventurer's Boots"
+    },
+    {
+      "ItemId": "4806",
+      "ItemName": "Fairy Shoes"
+    },
+    {
+      "ItemId": "4807",
+      "ItemName": "Martyr's Wraps"
+    },
+    {
+      "ItemId": "4808",
+      "ItemName": "Twice Stitched Boots"
+    },
+    {
+      "ItemId": "4831",
+      "ItemName": "Firestorm Wraps"
+    },
+    {
+      "ItemId": "4832",
+      "ItemName": "Plated Boots"
+    },
+    {
+      "ItemId": "4838",
+      "ItemName": "Novice's Shoes"
+    },
+    {
+      "ItemId": "4850",
+      "ItemName": "Soft Boots"
+    },
+    {
+      "ItemId": "4856",
+      "ItemName": "Sturdy Boots"
+    },
+    {
+      "ItemId": "4861",
+      "ItemName": "Boots of the Adverse"
+    },
+    {
+      "ItemId": "4868",
+      "ItemName": "Soldiers Wraps"
+    },
+    {
+      "ItemId": "4874",
+      "ItemName": "Roughspun Shoes"
+    },
+    {
+      "ItemId": "4875",
+      "ItemName": "Slippers of Rites"
+    },
+    {
+      "ItemId": "4877",
+      "ItemName": "Hardened Boots"
+    },
+    {
+      "ItemId": "77565",
+      "ItemName": "Firestorm Cap"
+    },
+    {
+      "ItemId": "77580",
+      "ItemName": "Hood of Storms"
+    },
+    {
+      "ItemId": "77595",
+      "ItemName": "Healer's Cowl"
+    },
+    {
+      "ItemId": "77609",
+      "ItemName": "Helm of Stability"
+    },
+    {
+      "ItemId": "77614",
+      "ItemName": "Soft Hood"
+    },
+    {
+      "ItemId": "77615",
+      "ItemName": "Novice's Hat"
+    },
+    {
+      "ItemId": "77616",
+      "ItemName": "Roughspun Hat"
+    },
+    {
+      "ItemId": "77620",
+      "ItemName": "Imp Lord's Helm"
+    },
+    {
+      "ItemId": "87185",
+      "ItemName": "Cloak of Foresight"
+    },
+    {
+      "ItemId": "87186",
+      "ItemName": "Vestment of the Adverse"
+    },
+    {
+      "ItemId": "87200",
+      "ItemName": "Senior Novice's Robe"
+    },
+    {
+      "ItemId": "87202",
+      "ItemName": "Chillcloak"
+    },
+    {
+      "ItemId": "87206",
+      "ItemName": "Stormcaller's Robe"
+    },
+    {
+      "ItemId": "87212",
+      "ItemName": "Robe of Antiquities"
+    },
+    {
+      "ItemId": "87218",
+      "ItemName": "Sturdy Coat"
+    },
+    {
+      "ItemId": "87224",
+      "ItemName": "Cloak of Calamity"
+    },
+    {
+      "ItemId": "87230",
+      "ItemName": "Twice Stitched Robe"
+    },
+    {
+      "ItemId": "87237",
+      "ItemName": "Novice's Robe"
+    },
+    {
+      "ItemId": "87240",
+      "ItemName": "Roughspun Robe"
+    },
+    {
+      "ItemId": "87241",
+      "ItemName": "Symmetrical Wand"
+    },
+    {
+      "ItemId": "87244",
+      "ItemName": "Wand of Repose"
+    },
+    {
+      "ItemId": "87262",
+      "ItemName": "Fairy Cloak"
+    }
+  ]
+}

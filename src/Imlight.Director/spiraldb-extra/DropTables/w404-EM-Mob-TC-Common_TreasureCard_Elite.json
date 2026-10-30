@@ -1,0 +1,65 @@
+{
+  "Name": "W404 EM-Mob-TC-Common TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table EM-Mob-TC-Common: the treasurecard drops (14), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Doom and Gloom TC",
+      "ItemName": "Doom and Gloom"
+    },
+    {
+      "ItemId": "Sanctuary TC",
+      "ItemName": "Sanctuary"
+    },
+    {
+      "ItemId": "Power Play TC",
+      "ItemName": "Power Play"
+    },
+    {
+      "ItemId": "Balefrost TC",
+      "ItemName": "Balefrost"
+    },
+    {
+      "ItemId": "Combustion TC",
+      "ItemName": "Combustion"
+    },
+    {
+      "ItemId": "Darkwind TC",
+      "ItemName": "Darkwind"
+    },
+    {
+      "ItemId": "Blood Moon TC",
+      "ItemName": "Time of Legend"
+    },
+    {
+      "ItemId": "Mass Fire Prism TC",
+      "ItemName": "Mass Fire Prism"
+    },
+    {
+      "ItemId": "Mass Ice Prism TC",
+      "ItemName": "Mass Ice Prism"
+    },
+    {
+      "ItemId": "Mass Life Prism TC",
+      "ItemName": "Mass Life Prism"
+    },
+    {
+      "ItemId": "Mass Myth Prism TC",
+      "ItemName": "Mass Myth Prism"
+    },
+    {
+      "ItemId": "Mass Storm Prism TC",
+      "ItemName": "Mass Storm Prism"
+    },
+    {
+      "ItemId": "Mass Triage TC",
+      "ItemName": "Mass Triage"
+    },
+    {
+      "ItemId": "Mass Death Prism TC",
+      "ItemName": "Mass Death Prism"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Gobbler-Pink-Baron-WCBoss-L22 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Gobbler-Pink-Baron-WCBoss-L22: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4674",
+      "ItemName": "Rotunda's Torc"
+    },
+    {
+      "ItemId": "4679",
+      "ItemName": "Bogeyman's Pendant"
+    },
+    {
+      "ItemId": "4735",
+      "ItemName": "Rotunda's Meal Blade"
+    },
+    {
+      "ItemId": "4777",
+      "ItemName": "Baron's Shiny Ring"
+    },
+    {
+      "ItemId": "4791",
+      "ItemName": "Rotunda's Regal Signet"
+    },
+    {
+      "ItemId": "4842",
+      "ItemName": "Cold Forged Boots"
+    },
+    {
+      "ItemId": "4872",
+      "ItemName": "Rotunda's Ancient Boots"
+    },
+    {
+      "ItemId": "77578",
+      "ItemName": "Cold Forged Helm"
+    },
+    {
+      "ItemId": "77590",
+      "ItemName": "Rotunda's Hood"
+    },
+    {
+      "ItemId": "87198",
+      "ItemName": "Splendiferous Robe"
+    },
+    {
+      "ItemId": "87205",
+      "ItemName": "Rotunda's Frost Robe"
+    },
+    {
+      "ItemId": "87223",
+      "ItemName": "Angelic Drape"
+    },
+    {
+      "ItemId": "87235",
+      "ItemName": "Cloak of the Watchful"
+    },
+    {
+      "ItemId": "87258",
+      "ItemName": "Baron's Staff of Command"
+    },
+    {
+      "ItemId": "87261",
+      "ItemName": "Baron's Staff of Tension"
+    },
+    {
+      "ItemId": "346483",
+      "ItemName": "Elven Ice Walkers"
+    }
+  ]
+}

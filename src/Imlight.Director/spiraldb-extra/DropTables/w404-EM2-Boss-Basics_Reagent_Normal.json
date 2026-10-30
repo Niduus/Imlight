@@ -1,0 +1,109 @@
+{
+  "Name": "W404 EM2-Boss-Basics Reagent (Normal)",
+  "Description": "Wizard404's drop list of the game's table EM2-Boss-Basics: the reagent drops (25), one picked when it rolls. How often: DropOdds.json Normal/Reagent.",
+  "Odds": "Normal/Reagent",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1421824",
+      "ItemName": "Flying Squid Ink"
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom"
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales"
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether"
+    },
+    {
+      "ItemId": "258584",
+      "ItemName": "Golden Pearl"
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone"
+    },
+    {
+      "ItemId": "258588",
+      "ItemName": "Aquamarine"
+    },
+    {
+      "ItemId": "473722",
+      "ItemName": "Agave Leaves"
+    },
+    {
+      "ItemId": "473723",
+      "ItemName": "Agave Nectar"
+    },
+    {
+      "ItemId": "473724",
+      "ItemName": "Turquoise"
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber"
+    },
+    {
+      "ItemId": "537976",
+      "ItemName": "Braided Vine"
+    },
+    {
+      "ItemId": "537977",
+      "ItemName": "Vine"
+    },
+    {
+      "ItemId": "537982",
+      "ItemName": "Amber Dust"
+    },
+    {
+      "ItemId": "537985",
+      "ItemName": "Merle's Whisker"
+    },
+    {
+      "ItemId": "1206361",
+      "ItemName": "Stardust"
+    },
+    {
+      "ItemId": "1206362",
+      "ItemName": "Astral Shard"
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel"
+    },
+    {
+      "ItemId": "1350017",
+      "ItemName": "Silver"
+    },
+    {
+      "ItemId": "1350018",
+      "ItemName": "Titanium"
+    },
+    {
+      "ItemId": "1350235",
+      "ItemName": "Tungsten"
+    },
+    {
+      "ItemId": "1350236",
+      "ItemName": "Mithril"
+    },
+    {
+      "ItemId": "1350237",
+      "ItemName": "Orichalcum"
+    },
+    {
+      "ItemId": "1350238",
+      "ItemName": "Draconium"
+    },
+    {
+      "ItemId": "1392207",
+      "ItemName": "Turmeric"
+    }
+  ]
+}

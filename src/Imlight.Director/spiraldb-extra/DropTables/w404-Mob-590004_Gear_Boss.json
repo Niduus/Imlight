@@ -1,0 +1,57 @@
+{
+  "Name": "W404 Mob-590004 Gear (Boss)",
+  "Description": "Wizard404's drop list of Sir Agravaine's own drops: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635214",
+      "ItemName": "Torc of Pluck"
+    },
+    {
+      "ItemId": "635215",
+      "ItemName": "Dependable Squire's Torc"
+    },
+    {
+      "ItemId": "635243",
+      "ItemName": "Badger's Claw"
+    },
+    {
+      "ItemId": "635244",
+      "ItemName": "Horn Handled Knife"
+    },
+    {
+      "ItemId": "635300",
+      "ItemName": "Mask of the Catalan"
+    },
+    {
+      "ItemId": "635301",
+      "ItemName": "Hood of the Sacred Lake"
+    },
+    {
+      "ItemId": "635335",
+      "ItemName": "Brisk Circle of Nodor"
+    },
+    {
+      "ItemId": "635373",
+      "ItemName": "Fire-Spitter Robes"
+    },
+    {
+      "ItemId": "635374",
+      "ItemName": "Winter Wyrm's Cloak"
+    },
+    {
+      "ItemId": "635414",
+      "ItemName": "Merciful Knight's Boots"
+    },
+    {
+      "ItemId": "635415",
+      "ItemName": "Knight's Boots of Justice"
+    },
+    {
+      "ItemId": "635626",
+      "ItemName": "Fellbringer's Bow"
+    }
+  ]
+}

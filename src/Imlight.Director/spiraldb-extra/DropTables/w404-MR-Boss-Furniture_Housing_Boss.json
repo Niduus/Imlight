@@ -1,0 +1,89 @@
+{
+  "Name": "W404 MR-Boss-Furniture Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MR-Boss-Furniture: the housing drops (20), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1335260",
+      "ItemName": "Mirage Desert Combat Theme"
+    },
+    {
+      "ItemId": "1335261",
+      "ItemName": "Mirage Caravan Theme"
+    },
+    {
+      "ItemId": "1335262",
+      "ItemName": "Mirage Chronoverge Com Theme"
+    },
+    {
+      "ItemId": "1335263",
+      "ItemName": "Mirage Chronoverge Theme"
+    },
+    {
+      "ItemId": "1335264",
+      "ItemName": "Mirage City Theme"
+    },
+    {
+      "ItemId": "1335265",
+      "ItemName": "Mirage City Combat Theme"
+    },
+    {
+      "ItemId": "1335266",
+      "ItemName": "Mirage Desert Canyons Theme"
+    },
+    {
+      "ItemId": "1335267",
+      "ItemName": "Mirage Jungle Combat Theme"
+    },
+    {
+      "ItemId": "1335268",
+      "ItemName": "Mirage Jungle Theme"
+    },
+    {
+      "ItemId": "1335269",
+      "ItemName": "Mirage Palace Theme"
+    },
+    {
+      "ItemId": "1335270",
+      "ItemName": "Mirage Serpent Theme"
+    },
+    {
+      "ItemId": "1335273",
+      "ItemName": "Mirage Canyon Combat Theme"
+    },
+    {
+      "ItemId": "1335274",
+      "ItemName": "Mirage City Theme 2"
+    },
+    {
+      "ItemId": "1335275",
+      "ItemName": "Mirage Den of Thieves Theme"
+    },
+    {
+      "ItemId": "1335276",
+      "ItemName": "Mirage Canyon Theme 1"
+    },
+    {
+      "ItemId": "1335277",
+      "ItemName": "Mirage Canyon Theme 2"
+    },
+    {
+      "ItemId": "1335278",
+      "ItemName": "Mirage Spider Speaks Theme"
+    },
+    {
+      "ItemId": "1335279",
+      "ItemName": "Mirage Magic Carpet Theme"
+    },
+    {
+      "ItemId": "1335280",
+      "ItemName": "Mirage Nomad Theme"
+    },
+    {
+      "ItemId": "1335281",
+      "ItemName": "Mirage City Tense Theme"
+    }
+  ]
+}

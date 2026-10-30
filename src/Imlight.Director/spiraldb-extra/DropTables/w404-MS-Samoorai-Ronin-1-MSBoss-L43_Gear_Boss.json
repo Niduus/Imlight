@@ -1,0 +1,101 @@
+{
+  "Name": "W404 MS-Samoorai-Ronin-1-MSBoss-L43 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Samoorai-Ronin-1-MSBoss-L43: the gear drops (23), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "87773",
+      "ItemName": "Kagemoosha's Citrine Blade"
+    },
+    {
+      "ItemId": "97449",
+      "ItemName": "Shoji's Athame"
+    },
+    {
+      "ItemId": "97470",
+      "ItemName": "Knife of Preoccupation"
+    },
+    {
+      "ItemId": "97473",
+      "ItemName": "Dagger of Detachment"
+    },
+    {
+      "ItemId": "97507",
+      "ItemName": "Shoji's Deck of Aspirations"
+    },
+    {
+      "ItemId": "97571",
+      "ItemName": "Heedful Headwraps"
+    },
+    {
+      "ItemId": "97591",
+      "ItemName": "Cap of Exertion"
+    },
+    {
+      "ItemId": "97609",
+      "ItemName": "Shoji's Shroud of Disorder"
+    },
+    {
+      "ItemId": "97619",
+      "ItemName": "Euphonic Cap"
+    },
+    {
+      "ItemId": "97639",
+      "ItemName": "Gogi Berry Stained Cap"
+    },
+    {
+      "ItemId": "97667",
+      "ItemName": "Mask of the Chipper"
+    },
+    {
+      "ItemId": "97698",
+      "ItemName": "Band of Sandcastles"
+    },
+    {
+      "ItemId": "97723",
+      "ItemName": "Shoji's Ring of Pondering"
+    },
+    {
+      "ItemId": "97789",
+      "ItemName": "Gallant Tunic"
+    },
+    {
+      "ItemId": "97813",
+      "ItemName": "Shoji's Precautionary Robe"
+    },
+    {
+      "ItemId": "97824",
+      "ItemName": "Cloak of Pictures"
+    },
+    {
+      "ItemId": "97856",
+      "ItemName": "Vestment of Hymns"
+    },
+    {
+      "ItemId": "97882",
+      "ItemName": "Robe of the Lithe"
+    },
+    {
+      "ItemId": "98006",
+      "ItemName": "Shoji's Shoes of Pondering"
+    },
+    {
+      "ItemId": "98012",
+      "ItemName": "Boots of the Verse"
+    },
+    {
+      "ItemId": "98060",
+      "ItemName": "Shoes of Dreaming"
+    },
+    {
+      "ItemId": "98063",
+      "ItemName": "Shoes of Deliberation"
+    },
+    {
+      "ItemId": "98065",
+      "ItemName": "Slippers of the Lotus"
+    }
+  ]
+}

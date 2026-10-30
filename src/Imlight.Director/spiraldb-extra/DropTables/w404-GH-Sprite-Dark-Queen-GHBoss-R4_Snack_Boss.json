@@ -1,0 +1,45 @@
+{
+  "Name": "W404 GH-Sprite-Dark-Queen-GHBoss-R4 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Sprite-Dark-Queen-GHBoss-R4: the snack drops (9), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220199",
+      "ItemName": "MooShu Broccoli"
+    },
+    {
+      "ItemId": "220200",
+      "ItemName": "Flaming Carrot"
+    },
+    {
+      "ItemId": "220201",
+      "ItemName": "Orange Jalapeno"
+    },
+    {
+      "ItemId": "220202",
+      "ItemName": "Wild Strawberry"
+    },
+    {
+      "ItemId": "220207",
+      "ItemName": "Spicy Bubblegum"
+    },
+    {
+      "ItemId": "220230",
+      "ItemName": "Tiny Pretzel"
+    },
+    {
+      "ItemId": "220241",
+      "ItemName": "Dragon Fruit"
+    },
+    {
+      "ItemId": "220242",
+      "ItemName": "Frosted Cupcake"
+    },
+    {
+      "ItemId": "220249",
+      "ItemName": "Taffy"
+    }
+  ]
+}

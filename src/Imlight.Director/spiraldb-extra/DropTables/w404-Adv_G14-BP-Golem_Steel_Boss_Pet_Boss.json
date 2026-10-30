@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Adv_G14-BP-Golem_Steel_Boss Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table Adv_G14-BP-Golem_Steel_Boss: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1719496",
+      "ItemName": "Life Potbelly"
+    }
+  ]
+}

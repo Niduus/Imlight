@@ -1,0 +1,41 @@
+{
+  "Name": "W404 KR-BossRare-Sofia-R12 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table KR-BossRare-Sofia-R12: the gear drops (8), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203135",
+      "ItemName": "Mouse Knight's Helmet"
+    },
+    {
+      "ItemId": "1203206",
+      "ItemName": "Armor of the Mouse Knight"
+    },
+    {
+      "ItemId": "1203254",
+      "ItemName": "Mantis Warrior's Footwraps"
+    },
+    {
+      "ItemId": "1203297",
+      "ItemName": "Defender of the Last Wood"
+    },
+    {
+      "ItemId": "1203335",
+      "ItemName": "CurdWright Medallion"
+    },
+    {
+      "ItemId": "1203342",
+      "ItemName": "Mantis Huntress' Pendant"
+    },
+    {
+      "ItemId": "1203403",
+      "ItemName": "Bumbler's Sleetfall Pack"
+    },
+    {
+      "ItemId": "1217210",
+      "ItemName": "The Dreamweaver"
+    }
+  ]
+}

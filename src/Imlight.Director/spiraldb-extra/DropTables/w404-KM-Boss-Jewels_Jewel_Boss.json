@@ -1,0 +1,465 @@
+{
+  "Name": "W404 KM-Boss-Jewels Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-Boss-Jewels: the jewel drops (114), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462481",
+      "ItemName": "Sparkling PIP Hematite +2"
+    },
+    {
+      "ItemId": "1514441",
+      "ItemName": "Dazzling Damage Ruby +29"
+    },
+    {
+      "ItemId": "1514442",
+      "ItemName": "Dazzling Damage Ruby +30"
+    },
+    {
+      "ItemId": "1514443",
+      "ItemName": "Dazzling Damage Sapphire +29"
+    },
+    {
+      "ItemId": "1514444",
+      "ItemName": "Dazzling Damage Sapphire +30"
+    },
+    {
+      "ItemId": "1514445",
+      "ItemName": "Dazzling Damage Amethyst +29"
+    },
+    {
+      "ItemId": "1514446",
+      "ItemName": "Dazzling Damage Amethyst +30"
+    },
+    {
+      "ItemId": "1514447",
+      "ItemName": "Dazzling Damage Peridot +29"
+    },
+    {
+      "ItemId": "1514448",
+      "ItemName": "Dazzling Damage Peridot +30"
+    },
+    {
+      "ItemId": "1514449",
+      "ItemName": "Dazzling Damage Jade +29"
+    },
+    {
+      "ItemId": "1514450",
+      "ItemName": "Dazzling Damage Jade +30"
+    },
+    {
+      "ItemId": "1514451",
+      "ItemName": "Dazzling Damage Onyx +29"
+    },
+    {
+      "ItemId": "1514452",
+      "ItemName": "Dazzling Damage Onyx +30"
+    },
+    {
+      "ItemId": "1514453",
+      "ItemName": "Dazzling Damage Citrine +29"
+    },
+    {
+      "ItemId": "1514454",
+      "ItemName": "Dazzling Damage Citrine +30"
+    },
+    {
+      "ItemId": "1514455",
+      "ItemName": "Dazzling Damage Hematite +58"
+    },
+    {
+      "ItemId": "1514456",
+      "ItemName": "Dazzling Damage Hematite +60"
+    },
+    {
+      "ItemId": "1514457",
+      "ItemName": "Dazzling Damage Opal +15"
+    },
+    {
+      "ItemId": "1514458",
+      "ItemName": "Dazzling Mending Opal +7%"
+    },
+    {
+      "ItemId": "1514459",
+      "ItemName": "Dazzling Critical Ruby +19"
+    },
+    {
+      "ItemId": "1514460",
+      "ItemName": "Dazzling Critical Ruby +20"
+    },
+    {
+      "ItemId": "1514461",
+      "ItemName": "Dazzling Critical Sapphire +19"
+    },
+    {
+      "ItemId": "1514462",
+      "ItemName": "Dazzling Critical Sapphire +20"
+    },
+    {
+      "ItemId": "1514463",
+      "ItemName": "Dazzling Critical Amethyst +19"
+    },
+    {
+      "ItemId": "1514464",
+      "ItemName": "Dazzling Critical Amethyst +20"
+    },
+    {
+      "ItemId": "1514465",
+      "ItemName": "Dazzling Critical Peridot +19"
+    },
+    {
+      "ItemId": "1514466",
+      "ItemName": "Dazzling Critical Peridot +20"
+    },
+    {
+      "ItemId": "1514467",
+      "ItemName": "Dazzling Critical Jade +19"
+    },
+    {
+      "ItemId": "1514468",
+      "ItemName": "Dazzling Critical Jade +20"
+    },
+    {
+      "ItemId": "1514469",
+      "ItemName": "Dazzling Critical Onyx +19"
+    },
+    {
+      "ItemId": "1514470",
+      "ItemName": "Dazzling Critical Onyx +20"
+    },
+    {
+      "ItemId": "1514471",
+      "ItemName": "Dazzling Critical Citrine +19"
+    },
+    {
+      "ItemId": "1514472",
+      "ItemName": "Dazzling Critical Citrine +20"
+    },
+    {
+      "ItemId": "1514473",
+      "ItemName": "Dazzling Critical Hematite +19"
+    },
+    {
+      "ItemId": "1514474",
+      "ItemName": "Dazzling Critical Hematite +20"
+    },
+    {
+      "ItemId": "1514475",
+      "ItemName": "Dazzling Critical Opal +10"
+    },
+    {
+      "ItemId": "1514480",
+      "ItemName": "Dazzling Accurate Ruby +14%"
+    },
+    {
+      "ItemId": "1514481",
+      "ItemName": "Dazzling Accurate Sapphire +14%"
+    },
+    {
+      "ItemId": "1514482",
+      "ItemName": "Dazzling Accurate Amethyst +14%"
+    },
+    {
+      "ItemId": "1514483",
+      "ItemName": "Dazzling Accurate Peridot +14%"
+    },
+    {
+      "ItemId": "1514484",
+      "ItemName": "Dazzling Accurate Jade +14%"
+    },
+    {
+      "ItemId": "1514485",
+      "ItemName": "Dazzling Accurate Onyx +14%"
+    },
+    {
+      "ItemId": "1514486",
+      "ItemName": "Dazzling Accurate Citrine +14%"
+    },
+    {
+      "ItemId": "1514487",
+      "ItemName": "Dazzling Accurate Hematite +14%"
+    },
+    {
+      "ItemId": "1514488",
+      "ItemName": "Dazzling Accurate Opal +7%"
+    },
+    {
+      "ItemId": "1514489",
+      "ItemName": "Krampus Revenant Ruby"
+    },
+    {
+      "ItemId": "1514490",
+      "ItemName": "Handsome Fomori Sapphire"
+    },
+    {
+      "ItemId": "1514491",
+      "ItemName": "Catalan Amethyst"
+    },
+    {
+      "ItemId": "1514492",
+      "ItemName": "Ninja Pigs Peridot"
+    },
+    {
+      "ItemId": "1514493",
+      "ItemName": "Goat Monk Jade"
+    },
+    {
+      "ItemId": "1514494",
+      "ItemName": "Lord of Night Onyx"
+    },
+    {
+      "ItemId": "1514495",
+      "ItemName": "Savage Paw Citrine"
+    },
+    {
+      "ItemId": "1514506",
+      "ItemName": "Dazzling Mana Opal +53"
+    },
+    {
+      "ItemId": "1514507",
+      "ItemName": "Dazzling Mana Opal +54"
+    },
+    {
+      "ItemId": "1514510",
+      "ItemName": "Dazzling Defense Ruby +57"
+    },
+    {
+      "ItemId": "1514511",
+      "ItemName": "Dazzling Defense Ruby +58"
+    },
+    {
+      "ItemId": "1514512",
+      "ItemName": "Dazzling Defense Ruby +59"
+    },
+    {
+      "ItemId": "1514513",
+      "ItemName": "Dazzling Defense Ruby +60"
+    },
+    {
+      "ItemId": "1514514",
+      "ItemName": "Dazzling Defense Sapphire +57"
+    },
+    {
+      "ItemId": "1514515",
+      "ItemName": "Dazzling Defense Sapphire +58"
+    },
+    {
+      "ItemId": "1514516",
+      "ItemName": "Dazzling Defense Sapphire +59"
+    },
+    {
+      "ItemId": "1514517",
+      "ItemName": "Dazzling Defense Sapphire +60"
+    },
+    {
+      "ItemId": "1514518",
+      "ItemName": "Dazzling Defense Amethyst +57"
+    },
+    {
+      "ItemId": "1514519",
+      "ItemName": "Dazzling Defense Amethyst +58"
+    },
+    {
+      "ItemId": "1514520",
+      "ItemName": "Dazzling Defense Amethyst +59"
+    },
+    {
+      "ItemId": "1514521",
+      "ItemName": "Dazzling Defense Amethyst +60"
+    },
+    {
+      "ItemId": "1514522",
+      "ItemName": "Dazzling Defense Peridot +57"
+    },
+    {
+      "ItemId": "1514523",
+      "ItemName": "Dazzling Defense Peridot +58"
+    },
+    {
+      "ItemId": "1514524",
+      "ItemName": "Dazzling Defense Peridot +59"
+    },
+    {
+      "ItemId": "1514525",
+      "ItemName": "Dazzling Defense Peridot +60"
+    },
+    {
+      "ItemId": "1514526",
+      "ItemName": "Dazzling Defense Jade +57"
+    },
+    {
+      "ItemId": "1514527",
+      "ItemName": "Dazzling Defense Jade +58"
+    },
+    {
+      "ItemId": "1514528",
+      "ItemName": "Dazzling Defense Jade +59"
+    },
+    {
+      "ItemId": "1514529",
+      "ItemName": "Dazzling Defense Jade +60"
+    },
+    {
+      "ItemId": "1514530",
+      "ItemName": "Dazzling Defense Onyx +57"
+    },
+    {
+      "ItemId": "1514531",
+      "ItemName": "Dazzling Defense Onyx +58"
+    },
+    {
+      "ItemId": "1514532",
+      "ItemName": "Dazzling Defense Onyx +59"
+    },
+    {
+      "ItemId": "1514533",
+      "ItemName": "Dazzling Defense Onyx +60"
+    },
+    {
+      "ItemId": "1514534",
+      "ItemName": "Dazzling Defense Citrine +57"
+    },
+    {
+      "ItemId": "1514535",
+      "ItemName": "Dazzling Defense Citrine +58"
+    },
+    {
+      "ItemId": "1514536",
+      "ItemName": "Dazzling Defense Citrine +59"
+    },
+    {
+      "ItemId": "1514537",
+      "ItemName": "Dazzling Defense Citrine +60"
+    },
+    {
+      "ItemId": "1514538",
+      "ItemName": "Dazzling Defense Hematite +57"
+    },
+    {
+      "ItemId": "1514539",
+      "ItemName": "Dazzling Defense Hematite +58"
+    },
+    {
+      "ItemId": "1514540",
+      "ItemName": "Dazzling Defense Hematite +59"
+    },
+    {
+      "ItemId": "1514541",
+      "ItemName": "Dazzling Defense Hematite +60"
+    },
+    {
+      "ItemId": "1514542",
+      "ItemName": "Dazzling Defense Opal +29"
+    },
+    {
+      "ItemId": "1514543",
+      "ItemName": "Dazzling Defense Opal +30"
+    },
+    {
+      "ItemId": "1514544",
+      "ItemName": "Dazzling Healing Opal +7%"
+    },
+    {
+      "ItemId": "1514545",
+      "ItemName": "Dazzling Blocking Ruby +19"
+    },
+    {
+      "ItemId": "1514546",
+      "ItemName": "Dazzling Blocking Ruby +20"
+    },
+    {
+      "ItemId": "1514547",
+      "ItemName": "Dazzling Blocking Sapphire +19"
+    },
+    {
+      "ItemId": "1514548",
+      "ItemName": "Dazzling Blocking Sapphire +20"
+    },
+    {
+      "ItemId": "1514549",
+      "ItemName": "Dazzling Blocking Amethyst +19"
+    },
+    {
+      "ItemId": "1514550",
+      "ItemName": "Dazzling Blocking Amethyst +20"
+    },
+    {
+      "ItemId": "1514551",
+      "ItemName": "Dazzling Blocking Peridot +19"
+    },
+    {
+      "ItemId": "1514552",
+      "ItemName": "Dazzling Blocking Peridot +20"
+    },
+    {
+      "ItemId": "1514553",
+      "ItemName": "Dazzling Blocking Jade +19"
+    },
+    {
+      "ItemId": "1514554",
+      "ItemName": "Dazzling Blocking Jade +20"
+    },
+    {
+      "ItemId": "1514555",
+      "ItemName": "Dazzling Blocking Onyx +19"
+    },
+    {
+      "ItemId": "1514556",
+      "ItemName": "Dazzling Blocking Onyx +20"
+    },
+    {
+      "ItemId": "1514557",
+      "ItemName": "Dazzling Blocking Citrine +19"
+    },
+    {
+      "ItemId": "1514558",
+      "ItemName": "Dazzling Blocking Citrine +20"
+    },
+    {
+      "ItemId": "1514559",
+      "ItemName": "Dazzling Blocking Hematite +19"
+    },
+    {
+      "ItemId": "1514560",
+      "ItemName": "Dazzling Blocking Hematite +20"
+    },
+    {
+      "ItemId": "1514561",
+      "ItemName": "Dazzling Blocking Opal +10"
+    },
+    {
+      "ItemId": "1514562",
+      "ItemName": "Dazzling Health Opal +127"
+    },
+    {
+      "ItemId": "1514563",
+      "ItemName": "Dazzling Health Opal +128"
+    },
+    {
+      "ItemId": "1514564",
+      "ItemName": "Dazzling Health Opal +129"
+    },
+    {
+      "ItemId": "1514565",
+      "ItemName": "Dazzling Health Opal +130"
+    },
+    {
+      "ItemId": "1514566",
+      "ItemName": "Dazzling Health Opal +131"
+    },
+    {
+      "ItemId": "1514567",
+      "ItemName": "Dazzling Health Opal +132"
+    },
+    {
+      "ItemId": "1514568",
+      "ItemName": "Dazzling Health Opal +133"
+    },
+    {
+      "ItemId": "1514571",
+      "ItemName": "Dazzling Health Opal +126"
+    }
+  ]
+}

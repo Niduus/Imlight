@@ -1,0 +1,9 @@
+{
+  "Name": "W404 CL-Level-06-Gauntlet",
+  "Description": "Gold of the game's table CL-Level-06-Gauntlet, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 29,
+  "MaxGold": 44,
+  "EachItem": false,
+  "Items": []
+}

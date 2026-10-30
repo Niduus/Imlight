@@ -1,0 +1,49 @@
+{
+  "Name": "W404 SKB_WC_SpiritIgnorance_A_150 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_WC_SpiritIgnorance_A_150: the housing drops (10), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160214",
+      "ItemName": "Floor Brazier"
+    },
+    {
+      "ItemId": "160221",
+      "ItemName": "Carved Skull"
+    },
+    {
+      "ItemId": "160235",
+      "ItemName": "Brain Jar"
+    },
+    {
+      "ItemId": "164215",
+      "ItemName": "Red Checker"
+    },
+    {
+      "ItemId": "164216",
+      "ItemName": "Black Checker"
+    },
+    {
+      "ItemId": "164217",
+      "ItemName": "Chessboard"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    },
+    {
+      "ItemId": "1217523",
+      "ItemName": "Gold Skeleton Key"
+    },
+    {
+      "ItemId": "1514440",
+      "ItemName": "Legendary Socket Wrench"
+    }
+  ]
+}

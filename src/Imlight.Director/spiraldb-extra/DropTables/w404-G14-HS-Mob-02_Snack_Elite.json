@@ -1,0 +1,57 @@
+{
+  "Name": "W404 G14-HS-Mob-02 Snack (Elite)",
+  "Description": "Wizard404's drop list of the game's table G14-HS-Mob-02: the snack drops (12), one picked when it rolls. How often: DropOdds.json Elite/Snack.",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220197",
+      "ItemName": "Green Grapes"
+    },
+    {
+      "ItemId": "220208",
+      "ItemName": "Cheese Broccoli"
+    },
+    {
+      "ItemId": "220213",
+      "ItemName": "Chocolate Strawberry"
+    },
+    {
+      "ItemId": "220218",
+      "ItemName": "Sugar Donut"
+    },
+    {
+      "ItemId": "220220",
+      "ItemName": "Gummy Firecat"
+    },
+    {
+      "ItemId": "220225",
+      "ItemName": "Nettle Root"
+    },
+    {
+      "ItemId": "220227",
+      "ItemName": "Cracker"
+    },
+    {
+      "ItemId": "220237",
+      "ItemName": "Tiny Fish"
+    },
+    {
+      "ItemId": "220311",
+      "ItemName": "Glowing Star Fruit"
+    },
+    {
+      "ItemId": "240118",
+      "ItemName": "Cauliflowers"
+    },
+    {
+      "ItemId": "473582",
+      "ItemName": "Kola Nuts"
+    },
+    {
+      "ItemId": "473583",
+      "ItemName": "Jelly Baby"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "Name": "W404 GH-Wolverine-Diseased-R5 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Wolverine-Diseased-R5: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136366",
+      "ItemName": "Cowl of Correspondence"
+    },
+    {
+      "ItemId": "136367",
+      "ItemName": "Hat of the Scirocco"
+    },
+    {
+      "ItemId": "136485",
+      "ItemName": "Skydark Ring"
+    },
+    {
+      "ItemId": "136575",
+      "ItemName": "Drape of Punditry"
+    },
+    {
+      "ItemId": "136576",
+      "ItemName": "Quintessential Clothing"
+    },
+    {
+      "ItemId": "136577",
+      "ItemName": "Funereal Coat"
+    },
+    {
+      "ItemId": "171141",
+      "ItemName": "Untiring Footguards"
+    },
+    {
+      "ItemId": "171142",
+      "ItemName": "Recursive Striders"
+    }
+  ]
+}

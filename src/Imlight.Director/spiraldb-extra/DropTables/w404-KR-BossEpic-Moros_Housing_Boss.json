@@ -1,0 +1,21 @@
+{
+  "Name": "W404 KR-BossEpic-Moros Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossEpic-Moros: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1212025",
+      "ItemName": "Khrysalis Shadow Combat Theme"
+    },
+    {
+      "ItemId": "1212027",
+      "ItemName": "Khrysalis Sardonyx Theme"
+    },
+    {
+      "ItemId": "1212039",
+      "ItemName": "Avalon Dreamworld Theme"
+    }
+  ]
+}

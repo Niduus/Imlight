@@ -1,0 +1,121 @@
+{
+  "Name": "W404 ZF-Level-02 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table ZF-Level-02: the gear drops (28), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "540156",
+      "ItemName": "Fire Valley Headdress"
+    },
+    {
+      "ItemId": "540157",
+      "ItemName": "Hood of the Hepheloomp"
+    },
+    {
+      "ItemId": "540158",
+      "ItemName": "Blackback Safari Brim"
+    },
+    {
+      "ItemId": "540159",
+      "ItemName": "Hood of the Grasslands"
+    },
+    {
+      "ItemId": "540162",
+      "ItemName": "Courageous Grower's Hat"
+    },
+    {
+      "ItemId": "540164",
+      "ItemName": "Hot-Tempered Chieftain's Mask"
+    },
+    {
+      "ItemId": "540166",
+      "ItemName": "Wise Hunter's Helmet"
+    },
+    {
+      "ItemId": "540193",
+      "ItemName": "Kakenya's Broken Band"
+    },
+    {
+      "ItemId": "540194",
+      "ItemName": "Vir's Zafarite Stone"
+    },
+    {
+      "ItemId": "540195",
+      "ItemName": "Mago's River Stone"
+    },
+    {
+      "ItemId": "540196",
+      "ItemName": "Hannibal's Bronze Ring"
+    },
+    {
+      "ItemId": "540197",
+      "ItemName": "Mandisa's Star Stone"
+    },
+    {
+      "ItemId": "540198",
+      "ItemName": "Aryanah's Golden Loop"
+    },
+    {
+      "ItemId": "540199",
+      "ItemName": "Amahle's Striped Band"
+    },
+    {
+      "ItemId": "540200",
+      "ItemName": "Tanei's Ghost Ring"
+    },
+    {
+      "ItemId": "540221",
+      "ItemName": "Shaman's Storm Sky Cloak"
+    },
+    {
+      "ItemId": "540222",
+      "ItemName": "Cold River Cloak"
+    },
+    {
+      "ItemId": "540223",
+      "ItemName": "Outsider's Symmetrical Jacket"
+    },
+    {
+      "ItemId": "540224",
+      "ItemName": "Fire Valley Outfit"
+    },
+    {
+      "ItemId": "540225",
+      "ItemName": "Shaman's Mythic Armor"
+    },
+    {
+      "ItemId": "540226",
+      "ItemName": "Darajani Havoc Robes"
+    },
+    {
+      "ItemId": "540227",
+      "ItemName": "Baxby's Noble Outfit"
+    },
+    {
+      "ItemId": "540266",
+      "ItemName": "Charging Bull's Footguards"
+    },
+    {
+      "ItemId": "540267",
+      "ItemName": "Big Five Trackers"
+    },
+    {
+      "ItemId": "540268",
+      "ItemName": "Finely Balanced Boots"
+    },
+    {
+      "ItemId": "540273",
+      "ItemName": "Big Sky Striders"
+    },
+    {
+      "ItemId": "540274",
+      "ItemName": "Spider's Storied Wraps"
+    },
+    {
+      "ItemId": "540275",
+      "ItemName": "Baxby's Noble Trackers"
+    }
+  ]
+}

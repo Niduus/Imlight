@@ -1,0 +1,77 @@
+{
+  "Name": "W404 Mob-1223235 Gear (Boss)",
+  "Description": "Wizard404's drop list of Rezzon's own drops: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203132",
+      "ItemName": "Burrower Coronet of Strife"
+    },
+    {
+      "ItemId": "1203133",
+      "ItemName": "Digger's Helm of Symmetry"
+    },
+    {
+      "ItemId": "1203172",
+      "ItemName": "Stone of the Huntress"
+    },
+    {
+      "ItemId": "1203173",
+      "ItemName": "Digger Captain's Ring"
+    },
+    {
+      "ItemId": "1203286",
+      "ItemName": "Fang of the Burning Spider"
+    },
+    {
+      "ItemId": "1203287",
+      "ItemName": "Lance of Chill Ichor"
+    },
+    {
+      "ItemId": "1203289",
+      "ItemName": "Venomtail's Bite"
+    },
+    {
+      "ItemId": "1203291",
+      "ItemName": "Lance of the Umbra Legion"
+    },
+    {
+      "ItemId": "1203328",
+      "ItemName": "Stinger's Carcanet"
+    },
+    {
+      "ItemId": "1203329",
+      "ItemName": "Mouse Revenant's Talisman"
+    },
+    {
+      "ItemId": "1203330",
+      "ItemName": "ToeBiter's Cursed Relic"
+    },
+    {
+      "ItemId": "1203364",
+      "ItemName": "Sky Terror's Ghastly Razor"
+    },
+    {
+      "ItemId": "1203365",
+      "ItemName": "Stiletto of the Vespula"
+    },
+    {
+      "ItemId": "1203402",
+      "ItemName": "Case of Engulfing Flames"
+    },
+    {
+      "ItemId": "1203403",
+      "ItemName": "Bumbler's Sleetfall Pack"
+    },
+    {
+      "ItemId": "1203404",
+      "ItemName": "Lightning Rider's Deck"
+    },
+    {
+      "ItemId": "1203405",
+      "ItemName": "Barbed Case of Stratagem"
+    }
+  ]
+}

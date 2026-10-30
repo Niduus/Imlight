@@ -1,0 +1,37 @@
+{
+  "Name": "W404 EM-SKR-CorpoalTennisyn Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM-SKR-CorpoalTennisyn: the pet drops (7), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "100421",
+      "ItemName": "Midnight Sprite"
+    },
+    {
+      "ItemId": "100443",
+      "ItemName": "Tough Troll"
+    },
+    {
+      "ItemId": "126412",
+      "ItemName": "Black Cat"
+    },
+    {
+      "ItemId": "175468",
+      "ItemName": "Grizzley Boar"
+    },
+    {
+      "ItemId": "225421",
+      "ItemName": "Lifebat"
+    },
+    {
+      "ItemId": "1421919",
+      "ItemName": "Green Globulin"
+    },
+    {
+      "ItemId": "1421921",
+      "ItemName": "Blue Globulin"
+    }
+  ]
+}

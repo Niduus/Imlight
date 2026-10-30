@@ -1,0 +1,49 @@
+{
+  "Name": "W404 ZF_Gorilla_SpiderWitch_Maroon-R11 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF_Gorilla_SpiderWitch_Maroon-R11: the snack drops (10), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220275",
+      "ItemName": "Glowing Dragon Fruit"
+    },
+    {
+      "ItemId": "220292",
+      "ItemName": "Uni-corn"
+    },
+    {
+      "ItemId": "220305",
+      "ItemName": "Buttered Bread"
+    },
+    {
+      "ItemId": "220311",
+      "ItemName": "Glowing Star Fruit"
+    },
+    {
+      "ItemId": "220325",
+      "ItemName": "Shiny Tomato"
+    },
+    {
+      "ItemId": "240118",
+      "ItemName": "Cauliflowers"
+    },
+    {
+      "ItemId": "446071",
+      "ItemName": "Salmonberry"
+    },
+    {
+      "ItemId": "473222",
+      "ItemName": "Dr. Jalapeno"
+    },
+    {
+      "ItemId": "473582",
+      "ItemName": "Kola Nuts"
+    },
+    {
+      "ItemId": "473583",
+      "ItemName": "Jelly Baby"
+    }
+  ]
+}

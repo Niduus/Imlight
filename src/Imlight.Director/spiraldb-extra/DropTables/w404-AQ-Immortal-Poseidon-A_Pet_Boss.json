@@ -1,0 +1,17 @@
+{
+  "Name": "W404 AQ-Immortal-Poseidon-A Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table AQ-Immortal-Poseidon-A: the pet drops (2), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "789433",
+      "ItemName": "Li'l Siren"
+    },
+    {
+      "ItemId": "789434",
+      "ItemName": "Golden Ram"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "Name": "W404 CL-SharkCaster-Boss-R10",
+  "Description": "Gold of the game's table CL-SharkCaster-Boss-R10, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 35,
+  "MaxGold": 35,
+  "EachItem": false,
+  "Items": []
+}

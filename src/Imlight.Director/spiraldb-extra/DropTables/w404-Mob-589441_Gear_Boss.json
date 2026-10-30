@@ -1,0 +1,61 @@
+{
+  "Name": "W404 Mob-589441 Gear (Boss)",
+  "Description": "Wizard404's drop list of Catalan the Lightning Lizard's own drops: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635226",
+      "ItemName": "Strength of the Oak Pendant"
+    },
+    {
+      "ItemId": "635227",
+      "ItemName": "Barbarian Philosopher's Mark"
+    },
+    {
+      "ItemId": "635257",
+      "ItemName": "Knight of Flame Edge"
+    },
+    {
+      "ItemId": "635258",
+      "ItemName": "Bite of the Winter Wyrm"
+    },
+    {
+      "ItemId": "635306",
+      "ItemName": "Great Horned Helm"
+    },
+    {
+      "ItemId": "635307",
+      "ItemName": "Lake Knight's Helm"
+    },
+    {
+      "ItemId": "635341",
+      "ItemName": "Crystal Cave Rose"
+    },
+    {
+      "ItemId": "635381",
+      "ItemName": "Knight of Flame Armor"
+    },
+    {
+      "ItemId": "635382",
+      "ItemName": "Sunken Giant's Tartan"
+    },
+    {
+      "ItemId": "635419",
+      "ItemName": "Fire-Spitter Dancers"
+    },
+    {
+      "ItemId": "635420",
+      "ItemName": "Winter Wyrm Cleats"
+    },
+    {
+      "ItemId": "635628",
+      "ItemName": "Fire-Edged Broadsword"
+    },
+    {
+      "ItemId": "635629",
+      "ItemName": "Dawnfrost Blade"
+    }
+  ]
+}

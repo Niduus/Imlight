@@ -1,0 +1,18 @@
+{
+  "TemplateID": 1206789,
+  "DropTableNames": [
+    "W404 GH-Level-01",
+    "W404 GH-Level-01 Gear (Boss)",
+    "W404 GH-Level-01 Snack (Boss)",
+    "W404 GH-Level-01 Seed (Boss)",
+    "W404 TC-CommonsBosses TreasureCard",
+    "W404 ME1_Evil_Snowman_A",
+    "W404 ME1_Evil_Snowman_A Gear (Boss)",
+    "W404 ME1_Evil_Snowman_A TreasureCard (Boss)",
+    "W404 ME1_Evil_Snowman_A Reagent (Boss)",
+    "W404 ME1_Evil_Snowman_A Housing (Boss)",
+    "W404 TC-ClockworkSpider TreasureCard (Boss)",
+    "W404 KT-GH1-PA-MiniBoss-Jewels Jewel (Boss)",
+    "W404 KT-GH1-PA-MiniBoss-Jewels Reagent (Boss)"
+  ]
+}

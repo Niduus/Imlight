@@ -1,0 +1,41 @@
+{
+  "Name": "W404 WC-CA-Drains-Boss-01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WC-CA-Drains-Boss-01: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1489328",
+      "ItemName": "Vanguard's Fiery Helm"
+    },
+    {
+      "ItemId": "1489329",
+      "ItemName": "Vanguard's Icy Helm"
+    },
+    {
+      "ItemId": "1489330",
+      "ItemName": "Vanguard's Shocking Helm"
+    },
+    {
+      "ItemId": "1489331",
+      "ItemName": "Vanguard's Mythic Helm"
+    },
+    {
+      "ItemId": "1489332",
+      "ItemName": "Vanguard's Vibrant Helm"
+    },
+    {
+      "ItemId": "1489333",
+      "ItemName": "Vanguard's Deadly Helm"
+    },
+    {
+      "ItemId": "1489334",
+      "ItemName": "Vanguard's Balanced Helm"
+    },
+    {
+      "ItemId": "1489335",
+      "ItemName": "Dragonspyre Vanguard's Helm"
+    }
+  ]
+}

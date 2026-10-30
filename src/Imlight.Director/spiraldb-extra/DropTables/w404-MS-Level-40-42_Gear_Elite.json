@@ -1,0 +1,257 @@
+{
+  "Name": "W404 MS-Level-40-42 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table MS-Level-40-42: the gear drops (62), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97467",
+      "ItemName": "Athame of the Lotus"
+    },
+    {
+      "ItemId": "97566",
+      "ItemName": "Benign Cap"
+    },
+    {
+      "ItemId": "97570",
+      "ItemName": "Gallant Shroud"
+    },
+    {
+      "ItemId": "97576",
+      "ItemName": "Shroud of Afterthoughts"
+    },
+    {
+      "ItemId": "97586",
+      "ItemName": "Profound Hat"
+    },
+    {
+      "ItemId": "97592",
+      "ItemName": "Hat of Enthusiasm"
+    },
+    {
+      "ItemId": "97598",
+      "ItemName": "Vigilant Cap"
+    },
+    {
+      "ItemId": "97602",
+      "ItemName": "Mask of Impression"
+    },
+    {
+      "ItemId": "97608",
+      "ItemName": "Cowl of Discord"
+    },
+    {
+      "ItemId": "97614",
+      "ItemName": "Light-as-Air Hat"
+    },
+    {
+      "ItemId": "97618",
+      "ItemName": "Concordant Headwraps"
+    },
+    {
+      "ItemId": "97624",
+      "ItemName": "Headwraps of Resonance"
+    },
+    {
+      "ItemId": "97630",
+      "ItemName": "Warbled Hat"
+    },
+    {
+      "ItemId": "97634",
+      "ItemName": "Hat of the Triad"
+    },
+    {
+      "ItemId": "97640",
+      "ItemName": "Hat of the Nimble"
+    },
+    {
+      "ItemId": "97646",
+      "ItemName": "Painful Cowl"
+    },
+    {
+      "ItemId": "97650",
+      "ItemName": "Tormented Mask"
+    },
+    {
+      "ItemId": "97656",
+      "ItemName": "Headwraps of Much Ado"
+    },
+    {
+      "ItemId": "97662",
+      "ItemName": "Cap of the Lithe"
+    },
+    {
+      "ItemId": "97666",
+      "ItemName": "Zippy Shroud"
+    },
+    {
+      "ItemId": "97672",
+      "ItemName": "Hood of the Resolute"
+    },
+    {
+      "ItemId": "97679",
+      "ItemName": "Hat of the Lotus"
+    },
+    {
+      "ItemId": "97710",
+      "ItemName": "Ring of the Naturewalker"
+    },
+    {
+      "ItemId": "97787",
+      "ItemName": "Vestment of Cooperation"
+    },
+    {
+      "ItemId": "97790",
+      "ItemName": "Heedful Robe"
+    },
+    {
+      "ItemId": "97804",
+      "ItemName": "Tunic of Preoccupation"
+    },
+    {
+      "ItemId": "97806",
+      "ItemName": "Cloak of Humor"
+    },
+    {
+      "ItemId": "97821",
+      "ItemName": "Garment of Watchfulness"
+    },
+    {
+      "ItemId": "97823",
+      "ItemName": "Robe of Conceit"
+    },
+    {
+      "ItemId": "97837",
+      "ItemName": "Garments of Chants"
+    },
+    {
+      "ItemId": "97840",
+      "ItemName": "Euphonic Cloak"
+    },
+    {
+      "ItemId": "97853",
+      "ItemName": "Blended Wool Tunic"
+    },
+    {
+      "ItemId": "97855",
+      "ItemName": "Cloak of Rhyming"
+    },
+    {
+      "ItemId": "97869",
+      "ItemName": "Robes of Struggling"
+    },
+    {
+      "ItemId": "97871",
+      "ItemName": "Vestment of Tribulations"
+    },
+    {
+      "ItemId": "97885",
+      "ItemName": "Sprightly Garments"
+    },
+    {
+      "ItemId": "97887",
+      "ItemName": "Robe of the Chipper"
+    },
+    {
+      "ItemId": "97896",
+      "ItemName": "Robe of Consideration"
+    },
+    {
+      "ItemId": "97945",
+      "ItemName": "Sandals of Sympathy"
+    },
+    {
+      "ItemId": "97948",
+      "ItemName": "Boots of Cooperation"
+    },
+    {
+      "ItemId": "97949",
+      "ItemName": "Friendly Shoes"
+    },
+    {
+      "ItemId": "97954",
+      "ItemName": "Shoes of the Observant"
+    },
+    {
+      "ItemId": "97962",
+      "ItemName": "Industrial Slippers"
+    },
+    {
+      "ItemId": "97965",
+      "ItemName": "Shoes of Preoccupation"
+    },
+    {
+      "ItemId": "97966",
+      "ItemName": "Profound Slippers"
+    },
+    {
+      "ItemId": "97971",
+      "ItemName": "Sandals of Exertion"
+    },
+    {
+      "ItemId": "97981",
+      "ItemName": "Meticulous Footwraps"
+    },
+    {
+      "ItemId": "97982",
+      "ItemName": "Boots of Niceties"
+    },
+    {
+      "ItemId": "97987",
+      "ItemName": "Boots of Commotion"
+    },
+    {
+      "ItemId": "97995",
+      "ItemName": "Shoes of Song"
+    },
+    {
+      "ItemId": "97998",
+      "ItemName": "Footwraps of Chants"
+    },
+    {
+      "ItemId": "97999",
+      "ItemName": "Boots of Chimes"
+    },
+    {
+      "ItemId": "98004",
+      "ItemName": "Boots of Melodies"
+    },
+    {
+      "ItemId": "98015",
+      "ItemName": "Slippers of the Opus"
+    },
+    {
+      "ItemId": "98016",
+      "ItemName": "Blended Wool Footwraps"
+    },
+    {
+      "ItemId": "98021",
+      "ItemName": "Footwraps of Anthems"
+    },
+    {
+      "ItemId": "98032",
+      "ItemName": "Problematic Boots"
+    },
+    {
+      "ItemId": "98033",
+      "ItemName": "Shoes of Struggling"
+    },
+    {
+      "ItemId": "98038",
+      "ItemName": "Shoes of Woe"
+    },
+    {
+      "ItemId": "98049",
+      "ItemName": "Sandals of the Quick-Witted"
+    },
+    {
+      "ItemId": "98050",
+      "ItemName": "Sprightly Slippers"
+    },
+    {
+      "ItemId": "98055",
+      "ItemName": "Slippers of the Eager"
+    }
+  ]
+}

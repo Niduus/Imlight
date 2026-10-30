@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Samoorai-Ronin-2-Ghost--PageEvent Pet (Elite)",
+  "Description": "Wizard404's drop list of the game's table Samoorai-Ronin-2-Ghost--PageEvent: the pet drops (1), one picked when it rolls. How often: DropOdds.json Elite/Pet.",
+  "Odds": "Elite/Pet",
+  "RollChance": 0.04,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1374359",
+      "ItemName": "Spellwrit Ronin"
+    }
+  ]
+}

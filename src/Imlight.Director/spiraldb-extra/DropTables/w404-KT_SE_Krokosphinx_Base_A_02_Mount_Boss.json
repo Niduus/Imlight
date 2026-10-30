@@ -1,0 +1,13 @@
+{
+  "Name": "W404 KT_SE_Krokosphinx_Base_A_02 Mount (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT_SE_Krokosphinx_Base_A_02: the mount drops (1), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1664613",
+      "ItemName": "Bling Cobra (PERM)"
+    }
+  ]
+}

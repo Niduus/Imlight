@@ -1,0 +1,321 @@
+{
+  "Name": "W404 AQ-Immortal-Hades Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AQ-Immortal-Hades: the gear drops (78), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "819551",
+      "ItemName": "Hades' Crown of Blazes"
+    },
+    {
+      "ItemId": "819552",
+      "ItemName": "Hades' Helmet of Shivers"
+    },
+    {
+      "ItemId": "819553",
+      "ItemName": "Hades' Blackrain Helm"
+    },
+    {
+      "ItemId": "819554",
+      "ItemName": "Hades' Helm of Dread"
+    },
+    {
+      "ItemId": "819555",
+      "ItemName": "Hades' Helm of Retribution"
+    },
+    {
+      "ItemId": "819556",
+      "ItemName": "Hades' Veil of Woe"
+    },
+    {
+      "ItemId": "819557",
+      "ItemName": "Hades' Helm of Penance"
+    },
+    {
+      "ItemId": "819558",
+      "ItemName": "Hades' Inferno Plate"
+    },
+    {
+      "ItemId": "819559",
+      "ItemName": "Hades' Frozen Over Armor"
+    },
+    {
+      "ItemId": "819560",
+      "ItemName": "Hades' Armor of the Abyss"
+    },
+    {
+      "ItemId": "819561",
+      "ItemName": "Hades' Armor of Tartarus"
+    },
+    {
+      "ItemId": "819562",
+      "ItemName": "Hades' Armor of Conscience"
+    },
+    {
+      "ItemId": "819563",
+      "ItemName": "Hades' Armor of Mortality"
+    },
+    {
+      "ItemId": "819564",
+      "ItemName": "Raiment of Hades' Ruin"
+    },
+    {
+      "ItemId": "819579",
+      "ItemName": "Senator's Laurel of Sparks"
+    },
+    {
+      "ItemId": "819580",
+      "ItemName": "Senator's Frostfall Laurel"
+    },
+    {
+      "ItemId": "819581",
+      "ItemName": "Senator's Monsoon Laurel"
+    },
+    {
+      "ItemId": "819582",
+      "ItemName": "Senator's Laurel of Wisdom"
+    },
+    {
+      "ItemId": "819583",
+      "ItemName": "Senator's Spirited Laurel"
+    },
+    {
+      "ItemId": "819584",
+      "ItemName": "Senator's Laurel of Demise"
+    },
+    {
+      "ItemId": "819585",
+      "ItemName": "Senator's Noble Laurel"
+    },
+    {
+      "ItemId": "819600",
+      "ItemName": "Senator's Toga of Sparks"
+    },
+    {
+      "ItemId": "819601",
+      "ItemName": "Senator's Frostfall Toga"
+    },
+    {
+      "ItemId": "819602",
+      "ItemName": "Senator's Monsoon Toga"
+    },
+    {
+      "ItemId": "819603",
+      "ItemName": "Senator's Toga of Wisdom"
+    },
+    {
+      "ItemId": "819604",
+      "ItemName": "Senator's Spirited Toga"
+    },
+    {
+      "ItemId": "819605",
+      "ItemName": "Senator's Toga of Demise"
+    },
+    {
+      "ItemId": "819606",
+      "ItemName": "Senator's Noble Toga"
+    },
+    {
+      "ItemId": "819621",
+      "ItemName": "Senator's Sparking Sandals"
+    },
+    {
+      "ItemId": "819622",
+      "ItemName": "Senator's Frostfall Shoes"
+    },
+    {
+      "ItemId": "819623",
+      "ItemName": "Senator's Monsoon Sandals"
+    },
+    {
+      "ItemId": "819624",
+      "ItemName": "Senator's Shoes of Wisdom"
+    },
+    {
+      "ItemId": "819625",
+      "ItemName": "Senator's Spirited Shoes"
+    },
+    {
+      "ItemId": "819626",
+      "ItemName": "Senator's Shoes of Demise"
+    },
+    {
+      "ItemId": "819627",
+      "ItemName": "Senator's Noble Sandals"
+    },
+    {
+      "ItemId": "819693",
+      "ItemName": "Amulet of Divine Influence"
+    },
+    {
+      "ItemId": "819722",
+      "ItemName": "Hades' Flamemaker"
+    },
+    {
+      "ItemId": "819723",
+      "ItemName": "Hades' Staff of Frostbite"
+    },
+    {
+      "ItemId": "819724",
+      "ItemName": "Hades' Staff of Tempests"
+    },
+    {
+      "ItemId": "819725",
+      "ItemName": "Hades' Staff of Eternity"
+    },
+    {
+      "ItemId": "819726",
+      "ItemName": "Hades' Staff of Awakening"
+    },
+    {
+      "ItemId": "819727",
+      "ItemName": "Hades' Soul Scythe"
+    },
+    {
+      "ItemId": "819728",
+      "ItemName": "Hades' Staff of Reckoning"
+    },
+    {
+      "ItemId": "1203028",
+      "ItemName": "Hades' Firestriders"
+    },
+    {
+      "ItemId": "1203029",
+      "ItemName": "Hades' Frost-Bound Boots"
+    },
+    {
+      "ItemId": "1203030",
+      "ItemName": "Hades' Brimstone Boots"
+    },
+    {
+      "ItemId": "1203031",
+      "ItemName": "Hades' Darkness Trekkers"
+    },
+    {
+      "ItemId": "1203032",
+      "ItemName": "Footgear of the Afterlife"
+    },
+    {
+      "ItemId": "1203033",
+      "ItemName": "Hades' Furtive Stalkers"
+    },
+    {
+      "ItemId": "1203034",
+      "ItemName": "Hades' Tartarus Walkers"
+    },
+    {
+      "ItemId": "1203042",
+      "ItemName": "Exalted Balance Amulet"
+    },
+    {
+      "ItemId": "1203043",
+      "ItemName": "Exalted Death Amulet"
+    },
+    {
+      "ItemId": "1203044",
+      "ItemName": "Exalted Fire Amulet"
+    },
+    {
+      "ItemId": "1203045",
+      "ItemName": "Exalted Ice Amulet"
+    },
+    {
+      "ItemId": "1203046",
+      "ItemName": "Exalted Life Amulet"
+    },
+    {
+      "ItemId": "1203047",
+      "ItemName": "Exalted Myth Amulet"
+    },
+    {
+      "ItemId": "1203048",
+      "ItemName": "Exalted Storm Amulet"
+    },
+    {
+      "ItemId": "1203049",
+      "ItemName": "Unseen Lord's Cinder Crown"
+    },
+    {
+      "ItemId": "1203050",
+      "ItemName": "Unseen Lord's Chill Helmet"
+    },
+    {
+      "ItemId": "1203051",
+      "ItemName": "Blackthunder Helm"
+    },
+    {
+      "ItemId": "1203052",
+      "ItemName": "Helm of Unknown Tartarus"
+    },
+    {
+      "ItemId": "1203053",
+      "ItemName": "Hades' Helm of the Abyss"
+    },
+    {
+      "ItemId": "1203054",
+      "ItemName": "Hades' Helm of Torment"
+    },
+    {
+      "ItemId": "1203055",
+      "ItemName": "Hades' Helm of Justice"
+    },
+    {
+      "ItemId": "1203056",
+      "ItemName": "Unseen Lord's Cinder Plate"
+    },
+    {
+      "ItemId": "1203057",
+      "ItemName": "Unseen Lord's Chill Armor"
+    },
+    {
+      "ItemId": "1203058",
+      "ItemName": "Blackthunder Armor"
+    },
+    {
+      "ItemId": "1203059",
+      "ItemName": "Armor of Unknown Tartarus"
+    },
+    {
+      "ItemId": "1203060",
+      "ItemName": "Armor of a Sorrowful Life"
+    },
+    {
+      "ItemId": "1203061",
+      "ItemName": "Hades' Armor of Torment"
+    },
+    {
+      "ItemId": "1203062",
+      "ItemName": "Hades' Raiment of Justice"
+    },
+    {
+      "ItemId": "1203063",
+      "ItemName": "Unseen Lord's Cinder Boots"
+    },
+    {
+      "ItemId": "1203064",
+      "ItemName": "Unseen Lord's Chill Boots"
+    },
+    {
+      "ItemId": "1203065",
+      "ItemName": "Blackthunder Walkers"
+    },
+    {
+      "ItemId": "1203066",
+      "ItemName": "Boots of Unknown Tartarus"
+    },
+    {
+      "ItemId": "1203067",
+      "ItemName": "Walkers of a Sorrowful Life"
+    },
+    {
+      "ItemId": "1203068",
+      "ItemName": "Hades' Striders of Torment"
+    },
+    {
+      "ItemId": "1203069",
+      "ItemName": "Hades' Boots of Justice"
+    }
+  ]
+}

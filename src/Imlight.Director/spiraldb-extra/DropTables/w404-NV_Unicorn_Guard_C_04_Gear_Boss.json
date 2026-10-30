@@ -1,0 +1,121 @@
+{
+  "Name": "W404 NV_Unicorn_Guard_C_04 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Unicorn_Guard_C_04: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1577716",
+      "ItemName": "Artillery Officer Band"
+    },
+    {
+      "ItemId": "1577712",
+      "ItemName": "Cavalry Officer Band"
+    },
+    {
+      "ItemId": "1577711",
+      "ItemName": "Infantry Officer Band"
+    },
+    {
+      "ItemId": "1577714",
+      "ItemName": "Medic Officer Band"
+    },
+    {
+      "ItemId": "1577715",
+      "ItemName": "Messenger Officer Band"
+    },
+    {
+      "ItemId": "1577710",
+      "ItemName": "Scout Officer Band"
+    },
+    {
+      "ItemId": "1577713",
+      "ItemName": "Trooper Officer Band"
+    },
+    {
+      "ItemId": "1577660",
+      "ItemName": "Regulation Artillery Band"
+    },
+    {
+      "ItemId": "1577656",
+      "ItemName": "Regulation Cavalry Band"
+    },
+    {
+      "ItemId": "1577655",
+      "ItemName": "Regulation Infantry Band"
+    },
+    {
+      "ItemId": "1577658",
+      "ItemName": "Regulation Medic Band"
+    },
+    {
+      "ItemId": "1577659",
+      "ItemName": "Regulation Messenger Band"
+    },
+    {
+      "ItemId": "1577654",
+      "ItemName": "Regulation Scout Band"
+    },
+    {
+      "ItemId": "1577657",
+      "ItemName": "Regulation Trooper Band"
+    },
+    {
+      "ItemId": "1577730",
+      "ItemName": "Artillery Officer Cards"
+    },
+    {
+      "ItemId": "1577726",
+      "ItemName": "Cavalry Officer Cards"
+    },
+    {
+      "ItemId": "1577725",
+      "ItemName": "Infantry Officer Cards"
+    },
+    {
+      "ItemId": "1577728",
+      "ItemName": "Medic Officer Cards"
+    },
+    {
+      "ItemId": "1577729",
+      "ItemName": "Messenger Officer Cards"
+    },
+    {
+      "ItemId": "1577724",
+      "ItemName": "Scout Officer Cards"
+    },
+    {
+      "ItemId": "1577727",
+      "ItemName": "Trooper Officer Cards"
+    },
+    {
+      "ItemId": "1577674",
+      "ItemName": "Regulation Artillery Cards"
+    },
+    {
+      "ItemId": "1577670",
+      "ItemName": "Regulation Cavalry Cards"
+    },
+    {
+      "ItemId": "1577669",
+      "ItemName": "Regulation Infantry Cards"
+    },
+    {
+      "ItemId": "1577672",
+      "ItemName": "Regulation Medic Cards"
+    },
+    {
+      "ItemId": "1577673",
+      "ItemName": "Regulation Messenger Cards"
+    },
+    {
+      "ItemId": "1577668",
+      "ItemName": "Regulation Scout Cards"
+    },
+    {
+      "ItemId": "1577671",
+      "ItemName": "Regulation Trooper Cards"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "Name": "W404 MS-Troll-Yellow-MSBoss-L35",
+  "Description": "Gold of the game's table MS-Troll-Yellow-MSBoss-L35, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 35,
+  "MaxGold": 50,
+  "EachItem": false,
+  "Items": []
+}

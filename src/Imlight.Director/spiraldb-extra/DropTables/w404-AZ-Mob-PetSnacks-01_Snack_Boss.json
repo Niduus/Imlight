@@ -1,0 +1,37 @@
+{
+  "Name": "W404 AZ-Mob-PetSnacks-01 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-Mob-PetSnacks-01: the snack drops (7), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220305",
+      "ItemName": "Buttered Bread"
+    },
+    {
+      "ItemId": "733112",
+      "ItemName": "Yucca"
+    },
+    {
+      "ItemId": "733114",
+      "ItemName": "Maize"
+    },
+    {
+      "ItemId": "733118",
+      "ItemName": "Avocado Milkshake"
+    },
+    {
+      "ItemId": "733120",
+      "ItemName": "Fern Jelly"
+    },
+    {
+      "ItemId": "733128",
+      "ItemName": "Marzipan Maize"
+    },
+    {
+      "ItemId": "733133",
+      "ItemName": "Chapulines"
+    }
+  ]
+}

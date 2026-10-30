@@ -1,0 +1,17 @@
+{
+  "TemplateID": 1505729,
+  "DropTableNames": [
+    "W404 KM-Boss-Reagents-Common Reagent (Boss)",
+    "W404 KM-Boss-Reagents-Rare Reagent (Boss)",
+    "W404 KM-Boss-PetSnacks-Common Snack (Boss)",
+    "W404 KM-Boss-PetSnacks-Rare Snack (Boss)",
+    "W404 KM-Mob-Gear-138",
+    "W404 KM-Mob-Gear-138 Gear (Boss)",
+    "W404 KM-Mob-Gear-138 Seed (Boss)",
+    "W404 KM-Boss-Furniture Housing (Boss)",
+    "W404 KM-MiniBoss-Jewels Jewel (Boss)",
+    "W404 KM-Mob-Jewels-1 Jewel (Boss)",
+    "W404 KM-Boss-TC-Common TreasureCard (Boss)",
+    "W404 KM-Boss-Seeds Seed (Boss)"
+  ]
+}

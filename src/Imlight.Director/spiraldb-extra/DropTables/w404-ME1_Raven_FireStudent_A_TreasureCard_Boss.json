@@ -1,0 +1,21 @@
+{
+  "Name": "W404 ME1_Raven_FireStudent_A TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Raven_FireStudent_A: the treasurecard drops (3), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Sprite TC WH",
+      "ItemName": "Sprite"
+    },
+    {
+      "ItemId": "Leprechaun TC WH",
+      "ItemName": "Leprechaun"
+    },
+    {
+      "ItemId": "Steel Golem - Fire TC",
+      "ItemName": "Firegut"
+    }
+  ]
+}

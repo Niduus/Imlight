@@ -1,0 +1,65 @@
+{
+  "Name": "W404 DM_Scholomari_WitchF_B_02 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Scholomari_WitchF_B_02: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1707713",
+      "ItemName": "Doomed Abomination Ring"
+    },
+    {
+      "ItemId": "1707714",
+      "ItemName": "Scary Abomination Ring"
+    },
+    {
+      "ItemId": "1707715",
+      "ItemName": "Tense Abomination Ring"
+    },
+    {
+      "ItemId": "1707716",
+      "ItemName": "Chilling Abomination Ring"
+    },
+    {
+      "ItemId": "1707717",
+      "ItemName": "Sanguine Abomination Ring"
+    },
+    {
+      "ItemId": "1707718",
+      "ItemName": "Mythic Abomination Ring"
+    },
+    {
+      "ItemId": "1707719",
+      "ItemName": "Shocking Abomination Ring"
+    },
+    {
+      "ItemId": "1707833",
+      "ItemName": "Scholomantic Justice Ring"
+    },
+    {
+      "ItemId": "1707834",
+      "ItemName": "Scholomantic Death Ring"
+    },
+    {
+      "ItemId": "1707835",
+      "ItemName": "Scholomantic Devilish Ring"
+    },
+    {
+      "ItemId": "1707836",
+      "ItemName": "Scholomantic Strength Ring"
+    },
+    {
+      "ItemId": "1707837",
+      "ItemName": "Scholomantic Worldly Ring"
+    },
+    {
+      "ItemId": "1707838",
+      "ItemName": "Scholomantic Fortune Ring"
+    },
+    {
+      "ItemId": "1707839",
+      "ItemName": "Scholomantic Destructive Ring"
+    }
+  ]
+}

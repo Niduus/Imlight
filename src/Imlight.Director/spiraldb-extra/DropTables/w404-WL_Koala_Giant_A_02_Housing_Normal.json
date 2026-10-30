@@ -1,0 +1,13 @@
+{
+  "Name": "W404 WL_Koala_Giant_A_02 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table WL_Koala_Giant_A_02: the housing drops (1), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1594229",
+      "ItemName": "Reception Ringer"
+    }
+  ]
+}

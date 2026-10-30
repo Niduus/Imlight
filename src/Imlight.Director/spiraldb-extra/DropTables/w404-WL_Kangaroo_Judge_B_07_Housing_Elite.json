@@ -1,0 +1,13 @@
+{
+  "Name": "W404 WL_Kangaroo_Judge_B_07 Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table WL_Kangaroo_Judge_B_07: the housing drops (1), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1594289",
+      "ItemName": "Teal Rug"
+    }
+  ]
+}

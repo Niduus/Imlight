@@ -1,0 +1,17 @@
+{
+  "Name": "W404 AZ-Mob-03 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table AZ-Mob-03: the housing drops (2), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "739177",
+      "ItemName": "Pathfinder"
+    },
+    {
+      "ItemId": "739190",
+      "ItemName": "Azteca Pot"
+    }
+  ]
+}

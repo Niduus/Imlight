@@ -1,0 +1,17 @@
+{
+  "Name": "W404 CE_TreasureTower_Balance_F30-2 Mount (Normal)",
+  "Description": "Wizard404's drop list of the game's table CE_TreasureTower_Balance_F30-2: the mount drops (2), one picked when it rolls. How often: DropOdds.json Normal/Mount.",
+  "Odds": "Normal/Mount",
+  "RollChance": 0.005,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1254229",
+      "ItemName": "Cast Symbol Balance (7 Day)"
+    },
+    {
+      "ItemId": "1254230",
+      "ItemName": "Cast Symbol Balance (1 Day)"
+    }
+  ]
+}

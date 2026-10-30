@@ -1,0 +1,73 @@
+{
+  "Name": "W404 EM-MiniBoss-Gear-125 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table EM-MiniBoss-Gear-125: the gear drops (16), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1430544",
+      "ItemName": "Cabalist Cleansing Dagger"
+    },
+    {
+      "ItemId": "1430545",
+      "ItemName": "Cabalist Dagger of Vengeance"
+    },
+    {
+      "ItemId": "1430546",
+      "ItemName": "Cabalist Chaotic Dagger"
+    },
+    {
+      "ItemId": "1430547",
+      "ItemName": "Nostalgic Cabal Dagger"
+    },
+    {
+      "ItemId": "1430548",
+      "ItemName": "Cabalist Dagger of the First"
+    },
+    {
+      "ItemId": "1430549",
+      "ItemName": "Cabalist Dagger of Finality"
+    },
+    {
+      "ItemId": "1430550",
+      "ItemName": "Cabal Dagger of Disruption"
+    },
+    {
+      "ItemId": "1430551",
+      "ItemName": "Cabalist Schism Dagger"
+    },
+    {
+      "ItemId": "1430552",
+      "ItemName": "Cabalist Cleansing Amulet"
+    },
+    {
+      "ItemId": "1430553",
+      "ItemName": "Cabalist Amulet of Vengeance"
+    },
+    {
+      "ItemId": "1430554",
+      "ItemName": "Cabalist Chaotic Amulet"
+    },
+    {
+      "ItemId": "1430555",
+      "ItemName": "Nostalgic Cabal Amulet"
+    },
+    {
+      "ItemId": "1430556",
+      "ItemName": "Cabalist Amulet of the First"
+    },
+    {
+      "ItemId": "1430557",
+      "ItemName": "Cabalist Amulet of Finality"
+    },
+    {
+      "ItemId": "1430558",
+      "ItemName": "Cabal Amulet of Disruption"
+    },
+    {
+      "ItemId": "1430559",
+      "ItemName": "Cabalist Schism Amulet"
+    }
+  ]
+}

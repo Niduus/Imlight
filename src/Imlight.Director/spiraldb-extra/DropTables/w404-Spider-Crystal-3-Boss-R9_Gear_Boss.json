@@ -1,0 +1,85 @@
+{
+  "Name": "W404 Spider-Crystal-3-Boss-R9 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Spider-Crystal-3-Boss-R9: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104611",
+      "ItemName": "Vestment of the Inferno"
+    },
+    {
+      "ItemId": "104643",
+      "ItemName": "Tunic of Tradition"
+    },
+    {
+      "ItemId": "104701",
+      "ItemName": "Crystalline Queen's Cloak"
+    },
+    {
+      "ItemId": "104702",
+      "ItemName": "Crystalline Queen's Shard Coat"
+    },
+    {
+      "ItemId": "104714",
+      "ItemName": "Coat of the Zephyr"
+    },
+    {
+      "ItemId": "104776",
+      "ItemName": "Mocassins of the Oracle"
+    },
+    {
+      "ItemId": "104833",
+      "ItemName": "Sandals of the Generous Earth"
+    },
+    {
+      "ItemId": "104836",
+      "ItemName": "Crystalline Queen's Sandals"
+    },
+    {
+      "ItemId": "104837",
+      "ItemName": "Crystalline Queen's Boots"
+    },
+    {
+      "ItemId": "126593",
+      "ItemName": "Rime-edged Ring"
+    },
+    {
+      "ItemId": "126615",
+      "ItemName": "Seal of the Gallium Paladin"
+    },
+    {
+      "ItemId": "126629",
+      "ItemName": "Crystalline Queen's Shard Seal"
+    },
+    {
+      "ItemId": "146107",
+      "ItemName": "Crystalline Queen's Pendant"
+    },
+    {
+      "ItemId": "146126",
+      "ItemName": "Searing Knife"
+    },
+    {
+      "ItemId": "146163",
+      "ItemName": "Crystalline Queen's Shardblade"
+    },
+    {
+      "ItemId": "146177",
+      "ItemName": "Claw of Conciliation"
+    },
+    {
+      "ItemId": "146221",
+      "ItemName": "Crystalline Queen's Shard Cowl"
+    },
+    {
+      "ItemId": "146271",
+      "ItemName": "Shroud of the Green"
+    },
+    {
+      "ItemId": "146342",
+      "ItemName": "Reaper's Hood"
+    }
+  ]
+}

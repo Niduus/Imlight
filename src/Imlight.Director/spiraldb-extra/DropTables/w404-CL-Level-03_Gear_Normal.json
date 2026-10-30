@@ -1,0 +1,201 @@
+{
+  "Name": "W404 CL-Level-03 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table CL-Level-03: the gear drops (48), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243225",
+      "ItemName": "Engineer's Knife"
+    },
+    {
+      "ItemId": "243229",
+      "ItemName": "Curing Claw"
+    },
+    {
+      "ItemId": "243242",
+      "ItemName": "Dagger of Redemption"
+    },
+    {
+      "ItemId": "243289",
+      "ItemName": "Steady Helmet"
+    },
+    {
+      "ItemId": "243292",
+      "ItemName": "Proportional Headdress"
+    },
+    {
+      "ItemId": "243308",
+      "ItemName": "Corrupt Cover"
+    },
+    {
+      "ItemId": "243317",
+      "ItemName": "Helm of Ordeal"
+    },
+    {
+      "ItemId": "243329",
+      "ItemName": "Shroud of Cinders"
+    },
+    {
+      "ItemId": "243333",
+      "ItemName": "Tinder Topper"
+    },
+    {
+      "ItemId": "243335",
+      "ItemName": "Fuming Hat"
+    },
+    {
+      "ItemId": "243361",
+      "ItemName": "Wintergale Headwrap"
+    },
+    {
+      "ItemId": "243365",
+      "ItemName": "Persistent Helmet"
+    },
+    {
+      "ItemId": "243367",
+      "ItemName": "Frostbit Mantle"
+    },
+    {
+      "ItemId": "243388",
+      "ItemName": "Headdress of the Heart"
+    },
+    {
+      "ItemId": "243414",
+      "ItemName": "Riddled Hood"
+    },
+    {
+      "ItemId": "243425",
+      "ItemName": "Thundercracked Cover"
+    },
+    {
+      "ItemId": "243430",
+      "ItemName": "Turbulent Topper"
+    },
+    {
+      "ItemId": "243453",
+      "ItemName": "Raiment of Resolution"
+    },
+    {
+      "ItemId": "243535",
+      "ItemName": "Ring of Redemption"
+    },
+    {
+      "ItemId": "243539",
+      "ItemName": "Ring of Reasoning"
+    },
+    {
+      "ItemId": "243541",
+      "ItemName": "Piscean Ring"
+    },
+    {
+      "ItemId": "243595",
+      "ItemName": "Drape of Dissonance"
+    },
+    {
+      "ItemId": "243601",
+      "ItemName": "Corrupt Jerkin"
+    },
+    {
+      "ItemId": "243618",
+      "ItemName": "Brimstone Tunic"
+    },
+    {
+      "ItemId": "243635",
+      "ItemName": "Iced Outfit"
+    },
+    {
+      "ItemId": "243640",
+      "ItemName": "Chilled Clothing"
+    },
+    {
+      "ItemId": "243655",
+      "ItemName": "Vital Vestment"
+    },
+    {
+      "ItemId": "243660",
+      "ItemName": "Whispering Raiment"
+    },
+    {
+      "ItemId": "243693",
+      "ItemName": "Rain Dance Raiment"
+    },
+    {
+      "ItemId": "243711",
+      "ItemName": "Runners of Resolution"
+    },
+    {
+      "ItemId": "243718",
+      "ItemName": "Medley Mukluks"
+    },
+    {
+      "ItemId": "243720",
+      "ItemName": "Wraps of Rapport"
+    },
+    {
+      "ItemId": "243732",
+      "ItemName": "Corrupt Deathstriders"
+    },
+    {
+      "ItemId": "243739",
+      "ItemName": "Menacing Stalkers"
+    },
+    {
+      "ItemId": "243780",
+      "ItemName": "Iced Boots"
+    },
+    {
+      "ItemId": "243788",
+      "ItemName": "Chilled Clogs"
+    },
+    {
+      "ItemId": "243800",
+      "ItemName": "Whispering Runners"
+    },
+    {
+      "ItemId": "243806",
+      "ItemName": "Merry Mukluks"
+    },
+    {
+      "ItemId": "243826",
+      "ItemName": "Mystifying Footgear"
+    },
+    {
+      "ItemId": "243830",
+      "ItemName": "Curious Clogs"
+    },
+    {
+      "ItemId": "1502466",
+      "ItemName": "Celestian Cinder Armor"
+    },
+    {
+      "ItemId": "1502467",
+      "ItemName": "Celestian Frostbit Armor"
+    },
+    {
+      "ItemId": "1502468",
+      "ItemName": "Celestian Tempest Armor"
+    },
+    {
+      "ItemId": "1502469",
+      "ItemName": "Storied Celestian Armor"
+    },
+    {
+      "ItemId": "1502470",
+      "ItemName": "Everlasting Celestian Armor"
+    },
+    {
+      "ItemId": "1502471",
+      "ItemName": "Celestian Abyss Armor"
+    },
+    {
+      "ItemId": "1502472",
+      "ItemName": "Versatile Celestian Armor"
+    },
+    {
+      "ItemId": "1502473",
+      "ItemName": "Armor of Celestian Totality"
+    }
+  ]
+}

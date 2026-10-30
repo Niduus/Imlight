@@ -1,0 +1,25 @@
+{
+  "Name": "W404 FEB-LootTable-007 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table FEB-LootTable-007: the gear drops (4), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1248077",
+      "ItemName": "Wand of Fascination"
+    },
+    {
+      "ItemId": "1248078",
+      "ItemName": "Spellbinder's Scepter"
+    },
+    {
+      "ItemId": "1248079",
+      "ItemName": "Scepter of the Ardent Vow"
+    },
+    {
+      "ItemId": "1248080",
+      "ItemName": "Lovestruck Stave"
+    }
+  ]
+}

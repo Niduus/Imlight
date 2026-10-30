@@ -1,0 +1,129 @@
+{
+  "Name": "W404 AZ-Mob-04 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table AZ-Mob-04: the gear drops (30), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730261",
+      "ItemName": "Helm of the Broken Spear"
+    },
+    {
+      "ItemId": "730262",
+      "ItemName": "Song of the Lizard Hood"
+    },
+    {
+      "ItemId": "730263",
+      "ItemName": "Glorious Feathered Mantle"
+    },
+    {
+      "ItemId": "730264",
+      "ItemName": "High Chac's Guarded Helm"
+    },
+    {
+      "ItemId": "730265",
+      "ItemName": "Tyrant of Beasts Mask"
+    },
+    {
+      "ItemId": "730266",
+      "ItemName": "Mask of the Calavera"
+    },
+    {
+      "ItemId": "730267",
+      "ItemName": "Coatl Lord's Hat"
+    },
+    {
+      "ItemId": "730268",
+      "ItemName": "Sweet Kiss of Death Mask"
+    },
+    {
+      "ItemId": "730269",
+      "ItemName": "Elite Jura Guard Helm"
+    },
+    {
+      "ItemId": "730270",
+      "ItemName": "Twisted Fang Mask"
+    },
+    {
+      "ItemId": "730271",
+      "ItemName": "Indigo Wing Crown"
+    },
+    {
+      "ItemId": "730272",
+      "ItemName": "Tree of Secrets Chac Mask"
+    },
+    {
+      "ItemId": "730273",
+      "ItemName": "Five Fangs of Fury Headdress"
+    },
+    {
+      "ItemId": "730274",
+      "ItemName": "Thirteen Death Mask"
+    },
+    {
+      "ItemId": "730275",
+      "ItemName": "Dawn Hour Mantle"
+    },
+    {
+      "ItemId": "730328",
+      "ItemName": "Tunic of the Broken Spear"
+    },
+    {
+      "ItemId": "730329",
+      "ItemName": "Song of the Lizard Coat"
+    },
+    {
+      "ItemId": "730330",
+      "ItemName": "Glorious Xicolli Vest"
+    },
+    {
+      "ItemId": "730331",
+      "ItemName": "High Chac's Guarded Armor"
+    },
+    {
+      "ItemId": "730332",
+      "ItemName": "Cloak of the Tyrant of Beasts"
+    },
+    {
+      "ItemId": "730333",
+      "ItemName": "Vestment of the Calavera"
+    },
+    {
+      "ItemId": "730334",
+      "ItemName": "Coatl Lord's Robes"
+    },
+    {
+      "ItemId": "730336",
+      "ItemName": "Elite Jura Guard Garb"
+    },
+    {
+      "ItemId": "730337",
+      "ItemName": "Twisted Fang Vestments"
+    },
+    {
+      "ItemId": "730338",
+      "ItemName": "Indigo Wing Raiment"
+    },
+    {
+      "ItemId": "730339",
+      "ItemName": "Tree of Secrets Chac Armor"
+    },
+    {
+      "ItemId": "730340",
+      "ItemName": "Five Fangs of Fury Scales"
+    },
+    {
+      "ItemId": "730341",
+      "ItemName": "Thirteen Death Robe"
+    },
+    {
+      "ItemId": "730342",
+      "ItemName": "Dawn Hour Xicolli Vest"
+    },
+    {
+      "ItemId": "730343",
+      "ItemName": "Black Tears of the Sky Drape"
+    }
+  ]
+}

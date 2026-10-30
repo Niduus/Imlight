@@ -247,11 +247,10 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         var playerRef = SessionActor.ActorRef;
         var playerObj = GetActiveGameObject();
 
-        // TODO: real mob drops. Every mob drops only gold today: the client names each mob's loot tables
-        // (WizGameObjectTemplate.m_lootTable, about 2,225 names such as MS-Level-40-42) but not what is in them, and
-        // SpiralDB has no NpcDropTable data. Niduus allows Wizard101 Central only boss by boss (2026-10-21: Malistaire the
-        // Undying, spiraldb-extra/NpcDropTable). The housing gauntlets' creatures have theirs from Wizard404 (2026-10-24:
-        // spiraldb-extra/NpcDropTable and DropTables/w404-*, their chances in DropOdds.json).
+        // Every creature Wizard404 lists drops for has its tables (2026-10-30, tools/mob-drops/make_mob_drops.py): the
+        // gold of each of its game loot tables, and per table and kind of drop (gear, treasure cards, reagents...) one item
+        // at DropOdds.json's chance for its rank. Before, only the gauntlet creatures and a few bosses had any, so most
+        // creatures dropped gold alone. Malistaire the Undying's are from Wizard101 Central (spiraldb-extra/NpcDropTable).
         foreach (var key in defeatedMobTemplateIds) {
             // A custom (Customs.cs) drops its own Drops when it names any, else its creature's.
             // A boss of the Bosses tab (BossOverrides) can name its own Drops too.

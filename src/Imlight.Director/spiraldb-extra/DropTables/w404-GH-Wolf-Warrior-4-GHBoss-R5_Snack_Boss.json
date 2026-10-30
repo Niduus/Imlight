@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Wolf-Warrior-4-GHBoss-R5 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Wolf-Warrior-4-GHBoss-R5: the snack drops (6), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220196",
+      "ItemName": "Sliced Watermelon"
+    },
+    {
+      "ItemId": "220222",
+      "ItemName": "Squash"
+    },
+    {
+      "ItemId": "220228",
+      "ItemName": "Chocolate Peanut"
+    },
+    {
+      "ItemId": "220229",
+      "ItemName": "Wafer Biscuit"
+    },
+    {
+      "ItemId": "220231",
+      "ItemName": "Potato Chips"
+    },
+    {
+      "ItemId": "220251",
+      "ItemName": "Lollipop"
+    }
+  ]
+}

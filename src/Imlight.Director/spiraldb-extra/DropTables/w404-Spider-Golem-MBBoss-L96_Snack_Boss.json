@@ -1,0 +1,69 @@
+{
+  "Name": "W404 Spider-Golem-MBBoss-L96 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table Spider-Golem-MBBoss-L96: the snack drops (15), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220204",
+      "ItemName": "Crunch Apple"
+    },
+    {
+      "ItemId": "220205",
+      "ItemName": "Square Watermelon"
+    },
+    {
+      "ItemId": "220206",
+      "ItemName": "Ape Grapes"
+    },
+    {
+      "ItemId": "220216",
+      "ItemName": "Large Watermelon"
+    },
+    {
+      "ItemId": "220256",
+      "ItemName": "Caramel Popcorn"
+    },
+    {
+      "ItemId": "220257",
+      "ItemName": "Stinky Cheese"
+    },
+    {
+      "ItemId": "220258",
+      "ItemName": "Wheat Cracker"
+    },
+    {
+      "ItemId": "220259",
+      "ItemName": "Redskin Peanut"
+    },
+    {
+      "ItemId": "220268",
+      "ItemName": "Medium Fish"
+    },
+    {
+      "ItemId": "220285",
+      "ItemName": "Gummy Bloodbat"
+    },
+    {
+      "ItemId": "220291",
+      "ItemName": "Golden Squash"
+    },
+    {
+      "ItemId": "220294",
+      "ItemName": "Square Root"
+    },
+    {
+      "ItemId": "220296",
+      "ItemName": "Fire Cracker"
+    },
+    {
+      "ItemId": "220297",
+      "ItemName": "Golden Peanut"
+    },
+    {
+      "ItemId": "220306",
+      "ItemName": "Large Fish"
+    }
+  ]
+}

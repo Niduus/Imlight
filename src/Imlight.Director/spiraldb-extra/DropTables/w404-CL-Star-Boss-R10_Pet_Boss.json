@@ -1,0 +1,13 @@
+{
+  "Name": "W404 CL-Star-Boss-R10 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-Star-Boss-R10: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "175580",
+      "ItemName": "Sea Dragon"
+    }
+  ]
+}

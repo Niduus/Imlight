@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Wizard-Male-Spikey-Blue-Boss-R8 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Wizard-Male-Spikey-Blue-Boss-R8: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82912",
+      "ItemName": "Wall Chains"
+    },
+    {
+      "ItemId": "160201",
+      "ItemName": "Open Burned Book"
+    },
+    {
+      "ItemId": "160902",
+      "ItemName": "Dragonspyre Platform"
+    }
+  ]
+}

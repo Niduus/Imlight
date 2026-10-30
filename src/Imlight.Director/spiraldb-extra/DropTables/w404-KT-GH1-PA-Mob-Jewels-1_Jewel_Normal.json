@@ -1,0 +1,173 @@
+{
+  "Name": "W404 KT-GH1-PA-Mob-Jewels-1 Jewel (Normal)",
+  "Description": "Wizard404's drop list of the game's table KT-GH1-PA-Mob-Jewels-1: the jewel drops (41), one picked when it rolls. How often: DropOdds.json Normal/Jewel.",
+  "Odds": "Normal/Jewel",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1352337",
+      "ItemName": "Cracked Health Opal +11"
+    },
+    {
+      "ItemId": "1352338",
+      "ItemName": "Cracked Health Opal +12"
+    },
+    {
+      "ItemId": "1352339",
+      "ItemName": "Cracked Health Opal +13"
+    },
+    {
+      "ItemId": "1352340",
+      "ItemName": "Cracked Health Opal +14"
+    },
+    {
+      "ItemId": "1352341",
+      "ItemName": "Cracked Health Opal +15"
+    },
+    {
+      "ItemId": "1352433",
+      "ItemName": "Cracked Mana Opal +5"
+    },
+    {
+      "ItemId": "1352434",
+      "ItemName": "Cracked Mana Opal +6"
+    },
+    {
+      "ItemId": "1352435",
+      "ItemName": "Cracked Mana Opal +7"
+    },
+    {
+      "ItemId": "1352436",
+      "ItemName": "Cracked Mana Opal +8"
+    },
+    {
+      "ItemId": "1352578",
+      "ItemName": "Cracked Damage Ruby +2"
+    },
+    {
+      "ItemId": "1352602",
+      "ItemName": "Cracked Damage Sapphire +2"
+    },
+    {
+      "ItemId": "1352626",
+      "ItemName": "Cracked Damage Amethyst +2"
+    },
+    {
+      "ItemId": "1352650",
+      "ItemName": "Cracked Damage Peridot +2"
+    },
+    {
+      "ItemId": "1352674",
+      "ItemName": "Cracked Damage Jade +2"
+    },
+    {
+      "ItemId": "1352698",
+      "ItemName": "Cracked Damage Onyx +2"
+    },
+    {
+      "ItemId": "1352722",
+      "ItemName": "Cracked Damage Citrine +2"
+    },
+    {
+      "ItemId": "1352817",
+      "ItemName": "Cracked Mending Opal +1%"
+    },
+    {
+      "ItemId": "1352934",
+      "ItemName": "Cracked Resilient Opal +1%"
+    },
+    {
+      "ItemId": "1352939",
+      "ItemName": "Cracked Healing Opal +1%"
+    },
+    {
+      "ItemId": "1357137",
+      "ItemName": "Cracked Accurate Ruby +2%"
+    },
+    {
+      "ItemId": "1357139",
+      "ItemName": "Cracked Accurate Sapphire +2%"
+    },
+    {
+      "ItemId": "1357141",
+      "ItemName": "Cracked Accurate Amethyst +2%"
+    },
+    {
+      "ItemId": "1357143",
+      "ItemName": "Cracked Accurate Peridot +2%"
+    },
+    {
+      "ItemId": "1357145",
+      "ItemName": "Cracked Accurate Jade +2%"
+    },
+    {
+      "ItemId": "1357147",
+      "ItemName": "Cracked Accurate Onyx +2%"
+    },
+    {
+      "ItemId": "1357149",
+      "ItemName": "Cracked Accurate Citrine +2%"
+    },
+    {
+      "ItemId": "1357243",
+      "ItemName": "Cracked Defense Ruby +7"
+    },
+    {
+      "ItemId": "1357244",
+      "ItemName": "Cracked Defense Ruby +8"
+    },
+    {
+      "ItemId": "1357288",
+      "ItemName": "Cracked Defense Sapphire +7"
+    },
+    {
+      "ItemId": "1357289",
+      "ItemName": "Cracked Defense Sapphire +8"
+    },
+    {
+      "ItemId": "1357333",
+      "ItemName": "Cracked Defense Amethyst +7"
+    },
+    {
+      "ItemId": "1357334",
+      "ItemName": "Cracked Defense Amethyst +8"
+    },
+    {
+      "ItemId": "1357378",
+      "ItemName": "Cracked Defense Peridot +7"
+    },
+    {
+      "ItemId": "1357379",
+      "ItemName": "Cracked Defense Peridot +8"
+    },
+    {
+      "ItemId": "1357423",
+      "ItemName": "Cracked Defense Jade +7"
+    },
+    {
+      "ItemId": "1357424",
+      "ItemName": "Cracked Defense Jade +8"
+    },
+    {
+      "ItemId": "1357468",
+      "ItemName": "Cracked Defense Onyx +7"
+    },
+    {
+      "ItemId": "1357469",
+      "ItemName": "Cracked Defense Onyx +8"
+    },
+    {
+      "ItemId": "1357513",
+      "ItemName": "Cracked Defense Citrine +7"
+    },
+    {
+      "ItemId": "1357514",
+      "ItemName": "Cracked Defense Citrine +8"
+    },
+    {
+      "ItemId": "1358568",
+      "ItemName": "Cracked Defense Opal +3"
+    }
+  ]
+}

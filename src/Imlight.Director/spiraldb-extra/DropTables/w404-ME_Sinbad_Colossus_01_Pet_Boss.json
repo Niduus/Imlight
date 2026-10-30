@@ -1,0 +1,13 @@
+{
+  "Name": "W404 ME_Sinbad_Colossus_01 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME_Sinbad_Colossus_01: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1479420",
+      "ItemName": "Plucky Gryphon"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Gobbler-Pink-Baron-WCBoss-L22 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Gobbler-Pink-Baron-WCBoss-L22: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "512114",
+      "ItemName": "Golem Tower Theme"
+    },
+    {
+      "ItemId": "512196",
+      "ItemName": "Grumpy Gobblers Theme"
+    },
+    {
+      "ItemId": "1335019",
+      "ItemName": "Wizard City Dance Theme"
+    }
+  ]
+}

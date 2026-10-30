@@ -1,0 +1,57 @@
+{
+  "Name": "W404 Cyclops-BlueHelmet-WCBoss-L15 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Cyclops-BlueHelmet-WCBoss-L15: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4685",
+      "ItemName": "Choker of Swarms"
+    },
+    {
+      "ItemId": "4714",
+      "ItemName": "Onyx Studded Athame"
+    },
+    {
+      "ItemId": "4718",
+      "ItemName": "Sapphire Studded Athame"
+    },
+    {
+      "ItemId": "4842",
+      "ItemName": "Cold Forged Boots"
+    },
+    {
+      "ItemId": "4858",
+      "ItemName": "Slippers of Excitement"
+    },
+    {
+      "ItemId": "77567",
+      "ItemName": "Flametouched Hat"
+    },
+    {
+      "ItemId": "77599",
+      "ItemName": "Blooming Hat"
+    },
+    {
+      "ItemId": "77601",
+      "ItemName": "Hat of Eradication"
+    },
+    {
+      "ItemId": "77606",
+      "ItemName": "Troubled Helm"
+    },
+    {
+      "ItemId": "77622",
+      "ItemName": "Helm of Supremacy"
+    },
+    {
+      "ItemId": "87201",
+      "ItemName": "Shimmering Cloak"
+    },
+    {
+      "ItemId": "87216",
+      "ItemName": "Vestment of Eyus"
+    }
+  ]
+}

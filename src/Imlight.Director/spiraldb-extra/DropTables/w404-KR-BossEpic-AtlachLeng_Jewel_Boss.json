@@ -1,0 +1,21 @@
+{
+  "Name": "W404 KR-BossEpic-AtlachLeng Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossEpic-AtlachLeng: the jewel drops (3), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1358998",
+      "ItemName": "Galvanic Field Opal"
+    },
+    {
+      "ItemId": "1360004",
+      "ItemName": "Chastisement Opal"
+    },
+    {
+      "ItemId": "1360005",
+      "ItemName": "Punishment Opal"
+    }
+  ]
+}

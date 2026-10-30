@@ -1,0 +1,29 @@
+{
+  "Name": "W404 CL-SharkKing-Boss-R10 Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-SharkKing-Boss-R10: the seed drops (5), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "345982",
+      "ItemName": "Deadly Fly Trap"
+    },
+    {
+      "ItemId": "345989",
+      "ItemName": "Silver Trumpet Vine"
+    },
+    {
+      "ItemId": "346010",
+      "ItemName": "Maelstrom Snap Dragon"
+    },
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion"
+    },
+    {
+      "ItemId": "653146",
+      "ItemName": "Fish on a Vine"
+    }
+  ]
+}

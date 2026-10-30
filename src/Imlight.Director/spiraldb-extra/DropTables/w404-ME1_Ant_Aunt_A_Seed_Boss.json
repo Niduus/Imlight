@@ -1,0 +1,21 @@
+{
+  "Name": "W404 ME1_Ant_Aunt_A Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Ant_Aunt_A: the seed drops (3), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots"
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears"
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas"
+    }
+  ]
+}

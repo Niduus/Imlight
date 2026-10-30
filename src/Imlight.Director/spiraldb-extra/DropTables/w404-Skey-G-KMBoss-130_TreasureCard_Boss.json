@@ -1,0 +1,77 @@
+{
+  "Name": "W404 Skey-G-KMBoss-130 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skey-G-KMBoss-130: the treasurecard drops (17), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Baby Sunbird TC",
+      "ItemName": "Baby Sunbird"
+    },
+    {
+      "ItemId": "Dragonflies TC",
+      "ItemName": "Dragonflies"
+    },
+    {
+      "ItemId": "Flood TC",
+      "ItemName": "Flood"
+    },
+    {
+      "ItemId": "Flute Symphony TC",
+      "ItemName": "Flute Symphony"
+    },
+    {
+      "ItemId": "Massive Pest Zapper TC",
+      "ItemName": "Massive Pest Zapper"
+    },
+    {
+      "ItemId": "Miniature Bloodbats TC",
+      "ItemName": "Miniature Bloodbats"
+    },
+    {
+      "ItemId": "Pest Zapper TC",
+      "ItemName": "Pest Zapper"
+    },
+    {
+      "ItemId": "Pungent Bug Spray TC",
+      "ItemName": "Pungent Bug Spray"
+    },
+    {
+      "ItemId": "Putrid Bug Spray TC",
+      "ItemName": "Putrid Bug Spray"
+    },
+    {
+      "ItemId": "Supreme Sunburst TC",
+      "ItemName": "Supreme Sunburst"
+    },
+    {
+      "ItemId": "Uncanny Magic TC",
+      "ItemName": "Uncanny Magic"
+    },
+    {
+      "ItemId": "Zounds...Bees! TC",
+      "ItemName": "Zounds...Bees!"
+    },
+    {
+      "ItemId": "Tri Blade TC",
+      "ItemName": "Elemental Blade"
+    },
+    {
+      "ItemId": "Elemental Defuse TC",
+      "ItemName": "Elemental Defuse"
+    },
+    {
+      "ItemId": "Tri Shield TC",
+      "ItemName": "Elemental Shield"
+    },
+    {
+      "ItemId": "Tri Spear TC",
+      "ItemName": "Elemental Spear"
+    },
+    {
+      "ItemId": "Tri Trap TC",
+      "ItemName": "Elemental Trap"
+    }
+  ]
+}

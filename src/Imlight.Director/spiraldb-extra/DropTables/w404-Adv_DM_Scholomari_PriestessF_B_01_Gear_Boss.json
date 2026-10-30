@@ -1,0 +1,65 @@
+{
+  "Name": "W404 Adv_DM_Scholomari_PriestessF_B_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Adv_DM_Scholomari_PriestessF_B_01: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1707734",
+      "ItemName": "Doomed Abomination Amulet"
+    },
+    {
+      "ItemId": "1707735",
+      "ItemName": "Scary Abomination Amulet"
+    },
+    {
+      "ItemId": "1707736",
+      "ItemName": "Tense Abomination Amulet"
+    },
+    {
+      "ItemId": "1707737",
+      "ItemName": "Chilling Abomination Amulet"
+    },
+    {
+      "ItemId": "1707738",
+      "ItemName": "Sanguine Abomination Amulet"
+    },
+    {
+      "ItemId": "1707739",
+      "ItemName": "Mythic Abomination Amulet"
+    },
+    {
+      "ItemId": "1707740",
+      "ItemName": "Shocking Abomination Amulet"
+    },
+    {
+      "ItemId": "1707868",
+      "ItemName": "Scholomantic Justice Charm"
+    },
+    {
+      "ItemId": "1707869",
+      "ItemName": "Scholomantic Death Charm"
+    },
+    {
+      "ItemId": "1707870",
+      "ItemName": "Scholomantic Devilish Charm"
+    },
+    {
+      "ItemId": "1707871",
+      "ItemName": "Scholomantic Strength Charm"
+    },
+    {
+      "ItemId": "1707872",
+      "ItemName": "Scholomantic Worldly Charm"
+    },
+    {
+      "ItemId": "1707873",
+      "ItemName": "Scholomantic Fortune Charm"
+    },
+    {
+      "ItemId": "1707874",
+      "ItemName": "Scholomantic Destructive Charm"
+    }
+  ]
+}

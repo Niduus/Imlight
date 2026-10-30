@@ -1,0 +1,173 @@
+{
+  "Name": "W404 MR-Mob-Jewels-1 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table MR-Mob-Jewels-1: the jewel drops (41), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1352422",
+      "ItemName": "Lustrous Health Opal +96"
+    },
+    {
+      "ItemId": "1352423",
+      "ItemName": "Lustrous Health Opal +97"
+    },
+    {
+      "ItemId": "1352426",
+      "ItemName": "Lustrous Health Opal +100"
+    },
+    {
+      "ItemId": "1352469",
+      "ItemName": "Lustrous Mana Opal +41"
+    },
+    {
+      "ItemId": "1352470",
+      "ItemName": "Lustrous Mana Opal +42"
+    },
+    {
+      "ItemId": "1352599",
+      "ItemName": "Lustrous Damage Ruby +23"
+    },
+    {
+      "ItemId": "1352623",
+      "ItemName": "Lustrous Damage Sapphire +23"
+    },
+    {
+      "ItemId": "1352647",
+      "ItemName": "Lustrous Damage Amethyst +23"
+    },
+    {
+      "ItemId": "1352671",
+      "ItemName": "Lustrous Damage Peridot +23"
+    },
+    {
+      "ItemId": "1352695",
+      "ItemName": "Lustrous Damage Jade +23"
+    },
+    {
+      "ItemId": "1352719",
+      "ItemName": "Lustrous Damage Onyx +23"
+    },
+    {
+      "ItemId": "1352743",
+      "ItemName": "Lustrous Damage Citrine +23"
+    },
+    {
+      "ItemId": "1352834",
+      "ItemName": "Lustrous Critical Ruby +13"
+    },
+    {
+      "ItemId": "1352847",
+      "ItemName": "Lustrous Critical Sapphire +13"
+    },
+    {
+      "ItemId": "1352860",
+      "ItemName": "Lustrous Critical Amethyst +13"
+    },
+    {
+      "ItemId": "1352873",
+      "ItemName": "Lustrous Critical Peridot +13"
+    },
+    {
+      "ItemId": "1352886",
+      "ItemName": "Lustrous Critical Jade +13"
+    },
+    {
+      "ItemId": "1352899",
+      "ItemName": "Lustrous Critical Onyx +13"
+    },
+    {
+      "ItemId": "1352912",
+      "ItemName": "Lustrous Critical Citrine +13"
+    },
+    {
+      "ItemId": "1352956",
+      "ItemName": "Lustrous Blocking Ruby +13"
+    },
+    {
+      "ItemId": "1352969",
+      "ItemName": "Lustrous Blocking Sapphire +13"
+    },
+    {
+      "ItemId": "1352982",
+      "ItemName": "Lustrous Blocking Amethyst +13"
+    },
+    {
+      "ItemId": "1352995",
+      "ItemName": "Lustrous Blocking Peridot +13"
+    },
+    {
+      "ItemId": "1357008",
+      "ItemName": "Lustrous Blocking Jade +13"
+    },
+    {
+      "ItemId": "1357021",
+      "ItemName": "Lustrous Blocking Onyx +13"
+    },
+    {
+      "ItemId": "1357034",
+      "ItemName": "Lustrous Blocking Citrine +13"
+    },
+    {
+      "ItemId": "1357064",
+      "ItemName": "Lustrous Accurate Ruby +11%"
+    },
+    {
+      "ItemId": "1357073",
+      "ItemName": "Lustrous Accurate Sapphire +11%"
+    },
+    {
+      "ItemId": "1357082",
+      "ItemName": "Lustrous Accurate Amethyst +11%"
+    },
+    {
+      "ItemId": "1357091",
+      "ItemName": "Lustrous Accurate Peridot +11%"
+    },
+    {
+      "ItemId": "1357100",
+      "ItemName": "Lustrous Accurate Jade +11%"
+    },
+    {
+      "ItemId": "1357109",
+      "ItemName": "Lustrous Accurate Onyx +11%"
+    },
+    {
+      "ItemId": "1357118",
+      "ItemName": "Lustrous Accurate Citrine +11%"
+    },
+    {
+      "ItemId": "1357134",
+      "ItemName": "Lustrous PIP Opal +10%"
+    },
+    {
+      "ItemId": "1357281",
+      "ItemName": "Lustrous Defense Ruby +45"
+    },
+    {
+      "ItemId": "1357326",
+      "ItemName": "Lustrous Defense Sapphire +45"
+    },
+    {
+      "ItemId": "1357371",
+      "ItemName": "Lustrous Defense Amethyst +45"
+    },
+    {
+      "ItemId": "1357416",
+      "ItemName": "Lustrous Defense Peridot +45"
+    },
+    {
+      "ItemId": "1357461",
+      "ItemName": "Lustrous Defense Jade +45"
+    },
+    {
+      "ItemId": "1357506",
+      "ItemName": "Lustrous Defense Onyx +45"
+    },
+    {
+      "ItemId": "1357551",
+      "ItemName": "Lustrous Defense Citrine +45"
+    }
+  ]
+}

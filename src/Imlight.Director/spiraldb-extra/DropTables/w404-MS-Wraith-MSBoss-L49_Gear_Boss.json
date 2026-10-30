@@ -1,0 +1,77 @@
+{
+  "Name": "W404 MS-Wraith-MSBoss-L49 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Wraith-MSBoss-L49: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "87774",
+      "ItemName": "Tomugawa's Onyx Blade"
+    },
+    {
+      "ItemId": "97486",
+      "ItemName": "Deck of the Lotus"
+    },
+    {
+      "ItemId": "97563",
+      "ItemName": "War Oni's Disillusioned Hat"
+    },
+    {
+      "ItemId": "97680",
+      "ItemName": "Helm of Sandcastles"
+    },
+    {
+      "ItemId": "97747",
+      "ItemName": "Garments of Explanation"
+    },
+    {
+      "ItemId": "97781",
+      "ItemName": "Tomugawa's Tunic"
+    },
+    {
+      "ItemId": "97782",
+      "ItemName": "Evil Vestment of Disillusion"
+    },
+    {
+      "ItemId": "97805",
+      "ItemName": "Profound Robes"
+    },
+    {
+      "ItemId": "97826",
+      "ItemName": "Garment of Dilemma"
+    },
+    {
+      "ItemId": "97854",
+      "ItemName": "Robes of the Triad"
+    },
+    {
+      "ItemId": "97873",
+      "ItemName": "Vexing Tunic"
+    },
+    {
+      "ItemId": "97898",
+      "ItemName": "Tunic of Soul-Searching"
+    },
+    {
+      "ItemId": "97939",
+      "ItemName": "Tomugawa's Slippers"
+    },
+    {
+      "ItemId": "97942",
+      "ItemName": "Tomugawa's Kind Shoes"
+    },
+    {
+      "ItemId": "97970",
+      "ItemName": "Shoes of the Whim"
+    },
+    {
+      "ItemId": "98020",
+      "ItemName": "Slippers of Yodels"
+    },
+    {
+      "ItemId": "126139",
+      "ItemName": "Enfused Tanto of the Sea"
+    }
+  ]
+}

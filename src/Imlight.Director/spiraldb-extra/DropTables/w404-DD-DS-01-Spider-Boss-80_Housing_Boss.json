@@ -1,0 +1,25 @@
+{
+  "Name": "W404 DD-DS-01-Spider-Boss-80 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-Spider-Boss-80: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160853",
+      "ItemName": "Wyrmkin Statue"
+    },
+    {
+      "ItemId": "160854",
+      "ItemName": "Hydra Statue"
+    },
+    {
+      "ItemId": "160858",
+      "ItemName": "Minotaur Statue"
+    },
+    {
+      "ItemId": "160890",
+      "ItemName": "Ruined Arch Ring"
+    }
+  ]
+}

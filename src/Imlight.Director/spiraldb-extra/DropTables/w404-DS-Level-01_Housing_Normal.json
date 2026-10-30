@@ -1,0 +1,13 @@
+{
+  "Name": "W404 DS-Level-01 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table DS-Level-01: the housing drops (1), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160892",
+      "ItemName": "Dragonspyre Ruins"
+    }
+  ]
+}

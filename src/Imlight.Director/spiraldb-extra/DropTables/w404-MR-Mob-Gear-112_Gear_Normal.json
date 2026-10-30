@@ -1,0 +1,345 @@
+{
+  "Name": "W404 MR-Mob-Gear-112 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table MR-Mob-Gear-112: the gear drops (84), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1402845",
+      "ItemName": "Djinn Cards of Radiance"
+    },
+    {
+      "ItemId": "1402847",
+      "ItemName": "Djinn Cards of Flux"
+    },
+    {
+      "ItemId": "1402849",
+      "ItemName": "Djinn Cards of Durability"
+    },
+    {
+      "ItemId": "1402851",
+      "ItemName": "Immaculate Djinn Cards"
+    },
+    {
+      "ItemId": "1402877",
+      "ItemName": "Djinn Array of Sparks"
+    },
+    {
+      "ItemId": "1402878",
+      "ItemName": "Djinn Array of Wintertide"
+    },
+    {
+      "ItemId": "1402879",
+      "ItemName": "Djinn Array of Swells"
+    },
+    {
+      "ItemId": "1402880",
+      "ItemName": "Djinn Array of Invention"
+    },
+    {
+      "ItemId": "1402881",
+      "ItemName": "Djinn Array of Vim"
+    },
+    {
+      "ItemId": "1402882",
+      "ItemName": "Djinn Array of Reverie"
+    },
+    {
+      "ItemId": "1402883",
+      "ItemName": "Djinn Array of Justice"
+    },
+    {
+      "ItemId": "1402941",
+      "ItemName": "Nomad's Sunfire Torboosh"
+    },
+    {
+      "ItemId": "1402942",
+      "ItemName": "Nomad's Frostdune Torboosh"
+    },
+    {
+      "ItemId": "1402943",
+      "ItemName": "Nomad's Sandstorm Torboosh"
+    },
+    {
+      "ItemId": "1402944",
+      "ItemName": "Nomad's Torboosh of Praxis"
+    },
+    {
+      "ItemId": "1402945",
+      "ItemName": "Nomad's Torboosh of Tenacity"
+    },
+    {
+      "ItemId": "1402946",
+      "ItemName": "Nomad's Torboosh of Solitude"
+    },
+    {
+      "ItemId": "1402947",
+      "ItemName": "Nomad's Torboosh of Redress"
+    },
+    {
+      "ItemId": "1402973",
+      "ItemName": "Nomad's Sunfire Thobe"
+    },
+    {
+      "ItemId": "1402974",
+      "ItemName": "Nomad's Frostdune Thobe"
+    },
+    {
+      "ItemId": "1402975",
+      "ItemName": "Nomad's Sandstorm Thobe"
+    },
+    {
+      "ItemId": "1402976",
+      "ItemName": "Nomad's Thobe of Praxis"
+    },
+    {
+      "ItemId": "1402977",
+      "ItemName": "Nomad's Thobe of Tenacity"
+    },
+    {
+      "ItemId": "1402978",
+      "ItemName": "Nomad's Thobe of Solitude"
+    },
+    {
+      "ItemId": "1402979",
+      "ItemName": "Nomad's Thobe of Redress"
+    },
+    {
+      "ItemId": "1405101",
+      "ItemName": "Mongu Givehs of Frenzy"
+    },
+    {
+      "ItemId": "1405103",
+      "ItemName": "Mongu Givehs of Tantrums"
+    },
+    {
+      "ItemId": "1405105",
+      "ItemName": "Mongu Givehs of Force"
+    },
+    {
+      "ItemId": "1405107",
+      "ItemName": "Mongu Givehs of Honor"
+    },
+    {
+      "ItemId": "1405134",
+      "ItemName": "Djinn Ghutrah of Patience"
+    },
+    {
+      "ItemId": "1405136",
+      "ItemName": "Djinn Ghutrah of Dreams"
+    },
+    {
+      "ItemId": "1405138",
+      "ItemName": "Djinn Ghutrah of Darkness"
+    },
+    {
+      "ItemId": "1405166",
+      "ItemName": "Djinn Vestment of Patience"
+    },
+    {
+      "ItemId": "1405168",
+      "ItemName": "Djinn Vestment of Dreams"
+    },
+    {
+      "ItemId": "1405170",
+      "ItemName": "Djinn Vestment of Darkness"
+    },
+    {
+      "ItemId": "1405197",
+      "ItemName": "Djinn Slippers of Radiance"
+    },
+    {
+      "ItemId": "1405198",
+      "ItemName": "Djinn Slippers of Patience"
+    },
+    {
+      "ItemId": "1405199",
+      "ItemName": "Djinn Slippers of Flux"
+    },
+    {
+      "ItemId": "1405200",
+      "ItemName": "Djinn Slippers of Dreams"
+    },
+    {
+      "ItemId": "1405201",
+      "ItemName": "Djinn Slippers of Durability"
+    },
+    {
+      "ItemId": "1405202",
+      "ItemName": "Djinn Slippers of Darkness"
+    },
+    {
+      "ItemId": "1405203",
+      "ItemName": "Immaculate Djinn Slippers"
+    },
+    {
+      "ItemId": "1405261",
+      "ItemName": "Djinn Amulet of Radiance"
+    },
+    {
+      "ItemId": "1405262",
+      "ItemName": "Djinn Amulet of Patience"
+    },
+    {
+      "ItemId": "1405263",
+      "ItemName": "Djinn Amulet of Flux"
+    },
+    {
+      "ItemId": "1405264",
+      "ItemName": "Djinn Amulet of Dreams"
+    },
+    {
+      "ItemId": "1405265",
+      "ItemName": "Djinn Amulet of Durability"
+    },
+    {
+      "ItemId": "1405266",
+      "ItemName": "Djinn Amulet of Darkness"
+    },
+    {
+      "ItemId": "1405267",
+      "ItemName": "Immaculate Djinn Amulet"
+    },
+    {
+      "ItemId": "1405326",
+      "ItemName": "Djinn Khanjar of Wintertide"
+    },
+    {
+      "ItemId": "1405328",
+      "ItemName": "Djinn Khanjar of Invention"
+    },
+    {
+      "ItemId": "1405330",
+      "ItemName": "Djinn Khanjar of Reverie"
+    },
+    {
+      "ItemId": "1405389",
+      "ItemName": "Djinn Loop of Sparks"
+    },
+    {
+      "ItemId": "1405391",
+      "ItemName": "Djinn Loop of Swells"
+    },
+    {
+      "ItemId": "1405393",
+      "ItemName": "Djinn Loop of Vim"
+    },
+    {
+      "ItemId": "1405395",
+      "ItemName": "Djinn Loop of Justice"
+    },
+    {
+      "ItemId": "1405421",
+      "ItemName": "Fang Dirk of Frenzy"
+    },
+    {
+      "ItemId": "1405422",
+      "ItemName": "Fang Dirk of Frostfall"
+    },
+    {
+      "ItemId": "1405423",
+      "ItemName": "Fang Dirk of Tantrums"
+    },
+    {
+      "ItemId": "1405424",
+      "ItemName": "Fang Dirk of Ages"
+    },
+    {
+      "ItemId": "1405425",
+      "ItemName": "Fang Dirk of Force"
+    },
+    {
+      "ItemId": "1405426",
+      "ItemName": "Fang Dirk of Umbrage"
+    },
+    {
+      "ItemId": "1405427",
+      "ItemName": "Fang Dirk of Honor"
+    },
+    {
+      "ItemId": "1405453",
+      "ItemName": "Fang Collar of Frenzy"
+    },
+    {
+      "ItemId": "1405455",
+      "ItemName": "Fang Collar of Tantrums"
+    },
+    {
+      "ItemId": "1405457",
+      "ItemName": "Fang Collar of Force"
+    },
+    {
+      "ItemId": "1405459",
+      "ItemName": "Fang Collar of Honor"
+    },
+    {
+      "ItemId": "1405485",
+      "ItemName": "Fang Loop of Frenzy"
+    },
+    {
+      "ItemId": "1405486",
+      "ItemName": "Fang Loop of Frostfall"
+    },
+    {
+      "ItemId": "1405487",
+      "ItemName": "Fang Loop of Tantrums"
+    },
+    {
+      "ItemId": "1405488",
+      "ItemName": "Fang Loop of Ages"
+    },
+    {
+      "ItemId": "1405489",
+      "ItemName": "Fang Loop of Force"
+    },
+    {
+      "ItemId": "1405490",
+      "ItemName": "Fang Loop of Umbrage"
+    },
+    {
+      "ItemId": "1405491",
+      "ItemName": "Fang Loop of Honor"
+    },
+    {
+      "ItemId": "1405518",
+      "ItemName": "Purrzian Frostdune Bow"
+    },
+    {
+      "ItemId": "1405520",
+      "ItemName": "Purrzian Bow of Praxis"
+    },
+    {
+      "ItemId": "1405522",
+      "ItemName": "Purrzian Bow of Solitude"
+    },
+    {
+      "ItemId": "1405549",
+      "ItemName": "Viper Stave of Sunstroke"
+    },
+    {
+      "ItemId": "1405550",
+      "ItemName": "Viper Stave of Bitterness"
+    },
+    {
+      "ItemId": "1405551",
+      "ItemName": "Viper Dunstorms Stave"
+    },
+    {
+      "ItemId": "1405552",
+      "ItemName": "Viper Stave of Reflection"
+    },
+    {
+      "ItemId": "1405553",
+      "ItemName": "Viper Stave of Thriving"
+    },
+    {
+      "ItemId": "1405554",
+      "ItemName": "Viper Stave of Strife"
+    },
+    {
+      "ItemId": "1405555",
+      "ItemName": "Viper Stave of Splendor"
+    }
+  ]
+}

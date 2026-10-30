@@ -1,0 +1,17 @@
+{
+  "Name": "W404 PA-Plant-BOSS-R5 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table PA-Plant-BOSS-R5: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "512093",
+      "ItemName": "Wysteria Main Theme"
+    },
+    {
+      "ItemId": "512152",
+      "ItemName": "Wysteria Theme 2"
+    }
+  ]
+}

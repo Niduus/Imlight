@@ -1,0 +1,49 @@
+{
+  "Name": "W404 CL-Protector-Tan-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-Protector-Tan-Boss-R10: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243220",
+      "ItemName": "Blistering Bodkin"
+    },
+    {
+      "ItemId": "243229",
+      "ItemName": "Curing Claw"
+    },
+    {
+      "ItemId": "243271",
+      "ItemName": "Storied Stiletto"
+    },
+    {
+      "ItemId": "243294",
+      "ItemName": "Symmetrical Hat"
+    },
+    {
+      "ItemId": "243434",
+      "ItemName": "Furious Facade"
+    },
+    {
+      "ItemId": "243517",
+      "ItemName": "Seal of Ordeal"
+    },
+    {
+      "ItemId": "243561",
+      "ItemName": "Echo Ring"
+    },
+    {
+      "ItemId": "243603",
+      "ItemName": "Raiment of Ruin"
+    },
+    {
+      "ItemId": "243697",
+      "ItemName": "Typhoon Armor"
+    },
+    {
+      "ItemId": "243789",
+      "ItemName": "Ice Rangers"
+    }
+  ]
+}

@@ -54,6 +54,16 @@ public static class DropTableFiles {
         return s_byName.TryGetValue(name, out var table) ? table : SpiralDB.GetDropTable(name);
     }
 
+    /// <summary>
+    /// Reads the folder once in the background at start, so the first won battle does not wait for every table.
+    /// </summary>
+    public static void Warm() => System.Threading.Tasks.Task.Run(() => {
+        var started = DateTime.UtcNow;
+        Rescan();
+        Logger.Information("Drop tables ready: {0} in the extra folder, read in {1:0.0} s.",
+            Logger.Args(s_byName.Count, (DateTime.UtcNow - started).TotalSeconds));
+    });
+
     private static void Rescan() {
         if (DateTime.UtcNow - s_scanned < RESCAN) {
             return;
@@ -69,8 +79,11 @@ public static class DropTableFiles {
             try {
                 var folder = Path.Combine(SpiralDB.ExtraPath, "DropTables");
                 if (Directory.Exists(folder)) {
-                    foreach (var file in Directory.EnumerateFiles(folder, "*.json")) {
-                        var written = File.GetLastWriteTimeUtc(file);
+                    // FileInfo carries the time from the folder listing itself: no extra look per file, as the
+                    // folder holds about 11,000 tables now that every creature Wizard404 lists has its drops.
+                    foreach (var info in new DirectoryInfo(folder).EnumerateFiles("*.json")) {
+                        var file = info.FullName;
+                        var written = info.LastWriteTimeUtc;
                         if (!s_files.TryGetValue(file, out var kept) || kept.Written != written) {
                             kept = (written, Read(file));
                             s_files[file] = kept;

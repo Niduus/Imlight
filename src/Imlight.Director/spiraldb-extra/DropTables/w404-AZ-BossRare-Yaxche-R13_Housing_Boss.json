@@ -1,0 +1,33 @@
+{
+  "Name": "W404 AZ-BossRare-Yaxche-R13 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossRare-Yaxche-R13: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "512209",
+      "ItemName": "Azteca Dungeon Theme"
+    },
+    {
+      "ItemId": "512210",
+      "ItemName": "Azteca Mountain Theme"
+    },
+    {
+      "ItemId": "512213",
+      "ItemName": "Azteca Zultun Theme"
+    },
+    {
+      "ItemId": "739196",
+      "ItemName": "Quetzal Straw Nest"
+    },
+    {
+      "ItemId": "739197",
+      "ItemName": "Quetzal Root Nest"
+    },
+    {
+      "ItemId": "739210",
+      "ItemName": "Sun Jar"
+    }
+  ]
+}

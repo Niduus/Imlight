@@ -1,0 +1,21 @@
+{
+  "Name": "W404 MB-Cat-Burglar-Yellow-MBBoss-L39 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Burglar-Yellow-MBBoss-L39: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160208",
+      "ItemName": "Stack of 3 Books"
+    },
+    {
+      "ItemId": "160657",
+      "ItemName": "High Statue Base"
+    },
+    {
+      "ItemId": "160664",
+      "ItemName": "Crumpled Newspaper"
+    }
+  ]
+}

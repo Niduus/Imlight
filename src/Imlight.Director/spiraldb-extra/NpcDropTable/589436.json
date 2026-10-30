@@ -1,0 +1,17 @@
+{
+  "TemplateID": 589436,
+  "DropTableNames": [
+    "W404 AV-ReagentsBoss Reagent (Boss)",
+    "W404 AV-R12-FroudlingBoss",
+    "W404 AV-R12-FroudlingBoss Gear (Boss)",
+    "W404 AV-R12-FroudlingBoss Snack (Boss)",
+    "W404 AV-R12-FroudlingBoss Seed (Boss)",
+    "W404 AV-R12-FroudlingBoss Housing (Boss)",
+    "W404 TC-AV-RaresBosses TreasureCard",
+    "W404 TC-AV-RaresBosses Seed",
+    "W404 TC-AV-Utility-Storm TreasureCard (Boss)",
+    "W404 AV-R12-StormDeck Gear (Boss)",
+    "W404 AV-Boss-Jewels Jewel",
+    "W404 AV-Boss-Jewels Reagent"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "Name": "W404 ME1_Maestro_A TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Maestro_A: the treasurecard drops (4), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Rebirth TC WH",
+      "ItemName": "Rebirth"
+    },
+    {
+      "ItemId": "Putrid Bug Spray TC WH",
+      "ItemName": "Putrid Bug Spray"
+    },
+    {
+      "ItemId": "Massive Pest Zapper TC WH",
+      "ItemName": "Massive Pest Zapper"
+    },
+    {
+      "ItemId": "Efreet TC",
+      "ItemName": "Efreet"
+    }
+  ]
+}

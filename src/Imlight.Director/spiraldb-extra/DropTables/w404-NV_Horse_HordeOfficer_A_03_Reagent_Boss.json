@@ -1,0 +1,33 @@
+{
+  "Name": "W404 NV_Horse_HordeOfficer_A_03 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Horse_HordeOfficer_A_03: the reagent drops (6), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1350238",
+      "ItemName": "Draconium"
+    },
+    {
+      "ItemId": "1350237",
+      "ItemName": "Orichalcum"
+    },
+    {
+      "ItemId": "1350017",
+      "ItemName": "Silver"
+    },
+    {
+      "ItemId": "1350018",
+      "ItemName": "Titanium"
+    },
+    {
+      "ItemId": "1504091",
+      "ItemName": "Toffee Bean"
+    },
+    {
+      "ItemId": "473724",
+      "ItemName": "Turquoise"
+    }
+  ]
+}

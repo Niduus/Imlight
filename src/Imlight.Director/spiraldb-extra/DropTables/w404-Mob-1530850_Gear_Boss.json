@@ -1,0 +1,93 @@
+{
+  "Name": "W404 Mob-1530850 Gear (Boss)",
+  "Description": "Wizard404's drop list of Old One Automaton's own drops: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1537634",
+      "ItemName": "Magician's Fire Deck"
+    },
+    {
+      "ItemId": "1537635",
+      "ItemName": "Magician's Ice Deck"
+    },
+    {
+      "ItemId": "1537636",
+      "ItemName": "Magician's Storm Deck"
+    },
+    {
+      "ItemId": "1537637",
+      "ItemName": "Magician's Myth Deck"
+    },
+    {
+      "ItemId": "1537638",
+      "ItemName": "Magician's Life Deck"
+    },
+    {
+      "ItemId": "1537639",
+      "ItemName": "Magician's Death Deck"
+    },
+    {
+      "ItemId": "1537640",
+      "ItemName": "Magician's Balance Deck"
+    },
+    {
+      "ItemId": "1537642",
+      "ItemName": "Malevolent Fire Deck"
+    },
+    {
+      "ItemId": "1537643",
+      "ItemName": "Malevolent Ice Deck"
+    },
+    {
+      "ItemId": "1537644",
+      "ItemName": "Malevolent Storm Deck"
+    },
+    {
+      "ItemId": "1537645",
+      "ItemName": "Malevolent Myth Deck"
+    },
+    {
+      "ItemId": "1537646",
+      "ItemName": "Malevolent Life Deck"
+    },
+    {
+      "ItemId": "1537647",
+      "ItemName": "Malevolent Death Deck"
+    },
+    {
+      "ItemId": "1537648",
+      "ItemName": "Malevolent Balance Deck"
+    },
+    {
+      "ItemId": "1537650",
+      "ItemName": "Merciless Fire Deck"
+    },
+    {
+      "ItemId": "1537651",
+      "ItemName": "Merciless Ice Deck"
+    },
+    {
+      "ItemId": "1537652",
+      "ItemName": "Merciless Storm Deck"
+    },
+    {
+      "ItemId": "1537653",
+      "ItemName": "Merciless Myth Deck"
+    },
+    {
+      "ItemId": "1537654",
+      "ItemName": "Merciless Life Deck"
+    },
+    {
+      "ItemId": "1537655",
+      "ItemName": "Merciless Death Deck"
+    },
+    {
+      "ItemId": "1537656",
+      "ItemName": "Merciless Balance Deck"
+    }
+  ]
+}

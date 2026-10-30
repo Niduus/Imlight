@@ -1,0 +1,53 @@
+{
+  "Name": "W404 Skey_Stone_Zafaria TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skey_Stone_Zafaria: the treasurecard drops (11), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Banshee TC",
+      "ItemName": "Banshee"
+    },
+    {
+      "ItemId": "Black Cat TC",
+      "ItemName": "Black Cat"
+    },
+    {
+      "ItemId": "Dark Pact TC",
+      "ItemName": "Dark Tribute"
+    },
+    {
+      "ItemId": "Dragonblade TC",
+      "ItemName": "Dragonblade"
+    },
+    {
+      "ItemId": "Dryad TC",
+      "ItemName": "Dryad"
+    },
+    {
+      "ItemId": "Fortify TC",
+      "ItemName": "Fortify"
+    },
+    {
+      "ItemId": "Imp TC",
+      "ItemName": "Imp"
+    },
+    {
+      "ItemId": "Minotaur TC",
+      "ItemName": "Minotaur"
+    },
+    {
+      "ItemId": "Sandstorm TC",
+      "ItemName": "Sandstorm"
+    },
+    {
+      "ItemId": "Snow Serpent TC",
+      "ItemName": "Snow Serpent"
+    },
+    {
+      "ItemId": "Tri Blade TC",
+      "ItemName": "Elemental Blade"
+    }
+  ]
+}

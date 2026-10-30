@@ -1,0 +1,45 @@
+{
+  "Name": "W404 DEC-LootTable-008 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table DEC-LootTable-008: the pet drops (9), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126826",
+      "ItemName": "Frostman"
+    },
+    {
+      "ItemId": "126827",
+      "ItemName": "Christmas Elf"
+    },
+    {
+      "ItemId": "346190",
+      "ItemName": "Yuletide Spirit"
+    },
+    {
+      "ItemId": "473680",
+      "ItemName": "Snowball"
+    },
+    {
+      "ItemId": "733225",
+      "ItemName": "Nutcracker"
+    },
+    {
+      "ItemId": "733226",
+      "ItemName": "Lump of Coal"
+    },
+    {
+      "ItemId": "1257144",
+      "ItemName": "Rescue Rover"
+    },
+    {
+      "ItemId": "1257301",
+      "ItemName": "Golden Goose"
+    },
+    {
+      "ItemId": "1317712",
+      "ItemName": "Maple Moose"
+    }
+  ]
+}

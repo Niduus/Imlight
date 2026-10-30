@@ -1,0 +1,21 @@
+{
+  "Name": "W404 SKB_WY_DarkBramble_A_100 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_WY_DarkBramble_A_100: the jewel drops (3), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1352859",
+      "ItemName": "Polished Critical Amethyst +12"
+    },
+    {
+      "ItemId": "1352742",
+      "ItemName": "Polished Damage Citrine +22"
+    },
+    {
+      "ItemId": "1352598",
+      "ItemName": "Polished Damage Ruby +22"
+    }
+  ]
+}

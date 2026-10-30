@@ -1,0 +1,17 @@
+{
+  "Name": "W404 WC-OT-Drains-Mob-01 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table WC-OT-Drains-Mob-01: the housing drops (2), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160348",
+      "ItemName": "Prop House 2"
+    },
+    {
+      "ItemId": "160349",
+      "ItemName": "Prop Mountains 1"
+    }
+  ]
+}

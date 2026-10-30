@@ -1,0 +1,61 @@
+{
+  "Name": "W404 Skey_Gold_Aggrobah Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skey_Gold_Aggrobah: the housing drops (13), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    },
+    {
+      "ItemId": "1350308",
+      "ItemName": "Novice's Socket Wrench"
+    },
+    {
+      "ItemId": "1350309",
+      "ItemName": "Adept's Socket Wrench"
+    },
+    {
+      "ItemId": "1350310",
+      "ItemName": "Expert's Socket Wrench"
+    },
+    {
+      "ItemId": "1392441",
+      "ItemName": "Cactus Pods"
+    },
+    {
+      "ItemId": "1392442",
+      "ItemName": "Red Basket"
+    },
+    {
+      "ItemId": "1392443",
+      "ItemName": "Green Basket"
+    },
+    {
+      "ItemId": "1392444",
+      "ItemName": "Folded Blankets"
+    },
+    {
+      "ItemId": "1392446",
+      "ItemName": "Wicker Box"
+    },
+    {
+      "ItemId": "1392449",
+      "ItemName": "Lined Cabinet"
+    },
+    {
+      "ItemId": "1392450",
+      "ItemName": "Dusty Rug"
+    },
+    {
+      "ItemId": "1392451",
+      "ItemName": "Wicker Chair"
+    }
+  ]
+}

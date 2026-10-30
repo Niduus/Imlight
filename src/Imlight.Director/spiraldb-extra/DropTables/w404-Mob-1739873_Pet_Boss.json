@@ -1,0 +1,17 @@
+{
+  "Name": "W404 Mob-1739873 Pet (Boss)",
+  "Description": "Wizard404's drop list of The Monster (Advanced)'s own drops: the pet drops (2), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1719495",
+      "ItemName": "Storm Potbelly"
+    },
+    {
+      "ItemId": "1719497",
+      "ItemName": "Death Potbelly"
+    }
+  ]
+}

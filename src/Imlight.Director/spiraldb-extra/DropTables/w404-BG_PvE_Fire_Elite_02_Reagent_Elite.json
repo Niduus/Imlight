@@ -1,0 +1,17 @@
+{
+  "Name": "W404 BG_PvE_Fire_Elite_02 Reagent (Elite)",
+  "Description": "Wizard404's drop list of the game's table BG_PvE_Fire_Elite_02: the reagent drops (2), one picked when it rolls. How often: DropOdds.json Elite/Reagent.",
+  "Odds": "Elite/Reagent",
+  "RollChance": 0.35,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1441808",
+      "ItemName": "Fire Rune"
+    },
+    {
+      "ItemId": "1441809",
+      "ItemName": "Enhanced Fire Rune"
+    }
+  ]
+}

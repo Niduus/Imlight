@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Mob-1336064 Gear (Elite)",
+  "Description": "Wizard404's drop list of Pit Viper's own drops: the gear drops (1), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1338451",
+      "ItemName": "Sands of Zigazag Cards"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "Name": "W404 Spider-PW-Gauntlet-Boss Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Spider-PW-Gauntlet-Boss: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243199",
+      "ItemName": "Spectral Choker"
+    },
+    {
+      "ItemId": "243205",
+      "ItemName": "Jewel of the Feint"
+    },
+    {
+      "ItemId": "243209",
+      "ItemName": "Edge of Equality"
+    },
+    {
+      "ItemId": "243266",
+      "ItemName": "Edge of Essence"
+    },
+    {
+      "ItemId": "243393",
+      "ItemName": "Cowl of Creation"
+    },
+    {
+      "ItemId": "243441",
+      "ItemName": "Maelstrom Mask"
+    },
+    {
+      "ItemId": "243514",
+      "ItemName": "Eye of Insight"
+    },
+    {
+      "ItemId": "243521",
+      "ItemName": "Forsaken Signet"
+    },
+    {
+      "ItemId": "243609",
+      "ItemName": "Wretched Jerkin"
+    },
+    {
+      "ItemId": "243688",
+      "ItemName": "Arcane Outfit"
+    },
+    {
+      "ItemId": "243745",
+      "ItemName": "Vile Boots"
+    },
+    {
+      "ItemId": "243791",
+      "ItemName": "Frost Giant's Footguards"
+    }
+  ]
+}

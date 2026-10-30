@@ -1,0 +1,89 @@
+{
+  "Name": "W404 MB-Cat-Meowiarty-MBBoss-L61 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Meowiarty-MBBoss-L61: the gear drops (20), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "5047",
+      "ItemName": "Meowiarty's Fyery Necklace"
+    },
+    {
+      "ItemId": "5052",
+      "ItemName": "Meowiarty's Satyrical Choker"
+    },
+    {
+      "ItemId": "38993",
+      "ItemName": "Meowiarty's Helm"
+    },
+    {
+      "ItemId": "39003",
+      "ItemName": "Meowiarty's Phobic Cowl"
+    },
+    {
+      "ItemId": "39052",
+      "ItemName": "Meowiarty's Brilliant Ring"
+    },
+    {
+      "ItemId": "39066",
+      "ItemName": "Meowiarty's Clever Ring"
+    },
+    {
+      "ItemId": "77141",
+      "ItemName": "Meowiarty's Robe of Ice"
+    },
+    {
+      "ItemId": "77149",
+      "ItemName": "Meowiarty's Cloak"
+    },
+    {
+      "ItemId": "77218",
+      "ItemName": "Meowiarty's Polished Shoes"
+    },
+    {
+      "ItemId": "97080",
+      "ItemName": "Meowiarty's Biting Dagger"
+    },
+    {
+      "ItemId": "97135",
+      "ItemName": "Meowiarty's Icy Cap"
+    },
+    {
+      "ItemId": "97152",
+      "ItemName": "Meowiarty's Intense Helm"
+    },
+    {
+      "ItemId": "97202",
+      "ItemName": "Meowiarty's Shrouded Hat"
+    },
+    {
+      "ItemId": "97251",
+      "ItemName": "Meowiarty's Intense Robe"
+    },
+    {
+      "ItemId": "97285",
+      "ItemName": "Meowiarty's Tunic"
+    },
+    {
+      "ItemId": "97350",
+      "ItemName": "Meowiarty's Refined Slippers"
+    },
+    {
+      "ItemId": "97380",
+      "ItemName": "Meowiarty's Sandals"
+    },
+    {
+      "ItemId": "126152",
+      "ItemName": "Band of Ice"
+    },
+    {
+      "ItemId": "161043",
+      "ItemName": "Spectral Cowl"
+    },
+    {
+      "ItemId": "164073",
+      "ItemName": "Vestment of Assistance"
+    }
+  ]
+}

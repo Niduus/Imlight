@@ -1,0 +1,13 @@
+{
+  "Name": "W404 HO-13-FlyTrap-LT Seed (Normal)",
+  "Description": "Wizard404's drop list of the game's table HO-13-FlyTrap-LT: the seed drops (1), one picked when it rolls. How often: DropOdds.json Normal/Seed.",
+  "Odds": "Normal/Seed",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355073",
+      "ItemName": "Venus Fly Trap"
+    }
+  ]
+}

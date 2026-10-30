@@ -1,0 +1,241 @@
+{
+  "Name": "W404 KR-BossEpic-Morganthe Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossEpic-Morganthe: the gear drops (58), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203151",
+      "ItemName": "Charred Mantle of the Burn"
+    },
+    {
+      "ItemId": "1203152",
+      "ItemName": "Mantis Helm of Cold Truth"
+    },
+    {
+      "ItemId": "1203153",
+      "ItemName": "Burrower Crown of Thunder"
+    },
+    {
+      "ItemId": "1203154",
+      "ItemName": "Digger Drone Helm of Duty"
+    },
+    {
+      "ItemId": "1203155",
+      "ItemName": "Mantis Cover of Readiness"
+    },
+    {
+      "ItemId": "1203156",
+      "ItemName": "Fallen Knight Death Mask"
+    },
+    {
+      "ItemId": "1203157",
+      "ItemName": "Gorge Digger's Sturdy Helm"
+    },
+    {
+      "ItemId": "1203158",
+      "ItemName": "Huntress' MirrorMask"
+    },
+    {
+      "ItemId": "1203188",
+      "ItemName": "Ring of the Dying Star"
+    },
+    {
+      "ItemId": "1203222",
+      "ItemName": "Digger's Brimstone Plate"
+    },
+    {
+      "ItemId": "1203228",
+      "ItemName": "Scorched Armor of the Burn"
+    },
+    {
+      "ItemId": "1203229",
+      "ItemName": "Armor of the QuietBlade"
+    },
+    {
+      "ItemId": "1203230",
+      "ItemName": "Burrower Robe of Ingenuity"
+    },
+    {
+      "ItemId": "1203231",
+      "ItemName": "Aged Hundred Legger Armor"
+    },
+    {
+      "ItemId": "1203232",
+      "ItemName": "Leaf Shield Armor of Vigor"
+    },
+    {
+      "ItemId": "1203233",
+      "ItemName": "Mouse Vestment of Mourning"
+    },
+    {
+      "ItemId": "1203234",
+      "ItemName": "Digger's Mail of Symmetry"
+    },
+    {
+      "ItemId": "1203235",
+      "ItemName": "Armor of the BurrowBreaker"
+    },
+    {
+      "ItemId": "1203236",
+      "ItemName": "Lost Mouse King's Raiment"
+    },
+    {
+      "ItemId": "1203268",
+      "ItemName": "Kermes Fire Walkers"
+    },
+    {
+      "ItemId": "1203269",
+      "ItemName": "Boots of the QuietBlade"
+    },
+    {
+      "ItemId": "1203270",
+      "ItemName": "Mouse Shoes of Ingenuity"
+    },
+    {
+      "ItemId": "1203271",
+      "ItemName": "Aged Hundred Legger Boots"
+    },
+    {
+      "ItemId": "1203272",
+      "ItemName": "Leaf Shield Clogs of Vigor"
+    },
+    {
+      "ItemId": "1203273",
+      "ItemName": "Mouse Boots of Mourning"
+    },
+    {
+      "ItemId": "1203274",
+      "ItemName": "Digger's Boots of Symmetry"
+    },
+    {
+      "ItemId": "1203275",
+      "ItemName": "Boots of the BurrowBreaker"
+    },
+    {
+      "ItemId": "1203276",
+      "ItemName": "Mouse Boots of Rebellion"
+    },
+    {
+      "ItemId": "1203392",
+      "ItemName": "Brood Mother's Regal Blade"
+    },
+    {
+      "ItemId": "1203513",
+      "ItemName": "Archangel's Vestment"
+    },
+    {
+      "ItemId": "1203653",
+      "ItemName": "Deck of Shadow Lightning"
+    },
+    {
+      "ItemId": "1203657",
+      "ItemName": "Deck of Shadow Prophecy"
+    },
+    {
+      "ItemId": "1203697",
+      "ItemName": "Crystal Staff of Mirages"
+    },
+    {
+      "ItemId": "1358864",
+      "ItemName": "Deck of Shadow Lightning"
+    },
+    {
+      "ItemId": "1358868",
+      "ItemName": "Deck of Shadow Prophecy"
+    },
+    {
+      "ItemId": "1358878",
+      "ItemName": "Deck of Shadow Lightning"
+    },
+    {
+      "ItemId": "1358882",
+      "ItemName": "Deck of Shadow Prophecy"
+    },
+    {
+      "ItemId": "1557011",
+      "ItemName": "Edge of the Shadow Web"
+    },
+    {
+      "ItemId": "1557012",
+      "ItemName": "Shadow Spider's Sting"
+    },
+    {
+      "ItemId": "1557015",
+      "ItemName": "Blade of the Shadow Palace"
+    },
+    {
+      "ItemId": "1557014",
+      "ItemName": "Morganthe's Bite"
+    },
+    {
+      "ItemId": "1557013",
+      "ItemName": "The Dark Woman's Dagger"
+    },
+    {
+      "ItemId": "1557010",
+      "ItemName": "Mercy of Shadow and Light"
+    },
+    {
+      "ItemId": "1557009",
+      "ItemName": "Athame of the Chosen One"
+    },
+    {
+      "ItemId": "1557018",
+      "ItemName": "Morganthe's Dark Charm"
+    },
+    {
+      "ItemId": "1557019",
+      "ItemName": "Gem of the Grand Prophecy"
+    },
+    {
+      "ItemId": "1557022",
+      "ItemName": "Lady of Spiders' Lure"
+    },
+    {
+      "ItemId": "1557021",
+      "ItemName": "Relic of the Shadow Palace"
+    },
+    {
+      "ItemId": "1557020",
+      "ItemName": "Jewel of the Shadow Web"
+    },
+    {
+      "ItemId": "1557017",
+      "ItemName": "Shadow Queen's Grace"
+    },
+    {
+      "ItemId": "1557016",
+      "ItemName": "Morganthe's Shadow of Amber"
+    },
+    {
+      "ItemId": "1557029",
+      "ItemName": "Band of the Shadow Web"
+    },
+    {
+      "ItemId": "1557026",
+      "ItemName": "Geometry of Shadows"
+    },
+    {
+      "ItemId": "1557024",
+      "ItemName": "Insignia of the Dark Woman"
+    },
+    {
+      "ItemId": "1557027",
+      "ItemName": "Lady of Spiders' Royal Ring"
+    },
+    {
+      "ItemId": "1557023",
+      "ItemName": "Loop of the Umbra Legion"
+    },
+    {
+      "ItemId": "1557025",
+      "ItemName": "Seal of the Shadow Palace"
+    },
+    {
+      "ItemId": "1557028",
+      "ItemName": "Signet of the Shadow Queen"
+    }
+  ]
+}

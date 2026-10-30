@@ -1,0 +1,17 @@
+{
+  "Name": "W404 Level-12-TriUW Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table Level-12-TriUW: the housing drops (2), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160347",
+      "ItemName": "Prop House 1"
+    },
+    {
+      "ItemId": "160361",
+      "ItemName": "Dark Stone Tower"
+    }
+  ]
+}

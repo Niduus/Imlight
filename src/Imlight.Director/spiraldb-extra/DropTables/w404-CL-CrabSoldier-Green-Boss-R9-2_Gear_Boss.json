@@ -1,0 +1,49 @@
+{
+  "Name": "W404 CL-CrabSoldier-Green-Boss-R9-2 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-CrabSoldier-Green-Boss-R9-2: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243218",
+      "ItemName": "Volcanic Edge"
+    },
+    {
+      "ItemId": "243245",
+      "ItemName": "Majestic Dagger"
+    },
+    {
+      "ItemId": "243332",
+      "ItemName": "Consuming Cover"
+    },
+    {
+      "ItemId": "243431",
+      "ItemName": "Rising Tide Topper"
+    },
+    {
+      "ItemId": "243558",
+      "ItemName": "Striking Celestian Signet"
+    },
+    {
+      "ItemId": "243577",
+      "ItemName": "Ring of Fallacy"
+    },
+    {
+      "ItemId": "243639",
+      "ItemName": "Frostbit Jerkin"
+    },
+    {
+      "ItemId": "243701",
+      "ItemName": "Rising Tide Raiment"
+    },
+    {
+      "ItemId": "243741",
+      "ItemName": "Shadow Striders"
+    },
+    {
+      "ItemId": "243827",
+      "ItemName": "Star Wisher's Boots"
+    }
+  ]
+}

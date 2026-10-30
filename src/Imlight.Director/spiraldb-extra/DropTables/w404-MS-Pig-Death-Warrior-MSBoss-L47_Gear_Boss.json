@@ -1,0 +1,97 @@
+{
+  "Name": "W404 MS-Pig-Death-Warrior-MSBoss-L47 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-Death-Warrior-MSBoss-L47: the gear drops (22), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97471",
+      "ItemName": "Athame of Attention"
+    },
+    {
+      "ItemId": "97474",
+      "ItemName": "Dirk of Sandcastles"
+    },
+    {
+      "ItemId": "97483",
+      "ItemName": "Jikiru's Shortblade of Images"
+    },
+    {
+      "ItemId": "97512",
+      "ItemName": "Jikiru's Hypothetical Deck"
+    },
+    {
+      "ItemId": "97570",
+      "ItemName": "Gallant Shroud"
+    },
+    {
+      "ItemId": "97592",
+      "ItemName": "Hat of Enthusiasm"
+    },
+    {
+      "ItemId": "97611",
+      "ItemName": "Jikiru's Mask of Misfortune"
+    },
+    {
+      "ItemId": "97618",
+      "ItemName": "Concordant Headwraps"
+    },
+    {
+      "ItemId": "97640",
+      "ItemName": "Hat of the Nimble"
+    },
+    {
+      "ItemId": "97666",
+      "ItemName": "Zippy Shroud"
+    },
+    {
+      "ItemId": "97703",
+      "ItemName": "Discerning Ring"
+    },
+    {
+      "ItemId": "97720",
+      "ItemName": "Jikiru's Band of Cognition"
+    },
+    {
+      "ItemId": "97847",
+      "ItemName": "Jikiru's Tunic of Unison"
+    },
+    {
+      "ItemId": "97948",
+      "ItemName": "Boots of Cooperation"
+    },
+    {
+      "ItemId": "97971",
+      "ItemName": "Sandals of Exertion"
+    },
+    {
+      "ItemId": "97998",
+      "ItemName": "Footwraps of Chants"
+    },
+    {
+      "ItemId": "98021",
+      "ItemName": "Footwraps of Anthems"
+    },
+    {
+      "ItemId": "98043",
+      "ItemName": "Jikiru's Slippers of Frailty"
+    },
+    {
+      "ItemId": "98049",
+      "ItemName": "Sandals of the Quick-Witted"
+    },
+    {
+      "ItemId": "98061",
+      "ItemName": "Entranced Slippers"
+    },
+    {
+      "ItemId": "98064",
+      "ItemName": "Sandals of Soul-Searching"
+    },
+    {
+      "ItemId": "98066",
+      "ItemName": "Footwraps of Sandcastles"
+    }
+  ]
+}

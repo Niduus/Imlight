@@ -1,0 +1,77 @@
+{
+  "Name": "W404 EM2-MiniBoss-Gear-2-130 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM2-MiniBoss-Gear-2-130: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462196",
+      "ItemName": "Blazing Zanadu Helm"
+    },
+    {
+      "ItemId": "1462197",
+      "ItemName": "Freezing Zanadu Helm"
+    },
+    {
+      "ItemId": "1462198",
+      "ItemName": "Crackling Zanadu Helm"
+    },
+    {
+      "ItemId": "1462199",
+      "ItemName": "Illuminated Zanadu Helm"
+    },
+    {
+      "ItemId": "1462200",
+      "ItemName": "Verdant Zanadu Helm"
+    },
+    {
+      "ItemId": "1462201",
+      "ItemName": "Grim Zanadu Helm"
+    },
+    {
+      "ItemId": "1462202",
+      "ItemName": "Immutable Zanadu Helm"
+    },
+    {
+      "ItemId": "1462203",
+      "ItemName": "Hopeful Zanadu Helm"
+    },
+    {
+      "ItemId": "1462211",
+      "ItemName": "Hopeful Zanadu Armor"
+    },
+    {
+      "ItemId": "1462212",
+      "ItemName": "Blazing Zanadu Boots"
+    },
+    {
+      "ItemId": "1462213",
+      "ItemName": "Freezing Zanadu Boots"
+    },
+    {
+      "ItemId": "1462214",
+      "ItemName": "Crackling Zanadu Boots"
+    },
+    {
+      "ItemId": "1462215",
+      "ItemName": "Illuminated Zanadu Boots"
+    },
+    {
+      "ItemId": "1462216",
+      "ItemName": "Verdant Zanadu Boots"
+    },
+    {
+      "ItemId": "1462217",
+      "ItemName": "Grim Zanadu Boots"
+    },
+    {
+      "ItemId": "1462218",
+      "ItemName": "Immutable Zanadu Boots"
+    },
+    {
+      "ItemId": "1462219",
+      "ItemName": "Hopeful Zanadu Boots"
+    }
+  ]
+}

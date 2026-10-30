@@ -1,0 +1,53 @@
+{
+  "Name": "W404 AZ-Boss-PetSnacks-03 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-Boss-PetSnacks-03: the snack drops (11), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "733116",
+      "ItemName": "Cacao Beans"
+    },
+    {
+      "ItemId": "733117",
+      "ItemName": "Tenochti-flan"
+    },
+    {
+      "ItemId": "733119",
+      "ItemName": "Fried Ice Cream"
+    },
+    {
+      "ItemId": "733125",
+      "ItemName": "Cactus Fruit"
+    },
+    {
+      "ItemId": "733126",
+      "ItemName": "Allocados"
+    },
+    {
+      "ItemId": "733131",
+      "ItemName": "Bedrock Bonbons"
+    },
+    {
+      "ItemId": "733132",
+      "ItemName": "Saber-tooth Cider"
+    },
+    {
+      "ItemId": "733135",
+      "ItemName": "Saursa"
+    },
+    {
+      "ItemId": "733136",
+      "ItemName": "Tortilla Chips"
+    },
+    {
+      "ItemId": "733137",
+      "ItemName": "Quetzal Pretzel"
+    },
+    {
+      "ItemId": "733139",
+      "ItemName": "Zocalo Wings"
+    }
+  ]
+}

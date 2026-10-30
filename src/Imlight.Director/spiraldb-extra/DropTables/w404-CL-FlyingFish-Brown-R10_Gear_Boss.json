@@ -1,0 +1,49 @@
+{
+  "Name": "W404 CL-FlyingFish-Brown-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-FlyingFish-Brown-R10: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243215",
+      "ItemName": "Edge of Shadows"
+    },
+    {
+      "ItemId": "243244",
+      "ItemName": "Dirk of Discovery"
+    },
+    {
+      "ItemId": "243375",
+      "ItemName": "Mask of Cold Intent"
+    },
+    {
+      "ItemId": "243415",
+      "ItemName": "Helmet of the Hero"
+    },
+    {
+      "ItemId": "243456",
+      "ItemName": "Attuned Uniform"
+    },
+    {
+      "ItemId": "243527",
+      "ItemName": "Tobiko's Scorched Signet"
+    },
+    {
+      "ItemId": "243581",
+      "ItemName": "Loop of Illusions"
+    },
+    {
+      "ItemId": "243662",
+      "ItemName": "Life Armor"
+    },
+    {
+      "ItemId": "243744",
+      "ItemName": "Wretched Runners"
+    },
+    {
+      "ItemId": "243796",
+      "ItemName": "Diamond Dust Runners"
+    }
+  ]
+}

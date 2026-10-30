@@ -1,0 +1,9 @@
+{
+  "Name": "W404 PL-Boss-Gear-110",
+  "Description": "Gold of the game's table PL-Boss-Gear-110, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 1125,
+  "MaxGold": 2250,
+  "EachItem": false,
+  "Items": []
+}

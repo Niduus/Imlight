@@ -1,0 +1,41 @@
+{
+  "Name": "W404 EM-Mob-Athame-120 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table EM-Mob-Athame-120: the gear drops (8), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1430488",
+      "ItemName": "Interstellar Engineer's Knife"
+    },
+    {
+      "ItemId": "1430489",
+      "ItemName": "Interstellar Explorer's Knife"
+    },
+    {
+      "ItemId": "1430490",
+      "ItemName": "Interstellar Navigator's Knife"
+    },
+    {
+      "ItemId": "1430491",
+      "ItemName": "Interstellar Hero's Knife"
+    },
+    {
+      "ItemId": "1430492",
+      "ItemName": "Interstellar Medic's Scalpel"
+    },
+    {
+      "ItemId": "1430493",
+      "ItemName": "Interstellar Warrior's Knife"
+    },
+    {
+      "ItemId": "1430494",
+      "ItemName": "Interstellar Delegate's Knife"
+    },
+    {
+      "ItemId": "1430495",
+      "ItemName": "Interstellar Officer's Knife"
+    }
+  ]
+}

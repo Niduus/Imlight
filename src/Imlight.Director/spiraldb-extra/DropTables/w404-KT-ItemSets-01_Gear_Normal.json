@@ -1,0 +1,41 @@
+{
+  "Name": "W404 KT-ItemSets-01 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table KT-ItemSets-01: the gear drops (8), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1502443",
+      "ItemName": "Krokotopian Fire Striders"
+    },
+    {
+      "ItemId": "1502444",
+      "ItemName": "Krokotopian Ice Striders"
+    },
+    {
+      "ItemId": "1502445",
+      "ItemName": "Krokotopian Storm Striders"
+    },
+    {
+      "ItemId": "1502446",
+      "ItemName": "Krokotopian Myth Striders"
+    },
+    {
+      "ItemId": "1502447",
+      "ItemName": "Krokotopian Life Striders"
+    },
+    {
+      "ItemId": "1502448",
+      "ItemName": "Krokotopian Death Striders"
+    },
+    {
+      "ItemId": "1502449",
+      "ItemName": "Krokotopian Balance Striders"
+    },
+    {
+      "ItemId": "1502450",
+      "ItemName": "Krokotopian Striders"
+    }
+  ]
+}

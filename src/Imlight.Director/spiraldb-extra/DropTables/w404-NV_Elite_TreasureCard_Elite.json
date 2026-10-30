@@ -1,0 +1,105 @@
+{
+  "Name": "W404 NV_Elite TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table NV_Elite: the treasurecard drops (24), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Power Play TC",
+      "ItemName": "Power Play"
+    },
+    {
+      "ItemId": "Ice Prism TC",
+      "ItemName": "Ice Prism"
+    },
+    {
+      "ItemId": "Combustion TC",
+      "ItemName": "Combustion"
+    },
+    {
+      "ItemId": "Deathspear TC",
+      "ItemName": "Deathspear"
+    },
+    {
+      "ItemId": "Myth Prism TC",
+      "ItemName": "Myth Prism"
+    },
+    {
+      "ItemId": "Blood Moon TC",
+      "ItemName": "Time of Legend"
+    },
+    {
+      "ItemId": "Balefrost TC",
+      "ItemName": "Balefrost"
+    },
+    {
+      "ItemId": "Darkwind TC",
+      "ItemName": "Darkwind"
+    },
+    {
+      "ItemId": "Tri Trap TC",
+      "ItemName": "Elemental Trap"
+    },
+    {
+      "ItemId": "Firespear TC",
+      "ItemName": "Firespear"
+    },
+    {
+      "ItemId": "Icespear TC",
+      "ItemName": "Icespear"
+    },
+    {
+      "ItemId": "Life Prism TC",
+      "ItemName": "Life Prism"
+    },
+    {
+      "ItemId": "Mythspear TC",
+      "ItemName": "Mythspear"
+    },
+    {
+      "ItemId": "Storm Prism TC",
+      "ItemName": "Storm Prism"
+    },
+    {
+      "ItemId": "Storm Shield TC",
+      "ItemName": "Storm Shield"
+    },
+    {
+      "ItemId": "Stormspear TC",
+      "ItemName": "Stormspear"
+    },
+    {
+      "ItemId": "Brilliant Light TC",
+      "ItemName": "Brilliant Light"
+    },
+    {
+      "ItemId": "Death Prism TC",
+      "ItemName": "Death Prism"
+    },
+    {
+      "ItemId": "Gargantuan TC",
+      "ItemName": "Gargantuan"
+    },
+    {
+      "ItemId": "Lifespear TC",
+      "ItemName": "Lifespear"
+    },
+    {
+      "ItemId": "Fire Prism TC",
+      "ItemName": "Fire Prism"
+    },
+    {
+      "ItemId": "Doom and Gloom TC",
+      "ItemName": "Doom and Gloom"
+    },
+    {
+      "ItemId": "Death Trap TC",
+      "ItemName": "Death Trap"
+    },
+    {
+      "ItemId": "Tri Blade TC",
+      "ItemName": "Elemental Blade"
+    }
+  ]
+}

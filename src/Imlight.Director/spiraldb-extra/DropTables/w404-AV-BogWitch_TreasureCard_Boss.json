@@ -1,0 +1,13 @@
+{
+  "Name": "W404 AV-BogWitch TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table AV-BogWitch: the treasurecard drops (1), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Brimstone Revenant TC",
+      "ItemName": "Brimstone Revenant"
+    }
+  ]
+}

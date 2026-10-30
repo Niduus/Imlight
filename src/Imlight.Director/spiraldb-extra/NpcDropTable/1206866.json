@@ -1,0 +1,19 @@
+{
+  "TemplateID": 1206866,
+  "DropTableNames": [
+    "W404 ReagentLT-Drop-Ectoplasm-01 Reagent (Boss)",
+    "W404 ME1_Clockwork_Marine_B",
+    "W404 ME1_Clockwork_Marine_B Gear (Boss)",
+    "W404 ME1_Clockwork_Marine_B Pet (Boss)",
+    "W404 ME1_Clockwork_Marine_B Mount (Boss)",
+    "W404 ME1_Clockwork_Marine_B TreasureCard (Boss)",
+    "W404 ME1_Clockwork_Marine_B Reagent (Boss)",
+    "W404 ME1_Clockwork_Marine_B Seed (Boss)",
+    "W404 ME1_Clockwork_Marine_B Housing (Boss)",
+    "W404 TC-CL-RaresBosses TreasureCard",
+    "W404 TC-GH2-Utility-Storm TreasureCard (Boss)",
+    "W404 TC-ClockworkSpider TreasureCard (Boss)",
+    "W404 ZF-AQ2-MiniBoss-Jewels Jewel (Boss)",
+    "W404 ZF-AQ2-MiniBoss-Jewels Reagent (Boss)"
+  ]
+}

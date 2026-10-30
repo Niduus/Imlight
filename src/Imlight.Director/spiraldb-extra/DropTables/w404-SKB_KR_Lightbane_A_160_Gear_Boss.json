@@ -1,0 +1,237 @@
+{
+  "Name": "W404 SKB_KR_Lightbane_A_160 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_KR_Lightbane_A_160: the gear drops (57), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1535191",
+      "ItemName": "Aquilan Charioteer Lance"
+    },
+    {
+      "ItemId": "1614643",
+      "ItemName": "Burrower's Sorcery Hood"
+    },
+    {
+      "ItemId": "1614644",
+      "ItemName": "Burrower's Necromancy Hood"
+    },
+    {
+      "ItemId": "1614645",
+      "ItemName": "Burrower's Pyromancy Hood"
+    },
+    {
+      "ItemId": "1614646",
+      "ItemName": "Burrower's Thaumaturgy Hood"
+    },
+    {
+      "ItemId": "1614647",
+      "ItemName": "Burrower's Theurgy Hood"
+    },
+    {
+      "ItemId": "1614648",
+      "ItemName": "Burrower's Conjuration Hood"
+    },
+    {
+      "ItemId": "1614649",
+      "ItemName": "Burrower's Divination Hood"
+    },
+    {
+      "ItemId": "1614650",
+      "ItemName": "Burrower's Sorcery Robe"
+    },
+    {
+      "ItemId": "1614651",
+      "ItemName": "Burrower's Necromancy Robe"
+    },
+    {
+      "ItemId": "1614652",
+      "ItemName": "Burrower's Pyromancy Robe"
+    },
+    {
+      "ItemId": "1614653",
+      "ItemName": "Burrower's Thaumaturgy Robe"
+    },
+    {
+      "ItemId": "1614654",
+      "ItemName": "Burrower's Theurgy Robe"
+    },
+    {
+      "ItemId": "1614655",
+      "ItemName": "Burrower's Conjuration Robe"
+    },
+    {
+      "ItemId": "1614656",
+      "ItemName": "Burrower's Divination Robe"
+    },
+    {
+      "ItemId": "1614657",
+      "ItemName": "Burrower's Sorcery Boots"
+    },
+    {
+      "ItemId": "1614658",
+      "ItemName": "Burrower's Necromancy Boots"
+    },
+    {
+      "ItemId": "1614659",
+      "ItemName": "Burrower's Pyromancy Boots"
+    },
+    {
+      "ItemId": "1614660",
+      "ItemName": "Burrower's Thaumaturgy Boots"
+    },
+    {
+      "ItemId": "1614661",
+      "ItemName": "Burrower's Theurgy Boots"
+    },
+    {
+      "ItemId": "1614662",
+      "ItemName": "Burrower's Conjuration Boots"
+    },
+    {
+      "ItemId": "1614663",
+      "ItemName": "Burrower's Divination Boots"
+    },
+    {
+      "ItemId": "1614776",
+      "ItemName": "Burrower's Sorcery Athame"
+    },
+    {
+      "ItemId": "1614777",
+      "ItemName": "Burrower's Necromancy Athame"
+    },
+    {
+      "ItemId": "1614778",
+      "ItemName": "Burrower's Pyromancy Athame"
+    },
+    {
+      "ItemId": "1614779",
+      "ItemName": "Burrower's Thaumaturgy Athame"
+    },
+    {
+      "ItemId": "1614780",
+      "ItemName": "Burrower's Theurgy Athame"
+    },
+    {
+      "ItemId": "1614781",
+      "ItemName": "Burrower's Conjuration Athame"
+    },
+    {
+      "ItemId": "1614782",
+      "ItemName": "Burrower's Divination Athame"
+    },
+    {
+      "ItemId": "1614895",
+      "ItemName": "Burrower's Sorcery Ring"
+    },
+    {
+      "ItemId": "1614896",
+      "ItemName": "Burrower's Necromancy Ring"
+    },
+    {
+      "ItemId": "1614897",
+      "ItemName": "Burrower's Pyromancy Ring"
+    },
+    {
+      "ItemId": "1614898",
+      "ItemName": "Burrower's Thaumaturgy Ring"
+    },
+    {
+      "ItemId": "1614899",
+      "ItemName": "Burrower's Theurgy Ring"
+    },
+    {
+      "ItemId": "1614900",
+      "ItemName": "Burrower's Conjuration Ring"
+    },
+    {
+      "ItemId": "1614901",
+      "ItemName": "Burrower's Divination Ring"
+    },
+    {
+      "ItemId": "1617014",
+      "ItemName": "Sorcerer's Mystic Sphere"
+    },
+    {
+      "ItemId": "1617015",
+      "ItemName": "Necromancer's Mystic Sphere"
+    },
+    {
+      "ItemId": "1617016",
+      "ItemName": "Pyromancer's Mystic Sphere"
+    },
+    {
+      "ItemId": "1617017",
+      "ItemName": "Thaumaturge's Mystic Sphere"
+    },
+    {
+      "ItemId": "1617018",
+      "ItemName": "Theurgist's Mystic Sphere"
+    },
+    {
+      "ItemId": "1617019",
+      "ItemName": "Conjuror's Mystic Sphere"
+    },
+    {
+      "ItemId": "1617020",
+      "ItemName": "Diviner's Mystic Sphere"
+    },
+    {
+      "ItemId": "1617133",
+      "ItemName": "Burrower's Sorcery Amulet"
+    },
+    {
+      "ItemId": "1617134",
+      "ItemName": "Burrower's Necromancy Amulet"
+    },
+    {
+      "ItemId": "1617135",
+      "ItemName": "Burrower's Pyromancy Amulet"
+    },
+    {
+      "ItemId": "1617136",
+      "ItemName": "Burrower's Thaumaturgy Amulet"
+    },
+    {
+      "ItemId": "1617137",
+      "ItemName": "Burrower's Theurgy Amulet"
+    },
+    {
+      "ItemId": "1617138",
+      "ItemName": "Burrower's Conjuration Amulet"
+    },
+    {
+      "ItemId": "1617139",
+      "ItemName": "Burrower's Divination Amulet"
+    },
+    {
+      "ItemId": "1617252",
+      "ItemName": "Burrower's Sorcery Deck"
+    },
+    {
+      "ItemId": "1617253",
+      "ItemName": "Burrower's Necromancy Deck"
+    },
+    {
+      "ItemId": "1617254",
+      "ItemName": "Burrower's Pyromancy Deck"
+    },
+    {
+      "ItemId": "1617255",
+      "ItemName": "Burrower's Thaumaturgy Deck"
+    },
+    {
+      "ItemId": "1617256",
+      "ItemName": "Burrower's Theurgy Deck"
+    },
+    {
+      "ItemId": "1617257",
+      "ItemName": "Burrower's Conjuration Deck"
+    },
+    {
+      "ItemId": "1617258",
+      "ItemName": "Burrower's Divination Deck"
+    }
+  ]
+}

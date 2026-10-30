@@ -1,0 +1,9 @@
+{
+  "Name": "W404 ME1_Messenger_A",
+  "Description": "Gold of the game's table ME1_Messenger_A, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 30,
+  "MaxGold": 70,
+  "EachItem": false,
+  "Items": []
+}

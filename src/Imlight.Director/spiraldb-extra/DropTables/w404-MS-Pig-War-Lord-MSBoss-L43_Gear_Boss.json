@@ -1,0 +1,97 @@
+{
+  "Name": "W404 MS-Pig-War-Lord-MSBoss-L43 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-War-Lord-MSBoss-L43: the gear drops (22), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97447",
+      "ItemName": "Katsumori's Blade"
+    },
+    {
+      "ItemId": "97470",
+      "ItemName": "Knife of Preoccupation"
+    },
+    {
+      "ItemId": "97473",
+      "ItemName": "Dagger of Detachment"
+    },
+    {
+      "ItemId": "97503",
+      "ItemName": "Katsumori's Deck"
+    },
+    {
+      "ItemId": "97587",
+      "ItemName": "Cowl of Humor"
+    },
+    {
+      "ItemId": "97593",
+      "ItemName": "Katsumori's Effortless Helm"
+    },
+    {
+      "ItemId": "97607",
+      "ItemName": "Hat of Discontent"
+    },
+    {
+      "ItemId": "97635",
+      "ItemName": "Cowl of Rhyming"
+    },
+    {
+      "ItemId": "97655",
+      "ItemName": "Stressed Mask"
+    },
+    {
+      "ItemId": "97678",
+      "ItemName": "Cowl of Soul-Searching"
+    },
+    {
+      "ItemId": "97698",
+      "ItemName": "Band of Sandcastles"
+    },
+    {
+      "ItemId": "97699",
+      "ItemName": "Katsumori's Pensive Ring"
+    },
+    {
+      "ItemId": "97715",
+      "ItemName": "Katsumori's Introspective Ring"
+    },
+    {
+      "ItemId": "97817",
+      "ItemName": "Nunu's Twisted Uniform"
+    },
+    {
+      "ItemId": "97850",
+      "ItemName": "Warbled Cloak"
+    },
+    {
+      "ItemId": "97872",
+      "ItemName": "Garments of Unrest"
+    },
+    {
+      "ItemId": "97897",
+      "ItemName": "Cloak of Deliberation"
+    },
+    {
+      "ItemId": "97974",
+      "ItemName": "Katsumori's Boots"
+    },
+    {
+      "ItemId": "98046",
+      "ItemName": "Footwraps of Generations"
+    },
+    {
+      "ItemId": "98060",
+      "ItemName": "Shoes of Dreaming"
+    },
+    {
+      "ItemId": "98063",
+      "ItemName": "Shoes of Deliberation"
+    },
+    {
+      "ItemId": "98065",
+      "ItemName": "Slippers of the Lotus"
+    }
+  ]
+}

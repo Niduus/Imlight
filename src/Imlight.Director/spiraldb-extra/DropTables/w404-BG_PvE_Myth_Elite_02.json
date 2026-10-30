@@ -1,0 +1,9 @@
+{
+  "Name": "W404 BG_PvE_Myth_Elite_02",
+  "Description": "Gold of the game's table BG_PvE_Myth_Elite_02, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 30,
+  "MaxGold": 40,
+  "EachItem": false,
+  "Items": []
+}

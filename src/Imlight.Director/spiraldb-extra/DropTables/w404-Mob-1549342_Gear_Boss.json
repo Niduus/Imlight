@@ -1,0 +1,105 @@
+{
+  "Name": "W404 Mob-1549342 Gear (Boss)",
+  "Description": "Wizard404's drop list of Lady Stonegaze's own drops: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1384107",
+      "ItemName": "Aquilan Charioteer Kalkris"
+    },
+    {
+      "ItemId": "1384108",
+      "ItemName": "Aquilan Charioteer Kalkris"
+    },
+    {
+      "ItemId": "1384119",
+      "ItemName": "Aquilan Charioteer Hamata"
+    },
+    {
+      "ItemId": "1384120",
+      "ItemName": "Aquilan Charioteer Hamata"
+    },
+    {
+      "ItemId": "1384131",
+      "ItemName": "Aquilan Charioteer Greaves"
+    },
+    {
+      "ItemId": "1384132",
+      "ItemName": "Aquilan Charioteer Greaves"
+    },
+    {
+      "ItemId": "1384143",
+      "ItemName": "Aquilan Secutor Kalkris"
+    },
+    {
+      "ItemId": "1384144",
+      "ItemName": "Aquilan Secutor Kalkris"
+    },
+    {
+      "ItemId": "1384155",
+      "ItemName": "Aquilan Secutor Hamata"
+    },
+    {
+      "ItemId": "1384156",
+      "ItemName": "Aquilan Secutor Hamata"
+    },
+    {
+      "ItemId": "1384167",
+      "ItemName": "Aquilan Secutor Greaves"
+    },
+    {
+      "ItemId": "1384168",
+      "ItemName": "Aquilan Secutor Greaves"
+    },
+    {
+      "ItemId": "1384179",
+      "ItemName": "Aquilan Velite Kalkris"
+    },
+    {
+      "ItemId": "1384180",
+      "ItemName": "Aquilan Velite Kalkris"
+    },
+    {
+      "ItemId": "1384191",
+      "ItemName": "Aquilan Velite Hamata"
+    },
+    {
+      "ItemId": "1384192",
+      "ItemName": "Aquilan Velite Hamata"
+    },
+    {
+      "ItemId": "1384203",
+      "ItemName": "Aquilan Velite Greaves"
+    },
+    {
+      "ItemId": "1384204",
+      "ItemName": "Aquilan Velite Greaves"
+    },
+    {
+      "ItemId": "1384215",
+      "ItemName": "Aquilan Charioteer Lance"
+    },
+    {
+      "ItemId": "1384216",
+      "ItemName": "Aquilan Charioteer Lance"
+    },
+    {
+      "ItemId": "1384227",
+      "ItemName": "Aquilan Secutor Lance"
+    },
+    {
+      "ItemId": "1384228",
+      "ItemName": "Aquilan Secutor Lance"
+    },
+    {
+      "ItemId": "1384239",
+      "ItemName": "Aquilan Velite Lance"
+    },
+    {
+      "ItemId": "1384240",
+      "ItemName": "Aquilan Velite Lance"
+    }
+  ]
+}

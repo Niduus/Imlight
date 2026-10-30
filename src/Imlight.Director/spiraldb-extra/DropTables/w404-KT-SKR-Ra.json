@@ -1,0 +1,9 @@
+{
+  "Name": "W404 KT-SKR-Ra",
+  "Description": "Gold of the game's table KT-SKR-Ra, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 350,
+  "MaxGold": 700,
+  "EachItem": false,
+  "Items": []
+}

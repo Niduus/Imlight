@@ -1,0 +1,81 @@
+{
+  "Name": "W404 Warrior-Female-Skirt-Black-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Warrior-Female-Skirt-Black-Boss-R8: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104617",
+      "ItemName": "Salamander's Wrap"
+    },
+    {
+      "ItemId": "104643",
+      "ItemName": "Tunic of Tradition"
+    },
+    {
+      "ItemId": "104684",
+      "ItemName": "Snowflower Cloak"
+    },
+    {
+      "ItemId": "104707",
+      "ItemName": "Robe of the Gale"
+    },
+    {
+      "ItemId": "104768",
+      "ItemName": "Sandals of Scorching"
+    },
+    {
+      "ItemId": "104834",
+      "ItemName": "Sandals of Zest"
+    },
+    {
+      "ItemId": "126561",
+      "ItemName": "Band of Balance"
+    },
+    {
+      "ItemId": "126592",
+      "ItemName": "Sapphire Studded Band"
+    },
+    {
+      "ItemId": "126605",
+      "ItemName": "Signet of the Chimera"
+    },
+    {
+      "ItemId": "126658",
+      "ItemName": "Steelwielder's Mineblade"
+    },
+    {
+      "ItemId": "126674",
+      "ItemName": "Steelwielder's Metalbound Deck"
+    },
+    {
+      "ItemId": "146120",
+      "ItemName": "Steelwielder's Skewer"
+    },
+    {
+      "ItemId": "146168",
+      "ItemName": "Athame of the Volcano"
+    },
+    {
+      "ItemId": "146218",
+      "ItemName": "Cap of the Unflinching"
+    },
+    {
+      "ItemId": "146250",
+      "ItemName": "Hat of the Endless"
+    },
+    {
+      "ItemId": "146270",
+      "ItemName": "Hood of the Ranger"
+    },
+    {
+      "ItemId": "146284",
+      "ItemName": "Cowl of the Glacier"
+    },
+    {
+      "ItemId": "146335",
+      "ItemName": "Helm of Oblivion"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "Name": "W404 ZF-CrownLoot-03 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-CrownLoot-03: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "532279",
+      "ItemName": "Sidhe Shoes"
+    },
+    {
+      "ItemId": "532311",
+      "ItemName": "Flameborn Sidhe Boots"
+    },
+    {
+      "ItemId": "532312",
+      "ItemName": "Frostborn Sidhe Boots"
+    },
+    {
+      "ItemId": "532313",
+      "ItemName": "Thornwood Stalkers"
+    },
+    {
+      "ItemId": "532314",
+      "ItemName": "Squamish Boots of the Sidhe"
+    },
+    {
+      "ItemId": "532315",
+      "ItemName": "Sidhe Boots of Attunement"
+    },
+    {
+      "ItemId": "532316",
+      "ItemName": "Restless Boots of Oblivion"
+    },
+    {
+      "ItemId": "532317",
+      "ItemName": "Storyborn Boots of Mist"
+    }
+  ]
+}

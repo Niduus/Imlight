@@ -1,0 +1,77 @@
+{
+  "Name": "W404 EM2-MiniBoss-Gear-4-130 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM2-MiniBoss-Gear-4-130: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462204",
+      "ItemName": "Blazing Zanadu Armor"
+    },
+    {
+      "ItemId": "1462205",
+      "ItemName": "Freezing Zanadu Armor"
+    },
+    {
+      "ItemId": "1462206",
+      "ItemName": "Crackling Zanadu Armor"
+    },
+    {
+      "ItemId": "1462207",
+      "ItemName": "Illuminated Zanadu Armor"
+    },
+    {
+      "ItemId": "1462208",
+      "ItemName": "Verdant Zanadu Armor"
+    },
+    {
+      "ItemId": "1462209",
+      "ItemName": "Grim Zanadu Armor"
+    },
+    {
+      "ItemId": "1462210",
+      "ItemName": "Immutable Zanadu Armor"
+    },
+    {
+      "ItemId": "1462211",
+      "ItemName": "Hopeful Zanadu Armor"
+    },
+    {
+      "ItemId": "1462379",
+      "ItemName": "Hopeful Zanadu Lance"
+    },
+    {
+      "ItemId": "1462404",
+      "ItemName": "Blazing Zanadu Deck"
+    },
+    {
+      "ItemId": "1462405",
+      "ItemName": "Freezing Zanadu Deck"
+    },
+    {
+      "ItemId": "1462406",
+      "ItemName": "Crackling Zanadu Deck"
+    },
+    {
+      "ItemId": "1462407",
+      "ItemName": "Illuminated Zanadu Deck"
+    },
+    {
+      "ItemId": "1462408",
+      "ItemName": "Verdant Zanadu Deck"
+    },
+    {
+      "ItemId": "1462409",
+      "ItemName": "Grim Zanadu Deck"
+    },
+    {
+      "ItemId": "1462410",
+      "ItemName": "Immutable Zanadu Deck"
+    },
+    {
+      "ItemId": "1462411",
+      "ItemName": "Hopeful Zanadu Deck"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "Name": "W404 APR-LootTable-003 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table APR-LootTable-003: the gear drops (4), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82967",
+      "ItemName": "Hop-hopping Wand"
+    },
+    {
+      "ItemId": "82970",
+      "ItemName": "Scepter of the Spring"
+    },
+    {
+      "ItemId": "82971",
+      "ItemName": "Half-shell Wand"
+    },
+    {
+      "ItemId": "82973",
+      "ItemName": "Spring Scepter"
+    }
+  ]
+}

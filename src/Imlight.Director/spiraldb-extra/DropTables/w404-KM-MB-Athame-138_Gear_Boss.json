@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-MB-Athame-138 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-MB-Athame-138: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1515066",
+      "ItemName": "Director Thermal Knife"
+    },
+    {
+      "ItemId": "1515067",
+      "ItemName": "Director Cryo Knife"
+    },
+    {
+      "ItemId": "1515068",
+      "ItemName": "Director Insulated Knife"
+    },
+    {
+      "ItemId": "1515069",
+      "ItemName": "Director Pressure Knife"
+    },
+    {
+      "ItemId": "1515070",
+      "ItemName": "Director Survival Knife"
+    },
+    {
+      "ItemId": "1515071",
+      "ItemName": "Director Biohazard Knife"
+    },
+    {
+      "ItemId": "1515072",
+      "ItemName": "Director Protective Knife"
+    },
+    {
+      "ItemId": "1515073",
+      "ItemName": "Director Hazmat Knife"
+    },
+    {
+      "ItemId": "1515090",
+      "ItemName": "Executive Thermal Knife"
+    },
+    {
+      "ItemId": "1515091",
+      "ItemName": "Executive Cryo Knife"
+    },
+    {
+      "ItemId": "1515092",
+      "ItemName": "Executive Insulated Knife"
+    },
+    {
+      "ItemId": "1515093",
+      "ItemName": "Executive Pressure Knife"
+    },
+    {
+      "ItemId": "1515094",
+      "ItemName": "Executive Survival Knife"
+    },
+    {
+      "ItemId": "1515095",
+      "ItemName": "Executive Biohazard Knife"
+    },
+    {
+      "ItemId": "1515096",
+      "ItemName": "Executive Protective Knife"
+    },
+    {
+      "ItemId": "1515097",
+      "ItemName": "Executive Hazmat Knife"
+    },
+    {
+      "ItemId": "1515114",
+      "ItemName": "Producer's Thermal Knife"
+    },
+    {
+      "ItemId": "1515115",
+      "ItemName": "Producer's Cryo Knife"
+    },
+    {
+      "ItemId": "1515116",
+      "ItemName": "Producer's Insulated Knife"
+    },
+    {
+      "ItemId": "1515117",
+      "ItemName": "Producer's Pressure Knife"
+    },
+    {
+      "ItemId": "1515118",
+      "ItemName": "Producer's Survival Knife"
+    },
+    {
+      "ItemId": "1515119",
+      "ItemName": "Producer's Biohazard Knife"
+    },
+    {
+      "ItemId": "1515120",
+      "ItemName": "Producer's Protective Knife"
+    },
+    {
+      "ItemId": "1515121",
+      "ItemName": "Producer's Hazmat Knife"
+    }
+  ]
+}

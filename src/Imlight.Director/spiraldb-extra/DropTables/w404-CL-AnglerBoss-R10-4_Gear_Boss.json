@@ -1,0 +1,69 @@
+{
+  "Name": "W404 CL-AnglerBoss-R10-4 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-AnglerBoss-R10-4: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243261",
+      "ItemName": "Marcio's Icy Edge"
+    },
+    {
+      "ItemId": "243268",
+      "ItemName": "Seraph's Shortblade"
+    },
+    {
+      "ItemId": "243300",
+      "ItemName": "Harmony Helm"
+    },
+    {
+      "ItemId": "243397",
+      "ItemName": "Everlasting Helm"
+    },
+    {
+      "ItemId": "243464",
+      "ItemName": "Equilibrium Armor"
+    },
+    {
+      "ItemId": "243516",
+      "ItemName": "Loop of the Lawful"
+    },
+    {
+      "ItemId": "243569",
+      "ItemName": "Marcio's Snowfall Band"
+    },
+    {
+      "ItemId": "243706",
+      "ItemName": "Maelstrom Costume"
+    },
+    {
+      "ItemId": "243751",
+      "ItemName": "Wicked Walkers"
+    },
+    {
+      "ItemId": "243859",
+      "ItemName": "Maelstrom Mukluks"
+    },
+    {
+      "ItemId": "243892",
+      "ItemName": "Orthrus' Choker"
+    },
+    {
+      "ItemId": "243897",
+      "ItemName": "Storm Lord's Pendant"
+    },
+    {
+      "ItemId": "243939",
+      "ItemName": "Blistering Baton"
+    },
+    {
+      "ItemId": "243942",
+      "ItemName": "Shivering Spear"
+    },
+    {
+      "ItemId": "243951",
+      "ItemName": "Jolting Jellywand"
+    }
+  ]
+}

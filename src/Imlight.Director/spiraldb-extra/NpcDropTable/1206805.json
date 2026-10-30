@@ -1,0 +1,21 @@
+{
+  "TemplateID": 1206805,
+  "DropTableNames": [
+    "W404 AV-ReagentsBoss Reagent (Boss)",
+    "W404 ME1_Loremaster_A",
+    "W404 ME1_Loremaster_A Gear (Boss)",
+    "W404 ME1_Loremaster_A Pet (Boss)",
+    "W404 ME1_Loremaster_A Mount (Boss)",
+    "W404 ME1_Loremaster_A TreasureCard (Boss)",
+    "W404 ME1_Loremaster_A Reagent (Boss)",
+    "W404 ME1_Loremaster_A Seed (Boss)",
+    "W404 ME1_Loremaster_A Housing (Boss)",
+    "W404 TC-AV-Rares TreasureCard (Boss)",
+    "W404 TC-AV-Rares Seed (Boss)",
+    "W404 TC-AV-Utility-Myth TreasureCard (Boss)",
+    "W404 AV-R11-MythDeck Gear (Boss)",
+    "W404 TC-ClockworkSpider TreasureCard (Boss)",
+    "W404 AV-Boss-Jewels Jewel",
+    "W404 AV-Boss-Jewels Reagent"
+  ]
+}

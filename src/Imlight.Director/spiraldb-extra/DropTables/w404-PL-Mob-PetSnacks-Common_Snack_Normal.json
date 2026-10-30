@@ -1,0 +1,97 @@
+{
+  "Name": "W404 PL-Mob-PetSnacks-Common Snack (Normal)",
+  "Description": "Wizard404's drop list of the game's table PL-Mob-PetSnacks-Common: the snack drops (22), one picked when it rolls. How often: DropOdds.json Normal/Snack.",
+  "Odds": "Normal/Snack",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220269",
+      "ItemName": "Chili Cheese Fries"
+    },
+    {
+      "ItemId": "220278",
+      "ItemName": "Large Ice Cream"
+    },
+    {
+      "ItemId": "220280",
+      "ItemName": "Delicious Cookie"
+    },
+    {
+      "ItemId": "220301",
+      "ItemName": "Gourmet Yogurt"
+    },
+    {
+      "ItemId": "220313",
+      "ItemName": "Sprinkle Cupcake"
+    },
+    {
+      "ItemId": "220315",
+      "ItemName": "Huge Ice Cream"
+    },
+    {
+      "ItemId": "220318",
+      "ItemName": "Super Cold Popsicle"
+    },
+    {
+      "ItemId": "220327",
+      "ItemName": "French Fries"
+    },
+    {
+      "ItemId": "240117",
+      "ItemName": "Submarine Sandwich"
+    },
+    {
+      "ItemId": "537603",
+      "ItemName": "Frozen Snails"
+    },
+    {
+      "ItemId": "641684",
+      "ItemName": "Frozen Perogies"
+    },
+    {
+      "ItemId": "733122",
+      "ItemName": "Chili Peppers"
+    },
+    {
+      "ItemId": "1359604",
+      "ItemName": "Chalupacabra"
+    },
+    {
+      "ItemId": "1359606",
+      "ItemName": "Ships 'n' Queso"
+    },
+    {
+      "ItemId": "1359612",
+      "ItemName": "Polaris Fries"
+    },
+    {
+      "ItemId": "1359613",
+      "ItemName": "Mustachios"
+    },
+    {
+      "ItemId": "1359618",
+      "ItemName": "Veggie Juice"
+    },
+    {
+      "ItemId": "1359619",
+      "ItemName": "Hot Cross Buns"
+    },
+    {
+      "ItemId": "1359622",
+      "ItemName": "Eye Candy"
+    },
+    {
+      "ItemId": "1359623",
+      "ItemName": "Satyr Chow"
+    },
+    {
+      "ItemId": "1359625",
+      "ItemName": "Beast Wellington"
+    },
+    {
+      "ItemId": "1359626",
+      "ItemName": "Penne Dreadful"
+    }
+  ]
+}

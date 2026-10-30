@@ -1,0 +1,25 @@
+{
+  "Name": "W404 ME1_Maestro_A Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Maestro_A: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "469785",
+      "ItemName": "Purple Teleporter"
+    },
+    {
+      "ItemId": "469786",
+      "ItemName": "Red Teleporter"
+    },
+    {
+      "ItemId": "469787",
+      "ItemName": "White Teleporter"
+    },
+    {
+      "ItemId": "469788",
+      "ItemName": "Yellow Teleporter"
+    }
+  ]
+}

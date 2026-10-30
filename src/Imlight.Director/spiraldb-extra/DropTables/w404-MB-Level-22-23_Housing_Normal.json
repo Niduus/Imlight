@@ -1,0 +1,21 @@
+{
+  "Name": "W404 MB-Level-22-23 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table MB-Level-22-23: the housing drops (3), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160632",
+      "ItemName": "Fishbones"
+    },
+    {
+      "ItemId": "160666",
+      "ItemName": "Litter"
+    },
+    {
+      "ItemId": "160667",
+      "ItemName": "Empty Tin Can"
+    }
+  ]
+}

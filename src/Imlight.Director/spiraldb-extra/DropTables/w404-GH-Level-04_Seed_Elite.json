@@ -1,0 +1,21 @@
+{
+  "Name": "W404 GH-Level-04 Seed (Elite)",
+  "Description": "Wizard404's drop list of the game's table GH-Level-04: the seed drops (3), one picked when it rolls. How often: DropOdds.json Elite/Seed.",
+  "Odds": "Elite/Seed",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion"
+    },
+    {
+      "ItemId": "356120",
+      "ItemName": "Rye Bread Fruit Bush"
+    },
+    {
+      "ItemId": "473092",
+      "ItemName": "Couch Potatoes"
+    }
+  ]
+}

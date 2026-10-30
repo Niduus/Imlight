@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Mob-1530885 Gear (Boss)",
+  "Description": "Wizard404's drop list of The Writer's own drops: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1537350",
+      "ItemName": "Magician's Fire Talisman"
+    },
+    {
+      "ItemId": "1537351",
+      "ItemName": "Magician's Ice Talisman"
+    },
+    {
+      "ItemId": "1537352",
+      "ItemName": "Magician's Storm Talisman"
+    },
+    {
+      "ItemId": "1537353",
+      "ItemName": "Magician's Myth Talisman"
+    },
+    {
+      "ItemId": "1537354",
+      "ItemName": "Magician's Life Talisman"
+    },
+    {
+      "ItemId": "1537355",
+      "ItemName": "Magician's Death Talisman"
+    },
+    {
+      "ItemId": "1537356",
+      "ItemName": "Magician's Balance Talisman"
+    },
+    {
+      "ItemId": "1537357",
+      "ItemName": "Magician's Power Talisman"
+    },
+    {
+      "ItemId": "1537374",
+      "ItemName": "Malevolent Fire Talisman"
+    },
+    {
+      "ItemId": "1537375",
+      "ItemName": "Malevolent Ice Talisman"
+    },
+    {
+      "ItemId": "1537376",
+      "ItemName": "Malevolent Storm Talisman"
+    },
+    {
+      "ItemId": "1537377",
+      "ItemName": "Malevolent Myth Talisman"
+    },
+    {
+      "ItemId": "1537378",
+      "ItemName": "Malevolent Life Talisman"
+    },
+    {
+      "ItemId": "1537379",
+      "ItemName": "Malevolent Death Talisman"
+    },
+    {
+      "ItemId": "1537380",
+      "ItemName": "Malevolent Balance Talisman"
+    },
+    {
+      "ItemId": "1537381",
+      "ItemName": "Malevolent Power Talisman"
+    }
+  ]
+}

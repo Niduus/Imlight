@@ -1,0 +1,49 @@
+{
+  "Name": "W404 CL-FishbotYellow-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-FishbotYellow-Boss-R10: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243208",
+      "ItemName": "Sliver of Insight"
+    },
+    {
+      "ItemId": "243265",
+      "ItemName": "Living Thorn"
+    },
+    {
+      "ItemId": "243345",
+      "ItemName": "Maglump's Blistering Hood"
+    },
+    {
+      "ItemId": "243398",
+      "ItemName": "Wanderlust Shroud"
+    },
+    {
+      "ItemId": "243512",
+      "ItemName": "Band of Principles"
+    },
+    {
+      "ItemId": "243532",
+      "ItemName": "Researcher's Ring"
+    },
+    {
+      "ItemId": "243572",
+      "ItemName": "Band of Bliss"
+    },
+    {
+      "ItemId": "243630",
+      "ItemName": "Maglump's Cinder Smock"
+    },
+    {
+      "ItemId": "243750",
+      "ItemName": "Wrath Walkers"
+    },
+    {
+      "ItemId": "243858",
+      "ItemName": "Shoes of the Storm Star"
+    }
+  ]
+}

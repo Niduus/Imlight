@@ -1,0 +1,41 @@
+{
+  "Name": "W404 GH-Undead-Caster-Purple-GHBoss-R5 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Undead-Caster-Purple-GHBoss-R5: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136360",
+      "ItemName": "Snowy Veil"
+    },
+    {
+      "ItemId": "136361",
+      "ItemName": "Umbral Headgear"
+    },
+    {
+      "ItemId": "136365",
+      "ItemName": "Circlet of the Nemesis"
+    },
+    {
+      "ItemId": "136484",
+      "ItemName": "Icebound Sigil"
+    },
+    {
+      "ItemId": "136573",
+      "ItemName": "Flarestarter's Garments"
+    },
+    {
+      "ItemId": "136574",
+      "ItemName": "Lifewarden's Raiment"
+    },
+    {
+      "ItemId": "171139",
+      "ItemName": "Frostsoled Boots"
+    },
+    {
+      "ItemId": "171140",
+      "ItemName": "Sandals of Expiry"
+    }
+  ]
+}

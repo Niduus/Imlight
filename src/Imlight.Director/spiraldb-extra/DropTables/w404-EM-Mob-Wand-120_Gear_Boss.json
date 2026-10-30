@@ -1,0 +1,41 @@
+{
+  "Name": "W404 EM-Mob-Wand-120 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM-Mob-Wand-120: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1430588",
+      "ItemName": "Engineer's Hexacorder"
+    },
+    {
+      "ItemId": "1430589",
+      "ItemName": "Explorer's Hexacorder"
+    },
+    {
+      "ItemId": "1430590",
+      "ItemName": "Navigator's Hexacorder"
+    },
+    {
+      "ItemId": "1430591",
+      "ItemName": "Hero's Hexacorder"
+    },
+    {
+      "ItemId": "1430592",
+      "ItemName": "Medic's Hexacorder"
+    },
+    {
+      "ItemId": "1430593",
+      "ItemName": "Warrior's Hexacorder"
+    },
+    {
+      "ItemId": "1430594",
+      "ItemName": "Delegate's Hexacorder"
+    },
+    {
+      "ItemId": "1430595",
+      "ItemName": "Officer's Hexacorder"
+    }
+  ]
+}

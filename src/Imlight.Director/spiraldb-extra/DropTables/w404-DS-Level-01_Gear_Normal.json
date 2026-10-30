@@ -1,0 +1,169 @@
+{
+  "Name": "W404 DS-Level-01 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table DS-Level-01: the gear drops (40), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104581",
+      "ItemName": "Sorcerer's Robe"
+    },
+    {
+      "ItemId": "104601",
+      "ItemName": "Cloak of Mortality"
+    },
+    {
+      "ItemId": "104621",
+      "ItemName": "Robe of the Conflagration"
+    },
+    {
+      "ItemId": "104653",
+      "ItemName": "Vestment of Fable"
+    },
+    {
+      "ItemId": "104661",
+      "ItemName": "Robes of the Ice Queen"
+    },
+    {
+      "ItemId": "104675",
+      "ItemName": "Gardener's Smock"
+    },
+    {
+      "ItemId": "104725",
+      "ItemName": "Vestment of the Howling Wind"
+    },
+    {
+      "ItemId": "104742",
+      "ItemName": "Sandals of the Shaman"
+    },
+    {
+      "ItemId": "104748",
+      "ItemName": "Mocassins of the Healer"
+    },
+    {
+      "ItemId": "104749",
+      "ItemName": "Footgear of the Forgotten"
+    },
+    {
+      "ItemId": "104765",
+      "ItemName": "Mocassins of the Polar Ice"
+    },
+    {
+      "ItemId": "104771",
+      "ItemName": "Sandals of Sleet"
+    },
+    {
+      "ItemId": "104786",
+      "ItemName": "Slippers of Deftness"
+    },
+    {
+      "ItemId": "104798",
+      "ItemName": "Sunwalkers"
+    },
+    {
+      "ItemId": "104802",
+      "ItemName": "Mocassins of the Embers"
+    },
+    {
+      "ItemId": "104816",
+      "ItemName": "Slippers of the Quiet"
+    },
+    {
+      "ItemId": "104858",
+      "ItemName": "Mythmaker Boots"
+    },
+    {
+      "ItemId": "104863",
+      "ItemName": "Talespinner's Footgear"
+    },
+    {
+      "ItemId": "104879",
+      "ItemName": "Footwraps of the Whirwind"
+    },
+    {
+      "ItemId": "104884",
+      "ItemName": "Boots of the Hurricane"
+    },
+    {
+      "ItemId": "104889",
+      "ItemName": "Sandals of the Remortal"
+    },
+    {
+      "ItemId": "126607",
+      "ItemName": "Lavastone Ring"
+    },
+    {
+      "ItemId": "126627",
+      "ItemName": "Glimmering Band"
+    },
+    {
+      "ItemId": "126628",
+      "ItemName": "Dragontooth Ring"
+    },
+    {
+      "ItemId": "146189",
+      "ItemName": "Indomitable Knife"
+    },
+    {
+      "ItemId": "146190",
+      "ItemName": "Dirk of the Daring"
+    },
+    {
+      "ItemId": "146234",
+      "ItemName": "Cyclone Coif"
+    },
+    {
+      "ItemId": "146239",
+      "ItemName": "Hood of the Tempest"
+    },
+    {
+      "ItemId": "146253",
+      "ItemName": "Cap of the Archivist"
+    },
+    {
+      "ItemId": "146260",
+      "ItemName": "Librarian's Mantle"
+    },
+    {
+      "ItemId": "146276",
+      "ItemName": "Headdress of the Grove"
+    },
+    {
+      "ItemId": "146282",
+      "ItemName": "Mantle of Growth"
+    },
+    {
+      "ItemId": "146287",
+      "ItemName": "Hat of the Ever Watchful"
+    },
+    {
+      "ItemId": "146299",
+      "ItemName": "Frostflower Cap"
+    },
+    {
+      "ItemId": "146305",
+      "ItemName": "Icefire Hood"
+    },
+    {
+      "ItemId": "146310",
+      "ItemName": "Headdress of the Phoenix"
+    },
+    {
+      "ItemId": "146331",
+      "ItemName": "Hood of Ashes"
+    },
+    {
+      "ItemId": "146346",
+      "ItemName": "Cowl of the Necromancer"
+    },
+    {
+      "ItemId": "146350",
+      "ItemName": "Headgear of the Absolute"
+    },
+    {
+      "ItemId": "146368",
+      "ItemName": "Veil of the Guardian"
+    }
+  ]
+}

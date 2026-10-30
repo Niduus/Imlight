@@ -1,0 +1,9 @@
+{
+  "Name": "W404 Draconian-PW-Gauntlet-Boss",
+  "Description": "Gold of the game's table Draconian-PW-Gauntlet-Boss, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 60,
+  "MaxGold": 120,
+  "EachItem": false,
+  "Items": []
+}

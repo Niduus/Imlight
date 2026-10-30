@@ -1,0 +1,105 @@
+{
+  "Name": "W404 Helephant-War-Boss-R9 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Helephant-War-Boss-R9: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104593",
+      "ItemName": "Coat of Omniscence"
+    },
+    {
+      "ItemId": "104612",
+      "ItemName": "Gurtok Firesmock"
+    },
+    {
+      "ItemId": "104630",
+      "ItemName": "Raiment of the Raven"
+    },
+    {
+      "ItemId": "104662",
+      "ItemName": "Tunic of Arden's Vale"
+    },
+    {
+      "ItemId": "104712",
+      "ItemName": "Cyclone Cloak"
+    },
+    {
+      "ItemId": "104727",
+      "ItemName": "Surcoat of Glory"
+    },
+    {
+      "ItemId": "104804",
+      "ItemName": "Reaper's Boots"
+    },
+    {
+      "ItemId": "104840",
+      "ItemName": "Throne-treading Sandals"
+    },
+    {
+      "ItemId": "104849",
+      "ItemName": "Slippers of the Hallowed Halls"
+    },
+    {
+      "ItemId": "104867",
+      "ItemName": "Striders of the Thicket"
+    },
+    {
+      "ItemId": "104888",
+      "ItemName": "Shoes of the Greatest Saga"
+    },
+    {
+      "ItemId": "126599",
+      "ItemName": "Burning Ring of Fire"
+    },
+    {
+      "ItemId": "126614",
+      "ItemName": "Ring of Wyrmkind"
+    },
+    {
+      "ItemId": "146164",
+      "ItemName": "Poniard of Vitality"
+    },
+    {
+      "ItemId": "146179",
+      "ItemName": "Lifegiver's Edge"
+    },
+    {
+      "ItemId": "146212",
+      "ItemName": "Lightning-charged Mantle"
+    },
+    {
+      "ItemId": "146247",
+      "ItemName": "Mantle of Imagination"
+    },
+    {
+      "ItemId": "146267",
+      "ItemName": "Verdant Cap"
+    },
+    {
+      "ItemId": "146268",
+      "ItemName": "Forest Lord's Cowl"
+    },
+    {
+      "ItemId": "146288",
+      "ItemName": "Frostbitten Cap"
+    },
+    {
+      "ItemId": "146292",
+      "ItemName": "Cap of Ancient Winter"
+    },
+    {
+      "ItemId": "146321",
+      "ItemName": "Gurtok Fireshroud"
+    },
+    {
+      "ItemId": "146341",
+      "ItemName": "Onyx-banded Coif"
+    },
+    {
+      "ItemId": "161063",
+      "ItemName": "Band of Aid"
+    }
+  ]
+}

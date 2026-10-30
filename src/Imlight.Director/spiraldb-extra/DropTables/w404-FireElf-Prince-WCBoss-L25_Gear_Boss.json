@@ -1,0 +1,81 @@
+{
+  "Name": "W404 FireElf-Prince-WCBoss-L25 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table FireElf-Prince-WCBoss-L25: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4683",
+      "ItemName": "Swiftarrow's Necklace"
+    },
+    {
+      "ItemId": "4733",
+      "ItemName": "Jeweled Dagger"
+    },
+    {
+      "ItemId": "4734",
+      "ItemName": "Alicane's Dirk"
+    },
+    {
+      "ItemId": "4774",
+      "ItemName": "Swiftarrow's Signet"
+    },
+    {
+      "ItemId": "4776",
+      "ItemName": "Alicane's Band"
+    },
+    {
+      "ItemId": "4779",
+      "ItemName": "Hallowed Band"
+    },
+    {
+      "ItemId": "4836",
+      "ItemName": "Branded Footguards"
+    },
+    {
+      "ItemId": "4860",
+      "ItemName": "Barkskin Boots"
+    },
+    {
+      "ItemId": "4871",
+      "ItemName": "Swiftarrow's Boots"
+    },
+    {
+      "ItemId": "77597",
+      "ItemName": "Alicane's Cowl"
+    },
+    {
+      "ItemId": "77622",
+      "ItemName": "Helm of Supremacy"
+    },
+    {
+      "ItemId": "87197",
+      "ItemName": "Swiftarrow's Mantle"
+    },
+    {
+      "ItemId": "87210",
+      "ItemName": "Swiftarrow's Windmane"
+    },
+    {
+      "ItemId": "87221",
+      "ItemName": "Barkskin Tunic"
+    },
+    {
+      "ItemId": "87243",
+      "ItemName": "Swiftarrow's Staff"
+    },
+    {
+      "ItemId": "87249",
+      "ItemName": "Alicane's Flame Staff"
+    },
+    {
+      "ItemId": "161025",
+      "ItemName": "Shortblade of the Quick"
+    },
+    {
+      "ItemId": "346482",
+      "ItemName": "Elven Fire Robe"
+    }
+  ]
+}

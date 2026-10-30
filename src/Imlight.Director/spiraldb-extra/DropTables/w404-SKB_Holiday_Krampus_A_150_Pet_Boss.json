@@ -1,0 +1,45 @@
+{
+  "Name": "W404 SKB_Holiday_Krampus_A_150 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_Holiday_Krampus_A_150: the pet drops (9), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "100435",
+      "ItemName": "Grumpy Snowman"
+    },
+    {
+      "ItemId": "191668",
+      "ItemName": "Ice Elf"
+    },
+    {
+      "ItemId": "225408",
+      "ItemName": "Fire Snowman"
+    },
+    {
+      "ItemId": "225436",
+      "ItemName": "Storm Snowman"
+    },
+    {
+      "ItemId": "225437",
+      "ItemName": "Fire Beetle"
+    },
+    {
+      "ItemId": "225449",
+      "ItemName": "Storm Elf"
+    },
+    {
+      "ItemId": "473680",
+      "ItemName": "Snowball"
+    },
+    {
+      "ItemId": "733226",
+      "ItemName": "Lump of Coal"
+    },
+    {
+      "ItemId": "1317712",
+      "ItemName": "Maple Moose"
+    }
+  ]
+}

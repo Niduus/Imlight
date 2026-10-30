@@ -1,0 +1,13 @@
+{
+  "Name": "W404 KrokBurly-Ice-1-PageEvent Pet (Elite)",
+  "Description": "Wizard404's drop list of the game's table KrokBurly-Ice-1-PageEvent: the pet drops (1), one picked when it rolls. How often: DropOdds.json Elite/Pet.",
+  "Odds": "Elite/Pet",
+  "RollChance": 0.04,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1374358",
+      "ItemName": "Spellwrit Stalker"
+    }
+  ]
+}

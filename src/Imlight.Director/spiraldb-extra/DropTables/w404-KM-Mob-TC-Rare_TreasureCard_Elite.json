@@ -1,0 +1,77 @@
+{
+  "Name": "W404 KM-Mob-TC-Rare TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table KM-Mob-TC-Rare: the treasurecard drops (17), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Death Prism TC",
+      "ItemName": "Death Prism"
+    },
+    {
+      "ItemId": "Fire Prism TC",
+      "ItemName": "Fire Prism"
+    },
+    {
+      "ItemId": "Ice Prism TC",
+      "ItemName": "Ice Prism"
+    },
+    {
+      "ItemId": "Life Prism TC",
+      "ItemName": "Life Prism"
+    },
+    {
+      "ItemId": "Myth Prism TC",
+      "ItemName": "Myth Prism"
+    },
+    {
+      "ItemId": "Storm Prism TC",
+      "ItemName": "Storm Prism"
+    },
+    {
+      "ItemId": "Firespear TC",
+      "ItemName": "Firespear"
+    },
+    {
+      "ItemId": "Icespear TC",
+      "ItemName": "Icespear"
+    },
+    {
+      "ItemId": "Lifespear TC",
+      "ItemName": "Lifespear"
+    },
+    {
+      "ItemId": "Mythspear TC",
+      "ItemName": "Mythspear"
+    },
+    {
+      "ItemId": "Spirit Spear TC",
+      "ItemName": "Spirit Spear"
+    },
+    {
+      "ItemId": "Stormspear TC",
+      "ItemName": "Stormspear"
+    },
+    {
+      "ItemId": "Tri Spear TC",
+      "ItemName": "Elemental Spear"
+    },
+    {
+      "ItemId": "Tri Blade TC",
+      "ItemName": "Elemental Blade"
+    },
+    {
+      "ItemId": "Elemental Defuse TC",
+      "ItemName": "Elemental Defuse"
+    },
+    {
+      "ItemId": "Tri Shield TC",
+      "ItemName": "Elemental Shield"
+    },
+    {
+      "ItemId": "Tri Trap TC",
+      "ItemName": "Elemental Trap"
+    }
+  ]
+}

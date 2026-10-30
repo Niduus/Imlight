@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Draconian-Caster-Tan-Boss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Draconian-Caster-Tan-Boss-R7: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104630",
+      "ItemName": "Raiment of the Raven"
+    },
+    {
+      "ItemId": "104632",
+      "ItemName": "Tamris' Tunic of the Talon"
+    },
+    {
+      "ItemId": "104681",
+      "ItemName": "Ice-Drake's Tunic"
+    },
+    {
+      "ItemId": "104707",
+      "ItemName": "Robe of the Gale"
+    },
+    {
+      "ItemId": "104768",
+      "ItemName": "Sandals of Scorching"
+    },
+    {
+      "ItemId": "104780",
+      "ItemName": "Tamris' Scaly Striders"
+    },
+    {
+      "ItemId": "104822",
+      "ItemName": "Shoes of Equilibrium"
+    },
+    {
+      "ItemId": "104846",
+      "ItemName": "Mocassins of the Gale"
+    },
+    {
+      "ItemId": "126599",
+      "ItemName": "Burning Ring of Fire"
+    },
+    {
+      "ItemId": "126637",
+      "ItemName": "Ring of Truthiness"
+    },
+    {
+      "ItemId": "126672",
+      "ItemName": "Deck of the Devouring Flame"
+    },
+    {
+      "ItemId": "146164",
+      "ItemName": "Poniard of Vitality"
+    },
+    {
+      "ItemId": "146170",
+      "ItemName": "Blade of Ashes"
+    },
+    {
+      "ItemId": "146241",
+      "ItemName": "Hood of the Historian"
+    },
+    {
+      "ItemId": "146308",
+      "ItemName": "Cowl of Blazes"
+    },
+    {
+      "ItemId": "146338",
+      "ItemName": "Tamris' Topper of Termination"
+    }
+  ]
+}

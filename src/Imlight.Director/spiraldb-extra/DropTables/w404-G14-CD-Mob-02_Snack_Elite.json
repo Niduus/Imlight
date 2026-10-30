@@ -1,0 +1,41 @@
+{
+  "Name": "W404 G14-CD-Mob-02 Snack (Elite)",
+  "Description": "Wizard404's drop list of the game's table G14-CD-Mob-02: the snack drops (8), one picked when it rolls. How often: DropOdds.json Elite/Snack.",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1248051",
+      "ItemName": "Gummy Bees"
+    },
+    {
+      "ItemId": "1248052",
+      "ItemName": "Sugar Khrystals"
+    },
+    {
+      "ItemId": "1248053",
+      "ItemName": "Punk Rock Candy"
+    },
+    {
+      "ItemId": "1248054",
+      "ItemName": "Honey Bombs"
+    },
+    {
+      "ItemId": "1248055",
+      "ItemName": "Honeycombs"
+    },
+    {
+      "ItemId": "1248056",
+      "ItemName": "Hive Rinds"
+    },
+    {
+      "ItemId": "1248059",
+      "ItemName": "HoneyDon't Melon"
+    },
+    {
+      "ItemId": "1248060",
+      "ItemName": "Honeycrisp Apples"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "Name": "W404 DM_Werewolf_Base_A_08 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Werewolf_Base_A_08: the jewel drops (5), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1352787",
+      "ItemName": "Polished Piercing Peridot +6%"
+    },
+    {
+      "ItemId": "1587356",
+      "ItemName": "Myth Accurate Pin (100)"
+    },
+    {
+      "ItemId": "1587357",
+      "ItemName": "Storm Accurate Pin (80)"
+    },
+    {
+      "ItemId": "1626574",
+      "ItemName": "Unearthly Damage Sapphire +9%"
+    },
+    {
+      "ItemId": "1626594",
+      "ItemName": "Unearthly Damage Ruby +11%"
+    }
+  ]
+}

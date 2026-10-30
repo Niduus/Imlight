@@ -1,0 +1,253 @@
+{
+  "Name": "W404 Level-15 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Level-15: the gear drops (61), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4695",
+      "ItemName": "Sturdy Blade"
+    },
+    {
+      "ItemId": "4704",
+      "ItemName": "Symmetrical Dirk"
+    },
+    {
+      "ItemId": "4705",
+      "ItemName": "Dagger of Repose"
+    },
+    {
+      "ItemId": "4706",
+      "ItemName": "Branded Dagger"
+    },
+    {
+      "ItemId": "4707",
+      "ItemName": "Insulated Dirk"
+    },
+    {
+      "ItemId": "4708",
+      "ItemName": "Fairy's Athame"
+    },
+    {
+      "ItemId": "4709",
+      "ItemName": "Antiquated Knife"
+    },
+    {
+      "ItemId": "4710",
+      "ItemName": "Charged Kris"
+    },
+    {
+      "ItemId": "4726",
+      "ItemName": "Fine Dagger"
+    },
+    {
+      "ItemId": "4727",
+      "ItemName": "Dulled Athame"
+    },
+    {
+      "ItemId": "4730",
+      "ItemName": "Honed Athame"
+    },
+    {
+      "ItemId": "4742",
+      "ItemName": "Antique Deck"
+    },
+    {
+      "ItemId": "4834",
+      "ItemName": "Boots of Embers"
+    },
+    {
+      "ItemId": "4840",
+      "ItemName": "Boots of Obstruction"
+    },
+    {
+      "ItemId": "4843",
+      "ItemName": "Stormforged Boots"
+    },
+    {
+      "ItemId": "4844",
+      "ItemName": "Cloudburst Wraps"
+    },
+    {
+      "ItemId": "4847",
+      "ItemName": "Windrunners"
+    },
+    {
+      "ItemId": "4849",
+      "ItemName": "Antique Footguards"
+    },
+    {
+      "ItemId": "4852",
+      "ItemName": "Shoes of the Troll King"
+    },
+    {
+      "ItemId": "4855",
+      "ItemName": "Goldleaf Shoes"
+    },
+    {
+      "ItemId": "4867",
+      "ItemName": "Symmetrical Shoes"
+    },
+    {
+      "ItemId": "4877",
+      "ItemName": "Hardened Boots"
+    },
+    {
+      "ItemId": "77568",
+      "ItemName": "Embershroud"
+    },
+    {
+      "ItemId": "77572",
+      "ItemName": "Fur-lined Hood"
+    },
+    {
+      "ItemId": "77574",
+      "ItemName": "Hardened Cap"
+    },
+    {
+      "ItemId": "77579",
+      "ItemName": "Charged Cover"
+    },
+    {
+      "ItemId": "77580",
+      "ItemName": "Hood of Storms"
+    },
+    {
+      "ItemId": "77581",
+      "ItemName": "Cloudburst Helm"
+    },
+    {
+      "ItemId": "77586",
+      "ItemName": "Antique Helm"
+    },
+    {
+      "ItemId": "77587",
+      "ItemName": "Helm of Tales"
+    },
+    {
+      "ItemId": "77588",
+      "ItemName": "Trollskin Hat"
+    },
+    {
+      "ItemId": "77602",
+      "ItemName": "Venomous Cowl"
+    },
+    {
+      "ItemId": "77603",
+      "ItemName": "Blightshroud"
+    },
+    {
+      "ItemId": "77610",
+      "ItemName": "Carbonshroud"
+    },
+    {
+      "ItemId": "77618",
+      "ItemName": "Vrixx's Verdant Cowl"
+    },
+    {
+      "ItemId": "77620",
+      "ItemName": "Imp Lord's Helm"
+    },
+    {
+      "ItemId": "87165",
+      "ItemName": "Fireguard Robe"
+    },
+    {
+      "ItemId": "87166",
+      "ItemName": "Frost Wolf Cloak"
+    },
+    {
+      "ItemId": "87167",
+      "ItemName": "Stormforged Mantle"
+    },
+    {
+      "ItemId": "87168",
+      "ItemName": "Trollskin Cloak"
+    },
+    {
+      "ItemId": "87169",
+      "ItemName": "Hallowed Robes"
+    },
+    {
+      "ItemId": "87170",
+      "ItemName": "Martyr's Raiment"
+    },
+    {
+      "ItemId": "87171",
+      "ItemName": "Scholarly Robes"
+    },
+    {
+      "ItemId": "87195",
+      "ItemName": "Robe of Embers"
+    },
+    {
+      "ItemId": "87199",
+      "ItemName": "Soot Stained Tunic"
+    },
+    {
+      "ItemId": "87200",
+      "ItemName": "Senior Novice's Robe"
+    },
+    {
+      "ItemId": "87202",
+      "ItemName": "Chillcloak"
+    },
+    {
+      "ItemId": "87206",
+      "ItemName": "Stormcaller's Robe"
+    },
+    {
+      "ItemId": "87207",
+      "ItemName": "Canvas Cloak"
+    },
+    {
+      "ItemId": "87211",
+      "ItemName": "Tunic of Disturbance"
+    },
+    {
+      "ItemId": "87213",
+      "ItemName": "Charged Coat"
+    },
+    {
+      "ItemId": "87217",
+      "ItemName": "Adventurer's Robe"
+    },
+    {
+      "ItemId": "87222",
+      "ItemName": "Healer's Vestment"
+    },
+    {
+      "ItemId": "87228",
+      "ItemName": "Vestment of Tremors"
+    },
+    {
+      "ItemId": "87231",
+      "ItemName": "Sapphyra's Vestment"
+    },
+    {
+      "ItemId": "87234",
+      "ItemName": "Robe of Savvy"
+    },
+    {
+      "ItemId": "87239",
+      "ItemName": "Vestment of Essence"
+    },
+    {
+      "ItemId": "87240",
+      "ItemName": "Roughspun Robe"
+    },
+    {
+      "ItemId": "87247",
+      "ItemName": "Branded Wand"
+    },
+    {
+      "ItemId": "87256",
+      "ItemName": "Antiquated Wand"
+    },
+    {
+      "ItemId": "87259",
+      "ItemName": "Charged Wand"
+    }
+  ]
+}

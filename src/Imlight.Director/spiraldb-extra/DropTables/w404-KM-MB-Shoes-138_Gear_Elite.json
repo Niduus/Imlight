@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-MB-Shoes-138 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table KM-MB-Shoes-138: the gear drops (24), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1514773",
+      "ItemName": "Director Thermal Boots"
+    },
+    {
+      "ItemId": "1514774",
+      "ItemName": "Director Cryo Boots"
+    },
+    {
+      "ItemId": "1514775",
+      "ItemName": "Director Insulated Boots"
+    },
+    {
+      "ItemId": "1514776",
+      "ItemName": "Director Pressure Boots"
+    },
+    {
+      "ItemId": "1514777",
+      "ItemName": "Director Survival Boots"
+    },
+    {
+      "ItemId": "1514778",
+      "ItemName": "Director Biohazard Boots"
+    },
+    {
+      "ItemId": "1514779",
+      "ItemName": "Director Protective Boots"
+    },
+    {
+      "ItemId": "1514780",
+      "ItemName": "Director Hazmat Boots"
+    },
+    {
+      "ItemId": "1514797",
+      "ItemName": "Executive Thermal Boots"
+    },
+    {
+      "ItemId": "1514798",
+      "ItemName": "Executive Cryo Boots"
+    },
+    {
+      "ItemId": "1514799",
+      "ItemName": "Executive Insulated Boots"
+    },
+    {
+      "ItemId": "1514800",
+      "ItemName": "Executive Pressure Boots"
+    },
+    {
+      "ItemId": "1514801",
+      "ItemName": "Executive Survival Boots"
+    },
+    {
+      "ItemId": "1514802",
+      "ItemName": "Executive Biohazard Boots"
+    },
+    {
+      "ItemId": "1514803",
+      "ItemName": "Executive Protective Boots"
+    },
+    {
+      "ItemId": "1514804",
+      "ItemName": "Executive Hazmat Boots"
+    },
+    {
+      "ItemId": "1514821",
+      "ItemName": "Producer's Thermal Boots"
+    },
+    {
+      "ItemId": "1514822",
+      "ItemName": "Producer's Cryo Boots"
+    },
+    {
+      "ItemId": "1514823",
+      "ItemName": "Producer's Insulated Boots"
+    },
+    {
+      "ItemId": "1514824",
+      "ItemName": "Producer's Pressure Boots"
+    },
+    {
+      "ItemId": "1514825",
+      "ItemName": "Producer's Survival Boots"
+    },
+    {
+      "ItemId": "1514826",
+      "ItemName": "Producer's Biohazard Boots"
+    },
+    {
+      "ItemId": "1514827",
+      "ItemName": "Producer's Protective Boots"
+    },
+    {
+      "ItemId": "1514828",
+      "ItemName": "Producer's Hazmat Boots"
+    }
+  ]
+}

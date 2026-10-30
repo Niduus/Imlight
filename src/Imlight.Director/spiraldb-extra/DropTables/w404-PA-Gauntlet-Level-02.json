@@ -1,0 +1,9 @@
+{
+  "Name": "W404 PA-Gauntlet-Level-02",
+  "Description": "Gold of the game's table PA-Gauntlet-Level-02, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 29,
+  "MaxGold": 44,
+  "EachItem": false,
+  "Items": []
+}

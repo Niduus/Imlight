@@ -1,0 +1,33 @@
+{
+  "Name": "W404 Student-Ice-PageEvent Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Student-Ice-PageEvent: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160824",
+      "ItemName": "Dragonhorn Trophy"
+    },
+    {
+      "ItemId": "160837",
+      "ItemName": "Dragonmoon Obelisk"
+    },
+    {
+      "ItemId": "160843",
+      "ItemName": "Dragonclaw Pedestal"
+    },
+    {
+      "ItemId": "160915",
+      "ItemName": "Dragonskull Plaque"
+    },
+    {
+      "ItemId": "160977",
+      "ItemName": "Snapdragon Flowerbed"
+    },
+    {
+      "ItemId": "160981",
+      "ItemName": "Snapdragons"
+    }
+  ]
+}

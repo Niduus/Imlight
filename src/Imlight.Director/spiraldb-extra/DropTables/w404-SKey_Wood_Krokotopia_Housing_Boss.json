@@ -1,0 +1,73 @@
+{
+  "Name": "W404 SKey_Wood_Krokotopia Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKey_Wood_Krokotopia: the housing drops (16), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82723",
+      "ItemName": "Fang Harp"
+    },
+    {
+      "ItemId": "82724",
+      "ItemName": "A Scroll"
+    },
+    {
+      "ItemId": "82771",
+      "ItemName": "Pickaxe"
+    },
+    {
+      "ItemId": "82832",
+      "ItemName": "Worn Shovel"
+    },
+    {
+      "ItemId": "82848",
+      "ItemName": "Sledgehammer"
+    },
+    {
+      "ItemId": "82880",
+      "ItemName": "Stone Block"
+    },
+    {
+      "ItemId": "82883",
+      "ItemName": "Pile of Dirt"
+    },
+    {
+      "ItemId": "82885",
+      "ItemName": "Rope Fence"
+    },
+    {
+      "ItemId": "82889",
+      "ItemName": "Scaffolding"
+    },
+    {
+      "ItemId": "82890",
+      "ItemName": "Pile of Sand"
+    },
+    {
+      "ItemId": "82896",
+      "ItemName": "Potted Palm"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    },
+    {
+      "ItemId": "1350308",
+      "ItemName": "Novice's Socket Wrench"
+    },
+    {
+      "ItemId": "1350309",
+      "ItemName": "Adept's Socket Wrench"
+    },
+    {
+      "ItemId": "1350310",
+      "ItemName": "Expert's Socket Wrench"
+    }
+  ]
+}

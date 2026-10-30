@@ -1,0 +1,33 @@
+{
+  "Name": "W404 Mob-1692532 Pet (Boss)",
+  "Description": "Wizard404's drop list of Mr. Ghastly's own drops: the pet drops (6), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1690398",
+      "ItemName": "Detective Corgi"
+    },
+    {
+      "ItemId": "1690397",
+      "ItemName": "Gray Star"
+    },
+    {
+      "ItemId": "1690396",
+      "ItemName": "Graysquatch"
+    },
+    {
+      "ItemId": "1690393",
+      "ItemName": "Monochropotamus"
+    },
+    {
+      "ItemId": "1690395",
+      "ItemName": "Noir Ninja"
+    },
+    {
+      "ItemId": "1690394",
+      "ItemName": "Old Timey Dactyl"
+    }
+  ]
+}

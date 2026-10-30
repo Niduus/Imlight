@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Cyclops-BlueHelmet-WCBoss-L15 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Cyclops-BlueHelmet-WCBoss-L15: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160236",
+      "ItemName": "Eye Jar"
+    },
+    {
+      "ItemId": "160325",
+      "ItemName": "Myth Stone Pedestal"
+    },
+    {
+      "ItemId": "160365",
+      "ItemName": "Sun Banner"
+    }
+  ]
+}

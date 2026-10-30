@@ -1,0 +1,129 @@
+{
+  "Name": "W404 AZ-Boss-R13-01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-Boss-R13-01: the gear drops (30), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730197",
+      "ItemName": "Shining Cold House Amulet"
+    },
+    {
+      "ItemId": "730198",
+      "ItemName": "Rising Sun Head Relic"
+    },
+    {
+      "ItemId": "730199",
+      "ItemName": "Stone of the Green Skycarrier"
+    },
+    {
+      "ItemId": "730200",
+      "ItemName": "Pitch Black Lake Plague Shell"
+    },
+    {
+      "ItemId": "730201",
+      "ItemName": "Smoking Fang Talisman"
+    },
+    {
+      "ItemId": "730202",
+      "ItemName": "Charm of the Gold Aztecosaur"
+    },
+    {
+      "ItemId": "730203",
+      "ItemName": "House of Plague Greenstone"
+    },
+    {
+      "ItemId": "730227",
+      "ItemName": "Tears of Mother Moon Blade"
+    },
+    {
+      "ItemId": "730228",
+      "ItemName": "Fang of the Night Sky"
+    },
+    {
+      "ItemId": "730229",
+      "ItemName": "Burning Water Talon"
+    },
+    {
+      "ItemId": "730230",
+      "ItemName": "Bleeding Sun Dagger"
+    },
+    {
+      "ItemId": "730269",
+      "ItemName": "Elite Jura Guard Helm"
+    },
+    {
+      "ItemId": "730270",
+      "ItemName": "Twisted Fang Mask"
+    },
+    {
+      "ItemId": "730271",
+      "ItemName": "Indigo Wing Crown"
+    },
+    {
+      "ItemId": "730272",
+      "ItemName": "Tree of Secrets Chac Mask"
+    },
+    {
+      "ItemId": "730273",
+      "ItemName": "Five Fangs of Fury Headdress"
+    },
+    {
+      "ItemId": "730274",
+      "ItemName": "Thirteen Death Mask"
+    },
+    {
+      "ItemId": "730275",
+      "ItemName": "Dawn Hour Mantle"
+    },
+    {
+      "ItemId": "730308",
+      "ItemName": "Bleeding Sun Warrior's Loop"
+    },
+    {
+      "ItemId": "730309",
+      "ItemName": "Mother Moon's Count Ring"
+    },
+    {
+      "ItemId": "730310",
+      "ItemName": "Falling Star's End Time Band"
+    },
+    {
+      "ItemId": "730311",
+      "ItemName": "Acampi Reedfist's Lost Seal"
+    },
+    {
+      "ItemId": "730416",
+      "ItemName": "Codex of the Lost Fire"
+    },
+    {
+      "ItemId": "730417",
+      "ItemName": "Winter's Pyramid Deck"
+    },
+    {
+      "ItemId": "730418",
+      "ItemName": "Storm Sun Gallery"
+    },
+    {
+      "ItemId": "730419",
+      "ItemName": "Deck of the Jaguar Spirit"
+    },
+    {
+      "ItemId": "730437",
+      "ItemName": "Lance of Night Fire"
+    },
+    {
+      "ItemId": "730438",
+      "ItemName": "Winter Lord's Obsidian Shard"
+    },
+    {
+      "ItemId": "730440",
+      "ItemName": "Eclipse Spear of Azteca"
+    },
+    {
+      "ItemId": "730442",
+      "ItemName": "Tears of Night Lance"
+    }
+  ]
+}

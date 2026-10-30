@@ -1,0 +1,9 @@
+{
+  "Name": "W404 CE_TreasureTower_Myth_F22",
+  "Description": "Gold of the game's table CE_TreasureTower_Myth_F22, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 104,
+  "MaxGold": 114,
+  "EachItem": false,
+  "Items": []
+}

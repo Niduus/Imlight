@@ -1,0 +1,9 @@
+{
+  "Name": "W404 Gauntlet-01-Nightglider",
+  "Description": "Gold of the game's table Gauntlet-01-Nightglider, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 50,
+  "MaxGold": 100,
+  "EachItem": false,
+  "Items": []
+}

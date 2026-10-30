@@ -1,0 +1,33 @@
+{
+  "Name": "W404 Gobbler-Green-Baron-WCBoss-L25 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Gobbler-Green-Baron-WCBoss-L25: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160211",
+      "ItemName": "Pile of Jellybeans"
+    },
+    {
+      "ItemId": "160260",
+      "ItemName": "Spotted Half Rug"
+    },
+    {
+      "ItemId": "160322",
+      "ItemName": "Munched Lamppost"
+    },
+    {
+      "ItemId": "160337",
+      "ItemName": "Colossus Statue"
+    },
+    {
+      "ItemId": "512117",
+      "ItemName": "Wizard City Theme 2"
+    },
+    {
+      "ItemId": "512196",
+      "ItemName": "Grumpy Gobblers Theme"
+    }
+  ]
+}

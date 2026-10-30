@@ -1,0 +1,225 @@
+{
+  "Name": "W404 ZF-Level-03 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Level-03: the gear drops (54), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "540160",
+      "ItemName": "Cold Chieftain's Mask"
+    },
+    {
+      "ItemId": "540161",
+      "ItemName": "River Captain's Hood"
+    },
+    {
+      "ItemId": "540162",
+      "ItemName": "Courageous Grower's Hat"
+    },
+    {
+      "ItemId": "540163",
+      "ItemName": "Hood of Chieftain's Honor"
+    },
+    {
+      "ItemId": "540164",
+      "ItemName": "Hot-Tempered Chieftain's Mask"
+    },
+    {
+      "ItemId": "540165",
+      "ItemName": "Hood of the Forgotten"
+    },
+    {
+      "ItemId": "540166",
+      "ItemName": "Wise Hunter's Helmet"
+    },
+    {
+      "ItemId": "540167",
+      "ItemName": "Mantle of the Grasslands"
+    },
+    {
+      "ItemId": "540168",
+      "ItemName": "Mask of the Great Patapon"
+    },
+    {
+      "ItemId": "540169",
+      "ItemName": "Elephant Graveyard Shroud"
+    },
+    {
+      "ItemId": "540170",
+      "ItemName": "Bushfire Hat"
+    },
+    {
+      "ItemId": "540171",
+      "ItemName": "Cold At Night Cover"
+    },
+    {
+      "ItemId": "540172",
+      "ItemName": "Mask of Mirror Lake"
+    },
+    {
+      "ItemId": "540173",
+      "ItemName": "Turban of the Olyphants"
+    },
+    {
+      "ItemId": "540197",
+      "ItemName": "Mandisa's Star Stone"
+    },
+    {
+      "ItemId": "540198",
+      "ItemName": "Aryanah's Golden Loop"
+    },
+    {
+      "ItemId": "540199",
+      "ItemName": "Amahle's Striped Band"
+    },
+    {
+      "ItemId": "540200",
+      "ItemName": "Tanei's Ghost Ring"
+    },
+    {
+      "ItemId": "540201",
+      "ItemName": "Mansa's Dream Stone"
+    },
+    {
+      "ItemId": "540202",
+      "ItemName": "Kallah's Dread Stone"
+    },
+    {
+      "ItemId": "540203",
+      "ItemName": "Inyanga's Baobab Loop"
+    },
+    {
+      "ItemId": "540204",
+      "ItemName": "Koko's Smoky Circle"
+    },
+    {
+      "ItemId": "540205",
+      "ItemName": "Nergal's Burning Brand"
+    },
+    {
+      "ItemId": "540206",
+      "ItemName": "Shaka's Lightning Loop"
+    },
+    {
+      "ItemId": "540207",
+      "ItemName": "Elissa's Chill Band"
+    },
+    {
+      "ItemId": "540224",
+      "ItemName": "Fire Valley Outfit"
+    },
+    {
+      "ItemId": "540225",
+      "ItemName": "Shaman's Mythic Armor"
+    },
+    {
+      "ItemId": "540226",
+      "ItemName": "Darajani Havoc Robes"
+    },
+    {
+      "ItemId": "540227",
+      "ItemName": "Baxby's Noble Outfit"
+    },
+    {
+      "ItemId": "540228",
+      "ItemName": "Storm Caller's Outfit"
+    },
+    {
+      "ItemId": "540229",
+      "ItemName": "Shaman's Winter Protection"
+    },
+    {
+      "ItemId": "540230",
+      "ItemName": "Tunic of Darajani Honor"
+    },
+    {
+      "ItemId": "540231",
+      "ItemName": "Cloak of Conformity"
+    },
+    {
+      "ItemId": "540232",
+      "ItemName": "Fire-Feather Robes"
+    },
+    {
+      "ItemId": "540233",
+      "ItemName": "Cloak of Dreaming Medicine"
+    },
+    {
+      "ItemId": "540234",
+      "ItemName": "Graveyard Shift"
+    },
+    {
+      "ItemId": "540235",
+      "ItemName": "Jacket of No Worries"
+    },
+    {
+      "ItemId": "540236",
+      "ItemName": "Big Sky Outfit"
+    },
+    {
+      "ItemId": "540237",
+      "ItemName": "Robes of the Cold Night"
+    },
+    {
+      "ItemId": "540238",
+      "ItemName": "Tunic of Long Memory"
+    },
+    {
+      "ItemId": "540269",
+      "ItemName": "Doctor's Firestorm Walkers"
+    },
+    {
+      "ItemId": "540270",
+      "ItemName": "Stone Town Storm Trackers"
+    },
+    {
+      "ItemId": "540271",
+      "ItemName": "Hot and Cold Rangers"
+    },
+    {
+      "ItemId": "540272",
+      "ItemName": "Hunter Prey Rangers"
+    },
+    {
+      "ItemId": "540273",
+      "ItemName": "Big Sky Striders"
+    },
+    {
+      "ItemId": "540274",
+      "ItemName": "Spider's Storied Wraps"
+    },
+    {
+      "ItemId": "540275",
+      "ItemName": "Baxby's Noble Trackers"
+    },
+    {
+      "ItemId": "540276",
+      "ItemName": "Fire Lion's Storm Wraps"
+    },
+    {
+      "ItemId": "540277",
+      "ItemName": "Shaman's Cold River Wraps"
+    },
+    {
+      "ItemId": "540278",
+      "ItemName": "Hot and Cold Crushers"
+    },
+    {
+      "ItemId": "540279",
+      "ItemName": "Life's Circle Safari Boots"
+    },
+    {
+      "ItemId": "540280",
+      "ItemName": "Nemean Rock Climbers"
+    },
+    {
+      "ItemId": "540281",
+      "ItemName": "Ananse's Dark Rangers"
+    },
+    {
+      "ItemId": "540282",
+      "ItemName": "Dancing Queen Dancers"
+    }
+  ]
+}

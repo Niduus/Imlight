@@ -1,0 +1,165 @@
+{
+  "Name": "W404 CE_TreasureTower_Storm_F25 TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table CE_TreasureTower_Storm_F25: the treasurecard drops (39), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Bloodbat TC",
+      "ItemName": "Blood Bat"
+    },
+    {
+      "ItemId": "Troll TC",
+      "ItemName": "Troll"
+    },
+    {
+      "ItemId": "Minor Blessing TC",
+      "ItemName": "Minor Blessing"
+    },
+    {
+      "ItemId": "Sprite TC",
+      "ItemName": "Sprite"
+    },
+    {
+      "ItemId": "Mythblade TC",
+      "ItemName": "Mythblade"
+    },
+    {
+      "ItemId": "Storm Shield TC",
+      "ItemName": "Storm Shield"
+    },
+    {
+      "ItemId": "Gobbler TC",
+      "ItemName": "Gobbler"
+    },
+    {
+      "ItemId": "Minotaur TC",
+      "ItemName": "Minotaur"
+    },
+    {
+      "ItemId": "General Akilles TC",
+      "ItemName": "General Akilles"
+    },
+    {
+      "ItemId": "Pixie Life TC",
+      "ItemName": "Fairy"
+    },
+    {
+      "ItemId": "Satyr TC",
+      "ItemName": "Satyr"
+    },
+    {
+      "ItemId": "Glacial Shield TC",
+      "ItemName": "Glacial Shield"
+    },
+    {
+      "ItemId": "Myth Trap TC",
+      "ItemName": "Myth Trap"
+    },
+    {
+      "ItemId": "Tower Shield TC",
+      "ItemName": "Tower Shield"
+    },
+    {
+      "ItemId": "3P Treant Myth TC",
+      "ItemName": "Legendary Treant"
+    },
+    {
+      "ItemId": "Athena Battle Sight - TC",
+      "ItemName": "Athena Battle Sight"
+    },
+    {
+      "ItemId": "Keeper Sacred Flame TC",
+      "ItemName": "Keeper of the Flame"
+    },
+    {
+      "ItemId": "Humongofrog TC",
+      "ItemName": "Humongofrog"
+    },
+    {
+      "ItemId": "Regenerate TC",
+      "ItemName": "Regenerate"
+    },
+    {
+      "ItemId": "Defibrillate TC",
+      "ItemName": "Healing Current"
+    },
+    {
+      "ItemId": "Helping Hands TC",
+      "ItemName": "Helping Hands"
+    },
+    {
+      "ItemId": "Dryad TC",
+      "ItemName": "Dryad"
+    },
+    {
+      "ItemId": "Feint TC",
+      "ItemName": "Feint"
+    },
+    {
+      "ItemId": "Fortify TC",
+      "ItemName": "Fortify"
+    },
+    {
+      "ItemId": "Amplify TC",
+      "ItemName": "Amplify"
+    },
+    {
+      "ItemId": "Infallible TC",
+      "ItemName": "Infallible"
+    },
+    {
+      "ItemId": "Leprechaun Myth - TC",
+      "ItemName": "Myth Leprechaun"
+    },
+    {
+      "ItemId": "Subdue TC",
+      "ItemName": "Subdue"
+    },
+    {
+      "ItemId": "Draw Power TC",
+      "ItemName": "Draw Power"
+    },
+    {
+      "ItemId": "Weakness TC",
+      "ItemName": "Weakness"
+    },
+    {
+      "ItemId": "Cat Thug TC",
+      "ItemName": "Cat Thug"
+    },
+    {
+      "ItemId": "Minion Myth Troll TC",
+      "ItemName": "Troll Minion"
+    },
+    {
+      "ItemId": "Punklops Ice Myth - TC",
+      "ItemName": "Punklops"
+    },
+    {
+      "ItemId": "Minion Myth Cyclops TC",
+      "ItemName": "Cyclops Minion"
+    },
+    {
+      "ItemId": "Helephant War - TC",
+      "ItemName": "War Helephant"
+    },
+    {
+      "ItemId": "Saga of Heroes TC",
+      "ItemName": "Saga of Heroes"
+    },
+    {
+      "ItemId": "Jacques TC",
+      "ItemName": "Jacques"
+    },
+    {
+      "ItemId": "Shatter TC",
+      "ItemName": "Shatter"
+    },
+    {
+      "ItemId": "Steal Charm TC",
+      "ItemName": "Steal Charm"
+    }
+  ]
+}

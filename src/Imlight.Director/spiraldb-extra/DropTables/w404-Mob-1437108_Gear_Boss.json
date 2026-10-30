@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Mob-1437108 Gear (Boss)",
+  "Description": "Wizard404's drop list of Capricorn the Gruff Goat's own drops: the gear drops (1), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462212",
+      "ItemName": "Blazing Zanadu Boots"
+    }
+  ]
+}

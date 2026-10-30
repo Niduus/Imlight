@@ -1,0 +1,57 @@
+{
+  "Name": "W404 Malistaire-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Malistaire-Boss-R10: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104589",
+      "ItemName": "Malistaire's Tunic of Torment"
+    },
+    {
+      "ItemId": "104622",
+      "ItemName": "Malistaire's Dragonfire Cloak"
+    },
+    {
+      "ItemId": "104639",
+      "ItemName": "Malistaire Drake's Ebon Robe"
+    },
+    {
+      "ItemId": "104645",
+      "ItemName": "Malistaire's Unhallowed Tunic"
+    },
+    {
+      "ItemId": "104668",
+      "ItemName": "Malistaire's Purgatory Coat"
+    },
+    {
+      "ItemId": "104686",
+      "ItemName": "Malistaire's Iceflame Tunic"
+    },
+    {
+      "ItemId": "104717",
+      "ItemName": "Malistaire's Wrathful Wrap"
+    },
+    {
+      "ItemId": "126617",
+      "ItemName": "Malistaire Drake's Ruby Signet"
+    },
+    {
+      "ItemId": "146181",
+      "ItemName": "Malistaire Drake's Deathedge"
+    },
+    {
+      "ItemId": "161024",
+      "ItemName": "Benevolent Knife"
+    },
+    {
+      "ItemId": "164356",
+      "ItemName": "Boots of the Slipstream"
+    },
+    {
+      "ItemId": "164357",
+      "ItemName": "Boots of the Comet"
+    }
+  ]
+}

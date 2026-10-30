@@ -1,0 +1,9 @@
+{
+  "Name": "W404 PL-Boss-BabaYaga",
+  "Description": "Gold of the game's table PL-Boss-BabaYaga, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 750,
+  "MaxGold": 1500,
+  "EachItem": false,
+  "Items": []
+}

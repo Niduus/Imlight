@@ -1,0 +1,161 @@
+{
+  "Name": "W404 ZF-Spectral-Guardians-R11 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Spectral-Guardians-R11: the gear drops (38), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "526680",
+      "ItemName": "Staff of Solomon"
+    },
+    {
+      "ItemId": "526681",
+      "ItemName": "Staff of Shadow and Light"
+    },
+    {
+      "ItemId": "526682",
+      "ItemName": "Sun's Light Spear"
+    },
+    {
+      "ItemId": "526683",
+      "ItemName": "Spear of the Trade Winds"
+    },
+    {
+      "ItemId": "526684",
+      "ItemName": "Quagga Blade"
+    },
+    {
+      "ItemId": "532277",
+      "ItemName": "Sidhe Cloak"
+    },
+    {
+      "ItemId": "532278",
+      "ItemName": "Sidhe Cowl"
+    },
+    {
+      "ItemId": "532279",
+      "ItemName": "Sidhe Shoes"
+    },
+    {
+      "ItemId": "532280",
+      "ItemName": "Sidhe Staff"
+    },
+    {
+      "ItemId": "532556",
+      "ItemName": "Splendid Tunic"
+    },
+    {
+      "ItemId": "532560",
+      "ItemName": "Boots of Fire Dancing"
+    },
+    {
+      "ItemId": "532561",
+      "ItemName": "Absolute Zero Brim"
+    },
+    {
+      "ItemId": "532565",
+      "ItemName": "Scintillating Tunic"
+    },
+    {
+      "ItemId": "532569",
+      "ItemName": "Razzle Dazzle Boots"
+    },
+    {
+      "ItemId": "532570",
+      "ItemName": "Decorous Brim"
+    },
+    {
+      "ItemId": "532574",
+      "ItemName": "Tunic of Sudden Grief"
+    },
+    {
+      "ItemId": "532578",
+      "ItemName": "Sky Walking Boots"
+    },
+    {
+      "ItemId": "540103",
+      "ItemName": "Berserker's Rage Pendant"
+    },
+    {
+      "ItemId": "540104",
+      "ItemName": "Witch Doctor's Juju Pendant"
+    },
+    {
+      "ItemId": "540105",
+      "ItemName": "Nganga's Strong Muti Pendant"
+    },
+    {
+      "ItemId": "540141",
+      "ItemName": "Zanga's Blade"
+    },
+    {
+      "ItemId": "540142",
+      "ItemName": "Kimba's Fang"
+    },
+    {
+      "ItemId": "540143",
+      "ItemName": "Great Ape's Tooth"
+    },
+    {
+      "ItemId": "540144",
+      "ItemName": "The Old Tusk-Tusk-Trunk"
+    },
+    {
+      "ItemId": "540175",
+      "ItemName": "Ghostgrass Hood"
+    },
+    {
+      "ItemId": "540176",
+      "ItemName": "Face of Baobab"
+    },
+    {
+      "ItemId": "540177",
+      "ItemName": "Stone Town Topper"
+    },
+    {
+      "ItemId": "540178",
+      "ItemName": "Hat of the Old Kings"
+    },
+    {
+      "ItemId": "540208",
+      "ItemName": "Council of Light's Band"
+    },
+    {
+      "ItemId": "540209",
+      "ItemName": "Spider Shadow's Stone"
+    },
+    {
+      "ItemId": "540240",
+      "ItemName": "Hunter Prey Jacket"
+    },
+    {
+      "ItemId": "540242",
+      "ItemName": "Sun's Circle Cloak"
+    },
+    {
+      "ItemId": "540244",
+      "ItemName": "Unbroken Spiral Robe"
+    },
+    {
+      "ItemId": "540247",
+      "ItemName": "Zafaria Tour Jacket"
+    },
+    {
+      "ItemId": "540249",
+      "ItemName": "Sinister Juju Robes"
+    },
+    {
+      "ItemId": "540251",
+      "ItemName": "Storm Chaser's Outfit"
+    },
+    {
+      "ItemId": "540253",
+      "ItemName": "Lost Outsider Gear"
+    },
+    {
+      "ItemId": "540300",
+      "ItemName": "Hand-Chased Box of Destiny"
+    }
+  ]
+}

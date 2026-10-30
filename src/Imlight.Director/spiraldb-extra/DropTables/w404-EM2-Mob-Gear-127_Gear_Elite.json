@@ -1,0 +1,265 @@
+{
+  "Name": "W404 EM2-Mob-Gear-127 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table EM2-Mob-Gear-127: the gear drops (64), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462172",
+      "ItemName": "Rad Kalamar Lid"
+    },
+    {
+      "ItemId": "1462173",
+      "ItemName": "Chill Kalamar Lid"
+    },
+    {
+      "ItemId": "1462174",
+      "ItemName": "Gnarly Kalamar Lid"
+    },
+    {
+      "ItemId": "1462175",
+      "ItemName": "Mondo Kalamar Lid"
+    },
+    {
+      "ItemId": "1462176",
+      "ItemName": "Righteous Kalamar Lid"
+    },
+    {
+      "ItemId": "1462177",
+      "ItemName": "Heavy Kalamar Lid"
+    },
+    {
+      "ItemId": "1462178",
+      "ItemName": "Bodacious Kalamar Lid"
+    },
+    {
+      "ItemId": "1462179",
+      "ItemName": "Choice Kalamar Lid"
+    },
+    {
+      "ItemId": "1462180",
+      "ItemName": "Rad Kalamar Tunic"
+    },
+    {
+      "ItemId": "1462181",
+      "ItemName": "Chill Kalamar Tunic"
+    },
+    {
+      "ItemId": "1462182",
+      "ItemName": "Gnarly Kalamar Tunic"
+    },
+    {
+      "ItemId": "1462183",
+      "ItemName": "Mondo Kalamar Tunic"
+    },
+    {
+      "ItemId": "1462184",
+      "ItemName": "Righteous Kalamar Tunic"
+    },
+    {
+      "ItemId": "1462185",
+      "ItemName": "Heavy Kalamar Tunic"
+    },
+    {
+      "ItemId": "1462186",
+      "ItemName": "Bodacious Kalamar Tunic"
+    },
+    {
+      "ItemId": "1462187",
+      "ItemName": "Choice Kalamar Tunic"
+    },
+    {
+      "ItemId": "1462188",
+      "ItemName": "Rad Kalamar Kicks"
+    },
+    {
+      "ItemId": "1462189",
+      "ItemName": "Chill Kalamar Kicks"
+    },
+    {
+      "ItemId": "1462190",
+      "ItemName": "Gnarly Kalamar Kicks"
+    },
+    {
+      "ItemId": "1462191",
+      "ItemName": "Mondo Kalamar Kicks"
+    },
+    {
+      "ItemId": "1462192",
+      "ItemName": "Righteous Kalamar Kicks"
+    },
+    {
+      "ItemId": "1462193",
+      "ItemName": "Heavy Kalamar Kicks"
+    },
+    {
+      "ItemId": "1462194",
+      "ItemName": "Bodacious Kalamar Kicks"
+    },
+    {
+      "ItemId": "1462195",
+      "ItemName": "Choice Kalamar Kicks"
+    },
+    {
+      "ItemId": "1462268",
+      "ItemName": "Rad Kalamar Knife"
+    },
+    {
+      "ItemId": "1462269",
+      "ItemName": "Chill Kalamar Knife"
+    },
+    {
+      "ItemId": "1462270",
+      "ItemName": "Gnarly Kalamar Knife"
+    },
+    {
+      "ItemId": "1462271",
+      "ItemName": "Mondo Kalamar Knife"
+    },
+    {
+      "ItemId": "1462272",
+      "ItemName": "Righteous Kalamar Knife"
+    },
+    {
+      "ItemId": "1462273",
+      "ItemName": "Heavy Kalamar Knife"
+    },
+    {
+      "ItemId": "1462274",
+      "ItemName": "Bodacious Kalamar Knife"
+    },
+    {
+      "ItemId": "1462275",
+      "ItemName": "Choice Kalamar Knife"
+    },
+    {
+      "ItemId": "1462276",
+      "ItemName": "Rad Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462277",
+      "ItemName": "Chill Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462278",
+      "ItemName": "Gnarly Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462279",
+      "ItemName": "Mondo Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462280",
+      "ItemName": "Righteous Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462281",
+      "ItemName": "Heavy Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462282",
+      "ItemName": "Bodacious Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462283",
+      "ItemName": "Choice Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462284",
+      "ItemName": "Rad Kalamar Ring"
+    },
+    {
+      "ItemId": "1462285",
+      "ItemName": "Chill Kalamar Ring"
+    },
+    {
+      "ItemId": "1462286",
+      "ItemName": "Gnarly Kalamar Ring"
+    },
+    {
+      "ItemId": "1462287",
+      "ItemName": "Mondo Kalamar Ring"
+    },
+    {
+      "ItemId": "1462288",
+      "ItemName": "Righteous Kalamar Ring"
+    },
+    {
+      "ItemId": "1462289",
+      "ItemName": "Heavy Kalamar Ring"
+    },
+    {
+      "ItemId": "1462290",
+      "ItemName": "Bodacious Kalamar Ring"
+    },
+    {
+      "ItemId": "1462291",
+      "ItemName": "Choice Kalamar Ring"
+    },
+    {
+      "ItemId": "1462364",
+      "ItemName": "Rad Kalakrys"
+    },
+    {
+      "ItemId": "1462365",
+      "ItemName": "Chill Kalakrys"
+    },
+    {
+      "ItemId": "1462366",
+      "ItemName": "Gnarly Kalakrys"
+    },
+    {
+      "ItemId": "1462367",
+      "ItemName": "Mondo Kalakrys"
+    },
+    {
+      "ItemId": "1462368",
+      "ItemName": "Righteous Kalakrys"
+    },
+    {
+      "ItemId": "1462369",
+      "ItemName": "Heavy Kalakrys"
+    },
+    {
+      "ItemId": "1462370",
+      "ItemName": "Bodacious Kalakrys"
+    },
+    {
+      "ItemId": "1462371",
+      "ItemName": "Choice Kalakrys"
+    },
+    {
+      "ItemId": "1462396",
+      "ItemName": "Rad Kalamar Deck"
+    },
+    {
+      "ItemId": "1462397",
+      "ItemName": "Chill Kalamar Deck"
+    },
+    {
+      "ItemId": "1462398",
+      "ItemName": "Gnarly Kalamar Deck"
+    },
+    {
+      "ItemId": "1462399",
+      "ItemName": "Mondo Kalamar Deck"
+    },
+    {
+      "ItemId": "1462400",
+      "ItemName": "Righteous Kalamar Deck"
+    },
+    {
+      "ItemId": "1462401",
+      "ItemName": "Heavy Kalamar Deck"
+    },
+    {
+      "ItemId": "1462402",
+      "ItemName": "Bodacious Kalamar Deck"
+    },
+    {
+      "ItemId": "1462403",
+      "ItemName": "Choice Kalamar Deck"
+    }
+  ]
+}

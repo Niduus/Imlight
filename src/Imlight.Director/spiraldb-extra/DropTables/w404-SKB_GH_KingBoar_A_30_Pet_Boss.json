@@ -1,0 +1,41 @@
+{
+  "Name": "W404 SKB_GH_KingBoar_A_30 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_GH_KingBoar_A_30: the pet drops (8), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "100453",
+      "ItemName": "Imp"
+    },
+    {
+      "ItemId": "473448",
+      "ItemName": "Night Hawk"
+    },
+    {
+      "ItemId": "589089",
+      "ItemName": "Raven"
+    },
+    {
+      "ItemId": "789435",
+      "ItemName": "Harpy"
+    },
+    {
+      "ItemId": "1257439",
+      "ItemName": "Pesky Beetle"
+    },
+    {
+      "ItemId": "1470348",
+      "ItemName": "Fenris"
+    },
+    {
+      "ItemId": "1470349",
+      "ItemName": "Fenrir"
+    },
+    {
+      "ItemId": "1470350",
+      "ItemName": "Fenric"
+    }
+  ]
+}

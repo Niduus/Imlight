@@ -1,0 +1,33 @@
+{
+  "Name": "W404 MS-Oni-Death-MSBoss-L61 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Oni-Death-MSBoss-L61: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160452",
+      "ItemName": "Gong of the Oni"
+    },
+    {
+      "ItemId": "160490",
+      "ItemName": "Samoorai Statue"
+    },
+    {
+      "ItemId": "160497",
+      "ItemName": "Votive Tablet"
+    },
+    {
+      "ItemId": "470236",
+      "ItemName": "Wing Chun Dummy"
+    },
+    {
+      "ItemId": "512100",
+      "ItemName": "MooShu Haunted Theme"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "Name": "W404 KM-Boss-TC-Rare TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-Boss-TC-Rare: the treasurecard drops (16), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Berserk TC",
+      "ItemName": "Berserk"
+    },
+    {
+      "ItemId": "Brilliant Light TC",
+      "ItemName": "Brilliant Light"
+    },
+    {
+      "ItemId": "Dream Shield TC",
+      "ItemName": "Dream Shield"
+    },
+    {
+      "ItemId": "Ether Shield TC",
+      "ItemName": "Ether Shield"
+    },
+    {
+      "ItemId": "Frostbite TC",
+      "ItemName": "Frostbite"
+    },
+    {
+      "ItemId": "Galvanic Field TC",
+      "ItemName": "Galvanic Field"
+    },
+    {
+      "ItemId": "Link TC",
+      "ItemName": "Link"
+    },
+    {
+      "ItemId": "Sirens TC",
+      "ItemName": "Sirens"
+    },
+    {
+      "ItemId": "Storm Shield TC",
+      "ItemName": "Storm Shield"
+    },
+    {
+      "ItemId": "Raging Bull TC",
+      "ItemName": "Raging Bull"
+    },
+    {
+      "ItemId": "Wings of Fate TC",
+      "ItemName": "Wings of Fate"
+    },
+    {
+      "ItemId": "Rusalka's Wrath TC",
+      "ItemName": "Rusalka's Wrath"
+    },
+    {
+      "ItemId": "Nested Fury TC",
+      "ItemName": "Nested Fury"
+    },
+    {
+      "ItemId": "Snowball Barrage TC",
+      "ItemName": "Snowball Barrage"
+    },
+    {
+      "ItemId": "Witch's Housecall TC",
+      "ItemName": "Witch's House Call"
+    },
+    {
+      "ItemId": "Winged Sorrow TC",
+      "ItemName": "Winged Sorrow"
+    }
+  ]
+}

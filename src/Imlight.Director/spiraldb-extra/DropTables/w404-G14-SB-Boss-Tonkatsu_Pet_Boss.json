@@ -1,0 +1,65 @@
+{
+  "Name": "W404 G14-SB-Boss-Tonkatsu Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-SB-Boss-Tonkatsu: the pet drops (14), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "100432",
+      "ItemName": "Green Ghost"
+    },
+    {
+      "ItemId": "100438",
+      "ItemName": "Minotaur"
+    },
+    {
+      "ItemId": "100441",
+      "ItemName": "Treant"
+    },
+    {
+      "ItemId": "100442",
+      "ItemName": "Firewing"
+    },
+    {
+      "ItemId": "100443",
+      "ItemName": "Tough Troll"
+    },
+    {
+      "ItemId": "100458",
+      "ItemName": "Sun Bird"
+    },
+    {
+      "ItemId": "100459",
+      "ItemName": "Troll"
+    },
+    {
+      "ItemId": "126987",
+      "ItemName": "Jade Oni"
+    },
+    {
+      "ItemId": "225413",
+      "ItemName": "Death Ninja"
+    },
+    {
+      "ItemId": "225419",
+      "ItemName": "Red Banshee"
+    },
+    {
+      "ItemId": "225420",
+      "ItemName": "Deathbat"
+    },
+    {
+      "ItemId": "225441",
+      "ItemName": "Myth Leprechaun"
+    },
+    {
+      "ItemId": "225450",
+      "ItemName": "Life Scarab"
+    },
+    {
+      "ItemId": "1317673",
+      "ItemName": "Ninja Piggle"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "Name": "W404 Adv_AQ-Bear-Gladiator Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Adv_AQ-Bear-Gladiator: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "819692",
+      "ItemName": "Alpha and Omega Ring"
+    },
+    {
+      "ItemId": "1203042",
+      "ItemName": "Exalted Balance Amulet"
+    },
+    {
+      "ItemId": "1203043",
+      "ItemName": "Exalted Death Amulet"
+    },
+    {
+      "ItemId": "1203044",
+      "ItemName": "Exalted Fire Amulet"
+    },
+    {
+      "ItemId": "1203045",
+      "ItemName": "Exalted Ice Amulet"
+    },
+    {
+      "ItemId": "1203046",
+      "ItemName": "Exalted Life Amulet"
+    },
+    {
+      "ItemId": "1203047",
+      "ItemName": "Exalted Myth Amulet"
+    },
+    {
+      "ItemId": "1203048",
+      "ItemName": "Exalted Storm Amulet"
+    },
+    {
+      "ItemId": "1696393",
+      "ItemName": "Board of Gorgon Imprisonment"
+    },
+    {
+      "ItemId": "1696394",
+      "ItemName": "Board of Gorgon Suffering"
+    },
+    {
+      "ItemId": "1696395",
+      "ItemName": "Board of Gorgon's Gaze"
+    },
+    {
+      "ItemId": "1696396",
+      "ItemName": "Board of Gorgon Petrification"
+    },
+    {
+      "ItemId": "1696397",
+      "ItemName": "Board of Gorgon Venom"
+    },
+    {
+      "ItemId": "1696398",
+      "ItemName": "Board of Gorgon Infamy"
+    },
+    {
+      "ItemId": "1696399",
+      "ItemName": "Board of Gorgon Volatility"
+    }
+  ]
+}

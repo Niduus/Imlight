@@ -1,0 +1,89 @@
+{
+  "Name": "W404 Wizard-Female-Point-Black-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Wizard-Female-Point-Black-Boss-R8: the gear drops (20), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104595",
+      "ItemName": "Judge's Robe"
+    },
+    {
+      "ItemId": "104630",
+      "ItemName": "Raiment of the Raven"
+    },
+    {
+      "ItemId": "104658",
+      "ItemName": "Leafy Jerkin"
+    },
+    {
+      "ItemId": "104665",
+      "ItemName": "Firewinter's Seasonal Drape"
+    },
+    {
+      "ItemId": "104727",
+      "ItemName": "Surcoat of Glory"
+    },
+    {
+      "ItemId": "104776",
+      "ItemName": "Mocassins of the Oracle"
+    },
+    {
+      "ItemId": "104793",
+      "ItemName": "Shoes of the Phoenix"
+    },
+    {
+      "ItemId": "104804",
+      "ItemName": "Reaper's Boots"
+    },
+    {
+      "ItemId": "104867",
+      "ItemName": "Striders of the Thicket"
+    },
+    {
+      "ItemId": "104888",
+      "ItemName": "Shoes of the Greatest Saga"
+    },
+    {
+      "ItemId": "126581",
+      "ItemName": "Seal of the Saga"
+    },
+    {
+      "ItemId": "126599",
+      "ItemName": "Burning Ring of Fire"
+    },
+    {
+      "ItemId": "126610",
+      "ItemName": "Seal of the Vigilant"
+    },
+    {
+      "ItemId": "146132",
+      "ItemName": "Firewinter's Ice Spark Blade"
+    },
+    {
+      "ItemId": "146164",
+      "ItemName": "Poniard of Vitality"
+    },
+    {
+      "ItemId": "146173",
+      "ItemName": "Needle of the Eye"
+    },
+    {
+      "ItemId": "146212",
+      "ItemName": "Lightning-charged Mantle"
+    },
+    {
+      "ItemId": "146288",
+      "ItemName": "Frostbitten Cap"
+    },
+    {
+      "ItemId": "146316",
+      "ItemName": "Pyromancer's Veil"
+    },
+    {
+      "ItemId": "146342",
+      "ItemName": "Reaper's Hood"
+    }
+  ]
+}

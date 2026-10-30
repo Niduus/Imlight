@@ -1,0 +1,153 @@
+{
+  "Name": "W404 GH-Level-01 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table GH-Level-01: the gear drops (36), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136254",
+      "ItemName": "Iceshadow's Athame"
+    },
+    {
+      "ItemId": "136255",
+      "ItemName": "Bodkin of Fury"
+    },
+    {
+      "ItemId": "136313",
+      "ItemName": "Cowl of the Flamesinger"
+    },
+    {
+      "ItemId": "136314",
+      "ItemName": "Snowthorn Hat"
+    },
+    {
+      "ItemId": "136315",
+      "ItemName": "Cloud Cover"
+    },
+    {
+      "ItemId": "136316",
+      "ItemName": "Circlet of the Fallen"
+    },
+    {
+      "ItemId": "136317",
+      "ItemName": "Hallowed Hood"
+    },
+    {
+      "ItemId": "136318",
+      "ItemName": "Ice Raider's Hat"
+    },
+    {
+      "ItemId": "136319",
+      "ItemName": "Cap of Dread"
+    },
+    {
+      "ItemId": "136326",
+      "ItemName": "Headcloth of the Fray"
+    },
+    {
+      "ItemId": "136333",
+      "ItemName": "Circlet of Fortune"
+    },
+    {
+      "ItemId": "136459",
+      "ItemName": "Ice Raider's Ring"
+    },
+    {
+      "ItemId": "136465",
+      "ItemName": "Stone of Confidence"
+    },
+    {
+      "ItemId": "136483",
+      "ItemName": "Seal of the Tundra"
+    },
+    {
+      "ItemId": "136524",
+      "ItemName": "Drape of the White Squall"
+    },
+    {
+      "ItemId": "136525",
+      "ItemName": "Vestment of Yesteryear"
+    },
+    {
+      "ItemId": "136526",
+      "ItemName": "Raiment of the Lifespring"
+    },
+    {
+      "ItemId": "136528",
+      "ItemName": "Robe of Elegies"
+    },
+    {
+      "ItemId": "136530",
+      "ItemName": "Vestment of Serenity"
+    },
+    {
+      "ItemId": "136548",
+      "ItemName": "Robe of the Firebloom"
+    },
+    {
+      "ItemId": "136549",
+      "ItemName": "Runeweave Clothing"
+    },
+    {
+      "ItemId": "136550",
+      "ItemName": "Coat of Pouring Rain"
+    },
+    {
+      "ItemId": "136551",
+      "ItemName": "Mystifying Raiment"
+    },
+    {
+      "ItemId": "136552",
+      "ItemName": "Garments of Zeal"
+    },
+    {
+      "ItemId": "136553",
+      "ItemName": "Thanatoid Vestment"
+    },
+    {
+      "ItemId": "136554",
+      "ItemName": "Tunic of Ataraxia"
+    },
+    {
+      "ItemId": "136555",
+      "ItemName": "Igneous Robe"
+    },
+    {
+      "ItemId": "136556",
+      "ItemName": "Glacial Longcoat"
+    },
+    {
+      "ItemId": "171098",
+      "ItemName": "Footgear of the Firehaze"
+    },
+    {
+      "ItemId": "171099",
+      "ItemName": "Hibernal Footwraps"
+    },
+    {
+      "ItemId": "171100",
+      "ItemName": "Boots of Precipitation"
+    },
+    {
+      "ItemId": "171101",
+      "ItemName": "Footguards of the Disciple"
+    },
+    {
+      "ItemId": "171102",
+      "ItemName": "Slippers of Diligence"
+    },
+    {
+      "ItemId": "171103",
+      "ItemName": "Doomstriders"
+    },
+    {
+      "ItemId": "171104",
+      "ItemName": "Boots of Reflexive Might"
+    },
+    {
+      "ItemId": "171105",
+      "ItemName": "Striders of Strife"
+    }
+  ]
+}

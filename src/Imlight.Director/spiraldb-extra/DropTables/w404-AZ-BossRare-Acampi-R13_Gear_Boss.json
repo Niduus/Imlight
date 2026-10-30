@@ -1,0 +1,61 @@
+{
+  "Name": "W404 AZ-BossRare-Acampi-R13 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossRare-Acampi-R13: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730191",
+      "ItemName": "Pendant of the Wild Wings"
+    },
+    {
+      "ItemId": "730202",
+      "ItemName": "Charm of the Gold Aztecosaur"
+    },
+    {
+      "ItemId": "730204",
+      "ItemName": "Kronosaur's Shell of Passion"
+    },
+    {
+      "ItemId": "730278",
+      "ItemName": "Keeper of the Codex Crown"
+    },
+    {
+      "ItemId": "730279",
+      "ItemName": "Black Sun Chac's Helmet"
+    },
+    {
+      "ItemId": "730348",
+      "ItemName": "Vestment of the Hungry Lizard"
+    },
+    {
+      "ItemId": "730355",
+      "ItemName": "Smoking Obsidian Scales"
+    },
+    {
+      "ItemId": "730416",
+      "ItemName": "Codex of the Lost Fire"
+    },
+    {
+      "ItemId": "730420",
+      "ItemName": "King's Royal Portraits"
+    },
+    {
+      "ItemId": "730423",
+      "ItemName": "White Fire Case"
+    },
+    {
+      "ItemId": "730429",
+      "ItemName": "Jaguar Paw Pyramid"
+    },
+    {
+      "ItemId": "730449",
+      "ItemName": "Rod of the Black Sun"
+    },
+    {
+      "ItemId": "730451",
+      "ItemName": "Head of the Fire Arrow Wand"
+    }
+  ]
+}

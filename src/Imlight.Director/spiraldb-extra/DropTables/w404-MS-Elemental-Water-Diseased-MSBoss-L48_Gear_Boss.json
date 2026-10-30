@@ -1,0 +1,77 @@
+{
+  "Name": "W404 MS-Elemental-Water-Diseased-MSBoss-L48 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Elemental-Water-Diseased-MSBoss-L48: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97484",
+      "ItemName": "River Spirit's Drifting Dirk"
+    },
+    {
+      "ItemId": "97511",
+      "ItemName": "River Spirit's Deck of Senses"
+    },
+    {
+      "ItemId": "97643",
+      "ItemName": "River Spirit's Lively Cap"
+    },
+    {
+      "ItemId": "97676",
+      "ItemName": "Cap of Consideration"
+    },
+    {
+      "ItemId": "97695",
+      "ItemName": "Wavebringer's Ring"
+    },
+    {
+      "ItemId": "97724",
+      "ItemName": "River Spirit's Dreaming Band"
+    },
+    {
+      "ItemId": "97741",
+      "ItemName": "Vestment of Apprehension"
+    },
+    {
+      "ItemId": "97742",
+      "ItemName": "Comprehensive Garments"
+    },
+    {
+      "ItemId": "97792",
+      "ItemName": "Indulgent Vestment"
+    },
+    {
+      "ItemId": "97798",
+      "ItemName": "River Spirit's Diligent Tunic"
+    },
+    {
+      "ItemId": "97822",
+      "ItemName": "Tunic of Impression"
+    },
+    {
+      "ItemId": "97842",
+      "ItemName": "Lyrical Garments"
+    },
+    {
+      "ItemId": "97870",
+      "ItemName": "Tormented Cloak"
+    },
+    {
+      "ItemId": "97889",
+      "ItemName": "Vestment of the Eager"
+    },
+    {
+      "ItemId": "97953",
+      "ItemName": "Indulgent Boots"
+    },
+    {
+      "ItemId": "98003",
+      "ItemName": "Lyrical Footwraps"
+    },
+    {
+      "ItemId": "98054",
+      "ItemName": "Sandals of the Determined"
+    }
+  ]
+}

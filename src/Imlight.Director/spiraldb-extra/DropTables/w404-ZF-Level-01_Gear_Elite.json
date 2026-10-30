@@ -1,0 +1,137 @@
+{
+  "Name": "W404 ZF-Level-01 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table ZF-Level-01: the gear drops (32), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "540152",
+      "ItemName": "Zebra's Zephyr Headdress"
+    },
+    {
+      "ItemId": "540153",
+      "ItemName": "Crocogator's Ambush Hood"
+    },
+    {
+      "ItemId": "540154",
+      "ItemName": "Hippogriff's Hat of Harmony"
+    },
+    {
+      "ItemId": "540155",
+      "ItemName": "Wrathful Wraith's Headdress"
+    },
+    {
+      "ItemId": "540160",
+      "ItemName": "Cold Chieftain's Mask"
+    },
+    {
+      "ItemId": "540161",
+      "ItemName": "River Captain's Hood"
+    },
+    {
+      "ItemId": "540163",
+      "ItemName": "Hood of Chieftain's Honor"
+    },
+    {
+      "ItemId": "540165",
+      "ItemName": "Hood of the Forgotten"
+    },
+    {
+      "ItemId": "540189",
+      "ItemName": "Hathi's Victory Band"
+    },
+    {
+      "ItemId": "540190",
+      "ItemName": "Mondli's Green Stone"
+    },
+    {
+      "ItemId": "540191",
+      "ItemName": "Esop's Dancing Ring"
+    },
+    {
+      "ItemId": "540192",
+      "ItemName": "Unathi's Nighttime Circle"
+    },
+    {
+      "ItemId": "540197",
+      "ItemName": "Mandisa's Star Stone"
+    },
+    {
+      "ItemId": "540198",
+      "ItemName": "Aryanah's Golden Loop"
+    },
+    {
+      "ItemId": "540199",
+      "ItemName": "Amahle's Striped Band"
+    },
+    {
+      "ItemId": "540200",
+      "ItemName": "Tanei's Ghost Ring"
+    },
+    {
+      "ItemId": "540217",
+      "ItemName": "Witch Doctor's Fiery Garb"
+    },
+    {
+      "ItemId": "540218",
+      "ItemName": "Irontrunk Cloak of Dreams"
+    },
+    {
+      "ItemId": "540219",
+      "ItemName": "Outsider's Grim Garb"
+    },
+    {
+      "ItemId": "540220",
+      "ItemName": "Jambo Jacket"
+    },
+    {
+      "ItemId": "540228",
+      "ItemName": "Storm Caller's Outfit"
+    },
+    {
+      "ItemId": "540229",
+      "ItemName": "Shaman's Winter Protection"
+    },
+    {
+      "ItemId": "540230",
+      "ItemName": "Tunic of Darajani Honor"
+    },
+    {
+      "ItemId": "540231",
+      "ItemName": "Cloak of Conformity"
+    },
+    {
+      "ItemId": "540262",
+      "ItemName": "Ironhide Boots"
+    },
+    {
+      "ItemId": "540263",
+      "ItemName": "Cold Storm Trackers"
+    },
+    {
+      "ItemId": "540264",
+      "ItemName": "Steppers of Ice and Fire"
+    },
+    {
+      "ItemId": "540265",
+      "ItemName": "Witch Doctor's Juju Rangers"
+    },
+    {
+      "ItemId": "540269",
+      "ItemName": "Doctor's Firestorm Walkers"
+    },
+    {
+      "ItemId": "540270",
+      "ItemName": "Stone Town Storm Trackers"
+    },
+    {
+      "ItemId": "540271",
+      "ItemName": "Hot and Cold Rangers"
+    },
+    {
+      "ItemId": "540272",
+      "ItemName": "Hunter Prey Rangers"
+    }
+  ]
+}

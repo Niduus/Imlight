@@ -1,0 +1,105 @@
+{
+  "Name": "W404 SKB_CL_Dan_A_150 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_CL_Dan_A_150: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1505022",
+      "ItemName": "Celestian Photon Mask"
+    },
+    {
+      "ItemId": "1505023",
+      "ItemName": "Celestian Photon Mask"
+    },
+    {
+      "ItemId": "1505036",
+      "ItemName": "Celestian Photon Cape"
+    },
+    {
+      "ItemId": "1505037",
+      "ItemName": "Celestian Photon Cape"
+    },
+    {
+      "ItemId": "1505050",
+      "ItemName": "Celestian Photon Striders"
+    },
+    {
+      "ItemId": "1505051",
+      "ItemName": "Celestian Photon Striders"
+    },
+    {
+      "ItemId": "1505064",
+      "ItemName": "Celestian Xenon Mask"
+    },
+    {
+      "ItemId": "1505065",
+      "ItemName": "Celestian Xenon Mask"
+    },
+    {
+      "ItemId": "1505078",
+      "ItemName": "Celestian Xenon Cape"
+    },
+    {
+      "ItemId": "1505079",
+      "ItemName": "Celestian Xenon Cape"
+    },
+    {
+      "ItemId": "1505092",
+      "ItemName": "Celestian Xenon Striders"
+    },
+    {
+      "ItemId": "1505093",
+      "ItemName": "Celestian Xenon Striders"
+    },
+    {
+      "ItemId": "1505106",
+      "ItemName": "Celestian Neon Mask"
+    },
+    {
+      "ItemId": "1505107",
+      "ItemName": "Celestian Neon Mask"
+    },
+    {
+      "ItemId": "1505120",
+      "ItemName": "Celestian Neon Cape"
+    },
+    {
+      "ItemId": "1505121",
+      "ItemName": "Celestian Neon Cape"
+    },
+    {
+      "ItemId": "1505134",
+      "ItemName": "Celestian Neon Striders"
+    },
+    {
+      "ItemId": "1505135",
+      "ItemName": "Celestian Neon Striders"
+    },
+    {
+      "ItemId": "1505190",
+      "ItemName": "Celestian Photon Axe"
+    },
+    {
+      "ItemId": "1505191",
+      "ItemName": "Celestian Photon Axe"
+    },
+    {
+      "ItemId": "1505204",
+      "ItemName": "Celestian Xenon Axe"
+    },
+    {
+      "ItemId": "1505205",
+      "ItemName": "Celestian Xenon Axe"
+    },
+    {
+      "ItemId": "1505218",
+      "ItemName": "Celestian Neon Axe"
+    },
+    {
+      "ItemId": "1505219",
+      "ItemName": "Celestian Neon Axe"
+    }
+  ]
+}

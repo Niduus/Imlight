@@ -1,0 +1,93 @@
+{
+  "Name": "W404 MS-Pig-Plague-Lord-MSBoss-L46 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-Plague-Lord-MSBoss-L46: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97471",
+      "ItemName": "Athame of Attention"
+    },
+    {
+      "ItemId": "97474",
+      "ItemName": "Dirk of Sandcastles"
+    },
+    {
+      "ItemId": "97477",
+      "ItemName": "Ideyoshi's Analytical Athame"
+    },
+    {
+      "ItemId": "97501",
+      "ItemName": "Ideyoshi's Deck of Purpose"
+    },
+    {
+      "ItemId": "97586",
+      "ItemName": "Profound Hat"
+    },
+    {
+      "ItemId": "97608",
+      "ItemName": "Cowl of Discord"
+    },
+    {
+      "ItemId": "97634",
+      "ItemName": "Hat of the Triad"
+    },
+    {
+      "ItemId": "97641",
+      "ItemName": "Ideyoshi's Adroit Cowl"
+    },
+    {
+      "ItemId": "97656",
+      "ItemName": "Headwraps of Much Ado"
+    },
+    {
+      "ItemId": "97679",
+      "ItemName": "Hat of the Lotus"
+    },
+    {
+      "ItemId": "97703",
+      "ItemName": "Discerning Ring"
+    },
+    {
+      "ItemId": "97719",
+      "ItemName": "Ideyoshi's Contemplative Ring"
+    },
+    {
+      "ItemId": "97845",
+      "ItemName": "Ideyoshi's Resonant Cloak"
+    },
+    {
+      "ItemId": "97965",
+      "ItemName": "Shoes of Preoccupation"
+    },
+    {
+      "ItemId": "97987",
+      "ItemName": "Boots of Commotion"
+    },
+    {
+      "ItemId": "98015",
+      "ItemName": "Slippers of the Opus"
+    },
+    {
+      "ItemId": "98038",
+      "ItemName": "Shoes of Woe"
+    },
+    {
+      "ItemId": "98059",
+      "ItemName": "Ideyoshi's Zealous Sandals"
+    },
+    {
+      "ItemId": "98061",
+      "ItemName": "Entranced Slippers"
+    },
+    {
+      "ItemId": "98064",
+      "ItemName": "Sandals of Soul-Searching"
+    },
+    {
+      "ItemId": "98066",
+      "ItemName": "Footwraps of Sandcastles"
+    }
+  ]
+}

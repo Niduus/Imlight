@@ -1,0 +1,17 @@
+{
+  "Name": "W404 AV-Mob-01 Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table AV-Mob-01: the housing drops (2), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "641572",
+      "ItemName": "Square Pedestal"
+    },
+    {
+      "ItemId": "641586",
+      "ItemName": "Avalon Wooden Table"
+    }
+  ]
+}

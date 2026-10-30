@@ -1,0 +1,129 @@
+{
+  "Name": "W404 WC-KT-Level-12 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WC-KT-Level-12: the gear drops (30), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4940",
+      "ItemName": "Dagger of Talent"
+    },
+    {
+      "ItemId": "4953",
+      "ItemName": "Glittering Dagger"
+    },
+    {
+      "ItemId": "5025",
+      "ItemName": "Superstitious Band"
+    },
+    {
+      "ItemId": "5034",
+      "ItemName": "Cryptkeeper's Band"
+    },
+    {
+      "ItemId": "38747",
+      "ItemName": "Blazing Vest"
+    },
+    {
+      "ItemId": "38760",
+      "ItemName": "Crystalline Vest"
+    },
+    {
+      "ItemId": "39426",
+      "ItemName": "Boots of the Cyclone"
+    },
+    {
+      "ItemId": "39432",
+      "ItemName": "Glacial Slippers"
+    },
+    {
+      "ItemId": "39442",
+      "ItemName": "Blazing Boots"
+    },
+    {
+      "ItemId": "77675",
+      "ItemName": "Ancient Circlet"
+    },
+    {
+      "ItemId": "77676",
+      "ItemName": "Charred Cowl"
+    },
+    {
+      "ItemId": "77686",
+      "ItemName": "Snowflake Cowl"
+    },
+    {
+      "ItemId": "77687",
+      "ItemName": "Crystalline Helm"
+    },
+    {
+      "ItemId": "77688",
+      "ItemName": "Cap of the Oasis"
+    },
+    {
+      "ItemId": "77689",
+      "ItemName": "Durable Hood"
+    },
+    {
+      "ItemId": "77697",
+      "ItemName": "Tempest Cowl"
+    },
+    {
+      "ItemId": "77699",
+      "ItemName": "Helm of the Cyclone"
+    },
+    {
+      "ItemId": "77719",
+      "ItemName": "Helm of Refuge"
+    },
+    {
+      "ItemId": "77756",
+      "ItemName": "Boots of Imagination"
+    },
+    {
+      "ItemId": "77765",
+      "ItemName": "Shoes of Adaptation"
+    },
+    {
+      "ItemId": "77775",
+      "ItemName": "Cryptkeeper's Shoes"
+    },
+    {
+      "ItemId": "77784",
+      "ItemName": "Ancient Sandals"
+    },
+    {
+      "ItemId": "77795",
+      "ItemName": "Slippers of the Badlands"
+    },
+    {
+      "ItemId": "77796",
+      "ItemName": "Sphinx's Footwraps"
+    },
+    {
+      "ItemId": "87265",
+      "ItemName": "Vest of the Cyclone"
+    },
+    {
+      "ItemId": "87277",
+      "ItemName": "Tunic of Tall Tales"
+    },
+    {
+      "ItemId": "87290",
+      "ItemName": "Flowering Mantle"
+    },
+    {
+      "ItemId": "87303",
+      "ItemName": "Cryptkeeper's Cloak"
+    },
+    {
+      "ItemId": "87316",
+      "ItemName": "Ancient Cloak"
+    },
+    {
+      "ItemId": "87330",
+      "ItemName": "Initiate's Uniform"
+    }
+  ]
+}

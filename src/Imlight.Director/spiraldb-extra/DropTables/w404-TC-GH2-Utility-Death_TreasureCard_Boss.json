@@ -1,0 +1,17 @@
+{
+  "Name": "W404 TC-GH2-Utility-Death TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-GH2-Utility-Death: the treasurecard drops (2), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Dark Pact TC",
+      "ItemName": "Dark Tribute"
+    },
+    {
+      "ItemId": "Virulent Plague TC",
+      "ItemName": "Virulent Plague"
+    }
+  ]
+}

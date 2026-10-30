@@ -1,0 +1,33 @@
+{
+  "Name": "W404 MS-Horse-Merc-Gray-MSBoss-L39 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Horse-Merc-Gray-MSBoss-L39: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82923",
+      "ItemName": "Throwing Star Display"
+    },
+    {
+      "ItemId": "82925",
+      "ItemName": "Marble Stool"
+    },
+    {
+      "ItemId": "160464",
+      "ItemName": "Quartermaster's Naginatas"
+    },
+    {
+      "ItemId": "470213",
+      "ItemName": "Sky Painting"
+    },
+    {
+      "ItemId": "512190",
+      "ItemName": "MooShu Pet Derby Theme"
+    },
+    {
+      "ItemId": "1335018",
+      "ItemName": "MooShu Dance Theme"
+    }
+  ]
+}

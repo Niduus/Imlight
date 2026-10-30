@@ -1,0 +1,13 @@
+{
+  "Name": "W404 G14-SB-Boss-GuardianOni TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-SB-Boss-GuardianOni: the treasurecard drops (1), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Goat Monk Death TC",
+      "ItemName": "Monk of Mourning"
+    }
+  ]
+}

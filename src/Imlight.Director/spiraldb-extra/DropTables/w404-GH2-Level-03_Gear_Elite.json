@@ -1,0 +1,221 @@
+{
+  "Name": "W404 GH2-Level-03 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table GH2-Level-03: the gear drops (53), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "455145",
+      "ItemName": "Horned Helm of the North"
+    },
+    {
+      "ItemId": "455146",
+      "ItemName": "Grizzled Helm"
+    },
+    {
+      "ItemId": "455147",
+      "ItemName": "Barbaric Helm"
+    },
+    {
+      "ItemId": "455148",
+      "ItemName": "Horned Helm of the Mighty"
+    },
+    {
+      "ItemId": "455149",
+      "ItemName": "Horned Helm of Valor"
+    },
+    {
+      "ItemId": "455150",
+      "ItemName": "Horned Helm of Courage"
+    },
+    {
+      "ItemId": "455151",
+      "ItemName": "Horned Helm of Bravery"
+    },
+    {
+      "ItemId": "455152",
+      "ItemName": "Cowl of Justice"
+    },
+    {
+      "ItemId": "455153",
+      "ItemName": "Cowl of Spirit Calling"
+    },
+    {
+      "ItemId": "455154",
+      "ItemName": "Cowl of Crackling"
+    },
+    {
+      "ItemId": "455155",
+      "ItemName": "Cold-Kissed Cowl"
+    },
+    {
+      "ItemId": "455156",
+      "ItemName": "Cowl of Esprit"
+    },
+    {
+      "ItemId": "455157",
+      "ItemName": "Cowl of the One Eyed Crow"
+    },
+    {
+      "ItemId": "455158",
+      "ItemName": "Cowl of the Dark Waters"
+    },
+    {
+      "ItemId": "455179",
+      "ItemName": "Ring of the Wolf Warrior"
+    },
+    {
+      "ItemId": "455180",
+      "ItemName": "Ring of the Hungry Wolf"
+    },
+    {
+      "ItemId": "455181",
+      "ItemName": "Ring of the Ravenous Wolf"
+    },
+    {
+      "ItemId": "455182",
+      "ItemName": "Ring of the Hunting Wolf"
+    },
+    {
+      "ItemId": "455183",
+      "ItemName": "Golden Ring of Battle"
+    },
+    {
+      "ItemId": "455184",
+      "ItemName": "Black Spinel of Battle"
+    },
+    {
+      "ItemId": "455185",
+      "ItemName": "Ruby Ring of Battle"
+    },
+    {
+      "ItemId": "455186",
+      "ItemName": "Sapphire Ring of Battle"
+    },
+    {
+      "ItemId": "455187",
+      "ItemName": "Jade Ring of Battle"
+    },
+    {
+      "ItemId": "455188",
+      "ItemName": "Peridot Ring of Battle"
+    },
+    {
+      "ItemId": "455189",
+      "ItemName": "Amethyst Ring of Battle"
+    },
+    {
+      "ItemId": "455206",
+      "ItemName": "Coat of Justice"
+    },
+    {
+      "ItemId": "455207",
+      "ItemName": "Coat of the Crypt"
+    },
+    {
+      "ItemId": "455208",
+      "ItemName": "Burnt Coat"
+    },
+    {
+      "ItemId": "455209",
+      "ItemName": "Chill-kissed Coat"
+    },
+    {
+      "ItemId": "455210",
+      "ItemName": "Hardy Coat"
+    },
+    {
+      "ItemId": "455211",
+      "ItemName": "Coat of Ages"
+    },
+    {
+      "ItemId": "455212",
+      "ItemName": "Blustering Coat"
+    },
+    {
+      "ItemId": "455213",
+      "ItemName": "Raiment of Sharp Talons"
+    },
+    {
+      "ItemId": "455214",
+      "ItemName": "Raiment of the Evil Eye"
+    },
+    {
+      "ItemId": "455215",
+      "ItemName": "Raiment of Smoke"
+    },
+    {
+      "ItemId": "455216",
+      "ItemName": "Raiment of Ash"
+    },
+    {
+      "ItemId": "455217",
+      "ItemName": "Mocking Raiment"
+    },
+    {
+      "ItemId": "455218",
+      "ItemName": "Raven's Eye Raiment"
+    },
+    {
+      "ItemId": "455219",
+      "ItemName": "Raiment of the Sun"
+    },
+    {
+      "ItemId": "455242",
+      "ItemName": "Barbarian's Courage Boots"
+    },
+    {
+      "ItemId": "455243",
+      "ItemName": "Barbarian's Brave Boots"
+    },
+    {
+      "ItemId": "455244",
+      "ItemName": "Barbarian's Fierce Boots"
+    },
+    {
+      "ItemId": "455245",
+      "ItemName": "Barbarian's Valorous Boots"
+    },
+    {
+      "ItemId": "455246",
+      "ItemName": "Barbarian's Daring Boots"
+    },
+    {
+      "ItemId": "455247",
+      "ItemName": "Barbarian's Fearless Boots"
+    },
+    {
+      "ItemId": "455248",
+      "ItemName": "Barbarian's Bold Boots"
+    },
+    {
+      "ItemId": "455249",
+      "ItemName": "Raven's Boots of Balance"
+    },
+    {
+      "ItemId": "455250",
+      "ItemName": "Raven's Tricksy Boots"
+    },
+    {
+      "ItemId": "455251",
+      "ItemName": "Raven's Shielded Boots"
+    },
+    {
+      "ItemId": "455252",
+      "ItemName": "Raven's Alert Boots"
+    },
+    {
+      "ItemId": "455253",
+      "ItemName": "Raven's Guarded Boots"
+    },
+    {
+      "ItemId": "455254",
+      "ItemName": "Raven's Protected Boots"
+    },
+    {
+      "ItemId": "455255",
+      "ItemName": "Raven's Covered Boots"
+    }
+  ]
+}

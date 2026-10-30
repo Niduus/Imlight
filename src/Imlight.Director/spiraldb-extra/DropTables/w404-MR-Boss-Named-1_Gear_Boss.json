@@ -1,0 +1,45 @@
+{
+  "Name": "W404 MR-Boss-Named-1 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MR-Boss-Named-1: the gear drops (9), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1407065",
+      "ItemName": "Time Warden Kavuk of Reason"
+    },
+    {
+      "ItemId": "1407066",
+      "ItemName": "Time Warden Kavuk of Bounce"
+    },
+    {
+      "ItemId": "1407076",
+      "ItemName": "Time Warden Thobe of Truth"
+    },
+    {
+      "ItemId": "1407080",
+      "ItemName": "Time Warden Downpour Galesh"
+    },
+    {
+      "ItemId": "1407084",
+      "ItemName": "Time Warden Galesh of Truth"
+    },
+    {
+      "ItemId": "1407094",
+      "ItemName": "Tetrus Ampul of Scalding"
+    },
+    {
+      "ItemId": "1407096",
+      "ItemName": "Tetrus Ampul of Tempests"
+    },
+    {
+      "ItemId": "1407100",
+      "ItemName": "Tetrus Ampul of Fusion"
+    },
+    {
+      "ItemId": "1407104",
+      "ItemName": "Tetrus Ringlet of Tempests"
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "Name": "W404 NV_Horse_TungAk_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Horse_TungAk_A_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1577752",
+      "ItemName": "Golden Balance Helmet"
+    },
+    {
+      "ItemId": "1577753",
+      "ItemName": "Golden Death Helmet"
+    },
+    {
+      "ItemId": "1577754",
+      "ItemName": "Golden Fire Helmet"
+    },
+    {
+      "ItemId": "1577755",
+      "ItemName": "Golden Ice Helmet"
+    },
+    {
+      "ItemId": "1577756",
+      "ItemName": "Golden Life Helmet"
+    },
+    {
+      "ItemId": "1577757",
+      "ItemName": "Golden Myth Helmet"
+    },
+    {
+      "ItemId": "1577758",
+      "ItemName": "Golden Storm Helmet"
+    },
+    {
+      "ItemId": "1577759",
+      "ItemName": "Golden Balance Lamellar"
+    },
+    {
+      "ItemId": "1577760",
+      "ItemName": "Golden Death Lamellar"
+    },
+    {
+      "ItemId": "1577761",
+      "ItemName": "Golden Fire Lamellar"
+    },
+    {
+      "ItemId": "1577762",
+      "ItemName": "Golden Ice Lamellar"
+    },
+    {
+      "ItemId": "1577763",
+      "ItemName": "Golden Life Lamellar"
+    },
+    {
+      "ItemId": "1577764",
+      "ItemName": "Golden Myth Lamellar"
+    },
+    {
+      "ItemId": "1577765",
+      "ItemName": "Golden Storm Lamellar"
+    },
+    {
+      "ItemId": "1577808",
+      "ItemName": "Glistening Balance Helmet"
+    },
+    {
+      "ItemId": "1577809",
+      "ItemName": "Glistening Death Helmet"
+    },
+    {
+      "ItemId": "1577810",
+      "ItemName": "Glistening Fire Helmet"
+    },
+    {
+      "ItemId": "1577811",
+      "ItemName": "Glistening Ice Helmet"
+    },
+    {
+      "ItemId": "1577812",
+      "ItemName": "Glistening Life Helmet"
+    },
+    {
+      "ItemId": "1577813",
+      "ItemName": "Glistening Myth Helmet"
+    },
+    {
+      "ItemId": "1577814",
+      "ItemName": "Glistening Storm Helmet"
+    },
+    {
+      "ItemId": "1577815",
+      "ItemName": "Glistening Balance Lamellar"
+    },
+    {
+      "ItemId": "1577816",
+      "ItemName": "Glistening Death Lamellar"
+    },
+    {
+      "ItemId": "1577817",
+      "ItemName": "Glistening Fire Lamellar"
+    },
+    {
+      "ItemId": "1577818",
+      "ItemName": "Glistening Ice Lamellar"
+    },
+    {
+      "ItemId": "1577819",
+      "ItemName": "Glistening Life Lamellar"
+    },
+    {
+      "ItemId": "1577820",
+      "ItemName": "Glistening Myth Lamellar"
+    },
+    {
+      "ItemId": "1577821",
+      "ItemName": "Glistening Storm Lamellar"
+    }
+  ]
+}

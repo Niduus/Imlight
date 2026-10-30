@@ -1,0 +1,89 @@
+{
+  "Name": "W404 PA-Professor-BOSS-R5 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table PA-Professor-BOSS-R5: the gear drops (20), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "39029",
+      "ItemName": "Hat of Numbness"
+    },
+    {
+      "ItemId": "39036",
+      "ItemName": "Cap of the Ice Wyvern"
+    },
+    {
+      "ItemId": "39063",
+      "ItemName": "Commoner's Ring"
+    },
+    {
+      "ItemId": "39067",
+      "ItemName": "Animated Ring"
+    },
+    {
+      "ItemId": "77174",
+      "ItemName": "Brisk Robe"
+    },
+    {
+      "ItemId": "77222",
+      "ItemName": "Glowing Canine Shoes"
+    },
+    {
+      "ItemId": "97120",
+      "ItemName": "Deck of the Phoenix"
+    },
+    {
+      "ItemId": "97132",
+      "ItemName": "Deck of the Banshee"
+    },
+    {
+      "ItemId": "97167",
+      "ItemName": "Hat of the Enigma"
+    },
+    {
+      "ItemId": "97177",
+      "ItemName": "Helm of Chivalry"
+    },
+    {
+      "ItemId": "97184",
+      "ItemName": "Headwraps of Restoration"
+    },
+    {
+      "ItemId": "97276",
+      "ItemName": "Medic's Robe"
+    },
+    {
+      "ItemId": "97349",
+      "ItemName": "Animated Canine Shoes"
+    },
+    {
+      "ItemId": "97356",
+      "ItemName": "Superstitious Canine Shoes"
+    },
+    {
+      "ItemId": "97393",
+      "ItemName": "Silent Canine Shoes"
+    },
+    {
+      "ItemId": "97401",
+      "ItemName": "Masterful Canine Shoes"
+    },
+    {
+      "ItemId": "468531",
+      "ItemName": "Pennon Poniard"
+    },
+    {
+      "ItemId": "468532",
+      "ItemName": "Librarian's Stylet"
+    },
+    {
+      "ItemId": "468536",
+      "ItemName": "Winged Circlet"
+    },
+    {
+      "ItemId": "468537",
+      "ItemName": "Tournament Ring"
+    }
+  ]
+}

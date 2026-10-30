@@ -1,0 +1,41 @@
+{
+  "Name": "W404 EM-Mob-Ring-120 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table EM-Mob-Ring-120: the gear drops (8), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1430504",
+      "ItemName": "Interstellar Engineer's Band"
+    },
+    {
+      "ItemId": "1430505",
+      "ItemName": "Interstellar Explorer's Band"
+    },
+    {
+      "ItemId": "1430506",
+      "ItemName": "Interstellar Navigator's Band"
+    },
+    {
+      "ItemId": "1430507",
+      "ItemName": "Interstellar Hero's Band"
+    },
+    {
+      "ItemId": "1430508",
+      "ItemName": "Interstellar Medic's Band"
+    },
+    {
+      "ItemId": "1430509",
+      "ItemName": "Interstellar Warrior's Band"
+    },
+    {
+      "ItemId": "1430510",
+      "ItemName": "Interstellar Delegate's Band"
+    },
+    {
+      "ItemId": "1430511",
+      "ItemName": "Interstellar Officer's Band"
+    }
+  ]
+}

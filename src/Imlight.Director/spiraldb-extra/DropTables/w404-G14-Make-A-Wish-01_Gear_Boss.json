@@ -1,0 +1,153 @@
+{
+  "Name": "W404 G14-Make-A-Wish-01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-Make-A-Wish-01: the gear drops (36), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243222",
+      "ItemName": "Dirk of the Dragon"
+    },
+    {
+      "ItemId": "243227",
+      "ItemName": "Explorer's Edge"
+    },
+    {
+      "ItemId": "455094",
+      "ItemName": "Moon's Thunder Pendant"
+    },
+    {
+      "ItemId": "455095",
+      "ItemName": "Charging Pearl Pendant"
+    },
+    {
+      "ItemId": "455096",
+      "ItemName": "Moon Storm Amulet"
+    },
+    {
+      "ItemId": "470717",
+      "ItemName": "The Restless Titan"
+    },
+    {
+      "ItemId": "635305",
+      "ItemName": "Whitehaven's Cover"
+    },
+    {
+      "ItemId": "635310",
+      "ItemName": "Chaos Lord's Helm"
+    },
+    {
+      "ItemId": "635313",
+      "ItemName": "Shroud of the One"
+    },
+    {
+      "ItemId": "635331",
+      "ItemName": "Circle of High Order"
+    },
+    {
+      "ItemId": "635335",
+      "ItemName": "Brisk Circle of Nodor"
+    },
+    {
+      "ItemId": "635340",
+      "ItemName": "Nameless Ring"
+    },
+    {
+      "ItemId": "635369",
+      "ItemName": "Dryad Friend Raiment"
+    },
+    {
+      "ItemId": "635370",
+      "ItemName": "Toadstool Defender Jerkin"
+    },
+    {
+      "ItemId": "635371",
+      "ItemName": "Armor of the Giant Slayer"
+    },
+    {
+      "ItemId": "635372",
+      "ItemName": "Knight Errant Armor"
+    },
+    {
+      "ItemId": "635403",
+      "ItemName": "Long as Night Walkers"
+    },
+    {
+      "ItemId": "635408",
+      "ItemName": "Whitehaven Boots"
+    },
+    {
+      "ItemId": "635409",
+      "ItemName": "Boots of Giant Dancing"
+    },
+    {
+      "ItemId": "635546",
+      "ItemName": "Woodlocke Deck"
+    },
+    {
+      "ItemId": "635548",
+      "ItemName": "Luminary Deck"
+    },
+    {
+      "ItemId": "635551",
+      "ItemName": "Astrological Gallery"
+    },
+    {
+      "ItemId": "730367",
+      "ItemName": "Vestments of Black Smoke"
+    },
+    {
+      "ItemId": "730405",
+      "ItemName": "Prince of the Avian's Boots"
+    },
+    {
+      "ItemId": "1217002",
+      "ItemName": "The Raven Eye"
+    },
+    {
+      "ItemId": "1217210",
+      "ItemName": "The Dreamweaver"
+    },
+    {
+      "ItemId": "1217358",
+      "ItemName": "The Warlock"
+    },
+    {
+      "ItemId": "1317802",
+      "ItemName": "The Manticore"
+    },
+    {
+      "ItemId": "1376256",
+      "ItemName": "Daniel's Fiery Answer"
+    },
+    {
+      "ItemId": "1376257",
+      "ItemName": "Daniel's Icy Answer"
+    },
+    {
+      "ItemId": "1376258",
+      "ItemName": "Daniel's Stormy Answer"
+    },
+    {
+      "ItemId": "1376259",
+      "ItemName": "Daniel's Mythic Answer"
+    },
+    {
+      "ItemId": "1376260",
+      "ItemName": "Daniel's Answer of Life"
+    },
+    {
+      "ItemId": "1376261",
+      "ItemName": "Daniel's Answer to Defeat"
+    },
+    {
+      "ItemId": "1376262",
+      "ItemName": "Daniel's Balanced Answer"
+    },
+    {
+      "ItemId": "1376263",
+      "ItemName": "Daniel's Answer"
+    }
+  ]
+}

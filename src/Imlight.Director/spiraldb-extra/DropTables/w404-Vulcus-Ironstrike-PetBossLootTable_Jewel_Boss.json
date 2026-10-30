@@ -1,0 +1,41 @@
+{
+  "Name": "W404 Vulcus-Ironstrike-PetBossLootTable Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table Vulcus-Ironstrike-PetBossLootTable: the jewel drops (8), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1360487",
+      "ItemName": "Extra Mana Opal"
+    },
+    {
+      "ItemId": "1360588",
+      "ItemName": "Medic Opal"
+    },
+    {
+      "ItemId": "1360699",
+      "ItemName": "Purloin Health Talent Citrine"
+    },
+    {
+      "ItemId": "1360704",
+      "ItemName": "Sprite Time Jade"
+    },
+    {
+      "ItemId": "1360738",
+      "ItemName": "Infector Onyx"
+    },
+    {
+      "ItemId": "1360743",
+      "ItemName": "Tower Shield Sapphire"
+    },
+    {
+      "ItemId": "1360753",
+      "ItemName": "Fortify Talent Opal"
+    },
+    {
+      "ItemId": "1360825",
+      "ItemName": "Wisp Bonus Opal"
+    }
+  ]
+}

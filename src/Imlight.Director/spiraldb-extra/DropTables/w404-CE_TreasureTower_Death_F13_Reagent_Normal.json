@@ -1,0 +1,41 @@
+{
+  "Name": "W404 CE_TreasureTower_Death_F13 Reagent (Normal)",
+  "Description": "Wizard404's drop list of the game's table CE_TreasureTower_Death_F13: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Normal/Reagent.",
+  "Odds": "Normal/Reagent",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1441818",
+      "ItemName": "Life Rune"
+    },
+    {
+      "ItemId": "1441821",
+      "ItemName": "Death Rune"
+    },
+    {
+      "ItemId": "1441824",
+      "ItemName": "Balance Rune"
+    },
+    {
+      "ItemId": "1441827",
+      "ItemName": "Myth Rune"
+    },
+    {
+      "ItemId": "1441819",
+      "ItemName": "Enhanced Life Rune"
+    },
+    {
+      "ItemId": "1441822",
+      "ItemName": "Enhanced Death Rune"
+    },
+    {
+      "ItemId": "1441825",
+      "ItemName": "Enhanced Balance Rune"
+    },
+    {
+      "ItemId": "1441828",
+      "ItemName": "Enhanced Myth Rune"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "Name": "W404 Wraith-WCBoss-L29 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Wraith-WCBoss-L29: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4667",
+      "ItemName": "Elven Pendant"
+    },
+    {
+      "ItemId": "4686",
+      "ItemName": "Nightshade's Choker"
+    },
+    {
+      "ItemId": "4738",
+      "ItemName": "Reaper's Athame"
+    },
+    {
+      "ItemId": "4780",
+      "ItemName": "Fine Jade Ring"
+    },
+    {
+      "ItemId": "4798",
+      "ItemName": "Lord Nightshade's Boots"
+    },
+    {
+      "ItemId": "4799",
+      "ItemName": "Nightshade's Shoes"
+    },
+    {
+      "ItemId": "4836",
+      "ItemName": "Branded Footguards"
+    },
+    {
+      "ItemId": "4853",
+      "ItemName": "Trollskin Boots"
+    },
+    {
+      "ItemId": "77536",
+      "ItemName": "Nightshade's Hood"
+    },
+    {
+      "ItemId": "77541",
+      "ItemName": "Nightshade's Cowl"
+    },
+    {
+      "ItemId": "77604",
+      "ItemName": "Helm of Nightmares"
+    },
+    {
+      "ItemId": "87158",
+      "ItemName": "Lord Nightshade's Cloak"
+    },
+    {
+      "ItemId": "87160",
+      "ItemName": "Lord Nightshade's Robe"
+    },
+    {
+      "ItemId": "87163",
+      "ItemName": "Robe of Horror"
+    },
+    {
+      "ItemId": "87204",
+      "ItemName": "Robe of the Lifeblood"
+    },
+    {
+      "ItemId": "161035",
+      "ItemName": "Midsummer's Cowl"
+    },
+    {
+      "ItemId": "161065",
+      "ItemName": "Jacket of Withstanding"
+    },
+    {
+      "ItemId": "164085",
+      "ItemName": "Watchtower Boots"
+    }
+  ]
+}

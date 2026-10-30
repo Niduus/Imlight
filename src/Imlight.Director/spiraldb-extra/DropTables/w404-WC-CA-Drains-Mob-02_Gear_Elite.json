@@ -1,0 +1,25 @@
+{
+  "Name": "W404 WC-CA-Drains-Mob-02 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table WC-CA-Drains-Mob-02: the gear drops (4), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1489324",
+      "ItemName": "Soldier's Vibrant Boots"
+    },
+    {
+      "ItemId": "1489325",
+      "ItemName": "Soldier's Deadly Boots"
+    },
+    {
+      "ItemId": "1489326",
+      "ItemName": "Soldier's Balanced Boots"
+    },
+    {
+      "ItemId": "1489327",
+      "ItemName": "Dragonspyre Soldier's Boots"
+    }
+  ]
+}

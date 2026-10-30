@@ -1,0 +1,121 @@
+{
+  "Name": "W404 G14-HS-Mob-01 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table G14-HS-Mob-01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1338108",
+      "ItemName": "Boots of the Burning Scales"
+    },
+    {
+      "ItemId": "1338109",
+      "ItemName": "Boots of the Frozen Desert"
+    },
+    {
+      "ItemId": "1338110",
+      "ItemName": "Desert Rain Mukluks"
+    },
+    {
+      "ItemId": "1338111",
+      "ItemName": "Ancient Rebus Sandals"
+    },
+    {
+      "ItemId": "1338112",
+      "ItemName": "Hands of Anubis Boots"
+    },
+    {
+      "ItemId": "1338113",
+      "ItemName": "Soul Devourer's Footwraps"
+    },
+    {
+      "ItemId": "1338114",
+      "ItemName": "Shoes of Anubis' Judgment"
+    },
+    {
+      "ItemId": "1338276",
+      "ItemName": "Zigazag Desert Relic"
+    },
+    {
+      "ItemId": "1338277",
+      "ItemName": "Relic of the Brisk Breeze"
+    },
+    {
+      "ItemId": "1338278",
+      "ItemName": "Ampul of Desert Squalls"
+    },
+    {
+      "ItemId": "1338279",
+      "ItemName": "Rebus Medallion"
+    },
+    {
+      "ItemId": "1338280",
+      "ItemName": "Hands of Anubis Pendant"
+    },
+    {
+      "ItemId": "1338281",
+      "ItemName": "Medallion of the Condemned"
+    },
+    {
+      "ItemId": "1338282",
+      "ItemName": "Jewel of Anubis' Judgment"
+    },
+    {
+      "ItemId": "1338360",
+      "ItemName": "Ring of the Simmering Evil"
+    },
+    {
+      "ItemId": "1338361",
+      "ItemName": "Band of the Sistrum"
+    },
+    {
+      "ItemId": "1338362",
+      "ItemName": "Ring of the Ravenous Teeth"
+    },
+    {
+      "ItemId": "1338363",
+      "ItemName": "Rebus Seal"
+    },
+    {
+      "ItemId": "1338364",
+      "ItemName": "Hands of Anubis Ring"
+    },
+    {
+      "ItemId": "1338365",
+      "ItemName": "Stone of the Longest Hall"
+    },
+    {
+      "ItemId": "1338366",
+      "ItemName": "Scales of Justice Band"
+    },
+    {
+      "ItemId": "1338528",
+      "ItemName": "Rod of the Burning Scales"
+    },
+    {
+      "ItemId": "1338529",
+      "ItemName": "Stave of Cold Justice"
+    },
+    {
+      "ItemId": "1338530",
+      "ItemName": "Wrath of Anubis Staff"
+    },
+    {
+      "ItemId": "1338531",
+      "ItemName": "Rebus Breaker's Stave"
+    },
+    {
+      "ItemId": "1338532",
+      "ItemName": "Hands of Anubis Staff"
+    },
+    {
+      "ItemId": "1338533",
+      "ItemName": "Stave of the Devoured"
+    },
+    {
+      "ItemId": "1338534",
+      "ItemName": "Anubis' Staff of Redress"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "Name": "W404 Wizard-Female-Jacket-Black-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Wizard-Female-Jacket-Black-Boss-R8: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104630",
+      "ItemName": "Raiment of the Raven"
+    },
+    {
+      "ItemId": "104666",
+      "ItemName": "Vestment of the Spring"
+    },
+    {
+      "ItemId": "104716",
+      "ItemName": "Redwind's Tunic of the Tornado"
+    },
+    {
+      "ItemId": "104727",
+      "ItemName": "Surcoat of Glory"
+    },
+    {
+      "ItemId": "104804",
+      "ItemName": "Reaper's Boots"
+    },
+    {
+      "ItemId": "104855",
+      "ItemName": "Redwind's Boastful Boots"
+    },
+    {
+      "ItemId": "104867",
+      "ItemName": "Striders of the Thicket"
+    },
+    {
+      "ItemId": "104888",
+      "ItemName": "Shoes of the Greatest Saga"
+    },
+    {
+      "ItemId": "126577",
+      "ItemName": "Redwind's Shocking Ring"
+    },
+    {
+      "ItemId": "126593",
+      "ItemName": "Rime-edged Ring"
+    },
+    {
+      "ItemId": "126599",
+      "ItemName": "Burning Ring of Fire"
+    },
+    {
+      "ItemId": "126659",
+      "ItemName": "Redwind's Viridian Blade"
+    },
+    {
+      "ItemId": "146164",
+      "ItemName": "Poniard of Vitality"
+    },
+    {
+      "ItemId": "146180",
+      "ItemName": "Dragon's Claw Blade"
+    },
+    {
+      "ItemId": "146199",
+      "ItemName": "Redwind's Forgotten Blade"
+    },
+    {
+      "ItemId": "146212",
+      "ItemName": "Lightning-charged Mantle"
+    },
+    {
+      "ItemId": "146231",
+      "ItemName": "Mantle of Thunder"
+    },
+    {
+      "ItemId": "146288",
+      "ItemName": "Frostbitten Cap"
+    },
+    {
+      "ItemId": "146296",
+      "ItemName": "Redwind's Cap of the Chill"
+    }
+  ]
+}

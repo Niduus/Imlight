@@ -1,0 +1,17 @@
+{
+  "Name": "W404 AZ-BossEpic-Belloq Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossEpic-Belloq: the jewel drops (2), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1358987",
+      "ItemName": "Gargantuan Opal"
+    },
+    {
+      "ItemId": "1358988",
+      "ItemName": "Unstoppable Opal"
+    }
+  ]
+}

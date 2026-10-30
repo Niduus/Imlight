@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Grendel-Medium-3-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Grendel-Medium-3-GHBoss-R7: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136291",
+      "ItemName": "Forgebright Blade"
+    },
+    {
+      "ItemId": "136293",
+      "ItemName": "Adamantine Dirk"
+    },
+    {
+      "ItemId": "136439",
+      "ItemName": "Hat of Elan"
+    },
+    {
+      "ItemId": "136440",
+      "ItemName": "Wildblaze Hat"
+    },
+    {
+      "ItemId": "136500",
+      "ItemName": "Band of the Bygone"
+    },
+    {
+      "ItemId": "171211",
+      "ItemName": "Tidal Striders"
+    }
+  ]
+}

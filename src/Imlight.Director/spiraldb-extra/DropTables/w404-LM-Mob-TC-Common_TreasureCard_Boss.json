@@ -1,0 +1,65 @@
+{
+  "Name": "W404 LM-Mob-TC-Common TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table LM-Mob-TC-Common: the treasurecard drops (14), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Life Prism TC",
+      "ItemName": "Life Prism"
+    },
+    {
+      "ItemId": "Blaze Beetle TC",
+      "ItemName": "Blaze Beetle"
+    },
+    {
+      "ItemId": "Death Prism TC",
+      "ItemName": "Death Prism"
+    },
+    {
+      "ItemId": "Storm Prism TC",
+      "ItemName": "Storm Prism"
+    },
+    {
+      "ItemId": "Triage TC",
+      "ItemName": "Triage"
+    },
+    {
+      "ItemId": "Fire Prism TC",
+      "ItemName": "Fire Prism"
+    },
+    {
+      "ItemId": "Bloodbat TC",
+      "ItemName": "Blood Bat"
+    },
+    {
+      "ItemId": "Cat Thug TC",
+      "ItemName": "Cat Thug"
+    },
+    {
+      "ItemId": "Crystal Spider TC",
+      "ItemName": "Crystal Spider"
+    },
+    {
+      "ItemId": "Black Widow TC",
+      "ItemName": "Green Widow"
+    },
+    {
+      "ItemId": "Ice Prism TC",
+      "ItemName": "Ice Prism"
+    },
+    {
+      "ItemId": "Myth Prism TC",
+      "ItemName": "Myth Prism"
+    },
+    {
+      "ItemId": "Centaur TC",
+      "ItemName": "Centaur"
+    },
+    {
+      "ItemId": "Blue Phoenix TC",
+      "ItemName": "Blue Phoenix"
+    }
+  ]
+}

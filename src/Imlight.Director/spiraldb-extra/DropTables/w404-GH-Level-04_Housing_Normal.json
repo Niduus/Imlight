@@ -1,0 +1,13 @@
+{
+  "Name": "W404 GH-Level-04 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table GH-Level-04: the housing drops (1), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "206111",
+      "ItemName": "Heavy Dining Table"
+    }
+  ]
+}

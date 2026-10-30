@@ -1,0 +1,21 @@
+{
+  "Name": "W404 TC-URare1 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-URare1: the treasurecard drops (3), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Tower Shield TC",
+      "ItemName": "Tower Shield"
+    },
+    {
+      "ItemId": "Tri Shield TC",
+      "ItemName": "Elemental Shield"
+    },
+    {
+      "ItemId": "Unicorn TC",
+      "ItemName": "Unicorn"
+    }
+  ]
+}

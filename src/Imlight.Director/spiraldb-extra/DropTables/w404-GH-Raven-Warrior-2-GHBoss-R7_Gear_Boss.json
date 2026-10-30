@@ -1,0 +1,41 @@
+{
+  "Name": "W404 GH-Raven-Warrior-2-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Raven-Warrior-2-GHBoss-R7: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136301",
+      "ItemName": "Blade of Symmetry"
+    },
+    {
+      "ItemId": "136429",
+      "ItemName": "Conflagrant Hat"
+    },
+    {
+      "ItemId": "136443",
+      "ItemName": "Tranquil Topper"
+    },
+    {
+      "ItemId": "136521",
+      "ItemName": "Seal of Wholeness"
+    },
+    {
+      "ItemId": "136684",
+      "ItemName": "Savant's Robe"
+    },
+    {
+      "ItemId": "171218",
+      "ItemName": "Wraps of the Wolverine"
+    },
+    {
+      "ItemId": "455100",
+      "ItemName": "Tricksy Dragon Charm"
+    },
+    {
+      "ItemId": "455126",
+      "ItemName": "Bear's Claw of Ice"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "W404 KT-KrokTut-Ice-KTBoss-L37 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokTut-Ice-KTBoss-L37: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "100419",
+      "ItemName": "Arctic Serpent"
+    }
+  ]
+}

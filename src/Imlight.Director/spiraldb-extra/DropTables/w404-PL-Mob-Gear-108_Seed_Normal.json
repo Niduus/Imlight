@@ -1,0 +1,69 @@
+{
+  "Name": "W404 PL-Mob-Gear-108 Seed (Normal)",
+  "Description": "Wizard404's drop list of the game's table PL-Mob-Gear-108: the seed drops (15), one picked when it rolls. How often: DropOdds.json Normal/Seed.",
+  "Odds": "Normal/Seed",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots"
+    },
+    {
+      "ItemId": "356113",
+      "ItemName": "Cornbread Fruit Bush"
+    },
+    {
+      "ItemId": "356127",
+      "ItemName": "Bread Fruit Bush"
+    },
+    {
+      "ItemId": "473092",
+      "ItemName": "Couch Potatoes"
+    },
+    {
+      "ItemId": "473124",
+      "ItemName": "Bell Pepper"
+    },
+    {
+      "ItemId": "473159",
+      "ItemName": "Grapes of Wrath"
+    },
+    {
+      "ItemId": "473638",
+      "ItemName": "Ivy League"
+    },
+    {
+      "ItemId": "589145",
+      "ItemName": "Angora Bunny Ears"
+    },
+    {
+      "ItemId": "589180",
+      "ItemName": "Red Huckleberries"
+    },
+    {
+      "ItemId": "589187",
+      "ItemName": "Pink Huckleberries"
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries"
+    },
+    {
+      "ItemId": "653146",
+      "ItemName": "Fish on a Vine"
+    },
+    {
+      "ItemId": "713119",
+      "ItemName": "Boiled Peanuts"
+    },
+    {
+      "ItemId": "713168",
+      "ItemName": "Red Couch Potatoes"
+    },
+    {
+      "ItemId": "713175",
+      "ItemName": "Golden Couch Potatoes"
+    }
+  ]
+}

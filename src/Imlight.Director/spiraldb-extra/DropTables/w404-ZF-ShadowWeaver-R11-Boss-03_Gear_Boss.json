@@ -1,0 +1,117 @@
+{
+  "Name": "W404 ZF-ShadowWeaver-R11-Boss-03 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-ShadowWeaver-R11-Boss-03: the gear drops (27), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "526681",
+      "ItemName": "Staff of Shadow and Light"
+    },
+    {
+      "ItemId": "526682",
+      "ItemName": "Sun's Light Spear"
+    },
+    {
+      "ItemId": "540100",
+      "ItemName": "Amulet of Lion's Sight"
+    },
+    {
+      "ItemId": "540131",
+      "ItemName": "Rainy Season Spike"
+    },
+    {
+      "ItemId": "540136",
+      "ItemName": "River Captain's Scimitar"
+    },
+    {
+      "ItemId": "540174",
+      "ItemName": "Jungle Lord's Winter Cap"
+    },
+    {
+      "ItemId": "540176",
+      "ItemName": "Face of Baobab"
+    },
+    {
+      "ItemId": "540177",
+      "ItemName": "Stone Town Topper"
+    },
+    {
+      "ItemId": "540180",
+      "ItemName": "Face of the Blinding Sun"
+    },
+    {
+      "ItemId": "540205",
+      "ItemName": "Nergal's Burning Brand"
+    },
+    {
+      "ItemId": "540239",
+      "ItemName": "Wildfire Garb"
+    },
+    {
+      "ItemId": "540240",
+      "ItemName": "Hunter Prey Jacket"
+    },
+    {
+      "ItemId": "540243",
+      "ItemName": "Hail and Thunder Raiment"
+    },
+    {
+      "ItemId": "540244",
+      "ItemName": "Unbroken Spiral Robe"
+    },
+    {
+      "ItemId": "540249",
+      "ItemName": "Sinister Juju Robes"
+    },
+    {
+      "ItemId": "540250",
+      "ItemName": "River Smuggler's Garb"
+    },
+    {
+      "ItemId": "540253",
+      "ItemName": "Lost Outsider Gear"
+    },
+    {
+      "ItemId": "540254",
+      "ItemName": "Big Five Robe"
+    },
+    {
+      "ItemId": "540283",
+      "ItemName": "Storm Caller's Rangers"
+    },
+    {
+      "ItemId": "540285",
+      "ItemName": "Witch Doctor's Spiral Boots"
+    },
+    {
+      "ItemId": "540287",
+      "ItemName": "Cold Climate Climbers"
+    },
+    {
+      "ItemId": "540289",
+      "ItemName": "Shaman's Fire-Feather Wraps"
+    },
+    {
+      "ItemId": "540300",
+      "ItemName": "Hand-Chased Box of Destiny"
+    },
+    {
+      "ItemId": "540301",
+      "ItemName": "Dead Chieftain's Fanged Deck"
+    },
+    {
+      "ItemId": "540305",
+      "ItemName": "Bundle of Ananse's Stories"
+    },
+    {
+      "ItemId": "540306",
+      "ItemName": "Hand-Chased Box of Thunder"
+    },
+    {
+      "ItemId": "1217358",
+      "ItemName": "The Warlock"
+    }
+  ]
+}

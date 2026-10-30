@@ -1,0 +1,33 @@
+{
+  "Name": "W404 NV_Tessellate_Base_A_01 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Tessellate_Base_A_01: the snack drops (6), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "641703",
+      "ItemName": "Colossal Rutabaga"
+    },
+    {
+      "ItemId": "537596",
+      "ItemName": "Fuzzy Peach Fizz"
+    },
+    {
+      "ItemId": "473518",
+      "ItemName": "Gobbler Stoppers"
+    },
+    {
+      "ItemId": "789446",
+      "ItemName": "Kalua Kebab"
+    },
+    {
+      "ItemId": "1359613",
+      "ItemName": "Mustachios"
+    },
+    {
+      "ItemId": "537585",
+      "ItemName": "Peppercorn"
+    }
+  ]
+}

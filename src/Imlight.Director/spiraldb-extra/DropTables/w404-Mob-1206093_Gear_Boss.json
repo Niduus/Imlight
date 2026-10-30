@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Mob-1206093 Gear (Boss)",
+  "Description": "Wizard404's drop list of Warrior Brood's own drops: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203130",
+      "ItemName": "Digger Drone Tactical Helm"
+    },
+    {
+      "ItemId": "1203131",
+      "ItemName": "Mantis Cowl of Purpose"
+    },
+    {
+      "ItemId": "1203212",
+      "ItemName": "Besieged Burrower Armor"
+    },
+    {
+      "ItemId": "1203250",
+      "ItemName": "Digger Drone Boots of Duty"
+    },
+    {
+      "ItemId": "1203251",
+      "ItemName": "Leaf Shield Brisk Walkers"
+    },
+    {
+      "ItemId": "1203279",
+      "ItemName": "Blade of CinderHart"
+    },
+    {
+      "ItemId": "1203280",
+      "ItemName": "SnowFur's Longblade"
+    },
+    {
+      "ItemId": "1203281",
+      "ItemName": "StormSky's Edge"
+    },
+    {
+      "ItemId": "1203323",
+      "ItemName": "Relic of Thriving Bastion"
+    },
+    {
+      "ItemId": "1203324",
+      "ItemName": "Night Flame Choker"
+    },
+    {
+      "ItemId": "1203360",
+      "ItemName": "Mouse Knight's Shortsword"
+    },
+    {
+      "ItemId": "1203361",
+      "ItemName": "SkyScreamer's Cutter"
+    },
+    {
+      "ItemId": "1203405",
+      "ItemName": "Barbed Case of Stratagem"
+    },
+    {
+      "ItemId": "1203406",
+      "ItemName": "Cell of Survival"
+    },
+    {
+      "ItemId": "1203407",
+      "ItemName": "Gallery of the Woebegone"
+    },
+    {
+      "ItemId": "1203408",
+      "ItemName": "LimeBlight's Gallery"
+    }
+  ]
+}

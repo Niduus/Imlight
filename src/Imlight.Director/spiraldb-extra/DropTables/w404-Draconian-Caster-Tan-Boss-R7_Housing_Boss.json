@@ -1,0 +1,17 @@
+{
+  "Name": "W404 Draconian-Caster-Tan-Boss-R7 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Draconian-Caster-Tan-Boss-R7: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160851",
+      "ItemName": "Dragonspyre Statue Base"
+    },
+    {
+      "ItemId": "160860",
+      "ItemName": "Stone Rose"
+    }
+  ]
+}

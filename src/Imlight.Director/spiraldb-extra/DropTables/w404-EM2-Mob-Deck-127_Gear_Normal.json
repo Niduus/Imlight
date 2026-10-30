@@ -1,0 +1,41 @@
+{
+  "Name": "W404 EM2-Mob-Deck-127 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table EM2-Mob-Deck-127: the gear drops (8), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462396",
+      "ItemName": "Rad Kalamar Deck"
+    },
+    {
+      "ItemId": "1462397",
+      "ItemName": "Chill Kalamar Deck"
+    },
+    {
+      "ItemId": "1462398",
+      "ItemName": "Gnarly Kalamar Deck"
+    },
+    {
+      "ItemId": "1462399",
+      "ItemName": "Mondo Kalamar Deck"
+    },
+    {
+      "ItemId": "1462400",
+      "ItemName": "Righteous Kalamar Deck"
+    },
+    {
+      "ItemId": "1462401",
+      "ItemName": "Heavy Kalamar Deck"
+    },
+    {
+      "ItemId": "1462402",
+      "ItemName": "Bodacious Kalamar Deck"
+    },
+    {
+      "ItemId": "1462403",
+      "ItemName": "Choice Kalamar Deck"
+    }
+  ]
+}

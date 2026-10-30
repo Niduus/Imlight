@@ -1,0 +1,65 @@
+{
+  "Name": "W404 PL-SKR-OmenStribog Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-SKR-OmenStribog: the snack drops (14), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "473519",
+      "ItemName": "Senior Mint"
+    },
+    {
+      "ItemId": "537589",
+      "ItemName": "Frosty Sugar Cubes"
+    },
+    {
+      "ItemId": "537603",
+      "ItemName": "Frozen Snails"
+    },
+    {
+      "ItemId": "641598",
+      "ItemName": "Pomegranite"
+    },
+    {
+      "ItemId": "641684",
+      "ItemName": "Frozen Perogies"
+    },
+    {
+      "ItemId": "641690",
+      "ItemName": "Rhubarbed Wire"
+    },
+    {
+      "ItemId": "641701",
+      "ItemName": "Crystal Bites"
+    },
+    {
+      "ItemId": "641703",
+      "ItemName": "Colossal Rutabaga"
+    },
+    {
+      "ItemId": "733119",
+      "ItemName": "Fried Ice Cream"
+    },
+    {
+      "ItemId": "733176",
+      "ItemName": "Snow Apple Cider"
+    },
+    {
+      "ItemId": "733183",
+      "ItemName": "Roast Beast"
+    },
+    {
+      "ItemId": "1257606",
+      "ItemName": "Granny Snow Apple"
+    },
+    {
+      "ItemId": "1257607",
+      "ItemName": "Snow Apple Pie"
+    },
+    {
+      "ItemId": "1317839",
+      "ItemName": "Skeletal Treebark"
+    }
+  ]
+}

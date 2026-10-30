@@ -1,0 +1,9 @@
+{
+  "Name": "W404 Gauntlet-01-Hollowsoul",
+  "Description": "Gold of the game's table Gauntlet-01-Hollowsoul, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 25,
+  "MaxGold": 50,
+  "EachItem": false,
+  "Items": []
+}

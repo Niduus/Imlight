@@ -1,0 +1,69 @@
+{
+  "Name": "W404 AZ-Mob-01 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table AZ-Mob-01: the gear drops (15), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730261",
+      "ItemName": "Helm of the Broken Spear"
+    },
+    {
+      "ItemId": "730262",
+      "ItemName": "Song of the Lizard Hood"
+    },
+    {
+      "ItemId": "730263",
+      "ItemName": "Glorious Feathered Mantle"
+    },
+    {
+      "ItemId": "730264",
+      "ItemName": "High Chac's Guarded Helm"
+    },
+    {
+      "ItemId": "730265",
+      "ItemName": "Tyrant of Beasts Mask"
+    },
+    {
+      "ItemId": "730266",
+      "ItemName": "Mask of the Calavera"
+    },
+    {
+      "ItemId": "730267",
+      "ItemName": "Coatl Lord's Hat"
+    },
+    {
+      "ItemId": "730268",
+      "ItemName": "Sweet Kiss of Death Mask"
+    },
+    {
+      "ItemId": "730376",
+      "ItemName": "Fiery Chac's Great Boots"
+    },
+    {
+      "ItemId": "730377",
+      "ItemName": "Ice Age Tyrant's Walkers"
+    },
+    {
+      "ItemId": "730378",
+      "ItemName": "Storm Owl's Favored Trackers"
+    },
+    {
+      "ItemId": "730379",
+      "ItemName": "Black Butterfly Guard's Wraps"
+    },
+    {
+      "ItemId": "730380",
+      "ItemName": "Smoking Obsidian Rangers"
+    },
+    {
+      "ItemId": "730381",
+      "ItemName": "Death Moon's Chosen Gliders"
+    },
+    {
+      "ItemId": "730382",
+      "ItemName": "Jaguar Prince's Leapers"
+    }
+  ]
+}

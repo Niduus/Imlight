@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-MB-Deck-138 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-MB-Deck-138: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1515377",
+      "ItemName": "Director Thermal Box"
+    },
+    {
+      "ItemId": "1515378",
+      "ItemName": "Director Cryo Box"
+    },
+    {
+      "ItemId": "1515379",
+      "ItemName": "Director Insulated Box"
+    },
+    {
+      "ItemId": "1515380",
+      "ItemName": "Director Pressure Box"
+    },
+    {
+      "ItemId": "1515381",
+      "ItemName": "Director Survival Box"
+    },
+    {
+      "ItemId": "1515382",
+      "ItemName": "Director Biohazard Box"
+    },
+    {
+      "ItemId": "1515383",
+      "ItemName": "Director Protective Box"
+    },
+    {
+      "ItemId": "1515384",
+      "ItemName": "Director Hazmat Box"
+    },
+    {
+      "ItemId": "1515385",
+      "ItemName": "Executive Thermal Box"
+    },
+    {
+      "ItemId": "1515386",
+      "ItemName": "Executive Cryo Box"
+    },
+    {
+      "ItemId": "1515387",
+      "ItemName": "Executive Insulated Box"
+    },
+    {
+      "ItemId": "1515388",
+      "ItemName": "Executive Pressure Box"
+    },
+    {
+      "ItemId": "1515389",
+      "ItemName": "Executive Survival Box"
+    },
+    {
+      "ItemId": "1515390",
+      "ItemName": "Executive Biohazard Box"
+    },
+    {
+      "ItemId": "1515391",
+      "ItemName": "Executive Protective Box"
+    },
+    {
+      "ItemId": "1515392",
+      "ItemName": "Executive Hazmat Box"
+    },
+    {
+      "ItemId": "1515393",
+      "ItemName": "Producer's Thermal Box"
+    },
+    {
+      "ItemId": "1515394",
+      "ItemName": "Producer's Cryo Box"
+    },
+    {
+      "ItemId": "1515395",
+      "ItemName": "Producer's Insulated Box"
+    },
+    {
+      "ItemId": "1515396",
+      "ItemName": "Producer's Pressure Box"
+    },
+    {
+      "ItemId": "1515397",
+      "ItemName": "Producer's Survival Box"
+    },
+    {
+      "ItemId": "1515398",
+      "ItemName": "Producer's Biohazard Box"
+    },
+    {
+      "ItemId": "1515399",
+      "ItemName": "Producer's Protective Box"
+    },
+    {
+      "ItemId": "1515400",
+      "ItemName": "Producer's Hazmat Box"
+    }
+  ]
+}

@@ -1,0 +1,777 @@
+{
+  "Name": "W404 LM-Mob-Gear-148 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table LM-Mob-Gear-148: the gear drops (192), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1535947",
+      "ItemName": "Supreme Founder's Hat"
+    },
+    {
+      "ItemId": "1535998",
+      "ItemName": "Supreme Deflector Robe"
+    },
+    {
+      "ItemId": "1537300",
+      "ItemName": "Supreme Hex Athame"
+    },
+    {
+      "ItemId": "1537275",
+      "ItemName": "Supreme Horror Athame"
+    },
+    {
+      "ItemId": "1537289",
+      "ItemName": "Supreme Barbarian Ring"
+    },
+    {
+      "ItemId": "1537519",
+      "ItemName": "Supreme Stability Staff"
+    },
+    {
+      "ItemId": "1537617",
+      "ItemName": "Supreme Founder's Deck"
+    },
+    {
+      "ItemId": "1535955",
+      "ItemName": "Supreme Founder's Robe"
+    },
+    {
+      "ItemId": "1537496",
+      "ItemName": "Supreme Detective Staff"
+    },
+    {
+      "ItemId": "1537620",
+      "ItemName": "Supreme Electric Deck"
+    },
+    {
+      "ItemId": "1537633",
+      "ItemName": "Supreme Ancient One Deck"
+    },
+    {
+      "ItemId": "1537325",
+      "ItemName": "Supreme Ancient One Athame"
+    },
+    {
+      "ItemId": "1535995",
+      "ItemName": "Supreme Ancient One Hat"
+    },
+    {
+      "ItemId": "1537341",
+      "ItemName": "Supreme Ancient One Ring"
+    },
+    {
+      "ItemId": "1537003",
+      "ItemName": "Supreme Ancient One Robe"
+    },
+    {
+      "ItemId": "1537011",
+      "ItemName": "Supreme Ancient One Shoes"
+    },
+    {
+      "ItemId": "1537520",
+      "ItemName": "Supreme Ancient One Staff"
+    },
+    {
+      "ItemId": "1537333",
+      "ItemName": "Supreme Ancient One Talisman"
+    },
+    {
+      "ItemId": "1537273",
+      "ItemName": "Supreme Barbarian Athame"
+    },
+    {
+      "ItemId": "1537613",
+      "ItemName": "Supreme Barbarian Deck"
+    },
+    {
+      "ItemId": "1535943",
+      "ItemName": "Supreme Barbarian Hat"
+    },
+    {
+      "ItemId": "1535951",
+      "ItemName": "Supreme Barbarian Robe"
+    },
+    {
+      "ItemId": "1535959",
+      "ItemName": "Supreme Barbarian Shoes"
+    },
+    {
+      "ItemId": "1537498",
+      "ItemName": "Supreme Barbarian Staff"
+    },
+    {
+      "ItemId": "1537281",
+      "ItemName": "Supreme Barbarian Talisman"
+    },
+    {
+      "ItemId": "1537327",
+      "ItemName": "Supreme Cold Steel Talisman"
+    },
+    {
+      "ItemId": "1537319",
+      "ItemName": "Supreme Cold Steel Athame"
+    },
+    {
+      "ItemId": "1537627",
+      "ItemName": "Supreme Cold Steel Deck"
+    },
+    {
+      "ItemId": "1535989",
+      "ItemName": "Supreme Cold Steel Hat"
+    },
+    {
+      "ItemId": "1537335",
+      "ItemName": "Supreme Cold Steel Ring"
+    },
+    {
+      "ItemId": "1535997",
+      "ItemName": "Supreme Cold Steel Robe"
+    },
+    {
+      "ItemId": "1537005",
+      "ItemName": "Supreme Cold Steel Shoes"
+    },
+    {
+      "ItemId": "1537514",
+      "ItemName": "Supreme Cold Steel Staff"
+    },
+    {
+      "ItemId": "1537299",
+      "ItemName": "Supreme Deadly Athame"
+    },
+    {
+      "ItemId": "1537623",
+      "ItemName": "Supreme Deadly Deck"
+    },
+    {
+      "ItemId": "1535969",
+      "ItemName": "Supreme Deadly Hat"
+    },
+    {
+      "ItemId": "1537315",
+      "ItemName": "Supreme Deadly Ring"
+    },
+    {
+      "ItemId": "1535977",
+      "ItemName": "Supreme Deadly Robe"
+    },
+    {
+      "ItemId": "1535985",
+      "ItemName": "Supreme Deadly Shoes"
+    },
+    {
+      "ItemId": "1537509",
+      "ItemName": "Supreme Deadly Staff"
+    },
+    {
+      "ItemId": "1537307",
+      "ItemName": "Supreme Deadly Talisman"
+    },
+    {
+      "ItemId": "1537320",
+      "ItemName": "Supreme Deflector Athame"
+    },
+    {
+      "ItemId": "1537628",
+      "ItemName": "Supreme Deflector Deck"
+    },
+    {
+      "ItemId": "1535990",
+      "ItemName": "Supreme Deflector Hat"
+    },
+    {
+      "ItemId": "1537336",
+      "ItemName": "Supreme Deflector Ring"
+    },
+    {
+      "ItemId": "1537006",
+      "ItemName": "Supreme Deflector Shoes"
+    },
+    {
+      "ItemId": "1537515",
+      "ItemName": "Supreme Deflector Staff"
+    },
+    {
+      "ItemId": "1537328",
+      "ItemName": "Supreme Deflector Talisman"
+    },
+    {
+      "ItemId": "1537271",
+      "ItemName": "Supreme Detective Athame"
+    },
+    {
+      "ItemId": "1537611",
+      "ItemName": "Supreme Detective Deck"
+    },
+    {
+      "ItemId": "1535941",
+      "ItemName": "Supreme Detective Hat"
+    },
+    {
+      "ItemId": "1537287",
+      "ItemName": "Supreme Detective Ring"
+    },
+    {
+      "ItemId": "1535949",
+      "ItemName": "Supreme Detective Robe"
+    },
+    {
+      "ItemId": "1535957",
+      "ItemName": "Supreme Detective Shoes"
+    },
+    {
+      "ItemId": "1537279",
+      "ItemName": "Supreme Detective Talisman"
+    },
+    {
+      "ItemId": "1537312",
+      "ItemName": "Supreme Electric Ring"
+    },
+    {
+      "ItemId": "1537296",
+      "ItemName": "Supreme Electric Athame"
+    },
+    {
+      "ItemId": "1535966",
+      "ItemName": "Supreme Electric Hat"
+    },
+    {
+      "ItemId": "1535974",
+      "ItemName": "Supreme Electric Robe"
+    },
+    {
+      "ItemId": "1535982",
+      "ItemName": "Supreme Electric Shoes"
+    },
+    {
+      "ItemId": "1537506",
+      "ItemName": "Supreme Electric Staff"
+    },
+    {
+      "ItemId": "1537304",
+      "ItemName": "Supreme Electric Talisman"
+    },
+    {
+      "ItemId": "1537618",
+      "ItemName": "Supreme Eruption Deck"
+    },
+    {
+      "ItemId": "1537294",
+      "ItemName": "Supreme Eruption Athame"
+    },
+    {
+      "ItemId": "1535964",
+      "ItemName": "Supreme Eruption Hat"
+    },
+    {
+      "ItemId": "1537310",
+      "ItemName": "Supreme Eruption Ring"
+    },
+    {
+      "ItemId": "1535972",
+      "ItemName": "Supreme Eruption Robe"
+    },
+    {
+      "ItemId": "1535980",
+      "ItemName": "Supreme Eruption Shoes"
+    },
+    {
+      "ItemId": "1537504",
+      "ItemName": "Supreme Eruption Staff"
+    },
+    {
+      "ItemId": "1537302",
+      "ItemName": "Supreme Eruption Talisman"
+    },
+    {
+      "ItemId": "1537297",
+      "ItemName": "Supreme Ferocious Athame"
+    },
+    {
+      "ItemId": "1537621",
+      "ItemName": "Supreme Ferocious Deck"
+    },
+    {
+      "ItemId": "1535967",
+      "ItemName": "Supreme Ferocious Hat"
+    },
+    {
+      "ItemId": "1537313",
+      "ItemName": "Supreme Ferocious Ring"
+    },
+    {
+      "ItemId": "1535975",
+      "ItemName": "Supreme Ferocious Robe"
+    },
+    {
+      "ItemId": "1535983",
+      "ItemName": "Supreme Ferocious Shoes"
+    },
+    {
+      "ItemId": "1537507",
+      "ItemName": "Supreme Ferocious Staff"
+    },
+    {
+      "ItemId": "1537305",
+      "ItemName": "Supreme Ferocious Talisman"
+    },
+    {
+      "ItemId": "1537318",
+      "ItemName": "Supreme Firewall Athame"
+    },
+    {
+      "ItemId": "1537626",
+      "ItemName": "Supreme Firewall Deck"
+    },
+    {
+      "ItemId": "1535988",
+      "ItemName": "Supreme Firewall Hat"
+    },
+    {
+      "ItemId": "1537334",
+      "ItemName": "Supreme Firewall Ring"
+    },
+    {
+      "ItemId": "1535996",
+      "ItemName": "Supreme Firewall Robe"
+    },
+    {
+      "ItemId": "1537004",
+      "ItemName": "Supreme Firewall Shoes"
+    },
+    {
+      "ItemId": "1537513",
+      "ItemName": "Supreme Firewall Staff"
+    },
+    {
+      "ItemId": "1537326",
+      "ItemName": "Supreme Firewall Talisman"
+    },
+    {
+      "ItemId": "1537277",
+      "ItemName": "Supreme Founder's Athame"
+    },
+    {
+      "ItemId": "1537293",
+      "ItemName": "Supreme Founder's Ring"
+    },
+    {
+      "ItemId": "1535963",
+      "ItemName": "Supreme Founder's Shoes"
+    },
+    {
+      "ItemId": "1537502",
+      "ItemName": "Supreme Founder's Staff"
+    },
+    {
+      "ItemId": "1537285",
+      "ItemName": "Supreme Founder's Talisman"
+    },
+    {
+      "ItemId": "1537295",
+      "ItemName": "Supreme Freezer Athame"
+    },
+    {
+      "ItemId": "1537619",
+      "ItemName": "Supreme Freezer Deck"
+    },
+    {
+      "ItemId": "1535965",
+      "ItemName": "Supreme Freezer Hat"
+    },
+    {
+      "ItemId": "1537311",
+      "ItemName": "Supreme Freezer Ring"
+    },
+    {
+      "ItemId": "1535973",
+      "ItemName": "Supreme Freezer Robe"
+    },
+    {
+      "ItemId": "1535981",
+      "ItemName": "Supreme Freezer Shoes"
+    },
+    {
+      "ItemId": "1537505",
+      "ItemName": "Supreme Freezer Staff"
+    },
+    {
+      "ItemId": "1537303",
+      "ItemName": "Supreme Freezer Talisman"
+    },
+    {
+      "ItemId": "1537624",
+      "ItemName": "Supreme Hex Deck"
+    },
+    {
+      "ItemId": "1535970",
+      "ItemName": "Supreme Hex Hat"
+    },
+    {
+      "ItemId": "1537316",
+      "ItemName": "Supreme Hex Ring"
+    },
+    {
+      "ItemId": "1535978",
+      "ItemName": "Supreme Hex Robe"
+    },
+    {
+      "ItemId": "1535986",
+      "ItemName": "Supreme Hex Shoes"
+    },
+    {
+      "ItemId": "1537510",
+      "ItemName": "Supreme Hex Staff"
+    },
+    {
+      "ItemId": "1537308",
+      "ItemName": "Supreme Hex Talisman"
+    },
+    {
+      "ItemId": "1537615",
+      "ItemName": "Supreme Horror Deck"
+    },
+    {
+      "ItemId": "1535945",
+      "ItemName": "Supreme Horror Hat"
+    },
+    {
+      "ItemId": "1537291",
+      "ItemName": "Supreme Horror Ring"
+    },
+    {
+      "ItemId": "1535953",
+      "ItemName": "Supreme Horror Robe"
+    },
+    {
+      "ItemId": "1535961",
+      "ItemName": "Supreme Horror Shoes"
+    },
+    {
+      "ItemId": "1537500",
+      "ItemName": "Supreme Horror Staff"
+    },
+    {
+      "ItemId": "1537283",
+      "ItemName": "Supreme Horror Talisman"
+    },
+    {
+      "ItemId": "1537290",
+      "ItemName": "Supreme Jungle Ring"
+    },
+    {
+      "ItemId": "1537274",
+      "ItemName": "Supreme Jungle Athame"
+    },
+    {
+      "ItemId": "1537614",
+      "ItemName": "Supreme Jungle Deck"
+    },
+    {
+      "ItemId": "1535944",
+      "ItemName": "Supreme Jungle Hat"
+    },
+    {
+      "ItemId": "1535952",
+      "ItemName": "Supreme Jungle Robe"
+    },
+    {
+      "ItemId": "1535960",
+      "ItemName": "Supreme Jungle Shoes"
+    },
+    {
+      "ItemId": "1537499",
+      "ItemName": "Supreme Jungle Staff"
+    },
+    {
+      "ItemId": "1537282",
+      "ItemName": "Supreme Jungle Talisman"
+    },
+    {
+      "ItemId": "1537314",
+      "ItemName": "Supreme Lifeforce Ring"
+    },
+    {
+      "ItemId": "1537298",
+      "ItemName": "Supreme Lifeforce Athame"
+    },
+    {
+      "ItemId": "1537622",
+      "ItemName": "Supreme Lifeforce Deck"
+    },
+    {
+      "ItemId": "1535968",
+      "ItemName": "Supreme Lifeforce Hat"
+    },
+    {
+      "ItemId": "1535976",
+      "ItemName": "Supreme Lifeforce Robe"
+    },
+    {
+      "ItemId": "1535984",
+      "ItemName": "Supreme Lifeforce Shoes"
+    },
+    {
+      "ItemId": "1537508",
+      "ItemName": "Supreme Lifeforce Staff"
+    },
+    {
+      "ItemId": "1537306",
+      "ItemName": "Supreme Lifeforce Talisman"
+    },
+    {
+      "ItemId": "1537317",
+      "ItemName": "Supreme Old Judge Ring"
+    },
+    {
+      "ItemId": "1537301",
+      "ItemName": "Supreme Old Judge Athame"
+    },
+    {
+      "ItemId": "1537625",
+      "ItemName": "Supreme Old Judge Deck"
+    },
+    {
+      "ItemId": "1535971",
+      "ItemName": "Supreme Old Judge Hat"
+    },
+    {
+      "ItemId": "1535979",
+      "ItemName": "Supreme Old Judge Robe"
+    },
+    {
+      "ItemId": "1535987",
+      "ItemName": "Supreme Old Judge Shoes"
+    },
+    {
+      "ItemId": "1537511",
+      "ItemName": "Supreme Old Judge Staff"
+    },
+    {
+      "ItemId": "1537309",
+      "ItemName": "Supreme Old Judge Talisman"
+    },
+    {
+      "ItemId": "1537338",
+      "ItemName": "Supreme Preservation Ring"
+    },
+    {
+      "ItemId": "1537322",
+      "ItemName": "Supreme Preservation Athame"
+    },
+    {
+      "ItemId": "1537630",
+      "ItemName": "Supreme Preservation Deck"
+    },
+    {
+      "ItemId": "1535992",
+      "ItemName": "Supreme Preservation Hat"
+    },
+    {
+      "ItemId": "1537000",
+      "ItemName": "Supreme Preservation Robe"
+    },
+    {
+      "ItemId": "1537008",
+      "ItemName": "Supreme Preservation Shoes"
+    },
+    {
+      "ItemId": "1537517",
+      "ItemName": "Supreme Preservation Staff"
+    },
+    {
+      "ItemId": "1537330",
+      "ItemName": "Supreme Preservation Talisman"
+    },
+    {
+      "ItemId": "1537272",
+      "ItemName": "Supreme Science Athame"
+    },
+    {
+      "ItemId": "1537612",
+      "ItemName": "Supreme Science Deck"
+    },
+    {
+      "ItemId": "1535942",
+      "ItemName": "Supreme Science Hat"
+    },
+    {
+      "ItemId": "1537288",
+      "ItemName": "Supreme Science Ring"
+    },
+    {
+      "ItemId": "1535950",
+      "ItemName": "Supreme Science Robe"
+    },
+    {
+      "ItemId": "1535958",
+      "ItemName": "Supreme Science Shoes"
+    },
+    {
+      "ItemId": "1537497",
+      "ItemName": "Supreme Science Staff"
+    },
+    {
+      "ItemId": "1537280",
+      "ItemName": "Supreme Science Talisman"
+    },
+    {
+      "ItemId": "1537324",
+      "ItemName": "Supreme Stability Athame"
+    },
+    {
+      "ItemId": "1537632",
+      "ItemName": "Supreme Stability Deck"
+    },
+    {
+      "ItemId": "1535994",
+      "ItemName": "Supreme Stability Hat"
+    },
+    {
+      "ItemId": "1537340",
+      "ItemName": "Supreme Stability Ring"
+    },
+    {
+      "ItemId": "1537002",
+      "ItemName": "Supreme Stability Robe"
+    },
+    {
+      "ItemId": "1537010",
+      "ItemName": "Supreme Stability Shoes"
+    },
+    {
+      "ItemId": "1537332",
+      "ItemName": "Supreme Stability Talisman"
+    },
+    {
+      "ItemId": "1537276",
+      "ItemName": "Supreme Teleological Athame"
+    },
+    {
+      "ItemId": "1537616",
+      "ItemName": "Supreme Teleological Deck"
+    },
+    {
+      "ItemId": "1535946",
+      "ItemName": "Supreme Teleological Hat"
+    },
+    {
+      "ItemId": "1537292",
+      "ItemName": "Supreme Teleological Ring"
+    },
+    {
+      "ItemId": "1535954",
+      "ItemName": "Supreme Teleological Robe"
+    },
+    {
+      "ItemId": "1535962",
+      "ItemName": "Supreme Teleological Shoes"
+    },
+    {
+      "ItemId": "1537501",
+      "ItemName": "Supreme Teleological Staff"
+    },
+    {
+      "ItemId": "1537284",
+      "ItemName": "Supreme Teleological Talisman"
+    },
+    {
+      "ItemId": "1537321",
+      "ItemName": "Supreme Undaunting Athame"
+    },
+    {
+      "ItemId": "1537629",
+      "ItemName": "Supreme Undaunting Deck"
+    },
+    {
+      "ItemId": "1535991",
+      "ItemName": "Supreme Undaunting Hat"
+    },
+    {
+      "ItemId": "1537337",
+      "ItemName": "Supreme Undaunting Ring"
+    },
+    {
+      "ItemId": "1535999",
+      "ItemName": "Supreme Undaunting Robe"
+    },
+    {
+      "ItemId": "1537007",
+      "ItemName": "Supreme Undaunting Shoes"
+    },
+    {
+      "ItemId": "1537516",
+      "ItemName": "Supreme Undaunting Staff"
+    },
+    {
+      "ItemId": "1537329",
+      "ItemName": "Supreme Undaunting Talisman"
+    },
+    {
+      "ItemId": "1537323",
+      "ItemName": "Supreme Undead Athame"
+    },
+    {
+      "ItemId": "1537631",
+      "ItemName": "Supreme Undead Deck"
+    },
+    {
+      "ItemId": "1535993",
+      "ItemName": "Supreme Undead Hat"
+    },
+    {
+      "ItemId": "1537339",
+      "ItemName": "Supreme Undead Ring"
+    },
+    {
+      "ItemId": "1537001",
+      "ItemName": "Supreme Undead Robe"
+    },
+    {
+      "ItemId": "1537009",
+      "ItemName": "Supreme Undead Shoes"
+    },
+    {
+      "ItemId": "1537518",
+      "ItemName": "Supreme Undead Staff"
+    },
+    {
+      "ItemId": "1537331",
+      "ItemName": "Supreme Undead Talisman"
+    },
+    {
+      "ItemId": "1537270",
+      "ItemName": "Supreme Volcanic Athame"
+    },
+    {
+      "ItemId": "1537610",
+      "ItemName": "Supreme Volcanic Deck"
+    },
+    {
+      "ItemId": "1535940",
+      "ItemName": "Supreme Volcanic Hat"
+    },
+    {
+      "ItemId": "1537286",
+      "ItemName": "Supreme Volcanic Ring"
+    },
+    {
+      "ItemId": "1535948",
+      "ItemName": "Supreme Volcanic Robe"
+    },
+    {
+      "ItemId": "1535956",
+      "ItemName": "Supreme Volcanic Shoes"
+    },
+    {
+      "ItemId": "1537495",
+      "ItemName": "Supreme Volcanic Staff"
+    },
+    {
+      "ItemId": "1537278",
+      "ItemName": "Supreme Volcanic Talisman"
+    }
+  ]
+}

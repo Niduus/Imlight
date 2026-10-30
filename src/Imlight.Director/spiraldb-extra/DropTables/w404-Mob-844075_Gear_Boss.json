@@ -1,0 +1,41 @@
+{
+  "Name": "W404 Mob-844075 Gear (Boss)",
+  "Description": "Wizard404's drop list of Sand Squid Tentacle's own drops: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203035",
+      "ItemName": "Deck of Immortal Might"
+    },
+    {
+      "ItemId": "1696701",
+      "ItemName": "Charm of Gorgon Imprisonment"
+    },
+    {
+      "ItemId": "1696702",
+      "ItemName": "Charm of Gorgon Suffering"
+    },
+    {
+      "ItemId": "1696703",
+      "ItemName": "Charm of Gorgon's Gaze"
+    },
+    {
+      "ItemId": "1696704",
+      "ItemName": "Charm of Gorgon Petrification"
+    },
+    {
+      "ItemId": "1696705",
+      "ItemName": "Charm of Gorgon Venom"
+    },
+    {
+      "ItemId": "1696706",
+      "ItemName": "Charm of Gorgon Infamy"
+    },
+    {
+      "ItemId": "1696707",
+      "ItemName": "Charm of Gorgon Volatility"
+    }
+  ]
+}

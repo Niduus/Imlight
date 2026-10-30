@@ -1,0 +1,9 @@
+{
+  "Name": "W404 G14-SB-Boss-Tonkatsu",
+  "Description": "Gold of the game's table G14-SB-Boss-Tonkatsu, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 60,
+  "MaxGold": 70,
+  "EachItem": false,
+  "Items": []
+}

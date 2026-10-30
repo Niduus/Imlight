@@ -1,0 +1,185 @@
+{
+  "Name": "W404 KT-SKR-Ra Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-SKR-Ra: the gear drops (44), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "789254",
+      "ItemName": "Nirini Helm of Scorching"
+    },
+    {
+      "ItemId": "789264",
+      "ItemName": "Singed Nirini Walkers"
+    },
+    {
+      "ItemId": "789274",
+      "ItemName": "Charred Nirini Robe"
+    },
+    {
+      "ItemId": "789284",
+      "ItemName": "Sokkwi Mantle of Blizzards"
+    },
+    {
+      "ItemId": "789294",
+      "ItemName": "Frosted Sokkwi Footwraps"
+    },
+    {
+      "ItemId": "789304",
+      "ItemName": "Sokkwi Frostbitten Armor"
+    },
+    {
+      "ItemId": "789314",
+      "ItemName": "Thunderous Karanahn Veil"
+    },
+    {
+      "ItemId": "789324",
+      "ItemName": "Karanahn's Charged Greaves"
+    },
+    {
+      "ItemId": "789334",
+      "ItemName": "Vestment of Ominous Skies"
+    },
+    {
+      "ItemId": "789344",
+      "ItemName": "Solar Pikestaff of Anubis"
+    },
+    {
+      "ItemId": "789355",
+      "ItemName": "Lunar Scepter of Anubis"
+    },
+    {
+      "ItemId": "789364",
+      "ItemName": "Anubis' Astral Staff"
+    },
+    {
+      "ItemId": "1376468",
+      "ItemName": "Ra's Firebrand Cowl"
+    },
+    {
+      "ItemId": "1376469",
+      "ItemName": "Ra's Frostbite Headdress"
+    },
+    {
+      "ItemId": "1376470",
+      "ItemName": "Ra's Cloudburst Hood"
+    },
+    {
+      "ItemId": "1376471",
+      "ItemName": "Ra's Speculation Cowl"
+    },
+    {
+      "ItemId": "1376472",
+      "ItemName": "Ra's Rapture Headdress"
+    },
+    {
+      "ItemId": "1376473",
+      "ItemName": "Ra's Catacomb Hood"
+    },
+    {
+      "ItemId": "1376474",
+      "ItemName": "Ra's Integrity Cowl"
+    },
+    {
+      "ItemId": "1376475",
+      "ItemName": "Ra's Zenith Headdress"
+    },
+    {
+      "ItemId": "1376476",
+      "ItemName": "Ra's Firebrand Tunic"
+    },
+    {
+      "ItemId": "1376477",
+      "ItemName": "Ra's Frostbite Jerkin"
+    },
+    {
+      "ItemId": "1376478",
+      "ItemName": "Ra's Cloudburst Coat"
+    },
+    {
+      "ItemId": "1376479",
+      "ItemName": "Ra's Speculation Smock"
+    },
+    {
+      "ItemId": "1376480",
+      "ItemName": "Ra's Rapture Cloak"
+    },
+    {
+      "ItemId": "1376481",
+      "ItemName": "Ra's Catacomb Robe"
+    },
+    {
+      "ItemId": "1376482",
+      "ItemName": "Ra's Integrity Vestment"
+    },
+    {
+      "ItemId": "1376483",
+      "ItemName": "Ra's Zenith Raiment"
+    },
+    {
+      "ItemId": "1376484",
+      "ItemName": "Ra's Firebrand Footwraps"
+    },
+    {
+      "ItemId": "1376485",
+      "ItemName": "Ra's Frostbite Boots"
+    },
+    {
+      "ItemId": "1376486",
+      "ItemName": "Ra's Cloudburst Striders"
+    },
+    {
+      "ItemId": "1376487",
+      "ItemName": "Ra's Speculation Runners"
+    },
+    {
+      "ItemId": "1376488",
+      "ItemName": "Ra's Rapture Boots"
+    },
+    {
+      "ItemId": "1376489",
+      "ItemName": "Ra's Catacomb Mocassins"
+    },
+    {
+      "ItemId": "1376490",
+      "ItemName": "Ra's Integrity Trackers"
+    },
+    {
+      "ItemId": "1376491",
+      "ItemName": "Ra's Zenith Footwraps"
+    },
+    {
+      "ItemId": "1376492",
+      "ItemName": "Krokotopian Firebrand Wand"
+    },
+    {
+      "ItemId": "1376493",
+      "ItemName": "Krokotopian Rod of Frostbite"
+    },
+    {
+      "ItemId": "1376494",
+      "ItemName": "Krokotopian Cloudburst Scepter"
+    },
+    {
+      "ItemId": "1376495",
+      "ItemName": "Krokotopian Speculation Wand"
+    },
+    {
+      "ItemId": "1376496",
+      "ItemName": "Krokotopian Rapture Baton"
+    },
+    {
+      "ItemId": "1376497",
+      "ItemName": "Krokotopian Catacomb Wand"
+    },
+    {
+      "ItemId": "1376498",
+      "ItemName": "Krokotopian Rod of Integrity"
+    },
+    {
+      "ItemId": "1376499",
+      "ItemName": "Krokotopian Zenith Scepter"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "W404 ReagentCL-Drop-Scales Reagent (Elite)",
+  "Description": "Wizard404's drop list of the game's table ReagentCL-Drop-Scales: the reagent drops (1), one picked when it rolls. How often: DropOdds.json Elite/Reagent.",
+  "Odds": "Elite/Reagent",
+  "RollChance": 0.35,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales"
+    }
+  ]
+}

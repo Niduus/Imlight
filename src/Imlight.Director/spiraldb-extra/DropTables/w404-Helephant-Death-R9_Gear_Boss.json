@@ -1,0 +1,93 @@
+{
+  "Name": "W404 Helephant-Death-R9 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Helephant-Death-R9: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104611",
+      "ItemName": "Vestment of the Inferno"
+    },
+    {
+      "ItemId": "104643",
+      "ItemName": "Tunic of Tradition"
+    },
+    {
+      "ItemId": "104714",
+      "ItemName": "Coat of the Zephyr"
+    },
+    {
+      "ItemId": "104776",
+      "ItemName": "Mocassins of the Oracle"
+    },
+    {
+      "ItemId": "104833",
+      "ItemName": "Sandals of the Generous Earth"
+    },
+    {
+      "ItemId": "126593",
+      "ItemName": "Rime-edged Ring"
+    },
+    {
+      "ItemId": "126615",
+      "ItemName": "Seal of the Gallium Paladin"
+    },
+    {
+      "ItemId": "146113",
+      "ItemName": "Gurtok Scaleblade"
+    },
+    {
+      "ItemId": "146118",
+      "ItemName": "Gurtok Ender's Blade"
+    },
+    {
+      "ItemId": "146123",
+      "ItemName": "Gurtok Firetusk"
+    },
+    {
+      "ItemId": "146126",
+      "ItemName": "Searing Knife"
+    },
+    {
+      "ItemId": "146129",
+      "ItemName": "Gurtok Chillblade"
+    },
+    {
+      "ItemId": "146135",
+      "ItemName": "Gurtok Everthorn"
+    },
+    {
+      "ItemId": "146177",
+      "ItemName": "Claw of Conciliation"
+    },
+    {
+      "ItemId": "146195",
+      "ItemName": "Gurtok Telluric Steel"
+    },
+    {
+      "ItemId": "146201",
+      "ItemName": "Gurtok Mythslayer"
+    },
+    {
+      "ItemId": "146271",
+      "ItemName": "Shroud of the Green"
+    },
+    {
+      "ItemId": "146342",
+      "ItemName": "Reaper's Hood"
+    },
+    {
+      "ItemId": "161053",
+      "ItemName": "Reinforced Helmet"
+    },
+    {
+      "ItemId": "164083",
+      "ItemName": "Surcoat of the Charge"
+    },
+    {
+      "ItemId": "164103",
+      "ItemName": "Boots of the Titan"
+    }
+  ]
+}

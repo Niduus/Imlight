@@ -1,0 +1,241 @@
+{
+  "Name": "W404 NV_Dog_General_A_01 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Dog_General_A_01: the jewel drops (58), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1535702",
+      "ItemName": "Amazing Accurate Amethyst +15%"
+    },
+    {
+      "ItemId": "1535701",
+      "ItemName": "Amazing Accurate Citrine +15%"
+    },
+    {
+      "ItemId": "1535705",
+      "ItemName": "Amazing Accurate Onyx +15%"
+    },
+    {
+      "ItemId": "1535706",
+      "ItemName": "Amazing Accurate Peridot +15%"
+    },
+    {
+      "ItemId": "1535707",
+      "ItemName": "Amazing Accurate Ruby +15%"
+    },
+    {
+      "ItemId": "1535708",
+      "ItemName": "Amazing Accurate Sapphire +15%"
+    },
+    {
+      "ItemId": "1535667",
+      "ItemName": "Amazing Health Opal +136"
+    },
+    {
+      "ItemId": "1535669",
+      "ItemName": "Amazing Health Opal +138"
+    },
+    {
+      "ItemId": "1535670",
+      "ItemName": "Amazing Health Opal +139"
+    },
+    {
+      "ItemId": "1535671",
+      "ItemName": "Amazing Health Opal +140"
+    },
+    {
+      "ItemId": "1535673",
+      "ItemName": "Amazing Health Opal +142"
+    },
+    {
+      "ItemId": "1535674",
+      "ItemName": "Amazing Health Opal +143"
+    },
+    {
+      "ItemId": "1535675",
+      "ItemName": "Amazing Health Opal +144"
+    },
+    {
+      "ItemId": "1535677",
+      "ItemName": "Amazing Mana Opal +57"
+    },
+    {
+      "ItemId": "1535678",
+      "ItemName": "Amazing Mana Opal +58"
+    },
+    {
+      "ItemId": "1535679",
+      "ItemName": "Amazing Mana Opal +59"
+    },
+    {
+      "ItemId": "1535680",
+      "ItemName": "Amazing Mana Opal +60"
+    },
+    {
+      "ItemId": "1535709",
+      "ItemName": "Amazing PIP Hematite +3"
+    },
+    {
+      "ItemId": "1537693",
+      "ItemName": "Buck Gordon Ruby"
+    },
+    {
+      "ItemId": "1514491",
+      "ItemName": "Catalan Amethyst"
+    },
+    {
+      "ItemId": "1514486",
+      "ItemName": "Dazzling Accurate Citrine +14%"
+    },
+    {
+      "ItemId": "1514483",
+      "ItemName": "Dazzling Accurate Peridot +14%"
+    },
+    {
+      "ItemId": "1514481",
+      "ItemName": "Dazzling Accurate Sapphire +14%"
+    },
+    {
+      "ItemId": "1587033",
+      "ItemName": "Dazzling Archmastery Opal +13"
+    },
+    {
+      "ItemId": "1514571",
+      "ItemName": "Dazzling Health Opal +126"
+    },
+    {
+      "ItemId": "1514563",
+      "ItemName": "Dazzling Health Opal +128"
+    },
+    {
+      "ItemId": "1514566",
+      "ItemName": "Dazzling Health Opal +131"
+    },
+    {
+      "ItemId": "1514567",
+      "ItemName": "Dazzling Health Opal +132"
+    },
+    {
+      "ItemId": "1514568",
+      "ItemName": "Dazzling Health Opal +133"
+    },
+    {
+      "ItemId": "1514569",
+      "ItemName": "Dazzling Health Opal +134"
+    },
+    {
+      "ItemId": "1514509",
+      "ItemName": "Dazzling Mana Opal +56"
+    },
+    {
+      "ItemId": "1514493",
+      "ItemName": "Goat Monk Jade"
+    },
+    {
+      "ItemId": "1514490",
+      "ItemName": "Handsome Fomori Sapphire"
+    },
+    {
+      "ItemId": "1514489",
+      "ItemName": "Krampus Revenant Ruby"
+    },
+    {
+      "ItemId": "1514494",
+      "ItemName": "Lord of Night Onyx"
+    },
+    {
+      "ItemId": "1357134",
+      "ItemName": "Lustrous PIP Opal +10%"
+    },
+    {
+      "ItemId": "1537696",
+      "ItemName": "Mandar Peridot"
+    },
+    {
+      "ItemId": "1514492",
+      "ItemName": "Ninja Pigs Peridot"
+    },
+    {
+      "ItemId": "1537699",
+      "ItemName": "Quartermane Citrine"
+    },
+    {
+      "ItemId": "1514495",
+      "ItemName": "Savage Paw Citrine"
+    },
+    {
+      "ItemId": "1537698",
+      "ItemName": "Solomon Crane Onyx"
+    },
+    {
+      "ItemId": "1537697",
+      "ItemName": "The Bantam Jade"
+    },
+    {
+      "ItemId": "1578455",
+      "ItemName": "Balance Blocking Pin (140)"
+    },
+    {
+      "ItemId": "1578433",
+      "ItemName": "Balance Blocking Pin (140)"
+    },
+    {
+      "ItemId": "1578618",
+      "ItemName": "Balance Blocking Pin (150)"
+    },
+    {
+      "ItemId": "1578615",
+      "ItemName": "Balance Blocking Pin (150)"
+    },
+    {
+      "ItemId": "1578611",
+      "ItemName": "Balance Blocking Pin (150)"
+    },
+    {
+      "ItemId": "1587010",
+      "ItemName": "Balance Mending Pin (140)"
+    },
+    {
+      "ItemId": "1587350",
+      "ItemName": "Balance Resist Pin (140)"
+    },
+    {
+      "ItemId": "1578428",
+      "ItemName": "Ice Blocking Pin (140)"
+    },
+    {
+      "ItemId": "1578457",
+      "ItemName": "Life Blocking Pin (140)"
+    },
+    {
+      "ItemId": "1578620",
+      "ItemName": "Life Blocking Pin (150)"
+    },
+    {
+      "ItemId": "1587422",
+      "ItemName": "Life Resist Pin (140)"
+    },
+    {
+      "ItemId": "1578612",
+      "ItemName": "Myth Blocking Pin (150)"
+    },
+    {
+      "ItemId": "1713143",
+      "ItemName": "Myth Mending Pin (140)"
+    },
+    {
+      "ItemId": "1713140",
+      "ItemName": "Myth Mending Pin (150)"
+    },
+    {
+      "ItemId": "1587418",
+      "ItemName": "Myth Resist Pin (140)"
+    },
+    {
+      "ItemId": "1587012",
+      "ItemName": "Storm Mending Pin (140)"
+    }
+  ]
+}

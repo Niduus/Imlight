@@ -1,0 +1,25 @@
+{
+  "Name": "W404 DS-GH2-Boss-Jewels Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table DS-GH2-Boss-Jewels: the reagent drops (4), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1350011",
+      "ItemName": "Tin"
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel"
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass"
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt"
+    }
+  ]
+}

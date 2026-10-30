@@ -1,0 +1,13 @@
+{
+  "Name": "W404 DM_Tree_Mini_Bartleby_A_01 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Tree_Mini_Bartleby_A_01: the snack drops (1), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1257606",
+      "ItemName": "Granny Snow Apple"
+    }
+  ]
+}

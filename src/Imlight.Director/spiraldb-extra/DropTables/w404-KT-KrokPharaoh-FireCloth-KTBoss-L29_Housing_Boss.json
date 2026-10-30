@@ -1,0 +1,17 @@
+{
+  "Name": "W404 KT-KrokPharaoh-FireCloth-KTBoss-L29 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokPharaoh-FireCloth-KTBoss-L29: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82758",
+      "ItemName": "Dim Scarab Pillar"
+    },
+    {
+      "ItemId": "82822",
+      "ItemName": "Short Krokotopian Pot"
+    }
+  ]
+}

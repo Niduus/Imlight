@@ -1,0 +1,125 @@
+{
+  "Name": "W404 CE_TreasureTower_Life_F07 TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table CE_TreasureTower_Life_F07: the treasurecard drops (29), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Ghoul TC",
+      "ItemName": "Ghoul"
+    },
+    {
+      "ItemId": "Dark Sprite TC",
+      "ItemName": "Dark Sprite"
+    },
+    {
+      "ItemId": "Minor Blessing TC",
+      "ItemName": "Minor Blessing"
+    },
+    {
+      "ItemId": "Sprite TC",
+      "ItemName": "Sprite"
+    },
+    {
+      "ItemId": "Deathblade TC",
+      "ItemName": "Deathblade"
+    },
+    {
+      "ItemId": "Life Shield TC",
+      "ItemName": "Life Shield"
+    },
+    {
+      "ItemId": "Punklops Death Fire - TC",
+      "ItemName": "Metalops"
+    },
+    {
+      "ItemId": "Vampire TC",
+      "ItemName": "Vampire"
+    },
+    {
+      "ItemId": "Poison TC",
+      "ItemName": "Poison"
+    },
+    {
+      "ItemId": "Pixie Life TC",
+      "ItemName": "Fairy"
+    },
+    {
+      "ItemId": "Satyr TC",
+      "ItemName": "Satyr"
+    },
+    {
+      "ItemId": "Ether Shield TC",
+      "ItemName": "Ether Shield"
+    },
+    {
+      "ItemId": "Death Trap TC",
+      "ItemName": "Death Trap"
+    },
+    {
+      "ItemId": "Tower Shield TC",
+      "ItemName": "Tower Shield"
+    },
+    {
+      "ItemId": "3P Helephant Death Weakness TC",
+      "ItemName": "Death Helephant"
+    },
+    {
+      "ItemId": "Lord of Night TC",
+      "ItemName": "Lord of Night"
+    },
+    {
+      "ItemId": "Headless Horseman TC",
+      "ItemName": "Headless Horseman"
+    },
+    {
+      "ItemId": "Deer Knight TC",
+      "ItemName": "Deer Knight"
+    },
+    {
+      "ItemId": "Regenerate TC",
+      "ItemName": "Regenerate"
+    },
+    {
+      "ItemId": "Defibrillate TC",
+      "ItemName": "Healing Current"
+    },
+    {
+      "ItemId": "Helping Hands TC",
+      "ItemName": "Helping Hands"
+    },
+    {
+      "ItemId": "Dryad TC",
+      "ItemName": "Dryad"
+    },
+    {
+      "ItemId": "Feint TC",
+      "ItemName": "Feint"
+    },
+    {
+      "ItemId": "Fortify TC",
+      "ItemName": "Fortify"
+    },
+    {
+      "ItemId": "Amplify TC",
+      "ItemName": "Amplify"
+    },
+    {
+      "ItemId": "Infallible TC",
+      "ItemName": "Infallible"
+    },
+    {
+      "ItemId": "Black Cat TC",
+      "ItemName": "Black Cat"
+    },
+    {
+      "ItemId": "Weakness TC",
+      "ItemName": "Weakness"
+    },
+    {
+      "ItemId": "Pixie TC",
+      "ItemName": "Pixie"
+    }
+  ]
+}

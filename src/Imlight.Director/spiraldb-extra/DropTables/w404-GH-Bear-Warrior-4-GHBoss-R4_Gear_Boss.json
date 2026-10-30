@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Bear-Warrior-4-GHBoss-R4 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Bear-Warrior-4-GHBoss-R4: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136337",
+      "ItemName": "Flamewarden's Mantle"
+    },
+    {
+      "ItemId": "136339",
+      "ItemName": "Headdress of Vigor"
+    },
+    {
+      "ItemId": "136466",
+      "ItemName": "Ringlet of Serenity"
+    },
+    {
+      "ItemId": "136537",
+      "ItemName": "Precipitant Coat"
+    },
+    {
+      "ItemId": "171112",
+      "ItemName": "Footgear of the Keeper"
+    },
+    {
+      "ItemId": "171118",
+      "ItemName": "Frozen Slippers"
+    }
+  ]
+}

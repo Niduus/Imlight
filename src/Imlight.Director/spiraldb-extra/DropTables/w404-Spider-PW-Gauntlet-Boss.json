@@ -1,0 +1,9 @@
+{
+  "Name": "W404 Spider-PW-Gauntlet-Boss",
+  "Description": "Gold of the game's table Spider-PW-Gauntlet-Boss, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 40,
+  "MaxGold": 40,
+  "EachItem": false,
+  "Items": []
+}

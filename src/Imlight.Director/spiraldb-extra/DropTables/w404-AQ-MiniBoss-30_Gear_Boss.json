@@ -1,0 +1,209 @@
+{
+  "Name": "W404 AQ-MiniBoss-30 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AQ-MiniBoss-30: the gear drops (50), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136247",
+      "ItemName": "Talisman of the Tower"
+    },
+    {
+      "ItemId": "136283",
+      "ItemName": "Vigilant Steel"
+    },
+    {
+      "ItemId": "136289",
+      "ItemName": "Edge of Veracity"
+    },
+    {
+      "ItemId": "136290",
+      "ItemName": "Mortal Steel"
+    },
+    {
+      "ItemId": "136291",
+      "ItemName": "Forgebright Blade"
+    },
+    {
+      "ItemId": "136294",
+      "ItemName": "Hepatizon Knife"
+    },
+    {
+      "ItemId": "136295",
+      "ItemName": "Telluric Stylet"
+    },
+    {
+      "ItemId": "136296",
+      "ItemName": "Snow-forged Steel"
+    },
+    {
+      "ItemId": "136414",
+      "ItemName": "Cap of Equilibrium"
+    },
+    {
+      "ItemId": "136416",
+      "ItemName": "Circlet of the Unavoidable"
+    },
+    {
+      "ItemId": "136418",
+      "ItemName": "Headgear of Revival"
+    },
+    {
+      "ItemId": "136420",
+      "ItemName": "Mantle of Ingenuity"
+    },
+    {
+      "ItemId": "136422",
+      "ItemName": "Cap of the Stratosphere"
+    },
+    {
+      "ItemId": "136424",
+      "ItemName": "Frostwoven Hood"
+    },
+    {
+      "ItemId": "136425",
+      "ItemName": "Firebloom Cowl"
+    },
+    {
+      "ItemId": "136654",
+      "ItemName": "Robe of the Raging Fire"
+    },
+    {
+      "ItemId": "136655",
+      "ItemName": "Winterweave Coat"
+    },
+    {
+      "ItemId": "136656",
+      "ItemName": "Drape of the Deep Blue Sea"
+    },
+    {
+      "ItemId": "136657",
+      "ItemName": "Jerkin of the Seer"
+    },
+    {
+      "ItemId": "136658",
+      "ItemName": "Lifeweave Robe"
+    },
+    {
+      "ItemId": "136659",
+      "ItemName": "Raiment of Lamentation"
+    },
+    {
+      "ItemId": "136660",
+      "ItemName": "Garment of Generality"
+    },
+    {
+      "ItemId": "171179",
+      "ItemName": "Firewalking Sandals"
+    },
+    {
+      "ItemId": "171180",
+      "ItemName": "Frigid Footwear"
+    },
+    {
+      "ItemId": "171186",
+      "ItemName": "Broghans of the Wanderer"
+    },
+    {
+      "ItemId": "171196",
+      "ItemName": "Boots of the Vortex"
+    },
+    {
+      "ItemId": "171198",
+      "ItemName": "Sapient Walkers"
+    },
+    {
+      "ItemId": "171200",
+      "ItemName": "Long Walkers"
+    },
+    {
+      "ItemId": "171201",
+      "ItemName": "Boots of Composure"
+    },
+    {
+      "ItemId": "819565",
+      "ItemName": "Senator's Radiant Laurel"
+    },
+    {
+      "ItemId": "819566",
+      "ItemName": "Senator's Mantle of Winter"
+    },
+    {
+      "ItemId": "819567",
+      "ItemName": "Senator's Raincloud Mantle"
+    },
+    {
+      "ItemId": "819568",
+      "ItemName": "Senator's Poetic Laurel"
+    },
+    {
+      "ItemId": "819569",
+      "ItemName": "Senator's Laurel of Truth"
+    },
+    {
+      "ItemId": "819570",
+      "ItemName": "Senator's Devious Mantle"
+    },
+    {
+      "ItemId": "819571",
+      "ItemName": "Senator's Judicial Laurel"
+    },
+    {
+      "ItemId": "819586",
+      "ItemName": "Senator's Radiant Toga"
+    },
+    {
+      "ItemId": "819587",
+      "ItemName": "Senator's Wintry Toga"
+    },
+    {
+      "ItemId": "819588",
+      "ItemName": "Senator's Raincloud Toga"
+    },
+    {
+      "ItemId": "819589",
+      "ItemName": "Senator's Poetic Toga"
+    },
+    {
+      "ItemId": "819590",
+      "ItemName": "Senator's Stirring Toga"
+    },
+    {
+      "ItemId": "819591",
+      "ItemName": "Senator's Devious Toga"
+    },
+    {
+      "ItemId": "819592",
+      "ItemName": "Senator's Judicial Toga"
+    },
+    {
+      "ItemId": "819607",
+      "ItemName": "Senator's Radiant Sandals"
+    },
+    {
+      "ItemId": "819608",
+      "ItemName": "Senator's Wintry Sandals"
+    },
+    {
+      "ItemId": "819609",
+      "ItemName": "Senator's Raincloud Shoes"
+    },
+    {
+      "ItemId": "819610",
+      "ItemName": "Senator's Poetic Boots"
+    },
+    {
+      "ItemId": "819611",
+      "ItemName": "Senator's Guiding Sandals"
+    },
+    {
+      "ItemId": "819612",
+      "ItemName": "Senator's Devious Sandals"
+    },
+    {
+      "ItemId": "819613",
+      "ItemName": "Senator's Judicial Shoes"
+    }
+  ]
+}

@@ -1,0 +1,261 @@
+{
+  "Name": "W404 G14-BP-Boss-Automaton Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-BP-Boss-Automaton: the gear drops (63), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330919",
+      "ItemName": "Barkingham Derby of Cinders"
+    },
+    {
+      "ItemId": "1330920",
+      "ItemName": "Barkingham Frost Cover"
+    },
+    {
+      "ItemId": "1330921",
+      "ItemName": "Barkingham Fog Bowler"
+    },
+    {
+      "ItemId": "1330922",
+      "ItemName": "Topper of Royal Wit"
+    },
+    {
+      "ItemId": "1330923",
+      "ItemName": "Barkingham Bombin of Brio"
+    },
+    {
+      "ItemId": "1330924",
+      "ItemName": "Barkingham Derby of Repose"
+    },
+    {
+      "ItemId": "1330925",
+      "ItemName": "Royal Cap of Alliance"
+    },
+    {
+      "ItemId": "1338003",
+      "ItemName": "Barkingham Cinder Smock"
+    },
+    {
+      "ItemId": "1338004",
+      "ItemName": "Barkingham Frostbreaker"
+    },
+    {
+      "ItemId": "1338005",
+      "ItemName": "Barkingham Fog Coat"
+    },
+    {
+      "ItemId": "1338006",
+      "ItemName": "Royal Coat of Wit"
+    },
+    {
+      "ItemId": "1338007",
+      "ItemName": "Smock of Barkingham Brio"
+    },
+    {
+      "ItemId": "1338008",
+      "ItemName": "Barkingham Robe of Repose"
+    },
+    {
+      "ItemId": "1338009",
+      "ItemName": "Royal Coat of Alliance"
+    },
+    {
+      "ItemId": "1338010",
+      "ItemName": "Palace Guard's Firebreaker"
+    },
+    {
+      "ItemId": "1338011",
+      "ItemName": "Yeoman's Winter Uniform"
+    },
+    {
+      "ItemId": "1338012",
+      "ItemName": "Palace Guard's Rain Gear"
+    },
+    {
+      "ItemId": "1338013",
+      "ItemName": "Yeoman's Cloak of Reverie"
+    },
+    {
+      "ItemId": "1338014",
+      "ItemName": "Yeoman's Robe of Bounty"
+    },
+    {
+      "ItemId": "1338015",
+      "ItemName": "Outfit of the Forlorn Watch"
+    },
+    {
+      "ItemId": "1338016",
+      "ItemName": "Yeoman's Vestment of Unity"
+    },
+    {
+      "ItemId": "1338087",
+      "ItemName": "Barkingham Cinder Shoes"
+    },
+    {
+      "ItemId": "1338088",
+      "ItemName": "Barkingham Frost Striders"
+    },
+    {
+      "ItemId": "1338089",
+      "ItemName": "Barkingham Fog Walkers"
+    },
+    {
+      "ItemId": "1338090",
+      "ItemName": "Barkingham Shoes of Wit"
+    },
+    {
+      "ItemId": "1338091",
+      "ItemName": "Barkingham Boots of Brio"
+    },
+    {
+      "ItemId": "1338092",
+      "ItemName": "Barkingham Clogs of Repose"
+    },
+    {
+      "ItemId": "1338093",
+      "ItemName": "Royal Boots of Alliance"
+    },
+    {
+      "ItemId": "1338178",
+      "ItemName": "Yeoman's Dagger of Sparks"
+    },
+    {
+      "ItemId": "1338179",
+      "ItemName": "Palace Guard's Ice Razor"
+    },
+    {
+      "ItemId": "1338180",
+      "ItemName": "Barkingham Knife of Floods"
+    },
+    {
+      "ItemId": "1338181",
+      "ItemName": "Royal Bodkin of Awareness"
+    },
+    {
+      "ItemId": "1338182",
+      "ItemName": "Barkingham Dagger of Nerve"
+    },
+    {
+      "ItemId": "1338183",
+      "ItemName": "Yeoman's Athame of Decay"
+    },
+    {
+      "ItemId": "1338184",
+      "ItemName": "Royal Dagger of Allegiance"
+    },
+    {
+      "ItemId": "1338269",
+      "ItemName": "Crown Jewel Necklace"
+    },
+    {
+      "ItemId": "1338270",
+      "ItemName": "Queen's Jewel of Barkingham"
+    },
+    {
+      "ItemId": "1338271",
+      "ItemName": "Lanyon Scratcher's Bauble"
+    },
+    {
+      "ItemId": "1338272",
+      "ItemName": "Locket of the Opera Nova"
+    },
+    {
+      "ItemId": "1338273",
+      "ItemName": "Torc of The Woman"
+    },
+    {
+      "ItemId": "1338274",
+      "ItemName": "Enfield Trickster's Ampul"
+    },
+    {
+      "ItemId": "1338275",
+      "ItemName": "Mycroft's Medallion"
+    },
+    {
+      "ItemId": "1338437",
+      "ItemName": "Sherlock's Brilliant Hand"
+    },
+    {
+      "ItemId": "1338438",
+      "ItemName": "Watson's Cold Case"
+    },
+    {
+      "ItemId": "1338439",
+      "ItemName": "Deck of the Ferocious Hound"
+    },
+    {
+      "ItemId": "1338440",
+      "ItemName": "Jackall's Mystifying Cards"
+    },
+    {
+      "ItemId": "1338441",
+      "ItemName": "Queen's Case of Resilience"
+    },
+    {
+      "ItemId": "1338442",
+      "ItemName": "Trickster's Pack of Lies"
+    },
+    {
+      "ItemId": "1338443",
+      "ItemName": "Regal Gallery of Dignity"
+    },
+    {
+      "ItemId": "1358936",
+      "ItemName": "Sherlock's Brilliant Hand"
+    },
+    {
+      "ItemId": "1358937",
+      "ItemName": "Watson's Cold Case"
+    },
+    {
+      "ItemId": "1358938",
+      "ItemName": "Deck of the Ferocious Hound"
+    },
+    {
+      "ItemId": "1358939",
+      "ItemName": "Jackall's Mystifying Cards"
+    },
+    {
+      "ItemId": "1358940",
+      "ItemName": "Queen's Case of Resilience"
+    },
+    {
+      "ItemId": "1358941",
+      "ItemName": "Trickster's Pack of Lies"
+    },
+    {
+      "ItemId": "1358942",
+      "ItemName": "Regal Gallery of Dignity"
+    },
+    {
+      "ItemId": "1358950",
+      "ItemName": "Sherlock's Brilliant Hand"
+    },
+    {
+      "ItemId": "1358951",
+      "ItemName": "Watson's Cold Case"
+    },
+    {
+      "ItemId": "1358952",
+      "ItemName": "Deck of the Ferocious Hound"
+    },
+    {
+      "ItemId": "1358953",
+      "ItemName": "Jackall's Mystifying Cards"
+    },
+    {
+      "ItemId": "1358954",
+      "ItemName": "Queen's Case of Resilience"
+    },
+    {
+      "ItemId": "1358955",
+      "ItemName": "Trickster's Pack of Lies"
+    },
+    {
+      "ItemId": "1358956",
+      "ItemName": "Regal Gallery of Dignity"
+    }
+  ]
+}

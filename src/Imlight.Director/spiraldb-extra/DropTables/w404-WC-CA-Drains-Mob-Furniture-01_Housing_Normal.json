@@ -1,0 +1,57 @@
+{
+  "Name": "W404 WC-CA-Drains-Mob-Furniture-01 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table WC-CA-Drains-Mob-Furniture-01: the housing drops (12), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160235",
+      "ItemName": "Brain Jar"
+    },
+    {
+      "ItemId": "1374488",
+      "ItemName": "Crab Alley Chaise"
+    },
+    {
+      "ItemId": "1374534",
+      "ItemName": "Watermelon Slice"
+    },
+    {
+      "ItemId": "1374545",
+      "ItemName": "Mystic Pizza"
+    },
+    {
+      "ItemId": "1374555",
+      "ItemName": "Fish"
+    },
+    {
+      "ItemId": "1374559",
+      "ItemName": "Roasted Drumstick"
+    },
+    {
+      "ItemId": "1374560",
+      "ItemName": "Ginormous Apple"
+    },
+    {
+      "ItemId": "1480048",
+      "ItemName": "WC Catacombs Combat Theme"
+    },
+    {
+      "ItemId": "1480049",
+      "ItemName": "WC Catacombs Theme"
+    },
+    {
+      "ItemId": "1480050",
+      "ItemName": "WC Drains Combat Theme"
+    },
+    {
+      "ItemId": "1480051",
+      "ItemName": "WC Drains Theme"
+    },
+    {
+      "ItemId": "1480052",
+      "ItemName": "WC Elsewhere Combat Theme"
+    }
+  ]
+}

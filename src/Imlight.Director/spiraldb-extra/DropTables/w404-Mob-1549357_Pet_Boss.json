@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Mob-1549357 Pet (Boss)",
+  "Description": "Wizard404's drop list of Drowned Dan's own drops: the pet drops (3), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1507004",
+      "ItemName": "Feral Zorphie"
+    },
+    {
+      "ItemId": "1507005",
+      "ItemName": "Ravenous Zorphie"
+    },
+    {
+      "ItemId": "1507006",
+      "ItemName": "Vicious Zorphie"
+    }
+  ]
+}

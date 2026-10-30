@@ -1,0 +1,273 @@
+{
+  "Name": "W404 NV_Dog_Rintintin_A_01 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Dog_Rintintin_A_01: the jewel drops (66), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1535633",
+      "ItemName": "Amazing Critical Amethyst +21"
+    },
+    {
+      "ItemId": "1535635",
+      "ItemName": "Amazing Critical Citrine +21"
+    },
+    {
+      "ItemId": "1535636",
+      "ItemName": "Amazing Critical Citrine +22"
+    },
+    {
+      "ItemId": "1535640",
+      "ItemName": "Amazing Critical Jade +22"
+    },
+    {
+      "ItemId": "1535641",
+      "ItemName": "Amazing Critical Onyx +21"
+    },
+    {
+      "ItemId": "1535642",
+      "ItemName": "Amazing Critical Onyx +22"
+    },
+    {
+      "ItemId": "1535644",
+      "ItemName": "Amazing Critical Peridot +21"
+    },
+    {
+      "ItemId": "1535645",
+      "ItemName": "Amazing Critical Peridot +22"
+    },
+    {
+      "ItemId": "1535646",
+      "ItemName": "Amazing Critical Ruby +21"
+    },
+    {
+      "ItemId": "1535647",
+      "ItemName": "Amazing Critical Ruby +22"
+    },
+    {
+      "ItemId": "1535648",
+      "ItemName": "Amazing Critical Sapphire +21"
+    },
+    {
+      "ItemId": "1535649",
+      "ItemName": "Amazing Critical Sapphire +22"
+    },
+    {
+      "ItemId": "1535650",
+      "ItemName": "Amazing Damage Amethyst +31"
+    },
+    {
+      "ItemId": "1535651",
+      "ItemName": "Amazing Damage Amethyst +32"
+    },
+    {
+      "ItemId": "1535652",
+      "ItemName": "Amazing Damage Citrine +31"
+    },
+    {
+      "ItemId": "1535656",
+      "ItemName": "Amazing Damage Jade +31"
+    },
+    {
+      "ItemId": "1535657",
+      "ItemName": "Amazing Damage Jade +32"
+    },
+    {
+      "ItemId": "1535658",
+      "ItemName": "Amazing Damage Onyx +31"
+    },
+    {
+      "ItemId": "1535659",
+      "ItemName": "Amazing Damage Onyx +32"
+    },
+    {
+      "ItemId": "1535662",
+      "ItemName": "Amazing Damage Peridot +32"
+    },
+    {
+      "ItemId": "1535663",
+      "ItemName": "Amazing Damage Ruby +31"
+    },
+    {
+      "ItemId": "1535664",
+      "ItemName": "Amazing Damage Ruby +32"
+    },
+    {
+      "ItemId": "1535665",
+      "ItemName": "Amazing Damage Sapphire +31"
+    },
+    {
+      "ItemId": "1535666",
+      "ItemName": "Amazing Damage Sapphire +32"
+    },
+    {
+      "ItemId": "1535661",
+      "ItemName": "Amazing Damage Peridot +31"
+    },
+    {
+      "ItemId": "1578840",
+      "ItemName": "Flawless Critical Amethyst +23"
+    },
+    {
+      "ItemId": "1578841",
+      "ItemName": "Flawless Critical Amethyst +24"
+    },
+    {
+      "ItemId": "1578828",
+      "ItemName": "Flawless Critical Citrine +23"
+    },
+    {
+      "ItemId": "1578829",
+      "ItemName": "Flawless Critical Citrine +24"
+    },
+    {
+      "ItemId": "1578836",
+      "ItemName": "Flawless Critical Jade +23"
+    },
+    {
+      "ItemId": "1578830",
+      "ItemName": "Flawless Critical Onyx +23"
+    },
+    {
+      "ItemId": "1578838",
+      "ItemName": "Flawless Critical Peridot +23"
+    },
+    {
+      "ItemId": "1578839",
+      "ItemName": "Flawless Critical Peridot +24"
+    },
+    {
+      "ItemId": "1578832",
+      "ItemName": "Flawless Critical Ruby +23"
+    },
+    {
+      "ItemId": "1578833",
+      "ItemName": "Flawless Critical Ruby +24"
+    },
+    {
+      "ItemId": "1578834",
+      "ItemName": "Flawless Critical Sapphire +23"
+    },
+    {
+      "ItemId": "1578835",
+      "ItemName": "Flawless Critical Sapphire +24"
+    },
+    {
+      "ItemId": "1578827",
+      "ItemName": "Flawless Mending Opal +8%"
+    },
+    {
+      "ItemId": "1352780",
+      "ItemName": "Polished Piercing Amethyst +6%"
+    },
+    {
+      "ItemId": "1352808",
+      "ItemName": "Polished Piercing Citrine +6%"
+    },
+    {
+      "ItemId": "1352787",
+      "ItemName": "Polished Piercing Peridot +6%"
+    },
+    {
+      "ItemId": "1352794",
+      "ItemName": "Polished Piercing Jade +6%"
+    },
+    {
+      "ItemId": "1352801",
+      "ItemName": "Polished Piercing Onyx +6%"
+    },
+    {
+      "ItemId": "1352766",
+      "ItemName": "Polished Piercing Ruby +6%"
+    },
+    {
+      "ItemId": "1352773",
+      "ItemName": "Polished Piercing Sapphire +6%"
+    },
+    {
+      "ItemId": "1587352",
+      "ItemName": "Balance Accurate Pin (100)"
+    },
+    {
+      "ItemId": "1578584",
+      "ItemName": "Balance Conversion Pin (150)"
+    },
+    {
+      "ItemId": "1587394",
+      "ItemName": "Balance Conversion Pin (160)"
+    },
+    {
+      "ItemId": "1587353",
+      "ItemName": "Death Accurate Pin (100)"
+    },
+    {
+      "ItemId": "1578585",
+      "ItemName": "Death Conversion Pin (150)"
+    },
+    {
+      "ItemId": "1587395",
+      "ItemName": "Death Conversion Pin (160)"
+    },
+    {
+      "ItemId": "1587354",
+      "ItemName": "Fire Accurate Pin (100)"
+    },
+    {
+      "ItemId": "1578586",
+      "ItemName": "Fire Conversion Pin (150)"
+    },
+    {
+      "ItemId": "1587396",
+      "ItemName": "Fire Conversion Pin (160)"
+    },
+    {
+      "ItemId": "1587351",
+      "ItemName": "Ice Accurate Pin (110)"
+    },
+    {
+      "ItemId": "1578587",
+      "ItemName": "Ice Conversion Pin (150)"
+    },
+    {
+      "ItemId": "1587397",
+      "ItemName": "Ice Conversion Pin (160)"
+    },
+    {
+      "ItemId": "1587355",
+      "ItemName": "Life Accurate Pin (100)"
+    },
+    {
+      "ItemId": "1578588",
+      "ItemName": "Life Conversion Pin (150)"
+    },
+    {
+      "ItemId": "1587398",
+      "ItemName": "Life Conversion Pin (160)"
+    },
+    {
+      "ItemId": "1587356",
+      "ItemName": "Myth Accurate Pin (100)"
+    },
+    {
+      "ItemId": "1578589",
+      "ItemName": "Myth Conversion Pin (150)"
+    },
+    {
+      "ItemId": "1587399",
+      "ItemName": "Myth Conversion Pin (160)"
+    },
+    {
+      "ItemId": "1587357",
+      "ItemName": "Storm Accurate Pin (80)"
+    },
+    {
+      "ItemId": "1578590",
+      "ItemName": "Storm Conversion Pin (150)"
+    },
+    {
+      "ItemId": "1587400",
+      "ItemName": "Storm Conversion Pin (160)"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "Name": "W404 Skey_Gold_Aggrobah Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skey_Gold_Aggrobah: the reagent drops (2), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1494687",
+      "ItemName": "Frost Beetle"
+    },
+    {
+      "ItemId": "1494688",
+      "ItemName": "Leprechaun"
+    }
+  ]
+}

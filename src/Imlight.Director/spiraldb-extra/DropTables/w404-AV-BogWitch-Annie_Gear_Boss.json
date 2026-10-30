@@ -1,0 +1,61 @@
+{
+  "Name": "W404 AV-BogWitch-Annie Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AV-BogWitch-Annie: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635232",
+      "ItemName": "Great Wild Wood Pendant"
+    },
+    {
+      "ItemId": "635233",
+      "ItemName": "Knight's Noble Amulet"
+    },
+    {
+      "ItemId": "635263",
+      "ItemName": "Dagger of the King's Court"
+    },
+    {
+      "ItemId": "635264",
+      "ItemName": "Fire Elf's Toasty Bodkin"
+    },
+    {
+      "ItemId": "635312",
+      "ItemName": "Helm of Night's Bannerman"
+    },
+    {
+      "ItemId": "635313",
+      "ItemName": "Shroud of the One"
+    },
+    {
+      "ItemId": "635342",
+      "ItemName": "Stone of the Other Side"
+    },
+    {
+      "ItemId": "635387",
+      "ItemName": "Loyal Banner's Coat"
+    },
+    {
+      "ItemId": "635388",
+      "ItemName": "Royal Jouster's Armor"
+    },
+    {
+      "ItemId": "635425",
+      "ItemName": "Owl Friend Talons"
+    },
+    {
+      "ItemId": "635426",
+      "ItemName": "Other Side Striders"
+    },
+    {
+      "ItemId": "635634",
+      "ItemName": "Valiant Longsword"
+    },
+    {
+      "ItemId": "635635",
+      "ItemName": "Staff of the Druid"
+    }
+  ]
+}

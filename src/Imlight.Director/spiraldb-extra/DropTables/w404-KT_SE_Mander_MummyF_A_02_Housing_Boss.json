@@ -1,0 +1,13 @@
+{
+  "Name": "W404 KT_SE_Mander_MummyF_A_02 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT_SE_Mander_MummyF_A_02: the housing drops (1), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1514440",
+      "ItemName": "Legendary Socket Wrench"
+    }
+  ]
+}

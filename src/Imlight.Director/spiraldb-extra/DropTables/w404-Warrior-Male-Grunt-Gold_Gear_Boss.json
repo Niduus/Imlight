@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Warrior-Male-Grunt-Gold Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Warrior-Male-Grunt-Gold: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104614",
+      "ItemName": "Spearcaller's Smoldering Coat"
+    },
+    {
+      "ItemId": "104656",
+      "ItemName": "Cloak of the Seasons"
+    },
+    {
+      "ItemId": "104679",
+      "ItemName": "Chilling Cloak"
+    },
+    {
+      "ItemId": "104730",
+      "ItemName": "Storyteller's Smock"
+    },
+    {
+      "ItemId": "104760",
+      "ItemName": "Spearcaller's Snowboots"
+    },
+    {
+      "ItemId": "104808",
+      "ItemName": "Undying Footwraps"
+    },
+    {
+      "ItemId": "104867",
+      "ItemName": "Striders of the Thicket"
+    },
+    {
+      "ItemId": "104888",
+      "ItemName": "Shoes of the Greatest Saga"
+    },
+    {
+      "ItemId": "126592",
+      "ItemName": "Sapphire Studded Band"
+    },
+    {
+      "ItemId": "126638",
+      "ItemName": "Ring of the Carbuncle"
+    },
+    {
+      "ItemId": "146166",
+      "ItemName": "Soothing Steel"
+    },
+    {
+      "ItemId": "146172",
+      "ItemName": "Sliver of Doubt"
+    },
+    {
+      "ItemId": "146210",
+      "ItemName": "Spearcaller's Deluge Mantle"
+    },
+    {
+      "ItemId": "146212",
+      "ItemName": "Lightning-charged Mantle"
+    },
+    {
+      "ItemId": "146334",
+      "ItemName": "Coif of Quietus"
+    },
+    {
+      "ItemId": "146335",
+      "ItemName": "Helm of Oblivion"
+    }
+  ]
+}

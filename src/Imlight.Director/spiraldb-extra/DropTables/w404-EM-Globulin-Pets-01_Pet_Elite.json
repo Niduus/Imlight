@@ -1,0 +1,13 @@
+{
+  "Name": "W404 EM-Globulin-Pets-01 Pet (Elite)",
+  "Description": "Wizard404's drop list of the game's table EM-Globulin-Pets-01: the pet drops (1), one picked when it rolls. How often: DropOdds.json Elite/Pet.",
+  "Odds": "Elite/Pet",
+  "RollChance": 0.04,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1421919",
+      "ItemName": "Green Globulin"
+    }
+  ]
+}

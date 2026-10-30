@@ -1,0 +1,121 @@
+{
+  "Name": "W404 Cl-SharkWarrior-Grey-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Cl-SharkWarrior-Grey-Boss-R10: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1689439",
+      "ItemName": "Atavistic Balance Staff"
+    },
+    {
+      "ItemId": "1689440",
+      "ItemName": "Atavistic Death Staff"
+    },
+    {
+      "ItemId": "1689441",
+      "ItemName": "Atavistic Fire Tiki"
+    },
+    {
+      "ItemId": "1689442",
+      "ItemName": "Atavistic Ice Trident"
+    },
+    {
+      "ItemId": "1689443",
+      "ItemName": "Atavistic Life Staff"
+    },
+    {
+      "ItemId": "1689444",
+      "ItemName": "Atavistic Myth Spyglass"
+    },
+    {
+      "ItemId": "1689445",
+      "ItemName": "Atavistic Storm Trident"
+    },
+    {
+      "ItemId": "1689446",
+      "ItemName": "Atavistic Balance Cards"
+    },
+    {
+      "ItemId": "1689447",
+      "ItemName": "Atavistic Death Cards"
+    },
+    {
+      "ItemId": "1689448",
+      "ItemName": "Atavistic Fire Cards"
+    },
+    {
+      "ItemId": "1689449",
+      "ItemName": "Atavistic Ice Cards"
+    },
+    {
+      "ItemId": "1689450",
+      "ItemName": "Atavistic Life Cards"
+    },
+    {
+      "ItemId": "1689451",
+      "ItemName": "Atavistic Myth Cards"
+    },
+    {
+      "ItemId": "1689452",
+      "ItemName": "Atavistic Storm Cards"
+    },
+    {
+      "ItemId": "1689456",
+      "ItemName": "Bygone Balance Cards"
+    },
+    {
+      "ItemId": "1689457",
+      "ItemName": "Bygone Death Cards"
+    },
+    {
+      "ItemId": "1689458",
+      "ItemName": "Bygone Fire Cards"
+    },
+    {
+      "ItemId": "1689459",
+      "ItemName": "Bygone Ice Cards"
+    },
+    {
+      "ItemId": "1689460",
+      "ItemName": "Bygone Life Cards"
+    },
+    {
+      "ItemId": "1689461",
+      "ItemName": "Bygone Myth Cards"
+    },
+    {
+      "ItemId": "1689462",
+      "ItemName": "Bygone Storm Cards"
+    },
+    {
+      "ItemId": "1689505",
+      "ItemName": "Bygone Balance Tiki"
+    },
+    {
+      "ItemId": "1689506",
+      "ItemName": "Bygone Death Tiki"
+    },
+    {
+      "ItemId": "1689507",
+      "ItemName": "Bygone Fire Tiki"
+    },
+    {
+      "ItemId": "1689508",
+      "ItemName": "Bygone Ice Tiki"
+    },
+    {
+      "ItemId": "1689509",
+      "ItemName": "Bygone Life Tiki"
+    },
+    {
+      "ItemId": "1689510",
+      "ItemName": "Bygone Myth Tiki"
+    },
+    {
+      "ItemId": "1689511",
+      "ItemName": "Bygone Storm Tiki"
+    }
+  ]
+}

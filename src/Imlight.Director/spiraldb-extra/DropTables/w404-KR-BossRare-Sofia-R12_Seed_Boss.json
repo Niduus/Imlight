@@ -1,0 +1,29 @@
+{
+  "Name": "W404 KR-BossRare-Sofia-R12 Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossRare-Sofia-R12: the seed drops (5), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "473078",
+      "ItemName": "Key Limes"
+    },
+    {
+      "ItemId": "589187",
+      "ItemName": "Pink Huckleberries"
+    },
+    {
+      "ItemId": "1248066",
+      "ItemName": "Sugar Khrystal"
+    },
+    {
+      "ItemId": "1248248",
+      "ItemName": "Saw Palmetto"
+    },
+    {
+      "ItemId": "1248268",
+      "ItemName": "Queen Crape Myrtle"
+    }
+  ]
+}

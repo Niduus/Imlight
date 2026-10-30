@@ -1,0 +1,41 @@
+{
+  "Name": "W404 TC-AV-Uncommons TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table TC-AV-Uncommons: the treasurecard drops (8), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Unstoppable TC",
+      "ItemName": "Unstoppable"
+    },
+    {
+      "ItemId": "Gargantuan TC",
+      "ItemName": "Gargantuan"
+    },
+    {
+      "ItemId": "Power Nova TC",
+      "ItemName": "Power Nova"
+    },
+    {
+      "ItemId": "Scarecrow TC",
+      "ItemName": "Scarecrow"
+    },
+    {
+      "ItemId": "Orthrus TC",
+      "ItemName": "Orthrus"
+    },
+    {
+      "ItemId": "Storm Lord TC",
+      "ItemName": "Storm Lord"
+    },
+    {
+      "ItemId": "Frost Giant TC",
+      "ItemName": "Frost Giant"
+    },
+    {
+      "ItemId": "Fire Dragon TC",
+      "ItemName": "Fire Dragon"
+    }
+  ]
+}

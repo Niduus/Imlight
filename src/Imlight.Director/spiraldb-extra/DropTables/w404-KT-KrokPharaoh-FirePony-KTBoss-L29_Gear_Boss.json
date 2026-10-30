@@ -1,0 +1,89 @@
+{
+  "Name": "W404 KT-KrokPharaoh-FirePony-KTBoss-L29 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokPharaoh-FirePony-KTBoss-L29: the gear drops (20), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4914",
+      "ItemName": "Nebit's Locket of Whimsy"
+    },
+    {
+      "ItemId": "4948",
+      "ItemName": "Cryptkeeper's Shortsword"
+    },
+    {
+      "ItemId": "4950",
+      "ItemName": "Flamedancer's Athame"
+    },
+    {
+      "ItemId": "39421",
+      "ItemName": "Diviner's Boots"
+    },
+    {
+      "ItemId": "77704",
+      "ItemName": "Headwrap of Originality"
+    },
+    {
+      "ItemId": "77725",
+      "ItemName": "Cowl of Prediction"
+    },
+    {
+      "ItemId": "77727",
+      "ItemName": "Nebit's Hood of Visions"
+    },
+    {
+      "ItemId": "77741",
+      "ItemName": "Nebit's Cap of Harmony"
+    },
+    {
+      "ItemId": "77760",
+      "ItemName": "Rough-hewn Boots"
+    },
+    {
+      "ItemId": "77762",
+      "ItemName": "Shoes of Figments"
+    },
+    {
+      "ItemId": "77790",
+      "ItemName": "Threadbare Boots"
+    },
+    {
+      "ItemId": "77793",
+      "ItemName": "Slippers of Sensibility"
+    },
+    {
+      "ItemId": "77794",
+      "ItemName": "Initiate's Boots"
+    },
+    {
+      "ItemId": "87268",
+      "ItemName": "Rugged Robe"
+    },
+    {
+      "ItemId": "87289",
+      "ItemName": "Nebit's Vest of Complexity"
+    },
+    {
+      "ItemId": "87296",
+      "ItemName": "Garments of the Augur"
+    },
+    {
+      "ItemId": "87310",
+      "ItemName": "Garments of Repose"
+    },
+    {
+      "ItemId": "87323",
+      "ItemName": "Sorcerer's Maroon Cloak"
+    },
+    {
+      "ItemId": "87328",
+      "ItemName": "Robe of Reason"
+    },
+    {
+      "ItemId": "87334",
+      "ItemName": "Ceremonial Vest"
+    }
+  ]
+}

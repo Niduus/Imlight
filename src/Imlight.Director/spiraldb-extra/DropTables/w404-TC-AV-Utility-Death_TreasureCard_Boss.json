@@ -1,0 +1,33 @@
+{
+  "Name": "W404 TC-AV-Utility-Death TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-AV-Utility-Death: the treasurecard drops (6), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Sacrifice TC",
+      "ItemName": "Sacrifice"
+    },
+    {
+      "ItemId": "Poison TC",
+      "ItemName": "Poison"
+    },
+    {
+      "ItemId": "Beguile TC",
+      "ItemName": "Beguile"
+    },
+    {
+      "ItemId": "Plague TC",
+      "ItemName": "Plague"
+    },
+    {
+      "ItemId": "Dark Pact TC",
+      "ItemName": "Dark Tribute"
+    },
+    {
+      "ItemId": "Virulent Plague TC",
+      "ItemName": "Virulent Plague"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "Name": "W404 PA-Hobgoblin-BOSS-R5 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table PA-Hobgoblin-BOSS-R5: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "39012",
+      "ItemName": "Visor of the Beacon"
+    },
+    {
+      "ItemId": "39049",
+      "ItemName": "Cat Burglar's Ring"
+    },
+    {
+      "ItemId": "77075",
+      "ItemName": "Tarnished Noble's Ring"
+    },
+    {
+      "ItemId": "77157",
+      "ItemName": "Tunic of Incineration"
+    },
+    {
+      "ItemId": "77229",
+      "ItemName": "Finely Finished Slippers"
+    },
+    {
+      "ItemId": "77250",
+      "ItemName": "Dandy Boots"
+    },
+    {
+      "ItemId": "97111",
+      "ItemName": "Watchman's Deck"
+    },
+    {
+      "ItemId": "97133",
+      "ItemName": "Deck of the Black Mantle"
+    },
+    {
+      "ItemId": "97150",
+      "ItemName": "Thinker's Cap"
+    },
+    {
+      "ItemId": "97160",
+      "ItemName": "Feline Hat of Whimsy"
+    },
+    {
+      "ItemId": "97211",
+      "ItemName": "Helm of Stasis"
+    },
+    {
+      "ItemId": "97218",
+      "ItemName": "Cap of the Black Mantle"
+    },
+    {
+      "ItemId": "97259",
+      "ItemName": "Vestment of Tragedy"
+    },
+    {
+      "ItemId": "97310",
+      "ItemName": "Vestment of Stasis"
+    },
+    {
+      "ItemId": "97378",
+      "ItemName": "Footwraps of Superiority"
+    },
+    {
+      "ItemId": "97386",
+      "ItemName": "Boots of the Supreme"
+    },
+    {
+      "ItemId": "468531",
+      "ItemName": "Pennon Poniard"
+    },
+    {
+      "ItemId": "468536",
+      "ItemName": "Winged Circlet"
+    },
+    {
+      "ItemId": "1217006",
+      "ItemName": "The Valiant Defender"
+    }
+  ]
+}

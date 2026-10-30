@@ -1,0 +1,17 @@
+{
+  "Name": "W404 ME1_Crab_Boss_A Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Crab_Boss_A: the seed drops (2), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "473078",
+      "ItemName": "Key Limes"
+    },
+    {
+      "ItemId": "473159",
+      "ItemName": "Grapes of Wrath"
+    }
+  ]
+}

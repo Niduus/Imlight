@@ -1,0 +1,37 @@
+{
+  "Name": "W404 KT-KrokTut-Storm-KTBoss-L39 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokTut-Storm-KTBoss-L39: the housing drops (7), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82706",
+      "ItemName": "Row of Scrolls"
+    },
+    {
+      "ItemId": "82869",
+      "ItemName": "Large Archway"
+    },
+    {
+      "ItemId": "82879",
+      "ItemName": "Boat Tent"
+    },
+    {
+      "ItemId": "512083",
+      "ItemName": "Krokotopia Theme 4"
+    },
+    {
+      "ItemId": "1346126",
+      "ItemName": "Krokopatra Master Duel"
+    },
+    {
+      "ItemId": "1346128",
+      "ItemName": "Krokopatra Exalted Duel"
+    },
+    {
+      "ItemId": "1350308",
+      "ItemName": "Novice's Socket Wrench"
+    }
+  ]
+}

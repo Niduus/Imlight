@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Mob-1283341 Gear (Normal)",
+  "Description": "Wizard404's drop list of Delving Goliath's own drops: the gear drops (3), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203176",
+      "ItemName": "Moon's Tear Band"
+    },
+    {
+      "ItemId": "1203210",
+      "ItemName": "Gorge Excavator's Outfit"
+    },
+    {
+      "ItemId": "1203211",
+      "ItemName": "Mantis Chitin Armor"
+    }
+  ]
+}

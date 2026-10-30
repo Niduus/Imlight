@@ -1,0 +1,85 @@
+{
+  "Name": "W404 Draconian-Warrior-Gold-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Draconian-Warrior-Gold-Boss-R8: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104591",
+      "ItemName": "Wrap of Equity"
+    },
+    {
+      "ItemId": "104664",
+      "ItemName": "Tunic of Effervescence"
+    },
+    {
+      "ItemId": "104781",
+      "ItemName": "Footgear of Craftsmanship"
+    },
+    {
+      "ItemId": "104793",
+      "ItemName": "Shoes of the Phoenix"
+    },
+    {
+      "ItemId": "104813",
+      "ItemName": "Kraysys' Boots of Retreat"
+    },
+    {
+      "ItemId": "104856",
+      "ItemName": "Kraysys' Subterfuge Slippers"
+    },
+    {
+      "ItemId": "126561",
+      "ItemName": "Band of Balance"
+    },
+    {
+      "ItemId": "126575",
+      "ItemName": "Kraysys' Quisling Signet"
+    },
+    {
+      "ItemId": "126576",
+      "ItemName": "Ring of the Harpy"
+    },
+    {
+      "ItemId": "126602",
+      "ItemName": "Kraysys' Ring of Betrayal"
+    },
+    {
+      "ItemId": "146104",
+      "ItemName": "Kraysys' Astral Carcanet"
+    },
+    {
+      "ItemId": "146115",
+      "ItemName": "Lancet of Equality"
+    },
+    {
+      "ItemId": "146178",
+      "ItemName": "Athame of Awakening"
+    },
+    {
+      "ItemId": "146200",
+      "ItemName": "Kraysys' Blade of Traitors"
+    },
+    {
+      "ItemId": "146231",
+      "ItemName": "Mantle of Thunder"
+    },
+    {
+      "ItemId": "146274",
+      "ItemName": "Kraysys' Unfaithful Cowl"
+    },
+    {
+      "ItemId": "146294",
+      "ItemName": "Headgear of the Ice Pilot"
+    },
+    {
+      "ItemId": "146364",
+      "ItemName": "Mantle of Order"
+    },
+    {
+      "ItemId": "146366",
+      "ItemName": "Kraysys' Hood of the Hidden"
+    }
+  ]
+}

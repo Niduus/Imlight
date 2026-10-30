@@ -1,0 +1,19 @@
+{
+  "TemplateID": 807085,
+  "DropTableNames": [
+    "W404 Student-Fire-PageEvent",
+    "W404 Student-Fire-PageEvent Gear (Boss)",
+    "W404 Student-Fire-PageEvent Pet (Boss)",
+    "W404 Student-Fire-PageEvent Mount (Boss)",
+    "W404 Student-Fire-PageEvent TreasureCard (Boss)",
+    "W404 Student-Fire-PageEvent Snack (Boss)",
+    "W404 Student-Fire-PageEvent Housing (Boss)",
+    "W404 AZ-BossRare-HuacCriesBlood-R13",
+    "W404 AZ-BossRare-HuacCriesBlood-R13 Gear (Boss)",
+    "W404 AZ-BossRare-HuacCriesBlood-R13 Seed (Boss)",
+    "W404 AZ-BossRare-HuacCriesBlood-R13 Housing (Boss)",
+    "W404 AZ-Boss-PetSnacks-03 Snack (Boss)",
+    "W404 AZ-Boss-TC-03 TreasureCard (Boss)",
+    "W404 AZ-Boss-Reagents Reagent (Boss)"
+  ]
+}

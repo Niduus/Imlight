@@ -1,0 +1,17 @@
+{
+  "Name": "W404 G14-HS-Boss-MohLharz Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-HS-Boss-MohLharz: the pet drops (2), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "789125",
+      "ItemName": "Firestorm Quetzal"
+    },
+    {
+      "ItemId": "1317656",
+      "ItemName": "Whirlwind Grimoire"
+    }
+  ]
+}

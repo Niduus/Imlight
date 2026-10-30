@@ -1,0 +1,33 @@
+{
+  "Name": "W404 ME1_Maestro_B Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Maestro_B: the seed drops (6), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355192",
+      "ItemName": "Boom Shroom"
+    },
+    {
+      "ItemId": "356160",
+      "ItemName": "Stinkweed"
+    },
+    {
+      "ItemId": "404123",
+      "ItemName": "Deadly Helephant Ears"
+    },
+    {
+      "ItemId": "473138",
+      "ItemName": "Orange Bell Pepper"
+    },
+    {
+      "ItemId": "473159",
+      "ItemName": "Grapes of Wrath"
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily"
+    }
+  ]
+}

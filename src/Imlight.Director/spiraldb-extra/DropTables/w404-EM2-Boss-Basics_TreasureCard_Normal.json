@@ -1,0 +1,281 @@
+{
+  "Name": "W404 EM2-Boss-Basics TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table EM2-Boss-Basics: the treasurecard drops (68), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Cyclops TC",
+      "ItemName": "Cyclops"
+    },
+    {
+      "ItemId": "Forest Lord Myth TC",
+      "ItemName": "Fable Lord"
+    },
+    {
+      "ItemId": "Forest Lord Storm TC",
+      "ItemName": "Lord of the Squall"
+    },
+    {
+      "ItemId": "Humongofrog TC",
+      "ItemName": "Humongofrog"
+    },
+    {
+      "ItemId": "Kraken TC",
+      "ItemName": "Kraken"
+    },
+    {
+      "ItemId": "Mega Soothe TC",
+      "ItemName": "Mega Soothe"
+    },
+    {
+      "ItemId": "Mega Subdue TC",
+      "ItemName": "Mega Subdue"
+    },
+    {
+      "ItemId": "Oni no Jade TC",
+      "ItemName": "Oni no Jade"
+    },
+    {
+      "ItemId": "Oni no Plague TC",
+      "ItemName": "Oni no Plague"
+    },
+    {
+      "ItemId": "Mutate - Banshee to Forsaken Banshee TC",
+      "ItemName": "Mutate Banshee"
+    },
+    {
+      "ItemId": "Mutate - Banshee to Life Banshee TC",
+      "ItemName": "Mutate Banshee"
+    },
+    {
+      "ItemId": "Mutate - Colossus to Fire TC",
+      "ItemName": "Mutate Colossus"
+    },
+    {
+      "ItemId": "Mutate - Colossus to Storm TC",
+      "ItemName": "Mutate Colossus"
+    },
+    {
+      "ItemId": "Mutate - Evil Snowman to Fire TC",
+      "ItemName": "Mutate Snowman"
+    },
+    {
+      "ItemId": "Mutate - Evil Snowman to Storm TC",
+      "ItemName": "Mutate Snowman"
+    },
+    {
+      "ItemId": "Mutate - Fire Cat to Ice TC",
+      "ItemName": "Mutate Cat"
+    },
+    {
+      "ItemId": "Mutate - Fire Cat to Storm TC",
+      "ItemName": "Mutate Cat"
+    },
+    {
+      "ItemId": "Mutate - Fire Elf to Ice TC",
+      "ItemName": "Mutate Elf"
+    },
+    {
+      "ItemId": "Mutate - Fire Elf to Storm TC",
+      "ItemName": "Mutate Elf"
+    },
+    {
+      "ItemId": "Mutate - Frost Beetle to Fire TC",
+      "ItemName": "Mutate Beetle"
+    },
+    {
+      "ItemId": "Mutate - Frost Beetle to Storm TC",
+      "ItemName": "Mutate Beetle"
+    },
+    {
+      "ItemId": "Mutate - Heck Hound to Ice TC",
+      "ItemName": "Mutate Hound"
+    },
+    {
+      "ItemId": "Mutate - Heck Hound to Storm TC",
+      "ItemName": "Mutate Hound"
+    },
+    {
+      "ItemId": "Mutate - Helephant to Ice TC",
+      "ItemName": "Mutate Helephant"
+    },
+    {
+      "ItemId": "Mutate - Helephant to Storm TC",
+      "ItemName": "Mutate Helephant"
+    },
+    {
+      "ItemId": "Mutate - Ice Wyvern to Fire TC",
+      "ItemName": "Mutate Wyvern"
+    },
+    {
+      "ItemId": "Mutate - Ice Wyvern to Fire Wyvern TC",
+      "ItemName": "Mutate Wyvern"
+    },
+    {
+      "ItemId": "Mutate - Ice Wyvern to Storm TC",
+      "ItemName": "Mutate Wyvern"
+    },
+    {
+      "ItemId": "Mutate - Kraken to Fire TC",
+      "ItemName": "Mutate Kraken"
+    },
+    {
+      "ItemId": "Mutate - Kraken to Ice TC",
+      "ItemName": "Mutate Kraken"
+    },
+    {
+      "ItemId": "Mutate - Kraken to Inferno Kraken TC",
+      "ItemName": "Mutate Kraken"
+    },
+    {
+      "ItemId": "Mutate - Lightning Bats to Fire TC",
+      "ItemName": "Mutate Bats"
+    },
+    {
+      "ItemId": "Mutate - Lightning Bats to Ice TC",
+      "ItemName": "Mutate Bats"
+    },
+    {
+      "ItemId": "Mutate - Locust Swarm to Polar Swarm TC",
+      "ItemName": "Mutate Swarm"
+    },
+    {
+      "ItemId": "Mutate - Minotaur to Deadly Minotaur TC",
+      "ItemName": "Mutate Minotaur"
+    },
+    {
+      "ItemId": "Mutate - Phoenix to Ice TC",
+      "ItemName": "Mutate Phoenix"
+    },
+    {
+      "ItemId": "Mutate - Phoenix to Storm TC",
+      "ItemName": "Mutate Phoenix"
+    },
+    {
+      "ItemId": "Mutate - Phoenix to Thunderbird TC",
+      "ItemName": "Mutate Phoenix"
+    },
+    {
+      "ItemId": "Mutate - Snow Serpent to Fire TC",
+      "ItemName": "Mutate Serpent"
+    },
+    {
+      "ItemId": "Mutate - Snow Serpent to Storm TC",
+      "ItemName": "Mutate Serpent"
+    },
+    {
+      "ItemId": "Mutate - Sprite to Midnight Sprite TC",
+      "ItemName": "Mutate Sprite"
+    },
+    {
+      "ItemId": "Mutate - Storm Shark to Fire TC",
+      "ItemName": "Mutate Shark"
+    },
+    {
+      "ItemId": "Mutate - Storm Shark to Ice TC",
+      "ItemName": "Mutate Shark"
+    },
+    {
+      "ItemId": "Mutate - Stormzilla to Fire TC",
+      "ItemName": "Mutate Monster"
+    },
+    {
+      "ItemId": "Mutate - Stormzilla to Ice TC",
+      "ItemName": "Mutate Monster"
+    },
+    {
+      "ItemId": "Mutate - Sunbird to Ice TC",
+      "ItemName": "Mutate Bird"
+    },
+    {
+      "ItemId": "Mutate - Sunbird to Storm TC",
+      "ItemName": "Mutate Bird"
+    },
+    {
+      "ItemId": "Mutate - Thundersnake to Fire TC",
+      "ItemName": "Mutate Snake"
+    },
+    {
+      "ItemId": "Mutate - Thundersnake to Ice TC",
+      "ItemName": "Mutate Snake"
+    },
+    {
+      "ItemId": "Humongofrog Death TC",
+      "ItemName": "Colossafrog"
+    },
+    {
+      "ItemId": "Efreet Balance TC",
+      "ItemName": "Sirocco Djinni"
+    },
+    {
+      "ItemId": "Efreet Death TC",
+      "ItemName": "Diablo Qarin"
+    },
+    {
+      "ItemId": "Efreet Ice TC",
+      "ItemName": "Chinook Genie"
+    },
+    {
+      "ItemId": "Efreet Life TC",
+      "ItemName": "Harmattan Maxios"
+    },
+    {
+      "ItemId": "Efreet Myth TC",
+      "ItemName": "Boreas Ifrit"
+    },
+    {
+      "ItemId": "Efreet Storm TC",
+      "ItemName": "Maelstrom Marid"
+    },
+    {
+      "ItemId": "Forest Lord Balance TC",
+      "ItemName": "Lord of Atonement"
+    },
+    {
+      "ItemId": "Forest Lord Death TC",
+      "ItemName": "Bonetree Lord"
+    },
+    {
+      "ItemId": "Forest Lord Fire TC",
+      "ItemName": "Lord of Blazes"
+    },
+    {
+      "ItemId": "Forest Lord Ice TC",
+      "ItemName": "Tundra Lord"
+    },
+    {
+      "ItemId": "Forest Lord TC",
+      "ItemName": "Forest Lord"
+    },
+    {
+      "ItemId": "Mass Death Prism TC",
+      "ItemName": "Mass Death Prism"
+    },
+    {
+      "ItemId": "Mass Fire Prism TC",
+      "ItemName": "Mass Fire Prism"
+    },
+    {
+      "ItemId": "Mass Ice Prism TC",
+      "ItemName": "Mass Ice Prism"
+    },
+    {
+      "ItemId": "Mass Infection TC",
+      "ItemName": "Mass Infection"
+    },
+    {
+      "ItemId": "Mass Life Prism TC",
+      "ItemName": "Mass Life Prism"
+    },
+    {
+      "ItemId": "Mass Myth Prism TC",
+      "ItemName": "Mass Myth Prism"
+    },
+    {
+      "ItemId": "Mass Storm Prism TC",
+      "ItemName": "Mass Storm Prism"
+    }
+  ]
+}

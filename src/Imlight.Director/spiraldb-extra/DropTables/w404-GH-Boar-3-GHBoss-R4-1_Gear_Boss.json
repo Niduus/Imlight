@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Boar-3-GHBoss-R4-1 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Boar-3-GHBoss-R4-1: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136275",
+      "ItemName": "Icicle Blade"
+    },
+    {
+      "ItemId": "136358",
+      "ItemName": "Smoldering Hood"
+    },
+    {
+      "ItemId": "136480",
+      "ItemName": "Band of the Winterhawk"
+    },
+    {
+      "ItemId": "136481",
+      "ItemName": "Signet of Brio"
+    },
+    {
+      "ItemId": "136572",
+      "ItemName": "Robe of the Eradicator"
+    },
+    {
+      "ItemId": "171136",
+      "ItemName": "Boots of the Cascade"
+    }
+  ]
+}

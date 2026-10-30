@@ -1,0 +1,41 @@
+{
+  "Name": "W404 MS-Level-40-42 Snack (Normal)",
+  "Description": "Wizard404's drop list of the game's table MS-Level-40-42: the snack drops (8), one picked when it rolls. How often: DropOdds.json Normal/Snack.",
+  "Odds": "Normal/Snack",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220204",
+      "ItemName": "Crunch Apple"
+    },
+    {
+      "ItemId": "220206",
+      "ItemName": "Ape Grapes"
+    },
+    {
+      "ItemId": "220216",
+      "ItemName": "Large Watermelon"
+    },
+    {
+      "ItemId": "220291",
+      "ItemName": "Golden Squash"
+    },
+    {
+      "ItemId": "220294",
+      "ItemName": "Square Root"
+    },
+    {
+      "ItemId": "220296",
+      "ItemName": "Fire Cracker"
+    },
+    {
+      "ItemId": "220297",
+      "ItemName": "Golden Peanut"
+    },
+    {
+      "ItemId": "220306",
+      "ItemName": "Large Fish"
+    }
+  ]
+}

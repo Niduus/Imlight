@@ -1,0 +1,125 @@
+{
+  "Name": "W404 EM2-Boss-Basics Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM2-Boss-Basics: the snack drops (29), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220210",
+      "ItemName": "Flaming Jalapeno"
+    },
+    {
+      "ItemId": "220251",
+      "ItemName": "Lollipop"
+    },
+    {
+      "ItemId": "220259",
+      "ItemName": "Redskin Peanut"
+    },
+    {
+      "ItemId": "220265",
+      "ItemName": "Spicy Drumstick"
+    },
+    {
+      "ItemId": "220266",
+      "ItemName": "Meat Soup"
+    },
+    {
+      "ItemId": "220271",
+      "ItemName": "Radioactive Pizza"
+    },
+    {
+      "ItemId": "220272",
+      "ItemName": "Taco"
+    },
+    {
+      "ItemId": "220279",
+      "ItemName": "Cow Pie"
+    },
+    {
+      "ItemId": "220291",
+      "ItemName": "Golden Squash"
+    },
+    {
+      "ItemId": "220318",
+      "ItemName": "Super Cold Popsicle"
+    },
+    {
+      "ItemId": "220328",
+      "ItemName": "Taco Town Special"
+    },
+    {
+      "ItemId": "220331",
+      "ItemName": "Gummy Humongofrog"
+    },
+    {
+      "ItemId": "473222",
+      "ItemName": "Dr. Jalapeno"
+    },
+    {
+      "ItemId": "473526",
+      "ItemName": "Athame Pop"
+    },
+    {
+      "ItemId": "537597",
+      "ItemName": "Lemon Daisy"
+    },
+    {
+      "ItemId": "641710",
+      "ItemName": "Ginger Mint Tea"
+    },
+    {
+      "ItemId": "789453",
+      "ItemName": "Pineapple Spears"
+    },
+    {
+      "ItemId": "1248056",
+      "ItemName": "Hive Rinds"
+    },
+    {
+      "ItemId": "1317838",
+      "ItemName": "Fetid Legumes"
+    },
+    {
+      "ItemId": "1359621",
+      "ItemName": "Oyster Shooter"
+    },
+    {
+      "ItemId": "240102",
+      "ItemName": "Killer Tomato"
+    },
+    {
+      "ItemId": "240103",
+      "ItemName": "Dastardly Radish"
+    },
+    {
+      "ItemId": "473520",
+      "ItemName": "Salmon Joy"
+    },
+    {
+      "ItemId": "733129",
+      "ItemName": "Pyramints"
+    },
+    {
+      "ItemId": "789215",
+      "ItemName": "Gator Tots"
+    },
+    {
+      "ItemId": "1257603",
+      "ItemName": "Berry Poundcake"
+    },
+    {
+      "ItemId": "1317844",
+      "ItemName": "Boiled Spider Legs"
+    },
+    {
+      "ItemId": "1383141",
+      "ItemName": "Minotarts"
+    },
+    {
+      "ItemId": "1383143",
+      "ItemName": "Hero Sandwich"
+    }
+  ]
+}

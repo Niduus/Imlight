@@ -1,0 +1,9 @@
+{
+  "Name": "W404 MB-Level-28-30",
+  "Description": "Gold of the game's table MB-Level-28-30, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 9,
+  "MaxGold": 17,
+  "EachItem": false,
+  "Items": []
+}

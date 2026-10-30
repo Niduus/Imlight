@@ -1,0 +1,553 @@
+{
+  "Name": "W404 PL-Boss-Minak Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-Boss-Minak: the gear drops (136), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "470720",
+      "ItemName": "The Enchanter"
+    },
+    {
+      "ItemId": "1217004",
+      "ItemName": "The Stalwart Guardian"
+    },
+    {
+      "ItemId": "1217212",
+      "ItemName": "The Stardust"
+    },
+    {
+      "ItemId": "1217358",
+      "ItemName": "The Warlock"
+    },
+    {
+      "ItemId": "1217362",
+      "ItemName": "The Kroktop"
+    },
+    {
+      "ItemId": "1317802",
+      "ItemName": "The Manticore"
+    },
+    {
+      "ItemId": "1359662",
+      "ItemName": "The Goat Horns"
+    },
+    {
+      "ItemId": "1359663",
+      "ItemName": "The Ice Horns"
+    },
+    {
+      "ItemId": "1363797",
+      "ItemName": "Titan Warrior Skyfire Helm"
+    },
+    {
+      "ItemId": "1363798",
+      "ItemName": "Titan Warrior Cowl of Bite"
+    },
+    {
+      "ItemId": "1363799",
+      "ItemName": "Titan Warrior Brim of Waves"
+    },
+    {
+      "ItemId": "1363800",
+      "ItemName": "Titan Warrior Helm of Logic"
+    },
+    {
+      "ItemId": "1363801",
+      "ItemName": "Titan Warrior Cowl of Mettle"
+    },
+    {
+      "ItemId": "1363802",
+      "ItemName": "Titan Warrior Helm of Torpor"
+    },
+    {
+      "ItemId": "1363803",
+      "ItemName": "Titan Warrior Honesty Cowl"
+    },
+    {
+      "ItemId": "1363804",
+      "ItemName": "Cowl of the Titan Warrior"
+    },
+    {
+      "ItemId": "1363805",
+      "ItemName": "Titan Warrior Skyfire Robe"
+    },
+    {
+      "ItemId": "1363806",
+      "ItemName": "Titan Warrior Plate of Bite"
+    },
+    {
+      "ItemId": "1363807",
+      "ItemName": "Titan Warrior Gear of Waves"
+    },
+    {
+      "ItemId": "1363808",
+      "ItemName": "Titan Warrior Garb of Logic"
+    },
+    {
+      "ItemId": "1363809",
+      "ItemName": "Titan Warrior Wrap of Mettle"
+    },
+    {
+      "ItemId": "1363810",
+      "ItemName": "Titan Warrior Gear of Torpor"
+    },
+    {
+      "ItemId": "1363811",
+      "ItemName": "Titan Warrior Honesty Drape"
+    },
+    {
+      "ItemId": "1363812",
+      "ItemName": "Armor of the Titan Warrior"
+    },
+    {
+      "ItemId": "1363813",
+      "ItemName": "Titan Warrior Skyfire Riders"
+    },
+    {
+      "ItemId": "1363814",
+      "ItemName": "Titan Warrior Boots of Bite"
+    },
+    {
+      "ItemId": "1363815",
+      "ItemName": "Titan Warrior Shoes of Waves"
+    },
+    {
+      "ItemId": "1363816",
+      "ItemName": "Titan Warrior Boots of Logic"
+    },
+    {
+      "ItemId": "1363817",
+      "ItemName": "Titan Warrior's Mettle Boots"
+    },
+    {
+      "ItemId": "1363818",
+      "ItemName": "Titan Warrior Torpor Riders"
+    },
+    {
+      "ItemId": "1363819",
+      "ItemName": "Titan Warrior Honesty Boots"
+    },
+    {
+      "ItemId": "1363820",
+      "ItemName": "Boots of the Titan Warrior"
+    },
+    {
+      "ItemId": "1369277",
+      "ItemName": "Arcanum Exile Scorched Blade"
+    },
+    {
+      "ItemId": "1369278",
+      "ItemName": "Arcanum Exile Snowflake Kris"
+    },
+    {
+      "ItemId": "1369279",
+      "ItemName": "Arcanum Exile Knife of Gales"
+    },
+    {
+      "ItemId": "1369280",
+      "ItemName": "Arcanum Exile Dirk of Ideas"
+    },
+    {
+      "ItemId": "1369281",
+      "ItemName": "Arcanum Exile Dagger of Vim"
+    },
+    {
+      "ItemId": "1369282",
+      "ItemName": "Arcanum Exile Claw of Strife"
+    },
+    {
+      "ItemId": "1369283",
+      "ItemName": "Steady Arcanum Exile Dagger"
+    },
+    {
+      "ItemId": "1369284",
+      "ItemName": "Razor of the Arcanum Exile"
+    },
+    {
+      "ItemId": "1369285",
+      "ItemName": "Arcanum Exile Burning Charm"
+    },
+    {
+      "ItemId": "1369286",
+      "ItemName": "Arcanum Exile Snowflake Torc"
+    },
+    {
+      "ItemId": "1369287",
+      "ItemName": "Arcanum Exile Relic of Gales"
+    },
+    {
+      "ItemId": "1369288",
+      "ItemName": "Arcanum Exile Idea Bauble"
+    },
+    {
+      "ItemId": "1369289",
+      "ItemName": "Arcanum Exile Amulet of Vim"
+    },
+    {
+      "ItemId": "1369290",
+      "ItemName": "Arcanum Exile Torc of Strife"
+    },
+    {
+      "ItemId": "1369291",
+      "ItemName": "Steady Arcanum Exile Ampul"
+    },
+    {
+      "ItemId": "1369292",
+      "ItemName": "Amulet of the Arcanum Exile"
+    },
+    {
+      "ItemId": "1369293",
+      "ItemName": "Arcanum Exile Burning Band"
+    },
+    {
+      "ItemId": "1369294",
+      "ItemName": "Arcanum Exile Snowflake Seal"
+    },
+    {
+      "ItemId": "1369295",
+      "ItemName": "Arcanum Exile Galeforce Ring"
+    },
+    {
+      "ItemId": "1369296",
+      "ItemName": "Arcanum Exile Loop of Ideas"
+    },
+    {
+      "ItemId": "1369297",
+      "ItemName": "Arcanum Exile Ringlet of Vim"
+    },
+    {
+      "ItemId": "1369298",
+      "ItemName": "Arcanum Exile Band of Strife"
+    },
+    {
+      "ItemId": "1369299",
+      "ItemName": "Steady Arcanum Exile Signet"
+    },
+    {
+      "ItemId": "1369300",
+      "ItemName": "Arcanum Exile Signet Ring"
+    },
+    {
+      "ItemId": "1369437",
+      "ItemName": "Titan Warrior Skyfire Relic"
+    },
+    {
+      "ItemId": "1369438",
+      "ItemName": "Titan Warrior Curio of Bite"
+    },
+    {
+      "ItemId": "1369439",
+      "ItemName": "Titan Warrior Focus of Waves"
+    },
+    {
+      "ItemId": "1369440",
+      "ItemName": "Titan Warrior Kernel of Logic"
+    },
+    {
+      "ItemId": "1369441",
+      "ItemName": "Portion of Titanic Mettle"
+    },
+    {
+      "ItemId": "1369442",
+      "ItemName": "Titanic Fragment of Torpor"
+    },
+    {
+      "ItemId": "1369443",
+      "ItemName": "Keepsake of Titan Equity"
+    },
+    {
+      "ItemId": "1369444",
+      "ItemName": "Relic of the Titan Warrior"
+    },
+    {
+      "ItemId": "1369565",
+      "ItemName": "Arcanum Exile Pack of Fever"
+    },
+    {
+      "ItemId": "1369566",
+      "ItemName": "Arcanum Exile Snowflake Set"
+    },
+    {
+      "ItemId": "1369567",
+      "ItemName": "Arcanum Exile Galeforce Set"
+    },
+    {
+      "ItemId": "1369568",
+      "ItemName": "Case of Arcanum Exile Ideas"
+    },
+    {
+      "ItemId": "1369569",
+      "ItemName": "Arcanum Exile Evergreen Set"
+    },
+    {
+      "ItemId": "1369570",
+      "ItemName": "Arcanum Exile Bevy of Strife"
+    },
+    {
+      "ItemId": "1369571",
+      "ItemName": "Steady Arcanum Exile Hand"
+    },
+    {
+      "ItemId": "1369572",
+      "ItemName": "Parcel of the Arcanum Exile"
+    },
+    {
+      "ItemId": "1363773",
+      "ItemName": "Volatile Borealis Brim"
+    },
+    {
+      "ItemId": "1363774",
+      "ItemName": "Borealis Icecrystal Helm"
+    },
+    {
+      "ItemId": "1363775",
+      "ItemName": "Borealis Helm of Windswirls"
+    },
+    {
+      "ItemId": "1363776",
+      "ItemName": "Borealis Cowl of Vision"
+    },
+    {
+      "ItemId": "1363777",
+      "ItemName": "Timeless Borealis Helm"
+    },
+    {
+      "ItemId": "1363778",
+      "ItemName": "Borealis Cowl of Schisms"
+    },
+    {
+      "ItemId": "1363779",
+      "ItemName": "Borealis Helm of Resolution"
+    },
+    {
+      "ItemId": "1363780",
+      "ItemName": "Polarian Borealis Cowl"
+    },
+    {
+      "ItemId": "1363781",
+      "ItemName": "Volatile Borealis Armor"
+    },
+    {
+      "ItemId": "1363782",
+      "ItemName": "Borealis Icecrystal Plate"
+    },
+    {
+      "ItemId": "1363783",
+      "ItemName": "Borealis Gear of Windswirls"
+    },
+    {
+      "ItemId": "1363784",
+      "ItemName": "Borealis Raiment of Vision"
+    },
+    {
+      "ItemId": "1363785",
+      "ItemName": "Timeless Borealis Vestment"
+    },
+    {
+      "ItemId": "1363786",
+      "ItemName": "Borealis Armor of Schisms"
+    },
+    {
+      "ItemId": "1363787",
+      "ItemName": "Borealis Gear of Resolution"
+    },
+    {
+      "ItemId": "1363788",
+      "ItemName": "Polarian Borealis Raiment"
+    },
+    {
+      "ItemId": "1363789",
+      "ItemName": "Volatile Borealis Boots"
+    },
+    {
+      "ItemId": "1363790",
+      "ItemName": "Borealis Icecrystal Shoes"
+    },
+    {
+      "ItemId": "1363791",
+      "ItemName": "Borealis Boots of Windswirls"
+    },
+    {
+      "ItemId": "1363792",
+      "ItemName": "Borealis Footgear of Vision"
+    },
+    {
+      "ItemId": "1363793",
+      "ItemName": "Timeless Borealis Trekkers"
+    },
+    {
+      "ItemId": "1363794",
+      "ItemName": "Borealis Boots of Schisms"
+    },
+    {
+      "ItemId": "1363795",
+      "ItemName": "Borealis Shoes of Resolution"
+    },
+    {
+      "ItemId": "1363796",
+      "ItemName": "Polarian Borealis Footgear"
+    },
+    {
+      "ItemId": "1369253",
+      "ItemName": "Horizon Hold Searing Spike"
+    },
+    {
+      "ItemId": "1369254",
+      "ItemName": "Horizon Hold Kris of Cold"
+    },
+    {
+      "ItemId": "1369255",
+      "ItemName": "Horizon Hold Cyclonic Edge"
+    },
+    {
+      "ItemId": "1369256",
+      "ItemName": "Auroracle's Point of Energy"
+    },
+    {
+      "ItemId": "1369257",
+      "ItemName": "Horizon Hold Dirk of Verdure"
+    },
+    {
+      "ItemId": "1369258",
+      "ItemName": "Horizon Hold Knife of Gloom"
+    },
+    {
+      "ItemId": "1369259",
+      "ItemName": "Gallant Kris of Horizon Hold"
+    },
+    {
+      "ItemId": "1369260",
+      "ItemName": "Ancient Dirk of Horizon Hold"
+    },
+    {
+      "ItemId": "1369261",
+      "ItemName": "Horizon Hold Scorched Charm"
+    },
+    {
+      "ItemId": "1369262",
+      "ItemName": "Bitter Relic of Horizon Hold"
+    },
+    {
+      "ItemId": "1369263",
+      "ItemName": "Horizon Hold Choker of Fog"
+    },
+    {
+      "ItemId": "1369264",
+      "ItemName": "Auroracle's Torc of Intent"
+    },
+    {
+      "ItemId": "1369265",
+      "ItemName": "Horizon Hold Amulet of Zest"
+    },
+    {
+      "ItemId": "1369266",
+      "ItemName": "Watch Lion's Collar of Angst"
+    },
+    {
+      "ItemId": "1369267",
+      "ItemName": "Auroracle's Charm of Equity"
+    },
+    {
+      "ItemId": "1369268",
+      "ItemName": "Jeweled Slopes Ornament"
+    },
+    {
+      "ItemId": "1369269",
+      "ItemName": "Flame-Forged Iron Paw Band"
+    },
+    {
+      "ItemId": "1369270",
+      "ItemName": "Polarian Glacier Loop"
+    },
+    {
+      "ItemId": "1369271",
+      "ItemName": "Gusting Ring of the Peaks"
+    },
+    {
+      "ItemId": "1369272",
+      "ItemName": "Northern Ring of Ruses"
+    },
+    {
+      "ItemId": "1369273",
+      "ItemName": "Snow Treant Band of Zesr"
+    },
+    {
+      "ItemId": "1369274",
+      "ItemName": "Snow Treant Ring of Dry Rot"
+    },
+    {
+      "ItemId": "1369275",
+      "ItemName": "Gulag Guard's Stout Band"
+    },
+    {
+      "ItemId": "1369276",
+      "ItemName": "Ring of the Northern Sea"
+    },
+    {
+      "ItemId": "1369429",
+      "ItemName": "Volatile Borealis Remnant"
+    },
+    {
+      "ItemId": "1369430",
+      "ItemName": "Borealis Icecrystal Artifact"
+    },
+    {
+      "ItemId": "1369431",
+      "ItemName": "Borealis Relic of Windswirls"
+    },
+    {
+      "ItemId": "1369432",
+      "ItemName": "Borealis Artifact of Vision"
+    },
+    {
+      "ItemId": "1369433",
+      "ItemName": "Timeless Borealis Fragment"
+    },
+    {
+      "ItemId": "1369434",
+      "ItemName": "Borealis Remnant of Schisms"
+    },
+    {
+      "ItemId": "1369435",
+      "ItemName": "Borealis Relic of Resolution"
+    },
+    {
+      "ItemId": "1369436",
+      "ItemName": "Polarian Borealis Relic"
+    },
+    {
+      "ItemId": "1369557",
+      "ItemName": "Horizon Hold Deck of Furor"
+    },
+    {
+      "ItemId": "1369558",
+      "ItemName": "Horizon Hold Set of Verglas"
+    },
+    {
+      "ItemId": "1369559",
+      "ItemName": "Horizon Hold Deck of Icefog"
+    },
+    {
+      "ItemId": "1369560",
+      "ItemName": "Horizon Hold Cards of Intent"
+    },
+    {
+      "ItemId": "1369561",
+      "ItemName": "Horizon Hold Set of Efficacy"
+    },
+    {
+      "ItemId": "1369562",
+      "ItemName": "Horizon Hold Array of Gloom"
+    },
+    {
+      "ItemId": "1369563",
+      "ItemName": "Gallant Hand of Horizon Hold"
+    },
+    {
+      "ItemId": "1369564",
+      "ItemName": "Ancient Deck of Horizon Hold"
+    }
+  ]
+}

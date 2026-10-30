@@ -1,0 +1,89 @@
+{
+  "Name": "W404 MS-Oni-Death-MSBoss-L61 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Oni-Death-MSBoss-L61: the gear drops (20), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "87778",
+      "ItemName": "Death Oni's Peridot Blade"
+    },
+    {
+      "ItemId": "97431",
+      "ItemName": "Death Oni's Necklace of Doom"
+    },
+    {
+      "ItemId": "97543",
+      "ItemName": "Death Oni's Abstract Hat"
+    },
+    {
+      "ItemId": "97578",
+      "ItemName": "Headwraps of Nourishment"
+    },
+    {
+      "ItemId": "97626",
+      "ItemName": "Hat of Unison"
+    },
+    {
+      "ItemId": "97763",
+      "ItemName": "Death Oni's Tunic"
+    },
+    {
+      "ItemId": "97767",
+      "ItemName": "Death Oni's Garments"
+    },
+    {
+      "ItemId": "97793",
+      "ItemName": "Garments of the Observant"
+    },
+    {
+      "ItemId": "97825",
+      "ItemName": "Vestment of Commotion"
+    },
+    {
+      "ItemId": "97843",
+      "ItemName": "Tunic of Melodies"
+    },
+    {
+      "ItemId": "97890",
+      "ItemName": "Enlivened Garment"
+    },
+    {
+      "ItemId": "97928",
+      "ItemName": "Death Oni's Introverted Shoes"
+    },
+    {
+      "ItemId": "97969",
+      "ItemName": "Peculiar Boots"
+    },
+    {
+      "ItemId": "97988",
+      "ItemName": "Shoes of Dilemma"
+    },
+    {
+      "ItemId": "98019",
+      "ItemName": "Sandals of Hymns"
+    },
+    {
+      "ItemId": "98039",
+      "ItemName": "Stressed Sandals"
+    },
+    {
+      "ItemId": "126144",
+      "ItemName": "Sapphire Ring of Power"
+    },
+    {
+      "ItemId": "161047",
+      "ItemName": "Headgear of the Sylph"
+    },
+    {
+      "ItemId": "164077",
+      "ItemName": "Nosferatu's Cloak"
+    },
+    {
+      "ItemId": "164097",
+      "ItemName": "Brogans of Decrepitude"
+    }
+  ]
+}

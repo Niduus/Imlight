@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Skey_Stone_Zafaria Mount (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skey_Stone_Zafaria: the mount drops (1), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1254141",
+      "ItemName": "Pirate Rowboat (PERM)"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "Name": "W404 ME1_Shark_Boss_A Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Shark_Boss_A: the seed drops (2), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346031",
+      "ItemName": "Ninja Fig"
+    },
+    {
+      "ItemId": "404123",
+      "ItemName": "Deadly Helephant Ears"
+    }
+  ]
+}

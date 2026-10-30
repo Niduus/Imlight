@@ -1,0 +1,29 @@
+{
+  "Name": "W404 GH-Level-03 Seed (Normal)",
+  "Description": "Wizard404's drop list of the game's table GH-Level-03: the seed drops (5), one picked when it rolls. How often: DropOdds.json Normal/Seed.",
+  "Odds": "Normal/Seed",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots"
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears"
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon"
+    },
+    {
+      "ItemId": "356127",
+      "ItemName": "Bread Fruit Bush"
+    },
+    {
+      "ItemId": "473092",
+      "ItemName": "Couch Potatoes"
+    }
+  ]
+}

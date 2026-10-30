@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Grendel-Large-2-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Grendel-Large-2-GHBoss-R7: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136292",
+      "ItemName": "Runewarden's Deck"
+    },
+    {
+      "ItemId": "136397",
+      "ItemName": "Cowl of the Bolt"
+    },
+    {
+      "ItemId": "136505",
+      "ItemName": "Eye of the Ancients"
+    },
+    {
+      "ItemId": "136636",
+      "ItemName": "Inclement Wear"
+    },
+    {
+      "ItemId": "136637",
+      "ItemName": "Robe of Remedy"
+    },
+    {
+      "ItemId": "171209",
+      "ItemName": "Footgear of Acumen"
+    }
+  ]
+}

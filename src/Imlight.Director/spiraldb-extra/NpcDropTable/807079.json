@@ -1,0 +1,17 @@
+{
+  "TemplateID": 807079,
+  "DropTableNames": [
+    "W404 Student-Death-PageEvent",
+    "W404 Student-Death-PageEvent Gear (Boss)",
+    "W404 Student-Death-PageEvent Pet (Boss)",
+    "W404 Student-Death-PageEvent Mount (Boss)",
+    "W404 Student-Death-PageEvent TreasureCard (Boss)",
+    "W404 Student-Death-PageEvent Snack (Boss)",
+    "W404 Student-Death-PageEvent Housing (Boss)",
+    "W404 MS-Colossus-Stone-MSBoss-L41",
+    "W404 MS-Colossus-Stone-MSBoss-L41 Gear (Boss)",
+    "W404 MS-Colossus-Stone-MSBoss-L41 Housing (Boss)",
+    "W404 TC-RaresBosses1 TreasureCard",
+    "W404 ReagentLT-Drop-Ectoplasm-03 Reagent (Boss)"
+  ]
+}

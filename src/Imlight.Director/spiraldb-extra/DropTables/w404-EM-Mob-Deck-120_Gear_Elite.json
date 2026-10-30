@@ -1,0 +1,41 @@
+{
+  "Name": "W404 EM-Mob-Deck-120 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table EM-Mob-Deck-120: the gear drops (8), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1430512",
+      "ItemName": "Interstellar Engineer's Deck"
+    },
+    {
+      "ItemId": "1430513",
+      "ItemName": "Interstellar Explorer's Deck"
+    },
+    {
+      "ItemId": "1430514",
+      "ItemName": "Interstellar Navigator's Deck"
+    },
+    {
+      "ItemId": "1430515",
+      "ItemName": "Interstellar Hero's Deck"
+    },
+    {
+      "ItemId": "1430516",
+      "ItemName": "Interstellar Medic's Deck"
+    },
+    {
+      "ItemId": "1430517",
+      "ItemName": "Interstellar Warrior's Deck"
+    },
+    {
+      "ItemId": "1430518",
+      "ItemName": "Interstellar Delegate's Deck"
+    },
+    {
+      "ItemId": "1430519",
+      "ItemName": "Interstellar Officer's Deck"
+    }
+  ]
+}

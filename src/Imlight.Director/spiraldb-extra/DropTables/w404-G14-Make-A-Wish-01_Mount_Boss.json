@@ -1,0 +1,73 @@
+{
+  "Name": "W404 G14-Make-A-Wish-01 Mount (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-Make-A-Wish-01: the mount drops (16), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "191227",
+      "ItemName": "Purple Glider (7 Day)"
+    },
+    {
+      "ItemId": "191235",
+      "ItemName": "White Mare (7 Day)"
+    },
+    {
+      "ItemId": "191271",
+      "ItemName": "Faithful Dragoness (7 Day)"
+    },
+    {
+      "ItemId": "191660",
+      "ItemName": "Starlight Pony (7 Day)"
+    },
+    {
+      "ItemId": "225484",
+      "ItemName": "Bat Wings (7 Day)"
+    },
+    {
+      "ItemId": "276448",
+      "ItemName": "Spritely Seahorse (7 Day)"
+    },
+    {
+      "ItemId": "276453",
+      "ItemName": "Rugged Seahorse (7 Day)"
+    },
+    {
+      "ItemId": "276460",
+      "ItemName": "Ancient Koi (7 Day)"
+    },
+    {
+      "ItemId": "425082",
+      "ItemName": "Moonlight Pony (7 Day)"
+    },
+    {
+      "ItemId": "425084",
+      "ItemName": "Sunshine Pony (7 Day)"
+    },
+    {
+      "ItemId": "425086",
+      "ItemName": "Starshine Pony (7 Day)"
+    },
+    {
+      "ItemId": "470138",
+      "ItemName": "Hippogriff (7 Day)"
+    },
+    {
+      "ItemId": "470140",
+      "ItemName": "Crokagator (7 Day)"
+    },
+    {
+      "ItemId": "470391",
+      "ItemName": "Brown Warg (7 Day)"
+    },
+    {
+      "ItemId": "470392",
+      "ItemName": "Grey Warg (7 Day)"
+    },
+    {
+      "ItemId": "1317675",
+      "ItemName": "Himoolayan Yak (7 Day)"
+    }
+  ]
+}

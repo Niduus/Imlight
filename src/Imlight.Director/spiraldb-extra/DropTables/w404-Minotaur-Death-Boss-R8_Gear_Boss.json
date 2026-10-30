@@ -1,0 +1,101 @@
+{
+  "Name": "W404 Minotaur-Death-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Minotaur-Death-Boss-R8: the gear drops (23), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104599",
+      "ItemName": "Drape of Symmetry"
+    },
+    {
+      "ItemId": "104634",
+      "ItemName": "Sepulchral Drape"
+    },
+    {
+      "ItemId": "104656",
+      "ItemName": "Cloak of the Seasons"
+    },
+    {
+      "ItemId": "104710",
+      "ItemName": "Smock of the Squall"
+    },
+    {
+      "ItemId": "104754",
+      "ItemName": "Slippers of the Ice Flow"
+    },
+    {
+      "ItemId": "104789",
+      "ItemName": "Slippers of the Sunflame"
+    },
+    {
+      "ItemId": "104806",
+      "ItemName": "Shoes of Gloom"
+    },
+    {
+      "ItemId": "104810",
+      "ItemName": "Karuvian Deathstriders"
+    },
+    {
+      "ItemId": "104827",
+      "ItemName": "Fortune Striders"
+    },
+    {
+      "ItemId": "104872",
+      "ItemName": "Boots of the Broken Sky"
+    },
+    {
+      "ItemId": "126568",
+      "ItemName": "Signet of the Reaper"
+    },
+    {
+      "ItemId": "126609",
+      "ItemName": "Band of the Boundless"
+    },
+    {
+      "ItemId": "126684",
+      "ItemName": "Karuvian Deck of Eternity"
+    },
+    {
+      "ItemId": "146166",
+      "ItemName": "Soothing Steel"
+    },
+    {
+      "ItemId": "146175",
+      "ItemName": "Smallsword of Euphoria"
+    },
+    {
+      "ItemId": "146217",
+      "ItemName": "Headwrap of the Victorious"
+    },
+    {
+      "ItemId": "146241",
+      "ItemName": "Hood of the Historian"
+    },
+    {
+      "ItemId": "146290",
+      "ItemName": "Karuvian Frostbringer Hood"
+    },
+    {
+      "ItemId": "146308",
+      "ItemName": "Cowl of Blazes"
+    },
+    {
+      "ItemId": "146319",
+      "ItemName": "Soot-streaked Veil"
+    },
+    {
+      "ItemId": "146337",
+      "ItemName": "Terminus Mantle"
+    },
+    {
+      "ItemId": "146359",
+      "ItemName": "Hood of Equity"
+    },
+    {
+      "ItemId": "161062",
+      "ItemName": "Ring of the Rose"
+    }
+  ]
+}

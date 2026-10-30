@@ -1,0 +1,81 @@
+{
+  "Name": "W404 MS-Pig-Death-Lord-MSBoss-L49 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-Death-Lord-MSBoss-L49: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "87773",
+      "ItemName": "Kagemoosha's Citrine Blade"
+    },
+    {
+      "ItemId": "97562",
+      "ItemName": "Kagemoosha's Cowl"
+    },
+    {
+      "ItemId": "97595",
+      "ItemName": "Kagemoosha's Shroud"
+    },
+    {
+      "ItemId": "97676",
+      "ItemName": "Cap of Consideration"
+    },
+    {
+      "ItemId": "97745",
+      "ItemName": "Cloak of Concentration"
+    },
+    {
+      "ItemId": "97746",
+      "ItemName": "Vestment of Dreaming"
+    },
+    {
+      "ItemId": "97779",
+      "ItemName": "Kagemoosha's Robe"
+    },
+    {
+      "ItemId": "97792",
+      "ItemName": "Indulgent Vestment"
+    },
+    {
+      "ItemId": "97822",
+      "ItemName": "Tunic of Impression"
+    },
+    {
+      "ItemId": "97842",
+      "ItemName": "Lyrical Garments"
+    },
+    {
+      "ItemId": "97870",
+      "ItemName": "Tormented Cloak"
+    },
+    {
+      "ItemId": "97889",
+      "ItemName": "Vestment of the Eager"
+    },
+    {
+      "ItemId": "97937",
+      "ItemName": "Kagemoosha's Boots"
+    },
+    {
+      "ItemId": "97941",
+      "ItemName": "Kagemoosha's Sandals"
+    },
+    {
+      "ItemId": "97953",
+      "ItemName": "Indulgent Boots"
+    },
+    {
+      "ItemId": "98003",
+      "ItemName": "Lyrical Footwraps"
+    },
+    {
+      "ItemId": "98054",
+      "ItemName": "Sandals of the Determined"
+    },
+    {
+      "ItemId": "126138",
+      "ItemName": "Dream Tanto of Ages"
+    }
+  ]
+}

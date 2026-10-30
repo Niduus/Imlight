@@ -1,0 +1,77 @@
+{
+  "Name": "W404 KT-KrokPharaoh-StormBand-KTBoss-L35 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokPharaoh-StormBand-KTBoss-L35: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4916",
+      "ItemName": "Son of Storms' Sigil"
+    },
+    {
+      "ItemId": "4967",
+      "ItemName": "Athame of Adaption"
+    },
+    {
+      "ItemId": "5023",
+      "ItemName": "Seal of the Conqueror"
+    },
+    {
+      "ItemId": "38752",
+      "ItemName": "Ardent Robe"
+    },
+    {
+      "ItemId": "38766",
+      "ItemName": "Bitter Cloak"
+    },
+    {
+      "ItemId": "39437",
+      "ItemName": "Pyromancer's Lambent Boots"
+    },
+    {
+      "ItemId": "77726",
+      "ItemName": "Soothsayer's Helm"
+    },
+    {
+      "ItemId": "77761",
+      "ItemName": "Conjurer's Sandals"
+    },
+    {
+      "ItemId": "77769",
+      "ItemName": "Theurge's Shoes of Marvel"
+    },
+    {
+      "ItemId": "77773",
+      "ItemName": "Slippers of Revelations"
+    },
+    {
+      "ItemId": "77778",
+      "ItemName": "Dusty Boots"
+    },
+    {
+      "ItemId": "77788",
+      "ItemName": "Sandals of Harmony"
+    },
+    {
+      "ItemId": "87274",
+      "ItemName": "Cloak of the Designer"
+    },
+    {
+      "ItemId": "87282",
+      "ItemName": "Robe of Figments"
+    },
+    {
+      "ItemId": "87301",
+      "ItemName": "Son of Storms's Robe"
+    },
+    {
+      "ItemId": "87313",
+      "ItemName": "Cloak of Respite"
+    },
+    {
+      "ItemId": "87326",
+      "ItemName": "Cloak of the Sage"
+    }
+  ]
+}

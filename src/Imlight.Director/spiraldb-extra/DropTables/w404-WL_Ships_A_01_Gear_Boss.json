@@ -1,0 +1,65 @@
+{
+  "Name": "W404 WL_Ships_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WL_Ships_A_01: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1628201",
+      "ItemName": "Deft Dream Reaver Knife"
+    },
+    {
+      "ItemId": "1628202",
+      "ItemName": "Fell Dream Reaver Knife"
+    },
+    {
+      "ItemId": "1628203",
+      "ItemName": "Fervid Dream Reaver Knife"
+    },
+    {
+      "ItemId": "1628204",
+      "ItemName": "Cruel Dream Reaver Knife"
+    },
+    {
+      "ItemId": "1628205",
+      "ItemName": "Bold Dream Reaver Knife"
+    },
+    {
+      "ItemId": "1628206",
+      "ItemName": "Fabled Dream Reaver Knife"
+    },
+    {
+      "ItemId": "1628207",
+      "ItemName": "Fierce Dream Reaver Knife"
+    },
+    {
+      "ItemId": "1628383",
+      "ItemName": "Deft Dream Warper Knife"
+    },
+    {
+      "ItemId": "1628384",
+      "ItemName": "Fell Dream Warper Knife"
+    },
+    {
+      "ItemId": "1628385",
+      "ItemName": "Fervid Dream Warper Knife"
+    },
+    {
+      "ItemId": "1628386",
+      "ItemName": "Cruel Dream Warper Knife"
+    },
+    {
+      "ItemId": "1628387",
+      "ItemName": "Bold Dream Warper Knife"
+    },
+    {
+      "ItemId": "1628388",
+      "ItemName": "Fabled Dream Warper Knife"
+    },
+    {
+      "ItemId": "1628389",
+      "ItemName": "Fierce Dream Warper Knife"
+    }
+  ]
+}

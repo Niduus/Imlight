@@ -1,0 +1,201 @@
+{
+  "Name": "W404 MB-Level-28-30 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table MB-Level-28-30: the gear drops (48), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "38978",
+      "ItemName": "Cap of the Phoenix"
+    },
+    {
+      "ItemId": "38981",
+      "ItemName": "Comedian's Hat"
+    },
+    {
+      "ItemId": "38984",
+      "ItemName": "Cap of Symmetry"
+    },
+    {
+      "ItemId": "39009",
+      "ItemName": "Opportunists' Cap"
+    },
+    {
+      "ItemId": "39026",
+      "ItemName": "Cap of Ideals"
+    },
+    {
+      "ItemId": "77073",
+      "ItemName": "Ring of Rejuvenation"
+    },
+    {
+      "ItemId": "77117",
+      "ItemName": "Basking Robes"
+    },
+    {
+      "ItemId": "77119",
+      "ItemName": "Comedian's Robe"
+    },
+    {
+      "ItemId": "77120",
+      "ItemName": "Dramatic Uniform"
+    },
+    {
+      "ItemId": "77155",
+      "ItemName": "Distinguished Robe"
+    },
+    {
+      "ItemId": "77156",
+      "ItemName": "Vest of Predominance"
+    },
+    {
+      "ItemId": "77169",
+      "ItemName": "Garment of Preference"
+    },
+    {
+      "ItemId": "77172",
+      "ItemName": "Robe of the Exceptional"
+    },
+    {
+      "ItemId": "77173",
+      "ItemName": "Delicate Garments"
+    },
+    {
+      "ItemId": "77185",
+      "ItemName": "Shoes of Certainty"
+    },
+    {
+      "ItemId": "77186",
+      "ItemName": "Crackling Boots"
+    },
+    {
+      "ItemId": "77190",
+      "ItemName": "Halcyon's Shoes"
+    },
+    {
+      "ItemId": "77219",
+      "ItemName": "Sandals of Dedication"
+    },
+    {
+      "ItemId": "77233",
+      "ItemName": "Distinct Slippers"
+    },
+    {
+      "ItemId": "77246",
+      "ItemName": "Jolting Boots"
+    },
+    {
+      "ItemId": "97099",
+      "ItemName": "Dirk of Nobles"
+    },
+    {
+      "ItemId": "97102",
+      "ItemName": "Fink's Stiletto"
+    },
+    {
+      "ItemId": "97104",
+      "ItemName": "Graceful Stiletto"
+    },
+    {
+      "ItemId": "97140",
+      "ItemName": "Dandy Hat"
+    },
+    {
+      "ItemId": "97157",
+      "ItemName": "Enticing Cowl"
+    },
+    {
+      "ItemId": "97174",
+      "ItemName": "Grandiose Headwraps"
+    },
+    {
+      "ItemId": "97191",
+      "ItemName": "Cap of the Supreme"
+    },
+    {
+      "ItemId": "97208",
+      "ItemName": "Hat of Excellence"
+    },
+    {
+      "ItemId": "97224",
+      "ItemName": "Exquisite Cowl"
+    },
+    {
+      "ItemId": "97241",
+      "ItemName": "Robe of the Aristocrat"
+    },
+    {
+      "ItemId": "97242",
+      "ItemName": "Robe of the Affected"
+    },
+    {
+      "ItemId": "97257",
+      "ItemName": "Charming Garment"
+    },
+    {
+      "ItemId": "97258",
+      "ItemName": "Enticing Robe"
+    },
+    {
+      "ItemId": "97274",
+      "ItemName": "Urbane Robe"
+    },
+    {
+      "ItemId": "97275",
+      "ItemName": "Debonair Garments"
+    },
+    {
+      "ItemId": "97291",
+      "ItemName": "Obligatory Cloak"
+    },
+    {
+      "ItemId": "97292",
+      "ItemName": "Sophisticated Tunic"
+    },
+    {
+      "ItemId": "97308",
+      "ItemName": "Cloak of Civility"
+    },
+    {
+      "ItemId": "97309",
+      "ItemName": "Affable Cloak"
+    },
+    {
+      "ItemId": "97321",
+      "ItemName": "Robe of Paramount"
+    },
+    {
+      "ItemId": "97353",
+      "ItemName": "Boots of Fabrication"
+    },
+    {
+      "ItemId": "97367",
+      "ItemName": "Shoes of Inclination"
+    },
+    {
+      "ItemId": "97369",
+      "ItemName": "Sensitive Slippers"
+    },
+    {
+      "ItemId": "97382",
+      "ItemName": "Slippers of Grief"
+    },
+    {
+      "ItemId": "97384",
+      "ItemName": "Boots of Heartache"
+    },
+    {
+      "ItemId": "97397",
+      "ItemName": "Slippers of Tranquility"
+    },
+    {
+      "ItemId": "97399",
+      "ItemName": "Boots of the Undisturbed"
+    },
+    {
+      "ItemId": "97414",
+      "ItemName": "Cat Burglar's Shoes"
+    }
+  ]
+}

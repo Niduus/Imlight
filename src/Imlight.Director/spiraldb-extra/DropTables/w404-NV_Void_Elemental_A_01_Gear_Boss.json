@@ -1,0 +1,65 @@
+{
+  "Name": "W404 NV_Void_Elemental_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Void_Elemental_A_01: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1577780",
+      "ItemName": "Golden Balance Dagger"
+    },
+    {
+      "ItemId": "1577781",
+      "ItemName": "Golden Death Dagger"
+    },
+    {
+      "ItemId": "1577782",
+      "ItemName": "Golden Fire Dagger"
+    },
+    {
+      "ItemId": "1577783",
+      "ItemName": "Golden Ice Dagger"
+    },
+    {
+      "ItemId": "1577784",
+      "ItemName": "Golden Life Dagger"
+    },
+    {
+      "ItemId": "1577785",
+      "ItemName": "Golden Myth Dagger"
+    },
+    {
+      "ItemId": "1577786",
+      "ItemName": "Golden Storm Dagger"
+    },
+    {
+      "ItemId": "1577836",
+      "ItemName": "Glistening Balance Dagger"
+    },
+    {
+      "ItemId": "1577837",
+      "ItemName": "Glistening Death Dagger"
+    },
+    {
+      "ItemId": "1577838",
+      "ItemName": "Glistening Fire Dagger"
+    },
+    {
+      "ItemId": "1577839",
+      "ItemName": "Glistening Ice Dagger"
+    },
+    {
+      "ItemId": "1577840",
+      "ItemName": "Glistening Life Dagger"
+    },
+    {
+      "ItemId": "1577841",
+      "ItemName": "Glistening Myth Dagger"
+    },
+    {
+      "ItemId": "1577842",
+      "ItemName": "Glistening Storm Dagger"
+    }
+  ]
+}

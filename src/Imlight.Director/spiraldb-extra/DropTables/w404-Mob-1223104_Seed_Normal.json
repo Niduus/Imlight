@@ -1,0 +1,29 @@
+{
+  "Name": "W404 Mob-1223104 Seed (Normal)",
+  "Description": "Wizard404's drop list of Sassafras Man's own drops: the seed drops (5), one picked when it rolls. How often: DropOdds.json Normal/Seed.",
+  "Odds": "Normal/Seed",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion"
+    },
+    {
+      "ItemId": "473078",
+      "ItemName": "Key Limes"
+    },
+    {
+      "ItemId": "589180",
+      "ItemName": "Red Huckleberries"
+    },
+    {
+      "ItemId": "589187",
+      "ItemName": "Pink Huckleberries"
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries"
+    }
+  ]
+}

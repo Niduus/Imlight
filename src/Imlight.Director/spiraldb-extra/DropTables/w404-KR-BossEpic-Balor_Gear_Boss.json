@@ -1,0 +1,73 @@
+{
+  "Name": "W404 KR-BossEpic-Balor Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossEpic-Balor: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203155",
+      "ItemName": "Mantis Cover of Readiness"
+    },
+    {
+      "ItemId": "1203179",
+      "ItemName": "Gloom Dancer's Band"
+    },
+    {
+      "ItemId": "1203185",
+      "ItemName": "Ghost Dog's Samoorai Band"
+    },
+    {
+      "ItemId": "1203229",
+      "ItemName": "Armor of the QuietBlade"
+    },
+    {
+      "ItemId": "1203230",
+      "ItemName": "Burrower Robe of Ingenuity"
+    },
+    {
+      "ItemId": "1203273",
+      "ItemName": "Mouse Boots of Mourning"
+    },
+    {
+      "ItemId": "1203389",
+      "ItemName": "Stinger's Razor of Fortune"
+    },
+    {
+      "ItemId": "1203393",
+      "ItemName": "King Alric's Royal Athame"
+    },
+    {
+      "ItemId": "1203654",
+      "ItemName": "Deck of the Shadow Web"
+    },
+    {
+      "ItemId": "1203656",
+      "ItemName": "Deck of Sinister Shadows"
+    },
+    {
+      "ItemId": "1203694",
+      "ItemName": "Sword and Shield of Havoc"
+    },
+    {
+      "ItemId": "1217362",
+      "ItemName": "The Kroktop"
+    },
+    {
+      "ItemId": "1358865",
+      "ItemName": "Deck of the Shadow Web"
+    },
+    {
+      "ItemId": "1358867",
+      "ItemName": "Deck of Sinister Shadows"
+    },
+    {
+      "ItemId": "1358879",
+      "ItemName": "Deck of the Shadow Web"
+    },
+    {
+      "ItemId": "1358881",
+      "ItemName": "Deck of Sinister Shadows"
+    }
+  ]
+}

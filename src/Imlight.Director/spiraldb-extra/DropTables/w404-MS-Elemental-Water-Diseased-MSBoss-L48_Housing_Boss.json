@@ -1,0 +1,29 @@
+{
+  "Name": "W404 MS-Elemental-Water-Diseased-MSBoss-L48 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Elemental-Water-Diseased-MSBoss-L48: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160444",
+      "ItemName": "Bubbling Cauldron"
+    },
+    {
+      "ItemId": "160487",
+      "ItemName": "Monk Statue"
+    },
+    {
+      "ItemId": "160595",
+      "ItemName": "Diseased Mushrooms"
+    },
+    {
+      "ItemId": "160601",
+      "ItemName": "Pearl Orchid"
+    },
+    {
+      "ItemId": "470202",
+      "ItemName": "Stone Dog Statue"
+    }
+  ]
+}

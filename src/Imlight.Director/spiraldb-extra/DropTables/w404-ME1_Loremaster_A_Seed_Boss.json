@@ -1,0 +1,17 @@
+{
+  "Name": "W404 ME1_Loremaster_A Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Loremaster_A: the seed drops (2), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "345989",
+      "ItemName": "Silver Trumpet Vine"
+    },
+    {
+      "ItemId": "404116",
+      "ItemName": "Evil Magma Peas"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "Name": "W404 ME1_Crab_Boss_A",
+  "Description": "Gold of the game's table ME1_Crab_Boss_A, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 70,
+  "MaxGold": 110,
+  "EachItem": false,
+  "Items": []
+}

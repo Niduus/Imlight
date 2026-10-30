@@ -1,0 +1,37 @@
+{
+  "Name": "W404 KM-Boss-End-01 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-Boss-End-01: the reagent drops (7), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1504146",
+      "ItemName": "Mockenspiel"
+    },
+    {
+      "ItemId": "1504147",
+      "ItemName": "Sound of Musicology"
+    },
+    {
+      "ItemId": "1504148",
+      "ItemName": "Shatterhorn"
+    },
+    {
+      "ItemId": "1504149",
+      "ItemName": "Snack Attack"
+    },
+    {
+      "ItemId": "1504150",
+      "ItemName": "S'more Machine"
+    },
+    {
+      "ItemId": "1504151",
+      "ItemName": "Grrnadier"
+    },
+    {
+      "ItemId": "1519005",
+      "ItemName": "Tatzlewurm Terror"
+    }
+  ]
+}

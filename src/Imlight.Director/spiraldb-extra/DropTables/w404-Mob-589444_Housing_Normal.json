@@ -1,0 +1,25 @@
+{
+  "Name": "W404 Mob-589444 Housing (Normal)",
+  "Description": "Wizard404's drop list of Horned Brocket's own drops: the housing drops (4), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "538031",
+      "ItemName": "Two Rail Fence"
+    },
+    {
+      "ItemId": "641571",
+      "ItemName": "Wooden Mirror"
+    },
+    {
+      "ItemId": "641584",
+      "ItemName": "Avalon Statue"
+    },
+    {
+      "ItemId": "641588",
+      "ItemName": "Covered Wagon"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "Name": "W404 GH2-Treant-Ice-1-BOSS-R9 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH2-Treant-Ice-1-BOSS-R9: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "455098",
+      "ItemName": "Wyrm's Curse Charm"
+    },
+    {
+      "ItemId": "455114",
+      "ItemName": "Wolf's Amethyst Claw"
+    },
+    {
+      "ItemId": "455147",
+      "ItemName": "Barbaric Helm"
+    },
+    {
+      "ItemId": "455148",
+      "ItemName": "Horned Helm of the Mighty"
+    },
+    {
+      "ItemId": "455152",
+      "ItemName": "Cowl of Justice"
+    },
+    {
+      "ItemId": "455153",
+      "ItemName": "Cowl of Spirit Calling"
+    },
+    {
+      "ItemId": "455154",
+      "ItemName": "Cowl of Crackling"
+    },
+    {
+      "ItemId": "455155",
+      "ItemName": "Cold-Kissed Cowl"
+    },
+    {
+      "ItemId": "455156",
+      "ItemName": "Cowl of Esprit"
+    },
+    {
+      "ItemId": "455157",
+      "ItemName": "Cowl of the One Eyed Crow"
+    },
+    {
+      "ItemId": "455158",
+      "ItemName": "Cowl of the Dark Waters"
+    },
+    {
+      "ItemId": "455179",
+      "ItemName": "Ring of the Wolf Warrior"
+    },
+    {
+      "ItemId": "455210",
+      "ItemName": "Hardy Coat"
+    },
+    {
+      "ItemId": "455211",
+      "ItemName": "Coat of Ages"
+    },
+    {
+      "ItemId": "455212",
+      "ItemName": "Blustering Coat"
+    },
+    {
+      "ItemId": "455238",
+      "ItemName": "Snarling Bear Boots"
+    },
+    {
+      "ItemId": "455239",
+      "ItemName": "Growling Bear Boots"
+    },
+    {
+      "ItemId": "455240",
+      "ItemName": "Slashing Bear Boots"
+    },
+    {
+      "ItemId": "455241",
+      "ItemName": "Biting Bear Boots"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "W404 CL-Wildclaw-Brown-PageEvent Pet (Elite)",
+  "Description": "Wizard404's drop list of the game's table CL-Wildclaw-Brown-PageEvent: the pet drops (1), one picked when it rolls. How often: DropOdds.json Elite/Pet.",
+  "Odds": "Elite/Pet",
+  "RollChance": 0.04,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1374360",
+      "ItemName": "Spellwrit Wildclaw"
+    }
+  ]
+}

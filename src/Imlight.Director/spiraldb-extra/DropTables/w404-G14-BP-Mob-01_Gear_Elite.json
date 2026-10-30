@@ -1,0 +1,93 @@
+{
+  "Name": "W404 G14-BP-Mob-01 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table G14-BP-Mob-01: the gear drops (21), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330919",
+      "ItemName": "Barkingham Derby of Cinders"
+    },
+    {
+      "ItemId": "1330920",
+      "ItemName": "Barkingham Frost Cover"
+    },
+    {
+      "ItemId": "1330921",
+      "ItemName": "Barkingham Fog Bowler"
+    },
+    {
+      "ItemId": "1330922",
+      "ItemName": "Topper of Royal Wit"
+    },
+    {
+      "ItemId": "1330923",
+      "ItemName": "Barkingham Bombin of Brio"
+    },
+    {
+      "ItemId": "1330924",
+      "ItemName": "Barkingham Derby of Repose"
+    },
+    {
+      "ItemId": "1330925",
+      "ItemName": "Royal Cap of Alliance"
+    },
+    {
+      "ItemId": "1338087",
+      "ItemName": "Barkingham Cinder Shoes"
+    },
+    {
+      "ItemId": "1338088",
+      "ItemName": "Barkingham Frost Striders"
+    },
+    {
+      "ItemId": "1338089",
+      "ItemName": "Barkingham Fog Walkers"
+    },
+    {
+      "ItemId": "1338090",
+      "ItemName": "Barkingham Shoes of Wit"
+    },
+    {
+      "ItemId": "1338091",
+      "ItemName": "Barkingham Boots of Brio"
+    },
+    {
+      "ItemId": "1338092",
+      "ItemName": "Barkingham Clogs of Repose"
+    },
+    {
+      "ItemId": "1338093",
+      "ItemName": "Royal Boots of Alliance"
+    },
+    {
+      "ItemId": "1338339",
+      "ItemName": "Grenadier's Blasting Ring"
+    },
+    {
+      "ItemId": "1338340",
+      "ItemName": "Chief Whip's Hail Stone"
+    },
+    {
+      "ItemId": "1338341",
+      "ItemName": "Ring of Marleybone Fog"
+    },
+    {
+      "ItemId": "1338342",
+      "ItemName": "Signet of Royal Ingenuity"
+    },
+    {
+      "ItemId": "1338343",
+      "ItemName": "Barkingham Band of Virtue"
+    },
+    {
+      "ItemId": "1338344",
+      "ItemName": "Enfield Circle of Trickery"
+    },
+    {
+      "ItemId": "1338345",
+      "ItemName": "Band of Royal Infallibility"
+    }
+  ]
+}

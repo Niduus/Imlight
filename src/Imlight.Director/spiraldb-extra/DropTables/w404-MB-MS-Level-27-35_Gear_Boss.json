@@ -1,0 +1,241 @@
+{
+  "Name": "W404 MB-MS-Level-27-35 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-MS-Level-27-35: the gear drops (58), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97564",
+      "ItemName": "Pupil's Cap"
+    },
+    {
+      "ItemId": "97567",
+      "ItemName": "Hat of Charity"
+    },
+    {
+      "ItemId": "97569",
+      "ItemName": "Friendly Helm"
+    },
+    {
+      "ItemId": "97574",
+      "ItemName": "Hat of the Observant"
+    },
+    {
+      "ItemId": "97581",
+      "ItemName": "Immersive Cowl"
+    },
+    {
+      "ItemId": "97583",
+      "ItemName": "Abstract Shroud"
+    },
+    {
+      "ItemId": "97585",
+      "ItemName": "Cap of Preoccupation"
+    },
+    {
+      "ItemId": "97590",
+      "ItemName": "Headwraps of the Whim"
+    },
+    {
+      "ItemId": "97596",
+      "ItemName": "Shroud of Scruples"
+    },
+    {
+      "ItemId": "97599",
+      "ItemName": "Meticulous Headwraps"
+    },
+    {
+      "ItemId": "97601",
+      "ItemName": "Cowl of Watchfulness"
+    },
+    {
+      "ItemId": "97606",
+      "ItemName": "Cap of Dilemma"
+    },
+    {
+      "ItemId": "97612",
+      "ItemName": "Haskarr's Barbarish Cap"
+    },
+    {
+      "ItemId": "97615",
+      "ItemName": "Cowl of Arias"
+    },
+    {
+      "ItemId": "97617",
+      "ItemName": "Hood of Chimes"
+    },
+    {
+      "ItemId": "97622",
+      "ItemName": "Hood of Melodies"
+    },
+    {
+      "ItemId": "97628",
+      "ItemName": "Druidic Cowl"
+    },
+    {
+      "ItemId": "97631",
+      "ItemName": "Cowl of Fiction"
+    },
+    {
+      "ItemId": "97633",
+      "ItemName": "Blended Wool Cap"
+    },
+    {
+      "ItemId": "97638",
+      "ItemName": "Headwraps of Anthems"
+    },
+    {
+      "ItemId": "97644",
+      "ItemName": "Cap of Hinderance"
+    },
+    {
+      "ItemId": "97647",
+      "ItemName": "Shroud of Predicament"
+    },
+    {
+      "ItemId": "97649",
+      "ItemName": "Helm of Struggling"
+    },
+    {
+      "ItemId": "97654",
+      "ItemName": "Shroud of Woe"
+    },
+    {
+      "ItemId": "97660",
+      "ItemName": "Shroud of the Universe"
+    },
+    {
+      "ItemId": "97663",
+      "ItemName": "Proficient Hat"
+    },
+    {
+      "ItemId": "97665",
+      "ItemName": "Sprightly Hood"
+    },
+    {
+      "ItemId": "97670",
+      "ItemName": "Hat of the Eager"
+    },
+    {
+      "ItemId": "97677",
+      "ItemName": "Shroud of Deliberation"
+    },
+    {
+      "ItemId": "97783",
+      "ItemName": "Pupil's Uniform"
+    },
+    {
+      "ItemId": "97785",
+      "ItemName": "Benign Robe"
+    },
+    {
+      "ItemId": "97799",
+      "ItemName": "Engrossed Robes"
+    },
+    {
+      "ItemId": "97802",
+      "ItemName": "Abstract Vestment"
+    },
+    {
+      "ItemId": "97816",
+      "ItemName": "Tunic of Scruples"
+    },
+    {
+      "ItemId": "97819",
+      "ItemName": "Meticulous Cloak"
+    },
+    {
+      "ItemId": "97833",
+      "ItemName": "Haskarr's Barbarish Tunic"
+    },
+    {
+      "ItemId": "97835",
+      "ItemName": "Light-as-Air Cloak"
+    },
+    {
+      "ItemId": "97848",
+      "ItemName": "Druidic Tunic"
+    },
+    {
+      "ItemId": "97851",
+      "ItemName": "Vestment of Fiction"
+    },
+    {
+      "ItemId": "97864",
+      "ItemName": "Robe of Hinderance"
+    },
+    {
+      "ItemId": "97867",
+      "ItemName": "Garments of Predicament"
+    },
+    {
+      "ItemId": "97880",
+      "ItemName": "Robe of the Universe"
+    },
+    {
+      "ItemId": "97883",
+      "ItemName": "Proficient Cloak"
+    },
+    {
+      "ItemId": "97943",
+      "ItemName": "Prospective Boots"
+    },
+    {
+      "ItemId": "97946",
+      "ItemName": "Benign Slippers"
+    },
+    {
+      "ItemId": "97959",
+      "ItemName": "Gripping Boots"
+    },
+    {
+      "ItemId": "97963",
+      "ItemName": "Abstract Footwraps"
+    },
+    {
+      "ItemId": "97977",
+      "ItemName": "Boots of the Astute"
+    },
+    {
+      "ItemId": "97979",
+      "ItemName": "Nunu's Twisted Slippers"
+    },
+    {
+      "ItemId": "97993",
+      "ItemName": "Boots of Captivation"
+    },
+    {
+      "ItemId": "97996",
+      "ItemName": "Light-as-Air Slippers"
+    },
+    {
+      "ItemId": "98010",
+      "ItemName": "Boots of Awareness"
+    },
+    {
+      "ItemId": "98013",
+      "ItemName": "Warbled Shoes"
+    },
+    {
+      "ItemId": "98027",
+      "ItemName": "Systematic Boots"
+    },
+    {
+      "ItemId": "98030",
+      "ItemName": "Painful Slippers"
+    },
+    {
+      "ItemId": "98044",
+      "ItemName": "Boots of Disillusion"
+    },
+    {
+      "ItemId": "98047",
+      "ItemName": "Boots of the Lithe"
+    },
+    {
+      "ItemId": "161059",
+      "ItemName": "Verdurous Band"
+    }
+  ]
+}

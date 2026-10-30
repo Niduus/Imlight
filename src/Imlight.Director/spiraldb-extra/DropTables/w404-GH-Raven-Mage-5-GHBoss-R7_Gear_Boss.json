@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Raven-Mage-5-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Raven-Mage-5-GHBoss-R7: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136300",
+      "ItemName": "Poniard of Repose"
+    },
+    {
+      "ItemId": "136507",
+      "ItemName": "Arctic Circlet"
+    },
+    {
+      "ItemId": "136509",
+      "ItemName": "Stone of the Icedrake"
+    },
+    {
+      "ItemId": "136520",
+      "ItemName": "Signet of Fatality"
+    },
+    {
+      "ItemId": "136646",
+      "ItemName": "Surcoat of Sleet"
+    },
+    {
+      "ItemId": "136648",
+      "ItemName": "Jerkin of the Undine"
+    }
+  ]
+}

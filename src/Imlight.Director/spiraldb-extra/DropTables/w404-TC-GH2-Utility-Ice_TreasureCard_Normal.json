@@ -1,0 +1,17 @@
+{
+  "Name": "W404 TC-GH2-Utility-Ice TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table TC-GH2-Utility-Ice: the treasurecard drops (2), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Legion Shield TC",
+      "ItemName": "Legion Shield"
+    },
+    {
+      "ItemId": "Frozen Armor TC",
+      "ItemName": "Frozen Armor"
+    }
+  ]
+}

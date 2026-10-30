@@ -1,0 +1,17 @@
+{
+  "Name": "W404 MB-Spider-Black-MBBoss-L42 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Spider-Black-MBBoss-L42: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160659",
+      "ItemName": "Well-traveled Suitcase"
+    },
+    {
+      "ItemId": "160717",
+      "ItemName": "Snapped Plank"
+    }
+  ]
+}

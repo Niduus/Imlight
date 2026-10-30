@@ -1,0 +1,89 @@
+{
+  "Name": "W404 Skey_Gold_Aggrobah Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skey_Gold_Aggrobah: the gear drops (20), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1402876",
+      "ItemName": "Eerem Courtier's Spread"
+    },
+    {
+      "ItemId": "1402908",
+      "ItemName": "Eerem Palace Gallery"
+    },
+    {
+      "ItemId": "1402940",
+      "ItemName": "Array of Mighty Istanboa"
+    },
+    {
+      "ItemId": "1405164",
+      "ItemName": "Eerem Courtier's Headwrap"
+    },
+    {
+      "ItemId": "1405196",
+      "ItemName": "Eerem Courtier's Raiment"
+    },
+    {
+      "ItemId": "1405228",
+      "ItemName": "Eerem Courtier's Givehs"
+    },
+    {
+      "ItemId": "1405260",
+      "ItemName": "Eerem Courtier's Razor"
+    },
+    {
+      "ItemId": "1405292",
+      "ItemName": "Eerem Courtier's Talisman"
+    },
+    {
+      "ItemId": "1405356",
+      "ItemName": "Razor of Eerem Palace"
+    },
+    {
+      "ItemId": "1405388",
+      "ItemName": "Necklace of Eerem Palace"
+    },
+    {
+      "ItemId": "1405452",
+      "ItemName": "Khanjar of Mighty Istanboa"
+    },
+    {
+      "ItemId": "1405484",
+      "ItemName": "Istanboa Pendant of Might"
+    },
+    {
+      "ItemId": "1414263",
+      "ItemName": "Mithraya's Blazing Loop"
+    },
+    {
+      "ItemId": "1414264",
+      "ItemName": "Prince's Glacial Band"
+    },
+    {
+      "ItemId": "1414265",
+      "ItemName": "Hagakure's Monsoon Ring"
+    },
+    {
+      "ItemId": "1414266",
+      "ItemName": "Drake Ancestral Signet"
+    },
+    {
+      "ItemId": "1414267",
+      "ItemName": "Mithraya Vivid Seal"
+    },
+    {
+      "ItemId": "1414268",
+      "ItemName": "Ghost Dog's Dire Loop"
+    },
+    {
+      "ItemId": "1414269",
+      "ItemName": "Charmbeak's Karma Band"
+    },
+    {
+      "ItemId": "1414270",
+      "ItemName": "Stellar Protector's Ring"
+    }
+  ]
+}

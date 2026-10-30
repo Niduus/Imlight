@@ -1,0 +1,33 @@
+{
+  "Name": "W404 Mob-1223077 Seed (Elite)",
+  "Description": "Wizard404's drop list of Devil's Flower's own drops: the seed drops (6), one picked when it rolls. How often: DropOdds.json Elite/Seed.",
+  "Odds": "Elite/Seed",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion"
+    },
+    {
+      "ItemId": "473078",
+      "ItemName": "Key Limes"
+    },
+    {
+      "ItemId": "473131",
+      "ItemName": "Red Bell Pepper"
+    },
+    {
+      "ItemId": "589180",
+      "ItemName": "Red Huckleberries"
+    },
+    {
+      "ItemId": "589187",
+      "ItemName": "Pink Huckleberries"
+    },
+    {
+      "ItemId": "1248066",
+      "ItemName": "Sugar Khrystal"
+    }
+  ]
+}

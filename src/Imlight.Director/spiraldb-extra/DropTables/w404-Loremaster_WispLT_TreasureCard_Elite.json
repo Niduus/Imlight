@@ -1,0 +1,77 @@
+{
+  "Name": "W404 Loremaster_WispLT TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table Loremaster_WispLT: the treasurecard drops (17), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Sprite TC",
+      "ItemName": "Sprite"
+    },
+    {
+      "ItemId": "Unicorn TC",
+      "ItemName": "Unicorn"
+    },
+    {
+      "ItemId": "Spirit Armor TC",
+      "ItemName": "Spirit Armor"
+    },
+    {
+      "ItemId": "Satyr TC",
+      "ItemName": "Satyr"
+    },
+    {
+      "ItemId": "Regenerate TC",
+      "ItemName": "Regenerate"
+    },
+    {
+      "ItemId": "Dryad TC",
+      "ItemName": "Dryad"
+    },
+    {
+      "ItemId": "Rebirth TC",
+      "ItemName": "Rebirth"
+    },
+    {
+      "ItemId": "Weakness TC",
+      "ItemName": "Weakness"
+    },
+    {
+      "ItemId": "Black Mantle TC",
+      "ItemName": "Black Mantle"
+    },
+    {
+      "ItemId": "Plague TC",
+      "ItemName": "Plague"
+    },
+    {
+      "ItemId": "Virulent Plague TC",
+      "ItemName": "Virulent Plague"
+    },
+    {
+      "ItemId": "Spirit Shield TC",
+      "ItemName": "Spirit Shield"
+    },
+    {
+      "ItemId": "Tri Shield TC",
+      "ItemName": "Elemental Shield"
+    },
+    {
+      "ItemId": "Tri Trap TC",
+      "ItemName": "Elemental Trap"
+    },
+    {
+      "ItemId": "Spirit Trap TC",
+      "ItemName": "Spirit Trap"
+    },
+    {
+      "ItemId": "Hex TC",
+      "ItemName": "Hex"
+    },
+    {
+      "ItemId": "Curse TC",
+      "ItemName": "Curse"
+    }
+  ]
+}

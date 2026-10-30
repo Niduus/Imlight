@@ -1,0 +1,149 @@
+{
+  "Name": "W404 G14-CD-Boss-ShaneV1 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-CD-Boss-ShaneV1: the gear drops (35), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330961",
+      "ItemName": "Brimstone Helm of Darkmoor"
+    },
+    {
+      "ItemId": "1330962",
+      "ItemName": "Darkmoor Helmet of Shivers"
+    },
+    {
+      "ItemId": "1330963",
+      "ItemName": "Raging Blackwater's Helm"
+    },
+    {
+      "ItemId": "1330964",
+      "ItemName": "Darkmoor Barbut of Delusion"
+    },
+    {
+      "ItemId": "1330965",
+      "ItemName": "Helm of the Living Dead"
+    },
+    {
+      "ItemId": "1330966",
+      "ItemName": "Depths of Darkmoor Cover"
+    },
+    {
+      "ItemId": "1330967",
+      "ItemName": "Darkmoor Herald's Mantle"
+    },
+    {
+      "ItemId": "1338045",
+      "ItemName": "Brimstone Gear of Darkmoor"
+    },
+    {
+      "ItemId": "1338046",
+      "ItemName": "Darkmoor Armor of Shivers"
+    },
+    {
+      "ItemId": "1338047",
+      "ItemName": "Raging Blackwater's Plate"
+    },
+    {
+      "ItemId": "1338048",
+      "ItemName": "Darkmoor Armor of Delusion"
+    },
+    {
+      "ItemId": "1338049",
+      "ItemName": "Plate of the Living Dead"
+    },
+    {
+      "ItemId": "1338050",
+      "ItemName": "Depths of Darkmoor Raiment"
+    },
+    {
+      "ItemId": "1338051",
+      "ItemName": "Darkmoor Herald's Gear"
+    },
+    {
+      "ItemId": "1338129",
+      "ItemName": "Brimstone Boots of Darkmoor"
+    },
+    {
+      "ItemId": "1338130",
+      "ItemName": "Sabatons of Frozen Furor"
+    },
+    {
+      "ItemId": "1338131",
+      "ItemName": "Raging Blackwater's Boots"
+    },
+    {
+      "ItemId": "1338132",
+      "ItemName": "Darkmoor Boots of Delusion"
+    },
+    {
+      "ItemId": "1338133",
+      "ItemName": "Sabatons of the Living Dead"
+    },
+    {
+      "ItemId": "1338134",
+      "ItemName": "Depths of Darkmoor Stalkers"
+    },
+    {
+      "ItemId": "1338135",
+      "ItemName": "Herald of Darkmoor's Shoes"
+    },
+    {
+      "ItemId": "1338304",
+      "ItemName": "Talisman of the Daystar"
+    },
+    {
+      "ItemId": "1338305",
+      "ItemName": "Amulet of Neverwhere"
+    },
+    {
+      "ItemId": "1338306",
+      "ItemName": "FlyGob's Medallion"
+    },
+    {
+      "ItemId": "1338307",
+      "ItemName": "Universal Memento"
+    },
+    {
+      "ItemId": "1338308",
+      "ItemName": "Spirit of Darkmoor's Jewel"
+    },
+    {
+      "ItemId": "1338309",
+      "ItemName": "Death Seeker's Talisman"
+    },
+    {
+      "ItemId": "1338310",
+      "ItemName": "Travelling Dead's Charm"
+    },
+    {
+      "ItemId": "1338549",
+      "ItemName": "Mace of the Dark Flame"
+    },
+    {
+      "ItemId": "1338550",
+      "ItemName": "Virge of the Bitter Ghost"
+    },
+    {
+      "ItemId": "1338551",
+      "ItemName": "Bludgeon of the Dark Skies"
+    },
+    {
+      "ItemId": "1338552",
+      "ItemName": "Morning Star of Kan Davasi"
+    },
+    {
+      "ItemId": "1338553",
+      "ItemName": "Mace of the Undying"
+    },
+    {
+      "ItemId": "1338554",
+      "ItemName": "Morning Star of Misery"
+    },
+    {
+      "ItemId": "1338555",
+      "ItemName": "Mace of the Outer Void"
+    }
+  ]
+}

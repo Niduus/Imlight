@@ -1,0 +1,121 @@
+{
+  "Name": "W404 MB-Elite-38-43 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table MB-Elite-38-43: the gear drops (28), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "39014",
+      "ItemName": "Glowing Canine Hat"
+    },
+    {
+      "ItemId": "39031",
+      "ItemName": "Winter Canine Cowl"
+    },
+    {
+      "ItemId": "77080",
+      "ItemName": "Mechanical Ring"
+    },
+    {
+      "ItemId": "77156",
+      "ItemName": "Vest of Predominance"
+    },
+    {
+      "ItemId": "77162",
+      "ItemName": "Vestment of the Sun"
+    },
+    {
+      "ItemId": "77179",
+      "ItemName": "Cosmopolitan Robe"
+    },
+    {
+      "ItemId": "77228",
+      "ItemName": "Slippers of Predominance"
+    },
+    {
+      "ItemId": "77238",
+      "ItemName": "Shoes of Preference"
+    },
+    {
+      "ItemId": "97088",
+      "ItemName": "Agent's Kris"
+    },
+    {
+      "ItemId": "97112",
+      "ItemName": "Deck of Chivalry"
+    },
+    {
+      "ItemId": "97145",
+      "ItemName": "Feline's Charged Hat"
+    },
+    {
+      "ItemId": "97162",
+      "ItemName": "Superstitious Canine Cowl"
+    },
+    {
+      "ItemId": "97179",
+      "ItemName": "Shaman's Hat"
+    },
+    {
+      "ItemId": "97196",
+      "ItemName": "Silent Canine Cowl"
+    },
+    {
+      "ItemId": "97213",
+      "ItemName": "Jinxed Hat"
+    },
+    {
+      "ItemId": "97248",
+      "ItemName": "Tunic of the Clever"
+    },
+    {
+      "ItemId": "97264",
+      "ItemName": "Feline's Whimsical Robe"
+    },
+    {
+      "ItemId": "97281",
+      "ItemName": "Feline's Invigorating Robe"
+    },
+    {
+      "ItemId": "97298",
+      "ItemName": "Feline's Somber Robe"
+    },
+    {
+      "ItemId": "97315",
+      "ItemName": "Tunic of Symmetry"
+    },
+    {
+      "ItemId": "97326",
+      "ItemName": "Tunic of Chivalry"
+    },
+    {
+      "ItemId": "97348",
+      "ItemName": "Premium Footwraps"
+    },
+    {
+      "ItemId": "97362",
+      "ItemName": "Remarkable Sandals"
+    },
+    {
+      "ItemId": "97377",
+      "ItemName": "Bewitching Shoes"
+    },
+    {
+      "ItemId": "97392",
+      "ItemName": "Magnificent Boots"
+    },
+    {
+      "ItemId": "97407",
+      "ItemName": "Admirable Shoes"
+    },
+    {
+      "ItemId": "97417",
+      "ItemName": "Puddle Stompers"
+    },
+    {
+      "ItemId": "97419",
+      "ItemName": "Exquisite Slippers"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "Name": "W404 Mob-126749 Gear (Boss)",
+  "Description": "Wizard404's drop list of Gurtok Firebender's own drops: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1548925",
+      "ItemName": "Gurtok Oroboros Loop"
+    },
+    {
+      "ItemId": "1548926",
+      "ItemName": "Gurtok Mortis Seal"
+    },
+    {
+      "ItemId": "1548927",
+      "ItemName": "Gurtok Ignus Signet"
+    },
+    {
+      "ItemId": "1548928",
+      "ItemName": "Gurtok Celsius Band"
+    },
+    {
+      "ItemId": "1548929",
+      "ItemName": "Gurtok Vivus Ring"
+    },
+    {
+      "ItemId": "1548930",
+      "ItemName": "Gurtok Apotheosis Ringlet"
+    },
+    {
+      "ItemId": "1548931",
+      "ItemName": "Gurtok Fulgis Circlet"
+    },
+    {
+      "ItemId": "1548933",
+      "ItemName": "Snowcrusher's Snowstompers"
+    },
+    {
+      "ItemId": "1592350",
+      "ItemName": "Gurtok Oroboros Coil"
+    },
+    {
+      "ItemId": "1592351",
+      "ItemName": "Gurtok Mortis Coil"
+    },
+    {
+      "ItemId": "1592352",
+      "ItemName": "Gurtok Ignus Coil"
+    },
+    {
+      "ItemId": "1592353",
+      "ItemName": "Gurtok Celsius Coil"
+    },
+    {
+      "ItemId": "1592354",
+      "ItemName": "Gurtok Vivus Coil"
+    },
+    {
+      "ItemId": "1592355",
+      "ItemName": "Gurtok Apotheosis Coil"
+    },
+    {
+      "ItemId": "1592356",
+      "ItemName": "Gurtok Fulgis Coil"
+    }
+  ]
+}

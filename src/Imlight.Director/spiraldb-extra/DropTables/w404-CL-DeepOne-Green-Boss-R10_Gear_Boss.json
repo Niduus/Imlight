@@ -1,0 +1,49 @@
+{
+  "Name": "W404 CL-DeepOne-Green-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-DeepOne-Green-Boss-R10: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243238",
+      "ItemName": "Longevity Twin Blades"
+    },
+    {
+      "ItemId": "243263",
+      "ItemName": "Blade of Bloom"
+    },
+    {
+      "ItemId": "243372",
+      "ItemName": "Shivering Mask"
+    },
+    {
+      "ItemId": "243429",
+      "ItemName": "Jolted Cowl"
+    },
+    {
+      "ItemId": "243511",
+      "ItemName": "Seal of the Steadfast"
+    },
+    {
+      "ItemId": "243571",
+      "ItemName": "Tangleroot's Blooming Band"
+    },
+    {
+      "ItemId": "243597",
+      "ItemName": "Forgotten Outfit"
+    },
+    {
+      "ItemId": "243623",
+      "ItemName": "Fire-Forged Flame Armor"
+    },
+    {
+      "ItemId": "243729",
+      "ItemName": "Kindred Walkers"
+    },
+    {
+      "ItemId": "243748",
+      "ItemName": "Forgotten Footwear"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "Name": "W404 KM-Boss-PetSnacks-Rare Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-Boss-PetSnacks-Rare: the snack drops (10), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220241",
+      "ItemName": "Dragon Fruit"
+    },
+    {
+      "ItemId": "220311",
+      "ItemName": "Glowing Star Fruit"
+    },
+    {
+      "ItemId": "220338",
+      "ItemName": "Crackle Jacks Cereal"
+    },
+    {
+      "ItemId": "789221",
+      "ItemName": "Waterworks Wonton"
+    },
+    {
+      "ItemId": "1317095",
+      "ItemName": "Roly Poly Fishheads"
+    },
+    {
+      "ItemId": "1359606",
+      "ItemName": "Ships 'n' Queso"
+    },
+    {
+      "ItemId": "1359608",
+      "ItemName": "Tasty Rainbow"
+    },
+    {
+      "ItemId": "1359618",
+      "ItemName": "Veggie Juice"
+    },
+    {
+      "ItemId": "1359622",
+      "ItemName": "Eye Candy"
+    },
+    {
+      "ItemId": "1392079",
+      "ItemName": "Krakamari"
+    }
+  ]
+}

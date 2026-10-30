@@ -1,0 +1,29 @@
+{
+  "Name": "W404 Mob-684239 Housing (Boss)",
+  "Description": "Wizard404's drop list of Yacate Farwalker's own drops: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "512206",
+      "ItemName": "Azteca Main Theme"
+    },
+    {
+      "ItemId": "512207",
+      "ItemName": "Azteca Apocalypse Theme"
+    },
+    {
+      "ItemId": "739112",
+      "ItemName": "Bird Head Mount"
+    },
+    {
+      "ItemId": "739121",
+      "ItemName": "Clothesline"
+    },
+    {
+      "ItemId": "739183",
+      "ItemName": "Starburst Frond"
+    }
+  ]
+}

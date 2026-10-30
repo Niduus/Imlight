@@ -1,0 +1,21 @@
+{
+  "Name": "W404 WC-SKR-Roberto Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table WC-SKR-Roberto: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1350308",
+      "ItemName": "Novice's Socket Wrench"
+    },
+    {
+      "ItemId": "1350309",
+      "ItemName": "Adept's Socket Wrench"
+    }
+  ]
+}

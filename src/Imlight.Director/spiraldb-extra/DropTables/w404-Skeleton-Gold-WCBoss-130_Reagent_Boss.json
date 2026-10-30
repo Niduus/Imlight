@@ -1,0 +1,77 @@
+{
+  "Name": "W404 Skeleton-Gold-WCBoss-130 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skeleton-Gold-WCBoss-130: the reagent drops (17), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "106943",
+      "ItemName": "Ectoplasm"
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk"
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear"
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "Blood Moss"
+    },
+    {
+      "ItemId": "106962",
+      "ItemName": "Ancient Scroll"
+    },
+    {
+      "ItemId": "106964",
+      "ItemName": "Spring"
+    },
+    {
+      "ItemId": "106966",
+      "ItemName": "Black Pearl"
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales"
+    },
+    {
+      "ItemId": "1350011",
+      "ItemName": "Tin"
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel"
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass"
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt"
+    },
+    {
+      "ItemId": "1392189",
+      "ItemName": "Antique Coins"
+    },
+    {
+      "ItemId": "1492248",
+      "ItemName": "Fire Cat"
+    },
+    {
+      "ItemId": "1494689",
+      "ItemName": "Dark Sprite"
+    },
+    {
+      "ItemId": "1494693",
+      "ItemName": "Fire Elf"
+    },
+    {
+      "ItemId": "1494696",
+      "ItemName": "Blood Bat"
+    }
+  ]
+}

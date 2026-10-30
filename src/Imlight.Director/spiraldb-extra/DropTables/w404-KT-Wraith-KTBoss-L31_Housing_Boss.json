@@ -1,0 +1,25 @@
+{
+  "Name": "W404 KT-Wraith-KTBoss-L31 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-Wraith-KTBoss-L31: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82780",
+      "ItemName": "Sand Celebration Rug"
+    },
+    {
+      "ItemId": "82783",
+      "ItemName": "Open Ice Sarcophagus"
+    },
+    {
+      "ItemId": "82837",
+      "ItemName": "Krok Skull Tablet"
+    },
+    {
+      "ItemId": "512122",
+      "ItemName": "Krokotopia Theme 3"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Mob-1283394 Seed (Normal)",
+  "Description": "Wizard404's drop list of Death Stalker's own drops: the seed drops (3), one picked when it rolls. How often: DropOdds.json Normal/Seed.",
+  "Odds": "Normal/Seed",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "473647",
+      "ItemName": "Moon Flower"
+    },
+    {
+      "ItemId": "589166",
+      "ItemName": "Honey Bee Plant"
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries"
+    }
+  ]
+}

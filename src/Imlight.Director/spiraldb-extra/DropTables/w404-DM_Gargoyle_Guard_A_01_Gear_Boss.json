@@ -1,0 +1,121 @@
+{
+  "Name": "W404 DM_Gargoyle_Guard_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Gargoyle_Guard_A_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1707805",
+      "ItemName": "Mask of the Turning Wheel"
+    },
+    {
+      "ItemId": "1707806",
+      "ItemName": "Mask of the Doomed"
+    },
+    {
+      "ItemId": "1707807",
+      "ItemName": "Mask of the Burnt Forest"
+    },
+    {
+      "ItemId": "1707808",
+      "ItemName": "Mask of the Coldhearted"
+    },
+    {
+      "ItemId": "1707809",
+      "ItemName": "Mask of the Living Lie"
+    },
+    {
+      "ItemId": "1707810",
+      "ItemName": "Mask of False Promises"
+    },
+    {
+      "ItemId": "1707811",
+      "ItemName": "Mask of the Changing Tide"
+    },
+    {
+      "ItemId": "1707903",
+      "ItemName": "Cards of the Turning Wheel"
+    },
+    {
+      "ItemId": "1707904",
+      "ItemName": "Cards of the Doomed"
+    },
+    {
+      "ItemId": "1707905",
+      "ItemName": "Cards of the Burnt Forest"
+    },
+    {
+      "ItemId": "1707906",
+      "ItemName": "Cards of the Coldhearted"
+    },
+    {
+      "ItemId": "1707907",
+      "ItemName": "Cards of the Living Lie"
+    },
+    {
+      "ItemId": "1707908",
+      "ItemName": "Cards of False Promises"
+    },
+    {
+      "ItemId": "1707909",
+      "ItemName": "Cards of the Changing Tide"
+    },
+    {
+      "ItemId": "1712446",
+      "ItemName": "Broken Branch Luckless Cards"
+    },
+    {
+      "ItemId": "1712447",
+      "ItemName": "Broken Branch Terror Cards"
+    },
+    {
+      "ItemId": "1712448",
+      "ItemName": "Broken Branch Rage Cards"
+    },
+    {
+      "ItemId": "1712449",
+      "ItemName": "Broken Branch Sorrow Cards"
+    },
+    {
+      "ItemId": "1712450",
+      "ItemName": "Broken Branch Neglect Cards"
+    },
+    {
+      "ItemId": "1712451",
+      "ItemName": "Broken Branch Loss Cards"
+    },
+    {
+      "ItemId": "1712452",
+      "ItemName": "Broken Branch Panic Cards"
+    },
+    {
+      "ItemId": "1712474",
+      "ItemName": "Broken Branch Luckless Mask"
+    },
+    {
+      "ItemId": "1712475",
+      "ItemName": "Broken Branch Terror Mask"
+    },
+    {
+      "ItemId": "1712476",
+      "ItemName": "Broken Branch Rage Mask"
+    },
+    {
+      "ItemId": "1712477",
+      "ItemName": "Broken Branch Sorrow Mask"
+    },
+    {
+      "ItemId": "1712478",
+      "ItemName": "Broken Branch Neglect Mask"
+    },
+    {
+      "ItemId": "1712479",
+      "ItemName": "Broken Branch Loss Mask"
+    },
+    {
+      "ItemId": "1712480",
+      "ItemName": "Broken Branch Panic Mask"
+    }
+  ]
+}

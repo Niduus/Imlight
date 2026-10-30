@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Colossus-Magma-Boss-R7 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table Colossus-Magma-Boss-R7: the gear drops (16), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104631",
+      "ItemName": "Shroud of the Spider"
+    },
+    {
+      "ItemId": "104682",
+      "ItemName": "Blackblade's Frostweave Robe"
+    },
+    {
+      "ItemId": "104708",
+      "ItemName": "Stormcaller's Smock"
+    },
+    {
+      "ItemId": "104843",
+      "ItemName": "Slippers of the Zephyr"
+    },
+    {
+      "ItemId": "104847",
+      "ItemName": "Boots of the Coming Storm"
+    },
+    {
+      "ItemId": "104850",
+      "ItemName": "Boots of the Forgotten"
+    },
+    {
+      "ItemId": "104865",
+      "ItemName": "Arboreal Boots"
+    },
+    {
+      "ItemId": "104887",
+      "ItemName": "Lore-Striders"
+    },
+    {
+      "ItemId": "126635",
+      "ItemName": "Serpent Eye Band"
+    },
+    {
+      "ItemId": "146206",
+      "ItemName": "Cap of Fables"
+    },
+    {
+      "ItemId": "146242",
+      "ItemName": "Shroud of Sagas"
+    },
+    {
+      "ItemId": "146291",
+      "ItemName": "Hood of Permafrost"
+    },
+    {
+      "ItemId": "146293",
+      "ItemName": "Frostwrapped Hood"
+    },
+    {
+      "ItemId": "146309",
+      "ItemName": "Flame Shroud"
+    },
+    {
+      "ItemId": "146354",
+      "ItemName": "Blackblade's Baleful Hood"
+    },
+    {
+      "ItemId": "146356",
+      "ItemName": "Cowl of Resilience"
+    }
+  ]
+}

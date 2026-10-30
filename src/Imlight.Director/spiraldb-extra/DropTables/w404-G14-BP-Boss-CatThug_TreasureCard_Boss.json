@@ -1,0 +1,89 @@
+{
+  "Name": "W404 G14-BP-Boss-CatThug TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-BP-Boss-CatThug: the treasurecard drops (20), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Meteor Strike TC",
+      "ItemName": "Meteor Strike"
+    },
+    {
+      "ItemId": "Ice Wyvern TC",
+      "ItemName": "Ice Wyvern"
+    },
+    {
+      "ItemId": "Kraken TC",
+      "ItemName": "Kraken"
+    },
+    {
+      "ItemId": "Seraph TC",
+      "ItemName": "Seraph"
+    },
+    {
+      "ItemId": "Humongofrog TC",
+      "ItemName": "Humongofrog"
+    },
+    {
+      "ItemId": "Vampire TC",
+      "ItemName": "Vampire"
+    },
+    {
+      "ItemId": "Sandstorm TC",
+      "ItemName": "Sandstorm"
+    },
+    {
+      "ItemId": "Power Play TC",
+      "ItemName": "Power Play"
+    },
+    {
+      "ItemId": "Doom and Gloom TC",
+      "ItemName": "Doom and Gloom"
+    },
+    {
+      "ItemId": "Blood Moon TC",
+      "ItemName": "Time of Legend"
+    },
+    {
+      "ItemId": "Sanctuary TC",
+      "ItemName": "Sanctuary"
+    },
+    {
+      "ItemId": "Darkwind TC",
+      "ItemName": "Darkwind"
+    },
+    {
+      "ItemId": "Balefrost TC",
+      "ItemName": "Balefrost"
+    },
+    {
+      "ItemId": "Wyldfire TC",
+      "ItemName": "Wyldfire"
+    },
+    {
+      "ItemId": "Cat Thug TC",
+      "ItemName": "Cat Thug"
+    },
+    {
+      "ItemId": "Clockwork TC",
+      "ItemName": "Clockwork"
+    },
+    {
+      "ItemId": "Deadly Scratcher TC",
+      "ItemName": "Deadly Scratcher"
+    },
+    {
+      "ItemId": "Firegut TC",
+      "ItemName": "Iron Golem"
+    },
+    {
+      "ItemId": "Spider Clockwork TC",
+      "ItemName": "Clockwork Spider"
+    },
+    {
+      "ItemId": "Street Sweeper TC",
+      "ItemName": "Street Sweeper"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "W404 WV_B04_Krok_Mummy_B_01 Jewel (Elite)",
+  "Description": "Wizard404's drop list of the game's table WV_B04_Krok_Mummy_B_01: the jewel drops (1), one picked when it rolls. How often: DropOdds.json Elite/Jewel.",
+  "Odds": "Elite/Jewel",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1352808",
+      "ItemName": "Polished Piercing Citrine +6%"
+    }
+  ]
+}

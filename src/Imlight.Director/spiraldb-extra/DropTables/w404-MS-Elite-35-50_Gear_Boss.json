@@ -1,0 +1,113 @@
+{
+  "Name": "W404 MS-Elite-35-50 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Elite-35-50: the gear drops (26), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97486",
+      "ItemName": "Deck of the Lotus"
+    },
+    {
+      "ItemId": "97676",
+      "ItemName": "Cap of Consideration"
+    },
+    {
+      "ItemId": "97680",
+      "ItemName": "Helm of Sandcastles"
+    },
+    {
+      "ItemId": "97788",
+      "ItemName": "Friendly Garments"
+    },
+    {
+      "ItemId": "97792",
+      "ItemName": "Indulgent Vestment"
+    },
+    {
+      "ItemId": "97805",
+      "ItemName": "Profound Robes"
+    },
+    {
+      "ItemId": "97809",
+      "ItemName": "Tunic of the Whim"
+    },
+    {
+      "ItemId": "97822",
+      "ItemName": "Tunic of Impression"
+    },
+    {
+      "ItemId": "97826",
+      "ItemName": "Garment of Dilemma"
+    },
+    {
+      "ItemId": "97838",
+      "ItemName": "Tunic of Chimes"
+    },
+    {
+      "ItemId": "97842",
+      "ItemName": "Lyrical Garments"
+    },
+    {
+      "ItemId": "97854",
+      "ItemName": "Robes of the Triad"
+    },
+    {
+      "ItemId": "97857",
+      "ItemName": "Garment of Yodels"
+    },
+    {
+      "ItemId": "97870",
+      "ItemName": "Tormented Cloak"
+    },
+    {
+      "ItemId": "97873",
+      "ItemName": "Vexing Tunic"
+    },
+    {
+      "ItemId": "97886",
+      "ItemName": "Zippy Tunic"
+    },
+    {
+      "ItemId": "97889",
+      "ItemName": "Vestment of the Eager"
+    },
+    {
+      "ItemId": "97898",
+      "ItemName": "Tunic of Soul-Searching"
+    },
+    {
+      "ItemId": "97900",
+      "ItemName": "Garment of Sandcastles"
+    },
+    {
+      "ItemId": "97953",
+      "ItemName": "Indulgent Boots"
+    },
+    {
+      "ItemId": "97970",
+      "ItemName": "Shoes of the Whim"
+    },
+    {
+      "ItemId": "97986",
+      "ItemName": "Footwraps of Pictures"
+    },
+    {
+      "ItemId": "98003",
+      "ItemName": "Lyrical Footwraps"
+    },
+    {
+      "ItemId": "98020",
+      "ItemName": "Slippers of Yodels"
+    },
+    {
+      "ItemId": "98037",
+      "ItemName": "Vexing Boots"
+    },
+    {
+      "ItemId": "98054",
+      "ItemName": "Sandals of the Determined"
+    }
+  ]
+}

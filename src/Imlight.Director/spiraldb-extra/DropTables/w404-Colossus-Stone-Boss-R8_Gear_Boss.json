@@ -1,0 +1,77 @@
+{
+  "Name": "W404 Colossus-Stone-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Colossus-Stone-Boss-R8: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104640",
+      "ItemName": "Librarian's Robes"
+    },
+    {
+      "ItemId": "104667",
+      "ItemName": "Avalanche's Verdant Robe"
+    },
+    {
+      "ItemId": "104684",
+      "ItemName": "Snowflower Cloak"
+    },
+    {
+      "ItemId": "104763",
+      "ItemName": "Avalanche's Frigid Boots"
+    },
+    {
+      "ItemId": "104812",
+      "ItemName": "Mocassins of Mortality"
+    },
+    {
+      "ItemId": "104834",
+      "ItemName": "Sandals of Zest"
+    },
+    {
+      "ItemId": "104875",
+      "ItemName": "Slippers of the Slipstream"
+    },
+    {
+      "ItemId": "126586",
+      "ItemName": "Heartwood Band"
+    },
+    {
+      "ItemId": "126600",
+      "ItemName": "Avalanche's Fiery Band"
+    },
+    {
+      "ItemId": "126605",
+      "ItemName": "Signet of the Chimera"
+    },
+    {
+      "ItemId": "126656",
+      "ItemName": "Avalanche's Legendary Cutlass"
+    },
+    {
+      "ItemId": "146131",
+      "ItemName": "Avalanche's Icy Athame"
+    },
+    {
+      "ItemId": "146176",
+      "ItemName": "Talon of the Wyrmkin"
+    },
+    {
+      "ItemId": "146198",
+      "ItemName": "Infinity's Edge"
+    },
+    {
+      "ItemId": "146270",
+      "ItemName": "Hood of the Ranger"
+    },
+    {
+      "ItemId": "146320",
+      "ItemName": "Blazing Bonnet"
+    },
+    {
+      "ItemId": "146365",
+      "ItemName": "Avalanche's Balanced Mantle"
+    }
+  ]
+}

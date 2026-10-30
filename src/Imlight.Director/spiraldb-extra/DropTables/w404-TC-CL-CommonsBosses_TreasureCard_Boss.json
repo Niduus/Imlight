@@ -1,0 +1,21 @@
+{
+  "Name": "W404 TC-CL-CommonsBosses TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-CL-CommonsBosses: the treasurecard drops (3), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Giant TC",
+      "ItemName": "Giant"
+    },
+    {
+      "ItemId": "Accurate TC",
+      "ItemName": "Accurate"
+    },
+    {
+      "ItemId": "Amplify TC",
+      "ItemName": "Amplify"
+    }
+  ]
+}

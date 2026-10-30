@@ -1,0 +1,121 @@
+{
+  "Name": "W404 WL_Vapor_Monster_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WL_Vapor_Monster_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1628425",
+      "ItemName": "Just Enforcer's Deck"
+    },
+    {
+      "ItemId": "1628426",
+      "ItemName": "Morbid Enforcer's Deck"
+    },
+    {
+      "ItemId": "1628427",
+      "ItemName": "Furious Enforcer's Deck"
+    },
+    {
+      "ItemId": "1628428",
+      "ItemName": "Steely Enforcer's Deck"
+    },
+    {
+      "ItemId": "1628429",
+      "ItemName": "Dynamic Enforcer's Deck"
+    },
+    {
+      "ItemId": "1628430",
+      "ItemName": "Legendary Enforcer's Deck"
+    },
+    {
+      "ItemId": "1628431",
+      "ItemName": "Thunderous Enforcer's Deck"
+    },
+    {
+      "ItemId": "1628446",
+      "ItemName": "Just Enforcer's Gavel"
+    },
+    {
+      "ItemId": "1628447",
+      "ItemName": "Morbid Enforcer's Gavel"
+    },
+    {
+      "ItemId": "1628448",
+      "ItemName": "Furious Enforcer's Gavel"
+    },
+    {
+      "ItemId": "1628449",
+      "ItemName": "Steely Enforcer's Gavel"
+    },
+    {
+      "ItemId": "1628450",
+      "ItemName": "Dynamic Enforcer's Gavel"
+    },
+    {
+      "ItemId": "1628451",
+      "ItemName": "Legendary Enforcer's Gavel"
+    },
+    {
+      "ItemId": "1628452",
+      "ItemName": "Thunderous Enforcer's Gavel"
+    },
+    {
+      "ItemId": "1628593",
+      "ItemName": "Just Protector's Deck"
+    },
+    {
+      "ItemId": "1628594",
+      "ItemName": "Morbid Protector's Deck"
+    },
+    {
+      "ItemId": "1628595",
+      "ItemName": "Furious Protector's Deck"
+    },
+    {
+      "ItemId": "1628596",
+      "ItemName": "Steely Protector's Deck"
+    },
+    {
+      "ItemId": "1628597",
+      "ItemName": "Dynamic Protector's Deck"
+    },
+    {
+      "ItemId": "1628598",
+      "ItemName": "Legendary Protector's Deck"
+    },
+    {
+      "ItemId": "1628599",
+      "ItemName": "Thunderous Protector's Deck"
+    },
+    {
+      "ItemId": "1628607",
+      "ItemName": "Just Protector's Gavel"
+    },
+    {
+      "ItemId": "1628608",
+      "ItemName": "Morbid Protector's Gavel"
+    },
+    {
+      "ItemId": "1628609",
+      "ItemName": "Furious Protector's Gavel"
+    },
+    {
+      "ItemId": "1628610",
+      "ItemName": "Steely Protector's Gavel"
+    },
+    {
+      "ItemId": "1628611",
+      "ItemName": "Dynamic Protector's Gavel"
+    },
+    {
+      "ItemId": "1628612",
+      "ItemName": "Legendary Protector's Gavel"
+    },
+    {
+      "ItemId": "1628613",
+      "ItemName": "Thunderous Protector's Gavel"
+    }
+  ]
+}

@@ -1,0 +1,417 @@
+{
+  "Name": "W404 Skey-G-KMBoss-130 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skey-G-KMBoss-130: the gear drops (102), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1514853",
+      "ItemName": "Wunderbar Freshbaker Cap"
+    },
+    {
+      "ItemId": "1514854",
+      "ItemName": "Wunderbar Wonderneer Cap"
+    },
+    {
+      "ItemId": "1514855",
+      "ItemName": "Wunderbar Sciencer Cap"
+    },
+    {
+      "ItemId": "1514856",
+      "ItemName": "Wunderbar Artisan Cap"
+    },
+    {
+      "ItemId": "1514857",
+      "ItemName": "Wunderbar Sweetsmith Cap"
+    },
+    {
+      "ItemId": "1514858",
+      "ItemName": "Wunderbar Sentamentalist Cap"
+    },
+    {
+      "ItemId": "1514859",
+      "ItemName": "Wunderbar Dreamsearcher Cap"
+    },
+    {
+      "ItemId": "1514860",
+      "ItemName": "Wunderbar Candymancer Cap"
+    },
+    {
+      "ItemId": "1514861",
+      "ItemName": "Wunderbar Freshbaker Smock"
+    },
+    {
+      "ItemId": "1514862",
+      "ItemName": "Wunderbar Wonderneer Smock"
+    },
+    {
+      "ItemId": "1514863",
+      "ItemName": "Wunderbar Sciencer Smock"
+    },
+    {
+      "ItemId": "1514864",
+      "ItemName": "Wunderbar Artisan Smock"
+    },
+    {
+      "ItemId": "1514865",
+      "ItemName": "Wunderbar Sweetsmith Smock"
+    },
+    {
+      "ItemId": "1514866",
+      "ItemName": "Wunderbar Sentamentalist Smock"
+    },
+    {
+      "ItemId": "1514867",
+      "ItemName": "Wunderbar Dreamsearcher Smock"
+    },
+    {
+      "ItemId": "1514868",
+      "ItemName": "Wunderbar Candymancer Smock"
+    },
+    {
+      "ItemId": "1514869",
+      "ItemName": "Wunderbar Freshbaker Boots"
+    },
+    {
+      "ItemId": "1514870",
+      "ItemName": "Wunderbar Wonderneer Boots"
+    },
+    {
+      "ItemId": "1514871",
+      "ItemName": "Wunderbar Sciencer Boots"
+    },
+    {
+      "ItemId": "1514872",
+      "ItemName": "Wunderbar Artisan Boots"
+    },
+    {
+      "ItemId": "1514873",
+      "ItemName": "Wunderbar Sweetsmith Boots"
+    },
+    {
+      "ItemId": "1514874",
+      "ItemName": "Wunderbar Sentamentalist Boots"
+    },
+    {
+      "ItemId": "1514875",
+      "ItemName": "Wunderbar Dreamsearcher Boots"
+    },
+    {
+      "ItemId": "1514876",
+      "ItemName": "Wunderbar Candymancer Boots"
+    },
+    {
+      "ItemId": "1515162",
+      "ItemName": "Wunderbar Freshbaker Knife"
+    },
+    {
+      "ItemId": "1515163",
+      "ItemName": "Wunderbar Wonderneer Knife"
+    },
+    {
+      "ItemId": "1515164",
+      "ItemName": "Wunderbar Sciencer Knife"
+    },
+    {
+      "ItemId": "1515165",
+      "ItemName": "Wunderbar Artisan Knife"
+    },
+    {
+      "ItemId": "1515166",
+      "ItemName": "Wunderbar Sweetsmith Knife"
+    },
+    {
+      "ItemId": "1515167",
+      "ItemName": "Wunderbar Sentamentalist Knife"
+    },
+    {
+      "ItemId": "1515168",
+      "ItemName": "Wunderbar Dreamsearcher Knife"
+    },
+    {
+      "ItemId": "1515169",
+      "ItemName": "Wunderbar Candymancer Knife"
+    },
+    {
+      "ItemId": "1515170",
+      "ItemName": "Wunderbar Freshbaker Rope"
+    },
+    {
+      "ItemId": "1515171",
+      "ItemName": "Wunderbar Wonderneer Rope"
+    },
+    {
+      "ItemId": "1515172",
+      "ItemName": "Wunderbar Sciencer Rope"
+    },
+    {
+      "ItemId": "1515173",
+      "ItemName": "Wunderbar Artisan Rope"
+    },
+    {
+      "ItemId": "1515174",
+      "ItemName": "Wunderbar Sweetsmith Rope"
+    },
+    {
+      "ItemId": "1515175",
+      "ItemName": "Wunderbar Sentamentalist Rope"
+    },
+    {
+      "ItemId": "1515176",
+      "ItemName": "Wunderbar Dreamsearcher Rope"
+    },
+    {
+      "ItemId": "1515177",
+      "ItemName": "Wunderbar Candymancer Rope"
+    },
+    {
+      "ItemId": "1515178",
+      "ItemName": "Wunderbar Freshbaker Ring"
+    },
+    {
+      "ItemId": "1515179",
+      "ItemName": "Wunderbar Wonderneer Ring"
+    },
+    {
+      "ItemId": "1515180",
+      "ItemName": "Wunderbar Sciencer Ring"
+    },
+    {
+      "ItemId": "1515181",
+      "ItemName": "Wunderbar Artisan Ring"
+    },
+    {
+      "ItemId": "1515182",
+      "ItemName": "Wunderbar Sweetsmith Ring"
+    },
+    {
+      "ItemId": "1515183",
+      "ItemName": "Wunderbar Sentamentalist Ring"
+    },
+    {
+      "ItemId": "1515184",
+      "ItemName": "Wunderbar Dreamsearcher Ring"
+    },
+    {
+      "ItemId": "1515185",
+      "ItemName": "Wunderbar Candymancer Ring"
+    },
+    {
+      "ItemId": "1515305",
+      "ItemName": "Wunderbar Freshbaker Staff"
+    },
+    {
+      "ItemId": "1515306",
+      "ItemName": "Wunderbar Wonderneer Staff"
+    },
+    {
+      "ItemId": "1515307",
+      "ItemName": "Wunderbar Sciencer Staff"
+    },
+    {
+      "ItemId": "1515308",
+      "ItemName": "Wunderbar Artisan Staff"
+    },
+    {
+      "ItemId": "1515309",
+      "ItemName": "Wunderbar Sweetsmith Staff"
+    },
+    {
+      "ItemId": "1515310",
+      "ItemName": "Wunderbar Sentamentalist Staff"
+    },
+    {
+      "ItemId": "1515311",
+      "ItemName": "Wunderbar Dreamsearcher Staff"
+    },
+    {
+      "ItemId": "1515312",
+      "ItemName": "Wunderbar Candymancer Staff"
+    },
+    {
+      "ItemId": "1515409",
+      "ItemName": "Wunderbar Freshbaker Box"
+    },
+    {
+      "ItemId": "1515410",
+      "ItemName": "Wunderbar Wonderneer Box"
+    },
+    {
+      "ItemId": "1515411",
+      "ItemName": "Wunderbar Sciencer Box"
+    },
+    {
+      "ItemId": "1515412",
+      "ItemName": "Wunderbar Artisan Box"
+    },
+    {
+      "ItemId": "1515413",
+      "ItemName": "Wunderbar Sweetsmith Box"
+    },
+    {
+      "ItemId": "1515414",
+      "ItemName": "Wunderbar Sentamentalist Box"
+    },
+    {
+      "ItemId": "1515415",
+      "ItemName": "Wunderbar Dreamsearcher Box"
+    },
+    {
+      "ItemId": "1515416",
+      "ItemName": "Wunderbar Candymancer Box"
+    },
+    {
+      "ItemId": "1523089",
+      "ItemName": "Toasted Marshmallow"
+    },
+    {
+      "ItemId": "1523090",
+      "ItemName": "Frosted Marshmallow"
+    },
+    {
+      "ItemId": "1523091",
+      "ItemName": "Lightning-Fried Marshmallow"
+    },
+    {
+      "ItemId": "1523092",
+      "ItemName": "Traditional Marshmallow"
+    },
+    {
+      "ItemId": "1523093",
+      "ItemName": "Delicious Marshmallow"
+    },
+    {
+      "ItemId": "1523094",
+      "ItemName": "Moldy Marshmallow"
+    },
+    {
+      "ItemId": "1523095",
+      "ItemName": "Dried Marshmallow"
+    },
+    {
+      "ItemId": "1523096",
+      "ItemName": "Sticky Marshmallow"
+    },
+    {
+      "ItemId": "1523823",
+      "ItemName": "Pyromancer's Timeless Brim"
+    },
+    {
+      "ItemId": "1523824",
+      "ItemName": "Pyromancer's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523825",
+      "ItemName": "Pyromancer's Timeless Shoes"
+    },
+    {
+      "ItemId": "1523826",
+      "ItemName": "Thaumaturge's Timeless Brim"
+    },
+    {
+      "ItemId": "1523827",
+      "ItemName": "Thaumaturge's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523828",
+      "ItemName": "Thaumaturge's Timeless Shoes"
+    },
+    {
+      "ItemId": "1523829",
+      "ItemName": "Diviner's Timeless Brim"
+    },
+    {
+      "ItemId": "1523830",
+      "ItemName": "Diviner's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523831",
+      "ItemName": "Diviner's Timeless Shoes"
+    },
+    {
+      "ItemId": "1523832",
+      "ItemName": "Conjurer's Timeless Brim"
+    },
+    {
+      "ItemId": "1523833",
+      "ItemName": "Conjurer's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523834",
+      "ItemName": "Conjurer's Timeless Shoes"
+    },
+    {
+      "ItemId": "1523835",
+      "ItemName": "Theurge's Timeless Brim"
+    },
+    {
+      "ItemId": "1523836",
+      "ItemName": "Theurge's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523837",
+      "ItemName": "Theurge's Timeless Shoes"
+    },
+    {
+      "ItemId": "1523838",
+      "ItemName": "Necromancer's Timeless Brim"
+    },
+    {
+      "ItemId": "1523839",
+      "ItemName": "Necromancer's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523840",
+      "ItemName": "Necromancer's Timeless Shoes"
+    },
+    {
+      "ItemId": "1523841",
+      "ItemName": "Sorcerer's Timeless Brim"
+    },
+    {
+      "ItemId": "1523842",
+      "ItemName": "Sorcerer's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523843",
+      "ItemName": "Sorcerer's Timeless Shoes"
+    },
+    {
+      "ItemId": "1523844",
+      "ItemName": "Timeless Astral Brim"
+    },
+    {
+      "ItemId": "1523845",
+      "ItemName": "Timeless Astral Tunic"
+    },
+    {
+      "ItemId": "1523846",
+      "ItemName": "Timeless Astral Shoes"
+    },
+    {
+      "ItemId": "1523847",
+      "ItemName": "Timeless Arboreal Brim"
+    },
+    {
+      "ItemId": "1523848",
+      "ItemName": "Timeless Arboreal Tunic"
+    },
+    {
+      "ItemId": "1523849",
+      "ItemName": "Timeless Arboreal Shoes"
+    },
+    {
+      "ItemId": "1523850",
+      "ItemName": "Wizard's Timeless Brim"
+    },
+    {
+      "ItemId": "1523851",
+      "ItemName": "Wizard's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523852",
+      "ItemName": "Wizard's Timeless Shoes"
+    }
+  ]
+}

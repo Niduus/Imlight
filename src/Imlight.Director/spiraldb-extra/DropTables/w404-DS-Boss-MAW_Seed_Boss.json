@@ -1,0 +1,21 @@
+{
+  "Name": "W404 DS-Boss-MAW Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table DS-Boss-MAW: the seed drops (3), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346010",
+      "ItemName": "Maelstrom Snap Dragon"
+    },
+    {
+      "ItemId": "355080",
+      "ItemName": "Burning Snap Dragon"
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon"
+    }
+  ]
+}

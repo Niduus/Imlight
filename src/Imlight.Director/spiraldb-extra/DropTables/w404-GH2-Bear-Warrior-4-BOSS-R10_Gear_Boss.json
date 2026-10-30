@@ -1,0 +1,69 @@
+{
+  "Name": "W404 GH2-Bear-Warrior-4-BOSS-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH2-Bear-Warrior-4-BOSS-R10: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "455089",
+      "ItemName": "Valkyrie's Pearl Pendant"
+    },
+    {
+      "ItemId": "455122",
+      "ItemName": "Wolf's Tanzanite Talon"
+    },
+    {
+      "ItemId": "455156",
+      "ItemName": "Cowl of Esprit"
+    },
+    {
+      "ItemId": "455157",
+      "ItemName": "Cowl of the One Eyed Crow"
+    },
+    {
+      "ItemId": "455158",
+      "ItemName": "Cowl of the Dark Waters"
+    },
+    {
+      "ItemId": "455182",
+      "ItemName": "Ring of the Hunting Wolf"
+    },
+    {
+      "ItemId": "455217",
+      "ItemName": "Mocking Raiment"
+    },
+    {
+      "ItemId": "455219",
+      "ItemName": "Raiment of the Sun"
+    },
+    {
+      "ItemId": "455242",
+      "ItemName": "Barbarian's Courage Boots"
+    },
+    {
+      "ItemId": "455243",
+      "ItemName": "Barbarian's Brave Boots"
+    },
+    {
+      "ItemId": "455244",
+      "ItemName": "Barbarian's Fierce Boots"
+    },
+    {
+      "ItemId": "455245",
+      "ItemName": "Barbarian's Valorous Boots"
+    },
+    {
+      "ItemId": "455246",
+      "ItemName": "Barbarian's Daring Boots"
+    },
+    {
+      "ItemId": "455247",
+      "ItemName": "Barbarian's Fearless Boots"
+    },
+    {
+      "ItemId": "455248",
+      "ItemName": "Barbarian's Bold Boots"
+    }
+  ]
+}

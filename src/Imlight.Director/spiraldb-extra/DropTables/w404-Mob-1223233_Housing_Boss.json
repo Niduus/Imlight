@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Mob-1223233 Housing (Boss)",
+  "Description": "Wizard404's drop list of Cree CurdWright's own drops: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1212015",
+      "ItemName": "Khrysalis Bastion Theme"
+    },
+    {
+      "ItemId": "1212016",
+      "ItemName": "Khrysalis Thrives Theme"
+    },
+    {
+      "ItemId": "1292128",
+      "ItemName": "Burrower Lectern"
+    }
+  ]
+}

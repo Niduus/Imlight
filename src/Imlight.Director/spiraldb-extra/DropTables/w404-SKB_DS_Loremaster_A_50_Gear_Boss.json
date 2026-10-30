@@ -1,0 +1,45 @@
+{
+  "Name": "W404 SKB_DS_Loremaster_A_50 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_DS_Loremaster_A_50: the gear drops (9), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "667575",
+      "ItemName": "Golden Boots of Serenity"
+    },
+    {
+      "ItemId": "667548",
+      "ItemName": "Mysterious Jade Boots"
+    },
+    {
+      "ItemId": "667602",
+      "ItemName": "Violet Boots of Bitter Truth"
+    },
+    {
+      "ItemId": "667611",
+      "ItemName": "Violet Robes of Bitter Truth"
+    },
+    {
+      "ItemId": "667593",
+      "ItemName": "Violet Hood of Bitter Truth"
+    },
+    {
+      "ItemId": "667557",
+      "ItemName": "Jade Robe of Mystery"
+    },
+    {
+      "ItemId": "667539",
+      "ItemName": "Jade Hood of Mystery"
+    },
+    {
+      "ItemId": "667584",
+      "ItemName": "Golden Robes of Serenity"
+    },
+    {
+      "ItemId": "667566",
+      "ItemName": "Golden Hood of Serenity"
+    }
+  ]
+}

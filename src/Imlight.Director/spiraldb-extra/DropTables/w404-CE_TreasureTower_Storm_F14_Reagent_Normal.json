@@ -1,0 +1,25 @@
+{
+  "Name": "W404 CE_TreasureTower_Storm_F14 Reagent (Normal)",
+  "Description": "Wizard404's drop list of the game's table CE_TreasureTower_Storm_F14: the reagent drops (4), one picked when it rolls. How often: DropOdds.json Normal/Reagent.",
+  "Odds": "Normal/Reagent",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1441808",
+      "ItemName": "Fire Rune"
+    },
+    {
+      "ItemId": "1441812",
+      "ItemName": "Ice Rune"
+    },
+    {
+      "ItemId": "1441815",
+      "ItemName": "Storm Rune"
+    },
+    {
+      "ItemId": "1441827",
+      "ItemName": "Myth Rune"
+    }
+  ]
+}

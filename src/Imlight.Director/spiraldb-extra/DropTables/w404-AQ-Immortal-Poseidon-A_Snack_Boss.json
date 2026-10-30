@@ -1,0 +1,53 @@
+{
+  "Name": "W404 AQ-Immortal-Poseidon-A Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table AQ-Immortal-Poseidon-A: the snack drops (11), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220217",
+      "ItemName": "Golden Grapes"
+    },
+    {
+      "ItemId": "220310",
+      "ItemName": "King Banana"
+    },
+    {
+      "ItemId": "220311",
+      "ItemName": "Glowing Star Fruit"
+    },
+    {
+      "ItemId": "220331",
+      "ItemName": "Gummy Humongofrog"
+    },
+    {
+      "ItemId": "240118",
+      "ItemName": "Cauliflowers"
+    },
+    {
+      "ItemId": "473716",
+      "ItemName": "Bogwich"
+    },
+    {
+      "ItemId": "473717",
+      "ItemName": "Treant Bark"
+    },
+    {
+      "ItemId": "473718",
+      "ItemName": "Gummy Wyrms"
+    },
+    {
+      "ItemId": "473719",
+      "ItemName": "Deviled Eggs"
+    },
+    {
+      "ItemId": "473720",
+      "ItemName": "Roasted Chickpeas"
+    },
+    {
+      "ItemId": "473721",
+      "ItemName": "Pigeon Pie"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "Name": "W404 GH2-Bear-Warrior-2-BOSS-R9 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH2-Bear-Warrior-2-BOSS-R9: the snack drops (8), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220215",
+      "ItemName": "Golden Apple"
+    },
+    {
+      "ItemId": "220217",
+      "ItemName": "Golden Grapes"
+    },
+    {
+      "ItemId": "220292",
+      "ItemName": "Uni-corn"
+    },
+    {
+      "ItemId": "220304",
+      "ItemName": "Flaming Soup"
+    },
+    {
+      "ItemId": "220305",
+      "ItemName": "Buttered Bread"
+    },
+    {
+      "ItemId": "220325",
+      "ItemName": "Shiny Tomato"
+    },
+    {
+      "ItemId": "220326",
+      "ItemName": "Goat Cheese"
+    },
+    {
+      "ItemId": "446071",
+      "ItemName": "Salmonberry"
+    }
+  ]
+}

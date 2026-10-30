@@ -1,0 +1,121 @@
+{
+  "Name": "W404 GH2-Giants-4-BOSS-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH2-Giants-4-BOSS-R10: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346495",
+      "ItemName": "Delectable Hooves"
+    },
+    {
+      "ItemId": "455104",
+      "ItemName": "Witch's Star Necklace"
+    },
+    {
+      "ItemId": "455105",
+      "ItemName": "Valkyrie's Star Necklace"
+    },
+    {
+      "ItemId": "455130",
+      "ItemName": "Claw of the Spirit Wolf"
+    },
+    {
+      "ItemId": "455131",
+      "ItemName": "Claw of the Ghost Wolf"
+    },
+    {
+      "ItemId": "455159",
+      "ItemName": "Horns of Absolution"
+    },
+    {
+      "ItemId": "455160",
+      "ItemName": "Horns of Calamity"
+    },
+    {
+      "ItemId": "455161",
+      "ItemName": "Fire-forged Horns"
+    },
+    {
+      "ItemId": "455162",
+      "ItemName": "Wintry Horns"
+    },
+    {
+      "ItemId": "455163",
+      "ItemName": "Hardy Horns"
+    },
+    {
+      "ItemId": "455164",
+      "ItemName": "Poetic Horns"
+    },
+    {
+      "ItemId": "455165",
+      "ItemName": "Horns of Havoc"
+    },
+    {
+      "ItemId": "455190",
+      "ItemName": "Ring of Wolf Lore"
+    },
+    {
+      "ItemId": "455191",
+      "ItemName": "Ring of Wolf Blood"
+    },
+    {
+      "ItemId": "455220",
+      "ItemName": "Valiant Armor"
+    },
+    {
+      "ItemId": "455221",
+      "ItemName": "Baneful Armor"
+    },
+    {
+      "ItemId": "455222",
+      "ItemName": "Fire-forged Warlord Armor"
+    },
+    {
+      "ItemId": "455223",
+      "ItemName": "Black Ice Armor"
+    },
+    {
+      "ItemId": "455224",
+      "ItemName": "Armor of Elan"
+    },
+    {
+      "ItemId": "455225",
+      "ItemName": "Armor of the Poets"
+    },
+    {
+      "ItemId": "455226",
+      "ItemName": "Storm Surge Armor"
+    },
+    {
+      "ItemId": "455256",
+      "ItemName": "Boots of Honor"
+    },
+    {
+      "ItemId": "455257",
+      "ItemName": "Boots of Anguish"
+    },
+    {
+      "ItemId": "455258",
+      "ItemName": "Firewalker Boots"
+    },
+    {
+      "ItemId": "455259",
+      "ItemName": "White Frost Boots"
+    },
+    {
+      "ItemId": "455260",
+      "ItemName": "Esprit Boots"
+    },
+    {
+      "ItemId": "455261",
+      "ItemName": "Boots of Ages"
+    },
+    {
+      "ItemId": "455262",
+      "ItemName": "Thunderstrike Boots"
+    }
+  ]
+}

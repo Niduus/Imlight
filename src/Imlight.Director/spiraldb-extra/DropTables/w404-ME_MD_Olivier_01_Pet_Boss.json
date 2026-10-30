@@ -1,0 +1,17 @@
+{
+  "Name": "W404 ME_MD_Olivier_01 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME_MD_Olivier_01: the pet drops (2), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "175580",
+      "ItemName": "Sea Dragon"
+    },
+    {
+      "ItemId": "1317109",
+      "ItemName": "Skeletal Gladiator"
+    }
+  ]
+}

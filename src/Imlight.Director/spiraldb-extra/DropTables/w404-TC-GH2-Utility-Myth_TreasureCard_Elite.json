@@ -1,0 +1,17 @@
+{
+  "Name": "W404 TC-GH2-Utility-Myth TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table TC-GH2-Utility-Myth: the treasurecard drops (2), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Minion Myth 004 TC",
+      "ItemName": "Talos"
+    },
+    {
+      "ItemId": "Shatter TC",
+      "ItemName": "Shatter"
+    }
+  ]
+}

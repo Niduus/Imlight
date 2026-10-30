@@ -1,0 +1,209 @@
+{
+  "Name": "W404 LoremasterLT Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table LoremasterLT: the gear drops (50), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104591",
+      "ItemName": "Wrap of Equity"
+    },
+    {
+      "ItemId": "104611",
+      "ItemName": "Vestment of the Inferno"
+    },
+    {
+      "ItemId": "104635",
+      "ItemName": "Crow's Wrap"
+    },
+    {
+      "ItemId": "104643",
+      "ItemName": "Tunic of Tradition"
+    },
+    {
+      "ItemId": "104666",
+      "ItemName": "Vestment of the Spring"
+    },
+    {
+      "ItemId": "104684",
+      "ItemName": "Snowflower Cloak"
+    },
+    {
+      "ItemId": "104713",
+      "ItemName": "Tunic of Typhoons"
+    },
+    {
+      "ItemId": "104762",
+      "ItemName": "Slippers of the Glacier"
+    },
+    {
+      "ItemId": "104776",
+      "ItemName": "Mocassins of the Oracle"
+    },
+    {
+      "ItemId": "104793",
+      "ItemName": "Shoes of the Phoenix"
+    },
+    {
+      "ItemId": "104811",
+      "ItemName": "Footgear of Corporeality"
+    },
+    {
+      "ItemId": "104835",
+      "ItemName": "Vineyard Shoes"
+    },
+    {
+      "ItemId": "104852",
+      "ItemName": "Sandals of the Lost Epoch"
+    },
+    {
+      "ItemId": "104875",
+      "ItemName": "Slippers of the Slipstream"
+    },
+    {
+      "ItemId": "126561",
+      "ItemName": "Band of Balance"
+    },
+    {
+      "ItemId": "126567",
+      "ItemName": "Final Orbit"
+    },
+    {
+      "ItemId": "126576",
+      "ItemName": "Ring of the Harpy"
+    },
+    {
+      "ItemId": "126581",
+      "ItemName": "Seal of the Saga"
+    },
+    {
+      "ItemId": "126586",
+      "ItemName": "Heartwood Band"
+    },
+    {
+      "ItemId": "126588",
+      "ItemName": "Flamebringer's Fiery Circle"
+    },
+    {
+      "ItemId": "126593",
+      "ItemName": "Rime-edged Ring"
+    },
+    {
+      "ItemId": "126639",
+      "ItemName": "Staff of the Justicar"
+    },
+    {
+      "ItemId": "126642",
+      "ItemName": "Terminus"
+    },
+    {
+      "ItemId": "126645",
+      "ItemName": "Soulbrand"
+    },
+    {
+      "ItemId": "126648",
+      "ItemName": "Pillar of Ice"
+    },
+    {
+      "ItemId": "126652",
+      "ItemName": "Lightning Rod"
+    },
+    {
+      "ItemId": "126657",
+      "ItemName": "Scepter of the Ages"
+    },
+    {
+      "ItemId": "126660",
+      "ItemName": "Branch of the World Tree"
+    },
+    {
+      "ItemId": "126672",
+      "ItemName": "Deck of the Devouring Flame"
+    },
+    {
+      "ItemId": "126673",
+      "ItemName": "Deck of the Ice Wyrm"
+    },
+    {
+      "ItemId": "126677",
+      "ItemName": "Sea Lord's Deck of Thunder"
+    },
+    {
+      "ItemId": "126682",
+      "ItemName": "Deck of Perfect Harmony"
+    },
+    {
+      "ItemId": "126683",
+      "ItemName": "Deck of Last Departure"
+    },
+    {
+      "ItemId": "126684",
+      "ItemName": "Karuvian Deck of Eternity"
+    },
+    {
+      "ItemId": "126685",
+      "ItemName": "Deck of Nature's Bounty"
+    },
+    {
+      "ItemId": "146115",
+      "ItemName": "Lancet of Equality"
+    },
+    {
+      "ItemId": "146120",
+      "ItemName": "Steelwielder's Skewer"
+    },
+    {
+      "ItemId": "146126",
+      "ItemName": "Searing Knife"
+    },
+    {
+      "ItemId": "146132",
+      "ItemName": "Firewinter's Ice Spark Blade"
+    },
+    {
+      "ItemId": "146161",
+      "ItemName": "Flamebringer's Lancet"
+    },
+    {
+      "ItemId": "146164",
+      "ItemName": "Poniard of Vitality"
+    },
+    {
+      "ItemId": "146192",
+      "ItemName": "Thunder Blade"
+    },
+    {
+      "ItemId": "146198",
+      "ItemName": "Infinity's Edge"
+    },
+    {
+      "ItemId": "146231",
+      "ItemName": "Mantle of Thunder"
+    },
+    {
+      "ItemId": "146249",
+      "ItemName": "Headdress of Refutation"
+    },
+    {
+      "ItemId": "146270",
+      "ItemName": "Hood of the Ranger"
+    },
+    {
+      "ItemId": "146286",
+      "ItemName": "Veil of Sleet"
+    },
+    {
+      "ItemId": "146320",
+      "ItemName": "Blazing Bonnet"
+    },
+    {
+      "ItemId": "146342",
+      "ItemName": "Reaper's Hood"
+    },
+    {
+      "ItemId": "146362",
+      "ItemName": "Mantle of Fortitude"
+    }
+  ]
+}

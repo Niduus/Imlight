@@ -1,0 +1,9 @@
+{
+  "Name": "W404 AZ-BossEpic-Guaman",
+  "Description": "Gold of the game's table AZ-BossEpic-Guaman, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 80,
+  "MaxGold": 100,
+  "EachItem": false,
+  "Items": []
+}

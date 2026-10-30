@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Mob-1530897 Gear (Boss)",
+  "Description": "Wizard404's drop list of Skeletaur's own drops: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1537521",
+      "ItemName": "Magician's Fire Wand"
+    },
+    {
+      "ItemId": "1537522",
+      "ItemName": "Magician's Ice Wand"
+    },
+    {
+      "ItemId": "1537523",
+      "ItemName": "Magician's Storm Wand"
+    },
+    {
+      "ItemId": "1537524",
+      "ItemName": "Magician's Myth Wand"
+    },
+    {
+      "ItemId": "1537525",
+      "ItemName": "Magician's Life Wand"
+    },
+    {
+      "ItemId": "1537526",
+      "ItemName": "Magician's Death Wand"
+    },
+    {
+      "ItemId": "1537527",
+      "ItemName": "Magician's Balance Wand"
+    },
+    {
+      "ItemId": "1537528",
+      "ItemName": "Magician's Power Wand"
+    },
+    {
+      "ItemId": "1537530",
+      "ItemName": "Malevolent Fire Wand"
+    },
+    {
+      "ItemId": "1537531",
+      "ItemName": "Malevolent Ice Wand"
+    },
+    {
+      "ItemId": "1537532",
+      "ItemName": "Malevolent Storm Wand"
+    },
+    {
+      "ItemId": "1537533",
+      "ItemName": "Malevolent Myth Wand"
+    },
+    {
+      "ItemId": "1537534",
+      "ItemName": "Malevolent Life Wand"
+    },
+    {
+      "ItemId": "1537535",
+      "ItemName": "Malevolent Death Wand"
+    },
+    {
+      "ItemId": "1537536",
+      "ItemName": "Malevolent Balance Wand"
+    },
+    {
+      "ItemId": "1537537",
+      "ItemName": "Malevolent Power Wand"
+    }
+  ]
+}

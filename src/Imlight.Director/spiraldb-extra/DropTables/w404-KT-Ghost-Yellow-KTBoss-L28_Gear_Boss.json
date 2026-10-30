@@ -1,0 +1,73 @@
+{
+  "Name": "W404 KT-Ghost-Yellow-KTBoss-L28 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-Ghost-Yellow-KTBoss-L28: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4985",
+      "ItemName": "Tempestra's Onyx Deck"
+    },
+    {
+      "ItemId": "5022",
+      "ItemName": "Loop of the Defender"
+    },
+    {
+      "ItemId": "5028",
+      "ItemName": "Jewel of Obliteration"
+    },
+    {
+      "ItemId": "38767",
+      "ItemName": "Frigid Vestment"
+    },
+    {
+      "ItemId": "39429",
+      "ItemName": "Durable Boots"
+    },
+    {
+      "ItemId": "39434",
+      "ItemName": "Slippers of Burning Sands"
+    },
+    {
+      "ItemId": "77682",
+      "ItemName": "Sweltering Helm"
+    },
+    {
+      "ItemId": "77696",
+      "ItemName": "Tempestra's Severe Cap"
+    },
+    {
+      "ItemId": "77702",
+      "ItemName": "Helm of Ingenuity"
+    },
+    {
+      "ItemId": "77714",
+      "ItemName": "Hat of Figments"
+    },
+    {
+      "ItemId": "77715",
+      "ItemName": "Hood of the Phantom"
+    },
+    {
+      "ItemId": "77771",
+      "ItemName": "Tempestra's Sandals"
+    },
+    {
+      "ItemId": "77774",
+      "ItemName": "Soothsayer's Sandals"
+    },
+    {
+      "ItemId": "87298",
+      "ItemName": "Cloak of Prediction"
+    },
+    {
+      "ItemId": "87310",
+      "ItemName": "Garments of Repose"
+    },
+    {
+      "ItemId": "87342",
+      "ItemName": "Tempestra's Staff"
+    }
+  ]
+}

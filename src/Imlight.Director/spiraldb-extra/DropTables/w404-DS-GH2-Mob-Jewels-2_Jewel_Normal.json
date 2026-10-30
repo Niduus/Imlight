@@ -1,0 +1,189 @@
+{
+  "Name": "W404 DS-GH2-Mob-Jewels-2 Jewel (Normal)",
+  "Description": "Wizard404's drop list of the game's table DS-GH2-Mob-Jewels-2: the jewel drops (45), one picked when it rolls. How often: DropOdds.json Normal/Jewel.",
+  "Odds": "Normal/Jewel",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1352369",
+      "ItemName": "Blemished Health Opal +43"
+    },
+    {
+      "ItemId": "1352370",
+      "ItemName": "Blemished Health Opal +44"
+    },
+    {
+      "ItemId": "1352371",
+      "ItemName": "Blemished Health Opal +45"
+    },
+    {
+      "ItemId": "1352449",
+      "ItemName": "Dull Mana Opal +21"
+    },
+    {
+      "ItemId": "1352753",
+      "ItemName": "Flawed Damage Opal +5"
+    },
+    {
+      "ItemId": "1352761",
+      "ItemName": "Dull Piercing Ruby +1%"
+    },
+    {
+      "ItemId": "1352768",
+      "ItemName": "Dull Piercing Sapphire +1%"
+    },
+    {
+      "ItemId": "1352775",
+      "ItemName": "Dull Piercing Amethyst +1%"
+    },
+    {
+      "ItemId": "1352782",
+      "ItemName": "Dull Piercing Peridot +1%"
+    },
+    {
+      "ItemId": "1352789",
+      "ItemName": "Dull Piercing Jade +1%"
+    },
+    {
+      "ItemId": "1352796",
+      "ItemName": "Dull Piercing Onyx +1%"
+    },
+    {
+      "ItemId": "1352803",
+      "ItemName": "Dull Piercing Citrine +1%"
+    },
+    {
+      "ItemId": "1352819",
+      "ItemName": "Dull Mending Opal +3%"
+    },
+    {
+      "ItemId": "1352824",
+      "ItemName": "Dull Critical Ruby +3"
+    },
+    {
+      "ItemId": "1352837",
+      "ItemName": "Dull Critical Sapphire +3"
+    },
+    {
+      "ItemId": "1352850",
+      "ItemName": "Dull Critical Amethyst +3"
+    },
+    {
+      "ItemId": "1352863",
+      "ItemName": "Dull Critical Peridot +3"
+    },
+    {
+      "ItemId": "1352876",
+      "ItemName": "Dull Critical Jade +3"
+    },
+    {
+      "ItemId": "1352889",
+      "ItemName": "Dull Critical Onyx +3"
+    },
+    {
+      "ItemId": "1352902",
+      "ItemName": "Dull Critical Citrine +3"
+    },
+    {
+      "ItemId": "1352928",
+      "ItemName": "Dull Critical Opal +2"
+    },
+    {
+      "ItemId": "1352936",
+      "ItemName": "Dull Resilient Opal +3%"
+    },
+    {
+      "ItemId": "1352941",
+      "ItemName": "Dull Healing Opal +3%"
+    },
+    {
+      "ItemId": "1352945",
+      "ItemName": "Dull Blocking Ruby +2"
+    },
+    {
+      "ItemId": "1352958",
+      "ItemName": "Dull Blocking Sapphire +2"
+    },
+    {
+      "ItemId": "1352971",
+      "ItemName": "Dull Blocking Amethyst +2"
+    },
+    {
+      "ItemId": "1352984",
+      "ItemName": "Dull Blocking Peridot +2"
+    },
+    {
+      "ItemId": "1352997",
+      "ItemName": "Dull Blocking Jade +2"
+    },
+    {
+      "ItemId": "1357010",
+      "ItemName": "Dull Blocking Onyx +2"
+    },
+    {
+      "ItemId": "1357023",
+      "ItemName": "Dull Blocking Citrine +2"
+    },
+    {
+      "ItemId": "1357058",
+      "ItemName": "Blemished Accurate Ruby +5%"
+    },
+    {
+      "ItemId": "1357067",
+      "ItemName": "Blemished Accurate Sapphire +5%"
+    },
+    {
+      "ItemId": "1357076",
+      "ItemName": "Blemished Accurate Amethyst +5%"
+    },
+    {
+      "ItemId": "1357085",
+      "ItemName": "Blemished Accurate Peridot +5%"
+    },
+    {
+      "ItemId": "1357094",
+      "ItemName": "Blemished Accurate Jade +5%"
+    },
+    {
+      "ItemId": "1357103",
+      "ItemName": "Blemished Accurate Onyx +5%"
+    },
+    {
+      "ItemId": "1357112",
+      "ItemName": "Blemished Accurate Citrine +5%"
+    },
+    {
+      "ItemId": "1357129",
+      "ItemName": "Dull PIP Opal +5%"
+    },
+    {
+      "ItemId": "1357259",
+      "ItemName": "Blemished Defense Ruby +23"
+    },
+    {
+      "ItemId": "1357304",
+      "ItemName": "Blemished Defense Sapphire +23"
+    },
+    {
+      "ItemId": "1357349",
+      "ItemName": "Blemished Defense Amethyst +23"
+    },
+    {
+      "ItemId": "1357394",
+      "ItemName": "Blemished Defense Peridot +23"
+    },
+    {
+      "ItemId": "1357439",
+      "ItemName": "Blemished Defense Jade +23"
+    },
+    {
+      "ItemId": "1357484",
+      "ItemName": "Blemished Defense Onyx +23"
+    },
+    {
+      "ItemId": "1357529",
+      "ItemName": "Blemished Defense Citrine +23"
+    }
+  ]
+}

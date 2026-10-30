@@ -1,0 +1,85 @@
+{
+  "Name": "W404 KT-KrokBurly-Storm-KTBoss-L37-1 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokBurly-Storm-KTBoss-L37-1: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4949",
+      "ItemName": "Glacial Dagger"
+    },
+    {
+      "ItemId": "4957",
+      "ItemName": "Crystalline Dagger"
+    },
+    {
+      "ItemId": "4965",
+      "ItemName": "Stiletto of Ignition"
+    },
+    {
+      "ItemId": "5012",
+      "ItemName": "Signet of Ancients"
+    },
+    {
+      "ItemId": "5020",
+      "ItemName": "Band of the Oasis"
+    },
+    {
+      "ItemId": "38744",
+      "ItemName": "Prince's Adaptive Robe"
+    },
+    {
+      "ItemId": "38745",
+      "ItemName": "Prince Karanahn's Vest"
+    },
+    {
+      "ItemId": "38746",
+      "ItemName": "Karanahn's Parched Tunic"
+    },
+    {
+      "ItemId": "38770",
+      "ItemName": "Cloak of Humility"
+    },
+    {
+      "ItemId": "39446",
+      "ItemName": "Princely Shoes of Sagas"
+    },
+    {
+      "ItemId": "39447",
+      "ItemName": "Karanahn's Footwraps"
+    },
+    {
+      "ItemId": "77668",
+      "ItemName": "Karanahn's Ignited Hood"
+    },
+    {
+      "ItemId": "77669",
+      "ItemName": "Prince Aka's Arctic Hood"
+    },
+    {
+      "ItemId": "77683",
+      "ItemName": "Cap of Burning Sands"
+    },
+    {
+      "ItemId": "77685",
+      "ItemName": "Cowl of Summertime"
+    },
+    {
+      "ItemId": "77728",
+      "ItemName": "Cowl of Alacrity"
+    },
+    {
+      "ItemId": "77747",
+      "ItemName": "Cowl of Sensibility"
+    },
+    {
+      "ItemId": "87275",
+      "ItemName": "Maker's Vestment"
+    },
+    {
+      "ItemId": "346502",
+      "ItemName": "Bolt Blade"
+    }
+  ]
+}

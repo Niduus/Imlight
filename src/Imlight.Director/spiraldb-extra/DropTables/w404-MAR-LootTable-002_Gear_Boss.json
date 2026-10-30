@@ -1,0 +1,29 @@
+{
+  "Name": "W404 MAR-LootTable-002 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MAR-LootTable-002: the gear drops (5), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160948",
+      "ItemName": "Harp of the Lucky"
+    },
+    {
+      "ItemId": "160949",
+      "ItemName": "Shamrock Scepter"
+    },
+    {
+      "ItemId": "160950",
+      "ItemName": "Bountiful Wand"
+    },
+    {
+      "ItemId": "160951",
+      "ItemName": "Lucky Shillelagh"
+    },
+    {
+      "ItemId": "160952",
+      "ItemName": "Charmed Clover Wand"
+    }
+  ]
+}

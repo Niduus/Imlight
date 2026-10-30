@@ -1,0 +1,29 @@
+{
+  "Name": "W404 Mob-1659110 Elixir (Boss)",
+  "Description": "Wizard404's drop list of Oblongata's own drops: the elixir drops (5), one picked when it rolls. How often: DropOdds.json Boss/Elixir.",
+  "Odds": "Boss/Elixir",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "512193",
+      "ItemName": "Hatching Elixir"
+    },
+    {
+      "ItemId": "512195",
+      "ItemName": "Crafting Elixir"
+    },
+    {
+      "ItemId": "225110",
+      "ItemName": "Energy Elixir"
+    },
+    {
+      "ItemId": "191109",
+      "ItemName": "Gold Boost Elixir"
+    },
+    {
+      "ItemId": "1335362",
+      "ItemName": "Triple Animus Elixir"
+    }
+  ]
+}

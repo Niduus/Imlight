@@ -1,0 +1,17 @@
+{
+  "Name": "W404 ZF-Gorilla-Boss-01-R11-Boss Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Gorilla-Boss-01-R11-Boss: the jewel drops (2), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1358993",
+      "ItemName": "Infallible Opal"
+    },
+    {
+      "ItemId": "1358994",
+      "ItemName": "Vengeance Opal"
+    }
+  ]
+}

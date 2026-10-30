@@ -1,0 +1,65 @@
+{
+  "Name": "W404 Skeleton-Gold-WCBoss-L18 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skeleton-Gold-WCBoss-L18: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4670",
+      "ItemName": "Flash Frozen Choker"
+    },
+    {
+      "ItemId": "4727",
+      "ItemName": "Dulled Athame"
+    },
+    {
+      "ItemId": "4736",
+      "ItemName": "Knife of Winter"
+    },
+    {
+      "ItemId": "4782",
+      "ItemName": "Skullsplitter's Signet"
+    },
+    {
+      "ItemId": "4834",
+      "ItemName": "Boots of Embers"
+    },
+    {
+      "ItemId": "4835",
+      "ItemName": "Fireguard Slippers"
+    },
+    {
+      "ItemId": "4846",
+      "ItemName": "Stormcaller's Boots"
+    },
+    {
+      "ItemId": "4849",
+      "ItemName": "Antique Footguards"
+    },
+    {
+      "ItemId": "4867",
+      "ItemName": "Symmetrical Shoes"
+    },
+    {
+      "ItemId": "77574",
+      "ItemName": "Hardened Cap"
+    },
+    {
+      "ItemId": "77602",
+      "ItemName": "Venomous Cowl"
+    },
+    {
+      "ItemId": "77611",
+      "ItemName": "Cowl of the Discreet"
+    },
+    {
+      "ItemId": "87195",
+      "ItemName": "Robe of Embers"
+    },
+    {
+      "ItemId": "87233",
+      "ItemName": "Cloak of Vigilance"
+    }
+  ]
+}

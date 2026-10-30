@@ -1,0 +1,121 @@
+{
+  "Name": "W404 WL_Kangaroo_Drover_F_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WL_Kangaroo_Drover_F_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1628313",
+      "ItemName": "Just Enforcer's Helmet"
+    },
+    {
+      "ItemId": "1628314",
+      "ItemName": "Morbid Enforcer's Helmet"
+    },
+    {
+      "ItemId": "1628315",
+      "ItemName": "Furious Enforcer's Helmet"
+    },
+    {
+      "ItemId": "1628316",
+      "ItemName": "Steely Enforcer's Helmet"
+    },
+    {
+      "ItemId": "1628317",
+      "ItemName": "Dynamic Enforcer's Helmet"
+    },
+    {
+      "ItemId": "1628318",
+      "ItemName": "Legendary Enforcer's Helmet"
+    },
+    {
+      "ItemId": "1628319",
+      "ItemName": "Thunderous Enforcer's Helmet"
+    },
+    {
+      "ItemId": "1628369",
+      "ItemName": "Just Enforcer's Athame"
+    },
+    {
+      "ItemId": "1628370",
+      "ItemName": "Morbid Enforcer's Athame"
+    },
+    {
+      "ItemId": "1628371",
+      "ItemName": "Furious Enforcer's Athame"
+    },
+    {
+      "ItemId": "1628372",
+      "ItemName": "Steely Enforcer's Athame"
+    },
+    {
+      "ItemId": "1628373",
+      "ItemName": "Dynamic Enforcer's Athame"
+    },
+    {
+      "ItemId": "1628374",
+      "ItemName": "Legendary Enforcer's Athame"
+    },
+    {
+      "ItemId": "1628375",
+      "ItemName": "Thunderous Enforcer's Athame"
+    },
+    {
+      "ItemId": "1628523",
+      "ItemName": "Just Protector's Helmet"
+    },
+    {
+      "ItemId": "1628524",
+      "ItemName": "Morbid Protector's Helmet"
+    },
+    {
+      "ItemId": "1628525",
+      "ItemName": "Furious Protector's Helmet"
+    },
+    {
+      "ItemId": "1628526",
+      "ItemName": "Steely Protector's Helmet"
+    },
+    {
+      "ItemId": "1628527",
+      "ItemName": "Dynamic Protector's Helmet"
+    },
+    {
+      "ItemId": "1628528",
+      "ItemName": "Legendary Protector's Helmet"
+    },
+    {
+      "ItemId": "1628529",
+      "ItemName": "Thunderous Protector's Helmet"
+    },
+    {
+      "ItemId": "1628572",
+      "ItemName": "Just Protector's Athame"
+    },
+    {
+      "ItemId": "1628573",
+      "ItemName": "Morbid Protector's Athame"
+    },
+    {
+      "ItemId": "1628574",
+      "ItemName": "Furious Protector's Athame"
+    },
+    {
+      "ItemId": "1628575",
+      "ItemName": "Steely Protector's Athame"
+    },
+    {
+      "ItemId": "1628576",
+      "ItemName": "Dynamic Protector's Athame"
+    },
+    {
+      "ItemId": "1628577",
+      "ItemName": "Legendary Protector's Athame"
+    },
+    {
+      "ItemId": "1628578",
+      "ItemName": "Thunderous Protector's Athame"
+    }
+  ]
+}

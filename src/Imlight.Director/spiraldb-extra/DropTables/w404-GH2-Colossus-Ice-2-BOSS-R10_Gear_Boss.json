@@ -1,0 +1,69 @@
+{
+  "Name": "W404 GH2-Colossus-Ice-2-BOSS-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH2-Colossus-Ice-2-BOSS-R10: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "455098",
+      "ItemName": "Wyrm's Curse Charm"
+    },
+    {
+      "ItemId": "455118",
+      "ItemName": "Wolf's Bronze Claw"
+    },
+    {
+      "ItemId": "455149",
+      "ItemName": "Horned Helm of Valor"
+    },
+    {
+      "ItemId": "455150",
+      "ItemName": "Horned Helm of Courage"
+    },
+    {
+      "ItemId": "455151",
+      "ItemName": "Horned Helm of Bravery"
+    },
+    {
+      "ItemId": "455176",
+      "ItemName": "Ring of Brother Wolf"
+    },
+    {
+      "ItemId": "455177",
+      "ItemName": "Ring of Sister Wolf"
+    },
+    {
+      "ItemId": "455178",
+      "ItemName": "Ring of the Wolf's Song"
+    },
+    {
+      "ItemId": "455210",
+      "ItemName": "Hardy Coat"
+    },
+    {
+      "ItemId": "455211",
+      "ItemName": "Coat of Ages"
+    },
+    {
+      "ItemId": "455212",
+      "ItemName": "Blustering Coat"
+    },
+    {
+      "ItemId": "455238",
+      "ItemName": "Snarling Bear Boots"
+    },
+    {
+      "ItemId": "455239",
+      "ItemName": "Growling Bear Boots"
+    },
+    {
+      "ItemId": "455240",
+      "ItemName": "Slashing Bear Boots"
+    },
+    {
+      "ItemId": "455241",
+      "ItemName": "Biting Bear Boots"
+    }
+  ]
+}

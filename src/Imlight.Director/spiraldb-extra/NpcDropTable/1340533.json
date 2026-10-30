@@ -1,0 +1,15 @@
+{
+  "TemplateID": 1340533,
+  "DropTableNames": [
+    "W404 PL-Boss-Reagents-Common Reagent (Boss)",
+    "W404 PL-Boss-Gear-104",
+    "W404 PL-Boss-Gear-104 Gear (Boss)",
+    "W404 PL-Boss-Gear-104 Pet (Boss)",
+    "W404 PL-Boss-Gear-104 Seed (Boss)",
+    "W404 PL-Boss-Gear-104 Housing (Boss)",
+    "W404 PL-Boss-PetSnacks-Common Snack (Boss)",
+    "W404 PL-Boss-TC-Common TreasureCard (Boss)",
+    "W404 PL-Boss-Furniture Housing (Boss)",
+    "W404 ReagentLT-GuildReagent01_TC-01 TreasureCard (Boss)"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Mob-1223129 Housing (Normal)",
+  "Description": "Wizard404's drop list of Yellow Jacket Shredder's own drops: the housing drops (1), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1603205",
+      "ItemName": "Silent Market Bowl"
+    }
+  ]
+}

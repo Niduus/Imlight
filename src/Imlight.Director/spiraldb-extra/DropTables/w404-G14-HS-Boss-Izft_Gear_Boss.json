@@ -1,0 +1,121 @@
+{
+  "Name": "W404 G14-HS-Boss-Izft Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-HS-Boss-Izft: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330940",
+      "ItemName": "Burning Scales Headdress"
+    },
+    {
+      "ItemId": "1330941",
+      "ItemName": "Crown of the Frozen Desert"
+    },
+    {
+      "ItemId": "1330942",
+      "ItemName": "Headgear of Dune Storms"
+    },
+    {
+      "ItemId": "1330943",
+      "ItemName": "Ancient Rebus Headgear"
+    },
+    {
+      "ItemId": "1330944",
+      "ItemName": "Hands of Anubis Mantle"
+    },
+    {
+      "ItemId": "1330945",
+      "ItemName": "Soul Devourer's Greathelm"
+    },
+    {
+      "ItemId": "1330946",
+      "ItemName": "Anubis' Crown of Judgment"
+    },
+    {
+      "ItemId": "1338024",
+      "ItemName": "Burning Scales Raiment"
+    },
+    {
+      "ItemId": "1338025",
+      "ItemName": "Robes of the Frozen Desert"
+    },
+    {
+      "ItemId": "1338026",
+      "ItemName": "Dune Storm Armor"
+    },
+    {
+      "ItemId": "1338027",
+      "ItemName": "Ancient Rebus Vestment"
+    },
+    {
+      "ItemId": "1338028",
+      "ItemName": "Hands of Anubis Uniform"
+    },
+    {
+      "ItemId": "1338029",
+      "ItemName": "Soul Devourer's Tunic"
+    },
+    {
+      "ItemId": "1338030",
+      "ItemName": "Anubis' Tunic of Judgment"
+    },
+    {
+      "ItemId": "1338031",
+      "ItemName": "Robes of the Fire Sands"
+    },
+    {
+      "ItemId": "1338032",
+      "ItemName": "Cold Bones Raiment"
+    },
+    {
+      "ItemId": "1338033",
+      "ItemName": "Sandsqualls Vestment"
+    },
+    {
+      "ItemId": "1338034",
+      "ItemName": "Garb of the Ancient Sage"
+    },
+    {
+      "ItemId": "1338035",
+      "ItemName": "Anubis' Robes of Rebirth"
+    },
+    {
+      "ItemId": "1338036",
+      "ItemName": "Armor of the Devoured"
+    },
+    {
+      "ItemId": "1338037",
+      "ItemName": "Anubis' Robes of Guidance"
+    },
+    {
+      "ItemId": "1338374",
+      "ItemName": "Mander Mummy's Circlet"
+    },
+    {
+      "ItemId": "1338375",
+      "ItemName": "House of Scales Iceband"
+    },
+    {
+      "ItemId": "1338376",
+      "ItemName": "Loop of the Duat Gate"
+    },
+    {
+      "ItemId": "1338377",
+      "ItemName": "Izft's Ring of Preparation"
+    },
+    {
+      "ItemId": "1338378",
+      "ItemName": "Baruti's Seal of Revival"
+    },
+    {
+      "ItemId": "1338379",
+      "ItemName": "Signet of the Devourer"
+    },
+    {
+      "ItemId": "1338380",
+      "ItemName": "Anubis' Ring of Prudence"
+    }
+  ]
+}

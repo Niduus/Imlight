@@ -1,0 +1,145 @@
+{
+  "Name": "W404 GH-Level-04 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table GH-Level-04: the gear drops (34), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136394",
+      "ItemName": "Igneous Cover"
+    },
+    {
+      "ItemId": "136414",
+      "ItemName": "Cap of Equilibrium"
+    },
+    {
+      "ItemId": "136415",
+      "ItemName": "Hood of the Invariable"
+    },
+    {
+      "ItemId": "136416",
+      "ItemName": "Circlet of the Unavoidable"
+    },
+    {
+      "ItemId": "136417",
+      "ItemName": "Mortal Veil"
+    },
+    {
+      "ItemId": "136418",
+      "ItemName": "Headgear of Revival"
+    },
+    {
+      "ItemId": "136419",
+      "ItemName": "Curative Coif"
+    },
+    {
+      "ItemId": "136420",
+      "ItemName": "Mantle of Ingenuity"
+    },
+    {
+      "ItemId": "136421",
+      "ItemName": "Cryptid Hood"
+    },
+    {
+      "ItemId": "136422",
+      "ItemName": "Cap of the Stratosphere"
+    },
+    {
+      "ItemId": "136423",
+      "ItemName": "Hat of the Gale"
+    },
+    {
+      "ItemId": "136424",
+      "ItemName": "Frostwoven Hood"
+    },
+    {
+      "ItemId": "136425",
+      "ItemName": "Firebloom Cowl"
+    },
+    {
+      "ItemId": "136629",
+      "ItemName": "Thermic Longcoat"
+    },
+    {
+      "ItemId": "136649",
+      "ItemName": "Harbinger's Smock"
+    },
+    {
+      "ItemId": "136650",
+      "ItemName": "Robe of the Nereid"
+    },
+    {
+      "ItemId": "136651",
+      "ItemName": "Raiment of Rainfall"
+    },
+    {
+      "ItemId": "136652",
+      "ItemName": "Gloomhound's Wrap"
+    },
+    {
+      "ItemId": "136653",
+      "ItemName": "Tunic of Regularity"
+    },
+    {
+      "ItemId": "136663",
+      "ItemName": "Gelid Garments"
+    },
+    {
+      "ItemId": "171178",
+      "ItemName": "Footwraps of the Efreet"
+    },
+    {
+      "ItemId": "171179",
+      "ItemName": "Firewalking Sandals"
+    },
+    {
+      "ItemId": "171180",
+      "ItemName": "Frigid Footwear"
+    },
+    {
+      "ItemId": "171181",
+      "ItemName": "Iceclaw Boots"
+    },
+    {
+      "ItemId": "171182",
+      "ItemName": "Footgear of the Undertow"
+    },
+    {
+      "ItemId": "171183",
+      "ItemName": "Telluric Striders"
+    },
+    {
+      "ItemId": "171184",
+      "ItemName": "Erudite Footwear"
+    },
+    {
+      "ItemId": "171185",
+      "ItemName": "Slippers of the Seer"
+    },
+    {
+      "ItemId": "171186",
+      "ItemName": "Broghans of the Wanderer"
+    },
+    {
+      "ItemId": "171187",
+      "ItemName": "Boots of the Warlord"
+    },
+    {
+      "ItemId": "171188",
+      "ItemName": "Footgear of Garm"
+    },
+    {
+      "ItemId": "171189",
+      "ItemName": "Treads of Tribulation"
+    },
+    {
+      "ItemId": "171190",
+      "ItemName": "Footwraps of Patience"
+    },
+    {
+      "ItemId": "171191",
+      "ItemName": "Contradictory Boots"
+    }
+  ]
+}

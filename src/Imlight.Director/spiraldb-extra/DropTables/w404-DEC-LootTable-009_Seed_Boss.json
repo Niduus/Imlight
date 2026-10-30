@@ -1,0 +1,17 @@
+{
+  "Name": "W404 DEC-LootTable-009 Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table DEC-LootTable-009: the seed drops (2), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355087",
+      "ItemName": "Happy Holidaisy"
+    },
+    {
+      "ItemId": "473654",
+      "ItemName": "Boon Tree"
+    }
+  ]
+}

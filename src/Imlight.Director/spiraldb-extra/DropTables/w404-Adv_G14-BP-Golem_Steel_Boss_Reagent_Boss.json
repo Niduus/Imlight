@@ -1,0 +1,41 @@
+{
+  "Name": "W404 Adv_G14-BP-Golem_Steel_Boss Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table Adv_G14-BP-Golem_Steel_Boss: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1740088",
+      "ItemName": "Royal Brooch"
+    },
+    {
+      "ItemId": "1742018",
+      "ItemName": "Jackall & Hound"
+    },
+    {
+      "ItemId": "1721990",
+      "ItemName": "Ratstabber"
+    },
+    {
+      "ItemId": "1721999",
+      "ItemName": "Clean Sweep"
+    },
+    {
+      "ItemId": "1721988",
+      "ItemName": "Mark of Meowiarty"
+    },
+    {
+      "ItemId": "1721977",
+      "ItemName": "Whiplash"
+    },
+    {
+      "ItemId": "1721978",
+      "ItemName": "Jacques Scratches!"
+    },
+    {
+      "ItemId": "1721967",
+      "ItemName": "Pops' Knuckles"
+    }
+  ]
+}

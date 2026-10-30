@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Minion75_11Elite Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table Minion75_11Elite: the gear drops (16), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "540152",
+      "ItemName": "Zebra's Zephyr Headdress"
+    },
+    {
+      "ItemId": "540153",
+      "ItemName": "Crocogator's Ambush Hood"
+    },
+    {
+      "ItemId": "540154",
+      "ItemName": "Hippogriff's Hat of Harmony"
+    },
+    {
+      "ItemId": "540155",
+      "ItemName": "Wrathful Wraith's Headdress"
+    },
+    {
+      "ItemId": "540156",
+      "ItemName": "Fire Valley Headdress"
+    },
+    {
+      "ItemId": "540157",
+      "ItemName": "Hood of the Hepheloomp"
+    },
+    {
+      "ItemId": "540158",
+      "ItemName": "Blackback Safari Brim"
+    },
+    {
+      "ItemId": "540159",
+      "ItemName": "Hood of the Grasslands"
+    },
+    {
+      "ItemId": "635283",
+      "ItemName": "Fire Spirits' Toasty Helm"
+    },
+    {
+      "ItemId": "635284",
+      "ItemName": "Brisk Helmet of Nodor"
+    },
+    {
+      "ItemId": "635285",
+      "ItemName": "Bad Storm Shroud"
+    },
+    {
+      "ItemId": "635286",
+      "ItemName": "Mask of the Silent Hunter"
+    },
+    {
+      "ItemId": "635287",
+      "ItemName": "Helm of Nature's Wrath"
+    },
+    {
+      "ItemId": "635288",
+      "ItemName": "Honor Bound Helm"
+    },
+    {
+      "ItemId": "635289",
+      "ItemName": "Brave One's Mantle"
+    },
+    {
+      "ItemId": "635290",
+      "ItemName": "Wrath of the Wild"
+    }
+  ]
+}

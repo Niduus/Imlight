@@ -1,0 +1,29 @@
+{
+  "Name": "W404 MS-Pig-Death-Warrior-MSBoss-L48 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-Death-Warrior-MSBoss-L48: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160473",
+      "ItemName": "Bamboo Obelisk"
+    },
+    {
+      "ItemId": "160612",
+      "ItemName": "Potted Heartblossom"
+    },
+    {
+      "ItemId": "470217",
+      "ItemName": "Potted Bamboo Plant"
+    },
+    {
+      "ItemId": "512101",
+      "ItemName": "MooShu Plague Theme"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    }
+  ]
+}

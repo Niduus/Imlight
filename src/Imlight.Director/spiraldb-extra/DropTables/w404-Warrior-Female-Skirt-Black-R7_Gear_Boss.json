@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Warrior-Female-Skirt-Black-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Warrior-Female-Skirt-Black-R7: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104634",
+      "ItemName": "Sepulchral Drape"
+    },
+    {
+      "ItemId": "104655",
+      "ItemName": "Vigorous Vestment"
+    },
+    {
+      "ItemId": "104709",
+      "ItemName": "Sea-King's Surcoat"
+    },
+    {
+      "ItemId": "104752",
+      "ItemName": "Boots of the Endless Chill"
+    },
+    {
+      "ItemId": "104805",
+      "ItemName": "Boots of Passage"
+    },
+    {
+      "ItemId": "104809",
+      "ItemName": "Moonwraith's Gloomstriders"
+    },
+    {
+      "ItemId": "104827",
+      "ItemName": "Fortune Striders"
+    },
+    {
+      "ItemId": "104872",
+      "ItemName": "Boots of the Broken Sky"
+    },
+    {
+      "ItemId": "126631",
+      "ItemName": "Band of the Basilisk"
+    },
+    {
+      "ItemId": "126662",
+      "ItemName": "Deck of the Sage"
+    },
+    {
+      "ItemId": "146207",
+      "ItemName": "Moonwraith's Hurricane Hood"
+    },
+    {
+      "ItemId": "146217",
+      "ItemName": "Headwrap of the Victorious"
+    },
+    {
+      "ItemId": "146285",
+      "ItemName": "Cap of Eternal Cold"
+    },
+    {
+      "ItemId": "146319",
+      "ItemName": "Soot-streaked Veil"
+    },
+    {
+      "ItemId": "146337",
+      "ItemName": "Terminus Mantle"
+    },
+    {
+      "ItemId": "146355",
+      "ItemName": "Cowl of Alignment"
+    }
+  ]
+}

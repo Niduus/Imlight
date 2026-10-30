@@ -1,0 +1,121 @@
+{
+  "Name": "W404 GH-Level-05 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table GH-Level-05: the gear drops (28), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136284",
+      "ItemName": "Bodkin of Battlefrenzy"
+    },
+    {
+      "ItemId": "136395",
+      "ItemName": "Veil of Fulmination"
+    },
+    {
+      "ItemId": "136396",
+      "ItemName": "Veil of the Apologue"
+    },
+    {
+      "ItemId": "136408",
+      "ItemName": "Vigorous Hood"
+    },
+    {
+      "ItemId": "136409",
+      "ItemName": "Coif of the Antithesis"
+    },
+    {
+      "ItemId": "136410",
+      "ItemName": "Cap of Cessation"
+    },
+    {
+      "ItemId": "136411",
+      "ItemName": "Mantle of Zest"
+    },
+    {
+      "ItemId": "136412",
+      "ItemName": "Frost-peaked Cap"
+    },
+    {
+      "ItemId": "136413",
+      "ItemName": "Insulated Helm"
+    },
+    {
+      "ItemId": "136512",
+      "ItemName": "Band of the Snow Owl"
+    },
+    {
+      "ItemId": "136654",
+      "ItemName": "Robe of the Raging Fire"
+    },
+    {
+      "ItemId": "136655",
+      "ItemName": "Winterweave Coat"
+    },
+    {
+      "ItemId": "136656",
+      "ItemName": "Drape of the Deep Blue Sea"
+    },
+    {
+      "ItemId": "136657",
+      "ItemName": "Jerkin of the Seer"
+    },
+    {
+      "ItemId": "136658",
+      "ItemName": "Lifeweave Robe"
+    },
+    {
+      "ItemId": "136659",
+      "ItemName": "Raiment of Lamentation"
+    },
+    {
+      "ItemId": "136660",
+      "ItemName": "Garment of Generality"
+    },
+    {
+      "ItemId": "136661",
+      "ItemName": "Longcoat of the Ice Floes"
+    },
+    {
+      "ItemId": "171192",
+      "ItemName": "Thermic Waders"
+    },
+    {
+      "ItemId": "171193",
+      "ItemName": "Radiant Striders"
+    },
+    {
+      "ItemId": "171194",
+      "ItemName": "Brumal Boots"
+    },
+    {
+      "ItemId": "171195",
+      "ItemName": "Winterweave Footgear"
+    },
+    {
+      "ItemId": "171196",
+      "ItemName": "Boots of the Vortex"
+    },
+    {
+      "ItemId": "171197",
+      "ItemName": "Sandals of the Shibboleth"
+    },
+    {
+      "ItemId": "171198",
+      "ItemName": "Sapient Walkers"
+    },
+    {
+      "ItemId": "171199",
+      "ItemName": "Mocassins of the Green"
+    },
+    {
+      "ItemId": "171200",
+      "ItemName": "Long Walkers"
+    },
+    {
+      "ItemId": "171201",
+      "ItemName": "Boots of Composure"
+    }
+  ]
+}

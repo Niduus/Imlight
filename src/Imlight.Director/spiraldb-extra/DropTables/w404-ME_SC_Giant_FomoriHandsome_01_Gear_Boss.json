@@ -1,0 +1,105 @@
+{
+  "Name": "W404 ME_SC_Giant_FomoriHandsome_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME_SC_Giant_FomoriHandsome_01: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "473287",
+      "ItemName": "Greenwarden's Energetic Mask"
+    },
+    {
+      "ItemId": "473294",
+      "ItemName": "Greenwarden's Energetic Shroud"
+    },
+    {
+      "ItemId": "473301",
+      "ItemName": "Greenwarden's Energetic Boots"
+    },
+    {
+      "ItemId": "473308",
+      "ItemName": "Greenwarden's Peaceful Mask"
+    },
+    {
+      "ItemId": "473315",
+      "ItemName": "Greenwarden's Peaceful Shroud"
+    },
+    {
+      "ItemId": "473322",
+      "ItemName": "Greenwarden's Peaceful Boots"
+    },
+    {
+      "ItemId": "473329",
+      "ItemName": "Greenwarden's Brilliant Mask"
+    },
+    {
+      "ItemId": "473336",
+      "ItemName": "Greenwarden's Brilliant Shroud"
+    },
+    {
+      "ItemId": "473343",
+      "ItemName": "Greenwarden's Brilliant Boots"
+    },
+    {
+      "ItemId": "473358",
+      "ItemName": "Greenwarden's Energetic Staff"
+    },
+    {
+      "ItemId": "473365",
+      "ItemName": "Greenwarden's Peaceful Staff"
+    },
+    {
+      "ItemId": "473372",
+      "ItemName": "Greenwarden's Brilliant Staff"
+    },
+    {
+      "ItemId": "1257884",
+      "ItemName": "Greenwarden's Energetic Staff"
+    },
+    {
+      "ItemId": "1257885",
+      "ItemName": "Greenwarden's Peaceful Staff"
+    },
+    {
+      "ItemId": "1257886",
+      "ItemName": "Greenwarden's Brilliant Staff"
+    },
+    {
+      "ItemId": "1257945",
+      "ItemName": "Greenwarden's Energetic Mask"
+    },
+    {
+      "ItemId": "1257946",
+      "ItemName": "Greenwarden's Energetic Boots"
+    },
+    {
+      "ItemId": "1257947",
+      "ItemName": "Greenwarden's Energetic Shroud"
+    },
+    {
+      "ItemId": "1257948",
+      "ItemName": "Greenwarden's Peaceful Mask"
+    },
+    {
+      "ItemId": "1257949",
+      "ItemName": "Greenwarden's Peaceful Greaves"
+    },
+    {
+      "ItemId": "1257950",
+      "ItemName": "Greenwarden's Peaceful Shroud"
+    },
+    {
+      "ItemId": "1257951",
+      "ItemName": "Greenwarden's Brilliant Mask"
+    },
+    {
+      "ItemId": "1257952",
+      "ItemName": "Greenwarden's Brilliant Boots"
+    },
+    {
+      "ItemId": "1257953",
+      "ItemName": "Greenwarden's Brilliant Shroud"
+    }
+  ]
+}

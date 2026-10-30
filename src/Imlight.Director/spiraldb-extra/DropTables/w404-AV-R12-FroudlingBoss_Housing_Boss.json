@@ -1,0 +1,21 @@
+{
+  "Name": "W404 AV-R12-FroudlingBoss Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table AV-R12-FroudlingBoss: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "512166",
+      "ItemName": "Avalon Tense Theme"
+    },
+    {
+      "ItemId": "512167",
+      "ItemName": "Avalon Wyrd Theme"
+    },
+    {
+      "ItemId": "641568",
+      "ItemName": "Tree Fountain"
+    }
+  ]
+}

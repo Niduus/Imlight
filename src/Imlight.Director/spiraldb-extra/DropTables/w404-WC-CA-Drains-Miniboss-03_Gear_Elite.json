@@ -1,0 +1,37 @@
+{
+  "Name": "W404 WC-CA-Drains-Miniboss-03 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table WC-CA-Drains-Miniboss-03: the gear drops (7), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1489316",
+      "ItemName": "Soldier's Vibrant Armor"
+    },
+    {
+      "ItemId": "1489317",
+      "ItemName": "Soldier's Deadly Armor"
+    },
+    {
+      "ItemId": "1489318",
+      "ItemName": "Soldier's Balanced Armor"
+    },
+    {
+      "ItemId": "1489319",
+      "ItemName": "Dragonspyre Soldier's Armor"
+    },
+    {
+      "ItemId": "1489451",
+      "ItemName": "Soldier's Vibrant Saber"
+    },
+    {
+      "ItemId": "1489452",
+      "ItemName": "Soldier's Deadly Longsword"
+    },
+    {
+      "ItemId": "1489454",
+      "ItemName": "Dragonspyre Soldier Cleaver"
+    }
+  ]
+}

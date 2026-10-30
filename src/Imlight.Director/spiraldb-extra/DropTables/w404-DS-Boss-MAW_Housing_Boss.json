@@ -1,0 +1,49 @@
+{
+  "Name": "W404 DS-Boss-MAW Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table DS-Boss-MAW: the housing drops (10), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160810",
+      "ItemName": "Dragon Bust"
+    },
+    {
+      "ItemId": "160825",
+      "ItemName": "Dragon Claw"
+    },
+    {
+      "ItemId": "160843",
+      "ItemName": "Dragonclaw Pedestal"
+    },
+    {
+      "ItemId": "160852",
+      "ItemName": "Regal Dragon Statue"
+    },
+    {
+      "ItemId": "160855",
+      "ItemName": "Great Dragon Bust"
+    },
+    {
+      "ItemId": "160892",
+      "ItemName": "Dragonspyre Ruins"
+    },
+    {
+      "ItemId": "160902",
+      "ItemName": "Dragonspyre Platform"
+    },
+    {
+      "ItemId": "160908",
+      "ItemName": "Dragon Wall Bust"
+    },
+    {
+      "ItemId": "160909",
+      "ItemName": "Dragonwing Bust"
+    },
+    {
+      "ItemId": "470452",
+      "ItemName": "Dragon Cauldron"
+    }
+  ]
+}

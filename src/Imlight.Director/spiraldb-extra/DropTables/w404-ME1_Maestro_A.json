@@ -1,0 +1,9 @@
+{
+  "Name": "W404 ME1_Maestro_A",
+  "Description": "Gold of the game's table ME1_Maestro_A, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 80,
+  "MaxGold": 120,
+  "EachItem": false,
+  "Items": []
+}

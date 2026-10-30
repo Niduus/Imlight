@@ -1,0 +1,41 @@
+{
+  "Name": "W404 EM2-Mob-Ring-127 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table EM2-Mob-Ring-127: the gear drops (8), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462284",
+      "ItemName": "Rad Kalamar Ring"
+    },
+    {
+      "ItemId": "1462285",
+      "ItemName": "Chill Kalamar Ring"
+    },
+    {
+      "ItemId": "1462286",
+      "ItemName": "Gnarly Kalamar Ring"
+    },
+    {
+      "ItemId": "1462287",
+      "ItemName": "Mondo Kalamar Ring"
+    },
+    {
+      "ItemId": "1462288",
+      "ItemName": "Righteous Kalamar Ring"
+    },
+    {
+      "ItemId": "1462289",
+      "ItemName": "Heavy Kalamar Ring"
+    },
+    {
+      "ItemId": "1462290",
+      "ItemName": "Bodacious Kalamar Ring"
+    },
+    {
+      "ItemId": "1462291",
+      "ItemName": "Choice Kalamar Ring"
+    }
+  ]
+}

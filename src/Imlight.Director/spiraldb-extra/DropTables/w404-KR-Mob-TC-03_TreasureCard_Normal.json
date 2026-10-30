@@ -1,0 +1,73 @@
+{
+  "Name": "W404 KR-Mob-TC-03 TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table KR-Mob-TC-03: the treasurecard drops (16), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Scarab TC KR",
+      "ItemName": "Scarab"
+    },
+    {
+      "ItemId": "Scarab Death TC KR",
+      "ItemName": "Death Scarab"
+    },
+    {
+      "ItemId": "Frost Beetle Fire TC KR",
+      "ItemName": "Fire Beetle"
+    },
+    {
+      "ItemId": "Frost Beetle Storm TC KR",
+      "ItemName": "Storm Beetle"
+    },
+    {
+      "ItemId": "Scarab Life TC KR",
+      "ItemName": "Life Scarab"
+    },
+    {
+      "ItemId": "Spinysaur TC",
+      "ItemName": "Spinysaur"
+    },
+    {
+      "ItemId": "Celestial Calendar TC",
+      "ItemName": "Celestial Calendar"
+    },
+    {
+      "ItemId": "Scorpion TC KR",
+      "ItemName": "Scorpion"
+    },
+    {
+      "ItemId": "Spider Black Widow TC KR",
+      "ItemName": "Black Widow"
+    },
+    {
+      "ItemId": "Frost Beetle TC KR",
+      "ItemName": "Frost Beetle"
+    },
+    {
+      "ItemId": "Choke TC KR",
+      "ItemName": "Choke"
+    },
+    {
+      "ItemId": "Sanctuary TC KR",
+      "ItemName": "Sanctuary"
+    },
+    {
+      "ItemId": "Pierce TC KR",
+      "ItemName": "Pierce"
+    },
+    {
+      "ItemId": "Disarm TC KR",
+      "ItemName": "Disarm"
+    },
+    {
+      "ItemId": "Mass Infection TC KR",
+      "ItemName": "Mass Infection"
+    },
+    {
+      "ItemId": "Avenging Fossil TC",
+      "ItemName": "Avenging Fossil"
+    }
+  ]
+}

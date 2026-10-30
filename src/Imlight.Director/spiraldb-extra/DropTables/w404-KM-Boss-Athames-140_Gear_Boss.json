@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-Boss-Athames-140 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-Boss-Athames-140: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1515138",
+      "ItemName": "Guten Freshbaker Knife"
+    },
+    {
+      "ItemId": "1515139",
+      "ItemName": "Guten Wonderneer Knife"
+    },
+    {
+      "ItemId": "1515140",
+      "ItemName": "Guten Sciencer Knife"
+    },
+    {
+      "ItemId": "1515141",
+      "ItemName": "Guten Artisan Knife"
+    },
+    {
+      "ItemId": "1515142",
+      "ItemName": "Guten Sweetsmith Knife"
+    },
+    {
+      "ItemId": "1515143",
+      "ItemName": "Guten Sentamentalist Knife"
+    },
+    {
+      "ItemId": "1515144",
+      "ItemName": "Guten Dreamsearcher Knife"
+    },
+    {
+      "ItemId": "1515145",
+      "ItemName": "Guten Candymancer Knife"
+    },
+    {
+      "ItemId": "1515162",
+      "ItemName": "Wunderbar Freshbaker Knife"
+    },
+    {
+      "ItemId": "1515163",
+      "ItemName": "Wunderbar Wonderneer Knife"
+    },
+    {
+      "ItemId": "1515164",
+      "ItemName": "Wunderbar Sciencer Knife"
+    },
+    {
+      "ItemId": "1515165",
+      "ItemName": "Wunderbar Artisan Knife"
+    },
+    {
+      "ItemId": "1515166",
+      "ItemName": "Wunderbar Sweetsmith Knife"
+    },
+    {
+      "ItemId": "1515167",
+      "ItemName": "Wunderbar Sentamentalist Knife"
+    },
+    {
+      "ItemId": "1515168",
+      "ItemName": "Wunderbar Dreamsearcher Knife"
+    },
+    {
+      "ItemId": "1515169",
+      "ItemName": "Wunderbar Candymancer Knife"
+    },
+    {
+      "ItemId": "1515186",
+      "ItemName": "Uber Freshbaker Knife"
+    },
+    {
+      "ItemId": "1515187",
+      "ItemName": "Uber Wonderneer Knife"
+    },
+    {
+      "ItemId": "1515188",
+      "ItemName": "Uber Sciencer Knife"
+    },
+    {
+      "ItemId": "1515189",
+      "ItemName": "Uber Artisan Knife"
+    },
+    {
+      "ItemId": "1515190",
+      "ItemName": "Uber Sweetsmith Knife"
+    },
+    {
+      "ItemId": "1515191",
+      "ItemName": "Uber Sentamentalist Knife"
+    },
+    {
+      "ItemId": "1515192",
+      "ItemName": "Uber Dreamsearcher Knife"
+    },
+    {
+      "ItemId": "1515193",
+      "ItemName": "Uber Candymancer Knife"
+    }
+  ]
+}

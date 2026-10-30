@@ -1,0 +1,49 @@
+{
+  "Name": "W404 NV_Horse_HordeOfficer_A_02 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Horse_HordeOfficer_A_02: the snack drops (10), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "641597",
+      "ItemName": "Bearberry"
+    },
+    {
+      "ItemId": "641703",
+      "ItemName": "Colossal Rutabaga"
+    },
+    {
+      "ItemId": "473518",
+      "ItemName": "Gobbler Stoppers"
+    },
+    {
+      "ItemId": "537596",
+      "ItemName": "Fuzzy Peach Fizz"
+    },
+    {
+      "ItemId": "473525",
+      "ItemName": "Jolly Rancher"
+    },
+    {
+      "ItemId": "789446",
+      "ItemName": "Kalua Kebab"
+    },
+    {
+      "ItemId": "1359613",
+      "ItemName": "Mustachios"
+    },
+    {
+      "ItemId": "537585",
+      "ItemName": "Peppercorn"
+    },
+    {
+      "ItemId": "641681",
+      "ItemName": "Street Pizza"
+    },
+    {
+      "ItemId": "1359607",
+      "ItemName": "Zeus Newton"
+    }
+  ]
+}

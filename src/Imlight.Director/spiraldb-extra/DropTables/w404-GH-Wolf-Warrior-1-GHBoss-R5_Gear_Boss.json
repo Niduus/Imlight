@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Wolf-Warrior-1-GHBoss-R5 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Wolf-Warrior-1-GHBoss-R5: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136282",
+      "ItemName": "Vibrant Dagger"
+    },
+    {
+      "ItemId": "136383",
+      "ItemName": "Cap of the Cyclone"
+    },
+    {
+      "ItemId": "136385",
+      "ItemName": "Polar Ice Cap"
+    },
+    {
+      "ItemId": "136490",
+      "ItemName": "Wavecrasher's Stone"
+    },
+    {
+      "ItemId": "171165",
+      "ItemName": "Firetalon Boots"
+    },
+    {
+      "ItemId": "171173",
+      "ItemName": "Striders of Abundance"
+    }
+  ]
+}

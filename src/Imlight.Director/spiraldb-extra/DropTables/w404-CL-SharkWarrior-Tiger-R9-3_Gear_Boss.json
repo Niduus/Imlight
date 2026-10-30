@@ -1,0 +1,57 @@
+{
+  "Name": "W404 CL-SharkWarrior-Tiger-R9-3 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-SharkWarrior-Tiger-R9-3: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243222",
+      "ItemName": "Dirk of the Dragon"
+    },
+    {
+      "ItemId": "243273",
+      "ItemName": "Marinos's Lancet"
+    },
+    {
+      "ItemId": "243346",
+      "ItemName": "Fire-Forged Flame Helm"
+    },
+    {
+      "ItemId": "243374",
+      "ItemName": "Diamond Dust Cover"
+    },
+    {
+      "ItemId": "243568",
+      "ItemName": "Signet of Shivers"
+    },
+    {
+      "ItemId": "243589",
+      "ItemName": "Ring of the Maelstrom"
+    },
+    {
+      "ItemId": "243625",
+      "ItemName": "Firestar Surcoat"
+    },
+    {
+      "ItemId": "243666",
+      "ItemName": "Neelus's Inspired Surcoat"
+    },
+    {
+      "ItemId": "243723",
+      "ItemName": "Mutual Mukluks"
+    },
+    {
+      "ItemId": "243746",
+      "ItemName": "Sinister Stalkers"
+    },
+    {
+      "ItemId": "243874",
+      "ItemName": "Amulet of Agony"
+    },
+    {
+      "ItemId": "243877",
+      "ItemName": "Jewel of the Dragons"
+    }
+  ]
+}

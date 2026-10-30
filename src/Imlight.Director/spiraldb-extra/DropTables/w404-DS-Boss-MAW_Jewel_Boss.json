@@ -1,0 +1,37 @@
+{
+  "Name": "W404 DS-Boss-MAW Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table DS-Boss-MAW: the jewel drops (7), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1384428",
+      "ItemName": "Fire Brandon Ruby"
+    },
+    {
+      "ItemId": "1384429",
+      "ItemName": "Ice Brandon Sapphire"
+    },
+    {
+      "ItemId": "1384430",
+      "ItemName": "Storm Brandon Amethyst"
+    },
+    {
+      "ItemId": "1384431",
+      "ItemName": "Myth Brandon Peridot"
+    },
+    {
+      "ItemId": "1384432",
+      "ItemName": "Life Brandon Jade"
+    },
+    {
+      "ItemId": "1384433",
+      "ItemName": "Death Brandon Onyx"
+    },
+    {
+      "ItemId": "1384434",
+      "ItemName": "Balance Brandon Citrine"
+    }
+  ]
+}

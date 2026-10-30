@@ -1,0 +1,117 @@
+{
+  "Name": "W404 AZ-Boss-R12-01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-Boss-R12-01: the gear drops (27), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730184",
+      "ItemName": "Laughing Chac's Talisman"
+    },
+    {
+      "ItemId": "730185",
+      "ItemName": "Sun's Death Smiling Pendant"
+    },
+    {
+      "ItemId": "730220",
+      "ItemName": "Smoking Frog Cutter"
+    },
+    {
+      "ItemId": "730221",
+      "ItemName": "Cut Rock Dagger"
+    },
+    {
+      "ItemId": "730222",
+      "ItemName": "Sky Flower Sliver"
+    },
+    {
+      "ItemId": "730223",
+      "ItemName": "Snake Ink Fang"
+    },
+    {
+      "ItemId": "730269",
+      "ItemName": "Elite Jura Guard Helm"
+    },
+    {
+      "ItemId": "730270",
+      "ItemName": "Twisted Fang Mask"
+    },
+    {
+      "ItemId": "730271",
+      "ItemName": "Indigo Wing Crown"
+    },
+    {
+      "ItemId": "730272",
+      "ItemName": "Tree of Secrets Chac Mask"
+    },
+    {
+      "ItemId": "730273",
+      "ItemName": "Five Fangs of Fury Headdress"
+    },
+    {
+      "ItemId": "730274",
+      "ItemName": "Thirteen Death Mask"
+    },
+    {
+      "ItemId": "730275",
+      "ItemName": "Dawn Hour Mantle"
+    },
+    {
+      "ItemId": "730383",
+      "ItemName": "Elite Jura Guard Stalkers"
+    },
+    {
+      "ItemId": "730384",
+      "ItemName": "Twisted Fang Boots"
+    },
+    {
+      "ItemId": "730385",
+      "ItemName": "Indigo Wing Striders"
+    },
+    {
+      "ItemId": "730386",
+      "ItemName": "Tree of Secrets Chac Runners"
+    },
+    {
+      "ItemId": "730387",
+      "ItemName": "Five Fangs of Fury Boots"
+    },
+    {
+      "ItemId": "730388",
+      "ItemName": "Black Tears of Night Wraps"
+    },
+    {
+      "ItemId": "730389",
+      "ItemName": "Heart of Sky Boots"
+    },
+    {
+      "ItemId": "730419",
+      "ItemName": "Deck of the Jaguar Spirit"
+    },
+    {
+      "ItemId": "730420",
+      "ItemName": "King's Royal Portraits"
+    },
+    {
+      "ItemId": "730421",
+      "ItemName": "Lords of Night Pyramid Deck"
+    },
+    {
+      "ItemId": "730422",
+      "ItemName": "Calendar of the Spiral King"
+    },
+    {
+      "ItemId": "730430",
+      "ItemName": "Red Sky Snake Banner"
+    },
+    {
+      "ItemId": "730431",
+      "ItemName": "Snake Staff of Frost and Hail"
+    },
+    {
+      "ItemId": "730432",
+      "ItemName": "Staff of the Storm Quetzals"
+    }
+  ]
+}

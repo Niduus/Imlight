@@ -1,0 +1,149 @@
+{
+  "Name": "W404 Spellements_W_All_World_Badge_07 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table Spellements_W_All_World_Badge_07: the reagent drops (35), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1492429",
+      "ItemName": "Barbarian's Saga"
+    },
+    {
+      "ItemId": "1492425",
+      "ItemName": "Blast Off!"
+    },
+    {
+      "ItemId": "1688488",
+      "ItemName": "Climaclysm"
+    },
+    {
+      "ItemId": "1492430",
+      "ItemName": "Dark & Stormy"
+    },
+    {
+      "ItemId": "1535581",
+      "ItemName": "Freeze Ray"
+    },
+    {
+      "ItemId": "1504151",
+      "ItemName": "Grrnadier"
+    },
+    {
+      "ItemId": "1492426",
+      "ItemName": "Grim Reader"
+    },
+    {
+      "ItemId": "1688483",
+      "ItemName": "Iron Sultan"
+    },
+    {
+      "ItemId": "1688485",
+      "ItemName": "Lamassu"
+    },
+    {
+      "ItemId": "1492428",
+      "ItemName": "Lord of the Jungle"
+    },
+    {
+      "ItemId": "1504146",
+      "ItemName": "Mockenspiel"
+    },
+    {
+      "ItemId": "1688492",
+      "ItemName": "Nested Fury"
+    },
+    {
+      "ItemId": "1537718",
+      "ItemName": "Old One's Endgame"
+    },
+    {
+      "ItemId": "1688487",
+      "ItemName": "Qismah's Curse"
+    },
+    {
+      "ItemId": "1688489",
+      "ItemName": "Raging Bull"
+    },
+    {
+      "ItemId": "1688491",
+      "ItemName": "Rusalka's Wrath"
+    },
+    {
+      "ItemId": "1688482",
+      "ItemName": "Sand Wurm"
+    },
+    {
+      "ItemId": "1688398",
+      "ItemName": "Scion of Balance"
+    },
+    {
+      "ItemId": "1688399",
+      "ItemName": "Scion of Death"
+    },
+    {
+      "ItemId": "1688320",
+      "ItemName": "Scion of Fire"
+    },
+    {
+      "ItemId": "1688400",
+      "ItemName": "Scion of Ice"
+    },
+    {
+      "ItemId": "1688401",
+      "ItemName": "Scion of Life"
+    },
+    {
+      "ItemId": "1688402",
+      "ItemName": "Scion of Myth"
+    },
+    {
+      "ItemId": "1688403",
+      "ItemName": "Scion of Storm"
+    },
+    {
+      "ItemId": "1688486",
+      "ItemName": "Scorching Scimitars"
+    },
+    {
+      "ItemId": "1504148",
+      "ItemName": "Shatterhorn"
+    },
+    {
+      "ItemId": "1504150",
+      "ItemName": "S'more Machine"
+    },
+    {
+      "ItemId": "1504149",
+      "ItemName": "Snack Attack"
+    },
+    {
+      "ItemId": "1688484",
+      "ItemName": "Snake Charmer"
+    },
+    {
+      "ItemId": "1688490",
+      "ItemName": "Snowball Barrage"
+    },
+    {
+      "ItemId": "1504147",
+      "ItemName": "Sound of Musicology"
+    },
+    {
+      "ItemId": "1519005",
+      "ItemName": "Tatzlewurm Terror"
+    },
+    {
+      "ItemId": "1688494",
+      "ItemName": "Winged Sorrow"
+    },
+    {
+      "ItemId": "1688493",
+      "ItemName": "Wings of Fate"
+    },
+    {
+      "ItemId": "1688495",
+      "ItemName": "Witch's House Call"
+    }
+  ]
+}

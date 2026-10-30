@@ -1,0 +1,377 @@
+{
+  "Name": "W404 PL-Mob-Gear-108 Jewel (Elite)",
+  "Description": "Wizard404's drop list of the game's table PL-Mob-Gear-108: the jewel drops (92), one picked when it rolls. How often: DropOdds.json Elite/Jewel.",
+  "Odds": "Elite/Jewel",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1352597",
+      "ItemName": "Polished Damage Ruby +21"
+    },
+    {
+      "ItemId": "1352621",
+      "ItemName": "Polished Damage Sapphire +21"
+    },
+    {
+      "ItemId": "1352645",
+      "ItemName": "Polished Damage Amethyst +21"
+    },
+    {
+      "ItemId": "1352669",
+      "ItemName": "Polished Damage Peridot +21"
+    },
+    {
+      "ItemId": "1352693",
+      "ItemName": "Polished Damage Jade +21"
+    },
+    {
+      "ItemId": "1352717",
+      "ItemName": "Polished Damage Onyx +21"
+    },
+    {
+      "ItemId": "1352741",
+      "ItemName": "Polished Damage Citrine +21"
+    },
+    {
+      "ItemId": "1352745",
+      "ItemName": "Polished Damage Hematite +42"
+    },
+    {
+      "ItemId": "1352766",
+      "ItemName": "Polished Piercing Ruby +6%"
+    },
+    {
+      "ItemId": "1352773",
+      "ItemName": "Polished Piercing Sapphire +6%"
+    },
+    {
+      "ItemId": "1352780",
+      "ItemName": "Polished Piercing Amethyst +6%"
+    },
+    {
+      "ItemId": "1352787",
+      "ItemName": "Polished Piercing Peridot +6%"
+    },
+    {
+      "ItemId": "1352794",
+      "ItemName": "Polished Piercing Jade +6%"
+    },
+    {
+      "ItemId": "1352801",
+      "ItemName": "Polished Piercing Onyx +6%"
+    },
+    {
+      "ItemId": "1352808",
+      "ItemName": "Polished Piercing Citrine +6%"
+    },
+    {
+      "ItemId": "1352832",
+      "ItemName": "Polished Critical Ruby +11"
+    },
+    {
+      "ItemId": "1352845",
+      "ItemName": "Polished Critical Sapphire +11"
+    },
+    {
+      "ItemId": "1352858",
+      "ItemName": "Polished Critical Amethyst +11"
+    },
+    {
+      "ItemId": "1352871",
+      "ItemName": "Polished Critical Peridot +11"
+    },
+    {
+      "ItemId": "1352884",
+      "ItemName": "Polished Critical Jade +11"
+    },
+    {
+      "ItemId": "1352897",
+      "ItemName": "Polished Critical Onyx +11"
+    },
+    {
+      "ItemId": "1352910",
+      "ItemName": "Polished Critical Citrine +11"
+    },
+    {
+      "ItemId": "1352923",
+      "ItemName": "Polished Critical Hematite +11"
+    },
+    {
+      "ItemId": "1352955",
+      "ItemName": "Polished Blocking Ruby +12"
+    },
+    {
+      "ItemId": "1352968",
+      "ItemName": "Polished Blocking Sapphire +12"
+    },
+    {
+      "ItemId": "1352981",
+      "ItemName": "Polished Blocking Amethyst +12"
+    },
+    {
+      "ItemId": "1352994",
+      "ItemName": "Polished Blocking Peridot +12"
+    },
+    {
+      "ItemId": "1357007",
+      "ItemName": "Polished Blocking Jade +12"
+    },
+    {
+      "ItemId": "1357020",
+      "ItemName": "Polished Blocking Onyx +12"
+    },
+    {
+      "ItemId": "1357033",
+      "ItemName": "Polished Blocking Citrine +12"
+    },
+    {
+      "ItemId": "1357045",
+      "ItemName": "Polished Blocking Hematite +11"
+    },
+    {
+      "ItemId": "1357063",
+      "ItemName": "Polished Accurate Ruby +10%"
+    },
+    {
+      "ItemId": "1357072",
+      "ItemName": "Polished Accurate Sapphire +10%"
+    },
+    {
+      "ItemId": "1357081",
+      "ItemName": "Polished Accurate Amethyst +10%"
+    },
+    {
+      "ItemId": "1357090",
+      "ItemName": "Polished Accurate Peridot +10%"
+    },
+    {
+      "ItemId": "1357099",
+      "ItemName": "Polished Accurate Jade +10%"
+    },
+    {
+      "ItemId": "1357108",
+      "ItemName": "Polished Accurate Onyx +10%"
+    },
+    {
+      "ItemId": "1357117",
+      "ItemName": "Polished Accurate Citrine +10%"
+    },
+    {
+      "ItemId": "1357119",
+      "ItemName": "Polished Accurate Hematite +10%"
+    },
+    {
+      "ItemId": "1357279",
+      "ItemName": "Polished Defense Ruby +43"
+    },
+    {
+      "ItemId": "1357280",
+      "ItemName": "Polished Defense Ruby +44"
+    },
+    {
+      "ItemId": "1357324",
+      "ItemName": "Polished Defense Sapphire +43"
+    },
+    {
+      "ItemId": "1357325",
+      "ItemName": "Polished Defense Sapphire +44"
+    },
+    {
+      "ItemId": "1357369",
+      "ItemName": "Polished Defense Amethyst +43"
+    },
+    {
+      "ItemId": "1357370",
+      "ItemName": "Polished Defense Amethyst +44"
+    },
+    {
+      "ItemId": "1357414",
+      "ItemName": "Polished Defense Peridot +43"
+    },
+    {
+      "ItemId": "1357415",
+      "ItemName": "Polished Defense Peridot +44"
+    },
+    {
+      "ItemId": "1357459",
+      "ItemName": "Polished Defense Jade +43"
+    },
+    {
+      "ItemId": "1357460",
+      "ItemName": "Polished Defense Jade +44"
+    },
+    {
+      "ItemId": "1357504",
+      "ItemName": "Polished Defense Onyx +43"
+    },
+    {
+      "ItemId": "1357505",
+      "ItemName": "Polished Defense Onyx +44"
+    },
+    {
+      "ItemId": "1357549",
+      "ItemName": "Polished Defense Citrine +43"
+    },
+    {
+      "ItemId": "1357550",
+      "ItemName": "Polished Defense Citrine +44"
+    },
+    {
+      "ItemId": "1357592",
+      "ItemName": "Polished Defense Hematite +41"
+    },
+    {
+      "ItemId": "1360040",
+      "ItemName": "Polished Piercing Hematite +5%"
+    },
+    {
+      "ItemId": "1352598",
+      "ItemName": "Polished Damage Ruby +22"
+    },
+    {
+      "ItemId": "1352622",
+      "ItemName": "Polished Damage Sapphire +22"
+    },
+    {
+      "ItemId": "1352646",
+      "ItemName": "Polished Damage Amethyst +22"
+    },
+    {
+      "ItemId": "1352670",
+      "ItemName": "Polished Damage Peridot +22"
+    },
+    {
+      "ItemId": "1352694",
+      "ItemName": "Polished Damage Jade +22"
+    },
+    {
+      "ItemId": "1352718",
+      "ItemName": "Polished Damage Onyx +22"
+    },
+    {
+      "ItemId": "1352742",
+      "ItemName": "Polished Damage Citrine +22"
+    },
+    {
+      "ItemId": "1352746",
+      "ItemName": "Polished Damage Hematite +44"
+    },
+    {
+      "ItemId": "1352759",
+      "ItemName": "Polished Damage Opal +11"
+    },
+    {
+      "ItemId": "1352821",
+      "ItemName": "Polished Mending Opal +5%"
+    },
+    {
+      "ItemId": "1352833",
+      "ItemName": "Polished Critical Ruby +12"
+    },
+    {
+      "ItemId": "1352846",
+      "ItemName": "Polished Critical Sapphire +12"
+    },
+    {
+      "ItemId": "1352859",
+      "ItemName": "Polished Critical Amethyst +12"
+    },
+    {
+      "ItemId": "1352872",
+      "ItemName": "Polished Critical Peridot +12"
+    },
+    {
+      "ItemId": "1352885",
+      "ItemName": "Polished Critical Jade +12"
+    },
+    {
+      "ItemId": "1352898",
+      "ItemName": "Polished Critical Onyx +12"
+    },
+    {
+      "ItemId": "1352911",
+      "ItemName": "Polished Critical Citrine +12"
+    },
+    {
+      "ItemId": "1352924",
+      "ItemName": "Polished Critical Hematite +12"
+    },
+    {
+      "ItemId": "1352938",
+      "ItemName": "Polished Resilient Opal +5%"
+    },
+    {
+      "ItemId": "1352943",
+      "ItemName": "Polished Healing Opal +5%"
+    },
+    {
+      "ItemId": "1357046",
+      "ItemName": "Polished Blocking Hematite +12"
+    },
+    {
+      "ItemId": "1357153",
+      "ItemName": "Polished Piercing Opal +3%"
+    },
+    {
+      "ItemId": "1357594",
+      "ItemName": "Polished Defense Hematite +43"
+    },
+    {
+      "ItemId": "1357595",
+      "ItemName": "Polished Defense Hematite +44"
+    },
+    {
+      "ItemId": "1358586",
+      "ItemName": "Polished Defense Opal +21"
+    },
+    {
+      "ItemId": "1358587",
+      "ItemName": "Polished Defense Opal +22"
+    },
+    {
+      "ItemId": "1358835",
+      "ItemName": "Polished Blocking Opal +6"
+    },
+    {
+      "ItemId": "1358973",
+      "ItemName": "Fireblade Ruby"
+    },
+    {
+      "ItemId": "1358974",
+      "ItemName": "Iceblade Sapphire"
+    },
+    {
+      "ItemId": "1358975",
+      "ItemName": "Stormblade Amethyst"
+    },
+    {
+      "ItemId": "1358976",
+      "ItemName": "Mythblade Peridot"
+    },
+    {
+      "ItemId": "1358977",
+      "ItemName": "Lifeblade Jade"
+    },
+    {
+      "ItemId": "1358978",
+      "ItemName": "Deathblade Onyx"
+    },
+    {
+      "ItemId": "1358979",
+      "ItemName": "Balanceblade Citrine"
+    },
+    {
+      "ItemId": "1358980",
+      "ItemName": "Shadowblade Hematite"
+    },
+    {
+      "ItemId": "1360038",
+      "ItemName": "Polished Critical Opal +6"
+    },
+    {
+      "ItemId": "1360041",
+      "ItemName": "Polished Piercing Hematite +6%"
+    }
+  ]
+}

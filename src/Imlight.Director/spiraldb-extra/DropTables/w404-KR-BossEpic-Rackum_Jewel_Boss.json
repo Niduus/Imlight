@@ -1,0 +1,21 @@
+{
+  "Name": "W404 KR-BossEpic-Rackum Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossEpic-Rackum: the jewel drops (3), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1358999",
+      "ItemName": "Furnace Opal"
+    },
+    {
+      "ItemId": "1360002",
+      "ItemName": "Virulence Opal"
+    },
+    {
+      "ItemId": "1360003",
+      "ItemName": "Reliquary Opal"
+    }
+  ]
+}

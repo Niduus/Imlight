@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Colossus-Earth-Boss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Colossus-Earth-Boss-R7: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104596",
+      "ItemName": "Robe of Equivalence"
+    },
+    {
+      "ItemId": "104597",
+      "ItemName": "Tunic of Readiness"
+    },
+    {
+      "ItemId": "104657",
+      "ItemName": "Coat of Autumn"
+    },
+    {
+      "ItemId": "104677",
+      "ItemName": "Surcoat of the Sasquatch"
+    },
+    {
+      "ItemId": "104732",
+      "ItemName": "Cloak of Forgotten Lore"
+    },
+    {
+      "ItemId": "104738",
+      "ItemName": "Sandals of the Earthlord"
+    },
+    {
+      "ItemId": "104773",
+      "ItemName": "Shoes of the Searing Flame"
+    },
+    {
+      "ItemId": "104775",
+      "ItemName": "Blasting Boots"
+    },
+    {
+      "ItemId": "104823",
+      "ItemName": "Sandals of Judgement"
+    },
+    {
+      "ItemId": "126585",
+      "ItemName": "Wood-carven Ring"
+    },
+    {
+      "ItemId": "146174",
+      "ItemName": "Soulwoven Stylet"
+    },
+    {
+      "ItemId": "146211",
+      "ItemName": "Stormwatcher's Hood"
+    },
+    {
+      "ItemId": "146243",
+      "ItemName": "Headdress of Allegory"
+    },
+    {
+      "ItemId": "146263",
+      "ItemName": "Veil of Activity"
+    },
+    {
+      "ItemId": "146265",
+      "ItemName": "Cowl of the Earthlord"
+    },
+    {
+      "ItemId": "146315",
+      "ItemName": "Hood of Fulmination"
+    }
+  ]
+}

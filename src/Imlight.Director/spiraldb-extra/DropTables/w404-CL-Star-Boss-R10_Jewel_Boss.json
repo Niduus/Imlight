@@ -1,0 +1,17 @@
+{
+  "Name": "W404 CL-Star-Boss-R10 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-Star-Boss-R10: the jewel drops (2), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1358991",
+      "ItemName": "Fortify Opal"
+    },
+    {
+      "ItemId": "1358992",
+      "ItemName": "Amplify Opal"
+    }
+  ]
+}

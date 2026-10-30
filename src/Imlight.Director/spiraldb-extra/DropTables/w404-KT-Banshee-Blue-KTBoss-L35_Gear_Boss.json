@@ -1,0 +1,73 @@
+{
+  "Name": "W404 KT-Banshee-Blue-KTBoss-L35 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-Banshee-Blue-KTBoss-L35: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4937",
+      "ItemName": "Pharaoh's Shortsword"
+    },
+    {
+      "ItemId": "4961",
+      "ItemName": "Keeper's Blade of Runes"
+    },
+    {
+      "ItemId": "4969",
+      "ItemName": "Dagger of Downpour"
+    },
+    {
+      "ItemId": "5033",
+      "ItemName": "Band of the Bastion"
+    },
+    {
+      "ItemId": "38757",
+      "ItemName": "Vest of Humidity"
+    },
+    {
+      "ItemId": "38765",
+      "ItemName": "Thaumaturge's Cloak of Awe"
+    },
+    {
+      "ItemId": "39423",
+      "ItemName": "Rugged Boots"
+    },
+    {
+      "ItemId": "39428",
+      "ItemName": "Thaumaturge's Boots of Awe"
+    },
+    {
+      "ItemId": "77746",
+      "ItemName": "Keeper's Hat of the Sage"
+    },
+    {
+      "ItemId": "77763",
+      "ItemName": "Quixotic Boots"
+    },
+    {
+      "ItemId": "77780",
+      "ItemName": "Necromancer's Ivory Boots"
+    },
+    {
+      "ItemId": "77792",
+      "ItemName": "Shrewd Footwraps"
+    },
+    {
+      "ItemId": "87287",
+      "ItemName": "Cloak of the Fathomable"
+    },
+    {
+      "ItemId": "87327",
+      "ItemName": "Shroud of Rationality"
+    },
+    {
+      "ItemId": "161028",
+      "ItemName": "Keen-edged Dirk"
+    },
+    {
+      "ItemId": "161057",
+      "ItemName": "Youthful Seal"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "Name": "W404 CL-GolemDigger-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-GolemDigger-Boss-R10: the gear drops (11), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243257",
+      "ItemName": "Frozen Claw"
+    },
+    {
+      "ItemId": "243265",
+      "ItemName": "Living Thorn"
+    },
+    {
+      "ItemId": "243321",
+      "ItemName": "Vile Hat"
+    },
+    {
+      "ItemId": "243440",
+      "ItemName": "Thunderstruck Hat"
+    },
+    {
+      "ItemId": "243520",
+      "ItemName": "Ring of Regret"
+    },
+    {
+      "ItemId": "243572",
+      "ItemName": "Band of Bliss"
+    },
+    {
+      "ItemId": "243690",
+      "ItemName": "Mystical Robe"
+    },
+    {
+      "ItemId": "243710",
+      "ItemName": "Smock of the Storm Star"
+    },
+    {
+      "ItemId": "243728",
+      "ItemName": "Synthesis Striders"
+    },
+    {
+      "ItemId": "243767",
+      "ItemName": "Fire-Forged Footguards"
+    },
+    {
+      "ItemId": "243881",
+      "ItemName": "Protective Pendant"
+    }
+  ]
+}

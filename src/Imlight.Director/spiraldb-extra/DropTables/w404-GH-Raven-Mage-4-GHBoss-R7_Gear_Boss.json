@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Raven-Mage-4-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Raven-Mage-4-GHBoss-R7: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136298",
+      "ItemName": "Orichalcum Shortblade"
+    },
+    {
+      "ItemId": "136447",
+      "ItemName": "Mantle of Euphoria"
+    },
+    {
+      "ItemId": "136511",
+      "ItemName": "Storied Ring"
+    },
+    {
+      "ItemId": "136644",
+      "ItemName": "Insulated Wrap"
+    },
+    {
+      "ItemId": "136668",
+      "ItemName": "Vestment of Loss"
+    },
+    {
+      "ItemId": "136670",
+      "ItemName": "Coat of Veracity"
+    }
+  ]
+}

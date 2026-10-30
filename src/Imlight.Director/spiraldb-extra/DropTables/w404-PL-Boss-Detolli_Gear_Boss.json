@@ -1,0 +1,297 @@
+{
+  "Name": "W404 PL-Boss-Detolli Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-Boss-Detolli: the gear drops (72), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "470720",
+      "ItemName": "The Enchanter"
+    },
+    {
+      "ItemId": "1217004",
+      "ItemName": "The Stalwart Guardian"
+    },
+    {
+      "ItemId": "1217212",
+      "ItemName": "The Stardust"
+    },
+    {
+      "ItemId": "1217358",
+      "ItemName": "The Warlock"
+    },
+    {
+      "ItemId": "1217362",
+      "ItemName": "The Kroktop"
+    },
+    {
+      "ItemId": "1317802",
+      "ItemName": "The Manticore"
+    },
+    {
+      "ItemId": "1359662",
+      "ItemName": "The Goat Horns"
+    },
+    {
+      "ItemId": "1359663",
+      "ItemName": "The Ice Horns"
+    },
+    {
+      "ItemId": "1363557",
+      "ItemName": "Sweltery Tundra Ushanka"
+    },
+    {
+      "ItemId": "1363558",
+      "ItemName": "Blizzardy Tundra Ushanka"
+    },
+    {
+      "ItemId": "1363559",
+      "ItemName": "Hailstorm Tundra Ushanka"
+    },
+    {
+      "ItemId": "1363560",
+      "ItemName": "Tundra Ushanka of Sagacity"
+    },
+    {
+      "ItemId": "1363561",
+      "ItemName": "Tundra Ushanka of Survival"
+    },
+    {
+      "ItemId": "1363562",
+      "ItemName": "Tundra Ushanka of Mayhem"
+    },
+    {
+      "ItemId": "1363563",
+      "ItemName": "Tundra Ushanka of Loyalty"
+    },
+    {
+      "ItemId": "1363564",
+      "ItemName": "Polarian Tundra Ushanka"
+    },
+    {
+      "ItemId": "1363589",
+      "ItemName": "Sweltery Tundra Vestment"
+    },
+    {
+      "ItemId": "1363590",
+      "ItemName": "Blizzardy Tundra Pelage"
+    },
+    {
+      "ItemId": "1363591",
+      "ItemName": "Hailstorm Tundra Suit"
+    },
+    {
+      "ItemId": "1363592",
+      "ItemName": "Tundra Coat of Sagacity"
+    },
+    {
+      "ItemId": "1363593",
+      "ItemName": "Tundra Jacket of Survival"
+    },
+    {
+      "ItemId": "1363594",
+      "ItemName": "Tundra Raiment of Mayhem"
+    },
+    {
+      "ItemId": "1363595",
+      "ItemName": "Tundra Garment of Loyalty"
+    },
+    {
+      "ItemId": "1363596",
+      "ItemName": "Polarian Tundra Apparel"
+    },
+    {
+      "ItemId": "1363621",
+      "ItemName": "Sweltery Tundra Boots"
+    },
+    {
+      "ItemId": "1363622",
+      "ItemName": "Blizzardy Tundra Snowshoes"
+    },
+    {
+      "ItemId": "1363623",
+      "ItemName": "Hailstorm Tundra Boots"
+    },
+    {
+      "ItemId": "1363624",
+      "ItemName": "Tundra Trekkers of Sagacity"
+    },
+    {
+      "ItemId": "1363625",
+      "ItemName": "Tundra Walkers of Survival"
+    },
+    {
+      "ItemId": "1363626",
+      "ItemName": "Tundra Boots of Mayhem"
+    },
+    {
+      "ItemId": "1363627",
+      "ItemName": "Tundra Footwear of Loyalty"
+    },
+    {
+      "ItemId": "1363628",
+      "ItemName": "Polarian Tundra Snowboots"
+    },
+    {
+      "ItemId": "1369133",
+      "ItemName": "Urville Dagger of Flames"
+    },
+    {
+      "ItemId": "1369134",
+      "ItemName": "Urville Kris of Wintertide"
+    },
+    {
+      "ItemId": "1369135",
+      "ItemName": "Urville Edge of Snowgusts"
+    },
+    {
+      "ItemId": "1369136",
+      "ItemName": "Urville Athame of Guile"
+    },
+    {
+      "ItemId": "1369137",
+      "ItemName": "Urville Knife of Elation"
+    },
+    {
+      "ItemId": "1369138",
+      "ItemName": "Urville Lancet of Anguish"
+    },
+    {
+      "ItemId": "1369139",
+      "ItemName": "Urville Spike of Honor"
+    },
+    {
+      "ItemId": "1369140",
+      "ItemName": "Frigid Maw Shortblade"
+    },
+    {
+      "ItemId": "1369165",
+      "ItemName": "Urville Bauble of Flames"
+    },
+    {
+      "ItemId": "1369166",
+      "ItemName": "Urville Relic of Wintertide"
+    },
+    {
+      "ItemId": "1369167",
+      "ItemName": "Urville Charm of Snowgusts"
+    },
+    {
+      "ItemId": "1369168",
+      "ItemName": "Urville Talisman of Guile"
+    },
+    {
+      "ItemId": "1369169",
+      "ItemName": "Urville Pendant of Elation"
+    },
+    {
+      "ItemId": "1369170",
+      "ItemName": "Urville Chaplet of Anguish"
+    },
+    {
+      "ItemId": "1369171",
+      "ItemName": "Urville Necklace of Honor"
+    },
+    {
+      "ItemId": "1369172",
+      "ItemName": "Memento of the Frigid Maw"
+    },
+    {
+      "ItemId": "1369197",
+      "ItemName": "Inspector's Scorched Ring"
+    },
+    {
+      "ItemId": "1369198",
+      "ItemName": "Inspector's Band of Shivers"
+    },
+    {
+      "ItemId": "1369199",
+      "ItemName": "Iron Paw's Band of Clangor"
+    },
+    {
+      "ItemId": "1369200",
+      "ItemName": "Inspector's Band of Theories"
+    },
+    {
+      "ItemId": "1369201",
+      "ItemName": "Inspector's Seal of Pluck"
+    },
+    {
+      "ItemId": "1369202",
+      "ItemName": "Inspector's Ring of Grief"
+    },
+    {
+      "ItemId": "1369203",
+      "ItemName": "Iron Paw's Steadfast Band"
+    },
+    {
+      "ItemId": "1369204",
+      "ItemName": "Chief Inspector's Signet"
+    },
+    {
+      "ItemId": "1369357",
+      "ItemName": "Tundra Bardiche of Ferocity"
+    },
+    {
+      "ItemId": "1369358",
+      "ItemName": "Axe of Tundra Blizzards"
+    },
+    {
+      "ItemId": "1369359",
+      "ItemName": "Tundra Axe of Hailstorms"
+    },
+    {
+      "ItemId": "1369360",
+      "ItemName": "Tundra Bardiche Sagacity"
+    },
+    {
+      "ItemId": "1369361",
+      "ItemName": "Tundra Survival Hatchet"
+    },
+    {
+      "ItemId": "1369362",
+      "ItemName": "Tundra Bardiche of Mayhem"
+    },
+    {
+      "ItemId": "1369363",
+      "ItemName": "Tundra Axe of Loyalty"
+    },
+    {
+      "ItemId": "1369364",
+      "ItemName": "Polarian Tundra Bardiche"
+    },
+    {
+      "ItemId": "1369485",
+      "ItemName": "Tundra Deck of Swelters"
+    },
+    {
+      "ItemId": "1369486",
+      "ItemName": "Hand of Tundra Blizzards"
+    },
+    {
+      "ItemId": "1369487",
+      "ItemName": "Tundra Gallery of Hailstorms"
+    },
+    {
+      "ItemId": "1369488",
+      "ItemName": "Deck of the Tundra Sage"
+    },
+    {
+      "ItemId": "1369489",
+      "ItemName": "Tundra Survivor's Pack"
+    },
+    {
+      "ItemId": "1369490",
+      "ItemName": "Tundra Cards of Disarray"
+    },
+    {
+      "ItemId": "1369491",
+      "ItemName": "Tundra Hand of Loyalty"
+    },
+    {
+      "ItemId": "1369492",
+      "ItemName": "Polarian Tundra Spelldeck"
+    }
+  ]
+}

@@ -370,7 +370,7 @@ internal sealed partial class ManagerWindow {
                                    "BossOverrides file, so these stay as Imlight ships them."),
                     ("DropTables, NpcDropTable", "The drop tables, and which tables each game creature drops."),
                     ("DropOdds.json", "How often each kind of drop rolls (gear, jewels, treasure cards...) by the creature's rank, in percent: " +
-                                      "the gauntlet drop tables (W404 ...) take their chance from it. Change a number and it counts from the next " +
+                                      "every creature's drop tables (W404 ...) take their chance from it. Change a number and it counts from the next " +
                                       "battle; updates keep your copy.")),
                 new GuideTerms("What updates keep",
                     ("Everything you made", "Customs, areas, boss and player cheats, drop tables, quest changes, vendors, recipes and " +

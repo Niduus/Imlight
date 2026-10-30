@@ -1,0 +1,17 @@
+{
+  "Name": "W404 CL-CelestianGhost-BlueEyes-Boss-R10-2 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-CelestianGhost-BlueEyes-Boss-R10-2: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "342147",
+      "ItemName": "Flowering Celestian Tree"
+    },
+    {
+      "ItemId": "512136",
+      "ItemName": "Celestia Mysterious Theme 1"
+    }
+  ]
+}

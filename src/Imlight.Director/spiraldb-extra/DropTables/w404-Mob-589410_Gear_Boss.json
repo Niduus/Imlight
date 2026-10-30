@@ -1,0 +1,61 @@
+{
+  "Name": "W404 Mob-589410 Gear (Boss)",
+  "Description": "Wizard404's drop list of Dark Knight's own drops: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635218",
+      "ItemName": "Torc of Hidden Wisdom"
+    },
+    {
+      "ItemId": "635219",
+      "ItemName": "Torc of the Faithful Squire"
+    },
+    {
+      "ItemId": "635248",
+      "ItemName": "Horned One's Iron"
+    },
+    {
+      "ItemId": "635249",
+      "ItemName": "Brave Steel"
+    },
+    {
+      "ItemId": "635298",
+      "ItemName": "Chaos Knight's Blazing Helm"
+    },
+    {
+      "ItemId": "635304",
+      "ItemName": "Mask of the Crystal Caves"
+    },
+    {
+      "ItemId": "635337",
+      "ItemName": "Sir Corwin's Ring"
+    },
+    {
+      "ItemId": "635379",
+      "ItemName": "Hanging Stones Armor"
+    },
+    {
+      "ItemId": "635380",
+      "ItemName": "Knight of the Wyrd Armor"
+    },
+    {
+      "ItemId": "635412",
+      "ItemName": "Courageous Knight's Boots"
+    },
+    {
+      "ItemId": "635418",
+      "ItemName": "Sworn Champion's Footguards"
+    },
+    {
+      "ItemId": "635620",
+      "ItemName": "Shillelagh of the Squire"
+    },
+    {
+      "ItemId": "635621",
+      "ItemName": "Dragonbreath Bow"
+    }
+  ]
+}

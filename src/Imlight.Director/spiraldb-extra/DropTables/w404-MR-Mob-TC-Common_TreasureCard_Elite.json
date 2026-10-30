@@ -1,0 +1,117 @@
+{
+  "Name": "W404 MR-Mob-TC-Common TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table MR-Mob-TC-Common: the treasurecard drops (27), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Punklops Death Fire - TC",
+      "ItemName": "Metalops"
+    },
+    {
+      "ItemId": "Punklops Ice Myth - TC",
+      "ItemName": "Punklops"
+    },
+    {
+      "ItemId": "Punklops Life Storm - TC",
+      "ItemName": "Rocklops"
+    },
+    {
+      "ItemId": "Fiery Giant - TC",
+      "ItemName": "Fiery Giant"
+    },
+    {
+      "ItemId": "Steel Giant - TC",
+      "ItemName": "Steel Giant"
+    },
+    {
+      "ItemId": "Colossus Magma TC",
+      "ItemName": "Magma Colossus"
+    },
+    {
+      "ItemId": "Colossus Sandstone TC",
+      "ItemName": "Sandstone Colossus"
+    },
+    {
+      "ItemId": "Colossus Steel TC",
+      "ItemName": "Steel Colossus"
+    },
+    {
+      "ItemId": "Colossus Stone TC",
+      "ItemName": "Stone Colossus"
+    },
+    {
+      "ItemId": "Firey Colossus TC",
+      "ItemName": "Fiery Colossus"
+    },
+    {
+      "ItemId": "Mutate - Colossus to Fire TC",
+      "ItemName": "Mutate Colossus"
+    },
+    {
+      "ItemId": "Mutate - Colossus to Storm TC",
+      "ItemName": "Mutate Colossus"
+    },
+    {
+      "ItemId": "Troll Death TC",
+      "ItemName": "Death Troll"
+    },
+    {
+      "ItemId": "Troll Yellow TC",
+      "ItemName": "Yellow Troll"
+    },
+    {
+      "ItemId": "Helephant Bronze - TC",
+      "ItemName": "Bronze Helephant"
+    },
+    {
+      "ItemId": "Helephant Death - TC",
+      "ItemName": "Death Helephant"
+    },
+    {
+      "ItemId": "Helephant TC",
+      "ItemName": "Helephant"
+    },
+    {
+      "ItemId": "Helephant War - TC",
+      "ItemName": "War Helephant"
+    },
+    {
+      "ItemId": "Mutate - Helephant to Ice TC",
+      "ItemName": "Mutate Helephant"
+    },
+    {
+      "ItemId": "Mutate - Helephant to Storm TC",
+      "ItemName": "Mutate Helephant"
+    },
+    {
+      "ItemId": "Mass Fire Prism TC",
+      "ItemName": "Mass Fire Prism"
+    },
+    {
+      "ItemId": "Mass Ice Prism TC",
+      "ItemName": "Mass Ice Prism"
+    },
+    {
+      "ItemId": "Mass Life Prism TC",
+      "ItemName": "Mass Life Prism"
+    },
+    {
+      "ItemId": "Mass Myth Prism TC",
+      "ItemName": "Mass Myth Prism"
+    },
+    {
+      "ItemId": "Mass Storm Prism TC",
+      "ItemName": "Mass Storm Prism"
+    },
+    {
+      "ItemId": "Mass Triage TC",
+      "ItemName": "Mass Triage"
+    },
+    {
+      "ItemId": "Mass Death Prism TC",
+      "ItemName": "Mass Death Prism"
+    }
+  ]
+}

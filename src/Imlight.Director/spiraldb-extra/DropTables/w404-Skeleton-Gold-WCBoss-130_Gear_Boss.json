@@ -1,0 +1,457 @@
+{
+  "Name": "W404 Skeleton-Gold-WCBoss-130 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skeleton-Gold-WCBoss-130: the gear drops (112), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1489328",
+      "ItemName": "Vanguard's Fiery Helm"
+    },
+    {
+      "ItemId": "1489329",
+      "ItemName": "Vanguard's Icy Helm"
+    },
+    {
+      "ItemId": "1489330",
+      "ItemName": "Vanguard's Shocking Helm"
+    },
+    {
+      "ItemId": "1489331",
+      "ItemName": "Vanguard's Mythic Helm"
+    },
+    {
+      "ItemId": "1489332",
+      "ItemName": "Vanguard's Vibrant Helm"
+    },
+    {
+      "ItemId": "1489333",
+      "ItemName": "Vanguard's Deadly Helm"
+    },
+    {
+      "ItemId": "1489334",
+      "ItemName": "Vanguard's Balanced Helm"
+    },
+    {
+      "ItemId": "1489335",
+      "ItemName": "Dragonspyre Vanguard's Helm"
+    },
+    {
+      "ItemId": "1489336",
+      "ItemName": "Vanguard's Fiery Armor"
+    },
+    {
+      "ItemId": "1489337",
+      "ItemName": "Vanguard's Icy Armor"
+    },
+    {
+      "ItemId": "1489338",
+      "ItemName": "Vanguard's Shocking Armor"
+    },
+    {
+      "ItemId": "1489339",
+      "ItemName": "Vanguard's Mythic Armor"
+    },
+    {
+      "ItemId": "1489340",
+      "ItemName": "Vanguard's Vibrant Armor"
+    },
+    {
+      "ItemId": "1489341",
+      "ItemName": "Vanguard's Deadly Armor"
+    },
+    {
+      "ItemId": "1489342",
+      "ItemName": "Vanguard's Balanced Armor"
+    },
+    {
+      "ItemId": "1489343",
+      "ItemName": "Dragonspyre Vanguard's Armor"
+    },
+    {
+      "ItemId": "1489344",
+      "ItemName": "Vanguard's Fiery Boots"
+    },
+    {
+      "ItemId": "1489345",
+      "ItemName": "Vanguard's Icy Boots"
+    },
+    {
+      "ItemId": "1489346",
+      "ItemName": "Vanguard's Shocking Boots"
+    },
+    {
+      "ItemId": "1489347",
+      "ItemName": "Vanguard's Mythic Boots"
+    },
+    {
+      "ItemId": "1489348",
+      "ItemName": "Vanguard's Vibrant Boots"
+    },
+    {
+      "ItemId": "1489349",
+      "ItemName": "Vanguard's Deadly Boots"
+    },
+    {
+      "ItemId": "1489350",
+      "ItemName": "Vanguard's Balanced Boots"
+    },
+    {
+      "ItemId": "1489351",
+      "ItemName": "Dragonspyre Vanguard's Boots"
+    },
+    {
+      "ItemId": "1489352",
+      "ItemName": "Dragoon's Fiery Helm"
+    },
+    {
+      "ItemId": "1489353",
+      "ItemName": "Dragoon's Icy Helm"
+    },
+    {
+      "ItemId": "1489354",
+      "ItemName": "Dragoon's Shocking Helm"
+    },
+    {
+      "ItemId": "1489355",
+      "ItemName": "Dragoon's Mythic Helm"
+    },
+    {
+      "ItemId": "1489356",
+      "ItemName": "Dragoon's Vibrant Helm"
+    },
+    {
+      "ItemId": "1489357",
+      "ItemName": "Dragoon's Deadly Helm"
+    },
+    {
+      "ItemId": "1489358",
+      "ItemName": "Dragoon's Balanced Helm"
+    },
+    {
+      "ItemId": "1489359",
+      "ItemName": "Dragonspyre Dragoon's Helm"
+    },
+    {
+      "ItemId": "1489360",
+      "ItemName": "Dragoon's Fiery Armor"
+    },
+    {
+      "ItemId": "1489361",
+      "ItemName": "Dragoon's Icy Armor"
+    },
+    {
+      "ItemId": "1489362",
+      "ItemName": "Dragoon's Shocking Armor"
+    },
+    {
+      "ItemId": "1489363",
+      "ItemName": "Dragoon's Mythic Armor"
+    },
+    {
+      "ItemId": "1489364",
+      "ItemName": "Dragoon's Vibrant Armor"
+    },
+    {
+      "ItemId": "1489365",
+      "ItemName": "Dragoon's Deadly Armor"
+    },
+    {
+      "ItemId": "1489366",
+      "ItemName": "Dragoon's Balanced Armor"
+    },
+    {
+      "ItemId": "1489367",
+      "ItemName": "Dragonspyre Dragoon's Armor"
+    },
+    {
+      "ItemId": "1489368",
+      "ItemName": "Dragoon's Fiery Boots"
+    },
+    {
+      "ItemId": "1489369",
+      "ItemName": "Dragoon's Icy Boots"
+    },
+    {
+      "ItemId": "1489370",
+      "ItemName": "Dragoon's Shocking Boots"
+    },
+    {
+      "ItemId": "1489371",
+      "ItemName": "Dragoon's Mythic Boots"
+    },
+    {
+      "ItemId": "1489372",
+      "ItemName": "Dragoon's Vibrant Boots"
+    },
+    {
+      "ItemId": "1489373",
+      "ItemName": "Dragoon's Deadly Boots"
+    },
+    {
+      "ItemId": "1489374",
+      "ItemName": "Dragoon's Balanced Boots"
+    },
+    {
+      "ItemId": "1489375",
+      "ItemName": "Dragonspyre Dragoon's Boots"
+    },
+    {
+      "ItemId": "1489399",
+      "ItemName": "Vanguard's Fiery Dagger"
+    },
+    {
+      "ItemId": "1489400",
+      "ItemName": "Vanguard's Icy Dagger"
+    },
+    {
+      "ItemId": "1489401",
+      "ItemName": "Vanguard's Shocking Dagger"
+    },
+    {
+      "ItemId": "1489402",
+      "ItemName": "Vanguard's Mythic Dagger"
+    },
+    {
+      "ItemId": "1489403",
+      "ItemName": "Vanguard's Vibrant Dagger"
+    },
+    {
+      "ItemId": "1489404",
+      "ItemName": "Vanguard's Deadly Dagger"
+    },
+    {
+      "ItemId": "1489405",
+      "ItemName": "Vanguard's Balanced Dagger"
+    },
+    {
+      "ItemId": "1489406",
+      "ItemName": "Dragonspyre Vanguard's Dagger"
+    },
+    {
+      "ItemId": "1489407",
+      "ItemName": "Vanguard's Fiery Charm"
+    },
+    {
+      "ItemId": "1489408",
+      "ItemName": "Vanguard's Icy Charm"
+    },
+    {
+      "ItemId": "1489409",
+      "ItemName": "Vanguard's Shocking Charm"
+    },
+    {
+      "ItemId": "1489410",
+      "ItemName": "Vanguard's Mythic Charm"
+    },
+    {
+      "ItemId": "1489411",
+      "ItemName": "Vanguard's Vibrant Charm"
+    },
+    {
+      "ItemId": "1489412",
+      "ItemName": "Vanguard's Deadly Charm"
+    },
+    {
+      "ItemId": "1489413",
+      "ItemName": "Vanguard's Balanced Charm"
+    },
+    {
+      "ItemId": "1489414",
+      "ItemName": "Dragonspyre Vanguard's Charm"
+    },
+    {
+      "ItemId": "1489415",
+      "ItemName": "Vanguard's Fiery Ring"
+    },
+    {
+      "ItemId": "1489416",
+      "ItemName": "Vanguard's Icy Ring"
+    },
+    {
+      "ItemId": "1489417",
+      "ItemName": "Vanguard's Shocking Ring"
+    },
+    {
+      "ItemId": "1489418",
+      "ItemName": "Vanguard's Mythic Ring"
+    },
+    {
+      "ItemId": "1489419",
+      "ItemName": "Vanguard's Vibrant Ring"
+    },
+    {
+      "ItemId": "1489420",
+      "ItemName": "Vanguard's Deadly Ring"
+    },
+    {
+      "ItemId": "1489421",
+      "ItemName": "Vanguard's Balanced Ring"
+    },
+    {
+      "ItemId": "1489422",
+      "ItemName": "Dragonspyre Vanguard's Ring"
+    },
+    {
+      "ItemId": "1489423",
+      "ItemName": "Dragoon's Fiery Dagger"
+    },
+    {
+      "ItemId": "1489424",
+      "ItemName": "Dragoon's Icy Dagger"
+    },
+    {
+      "ItemId": "1489425",
+      "ItemName": "Dragoon's Shocking Dagger"
+    },
+    {
+      "ItemId": "1489426",
+      "ItemName": "Dragoon's Mythic Dagger"
+    },
+    {
+      "ItemId": "1489427",
+      "ItemName": "Dragoon's Vibrant Dagger"
+    },
+    {
+      "ItemId": "1489428",
+      "ItemName": "Dragoon's Deadly Dagger"
+    },
+    {
+      "ItemId": "1489429",
+      "ItemName": "Dragoon's Balanced Dagger"
+    },
+    {
+      "ItemId": "1489430",
+      "ItemName": "Dragonspyre Dragoon's Dagger"
+    },
+    {
+      "ItemId": "1489431",
+      "ItemName": "Dragoon's Fiery Charm"
+    },
+    {
+      "ItemId": "1489432",
+      "ItemName": "Dragoon's Icy Charm"
+    },
+    {
+      "ItemId": "1489433",
+      "ItemName": "Dragoon's Shocking Charm"
+    },
+    {
+      "ItemId": "1489434",
+      "ItemName": "Dragoon's Mythic Charm"
+    },
+    {
+      "ItemId": "1489435",
+      "ItemName": "Dragoon's Vibrant Charm"
+    },
+    {
+      "ItemId": "1489436",
+      "ItemName": "Dragoon's Deadly Charm"
+    },
+    {
+      "ItemId": "1489437",
+      "ItemName": "Dragoon's Balanced Charm"
+    },
+    {
+      "ItemId": "1489438",
+      "ItemName": "Dragonspyre Dragoon's Charm"
+    },
+    {
+      "ItemId": "1489439",
+      "ItemName": "Dragoon's Fiery Ring"
+    },
+    {
+      "ItemId": "1489440",
+      "ItemName": "Dragoon's Icy Ring"
+    },
+    {
+      "ItemId": "1489441",
+      "ItemName": "Dragoon's Shocking Ring"
+    },
+    {
+      "ItemId": "1489442",
+      "ItemName": "Dragoon's Mythic Ring"
+    },
+    {
+      "ItemId": "1489443",
+      "ItemName": "Dragoon's Vibrant Ring"
+    },
+    {
+      "ItemId": "1489444",
+      "ItemName": "Dragoon's Deadly Ring"
+    },
+    {
+      "ItemId": "1489445",
+      "ItemName": "Dragoon's Balanced Ring"
+    },
+    {
+      "ItemId": "1489446",
+      "ItemName": "Dragonspyre Dragoon's Ring"
+    },
+    {
+      "ItemId": "1489455",
+      "ItemName": "Vanguard's Fiery Sword"
+    },
+    {
+      "ItemId": "1489456",
+      "ItemName": "Vanguard's Icy Sword"
+    },
+    {
+      "ItemId": "1489457",
+      "ItemName": "Vanguard's Shocking Sword"
+    },
+    {
+      "ItemId": "1489458",
+      "ItemName": "Vanguard's Mythic Sword"
+    },
+    {
+      "ItemId": "1489459",
+      "ItemName": "Vanguard's Vibrant Sword"
+    },
+    {
+      "ItemId": "1489460",
+      "ItemName": "Vanguard's Deadly Sword"
+    },
+    {
+      "ItemId": "1489461",
+      "ItemName": "Vanguard's Balanced Sword"
+    },
+    {
+      "ItemId": "1489462",
+      "ItemName": "Dragonspyre Vanguard Sword"
+    },
+    {
+      "ItemId": "1489463",
+      "ItemName": "Dragoon's Fiery Sword"
+    },
+    {
+      "ItemId": "1489464",
+      "ItemName": "Dragoon's Icy Sword"
+    },
+    {
+      "ItemId": "1489465",
+      "ItemName": "Dragoon's Shocking Sword"
+    },
+    {
+      "ItemId": "1489466",
+      "ItemName": "Dragoon's Mythic Sword"
+    },
+    {
+      "ItemId": "1489467",
+      "ItemName": "Dragoon's Vibrant Sword"
+    },
+    {
+      "ItemId": "1489468",
+      "ItemName": "Dragoon's Deadly Sword"
+    },
+    {
+      "ItemId": "1489469",
+      "ItemName": "Dragoon's Balanced Sword"
+    },
+    {
+      "ItemId": "1489470",
+      "ItemName": "Dragonspyre Dragoon Sword"
+    }
+  ]
+}

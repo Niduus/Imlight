@@ -1,0 +1,45 @@
+{
+  "Name": "W404 Mob-1530894 Seed (Elite)",
+  "Description": "Wizard404's drop list of Death Metal Lemur's own drops: the seed drops (9), one picked when it rolls. How often: DropOdds.json Elite/Seed.",
+  "Odds": "Elite/Seed",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "589152",
+      "ItemName": "Fortune Cookie Tree"
+    },
+    {
+      "ItemId": "589166",
+      "ItemName": "Honey Bee Plant"
+    },
+    {
+      "ItemId": "1350059",
+      "ItemName": "Ultra Alligator Pear Tree"
+    },
+    {
+      "ItemId": "1350083",
+      "ItemName": "Ultra King Parsley"
+    },
+    {
+      "ItemId": "1350093",
+      "ItemName": "Ultra Boom Shroom"
+    },
+    {
+      "ItemId": "1350103",
+      "ItemName": "Ultra Dandelion"
+    },
+    {
+      "ItemId": "1350119",
+      "ItemName": "Ultra Trumpet Vine"
+    },
+    {
+      "ItemId": "1350138",
+      "ItemName": "Ultra Ninja Fig"
+    },
+    {
+      "ItemId": "1350146",
+      "ItemName": "Ultra Tiger Lily"
+    }
+  ]
+}

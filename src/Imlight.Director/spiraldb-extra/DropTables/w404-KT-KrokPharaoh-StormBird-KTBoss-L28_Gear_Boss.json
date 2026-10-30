@@ -1,0 +1,73 @@
+{
+  "Name": "W404 KT-KrokPharaoh-StormBird-KTBoss-L28 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokPharaoh-StormBird-KTBoss-L28: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4984",
+      "ItemName": "Prince's Peridot Deck"
+    },
+    {
+      "ItemId": "5017",
+      "ItemName": "Loop of Quietude"
+    },
+    {
+      "ItemId": "5018",
+      "ItemName": "Band of Equilibrium"
+    },
+    {
+      "ItemId": "38767",
+      "ItemName": "Frigid Vestment"
+    },
+    {
+      "ItemId": "39429",
+      "ItemName": "Durable Boots"
+    },
+    {
+      "ItemId": "39434",
+      "ItemName": "Slippers of Burning Sands"
+    },
+    {
+      "ItemId": "77682",
+      "ItemName": "Sweltering Helm"
+    },
+    {
+      "ItemId": "77702",
+      "ItemName": "Helm of Ingenuity"
+    },
+    {
+      "ItemId": "77704",
+      "ItemName": "Headwrap of Originality"
+    },
+    {
+      "ItemId": "77714",
+      "ItemName": "Hat of Figments"
+    },
+    {
+      "ItemId": "77715",
+      "ItemName": "Hood of the Phantom"
+    },
+    {
+      "ItemId": "77774",
+      "ItemName": "Soothsayer's Sandals"
+    },
+    {
+      "ItemId": "77781",
+      "ItemName": "Prince Meti's Shoes"
+    },
+    {
+      "ItemId": "87297",
+      "ItemName": "Meti's Robes of Peace"
+    },
+    {
+      "ItemId": "87298",
+      "ItemName": "Cloak of Prediction"
+    },
+    {
+      "ItemId": "87339",
+      "ItemName": "Meti's Staff of Talent"
+    }
+  ]
+}

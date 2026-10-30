@@ -1,0 +1,129 @@
+{
+  "Name": "W404 GH2-Raven-Warrior-7-BOSS-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH2-Raven-Warrior-7-BOSS-R10: the gear drops (30), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "455100",
+      "ItemName": "Tricksy Dragon Charm"
+    },
+    {
+      "ItemId": "455126",
+      "ItemName": "Bear's Claw of Ice"
+    },
+    {
+      "ItemId": "455154",
+      "ItemName": "Cowl of Crackling"
+    },
+    {
+      "ItemId": "455155",
+      "ItemName": "Cold-Kissed Cowl"
+    },
+    {
+      "ItemId": "455162",
+      "ItemName": "Wintry Horns"
+    },
+    {
+      "ItemId": "455163",
+      "ItemName": "Hardy Horns"
+    },
+    {
+      "ItemId": "455183",
+      "ItemName": "Golden Ring of Battle"
+    },
+    {
+      "ItemId": "455184",
+      "ItemName": "Black Spinel of Battle"
+    },
+    {
+      "ItemId": "455185",
+      "ItemName": "Ruby Ring of Battle"
+    },
+    {
+      "ItemId": "455186",
+      "ItemName": "Sapphire Ring of Battle"
+    },
+    {
+      "ItemId": "455187",
+      "ItemName": "Jade Ring of Battle"
+    },
+    {
+      "ItemId": "455188",
+      "ItemName": "Peridot Ring of Battle"
+    },
+    {
+      "ItemId": "455189",
+      "ItemName": "Amethyst Ring of Battle"
+    },
+    {
+      "ItemId": "455190",
+      "ItemName": "Ring of Wolf Lore"
+    },
+    {
+      "ItemId": "455191",
+      "ItemName": "Ring of Wolf Blood"
+    },
+    {
+      "ItemId": "455220",
+      "ItemName": "Valiant Armor"
+    },
+    {
+      "ItemId": "455223",
+      "ItemName": "Black Ice Armor"
+    },
+    {
+      "ItemId": "455226",
+      "ItemName": "Storm Surge Armor"
+    },
+    {
+      "ItemId": "455249",
+      "ItemName": "Raven's Boots of Balance"
+    },
+    {
+      "ItemId": "455250",
+      "ItemName": "Raven's Tricksy Boots"
+    },
+    {
+      "ItemId": "455251",
+      "ItemName": "Raven's Shielded Boots"
+    },
+    {
+      "ItemId": "455252",
+      "ItemName": "Raven's Alert Boots"
+    },
+    {
+      "ItemId": "455253",
+      "ItemName": "Raven's Guarded Boots"
+    },
+    {
+      "ItemId": "455254",
+      "ItemName": "Raven's Protected Boots"
+    },
+    {
+      "ItemId": "455255",
+      "ItemName": "Raven's Covered Boots"
+    },
+    {
+      "ItemId": "455257",
+      "ItemName": "Boots of Anguish"
+    },
+    {
+      "ItemId": "455259",
+      "ItemName": "White Frost Boots"
+    },
+    {
+      "ItemId": "455261",
+      "ItemName": "Boots of Ages"
+    },
+    {
+      "ItemId": "455422",
+      "ItemName": "Spear of Bear's Wrath"
+    },
+    {
+      "ItemId": "455426",
+      "ItemName": "Staff of the Boreal Bear"
+    }
+  ]
+}

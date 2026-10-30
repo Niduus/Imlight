@@ -1,0 +1,121 @@
+{
+  "Name": "W404 NV_Penguin_Cook_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Penguin_Cook_A_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1577709",
+      "ItemName": "Artillery Officer Knife"
+    },
+    {
+      "ItemId": "1577705",
+      "ItemName": "Cavalry Officer Knife"
+    },
+    {
+      "ItemId": "1577704",
+      "ItemName": "Infantry Officer Knife"
+    },
+    {
+      "ItemId": "1577707",
+      "ItemName": "Medic Officer Knife"
+    },
+    {
+      "ItemId": "1577708",
+      "ItemName": "Messenger Officer Knife"
+    },
+    {
+      "ItemId": "1577703",
+      "ItemName": "Scout Officer Knife"
+    },
+    {
+      "ItemId": "1577706",
+      "ItemName": "Trooper Officer Knife"
+    },
+    {
+      "ItemId": "1577653",
+      "ItemName": "Regulation Artillery Knife"
+    },
+    {
+      "ItemId": "1577649",
+      "ItemName": "Regulation Cavalry Knife"
+    },
+    {
+      "ItemId": "1577648",
+      "ItemName": "Regulation Infantry Knife"
+    },
+    {
+      "ItemId": "1577651",
+      "ItemName": "Regulation Medic Knife"
+    },
+    {
+      "ItemId": "1577652",
+      "ItemName": "Regulation Messenger Knife"
+    },
+    {
+      "ItemId": "1577647",
+      "ItemName": "Regulation Scout Knife"
+    },
+    {
+      "ItemId": "1577650",
+      "ItemName": "Regulation Trooper Knife"
+    },
+    {
+      "ItemId": "1577723",
+      "ItemName": "Artillery Officer Medallion"
+    },
+    {
+      "ItemId": "1577719",
+      "ItemName": "Cavalry Officer Medallion"
+    },
+    {
+      "ItemId": "1577718",
+      "ItemName": "Infantry Officer Medallion"
+    },
+    {
+      "ItemId": "1577721",
+      "ItemName": "Medic Officer Medallion"
+    },
+    {
+      "ItemId": "1577722",
+      "ItemName": "Messenger Officer Medallion"
+    },
+    {
+      "ItemId": "1577717",
+      "ItemName": "Scout Officer Medallion"
+    },
+    {
+      "ItemId": "1577720",
+      "ItemName": "Trooper Officer Medallion"
+    },
+    {
+      "ItemId": "1577667",
+      "ItemName": "Regulation Artillery Medallion"
+    },
+    {
+      "ItemId": "1577663",
+      "ItemName": "Regulation Cavalry Medallion"
+    },
+    {
+      "ItemId": "1577662",
+      "ItemName": "Regulation Infantry Medallion"
+    },
+    {
+      "ItemId": "1577665",
+      "ItemName": "Regulation Medic Medallion"
+    },
+    {
+      "ItemId": "1577666",
+      "ItemName": "Regulation Messenger Medallion"
+    },
+    {
+      "ItemId": "1577661",
+      "ItemName": "Regulation Scout Medallion"
+    },
+    {
+      "ItemId": "1577664",
+      "ItemName": "Regulation Trooper Medallion"
+    }
+  ]
+}

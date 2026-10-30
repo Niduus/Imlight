@@ -1,0 +1,41 @@
+{
+  "Name": "W404 KR-BossEpic-Hisser Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossEpic-Hisser: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203141",
+      "ItemName": "Mouse Helm of the Besieged"
+    },
+    {
+      "ItemId": "1203176",
+      "ItemName": "Moon's Tear Band"
+    },
+    {
+      "ItemId": "1203212",
+      "ItemName": "Besieged Burrower Armor"
+    },
+    {
+      "ItemId": "1203260",
+      "ItemName": "Mantis Hunter's Footwraps"
+    },
+    {
+      "ItemId": "1203305",
+      "ItemName": "Withering Lance"
+    },
+    {
+      "ItemId": "1203372",
+      "ItemName": "Last Wood Defender's Blade"
+    },
+    {
+      "ItemId": "1203410",
+      "ItemName": "Pack of Frozen Souls"
+    },
+    {
+      "ItemId": "1203414",
+      "ItemName": "Mago's Death's Head Set"
+    }
+  ]
+}

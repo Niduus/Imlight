@@ -1,0 +1,13 @@
+{
+  "Name": "W404 ZF-TseTse-Elephant-R11 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-TseTse-Elephant-R11: the housing drops (1), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "512094",
+      "ItemName": "Zafaria Main Theme"
+    }
+  ]
+}

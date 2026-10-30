@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-Boss-Shoes-140 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-Boss-Shoes-140: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1514845",
+      "ItemName": "Guten Freshbaker Boots"
+    },
+    {
+      "ItemId": "1514846",
+      "ItemName": "Guten Wonderneer Boots"
+    },
+    {
+      "ItemId": "1514847",
+      "ItemName": "Guten Sciencer Boots"
+    },
+    {
+      "ItemId": "1514848",
+      "ItemName": "Guten Artisan Boots"
+    },
+    {
+      "ItemId": "1514849",
+      "ItemName": "Guten Sweetsmith Boots"
+    },
+    {
+      "ItemId": "1514850",
+      "ItemName": "Guten Sentamentalist Boots"
+    },
+    {
+      "ItemId": "1514851",
+      "ItemName": "Guten Dreamsearcher Boots"
+    },
+    {
+      "ItemId": "1514852",
+      "ItemName": "Guten Candymancer Boots"
+    },
+    {
+      "ItemId": "1514869",
+      "ItemName": "Wunderbar Freshbaker Boots"
+    },
+    {
+      "ItemId": "1514870",
+      "ItemName": "Wunderbar Wonderneer Boots"
+    },
+    {
+      "ItemId": "1514871",
+      "ItemName": "Wunderbar Sciencer Boots"
+    },
+    {
+      "ItemId": "1514872",
+      "ItemName": "Wunderbar Artisan Boots"
+    },
+    {
+      "ItemId": "1514873",
+      "ItemName": "Wunderbar Sweetsmith Boots"
+    },
+    {
+      "ItemId": "1514874",
+      "ItemName": "Wunderbar Sentamentalist Boots"
+    },
+    {
+      "ItemId": "1514875",
+      "ItemName": "Wunderbar Dreamsearcher Boots"
+    },
+    {
+      "ItemId": "1514876",
+      "ItemName": "Wunderbar Candymancer Boots"
+    },
+    {
+      "ItemId": "1514893",
+      "ItemName": "Uber Freshbaker Boots"
+    },
+    {
+      "ItemId": "1514894",
+      "ItemName": "Uber Wonderneer Boots"
+    },
+    {
+      "ItemId": "1514895",
+      "ItemName": "Uber Sciencer Boots"
+    },
+    {
+      "ItemId": "1514896",
+      "ItemName": "Uber Artisan Boots"
+    },
+    {
+      "ItemId": "1514897",
+      "ItemName": "Uber Sweetsmith Boots"
+    },
+    {
+      "ItemId": "1514898",
+      "ItemName": "Uber Sentamentalist Boots"
+    },
+    {
+      "ItemId": "1514899",
+      "ItemName": "Uber Dreamsearcher Boots"
+    },
+    {
+      "ItemId": "1514900",
+      "ItemName": "Uber Candymancer Boots"
+    }
+  ]
+}

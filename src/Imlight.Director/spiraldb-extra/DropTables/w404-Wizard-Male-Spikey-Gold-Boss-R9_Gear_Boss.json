@@ -1,0 +1,89 @@
+{
+  "Name": "W404 Wizard-Male-Spikey-Gold-Boss-R9 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Wizard-Male-Spikey-Gold-Boss-R9: the gear drops (20), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104598",
+      "ItemName": "Coat of Impartiality"
+    },
+    {
+      "ItemId": "104611",
+      "ItemName": "Vestment of the Inferno"
+    },
+    {
+      "ItemId": "104637",
+      "ItemName": "Dean Darkflame's Robe of Ruin"
+    },
+    {
+      "ItemId": "104643",
+      "ItemName": "Tunic of Tradition"
+    },
+    {
+      "ItemId": "104679",
+      "ItemName": "Chilling Cloak"
+    },
+    {
+      "ItemId": "104822",
+      "ItemName": "Shoes of Equilibrium"
+    },
+    {
+      "ItemId": "104876",
+      "ItemName": "Dean Darkflame's Stormstriders"
+    },
+    {
+      "ItemId": "126562",
+      "ItemName": "Ring of Equilibrium"
+    },
+    {
+      "ItemId": "126583",
+      "ItemName": "Dean Darkflame's Legacy Signet"
+    },
+    {
+      "ItemId": "126605",
+      "ItemName": "Signet of the Chimera"
+    },
+    {
+      "ItemId": "126615",
+      "ItemName": "Seal of the Gallium Paladin"
+    },
+    {
+      "ItemId": "126646",
+      "ItemName": "Dean Darkflame's Cleaver"
+    },
+    {
+      "ItemId": "146167",
+      "ItemName": "Scaled Smallsword"
+    },
+    {
+      "ItemId": "146177",
+      "ItemName": "Claw of Conciliation"
+    },
+    {
+      "ItemId": "146193",
+      "ItemName": "Darkflame's Thunderblade"
+    },
+    {
+      "ItemId": "146250",
+      "ItemName": "Hat of the Endless"
+    },
+    {
+      "ItemId": "146259",
+      "ItemName": "Herbalist's Hood"
+    },
+    {
+      "ItemId": "146322",
+      "ItemName": "Dean Darkflame's Fiery Mantle"
+    },
+    {
+      "ItemId": "146332",
+      "ItemName": "Mantle of the Undying"
+    },
+    {
+      "ItemId": "146364",
+      "ItemName": "Mantle of Order"
+    }
+  ]
+}

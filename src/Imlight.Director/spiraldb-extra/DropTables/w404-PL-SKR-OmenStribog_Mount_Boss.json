@@ -1,0 +1,41 @@
+{
+  "Name": "W404 PL-SKR-OmenStribog Mount (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-SKR-OmenStribog: the mount drops (8), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "440146",
+      "ItemName": "Snow Ram (PERM)"
+    },
+    {
+      "ItemId": "470354",
+      "ItemName": "Owl (PERM)"
+    },
+    {
+      "ItemId": "470360",
+      "ItemName": "White Stag (PERM)"
+    },
+    {
+      "ItemId": "733158",
+      "ItemName": "Winter Treant (PERM)"
+    },
+    {
+      "ItemId": "789072",
+      "ItemName": "Frostfang Tiger (PERM)"
+    },
+    {
+      "ItemId": "1317674",
+      "ItemName": "Himoolayan Yak (PERM)"
+    },
+    {
+      "ItemId": "1317713",
+      "ItemName": "WinterGlide Skates (PERM)"
+    },
+    {
+      "ItemId": "1374851",
+      "ItemName": "Luphilim Wings (PERM)"
+    }
+  ]
+}

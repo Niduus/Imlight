@@ -1,0 +1,25 @@
+{
+  "Name": "W404 MB-Cat-Hobo-HatGray-MBBoss-L38-NoPet Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Hobo-HatGray-MBBoss-L38-NoPet: the housing drops (4), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82860",
+      "ItemName": "Silver Chest"
+    },
+    {
+      "ItemId": "160616",
+      "ItemName": "Short Cement Post"
+    },
+    {
+      "ItemId": "160689",
+      "ItemName": "Engraved Pedestal"
+    },
+    {
+      "ItemId": "160736",
+      "ItemName": "Square Metal Platform"
+    }
+  ]
+}

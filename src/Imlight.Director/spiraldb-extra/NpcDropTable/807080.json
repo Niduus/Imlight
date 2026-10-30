@@ -1,0 +1,17 @@
+{
+  "TemplateID": 807080,
+  "DropTableNames": [
+    "W404 CL-Wildclaw-Brown-PageEvent",
+    "W404 CL-Wildclaw-Brown-PageEvent Pet (Elite)",
+    "W404 CL-Wildclaw-Brown-PageEvent TreasureCard (Elite)",
+    "W404 CL-Wildclaw-Brown-PageEvent Snack (Elite)",
+    "W404 CL-Wildclaw-Brown-PageEvent Housing (Elite)",
+    "W404 CL-Level-03",
+    "W404 CL-Level-03 Gear (Elite)",
+    "W404 CL-Level-03 TreasureCard (Elite)",
+    "W404 CL-Level-03 Snack (Elite)",
+    "W404 CL-Level-03 Seed (Elite)",
+    "W404 TC-CL-Commons TreasureCard (Elite)",
+    "W404 TC-Uncommons TreasureCard (Elite)"
+  ]
+}

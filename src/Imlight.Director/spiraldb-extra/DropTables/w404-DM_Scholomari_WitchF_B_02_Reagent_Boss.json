@@ -1,0 +1,41 @@
+{
+  "Name": "W404 DM_Scholomari_WitchF_B_02 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Scholomari_WitchF_B_02: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1705917",
+      "ItemName": "Outsider Relic"
+    },
+    {
+      "ItemId": "1702368",
+      "ItemName": "The Tower"
+    },
+    {
+      "ItemId": "1580233",
+      "ItemName": "Tree of Strife"
+    },
+    {
+      "ItemId": "1621727",
+      "ItemName": "Rainbow Serpent"
+    },
+    {
+      "ItemId": "1492428",
+      "ItemName": "Lord of the Jungle"
+    },
+    {
+      "ItemId": "1580234",
+      "ItemName": "Improbable Gaze"
+    },
+    {
+      "ItemId": "1492426",
+      "ItemName": "Grim Reader"
+    },
+    {
+      "ItemId": "1702727",
+      "ItemName": "The Hierophant"
+    }
+  ]
+}

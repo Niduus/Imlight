@@ -1,0 +1,41 @@
+{
+  "Name": "W404 PA-Gauntlet-Level-01 Snack (Normal)",
+  "Description": "Wizard404's drop list of the game's table PA-Gauntlet-Level-01: the snack drops (8), one picked when it rolls. How often: DropOdds.json Normal/Snack.",
+  "Odds": "Normal/Snack",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220265",
+      "ItemName": "Spicy Drumstick"
+    },
+    {
+      "ItemId": "220276",
+      "ItemName": "Strawberry Cupcake"
+    },
+    {
+      "ItemId": "220280",
+      "ItemName": "Delicious Cookie"
+    },
+    {
+      "ItemId": "220284",
+      "ItemName": "Glowing Taffy"
+    },
+    {
+      "ItemId": "220311",
+      "ItemName": "Glowing Star Fruit"
+    },
+    {
+      "ItemId": "240117",
+      "ItemName": "Submarine Sandwich"
+    },
+    {
+      "ItemId": "240118",
+      "ItemName": "Cauliflowers"
+    },
+    {
+      "ItemId": "473221",
+      "ItemName": "Flapjacks"
+    }
+  ]
+}

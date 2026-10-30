@@ -1,0 +1,153 @@
+{
+  "Name": "W404 KT-MB-Level-22-23 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-MB-Level-22-23: the gear drops (36), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "39006",
+      "ItemName": "Finely Finished Mask"
+    },
+    {
+      "ItemId": "39010",
+      "ItemName": "Distinguished Cap"
+    },
+    {
+      "ItemId": "39024",
+      "ItemName": "Cowl of Diplomacy"
+    },
+    {
+      "ItemId": "77073",
+      "ItemName": "Ring of Rejuvenation"
+    },
+    {
+      "ItemId": "77122",
+      "ItemName": "Distressing Garment"
+    },
+    {
+      "ItemId": "77123",
+      "ItemName": "Jinxed Tunic"
+    },
+    {
+      "ItemId": "77221",
+      "ItemName": "Shoes of Bottled Anger"
+    },
+    {
+      "ItemId": "77235",
+      "ItemName": "Slippers of Definition"
+    },
+    {
+      "ItemId": "77249",
+      "ItemName": "Boots of Sparking Energy"
+    },
+    {
+      "ItemId": "97098",
+      "ItemName": "Athame of the Sleuth"
+    },
+    {
+      "ItemId": "97099",
+      "ItemName": "Dirk of Nobles"
+    },
+    {
+      "ItemId": "97101",
+      "ItemName": "Conventional Dagger"
+    },
+    {
+      "ItemId": "97103",
+      "ItemName": "Athame of Chivalry"
+    },
+    {
+      "ItemId": "97104",
+      "ItemName": "Graceful Stiletto"
+    },
+    {
+      "ItemId": "97105",
+      "ItemName": "Detective's Dagger"
+    },
+    {
+      "ItemId": "97137",
+      "ItemName": "Headwrap of the Affected"
+    },
+    {
+      "ItemId": "97142",
+      "ItemName": "Stylish Hat"
+    },
+    {
+      "ItemId": "97154",
+      "ItemName": "Smooth Spun Hat"
+    },
+    {
+      "ItemId": "97158",
+      "ItemName": "Cowl of the Consummate"
+    },
+    {
+      "ItemId": "97171",
+      "ItemName": "Debonair Cap"
+    },
+    {
+      "ItemId": "97175",
+      "ItemName": "Savvy Cap"
+    },
+    {
+      "ItemId": "97188",
+      "ItemName": "Helm of Intolerance"
+    },
+    {
+      "ItemId": "97192",
+      "ItemName": "Cowl of Respect"
+    },
+    {
+      "ItemId": "97205",
+      "ItemName": "Masterful Canine Cowl"
+    },
+    {
+      "ItemId": "97209",
+      "ItemName": "Affable Cowl"
+    },
+    {
+      "ItemId": "97222",
+      "ItemName": "Conventional Cap"
+    },
+    {
+      "ItemId": "97224",
+      "ItemName": "Exquisite Cowl"
+    },
+    {
+      "ItemId": "97226",
+      "ItemName": "Watchman's Hat"
+    },
+    {
+      "ItemId": "97321",
+      "ItemName": "Robe of Paramount"
+    },
+    {
+      "ItemId": "97323",
+      "ItemName": "Skillful Cloak"
+    },
+    {
+      "ItemId": "97355",
+      "ItemName": "Footwraps of Dreamland"
+    },
+    {
+      "ItemId": "97370",
+      "ItemName": "Shoes of Humanity"
+    },
+    {
+      "ItemId": "97385",
+      "ItemName": "Shoes of Anxiety"
+    },
+    {
+      "ItemId": "97400",
+      "ItemName": "Pastoral Boots"
+    },
+    {
+      "ItemId": "97412",
+      "ItemName": "Shoes of the Breakneck"
+    },
+    {
+      "ItemId": "97414",
+      "ItemName": "Cat Burglar's Shoes"
+    }
+  ]
+}

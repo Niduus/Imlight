@@ -1,0 +1,161 @@
+{
+  "Name": "W404 MB-Level-31-34 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Level-31-34: the gear drops (38), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "38979",
+      "ItemName": "Brisk Cap"
+    },
+    {
+      "ItemId": "38980",
+      "ItemName": "Cap of the Inventor"
+    },
+    {
+      "ItemId": "38982",
+      "ItemName": "Cap of the Unicorn"
+    },
+    {
+      "ItemId": "38983",
+      "ItemName": "Cap of the Banshee"
+    },
+    {
+      "ItemId": "77074",
+      "ItemName": "Ring of the Unicorn"
+    },
+    {
+      "ItemId": "77082",
+      "ItemName": "Ring of Effect"
+    },
+    {
+      "ItemId": "77153",
+      "ItemName": "Cloak of Fascination"
+    },
+    {
+      "ItemId": "77154",
+      "ItemName": "Alluring Robes"
+    },
+    {
+      "ItemId": "77170",
+      "ItemName": "Robe of Ideals"
+    },
+    {
+      "ItemId": "77171",
+      "ItemName": "Cloak of Clarity"
+    },
+    {
+      "ItemId": "77184",
+      "ItemName": "Opportunists' Sandals"
+    },
+    {
+      "ItemId": "77187",
+      "ItemName": "Sandals of Delusion"
+    },
+    {
+      "ItemId": "77188",
+      "ItemName": "Slippers of Gusto"
+    },
+    {
+      "ItemId": "77189",
+      "ItemName": "Footwraps of Anguish"
+    },
+    {
+      "ItemId": "77220",
+      "ItemName": "Shoes of the Devoted"
+    },
+    {
+      "ItemId": "77234",
+      "ItemName": "Exacting Boots"
+    },
+    {
+      "ItemId": "77247",
+      "ItemName": "Boots of the Nucleus"
+    },
+    {
+      "ItemId": "97106",
+      "ItemName": "Informant's Dirk"
+    },
+    {
+      "ItemId": "97107",
+      "ItemName": "Watchman's Athame"
+    },
+    {
+      "ItemId": "97141",
+      "ItemName": "Exclusive Cap"
+    },
+    {
+      "ItemId": "97227",
+      "ItemName": "Cat Burglar's Cap"
+    },
+    {
+      "ItemId": "97239",
+      "ItemName": "Stylish Garments"
+    },
+    {
+      "ItemId": "97240",
+      "ItemName": "Artificial Robe"
+    },
+    {
+      "ItemId": "97255",
+      "ItemName": "Fancy Garments"
+    },
+    {
+      "ItemId": "97256",
+      "ItemName": "Robe of the Bubble"
+    },
+    {
+      "ItemId": "97271",
+      "ItemName": "Savvy Vestment"
+    },
+    {
+      "ItemId": "97272",
+      "ItemName": "Robe of Superiority"
+    },
+    {
+      "ItemId": "97273",
+      "ItemName": "Dexterous Vest"
+    },
+    {
+      "ItemId": "97288",
+      "ItemName": "Garment of the Supreme"
+    },
+    {
+      "ItemId": "97289",
+      "ItemName": "Marvelous Shroud"
+    },
+    {
+      "ItemId": "97290",
+      "ItemName": "High Quality Cloak"
+    },
+    {
+      "ItemId": "97305",
+      "ItemName": "Polished Garments"
+    },
+    {
+      "ItemId": "97306",
+      "ItemName": "Robe of Excellence"
+    },
+    {
+      "ItemId": "97307",
+      "ItemName": "Vestment of Expertise"
+    },
+    {
+      "ItemId": "97354",
+      "ItemName": "Shoes of the Chimera"
+    },
+    {
+      "ItemId": "97368",
+      "ItemName": "Shoes of Sentiments"
+    },
+    {
+      "ItemId": "97383",
+      "ItemName": "Slippers of the Worrier"
+    },
+    {
+      "ItemId": "97398",
+      "ItemName": "Shoes of The Windless"
+    }
+  ]
+}

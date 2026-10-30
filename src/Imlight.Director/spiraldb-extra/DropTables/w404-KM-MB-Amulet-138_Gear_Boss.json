@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-MB-Amulet-138 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-MB-Amulet-138: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1515074",
+      "ItemName": "Director Thermal Rope"
+    },
+    {
+      "ItemId": "1515075",
+      "ItemName": "Director Cryo Rope"
+    },
+    {
+      "ItemId": "1515076",
+      "ItemName": "Director Insulated Rope"
+    },
+    {
+      "ItemId": "1515077",
+      "ItemName": "Director Pressure Rope"
+    },
+    {
+      "ItemId": "1515078",
+      "ItemName": "Director Survival Rope"
+    },
+    {
+      "ItemId": "1515079",
+      "ItemName": "Director Biohazard Rope"
+    },
+    {
+      "ItemId": "1515080",
+      "ItemName": "Director Protective Rope"
+    },
+    {
+      "ItemId": "1515081",
+      "ItemName": "Director Hazmat Rope"
+    },
+    {
+      "ItemId": "1515098",
+      "ItemName": "Executive Thermal Rope"
+    },
+    {
+      "ItemId": "1515099",
+      "ItemName": "Executive Cryo Rope"
+    },
+    {
+      "ItemId": "1515100",
+      "ItemName": "Executive Insulated Rope"
+    },
+    {
+      "ItemId": "1515101",
+      "ItemName": "Executive Pressure Rope"
+    },
+    {
+      "ItemId": "1515102",
+      "ItemName": "Executive Survival Rope"
+    },
+    {
+      "ItemId": "1515103",
+      "ItemName": "Executive Biohazard Rope"
+    },
+    {
+      "ItemId": "1515104",
+      "ItemName": "Executive Protective Rope"
+    },
+    {
+      "ItemId": "1515105",
+      "ItemName": "Executive Hazmat Rope"
+    },
+    {
+      "ItemId": "1515122",
+      "ItemName": "Producer's Thermal Rope"
+    },
+    {
+      "ItemId": "1515123",
+      "ItemName": "Producer's Cryo Rope"
+    },
+    {
+      "ItemId": "1515124",
+      "ItemName": "Producer's Insulated Rope"
+    },
+    {
+      "ItemId": "1515125",
+      "ItemName": "Producer's Pressure Rope"
+    },
+    {
+      "ItemId": "1515126",
+      "ItemName": "Producer's Survival Rope"
+    },
+    {
+      "ItemId": "1515127",
+      "ItemName": "Producer's Biohazard Rope"
+    },
+    {
+      "ItemId": "1515128",
+      "ItemName": "Producer's Protective Rope"
+    },
+    {
+      "ItemId": "1515129",
+      "ItemName": "Producer's Hazmat Rope"
+    }
+  ]
+}

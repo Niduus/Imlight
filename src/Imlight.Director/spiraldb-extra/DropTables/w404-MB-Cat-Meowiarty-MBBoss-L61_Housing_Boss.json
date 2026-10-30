@@ -1,0 +1,45 @@
+{
+  "Name": "W404 MB-Cat-Meowiarty-MBBoss-L61 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Meowiarty-MBBoss-L61: the housing drops (9), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82878",
+      "ItemName": "Krokotopia Grand Tent"
+    },
+    {
+      "ItemId": "160620",
+      "ItemName": "Meowiarty's Blueprints"
+    },
+    {
+      "ItemId": "160656",
+      "ItemName": "Watchdog Statue"
+    },
+    {
+      "ItemId": "160706",
+      "ItemName": "Rack of Billy Clubs"
+    },
+    {
+      "ItemId": "160721",
+      "ItemName": "Model MB Automobile"
+    },
+    {
+      "ItemId": "512084",
+      "ItemName": "Marleybone Main Theme"
+    },
+    {
+      "ItemId": "1346131",
+      "ItemName": "Meowiarty Archmage Duel"
+    },
+    {
+      "ItemId": "1346132",
+      "ItemName": "Meowiarty Exalted Duel"
+    },
+    {
+      "ItemId": "1350308",
+      "ItemName": "Novice's Socket Wrench"
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "Name": "W404 DS-Level-02 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table DS-Level-02: the gear drops (40), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104582",
+      "ItemName": "Tunic of the Sphinx"
+    },
+    {
+      "ItemId": "104602",
+      "ItemName": "Terminus Wrap"
+    },
+    {
+      "ItemId": "104620",
+      "ItemName": "Fiery Tunic"
+    },
+    {
+      "ItemId": "104652",
+      "ItemName": "Shibboleth Smock"
+    },
+    {
+      "ItemId": "104663",
+      "ItemName": "Verdant Vestment"
+    },
+    {
+      "ItemId": "104693",
+      "ItemName": "Blizzard Cloak"
+    },
+    {
+      "ItemId": "104724",
+      "ItemName": "Storm Giant's Surcoat"
+    },
+    {
+      "ItemId": "104741",
+      "ItemName": "Earthrangers"
+    },
+    {
+      "ItemId": "104747",
+      "ItemName": "Boots of the Bountiful"
+    },
+    {
+      "ItemId": "104751",
+      "ItemName": "Sandals of Neutrality"
+    },
+    {
+      "ItemId": "104764",
+      "ItemName": "Frost Giant's Boots"
+    },
+    {
+      "ItemId": "104770",
+      "ItemName": "Footgear of the North Wind"
+    },
+    {
+      "ItemId": "104785",
+      "ItemName": "Boots of Equivalence"
+    },
+    {
+      "ItemId": "104797",
+      "ItemName": "Salamander-hide Shoes"
+    },
+    {
+      "ItemId": "104799",
+      "ItemName": "Burning Boots"
+    },
+    {
+      "ItemId": "104815",
+      "ItemName": "Shoes of the Whispering Dark"
+    },
+    {
+      "ItemId": "104820",
+      "ItemName": "Ashen Footwraps"
+    },
+    {
+      "ItemId": "104857",
+      "ItemName": "Legend Walkers"
+    },
+    {
+      "ItemId": "104862",
+      "ItemName": "Sandals of Lost Aeons"
+    },
+    {
+      "ItemId": "104878",
+      "ItemName": "Rainstorm Waders"
+    },
+    {
+      "ItemId": "104883",
+      "ItemName": "Sandals of the Squall"
+    },
+    {
+      "ItemId": "126624",
+      "ItemName": "Band of the Hearth"
+    },
+    {
+      "ItemId": "126625",
+      "ItemName": "Ring of Dominance"
+    },
+    {
+      "ItemId": "126626",
+      "ItemName": "Ring of the Forefathers"
+    },
+    {
+      "ItemId": "146187",
+      "ItemName": "Dragonblood Dirk"
+    },
+    {
+      "ItemId": "146188",
+      "ItemName": "Dauntless Dirk"
+    },
+    {
+      "ItemId": "146226",
+      "ItemName": "Halcyon Hood"
+    },
+    {
+      "ItemId": "146233",
+      "ItemName": "Triton's Topper"
+    },
+    {
+      "ItemId": "146252",
+      "ItemName": "Cap of Chronicles"
+    },
+    {
+      "ItemId": "146256",
+      "ItemName": "Mythological Mantle"
+    },
+    {
+      "ItemId": "146262",
+      "ItemName": "Equalizer's Coif"
+    },
+    {
+      "ItemId": "146275",
+      "ItemName": "Veil of Leaves"
+    },
+    {
+      "ItemId": "146281",
+      "ItemName": "Ivy-wrapped Cap"
+    },
+    {
+      "ItemId": "146298",
+      "ItemName": "Shroud of the Equinox"
+    },
+    {
+      "ItemId": "146304",
+      "ItemName": "Mantle of the Icicle"
+    },
+    {
+      "ItemId": "146324",
+      "ItemName": "Promethean Hood"
+    },
+    {
+      "ItemId": "146329",
+      "ItemName": "Bonfire Headdress"
+    },
+    {
+      "ItemId": "146345",
+      "ItemName": "Cowl of Morbidity"
+    },
+    {
+      "ItemId": "146351",
+      "ItemName": "Veil of Passage"
+    },
+    {
+      "ItemId": "146367",
+      "ItemName": "Cap of Constitution"
+    }
+  ]
+}

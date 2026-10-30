@@ -1,0 +1,37 @@
+{
+  "Name": "W404 GH2-Skeleton-Ice-4-BOSS-R10 Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH2-Skeleton-Ice-4-BOSS-R10: the seed drops (7), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "345982",
+      "ItemName": "Deadly Fly Trap"
+    },
+    {
+      "ItemId": "346045",
+      "ItemName": "Trumpet Vine"
+    },
+    {
+      "ItemId": "346052",
+      "ItemName": "White Desparagus"
+    },
+    {
+      "ItemId": "355080",
+      "ItemName": "Burning Snap Dragon"
+    },
+    {
+      "ItemId": "355101",
+      "ItemName": "Fickle Pickle"
+    },
+    {
+      "ItemId": "355115",
+      "ItemName": "Orange Dandelion"
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears"
+    }
+  ]
+}

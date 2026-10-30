@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Grendel-Large-3-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Grendel-Large-3-GHBoss-R7: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136427",
+      "ItemName": "Figmentary Crown"
+    },
+    {
+      "ItemId": "136441",
+      "ItemName": "Mantle of Decorum"
+    },
+    {
+      "ItemId": "136639",
+      "ItemName": "Banshee's Raiment"
+    },
+    {
+      "ItemId": "136640",
+      "ItemName": "Longcoat of Decorum"
+    },
+    {
+      "ItemId": "136664",
+      "ItemName": "Smock of the Leviathan"
+    },
+    {
+      "ItemId": "171210",
+      "ItemName": "Snowfather's Boots"
+    }
+  ]
+}

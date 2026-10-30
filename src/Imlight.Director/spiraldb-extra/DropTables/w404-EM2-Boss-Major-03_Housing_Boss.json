@@ -1,0 +1,41 @@
+{
+  "Name": "W404 EM2-Boss-Major-03 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM2-Boss-Major-03: the housing drops (8), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1441525",
+      "ItemName": "Empyrea Mandalla Combat"
+    },
+    {
+      "ItemId": "1441526",
+      "ItemName": "Empyrea Mandalla Destroyed Combat"
+    },
+    {
+      "ItemId": "1441527",
+      "ItemName": "Empyrea Nexus Theme"
+    },
+    {
+      "ItemId": "1441528",
+      "ItemName": "Empyrea Nimbus Combat"
+    },
+    {
+      "ItemId": "1441529",
+      "ItemName": "Empyrea Nimbus Theme"
+    },
+    {
+      "ItemId": "1441530",
+      "ItemName": "Empyrea Reverie Combat"
+    },
+    {
+      "ItemId": "1441531",
+      "ItemName": "Empyrea Reverie Dream Shrine Theme"
+    },
+    {
+      "ItemId": "1441532",
+      "ItemName": "Empyrea Reverie Hive Theme"
+    }
+  ]
+}

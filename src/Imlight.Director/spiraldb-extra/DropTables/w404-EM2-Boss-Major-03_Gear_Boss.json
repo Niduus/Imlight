@@ -1,0 +1,73 @@
+{
+  "Name": "W404 EM2-Boss-Major-03 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM2-Boss-Major-03: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462244",
+      "ItemName": "Fiery Paradox Conical"
+    },
+    {
+      "ItemId": "1462245",
+      "ItemName": "Icy Paradox Conical"
+    },
+    {
+      "ItemId": "1462246",
+      "ItemName": "Stormy Paradox Conical"
+    },
+    {
+      "ItemId": "1462247",
+      "ItemName": "Mythic Paradox Conical"
+    },
+    {
+      "ItemId": "1462248",
+      "ItemName": "Lively Paradox Conical"
+    },
+    {
+      "ItemId": "1462249",
+      "ItemName": "Deathly Paradox Conical"
+    },
+    {
+      "ItemId": "1462250",
+      "ItemName": "Balanced Paradox Conical"
+    },
+    {
+      "ItemId": "1462251",
+      "ItemName": "Divine Paradox Conical"
+    },
+    {
+      "ItemId": "1462260",
+      "ItemName": "Fiery Paradox Boots"
+    },
+    {
+      "ItemId": "1462261",
+      "ItemName": "Icy Paradox Boots"
+    },
+    {
+      "ItemId": "1462262",
+      "ItemName": "Stormy Paradox Boots"
+    },
+    {
+      "ItemId": "1462263",
+      "ItemName": "Mythic Paradox Boots"
+    },
+    {
+      "ItemId": "1462264",
+      "ItemName": "Lively Paradox Boots"
+    },
+    {
+      "ItemId": "1462265",
+      "ItemName": "Deathly Paradox Boots"
+    },
+    {
+      "ItemId": "1462266",
+      "ItemName": "Balanced Paradox Boots"
+    },
+    {
+      "ItemId": "1462267",
+      "ItemName": "Divine Paradox Boots"
+    }
+  ]
+}

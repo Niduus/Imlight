@@ -1,0 +1,61 @@
+{
+  "Name": "W404 AZ-BossRare-BlueAgnes-R13 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossRare-BlueAgnes-R13: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730192",
+      "ItemName": "Thunder Horn's Coral Charm"
+    },
+    {
+      "ItemId": "730201",
+      "ItemName": "Smoking Fang Talisman"
+    },
+    {
+      "ItemId": "730205",
+      "ItemName": "Golden Death Head Relic"
+    },
+    {
+      "ItemId": "730279",
+      "ItemName": "Black Sun Chac's Helmet"
+    },
+    {
+      "ItemId": "730280",
+      "ItemName": "Hood of the Hungry Lizard"
+    },
+    {
+      "ItemId": "730349",
+      "ItemName": "Grinning Death Xicolli Vest"
+    },
+    {
+      "ItemId": "730356",
+      "ItemName": "Death Moon's Chosen Robes"
+    },
+    {
+      "ItemId": "730417",
+      "ItemName": "Winter's Pyramid Deck"
+    },
+    {
+      "ItemId": "730420",
+      "ItemName": "King's Royal Portraits"
+    },
+    {
+      "ItemId": "730428",
+      "ItemName": "Cipactli's Lost Cards"
+    },
+    {
+      "ItemId": "730450",
+      "ItemName": "Heart of the Sky Scepter"
+    },
+    {
+      "ItemId": "730452",
+      "ItemName": "Brutal Ice Arrow Rod"
+    },
+    {
+      "ItemId": "730858",
+      "ItemName": "Storm Caiman's Sly Boots"
+    }
+  ]
+}

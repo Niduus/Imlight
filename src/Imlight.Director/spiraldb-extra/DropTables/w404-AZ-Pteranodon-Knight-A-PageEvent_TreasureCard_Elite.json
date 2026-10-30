@@ -1,0 +1,25 @@
+{
+  "Name": "W404 AZ-Pteranodon-Knight-A-PageEvent TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table AZ-Pteranodon-Knight-A-PageEvent: the treasurecard drops (4), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Hydra TC DH",
+      "ItemName": "Hydra"
+    },
+    {
+      "ItemId": "Skeletal Dragon TC DH",
+      "ItemName": "Skeletal Dragon"
+    },
+    {
+      "ItemId": "Dragonflies TC DH",
+      "ItemName": "Dragonflies"
+    },
+    {
+      "ItemId": "Polymorph - Draconian TC DH",
+      "ItemName": "Polymorph Dracon"
+    }
+  ]
+}

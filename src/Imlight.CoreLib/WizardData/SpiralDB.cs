@@ -247,6 +247,7 @@ public static class SpiralDB {
                     s_zoneData.Count,
                     s_badgeDefinitions.Count,
                     s_npcSeamstresses.Count));
+            Imlight.CoreLib.Game.DropTables.DropTableFiles.Warm();
 
             return true;
         }

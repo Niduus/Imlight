@@ -1,0 +1,9 @@
+{
+  "Name": "W404 Minion75_7Elite",
+  "Description": "Gold of the game's table Minion75_7Elite, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 20,
+  "MaxGold": 25,
+  "EachItem": false,
+  "Items": []
+}

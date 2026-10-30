@@ -1,0 +1,13 @@
+{
+  "Name": "W404 ME1_Crab_Boss_A Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Crab_Boss_A: the housing drops (1), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "206091",
+      "ItemName": "Chicken Coop"
+    }
+  ]
+}

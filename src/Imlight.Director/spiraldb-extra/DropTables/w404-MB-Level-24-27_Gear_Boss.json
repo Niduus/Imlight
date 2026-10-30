@@ -1,0 +1,157 @@
+{
+  "Name": "W404 MB-Level-24-27 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Level-24-27: the gear drops (37), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "39007",
+      "ItemName": "Shroud of Predominance"
+    },
+    {
+      "ItemId": "39008",
+      "ItemName": "Cap of Fascination"
+    },
+    {
+      "ItemId": "39023",
+      "ItemName": "Cowl of the Exceptional"
+    },
+    {
+      "ItemId": "39025",
+      "ItemName": "Headwraps of Preference"
+    },
+    {
+      "ItemId": "39027",
+      "ItemName": "Delicate Hat"
+    },
+    {
+      "ItemId": "77073",
+      "ItemName": "Ring of Rejuvenation"
+    },
+    {
+      "ItemId": "77118",
+      "ItemName": "Biting Garment"
+    },
+    {
+      "ItemId": "77121",
+      "ItemName": "Doctor's Uniform"
+    },
+    {
+      "ItemId": "77152",
+      "ItemName": "Finely Finished Cloak"
+    },
+    {
+      "ItemId": "77168",
+      "ItemName": "Cloak of Diplomacy"
+    },
+    {
+      "ItemId": "77248",
+      "ItemName": "Flickering Boots"
+    },
+    {
+      "ItemId": "97098",
+      "ItemName": "Athame of the Sleuth"
+    },
+    {
+      "ItemId": "97099",
+      "ItemName": "Dirk of Nobles"
+    },
+    {
+      "ItemId": "97100",
+      "ItemName": "Dagger of Force"
+    },
+    {
+      "ItemId": "97101",
+      "ItemName": "Conventional Dagger"
+    },
+    {
+      "ItemId": "97104",
+      "ItemName": "Graceful Stiletto"
+    },
+    {
+      "ItemId": "97105",
+      "ItemName": "Detective's Dagger"
+    },
+    {
+      "ItemId": "97107",
+      "ItemName": "Watchman's Athame"
+    },
+    {
+      "ItemId": "97138",
+      "ItemName": "Elegant Helm"
+    },
+    {
+      "ItemId": "97139",
+      "ItemName": "Artificial Headwrap"
+    },
+    {
+      "ItemId": "97155",
+      "ItemName": "Famous Cap"
+    },
+    {
+      "ItemId": "97156",
+      "ItemName": "Remarkable Cowl"
+    },
+    {
+      "ItemId": "97172",
+      "ItemName": "Headwraps of Superiority"
+    },
+    {
+      "ItemId": "97173",
+      "ItemName": "Dexterous Cap"
+    },
+    {
+      "ItemId": "97189",
+      "ItemName": "Sophisticated Headwraps"
+    },
+    {
+      "ItemId": "97190",
+      "ItemName": "Obligatory Shroud"
+    },
+    {
+      "ItemId": "97206",
+      "ItemName": "Cap of Expertise"
+    },
+    {
+      "ItemId": "97207",
+      "ItemName": "Cap of Poise"
+    },
+    {
+      "ItemId": "97223",
+      "ItemName": "Skillful Hat"
+    },
+    {
+      "ItemId": "97227",
+      "ItemName": "Cat Burglar's Cap"
+    },
+    {
+      "ItemId": "97238",
+      "ItemName": "Animated Canine Cloak"
+    },
+    {
+      "ItemId": "97254",
+      "ItemName": "Remarkable Robe"
+    },
+    {
+      "ItemId": "97270",
+      "ItemName": "Robe of Politeness"
+    },
+    {
+      "ItemId": "97287",
+      "ItemName": "Cloak of Respect"
+    },
+    {
+      "ItemId": "97304",
+      "ItemName": "Masterful Canine Cloak"
+    },
+    {
+      "ItemId": "97322",
+      "ItemName": "Rainslicker"
+    },
+    {
+      "ItemId": "97413",
+      "ItemName": "Bandit's Footwraps"
+    }
+  ]
+}

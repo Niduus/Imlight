@@ -1,0 +1,65 @@
+{
+  "Name": "W404 NV_Irks_Super_A_03 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Irks_Super_A_03: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1577794",
+      "ItemName": "Golden Balance Amulet"
+    },
+    {
+      "ItemId": "1577795",
+      "ItemName": "Golden Death Amulet"
+    },
+    {
+      "ItemId": "1577796",
+      "ItemName": "Golden Fire Amulet"
+    },
+    {
+      "ItemId": "1577797",
+      "ItemName": "Golden Ice Amulet"
+    },
+    {
+      "ItemId": "1577798",
+      "ItemName": "Golden Life Amulet"
+    },
+    {
+      "ItemId": "1577799",
+      "ItemName": "Golden Myth Amulet"
+    },
+    {
+      "ItemId": "1577800",
+      "ItemName": "Golden Storm Amulet"
+    },
+    {
+      "ItemId": "1577850",
+      "ItemName": "Glistening Balance Amulet"
+    },
+    {
+      "ItemId": "1577851",
+      "ItemName": "Glistening Death Amulet"
+    },
+    {
+      "ItemId": "1577852",
+      "ItemName": "Glistening Fire Amulet"
+    },
+    {
+      "ItemId": "1577853",
+      "ItemName": "Glistening Ice Amulet"
+    },
+    {
+      "ItemId": "1577854",
+      "ItemName": "Glistening Life Amulet"
+    },
+    {
+      "ItemId": "1577855",
+      "ItemName": "Glistening Myth Amulet"
+    },
+    {
+      "ItemId": "1577856",
+      "ItemName": "Glistening Storm Amulet"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "Name": "W404 GH2-Wolf-Warrior-3-BOSS-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH2-Wolf-Warrior-3-BOSS-R10: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "455099",
+      "ItemName": "Dragon's Shield Amulet"
+    },
+    {
+      "ItemId": "455117",
+      "ItemName": "Wolf's Sapphire Claw"
+    },
+    {
+      "ItemId": "455147",
+      "ItemName": "Barbaric Helm"
+    },
+    {
+      "ItemId": "455148",
+      "ItemName": "Horned Helm of the Mighty"
+    },
+    {
+      "ItemId": "455179",
+      "ItemName": "Ring of the Wolf Warrior"
+    },
+    {
+      "ItemId": "455208",
+      "ItemName": "Burnt Coat"
+    },
+    {
+      "ItemId": "455209",
+      "ItemName": "Chill-kissed Coat"
+    },
+    {
+      "ItemId": "455238",
+      "ItemName": "Snarling Bear Boots"
+    },
+    {
+      "ItemId": "455239",
+      "ItemName": "Growling Bear Boots"
+    },
+    {
+      "ItemId": "455240",
+      "ItemName": "Slashing Bear Boots"
+    },
+    {
+      "ItemId": "455241",
+      "ItemName": "Biting Bear Boots"
+    },
+    {
+      "ItemId": "455420",
+      "ItemName": "Staff of Absolution"
+    },
+    {
+      "ItemId": "455422",
+      "ItemName": "Spear of Bear's Wrath"
+    }
+  ]
+}

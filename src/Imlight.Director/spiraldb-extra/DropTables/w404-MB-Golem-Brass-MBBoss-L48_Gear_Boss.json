@@ -1,0 +1,77 @@
+{
+  "Name": "W404 MB-Golem-Brass-MBBoss-L48 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Golem-Brass-MBBoss-L48: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "5055",
+      "ItemName": "Sprockets' Amulet"
+    },
+    {
+      "ItemId": "39001",
+      "ItemName": "Sprockets' Invigorating Hat"
+    },
+    {
+      "ItemId": "39020",
+      "ItemName": "Sprockets's Cultured Cap"
+    },
+    {
+      "ItemId": "39056",
+      "ItemName": "Sprockets' Medicinal Ring"
+    },
+    {
+      "ItemId": "77145",
+      "ItemName": "Sprockets's Victorian Vest"
+    },
+    {
+      "ItemId": "77182",
+      "ItemName": "Sprockets's Robe"
+    },
+    {
+      "ItemId": "77208",
+      "ItemName": "Sprockets' Shoes of Ideals"
+    },
+    {
+      "ItemId": "77212",
+      "ItemName": "Sprockets' Charming Shoes"
+    },
+    {
+      "ItemId": "77231",
+      "ItemName": "Sprockets' Slippers"
+    },
+    {
+      "ItemId": "97079",
+      "ItemName": "Sprockets Basking Athame"
+    },
+    {
+      "ItemId": "97185",
+      "ItemName": "Sprockets' Urbane Cowl"
+    },
+    {
+      "ItemId": "97220",
+      "ItemName": "Sprockets' Hat of the Feline"
+    },
+    {
+      "ItemId": "97268",
+      "ItemName": "Sprockets' Vestment"
+    },
+    {
+      "ItemId": "97318",
+      "ItemName": "Sprockets' Equivalent Robe"
+    },
+    {
+      "ItemId": "97364",
+      "ItemName": "Sprockets' Enticing Boots"
+    },
+    {
+      "ItemId": "97395",
+      "ItemName": "Sprockets' Marvelous Boots"
+    },
+    {
+      "ItemId": "126150",
+      "ItemName": "Ring of Clarity"
+    }
+  ]
+}

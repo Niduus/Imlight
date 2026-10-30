@@ -1,0 +1,121 @@
+{
+  "Name": "W404 WL_Dingo_Armor_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WL_Dingo_Armor_A_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1628306",
+      "ItemName": "Elegant City Dweller Hoppers"
+    },
+    {
+      "ItemId": "1628307",
+      "ItemName": "Gothic City Dweller Hoppers"
+    },
+    {
+      "ItemId": "1628308",
+      "ItemName": "Flashy City Dweller Hoppers"
+    },
+    {
+      "ItemId": "1628309",
+      "ItemName": "Crisp City Dweller Hoppers"
+    },
+    {
+      "ItemId": "1628310",
+      "ItemName": "Vibrant City Dweller Hoppers"
+    },
+    {
+      "ItemId": "1628311",
+      "ItemName": "Iconic City Dweller Hoppers"
+    },
+    {
+      "ItemId": "1628312",
+      "ItemName": "Striking City Dweller Hoppers"
+    },
+    {
+      "ItemId": "1628362",
+      "ItemName": "Elegant City Dweller Ring"
+    },
+    {
+      "ItemId": "1628363",
+      "ItemName": "Gothic City Dweller Ring"
+    },
+    {
+      "ItemId": "1628364",
+      "ItemName": "Flashy City Dweller Ring"
+    },
+    {
+      "ItemId": "1628365",
+      "ItemName": "Crisp City Dweller Ring"
+    },
+    {
+      "ItemId": "1628366",
+      "ItemName": "Vibrant City Dweller Ring"
+    },
+    {
+      "ItemId": "1628367",
+      "ItemName": "Iconic City Dweller Ring"
+    },
+    {
+      "ItemId": "1628368",
+      "ItemName": "Striking City Dweller Ring"
+    },
+    {
+      "ItemId": "1628516",
+      "ItemName": "Elegant Townie Hoppers"
+    },
+    {
+      "ItemId": "1628517",
+      "ItemName": "Gothic Townie Hoppers"
+    },
+    {
+      "ItemId": "1628518",
+      "ItemName": "Flashy Townie Hoppers"
+    },
+    {
+      "ItemId": "1628519",
+      "ItemName": "Crisp Townie Hoppers"
+    },
+    {
+      "ItemId": "1628520",
+      "ItemName": "Vibrant Townie Hoppers"
+    },
+    {
+      "ItemId": "1628521",
+      "ItemName": "Iconic Townie Hoppers"
+    },
+    {
+      "ItemId": "1628522",
+      "ItemName": "Striking Townie Hoppers"
+    },
+    {
+      "ItemId": "1628565",
+      "ItemName": "Elegant Townie Ring"
+    },
+    {
+      "ItemId": "1628566",
+      "ItemName": "Gothic Townie Ring"
+    },
+    {
+      "ItemId": "1628567",
+      "ItemName": "Flashy Townie Ring"
+    },
+    {
+      "ItemId": "1628568",
+      "ItemName": "Crisp Townie Ring"
+    },
+    {
+      "ItemId": "1628569",
+      "ItemName": "Vibrant Townie Ring"
+    },
+    {
+      "ItemId": "1628570",
+      "ItemName": "Iconic Townie Ring"
+    },
+    {
+      "ItemId": "1628571",
+      "ItemName": "Striking Townie Ring"
+    }
+  ]
+}

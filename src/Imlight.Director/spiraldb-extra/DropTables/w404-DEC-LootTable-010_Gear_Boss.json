@@ -1,0 +1,37 @@
+{
+  "Name": "W404 DEC-LootTable-010 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table DEC-LootTable-010: the gear drops (7), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126806",
+      "ItemName": "Santa Hat"
+    },
+    {
+      "ItemId": "126807",
+      "ItemName": "Santa Robe"
+    },
+    {
+      "ItemId": "126808",
+      "ItemName": "Santa Boots"
+    },
+    {
+      "ItemId": "1257815",
+      "ItemName": "Wand of the Gift Giver"
+    },
+    {
+      "ItemId": "1257816",
+      "ItemName": "Traveler's Star Scepter"
+    },
+    {
+      "ItemId": "1257817",
+      "ItemName": "Holiday Cookie Wand"
+    },
+    {
+      "ItemId": "1257818",
+      "ItemName": "Nutcracker Knight Baton"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "Name": "W404 EM-Mob-Gear-120 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM-Mob-Gear-120: the housing drops (7), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1439000",
+      "ItemName": "Empyrea Aeriel Theme"
+    },
+    {
+      "ItemId": "1439001",
+      "ItemName": "Empyrea Athanor Combat Theme"
+    },
+    {
+      "ItemId": "1439002",
+      "ItemName": "Empyrea Inner Athanor Theme"
+    },
+    {
+      "ItemId": "1439003",
+      "ItemName": "Empyrea Outer Athanor Theme"
+    },
+    {
+      "ItemId": "1439004",
+      "ItemName": "Empyrea Finale Combat Theme"
+    },
+    {
+      "ItemId": "1439005",
+      "ItemName": "Empyrea Flotsam Combat Theme"
+    },
+    {
+      "ItemId": "1439006",
+      "ItemName": "Empyrea Jungle Theme"
+    }
+  ]
+}

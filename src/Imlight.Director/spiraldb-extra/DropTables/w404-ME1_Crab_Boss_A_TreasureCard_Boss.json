@@ -1,0 +1,25 @@
+{
+  "Name": "W404 ME1_Crab_Boss_A TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Crab_Boss_A: the treasurecard drops (4), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Supreme Sunburst TC WH",
+      "ItemName": "Supreme Sunburst"
+    },
+    {
+      "ItemId": "Flood TC WH",
+      "ItemName": "Flood"
+    },
+    {
+      "ItemId": "Triage TC WH",
+      "ItemName": "Triage"
+    },
+    {
+      "ItemId": "Efreet Balance TC",
+      "ItemName": "Sirocco Djinni"
+    }
+  ]
+}

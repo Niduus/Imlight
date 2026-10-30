@@ -1,0 +1,93 @@
+{
+  "Name": "W404 MS-Pig-Plague-Ninja-MSBoss-L42 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-Plague-Ninja-MSBoss-L42: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "87776",
+      "ItemName": "Plague Oni's Sapphire Blade"
+    },
+    {
+      "ItemId": "97452",
+      "ItemName": "Koto's Knife of Notion"
+    },
+    {
+      "ItemId": "97470",
+      "ItemName": "Knife of Preoccupation"
+    },
+    {
+      "ItemId": "97473",
+      "ItemName": "Dagger of Detachment"
+    },
+    {
+      "ItemId": "97571",
+      "ItemName": "Heedful Headwraps"
+    },
+    {
+      "ItemId": "97591",
+      "ItemName": "Cap of Exertion"
+    },
+    {
+      "ItemId": "97619",
+      "ItemName": "Euphonic Cap"
+    },
+    {
+      "ItemId": "97639",
+      "ItemName": "Gogi Berry Stained Cap"
+    },
+    {
+      "ItemId": "97667",
+      "ItemName": "Mask of the Chipper"
+    },
+    {
+      "ItemId": "97698",
+      "ItemName": "Band of Sandcastles"
+    },
+    {
+      "ItemId": "97707",
+      "ItemName": "Koto's Band of Images"
+    },
+    {
+      "ItemId": "97789",
+      "ItemName": "Gallant Tunic"
+    },
+    {
+      "ItemId": "97824",
+      "ItemName": "Cloak of Pictures"
+    },
+    {
+      "ItemId": "97856",
+      "ItemName": "Vestment of Hymns"
+    },
+    {
+      "ItemId": "97878",
+      "ItemName": "Koto's Brooding Tunic"
+    },
+    {
+      "ItemId": "97882",
+      "ItemName": "Robe of the Lithe"
+    },
+    {
+      "ItemId": "97989",
+      "ItemName": "Koto's Sandals of Discontent"
+    },
+    {
+      "ItemId": "98024",
+      "ItemName": "Koto's Adroit Sandals"
+    },
+    {
+      "ItemId": "98060",
+      "ItemName": "Shoes of Dreaming"
+    },
+    {
+      "ItemId": "98063",
+      "ItemName": "Shoes of Deliberation"
+    },
+    {
+      "ItemId": "98065",
+      "ItemName": "Slippers of the Lotus"
+    }
+  ]
+}

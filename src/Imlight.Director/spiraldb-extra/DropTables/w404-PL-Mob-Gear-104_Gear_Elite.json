@@ -1,0 +1,265 @@
+{
+  "Name": "W404 PL-Mob-Gear-104 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table PL-Mob-Gear-104: the gear drops (64), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1363565",
+      "ItemName": "Bleaks Ushanka of Pyres"
+    },
+    {
+      "ItemId": "1363566",
+      "ItemName": "Bleaks Ushanka of Frost"
+    },
+    {
+      "ItemId": "1363567",
+      "ItemName": "Snowstorm Bleaks Ushanka"
+    },
+    {
+      "ItemId": "1363568",
+      "ItemName": "Bleaks Ushanka of Mischief"
+    },
+    {
+      "ItemId": "1363569",
+      "ItemName": "Bleaks Ushanka of Vigor"
+    },
+    {
+      "ItemId": "1363570",
+      "ItemName": "Bleaks Ushanka of Despair"
+    },
+    {
+      "ItemId": "1363571",
+      "ItemName": "Noble Bleaks Ushanka"
+    },
+    {
+      "ItemId": "1363572",
+      "ItemName": "Polarian Bleaks Ushanka"
+    },
+    {
+      "ItemId": "1363597",
+      "ItemName": "Bleaks Jacket of Pyres"
+    },
+    {
+      "ItemId": "1363598",
+      "ItemName": "Bleaks Coat of Frost"
+    },
+    {
+      "ItemId": "1363599",
+      "ItemName": "Snowstorm Bleaks Suit"
+    },
+    {
+      "ItemId": "1363600",
+      "ItemName": "Bleaks Apparel of Mischief"
+    },
+    {
+      "ItemId": "1363601",
+      "ItemName": "Bleaks Pelage of Vigor"
+    },
+    {
+      "ItemId": "1363602",
+      "ItemName": "Bleaks Jerkin of Despair"
+    },
+    {
+      "ItemId": "1363603",
+      "ItemName": "Noble Bleaks Finery"
+    },
+    {
+      "ItemId": "1363604",
+      "ItemName": "Polarian Bleaks Jacket"
+    },
+    {
+      "ItemId": "1363629",
+      "ItemName": "Bleaks Footgear of Pyres"
+    },
+    {
+      "ItemId": "1363630",
+      "ItemName": "Bleaks Mukluks of Frost"
+    },
+    {
+      "ItemId": "1363631",
+      "ItemName": "Bleaks Shoes of Snowstorms"
+    },
+    {
+      "ItemId": "1363632",
+      "ItemName": "Bleaks Runners of Mischief"
+    },
+    {
+      "ItemId": "1363633",
+      "ItemName": "Bleaks Trekkers of Vigor"
+    },
+    {
+      "ItemId": "1363634",
+      "ItemName": "Bleaks Clogs of Despair"
+    },
+    {
+      "ItemId": "1363635",
+      "ItemName": "Noble Bleaks Trackers"
+    },
+    {
+      "ItemId": "1363636",
+      "ItemName": "Polarian Bleaks Iceboots"
+    },
+    {
+      "ItemId": "1369141",
+      "ItemName": "Kossack Knife of Radiance"
+    },
+    {
+      "ItemId": "1369142",
+      "ItemName": "Kossack Iceblade of Chills"
+    },
+    {
+      "ItemId": "1369143",
+      "ItemName": "Kossack Stylet of Tempests"
+    },
+    {
+      "ItemId": "1369144",
+      "ItemName": "Kossack Athame of Counsel"
+    },
+    {
+      "ItemId": "1369145",
+      "ItemName": "Kossack Spike of Purpose"
+    },
+    {
+      "ItemId": "1369146",
+      "ItemName": "Kossack Cutter of Travail"
+    },
+    {
+      "ItemId": "1369147",
+      "ItemName": "Kossack Athame of Redress"
+    },
+    {
+      "ItemId": "1369148",
+      "ItemName": "Polarian Kossack Shortblade"
+    },
+    {
+      "ItemId": "1369173",
+      "ItemName": "Radiant Kossack Amulet"
+    },
+    {
+      "ItemId": "1369174",
+      "ItemName": "Kossack Chaplet of Chills"
+    },
+    {
+      "ItemId": "1369175",
+      "ItemName": "Kossack Charm of Tempests"
+    },
+    {
+      "ItemId": "1369176",
+      "ItemName": "Kossack Locket of Counsel"
+    },
+    {
+      "ItemId": "1369177",
+      "ItemName": "Kossack Ampul of Purpose"
+    },
+    {
+      "ItemId": "1369178",
+      "ItemName": "Kossack Collar of Misery"
+    },
+    {
+      "ItemId": "1369179",
+      "ItemName": "Kossack Bauble of Honor"
+    },
+    {
+      "ItemId": "1369180",
+      "ItemName": "Polarian Kossack Medallion"
+    },
+    {
+      "ItemId": "1369205",
+      "ItemName": "Radiant Kossack Ring"
+    },
+    {
+      "ItemId": "1369206",
+      "ItemName": "Kossack Band of Chills"
+    },
+    {
+      "ItemId": "1369207",
+      "ItemName": "Kossack Loop of Tempests"
+    },
+    {
+      "ItemId": "1369208",
+      "ItemName": "Kossack Ring of Counsel"
+    },
+    {
+      "ItemId": "1369209",
+      "ItemName": "Kossack Band of Purpose"
+    },
+    {
+      "ItemId": "1369210",
+      "ItemName": "Kossack Ringlet of Travail"
+    },
+    {
+      "ItemId": "1369211",
+      "ItemName": "Kossack Ring of Fairness"
+    },
+    {
+      "ItemId": "1369212",
+      "ItemName": "Polarian Kossack Signet"
+    },
+    {
+      "ItemId": "1369333",
+      "ItemName": "Evoker's Ember Bodkin"
+    },
+    {
+      "ItemId": "1369334",
+      "ItemName": "Evoker's Gelid Wand"
+    },
+    {
+      "ItemId": "1369335",
+      "ItemName": "Evoker's Stave of Squalls"
+    },
+    {
+      "ItemId": "1369336",
+      "ItemName": "Evoker's Baton of Acuity"
+    },
+    {
+      "ItemId": "1369337",
+      "ItemName": "Evoker's Stalwart Stave"
+    },
+    {
+      "ItemId": "1369338",
+      "ItemName": "Evoker's Forlorn Wand"
+    },
+    {
+      "ItemId": "1369339",
+      "ItemName": "Evoker's Gallant Bodkin"
+    },
+    {
+      "ItemId": "1369340",
+      "ItemName": "Polarian Evoker's Wand"
+    },
+    {
+      "ItemId": "1369461",
+      "ItemName": "Evoker's Hand of Embers"
+    },
+    {
+      "ItemId": "1369462",
+      "ItemName": "Evoker's Gelid Pasteboards"
+    },
+    {
+      "ItemId": "1369463",
+      "ItemName": "Evoker's Deck of Squalls"
+    },
+    {
+      "ItemId": "1369464",
+      "ItemName": "Evoker's Stack of Acuity"
+    },
+    {
+      "ItemId": "1369465",
+      "ItemName": "Evoker's Stalwart Parcel"
+    },
+    {
+      "ItemId": "1369466",
+      "ItemName": "Evoker's Forlorn Sheaf"
+    },
+    {
+      "ItemId": "1369467",
+      "ItemName": "Evoker's Gallant Hand"
+    },
+    {
+      "ItemId": "1369468",
+      "ItemName": "Polarian Evoker's Bevy"
+    }
+  ]
+}

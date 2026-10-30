@@ -1,0 +1,41 @@
+{
+  "Name": "W404 Mob-1549371 Mount (Boss)",
+  "Description": "Wizard404's drop list of Ixcax Cursedwing's own drops: the mount drops (8), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "470132",
+      "ItemName": "Crokagator (PERM)"
+    },
+    {
+      "ItemId": "713345",
+      "ItemName": "Tyrannosaurus Rex (PERM)"
+    },
+    {
+      "ItemId": "733074",
+      "ItemName": "Ankylosaurus (PERM)"
+    },
+    {
+      "ItemId": "733075",
+      "ItemName": "Triceratops (PERM)"
+    },
+    {
+      "ItemId": "789437",
+      "ItemName": "Gold-wrought Eagle (PERM)"
+    },
+    {
+      "ItemId": "789439",
+      "ItemName": "Arcus Cloud (PERM)"
+    },
+    {
+      "ItemId": "1317670",
+      "ItemName": "Jeweled Scarab (PERM)"
+    },
+    {
+      "ItemId": "1350159",
+      "ItemName": "Feathered Raptor (PERM)"
+    }
+  ]
+}

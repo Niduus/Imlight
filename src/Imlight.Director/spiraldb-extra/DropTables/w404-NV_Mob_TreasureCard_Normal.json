@@ -1,0 +1,105 @@
+{
+  "Name": "W404 NV_Mob TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table NV_Mob: the treasurecard drops (24), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Brilliant Light TC",
+      "ItemName": "Brilliant Light"
+    },
+    {
+      "ItemId": "Combustion TC",
+      "ItemName": "Combustion"
+    },
+    {
+      "ItemId": "Darkwind TC",
+      "ItemName": "Darkwind"
+    },
+    {
+      "ItemId": "Death Prism TC",
+      "ItemName": "Death Prism"
+    },
+    {
+      "ItemId": "Tri Blade TC",
+      "ItemName": "Elemental Blade"
+    },
+    {
+      "ItemId": "Ice Prism TC",
+      "ItemName": "Ice Prism"
+    },
+    {
+      "ItemId": "Gargantuan TC",
+      "ItemName": "Gargantuan"
+    },
+    {
+      "ItemId": "Mythspear TC",
+      "ItemName": "Mythspear"
+    },
+    {
+      "ItemId": "Blood Moon TC",
+      "ItemName": "Time of Legend"
+    },
+    {
+      "ItemId": "Deathspear TC",
+      "ItemName": "Deathspear"
+    },
+    {
+      "ItemId": "Fire Prism TC",
+      "ItemName": "Fire Prism"
+    },
+    {
+      "ItemId": "Firespear TC",
+      "ItemName": "Firespear"
+    },
+    {
+      "ItemId": "Lifespear TC",
+      "ItemName": "Lifespear"
+    },
+    {
+      "ItemId": "Myth Prism TC",
+      "ItemName": "Myth Prism"
+    },
+    {
+      "ItemId": "Storm Shield TC",
+      "ItemName": "Storm Shield"
+    },
+    {
+      "ItemId": "Storm Prism TC",
+      "ItemName": "Storm Prism"
+    },
+    {
+      "ItemId": "Stormspear TC",
+      "ItemName": "Stormspear"
+    },
+    {
+      "ItemId": "Doom and Gloom TC",
+      "ItemName": "Doom and Gloom"
+    },
+    {
+      "ItemId": "Tri Trap TC",
+      "ItemName": "Elemental Trap"
+    },
+    {
+      "ItemId": "Life Prism TC",
+      "ItemName": "Life Prism"
+    },
+    {
+      "ItemId": "Pacify TC",
+      "ItemName": "Pacify"
+    },
+    {
+      "ItemId": "Balefrost TC",
+      "ItemName": "Balefrost"
+    },
+    {
+      "ItemId": "Icespear TC",
+      "ItemName": "Icespear"
+    },
+    {
+      "ItemId": "Power Play TC",
+      "ItemName": "Power Play"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "Name": "W404 KR-Mob-01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-Mob-01: the gear drops (7), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203126",
+      "ItemName": "Burrower's Barbed Helmet"
+    },
+    {
+      "ItemId": "1203127",
+      "ItemName": "Kermes Fire Miner's Helmet"
+    },
+    {
+      "ItemId": "1203128",
+      "ItemName": "Mantis Cover of Frostfall"
+    },
+    {
+      "ItemId": "1203129",
+      "ItemName": "Burrower's Rainstorm Cap"
+    },
+    {
+      "ItemId": "1203247",
+      "ItemName": "Flame Legs Coalwalkers"
+    },
+    {
+      "ItemId": "1203248",
+      "ItemName": "Mantis Boots of Patience"
+    },
+    {
+      "ItemId": "1203249",
+      "ItemName": "CloudDancer's Footwraps"
+    }
+  ]
+}

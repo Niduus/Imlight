@@ -1,0 +1,17 @@
+{
+  "Name": "W404 AV-R12-Wyrm TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table AV-R12-Wyrm: the treasurecard drops (2), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Catalan TC",
+      "ItemName": "Catalan"
+    },
+    {
+      "ItemId": "Keeper Sacred Flame TC",
+      "ItemName": "Keeper of the Flame"
+    }
+  ]
+}

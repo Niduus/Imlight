@@ -1,0 +1,129 @@
+{
+  "Name": "W404 KT-Ghost-Blue-KTBoss-L28 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-Ghost-Blue-KTBoss-L28: the gear drops (30), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4906",
+      "ItemName": "Pendant of the Icy Soul"
+    },
+    {
+      "ItemId": "4938",
+      "ItemName": "Ancient Kris"
+    },
+    {
+      "ItemId": "4945",
+      "ItemName": "Athame of Mortality"
+    },
+    {
+      "ItemId": "4948",
+      "ItemName": "Cryptkeeper's Shortsword"
+    },
+    {
+      "ItemId": "4950",
+      "ItemName": "Flamedancer's Athame"
+    },
+    {
+      "ItemId": "4970",
+      "ItemName": "Pharaohs Deck"
+    },
+    {
+      "ItemId": "4972",
+      "ItemName": "Mummified Deck"
+    },
+    {
+      "ItemId": "5005",
+      "ItemName": "Victor's Signet"
+    },
+    {
+      "ItemId": "5007",
+      "ItemName": "Partisan's Ring"
+    },
+    {
+      "ItemId": "5011",
+      "ItemName": "Loop of Talent"
+    },
+    {
+      "ItemId": "5019",
+      "ItemName": "Ring of Mortality"
+    },
+    {
+      "ItemId": "5024",
+      "ItemName": "Advocate's Ring"
+    },
+    {
+      "ItemId": "5029",
+      "ItemName": "Band of Energy"
+    },
+    {
+      "ItemId": "5031",
+      "ItemName": "Loop of Tall Tales"
+    },
+    {
+      "ItemId": "38751",
+      "ItemName": "Pyromancer's Lambent Robe"
+    },
+    {
+      "ItemId": "38764",
+      "ItemName": "Durable Robe"
+    },
+    {
+      "ItemId": "39421",
+      "ItemName": "Diviner's Boots"
+    },
+    {
+      "ItemId": "77725",
+      "ItemName": "Cowl of Prediction"
+    },
+    {
+      "ItemId": "77752",
+      "ItemName": "Hood of the Stronghold"
+    },
+    {
+      "ItemId": "77770",
+      "ItemName": "Soul Scavenger's Boots"
+    },
+    {
+      "ItemId": "77799",
+      "ItemName": "Shoes of the Fortress"
+    },
+    {
+      "ItemId": "87268",
+      "ItemName": "Rugged Robe"
+    },
+    {
+      "ItemId": "87270",
+      "ItemName": "Robe of Ingenuity"
+    },
+    {
+      "ItemId": "87281",
+      "ItemName": "Conjurer's Cloak"
+    },
+    {
+      "ItemId": "87296",
+      "ItemName": "Garments of the Augur"
+    },
+    {
+      "ItemId": "87309",
+      "ItemName": "Robes of Dormancy"
+    },
+    {
+      "ItemId": "87322",
+      "ItemName": "Threadbare Robe"
+    },
+    {
+      "ItemId": "87329",
+      "ItemName": "Soul Scavenger's Shroud"
+    },
+    {
+      "ItemId": "87334",
+      "ItemName": "Ceremonial Vest"
+    },
+    {
+      "ItemId": "87354",
+      "ItemName": "Scavenger's Staff of Sagas"
+    }
+  ]
+}

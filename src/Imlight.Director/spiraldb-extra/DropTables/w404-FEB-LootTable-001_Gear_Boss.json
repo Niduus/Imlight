@@ -1,0 +1,25 @@
+{
+  "Name": "W404 FEB-LootTable-001 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table FEB-LootTable-001: the gear drops (4), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126947",
+      "ItemName": "Roseate Wand"
+    },
+    {
+      "ItemId": "126948",
+      "ItemName": "Heartbow Scepter"
+    },
+    {
+      "ItemId": "126949",
+      "ItemName": "Rod of Unity"
+    },
+    {
+      "ItemId": "126950",
+      "ItemName": "Wand of Veneration"
+    }
+  ]
+}

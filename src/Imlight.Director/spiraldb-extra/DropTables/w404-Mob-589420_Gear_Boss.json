@@ -1,0 +1,57 @@
+{
+  "Name": "W404 Mob-589420 Gear (Boss)",
+  "Description": "Wizard404's drop list of Maudit Soulban's own drops: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635220",
+      "ItemName": "Wise Wood Amulet"
+    },
+    {
+      "ItemId": "635221",
+      "ItemName": "Armiger's Bravura Necklace"
+    },
+    {
+      "ItemId": "635250",
+      "ItemName": "Wild Tangle Blade"
+    },
+    {
+      "ItemId": "635251",
+      "ItemName": "Hound's Tooth"
+    },
+    {
+      "ItemId": "635299",
+      "ItemName": "Champion of Order's Icy Helm"
+    },
+    {
+      "ItemId": "635300",
+      "ItemName": "Mask of the Catalan"
+    },
+    {
+      "ItemId": "635338",
+      "ItemName": "Lady of the Lake's Signet"
+    },
+    {
+      "ItemId": "635373",
+      "ItemName": "Fire-Spitter Robes"
+    },
+    {
+      "ItemId": "635374",
+      "ItemName": "Winter Wyrm's Cloak"
+    },
+    {
+      "ItemId": "635413",
+      "ItemName": "Noble Knight's Boots"
+    },
+    {
+      "ItemId": "635414",
+      "ItemName": "Merciful Knight's Boots"
+    },
+    {
+      "ItemId": "635623",
+      "ItemName": "Truesight Bow"
+    }
+  ]
+}

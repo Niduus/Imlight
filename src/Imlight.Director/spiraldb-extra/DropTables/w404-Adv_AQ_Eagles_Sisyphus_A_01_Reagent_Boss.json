@@ -1,0 +1,41 @@
+{
+  "Name": "W404 Adv_AQ_Eagles_Sisyphus_A_01 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table Adv_AQ_Eagles_Sisyphus_A_01: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1699143",
+      "ItemName": "Fires of Mars"
+    },
+    {
+      "ItemId": "1699141",
+      "ItemName": "Neptune's Fury"
+    },
+    {
+      "ItemId": "1699138",
+      "ItemName": "Jupiter's Might"
+    },
+    {
+      "ItemId": "1699139",
+      "ItemName": "Saturn's Reaping"
+    },
+    {
+      "ItemId": "1699140",
+      "ItemName": "Phoebus' Will"
+    },
+    {
+      "ItemId": "1699144",
+      "ItemName": "Pluto's Peril"
+    },
+    {
+      "ItemId": "1699147",
+      "ItemName": "Terminus' Strike"
+    },
+    {
+      "ItemId": "1699207",
+      "ItemName": "Olympian Dust"
+    }
+  ]
+}

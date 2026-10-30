@@ -1,0 +1,81 @@
+{
+  "Name": "W404 Colossus-Obsidian-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Colossus-Obsidian-Boss-R8: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104593",
+      "ItemName": "Coat of Omniscence"
+    },
+    {
+      "ItemId": "104598",
+      "ItemName": "Coat of Impartiality"
+    },
+    {
+      "ItemId": "104638",
+      "ItemName": "Blackrock's Obsidian Drape"
+    },
+    {
+      "ItemId": "104679",
+      "ItemName": "Chilling Cloak"
+    },
+    {
+      "ItemId": "104756",
+      "ItemName": "Blizzard Boots"
+    },
+    {
+      "ItemId": "104822",
+      "ItemName": "Shoes of Equilibrium"
+    },
+    {
+      "ItemId": "104833",
+      "ItemName": "Sandals of the Generous Earth"
+    },
+    {
+      "ItemId": "126562",
+      "ItemName": "Ring of Equilibrium"
+    },
+    {
+      "ItemId": "126576",
+      "ItemName": "Ring of the Harpy"
+    },
+    {
+      "ItemId": "126614",
+      "ItemName": "Ring of Wyrmkind"
+    },
+    {
+      "ItemId": "126647",
+      "ItemName": "Blackrock's Obsidian Blade"
+    },
+    {
+      "ItemId": "126680",
+      "ItemName": "Blackrock's Obsidian Deck"
+    },
+    {
+      "ItemId": "146115",
+      "ItemName": "Lancet of Equality"
+    },
+    {
+      "ItemId": "146167",
+      "ItemName": "Scaled Smallsword"
+    },
+    {
+      "ItemId": "146179",
+      "ItemName": "Lifegiver's Edge"
+    },
+    {
+      "ItemId": "146259",
+      "ItemName": "Herbalist's Hood"
+    },
+    {
+      "ItemId": "146332",
+      "ItemName": "Mantle of the Undying"
+    },
+    {
+      "ItemId": "146341",
+      "ItemName": "Onyx-banded Coif"
+    }
+  ]
+}

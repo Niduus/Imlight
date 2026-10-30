@@ -1,0 +1,13 @@
+{
+  "Name": "W404 KT-KrokTut-Storm-KTBoss-L39 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokTut-Storm-KTBoss-L39: the treasurecard drops (1), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "CantripsTeleportToTheOasisTC",
+      "ItemName": "To The Oasis"
+    }
+  ]
+}

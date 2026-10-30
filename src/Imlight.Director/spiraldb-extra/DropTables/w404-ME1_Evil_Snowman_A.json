@@ -1,0 +1,9 @@
+{
+  "Name": "W404 ME1_Evil_Snowman_A",
+  "Description": "Gold of the game's table ME1_Evil_Snowman_A, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 10,
+  "MaxGold": 50,
+  "EachItem": false,
+  "Items": []
+}

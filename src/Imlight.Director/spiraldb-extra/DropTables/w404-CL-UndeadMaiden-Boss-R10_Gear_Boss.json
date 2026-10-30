@@ -1,0 +1,117 @@
+{
+  "Name": "W404 CL-UndeadMaiden-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-UndeadMaiden-Boss-R10: the gear drops (27), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243201",
+      "ItemName": "Nova Necklace"
+    },
+    {
+      "ItemId": "243202",
+      "ItemName": "Vial of the Sun"
+    },
+    {
+      "ItemId": "243254",
+      "ItemName": "Sun Kris"
+    },
+    {
+      "ItemId": "243280",
+      "ItemName": "Abyss Bodkin"
+    },
+    {
+      "ItemId": "243349",
+      "ItemName": "Headdress of Dragon Fire"
+    },
+    {
+      "ItemId": "243445",
+      "ItemName": "Eureka Coif"
+    },
+    {
+      "ItemId": "243576",
+      "ItemName": "Ring of Rapture"
+    },
+    {
+      "ItemId": "243590",
+      "ItemName": "Sun Circle"
+    },
+    {
+      "ItemId": "243645",
+      "ItemName": "Sub Zero Jerkin"
+    },
+    {
+      "ItemId": "243689",
+      "ItemName": "Raiment of Reverie"
+    },
+    {
+      "ItemId": "243705",
+      "ItemName": "Pandemonium Platemail"
+    },
+    {
+      "ItemId": "243860",
+      "ItemName": "Eureka Wraps"
+    },
+    {
+      "ItemId": "243902",
+      "ItemName": "Tempest Trackers"
+    },
+    {
+      "ItemId": "1689431",
+      "ItemName": "Atavistic Balance Band"
+    },
+    {
+      "ItemId": "1689432",
+      "ItemName": "Atavistic Death Band"
+    },
+    {
+      "ItemId": "1689433",
+      "ItemName": "Atavistic Fire Band"
+    },
+    {
+      "ItemId": "1689434",
+      "ItemName": "Atavistic Ice Band"
+    },
+    {
+      "ItemId": "1689435",
+      "ItemName": "Atavistic Life Band"
+    },
+    {
+      "ItemId": "1689436",
+      "ItemName": "Atavistic Myth Band"
+    },
+    {
+      "ItemId": "1689437",
+      "ItemName": "Atavistic Storm Band"
+    },
+    {
+      "ItemId": "1689498",
+      "ItemName": "Bygone Balance Band"
+    },
+    {
+      "ItemId": "1689499",
+      "ItemName": "Bygone Death Band"
+    },
+    {
+      "ItemId": "1689500",
+      "ItemName": "Bygone Fire Band"
+    },
+    {
+      "ItemId": "1689501",
+      "ItemName": "Bygone Ice Band"
+    },
+    {
+      "ItemId": "1689502",
+      "ItemName": "Bygone Life Band"
+    },
+    {
+      "ItemId": "1689503",
+      "ItemName": "Bygone Myth Band"
+    },
+    {
+      "ItemId": "1689504",
+      "ItemName": "Bygone Storm Band"
+    }
+  ]
+}

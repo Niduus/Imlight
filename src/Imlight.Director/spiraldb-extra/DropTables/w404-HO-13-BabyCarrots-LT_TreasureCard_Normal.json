@@ -1,0 +1,57 @@
+{
+  "Name": "W404 HO-13-BabyCarrots-LT TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table HO-13-BabyCarrots-LT: the treasurecard drops (12), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Baby Sunbird TC",
+      "ItemName": "Baby Sunbird"
+    },
+    {
+      "ItemId": "Dragonflies TC",
+      "ItemName": "Dragonflies"
+    },
+    {
+      "ItemId": "Flood TC",
+      "ItemName": "Flood"
+    },
+    {
+      "ItemId": "Flute Symphony TC",
+      "ItemName": "Flute Symphony"
+    },
+    {
+      "ItemId": "Massive Pest Zapper TC",
+      "ItemName": "Massive Pest Zapper"
+    },
+    {
+      "ItemId": "Miniature Bloodbats TC",
+      "ItemName": "Miniature Bloodbats"
+    },
+    {
+      "ItemId": "Pest Zapper TC",
+      "ItemName": "Pest Zapper"
+    },
+    {
+      "ItemId": "Pungent Bug Spray TC",
+      "ItemName": "Pungent Bug Spray"
+    },
+    {
+      "ItemId": "Putrid Bug Spray TC",
+      "ItemName": "Putrid Bug Spray"
+    },
+    {
+      "ItemId": "Supreme Sunburst TC",
+      "ItemName": "Supreme Sunburst"
+    },
+    {
+      "ItemId": "Uncanny Magic TC",
+      "ItemName": "Uncanny Magic"
+    },
+    {
+      "ItemId": "Zounds...Bees! TC",
+      "ItemName": "Zounds...Bees!"
+    }
+  ]
+}

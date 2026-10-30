@@ -1,0 +1,21 @@
+{
+  "Name": "W404 SKB_KR_Lightbane_A_160 Mount (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_KR_Lightbane_A_160: the mount drops (3), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1204444",
+      "ItemName": "Dual Dragonflyer (PERM)"
+    },
+    {
+      "ItemId": "1204448",
+      "ItemName": "Stonehopper (PERM)"
+    },
+    {
+      "ItemId": "1257608",
+      "ItemName": "Monarch Butterfly (PERM)"
+    }
+  ]
+}

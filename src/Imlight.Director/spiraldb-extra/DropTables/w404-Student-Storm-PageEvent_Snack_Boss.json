@@ -1,0 +1,41 @@
+{
+  "Name": "W404 Student-Storm-PageEvent Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table Student-Storm-PageEvent: the snack drops (8), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220211",
+      "ItemName": "Cheese"
+    },
+    {
+      "ItemId": "220226",
+      "ItemName": "Buttered Popcorn"
+    },
+    {
+      "ItemId": "220230",
+      "ItemName": "Tiny Pretzel"
+    },
+    {
+      "ItemId": "220241",
+      "ItemName": "Dragon Fruit"
+    },
+    {
+      "ItemId": "220242",
+      "ItemName": "Frosted Cupcake"
+    },
+    {
+      "ItemId": "220248",
+      "ItemName": "Candy bar"
+    },
+    {
+      "ItemId": "220249",
+      "ItemName": "Taffy"
+    },
+    {
+      "ItemId": "220312",
+      "ItemName": "Mystic Dragon Fruit"
+    }
+  ]
+}

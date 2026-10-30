@@ -1,0 +1,41 @@
+{
+  "Name": "W404 EM-Mob-Shoes-120 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM-Mob-Shoes-120: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1430458",
+      "ItemName": "Interstellar Engineer Trekkers"
+    },
+    {
+      "ItemId": "1430459",
+      "ItemName": "Interstellar Explorer's Trekkers"
+    },
+    {
+      "ItemId": "1430460",
+      "ItemName": "Interstellar Navigator's Boots"
+    },
+    {
+      "ItemId": "1430461",
+      "ItemName": "Interstellar Hero's Trekkers"
+    },
+    {
+      "ItemId": "1430462",
+      "ItemName": "Medic's Interstellar Trekkers"
+    },
+    {
+      "ItemId": "1430463",
+      "ItemName": "Interstellar Warrior Trekkers"
+    },
+    {
+      "ItemId": "1430464",
+      "ItemName": "Interstellar Delegate Trekkers"
+    },
+    {
+      "ItemId": "1430465",
+      "ItemName": "Interstellar Officer's Boots"
+    }
+  ]
+}

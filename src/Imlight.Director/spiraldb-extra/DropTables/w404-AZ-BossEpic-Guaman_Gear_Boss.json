@@ -1,0 +1,81 @@
+{
+  "Name": "W404 AZ-BossEpic-Guaman Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossEpic-Guaman: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730206",
+      "ItemName": "Memento of the Sun Caiman"
+    },
+    {
+      "ItemId": "730210",
+      "ItemName": "Shining Horns of Light Relic"
+    },
+    {
+      "ItemId": "730236",
+      "ItemName": "Smoking Mirror's Final Touch"
+    },
+    {
+      "ItemId": "730238",
+      "ItemName": "Captain of the Sky's Talon"
+    },
+    {
+      "ItemId": "730244",
+      "ItemName": "Black Blade of Five Deaths"
+    },
+    {
+      "ItemId": "730251",
+      "ItemName": "Mother's New Moon Athame"
+    },
+    {
+      "ItemId": "730287",
+      "ItemName": "Crown of the Vicious Sky"
+    },
+    {
+      "ItemId": "730290",
+      "ItemName": "Night Caiman's Smiling Mask"
+    },
+    {
+      "ItemId": "730312",
+      "ItemName": "Tears of the Sun Band"
+    },
+    {
+      "ItemId": "730314",
+      "ItemName": "Storm Owl's Terror Ring"
+    },
+    {
+      "ItemId": "730320",
+      "ItemName": "Lords of Night Challenge Ring"
+    },
+    {
+      "ItemId": "730361",
+      "ItemName": "Xicolli Vest of Vicious Sky"
+    },
+    {
+      "ItemId": "730399",
+      "ItemName": "Footwraps of the Vicious Sky"
+    },
+    {
+      "ItemId": "730404",
+      "ItemName": "Black Butterfly Guard's Boots"
+    },
+    {
+      "ItemId": "730423",
+      "ItemName": "White Fire Case"
+    },
+    {
+      "ItemId": "730425",
+      "ItemName": "Storm Caimans Pyramid Deck"
+    },
+    {
+      "ItemId": "730453",
+      "ItemName": "Caiman's Storm Arrow Wand"
+    },
+    {
+      "ItemId": "730854",
+      "ItemName": "Storm Caiman's Cruel Fang"
+    }
+  ]
+}

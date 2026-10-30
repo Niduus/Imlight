@@ -1,0 +1,73 @@
+{
+  "Name": "W404 MB-Golem-Steel-MBBoss-LXX Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Golem-Steel-MBBoss-LXX: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "5059",
+      "ItemName": "Smogger's Sand Choker"
+    },
+    {
+      "ItemId": "97229",
+      "ItemName": "Smogger's Cowl of Courtesy"
+    },
+    {
+      "ItemId": "97233",
+      "ItemName": "Smogger's Hat of Politeness"
+    },
+    {
+      "ItemId": "97235",
+      "ItemName": "Smogger's Shroud of Poise"
+    },
+    {
+      "ItemId": "97330",
+      "ItemName": "Smogger's Charged Robe"
+    },
+    {
+      "ItemId": "97332",
+      "ItemName": "Smogger's Noble Vestment"
+    },
+    {
+      "ItemId": "97334",
+      "ItemName": "Smogger's Formal Robe"
+    },
+    {
+      "ItemId": "97420",
+      "ItemName": "Smogger's Affected Boots"
+    },
+    {
+      "ItemId": "97421",
+      "ItemName": "Smogger's Germane Boots"
+    },
+    {
+      "ItemId": "97423",
+      "ItemName": "Smogger's Shoes of Atlantis"
+    },
+    {
+      "ItemId": "97425",
+      "ItemName": "Smogger's Shoes of Agony"
+    },
+    {
+      "ItemId": "161029",
+      "ItemName": "Charged Knife"
+    },
+    {
+      "ItemId": "161045",
+      "ItemName": "Hat of Rising Stakes"
+    },
+    {
+      "ItemId": "161058",
+      "ItemName": "Ring of the Hale"
+    },
+    {
+      "ItemId": "164093",
+      "ItemName": "Boots of the Elements"
+    },
+    {
+      "ItemId": "470721",
+      "ItemName": "The Troll Hunter"
+    }
+  ]
+}

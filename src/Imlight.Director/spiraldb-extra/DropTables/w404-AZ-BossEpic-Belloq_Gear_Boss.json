@@ -1,0 +1,89 @@
+{
+  "Name": "W404 AZ-BossEpic-Belloq Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossEpic-Belloq: the gear drops (20), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730204",
+      "ItemName": "Kronosaur's Shell of Passion"
+    },
+    {
+      "ItemId": "730208",
+      "ItemName": "Last Axantho Carved Shell"
+    },
+    {
+      "ItemId": "730235",
+      "ItemName": "Deathless Storm Horn Dagger"
+    },
+    {
+      "ItemId": "730241",
+      "ItemName": "Kronosaur's Grim Cutter"
+    },
+    {
+      "ItemId": "730242",
+      "ItemName": "Sacred Sunblade of Alto Alto"
+    },
+    {
+      "ItemId": "730249",
+      "ItemName": "Vicious Sky's Sacred Athame"
+    },
+    {
+      "ItemId": "730286",
+      "ItemName": "Moon Caiman's Headdress"
+    },
+    {
+      "ItemId": "730292",
+      "ItemName": "Face of Black Tears"
+    },
+    {
+      "ItemId": "730316",
+      "ItemName": "Broken Spears Band"
+    },
+    {
+      "ItemId": "730318",
+      "ItemName": "Xibalba's Dread Seal"
+    },
+    {
+      "ItemId": "730319",
+      "ItemName": "Ring of Aztlan"
+    },
+    {
+      "ItemId": "730365",
+      "ItemName": "Winged Tooth Knight's Tunic"
+    },
+    {
+      "ItemId": "730366",
+      "ItemName": "Philosoraptor's Abstract Garb"
+    },
+    {
+      "ItemId": "730397",
+      "ItemName": "Striders of the Cruel Star"
+    },
+    {
+      "ItemId": "730425",
+      "ItemName": "Storm Caimans Pyramid Deck"
+    },
+    {
+      "ItemId": "730426",
+      "ItemName": "Case of Mother Moon"
+    },
+    {
+      "ItemId": "730429",
+      "ItemName": "Jaguar Paw Pyramid"
+    },
+    {
+      "ItemId": "730451",
+      "ItemName": "Head of the Fire Arrow Wand"
+    },
+    {
+      "ItemId": "730457",
+      "ItemName": "Coatl's Biting Wand"
+    },
+    {
+      "ItemId": "730856",
+      "ItemName": "Storm Caiman's Tailbiter Ring"
+    }
+  ]
+}

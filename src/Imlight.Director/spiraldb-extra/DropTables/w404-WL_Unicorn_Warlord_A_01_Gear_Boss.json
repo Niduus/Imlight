@@ -1,0 +1,121 @@
+{
+  "Name": "W404 WL_Unicorn_Warlord_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WL_Unicorn_Warlord_A_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1628376",
+      "ItemName": "Just Enforcer's Ring"
+    },
+    {
+      "ItemId": "1628377",
+      "ItemName": "Morbid Enforcer's Ring"
+    },
+    {
+      "ItemId": "1628378",
+      "ItemName": "Furious Enforcer's Ring"
+    },
+    {
+      "ItemId": "1628379",
+      "ItemName": "Steely Enforcer's Ring"
+    },
+    {
+      "ItemId": "1628380",
+      "ItemName": "Dynamic Enforcer's Ring"
+    },
+    {
+      "ItemId": "1628381",
+      "ItemName": "Legendary Enforcer's Ring"
+    },
+    {
+      "ItemId": "1628382",
+      "ItemName": "Thunderous Enforcer's Ring"
+    },
+    {
+      "ItemId": "1628404",
+      "ItemName": "Just Enforcer's Amulet"
+    },
+    {
+      "ItemId": "1628405",
+      "ItemName": "Morbid Enforcer's Amulet"
+    },
+    {
+      "ItemId": "1628406",
+      "ItemName": "Furious Enforcer's Amulet"
+    },
+    {
+      "ItemId": "1628407",
+      "ItemName": "Steely Enforcer's Amulet"
+    },
+    {
+      "ItemId": "1628408",
+      "ItemName": "Dynamic Enforcer's Amulet"
+    },
+    {
+      "ItemId": "1628409",
+      "ItemName": "Legendary Enforcer's Amulet"
+    },
+    {
+      "ItemId": "1628410",
+      "ItemName": "Thunderous Enforcer's Amulet"
+    },
+    {
+      "ItemId": "1628551",
+      "ItemName": "Just Protector's Amulet"
+    },
+    {
+      "ItemId": "1628552",
+      "ItemName": "Morbid Protector's Amulet"
+    },
+    {
+      "ItemId": "1628553",
+      "ItemName": "Furious Protector's Amulet"
+    },
+    {
+      "ItemId": "1628554",
+      "ItemName": "Steely Protector's Amulet"
+    },
+    {
+      "ItemId": "1628555",
+      "ItemName": "Dynamic Protector's Amulet"
+    },
+    {
+      "ItemId": "1628556",
+      "ItemName": "Legendary Protector's Amulet"
+    },
+    {
+      "ItemId": "1628557",
+      "ItemName": "Thunderous Protector's Amulet"
+    },
+    {
+      "ItemId": "1628579",
+      "ItemName": "Just Protector's Ring"
+    },
+    {
+      "ItemId": "1628580",
+      "ItemName": "Morbid Protector's Ring"
+    },
+    {
+      "ItemId": "1628581",
+      "ItemName": "Furious Protector's Ring"
+    },
+    {
+      "ItemId": "1628582",
+      "ItemName": "Steely Protector's Ring"
+    },
+    {
+      "ItemId": "1628583",
+      "ItemName": "Dynamic Protector's Ring"
+    },
+    {
+      "ItemId": "1628584",
+      "ItemName": "Legendary Protector's Ring"
+    },
+    {
+      "ItemId": "1628585",
+      "ItemName": "Thunderous Protector's Ring"
+    }
+  ]
+}

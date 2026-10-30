@@ -1,0 +1,37 @@
+{
+  "Name": "W404 AZ-Mob-02 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table AZ-Mob-02: the gear drops (7), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730328",
+      "ItemName": "Tunic of the Broken Spear"
+    },
+    {
+      "ItemId": "730329",
+      "ItemName": "Song of the Lizard Coat"
+    },
+    {
+      "ItemId": "730330",
+      "ItemName": "Glorious Xicolli Vest"
+    },
+    {
+      "ItemId": "730331",
+      "ItemName": "High Chac's Guarded Armor"
+    },
+    {
+      "ItemId": "730332",
+      "ItemName": "Cloak of the Tyrant of Beasts"
+    },
+    {
+      "ItemId": "730333",
+      "ItemName": "Vestment of the Calavera"
+    },
+    {
+      "ItemId": "730334",
+      "ItemName": "Coatl Lord's Robes"
+    }
+  ]
+}

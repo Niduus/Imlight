@@ -1,0 +1,69 @@
+{
+  "Name": "W404 KR-BossRare-Sun-R14 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossRare-Sun-R14: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203152",
+      "ItemName": "Mantis Helm of Cold Truth"
+    },
+    {
+      "ItemId": "1203182",
+      "ItemName": "NightOrb's Ring of Havoc"
+    },
+    {
+      "ItemId": "1203221",
+      "ItemName": "Frozen In Time Armor"
+    },
+    {
+      "ItemId": "1203222",
+      "ItemName": "Digger's Brimstone Plate"
+    },
+    {
+      "ItemId": "1203267",
+      "ItemName": "Boots of the BurrowBuilder"
+    },
+    {
+      "ItemId": "1203268",
+      "ItemName": "Kermes Fire Walkers"
+    },
+    {
+      "ItemId": "1203301",
+      "ItemName": "Cold Pits Stabber"
+    },
+    {
+      "ItemId": "1203347",
+      "ItemName": "Mantis Amulet of Fortitude"
+    },
+    {
+      "ItemId": "1203653",
+      "ItemName": "Deck of Shadow Lightning"
+    },
+    {
+      "ItemId": "1203654",
+      "ItemName": "Deck of the Shadow Web"
+    },
+    {
+      "ItemId": "1203689",
+      "ItemName": "Sword and Shield of Embers"
+    },
+    {
+      "ItemId": "1358864",
+      "ItemName": "Deck of Shadow Lightning"
+    },
+    {
+      "ItemId": "1358865",
+      "ItemName": "Deck of the Shadow Web"
+    },
+    {
+      "ItemId": "1358878",
+      "ItemName": "Deck of Shadow Lightning"
+    },
+    {
+      "ItemId": "1358879",
+      "ItemName": "Deck of the Shadow Web"
+    }
+  ]
+}

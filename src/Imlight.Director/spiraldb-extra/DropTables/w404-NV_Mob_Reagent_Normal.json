@@ -1,0 +1,81 @@
+{
+  "Name": "W404 NV_Mob Reagent (Normal)",
+  "Description": "Wizard404's drop list of the game's table NV_Mob: the reagent drops (18), one picked when it rolls. How often: DropOdds.json Normal/Reagent.",
+  "Odds": "Normal/Reagent",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone"
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass"
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt"
+    },
+    {
+      "ItemId": "106943",
+      "ItemName": "Ectoplasm"
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin"
+    },
+    {
+      "ItemId": "1350012",
+      "ItemName": "Lead"
+    },
+    {
+      "ItemId": "106942",
+      "ItemName": "Leather Straps"
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel"
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite"
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales"
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk"
+    },
+    {
+      "ItemId": "1350235",
+      "ItemName": "Tungsten"
+    },
+    {
+      "ItemId": "1392207",
+      "ItemName": "Turmeric"
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear"
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper"
+    },
+    {
+      "ItemId": "1350011",
+      "ItemName": "Tin"
+    },
+    {
+      "ItemId": "1350018",
+      "ItemName": "Titanium"
+    },
+    {
+      "ItemId": "1580060",
+      "ItemName": "Pixels"
+    }
+  ]
+}

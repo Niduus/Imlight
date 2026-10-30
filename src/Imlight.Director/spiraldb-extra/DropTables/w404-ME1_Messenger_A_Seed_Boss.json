@@ -1,0 +1,33 @@
+{
+  "Name": "W404 ME1_Messenger_A Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Messenger_A: the seed drops (6), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion"
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon"
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus"
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "Laugh-o-dil"
+    },
+    {
+      "ItemId": "473124",
+      "ItemName": "Bell Pepper"
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily"
+    }
+  ]
+}

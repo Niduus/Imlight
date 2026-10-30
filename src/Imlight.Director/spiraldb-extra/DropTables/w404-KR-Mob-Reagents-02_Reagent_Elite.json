@@ -1,0 +1,53 @@
+{
+  "Name": "W404 KR-Mob-Reagents-02 Reagent (Elite)",
+  "Description": "Wizard404's drop list of the game's table KR-Mob-Reagents-02: the reagent drops (11), one picked when it rolls. How often: DropOdds.json Elite/Reagent.",
+  "Odds": "Elite/Reagent",
+  "RollChance": 0.35,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood"
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block"
+    },
+    {
+      "ItemId": "106935",
+      "ItemName": "Deep Mushroom"
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore"
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone"
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear"
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake"
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus"
+    },
+    {
+      "ItemId": "106967",
+      "ItemName": "Lava Lily"
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom"
+    },
+    {
+      "ItemId": "1206362",
+      "ItemName": "Astral Shard"
+    }
+  ]
+}

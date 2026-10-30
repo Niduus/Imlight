@@ -1,0 +1,17 @@
+{
+  "Name": "W404 EM2-Boss-Major-03 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM2-Boss-Major-03: the jewel drops (2), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462477",
+      "ItemName": "Sparkling Health Opal +124"
+    },
+    {
+      "ItemId": "1462479",
+      "ItemName": "Sparkling Mana Opal +51"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "Name": "W404 EM-SideBoss-Gear-125 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM-SideBoss-Gear-125: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1430560",
+      "ItemName": "Cabalist Cleansing Ring"
+    },
+    {
+      "ItemId": "1430561",
+      "ItemName": "Cabalist Ring of Vengeance"
+    },
+    {
+      "ItemId": "1430562",
+      "ItemName": "Cabalist Chaotic Ring"
+    },
+    {
+      "ItemId": "1430563",
+      "ItemName": "Nostalgic Cabal Ring"
+    },
+    {
+      "ItemId": "1430564",
+      "ItemName": "Cabalist Ring of the First"
+    },
+    {
+      "ItemId": "1430565",
+      "ItemName": "Cabalist Ring of Finality"
+    },
+    {
+      "ItemId": "1430566",
+      "ItemName": "Cabal Ring of Disruption"
+    },
+    {
+      "ItemId": "1430567",
+      "ItemName": "Cabalist Schism Ring"
+    },
+    {
+      "ItemId": "1430576",
+      "ItemName": "Cabalist Cleansing Deck"
+    },
+    {
+      "ItemId": "1430577",
+      "ItemName": "Cabalist Deck of Vengeance"
+    },
+    {
+      "ItemId": "1430578",
+      "ItemName": "Cabalist Chaotic Deck"
+    },
+    {
+      "ItemId": "1430579",
+      "ItemName": "Nostalgic Cabal Deck"
+    },
+    {
+      "ItemId": "1430580",
+      "ItemName": "Cabalist Deck of the First"
+    },
+    {
+      "ItemId": "1430581",
+      "ItemName": "Cabalist Deck of Finality"
+    },
+    {
+      "ItemId": "1430582",
+      "ItemName": "Cabal Deck of Disruption"
+    },
+    {
+      "ItemId": "1430583",
+      "ItemName": "Cabalist Schism Deck"
+    }
+  ]
+}

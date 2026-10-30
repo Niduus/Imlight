@@ -1,0 +1,49 @@
+{
+  "Name": "W404 KR-Mob-02 Seed (Normal)",
+  "Description": "Wizard404's drop list of the game's table KR-Mob-02: the seed drops (10), one picked when it rolls. How often: DropOdds.json Normal/Seed.",
+  "Odds": "Normal/Seed",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346003",
+      "ItemName": "Fiery Boom Shroom"
+    },
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion"
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap"
+    },
+    {
+      "ItemId": "473078",
+      "ItemName": "Key Limes"
+    },
+    {
+      "ItemId": "589145",
+      "ItemName": "Angora Bunny Ears"
+    },
+    {
+      "ItemId": "589180",
+      "ItemName": "Red Huckleberries"
+    },
+    {
+      "ItemId": "589187",
+      "ItemName": "Pink Huckleberries"
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries"
+    },
+    {
+      "ItemId": "653139",
+      "ItemName": "Angel Oak"
+    },
+    {
+      "ItemId": "1248248",
+      "ItemName": "Saw Palmetto"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "Name": "W404 ME_Clock_Lugs_01 Pet (Elite)",
+  "Description": "Wizard404's drop list of the game's table ME_Clock_Lugs_01: the pet drops (9), one picked when it rolls. How often: DropOdds.json Elite/Pet.",
+  "Odds": "Elite/Pet",
+  "RollChance": 0.04,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "100326",
+      "ItemName": "Brass Golem"
+    },
+    {
+      "ItemId": "100411",
+      "ItemName": "Steel Golem"
+    },
+    {
+      "ItemId": "100431",
+      "ItemName": "Clockwork Golem"
+    },
+    {
+      "ItemId": "789470",
+      "ItemName": "Clockwork Paladin"
+    },
+    {
+      "ItemId": "1204451",
+      "ItemName": "Bronze Golem"
+    },
+    {
+      "ItemId": "1374389",
+      "ItemName": "Sister Cheesiwitz"
+    },
+    {
+      "ItemId": "1374522",
+      "ItemName": "Papa Cheesiwitz"
+    },
+    {
+      "ItemId": "1383043",
+      "ItemName": "Mama Cheesiwitz"
+    },
+    {
+      "ItemId": "1383044",
+      "ItemName": "Brother Cheesiwitz"
+    }
+  ]
+}

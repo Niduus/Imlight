@@ -1,0 +1,37 @@
+{
+  "Name": "W404 CE_TreasureTower_Balance_F30-2 Reagent (Normal)",
+  "Description": "Wizard404's drop list of the game's table CE_TreasureTower_Balance_F30-2: the reagent drops (7), one picked when it rolls. How often: DropOdds.json Normal/Reagent.",
+  "Odds": "Normal/Reagent",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1492248",
+      "ItemName": "Fire Cat"
+    },
+    {
+      "ItemId": "1494687",
+      "ItemName": "Frost Beetle"
+    },
+    {
+      "ItemId": "1494689",
+      "ItemName": "Dark Sprite"
+    },
+    {
+      "ItemId": "1494690",
+      "ItemName": "Scarab"
+    },
+    {
+      "ItemId": "1494695",
+      "ItemName": "Imp"
+    },
+    {
+      "ItemId": "1494696",
+      "ItemName": "Blood Bat"
+    },
+    {
+      "ItemId": "1494699",
+      "ItemName": "Thunder Snake"
+    }
+  ]
+}

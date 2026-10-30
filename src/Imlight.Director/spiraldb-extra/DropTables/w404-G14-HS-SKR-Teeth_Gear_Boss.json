@@ -1,0 +1,113 @@
+{
+  "Name": "W404 G14-HS-SKR-Teeth Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-HS-SKR-Teeth: the gear drops (26), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1338206",
+      "ItemName": "Pit Viper's Venom Blade"
+    },
+    {
+      "ItemId": "1338207",
+      "ItemName": "Rebus Breaker's Stylet"
+    },
+    {
+      "ItemId": "1338208",
+      "ItemName": "Ammit's Claw of Revolution"
+    },
+    {
+      "ItemId": "1338209",
+      "ItemName": "Blade of the Krokapocrypha"
+    },
+    {
+      "ItemId": "1338210",
+      "ItemName": "Talon of the Duat Guardian"
+    },
+    {
+      "ItemId": "1338211",
+      "ItemName": "Blade of the Soul Eater"
+    },
+    {
+      "ItemId": "1338212",
+      "ItemName": "Athame of Burning Justice"
+    },
+    {
+      "ItemId": "1338444",
+      "ItemName": "Deck of the Simmering Evil"
+    },
+    {
+      "ItemId": "1338446",
+      "ItemName": "Deck of Sand Squalls"
+    },
+    {
+      "ItemId": "1338447",
+      "ItemName": "Array of the Archaic Rebus"
+    },
+    {
+      "ItemId": "1338448",
+      "ItemName": "Case of the Virtuous Soul"
+    },
+    {
+      "ItemId": "1338449",
+      "ItemName": "Condemned Soldier's Arcana"
+    },
+    {
+      "ItemId": "1338450",
+      "ItemName": "Anubis' Cards of Veracity"
+    },
+    {
+      "ItemId": "1338528",
+      "ItemName": "Rod of the Burning Scales"
+    },
+    {
+      "ItemId": "1338530",
+      "ItemName": "Wrath of Anubis Staff"
+    },
+    {
+      "ItemId": "1338531",
+      "ItemName": "Rebus Breaker's Stave"
+    },
+    {
+      "ItemId": "1338532",
+      "ItemName": "Hands of Anubis Staff"
+    },
+    {
+      "ItemId": "1338533",
+      "ItemName": "Stave of the Devoured"
+    },
+    {
+      "ItemId": "1338534",
+      "ItemName": "Anubis' Staff of Redress"
+    },
+    {
+      "ItemId": "1338535",
+      "ItemName": "Anubis' Scathing Words"
+    },
+    {
+      "ItemId": "1338536",
+      "ItemName": "Book of Stinging Secrets"
+    },
+    {
+      "ItemId": "1338537",
+      "ItemName": "Condemned Codex of Havoc"
+    },
+    {
+      "ItemId": "1338538",
+      "ItemName": "Forgotten Hieroglyphs Tome"
+    },
+    {
+      "ItemId": "1338539",
+      "ItemName": "Eternal Verses of Anubis"
+    },
+    {
+      "ItemId": "1338540",
+      "ItemName": "Grimoire of the Condemned"
+    },
+    {
+      "ItemId": "1338541",
+      "ItemName": "Hall of Justice Compendium"
+    }
+  ]
+}

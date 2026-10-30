@@ -1,0 +1,21 @@
+{
+  "Name": "W404 OCT-LootTable-004 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table OCT-LootTable-004: the pet drops (3), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126412",
+      "ItemName": "Black Cat"
+    },
+    {
+      "ItemId": "346189",
+      "ItemName": "Ghost Dragon"
+    },
+    {
+      "ItemId": "346193",
+      "ItemName": "Nightmare"
+    }
+  ]
+}

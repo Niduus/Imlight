@@ -1,0 +1,89 @@
+{
+  "Name": "W404 LM-Mob-PetSnacks-Common Snack (Normal)",
+  "Description": "Wizard404's drop list of the game's table LM-Mob-PetSnacks-Common: the snack drops (20), one picked when it rolls. How often: DropOdds.json Normal/Snack.",
+  "Odds": "Normal/Snack",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220227",
+      "ItemName": "Cracker"
+    },
+    {
+      "ItemId": "220295",
+      "ItemName": "Spicy Popcorn"
+    },
+    {
+      "ItemId": "220222",
+      "ItemName": "Squash"
+    },
+    {
+      "ItemId": "220316",
+      "ItemName": "Moon Pie"
+    },
+    {
+      "ItemId": "220237",
+      "ItemName": "Tiny Fish"
+    },
+    {
+      "ItemId": "589096",
+      "ItemName": "Eggplant"
+    },
+    {
+      "ItemId": "1317838",
+      "ItemName": "Fetid Legumes"
+    },
+    {
+      "ItemId": "220231",
+      "ItemName": "Potato Chips"
+    },
+    {
+      "ItemId": "220272",
+      "ItemName": "Taco"
+    },
+    {
+      "ItemId": "220235",
+      "ItemName": "Tomato Soup"
+    },
+    {
+      "ItemId": "537586",
+      "ItemName": "Black Sun Seeds"
+    },
+    {
+      "ItemId": "220196",
+      "ItemName": "Sliced Watermelon"
+    },
+    {
+      "ItemId": "220218",
+      "ItemName": "Sugar Donut"
+    },
+    {
+      "ItemId": "220216",
+      "ItemName": "Large Watermelon"
+    },
+    {
+      "ItemId": "1359629",
+      "ItemName": "Breakfast Tacos"
+    },
+    {
+      "ItemId": "1359628",
+      "ItemName": "Chilly Con Queso"
+    },
+    {
+      "ItemId": "220306",
+      "ItemName": "Large Fish"
+    },
+    {
+      "ItemId": "220300",
+      "ItemName": "Poncherello Chips"
+    },
+    {
+      "ItemId": "220294",
+      "ItemName": "Square Root"
+    },
+    {
+      "ItemId": "220322",
+      "ItemName": "Swirled Lollipop"
+    }
+  ]
+}

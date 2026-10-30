@@ -1,0 +1,137 @@
+{
+  "Name": "W404 Mob-684239 Gear (Boss)",
+  "Description": "Wizard404's drop list of Yacate Farwalker's own drops: the gear drops (32), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730189",
+      "ItemName": "Horizon of Underworld Charm"
+    },
+    {
+      "ItemId": "730190",
+      "ItemName": "Golden Head of the Cold House"
+    },
+    {
+      "ItemId": "730191",
+      "ItemName": "Pendant of the Wild Wings"
+    },
+    {
+      "ItemId": "730192",
+      "ItemName": "Thunder Horn's Coral Charm"
+    },
+    {
+      "ItemId": "730193",
+      "ItemName": "Necklace of Lost Ancestors"
+    },
+    {
+      "ItemId": "730194",
+      "ItemName": "Home Hearth Relic"
+    },
+    {
+      "ItemId": "730195",
+      "ItemName": "Courage Charm of Jade Wings"
+    },
+    {
+      "ItemId": "730196",
+      "ItemName": "Speaking Water Ornament"
+    },
+    {
+      "ItemId": "730231",
+      "ItemName": "Winged Tooth Knight's Hook"
+    },
+    {
+      "ItemId": "730232",
+      "ItemName": "Moon Skull's Blessed Edge"
+    },
+    {
+      "ItemId": "730233",
+      "ItemName": "Thunder Horn's Rough Cutter"
+    },
+    {
+      "ItemId": "730234",
+      "ItemName": "Wild Wing's Glorious Razor"
+    },
+    {
+      "ItemId": "730344",
+      "ItemName": "White Fire Chac's Armor"
+    },
+    {
+      "ItemId": "730345",
+      "ItemName": "Philososaur's Robes"
+    },
+    {
+      "ItemId": "730346",
+      "ItemName": "Keeper of the Codex Vest"
+    },
+    {
+      "ItemId": "730347",
+      "ItemName": "Black Sun Chac's Armor"
+    },
+    {
+      "ItemId": "730348",
+      "ItemName": "Vestment of the Hungry Lizard"
+    },
+    {
+      "ItemId": "730349",
+      "ItemName": "Grinning Death Xicolli Vest"
+    },
+    {
+      "ItemId": "730350",
+      "ItemName": "Lord of Night Robes"
+    },
+    {
+      "ItemId": "730383",
+      "ItemName": "Elite Jura Guard Stalkers"
+    },
+    {
+      "ItemId": "730384",
+      "ItemName": "Twisted Fang Boots"
+    },
+    {
+      "ItemId": "730385",
+      "ItemName": "Indigo Wing Striders"
+    },
+    {
+      "ItemId": "730386",
+      "ItemName": "Tree of Secrets Chac Runners"
+    },
+    {
+      "ItemId": "730387",
+      "ItemName": "Five Fangs of Fury Boots"
+    },
+    {
+      "ItemId": "730388",
+      "ItemName": "Black Tears of Night Wraps"
+    },
+    {
+      "ItemId": "730389",
+      "ItemName": "Heart of Sky Boots"
+    },
+    {
+      "ItemId": "730420",
+      "ItemName": "King's Royal Portraits"
+    },
+    {
+      "ItemId": "730421",
+      "ItemName": "Lords of Night Pyramid Deck"
+    },
+    {
+      "ItemId": "730422",
+      "ItemName": "Calendar of the Spiral King"
+    },
+    {
+      "ItemId": "730439",
+      "ItemName": "Talon of the Storm Owl"
+    },
+    {
+      "ItemId": "730441",
+      "ItemName": "New Moon Lance"
+    },
+    {
+      "ItemId": "730443",
+      "ItemName": "Spear of Breaking Dawn"
+    }
+  ]
+}

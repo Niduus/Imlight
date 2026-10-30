@@ -1,0 +1,45 @@
+{
+  "Name": "W404 KT_SE_Krokosphinx_Base_A_02 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT_SE_Krokosphinx_Base_A_02: the snack drops (9), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1257604",
+      "ItemName": "Alligator Pear"
+    },
+    {
+      "ItemId": "240082",
+      "ItemName": "Baby Carrot"
+    },
+    {
+      "ItemId": "240081",
+      "ItemName": "Crab Apples"
+    },
+    {
+      "ItemId": "220190",
+      "ItemName": "Cubby Broccoli"
+    },
+    {
+      "ItemId": "473222",
+      "ItemName": "Dr. Jalapeno"
+    },
+    {
+      "ItemId": "641687",
+      "ItemName": "Killer Kumquat"
+    },
+    {
+      "ItemId": "1248057",
+      "ItemName": "Spicy Stingers"
+    },
+    {
+      "ItemId": "733136",
+      "ItemName": "Tortilla Chips"
+    },
+    {
+      "ItemId": "589105",
+      "ItemName": "Zen Poppers"
+    }
+  ]
+}

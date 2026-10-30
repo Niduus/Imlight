@@ -1,0 +1,89 @@
+{
+  "Name": "W404 G14-BP-Boss-Jackall TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-BP-Boss-Jackall: the treasurecard drops (20), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Phoenix TC",
+      "ItemName": "Phoenix"
+    },
+    {
+      "ItemId": "Smoke Screen TC",
+      "ItemName": "Smoke Screen"
+    },
+    {
+      "ItemId": "Stormzilla TC",
+      "ItemName": "Stormzilla"
+    },
+    {
+      "ItemId": "Dryad TC",
+      "ItemName": "Dryad"
+    },
+    {
+      "ItemId": "Regenerate TC",
+      "ItemName": "Regenerate"
+    },
+    {
+      "ItemId": "Minotaur TC",
+      "ItemName": "Minotaur"
+    },
+    {
+      "ItemId": "Black Mantle TC",
+      "ItemName": "Black Mantle"
+    },
+    {
+      "ItemId": "Hex TC",
+      "ItemName": "Hex"
+    },
+    {
+      "ItemId": "Bladestorm TC",
+      "ItemName": "Bladestorm"
+    },
+    {
+      "ItemId": "Plague TC",
+      "ItemName": "Plague"
+    },
+    {
+      "ItemId": "Pierce TC",
+      "ItemName": "Pierce"
+    },
+    {
+      "ItemId": "Cleanse Ward TC",
+      "ItemName": "Cleanse Ward"
+    },
+    {
+      "ItemId": "Guidance TC",
+      "ItemName": "Guidance"
+    },
+    {
+      "ItemId": "Triage TC",
+      "ItemName": "Triage"
+    },
+    {
+      "ItemId": "Cat Thug TC",
+      "ItemName": "Cat Thug"
+    },
+    {
+      "ItemId": "Clockwork TC",
+      "ItemName": "Clockwork"
+    },
+    {
+      "ItemId": "Deadly Scratcher TC",
+      "ItemName": "Deadly Scratcher"
+    },
+    {
+      "ItemId": "Firegut TC",
+      "ItemName": "Iron Golem"
+    },
+    {
+      "ItemId": "Spider Clockwork TC",
+      "ItemName": "Clockwork Spider"
+    },
+    {
+      "ItemId": "Street Sweeper TC",
+      "ItemName": "Street Sweeper"
+    }
+  ]
+}

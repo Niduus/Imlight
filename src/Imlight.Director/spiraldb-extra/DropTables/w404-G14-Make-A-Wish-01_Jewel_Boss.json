@@ -1,0 +1,37 @@
+{
+  "Name": "W404 G14-Make-A-Wish-01 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-Make-A-Wish-01: the jewel drops (7), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1376280",
+      "ItemName": "Fire Wall Ruby"
+    },
+    {
+      "ItemId": "1376281",
+      "ItemName": "Glacial Wall Sapphire"
+    },
+    {
+      "ItemId": "1376282",
+      "ItemName": "Cloud Wall Amethyst"
+    },
+    {
+      "ItemId": "1376283",
+      "ItemName": "Reflective Wall Peridot"
+    },
+    {
+      "ItemId": "1376284",
+      "ItemName": "Energy Wall Jade"
+    },
+    {
+      "ItemId": "1376285",
+      "ItemName": "Silencing Wall Onyx"
+    },
+    {
+      "ItemId": "1376286",
+      "ItemName": "Shield Wall Citrine"
+    }
+  ]
+}

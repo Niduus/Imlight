@@ -1,0 +1,65 @@
+{
+  "Name": "W404 KT-SKR-Ra Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-SKR-Ra: the pet drops (14), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "100324",
+      "ItemName": "Krok"
+    },
+    {
+      "ItemId": "100437",
+      "ItemName": "Krokomummy"
+    },
+    {
+      "ItemId": "100454",
+      "ItemName": "Krokotillian"
+    },
+    {
+      "ItemId": "100463",
+      "ItemName": "Fire Salamander"
+    },
+    {
+      "ItemId": "100464",
+      "ItemName": "Ice Salamander"
+    },
+    {
+      "ItemId": "100465",
+      "ItemName": "Storm Salamander"
+    },
+    {
+      "ItemId": "164422",
+      "ItemName": "Death Scarab"
+    },
+    {
+      "ItemId": "225450",
+      "ItemName": "Life Scarab"
+    },
+    {
+      "ItemId": "446105",
+      "ItemName": "Snake in a Basket"
+    },
+    {
+      "ItemId": "473580",
+      "ItemName": "Skink"
+    },
+    {
+      "ItemId": "789138",
+      "ItemName": "Mummy Cat"
+    },
+    {
+      "ItemId": "1317677",
+      "ItemName": "Sailback Skink"
+    },
+    {
+      "ItemId": "1374459",
+      "ItemName": "Frosty Krokomummy"
+    },
+    {
+      "ItemId": "1374460",
+      "ItemName": "Furious Krokomummy"
+    }
+  ]
+}

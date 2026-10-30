@@ -1,0 +1,109 @@
+{
+  "Name": "W404 LoremasterLT TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table LoremasterLT: the treasurecard drops (25), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Brimstone Revenant TC",
+      "ItemName": "Brimstone Revenant"
+    },
+    {
+      "ItemId": "Winter Moon TC",
+      "ItemName": "Winter Moon"
+    },
+    {
+      "ItemId": "Handsome Fomori TC",
+      "ItemName": "Handsome Fomori"
+    },
+    {
+      "ItemId": "Catalan TC",
+      "ItemName": "Catalan"
+    },
+    {
+      "ItemId": "Luminous Weaver TC",
+      "ItemName": "Luminous Weaver"
+    },
+    {
+      "ItemId": "Keeper Sacred Flame TC",
+      "ItemName": "Keeper of the Flame"
+    },
+    {
+      "ItemId": "Deer Knight TC",
+      "ItemName": "Deer Knight"
+    },
+    {
+      "ItemId": "Goat Monk TC",
+      "ItemName": "Goat Monk"
+    },
+    {
+      "ItemId": "Lord of Night TC",
+      "ItemName": "Lord of Night"
+    },
+    {
+      "ItemId": "Samoorai TC",
+      "ItemName": "Samoorai"
+    },
+    {
+      "ItemId": "Ninja Pig TC",
+      "ItemName": "Ninja Pigs"
+    },
+    {
+      "ItemId": "Savage Paw TC",
+      "ItemName": "Savage Paw"
+    },
+    {
+      "ItemId": "Loremaster TC",
+      "ItemName": "Loremaster"
+    },
+    {
+      "ItemId": "Queen Calypso - TC",
+      "ItemName": "Queen Calypso"
+    },
+    {
+      "ItemId": "Hephaestus Coppersmith - TC",
+      "ItemName": "Hephaestus"
+    },
+    {
+      "ItemId": "Athena Battle Sight - TC",
+      "ItemName": "Athena Battle Sight"
+    },
+    {
+      "ItemId": "Pigsie TC",
+      "ItemName": "Pigsie"
+    },
+    {
+      "ItemId": "Ninja Piglets TC",
+      "ItemName": "Ninja Piglets"
+    },
+    {
+      "ItemId": "Angry Snowpig TC",
+      "ItemName": "Angry Snowpig"
+    },
+    {
+      "ItemId": "Ratatoskr's Spin TC",
+      "ItemName": "Ratatoskr's Spin"
+    },
+    {
+      "ItemId": "Hammer of Thor TC",
+      "ItemName": "Hammer of Thor"
+    },
+    {
+      "ItemId": "Grendel's Amends TC",
+      "ItemName": "Grendel's Amends"
+    },
+    {
+      "ItemId": "Krampus TC",
+      "ItemName": "Krampus"
+    },
+    {
+      "ItemId": "Reindeer Knight TC",
+      "ItemName": "Reindeer Knight"
+    },
+    {
+      "ItemId": "Headless Horseman TC",
+      "ItemName": "Headless Horseman"
+    }
+  ]
+}

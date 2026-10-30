@@ -1,0 +1,265 @@
+{
+  "Name": "W404 PL-Mob-Gear-108 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table PL-Mob-Gear-108: the gear drops (64), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1363869",
+      "ItemName": "Arcanum Pyromancer's Spire"
+    },
+    {
+      "ItemId": "1363870",
+      "ItemName": "Arcanum Thaumaturge's Spire"
+    },
+    {
+      "ItemId": "1363871",
+      "ItemName": "Arcanum Diviner's Spire"
+    },
+    {
+      "ItemId": "1363872",
+      "ItemName": "Arcanum Conjurer's Spire"
+    },
+    {
+      "ItemId": "1363873",
+      "ItemName": "Arcanum Theurgist's Spire"
+    },
+    {
+      "ItemId": "1363874",
+      "ItemName": "Arcanum Necromancer's Spire"
+    },
+    {
+      "ItemId": "1363875",
+      "ItemName": "Arcanum Sorcerer's Spire"
+    },
+    {
+      "ItemId": "1363876",
+      "ItemName": "Spire of the Arcanum"
+    },
+    {
+      "ItemId": "1363901",
+      "ItemName": "Arcanum Pyromancer's Garb"
+    },
+    {
+      "ItemId": "1363902",
+      "ItemName": "Arcanum Thaumaturge's Cape"
+    },
+    {
+      "ItemId": "1363903",
+      "ItemName": "Arcanum Diviner's Vesment"
+    },
+    {
+      "ItemId": "1363904",
+      "ItemName": "Arcanum Conjurer's Robes"
+    },
+    {
+      "ItemId": "1363905",
+      "ItemName": "Arcanum Theurgist's Wraps"
+    },
+    {
+      "ItemId": "1363906",
+      "ItemName": "Arcanum Necromancer's Garb"
+    },
+    {
+      "ItemId": "1363907",
+      "ItemName": "Arcanum Sorcerer's Attire"
+    },
+    {
+      "ItemId": "1363908",
+      "ItemName": "Raiment of the Arcanum"
+    },
+    {
+      "ItemId": "1363933",
+      "ItemName": "Arcanum Pyromancer's Boots"
+    },
+    {
+      "ItemId": "1363934",
+      "ItemName": "Arcanum Thaumaturge's Shoes"
+    },
+    {
+      "ItemId": "1363935",
+      "ItemName": "Arcanum Diviner's Mukluks"
+    },
+    {
+      "ItemId": "1363936",
+      "ItemName": "Arcanum Conjurer's Boots"
+    },
+    {
+      "ItemId": "1363937",
+      "ItemName": "Arcanum Theurgist's Waders"
+    },
+    {
+      "ItemId": "1363938",
+      "ItemName": "Arcanum Necromancer's Soles"
+    },
+    {
+      "ItemId": "1363939",
+      "ItemName": "Arcanum Sorcerer's Mocassins"
+    },
+    {
+      "ItemId": "1363940",
+      "ItemName": "Footwraps of the Arcanum"
+    },
+    {
+      "ItemId": "1363965",
+      "ItemName": "Arcanum Pyromancer's Edge"
+    },
+    {
+      "ItemId": "1363966",
+      "ItemName": "Arcanum Thaumaturge's Blade"
+    },
+    {
+      "ItemId": "1363967",
+      "ItemName": "Arcanum Diviner's Razor"
+    },
+    {
+      "ItemId": "1363968",
+      "ItemName": "Arcanum Conjurer's Knife"
+    },
+    {
+      "ItemId": "1363969",
+      "ItemName": "Arcanum Theurgist's Athame"
+    },
+    {
+      "ItemId": "1363970",
+      "ItemName": "Arcanum Necromancer's Thorn"
+    },
+    {
+      "ItemId": "1363971",
+      "ItemName": "Arcanum Sorcerer's Dagger"
+    },
+    {
+      "ItemId": "1363972",
+      "ItemName": "Chiseled Arcanum Dagger"
+    },
+    {
+      "ItemId": "1363997",
+      "ItemName": "Arcanum Pyromancer's Amulet"
+    },
+    {
+      "ItemId": "1363998",
+      "ItemName": "Arcanum Thaumaturge's Torc"
+    },
+    {
+      "ItemId": "1363999",
+      "ItemName": "Arcanum Diviner's Ornament"
+    },
+    {
+      "ItemId": "1369000",
+      "ItemName": "Arcanum Conjurer's Amulet"
+    },
+    {
+      "ItemId": "1369001",
+      "ItemName": "Arcanum Theurgist's Locket"
+    },
+    {
+      "ItemId": "1369002",
+      "ItemName": "Arcanum Necromancer's Charm"
+    },
+    {
+      "ItemId": "1369003",
+      "ItemName": "Arcanum Sorcerer's Chaplet"
+    },
+    {
+      "ItemId": "1369004",
+      "ItemName": "Phylactery of the Arcanum"
+    },
+    {
+      "ItemId": "1369029",
+      "ItemName": "Arcanum Pyromancer's Ring"
+    },
+    {
+      "ItemId": "1369030",
+      "ItemName": "Arcanum Thaumaturge's Seal"
+    },
+    {
+      "ItemId": "1369031",
+      "ItemName": "Arcanum Diviner's Ring"
+    },
+    {
+      "ItemId": "1369032",
+      "ItemName": "Arcanum Conjurer's Band"
+    },
+    {
+      "ItemId": "1369033",
+      "ItemName": "Arcanum Theurgist's Loop"
+    },
+    {
+      "ItemId": "1369034",
+      "ItemName": "Arcanum Necromancer's Ring"
+    },
+    {
+      "ItemId": "1369035",
+      "ItemName": "Arcanum Sorcerer's Ring"
+    },
+    {
+      "ItemId": "1369036",
+      "ItemName": "Signet of the Arcanum"
+    },
+    {
+      "ItemId": "1369349",
+      "ItemName": "Arcanum Pyromancer's Stave"
+    },
+    {
+      "ItemId": "1369350",
+      "ItemName": "Arcanum Thaumaturge's Wand"
+    },
+    {
+      "ItemId": "1369351",
+      "ItemName": "Arcanum Diviner's Stave"
+    },
+    {
+      "ItemId": "1369352",
+      "ItemName": "Arcanum Conjurer's Wand"
+    },
+    {
+      "ItemId": "1369353",
+      "ItemName": "Arcanum Theurgist's Stave"
+    },
+    {
+      "ItemId": "1369354",
+      "ItemName": "Arcanum Necromancer's Wand"
+    },
+    {
+      "ItemId": "1369355",
+      "ItemName": "Arcanum Sorcerer's Stave"
+    },
+    {
+      "ItemId": "1369356",
+      "ItemName": "Charmed Wand of the Arcanum"
+    },
+    {
+      "ItemId": "1369477",
+      "ItemName": "Arcanum Pyromancer's Deck"
+    },
+    {
+      "ItemId": "1369478",
+      "ItemName": "Arcanum Thaumaturge's Set"
+    },
+    {
+      "ItemId": "1369479",
+      "ItemName": "Arcanum Diviner's Hand"
+    },
+    {
+      "ItemId": "1369480",
+      "ItemName": "Arcanum Conjurer's Bevy"
+    },
+    {
+      "ItemId": "1369481",
+      "ItemName": "Arcanum Theurgist's Cards"
+    },
+    {
+      "ItemId": "1369482",
+      "ItemName": "Arcanum Necromancer's Set"
+    },
+    {
+      "ItemId": "1369483",
+      "ItemName": "Arcanum Sorcerer's Array"
+    },
+    {
+      "ItemId": "1369484",
+      "ItemName": "Assemblage of the Arcanum"
+    }
+  ]
+}

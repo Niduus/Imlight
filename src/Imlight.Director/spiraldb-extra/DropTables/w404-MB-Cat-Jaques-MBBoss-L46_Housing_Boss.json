@@ -1,0 +1,33 @@
+{
+  "Name": "W404 MB-Cat-Jaques-MBBoss-L46 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Jaques-MBBoss-L46: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160209",
+      "ItemName": "Stack of 4 Books"
+    },
+    {
+      "ItemId": "160399",
+      "ItemName": "Professor Balestrom"
+    },
+    {
+      "ItemId": "160630",
+      "ItemName": "Jaques' Saw"
+    },
+    {
+      "ItemId": "160729",
+      "ItemName": "Large Stone Fountain"
+    },
+    {
+      "ItemId": "160756",
+      "ItemName": "Ornate Wall Clock"
+    },
+    {
+      "ItemId": "512125",
+      "ItemName": "Marleybone Theme 2"
+    }
+  ]
+}

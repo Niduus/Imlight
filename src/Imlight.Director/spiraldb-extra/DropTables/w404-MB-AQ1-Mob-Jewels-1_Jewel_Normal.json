@@ -1,0 +1,113 @@
+{
+  "Name": "W404 MB-AQ1-Mob-Jewels-1 Jewel (Normal)",
+  "Description": "Wizard404's drop list of the game's table MB-AQ1-Mob-Jewels-1: the jewel drops (26), one picked when it rolls. How often: DropOdds.json Normal/Jewel.",
+  "Odds": "Normal/Jewel",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1352347",
+      "ItemName": "Chipped Health Opal +21"
+    },
+    {
+      "ItemId": "1352348",
+      "ItemName": "Chipped Health Opal +22"
+    },
+    {
+      "ItemId": "1352349",
+      "ItemName": "Chipped Health Opal +23"
+    },
+    {
+      "ItemId": "1352350",
+      "ItemName": "Chipped Health Opal +24"
+    },
+    {
+      "ItemId": "1352437",
+      "ItemName": "Chipped Mana Opal +9"
+    },
+    {
+      "ItemId": "1352438",
+      "ItemName": "Chipped Mana Opal +10"
+    },
+    {
+      "ItemId": "1352583",
+      "ItemName": "Chipped Damage Ruby +7"
+    },
+    {
+      "ItemId": "1352607",
+      "ItemName": "Chipped Damage Sapphire +7"
+    },
+    {
+      "ItemId": "1352631",
+      "ItemName": "Chipped Damage Amethyst +7"
+    },
+    {
+      "ItemId": "1352655",
+      "ItemName": "Chipped Damage Peridot +7"
+    },
+    {
+      "ItemId": "1352679",
+      "ItemName": "Chipped Damage Jade +7"
+    },
+    {
+      "ItemId": "1352703",
+      "ItemName": "Chipped Damage Onyx +7"
+    },
+    {
+      "ItemId": "1352727",
+      "ItemName": "Chipped Damage Citrine +7"
+    },
+    {
+      "ItemId": "1352751",
+      "ItemName": "Cracked Damage Opal +3"
+    },
+    {
+      "ItemId": "1352818",
+      "ItemName": "Flawed Mending Opal +2%"
+    },
+    {
+      "ItemId": "1352935",
+      "ItemName": "Flawed Resilient Opal +2%"
+    },
+    {
+      "ItemId": "1352940",
+      "ItemName": "Flawed Healing Opal +2%"
+    },
+    {
+      "ItemId": "1357126",
+      "ItemName": "Chipped PIP Opal +2%"
+    },
+    {
+      "ItemId": "1357250",
+      "ItemName": "Chipped Defense Ruby +14"
+    },
+    {
+      "ItemId": "1357295",
+      "ItemName": "Chipped Defense Sapphire +14"
+    },
+    {
+      "ItemId": "1357340",
+      "ItemName": "Chipped Defense Amethyst +14"
+    },
+    {
+      "ItemId": "1357385",
+      "ItemName": "Chipped Defense Peridot +14"
+    },
+    {
+      "ItemId": "1357430",
+      "ItemName": "Chipped Defense Jade +14"
+    },
+    {
+      "ItemId": "1357475",
+      "ItemName": "Chipped Defense Onyx +14"
+    },
+    {
+      "ItemId": "1357520",
+      "ItemName": "Chipped Defense Citrine +14"
+    },
+    {
+      "ItemId": "1358572",
+      "ItemName": "Chipped Defense Opal +7"
+    }
+  ]
+}

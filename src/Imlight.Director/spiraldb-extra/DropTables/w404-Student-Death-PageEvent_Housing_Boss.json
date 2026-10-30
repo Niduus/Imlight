@@ -1,0 +1,25 @@
+{
+  "Name": "W404 Student-Death-PageEvent Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Student-Death-PageEvent: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160219",
+      "ItemName": "Dragon Skull"
+    },
+    {
+      "ItemId": "160799",
+      "ItemName": "Dragon Pedestal"
+    },
+    {
+      "ItemId": "160810",
+      "ItemName": "Dragon Bust"
+    },
+    {
+      "ItemId": "160852",
+      "ItemName": "Regal Dragon Statue"
+    }
+  ]
+}

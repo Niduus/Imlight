@@ -1,0 +1,65 @@
+{
+  "Name": "W404 Adv_DM_Gargoyle_CommanderF_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Adv_DM_Gargoyle_CommanderF_A_01: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1707854",
+      "ItemName": "Dagger of the Turning Wheel"
+    },
+    {
+      "ItemId": "1707855",
+      "ItemName": "Dagger of the Doomed"
+    },
+    {
+      "ItemId": "1707856",
+      "ItemName": "Dagger of the Burnt Forest"
+    },
+    {
+      "ItemId": "1707857",
+      "ItemName": "Dagger of the Coldhearted"
+    },
+    {
+      "ItemId": "1707858",
+      "ItemName": "Dagger of the Living Lie"
+    },
+    {
+      "ItemId": "1707859",
+      "ItemName": "Dagger of False Promises"
+    },
+    {
+      "ItemId": "1707860",
+      "ItemName": "Dagger of the Changing Tide"
+    },
+    {
+      "ItemId": "1712425",
+      "ItemName": "Broken Branch Luckless Dagger"
+    },
+    {
+      "ItemId": "1712426",
+      "ItemName": "Broken Branch Terror Dagger"
+    },
+    {
+      "ItemId": "1712427",
+      "ItemName": "Broken Branch Rage Dagger"
+    },
+    {
+      "ItemId": "1712428",
+      "ItemName": "Broken Branch Sorrow Dagger"
+    },
+    {
+      "ItemId": "1712429",
+      "ItemName": "Broken Branch Neglect Dagger"
+    },
+    {
+      "ItemId": "1712430",
+      "ItemName": "Broken Branch Loss Dagger"
+    },
+    {
+      "ItemId": "1712431",
+      "ItemName": "Broken Branch Panic Dagger"
+    }
+  ]
+}

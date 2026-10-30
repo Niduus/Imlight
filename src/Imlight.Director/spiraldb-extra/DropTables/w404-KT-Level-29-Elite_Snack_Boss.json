@@ -1,0 +1,53 @@
+{
+  "Name": "W404 KT-Level-29-Elite Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-Level-29-Elite: the snack drops (11), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220197",
+      "ItemName": "Green Grapes"
+    },
+    {
+      "ItemId": "220205",
+      "ItemName": "Square Watermelon"
+    },
+    {
+      "ItemId": "220225",
+      "ItemName": "Nettle Root"
+    },
+    {
+      "ItemId": "220227",
+      "ItemName": "Cracker"
+    },
+    {
+      "ItemId": "220237",
+      "ItemName": "Tiny Fish"
+    },
+    {
+      "ItemId": "220256",
+      "ItemName": "Caramel Popcorn"
+    },
+    {
+      "ItemId": "220257",
+      "ItemName": "Stinky Cheese"
+    },
+    {
+      "ItemId": "220258",
+      "ItemName": "Wheat Cracker"
+    },
+    {
+      "ItemId": "220259",
+      "ItemName": "Redskin Peanut"
+    },
+    {
+      "ItemId": "220268",
+      "ItemName": "Medium Fish"
+    },
+    {
+      "ItemId": "220285",
+      "ItemName": "Gummy Bloodbat"
+    }
+  ]
+}

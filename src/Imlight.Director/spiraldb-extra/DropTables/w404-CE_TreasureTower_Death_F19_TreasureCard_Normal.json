@@ -1,0 +1,149 @@
+{
+  "Name": "W404 CE_TreasureTower_Death_F19 TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table CE_TreasureTower_Death_F19: the treasurecard drops (35), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Leprechaun TC",
+      "ItemName": "Leprechaun"
+    },
+    {
+      "ItemId": "Imp TC",
+      "ItemName": "Imp"
+    },
+    {
+      "ItemId": "Minor Blessing TC",
+      "ItemName": "Minor Blessing"
+    },
+    {
+      "ItemId": "Pixie TC",
+      "ItemName": "Pixie"
+    },
+    {
+      "ItemId": "Lifeblade TC",
+      "ItemName": "Lifeblade"
+    },
+    {
+      "ItemId": "Legend Shield TC",
+      "ItemName": "Legend Shield"
+    },
+    {
+      "ItemId": "Banshee Life TC",
+      "ItemName": "Life Banshee"
+    },
+    {
+      "ItemId": "Spider Brown TC ET",
+      "ItemName": "Brown Spider"
+    },
+    {
+      "ItemId": "Nature's Wrath TC",
+      "ItemName": "Nature's Wrath"
+    },
+    {
+      "ItemId": "Pixie Life TC",
+      "ItemName": "Fairy"
+    },
+    {
+      "ItemId": "Sprite TC",
+      "ItemName": "Sprite"
+    },
+    {
+      "ItemId": "Satyr TC",
+      "ItemName": "Satyr"
+    },
+    {
+      "ItemId": "Life Trap TC",
+      "ItemName": "Life Trap"
+    },
+    {
+      "ItemId": "Spirit Shield TC",
+      "ItemName": "Spirit Shield"
+    },
+    {
+      "ItemId": "Triage TC",
+      "ItemName": "Triage"
+    },
+    {
+      "ItemId": "3P Goat Monk Heal TC",
+      "ItemName": "Goat Monk"
+    },
+    {
+      "ItemId": "Gnomes TC",
+      "ItemName": "Gnomes!"
+    },
+    {
+      "ItemId": "Steel Golem - Life TC",
+      "ItemName": "Potboiler"
+    },
+    {
+      "ItemId": "Leafstorm TC",
+      "ItemName": "Leafstorm"
+    },
+    {
+      "ItemId": "Regenerate TC",
+      "ItemName": "Regenerate"
+    },
+    {
+      "ItemId": "Pigsie TC",
+      "ItemName": "Pigsie"
+    },
+    {
+      "ItemId": "Helping Hands TC",
+      "ItemName": "Helping Hands"
+    },
+    {
+      "ItemId": "Dryad TC",
+      "ItemName": "Dryad"
+    },
+    {
+      "ItemId": "Feint TC",
+      "ItemName": "Feint"
+    },
+    {
+      "ItemId": "Fortify TC",
+      "ItemName": "Fortify"
+    },
+    {
+      "ItemId": "Amplify TC",
+      "ItemName": "Amplify"
+    },
+    {
+      "ItemId": "Infallible TC",
+      "ItemName": "Infallible"
+    },
+    {
+      "ItemId": "Scarab Life TC KR",
+      "ItemName": "Life Scarab"
+    },
+    {
+      "ItemId": "Death Shield TC",
+      "ItemName": "Death Shield"
+    },
+    {
+      "ItemId": "Weakness TC",
+      "ItemName": "Weakness"
+    },
+    {
+      "ItemId": "Tower Shield TC",
+      "ItemName": "Tower Shield"
+    },
+    {
+      "ItemId": "Cleanse Charm TC",
+      "ItemName": "Cleanse Charm"
+    },
+    {
+      "ItemId": "Pierce TC",
+      "ItemName": "Pierce"
+    },
+    {
+      "ItemId": "Dark Pact TC",
+      "ItemName": "Dark Tribute"
+    },
+    {
+      "ItemId": "Mana Burn - TC",
+      "ItemName": "Mana Burn"
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+{
+  "Name": "W404 NV_Unicorn_Guard_C_04 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Unicorn_Guard_C_04: the jewel drops (54), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1535633",
+      "ItemName": "Amazing Critical Amethyst +21"
+    },
+    {
+      "ItemId": "1535635",
+      "ItemName": "Amazing Critical Citrine +21"
+    },
+    {
+      "ItemId": "1535639",
+      "ItemName": "Amazing Critical Jade +21"
+    },
+    {
+      "ItemId": "1535640",
+      "ItemName": "Amazing Critical Jade +22"
+    },
+    {
+      "ItemId": "1535641",
+      "ItemName": "Amazing Critical Onyx +21"
+    },
+    {
+      "ItemId": "1535644",
+      "ItemName": "Amazing Critical Peridot +21"
+    },
+    {
+      "ItemId": "1535647",
+      "ItemName": "Amazing Critical Ruby +22"
+    },
+    {
+      "ItemId": "1535648",
+      "ItemName": "Amazing Critical Sapphire +21"
+    },
+    {
+      "ItemId": "1535649",
+      "ItemName": "Amazing Critical Sapphire +22"
+    },
+    {
+      "ItemId": "1535650",
+      "ItemName": "Amazing Damage Amethyst +31"
+    },
+    {
+      "ItemId": "1535651",
+      "ItemName": "Amazing Damage Amethyst +32"
+    },
+    {
+      "ItemId": "1535652",
+      "ItemName": "Amazing Damage Citrine +31"
+    },
+    {
+      "ItemId": "1535653",
+      "ItemName": "Amazing Damage Citrine +32"
+    },
+    {
+      "ItemId": "1535656",
+      "ItemName": "Amazing Damage Jade +31"
+    },
+    {
+      "ItemId": "1535657",
+      "ItemName": "Amazing Damage Jade +32"
+    },
+    {
+      "ItemId": "1535662",
+      "ItemName": "Amazing Damage Peridot +32"
+    },
+    {
+      "ItemId": "1535663",
+      "ItemName": "Amazing Damage Ruby +31"
+    },
+    {
+      "ItemId": "1514463",
+      "ItemName": "Dazzling Critical Amethyst +19"
+    },
+    {
+      "ItemId": "1514464",
+      "ItemName": "Dazzling Critical Amethyst +20"
+    },
+    {
+      "ItemId": "1514471",
+      "ItemName": "Dazzling Critical Citrine +19"
+    },
+    {
+      "ItemId": "1514472",
+      "ItemName": "Dazzling Critical Citrine +20"
+    },
+    {
+      "ItemId": "1514467",
+      "ItemName": "Dazzling Critical Jade +19"
+    },
+    {
+      "ItemId": "1514468",
+      "ItemName": "Dazzling Critical Jade +20"
+    },
+    {
+      "ItemId": "1514470",
+      "ItemName": "Dazzling Critical Onyx +20"
+    },
+    {
+      "ItemId": "1514465",
+      "ItemName": "Dazzling Critical Peridot +19"
+    },
+    {
+      "ItemId": "1514466",
+      "ItemName": "Dazzling Critical Peridot +20"
+    },
+    {
+      "ItemId": "1514459",
+      "ItemName": "Dazzling Critical Ruby +19"
+    },
+    {
+      "ItemId": "1514460",
+      "ItemName": "Dazzling Critical Ruby +20"
+    },
+    {
+      "ItemId": "1514462",
+      "ItemName": "Dazzling Critical Sapphire +20"
+    },
+    {
+      "ItemId": "1514453",
+      "ItemName": "Dazzling Damage Citrine +29"
+    },
+    {
+      "ItemId": "1514449",
+      "ItemName": "Dazzling Damage Jade +29"
+    },
+    {
+      "ItemId": "1514450",
+      "ItemName": "Dazzling Damage Jade +30"
+    },
+    {
+      "ItemId": "1514451",
+      "ItemName": "Dazzling Damage Onyx +29"
+    },
+    {
+      "ItemId": "1514452",
+      "ItemName": "Dazzling Damage Onyx +30"
+    },
+    {
+      "ItemId": "1514448",
+      "ItemName": "Dazzling Damage Peridot +30"
+    },
+    {
+      "ItemId": "1514443",
+      "ItemName": "Dazzling Damage Sapphire +29"
+    },
+    {
+      "ItemId": "1352780",
+      "ItemName": "Polished Piercing Amethyst +6%"
+    },
+    {
+      "ItemId": "1352808",
+      "ItemName": "Polished Piercing Citrine +6%"
+    },
+    {
+      "ItemId": "1352801",
+      "ItemName": "Polished Piercing Onyx +6%"
+    },
+    {
+      "ItemId": "1352766",
+      "ItemName": "Polished Piercing Ruby +6%"
+    },
+    {
+      "ItemId": "1352773",
+      "ItemName": "Polished Piercing Sapphire +6%"
+    },
+    {
+      "ItemId": "1352787",
+      "ItemName": "Polished Piercing Peridot +6%"
+    },
+    {
+      "ItemId": "1578455",
+      "ItemName": "Balance Blocking Pin (140)"
+    },
+    {
+      "ItemId": "1578618",
+      "ItemName": "Balance Blocking Pin (150)"
+    },
+    {
+      "ItemId": "1587350",
+      "ItemName": "Balance Resist Pin (140)"
+    },
+    {
+      "ItemId": "1587348",
+      "ItemName": "Balance Resist Pin (140)"
+    },
+    {
+      "ItemId": "1578456",
+      "ItemName": "Fire Blocking Pin (140)"
+    },
+    {
+      "ItemId": "1587421",
+      "ItemName": "Fire Resist Pin (140)"
+    },
+    {
+      "ItemId": "1578453",
+      "ItemName": "Ice Blocking Pin (140)"
+    },
+    {
+      "ItemId": "1578457",
+      "ItemName": "Life Blocking Pin (140)"
+    },
+    {
+      "ItemId": "1578620",
+      "ItemName": "Life Blocking Pin (150)"
+    },
+    {
+      "ItemId": "1587422",
+      "ItemName": "Life Resist Pin (140)"
+    },
+    {
+      "ItemId": "1578447",
+      "ItemName": "Myth Blocking Pin (140)"
+    },
+    {
+      "ItemId": "1587012",
+      "ItemName": "Storm Mending Pin (140)"
+    }
+  ]
+}

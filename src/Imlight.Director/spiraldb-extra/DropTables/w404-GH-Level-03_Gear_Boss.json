@@ -1,0 +1,121 @@
+{
+  "Name": "W404 GH-Level-03 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Level-03: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136278",
+      "ItemName": "Poniard of the Last Rune"
+    },
+    {
+      "ItemId": "136279",
+      "ItemName": "Shortblade of Valor"
+    },
+    {
+      "ItemId": "136368",
+      "ItemName": "Penumbra Cowl"
+    },
+    {
+      "ItemId": "136393",
+      "ItemName": "Crown of Hardiness"
+    },
+    {
+      "ItemId": "136486",
+      "ItemName": "Burnished Band"
+    },
+    {
+      "ItemId": "136491",
+      "ItemName": "Ice Crystal Loop"
+    },
+    {
+      "ItemId": "136581",
+      "ItemName": "Flamefollower's Tunic"
+    },
+    {
+      "ItemId": "136582",
+      "ItemName": "Longcoat of the Librarian"
+    },
+    {
+      "ItemId": "136583",
+      "ItemName": "Mythologist's Raiment"
+    },
+    {
+      "ItemId": "136584",
+      "ItemName": "Survivalist's Tunic"
+    },
+    {
+      "ItemId": "136585",
+      "ItemName": "Wrap of the Woods"
+    },
+    {
+      "ItemId": "136586",
+      "ItemName": "Coldgrave Garments"
+    },
+    {
+      "ItemId": "136587",
+      "ItemName": "Robe of Mourning"
+    },
+    {
+      "ItemId": "136588",
+      "ItemName": "Jerkin of the Just"
+    },
+    {
+      "ItemId": "136589",
+      "ItemName": "Coat of Utility"
+    },
+    {
+      "ItemId": "136590",
+      "ItemName": "Vestment of Poise"
+    },
+    {
+      "ItemId": "136591",
+      "ItemName": "Drape of Magnitude"
+    },
+    {
+      "ItemId": "136622",
+      "ItemName": "Robe of Subsistence"
+    },
+    {
+      "ItemId": "136623",
+      "ItemName": "Maelstrom Vestment"
+    },
+    {
+      "ItemId": "136624",
+      "ItemName": "Jerkin of the Rime"
+    },
+    {
+      "ItemId": "136625",
+      "ItemName": "Arctic Robe"
+    },
+    {
+      "ItemId": "136627",
+      "ItemName": "Cloak of Nephele"
+    },
+    {
+      "ItemId": "136628",
+      "ItemName": "Smock of Cinders"
+    },
+    {
+      "ItemId": "171143",
+      "ItemName": "Scorched Footwraps"
+    },
+    {
+      "ItemId": "171144",
+      "ItemName": "Glacier Walkers"
+    },
+    {
+      "ItemId": "171145",
+      "ItemName": "Fountain Waders"
+    },
+    {
+      "ItemId": "171146",
+      "ItemName": "Conservator's Footgear"
+    },
+    {
+      "ItemId": "171147",
+      "ItemName": "Wild Rover's Boots"
+    }
+  ]
+}

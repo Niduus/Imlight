@@ -1,0 +1,109 @@
+{
+  "Name": "W404 Helephant-Fire-R9 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Helephant-Fire-R9: the gear drops (25), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104666",
+      "ItemName": "Vestment of the Spring"
+    },
+    {
+      "ItemId": "104715",
+      "ItemName": "Wrap of the Monsoon"
+    },
+    {
+      "ItemId": "104811",
+      "ItemName": "Footgear of Corporeality"
+    },
+    {
+      "ItemId": "104835",
+      "ItemName": "Vineyard Shoes"
+    },
+    {
+      "ItemId": "104874",
+      "ItemName": "Stormbreaker Sandals"
+    },
+    {
+      "ItemId": "126559",
+      "ItemName": "Gurtok Oroboros Loop"
+    },
+    {
+      "ItemId": "126565",
+      "ItemName": "Gurtok Mortis Seal"
+    },
+    {
+      "ItemId": "126572",
+      "ItemName": "Gurtok Apotheosis Ringlet"
+    },
+    {
+      "ItemId": "126573",
+      "ItemName": "Gurtok Fulgis Circlet"
+    },
+    {
+      "ItemId": "126581",
+      "ItemName": "Seal of the Saga"
+    },
+    {
+      "ItemId": "126589",
+      "ItemName": "Gurtok Vivus Ring"
+    },
+    {
+      "ItemId": "126596",
+      "ItemName": "Gurtok Celsius Band"
+    },
+    {
+      "ItemId": "126601",
+      "ItemName": "Gurtok Ignus Signet"
+    },
+    {
+      "ItemId": "126613",
+      "ItemName": "Oroboros Band"
+    },
+    {
+      "ItemId": "146180",
+      "ItemName": "Dragon's Claw Blade"
+    },
+    {
+      "ItemId": "146249",
+      "ItemName": "Headdress of Refutation"
+    },
+    {
+      "ItemId": "146250",
+      "ItemName": "Hat of the Endless"
+    },
+    {
+      "ItemId": "146295",
+      "ItemName": "Hood of Hibernation"
+    },
+    {
+      "ItemId": "161051",
+      "ItemName": "Wolverine's Helm"
+    },
+    {
+      "ItemId": "164081",
+      "ItemName": "Vestment of the Chill"
+    },
+    {
+      "ItemId": "164101",
+      "ItemName": "Warded Footwear"
+    },
+    {
+      "ItemId": "175476",
+      "ItemName": "Cap of the Frontier"
+    },
+    {
+      "ItemId": "175477",
+      "ItemName": "Raiment of the Judge"
+    },
+    {
+      "ItemId": "175478",
+      "ItemName": "Dune Striders"
+    },
+    {
+      "ItemId": "175481",
+      "ItemName": "Ascendant Staff"
+    }
+  ]
+}

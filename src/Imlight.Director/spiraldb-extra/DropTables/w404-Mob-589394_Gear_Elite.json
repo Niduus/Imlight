@@ -1,0 +1,149 @@
+{
+  "Name": "W404 Mob-589394 Gear (Elite)",
+  "Description": "Wizard404's drop list of Amber Knight's own drops: the gear drops (35), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635285",
+      "ItemName": "Bad Storm Shroud"
+    },
+    {
+      "ItemId": "635286",
+      "ItemName": "Mask of the Silent Hunter"
+    },
+    {
+      "ItemId": "635287",
+      "ItemName": "Helm of Nature's Wrath"
+    },
+    {
+      "ItemId": "635288",
+      "ItemName": "Honor Bound Helm"
+    },
+    {
+      "ItemId": "635289",
+      "ItemName": "Brave One's Mantle"
+    },
+    {
+      "ItemId": "635290",
+      "ItemName": "Wrath of the Wild"
+    },
+    {
+      "ItemId": "635291",
+      "ItemName": "Fire Elf Champion's Helm"
+    },
+    {
+      "ItemId": "635292",
+      "ItemName": "Paladin's Frosty Helmet"
+    },
+    {
+      "ItemId": "635293",
+      "ItemName": "Lightning Lizard Rider's Helm"
+    },
+    {
+      "ItemId": "635294",
+      "ItemName": "Great Faerie Knight Helm"
+    },
+    {
+      "ItemId": "635324",
+      "ItemName": "Band of the Lost Abbey"
+    },
+    {
+      "ItemId": "635325",
+      "ItemName": "Ganelon's Lost Ring"
+    },
+    {
+      "ItemId": "635326",
+      "ItemName": "Dun Dara's Triskelion"
+    },
+    {
+      "ItemId": "635327",
+      "ItemName": "Knight Errant's Seal"
+    },
+    {
+      "ItemId": "635328",
+      "ItemName": "Bad Host Band"
+    },
+    {
+      "ItemId": "635329",
+      "ItemName": "Bannerman's Honorbound Ring"
+    },
+    {
+      "ItemId": "635331",
+      "ItemName": "Circle of High Order"
+    },
+    {
+      "ItemId": "635332",
+      "ItemName": "Black Annie's Band"
+    },
+    {
+      "ItemId": "635353",
+      "ItemName": "Robes of the Silent Hunter"
+    },
+    {
+      "ItemId": "635354",
+      "ItemName": "Tunic of Nature's Wrath"
+    },
+    {
+      "ItemId": "635355",
+      "ItemName": "Honor Bound Surcoat"
+    },
+    {
+      "ItemId": "635356",
+      "ItemName": "Brave One's Plate"
+    },
+    {
+      "ItemId": "635358",
+      "ItemName": "Courageous Armiger's Vestment"
+    },
+    {
+      "ItemId": "635359",
+      "ItemName": "Noble Armiger's Armor"
+    },
+    {
+      "ItemId": "635360",
+      "ItemName": "Merciful Armiger's Armor"
+    },
+    {
+      "ItemId": "635361",
+      "ItemName": "Just Armiger's Armor"
+    },
+    {
+      "ItemId": "635400",
+      "ItemName": "Splashing Stream Waders"
+    },
+    {
+      "ItemId": "635401",
+      "ItemName": "Ponycorn Hoofers"
+    },
+    {
+      "ItemId": "635402",
+      "ItemName": "Luck Smithed Boots"
+    },
+    {
+      "ItemId": "635403",
+      "ItemName": "Long as Night Walkers"
+    },
+    {
+      "ItemId": "635404",
+      "ItemName": "Hanging Stones Striders"
+    },
+    {
+      "ItemId": "635405",
+      "ItemName": "Boots of the Lake Shore"
+    },
+    {
+      "ItemId": "635406",
+      "ItemName": "Deep Water Splashers"
+    },
+    {
+      "ItemId": "635407",
+      "ItemName": "Jouster's Footguards"
+    },
+    {
+      "ItemId": "635408",
+      "ItemName": "Whitehaven Boots"
+    }
+  ]
+}

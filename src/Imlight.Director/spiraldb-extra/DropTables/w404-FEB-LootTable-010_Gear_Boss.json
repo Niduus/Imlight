@@ -1,0 +1,25 @@
+{
+  "Name": "W404 FEB-LootTable-010 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table FEB-LootTable-010: the gear drops (4), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1257796",
+      "ItemName": "Staff of Heartbeats"
+    },
+    {
+      "ItemId": "1257797",
+      "ItemName": "Baton of Entanglements"
+    },
+    {
+      "ItemId": "1257798",
+      "ItemName": "Bowstaff of the Cherubim"
+    },
+    {
+      "ItemId": "1257799",
+      "ItemName": "Stave of Captivation"
+    }
+  ]
+}

@@ -1,0 +1,233 @@
+{
+  "Name": "W404 AQ-Mob-30 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table AQ-Mob-30: the gear drops (56), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97442",
+      "ItemName": "Usegi's Speculative Dirk"
+    },
+    {
+      "ItemId": "97468",
+      "ItemName": "Dirk of Brainwork"
+    },
+    {
+      "ItemId": "97471",
+      "ItemName": "Athame of Attention"
+    },
+    {
+      "ItemId": "97574",
+      "ItemName": "Hat of the Observant"
+    },
+    {
+      "ItemId": "97590",
+      "ItemName": "Headwraps of the Whim"
+    },
+    {
+      "ItemId": "97606",
+      "ItemName": "Cap of Dilemma"
+    },
+    {
+      "ItemId": "97622",
+      "ItemName": "Hood of Melodies"
+    },
+    {
+      "ItemId": "97638",
+      "ItemName": "Headwraps of Anthems"
+    },
+    {
+      "ItemId": "97654",
+      "ItemName": "Shroud of Woe"
+    },
+    {
+      "ItemId": "97670",
+      "ItemName": "Hat of the Eager"
+    },
+    {
+      "ItemId": "97704",
+      "ItemName": "Band of Hope"
+    },
+    {
+      "ItemId": "97794",
+      "ItemName": "Tunic of Tact"
+    },
+    {
+      "ItemId": "97811",
+      "ItemName": "Cloak of Enthusiasm"
+    },
+    {
+      "ItemId": "97828",
+      "ItemName": "Robe of Discord"
+    },
+    {
+      "ItemId": "97843",
+      "ItemName": "Tunic of Melodies"
+    },
+    {
+      "ItemId": "97859",
+      "ItemName": "Gogi Berry Stained Robe"
+    },
+    {
+      "ItemId": "97875",
+      "ItemName": "Stressed Robes"
+    },
+    {
+      "ItemId": "97891",
+      "ItemName": "Tunic of the Resolute"
+    },
+    {
+      "ItemId": "97916",
+      "ItemName": "Boots of Intent"
+    },
+    {
+      "ItemId": "97971",
+      "ItemName": "Sandals of Exertion"
+    },
+    {
+      "ItemId": "97987",
+      "ItemName": "Boots of Commotion"
+    },
+    {
+      "ItemId": "98001",
+      "ItemName": "Euphonic Sandals"
+    },
+    {
+      "ItemId": "98021",
+      "ItemName": "Footwraps of Anthems"
+    },
+    {
+      "ItemId": "98038",
+      "ItemName": "Shoes of Woe"
+    },
+    {
+      "ItemId": "98055",
+      "ItemName": "Slippers of the Eager"
+    },
+    {
+      "ItemId": "136388",
+      "ItemName": "Runeluck Hat"
+    },
+    {
+      "ItemId": "136599",
+      "ItemName": "Snowfall Wear"
+    },
+    {
+      "ItemId": "171155",
+      "ItemName": "Mistborn Footwear"
+    },
+    {
+      "ItemId": "819565",
+      "ItemName": "Senator's Radiant Laurel"
+    },
+    {
+      "ItemId": "819566",
+      "ItemName": "Senator's Mantle of Winter"
+    },
+    {
+      "ItemId": "819567",
+      "ItemName": "Senator's Raincloud Mantle"
+    },
+    {
+      "ItemId": "819568",
+      "ItemName": "Senator's Poetic Laurel"
+    },
+    {
+      "ItemId": "819569",
+      "ItemName": "Senator's Laurel of Truth"
+    },
+    {
+      "ItemId": "819570",
+      "ItemName": "Senator's Devious Mantle"
+    },
+    {
+      "ItemId": "819571",
+      "ItemName": "Senator's Judicial Laurel"
+    },
+    {
+      "ItemId": "819586",
+      "ItemName": "Senator's Radiant Toga"
+    },
+    {
+      "ItemId": "819587",
+      "ItemName": "Senator's Wintry Toga"
+    },
+    {
+      "ItemId": "819588",
+      "ItemName": "Senator's Raincloud Toga"
+    },
+    {
+      "ItemId": "819589",
+      "ItemName": "Senator's Poetic Toga"
+    },
+    {
+      "ItemId": "819590",
+      "ItemName": "Senator's Stirring Toga"
+    },
+    {
+      "ItemId": "819591",
+      "ItemName": "Senator's Devious Toga"
+    },
+    {
+      "ItemId": "819592",
+      "ItemName": "Senator's Judicial Toga"
+    },
+    {
+      "ItemId": "819607",
+      "ItemName": "Senator's Radiant Sandals"
+    },
+    {
+      "ItemId": "819608",
+      "ItemName": "Senator's Wintry Sandals"
+    },
+    {
+      "ItemId": "819609",
+      "ItemName": "Senator's Raincloud Shoes"
+    },
+    {
+      "ItemId": "819610",
+      "ItemName": "Senator's Poetic Boots"
+    },
+    {
+      "ItemId": "819611",
+      "ItemName": "Senator's Guiding Sandals"
+    },
+    {
+      "ItemId": "819612",
+      "ItemName": "Senator's Devious Sandals"
+    },
+    {
+      "ItemId": "819613",
+      "ItemName": "Senator's Judicial Shoes"
+    },
+    {
+      "ItemId": "819729",
+      "ItemName": "Ares' Charred Spear"
+    },
+    {
+      "ItemId": "819730",
+      "ItemName": "Ares' Spear of Bitter Cold"
+    },
+    {
+      "ItemId": "819731",
+      "ItemName": "Ares' Windstorm Spear"
+    },
+    {
+      "ItemId": "819732",
+      "ItemName": "Ares' Spear of Valor"
+    },
+    {
+      "ItemId": "819733",
+      "ItemName": "Ares' Spear of Fortitude"
+    },
+    {
+      "ItemId": "819734",
+      "ItemName": "Ares' Spear of Havoc"
+    },
+    {
+      "ItemId": "819735",
+      "ItemName": "Ares' Spear of Destiny"
+    }
+  ]
+}

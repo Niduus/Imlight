@@ -1,0 +1,121 @@
+{
+  "Name": "W404 G14-SB-Mob-01 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table G14-SB-Mob-01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330898",
+      "ItemName": "Helm of the Smoking Ember"
+    },
+    {
+      "ItemId": "1330899",
+      "ItemName": "Himoolayan Snow Cap"
+    },
+    {
+      "ItemId": "1330900",
+      "ItemName": "Himoolayan Blizzard Helmet"
+    },
+    {
+      "ItemId": "1330901",
+      "ItemName": "Mind Monk's Headgear"
+    },
+    {
+      "ItemId": "1330902",
+      "ItemName": "Spirit Monk's Helmet"
+    },
+    {
+      "ItemId": "1330903",
+      "ItemName": "Vanquished Asura's Mantle"
+    },
+    {
+      "ItemId": "1330904",
+      "ItemName": "Helm of the Harmonious"
+    },
+    {
+      "ItemId": "1338066",
+      "ItemName": "Smoking Ember Walkers"
+    },
+    {
+      "ItemId": "1338067",
+      "ItemName": "Himoolayan Snowshoes"
+    },
+    {
+      "ItemId": "1338068",
+      "ItemName": "Himoolayan Blizzard Boots"
+    },
+    {
+      "ItemId": "1338069",
+      "ItemName": "Mind Monk's Footgear"
+    },
+    {
+      "ItemId": "1338070",
+      "ItemName": "Spirit Monk' Footwraps"
+    },
+    {
+      "ItemId": "1338071",
+      "ItemName": "Vanquished Asura's Shoes"
+    },
+    {
+      "ItemId": "1338072",
+      "ItemName": "Harmonious One's Striders"
+    },
+    {
+      "ItemId": "1338318",
+      "ItemName": "Monk's Ring of Dedication"
+    },
+    {
+      "ItemId": "1338319",
+      "ItemName": "Himoolayan Sleetfall Band"
+    },
+    {
+      "ItemId": "1338320",
+      "ItemName": "Himoolayan Hailstorm Loop"
+    },
+    {
+      "ItemId": "1338321",
+      "ItemName": "Seal of the Mind Monk"
+    },
+    {
+      "ItemId": "1338322",
+      "ItemName": "Spirit Monk's Signet"
+    },
+    {
+      "ItemId": "1338323",
+      "ItemName": "Asura's Ring of Strife"
+    },
+    {
+      "ItemId": "1338324",
+      "ItemName": "Pagoda of Harmony Signet"
+    },
+    {
+      "ItemId": "1338402",
+      "ItemName": "Body Monk's Set"
+    },
+    {
+      "ItemId": "1338403",
+      "ItemName": "Hand of the Himoolayas"
+    },
+    {
+      "ItemId": "1338404",
+      "ItemName": "Hoof Ninja's Pasteboards"
+    },
+    {
+      "ItemId": "1338405",
+      "ItemName": "Mind Monk's Cards"
+    },
+    {
+      "ItemId": "1338406",
+      "ItemName": "Spirit Monk's Deck"
+    },
+    {
+      "ItemId": "1338407",
+      "ItemName": "Arcana of the Dark Asura"
+    },
+    {
+      "ItemId": "1338408",
+      "ItemName": "Temple Guardian's Cards"
+    }
+  ]
+}

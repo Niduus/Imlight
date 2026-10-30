@@ -1,0 +1,37 @@
+{
+  "Name": "W404 PA-Level-02 Seed (Elite)",
+  "Description": "Wizard404's drop list of the game's table PA-Level-02: the seed drops (7), one picked when it rolls. How often: DropOdds.json Elite/Seed.",
+  "Odds": "Elite/Seed",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion"
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus"
+    },
+    {
+      "ItemId": "355199",
+      "ItemName": "Honey Sickle"
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "Laugh-o-dil"
+    },
+    {
+      "ItemId": "473124",
+      "ItemName": "Bell Pepper"
+    },
+    {
+      "ItemId": "473138",
+      "ItemName": "Orange Bell Pepper"
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily"
+    }
+  ]
+}

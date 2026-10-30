@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Cyclops-RedHelmet-WCBoss-L18 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Cyclops-RedHelmet-WCBoss-L18: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160332",
+      "ItemName": "Cyclops Statue"
+    },
+    {
+      "ItemId": "160378",
+      "ItemName": "Elm Tree"
+    },
+    {
+      "ItemId": "160407",
+      "ItemName": "Dark Wall Shelf"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "Name": "W404 G14-HS-Boss-Izft TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-HS-Boss-Izft: the treasurecard drops (9), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Locust Swarm TC",
+      "ItemName": "Locust Swarm"
+    },
+    {
+      "ItemId": "Sunbird TC",
+      "ItemName": "Sunbird"
+    },
+    {
+      "ItemId": "Ra TC",
+      "ItemName": "Ra"
+    },
+    {
+      "ItemId": "Colossus Stone TC",
+      "ItemName": "Stone Colossus"
+    },
+    {
+      "ItemId": "Efreet TC",
+      "ItemName": "Efreet"
+    },
+    {
+      "ItemId": "Fire Serpent TC",
+      "ItemName": "Fire Serpent"
+    },
+    {
+      "ItemId": "Krokotillian TC",
+      "ItemName": "Krokotillian"
+    },
+    {
+      "ItemId": "Scarab TC",
+      "ItemName": "Scarab"
+    },
+    {
+      "ItemId": "Scorpion TC",
+      "ItemName": "Scorpion"
+    }
+  ]
+}

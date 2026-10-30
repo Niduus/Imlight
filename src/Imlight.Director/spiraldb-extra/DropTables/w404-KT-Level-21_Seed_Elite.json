@@ -1,0 +1,17 @@
+{
+  "Name": "W404 KT-Level-21 Seed (Elite)",
+  "Description": "Wizard404's drop list of the game's table KT-Level-21: the seed drops (2), one picked when it rolls. How often: DropOdds.json Elite/Seed.",
+  "Odds": "Elite/Seed",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion"
+    },
+    {
+      "ItemId": "653111",
+      "ItemName": "Alligator Pear Tree"
+    }
+  ]
+}

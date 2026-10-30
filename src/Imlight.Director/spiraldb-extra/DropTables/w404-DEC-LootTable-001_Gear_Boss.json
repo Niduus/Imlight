@@ -1,0 +1,53 @@
+{
+  "Name": "W404 DEC-LootTable-001 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table DEC-LootTable-001: the gear drops (11), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126806",
+      "ItemName": "Santa Hat"
+    },
+    {
+      "ItemId": "126807",
+      "ItemName": "Santa Robe"
+    },
+    {
+      "ItemId": "126808",
+      "ItemName": "Santa Boots"
+    },
+    {
+      "ItemId": "126814",
+      "ItemName": "Nutcracker Wand"
+    },
+    {
+      "ItemId": "126815",
+      "ItemName": "Gingerbread Wand"
+    },
+    {
+      "ItemId": "126816",
+      "ItemName": "Candy Wand"
+    },
+    {
+      "ItemId": "126817",
+      "ItemName": "Candle Wand"
+    },
+    {
+      "ItemId": "126818",
+      "ItemName": "Star Staff"
+    },
+    {
+      "ItemId": "126819",
+      "ItemName": "Ornamental Paper Staff"
+    },
+    {
+      "ItemId": "126820",
+      "ItemName": "Mint Staff"
+    },
+    {
+      "ItemId": "126821",
+      "ItemName": "Sweet Staff"
+    }
+  ]
+}

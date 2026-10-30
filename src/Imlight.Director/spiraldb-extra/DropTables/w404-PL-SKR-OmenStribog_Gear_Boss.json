@@ -1,0 +1,313 @@
+{
+  "Name": "W404 PL-SKR-OmenStribog Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-SKR-OmenStribog: the gear drops (76), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1376012",
+      "ItemName": "Seal Team Demolitions Fins"
+    },
+    {
+      "ItemId": "1376024",
+      "ItemName": "Seal Team Demolitions Suit"
+    },
+    {
+      "ItemId": "1376048",
+      "ItemName": "Seal Team Assault Fins"
+    },
+    {
+      "ItemId": "1376060",
+      "ItemName": "Seal Team Assault Suit"
+    },
+    {
+      "ItemId": "1376084",
+      "ItemName": "Seal Team Recon Fins"
+    },
+    {
+      "ItemId": "1376096",
+      "ItemName": "Seal Team Recon Suit"
+    },
+    {
+      "ItemId": "1376108",
+      "ItemName": "Seal Team Demolitions Helmet"
+    },
+    {
+      "ItemId": "1376120",
+      "ItemName": "Seal Team Assault Helmet"
+    },
+    {
+      "ItemId": "1376132",
+      "ItemName": "Seal Team Recon Helmet"
+    },
+    {
+      "ItemId": "1376206",
+      "ItemName": "Seal Team Demolitions Hammer"
+    },
+    {
+      "ItemId": "1376218",
+      "ItemName": "Seal Team Assault Hammer"
+    },
+    {
+      "ItemId": "1376230",
+      "ItemName": "Seal Team Recon Hammer"
+    },
+    {
+      "ItemId": "1376401",
+      "ItemName": "Luphilim's Blazing Helm"
+    },
+    {
+      "ItemId": "1376402",
+      "ItemName": "Luphilim's Piercing Visage"
+    },
+    {
+      "ItemId": "1376403",
+      "ItemName": "Luphilim's Howling Greathelm"
+    },
+    {
+      "ItemId": "1376404",
+      "ItemName": "Luphilim's Legend Visor"
+    },
+    {
+      "ItemId": "1376405",
+      "ItemName": "Luphilim's Rapture Helmet"
+    },
+    {
+      "ItemId": "1376406",
+      "ItemName": "Luphilim's Grim Visage"
+    },
+    {
+      "ItemId": "1376407",
+      "ItemName": "Luphilim's Valiant Greathelm"
+    },
+    {
+      "ItemId": "1376408",
+      "ItemName": "Luphilim's Eternal Helm"
+    },
+    {
+      "ItemId": "1376409",
+      "ItemName": "Luphilim's Blazing Plate"
+    },
+    {
+      "ItemId": "1376410",
+      "ItemName": "Luphilim's Piercing Mail"
+    },
+    {
+      "ItemId": "1376411",
+      "ItemName": "Luphilim's Howling Hauberk"
+    },
+    {
+      "ItemId": "1376412",
+      "ItemName": "Luphilim's Legend Armor"
+    },
+    {
+      "ItemId": "1376413",
+      "ItemName": "Luphilim's Rapture Suit"
+    },
+    {
+      "ItemId": "1376414",
+      "ItemName": "Luphilim's Grim Raiment"
+    },
+    {
+      "ItemId": "1376415",
+      "ItemName": "Luphilim's Valiant Armor"
+    },
+    {
+      "ItemId": "1376416",
+      "ItemName": "Luphilim's Eternal Platemail"
+    },
+    {
+      "ItemId": "1376417",
+      "ItemName": "Luphilim's Blazing Boots"
+    },
+    {
+      "ItemId": "1376418",
+      "ItemName": "Luphilim's Piercing Sabatons"
+    },
+    {
+      "ItemId": "1376419",
+      "ItemName": "Luphilim's Howling Stompers"
+    },
+    {
+      "ItemId": "1376420",
+      "ItemName": "Luphilim's Legend Boots"
+    },
+    {
+      "ItemId": "1376421",
+      "ItemName": "Luphilim's Rapture Soilerets"
+    },
+    {
+      "ItemId": "1376422",
+      "ItemName": "Luphilim's Grim Footguards"
+    },
+    {
+      "ItemId": "1376423",
+      "ItemName": "Luphilim's Valiant Footgear"
+    },
+    {
+      "ItemId": "1376424",
+      "ItemName": "Luphilim's Eternal Sabatons"
+    },
+    {
+      "ItemId": "1376425",
+      "ItemName": "Luphilim's Blazing Pick"
+    },
+    {
+      "ItemId": "1376426",
+      "ItemName": "Luphilim's Piercing Spike"
+    },
+    {
+      "ItemId": "1376427",
+      "ItemName": "Luphilim's Howling Pick"
+    },
+    {
+      "ItemId": "1376428",
+      "ItemName": "Luphilim's Legend Spike"
+    },
+    {
+      "ItemId": "1376429",
+      "ItemName": "Luphilim's Rapture Pick"
+    },
+    {
+      "ItemId": "1376430",
+      "ItemName": "Luphilim's Grim Spike"
+    },
+    {
+      "ItemId": "1376431",
+      "ItemName": "Luphilim's Valiant Spike"
+    },
+    {
+      "ItemId": "1376432",
+      "ItemName": "Luphilim's Eternal Spike"
+    },
+    {
+      "ItemId": "1376433",
+      "ItemName": "Luphilim's Blazing Bauble"
+    },
+    {
+      "ItemId": "1376434",
+      "ItemName": "Luphilim's Piercing Choker"
+    },
+    {
+      "ItemId": "1376435",
+      "ItemName": "Luphilim's Howling Chain"
+    },
+    {
+      "ItemId": "1376436",
+      "ItemName": "Luphilim's Legend Necklace"
+    },
+    {
+      "ItemId": "1376437",
+      "ItemName": "Luphilim's Rapture Pendant"
+    },
+    {
+      "ItemId": "1376438",
+      "ItemName": "Luphilim's Grim Chain"
+    },
+    {
+      "ItemId": "1376439",
+      "ItemName": "Luphilim's Valiant Pendant"
+    },
+    {
+      "ItemId": "1376440",
+      "ItemName": "Luphilim's Eternal Chain"
+    },
+    {
+      "ItemId": "1376441",
+      "ItemName": "Luphilim's Blazing Band"
+    },
+    {
+      "ItemId": "1376442",
+      "ItemName": "Luphilim's Piercing Ring"
+    },
+    {
+      "ItemId": "1376443",
+      "ItemName": "Luphilim's Howling Hoop"
+    },
+    {
+      "ItemId": "1376444",
+      "ItemName": "Luphilim's Legend Ring"
+    },
+    {
+      "ItemId": "1376445",
+      "ItemName": "Luphilim's Rapture Band"
+    },
+    {
+      "ItemId": "1376446",
+      "ItemName": "Luphilim's Grim Hoop"
+    },
+    {
+      "ItemId": "1376447",
+      "ItemName": "Luphilim's Valiant Band"
+    },
+    {
+      "ItemId": "1376448",
+      "ItemName": "Luphilim's Eternal Ring"
+    },
+    {
+      "ItemId": "1376450",
+      "ItemName": "Luphilim's Blazing Array"
+    },
+    {
+      "ItemId": "1376451",
+      "ItemName": "Luphilim's Piercing Pack"
+    },
+    {
+      "ItemId": "1376452",
+      "ItemName": "Luphilim's Howling Case"
+    },
+    {
+      "ItemId": "1376453",
+      "ItemName": "Luphilim's Legend Cards"
+    },
+    {
+      "ItemId": "1376454",
+      "ItemName": "Luphilim's Rapture Deck"
+    },
+    {
+      "ItemId": "1376455",
+      "ItemName": "Luphilim's Grim Gallery"
+    },
+    {
+      "ItemId": "1376456",
+      "ItemName": "Luphilim's Valiant Set"
+    },
+    {
+      "ItemId": "1376457",
+      "ItemName": "Luphilim's Eternal Deck"
+    },
+    {
+      "ItemId": "1376460",
+      "ItemName": "Luphilim's Blazing Saber"
+    },
+    {
+      "ItemId": "1376461",
+      "ItemName": "Luphilim's Piercing Blade"
+    },
+    {
+      "ItemId": "1376462",
+      "ItemName": "Luphilim's Howling Razor"
+    },
+    {
+      "ItemId": "1376463",
+      "ItemName": "Luphilim's Legend Sword"
+    },
+    {
+      "ItemId": "1376464",
+      "ItemName": "Luphilim's Rapture Blade"
+    },
+    {
+      "ItemId": "1376465",
+      "ItemName": "Luphilim's Grim Longsword"
+    },
+    {
+      "ItemId": "1376466",
+      "ItemName": "Luphilim's Valiant Saber"
+    },
+    {
+      "ItemId": "1376467",
+      "ItemName": "Luphilim's Eternal Blade"
+    }
+  ]
+}

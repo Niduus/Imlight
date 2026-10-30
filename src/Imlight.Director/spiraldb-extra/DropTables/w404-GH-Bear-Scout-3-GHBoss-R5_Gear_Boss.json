@@ -1,0 +1,37 @@
+{
+  "Name": "W404 GH-Bear-Scout-3-GHBoss-R5 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Bear-Scout-3-GHBoss-R5: the gear drops (7), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136269",
+      "ItemName": "Dirk of the Flamewatcher"
+    },
+    {
+      "ItemId": "136270",
+      "ItemName": "Edge of Survival"
+    },
+    {
+      "ItemId": "136350",
+      "ItemName": "Hat of the Intrepid"
+    },
+    {
+      "ItemId": "136476",
+      "ItemName": "Chimerical Circlet"
+    },
+    {
+      "ItemId": "136564",
+      "ItemName": "Frostwoven Jerkin"
+    },
+    {
+      "ItemId": "171129",
+      "ItemName": "Sandals of Equity"
+    },
+    {
+      "ItemId": "346489",
+      "ItemName": "Birdcaller's Boots"
+    }
+  ]
+}

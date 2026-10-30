@@ -1,0 +1,41 @@
+{
+  "Name": "W404 EM-Mob-Amulet-120 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table EM-Mob-Amulet-120: the gear drops (8), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1430496",
+      "ItemName": "Interstellar Engineer's Charm"
+    },
+    {
+      "ItemId": "1430497",
+      "ItemName": "Interstellar Explorer's Charm"
+    },
+    {
+      "ItemId": "1430498",
+      "ItemName": "Interstellar Navigator's Charm"
+    },
+    {
+      "ItemId": "1430499",
+      "ItemName": "Interstellar Hero's Charm"
+    },
+    {
+      "ItemId": "1430500",
+      "ItemName": "Interstellar Medic's Charm"
+    },
+    {
+      "ItemId": "1430501",
+      "ItemName": "Interstellar Warrior's Charm"
+    },
+    {
+      "ItemId": "1430502",
+      "ItemName": "Interstellar Delegate's Charm"
+    },
+    {
+      "ItemId": "1430503",
+      "ItemName": "Interstellar Officer's Charm"
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "Name": "W404 PA-Gauntlet-Level-02 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table PA-Gauntlet-Level-02: the gear drops (37), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243248",
+      "ItemName": "Kris of the Piscean Guard"
+    },
+    {
+      "ItemId": "243269",
+      "ItemName": "Dirk of Delusion"
+    },
+    {
+      "ItemId": "243277",
+      "ItemName": "Dagger of Typhoons"
+    },
+    {
+      "ItemId": "243285",
+      "ItemName": "Facade of Fairness"
+    },
+    {
+      "ItemId": "243288",
+      "ItemName": "Insightful Topper"
+    },
+    {
+      "ItemId": "243297",
+      "ItemName": "Synthesis Cover"
+    },
+    {
+      "ItemId": "243309",
+      "ItemName": "Shroud of Solitude"
+    },
+    {
+      "ItemId": "243310",
+      "ItemName": "Forgotten Facade"
+    },
+    {
+      "ItemId": "243347",
+      "ItemName": "Helm of Burning Ambition"
+    },
+    {
+      "ItemId": "243363",
+      "ItemName": "Nereus's Hoarfrost Helm"
+    },
+    {
+      "ItemId": "243389",
+      "ItemName": "Vital Headdress"
+    },
+    {
+      "ItemId": "243409",
+      "ItemName": "Storyteller's Cap"
+    },
+    {
+      "ItemId": "243431",
+      "ItemName": "Rising Tide Topper"
+    },
+    {
+      "ItemId": "243432",
+      "ItemName": "Thundercloud Coif"
+    },
+    {
+      "ItemId": "243523",
+      "ItemName": "Combustible Band"
+    },
+    {
+      "ItemId": "243554",
+      "ItemName": "Majestic Signet"
+    },
+    {
+      "ItemId": "243559",
+      "ItemName": "Ring of Rare Origins"
+    },
+    {
+      "ItemId": "243587",
+      "ItemName": "Typhoon Band"
+    },
+    {
+      "ItemId": "243596",
+      "ItemName": "Tragic Tunic"
+    },
+    {
+      "ItemId": "243617",
+      "ItemName": "Salgio's Tinder Cloak"
+    },
+    {
+      "ItemId": "243619",
+      "ItemName": "Reckless Raiment"
+    },
+    {
+      "ItemId": "243624",
+      "ItemName": "Devoted Vestment"
+    },
+    {
+      "ItemId": "243677",
+      "ItemName": "Storyteller's Tunic"
+    },
+    {
+      "ItemId": "243679",
+      "ItemName": "Whimsical Surcoat"
+    },
+    {
+      "ItemId": "243684",
+      "ItemName": "Mysterious Costume"
+    },
+    {
+      "ItemId": "243700",
+      "ItemName": "Turbulent Tunic"
+    },
+    {
+      "ItemId": "243717",
+      "ItemName": "Tolerant Boots"
+    },
+    {
+      "ItemId": "243720",
+      "ItemName": "Wraps of Rapport"
+    },
+    {
+      "ItemId": "243738",
+      "ItemName": "Boots of Catastrophe"
+    },
+    {
+      "ItemId": "243757",
+      "ItemName": "Brimstone Boots"
+    },
+    {
+      "ItemId": "243783",
+      "ItemName": "Icestar Stalkers"
+    },
+    {
+      "ItemId": "243785",
+      "ItemName": "Frostbit Footguards"
+    },
+    {
+      "ItemId": "243786",
+      "ItemName": "Polar Boots"
+    },
+    {
+      "ItemId": "243787",
+      "ItemName": "Rime Runners"
+    },
+    {
+      "ItemId": "243789",
+      "ItemName": "Ice Rangers"
+    },
+    {
+      "ItemId": "243804",
+      "ItemName": "Natural Boots"
+    },
+    {
+      "ItemId": "243809",
+      "ItemName": "Virtue Shoes"
+    }
+  ]
+}

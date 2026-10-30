@@ -1,0 +1,77 @@
+{
+  "Name": "W404 Warrior-Female-Horns-Red-Boss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Warrior-Female-Horns-Red-Boss-R7: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104591",
+      "ItemName": "Wrap of Equity"
+    },
+    {
+      "ItemId": "104664",
+      "ItemName": "Tunic of Effervescence"
+    },
+    {
+      "ItemId": "104685",
+      "ItemName": "Frostcloak of the Hoarder"
+    },
+    {
+      "ItemId": "104781",
+      "ItemName": "Footgear of Craftsmanship"
+    },
+    {
+      "ItemId": "104793",
+      "ItemName": "Shoes of the Phoenix"
+    },
+    {
+      "ItemId": "104814",
+      "ItemName": "Deathwalkers of the Hoarder"
+    },
+    {
+      "ItemId": "126560",
+      "ItemName": "Everband of the Hoarder"
+    },
+    {
+      "ItemId": "126561",
+      "ItemName": "Band of Balance"
+    },
+    {
+      "ItemId": "126576",
+      "ItemName": "Ring of the Harpy"
+    },
+    {
+      "ItemId": "126653",
+      "ItemName": "Shockblade of the Hoarder"
+    },
+    {
+      "ItemId": "146115",
+      "ItemName": "Lancet of Equality"
+    },
+    {
+      "ItemId": "146136",
+      "ItemName": "Thornblade of the Hoarder"
+    },
+    {
+      "ItemId": "146178",
+      "ItemName": "Athame of Awakening"
+    },
+    {
+      "ItemId": "146205",
+      "ItemName": "Loremantle of the Hoarder"
+    },
+    {
+      "ItemId": "146231",
+      "ItemName": "Mantle of Thunder"
+    },
+    {
+      "ItemId": "146294",
+      "ItemName": "Headgear of the Ice Pilot"
+    },
+    {
+      "ItemId": "146364",
+      "ItemName": "Mantle of Order"
+    }
+  ]
+}

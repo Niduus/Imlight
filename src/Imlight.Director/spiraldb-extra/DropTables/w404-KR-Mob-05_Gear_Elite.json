@@ -1,0 +1,37 @@
+{
+  "Name": "W404 KR-Mob-05 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table KR-Mob-05: the gear drops (7), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203138",
+      "ItemName": "Last Wood Defender's Cap"
+    },
+    {
+      "ItemId": "1203139",
+      "ItemName": "Helmet of Excavation"
+    },
+    {
+      "ItemId": "1203140",
+      "ItemName": "Mantis Cowl of Honor"
+    },
+    {
+      "ItemId": "1203141",
+      "ItemName": "Mouse Helm of the Besieged"
+    },
+    {
+      "ItemId": "1203258",
+      "ItemName": "Mouse Knight's Footguards"
+    },
+    {
+      "ItemId": "1203259",
+      "ItemName": "Kermes Fire Miner's Clogs"
+    },
+    {
+      "ItemId": "1203260",
+      "ItemName": "Mantis Hunter's Footwraps"
+    }
+  ]
+}

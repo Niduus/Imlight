@@ -1,0 +1,25 @@
+{
+  "Name": "W404 KR-BossRare-Belosto-R13 Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossRare-Belosto-R13: the seed drops (4), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346010",
+      "ItemName": "Maelstrom Snap Dragon"
+    },
+    {
+      "ItemId": "1248066",
+      "ItemName": "Sugar Khrystal"
+    },
+    {
+      "ItemId": "1248248",
+      "ItemName": "Saw Palmetto"
+    },
+    {
+      "ItemId": "1248268",
+      "ItemName": "Queen Crape Myrtle"
+    }
+  ]
+}

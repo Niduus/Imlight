@@ -1,0 +1,205 @@
+{
+  "Name": "W404 AQ-Immortal-Poseidon-A Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AQ-Immortal-Poseidon-A: the gear drops (49), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "819523",
+      "ItemName": "Poseidon's Backdraft Helm"
+    },
+    {
+      "ItemId": "819524",
+      "ItemName": "Poseidon's Iceberg Helm"
+    },
+    {
+      "ItemId": "819525",
+      "ItemName": "Poseidon's Typhoon Helmet"
+    },
+    {
+      "ItemId": "819526",
+      "ItemName": "Helm of Poseidon's Acumen"
+    },
+    {
+      "ItemId": "819527",
+      "ItemName": "Poseidon's Cover of Vim"
+    },
+    {
+      "ItemId": "819528",
+      "ItemName": "Poseidon's Raging Sea Helm"
+    },
+    {
+      "ItemId": "819529",
+      "ItemName": "Poseidon's Wave Crest Helm"
+    },
+    {
+      "ItemId": "819530",
+      "ItemName": "Poseidon's Sizzling Garb"
+    },
+    {
+      "ItemId": "819531",
+      "ItemName": "Poseidon's Icy Seas Armor"
+    },
+    {
+      "ItemId": "819532",
+      "ItemName": "Poseidon's Tsunami Garb"
+    },
+    {
+      "ItemId": "819533",
+      "ItemName": "Poseidon's Fabled Raiment"
+    },
+    {
+      "ItemId": "819534",
+      "ItemName": "Tunic of Poseidon's Mercy"
+    },
+    {
+      "ItemId": "819535",
+      "ItemName": "Poseidon's Undertow Robe"
+    },
+    {
+      "ItemId": "819536",
+      "ItemName": "Poseidon's Calm Seas Cloak"
+    },
+    {
+      "ItemId": "819572",
+      "ItemName": "Senator's Embering Laurel"
+    },
+    {
+      "ItemId": "819573",
+      "ItemName": "Senator's Frigid Laurel"
+    },
+    {
+      "ItemId": "819574",
+      "ItemName": "Senator's Downpour Laurel"
+    },
+    {
+      "ItemId": "819575",
+      "ItemName": "Senator's Scholarly Laurel"
+    },
+    {
+      "ItemId": "819576",
+      "ItemName": "Senator's Laurel of Vigor"
+    },
+    {
+      "ItemId": "819577",
+      "ItemName": "Senator's Forlorn Laurel"
+    },
+    {
+      "ItemId": "819578",
+      "ItemName": "Senator's Stately Laurel"
+    },
+    {
+      "ItemId": "819593",
+      "ItemName": "Senator's Toga of Embers"
+    },
+    {
+      "ItemId": "819594",
+      "ItemName": "Senator's Frigid Toga"
+    },
+    {
+      "ItemId": "819595",
+      "ItemName": "Senator's Downpour Toga"
+    },
+    {
+      "ItemId": "819596",
+      "ItemName": "Senator's Scholarly Toga"
+    },
+    {
+      "ItemId": "819597",
+      "ItemName": "Senator's Toga of Vigor"
+    },
+    {
+      "ItemId": "819598",
+      "ItemName": "Senator's Forlorn Toga"
+    },
+    {
+      "ItemId": "819599",
+      "ItemName": "Senator's Stately Toga"
+    },
+    {
+      "ItemId": "819614",
+      "ItemName": "Senator's  Shoes of Embers"
+    },
+    {
+      "ItemId": "819615",
+      "ItemName": "Senator's Frigid Sandals"
+    },
+    {
+      "ItemId": "819616",
+      "ItemName": "Senator's Downpour Shoes"
+    },
+    {
+      "ItemId": "819617",
+      "ItemName": "Senator's Scholarly Shoes"
+    },
+    {
+      "ItemId": "819618",
+      "ItemName": "Senator's Sandals of Vigor"
+    },
+    {
+      "ItemId": "819619",
+      "ItemName": "Senator's Forlorn Sandals"
+    },
+    {
+      "ItemId": "819620",
+      "ItemName": "Senator's Stately Sandals"
+    },
+    {
+      "ItemId": "819708",
+      "ItemName": "Poseidon's Waterbane"
+    },
+    {
+      "ItemId": "819709",
+      "ItemName": "Poseidon's Polar Trident"
+    },
+    {
+      "ItemId": "819710",
+      "ItemName": "Poseidon's Squalls Trident"
+    },
+    {
+      "ItemId": "819711",
+      "ItemName": "Poseidon's Trident of Lore"
+    },
+    {
+      "ItemId": "819712",
+      "ItemName": "Poseidon's Wavemaker Staff"
+    },
+    {
+      "ItemId": "819713",
+      "ItemName": "Trident of Poseidon's Fury"
+    },
+    {
+      "ItemId": "819714",
+      "ItemName": "Poseidon's Staff of Tides"
+    },
+    {
+      "ItemId": "1203014",
+      "ItemName": "Poseidon's Steamwalkers"
+    },
+    {
+      "ItemId": "1203015",
+      "ItemName": "Poseidon's Frost Runners"
+    },
+    {
+      "ItemId": "1203016",
+      "ItemName": "Poseidon's Floodskimmers"
+    },
+    {
+      "ItemId": "1203017",
+      "ItemName": "Poseidon's Maritime Boots"
+    },
+    {
+      "ItemId": "1203018",
+      "ItemName": "Poseidon's Waterwalkers"
+    },
+    {
+      "ItemId": "1203019",
+      "ItemName": "Poseidon's Whirlpool Boots"
+    },
+    {
+      "ItemId": "1203020",
+      "ItemName": "Poseidon's Wave Walkers"
+    }
+  ]
+}

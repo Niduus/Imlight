@@ -1,0 +1,65 @@
+{
+  "Name": "W404 AQ-Squid-Tentacle-Lrg Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AQ-Squid-Tentacle-Lrg: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "819715",
+      "ItemName": "Poseidon's Backdraft Stave"
+    },
+    {
+      "ItemId": "819716",
+      "ItemName": "Poseidon's Numbing Staff"
+    },
+    {
+      "ItemId": "819717",
+      "ItemName": "Trident of Shock Waves"
+    },
+    {
+      "ItemId": "819718",
+      "ItemName": "Staff of Poseidon's Angst"
+    },
+    {
+      "ItemId": "819719",
+      "ItemName": "Poseidon's Staff of Zeal"
+    },
+    {
+      "ItemId": "819720",
+      "ItemName": "Poseidon's Wavemaker"
+    },
+    {
+      "ItemId": "819721",
+      "ItemName": "Poseidon's Open Seas Staff"
+    },
+    {
+      "ItemId": "1203042",
+      "ItemName": "Exalted Balance Amulet"
+    },
+    {
+      "ItemId": "1203043",
+      "ItemName": "Exalted Death Amulet"
+    },
+    {
+      "ItemId": "1203044",
+      "ItemName": "Exalted Fire Amulet"
+    },
+    {
+      "ItemId": "1203045",
+      "ItemName": "Exalted Ice Amulet"
+    },
+    {
+      "ItemId": "1203046",
+      "ItemName": "Exalted Life Amulet"
+    },
+    {
+      "ItemId": "1203047",
+      "ItemName": "Exalted Myth Amulet"
+    },
+    {
+      "ItemId": "1203048",
+      "ItemName": "Exalted Storm Amulet"
+    }
+  ]
+}

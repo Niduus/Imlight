@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Troll-Death-GHBoss-R4 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Troll-Death-GHBoss-R4: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136276",
+      "ItemName": "Claw of the Valiant"
+    },
+    {
+      "ItemId": "136277",
+      "ItemName": "Deathwatch Dagger"
+    },
+    {
+      "ItemId": "136359",
+      "ItemName": "Coif of the Inferno"
+    },
+    {
+      "ItemId": "136482",
+      "ItemName": "Seal of Composure"
+    },
+    {
+      "ItemId": "171137",
+      "ItemName": "Arctic Footgear"
+    },
+    {
+      "ItemId": "171138",
+      "ItemName": "Woodland Waders"
+    }
+  ]
+}

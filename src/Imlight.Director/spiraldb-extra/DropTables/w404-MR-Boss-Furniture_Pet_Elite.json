@@ -1,0 +1,13 @@
+{
+  "Name": "W404 MR-Boss-Furniture Pet (Elite)",
+  "Description": "Wizard404's drop list of the game's table MR-Boss-Furniture: the pet drops (1), one picked when it rolls. How often: DropOdds.json Elite/Pet.",
+  "Odds": "Elite/Pet",
+  "RollChance": 0.04,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1392164",
+      "ItemName": "MaCaw"
+    }
+  ]
+}

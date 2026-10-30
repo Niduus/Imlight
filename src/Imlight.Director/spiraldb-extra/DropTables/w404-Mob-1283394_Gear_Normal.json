@@ -1,0 +1,41 @@
+{
+  "Name": "W404 Mob-1283394 Gear (Normal)",
+  "Description": "Wizard404's drop list of Death Stalker's own drops: the gear drops (8), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203177",
+      "ItemName": "Mantis Prophet's Ringlet"
+    },
+    {
+      "ItemId": "1203178",
+      "ItemName": "Seal of the Lost King"
+    },
+    {
+      "ItemId": "1203179",
+      "ItemName": "Gloom Dancer's Band"
+    },
+    {
+      "ItemId": "1203258",
+      "ItemName": "Mouse Knight's Footguards"
+    },
+    {
+      "ItemId": "1203259",
+      "ItemName": "Kermes Fire Miner's Clogs"
+    },
+    {
+      "ItemId": "1203260",
+      "ItemName": "Mantis Hunter's Footwraps"
+    },
+    {
+      "ItemId": "1203261",
+      "ItemName": "Burrower Scout's Hoppers"
+    },
+    {
+      "ItemId": "1203262",
+      "ItemName": "Tireless Digger's Boots"
+    }
+  ]
+}

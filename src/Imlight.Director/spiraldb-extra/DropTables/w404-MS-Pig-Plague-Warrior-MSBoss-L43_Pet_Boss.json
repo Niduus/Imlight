@@ -1,0 +1,13 @@
+{
+  "Name": "W404 MS-Pig-Plague-Warrior-MSBoss-L43 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-Plague-Warrior-MSBoss-L43: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "225441",
+      "ItemName": "Myth Leprechaun"
+    }
+  ]
+}

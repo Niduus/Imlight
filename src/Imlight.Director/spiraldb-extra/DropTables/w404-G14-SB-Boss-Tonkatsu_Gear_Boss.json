@@ -1,0 +1,401 @@
+{
+  "Name": "W404 G14-SB-Boss-Tonkatsu Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-SB-Boss-Tonkatsu: the gear drops (98), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330898",
+      "ItemName": "Helm of the Smoking Ember"
+    },
+    {
+      "ItemId": "1330899",
+      "ItemName": "Himoolayan Snow Cap"
+    },
+    {
+      "ItemId": "1330900",
+      "ItemName": "Himoolayan Blizzard Helmet"
+    },
+    {
+      "ItemId": "1330901",
+      "ItemName": "Mind Monk's Headgear"
+    },
+    {
+      "ItemId": "1330902",
+      "ItemName": "Spirit Monk's Helmet"
+    },
+    {
+      "ItemId": "1330903",
+      "ItemName": "Vanquished Asura's Mantle"
+    },
+    {
+      "ItemId": "1330904",
+      "ItemName": "Helm of the Harmonious"
+    },
+    {
+      "ItemId": "1330912",
+      "ItemName": "Helm of Ardent Purpose"
+    },
+    {
+      "ItemId": "1330913",
+      "ItemName": "Himoolayan Warrior's Mantle"
+    },
+    {
+      "ItemId": "1330914",
+      "ItemName": "Himoolayan Avalanche Helm"
+    },
+    {
+      "ItemId": "1330915",
+      "ItemName": "Helm of Fabled Shangri-Baa"
+    },
+    {
+      "ItemId": "1330916",
+      "ItemName": "Monk's Warhelm of Focus"
+    },
+    {
+      "ItemId": "1330917",
+      "ItemName": "Tonkatsu's Helm of Discord"
+    },
+    {
+      "ItemId": "1330918",
+      "ItemName": "Battlehelm of Harmony"
+    },
+    {
+      "ItemId": "1330982",
+      "ItemName": "Armor of the Smoking Ember"
+    },
+    {
+      "ItemId": "1330983",
+      "ItemName": "Himoolayan Snow Cover"
+    },
+    {
+      "ItemId": "1330984",
+      "ItemName": "Himoolayan Blizzard Gear"
+    },
+    {
+      "ItemId": "1330985",
+      "ItemName": "Armor of the Mind Monk"
+    },
+    {
+      "ItemId": "1330986",
+      "ItemName": "Spirit Monk's Warplate"
+    },
+    {
+      "ItemId": "1330987",
+      "ItemName": "Vanquished Asura's Raiment"
+    },
+    {
+      "ItemId": "1330988",
+      "ItemName": "Harmonious One's Vestment"
+    },
+    {
+      "ItemId": "1330996",
+      "ItemName": "Laminar of Ardent Purpose"
+    },
+    {
+      "ItemId": "1330997",
+      "ItemName": "Himoolayan Warrior's Armor"
+    },
+    {
+      "ItemId": "1330998",
+      "ItemName": "Himoolayan Avalanche Gear"
+    },
+    {
+      "ItemId": "1330999",
+      "ItemName": "Fabled Shangri-Baa Armor"
+    },
+    {
+      "ItemId": "1338000",
+      "ItemName": "Monk's Laminar of Focus"
+    },
+    {
+      "ItemId": "1338001",
+      "ItemName": "Tonkatsu's Plate of Discord"
+    },
+    {
+      "ItemId": "1338002",
+      "ItemName": "Battlegear of Harmony"
+    },
+    {
+      "ItemId": "1338066",
+      "ItemName": "Smoking Ember Walkers"
+    },
+    {
+      "ItemId": "1338067",
+      "ItemName": "Himoolayan Snowshoes"
+    },
+    {
+      "ItemId": "1338068",
+      "ItemName": "Himoolayan Blizzard Boots"
+    },
+    {
+      "ItemId": "1338069",
+      "ItemName": "Mind Monk's Footgear"
+    },
+    {
+      "ItemId": "1338070",
+      "ItemName": "Spirit Monk' Footwraps"
+    },
+    {
+      "ItemId": "1338071",
+      "ItemName": "Vanquished Asura's Shoes"
+    },
+    {
+      "ItemId": "1338072",
+      "ItemName": "Harmonious One's Striders"
+    },
+    {
+      "ItemId": "1338080",
+      "ItemName": "Striders of Ardent Purpose"
+    },
+    {
+      "ItemId": "1338081",
+      "ItemName": "Himoolayan Warrior's Boots"
+    },
+    {
+      "ItemId": "1338082",
+      "ItemName": "Himoolayan Avalanche Boots"
+    },
+    {
+      "ItemId": "1338083",
+      "ItemName": "Fabled Shangri-Baa Trekkers"
+    },
+    {
+      "ItemId": "1338084",
+      "ItemName": "Monk's Runners of Focus"
+    },
+    {
+      "ItemId": "1338085",
+      "ItemName": "Tonkatsu's Boots of Discord"
+    },
+    {
+      "ItemId": "1338086",
+      "ItemName": "Footgear of Harmony"
+    },
+    {
+      "ItemId": "1338164",
+      "ItemName": "Temple Guardian's Flametusk"
+    },
+    {
+      "ItemId": "1338165",
+      "ItemName": "Himoolayan Ice Floe Dagger"
+    },
+    {
+      "ItemId": "1338166",
+      "ItemName": "Blizzard of Ninja's Steel"
+    },
+    {
+      "ItemId": "1338167",
+      "ItemName": "Edge of the Hollow Mountian"
+    },
+    {
+      "ItemId": "1338168",
+      "ItemName": "Claw of Monastic Devotion"
+    },
+    {
+      "ItemId": "1338169",
+      "ItemName": "Asura's Razor of Calamity"
+    },
+    {
+      "ItemId": "1338170",
+      "ItemName": "Path of Harmony Hook"
+    },
+    {
+      "ItemId": "1338248",
+      "ItemName": "Monk's Choker of Asperity"
+    },
+    {
+      "ItemId": "1338249",
+      "ItemName": "Himoolayan Woolly Collar"
+    },
+    {
+      "ItemId": "1338250",
+      "ItemName": "Hamakala's Amulet of Havoc"
+    },
+    {
+      "ItemId": "1338251",
+      "ItemName": "Vial of Fabled Shangri-Baa"
+    },
+    {
+      "ItemId": "1338252",
+      "ItemName": "Monk's Bauble of Constancy"
+    },
+    {
+      "ItemId": "1338253",
+      "ItemName": "Hoof Choker of Eradication"
+    },
+    {
+      "ItemId": "1338254",
+      "ItemName": "Dalai Lamba's Harmony Vial"
+    },
+    {
+      "ItemId": "1338332",
+      "ItemName": "Seal of the Roaring Heart"
+    },
+    {
+      "ItemId": "1338333",
+      "ItemName": "Himoolayan Frostbite Loop"
+    },
+    {
+      "ItemId": "1338334",
+      "ItemName": "Tonkatsu's Ring of Havoc"
+    },
+    {
+      "ItemId": "1338335",
+      "ItemName": "Ring of Fabled Shangri-Baa"
+    },
+    {
+      "ItemId": "1338336",
+      "ItemName": "Body Monk's Band of Vigor"
+    },
+    {
+      "ItemId": "1338337",
+      "ItemName": "Hamakala's Signet of Pain"
+    },
+    {
+      "ItemId": "1338338",
+      "ItemName": "Signet of the Harmonious"
+    },
+    {
+      "ItemId": "1338416",
+      "ItemName": "Tsutsui's Mighty Hand"
+    },
+    {
+      "ItemId": "1338417",
+      "ItemName": "Gallery of Kembaalung"
+    },
+    {
+      "ItemId": "1338418",
+      "ItemName": "Arcana of Cacophony"
+    },
+    {
+      "ItemId": "1338419",
+      "ItemName": "Pack of the Tuned Mind"
+    },
+    {
+      "ItemId": "1338420",
+      "ItemName": "Deck of the Beguiling Song"
+    },
+    {
+      "ItemId": "1338421",
+      "ItemName": "Tonkatsu's Deck of Discord"
+    },
+    {
+      "ItemId": "1338422",
+      "ItemName": "Ensemble of the Harmonious"
+    },
+    {
+      "ItemId": "1338486",
+      "ItemName": "Sword of Fervent Resolve"
+    },
+    {
+      "ItemId": "1338487",
+      "ItemName": "Blade of Himoolayan Ice"
+    },
+    {
+      "ItemId": "1338488",
+      "ItemName": "Snows of Kembaalung Saber"
+    },
+    {
+      "ItemId": "1338489",
+      "ItemName": "Kembaalung Sword of Guile"
+    },
+    {
+      "ItemId": "1338490",
+      "ItemName": "Stout Himoolayan Sword"
+    },
+    {
+      "ItemId": "1338491",
+      "ItemName": "Longblade of the Asura"
+    },
+    {
+      "ItemId": "1338492",
+      "ItemName": "Scimitar of the Harmonious"
+    },
+    {
+      "ItemId": "1338500",
+      "ItemName": "Himoolayan Ji of Sunbursts"
+    },
+    {
+      "ItemId": "1338501",
+      "ItemName": "Halberd of Himoolayan Frost"
+    },
+    {
+      "ItemId": "1338502",
+      "ItemName": "Himoolayan Hailstone Ji"
+    },
+    {
+      "ItemId": "1338503",
+      "ItemName": "Polearm of the Summoned"
+    },
+    {
+      "ItemId": "1338504",
+      "ItemName": "Himoolayan Ji of Valiance"
+    },
+    {
+      "ItemId": "1338505",
+      "ItemName": "Dark Asura's Poleaxe"
+    },
+    {
+      "ItemId": "1338506",
+      "ItemName": "Ji of the Harmonious Path"
+    },
+    {
+      "ItemId": "1358929",
+      "ItemName": "Tsutsui's Mighty Hand"
+    },
+    {
+      "ItemId": "1358930",
+      "ItemName": "Gallery of Kembaalung"
+    },
+    {
+      "ItemId": "1358931",
+      "ItemName": "Arcana of Cacophony"
+    },
+    {
+      "ItemId": "1358932",
+      "ItemName": "Pack of the Tuned Mind"
+    },
+    {
+      "ItemId": "1358933",
+      "ItemName": "Deck of the Beguiling Song"
+    },
+    {
+      "ItemId": "1358934",
+      "ItemName": "Tonkatsu's Deck of Discord"
+    },
+    {
+      "ItemId": "1358935",
+      "ItemName": "Ensemble of the Harmonious"
+    },
+    {
+      "ItemId": "1358943",
+      "ItemName": "Tsutsui's Mighty Hand"
+    },
+    {
+      "ItemId": "1358944",
+      "ItemName": "Gallery of Kembaalung"
+    },
+    {
+      "ItemId": "1358945",
+      "ItemName": "Arcana of Cacophony"
+    },
+    {
+      "ItemId": "1358946",
+      "ItemName": "Pack of the Tuned Mind"
+    },
+    {
+      "ItemId": "1358947",
+      "ItemName": "Deck of the Beguiling Song"
+    },
+    {
+      "ItemId": "1358948",
+      "ItemName": "Tonkatsu's Deck of Discord"
+    },
+    {
+      "ItemId": "1358949",
+      "ItemName": "Ensemble of the Harmonious"
+    }
+  ]
+}

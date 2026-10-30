@@ -1,0 +1,13 @@
+{
+  "Name": "W404 MB-Cat-Thug-Green-MBBoss-L42 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Thug-Green-MBBoss-L42: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "100449",
+      "ItemName": "Evil Snowman"
+    }
+  ]
+}

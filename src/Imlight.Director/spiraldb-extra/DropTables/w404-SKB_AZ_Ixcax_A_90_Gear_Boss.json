@@ -1,0 +1,185 @@
+{
+  "Name": "W404 SKB_AZ_Ixcax_A_90 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_AZ_Ixcax_A_90: the gear drops (44), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730591",
+      "ItemName": "Turquoise Eagle's Raiment"
+    },
+    {
+      "ItemId": "730592",
+      "ItemName": "Turquoise Eagle's Raiment"
+    },
+    {
+      "ItemId": "730601",
+      "ItemName": "Black Star Eagle's Helm"
+    },
+    {
+      "ItemId": "730602",
+      "ItemName": "Black Star Eagle's Helm"
+    },
+    {
+      "ItemId": "730641",
+      "ItemName": "Sun Eagle Striders"
+    },
+    {
+      "ItemId": "730642",
+      "ItemName": "Sun Eagle Striders"
+    },
+    {
+      "ItemId": "730798",
+      "ItemName": "Hungry Caiman's Staff"
+    },
+    {
+      "ItemId": "730799",
+      "ItemName": "Hungry Caiman's Staff"
+    },
+    {
+      "ItemId": "730808",
+      "ItemName": "Staff of the Storm Caiman"
+    },
+    {
+      "ItemId": "730809",
+      "ItemName": "Staff of the Storm Caiman"
+    },
+    {
+      "ItemId": "730818",
+      "ItemName": "Emerald Caiman's Scepter"
+    },
+    {
+      "ItemId": "730819",
+      "ItemName": "Emerald Caiman's Scepter"
+    },
+    {
+      "ItemId": "1376500",
+      "ItemName": "Lost World Ember Hood"
+    },
+    {
+      "ItemId": "1376501",
+      "ItemName": "Lost World Hail Visor"
+    },
+    {
+      "ItemId": "1376502",
+      "ItemName": "Lost World Cloud Helm"
+    },
+    {
+      "ItemId": "1376503",
+      "ItemName": "Lost World Mystic Mask"
+    },
+    {
+      "ItemId": "1376504",
+      "ItemName": "Lost World Soul Helm"
+    },
+    {
+      "ItemId": "1376505",
+      "ItemName": "Lost World Cursed Visor"
+    },
+    {
+      "ItemId": "1376506",
+      "ItemName": "Lost World Fated Hood"
+    },
+    {
+      "ItemId": "1376507",
+      "ItemName": "Lost World Survivor Mask"
+    },
+    {
+      "ItemId": "1376508",
+      "ItemName": "Lost World Ember Jerkin"
+    },
+    {
+      "ItemId": "1376509",
+      "ItemName": "Lost World Hail Suit"
+    },
+    {
+      "ItemId": "1376510",
+      "ItemName": "Lost World Cloud Mail"
+    },
+    {
+      "ItemId": "1376511",
+      "ItemName": "Lost World Mystic"
+    },
+    {
+      "ItemId": "1376512",
+      "ItemName": "Lost World Soul Gear"
+    },
+    {
+      "ItemId": "1376513",
+      "ItemName": "Lost World Cursed Vestment"
+    },
+    {
+      "ItemId": "1376514",
+      "ItemName": "Lost World Fated Armor"
+    },
+    {
+      "ItemId": "1376515",
+      "ItemName": "Lost World Survivor Mail"
+    },
+    {
+      "ItemId": "1376516",
+      "ItemName": "Lost World Ember Footwraps"
+    },
+    {
+      "ItemId": "1376517",
+      "ItemName": "Lost World Hail Boots"
+    },
+    {
+      "ItemId": "1376518",
+      "ItemName": "Lost World Cloud Runners"
+    },
+    {
+      "ItemId": "1376519",
+      "ItemName": "Lost World Mystic Trekkers"
+    },
+    {
+      "ItemId": "1376520",
+      "ItemName": "Lost World Soul Boots"
+    },
+    {
+      "ItemId": "1376521",
+      "ItemName": "Lost World Cursed Footclaws"
+    },
+    {
+      "ItemId": "1376522",
+      "ItemName": "Lost World Fated Footwraps"
+    },
+    {
+      "ItemId": "1376523",
+      "ItemName": "Lost World Survivor Footclaws"
+    },
+    {
+      "ItemId": "1376524",
+      "ItemName": "Lost World Ember Macua"
+    },
+    {
+      "ItemId": "1376525",
+      "ItemName": "Lost World Hail Spear"
+    },
+    {
+      "ItemId": "1376526",
+      "ItemName": "Lost World Cloud Atlatl"
+    },
+    {
+      "ItemId": "1376527",
+      "ItemName": "Lost World Mystic Macua"
+    },
+    {
+      "ItemId": "1376528",
+      "ItemName": "Lost World Soul Spear"
+    },
+    {
+      "ItemId": "1376529",
+      "ItemName": "Lost World Cursed Macua"
+    },
+    {
+      "ItemId": "1376530",
+      "ItemName": "Lost World Fated Atlatl"
+    },
+    {
+      "ItemId": "1376531",
+      "ItemName": "Lost World Survivor Spear"
+    }
+  ]
+}

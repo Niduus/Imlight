@@ -1,0 +1,25 @@
+{
+  "Name": "W404 MS-Pig-War-Lord-MSBoss-L43 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-War-Lord-MSBoss-L43: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160445",
+      "ItemName": "Pagoda Brazier"
+    },
+    {
+      "ItemId": "160561",
+      "ItemName": "Grand Torii"
+    },
+    {
+      "ItemId": "160584",
+      "ItemName": "Stone Watchtower"
+    },
+    {
+      "ItemId": "470189",
+      "ItemName": "Banking Table"
+    }
+  ]
+}

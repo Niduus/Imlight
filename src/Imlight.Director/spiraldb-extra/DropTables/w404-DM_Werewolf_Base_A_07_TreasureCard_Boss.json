@@ -1,0 +1,29 @@
+{
+  "Name": "W404 DM_Werewolf_Base_A_07 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Werewolf_Base_A_07: the treasurecard drops (5), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Avenging Fossil TC",
+      "ItemName": "Avenging Fossil"
+    },
+    {
+      "ItemId": "Chimera TC",
+      "ItemName": "Chimera"
+    },
+    {
+      "ItemId": "Katzenstein's Monster TC",
+      "ItemName": "Dr. Von's Monster"
+    },
+    {
+      "ItemId": "Sirens TC",
+      "ItemName": "Sirens"
+    },
+    {
+      "ItemId": "Spinysaur TC",
+      "ItemName": "Spinysaur"
+    }
+  ]
+}

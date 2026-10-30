@@ -1,0 +1,85 @@
+{
+  "Name": "W404 MS-Pig-War-Caster-MSBoss-L41 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-War-Caster-MSBoss-L41: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "87491",
+      "ItemName": "Ashikata's Staff of Intent"
+    },
+    {
+      "ItemId": "97460",
+      "ItemName": "Ashikata's Calculated Kris"
+    },
+    {
+      "ItemId": "97469",
+      "ItemName": "Kris of the Pensive Ones"
+    },
+    {
+      "ItemId": "97472",
+      "ItemName": "Shortblade of a Daydreamer"
+    },
+    {
+      "ItemId": "97569",
+      "ItemName": "Friendly Helm"
+    },
+    {
+      "ItemId": "97590",
+      "ItemName": "Headwraps of the Whim"
+    },
+    {
+      "ItemId": "97617",
+      "ItemName": "Hood of Chimes"
+    },
+    {
+      "ItemId": "97620",
+      "ItemName": "Ashikata's Hat of Inflection"
+    },
+    {
+      "ItemId": "97638",
+      "ItemName": "Headwraps of Anthems"
+    },
+    {
+      "ItemId": "97665",
+      "ItemName": "Sprightly Hood"
+    },
+    {
+      "ItemId": "97697",
+      "ItemName": "Ring of Detachment"
+    },
+    {
+      "ItemId": "97704",
+      "ItemName": "Band of Hope"
+    },
+    {
+      "ItemId": "97708",
+      "ItemName": "Drifting Ring"
+    },
+    {
+      "ItemId": "97795",
+      "ItemName": "Ashikata's Robe"
+    },
+    {
+      "ItemId": "97950",
+      "ItemName": "Gallant Sandals"
+    },
+    {
+      "ItemId": "97975",
+      "ItemName": "Ashikata's Solitary Sandals"
+    },
+    {
+      "ItemId": "98000",
+      "ItemName": "Concordant Shoes"
+    },
+    {
+      "ItemId": "98051",
+      "ItemName": "Zippy Footwraps"
+    },
+    {
+      "ItemId": "98062",
+      "ItemName": "Boots of Consideration"
+    }
+  ]
+}

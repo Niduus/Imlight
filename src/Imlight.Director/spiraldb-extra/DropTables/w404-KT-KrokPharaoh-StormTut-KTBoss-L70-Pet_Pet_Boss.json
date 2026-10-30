@@ -1,0 +1,13 @@
+{
+  "Name": "W404 KT-KrokPharaoh-StormTut-KTBoss-L70-Pet Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokPharaoh-StormTut-KTBoss-L70-Pet: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "225434",
+      "ItemName": "Green Cat Thug"
+    }
+  ]
+}

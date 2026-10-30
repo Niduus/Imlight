@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Mob-1223097 Gear (Boss)",
+  "Description": "Wizard404's drop list of Kravenly the Hunter's own drops: the gear drops (1), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203682",
+      "ItemName": "Sweltering Desert Staff"
+    }
+  ]
+}

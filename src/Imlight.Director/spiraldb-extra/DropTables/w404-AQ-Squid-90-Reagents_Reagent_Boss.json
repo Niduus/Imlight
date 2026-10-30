@@ -1,0 +1,45 @@
+{
+  "Name": "W404 AQ-Squid-90-Reagents Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table AQ-Squid-90-Reagents: the reagent drops (9), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond"
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether"
+    },
+    {
+      "ItemId": "473723",
+      "ItemName": "Agave Nectar"
+    },
+    {
+      "ItemId": "473724",
+      "ItemName": "Turquoise"
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber"
+    },
+    {
+      "ItemId": "537976",
+      "ItemName": "Braided Vine"
+    },
+    {
+      "ItemId": "537977",
+      "ItemName": "Vine"
+    },
+    {
+      "ItemId": "537982",
+      "ItemName": "Amber Dust"
+    },
+    {
+      "ItemId": "537985",
+      "ItemName": "Merle's Whisker"
+    }
+  ]
+}

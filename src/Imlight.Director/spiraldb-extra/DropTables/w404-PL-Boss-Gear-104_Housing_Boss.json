@@ -1,0 +1,45 @@
+{
+  "Name": "W404 PL-Boss-Gear-104 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-Boss-Gear-104: the housing drops (9), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1212060",
+      "ItemName": "Large Whopper Aquarium"
+    },
+    {
+      "ItemId": "1212068",
+      "ItemName": "Regular Whopper Aquarium"
+    },
+    {
+      "ItemId": "1212069",
+      "ItemName": "Tall Whopper Aquarium"
+    },
+    {
+      "ItemId": "1212071",
+      "ItemName": "Large Keeper Aquarium"
+    },
+    {
+      "ItemId": "1212072",
+      "ItemName": "Tall Keeper Aquarium"
+    },
+    {
+      "ItemId": "1212073",
+      "ItemName": "Regular Keeper Aquarium"
+    },
+    {
+      "ItemId": "1212075",
+      "ItemName": "Tall Small Fry Aquarium"
+    },
+    {
+      "ItemId": "1212076",
+      "ItemName": "Regular Small Fry Aquarium"
+    },
+    {
+      "ItemId": "1212077",
+      "ItemName": "Large Small Fry Aquarium"
+    }
+  ]
+}

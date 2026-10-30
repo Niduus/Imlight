@@ -1,0 +1,161 @@
+{
+  "Name": "W404 KT-Level-21 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table KT-Level-21: the gear drops (38), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4942",
+      "ItemName": "Parched Kris"
+    },
+    {
+      "ItemId": "4955",
+      "ItemName": "Whirlwind Dagger"
+    },
+    {
+      "ItemId": "4960",
+      "ItemName": "Dirk of Harmony"
+    },
+    {
+      "ItemId": "5016",
+      "ItemName": "Sparkling Band"
+    },
+    {
+      "ItemId": "5027",
+      "ItemName": "Ring of the Badlands"
+    },
+    {
+      "ItemId": "38750",
+      "ItemName": "Stout Robe"
+    },
+    {
+      "ItemId": "38762",
+      "ItemName": "Vestment of the Arctic"
+    },
+    {
+      "ItemId": "38763",
+      "ItemName": "Vest of the Oasis"
+    },
+    {
+      "ItemId": "39425",
+      "ItemName": "Boots of the Whirlwind"
+    },
+    {
+      "ItemId": "39431",
+      "ItemName": "Footwraps of the Arctic"
+    },
+    {
+      "ItemId": "39441",
+      "ItemName": "Sandals of Energy"
+    },
+    {
+      "ItemId": "77677",
+      "ItemName": "Blazing Helm"
+    },
+    {
+      "ItemId": "77678",
+      "ItemName": "Stout Hood"
+    },
+    {
+      "ItemId": "77690",
+      "ItemName": "Thaumaturge's Cowl of Awe"
+    },
+    {
+      "ItemId": "77691",
+      "ItemName": "Bitter Cap"
+    },
+    {
+      "ItemId": "77700",
+      "ItemName": "Rugged Hood"
+    },
+    {
+      "ItemId": "77701",
+      "ItemName": "Diviner's Hat of Squalls"
+    },
+    {
+      "ItemId": "77710",
+      "ItemName": "Hat of the Mirage"
+    },
+    {
+      "ItemId": "77711",
+      "ItemName": "Rough-hewn Hood"
+    },
+    {
+      "ItemId": "77729",
+      "ItemName": "Cryptkeeper's Circlet"
+    },
+    {
+      "ItemId": "77732",
+      "ItemName": "Headwrap of Annihilation"
+    },
+    {
+      "ItemId": "77742",
+      "ItemName": "Threadbare Hood"
+    },
+    {
+      "ItemId": "77749",
+      "ItemName": "Sphinx's Circlet"
+    },
+    {
+      "ItemId": "77750",
+      "ItemName": "Helm of the Citadel"
+    },
+    {
+      "ItemId": "77757",
+      "ItemName": "Sandals of Tall Tales"
+    },
+    {
+      "ItemId": "77767",
+      "ItemName": "Sandals of Refuge"
+    },
+    {
+      "ItemId": "77776",
+      "ItemName": "Shoes of Mortality"
+    },
+    {
+      "ItemId": "77786",
+      "ItemName": "Shoes of the Desert"
+    },
+    {
+      "ItemId": "77798",
+      "ItemName": "Boots of the Citadel"
+    },
+    {
+      "ItemId": "87269",
+      "ItemName": "Diviner's Tunic of Squalls"
+    },
+    {
+      "ItemId": "87280",
+      "ItemName": "Rough-hewn Robe"
+    },
+    {
+      "ItemId": "87292",
+      "ItemName": "Sturdy Robe"
+    },
+    {
+      "ItemId": "87295",
+      "ItemName": "Robe of the Oracle"
+    },
+    {
+      "ItemId": "87305",
+      "ItemName": "Vestment of Darkness"
+    },
+    {
+      "ItemId": "87308",
+      "ItemName": "Necromancer's Ivory Cloak"
+    },
+    {
+      "ItemId": "87318",
+      "ItemName": "Vest of the Desert"
+    },
+    {
+      "ItemId": "87321",
+      "ItemName": "Cloak of Harmony"
+    },
+    {
+      "ItemId": "87333",
+      "ItemName": "Sphinx's Vestment"
+    }
+  ]
+}

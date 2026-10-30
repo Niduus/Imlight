@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-MB-Hat-138 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-MB-Hat-138: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1514757",
+      "ItemName": "Director Thermal Hood"
+    },
+    {
+      "ItemId": "1514758",
+      "ItemName": "Director Cryo Hood"
+    },
+    {
+      "ItemId": "1514759",
+      "ItemName": "Director Insulated Hood"
+    },
+    {
+      "ItemId": "1514760",
+      "ItemName": "Director Pressure Hood"
+    },
+    {
+      "ItemId": "1514761",
+      "ItemName": "Director Survival Hood"
+    },
+    {
+      "ItemId": "1514762",
+      "ItemName": "Director Biohazard Hood"
+    },
+    {
+      "ItemId": "1514763",
+      "ItemName": "Director Protective Hood"
+    },
+    {
+      "ItemId": "1514764",
+      "ItemName": "Director Hazmat Hood"
+    },
+    {
+      "ItemId": "1514781",
+      "ItemName": "Executive Thermal Hood"
+    },
+    {
+      "ItemId": "1514782",
+      "ItemName": "Executive Cryo Hood"
+    },
+    {
+      "ItemId": "1514783",
+      "ItemName": "Executive Insulated Hood"
+    },
+    {
+      "ItemId": "1514784",
+      "ItemName": "Executive Pressure Hood"
+    },
+    {
+      "ItemId": "1514785",
+      "ItemName": "Executive Survival Hood"
+    },
+    {
+      "ItemId": "1514786",
+      "ItemName": "Executive Biohazard Hood"
+    },
+    {
+      "ItemId": "1514787",
+      "ItemName": "Executive Protective Hood"
+    },
+    {
+      "ItemId": "1514788",
+      "ItemName": "Executive Hazmat Hood"
+    },
+    {
+      "ItemId": "1514805",
+      "ItemName": "Producer's Thermal Hood"
+    },
+    {
+      "ItemId": "1514806",
+      "ItemName": "Producer's Cryo Hood"
+    },
+    {
+      "ItemId": "1514807",
+      "ItemName": "Producer's Insulated Hood"
+    },
+    {
+      "ItemId": "1514808",
+      "ItemName": "Producer's Pressure Hood"
+    },
+    {
+      "ItemId": "1514809",
+      "ItemName": "Producer's Survival Hood"
+    },
+    {
+      "ItemId": "1514810",
+      "ItemName": "Producer's Biohazard Hood"
+    },
+    {
+      "ItemId": "1514811",
+      "ItemName": "Producer's Protective Hood"
+    },
+    {
+      "ItemId": "1514812",
+      "ItemName": "Producer's Hazmat Hood"
+    }
+  ]
+}

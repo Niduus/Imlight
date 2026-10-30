@@ -1,0 +1,13 @@
+{
+  "Name": "W404 TC-HarvestLord TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-HarvestLord: the treasurecard drops (1), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Harvest Lord TC",
+      "ItemName": "Harvest Lord"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "Name": "W404 ZF-Elephant-Shaman-Red-R11-Boss Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Elephant-Shaman-Red-R11-Boss: the gear drops (26), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "526682",
+      "ItemName": "Sun's Light Spear"
+    },
+    {
+      "ItemId": "526683",
+      "ItemName": "Spear of the Trade Winds"
+    },
+    {
+      "ItemId": "540099",
+      "ItemName": "Ruby and Sapphire Bauble"
+    },
+    {
+      "ItemId": "540130",
+      "ItemName": "Ghost in the Darkness"
+    },
+    {
+      "ItemId": "540135",
+      "ItemName": "Fire Valley Thorn"
+    },
+    {
+      "ItemId": "540140",
+      "ItemName": "Scimitar of the Howling Wind"
+    },
+    {
+      "ItemId": "540178",
+      "ItemName": "Hat of the Old Kings"
+    },
+    {
+      "ItemId": "540179",
+      "ItemName": "Griot's Hood"
+    },
+    {
+      "ItemId": "540180",
+      "ItemName": "Face of the Blinding Sun"
+    },
+    {
+      "ItemId": "540181",
+      "ItemName": "War Olyphant's Wrap"
+    },
+    {
+      "ItemId": "540204",
+      "ItemName": "Koko's Smoky Circle"
+    },
+    {
+      "ItemId": "540247",
+      "ItemName": "Zafaria Tour Jacket"
+    },
+    {
+      "ItemId": "540248",
+      "ItemName": "Spider's Storied Robe"
+    },
+    {
+      "ItemId": "540249",
+      "ItemName": "Sinister Juju Robes"
+    },
+    {
+      "ItemId": "540250",
+      "ItemName": "River Smuggler's Garb"
+    },
+    {
+      "ItemId": "540251",
+      "ItemName": "Storm Chaser's Outfit"
+    },
+    {
+      "ItemId": "540252",
+      "ItemName": "Hunter's Kin Garb"
+    },
+    {
+      "ItemId": "540253",
+      "ItemName": "Lost Outsider Gear"
+    },
+    {
+      "ItemId": "540254",
+      "ItemName": "Big Five Robe"
+    },
+    {
+      "ItemId": "540283",
+      "ItemName": "Storm Caller's Rangers"
+    },
+    {
+      "ItemId": "540284",
+      "ItemName": "Lion King's Balanced Pads"
+    },
+    {
+      "ItemId": "540285",
+      "ItemName": "Witch Doctor's Spiral Boots"
+    },
+    {
+      "ItemId": "540286",
+      "ItemName": "Graveyard Walkers"
+    },
+    {
+      "ItemId": "540302",
+      "ItemName": "Bundle of Eternal Flame"
+    },
+    {
+      "ItemId": "540303",
+      "ItemName": "Hand-Chased Box of Winter"
+    },
+    {
+      "ItemId": "540304",
+      "ItemName": "Chieftain's Smiling Deck"
+    }
+  ]
+}

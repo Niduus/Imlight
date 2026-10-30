@@ -1,0 +1,33 @@
+{
+  "Name": "W404 ME1_Maestro_B TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Maestro_B: the treasurecard drops (6), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Uncanny Magic TC WH",
+      "ItemName": "Uncanny Magic"
+    },
+    {
+      "ItemId": "Flood TC WH",
+      "ItemName": "Flood"
+    },
+    {
+      "ItemId": "Triage TC WH",
+      "ItemName": "Triage"
+    },
+    {
+      "ItemId": "Sprite TC WH",
+      "ItemName": "Sprite"
+    },
+    {
+      "ItemId": "Leprechaun TC WH",
+      "ItemName": "Leprechaun"
+    },
+    {
+      "ItemId": "Efreet TC",
+      "ItemName": "Efreet"
+    }
+  ]
+}

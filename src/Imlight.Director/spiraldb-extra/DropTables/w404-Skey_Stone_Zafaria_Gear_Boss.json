@@ -1,0 +1,81 @@
+{
+  "Name": "W404 Skey_Stone_Zafaria Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skey_Stone_Zafaria: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "540103",
+      "ItemName": "Berserker's Rage Pendant"
+    },
+    {
+      "ItemId": "540104",
+      "ItemName": "Witch Doctor's Juju Pendant"
+    },
+    {
+      "ItemId": "540105",
+      "ItemName": "Nganga's Strong Muti Pendant"
+    },
+    {
+      "ItemId": "540142",
+      "ItemName": "Kimba's Fang"
+    },
+    {
+      "ItemId": "540143",
+      "ItemName": "Great Ape's Tooth"
+    },
+    {
+      "ItemId": "540144",
+      "ItemName": "The Old Tusk-Tusk-Trunk"
+    },
+    {
+      "ItemId": "540171",
+      "ItemName": "Cold At Night Cover"
+    },
+    {
+      "ItemId": "540172",
+      "ItemName": "Mask of Mirror Lake"
+    },
+    {
+      "ItemId": "540173",
+      "ItemName": "Turban of the Olyphants"
+    },
+    {
+      "ItemId": "540200",
+      "ItemName": "Tanei's Ghost Ring"
+    },
+    {
+      "ItemId": "540201",
+      "ItemName": "Mansa's Dream Stone"
+    },
+    {
+      "ItemId": "540202",
+      "ItemName": "Kallah's Dread Stone"
+    },
+    {
+      "ItemId": "540236",
+      "ItemName": "Big Sky Outfit"
+    },
+    {
+      "ItemId": "540237",
+      "ItemName": "Robes of the Cold Night"
+    },
+    {
+      "ItemId": "540238",
+      "ItemName": "Tunic of Long Memory"
+    },
+    {
+      "ItemId": "540280",
+      "ItemName": "Nemean Rock Climbers"
+    },
+    {
+      "ItemId": "540281",
+      "ItemName": "Ananse's Dark Rangers"
+    },
+    {
+      "ItemId": "540282",
+      "ItemName": "Dancing Queen Dancers"
+    }
+  ]
+}

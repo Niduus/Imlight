@@ -1,0 +1,137 @@
+{
+  "Name": "W404 KR-Boss-TC-06 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-Boss-TC-06: the treasurecard drops (32), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Scorpion TC KR",
+      "ItemName": "Scorpion"
+    },
+    {
+      "ItemId": "Spider Black Widow TC KR",
+      "ItemName": "Black Widow"
+    },
+    {
+      "ItemId": "Crystal Spider TC KR",
+      "ItemName": "Crystal Spider"
+    },
+    {
+      "ItemId": "Choke TC KR",
+      "ItemName": "Choke"
+    },
+    {
+      "ItemId": "Sanctuary TC KR",
+      "ItemName": "Sanctuary"
+    },
+    {
+      "ItemId": "Pierce TC KR",
+      "ItemName": "Pierce"
+    },
+    {
+      "ItemId": "Sabertooth TC",
+      "ItemName": "Sabertooth"
+    },
+    {
+      "ItemId": "Reliquary TC - KR",
+      "ItemName": "Reliquary"
+    },
+    {
+      "ItemId": "Cycle of Life TC - KR",
+      "ItemName": "Cycle of Life"
+    },
+    {
+      "ItemId": "Virulence TC - KR",
+      "ItemName": "Virulence"
+    },
+    {
+      "ItemId": "Chastisement TC - KR",
+      "ItemName": "Chastisement"
+    },
+    {
+      "ItemId": "Punishment TC - KR",
+      "ItemName": "Punishment"
+    },
+    {
+      "ItemId": "Galvanic Field TC - KR",
+      "ItemName": "Galvanic Field"
+    },
+    {
+      "ItemId": "Furnace TC - KR",
+      "ItemName": "Furnace"
+    },
+    {
+      "ItemId": "Sleet Storm TC - KR",
+      "ItemName": "Sleet Storm"
+    },
+    {
+      "ItemId": "Locust Swarm TC KR",
+      "ItemName": "Locust Swarm"
+    },
+    {
+      "ItemId": "Doom and Gloom TC KR",
+      "ItemName": "Doom and Gloom"
+    },
+    {
+      "ItemId": "Polar Swarm TC KR",
+      "ItemName": "Polar Swarm"
+    },
+    {
+      "ItemId": "Sprite Swarm TC KR",
+      "ItemName": "Sprite Swarm"
+    },
+    {
+      "ItemId": "Treant Myth TC KR",
+      "ItemName": "Legendary Treant"
+    },
+    {
+      "ItemId": "Lord of Winter TC",
+      "ItemName": "Lord of Winter"
+    },
+    {
+      "ItemId": "OLeary Swindler TC",
+      "ItemName": "O'Leary Swindler"
+    },
+    {
+      "ItemId": "Wildfire Treant TC KR",
+      "ItemName": "Wildfire Treant"
+    },
+    {
+      "ItemId": "Shatter TC KR",
+      "ItemName": "Shatter"
+    },
+    {
+      "ItemId": "Luminous Weaver TC KR",
+      "ItemName": "Luminous Weaver"
+    },
+    {
+      "ItemId": "Cripple TC KR",
+      "ItemName": "Enfeeble"
+    },
+    {
+      "ItemId": "Spinysaur TC",
+      "ItemName": "Spinysaur"
+    },
+    {
+      "ItemId": "Celestial Calendar TC",
+      "ItemName": "Celestial Calendar"
+    },
+    {
+      "ItemId": "Avenging Fossil TC",
+      "ItemName": "Avenging Fossil"
+    },
+    {
+      "ItemId": "Hooligan TC",
+      "ItemName": "Hooligan"
+    },
+    {
+      "ItemId": "Sun Serpent TC",
+      "ItemName": "Sun Serpent"
+    },
+    {
+      "ItemId": "Storm Owl TC",
+      "ItemName": "Storm Owl"
+    }
+  ]
+}

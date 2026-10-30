@@ -1,0 +1,29 @@
+{
+  "Name": "W404 ME1_Ant_Aunt_B Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Ant_Aunt_B: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "342095",
+      "ItemName": "Fish Fountain"
+    },
+    {
+      "ItemId": "469719",
+      "ItemName": "Cross Section Floor Tile"
+    },
+    {
+      "ItemId": "469721",
+      "ItemName": "Cobblestone Flooring"
+    },
+    {
+      "ItemId": "469722",
+      "ItemName": "Blue Vine Wallpaper"
+    },
+    {
+      "ItemId": "469723",
+      "ItemName": "Stone Block Wallpaper"
+    }
+  ]
+}

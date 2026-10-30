@@ -1,0 +1,37 @@
+{
+  "Name": "W404 GH-Sunbird-Black-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Sunbird-Black-GHBoss-R7: the gear drops (7), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136434",
+      "ItemName": "Pyrestorm Crown"
+    },
+    {
+      "ItemId": "136444",
+      "ItemName": "Shroud of the Shibboleth"
+    },
+    {
+      "ItemId": "136445",
+      "ItemName": "Crown of Congruity"
+    },
+    {
+      "ItemId": "136666",
+      "ItemName": "Longcoat of Longevity"
+    },
+    {
+      "ItemId": "171219",
+      "ItemName": "Frost-toed Boots"
+    },
+    {
+      "ItemId": "171223",
+      "ItemName": "Judicial Footgear"
+    },
+    {
+      "ItemId": "171227",
+      "ItemName": "Murmuring Moccasins"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "Name": "W404 MS-Oni-War-MSBoss-L50 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Oni-War-MSBoss-L50: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97429",
+      "ItemName": "War Oni's Tempestial Circle"
+    },
+    {
+      "ItemId": "97558",
+      "ItemName": "War Oni's Gripping Helm"
+    },
+    {
+      "ItemId": "97561",
+      "ItemName": "War Torn Cowl of Awareness"
+    },
+    {
+      "ItemId": "97563",
+      "ItemName": "War Oni's Disillusioned Hat"
+    },
+    {
+      "ItemId": "97676",
+      "ItemName": "Cap of Consideration"
+    },
+    {
+      "ItemId": "97777",
+      "ItemName": "War Oni's Gripping Garments"
+    },
+    {
+      "ItemId": "97778",
+      "ItemName": "War Oni's Astute Tunic"
+    },
+    {
+      "ItemId": "97792",
+      "ItemName": "Indulgent Vestment"
+    },
+    {
+      "ItemId": "97822",
+      "ItemName": "Tunic of Impression"
+    },
+    {
+      "ItemId": "97842",
+      "ItemName": "Lyrical Garments"
+    },
+    {
+      "ItemId": "97870",
+      "ItemName": "Tormented Cloak"
+    },
+    {
+      "ItemId": "97889",
+      "ItemName": "Vestment of the Eager"
+    },
+    {
+      "ItemId": "97936",
+      "ItemName": "War Oni's Footwraps"
+    },
+    {
+      "ItemId": "97953",
+      "ItemName": "Indulgent Boots"
+    },
+    {
+      "ItemId": "98003",
+      "ItemName": "Lyrical Footwraps"
+    },
+    {
+      "ItemId": "98054",
+      "ItemName": "Sandals of the Determined"
+    },
+    {
+      "ItemId": "126145",
+      "ItemName": "Ruby Ring of Focus"
+    }
+  ]
+}

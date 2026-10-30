@@ -1,0 +1,41 @@
+{
+  "Name": "W404 DS-Boss-MAW Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table DS-Boss-MAW: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1384414",
+      "ItemName": "Dragonhorn Helm of Fire"
+    },
+    {
+      "ItemId": "1384415",
+      "ItemName": "Dragonhorn Helm of Ice"
+    },
+    {
+      "ItemId": "1384416",
+      "ItemName": "Dragonhorn Helm of Storm"
+    },
+    {
+      "ItemId": "1384417",
+      "ItemName": "Dragonhorn Helm of Myth"
+    },
+    {
+      "ItemId": "1384418",
+      "ItemName": "Dragonhorn Helm of Life"
+    },
+    {
+      "ItemId": "1384419",
+      "ItemName": "Dragonhorn Helm of Death"
+    },
+    {
+      "ItemId": "1384420",
+      "ItemName": "Dragonhorn Helm of Balance"
+    },
+    {
+      "ItemId": "1384421",
+      "ItemName": "Dragonhorn Disciple's Helm"
+    }
+  ]
+}

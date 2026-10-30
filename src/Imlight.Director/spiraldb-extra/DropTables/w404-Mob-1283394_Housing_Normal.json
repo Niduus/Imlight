@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Mob-1283394 Housing (Normal)",
+  "Description": "Wizard404's drop list of Death Stalker's own drops: the housing drops (1), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1603219",
+      "ItemName": "Umbra Green Drinking Glass"
+    }
+  ]
+}

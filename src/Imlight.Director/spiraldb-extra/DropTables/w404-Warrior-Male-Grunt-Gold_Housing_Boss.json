@@ -1,0 +1,17 @@
+{
+  "Name": "W404 Warrior-Male-Grunt-Gold Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Warrior-Male-Grunt-Gold: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160800",
+      "ItemName": "Smoldering Tree"
+    },
+    {
+      "ItemId": "160829",
+      "ItemName": "Memorial Fountain"
+    }
+  ]
+}

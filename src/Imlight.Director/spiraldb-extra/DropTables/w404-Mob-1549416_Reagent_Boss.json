@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Mob-1549416 Reagent (Boss)",
+  "Description": "Wizard404's drop list of Ixcax Cursedwing's own drops: the reagent drops (3), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1528544",
+      "ItemName": "Lord of Night"
+    },
+    {
+      "ItemId": "1528534",
+      "ItemName": "Savage Paw"
+    },
+    {
+      "ItemId": "1528539",
+      "ItemName": "Winter Moon"
+    }
+  ]
+}

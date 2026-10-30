@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Colossus-Silver-Runed-GHBoss-R7-1 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Colossus-Silver-Runed-GHBoss-R7-1: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136289",
+      "ItemName": "Edge of Veracity"
+    },
+    {
+      "ItemId": "136403",
+      "ItemName": "Cap of the Evenhanded"
+    },
+    {
+      "ItemId": "136404",
+      "ItemName": "Hood of Delusion"
+    },
+    {
+      "ItemId": "136496",
+      "ItemName": "Windtossed Band"
+    },
+    {
+      "ItemId": "136632",
+      "ItemName": "Curative Garments"
+    },
+    {
+      "ItemId": "171203",
+      "ItemName": "Boots of the Inferno"
+    }
+  ]
+}

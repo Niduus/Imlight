@@ -1,0 +1,9 @@
+{
+  "Name": "W404 CL-AnglerBoss-R10-1",
+  "Description": "Gold of the game's table CL-AnglerBoss-R10-1, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 40,
+  "MaxGold": 40,
+  "EachItem": false,
+  "Items": []
+}

@@ -1,0 +1,30 @@
+{
+  "TemplateID": 35433,
+  "DropTableNames": [
+    "W404 ReagentLT-Drop-SpiderSilk-03 Reagent (Boss)",
+    "W404 KT-KrokTut-Storm-KTBoss-L39 Gear (Boss)",
+    "W404 KT-KrokTut-Storm-KTBoss-L39 Pet (Boss)",
+    "W404 KT-KrokTut-Storm-KTBoss-L39 TreasureCard (Boss)",
+    "W404 KT-KrokTut-Storm-KTBoss-L39 Seed (Boss)",
+    "W404 KT-KrokTut-Storm-KTBoss-L39 Housing (Boss)",
+    "W404 TC-UncommonsBosses TreasureCard",
+    "W404 DEC-LootTable-002 Gear (Boss)",
+    "W404 DEC-LootTable-002 Pet (Boss)",
+    "W404 DEC-LootTable-002 Seed (Boss)",
+    "W404 DEC-LootTable-002 Housing (Boss)",
+    "W404 APR-LootTable-002 Gear (Boss)",
+    "W404 APR-LootTable-002 Pet (Boss)",
+    "W404 APR-LootTable-002 Mount (Boss)",
+    "W404 FEB-LootTable-002 Gear (Boss)",
+    "W404 FEB-LootTable-002 Pet (Boss)",
+    "W404 MAR-LootTable-002 Gear (Boss)",
+    "W404 MAR-LootTable-002 Pet (Boss)",
+    "W404 NOV-LootTable-002 Gear (Boss)",
+    "W404 OCT-LootTable-002 Gear (Boss)",
+    "W404 OCT-LootTable-002 Pet (Boss)",
+    "W404 OCT-LootTable-002 Housing (Boss)",
+    "W404 KT-GH1-PA-Boss-Jewels Jewel",
+    "W404 KT-GH1-PA-Boss-Jewels Reagent",
+    "W404 KT-ItemSets-02 Gear (Boss)"
+  ]
+}

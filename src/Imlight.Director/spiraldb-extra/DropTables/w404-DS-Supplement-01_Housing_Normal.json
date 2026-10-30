@@ -1,0 +1,17 @@
+{
+  "Name": "W404 DS-Supplement-01 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table DS-Supplement-01: the housing drops (2), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160896",
+      "ItemName": "Long Corner Wall Ruins"
+    },
+    {
+      "ItemId": "160974",
+      "ItemName": "Singed Magic Book"
+    }
+  ]
+}

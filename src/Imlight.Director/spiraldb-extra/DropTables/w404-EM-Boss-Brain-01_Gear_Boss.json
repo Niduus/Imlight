@@ -1,0 +1,137 @@
+{
+  "Name": "W404 EM-Boss-Brain-01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM-Boss-Brain-01: the gear drops (32), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1430520",
+      "ItemName": "Cabalist Cleansing Hood"
+    },
+    {
+      "ItemId": "1430521",
+      "ItemName": "Cabalist Hood of Vengeance"
+    },
+    {
+      "ItemId": "1430522",
+      "ItemName": "Cabalist Chaotic Hood"
+    },
+    {
+      "ItemId": "1430523",
+      "ItemName": "Nostalgic Cabal Hood"
+    },
+    {
+      "ItemId": "1430524",
+      "ItemName": "Cabalist Hood of the First"
+    },
+    {
+      "ItemId": "1430525",
+      "ItemName": "Cabalist Hood of Finality"
+    },
+    {
+      "ItemId": "1430526",
+      "ItemName": "Cabal Hood of Disruption"
+    },
+    {
+      "ItemId": "1430527",
+      "ItemName": "Cabal Schism Hood"
+    },
+    {
+      "ItemId": "1430528",
+      "ItemName": "Cabalist Cleansing Cloak"
+    },
+    {
+      "ItemId": "1430529",
+      "ItemName": "Cabalist Cloak of Vengeance"
+    },
+    {
+      "ItemId": "1430530",
+      "ItemName": "Cabalist Chaotic Cloak"
+    },
+    {
+      "ItemId": "1430531",
+      "ItemName": "Nostalgic Cabal Cloak"
+    },
+    {
+      "ItemId": "1430532",
+      "ItemName": "Cabalist Cloak of the First"
+    },
+    {
+      "ItemId": "1430533",
+      "ItemName": "Cabalist Cloak of Finality"
+    },
+    {
+      "ItemId": "1430534",
+      "ItemName": "Cabal Cloak of Disruption"
+    },
+    {
+      "ItemId": "1430535",
+      "ItemName": "Cabal Schism Cloak"
+    },
+    {
+      "ItemId": "1430536",
+      "ItemName": "Cabalist Cleansing Stompers"
+    },
+    {
+      "ItemId": "1430537",
+      "ItemName": "Cabalist Stomps of Vengeance"
+    },
+    {
+      "ItemId": "1430538",
+      "ItemName": "Cabalist Chaotic Stompers"
+    },
+    {
+      "ItemId": "1430539",
+      "ItemName": "Nostalgic Cabal Stompers"
+    },
+    {
+      "ItemId": "1430540",
+      "ItemName": "Cabalist Stompers of the First"
+    },
+    {
+      "ItemId": "1430541",
+      "ItemName": "Cabalist Stompers of Finality"
+    },
+    {
+      "ItemId": "1430542",
+      "ItemName": "Cabal Stompers of Disruption"
+    },
+    {
+      "ItemId": "1430543",
+      "ItemName": "Cabal Schism Stompers"
+    },
+    {
+      "ItemId": "1430568",
+      "ItemName": "Nostalgic Cabal Banner"
+    },
+    {
+      "ItemId": "1430569",
+      "ItemName": "Cabalist Banner of the First"
+    },
+    {
+      "ItemId": "1430570",
+      "ItemName": "Cabalist Banner of Finality"
+    },
+    {
+      "ItemId": "1430571",
+      "ItemName": "Cabalist Chaotic Banner"
+    },
+    {
+      "ItemId": "1430572",
+      "ItemName": "Cabalist Cleansing Banner"
+    },
+    {
+      "ItemId": "1430573",
+      "ItemName": "Cabalist Banner of Vengeance"
+    },
+    {
+      "ItemId": "1430574",
+      "ItemName": "Cabal Banner of Disruption"
+    },
+    {
+      "ItemId": "1430575",
+      "ItemName": "Cabalist Schism Banner"
+    }
+  ]
+}

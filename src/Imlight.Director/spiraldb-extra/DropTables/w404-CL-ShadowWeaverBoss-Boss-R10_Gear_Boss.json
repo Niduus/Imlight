@@ -1,0 +1,49 @@
+{
+  "Name": "W404 CL-ShadowWeaverBoss-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-ShadowWeaverBoss-Boss-R10: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243221",
+      "ItemName": "Flaming Dagger"
+    },
+    {
+      "ItemId": "243272",
+      "ItemName": "Mystic Blade"
+    },
+    {
+      "ItemId": "243362",
+      "ItemName": "Ice Helm"
+    },
+    {
+      "ItemId": "243417",
+      "ItemName": "Arcane Cowl"
+    },
+    {
+      "ItemId": "243560",
+      "ItemName": "Sublime Band"
+    },
+    {
+      "ItemId": "243580",
+      "ItemName": "Mystic Ring"
+    },
+    {
+      "ItemId": "243602",
+      "ItemName": "Grim Gear"
+    },
+    {
+      "ItemId": "243698",
+      "ItemName": "Gale Force Gear"
+    },
+    {
+      "ItemId": "243792",
+      "ItemName": "Wintertide Walkers"
+    },
+    {
+      "ItemId": "243846",
+      "ItemName": "Jolted Jumpers"
+    }
+  ]
+}

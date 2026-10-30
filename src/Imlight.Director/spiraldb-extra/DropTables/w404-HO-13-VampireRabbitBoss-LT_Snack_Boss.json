@@ -1,0 +1,57 @@
+{
+  "Name": "W404 HO-13-VampireRabbitBoss-LT Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table HO-13-VampireRabbitBoss-LT: the snack drops (12), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220191",
+      "ItemName": "Carrot"
+    },
+    {
+      "ItemId": "220193",
+      "ItemName": "Blonde Strawberry"
+    },
+    {
+      "ItemId": "220197",
+      "ItemName": "Green Grapes"
+    },
+    {
+      "ItemId": "220200",
+      "ItemName": "Flaming Carrot"
+    },
+    {
+      "ItemId": "220202",
+      "ItemName": "Wild Strawberry"
+    },
+    {
+      "ItemId": "220208",
+      "ItemName": "Cheese Broccoli"
+    },
+    {
+      "ItemId": "220210",
+      "ItemName": "Flaming Jalapeno"
+    },
+    {
+      "ItemId": "220222",
+      "ItemName": "Squash"
+    },
+    {
+      "ItemId": "220240",
+      "ItemName": "Green Banana"
+    },
+    {
+      "ItemId": "220253",
+      "ItemName": "Harvest Corn"
+    },
+    {
+      "ItemId": "220274",
+      "ItemName": "Star Fruit"
+    },
+    {
+      "ItemId": "225465",
+      "ItemName": "Evil Carrot"
+    }
+  ]
+}

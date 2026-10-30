@@ -1,0 +1,13 @@
+{
+  "Name": "W404 AQ-Immortal-Ares Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AQ-Immortal-Ares: the gear drops (1), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203038",
+      "ItemName": "Sky Iron Hasta"
+    }
+  ]
+}

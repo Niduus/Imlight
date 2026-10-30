@@ -1,0 +1,21 @@
+{
+  "Name": "W404 MS-Pig-Plague-Sumo-MSBoss-L43 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-Plague-Sumo-MSBoss-L43: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160484",
+      "ItemName": "Tatami Mat Arrangement"
+    },
+    {
+      "ItemId": "160594",
+      "ItemName": "Hexagonal Stone Plaque"
+    },
+    {
+      "ItemId": "470191",
+      "ItemName": "Torn Red Banner"
+    }
+  ]
+}

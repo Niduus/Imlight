@@ -1,0 +1,77 @@
+{
+  "Name": "W404 MS-Pig-Death-Warrior-MSBoss-L48 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-Death-Warrior-MSBoss-L48: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97480",
+      "ItemName": "Nomoonaga's Kris of Hope"
+    },
+    {
+      "ItemId": "97486",
+      "ItemName": "Deck of the Lotus"
+    },
+    {
+      "ItemId": "97513",
+      "ItemName": "Nomoonaga's Deck"
+    },
+    {
+      "ItemId": "97579",
+      "ItemName": "Nomoonaga's Diligent Cap"
+    },
+    {
+      "ItemId": "97680",
+      "ItemName": "Helm of Sandcastles"
+    },
+    {
+      "ItemId": "97701",
+      "ItemName": "Nomoonaga's Analytical Ring"
+    },
+    {
+      "ItemId": "97726",
+      "ItemName": "Nomoonaga's Band"
+    },
+    {
+      "ItemId": "97743",
+      "ItemName": "Speculative Tunic"
+    },
+    {
+      "ItemId": "97744",
+      "ItemName": "Robe of Cognition"
+    },
+    {
+      "ItemId": "97805",
+      "ItemName": "Profound Robes"
+    },
+    {
+      "ItemId": "97826",
+      "ItemName": "Garment of Dilemma"
+    },
+    {
+      "ItemId": "97854",
+      "ItemName": "Robes of the Triad"
+    },
+    {
+      "ItemId": "97863",
+      "ItemName": "Nomoonaga's Lively Garment"
+    },
+    {
+      "ItemId": "97873",
+      "ItemName": "Vexing Tunic"
+    },
+    {
+      "ItemId": "97898",
+      "ItemName": "Tunic of Soul-Searching"
+    },
+    {
+      "ItemId": "97970",
+      "ItemName": "Shoes of the Whim"
+    },
+    {
+      "ItemId": "98020",
+      "ItemName": "Slippers of Yodels"
+    }
+  ]
+}

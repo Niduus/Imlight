@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Grendel-Medium-3-GHBoss-R7 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Grendel-Medium-3-GHBoss-R7: the snack drops (6), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220204",
+      "ItemName": "Crunch Apple"
+    },
+    {
+      "ItemId": "220206",
+      "ItemName": "Ape Grapes"
+    },
+    {
+      "ItemId": "220296",
+      "ItemName": "Fire Cracker"
+    },
+    {
+      "ItemId": "220316",
+      "ItemName": "Moon Pie"
+    },
+    {
+      "ItemId": "220322",
+      "ItemName": "Swirled Lollipop"
+    },
+    {
+      "ItemId": "220324",
+      "ItemName": "Glowing Rock Candy"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "Name": "W404 CL-DeepOne-Red-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-DeepOne-Red-Boss-R10: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243211",
+      "ItemName": "Claw of the Law"
+    },
+    {
+      "ItemId": "243268",
+      "ItemName": "Seraph's Shortblade"
+    },
+    {
+      "ItemId": "243325",
+      "ItemName": "Wicked Mantle"
+    },
+    {
+      "ItemId": "243443",
+      "ItemName": "Pandemonium Helm"
+    },
+    {
+      "ItemId": "243466",
+      "ItemName": "Outfit of Accord"
+    },
+    {
+      "ItemId": "243522",
+      "ItemName": "Ring of Wrath"
+    },
+    {
+      "ItemId": "243569",
+      "ItemName": "Marcio's Snowfall Band"
+    },
+    {
+      "ItemId": "243668",
+      "ItemName": "Cloak of Creation"
+    },
+    {
+      "ItemId": "243727",
+      "ItemName": "Law Walkers"
+    },
+    {
+      "ItemId": "243816",
+      "ItemName": "Euphoric Footgear"
+    },
+    {
+      "ItemId": "243887",
+      "ItemName": "Vial of Rebirth"
+    },
+    {
+      "ItemId": "243892",
+      "ItemName": "Orthrus' Choker"
+    },
+    {
+      "ItemId": "243934",
+      "ItemName": "Cursed Staff"
+    },
+    {
+      "ItemId": "243945",
+      "ItemName": "Rod of Rapture"
+    },
+    {
+      "ItemId": "243948",
+      "ItemName": "Staff of Legends"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "Name": "W404 Mob-126730 Gear (Boss)",
+  "Description": "Wizard404's drop list of Vesta Shadowmark's own drops: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1548918",
+      "ItemName": "Shadowmark's Charm of Making"
+    },
+    {
+      "ItemId": "1548919",
+      "ItemName": "Kraysys' Astral Carcanet"
+    },
+    {
+      "ItemId": "1548920",
+      "ItemName": "Snowcrusher's Flame Pendant"
+    },
+    {
+      "ItemId": "1548921",
+      "ItemName": "Spiderkeeper's Frostcharm"
+    },
+    {
+      "ItemId": "1548922",
+      "ItemName": "Crystalline Queen's Pendant"
+    },
+    {
+      "ItemId": "1548923",
+      "ItemName": "Chronius' Continuum Circlet"
+    },
+    {
+      "ItemId": "1548924",
+      "ItemName": "Markmaker's Lightning Locket"
+    },
+    {
+      "ItemId": "1592358",
+      "ItemName": "Shadowmark's Amulet of Making"
+    },
+    {
+      "ItemId": "1592359",
+      "ItemName": "Kraysys' Astral Amulet"
+    },
+    {
+      "ItemId": "1592360",
+      "ItemName": "Snowcrusher's Flame Amulet"
+    },
+    {
+      "ItemId": "1592361",
+      "ItemName": "Spiderkeeper's Frost Amulet"
+    },
+    {
+      "ItemId": "1592362",
+      "ItemName": "Crystalline Queen's Amulet"
+    },
+    {
+      "ItemId": "1592363",
+      "ItemName": "Chronius' Continuum Amulet"
+    },
+    {
+      "ItemId": "1592364",
+      "ItemName": "Markmaker's Lightning Amulet"
+    }
+  ]
+}

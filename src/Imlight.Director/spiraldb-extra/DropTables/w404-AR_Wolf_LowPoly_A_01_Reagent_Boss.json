@@ -1,0 +1,21 @@
+{
+  "Name": "W404 AR_Wolf_LowPoly_A_01 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table AR_Wolf_LowPoly_A_01: the reagent drops (3), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1206362",
+      "ItemName": "Astral Shard"
+    },
+    {
+      "ItemId": "1350237",
+      "ItemName": "Orichalcum"
+    },
+    {
+      "ItemId": "1350241",
+      "ItemName": "Platinum"
+    }
+  ]
+}

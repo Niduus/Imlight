@@ -1,0 +1,65 @@
+{
+  "Name": "W404 KR-Boss-TC-02 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-Boss-TC-02: the treasurecard drops (14), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Wildfire Treant TC KR",
+      "ItemName": "Wildfire Treant"
+    },
+    {
+      "ItemId": "Shatter TC KR",
+      "ItemName": "Shatter"
+    },
+    {
+      "ItemId": "Luminous Weaver TC KR",
+      "ItemName": "Luminous Weaver"
+    },
+    {
+      "ItemId": "Cripple TC KR",
+      "ItemName": "Enfeeble"
+    },
+    {
+      "ItemId": "Spider Clockwork TC KR",
+      "ItemName": "Clockwork Spider"
+    },
+    {
+      "ItemId": "Patches OLeary TC",
+      "ItemName": "Patches O'Leary"
+    },
+    {
+      "ItemId": "Hooligan TC",
+      "ItemName": "Hooligan"
+    },
+    {
+      "ItemId": "Locust Swarm TC KR",
+      "ItemName": "Locust Swarm"
+    },
+    {
+      "ItemId": "Doom and Gloom TC KR",
+      "ItemName": "Doom and Gloom"
+    },
+    {
+      "ItemId": "Polar Swarm TC KR",
+      "ItemName": "Polar Swarm"
+    },
+    {
+      "ItemId": "Sprite Swarm TC KR",
+      "ItemName": "Sprite Swarm"
+    },
+    {
+      "ItemId": "Treant Myth TC KR",
+      "ItemName": "Legendary Treant"
+    },
+    {
+      "ItemId": "O'Leary Charlatan TC KR",
+      "ItemName": "O'Leary Charlatan"
+    },
+    {
+      "ItemId": "OLeary Swindler TC",
+      "ItemName": "O'Leary Swindler"
+    }
+  ]
+}

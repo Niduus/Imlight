@@ -1,0 +1,25 @@
+{
+  "Name": "W404 GH-Wolf-Warrior-5-GHBoss-R5 Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Wolf-Warrior-5-GHBoss-R5: the seed drops (4), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots"
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears"
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon"
+    },
+    {
+      "ItemId": "356127",
+      "ItemName": "Bread Fruit Bush"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "Name": "W404 SKB_MS_Samoorai_A Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_MS_Samoorai_A: the pet drops (7), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "100330",
+      "ItemName": "Ninja Pig"
+    },
+    {
+      "ItemId": "458071",
+      "ItemName": "Samoorai"
+    },
+    {
+      "ItemId": "589079",
+      "ItemName": "Onyx Shenlong Dragon"
+    },
+    {
+      "ItemId": "589080",
+      "ItemName": "Jade Shenlong Dragon"
+    },
+    {
+      "ItemId": "589081",
+      "ItemName": "Ruby Shenlong Dragon"
+    },
+    {
+      "ItemId": "589082",
+      "ItemName": "Ivory Shenlong Dragon"
+    },
+    {
+      "ItemId": "589083",
+      "ItemName": "Amber Shenlong Dragon"
+    }
+  ]
+}

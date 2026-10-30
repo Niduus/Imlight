@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Mob-1530875 Gear (Boss)",
+  "Description": "Wizard404's drop list of White Tiger's own drops: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1537028",
+      "ItemName": "Magician's Fire Boots"
+    },
+    {
+      "ItemId": "1537029",
+      "ItemName": "Magician's Ice Boots"
+    },
+    {
+      "ItemId": "1537030",
+      "ItemName": "Magician's Storm Boots"
+    },
+    {
+      "ItemId": "1537031",
+      "ItemName": "Magician's Myth Boots"
+    },
+    {
+      "ItemId": "1537032",
+      "ItemName": "Magician's Life Boots"
+    },
+    {
+      "ItemId": "1537033",
+      "ItemName": "Magician's Death Boots"
+    },
+    {
+      "ItemId": "1537034",
+      "ItemName": "Magician's Balance Boots"
+    },
+    {
+      "ItemId": "1537035",
+      "ItemName": "Magician's Power Boots"
+    },
+    {
+      "ItemId": "1537052",
+      "ItemName": "Malevolent Fire Boots"
+    },
+    {
+      "ItemId": "1537053",
+      "ItemName": "Malevolent Ice Boots"
+    },
+    {
+      "ItemId": "1537054",
+      "ItemName": "Malevolent Storm Boots"
+    },
+    {
+      "ItemId": "1537055",
+      "ItemName": "Malevolent Myth Boots"
+    },
+    {
+      "ItemId": "1537056",
+      "ItemName": "Malevolent Life Boots"
+    },
+    {
+      "ItemId": "1537057",
+      "ItemName": "Malevolent Death Boots"
+    },
+    {
+      "ItemId": "1537058",
+      "ItemName": "Malevolent Balance Boots"
+    },
+    {
+      "ItemId": "1537059",
+      "ItemName": "Malevolent Power Boots"
+    }
+  ]
+}

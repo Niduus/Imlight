@@ -1,0 +1,29 @@
+{
+  "Name": "W404 MB-Golem-Brass-MBBoss-L48 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Golem-Brass-MBBoss-L48: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160662",
+      "ItemName": "Jerrycan"
+    },
+    {
+      "ItemId": "160676",
+      "ItemName": "Park Bench"
+    },
+    {
+      "ItemId": "160759",
+      "ItemName": "Double Wall Lamp"
+    },
+    {
+      "ItemId": "160765",
+      "ItemName": "Marleybonian Pilot Painting"
+    },
+    {
+      "ItemId": "512126",
+      "ItemName": "Marleybone Theme 3"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "Name": "W404 G14-BP-Boss-ChiefWhip TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-BP-Boss-ChiefWhip: the treasurecard drops (17), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Tower Shield TC",
+      "ItemName": "Tower Shield"
+    },
+    {
+      "ItemId": "Ice Armor TC",
+      "ItemName": "Ice Armor"
+    },
+    {
+      "ItemId": "Spirit Armor TC",
+      "ItemName": "Spirit Armor"
+    },
+    {
+      "ItemId": "Spectral Blast TC",
+      "ItemName": "Spectral Blast"
+    },
+    {
+      "ItemId": "Donate Power TC",
+      "ItemName": "Donate Power"
+    },
+    {
+      "ItemId": "Feint TC",
+      "ItemName": "Feint"
+    },
+    {
+      "ItemId": "Curse TC",
+      "ItemName": "Curse"
+    },
+    {
+      "ItemId": "Empower TC",
+      "ItemName": "Empower"
+    },
+    {
+      "ItemId": "Seraph TC",
+      "ItemName": "Seraph"
+    },
+    {
+      "ItemId": "Satyr TC",
+      "ItemName": "Satyr"
+    },
+    {
+      "ItemId": "Blizzard TC",
+      "ItemName": "Blizzard"
+    },
+    {
+      "ItemId": "Cat Thug TC",
+      "ItemName": "Cat Thug"
+    },
+    {
+      "ItemId": "Clockwork TC",
+      "ItemName": "Clockwork"
+    },
+    {
+      "ItemId": "Deadly Scratcher TC",
+      "ItemName": "Deadly Scratcher"
+    },
+    {
+      "ItemId": "Firegut TC",
+      "ItemName": "Iron Golem"
+    },
+    {
+      "ItemId": "Spider Clockwork TC",
+      "ItemName": "Clockwork Spider"
+    },
+    {
+      "ItemId": "Street Sweeper TC",
+      "ItemName": "Street Sweeper"
+    }
+  ]
+}

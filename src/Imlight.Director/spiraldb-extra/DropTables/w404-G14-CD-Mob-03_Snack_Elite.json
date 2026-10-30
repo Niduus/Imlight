@@ -1,0 +1,49 @@
+{
+  "Name": "W404 G14-CD-Mob-03 Snack (Elite)",
+  "Description": "Wizard404's drop list of the game's table G14-CD-Mob-03: the snack drops (10), one picked when it rolls. How often: DropOdds.json Elite/Snack.",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1257584",
+      "ItemName": "Evil Magma Soup"
+    },
+    {
+      "ItemId": "1257585",
+      "ItemName": "Stuffed Bell Pepper"
+    },
+    {
+      "ItemId": "1257586",
+      "ItemName": "King Parsley Soup"
+    },
+    {
+      "ItemId": "1257587",
+      "ItemName": "Bell Pepper Steak"
+    },
+    {
+      "ItemId": "1257588",
+      "ItemName": "Discord Grape Jelly"
+    },
+    {
+      "ItemId": "1257589",
+      "ItemName": "Ninja Fig Bars"
+    },
+    {
+      "ItemId": "1257590",
+      "ItemName": "Prickly Bear Punch"
+    },
+    {
+      "ItemId": "1257591",
+      "ItemName": "Desparagus Quiche"
+    },
+    {
+      "ItemId": "1257604",
+      "ItemName": "Alligator Pear"
+    },
+    {
+      "ItemId": "1257605",
+      "ItemName": "Dead Beet Risotto"
+    }
+  ]
+}

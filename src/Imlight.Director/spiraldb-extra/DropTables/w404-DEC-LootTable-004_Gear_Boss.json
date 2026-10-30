@@ -1,0 +1,37 @@
+{
+  "Name": "W404 DEC-LootTable-004 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table DEC-LootTable-004: the gear drops (7), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126806",
+      "ItemName": "Santa Hat"
+    },
+    {
+      "ItemId": "126807",
+      "ItemName": "Santa Robe"
+    },
+    {
+      "ItemId": "126808",
+      "ItemName": "Santa Boots"
+    },
+    {
+      "ItemId": "1248180",
+      "ItemName": "Holiday Treat Wand"
+    },
+    {
+      "ItemId": "1248181",
+      "ItemName": "Sugar Cane Wand"
+    },
+    {
+      "ItemId": "1248196",
+      "ItemName": "Holiday Hook Wand"
+    },
+    {
+      "ItemId": "1248197",
+      "ItemName": "Stave of the Holiday Flame"
+    }
+  ]
+}

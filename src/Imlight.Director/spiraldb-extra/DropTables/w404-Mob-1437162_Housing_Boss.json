@@ -1,0 +1,33 @@
+{
+  "Name": "W404 Mob-1437162 Housing (Boss)",
+  "Description": "Wizard404's drop list of Titan's Trident's own drops: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1439014",
+      "ItemName": "Empyrea Dance Hall Theme"
+    },
+    {
+      "ItemId": "1439017",
+      "ItemName": "Empyrea Brain Theme 1"
+    },
+    {
+      "ItemId": "1439018",
+      "ItemName": "Empyrea Brain Theme 2"
+    },
+    {
+      "ItemId": "1439019",
+      "ItemName": "Empyrea Brain Theme 3"
+    },
+    {
+      "ItemId": "1439020",
+      "ItemName": "Empyrea Medulla Theme"
+    },
+    {
+      "ItemId": "1439021",
+      "ItemName": "Empyrea Sewer Theme"
+    }
+  ]
+}

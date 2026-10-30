@@ -1,0 +1,45 @@
+{
+  "Name": "W404 TC-RaresBosses1-Gauntlet TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-RaresBosses1-Gauntlet: the treasurecard drops (9), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Balefrost TC",
+      "ItemName": "Balefrost"
+    },
+    {
+      "ItemId": "Darkwind TC",
+      "ItemName": "Darkwind"
+    },
+    {
+      "ItemId": "Donate Power TC",
+      "ItemName": "Donate Power"
+    },
+    {
+      "ItemId": "Doom and Gloom TC",
+      "ItemName": "Doom and Gloom"
+    },
+    {
+      "ItemId": "Minotaur TC",
+      "ItemName": "Minotaur"
+    },
+    {
+      "ItemId": "Sanctuary TC",
+      "ItemName": "Sanctuary"
+    },
+    {
+      "ItemId": "Wyldfire TC",
+      "ItemName": "Wyldfire"
+    },
+    {
+      "ItemId": "Mutate - Evil Snowman to Fire TC",
+      "ItemName": "Mutate Snowman"
+    },
+    {
+      "ItemId": "Mutate - Evil Snowman to Storm TC",
+      "ItemName": "Mutate Snowman"
+    }
+  ]
+}

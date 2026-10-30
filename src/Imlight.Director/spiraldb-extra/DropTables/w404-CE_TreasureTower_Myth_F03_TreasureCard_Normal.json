@@ -1,0 +1,117 @@
+{
+  "Name": "W404 CE_TreasureTower_Myth_F03 TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table CE_TreasureTower_Myth_F03: the treasurecard drops (27), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Lightning Bats TC",
+      "ItemName": "Lightning Bats"
+    },
+    {
+      "ItemId": "Thunder Snake TC",
+      "ItemName": "Thunder Snake"
+    },
+    {
+      "ItemId": "Minor Blessing TC",
+      "ItemName": "Minor Blessing"
+    },
+    {
+      "ItemId": "Sprite TC",
+      "ItemName": "Sprite"
+    },
+    {
+      "ItemId": "Stormblade TC",
+      "ItemName": "Stormblade"
+    },
+    {
+      "ItemId": "Myth Shield TC",
+      "ItemName": "Myth Shield"
+    },
+    {
+      "ItemId": "Soulsapper TC",
+      "ItemName": "Soulsapper"
+    },
+    {
+      "ItemId": "Kraken TC",
+      "ItemName": "Kraken"
+    },
+    {
+      "ItemId": "Jolted Snowman TC",
+      "ItemName": "Jolted Snowman"
+    },
+    {
+      "ItemId": "Pixie Life TC",
+      "ItemName": "Fairy"
+    },
+    {
+      "ItemId": "Satyr TC",
+      "ItemName": "Satyr"
+    },
+    {
+      "ItemId": "Legend Shield TC",
+      "ItemName": "Legend Shield"
+    },
+    {
+      "ItemId": "Storm Trap TC",
+      "ItemName": "Storm Trap"
+    },
+    {
+      "ItemId": "Tower Shield TC",
+      "ItemName": "Tower Shield"
+    },
+    {
+      "ItemId": "3P Mashup_Storm_KrakenShark TC",
+      "ItemName": "Catch of the Day"
+    },
+    {
+      "ItemId": "Catalan TC",
+      "ItemName": "Catalan"
+    },
+    {
+      "ItemId": "Queen Calypso - TC",
+      "ItemName": "Queen Calypso"
+    },
+    {
+      "ItemId": "Tempest TC",
+      "ItemName": "Tempest"
+    },
+    {
+      "ItemId": "Regenerate TC",
+      "ItemName": "Regenerate"
+    },
+    {
+      "ItemId": "Defibrillate TC",
+      "ItemName": "Healing Current"
+    },
+    {
+      "ItemId": "Helping Hands TC",
+      "ItemName": "Helping Hands"
+    },
+    {
+      "ItemId": "Dryad TC",
+      "ItemName": "Dryad"
+    },
+    {
+      "ItemId": "Feint TC",
+      "ItemName": "Feint"
+    },
+    {
+      "ItemId": "Fortify TC",
+      "ItemName": "Fortify"
+    },
+    {
+      "ItemId": "Amplify TC",
+      "ItemName": "Amplify"
+    },
+    {
+      "ItemId": "Infallible TC",
+      "ItemName": "Infallible"
+    },
+    {
+      "ItemId": "Lightning Elf TC",
+      "ItemName": "Lightning Elf"
+    }
+  ]
+}

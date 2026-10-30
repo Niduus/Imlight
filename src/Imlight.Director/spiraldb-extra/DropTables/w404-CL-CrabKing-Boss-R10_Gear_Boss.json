@@ -1,0 +1,49 @@
+{
+  "Name": "W404 CL-CrabKing-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-CrabKing-Boss-R10: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243252",
+      "ItemName": "Celestian Sliver of Power"
+    },
+    {
+      "ItemId": "243278",
+      "ItemName": "Kris of the Kraken"
+    },
+    {
+      "ItemId": "243335",
+      "ItemName": "Fuming Hat"
+    },
+    {
+      "ItemId": "243363",
+      "ItemName": "Nereus's Hoarfrost Helm"
+    },
+    {
+      "ItemId": "243556",
+      "ItemName": "Sunken Celestian Circle"
+    },
+    {
+      "ItemId": "243588",
+      "ItemName": "Surging Sea Ring"
+    },
+    {
+      "ItemId": "243618",
+      "ItemName": "Brimstone Tunic"
+    },
+    {
+      "ItemId": "243619",
+      "ItemName": "Reckless Raiment"
+    },
+    {
+      "ItemId": "243717",
+      "ItemName": "Tolerant Boots"
+    },
+    {
+      "ItemId": "243738",
+      "ItemName": "Boots of Catastrophe"
+    }
+  ]
+}

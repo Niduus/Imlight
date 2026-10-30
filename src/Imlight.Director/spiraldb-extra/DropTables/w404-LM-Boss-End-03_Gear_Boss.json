@@ -1,0 +1,681 @@
+{
+  "Name": "W404 LM-Boss-End-03 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table LM-Boss-End-03: the gear drops (168), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1537348",
+      "ItemName": "Magician's Balance Athame"
+    },
+    {
+      "ItemId": "1537034",
+      "ItemName": "Magician's Balance Boots"
+    },
+    {
+      "ItemId": "1537018",
+      "ItemName": "Magician's Balance Cap"
+    },
+    {
+      "ItemId": "1537026",
+      "ItemName": "Magician's Balance Cloak"
+    },
+    {
+      "ItemId": "1537640",
+      "ItemName": "Magician's Balance Deck"
+    },
+    {
+      "ItemId": "1537364",
+      "ItemName": "Magician's Balance Ring"
+    },
+    {
+      "ItemId": "1537356",
+      "ItemName": "Magician's Balance Talisman"
+    },
+    {
+      "ItemId": "1537527",
+      "ItemName": "Magician's Balance Wand"
+    },
+    {
+      "ItemId": "1537347",
+      "ItemName": "Magician's Death Athame"
+    },
+    {
+      "ItemId": "1537033",
+      "ItemName": "Magician's Death Boots"
+    },
+    {
+      "ItemId": "1537017",
+      "ItemName": "Magician's Death Cap"
+    },
+    {
+      "ItemId": "1537025",
+      "ItemName": "Magician's Death Cloak"
+    },
+    {
+      "ItemId": "1537639",
+      "ItemName": "Magician's Death Deck"
+    },
+    {
+      "ItemId": "1537363",
+      "ItemName": "Magician's Death Ring"
+    },
+    {
+      "ItemId": "1537355",
+      "ItemName": "Magician's Death Talisman"
+    },
+    {
+      "ItemId": "1537526",
+      "ItemName": "Magician's Death Wand"
+    },
+    {
+      "ItemId": "1537342",
+      "ItemName": "Magician's Fire Athame"
+    },
+    {
+      "ItemId": "1537028",
+      "ItemName": "Magician's Fire Boots"
+    },
+    {
+      "ItemId": "1537012",
+      "ItemName": "Magician's Fire Cap"
+    },
+    {
+      "ItemId": "1537020",
+      "ItemName": "Magician's Fire Cloak"
+    },
+    {
+      "ItemId": "1537634",
+      "ItemName": "Magician's Fire Deck"
+    },
+    {
+      "ItemId": "1537358",
+      "ItemName": "Magician's Fire Ring"
+    },
+    {
+      "ItemId": "1537350",
+      "ItemName": "Magician's Fire Talisman"
+    },
+    {
+      "ItemId": "1537521",
+      "ItemName": "Magician's Fire Wand"
+    },
+    {
+      "ItemId": "1537351",
+      "ItemName": "Magician's Ice Talisman"
+    },
+    {
+      "ItemId": "1537343",
+      "ItemName": "Magician's Ice Athame"
+    },
+    {
+      "ItemId": "1537029",
+      "ItemName": "Magician's Ice Boots"
+    },
+    {
+      "ItemId": "1537013",
+      "ItemName": "Magician's Ice Cap"
+    },
+    {
+      "ItemId": "1537021",
+      "ItemName": "Magician's Ice Cloak"
+    },
+    {
+      "ItemId": "1537635",
+      "ItemName": "Magician's Ice Deck"
+    },
+    {
+      "ItemId": "1537359",
+      "ItemName": "Magician's Ice Ring"
+    },
+    {
+      "ItemId": "1537522",
+      "ItemName": "Magician's Ice Wand"
+    },
+    {
+      "ItemId": "1537346",
+      "ItemName": "Magician's Life Athame"
+    },
+    {
+      "ItemId": "1537032",
+      "ItemName": "Magician's Life Boots"
+    },
+    {
+      "ItemId": "1537016",
+      "ItemName": "Magician's Life Cap"
+    },
+    {
+      "ItemId": "1537024",
+      "ItemName": "Magician's Life Cloak"
+    },
+    {
+      "ItemId": "1537638",
+      "ItemName": "Magician's Life Deck"
+    },
+    {
+      "ItemId": "1537362",
+      "ItemName": "Magician's Life Ring"
+    },
+    {
+      "ItemId": "1537354",
+      "ItemName": "Magician's Life Talisman"
+    },
+    {
+      "ItemId": "1537525",
+      "ItemName": "Magician's Life Wand"
+    },
+    {
+      "ItemId": "1537345",
+      "ItemName": "Magician's Myth Athame"
+    },
+    {
+      "ItemId": "1537031",
+      "ItemName": "Magician's Myth Boots"
+    },
+    {
+      "ItemId": "1537015",
+      "ItemName": "Magician's Myth Cap"
+    },
+    {
+      "ItemId": "1537023",
+      "ItemName": "Magician's Myth Cloak"
+    },
+    {
+      "ItemId": "1537637",
+      "ItemName": "Magician's Myth Deck"
+    },
+    {
+      "ItemId": "1537361",
+      "ItemName": "Magician's Myth Ring"
+    },
+    {
+      "ItemId": "1537353",
+      "ItemName": "Magician's Myth Talisman"
+    },
+    {
+      "ItemId": "1537524",
+      "ItemName": "Magician's Myth Wand"
+    },
+    {
+      "ItemId": "1537636",
+      "ItemName": "Magician's Storm Deck"
+    },
+    {
+      "ItemId": "1537344",
+      "ItemName": "Magician's Storm Athame"
+    },
+    {
+      "ItemId": "1537030",
+      "ItemName": "Magician's Storm Boots"
+    },
+    {
+      "ItemId": "1537014",
+      "ItemName": "Magician's Storm Cap"
+    },
+    {
+      "ItemId": "1537022",
+      "ItemName": "Magician's Storm Cloak"
+    },
+    {
+      "ItemId": "1537360",
+      "ItemName": "Magician's Storm Ring"
+    },
+    {
+      "ItemId": "1537352",
+      "ItemName": "Magician's Storm Talisman"
+    },
+    {
+      "ItemId": "1537523",
+      "ItemName": "Magician's Storm Wand"
+    },
+    {
+      "ItemId": "1537371",
+      "ItemName": "Malevolent Death Athame"
+    },
+    {
+      "ItemId": "1537057",
+      "ItemName": "Malevolent Death Boots"
+    },
+    {
+      "ItemId": "1537041",
+      "ItemName": "Malevolent Death Cap"
+    },
+    {
+      "ItemId": "1537049",
+      "ItemName": "Malevolent Death Cloak"
+    },
+    {
+      "ItemId": "1537647",
+      "ItemName": "Malevolent Death Deck"
+    },
+    {
+      "ItemId": "1537387",
+      "ItemName": "Malevolent Death Ring"
+    },
+    {
+      "ItemId": "1537379",
+      "ItemName": "Malevolent Death Talisman"
+    },
+    {
+      "ItemId": "1537535",
+      "ItemName": "Malevolent Death Wand"
+    },
+    {
+      "ItemId": "1537372",
+      "ItemName": "Malevolent Balance Athame"
+    },
+    {
+      "ItemId": "1537058",
+      "ItemName": "Malevolent Balance Boots"
+    },
+    {
+      "ItemId": "1537042",
+      "ItemName": "Malevolent Balance Cap"
+    },
+    {
+      "ItemId": "1537050",
+      "ItemName": "Malevolent Balance Cloak"
+    },
+    {
+      "ItemId": "1537648",
+      "ItemName": "Malevolent Balance Deck"
+    },
+    {
+      "ItemId": "1537388",
+      "ItemName": "Malevolent Balance Ring"
+    },
+    {
+      "ItemId": "1537380",
+      "ItemName": "Malevolent Balance Talisman"
+    },
+    {
+      "ItemId": "1537536",
+      "ItemName": "Malevolent Balance Wand"
+    },
+    {
+      "ItemId": "1537368",
+      "ItemName": "Malevolent Storm Athame"
+    },
+    {
+      "ItemId": "1537054",
+      "ItemName": "Malevolent Storm Boots"
+    },
+    {
+      "ItemId": "1537038",
+      "ItemName": "Malevolent Storm Cap"
+    },
+    {
+      "ItemId": "1537046",
+      "ItemName": "Malevolent Storm Cloak"
+    },
+    {
+      "ItemId": "1537644",
+      "ItemName": "Malevolent Storm Deck"
+    },
+    {
+      "ItemId": "1537384",
+      "ItemName": "Malevolent Storm Ring"
+    },
+    {
+      "ItemId": "1537376",
+      "ItemName": "Malevolent Storm Talisman"
+    },
+    {
+      "ItemId": "1537532",
+      "ItemName": "Malevolent Storm Wand"
+    },
+    {
+      "ItemId": "1537366",
+      "ItemName": "Malevolent Fire Athame"
+    },
+    {
+      "ItemId": "1537052",
+      "ItemName": "Malevolent Fire Boots"
+    },
+    {
+      "ItemId": "1537036",
+      "ItemName": "Malevolent Fire Cap"
+    },
+    {
+      "ItemId": "1537044",
+      "ItemName": "Malevolent Fire Cloak"
+    },
+    {
+      "ItemId": "1537642",
+      "ItemName": "Malevolent Fire Deck"
+    },
+    {
+      "ItemId": "1537382",
+      "ItemName": "Malevolent Fire Ring"
+    },
+    {
+      "ItemId": "1537374",
+      "ItemName": "Malevolent Fire Talisman"
+    },
+    {
+      "ItemId": "1537530",
+      "ItemName": "Malevolent Fire Wand"
+    },
+    {
+      "ItemId": "1537367",
+      "ItemName": "Malevolent Ice Athame"
+    },
+    {
+      "ItemId": "1537375",
+      "ItemName": "Malevolent Ice Talisman"
+    },
+    {
+      "ItemId": "1537053",
+      "ItemName": "Malevolent Ice Boots"
+    },
+    {
+      "ItemId": "1537037",
+      "ItemName": "Malevolent Ice Cap"
+    },
+    {
+      "ItemId": "1537045",
+      "ItemName": "Malevolent Ice Cloak"
+    },
+    {
+      "ItemId": "1537643",
+      "ItemName": "Malevolent Ice Deck"
+    },
+    {
+      "ItemId": "1537383",
+      "ItemName": "Malevolent Ice Ring"
+    },
+    {
+      "ItemId": "1537531",
+      "ItemName": "Malevolent Ice Wand"
+    },
+    {
+      "ItemId": "1537369",
+      "ItemName": "Malevolent Myth Athame"
+    },
+    {
+      "ItemId": "1537055",
+      "ItemName": "Malevolent Myth Boots"
+    },
+    {
+      "ItemId": "1537039",
+      "ItemName": "Malevolent Myth Cap"
+    },
+    {
+      "ItemId": "1537047",
+      "ItemName": "Malevolent Myth Cloak"
+    },
+    {
+      "ItemId": "1537645",
+      "ItemName": "Malevolent Myth Deck"
+    },
+    {
+      "ItemId": "1537385",
+      "ItemName": "Malevolent Myth Ring"
+    },
+    {
+      "ItemId": "1537377",
+      "ItemName": "Malevolent Myth Talisman"
+    },
+    {
+      "ItemId": "1537533",
+      "ItemName": "Malevolent Myth Wand"
+    },
+    {
+      "ItemId": "1537370",
+      "ItemName": "Malevolent Life Athame"
+    },
+    {
+      "ItemId": "1537056",
+      "ItemName": "Malevolent Life Boots"
+    },
+    {
+      "ItemId": "1537040",
+      "ItemName": "Malevolent Life Cap"
+    },
+    {
+      "ItemId": "1537048",
+      "ItemName": "Malevolent Life Cloak"
+    },
+    {
+      "ItemId": "1537646",
+      "ItemName": "Malevolent Life Deck"
+    },
+    {
+      "ItemId": "1537386",
+      "ItemName": "Malevolent Life Ring"
+    },
+    {
+      "ItemId": "1537378",
+      "ItemName": "Malevolent Life Talisman"
+    },
+    {
+      "ItemId": "1537534",
+      "ItemName": "Malevolent Life Wand"
+    },
+    {
+      "ItemId": "1537396",
+      "ItemName": "Merciless Balance Athame"
+    },
+    {
+      "ItemId": "1537082",
+      "ItemName": "Merciless Balance Boots"
+    },
+    {
+      "ItemId": "1537066",
+      "ItemName": "Merciless Balance Cap"
+    },
+    {
+      "ItemId": "1537074",
+      "ItemName": "Merciless Balance Cloak"
+    },
+    {
+      "ItemId": "1537656",
+      "ItemName": "Merciless Balance Deck"
+    },
+    {
+      "ItemId": "1537412",
+      "ItemName": "Merciless Balance Ring"
+    },
+    {
+      "ItemId": "1537404",
+      "ItemName": "Merciless Balance Talisman"
+    },
+    {
+      "ItemId": "1537545",
+      "ItemName": "Merciless Balance Wand"
+    },
+    {
+      "ItemId": "1537652",
+      "ItemName": "Merciless Storm Deck"
+    },
+    {
+      "ItemId": "1537392",
+      "ItemName": "Merciless Storm Athame"
+    },
+    {
+      "ItemId": "1537078",
+      "ItemName": "Merciless Storm Boots"
+    },
+    {
+      "ItemId": "1537062",
+      "ItemName": "Merciless Storm Cap"
+    },
+    {
+      "ItemId": "1537070",
+      "ItemName": "Merciless Storm Cloak"
+    },
+    {
+      "ItemId": "1537408",
+      "ItemName": "Merciless Storm Ring"
+    },
+    {
+      "ItemId": "1537400",
+      "ItemName": "Merciless Storm Talisman"
+    },
+    {
+      "ItemId": "1537541",
+      "ItemName": "Merciless Storm Wand"
+    },
+    {
+      "ItemId": "1537390",
+      "ItemName": "Merciless Fire Athame"
+    },
+    {
+      "ItemId": "1537076",
+      "ItemName": "Merciless Fire Boots"
+    },
+    {
+      "ItemId": "1537060",
+      "ItemName": "Merciless Fire Cap"
+    },
+    {
+      "ItemId": "1537068",
+      "ItemName": "Merciless Fire Cloak"
+    },
+    {
+      "ItemId": "1537650",
+      "ItemName": "Merciless Fire Deck"
+    },
+    {
+      "ItemId": "1537406",
+      "ItemName": "Merciless Fire Ring"
+    },
+    {
+      "ItemId": "1537398",
+      "ItemName": "Merciless Fire Talisman"
+    },
+    {
+      "ItemId": "1537539",
+      "ItemName": "Merciless Fire Wand"
+    },
+    {
+      "ItemId": "1537399",
+      "ItemName": "Merciless Ice Talisman"
+    },
+    {
+      "ItemId": "1537391",
+      "ItemName": "Merciless Ice Athame"
+    },
+    {
+      "ItemId": "1537077",
+      "ItemName": "Merciless Ice Boots"
+    },
+    {
+      "ItemId": "1537061",
+      "ItemName": "Merciless Ice Cap"
+    },
+    {
+      "ItemId": "1537069",
+      "ItemName": "Merciless Ice Cloak"
+    },
+    {
+      "ItemId": "1537651",
+      "ItemName": "Merciless Ice Deck"
+    },
+    {
+      "ItemId": "1537407",
+      "ItemName": "Merciless Ice Ring"
+    },
+    {
+      "ItemId": "1537540",
+      "ItemName": "Merciless Ice Wand"
+    },
+    {
+      "ItemId": "1537394",
+      "ItemName": "Merciless Life Athame"
+    },
+    {
+      "ItemId": "1537080",
+      "ItemName": "Merciless Life Boots"
+    },
+    {
+      "ItemId": "1537064",
+      "ItemName": "Merciless Life Cap"
+    },
+    {
+      "ItemId": "1537072",
+      "ItemName": "Merciless Life Cloak"
+    },
+    {
+      "ItemId": "1537654",
+      "ItemName": "Merciless Life Deck"
+    },
+    {
+      "ItemId": "1537410",
+      "ItemName": "Merciless Life Ring"
+    },
+    {
+      "ItemId": "1537402",
+      "ItemName": "Merciless Life Talisman"
+    },
+    {
+      "ItemId": "1537543",
+      "ItemName": "Merciless Life Wand"
+    },
+    {
+      "ItemId": "1537393",
+      "ItemName": "Merciless Myth Athame"
+    },
+    {
+      "ItemId": "1537079",
+      "ItemName": "Merciless Myth Boots"
+    },
+    {
+      "ItemId": "1537063",
+      "ItemName": "Merciless Myth Cap"
+    },
+    {
+      "ItemId": "1537071",
+      "ItemName": "Merciless Myth Cloak"
+    },
+    {
+      "ItemId": "1537653",
+      "ItemName": "Merciless Myth Deck"
+    },
+    {
+      "ItemId": "1537409",
+      "ItemName": "Merciless Myth Ring"
+    },
+    {
+      "ItemId": "1537401",
+      "ItemName": "Merciless Myth Talisman"
+    },
+    {
+      "ItemId": "1537542",
+      "ItemName": "Merciless Myth Wand"
+    },
+    {
+      "ItemId": "1537403",
+      "ItemName": "Merciless Death Talisman"
+    },
+    {
+      "ItemId": "1537395",
+      "ItemName": "Merciless Death Athame"
+    },
+    {
+      "ItemId": "1537081",
+      "ItemName": "Merciless Death Boots"
+    },
+    {
+      "ItemId": "1537065",
+      "ItemName": "Merciless Death Cap"
+    },
+    {
+      "ItemId": "1537073",
+      "ItemName": "Merciless Death Cloak"
+    },
+    {
+      "ItemId": "1537655",
+      "ItemName": "Merciless Death Deck"
+    },
+    {
+      "ItemId": "1537411",
+      "ItemName": "Merciless Death Ring"
+    },
+    {
+      "ItemId": "1537544",
+      "ItemName": "Merciless Death Wand"
+    }
+  ]
+}

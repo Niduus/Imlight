@@ -1,0 +1,41 @@
+{
+  "Name": "W404 DM_HeadlessHorseman_Base_A_01 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_HeadlessHorseman_Base_A_01: the snack drops (8), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1317096",
+      "ItemName": "Bone Fish 'n Harmony"
+    },
+    {
+      "ItemId": "225465",
+      "ItemName": "Evil Carrot"
+    },
+    {
+      "ItemId": "220215",
+      "ItemName": "Golden Apple"
+    },
+    {
+      "ItemId": "1257606",
+      "ItemName": "Granny Snow Apple"
+    },
+    {
+      "ItemId": "641711",
+      "ItemName": "Locust Kabob"
+    },
+    {
+      "ItemId": "220201",
+      "ItemName": "Orange Jalapeno"
+    },
+    {
+      "ItemId": "641596",
+      "ItemName": "Shepherd's Crook Pie"
+    },
+    {
+      "ItemId": "1317841",
+      "ItemName": "Wolfbane Tea"
+    }
+  ]
+}

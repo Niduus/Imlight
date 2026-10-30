@@ -1,0 +1,29 @@
+{
+  "Name": "W404 MS-Imp-Dark-LXX Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Imp-Dark-LXX: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160509",
+      "ItemName": "Youkai's Bonsai"
+    },
+    {
+      "ItemId": "160517",
+      "ItemName": "Tall Blue Vase"
+    },
+    {
+      "ItemId": "160558",
+      "ItemName": "Pagoda Shrine"
+    },
+    {
+      "ItemId": "470209",
+      "ItemName": "Koi Pond"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    }
+  ]
+}

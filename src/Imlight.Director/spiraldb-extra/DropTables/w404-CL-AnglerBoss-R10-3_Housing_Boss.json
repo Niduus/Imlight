@@ -1,0 +1,17 @@
+{
+  "Name": "W404 CL-AnglerBoss-R10-3 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-AnglerBoss-R10-3: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "342160",
+      "ItemName": "Dog House"
+    },
+    {
+      "ItemId": "1350310",
+      "ItemName": "Expert's Socket Wrench"
+    }
+  ]
+}

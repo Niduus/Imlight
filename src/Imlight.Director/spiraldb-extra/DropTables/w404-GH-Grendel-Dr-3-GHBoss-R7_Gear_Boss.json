@@ -1,0 +1,37 @@
+{
+  "Name": "W404 GH-Grendel-Dr-3-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Grendel-Dr-3-GHBoss-R7: the gear drops (7), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136290",
+      "ItemName": "Mortal Steel"
+    },
+    {
+      "ItemId": "136399",
+      "ItemName": "Cap of the Finale"
+    },
+    {
+      "ItemId": "136400",
+      "ItemName": "Typhoon Crown"
+    },
+    {
+      "ItemId": "136426",
+      "ItemName": "Veil of Protocol"
+    },
+    {
+      "ItemId": "136498",
+      "ItemName": "Hailstone Ring"
+    },
+    {
+      "ItemId": "171206",
+      "ItemName": "Incandescent Footwraps"
+    },
+    {
+      "ItemId": "171207",
+      "ItemName": "Treaders of Tranquility"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "Name": "W404 AQ-MiniBoss-70 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table AQ-MiniBoss-70: the snack drops (4), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220260",
+      "ItemName": "Tasty Biscuit"
+    },
+    {
+      "ItemId": "220266",
+      "ItemName": "Meat Soup"
+    },
+    {
+      "ItemId": "220316",
+      "ItemName": "Moon Pie"
+    },
+    {
+      "ItemId": "220324",
+      "ItemName": "Glowing Rock Candy"
+    }
+  ]
+}

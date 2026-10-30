@@ -1,0 +1,21 @@
+{
+  "Name": "W404 MB-Cat-Burglar-White-MBBoss-L37 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Burglar-White-MBBoss-L37: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82753",
+      "ItemName": "Gas Can"
+    },
+    {
+      "ItemId": "160741",
+      "ItemName": "Thick Roof Vent"
+    },
+    {
+      "ItemId": "160744",
+      "ItemName": "Blue Street Light"
+    }
+  ]
+}

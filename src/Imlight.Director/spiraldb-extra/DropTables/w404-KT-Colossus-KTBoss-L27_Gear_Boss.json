@@ -1,0 +1,129 @@
+{
+  "Name": "W404 KT-Colossus-KTBoss-L27 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-Colossus-KTBoss-L27: the gear drops (30), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4982",
+      "ItemName": "Keymaster's Amethyst Deck"
+    },
+    {
+      "ItemId": "5017",
+      "ItemName": "Loop of Quietude"
+    },
+    {
+      "ItemId": "5018",
+      "ItemName": "Band of Equilibrium"
+    },
+    {
+      "ItemId": "5022",
+      "ItemName": "Loop of the Defender"
+    },
+    {
+      "ItemId": "5028",
+      "ItemName": "Jewel of Obliteration"
+    },
+    {
+      "ItemId": "5030",
+      "ItemName": "Flowering Band"
+    },
+    {
+      "ItemId": "5035",
+      "ItemName": "Band of the Skies"
+    },
+    {
+      "ItemId": "38749",
+      "ItemName": "Vestment of Ignition"
+    },
+    {
+      "ItemId": "39424",
+      "ItemName": "Powerful Boots"
+    },
+    {
+      "ItemId": "39430",
+      "ItemName": "Slippers of the Oasis"
+    },
+    {
+      "ItemId": "39440",
+      "ItemName": "Sandals of Ignition"
+    },
+    {
+      "ItemId": "77694",
+      "ItemName": "Keymaster's Visor"
+    },
+    {
+      "ItemId": "77720",
+      "ItemName": "Sturdy Hood"
+    },
+    {
+      "ItemId": "77722",
+      "ItemName": "Theurge's Hat"
+    },
+    {
+      "ItemId": "77730",
+      "ItemName": "Destructive Cowl"
+    },
+    {
+      "ItemId": "77751",
+      "ItemName": "Cowl of the Fortress"
+    },
+    {
+      "ItemId": "77758",
+      "ItemName": "Runed Boots"
+    },
+    {
+      "ItemId": "77766",
+      "ItemName": "Flowering Shoes"
+    },
+    {
+      "ItemId": "77768",
+      "ItemName": "Hardy Boots"
+    },
+    {
+      "ItemId": "77777",
+      "ItemName": "Sandals of Darkness"
+    },
+    {
+      "ItemId": "77783",
+      "ItemName": "Keymaster's Languid Boots"
+    },
+    {
+      "ItemId": "77785",
+      "ItemName": "Boots of Talent"
+    },
+    {
+      "ItemId": "77787",
+      "ItemName": "Boots of the Bastion"
+    },
+    {
+      "ItemId": "87267",
+      "ItemName": "Powerful Vestment"
+    },
+    {
+      "ItemId": "87279",
+      "ItemName": "Robe of the Mirage"
+    },
+    {
+      "ItemId": "87293",
+      "ItemName": "Theurge's Brown Cloak"
+    },
+    {
+      "ItemId": "87298",
+      "ItemName": "Cloak of Prediction"
+    },
+    {
+      "ItemId": "87306",
+      "ItemName": "Dusty Robe"
+    },
+    {
+      "ItemId": "87319",
+      "ItemName": "Robe of the Bastion"
+    },
+    {
+      "ItemId": "87352",
+      "ItemName": "Sokkwi Keymaster's Wand"
+    }
+  ]
+}

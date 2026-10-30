@@ -1,0 +1,41 @@
+{
+  "Name": "W404 EM2-Mob-Amulet-127 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table EM2-Mob-Amulet-127: the gear drops (8), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462276",
+      "ItemName": "Rad Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462277",
+      "ItemName": "Chill Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462278",
+      "ItemName": "Gnarly Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462279",
+      "ItemName": "Mondo Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462280",
+      "ItemName": "Righteous Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462281",
+      "ItemName": "Heavy Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462282",
+      "ItemName": "Bodacious Kalamar Amulet"
+    },
+    {
+      "ItemId": "1462283",
+      "ItemName": "Choice Kalamar Amulet"
+    }
+  ]
+}

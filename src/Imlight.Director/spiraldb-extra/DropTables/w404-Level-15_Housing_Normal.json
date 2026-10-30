@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Level-15 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table Level-15: the housing drops (3), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160232",
+      "ItemName": "Sundae"
+    },
+    {
+      "ItemId": "160330",
+      "ItemName": "Frozen Pedestal"
+    },
+    {
+      "ItemId": "160350",
+      "ItemName": "Prop Mountains 2"
+    }
+  ]
+}

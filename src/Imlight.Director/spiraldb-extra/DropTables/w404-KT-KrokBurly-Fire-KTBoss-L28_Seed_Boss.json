@@ -1,0 +1,13 @@
+{
+  "Name": "W404 KT-KrokBurly-Fire-KTBoss-L28 Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokBurly-Fire-KTBoss-L28: the seed drops (1), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion"
+    }
+  ]
+}

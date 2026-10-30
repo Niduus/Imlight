@@ -1,0 +1,17 @@
+{
+  "Name": "W404 ME1_Clockwork_Marine_B Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Clockwork_Marine_B: the seed drops (2), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "356144",
+      "ItemName": "King Parsley"
+    },
+    {
+      "ItemId": "473092",
+      "ItemName": "Couch Potatoes"
+    }
+  ]
+}

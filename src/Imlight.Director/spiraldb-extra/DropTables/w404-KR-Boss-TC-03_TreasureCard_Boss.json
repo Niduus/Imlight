@@ -1,0 +1,93 @@
+{
+  "Name": "W404 KR-Boss-TC-03 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-Boss-TC-03: the treasurecard drops (21), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Scorpion TC KR",
+      "ItemName": "Scorpion"
+    },
+    {
+      "ItemId": "Spider Black Widow TC KR",
+      "ItemName": "Black Widow"
+    },
+    {
+      "ItemId": "Crystal Spider TC KR",
+      "ItemName": "Crystal Spider"
+    },
+    {
+      "ItemId": "Choke TC KR",
+      "ItemName": "Choke"
+    },
+    {
+      "ItemId": "Sanctuary TC KR",
+      "ItemName": "Sanctuary"
+    },
+    {
+      "ItemId": "Pierce TC KR",
+      "ItemName": "Pierce"
+    },
+    {
+      "ItemId": "Disarm TC KR",
+      "ItemName": "Disarm"
+    },
+    {
+      "ItemId": "Locust Swarm TC KR",
+      "ItemName": "Locust Swarm"
+    },
+    {
+      "ItemId": "Doom and Gloom TC KR",
+      "ItemName": "Doom and Gloom"
+    },
+    {
+      "ItemId": "Polar Swarm TC KR",
+      "ItemName": "Polar Swarm"
+    },
+    {
+      "ItemId": "Sprite Swarm TC KR",
+      "ItemName": "Sprite Swarm"
+    },
+    {
+      "ItemId": "Treant Myth TC KR",
+      "ItemName": "Legendary Treant"
+    },
+    {
+      "ItemId": "O'Leary Charlatan TC KR",
+      "ItemName": "O'Leary Charlatan"
+    },
+    {
+      "ItemId": "OLeary Swindler TC",
+      "ItemName": "O'Leary Swindler"
+    },
+    {
+      "ItemId": "Wildfire Treant TC KR",
+      "ItemName": "Wildfire Treant"
+    },
+    {
+      "ItemId": "Shatter TC KR",
+      "ItemName": "Shatter"
+    },
+    {
+      "ItemId": "Luminous Weaver TC KR",
+      "ItemName": "Luminous Weaver"
+    },
+    {
+      "ItemId": "Cripple TC KR",
+      "ItemName": "Enfeeble"
+    },
+    {
+      "ItemId": "Spider Clockwork TC KR",
+      "ItemName": "Clockwork Spider"
+    },
+    {
+      "ItemId": "Patches OLeary TC",
+      "ItemName": "Patches O'Leary"
+    },
+    {
+      "ItemId": "Hooligan TC",
+      "ItemName": "Hooligan"
+    }
+  ]
+}

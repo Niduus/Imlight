@@ -1,0 +1,65 @@
+{
+  "Name": "W404 Spider-Golem-MBBoss-L96 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Spider-Golem-MBBoss-L96: the housing drops (14), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82877",
+      "ItemName": "Krokotopia Camping Tent"
+    },
+    {
+      "ItemId": "160482",
+      "ItemName": "Solar Obelisk"
+    },
+    {
+      "ItemId": "160534",
+      "ItemName": "Dirt Pile"
+    },
+    {
+      "ItemId": "160546",
+      "ItemName": "Tall Boulder"
+    },
+    {
+      "ItemId": "160621",
+      "ItemName": "Boiler Door"
+    },
+    {
+      "ItemId": "160628",
+      "ItemName": "Antique Cello"
+    },
+    {
+      "ItemId": "160631",
+      "ItemName": "Dogfish Statue"
+    },
+    {
+      "ItemId": "160654",
+      "ItemName": "Statue of St. Bernard"
+    },
+    {
+      "ItemId": "160655",
+      "ItemName": "Statue of St. Hubert"
+    },
+    {
+      "ItemId": "160769",
+      "ItemName": "Cameo of Sherlock Bones"
+    },
+    {
+      "ItemId": "160997",
+      "ItemName": "Overstuff Postbox"
+    },
+    {
+      "ItemId": "470195",
+      "ItemName": "Table Chest"
+    },
+    {
+      "ItemId": "470204",
+      "ItemName": "Hooked Lantern"
+    },
+    {
+      "ItemId": "470207",
+      "ItemName": "Silver Lantern"
+    }
+  ]
+}

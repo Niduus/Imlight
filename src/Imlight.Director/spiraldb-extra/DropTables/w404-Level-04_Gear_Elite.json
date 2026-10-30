@@ -1,0 +1,77 @@
+{
+  "Name": "W404 Level-04 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table Level-04: the gear drops (17), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4696",
+      "ItemName": "Novice's Athame"
+    },
+    {
+      "ItemId": "4758",
+      "ItemName": "Simple Opal Ring"
+    },
+    {
+      "ItemId": "4832",
+      "ItemName": "Plated Boots"
+    },
+    {
+      "ItemId": "4850",
+      "ItemName": "Soft Boots"
+    },
+    {
+      "ItemId": "4868",
+      "ItemName": "Soldiers Wraps"
+    },
+    {
+      "ItemId": "4874",
+      "ItemName": "Roughspun Shoes"
+    },
+    {
+      "ItemId": "77553",
+      "ItemName": "Adventurer's Helm"
+    },
+    {
+      "ItemId": "77554",
+      "ItemName": "Sturdy Hat"
+    },
+    {
+      "ItemId": "77555",
+      "ItemName": "Martyr's Hat"
+    },
+    {
+      "ItemId": "77556",
+      "ItemName": "Crown of Seasons"
+    },
+    {
+      "ItemId": "77579",
+      "ItemName": "Charged Cover"
+    },
+    {
+      "ItemId": "77586",
+      "ItemName": "Antique Helm"
+    },
+    {
+      "ItemId": "77614",
+      "ItemName": "Soft Hood"
+    },
+    {
+      "ItemId": "77615",
+      "ItemName": "Novice's Hat"
+    },
+    {
+      "ItemId": "87218",
+      "ItemName": "Sturdy Coat"
+    },
+    {
+      "ItemId": "87224",
+      "ItemName": "Cloak of Calamity"
+    },
+    {
+      "ItemId": "87237",
+      "ItemName": "Novice's Robe"
+    }
+  ]
+}

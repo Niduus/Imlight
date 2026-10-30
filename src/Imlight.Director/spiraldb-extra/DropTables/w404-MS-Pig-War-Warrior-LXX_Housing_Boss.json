@@ -1,0 +1,33 @@
+{
+  "Name": "W404 MS-Pig-War-Warrior-LXX Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-War-Warrior-LXX: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160397",
+      "ItemName": "Professor Wu"
+    },
+    {
+      "ItemId": "160587",
+      "ItemName": "Crossed Naginata Spears"
+    },
+    {
+      "ItemId": "160591",
+      "ItemName": "Green Sword Display"
+    },
+    {
+      "ItemId": "470202",
+      "ItemName": "Stone Dog Statue"
+    },
+    {
+      "ItemId": "470208",
+      "ItemName": "Indoor Shrine"
+    },
+    {
+      "ItemId": "512100",
+      "ItemName": "MooShu Haunted Theme"
+    }
+  ]
+}

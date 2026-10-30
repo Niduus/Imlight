@@ -1,0 +1,101 @@
+{
+  "Name": "W404 KT-KrokPharaoh-IceCloth-KTBoss-L23 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokPharaoh-IceCloth-KTBoss-L23: the gear drops (23), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4942",
+      "ItemName": "Parched Kris"
+    },
+    {
+      "ItemId": "4955",
+      "ItemName": "Whirlwind Dagger"
+    },
+    {
+      "ItemId": "4960",
+      "ItemName": "Dirk of Harmony"
+    },
+    {
+      "ItemId": "4980",
+      "ItemName": "Nekhbet's Ruby Deck"
+    },
+    {
+      "ItemId": "5016",
+      "ItemName": "Sparkling Band"
+    },
+    {
+      "ItemId": "5027",
+      "ItemName": "Ring of the Badlands"
+    },
+    {
+      "ItemId": "38762",
+      "ItemName": "Vestment of the Arctic"
+    },
+    {
+      "ItemId": "38763",
+      "ItemName": "Vest of the Oasis"
+    },
+    {
+      "ItemId": "77678",
+      "ItemName": "Stout Hood"
+    },
+    {
+      "ItemId": "77691",
+      "ItemName": "Bitter Cap"
+    },
+    {
+      "ItemId": "77701",
+      "ItemName": "Diviner's Hat of Squalls"
+    },
+    {
+      "ItemId": "77702",
+      "ItemName": "Helm of Ingenuity"
+    },
+    {
+      "ItemId": "77711",
+      "ItemName": "Rough-hewn Hood"
+    },
+    {
+      "ItemId": "77742",
+      "ItemName": "Threadbare Hood"
+    },
+    {
+      "ItemId": "77743",
+      "ItemName": "Nekhbet's Shrewd Cowl"
+    },
+    {
+      "ItemId": "77764",
+      "ItemName": "Nekhbet's Boots"
+    },
+    {
+      "ItemId": "77798",
+      "ItemName": "Boots of the Citadel"
+    },
+    {
+      "ItemId": "87272",
+      "ItemName": "Nekhbet's Robe"
+    },
+    {
+      "ItemId": "87292",
+      "ItemName": "Sturdy Robe"
+    },
+    {
+      "ItemId": "87305",
+      "ItemName": "Vestment of Darkness"
+    },
+    {
+      "ItemId": "87318",
+      "ItemName": "Vest of the Desert"
+    },
+    {
+      "ItemId": "87333",
+      "ItemName": "Sphinx's Vestment"
+    },
+    {
+      "ItemId": "87346",
+      "ItemName": "Nekhbet's Arctic Wand"
+    }
+  ]
+}

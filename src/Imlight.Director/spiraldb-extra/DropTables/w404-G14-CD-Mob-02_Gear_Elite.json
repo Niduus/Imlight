@@ -1,0 +1,149 @@
+{
+  "Name": "W404 G14-CD-Mob-02 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table G14-CD-Mob-02: the gear drops (35), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330961",
+      "ItemName": "Brimstone Helm of Darkmoor"
+    },
+    {
+      "ItemId": "1330962",
+      "ItemName": "Darkmoor Helmet of Shivers"
+    },
+    {
+      "ItemId": "1330963",
+      "ItemName": "Raging Blackwater's Helm"
+    },
+    {
+      "ItemId": "1330964",
+      "ItemName": "Darkmoor Barbut of Delusion"
+    },
+    {
+      "ItemId": "1330965",
+      "ItemName": "Helm of the Living Dead"
+    },
+    {
+      "ItemId": "1330966",
+      "ItemName": "Depths of Darkmoor Cover"
+    },
+    {
+      "ItemId": "1330967",
+      "ItemName": "Darkmoor Herald's Mantle"
+    },
+    {
+      "ItemId": "1338129",
+      "ItemName": "Brimstone Boots of Darkmoor"
+    },
+    {
+      "ItemId": "1338130",
+      "ItemName": "Sabatons of Frozen Furor"
+    },
+    {
+      "ItemId": "1338131",
+      "ItemName": "Raging Blackwater's Boots"
+    },
+    {
+      "ItemId": "1338132",
+      "ItemName": "Darkmoor Boots of Delusion"
+    },
+    {
+      "ItemId": "1338133",
+      "ItemName": "Sabatons of the Living Dead"
+    },
+    {
+      "ItemId": "1338134",
+      "ItemName": "Depths of Darkmoor Stalkers"
+    },
+    {
+      "ItemId": "1338135",
+      "ItemName": "Herald of Darkmoor's Shoes"
+    },
+    {
+      "ItemId": "1338381",
+      "ItemName": "Signet of the Howling Wolf"
+    },
+    {
+      "ItemId": "1338382",
+      "ItemName": "Wolfbane Loop"
+    },
+    {
+      "ItemId": "1338383",
+      "ItemName": "Blackwater's Band"
+    },
+    {
+      "ItemId": "1338384",
+      "ItemName": "Gargoyle's Circle"
+    },
+    {
+      "ItemId": "1338385",
+      "ItemName": "von Shane Family Signet"
+    },
+    {
+      "ItemId": "1338386",
+      "ItemName": "Ring of Mortis"
+    },
+    {
+      "ItemId": "1338387",
+      "ItemName": "Herald of Darkmoor's Seal"
+    },
+    {
+      "ItemId": "1338465",
+      "ItemName": "Darkmoor's Brimstone Deck"
+    },
+    {
+      "ItemId": "1338466",
+      "ItemName": "Cards of the Blue Ague"
+    },
+    {
+      "ItemId": "1338467",
+      "ItemName": "Thunderous Darkmoor Hand"
+    },
+    {
+      "ItemId": "1338468",
+      "ItemName": "Arcana of Kan Davasi"
+    },
+    {
+      "ItemId": "1338469",
+      "ItemName": "Deck of Unchecked Passion"
+    },
+    {
+      "ItemId": "1338470",
+      "ItemName": "Von Shane's Hand of Doom"
+    },
+    {
+      "ItemId": "1338471",
+      "ItemName": "Darkmoor's Case of Scrutiny"
+    },
+    {
+      "ItemId": "1338549",
+      "ItemName": "Mace of the Dark Flame"
+    },
+    {
+      "ItemId": "1338550",
+      "ItemName": "Virge of the Bitter Ghost"
+    },
+    {
+      "ItemId": "1338551",
+      "ItemName": "Bludgeon of the Dark Skies"
+    },
+    {
+      "ItemId": "1338552",
+      "ItemName": "Morning Star of Kan Davasi"
+    },
+    {
+      "ItemId": "1338553",
+      "ItemName": "Mace of the Undying"
+    },
+    {
+      "ItemId": "1338554",
+      "ItemName": "Morning Star of Misery"
+    },
+    {
+      "ItemId": "1338555",
+      "ItemName": "Mace of the Outer Void"
+    }
+  ]
+}

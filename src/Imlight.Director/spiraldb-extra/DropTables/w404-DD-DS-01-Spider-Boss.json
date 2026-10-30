@@ -1,0 +1,9 @@
+{
+  "Name": "W404 DD-DS-01-Spider-Boss",
+  "Description": "Gold of the game's table DD-DS-01-Spider-Boss, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 30,
+  "MaxGold": 50,
+  "EachItem": false,
+  "Items": []
+}

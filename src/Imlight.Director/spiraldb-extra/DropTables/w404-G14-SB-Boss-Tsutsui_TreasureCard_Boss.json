@@ -1,0 +1,113 @@
+{
+  "Name": "W404 G14-SB-Boss-Tsutsui TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-SB-Boss-Tsutsui: the treasurecard drops (26), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Goat Monk TC",
+      "ItemName": "Goat Monk"
+    },
+    {
+      "ItemId": "Samoorai TC",
+      "ItemName": "Samoorai"
+    },
+    {
+      "ItemId": "Goat Monk Death TC",
+      "ItemName": "Monk of Mourning"
+    },
+    {
+      "ItemId": "Fireblade TC",
+      "ItemName": "Fireblade"
+    },
+    {
+      "ItemId": "Iceblade TC",
+      "ItemName": "Iceblade"
+    },
+    {
+      "ItemId": "Stormblade TC",
+      "ItemName": "Stormblade"
+    },
+    {
+      "ItemId": "Mythblade TC",
+      "ItemName": "Mythblade"
+    },
+    {
+      "ItemId": "Lifeblade TC",
+      "ItemName": "Lifeblade"
+    },
+    {
+      "ItemId": "Deathblade TC",
+      "ItemName": "Deathblade"
+    },
+    {
+      "ItemId": "Balanceblade TC",
+      "ItemName": "Balanceblade"
+    },
+    {
+      "ItemId": "Fire Trap TC",
+      "ItemName": "Fire Trap"
+    },
+    {
+      "ItemId": "Ice Trap TC",
+      "ItemName": "Ice Trap"
+    },
+    {
+      "ItemId": "Storm Trap TC",
+      "ItemName": "Storm Trap"
+    },
+    {
+      "ItemId": "Myth Trap TC",
+      "ItemName": "Myth Trap"
+    },
+    {
+      "ItemId": "Life Trap TC",
+      "ItemName": "Life Trap"
+    },
+    {
+      "ItemId": "Death Trap TC",
+      "ItemName": "Death Trap"
+    },
+    {
+      "ItemId": "Tri Trap TC",
+      "ItemName": "Elemental Trap"
+    },
+    {
+      "ItemId": "Fire Shield TC",
+      "ItemName": "Fire Shield"
+    },
+    {
+      "ItemId": "Snow Shield TC",
+      "ItemName": "Snow Shield"
+    },
+    {
+      "ItemId": "Storm Shield TC",
+      "ItemName": "Storm Shield"
+    },
+    {
+      "ItemId": "Myth Shield TC",
+      "ItemName": "Myth Shield"
+    },
+    {
+      "ItemId": "Life Shield TC",
+      "ItemName": "Life Shield"
+    },
+    {
+      "ItemId": "Death Shield TC",
+      "ItemName": "Death Shield"
+    },
+    {
+      "ItemId": "Tri Shield TC",
+      "ItemName": "Elemental Shield"
+    },
+    {
+      "ItemId": "Fire Wyvern TC",
+      "ItemName": "Fire Wyvern"
+    },
+    {
+      "ItemId": "Ice Wyvern TC",
+      "ItemName": "Ice Wyvern"
+    }
+  ]
+}

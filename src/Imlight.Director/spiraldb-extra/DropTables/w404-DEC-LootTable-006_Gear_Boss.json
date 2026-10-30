@@ -1,0 +1,37 @@
+{
+  "Name": "W404 DEC-LootTable-006 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table DEC-LootTable-006: the gear drops (7), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126806",
+      "ItemName": "Santa Hat"
+    },
+    {
+      "ItemId": "126807",
+      "ItemName": "Santa Robe"
+    },
+    {
+      "ItemId": "126808",
+      "ItemName": "Santa Boots"
+    },
+    {
+      "ItemId": "1248184",
+      "ItemName": "Hard Candy Spellcaster"
+    },
+    {
+      "ItemId": "1248185",
+      "ItemName": "Candystriped Staff"
+    },
+    {
+      "ItemId": "1248200",
+      "ItemName": "Shepherd's Candy Wand"
+    },
+    {
+      "ItemId": "1248201",
+      "ItemName": "Festival of Lights Scepter"
+    }
+  ]
+}

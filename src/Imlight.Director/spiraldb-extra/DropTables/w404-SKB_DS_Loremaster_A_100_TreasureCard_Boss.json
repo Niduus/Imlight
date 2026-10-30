@@ -1,0 +1,25 @@
+{
+  "Name": "W404 SKB_DS_Loremaster_A_100 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_DS_Loremaster_A_100: the treasurecard drops (4), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Brimstone Revenant TC",
+      "ItemName": "Brimstone Revenant"
+    },
+    {
+      "ItemId": "Loremaster TC",
+      "ItemName": "Loremaster"
+    },
+    {
+      "ItemId": "Luminous Weaver TC",
+      "ItemName": "Luminous Weaver"
+    },
+    {
+      "ItemId": "Keeper Sacred Flame TC",
+      "ItemName": "Keeper of the Flame"
+    }
+  ]
+}

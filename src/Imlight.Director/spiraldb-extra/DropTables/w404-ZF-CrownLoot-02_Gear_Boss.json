@@ -1,0 +1,45 @@
+{
+  "Name": "W404 ZF-CrownLoot-02 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-CrownLoot-02: the gear drops (9), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "532277",
+      "ItemName": "Sidhe Cloak"
+    },
+    {
+      "ItemId": "532280",
+      "ItemName": "Sidhe Staff"
+    },
+    {
+      "ItemId": "532303",
+      "ItemName": "Flameborn Sidhe Cloak"
+    },
+    {
+      "ItemId": "532304",
+      "ItemName": "Frostborn Sidhe Cloak"
+    },
+    {
+      "ItemId": "532305",
+      "ItemName": "Vestment of the Thornwood"
+    },
+    {
+      "ItemId": "532306",
+      "ItemName": "Squamish Cloak of the Sidhe"
+    },
+    {
+      "ItemId": "532307",
+      "ItemName": "Sidhe Cloak of Attunement"
+    },
+    {
+      "ItemId": "532308",
+      "ItemName": "Restless Cloak of Oblivion"
+    },
+    {
+      "ItemId": "532309",
+      "ItemName": "Storyborn Cloak of Mist"
+    }
+  ]
+}

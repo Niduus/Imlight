@@ -1,0 +1,9 @@
+{
+  "Name": "W404 AZ-Pteranodon-Knight-A-PageEvent",
+  "Description": "Gold of the game's table AZ-Pteranodon-Knight-A-PageEvent, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 35,
+  "MaxGold": 40,
+  "EachItem": false,
+  "Items": []
+}

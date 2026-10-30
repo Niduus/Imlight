@@ -1,0 +1,153 @@
+{
+  "Name": "W404 Mob-1655180 Gear (Boss)",
+  "Description": "Wizard404's drop list of Dewey's own drops: the gear drops (36), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1204031",
+      "ItemName": "Frosty Stare Tiki Torch"
+    },
+    {
+      "ItemId": "1204041",
+      "ItemName": "Shocking Truth Tiki Torch"
+    },
+    {
+      "ItemId": "1204051",
+      "ItemName": "Dying Embers Tiki Torch"
+    },
+    {
+      "ItemId": "1204163",
+      "ItemName": "Tiki Crown of Sacred Songs"
+    },
+    {
+      "ItemId": "1204173",
+      "ItemName": "Tiki Boots of Sacred Songs"
+    },
+    {
+      "ItemId": "1204183",
+      "ItemName": "Tiki Armor of Sacred Songs"
+    },
+    {
+      "ItemId": "1204193",
+      "ItemName": "Tiki Crown of Purity"
+    },
+    {
+      "ItemId": "1204203",
+      "ItemName": "Tiki Boots of Purity"
+    },
+    {
+      "ItemId": "1204213",
+      "ItemName": "Tiki Armor of Purity"
+    },
+    {
+      "ItemId": "1204223",
+      "ItemName": "Tiki Crown of Riptides"
+    },
+    {
+      "ItemId": "1204233",
+      "ItemName": "Tiki Boots of Riptides"
+    },
+    {
+      "ItemId": "1204243",
+      "ItemName": "Tiki Armor of Riptides"
+    },
+    {
+      "ItemId": "1257933",
+      "ItemName": "Frosty Stare Tiki Torch"
+    },
+    {
+      "ItemId": "1257934",
+      "ItemName": "Shocking Truth Tiki Torch"
+    },
+    {
+      "ItemId": "1257935",
+      "ItemName": "Dying Embers Tiki Torch"
+    },
+    {
+      "ItemId": "1302083",
+      "ItemName": "Tiki Crown of Sacred Songs"
+    },
+    {
+      "ItemId": "1302084",
+      "ItemName": "Tiki Boots of Sacred Songs"
+    },
+    {
+      "ItemId": "1302085",
+      "ItemName": "Tiki Armor of Sacred Songs"
+    },
+    {
+      "ItemId": "1302086",
+      "ItemName": "Tiki Crown of Purity"
+    },
+    {
+      "ItemId": "1302087",
+      "ItemName": "Tiki Boots of Purity"
+    },
+    {
+      "ItemId": "1302088",
+      "ItemName": "Tiki Armor of Purity"
+    },
+    {
+      "ItemId": "1302089",
+      "ItemName": "Tiki Crown of Riptides"
+    },
+    {
+      "ItemId": "1302090",
+      "ItemName": "Tiki Boots of Riptides"
+    },
+    {
+      "ItemId": "1302091",
+      "ItemName": "Tiki Armor of Riptides"
+    },
+    {
+      "ItemId": "1505669",
+      "ItemName": "Tiki Crown of Sacred Songs"
+    },
+    {
+      "ItemId": "1505672",
+      "ItemName": "Tiki Armor of Sacred Songs"
+    },
+    {
+      "ItemId": "1505675",
+      "ItemName": "Tiki Boots of Sacred Songs"
+    },
+    {
+      "ItemId": "1505677",
+      "ItemName": "Tiki Crown of Purity"
+    },
+    {
+      "ItemId": "1505680",
+      "ItemName": "Tiki Armor of Purity"
+    },
+    {
+      "ItemId": "1505683",
+      "ItemName": "Tiki Boots of Purity"
+    },
+    {
+      "ItemId": "1505685",
+      "ItemName": "Tiki Crown of Riptides"
+    },
+    {
+      "ItemId": "1505688",
+      "ItemName": "Tiki Armor of Riptides"
+    },
+    {
+      "ItemId": "1505691",
+      "ItemName": "Tiki Boots of Riptides"
+    },
+    {
+      "ItemId": "1505697",
+      "ItemName": "Frosty Stare Tiki Torch"
+    },
+    {
+      "ItemId": "1505700",
+      "ItemName": "Shocking Truth Tiki Torch"
+    },
+    {
+      "ItemId": "1505703",
+      "ItemName": "Dying Embers Tiki Torch"
+    }
+  ]
+}

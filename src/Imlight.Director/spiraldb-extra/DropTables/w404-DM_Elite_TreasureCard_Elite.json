@@ -1,0 +1,25 @@
+{
+  "Name": "W404 DM_Elite TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table DM_Elite: the treasurecard drops (4), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Ice Trap TC",
+      "ItemName": "Ice Trap"
+    },
+    {
+      "ItemId": "Myth Trap TC",
+      "ItemName": "Myth Trap"
+    },
+    {
+      "ItemId": "Iceblade TC",
+      "ItemName": "Iceblade"
+    },
+    {
+      "ItemId": "Deathblade TC",
+      "ItemName": "Deathblade"
+    }
+  ]
+}

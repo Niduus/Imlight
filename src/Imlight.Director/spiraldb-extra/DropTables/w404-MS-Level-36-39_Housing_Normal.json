@@ -1,0 +1,33 @@
+{
+  "Name": "W404 MS-Level-36-39 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table MS-Level-36-39: the housing drops (6), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160482",
+      "ItemName": "Solar Obelisk"
+    },
+    {
+      "ItemId": "160534",
+      "ItemName": "Dirt Pile"
+    },
+    {
+      "ItemId": "160546",
+      "ItemName": "Tall Boulder"
+    },
+    {
+      "ItemId": "470195",
+      "ItemName": "Table Chest"
+    },
+    {
+      "ItemId": "470204",
+      "ItemName": "Hooked Lantern"
+    },
+    {
+      "ItemId": "470207",
+      "ItemName": "Silver Lantern"
+    }
+  ]
+}

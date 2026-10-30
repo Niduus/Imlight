@@ -1,0 +1,53 @@
+{
+  "Name": "W404 KR-BossRare-Elana-R14 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossRare-Elana-R14: the gear drops (11), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203150",
+      "ItemName": "Mouse Skirmisher's Helmet"
+    },
+    {
+      "ItemId": "1203180",
+      "ItemName": "Ring of Kermes Fire"
+    },
+    {
+      "ItemId": "1203218",
+      "ItemName": "Scuffed Burrower Armor"
+    },
+    {
+      "ItemId": "1203263",
+      "ItemName": "Mantis Guard Stonesteppers"
+    },
+    {
+      "ItemId": "1203264",
+      "ItemName": "Last Wood Defender's Boots"
+    },
+    {
+      "ItemId": "1203341",
+      "ItemName": "Sacred Burrower Pendant"
+    },
+    {
+      "ItemId": "1203343",
+      "ItemName": "Memento of the Moon Cliffs"
+    },
+    {
+      "ItemId": "1203344",
+      "ItemName": "Last Wood Defender's Jewel"
+    },
+    {
+      "ItemId": "1203413",
+      "ItemName": "Box of Indomitable Spirit"
+    },
+    {
+      "ItemId": "1203687",
+      "ItemName": "Trader's Staff of Scarcity"
+    },
+    {
+      "ItemId": "1217210",
+      "ItemName": "The Dreamweaver"
+    }
+  ]
+}

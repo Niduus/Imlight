@@ -1,0 +1,69 @@
+{
+  "Name": "W404 Kraken-WCBoss-L15 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Kraken-WCBoss-L15: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4682",
+      "ItemName": "Choker of Ferocity"
+    },
+    {
+      "ItemId": "4683",
+      "ItemName": "Swiftarrow's Necklace"
+    },
+    {
+      "ItemId": "4712",
+      "ItemName": "Citrine Studded Athame"
+    },
+    {
+      "ItemId": "4775",
+      "ItemName": "Lord's Signet"
+    },
+    {
+      "ItemId": "4848",
+      "ItemName": "Kraken's Charged Boots"
+    },
+    {
+      "ItemId": "4866",
+      "ItemName": "Slippers of Repose"
+    },
+    {
+      "ItemId": "4873",
+      "ItemName": "Senior Novice's Shoes"
+    },
+    {
+      "ItemId": "77573",
+      "ItemName": "Helm of Audacity"
+    },
+    {
+      "ItemId": "77585",
+      "ItemName": "Hood of Tension"
+    },
+    {
+      "ItemId": "77608",
+      "ItemName": "Cowl of Wisdom"
+    },
+    {
+      "ItemId": "77613",
+      "ItemName": "Cowl of Comparison"
+    },
+    {
+      "ItemId": "77621",
+      "ItemName": "Sapphyra's Studded Helm"
+    },
+    {
+      "ItemId": "87194",
+      "ItemName": "Ashen Cloak"
+    },
+    {
+      "ItemId": "87198",
+      "ItemName": "Splendiferous Robe"
+    },
+    {
+      "ItemId": "87235",
+      "ItemName": "Cloak of the Watchful"
+    }
+  ]
+}

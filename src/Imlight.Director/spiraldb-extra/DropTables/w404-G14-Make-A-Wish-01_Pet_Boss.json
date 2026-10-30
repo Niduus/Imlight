@@ -1,0 +1,25 @@
+{
+  "Name": "W404 G14-Make-A-Wish-01 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-Make-A-Wish-01: the pet drops (4), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "175618",
+      "ItemName": "Fierce Hound"
+    },
+    {
+      "ItemId": "225497",
+      "ItemName": "Ghost Hound"
+    },
+    {
+      "ItemId": "267140",
+      "ItemName": "Brave Hound"
+    },
+    {
+      "ItemId": "1374201",
+      "ItemName": "Polterpooch"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-MB-Ring-138 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-MB-Ring-138: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1515082",
+      "ItemName": "Director Thermal Ring"
+    },
+    {
+      "ItemId": "1515083",
+      "ItemName": "Director Cryo Ring"
+    },
+    {
+      "ItemId": "1515084",
+      "ItemName": "Director Insulated Ring"
+    },
+    {
+      "ItemId": "1515085",
+      "ItemName": "Director Pressure Ring"
+    },
+    {
+      "ItemId": "1515086",
+      "ItemName": "Director Survival Ring"
+    },
+    {
+      "ItemId": "1515087",
+      "ItemName": "Director Biohazard Ring"
+    },
+    {
+      "ItemId": "1515088",
+      "ItemName": "Director Protective Ring"
+    },
+    {
+      "ItemId": "1515089",
+      "ItemName": "Director Hazmat Ring"
+    },
+    {
+      "ItemId": "1515106",
+      "ItemName": "Executive Thermal Ring"
+    },
+    {
+      "ItemId": "1515107",
+      "ItemName": "Executive Cryo Ring"
+    },
+    {
+      "ItemId": "1515108",
+      "ItemName": "Executive Insulated Ring"
+    },
+    {
+      "ItemId": "1515109",
+      "ItemName": "Executive Pressure Ring"
+    },
+    {
+      "ItemId": "1515110",
+      "ItemName": "Executive Survival Ring"
+    },
+    {
+      "ItemId": "1515111",
+      "ItemName": "Executive Biohazard Ring"
+    },
+    {
+      "ItemId": "1515112",
+      "ItemName": "Executive Protective Ring"
+    },
+    {
+      "ItemId": "1515113",
+      "ItemName": "Executive Hazmat Ring"
+    },
+    {
+      "ItemId": "1515130",
+      "ItemName": "Producer's Thermal Ring"
+    },
+    {
+      "ItemId": "1515131",
+      "ItemName": "Producer's Cryo Ring"
+    },
+    {
+      "ItemId": "1515132",
+      "ItemName": "Producer's Insulated Ring"
+    },
+    {
+      "ItemId": "1515133",
+      "ItemName": "Producer's Pressure Ring"
+    },
+    {
+      "ItemId": "1515134",
+      "ItemName": "Producer's Survival Ring"
+    },
+    {
+      "ItemId": "1515135",
+      "ItemName": "Producer's Biohazard Ring"
+    },
+    {
+      "ItemId": "1515136",
+      "ItemName": "Producer's Protective Ring"
+    },
+    {
+      "ItemId": "1515137",
+      "ItemName": "Producer's Hazmat Ring"
+    }
+  ]
+}

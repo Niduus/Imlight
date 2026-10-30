@@ -1,0 +1,41 @@
+{
+  "Name": "W404 TC-RaresBosses1 TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table TC-RaresBosses1: the treasurecard drops (8), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Balefrost TC",
+      "ItemName": "Balefrost"
+    },
+    {
+      "ItemId": "Darkwind TC",
+      "ItemName": "Darkwind"
+    },
+    {
+      "ItemId": "Donate Power TC",
+      "ItemName": "Donate Power"
+    },
+    {
+      "ItemId": "Doom and Gloom TC",
+      "ItemName": "Doom and Gloom"
+    },
+    {
+      "ItemId": "Minotaur TC",
+      "ItemName": "Minotaur"
+    },
+    {
+      "ItemId": "Sanctuary TC",
+      "ItemName": "Sanctuary"
+    },
+    {
+      "ItemId": "Wyldfire TC",
+      "ItemName": "Wyldfire"
+    },
+    {
+      "ItemId": "Accurate TC",
+      "ItemName": "Accurate"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "Name": "W404 SKB_AQ_Medusa_A_30 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_AQ_Medusa_A_30: the pet drops (5), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "789433",
+      "ItemName": "Li'l Siren"
+    },
+    {
+      "ItemId": "789434",
+      "ItemName": "Golden Ram"
+    },
+    {
+      "ItemId": "789436",
+      "ItemName": "Enchanted Armament"
+    },
+    {
+      "ItemId": "1204451",
+      "ItemName": "Bronze Golem"
+    },
+    {
+      "ItemId": "1383285",
+      "ItemName": "Mechanical Owl"
+    }
+  ]
+}

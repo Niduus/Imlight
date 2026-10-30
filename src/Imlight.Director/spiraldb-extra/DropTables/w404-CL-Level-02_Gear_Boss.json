@@ -1,0 +1,193 @@
+{
+  "Name": "W404 CL-Level-02 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-Level-02: the gear drops (46), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243224",
+      "ItemName": "Archaeologist's Athame"
+    },
+    {
+      "ItemId": "243233",
+      "ItemName": "Wily Edge"
+    },
+    {
+      "ItemId": "243236",
+      "ItemName": "Long Lost Dagger"
+    },
+    {
+      "ItemId": "243282",
+      "ItemName": "Collective Mask"
+    },
+    {
+      "ItemId": "243306",
+      "ItemName": "Ominous Veil"
+    },
+    {
+      "ItemId": "243307",
+      "ItemName": "Menacing Mask"
+    },
+    {
+      "ItemId": "243311",
+      "ItemName": "Tragic Hat"
+    },
+    {
+      "ItemId": "243332",
+      "ItemName": "Consuming Cover"
+    },
+    {
+      "ItemId": "243337",
+      "ItemName": "Scorched Helmet"
+    },
+    {
+      "ItemId": "243340",
+      "ItemName": "Torched Topper"
+    },
+    {
+      "ItemId": "243364",
+      "ItemName": "Hard Rime Headdress"
+    },
+    {
+      "ItemId": "243378",
+      "ItemName": "Life Helmet"
+    },
+    {
+      "ItemId": "243381",
+      "ItemName": "Merry Mask"
+    },
+    {
+      "ItemId": "243404",
+      "ItemName": "Topper of Tales"
+    },
+    {
+      "ItemId": "243408",
+      "ItemName": "Brim of Bewilderment"
+    },
+    {
+      "ItemId": "243413",
+      "ItemName": "Mirage Helm"
+    },
+    {
+      "ItemId": "243450",
+      "ItemName": "Medley Costume"
+    },
+    {
+      "ItemId": "243531",
+      "ItemName": "Crustacean Band"
+    },
+    {
+      "ItemId": "243532",
+      "ItemName": "Researcher's Ring"
+    },
+    {
+      "ItemId": "243536",
+      "ItemName": "Relic Ring"
+    },
+    {
+      "ItemId": "243593",
+      "ItemName": "Menacing Costume"
+    },
+    {
+      "ItemId": "243613",
+      "ItemName": "Volcanic Costume"
+    },
+    {
+      "ItemId": "243614",
+      "ItemName": "Smokey Smock"
+    },
+    {
+      "ItemId": "243624",
+      "ItemName": "Devoted Vestment"
+    },
+    {
+      "ItemId": "243644",
+      "ItemName": "Wintergale Garment"
+    },
+    {
+      "ItemId": "243653",
+      "ItemName": "Pure Plate Armor"
+    },
+    {
+      "ItemId": "243673",
+      "ItemName": "Mystifying Armor"
+    },
+    {
+      "ItemId": "243674",
+      "ItemName": "Riddled Raiment"
+    },
+    {
+      "ItemId": "243741",
+      "ItemName": "Shadow Striders"
+    },
+    {
+      "ItemId": "243753",
+      "ItemName": "Tinder Trackers"
+    },
+    {
+      "ItemId": "243759",
+      "ItemName": "Smokey Shoes"
+    },
+    {
+      "ItemId": "243762",
+      "ItemName": "Volcanic Waders"
+    },
+    {
+      "ItemId": "243790",
+      "ItemName": "Numbing Shoes"
+    },
+    {
+      "ItemId": "243795",
+      "ItemName": "Wintergale Runners"
+    },
+    {
+      "ItemId": "243802",
+      "ItemName": "Innocent Boots"
+    },
+    {
+      "ItemId": "243821",
+      "ItemName": "Riddled Rangers"
+    },
+    {
+      "ItemId": "243843",
+      "ItemName": "Drenched Storm Waders"
+    },
+    {
+      "ItemId": "243845",
+      "ItemName": "Rain Dance Runners"
+    },
+    {
+      "ItemId": "1502457",
+      "ItemName": "Celestian Cinder Helm"
+    },
+    {
+      "ItemId": "1502458",
+      "ItemName": "Celestian Frostbit Helm"
+    },
+    {
+      "ItemId": "1502459",
+      "ItemName": "Celestian Tempest Helm"
+    },
+    {
+      "ItemId": "1502460",
+      "ItemName": "Storied Celestian Helm"
+    },
+    {
+      "ItemId": "1502461",
+      "ItemName": "Everlasting Celestian Helm"
+    },
+    {
+      "ItemId": "1502462",
+      "ItemName": "Celestian Abyss Helm"
+    },
+    {
+      "ItemId": "1502463",
+      "ItemName": "Versatile Celestian Helm"
+    },
+    {
+      "ItemId": "1502464",
+      "ItemName": "Helm of Celestian Totality"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "Name": "W404 CL-MorgantineGhost-Gold-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-MorgantineGhost-Gold-Boss-R10: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243214",
+      "ItemName": "Duskweb's Dire Dirk"
+    },
+    {
+      "ItemId": "243244",
+      "ItemName": "Dirk of Discovery"
+    },
+    {
+      "ItemId": "243343",
+      "ItemName": "Incendiary Helm"
+    },
+    {
+      "ItemId": "243419",
+      "ItemName": "Mystical Headdress"
+    },
+    {
+      "ItemId": "243454",
+      "ItemName": "Ensemble Uniform"
+    },
+    {
+      "ItemId": "243518",
+      "ItemName": "Duskweb's Corrupt Ring"
+    },
+    {
+      "ItemId": "243527",
+      "ItemName": "Tobiko's Scorched Signet"
+    },
+    {
+      "ItemId": "243646",
+      "ItemName": "Wintery Raiment"
+    },
+    {
+      "ItemId": "243766",
+      "ItemName": "Volatile Footwear"
+    },
+    {
+      "ItemId": "243832",
+      "ItemName": "Mystical Mukluks"
+    }
+  ]
+}

@@ -1,0 +1,345 @@
+{
+  "Name": "W404 MR-Mob-Gear-116 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table MR-Mob-Gear-116: the gear drops (84), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1402893",
+      "ItemName": "Sand Sea Deck of Explosion"
+    },
+    {
+      "ItemId": "1402894",
+      "ItemName": "Sand Sea Deck of Blusters"
+    },
+    {
+      "ItemId": "1402895",
+      "ItemName": "Sand Sea Deck of Bolts"
+    },
+    {
+      "ItemId": "1402896",
+      "ItemName": "Sand Sea Deck of Curiosity"
+    },
+    {
+      "ItemId": "1402897",
+      "ItemName": "Sand Sea Deck of Ardor"
+    },
+    {
+      "ItemId": "1402898",
+      "ItemName": "Sand Sea Deck of Blight"
+    },
+    {
+      "ItemId": "1402899",
+      "ItemName": "Sand Sea Deck of Accord"
+    },
+    {
+      "ItemId": "1402925",
+      "ItemName": "Kobra Hand of Fury"
+    },
+    {
+      "ItemId": "1402927",
+      "ItemName": "Kobra Hand of Flashfloods"
+    },
+    {
+      "ItemId": "1402930",
+      "ItemName": "Kobra Hand of Demise"
+    },
+    {
+      "ItemId": "1402931",
+      "ItemName": "Kobra Hand of Amity"
+    },
+    {
+      "ItemId": "1402957",
+      "ItemName": "Vizier's Mantle of Smolders"
+    },
+    {
+      "ItemId": "1402958",
+      "ItemName": "Vizier's Desert Snow Mantle"
+    },
+    {
+      "ItemId": "1402959",
+      "ItemName": "Vizier's Windswept Mantle"
+    },
+    {
+      "ItemId": "1402960",
+      "ItemName": "Vizier's Mantle of Sagacity"
+    },
+    {
+      "ItemId": "1402961",
+      "ItemName": "Vizier's Mantle of Bustle"
+    },
+    {
+      "ItemId": "1402962",
+      "ItemName": "Vizier's Mantle of Apathy"
+    },
+    {
+      "ItemId": "1402963",
+      "ItemName": "Vizier's Mantle of Dignity"
+    },
+    {
+      "ItemId": "1402989",
+      "ItemName": "Vizier's Raiment of Smolders"
+    },
+    {
+      "ItemId": "1402990",
+      "ItemName": "Vizier's Desert Snow Raiment"
+    },
+    {
+      "ItemId": "1402991",
+      "ItemName": "Vizier's Windswept Raiment"
+    },
+    {
+      "ItemId": "1402992",
+      "ItemName": "Vizier's Raiment of Sagacity"
+    },
+    {
+      "ItemId": "1402993",
+      "ItemName": "Vizier's Raiment of Bustle"
+    },
+    {
+      "ItemId": "1402994",
+      "ItemName": "Vizier's Raiment of Apathy"
+    },
+    {
+      "ItemId": "1402995",
+      "ItemName": "Vizier's Raiment of Dignity"
+    },
+    {
+      "ItemId": "1405022",
+      "ItemName": "Vizier's Desert Snow Shoes"
+    },
+    {
+      "ItemId": "1405024",
+      "ItemName": "Vizier's Shoes of Sagacity"
+    },
+    {
+      "ItemId": "1405025",
+      "ItemName": "Vizier's Shoes of Bustle"
+    },
+    {
+      "ItemId": "1405027",
+      "ItemName": "Vizier's Shoes of Dignity"
+    },
+    {
+      "ItemId": "1405055",
+      "ItemName": "Zruvan Flashflood Helmet"
+    },
+    {
+      "ItemId": "1405058",
+      "ItemName": "Zruvan Helmet of Demise"
+    },
+    {
+      "ItemId": "1405059",
+      "ItemName": "Zruvan Helmet of Amity"
+    },
+    {
+      "ItemId": "1405086",
+      "ItemName": "Zruvan Raiment of Rigor"
+    },
+    {
+      "ItemId": "1405088",
+      "ItemName": "Zruvan Raiment of Acumen"
+    },
+    {
+      "ItemId": "1405090",
+      "ItemName": "Zruvan Raiment of Demise"
+    },
+    {
+      "ItemId": "1405213",
+      "ItemName": "Sand Sea Striders of Ashes"
+    },
+    {
+      "ItemId": "1405214",
+      "ItemName": "Sand Sea Striders of Shivers"
+    },
+    {
+      "ItemId": "1405215",
+      "ItemName": "Sand Sea Striders of Havoc"
+    },
+    {
+      "ItemId": "1405216",
+      "ItemName": "Sand Sea Shoes of Mischief"
+    },
+    {
+      "ItemId": "1405217",
+      "ItemName": "Sand Sea Shoes of Hardiness"
+    },
+    {
+      "ItemId": "1405218",
+      "ItemName": "Sand Sea Shoes of Emptiness"
+    },
+    {
+      "ItemId": "1405219",
+      "ItemName": "Sand Sea Striders of Decorum"
+    },
+    {
+      "ItemId": "1405247",
+      "ItemName": "Sand Sea Dagger of Havoc"
+    },
+    {
+      "ItemId": "1405248",
+      "ItemName": "Sand Sea Dagger of Mischief"
+    },
+    {
+      "ItemId": "1405249",
+      "ItemName": "Sand Sea Dagger of Hardiness"
+    },
+    {
+      "ItemId": "1405277",
+      "ItemName": "Sand Sea Charm of Ashes"
+    },
+    {
+      "ItemId": "1405278",
+      "ItemName": "Sand Sea Charm of Shivers"
+    },
+    {
+      "ItemId": "1405279",
+      "ItemName": "Sand Sea Charm of Havoc"
+    },
+    {
+      "ItemId": "1405280",
+      "ItemName": "Sand Sea Charm of Mischief"
+    },
+    {
+      "ItemId": "1405281",
+      "ItemName": "Sand Sea Charm of Hardiness"
+    },
+    {
+      "ItemId": "1405282",
+      "ItemName": "Sand Sea Charm of Emptiness"
+    },
+    {
+      "ItemId": "1405283",
+      "ItemName": "Sand Sea Charm of Decorum"
+    },
+    {
+      "ItemId": "1405309",
+      "ItemName": "Sand Sea Ring of Ashes"
+    },
+    {
+      "ItemId": "1405311",
+      "ItemName": "Sand Sea Ring of Havoc"
+    },
+    {
+      "ItemId": "1405312",
+      "ItemName": "Sand Sea Ring of Mischief"
+    },
+    {
+      "ItemId": "1405313",
+      "ItemName": "Sand Sea Ring of Hardiness"
+    },
+    {
+      "ItemId": "1405375",
+      "ItemName": "Sand Sea Amulet of Bolts"
+    },
+    {
+      "ItemId": "1405376",
+      "ItemName": "Sand Sea Amulet of Curiosity"
+    },
+    {
+      "ItemId": "1405378",
+      "ItemName": "Sand Sea Amulet of Blight"
+    },
+    {
+      "ItemId": "1405379",
+      "ItemName": "Sand Sea Amulet of Accord"
+    },
+    {
+      "ItemId": "1405437",
+      "ItemName": "Kobra Janbiya of Fury"
+    },
+    {
+      "ItemId": "1405438",
+      "ItemName": "Kobra Janbiya of Rigor"
+    },
+    {
+      "ItemId": "1405439",
+      "ItemName": "Kobra Janbiya of Flashfloods"
+    },
+    {
+      "ItemId": "1405440",
+      "ItemName": "Kobra Janbiya of Acumen"
+    },
+    {
+      "ItemId": "1405441",
+      "ItemName": "Kobra Janbiya of Mettle"
+    },
+    {
+      "ItemId": "1405442",
+      "ItemName": "Kobra Janbiya of Demise"
+    },
+    {
+      "ItemId": "1405443",
+      "ItemName": "Kobra Janbiya of Amity"
+    },
+    {
+      "ItemId": "1405501",
+      "ItemName": "Kobra Ringlet of Fury"
+    },
+    {
+      "ItemId": "1405502",
+      "ItemName": "Kobra Ringlet of Rigor"
+    },
+    {
+      "ItemId": "1405503",
+      "ItemName": "Kobra Ringlet of Flashfloods"
+    },
+    {
+      "ItemId": "1405504",
+      "ItemName": "Kobra Ringlet of Acumen"
+    },
+    {
+      "ItemId": "1405505",
+      "ItemName": "Kobra Ringlet of Mettle"
+    },
+    {
+      "ItemId": "1405506",
+      "ItemName": "Kobra Ringlet of Demise"
+    },
+    {
+      "ItemId": "1405507",
+      "ItemName": "Kobra Ringlet of Amity"
+    },
+    {
+      "ItemId": "1405565",
+      "ItemName": "Kobra Sceptor of Fury"
+    },
+    {
+      "ItemId": "1405566",
+      "ItemName": "Kobra Sceptor of Rigor"
+    },
+    {
+      "ItemId": "1405567",
+      "ItemName": "Kobra Sceptor of Flooding"
+    },
+    {
+      "ItemId": "1405568",
+      "ItemName": "Sceptor of Kobra Acumen"
+    },
+    {
+      "ItemId": "1405569",
+      "ItemName": "Sceptor of Kobra Mettle"
+    },
+    {
+      "ItemId": "1405570",
+      "ItemName": "Kobra Sceptor of Demise"
+    },
+    {
+      "ItemId": "1405571",
+      "ItemName": "Kobra Sceptor of Amity"
+    },
+    {
+      "ItemId": "1405597",
+      "ItemName": "Durvish Armaments of Ire"
+    },
+    {
+      "ItemId": "1405598",
+      "ItemName": "Algid Durvish Armaments"
+    },
+    {
+      "ItemId": "1405601",
+      "ItemName": "Durvish Armaments of Impulse"
+    }
+  ]
+}

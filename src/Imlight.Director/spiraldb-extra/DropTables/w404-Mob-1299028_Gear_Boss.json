@@ -1,0 +1,65 @@
+{
+  "Name": "W404 Mob-1299028 Gear (Boss)",
+  "Description": "Wizard404's drop list of Evandyr HalfEar's own drops: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203142",
+      "ItemName": "Dragonfly Rider's Helm"
+    },
+    {
+      "ItemId": "1203216",
+      "ItemName": "Flame Legs Captain's Mail"
+    },
+    {
+      "ItemId": "1203266",
+      "ItemName": "Mantis Chitin Runners"
+    },
+    {
+      "ItemId": "1203267",
+      "ItemName": "Boots of the BurrowBuilder"
+    },
+    {
+      "ItemId": "1203337",
+      "ItemName": "FireWing's Jewel"
+    },
+    {
+      "ItemId": "1203338",
+      "ItemName": "BurrowBuilder's Medallion"
+    },
+    {
+      "ItemId": "1203339",
+      "ItemName": "Charm of the Fierce Mantis"
+    },
+    {
+      "ItemId": "1203386",
+      "ItemName": "Sabina's Dagger of Revival"
+    },
+    {
+      "ItemId": "1203408",
+      "ItemName": "LimeBlight's Gallery"
+    },
+    {
+      "ItemId": "1203410",
+      "ItemName": "Pack of Frozen Souls"
+    },
+    {
+      "ItemId": "1203669",
+      "ItemName": "Ice-Forged Burrower Steel"
+    },
+    {
+      "ItemId": "1203683",
+      "ItemName": "Cudgel of Frostbite"
+    },
+    {
+      "ItemId": "1203684",
+      "ItemName": "Staff of the Sand Devil"
+    },
+    {
+      "ItemId": "1217214",
+      "ItemName": "The Savvy Satyr"
+    }
+  ]
+}

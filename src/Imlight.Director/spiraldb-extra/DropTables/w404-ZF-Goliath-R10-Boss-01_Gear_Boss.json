@@ -1,0 +1,45 @@
+{
+  "Name": "W404 ZF-Goliath-R10-Boss-01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Goliath-R10-Boss-01: the gear drops (9), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "540083",
+      "ItemName": "Shango's Shield Pendant"
+    },
+    {
+      "ItemId": "540114",
+      "ItemName": "Prideful Paw"
+    },
+    {
+      "ItemId": "540169",
+      "ItemName": "Elephant Graveyard Shroud"
+    },
+    {
+      "ItemId": "540170",
+      "ItemName": "Bushfire Hat"
+    },
+    {
+      "ItemId": "540202",
+      "ItemName": "Kallah's Dread Stone"
+    },
+    {
+      "ItemId": "540234",
+      "ItemName": "Graveyard Shift"
+    },
+    {
+      "ItemId": "540235",
+      "ItemName": "Jacket of No Worries"
+    },
+    {
+      "ItemId": "540279",
+      "ItemName": "Life's Circle Safari Boots"
+    },
+    {
+      "ItemId": "540280",
+      "ItemName": "Nemean Rock Climbers"
+    }
+  ]
+}

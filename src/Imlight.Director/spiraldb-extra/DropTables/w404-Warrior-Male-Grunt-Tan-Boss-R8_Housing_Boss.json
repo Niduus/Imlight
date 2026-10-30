@@ -1,0 +1,17 @@
+{
+  "Name": "W404 Warrior-Male-Grunt-Tan-Boss-R8 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Warrior-Male-Grunt-Tan-Boss-R8: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160883",
+      "ItemName": "Medium Pillar"
+    },
+    {
+      "ItemId": "160916",
+      "ItemName": "Drake Plaque"
+    }
+  ]
+}

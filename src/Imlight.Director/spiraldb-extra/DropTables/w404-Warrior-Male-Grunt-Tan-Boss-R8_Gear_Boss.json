@@ -1,0 +1,97 @@
+{
+  "Name": "W404 Warrior-Male-Grunt-Tan-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Warrior-Male-Grunt-Tan-Boss-R8: the gear drops (22), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104611",
+      "ItemName": "Vestment of the Inferno"
+    },
+    {
+      "ItemId": "104630",
+      "ItemName": "Raiment of the Raven"
+    },
+    {
+      "ItemId": "104713",
+      "ItemName": "Tunic of Typhoons"
+    },
+    {
+      "ItemId": "104727",
+      "ItemName": "Surcoat of Glory"
+    },
+    {
+      "ItemId": "104804",
+      "ItemName": "Reaper's Boots"
+    },
+    {
+      "ItemId": "104828",
+      "ItemName": "Boots of Revelation"
+    },
+    {
+      "ItemId": "104852",
+      "ItemName": "Sandals of the Lost Epoch"
+    },
+    {
+      "ItemId": "104867",
+      "ItemName": "Striders of the Thicket"
+    },
+    {
+      "ItemId": "104888",
+      "ItemName": "Shoes of the Greatest Saga"
+    },
+    {
+      "ItemId": "126567",
+      "ItemName": "Final Orbit"
+    },
+    {
+      "ItemId": "126599",
+      "ItemName": "Burning Ring of Fire"
+    },
+    {
+      "ItemId": "126615",
+      "ItemName": "Seal of the Gallium Paladin"
+    },
+    {
+      "ItemId": "126655",
+      "ItemName": "Saber of the Gallium Paladin"
+    },
+    {
+      "ItemId": "126678",
+      "ItemName": "Deck of the Gallium Paladin"
+    },
+    {
+      "ItemId": "146164",
+      "ItemName": "Poniard of Vitality"
+    },
+    {
+      "ItemId": "146177",
+      "ItemName": "Claw of Conciliation"
+    },
+    {
+      "ItemId": "146192",
+      "ItemName": "Thunder Blade"
+    },
+    {
+      "ItemId": "146212",
+      "ItemName": "Lightning-charged Mantle"
+    },
+    {
+      "ItemId": "146229",
+      "ItemName": "Shroud of the Sylph"
+    },
+    {
+      "ItemId": "146272",
+      "ItemName": "Hood of Rejuvenation"
+    },
+    {
+      "ItemId": "146288",
+      "ItemName": "Frostbitten Cap"
+    },
+    {
+      "ItemId": "146364",
+      "ItemName": "Mantle of Order"
+    }
+  ]
+}

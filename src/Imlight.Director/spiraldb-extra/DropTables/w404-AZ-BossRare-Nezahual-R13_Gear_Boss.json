@@ -1,0 +1,57 @@
+{
+  "Name": "W404 AZ-BossRare-Nezahual-R13 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossRare-Nezahual-R13: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730240",
+      "ItemName": "Black Sky Barbed Hook"
+    },
+    {
+      "ItemId": "730243",
+      "ItemName": "Blade of the Green Song"
+    },
+    {
+      "ItemId": "730250",
+      "ItemName": "Seven Stabs of the Sky Athame"
+    },
+    {
+      "ItemId": "730310",
+      "ItemName": "Falling Star's End Time Band"
+    },
+    {
+      "ItemId": "730352",
+      "ItemName": "Ice Age Tyrant's Scales"
+    },
+    {
+      "ItemId": "730392",
+      "ItemName": "Keeper of the Codex Walkers"
+    },
+    {
+      "ItemId": "730394",
+      "ItemName": "Rangers of the Hungry Lizard"
+    },
+    {
+      "ItemId": "730418",
+      "ItemName": "Storm Sun Gallery"
+    },
+    {
+      "ItemId": "730422",
+      "ItemName": "Calendar of the Spiral King"
+    },
+    {
+      "ItemId": "730429",
+      "ItemName": "Jaguar Paw Pyramid"
+    },
+    {
+      "ItemId": "730445",
+      "ItemName": "Rod of Icy Tears"
+    },
+    {
+      "ItemId": "730446",
+      "ItemName": "Storm Quetzal's Charged Mace"
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "Name": "W404 ZF-Goliath-R11-Boss-02-Loot Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Goliath-R11-Boss-02-Loot: the gear drops (33), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "526680",
+      "ItemName": "Staff of Solomon"
+    },
+    {
+      "ItemId": "526684",
+      "ItemName": "Quagga Blade"
+    },
+    {
+      "ItemId": "532557",
+      "ItemName": "Splendid Boots"
+    },
+    {
+      "ItemId": "532558",
+      "ItemName": "Branded Chapeau"
+    },
+    {
+      "ItemId": "532562",
+      "ItemName": "Whiteblind Tunic"
+    },
+    {
+      "ItemId": "532566",
+      "ItemName": "Quick Stepping Boots"
+    },
+    {
+      "ItemId": "532567",
+      "ItemName": "Wild Monsoon Brim"
+    },
+    {
+      "ItemId": "532571",
+      "ItemName": "Tunic of the Paragon"
+    },
+    {
+      "ItemId": "532575",
+      "ItemName": "Soul Stepping Boots"
+    },
+    {
+      "ItemId": "532576",
+      "ItemName": "Mischievous Brim"
+    },
+    {
+      "ItemId": "540102",
+      "ItemName": "Mirror Light Pendant"
+    },
+    {
+      "ItemId": "540133",
+      "ItemName": "Spear of Ice and Hail"
+    },
+    {
+      "ItemId": "540138",
+      "ItemName": "Jungle King's Roar"
+    },
+    {
+      "ItemId": "540174",
+      "ItemName": "Jungle Lord's Winter Cap"
+    },
+    {
+      "ItemId": "540179",
+      "ItemName": "Griot's Hood"
+    },
+    {
+      "ItemId": "540180",
+      "ItemName": "Face of the Blinding Sun"
+    },
+    {
+      "ItemId": "540181",
+      "ItemName": "War Olyphant's Wrap"
+    },
+    {
+      "ItemId": "540207",
+      "ItemName": "Elissa's Chill Band"
+    },
+    {
+      "ItemId": "540239",
+      "ItemName": "Wildfire Garb"
+    },
+    {
+      "ItemId": "540241",
+      "ItemName": "Sinister Medicine Cloak"
+    },
+    {
+      "ItemId": "540243",
+      "ItemName": "Hail and Thunder Raiment"
+    },
+    {
+      "ItemId": "540245",
+      "ItemName": "Wicked Cold Clothes"
+    },
+    {
+      "ItemId": "540248",
+      "ItemName": "Spider's Storied Robe"
+    },
+    {
+      "ItemId": "540250",
+      "ItemName": "River Smuggler's Garb"
+    },
+    {
+      "ItemId": "540252",
+      "ItemName": "Hunter's Kin Garb"
+    },
+    {
+      "ItemId": "540254",
+      "ItemName": "Big Five Robe"
+    },
+    {
+      "ItemId": "540283",
+      "ItemName": "Storm Caller's Rangers"
+    },
+    {
+      "ItemId": "540284",
+      "ItemName": "Lion King's Balanced Pads"
+    },
+    {
+      "ItemId": "540287",
+      "ItemName": "Cold Climate Climbers"
+    },
+    {
+      "ItemId": "540288",
+      "ItemName": "No Worries Footgear"
+    },
+    {
+      "ItemId": "540300",
+      "ItemName": "Hand-Chased Box of Destiny"
+    },
+    {
+      "ItemId": "540301",
+      "ItemName": "Dead Chieftain's Fanged Deck"
+    },
+    {
+      "ItemId": "540302",
+      "ItemName": "Bundle of Eternal Flame"
+    }
+  ]
+}

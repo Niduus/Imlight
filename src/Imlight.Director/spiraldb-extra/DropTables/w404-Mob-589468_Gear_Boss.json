@@ -1,0 +1,61 @@
+{
+  "Name": "W404 Mob-589468 Gear (Boss)",
+  "Description": "Wizard404's drop list of Unsung Knight's own drops: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635229",
+      "ItemName": "Knight of the Wyrd's Pendant"
+    },
+    {
+      "ItemId": "635230",
+      "ItemName": "Seely Wizard's Torc"
+    },
+    {
+      "ItemId": "635269",
+      "ItemName": "Grim Guardian's Dirk"
+    },
+    {
+      "ItemId": "635270",
+      "ItemName": "Queen's Ever Sharp Wit"
+    },
+    {
+      "ItemId": "635309",
+      "ItemName": "Thunderstruck Shroud"
+    },
+    {
+      "ItemId": "635310",
+      "ItemName": "Chaos Lord's Helm"
+    },
+    {
+      "ItemId": "635341",
+      "ItemName": "Crystal Cave Rose"
+    },
+    {
+      "ItemId": "635385",
+      "ItemName": "High Court Robes"
+    },
+    {
+      "ItemId": "635386",
+      "ItemName": "Horned One's Tunic"
+    },
+    {
+      "ItemId": "635423",
+      "ItemName": "Hundred Year Bridge Walkers"
+    },
+    {
+      "ItemId": "635424",
+      "ItemName": "Deep Is The Well Waders"
+    },
+    {
+      "ItemId": "635640",
+      "ItemName": "Staff of the Wildgrave"
+    },
+    {
+      "ItemId": "635641",
+      "ItemName": "Stag-Horned Staff"
+    }
+  ]
+}

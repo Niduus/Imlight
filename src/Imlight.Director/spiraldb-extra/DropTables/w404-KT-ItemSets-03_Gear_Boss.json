@@ -1,0 +1,41 @@
+{
+  "Name": "W404 KT-ItemSets-03 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-ItemSets-03: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1502434",
+      "ItemName": "Krokotopian Fire Kaftan"
+    },
+    {
+      "ItemId": "1502435",
+      "ItemName": "Krokotopian Ice Kaftan"
+    },
+    {
+      "ItemId": "1502436",
+      "ItemName": "Krokotopian Storm Kaftan"
+    },
+    {
+      "ItemId": "1502437",
+      "ItemName": "Krokotopian Myth Kaftan"
+    },
+    {
+      "ItemId": "1502438",
+      "ItemName": "Krokotopian Life Kaftan"
+    },
+    {
+      "ItemId": "1502439",
+      "ItemName": "Krokotopian Death Kaftan"
+    },
+    {
+      "ItemId": "1502440",
+      "ItemName": "Krokotopian Balance Kaftan"
+    },
+    {
+      "ItemId": "1502441",
+      "ItemName": "Krokotopian Kaftan"
+    }
+  ]
+}

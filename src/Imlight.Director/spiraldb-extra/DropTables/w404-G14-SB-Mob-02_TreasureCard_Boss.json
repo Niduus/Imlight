@@ -1,0 +1,17 @@
+{
+  "Name": "W404 G14-SB-Mob-02 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-SB-Mob-02: the treasurecard drops (2), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Pest Zapper TC",
+      "ItemName": "Pest Zapper"
+    },
+    {
+      "ItemId": "Dragonflies TC",
+      "ItemName": "Dragonflies"
+    }
+  ]
+}

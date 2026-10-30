@@ -1,0 +1,77 @@
+{
+  "Name": "W404 Tri-Gauntlet-Squid Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Tri-Gauntlet-Squid: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346493",
+      "ItemName": "Savory Shroud"
+    },
+    {
+      "ItemId": "346494",
+      "ItemName": "Tasty Tunic"
+    },
+    {
+      "ItemId": "346495",
+      "ItemName": "Delectable Hooves"
+    },
+    {
+      "ItemId": "455354",
+      "ItemName": "Hood of Judgment"
+    },
+    {
+      "ItemId": "455355",
+      "ItemName": "Hangman's Hood"
+    },
+    {
+      "ItemId": "455356",
+      "ItemName": "Firestarter's Hood"
+    },
+    {
+      "ItemId": "455357",
+      "ItemName": "Frostbit Hood"
+    },
+    {
+      "ItemId": "455358",
+      "ItemName": "Hood of Esprit"
+    },
+    {
+      "ItemId": "455359",
+      "ItemName": "Tricksy Hood"
+    },
+    {
+      "ItemId": "455360",
+      "ItemName": "Skyscream Hood"
+    },
+    {
+      "ItemId": "468162",
+      "ItemName": "Balance Mastery Amulet"
+    },
+    {
+      "ItemId": "468163",
+      "ItemName": "Death Mastery Amulet"
+    },
+    {
+      "ItemId": "468164",
+      "ItemName": "Fire Mastery Amulet"
+    },
+    {
+      "ItemId": "468165",
+      "ItemName": "Ice Mastery Amulet"
+    },
+    {
+      "ItemId": "468166",
+      "ItemName": "Life Mastery Amulet"
+    },
+    {
+      "ItemId": "468167",
+      "ItemName": "Myth Mastery Amulet"
+    },
+    {
+      "ItemId": "468168",
+      "ItemName": "Storm Mastery Amulet"
+    }
+  ]
+}

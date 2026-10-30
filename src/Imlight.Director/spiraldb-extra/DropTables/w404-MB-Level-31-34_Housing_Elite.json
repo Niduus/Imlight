@@ -1,0 +1,21 @@
+{
+  "Name": "W404 MB-Level-31-34 Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table MB-Level-31-34: the housing drops (3), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160625",
+      "ItemName": "Tin Can"
+    },
+    {
+      "ItemId": "160731",
+      "ItemName": "Angled Gravemarker"
+    },
+    {
+      "ItemId": "160733",
+      "ItemName": "Crossbone Gravestone"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "Name": "W404 Mob-589669 Gear (Boss)",
+  "Description": "Wizard404's drop list of Feletheus Barca's own drops: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635222",
+      "ItemName": "Unknowable Torc"
+    },
+    {
+      "ItemId": "635223",
+      "ItemName": "Circlet of the Hardy Squire"
+    },
+    {
+      "ItemId": "635252",
+      "ItemName": "Noble Hunter's Dagger"
+    },
+    {
+      "ItemId": "635253",
+      "ItemName": "Loyal Steel"
+    },
+    {
+      "ItemId": "635301",
+      "ItemName": "Hood of the Sacred Lake"
+    },
+    {
+      "ItemId": "635302",
+      "ItemName": "Hunter's Helm of Mercy"
+    },
+    {
+      "ItemId": "635339",
+      "ItemName": "Sir Malory's Seal"
+    },
+    {
+      "ItemId": "635375",
+      "ItemName": "Catalan's Scales"
+    },
+    {
+      "ItemId": "635376",
+      "ItemName": "Jabberwock's Plate"
+    },
+    {
+      "ItemId": "635415",
+      "ItemName": "Knight's Boots of Justice"
+    },
+    {
+      "ItemId": "635416",
+      "ItemName": "Loyal Knight's Boots"
+    },
+    {
+      "ItemId": "635624",
+      "ItemName": "Longbow of Integrity"
+    },
+    {
+      "ItemId": "635625",
+      "ItemName": "Gallant Longbow"
+    }
+  ]
+}

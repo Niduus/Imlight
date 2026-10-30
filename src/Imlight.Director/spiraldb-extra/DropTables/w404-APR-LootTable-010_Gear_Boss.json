@@ -1,0 +1,25 @@
+{
+  "Name": "W404 APR-LootTable-010 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table APR-LootTable-010: the gear drops (4), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1257804",
+      "ItemName": "Long-eared Bunny Scepter"
+    },
+    {
+      "ItemId": "1257805",
+      "ItemName": "Egg Hunter's Staff"
+    },
+    {
+      "ItemId": "1257806",
+      "ItemName": "Staff of the Spring Song"
+    },
+    {
+      "ItemId": "1257807",
+      "ItemName": "Baton of the Spring Hare"
+    }
+  ]
+}

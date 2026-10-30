@@ -1,0 +1,37 @@
+{
+  "Name": "W404 MB-Level-24-27 Snack (Normal)",
+  "Description": "Wizard404's drop list of the game's table MB-Level-24-27: the snack drops (7), one picked when it rolls. How often: DropOdds.json Normal/Snack.",
+  "Odds": "Normal/Snack",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220205",
+      "ItemName": "Square Watermelon"
+    },
+    {
+      "ItemId": "220256",
+      "ItemName": "Caramel Popcorn"
+    },
+    {
+      "ItemId": "220257",
+      "ItemName": "Stinky Cheese"
+    },
+    {
+      "ItemId": "220258",
+      "ItemName": "Wheat Cracker"
+    },
+    {
+      "ItemId": "220259",
+      "ItemName": "Redskin Peanut"
+    },
+    {
+      "ItemId": "220268",
+      "ItemName": "Medium Fish"
+    },
+    {
+      "ItemId": "220285",
+      "ItemName": "Gummy Bloodbat"
+    }
+  ]
+}

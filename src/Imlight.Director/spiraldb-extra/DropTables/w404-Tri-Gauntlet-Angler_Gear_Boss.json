@@ -1,0 +1,105 @@
+{
+  "Name": "W404 Tri-Gauntlet-Angler Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Tri-Gauntlet-Angler: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346493",
+      "ItemName": "Savory Shroud"
+    },
+    {
+      "ItemId": "346494",
+      "ItemName": "Tasty Tunic"
+    },
+    {
+      "ItemId": "346495",
+      "ItemName": "Delectable Hooves"
+    },
+    {
+      "ItemId": "455361",
+      "ItemName": "Cape of Judgment"
+    },
+    {
+      "ItemId": "455362",
+      "ItemName": "Hangman's Cape"
+    },
+    {
+      "ItemId": "455363",
+      "ItemName": "Firestarter's Cape"
+    },
+    {
+      "ItemId": "455364",
+      "ItemName": "Frostbit Cape"
+    },
+    {
+      "ItemId": "455365",
+      "ItemName": "Cape of Esprit"
+    },
+    {
+      "ItemId": "455366",
+      "ItemName": "Tricksy Cape"
+    },
+    {
+      "ItemId": "455367",
+      "ItemName": "Skyscream Cape"
+    },
+    {
+      "ItemId": "455368",
+      "ItemName": "Boots of Judgment"
+    },
+    {
+      "ItemId": "455369",
+      "ItemName": "Hangman's Boots"
+    },
+    {
+      "ItemId": "455370",
+      "ItemName": "Firestarter's Boots"
+    },
+    {
+      "ItemId": "455371",
+      "ItemName": "Frostbit Boots"
+    },
+    {
+      "ItemId": "455372",
+      "ItemName": "Boots of Esprit"
+    },
+    {
+      "ItemId": "455373",
+      "ItemName": "Tricksy Boots"
+    },
+    {
+      "ItemId": "455374",
+      "ItemName": "Skyscream Boots"
+    },
+    {
+      "ItemId": "468162",
+      "ItemName": "Balance Mastery Amulet"
+    },
+    {
+      "ItemId": "468163",
+      "ItemName": "Death Mastery Amulet"
+    },
+    {
+      "ItemId": "468164",
+      "ItemName": "Fire Mastery Amulet"
+    },
+    {
+      "ItemId": "468165",
+      "ItemName": "Ice Mastery Amulet"
+    },
+    {
+      "ItemId": "468166",
+      "ItemName": "Life Mastery Amulet"
+    },
+    {
+      "ItemId": "468167",
+      "ItemName": "Myth Mastery Amulet"
+    },
+    {
+      "ItemId": "468168",
+      "ItemName": "Storm Mastery Amulet"
+    }
+  ]
+}

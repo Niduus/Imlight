@@ -1,0 +1,17 @@
+{
+  "Name": "W404 NV_Horse_HordeOfficer_A_01 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Horse_HordeOfficer_A_01: the treasurecard drops (2), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Guidance TC",
+      "ItemName": "Guidance"
+    },
+    {
+      "ItemId": "Mass Storm Prism TC",
+      "ItemName": "Mass Storm Prism"
+    }
+  ]
+}

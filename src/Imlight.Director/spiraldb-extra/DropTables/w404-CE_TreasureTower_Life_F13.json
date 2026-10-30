@@ -1,0 +1,9 @@
+{
+  "Name": "W404 CE_TreasureTower_Life_F13",
+  "Description": "Gold of the game's table CE_TreasureTower_Life_F13, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 54,
+  "MaxGold": 64,
+  "EachItem": false,
+  "Items": []
+}

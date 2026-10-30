@@ -1,0 +1,25 @@
+{
+  "Name": "W404 FEB-LootTable-001 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table FEB-LootTable-001: the pet drops (4), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126945",
+      "ItemName": "Valentine Pig"
+    },
+    {
+      "ItemId": "126969",
+      "ItemName": "Cupig"
+    },
+    {
+      "ItemId": "1359796",
+      "ItemName": "Lovely Ladybug"
+    },
+    {
+      "ItemId": "1359797",
+      "ItemName": "Lovely Leopard"
+    }
+  ]
+}

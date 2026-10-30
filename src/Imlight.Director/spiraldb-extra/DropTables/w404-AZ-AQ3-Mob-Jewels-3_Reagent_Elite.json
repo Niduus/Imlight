@@ -1,0 +1,33 @@
+{
+  "Name": "W404 AZ-AQ3-Mob-Jewels-3 Reagent (Elite)",
+  "Description": "Wizard404's drop list of the game's table AZ-AQ3-Mob-Jewels-3: the reagent drops (6), one picked when it rolls. How often: DropOdds.json Elite/Reagent.",
+  "Odds": "Elite/Reagent",
+  "RollChance": 0.35,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass"
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel"
+    },
+    {
+      "ItemId": "1350017",
+      "ItemName": "Silver"
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt"
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze"
+    },
+    {
+      "ItemId": "1350235",
+      "ItemName": "Tungsten"
+    }
+  ]
+}

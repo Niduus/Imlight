@@ -1,0 +1,29 @@
+{
+  "Name": "W404 HO-13-VampireRabbitBoss-LT Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table HO-13-VampireRabbitBoss-LT: the seed drops (5), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355073",
+      "ItemName": "Venus Fly Trap"
+    },
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots"
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus"
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas"
+    },
+    {
+      "ItemId": "713133",
+      "ItemName": "Dead Beets"
+    }
+  ]
+}
