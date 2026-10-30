@@ -555,6 +555,19 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Sent by the CrownShopService to the EquipmentService: an elixir bought to use now could not go on straight away
+    /// (one of the same type is active), so it went to the backpack and is used from there, replacing the active one.
+    /// </summary>
+    public sealed class MSG_USEELIXIR : IServerMessage {
+
+        public byte MessageOrder { get; } = 153;
+        public byte ServiceID { get; } = 103;
+
+        public ulong TemplateId;
+
+    }
+
+    /// <summary>
     /// Fired every second to tick down active elixir playtime.
     /// </summary>
     public sealed class MSG_DOELIXIRTICK : IServerMessage {

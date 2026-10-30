@@ -532,6 +532,7 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
             return 0;
         }
 
+        var useFromBackpack = false;
         if (behaviors is not null) {
             if (message.PurchaseElixirEquipNow > 0) {
                 var elixirBehavior = behaviors.OfType<ElixirBehaviorTemplate>().FirstOrDefault();
@@ -539,8 +540,14 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
                     if (TryEquipElixir(wizard, message.Item, wizItemTemplate, elixirBehavior)) {
                         return 0;
                     }
+
+                    // One of the same type is active: the elixir goes to the backpack and is used from there, where it
+                    // replaces the active one as in the game. With no room it just stays in the backpack.
+                    useFromBackpack = wizard.EquipmentBehavior.HasElixirRoom(elixirBehavior);
+                    if (!useFromBackpack) {
+                        InformGameClient($"You can only have {Imlight.CoreLib.Shared.Behaviors.ServerWizEquipmentBehavior.MaxActiveElixirs} elixirs active at once, so this one went to your backpack.");
+                    }
                 }
-                // If it couldn't be equipped (already 3 active, duplicate type, etc.), fall back to inventory.
 
                 if (behaviors.OfType<LevelUpElixirBehaviorTemplate>().Any()
                     || behaviors.OfType<WorldElixirBehaviorTemplate>().Any()) {
@@ -579,6 +586,10 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
             if (!TryAddItemToInventory(wizard, message.Item, message.Texture, message.Decal)) {
                 return s_errorInvFull;
             }
+        }
+
+        if (useFromBackpack) {
+            TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_USEELIXIR { TemplateId = message.Item });
         }
 
         return 0;

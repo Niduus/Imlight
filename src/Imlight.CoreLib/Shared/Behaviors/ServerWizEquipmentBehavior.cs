@@ -288,6 +288,39 @@ public class ServerWizEquipmentBehavior : IClientBehaviorProvider<ClientWizEquip
         }
     }
 
+    /// <summary>
+    /// The active elixirs that share a type with this elixir. In the game a new elixir takes the place of the active
+    /// one of the same type (using a second Damage Elixir replaces the first and starts its timer again).
+    /// </summary>
+    public List<EquipmentSlot> GetSameTypeElixirs(ElixirBehaviorTemplate template) {
+        if (template?.m_typeList is not { Count: > 0 }) {
+            return [];
+        }
+
+        var slots = new List<EquipmentSlot>();
+        foreach (var (slot, activeItem) in GetActiveElixirs()) {
+            var activeTemplate = ItemHelper.GetItemTemplate(activeItem);
+            var activeElixirTemplate = activeTemplate?.m_behaviors?.OfType<ElixirBehaviorTemplate>().FirstOrDefault();
+            if (activeElixirTemplate?.m_typeList is not null
+                && activeElixirTemplate.m_typeList.Any(template.m_typeList.Contains)) {
+                slots.Add(slot);
+            }
+        }
+
+        return slots;
+    }
+
+    /// <summary>
+    /// Whether one more elixir fits once the active ones of the same type are taken off.
+    /// </summary>
+    public bool HasElixirRoom(ElixirBehaviorTemplate template) {
+        var activeCount = SlotList?.Count(s => s.SlotType == EquipmentSlotType.Elixir) ?? 0;
+
+        return activeCount - GetSameTypeElixirs(template).Count < s_maxActiveElixirs;
+    }
+
+    public static int MaxActiveElixirs => s_maxActiveElixirs;
+
     public bool CanEquipElixir(ElixirBehaviorTemplate template) {
         var activeCount = SlotList?.Count(s => s.SlotType == EquipmentSlotType.Elixir) ?? 0;
         if (activeCount >= s_maxActiveElixirs) {
