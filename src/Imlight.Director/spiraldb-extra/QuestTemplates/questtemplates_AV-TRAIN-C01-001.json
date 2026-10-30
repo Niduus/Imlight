@@ -11,7 +11,7 @@
   ],
   "m_goals": [
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -24,16 +24,18 @@
         "m_percentChance": 1.0,
         "m_descriptor": "Toadstool Forest Scroll",
         "m_descriptor2": "",
-        "m_count": 0,
+        "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AV_ScrollCase.dds",
       "m_displayImage2": "",
-      "m_clientTags": [],
+      "m_clientTags": [
+        "AV-MissingScroll-1"
+      ],
       "m_genericEvents": [],
-      "m_autoQualify": false,
+      "m_autoQualify": true,
       "m_autoComplete": false,
       "m_dialogList": null,
       "m_noQuestHelper": false,
@@ -41,14 +43,14 @@
       "m_locationName": "The Wild",
       "m_goalName": "1_WizardQuestGoals00000058",
       "m_goalTitle": "WizardQuestGoals_00000058",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Avalon/AV_Z04_TheWild",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "AV-MissingScroll-1.AdjRef"
+      ],
+      "m_itemTotal": 1
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -61,16 +63,18 @@
         "m_percentChance": 1.0,
         "m_descriptor": "Fire Elf Village Scroll",
         "m_descriptor2": "",
-        "m_count": 0,
+        "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AV_ScrollCase.dds",
       "m_displayImage2": "",
-      "m_clientTags": [],
+      "m_clientTags": [
+        "AV-MissingScroll-2"
+      ],
       "m_genericEvents": [],
-      "m_autoQualify": false,
+      "m_autoQualify": true,
       "m_autoComplete": false,
       "m_dialogList": null,
       "m_noQuestHelper": false,
@@ -78,14 +82,14 @@
       "m_locationName": "The Wild",
       "m_goalName": "2_WizardQuestGoals00000058",
       "m_goalTitle": "WizardQuestGoals_00000058",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Avalon/AV_Z04_TheWild",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "AV-MissingScroll-2.AdjRef"
+      ],
+      "m_itemTotal": 1
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -98,16 +102,18 @@
         "m_percentChance": 1.0,
         "m_descriptor": "Floating Bridge Scroll",
         "m_descriptor2": "",
-        "m_count": 0,
+        "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AV_ScrollCase.dds",
       "m_displayImage2": "",
-      "m_clientTags": [],
+      "m_clientTags": [
+        "AV-MissingScroll-3"
+      ],
       "m_genericEvents": [],
-      "m_autoQualify": false,
+      "m_autoQualify": true,
       "m_autoComplete": false,
       "m_dialogList": null,
       "m_noQuestHelper": false,
@@ -115,14 +121,14 @@
       "m_locationName": "The Wild",
       "m_goalName": "3_WizardQuestGoals00000058",
       "m_goalTitle": "WizardQuestGoals_00000058",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Avalon/AV_Z04_TheWild",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "AV-MissingScroll-3.AdjRef"
+      ],
+      "m_itemTotal": 1
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -135,16 +141,18 @@
         "m_percentChance": 1.0,
         "m_descriptor": "Froudling Village Scroll",
         "m_descriptor2": "",
-        "m_count": 0,
+        "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AV_ScrollCase.dds",
       "m_displayImage2": "",
-      "m_clientTags": [],
+      "m_clientTags": [
+        "AV-MissingScroll-4"
+      ],
       "m_genericEvents": [],
-      "m_autoQualify": false,
+      "m_autoQualify": true,
       "m_autoComplete": false,
       "m_dialogList": null,
       "m_noQuestHelper": false,
@@ -152,14 +160,14 @@
       "m_locationName": "The Wyrd",
       "m_goalName": "4_WizardQuestGoals00000058",
       "m_goalTitle": "WizardQuestGoals_00000058",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Avalon/AV_Z05_TheWyrd",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "AV-MissingScroll-4.AdjRef"
+      ],
+      "m_itemTotal": 1
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -172,16 +180,18 @@
         "m_percentChance": 1.0,
         "m_descriptor": "Graveyard Scroll",
         "m_descriptor2": "",
-        "m_count": 0,
+        "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AV_ScrollCase.dds",
       "m_displayImage2": "",
-      "m_clientTags": [],
+      "m_clientTags": [
+        "AV-MissingScroll-5"
+      ],
       "m_genericEvents": [],
-      "m_autoQualify": false,
+      "m_autoQualify": true,
       "m_autoComplete": false,
       "m_dialogList": null,
       "m_noQuestHelper": false,
@@ -189,11 +199,11 @@
       "m_locationName": "The Wyrd",
       "m_goalName": "5_WizardQuestGoals00000058",
       "m_goalTitle": "WizardQuestGoals_00000058",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Avalon/AV_Z05_TheWyrd",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "AV-MissingScroll-5.AdjRef"
+      ],
+      "m_itemTotal": 1
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",

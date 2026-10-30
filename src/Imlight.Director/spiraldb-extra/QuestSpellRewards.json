@@ -90,6 +90,8 @@
   {"quest": "WC-UNICORN-MAIN-008", "school": "Storm", "spell": 743740871, "name": "Lightning Strike"},
   {"quest": "WC-UNICORN-MAIN-008", "school": "Balance", "spell": 751181746, "name": "Elemental Shield"},
   {"quest": "LM-W404-1658113843", "school": "Myth", "spell": 1001659918, "name": "Barbarian's Saga"},
+  {"quest": "AV-FISH-MAIN-002", "spell": 591132794, "name": "Banish Sentinels 2 (fishing spell)"},
+  {"quest": "AZ-FISH-001", "spell": 766279669, "name": "Buoy Chests 1 (fishing spell)"},
   {"quest": "MB-SPELL-C01-002", "spell": 551219137, "name": "Nerys"},
   {"quest": "MB-SPELL-C02-002", "spell": 1748085750, "name": "Malduit"},
   {"quest": "MB-SPELL-C03-002", "spell": 408748843, "name": "Sir Lamorak"},

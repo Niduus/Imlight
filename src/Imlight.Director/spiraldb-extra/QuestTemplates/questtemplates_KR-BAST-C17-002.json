@@ -107,7 +107,7 @@
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_KH_Mice_Ancient_Horn.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "Cyclops-Red-L02"
+        "KR-LoratiosWarhorn"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -120,7 +120,7 @@
       "m_goalTitle": "WizardQuestGoals_00000058",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "Cyclops-Red-L02.AdjRef"
+        "KR-LoratiosWarhorn.AdjRef"
       ],
       "m_itemTotal": 1
     },

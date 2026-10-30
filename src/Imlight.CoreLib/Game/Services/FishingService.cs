@@ -377,6 +377,9 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
         if (!info.IsChest) {
             Imlight.CoreLib.Game.Events.ClassProjects.Record(SessionActor.ActorRef, wizard, Imcodec.ObjectProperty.TypeCache.ClassProjectActivityType.CPT_CatchFish);
 
+            // Quests that ask for this fish ("Catch a Sword Tail") count it.
+            SessionActor.ActorRef.Tell(new CHARACTER_103_PROTOCOL.MSG_FISHCAUGHTFORQUESTS { FishTemplateId = info.TemplateId });
+
             // "Catch a Frost Dekoi" steps of our fishing quests (A River Runs Through It) list this event.
             SessionActor.ActorRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONEEVENTFORQUESTS {
                 EventName = CATCH_EVENT_PREFIX + info.TemplateId,
