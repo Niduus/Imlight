@@ -582,6 +582,52 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         SendGoalMessage(gTemplate, qInstance, 2);
     }
 
+    // A caught fish counts for every active "catch" step that names it: the step's tag is the fish's file name
+    // (Fish_Eel_SwordTail) and its adjective the fish's own. Nothing counted catches before, so fishing quests such as
+    // A Fishy Competitor and Rivers of Gold could not be finished (side quest check, 2026-10-30).
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_FISHCAUGHTFORQUESTS))]
+    private void ReceiveFishCaughtForQuests(CHARACTER_103_PROTOCOL.MSG_FISHCAUGHTFORQUESTS message) {
+        var wizard = GetActiveWizard();
+        if (wizard?.QuestBehavior is null || message.FishTemplateId == 0) {
+            return;
+        }
+
+        var fileName = Imlight.CoreLib.Shared.Resources.CoreObjectFactory.FileNameOf(message.FishTemplateId);
+        var template = Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(message.FishTemplateId) as GameObjectTemplate;
+        string objectName = template?.m_objectName;
+        var adjectives = (template?.m_adjectiveList ?? []).Select(a => (string) a).Where(a => !string.IsNullOrEmpty(a))
+            .ToHashSet(StringComparer.Ordinal);
+        bool Names(ScavengeGoalTemplate goal)
+            => (goal.m_clientTags ?? []).Any(tag => (string) tag is { Length: > 0 } text
+                    && (string.Equals(text, fileName, StringComparison.OrdinalIgnoreCase) || string.Equals(text, objectName, StringComparison.OrdinalIgnoreCase)))
+                || (goal.m_itemAdjectives ?? []).Any(a => adjectives.Contains(a));
+
+        foreach (var qInstance in wizard.QuestBehavior.CurrentQuestInstances.ToList()) {
+            var qTemplate = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == qInstance.QuestName);
+            foreach (var goal in qTemplate?.m_goals ?? []) {
+                if (goal is not ScavengeGoalTemplate scavenge || !qInstance.IsGoalActive(goal.m_goalName) || !Names(scavenge)) {
+                    continue;
+                }
+
+                var gInstance = qInstance.GoalProgress.FirstOrDefault(g => g.GoalName == goal.m_goalName);
+                var goalMax = QuestMadlibs.GetGoalTotal(goal);
+                if (gInstance is null || gInstance.CurrentProgress >= goalMax) {
+                    continue;
+                }
+
+                wizard.IncrementQuestGoal(qInstance.QuestName, goal.m_goalName);
+                Logger.Information("Quest goal progress: {0} quest '{1}' goal '{2}' at {3}/{4} after catching fish {5}.",
+                    Logger.Args(wizard.CharId, qInstance.QuestName, goal.m_goalName, gInstance.CurrentProgress, goalMax, message.FishTemplateId));
+                if (gInstance.CurrentProgress >= goalMax) {
+                    CompleteGoal(qInstance, goal);
+                }
+                else {
+                    SendGoalMessage(goal, qInstance, 2);
+                }
+            }
+        }
+    }
+
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_COMPLETEPROXIMITYGOAL))]
     private void ReceiveCompleteProximityGoal(ZONE_102_PROTOCOL.MSG_COMPLETEPROXIMITYGOAL message) {
         // A volume component matched one of this player's active proximity goals to the

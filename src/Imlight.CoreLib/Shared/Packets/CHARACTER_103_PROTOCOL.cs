@@ -829,4 +829,16 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// The player caught a fish (FishingService): a quest's "catch" step that names this fish counts it (QuestService).
+    /// </summary>
+    public sealed class MSG_FISHCAUGHTFORQUESTS : IServerMessage {
+
+        public byte MessageOrder { get; } = 152;
+        public byte ServiceID { get; } = 103;
+
+        public uint FishTemplateId;
+
+    }
+
 }
