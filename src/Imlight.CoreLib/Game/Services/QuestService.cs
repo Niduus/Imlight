@@ -740,6 +740,9 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             case "collectspells":
                 CommandCollectSpells(wizard);
                 return;
+            case "removespells":
+                CommandRemoveSpells(wizard);
+                return;
         }
 
         // The remaining actions act on an active quest. The server does not learn which quest the client
