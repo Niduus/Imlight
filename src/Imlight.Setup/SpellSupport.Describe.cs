@@ -363,12 +363,16 @@ internal static partial class SpellSupport {
         var you = requirement is ConditionalSpellEffectRequirement { m_targetType: RequirementTarget.RT_Caster };
         var who = you ? "you" : "the target";
         var has = you ? (not ? "you have no" : "you have") : (not ? "the target has no" : "the target has");
+        var doesNotHave = you ? "you don't have" : "the target doesn't have";
+        // "has no blades" reads right, "has no at least 2 blades" doesn't: a count that is not met is "fewer than".
         string Count(int min, int max, string one, string many)
-            => min > 1 && max >= min && max != min ? $"{min} to {max} {many}" : min > 1 ? $"at least {min} {many}" : (not ? many : "a " + one);
+            => min > 1 && max >= min && max != min ? $"{min} to {max} {many}"
+                : min > 1 ? (not ? $"fewer than {min} {many}" : $"at least {min} {many}")
+                : (not ? many : "a " + one);
 
         return requirement switch {
             ReqIsSchool isSchool => $"{who} {(you ? "are" : "is")}{(not ? " not" : "")} {isSchool.m_magicSchoolName}",
-            ReqIsSecondarySchool => $"{who} {(you ? "have" : "has")}{(not ? " not" : "")} the right second school",
+            ReqIsSecondarySchool => $"{(not ? doesNotHave : you ? "you have" : "the target has")} the right second school",
             ReqHangingWard ward => $"{has} {Count(ward.m_minCount, ward.m_maxCount, Kind(ward.m_disposition, "shield", "trap", "ward"), Kind(ward.m_disposition, "shields", "traps", "wards"))}",
             ReqHangingCharm charm => $"{has} {Count(charm.m_minCount, charm.m_maxCount, Kind(charm.m_disposition, "blade", "weakness", "charm"), Kind(charm.m_disposition, "blades", "weaknesses", "charms"))}",
             ReqHangingOverTime overTime => $"{has} {Count(overTime.m_minCount, overTime.m_maxCount, Kind(overTime.m_disposition, "heal over time", "damage over time", "over-time effect"), Kind(overTime.m_disposition, "heals over time", "damage-over-time effects", "over-time effects"))}",
@@ -383,7 +387,9 @@ internal static partial class SpellSupport {
             },
             ReqCombatHealth health => $"{who}{(you ? "r" : "'s")} health is{(not ? " not" : "")} between {health.m_fMinPercent * 100:0}% and {health.m_fMaxPercent * 100:0}%",
             ReqCombatStatus status => $"{who} {(you ? "are" : "is")}{(not ? " not" : "")} {(status.m_status == kStatusEffect.kConfused ? "confused" : "stunned")}",
-            ReqPipCount pips => $"{who} {(you ? "have" : "has")}{(not ? " not" : "")} {pips.m_minPips}{(pips.m_maxPips > pips.m_minPips ? $" to {pips.m_maxPips}" : " or more")} pips",
+            ReqPipCount pips => pips.m_maxPips > pips.m_minPips
+                ? $"{(not ? doesNotHave : you ? "you have" : "the target has")} {pips.m_minPips} to {pips.m_maxPips} pips"
+                : $"{who} {(you ? "have" : "has")} {(not ? $"fewer than {pips.m_minPips}" : $"{pips.m_minPips} or more")} pips",
             ReqShadowPipCount => $"{who} {(you ? "have" : "has")}{(not ? " no" : "")} shadow pips",
             _ => "a condition is met",
         };
@@ -487,6 +493,10 @@ internal static partial class SpellSupport {
         var next = rounds > 0 ? "" : "next ";
         var many = rounds > 0 ? "s" : "";
         var their = who == "you" ? "your" : "their";
+        // "all enemies take", "one enemy takes", "you take".
+        var plural = who is "you" or "all enemies" or "several enemies" or "several allies";
+        string Verb(string single, string multiple) => plural ? multiple : single;
+        var them = who == "you" ? "you" : "them";
 
         Clause Say(string text, string suffix = "") => new(text, suffix);
 
@@ -535,7 +545,7 @@ internal static partial class SpellSupport {
                 return Say($"{sign} damage on {whose} {next}{hit}attack{many}{forRounds}");
             case kSpellEffects.kModifyIncomingDamage:
                 if (rounds > 0) {
-                    return Say($"{sign}% to the {hit}damage {who} take{(who == "you" ? "" : "s")} for {Rounds(rounds)}");
+                    return Say($"{sign}% to the {hit}damage {who} {Verb("takes", "take")} for {Rounds(rounds)}");
                 }
 
                 return Say(high < 0 || low < 0 ? $"{sign}% to the next {hit}attack{on}" : $"{sign}% to the next {hit}hit{on}");
@@ -650,12 +660,12 @@ internal static partial class SpellSupport {
             case kSpellEffects.kModifyHate:
                 return Say($"Changes how much monsters go after {who}");
             case kSpellEffects.kAfterlife:
-                return Say($"If {who} {(who == "you" ? "are" : "is")} defeated{(rounds > 0 ? $" in the next {Rounds(rounds)}" : "")}, brings them back");
+                return Say($"If {who} {Verb("is", "are")} defeated{(rounds > 0 ? $" in the next {Rounds(rounds)}" : "")}, brings {them} back");
             case kSpellEffects.kConfusion:
-                return Say($"Confuses {who}{forRounds}: {n}% chance each turn that their spell hits a random target");
+                return Say($"Confuses {who}{forRounds}: {n}% chance each turn that {their} spell hits a random target");
             // Beguile and Spy keep their rounds in m_effectParam.
             case kSpellEffects.kMindControl:
-                return Say($"Beguiles {who} so it fights for your side for {Rounds(effect.m_effectParam)}");
+                return Say($"Beguiles {who} so {Verb("it fights", "they fight")} for your side for {Rounds(effect.m_effectParam)}");
             case kSpellEffects.kClue:
                 return Say($"Spies on {who} for {Rounds(effect.m_effectParam)}");
             case kSpellEffects.kAddSpellToHand:
@@ -678,7 +688,7 @@ internal static partial class SpellSupport {
             case kSpellEffects.kModifyPipRoundRate:
                 return Say($"{(high >= 0 ? "+" : "-")}{n} pip{(n == "1" ? "" : "s")} each round for {who}{forRounds}");
             case kSpellEffects.kHealByWard:
-                return Say($"Heals {who} for {n} health for each ward on them{forRounds}");
+                return Say($"Heals {who} for {n} health for each ward on {them}{forRounds}");
             case kSpellEffects.kAddCombatTriggerList:
                 return Say($"Sets up battle triggers on {who}");
             case kSpellEffects.kRemoveCombatTriggerList:
@@ -690,7 +700,7 @@ internal static partial class SpellSupport {
             case kSpellEffects.kVanish:
                 return Say($"Makes {who} vanish from the battle{forRounds}");
             case kSpellEffects.kAutoPass:
-                return Say($"Makes {who} pass {(who == "you" ? "your" : "their")} turns{forRounds}");
+                return Say($"Makes {who} pass {their} turns{forRounds}");
             case kSpellEffects.kExitCombat:
                 return Say($"Takes {who} out of the battle");
             case kSpellEffects.kCollectEssence:
@@ -719,9 +729,26 @@ internal static partial class SpellSupport {
             case kSpellEffects.kModifyCardCloak:
                 return Say("Cloaks the card, so the enemy can't see it");
             case kSpellEffects.kModifyCardRank:
-                return Say($"{sign} pip{(n == "1" ? "" : "s")} on the card's rank");
+                return Say(high >= 0 ? $"Makes the card cost {n} more pip{(n == "1" ? "" : "s")}" : $"Makes the card cost {n} fewer pip{(n == "1" ? "" : "s")}");
             case kSpellEffects.kModifyCardMutation:
                 return Say("Changes the card into a stronger one");
+            case kSpellEffects.kRevealCloak:
+                return Say($"Reveals the hidden charms and wards on {who}");
+            case kSpellEffects.kStopVanish:
+                return Say($"Brings {who} back from vanishing");
+            case kSpellEffects.kStopAutoPass:
+                return Say($"Lets {who} pick {their} own turns again");
+            case kSpellEffects.kMakeTargetable:
+            case kSpellEffects.kForceTargetable:
+                return Say($"Makes {who} targetable again");
+            case kSpellEffects.kSuspendPips:
+                return Say($"Stops {whose} pips from coming in{forRounds}");
+            case kSpellEffects.kResumePips:
+                return Say($"Lets {whose} pips come in again");
+            case kSpellEffects.kBacklashDamage:
+                return Say("Deals Shadow backlash damage", to);
+            case kSpellEffects.kAbsorbHeal:
+                return Say($"Gives {who} a shield that soaks up the next {n} healing{forRounds}");
             case kSpellEffects.kProtectCardBeneficial:
             case kSpellEffects.kProtectCardHarmful:
                 return Say("Protects what the card puts on from being removed");

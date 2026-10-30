@@ -408,7 +408,7 @@ internal static partial class SpellSupport {
         kSpellEffects.kDelayCast => "a delayed cast",
         kSpellEffects.kAbsorbHeal => "absorbing heals",
         kSpellEffects.kRevealCloak => "revealing cloaked effects",
-        kSpellEffects.kClue => "a clue",
+        kSpellEffects.kClue => "spy",
         _ => Words(type.ToString()).ToLowerInvariant(),
     };
 
