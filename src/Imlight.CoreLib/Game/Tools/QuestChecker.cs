@@ -333,7 +333,7 @@ internal static class QuestChecker {
             }
 
             var facts = new ZoneFacts();
-            var zoneData = Read<WizZoneData>(wad.OpenFile("gamedata.bin")?.ToArray());
+            var zoneData = Read<WizZoneData>(ResourceManager.OpenZoneData(wad)?.ToArray());
             foreach (var info in zoneData?.m_objectList ?? []) {
                 if (info is not null) {
                     AddTemplate(facts, info.m_templateID);

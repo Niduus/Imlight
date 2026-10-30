@@ -79,7 +79,7 @@ internal static class QuestStepSpots {
 
     private static (ulong Template, Imcodec.Math.Vector3 Spot)[] ObjectsOf(string zone) => s_zoneObjects.GetOrAdd(zone, name => {
         try {
-            if (!ResourceManager.TryLoadArchive(name, out var wad) || wad.OpenFile("gamedata.bin")?.ToArray() is not { } data
+            if (!ResourceManager.TryLoadArchive(name, out var wad) || ResourceManager.OpenZoneData(wad)?.ToArray() is not { } data
                 || !new BindSerializer().Deserialize<WizZoneData>(data, 1, out var zoneData)) {
                 return [];
             }

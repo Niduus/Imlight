@@ -29,6 +29,23 @@ internal static class ResourceManager {
     private const string RootWadName = RootArchiveLoader.ROOT_WAD_NAME;
 
     /// <summary>
+    /// A zone's placed objects and named places. Older zones keep them in gamedata.bin; newer ones
+    /// (Selenopolis and later) keep the same data in gamedata.xml instead.
+    /// </summary>
+    public static readonly string[] ZoneDataFileNames = ["gamedata.bin", "gamedata.xml"];
+
+    /// <summary>Opens a zone's gamedata file, whichever of its names the zone uses.</summary>
+    public static Memory<byte>? OpenZoneData(Archive wad) {
+        foreach (var name in ZoneDataFileNames) {
+            if (wad.OpenFile(name) is { } data) {
+                return data;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
     /// Tries to load an archive with the specified name.
     /// </summary>
     /// <param name="wadName">The name of the archive to load.</param>
