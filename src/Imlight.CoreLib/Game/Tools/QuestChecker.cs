@@ -42,6 +42,8 @@ namespace Imlight.CoreLib.Game.Tools;
 /// a "go to" place must be one of the zone's areas, a "use" or "collect" object must be in it; and the quest's giver
 /// must stand somewhere. The Manager's Quest Testing tab asks for it (quest-check-request.txt beside the server) and
 /// shows quest-check.json from the ID lookup folder: quests that pass tick themselves. Nothing in the game changes.
+/// Side quests are checked too (Niduus, 2026-10-30: "ensure that all side quests are as programmed as intended"): they
+/// carry their title, world, giver and steps, since the Manager's built-in list only has the main story.
 /// </summary>
 internal static class QuestChecker {
 
@@ -54,7 +56,14 @@ internal static class QuestChecker {
 
     private static int s_running;
 
-    private sealed record QuestResult(string Code, bool Ok, List<string> Problems, List<string> Unchecked, List<string> Notes);
+    private sealed record QuestResult(string Code, bool Ok, List<string> Problems, List<string> Unchecked, List<string> Notes) {
+        public bool Side { get; init; }
+        public string Title { get; init; } = "";
+        public string World { get; init; } = "";
+        public string Giver { get; init; } = "";
+        public string Zone { get; init; } = "";
+        public List<string> Steps { get; init; } = [];
+    }
 
     private sealed record CheckFile(string Written, int Zones, int ZonesNotRead, List<string> NotRead, List<QuestResult> Quests);
 
@@ -102,7 +111,6 @@ internal static class QuestChecker {
         _ = AccessPassManager.Zones;
         var quests = QuestTemplateCollection.GetAllQuests()
             .Where(q => q is not null && !string.IsNullOrEmpty(q.m_questName) && !Quests.QuestOptions.IsOff(q.m_questName))
-            .Where(q => q.m_mainline || ((string) q.m_questName).Contains("MAIN", StringComparison.OrdinalIgnoreCase))
             .GroupBy(q => (string) q.m_questName, StringComparer.OrdinalIgnoreCase)
             .Select(g => g.First())
             .ToList();
@@ -111,7 +119,8 @@ internal static class QuestChecker {
         var zoneNames = quests.SelectMany(q => q.m_goals ?? []).Where(g => g is not null)
             .Select(ZoneOf).Where(z => z.Length > 0)
             .Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(z => z, StringComparer.OrdinalIgnoreCase).ToList();
-        Logger.Information("Quest checker: checking {0} main quests, reading {1} zones.", Logger.Args(quests.Count, zoneNames.Count));
+        Logger.Information("Quest checker: checking {0} quests ({1} side quests), reading {2} zones.",
+            Logger.Args(quests.Count, quests.Count(q => !IsMain(q)), zoneNames.Count));
 
         var zones = new Dictionary<string, ZoneFacts>(StringComparer.OrdinalIgnoreCase);
         var notRead = new List<string>();
@@ -163,14 +172,14 @@ internal static class QuestChecker {
             }
         }
 
-        var results = quests.Select(q => Check(q, zones, anywhere, npcZones, usable)).ToList();
+        var results = quests.Select(q => Describe(q, Check(q, zones, anywhere, npcZones, usable), zones, npcZones)).ToList();
         var file = new CheckFile(DateTime.UtcNow.ToString("o"), zones.Count, notRead.Count, notRead, results);
         Directory.CreateDirectory(folder);
         var path = Path.Combine(folder, FILE_NAME);
         File.WriteAllText(path + ".tmp", JsonSerializer.Serialize(file));
         File.Move(path + ".tmp", path, overwrite: true);
         Progress(folder, $"Done: {results.Count(r => r.Ok)} of {results.Count} quests passed");
-        Logger.Information("Quest checker: {0} of {1} main quests passed, {2} have problems; {3} zones could not be read ({4:0} s).",
+        Logger.Information("Quest checker: {0} of {1} quests passed, {2} have problems; {3} zones could not be read ({4:0} s).",
             Logger.Args(results.Count(r => r.Ok), results.Count, results.Count(r => r.Problems.Count > 0), notRead.Count,
                 timer.Elapsed.TotalSeconds));
     }
@@ -256,6 +265,57 @@ internal static class QuestChecker {
         }
 
         return new QuestResult(questName, problems.Count == 0 && notChecked.Count == 0, problems, notChecked, notes);
+    }
+
+    private static bool IsMain(QuestTemplate quest)
+        => quest.m_mainline || ((string) quest.m_questName).Contains("MAIN", StringComparison.OrdinalIgnoreCase);
+
+    // The game's names for the first part of a zone path, where they differ from it split at its capitals.
+    private static readonly Dictionary<string, string> s_worldNames = new(StringComparer.OrdinalIgnoreCase) {
+        ["WizardCity"] = "Wizard City", ["MooShu"] = "Mooshu", ["DragonSpire"] = "Dragonspyre",
+    };
+
+    /// <summary>
+    /// What the Manager needs to list a side quest it has no built-in row for: its title, world, giver and steps.
+    /// Main quests only get their title; the Manager's list has the rest.
+    /// </summary>
+    private static QuestResult Describe(QuestTemplate quest, QuestResult result, Dictionary<string, ZoneFacts> zones,
+                                        Dictionary<ulong, List<string>> npcZones) {
+        string titleKey = quest.m_questTitle;
+        var title = string.IsNullOrEmpty(titleKey) || titleKey.Contains(' ') ? titleKey : Locale.GetEnglishName(titleKey);
+        title = string.IsNullOrWhiteSpace(title) ? titleKey ?? "" : title.Trim();
+        if (IsMain(quest)) {
+            return result with { Title = title };
+        }
+
+        var steps = new List<string>();
+        try {
+            foreach (var goal in quest.m_goals ?? []) {
+                if (goal is null) {
+                    continue;
+                }
+
+                var zone = ZoneOf(goal);
+                var place = zone.Length > 0 ? zone : RawZoneOf(goal);
+                steps.Add($"{steps.Count + 1}. {StepTitle(goal)}{(place.Length > 0 ? $" ({place})" : "")}");
+            }
+        }
+        catch (Exception) {
+            // Only the Manager's description; the check result stands.
+        }
+
+        var giver = QuestMadlibs.GiverTemplateOf(quest);
+        var giverZone = giver == 0 ? ""
+            : zones.FirstOrDefault(z => z.Value.Templates.Contains(giver)).Key
+              ?? npcZones.GetValueOrDefault(giver)?.FirstOrDefault() ?? "";
+        var firstZone = quest.m_goals?.Where(g => g is not null).Select(RawZoneOf).FirstOrDefault(z => z.Length > 0) ?? "";
+        var root = (giverZone.Length > 0 ? giverZone : firstZone).Split('/')[0];
+        var world = root.Length == 0 ? "Other" : s_worldNames.GetValueOrDefault(root)
+            ?? System.Text.RegularExpressions.Regex.Replace(root, "(?<=[a-z])(?=[A-Z])", " ");
+
+        return result with {
+            Side = true, Title = title, World = world, Giver = giver == 0 ? "" : NameOf(giver), Zone = giverZone, Steps = steps,
+        };
     }
 
     private static void CheckPersona(string step, PersonaGoalTemplate persona, string zoneName, ZoneFacts zone, ZoneFacts anywhere,
