@@ -1,0 +1,20 @@
+{
+  "Name": "WC-ICE-C02-001",
+  "Description": "WizardCity quest No More Mr. Ice Guy (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 56,
+  "MaxGold": 56,
+  "ExperienceAmount": 275,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160966",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

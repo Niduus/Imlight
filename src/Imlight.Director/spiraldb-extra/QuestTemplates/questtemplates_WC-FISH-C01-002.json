@@ -1,0 +1,645 @@
+{
+  "m_questName": "WC-FISH-C01-002",
+  "m_questNameID": 0,
+  "m_questTitle": "Fishful Thinking",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_Catch"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Sharkspeare",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/Buttons/Button_Fishing_Catching.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [
+        "ImlightCatchFish_1302326"
+      ],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Streets/WC_OldeTown",
+      "m_locationName": "Olde Town",
+      "m_goalName": "1_Catch",
+      "m_goalTitle": "Catch",
+      "m_goalType": "GOAL_TYPE_SCAVENGE",
+      "m_itemAdjectives": [
+        "Fish_Long_Sharkspear.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Mechanical Armorhead",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/Buttons/Button_Fishing_Catching.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [
+        "ImlightCatchFish_1302314"
+      ],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Streets/WC_Cyclops",
+      "m_locationName": "Cyclops Lane",
+      "m_goalName": "2_Catch",
+      "m_goalTitle": "Catch",
+      "m_goalType": "GOAL_TYPE_SCAVENGE",
+      "m_itemAdjectives": [
+        "Fish_Short_Mech.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Catfish",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/Buttons/Button_Fishing_Catching.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [
+        "ImlightCatchFish_1212046"
+      ],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Hub",
+      "m_locationName": "The Commons",
+      "m_goalName": "3_Catch",
+      "m_goalTitle": "Catch",
+      "m_goalType": "GOAL_TYPE_SCAVENGE",
+      "m_itemAdjectives": [
+        "Catfish.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Garrrfish",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/Buttons/Button_Fishing_Catching.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [
+        "ImlightCatchFish_1302313"
+      ],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Streets/WC_Cyclops",
+      "m_locationName": "Cyclops Lane",
+      "m_goalName": "4_Catch",
+      "m_goalTitle": "Catch",
+      "m_goalType": "GOAL_TYPE_SCAVENGE",
+      "m_itemAdjectives": [
+        "Fish_Eel_Garrrfish.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Fish Sandwich",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/Buttons/Button_Fishing_Catching.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [
+        "ImlightCatchFish_1302320"
+      ],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Streets/WC_Cyclops",
+      "m_locationName": "Cyclops Lane",
+      "m_goalName": "5_Catch",
+      "m_goalTitle": "Catch",
+      "m_goalType": "GOAL_TYPE_SCAVENGE",
+      "m_itemAdjectives": [
+        "Fish_Short_Sandwich.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Mainstream Dekoi",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/Buttons/Button_Fishing_Catching.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [
+        "ImlightCatchFish_1302305"
+      ],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Hub",
+      "m_locationName": "The Commons",
+      "m_goalName": "6_Catch",
+      "m_goalTitle": "Catch",
+      "m_goalType": "GOAL_TYPE_SCAVENGE",
+      "m_itemAdjectives": [
+        "Fish_Short_Dekoi.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Bone Fish",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/Buttons/Button_Fishing_Catching.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [
+        "ImlightCatchFish_1302316"
+      ],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Streets/WC_Unicorn",
+      "m_locationName": "Unicorn Way",
+      "m_goalName": "7_Catch",
+      "m_goalTitle": "Catch",
+      "m_goalType": "GOAL_TYPE_SCAVENGE",
+      "m_itemAdjectives": [
+        "Fish_Short_BoneFish.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "WC-Pelican-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Ayuh, hello again, young Wizard! How was your fishing trip? Did ya manage to catch 'em all? Ya did? Good on ya!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_34.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1206837,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "WC-Pelican-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Ya catch on quick, kid. I hereby declare ya a right proper Angler now!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_35.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1206837,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Hub",
+      "m_locationName": "The Commons",
+      "m_goalName": "8_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "WC-Pelican-NPC01_Persona",
+      "m_usePatron": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "WC-FISH-C01-002"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "WC-FISH-C01-001",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_Catch"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "2_Catch"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "2_Catch"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "3_Catch"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "3_Catch"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "4_Catch"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "4_Catch"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "5_Catch"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "5_Catch"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "6_Catch"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "6_Catch"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "7_Catch"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "7_Catch"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "8_WizardQuestGoalsTalkNPC"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "8_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Ya ready for your next Fishing lesson now? Ayuh, sounds like someone's hooked on Fishing. Let's get started!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_26.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Ya're a bright kid, so I'm sure ya noticed that the Lesser Frost Lure I gave ya is an Ice school spell.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_27.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "An' ya probably also noticed that the Frost Dekoi and the Icecuda are both Ice school fish. Ice fish like Ice lures.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_28.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "You can catch non-Ice fish with your Lesser Ice Lure, but you'll have a better chance if you buy the other school Lures.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_29.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I have Lures for each school I can sell ya. They're not required, but they will help with your next objective:",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_30.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Catch one Sharkspeare, a Mechanical Armorhead, a Catfish, a Garrrfish, a Fish Sandwich, a Mainstream Dekoi, an' Bone Fish.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_31.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Ayuh, because I'm nice, I'm not going to tell ya to catch seven fish and just wish ya luck. I'm gonna give ya luck!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_32.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Underway",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Catch one Sharkspeare, a Mechanical Armorhead, a Catfish, a Garrrfish, a Fish Sandwich, a Mainstream Dekoi, an' Bone Fish.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_33.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": false,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

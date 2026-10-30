@@ -1,0 +1,26 @@
+{
+  "Name": "MB-SPELL-C04-002",
+  "Description": "Marleybone quest Line in the Water (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 965,
+  "MaxGold": 965,
+  "ExperienceAmount": 42255,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "473583",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "473583",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

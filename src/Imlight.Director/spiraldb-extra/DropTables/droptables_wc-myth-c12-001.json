@@ -1,0 +1,13 @@
+{
+  "Name": "WC-MYTH-C12-001",
+  "Description": "WizardCity quest Mark Your Calendar (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 755,
+  "MaxGold": 755,
+  "ExperienceAmount": 56690,
+  "TrainingPoints": 0,
+  "Items": []
+}

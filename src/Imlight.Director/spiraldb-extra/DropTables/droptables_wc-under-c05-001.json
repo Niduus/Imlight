@@ -1,0 +1,32 @@
+{
+  "Name": "WC-UNDER-C05-001",
+  "Description": "WizardCity quest Into the Breach! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 40,
+  "MaxGold": 40,
+  "ExperienceAmount": 425,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "240117",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220311",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220311",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

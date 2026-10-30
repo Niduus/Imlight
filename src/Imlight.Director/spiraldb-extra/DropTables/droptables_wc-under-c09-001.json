@@ -1,0 +1,13 @@
+{
+  "Name": "WC-UNDER-C09-001",
+  "Description": "WizardCity quest Castles Made of Sand (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 100,
+  "MaxGold": 100,
+  "ExperienceAmount": 975,
+  "TrainingPoints": 0,
+  "Items": []
+}

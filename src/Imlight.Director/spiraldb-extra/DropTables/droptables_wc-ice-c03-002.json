@@ -1,0 +1,20 @@
+{
+  "Name": "WC-ICE-C03-002",
+  "Description": "WizardCity quest Going Ice Snaking (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 100,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160984",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

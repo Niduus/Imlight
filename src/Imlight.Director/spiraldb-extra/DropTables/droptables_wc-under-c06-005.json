@@ -1,0 +1,44 @@
+{
+  "Name": "WC-UNDER-C06-005",
+  "Description": "WizardCity quest Light Up The Dark (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 70,
+  "MaxGold": 70,
+  "ExperienceAmount": 750,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "258583",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "258583",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "258581",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "258581",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "258581",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

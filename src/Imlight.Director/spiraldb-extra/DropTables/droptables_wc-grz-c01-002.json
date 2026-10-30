@@ -1,0 +1,13 @@
+{
+  "Name": "WC-GRZ-C01-002",
+  "Description": "WizardCity quest Call of the North (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 110,
+  "MaxGold": 110,
+  "ExperienceAmount": 50,
+  "TrainingPoints": 0,
+  "Items": []
+}

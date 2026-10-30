@@ -1,0 +1,632 @@
+{
+  "m_questName": "WC-FISH-C01-001",
+  "m_questNameID": 0,
+  "m_questTitle": "A River Runs Through It",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoals00000012"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Frost Dekoi",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/Buttons/Button_Fishing_Catching.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [
+        "ImlightCatchFish_1302354"
+      ],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Hub",
+      "m_locationName": "ZoneLocName_1103331",
+      "m_goalName": "1_WizardQuestGoals00000012",
+      "m_goalTitle": "WizardQuestGoals_00000012",
+      "m_goalType": "GOAL_TYPE_SCAVENGE",
+      "m_itemAdjectives": [
+        "Fish_Short_Dekoi_Ice.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Icecuda",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/Buttons/Button_Fishing_Catching.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [
+        "ImlightCatchFish_1302307"
+      ],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Hub",
+      "m_locationName": "ZoneLocName_1103331",
+      "m_goalName": "2_WizardQuestGoals00000012",
+      "m_goalTitle": "WizardQuestGoals_00000012",
+      "m_goalType": "GOAL_TYPE_SCAVENGE",
+      "m_itemAdjectives": [
+        "Fish_Long_Schoolacuda_Ice.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "WC-Pelican-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Ayuh, look at the sizes of the Frost Dekoi an' Icecuda ya caught! I reckon that must have taken a bit outta ya.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_23.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1206837,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "WC-Pelican-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "As ya may have noticed, Fishing costs Energy. Never fear, your Energy will replenish over time.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_24.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1206837,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "WC-Pelican-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "But we need to get on with your next Fishing lesson. So here, have this Energy Elixir so we can get started!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_25.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1206837,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Hub",
+      "m_locationName": "The Commons",
+      "m_goalName": "3_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "WC-Pelican-NPC01_Persona",
+      "m_usePatron": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "WC-FISH-C01-001"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqMagicLevel, Imcodec.ObjectProperty",
+        "m_magicSchool": "",
+        "m_numericValue": 7,
+        "m_operatorType": "OPERATOR_GREATER_THAN_EQ",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoals00000012"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "2_WizardQuestGoals00000012"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "2_WizardQuestGoals00000012"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "3_WizardQuestGoalsTalkNPC"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "3_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 7,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "'Ello, Wizard. I'm Lucky Hookline, famous fisher an' pisces collector! Ya might a' heard about the 60 inch Whopper I caught.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_02.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "No? Ah, well. Let me tell ya, Fishing is a terrific hobby, an' ya won't find a more relaxing pastime, ayuh.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_03.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "If ya like, I can teach ya how to cast for fish, magically, of course. Then ya can catch your own Whoppers!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_04.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "First off, ya gotta be in an area of the Spiral populated with fish. You'll know ya are when the Fishing Icon appears.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_05.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Clicking the Fishing Icon button displays your Fishing Spells. Fishing is a magical activity in the Spiral, ya know!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_06.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Your Fishing Spells consist of Fish Catching Spells and Fishing Utility Spells.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_07.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Click on a Fish Catching Spell to cast a magical lure. Ya want it to land in front of a fish so they notice it!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_08.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "If ya don't like where your lure lands, click the Cancel Spell button to quickly re-cast the spell.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_09.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "When the magical lure flashes, that means a fish has noticed it an' is coming closer to take a nibble.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_10.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "As it nibbles, the lure will rise an' fall a bit. The trick is to wait until the lure completely sinks below the water...",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_11.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Then ya reel 'em in! Timing is crucial, so be sure to hit the Space Bar quickly to invoke the Fish Catching Spell properly.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_12.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "An' so are your spells. Every fish has a magical school type, an' fish are more attracted to lures from their same school.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_13.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "When ya use a lure correctly, your magic will snare the fish an' float it back to ya, ayuh!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_14.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "You'll see the name an' size of every fish ya catch. Small Fries are the tiniest ones, while Whoppers are the biggest.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_15.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Fish are stored in your Fish Basket. The Angler's Tome has a record of all the fish ya ever caught. Click on it to open it.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_16.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Angler's Tome will tell ya how many of each type ya've caught, along with the smallest an' largest sizes.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_17.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Another important tip to know is that every fish ya come across responds only to your presence, no matter what.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_18.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "So don't worry about competition, or that other Wizards will scare away the fish. Ya're the only one who can do that!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_19.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Now that I've explained the basics of our magical fishing, let me give ya the Lesser Frost Lure. It's a good, basic lure spell.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_20.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Go to the water behind ol' Zeke over there an' use the Lesser Frost Lure to catch a Frost Dekoi and an Icecuda.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_21.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Underway",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WC-Pelican-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Use the Lesser Frost Lure to magically catch a Frost Dekoi an' an Icecuda, like I've taught ya! Have fun!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pelican_Fisherman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/LuckyHookline_FIS_22.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1206837,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": false,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "WC-UNDER-C10-001",
+  "Description": "WizardCity quest Good to be the King (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 20,
+  "MaxGold": 20,
+  "ExperienceAmount": 230,
+  "TrainingPoints": 0,
+  "Items": []
+}
