@@ -73,6 +73,13 @@ internal sealed partial class ManagerWindow {
         public List<string> Problems { get; init; } = [];
         public List<string> Unchecked { get; init; } = [];
         public List<string> Notes { get; init; } = [];
+        // Side quests only (the built-in list is the main story): what to list them by.
+        public bool Side { get; init; }
+        public string Title { get; init; } = "";
+        public string World { get; init; } = "";
+        public string Giver { get; init; } = "";
+        public string Zone { get; init; } = "";
+        public List<string>? Steps { get; init; } = [];
     }
 
     private sealed class QxCheckFile {
@@ -147,6 +154,7 @@ internal sealed partial class ManagerWindow {
     private readonly ComboBox _qxServer = FilterCombo(s_qxServer, 150);
     private readonly CheckBox _qxFlaggedOnly = new() { Content = QX_ONLY_FLAGGED };
     private readonly CheckBox _qxSideWorlds = new() { Content = "Include side worlds", IsChecked = true };
+    private readonly CheckBox _qxSideQuests = new() { Content = "Include side quests", IsChecked = true };
     private readonly TextBlock _qxCount = new() { TextWrapping = TextWrapping.Wrap };
     private readonly ListBox _qxList = new() { Background = Brushes.Transparent };
     private readonly StackPanel _qxDetails = new() { Spacing = 6 };
@@ -159,6 +167,8 @@ internal sealed partial class ManagerWindow {
 
     private List<QxWorld> _qxWorlds = [];
     private List<QxQuest> _qxQuests = [];
+    // Side quests, one list per world, from the computer check (Niduus, 2026-10-30: side quests as well).
+    private List<QxWorld> _qxSideLists = [];
     private HashSet<string> _qxDone = new(StringComparer.OrdinalIgnoreCase);
     private string _qxSource = "";
     private QxQuest? _qxPicked;
@@ -188,12 +198,12 @@ internal sealed partial class ManagerWindow {
                 _qxList.SelectedItem = null;
             }
         };
-        WhenFiltersChange(RenderQuestTesting, _qxSearch, _qxWorld, _qxFlag, _qxShowing, _qxServer, _qxFlaggedOnly, _qxSideWorlds);
+        WhenFiltersChange(RenderQuestTesting, _qxSearch, _qxWorld, _qxFlag, _qxShowing, _qxServer, _qxFlaggedOnly, _qxSideWorlds, _qxSideQuests);
 
         var next = Primary("Next to test");
         ToolTip.SetTip(next, "Shows the first quest in story order that isn't ticked yet.");
         var check = Plain("Check all quests");
-        ToolTip.SetTip(check, "The server reads the game's zone files and checks every step of every main quest: the NPC to talk to " +
+        ToolTip.SetTip(check, "The server reads the game's zone files and checks every step of every quest, side quests too: the NPC to talk to " +
                               "is there, the monsters spawn, the place exists, the object to click is there. Quests that pass tick " +
                               "themselves. It runs in the background and can take 10 to 30 minutes the first time.");
         _qxCheckTimer.Tick += (_, _) => QuestCheckPoll();
@@ -213,6 +223,7 @@ internal sealed partial class ManagerWindow {
                         "door or scene the quest should now start; Dungeon = its sigil or door; Text fixed = a raw code in the quest book was " +
                         "replaced; Dialog on arrival = a dialog that used to play late; Fight counts now = a defeat step that never " +
                         "counted; Not on the server = the server doesn't have it, so check the next quest is still offered. " +
+                        "Side quests show under each world's \"side quests\" heading after Check all quests has run. " +
                         "Showing: Recent fixes lists the quests changed lately (New fix), ticked or not. Ticks are kept on this PC only."),
                     SearchFilters(
                         SearchFilter("World", _qxWorld),
@@ -220,7 +231,8 @@ internal sealed partial class ManagerWindow {
                         SearchFilter("Showing", _qxShowing),
                         SearchFilter("On this server", _qxServer),
                         SearchTick(_qxFlaggedOnly),
-                        SearchTick(_qxSideWorlds)),
+                        SearchTick(_qxSideWorlds),
+                        SearchTick(_qxSideQuests)),
                     new WrapPanel {
                         Children = {
                             Spaced(Action(next, () => {
@@ -233,7 +245,7 @@ internal sealed partial class ManagerWindow {
                                 _qxCheckAsked = DateTime.UtcNow;
                                 _qxCheckStatus.Text = "Asked the server to check every quest. This line shows how far it got.";
                                 _qxCheckTimer.Start();
-                                Say("The server is checking every main quest. Keep it running; the list updates by itself when it's done.");
+                                Say("The server is checking every quest, side quests too. Keep it running; the list updates by itself when it's done.");
 
                                 return Task.CompletedTask;
                             })),
@@ -275,10 +287,43 @@ internal sealed partial class ManagerWindow {
         RenderQuestTesting();
     }
 
+    private IEnumerable<QxWorld> QxAllWorlds() => _qxWorlds.Concat(_qxSideLists);
+
     private void FillQuestTestingFlags() {
         var kinds = _qxQuests.SelectMany(q => q.Flags).GroupBy(f => f.Kind).OrderByDescending(g => g.Count()).Select(g => g.Key);
-        var checks = _qxQuests.Select(q => q.Checked).Where(c => c.Length > 0).Distinct();
+        var checks = _qxQuests.Concat(_qxSideLists.SelectMany(w => w.Quests)).Select(q => q.Checked).Where(c => c.Length > 0).Distinct();
         FillFilterCombo(_qxFlag, checks.Concat(kinds));
+        FillFilterCombo(_qxWorld, QxAllWorlds().Select(w => w.Name));
+    }
+
+    /// <summary>The side quests of the check, one list per world after its main story list.</summary>
+    private void ReadQuestCheckSideQuests(IEnumerable<QxCheck> checks) {
+        var order = _qxWorlds.Select((w, i) => (w.Name, i)).ToDictionary(x => x.Name, x => x.i, StringComparer.OrdinalIgnoreCase);
+        _qxSideLists = [.. checks.Where(c => c.Side && c.Code.Length > 0)
+            .GroupBy(c => c.World.Length > 0 ? c.World : "Other", StringComparer.OrdinalIgnoreCase)
+            .OrderBy(g => order.GetValueOrDefault(g.Key, int.MaxValue)).ThenBy(g => g.Key, StringComparer.OrdinalIgnoreCase)
+            .Select(g => {
+                var name = $"{g.Key} side quests";
+                var quests = g.OrderBy(c => c.Code, StringComparer.OrdinalIgnoreCase).Select(c => {
+                    var title = c.Title.Length > 0 ? c.Title : c.Code;
+                    var quest = new QxQuest {
+                        Name = title, Area = "Side quest", Code = c.Code, Giver = c.Giver, Zone = c.Zone,
+                        Do = [.. (c.Giver.Length > 0 ? new[] { $"Get it from {c.Giver}." } : []), .. c.Steps ?? []],
+                        Expect = ["The giver offers it once the quest before it is done.", "Every step finishes and the quest ends with its rewards."],
+                    };
+                    quest.World = name;
+                    quest.Haystack = SearchText.Normalize(string.Join(' ', [title, c.Code, c.Giver, name, "side quest", .. c.Steps ?? []]));
+                    var problems = c.Problems.Distinct().ToList();
+                    var notChecked = c.Unchecked.Distinct().ToList();
+                    quest.CheckLines = [.. problems.Select(p => "Problem: " + p), .. notChecked.Select(u => "Not checked: " + u),
+                        .. c.Notes.Distinct().Select(n => "Note: " + n)];
+                    quest.Checked = problems.Count > 0 ? QX_PROBLEM : notChecked.Count > 0 ? QX_UNCHECKED : QX_PASSED;
+
+                    return quest;
+                }).ToList();
+
+                return new QxWorld { Name = name, Quests = quests };
+            })];
     }
 
     /// <summary>Reads the server's quest check when it changed since, and works out what each quest still needs.</summary>
@@ -307,6 +352,8 @@ internal sealed partial class ManagerWindow {
         foreach (var check in file?.Quests ?? []) {
             _qxChecks.TryAdd(check.Code, check);
         }
+
+        ReadQuestCheckSideQuests(file?.Quests ?? []);
 
         foreach (var world in _qxWorlds) {
             var firstOf = new Dictionary<string, QxQuest>();
@@ -462,7 +509,7 @@ internal sealed partial class ManagerWindow {
 
             for (var i = Math.Min(index, _qxRows.Count - 1); i >= 0; i--) {
                 if (_qxRows[i].Kind == QxRowKind.World) {
-                    var world = _qxWorlds.First(w => w.Name == quest.World);
+                    var world = QxAllWorlds().First(w => w.Name == quest.World);
                     _qxRows[i] = QuestTestingWorldRow(world);
                     break;
                 }
@@ -511,7 +558,7 @@ internal sealed partial class ManagerWindow {
         var flag = FilterPick(_qxFlag);
         var rows = new List<QxRow>();
         var shown = 0;
-        foreach (var w in _qxWorlds) {
+        foreach (var w in _qxWorlds.Concat(_qxSideQuests.IsChecked == true || world is not null ? _qxSideLists : [])) {
             if (world is not null ? w.Name != world : w.SideWorld && _qxSideWorlds.IsChecked != true) {
                 continue;
             }
@@ -552,8 +599,15 @@ internal sealed partial class ManagerWindow {
                   $"{playable.Count(q => q.Checked == QX_PROBLEM):N0} with a problem, " +
                   $"{playable.Count(q => q.Checked == QX_UNCHECKED):N0} it couldn't check" +
                   (check.ZonesNotRead > 0 ? $" ({check.ZonesNotRead:N0} zones could not be read)." : ".") +
+                  (_qxSideLists.Count > 0 ? $" Side quests: {QxSideSummary()}." : "") +
                   " Press Check all quests again after an update.";
         }
+    }
+
+    private string QxSideSummary() {
+        var side = _qxSideLists.SelectMany(w => w.Quests).ToList();
+        return $"{side.Count:N0} checked, {side.Count(q => q.Checked == QX_PASSED):N0} passed, " +
+               $"{side.Count(q => q.Checked == QX_PROBLEM):N0} with a problem, {side.Count(q => q.Checked == QX_UNCHECKED):N0} it couldn't check";
     }
 
     private static string QxWhen(string written)
@@ -580,7 +634,7 @@ internal sealed partial class ManagerWindow {
 
         var title = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
         title.Children.Add(tick);
-        title.Children.Add(new TextBlock { Text = $"{quest.Step}.", Foreground = MUTED, FontSize = 14, MinWidth = 40, VerticalAlignment = VerticalAlignment.Center });
+        title.Children.Add(new TextBlock { Text = quest.Step > 0 ? $"{quest.Step}." : "", Foreground = MUTED, FontSize = 14, MinWidth = 40, VerticalAlignment = VerticalAlignment.Center });
         var name = new TextBlock { Text = quest.Name, FontWeight = FontWeight.SemiBold, FontSize = 15, VerticalAlignment = VerticalAlignment.Center };
         if (!quest.OnServer) {
             name.Foreground = MUTED;
@@ -677,8 +731,9 @@ internal sealed partial class ManagerWindow {
         });
 
         _qxDetails.Children.Add(new SelectableTextBlock { Text = quest.Name, FontSize = 18, FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap });
-        _qxDetails.Children.Add(Sub($"Quest {quest.Step:N0} of {_qxQuests.Count:N0} in the story. {quest.World}, {quest.Area}." +
-                                    (quest.Level > 1 ? $" Level {quest.Level}." : "")));
+        _qxDetails.Children.Add(Sub(quest.Step > 0
+            ? $"Quest {quest.Step:N0} of {_qxQuests.Count:N0} in the story. {quest.World}, {quest.Area}." + (quest.Level > 1 ? $" Level {quest.Level}." : "")
+            : $"{quest.World}: not part of the main story, listed by the computer check."));
 
         if (quest.OnServer) {
             var tested = new CheckBox { Content = quest.AutoDone ? "Done: the computer check covers it" : "Tested: it worked",
