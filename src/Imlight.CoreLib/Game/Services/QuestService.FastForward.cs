@@ -85,8 +85,9 @@ internal partial class QuestService {
         public string Next = "";
         public bool ReachedLevel;
 
+        // Never below the level they had: a wizard levelled up by command has less XP than their level needs.
         public int Level => MagicLevelsConfig.GetPlayerLevelAtExperience(StartXp + Xp) is var level and > 0
-            ? Math.Min(level, Math.Max(1, MagicLevelsConfig.MaxLevel)) : StartLevel;
+            ? Math.Max(StartLevel, Math.Min(level, Math.Max(1, MagicLevelsConfig.MaxLevel))) : StartLevel;
     }
 
     private static string FastForwardPlanPath(ulong charId)
@@ -222,7 +223,10 @@ internal partial class QuestService {
     private string FastForwardQuest(Wizard wizard, QuestTemplate template, FastForwardPlan plan, FastForwardRun run, int depth) {
         string name = template.m_questName;
         var context = new GenericRequirementContext(template.m_requirements, SessionActor.ActorRef, GetActiveGameObject(), wizard);
-        if (!FastForwardMeets(template.m_requirements, context, plan.PassLevels, run.Level)) {
+        // A quest in the quest book was started, so it met its needs then; its own "not started yet" checks would fail.
+        var held = wizard.QuestBehavior.CurrentQuestInstances
+            .FirstOrDefault(q => q is not null && q.QuestName.Equals(name, StringComparison.OrdinalIgnoreCase));
+        if (held is null && !FastForwardMeets(template.m_requirements, context, plan.PassLevels, run.Level)) {
             // Quests it needs come first, the way a player would have done them.
             if (depth < FAST_FORWARD_NEEDS_DEPTH) {
                 foreach (var needed in RequiredEntries(template.m_requirements).Where(e => e.m_isQuestRegistry)
@@ -245,8 +249,6 @@ internal partial class QuestService {
         }
 
         // A copy in the quest book goes; it is finished below.
-        var held = wizard.QuestBehavior.CurrentQuestInstances
-            .FirstOrDefault(q => q is not null && q.QuestName.Equals(name, StringComparison.OrdinalIgnoreCase));
         if (held is not null && wizard.RemoveQuest(held.QuestName)) {
             SendRemoveQuest(held.ID);
         }
