@@ -1,0 +1,32 @@
+{
+  "Name": "WC-UNDER-C03-004",
+  "Description": "WizardCity quest Way To His Heart (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 60,
+  "MaxGold": 60,
+  "ExperienceAmount": 340,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "355185",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

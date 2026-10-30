@@ -1,0 +1,13 @@
+{
+  "Name": "WC-FISH-C01-001",
+  "Description": "WizardCity quest A River Runs Through It (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 15,
+  "MaxGold": 15,
+  "ExperienceAmount": 125,
+  "TrainingPoints": 0,
+  "Items": []
+}

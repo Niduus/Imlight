@@ -1,0 +1,20 @@
+{
+  "Name": "WC-DETH-C02-002",
+  "Description": "WizardCity quest Sweet Revenge (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 56,
+  "MaxGold": 56,
+  "ExperienceAmount": 275,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160970",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

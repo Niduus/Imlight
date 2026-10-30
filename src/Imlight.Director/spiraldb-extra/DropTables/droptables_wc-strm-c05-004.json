@@ -1,0 +1,20 @@
+{
+  "Name": "WC-STRM-C05-004",
+  "Description": "WizardCity quest Before the Storm (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 136,
+  "MaxGold": 136,
+  "ExperienceAmount": 975,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160287",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

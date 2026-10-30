@@ -1,0 +1,20 @@
+{
+  "Name": "WC-LIFE-C07-003",
+  "Description": "WizardCity quest A Taste of Honey (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 400,
+  "MaxGold": 400,
+  "ExperienceAmount": 4200,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1479742",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

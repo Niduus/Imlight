@@ -1,0 +1,13 @@
+{
+  "Name": "WC-STRM-C12-001",
+  "Description": "WizardCity quest Storm Warning (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 605,
+  "MaxGold": 605,
+  "ExperienceAmount": 46380,
+  "TrainingPoints": 0,
+  "Items": []
+}

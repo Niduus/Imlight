@@ -49,6 +49,8 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
     private const string ZonedFallbackTimer = "fishing-zoned-fallback";
     // Any FishingPassport above 1 in the cast answer lets the game cast (0 and 1 are its two "no" answers).
     private const uint CastAllowed = 2;
+    // The quest event a caught fish posts: this plus the fish's template ID (a fishing quest's "Catch" step lists it).
+    internal const string CATCH_EVENT_PREFIX = "ImlightCatchFish_";
     private static readonly TimeSpan SyncInterval = TimeSpan.FromSeconds(5);
     // The client says MSG_CLIENTZONED once it has loaded a zone; when it does not, the fish go out after this.
     private static readonly TimeSpan ZonedFallback = TimeSpan.FromSeconds(8);
@@ -377,6 +379,11 @@ internal class FishingService(SessionActor sessionActor) : MessageService(sessio
 
             // Quests that ask for this fish ("Catch a Sword Tail") count it.
             SessionActor.ActorRef.Tell(new CHARACTER_103_PROTOCOL.MSG_FISHCAUGHTFORQUESTS { FishTemplateId = info.TemplateId });
+
+            // "Catch a Frost Dekoi" steps of our fishing quests (A River Runs Through It) list this event.
+            SessionActor.ActorRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONEEVENTFORQUESTS {
+                EventName = CATCH_EVENT_PREFIX + info.TemplateId,
+            }, ActorRefs.NoSender);
         }
     }
 

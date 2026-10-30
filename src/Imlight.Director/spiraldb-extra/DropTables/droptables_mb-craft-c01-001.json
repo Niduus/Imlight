@@ -1,0 +1,13 @@
+{
+  "Name": "MB-CRAFT-C01-001",
+  "Description": "Marleybone quest Craft Services (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 3373,
+  "MaxGold": 3373,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

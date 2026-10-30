@@ -1,0 +1,13 @@
+{
+  "Name": "WC-LIFE-C04-001",
+  "Description": "WizardCity quest My Re-Generation (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 136,
+  "MaxGold": 136,
+  "ExperienceAmount": 840,
+  "TrainingPoints": 0,
+  "Items": []
+}

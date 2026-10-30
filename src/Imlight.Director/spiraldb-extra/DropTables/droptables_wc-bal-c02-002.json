@@ -1,0 +1,20 @@
+{
+  "Name": "WC-BAL-C02-002",
+  "Description": "WizardCity quest Everything Being Equal (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 56,
+  "MaxGold": 56,
+  "ExperienceAmount": 275,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160973",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}
