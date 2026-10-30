@@ -310,12 +310,8 @@ internal sealed partial class ManagerWindow {
             },
         };
 
-        return new DockPanel {
-            Children = {
-                WithDock(ManagerTheme.PageHeader("sparkle", ManagerTheme.Accent(WHATS_NEW), WHATS_NEW, "What changed in each version of " + Edition.NAME + "."), Dock.Top),
-                content,
-            },
-        };
+        // Its one line comes from the Help page's tab (it was a page of its own, with a header).
+        return content;
     }
 
     private static Control NoteView(NoteRow? row) {

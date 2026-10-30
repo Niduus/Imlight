@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 
 namespace Imlight.Setup;
 
-/// <summary>Where the server the app runs comes from (the Server source card on the Tools tab).</summary>
+/// <summary>Where the server the app runs comes from (the Server source card on the Server tab).</summary>
 internal enum ServerSourceKind {
     /// <summary>The edition's own repository (Niduus/Imlight for the Manager), the way it always was.</summary>
     Default,
@@ -105,7 +105,7 @@ internal sealed partial class ServerSource {
         }
 
         File.WriteAllLines(path, [
-            "; Where Imlight gets its server. The Server source card on the Tools tab in the app changes it;",
+            "; Where Imlight gets its server. The Server source card on the Server tab in the app changes it;",
             "; deleting this file goes back to " + DefaultName + ".",
             $"[{SECTION}]",
             $"Kind = {Kind}",

@@ -193,7 +193,7 @@ internal static class InstalledCommands {
         var folders = Aurorium.GameDataFolders(folder);
         if (folders.Count == 0) {
             Console.WriteLine($"Aurorium in {folder} has no game files yet, so the server uses your Wizard101 folder this time. " +
-                "Start Aurorium on the Tools tab of the app and leave it running until it finishes downloading.");
+                "Start Aurorium on the Game Files tab of the app (Server page) and leave it running until it finishes downloading.");
 
             return null;
         }

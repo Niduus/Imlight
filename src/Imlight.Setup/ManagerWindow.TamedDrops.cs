@@ -13,7 +13,7 @@ using Avalonia.Media;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Tamed Drops card on the Server tab (Niduus, 2026-10-23: "make this a toggle and customizeable via manager"): the
+/// The Tamed Drops card on the Game Rules page (Niduus, 2026-10-23: "make this a toggle and customizeable via manager"): the
 /// on/off switch ([TamedDrops] Enabled) and every number and choice of it, saved to tamed-drops.json
 /// next to the server. The server reads that file again whenever it changes, so those apply from the next boss. The
 /// defaults are what the server's TamedDropsSettings has with no file. It also shows and resets the accounts' pity meters.

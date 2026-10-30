@@ -388,13 +388,18 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Share", ShareTab),
             Tab("Quest Editor", QuestEditorTab),
             Tab("Guides", GuidesTab),
+            Tab(WHATS_NEW, WhatsNewPage),
             Tab("Server", ServerTab),
+            Tab("Game Modes", GameModesTab),
+            Tab("Battles and World", BattlesTab),
+            Tab("Events", EventsTab),
+            Tab("Shops and Codes", ShopsTab),
             Tab("Announcements", AnnouncementsTab),
             Tab("Logs", LogsTab),
             Tab("Settings", SettingsTab),
             Tab("Accounts", AccountsTab),
             Tab("Game Files", GameFilesTab),
-            Tab("Tools", ToolsTab),
+            Tab(Edition.NAME, AhziaelTab),
         }.ToDictionary(t => (string) t.Tag!);
         // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
         var nav = Navigation(tabs);
@@ -837,17 +842,27 @@ internal sealed partial class ManagerWindow : Window {
                 "Closing this window stops the server.",
                 WithHint(Row(_startButton, _restartButton, _stopButton),
                     "Start the server here. It gets the game files from your Wizard101 folder by itself. Closing this window stops it.")),
-            _modesCard,
-            _battleCard,
-            TamedDropsCard(),
-            CodesCard(),
-            MemberBenefitsCard(),
-            PlantGrowthCard(),
-            EventsCard(),
-            LoyaltyStoreCard(),
-            CrownShopCard(),
-            BazaarBotCard(),
-            _trainersCard);
+            ServerSourceCard());
+    }
+
+    // The Game Rules page (Niduus, 2026-10-30: "make it less confusing and more organized"): the cards that change how
+    // the game plays, which all sat on the Server tab, a tab for each kind.
+    private Control GameModesTab() => Page(RulesWaitNote(), _modesCard, _trainersCard);
+
+    private Control BattlesTab() => Page(RulesWaitNote(), _battleCard, TamedDropsCard(), PlantGrowthCard());
+
+    private Control EventsTab() => Page(EventsCard());
+
+    private Control ShopsTab() => Page(CodesCard(), MemberBenefitsCard(), CrownShopCard(), LoyaltyStoreCard(), BazaarBotCard());
+
+    private readonly List<TextBlock> _rulesWaitNotes = [];
+
+    /// <summary>Says why a Game Rules tab is empty before the server has made its settings file.</summary>
+    private TextBlock RulesWaitNote() {
+        var note = Sub("These switches show once the server is installed and has made its settings. Click \"Update Ahziael\" at the top once, or start the server on the Server tab.");
+        _rulesWaitNotes.Add(note);
+
+        return note;
     }
 
     private Control SettingsTab() {
@@ -970,7 +985,8 @@ internal sealed partial class ManagerWindow : Window {
                 })),
             Shut(Fold("bag", "Game Files", "Shop research",
                 "Zips the game's shop files to your desktop, to find why some shops open as a robe shop.",
-                Row(_shopResearch))));
+                Row(_shopResearch))),
+            AuroriumCard());
     }
 
     private string GameFilesState()
@@ -1319,7 +1335,8 @@ internal sealed partial class ManagerWindow : Window {
                 + "Select any part of the text to copy it, or use the button. Positions are exact to about 4 units.")));
     }
 
-    private Control ToolsTab() {
+    // The app's own tab (it was Tools): its updates, look, privacy and folders.
+    private Control AhziaelTab() {
         return Page(
             Fold("download", "Settings", "Updates",
                 $"{Edition.NAME} {SelfUpdate.CurrentVersion}. Update Ahziael and What's new are at the top of the window, on every page.",
@@ -1330,8 +1347,6 @@ internal sealed partial class ManagerWindow : Window {
                 SwitchRow("Moving background", _movingBackground,
                     "The colours behind the panels drift slowly and the server light breathes. They stop while you play.")),
             PrivacyCard(),
-            ServerSourceCard(),
-            AuroriumCard(),
             Fold("folder", "Tools", "Files and folders", $"Installed in {_manager.InstallFolder}.",
                 new WrapPanel {
                     Children = {
@@ -1419,6 +1434,10 @@ internal sealed partial class ManagerWindow : Window {
         }
 
         _battleCard.IsVisible = Has("Battle", "ManaOnFizzle");
+        foreach (var note in _rulesWaitNotes) {
+            note.IsVisible = !_modesCard.IsVisible && !_trainersCard.IsVisible && !_battleCard.IsVisible;
+        }
+
         ShowTamedDropsSwitch(Has("TamedDrops", "Enabled"), Switch("TamedDrops", "Enabled"));
         foreach (var (section, key, _, toggle) in _battleSwitches) {
             toggle.IsChecked = Switch(section, key);
@@ -1647,7 +1666,7 @@ internal sealed partial class ManagerWindow : Window {
 
     private async Task LoadPlayAsync() {
         RenderServers();
-        // Looked up online only once friends were let in (Tools > Privacy): opening the Play tab sends nothing anywhere.
+        // Looked up online only once friends were let in (Ahziael tab > Privacy): opening the Play tab sends nothing anywhere.
         if (FriendAccess.WasTurnedOn(_manager.InstallFolder)) {
             _publicIp ??= await FriendAccess.PublicIpAsync();
         }
@@ -1927,7 +1946,7 @@ internal sealed partial class ManagerWindow : Window {
     private bool _preparingUpdate;
 
     /// <summary>
-    /// When the app opens, gets a newer Imlight ready in the background (unless turned off on the Tools tab), then
+    /// When the app opens, gets a newer Imlight ready in the background (unless turned off on the Ahziael tab), then
     /// asks to restart into it. The server keeps running meanwhile. Another GitHub copy (the Server source card) also
     /// updates when its branch has a newer commit; a folder on this PC never does by itself.
     /// </summary>
@@ -1975,7 +1994,7 @@ internal sealed partial class ManagerWindow : Window {
         var source = _manager.Source;
         if (source.Kind == ServerSourceKind.Folder) {
             Say($"You have the newest {Edition.NAME}. Your server comes from {source.Describe()}, so it only changes when you " +
-                "click Rebuild from folder under Server source on the Tools tab.");
+                "click Rebuild from folder under Server source on the Server tab.");
 
             return;
         }
@@ -2085,7 +2104,7 @@ internal sealed partial class ManagerWindow : Window {
         process.BeginErrorReadLine();
         await process.WaitForExitAsync();
         if (process.ExitCode != 0) {
-            Say($"{name} could not be built. The reason is in setup-log.txt in the install folder (Tools tab, Open install folder).", true);
+            Say($"{name} could not be built. The reason is in setup-log.txt in the install folder (Server page, Ahziael tab, Open install folder).", true);
 
             return;
         }
@@ -2096,7 +2115,7 @@ internal sealed partial class ManagerWindow : Window {
 
     /// <summary>
     /// Restarts into the ready update after asking, or straight away when <paramref name="withoutAsking"/> (the
-    /// Install updates automatically switch on the Tools tab). The server keeps running; ServerUpdate decides what waits for its restart.
+    /// Install updates automatically switch on the Ahziael tab). The server keeps running; ServerUpdate decides what waits for its restart.
     /// </summary>
     private async Task OfferRestartAsync(bool withoutAsking = false) {
         if (_readyUpdate is not { } update) {
@@ -2772,27 +2791,37 @@ internal sealed partial class ManagerWindow : Window {
         ["Share"] = ("link", "Export any of your customs to one file to share, or import a friend's file safely."),
         ["Quest Editor"] = ("flag", "Change any quest's rewards, steps, giver, level and what it needs, or make quests of your own."),
         ["Guides"] = ("info", "Make a custom, and step-by-step help for everything else."),
-        ["Server"] = ("server", "Start and stop the server, and switch its modes."),
+        [WHATS_NEW] = ("sparkle", "What changed in each version of Ahziael: every version's patch notes, with a search."),
+        ["Server"] = ("server", "Start, restart and stop the server, and pick where the server comes from."),
+        ["Game Modes"] = ("dice", "Whole-server modes such as Randomizer and Die = Delete, and what spell trainers ask for."),
+        ["Battles and World"] = ("sword", "Switches for battles, pips, pets, jewels, houses and the world, Tamed Drops, and how fast plants grow."),
+        ["Events"] = ("clock", "Run the game's own events, such as the Deckathalon, Side Activity and Monthly Gauntlets, one after another from a queue."),
+        ["Shops and Codes"] = ("bag", "Codes to redeem, member benefits, the Crown Shop, the Loyalty Store and the Bazaar bot."),
         ["Announcements"] = ("chat", "Change the words of everything the server announces or tells a player, turn any of it off, and send your own."),
         ["Logs"] = ("log", "What the server and the game are writing down, as it happens."),
         ["Settings"] = ("gear", "Every setting of the server, with what each one does."),
         ["Accounts"] = ("users", "Who can log in to your server, and what they may do."),
-        ["Game Files"] = ("folder", "Read the game's data files, without ever changing them."),
-        ["Tools"] = ("wrench", "Update Ahziael, clean up after it, open its folders, or remove it."),
+        ["Game Files"] = ("folder", "Read the game's data files without ever changing them, and download them with Aurorium."),
+        [Edition.NAME] = ("wrench", "Ahziael itself: updates, how it looks, privacy, its folders, and removing it."),
     };
 
     /// <summary>
-    /// A tab inside one of the menu's pages: its icon and name along the top, and its one line on what it is for when
-    /// pointed at (Niduus, 2026-10-26, mockup L: no big title block over each tab, so the tab has the room).
+    /// A tab inside one of the menu's pages: its icon and name along the top, and its one line on what it is for, small,
+    /// over the tab (Niduus, 2026-10-26, mockup L: no big title block over each tab, so the tab has the room; 2026-10-30:
+    /// "make it less confusing", so the line shows without pointing at the tab).
     /// </summary>
     private static TabItem Tab(string header, Func<Control> build) {
         var content = UiTiming.Measure($"build {header} tab", build);
         var (icon, line) = s_tabs[header];
+        var about = new TextBlock {
+            Text = line, FontSize = ManagerTheme.FONT_SMALL, Foreground = MUTED, TextWrapping = TextWrapping.Wrap,
+            Margin = new Thickness(26, 2, 26, 0), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH - 4,
+        };
         var tab = new TabItem {
             Tag = header,
             Classes = { "sub" },
             Header = ManagerTheme.SubTabHeader(icon, ManagerTheme.Accent(header), header),
-            Content = content,
+            Content = new DockPanel { Children = { WithDock(about, Dock.Top), content } },
         };
         ToolTip.SetTip(tab, line);
 

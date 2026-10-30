@@ -174,6 +174,7 @@ internal sealed partial class ManagerWindow {
 
             return Task.CompletedTask;
         });
+        var updateWords = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Spacing = 2, Children = { _updateTitle, _updateLine } };
         _updatePanel = ManagerTheme.GlassPanel(new DockPanel {
             Children = {
                 WithDock(new StackPanel {
@@ -181,13 +182,13 @@ internal sealed partial class ManagerWindow {
                     Children = { Action(_updateButton, UpdateAsync), whatsNew },
                 }, Dock.Right),
                 WithDock(WithMargin(ManagerTheme.Tile("download", ManagerTheme.Accent("What's New"), 28), new Thickness(0, 0, 10, 0)), Dock.Left),
-                new StackPanel { VerticalAlignment = VerticalAlignment.Center, Spacing = 2, Children = { _updateTitle, _updateLine } },
+                updateWords,
             },
         });
         _updatePanel.Padding = new Thickness(10, 6);
         _updatePanel.HorizontalAlignment = HorizontalAlignment.Center;
         _updatePanel.Margin = new Thickness(16, 0);
-        ToolTip.SetTip(_updatePanel, "Updates and what changed in each version. Turn automatic updates on or off on the Tools tab.");
+        ToolTip.SetTip(_updatePanel, "Updates and what changed in each version. Turn automatic updates on or off on the Ahziael tab (Server page).");
         _updateButton.PropertyChanged += (_, e) => {
             if (e.Property == ContentControl.ContentProperty) {
                 RefreshUpdatePanel();
@@ -200,12 +201,22 @@ internal sealed partial class ManagerWindow {
         var bar = ManagerTheme.GlassPanel(new DockPanel {
             Children = {
                 WithDock(_statusBadge, Dock.Right),
+                WithDock(JumpBox(), Dock.Right),
                 WithDock(brand, Dock.Left),
                 _updatePanel,
             },
         }, 18);
         bar.Padding = new Thickness(10, 6);
         bar.Margin = new Thickness(12, 10, 12, 0);
+        // A narrow window keeps the header on one line: the update panel drops its words, then its What's new button
+        // (Help has What's New too), and the Jump to box gets shorter.
+        SizeChanged += (_, e) => {
+            var width = e.NewSize.Width;
+            updateWords.IsVisible = width >= 1180;
+            whatsNew.IsVisible = width >= 980;
+            _jumpBox.Width = width >= 1100 ? 250 : 180;
+            _jumpBox.Watermark = width >= 1100 ? "Search pages and settings" : "Search pages";
+        };
 
         return bar;
     }

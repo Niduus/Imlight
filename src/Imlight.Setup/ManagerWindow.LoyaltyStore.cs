@@ -15,7 +15,7 @@ using Avalonia.Threading;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Loyalty Store card on the Server tab (Niduus, 2026-10-25: "Loyalty shop is not present and have all his
+/// The Loyalty Store card on the Game Rules page (Niduus, 2026-10-25: "Loyalty shop is not present and have all his
 /// rotations viewable via manager and able to have configs for when his wares rotate and a option in configs to
 /// announce his rotation"). Majid in the Shopping District sells one rotation of wares at a time; the card lists every
 /// rotation with its wares (spiraldb-extra/LoyaltyStore/Rotations.json), which one is on and when the next comes, and

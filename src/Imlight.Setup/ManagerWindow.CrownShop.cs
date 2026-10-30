@@ -13,7 +13,7 @@ using Avalonia.Threading;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Crown Shop card on the Server tab (Niduus, 2026-10-25): the items on the shop's Featured tab, sales of one's
+/// The Crown Shop card on the Game Rules page (Niduus, 2026-10-25): the items on the shop's Featured tab, sales of one's
 /// own (a sale price with the normal price crossed out, for some hours or days or for good) and a Crowns Rewards event
 /// (spend crowns in the shop, reach a tier, get its item). The app writes crown-shop.json next to the server; the
 /// server reads it within a second, and the shop shows the change the next time it is opened.

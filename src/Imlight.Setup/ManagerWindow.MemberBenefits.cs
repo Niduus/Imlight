@@ -13,7 +13,7 @@ using Avalonia.Threading;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Member benefits card on the Server tab (Niduus, 2026-10-23): a switch for each member benefit, each with an
+/// The Member benefits card on the Game Rules page (Niduus, 2026-10-23): a switch for each member benefit, each with an
 /// optional time after which it turns itself off. The app writes member-benefits.json next to the server; the server
 /// picks it up within a second, sends the game the new benefits and tells everyone online what turned on or off.
 /// </summary>
