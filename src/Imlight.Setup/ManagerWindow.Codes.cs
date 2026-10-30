@@ -16,7 +16,7 @@ using Imlight.Setup.Blocks;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Codes card on the Server tab (Niduus, 2026-10-23: "Make a code section in the manager under server. This will
+/// The Codes card on the Game Rules page (Niduus, 2026-10-23: "Make a code section in the manager under server. This will
 /// allow the creation of codes and their time limits."). Each code has its text, an optional start and end, the uses
 /// per account, an on/off switch and what it gives: items picked by name, gold and crowns. Saved to codes.json next
 /// to the server, which reads it again whenever it changes. Who redeemed what is in code-redemptions.json.

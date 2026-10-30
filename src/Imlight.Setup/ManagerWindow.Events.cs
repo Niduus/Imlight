@@ -14,7 +14,7 @@ using Avalonia.Threading;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Events card on the Server tab (Niduus, 2026-10-24: "Have events be controlled by the manager with able to queue
+/// The Events card on the Game Rules page (Niduus, 2026-10-24: "Have events be controlled by the manager with able to queue
 /// new ones up as old ones expire"): a queue of game events, each lasting so many days and hours. The first one starts
 /// when Start is pressed and each next one starts as the one before it ends; with Repeat the queue goes round again.
 /// The app writes events.json next to the server, which works out from it which event is on and tells everyone online

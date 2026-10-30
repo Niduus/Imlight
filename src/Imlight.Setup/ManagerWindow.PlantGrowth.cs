@@ -11,7 +11,7 @@ using Avalonia.Layout;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Plant growth card on the Server tab (Niduus, 2026-10-25: "Make them obey to configs in manager for their age. and
+/// The Plant growth card on the Game Rules page (Niduus, 2026-10-25: "Make them obey to configs in manager for their age. and
 /// dynamically update"): how many times faster than the game plants grow, in all and for each stage, and a pause. The
 /// app writes garden-growth.json next to the server; the server reads it within a second and every garden takes the new
 /// speeds at its next growth check, plants halfway through a stage included (Game/Gardening/GardenTiming). The

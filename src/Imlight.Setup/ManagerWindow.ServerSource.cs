@@ -30,7 +30,7 @@ using Avalonia.Platform.Storage;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Server source card on the Tools tab: run Niduus's server (the default), another GitHub copy of Imlight, or one
+/// The Server source card on the Server tab: run Niduus's server (the default), another GitHub copy of Imlight, or one
 /// in a folder on this PC (Niduus, 2026-10-22: "make the manager work with any imlight copy"). Also the short notes a
 /// page shows when the chosen copy doesn't have the feature it is for.
 /// </summary>
@@ -208,7 +208,7 @@ internal sealed partial class ManagerWindow {
             CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(14, 8),
             IsVisible = false,
             Child = new TextBlock {
-                Text = $"This server copy doesn't have this feature: {what} Change the copy under Server source on the Tools tab.",
+                Text = $"This server copy doesn't have this feature: {what} Change the copy under Server source on the Server tab.",
                 Foreground = WARN, TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center,
             },
         };

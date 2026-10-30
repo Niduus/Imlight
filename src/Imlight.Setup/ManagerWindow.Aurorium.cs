@@ -29,7 +29,7 @@ using Avalonia.Threading;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Aurorium card on the Tools tab: install Aurorium into any folder, run it so it downloads the game files, and have
+/// The Aurorium card on the Game Files tab: install Aurorium into any folder, run it so it downloads the game files, and have
 /// the server take its files instead of the ones in the player's Wizard101 folder.
 /// </summary>
 internal sealed partial class ManagerWindow {

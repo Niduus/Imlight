@@ -12,7 +12,7 @@ using Avalonia.Threading;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Bazaar bot card on the Server tab and its log on the Logs tab (Niduus, 2026-10-27: "I want the Bazaar to have
+/// The Bazaar bot card on the Game Rules page and its log on the Logs tab (Niduus, 2026-10-27: "I want the Bazaar to have
 /// it's own mini server" and "a bazaar bot log into Ahziael as well"). The server starts the bot, a second copy of
 /// Imlight.Director, which keeps the Bazaar's entries and stock (Game/Bazaar/BazaarBot). The bot writes its log, stock
 /// and a status file in Server\logs\bazaar-bot; this card reads them. Its settings are [Bazaar] in Imlight.ini, which

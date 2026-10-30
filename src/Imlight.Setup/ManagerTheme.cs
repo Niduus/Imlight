@@ -112,6 +112,8 @@ internal static class ManagerTheme {
         ["Database"] = Color.FromRgb(58, 143, 217),
         ["Progress"] = Color.FromRgb(240, 170, 60),
         ["Create"] = Color.FromRgb(217, 101, 59),
+        ["Game Rules"] = Color.FromRgb(46, 170, 98),
+        ["Help"] = Color.FromRgb(46, 160, 140),
         // Tabs.
         ["Play"] = Color.FromRgb(46, 170, 98),
         ["Commands"] = BLOCK_WHEN,
@@ -143,6 +145,11 @@ internal static class ManagerTheme {
         ["Accounts"] = Color.FromRgb(199, 92, 154),
         ["Game Files"] = Color.FromRgb(201, 162, 39),
         ["Tools"] = Color.FromRgb(140, 150, 165),
+        [Edition.NAME] = Color.FromRgb(140, 150, 165),
+        ["Game Modes"] = Color.FromRgb(154, 92, 201),
+        ["Battles and World"] = Color.FromRgb(217, 101, 59),
+        ["Events"] = Color.FromRgb(70, 130, 220),
+        ["Shops and Codes"] = Color.FromRgb(201, 162, 39),
         // The boss editor's sections.
         ["identity"] = Color.FromRgb(63, 167, 160),
         ["stats"] = Color.FromRgb(217, 101, 59),

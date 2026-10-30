@@ -217,11 +217,11 @@ internal sealed partial class ManagerWindow {
     };
 
     private static string AnnouncementGroupHelp(string group) => group switch {
-        "Events" => "Sent to everyone online when an event from the Server tab's Events card starts or ends.",
+        "Events" => "Sent to everyone online when an event from the Events tab (Game Rules page) starts or ends.",
         "Deckathalon" => "Sent to the wizard climbing a Deckathalon tower.",
-        "Loyalty Store" => "Sent to everyone online when Majid's wares change (Server tab, Loyalty Store card).",
+        "Loyalty Store" => "Sent to everyone online when Majid's wares change (Game Rules page, Shops and Codes tab).",
         "Member benefits" => "Sent when a member benefit turns on or off, and to each wizard when they log in.",
-        "Crowns Rewards" => "Sent to the buyer while the Crowns Rewards event is on (Server tab, Crown Shop card).",
+        "Crowns Rewards" => "Sent to the buyer while the Crowns Rewards event is on (Game Rules page, Shops and Codes tab).",
         "Guild raids" => "Sent to everyone inside a guild raid.",
         "Guilds" => "Sent to the guild's members.",
         "Teleport to a friend" => "The box a player sees when they cannot teleport to a friend or group mate: the first line with one of the reasons.",

@@ -25,7 +25,7 @@ using Avalonia.Controls;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Privacy card on the Tools tab (Niduus, 2026-10-30: users must not be traceable for playing on a private
+/// The Privacy card on the Ahziael tab (Niduus, 2026-10-30: users must not be traceable for playing on a private
 /// server). It says plainly what Ahziael sends and keeps, and its Clean up button removes Ahziael's leftovers
 /// (<see cref="PrivacyCleanup"/>) and undoes "Let friends connect". It never touches Wizard101's own files.
 /// </summary>

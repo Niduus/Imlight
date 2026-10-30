@@ -22,6 +22,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
@@ -55,18 +56,26 @@ internal sealed partial class ManagerWindow {
         ("Progress", "bolt", "Fast forward, best gear, spells",
             "Bring a wizard up to a level or a world with the quests' real rewards, find the best gear for your level and where to get it, and collect the spells you should have.",
             ["Fast Forward", "Best Gear", "Collect Spells"]),
-        // Niduus, 2026-10-25: "move Bosses to Database".
+        // Niduus, 2026-10-25: "move Bosses to Database". Niduus, 2026-10-30: "make it less confusing and more organized":
+        // what you look up for your wizard first (spells, gear, items), then the house, places and pets, then the rest.
         ("Database", "search", "IDs, spells, gear, bosses",
-            "Everything in the game, ready to search: IDs, spell cards, gear, house items, reagents, jewels, snacks and every other item, badges, bosses, recipes, vendors and trainers, pet talents, and every line of text.",
-            ["Lookup", "Spells", "Gear", "Furniture", "Items", "Badges", "Bosses", "Recipes", "Vendors", "Pet Talents", "Pet Derby", "Phrases"]),
-        ("Create", "puzzle", "Cheats, customs, guides",
-            "Make cheats for yourself, build your own creatures and areas, word what the server announces, and step-by-step guides.",
+            "Everything in the game, ready to search: IDs, spell cards, gear, reagents, jewels, snacks and every other item, house items, badges, recipes, vendors and trainers, pet talents, bosses, and every line of text.",
+            ["Lookup", "Spells", "Gear", "Items", "Furniture", "Badges", "Recipes", "Vendors", "Pet Talents", "Pet Derby", "Bosses", "Phrases"]),
+        ("Create", "puzzle", "Customs, cheats, announcements",
+            "Build your own creatures and areas and share them, make cheats for yourself, test the bosses' cheats, and word what the server announces.",
             // Niduus, 2026-10-28: "Make BOSS TEST in the exe": the bosses with cheats to test, beside the cheat editor.
             // Niduus, 2026-10-29: every custom can be exported and imported for sharing (Share, beside Customs).
-            ["Player Cheats", "Boss Test", "Customs", "Share", "Announcements", "Guides"]),
-        ("Server", "server", "Settings, accounts, logs",
-            "Run the server and set it up: settings, who can log in, logs, game files and tools.",
-            ["Server", "Settings", "Accounts", "Logs", "Game Files", "Tools"]),
+            ["Customs", "Share", "Player Cheats", "Boss Test", "Announcements"]),
+        // Niduus, 2026-10-30: the Server tab held a pile of cards that change how the game plays; they get a page of their own.
+        ("Game Rules", "dice", "Modes, battles, events, shops",
+            "Change how the game plays on your server: game modes and spell trainers, battle and world switches, events, and the shops and codes.",
+            ["Game Modes", "Battles and World", "Events", "Shops and Codes"]),
+        ("Server", "server", "Start, settings, accounts, logs",
+            "Run the server and set it up: start and stop, every setting, who can log in, logs, game files, and Ahziael itself.",
+            ["Server", "Settings", "Accounts", "Logs", "Game Files", Edition.NAME]),
+        ("Help", "info", "Guides and what's new",
+            "Step-by-step guides for everything, and what changed in each version.",
+            ["Guides", WHATS_NEW]),
     ];
 
     private const string HOME = "Home";
@@ -97,7 +106,6 @@ internal sealed partial class ManagerWindow {
     private TabControl Navigation(Dictionary<string, TabItem> tabs) {
         var items = new List<TabItem> {
             NavItem(HOME, "home", "Start here, search it all", HomePage()),
-            NavItem(WHATS_NEW, "sparkle", "Every version's changes", WhatsNewPage()),
         };
         if (AI_GUIDE_ON) {
             items.Add(NavItem(AI_GUIDE, "chat", "Ask about Ahziael, with your own key", AiGuidePage()));
@@ -156,7 +164,7 @@ internal sealed partial class ManagerWindow {
             return;
         }
 
-        var groupName = name is HOME or WHATS_NEW or AI_GUIDE ? name : s_groups.FirstOrDefault(g => g.Tabs.Contains(name)).Name;
+        var groupName = name is HOME or AI_GUIDE ? name : s_groups.FirstOrDefault(g => g.Tabs.Contains(name)).Name;
         if (groupName is null) {
             return;
         }
@@ -169,6 +177,106 @@ internal sealed partial class ManagerWindow {
         if (_nav.Items.OfType<TabItem>().FirstOrDefault(t => (t.Tag as string) == groupName) is { } page) {
             _nav.SelectedItem = page;
         }
+    }
+
+    // ---------------------------------------------------------------------
+    // Jump to (in the header, on every page)
+    // ---------------------------------------------------------------------
+
+    // Niduus, 2026-10-30: "Some of the UI is confusing to navigate": a box at the top of every page that finds a page,
+    // tab or setting by a few letters and goes there.
+    private readonly TextBox _jumpBox = new() { Watermark = "Search pages and settings", Width = 250, VerticalAlignment = VerticalAlignment.Center };
+    private readonly StackPanel _jumpResults = new() { Spacing = 4 };
+    private readonly Popup _jumpPopup = new() { Placement = PlacementMode.BottomEdgeAlignedRight, IsLightDismissEnabled = true };
+    private Action? _jumpFirst;
+
+    private Control JumpBox() {
+        _jumpPopup.PlacementTarget = _jumpBox;
+        _jumpPopup.Child = new Border {
+            Background = ManagerTheme.BACKGROUND_BRUSH, BorderBrush = ManagerTheme.Brush(ManagerTheme.ACCENT_LIGHT, 110), BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(ManagerTheme.RADIUS), Padding = new Thickness(8), Width = 440, Margin = new Thickness(0, 6, 0, 0),
+            Child = new ScrollViewer { MaxHeight = 480, Content = _jumpResults },
+        };
+        _jumpBox.TextChanged += (_, _) => RenderJump();
+        _jumpBox.GotFocus += (_, _) => RenderJump();
+        _jumpBox.KeyDown += (_, e) => {
+            if (e.Key == Key.Enter && _jumpFirst is { } first) {
+                first();
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Escape) {
+                _jumpPopup.IsOpen = false;
+            }
+        };
+        ToolTip.SetTip(_jumpBox, "Ctrl+K. Type a few letters of a page, tab or setting, such as events, crown shop or privacy, then click it or press Enter.");
+
+        return new Panel { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 10, 0), Children = { _jumpBox, _jumpPopup } };
+    }
+
+    /// <summary>The Jump to box's list: the tabs that match, then a few settings, then "Search everything" on Home.</summary>
+    private void RenderJump() {
+        var query = (_jumpBox.Text ?? "").Trim();
+        _jumpResults.Children.Clear();
+        _jumpFirst = null;
+        if (query.Length == 0) {
+            _jumpPopup.IsOpen = false;
+
+            return;
+        }
+
+        void Go(Action open) {
+            _jumpPopup.IsOpen = false;
+            _jumpBox.Text = "";
+            open();
+        }
+
+        var rows = new List<Control>();
+        void Add(string icon, string accent, string title, string line, Action open) {
+            _jumpFirst ??= () => Go(open);
+            rows.Add(ResultRow(icon, accent, title, line, () => Go(open)));
+        }
+
+        if (SearchText.Matches($"{HOME} start welcome search everything", query)) {
+            Add("home", HOME, HOME, "Start here: run the server and search everything.", () => SelectTab(HOME));
+        }
+
+        foreach (var group in s_groups) {
+            var groupMatches = SearchText.Matches($"{group.Name} {group.Line}", query);
+            foreach (var name in group.Tabs) {
+                var (icon, line) = s_tabs[name];
+                if (groupMatches || SearchText.Matches($"{name} {line}", query)) {
+                    var tab = name;
+                    Add(icon, name, $"{group.Name}  ›  {name}", line, () => SelectTab(tab));
+                }
+            }
+        }
+
+        try {
+            if (_settings.Count == 0) {
+                LoadSettings();
+            }
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or PanelException) {
+            // No settings file yet; the pages still show.
+        }
+
+        foreach (var setting in _settings.SelectMany(g => g.Settings)
+                     .Where(s => SearchText.Matches($"{s.Section} {s.Key} {SearchText.SplitCamel(s.Key)} {s.Help}", query)).Take(5)) {
+            var key = setting.Key;
+            Add("gear", "Settings", $"Setting: {setting.Section}, {SearchText.SplitCamel(key)}", setting.Help, () => {
+                SelectTab("Settings");
+                _settingSearch.Text = key;
+            });
+        }
+
+        Add("search", HOME, $"Search everything for \"{query}\"", "Items, spells, creatures, zones, quests and commands too, on Home.", () => {
+            SelectTab(HOME);
+            _homeSearch.Text = query;
+            FocusLater(_homeSearch);
+        });
+
+        _jumpResults.Children.AddRange(rows);
+        _jumpPopup.IsOpen = true;
     }
 
     // ---------------------------------------------------------------------
@@ -280,7 +388,7 @@ internal sealed partial class ManagerWindow {
     }
 
     private static TextBlock HomeSearchTip() => Sub("Type a name, an ID or a few words, such as Fire Cat, Malistaire, unlimited mana or 1317127. " +
-                                                    "Ctrl+K jumps to this box from anywhere; Ctrl+F searches the tab you are on.");
+                                                    "The box at the top of every window (Ctrl+K) finds a page or setting; Ctrl+F searches the tab you are on.");
 
     /// <summary>
     /// Home's results: matching tabs, settings and Lookup entries (a group for each kind), and a quick search of each tab
@@ -318,10 +426,6 @@ internal sealed partial class ManagerWindow {
                         tabRows.Add(ResultRow(icon, name, name, $"{group.Name} page. {line}", () => SelectTab(tab)));
                     }
                 }
-            }
-
-            if (SearchText.Matches($"{WHATS_NEW} patch notes update changes version", query)) {
-                tabRows.Add(ResultRow("sparkle", WHATS_NEW, WHATS_NEW, "Every version's changes, with a search.", () => SelectTab(WHATS_NEW)));
             }
 
             if (AI_GUIDE_ON && SearchText.Matches($"{AI_GUIDE} ai claude help ask question chat assistant", query)) {
@@ -415,7 +519,7 @@ internal sealed partial class ManagerWindow {
         ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Furniture", _furnitureSearch), ("Items", _itemsSearch), ("Badges", _badgesSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Pet Talents", _petTalentPage.Search), ("Pet Derby", _petDerbyPage.Search), ("Quest Tree", _qtSearch), ("Quest Testing", _qxSearch), ("Boss Test", _btSearch), ("Spell Quests", _sqSearch), ("Phrases", _phraseSearch),
         ("Quests", _questSearch), ("Bosses", _bossSearch), ("Commands", _commandSearch), ("Announcements", _announcementSearch),
         ("Lookup", _lookupSearch), ("Settings", _settingSearch), ("Customs", _customListSearch), ("Share", _shareSearch), ("Accounts", _accountSearch),
-        ("Logs", _logSearch),
+        ("Logs", _logSearch), (WHATS_NEW, _notesSearch),
     ];
 
     private static string KindIcon(string kind) => kind switch {
@@ -543,15 +647,14 @@ internal sealed partial class ManagerWindow {
         };
     }
 
-    /// <summary>Ctrl+K: Home's search. Ctrl+F: the search box of the tab showing.</summary>
+    /// <summary>Ctrl+K: the Jump to box at the top. Ctrl+F: the search box of the tab showing.</summary>
     private void OnShortcutKey(object? sender, KeyEventArgs e) {
         if (!e.KeyModifiers.HasFlag(KeyModifiers.Control)) {
             return;
         }
 
         if (e.Key == Key.K) {
-            SelectTab(HOME);
-            FocusLater(_homeSearch);
+            FocusLater(_jumpBox);
             e.Handled = true;
         }
         else if (e.Key == Key.F) {
@@ -569,10 +672,6 @@ internal sealed partial class ManagerWindow {
 
         if (name == HOME) {
             return _homeSearch;
-        }
-
-        if (name == WHATS_NEW) {
-            return _notesSearch;
         }
 
         var content = _groupTabs.TryGetValue(name, out var inner) ? (inner.SelectedItem as TabItem)?.Content as ILogical : null;

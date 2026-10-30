@@ -426,7 +426,7 @@ internal sealed partial class ServerManager(string installFolder) {
     // What this server copy has
     // ---------------------------------------------------------------------
 
-    /// <summary>Where the server comes from (the Server source card on the Tools tab).</summary>
+    /// <summary>Where the server comes from (the Server source card on the Server tab).</summary>
     internal ServerSource Source => ServerSource.Load(InstallFolder);
 
     /// <summary>Whether the server runs the commands from the app (manager-commands.txt). Another Imlight copy may not.</summary>
@@ -541,7 +541,7 @@ internal sealed partial class ServerManager(string installFolder) {
                 File.Delete(path);
             }
             else {
-                File.WriteAllText(path, "Imlight does not update by itself while this file exists. The Tools tab in the app changes it.");
+                File.WriteAllText(path, "Imlight does not update by itself while this file exists. The Ahziael tab in the app changes it.");
             }
         }
     }
@@ -582,7 +582,7 @@ internal sealed partial class ServerManager(string installFolder) {
         set {
             var path = Path.Combine(InstallFolder, AUTO_INSTALL_ON_FILE);
             if (value) {
-                File.WriteAllText(path, "Imlight installs a new version as soon as it is ready, without asking, while this file exists. The Tools tab in the app changes it.");
+                File.WriteAllText(path, "Imlight installs a new version as soon as it is ready, without asking, while this file exists. The Ahziael tab in the app changes it.");
             }
             else {
                 File.Delete(path);

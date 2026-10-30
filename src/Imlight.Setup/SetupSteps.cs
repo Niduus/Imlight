@@ -201,7 +201,7 @@ internal sealed class SetupSteps : IDisposable {
     /// </summary>
     internal async Task DownloadSourceAsync() {
         if (_options.SourceProblem is { } problem) {
-            throw new SetupException(problem + " Change the Server source on the Tools tab of the app, then update again.");
+            throw new SetupException(problem + " Change the Server source on the Server tab of the app, then update again.");
         }
 
         if (_options.LocalCheckout is { } checkout) {
@@ -247,7 +247,7 @@ internal sealed class SetupSteps : IDisposable {
         var from = Path.GetFullPath(checkout).TrimEnd(Path.DirectorySeparatorChar, '/');
         var source = Path.GetFullPath(SourceFolder).TrimEnd(Path.DirectorySeparatorChar);
         if (IsSameOrInside(from, source) || IsSameOrInside(source, from)) {
-            throw new SetupException($"{from} is the app's own working folder. Pick your own Imlight folder on the Tools tab of the app.");
+            throw new SetupException($"{from} is the app's own working folder. Pick your own Imlight folder under Server source on the Server tab of the app.");
         }
 
         SetupLog.Info($"Copying Imlight from {from}. Your folder is not changed..");

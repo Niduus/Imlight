@@ -91,7 +91,7 @@ internal sealed class SetupOptions {
           --repo <owner/repo>        Build from another GitHub repository. Default: Revive101/Imlight (Niduus/Imlight for Ahziael)
           --branch <name>            Build another branch. Default: quality-assurance
           --source-folder <folder>   Build an Imlight source folder on this PC, or run a server already built there.
-                                     Without --repo or this, the app's Server source choice (Tools tab) is used.
+                                     Without --repo or this, the app's Server source choice (Server tab) is used.
           --admin-password <text>    The admin password, for --yes installs.
           --yes                      Do not ask anything; use the defaults.
 

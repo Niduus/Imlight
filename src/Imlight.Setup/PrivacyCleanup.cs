@@ -24,7 +24,7 @@ using System.Linq;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The "Clean up" button on Tools > Privacy (Niduus, 2026-10-30: leave no traces of playing on a private server). It
+/// The "Clean up" button on the Ahziael tab > Privacy (Niduus, 2026-10-30: leave no traces of playing on a private server). It
 /// finds what Ahziael and its server left behind (logs, command history, copies on the desktop, downloads in the
 /// Windows temp folder) and removes it. Wizard101's own files are never touched; accounts, characters, customs and
 /// backups are kept.

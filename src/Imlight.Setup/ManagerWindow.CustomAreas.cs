@@ -1610,7 +1610,7 @@ internal sealed partial class ManagerWindow {
             if (places.Count == 0) {
                 list.Children.Add(Sub(_areaCatalog?.HasGameTables == true
                     ? "The game files list no named places for this zone."
-                    : "Named places show here once the game files are read (Tools tab, Game files)."));
+                    : "Named places show here once the game files are read (Server page, Game Files tab)."));
             }
 
             foreach (var place in places) {
@@ -1723,7 +1723,7 @@ internal sealed partial class ManagerWindow {
                 if (rows.Count == 0) {
                     results.Children.Add(Sub(_areaCatalog?.HasGameTables == true || _bossCatalog?.Missing is null
                         ? "Nothing matches."
-                        : "Nothing matches. Start the server once so it makes its ID lists, and read the game files on the Tools tab for objects."));
+                        : "Nothing matches. Start the server once so it makes its ID lists, and read the game files on the Game Files tab for objects."));
                 }
             }
 
@@ -1815,7 +1815,7 @@ internal sealed partial class ManagerWindow {
             picks.Children.Clear();
             var names = suggestions();
             if (names.Count == 0) {
-                picks.Children.Add(Sub("The game files list none for this zone (or they have not been read yet on the Tools tab). Use Add an empty one."));
+                picks.Children.Add(Sub("The game files list none for this zone (or they have not been read yet on the Game Files tab). Use Add an empty one."));
             }
 
             foreach (var entry in names) {
@@ -1868,7 +1868,7 @@ internal sealed partial class ManagerWindow {
 
         return name.Length > 0 ? name : kind == PickKind.Creature
             ? "Not in the creature list (start the server once so it makes it)"
-            : "Not in the lists (read the game files on the Tools tab to name objects)";
+            : "Not in the lists (read the game files on the Game Files tab to name objects)";
     }
 
     // The creature's school icon from the game files, or a coloured dot; a boss gets a crown beside it.
