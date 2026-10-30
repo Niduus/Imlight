@@ -241,7 +241,9 @@ internal sealed partial class ManagerWindow {
         return _dropCatalog;
     }
 
-    private DropCatalogItem? CatalogItem(string id) => DropCatalog().FirstOrDefault(i => i.Id == id);
+    // By number, or for a treasure card named by its spell name (the server gives those too), by that name.
+    private DropCatalogItem? CatalogItem(string id) => DropCatalog().FirstOrDefault(i => i.Id == id)
+        ?? (id.Length > 0 && !id.All(char.IsDigit) ? DropCatalog().FirstOrDefault(i => i.Kind == "Spell" && i.Name.Equals(id.Trim(), StringComparison.OrdinalIgnoreCase)) : null);
 
     /// <summary>What a line of a table is, in words: an item, a treasure card or a spell it teaches.</summary>
     private string DropKind(DropCatalogItem? item) => item?.Kind switch {
