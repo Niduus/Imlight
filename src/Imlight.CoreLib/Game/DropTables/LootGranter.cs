@@ -139,18 +139,18 @@ public static class LootGranter {
     }
 
     internal static int GrantReagent(IActorRef playerActor, Wizard wizard, ulong templateId, int quantity) {
-        // The wizard adds one unit per call and refuses at the stack cap, so the count is what fit.
-        // A fresh one-unit object per call: the stored stack grows by the quantity of the object passed.
-        var granted = 0;
-        while (granted < quantity && wizard.AddReagent(CreateReagentUnit(wizard, templateId))) {
-            granted++;
-        }
-
-        if (granted == 0) {
+        // The whole amount in one step, saved once: one save per unit made a big grant (.spellements gives up to 999
+        // of each Spellement) take many minutes, and every command after it waited (Niduus, 2026-10-30). The count is
+        // what fit below the stack cap.
+        if (quantity <= 0) {
             return 0;
         }
 
-        var reagent = wizard.AlchemyBehavior.GetReagent(templateId);
+        var granted = wizard.AddReagents(templateId, quantity, out var reagent);
+        if (granted <= 0 || reagent is null) {
+            return 0;
+        }
+
         if (!s_itemSerializer.Serialize(reagent, ReagentAddSerializationFlags, out var serializedReagent)) {
             Logger.Error("Failed to serialize reward reagent {0} for reagent-add.",
                 Logger.Args(reagent.m_globalID.Full));
@@ -296,17 +296,6 @@ public static class LootGranter {
                     break;
             }
         }
-    }
-
-    private static ClientReagentItem CreateReagentUnit(Wizard wizard, ulong templateId) {
-        if (CoreObjectFactory.FinalizeCoreObject(templateId) is not ClientReagentItem unit) {
-            return null;
-        }
-
-        unit.m_characterId = (GID) wizard.CharId;
-        unit.m_quantity = 1;
-
-        return unit;
     }
 
     /// <summary>

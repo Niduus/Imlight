@@ -116,6 +116,12 @@ internal class CommandQuest : CommandProtocol {
     private void QuestCollectSpellsCommand()
         => SendQuestAction("collectspells", "");
 
+    // Ahziael's Collect Spells: takes out the spells it listed as not from the real game and the player ticked.
+    [Command("removespells")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void QuestRemoveSpellsCommand()
+        => SendQuestAction("removespells", "");
+
     private void SendQuestAction(string action, string questName)
         => Context.SessionActor.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND {
             Action = action,
