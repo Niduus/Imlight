@@ -982,14 +982,25 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
         }
 
         // Case 2: Timed elixir.
+        // As in the game, a new elixir replaces the active one of the same type; it used to be refused without a word,
+        // which left the elixir looking worn in the game while the server never put it on.
         var equipBehavior = wizard.EquipmentBehavior;
-        if (!equipBehavior.CanEquipElixir(elixirTemplate)) {
-            Logger.Warning("Player tried to equip elixir {0} but cannot equip it.", Logger.Args(item.m_globalID));
+        if (!equipBehavior.HasElixirRoom(elixirTemplate)) {
+            Logger.Warning("{0} tried to use elixir {1} ({2}) with {3} elixirs already active.",
+                Logger.Args(wizard.CharId, (ulong) item.m_globalID, (ulong) item.m_templateID, Imlight.CoreLib.Shared.Behaviors.ServerWizEquipmentBehavior.MaxActiveElixirs));
+            InformGameClient($"You can only have {Imlight.CoreLib.Shared.Behaviors.ServerWizEquipmentBehavior.MaxActiveElixirs} elixirs active at once. Wait for one to run out first.");
+
             return;
         }
 
         if (!wizard.InventoryBehavior.RemoveItem(item.m_globalID, out _)) {
             return;
+        }
+
+        foreach (var replacedSlot in equipBehavior.GetSameTypeElixirs(elixirTemplate)) {
+            Logger.Information("{0} used elixir {1} ({2}): it replaces the active {3} ({4}).",
+                Logger.Args(wizard.CharId, (ulong) item.m_globalID, (ulong) item.m_templateID, replacedSlot.ItemName, (ulong) replacedSlot.ItemId.Value));
+            RemoveActiveElixir(wizard, replacedSlot, "replaced by a new elixir of the same type");
         }
 
         if (CoreObjectFactory.FindBehaviorInstance<ClientElixirBehavior>(item, out var clientElixir)) {
@@ -1029,6 +1040,19 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
         PlaySound(elixirTemplate.m_equipSound);
         SyncHealthAndMana(wizard);
         StartElixirPlaytimeTicker();
+    }
+
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_USEELIXIR))]
+    private void ReceiveUseElixir(CHARACTER_103_PROTOCOL.MSG_USEELIXIR message) {
+        var wizard = GetActiveWizard();
+        var item = wizard?.InventoryBehavior?.Items?.LastOrDefault(i => (ulong) i.m_templateID == message.TemplateId);
+        var itemTemplate = item is null ? null : ItemHelper.GetItemTemplate(item);
+        var elixirTemplate = itemTemplate?.m_behaviors?.OfType<ElixirBehaviorTemplate>().FirstOrDefault();
+        if (elixirTemplate is null) {
+            return;
+        }
+
+        EquipElixirFromInventory(wizard, item, itemTemplate, elixirTemplate);
     }
 
     private void RestoreActiveElixirs(Wizard wizard) {
@@ -1125,9 +1149,17 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
     }
 
     private void ExpireElixir(Wizard wizard, EquipmentSlot slot) {
-        var itemId = slot.ItemId.Value;
         Logger.Information("Elixir {0} ({1}) expired for character {2}",
-            Logger.Args(slot.ItemName, itemId, wizard.CharId));
+            Logger.Args(slot.ItemName, (ulong) slot.ItemId.Value, wizard.CharId));
+
+        RemoveActiveElixir(wizard, slot, "elixir ran out");
+    }
+
+    /// <summary>
+    /// Takes an active elixir off and removes it: its effects end and its HUD timer goes away.
+    /// </summary>
+    private void RemoveActiveElixir(Wizard wizard, EquipmentSlot slot, string reason) {
+        var itemId = slot.ItemId.Value;
 
         // Destroy client HUD button and unequip item in client.
         SendToSocket(new GAME_5_PROTOCOL.MSG_EQUIPMENTBEHAVIOR_UNEQUIPITEM {
@@ -1153,7 +1185,7 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
 
         // Remove from server equipment behavior and database.
         wizard.EquipmentBehavior.UnequipItem(itemId);
-        WizardItemCollection.RemoveItem(wizard.CharId, itemId, reason: "elixir ran out");
+        WizardItemCollection.RemoveItem(wizard.CharId, itemId, reason: reason);
         WizardCollection.UpdateCharacterItems(wizard);
 
         SyncHealthAndMana(wizard, clampToMax: true);
