@@ -129,7 +129,15 @@ internal static class CustomShare {
         new("dropodds", "Drop odds", "dice", ShareShape.Whole, true, "DropOdds.json", OwnOnly: true),
     ];
 
-    internal static ShareKind? KindOf(string id) => s_kinds.FirstOrDefault(k => k.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+    internal static ShareKind? KindOf(string id) {
+        // Its id ("drops"), or, in a file made by hand, its title ("Drop tables") or a near spelling ("drop table").
+        var plain = new string([.. id.Where(char.IsLetterOrDigit)]);
+
+        return s_kinds.FirstOrDefault(k => k.Id.Equals(id, StringComparison.OrdinalIgnoreCase))
+               ?? s_kinds.FirstOrDefault(k => k.Title.Equals(id, StringComparison.OrdinalIgnoreCase))
+               ?? s_kinds.FirstOrDefault(k => plain.Length > 0 && (new string([.. k.Title.Where(char.IsLetterOrDigit)]).Equals(plain, StringComparison.OrdinalIgnoreCase)
+                                                                   || new string([.. k.Title.Where(char.IsLetterOrDigit)]).Equals(plain + "s", StringComparison.OrdinalIgnoreCase)));
+    }
 
     // ---------------------------------------------------------------------
     // Where each kind lives
@@ -362,18 +370,7 @@ internal static class CustomShare {
             throw new PanelException($"That file is {info.Length / (1024 * 1024)} MB, too big to be a customs file.");
         }
 
-        JsonObject root;
-        try {
-            root = JsonNode.Parse(File.ReadAllText(file), documentOptions: s_read) as JsonObject
-                   ?? throw new PanelException("That file is not an Ahziael customs file.");
-        }
-        catch (JsonException) {
-            throw new PanelException("That file is not an Ahziael customs file (it is not readable JSON text).");
-        }
-
-        if (Find(root, "Format") is not JsonValue format || ValueText(format) != FORMAT) {
-            throw new PanelException("That file is not an Ahziael customs file. Make one with Export on the Share tab.");
-        }
+        var root = AsShareFile(ParseFile(File.ReadAllText(file)));
 
         if (Find(root, "FormatVersion") is JsonValue version && int.TryParse(ValueText(version), out var v) && v > FORMAT_VERSION) {
             throw new PanelException("That customs file was made by a newer Ahziael. Update Ahziael at the top of the window first.");
@@ -397,8 +394,8 @@ internal static class CustomShare {
                 continue;
             }
 
-            var kindId = Find(entry, "Kind") is JsonValue k ? ValueText(k) : "";
-            var key = Find(entry, "Key") is JsonValue kv ? ValueText(kv) : "";
+            var kindId = Find(entry, "Kind") is JsonValue k ? ValueText(k).Trim() : "";
+            var key = Find(entry, "Key") is JsonValue kv ? ValueText(kv).Trim() : "";
             var shown = Find(entry, "Name") is JsonValue n ? Shorten(ValueText(n)) : key;
             if (KindOf(kindId) is not { } kind) {
                 leftOut.Add($"{Shorten(shown)}: \"{Shorten(kindId)}\" is not a kind of custom this Ahziael knows.");
@@ -406,10 +403,34 @@ internal static class CustomShare {
                 continue;
             }
 
-            if (Find(entry, "Data") is not { } data) {
+            var data = Find(entry, "Data");
+            // A file made by hand or by another program may hold the contents as text ("Data": "{...}").
+            if (data is JsonValue dataText && dataText.TryGetValue<string>(out var inner)) {
+                try {
+                    data = JsonNode.Parse(inner, documentOptions: s_read);
+                }
+                catch (JsonException ex) {
+                    leftOut.Add($"{kind.Title}, {Shorten(shown)}: its contents are not readable JSON text ({JsonProblem(ex)}).");
+
+                    continue;
+                }
+            }
+
+            if (data is null) {
                 leftOut.Add($"{kind.Title}, {Shorten(shown)}: it has nothing in it.");
 
                 continue;
+            }
+
+            if (kind.Id == "drops" && data is JsonObject table) {
+                data = NormalizeDropTable(table, key.Length > 0 ? key : shown);
+                if (!s_fileKey.IsMatch(key) || key.Contains("..", StringComparison.Ordinal)) {
+                    key = DropKey(ValueText((JsonValue) ((JsonObject) data)["Name"]!));
+                }
+
+                if (UnreadableLines((JsonObject) data) is { } note) {
+                    leftOut.Add($"{kind.Title}, {Shorten(shown)}: {note}");
+                }
             }
 
             try {
@@ -819,6 +840,162 @@ internal static class CustomShare {
         File.Move(zipPath, undone, overwrite: true);
 
         return count;
+    }
+
+    // ---------------------------------------------------------------------
+    // Files made by hand or by other programs
+    // ---------------------------------------------------------------------
+
+    /// <summary>
+    /// The file's JSON, or a plain-words error saying where it breaks. Curly quotes (from a word processor or a chat app)
+    /// are read as plain ones when that is what keeps the file from reading.
+    /// </summary>
+    private static JsonNode ParseFile(string text) {
+        try {
+            return JsonNode.Parse(text, documentOptions: s_read) ?? throw new PanelException("That file is empty.");
+        }
+        catch (JsonException first) {
+            var straight = text.Replace('\u201C', '"').Replace('\u201D', '"').Replace('\u2018', '\'').Replace('\u2019', '\'');
+            if (straight != text) {
+                try {
+                    if (JsonNode.Parse(straight, documentOptions: s_read) is { } fixedNode) {
+                        return fixedNode;
+                    }
+                }
+                catch (JsonException) {
+                    // The first problem is the one to tell.
+                }
+            }
+
+            throw new PanelException($"That file is not readable JSON text: {JsonProblem(first)}. Open it in Notepad and look there: " +
+                                     "usually a missing comma between two entries, a missing \" or } or ], or text pasted outside the quotes.");
+        }
+    }
+
+    // "the problem is on line 12, near character 5", from the reader's error.
+    private static string JsonProblem(JsonException ex)
+        => ex.LineNumber is { } line ? $"the problem is on line {line + 1}, near character {(ex.BytePositionInLine ?? 0) + 1}" : "it stops making sense partway";
+
+    /// <summary>
+    /// The file as a customs file: one made by Export as it is; one made by hand without the Format line but with a list of
+    /// customs; or a drop table (or a list of them) as the server's DropTables folder keeps them, each made a drop table custom.
+    /// </summary>
+    private static JsonObject AsShareFile(JsonNode node) {
+        if (node is JsonObject root) {
+            if (Find(root, "Format") is JsonValue format) {
+                if (!ValueText(format).Trim().Equals(FORMAT, StringComparison.OrdinalIgnoreCase)) {
+                    throw new PanelException($"That file says it is \"{Shorten(ValueText(format))}\", not an Ahziael customs file. " +
+                                             $"Its first lines should have \"Format\": \"{FORMAT}\".");
+                }
+
+                return root;
+            }
+
+            if (Find(root, "Items") is JsonArray list && list.OfType<JsonObject>().Any(e => Find(e, "Kind") is not null && Find(e, "Data") is not null)) {
+                return root;
+            }
+
+            if (IsDropTable(root)) {
+                return Wrap([root]);
+            }
+        }
+        else if (node is JsonArray tables && tables.Count > 0 && tables.All(t => t is JsonObject o && IsDropTable(o))) {
+            return Wrap([.. tables.OfType<JsonObject>()]);
+        }
+
+        throw new PanelException("That file is neither an Ahziael customs file nor a drop table. A customs file comes from Export " +
+                                 "(on the Share tab or the Drops section); a drop table file has a \"Name\" and an \"Items\" list, " +
+                                 "each line with an \"ItemId\".");
+
+        static JsonObject Wrap(IEnumerable<JsonObject> found) {
+            var items = new JsonArray();
+            var number = 0;
+            foreach (var table in found) {
+                number++;
+                var name = Find(table, "Name") is JsonValue n && ValueText(n).Trim() is { Length: > 0 } given ? given : $"Imported drop table {number}";
+                items.Add(new JsonObject { ["Kind"] = "drops", ["Key"] = DropKey(name), ["Name"] = name, ["Data"] = table.DeepClone() });
+            }
+
+            return new JsonObject { ["Format"] = FORMAT, ["FormatVersion"] = FORMAT_VERSION, ["Items"] = items };
+        }
+    }
+
+    // A drop table as the server reads it: a list of lines that name items, or at least gold or XP.
+    private static bool IsDropTable(JsonObject json)
+        => Find(json, "Items") is JsonArray lines
+            ? lines.Count == 0 || lines.OfType<JsonObject>().Any(l => Find(l, "ItemId") is not null || Find(l, "ItemName") is not null)
+            : Find(json, "Name") is not null && (Find(json, "MinGold") ?? Find(json, "MaxGold") ?? Find(json, "ExperienceAmount")) is not null;
+
+    /// <summary>A file name for a drop table, made from its name: letters, numbers and dashes.</summary>
+    internal static string DropKey(string name) {
+        var slug = new StringBuilder();
+        foreach (var c in name.Trim().ToLowerInvariant()) {
+            slug.Append(char.IsAsciiLetterOrDigit(c) ? c : '-');
+        }
+
+        var key = Regex.Replace(slug.ToString(), "-{2,}", "-").Trim('-');
+        key = key.Length > 100 ? key[..100].TrimEnd('-') : key;
+
+        return key.Length == 0 ? "imported-drop-table" : key;
+    }
+
+    /// <summary>
+    /// A drop table as the server can read it: its own (MadeInApp, so it is listed as yours), with a name, and the fields
+    /// the server reads as text or yes/no turned into those when another program wrote them as numbers or words (an ItemId
+    /// of 12345 instead of "12345" kept the whole table from loading).
+    /// </summary>
+    private static JsonObject NormalizeDropTable(JsonObject source, string fallbackName) {
+        var table = (JsonObject) source.DeepClone();
+        if (Find(table, "Name") is not JsonValue name || ValueText(name).Trim().Length == 0) {
+            SetField(table, "Name", fallbackName.Trim().Length > 0 ? fallbackName.Trim() : "Imported drop table");
+        }
+
+        foreach (var field in new[] { "Name", "Description", "Id", "Odds" }) {
+            AsText(table, field);
+        }
+
+        foreach (var field in new[] { "EachItem", "GrantsPotionSlot" }) {
+            AsYesNo(table, field);
+        }
+
+        if (Find(table, "Items") is JsonArray lines) {
+            foreach (var line in lines.OfType<JsonObject>()) {
+                foreach (var field in new[] { "ItemId", "ItemName", "Notes" }) {
+                    AsText(line, field);
+                }
+
+                AsYesNo(line, "Guaranteed");
+            }
+        }
+
+        SetField(table, "MadeInApp", true);
+
+        return table;
+
+        static void AsText(JsonObject json, string field) {
+            if (Find(json, field) is JsonValue value && !value.TryGetValue<string>(out _)) {
+                SetField(json, field, value.ToJsonString().Trim('"'));
+            }
+        }
+
+        static void AsYesNo(JsonObject json, string field) {
+            if (Find(json, field) is JsonValue value && !value.TryGetValue<bool>(out _)) {
+                var text = ValueText(value).Trim().ToLowerInvariant();
+                SetField(json, field, text is "true" or "yes" or "1" or "y");
+            }
+        }
+    }
+
+    // A note when lines name no item number: the server gives those only when the name is a treasure card's.
+    private static string? UnreadableLines(JsonObject table) {
+        var lines = (Find(table, "Items") as JsonArray ?? []).OfType<JsonObject>().ToList();
+        var noNumber = lines.Count(l => !(Find(l, "ItemId") is JsonValue id && ulong.TryParse(ValueText(id).Trim(), out _)));
+        if (noNumber == 0) {
+            return null;
+        }
+
+        return $"imported, but {noNumber} of its {lines.Count} lines have no item number in \"ItemId\". The server gives those only " +
+               "when the ItemId is a treasure card's spell name; anything else needs the item's number (find it in Lookup).";
     }
 
     // ---------------------------------------------------------------------
