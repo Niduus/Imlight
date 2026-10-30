@@ -248,7 +248,10 @@ internal static class QuestChecker {
                         }
                         break;
                     default:
-                        if (goal.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE) {
+                        if (Quests.QuestCraftGoals.IsCraftGoal(goal)) {
+                            notChecked.Add($"{step}: done by crafting an item, which the computer can't check.");
+                        }
+                        else if (goal.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE) {
                             if (!usable.Contains((questName, (string) goal.m_goalName))) {
                                 problems.Add($"{step}: no object in the game's zones can be used for it.");
                             }
