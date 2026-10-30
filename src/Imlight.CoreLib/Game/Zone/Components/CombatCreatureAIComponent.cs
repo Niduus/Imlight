@@ -488,14 +488,19 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
             var selectedSpell = buffSpells[randomIdx];
             msg.SpellSelection = (byte) _roundHand.m_spellList.IndexOf(selectedSpell);
 
+            // A card that also lands on the other side (Feint, Hex) is aimed at them, or its harm hit a teammate.
+            if (SpellEffectFilter.TargetsEnemy(selectedSpell)) {
+                msg.SpellTarget = (byte) GetMostHatedTarget();
+            }
             // Are we selfish? If so, cast it on ourselves.
-            if (_determinedSelfishThisTurn) {
+            else if (_determinedSelfishThisTurn) {
                 msg.SpellTarget = (uint) _currentSubCircle.SlotIndex;
             }
             else {
-                // Otherwise, select a random teammate.
+                // Otherwise, select a random teammate. Targets are plain circle numbers (0 = the first circle);
+                // the old +1 put the blade on the circle after the teammate, a wizard's for the last one.
                 var randomTeammate = _friendlySubcircles[_random.Next(_friendlySubcircles.Length)];
-                msg.SpellTarget = (byte) (randomTeammate.SlotIndex + 1);
+                msg.SpellTarget = (byte) randomTeammate.SlotIndex;
             }
         }
         else if (debuffSpells.Count > 0) {
@@ -574,16 +579,20 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         // The battle's stats: a boss changed in the app's Bosses tab fights with a copy of the creature's own.
         var self = _currentSubCircle.ParticipantGameStats ?? _stats.Stats;
         var selfThresholdMatched = (float) self.m_currentHitpoints / Math.Max(1, self.m_baseHitpoints) < _healingThreshold;
-        if (selfThresholdMatched && _determinedSelfishThisTurn) {
+        // A heal that takes from the other side (Sap Health, Steal Health) is aimed at them, not at a teammate.
+        if (SpellEffectFilter.TargetsEnemy(selectedSpell)) {
+            msg.SpellTarget = (byte) GetMostHatedTarget();
+        }
+        else if (selfThresholdMatched && _determinedSelfishThisTurn) {
             msg.SpellTarget = (uint) _currentSubCircle.SlotIndex;
         }
         else {
-            // Otherwise, heal the teammate with the lowest health percentage.
+            // Otherwise, heal the teammate with the lowest health percentage (a plain circle number, like every target).
             var lowestHealthTeammate = _friendlySubcircles
                 .OrderBy(HealthFraction)
                 .First();
 
-            msg.SpellTarget = (byte) (lowestHealthTeammate.SlotIndex + 1);
+            msg.SpellTarget = (byte) lowestHealthTeammate.SlotIndex;
         }
 
         return msg;
