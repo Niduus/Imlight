@@ -103,6 +103,12 @@ internal sealed class SpellCard {
 
     internal string Category { get; init; } = "";
 
+    /// <summary>The card's adjectives; "Fusion_Banshee" makes it a material of a Spell Fusion recipe.</summary>
+    internal IReadOnlyList<string> Adjectives { get; init; } = [];
+
+    /// <summary>The Spell Fusion recipe this is the fused spell of (SpellTemplate.m_spellFusion), or 0.</summary>
+    internal uint FusionRecipe { get; init; }
+
     /// <summary>Summons a minion (a SummonCreature effect), whatever its type says.</summary>
     internal bool Minion { get; init; }
 
@@ -203,6 +209,27 @@ internal sealed partial class SpellBook {
 
     internal IReadOnlyList<SpellCard> Spells { get; private set; } = [];
 
+    /// <summary>A Spell Fusion recipe (Root.wad SpellFusions/): the two material adjectives and its fused spells.</summary>
+    internal sealed record Fusion(uint Id, string Primary, string Secondary, IReadOnlyList<SpellCard> Fused);
+
+    /// <summary>Every Spell Fusion recipe in the game.</summary>
+    internal IReadOnlyList<Fusion> Fusions { get; private set; } = [];
+
+    /// <summary>The cards that are this material: every card with the adjective.</summary>
+    internal IReadOnlyList<SpellCard> CardsWith(string adjective)
+        => [.. Spells.Where(s => s.Adjectives.Contains(adjective, StringComparer.OrdinalIgnoreCase))];
+
+    /// <summary>The card a material is known by: the plain trained spell rather than a pet, amulet or upgraded tier.</summary>
+    internal SpellCard? MainCardOf(string adjective)
+        => CardsWith(adjective).OrderBy(c => c.Hidden ? 1 : 0).ThenBy(c => c.Source == "Caster" ? 0 : 1)
+            .ThenBy(c => c.Treasure || c.Item ? 1 : 0).ThenBy(c => c.Name.Contains("(tier", StringComparison.Ordinal) ? 1 : 0)
+            .ThenBy(c => c.Code.Length).FirstOrDefault();
+
+    /// <summary>The recipes a card is a material of.</summary>
+    internal IReadOnlyList<Fusion> FusionsWith(SpellCard card)
+        => [.. Fusions.Where(f => card.Adjectives.Any(a => a.Equals(f.Primary, StringComparison.OrdinalIgnoreCase)
+                                                          || a.Equals(f.Secondary, StringComparison.OrdinalIgnoreCase)))];
+
     /// <summary>The game's data folder these were read from.</summary>
     internal string Folder => _folder;
 
@@ -265,6 +292,32 @@ internal sealed partial class SpellBook {
         });
 
         Spells = [.. spells.OrderBy(s => s.Name, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.School).ThenBy(s => s.Pips).ThenBy(s => s.Id)];
+        ReadFusions(manifest);
+    }
+
+    private void ReadFusions(TemplateManifest manifest) {
+        var fusions = new List<Fusion>();
+        try {
+            foreach (var location in manifest.m_serializedTemplates ?? []) {
+                string file = location.m_filename;
+                if (file is null || !file.StartsWith("SpellFusions/", StringComparison.OrdinalIgnoreCase)
+                    || Decode<SpellFusionTemplate>(_root, file) is not { } recipe) {
+                    continue;
+                }
+
+                string primary = recipe.m_primaryIngredient?.m_adjective;
+                string secondary = recipe.m_secondaryIngredient?.m_adjective;
+                if (!string.IsNullOrEmpty(primary) && !string.IsNullOrEmpty(secondary)) {
+                    var id = location.m_id;
+                    fusions.Add(new Fusion(id, primary, secondary, [.. Spells.Where(s => s.FusionRecipe == id)]));
+                }
+            }
+        }
+        catch (Exception) {
+            // Without the recipes the cards still show; only the fusion lines are missing.
+        }
+
+        Fusions = fusions;
     }
 
     private SpellCard? Read(uint id, string file, byte[] data) {
@@ -325,6 +378,8 @@ internal sealed partial class SpellBook {
             MaxCopies = (int) spell.m_maxCopies,
             Category = spell.m_spellCategory.ToString() ?? "",
             Minion = Summons(spell.m_effects),
+            Adjectives = [.. spell.m_adjectives?.Select(a => (string) a).Where(a => !string.IsNullOrEmpty(a)) ?? []],
+            FusionRecipe = spell.m_spellFusion,
         };
         card.Hidden = IsHidden(card, Text(displayName).Length > 0);
         card.Short = Plain(card);
@@ -340,7 +395,7 @@ internal sealed partial class SpellBook {
 
         var status = card.Broken ? "broken" : card.Partly ? "partly" : "";
         card.Haystack = SearchText.Normalize($"{card.Name} {card.Code} {card.Id} {card.School} {card.Type} {card.Shown} " +
-                                             $"{(card.Treasure ? "treasure tc" : "")} {status}");
+                                             $"{(card.Treasure ? "treasure tc" : "")} {status} {(card.FusionRecipe != 0 ? "fusion fused" : "")}");
 
         return card;
     }

@@ -2888,8 +2888,12 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             if (second is null) {
                 Logger.Warning("Duel {0} | Slot {1} | Fusion of card {2} with target {3}/{4}: no recipe of the wizard's fits.",
                     Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, spellSelection, spellTarget, rawSpellTarget));
+                var target = (int) rawSpellTarget < hand.Count ? hand[(int) rawSpellTarget] : (int) spellTarget < hand.Count ? hand[(int) spellTarget] : null;
+                var targetName = target is null ? null : SpellFusions.CardName(CoreObjectFactory.GetCoreTemplate(target.m_templateID) as SpellTemplate);
                 caster.ParticipantActor?.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
-                    Message = "Those two cards don't fuse. Learn the Fusion Formula first (.fusions lists yours).", Modal = 0,
+                    Message = $"{SpellFusions.CardName(firstTemplate) ?? "That card"} and {targetName ?? "that card"} don't fuse in any Fusion Formula you know. "
+                              + "Type .fusions to see your formulas and the two materials each one needs.",
+                    Modal = 0,
                 });
                 SendCurrentCombatHand(caster);
 
