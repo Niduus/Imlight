@@ -2587,7 +2587,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     }
 
     // Determines if a card is an enchantment instead of a playable combat cast.
-    internal static bool IsEnchantment(Spell spell) {
+    private static bool IsEnchantment(Spell spell) {
         if (spell is null) {
             return false;
         }
@@ -2625,7 +2625,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         return false;
     }
 
-    internal static bool IsValidEnchantTarget(Spell enchantSpell, Spell targetSpell) {
+    private static bool IsValidEnchantTarget(Spell enchantSpell, Spell targetSpell) {
         if (targetSpell is null || enchantSpell is null) {
             return false;
         }
