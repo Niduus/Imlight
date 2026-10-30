@@ -107,9 +107,7 @@
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_Air_Bubble_Prison.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "WC_DarkCave_Bubble1",
-        "WC_DarkCave_Bubble2",
-        "WC_DarkCave_Bubble3"
+        "AZ-BubblePrison"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -122,9 +120,7 @@
       "m_goalTitle": "Pop",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "WC_DarkCave_Bubble1.AdjRef",
-        "WC_DarkCave_Bubble2.AdjRef",
-        "WC_DarkCave_Bubble3.AdjRef"
+        "AZ-BubblePrison.AdjRef"
       ],
       "m_itemTotal": 1
     },

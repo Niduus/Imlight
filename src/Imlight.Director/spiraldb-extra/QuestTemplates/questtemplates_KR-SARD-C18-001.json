@@ -69,13 +69,7 @@
       "m_displayImage1": "GUI/QuestButtons/Location_KR_SARD_GarrisonWeapons.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "KR_ShadowWeapons_LP",
-        "KR_ShadowWeapons_Activate",
-        "KR-ShadowWeaponStaff1",
-        "KR-ShadowWeaponStaff3",
-        "KR-ShadowWeaponStaff5",
-        "KR-ShadowWeaponSword2",
-        "KR-ShadowWeaponSword4"
+        "KR_WeaponsCache"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -88,13 +82,7 @@
       "m_goalTitle": "WizardQuestGoals_00000058",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "KR_ShadowWeapons_LP.AdjRef",
-        "KR_ShadowWeapons_Activate.AdjRef",
-        "KR-ShadowWeaponStaff1.AdjRef",
-        "KR-ShadowWeaponStaff3.AdjRef",
-        "KR-ShadowWeaponStaff5.AdjRef",
-        "KR-ShadowWeaponSword2.AdjRef",
-        "KR-ShadowWeaponSword4.AdjRef"
+        "KR_WeaponsCache.AdjRef"
       ],
       "m_itemTotal": 1
     },
