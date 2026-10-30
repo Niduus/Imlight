@@ -400,6 +400,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Accounts", AccountsTab),
             Tab("Game Files", GameFilesTab),
             Tab(Edition.NAME, AhziaelTab),
+            Tab("Remote", RemoteTab),
         }.ToDictionary(t => (string) t.Tag!);
         // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
         var nav = Navigation(tabs);
@@ -435,6 +436,7 @@ internal sealed partial class ManagerWindow : Window {
                 new DockPanel {
                     Children = {
                         WithDock(header, Dock.Top),
+                        WithDock(RemoteBanner() ?? new Panel(), Dock.Top),
                         WithDock(_messageBar, Dock.Bottom),
                         WithDock(_saveBar, Dock.Bottom),
                         body,
@@ -450,6 +452,13 @@ internal sealed partial class ManagerWindow : Window {
             await LoadPlayAsync();
             _timer.Start();
             _shownPage = ShownPage();
+            // On another PC's server, this PC's own server and its updates wait until "Back to my PC".
+            if (IsRemote) {
+                _ = Guard(CheckForUpdateAsync);
+
+                return;
+            }
+
             if (ManagerApp.StartServerOnOpen) {
                 await Guard(() => {
                     Say($"Updated to {Edition.NAME} {SelfUpdate.CurrentVersion}. " + _manager.StartServer());
@@ -1338,6 +1347,11 @@ internal sealed partial class ManagerWindow : Window {
     // The app's own tab (it was Tools): its updates, look, privacy and folders.
     private Control AhziaelTab() {
         return Page(
+            IsRemote
+                ? Fold("link", "Server", "You are on another PC's server",
+                    "These tools work on this PC and its own server: Ahziael's updates, its look, its folders, and Privacy clean up. " +
+                    "Clean up and the server's update and source wait until you click \"Back to my PC\".")
+                : new Panel(),
             Fold("download", "Settings", "Updates",
                 $"{Edition.NAME} {SelfUpdate.CurrentVersion}. Update Ahziael and What's new are at the top of the window, on every page.",
                 AutoUpdateBox(),
@@ -1399,6 +1413,11 @@ internal sealed partial class ManagerWindow : Window {
             _refreshing = false;
         }
 
+        // What the remote server said back: a lost connection, a command no wizard ran, a setting only the host may change.
+        if (RemoteSession.Current?.TakeNotice() is { } notice) {
+            Say(notice);
+        }
+
         RefreshLog();
         if (_refreshAgain) {
             _refreshAgain = false;
@@ -1411,12 +1430,17 @@ internal sealed partial class ManagerWindow : Window {
         bool Switch(string section, string key) => ini.TryGetValue((section, key), out var value) && value.Equals("true", StringComparison.OrdinalIgnoreCase);
         _dot.Background = status.Ready ? GOOD : status.Running ? WARN : MUTED;
         _statusText.Text = status.Ready ? "Running, ready for players" : status.Running ? "Starting…" : "Stopped";
+        if (RemoteSession.Current is { } remote) {
+            _dot.Background = remote.Connected ? GOOD : WARN;
+            _statusText.Text = remote.Connected ? $"{remote.Label}: {remote.Players} online" : $"Reconnecting to {remote.Label}…";
+        }
+
         ManagerTheme.PaintBadge(_statusBadge, _statusText, _dot.Background);
         ShowHomeStatus(status);
         TickServerRestart(status.Running);
-        _startButton.IsEnabled = !status.Running;
-        _stopButton.IsEnabled = status.Running;
-        _restartButton.IsEnabled = status.Running;
+        _startButton.IsEnabled = !status.Running && !IsRemote;
+        _stopButton.IsEnabled = status.Running && !IsRemote;
+        _restartButton.IsEnabled = status.Running && !IsRemote;
         _playButton.IsEnabled = status.ClientFound;
         if (!status.ClientFound) {
             _playHelp.Text = "Wizard101 could not be found. Click \"Update Ahziael\" at the top of the app once.";
@@ -2803,6 +2827,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Accounts"] = ("users", "Who can log in to your server, and what they may do."),
         ["Game Files"] = ("folder", "Read the game's data files without ever changing them, and download them with Aurorium."),
         [Edition.NAME] = ("wrench", "Ahziael itself: updates, how it looks, privacy, its folders, and removing it."),
+        ["Remote"] = ("link", "Manage an Imlight server on another PC with your Administrator account there, or let admins manage this one."),
     };
 
     /// <summary>

@@ -48,6 +48,10 @@ internal sealed partial class ManagerWindow {
     }
 
     private async Task CleanUpAsync() {
+        if (IsRemote) {
+            throw new PanelException(RemoteSession.LOCAL_ONLY);
+        }
+
         var manager = _manager;
         var found = await Task.Run(() => PrivacyCleanup.Find(manager));
         if (found.Count == 0) {

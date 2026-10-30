@@ -46,6 +46,12 @@ namespace Imlight.CoreLib.Game.Commands;
 /// <summary>Asks a player's command service to run a command as that player.</summary>
 internal sealed record AgentRunCommand(string Text, ConcurrentQueue<string> Output);
 
+/// <summary>
+/// Runs a command typed in Ahziael by a remote admin (RemoteAdminServer), for that admin's own wizard only: the service
+/// whose account is AccountId runs it (and only the wizard WizardId when set) and tells Ran the wizard's name.
+/// </summary>
+internal sealed record RemoteAdminCommand(ulong AccountId, ulong? WizardId, string Text, Action<string> Ran);
+
 /// <summary>Asks a player's command service who it belongs to.</summary>
 internal sealed record AgentDescribe(TaskCompletionSource<Dictionary<string, object>> Reply);
 
@@ -110,6 +116,9 @@ public static class AgentBridge {
     }
 
     public static void Unregister(IActorRef commandService) => s_services.TryRemove(commandService, out _);
+
+    /// <summary>Every player's command service, for Remote Admin's commands.</summary>
+    internal static ICollection<IActorRef> CommandServices => s_services.Keys;
 
     public static void StartIfEnabled() {
         if (!ConfigurationManager.GetValue("Agent Bridge.Enabled", false)) {

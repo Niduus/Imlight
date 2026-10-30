@@ -65,7 +65,13 @@ internal static class FriendAccess {
         var game = Number("Game Server", "GameServerPort", 12333);
         var realms = Math.Max(1, Math.Max(Number("Game Server", "GameServerCount", 3), Number("Game Server", "MaxGameServersAllowed", 3)));
 
-        return new[] { login }.Concat(Enumerable.Range(game, realms)).Distinct().ToList();
+        var ports = new[] { login }.Concat(Enumerable.Range(game, realms)).ToList();
+        // Remote Admin's port too, while it is on (Server > Remote), so admins on the internet can reach it.
+        if (string.Equals(IniFile.Get(config, "Remote Admin", "Enabled"), "true", StringComparison.OrdinalIgnoreCase)) {
+            ports.Add(Number("Remote Admin", "Port", Imlight.RemoteAdmin.RemoteAdminWire.DEFAULT_PORT));
+        }
+
+        return ports.Distinct().ToList();
     }
 
     /// <summary>True once "Let friends connect" has worked, so the server start asks the router again.</summary>
@@ -92,6 +98,10 @@ internal static class FriendAccess {
     /// Does everything friends need on this computer's side. Windows asks once to allow the firewall change.
     /// </summary>
     internal static async Task<FriendAccessResult> TurnOnAsync(string installFolder) {
+        if (RemoteSession.Current is not null) {
+            throw new PanelException(RemoteSession.LOCAL_ONLY);
+        }
+
         var ports = Ports(installFolder);
         var (firewall, firewallNote) = await AllowThroughFirewallAsync(ports);
         var router = await OpenRouterAsync(ports);
@@ -137,6 +147,10 @@ internal static class FriendAccess {
     /// and the server start stops asking the router. Returns what it did, one line each.
     /// </summary>
     internal static async Task<List<string>> TurnOffAsync(string installFolder) {
+        if (RemoteSession.Current is not null) {
+            throw new PanelException(RemoteSession.LOCAL_ONLY);
+        }
+
         var done = new List<string>();
         var mark = Path.Combine(installFolder, MARK_FILE);
         if (File.Exists(mark)) {

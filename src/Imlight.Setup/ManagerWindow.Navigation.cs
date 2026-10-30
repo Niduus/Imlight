@@ -72,7 +72,8 @@ internal sealed partial class ManagerWindow {
             ["Game Modes", "Battles and World", "Events", "Shops and Codes"]),
         ("Server", "server", "Start, settings, accounts, logs",
             "Run the server and set it up: start and stop, every setting, who can log in, logs, game files, and Ahziael itself.",
-            ["Server", "Settings", "Accounts", "Logs", "Game Files", Edition.NAME]),
+            // Niduus, 2026-10-30: Ahziael on a server hosted on another PC, for its admins.
+            ["Server", "Settings", "Accounts", "Logs", "Game Files", Edition.NAME, "Remote"]),
         ("Help", "info", "Guides and what's new",
             "Step-by-step guides for everything, and what changed in each version.",
             ["Guides", WHATS_NEW]),
@@ -584,8 +585,15 @@ internal sealed partial class ManagerWindow {
             : status.Running ? "● The server is starting…"
             : "● The server is stopped. Play Wizard101 starts it for you.";
         _homeStatus.Foreground = status.Ready ? GOOD : status.Running ? WARN : MUTED;
-        _homeStart.IsEnabled = !status.Running;
-        _homeStop.IsEnabled = status.Running;
+        if (RemoteSession.Current is { } remote) {
+            _homeStatus.Text = remote.Connected
+                ? $"● You are managing {remote.Label}, on another PC. Play Wizard101 logs in there."
+                : $"● Reconnecting to {remote.Label}…";
+        }
+
+        // Only the host's PC starts and stops its server (Server > Remote).
+        _homeStart.IsEnabled = !status.Running && !IsRemote;
+        _homeStop.IsEnabled = status.Running && !IsRemote;
         _homePlay.IsEnabled = status.ClientFound;
         RefreshWhosOnline(status.Running);
         RefreshLostItems();

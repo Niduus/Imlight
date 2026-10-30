@@ -74,6 +74,7 @@ internal sealed class ManagerApp : Application {
 
         ui.Start();
         ui.Join();
+        RemoteSession.Deactivate();
         if (!KeepServerRunning) {
             manager.StopServer();
         }

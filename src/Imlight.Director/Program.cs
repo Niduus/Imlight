@@ -164,6 +164,8 @@ internal static class Program {
         Imlight.CoreLib.Game.Commands.AgentBridge.Actors = s_imlightSystem;
         AgentScripting.Map();
         Imlight.CoreLib.Game.Commands.AgentBridge.StartIfEnabled();
+        // Ahziael on other PCs, for Administrator accounts; off until [Remote Admin] Enabled is turned on.
+        Imlight.CoreLib.Game.Tools.RemoteAdmin.RemoteAdminServer.Start();
 
         // =============================================================
         // PLAYER DATABASE

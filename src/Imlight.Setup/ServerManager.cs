@@ -67,6 +67,12 @@ internal sealed partial class ServerManager(string installFolder) {
     private bool _sawListening;
 
     internal ServerStatus Status() {
+        if (RemoteSession.Current is { } remote) {
+            var on = remote.Connected;
+
+            return new ServerStatus(on, on, Switch("Randomizer", "Enabled"), Switch("Die Delete", "Enabled"), GameClient.ClientExe(InstallFolder) is not null);
+        }
+
         var running = InstalledCommands.IsServerRunning(InstallFolder);
         var randomizer = IniFile.Get(ConfigFile, "Randomizer", "Enabled");
         var dieDelete = IniFile.Get(ConfigFile, "Die Delete", "Enabled");
@@ -83,6 +89,9 @@ internal sealed partial class ServerManager(string installFolder) {
     /// <summary>
     /// Whether an on/off setting in Imlight.ini is on. A missing setting counts as off.
     /// </summary>
+    private bool? Switch(string section, string key)
+        => IniFile.Get(ConfigFile, section, key) is { } value ? value.Equals("true", StringComparison.OrdinalIgnoreCase) : null;
+
     internal bool GetSwitch(string section, string key)
         => IniFile.Get(ConfigFile, section, key)?.Equals("true", StringComparison.OrdinalIgnoreCase) == true;
 
@@ -91,6 +100,10 @@ internal sealed partial class ServerManager(string installFolder) {
     internal string? GetSetting(string section, string key) => IniFile.Get(ConfigFile, section, key);
 
     internal string StartServer() {
+        if (RemoteSession.Current is not null) {
+            throw new PanelException(RemoteSession.LOCAL_ONLY);
+        }
+
         if (InstalledCommands.IsServerRunning(InstallFolder)) {
             return "The server is already running.";
         }
@@ -169,6 +182,10 @@ internal sealed partial class ServerManager(string installFolder) {
     }
 
     internal string StopServer(string notice = null) {
+        if (RemoteSession.Current is not null) {
+            throw new PanelException(RemoteSession.LOCAL_ONLY);
+        }
+
         AnnounceBeforeStop(notice ?? StopNotice ?? "The server is shutting down now. You will be disconnected.");
         var exe = Path.GetFullPath(InstalledCommands.ServerExe(InstallFolder));
         var stopped = 0;
@@ -193,6 +210,10 @@ internal sealed partial class ServerManager(string installFolder) {
     }
 
     internal async Task<string> RestartServerAsync() {
+        if (RemoteSession.Current is not null) {
+            throw new PanelException(RemoteSession.LOCAL_ONLY);
+        }
+
         await Task.Run(() => StopServer("The server is restarting now. You will be disconnected for a moment; log in again in about a minute."));
         await Task.Delay(1500);
 
@@ -220,6 +241,13 @@ internal sealed partial class ServerManager(string installFolder) {
     internal async Task<string> PlayHereAsync() {
         if (GameClient.ClientExe(InstallFolder) is null) {
             throw new PanelException("Wizard101 could not be found. Click \"Update Ahziael\" at the top of the app once, then try again.");
+        }
+
+        // On a remote server: its login port, at the address Ahziael connected to.
+        if (RemoteSession.Current is { } remote) {
+            await GameClient.LaunchAsync(InstallFolder, remote.Server.Host, LoginPort);
+
+            return $"Starting Wizard101 for {remote.Label}. Log in with your account on that server.";
         }
 
         // Away from the window: trying a port nothing listens on waits up to half a second.
@@ -397,7 +425,9 @@ internal sealed partial class ServerManager(string installFolder) {
     // ---------------------------------------------------------------------
 
     internal PlayerAccounts Accounts()
-        => PlayerAccounts.FromConfig(ConfigFile, out var reason) ?? throw new PanelException(reason!);
+        => RemoteSession.Current is { } remote
+            ? new PlayerAccounts(new System.Net.Http.HttpClient(remote.DatabaseHandler()) { BaseAddress = new Uri("http://remote-admin/"), Timeout = TimeSpan.FromSeconds(30) }, "Playerdata")
+            : PlayerAccounts.FromConfig(ConfigFile, out var reason) ?? throw new PanelException(reason!);
 
     // ---------------------------------------------------------------------
     // Tools
@@ -407,7 +437,7 @@ internal sealed partial class ServerManager(string installFolder) {
     /// Where the server writes its lists of IDs, zones and quests.
     /// </summary>
     internal string IdLookupFolder
-        => Path.GetFullPath(Path.Combine(ServerFolder, IniFile.Get(ConfigFile, "ID Lookup", "OutputPath") ?? "./id-lookup"));
+        => RemoteSession.Current?.IdLookupFolder ?? Path.GetFullPath(Path.Combine(ServerFolder, IniFile.Get(ConfigFile, "ID Lookup", "OutputPath") ?? "./id-lookup"));
 
     /// <summary>
     /// Where the Bosses tab saves its changes, one file per creature: the server's own additions folder
@@ -417,7 +447,7 @@ internal sealed partial class ServerManager(string installFolder) {
 
     /// <summary>The server's own additions folder (spiraldb-extra).</summary>
     internal string ExtraFolder
-        => Path.GetFullPath(Path.Combine(ServerFolder, IniFile.Get(ConfigFile, "Database", "SpiralDBExtraPath") ?? "./spiraldb-extra"));
+        => RemoteSession.Current?.ExtraFolder ?? Path.GetFullPath(Path.Combine(ServerFolder, IniFile.Get(ConfigFile, "Database", "SpiralDBExtraPath") ?? "./spiraldb-extra"));
 
     /// <summary>Where the Customs tab keeps the customs, one file per custom number, and its rooms (Rooms.json).</summary>
     internal string CustomsFolder => Path.Combine(ExtraFolder, "Customs");
@@ -483,6 +513,11 @@ internal sealed partial class ServerManager(string installFolder) {
     /// app may have made. Without the file (a single-file build), a server that has the ID Lookup settings counts as having it.
     /// </summary>
     private bool ServerKnows(string text) {
+        // A remote server is one new enough for Remote Admin, so it has everything the pages look for.
+        if (RemoteSession.Current is not null) {
+            return true;
+        }
+
         var dll = Path.Combine(ServerFolder, "Imlight.CoreLib.dll");
         try {
             if (!File.Exists(dll)) {
@@ -515,6 +550,10 @@ internal sealed partial class ServerManager(string installFolder) {
     /// The app closes afterwards, so the files it uses can be replaced or removed.
     /// </summary>
     internal void RunInstaller(string mode) {
+        if (RemoteSession.Current is not null) {
+            throw new PanelException(RemoteSession.LOCAL_ONLY);
+        }
+
         var exe = Path.Combine(InstallFolder, InstalledCommands.INSTALLED_EXE);
         if (!File.Exists(exe)) {
             throw new PanelException($"{exe} is missing. Run {Edition.RELEASE_ASSET} again to repair Imlight.");
@@ -592,7 +631,7 @@ internal sealed partial class ServerManager(string installFolder) {
 
     private const string AUTO_INSTALL_ON_FILE = "auto-install-updates-on.txt";
 
-    internal string LogFolder => Path.Combine(ServerFolder, "logs");
+    internal string LogFolder => RemoteSession.Current?.LogFolder ?? Path.Combine(ServerFolder, "logs");
 
     // The server runs each line of this file as a command of the wizard playing on this PC (ManagerCommands).
     private const string COMMANDS_FILE = "manager-commands.txt";

@@ -56,6 +56,12 @@ internal sealed class PlayerAccounts : IDisposable {
         _database = database;
     }
 
+    /// <summary>Through another way in, such as Remote Admin's (RemoteSession.DatabaseHandler).</summary>
+    internal PlayerAccounts(HttpClient http, string database) {
+        _http = http;
+        _database = database;
+    }
+
     /// <summary>
     /// The embedded database of an install, or null with a reason when the server uses a remote database.
     /// </summary>
