@@ -322,9 +322,8 @@ internal static class SpellFusions {
     }
 
     /// <summary>
-    /// Marks the cards of a hand for the game: FS_Valid (green glow) when another card in the hand fuses with it,
-    /// FS_Invalid otherwise. A card whose other half is not in the hand gets no glow: it cannot be played onto
-    /// anything yet, and the yellow glow (FS_Partial) is for cards that can (CombatDuelSubCircle.MarkActivatableCards).
+    /// Marks the cards of a hand for the game: FS_Valid when another card in the hand fuses with it, FS_Partial when it
+    /// is a card of a usable recipe whose other card is not there, FS_Invalid otherwise.
     /// </summary>
     internal static void MarkHand(List<Spell> cards, List<Recipe> recipes) {
         if (cards is null) {
@@ -343,6 +342,7 @@ internal static class SpellFusions {
                 if (mine is not null && recipes.Count > 0) {
                     var partOf = recipes.Where(r => HasAdjective(mine, r.Primary) || HasAdjective(mine, r.Secondary)).ToList();
                     if (partOf.Count > 0) {
+                        state = FusionState.FS_Partial;
                         for (var j = 0; j < cards.Count && state != FusionState.FS_Valid; j++) {
                             if (j != i && templates[j] is { } other && RecipesFor(mine, other, partOf).Count > 0) {
                                 state = FusionState.FS_Valid;
