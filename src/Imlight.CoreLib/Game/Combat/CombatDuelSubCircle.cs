@@ -265,7 +265,8 @@ public partial class CombatDuelSubCircle {
 
     /// <summary>
     /// Gives a hand going to the game the wizard's fusions (SpellFusions.cs): the fused spells it can make
-    /// (m_spellFusionIDList) and which cards fuse (m_fusionState).
+    /// (m_spellFusionIDList) and which cards fuse (m_fusionState). Enchantments with a card to go on then get
+    /// the game's yellow card glow ([Battle] ActivatableCardGlow).
     /// </summary>
     internal Hand WithFusions(Hand hand) {
         if (hand is null || !IsHumanPlayer || _wizard is null) {
@@ -274,15 +275,48 @@ public partial class CombatDuelSubCircle {
 
         if (!SpellFusions.Enabled) {
             hand.m_spellFusionIDList = [];
-
-            return hand;
+            SpellFusions.MarkHand(hand.m_spellList, []);
+        }
+        else {
+            var recipes = SpellFusions.KnownRecipes(_wizard);
+            hand.m_spellFusionIDList = [.. recipes.SelectMany(r => r.Outputs).Distinct()];
+            SpellFusions.MarkHand(hand.m_spellList, recipes);
         }
 
-        var recipes = SpellFusions.KnownRecipes(_wizard);
-        hand.m_spellFusionIDList = [.. recipes.SelectMany(r => r.Outputs).Distinct()];
-        SpellFusions.MarkHand(hand.m_spellList, recipes);
+        MarkActivatableCards(hand.m_spellList);
 
         return hand;
+    }
+
+    private static bool ActivatableCardGlow => ConfigurationManager.GetValue("Battle.ActivatableCardGlow", true);
+
+    /// <summary>
+    /// The game draws a yellow glow around a card marked FS_Partial and a green one around FS_Valid (a card that
+    /// fuses, which also lets it be dragged onto its partner). FS_Partial does nothing else in the game, so an
+    /// enchantment that has a card in the hand it can go on is marked with it: it glows yellow like a card ready
+    /// to play.
+    /// </summary>
+    private static void MarkActivatableCards(List<Spell> cards) {
+        if (cards is null || !ActivatableCardGlow) {
+            return;
+        }
+
+        try {
+            foreach (var card in cards) {
+                if (card is null || card.m_fusionState != FusionState.FS_Invalid
+                    || !CombatDuelComponent.IsEnchantment(card)) {
+                    continue;
+                }
+
+                if (cards.Any(other => other is not null && !ReferenceEquals(other, card)
+                    && CombatDuelComponent.IsValidEnchantTarget(card, other))) {
+                    card.m_fusionState = FusionState.FS_Partial;
+                }
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Could not mark the enchantments of a hand: {0}", Logger.Args(ex));
+        }
     }
 
     /// <summary>
