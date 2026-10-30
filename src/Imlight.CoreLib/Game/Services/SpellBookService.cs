@@ -141,6 +141,9 @@ internal class SpellbookService(SessionActor sessionActor) : MessageService(sess
         });
     }
 
+    // Cards the player was already told they do not really have, so the message comes once per card.
+    private readonly System.Collections.Generic.HashSet<uint> _missingCardsTold = [];
+
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_ADDTREASURESPELLTODECK))]
     private void ReceiveAddTreasureSpellToDeck(WIZARD_12_PROTOCOL.MSG_ADDTREASURESPELLTODECK message) {
         var wizard = GetActiveWizard();
@@ -166,6 +169,10 @@ internal class SpellbookService(SessionActor sessionActor) : MessageService(sess
         // the game's book too, so it does not keep jumping back out of the deck (Niduus, 2026-10-28).
         if (wizard.SpellbookBehavior.TreasureCardCount(templateId) <= 0) {
             SendToSocket(new WIZARD_12_PROTOCOL.MSG_REMOVETREASURESPELLFROMBOOK { SpellID = message.SpellID, EnchantmentID = message.EnchantmentID });
+            if (_missingCardsTold.Add(templateId)) {
+                InformGameClient("You have no more of that treasure card: the game showed one that was not really there. "
+                                 + "Log out and back in to see your real treasure cards.");
+            }
         }
 
         var deckAddSuccess = wizard.AddTreasureCardToDeck(templateId, message.DeckID);
