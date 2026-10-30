@@ -1,0 +1,20 @@
+{
+  "Name": "PA-SIDE-C02-003",
+  "Description": "Wysteria quest Crime Does Not Pay (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 60,
+  "MaxGold": 60,
+  "ExperienceAmount": 700,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "473254",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

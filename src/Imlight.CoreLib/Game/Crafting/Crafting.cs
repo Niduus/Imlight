@@ -714,6 +714,8 @@ internal static class Crafting {
         }
 
         WizardCollection.UpdateCharacterItems(wizard);
+        // A crafting side quest's "Craft" step names the recipe's item.
+        Quests.QuestCraftGoals.Credit(session, wizard, recipe.m_itemID.MParts.TemplateId, quantity);
         Logger.Information("Crafting: {0} crafted {1} x{2} ({3}) at {4}; cooldown {5} s.",
             Logger.Args(wizard.CharId, name, quantity, id, station.Name, cooldown));
 
