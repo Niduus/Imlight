@@ -197,6 +197,8 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         PetCombatXp.Award(SessionActor.ActorRef, GetActiveGameObject(), GetActiveWizard());
 
         GrantMobLoot(message.MobLootKeys ?? message.MobTemplateIds, Math.Max(1, message.AllyCharIds?.Length ?? 1), message.CountedRounds);
+        // A pet worn that is Ancient or older can find a Pet Talent Token.
+        Imlight.CoreLib.Game.Pet.PetTokens.GrantBattleDrop(SessionActor.ActorRef, GetActiveWizard());
         TeachSpellAfterBattle();
         Imlight.CoreLib.Game.Events.Deckathalon.OnWin(SessionActor.ActorRef, GetActiveWizard(), message.MobLootKeys ?? message.MobTemplateIds,
             message.CountedRounds);

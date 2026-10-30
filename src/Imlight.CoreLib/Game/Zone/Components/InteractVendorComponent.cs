@@ -48,6 +48,7 @@ using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Game.WizBang;
 using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Game.Zone.Core;
@@ -98,6 +99,8 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         UseChanges();
 
         return _changePrices is not null && _changePrices.TryGetValue(templateId, out var changed) ? changed
+            : _custom is null && PetTokens.IsVendor(Entity.ActiveGameObject.m_templateID.MParts.TemplateId)
+                && PetTokens.PriceOf(templateId) is { } tokenPrice ? tokenPrice
             : _customPrices is not null && _customPrices.TryGetValue(templateId, out var price) ? price : FixedPrice;
     }
 

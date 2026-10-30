@@ -2877,7 +2877,7 @@ internal sealed partial class ManagerWindow : Window {
         "Die Delete" => ("skull", "bad"),
         "Character" => ("user", "Accounts"),
         "Mounts" => ("user", "Play"),
-        "Pets" or "Hatching" or PET_CASTING => ("paw", "Play"),
+        "Pets" or "PetTokens" or "Hatching" or PET_CASTING => ("paw", "Play"),
         "Jewels" or "April Fools" => ("sparkle", "Customs"),
         "Minigames" => ("dice", "Commands"),
         "Randomizer" => ("dice", "Customs"),
