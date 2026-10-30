@@ -48,6 +48,7 @@ using Imlight.Common;
 using Imlight.CoreLib.Game.DropTables;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
+using Imlight.CoreLib.WizardData.Models.World;
 
 namespace Imlight.CoreLib.Game.Pet;
 
@@ -92,12 +93,12 @@ internal static class PetLevelLoot {
     /// <param name="level">The level reached.</param>
     internal static void Grant(IActorRef session, CoreObject playerObj, Wizard wizard, WizClientObjectItem pet, int level) {
         var tables = FindTables(pet, level);
-        if (tables.Length == 0) {
-            return;
+        var loot = tables.Length > 0 ? DropTableRoller.Roll(tables, session, playerObj, wizard) : new DropTableResult();
+        // The age's Pet Talent Tokens (PetTokens), in the same popup.
+        PetTokens.AddLevelUpTokens(loot, pet, level);
+        if (loot.HasRewards) {
+            LootGranter.GrantAndDisplay(session, wizard, loot);
         }
-
-        var loot = DropTableRoller.Roll(tables, session, playerObj, wizard);
-        LootGranter.GrantAndDisplay(session, wizard, loot);
     }
 
 }

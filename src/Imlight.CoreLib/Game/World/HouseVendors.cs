@@ -178,10 +178,10 @@ internal static class HouseVendors {
     /// <summary>The overhead name for a seller's zone tag, or null.</summary>
     internal static string NameFor(string zoneTag) => SellerForTag(zoneTag)?.Name;
 
-    /// <summary>NPCs that sell from these lists: Hao, Doctor Purreau and the two house seller looks.</summary>
+    /// <summary>NPCs that sell from these lists: Hao, Doctor Purreau, the token vendor and the two house seller looks.</summary>
     internal static bool IsSellerNpc(uint templateId)
         => templateId != 0 && (templateId == s_snackVendorId || templateId == s_petElixirVendorId
-            || templateId == s_reagentNpcId || templateId == s_jewelNpcId);
+            || templateId == s_reagentNpcId || templateId == s_jewelNpcId || PetTokens.IsVendor(templateId));
 
     /// <summary>What an NPC sells: Hao the snacks, Doctor Purreau the pet elixirs, a house seller its kind; null for every other NPC.</summary>
     internal static (List<uint> Items, ShopWindow Window)? StockFor(uint templateId, string zoneTag) {
@@ -191,6 +191,11 @@ internal static class HouseVendors {
 
         if (templateId == s_snackVendorId) {
             return (s_snacks.Value, s_specialWindows ? ShopWindow.Snack : ShopWindow.Equipment);
+        }
+
+        // Tennant Wastelander sells the Pet Talent Tokens (PetTokens), each at its [PetTokens] price.
+        if (PetTokens.IsVendor(templateId)) {
+            return ([.. PetTokens.All], s_specialWindows ? ShopWindow.Reagent : ShopWindow.Equipment);
         }
 
         if (templateId == s_petElixirVendorId) {
