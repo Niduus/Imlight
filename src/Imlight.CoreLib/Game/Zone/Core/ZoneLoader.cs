@@ -54,7 +54,7 @@ namespace Imlight.CoreLib.Game.Zone.Core;
 
 internal sealed class ZoneLoader : ReceiveProtocolDispatcher {
 
-    private const string ZONE_DATA_FILE_NAME = "gamedata.bin";
+    private const string ZONE_DATA_FILE_NAME = "gamedata.bin (or gamedata.xml)";
     private const string SPAWN_DATA_FILE_NAME = "spawnData.xml";
     private const string PATH_DATA_FILE_NAME = "pathData.xml";
     private const string NODE_DATA_FILE_NAME = "pathNodeData.bin";
@@ -146,7 +146,7 @@ internal sealed class ZoneLoader : ReceiveProtocolDispatcher {
     }
 
     private static ZoneDataFiles ReadZoneDataFiles(Archive wad) => new(
-        wad.OpenFile(ZONE_DATA_FILE_NAME)?.ToArray(),
+        ResourceManager.OpenZoneData(wad)?.ToArray(),
         wad.OpenFile(SPAWN_DATA_FILE_NAME)?.ToArray(),
         wad.OpenFile(PATH_DATA_FILE_NAME)?.ToArray(),
         wad.OpenFile(NODE_DATA_FILE_NAME)?.ToArray(),

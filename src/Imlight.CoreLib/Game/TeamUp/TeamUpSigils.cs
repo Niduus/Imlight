@@ -119,14 +119,12 @@ internal static class TeamUpSigils {
 
     private static void ReadDisplayKey(string zone) {
         try {
-            if (!ResourceManager.TryLoadFile(zone, "gamedata.bin", out var stream) || stream is null) {
+            if (!ResourceManager.TryLoadArchive(zone, out var wad) || ResourceManager.OpenZoneData(wad)?.ToArray() is not { } bytes) {
                 return;
             }
 
-            using (stream) {
-                if (new BindSerializer().Deserialize<WizZoneData>(stream.ToArray(), 1, out var data) && data is not null) {
-                    s_displayKeys[zone] = data.m_zoneDisplayName.ToString() ?? "";
-                }
+            if (new BindSerializer().Deserialize<WizZoneData>(bytes, 1, out var data) && data is not null) {
+                s_displayKeys[zone] = data.m_zoneDisplayName.ToString() ?? "";
             }
         }
         catch (Exception ex) {
