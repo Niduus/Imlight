@@ -1,0 +1,13 @@
+{
+  "Name": "GH-SPELL-C01-001",
+  "Description": "Grizzleheim quest Thief of Spells (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 200,
+  "MaxGold": 200,
+  "ExperienceAmount": 2750,
+  "TrainingPoints": 0,
+  "Items": []
+}

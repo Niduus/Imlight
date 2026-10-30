@@ -812,12 +812,16 @@ public static class SpiralDB {
         }
         var files = Directory.GetFiles(dir, "*.json");
         var count = 0;
+        var retired = 0;
 
         Parallel.ForEach(files, file => {
             try {
                 using var stream = File.OpenRead(file);
                 var quest = JsonSerializer.Deserialize<QuestTemplate>(stream, s_jsonOptions);
-                if (quest != null) {
+                if (quest != null && IsRetiredCelestiaQuest(quest.m_questName)) {
+                    Interlocked.Increment(ref retired);
+                }
+                else if (quest != null) {
                     targetBag.Add(quest);
                     targetDict[quest.m_questName] = quest;
                     Interlocked.Increment(ref count);
@@ -828,7 +832,26 @@ public static class SpiralDB {
             }
         });
 
+        if (retired > 0) {
+            Logger.Information("Left out {0} old Celestia quest files (CL-MAIN-/CL-SIDE-NNN) an older update left behind.", Logger.Args(retired));
+        }
+
         return count;
+    }
+
+    // The first Celestia rebuild (v0.9.31) named its quests CL-MAIN-002..095 and CL-SIDE-002..060. Later versions
+    // replaced them with the game's own quest names (CL-DIST-C01-001, ...), but an update never deletes files, so
+    // PCs that had the old build still carried 144 of them: every Celestia quest twice, the old copies with guessed
+    // steps and rewards (side quest check, 2026-10-30). Only CL-MAIN-056/057 and 091-094 are still shipped.
+    private static readonly HashSet<int> s_keptCelestiaMain = [56, 57, 91, 92, 93, 94];
+
+    internal static bool IsRetiredCelestiaQuest(string questName) {
+        if (questName is not { Length: 11 } || !int.TryParse(questName.AsSpan(8), out var number)) {
+            return false;
+        }
+
+        return questName.StartsWith("CL-SIDE-", StringComparison.Ordinal)
+            || (questName.StartsWith("CL-MAIN-", StringComparison.Ordinal) && !s_keptCelestiaMain.Contains(number));
     }
 
     // spiraldb-extra/DungeonTeleports: where the dungeon sigils and the dungeon doors go that SpiralDB has no capture of,

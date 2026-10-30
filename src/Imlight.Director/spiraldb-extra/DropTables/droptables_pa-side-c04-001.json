@@ -1,0 +1,13 @@
+{
+  "Name": "PA-SIDE-C04-001",
+  "Description": "Wysteria quest Bookhounds of Pigswick (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 40,
+  "MaxGold": 40,
+  "ExperienceAmount": 500,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "PA-SIDE-C08-002",
+  "Description": "Wysteria quest Lost Sheep (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 85,
+  "MaxGold": 85,
+  "ExperienceAmount": 1075,
+  "TrainingPoints": 0,
+  "Items": []
+}
