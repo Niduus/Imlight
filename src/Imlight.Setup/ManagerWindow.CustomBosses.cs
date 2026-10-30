@@ -139,6 +139,7 @@ internal sealed partial class ManagerWindow {
             RenderDropResults();
         };
         _customDropSearch.GotFocus += (_, _) => RenderDropResults();
+        WhenFiltersChange(RenderDropResults, _dropWhose, _dropUsedBy);
         _customDropSearch.TextChanged += (_, _) => {
             _customDropDelay.Stop();
             _customDropDelay.Start();
@@ -179,8 +180,11 @@ internal sealed partial class ManagerWindow {
                     _customDropSearch,
                 },
             }, new Thickness(0, 8, 0, 0)),
-            Sub("Search a table to add it, or to change it: your own tables change as they are, the server's change as a copy. " +
-                "New drop table makes one of your own, with gold, XP, items and treasure cards."),
+            WithMargin(SearchFilters(SearchFilter("Whose", _dropWhose), SearchFilter("Dropped by", _dropUsedBy)), new Thickness(0, 6, 0, 0)),
+            Sub("Search a table by its name or by who drops it, such as Malistaire. Use: this creature drops it as it is. " +
+                "Change: your own table, for everything that drops it. Copy to change: a copy of your own of any table, " +
+                "the table itself stays as it is. New drop table makes one from scratch, with gold, XP, items and treasure cards."),
+            new DockPanel { Children = { WithDock(DropShareButtons(), Dock.Right), WithCenter(_dropFound) } },
             _customDropResults,
             _dropEditorHost,
         },
@@ -298,6 +302,7 @@ internal sealed partial class ManagerWindow {
         _customDropChips.Children.Clear();
         var drops = CustomDropNames();
         _dropsSection?.SetBadge(drops.Count == 0 ? "The creature's own" : $"{drops.Count} tables");
+        var users = drops.Count == 0 ? new Dictionary<string, List<DropTableUser>>() : AllDropUsers();
         foreach (var name in drops) {
             var table = DropTables().FirstOrDefault(t => t.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             var edit = new Button { Padding = new Thickness(4, 2), Background = Brushes.Transparent, Content = BlockIcons.Icon("pencil", 12, Brushes.White), IsVisible = table is not null };
@@ -309,6 +314,9 @@ internal sealed partial class ManagerWindow {
                 _customDrops.Text = string.Join(", ", CustomDropNames().Where(d => !d.Equals(name, StringComparison.OrdinalIgnoreCase)));
             };
             var description = table is null ? "This table was not found in spiraldb-extra/DropTables; the server may have it in its own data." : table.Description;
+            if (users.TryGetValue(name, out var dropping)) {
+                description = (description.Length > 0 ? description + "\n\n" : "") + DropUsersTip(dropping);
+            }
             var chip = new Border {
                 Background = BlockColors.Accent("drops"), CornerRadius = new CornerRadius(14), Padding = new Thickness(10, 3, 4, 3),
                 Margin = new Thickness(0, 0, 8, 6),
@@ -362,47 +370,6 @@ internal sealed partial class ManagerWindow {
         _dropTables.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase));
 
         return _dropTables;
-    }
-
-    private void RenderDropResults() {
-        _customDropResults.Children.Clear();
-        // An empty box lists the tables too (Niduus, 2026-10-25: "have them all generate search results if left empty").
-        var query = _customDropSearch.Text ?? "";
-        var found = DropTables().Where(t => SearchText.Matches($"{t.Name} {t.Description}", query)).Take(8).ToList();
-        if (found.Count == 0) {
-            _customDropResults.Children.Add(Sub(DropTables().Count == 0 ? "The server's drop tables were not found." : "No drop table matches."));
-        }
-
-        foreach (var table in found) {
-            var (name, description) = (table.Name, table.Description);
-            _customDropResults.Children.Add(new DockPanel {
-                Children = {
-                    WithDock(Action(Plain(table.AppMade ? "Change" : "Change a copy"), () => {
-                        EditDropTable(table);
-
-                        return Task.CompletedTask;
-                    }), Dock.Right),
-                    WithDock(Action(Plain("Add"), () => {
-                        var drops = CustomDropNames();
-                        if (!drops.Contains(name, StringComparer.OrdinalIgnoreCase)) {
-                            drops.Add(name);
-                            _customDrops.Text = string.Join(", ", drops);
-                        }
-
-                        return Task.CompletedTask;
-                    }), Dock.Right),
-                    WithCenter(new StackPanel {
-                        Orientation = Orientation.Horizontal, Spacing = 8,
-                        Children = {
-                            BlockIcons.Icon("bag", 14, BlockColors.Accent("drops")),
-                            new TextBlock { Text = name, FontWeight = FontWeight.SemiBold },
-                            new TextBlock { Text = table.AppMade ? "yours" : "the server's", Foreground = BlockColors.Accent(table.AppMade ? "rewards" : "drops") },
-                            new TextBlock { Text = description, Foreground = MUTED },
-                        },
-                    }),
-                },
-            });
-        }
     }
 
 }

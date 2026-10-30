@@ -161,6 +161,8 @@ public static class IdCatalog {
         RunManagerFile("vendors and trainers", () => Imlight.CoreLib.Game.Tools.VendorGuide.Write(OutputPath));
         // The Manager's Best Gear tab: which creatures drop and which quests give every item.
         RunManagerFile("item sources", () => Imlight.CoreLib.Game.World.ItemSources.WriteGuide(OutputPath));
+        // The Manager's drop table search: which creatures and quests use every drop table.
+        RunManagerFile("drop table users", () => Imlight.CoreLib.Game.World.ItemSources.WriteTableUsers(OutputPath));
         // The Manager's Pet Talents and Pet Derby searches: every talent, what it does and which pets can have it.
         RunManagerFile("pet talents", () => Imlight.CoreLib.Game.Tools.PetTalentGuide.Write(OutputPath));
     }

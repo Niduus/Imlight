@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -228,7 +229,21 @@ internal sealed partial class ManagerWindow {
             throw new PanelException("Tick at least one custom to export.");
         }
 
-        var suggested = items.Count == 1 ? Safe(items[0].Name) : "My customs";
+        // A custom or boss change goes with the drop tables of yours it drops, so it drops the same on a friend's PC.
+        var wanted = items.Where(i => i.Kind.Id is "custom" or "boss" && i.Data is JsonObject)
+            .SelectMany(i => BossChanges.FindIn((JsonObject) i.Data, "Drops") as JsonArray ?? [])
+            .Select(d => (d as JsonValue)?.ToString() ?? "").Where(d => d.Length > 0).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var tables = _shareMine.Where(i => i.Kind.Id == "drops" && !items.Contains(i) && i.Data is JsonObject table
+                                           && (table["Name"] as JsonValue)?.ToString() is { } name && wanted.Contains(name)).ToList();
+        items.AddRange(tables);
+
+        await ExportShareItemsAsync(items, items.Count - tables.Count == 1 ? items[0].Name : "My customs",
+            tables.Count > 0 ? $" It takes along {tables.Count} drop table{(tables.Count == 1 ? "" : "s")} of yours that {(items.Count - tables.Count == 1 ? "it drops" : "they drop")}." : "");
+    }
+
+    /// <summary>Saves these customs as one .ahziael file where the player picks.</summary>
+    private async Task ExportShareItemsAsync(List<ShareItem> items, string name, string note = "") {
+        var suggested = Safe(name);
         var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions {
             Title = "Save the customs file", SuggestedFileName = suggested + CustomShare.EXTENSION, DefaultExtension = CustomShare.EXTENSION.TrimStart('.'),
             ShowOverwritePrompt = true,
@@ -246,7 +261,7 @@ internal sealed partial class ManagerWindow {
             await writer.WriteAsync(text);
         }
 
-        Say($"Saved {items.Count} custom{(items.Count == 1 ? "" : "s")} as \"{file.Name}\". Send that file; your friend opens it on Ahziael's Share tab with Open a customs file.");
+        Say($"Saved {items.Count} custom{(items.Count == 1 ? "" : "s")} as \"{file.Name}\".{note} Send that file; your friend opens it on Ahziael's Share tab with Open a customs file.");
 
         // A file name made from a custom's name: letters, numbers, spaces and dashes.
         static string Safe(string name) {
@@ -409,6 +424,8 @@ internal sealed partial class ManagerWindow {
         var manager = _manager;
         var backup = await Task.Run(() => CustomShare.Import(manager, used));
         _shareReading = null;
+        // Imported drop tables show in the Drops search at once.
+        _dropTables = null;
         await LoadShareAsync();
         Say($"Imported {used.Count} custom{(used.Count == 1 ? "" : "s")}. The server picks them up by itself. " +
             $"Your old files are saved in {Path.GetFileName(backup)} (Undo last import puts them back).");
@@ -423,6 +440,7 @@ internal sealed partial class ManagerWindow {
 
         var manager = _manager;
         var count = await Task.Run(() => CustomShare.Undo(manager, last));
+        _dropTables = null;
         await LoadShareAsync();
         Say($"Undone: {count} file{(count == 1 ? "" : "s")} put back as they were.");
     }
