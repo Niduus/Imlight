@@ -44,7 +44,9 @@ internal static class InstalledCommands {
     private const string DEFAULT_PATCH_URL = "http://127.0.0.1:12369";
 
     // The install's own Server folder, or a built server elsewhere on this PC when the Server source card says so.
-    internal static string ServerFolder(string installFolder) => ServerSource.Load(installFolder).ServerFolder(installFolder);
+    // While Ahziael manages a server on another PC, the pages work on its copy of that server's files (RemoteSession).
+    internal static string ServerFolder(string installFolder)
+        => RemoteSession.Current?.MirrorFolder ?? ServerSource.Load(installFolder).ServerFolder(installFolder);
 
     internal static string ServerExe(string installFolder) => Path.Combine(ServerFolder(installFolder),
         RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Imlight.Director.exe" : "Imlight.Director");
@@ -381,6 +383,10 @@ internal static class InstalledCommands {
     // ---------------------------------------------------------------------
 
     internal static bool IsServerRunning(string installFolder) {
+        if (RemoteSession.Current is { } remote) {
+            return remote.Connected;
+        }
+
         var exe = Path.GetFullPath(ServerExe(installFolder));
 
         return Process.GetProcessesByName(Path.GetFileNameWithoutExtension(exe)).Any(p => {

@@ -206,6 +206,36 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
         });
     }
 
+    [InternalMessageHandler(typeof(RemoteAdminCommand))]
+    private void ReceiveRemoteAdminCommand(RemoteAdminCommand message) {
+        var wizard = GetActiveWizard();
+        var account = GetActiveAccount();
+        if (wizard is null || GetActiveGameObject() is null || account is null || account.AccountId != message.AccountId
+            || message.WizardId is { } only && wizard.CharId != only) {
+            return;
+        }
+
+        // Remote Admin let in only an Administrator, but the rank may have changed since.
+        if (account.AuthLevel < AuthLevel.Administrator) {
+            return;
+        }
+
+        var name = wizard.PlayerNameBehavior?.GetWizardName() ?? "";
+        Logger.Information("Running the remote admin command \"{0}\" for {1}.", Logger.Args(message.Text, name));
+        message.Ran(name);
+        _dispatcherRef.Tell(new SERVER_100_PROTOCOL.MSG_COMMAND() {
+            CommandText = message.Text,
+            ActorRef = SessionActor.ActorRef,
+            CoreObject = GetActiveGameObject(),
+            Wizard = wizard,
+            Account = account,
+            ZoneActor = SessionActor.GetZoneActor(),
+            ServerActor = SessionActor.ServerRef,
+            SelectedWizard = _selectedWizard,
+            SelectedAccount = _selectedAccount
+        });
+    }
+
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_BUDDYSTATS))]
     private void ReceivePlayerSelect(GAME_5_PROTOCOL.MSG_BUDDYSTATS message) {
         // We only care about the ID sent here. It's the ID of the core object, but Imlight serialized

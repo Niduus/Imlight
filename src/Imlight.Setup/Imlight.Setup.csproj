@@ -45,6 +45,8 @@
     <!-- And every other message the server sends a player, with its groups. -->
     <Compile Include="..\Imlight.CoreLib\Game\Tools\ServerMessageCatalog.cs" Link="Shared\ServerMessageCatalog.cs" />
     <Compile Include="..\Imlight.CoreLib\Game\Tools\ServerMessageCatalog.Generated.cs" Link="Shared\ServerMessageCatalog.Generated.cs" />
+    <!-- Remote Admin's wire format and file rules (Server > Remote), the same file the server uses. -->
+    <Compile Include="..\Imlight.CoreLib\Game\Tools\RemoteAdmin\RemoteAdminWire.cs" Link="Shared\RemoteAdminWire.cs" />
   </ItemGroup>
 
   <ItemGroup>
