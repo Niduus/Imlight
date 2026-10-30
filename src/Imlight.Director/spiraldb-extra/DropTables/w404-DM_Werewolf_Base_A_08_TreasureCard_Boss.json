@@ -1,0 +1,17 @@
+{
+  "Name": "W404 DM_Werewolf_Base_A_08 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Werewolf_Base_A_08: the treasurecard drops (2), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Minotaur Death TC",
+      "ItemName": "Deadly Minotaur"
+    },
+    {
+      "ItemId": "Forest Lord Storm TC",
+      "ItemName": "Lord of the Squall"
+    }
+  ]
+}

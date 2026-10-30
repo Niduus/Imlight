@@ -1,0 +1,49 @@
+{
+  "Name": "W404 CL-CrabSoldier-Green-Boss-R9-1 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-CrabSoldier-Green-Boss-R9-1: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243218",
+      "ItemName": "Volcanic Edge"
+    },
+    {
+      "ItemId": "243252",
+      "ItemName": "Celestian Sliver of Power"
+    },
+    {
+      "ItemId": "243285",
+      "ItemName": "Facade of Fairness"
+    },
+    {
+      "ItemId": "243309",
+      "ItemName": "Shroud of Solitude"
+    },
+    {
+      "ItemId": "243556",
+      "ItemName": "Sunken Celestian Circle"
+    },
+    {
+      "ItemId": "243558",
+      "ItemName": "Striking Celestian Signet"
+    },
+    {
+      "ItemId": "243684",
+      "ItemName": "Mysterious Costume"
+    },
+    {
+      "ItemId": "243700",
+      "ItemName": "Turbulent Tunic"
+    },
+    {
+      "ItemId": "243786",
+      "ItemName": "Polar Boots"
+    },
+    {
+      "ItemId": "243787",
+      "ItemName": "Rime Runners"
+    }
+  ]
+}

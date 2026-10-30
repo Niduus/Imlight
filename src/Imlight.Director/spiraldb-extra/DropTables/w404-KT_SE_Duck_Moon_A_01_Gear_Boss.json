@@ -1,0 +1,121 @@
+{
+  "Name": "W404 KT_SE_Duck_Moon_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT_SE_Duck_Moon_A_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1673506",
+      "ItemName": "Avatar's Boots of Reprisal"
+    },
+    {
+      "ItemId": "1673507",
+      "ItemName": "Avatar's Boots of Payback"
+    },
+    {
+      "ItemId": "1673508",
+      "ItemName": "Avatar's Boots of Wrath"
+    },
+    {
+      "ItemId": "1673509",
+      "ItemName": "Avatar's Boots of Revenge"
+    },
+    {
+      "ItemId": "1673510",
+      "ItemName": "Avatar's Boots of Retribution"
+    },
+    {
+      "ItemId": "1673511",
+      "ItemName": "Avatar's Boots of Bad Blood"
+    },
+    {
+      "ItemId": "1673512",
+      "ItemName": "Avatar's Boots of Vengeance"
+    },
+    {
+      "ItemId": "1673579",
+      "ItemName": "Avatar's Cards of Reprisal"
+    },
+    {
+      "ItemId": "1673580",
+      "ItemName": "Avatar's Cards of Payback"
+    },
+    {
+      "ItemId": "1673581",
+      "ItemName": "Avatar's Cards of Wrath"
+    },
+    {
+      "ItemId": "1673582",
+      "ItemName": "Avatar's Cards of Revenge"
+    },
+    {
+      "ItemId": "1673583",
+      "ItemName": "Avatar's Cards of Retribution"
+    },
+    {
+      "ItemId": "1673584",
+      "ItemName": "Avatar's Cards of Bad Blood"
+    },
+    {
+      "ItemId": "1673585",
+      "ItemName": "Avatar's Cards of Vengeance"
+    },
+    {
+      "ItemId": "1673630",
+      "ItemName": "Manifest Cards of Reprisal"
+    },
+    {
+      "ItemId": "1673631",
+      "ItemName": "Manifest Cards of Payback"
+    },
+    {
+      "ItemId": "1673632",
+      "ItemName": "Manifest Cards of Wrath"
+    },
+    {
+      "ItemId": "1673633",
+      "ItemName": "Manifest Cards of Revenge"
+    },
+    {
+      "ItemId": "1673634",
+      "ItemName": "Manifest Cards of Retribution"
+    },
+    {
+      "ItemId": "1673635",
+      "ItemName": "Manifest Cards of Bad Blood"
+    },
+    {
+      "ItemId": "1673636",
+      "ItemName": "Manifest Cards of Vengeance"
+    },
+    {
+      "ItemId": "1673651",
+      "ItemName": "Manifest Boots of Reprisal"
+    },
+    {
+      "ItemId": "1673652",
+      "ItemName": "Manifest Boots of Payback"
+    },
+    {
+      "ItemId": "1673653",
+      "ItemName": "Manifest Boots of Wrath"
+    },
+    {
+      "ItemId": "1673654",
+      "ItemName": "Manifest Boots of Revenge"
+    },
+    {
+      "ItemId": "1673655",
+      "ItemName": "Manifest Boots of Retribution"
+    },
+    {
+      "ItemId": "1673656",
+      "ItemName": "Manifest Boots of Bad Blood"
+    },
+    {
+      "ItemId": "1673657",
+      "ItemName": "Manifest Boots of Vengeance"
+    }
+  ]
+}

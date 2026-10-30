@@ -1,0 +1,13 @@
+{
+  "Name": "W404 AV-R11-LifeDeck Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AV-R11-LifeDeck: the gear drops (1), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635542",
+      "ItemName": "Greenroot Gallery"
+    }
+  ]
+}

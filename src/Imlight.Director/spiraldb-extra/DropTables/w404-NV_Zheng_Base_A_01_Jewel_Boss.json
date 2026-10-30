@@ -1,0 +1,217 @@
+{
+  "Name": "W404 NV_Zheng_Base_A_01 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Zheng_Base_A_01: the jewel drops (52), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1535582",
+      "ItemName": "Amazing Blocking Amethyst +21"
+    },
+    {
+      "ItemId": "1535588",
+      "ItemName": "Amazing Blocking Jade +21"
+    },
+    {
+      "ItemId": "1535589",
+      "ItemName": "Amazing Blocking Jade +22"
+    },
+    {
+      "ItemId": "1535591",
+      "ItemName": "Amazing Blocking Onyx +22"
+    },
+    {
+      "ItemId": "1535597",
+      "ItemName": "Amazing Blocking Sapphire +21"
+    },
+    {
+      "ItemId": "1535605",
+      "ItemName": "Amazing Defense Citrine +63"
+    },
+    {
+      "ItemId": "1535618",
+      "ItemName": "Amazing Defense Onyx +64"
+    },
+    {
+      "ItemId": "1535620",
+      "ItemName": "Amazing Defense Opal +32"
+    },
+    {
+      "ItemId": "1535628",
+      "ItemName": "Amazing Defense Ruby +64"
+    },
+    {
+      "ItemId": "1514554",
+      "ItemName": "Dazzling Blocking Jade +20"
+    },
+    {
+      "ItemId": "1514555",
+      "ItemName": "Dazzling Blocking Onyx +19"
+    },
+    {
+      "ItemId": "1514561",
+      "ItemName": "Dazzling Blocking Opal +10"
+    },
+    {
+      "ItemId": "1514546",
+      "ItemName": "Dazzling Blocking Ruby +20"
+    },
+    {
+      "ItemId": "1514520",
+      "ItemName": "Dazzling Defense Amethyst +59"
+    },
+    {
+      "ItemId": "1514521",
+      "ItemName": "Dazzling Defense Amethyst +60"
+    },
+    {
+      "ItemId": "1514536",
+      "ItemName": "Dazzling Defense Citrine +59"
+    },
+    {
+      "ItemId": "1514537",
+      "ItemName": "Dazzling Defense Citrine +60"
+    },
+    {
+      "ItemId": "1514533",
+      "ItemName": "Dazzling Defense Onyx +60"
+    },
+    {
+      "ItemId": "1514543",
+      "ItemName": "Dazzling Defense Opal +30"
+    },
+    {
+      "ItemId": "1514524",
+      "ItemName": "Dazzling Defense Peridot +59"
+    },
+    {
+      "ItemId": "1514525",
+      "ItemName": "Dazzling Defense Peridot +60"
+    },
+    {
+      "ItemId": "1514513",
+      "ItemName": "Dazzling Defense Ruby +60"
+    },
+    {
+      "ItemId": "1578375",
+      "ItemName": "Balance Crushing Pin (140)"
+    },
+    {
+      "ItemId": "1578411",
+      "ItemName": "Balance Crushing Pin (140)"
+    },
+    {
+      "ItemId": "1578578",
+      "ItemName": "Balance Crushing Pin (150)"
+    },
+    {
+      "ItemId": "1578548",
+      "ItemName": "Balance Disabling Pin (150)"
+    },
+    {
+      "ItemId": "1578387",
+      "ItemName": "Balance Punishing Pin (140)"
+    },
+    {
+      "ItemId": "1578412",
+      "ItemName": "Death Crushing Pin (140)"
+    },
+    {
+      "ItemId": "1578543",
+      "ItemName": "Death Crushing Pin (150)"
+    },
+    {
+      "ItemId": "1578291",
+      "ItemName": "Death Disabling Pin (140)"
+    },
+    {
+      "ItemId": "1578567",
+      "ItemName": "Death Disabling Pin (150)"
+    },
+    {
+      "ItemId": "1578334",
+      "ItemName": "Death Punishing Pin (140)"
+    },
+    {
+      "ItemId": "1578413",
+      "ItemName": "Fire Crushing Pin (140)"
+    },
+    {
+      "ItemId": "1578401",
+      "ItemName": "Fire Disabling Pin (140)"
+    },
+    {
+      "ItemId": "1578477",
+      "ItemName": "Fire Disabling Pin (150)"
+    },
+    {
+      "ItemId": "1578568",
+      "ItemName": "Fire Disabling Pin (150)"
+    },
+    {
+      "ItemId": "1578316",
+      "ItemName": "Fire Punishing Pin (140)"
+    },
+    {
+      "ItemId": "1578407",
+      "ItemName": "Fire Punishing Pin (140)"
+    },
+    {
+      "ItemId": "1578414",
+      "ItemName": "Ice Crushing Pin (140)"
+    },
+    {
+      "ItemId": "1578569",
+      "ItemName": "Ice Disabling Pin (150)"
+    },
+    {
+      "ItemId": "1578502",
+      "ItemName": "Ice Punishing Pin (150)"
+    },
+    {
+      "ItemId": "1578575",
+      "ItemName": "Ice Punishing Pin (150)"
+    },
+    {
+      "ItemId": "1578397",
+      "ItemName": "Life Crushing Pin (140)"
+    },
+    {
+      "ItemId": "1578552",
+      "ItemName": "Life Disabling Pin (150)"
+    },
+    {
+      "ItemId": "1578570",
+      "ItemName": "Life Disabling Pin (150)"
+    },
+    {
+      "ItemId": "1578576",
+      "ItemName": "Life Punishing Pin (150)"
+    },
+    {
+      "ItemId": "1578416",
+      "ItemName": "Myth Crushing Pin (140)"
+    },
+    {
+      "ItemId": "1578571",
+      "ItemName": "Myth Disabling Pin (150)"
+    },
+    {
+      "ItemId": "1578301",
+      "ItemName": "Myth Punishing Pin (140)"
+    },
+    {
+      "ItemId": "1578373",
+      "ItemName": "Myth Punishing Pin (140)"
+    },
+    {
+      "ItemId": "1578410",
+      "ItemName": "Myth Punishing Pin (140)"
+    },
+    {
+      "ItemId": "1578577",
+      "ItemName": "Myth Punishing Pin (150)"
+    }
+  ]
+}

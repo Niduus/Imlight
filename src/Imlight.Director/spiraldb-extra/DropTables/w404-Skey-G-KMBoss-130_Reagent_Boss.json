@@ -1,0 +1,157 @@
+{
+  "Name": "W404 Skey-G-KMBoss-130 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skey-G-KMBoss-130: the reagent drops (37), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil"
+    },
+    {
+      "ItemId": "106938",
+      "ItemName": "Diamond"
+    },
+    {
+      "ItemId": "106964",
+      "ItemName": "Spring"
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom"
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales"
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether"
+    },
+    {
+      "ItemId": "258584",
+      "ItemName": "Golden Pearl"
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone"
+    },
+    {
+      "ItemId": "258588",
+      "ItemName": "Aquamarine"
+    },
+    {
+      "ItemId": "473723",
+      "ItemName": "Agave Nectar"
+    },
+    {
+      "ItemId": "473724",
+      "ItemName": "Turquoise"
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber"
+    },
+    {
+      "ItemId": "537976",
+      "ItemName": "Braided Vine"
+    },
+    {
+      "ItemId": "537985",
+      "ItemName": "Merle's Whisker"
+    },
+    {
+      "ItemId": "1206361",
+      "ItemName": "Stardust"
+    },
+    {
+      "ItemId": "1206362",
+      "ItemName": "Astral Shard"
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper"
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel"
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel"
+    },
+    {
+      "ItemId": "1350017",
+      "ItemName": "Silver"
+    },
+    {
+      "ItemId": "1350018",
+      "ItemName": "Titanium"
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt"
+    },
+    {
+      "ItemId": "1350235",
+      "ItemName": "Tungsten"
+    },
+    {
+      "ItemId": "1350236",
+      "ItemName": "Mithril"
+    },
+    {
+      "ItemId": "1350237",
+      "ItemName": "Orichalcum"
+    },
+    {
+      "ItemId": "1350238",
+      "ItemName": "Draconium"
+    },
+    {
+      "ItemId": "1392207",
+      "ItemName": "Turmeric"
+    },
+    {
+      "ItemId": "1504088",
+      "ItemName": "Pretzel Sticks"
+    },
+    {
+      "ItemId": "1504091",
+      "ItemName": "Toffee Bean"
+    },
+    {
+      "ItemId": "1504092",
+      "ItemName": "Karamelle Chunk"
+    },
+    {
+      "ItemId": "1504146",
+      "ItemName": "Mockenspiel"
+    },
+    {
+      "ItemId": "1504147",
+      "ItemName": "Sound of Musicology"
+    },
+    {
+      "ItemId": "1504148",
+      "ItemName": "Shatterhorn"
+    },
+    {
+      "ItemId": "1504149",
+      "ItemName": "Snack Attack"
+    },
+    {
+      "ItemId": "1504150",
+      "ItemName": "S'more Machine"
+    },
+    {
+      "ItemId": "1504151",
+      "ItemName": "Grrnadier"
+    },
+    {
+      "ItemId": "1519005",
+      "ItemName": "Tatzlewurm Terror"
+    }
+  ]
+}

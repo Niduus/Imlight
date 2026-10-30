@@ -1,0 +1,85 @@
+{
+  "Name": "W404 Warrior-Male-Armor-Purple-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Warrior-Male-Armor-Purple-Boss-R8: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104599",
+      "ItemName": "Drape of Symmetry"
+    },
+    {
+      "ItemId": "104656",
+      "ItemName": "Cloak of the Seasons"
+    },
+    {
+      "ItemId": "104664",
+      "ItemName": "Tunic of Effervescence"
+    },
+    {
+      "ItemId": "104683",
+      "ItemName": "Valerik's Chilled Vestment"
+    },
+    {
+      "ItemId": "104754",
+      "ItemName": "Slippers of the Ice Flow"
+    },
+    {
+      "ItemId": "104781",
+      "ItemName": "Footgear of Craftsmanship"
+    },
+    {
+      "ItemId": "104806",
+      "ItemName": "Shoes of Gloom"
+    },
+    {
+      "ItemId": "104826",
+      "ItemName": "Sandals of the Prophet"
+    },
+    {
+      "ItemId": "104854",
+      "ItemName": "Valerik's Sandals of Destiny"
+    },
+    {
+      "ItemId": "104871",
+      "ItemName": "Monsoon Mocassins"
+    },
+    {
+      "ItemId": "104875",
+      "ItemName": "Slippers of the Slipstream"
+    },
+    {
+      "ItemId": "126568",
+      "ItemName": "Signet of the Reaper"
+    },
+    {
+      "ItemId": "126682",
+      "ItemName": "Deck of Perfect Harmony"
+    },
+    {
+      "ItemId": "146166",
+      "ItemName": "Soothing Steel"
+    },
+    {
+      "ItemId": "146171",
+      "ItemName": "Stonecutter"
+    },
+    {
+      "ItemId": "146208",
+      "ItemName": "Ozone Shroud"
+    },
+    {
+      "ItemId": "146241",
+      "ItemName": "Hood of the Historian"
+    },
+    {
+      "ItemId": "146294",
+      "ItemName": "Headgear of the Ice Pilot"
+    },
+    {
+      "ItemId": "146308",
+      "ItemName": "Cowl of Blazes"
+    }
+  ]
+}

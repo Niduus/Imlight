@@ -1,0 +1,97 @@
+{
+  "Name": "W404 MB-Golem-Steel-MBBoss-L40 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Golem-Steel-MBBoss-L40: the gear drops (22), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "5048",
+      "ItemName": "Amulet of Chilled Creatures"
+    },
+    {
+      "ItemId": "39018",
+      "ItemName": "Glowing Canine Cowl"
+    },
+    {
+      "ItemId": "77071",
+      "ItemName": "Mysterious Band"
+    },
+    {
+      "ItemId": "77167",
+      "ItemName": "Feline's Fiery Robe"
+    },
+    {
+      "ItemId": "77180",
+      "ItemName": "Uniform of the Proficient"
+    },
+    {
+      "ItemId": "77227",
+      "ItemName": "Alluring Boots"
+    },
+    {
+      "ItemId": "77245",
+      "ItemName": "Delicate Slippers"
+    },
+    {
+      "ItemId": "87472",
+      "ItemName": "Staff of the Ice Wyvern"
+    },
+    {
+      "ItemId": "97091",
+      "ItemName": "Aristocrat's Dagger"
+    },
+    {
+      "ItemId": "97122",
+      "ItemName": "Deck of Intensity"
+    },
+    {
+      "ItemId": "97127",
+      "ItemName": "Deck of the Aurora"
+    },
+    {
+      "ItemId": "97136",
+      "ItemName": "Precious Cap"
+    },
+    {
+      "ItemId": "97148",
+      "ItemName": "Animated Canine Cowl"
+    },
+    {
+      "ItemId": "97170",
+      "ItemName": "Victorian Hat"
+    },
+    {
+      "ItemId": "97182",
+      "ItemName": "Flowering Canine Cowl"
+    },
+    {
+      "ItemId": "97200",
+      "ItemName": "Genteel Cap"
+    },
+    {
+      "ItemId": "97250",
+      "ItemName": "Uniform of the Inventor"
+    },
+    {
+      "ItemId": "97266",
+      "ItemName": "Smooth Spun Cloak"
+    },
+    {
+      "ItemId": "97282",
+      "ItemName": "Flowering Canine Cloak"
+    },
+    {
+      "ItemId": "97320",
+      "ItemName": "Mugsy's Robe of Equity"
+    },
+    {
+      "ItemId": "97361",
+      "ItemName": "Fancy Slippers"
+    },
+    {
+      "ItemId": "97406",
+      "ItemName": "Pleasing Sandals"
+    }
+  ]
+}

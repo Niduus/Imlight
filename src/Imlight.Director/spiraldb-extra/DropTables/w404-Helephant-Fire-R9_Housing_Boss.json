@@ -1,0 +1,17 @@
+{
+  "Name": "W404 Helephant-Fire-R9 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Helephant-Fire-R9: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160841",
+      "ItemName": "Dark Sun Obelisk"
+    },
+    {
+      "ItemId": "160845",
+      "ItemName": "Copper Urn"
+    }
+  ]
+}

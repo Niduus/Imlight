@@ -1,0 +1,185 @@
+{
+  "Name": "W404 NV_Penguin_Cook_A_01 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Penguin_Cook_A_01: the jewel drops (44), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1535702",
+      "ItemName": "Amazing Accurate Amethyst +15%"
+    },
+    {
+      "ItemId": "1535701",
+      "ItemName": "Amazing Accurate Citrine +15%"
+    },
+    {
+      "ItemId": "1535705",
+      "ItemName": "Amazing Accurate Onyx +15%"
+    },
+    {
+      "ItemId": "1535706",
+      "ItemName": "Amazing Accurate Peridot +15%"
+    },
+    {
+      "ItemId": "1587035",
+      "ItemName": "Amazing Archmastery Opal +14"
+    },
+    {
+      "ItemId": "1535668",
+      "ItemName": "Amazing Health Opal +137"
+    },
+    {
+      "ItemId": "1535670",
+      "ItemName": "Amazing Health Opal +139"
+    },
+    {
+      "ItemId": "1535672",
+      "ItemName": "Amazing Health Opal +141"
+    },
+    {
+      "ItemId": "1535673",
+      "ItemName": "Amazing Health Opal +142"
+    },
+    {
+      "ItemId": "1535677",
+      "ItemName": "Amazing Mana Opal +57"
+    },
+    {
+      "ItemId": "1535679",
+      "ItemName": "Amazing Mana Opal +59"
+    },
+    {
+      "ItemId": "1535709",
+      "ItemName": "Amazing PIP Hematite +3"
+    },
+    {
+      "ItemId": "1537693",
+      "ItemName": "Buck Gordon Ruby"
+    },
+    {
+      "ItemId": "1514484",
+      "ItemName": "Dazzling Accurate Jade +14%"
+    },
+    {
+      "ItemId": "1514480",
+      "ItemName": "Dazzling Accurate Ruby +14%"
+    },
+    {
+      "ItemId": "1514483",
+      "ItemName": "Dazzling Accurate Peridot +14%"
+    },
+    {
+      "ItemId": "1514563",
+      "ItemName": "Dazzling Health Opal +128"
+    },
+    {
+      "ItemId": "1514565",
+      "ItemName": "Dazzling Health Opal +130"
+    },
+    {
+      "ItemId": "1514568",
+      "ItemName": "Dazzling Health Opal +133"
+    },
+    {
+      "ItemId": "1514507",
+      "ItemName": "Dazzling Mana Opal +54"
+    },
+    {
+      "ItemId": "1514509",
+      "ItemName": "Dazzling Mana Opal +56"
+    },
+    {
+      "ItemId": "1514493",
+      "ItemName": "Goat Monk Jade"
+    },
+    {
+      "ItemId": "1514490",
+      "ItemName": "Handsome Fomori Sapphire"
+    },
+    {
+      "ItemId": "1514489",
+      "ItemName": "Krampus Revenant Ruby"
+    },
+    {
+      "ItemId": "1514494",
+      "ItemName": "Lord of Night Onyx"
+    },
+    {
+      "ItemId": "1357134",
+      "ItemName": "Lustrous PIP Opal +10%"
+    },
+    {
+      "ItemId": "1514492",
+      "ItemName": "Ninja Pigs Peridot"
+    },
+    {
+      "ItemId": "1514495",
+      "ItemName": "Savage Paw Citrine"
+    },
+    {
+      "ItemId": "1537698",
+      "ItemName": "Solomon Crane Onyx"
+    },
+    {
+      "ItemId": "1537699",
+      "ItemName": "Quartermane Citrine"
+    },
+    {
+      "ItemId": "1578455",
+      "ItemName": "Balance Blocking Pin (140)"
+    },
+    {
+      "ItemId": "1578451",
+      "ItemName": "Balance Blocking Pin (140)"
+    },
+    {
+      "ItemId": "1578618",
+      "ItemName": "Balance Blocking Pin (150)"
+    },
+    {
+      "ItemId": "1587350",
+      "ItemName": "Balance Resist Pin (140)"
+    },
+    {
+      "ItemId": "1587347",
+      "ItemName": "Balance Resist Pin (140)"
+    },
+    {
+      "ItemId": "1578456",
+      "ItemName": "Fire Blocking Pin (140)"
+    },
+    {
+      "ItemId": "1578617",
+      "ItemName": "Ice Blocking Pin (150)"
+    },
+    {
+      "ItemId": "1587349",
+      "ItemName": "Ice Resist Pin (140)"
+    },
+    {
+      "ItemId": "1578457",
+      "ItemName": "Life Blocking Pin (140)"
+    },
+    {
+      "ItemId": "1578620",
+      "ItemName": "Life Blocking Pin (150)"
+    },
+    {
+      "ItemId": "1587422",
+      "ItemName": "Life Resist Pin (140)"
+    },
+    {
+      "ItemId": "1578602",
+      "ItemName": "Storm Blocking Pin (150)"
+    },
+    {
+      "ItemId": "1587012",
+      "ItemName": "Storm Mending Pin (140)"
+    },
+    {
+      "ItemId": "1587424",
+      "ItemName": "Storm Resist Pin (130)"
+    }
+  ]
+}

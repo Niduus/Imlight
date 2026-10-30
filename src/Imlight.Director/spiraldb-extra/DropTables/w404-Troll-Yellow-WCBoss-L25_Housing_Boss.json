@@ -1,0 +1,29 @@
+{
+  "Name": "W404 Troll-Yellow-WCBoss-L25 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Troll-Yellow-WCBoss-L25: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160256",
+      "ItemName": "Stitched Rug"
+    },
+    {
+      "ItemId": "160358",
+      "ItemName": "Ornate Stone Tower"
+    },
+    {
+      "ItemId": "160385",
+      "ItemName": "Snowy Pine"
+    },
+    {
+      "ItemId": "512116",
+      "ItemName": "Wizard City Theme 1"
+    },
+    {
+      "ItemId": "1335019",
+      "ItemName": "Wizard City Dance Theme"
+    }
+  ]
+}

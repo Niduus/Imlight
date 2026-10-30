@@ -1,0 +1,61 @@
+{
+  "Name": "W404 Gobbler-Hick-Baron-WCBoss-L22 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Gobbler-Hick-Baron-WCBoss-L22: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4671",
+      "ItemName": "Greebly's Gemstone"
+    },
+    {
+      "ItemId": "4673",
+      "ItemName": "Swooping Necklace"
+    },
+    {
+      "ItemId": "4724",
+      "ItemName": "Amethyst Studded Athame"
+    },
+    {
+      "ItemId": "4739",
+      "ItemName": "Greebly's Steaknife"
+    },
+    {
+      "ItemId": "4778",
+      "ItemName": "Baron's Sparking Ring"
+    },
+    {
+      "ItemId": "4852",
+      "ItemName": "Shoes of the Troll King"
+    },
+    {
+      "ItemId": "4854",
+      "ItemName": "Greebly's Boots of Tales"
+    },
+    {
+      "ItemId": "4859",
+      "ItemName": "Baron's Vivacious Shoes"
+    },
+    {
+      "ItemId": "77584",
+      "ItemName": "Greebly's Windshroud"
+    },
+    {
+      "ItemId": "77599",
+      "ItemName": "Blooming Hat"
+    },
+    {
+      "ItemId": "87209",
+      "ItemName": "Greebly's Storm Drape"
+    },
+    {
+      "ItemId": "87235",
+      "ItemName": "Cloak of the Watchful"
+    },
+    {
+      "ItemId": "87252",
+      "ItemName": "Greebly's Frost Wand"
+    }
+  ]
+}

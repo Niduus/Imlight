@@ -1,0 +1,65 @@
+{
+  "Name": "W404 Mob-1283323 Gear (Boss)",
+  "Description": "Wizard404's drop list of Tree Root's own drops: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1557037",
+      "ItemName": "Elder's Sword and Shield"
+    },
+    {
+      "ItemId": "1557038",
+      "ItemName": "Sword and Shield of Havoc"
+    },
+    {
+      "ItemId": "1557039",
+      "ItemName": "Sword and Shield of Embers"
+    },
+    {
+      "ItemId": "1557040",
+      "ItemName": "Frostbound Sword and Shield"
+    },
+    {
+      "ItemId": "1557041",
+      "ItemName": "Sword and Shield of Vigor"
+    },
+    {
+      "ItemId": "1557042",
+      "ItemName": "Dreamscape Sword and Shield"
+    },
+    {
+      "ItemId": "1557043",
+      "ItemName": "Sandstorm Sword and Shield"
+    },
+    {
+      "ItemId": "1592838",
+      "ItemName": "Elder's Armaments"
+    },
+    {
+      "ItemId": "1592839",
+      "ItemName": "Armaments of Havoc"
+    },
+    {
+      "ItemId": "1592840",
+      "ItemName": "Armaments of Embers"
+    },
+    {
+      "ItemId": "1592841",
+      "ItemName": "Frostbound Armaments"
+    },
+    {
+      "ItemId": "1592842",
+      "ItemName": "Armaments of Vigor"
+    },
+    {
+      "ItemId": "1592843",
+      "ItemName": "Dreamscape Armaments"
+    },
+    {
+      "ItemId": "1592844",
+      "ItemName": "Sandstorm Armaments"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "Name": "W404 EM2-Mob-Wand-127 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table EM2-Mob-Wand-127: the gear drops (8), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462364",
+      "ItemName": "Rad Kalakrys"
+    },
+    {
+      "ItemId": "1462365",
+      "ItemName": "Chill Kalakrys"
+    },
+    {
+      "ItemId": "1462366",
+      "ItemName": "Gnarly Kalakrys"
+    },
+    {
+      "ItemId": "1462367",
+      "ItemName": "Mondo Kalakrys"
+    },
+    {
+      "ItemId": "1462368",
+      "ItemName": "Righteous Kalakrys"
+    },
+    {
+      "ItemId": "1462369",
+      "ItemName": "Heavy Kalakrys"
+    },
+    {
+      "ItemId": "1462370",
+      "ItemName": "Bodacious Kalakrys"
+    },
+    {
+      "ItemId": "1462371",
+      "ItemName": "Choice Kalakrys"
+    }
+  ]
+}

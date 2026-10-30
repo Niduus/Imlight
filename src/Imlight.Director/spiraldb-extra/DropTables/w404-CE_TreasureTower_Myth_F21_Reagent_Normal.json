@@ -1,0 +1,85 @@
+{
+  "Name": "W404 CE_TreasureTower_Myth_F21 Reagent (Normal)",
+  "Description": "Wizard404's drop list of the game's table CE_TreasureTower_Myth_F21: the reagent drops (19), one picked when it rolls. How often: DropOdds.json Normal/Reagent.",
+  "Odds": "Normal/Reagent",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1494696",
+      "ItemName": "Blood Bat"
+    },
+    {
+      "ItemId": "1441815",
+      "ItemName": "Storm Rune"
+    },
+    {
+      "ItemId": "1441818",
+      "ItemName": "Life Rune"
+    },
+    {
+      "ItemId": "1441821",
+      "ItemName": "Death Rune"
+    },
+    {
+      "ItemId": "1441827",
+      "ItemName": "Myth Rune"
+    },
+    {
+      "ItemId": "1441816",
+      "ItemName": "Enhanced Storm Rune"
+    },
+    {
+      "ItemId": "1441819",
+      "ItemName": "Enhanced Life Rune"
+    },
+    {
+      "ItemId": "1441822",
+      "ItemName": "Enhanced Death Rune"
+    },
+    {
+      "ItemId": "1441828",
+      "ItemName": "Enhanced Myth Rune"
+    },
+    {
+      "ItemId": "1441810",
+      "ItemName": "Superior Fire Rune"
+    },
+    {
+      "ItemId": "1441814",
+      "ItemName": "Superior Ice Rune"
+    },
+    {
+      "ItemId": "1441817",
+      "ItemName": "Superior Storm Rune"
+    },
+    {
+      "ItemId": "1441820",
+      "ItemName": "Superior Life Rune"
+    },
+    {
+      "ItemId": "1441823",
+      "ItemName": "Superior Death Rune"
+    },
+    {
+      "ItemId": "1441826",
+      "ItemName": "Superior Balance Rune"
+    },
+    {
+      "ItemId": "1441829",
+      "ItemName": "Superior Myth Rune"
+    },
+    {
+      "ItemId": "1472087",
+      "ItemName": "Augmentation Rune"
+    },
+    {
+      "ItemId": "1472088",
+      "ItemName": "Improvement Rune"
+    },
+    {
+      "ItemId": "1472089",
+      "ItemName": "Strengthening Rune"
+    }
+  ]
+}

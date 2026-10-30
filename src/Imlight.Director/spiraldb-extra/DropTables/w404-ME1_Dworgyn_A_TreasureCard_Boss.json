@@ -1,0 +1,13 @@
+{
+  "Name": "W404 ME1_Dworgyn_A TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Dworgyn_A: the treasurecard drops (1), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Steel Golem - Death TC",
+      "ItemName": "Kettleblack"
+    }
+  ]
+}

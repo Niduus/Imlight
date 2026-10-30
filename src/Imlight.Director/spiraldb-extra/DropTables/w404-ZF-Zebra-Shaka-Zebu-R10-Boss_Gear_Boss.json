@@ -1,0 +1,45 @@
+{
+  "Name": "W404 ZF-Zebra-Shaka-Zebu-R10-Boss Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Zebra-Shaka-Zebu-R10-Boss: the gear drops (9), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "540088",
+      "ItemName": "Collar of the Firezilla"
+    },
+    {
+      "ItemId": "540119",
+      "ItemName": "Razor Thorn"
+    },
+    {
+      "ItemId": "540167",
+      "ItemName": "Mantle of the Grasslands"
+    },
+    {
+      "ItemId": "540170",
+      "ItemName": "Bushfire Hat"
+    },
+    {
+      "ItemId": "540207",
+      "ItemName": "Elissa's Chill Band"
+    },
+    {
+      "ItemId": "540237",
+      "ItemName": "Robes of the Cold Night"
+    },
+    {
+      "ItemId": "540238",
+      "ItemName": "Tunic of Long Memory"
+    },
+    {
+      "ItemId": "540278",
+      "ItemName": "Hot and Cold Crushers"
+    },
+    {
+      "ItemId": "540281",
+      "ItemName": "Ananse's Dark Rangers"
+    }
+  ]
+}

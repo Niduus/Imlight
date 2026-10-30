@@ -1,0 +1,21 @@
+{
+  "Name": "W404 KT-MB-Level-22-23 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-MB-Level-22-23: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82833",
+      "ItemName": "Krok Moon Tablet"
+    },
+    {
+      "ItemId": "82841",
+      "ItemName": "Krok Insect Tablet"
+    },
+    {
+      "ItemId": "82908",
+      "ItemName": "Hieroglyphic Storm Tablet"
+    }
+  ]
+}

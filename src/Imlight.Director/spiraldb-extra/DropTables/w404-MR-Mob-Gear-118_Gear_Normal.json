@@ -1,0 +1,345 @@
+{
+  "Name": "W404 MR-Mob-Gear-118 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table MR-Mob-Gear-118: the gear drops (84), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1402901",
+      "ItemName": "Eerem Gallery of Eruption"
+    },
+    {
+      "ItemId": "1402902",
+      "ItemName": "Eerem Gallery of Frostfall"
+    },
+    {
+      "ItemId": "1402903",
+      "ItemName": "Eerem Gallery of Clouds"
+    },
+    {
+      "ItemId": "1402904",
+      "ItemName": "Eerem Gallery of Ciphers"
+    },
+    {
+      "ItemId": "1402905",
+      "ItemName": "Eerem Gallery of Elation"
+    },
+    {
+      "ItemId": "1402906",
+      "ItemName": "Eerem Gallery of Agony"
+    },
+    {
+      "ItemId": "1402907",
+      "ItemName": "Eerem Gallery of Ability"
+    },
+    {
+      "ItemId": "1402935",
+      "ItemName": "Istanboa Sandspouts Array"
+    },
+    {
+      "ItemId": "1402936",
+      "ItemName": "Istanboa Array of Enigmas"
+    },
+    {
+      "ItemId": "1402938",
+      "ItemName": "Istanboa Array of Ruin"
+    },
+    {
+      "ItemId": "1402939",
+      "ItemName": "Istanboa Array of Scruples"
+    },
+    {
+      "ItemId": "1405061",
+      "ItemName": "Mottoman Heatwave Helm"
+    },
+    {
+      "ItemId": "1405062",
+      "ItemName": "Mottoman Helm of Icefall"
+    },
+    {
+      "ItemId": "1405063",
+      "ItemName": "Mottoman Sandspouts Helm"
+    },
+    {
+      "ItemId": "1405064",
+      "ItemName": "Mottoman Helm of Enigmas"
+    },
+    {
+      "ItemId": "1405065",
+      "ItemName": "Gallant Mottoman Helm"
+    },
+    {
+      "ItemId": "1405066",
+      "ItemName": "Mottoman Helm of Ruin"
+    },
+    {
+      "ItemId": "1405067",
+      "ItemName": "Mottoman Helm of Scruples"
+    },
+    {
+      "ItemId": "1405093",
+      "ItemName": "Mottoman Heatwave Uniform"
+    },
+    {
+      "ItemId": "1405094",
+      "ItemName": "Mottoman Icefall Uniform"
+    },
+    {
+      "ItemId": "1405095",
+      "ItemName": "Mottoman Sandspouts Uniform"
+    },
+    {
+      "ItemId": "1405096",
+      "ItemName": "Mottoman Uniform of Enigmas"
+    },
+    {
+      "ItemId": "1405097",
+      "ItemName": "Gallant Mottoman Uniform"
+    },
+    {
+      "ItemId": "1405098",
+      "ItemName": "Mottoman Uniform of Ruin"
+    },
+    {
+      "ItemId": "1405099",
+      "ItemName": "Mottoman Uniform of Scruples"
+    },
+    {
+      "ItemId": "1405125",
+      "ItemName": "Mottoman Heatwave Runners"
+    },
+    {
+      "ItemId": "1405126",
+      "ItemName": "Mottoman Icefall Runners"
+    },
+    {
+      "ItemId": "1405127",
+      "ItemName": "Mottoman Sandspouts Runners"
+    },
+    {
+      "ItemId": "1405128",
+      "ItemName": "Mottoman Runners of Enigmas"
+    },
+    {
+      "ItemId": "1405129",
+      "ItemName": "Gallant Mottoman Runners"
+    },
+    {
+      "ItemId": "1405130",
+      "ItemName": "Mottoman Runners of Ruin"
+    },
+    {
+      "ItemId": "1405131",
+      "ItemName": "Mottoman Runners of Scruples"
+    },
+    {
+      "ItemId": "1405158",
+      "ItemName": "Eerem Headwrap of Hail"
+    },
+    {
+      "ItemId": "1405160",
+      "ItemName": "Eerem Headwrap of Discovery"
+    },
+    {
+      "ItemId": "1405162",
+      "ItemName": "Eerem Headwrap of Menace"
+    },
+    {
+      "ItemId": "1405189",
+      "ItemName": "Charred Eerem Raiment"
+    },
+    {
+      "ItemId": "1405191",
+      "ItemName": "Eerem Raiment of Clangor"
+    },
+    {
+      "ItemId": "1405192",
+      "ItemName": "Eerem Raiment of Discovery"
+    },
+    {
+      "ItemId": "1405193",
+      "ItemName": "Eerem Raiment of Pulse"
+    },
+    {
+      "ItemId": "1405221",
+      "ItemName": "Charred Eerem Givehs"
+    },
+    {
+      "ItemId": "1405222",
+      "ItemName": "Eerem Givehs of Hail"
+    },
+    {
+      "ItemId": "1405225",
+      "ItemName": "Eerem Givehs of Pulse"
+    },
+    {
+      "ItemId": "1405349",
+      "ItemName": "Eerem Razor of Eruption"
+    },
+    {
+      "ItemId": "1405350",
+      "ItemName": "Eerem Frostfall Razor"
+    },
+    {
+      "ItemId": "1405351",
+      "ItemName": "Eerem Razor of Clouds"
+    },
+    {
+      "ItemId": "1405352",
+      "ItemName": "Eerem Razor of Ciphers"
+    },
+    {
+      "ItemId": "1405353",
+      "ItemName": "Eerem Razor of Elation"
+    },
+    {
+      "ItemId": "1405354",
+      "ItemName": "Eerem Razor of Agony"
+    },
+    {
+      "ItemId": "1405355",
+      "ItemName": "Eerem Razor of Ability"
+    },
+    {
+      "ItemId": "1405381",
+      "ItemName": "Eerem Necklace of Eruption"
+    },
+    {
+      "ItemId": "1405382",
+      "ItemName": "Eerem Necklace of Frostfall"
+    },
+    {
+      "ItemId": "1405383",
+      "ItemName": "Eerem Necklace of Clouds"
+    },
+    {
+      "ItemId": "1405384",
+      "ItemName": "Eerem Necklace of Ciphers"
+    },
+    {
+      "ItemId": "1405385",
+      "ItemName": "Eerem Necklace of Elation"
+    },
+    {
+      "ItemId": "1405386",
+      "ItemName": "Eerem Necklace of Agony"
+    },
+    {
+      "ItemId": "1405387",
+      "ItemName": "Eerem Necklace of Ability"
+    },
+    {
+      "ItemId": "1405413",
+      "ItemName": "Eerem Signet of Eruption"
+    },
+    {
+      "ItemId": "1405414",
+      "ItemName": "Eerem Signet of Frostfall"
+    },
+    {
+      "ItemId": "1405415",
+      "ItemName": "Eerem Signet of Clouds"
+    },
+    {
+      "ItemId": "1405416",
+      "ItemName": "Eerem Signet of Ciphers"
+    },
+    {
+      "ItemId": "1405417",
+      "ItemName": "Eerem Signet of Elation"
+    },
+    {
+      "ItemId": "1405418",
+      "ItemName": "Eerem Signet of Agony"
+    },
+    {
+      "ItemId": "1405419",
+      "ItemName": "Eerem Signet of Ability"
+    },
+    {
+      "ItemId": "1405447",
+      "ItemName": "Istanboa Sandspouts Khanjar"
+    },
+    {
+      "ItemId": "1405448",
+      "ItemName": "Istanboa Khanjar of Enigmas"
+    },
+    {
+      "ItemId": "1405449",
+      "ItemName": "Gallant Istanboa Khanjar"
+    },
+    {
+      "ItemId": "1405478",
+      "ItemName": "Istanboa Pendant of Icefall"
+    },
+    {
+      "ItemId": "1405479",
+      "ItemName": "Istanboa Sandspouts Pendant"
+    },
+    {
+      "ItemId": "1405480",
+      "ItemName": "Istanboa Pendant of Enigmas"
+    },
+    {
+      "ItemId": "1405481",
+      "ItemName": "Gallant Istanboa Pendant"
+    },
+    {
+      "ItemId": "1405510",
+      "ItemName": "Istanboa Signet of Icefall"
+    },
+    {
+      "ItemId": "1405512",
+      "ItemName": "Istanboa Signet of Enigmas"
+    },
+    {
+      "ItemId": "1405513",
+      "ItemName": "Gallant Istanboa Signet"
+    },
+    {
+      "ItemId": "1405515",
+      "ItemName": "Istanboa Signet of Scruples"
+    },
+    {
+      "ItemId": "1405573",
+      "ItemName": "Smouldering Tetrus Baton"
+    },
+    {
+      "ItemId": "1405574",
+      "ItemName": "Tetrus Baton of Blizzards"
+    },
+    {
+      "ItemId": "1405575",
+      "ItemName": "Tetrus Baton of Torrents"
+    },
+    {
+      "ItemId": "1405576",
+      "ItemName": "Tetrus Baton of Sophistry"
+    },
+    {
+      "ItemId": "1405577",
+      "ItemName": "Tetrus Baton of Readiness"
+    },
+    {
+      "ItemId": "1405578",
+      "ItemName": "Tetrus Baton of Woe"
+    },
+    {
+      "ItemId": "1405579",
+      "ItemName": "Tetrus Baton of Opposition"
+    },
+    {
+      "ItemId": "1405607",
+      "ItemName": "Myriarch Tabarzin of Chaos"
+    },
+    {
+      "ItemId": "1405610",
+      "ItemName": "Myriarch Tabarzin of Fright"
+    },
+    {
+      "ItemId": "1405611",
+      "ItemName": "Myriarch Tabarzin of Renown"
+    }
+  ]
+}

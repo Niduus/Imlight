@@ -1,0 +1,41 @@
+{
+  "Name": "W404 SKB_KR_Lightbane_A_160 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_KR_Lightbane_A_160: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1605749",
+      "ItemName": "Whitehart Fire"
+    },
+    {
+      "ItemId": "1605750",
+      "ItemName": "Deermouse Trap"
+    },
+    {
+      "ItemId": "1605753",
+      "ItemName": "Burrowing Bane"
+    },
+    {
+      "ItemId": "1605751",
+      "ItemName": "Revolutionary's Strike"
+    },
+    {
+      "ItemId": "1605752",
+      "ItemName": "Hero of Khrysalis"
+    },
+    {
+      "ItemId": "1605754",
+      "ItemName": "Kiiii-yaaaa!"
+    },
+    {
+      "ItemId": "1605755",
+      "ItemName": "Dyvim's Resurgence"
+    },
+    {
+      "ItemId": "1621362",
+      "ItemName": "Sporecap"
+    }
+  ]
+}

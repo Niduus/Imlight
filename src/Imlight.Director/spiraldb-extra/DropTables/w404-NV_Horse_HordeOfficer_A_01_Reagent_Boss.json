@@ -1,0 +1,25 @@
+{
+  "Name": "W404 NV_Horse_HordeOfficer_A_01 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Horse_HordeOfficer_A_01: the reagent drops (4), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "537982",
+      "ItemName": "Amber Dust"
+    },
+    {
+      "ItemId": "1206362",
+      "ItemName": "Astral Shard"
+    },
+    {
+      "ItemId": "1350238",
+      "ItemName": "Draconium"
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel"
+    }
+  ]
+}

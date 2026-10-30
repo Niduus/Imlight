@@ -1,0 +1,13 @@
+{
+  "Name": "W404 WL_Khrulhu_Lincoln_A_02 Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table WL_Khrulhu_Lincoln_A_02: the housing drops (1), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1594262",
+      "ItemName": "Early Edition"
+    }
+  ]
+}

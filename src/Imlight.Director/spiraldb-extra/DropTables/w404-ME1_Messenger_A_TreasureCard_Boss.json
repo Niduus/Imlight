@@ -1,0 +1,25 @@
+{
+  "Name": "W404 ME1_Messenger_A TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Messenger_A: the treasurecard drops (4), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Sprite TC WH",
+      "ItemName": "Sprite"
+    },
+    {
+      "ItemId": "Leprechaun TC WH",
+      "ItemName": "Leprechaun"
+    },
+    {
+      "ItemId": "Steel Golem - Balance TC",
+      "ItemName": "Franklinstove"
+    },
+    {
+      "ItemId": "Steel Golem - Myth TC",
+      "ItemName": "Chimenea"
+    }
+  ]
+}

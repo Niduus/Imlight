@@ -1,0 +1,41 @@
+{
+  "Name": "W404 GH-Colossus-Ice-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Colossus-Ice-GHBoss-R7: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136428",
+      "ItemName": "Arctic Shroud"
+    },
+    {
+      "ItemId": "136506",
+      "ItemName": "Ring of the Glacier"
+    },
+    {
+      "ItemId": "136645",
+      "ItemName": "Coat of the Firebird"
+    },
+    {
+      "ItemId": "136647",
+      "ItemName": "Hiemal Robe"
+    },
+    {
+      "ItemId": "136667",
+      "ItemName": "Apothecary's Robe"
+    },
+    {
+      "ItemId": "136671",
+      "ItemName": "Robe of the Nemesis"
+    },
+    {
+      "ItemId": "171221",
+      "ItemName": "Galvanic Boots"
+    },
+    {
+      "ItemId": "171225",
+      "ItemName": "Boots of the Cornucopia"
+    }
+  ]
+}

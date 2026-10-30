@@ -1,0 +1,65 @@
+{
+  "Name": "W404 DM_Werebear_Base_B_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Werebear_Base_B_01: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1707791",
+      "ItemName": "Ancient Dhampir Regalia"
+    },
+    {
+      "ItemId": "1707792",
+      "ItemName": "Ancient Living Dead Regalia"
+    },
+    {
+      "ItemId": "1707793",
+      "ItemName": "Ancient Hemavore Regalia"
+    },
+    {
+      "ItemId": "1707794",
+      "ItemName": "Ancient Nightstalker Regalia"
+    },
+    {
+      "ItemId": "1707795",
+      "ItemName": "Ancient Immortal Regalia"
+    },
+    {
+      "ItemId": "1707796",
+      "ItemName": "Ancient Vampire Regalia"
+    },
+    {
+      "ItemId": "1707797",
+      "ItemName": "Ancient Nosferatu Regalia"
+    },
+    {
+      "ItemId": "1712460",
+      "ItemName": "Fledgling Dhampir Regalia"
+    },
+    {
+      "ItemId": "1712461",
+      "ItemName": "Fledgling Living Dead Regalia"
+    },
+    {
+      "ItemId": "1712462",
+      "ItemName": "Fledgling Hemavore Regalia"
+    },
+    {
+      "ItemId": "1712463",
+      "ItemName": "Fledgling Nightstalker Regalia"
+    },
+    {
+      "ItemId": "1712464",
+      "ItemName": "Fledgling Immortal Regalia"
+    },
+    {
+      "ItemId": "1712465",
+      "ItemName": "Fledgling Vampire Regalia"
+    },
+    {
+      "ItemId": "1712466",
+      "ItemName": "Fledgling Nosferatu Regalia"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "Name": "W404 Warrior-Female-Horns-Green-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Warrior-Female-Horns-Green-Boss-R8: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104598",
+      "ItemName": "Coat of Impartiality"
+    },
+    {
+      "ItemId": "104640",
+      "ItemName": "Librarian's Robes"
+    },
+    {
+      "ItemId": "104679",
+      "ItemName": "Chilling Cloak"
+    },
+    {
+      "ItemId": "104681",
+      "ItemName": "Ice-Drake's Tunic"
+    },
+    {
+      "ItemId": "104756",
+      "ItemName": "Blizzard Boots"
+    },
+    {
+      "ItemId": "104761",
+      "ItemName": "Pyrelance's Glacial Striders"
+    },
+    {
+      "ItemId": "104811",
+      "ItemName": "Footgear of Corporeality"
+    },
+    {
+      "ItemId": "104822",
+      "ItemName": "Shoes of Equilibrium"
+    },
+    {
+      "ItemId": "104835",
+      "ItemName": "Vineyard Shoes"
+    },
+    {
+      "ItemId": "104846",
+      "ItemName": "Mocassins of the Gale"
+    },
+    {
+      "ItemId": "126562",
+      "ItemName": "Ring of Equilibrium"
+    },
+    {
+      "ItemId": "126637",
+      "ItemName": "Ring of Truthiness"
+    },
+    {
+      "ItemId": "126672",
+      "ItemName": "Deck of the Devouring Flame"
+    },
+    {
+      "ItemId": "146167",
+      "ItemName": "Scaled Smallsword"
+    },
+    {
+      "ItemId": "146170",
+      "ItemName": "Blade of Ashes"
+    },
+    {
+      "ItemId": "146230",
+      "ItemName": "Pyrelance's Downpouring Hood"
+    },
+    {
+      "ItemId": "146259",
+      "ItemName": "Herbalist's Hood"
+    },
+    {
+      "ItemId": "146320",
+      "ItemName": "Blazing Bonnet"
+    },
+    {
+      "ItemId": "146332",
+      "ItemName": "Mantle of the Undying"
+    }
+  ]
+}

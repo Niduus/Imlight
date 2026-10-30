@@ -1,0 +1,57 @@
+{
+  "Name": "W404 ME1_Evil_Snowman_A Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Evil_Snowman_A: the housing drops (12), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82897",
+      "ItemName": "Bushy Palm Tree"
+    },
+    {
+      "ItemId": "181061",
+      "ItemName": "Large Evergreen Tree"
+    },
+    {
+      "ItemId": "181062",
+      "ItemName": "Medium Evergreen Tree"
+    },
+    {
+      "ItemId": "181063",
+      "ItemName": "Small Evergreen Tree"
+    },
+    {
+      "ItemId": "181064",
+      "ItemName": "Large Fir Tree"
+    },
+    {
+      "ItemId": "181065",
+      "ItemName": "Medium Fir Tree"
+    },
+    {
+      "ItemId": "181066",
+      "ItemName": "Small Fir Tree"
+    },
+    {
+      "ItemId": "181111",
+      "ItemName": "Great Pine Tree"
+    },
+    {
+      "ItemId": "181112",
+      "ItemName": "Medium Pine Tree"
+    },
+    {
+      "ItemId": "181113",
+      "ItemName": "Coniferous Tree"
+    },
+    {
+      "ItemId": "342150",
+      "ItemName": "Leaning Palm Tree"
+    },
+    {
+      "ItemId": "342151",
+      "ItemName": "Broken Palm Tree"
+    }
+  ]
+}

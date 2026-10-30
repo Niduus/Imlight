@@ -1,0 +1,65 @@
+{
+  "Name": "W404 G14-SB-Boss-GuardianOni Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-SB-Boss-GuardianOni: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1338157",
+      "ItemName": "Monk's Steel of Combustion"
+    },
+    {
+      "ItemId": "1338158",
+      "ItemName": "Point of the Icy Himoolayas"
+    },
+    {
+      "ItemId": "1338159",
+      "ItemName": "Kris of the Calamitous Hoof"
+    },
+    {
+      "ItemId": "1338160",
+      "ItemName": "Hoof's Bewildering Dagger"
+    },
+    {
+      "ItemId": "1338161",
+      "ItemName": "Monk's Thorn of Fortitude"
+    },
+    {
+      "ItemId": "1338162",
+      "ItemName": "Asura's Steel of Malcontent"
+    },
+    {
+      "ItemId": "1338163",
+      "ItemName": "Pagoda of Harmony Razor"
+    },
+    {
+      "ItemId": "1338493",
+      "ItemName": "Fingers of Fire Dramyin"
+    },
+    {
+      "ItemId": "1338494",
+      "ItemName": "Frosty Himoolayan Dranyen"
+    },
+    {
+      "ItemId": "1338495",
+      "ItemName": "Himoolayan Lute of Snowfall"
+    },
+    {
+      "ItemId": "1338496",
+      "ItemName": "Song of Shangri-Baa"
+    },
+    {
+      "ItemId": "1338497",
+      "ItemName": "Lute of the Hale & Hearty"
+    },
+    {
+      "ItemId": "1338498",
+      "ItemName": "Monk's Instrument of Death"
+    },
+    {
+      "ItemId": "1338499",
+      "ItemName": "Himoolayan Harmony Maker"
+    }
+  ]
+}

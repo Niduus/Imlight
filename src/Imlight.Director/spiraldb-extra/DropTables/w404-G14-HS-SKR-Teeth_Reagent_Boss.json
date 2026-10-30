@@ -1,0 +1,21 @@
+{
+  "Name": "W404 G14-HS-SKR-Teeth Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-HS-SKR-Teeth: the reagent drops (3), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1340032",
+      "ItemName": "Mote of Severity"
+    },
+    {
+      "ItemId": "1494694",
+      "ItemName": "Snow Serpent"
+    },
+    {
+      "ItemId": "1494695",
+      "ItemName": "Imp"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "Name": "W404 KT-Level-28",
+  "Description": "Gold of the game's table KT-Level-28, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 9,
+  "MaxGold": 16,
+  "EachItem": false,
+  "Items": []
+}

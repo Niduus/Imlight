@@ -1,0 +1,121 @@
+{
+  "Name": "W404 WL_KoalaRider_Mask_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WL_KoalaRider_Mask_A_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1628292",
+      "ItemName": "Elegant City Dweller Kanga-Cap"
+    },
+    {
+      "ItemId": "1628293",
+      "ItemName": "Gothic City Dweller Kanga-Cap"
+    },
+    {
+      "ItemId": "1628294",
+      "ItemName": "Flashy City Dweller Kanga-Cap"
+    },
+    {
+      "ItemId": "1628295",
+      "ItemName": "Crisp City Dweller Kanga-Cap"
+    },
+    {
+      "ItemId": "1628296",
+      "ItemName": "Vibrant City Dweller Kanga-Cap"
+    },
+    {
+      "ItemId": "1628297",
+      "ItemName": "Iconic City Dweller Kanga-Cap"
+    },
+    {
+      "ItemId": "1628298",
+      "ItemName": "Striking City Dweller KangaCap"
+    },
+    {
+      "ItemId": "1628299",
+      "ItemName": "Elegant City Dweller Vest"
+    },
+    {
+      "ItemId": "1628300",
+      "ItemName": "Gothic City Dweller Vest"
+    },
+    {
+      "ItemId": "1628301",
+      "ItemName": "Flashy City Dweller Vest"
+    },
+    {
+      "ItemId": "1628302",
+      "ItemName": "Crisp City Dweller Vest"
+    },
+    {
+      "ItemId": "1628303",
+      "ItemName": "Vibrant City Dweller Vest"
+    },
+    {
+      "ItemId": "1628304",
+      "ItemName": "Iconic City Dweller Vest"
+    },
+    {
+      "ItemId": "1628305",
+      "ItemName": "Striking City Dweller Vest"
+    },
+    {
+      "ItemId": "1628502",
+      "ItemName": "Elegant Townie Kanga-Cap"
+    },
+    {
+      "ItemId": "1628503",
+      "ItemName": "Gothic Townie Kanga-Cap"
+    },
+    {
+      "ItemId": "1628504",
+      "ItemName": "Flashy Townie Kanga-Cap"
+    },
+    {
+      "ItemId": "1628505",
+      "ItemName": "Crisp Townie Kanga-Cap"
+    },
+    {
+      "ItemId": "1628506",
+      "ItemName": "Vibrant Townie Kanga-Cap"
+    },
+    {
+      "ItemId": "1628507",
+      "ItemName": "Iconic Townie Kanga-Cap"
+    },
+    {
+      "ItemId": "1628508",
+      "ItemName": "Striking Townie Kanga-Cap"
+    },
+    {
+      "ItemId": "1628509",
+      "ItemName": "Elegant Townie Vest"
+    },
+    {
+      "ItemId": "1628510",
+      "ItemName": "Gothic Townie Vest"
+    },
+    {
+      "ItemId": "1628511",
+      "ItemName": "Flashy Townie Vest"
+    },
+    {
+      "ItemId": "1628512",
+      "ItemName": "Crisp Townie Vest"
+    },
+    {
+      "ItemId": "1628513",
+      "ItemName": "Vibrant Townie Vest"
+    },
+    {
+      "ItemId": "1628514",
+      "ItemName": "Iconic Townie Vest"
+    },
+    {
+      "ItemId": "1628515",
+      "ItemName": "Striking Townie Vest"
+    }
+  ]
+}

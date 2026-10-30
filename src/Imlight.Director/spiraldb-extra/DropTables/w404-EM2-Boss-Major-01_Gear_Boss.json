@@ -1,0 +1,73 @@
+{
+  "Name": "W404 EM2-Boss-Major-01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM2-Boss-Major-01: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462348",
+      "ItemName": "Fiery Paradox Amulet"
+    },
+    {
+      "ItemId": "1462349",
+      "ItemName": "Icy Paradox Amulet"
+    },
+    {
+      "ItemId": "1462350",
+      "ItemName": "Stormy Paradox Amulet"
+    },
+    {
+      "ItemId": "1462351",
+      "ItemName": "Mythic Paradox Amulet"
+    },
+    {
+      "ItemId": "1462352",
+      "ItemName": "Lively Paradox Amulet"
+    },
+    {
+      "ItemId": "1462353",
+      "ItemName": "Deathly Paradox Amulet"
+    },
+    {
+      "ItemId": "1462354",
+      "ItemName": "Balanced Paradox Amulet"
+    },
+    {
+      "ItemId": "1462355",
+      "ItemName": "Divine Paradox Amulet"
+    },
+    {
+      "ItemId": "1462356",
+      "ItemName": "Fiery Paradox Ring"
+    },
+    {
+      "ItemId": "1462357",
+      "ItemName": "Icy Paradox Ring"
+    },
+    {
+      "ItemId": "1462358",
+      "ItemName": "Stormy Paradox Ring"
+    },
+    {
+      "ItemId": "1462359",
+      "ItemName": "Mythic Paradox Ring"
+    },
+    {
+      "ItemId": "1462360",
+      "ItemName": "Lively Paradox Ring"
+    },
+    {
+      "ItemId": "1462361",
+      "ItemName": "Deathly Paradox Ring"
+    },
+    {
+      "ItemId": "1462362",
+      "ItemName": "Balanced Paradox Ring"
+    },
+    {
+      "ItemId": "1462363",
+      "ItemName": "Divine Paradox Ring"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Mob-1223077 Housing (Elite)",
+  "Description": "Wizard404's drop list of Devil's Flower's own drops: the housing drops (1), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1603216",
+      "ItemName": "Umbra Cooking Pot"
+    }
+  ]
+}

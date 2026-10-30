@@ -1,0 +1,25 @@
+{
+  "Name": "W404 MS-Pig-War-Warrior-MSBoss-L42 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-War-Warrior-MSBoss-L42: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160468",
+      "ItemName": "Futon Pillow"
+    },
+    {
+      "ItemId": "160472",
+      "ItemName": "Paper Lantern"
+    },
+    {
+      "ItemId": "470211",
+      "ItemName": "Landscape Painting"
+    },
+    {
+      "ItemId": "470221",
+      "ItemName": "Single Bed"
+    }
+  ]
+}

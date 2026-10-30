@@ -1,0 +1,41 @@
+{
+  "Name": "W404 TC-AV-Utility-Balance TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-AV-Utility-Balance: the treasurecard drops (8), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Spirit Shield TC",
+      "ItemName": "Spirit Shield"
+    },
+    {
+      "ItemId": "Black Mantle TC",
+      "ItemName": "Black Mantle"
+    },
+    {
+      "ItemId": "Helping Hands TC",
+      "ItemName": "Helping Hands"
+    },
+    {
+      "ItemId": "Hex TC",
+      "ItemName": "Hex"
+    },
+    {
+      "ItemId": "Bladestorm TC",
+      "ItemName": "Bladestorm"
+    },
+    {
+      "ItemId": "Spirit Defuse TC",
+      "ItemName": "Spirit Defuse"
+    },
+    {
+      "ItemId": "Elemental Defuse TC",
+      "ItemName": "Elemental Defuse"
+    },
+    {
+      "ItemId": "Availing Hands TC",
+      "ItemName": "Availing Hands"
+    }
+  ]
+}

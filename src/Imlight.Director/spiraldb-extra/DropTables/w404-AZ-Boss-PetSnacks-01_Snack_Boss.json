@@ -1,0 +1,53 @@
+{
+  "Name": "W404 AZ-Boss-PetSnacks-01 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-Boss-PetSnacks-01: the snack drops (11), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220275",
+      "ItemName": "Glowing Dragon Fruit"
+    },
+    {
+      "ItemId": "473582",
+      "ItemName": "Kola Nuts"
+    },
+    {
+      "ItemId": "473717",
+      "ItemName": "Treant Bark"
+    },
+    {
+      "ItemId": "473720",
+      "ItemName": "Roasted Chickpeas"
+    },
+    {
+      "ItemId": "733117",
+      "ItemName": "Tenochti-flan"
+    },
+    {
+      "ItemId": "733125",
+      "ItemName": "Cactus Fruit"
+    },
+    {
+      "ItemId": "733127",
+      "ItemName": "Tricera-pops"
+    },
+    {
+      "ItemId": "733129",
+      "ItemName": "Pyramints"
+    },
+    {
+      "ItemId": "733130",
+      "ItemName": "Caramel Apple"
+    },
+    {
+      "ItemId": "733134",
+      "ItemName": "Rex Tea"
+    },
+    {
+      "ItemId": "733140",
+      "ItemName": "Tamales"
+    }
+  ]
+}

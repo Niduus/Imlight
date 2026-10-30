@@ -1,0 +1,97 @@
+{
+  "Name": "W404 MB-Cat-Burglar-Yellow-MBBoss-L39 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Burglar-Yellow-MBBoss-L39: the gear drops (22), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "39022",
+      "ItemName": "Brady's Solar Cowl"
+    },
+    {
+      "ItemId": "39033",
+      "ItemName": "Sneak's Frosty Headwrap"
+    },
+    {
+      "ItemId": "39068",
+      "ItemName": "Brady's Conventional Ring"
+    },
+    {
+      "ItemId": "77083",
+      "ItemName": "Brady's Provincial Ring"
+    },
+    {
+      "ItemId": "77177",
+      "ItemName": "Brady's Frigid Garment"
+    },
+    {
+      "ItemId": "77226",
+      "ItemName": "Brady's Boots of the Cultured"
+    },
+    {
+      "ItemId": "87478",
+      "ItemName": "Brady's Staff of Intensity"
+    },
+    {
+      "ItemId": "97092",
+      "ItemName": "Brady's Provincial Kris"
+    },
+    {
+      "ItemId": "97125",
+      "ItemName": "Brady's Distressed Deck"
+    },
+    {
+      "ItemId": "97129",
+      "ItemName": "Brady's Deck of the Kraken"
+    },
+    {
+      "ItemId": "97164",
+      "ItemName": "Brady's Hat of History"
+    },
+    {
+      "ItemId": "97198",
+      "ItemName": "Sneak's Frightful Hat"
+    },
+    {
+      "ItemId": "97201",
+      "ItemName": "Brady's Hat of Reverence"
+    },
+    {
+      "ItemId": "97204",
+      "ItemName": "Brady's Hat of Extinction"
+    },
+    {
+      "ItemId": "97262",
+      "ItemName": "Brady's Robe of the Cyclops"
+    },
+    {
+      "ItemId": "97269",
+      "ItemName": "The Sneak's Puzzling Robes"
+    },
+    {
+      "ItemId": "97296",
+      "ItemName": "The Sneak's Phobic Robe"
+    },
+    {
+      "ItemId": "97317",
+      "ItemName": "Sneak's Robe of Parity"
+    },
+    {
+      "ItemId": "97346",
+      "ItemName": "Brady's Stylish Sandals"
+    },
+    {
+      "ItemId": "97366",
+      "ItemName": "Brady's Victorian Boots"
+    },
+    {
+      "ItemId": "97375",
+      "ItemName": "The Sneak's Noble Shoes"
+    },
+    {
+      "ItemId": "97405",
+      "ItemName": "Brady's Formal Slippers"
+    }
+  ]
+}

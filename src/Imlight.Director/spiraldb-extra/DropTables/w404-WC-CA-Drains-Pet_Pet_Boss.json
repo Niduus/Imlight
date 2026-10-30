@@ -1,0 +1,13 @@
+{
+  "Name": "W404 WC-CA-Drains-Pet Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table WC-CA-Drains-Pet: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1489645",
+      "ItemName": "Feathered Tabby"
+    }
+  ]
+}

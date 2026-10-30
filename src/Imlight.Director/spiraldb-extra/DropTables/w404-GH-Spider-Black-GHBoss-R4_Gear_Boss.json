@@ -1,0 +1,41 @@
+{
+  "Name": "W404 GH-Spider-Black-GHBoss-R4 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Spider-Black-GHBoss-R4: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136263",
+      "ItemName": "Reaper's Quill"
+    },
+    {
+      "ItemId": "136345",
+      "ItemName": "Cap of the Lost Heritage"
+    },
+    {
+      "ItemId": "136346",
+      "ItemName": "Doomfollower's Hat"
+    },
+    {
+      "ItemId": "136472",
+      "ItemName": "Maelstrom's Loop"
+    },
+    {
+      "ItemId": "136559",
+      "ItemName": "Robe of Elan"
+    },
+    {
+      "ItemId": "136580",
+      "ItemName": "Vestment of Smoke"
+    },
+    {
+      "ItemId": "171121",
+      "ItemName": "Ice-caked Striders"
+    },
+    {
+      "ItemId": "171122",
+      "ItemName": "Applicant's Shoes"
+    }
+  ]
+}

@@ -1,0 +1,253 @@
+{
+  "Name": "W404 AQ-Mob-90 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table AQ-Mob-90: the gear drops (61), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730227",
+      "ItemName": "Tears of Mother Moon Blade"
+    },
+    {
+      "ItemId": "730228",
+      "ItemName": "Fang of the Night Sky"
+    },
+    {
+      "ItemId": "730229",
+      "ItemName": "Burning Water Talon"
+    },
+    {
+      "ItemId": "730230",
+      "ItemName": "Bleeding Sun Dagger"
+    },
+    {
+      "ItemId": "730231",
+      "ItemName": "Winged Tooth Knight's Hook"
+    },
+    {
+      "ItemId": "730232",
+      "ItemName": "Moon Skull's Blessed Edge"
+    },
+    {
+      "ItemId": "730233",
+      "ItemName": "Thunder Horn's Rough Cutter"
+    },
+    {
+      "ItemId": "730269",
+      "ItemName": "Elite Jura Guard Helm"
+    },
+    {
+      "ItemId": "730270",
+      "ItemName": "Twisted Fang Mask"
+    },
+    {
+      "ItemId": "730271",
+      "ItemName": "Indigo Wing Crown"
+    },
+    {
+      "ItemId": "730272",
+      "ItemName": "Tree of Secrets Chac Mask"
+    },
+    {
+      "ItemId": "730273",
+      "ItemName": "Five Fangs of Fury Headdress"
+    },
+    {
+      "ItemId": "730274",
+      "ItemName": "Thirteen Death Mask"
+    },
+    {
+      "ItemId": "730275",
+      "ItemName": "Dawn Hour Mantle"
+    },
+    {
+      "ItemId": "730308",
+      "ItemName": "Bleeding Sun Warrior's Loop"
+    },
+    {
+      "ItemId": "730309",
+      "ItemName": "Mother Moon's Count Ring"
+    },
+    {
+      "ItemId": "730310",
+      "ItemName": "Falling Star's End Time Band"
+    },
+    {
+      "ItemId": "730311",
+      "ItemName": "Acampi Reedfist's Lost Seal"
+    },
+    {
+      "ItemId": "730336",
+      "ItemName": "Elite Jura Guard Garb"
+    },
+    {
+      "ItemId": "730337",
+      "ItemName": "Twisted Fang Vestments"
+    },
+    {
+      "ItemId": "730338",
+      "ItemName": "Indigo Wing Raiment"
+    },
+    {
+      "ItemId": "730339",
+      "ItemName": "Tree of Secrets Chac Armor"
+    },
+    {
+      "ItemId": "730340",
+      "ItemName": "Five Fangs of Fury Scales"
+    },
+    {
+      "ItemId": "730341",
+      "ItemName": "Thirteen Death Robe"
+    },
+    {
+      "ItemId": "730342",
+      "ItemName": "Dawn Hour Xicolli Vest"
+    },
+    {
+      "ItemId": "730343",
+      "ItemName": "Black Tears of the Sky Drape"
+    },
+    {
+      "ItemId": "730383",
+      "ItemName": "Elite Jura Guard Stalkers"
+    },
+    {
+      "ItemId": "730384",
+      "ItemName": "Twisted Fang Boots"
+    },
+    {
+      "ItemId": "730385",
+      "ItemName": "Indigo Wing Striders"
+    },
+    {
+      "ItemId": "730386",
+      "ItemName": "Tree of Secrets Chac Runners"
+    },
+    {
+      "ItemId": "730387",
+      "ItemName": "Five Fangs of Fury Boots"
+    },
+    {
+      "ItemId": "730388",
+      "ItemName": "Black Tears of Night Wraps"
+    },
+    {
+      "ItemId": "730389",
+      "ItemName": "Heart of Sky Boots"
+    },
+    {
+      "ItemId": "819579",
+      "ItemName": "Senator's Laurel of Sparks"
+    },
+    {
+      "ItemId": "819580",
+      "ItemName": "Senator's Frostfall Laurel"
+    },
+    {
+      "ItemId": "819581",
+      "ItemName": "Senator's Monsoon Laurel"
+    },
+    {
+      "ItemId": "819582",
+      "ItemName": "Senator's Laurel of Wisdom"
+    },
+    {
+      "ItemId": "819583",
+      "ItemName": "Senator's Spirited Laurel"
+    },
+    {
+      "ItemId": "819584",
+      "ItemName": "Senator's Laurel of Demise"
+    },
+    {
+      "ItemId": "819585",
+      "ItemName": "Senator's Noble Laurel"
+    },
+    {
+      "ItemId": "819600",
+      "ItemName": "Senator's Toga of Sparks"
+    },
+    {
+      "ItemId": "819601",
+      "ItemName": "Senator's Frostfall Toga"
+    },
+    {
+      "ItemId": "819602",
+      "ItemName": "Senator's Monsoon Toga"
+    },
+    {
+      "ItemId": "819603",
+      "ItemName": "Senator's Toga of Wisdom"
+    },
+    {
+      "ItemId": "819604",
+      "ItemName": "Senator's Spirited Toga"
+    },
+    {
+      "ItemId": "819605",
+      "ItemName": "Senator's Toga of Demise"
+    },
+    {
+      "ItemId": "819606",
+      "ItemName": "Senator's Noble Toga"
+    },
+    {
+      "ItemId": "819621",
+      "ItemName": "Senator's Sparking Sandals"
+    },
+    {
+      "ItemId": "819622",
+      "ItemName": "Senator's Frostfall Shoes"
+    },
+    {
+      "ItemId": "819623",
+      "ItemName": "Senator's Monsoon Sandals"
+    },
+    {
+      "ItemId": "819624",
+      "ItemName": "Senator's Shoes of Wisdom"
+    },
+    {
+      "ItemId": "819625",
+      "ItemName": "Senator's Spirited Shoes"
+    },
+    {
+      "ItemId": "819626",
+      "ItemName": "Senator's Shoes of Demise"
+    },
+    {
+      "ItemId": "819627",
+      "ItemName": "Senator's Noble Sandals"
+    },
+    {
+      "ItemId": "819743",
+      "ItemName": "Ares' Scalding Spear"
+    },
+    {
+      "ItemId": "819744",
+      "ItemName": "Ares' Numbing Spear"
+    },
+    {
+      "ItemId": "819745",
+      "ItemName": "Ares' Cyclone Spear"
+    },
+    {
+      "ItemId": "819746",
+      "ItemName": "Ares' Spear of Wits"
+    },
+    {
+      "ItemId": "819747",
+      "ItemName": "Ares' Spear of Nerve"
+    },
+    {
+      "ItemId": "819748",
+      "ItemName": "Ares' Spear of Guile"
+    },
+    {
+      "ItemId": "819749",
+      "ItemName": "Ares' Stout Spear"
+    }
+  ]
+}

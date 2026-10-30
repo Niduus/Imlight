@@ -1,0 +1,13 @@
+{
+  "Name": "W404 CL-Pet-Bloodbat Pet (Normal)",
+  "Description": "Wizard404's drop list of the game's table CL-Pet-Bloodbat: the pet drops (1), one picked when it rolls. How often: DropOdds.json Normal/Pet.",
+  "Odds": "Normal/Pet",
+  "RollChance": 0.02,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1374388",
+      "ItemName": "Bloodwing"
+    }
+  ]
+}

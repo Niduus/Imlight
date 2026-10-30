@@ -1,0 +1,77 @@
+{
+  "Name": "W404 MS-Mob-Jewels-1 Jewel (Normal)",
+  "Description": "Wizard404's drop list of the game's table MS-Mob-Jewels-1: the jewel drops (17), one picked when it rolls. How often: DropOdds.json Normal/Jewel.",
+  "Odds": "Normal/Jewel",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1352357",
+      "ItemName": "Flawed Health Opal +31"
+    },
+    {
+      "ItemId": "1352358",
+      "ItemName": "Flawed Health Opal +32"
+    },
+    {
+      "ItemId": "1352359",
+      "ItemName": "Flawed Health Opal +33"
+    },
+    {
+      "ItemId": "1352443",
+      "ItemName": "Flawed Mana Opal +15"
+    },
+    {
+      "ItemId": "1352444",
+      "ItemName": "Flawed Mana Opal +16"
+    },
+    {
+      "ItemId": "1352754",
+      "ItemName": "Blemished Damage Opal +6"
+    },
+    {
+      "ItemId": "1352818",
+      "ItemName": "Flawed Mending Opal +2%"
+    },
+    {
+      "ItemId": "1352935",
+      "ItemName": "Flawed Resilient Opal +2%"
+    },
+    {
+      "ItemId": "1352940",
+      "ItemName": "Flawed Healing Opal +2%"
+    },
+    {
+      "ItemId": "1357127",
+      "ItemName": "Flawed PIP Opal +3%"
+    },
+    {
+      "ItemId": "1357254",
+      "ItemName": "Flawed Defense Ruby +18"
+    },
+    {
+      "ItemId": "1357299",
+      "ItemName": "Flawed Defense Sapphire +18"
+    },
+    {
+      "ItemId": "1357344",
+      "ItemName": "Flawed Defense Amethyst +18"
+    },
+    {
+      "ItemId": "1357389",
+      "ItemName": "Flawed Defense Peridot +18"
+    },
+    {
+      "ItemId": "1357434",
+      "ItemName": "Flawed Defense Jade +18"
+    },
+    {
+      "ItemId": "1357479",
+      "ItemName": "Flawed Defense Onyx +18"
+    },
+    {
+      "ItemId": "1357524",
+      "ItemName": "Flawed Defense Citrine +18"
+    }
+  ]
+}

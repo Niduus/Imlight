@@ -1,0 +1,21 @@
+{
+  "Name": "W404 AQ-Immortal-Poseidon-B TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table AQ-Immortal-Poseidon-B: the treasurecard drops (3), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Athena Battle Sight - TC",
+      "ItemName": "Athena Battle Sight"
+    },
+    {
+      "ItemId": "Hephaestus Coppersmith - TC",
+      "ItemName": "Hephaestus"
+    },
+    {
+      "ItemId": "Queen Calypso - TC",
+      "ItemName": "Queen Calypso"
+    }
+  ]
+}

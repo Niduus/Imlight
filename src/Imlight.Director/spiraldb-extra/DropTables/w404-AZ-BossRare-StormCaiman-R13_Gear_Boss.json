@@ -1,0 +1,57 @@
+{
+  "Name": "W404 AZ-BossRare-StormCaiman-R13 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossRare-StormCaiman-R13: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730236",
+      "ItemName": "Smoking Mirror's Final Touch"
+    },
+    {
+      "ItemId": "730247",
+      "ItemName": "Vibrant Green Flower Thorn"
+    },
+    {
+      "ItemId": "730310",
+      "ItemName": "Falling Star's End Time Band"
+    },
+    {
+      "ItemId": "730313",
+      "ItemName": "Celestial Codex Ring"
+    },
+    {
+      "ItemId": "730316",
+      "ItemName": "Broken Spears Band"
+    },
+    {
+      "ItemId": "730353",
+      "ItemName": "Storm Owl's Favored Robes"
+    },
+    {
+      "ItemId": "730393",
+      "ItemName": "Black Sun Chac's Stalkers"
+    },
+    {
+      "ItemId": "730396",
+      "ItemName": "Eagle Lord's Cloud Dancers"
+    },
+    {
+      "ItemId": "730418",
+      "ItemName": "Storm Sun Gallery"
+    },
+    {
+      "ItemId": "730425",
+      "ItemName": "Storm Caimans Pyramid Deck"
+    },
+    {
+      "ItemId": "730449",
+      "ItemName": "Rod of the Black Sun"
+    },
+    {
+      "ItemId": "730450",
+      "ItemName": "Heart of the Sky Scepter"
+    }
+  ]
+}

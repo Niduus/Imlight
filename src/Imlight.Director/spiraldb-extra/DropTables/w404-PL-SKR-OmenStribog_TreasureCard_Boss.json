@@ -1,0 +1,185 @@
+{
+  "Name": "W404 PL-SKR-OmenStribog TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-SKR-OmenStribog: the treasurecard drops (44), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Woolly Mammoth TC",
+      "ItemName": "Woolly Mammoth"
+    },
+    {
+      "ItemId": "Winters Web TC",
+      "ItemName": "Abominable Weaver"
+    },
+    {
+      "ItemId": "Winter Moon TC",
+      "ItemName": "Winter Moon"
+    },
+    {
+      "ItemId": "Wild Bolt TC",
+      "ItemName": "Wild Bolt"
+    },
+    {
+      "ItemId": "Tri Spear TC",
+      "ItemName": "Elemental Spear"
+    },
+    {
+      "ItemId": "Tri Blade TC",
+      "ItemName": "Elemental Blade"
+    },
+    {
+      "ItemId": "Tri Trap TC",
+      "ItemName": "Elemental Trap"
+    },
+    {
+      "ItemId": "Sunbird Ice TC",
+      "ItemName": "Icebird"
+    },
+    {
+      "ItemId": "Steel Golem - Ice TC",
+      "ItemName": "Coldiron"
+    },
+    {
+      "ItemId": "Snowball Barrage TC",
+      "ItemName": "Snowball Barrage"
+    },
+    {
+      "ItemId": "Snow Shield TC",
+      "ItemName": "Snow Shield"
+    },
+    {
+      "ItemId": "Snow Drift TC",
+      "ItemName": "Snow Drift"
+    },
+    {
+      "ItemId": "Snow Angel TC",
+      "ItemName": "Snow Angel"
+    },
+    {
+      "ItemId": "Sabertooth TC",
+      "ItemName": "Sabertooth"
+    },
+    {
+      "ItemId": "Sabertooth Ice TC",
+      "ItemName": "Frostfang"
+    },
+    {
+      "ItemId": "Reshuffle TC",
+      "ItemName": "Reshuffle"
+    },
+    {
+      "ItemId": "Rebirth TC",
+      "ItemName": "Rebirth"
+    },
+    {
+      "ItemId": "Polar Swarm TC",
+      "ItemName": "Polar Swarm"
+    },
+    {
+      "ItemId": "Mutate - Sunbird to Ice TC",
+      "ItemName": "Mutate Bird"
+    },
+    {
+      "ItemId": "Mutate - Stormzilla to Ice TC",
+      "ItemName": "Mutate Monster"
+    },
+    {
+      "ItemId": "Mutate - Storm Shark to Ice TC",
+      "ItemName": "Mutate Shark"
+    },
+    {
+      "ItemId": "Mutate - Phoenix to Ice TC",
+      "ItemName": "Mutate Phoenix"
+    },
+    {
+      "ItemId": "Mutate - Locust Swarm to Polar Swarm TC",
+      "ItemName": "Mutate Swarm"
+    },
+    {
+      "ItemId": "Mutate - Ice Wyvern to Storm TC",
+      "ItemName": "Mutate Wyvern"
+    },
+    {
+      "ItemId": "Mutate - Ice Wyvern to Fire Wyvern TC",
+      "ItemName": "Mutate Wyvern"
+    },
+    {
+      "ItemId": "Mutate - Ice Wyvern to Fire TC",
+      "ItemName": "Mutate Wyvern"
+    },
+    {
+      "ItemId": "Mutate - Helephant to Ice TC",
+      "ItemName": "Mutate Helephant"
+    },
+    {
+      "ItemId": "Mutate - Heck Hound to Ice TC",
+      "ItemName": "Mutate Hound"
+    },
+    {
+      "ItemId": "Minion Ice TC",
+      "ItemName": "Ice Guardian"
+    },
+    {
+      "ItemId": "Mass Ice Prism TC",
+      "ItemName": "Mass Ice Prism"
+    },
+    {
+      "ItemId": "Ice Armor TC",
+      "ItemName": "Ice Armor"
+    },
+    {
+      "ItemId": "Gargantuan TC",
+      "ItemName": "Gargantuan"
+    },
+    {
+      "ItemId": "Frozen Armor TC",
+      "ItemName": "Frozen Armor"
+    },
+    {
+      "ItemId": "Earthquake TC",
+      "ItemName": "Earthquake"
+    },
+    {
+      "ItemId": "Dryad TC",
+      "ItemName": "Dryad"
+    },
+    {
+      "ItemId": "Dragonblade TC",
+      "ItemName": "Dragonblade"
+    },
+    {
+      "ItemId": "Deathspear TC",
+      "ItemName": "Deathspear"
+    },
+    {
+      "ItemId": "Dragonspear TC",
+      "ItemName": "Dragonspear"
+    },
+    {
+      "ItemId": "Firespear TC",
+      "ItemName": "Firespear"
+    },
+    {
+      "ItemId": "Icespear TC",
+      "ItemName": "Icespear"
+    },
+    {
+      "ItemId": "Lifespear TC",
+      "ItemName": "Lifespear"
+    },
+    {
+      "ItemId": "Mythspear TC",
+      "ItemName": "Mythspear"
+    },
+    {
+      "ItemId": "Spirit Spear TC",
+      "ItemName": "Spirit Spear"
+    },
+    {
+      "ItemId": "Stormspear TC",
+      "ItemName": "Stormspear"
+    }
+  ]
+}

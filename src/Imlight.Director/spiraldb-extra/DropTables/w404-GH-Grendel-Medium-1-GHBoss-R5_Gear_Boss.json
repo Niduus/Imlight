@@ -1,0 +1,37 @@
+{
+  "Name": "W404 GH-Grendel-Medium-1-GHBoss-R5 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Grendel-Medium-1-GHBoss-R5: the gear drops (7), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136375",
+      "ItemName": "Equanimous Headdress"
+    },
+    {
+      "ItemId": "136382",
+      "ItemName": "Mythic Mantle"
+    },
+    {
+      "ItemId": "136610",
+      "ItemName": "Algid Longcoat"
+    },
+    {
+      "ItemId": "136614",
+      "ItemName": "Cloak of the Museum"
+    },
+    {
+      "ItemId": "136616",
+      "ItemName": "Topiary Tunic"
+    },
+    {
+      "ItemId": "136620",
+      "ItemName": "Ordered Drape"
+    },
+    {
+      "ItemId": "171174",
+      "ItemName": "Slippers of the Shadow"
+    }
+  ]
+}

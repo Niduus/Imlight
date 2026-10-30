@@ -1,0 +1,177 @@
+{
+  "Name": "W404 G14-HS-Mob-02 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table G14-HS-Mob-02: the gear drops (42), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330940",
+      "ItemName": "Burning Scales Headdress"
+    },
+    {
+      "ItemId": "1330941",
+      "ItemName": "Crown of the Frozen Desert"
+    },
+    {
+      "ItemId": "1330942",
+      "ItemName": "Headgear of Dune Storms"
+    },
+    {
+      "ItemId": "1330943",
+      "ItemName": "Ancient Rebus Headgear"
+    },
+    {
+      "ItemId": "1330944",
+      "ItemName": "Hands of Anubis Mantle"
+    },
+    {
+      "ItemId": "1330945",
+      "ItemName": "Soul Devourer's Greathelm"
+    },
+    {
+      "ItemId": "1330946",
+      "ItemName": "Anubis' Crown of Judgment"
+    },
+    {
+      "ItemId": "1338024",
+      "ItemName": "Burning Scales Raiment"
+    },
+    {
+      "ItemId": "1338025",
+      "ItemName": "Robes of the Frozen Desert"
+    },
+    {
+      "ItemId": "1338026",
+      "ItemName": "Dune Storm Armor"
+    },
+    {
+      "ItemId": "1338027",
+      "ItemName": "Ancient Rebus Vestment"
+    },
+    {
+      "ItemId": "1338028",
+      "ItemName": "Hands of Anubis Uniform"
+    },
+    {
+      "ItemId": "1338029",
+      "ItemName": "Soul Devourer's Tunic"
+    },
+    {
+      "ItemId": "1338030",
+      "ItemName": "Anubis' Tunic of Judgment"
+    },
+    {
+      "ItemId": "1338108",
+      "ItemName": "Boots of the Burning Scales"
+    },
+    {
+      "ItemId": "1338109",
+      "ItemName": "Boots of the Frozen Desert"
+    },
+    {
+      "ItemId": "1338110",
+      "ItemName": "Desert Rain Mukluks"
+    },
+    {
+      "ItemId": "1338111",
+      "ItemName": "Ancient Rebus Sandals"
+    },
+    {
+      "ItemId": "1338112",
+      "ItemName": "Hands of Anubis Boots"
+    },
+    {
+      "ItemId": "1338113",
+      "ItemName": "Soul Devourer's Footwraps"
+    },
+    {
+      "ItemId": "1338114",
+      "ItemName": "Shoes of Anubis' Judgment"
+    },
+    {
+      "ItemId": "1338192",
+      "ItemName": "Blade of the Fire River"
+    },
+    {
+      "ItemId": "1338193",
+      "ItemName": "Dagger of the Cold Bones"
+    },
+    {
+      "ItemId": "1338194",
+      "ItemName": "Kris of Thunderous Resolve"
+    },
+    {
+      "ItemId": "1338195",
+      "ItemName": "Dagger of the Hidden Words"
+    },
+    {
+      "ItemId": "1338196",
+      "ItemName": "Izft's Dirk of Incarnation"
+    },
+    {
+      "ItemId": "1338197",
+      "ItemName": "Dagger of the Devourer"
+    },
+    {
+      "ItemId": "1338198",
+      "ItemName": "Blade of Anubis' Verdict"
+    },
+    {
+      "ItemId": "1338444",
+      "ItemName": "Deck of the Simmering Evil"
+    },
+    {
+      "ItemId": "1338445",
+      "ItemName": "Brisk Breeze Pasteboards"
+    },
+    {
+      "ItemId": "1338446",
+      "ItemName": "Deck of Sand Squalls"
+    },
+    {
+      "ItemId": "1338447",
+      "ItemName": "Array of the Archaic Rebus"
+    },
+    {
+      "ItemId": "1338448",
+      "ItemName": "Case of the Virtuous Soul"
+    },
+    {
+      "ItemId": "1338449",
+      "ItemName": "Condemned Soldier's Arcana"
+    },
+    {
+      "ItemId": "1338450",
+      "ItemName": "Anubis' Cards of Veracity"
+    },
+    {
+      "ItemId": "1338528",
+      "ItemName": "Rod of the Burning Scales"
+    },
+    {
+      "ItemId": "1338529",
+      "ItemName": "Stave of Cold Justice"
+    },
+    {
+      "ItemId": "1338530",
+      "ItemName": "Wrath of Anubis Staff"
+    },
+    {
+      "ItemId": "1338531",
+      "ItemName": "Rebus Breaker's Stave"
+    },
+    {
+      "ItemId": "1338532",
+      "ItemName": "Hands of Anubis Staff"
+    },
+    {
+      "ItemId": "1338533",
+      "ItemName": "Stave of the Devoured"
+    },
+    {
+      "ItemId": "1338534",
+      "ItemName": "Anubis' Staff of Redress"
+    }
+  ]
+}

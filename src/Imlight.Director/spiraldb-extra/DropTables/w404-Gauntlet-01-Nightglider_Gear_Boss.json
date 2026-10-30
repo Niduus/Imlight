@@ -1,0 +1,41 @@
+{
+  "Name": "W404 Gauntlet-01-Nightglider Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Gauntlet-01-Nightglider: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "191452",
+      "ItemName": "Jewel of Nullification"
+    },
+    {
+      "ItemId": "191453",
+      "ItemName": "Signet of the Sepulcher"
+    },
+    {
+      "ItemId": "191454",
+      "ItemName": "Simmering Sigil"
+    },
+    {
+      "ItemId": "191455",
+      "ItemName": "Ring of Winterbite"
+    },
+    {
+      "ItemId": "191456",
+      "ItemName": "Seal of Salvation"
+    },
+    {
+      "ItemId": "191457",
+      "ItemName": "Philosopher's Stone"
+    },
+    {
+      "ItemId": "191458",
+      "ItemName": "Stormtossed Band"
+    },
+    {
+      "ItemId": "1502505",
+      "ItemName": "Nightglider's Band"
+    }
+  ]
+}

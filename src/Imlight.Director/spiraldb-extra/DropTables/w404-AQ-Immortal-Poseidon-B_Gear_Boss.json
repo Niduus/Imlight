@@ -1,0 +1,121 @@
+{
+  "Name": "W404 AQ-Immortal-Poseidon-B Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AQ-Immortal-Poseidon-B: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "819537",
+      "ItemName": "Poseidon's Cowl of Flares"
+    },
+    {
+      "ItemId": "819538",
+      "ItemName": "Helm of the Frozen Wave"
+    },
+    {
+      "ItemId": "819539",
+      "ItemName": "Poseidon's Torrential Helm"
+    },
+    {
+      "ItemId": "819540",
+      "ItemName": "Poseidon's Sea Spray Helm"
+    },
+    {
+      "ItemId": "819541",
+      "ItemName": "Poseidon's Brim of Ardor"
+    },
+    {
+      "ItemId": "819542",
+      "ItemName": "Poseidon's Whirlpool Helm"
+    },
+    {
+      "ItemId": "819543",
+      "ItemName": "Helmet of Tranquil Seas"
+    },
+    {
+      "ItemId": "819544",
+      "ItemName": "Poseidon's Firestream Garb"
+    },
+    {
+      "ItemId": "819545",
+      "ItemName": "Poseidon's Glacial Armor"
+    },
+    {
+      "ItemId": "819546",
+      "ItemName": "Poseidon's Maelstrom Gear"
+    },
+    {
+      "ItemId": "819547",
+      "ItemName": "Poseidon's Armor of Ages"
+    },
+    {
+      "ItemId": "819548",
+      "ItemName": "Poseidon's Armor of Fervor"
+    },
+    {
+      "ItemId": "819549",
+      "ItemName": "Poseidon's Doldrums Armor"
+    },
+    {
+      "ItemId": "819550",
+      "ItemName": "Poseidon's Armor of Depths"
+    },
+    {
+      "ItemId": "819715",
+      "ItemName": "Poseidon's Backdraft Stave"
+    },
+    {
+      "ItemId": "819716",
+      "ItemName": "Poseidon's Numbing Staff"
+    },
+    {
+      "ItemId": "819717",
+      "ItemName": "Trident of Shock Waves"
+    },
+    {
+      "ItemId": "819718",
+      "ItemName": "Staff of Poseidon's Angst"
+    },
+    {
+      "ItemId": "819719",
+      "ItemName": "Poseidon's Staff of Zeal"
+    },
+    {
+      "ItemId": "819720",
+      "ItemName": "Poseidon's Wavemaker"
+    },
+    {
+      "ItemId": "819721",
+      "ItemName": "Poseidon's Open Seas Staff"
+    },
+    {
+      "ItemId": "1203021",
+      "ItemName": "Poseidon's Boots of Vapors"
+    },
+    {
+      "ItemId": "1203022",
+      "ItemName": "Poseidon's Icebound Boots"
+    },
+    {
+      "ItemId": "1203023",
+      "ItemName": "Poseidon's Waterskimmers"
+    },
+    {
+      "ItemId": "1203024",
+      "ItemName": "Boots of the Uncharted Sea"
+    },
+    {
+      "ItemId": "1203025",
+      "ItemName": "Poseidon's Crest Walkers"
+    },
+    {
+      "ItemId": "1203026",
+      "ItemName": "Poseidon's Engulfing Boots"
+    },
+    {
+      "ItemId": "1203027",
+      "ItemName": "Poseidon's Wavewalkers"
+    }
+  ]
+}

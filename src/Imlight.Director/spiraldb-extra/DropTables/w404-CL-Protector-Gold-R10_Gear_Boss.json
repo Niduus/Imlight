@@ -1,0 +1,57 @@
+{
+  "Name": "W404 CL-Protector-Gold-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-Protector-Gold-R10: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243260",
+      "ItemName": "Shivering Shortblade"
+    },
+    {
+      "ItemId": "243279",
+      "ItemName": "Dirk of the Deluge"
+    },
+    {
+      "ItemId": "243298",
+      "ItemName": "Mutual Mask"
+    },
+    {
+      "ItemId": "243344",
+      "ItemName": "Volatile Headdress"
+    },
+    {
+      "ItemId": "243565",
+      "ItemName": "Polar Ring"
+    },
+    {
+      "ItemId": "243567",
+      "ItemName": "Ring of Rime"
+    },
+    {
+      "ItemId": "243685",
+      "ItemName": "Inquisitor's Tunic"
+    },
+    {
+      "ItemId": "243687",
+      "ItemName": "Epic Armor"
+    },
+    {
+      "ItemId": "243769",
+      "ItemName": "Fuming Footgear"
+    },
+    {
+      "ItemId": "243838",
+      "ItemName": "Inquisitor's Boots"
+    },
+    {
+      "ItemId": "243872",
+      "ItemName": "Scarecrow's Sinister Vial"
+    },
+    {
+      "ItemId": "243885",
+      "ItemName": "Nellek's Regenerating Jewel"
+    }
+  ]
+}

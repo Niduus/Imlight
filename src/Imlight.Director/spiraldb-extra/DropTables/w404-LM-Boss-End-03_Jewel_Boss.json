@@ -1,0 +1,33 @@
+{
+  "Name": "W404 LM-Boss-End-03 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table LM-Boss-End-03: the jewel drops (6), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1537694",
+      "ItemName": "Duck Savage Sapphire"
+    },
+    {
+      "ItemId": "1537695",
+      "ItemName": "Dog Tracy Amethyst"
+    },
+    {
+      "ItemId": "1537693",
+      "ItemName": "Buck Gordon Ruby"
+    },
+    {
+      "ItemId": "1537696",
+      "ItemName": "Mandar Peridot"
+    },
+    {
+      "ItemId": "1537697",
+      "ItemName": "The Bantam Jade"
+    },
+    {
+      "ItemId": "1537698",
+      "ItemName": "Solomon Crane Onyx"
+    }
+  ]
+}

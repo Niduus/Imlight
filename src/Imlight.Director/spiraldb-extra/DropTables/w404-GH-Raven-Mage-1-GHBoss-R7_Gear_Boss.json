@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Raven-Mage-1-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Raven-Mage-1-GHBoss-R7: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136303",
+      "ItemName": "Ember Blade"
+    },
+    {
+      "ItemId": "136304",
+      "ItemName": "Glyph-etched Knife"
+    },
+    {
+      "ItemId": "136432",
+      "ItemName": "Hood of the Flurry"
+    },
+    {
+      "ItemId": "136510",
+      "ItemName": "Shadowstorm Jewel"
+    },
+    {
+      "ItemId": "171222",
+      "ItemName": "Striders of Majesty"
+    },
+    {
+      "ItemId": "171228",
+      "ItemName": "Sandals of Retribution"
+    }
+  ]
+}

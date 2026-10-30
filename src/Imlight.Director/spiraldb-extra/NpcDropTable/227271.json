@@ -1,0 +1,16 @@
+{
+  "TemplateID": 227271,
+  "DropTableNames": [
+    "W404 ReagentCL-Drop-Fin-Boss Reagent (Boss)",
+    "W404 CL-Level-02",
+    "W404 CL-Level-02 Gear (Boss)",
+    "W404 CL-Level-02 TreasureCard (Boss)",
+    "W404 CL-Level-02 Snack (Boss)",
+    "W404 CL-Level-02 Seed (Boss)",
+    "W404 TC-CL-CommonsBosses TreasureCard (Boss)",
+    "W404 TC-UncommonsBosses TreasureCard",
+    "W404 ReagentCL-Drop-Scales Reagent (Boss)",
+    "W404 CL-GH3-MiniBoss-Jewels Jewel (Boss)",
+    "W404 CL-GH3-MiniBoss-Jewels Reagent (Boss)"
+  ]
+}

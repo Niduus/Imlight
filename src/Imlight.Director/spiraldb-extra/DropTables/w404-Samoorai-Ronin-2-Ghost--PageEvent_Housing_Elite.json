@@ -1,0 +1,25 @@
+{
+  "Name": "W404 Samoorai-Ronin-2-Ghost--PageEvent Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table Samoorai-Ronin-2-Ghost--PageEvent: the housing drops (4), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160219",
+      "ItemName": "Dragon Skull"
+    },
+    {
+      "ItemId": "160799",
+      "ItemName": "Dragon Pedestal"
+    },
+    {
+      "ItemId": "160810",
+      "ItemName": "Dragon Bust"
+    },
+    {
+      "ItemId": "160852",
+      "ItemName": "Regal Dragon Statue"
+    }
+  ]
+}

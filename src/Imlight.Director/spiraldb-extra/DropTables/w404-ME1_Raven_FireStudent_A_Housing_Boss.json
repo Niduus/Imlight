@@ -1,0 +1,69 @@
+{
+  "Name": "W404 ME1_Raven_FireStudent_A Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Raven_FireStudent_A: the housing drops (15), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82726",
+      "ItemName": "Bowl of Tomatoes"
+    },
+    {
+      "ItemId": "82755",
+      "ItemName": "Tall Pumpkin"
+    },
+    {
+      "ItemId": "160542",
+      "ItemName": "Bamboo Grove"
+    },
+    {
+      "ItemId": "160586",
+      "ItemName": "Wooden Well"
+    },
+    {
+      "ItemId": "160617",
+      "ItemName": "Sunflower"
+    },
+    {
+      "ItemId": "160696",
+      "ItemName": "Green Foodcart"
+    },
+    {
+      "ItemId": "181106",
+      "ItemName": "Broken Stump"
+    },
+    {
+      "ItemId": "240100",
+      "ItemName": "Wheel of Cheese"
+    },
+    {
+      "ItemId": "342146",
+      "ItemName": "Celestian Tree Sapling"
+    },
+    {
+      "ItemId": "342147",
+      "ItemName": "Flowering Celestian Tree"
+    },
+    {
+      "ItemId": "342148",
+      "ItemName": "Celestian Tree Sprig"
+    },
+    {
+      "ItemId": "342149",
+      "ItemName": "Large Willow Tree"
+    },
+    {
+      "ItemId": "1317189",
+      "ItemName": "Olde Town Turn Table"
+    },
+    {
+      "ItemId": "1317190",
+      "ItemName": "Pyramid Player"
+    },
+    {
+      "ItemId": "1317195",
+      "ItemName": "Ravenscar Turntable"
+    }
+  ]
+}

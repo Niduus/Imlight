@@ -1,0 +1,13 @@
+{
+  "Name": "W404 G14-HS-SKR-Belloshe Mount (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-HS-SKR-Belloshe: the mount drops (1), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "789208",
+      "ItemName": "Mander Palanquin (PERM)"
+    }
+  ]
+}

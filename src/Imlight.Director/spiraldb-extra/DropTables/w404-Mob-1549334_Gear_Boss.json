@@ -1,0 +1,105 @@
+{
+  "Name": "W404 Mob-1549334 Gear (Boss)",
+  "Description": "Wizard404's drop list of Baron von Bracken's own drops: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1418367",
+      "ItemName": "Wysteria Warrior's Armet"
+    },
+    {
+      "ItemId": "1418368",
+      "ItemName": "Wysteria Warrior's Armet"
+    },
+    {
+      "ItemId": "1418381",
+      "ItemName": "Wysteria Warrior's Plate"
+    },
+    {
+      "ItemId": "1418382",
+      "ItemName": "Wysteria Warrior's Plate"
+    },
+    {
+      "ItemId": "1418395",
+      "ItemName": "Wysteria Warrior's Boots"
+    },
+    {
+      "ItemId": "1418396",
+      "ItemName": "Wysteria Warrior's Boots"
+    },
+    {
+      "ItemId": "1418409",
+      "ItemName": "Wysteria Warrior's Helmet"
+    },
+    {
+      "ItemId": "1418410",
+      "ItemName": "Wysteria Warrior's Helmet"
+    },
+    {
+      "ItemId": "1418423",
+      "ItemName": "Wysteria Warrior's Cuirass"
+    },
+    {
+      "ItemId": "1418424",
+      "ItemName": "Wysteria Warrior's Cuirass"
+    },
+    {
+      "ItemId": "1418437",
+      "ItemName": "Wysteria Warrior's Sabatons"
+    },
+    {
+      "ItemId": "1418438",
+      "ItemName": "Wysteria Warrior's Sabatons"
+    },
+    {
+      "ItemId": "1418451",
+      "ItemName": "Wysteria Warrior's Warhelm"
+    },
+    {
+      "ItemId": "1418452",
+      "ItemName": "Wysteria Warrior's Warhelm"
+    },
+    {
+      "ItemId": "1418465",
+      "ItemName": "Wysteria Warrior's Armor"
+    },
+    {
+      "ItemId": "1418466",
+      "ItemName": "Wysteria Warrior's Armor"
+    },
+    {
+      "ItemId": "1418479",
+      "ItemName": "Wysteria Warrior's Sollerets"
+    },
+    {
+      "ItemId": "1418480",
+      "ItemName": "Wysteria Warrior's Sollerets"
+    },
+    {
+      "ItemId": "1418493",
+      "ItemName": "Wysteria Warrior's Claymore"
+    },
+    {
+      "ItemId": "1418494",
+      "ItemName": "Wysteria Warrior's Claymore"
+    },
+    {
+      "ItemId": "1418507",
+      "ItemName": "Wysteria Warrior's Broadsword"
+    },
+    {
+      "ItemId": "1418508",
+      "ItemName": "Wysteria Warrior's Broadsword"
+    },
+    {
+      "ItemId": "1418521",
+      "ItemName": "Wysteria Warrior's Longsword"
+    },
+    {
+      "ItemId": "1418522",
+      "ItemName": "Wysteria Warrior's Longsword"
+    }
+  ]
+}

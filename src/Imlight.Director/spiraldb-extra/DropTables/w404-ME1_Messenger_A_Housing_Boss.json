@@ -1,0 +1,29 @@
+{
+  "Name": "W404 ME1_Messenger_A Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Messenger_A: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "469718",
+      "ItemName": "Red Brick Floor Tile"
+    },
+    {
+      "ItemId": "469723",
+      "ItemName": "Stone Block Wallpaper"
+    },
+    {
+      "ItemId": "469726",
+      "ItemName": "Wavy Stalk Wallpaper"
+    },
+    {
+      "ItemId": "469727",
+      "ItemName": "Stucco Wallpaper"
+    },
+    {
+      "ItemId": "1317191",
+      "ItemName": "Marleybonaphone"
+    }
+  ]
+}

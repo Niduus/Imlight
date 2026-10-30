@@ -1,0 +1,9 @@
+{
+  "Name": "W404 MB-Gauntlet-01-Stormclaw",
+  "Description": "Gold of the game's table MB-Gauntlet-01-Stormclaw, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 25,
+  "MaxGold": 50,
+  "EachItem": false,
+  "Items": []
+}

@@ -1,0 +1,33 @@
+{
+  "Name": "W404 TC-ZF-Rares TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table TC-ZF-Rares: the treasurecard drops (6), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Polymorph - Treant TC",
+      "ItemName": "Polymorph Treant"
+    },
+    {
+      "ItemId": "Polymorph - Ice Colossus TC",
+      "ItemName": "Polymorph Colossus"
+    },
+    {
+      "ItemId": "Polymorph - Fire Elemental TC",
+      "ItemName": "Polymorph Elemental"
+    },
+    {
+      "ItemId": "Polymorph - Storm Elemental TC",
+      "ItemName": "Polymorph Elemental"
+    },
+    {
+      "ItemId": "Infallible TC",
+      "ItemName": "Infallible"
+    },
+    {
+      "ItemId": "Stun Block TC",
+      "ItemName": "Stun Block"
+    }
+  ]
+}

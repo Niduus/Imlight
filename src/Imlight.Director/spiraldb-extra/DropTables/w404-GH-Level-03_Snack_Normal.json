@@ -1,0 +1,25 @@
+{
+  "Name": "W404 GH-Level-03 Snack (Normal)",
+  "Description": "Wizard404's drop list of the game's table GH-Level-03: the snack drops (4), one picked when it rolls. How often: DropOdds.json Normal/Snack.",
+  "Odds": "Normal/Snack",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220260",
+      "ItemName": "Tasty Biscuit"
+    },
+    {
+      "ItemId": "220266",
+      "ItemName": "Meat Soup"
+    },
+    {
+      "ItemId": "220316",
+      "ItemName": "Moon Pie"
+    },
+    {
+      "ItemId": "220324",
+      "ItemName": "Glowing Rock Candy"
+    }
+  ]
+}

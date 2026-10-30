@@ -1,0 +1,25 @@
+{
+  "Name": "W404 MS-Treant-MSBoss-L44 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Treant-MSBoss-L44: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160597",
+      "ItemName": "Wild Bamboo"
+    },
+    {
+      "ItemId": "160603",
+      "ItemName": "Flower Petals"
+    },
+    {
+      "ItemId": "160610",
+      "ItemName": "Potted Purple Pansy"
+    },
+    {
+      "ItemId": "470200",
+      "ItemName": "Dresser with Flowers"
+    }
+  ]
+}

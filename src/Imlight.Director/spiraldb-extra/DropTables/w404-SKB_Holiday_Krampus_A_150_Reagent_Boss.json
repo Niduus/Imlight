@@ -1,0 +1,17 @@
+{
+  "Name": "W404 SKB_Holiday_Krampus_A_150 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_Holiday_Krampus_A_150: the reagent drops (2), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1479641",
+      "ItemName": "Krampus"
+    },
+    {
+      "ItemId": "1492250",
+      "ItemName": "Reindeer Knight"
+    }
+  ]
+}

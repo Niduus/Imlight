@@ -1,0 +1,121 @@
+{
+  "Name": "W404 G14-HS-Boss-KusBhid Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-HS-Boss-KusBhid: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1338115",
+      "ItemName": "Boots of the Fire Sands"
+    },
+    {
+      "ItemId": "1338116",
+      "ItemName": "Cold Bones Footwraps"
+    },
+    {
+      "ItemId": "1338117",
+      "ItemName": "Sandsquall Boots"
+    },
+    {
+      "ItemId": "1338118",
+      "ItemName": "Ancient Sage Sandals"
+    },
+    {
+      "ItemId": "1338119",
+      "ItemName": "Anubis' Boots of Rebirth"
+    },
+    {
+      "ItemId": "1338120",
+      "ItemName": "Footwraps of the Devoured"
+    },
+    {
+      "ItemId": "1338121",
+      "ItemName": "Anubis' Boots of Guidance"
+    },
+    {
+      "ItemId": "1338276",
+      "ItemName": "Zigazag Desert Relic"
+    },
+    {
+      "ItemId": "1338277",
+      "ItemName": "Relic of the Brisk Breeze"
+    },
+    {
+      "ItemId": "1338278",
+      "ItemName": "Ampul of Desert Squalls"
+    },
+    {
+      "ItemId": "1338279",
+      "ItemName": "Rebus Medallion"
+    },
+    {
+      "ItemId": "1338280",
+      "ItemName": "Hands of Anubis Pendant"
+    },
+    {
+      "ItemId": "1338281",
+      "ItemName": "Medallion of the Condemned"
+    },
+    {
+      "ItemId": "1338282",
+      "ItemName": "Jewel of Anubis' Judgment"
+    },
+    {
+      "ItemId": "1338360",
+      "ItemName": "Ring of the Simmering Evil"
+    },
+    {
+      "ItemId": "1338361",
+      "ItemName": "Band of the Sistrum"
+    },
+    {
+      "ItemId": "1338362",
+      "ItemName": "Ring of the Ravenous Teeth"
+    },
+    {
+      "ItemId": "1338363",
+      "ItemName": "Rebus Seal"
+    },
+    {
+      "ItemId": "1338364",
+      "ItemName": "Hands of Anubis Ring"
+    },
+    {
+      "ItemId": "1338365",
+      "ItemName": "Stone of the Longest Hall"
+    },
+    {
+      "ItemId": "1338366",
+      "ItemName": "Scales of Justice Band"
+    },
+    {
+      "ItemId": "1338367",
+      "ItemName": "Loop of Lower Zigazag"
+    },
+    {
+      "ItemId": "1338368",
+      "ItemName": "Kus'Bhid's Ring of Biting"
+    },
+    {
+      "ItemId": "1338369",
+      "ItemName": "Band of Upper Zigazag"
+    },
+    {
+      "ItemId": "1338370",
+      "ItemName": "Hieroglyph Ring"
+    },
+    {
+      "ItemId": "1338371",
+      "ItemName": "Mander Ring of Liberation"
+    },
+    {
+      "ItemId": "1338372",
+      "ItemName": "Seal of the Condemned"
+    },
+    {
+      "ItemId": "1338373",
+      "ItemName": "Hall of Justice Signet"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "Name": "W404 MB-Gauntlet-01-Gloomthorn",
+  "Description": "Gold of the game's table MB-Gauntlet-01-Gloomthorn, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 50,
+  "MaxGold": 100,
+  "EachItem": false,
+  "Items": []
+}

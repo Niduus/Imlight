@@ -1,0 +1,61 @@
+{
+  "Name": "W404 DM_Elite Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table DM_Elite: the housing drops (13), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1650019",
+      "ItemName": "Darkmoor Mortal Plain Theme"
+    },
+    {
+      "ItemId": "1650012",
+      "ItemName": "Darkmoor Black Lagoon Theme"
+    },
+    {
+      "ItemId": "1650013",
+      "ItemName": "Darkmoor Castle Theme"
+    },
+    {
+      "ItemId": "1650014",
+      "ItemName": "Darkmoor Graveholm Combat Theme"
+    },
+    {
+      "ItemId": "1650015",
+      "ItemName": "Darkmoor Graveholm Theme"
+    },
+    {
+      "ItemId": "1650016",
+      "ItemName": "Darkmoor Howling Lands Com Theme"
+    },
+    {
+      "ItemId": "1650017",
+      "ItemName": "Darkmoor Howling Lands Theme"
+    },
+    {
+      "ItemId": "1650018",
+      "ItemName": "Darkmoor Mortal Plain Com Theme"
+    },
+    {
+      "ItemId": "1650020",
+      "ItemName": "Darkmoor Outsiders Theme"
+    },
+    {
+      "ItemId": "1650021",
+      "ItemName": "Scholomance Combat Theme"
+    },
+    {
+      "ItemId": "1650022",
+      "ItemName": "Darkmoor Scholomance Theme"
+    },
+    {
+      "ItemId": "1650023",
+      "ItemName": "Darkmoor Tragedy Theme"
+    },
+    {
+      "ItemId": "1650024",
+      "ItemName": "Arcanum Espionage Theme"
+    }
+  ]
+}

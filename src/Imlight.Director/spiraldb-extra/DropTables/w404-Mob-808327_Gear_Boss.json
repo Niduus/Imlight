@@ -1,0 +1,261 @@
+{
+  "Name": "W404 Mob-808327 Gear (Boss)",
+  "Description": "Wizard404's drop list of Hades the Unseen's own drops: the gear drops (63), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "819509",
+      "ItemName": "Zeus' Eternal Flame Helm"
+    },
+    {
+      "ItemId": "819510",
+      "ItemName": "Zeus' Helmet of Blizzards"
+    },
+    {
+      "ItemId": "819511",
+      "ItemName": "Clangor From Olympus Brim"
+    },
+    {
+      "ItemId": "819512",
+      "ItemName": "Zeus' Divine Right Helm"
+    },
+    {
+      "ItemId": "819513",
+      "ItemName": "Zeus' Helm of Kings"
+    },
+    {
+      "ItemId": "819514",
+      "ItemName": "Zeus' Helm of the Moribund"
+    },
+    {
+      "ItemId": "819515",
+      "ItemName": "Helm of the Heavens"
+    },
+    {
+      "ItemId": "819516",
+      "ItemName": "Zeus' Skyforged Plate"
+    },
+    {
+      "ItemId": "819517",
+      "ItemName": "Zeus' Frozen Skies Armor"
+    },
+    {
+      "ItemId": "819518",
+      "ItemName": "Zeus' Ominous Skies Armor"
+    },
+    {
+      "ItemId": "819519",
+      "ItemName": "Zeus' Garb of Mischief"
+    },
+    {
+      "ItemId": "819520",
+      "ItemName": "Zeus' War Eagle Raiment"
+    },
+    {
+      "ItemId": "819521",
+      "ItemName": "Zeus' Wicked Ploy Armor"
+    },
+    {
+      "ItemId": "819522",
+      "ItemName": "Armor of Zeus' Law"
+    },
+    {
+      "ItemId": "819537",
+      "ItemName": "Poseidon's Cowl of Flares"
+    },
+    {
+      "ItemId": "819538",
+      "ItemName": "Helm of the Frozen Wave"
+    },
+    {
+      "ItemId": "819539",
+      "ItemName": "Poseidon's Torrential Helm"
+    },
+    {
+      "ItemId": "819540",
+      "ItemName": "Poseidon's Sea Spray Helm"
+    },
+    {
+      "ItemId": "819541",
+      "ItemName": "Poseidon's Brim of Ardor"
+    },
+    {
+      "ItemId": "819542",
+      "ItemName": "Poseidon's Whirlpool Helm"
+    },
+    {
+      "ItemId": "819543",
+      "ItemName": "Helmet of Tranquil Seas"
+    },
+    {
+      "ItemId": "819544",
+      "ItemName": "Poseidon's Firestream Garb"
+    },
+    {
+      "ItemId": "819545",
+      "ItemName": "Poseidon's Glacial Armor"
+    },
+    {
+      "ItemId": "819546",
+      "ItemName": "Poseidon's Maelstrom Gear"
+    },
+    {
+      "ItemId": "819547",
+      "ItemName": "Poseidon's Armor of Ages"
+    },
+    {
+      "ItemId": "819548",
+      "ItemName": "Poseidon's Armor of Fervor"
+    },
+    {
+      "ItemId": "819549",
+      "ItemName": "Poseidon's Doldrums Armor"
+    },
+    {
+      "ItemId": "819550",
+      "ItemName": "Poseidon's Armor of Depths"
+    },
+    {
+      "ItemId": "819701",
+      "ItemName": "Zeus' Smoke Cloud Scepter"
+    },
+    {
+      "ItemId": "819702",
+      "ItemName": "Zeus' Hailstone Bolt"
+    },
+    {
+      "ItemId": "819703",
+      "ItemName": "Zeus' Thunderstrike Staff"
+    },
+    {
+      "ItemId": "819704",
+      "ItemName": "Zeus' Bolt of Genius"
+    },
+    {
+      "ItemId": "819705",
+      "ItemName": "Zeus' Scepter of Creation"
+    },
+    {
+      "ItemId": "819706",
+      "ItemName": "Staff of Zeus' Curses"
+    },
+    {
+      "ItemId": "819707",
+      "ItemName": "Bolt of Zeus' Justice"
+    },
+    {
+      "ItemId": "819715",
+      "ItemName": "Poseidon's Backdraft Stave"
+    },
+    {
+      "ItemId": "819716",
+      "ItemName": "Poseidon's Numbing Staff"
+    },
+    {
+      "ItemId": "819717",
+      "ItemName": "Trident of Shock Waves"
+    },
+    {
+      "ItemId": "819718",
+      "ItemName": "Staff of Poseidon's Angst"
+    },
+    {
+      "ItemId": "819719",
+      "ItemName": "Poseidon's Staff of Zeal"
+    },
+    {
+      "ItemId": "819720",
+      "ItemName": "Poseidon's Wavemaker"
+    },
+    {
+      "ItemId": "819721",
+      "ItemName": "Poseidon's Open Seas Staff"
+    },
+    {
+      "ItemId": "819743",
+      "ItemName": "Ares' Scalding Spear"
+    },
+    {
+      "ItemId": "819744",
+      "ItemName": "Ares' Numbing Spear"
+    },
+    {
+      "ItemId": "819745",
+      "ItemName": "Ares' Cyclone Spear"
+    },
+    {
+      "ItemId": "819746",
+      "ItemName": "Ares' Spear of Wits"
+    },
+    {
+      "ItemId": "819747",
+      "ItemName": "Ares' Spear of Nerve"
+    },
+    {
+      "ItemId": "819748",
+      "ItemName": "Ares' Spear of Guile"
+    },
+    {
+      "ItemId": "819749",
+      "ItemName": "Ares' Stout Spear"
+    },
+    {
+      "ItemId": "1203007",
+      "ItemName": "Zeus' Flamewalkers"
+    },
+    {
+      "ItemId": "1203008",
+      "ItemName": "Zeus' Iceshelf Striders"
+    },
+    {
+      "ItemId": "1203009",
+      "ItemName": "Zeus' Cloud Stalkers"
+    },
+    {
+      "ItemId": "1203010",
+      "ItemName": "Zeus' Boots of Ambition"
+    },
+    {
+      "ItemId": "1203011",
+      "ItemName": "Zeus' Striders of Vitality"
+    },
+    {
+      "ItemId": "1203012",
+      "ItemName": "Zeus' Soulless Walkers"
+    },
+    {
+      "ItemId": "1203013",
+      "ItemName": "Zeus' Majestic Skyriders"
+    },
+    {
+      "ItemId": "1203021",
+      "ItemName": "Poseidon's Boots of Vapors"
+    },
+    {
+      "ItemId": "1203022",
+      "ItemName": "Poseidon's Icebound Boots"
+    },
+    {
+      "ItemId": "1203023",
+      "ItemName": "Poseidon's Waterskimmers"
+    },
+    {
+      "ItemId": "1203024",
+      "ItemName": "Boots of the Uncharted Sea"
+    },
+    {
+      "ItemId": "1203025",
+      "ItemName": "Poseidon's Crest Walkers"
+    },
+    {
+      "ItemId": "1203026",
+      "ItemName": "Poseidon's Engulfing Boots"
+    },
+    {
+      "ItemId": "1203027",
+      "ItemName": "Poseidon's Wavewalkers"
+    }
+  ]
+}

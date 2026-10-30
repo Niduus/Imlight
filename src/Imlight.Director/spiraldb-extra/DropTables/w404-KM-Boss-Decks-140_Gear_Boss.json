@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-Boss-Decks-140 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-Boss-Decks-140: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1515401",
+      "ItemName": "Guten Freshbaker Box"
+    },
+    {
+      "ItemId": "1515402",
+      "ItemName": "Guten Wonderneer Box"
+    },
+    {
+      "ItemId": "1515403",
+      "ItemName": "Guten Sciencer Box"
+    },
+    {
+      "ItemId": "1515404",
+      "ItemName": "Guten Artisan Box"
+    },
+    {
+      "ItemId": "1515405",
+      "ItemName": "Guten Sweetsmith Box"
+    },
+    {
+      "ItemId": "1515406",
+      "ItemName": "Guten Sentamentalist Box"
+    },
+    {
+      "ItemId": "1515407",
+      "ItemName": "Guten Dreamsearcher Box"
+    },
+    {
+      "ItemId": "1515408",
+      "ItemName": "Guten Candymancer Box"
+    },
+    {
+      "ItemId": "1515409",
+      "ItemName": "Wunderbar Freshbaker Box"
+    },
+    {
+      "ItemId": "1515410",
+      "ItemName": "Wunderbar Wonderneer Box"
+    },
+    {
+      "ItemId": "1515411",
+      "ItemName": "Wunderbar Sciencer Box"
+    },
+    {
+      "ItemId": "1515412",
+      "ItemName": "Wunderbar Artisan Box"
+    },
+    {
+      "ItemId": "1515413",
+      "ItemName": "Wunderbar Sweetsmith Box"
+    },
+    {
+      "ItemId": "1515414",
+      "ItemName": "Wunderbar Sentamentalist Box"
+    },
+    {
+      "ItemId": "1515415",
+      "ItemName": "Wunderbar Dreamsearcher Box"
+    },
+    {
+      "ItemId": "1515416",
+      "ItemName": "Wunderbar Candymancer Box"
+    },
+    {
+      "ItemId": "1515417",
+      "ItemName": "Uber Freshbaker Box"
+    },
+    {
+      "ItemId": "1515418",
+      "ItemName": "Uber Wonderneer Box"
+    },
+    {
+      "ItemId": "1515419",
+      "ItemName": "Uber Sciencer Box"
+    },
+    {
+      "ItemId": "1515420",
+      "ItemName": "Uber Artisan Box"
+    },
+    {
+      "ItemId": "1515421",
+      "ItemName": "Uber Sweetsmith Box"
+    },
+    {
+      "ItemId": "1515422",
+      "ItemName": "Uber Sentamentalist Box"
+    },
+    {
+      "ItemId": "1515423",
+      "ItemName": "Uber Dreamsearcher Box"
+    },
+    {
+      "ItemId": "1515424",
+      "ItemName": "Uber Candymancer Box"
+    }
+  ]
+}

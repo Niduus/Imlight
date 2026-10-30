@@ -1,0 +1,149 @@
+{
+  "Name": "W404 G14-HS-Boss-MohLharz Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-HS-Boss-MohLharz: the gear drops (35), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330940",
+      "ItemName": "Burning Scales Headdress"
+    },
+    {
+      "ItemId": "1330941",
+      "ItemName": "Crown of the Frozen Desert"
+    },
+    {
+      "ItemId": "1330942",
+      "ItemName": "Headgear of Dune Storms"
+    },
+    {
+      "ItemId": "1330943",
+      "ItemName": "Ancient Rebus Headgear"
+    },
+    {
+      "ItemId": "1330944",
+      "ItemName": "Hands of Anubis Mantle"
+    },
+    {
+      "ItemId": "1330945",
+      "ItemName": "Soul Devourer's Greathelm"
+    },
+    {
+      "ItemId": "1330946",
+      "ItemName": "Anubis' Crown of Judgment"
+    },
+    {
+      "ItemId": "1330947",
+      "ItemName": "Crown of the Fire Sands"
+    },
+    {
+      "ItemId": "1330948",
+      "ItemName": "Cold Bones Headdress"
+    },
+    {
+      "ItemId": "1330949",
+      "ItemName": "Headdress of Sandsqualls"
+    },
+    {
+      "ItemId": "1330950",
+      "ItemName": "Crown of the Ancient Sage"
+    },
+    {
+      "ItemId": "1330951",
+      "ItemName": "Anubis' Crown of Rebirth"
+    },
+    {
+      "ItemId": "1330952",
+      "ItemName": "Headdress of the Devoured"
+    },
+    {
+      "ItemId": "1330953",
+      "ItemName": "Anubis' Crown of Guidance"
+    },
+    {
+      "ItemId": "1338024",
+      "ItemName": "Burning Scales Raiment"
+    },
+    {
+      "ItemId": "1338025",
+      "ItemName": "Robes of the Frozen Desert"
+    },
+    {
+      "ItemId": "1338026",
+      "ItemName": "Dune Storm Armor"
+    },
+    {
+      "ItemId": "1338027",
+      "ItemName": "Ancient Rebus Vestment"
+    },
+    {
+      "ItemId": "1338028",
+      "ItemName": "Hands of Anubis Uniform"
+    },
+    {
+      "ItemId": "1338029",
+      "ItemName": "Soul Devourer's Tunic"
+    },
+    {
+      "ItemId": "1338030",
+      "ItemName": "Anubis' Tunic of Judgment"
+    },
+    {
+      "ItemId": "1338108",
+      "ItemName": "Boots of the Burning Scales"
+    },
+    {
+      "ItemId": "1338109",
+      "ItemName": "Boots of the Frozen Desert"
+    },
+    {
+      "ItemId": "1338110",
+      "ItemName": "Desert Rain Mukluks"
+    },
+    {
+      "ItemId": "1338111",
+      "ItemName": "Ancient Rebus Sandals"
+    },
+    {
+      "ItemId": "1338112",
+      "ItemName": "Hands of Anubis Boots"
+    },
+    {
+      "ItemId": "1338113",
+      "ItemName": "Soul Devourer's Footwraps"
+    },
+    {
+      "ItemId": "1338114",
+      "ItemName": "Shoes of Anubis' Judgment"
+    },
+    {
+      "ItemId": "1338283",
+      "ItemName": "Medallion of Lower Zigazag"
+    },
+    {
+      "ItemId": "1338284",
+      "ItemName": "Necklace of Upper Zigazag"
+    },
+    {
+      "ItemId": "1338285",
+      "ItemName": "Memento of Ammit's Revolt"
+    },
+    {
+      "ItemId": "1338286",
+      "ItemName": "Ancient Hieroglyph Relic"
+    },
+    {
+      "ItemId": "1338287",
+      "ItemName": "Izft's Vial of Restoration"
+    },
+    {
+      "ItemId": "1338288",
+      "ItemName": "Phylactery of the Wicked"
+    },
+    {
+      "ItemId": "1338289",
+      "ItemName": "Scales of Justice Charm"
+    }
+  ]
+}

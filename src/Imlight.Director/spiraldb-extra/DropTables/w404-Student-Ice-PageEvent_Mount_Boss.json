@@ -1,0 +1,25 @@
+{
+  "Name": "W404 Student-Ice-PageEvent Mount (Boss)",
+  "Description": "Wizard404's drop list of the game's table Student-Ice-PageEvent: the mount drops (4), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "470081",
+      "ItemName": "Bone Dragon (PERM)"
+    },
+    {
+      "ItemId": "470084",
+      "ItemName": "Faithful Dragoness (1 Day)"
+    },
+    {
+      "ItemId": "470085",
+      "ItemName": "Blue Dragon (1 Day)"
+    },
+    {
+      "ItemId": "470086",
+      "ItemName": "Dark Redwing (1 Day)"
+    }
+  ]
+}

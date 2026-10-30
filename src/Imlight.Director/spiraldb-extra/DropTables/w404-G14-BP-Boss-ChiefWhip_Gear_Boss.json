@@ -1,0 +1,177 @@
+{
+  "Name": "W404 G14-BP-Boss-ChiefWhip Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-BP-Boss-ChiefWhip: the gear drops (42), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330919",
+      "ItemName": "Barkingham Derby of Cinders"
+    },
+    {
+      "ItemId": "1330920",
+      "ItemName": "Barkingham Frost Cover"
+    },
+    {
+      "ItemId": "1330921",
+      "ItemName": "Barkingham Fog Bowler"
+    },
+    {
+      "ItemId": "1330922",
+      "ItemName": "Topper of Royal Wit"
+    },
+    {
+      "ItemId": "1330923",
+      "ItemName": "Barkingham Bombin of Brio"
+    },
+    {
+      "ItemId": "1330924",
+      "ItemName": "Barkingham Derby of Repose"
+    },
+    {
+      "ItemId": "1330925",
+      "ItemName": "Royal Cap of Alliance"
+    },
+    {
+      "ItemId": "1338003",
+      "ItemName": "Barkingham Cinder Smock"
+    },
+    {
+      "ItemId": "1338004",
+      "ItemName": "Barkingham Frostbreaker"
+    },
+    {
+      "ItemId": "1338005",
+      "ItemName": "Barkingham Fog Coat"
+    },
+    {
+      "ItemId": "1338006",
+      "ItemName": "Royal Coat of Wit"
+    },
+    {
+      "ItemId": "1338007",
+      "ItemName": "Smock of Barkingham Brio"
+    },
+    {
+      "ItemId": "1338008",
+      "ItemName": "Barkingham Robe of Repose"
+    },
+    {
+      "ItemId": "1338009",
+      "ItemName": "Royal Coat of Alliance"
+    },
+    {
+      "ItemId": "1338087",
+      "ItemName": "Barkingham Cinder Shoes"
+    },
+    {
+      "ItemId": "1338088",
+      "ItemName": "Barkingham Frost Striders"
+    },
+    {
+      "ItemId": "1338089",
+      "ItemName": "Barkingham Fog Walkers"
+    },
+    {
+      "ItemId": "1338090",
+      "ItemName": "Barkingham Shoes of Wit"
+    },
+    {
+      "ItemId": "1338091",
+      "ItemName": "Barkingham Boots of Brio"
+    },
+    {
+      "ItemId": "1338092",
+      "ItemName": "Barkingham Clogs of Repose"
+    },
+    {
+      "ItemId": "1338093",
+      "ItemName": "Royal Boots of Alliance"
+    },
+    {
+      "ItemId": "1338262",
+      "ItemName": "Grenadier's Vial of Tumult"
+    },
+    {
+      "ItemId": "1338263",
+      "ItemName": "Yeoman's Ampul of Winter"
+    },
+    {
+      "ItemId": "1338264",
+      "ItemName": "Hound's Choker of Squalls"
+    },
+    {
+      "ItemId": "1338265",
+      "ItemName": "Ornament of Mesmerization"
+    },
+    {
+      "ItemId": "1338266",
+      "ItemName": "Watson's Amulet of Purpose"
+    },
+    {
+      "ItemId": "1338267",
+      "ItemName": "Vial of the Palace Menace"
+    },
+    {
+      "ItemId": "1338268",
+      "ItemName": "Sherlock's Lens of Hegemony"
+    },
+    {
+      "ItemId": "1338353",
+      "ItemName": "Duke's Rosy Signet"
+    },
+    {
+      "ItemId": "1338354",
+      "ItemName": "Official Seal of Barkingham"
+    },
+    {
+      "ItemId": "1338355",
+      "ItemName": "Mr. Hound's Ferocious Loop"
+    },
+    {
+      "ItemId": "1338356",
+      "ItemName": "Ringlet of Mesmerization"
+    },
+    {
+      "ItemId": "1338357",
+      "ItemName": "Warder's Band of Recovery"
+    },
+    {
+      "ItemId": "1338358",
+      "ItemName": "Fallen Palace Guard's Ring"
+    },
+    {
+      "ItemId": "1338359",
+      "ItemName": "Antique Barkingham Ring"
+    },
+    {
+      "ItemId": "1338430",
+      "ItemName": "Barkingham Case of Splendor"
+    },
+    {
+      "ItemId": "1338431",
+      "ItemName": "Yeoman's Crisp Cards"
+    },
+    {
+      "ItemId": "1338432",
+      "ItemName": "Deck of the Roiling Court"
+    },
+    {
+      "ItemId": "1338433",
+      "ItemName": "Arcana of Noble Praxis"
+    },
+    {
+      "ItemId": "1338434",
+      "ItemName": "Set of the Thriving Monarch"
+    },
+    {
+      "ItemId": "1338435",
+      "ItemName": "Barkingham Pack of Malaise"
+    },
+    {
+      "ItemId": "1338436",
+      "ItemName": "Her Majesty's Regal Array"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-Boss-Hats-140 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-Boss-Hats-140: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1514829",
+      "ItemName": "Guten Freshbaker Cap"
+    },
+    {
+      "ItemId": "1514830",
+      "ItemName": "Guten Wonderneer Cap"
+    },
+    {
+      "ItemId": "1514831",
+      "ItemName": "Guten Sciencer Cap"
+    },
+    {
+      "ItemId": "1514832",
+      "ItemName": "Guten Artisan Cap"
+    },
+    {
+      "ItemId": "1514833",
+      "ItemName": "Guten Sweetsmith Cap"
+    },
+    {
+      "ItemId": "1514834",
+      "ItemName": "Guten Sentamentalist Cap"
+    },
+    {
+      "ItemId": "1514835",
+      "ItemName": "Guten Dreamsearcher Cap"
+    },
+    {
+      "ItemId": "1514836",
+      "ItemName": "Guten Candymancer Cap"
+    },
+    {
+      "ItemId": "1514853",
+      "ItemName": "Wunderbar Freshbaker Cap"
+    },
+    {
+      "ItemId": "1514854",
+      "ItemName": "Wunderbar Wonderneer Cap"
+    },
+    {
+      "ItemId": "1514855",
+      "ItemName": "Wunderbar Sciencer Cap"
+    },
+    {
+      "ItemId": "1514856",
+      "ItemName": "Wunderbar Artisan Cap"
+    },
+    {
+      "ItemId": "1514857",
+      "ItemName": "Wunderbar Sweetsmith Cap"
+    },
+    {
+      "ItemId": "1514858",
+      "ItemName": "Wunderbar Sentamentalist Cap"
+    },
+    {
+      "ItemId": "1514859",
+      "ItemName": "Wunderbar Dreamsearcher Cap"
+    },
+    {
+      "ItemId": "1514860",
+      "ItemName": "Wunderbar Candymancer Cap"
+    },
+    {
+      "ItemId": "1514877",
+      "ItemName": "Uber Freshbaker Cap"
+    },
+    {
+      "ItemId": "1514878",
+      "ItemName": "Uber Wonderneer Cap"
+    },
+    {
+      "ItemId": "1514879",
+      "ItemName": "Uber Sciencer Cap"
+    },
+    {
+      "ItemId": "1514880",
+      "ItemName": "Uber Artisan Cap"
+    },
+    {
+      "ItemId": "1514881",
+      "ItemName": "Uber Sweetsmith Cap"
+    },
+    {
+      "ItemId": "1514882",
+      "ItemName": "Uber Sentamentalist Cap"
+    },
+    {
+      "ItemId": "1514883",
+      "ItemName": "Uber Dreamsearcher Cap"
+    },
+    {
+      "ItemId": "1514884",
+      "ItemName": "Uber Candymancer Cap"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "Name": "W404 MR-Boss-PetSnacks-Rare Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table MR-Boss-PetSnacks-Rare: the snack drops (10), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "537590",
+      "ItemName": "Hard Boiled Beetle Eggs"
+    },
+    {
+      "ItemId": "537593",
+      "ItemName": "Beetle Cream Soda"
+    },
+    {
+      "ItemId": "1359604",
+      "ItemName": "Chalupacabra"
+    },
+    {
+      "ItemId": "1359606",
+      "ItemName": "Ships 'n' Queso"
+    },
+    {
+      "ItemId": "1359613",
+      "ItemName": "Mustachios"
+    },
+    {
+      "ItemId": "1359618",
+      "ItemName": "Veggie Juice"
+    },
+    {
+      "ItemId": "1359619",
+      "ItemName": "Hot Cross Buns"
+    },
+    {
+      "ItemId": "1359622",
+      "ItemName": "Eye Candy"
+    },
+    {
+      "ItemId": "1359623",
+      "ItemName": "Satyr Chow"
+    },
+    {
+      "ItemId": "1359625",
+      "ItemName": "Beast Wellington"
+    }
+  ]
+}

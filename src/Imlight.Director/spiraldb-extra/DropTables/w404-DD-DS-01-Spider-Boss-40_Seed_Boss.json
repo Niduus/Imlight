@@ -1,0 +1,21 @@
+{
+  "Name": "W404 DD-DS-01-Spider-Boss-40 Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-Spider-Boss-40: the seed drops (3), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355080",
+      "ItemName": "Burning Snap Dragon"
+    },
+    {
+      "ItemId": "355108",
+      "ItemName": "Prickly Bear Cactus"
+    },
+    {
+      "ItemId": "356113",
+      "ItemName": "Cornbread Fruit Bush"
+    }
+  ]
+}

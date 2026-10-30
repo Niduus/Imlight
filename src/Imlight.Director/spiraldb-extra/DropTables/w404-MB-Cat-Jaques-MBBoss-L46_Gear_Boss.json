@@ -1,0 +1,77 @@
+{
+  "Name": "W404 MB-Cat-Jaques-MBBoss-L46 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Jaques-MBBoss-L46: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "5058",
+      "ItemName": "Scratcher's Black Amulet"
+    },
+    {
+      "ItemId": "38995",
+      "ItemName": "Jacques's Hat of Winter"
+    },
+    {
+      "ItemId": "39055",
+      "ItemName": "Jacques's Band of Tragedy"
+    },
+    {
+      "ItemId": "39062",
+      "ItemName": "Scratcher's Ring of Chivalry"
+    },
+    {
+      "ItemId": "77147",
+      "ItemName": "Jacques' Restorative Robe"
+    },
+    {
+      "ItemId": "77183",
+      "ItemName": "Jacques' Robe of Numbness"
+    },
+    {
+      "ItemId": "77206",
+      "ItemName": "Scratcher's Confined Boots"
+    },
+    {
+      "ItemId": "77210",
+      "ItemName": "Jacques' Artificial Sandals"
+    },
+    {
+      "ItemId": "77230",
+      "ItemName": "Jacques' Boots of Courtesy"
+    },
+    {
+      "ItemId": "97078",
+      "ItemName": "Jacques's Polished Athame"
+    },
+    {
+      "ItemId": "97151",
+      "ItemName": "Scratcher's Invigorated Cowl"
+    },
+    {
+      "ItemId": "97186",
+      "ItemName": "Jacques' Helm of the Mender"
+    },
+    {
+      "ItemId": "97284",
+      "ItemName": "Jacques' Soothing Robe"
+    },
+    {
+      "ItemId": "97319",
+      "ItemName": "Scratcher's Black Mantle"
+    },
+    {
+      "ItemId": "97351",
+      "ItemName": "Scratcher's Elegant Shoes"
+    },
+    {
+      "ItemId": "97394",
+      "ItemName": "Jacques' Intolerant Shoes"
+    },
+    {
+      "ItemId": "126148",
+      "ItemName": "Blade of Frost"
+    }
+  ]
+}

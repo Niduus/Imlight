@@ -1,0 +1,73 @@
+{
+  "Name": "W404 MS-Banshee-Blue-MSBoss-L50 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Banshee-Blue-MSBoss-L50: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97427",
+      "ItemName": "Fushiko's Choker"
+    },
+    {
+      "ItemId": "97557",
+      "ItemName": "Fushiko's Shroud"
+    },
+    {
+      "ItemId": "97560",
+      "ItemName": "Fushiko's Captive Shroud"
+    },
+    {
+      "ItemId": "97776",
+      "ItemName": "Fushiko's Prospective Vest"
+    },
+    {
+      "ItemId": "97780",
+      "ItemName": "Fushiko's Cloak"
+    },
+    {
+      "ItemId": "97788",
+      "ItemName": "Friendly Garments"
+    },
+    {
+      "ItemId": "97809",
+      "ItemName": "Tunic of the Whim"
+    },
+    {
+      "ItemId": "97838",
+      "ItemName": "Tunic of Chimes"
+    },
+    {
+      "ItemId": "97857",
+      "ItemName": "Garment of Yodels"
+    },
+    {
+      "ItemId": "97886",
+      "ItemName": "Zippy Tunic"
+    },
+    {
+      "ItemId": "97900",
+      "ItemName": "Garment of Sandcastles"
+    },
+    {
+      "ItemId": "97938",
+      "ItemName": "Fushiko's Sandals"
+    },
+    {
+      "ItemId": "97940",
+      "ItemName": "Fushiko's Footwraps of Intent"
+    },
+    {
+      "ItemId": "97986",
+      "ItemName": "Footwraps of Pictures"
+    },
+    {
+      "ItemId": "98037",
+      "ItemName": "Vexing Boots"
+    },
+    {
+      "ItemId": "126140",
+      "ItemName": "Tanto of Icy Power"
+    }
+  ]
+}

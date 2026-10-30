@@ -1,0 +1,61 @@
+{
+  "Name": "W404 PL-Boss-Ludus Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-Boss-Ludus: the seed drops (13), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "345982",
+      "ItemName": "Deadly Fly Trap"
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap"
+    },
+    {
+      "ItemId": "355073",
+      "ItemName": "Venus Fly Trap"
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas"
+    },
+    {
+      "ItemId": "473647",
+      "ItemName": "Moon Flower"
+    },
+    {
+      "ItemId": "653139",
+      "ItemName": "Angel Oak"
+    },
+    {
+      "ItemId": "653146",
+      "ItemName": "Fish on a Vine"
+    },
+    {
+      "ItemId": "713140",
+      "ItemName": "Snow Apples"
+    },
+    {
+      "ItemId": "713154",
+      "ItemName": "Green Snow Apples"
+    },
+    {
+      "ItemId": "713161",
+      "ItemName": "Purple Snow Apples"
+    },
+    {
+      "ItemId": "1248268",
+      "ItemName": "Queen Crape Myrtle"
+    },
+    {
+      "ItemId": "1350094",
+      "ItemName": "Ultra Snow Apples"
+    },
+    {
+      "ItemId": "1350155",
+      "ItemName": "Ultra Fly Trap"
+    }
+  ]
+}

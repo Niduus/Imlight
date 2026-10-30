@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Raven-Mage-5-GHBoss-R7-1 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Raven-Mage-5-GHBoss-R7-1: the snack drops (6), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220304",
+      "ItemName": "Flaming Soup"
+    },
+    {
+      "ItemId": "220307",
+      "ItemName": "Dagwood Sandwich"
+    },
+    {
+      "ItemId": "220327",
+      "ItemName": "French Fries"
+    },
+    {
+      "ItemId": "220328",
+      "ItemName": "Taco Town Special"
+    },
+    {
+      "ItemId": "220330",
+      "ItemName": "Double Donut"
+    },
+    {
+      "ItemId": "220333",
+      "ItemName": "Rock and Roll Candy"
+    }
+  ]
+}

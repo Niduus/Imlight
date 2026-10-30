@@ -1,0 +1,113 @@
+{
+  "Name": "W404 GH2-Level-02 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table GH2-Level-02: the gear drops (26), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "455142",
+      "ItemName": "Hearty Bear Hat"
+    },
+    {
+      "ItemId": "455143",
+      "ItemName": "Hopping Bear Hat"
+    },
+    {
+      "ItemId": "455144",
+      "ItemName": "Blustering Bear Hat"
+    },
+    {
+      "ItemId": "455149",
+      "ItemName": "Horned Helm of Valor"
+    },
+    {
+      "ItemId": "455150",
+      "ItemName": "Horned Helm of Courage"
+    },
+    {
+      "ItemId": "455151",
+      "ItemName": "Horned Helm of Bravery"
+    },
+    {
+      "ItemId": "455176",
+      "ItemName": "Ring of Brother Wolf"
+    },
+    {
+      "ItemId": "455177",
+      "ItemName": "Ring of Sister Wolf"
+    },
+    {
+      "ItemId": "455178",
+      "ItemName": "Ring of the Wolf's Song"
+    },
+    {
+      "ItemId": "455181",
+      "ItemName": "Ring of the Ravenous Wolf"
+    },
+    {
+      "ItemId": "455182",
+      "ItemName": "Ring of the Hunting Wolf"
+    },
+    {
+      "ItemId": "455203",
+      "ItemName": "Jerkin of the Great Bear"
+    },
+    {
+      "ItemId": "455204",
+      "ItemName": "Bear's Heart Jerkin"
+    },
+    {
+      "ItemId": "455205",
+      "ItemName": "Jerkin of the Howling Bear"
+    },
+    {
+      "ItemId": "455209",
+      "ItemName": "Chill-kissed Coat"
+    },
+    {
+      "ItemId": "455210",
+      "ItemName": "Hardy Coat"
+    },
+    {
+      "ItemId": "455211",
+      "ItemName": "Coat of Ages"
+    },
+    {
+      "ItemId": "455212",
+      "ItemName": "Blustering Coat"
+    },
+    {
+      "ItemId": "455238",
+      "ItemName": "Snarling Bear Boots"
+    },
+    {
+      "ItemId": "455239",
+      "ItemName": "Growling Bear Boots"
+    },
+    {
+      "ItemId": "455240",
+      "ItemName": "Slashing Bear Boots"
+    },
+    {
+      "ItemId": "455241",
+      "ItemName": "Biting Bear Boots"
+    },
+    {
+      "ItemId": "455245",
+      "ItemName": "Barbarian's Valorous Boots"
+    },
+    {
+      "ItemId": "455246",
+      "ItemName": "Barbarian's Daring Boots"
+    },
+    {
+      "ItemId": "455247",
+      "ItemName": "Barbarian's Fearless Boots"
+    },
+    {
+      "ItemId": "455248",
+      "ItemName": "Barbarian's Bold Boots"
+    }
+  ]
+}

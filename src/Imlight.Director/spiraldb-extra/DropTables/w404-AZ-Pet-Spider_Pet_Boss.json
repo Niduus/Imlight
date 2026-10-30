@@ -1,0 +1,13 @@
+{
+  "Name": "W404 AZ-Pet-Spider Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-Pet-Spider: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1374458",
+      "ItemName": "Starburst Spider"
+    }
+  ]
+}

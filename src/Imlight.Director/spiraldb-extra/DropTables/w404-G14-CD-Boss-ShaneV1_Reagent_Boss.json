@@ -1,0 +1,101 @@
+{
+  "Name": "W404 G14-CD-Boss-ShaneV1 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-CD-Boss-ShaneV1: the reagent drops (23), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood"
+    },
+    {
+      "ItemId": "106933",
+      "ItemName": "Stone Block"
+    },
+    {
+      "ItemId": "106934",
+      "ItemName": "Fossil"
+    },
+    {
+      "ItemId": "106935",
+      "ItemName": "Deep Mushroom"
+    },
+    {
+      "ItemId": "106936",
+      "ItemName": "Nightshade"
+    },
+    {
+      "ItemId": "106937",
+      "ItemName": "Ore"
+    },
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone"
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear"
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake"
+    },
+    {
+      "ItemId": "106960",
+      "ItemName": "Blood Moss"
+    },
+    {
+      "ItemId": "106965",
+      "ItemName": "Black Lotus"
+    },
+    {
+      "ItemId": "106966",
+      "ItemName": "Black Pearl"
+    },
+    {
+      "ItemId": "106967",
+      "ItemName": "Lava Lily"
+    },
+    {
+      "ItemId": "106968",
+      "ItemName": "Fire Blossom"
+    },
+    {
+      "ItemId": "258584",
+      "ItemName": "Golden Pearl"
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone"
+    },
+    {
+      "ItemId": "473724",
+      "ItemName": "Turquoise"
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber"
+    },
+    {
+      "ItemId": "537976",
+      "ItemName": "Braided Vine"
+    },
+    {
+      "ItemId": "537977",
+      "ItemName": "Vine"
+    },
+    {
+      "ItemId": "537982",
+      "ItemName": "Amber Dust"
+    },
+    {
+      "ItemId": "537985",
+      "ItemName": "Merle's Whisker"
+    },
+    {
+      "ItemId": "1206362",
+      "ItemName": "Astral Shard"
+    }
+  ]
+}

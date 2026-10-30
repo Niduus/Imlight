@@ -1,0 +1,77 @@
+{
+  "Name": "W404 EM-Boss-Gear-120 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table EM-Boss-Gear-120: the gear drops (17), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1430520",
+      "ItemName": "Cabalist Cleansing Hood"
+    },
+    {
+      "ItemId": "1430521",
+      "ItemName": "Cabalist Hood of Vengeance"
+    },
+    {
+      "ItemId": "1430522",
+      "ItemName": "Cabalist Chaotic Hood"
+    },
+    {
+      "ItemId": "1430523",
+      "ItemName": "Nostalgic Cabal Hood"
+    },
+    {
+      "ItemId": "1430524",
+      "ItemName": "Cabalist Hood of the First"
+    },
+    {
+      "ItemId": "1430525",
+      "ItemName": "Cabalist Hood of Finality"
+    },
+    {
+      "ItemId": "1430526",
+      "ItemName": "Cabal Hood of Disruption"
+    },
+    {
+      "ItemId": "1430527",
+      "ItemName": "Cabal Schism Hood"
+    },
+    {
+      "ItemId": "1430535",
+      "ItemName": "Cabal Schism Cloak"
+    },
+    {
+      "ItemId": "1430536",
+      "ItemName": "Cabalist Cleansing Stompers"
+    },
+    {
+      "ItemId": "1430537",
+      "ItemName": "Cabalist Stomps of Vengeance"
+    },
+    {
+      "ItemId": "1430538",
+      "ItemName": "Cabalist Chaotic Stompers"
+    },
+    {
+      "ItemId": "1430539",
+      "ItemName": "Nostalgic Cabal Stompers"
+    },
+    {
+      "ItemId": "1430540",
+      "ItemName": "Cabalist Stompers of the First"
+    },
+    {
+      "ItemId": "1430541",
+      "ItemName": "Cabalist Stompers of Finality"
+    },
+    {
+      "ItemId": "1430542",
+      "ItemName": "Cabal Stompers of Disruption"
+    },
+    {
+      "ItemId": "1430543",
+      "ItemName": "Cabal Schism Stompers"
+    }
+  ]
+}

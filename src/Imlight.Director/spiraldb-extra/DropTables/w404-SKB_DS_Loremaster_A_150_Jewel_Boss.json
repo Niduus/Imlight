@@ -1,0 +1,45 @@
+{
+  "Name": "W404 SKB_DS_Loremaster_A_150 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_DS_Loremaster_A_150: the jewel drops (9), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1514492",
+      "ItemName": "Ninja Pigs Peridot"
+    },
+    {
+      "ItemId": "1514493",
+      "ItemName": "Goat Monk Jade"
+    },
+    {
+      "ItemId": "1514481",
+      "ItemName": "Dazzling Accurate Sapphire +14%"
+    },
+    {
+      "ItemId": "1514548",
+      "ItemName": "Dazzling Blocking Sapphire +20"
+    },
+    {
+      "ItemId": "1514459",
+      "ItemName": "Dazzling Critical Ruby +19"
+    },
+    {
+      "ItemId": "1514461",
+      "ItemName": "Dazzling Critical Sapphire +19"
+    },
+    {
+      "ItemId": "1514444",
+      "ItemName": "Dazzling Damage Sapphire +30"
+    },
+    {
+      "ItemId": "1514542",
+      "ItemName": "Dazzling Defense Opal +29"
+    },
+    {
+      "ItemId": "1514515",
+      "ItemName": "Dazzling Defense Sapphire +58"
+    }
+  ]
+}

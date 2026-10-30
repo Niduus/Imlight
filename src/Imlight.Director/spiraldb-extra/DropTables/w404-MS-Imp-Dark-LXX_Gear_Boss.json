@@ -1,0 +1,61 @@
+{
+  "Name": "W404 MS-Imp-Dark-LXX Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Imp-Dark-LXX: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97550",
+      "ItemName": "Youkai's Cap of Brainstorms"
+    },
+    {
+      "ItemId": "97551",
+      "ItemName": "Youkai's Rational Hat"
+    },
+    {
+      "ItemId": "97554",
+      "ItemName": "Youkai's Headwraps of Intent"
+    },
+    {
+      "ItemId": "97556",
+      "ItemName": "Youkai's Hat of Kindness"
+    },
+    {
+      "ItemId": "97771",
+      "ItemName": "Youkai's Vestment"
+    },
+    {
+      "ItemId": "97773",
+      "ItemName": "Youkai's Tunic of Intent"
+    },
+    {
+      "ItemId": "97774",
+      "ItemName": "Youkai's Robe of Premise"
+    },
+    {
+      "ItemId": "97775",
+      "ItemName": "Youkai's Cloak of Kindness"
+    },
+    {
+      "ItemId": "97930",
+      "ItemName": "Youkai's Slippers"
+    },
+    {
+      "ItemId": "97931",
+      "ItemName": "Youkai's Vacant Footwraps"
+    },
+    {
+      "ItemId": "97933",
+      "ItemName": "Youkai's Shoes"
+    },
+    {
+      "ItemId": "161031",
+      "ItemName": "Surgeon's Scalpel"
+    },
+    {
+      "ItemId": "161060",
+      "ItemName": "Loop of Refreshment"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "Name": "W404 KT-KrokTut-Storm-KTBoss-L39 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokTut-Storm-KTBoss-L39: the gear drops (25), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4913",
+      "ItemName": "Amulet of Eyes"
+    },
+    {
+      "ItemId": "4936",
+      "ItemName": "Dagger of Annihilation"
+    },
+    {
+      "ItemId": "4967",
+      "ItemName": "Athame of Adaption"
+    },
+    {
+      "ItemId": "4969",
+      "ItemName": "Dagger of Downpour"
+    },
+    {
+      "ItemId": "5010",
+      "ItemName": "Silent Jewel"
+    },
+    {
+      "ItemId": "5023",
+      "ItemName": "Seal of the Conqueror"
+    },
+    {
+      "ItemId": "5032",
+      "ItemName": "Powerful Ring"
+    },
+    {
+      "ItemId": "5033",
+      "ItemName": "Band of the Bastion"
+    },
+    {
+      "ItemId": "38735",
+      "ItemName": "Krokopatra's Robe"
+    },
+    {
+      "ItemId": "38738",
+      "ItemName": "Krokopatra's Silent Cloak"
+    },
+    {
+      "ItemId": "38739",
+      "ItemName": "Krokopatra's Garments"
+    },
+    {
+      "ItemId": "38742",
+      "ItemName": "Cloak of the Skies"
+    },
+    {
+      "ItemId": "39443",
+      "ItemName": "Parched Sandals"
+    },
+    {
+      "ItemId": "39448",
+      "ItemName": "Polar Shoes"
+    },
+    {
+      "ItemId": "39453",
+      "ItemName": "Krokopatra's Footwraps"
+    },
+    {
+      "ItemId": "39456",
+      "ItemName": "Krokopatra's Shoes"
+    },
+    {
+      "ItemId": "77662",
+      "ItemName": "Krokopatra's Circlet"
+    },
+    {
+      "ItemId": "77665",
+      "ItemName": "Krokopatra's Cap"
+    },
+    {
+      "ItemId": "77671",
+      "ItemName": "Runed Hood"
+    },
+    {
+      "ItemId": "77726",
+      "ItemName": "Soothsayer's Helm"
+    },
+    {
+      "ItemId": "87314",
+      "ItemName": "Vest of Somnolence"
+    },
+    {
+      "ItemId": "87327",
+      "ItemName": "Shroud of Rationality"
+    },
+    {
+      "ItemId": "161039",
+      "ItemName": "Augmented Mantle"
+    },
+    {
+      "ItemId": "161069",
+      "ItemName": "Phantasmal Raiment"
+    },
+    {
+      "ItemId": "164089",
+      "ItemName": "Magma-walkers"
+    }
+  ]
+}

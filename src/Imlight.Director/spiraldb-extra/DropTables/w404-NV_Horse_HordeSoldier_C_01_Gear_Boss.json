@@ -1,0 +1,121 @@
+{
+  "Name": "W404 NV_Horse_HordeSoldier_C_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Horse_HordeSoldier_C_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1577787",
+      "ItemName": "Golden Balance Ring"
+    },
+    {
+      "ItemId": "1577788",
+      "ItemName": "Golden Death Ring"
+    },
+    {
+      "ItemId": "1577789",
+      "ItemName": "Golden Fire Ring"
+    },
+    {
+      "ItemId": "1577790",
+      "ItemName": "Golden Ice Ring"
+    },
+    {
+      "ItemId": "1577791",
+      "ItemName": "Golden Life Ring"
+    },
+    {
+      "ItemId": "1577792",
+      "ItemName": "Golden Myth Ring"
+    },
+    {
+      "ItemId": "1577793",
+      "ItemName": "Golden Storm Ring"
+    },
+    {
+      "ItemId": "1577801",
+      "ItemName": "Golden Balance Box"
+    },
+    {
+      "ItemId": "1577802",
+      "ItemName": "Golden Death Box"
+    },
+    {
+      "ItemId": "1577803",
+      "ItemName": "Golden Fire Box"
+    },
+    {
+      "ItemId": "1577804",
+      "ItemName": "Golden Ice Box"
+    },
+    {
+      "ItemId": "1577805",
+      "ItemName": "Golden Life Box"
+    },
+    {
+      "ItemId": "1577806",
+      "ItemName": "Golden Myth Box"
+    },
+    {
+      "ItemId": "1577807",
+      "ItemName": "Golden Storm Box"
+    },
+    {
+      "ItemId": "1577843",
+      "ItemName": "Glistening Balance Ring"
+    },
+    {
+      "ItemId": "1577844",
+      "ItemName": "Glistening Death Ring"
+    },
+    {
+      "ItemId": "1577845",
+      "ItemName": "Glistening Fire Ring"
+    },
+    {
+      "ItemId": "1577846",
+      "ItemName": "Glistening Ice Ring"
+    },
+    {
+      "ItemId": "1577847",
+      "ItemName": "Glistening Life Ring"
+    },
+    {
+      "ItemId": "1577848",
+      "ItemName": "Glistening Myth Ring"
+    },
+    {
+      "ItemId": "1577849",
+      "ItemName": "Glistening Storm Ring"
+    },
+    {
+      "ItemId": "1577857",
+      "ItemName": "Glistening Balance Box"
+    },
+    {
+      "ItemId": "1577858",
+      "ItemName": "Glistening Death Box"
+    },
+    {
+      "ItemId": "1577859",
+      "ItemName": "Glistening Fire Box"
+    },
+    {
+      "ItemId": "1577860",
+      "ItemName": "Glistening Ice Box"
+    },
+    {
+      "ItemId": "1577861",
+      "ItemName": "Glistening Life Box"
+    },
+    {
+      "ItemId": "1577862",
+      "ItemName": "Glistening Myth Box"
+    },
+    {
+      "ItemId": "1577863",
+      "ItemName": "Glistening Storm Box"
+    }
+  ]
+}

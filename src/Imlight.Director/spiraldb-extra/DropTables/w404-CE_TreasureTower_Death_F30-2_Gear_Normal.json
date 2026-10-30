@@ -1,0 +1,233 @@
+{
+  "Name": "W404 CE_TreasureTower_Death_F30-2 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table CE_TreasureTower_Death_F30-2: the gear drops (56), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1414577",
+      "ItemName": "Dworgyn's Havoc Hood"
+    },
+    {
+      "ItemId": "1414578",
+      "ItemName": "Dworgyn's Havoc Hood"
+    },
+    {
+      "ItemId": "1414579",
+      "ItemName": "Dworgyn's Havoc Hood"
+    },
+    {
+      "ItemId": "1414580",
+      "ItemName": "Dworgyn's Havoc Hood"
+    },
+    {
+      "ItemId": "1414581",
+      "ItemName": "Dworgyn's Havoc Hood"
+    },
+    {
+      "ItemId": "1414582",
+      "ItemName": "Dworgyn's Havoc Hood"
+    },
+    {
+      "ItemId": "1414583",
+      "ItemName": "Dworgyn's Havoc Hood"
+    },
+    {
+      "ItemId": "1414584",
+      "ItemName": "Dworgyn's Havoc Hood"
+    },
+    {
+      "ItemId": "1414585",
+      "ItemName": "Dworgyn's Havoc Hood"
+    },
+    {
+      "ItemId": "1414586",
+      "ItemName": "Dworgyn's Havoc Hood"
+    },
+    {
+      "ItemId": "1414587",
+      "ItemName": "Dworgyn's Havoc Hood"
+    },
+    {
+      "ItemId": "1414588",
+      "ItemName": "Dworgyn's Havoc Hood"
+    },
+    {
+      "ItemId": "1414589",
+      "ItemName": "Dworgyn's Havoc Hood"
+    },
+    {
+      "ItemId": "1414590",
+      "ItemName": "Dworgyn's Havoc Hood"
+    },
+    {
+      "ItemId": "1414591",
+      "ItemName": "Dworgyn's Sinister Smock"
+    },
+    {
+      "ItemId": "1414592",
+      "ItemName": "Dworgyn's Sinister Smock"
+    },
+    {
+      "ItemId": "1414593",
+      "ItemName": "Dworgyn's Sinister Smock"
+    },
+    {
+      "ItemId": "1414594",
+      "ItemName": "Dworgyn's Sinister Smock"
+    },
+    {
+      "ItemId": "1414595",
+      "ItemName": "Dworgyn's Sinister Smock"
+    },
+    {
+      "ItemId": "1414596",
+      "ItemName": "Dworgyn's Sinister Smock"
+    },
+    {
+      "ItemId": "1414597",
+      "ItemName": "Dworgyn's Sinister Smock"
+    },
+    {
+      "ItemId": "1414598",
+      "ItemName": "Dworgyn's Sinister Smock"
+    },
+    {
+      "ItemId": "1414599",
+      "ItemName": "Dworgyn's Sinister Smock"
+    },
+    {
+      "ItemId": "1414600",
+      "ItemName": "Dworgyn's Sinister Smock"
+    },
+    {
+      "ItemId": "1414601",
+      "ItemName": "Dworgyn's Sinister Smock"
+    },
+    {
+      "ItemId": "1414602",
+      "ItemName": "Dworgyn's Sinister Smock"
+    },
+    {
+      "ItemId": "1414603",
+      "ItemName": "Dworgyn's Sinister Smock"
+    },
+    {
+      "ItemId": "1414604",
+      "ItemName": "Dworgyn's Sinister Smock"
+    },
+    {
+      "ItemId": "1414605",
+      "ItemName": "Dworgyn's Dire Boots"
+    },
+    {
+      "ItemId": "1414606",
+      "ItemName": "Dworgyn's Dire Boots"
+    },
+    {
+      "ItemId": "1414607",
+      "ItemName": "Dworgyn's Dire Boots"
+    },
+    {
+      "ItemId": "1414608",
+      "ItemName": "Dworgyn's Dire Boots"
+    },
+    {
+      "ItemId": "1414609",
+      "ItemName": "Dworgyn's Dire Boots"
+    },
+    {
+      "ItemId": "1414610",
+      "ItemName": "Dworgyn's Dire Boots"
+    },
+    {
+      "ItemId": "1414611",
+      "ItemName": "Dworgyn's Dire Boots"
+    },
+    {
+      "ItemId": "1414612",
+      "ItemName": "Dworgyn's Dire Boots"
+    },
+    {
+      "ItemId": "1414613",
+      "ItemName": "Dworgyn's Dire Boots"
+    },
+    {
+      "ItemId": "1414614",
+      "ItemName": "Dworgyn's Dire Boots"
+    },
+    {
+      "ItemId": "1414615",
+      "ItemName": "Dworgyn's Dire Boots"
+    },
+    {
+      "ItemId": "1414616",
+      "ItemName": "Dworgyn's Dire Boots"
+    },
+    {
+      "ItemId": "1414617",
+      "ItemName": "Dworgyn's Dire Boots"
+    },
+    {
+      "ItemId": "1414618",
+      "ItemName": "Dworgyn's Dire Boots"
+    },
+    {
+      "ItemId": "1414731",
+      "ItemName": "Headmaster's Doom Staff"
+    },
+    {
+      "ItemId": "1414732",
+      "ItemName": "Headmaster's Doom Staff"
+    },
+    {
+      "ItemId": "1414733",
+      "ItemName": "Headmaster's Doom Staff"
+    },
+    {
+      "ItemId": "1414734",
+      "ItemName": "Headmaster's Doom Staff"
+    },
+    {
+      "ItemId": "1414735",
+      "ItemName": "Headmaster's Doom Staff"
+    },
+    {
+      "ItemId": "1414736",
+      "ItemName": "Headmaster's Doom Staff"
+    },
+    {
+      "ItemId": "1414737",
+      "ItemName": "Headmaster's Doom Staff"
+    },
+    {
+      "ItemId": "1414738",
+      "ItemName": "Headmaster's Doom Staff"
+    },
+    {
+      "ItemId": "1414739",
+      "ItemName": "Headmaster's Doom Staff"
+    },
+    {
+      "ItemId": "1414740",
+      "ItemName": "Headmaster's Doom Staff"
+    },
+    {
+      "ItemId": "1414741",
+      "ItemName": "Headmaster's Doom Staff"
+    },
+    {
+      "ItemId": "1414742",
+      "ItemName": "Headmaster's Doom Staff"
+    },
+    {
+      "ItemId": "1414743",
+      "ItemName": "Headmaster's Doom Staff"
+    },
+    {
+      "ItemId": "1414744",
+      "ItemName": "Headmaster's Doom Staff"
+    }
+  ]
+}

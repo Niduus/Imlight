@@ -1,0 +1,17 @@
+{
+  "TemplateID": 1489250,
+  "DropTableNames": [
+    "W404 WC-CA-Drains-Mob-Reagents-01 Reagent (Boss)",
+    "W404 WC-CA-Drains-Mob-Furniture-01 Housing (Boss)",
+    "W404 WC-CA-Drains-Mob-PetSnacks-01 Snack (Boss)",
+    "W404 WC-CA-Drains-Boss-PetSnacks-01 Snack (Boss)",
+    "W404 WC-CA-Drains-Mob-Seeds-01 Seed (Boss)",
+    "W404 WC-CA-Drains-Boss-06",
+    "W404 WC-CA-Drains-Boss-06 Gear (Boss)",
+    "W404 WC-CA-Drains-Boss-06 Reagent (Boss)",
+    "W404 WC-CA-Drains-Miniboss-06 Gear (Boss)",
+    "W404 WC-CA-Drains-Miniboss-06 Reagent (Boss)",
+    "W404 WC-CA-Drains-Mob-06 Gear (Boss)",
+    "W404 WC-CA-Drains-Mob-06 Reagent (Boss)"
+  ]
+}

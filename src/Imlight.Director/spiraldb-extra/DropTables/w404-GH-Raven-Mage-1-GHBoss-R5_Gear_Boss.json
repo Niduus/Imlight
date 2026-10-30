@@ -1,0 +1,45 @@
+{
+  "Name": "W404 GH-Raven-Mage-1-GHBoss-R5 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Raven-Mage-1-GHBoss-R5: the gear drops (9), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136384",
+      "ItemName": "Tornadic Hat"
+    },
+    {
+      "ItemId": "136387",
+      "ItemName": "Hood of the Frostwyrm"
+    },
+    {
+      "ItemId": "136489",
+      "ItemName": "Frostward Seal"
+    },
+    {
+      "ItemId": "136608",
+      "ItemName": "Wrap of the Leaping Flame"
+    },
+    {
+      "ItemId": "136612",
+      "ItemName": "Coat of the Stormy Seas"
+    },
+    {
+      "ItemId": "136618",
+      "ItemName": "Terminal Robe"
+    },
+    {
+      "ItemId": "171164",
+      "ItemName": "Flaring Footgear"
+    },
+    {
+      "ItemId": "171168",
+      "ItemName": "Wraps of the Eddy"
+    },
+    {
+      "ItemId": "171172",
+      "ItemName": "Woodbark Footwraps"
+    }
+  ]
+}

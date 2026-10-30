@@ -1,0 +1,25 @@
+{
+  "Name": "W404 KT-Level-17 Snack (Elite)",
+  "Description": "Wizard404's drop list of the game's table KT-Level-17: the snack drops (4), one picked when it rolls. How often: DropOdds.json Elite/Snack.",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220197",
+      "ItemName": "Green Grapes"
+    },
+    {
+      "ItemId": "220225",
+      "ItemName": "Nettle Root"
+    },
+    {
+      "ItemId": "220227",
+      "ItemName": "Cracker"
+    },
+    {
+      "ItemId": "220237",
+      "ItemName": "Tiny Fish"
+    }
+  ]
+}

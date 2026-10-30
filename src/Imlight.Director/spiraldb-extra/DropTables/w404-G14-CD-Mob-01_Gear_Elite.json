@@ -1,0 +1,121 @@
+{
+  "Name": "W404 G14-CD-Mob-01 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table G14-CD-Mob-01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1338129",
+      "ItemName": "Brimstone Boots of Darkmoor"
+    },
+    {
+      "ItemId": "1338130",
+      "ItemName": "Sabatons of Frozen Furor"
+    },
+    {
+      "ItemId": "1338131",
+      "ItemName": "Raging Blackwater's Boots"
+    },
+    {
+      "ItemId": "1338132",
+      "ItemName": "Darkmoor Boots of Delusion"
+    },
+    {
+      "ItemId": "1338133",
+      "ItemName": "Sabatons of the Living Dead"
+    },
+    {
+      "ItemId": "1338134",
+      "ItemName": "Depths of Darkmoor Stalkers"
+    },
+    {
+      "ItemId": "1338135",
+      "ItemName": "Herald of Darkmoor's Shoes"
+    },
+    {
+      "ItemId": "1338297",
+      "ItemName": "Brimstone Torc of Darkmoor"
+    },
+    {
+      "ItemId": "1338298",
+      "ItemName": "Darkmoor Frost Collar"
+    },
+    {
+      "ItemId": "1338299",
+      "ItemName": "Relic of the Fetid Lagoon"
+    },
+    {
+      "ItemId": "1338300",
+      "ItemName": "Kan Davasi Medallion"
+    },
+    {
+      "ItemId": "1338301",
+      "ItemName": "Pendant of Love's Grace"
+    },
+    {
+      "ItemId": "1338302",
+      "ItemName": "Embodiment of Death Charm"
+    },
+    {
+      "ItemId": "1338303",
+      "ItemName": "Vial From the Fetid Lagoon"
+    },
+    {
+      "ItemId": "1338381",
+      "ItemName": "Signet of the Howling Wolf"
+    },
+    {
+      "ItemId": "1338382",
+      "ItemName": "Wolfbane Loop"
+    },
+    {
+      "ItemId": "1338383",
+      "ItemName": "Blackwater's Band"
+    },
+    {
+      "ItemId": "1338384",
+      "ItemName": "Gargoyle's Circle"
+    },
+    {
+      "ItemId": "1338385",
+      "ItemName": "von Shane Family Signet"
+    },
+    {
+      "ItemId": "1338386",
+      "ItemName": "Ring of Mortis"
+    },
+    {
+      "ItemId": "1338387",
+      "ItemName": "Herald of Darkmoor's Seal"
+    },
+    {
+      "ItemId": "1338549",
+      "ItemName": "Mace of the Dark Flame"
+    },
+    {
+      "ItemId": "1338550",
+      "ItemName": "Virge of the Bitter Ghost"
+    },
+    {
+      "ItemId": "1338551",
+      "ItemName": "Bludgeon of the Dark Skies"
+    },
+    {
+      "ItemId": "1338552",
+      "ItemName": "Morning Star of Kan Davasi"
+    },
+    {
+      "ItemId": "1338553",
+      "ItemName": "Mace of the Undying"
+    },
+    {
+      "ItemId": "1338554",
+      "ItemName": "Morning Star of Misery"
+    },
+    {
+      "ItemId": "1338555",
+      "ItemName": "Mace of the Outer Void"
+    }
+  ]
+}

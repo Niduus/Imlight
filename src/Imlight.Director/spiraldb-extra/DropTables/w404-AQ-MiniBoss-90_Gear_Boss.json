@@ -1,0 +1,233 @@
+{
+  "Name": "W404 AQ-MiniBoss-90 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AQ-MiniBoss-90: the gear drops (56), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730235",
+      "ItemName": "Deathless Storm Horn Dagger"
+    },
+    {
+      "ItemId": "730236",
+      "ItemName": "Smoking Mirror's Final Touch"
+    },
+    {
+      "ItemId": "730237",
+      "ItemName": "Savage Spike Horn Cutter"
+    },
+    {
+      "ItemId": "730238",
+      "ItemName": "Captain of the Sky's Talon"
+    },
+    {
+      "ItemId": "730239",
+      "ItemName": "Beak Breaker's Antique Sliver"
+    },
+    {
+      "ItemId": "730240",
+      "ItemName": "Black Sky Barbed Hook"
+    },
+    {
+      "ItemId": "730241",
+      "ItemName": "Kronosaur's Grim Cutter"
+    },
+    {
+      "ItemId": "730276",
+      "ItemName": "White Fire Chac's Helmet"
+    },
+    {
+      "ItemId": "730277",
+      "ItemName": "Philosoraptor's Ideal Mantle"
+    },
+    {
+      "ItemId": "730278",
+      "ItemName": "Keeper of the Codex Crown"
+    },
+    {
+      "ItemId": "730279",
+      "ItemName": "Black Sun Chac's Helmet"
+    },
+    {
+      "ItemId": "730280",
+      "ItemName": "Hood of the Hungry Lizard"
+    },
+    {
+      "ItemId": "730281",
+      "ItemName": "Grinning Death Mask"
+    },
+    {
+      "ItemId": "730282",
+      "ItemName": "Five Flowers Crown"
+    },
+    {
+      "ItemId": "730312",
+      "ItemName": "Tears of the Sun Band"
+    },
+    {
+      "ItemId": "730313",
+      "ItemName": "Celestial Codex Ring"
+    },
+    {
+      "ItemId": "730314",
+      "ItemName": "Storm Owl's Terror Ring"
+    },
+    {
+      "ItemId": "730315",
+      "ItemName": "Signet of the Lizard Tyrant"
+    },
+    {
+      "ItemId": "730316",
+      "ItemName": "Broken Spears Band"
+    },
+    {
+      "ItemId": "730317",
+      "ItemName": "Apocalypto Ring"
+    },
+    {
+      "ItemId": "730318",
+      "ItemName": "Xibalba's Dread Seal"
+    },
+    {
+      "ItemId": "730344",
+      "ItemName": "White Fire Chac's Armor"
+    },
+    {
+      "ItemId": "730345",
+      "ItemName": "Philososaur's Robes"
+    },
+    {
+      "ItemId": "730346",
+      "ItemName": "Keeper of the Codex Vest"
+    },
+    {
+      "ItemId": "730347",
+      "ItemName": "Black Sun Chac's Armor"
+    },
+    {
+      "ItemId": "730348",
+      "ItemName": "Vestment of the Hungry Lizard"
+    },
+    {
+      "ItemId": "730349",
+      "ItemName": "Grinning Death Xicolli Vest"
+    },
+    {
+      "ItemId": "730350",
+      "ItemName": "Lord of Night Robes"
+    },
+    {
+      "ItemId": "730390",
+      "ItemName": "White Fire Chac's Footgear"
+    },
+    {
+      "ItemId": "730391",
+      "ItemName": "Philosoraptor's Abstract Feet"
+    },
+    {
+      "ItemId": "730392",
+      "ItemName": "Keeper of the Codex Walkers"
+    },
+    {
+      "ItemId": "730393",
+      "ItemName": "Black Sun Chac's Stalkers"
+    },
+    {
+      "ItemId": "730394",
+      "ItemName": "Rangers of the Hungry Lizard"
+    },
+    {
+      "ItemId": "730395",
+      "ItemName": "Grinning Death Stompers"
+    },
+    {
+      "ItemId": "730396",
+      "ItemName": "Eagle Lord's Cloud Dancers"
+    },
+    {
+      "ItemId": "819579",
+      "ItemName": "Senator's Laurel of Sparks"
+    },
+    {
+      "ItemId": "819580",
+      "ItemName": "Senator's Frostfall Laurel"
+    },
+    {
+      "ItemId": "819581",
+      "ItemName": "Senator's Monsoon Laurel"
+    },
+    {
+      "ItemId": "819582",
+      "ItemName": "Senator's Laurel of Wisdom"
+    },
+    {
+      "ItemId": "819583",
+      "ItemName": "Senator's Spirited Laurel"
+    },
+    {
+      "ItemId": "819584",
+      "ItemName": "Senator's Laurel of Demise"
+    },
+    {
+      "ItemId": "819585",
+      "ItemName": "Senator's Noble Laurel"
+    },
+    {
+      "ItemId": "819600",
+      "ItemName": "Senator's Toga of Sparks"
+    },
+    {
+      "ItemId": "819601",
+      "ItemName": "Senator's Frostfall Toga"
+    },
+    {
+      "ItemId": "819602",
+      "ItemName": "Senator's Monsoon Toga"
+    },
+    {
+      "ItemId": "819603",
+      "ItemName": "Senator's Toga of Wisdom"
+    },
+    {
+      "ItemId": "819604",
+      "ItemName": "Senator's Spirited Toga"
+    },
+    {
+      "ItemId": "819605",
+      "ItemName": "Senator's Toga of Demise"
+    },
+    {
+      "ItemId": "819606",
+      "ItemName": "Senator's Noble Toga"
+    },
+    {
+      "ItemId": "819621",
+      "ItemName": "Senator's Sparking Sandals"
+    },
+    {
+      "ItemId": "819622",
+      "ItemName": "Senator's Frostfall Shoes"
+    },
+    {
+      "ItemId": "819623",
+      "ItemName": "Senator's Monsoon Sandals"
+    },
+    {
+      "ItemId": "819624",
+      "ItemName": "Senator's Shoes of Wisdom"
+    },
+    {
+      "ItemId": "819625",
+      "ItemName": "Senator's Spirited Shoes"
+    },
+    {
+      "ItemId": "819626",
+      "ItemName": "Senator's Shoes of Demise"
+    },
+    {
+      "ItemId": "819627",
+      "ItemName": "Senator's Noble Sandals"
+    }
+  ]
+}

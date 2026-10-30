@@ -1,0 +1,77 @@
+{
+  "Name": "W404 Mob-1549343 Housing (Boss)",
+  "Description": "Wizard404's drop list of Lady Stonegaze's own drops: the housing drops (17), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1202010",
+      "ItemName": "Banner of Apollo"
+    },
+    {
+      "ItemId": "1202011",
+      "ItemName": "Nine Fathoms Pedestal"
+    },
+    {
+      "ItemId": "1202012",
+      "ItemName": "Atlantean Arch"
+    },
+    {
+      "ItemId": "1202014",
+      "ItemName": "Ember Stone of Tartarus"
+    },
+    {
+      "ItemId": "1202016",
+      "ItemName": "Underworld Brazier"
+    },
+    {
+      "ItemId": "1202017",
+      "ItemName": "Hades the Unseen Mural"
+    },
+    {
+      "ItemId": "1202018",
+      "ItemName": "Olympian Herb"
+    },
+    {
+      "ItemId": "1212000",
+      "ItemName": "Aquila Atlantea Theme"
+    },
+    {
+      "ItemId": "1212001",
+      "ItemName": "Aquila Olympus Theme"
+    },
+    {
+      "ItemId": "1212002",
+      "ItemName": "Aquila Tartarus Theme"
+    },
+    {
+      "ItemId": "1212003",
+      "ItemName": "Aquila Combat Theme"
+    },
+    {
+      "ItemId": "1212004",
+      "ItemName": "Aquila Boss Combat Theme"
+    },
+    {
+      "ItemId": "1212005",
+      "ItemName": "Aquila Epic Combat Theme"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    },
+    {
+      "ItemId": "1217523",
+      "ItemName": "Gold Skeleton Key"
+    },
+    {
+      "ItemId": "1350313",
+      "ItemName": "Artisan's Socket Wrench"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "Name": "W404 Ghost-Green-WCBoss-L08 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Ghost-Green-WCBoss-L08: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4809",
+      "ItemName": "Seared Shoes"
+    },
+    {
+      "ItemId": "4811",
+      "ItemName": "Stormweave Shoes"
+    },
+    {
+      "ItemId": "4812",
+      "ItemName": "Graven Boots"
+    },
+    {
+      "ItemId": "4813",
+      "ItemName": "Healer's Shoes"
+    },
+    {
+      "ItemId": "4837",
+      "ItemName": "Blackhope's Ice Shoes"
+    },
+    {
+      "ItemId": "4868",
+      "ItemName": "Soldiers Wraps"
+    },
+    {
+      "ItemId": "77593",
+      "ItemName": "Alicane's Helm"
+    },
+    {
+      "ItemId": "77607",
+      "ItemName": "Double Sided Hat"
+    },
+    {
+      "ItemId": "87224",
+      "ItemName": "Cloak of Calamity"
+    },
+    {
+      "ItemId": "87238",
+      "ItemName": "Armored Tunic"
+    }
+  ]
+}

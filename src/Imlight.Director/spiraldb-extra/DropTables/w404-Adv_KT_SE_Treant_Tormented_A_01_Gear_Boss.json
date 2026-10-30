@@ -1,0 +1,121 @@
+{
+  "Name": "W404 Adv_KT_SE_Treant_Tormented_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Adv_KT_SE_Treant_Tormented_A_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1673544",
+      "ItemName": "Avatar's Amulet of Reprisal"
+    },
+    {
+      "ItemId": "1673545",
+      "ItemName": "Avatar's Amulet of Payback"
+    },
+    {
+      "ItemId": "1673546",
+      "ItemName": "Avatar's Amulet of Wrath"
+    },
+    {
+      "ItemId": "1673547",
+      "ItemName": "Avatar's Amulet of Revenge"
+    },
+    {
+      "ItemId": "1673548",
+      "ItemName": "Avatar's Amulet of Retribution"
+    },
+    {
+      "ItemId": "1673549",
+      "ItemName": "Avatar's Amulet of Bad Blood"
+    },
+    {
+      "ItemId": "1673550",
+      "ItemName": "Avatar's Amulet of Vengeance"
+    },
+    {
+      "ItemId": "1673593",
+      "ItemName": "Avatar's Chakram of Reprisal"
+    },
+    {
+      "ItemId": "1673594",
+      "ItemName": "Avatar's Chakram of Payback"
+    },
+    {
+      "ItemId": "1673595",
+      "ItemName": "Avatar's Chakram of Wrath"
+    },
+    {
+      "ItemId": "1673596",
+      "ItemName": "Avatar's Chakram of Revenge"
+    },
+    {
+      "ItemId": "1673597",
+      "ItemName": "Avatar's Chakram of Retribution"
+    },
+    {
+      "ItemId": "1673598",
+      "ItemName": "Avatar's Chakram of Bad Blood"
+    },
+    {
+      "ItemId": "1673599",
+      "ItemName": "Avatar's Chakram of Vengeance"
+    },
+    {
+      "ItemId": "1673616",
+      "ItemName": "Manifest Amulet of Reprisal"
+    },
+    {
+      "ItemId": "1673617",
+      "ItemName": "Manifest Amulet of Payback"
+    },
+    {
+      "ItemId": "1673618",
+      "ItemName": "Manifest Amulet of Wrath"
+    },
+    {
+      "ItemId": "1673619",
+      "ItemName": "Manifest Amulet of Revenge"
+    },
+    {
+      "ItemId": "1673620",
+      "ItemName": "Manifest Amulet of Retribution"
+    },
+    {
+      "ItemId": "1673621",
+      "ItemName": "Manifest Amulet of Bad Blood"
+    },
+    {
+      "ItemId": "1673622",
+      "ItemName": "Manifest Amulet of Vengeance"
+    },
+    {
+      "ItemId": "1673658",
+      "ItemName": "Manifest Chakram of Reprisal"
+    },
+    {
+      "ItemId": "1673659",
+      "ItemName": "Manifest Chakram of Payback"
+    },
+    {
+      "ItemId": "1673660",
+      "ItemName": "Manifest Chakram of Wrath"
+    },
+    {
+      "ItemId": "1673661",
+      "ItemName": "Manifest Chakram of Revenge"
+    },
+    {
+      "ItemId": "1673662",
+      "ItemName": "Manifest Chakram of Retribution"
+    },
+    {
+      "ItemId": "1673663",
+      "ItemName": "Manifest Chakram of Bad Blood"
+    },
+    {
+      "ItemId": "1673664",
+      "ItemName": "Manifest Chakram of Vengeance"
+    }
+  ]
+}

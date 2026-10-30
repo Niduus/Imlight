@@ -1,0 +1,125 @@
+{
+  "Name": "W404 MB-AQ1-Mob-Jewels-2 Jewel (Elite)",
+  "Description": "Wizard404's drop list of the game's table MB-AQ1-Mob-Jewels-2: the jewel drops (29), one picked when it rolls. How often: DropOdds.json Elite/Jewel.",
+  "Odds": "Elite/Jewel",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1352351",
+      "ItemName": "Chipped Health Opal +25"
+    },
+    {
+      "ItemId": "1352352",
+      "ItemName": "Flawed Health Opal +26"
+    },
+    {
+      "ItemId": "1352439",
+      "ItemName": "Chipped Mana Opal +11"
+    },
+    {
+      "ItemId": "1352440",
+      "ItemName": "Chipped Mana Opal +12"
+    },
+    {
+      "ItemId": "1352584",
+      "ItemName": "Chipped Damage Ruby +8"
+    },
+    {
+      "ItemId": "1352608",
+      "ItemName": "Chipped Damage Sapphire +8"
+    },
+    {
+      "ItemId": "1352632",
+      "ItemName": "Chipped Damage Amethyst +8"
+    },
+    {
+      "ItemId": "1352656",
+      "ItemName": "Chipped Damage Peridot +8"
+    },
+    {
+      "ItemId": "1352680",
+      "ItemName": "Chipped Damage Jade +8"
+    },
+    {
+      "ItemId": "1352704",
+      "ItemName": "Chipped Damage Onyx +8"
+    },
+    {
+      "ItemId": "1352728",
+      "ItemName": "Chipped Damage Citrine +8"
+    },
+    {
+      "ItemId": "1352818",
+      "ItemName": "Flawed Mending Opal +2%"
+    },
+    {
+      "ItemId": "1352935",
+      "ItemName": "Flawed Resilient Opal +2%"
+    },
+    {
+      "ItemId": "1352940",
+      "ItemName": "Flawed Healing Opal +2%"
+    },
+    {
+      "ItemId": "1357056",
+      "ItemName": "Chipped Accurate Ruby +3%"
+    },
+    {
+      "ItemId": "1357065",
+      "ItemName": "Chipped Accurate Sapphire +3%"
+    },
+    {
+      "ItemId": "1357074",
+      "ItemName": "Chipped Accurate Amethyst +3%"
+    },
+    {
+      "ItemId": "1357083",
+      "ItemName": "Chipped Accurate Peridot +3%"
+    },
+    {
+      "ItemId": "1357092",
+      "ItemName": "Chipped Accurate Jade +3%"
+    },
+    {
+      "ItemId": "1357101",
+      "ItemName": "Chipped Accurate Onyx +3%"
+    },
+    {
+      "ItemId": "1357110",
+      "ItemName": "Chipped Accurate Citrine +3%"
+    },
+    {
+      "ItemId": "1357127",
+      "ItemName": "Flawed PIP Opal +3%"
+    },
+    {
+      "ItemId": "1357251",
+      "ItemName": "Chipped Defense Ruby +15"
+    },
+    {
+      "ItemId": "1357296",
+      "ItemName": "Chipped Defense Sapphire +15"
+    },
+    {
+      "ItemId": "1357341",
+      "ItemName": "Chipped Defense Amethyst +15"
+    },
+    {
+      "ItemId": "1357386",
+      "ItemName": "Chipped Defense Peridot +15"
+    },
+    {
+      "ItemId": "1357431",
+      "ItemName": "Chipped Defense Jade +15"
+    },
+    {
+      "ItemId": "1357476",
+      "ItemName": "Chipped Defense Onyx +15"
+    },
+    {
+      "ItemId": "1357521",
+      "ItemName": "Chipped Defense Citrine +15"
+    }
+  ]
+}

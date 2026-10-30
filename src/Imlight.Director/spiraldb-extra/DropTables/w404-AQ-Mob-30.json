@@ -1,0 +1,9 @@
+{
+  "Name": "W404 AQ-Mob-30",
+  "Description": "Gold of the game's table AQ-Mob-30, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 13,
+  "MaxGold": 26,
+  "EachItem": false,
+  "Items": []
+}

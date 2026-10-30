@@ -1,0 +1,21 @@
+{
+  "Name": "W404 KT-Level-17 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table KT-Level-17: the housing drops (3), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82722",
+      "ItemName": "Purple Painted Column"
+    },
+    {
+      "ItemId": "82747",
+      "ItemName": "Floor Torch"
+    },
+    {
+      "ItemId": "82767",
+      "ItemName": "Krok Sun Plaque"
+    }
+  ]
+}

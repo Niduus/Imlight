@@ -1,0 +1,65 @@
+{
+  "Name": "W404 MB-Cat-Thug-Purple-MBBoss-LXX Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Thug-Purple-MBBoss-LXX: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "5053",
+      "ItemName": "Spike's Amulet of Smiting"
+    },
+    {
+      "ItemId": "97230",
+      "ItemName": "Spike's Icicle-Spiked Hat"
+    },
+    {
+      "ItemId": "97231",
+      "ItemName": "Spike's Mechanical Visor"
+    },
+    {
+      "ItemId": "97232",
+      "ItemName": "Crusher's Mysterious Cap"
+    },
+    {
+      "ItemId": "97234",
+      "ItemName": "Crusher's Hat"
+    },
+    {
+      "ItemId": "97328",
+      "ItemName": "Spike's Robe of the Phoenix"
+    },
+    {
+      "ItemId": "97329",
+      "ItemName": "Crusher's Winter Vestment"
+    },
+    {
+      "ItemId": "97331",
+      "ItemName": "Spike's Vestment of History"
+    },
+    {
+      "ItemId": "97333",
+      "ItemName": "Crusher's Deathly Robe"
+    },
+    {
+      "ItemId": "97422",
+      "ItemName": "Spike's Boots of Diplomacy"
+    },
+    {
+      "ItemId": "97424",
+      "ItemName": "Crusher's Dexterous Shoes"
+    },
+    {
+      "ItemId": "97426",
+      "ItemName": "Spike's Boots of Excellence"
+    },
+    {
+      "ItemId": "164075",
+      "ItemName": "Infernal Drape"
+    },
+    {
+      "ItemId": "164095",
+      "ItemName": "Striders of the Verge"
+    }
+  ]
+}

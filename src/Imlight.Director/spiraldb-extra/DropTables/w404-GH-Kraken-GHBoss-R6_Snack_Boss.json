@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Kraken-GHBoss-R6 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Kraken-GHBoss-R6: the snack drops (6), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220225",
+      "ItemName": "Nettle Root"
+    },
+    {
+      "ItemId": "220226",
+      "ItemName": "Buttered Popcorn"
+    },
+    {
+      "ItemId": "220228",
+      "ItemName": "Chocolate Peanut"
+    },
+    {
+      "ItemId": "220237",
+      "ItemName": "Tiny Fish"
+    },
+    {
+      "ItemId": "220248",
+      "ItemName": "Candy bar"
+    },
+    {
+      "ItemId": "220251",
+      "ItemName": "Lollipop"
+    }
+  ]
+}

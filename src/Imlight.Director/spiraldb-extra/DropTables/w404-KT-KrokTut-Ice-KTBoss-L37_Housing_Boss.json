@@ -1,0 +1,29 @@
+{
+  "Name": "W404 KT-KrokTut-Ice-KTBoss-L37 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokTut-Ice-KTBoss-L37: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82768",
+      "ItemName": "Krok Tree Plaque"
+    },
+    {
+      "ItemId": "160251",
+      "ItemName": "Knotted Rug"
+    },
+    {
+      "ItemId": "160396",
+      "ItemName": "Professor Greyrose"
+    },
+    {
+      "ItemId": "160987",
+      "ItemName": "Lunar-Emblem Bed"
+    },
+    {
+      "ItemId": "160989",
+      "ItemName": "Beetle Beanbag"
+    }
+  ]
+}

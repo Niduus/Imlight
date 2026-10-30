@@ -1,0 +1,145 @@
+{
+  "Name": "W404 EM2-Mob-Basics Snack (Elite)",
+  "Description": "Wizard404's drop list of the game's table EM2-Mob-Basics: the snack drops (34), one picked when it rolls. How often: DropOdds.json Elite/Snack.",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220222",
+      "ItemName": "Squash"
+    },
+    {
+      "ItemId": "220234",
+      "ItemName": "Drumstick"
+    },
+    {
+      "ItemId": "220239",
+      "ItemName": "Pizza"
+    },
+    {
+      "ItemId": "220245",
+      "ItemName": "Cherry Pie"
+    },
+    {
+      "ItemId": "220258",
+      "ItemName": "Wheat Cracker"
+    },
+    {
+      "ItemId": "220284",
+      "ItemName": "Glowing Taffy"
+    },
+    {
+      "ItemId": "220303",
+      "ItemName": "BBQ Drumstick"
+    },
+    {
+      "ItemId": "220313",
+      "ItemName": "Sprinkle Cupcake"
+    },
+    {
+      "ItemId": "220333",
+      "ItemName": "Rock and Roll Candy"
+    },
+    {
+      "ItemId": "641700",
+      "ItemName": "Antheneum Delight"
+    },
+    {
+      "ItemId": "733120",
+      "ItemName": "Fern Jelly"
+    },
+    {
+      "ItemId": "733121",
+      "ItemName": "Aztecan Hot Chocolate"
+    },
+    {
+      "ItemId": "1257588",
+      "ItemName": "Discord Grape Jelly"
+    },
+    {
+      "ItemId": "1257599",
+      "ItemName": "Bread Fruit Fruit"
+    },
+    {
+      "ItemId": "1359618",
+      "ItemName": "Veggie Juice"
+    },
+    {
+      "ItemId": "1359619",
+      "ItemName": "Hot Cross Buns"
+    },
+    {
+      "ItemId": "1359622",
+      "ItemName": "Eye Candy"
+    },
+    {
+      "ItemId": "1359623",
+      "ItemName": "Satyr Chow"
+    },
+    {
+      "ItemId": "1359624",
+      "ItemName": "Decimatoes"
+    },
+    {
+      "ItemId": "1359625",
+      "ItemName": "Beast Wellington"
+    },
+    {
+      "ItemId": "220241",
+      "ItemName": "Dragon Fruit"
+    },
+    {
+      "ItemId": "220290",
+      "ItemName": "Green Tomato"
+    },
+    {
+      "ItemId": "220311",
+      "ItemName": "Glowing Star Fruit"
+    },
+    {
+      "ItemId": "220338",
+      "ItemName": "Crackle Jacks Cereal"
+    },
+    {
+      "ItemId": "473525",
+      "ItemName": "Jolly Rancher"
+    },
+    {
+      "ItemId": "537589",
+      "ItemName": "Frosty Sugar Cubes"
+    },
+    {
+      "ItemId": "589097",
+      "ItemName": "Fire Passion Fruit"
+    },
+    {
+      "ItemId": "641594",
+      "ItemName": "High Road Haggis"
+    },
+    {
+      "ItemId": "641690",
+      "ItemName": "Rhubarbed Wire"
+    },
+    {
+      "ItemId": "789221",
+      "ItemName": "Waterworks Wonton"
+    },
+    {
+      "ItemId": "1317095",
+      "ItemName": "Roly Poly Fishheads"
+    },
+    {
+      "ItemId": "1359606",
+      "ItemName": "Ships 'n' Queso"
+    },
+    {
+      "ItemId": "1359608",
+      "ItemName": "Tasty Rainbow"
+    },
+    {
+      "ItemId": "1392079",
+      "ItemName": "Krakamari"
+    }
+  ]
+}

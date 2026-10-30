@@ -1,0 +1,53 @@
+{
+  "Name": "W404 PL-SKR-OmenStribog Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-SKR-OmenStribog: the pet drops (11), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "225433",
+      "ItemName": "Icebat"
+    },
+    {
+      "ItemId": "225453",
+      "ItemName": "Ice Bird"
+    },
+    {
+      "ItemId": "473444",
+      "ItemName": "Arctic Ninja Pig"
+    },
+    {
+      "ItemId": "473680",
+      "ItemName": "Snowball"
+    },
+    {
+      "ItemId": "653098",
+      "ItemName": "Snow Beast"
+    },
+    {
+      "ItemId": "653164",
+      "ItemName": "White Winter Owl"
+    },
+    {
+      "ItemId": "690101",
+      "ItemName": "Frosty Fish"
+    },
+    {
+      "ItemId": "1257300",
+      "ItemName": "Polar Fox"
+    },
+    {
+      "ItemId": "1359772",
+      "ItemName": "Proper Penguin"
+    },
+    {
+      "ItemId": "1359786",
+      "ItemName": "Intrepid Seal Pup"
+    },
+    {
+      "ItemId": "1359953",
+      "ItemName": "Ice Floe Siren"
+    }
+  ]
+}

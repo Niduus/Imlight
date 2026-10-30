@@ -1,0 +1,21 @@
+{
+  "Name": "W404 ME1_Ant_Aunt_B Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Ant_Aunt_B: the reagent drops (3), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "106967",
+      "ItemName": "Lava Lily"
+    },
+    {
+      "ItemId": "106969",
+      "ItemName": "Frost Flower"
+    },
+    {
+      "ItemId": "1317184",
+      "ItemName": "Sonic Spring"
+    }
+  ]
+}

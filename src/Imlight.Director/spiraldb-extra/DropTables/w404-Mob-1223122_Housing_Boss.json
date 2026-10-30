@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Mob-1223122 Housing (Boss)",
+  "Description": "Wizard404's drop list of Belosto ToeBiter's own drops: the housing drops (1), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1603232",
+      "ItemName": "Umbra Tooth Trophy"
+    }
+  ]
+}

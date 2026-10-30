@@ -1,0 +1,33 @@
+{
+  "Name": "W404 MS-Treant-MSBoss-L54 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Treant-MSBoss-L54: the housing drops (6), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160607",
+      "ItemName": "Cherry Blossom Tree"
+    },
+    {
+      "ItemId": "160611",
+      "ItemName": "Potted Bobtail"
+    },
+    {
+      "ItemId": "160613",
+      "ItemName": "Potted Cattail"
+    },
+    {
+      "ItemId": "470226",
+      "ItemName": "Tree Stage Set"
+    },
+    {
+      "ItemId": "512100",
+      "ItemName": "MooShu Haunted Theme"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    }
+  ]
+}

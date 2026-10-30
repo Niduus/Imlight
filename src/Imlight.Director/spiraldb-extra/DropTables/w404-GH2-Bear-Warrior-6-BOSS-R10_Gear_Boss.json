@@ -1,0 +1,93 @@
+{
+  "Name": "W404 GH2-Bear-Warrior-6-BOSS-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH2-Bear-Warrior-6-BOSS-R10: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "455092",
+      "ItemName": "Valkyrie's Light Pendant"
+    },
+    {
+      "ItemId": "455124",
+      "ItemName": "Bear's Claw of Death"
+    },
+    {
+      "ItemId": "455154",
+      "ItemName": "Cowl of Crackling"
+    },
+    {
+      "ItemId": "455155",
+      "ItemName": "Cold-Kissed Cowl"
+    },
+    {
+      "ItemId": "455182",
+      "ItemName": "Ring of the Hunting Wolf"
+    },
+    {
+      "ItemId": "455221",
+      "ItemName": "Baneful Armor"
+    },
+    {
+      "ItemId": "455223",
+      "ItemName": "Black Ice Armor"
+    },
+    {
+      "ItemId": "455225",
+      "ItemName": "Armor of the Poets"
+    },
+    {
+      "ItemId": "455249",
+      "ItemName": "Raven's Boots of Balance"
+    },
+    {
+      "ItemId": "455250",
+      "ItemName": "Raven's Tricksy Boots"
+    },
+    {
+      "ItemId": "455251",
+      "ItemName": "Raven's Shielded Boots"
+    },
+    {
+      "ItemId": "455252",
+      "ItemName": "Raven's Alert Boots"
+    },
+    {
+      "ItemId": "455253",
+      "ItemName": "Raven's Guarded Boots"
+    },
+    {
+      "ItemId": "455254",
+      "ItemName": "Raven's Protected Boots"
+    },
+    {
+      "ItemId": "455255",
+      "ItemName": "Raven's Covered Boots"
+    },
+    {
+      "ItemId": "455258",
+      "ItemName": "Firewalker Boots"
+    },
+    {
+      "ItemId": "455259",
+      "ItemName": "White Frost Boots"
+    },
+    {
+      "ItemId": "455260",
+      "ItemName": "Esprit Boots"
+    },
+    {
+      "ItemId": "455428",
+      "ItemName": "Juniper Staff"
+    },
+    {
+      "ItemId": "455430",
+      "ItemName": "Horns of Winter Dreams"
+    },
+    {
+      "ItemId": "455432",
+      "ItemName": "Staff of the Rushing Bear"
+    }
+  ]
+}

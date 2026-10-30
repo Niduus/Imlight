@@ -1,0 +1,93 @@
+{
+  "Name": "W404 DS-GH2-Mob-Jewels-1 Jewel (Normal)",
+  "Description": "Wizard404's drop list of the game's table DS-GH2-Mob-Jewels-1: the jewel drops (21), one picked when it rolls. How often: DropOdds.json Normal/Jewel.",
+  "Odds": "Normal/Jewel",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1352367",
+      "ItemName": "Blemished Health Opal +41"
+    },
+    {
+      "ItemId": "1352368",
+      "ItemName": "Blemished Health Opal +42"
+    },
+    {
+      "ItemId": "1352448",
+      "ItemName": "Blemished Mana Opal +20"
+    },
+    {
+      "ItemId": "1352823",
+      "ItemName": "Dull Critical Ruby +2"
+    },
+    {
+      "ItemId": "1352836",
+      "ItemName": "Dull Critical Sapphire +2"
+    },
+    {
+      "ItemId": "1352849",
+      "ItemName": "Dull Critical Amethyst +2"
+    },
+    {
+      "ItemId": "1352862",
+      "ItemName": "Dull Critical Peridot +2"
+    },
+    {
+      "ItemId": "1352875",
+      "ItemName": "Dull Critical Jade +2"
+    },
+    {
+      "ItemId": "1352888",
+      "ItemName": "Dull Critical Onyx +2"
+    },
+    {
+      "ItemId": "1352901",
+      "ItemName": "Dull Critical Citrine +2"
+    },
+    {
+      "ItemId": "1352927",
+      "ItemName": "Dull Critical Opal +1"
+    },
+    {
+      "ItemId": "1352935",
+      "ItemName": "Flawed Resilient Opal +2%"
+    },
+    {
+      "ItemId": "1352940",
+      "ItemName": "Flawed Healing Opal +2%"
+    },
+    {
+      "ItemId": "1357128",
+      "ItemName": "Blemished PIP Opal +4%"
+    },
+    {
+      "ItemId": "1357258",
+      "ItemName": "Blemished Defense Ruby +22"
+    },
+    {
+      "ItemId": "1357303",
+      "ItemName": "Blemished Defense Sapphire +22"
+    },
+    {
+      "ItemId": "1357348",
+      "ItemName": "Blemished Defense Amethyst +22"
+    },
+    {
+      "ItemId": "1357393",
+      "ItemName": "Blemished Defense Peridot +22"
+    },
+    {
+      "ItemId": "1357438",
+      "ItemName": "Blemished Defense Jade +22"
+    },
+    {
+      "ItemId": "1357483",
+      "ItemName": "Blemished Defense Onyx +22"
+    },
+    {
+      "ItemId": "1357528",
+      "ItemName": "Blemished Defense Citrine +22"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "Name": "W404 CE_TreasureTower_Storm_F30-2 Mount (Normal)",
+  "Description": "Wizard404's drop list of the game's table CE_TreasureTower_Storm_F30-2: the mount drops (2), one picked when it rolls. How often: DropOdds.json Normal/Mount.",
+  "Odds": "Normal/Mount",
+  "RollChance": 0.005,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1254227",
+      "ItemName": "Cast Symbol Storm (1 Day)"
+    },
+    {
+      "ItemId": "1254228",
+      "ItemName": "Cast Symbol Storm (7 Day)"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "Name": "W404 EM2-Mob-Hat-127 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table EM2-Mob-Hat-127: the gear drops (8), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462172",
+      "ItemName": "Rad Kalamar Lid"
+    },
+    {
+      "ItemId": "1462173",
+      "ItemName": "Chill Kalamar Lid"
+    },
+    {
+      "ItemId": "1462174",
+      "ItemName": "Gnarly Kalamar Lid"
+    },
+    {
+      "ItemId": "1462175",
+      "ItemName": "Mondo Kalamar Lid"
+    },
+    {
+      "ItemId": "1462176",
+      "ItemName": "Righteous Kalamar Lid"
+    },
+    {
+      "ItemId": "1462177",
+      "ItemName": "Heavy Kalamar Lid"
+    },
+    {
+      "ItemId": "1462178",
+      "ItemName": "Bodacious Kalamar Lid"
+    },
+    {
+      "ItemId": "1462179",
+      "ItemName": "Choice Kalamar Lid"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "Name": "W404 Mob-1283252 Housing (Boss)",
+  "Description": "Wizard404's drop list of Stieg Quicksand's own drops: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1212023",
+      "ItemName": "Khrysalis Hive Combat Theme"
+    },
+    {
+      "ItemId": "1212024",
+      "ItemName": "Khrysalis Combat Theme 2"
+    },
+    {
+      "ItemId": "1212036",
+      "ItemName": "Khrysalis Desert Shadows Theme"
+    },
+    {
+      "ItemId": "1603147",
+      "ItemName": "Bastion Arcane Colossus Statue"
+    }
+  ]
+}

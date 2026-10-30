@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Wraith-WCBoss-L29 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table Wraith-WCBoss-L29: the treasurecard drops (1), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "CantripsTeleportToCommonsTC",
+      "ItemName": "To The Commons"
+    }
+  ]
+}

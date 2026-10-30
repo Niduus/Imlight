@@ -1,0 +1,73 @@
+{
+  "Name": "W404 MS-Treant-MSBoss-L54 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Treant-MSBoss-L54: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "87775",
+      "ItemName": "Ruby Blade of the Forest"
+    },
+    {
+      "ItemId": "97430",
+      "ItemName": "Spirit's Flowering Choker"
+    },
+    {
+      "ItemId": "97486",
+      "ItemName": "Deck of the Lotus"
+    },
+    {
+      "ItemId": "97548",
+      "ItemName": "Forest Spirit's Cap of Belief"
+    },
+    {
+      "ItemId": "97680",
+      "ItemName": "Helm of Sandcastles"
+    },
+    {
+      "ItemId": "97765",
+      "ItemName": "Forest Spirit's Cloak"
+    },
+    {
+      "ItemId": "97805",
+      "ItemName": "Profound Robes"
+    },
+    {
+      "ItemId": "97826",
+      "ItemName": "Garment of Dilemma"
+    },
+    {
+      "ItemId": "97854",
+      "ItemName": "Robes of the Triad"
+    },
+    {
+      "ItemId": "97873",
+      "ItemName": "Vexing Tunic"
+    },
+    {
+      "ItemId": "97898",
+      "ItemName": "Tunic of Soul-Searching"
+    },
+    {
+      "ItemId": "97923",
+      "ItemName": "Forest Spirit's Careful Boots"
+    },
+    {
+      "ItemId": "97924",
+      "ItemName": "Spirit's Slippers of the Muse"
+    },
+    {
+      "ItemId": "97970",
+      "ItemName": "Shoes of the Whim"
+    },
+    {
+      "ItemId": "98020",
+      "ItemName": "Slippers of Yodels"
+    },
+    {
+      "ItemId": "126141",
+      "ItemName": "Tanto of Fire"
+    }
+  ]
+}

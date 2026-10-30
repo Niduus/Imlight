@@ -1,0 +1,49 @@
+{
+  "Name": "W404 KR-BossEpic-Kravenly Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossEpic-Kravenly: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203138",
+      "ItemName": "Last Wood Defender's Cap"
+    },
+    {
+      "ItemId": "1203177",
+      "ItemName": "Mantis Prophet's Ringlet"
+    },
+    {
+      "ItemId": "1203179",
+      "ItemName": "Gloom Dancer's Band"
+    },
+    {
+      "ItemId": "1203209",
+      "ItemName": "Last Wood Defender's Cloak"
+    },
+    {
+      "ItemId": "1203257",
+      "ItemName": "Mantis Stalkers of Secrecy"
+    },
+    {
+      "ItemId": "1203302",
+      "ItemName": "Black Cloud Carnage"
+    },
+    {
+      "ItemId": "1203369",
+      "ItemName": "Spike of the WoodWard"
+    },
+    {
+      "ItemId": "1203373",
+      "ItemName": "Gloom Dancer's Talon"
+    },
+    {
+      "ItemId": "1203409",
+      "ItemName": "Melting Beeswax Case"
+    },
+    {
+      "ItemId": "1203411",
+      "ItemName": "Spiked Set"
+    }
+  ]
+}

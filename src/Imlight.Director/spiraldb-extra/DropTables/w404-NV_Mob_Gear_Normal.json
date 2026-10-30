@@ -1,0 +1,37 @@
+{
+  "Name": "W404 NV_Mob Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table NV_Mob: the gear drops (7), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1588133",
+      "ItemName": "Abstract Aeon Athame"
+    },
+    {
+      "ItemId": "1588136",
+      "ItemName": "Crystalline Aeon Athame"
+    },
+    {
+      "ItemId": "1588138",
+      "ItemName": "Dreamscape Aeon Athame"
+    },
+    {
+      "ItemId": "1588139",
+      "ItemName": "Fractal Aeon Athame"
+    },
+    {
+      "ItemId": "1588137",
+      "ItemName": "Inspired Aeon Athame"
+    },
+    {
+      "ItemId": "1588134",
+      "ItemName": "Macabre Aeon Athame"
+    },
+    {
+      "ItemId": "1588135",
+      "ItemName": "Primordial Aeon Athame"
+    }
+  ]
+}

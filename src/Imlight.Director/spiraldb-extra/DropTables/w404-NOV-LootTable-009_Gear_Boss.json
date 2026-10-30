@@ -1,0 +1,41 @@
+{
+  "Name": "W404 NOV-LootTable-009 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table NOV-LootTable-009: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126548",
+      "ItemName": "Pilgrim Robe"
+    },
+    {
+      "ItemId": "126549",
+      "ItemName": "Pilgrim Boots"
+    },
+    {
+      "ItemId": "126550",
+      "ItemName": "Pilgrim Hat"
+    },
+    {
+      "ItemId": "126551",
+      "ItemName": "Turkey Hat"
+    },
+    {
+      "ItemId": "126552",
+      "ItemName": "Headdress"
+    },
+    {
+      "ItemId": "1248173",
+      "ItemName": "Unpopped Corn Wand"
+    },
+    {
+      "ItemId": "1248174",
+      "ItemName": "Turning Leaf Scepter"
+    },
+    {
+      "ItemId": "1248175",
+      "ItemName": "Scepter of the Gloaming"
+    }
+  ]
+}

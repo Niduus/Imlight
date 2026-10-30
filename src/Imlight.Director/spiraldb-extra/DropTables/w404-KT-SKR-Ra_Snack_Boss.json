@@ -1,0 +1,53 @@
+{
+  "Name": "W404 KT-SKR-Ra Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-SKR-Ra: the snack drops (11), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220329",
+      "ItemName": "Sun Fruit"
+    },
+    {
+      "ItemId": "473527",
+      "ItemName": "Atomic Fireball"
+    },
+    {
+      "ItemId": "537591",
+      "ItemName": "Pollen Bombs"
+    },
+    {
+      "ItemId": "537601",
+      "ItemName": "Bad Honeyed Dates"
+    },
+    {
+      "ItemId": "641598",
+      "ItemName": "Pomegranite"
+    },
+    {
+      "ItemId": "641711",
+      "ItemName": "Locust Kabob"
+    },
+    {
+      "ItemId": "789211",
+      "ItemName": "Pharaoh Taro"
+    },
+    {
+      "ItemId": "789212",
+      "ItemName": "Krokkish coffee"
+    },
+    {
+      "ItemId": "789213",
+      "ItemName": "Kroklava"
+    },
+    {
+      "ItemId": "789214",
+      "ItemName": "Manderdrake fruit"
+    },
+    {
+      "ItemId": "789215",
+      "ItemName": "Gator Tots"
+    }
+  ]
+}

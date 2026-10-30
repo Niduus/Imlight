@@ -1,0 +1,9 @@
+{
+  "Name": "W404 HO-13-BabyCarrots-LT",
+  "Description": "Gold of the game's table HO-13-BabyCarrots-LT, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 4,
+  "MaxGold": 6,
+  "EachItem": false,
+  "Items": []
+}

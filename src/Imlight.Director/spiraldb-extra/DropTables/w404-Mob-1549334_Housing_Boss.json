@@ -1,0 +1,113 @@
+{
+  "Name": "W404 Mob-1549334 Housing (Boss)",
+  "Description": "Wizard404's drop list of Baron von Bracken's own drops: the housing drops (26), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "512093",
+      "ItemName": "Wysteria Main Theme"
+    },
+    {
+      "ItemId": "512151",
+      "ItemName": "Wysteria Theme 1"
+    },
+    {
+      "ItemId": "512152",
+      "ItemName": "Wysteria Theme 2"
+    },
+    {
+      "ItemId": "512153",
+      "ItemName": "Wysteria Combat Theme"
+    },
+    {
+      "ItemId": "683117",
+      "ItemName": "Spiral Tree"
+    },
+    {
+      "ItemId": "683118",
+      "ItemName": "Proud Pegasus Statue"
+    },
+    {
+      "ItemId": "683119",
+      "ItemName": "Estate Painting"
+    },
+    {
+      "ItemId": "683120",
+      "ItemName": "Dragonship Painting"
+    },
+    {
+      "ItemId": "683121",
+      "ItemName": "Small Wooden Clock"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    },
+    {
+      "ItemId": "1217523",
+      "ItemName": "Gold Skeleton Key"
+    },
+    {
+      "ItemId": "1317847",
+      "ItemName": "Wysteria Throw Rug"
+    },
+    {
+      "ItemId": "1317848",
+      "ItemName": "Wysteria Cupboard"
+    },
+    {
+      "ItemId": "1317849",
+      "ItemName": "Wysteria Towel Rack"
+    },
+    {
+      "ItemId": "1350309",
+      "ItemName": "Adept's Socket Wrench"
+    },
+    {
+      "ItemId": "1350751",
+      "ItemName": "Filigreed Wysterian Chair"
+    },
+    {
+      "ItemId": "1350752",
+      "ItemName": "Pigswick Student's Seat"
+    },
+    {
+      "ItemId": "1350753",
+      "ItemName": "Wysterian Artist's Easel"
+    },
+    {
+      "ItemId": "1350754",
+      "ItemName": "Elephantine Ottoman"
+    },
+    {
+      "ItemId": "1350756",
+      "ItemName": "Stately Wysterian Wooden Desk"
+    },
+    {
+      "ItemId": "1350758",
+      "ItemName": "Tall Wysterian Potted Fern"
+    },
+    {
+      "ItemId": "1350760",
+      "ItemName": "Short Wysterian Potted Fern"
+    },
+    {
+      "ItemId": "1350762",
+      "ItemName": "Cornflower Wysterian Settee"
+    },
+    {
+      "ItemId": "1350763",
+      "ItemName": "Golden Blossom Rug"
+    },
+    {
+      "ItemId": "1359101",
+      "ItemName": "Pigswick Student's Desk"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "Name": "W404 Mob-126423 Gear (Boss)",
+  "Description": "Wizard404's drop list of Pumpkin Head's own drops: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1548911",
+      "ItemName": "Gurtok Scaleblade"
+    },
+    {
+      "ItemId": "1548912",
+      "ItemName": "Gurtok Ender's Blade"
+    },
+    {
+      "ItemId": "1548913",
+      "ItemName": "Gurtok Firetusk"
+    },
+    {
+      "ItemId": "1548914",
+      "ItemName": "Gurtok Chillblade"
+    },
+    {
+      "ItemId": "1548915",
+      "ItemName": "Gurtok Everthorn"
+    },
+    {
+      "ItemId": "1548916",
+      "ItemName": "Gurtok Mythslayer"
+    },
+    {
+      "ItemId": "1548917",
+      "ItemName": "Gurtok Telluric Steel"
+    },
+    {
+      "ItemId": "1592342",
+      "ItemName": "Gurtok Spell Knife"
+    },
+    {
+      "ItemId": "1592343",
+      "ItemName": "Gurtok Ender's Spell Knife"
+    },
+    {
+      "ItemId": "1592344",
+      "ItemName": "Gurtok Firetusk Spell Knife"
+    },
+    {
+      "ItemId": "1592345",
+      "ItemName": "Gurtok Chill Spell Knife"
+    },
+    {
+      "ItemId": "1592346",
+      "ItemName": "Gurtok Everthorn Spell Knife"
+    },
+    {
+      "ItemId": "1592347",
+      "ItemName": "Gurtok Mythslayer Spell Knife"
+    },
+    {
+      "ItemId": "1592348",
+      "ItemName": "Gurtok Telluric Spell Knife"
+    }
+  ]
+}

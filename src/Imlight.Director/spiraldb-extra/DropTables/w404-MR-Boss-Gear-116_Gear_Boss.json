@@ -1,0 +1,345 @@
+{
+  "Name": "W404 MR-Boss-Gear-116 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MR-Boss-Gear-116: the gear drops (84), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1402861",
+      "ItemName": "Sand Sea Hand of Ashes"
+    },
+    {
+      "ItemId": "1402862",
+      "ItemName": "Sand Sea Hand of Shivers"
+    },
+    {
+      "ItemId": "1402863",
+      "ItemName": "Sand Sea Hand of Havoc"
+    },
+    {
+      "ItemId": "1402864",
+      "ItemName": "Sand Sea Hand of Mischief"
+    },
+    {
+      "ItemId": "1402865",
+      "ItemName": "Sand Sea Hand of Hardiness"
+    },
+    {
+      "ItemId": "1402866",
+      "ItemName": "Sand Sea Hand of Emptiness"
+    },
+    {
+      "ItemId": "1402867",
+      "ItemName": "Sand Sea Hand of Decorum"
+    },
+    {
+      "ItemId": "1402926",
+      "ItemName": "Kobra Hand of Rigor"
+    },
+    {
+      "ItemId": "1402928",
+      "ItemName": "Hand of Kobra Acumen"
+    },
+    {
+      "ItemId": "1402929",
+      "ItemName": "Kobra Hand of Mettle"
+    },
+    {
+      "ItemId": "1405021",
+      "ItemName": "Vizier's Shoes of Smolders"
+    },
+    {
+      "ItemId": "1405023",
+      "ItemName": "Vizier's Windswept Shoes"
+    },
+    {
+      "ItemId": "1405026",
+      "ItemName": "Vizier's Shoes of Apathy"
+    },
+    {
+      "ItemId": "1405053",
+      "ItemName": "Zruvan Helmet of Fury"
+    },
+    {
+      "ItemId": "1405054",
+      "ItemName": "Zruvan Helmet of Rigor"
+    },
+    {
+      "ItemId": "1405056",
+      "ItemName": "Zruvan Helmet of Acumen"
+    },
+    {
+      "ItemId": "1405057",
+      "ItemName": "Zruvan Helmet of Mettle"
+    },
+    {
+      "ItemId": "1405085",
+      "ItemName": "Zruvan Raiment of Fury"
+    },
+    {
+      "ItemId": "1405087",
+      "ItemName": "Zruvan Flashflood Raiment"
+    },
+    {
+      "ItemId": "1405089",
+      "ItemName": "Zruvan Raiment of Mettle"
+    },
+    {
+      "ItemId": "1405091",
+      "ItemName": "Zruvan Raiment of Amity"
+    },
+    {
+      "ItemId": "1405117",
+      "ItemName": "Zruvan Galesh of Fury"
+    },
+    {
+      "ItemId": "1405118",
+      "ItemName": "Zruvan Galesh of Rigor"
+    },
+    {
+      "ItemId": "1405119",
+      "ItemName": "Zruvan Galesh of Flashfloods"
+    },
+    {
+      "ItemId": "1405120",
+      "ItemName": "Zruvan Galesh of Acumen"
+    },
+    {
+      "ItemId": "1405121",
+      "ItemName": "Zruvan Galesh of Mettle"
+    },
+    {
+      "ItemId": "1405122",
+      "ItemName": "Zruvan Galesh of Demise"
+    },
+    {
+      "ItemId": "1405123",
+      "ItemName": "Zruvan Galesh of Amity"
+    },
+    {
+      "ItemId": "1405149",
+      "ItemName": "Sand Sea Cowl of Ashes"
+    },
+    {
+      "ItemId": "1405150",
+      "ItemName": "Sand Sea Cowl of Shivers"
+    },
+    {
+      "ItemId": "1405151",
+      "ItemName": "Sand Sea Cowl of Havoc"
+    },
+    {
+      "ItemId": "1405152",
+      "ItemName": "Sand Sea Cowl of Mischief"
+    },
+    {
+      "ItemId": "1405153",
+      "ItemName": "Sand Sea Cowl of Hardiness"
+    },
+    {
+      "ItemId": "1405154",
+      "ItemName": "Sand Sea Cowl of Emptiness"
+    },
+    {
+      "ItemId": "1405155",
+      "ItemName": "Sand Sea Cowl of Decorum"
+    },
+    {
+      "ItemId": "1405181",
+      "ItemName": "Sand Sea Outfit of Ashes"
+    },
+    {
+      "ItemId": "1405182",
+      "ItemName": "Sand Sea Outfit of Shivers"
+    },
+    {
+      "ItemId": "1405183",
+      "ItemName": "Sand Sea Outfit of Havoc"
+    },
+    {
+      "ItemId": "1405184",
+      "ItemName": "Sand Sea Outfit of Mischief"
+    },
+    {
+      "ItemId": "1405185",
+      "ItemName": "Sand Sea Outfit of Hardiness"
+    },
+    {
+      "ItemId": "1405186",
+      "ItemName": "Sand Sea Outfit of Emptiness"
+    },
+    {
+      "ItemId": "1405187",
+      "ItemName": "Sand Sea Outfit of Decorum"
+    },
+    {
+      "ItemId": "1405245",
+      "ItemName": "Sand Sea Dagger of Ashes"
+    },
+    {
+      "ItemId": "1405246",
+      "ItemName": "Sand Sea Dagger of Shivers"
+    },
+    {
+      "ItemId": "1405250",
+      "ItemName": "Sand Sea Dagger of Emptiness"
+    },
+    {
+      "ItemId": "1405251",
+      "ItemName": "Sand Sea Dagger of Decorum"
+    },
+    {
+      "ItemId": "1405310",
+      "ItemName": "Sand Sea Ring of Shivers"
+    },
+    {
+      "ItemId": "1405314",
+      "ItemName": "Sand Sea Ring of Emptiness"
+    },
+    {
+      "ItemId": "1405315",
+      "ItemName": "Sand Sea Ring of Decorum"
+    },
+    {
+      "ItemId": "1405341",
+      "ItemName": "Sand Sea Dagger of Explosion"
+    },
+    {
+      "ItemId": "1405342",
+      "ItemName": "Sand Sea Dagger of Blusters"
+    },
+    {
+      "ItemId": "1405343",
+      "ItemName": "Sand Sea Dagger of Bolts"
+    },
+    {
+      "ItemId": "1405344",
+      "ItemName": "Sand Sea Dagger of Curiosity"
+    },
+    {
+      "ItemId": "1405345",
+      "ItemName": "Sand Sea Dagger of Ardor"
+    },
+    {
+      "ItemId": "1405346",
+      "ItemName": "Sand Sea Dagger of Blight"
+    },
+    {
+      "ItemId": "1405347",
+      "ItemName": "Sand Sea Dagger of Accord"
+    },
+    {
+      "ItemId": "1405373",
+      "ItemName": "Sand Sea Amulet of Explosion"
+    },
+    {
+      "ItemId": "1405374",
+      "ItemName": "Sand Sea Amulet of Blusters"
+    },
+    {
+      "ItemId": "1405377",
+      "ItemName": "Sand Sea Amulet of Ardor"
+    },
+    {
+      "ItemId": "1405405",
+      "ItemName": "Sand Sea Ring of Explosion"
+    },
+    {
+      "ItemId": "1405406",
+      "ItemName": "Sand Sea Ring of Blusters"
+    },
+    {
+      "ItemId": "1405407",
+      "ItemName": "Sand Sea Ring of Bolts"
+    },
+    {
+      "ItemId": "1405408",
+      "ItemName": "Sand Sea Ring of Curiosity"
+    },
+    {
+      "ItemId": "1405409",
+      "ItemName": "Sand Sea Ring of Ardor"
+    },
+    {
+      "ItemId": "1405410",
+      "ItemName": "Sand Sea Ring of Blight"
+    },
+    {
+      "ItemId": "1405411",
+      "ItemName": "Sand Sea Ring of Accord"
+    },
+    {
+      "ItemId": "1405469",
+      "ItemName": "Kobra Choker of Fury"
+    },
+    {
+      "ItemId": "1405470",
+      "ItemName": "Kobra Choker of Rigor"
+    },
+    {
+      "ItemId": "1405471",
+      "ItemName": "Kobra Choker of Flashfloods"
+    },
+    {
+      "ItemId": "1405472",
+      "ItemName": "Kobra Choker of Acumen"
+    },
+    {
+      "ItemId": "1405473",
+      "ItemName": "Kobra Choker of Mettle"
+    },
+    {
+      "ItemId": "1405474",
+      "ItemName": "Kobra Choker of Demise"
+    },
+    {
+      "ItemId": "1405475",
+      "ItemName": "Kobra Choker of Amity"
+    },
+    {
+      "ItemId": "1405533",
+      "ItemName": "Rubal Bow of Conflagration"
+    },
+    {
+      "ItemId": "1405534",
+      "ItemName": "Rubal Sleetfall Bow"
+    },
+    {
+      "ItemId": "1405535",
+      "ItemName": "Thundering Rubal Bow"
+    },
+    {
+      "ItemId": "1405536",
+      "ItemName": "Rubal Bow of Illusions"
+    },
+    {
+      "ItemId": "1405537",
+      "ItemName": "Hardy Rubal Bow"
+    },
+    {
+      "ItemId": "1405538",
+      "ItemName": "Rubal Bow of Eradication"
+    },
+    {
+      "ItemId": "1405539",
+      "ItemName": "Rubal Bow of Justice"
+    },
+    {
+      "ItemId": "1405599",
+      "ItemName": "Voltaic Durvish Armaments"
+    },
+    {
+      "ItemId": "1405600",
+      "ItemName": "Wiley Durvish Armaments"
+    },
+    {
+      "ItemId": "1405602",
+      "ItemName": "Durvish Armaments of Unrest"
+    },
+    {
+      "ItemId": "1405603",
+      "ItemName": "Dutiful Durvish's Armaments"
+    }
+  ]
+}

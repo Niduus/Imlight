@@ -1,0 +1,105 @@
+{
+  "Name": "W404 ME1_Dworgyn_A Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Dworgyn_A: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "473286",
+      "ItemName": "Greenwarden's Energetic Mask"
+    },
+    {
+      "ItemId": "473287",
+      "ItemName": "Greenwarden's Energetic Mask"
+    },
+    {
+      "ItemId": "473293",
+      "ItemName": "Greenwarden's Energetic Shroud"
+    },
+    {
+      "ItemId": "473294",
+      "ItemName": "Greenwarden's Energetic Shroud"
+    },
+    {
+      "ItemId": "473300",
+      "ItemName": "Greenwarden's Energetic Boots"
+    },
+    {
+      "ItemId": "473301",
+      "ItemName": "Greenwarden's Energetic Boots"
+    },
+    {
+      "ItemId": "473307",
+      "ItemName": "Greenwarden's Peaceful Mask"
+    },
+    {
+      "ItemId": "473308",
+      "ItemName": "Greenwarden's Peaceful Mask"
+    },
+    {
+      "ItemId": "473314",
+      "ItemName": "Greenwarden's Peaceful Shroud"
+    },
+    {
+      "ItemId": "473315",
+      "ItemName": "Greenwarden's Peaceful Shroud"
+    },
+    {
+      "ItemId": "473321",
+      "ItemName": "Greenwarden's Peaceful Boots"
+    },
+    {
+      "ItemId": "473322",
+      "ItemName": "Greenwarden's Peaceful Boots"
+    },
+    {
+      "ItemId": "473328",
+      "ItemName": "Greenwarden's Brilliant Mask"
+    },
+    {
+      "ItemId": "473329",
+      "ItemName": "Greenwarden's Brilliant Mask"
+    },
+    {
+      "ItemId": "473335",
+      "ItemName": "Greenwarden's Brilliant Shroud"
+    },
+    {
+      "ItemId": "473336",
+      "ItemName": "Greenwarden's Brilliant Shroud"
+    },
+    {
+      "ItemId": "473342",
+      "ItemName": "Greenwarden's Brilliant Boots"
+    },
+    {
+      "ItemId": "473343",
+      "ItemName": "Greenwarden's Brilliant Boots"
+    },
+    {
+      "ItemId": "473357",
+      "ItemName": "Greenwarden's Energetic Staff"
+    },
+    {
+      "ItemId": "473358",
+      "ItemName": "Greenwarden's Energetic Staff"
+    },
+    {
+      "ItemId": "473364",
+      "ItemName": "Greenwarden's Peaceful Staff"
+    },
+    {
+      "ItemId": "473365",
+      "ItemName": "Greenwarden's Peaceful Staff"
+    },
+    {
+      "ItemId": "473371",
+      "ItemName": "Greenwarden's Brilliant Staff"
+    },
+    {
+      "ItemId": "473372",
+      "ItemName": "Greenwarden's Brilliant Staff"
+    }
+  ]
+}

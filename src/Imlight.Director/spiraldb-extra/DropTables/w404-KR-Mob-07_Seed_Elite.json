@@ -1,0 +1,29 @@
+{
+  "Name": "W404 KR-Mob-07 Seed (Elite)",
+  "Description": "Wizard404's drop list of the game's table KR-Mob-07: the seed drops (5), one picked when it rolls. How often: DropOdds.json Elite/Seed.",
+  "Odds": "Elite/Seed",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "473647",
+      "ItemName": "Moon Flower"
+    },
+    {
+      "ItemId": "589166",
+      "ItemName": "Honey Bee Plant"
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries"
+    },
+    {
+      "ItemId": "653139",
+      "ItemName": "Angel Oak"
+    },
+    {
+      "ItemId": "653153",
+      "ItemName": "Melting Cheese Tree"
+    }
+  ]
+}

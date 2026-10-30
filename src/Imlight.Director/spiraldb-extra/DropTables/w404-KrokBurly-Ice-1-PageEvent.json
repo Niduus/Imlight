@@ -1,0 +1,9 @@
+{
+  "Name": "W404 KrokBurly-Ice-1-PageEvent",
+  "Description": "Gold of the game's table KrokBurly-Ice-1-PageEvent, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 10,
+  "MaxGold": 15,
+  "EachItem": false,
+  "Items": []
+}

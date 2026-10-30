@@ -1,0 +1,205 @@
+{
+  "Name": "W404 G14-HS-SKR-Belloshe Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-HS-SKR-Belloshe: the gear drops (49), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1338192",
+      "ItemName": "Blade of the Fire River"
+    },
+    {
+      "ItemId": "1338193",
+      "ItemName": "Dagger of the Cold Bones"
+    },
+    {
+      "ItemId": "1338194",
+      "ItemName": "Kris of Thunderous Resolve"
+    },
+    {
+      "ItemId": "1338195",
+      "ItemName": "Dagger of the Hidden Words"
+    },
+    {
+      "ItemId": "1338196",
+      "ItemName": "Izft's Dirk of Incarnation"
+    },
+    {
+      "ItemId": "1338197",
+      "ItemName": "Dagger of the Devourer"
+    },
+    {
+      "ItemId": "1338198",
+      "ItemName": "Blade of Anubis' Verdict"
+    },
+    {
+      "ItemId": "1338276",
+      "ItemName": "Zigazag Desert Relic"
+    },
+    {
+      "ItemId": "1338277",
+      "ItemName": "Relic of the Brisk Breeze"
+    },
+    {
+      "ItemId": "1338278",
+      "ItemName": "Ampul of Desert Squalls"
+    },
+    {
+      "ItemId": "1338279",
+      "ItemName": "Rebus Medallion"
+    },
+    {
+      "ItemId": "1338280",
+      "ItemName": "Hands of Anubis Pendant"
+    },
+    {
+      "ItemId": "1338281",
+      "ItemName": "Medallion of the Condemned"
+    },
+    {
+      "ItemId": "1338282",
+      "ItemName": "Jewel of Anubis' Judgment"
+    },
+    {
+      "ItemId": "1338360",
+      "ItemName": "Ring of the Simmering Evil"
+    },
+    {
+      "ItemId": "1338361",
+      "ItemName": "Band of the Sistrum"
+    },
+    {
+      "ItemId": "1338362",
+      "ItemName": "Ring of the Ravenous Teeth"
+    },
+    {
+      "ItemId": "1338363",
+      "ItemName": "Rebus Seal"
+    },
+    {
+      "ItemId": "1338364",
+      "ItemName": "Hands of Anubis Ring"
+    },
+    {
+      "ItemId": "1338365",
+      "ItemName": "Stone of the Longest Hall"
+    },
+    {
+      "ItemId": "1338366",
+      "ItemName": "Scales of Justice Band"
+    },
+    {
+      "ItemId": "1338444",
+      "ItemName": "Deck of the Simmering Evil"
+    },
+    {
+      "ItemId": "1338445",
+      "ItemName": "Brisk Breeze Pasteboards"
+    },
+    {
+      "ItemId": "1338446",
+      "ItemName": "Deck of Sand Squalls"
+    },
+    {
+      "ItemId": "1338447",
+      "ItemName": "Array of the Archaic Rebus"
+    },
+    {
+      "ItemId": "1338448",
+      "ItemName": "Case of the Virtuous Soul"
+    },
+    {
+      "ItemId": "1338449",
+      "ItemName": "Condemned Soldier's Arcana"
+    },
+    {
+      "ItemId": "1338450",
+      "ItemName": "Anubis' Cards of Veracity"
+    },
+    {
+      "ItemId": "1338458",
+      "ItemName": "Pit Viper's Array of Venom"
+    },
+    {
+      "ItemId": "1338459",
+      "ItemName": "Set of the Ravenous Teeth"
+    },
+    {
+      "ItemId": "1338460",
+      "ItemName": "Duat Traveler's Gallery"
+    },
+    {
+      "ItemId": "1338461",
+      "ItemName": "Case of the Hall of Echoes"
+    },
+    {
+      "ItemId": "1338462",
+      "ItemName": "Resolute Hand of Anubis"
+    },
+    {
+      "ItemId": "1338463",
+      "ItemName": "Soul Devourer's Arcana"
+    },
+    {
+      "ItemId": "1338464",
+      "ItemName": "House of Scales Array"
+    },
+    {
+      "ItemId": "1358957",
+      "ItemName": "Pit Viper's Array of Venom"
+    },
+    {
+      "ItemId": "1358958",
+      "ItemName": "Set of the Ravenous Teeth"
+    },
+    {
+      "ItemId": "1358959",
+      "ItemName": "Duat Traveler's Gallery"
+    },
+    {
+      "ItemId": "1358960",
+      "ItemName": "Case of the Hall of Echoes"
+    },
+    {
+      "ItemId": "1358961",
+      "ItemName": "Resolute Hand of Anubis"
+    },
+    {
+      "ItemId": "1358962",
+      "ItemName": "Soul Devourer's Arcana"
+    },
+    {
+      "ItemId": "1358963",
+      "ItemName": "House of Scales Array"
+    },
+    {
+      "ItemId": "1358964",
+      "ItemName": "Pit Viper's Array of Venom"
+    },
+    {
+      "ItemId": "1358965",
+      "ItemName": "Set of the Ravenous Teeth"
+    },
+    {
+      "ItemId": "1358966",
+      "ItemName": "Duat Traveler's Gallery"
+    },
+    {
+      "ItemId": "1358967",
+      "ItemName": "Case of the Hall of Echoes"
+    },
+    {
+      "ItemId": "1358968",
+      "ItemName": "Resolute Hand of Anubis"
+    },
+    {
+      "ItemId": "1358969",
+      "ItemName": "Soul Devourer's Arcana"
+    },
+    {
+      "ItemId": "1358970",
+      "ItemName": "House of Scales Array"
+    }
+  ]
+}

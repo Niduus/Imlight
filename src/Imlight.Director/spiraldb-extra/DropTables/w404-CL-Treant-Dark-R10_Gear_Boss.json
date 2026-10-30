@@ -1,0 +1,65 @@
+{
+  "Name": "W404 CL-Treant-Dark-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-Treant-Dark-R10: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243238",
+      "ItemName": "Longevity Twin Blades"
+    },
+    {
+      "ItemId": "243251",
+      "ItemName": "Ethereal Athame"
+    },
+    {
+      "ItemId": "243297",
+      "ItemName": "Synthesis Cover"
+    },
+    {
+      "ItemId": "243319",
+      "ItemName": "Shroud of Shadows"
+    },
+    {
+      "ItemId": "243359",
+      "ItemName": "Polar Cap"
+    },
+    {
+      "ItemId": "243461",
+      "ItemName": "Raiment of Rapport"
+    },
+    {
+      "ItemId": "243552",
+      "ItemName": "Ring of Hidden Treasures"
+    },
+    {
+      "ItemId": "243571",
+      "ItemName": "Tangleroot's Blooming Band"
+    },
+    {
+      "ItemId": "243656",
+      "ItemName": "Tangleroot's Spirit Gear"
+    },
+    {
+      "ItemId": "243683",
+      "ItemName": "Storied Armor"
+    },
+    {
+      "ItemId": "243765",
+      "ItemName": "Devoted Greaves"
+    },
+    {
+      "ItemId": "243770",
+      "ItemName": "Blistering Greaves"
+    },
+    {
+      "ItemId": "243817",
+      "ItemName": "Tangleroot's Spirit Greaves"
+    },
+    {
+      "ItemId": "243899",
+      "ItemName": "Vial of Stormy Seas"
+    }
+  ]
+}

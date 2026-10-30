@@ -1,0 +1,153 @@
+{
+  "Name": "W404 ME_Sinbad_IronSultan_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME_Sinbad_IronSultan_01: the gear drops (36), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1489476",
+      "ItemName": "Fleet Kapudan's Turban"
+    },
+    {
+      "ItemId": "1489481",
+      "ItemName": "Fleet Kapudan's Turban"
+    },
+    {
+      "ItemId": "1489484",
+      "ItemName": "Fleet Kapudan's Turban"
+    },
+    {
+      "ItemId": "1489490",
+      "ItemName": "Fleet Kapudan's Armor"
+    },
+    {
+      "ItemId": "1489495",
+      "ItemName": "Fleet Kapudan's Armor"
+    },
+    {
+      "ItemId": "1489498",
+      "ItemName": "Fleet Kapudan's Armor"
+    },
+    {
+      "ItemId": "1489504",
+      "ItemName": "Fleet Kapudan's Boots"
+    },
+    {
+      "ItemId": "1489509",
+      "ItemName": "Fleet Kapudan's Boots"
+    },
+    {
+      "ItemId": "1489512",
+      "ItemName": "Fleet Kapudan's Boots"
+    },
+    {
+      "ItemId": "1489518",
+      "ItemName": "Grand Admiral's Turban"
+    },
+    {
+      "ItemId": "1489523",
+      "ItemName": "Grand Admiral's Turban"
+    },
+    {
+      "ItemId": "1489526",
+      "ItemName": "Grand Admiral's Turban"
+    },
+    {
+      "ItemId": "1489532",
+      "ItemName": "Grand Admiral's Armor"
+    },
+    {
+      "ItemId": "1489537",
+      "ItemName": "Grand Admiral's Armor"
+    },
+    {
+      "ItemId": "1489540",
+      "ItemName": "Grand Admiral's Armor"
+    },
+    {
+      "ItemId": "1489546",
+      "ItemName": "Grand Admiral's Boots"
+    },
+    {
+      "ItemId": "1489551",
+      "ItemName": "Grand Admiral's Boots"
+    },
+    {
+      "ItemId": "1489554",
+      "ItemName": "Grand Admiral's Boots"
+    },
+    {
+      "ItemId": "1489560",
+      "ItemName": "Sky Captain's Turban"
+    },
+    {
+      "ItemId": "1489565",
+      "ItemName": "Sky Captain's Turban"
+    },
+    {
+      "ItemId": "1489568",
+      "ItemName": "Sky Captain's Turban"
+    },
+    {
+      "ItemId": "1489574",
+      "ItemName": "Sky Captain's Armor"
+    },
+    {
+      "ItemId": "1489579",
+      "ItemName": "Sky Captain's Armor"
+    },
+    {
+      "ItemId": "1489582",
+      "ItemName": "Sky Captain's Armor"
+    },
+    {
+      "ItemId": "1489588",
+      "ItemName": "Sky Captain's Boots"
+    },
+    {
+      "ItemId": "1489593",
+      "ItemName": "Sky Captain's Boots"
+    },
+    {
+      "ItemId": "1489596",
+      "ItemName": "Sky Captain's Boots"
+    },
+    {
+      "ItemId": "1489616",
+      "ItemName": "Admiral's Boarding Hook"
+    },
+    {
+      "ItemId": "1489621",
+      "ItemName": "Admiral's Boarding Hook"
+    },
+    {
+      "ItemId": "1489624",
+      "ItemName": "Admiral's Boarding Hook"
+    },
+    {
+      "ItemId": "1489630",
+      "ItemName": "Sky Captain's Boarding Hook"
+    },
+    {
+      "ItemId": "1489635",
+      "ItemName": "Sky Captain's Boarding Hook"
+    },
+    {
+      "ItemId": "1489638",
+      "ItemName": "Sky Captain's Boarding Hook"
+    },
+    {
+      "ItemId": "1489890",
+      "ItemName": "Kapudan's Grappling Hook"
+    },
+    {
+      "ItemId": "1489895",
+      "ItemName": "Kapudan's Grappling Hook"
+    },
+    {
+      "ItemId": "1489898",
+      "ItemName": "Kapudan's Grappling Hook"
+    }
+  ]
+}

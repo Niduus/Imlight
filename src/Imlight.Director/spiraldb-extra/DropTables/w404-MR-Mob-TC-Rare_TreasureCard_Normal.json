@@ -1,0 +1,149 @@
+{
+  "Name": "W404 MR-Mob-TC-Rare TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table MR-Mob-TC-Rare: the treasurecard drops (35), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Troll Death TC",
+      "ItemName": "Death Troll"
+    },
+    {
+      "ItemId": "Troll Yellow TC",
+      "ItemName": "Yellow Troll"
+    },
+    {
+      "ItemId": "Shift - TC",
+      "ItemName": "Shift"
+    },
+    {
+      "ItemId": "Colossus Magma TC",
+      "ItemName": "Magma Colossus"
+    },
+    {
+      "ItemId": "Colossus Obsidian TC",
+      "ItemName": "Obsidian Colossus"
+    },
+    {
+      "ItemId": "Colossus Sandstone TC",
+      "ItemName": "Sandstone Colossus"
+    },
+    {
+      "ItemId": "Colossus Steel TC",
+      "ItemName": "Steel Colossus"
+    },
+    {
+      "ItemId": "Colossus Stone TC",
+      "ItemName": "Stone Colossus"
+    },
+    {
+      "ItemId": "Firey Colossus TC",
+      "ItemName": "Fiery Colossus"
+    },
+    {
+      "ItemId": "Mutate - Colossus to Fire TC",
+      "ItemName": "Mutate Colossus"
+    },
+    {
+      "ItemId": "Mutate - Colossus to Storm TC",
+      "ItemName": "Mutate Colossus"
+    },
+    {
+      "ItemId": "Shock Colossus TC",
+      "ItemName": "Shock Colossus"
+    },
+    {
+      "ItemId": "Sabertooth Ice TC",
+      "ItemName": "Frostfang"
+    },
+    {
+      "ItemId": "Steel Golem - Ice TC",
+      "ItemName": "Coldiron"
+    },
+    {
+      "ItemId": "Sunbird Ice TC",
+      "ItemName": "Icebird"
+    },
+    {
+      "ItemId": "Arcticzilla TC",
+      "ItemName": "Arcticzilla"
+    },
+    {
+      "ItemId": "Balefrost TC",
+      "ItemName": "Balefrost"
+    },
+    {
+      "ItemId": "Blue Phoenix TC",
+      "ItemName": "Blue Phoenix"
+    },
+    {
+      "ItemId": "Crystal Spider TC",
+      "ItemName": "Crystal Spider"
+    },
+    {
+      "ItemId": "Deathspear TC",
+      "ItemName": "Deathspear"
+    },
+    {
+      "ItemId": "Dragonspear TC",
+      "ItemName": "Dragonspear"
+    },
+    {
+      "ItemId": "Firespear TC",
+      "ItemName": "Firespear"
+    },
+    {
+      "ItemId": "Icespear TC",
+      "ItemName": "Icespear"
+    },
+    {
+      "ItemId": "Lifespear TC",
+      "ItemName": "Lifespear"
+    },
+    {
+      "ItemId": "Mythspear TC",
+      "ItemName": "Mythspear"
+    },
+    {
+      "ItemId": "Spirit Spear TC",
+      "ItemName": "Spirit Spear"
+    },
+    {
+      "ItemId": "Stormspear TC",
+      "ItemName": "Stormspear"
+    },
+    {
+      "ItemId": "Tri Spear TC",
+      "ItemName": "Elemental Spear"
+    },
+    {
+      "ItemId": "Combustion TC",
+      "ItemName": "Combustion"
+    },
+    {
+      "ItemId": "Katabatic Wind TC",
+      "ItemName": "Katabatic Wind"
+    },
+    {
+      "ItemId": "Astraphobia TC",
+      "ItemName": "Astraphobia"
+    },
+    {
+      "ItemId": "Saga of Heroes TC",
+      "ItemName": "Saga of Heroes"
+    },
+    {
+      "ItemId": "Namaste TC",
+      "ItemName": "Namaste"
+    },
+    {
+      "ItemId": "Age of Reckoning TC",
+      "ItemName": "Age of Reckoning"
+    },
+    {
+      "ItemId": "Counterforce TC",
+      "ItemName": "Counterforce"
+    }
+  ]
+}

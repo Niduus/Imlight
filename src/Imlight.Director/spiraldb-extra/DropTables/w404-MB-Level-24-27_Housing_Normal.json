@@ -1,0 +1,17 @@
+{
+  "Name": "W404 MB-Level-24-27 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table MB-Level-24-27: the housing drops (2), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160673",
+      "ItemName": "Ball of Yellow Yarn"
+    },
+    {
+      "ItemId": "160743",
+      "ItemName": "Green Street Light"
+    }
+  ]
+}

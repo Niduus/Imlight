@@ -1,0 +1,65 @@
+{
+  "Name": "W404 ZF-ShadowWeaver-R11-Boss-02 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-ShadowWeaver-R11-Boss-02: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "526681",
+      "ItemName": "Staff of Shadow and Light"
+    },
+    {
+      "ItemId": "526683",
+      "ItemName": "Spear of the Trade Winds"
+    },
+    {
+      "ItemId": "540097",
+      "ItemName": "Collar of the Ice Hound"
+    },
+    {
+      "ItemId": "540128",
+      "ItemName": "Hot White Scimitar"
+    },
+    {
+      "ItemId": "540176",
+      "ItemName": "Face of Baobab"
+    },
+    {
+      "ItemId": "540178",
+      "ItemName": "Hat of the Old Kings"
+    },
+    {
+      "ItemId": "540202",
+      "ItemName": "Kallah's Dread Stone"
+    },
+    {
+      "ItemId": "540234",
+      "ItemName": "Graveyard Shift"
+    },
+    {
+      "ItemId": "540236",
+      "ItemName": "Big Sky Outfit"
+    },
+    {
+      "ItemId": "540277",
+      "ItemName": "Shaman's Cold River Wraps"
+    },
+    {
+      "ItemId": "540280",
+      "ItemName": "Nemean Rock Climbers"
+    },
+    {
+      "ItemId": "540301",
+      "ItemName": "Dead Chieftain's Fanged Deck"
+    },
+    {
+      "ItemId": "540303",
+      "ItemName": "Hand-Chased Box of Winter"
+    },
+    {
+      "ItemId": "540305",
+      "ItemName": "Bundle of Ananse's Stories"
+    }
+  ]
+}

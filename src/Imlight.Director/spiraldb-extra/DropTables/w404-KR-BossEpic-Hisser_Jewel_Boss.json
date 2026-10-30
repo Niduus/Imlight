@@ -1,0 +1,17 @@
+{
+  "Name": "W404 KR-BossEpic-Hisser Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossEpic-Hisser: the jewel drops (2), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1360000",
+      "ItemName": "Sleet Storm Opal"
+    },
+    {
+      "ItemId": "1360001",
+      "ItemName": "Cycle of Life Opal"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "W404 TC-Krokotillian TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-Krokotillian: the treasurecard drops (1), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Krokotillian TC",
+      "ItemName": "Krokotillian"
+    }
+  ]
+}

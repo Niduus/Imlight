@@ -1,0 +1,41 @@
+{
+  "Name": "W404 WC-CA-Drains-Boss-02 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WC-CA-Drains-Boss-02: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1489336",
+      "ItemName": "Vanguard's Fiery Armor"
+    },
+    {
+      "ItemId": "1489337",
+      "ItemName": "Vanguard's Icy Armor"
+    },
+    {
+      "ItemId": "1489338",
+      "ItemName": "Vanguard's Shocking Armor"
+    },
+    {
+      "ItemId": "1489339",
+      "ItemName": "Vanguard's Mythic Armor"
+    },
+    {
+      "ItemId": "1489340",
+      "ItemName": "Vanguard's Vibrant Armor"
+    },
+    {
+      "ItemId": "1489341",
+      "ItemName": "Vanguard's Deadly Armor"
+    },
+    {
+      "ItemId": "1489342",
+      "ItemName": "Vanguard's Balanced Armor"
+    },
+    {
+      "ItemId": "1489343",
+      "ItemName": "Dragonspyre Vanguard's Armor"
+    }
+  ]
+}

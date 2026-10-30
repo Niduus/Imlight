@@ -1,0 +1,9 @@
+{
+  "Name": "W404 CL-Wildclaw-Brown-PageEvent",
+  "Description": "Gold of the game's table CL-Wildclaw-Brown-PageEvent, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 20,
+  "MaxGold": 25,
+  "EachItem": false,
+  "Items": []
+}

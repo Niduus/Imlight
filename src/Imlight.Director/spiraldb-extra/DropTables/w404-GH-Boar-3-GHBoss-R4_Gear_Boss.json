@@ -1,0 +1,37 @@
+{
+  "Name": "W404 GH-Boar-3-GHBoss-R4 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Boar-3-GHBoss-R4: the gear drops (7), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136257",
+      "ItemName": "Icewarden's Knife"
+    },
+    {
+      "ItemId": "136258",
+      "ItemName": "Legend's Edge"
+    },
+    {
+      "ItemId": "136340",
+      "ItemName": "Firebrand's Coif"
+    },
+    {
+      "ItemId": "136342",
+      "ItemName": "Veil of Measure"
+    },
+    {
+      "ItemId": "136467",
+      "ItemName": "Circlet of the Blaze"
+    },
+    {
+      "ItemId": "136538",
+      "ItemName": "Vestment of Verse"
+    },
+    {
+      "ItemId": "171119",
+      "ItemName": "Footwraps of Condensation"
+    }
+  ]
+}

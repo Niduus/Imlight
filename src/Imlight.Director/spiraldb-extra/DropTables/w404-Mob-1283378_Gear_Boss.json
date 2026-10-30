@@ -1,0 +1,233 @@
+{
+  "Name": "W404 Mob-1283378 Gear (Boss)",
+  "Description": "Wizard404's drop list of Archmagus Lorcan's own drops: the gear drops (56), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1548988",
+      "ItemName": "Gorge Digger's Sturdy Helm"
+    },
+    {
+      "ItemId": "1548989",
+      "ItemName": "Fallen Knight Death Mask"
+    },
+    {
+      "ItemId": "1548990",
+      "ItemName": "Charred Mantle of the Burn"
+    },
+    {
+      "ItemId": "1548991",
+      "ItemName": "Mantis Helm of Cold Truth"
+    },
+    {
+      "ItemId": "1548992",
+      "ItemName": "Mantis Cover of Readiness"
+    },
+    {
+      "ItemId": "1548993",
+      "ItemName": "Digger Drone Helm of Duty"
+    },
+    {
+      "ItemId": "1548994",
+      "ItemName": "Burrower Crown of Thunder"
+    },
+    {
+      "ItemId": "1548995",
+      "ItemName": "Mantis Captain's Raiment"
+    },
+    {
+      "ItemId": "1548996",
+      "ItemName": "Grave Digger Drone's Tunic"
+    },
+    {
+      "ItemId": "1548997",
+      "ItemName": "Devil's Flower Vestment"
+    },
+    {
+      "ItemId": "1548998",
+      "ItemName": "Frozen In Time Armor"
+    },
+    {
+      "ItemId": "1548999",
+      "ItemName": "Mouse Armor of Persistence"
+    },
+    {
+      "ItemId": "1557000",
+      "ItemName": "Mantis Prophet's Garb"
+    },
+    {
+      "ItemId": "1557001",
+      "ItemName": "Digger's Brimstone Plate"
+    },
+    {
+      "ItemId": "1557002",
+      "ItemName": "Digger's Boots of Symmetry"
+    },
+    {
+      "ItemId": "1557003",
+      "ItemName": "Mouse Boots of Mourning"
+    },
+    {
+      "ItemId": "1557004",
+      "ItemName": "Kermes Fire Walkers"
+    },
+    {
+      "ItemId": "1557005",
+      "ItemName": "Boots of the QuietBlade"
+    },
+    {
+      "ItemId": "1557006",
+      "ItemName": "Leaf Shield Clogs of Vigor"
+    },
+    {
+      "ItemId": "1557007",
+      "ItemName": "Aged Hundred Legger Boots"
+    },
+    {
+      "ItemId": "1557008",
+      "ItemName": "Mouse Shoes of Ingenuity"
+    },
+    {
+      "ItemId": "1592823",
+      "ItemName": "Shadow Queen Deck of Dust"
+    },
+    {
+      "ItemId": "1592824",
+      "ItemName": "Shadow Queen Deck of Graves"
+    },
+    {
+      "ItemId": "1592825",
+      "ItemName": "Shadow Queen Deck of Ashes"
+    },
+    {
+      "ItemId": "1592826",
+      "ItemName": "Shadow Queen Deck of Crystals"
+    },
+    {
+      "ItemId": "1592827",
+      "ItemName": "Shadow Queen Deck of Cells"
+    },
+    {
+      "ItemId": "1592828",
+      "ItemName": "Shadow Queen Deck of Memes"
+    },
+    {
+      "ItemId": "1592829",
+      "ItemName": "Shadow Queen Deck of Drops"
+    },
+    {
+      "ItemId": "1592831",
+      "ItemName": "Shadow Queen Box of Dust"
+    },
+    {
+      "ItemId": "1592832",
+      "ItemName": "Shadow Queen Box of Graves"
+    },
+    {
+      "ItemId": "1592833",
+      "ItemName": "Shadow Queen Box of Ashes"
+    },
+    {
+      "ItemId": "1592834",
+      "ItemName": "Shadow Queen Box of Crystals"
+    },
+    {
+      "ItemId": "1592835",
+      "ItemName": "Shadow Queen Box of Cells"
+    },
+    {
+      "ItemId": "1592836",
+      "ItemName": "Shadow Queen Box of Memes"
+    },
+    {
+      "ItemId": "1592837",
+      "ItemName": "Shadow Queen Box of Drops"
+    },
+    {
+      "ItemId": "1592846",
+      "ItemName": "Gorge Digger's Sturdy Hat"
+    },
+    {
+      "ItemId": "1592847",
+      "ItemName": "Fallen Knight Death Hat"
+    },
+    {
+      "ItemId": "1592848",
+      "ItemName": "Charred Hat of the Burn"
+    },
+    {
+      "ItemId": "1592849",
+      "ItemName": "Mantis Hat of Cold Truth"
+    },
+    {
+      "ItemId": "1592850",
+      "ItemName": "Mantis Hat of Readiness"
+    },
+    {
+      "ItemId": "1592851",
+      "ItemName": "Digger Drone Hat of Duty"
+    },
+    {
+      "ItemId": "1592852",
+      "ItemName": "Burrower Hat of Thunder"
+    },
+    {
+      "ItemId": "1592854",
+      "ItemName": "Mantis Captain's Aegis"
+    },
+    {
+      "ItemId": "1592855",
+      "ItemName": "Grave Digger Drone's Aegis"
+    },
+    {
+      "ItemId": "1592856",
+      "ItemName": "Devil's Flower Aegis"
+    },
+    {
+      "ItemId": "1592857",
+      "ItemName": "Frozen In Time Aegis"
+    },
+    {
+      "ItemId": "1592858",
+      "ItemName": "Mouse Aegis of Persistence"
+    },
+    {
+      "ItemId": "1592859",
+      "ItemName": "Mantis Prophet's Aegis"
+    },
+    {
+      "ItemId": "1592860",
+      "ItemName": "Digger's Brimstone Aegis"
+    },
+    {
+      "ItemId": "1592862",
+      "ItemName": "Digger's Stompers of Symmetry"
+    },
+    {
+      "ItemId": "1592863",
+      "ItemName": "Mouse Stompers of Mourning"
+    },
+    {
+      "ItemId": "1592864",
+      "ItemName": "Kermes Fire Stompers"
+    },
+    {
+      "ItemId": "1592865",
+      "ItemName": "Stompers of the QuietBlade"
+    },
+    {
+      "ItemId": "1592866",
+      "ItemName": "Leaf Shield Stompers of Vigor"
+    },
+    {
+      "ItemId": "1592867",
+      "ItemName": "Aged Hundred Legger Stompers"
+    },
+    {
+      "ItemId": "1592868",
+      "ItemName": "Mouse Stompers of Ingenuity"
+    }
+  ]
+}

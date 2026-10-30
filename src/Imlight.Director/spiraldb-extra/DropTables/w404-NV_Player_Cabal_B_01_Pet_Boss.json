@@ -1,0 +1,13 @@
+{
+  "Name": "W404 NV_Player_Cabal_B_01 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Player_Cabal_B_01: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1580241",
+      "ItemName": "Frozen Pet Peeve"
+    }
+  ]
+}

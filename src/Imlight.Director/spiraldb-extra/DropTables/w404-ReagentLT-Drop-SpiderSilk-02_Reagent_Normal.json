@@ -1,0 +1,13 @@
+{
+  "Name": "W404 ReagentLT-Drop-SpiderSilk-02 Reagent (Normal)",
+  "Description": "Wizard404's drop list of the game's table ReagentLT-Drop-SpiderSilk-02: the reagent drops (1), one picked when it rolls. How often: DropOdds.json Normal/Reagent.",
+  "Odds": "Normal/Reagent",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk"
+    }
+  ]
+}

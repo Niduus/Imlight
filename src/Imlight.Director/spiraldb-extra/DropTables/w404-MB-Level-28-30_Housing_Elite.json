@@ -1,0 +1,25 @@
+{
+  "Name": "W404 MB-Level-28-30 Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table MB-Level-28-30: the housing drops (4), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160622",
+      "ItemName": "Bone"
+    },
+    {
+      "ItemId": "160660",
+      "ItemName": "Empty Tin Cans"
+    },
+    {
+      "ItemId": "160670",
+      "ItemName": "Ball of Blue Yarn"
+    },
+    {
+      "ItemId": "160739",
+      "ItemName": "Short Roof Vent"
+    }
+  ]
+}

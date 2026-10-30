@@ -1,0 +1,77 @@
+{
+  "Name": "W404 MS-Wraith-MSBoss-L56 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Wraith-MSBoss-L56: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "87777",
+      "ItemName": "Oyotomi's Jade Blade"
+    },
+    {
+      "ItemId": "97428",
+      "ItemName": "Oyotomi's Snowstorm Pendant"
+    },
+    {
+      "ItemId": "97545",
+      "ItemName": "Oyotomi's Cowl of Vacancy"
+    },
+    {
+      "ItemId": "97547",
+      "ItemName": "Defiler's Helm of Anticipation"
+    },
+    {
+      "ItemId": "97594",
+      "ItemName": "Precautionary Cowl"
+    },
+    {
+      "ItemId": "97642",
+      "ItemName": "Hood of the Agile"
+    },
+    {
+      "ItemId": "97768",
+      "ItemName": "Defiler's Tunic of Aspirations"
+    },
+    {
+      "ItemId": "97791",
+      "ItemName": "Mindful Cloak"
+    },
+    {
+      "ItemId": "97810",
+      "ItemName": "Robe of Exertion"
+    },
+    {
+      "ItemId": "97841",
+      "ItemName": "Vestment of Inflection"
+    },
+    {
+      "ItemId": "97874",
+      "ItemName": "Vestment of Woe"
+    },
+    {
+      "ItemId": "97922",
+      "ItemName": "Oyotomi's Shoes of Egoism"
+    },
+    {
+      "ItemId": "97952",
+      "ItemName": "Mindful Footwraps"
+    },
+    {
+      "ItemId": "97985",
+      "ItemName": "Slippers of Conceit"
+    },
+    {
+      "ItemId": "98005",
+      "ItemName": "Shoes of Music"
+    },
+    {
+      "ItemId": "98036",
+      "ItemName": "Footwraps of Unrest"
+    },
+    {
+      "ItemId": "126143",
+      "ItemName": "Electrified Band of Mayhem"
+    }
+  ]
+}

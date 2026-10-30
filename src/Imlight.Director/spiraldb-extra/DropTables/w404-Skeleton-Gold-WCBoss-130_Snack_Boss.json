@@ -1,0 +1,45 @@
+{
+  "Name": "W404 Skeleton-Gold-WCBoss-130 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skeleton-Gold-WCBoss-130: the snack drops (9), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220239",
+      "ItemName": "Pizza"
+    },
+    {
+      "ItemId": "220284",
+      "ItemName": "Glowing Taffy"
+    },
+    {
+      "ItemId": "220313",
+      "ItemName": "Sprinkle Cupcake"
+    },
+    {
+      "ItemId": "220333",
+      "ItemName": "Rock and Roll Candy"
+    },
+    {
+      "ItemId": "1257588",
+      "ItemName": "Discord Grape Jelly"
+    },
+    {
+      "ItemId": "1359619",
+      "ItemName": "Hot Cross Buns"
+    },
+    {
+      "ItemId": "1359622",
+      "ItemName": "Eye Candy"
+    },
+    {
+      "ItemId": "1359623",
+      "ItemName": "Satyr Chow"
+    },
+    {
+      "ItemId": "1359625",
+      "ItemName": "Beast Wellington"
+    }
+  ]
+}

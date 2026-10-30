@@ -1,0 +1,17 @@
+{
+  "Name": "W404 Colossus-Steel-Boss-R8-2 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Colossus-Steel-Boss-R8-2: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160889",
+      "ItemName": "Broken Rock Shard"
+    },
+    {
+      "ItemId": "160918",
+      "ItemName": "Dark Sun Plaque"
+    }
+  ]
+}

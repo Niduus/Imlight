@@ -1,0 +1,41 @@
+{
+  "Name": "W404 EM2-Mob-Athame-127 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table EM2-Mob-Athame-127: the gear drops (8), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462268",
+      "ItemName": "Rad Kalamar Knife"
+    },
+    {
+      "ItemId": "1462269",
+      "ItemName": "Chill Kalamar Knife"
+    },
+    {
+      "ItemId": "1462270",
+      "ItemName": "Gnarly Kalamar Knife"
+    },
+    {
+      "ItemId": "1462271",
+      "ItemName": "Mondo Kalamar Knife"
+    },
+    {
+      "ItemId": "1462272",
+      "ItemName": "Righteous Kalamar Knife"
+    },
+    {
+      "ItemId": "1462273",
+      "ItemName": "Heavy Kalamar Knife"
+    },
+    {
+      "ItemId": "1462274",
+      "ItemName": "Bodacious Kalamar Knife"
+    },
+    {
+      "ItemId": "1462275",
+      "ItemName": "Choice Kalamar Knife"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "Name": "W404 SKB_WC_SpiritIgnorance_A_150 Mount (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_WC_SpiritIgnorance_A_150: the mount drops (3), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "276456",
+      "ItemName": "Snappy Lobster (PERM)"
+    },
+    {
+      "ItemId": "276462",
+      "ItemName": "Sea Turtle (PERM)"
+    },
+    {
+      "ItemId": "470092",
+      "ItemName": "Purple Fairy Wings (7 Day)"
+    }
+  ]
+}

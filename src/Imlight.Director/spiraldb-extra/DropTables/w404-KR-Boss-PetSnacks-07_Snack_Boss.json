@@ -1,0 +1,57 @@
+{
+  "Name": "W404 KR-Boss-PetSnacks-07 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-Boss-PetSnacks-07: the snack drops (12), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1257584",
+      "ItemName": "Evil Magma Soup"
+    },
+    {
+      "ItemId": "1257585",
+      "ItemName": "Stuffed Bell Pepper"
+    },
+    {
+      "ItemId": "1257586",
+      "ItemName": "King Parsley Soup"
+    },
+    {
+      "ItemId": "1257587",
+      "ItemName": "Bell Pepper Steak"
+    },
+    {
+      "ItemId": "1257588",
+      "ItemName": "Discord Grape Jelly"
+    },
+    {
+      "ItemId": "1257589",
+      "ItemName": "Ninja Fig Bars"
+    },
+    {
+      "ItemId": "1257590",
+      "ItemName": "Prickly Bear Punch"
+    },
+    {
+      "ItemId": "1257591",
+      "ItemName": "Desparagus Quiche"
+    },
+    {
+      "ItemId": "1257592",
+      "ItemName": "Key Lime Pie"
+    },
+    {
+      "ItemId": "1257593",
+      "ItemName": "Sweet Baby Carrots"
+    },
+    {
+      "ItemId": "1257604",
+      "ItemName": "Alligator Pear"
+    },
+    {
+      "ItemId": "1257605",
+      "ItemName": "Dead Beet Risotto"
+    }
+  ]
+}

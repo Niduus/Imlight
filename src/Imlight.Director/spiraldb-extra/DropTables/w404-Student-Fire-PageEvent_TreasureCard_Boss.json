@@ -1,0 +1,25 @@
+{
+  "Name": "W404 Student-Fire-PageEvent TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table Student-Fire-PageEvent: the treasurecard drops (4), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Hydra TC DH",
+      "ItemName": "Hydra"
+    },
+    {
+      "ItemId": "Skeletal Dragon TC DH",
+      "ItemName": "Skeletal Dragon"
+    },
+    {
+      "ItemId": "Dragonflies TC DH",
+      "ItemName": "Dragonflies"
+    },
+    {
+      "ItemId": "Polymorph - Draconian TC DH",
+      "ItemName": "Polymorph Dracon"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "TemplateID": 1223097,
+  "DropTableNames": [
+    "W404 KR-Boss-Reagents Reagent (Boss)",
+    "W404 KR-BossEpic-Kravenly",
+    "W404 KR-BossEpic-Kravenly Gear (Boss)",
+    "W404 KR-BossEpic-Kravenly Pet (Boss)",
+    "W404 KR-BossEpic-Kravenly Seed (Boss)",
+    "W404 KR-BossEpic-Kravenly Housing (Boss)",
+    "W404 KR-Boss-PetSnacks-03 Snack (Boss)",
+    "W404 KR-Boss-TC-03 TreasureCard (Boss)",
+    "W404 OCT-LootTable-010 Gear (Boss)",
+    "W404 OCT-LootTable-010 Pet (Boss)",
+    "W404 OCT-LootTable-010 Housing (Boss)",
+    "W404 NOV-LootTable-010 Gear (Boss)",
+    "W404 MAR-LootTable-010 Gear (Boss)",
+    "W404 MAR-LootTable-010 Pet (Boss)",
+    "W404 FEB-LootTable-010 Gear (Boss)",
+    "W404 FEB-LootTable-010 Pet (Boss)",
+    "W404 DEC-LootTable-010 Gear (Boss)",
+    "W404 DEC-LootTable-010 Pet (Boss)",
+    "W404 DEC-LootTable-010 Seed (Boss)",
+    "W404 DEC-LootTable-010 Housing (Boss)",
+    "W404 APR-LootTable-010 Gear (Boss)",
+    "W404 APR-LootTable-010 Pet (Boss)",
+    "W404 APR-LootTable-010 Mount (Boss)",
+    "W404 KR-MiniBoss-Jewels Jewel (Boss)",
+    "W404 KR-MiniBoss-Jewels Reagent (Boss)",
+    "W404 Mob-1223097 Gear (Boss)"
+  ]
+}

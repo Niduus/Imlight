@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Colossus-Magma-Boss-R7-1 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Colossus-Magma-Boss-R7-1: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104618",
+      "ItemName": "Robe of the Efreet"
+    },
+    {
+      "ItemId": "104659",
+      "ItemName": "Robe of the Earth Dragon"
+    },
+    {
+      "ItemId": "104680",
+      "ItemName": "Firevein's Cloak of Cooling"
+    },
+    {
+      "ItemId": "104728",
+      "ItemName": "Robe of the Magister"
+    },
+    {
+      "ItemId": "104791",
+      "ItemName": "Firevein's Flaming Sandals"
+    },
+    {
+      "ItemId": "104845",
+      "ItemName": "Thunderbird Shoes"
+    },
+    {
+      "ItemId": "104868",
+      "ItemName": "Shoes of the Gardener"
+    },
+    {
+      "ItemId": "104886",
+      "ItemName": "Storyteller's Shoes"
+    },
+    {
+      "ItemId": "126574",
+      "ItemName": "Tornado Wring"
+    },
+    {
+      "ItemId": "126636",
+      "ItemName": "Band of Brotherhood"
+    },
+    {
+      "ItemId": "126685",
+      "ItemName": "Deck of Nature's Bounty"
+    },
+    {
+      "ItemId": "146165",
+      "ItemName": "Poniard of the Wyrms"
+    },
+    {
+      "ItemId": "146307",
+      "ItemName": "Brimstone Hood"
+    },
+    {
+      "ItemId": "146336",
+      "ItemName": "Gallows Hood"
+    },
+    {
+      "ItemId": "146352",
+      "ItemName": "Headgear of Resistance"
+    },
+    {
+      "ItemId": "146357",
+      "ItemName": "Firevein's Omnipotent Shroud"
+    }
+  ]
+}

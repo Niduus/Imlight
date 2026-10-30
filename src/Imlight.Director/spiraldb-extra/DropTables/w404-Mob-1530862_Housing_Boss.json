@@ -1,0 +1,29 @@
+{
+  "Name": "W404 Mob-1530862 Housing (Boss)",
+  "Description": "Wizard404's drop list of Donny Kong's own drops: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1536026",
+      "ItemName": "Lemuria Jungle Combat Theme"
+    },
+    {
+      "ItemId": "1536030",
+      "ItemName": "Lemuria Mandoria Theme"
+    },
+    {
+      "ItemId": "1536034",
+      "ItemName": "Lemuria Sky City Combat Theme"
+    },
+    {
+      "ItemId": "1536045",
+      "ItemName": "Arcanum Combat Theme"
+    },
+    {
+      "ItemId": "1536051",
+      "ItemName": "Lemuria Telos Theme 6"
+    }
+  ]
+}

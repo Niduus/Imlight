@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-MB-Robe-138 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-MB-Robe-138: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1514765",
+      "ItemName": "Director Thermal Suit"
+    },
+    {
+      "ItemId": "1514766",
+      "ItemName": "Director Cryo Suit"
+    },
+    {
+      "ItemId": "1514767",
+      "ItemName": "Director Insulated Suit"
+    },
+    {
+      "ItemId": "1514768",
+      "ItemName": "Director Pressure Suit"
+    },
+    {
+      "ItemId": "1514769",
+      "ItemName": "Director Survival Suit"
+    },
+    {
+      "ItemId": "1514770",
+      "ItemName": "Director Biohazard Suit"
+    },
+    {
+      "ItemId": "1514771",
+      "ItemName": "Director Protective Suit"
+    },
+    {
+      "ItemId": "1514772",
+      "ItemName": "Director Hazmat Suit"
+    },
+    {
+      "ItemId": "1514789",
+      "ItemName": "Executive Thermal Suit"
+    },
+    {
+      "ItemId": "1514790",
+      "ItemName": "Executive Cryo Suit"
+    },
+    {
+      "ItemId": "1514791",
+      "ItemName": "Executive Insulated Suit"
+    },
+    {
+      "ItemId": "1514792",
+      "ItemName": "Executive Pressure Suit"
+    },
+    {
+      "ItemId": "1514793",
+      "ItemName": "Executive Survival Suit"
+    },
+    {
+      "ItemId": "1514794",
+      "ItemName": "Executive Biohazard Suit"
+    },
+    {
+      "ItemId": "1514795",
+      "ItemName": "Executive Protective Suit"
+    },
+    {
+      "ItemId": "1514796",
+      "ItemName": "Executive Hazmat Suit"
+    },
+    {
+      "ItemId": "1514813",
+      "ItemName": "Producer's Thermal Suit"
+    },
+    {
+      "ItemId": "1514814",
+      "ItemName": "Producer's Cryo Suit"
+    },
+    {
+      "ItemId": "1514815",
+      "ItemName": "Producer's Insulated Suit"
+    },
+    {
+      "ItemId": "1514816",
+      "ItemName": "Producer's Pressure Suit"
+    },
+    {
+      "ItemId": "1514817",
+      "ItemName": "Producer's Survival Suit"
+    },
+    {
+      "ItemId": "1514818",
+      "ItemName": "Producer's Biohazard Suit"
+    },
+    {
+      "ItemId": "1514819",
+      "ItemName": "Producer's Protective Suit"
+    },
+    {
+      "ItemId": "1514820",
+      "ItemName": "Producer's Hazmat Suit"
+    }
+  ]
+}

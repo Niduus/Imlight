@@ -1,0 +1,37 @@
+{
+  "Name": "W404 DM_Mob TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table DM_Mob: the treasurecard drops (7), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Hex TC",
+      "ItemName": "Hex"
+    },
+    {
+      "ItemId": "Life Trap TC",
+      "ItemName": "Life Trap"
+    },
+    {
+      "ItemId": "Feint TC",
+      "ItemName": "Feint"
+    },
+    {
+      "ItemId": "Spirit Trap TC",
+      "ItemName": "Spirit Trap"
+    },
+    {
+      "ItemId": "Storm Trap TC",
+      "ItemName": "Storm Trap"
+    },
+    {
+      "ItemId": "Fireblade TC",
+      "ItemName": "Fireblade"
+    },
+    {
+      "ItemId": "Mythblade TC",
+      "ItemName": "Mythblade"
+    }
+  ]
+}

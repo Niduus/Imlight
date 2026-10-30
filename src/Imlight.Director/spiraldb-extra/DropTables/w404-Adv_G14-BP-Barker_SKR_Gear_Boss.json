@@ -1,0 +1,93 @@
+{
+  "Name": "W404 Adv_G14-BP-Barker_SKR Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Adv_G14-BP-Barker_SKR: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1338171",
+      "ItemName": "Barkingham Firepoker"
+    },
+    {
+      "ItemId": "1338172",
+      "ItemName": "Barkingham Palace Icepick"
+    },
+    {
+      "ItemId": "1338173",
+      "ItemName": "Barkingham Dirk of Thunder"
+    },
+    {
+      "ItemId": "1338174",
+      "ItemName": "Barkingham Claw of Insight"
+    },
+    {
+      "ItemId": "1338175",
+      "ItemName": "Royal Cutlass of Efficacy"
+    },
+    {
+      "ItemId": "1338176",
+      "ItemName": "Barkingham Blade of Blight"
+    },
+    {
+      "ItemId": "1338177",
+      "ItemName": "Barkingham Steel Splinter"
+    },
+    {
+      "ItemId": "1338178",
+      "ItemName": "Yeoman's Dagger of Sparks"
+    },
+    {
+      "ItemId": "1338179",
+      "ItemName": "Palace Guard's Ice Razor"
+    },
+    {
+      "ItemId": "1338180",
+      "ItemName": "Barkingham Knife of Floods"
+    },
+    {
+      "ItemId": "1338181",
+      "ItemName": "Royal Bodkin of Awareness"
+    },
+    {
+      "ItemId": "1338182",
+      "ItemName": "Barkingham Dagger of Nerve"
+    },
+    {
+      "ItemId": "1338183",
+      "ItemName": "Yeoman's Athame of Decay"
+    },
+    {
+      "ItemId": "1338184",
+      "ItemName": "Royal Dagger of Allegiance"
+    },
+    {
+      "ItemId": "1338185",
+      "ItemName": "Royal Palace Guard's Dirk"
+    },
+    {
+      "ItemId": "1338186",
+      "ItemName": "Royal Ceremonial Stiletto"
+    },
+    {
+      "ItemId": "1338187",
+      "ItemName": "Dagger of Royal Countenance"
+    },
+    {
+      "ItemId": "1338188",
+      "ItemName": "Claw of the Vicious Hound"
+    },
+    {
+      "ItemId": "1338189",
+      "ItemName": "Jackall's Edge of Reality"
+    },
+    {
+      "ItemId": "1338190",
+      "ItemName": "Royal Point of No Return"
+    },
+    {
+      "ItemId": "1338191",
+      "ItemName": "Royal Athame of Duality"
+    }
+  ]
+}

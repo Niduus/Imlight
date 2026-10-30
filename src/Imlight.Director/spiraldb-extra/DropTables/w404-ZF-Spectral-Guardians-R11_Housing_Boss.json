@@ -1,0 +1,17 @@
+{
+  "Name": "W404 ZF-Spectral-Guardians-R11 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Spectral-Guardians-R11: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "512145",
+      "ItemName": "Zafaria Stone Town Theme"
+    },
+    {
+      "ItemId": "512146",
+      "ItemName": "Zafaria Waterfront Theme"
+    }
+  ]
+}

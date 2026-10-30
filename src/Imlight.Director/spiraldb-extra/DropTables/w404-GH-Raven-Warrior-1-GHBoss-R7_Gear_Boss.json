@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Raven-Warrior-1-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Raven-Warrior-1-GHBoss-R7: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136299",
+      "ItemName": "Lancet of Aptitude"
+    },
+    {
+      "ItemId": "136302",
+      "ItemName": "Cold Iron Dagger"
+    },
+    {
+      "ItemId": "136430",
+      "ItemName": "Sagacious Crown"
+    },
+    {
+      "ItemId": "136508",
+      "ItemName": "Band of the Bonfire"
+    },
+    {
+      "ItemId": "171220",
+      "ItemName": "Broghans of the Flux"
+    },
+    {
+      "ItemId": "171226",
+      "ItemName": "Grimsoled Shoes"
+    }
+  ]
+}

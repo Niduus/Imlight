@@ -1,0 +1,25 @@
+{
+  "Name": "W404 APR-LootTable-008 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table APR-LootTable-008: the gear drops (4), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1248113",
+      "ItemName": "Wand of the Spring Coney"
+    },
+    {
+      "ItemId": "1248114",
+      "ItemName": "Scepter of Springtime"
+    },
+    {
+      "ItemId": "1248115",
+      "ItemName": "First Bird of Spring Wand"
+    },
+    {
+      "ItemId": "1248116",
+      "ItemName": "Wild Hare Scepter"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "W404 KR-BossEpic-Hisser Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossEpic-Hisser: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "789126",
+      "ItemName": "Piranha Hunter"
+    }
+  ]
+}

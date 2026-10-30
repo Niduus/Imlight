@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Cl-SharkWarrior-GreyShoulder-BossR10-1 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Cl-SharkWarrior-GreyShoulder-BossR10-1: the housing drops (1), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "342151",
+      "ItemName": "Broken Palm Tree"
+    }
+  ]
+}

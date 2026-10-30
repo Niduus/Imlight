@@ -1,0 +1,33 @@
+{
+  "Name": "W404 KrokBurly-Ice-1-PageEvent Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table KrokBurly-Ice-1-PageEvent: the housing drops (6), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160824",
+      "ItemName": "Dragonhorn Trophy"
+    },
+    {
+      "ItemId": "160837",
+      "ItemName": "Dragonmoon Obelisk"
+    },
+    {
+      "ItemId": "160843",
+      "ItemName": "Dragonclaw Pedestal"
+    },
+    {
+      "ItemId": "160915",
+      "ItemName": "Dragonskull Plaque"
+    },
+    {
+      "ItemId": "160977",
+      "ItemName": "Snapdragon Flowerbed"
+    },
+    {
+      "ItemId": "160981",
+      "ItemName": "Snapdragons"
+    }
+  ]
+}

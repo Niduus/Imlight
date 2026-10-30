@@ -1,0 +1,21 @@
+{
+  "Name": "W404 KT-Level-21 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table KT-Level-21: the housing drops (3), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82750",
+      "ItemName": "Red Floor Torch"
+    },
+    {
+      "ItemId": "82776",
+      "ItemName": "Krok Insect Plaque"
+    },
+    {
+      "ItemId": "82897",
+      "ItemName": "Bushy Palm Tree"
+    }
+  ]
+}

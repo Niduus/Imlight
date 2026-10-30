@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Treant-GHBoss-R4 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Treant-GHBoss-R4: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136268",
+      "ItemName": "Wildbrand's Dagger"
+    },
+    {
+      "ItemId": "136351",
+      "ItemName": "Wildfang Veil"
+    },
+    {
+      "ItemId": "136475",
+      "ItemName": "Signet of the Icecap"
+    },
+    {
+      "ItemId": "136563",
+      "ItemName": "Raiment of the Last Stand"
+    },
+    {
+      "ItemId": "171127",
+      "ItemName": "Drizzling Boots"
+    },
+    {
+      "ItemId": "171128",
+      "ItemName": "Footgear of Attention"
+    }
+  ]
+}

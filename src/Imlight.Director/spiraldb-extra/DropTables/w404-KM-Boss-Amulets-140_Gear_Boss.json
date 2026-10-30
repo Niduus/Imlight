@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-Boss-Amulets-140 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-Boss-Amulets-140: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1515146",
+      "ItemName": "Guten Freshbaker Rope"
+    },
+    {
+      "ItemId": "1515147",
+      "ItemName": "Guten Wonderneer Rope"
+    },
+    {
+      "ItemId": "1515148",
+      "ItemName": "Guten Sciencer Rope"
+    },
+    {
+      "ItemId": "1515149",
+      "ItemName": "Guten Artisan Rope"
+    },
+    {
+      "ItemId": "1515150",
+      "ItemName": "Guten Sweetsmith Rope"
+    },
+    {
+      "ItemId": "1515151",
+      "ItemName": "Guten Sentamentalist Rope"
+    },
+    {
+      "ItemId": "1515152",
+      "ItemName": "Guten Dreamsearcher Rope"
+    },
+    {
+      "ItemId": "1515153",
+      "ItemName": "Guten Candymancer Rope"
+    },
+    {
+      "ItemId": "1515170",
+      "ItemName": "Wunderbar Freshbaker Rope"
+    },
+    {
+      "ItemId": "1515171",
+      "ItemName": "Wunderbar Wonderneer Rope"
+    },
+    {
+      "ItemId": "1515172",
+      "ItemName": "Wunderbar Sciencer Rope"
+    },
+    {
+      "ItemId": "1515173",
+      "ItemName": "Wunderbar Artisan Rope"
+    },
+    {
+      "ItemId": "1515174",
+      "ItemName": "Wunderbar Sweetsmith Rope"
+    },
+    {
+      "ItemId": "1515175",
+      "ItemName": "Wunderbar Sentamentalist Rope"
+    },
+    {
+      "ItemId": "1515176",
+      "ItemName": "Wunderbar Dreamsearcher Rope"
+    },
+    {
+      "ItemId": "1515177",
+      "ItemName": "Wunderbar Candymancer Rope"
+    },
+    {
+      "ItemId": "1515194",
+      "ItemName": "Uber Freshbaker Rope"
+    },
+    {
+      "ItemId": "1515195",
+      "ItemName": "Uber Wonderneer Rope"
+    },
+    {
+      "ItemId": "1515196",
+      "ItemName": "Uber Sciencer Rope"
+    },
+    {
+      "ItemId": "1515197",
+      "ItemName": "Uber Artisan Rope"
+    },
+    {
+      "ItemId": "1515198",
+      "ItemName": "Uber Sweetsmith Rope"
+    },
+    {
+      "ItemId": "1515199",
+      "ItemName": "Uber Sentamentalist Rope"
+    },
+    {
+      "ItemId": "1515200",
+      "ItemName": "Uber Dreamsearcher Rope"
+    },
+    {
+      "ItemId": "1515201",
+      "ItemName": "Uber Candymancer Rope"
+    }
+  ]
+}

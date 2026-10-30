@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Mob-1340102 Pet (Boss)",
+  "Description": "Wizard404's drop list of The Woman's Right Hand's own drops: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1719498",
+      "ItemName": "Myth Potbelly"
+    }
+  ]
+}

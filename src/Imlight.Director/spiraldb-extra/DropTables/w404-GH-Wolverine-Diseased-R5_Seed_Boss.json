@@ -1,0 +1,21 @@
+{
+  "Name": "W404 GH-Wolverine-Diseased-R5 Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Wolverine-Diseased-R5: the seed drops (3), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion"
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "Laugh-o-dil"
+    },
+    {
+      "ItemId": "356160",
+      "ItemName": "Stinkweed"
+    }
+  ]
+}

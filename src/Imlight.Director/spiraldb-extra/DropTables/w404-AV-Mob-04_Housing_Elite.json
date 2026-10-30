@@ -1,0 +1,45 @@
+{
+  "Name": "W404 AV-Mob-04 Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table AV-Mob-04: the housing drops (9), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "470468",
+      "ItemName": "Dread Keep Throne"
+    },
+    {
+      "ItemId": "512187",
+      "ItemName": "Wizard City Pet Derby Theme"
+    },
+    {
+      "ItemId": "512188",
+      "ItemName": "Krokotopia Pet Derby Theme"
+    },
+    {
+      "ItemId": "512189",
+      "ItemName": "Marleybone Pet Derby Theme"
+    },
+    {
+      "ItemId": "512190",
+      "ItemName": "MooShu Pet Derby Theme"
+    },
+    {
+      "ItemId": "512191",
+      "ItemName": "Dragonspyre Pet Derby Theme"
+    },
+    {
+      "ItemId": "512192",
+      "ItemName": "Grizzleheim Pet Derby Theme"
+    },
+    {
+      "ItemId": "641581",
+      "ItemName": "Avalon Owl Stained Glass"
+    },
+    {
+      "ItemId": "641585",
+      "ItemName": "Fox Head Statue"
+    }
+  ]
+}

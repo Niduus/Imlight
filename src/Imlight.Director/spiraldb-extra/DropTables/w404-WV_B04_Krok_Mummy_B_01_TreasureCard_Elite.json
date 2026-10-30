@@ -1,0 +1,17 @@
+{
+  "Name": "W404 WV_B04_Krok_Mummy_B_01 TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table WV_B04_Krok_Mummy_B_01: the treasurecard drops (2), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Power Nova TC",
+      "ItemName": "Power Nova"
+    },
+    {
+      "ItemId": "Chimera TC",
+      "ItemName": "Chimera"
+    }
+  ]
+}

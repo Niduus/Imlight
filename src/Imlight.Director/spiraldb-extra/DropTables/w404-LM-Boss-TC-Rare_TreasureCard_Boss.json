@@ -1,0 +1,81 @@
+{
+  "Name": "W404 LM-Boss-TC-Rare TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table LM-Boss-TC-Rare: the treasurecard drops (18), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Tri Trap TC",
+      "ItemName": "Elemental Trap"
+    },
+    {
+      "ItemId": "Ether Shield TC",
+      "ItemName": "Ether Shield"
+    },
+    {
+      "ItemId": "Feint TC",
+      "ItemName": "Feint"
+    },
+    {
+      "ItemId": "Guidance TC",
+      "ItemName": "Guidance"
+    },
+    {
+      "ItemId": "Infallible TC",
+      "ItemName": "Infallible"
+    },
+    {
+      "ItemId": "Mass Death Prism TC",
+      "ItemName": "Mass Death Prism"
+    },
+    {
+      "ItemId": "Mass Fire Prism TC",
+      "ItemName": "Mass Fire Prism"
+    },
+    {
+      "ItemId": "Mass Ice Prism TC",
+      "ItemName": "Mass Ice Prism"
+    },
+    {
+      "ItemId": "Mass Life Prism TC",
+      "ItemName": "Mass Life Prism"
+    },
+    {
+      "ItemId": "Mass Storm Prism TC",
+      "ItemName": "Mass Storm Prism"
+    },
+    {
+      "ItemId": "Mass Triage TC",
+      "ItemName": "Mass Triage"
+    },
+    {
+      "ItemId": "Pacify TC",
+      "ItemName": "Pacify"
+    },
+    {
+      "ItemId": "Rusalka's Wrath TC",
+      "ItemName": "Rusalka's Wrath"
+    },
+    {
+      "ItemId": "Winged Sorrow TC",
+      "ItemName": "Winged Sorrow"
+    },
+    {
+      "ItemId": "Fortify TC",
+      "ItemName": "Fortify"
+    },
+    {
+      "ItemId": "Link TC",
+      "ItemName": "Link"
+    },
+    {
+      "ItemId": "Nested Fury TC",
+      "ItemName": "Nested Fury"
+    },
+    {
+      "ItemId": "Raging Bull TC",
+      "ItemName": "Raging Bull"
+    }
+  ]
+}

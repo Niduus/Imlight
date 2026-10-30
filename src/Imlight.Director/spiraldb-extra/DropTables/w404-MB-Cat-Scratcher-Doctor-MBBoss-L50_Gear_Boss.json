@@ -1,0 +1,97 @@
+{
+  "Name": "W404 MB-Cat-Scratcher-Doctor-MBBoss-L50 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Scratcher-Doctor-MBBoss-L50: the gear drops (22), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "5051",
+      "ItemName": "Katzenstein's Necklace"
+    },
+    {
+      "ItemId": "38999",
+      "ItemName": "Katzenstein's Helm"
+    },
+    {
+      "ItemId": "39037",
+      "ItemName": "Doctor's Visor of Severity"
+    },
+    {
+      "ItemId": "39057",
+      "ItemName": "Katzenstein's Band"
+    },
+    {
+      "ItemId": "77143",
+      "ItemName": "Katzenstein's Robe"
+    },
+    {
+      "ItemId": "77151",
+      "ItemName": "Katzenstein's Tunic"
+    },
+    {
+      "ItemId": "77165",
+      "ItemName": "Doctor's Robe of the Aurora"
+    },
+    {
+      "ItemId": "77216",
+      "ItemName": "Katzenstein's Slippers"
+    },
+    {
+      "ItemId": "77244",
+      "ItemName": "Katzenstein's Boots"
+    },
+    {
+      "ItemId": "97076",
+      "ItemName": "Doctor's Surgical Knife"
+    },
+    {
+      "ItemId": "97083",
+      "ItemName": "Katzenstein's Athame"
+    },
+    {
+      "ItemId": "97168",
+      "ItemName": "Katzenstein's Tragic Helm"
+    },
+    {
+      "ItemId": "97203",
+      "ItemName": "Katzenstein's Facemask"
+    },
+    {
+      "ItemId": "97252",
+      "ItemName": "Doctor's Robe of the Kraken"
+    },
+    {
+      "ItemId": "97301",
+      "ItemName": "Dr. Von's Shrouded Tunic"
+    },
+    {
+      "ItemId": "97379",
+      "ItemName": "Doctor's Urbane Shoes"
+    },
+    {
+      "ItemId": "97410",
+      "ItemName": "Dr. Von's Affable Shoes"
+    },
+    {
+      "ItemId": "126151",
+      "ItemName": "Loop of Sparks"
+    },
+    {
+      "ItemId": "161030",
+      "ItemName": "Galvanic Glaive"
+    },
+    {
+      "ItemId": "346490",
+      "ItemName": "Puppetmaster's Facade"
+    },
+    {
+      "ItemId": "346491",
+      "ItemName": "Puppetmaster's Costume"
+    },
+    {
+      "ItemId": "346492",
+      "ItemName": "Puppetmaster's Footwear"
+    }
+  ]
+}

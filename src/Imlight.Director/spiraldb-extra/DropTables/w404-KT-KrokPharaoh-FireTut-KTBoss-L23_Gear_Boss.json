@@ -1,0 +1,69 @@
+{
+  "Name": "W404 KT-KrokPharaoh-FireTut-KTBoss-L23 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokPharaoh-FireTut-KTBoss-L23: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4948",
+      "ItemName": "Cryptkeeper's Shortsword"
+    },
+    {
+      "ItemId": "4950",
+      "ItemName": "Flamedancer's Athame"
+    },
+    {
+      "ItemId": "4972",
+      "ItemName": "Mummified Deck"
+    },
+    {
+      "ItemId": "5011",
+      "ItemName": "Loop of Talent"
+    },
+    {
+      "ItemId": "5029",
+      "ItemName": "Band of Energy"
+    },
+    {
+      "ItemId": "39434",
+      "ItemName": "Slippers of Burning Sands"
+    },
+    {
+      "ItemId": "77715",
+      "ItemName": "Hood of the Phantom"
+    },
+    {
+      "ItemId": "77733",
+      "ItemName": "Quartermaster's Cap"
+    },
+    {
+      "ItemId": "77800",
+      "ItemName": "Quartermaster's Boots"
+    },
+    {
+      "ItemId": "87268",
+      "ItemName": "Rugged Robe"
+    },
+    {
+      "ItemId": "87284",
+      "ItemName": "Quartermaster's Vestment"
+    },
+    {
+      "ItemId": "87296",
+      "ItemName": "Garments of the Augur"
+    },
+    {
+      "ItemId": "87334",
+      "ItemName": "Ceremonial Vest"
+    },
+    {
+      "ItemId": "87343",
+      "ItemName": "Quartermaster's Wand"
+    },
+    {
+      "ItemId": "1217004",
+      "ItemName": "The Stalwart Guardian"
+    }
+  ]
+}

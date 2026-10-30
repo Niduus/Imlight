@@ -1,0 +1,21 @@
+{
+  "Name": "W404 MS-Colossus-Stone-MSBoss-L41 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Colossus-Stone-MSBoss-L41: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160448",
+      "ItemName": "Stone Temple Column"
+    },
+    {
+      "ItemId": "160521",
+      "ItemName": "Throwing Star Case"
+    },
+    {
+      "ItemId": "470215",
+      "ItemName": "Branch Painting"
+    }
+  ]
+}

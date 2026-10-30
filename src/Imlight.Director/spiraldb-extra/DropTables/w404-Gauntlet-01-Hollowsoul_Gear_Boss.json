@@ -1,0 +1,37 @@
+{
+  "Name": "W404 Gauntlet-01-Hollowsoul Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Gauntlet-01-Hollowsoul: the gear drops (7), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126672",
+      "ItemName": "Deck of the Devouring Flame"
+    },
+    {
+      "ItemId": "126673",
+      "ItemName": "Deck of the Ice Wyrm"
+    },
+    {
+      "ItemId": "126677",
+      "ItemName": "Sea Lord's Deck of Thunder"
+    },
+    {
+      "ItemId": "126682",
+      "ItemName": "Deck of Perfect Harmony"
+    },
+    {
+      "ItemId": "126683",
+      "ItemName": "Deck of Last Departure"
+    },
+    {
+      "ItemId": "126684",
+      "ItemName": "Karuvian Deck of Eternity"
+    },
+    {
+      "ItemId": "126685",
+      "ItemName": "Deck of Nature's Bounty"
+    }
+  ]
+}

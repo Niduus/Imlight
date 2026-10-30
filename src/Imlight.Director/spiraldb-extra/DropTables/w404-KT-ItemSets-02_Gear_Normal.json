@@ -1,0 +1,41 @@
+{
+  "Name": "W404 KT-ItemSets-02 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table KT-ItemSets-02: the gear drops (8), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1502425",
+      "ItemName": "Krokotopian Fire Modius"
+    },
+    {
+      "ItemId": "1502426",
+      "ItemName": "Krokotopian Ice Modius"
+    },
+    {
+      "ItemId": "1502427",
+      "ItemName": "Krokotopian Storm Modius"
+    },
+    {
+      "ItemId": "1502428",
+      "ItemName": "Krokotopian Myth Modius"
+    },
+    {
+      "ItemId": "1502429",
+      "ItemName": "Krokotopian Life Modius"
+    },
+    {
+      "ItemId": "1502430",
+      "ItemName": "Krokotopian Death Modius"
+    },
+    {
+      "ItemId": "1502431",
+      "ItemName": "Krokotopian Balance Modius"
+    },
+    {
+      "ItemId": "1502432",
+      "ItemName": "Krokotopian Modius"
+    }
+  ]
+}

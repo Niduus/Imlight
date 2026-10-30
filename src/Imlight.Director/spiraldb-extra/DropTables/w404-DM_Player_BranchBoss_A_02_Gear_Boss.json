@@ -1,0 +1,121 @@
+{
+  "Name": "W404 DM_Player_BranchBoss_A_02 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Player_BranchBoss_A_02: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1707812",
+      "ItemName": "Armor of the Turning Wheel"
+    },
+    {
+      "ItemId": "1707813",
+      "ItemName": "Armor of the Doomed"
+    },
+    {
+      "ItemId": "1707814",
+      "ItemName": "Armor of the Burnt Forest"
+    },
+    {
+      "ItemId": "1707815",
+      "ItemName": "Armor of the Coldhearted"
+    },
+    {
+      "ItemId": "1707816",
+      "ItemName": "Armor of the Living Lie"
+    },
+    {
+      "ItemId": "1707817",
+      "ItemName": "Armor of False Promises"
+    },
+    {
+      "ItemId": "1707818",
+      "ItemName": "Armor of the Changing Tide"
+    },
+    {
+      "ItemId": "1707861",
+      "ItemName": "Ring of the Turning Wheel"
+    },
+    {
+      "ItemId": "1707862",
+      "ItemName": "Ring of the Doomed"
+    },
+    {
+      "ItemId": "1707863",
+      "ItemName": "Ring of the Burnt Forest"
+    },
+    {
+      "ItemId": "1707864",
+      "ItemName": "Ring of the Coldhearted"
+    },
+    {
+      "ItemId": "1707865",
+      "ItemName": "Ring of the Living Lie"
+    },
+    {
+      "ItemId": "1707866",
+      "ItemName": "Ring of False Promises"
+    },
+    {
+      "ItemId": "1707867",
+      "ItemName": "Ring of the Changing Tide"
+    },
+    {
+      "ItemId": "1712418",
+      "ItemName": "Broken Branch Luckless Ring"
+    },
+    {
+      "ItemId": "1712419",
+      "ItemName": "Broken Branch Terror Ring"
+    },
+    {
+      "ItemId": "1712420",
+      "ItemName": "Broken Branch Rage Ring"
+    },
+    {
+      "ItemId": "1712421",
+      "ItemName": "Broken Branch Sorrow Ring"
+    },
+    {
+      "ItemId": "1712422",
+      "ItemName": "Broken Branch Neglect Ring"
+    },
+    {
+      "ItemId": "1712423",
+      "ItemName": "Broken Branch Loss Ring"
+    },
+    {
+      "ItemId": "1712424",
+      "ItemName": "Broken Branch Panic Ring"
+    },
+    {
+      "ItemId": "1712481",
+      "ItemName": "Broken Branch Luckless Armor"
+    },
+    {
+      "ItemId": "1712482",
+      "ItemName": "Broken Branch Terror Armor"
+    },
+    {
+      "ItemId": "1712483",
+      "ItemName": "Broken Branch Rage Armor"
+    },
+    {
+      "ItemId": "1712484",
+      "ItemName": "Broken Branch Sorrow Armor"
+    },
+    {
+      "ItemId": "1712485",
+      "ItemName": "Broken Branch Neglect Armor"
+    },
+    {
+      "ItemId": "1712486",
+      "ItemName": "Broken Branch Loss Armor"
+    },
+    {
+      "ItemId": "1712487",
+      "ItemName": "Broken Branch Panic Armor"
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "Name": "W404 GH2-Raven-Mystic-5-BOSS-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH2-Raven-Mystic-5-BOSS-R10: the gear drops (32), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "455103",
+      "ItemName": "Baleful Star Necklace"
+    },
+    {
+      "ItemId": "455125",
+      "ItemName": "Bear's Claw of Fire"
+    },
+    {
+      "ItemId": "455152",
+      "ItemName": "Cowl of Justice"
+    },
+    {
+      "ItemId": "455153",
+      "ItemName": "Cowl of Spirit Calling"
+    },
+    {
+      "ItemId": "455164",
+      "ItemName": "Poetic Horns"
+    },
+    {
+      "ItemId": "455165",
+      "ItemName": "Horns of Havoc"
+    },
+    {
+      "ItemId": "455183",
+      "ItemName": "Golden Ring of Battle"
+    },
+    {
+      "ItemId": "455184",
+      "ItemName": "Black Spinel of Battle"
+    },
+    {
+      "ItemId": "455185",
+      "ItemName": "Ruby Ring of Battle"
+    },
+    {
+      "ItemId": "455186",
+      "ItemName": "Sapphire Ring of Battle"
+    },
+    {
+      "ItemId": "455187",
+      "ItemName": "Jade Ring of Battle"
+    },
+    {
+      "ItemId": "455188",
+      "ItemName": "Peridot Ring of Battle"
+    },
+    {
+      "ItemId": "455189",
+      "ItemName": "Amethyst Ring of Battle"
+    },
+    {
+      "ItemId": "455190",
+      "ItemName": "Ring of Wolf Lore"
+    },
+    {
+      "ItemId": "455191",
+      "ItemName": "Ring of Wolf Blood"
+    },
+    {
+      "ItemId": "455221",
+      "ItemName": "Baneful Armor"
+    },
+    {
+      "ItemId": "455222",
+      "ItemName": "Fire-forged Warlord Armor"
+    },
+    {
+      "ItemId": "455224",
+      "ItemName": "Armor of Elan"
+    },
+    {
+      "ItemId": "455225",
+      "ItemName": "Armor of the Poets"
+    },
+    {
+      "ItemId": "455249",
+      "ItemName": "Raven's Boots of Balance"
+    },
+    {
+      "ItemId": "455250",
+      "ItemName": "Raven's Tricksy Boots"
+    },
+    {
+      "ItemId": "455251",
+      "ItemName": "Raven's Shielded Boots"
+    },
+    {
+      "ItemId": "455252",
+      "ItemName": "Raven's Alert Boots"
+    },
+    {
+      "ItemId": "455253",
+      "ItemName": "Raven's Guarded Boots"
+    },
+    {
+      "ItemId": "455254",
+      "ItemName": "Raven's Protected Boots"
+    },
+    {
+      "ItemId": "455255",
+      "ItemName": "Raven's Covered Boots"
+    },
+    {
+      "ItemId": "455256",
+      "ItemName": "Boots of Honor"
+    },
+    {
+      "ItemId": "455258",
+      "ItemName": "Firewalker Boots"
+    },
+    {
+      "ItemId": "455260",
+      "ItemName": "Esprit Boots"
+    },
+    {
+      "ItemId": "455262",
+      "ItemName": "Thunderstrike Boots"
+    },
+    {
+      "ItemId": "455420",
+      "ItemName": "Staff of Absolution"
+    },
+    {
+      "ItemId": "455432",
+      "ItemName": "Staff of the Rushing Bear"
+    }
+  ]
+}

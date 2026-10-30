@@ -1,0 +1,17 @@
+{
+  "Name": "W404 KT-KrokBurly-Storm-KTBoss-L37 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokBurly-Storm-KTBoss-L37: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82754",
+      "ItemName": "Turkey Platter"
+    },
+    {
+      "ItemId": "82903",
+      "ItemName": "Purple Krok Bust"
+    }
+  ]
+}

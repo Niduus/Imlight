@@ -1,0 +1,61 @@
+{
+  "Name": "W404 Mob-589403 Gear (Boss)",
+  "Description": "Wizard404's drop list of Jabberwock's own drops: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635212",
+      "ItemName": "Druid's Amulet of Courage"
+    },
+    {
+      "ItemId": "635213",
+      "ItemName": "Pendant of Armiger's Tenacity"
+    },
+    {
+      "ItemId": "635242",
+      "ItemName": "Weirwood's Thorn"
+    },
+    {
+      "ItemId": "635243",
+      "ItemName": "Badger's Claw"
+    },
+    {
+      "ItemId": "635298",
+      "ItemName": "Chaos Knight's Blazing Helm"
+    },
+    {
+      "ItemId": "635299",
+      "ItemName": "Champion of Order's Icy Helm"
+    },
+    {
+      "ItemId": "635334",
+      "ItemName": "Toasty Band of the Fire Elves"
+    },
+    {
+      "ItemId": "635373",
+      "ItemName": "Fire-Spitter Robes"
+    },
+    {
+      "ItemId": "635374",
+      "ItemName": "Winter Wyrm's Cloak"
+    },
+    {
+      "ItemId": "635412",
+      "ItemName": "Courageous Knight's Boots"
+    },
+    {
+      "ItemId": "635413",
+      "ItemName": "Noble Knight's Boots"
+    },
+    {
+      "ItemId": "635614",
+      "ItemName": "Bludgeon of Confidence"
+    },
+    {
+      "ItemId": "635615",
+      "ItemName": "Highland Shillelagh"
+    }
+  ]
+}

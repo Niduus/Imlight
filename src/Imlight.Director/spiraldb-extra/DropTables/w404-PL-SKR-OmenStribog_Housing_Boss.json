@@ -1,0 +1,253 @@
+{
+  "Name": "W404 PL-SKR-OmenStribog Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-SKR-OmenStribog: the housing drops (61), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1317866",
+      "ItemName": "Lydia's Icy Floor"
+    },
+    {
+      "ItemId": "1317867",
+      "ItemName": "Lydia's Wintry Wallcovering"
+    },
+    {
+      "ItemId": "1350312",
+      "ItemName": "Master's Socket Wrench"
+    },
+    {
+      "ItemId": "1350313",
+      "ItemName": "Artisan's Socket Wrench"
+    },
+    {
+      "ItemId": "1374181",
+      "ItemName": "Lydia's Icicle Towel Rod"
+    },
+    {
+      "ItemId": "1374182",
+      "ItemName": "Lydia's Icy Kitchen Counter"
+    },
+    {
+      "ItemId": "1374183",
+      "ItemName": "Lydia's Snow Rug"
+    },
+    {
+      "ItemId": "1374185",
+      "ItemName": "Lydia's Icy Hearth"
+    },
+    {
+      "ItemId": "1374186",
+      "ItemName": "Lydia's Cold Table"
+    },
+    {
+      "ItemId": "1374187",
+      "ItemName": "Lydia's Chill Dining Chair"
+    },
+    {
+      "ItemId": "1374188",
+      "ItemName": "Lydia's Frozen Pantry"
+    },
+    {
+      "ItemId": "1374189",
+      "ItemName": "Lydia's Chesterfield"
+    },
+    {
+      "ItemId": "1374190",
+      "ItemName": "Lydia's Iced Coffee Table"
+    },
+    {
+      "ItemId": "1374191",
+      "ItemName": "Lydia's Frozen Cathedra"
+    },
+    {
+      "ItemId": "1374192",
+      "ItemName": "Lydia's Frozen Shelf"
+    },
+    {
+      "ItemId": "1374193",
+      "ItemName": "Lydia's Chilly Larder"
+    },
+    {
+      "ItemId": "1374194",
+      "ItemName": "Lydia's Ice Bath"
+    },
+    {
+      "ItemId": "1374195",
+      "ItemName": "Lydia's Frosty Night Table"
+    },
+    {
+      "ItemId": "1374196",
+      "ItemName": "Lydia's Frozen Waterbed"
+    },
+    {
+      "ItemId": "1374197",
+      "ItemName": "Lydia's Wintry Wash Basin"
+    },
+    {
+      "ItemId": "1374242",
+      "ItemName": "Pingouin Breakfast Table"
+    },
+    {
+      "ItemId": "1374243",
+      "ItemName": "Pingouin Round Table"
+    },
+    {
+      "ItemId": "1374244",
+      "ItemName": "Pingouin Feasting Table"
+    },
+    {
+      "ItemId": "1374245",
+      "ItemName": "Pingouin Settee"
+    },
+    {
+      "ItemId": "1374246",
+      "ItemName": "Pingouin Butter Churn"
+    },
+    {
+      "ItemId": "1374247",
+      "ItemName": "Unlocked Pingouin Trunk"
+    },
+    {
+      "ItemId": "1374248",
+      "ItemName": "Pingouin Side Chair"
+    },
+    {
+      "ItemId": "1374249",
+      "ItemName": "Pingouin Butler's Pantry"
+    },
+    {
+      "ItemId": "1374250",
+      "ItemName": "Icy Polarian Shrub"
+    },
+    {
+      "ItemId": "1374251",
+      "ItemName": "Extra Large Fish Cart"
+    },
+    {
+      "ItemId": "1374252",
+      "ItemName": "Stacked Ice Blocks"
+    },
+    {
+      "ItemId": "1374253",
+      "ItemName": "Frozen Fish Block"
+    },
+    {
+      "ItemId": "1374254",
+      "ItemName": "Ice Patch"
+    },
+    {
+      "ItemId": "1374255",
+      "ItemName": "Tip of the Polarian Iceberg"
+    },
+    {
+      "ItemId": "1374256",
+      "ItemName": "Polarian Birch Tree"
+    },
+    {
+      "ItemId": "1374258",
+      "ItemName": "Snowy Polarian Pine Tree"
+    },
+    {
+      "ItemId": "1374260",
+      "ItemName": "Pingouin Teapot"
+    },
+    {
+      "ItemId": "1374261",
+      "ItemName": "Walrusk Feasting Table"
+    },
+    {
+      "ItemId": "1374262",
+      "ItemName": "Walrusk Round Table"
+    },
+    {
+      "ItemId": "1374264",
+      "ItemName": "Grand Walruskberg Lamp Post"
+    },
+    {
+      "ItemId": "1374265",
+      "ItemName": "Walrusk Rug"
+    },
+    {
+      "ItemId": "1374266",
+      "ItemName": "Penguinonian Rug"
+    },
+    {
+      "ItemId": "1374267",
+      "ItemName": "Walrusk Potted Plant"
+    },
+    {
+      "ItemId": "1374268",
+      "ItemName": "Bromeliad Vase"
+    },
+    {
+      "ItemId": "1374271",
+      "ItemName": "Walrusk End Table"
+    },
+    {
+      "ItemId": "1374272",
+      "ItemName": "Small Walrusk Chair"
+    },
+    {
+      "ItemId": "1374273",
+      "ItemName": "Walrusk Travel Trunk"
+    },
+    {
+      "ItemId": "1374274",
+      "ItemName": "Walrusk Wooden Settee"
+    },
+    {
+      "ItemId": "1374275",
+      "ItemName": "Walrusk Officer's Desk"
+    },
+    {
+      "ItemId": "1374276",
+      "ItemName": "Simple Walruskberg Lamp Post"
+    },
+    {
+      "ItemId": "1374277",
+      "ItemName": "Walruskberg Palace Painting"
+    },
+    {
+      "ItemId": "1374278",
+      "ItemName": "Walruskberg Portrait"
+    },
+    {
+      "ItemId": "1374279",
+      "ItemName": "Snowy Walruskberg Guard Booth"
+    },
+    {
+      "ItemId": "1374280",
+      "ItemName": "Walruskberg Guard Booth"
+    },
+    {
+      "ItemId": "1374281",
+      "ItemName": "Polarian Cathedral Window"
+    },
+    {
+      "ItemId": "1374282",
+      "ItemName": "Walruskberg Window"
+    },
+    {
+      "ItemId": "1374284",
+      "ItemName": "Pingouin Potted Plant"
+    },
+    {
+      "ItemId": "1374285",
+      "ItemName": "Polarian Well"
+    },
+    {
+      "ItemId": "1374287",
+      "ItemName": "Patriôte Graffiti"
+    },
+    {
+      "ItemId": "1374288",
+      "ItemName": "Walrusk Empress Caricature"
+    },
+    {
+      "ItemId": "1374291",
+      "ItemName": "Walrusk Vanity"
+    }
+  ]
+}

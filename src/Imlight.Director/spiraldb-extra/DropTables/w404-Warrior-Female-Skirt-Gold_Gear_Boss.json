@@ -1,0 +1,97 @@
+{
+  "Name": "W404 Warrior-Female-Skirt-Gold Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Warrior-Female-Skirt-Gold: the gear drops (22), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104617",
+      "ItemName": "Salamander's Wrap"
+    },
+    {
+      "ItemId": "104619",
+      "ItemName": "Flamewing's Phoenix Cloak"
+    },
+    {
+      "ItemId": "104707",
+      "ItemName": "Robe of the Gale"
+    },
+    {
+      "ItemId": "104768",
+      "ItemName": "Sandals of Scorching"
+    },
+    {
+      "ItemId": "104826",
+      "ItemName": "Sandals of the Prophet"
+    },
+    {
+      "ItemId": "104847",
+      "ItemName": "Boots of the Coming Storm"
+    },
+    {
+      "ItemId": "104850",
+      "ItemName": "Boots of the Forgotten"
+    },
+    {
+      "ItemId": "104871",
+      "ItemName": "Monsoon Mocassins"
+    },
+    {
+      "ItemId": "104877",
+      "ItemName": "Flamewing's Boots"
+    },
+    {
+      "ItemId": "126592",
+      "ItemName": "Sapphire Studded Band"
+    },
+    {
+      "ItemId": "126682",
+      "ItemName": "Deck of Perfect Harmony"
+    },
+    {
+      "ItemId": "146168",
+      "ItemName": "Athame of the Volcano"
+    },
+    {
+      "ItemId": "146171",
+      "ItemName": "Stonecutter"
+    },
+    {
+      "ItemId": "146206",
+      "ItemName": "Cap of Fables"
+    },
+    {
+      "ItemId": "146208",
+      "ItemName": "Ozone Shroud"
+    },
+    {
+      "ItemId": "146218",
+      "ItemName": "Cap of the Unflinching"
+    },
+    {
+      "ItemId": "146266",
+      "ItemName": "Flamewing's Rejuvenative Cowl"
+    },
+    {
+      "ItemId": "146284",
+      "ItemName": "Cowl of the Glacier"
+    },
+    {
+      "ItemId": "146291",
+      "ItemName": "Hood of Permafrost"
+    },
+    {
+      "ItemId": "146293",
+      "ItemName": "Frostwrapped Hood"
+    },
+    {
+      "ItemId": "146335",
+      "ItemName": "Helm of Oblivion"
+    },
+    {
+      "ItemId": "146339",
+      "ItemName": "Shroud of the Grave"
+    }
+  ]
+}

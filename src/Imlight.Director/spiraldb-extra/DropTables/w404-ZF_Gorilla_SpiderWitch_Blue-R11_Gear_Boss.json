@@ -1,0 +1,53 @@
+{
+  "Name": "W404 ZF_Gorilla_SpiderWitch_Blue-R11 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF_Gorilla_SpiderWitch_Blue-R11: the gear drops (11), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "526681",
+      "ItemName": "Staff of Shadow and Light"
+    },
+    {
+      "ItemId": "540095",
+      "ItemName": "Collar of the Heck Hound"
+    },
+    {
+      "ItemId": "540126",
+      "ItemName": "Roaring Razor"
+    },
+    {
+      "ItemId": "540169",
+      "ItemName": "Elephant Graveyard Shroud"
+    },
+    {
+      "ItemId": "540173",
+      "ItemName": "Turban of the Olyphants"
+    },
+    {
+      "ItemId": "540207",
+      "ItemName": "Elissa's Chill Band"
+    },
+    {
+      "ItemId": "540277",
+      "ItemName": "Shaman's Cold River Wraps"
+    },
+    {
+      "ItemId": "540281",
+      "ItemName": "Ananse's Dark Rangers"
+    },
+    {
+      "ItemId": "540300",
+      "ItemName": "Hand-Chased Box of Destiny"
+    },
+    {
+      "ItemId": "540303",
+      "ItemName": "Hand-Chased Box of Winter"
+    },
+    {
+      "ItemId": "540304",
+      "ItemName": "Chieftain's Smiling Deck"
+    }
+  ]
+}

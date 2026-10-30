@@ -1,0 +1,29 @@
+{
+  "Name": "W404 AZ-Boss-R12-01 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-Boss-R12-01: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "512206",
+      "ItemName": "Azteca Main Theme"
+    },
+    {
+      "ItemId": "512207",
+      "ItemName": "Azteca Apocalypse Theme"
+    },
+    {
+      "ItemId": "739112",
+      "ItemName": "Bird Head Mount"
+    },
+    {
+      "ItemId": "739121",
+      "ItemName": "Clothesline"
+    },
+    {
+      "ItemId": "739160",
+      "ItemName": "Hollow Log"
+    }
+  ]
+}

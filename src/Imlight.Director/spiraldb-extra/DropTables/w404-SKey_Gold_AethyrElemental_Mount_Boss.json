@@ -1,0 +1,13 @@
+{
+  "Name": "W404 SKey_Gold_AethyrElemental Mount (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKey_Gold_AethyrElemental: the mount drops (1), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1468016",
+      "ItemName": "Aethyr Cloud (PERM)"
+    }
+  ]
+}

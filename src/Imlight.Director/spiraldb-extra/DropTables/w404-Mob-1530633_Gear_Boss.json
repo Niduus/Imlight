@@ -1,0 +1,17 @@
+{
+  "Name": "W404 Mob-1530633 Gear (Boss)",
+  "Description": "Wizard404's drop list of Stallion Quartermane's own drops: the gear drops (2), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1537027",
+      "ItemName": "Magician's Power Cloak"
+    },
+    {
+      "ItemId": "1537051",
+      "ItemName": "Malevolent Power Cloak"
+    }
+  ]
+}

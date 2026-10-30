@@ -1,0 +1,13 @@
+{
+  "Name": "W404 APR-LootTable-008 Mount (Boss)",
+  "Description": "Wizard404's drop list of the game's table APR-LootTable-008: the mount drops (1), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1257820",
+      "ItemName": "Stormrider Hare (PERM)"
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "Name": "W404 CE_TreasureTower_Balance_F27 TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table CE_TreasureTower_Balance_F27: the treasurecard drops (39), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Scarab TC",
+      "ItemName": "Scarab"
+    },
+    {
+      "ItemId": "Scorpion TC",
+      "ItemName": "Scorpion"
+    },
+    {
+      "ItemId": "Minor Blessing TC",
+      "ItemName": "Minor Blessing"
+    },
+    {
+      "ItemId": "Sprite TC",
+      "ItemName": "Sprite"
+    },
+    {
+      "ItemId": "Balanceblade TC",
+      "ItemName": "Balanceblade"
+    },
+    {
+      "ItemId": "Tower Shield TC",
+      "ItemName": "Tower Shield"
+    },
+    {
+      "ItemId": "Krokotillian TC",
+      "ItemName": "Krokotillian"
+    },
+    {
+      "ItemId": "Locust Swarm TC",
+      "ItemName": "Locust Swarm"
+    },
+    {
+      "ItemId": "Judgement TC",
+      "ItemName": "Judgement"
+    },
+    {
+      "ItemId": "Pixie Life TC",
+      "ItemName": "Fairy"
+    },
+    {
+      "ItemId": "Satyr TC",
+      "ItemName": "Satyr"
+    },
+    {
+      "ItemId": "Hex TC",
+      "ItemName": "Hex"
+    },
+    {
+      "ItemId": "Tri Shield TC",
+      "ItemName": "Elemental Shield"
+    },
+    {
+      "ItemId": "Spirit Shield TC",
+      "ItemName": "Spirit Shield"
+    },
+    {
+      "ItemId": "3P Ninja Pig Plague Black Mantle TC",
+      "ItemName": "Plague Ninja Pig"
+    },
+    {
+      "ItemId": "Sandstorm TC",
+      "ItemName": "Sandstorm"
+    },
+    {
+      "ItemId": "Loremaster TC",
+      "ItemName": "Loremaster"
+    },
+    {
+      "ItemId": "Ninja Piglets TC",
+      "ItemName": "Ninja Piglets"
+    },
+    {
+      "ItemId": "Regenerate TC",
+      "ItemName": "Regenerate"
+    },
+    {
+      "ItemId": "Defibrillate TC",
+      "ItemName": "Healing Current"
+    },
+    {
+      "ItemId": "Helping Hands TC",
+      "ItemName": "Helping Hands"
+    },
+    {
+      "ItemId": "Dryad TC",
+      "ItemName": "Dryad"
+    },
+    {
+      "ItemId": "Feint TC",
+      "ItemName": "Feint"
+    },
+    {
+      "ItemId": "Fortify TC",
+      "ItemName": "Fortify"
+    },
+    {
+      "ItemId": "Amplify TC",
+      "ItemName": "Amplify"
+    },
+    {
+      "ItemId": "Infallible TC",
+      "ItemName": "Infallible"
+    },
+    {
+      "ItemId": "Pixie TC",
+      "ItemName": "Pixie"
+    },
+    {
+      "ItemId": "Spectral Blast TC",
+      "ItemName": "Spectral Blast"
+    },
+    {
+      "ItemId": "Weakness TC",
+      "ItemName": "Weakness"
+    },
+    {
+      "ItemId": "Infection TC",
+      "ItemName": "Infection"
+    },
+    {
+      "ItemId": "Gear Spinner TC",
+      "ItemName": "Gear Spinner"
+    },
+    {
+      "ItemId": "Cleanse Charm TC",
+      "ItemName": "Cleanse Charm"
+    },
+    {
+      "ItemId": "Black Mantle TC",
+      "ItemName": "Black Mantle"
+    },
+    {
+      "ItemId": "Hydra TC",
+      "ItemName": "Hydra"
+    },
+    {
+      "ItemId": "Unbalance TC",
+      "ItemName": "Unbalance"
+    },
+    {
+      "ItemId": "Snow Drift TC",
+      "ItemName": "Snow Drift"
+    },
+    {
+      "ItemId": "Dark Pact TC",
+      "ItemName": "Dark Tribute"
+    },
+    {
+      "ItemId": "Dragonblade TC",
+      "ItemName": "Dragonblade"
+    },
+    {
+      "ItemId": "Pierce TC",
+      "ItemName": "Pierce"
+    }
+  ]
+}

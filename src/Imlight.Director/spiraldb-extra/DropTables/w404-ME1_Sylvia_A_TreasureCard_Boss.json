@@ -1,0 +1,21 @@
+{
+  "Name": "W404 ME1_Sylvia_A TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Sylvia_A: the treasurecard drops (3), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Rebirth TC WH",
+      "ItemName": "Rebirth"
+    },
+    {
+      "ItemId": "Putrid Bug Spray TC WH",
+      "ItemName": "Putrid Bug Spray"
+    },
+    {
+      "ItemId": "Efreet TC",
+      "ItemName": "Efreet"
+    }
+  ]
+}

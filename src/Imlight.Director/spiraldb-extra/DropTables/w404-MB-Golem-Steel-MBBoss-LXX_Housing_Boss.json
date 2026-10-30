@@ -1,0 +1,29 @@
+{
+  "Name": "W404 MB-Golem-Steel-MBBoss-LXX Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Golem-Steel-MBBoss-LXX: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160645",
+      "ItemName": "Smogger's Auto Radiator"
+    },
+    {
+      "ItemId": "160729",
+      "ItemName": "Large Stone Fountain"
+    },
+    {
+      "ItemId": "160763",
+      "ItemName": "Air Dales Sign"
+    },
+    {
+      "ItemId": "160779",
+      "ItemName": "Wooden Propellor"
+    },
+    {
+      "ItemId": "512189",
+      "ItemName": "Marleybone Pet Derby Theme"
+    }
+  ]
+}

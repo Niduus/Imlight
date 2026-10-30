@@ -1,0 +1,97 @@
+{
+  "Name": "W404 Kraken-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Kraken-Boss-R8: the gear drops (22), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104595",
+      "ItemName": "Judge's Robe"
+    },
+    {
+      "ItemId": "104598",
+      "ItemName": "Coat of Impartiality"
+    },
+    {
+      "ItemId": "104658",
+      "ItemName": "Leafy Jerkin"
+    },
+    {
+      "ItemId": "104679",
+      "ItemName": "Chilling Cloak"
+    },
+    {
+      "ItemId": "104705",
+      "ItemName": "Dragonscale Wrap"
+    },
+    {
+      "ItemId": "104756",
+      "ItemName": "Blizzard Boots"
+    },
+    {
+      "ItemId": "104758",
+      "ItemName": "Sea Lord's Iceberg Waders"
+    },
+    {
+      "ItemId": "104790",
+      "ItemName": "Firewalker's Footwraps"
+    },
+    {
+      "ItemId": "104822",
+      "ItemName": "Shoes of Equilibrium"
+    },
+    {
+      "ItemId": "104870",
+      "ItemName": "Boots of the Emerald Grove"
+    },
+    {
+      "ItemId": "126562",
+      "ItemName": "Ring of Equilibrium"
+    },
+    {
+      "ItemId": "126610",
+      "ItemName": "Seal of the Vigilant"
+    },
+    {
+      "ItemId": "126677",
+      "ItemName": "Sea Lord's Deck of Thunder"
+    },
+    {
+      "ItemId": "146167",
+      "ItemName": "Scaled Smallsword"
+    },
+    {
+      "ItemId": "146173",
+      "ItemName": "Needle of the Eye"
+    },
+    {
+      "ItemId": "146227",
+      "ItemName": "Veil of Clouds"
+    },
+    {
+      "ItemId": "146245",
+      "ItemName": "Sea Lord's Hurricane Cowl"
+    },
+    {
+      "ItemId": "146259",
+      "ItemName": "Herbalist's Hood"
+    },
+    {
+      "ItemId": "146269",
+      "ItemName": "Hood of the Gnome"
+    },
+    {
+      "ItemId": "146316",
+      "ItemName": "Pyromancer's Veil"
+    },
+    {
+      "ItemId": "146332",
+      "ItemName": "Mantle of the Undying"
+    },
+    {
+      "ItemId": "146361",
+      "ItemName": "Hood of Propriety"
+    }
+  ]
+}

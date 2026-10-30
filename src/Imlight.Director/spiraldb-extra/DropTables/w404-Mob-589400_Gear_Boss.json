@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Mob-589400 Gear (Boss)",
+  "Description": "Wizard404's drop list of Black Annie's own drops: the gear drops (3), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "789099",
+      "ItemName": "Poet's Crown"
+    },
+    {
+      "ItemId": "789103",
+      "ItemName": "Poet's Slippers"
+    },
+    {
+      "ItemId": "789107",
+      "ItemName": "Poet's Cassock"
+    }
+  ]
+}

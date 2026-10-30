@@ -1,0 +1,41 @@
+{
+  "Name": "W404 SKB_MS_Samoorai_A Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_MS_Samoorai_A: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1659389",
+      "ItemName": "Sword Oil"
+    },
+    {
+      "ItemId": "1659643",
+      "ItemName": "A-baahh-calypse"
+    },
+    {
+      "ItemId": "1659645",
+      "ItemName": "Ice Elemental"
+    },
+    {
+      "ItemId": "1607044",
+      "ItemName": "Catch of the Day"
+    },
+    {
+      "ItemId": "1528504",
+      "ItemName": "Ninja Pigs"
+    },
+    {
+      "ItemId": "1528509",
+      "ItemName": "Goat Monk"
+    },
+    {
+      "ItemId": "1607673",
+      "ItemName": "Monk of Mourning"
+    },
+    {
+      "ItemId": "1528514",
+      "ItemName": "Samoorai"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "Name": "W404 WV_M03_Monkey_Noble_A_01 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table WV_M03_Monkey_Noble_A_01: the reagent drops (2), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1472670",
+      "ItemName": "Rat Thief Gold Idol"
+    },
+    {
+      "ItemId": "1677016",
+      "ItemName": "Weft Yarn"
+    }
+  ]
+}

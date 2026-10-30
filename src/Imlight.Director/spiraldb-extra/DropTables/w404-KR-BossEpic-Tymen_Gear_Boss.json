@@ -1,0 +1,45 @@
+{
+  "Name": "W404 KR-BossEpic-Tymen Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossEpic-Tymen: the gear drops (9), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203140",
+      "ItemName": "Mantis Cowl of Honor"
+    },
+    {
+      "ItemId": "1203174",
+      "ItemName": "First Scythe's Ringlet"
+    },
+    {
+      "ItemId": "1203211",
+      "ItemName": "Mantis Chitin Armor"
+    },
+    {
+      "ItemId": "1203259",
+      "ItemName": "Kermes Fire Miner's Clogs"
+    },
+    {
+      "ItemId": "1203304",
+      "ItemName": "Molting Spear"
+    },
+    {
+      "ItemId": "1203336",
+      "ItemName": "Death's Head Talisman"
+    },
+    {
+      "ItemId": "1203371",
+      "ItemName": "Venom-Tipped Stingblade"
+    },
+    {
+      "ItemId": "1203413",
+      "ItemName": "Box of Indomitable Spirit"
+    },
+    {
+      "ItemId": "1203415",
+      "ItemName": "House of Harmonic Buzzing"
+    }
+  ]
+}

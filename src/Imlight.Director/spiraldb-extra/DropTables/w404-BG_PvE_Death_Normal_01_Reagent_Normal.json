@@ -1,0 +1,13 @@
+{
+  "Name": "W404 BG_PvE_Death_Normal_01 Reagent (Normal)",
+  "Description": "Wizard404's drop list of the game's table BG_PvE_Death_Normal_01: the reagent drops (1), one picked when it rolls. How often: DropOdds.json Normal/Reagent.",
+  "Odds": "Normal/Reagent",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1441821",
+      "ItemName": "Death Rune"
+    }
+  ]
+}

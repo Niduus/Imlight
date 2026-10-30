@@ -1,0 +1,25 @@
+{
+  "Name": "W404 ME1_Shark_Boss_A TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Shark_Boss_A: the treasurecard drops (4), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Zounds...Bees! TC WH",
+      "ItemName": "Zounds...Bees!"
+    },
+    {
+      "ItemId": "Flute Symphony TC WH",
+      "ItemName": "Flute Symphony"
+    },
+    {
+      "ItemId": "Triage TC WH",
+      "ItemName": "Triage"
+    },
+    {
+      "ItemId": "Efreet Storm - TC",
+      "ItemName": "Storm Efreet"
+    }
+  ]
+}

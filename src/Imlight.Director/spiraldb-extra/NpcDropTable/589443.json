@@ -1,0 +1,17 @@
+{
+  "TemplateID": 589443,
+  "DropTableNames": [
+    "W404 AV-ReagentsBoss Reagent (Boss)",
+    "W404 AV-R12-FoxBoss",
+    "W404 AV-R12-FoxBoss Gear (Boss)",
+    "W404 AV-R12-FoxBoss Snack (Boss)",
+    "W404 AV-R12-FoxBoss Seed (Boss)",
+    "W404 AV-R12-FoxBoss Housing (Boss)",
+    "W404 TC-AV-RaresBosses TreasureCard",
+    "W404 TC-AV-RaresBosses Seed",
+    "W404 TC-AV-Utility-Fire TreasureCard (Boss)",
+    "W404 AV-R12-FireDeck Gear (Boss)",
+    "W404 AV-Boss-Jewels Jewel",
+    "W404 AV-Boss-Jewels Reagent"
+  ]
+}

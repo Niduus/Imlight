@@ -1,0 +1,13 @@
+{
+  "Name": "W404 PA-Duel-03 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table PA-Duel-03: the gear drops (1), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "468530",
+      "ItemName": "Grimoire's Edge"
+    }
+  ]
+}

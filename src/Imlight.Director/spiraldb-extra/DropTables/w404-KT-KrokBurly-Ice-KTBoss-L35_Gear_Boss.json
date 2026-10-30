@@ -1,0 +1,77 @@
+{
+  "Name": "W404 KT-KrokBurly-Ice-KTBoss-L35 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokBurly-Ice-KTBoss-L35: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4913",
+      "ItemName": "Amulet of Eyes"
+    },
+    {
+      "ItemId": "4952",
+      "ItemName": "Athame of Pyramids"
+    },
+    {
+      "ItemId": "4968",
+      "ItemName": "Amahte's Dagger of Sagas"
+    },
+    {
+      "ItemId": "5032",
+      "ItemName": "Powerful Ring"
+    },
+    {
+      "ItemId": "38753",
+      "ItemName": "Torrid Cloak"
+    },
+    {
+      "ItemId": "38769",
+      "ItemName": "Robe of Composure"
+    },
+    {
+      "ItemId": "39420",
+      "ItemName": "Sandals of Vision"
+    },
+    {
+      "ItemId": "39439",
+      "ItemName": "Stout Boots"
+    },
+    {
+      "ItemId": "77738",
+      "ItemName": "Khai's Entrancing Circlet"
+    },
+    {
+      "ItemId": "77754",
+      "ItemName": "Shoes of Originality"
+    },
+    {
+      "ItemId": "77759",
+      "ItemName": "Footwraps of the Mirage"
+    },
+    {
+      "ItemId": "77772",
+      "ItemName": "Shoes of the Augur"
+    },
+    {
+      "ItemId": "77791",
+      "ItemName": "Sorcerer's Sandals"
+    },
+    {
+      "ItemId": "87271",
+      "ItemName": "Vestment of Vision"
+    },
+    {
+      "ItemId": "87283",
+      "ItemName": "Cloak of the Phantom"
+    },
+    {
+      "ItemId": "87300",
+      "ItemName": "Soothsayer's Cloak"
+    },
+    {
+      "ItemId": "87314",
+      "ItemName": "Vest of Somnolence"
+    }
+  ]
+}

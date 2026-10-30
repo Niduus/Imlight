@@ -1,0 +1,18 @@
+{
+  "TemplateID": 1206786,
+  "DropTableNames": [
+    "W404 AZ-Boss-Reagents Reagent (Boss)",
+    "W404 ME1_Maestro_A",
+    "W404 ME1_Maestro_A Gear (Boss)",
+    "W404 ME1_Maestro_A Pet (Boss)",
+    "W404 ME1_Maestro_A Mount (Boss)",
+    "W404 ME1_Maestro_A TreasureCard (Boss)",
+    "W404 ME1_Maestro_A Reagent (Boss)",
+    "W404 ME1_Maestro_A Housing (Boss)",
+    "W404 AZ-Boss-PetSnacks-01 Snack (Boss)",
+    "W404 AZ-Boss-TC-01 TreasureCard (Boss)",
+    "W404 TC-ClockworkSpider TreasureCard (Boss)",
+    "W404 AV-Boss-Jewels Jewel",
+    "W404 AV-Boss-Jewels Reagent"
+  ]
+}

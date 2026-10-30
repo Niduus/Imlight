@@ -1,0 +1,65 @@
+{
+  "Name": "W404 CL-Star-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-Star-Boss-R10: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243223",
+      "ItemName": "Moon Dagger"
+    },
+    {
+      "ItemId": "243274",
+      "ItemName": "Star Blade"
+    },
+    {
+      "ItemId": "243326",
+      "ItemName": "Eclipse Cover"
+    },
+    {
+      "ItemId": "243529",
+      "ItemName": "Star Signet"
+    },
+    {
+      "ItemId": "243583",
+      "ItemName": "Moon Ring"
+    },
+    {
+      "ItemId": "243607",
+      "ItemName": "Wicked Raiment"
+    },
+    {
+      "ItemId": "243671",
+      "ItemName": "Robe of Rapture"
+    },
+    {
+      "ItemId": "243691",
+      "ItemName": "Illusive Longcoat"
+    },
+    {
+      "ItemId": "243752",
+      "ItemName": "Eclipse Clogs"
+    },
+    {
+      "ItemId": "243799",
+      "ItemName": "Celestian Snow Boots"
+    },
+    {
+      "ItemId": "243865",
+      "ItemName": "Tempest Robe"
+    },
+    {
+      "ItemId": "243889",
+      "ItemName": "Star Amulet"
+    },
+    {
+      "ItemId": "243894",
+      "ItemName": "Moon Pendant"
+    },
+    {
+      "ItemId": "243900",
+      "ItemName": "Tempest Topper"
+    }
+  ]
+}

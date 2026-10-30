@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Skey_Stone_Zafaria Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skey_Stone_Zafaria: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "690106",
+      "ItemName": "Burlap Boy"
+    }
+  ]
+}

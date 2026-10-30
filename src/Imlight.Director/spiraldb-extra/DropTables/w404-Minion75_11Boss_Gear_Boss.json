@@ -1,0 +1,65 @@
+{
+  "Name": "W404 Minion75_11Boss Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Minion75_11Boss: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "540262",
+      "ItemName": "Ironhide Boots"
+    },
+    {
+      "ItemId": "540263",
+      "ItemName": "Cold Storm Trackers"
+    },
+    {
+      "ItemId": "540264",
+      "ItemName": "Steppers of Ice and Fire"
+    },
+    {
+      "ItemId": "540265",
+      "ItemName": "Witch Doctor's Juju Rangers"
+    },
+    {
+      "ItemId": "540266",
+      "ItemName": "Charging Bull's Footguards"
+    },
+    {
+      "ItemId": "540267",
+      "ItemName": "Big Five Trackers"
+    },
+    {
+      "ItemId": "540268",
+      "ItemName": "Finely Balanced Boots"
+    },
+    {
+      "ItemId": "635398",
+      "ItemName": "Friend of the Fire Elf Boots"
+    },
+    {
+      "ItemId": "635399",
+      "ItemName": "Slick Road Grippers"
+    },
+    {
+      "ItemId": "635400",
+      "ItemName": "Splashing Stream Waders"
+    },
+    {
+      "ItemId": "635401",
+      "ItemName": "Ponycorn Hoofers"
+    },
+    {
+      "ItemId": "635402",
+      "ItemName": "Luck Smithed Boots"
+    },
+    {
+      "ItemId": "635403",
+      "ItemName": "Long as Night Walkers"
+    },
+    {
+      "ItemId": "635404",
+      "ItemName": "Hanging Stones Striders"
+    }
+  ]
+}

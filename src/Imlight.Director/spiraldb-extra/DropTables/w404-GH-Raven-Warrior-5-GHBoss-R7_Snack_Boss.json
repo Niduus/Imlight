@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Raven-Warrior-5-GHBoss-R7 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Raven-Warrior-5-GHBoss-R7: the snack drops (6), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220295",
+      "ItemName": "Spicy Popcorn"
+    },
+    {
+      "ItemId": "220298",
+      "ItemName": "Golden Biscuit"
+    },
+    {
+      "ItemId": "220300",
+      "ItemName": "Poncherello Chips"
+    },
+    {
+      "ItemId": "220314",
+      "ItemName": "Fairy Cake"
+    },
+    {
+      "ItemId": "220315",
+      "ItemName": "Huge Ice Cream"
+    },
+    {
+      "ItemId": "220319",
+      "ItemName": "Golden Candy Bar"
+    }
+  ]
+}

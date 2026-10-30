@@ -1,0 +1,9 @@
+{
+  "Name": "W404 LM-Mob-PreQuest-Loot",
+  "Description": "Gold of the game's table LM-Mob-PreQuest-Loot, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 75,
+  "MaxGold": 150,
+  "EachItem": false,
+  "Items": []
+}

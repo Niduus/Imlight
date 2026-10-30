@@ -1,0 +1,9 @@
+{
+  "Name": "W404 G14-SB-SKR-TempleOni",
+  "Description": "Gold of the game's table G14-SB-SKR-TempleOni, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 400,
+  "MaxGold": 500,
+  "EachItem": false,
+  "Items": []
+}

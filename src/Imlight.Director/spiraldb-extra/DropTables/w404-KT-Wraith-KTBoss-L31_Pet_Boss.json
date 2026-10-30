@@ -1,0 +1,13 @@
+{
+  "Name": "W404 KT-Wraith-KTBoss-L31 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-Wraith-KTBoss-L31: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "87801",
+      "ItemName": "Fang Bat"
+    }
+  ]
+}

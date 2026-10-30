@@ -1,0 +1,57 @@
+{
+  "Name": "W404 CL-SharkWarrior-Tiger-R9-2 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-SharkWarrior-Tiger-R9-2: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243260",
+      "ItemName": "Shivering Shortblade"
+    },
+    {
+      "ItemId": "243273",
+      "ItemName": "Marinos's Lancet"
+    },
+    {
+      "ItemId": "243395",
+      "ItemName": "Inspired Mask"
+    },
+    {
+      "ItemId": "243438",
+      "ItemName": "Mistral Mantle"
+    },
+    {
+      "ItemId": "243465",
+      "ItemName": "Compatible Clothing"
+    },
+    {
+      "ItemId": "243567",
+      "ItemName": "Ring of Rime"
+    },
+    {
+      "ItemId": "243589",
+      "ItemName": "Ring of the Maelstrom"
+    },
+    {
+      "ItemId": "243670",
+      "ItemName": "Timeless Tunic"
+    },
+    {
+      "ItemId": "243726",
+      "ItemName": "Equilibrium Striders"
+    },
+    {
+      "ItemId": "243815",
+      "ItemName": "Everlasting Footguards"
+    },
+    {
+      "ItemId": "243872",
+      "ItemName": "Scarecrow's Sinister Vial"
+    },
+    {
+      "ItemId": "243874",
+      "ItemName": "Amulet of Agony"
+    }
+  ]
+}

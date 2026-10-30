@@ -1,0 +1,173 @@
+{
+  "Name": "W404 PL-Boss-Rasputin Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-Boss-Rasputin: the seed drops (41), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "345982",
+      "ItemName": "Deadly Fly Trap"
+    },
+    {
+      "ItemId": "345989",
+      "ItemName": "Silver Trumpet Vine"
+    },
+    {
+      "ItemId": "346003",
+      "ItemName": "Fiery Boom Shroom"
+    },
+    {
+      "ItemId": "346010",
+      "ItemName": "Maelstrom Snap Dragon"
+    },
+    {
+      "ItemId": "346017",
+      "ItemName": "Deadly Ninja Fig"
+    },
+    {
+      "ItemId": "346031",
+      "ItemName": "Ninja Fig"
+    },
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion"
+    },
+    {
+      "ItemId": "346045",
+      "ItemName": "Trumpet Vine"
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap"
+    },
+    {
+      "ItemId": "355073",
+      "ItemName": "Venus Fly Trap"
+    },
+    {
+      "ItemId": "355080",
+      "ItemName": "Burning Snap Dragon"
+    },
+    {
+      "ItemId": "355115",
+      "ItemName": "Orange Dandelion"
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears"
+    },
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion"
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon"
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas"
+    },
+    {
+      "ItemId": "355192",
+      "ItemName": "Boom Shroom"
+    },
+    {
+      "ItemId": "356144",
+      "ItemName": "King Parsley"
+    },
+    {
+      "ItemId": "404123",
+      "ItemName": "Deadly Helephant Ears"
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily"
+    },
+    {
+      "ItemId": "473187",
+      "ItemName": "White Tiger Lily"
+    },
+    {
+      "ItemId": "473194",
+      "ItemName": "Maltese Tiger Lily"
+    },
+    {
+      "ItemId": "589180",
+      "ItemName": "Red Huckleberries"
+    },
+    {
+      "ItemId": "589187",
+      "ItemName": "Pink Huckleberries"
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries"
+    },
+    {
+      "ItemId": "653111",
+      "ItemName": "Alligator Pear Tree"
+    },
+    {
+      "ItemId": "713140",
+      "ItemName": "Snow Apples"
+    },
+    {
+      "ItemId": "713154",
+      "ItemName": "Green Snow Apples"
+    },
+    {
+      "ItemId": "713161",
+      "ItemName": "Purple Snow Apples"
+    },
+    {
+      "ItemId": "1350059",
+      "ItemName": "Ultra Alligator Pear Tree"
+    },
+    {
+      "ItemId": "1350083",
+      "ItemName": "Ultra King Parsley"
+    },
+    {
+      "ItemId": "1350093",
+      "ItemName": "Ultra Boom Shroom"
+    },
+    {
+      "ItemId": "1350094",
+      "ItemName": "Ultra Snow Apples"
+    },
+    {
+      "ItemId": "1350103",
+      "ItemName": "Ultra Dandelion"
+    },
+    {
+      "ItemId": "1350111",
+      "ItemName": "Ultra Huckleberries"
+    },
+    {
+      "ItemId": "1350119",
+      "ItemName": "Ultra Trumpet Vine"
+    },
+    {
+      "ItemId": "1350124",
+      "ItemName": "Ultra Helephant Ears"
+    },
+    {
+      "ItemId": "1350131",
+      "ItemName": "Ultra Snap Dragon"
+    },
+    {
+      "ItemId": "1350138",
+      "ItemName": "Ultra Ninja Fig"
+    },
+    {
+      "ItemId": "1350146",
+      "ItemName": "Ultra Tiger Lily"
+    },
+    {
+      "ItemId": "1350155",
+      "ItemName": "Ultra Fly Trap"
+    }
+  ]
+}

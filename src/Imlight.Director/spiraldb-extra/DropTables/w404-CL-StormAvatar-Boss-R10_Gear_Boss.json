@@ -1,0 +1,57 @@
+{
+  "Name": "W404 CL-StormAvatar-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-StormAvatar-Boss-R10: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243199",
+      "ItemName": "Spectral Choker"
+    },
+    {
+      "ItemId": "243209",
+      "ItemName": "Edge of Equality"
+    },
+    {
+      "ItemId": "243257",
+      "ItemName": "Frozen Claw"
+    },
+    {
+      "ItemId": "243421",
+      "ItemName": "Mask of Wonder"
+    },
+    {
+      "ItemId": "243442",
+      "ItemName": "Stormfist's Gale Force Helm"
+    },
+    {
+      "ItemId": "243520",
+      "ItemName": "Ring of Regret"
+    },
+    {
+      "ItemId": "243521",
+      "ItemName": "Forsaken Signet"
+    },
+    {
+      "ItemId": "243537",
+      "ItemName": "Imbued Ring"
+    },
+    {
+      "ItemId": "243628",
+      "ItemName": "Blistering Jerkin"
+    },
+    {
+      "ItemId": "243797",
+      "ItemName": "Wintery Waders"
+    },
+    {
+      "ItemId": "243818",
+      "ItemName": "Clogs of Creation"
+    },
+    {
+      "ItemId": "243881",
+      "ItemName": "Protective Pendant"
+    }
+  ]
+}

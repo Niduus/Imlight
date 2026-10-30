@@ -1,0 +1,29 @@
+{
+  "Name": "W404 AR_Wolf_LowPoly_A_01 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table AR_Wolf_LowPoly_A_01: the snack drops (5), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "641597",
+      "ItemName": "Bearberry"
+    },
+    {
+      "ItemId": "789446",
+      "ItemName": "Kalua Kebab"
+    },
+    {
+      "ItemId": "1359613",
+      "ItemName": "Mustachios"
+    },
+    {
+      "ItemId": "641681",
+      "ItemName": "Street Pizza"
+    },
+    {
+      "ItemId": "641703",
+      "ItemName": "Colossal Rutabaga"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "W404 WL_Dromel_Fighter_A_01 Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table WL_Dromel_Fighter_A_01: the housing drops (1), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1594290",
+      "ItemName": "Antique Rug"
+    }
+  ]
+}

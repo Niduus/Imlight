@@ -1,0 +1,133 @@
+{
+  "Name": "W404 EM2-Mob-Basics TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table EM2-Mob-Basics: the treasurecard drops (31), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Doom and Gloom TC",
+      "ItemName": "Doom and Gloom"
+    },
+    {
+      "ItemId": "Sanctuary TC",
+      "ItemName": "Sanctuary"
+    },
+    {
+      "ItemId": "Power Play TC",
+      "ItemName": "Power Play"
+    },
+    {
+      "ItemId": "Balefrost TC",
+      "ItemName": "Balefrost"
+    },
+    {
+      "ItemId": "Combustion TC",
+      "ItemName": "Combustion"
+    },
+    {
+      "ItemId": "Darkwind TC",
+      "ItemName": "Darkwind"
+    },
+    {
+      "ItemId": "Blood Moon TC",
+      "ItemName": "Time of Legend"
+    },
+    {
+      "ItemId": "Mass Fire Prism TC",
+      "ItemName": "Mass Fire Prism"
+    },
+    {
+      "ItemId": "Mass Ice Prism TC",
+      "ItemName": "Mass Ice Prism"
+    },
+    {
+      "ItemId": "Mass Life Prism TC",
+      "ItemName": "Mass Life Prism"
+    },
+    {
+      "ItemId": "Mass Myth Prism TC",
+      "ItemName": "Mass Myth Prism"
+    },
+    {
+      "ItemId": "Mass Storm Prism TC",
+      "ItemName": "Mass Storm Prism"
+    },
+    {
+      "ItemId": "Mass Triage TC",
+      "ItemName": "Mass Triage"
+    },
+    {
+      "ItemId": "Mass Death Prism TC",
+      "ItemName": "Mass Death Prism"
+    },
+    {
+      "ItemId": "Death Prism TC",
+      "ItemName": "Death Prism"
+    },
+    {
+      "ItemId": "Fire Prism TC",
+      "ItemName": "Fire Prism"
+    },
+    {
+      "ItemId": "Ice Prism TC",
+      "ItemName": "Ice Prism"
+    },
+    {
+      "ItemId": "Life Prism TC",
+      "ItemName": "Life Prism"
+    },
+    {
+      "ItemId": "Myth Prism TC",
+      "ItemName": "Myth Prism"
+    },
+    {
+      "ItemId": "Storm Prism TC",
+      "ItemName": "Storm Prism"
+    },
+    {
+      "ItemId": "Firespear TC",
+      "ItemName": "Firespear"
+    },
+    {
+      "ItemId": "Icespear TC",
+      "ItemName": "Icespear"
+    },
+    {
+      "ItemId": "Lifespear TC",
+      "ItemName": "Lifespear"
+    },
+    {
+      "ItemId": "Mythspear TC",
+      "ItemName": "Mythspear"
+    },
+    {
+      "ItemId": "Spirit Spear TC",
+      "ItemName": "Spirit Spear"
+    },
+    {
+      "ItemId": "Stormspear TC",
+      "ItemName": "Stormspear"
+    },
+    {
+      "ItemId": "Tri Spear TC",
+      "ItemName": "Elemental Spear"
+    },
+    {
+      "ItemId": "Tri Blade TC",
+      "ItemName": "Elemental Blade"
+    },
+    {
+      "ItemId": "Elemental Defuse TC",
+      "ItemName": "Elemental Defuse"
+    },
+    {
+      "ItemId": "Tri Shield TC",
+      "ItemName": "Elemental Shield"
+    },
+    {
+      "ItemId": "Tri Trap TC",
+      "ItemName": "Elemental Trap"
+    }
+  ]
+}

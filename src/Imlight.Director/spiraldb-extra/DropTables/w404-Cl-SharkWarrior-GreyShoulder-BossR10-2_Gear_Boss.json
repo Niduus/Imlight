@@ -1,0 +1,49 @@
+{
+  "Name": "W404 Cl-SharkWarrior-GreyShoulder-BossR10-2 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Cl-SharkWarrior-GreyShoulder-BossR10-2: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243212",
+      "ItemName": "Sliver of Regret"
+    },
+    {
+      "ItemId": "243239",
+      "ItemName": "Venerable Blade"
+    },
+    {
+      "ItemId": "243287",
+      "ItemName": "Starkwave's Balanced Brim"
+    },
+    {
+      "ItemId": "243387",
+      "ItemName": "Veil of Virtue"
+    },
+    {
+      "ItemId": "243524",
+      "ItemName": "Seal of Cinders"
+    },
+    {
+      "ItemId": "243578",
+      "ItemName": "Storied Signet"
+    },
+    {
+      "ItemId": "243604",
+      "ItemName": "Ominous Outfit"
+    },
+    {
+      "ItemId": "243704",
+      "ItemName": "Thundercracked Costume"
+    },
+    {
+      "ItemId": "243836",
+      "ItemName": "Footguards of the Hero"
+    },
+    {
+      "ItemId": "243848",
+      "ItemName": "Bolt Boots"
+    }
+  ]
+}

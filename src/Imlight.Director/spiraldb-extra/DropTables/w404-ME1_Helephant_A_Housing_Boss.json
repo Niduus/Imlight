@@ -1,0 +1,61 @@
+{
+  "Name": "W404 ME1_Helephant_A Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Helephant_A: the housing drops (13), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82898",
+      "ItemName": "Tall Palm Tree"
+    },
+    {
+      "ItemId": "160369",
+      "ItemName": "Small Bush"
+    },
+    {
+      "ItemId": "160370",
+      "ItemName": "Fire Bush"
+    },
+    {
+      "ItemId": "160375",
+      "ItemName": "Hedge Row"
+    },
+    {
+      "ItemId": "160376",
+      "ItemName": "Square Hedge"
+    },
+    {
+      "ItemId": "160378",
+      "ItemName": "Elm Tree"
+    },
+    {
+      "ItemId": "160379",
+      "ItemName": "Large Cypress Tree"
+    },
+    {
+      "ItemId": "160380",
+      "ItemName": "Small Cypress Tree"
+    },
+    {
+      "ItemId": "160383",
+      "ItemName": "Maple Tree"
+    },
+    {
+      "ItemId": "160384",
+      "ItemName": "Small Maple Tree"
+    },
+    {
+      "ItemId": "160605",
+      "ItemName": "Summer Tree"
+    },
+    {
+      "ItemId": "160607",
+      "ItemName": "Cherry Blossom Tree"
+    },
+    {
+      "ItemId": "160608",
+      "ItemName": "Red Leaf Tree"
+    }
+  ]
+}

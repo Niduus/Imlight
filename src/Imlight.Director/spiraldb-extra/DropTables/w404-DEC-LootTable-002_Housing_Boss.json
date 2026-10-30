@@ -1,0 +1,129 @@
+{
+  "Name": "W404 DEC-LootTable-002 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table DEC-LootTable-002: the housing drops (30), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "537487",
+      "ItemName": "Big Holiday Tree"
+    },
+    {
+      "ItemId": "537488",
+      "ItemName": "Tree Wrapped Gift"
+    },
+    {
+      "ItemId": "537489",
+      "ItemName": "Star Wrapped Gift"
+    },
+    {
+      "ItemId": "537490",
+      "ItemName": "Snowman Wrapped Gift"
+    },
+    {
+      "ItemId": "537491",
+      "ItemName": "Polka Dot Wrapped Gift"
+    },
+    {
+      "ItemId": "537492",
+      "ItemName": "Polka Dot Wrapped Long Gift"
+    },
+    {
+      "ItemId": "537493",
+      "ItemName": "Snowflake Wrapped Gift"
+    },
+    {
+      "ItemId": "537494",
+      "ItemName": "Mint Swirl"
+    },
+    {
+      "ItemId": "537495",
+      "ItemName": "Mint Standee"
+    },
+    {
+      "ItemId": "537496",
+      "ItemName": "Large Snowflake"
+    },
+    {
+      "ItemId": "537497",
+      "ItemName": "Small Snowflake"
+    },
+    {
+      "ItemId": "537498",
+      "ItemName": "Snowman"
+    },
+    {
+      "ItemId": "537499",
+      "ItemName": "Color Light Strand"
+    },
+    {
+      "ItemId": "537506",
+      "ItemName": "Milk and Cookies"
+    },
+    {
+      "ItemId": "537611",
+      "ItemName": "Holiday Wreath"
+    },
+    {
+      "ItemId": "724290",
+      "ItemName": "Gingerbread House"
+    },
+    {
+      "ItemId": "724291",
+      "ItemName": "Nutcracker"
+    },
+    {
+      "ItemId": "724292",
+      "ItemName": "Yellow Holiday Ornament"
+    },
+    {
+      "ItemId": "724293",
+      "ItemName": "Red Holiday Ornament"
+    },
+    {
+      "ItemId": "724294",
+      "ItemName": "Green Holiday Ornament"
+    },
+    {
+      "ItemId": "724295",
+      "ItemName": "Blue Holiday Ornament"
+    },
+    {
+      "ItemId": "724297",
+      "ItemName": "Holiday Fireplace"
+    },
+    {
+      "ItemId": "724298",
+      "ItemName": "Spiral Wrapped Gift"
+    },
+    {
+      "ItemId": "724302",
+      "ItemName": "Snowglobe"
+    },
+    {
+      "ItemId": "739253",
+      "ItemName": "Small Color Light Strand"
+    },
+    {
+      "ItemId": "1317756",
+      "ItemName": "Yuletide Tall Small Fry Aquarium"
+    },
+    {
+      "ItemId": "1317760",
+      "ItemName": "Yuletide Lg. Small Fry Aquarium"
+    },
+    {
+      "ItemId": "1335011",
+      "ItemName": "Jingle Bells Theme"
+    },
+    {
+      "ItemId": "1335012",
+      "ItemName": "Deck the Halls Theme"
+    },
+    {
+      "ItemId": "1335013",
+      "ItemName": "Carol of the Bells Theme"
+    }
+  ]
+}

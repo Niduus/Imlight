@@ -1,0 +1,17 @@
+{
+  "Name": "W404 MB-Cat-Meowiarty-MBBoss-L61 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Meowiarty-MBBoss-L61: the pet drops (2), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "100454",
+      "ItemName": "Krokotillian"
+    },
+    {
+      "ItemId": "160130",
+      "ItemName": "Dream Ghoul"
+    }
+  ]
+}

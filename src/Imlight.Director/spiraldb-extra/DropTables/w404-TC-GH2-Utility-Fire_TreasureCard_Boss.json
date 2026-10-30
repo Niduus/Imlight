@@ -1,0 +1,17 @@
+{
+  "Name": "W404 TC-GH2-Utility-Fire TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-GH2-Utility-Fire: the treasurecard drops (2), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Fuel TC",
+      "ItemName": "Fuel"
+    },
+    {
+      "ItemId": "Power Link TC",
+      "ItemName": "Power Link"
+    }
+  ]
+}

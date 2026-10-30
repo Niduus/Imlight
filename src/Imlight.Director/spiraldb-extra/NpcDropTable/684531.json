@@ -1,0 +1,32 @@
+{
+  "TemplateID": 684531,
+  "DropTableNames": [
+    "W404 AZ-Boss-Reagents Reagent (Boss)",
+    "W404 AZ-BossEpic-Malistaire",
+    "W404 AZ-BossEpic-Malistaire Gear (Boss)",
+    "W404 AZ-BossEpic-Malistaire Reagent (Boss)",
+    "W404 AZ-BossEpic-Malistaire Seed (Boss)",
+    "W404 AZ-BossEpic-Malistaire Housing (Boss)",
+    "W404 AZ-Boss-PetSnacks-03 Snack (Boss)",
+    "W404 AZ-Boss-TC-03 TreasureCard (Boss)",
+    "W404 APR-LootTable-009 Gear (Boss)",
+    "W404 APR-LootTable-009 Pet (Boss)",
+    "W404 APR-LootTable-009 Mount (Boss)",
+    "W404 DEC-LootTable-009 Gear (Boss)",
+    "W404 DEC-LootTable-009 Pet (Boss)",
+    "W404 DEC-LootTable-009 Seed (Boss)",
+    "W404 DEC-LootTable-009 Housing (Boss)",
+    "W404 FEB-LootTable-009 Gear (Boss)",
+    "W404 FEB-LootTable-009 Pet (Boss)",
+    "W404 MAR-LootTable-009 Gear (Boss)",
+    "W404 MAR-LootTable-009 Pet (Boss)",
+    "W404 NOV-LootTable-009 Gear (Boss)",
+    "W404 OCT-LootTable-009 Gear (Boss)",
+    "W404 OCT-LootTable-009 Pet (Boss)",
+    "W404 OCT-LootTable-009 Housing (Boss)",
+    "W404 AZ-AQ3-Boss-Jewels Jewel (Boss)",
+    "W404 AZ-AQ3-Boss-Jewels Reagent (Boss)",
+    "W404 ReagentLT-GuildReagent01_TC-01 TreasureCard (Boss)",
+    "W404 Spellements_W_All_World_Badge_05 Reagent (Boss)"
+  ]
+}

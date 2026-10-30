@@ -1,0 +1,85 @@
+{
+  "Name": "W404 KR-BossRare-Goliath-R14 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossRare-Goliath-R14: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203153",
+      "ItemName": "Burrower Crown of Thunder"
+    },
+    {
+      "ItemId": "1203223",
+      "ItemName": "Mantis Prophet's Garb"
+    },
+    {
+      "ItemId": "1203224",
+      "ItemName": "Mouse Armor of Persistence"
+    },
+    {
+      "ItemId": "1203269",
+      "ItemName": "Boots of the QuietBlade"
+    },
+    {
+      "ItemId": "1203270",
+      "ItemName": "Mouse Shoes of Ingenuity"
+    },
+    {
+      "ItemId": "1203302",
+      "ItemName": "Black Cloud Carnage"
+    },
+    {
+      "ItemId": "1203343",
+      "ItemName": "Memento of the Moon Cliffs"
+    },
+    {
+      "ItemId": "1203348",
+      "ItemName": "Trader's Charm of Lucidity"
+    },
+    {
+      "ItemId": "1203651",
+      "ItemName": "Deck of Charred Shadows"
+    },
+    {
+      "ItemId": "1203655",
+      "ItemName": "Deck of the Shadow Heart"
+    },
+    {
+      "ItemId": "1203656",
+      "ItemName": "Deck of Sinister Shadows"
+    },
+    {
+      "ItemId": "1203690",
+      "ItemName": "Frostbound Sword and Shield"
+    },
+    {
+      "ItemId": "1203691",
+      "ItemName": "Sandstorm Sword and Shield"
+    },
+    {
+      "ItemId": "1358862",
+      "ItemName": "Deck of Charred Shadows"
+    },
+    {
+      "ItemId": "1358866",
+      "ItemName": "Deck of the Shadow Heart"
+    },
+    {
+      "ItemId": "1358867",
+      "ItemName": "Deck of Sinister Shadows"
+    },
+    {
+      "ItemId": "1358876",
+      "ItemName": "Deck of Charred Shadows"
+    },
+    {
+      "ItemId": "1358880",
+      "ItemName": "Deck of the Shadow Heart"
+    },
+    {
+      "ItemId": "1358881",
+      "ItemName": "Deck of Sinister Shadows"
+    }
+  ]
+}

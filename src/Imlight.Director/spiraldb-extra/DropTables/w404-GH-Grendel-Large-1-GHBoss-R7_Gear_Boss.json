@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Grendel-Large-1-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Grendel-Large-1-GHBoss-R7: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136398",
+      "ItemName": "Iceblight Hood"
+    },
+    {
+      "ItemId": "136442",
+      "ItemName": "Hood of Hardiness"
+    },
+    {
+      "ItemId": "136499",
+      "ItemName": "Seal of the Rime King"
+    },
+    {
+      "ItemId": "136634",
+      "ItemName": "Jerkin of the Firestar"
+    },
+    {
+      "ItemId": "136635",
+      "ItemName": "Coat of the Prophet"
+    },
+    {
+      "ItemId": "171208",
+      "ItemName": "Shadow Stalkers"
+    }
+  ]
+}

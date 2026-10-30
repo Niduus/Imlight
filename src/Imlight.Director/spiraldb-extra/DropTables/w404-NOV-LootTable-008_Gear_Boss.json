@@ -1,0 +1,41 @@
+{
+  "Name": "W404 NOV-LootTable-008 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table NOV-LootTable-008: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126548",
+      "ItemName": "Pilgrim Robe"
+    },
+    {
+      "ItemId": "126549",
+      "ItemName": "Pilgrim Boots"
+    },
+    {
+      "ItemId": "126550",
+      "ItemName": "Pilgrim Hat"
+    },
+    {
+      "ItemId": "126551",
+      "ItemName": "Turkey Hat"
+    },
+    {
+      "ItemId": "126552",
+      "ItemName": "Headdress"
+    },
+    {
+      "ItemId": "1248170",
+      "ItemName": "Wizard of the Corn's Wand"
+    },
+    {
+      "ItemId": "1248171",
+      "ItemName": "Rustling Leaves Wand"
+    },
+    {
+      "ItemId": "1248172",
+      "ItemName": "Wand of Fruition"
+    }
+  ]
+}

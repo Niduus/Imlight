@@ -1,0 +1,177 @@
+{
+  "Name": "W404 LM-Boss-PetSnacks-Common Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table LM-Boss-PetSnacks-Common: the snack drops (42), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1359625",
+      "ItemName": "Beast Wellington"
+    },
+    {
+      "ItemId": "537586",
+      "ItemName": "Black Sun Seeds"
+    },
+    {
+      "ItemId": "220227",
+      "ItemName": "Cracker"
+    },
+    {
+      "ItemId": "220291",
+      "ItemName": "Golden Squash"
+    },
+    {
+      "ItemId": "220315",
+      "ItemName": "Huge Ice Cream"
+    },
+    {
+      "ItemId": "220306",
+      "ItemName": "Large Fish"
+    },
+    {
+      "ItemId": "220216",
+      "ItemName": "Large Watermelon"
+    },
+    {
+      "ItemId": "789453",
+      "ItemName": "Pineapple Spears"
+    },
+    {
+      "ItemId": "220231",
+      "ItemName": "Potato Chips"
+    },
+    {
+      "ItemId": "220196",
+      "ItemName": "Sliced Watermelon"
+    },
+    {
+      "ItemId": "220222",
+      "ItemName": "Squash"
+    },
+    {
+      "ItemId": "220272",
+      "ItemName": "Taco"
+    },
+    {
+      "ItemId": "220237",
+      "ItemName": "Tiny Fish"
+    },
+    {
+      "ItemId": "220235",
+      "ItemName": "Tomato Soup"
+    },
+    {
+      "ItemId": "220296",
+      "ItemName": "Fire Cracker"
+    },
+    {
+      "ItemId": "220316",
+      "ItemName": "Moon Pie"
+    },
+    {
+      "ItemId": "1359629",
+      "ItemName": "Breakfast Tacos"
+    },
+    {
+      "ItemId": "1359628",
+      "ItemName": "Chilly Con Queso"
+    },
+    {
+      "ItemId": "220298",
+      "ItemName": "Golden Biscuit"
+    },
+    {
+      "ItemId": "220218",
+      "ItemName": "Sugar Donut"
+    },
+    {
+      "ItemId": "220318",
+      "ItemName": "Super Cold Popsicle"
+    },
+    {
+      "ItemId": "1257587",
+      "ItemName": "Bell Pepper Steak"
+    },
+    {
+      "ItemId": "1317844",
+      "ItemName": "Boiled Spider Legs"
+    },
+    {
+      "ItemId": "1257597",
+      "ItemName": "Boom Stroganoff"
+    },
+    {
+      "ItemId": "1257599",
+      "ItemName": "Bread Fruit Fruit"
+    },
+    {
+      "ItemId": "789452",
+      "ItemName": "Candlenut"
+    },
+    {
+      "ItemId": "240118",
+      "ItemName": "Cauliflowers"
+    },
+    {
+      "ItemId": "733133",
+      "ItemName": "Chapulines"
+    },
+    {
+      "ItemId": "1257600",
+      "ItemName": "Desparagus Salad"
+    },
+    {
+      "ItemId": "589096",
+      "ItemName": "Eggplant"
+    },
+    {
+      "ItemId": "537602",
+      "ItemName": "Fried Worms"
+    },
+    {
+      "ItemId": "733177",
+      "ItemName": "Gingerbread Wizard"
+    },
+    {
+      "ItemId": "220326",
+      "ItemName": "Goat Cheese"
+    },
+    {
+      "ItemId": "220319",
+      "ItemName": "Golden Candy Bar"
+    },
+    {
+      "ItemId": "220297",
+      "ItemName": "Golden Peanut"
+    },
+    {
+      "ItemId": "641704",
+      "ItemName": "Hickory Chicory"
+    },
+    {
+      "ItemId": "1248056",
+      "ItemName": "Hive Rinds"
+    },
+    {
+      "ItemId": "1248054",
+      "ItemName": "Honey Bombs"
+    },
+    {
+      "ItemId": "733128",
+      "ItemName": "Marzipan Maize"
+    },
+    {
+      "ItemId": "220313",
+      "ItemName": "Sprinkle Cupcake"
+    },
+    {
+      "ItemId": "220328",
+      "ItemName": "Taco Town Special"
+    },
+    {
+      "ItemId": "220317",
+      "ItemName": "Star Cookie"
+    }
+  ]
+}

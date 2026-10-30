@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Wizard-Female-Jacket-Black-Boss-R8 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Wizard-Female-Jacket-Black-Boss-R8: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82914",
+      "ItemName": "Clawed Wall Sconce"
+    },
+    {
+      "ItemId": "160848",
+      "ItemName": "Battle Standard"
+    },
+    {
+      "ItemId": "160972",
+      "ItemName": "Singed Dragon Handbook"
+    }
+  ]
+}

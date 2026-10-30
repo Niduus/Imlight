@@ -1,0 +1,21 @@
+{
+  "Name": "W404 DM_Werewolf_Base_A_08 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Werewolf_Base_A_08: the reagent drops (3), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1492426",
+      "ItemName": "Grim Reader"
+    },
+    {
+      "ItemId": "1669481",
+      "ItemName": "Ammut"
+    },
+    {
+      "ItemId": "1492428",
+      "ItemName": "Lord of the Jungle"
+    }
+  ]
+}

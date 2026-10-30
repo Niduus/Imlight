@@ -1,0 +1,25 @@
+{
+  "Name": "W404 DM_Khrulhu_Instructor_A Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Khrulhu_Instructor_A: the jewel drops (4), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1705766",
+      "ItemName": "Myth Disabling Pin (180)"
+    },
+    {
+      "ItemId": "1705659",
+      "ItemName": "Bright Critical Onyx +57"
+    },
+    {
+      "ItemId": "1705780",
+      "ItemName": "Balance Disabling Pin (180)"
+    },
+    {
+      "ItemId": "1714812",
+      "ItemName": "Bright Damage Amethyst +10%"
+    }
+  ]
+}

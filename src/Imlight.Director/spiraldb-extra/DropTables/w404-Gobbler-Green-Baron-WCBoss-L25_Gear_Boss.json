@@ -1,0 +1,77 @@
+{
+  "Name": "W404 Gobbler-Green-Baron-WCBoss-L25 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Gobbler-Green-Baron-WCBoss-L25: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4668",
+      "ItemName": "Gobblestone's Pendant"
+    },
+    {
+      "ItemId": "4676",
+      "ItemName": "Amulet of the Fay"
+    },
+    {
+      "ItemId": "4733",
+      "ItemName": "Jeweled Dagger"
+    },
+    {
+      "ItemId": "4779",
+      "ItemName": "Hallowed Band"
+    },
+    {
+      "ItemId": "4800",
+      "ItemName": "Princely Slippers"
+    },
+    {
+      "ItemId": "4801",
+      "ItemName": "Gobblestone's Boots"
+    },
+    {
+      "ItemId": "4841",
+      "ItemName": "Northland Footwraps"
+    },
+    {
+      "ItemId": "4879",
+      "ItemName": "Gobblestone's Fur Boots"
+    },
+    {
+      "ItemId": "77537",
+      "ItemName": "Gobblestone's Frost Cap"
+    },
+    {
+      "ItemId": "77538",
+      "ItemName": "Gobblestone's Storm Cap"
+    },
+    {
+      "ItemId": "77583",
+      "ItemName": "Stormweave Hood"
+    },
+    {
+      "ItemId": "87162",
+      "ItemName": "Gobblestone's Robes"
+    },
+    {
+      "ItemId": "87164",
+      "ItemName": "Gobblestone's Bib"
+    },
+    {
+      "ItemId": "87221",
+      "ItemName": "Barkskin Tunic"
+    },
+    {
+      "ItemId": "87223",
+      "ItemName": "Angelic Drape"
+    },
+    {
+      "ItemId": "161026",
+      "ItemName": "Heartsteel"
+    },
+    {
+      "ItemId": "161055",
+      "ItemName": "Band of Purpose"
+    }
+  ]
+}

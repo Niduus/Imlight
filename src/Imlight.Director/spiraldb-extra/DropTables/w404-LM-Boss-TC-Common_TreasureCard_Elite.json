@@ -1,0 +1,141 @@
+{
+  "Name": "W404 LM-Boss-TC-Common TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table LM-Boss-TC-Common: the treasurecard drops (33), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Berserk TC",
+      "ItemName": "Berserk"
+    },
+    {
+      "ItemId": "Death Prism TC",
+      "ItemName": "Death Prism"
+    },
+    {
+      "ItemId": "Death Shield TC",
+      "ItemName": "Death Shield"
+    },
+    {
+      "ItemId": "Ice Prism TC",
+      "ItemName": "Ice Prism"
+    },
+    {
+      "ItemId": "Life Prism TC",
+      "ItemName": "Life Prism"
+    },
+    {
+      "ItemId": "Link TC",
+      "ItemName": "Link"
+    },
+    {
+      "ItemId": "Storm Shield TC",
+      "ItemName": "Storm Shield"
+    },
+    {
+      "ItemId": "Ether Shield TC",
+      "ItemName": "Ether Shield"
+    },
+    {
+      "ItemId": "Frostbite TC",
+      "ItemName": "Frostbite"
+    },
+    {
+      "ItemId": "Galvanic Field TC",
+      "ItemName": "Galvanic Field"
+    },
+    {
+      "ItemId": "Supreme Sunburst TC",
+      "ItemName": "Supreme Sunburst"
+    },
+    {
+      "ItemId": "Blaze Beetle TC",
+      "ItemName": "Blaze Beetle"
+    },
+    {
+      "ItemId": "Bloodbat TC",
+      "ItemName": "Blood Bat"
+    },
+    {
+      "ItemId": "Cat Thug TC",
+      "ItemName": "Cat Thug"
+    },
+    {
+      "ItemId": "Dream Shield TC",
+      "ItemName": "Dream Shield"
+    },
+    {
+      "ItemId": "Elemental Defuse TC",
+      "ItemName": "Elemental Defuse"
+    },
+    {
+      "ItemId": "Tri Trap TC",
+      "ItemName": "Elemental Trap"
+    },
+    {
+      "ItemId": "Flute Symphony TC",
+      "ItemName": "Flute Symphony"
+    },
+    {
+      "ItemId": "Black Widow TC",
+      "ItemName": "Green Widow"
+    },
+    {
+      "ItemId": "Triage TC",
+      "ItemName": "Triage"
+    },
+    {
+      "ItemId": "Baby Sunbird TC",
+      "ItemName": "Baby Sunbird"
+    },
+    {
+      "ItemId": "Tri Shield TC",
+      "ItemName": "Elemental Shield"
+    },
+    {
+      "ItemId": "Fortify TC",
+      "ItemName": "Fortify"
+    },
+    {
+      "ItemId": "Infallible TC",
+      "ItemName": "Infallible"
+    },
+    {
+      "ItemId": "Mass Death Prism TC",
+      "ItemName": "Mass Death Prism"
+    },
+    {
+      "ItemId": "Mass Ice Prism TC",
+      "ItemName": "Mass Ice Prism"
+    },
+    {
+      "ItemId": "Mass Life Prism TC",
+      "ItemName": "Mass Life Prism"
+    },
+    {
+      "ItemId": "Mass Myth Prism TC",
+      "ItemName": "Mass Myth Prism"
+    },
+    {
+      "ItemId": "Pacify TC",
+      "ItemName": "Pacify"
+    },
+    {
+      "ItemId": "Sirens TC",
+      "ItemName": "Sirens"
+    },
+    {
+      "ItemId": "Dragonflies TC",
+      "ItemName": "Dragonflies"
+    },
+    {
+      "ItemId": "Miniature Bloodbats TC",
+      "ItemName": "Miniature Bloodbats"
+    },
+    {
+      "ItemId": "Brilliant Light TC",
+      "ItemName": "Brilliant Light"
+    }
+  ]
+}

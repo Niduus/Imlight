@@ -1,0 +1,25 @@
+{
+  "Name": "W404 MB-MS-Level-27-35 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-MS-Level-27-35: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160682",
+      "ItemName": "Carved Pew"
+    },
+    {
+      "ItemId": "160694",
+      "ItemName": "Brick Fireplace"
+    },
+    {
+      "ItemId": "160698",
+      "ItemName": "Yellow Foodcart"
+    },
+    {
+      "ItemId": "160727",
+      "ItemName": "Fire Hydrant"
+    }
+  ]
+}

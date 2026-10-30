@@ -1,0 +1,29 @@
+{
+  "Name": "W404 ME1_Messenger_A Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Messenger_A: the reagent drops (5), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "106931",
+      "ItemName": "Mist Wood"
+    },
+    {
+      "ItemId": "106939",
+      "ItemName": "Cat Tail"
+    },
+    {
+      "ItemId": "106959",
+      "ItemName": "Red Mandrake"
+    },
+    {
+      "ItemId": "106967",
+      "ItemName": "Lava Lily"
+    },
+    {
+      "ItemId": "1317184",
+      "ItemName": "Sonic Spring"
+    }
+  ]
+}

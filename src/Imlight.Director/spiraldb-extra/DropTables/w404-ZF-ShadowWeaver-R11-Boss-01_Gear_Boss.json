@@ -1,0 +1,69 @@
+{
+  "Name": "W404 ZF-ShadowWeaver-R11-Boss-01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-ShadowWeaver-R11-Boss-01: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "526681",
+      "ItemName": "Staff of Shadow and Light"
+    },
+    {
+      "ItemId": "526684",
+      "ItemName": "Quagga Blade"
+    },
+    {
+      "ItemId": "540096",
+      "ItemName": "Storm Shard Charm"
+    },
+    {
+      "ItemId": "540127",
+      "ItemName": "Razor of Symmetry"
+    },
+    {
+      "ItemId": "540174",
+      "ItemName": "Jungle Lord's Winter Cap"
+    },
+    {
+      "ItemId": "540175",
+      "ItemName": "Ghostgrass Hood"
+    },
+    {
+      "ItemId": "540201",
+      "ItemName": "Mansa's Dream Stone"
+    },
+    {
+      "ItemId": "540234",
+      "ItemName": "Graveyard Shift"
+    },
+    {
+      "ItemId": "540238",
+      "ItemName": "Tunic of Long Memory"
+    },
+    {
+      "ItemId": "540276",
+      "ItemName": "Fire Lion's Storm Wraps"
+    },
+    {
+      "ItemId": "540282",
+      "ItemName": "Dancing Queen Dancers"
+    },
+    {
+      "ItemId": "540301",
+      "ItemName": "Dead Chieftain's Fanged Deck"
+    },
+    {
+      "ItemId": "540302",
+      "ItemName": "Bundle of Eternal Flame"
+    },
+    {
+      "ItemId": "540305",
+      "ItemName": "Bundle of Ananse's Stories"
+    },
+    {
+      "ItemId": "540306",
+      "ItemName": "Hand-Chased Box of Thunder"
+    }
+  ]
+}

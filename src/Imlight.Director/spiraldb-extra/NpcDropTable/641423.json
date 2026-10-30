@@ -1,0 +1,33 @@
+{
+  "TemplateID": 641423,
+  "DropTableNames": [
+    "W404 AV-ReagentsBoss Reagent (Boss)",
+    "W404 AV-Malory",
+    "W404 AV-Malory Gear (Boss)",
+    "W404 AV-Malory Reagent (Boss)",
+    "W404 AV-Malory Snack (Boss)",
+    "W404 AV-Malory Seed (Boss)",
+    "W404 AV-Malory Housing (Boss)",
+    "W404 TC-AV-RaresBosses TreasureCard",
+    "W404 TC-AV-RaresBosses Seed",
+    "W404 TC-AV-Utility-Storm TreasureCard (Boss)",
+    "W404 AV-R12-StormDeck Gear (Boss)",
+    "W404 APR-LootTable-008 Gear (Boss)",
+    "W404 APR-LootTable-008 Pet (Boss)",
+    "W404 APR-LootTable-008 Mount (Boss)",
+    "W404 DEC-LootTable-008 Gear (Boss)",
+    "W404 DEC-LootTable-008 Pet (Boss)",
+    "W404 DEC-LootTable-008 Seed (Boss)",
+    "W404 DEC-LootTable-008 Housing (Boss)",
+    "W404 FEB-LootTable-008 Gear (Boss)",
+    "W404 FEB-LootTable-008 Pet (Boss)",
+    "W404 MAR-LootTable-008 Gear (Boss)",
+    "W404 MAR-LootTable-008 Pet (Boss)",
+    "W404 NOV-LootTable-008 Gear (Boss)",
+    "W404 OCT-LootTable-008 Gear (Boss)",
+    "W404 OCT-LootTable-008 Pet (Boss)",
+    "W404 OCT-LootTable-008 Housing (Boss)",
+    "W404 AV-Boss-Jewels Jewel",
+    "W404 AV-Boss-Jewels Reagent"
+  ]
+}

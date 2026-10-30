@@ -1,0 +1,541 @@
+{
+  "Name": "W404 PL-Boss-Rasputin Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-Boss-Rasputin: the gear drops (133), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "470720",
+      "ItemName": "The Enchanter"
+    },
+    {
+      "ItemId": "1217004",
+      "ItemName": "The Stalwart Guardian"
+    },
+    {
+      "ItemId": "1217212",
+      "ItemName": "The Stardust"
+    },
+    {
+      "ItemId": "1217358",
+      "ItemName": "The Warlock"
+    },
+    {
+      "ItemId": "1217362",
+      "ItemName": "The Kroktop"
+    },
+    {
+      "ItemId": "1317802",
+      "ItemName": "The Manticore"
+    },
+    {
+      "ItemId": "1359662",
+      "ItemName": "The Goat Horns"
+    },
+    {
+      "ItemId": "1359663",
+      "ItemName": "The Ice Horns"
+    },
+    {
+      "ItemId": "1363781",
+      "ItemName": "Volatile Borealis Armor"
+    },
+    {
+      "ItemId": "1363782",
+      "ItemName": "Borealis Icecrystal Plate"
+    },
+    {
+      "ItemId": "1363783",
+      "ItemName": "Borealis Gear of Windswirls"
+    },
+    {
+      "ItemId": "1363784",
+      "ItemName": "Borealis Raiment of Vision"
+    },
+    {
+      "ItemId": "1363785",
+      "ItemName": "Timeless Borealis Vestment"
+    },
+    {
+      "ItemId": "1363786",
+      "ItemName": "Borealis Armor of Schisms"
+    },
+    {
+      "ItemId": "1363787",
+      "ItemName": "Borealis Gear of Resolution"
+    },
+    {
+      "ItemId": "1363788",
+      "ItemName": "Polarian Borealis Raiment"
+    },
+    {
+      "ItemId": "1363789",
+      "ItemName": "Volatile Borealis Boots"
+    },
+    {
+      "ItemId": "1363790",
+      "ItemName": "Borealis Icecrystal Shoes"
+    },
+    {
+      "ItemId": "1363791",
+      "ItemName": "Borealis Boots of Windswirls"
+    },
+    {
+      "ItemId": "1363792",
+      "ItemName": "Borealis Footgear of Vision"
+    },
+    {
+      "ItemId": "1363793",
+      "ItemName": "Timeless Borealis Trekkers"
+    },
+    {
+      "ItemId": "1363794",
+      "ItemName": "Borealis Boots of Schisms"
+    },
+    {
+      "ItemId": "1363795",
+      "ItemName": "Borealis Shoes of Resolution"
+    },
+    {
+      "ItemId": "1363796",
+      "ItemName": "Polarian Borealis Footgear"
+    },
+    {
+      "ItemId": "1363805",
+      "ItemName": "Titan Warrior Skyfire Robe"
+    },
+    {
+      "ItemId": "1363806",
+      "ItemName": "Titan Warrior Plate of Bite"
+    },
+    {
+      "ItemId": "1363807",
+      "ItemName": "Titan Warrior Gear of Waves"
+    },
+    {
+      "ItemId": "1363808",
+      "ItemName": "Titan Warrior Garb of Logic"
+    },
+    {
+      "ItemId": "1363809",
+      "ItemName": "Titan Warrior Wrap of Mettle"
+    },
+    {
+      "ItemId": "1363810",
+      "ItemName": "Titan Warrior Gear of Torpor"
+    },
+    {
+      "ItemId": "1363811",
+      "ItemName": "Titan Warrior Honesty Drape"
+    },
+    {
+      "ItemId": "1363812",
+      "ItemName": "Armor of the Titan Warrior"
+    },
+    {
+      "ItemId": "1363813",
+      "ItemName": "Titan Warrior Skyfire Riders"
+    },
+    {
+      "ItemId": "1363814",
+      "ItemName": "Titan Warrior Boots of Bite"
+    },
+    {
+      "ItemId": "1363815",
+      "ItemName": "Titan Warrior Shoes of Waves"
+    },
+    {
+      "ItemId": "1363816",
+      "ItemName": "Titan Warrior Boots of Logic"
+    },
+    {
+      "ItemId": "1363817",
+      "ItemName": "Titan Warrior's Mettle Boots"
+    },
+    {
+      "ItemId": "1363818",
+      "ItemName": "Titan Warrior Torpor Riders"
+    },
+    {
+      "ItemId": "1363819",
+      "ItemName": "Titan Warrior Honesty Boots"
+    },
+    {
+      "ItemId": "1363820",
+      "ItemName": "Boots of the Titan Warrior"
+    },
+    {
+      "ItemId": "1363821",
+      "ItemName": "Shimmering Majoris Cowl"
+    },
+    {
+      "ItemId": "1363822",
+      "ItemName": "Majoris Helm of Diligence"
+    },
+    {
+      "ItemId": "1363823",
+      "ItemName": "Majoris Helm of Fortitude"
+    },
+    {
+      "ItemId": "1363824",
+      "ItemName": "Majoris Cowl of Insight"
+    },
+    {
+      "ItemId": "1363825",
+      "ItemName": "Majoris Cover of Impulse"
+    },
+    {
+      "ItemId": "1363829",
+      "ItemName": "Shimmering Majoris Armor"
+    },
+    {
+      "ItemId": "1363830",
+      "ItemName": "Majoris Armor of Diligence"
+    },
+    {
+      "ItemId": "1363831",
+      "ItemName": "Majoris Robe of Fortitude"
+    },
+    {
+      "ItemId": "1363832",
+      "ItemName": "Majoris Raiment of Insight"
+    },
+    {
+      "ItemId": "1363833",
+      "ItemName": "Majoris Armor of Impulse"
+    },
+    {
+      "ItemId": "1363834",
+      "ItemName": "Majoris Plate of Umbrage"
+    },
+    {
+      "ItemId": "1363835",
+      "ItemName": "Majoris Gear of Cohesion"
+    },
+    {
+      "ItemId": "1363836",
+      "ItemName": "Borealis Majoris Armor"
+    },
+    {
+      "ItemId": "1363837",
+      "ItemName": "Shimmering Majoris Footgear"
+    },
+    {
+      "ItemId": "1363838",
+      "ItemName": "Majoris Boots of Diligence"
+    },
+    {
+      "ItemId": "1363839",
+      "ItemName": "Majoris Shoes of Fortitude"
+    },
+    {
+      "ItemId": "1363840",
+      "ItemName": "Majoris Footgear of Insight"
+    },
+    {
+      "ItemId": "1363841",
+      "ItemName": "Majoris Trekkers of Impulse"
+    },
+    {
+      "ItemId": "1363842",
+      "ItemName": "Majoris Stalkers of Umbrage"
+    },
+    {
+      "ItemId": "1363843",
+      "ItemName": "Majoris Runners of Cohesion"
+    },
+    {
+      "ItemId": "1363844",
+      "ItemName": "Borealis Majoris Sabatons"
+    },
+    {
+      "ItemId": "1369261",
+      "ItemName": "Horizon Hold Scorched Charm"
+    },
+    {
+      "ItemId": "1369262",
+      "ItemName": "Bitter Relic of Horizon Hold"
+    },
+    {
+      "ItemId": "1369263",
+      "ItemName": "Horizon Hold Choker of Fog"
+    },
+    {
+      "ItemId": "1369264",
+      "ItemName": "Auroracle's Torc of Intent"
+    },
+    {
+      "ItemId": "1369265",
+      "ItemName": "Horizon Hold Amulet of Zest"
+    },
+    {
+      "ItemId": "1369266",
+      "ItemName": "Watch Lion's Collar of Angst"
+    },
+    {
+      "ItemId": "1369267",
+      "ItemName": "Auroracle's Charm of Equity"
+    },
+    {
+      "ItemId": "1369268",
+      "ItemName": "Jeweled Slopes Ornament"
+    },
+    {
+      "ItemId": "1369285",
+      "ItemName": "Arcanum Exile Burning Charm"
+    },
+    {
+      "ItemId": "1369286",
+      "ItemName": "Arcanum Exile Snowflake Torc"
+    },
+    {
+      "ItemId": "1369287",
+      "ItemName": "Arcanum Exile Relic of Gales"
+    },
+    {
+      "ItemId": "1369288",
+      "ItemName": "Arcanum Exile Idea Bauble"
+    },
+    {
+      "ItemId": "1369289",
+      "ItemName": "Arcanum Exile Amulet of Vim"
+    },
+    {
+      "ItemId": "1369290",
+      "ItemName": "Arcanum Exile Torc of Strife"
+    },
+    {
+      "ItemId": "1369291",
+      "ItemName": "Steady Arcanum Exile Ampul"
+    },
+    {
+      "ItemId": "1369292",
+      "ItemName": "Amulet of the Arcanum Exile"
+    },
+    {
+      "ItemId": "1369309",
+      "ItemName": "Lt. Snow's Incendiary Amulet"
+    },
+    {
+      "ItemId": "1369310",
+      "ItemName": "Orlov's Icesheet Charm"
+    },
+    {
+      "ItemId": "1369311",
+      "ItemName": "Chillvenom's Maelstrom Charm"
+    },
+    {
+      "ItemId": "1369312",
+      "ItemName": "Yolok's Ampul of Observation"
+    },
+    {
+      "ItemId": "1369313",
+      "ItemName": "Rasputin's Charm of Exertion"
+    },
+    {
+      "ItemId": "1369314",
+      "ItemName": "Jawniak's Torc of Deceit"
+    },
+    {
+      "ItemId": "1369315",
+      "ItemName": "Jarilo's Talisman of Decorum"
+    },
+    {
+      "ItemId": "1369316",
+      "ItemName": "Warlord Minak's Medallion"
+    },
+    {
+      "ItemId": "1369429",
+      "ItemName": "Volatile Borealis Remnant"
+    },
+    {
+      "ItemId": "1369430",
+      "ItemName": "Borealis Icecrystal Artifact"
+    },
+    {
+      "ItemId": "1369431",
+      "ItemName": "Borealis Relic of Windswirls"
+    },
+    {
+      "ItemId": "1369432",
+      "ItemName": "Borealis Artifact of Vision"
+    },
+    {
+      "ItemId": "1369433",
+      "ItemName": "Timeless Borealis Fragment"
+    },
+    {
+      "ItemId": "1369434",
+      "ItemName": "Borealis Remnant of Schisms"
+    },
+    {
+      "ItemId": "1369435",
+      "ItemName": "Borealis Relic of Resolution"
+    },
+    {
+      "ItemId": "1369436",
+      "ItemName": "Polarian Borealis Relic"
+    },
+    {
+      "ItemId": "1369437",
+      "ItemName": "Titan Warrior Skyfire Relic"
+    },
+    {
+      "ItemId": "1369438",
+      "ItemName": "Titan Warrior Curio of Bite"
+    },
+    {
+      "ItemId": "1369439",
+      "ItemName": "Titan Warrior Focus of Waves"
+    },
+    {
+      "ItemId": "1369440",
+      "ItemName": "Titan Warrior Kernel of Logic"
+    },
+    {
+      "ItemId": "1369441",
+      "ItemName": "Portion of Titanic Mettle"
+    },
+    {
+      "ItemId": "1369442",
+      "ItemName": "Titanic Fragment of Torpor"
+    },
+    {
+      "ItemId": "1369443",
+      "ItemName": "Keepsake of Titan Equity"
+    },
+    {
+      "ItemId": "1369444",
+      "ItemName": "Relic of the Titan Warrior"
+    },
+    {
+      "ItemId": "1369445",
+      "ItemName": "Shimmering Majoris Artifact"
+    },
+    {
+      "ItemId": "1369446",
+      "ItemName": "Majoris Relic of Diligence"
+    },
+    {
+      "ItemId": "1369447",
+      "ItemName": "Majoris Curio of Fortitude"
+    },
+    {
+      "ItemId": "1369448",
+      "ItemName": "Majoris Fragment of Insight"
+    },
+    {
+      "ItemId": "1369449",
+      "ItemName": "Majoris Portion of Impulse"
+    },
+    {
+      "ItemId": "1369450",
+      "ItemName": "Majoris Remnant of Umbrage"
+    },
+    {
+      "ItemId": "1369451",
+      "ItemName": "Majoris Relic of Cohesion"
+    },
+    {
+      "ItemId": "1369452",
+      "ItemName": "Borealis Majoris Artifact"
+    },
+    {
+      "ItemId": "1369557",
+      "ItemName": "Horizon Hold Deck of Furor"
+    },
+    {
+      "ItemId": "1369558",
+      "ItemName": "Horizon Hold Set of Verglas"
+    },
+    {
+      "ItemId": "1369559",
+      "ItemName": "Horizon Hold Deck of Icefog"
+    },
+    {
+      "ItemId": "1369560",
+      "ItemName": "Horizon Hold Cards of Intent"
+    },
+    {
+      "ItemId": "1369561",
+      "ItemName": "Horizon Hold Set of Efficacy"
+    },
+    {
+      "ItemId": "1369562",
+      "ItemName": "Horizon Hold Array of Gloom"
+    },
+    {
+      "ItemId": "1369563",
+      "ItemName": "Gallant Hand of Horizon Hold"
+    },
+    {
+      "ItemId": "1369564",
+      "ItemName": "Ancient Deck of Horizon Hold"
+    },
+    {
+      "ItemId": "1369565",
+      "ItemName": "Arcanum Exile Pack of Fever"
+    },
+    {
+      "ItemId": "1369566",
+      "ItemName": "Arcanum Exile Snowflake Set"
+    },
+    {
+      "ItemId": "1369567",
+      "ItemName": "Arcanum Exile Galeforce Set"
+    },
+    {
+      "ItemId": "1369568",
+      "ItemName": "Case of Arcanum Exile Ideas"
+    },
+    {
+      "ItemId": "1369569",
+      "ItemName": "Arcanum Exile Evergreen Set"
+    },
+    {
+      "ItemId": "1369570",
+      "ItemName": "Arcanum Exile Bevy of Strife"
+    },
+    {
+      "ItemId": "1369571",
+      "ItemName": "Steady Arcanum Exile Hand"
+    },
+    {
+      "ItemId": "1369572",
+      "ItemName": "Parcel of the Arcanum Exile"
+    },
+    {
+      "ItemId": "1369573",
+      "ItemName": "Rasputin's Deck of Gall"
+    },
+    {
+      "ItemId": "1369574",
+      "ItemName": "Rasputin's Cards of Numbing"
+    },
+    {
+      "ItemId": "1369575",
+      "ItemName": "Rasputin's Hand of Tumult"
+    },
+    {
+      "ItemId": "1369576",
+      "ItemName": "Rasputin's Hypnotic Hand"
+    },
+    {
+      "ItemId": "1369577",
+      "ItemName": "Rasputin's Set of Fortitude"
+    },
+    {
+      "ItemId": "1369578",
+      "ItemName": "Rasputin's Wicked Hand"
+    },
+    {
+      "ItemId": "1369579",
+      "ItemName": "Rasputin's Bevy of Answers"
+    },
+    {
+      "ItemId": "1369580",
+      "ItemName": "Chief Advisor's Pack of Lies"
+    }
+  ]
+}

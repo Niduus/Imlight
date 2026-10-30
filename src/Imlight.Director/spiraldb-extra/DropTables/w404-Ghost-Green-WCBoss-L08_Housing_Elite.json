@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Ghost-Green-WCBoss-L08 Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table Ghost-Green-WCBoss-L08: the housing drops (1), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160324",
+      "ItemName": "Life Stone Pedestal"
+    }
+  ]
+}

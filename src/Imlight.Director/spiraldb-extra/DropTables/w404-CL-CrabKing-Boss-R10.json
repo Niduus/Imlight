@@ -1,0 +1,9 @@
+{
+  "Name": "W404 CL-CrabKing-Boss-R10",
+  "Description": "Gold of the game's table CL-CrabKing-Boss-R10, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 24,
+  "MaxGold": 24,
+  "EachItem": false,
+  "Items": []
+}

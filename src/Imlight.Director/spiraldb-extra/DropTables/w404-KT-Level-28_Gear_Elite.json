@@ -1,0 +1,189 @@
+{
+  "Name": "W404 KT-Level-28 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table KT-Level-28: the gear drops (45), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4942",
+      "ItemName": "Parched Kris"
+    },
+    {
+      "ItemId": "4955",
+      "ItemName": "Whirlwind Dagger"
+    },
+    {
+      "ItemId": "4960",
+      "ItemName": "Dirk of Harmony"
+    },
+    {
+      "ItemId": "5016",
+      "ItemName": "Sparkling Band"
+    },
+    {
+      "ItemId": "5017",
+      "ItemName": "Loop of Quietude"
+    },
+    {
+      "ItemId": "5018",
+      "ItemName": "Band of Equilibrium"
+    },
+    {
+      "ItemId": "5022",
+      "ItemName": "Loop of the Defender"
+    },
+    {
+      "ItemId": "5027",
+      "ItemName": "Ring of the Badlands"
+    },
+    {
+      "ItemId": "5028",
+      "ItemName": "Jewel of Obliteration"
+    },
+    {
+      "ItemId": "5030",
+      "ItemName": "Flowering Band"
+    },
+    {
+      "ItemId": "5035",
+      "ItemName": "Band of the Skies"
+    },
+    {
+      "ItemId": "38749",
+      "ItemName": "Vestment of Ignition"
+    },
+    {
+      "ItemId": "38763",
+      "ItemName": "Vest of the Oasis"
+    },
+    {
+      "ItemId": "39425",
+      "ItemName": "Boots of the Whirlwind"
+    },
+    {
+      "ItemId": "39431",
+      "ItemName": "Footwraps of the Arctic"
+    },
+    {
+      "ItemId": "39438",
+      "ItemName": "Biti Nirini's Torrid Boots"
+    },
+    {
+      "ItemId": "39441",
+      "ItemName": "Sandals of Energy"
+    },
+    {
+      "ItemId": "77678",
+      "ItemName": "Stout Hood"
+    },
+    {
+      "ItemId": "77691",
+      "ItemName": "Bitter Cap"
+    },
+    {
+      "ItemId": "77701",
+      "ItemName": "Diviner's Hat of Squalls"
+    },
+    {
+      "ItemId": "77711",
+      "ItemName": "Rough-hewn Hood"
+    },
+    {
+      "ItemId": "77720",
+      "ItemName": "Sturdy Hood"
+    },
+    {
+      "ItemId": "77722",
+      "ItemName": "Theurge's Hat"
+    },
+    {
+      "ItemId": "77729",
+      "ItemName": "Cryptkeeper's Circlet"
+    },
+    {
+      "ItemId": "77730",
+      "ItemName": "Destructive Cowl"
+    },
+    {
+      "ItemId": "77742",
+      "ItemName": "Threadbare Hood"
+    },
+    {
+      "ItemId": "77749",
+      "ItemName": "Sphinx's Circlet"
+    },
+    {
+      "ItemId": "77750",
+      "ItemName": "Helm of the Citadel"
+    },
+    {
+      "ItemId": "77751",
+      "ItemName": "Cowl of the Fortress"
+    },
+    {
+      "ItemId": "77757",
+      "ItemName": "Sandals of Tall Tales"
+    },
+    {
+      "ItemId": "77766",
+      "ItemName": "Flowering Shoes"
+    },
+    {
+      "ItemId": "77767",
+      "ItemName": "Sandals of Refuge"
+    },
+    {
+      "ItemId": "77776",
+      "ItemName": "Shoes of Mortality"
+    },
+    {
+      "ItemId": "77785",
+      "ItemName": "Boots of Talent"
+    },
+    {
+      "ItemId": "77786",
+      "ItemName": "Shoes of the Desert"
+    },
+    {
+      "ItemId": "77798",
+      "ItemName": "Boots of the Citadel"
+    },
+    {
+      "ItemId": "87267",
+      "ItemName": "Powerful Vestment"
+    },
+    {
+      "ItemId": "87279",
+      "ItemName": "Robe of the Mirage"
+    },
+    {
+      "ItemId": "87292",
+      "ItemName": "Sturdy Robe"
+    },
+    {
+      "ItemId": "87293",
+      "ItemName": "Theurge's Brown Cloak"
+    },
+    {
+      "ItemId": "87305",
+      "ItemName": "Vestment of Darkness"
+    },
+    {
+      "ItemId": "87306",
+      "ItemName": "Dusty Robe"
+    },
+    {
+      "ItemId": "87318",
+      "ItemName": "Vest of the Desert"
+    },
+    {
+      "ItemId": "87319",
+      "ItemName": "Robe of the Bastion"
+    },
+    {
+      "ItemId": "87333",
+      "ItemName": "Sphinx's Vestment"
+    }
+  ]
+}

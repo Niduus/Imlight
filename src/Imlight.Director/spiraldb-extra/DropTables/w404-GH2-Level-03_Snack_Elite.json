@@ -1,0 +1,81 @@
+{
+  "Name": "W404 GH2-Level-03 Snack (Elite)",
+  "Description": "Wizard404's drop list of the game's table GH2-Level-03: the snack drops (18), one picked when it rolls. How often: DropOdds.json Elite/Snack.",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220215",
+      "ItemName": "Golden Apple"
+    },
+    {
+      "ItemId": "220217",
+      "ItemName": "Golden Grapes"
+    },
+    {
+      "ItemId": "220265",
+      "ItemName": "Spicy Drumstick"
+    },
+    {
+      "ItemId": "220275",
+      "ItemName": "Glowing Dragon Fruit"
+    },
+    {
+      "ItemId": "220276",
+      "ItemName": "Strawberry Cupcake"
+    },
+    {
+      "ItemId": "220280",
+      "ItemName": "Delicious Cookie"
+    },
+    {
+      "ItemId": "220284",
+      "ItemName": "Glowing Taffy"
+    },
+    {
+      "ItemId": "220292",
+      "ItemName": "Uni-corn"
+    },
+    {
+      "ItemId": "220304",
+      "ItemName": "Flaming Soup"
+    },
+    {
+      "ItemId": "220305",
+      "ItemName": "Buttered Bread"
+    },
+    {
+      "ItemId": "220310",
+      "ItemName": "King Banana"
+    },
+    {
+      "ItemId": "220311",
+      "ItemName": "Glowing Star Fruit"
+    },
+    {
+      "ItemId": "220325",
+      "ItemName": "Shiny Tomato"
+    },
+    {
+      "ItemId": "220326",
+      "ItemName": "Goat Cheese"
+    },
+    {
+      "ItemId": "220331",
+      "ItemName": "Gummy Humongofrog"
+    },
+    {
+      "ItemId": "240117",
+      "ItemName": "Submarine Sandwich"
+    },
+    {
+      "ItemId": "240118",
+      "ItemName": "Cauliflowers"
+    },
+    {
+      "ItemId": "446071",
+      "ItemName": "Salmonberry"
+    }
+  ]
+}

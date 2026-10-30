@@ -1,0 +1,45 @@
+{
+  "Name": "W404 PL-Boss-Gear-110 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-Boss-Gear-110: the pet drops (9), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "225453",
+      "ItemName": "Ice Bird"
+    },
+    {
+      "ItemId": "473444",
+      "ItemName": "Arctic Ninja Pig"
+    },
+    {
+      "ItemId": "473680",
+      "ItemName": "Snowball"
+    },
+    {
+      "ItemId": "589640",
+      "ItemName": "Glacier Dragon"
+    },
+    {
+      "ItemId": "653164",
+      "ItemName": "White Winter Owl"
+    },
+    {
+      "ItemId": "789210",
+      "ItemName": "Polar Bear Cub"
+    },
+    {
+      "ItemId": "1317711",
+      "ItemName": "Nodori Winged Ram"
+    },
+    {
+      "ItemId": "1359786",
+      "ItemName": "Intrepid Seal Pup"
+    },
+    {
+      "ItemId": "1359789",
+      "ItemName": "Mountain Yeti"
+    }
+  ]
+}

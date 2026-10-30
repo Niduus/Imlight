@@ -1,0 +1,17 @@
+{
+  "Name": "W404 ZF-Gorilla-Boss-01-R11-Boss Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Gorilla-Boss-01-R11-Boss: the pet drops (2), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "473580",
+      "ItemName": "Skink"
+    },
+    {
+      "ItemId": "473581",
+      "ItemName": "Leopard"
+    }
+  ]
+}

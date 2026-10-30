@@ -1,0 +1,57 @@
+{
+  "Name": "W404 HO-13-VampireRabbitBoss-LT Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table HO-13-VampireRabbitBoss-LT: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126395",
+      "ItemName": "Hallowe'en Hat"
+    },
+    {
+      "ItemId": "126396",
+      "ItemName": "Ninja Pig Hat"
+    },
+    {
+      "ItemId": "126398",
+      "ItemName": "Hallowe'en Shoes"
+    },
+    {
+      "ItemId": "126399",
+      "ItemName": "Hallowe'en Robe"
+    },
+    {
+      "ItemId": "126405",
+      "ItemName": "Ninja Pig Shoes"
+    },
+    {
+      "ItemId": "126406",
+      "ItemName": "Ninja Pig Robe"
+    },
+    {
+      "ItemId": "1363260",
+      "ItemName": "Vampire Costume Wig"
+    },
+    {
+      "ItemId": "1363261",
+      "ItemName": "Vampire Costume Coat"
+    },
+    {
+      "ItemId": "1363262",
+      "ItemName": "Vampire Costume Boots"
+    },
+    {
+      "ItemId": "1363263",
+      "ItemName": "Mummy Costume Headwraps"
+    },
+    {
+      "ItemId": "1363264",
+      "ItemName": "Mummy Costume Bodywraps"
+    },
+    {
+      "ItemId": "1363265",
+      "ItemName": "Mummy Costume Footwraps"
+    }
+  ]
+}

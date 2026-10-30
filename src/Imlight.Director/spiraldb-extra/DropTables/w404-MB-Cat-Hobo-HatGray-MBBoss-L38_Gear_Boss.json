@@ -1,0 +1,85 @@
+{
+  "Name": "W404 MB-Cat-Hobo-HatGray-MBBoss-L38 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Hobo-HatGray-MBBoss-L38: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "39019",
+      "ItemName": "Headwrap of Incineration"
+    },
+    {
+      "ItemId": "39069",
+      "ItemName": "Watchman's Decoder Ring"
+    },
+    {
+      "ItemId": "77181",
+      "ItemName": "Icy Tunic"
+    },
+    {
+      "ItemId": "77232",
+      "ItemName": "Pompous Footwraps"
+    },
+    {
+      "ItemId": "77239",
+      "ItemName": "Frozen Canine Shoes"
+    },
+    {
+      "ItemId": "87474",
+      "ItemName": "Staff of Rejuvenation"
+    },
+    {
+      "ItemId": "97124",
+      "ItemName": "Enigmatic Deck"
+    },
+    {
+      "ItemId": "97131",
+      "ItemName": "Deck of the Cyclops"
+    },
+    {
+      "ItemId": "97147",
+      "ItemName": "Cap of the Kraken"
+    },
+    {
+      "ItemId": "97194",
+      "ItemName": "Helm of Horrors"
+    },
+    {
+      "ItemId": "97221",
+      "ItemName": "Hat of Equation"
+    },
+    {
+      "ItemId": "97237",
+      "ItemName": "Frosty Vestment"
+    },
+    {
+      "ItemId": "97243",
+      "ItemName": "Mechanical Tunic"
+    },
+    {
+      "ItemId": "97283",
+      "ItemName": "Robe of the Unicorn"
+    },
+    {
+      "ItemId": "97293",
+      "ItemName": "Robe of Extinction"
+    },
+    {
+      "ItemId": "97363",
+      "ItemName": "Graceful Slippers"
+    },
+    {
+      "ItemId": "97371",
+      "ItemName": "Flowering Canine Shoes"
+    },
+    {
+      "ItemId": "97389",
+      "ItemName": "Clanker's Irritating Shoes"
+    },
+    {
+      "ItemId": "97411",
+      "ItemName": "Sandals of Civility"
+    }
+  ]
+}

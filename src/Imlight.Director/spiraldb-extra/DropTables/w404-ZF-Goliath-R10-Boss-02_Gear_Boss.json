@@ -1,0 +1,45 @@
+{
+  "Name": "W404 ZF-Goliath-R10-Boss-02 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Goliath-R10-Boss-02: the gear drops (9), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "540085",
+      "ItemName": "Pachyderm's Strength Pendant"
+    },
+    {
+      "ItemId": "540116",
+      "ItemName": "Stone Town Scimitar"
+    },
+    {
+      "ItemId": "540167",
+      "ItemName": "Mantle of the Grasslands"
+    },
+    {
+      "ItemId": "540173",
+      "ItemName": "Turban of the Olyphants"
+    },
+    {
+      "ItemId": "540204",
+      "ItemName": "Koko's Smoky Circle"
+    },
+    {
+      "ItemId": "540232",
+      "ItemName": "Fire-Feather Robes"
+    },
+    {
+      "ItemId": "540238",
+      "ItemName": "Tunic of Long Memory"
+    },
+    {
+      "ItemId": "540276",
+      "ItemName": "Fire Lion's Storm Wraps"
+    },
+    {
+      "ItemId": "540279",
+      "ItemName": "Life's Circle Safari Boots"
+    }
+  ]
+}

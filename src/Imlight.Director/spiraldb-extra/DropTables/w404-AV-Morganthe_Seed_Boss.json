@@ -1,0 +1,25 @@
+{
+  "Name": "W404 AV-Morganthe Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table AV-Morganthe: the seed drops (4), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "589145",
+      "ItemName": "Angora Bunny Ears"
+    },
+    {
+      "ItemId": "589180",
+      "ItemName": "Red Huckleberries"
+    },
+    {
+      "ItemId": "589187",
+      "ItemName": "Pink Huckleberries"
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries"
+    }
+  ]
+}

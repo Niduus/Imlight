@@ -1,0 +1,129 @@
+{
+  "Name": "W404 LM-Mob-PetSnacks-Rare Snack (Elite)",
+  "Description": "Wizard404's drop list of the game's table LM-Mob-PetSnacks-Rare: the snack drops (30), one picked when it rolls. How often: DropOdds.json Elite/Snack.",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1257587",
+      "ItemName": "Bell Pepper Steak"
+    },
+    {
+      "ItemId": "1257599",
+      "ItemName": "Bread Fruit Fruit"
+    },
+    {
+      "ItemId": "789452",
+      "ItemName": "Candlenut"
+    },
+    {
+      "ItemId": "733122",
+      "ItemName": "Chili Peppers"
+    },
+    {
+      "ItemId": "1257600",
+      "ItemName": "Desparagus Salad"
+    },
+    {
+      "ItemId": "589096",
+      "ItemName": "Eggplant"
+    },
+    {
+      "ItemId": "220327",
+      "ItemName": "French Fries"
+    },
+    {
+      "ItemId": "1248054",
+      "ItemName": "Honey Bombs"
+    },
+    {
+      "ItemId": "641710",
+      "ItemName": "Ginger Mint Tea"
+    },
+    {
+      "ItemId": "220326",
+      "ItemName": "Goat Cheese"
+    },
+    {
+      "ItemId": "1392078",
+      "ItemName": "Hespermint"
+    },
+    {
+      "ItemId": "1248056",
+      "ItemName": "Hive Rinds"
+    },
+    {
+      "ItemId": "589101",
+      "ItemName": "Hot and Sour Bits"
+    },
+    {
+      "ItemId": "1359614",
+      "ItemName": "Kraken Jacks"
+    },
+    {
+      "ItemId": "1317844",
+      "ItemName": "Boiled Spider Legs"
+    },
+    {
+      "ItemId": "1257597",
+      "ItemName": "Boom Stroganoff"
+    },
+    {
+      "ItemId": "240118",
+      "ItemName": "Cauliflowers"
+    },
+    {
+      "ItemId": "733133",
+      "ItemName": "Chapulines"
+    },
+    {
+      "ItemId": "733119",
+      "ItemName": "Fried Ice Cream"
+    },
+    {
+      "ItemId": "1383139",
+      "ItemName": "Frojan Mousse"
+    },
+    {
+      "ItemId": "733177",
+      "ItemName": "Gingerbread Wizard"
+    },
+    {
+      "ItemId": "537602",
+      "ItemName": "Fried Worms"
+    },
+    {
+      "ItemId": "641684",
+      "ItemName": "Frozen Perogies"
+    },
+    {
+      "ItemId": "220215",
+      "ItemName": "Golden Apple"
+    },
+    {
+      "ItemId": "220302",
+      "ItemName": "Shanta Pudding"
+    },
+    {
+      "ItemId": "641704",
+      "ItemName": "Hickory Chicory"
+    },
+    {
+      "ItemId": "1317092",
+      "ItemName": "Crab Louie"
+    },
+    {
+      "ItemId": "1317093",
+      "ItemName": "Catfish Stevens"
+    },
+    {
+      "ItemId": "1359604",
+      "ItemName": "Chalupacabra"
+    },
+    {
+      "ItemId": "1383140",
+      "ItemName": "Manticoreos"
+    }
+  ]
+}

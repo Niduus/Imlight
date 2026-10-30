@@ -1,0 +1,157 @@
+{
+  "Name": "W404 PA-Gauntlet-Level-01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table PA-Gauntlet-Level-01: the gear drops (37), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243238",
+      "ItemName": "Longevity Twin Blades"
+    },
+    {
+      "ItemId": "243249",
+      "ItemName": "Supreme Stiletto"
+    },
+    {
+      "ItemId": "243275",
+      "ItemName": "Wave Cutter"
+    },
+    {
+      "ItemId": "243293",
+      "ItemName": "Helm of Higher Learning"
+    },
+    {
+      "ItemId": "243313",
+      "ItemName": "Grim Helmet"
+    },
+    {
+      "ItemId": "243315",
+      "ItemName": "Hood of Dissonance"
+    },
+    {
+      "ItemId": "243336",
+      "ItemName": "Mercurial Mantle"
+    },
+    {
+      "ItemId": "243369",
+      "ItemName": "Wintertide Topper"
+    },
+    {
+      "ItemId": "243373",
+      "ItemName": "Icestar Cover"
+    },
+    {
+      "ItemId": "243384",
+      "ItemName": "Tangleroot's Spirit Mask"
+    },
+    {
+      "ItemId": "243386",
+      "ItemName": "Spirit Helm"
+    },
+    {
+      "ItemId": "243407",
+      "ItemName": "Mythical Mantle"
+    },
+    {
+      "ItemId": "243410",
+      "ItemName": "Secret Mask"
+    },
+    {
+      "ItemId": "243428",
+      "ItemName": "Drenched Headdress"
+    },
+    {
+      "ItemId": "243437",
+      "ItemName": "Rumbling Cover"
+    },
+    {
+      "ItemId": "243457",
+      "ItemName": "Tunic of Tolerance"
+    },
+    {
+      "ItemId": "243458",
+      "ItemName": "Insightful Cloak"
+    },
+    {
+      "ItemId": "243548",
+      "ItemName": "Ring of Memories"
+    },
+    {
+      "ItemId": "243584",
+      "ItemName": "Swirling Signet"
+    },
+    {
+      "ItemId": "243585",
+      "ItemName": "Circle of Squalls"
+    },
+    {
+      "ItemId": "243616",
+      "ItemName": "Combustible Costume"
+    },
+    {
+      "ItemId": "243639",
+      "ItemName": "Frostbit Jerkin"
+    },
+    {
+      "ItemId": "243657",
+      "ItemName": "Innate Tunic"
+    },
+    {
+      "ItemId": "243659",
+      "ItemName": "Longcoat of Long Life"
+    },
+    {
+      "ItemId": "243676",
+      "ItemName": "Secret Surcoat"
+    },
+    {
+      "ItemId": "243701",
+      "ItemName": "Rising Tide Raiment"
+    },
+    {
+      "ItemId": "243717",
+      "ItemName": "Tolerant Boots"
+    },
+    {
+      "ItemId": "243719",
+      "ItemName": "Examiner's Boots"
+    },
+    {
+      "ItemId": "243722",
+      "ItemName": "Collective Footwraps"
+    },
+    {
+      "ItemId": "243743",
+      "ItemName": "Grim Greaves"
+    },
+    {
+      "ItemId": "243758",
+      "ItemName": "Cinder Striders"
+    },
+    {
+      "ItemId": "243760",
+      "ItemName": "Scorched Footguards"
+    },
+    {
+      "ItemId": "243808",
+      "ItemName": "Innate Striders"
+    },
+    {
+      "ItemId": "243811",
+      "ItemName": "Festive Footwear"
+    },
+    {
+      "ItemId": "243827",
+      "ItemName": "Star Wisher's Boots"
+    },
+    {
+      "ItemId": "243828",
+      "ItemName": "Storied Stalkers"
+    },
+    {
+      "ItemId": "243841",
+      "ItemName": "Rising Tide Trekkers"
+    }
+  ]
+}

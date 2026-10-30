@@ -1,0 +1,469 @@
+{
+  "Name": "W404 ZF-AQ2-Boss-Jewels Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-AQ2-Boss-Jewels: the jewel drops (115), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1352395",
+      "ItemName": "Opaque Health Opal +69"
+    },
+    {
+      "ItemId": "1352396",
+      "ItemName": "Opaque Health Opal +70"
+    },
+    {
+      "ItemId": "1352593",
+      "ItemName": "Opaque Damage Ruby +17"
+    },
+    {
+      "ItemId": "1352617",
+      "ItemName": "Opaque Damage Sapphire +17"
+    },
+    {
+      "ItemId": "1352641",
+      "ItemName": "Opaque Damage Amethyst +17"
+    },
+    {
+      "ItemId": "1352665",
+      "ItemName": "Opaque Damage Peridot +17"
+    },
+    {
+      "ItemId": "1352689",
+      "ItemName": "Opaque Damage Jade +17"
+    },
+    {
+      "ItemId": "1352713",
+      "ItemName": "Opaque Damage Onyx +17"
+    },
+    {
+      "ItemId": "1352737",
+      "ItemName": "Opaque Damage Citrine +17"
+    },
+    {
+      "ItemId": "1352951",
+      "ItemName": "Opaque Blocking Ruby +8"
+    },
+    {
+      "ItemId": "1352964",
+      "ItemName": "Opaque Blocking Sapphire +8"
+    },
+    {
+      "ItemId": "1352977",
+      "ItemName": "Opaque Blocking Amethyst +8"
+    },
+    {
+      "ItemId": "1352990",
+      "ItemName": "Opaque Blocking Peridot +8"
+    },
+    {
+      "ItemId": "1357003",
+      "ItemName": "Opaque Blocking Jade +8"
+    },
+    {
+      "ItemId": "1357016",
+      "ItemName": "Opaque Blocking Onyx +8"
+    },
+    {
+      "ItemId": "1357029",
+      "ItemName": "Opaque Blocking Citrine +8"
+    },
+    {
+      "ItemId": "1357269",
+      "ItemName": "Opaque Defense Ruby +33"
+    },
+    {
+      "ItemId": "1357314",
+      "ItemName": "Opaque Defense Sapphire +33"
+    },
+    {
+      "ItemId": "1357359",
+      "ItemName": "Opaque Defense Amethyst +33"
+    },
+    {
+      "ItemId": "1357404",
+      "ItemName": "Opaque Defense Peridot +33"
+    },
+    {
+      "ItemId": "1357449",
+      "ItemName": "Opaque Defense Jade +33"
+    },
+    {
+      "ItemId": "1357494",
+      "ItemName": "Opaque Defense Onyx +33"
+    },
+    {
+      "ItemId": "1357539",
+      "ItemName": "Opaque Defense Citrine +33"
+    },
+    {
+      "ItemId": "1358583",
+      "ItemName": "Opaque Defense Opal +18"
+    },
+    {
+      "ItemId": "1358628",
+      "ItemName": "Fire Dragon Ruby"
+    },
+    {
+      "ItemId": "1358629",
+      "ItemName": "Power Link Ruby"
+    },
+    {
+      "ItemId": "1358637",
+      "ItemName": "Frost Giant Sapphire"
+    },
+    {
+      "ItemId": "1358638",
+      "ItemName": "Frozen Armor Sapphire"
+    },
+    {
+      "ItemId": "1358646",
+      "ItemName": "Storm Lord Amethyst"
+    },
+    {
+      "ItemId": "1358647",
+      "ItemName": "Insane Bolt Amethyst"
+    },
+    {
+      "ItemId": "1358656",
+      "ItemName": "Talos Peridot"
+    },
+    {
+      "ItemId": "1358669",
+      "ItemName": "Rebirth Jade"
+    },
+    {
+      "ItemId": "1358670",
+      "ItemName": "Brilliant Light Jade"
+    },
+    {
+      "ItemId": "1358678",
+      "ItemName": "Scarecrow Onyx"
+    },
+    {
+      "ItemId": "1358679",
+      "ItemName": "Virulent Plague Onyx"
+    },
+    {
+      "ItemId": "1358687",
+      "ItemName": "Power Nova Citrine"
+    },
+    {
+      "ItemId": "1358688",
+      "ItemName": "Availing Hands Citrine"
+    },
+    {
+      "ItemId": "1358712",
+      "ItemName": "Orthrus Peridot"
+    },
+    {
+      "ItemId": "1358832",
+      "ItemName": "Plain Blocking Opal +3"
+    },
+    {
+      "ItemId": "1358833",
+      "ItemName": "Opaque Blocking Opal +4"
+    },
+    {
+      "ItemId": "1360699",
+      "ItemName": "Purloin Health Talent Citrine"
+    },
+    {
+      "ItemId": "1360700",
+      "ItemName": "Curse Giver Onyx"
+    },
+    {
+      "ItemId": "1360701",
+      "ItemName": "Steal Health Talent Onyx"
+    },
+    {
+      "ItemId": "1360702",
+      "ItemName": "Elf on Fire Ruby"
+    },
+    {
+      "ItemId": "1360703",
+      "ItemName": "Bad Snowman Sapphire"
+    },
+    {
+      "ItemId": "1360704",
+      "ItemName": "Sprite Time Jade"
+    },
+    {
+      "ItemId": "1360705",
+      "ItemName": "Mend Minion Talent Peridot"
+    },
+    {
+      "ItemId": "1360706",
+      "ItemName": "Big Sparky Amethyst"
+    },
+    {
+      "ItemId": "1360707",
+      "ItemName": "Strong Talent Opal"
+    },
+    {
+      "ItemId": "1360708",
+      "ItemName": "Keen Eyes Talent Opal"
+    },
+    {
+      "ItemId": "1360709",
+      "ItemName": "Hexster Citrine"
+    },
+    {
+      "ItemId": "1360710",
+      "ItemName": "Power Player Citrine"
+    },
+    {
+      "ItemId": "1360711",
+      "ItemName": "No Pain, No Gain Onyx"
+    },
+    {
+      "ItemId": "1360712",
+      "ItemName": "Feinting Spell Onyx"
+    },
+    {
+      "ItemId": "1360713",
+      "ItemName": "Power-Taker Ruby"
+    },
+    {
+      "ItemId": "1360714",
+      "ItemName": "Blade of Ice Sapphire"
+    },
+    {
+      "ItemId": "1360715",
+      "ItemName": "Heart o'Pixie Jade"
+    },
+    {
+      "ItemId": "1360716",
+      "ItemName": "Buff Minion Talent Peridot"
+    },
+    {
+      "ItemId": "1360717",
+      "ItemName": "Blade Flurry Amethyst"
+    },
+    {
+      "ItemId": "1360718",
+      "ItemName": "Giant Talent Opal"
+    },
+    {
+      "ItemId": "1360719",
+      "ItemName": "Accurate Talent Opal"
+    },
+    {
+      "ItemId": "1360720",
+      "ItemName": "Feeling Weak Citrine"
+    },
+    {
+      "ItemId": "1360721",
+      "ItemName": "Plaguebringer Onyx"
+    },
+    {
+      "ItemId": "1360722",
+      "ItemName": "Animate Skeleton Onyx"
+    },
+    {
+      "ItemId": "1360723",
+      "ItemName": "Blade of Fire Ruby"
+    },
+    {
+      "ItemId": "1360724",
+      "ItemName": "SnowBorn Sapphire"
+    },
+    {
+      "ItemId": "1360725",
+      "ItemName": "Blade of Life Jade"
+    },
+    {
+      "ItemId": "1360726",
+      "ItemName": "Go Humongo Peridot"
+    },
+    {
+      "ItemId": "1360727",
+      "ItemName": "Storm-Tooth Amethyst"
+    },
+    {
+      "ItemId": "1360728",
+      "ItemName": "Monstrous Talent Opal"
+    },
+    {
+      "ItemId": "1360729",
+      "ItemName": "Sniper Talent Opal"
+    },
+    {
+      "ItemId": "1360730",
+      "ItemName": "Aura Crush Citrine"
+    },
+    {
+      "ItemId": "1360731",
+      "ItemName": "Infallible Talent Opal"
+    },
+    {
+      "ItemId": "1360732",
+      "ItemName": "Berserk Talent Opal"
+    },
+    {
+      "ItemId": "1360733",
+      "ItemName": "Blazing Oak Ruby"
+    },
+    {
+      "ItemId": "1360734",
+      "ItemName": "Balanceblade Talent Citrine"
+    },
+    {
+      "ItemId": "1360735",
+      "ItemName": "Time Skip Sapphire"
+    },
+    {
+      "ItemId": "1360736",
+      "ItemName": "Rage of Winter Sapphire"
+    },
+    {
+      "ItemId": "1360737",
+      "ItemName": "Button Tom Peridot"
+    },
+    {
+      "ItemId": "1360738",
+      "ItemName": "Infector Onyx"
+    },
+    {
+      "ItemId": "1360739",
+      "ItemName": "The Deer Knight Rises Onyx"
+    },
+    {
+      "ItemId": "1360740",
+      "ItemName": "Get Sunbird Ruby"
+    },
+    {
+      "ItemId": "1360741",
+      "ItemName": "Screen Ruby"
+    },
+    {
+      "ItemId": "1360743",
+      "ItemName": "Tower Shield Sapphire"
+    },
+    {
+      "ItemId": "1360744",
+      "ItemName": "Crystallize Sapphire"
+    },
+    {
+      "ItemId": "1360745",
+      "ItemName": "Spartan Jade"
+    },
+    {
+      "ItemId": "1360746",
+      "ItemName": "Spirit Armor Jade"
+    },
+    {
+      "ItemId": "1360748",
+      "ItemName": "PierceMonger Peridot"
+    },
+    {
+      "ItemId": "1360749",
+      "ItemName": "Mulligan's Shuffle Citrine"
+    },
+    {
+      "ItemId": "1360750",
+      "ItemName": "Clock Spider Citrine"
+    },
+    {
+      "ItemId": "1360751",
+      "ItemName": "Black Widow Onyx"
+    },
+    {
+      "ItemId": "1360752",
+      "ItemName": "Brown Recluse Jade"
+    },
+    {
+      "ItemId": "1360753",
+      "ItemName": "Fortify Talent Opal"
+    },
+    {
+      "ItemId": "1360754",
+      "ItemName": "Amplify Talent Opal"
+    },
+    {
+      "ItemId": "1360755",
+      "ItemName": "Vengeance Talent Opal"
+    },
+    {
+      "ItemId": "1360756",
+      "ItemName": "Empowerment Talent Opal"
+    },
+    {
+      "ItemId": "1360757",
+      "ItemName": "Conviction Talent Opal"
+    },
+    {
+      "ItemId": "1360758",
+      "ItemName": "Mend Talent Opal"
+    },
+    {
+      "ItemId": "1360759",
+      "ItemName": "Disarmament Amethyst"
+    },
+    {
+      "ItemId": "1360760",
+      "ItemName": "Stormclaw Amethyst"
+    },
+    {
+      "ItemId": "1360762",
+      "ItemName": "Boss Toad Peridot"
+    },
+    {
+      "ItemId": "1360763",
+      "ItemName": "Gargantuan Talent Opal"
+    },
+    {
+      "ItemId": "1360764",
+      "ItemName": "Unstoppable Talent Opal"
+    },
+    {
+      "ItemId": "1360765",
+      "ItemName": "Greensleeves Jade"
+    },
+    {
+      "ItemId": "1360766",
+      "ItemName": "Blizzard Lizard Sapphire"
+    },
+    {
+      "ItemId": "1360767",
+      "ItemName": "Gobbler Opal"
+    },
+    {
+      "ItemId": "1360768",
+      "ItemName": "Mander Opal"
+    },
+    {
+      "ItemId": "1360769",
+      "ItemName": "Cat Bandit Opal"
+    },
+    {
+      "ItemId": "1360770",
+      "ItemName": "Ninja Pig Opal"
+    },
+    {
+      "ItemId": "1360771",
+      "ItemName": "Draconian Opal"
+    },
+    {
+      "ItemId": "1360772",
+      "ItemName": "Treant Opal"
+    },
+    {
+      "ItemId": "1360773",
+      "ItemName": "Colossus Opal"
+    },
+    {
+      "ItemId": "1360774",
+      "ItemName": "Fire Elemental Opal"
+    },
+    {
+      "ItemId": "1360775",
+      "ItemName": "Storm Elemental Opal"
+    },
+    {
+      "ItemId": "1369583",
+      "ItemName": "Great Learner Opal"
+    }
+  ]
+}

@@ -1,0 +1,209 @@
+{
+  "Name": "W404 Level-12 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table Level-12: the gear drops (50), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4728",
+      "ItemName": "Studded Knife"
+    },
+    {
+      "ItemId": "4732",
+      "ItemName": "Chipped Knife"
+    },
+    {
+      "ItemId": "4741",
+      "ItemName": "Pinewood Deck"
+    },
+    {
+      "ItemId": "4759",
+      "ItemName": "Engraved Ruby Ring"
+    },
+    {
+      "ItemId": "4760",
+      "ItemName": "Engraved Sapphire Ring"
+    },
+    {
+      "ItemId": "4761",
+      "ItemName": "Engraved Amethyst Ring"
+    },
+    {
+      "ItemId": "4762",
+      "ItemName": "Engraved Peridot Ring"
+    },
+    {
+      "ItemId": "4763",
+      "ItemName": "Engraved Jade Ring"
+    },
+    {
+      "ItemId": "4764",
+      "ItemName": "Engraved Onyx Ring"
+    },
+    {
+      "ItemId": "4765",
+      "ItemName": "Engraved Citrine Ring"
+    },
+    {
+      "ItemId": "4775",
+      "ItemName": "Lord's Signet"
+    },
+    {
+      "ItemId": "4858",
+      "ItemName": "Slippers of Excitement"
+    },
+    {
+      "ItemId": "4864",
+      "ItemName": "Venemous Footwraps"
+    },
+    {
+      "ItemId": "4870",
+      "ItemName": "Footwraps of Seasons"
+    },
+    {
+      "ItemId": "4873",
+      "ItemName": "Senior Novice's Shoes"
+    },
+    {
+      "ItemId": "4876",
+      "ItemName": "Sapphyra's Studded Boots"
+    },
+    {
+      "ItemId": "4877",
+      "ItemName": "Hardened Boots"
+    },
+    {
+      "ItemId": "77567",
+      "ItemName": "Flametouched Hat"
+    },
+    {
+      "ItemId": "77571",
+      "ItemName": "Charbane's Helm"
+    },
+    {
+      "ItemId": "77572",
+      "ItemName": "Fur-lined Hood"
+    },
+    {
+      "ItemId": "77573",
+      "ItemName": "Helm of Audacity"
+    },
+    {
+      "ItemId": "77575",
+      "ItemName": "Frostshroud"
+    },
+    {
+      "ItemId": "77579",
+      "ItemName": "Charged Cover"
+    },
+    {
+      "ItemId": "77580",
+      "ItemName": "Hood of Storms"
+    },
+    {
+      "ItemId": "77585",
+      "ItemName": "Hood of Tension"
+    },
+    {
+      "ItemId": "77586",
+      "ItemName": "Antique Helm"
+    },
+    {
+      "ItemId": "77589",
+      "ItemName": "Wondershroud"
+    },
+    {
+      "ItemId": "77594",
+      "ItemName": "Fairy Cap"
+    },
+    {
+      "ItemId": "77596",
+      "ItemName": "Bloomshroud"
+    },
+    {
+      "ItemId": "77601",
+      "ItemName": "Hat of Eradication"
+    },
+    {
+      "ItemId": "77607",
+      "ItemName": "Double Sided Hat"
+    },
+    {
+      "ItemId": "77608",
+      "ItemName": "Cowl of Wisdom"
+    },
+    {
+      "ItemId": "77617",
+      "ItemName": "Cap of Advantages"
+    },
+    {
+      "ItemId": "77620",
+      "ItemName": "Imp Lord's Helm"
+    },
+    {
+      "ItemId": "87179",
+      "ItemName": "Firestorm Vestment"
+    },
+    {
+      "ItemId": "87180",
+      "ItemName": "Robe of the Blizzard"
+    },
+    {
+      "ItemId": "87181",
+      "ItemName": "Raiment of Storms"
+    },
+    {
+      "ItemId": "87182",
+      "ItemName": "Antique Overshirt"
+    },
+    {
+      "ItemId": "87194",
+      "ItemName": "Ashen Cloak"
+    },
+    {
+      "ItemId": "87200",
+      "ItemName": "Senior Novice's Robe"
+    },
+    {
+      "ItemId": "87201",
+      "ItemName": "Shimmering Cloak"
+    },
+    {
+      "ItemId": "87202",
+      "ItemName": "Chillcloak"
+    },
+    {
+      "ItemId": "87206",
+      "ItemName": "Stormcaller's Robe"
+    },
+    {
+      "ItemId": "87219",
+      "ItemName": "Vrixx's Verdant Robes"
+    },
+    {
+      "ItemId": "87225",
+      "ItemName": "Vestment of Panic"
+    },
+    {
+      "ItemId": "87236",
+      "ItemName": "Robe of All Trades"
+    },
+    {
+      "ItemId": "87238",
+      "ItemName": "Armored Tunic"
+    },
+    {
+      "ItemId": "87240",
+      "ItemName": "Roughspun Robe"
+    },
+    {
+      "ItemId": "87250",
+      "ItemName": "Insulated Wand"
+    },
+    {
+      "ItemId": "87253",
+      "ItemName": "Fairy's Wand"
+    }
+  ]
+}

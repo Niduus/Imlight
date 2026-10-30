@@ -1,0 +1,77 @@
+{
+  "Name": "W404 KR-Boss-TC-01 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-Boss-TC-01: the treasurecard drops (17), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Scarab TC KR",
+      "ItemName": "Scarab"
+    },
+    {
+      "ItemId": "Scarab Death TC KR",
+      "ItemName": "Death Scarab"
+    },
+    {
+      "ItemId": "Crystal Spider TC KR",
+      "ItemName": "Crystal Spider"
+    },
+    {
+      "ItemId": "Giant Spider TC KR",
+      "ItemName": "Giant Spider"
+    },
+    {
+      "ItemId": "Scarab Life TC KR",
+      "ItemName": "Life Scarab"
+    },
+    {
+      "ItemId": "O'Leary Charlatan TC KR",
+      "ItemName": "O'Leary Charlatan"
+    },
+    {
+      "ItemId": "Doom and Gloom TC KR",
+      "ItemName": "Doom and Gloom"
+    },
+    {
+      "ItemId": "Frost Beetle Fire TC KR",
+      "ItemName": "Fire Beetle"
+    },
+    {
+      "ItemId": "Rat Illusionist TC",
+      "ItemName": "Rat Illusionist"
+    },
+    {
+      "ItemId": "Scorpion TC KR",
+      "ItemName": "Scorpion"
+    },
+    {
+      "ItemId": "Spider Black Widow TC KR",
+      "ItemName": "Black Widow"
+    },
+    {
+      "ItemId": "Frost Beetle TC KR",
+      "ItemName": "Frost Beetle"
+    },
+    {
+      "ItemId": "Choke TC KR",
+      "ItemName": "Choke"
+    },
+    {
+      "ItemId": "Sanctuary TC KR",
+      "ItemName": "Sanctuary"
+    },
+    {
+      "ItemId": "Pierce TC KR",
+      "ItemName": "Pierce"
+    },
+    {
+      "ItemId": "Disarm TC KR",
+      "ItemName": "Disarm"
+    },
+    {
+      "ItemId": "Mass Infection TC KR",
+      "ItemName": "Mass Infection"
+    }
+  ]
+}

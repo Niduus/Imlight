@@ -1,0 +1,9 @@
+{
+  "Name": "W404 PL-Boss-Zubkov",
+  "Description": "Gold of the game's table PL-Boss-Zubkov, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 80,
+  "MaxGold": 160,
+  "EachItem": false,
+  "Items": []
+}

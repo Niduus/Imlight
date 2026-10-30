@@ -1,0 +1,61 @@
+{
+  "Name": "W404 KT-KrokPharaoh-StormPony-KTBoss-L23 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokPharaoh-StormPony-KTBoss-L23: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4945",
+      "ItemName": "Athame of Mortality"
+    },
+    {
+      "ItemId": "4970",
+      "ItemName": "Pharaohs Deck"
+    },
+    {
+      "ItemId": "5007",
+      "ItemName": "Partisan's Ring"
+    },
+    {
+      "ItemId": "5008",
+      "ItemName": "Prince Karanahn's Loop"
+    },
+    {
+      "ItemId": "5024",
+      "ItemName": "Advocate's Ring"
+    },
+    {
+      "ItemId": "5031",
+      "ItemName": "Loop of Tall Tales"
+    },
+    {
+      "ItemId": "38764",
+      "ItemName": "Durable Robe"
+    },
+    {
+      "ItemId": "77682",
+      "ItemName": "Sweltering Helm"
+    },
+    {
+      "ItemId": "77723",
+      "ItemName": "Mkhai's Cap"
+    },
+    {
+      "ItemId": "87281",
+      "ItemName": "Conjurer's Cloak"
+    },
+    {
+      "ItemId": "87322",
+      "ItemName": "Threadbare Robe"
+    },
+    {
+      "ItemId": "87335",
+      "ItemName": "Karanahn's Robe"
+    },
+    {
+      "ItemId": "87340",
+      "ItemName": "Prince's Dissolving Wand"
+    }
+  ]
+}

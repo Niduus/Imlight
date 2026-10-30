@@ -1,0 +1,89 @@
+{
+  "Name": "W404 ME_MD_MacDeath_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME_MD_MacDeath_01: the gear drops (20), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "468379",
+      "ItemName": "Dragonrider's Vigilant Helm"
+    },
+    {
+      "ItemId": "468386",
+      "ItemName": "Dragonrider's Vigilant Robe"
+    },
+    {
+      "ItemId": "468393",
+      "ItemName": "Dragonrider's Vigilant Boots"
+    },
+    {
+      "ItemId": "468400",
+      "ItemName": "Dragonrider's Utility Helm"
+    },
+    {
+      "ItemId": "468407",
+      "ItemName": "Dragonrider's Utility Robe"
+    },
+    {
+      "ItemId": "468414",
+      "ItemName": "Dragonrider's Utility Boots"
+    },
+    {
+      "ItemId": "468421",
+      "ItemName": "Dragonrider's Assailing Helm"
+    },
+    {
+      "ItemId": "468428",
+      "ItemName": "Dragonrider's Assailing Robe"
+    },
+    {
+      "ItemId": "468435",
+      "ItemName": "Dragonrider's Assailing Shoes"
+    },
+    {
+      "ItemId": "468442",
+      "ItemName": "Dragonrider's Death Blade"
+    },
+    {
+      "ItemId": "1257883",
+      "ItemName": "Dragonrider's Balance Blade"
+    },
+    {
+      "ItemId": "1257936",
+      "ItemName": "Dragonrider's Vigilant Helm"
+    },
+    {
+      "ItemId": "1257937",
+      "ItemName": "Dragonrider's Vigilant Boots"
+    },
+    {
+      "ItemId": "1257938",
+      "ItemName": "Dragonrider's Vigilant Robe"
+    },
+    {
+      "ItemId": "1257939",
+      "ItemName": "Dragonrider's Utility Helm"
+    },
+    {
+      "ItemId": "1257940",
+      "ItemName": "Dragonrider's Utility Boots"
+    },
+    {
+      "ItemId": "1257941",
+      "ItemName": "Dragonrider's Utility Robe"
+    },
+    {
+      "ItemId": "1257942",
+      "ItemName": "Dragonrider's Assailing Helm"
+    },
+    {
+      "ItemId": "1257943",
+      "ItemName": "Dragonrider's Assailing Shoes"
+    },
+    {
+      "ItemId": "1257944",
+      "ItemName": "Dragonrider's Assailing Robe"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "Name": "W404 AZ-Mob-TC-01 TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table AZ-Mob-TC-01: the treasurecard drops (16), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Fire Dragon TC",
+      "ItemName": "Fire Dragon"
+    },
+    {
+      "ItemId": "Frost Giant TC",
+      "ItemName": "Frost Giant"
+    },
+    {
+      "ItemId": "Orthrus TC",
+      "ItemName": "Orthrus"
+    },
+    {
+      "ItemId": "Power Nova TC",
+      "ItemName": "Power Nova"
+    },
+    {
+      "ItemId": "Rebirth TC",
+      "ItemName": "Rebirth"
+    },
+    {
+      "ItemId": "Scarecrow TC",
+      "ItemName": "Scarecrow"
+    },
+    {
+      "ItemId": "Storm Lord TC",
+      "ItemName": "Storm Lord"
+    },
+    {
+      "ItemId": "Amplify TC",
+      "ItemName": "Amplify"
+    },
+    {
+      "ItemId": "Berserk TC",
+      "ItemName": "Berserk"
+    },
+    {
+      "ItemId": "Empowerment TC",
+      "ItemName": "Empowerment"
+    },
+    {
+      "ItemId": "Fortify TC",
+      "ItemName": "Fortify"
+    },
+    {
+      "ItemId": "Infallible TC",
+      "ItemName": "Infallible"
+    },
+    {
+      "ItemId": "Mend TC",
+      "ItemName": "Mend"
+    },
+    {
+      "ItemId": "Vengeance TC",
+      "ItemName": "Vengeance"
+    },
+    {
+      "ItemId": "Gargantuan TC",
+      "ItemName": "Gargantuan"
+    },
+    {
+      "ItemId": "Unstoppable TC",
+      "ItemName": "Unstoppable"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "Name": "W404 KR-BossEpic-Lorcan Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossEpic-Lorcan: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203157",
+      "ItemName": "Gorge Digger's Sturdy Helm"
+    },
+    {
+      "ItemId": "1203187",
+      "ItemName": "FateSailor's Signet"
+    },
+    {
+      "ItemId": "1203233",
+      "ItemName": "Mouse Vestment of Mourning"
+    },
+    {
+      "ItemId": "1203234",
+      "ItemName": "Digger's Mail of Symmetry"
+    },
+    {
+      "ItemId": "1203238",
+      "ItemName": "Fifth Column's Protection"
+    },
+    {
+      "ItemId": "1203275",
+      "ItemName": "Boots of the BurrowBreaker"
+    },
+    {
+      "ItemId": "1203351",
+      "ItemName": "Trader's Desert Fire Choker"
+    },
+    {
+      "ItemId": "1203391",
+      "ItemName": "Rackum's Blade of Deceit"
+    },
+    {
+      "ItemId": "1203652",
+      "ItemName": "Deck of Winter Shadows"
+    },
+    {
+      "ItemId": "1203656",
+      "ItemName": "Deck of Sinister Shadows"
+    },
+    {
+      "ItemId": "1203696",
+      "ItemName": "Crystal Icespike"
+    },
+    {
+      "ItemId": "1358863",
+      "ItemName": "Deck of Winter Shadows"
+    },
+    {
+      "ItemId": "1358867",
+      "ItemName": "Deck of Sinister Shadows"
+    },
+    {
+      "ItemId": "1358877",
+      "ItemName": "Deck of Winter Shadows"
+    },
+    {
+      "ItemId": "1358881",
+      "ItemName": "Deck of Sinister Shadows"
+    }
+  ]
+}

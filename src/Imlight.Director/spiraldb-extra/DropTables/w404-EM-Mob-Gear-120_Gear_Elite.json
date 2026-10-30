@@ -1,0 +1,265 @@
+{
+  "Name": "W404 EM-Mob-Gear-120 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table EM-Mob-Gear-120: the gear drops (64), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1430442",
+      "ItemName": "Interstellar Engineer Helm"
+    },
+    {
+      "ItemId": "1430443",
+      "ItemName": "Interstellar Explorer's Helm"
+    },
+    {
+      "ItemId": "1430444",
+      "ItemName": "Interstellar Navigator Helm"
+    },
+    {
+      "ItemId": "1430445",
+      "ItemName": "Interstellar Hero's Helm"
+    },
+    {
+      "ItemId": "1430446",
+      "ItemName": "Medic's Interstellar Helm"
+    },
+    {
+      "ItemId": "1430447",
+      "ItemName": "Interstellar Warrior Helm"
+    },
+    {
+      "ItemId": "1430448",
+      "ItemName": "Interstellar Delegate's Helm"
+    },
+    {
+      "ItemId": "1430449",
+      "ItemName": "Interstellar Officer's Helm"
+    },
+    {
+      "ItemId": "1430450",
+      "ItemName": "Interstellar Engineer Suit"
+    },
+    {
+      "ItemId": "1430451",
+      "ItemName": "Interstellar Explorer's Uniform"
+    },
+    {
+      "ItemId": "1430452",
+      "ItemName": "Interstellar Navigator Suit"
+    },
+    {
+      "ItemId": "1430453",
+      "ItemName": "Interstellar Hero's Uniform"
+    },
+    {
+      "ItemId": "1430454",
+      "ItemName": "Medic's Interstellar Uniform"
+    },
+    {
+      "ItemId": "1430455",
+      "ItemName": "Interstellar Warrior Uniform"
+    },
+    {
+      "ItemId": "1430456",
+      "ItemName": "Interstellar Delegate's Suit"
+    },
+    {
+      "ItemId": "1430457",
+      "ItemName": "Interstellar Officer's Uniform"
+    },
+    {
+      "ItemId": "1430458",
+      "ItemName": "Interstellar Engineer Trekkers"
+    },
+    {
+      "ItemId": "1430459",
+      "ItemName": "Interstellar Explorer's Trekkers"
+    },
+    {
+      "ItemId": "1430460",
+      "ItemName": "Interstellar Navigator's Boots"
+    },
+    {
+      "ItemId": "1430461",
+      "ItemName": "Interstellar Hero's Trekkers"
+    },
+    {
+      "ItemId": "1430462",
+      "ItemName": "Medic's Interstellar Trekkers"
+    },
+    {
+      "ItemId": "1430463",
+      "ItemName": "Interstellar Warrior Trekkers"
+    },
+    {
+      "ItemId": "1430464",
+      "ItemName": "Interstellar Delegate Trekkers"
+    },
+    {
+      "ItemId": "1430465",
+      "ItemName": "Interstellar Officer's Boots"
+    },
+    {
+      "ItemId": "1430488",
+      "ItemName": "Interstellar Engineer's Knife"
+    },
+    {
+      "ItemId": "1430489",
+      "ItemName": "Interstellar Explorer's Knife"
+    },
+    {
+      "ItemId": "1430490",
+      "ItemName": "Interstellar Navigator's Knife"
+    },
+    {
+      "ItemId": "1430491",
+      "ItemName": "Interstellar Hero's Knife"
+    },
+    {
+      "ItemId": "1430492",
+      "ItemName": "Interstellar Medic's Scalpel"
+    },
+    {
+      "ItemId": "1430493",
+      "ItemName": "Interstellar Warrior's Knife"
+    },
+    {
+      "ItemId": "1430494",
+      "ItemName": "Interstellar Delegate's Knife"
+    },
+    {
+      "ItemId": "1430495",
+      "ItemName": "Interstellar Officer's Knife"
+    },
+    {
+      "ItemId": "1430496",
+      "ItemName": "Interstellar Engineer's Charm"
+    },
+    {
+      "ItemId": "1430497",
+      "ItemName": "Interstellar Explorer's Charm"
+    },
+    {
+      "ItemId": "1430498",
+      "ItemName": "Interstellar Navigator's Charm"
+    },
+    {
+      "ItemId": "1430499",
+      "ItemName": "Interstellar Hero's Charm"
+    },
+    {
+      "ItemId": "1430500",
+      "ItemName": "Interstellar Medic's Charm"
+    },
+    {
+      "ItemId": "1430501",
+      "ItemName": "Interstellar Warrior's Charm"
+    },
+    {
+      "ItemId": "1430502",
+      "ItemName": "Interstellar Delegate's Charm"
+    },
+    {
+      "ItemId": "1430503",
+      "ItemName": "Interstellar Officer's Charm"
+    },
+    {
+      "ItemId": "1430504",
+      "ItemName": "Interstellar Engineer's Band"
+    },
+    {
+      "ItemId": "1430505",
+      "ItemName": "Interstellar Explorer's Band"
+    },
+    {
+      "ItemId": "1430506",
+      "ItemName": "Interstellar Navigator's Band"
+    },
+    {
+      "ItemId": "1430507",
+      "ItemName": "Interstellar Hero's Band"
+    },
+    {
+      "ItemId": "1430508",
+      "ItemName": "Interstellar Medic's Band"
+    },
+    {
+      "ItemId": "1430509",
+      "ItemName": "Interstellar Warrior's Band"
+    },
+    {
+      "ItemId": "1430510",
+      "ItemName": "Interstellar Delegate's Band"
+    },
+    {
+      "ItemId": "1430511",
+      "ItemName": "Interstellar Officer's Band"
+    },
+    {
+      "ItemId": "1430512",
+      "ItemName": "Interstellar Engineer's Deck"
+    },
+    {
+      "ItemId": "1430513",
+      "ItemName": "Interstellar Explorer's Deck"
+    },
+    {
+      "ItemId": "1430514",
+      "ItemName": "Interstellar Navigator's Deck"
+    },
+    {
+      "ItemId": "1430515",
+      "ItemName": "Interstellar Hero's Deck"
+    },
+    {
+      "ItemId": "1430516",
+      "ItemName": "Interstellar Medic's Deck"
+    },
+    {
+      "ItemId": "1430517",
+      "ItemName": "Interstellar Warrior's Deck"
+    },
+    {
+      "ItemId": "1430518",
+      "ItemName": "Interstellar Delegate's Deck"
+    },
+    {
+      "ItemId": "1430519",
+      "ItemName": "Interstellar Officer's Deck"
+    },
+    {
+      "ItemId": "1430588",
+      "ItemName": "Engineer's Hexacorder"
+    },
+    {
+      "ItemId": "1430589",
+      "ItemName": "Explorer's Hexacorder"
+    },
+    {
+      "ItemId": "1430590",
+      "ItemName": "Navigator's Hexacorder"
+    },
+    {
+      "ItemId": "1430591",
+      "ItemName": "Hero's Hexacorder"
+    },
+    {
+      "ItemId": "1430592",
+      "ItemName": "Medic's Hexacorder"
+    },
+    {
+      "ItemId": "1430593",
+      "ItemName": "Warrior's Hexacorder"
+    },
+    {
+      "ItemId": "1430594",
+      "ItemName": "Delegate's Hexacorder"
+    },
+    {
+      "ItemId": "1430595",
+      "ItemName": "Officer's Hexacorder"
+    }
+  ]
+}

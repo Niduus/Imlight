@@ -1,0 +1,101 @@
+{
+  "Name": "W404 AZ-Boss-TC-03 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-Boss-TC-03: the treasurecard drops (23), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Basilisk TC",
+      "ItemName": "Basilisk"
+    },
+    {
+      "ItemId": "Chimera TC",
+      "ItemName": "Chimera"
+    },
+    {
+      "ItemId": "Gnomes TC",
+      "ItemName": "Gnomes!"
+    },
+    {
+      "ItemId": "Katzenstein's Monster TC",
+      "ItemName": "Dr. Von's Monster"
+    },
+    {
+      "ItemId": "Rain of Fire TC",
+      "ItemName": "Rain of Fire"
+    },
+    {
+      "ItemId": "Sirens TC",
+      "ItemName": "Sirens"
+    },
+    {
+      "ItemId": "Woolly Mammoth TC",
+      "ItemName": "Woolly Mammoth"
+    },
+    {
+      "ItemId": "Colossal TC",
+      "ItemName": "Colossal"
+    },
+    {
+      "ItemId": "Extraordinary TC",
+      "ItemName": "Extraordinary"
+    },
+    {
+      "ItemId": "Potent Trap TC",
+      "ItemName": "Potent Trap"
+    },
+    {
+      "ItemId": "Primordial TC",
+      "ItemName": "Primordial"
+    },
+    {
+      "ItemId": "Sharpened Blade TC",
+      "ItemName": "Sharpened Blade"
+    },
+    {
+      "ItemId": "Polymorph - Thunderhorn TC",
+      "ItemName": "Polymorph Icehorn"
+    },
+    {
+      "ItemId": "Polymorph - Pteranadon TC",
+      "ItemName": "Polymorph Ptera"
+    },
+    {
+      "ItemId": "Polymorph - Jaguar TC",
+      "ItemName": "Polymorph Jaguar"
+    },
+    {
+      "ItemId": "Galvanic Field TC",
+      "ItemName": "Galvanic Field"
+    },
+    {
+      "ItemId": "Furnace TC",
+      "ItemName": "Furnace"
+    },
+    {
+      "ItemId": "Sleet Storm TC",
+      "ItemName": "Sleet Storm"
+    },
+    {
+      "ItemId": "Cycle of Life TC",
+      "ItemName": "Cycle of Life"
+    },
+    {
+      "ItemId": "Virulence TC",
+      "ItemName": "Virulence"
+    },
+    {
+      "ItemId": "Reliquary TC",
+      "ItemName": "Reliquary"
+    },
+    {
+      "ItemId": "Chastisement TC",
+      "ItemName": "Chastisement"
+    },
+    {
+      "ItemId": "Punishment TC",
+      "ItemName": "Punishment"
+    }
+  ]
+}

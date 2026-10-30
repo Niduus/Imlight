@@ -1,0 +1,105 @@
+{
+  "Name": "W404 SKB_AQ_Medusa_A_30 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_AQ_Medusa_A_30: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1384105",
+      "ItemName": "Aquilan Charioteer Kalkris"
+    },
+    {
+      "ItemId": "1384106",
+      "ItemName": "Aquilan Charioteer Kalkris"
+    },
+    {
+      "ItemId": "1384117",
+      "ItemName": "Aquilan Charioteer Hamata"
+    },
+    {
+      "ItemId": "1384118",
+      "ItemName": "Aquilan Charioteer Hamata"
+    },
+    {
+      "ItemId": "1384129",
+      "ItemName": "Aquilan Charioteer Greaves"
+    },
+    {
+      "ItemId": "1384130",
+      "ItemName": "Aquilan Charioteer Greaves"
+    },
+    {
+      "ItemId": "1384141",
+      "ItemName": "Aquilan Secutor Kalkris"
+    },
+    {
+      "ItemId": "1384142",
+      "ItemName": "Aquilan Secutor Kalkris"
+    },
+    {
+      "ItemId": "1384153",
+      "ItemName": "Aquilan Secutor Hamata"
+    },
+    {
+      "ItemId": "1384154",
+      "ItemName": "Aquilan Secutor Hamata"
+    },
+    {
+      "ItemId": "1384165",
+      "ItemName": "Aquilan Secutor Greaves"
+    },
+    {
+      "ItemId": "1384166",
+      "ItemName": "Aquilan Secutor Greaves"
+    },
+    {
+      "ItemId": "1384177",
+      "ItemName": "Aquilan Velite Kalkris"
+    },
+    {
+      "ItemId": "1384178",
+      "ItemName": "Aquilan Velite Kalkris"
+    },
+    {
+      "ItemId": "1384189",
+      "ItemName": "Aquilan Velite Hamata"
+    },
+    {
+      "ItemId": "1384190",
+      "ItemName": "Aquilan Velite Hamata"
+    },
+    {
+      "ItemId": "1384201",
+      "ItemName": "Aquilan Velite Greaves"
+    },
+    {
+      "ItemId": "1384202",
+      "ItemName": "Aquilan Velite Greaves"
+    },
+    {
+      "ItemId": "1384213",
+      "ItemName": "Aquilan Charioteer Lance"
+    },
+    {
+      "ItemId": "1384214",
+      "ItemName": "Aquilan Charioteer Lance"
+    },
+    {
+      "ItemId": "1384225",
+      "ItemName": "Aquilan Secutor Lance"
+    },
+    {
+      "ItemId": "1384226",
+      "ItemName": "Aquilan Secutor Lance"
+    },
+    {
+      "ItemId": "1384237",
+      "ItemName": "Aquilan Velite Lance"
+    },
+    {
+      "ItemId": "1384238",
+      "ItemName": "Aquilan Velite Lance"
+    }
+  ]
+}

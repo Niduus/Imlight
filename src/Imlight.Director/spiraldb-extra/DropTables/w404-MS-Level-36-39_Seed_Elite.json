@@ -1,0 +1,29 @@
+{
+  "Name": "W404 MS-Level-36-39 Seed (Elite)",
+  "Description": "Wizard404's drop list of the game's table MS-Level-36-39: the seed drops (5), one picked when it rolls. How often: DropOdds.json Elite/Seed.",
+  "Odds": "Elite/Seed",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346003",
+      "ItemName": "Fiery Boom Shroom"
+    },
+    {
+      "ItemId": "346010",
+      "ItemName": "Maelstrom Snap Dragon"
+    },
+    {
+      "ItemId": "346017",
+      "ItemName": "Deadly Ninja Fig"
+    },
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion"
+    },
+    {
+      "ItemId": "356092",
+      "ItemName": "White Laugh-o-dil"
+    }
+  ]
+}

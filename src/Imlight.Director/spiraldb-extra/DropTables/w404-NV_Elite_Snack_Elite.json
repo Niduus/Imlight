@@ -1,0 +1,33 @@
+{
+  "Name": "W404 NV_Elite Snack (Elite)",
+  "Description": "Wizard404's drop list of the game's table NV_Elite: the snack drops (6), one picked when it rolls. How often: DropOdds.json Elite/Snack.",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "789456",
+      "ItemName": "Big Papa Paya"
+    },
+    {
+      "ItemId": "220209",
+      "ItemName": "Diamond Carrot"
+    },
+    {
+      "ItemId": "220310",
+      "ItemName": "King Banana"
+    },
+    {
+      "ItemId": "733181",
+      "ItemName": "Cheese Cake"
+    },
+    {
+      "ItemId": "473521",
+      "ItemName": "Rotten Candy"
+    },
+    {
+      "ItemId": "220273",
+      "ItemName": "Tiki Banana"
+    }
+  ]
+}

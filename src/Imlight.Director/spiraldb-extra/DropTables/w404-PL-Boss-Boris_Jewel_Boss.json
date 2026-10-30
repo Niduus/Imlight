@@ -1,0 +1,221 @@
+{
+  "Name": "W404 PL-Boss-Boris Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-Boss-Boris: the jewel drops (53), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1352600",
+      "ItemName": "Lustrous Damage Ruby +24"
+    },
+    {
+      "ItemId": "1352624",
+      "ItemName": "Lustrous Damage Sapphire +24"
+    },
+    {
+      "ItemId": "1352648",
+      "ItemName": "Lustrous Damage Amethyst +24"
+    },
+    {
+      "ItemId": "1352672",
+      "ItemName": "Lustrous Damage Peridot +24"
+    },
+    {
+      "ItemId": "1352696",
+      "ItemName": "Lustrous Damage Jade +24"
+    },
+    {
+      "ItemId": "1352720",
+      "ItemName": "Lustrous Damage Onyx +24"
+    },
+    {
+      "ItemId": "1352744",
+      "ItemName": "Lustrous Damage Citrine +24"
+    },
+    {
+      "ItemId": "1352748",
+      "ItemName": "Lustrous Damage Hematite +48"
+    },
+    {
+      "ItemId": "1352760",
+      "ItemName": "Lustrous Damage Opal +12"
+    },
+    {
+      "ItemId": "1352835",
+      "ItemName": "Lustrous Critical Ruby +14"
+    },
+    {
+      "ItemId": "1352848",
+      "ItemName": "Lustrous Critical Sapphire +14"
+    },
+    {
+      "ItemId": "1352861",
+      "ItemName": "Lustrous Critical Amethyst +14"
+    },
+    {
+      "ItemId": "1352874",
+      "ItemName": "Lustrous Critical Peridot +14"
+    },
+    {
+      "ItemId": "1352887",
+      "ItemName": "Lustrous Critical Jade +14"
+    },
+    {
+      "ItemId": "1352900",
+      "ItemName": "Lustrous Critical Onyx +14"
+    },
+    {
+      "ItemId": "1352913",
+      "ItemName": "Lustrous Critical Citrine +14"
+    },
+    {
+      "ItemId": "1352926",
+      "ItemName": "Lustrous Critical Hematite +14"
+    },
+    {
+      "ItemId": "1352957",
+      "ItemName": "Lustrous Blocking Ruby +14"
+    },
+    {
+      "ItemId": "1352970",
+      "ItemName": "Lustrous Blocking Sapphire +14"
+    },
+    {
+      "ItemId": "1352983",
+      "ItemName": "Lustrous Blocking Amethyst +14"
+    },
+    {
+      "ItemId": "1352996",
+      "ItemName": "Lustrous Blocking Peridot +14"
+    },
+    {
+      "ItemId": "1357009",
+      "ItemName": "Lustrous Blocking Jade +14"
+    },
+    {
+      "ItemId": "1357022",
+      "ItemName": "Lustrous Blocking Onyx +14"
+    },
+    {
+      "ItemId": "1357035",
+      "ItemName": "Lustrous Blocking Citrine +14"
+    },
+    {
+      "ItemId": "1357048",
+      "ItemName": "Lustrous Blocking Hematite +14"
+    },
+    {
+      "ItemId": "1357064",
+      "ItemName": "Lustrous Accurate Ruby +11%"
+    },
+    {
+      "ItemId": "1357073",
+      "ItemName": "Lustrous Accurate Sapphire +11%"
+    },
+    {
+      "ItemId": "1357082",
+      "ItemName": "Lustrous Accurate Amethyst +11%"
+    },
+    {
+      "ItemId": "1357091",
+      "ItemName": "Lustrous Accurate Peridot +11%"
+    },
+    {
+      "ItemId": "1357100",
+      "ItemName": "Lustrous Accurate Jade +11%"
+    },
+    {
+      "ItemId": "1357109",
+      "ItemName": "Lustrous Accurate Onyx +11%"
+    },
+    {
+      "ItemId": "1357118",
+      "ItemName": "Lustrous Accurate Citrine +11%"
+    },
+    {
+      "ItemId": "1357134",
+      "ItemName": "Lustrous PIP Opal +10%"
+    },
+    {
+      "ItemId": "1357283",
+      "ItemName": "Lustrous Defense Ruby +47"
+    },
+    {
+      "ItemId": "1357284",
+      "ItemName": "Lustrous Defense Ruby +48"
+    },
+    {
+      "ItemId": "1357328",
+      "ItemName": "Lustrous Defense Sapphire +47"
+    },
+    {
+      "ItemId": "1357329",
+      "ItemName": "Lustrous Defense Sapphire +48"
+    },
+    {
+      "ItemId": "1357373",
+      "ItemName": "Lustrous Defense Amethyst +47"
+    },
+    {
+      "ItemId": "1357374",
+      "ItemName": "Lustrous Defense Amethyst +48"
+    },
+    {
+      "ItemId": "1357418",
+      "ItemName": "Lustrous Defense Peridot +47"
+    },
+    {
+      "ItemId": "1357419",
+      "ItemName": "Lustrous Defense Peridot +48"
+    },
+    {
+      "ItemId": "1357463",
+      "ItemName": "Lustrous Defense Jade +47"
+    },
+    {
+      "ItemId": "1357464",
+      "ItemName": "Lustrous Defense Jade +48"
+    },
+    {
+      "ItemId": "1357508",
+      "ItemName": "Lustrous Defense Onyx +47"
+    },
+    {
+      "ItemId": "1357509",
+      "ItemName": "Lustrous Defense Onyx +48"
+    },
+    {
+      "ItemId": "1357553",
+      "ItemName": "Lustrous Defense Citrine +47"
+    },
+    {
+      "ItemId": "1357554",
+      "ItemName": "Lustrous Defense Citrine +48"
+    },
+    {
+      "ItemId": "1357598",
+      "ItemName": "Lustrous Defense Hematite +47"
+    },
+    {
+      "ItemId": "1357599",
+      "ItemName": "Lustrous Defense Hematite +48"
+    },
+    {
+      "ItemId": "1358566",
+      "ItemName": "Lustrous Accurate Hematite +11%"
+    },
+    {
+      "ItemId": "1360039",
+      "ItemName": "Lustrous Critical Opal +7"
+    },
+    {
+      "ItemId": "1369584",
+      "ItemName": "Lustrous PIP Hematite +1"
+    },
+    {
+      "ItemId": "1405759",
+      "ItemName": "Primordial Opal"
+    }
+  ]
+}

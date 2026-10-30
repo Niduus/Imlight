@@ -1,0 +1,45 @@
+{
+  "Name": "W404 PL-SKR-OmenStribog Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-SKR-OmenStribog: the seed drops (9), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346052",
+      "ItemName": "White Desparagus"
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap"
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas"
+    },
+    {
+      "ItemId": "473187",
+      "ItemName": "White Tiger Lily"
+    },
+    {
+      "ItemId": "589145",
+      "ItemName": "Angora Bunny Ears"
+    },
+    {
+      "ItemId": "713140",
+      "ItemName": "Snow Apples"
+    },
+    {
+      "ItemId": "713154",
+      "ItemName": "Green Snow Apples"
+    },
+    {
+      "ItemId": "713161",
+      "ItemName": "Purple Snow Apples"
+    },
+    {
+      "ItemId": "1248066",
+      "ItemName": "Sugar Khrystal"
+    }
+  ]
+}

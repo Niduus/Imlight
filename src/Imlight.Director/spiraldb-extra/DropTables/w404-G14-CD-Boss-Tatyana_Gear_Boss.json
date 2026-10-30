@@ -1,0 +1,93 @@
+{
+  "Name": "W404 G14-CD-Boss-Tatyana Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-CD-Boss-Tatyana: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330968",
+      "ItemName": "Carpathesian Helm of Fury"
+    },
+    {
+      "ItemId": "1330969",
+      "ItemName": "Mantle of the Bitter Ghost"
+    },
+    {
+      "ItemId": "1330970",
+      "ItemName": "Battle Mage's Helm of Furor"
+    },
+    {
+      "ItemId": "1330971",
+      "ItemName": "Helmet of Kan Davasi Law"
+    },
+    {
+      "ItemId": "1330972",
+      "ItemName": "Spirit of Darkmoor's Helm"
+    },
+    {
+      "ItemId": "1330973",
+      "ItemName": "Death Mask of the Usurped"
+    },
+    {
+      "ItemId": "1330974",
+      "ItemName": "Helm of Castle Darkmoor"
+    },
+    {
+      "ItemId": "1338213",
+      "ItemName": "Dragon's Tooth of Darkmoor"
+    },
+    {
+      "ItemId": "1338214",
+      "ItemName": "Kris of Cold Fury"
+    },
+    {
+      "ItemId": "1338215",
+      "ItemName": "Thunderclap Spike"
+    },
+    {
+      "ItemId": "1338216",
+      "ItemName": "Blade of Kan Davasi"
+    },
+    {
+      "ItemId": "1338217",
+      "ItemName": "Dirk of Unnatural Life"
+    },
+    {
+      "ItemId": "1338218",
+      "ItemName": "Sharp Edge of the Void"
+    },
+    {
+      "ItemId": "1338219",
+      "ItemName": "Herald of Darkmoor's Knife"
+    },
+    {
+      "ItemId": "1338549",
+      "ItemName": "Mace of the Dark Flame"
+    },
+    {
+      "ItemId": "1338550",
+      "ItemName": "Virge of the Bitter Ghost"
+    },
+    {
+      "ItemId": "1338551",
+      "ItemName": "Bludgeon of the Dark Skies"
+    },
+    {
+      "ItemId": "1338552",
+      "ItemName": "Morning Star of Kan Davasi"
+    },
+    {
+      "ItemId": "1338553",
+      "ItemName": "Mace of the Undying"
+    },
+    {
+      "ItemId": "1338554",
+      "ItemName": "Morning Star of Misery"
+    },
+    {
+      "ItemId": "1338555",
+      "ItemName": "Mace of the Outer Void"
+    }
+  ]
+}

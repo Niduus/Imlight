@@ -1,0 +1,21 @@
+{
+  "Name": "W404 MB-Golem-Steel-MBBoss-L50 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Golem-Steel-MBBoss-L50: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160707",
+      "ItemName": "Steamer Trunk"
+    },
+    {
+      "ItemId": "160740",
+      "ItemName": "Tall Roof Vent"
+    },
+    {
+      "ItemId": "512127",
+      "ItemName": "Marleybone Theme 4"
+    }
+  ]
+}

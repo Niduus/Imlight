@@ -1,0 +1,225 @@
+{
+  "Name": "W404 Mob-1523277 Gear (Boss)",
+  "Description": "Wizard404's drop list of King Borr's own drops: the gear drops (54), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1475442",
+      "ItemName": "Wotan's Helm"
+    },
+    {
+      "ItemId": "1475443",
+      "ItemName": "Wotan's Helm"
+    },
+    {
+      "ItemId": "1475456",
+      "ItemName": "Wotan's Raiment"
+    },
+    {
+      "ItemId": "1475457",
+      "ItemName": "Wotan's Raiment"
+    },
+    {
+      "ItemId": "1475470",
+      "ItemName": "Wotan's Boots"
+    },
+    {
+      "ItemId": "1475471",
+      "ItemName": "Wotan's Boots"
+    },
+    {
+      "ItemId": "1475484",
+      "ItemName": "Allfather's Helm"
+    },
+    {
+      "ItemId": "1475485",
+      "ItemName": "Allfather's Helm"
+    },
+    {
+      "ItemId": "1475498",
+      "ItemName": "Allfather's Raiment"
+    },
+    {
+      "ItemId": "1475499",
+      "ItemName": "Allfather's Raiment"
+    },
+    {
+      "ItemId": "1475512",
+      "ItemName": "Allfather's Boots"
+    },
+    {
+      "ItemId": "1475513",
+      "ItemName": "Allfather's Boots"
+    },
+    {
+      "ItemId": "1475526",
+      "ItemName": "Odin's Helm"
+    },
+    {
+      "ItemId": "1475527",
+      "ItemName": "Odin's Helm"
+    },
+    {
+      "ItemId": "1475540",
+      "ItemName": "Odin's Raiment"
+    },
+    {
+      "ItemId": "1475541",
+      "ItemName": "Odin's Raiment"
+    },
+    {
+      "ItemId": "1475554",
+      "ItemName": "Odin's Boots"
+    },
+    {
+      "ItemId": "1475555",
+      "ItemName": "Odin's Boots"
+    },
+    {
+      "ItemId": "1475568",
+      "ItemName": "Wotan's Gungnir"
+    },
+    {
+      "ItemId": "1475569",
+      "ItemName": "Wotan's Gungnir"
+    },
+    {
+      "ItemId": "1475582",
+      "ItemName": "Allfather's Gungnir"
+    },
+    {
+      "ItemId": "1475583",
+      "ItemName": "Allfather's Gungnir"
+    },
+    {
+      "ItemId": "1475596",
+      "ItemName": "Odin's Gungnir"
+    },
+    {
+      "ItemId": "1475597",
+      "ItemName": "Odin's Gungnir"
+    },
+    {
+      "ItemId": "1523823",
+      "ItemName": "Pyromancer's Timeless Brim"
+    },
+    {
+      "ItemId": "1523824",
+      "ItemName": "Pyromancer's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523825",
+      "ItemName": "Pyromancer's Timeless Shoes"
+    },
+    {
+      "ItemId": "1523826",
+      "ItemName": "Thaumaturge's Timeless Brim"
+    },
+    {
+      "ItemId": "1523827",
+      "ItemName": "Thaumaturge's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523828",
+      "ItemName": "Thaumaturge's Timeless Shoes"
+    },
+    {
+      "ItemId": "1523829",
+      "ItemName": "Diviner's Timeless Brim"
+    },
+    {
+      "ItemId": "1523830",
+      "ItemName": "Diviner's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523831",
+      "ItemName": "Diviner's Timeless Shoes"
+    },
+    {
+      "ItemId": "1523832",
+      "ItemName": "Conjurer's Timeless Brim"
+    },
+    {
+      "ItemId": "1523833",
+      "ItemName": "Conjurer's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523834",
+      "ItemName": "Conjurer's Timeless Shoes"
+    },
+    {
+      "ItemId": "1523835",
+      "ItemName": "Theurge's Timeless Brim"
+    },
+    {
+      "ItemId": "1523836",
+      "ItemName": "Theurge's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523837",
+      "ItemName": "Theurge's Timeless Shoes"
+    },
+    {
+      "ItemId": "1523838",
+      "ItemName": "Necromancer's Timeless Brim"
+    },
+    {
+      "ItemId": "1523839",
+      "ItemName": "Necromancer's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523840",
+      "ItemName": "Necromancer's Timeless Shoes"
+    },
+    {
+      "ItemId": "1523841",
+      "ItemName": "Sorcerer's Timeless Brim"
+    },
+    {
+      "ItemId": "1523842",
+      "ItemName": "Sorcerer's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523843",
+      "ItemName": "Sorcerer's Timeless Shoes"
+    },
+    {
+      "ItemId": "1523844",
+      "ItemName": "Timeless Astral Brim"
+    },
+    {
+      "ItemId": "1523845",
+      "ItemName": "Timeless Astral Tunic"
+    },
+    {
+      "ItemId": "1523846",
+      "ItemName": "Timeless Astral Shoes"
+    },
+    {
+      "ItemId": "1523847",
+      "ItemName": "Timeless Arboreal Brim"
+    },
+    {
+      "ItemId": "1523848",
+      "ItemName": "Timeless Arboreal Tunic"
+    },
+    {
+      "ItemId": "1523849",
+      "ItemName": "Timeless Arboreal Shoes"
+    },
+    {
+      "ItemId": "1523850",
+      "ItemName": "Wizard's Timeless Brim"
+    },
+    {
+      "ItemId": "1523851",
+      "ItemName": "Wizard's Timeless Tunic"
+    },
+    {
+      "ItemId": "1523852",
+      "ItemName": "Wizard's Timeless Shoes"
+    }
+  ]
+}

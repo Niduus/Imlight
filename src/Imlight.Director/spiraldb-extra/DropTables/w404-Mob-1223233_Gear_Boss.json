@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Mob-1223233 Gear (Boss)",
+  "Description": "Wizard404's drop list of Cree CurdWright's own drops: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203170",
+      "ItemName": "Tyrian Gorge Stone"
+    },
+    {
+      "ItemId": "1203171",
+      "ItemName": "Royal Guard's Signet"
+    },
+    {
+      "ItemId": "1203200",
+      "ItemName": "Burrower's Rainstorm Gear"
+    },
+    {
+      "ItemId": "1203201",
+      "ItemName": "Digger Drone Tactical Garb"
+    },
+    {
+      "ItemId": "1203282",
+      "ItemName": "WhiteHart's Justice"
+    },
+    {
+      "ItemId": "1203283",
+      "ItemName": "RunningBuck's Razor"
+    },
+    {
+      "ItemId": "1203284",
+      "ItemName": "BlackFur's Blade"
+    },
+    {
+      "ItemId": "1203285",
+      "ItemName": "Long Edge of BrightEyes"
+    },
+    {
+      "ItemId": "1203325",
+      "ItemName": "Blue Razor Collar"
+    },
+    {
+      "ItemId": "1203326",
+      "ItemName": "Amulet of the Mouse Scout"
+    },
+    {
+      "ItemId": "1203327",
+      "ItemName": "Locket of the QuietOne"
+    },
+    {
+      "ItemId": "1203362",
+      "ItemName": "Royal Guard's Shortblade"
+    },
+    {
+      "ItemId": "1203363",
+      "ItemName": "Burrower Claw of Unrest"
+    },
+    {
+      "ItemId": "1203402",
+      "ItemName": "Case of Engulfing Flames"
+    },
+    {
+      "ItemId": "1203403",
+      "ItemName": "Bumbler's Sleetfall Pack"
+    },
+    {
+      "ItemId": "1203404",
+      "ItemName": "Lightning Rider's Deck"
+    }
+  ]
+}

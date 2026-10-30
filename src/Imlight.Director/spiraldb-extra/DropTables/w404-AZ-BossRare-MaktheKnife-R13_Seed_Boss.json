@@ -1,0 +1,25 @@
+{
+  "Name": "W404 AZ-BossRare-MaktheKnife-R13 Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossRare-MaktheKnife-R13: the seed drops (4), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346010",
+      "ItemName": "Maelstrom Snap Dragon"
+    },
+    {
+      "ItemId": "346031",
+      "ItemName": "Ninja Fig"
+    },
+    {
+      "ItemId": "356092",
+      "ItemName": "White Laugh-o-dil"
+    },
+    {
+      "ItemId": "356144",
+      "ItemName": "King Parsley"
+    }
+  ]
+}

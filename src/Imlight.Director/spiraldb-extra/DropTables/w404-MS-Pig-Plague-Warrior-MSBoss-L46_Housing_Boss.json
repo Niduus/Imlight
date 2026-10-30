@@ -1,0 +1,21 @@
+{
+  "Name": "W404 MS-Pig-Plague-Warrior-MSBoss-L46 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-Plague-Warrior-MSBoss-L46: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160525",
+      "ItemName": "Rectangular Wooden Table"
+    },
+    {
+      "ItemId": "160531",
+      "ItemName": "Small Stone Pagoda"
+    },
+    {
+      "ItemId": "470234",
+      "ItemName": "Vase Case"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "Name": "W404 SKB_WY_DarkBramble_A_50 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_WY_DarkBramble_A_50: the treasurecard drops (4), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Angry Snowpig TC",
+      "ItemName": "Angry Snowpig"
+    },
+    {
+      "ItemId": "Ninja Piglets TC",
+      "ItemName": "Ninja Piglets"
+    },
+    {
+      "ItemId": "Pigsie TC",
+      "ItemName": "Pigsie"
+    },
+    {
+      "ItemId": "GuildReagent01_TC",
+      "ItemName": "Azoth"
+    }
+  ]
+}

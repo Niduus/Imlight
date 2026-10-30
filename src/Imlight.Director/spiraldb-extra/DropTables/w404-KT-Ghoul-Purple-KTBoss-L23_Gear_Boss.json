@@ -1,0 +1,65 @@
+{
+  "Name": "W404 KT-Ghoul-Purple-KTBoss-L23 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-Ghoul-Purple-KTBoss-L23: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4938",
+      "ItemName": "Ancient Kris"
+    },
+    {
+      "ItemId": "5005",
+      "ItemName": "Victor's Signet"
+    },
+    {
+      "ItemId": "5013",
+      "ItemName": "The Bonekeeper's Band"
+    },
+    {
+      "ItemId": "5019",
+      "ItemName": "Ring of Mortality"
+    },
+    {
+      "ItemId": "38751",
+      "ItemName": "Pyromancer's Lambent Robe"
+    },
+    {
+      "ItemId": "38754",
+      "ItemName": "Bonekeeper's Robe"
+    },
+    {
+      "ItemId": "39429",
+      "ItemName": "Durable Boots"
+    },
+    {
+      "ItemId": "77714",
+      "ItemName": "Hat of Figments"
+    },
+    {
+      "ItemId": "77752",
+      "ItemName": "Hood of the Stronghold"
+    },
+    {
+      "ItemId": "77753",
+      "ItemName": "Bonekeeper's Cowl"
+    },
+    {
+      "ItemId": "77779",
+      "ItemName": "The Bonekeeper's Shoes"
+    },
+    {
+      "ItemId": "77799",
+      "ItemName": "Shoes of the Fortress"
+    },
+    {
+      "ItemId": "87270",
+      "ItemName": "Robe of Ingenuity"
+    },
+    {
+      "ItemId": "87337",
+      "ItemName": "The Bonekeeper's Wand"
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "Name": "W404 CE_TreasureTower_Ice_F16 TreasureCard (Normal)",
+  "Description": "Wizard404's drop list of the game's table CE_TreasureTower_Ice_F16: the treasurecard drops (36), one picked when it rolls. How often: DropOdds.json Normal/TreasureCard.",
+  "Odds": "Normal/TreasureCard",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Fire Elf TC",
+      "ItemName": "Fire Elf"
+    },
+    {
+      "ItemId": "Fire Cat TC",
+      "ItemName": "Fire Cat"
+    },
+    {
+      "ItemId": "Minor Blessing TC",
+      "ItemName": "Minor Blessing"
+    },
+    {
+      "ItemId": "Pixie TC",
+      "ItemName": "Pixie"
+    },
+    {
+      "ItemId": "Fireblade TC",
+      "ItemName": "Fireblade"
+    },
+    {
+      "ItemId": "Volcanic Shield TC",
+      "ItemName": "Volcanic Shield"
+    },
+    {
+      "ItemId": "Krokomummy TC",
+      "ItemName": "Krokomummy"
+    },
+    {
+      "ItemId": "Scald TC",
+      "ItemName": "Scald"
+    },
+    {
+      "ItemId": "Ash Bats TC",
+      "ItemName": "Ash Bats"
+    },
+    {
+      "ItemId": "Pixie Life TC",
+      "ItemName": "Fairy"
+    },
+    {
+      "ItemId": "Sprite TC",
+      "ItemName": "Sprite"
+    },
+    {
+      "ItemId": "Satyr TC",
+      "ItemName": "Satyr"
+    },
+    {
+      "ItemId": "Tri Shield TC",
+      "ItemName": "Elemental Shield"
+    },
+    {
+      "ItemId": "Fire Trap TC",
+      "ItemName": "Fire Trap"
+    },
+    {
+      "ItemId": "Triage TC",
+      "ItemName": "Triage"
+    },
+    {
+      "ItemId": "3P Fire Wyvern Steal TC",
+      "ItemName": "Fire Wyvern"
+    },
+    {
+      "ItemId": "Fire Dragon TC",
+      "ItemName": "Fire Dragon"
+    },
+    {
+      "ItemId": "Firezilla TC",
+      "ItemName": "Firezilla"
+    },
+    {
+      "ItemId": "Meteor Strike TC",
+      "ItemName": "Meteor Strike"
+    },
+    {
+      "ItemId": "Regenerate TC",
+      "ItemName": "Regenerate"
+    },
+    {
+      "ItemId": "Helping Hands TC",
+      "ItemName": "Helping Hands"
+    },
+    {
+      "ItemId": "Link TC",
+      "ItemName": "Link"
+    },
+    {
+      "ItemId": "Dryad TC",
+      "ItemName": "Dryad"
+    },
+    {
+      "ItemId": "Feint TC",
+      "ItemName": "Feint"
+    },
+    {
+      "ItemId": "Fortify TC",
+      "ItemName": "Fortify"
+    },
+    {
+      "ItemId": "Amplify TC",
+      "ItemName": "Amplify"
+    },
+    {
+      "ItemId": "Infallible TC",
+      "ItemName": "Infallible"
+    },
+    {
+      "ItemId": "Fire Serpent TC",
+      "ItemName": "Fire Serpent"
+    },
+    {
+      "ItemId": "Snow Shield TC",
+      "ItemName": "Snow Shield"
+    },
+    {
+      "ItemId": "Weakness TC",
+      "ItemName": "Weakness"
+    },
+    {
+      "ItemId": "Tower Shield TC",
+      "ItemName": "Tower Shield"
+    },
+    {
+      "ItemId": "Voodoo TC",
+      "ItemName": "Bad Juju"
+    },
+    {
+      "ItemId": "Pierce TC",
+      "ItemName": "Pierce"
+    },
+    {
+      "ItemId": "Plague TC",
+      "ItemName": "Plague"
+    },
+    {
+      "ItemId": "Steal Charm TC",
+      "ItemName": "Steal Charm"
+    },
+    {
+      "ItemId": "Steal Ward TC",
+      "ItemName": "Steal Ward"
+    }
+  ]
+}

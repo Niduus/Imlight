@@ -1,0 +1,81 @@
+{
+  "Name": "W404 Colossus-Steel-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Colossus-Steel-Boss-R8: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104598",
+      "ItemName": "Coat of Impartiality"
+    },
+    {
+      "ItemId": "104635",
+      "ItemName": "Crow's Wrap"
+    },
+    {
+      "ItemId": "104659",
+      "ItemName": "Robe of the Earth Dragon"
+    },
+    {
+      "ItemId": "104679",
+      "ItemName": "Chilling Cloak"
+    },
+    {
+      "ItemId": "104756",
+      "ItemName": "Blizzard Boots"
+    },
+    {
+      "ItemId": "104778",
+      "ItemName": "Vault Protector's Boots"
+    },
+    {
+      "ItemId": "104822",
+      "ItemName": "Shoes of Equilibrium"
+    },
+    {
+      "ItemId": "104868",
+      "ItemName": "Shoes of the Gardener"
+    },
+    {
+      "ItemId": "104873",
+      "ItemName": "Footgear of the Tempest"
+    },
+    {
+      "ItemId": "126562",
+      "ItemName": "Ring of Equilibrium"
+    },
+    {
+      "ItemId": "126636",
+      "ItemName": "Band of Brotherhood"
+    },
+    {
+      "ItemId": "126685",
+      "ItemName": "Deck of Nature's Bounty"
+    },
+    {
+      "ItemId": "146167",
+      "ItemName": "Scaled Smallsword"
+    },
+    {
+      "ItemId": "146248",
+      "ItemName": "Vault Protector's Cowl"
+    },
+    {
+      "ItemId": "146259",
+      "ItemName": "Herbalist's Hood"
+    },
+    {
+      "ItemId": "146332",
+      "ItemName": "Mantle of the Undying"
+    },
+    {
+      "ItemId": "146336",
+      "ItemName": "Gallows Hood"
+    },
+    {
+      "ItemId": "146362",
+      "ItemName": "Mantle of Fortitude"
+    }
+  ]
+}

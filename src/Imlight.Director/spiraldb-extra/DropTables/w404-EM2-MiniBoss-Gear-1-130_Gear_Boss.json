@@ -1,0 +1,73 @@
+{
+  "Name": "W404 EM2-MiniBoss-Gear-1-130 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM2-MiniBoss-Gear-1-130: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462292",
+      "ItemName": "Blazing Zanadu Dagger"
+    },
+    {
+      "ItemId": "1462293",
+      "ItemName": "Freezing Zanadu Dagger"
+    },
+    {
+      "ItemId": "1462294",
+      "ItemName": "Crackling Zanadu Dagger"
+    },
+    {
+      "ItemId": "1462295",
+      "ItemName": "Illuminated Zanadu Dagger"
+    },
+    {
+      "ItemId": "1462296",
+      "ItemName": "Verdant Zanadu Dagger"
+    },
+    {
+      "ItemId": "1462297",
+      "ItemName": "Grim Zanadu Dagger"
+    },
+    {
+      "ItemId": "1462298",
+      "ItemName": "Immutable Zanadu Dagger"
+    },
+    {
+      "ItemId": "1462299",
+      "ItemName": "Hopeful Zanadu Dagger"
+    },
+    {
+      "ItemId": "1462300",
+      "ItemName": "Blazing Zanadu Pendant"
+    },
+    {
+      "ItemId": "1462301",
+      "ItemName": "Freezing Zanadu Pendant"
+    },
+    {
+      "ItemId": "1462302",
+      "ItemName": "Crackling Zanadu Pendant"
+    },
+    {
+      "ItemId": "1462303",
+      "ItemName": "Illuminated Zanadu Pendant"
+    },
+    {
+      "ItemId": "1462304",
+      "ItemName": "Verdant Zanadu Pendant"
+    },
+    {
+      "ItemId": "1462305",
+      "ItemName": "Grim Zanadu Pendant"
+    },
+    {
+      "ItemId": "1462306",
+      "ItemName": "Immutable Zanadu Pendant"
+    },
+    {
+      "ItemId": "1462307",
+      "ItemName": "Hopeful Zanadu Pendant"
+    }
+  ]
+}

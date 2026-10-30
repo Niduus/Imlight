@@ -1,0 +1,37 @@
+{
+  "Name": "W404 KT-SKR-Ra Mount (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-SKR-Ra: the mount drops (7), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "191661",
+      "ItemName": "Starlight Pony (PERM)"
+    },
+    {
+      "ItemId": "225660",
+      "ItemName": "Moonlight Pony (PERM)"
+    },
+    {
+      "ItemId": "225661",
+      "ItemName": "Starshine Pony (PERM)"
+    },
+    {
+      "ItemId": "225662",
+      "ItemName": "Sunshine Pony (PERM)"
+    },
+    {
+      "ItemId": "470132",
+      "ItemName": "Crokagator (PERM)"
+    },
+    {
+      "ItemId": "470237",
+      "ItemName": "Camel (PERM)"
+    },
+    {
+      "ItemId": "789208",
+      "ItemName": "Mander Palanquin (PERM)"
+    }
+  ]
+}

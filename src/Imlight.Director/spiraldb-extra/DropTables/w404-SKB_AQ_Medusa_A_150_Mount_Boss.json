@@ -1,0 +1,13 @@
+{
+  "Name": "W404 SKB_AQ_Medusa_A_150 Mount (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_AQ_Medusa_A_150: the mount drops (1), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "789181",
+      "ItemName": "Aquilan Dual Chariot (PERM)"
+    }
+  ]
+}

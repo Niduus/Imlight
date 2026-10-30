@@ -1,0 +1,25 @@
+{
+  "Name": "W404 KT-Level-29-Elite Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-Level-29-Elite: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82772",
+      "ItemName": "Krok Skull Plaque"
+    },
+    {
+      "ItemId": "82853",
+      "ItemName": "Wrapped Long Bench"
+    },
+    {
+      "ItemId": "82896",
+      "ItemName": "Potted Palm"
+    },
+    {
+      "ItemId": "82907",
+      "ItemName": "Hieroglyphic Ice Tablet"
+    }
+  ]
+}

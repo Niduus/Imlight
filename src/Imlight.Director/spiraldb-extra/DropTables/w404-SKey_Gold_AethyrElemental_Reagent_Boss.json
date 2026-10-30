@@ -1,0 +1,65 @@
+{
+  "Name": "W404 SKey_Gold_AethyrElemental Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKey_Gold_AethyrElemental: the reagent drops (14), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether"
+    },
+    {
+      "ItemId": "258586",
+      "ItemName": "Sunstone"
+    },
+    {
+      "ItemId": "258588",
+      "ItemName": "Aquamarine"
+    },
+    {
+      "ItemId": "537982",
+      "ItemName": "Amber Dust"
+    },
+    {
+      "ItemId": "1206361",
+      "ItemName": "Stardust"
+    },
+    {
+      "ItemId": "1206362",
+      "ItemName": "Astral Shard"
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel"
+    },
+    {
+      "ItemId": "1350017",
+      "ItemName": "Silver"
+    },
+    {
+      "ItemId": "1350018",
+      "ItemName": "Titanium"
+    },
+    {
+      "ItemId": "1350235",
+      "ItemName": "Tungsten"
+    },
+    {
+      "ItemId": "1350236",
+      "ItemName": "Mithril"
+    },
+    {
+      "ItemId": "1350237",
+      "ItemName": "Orichalcum"
+    },
+    {
+      "ItemId": "1421822",
+      "ItemName": "Aethyr Dust"
+    },
+    {
+      "ItemId": "1421824",
+      "ItemName": "Flying Squid Ink"
+    }
+  ]
+}

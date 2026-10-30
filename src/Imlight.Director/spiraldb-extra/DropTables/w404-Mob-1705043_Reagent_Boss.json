@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Mob-1705043 Reagent (Boss)",
+  "Description": "Wizard404's drop list of Balaur's own drops: the reagent drops (16), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1702473",
+      "ItemName": "The Emperor"
+    },
+    {
+      "ItemId": "1492426",
+      "ItemName": "Grim Reader"
+    },
+    {
+      "ItemId": "1674175",
+      "ItemName": "Thoth"
+    },
+    {
+      "ItemId": "1492429",
+      "ItemName": "Barbarian's Saga"
+    },
+    {
+      "ItemId": "1580229",
+      "ItemName": "Glimpse of Infinity"
+    },
+    {
+      "ItemId": "1621733",
+      "ItemName": "Wobbegong Frenzy"
+    },
+    {
+      "ItemId": "1580233",
+      "ItemName": "Tree of Strife"
+    },
+    {
+      "ItemId": "1702505",
+      "ItemName": "Mortality"
+    },
+    {
+      "ItemId": "1702602",
+      "ItemName": "The Chariot"
+    },
+    {
+      "ItemId": "1580230",
+      "ItemName": "Starspawn"
+    },
+    {
+      "ItemId": "1492428",
+      "ItemName": "Lord of the Jungle"
+    },
+    {
+      "ItemId": "1705917",
+      "ItemName": "Outsider Relic"
+    },
+    {
+      "ItemId": "1702727",
+      "ItemName": "The Hierophant"
+    },
+    {
+      "ItemId": "1702368",
+      "ItemName": "The Tower"
+    },
+    {
+      "ItemId": "1702329",
+      "ItemName": "The World"
+    },
+    {
+      "ItemId": "1702603",
+      "ItemName": "Wheel of Fortune"
+    }
+  ]
+}

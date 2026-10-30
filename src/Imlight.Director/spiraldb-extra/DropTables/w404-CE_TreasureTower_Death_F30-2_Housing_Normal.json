@@ -1,0 +1,49 @@
+{
+  "Name": "W404 CE_TreasureTower_Death_F30-2 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table CE_TreasureTower_Death_F30-2: the housing drops (10), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160208",
+      "ItemName": "Stack of 3 Books"
+    },
+    {
+      "ItemId": "160229",
+      "ItemName": "Pie"
+    },
+    {
+      "ItemId": "160293",
+      "ItemName": "Crate of Ice Cream"
+    },
+    {
+      "ItemId": "160395",
+      "ItemName": "Professor Falmea"
+    },
+    {
+      "ItemId": "160399",
+      "ItemName": "Professor Balestrom"
+    },
+    {
+      "ItemId": "160982",
+      "ItemName": "Professor Ambrose"
+    },
+    {
+      "ItemId": "160983",
+      "ItemName": "Portrait of Lydia Greyrose"
+    },
+    {
+      "ItemId": "164419",
+      "ItemName": "Theater Masks"
+    },
+    {
+      "ItemId": "1374487",
+      "ItemName": "Fishy Bird Cage"
+    },
+    {
+      "ItemId": "1374549",
+      "ItemName": "Ravenwood Librarian's Desk"
+    }
+  ]
+}

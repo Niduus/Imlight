@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Treant-GHBoss-R6 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Treant-GHBoss-R6: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136296",
+      "ItemName": "Snow-forged Steel"
+    },
+    {
+      "ItemId": "136504",
+      "ItemName": "Stabilizing Ring"
+    },
+    {
+      "ItemId": "136642",
+      "ItemName": "Chronicler's Robe"
+    },
+    {
+      "ItemId": "136643",
+      "ItemName": "Tunic of Termination"
+    },
+    {
+      "ItemId": "171214",
+      "ItemName": "Footwraps of Discernment"
+    },
+    {
+      "ItemId": "171215",
+      "ItemName": "Boots of Consequence"
+    }
+  ]
+}

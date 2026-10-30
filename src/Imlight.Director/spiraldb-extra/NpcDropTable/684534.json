@@ -1,0 +1,32 @@
+{
+  "TemplateID": 684534,
+  "DropTableNames": [
+    "W404 AZ-Boss-Reagents Reagent (Boss)",
+    "W404 AZ-BossEpic-Skurkis",
+    "W404 AZ-BossEpic-Skurkis Gear (Boss)",
+    "W404 AZ-BossEpic-Skurkis Jewel (Boss)",
+    "W404 AZ-BossEpic-Skurkis Reagent (Boss)",
+    "W404 AZ-BossEpic-Skurkis Seed (Boss)",
+    "W404 AZ-BossEpic-Skurkis Housing (Boss)",
+    "W404 AZ-Boss-PetSnacks-03 Snack (Boss)",
+    "W404 AZ-Boss-TC-03 TreasureCard (Boss)",
+    "W404 TC-WinterMoon TreasureCard (Boss)",
+    "W404 APR-LootTable-009 Gear (Boss)",
+    "W404 APR-LootTable-009 Pet (Boss)",
+    "W404 APR-LootTable-009 Mount (Boss)",
+    "W404 DEC-LootTable-009 Gear (Boss)",
+    "W404 DEC-LootTable-009 Pet (Boss)",
+    "W404 DEC-LootTable-009 Seed (Boss)",
+    "W404 DEC-LootTable-009 Housing (Boss)",
+    "W404 FEB-LootTable-009 Gear (Boss)",
+    "W404 FEB-LootTable-009 Pet (Boss)",
+    "W404 MAR-LootTable-009 Gear (Boss)",
+    "W404 MAR-LootTable-009 Pet (Boss)",
+    "W404 NOV-LootTable-009 Gear (Boss)",
+    "W404 OCT-LootTable-009 Gear (Boss)",
+    "W404 OCT-LootTable-009 Pet (Boss)",
+    "W404 OCT-LootTable-009 Housing (Boss)",
+    "W404 AZ-AQ3-Boss-Jewels Jewel (Boss)",
+    "W404 AZ-AQ3-Boss-Jewels Reagent (Boss)"
+  ]
+}

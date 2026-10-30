@@ -1,0 +1,101 @@
+{
+  "Name": "W404 WC-SKR-Roberto Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WC-SKR-Roberto: the gear drops (23), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4742",
+      "ItemName": "Antique Deck"
+    },
+    {
+      "ItemId": "4823",
+      "ItemName": "Ruby Studded Boots"
+    },
+    {
+      "ItemId": "4824",
+      "ItemName": "Sapphire Studded Boots"
+    },
+    {
+      "ItemId": "4825",
+      "ItemName": "Amethyst Studded Boots"
+    },
+    {
+      "ItemId": "4826",
+      "ItemName": "Peridot Studded Boots"
+    },
+    {
+      "ItemId": "4827",
+      "ItemName": "Jade Studded Boots"
+    },
+    {
+      "ItemId": "4828",
+      "ItemName": "Onyx Studded Boots"
+    },
+    {
+      "ItemId": "4829",
+      "ItemName": "Citrine Studded Boots"
+    },
+    {
+      "ItemId": "77543",
+      "ItemName": "Verdant Helm"
+    },
+    {
+      "ItemId": "77544",
+      "ItemName": "Goldleaf Hood"
+    },
+    {
+      "ItemId": "77545",
+      "ItemName": "Student's Helm"
+    },
+    {
+      "ItemId": "77546",
+      "ItemName": "Valedictorian's Cowl"
+    },
+    {
+      "ItemId": "77547",
+      "ItemName": "Cap of the Teacher's Pet"
+    },
+    {
+      "ItemId": "77548",
+      "ItemName": "Gold-flecked Hood"
+    },
+    {
+      "ItemId": "77549",
+      "ItemName": "Twice Stitched Hat"
+    },
+    {
+      "ItemId": "87187",
+      "ItemName": "Ruby Studded Cloak"
+    },
+    {
+      "ItemId": "87188",
+      "ItemName": "Sapphire Studded Cloak"
+    },
+    {
+      "ItemId": "87189",
+      "ItemName": "Amethyst Studded Cloak"
+    },
+    {
+      "ItemId": "87190",
+      "ItemName": "Peridot Studded Cloak"
+    },
+    {
+      "ItemId": "87191",
+      "ItemName": "Jade Studded Cloak"
+    },
+    {
+      "ItemId": "87192",
+      "ItemName": "Onyx Studded Cloak"
+    },
+    {
+      "ItemId": "87193",
+      "ItemName": "Citrine Studded Cloak"
+    },
+    {
+      "ItemId": "1446422",
+      "ItemName": "Roberto's Rapier"
+    }
+  ]
+}

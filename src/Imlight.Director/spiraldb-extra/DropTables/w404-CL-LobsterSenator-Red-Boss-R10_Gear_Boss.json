@@ -1,0 +1,57 @@
+{
+  "Name": "W404 CL-LobsterSenator-Red-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-LobsterSenator-Red-Boss-R10: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243267",
+      "ItemName": "Razor of Rapture"
+    },
+    {
+      "ItemId": "243279",
+      "ItemName": "Dirk of the Deluge"
+    },
+    {
+      "ItemId": "243296",
+      "ItemName": "Helm of Equilibrium"
+    },
+    {
+      "ItemId": "243371",
+      "ItemName": "Frost Giant's Helm"
+    },
+    {
+      "ItemId": "243565",
+      "ItemName": "Polar Ring"
+    },
+    {
+      "ItemId": "243575",
+      "ItemName": "Nellek's Willow Ring"
+    },
+    {
+      "ItemId": "243626",
+      "ItemName": "Torched Tunic"
+    },
+    {
+      "ItemId": "243627",
+      "ItemName": "Incendiary Armor"
+    },
+    {
+      "ItemId": "243747",
+      "ItemName": "Chaos Greaves"
+    },
+    {
+      "ItemId": "243856",
+      "ItemName": "Pandemonium Stalkers"
+    },
+    {
+      "ItemId": "243885",
+      "ItemName": "Nellek's Regenerating Jewel"
+    },
+    {
+      "ItemId": "243896",
+      "ItemName": "Windstorm Choker"
+    }
+  ]
+}

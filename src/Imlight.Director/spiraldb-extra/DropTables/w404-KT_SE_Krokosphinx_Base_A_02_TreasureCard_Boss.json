@@ -1,0 +1,77 @@
+{
+  "Name": "W404 KT_SE_Krokosphinx_Base_A_02 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT_SE_Krokosphinx_Base_A_02: the treasurecard drops (17), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Basilisk TC",
+      "ItemName": "Basilisk"
+    },
+    {
+      "ItemId": "Chimera TC",
+      "ItemName": "Chimera"
+    },
+    {
+      "ItemId": "Katzenstein's Monster TC",
+      "ItemName": "Dr. Von's Monster"
+    },
+    {
+      "ItemId": "Efreet TC",
+      "ItemName": "Efreet"
+    },
+    {
+      "ItemId": "Gnomes TC",
+      "ItemName": "Gnomes!"
+    },
+    {
+      "ItemId": "Leviathan TC",
+      "ItemName": "Leviathan"
+    },
+    {
+      "ItemId": "Lord of Winter TC",
+      "ItemName": "Lord of Winter"
+    },
+    {
+      "ItemId": "Medusa TC",
+      "ItemName": "Medusa"
+    },
+    {
+      "ItemId": "Ra TC",
+      "ItemName": "Ra"
+    },
+    {
+      "ItemId": "Rain of Fire TC",
+      "ItemName": "Rain of Fire"
+    },
+    {
+      "ItemId": "Sabertooth TC",
+      "ItemName": "Sabertooth"
+    },
+    {
+      "ItemId": "Sirens TC",
+      "ItemName": "Sirens"
+    },
+    {
+      "ItemId": "Skeletal Dragon TC",
+      "ItemName": "Skeletal Dragon"
+    },
+    {
+      "ItemId": "Spinysaur TC",
+      "ItemName": "Spinysaur"
+    },
+    {
+      "ItemId": "Snow Angel TC",
+      "ItemName": "Snow Angel"
+    },
+    {
+      "ItemId": "Storm Owl TC",
+      "ItemName": "Storm Owl"
+    },
+    {
+      "ItemId": "Woolly Mammoth TC",
+      "ItemName": "Woolly Mammoth"
+    }
+  ]
+}

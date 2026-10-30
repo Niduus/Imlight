@@ -1,0 +1,65 @@
+{
+  "Name": "W404 Adv_WL_Dog_NavyCaptain_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Adv_WL_Dog_NavyCaptain_A_01: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1628243",
+      "ItemName": "Deft Dream Reaver Deck"
+    },
+    {
+      "ItemId": "1628244",
+      "ItemName": "Fell Dream Reaver Deck"
+    },
+    {
+      "ItemId": "1628245",
+      "ItemName": "Fervid Dream Reaver Deck"
+    },
+    {
+      "ItemId": "1628246",
+      "ItemName": "Cruel Dream Reaver Deck"
+    },
+    {
+      "ItemId": "1628247",
+      "ItemName": "Bold Dream Reaver Deck"
+    },
+    {
+      "ItemId": "1628248",
+      "ItemName": "Fabled Dream Reaver Deck"
+    },
+    {
+      "ItemId": "1628249",
+      "ItemName": "Fierce Dream Reaver Deck"
+    },
+    {
+      "ItemId": "1628432",
+      "ItemName": "Deft Dream Warper Deck"
+    },
+    {
+      "ItemId": "1628433",
+      "ItemName": "Fell Dream Warper Deck"
+    },
+    {
+      "ItemId": "1628434",
+      "ItemName": "Fervid Dream Warper Deck"
+    },
+    {
+      "ItemId": "1628435",
+      "ItemName": "Cruel Dream Warper Deck"
+    },
+    {
+      "ItemId": "1628436",
+      "ItemName": "Bold Dream Warper Deck"
+    },
+    {
+      "ItemId": "1628437",
+      "ItemName": "Fabled Dream Warper Deck"
+    },
+    {
+      "ItemId": "1628438",
+      "ItemName": "Fierce Dream Warper Deck"
+    }
+  ]
+}

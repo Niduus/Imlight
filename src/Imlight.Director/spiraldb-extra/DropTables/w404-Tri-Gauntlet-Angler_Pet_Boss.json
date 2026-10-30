@@ -1,0 +1,17 @@
+{
+  "Name": "W404 Tri-Gauntlet-Angler Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table Tri-Gauntlet-Angler: the pet drops (2), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "473446",
+      "ItemName": "Burning Pixie"
+    },
+    {
+      "ItemId": "473447",
+      "ItemName": "Pink Jellyfish"
+    }
+  ]
+}

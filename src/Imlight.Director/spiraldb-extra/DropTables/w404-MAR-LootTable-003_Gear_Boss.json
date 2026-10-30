@@ -1,0 +1,29 @@
+{
+  "Name": "W404 MAR-LootTable-003 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MAR-LootTable-003: the gear drops (5), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160953",
+      "ItemName": "Wand of the Golden Ward"
+    },
+    {
+      "ItemId": "160954",
+      "ItemName": "Bounty of the Rainbow"
+    },
+    {
+      "ItemId": "160955",
+      "ItemName": "Shamrock Harp"
+    },
+    {
+      "ItemId": "160956",
+      "ItemName": "Leprechaun's Bounty"
+    },
+    {
+      "ItemId": "160957",
+      "ItemName": "Harp o' the Emerald Isle"
+    }
+  ]
+}

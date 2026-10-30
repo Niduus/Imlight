@@ -1,0 +1,121 @@
+{
+  "Name": "W404 NV_Dino_AberrantUndead_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Dino_AberrantUndead_A_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1577892",
+      "ItemName": "Abstract Masterpiece Ring"
+    },
+    {
+      "ItemId": "1577893",
+      "ItemName": "Macabre Masterpiece Ring"
+    },
+    {
+      "ItemId": "1577894",
+      "ItemName": "Primordial Masterpiece Ring"
+    },
+    {
+      "ItemId": "1577895",
+      "ItemName": "Crystalline Masterpiece Ring"
+    },
+    {
+      "ItemId": "1577896",
+      "ItemName": "Inspired Masterpiece Ring"
+    },
+    {
+      "ItemId": "1577897",
+      "ItemName": "Dreamscape Masterpiece Ring"
+    },
+    {
+      "ItemId": "1577898",
+      "ItemName": "Fractal Masterpiece Ring"
+    },
+    {
+      "ItemId": "1577906",
+      "ItemName": "Abstract Masterpiece Charm"
+    },
+    {
+      "ItemId": "1577907",
+      "ItemName": "Macabre Masterpiece Charm"
+    },
+    {
+      "ItemId": "1577908",
+      "ItemName": "Primordial Masterpiece Charm"
+    },
+    {
+      "ItemId": "1577909",
+      "ItemName": "Crystalline Masterpiece Charm"
+    },
+    {
+      "ItemId": "1577910",
+      "ItemName": "Inspired Masterpiece Charm"
+    },
+    {
+      "ItemId": "1577911",
+      "ItemName": "Dreamscape Masterpiece Charm"
+    },
+    {
+      "ItemId": "1577912",
+      "ItemName": "Fractal Masterpiece Charm"
+    },
+    {
+      "ItemId": "1588140",
+      "ItemName": "Abstract Aeon Ring"
+    },
+    {
+      "ItemId": "1588141",
+      "ItemName": "Macabre Aeon Ring"
+    },
+    {
+      "ItemId": "1588142",
+      "ItemName": "Primordial Aeon Ring"
+    },
+    {
+      "ItemId": "1588143",
+      "ItemName": "Crystalline Aeon Ring"
+    },
+    {
+      "ItemId": "1588144",
+      "ItemName": "Inspired Aeon Ring"
+    },
+    {
+      "ItemId": "1588145",
+      "ItemName": "Dreamscape Aeon Ring"
+    },
+    {
+      "ItemId": "1588146",
+      "ItemName": "Fractal Aeon Ring"
+    },
+    {
+      "ItemId": "1588147",
+      "ItemName": "Abstract Aeon Charm"
+    },
+    {
+      "ItemId": "1588148",
+      "ItemName": "Macabre Aeon Charm"
+    },
+    {
+      "ItemId": "1588149",
+      "ItemName": "Primordial Aeon Charm"
+    },
+    {
+      "ItemId": "1588150",
+      "ItemName": "Crystalline Aeon Charm"
+    },
+    {
+      "ItemId": "1588151",
+      "ItemName": "Inspired Aeon Charm"
+    },
+    {
+      "ItemId": "1588152",
+      "ItemName": "Dreamscape Aeon Charm"
+    },
+    {
+      "ItemId": "1588153",
+      "ItemName": "Fractal Aeon Charm"
+    }
+  ]
+}

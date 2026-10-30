@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-MB-Wand-138 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table KM-MB-Wand-138: the gear drops (24), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1515270",
+      "ItemName": "Director Thermal Meter"
+    },
+    {
+      "ItemId": "1515271",
+      "ItemName": "Director Cryo Meter"
+    },
+    {
+      "ItemId": "1515272",
+      "ItemName": "Director Insulated Meter"
+    },
+    {
+      "ItemId": "1515273",
+      "ItemName": "Director Pressure Meter"
+    },
+    {
+      "ItemId": "1515274",
+      "ItemName": "Director Survival Meter"
+    },
+    {
+      "ItemId": "1515275",
+      "ItemName": "Director Biohazard Meter"
+    },
+    {
+      "ItemId": "1515276",
+      "ItemName": "Director Protective Meter"
+    },
+    {
+      "ItemId": "1515277",
+      "ItemName": "Director Hazmat Meter"
+    },
+    {
+      "ItemId": "1515279",
+      "ItemName": "Executive Thermal Meter"
+    },
+    {
+      "ItemId": "1515280",
+      "ItemName": "Executive Cryo Meter"
+    },
+    {
+      "ItemId": "1515281",
+      "ItemName": "Executive Insulated Meter"
+    },
+    {
+      "ItemId": "1515282",
+      "ItemName": "Executive Pressure Meter"
+    },
+    {
+      "ItemId": "1515283",
+      "ItemName": "Executive Survival Meter"
+    },
+    {
+      "ItemId": "1515284",
+      "ItemName": "Executive Biohazard Meter"
+    },
+    {
+      "ItemId": "1515285",
+      "ItemName": "Executive Protective Meter"
+    },
+    {
+      "ItemId": "1515286",
+      "ItemName": "Executive Hazmat Meter"
+    },
+    {
+      "ItemId": "1515288",
+      "ItemName": "Producer's Thermal Meter"
+    },
+    {
+      "ItemId": "1515289",
+      "ItemName": "Producer's Cryo Meter"
+    },
+    {
+      "ItemId": "1515290",
+      "ItemName": "Producer's Insulated Meter"
+    },
+    {
+      "ItemId": "1515291",
+      "ItemName": "Producer's Pressure Meter"
+    },
+    {
+      "ItemId": "1515292",
+      "ItemName": "Producer's Survival Meter"
+    },
+    {
+      "ItemId": "1515293",
+      "ItemName": "Producer's Biohazard Meter"
+    },
+    {
+      "ItemId": "1515294",
+      "ItemName": "Producer's Protective Meter"
+    },
+    {
+      "ItemId": "1515295",
+      "ItemName": "Producer's Hazmat Meter"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "Name": "W404 DM_Mob Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Mob: the snack drops (8), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1248064",
+      "ItemName": "Gingerbread House"
+    },
+    {
+      "ItemId": "220294",
+      "ItemName": "Square Root"
+    },
+    {
+      "ItemId": "220207",
+      "ItemName": "Spicy Bubblegum"
+    },
+    {
+      "ItemId": "1359625",
+      "ItemName": "Beast Wellington"
+    },
+    {
+      "ItemId": "220265",
+      "ItemName": "Spicy Drumstick"
+    },
+    {
+      "ItemId": "220209",
+      "ItemName": "Diamond Carrot"
+    },
+    {
+      "ItemId": "220225",
+      "ItemName": "Nettle Root"
+    },
+    {
+      "ItemId": "225465",
+      "ItemName": "Evil Carrot"
+    }
+  ]
+}

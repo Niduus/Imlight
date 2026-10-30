@@ -1,0 +1,17 @@
+{
+  "Name": "W404 DM_Werewolf_Base_A_07 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Werewolf_Base_A_07: the snack drops (2), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220190",
+      "ItemName": "Cubby Broccoli"
+    },
+    {
+      "ItemId": "641705",
+      "ItemName": "Fiddleheads"
+    }
+  ]
+}

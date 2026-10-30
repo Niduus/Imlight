@@ -1,0 +1,81 @@
+{
+  "Name": "W404 PL-Boss-Kamensky Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-Boss-Kamensky: the seed drops (18), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346031",
+      "ItemName": "Ninja Fig"
+    },
+    {
+      "ItemId": "346052",
+      "ItemName": "White Desparagus"
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap"
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas"
+    },
+    {
+      "ItemId": "356092",
+      "ItemName": "White Laugh-o-dil"
+    },
+    {
+      "ItemId": "356113",
+      "ItemName": "Cornbread Fruit Bush"
+    },
+    {
+      "ItemId": "356144",
+      "ItemName": "King Parsley"
+    },
+    {
+      "ItemId": "473187",
+      "ItemName": "White Tiger Lily"
+    },
+    {
+      "ItemId": "473647",
+      "ItemName": "Moon Flower"
+    },
+    {
+      "ItemId": "589159",
+      "ItemName": "Goose Tree"
+    },
+    {
+      "ItemId": "653139",
+      "ItemName": "Angel Oak"
+    },
+    {
+      "ItemId": "653146",
+      "ItemName": "Fish on a Vine"
+    },
+    {
+      "ItemId": "713140",
+      "ItemName": "Snow Apples"
+    },
+    {
+      "ItemId": "713154",
+      "ItemName": "Green Snow Apples"
+    },
+    {
+      "ItemId": "713161",
+      "ItemName": "Purple Snow Apples"
+    },
+    {
+      "ItemId": "1248268",
+      "ItemName": "Queen Crape Myrtle"
+    },
+    {
+      "ItemId": "1350094",
+      "ItemName": "Ultra Snow Apples"
+    },
+    {
+      "ItemId": "1350138",
+      "ItemName": "Ultra Ninja Fig"
+    }
+  ]
+}

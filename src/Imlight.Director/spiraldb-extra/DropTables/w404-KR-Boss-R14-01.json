@@ -1,0 +1,9 @@
+{
+  "Name": "W404 KR-Boss-R14-01",
+  "Description": "Gold of the game's table KR-Boss-R14-01, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 65,
+  "MaxGold": 85,
+  "EachItem": false,
+  "Items": []
+}

@@ -1,0 +1,21 @@
+{
+  "Name": "W404 MB-Cat-Burglar-Stripe-MBBoss-L39 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Burglar-Stripe-MBBoss-L39: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160679",
+      "ItemName": "Bulletin Board"
+    },
+    {
+      "ItemId": "160710",
+      "ItemName": "Fine Wooden Table"
+    },
+    {
+      "ItemId": "160761",
+      "ItemName": "Enclosed Wall Lamp"
+    }
+  ]
+}

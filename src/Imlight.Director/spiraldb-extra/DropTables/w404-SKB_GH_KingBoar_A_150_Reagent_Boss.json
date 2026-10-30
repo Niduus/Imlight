@@ -1,0 +1,21 @@
+{
+  "Name": "W404 SKB_GH_KingBoar_A_150 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_GH_KingBoar_A_150: the reagent drops (3), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1507373",
+      "ItemName": "Grendel's Amends"
+    },
+    {
+      "ItemId": "1507399",
+      "ItemName": "Hammer of Thor"
+    },
+    {
+      "ItemId": "1507378",
+      "ItemName": "Ratatoskr's Spin"
+    }
+  ]
+}

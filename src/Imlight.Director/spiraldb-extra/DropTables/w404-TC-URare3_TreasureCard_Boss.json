@@ -1,0 +1,33 @@
+{
+  "Name": "W404 TC-URare3 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-URare3: the treasurecard drops (6), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Beguile TC",
+      "ItemName": "Beguile"
+    },
+    {
+      "ItemId": "Ice Armor TC",
+      "ItemName": "Ice Armor"
+    },
+    {
+      "ItemId": "Regenerate TC",
+      "ItemName": "Regenerate"
+    },
+    {
+      "ItemId": "Stun TC",
+      "ItemName": "Stun"
+    },
+    {
+      "ItemId": "Immolate TC",
+      "ItemName": "Immolate"
+    },
+    {
+      "ItemId": "Tri Trap TC",
+      "ItemName": "Elemental Trap"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "Name": "W404 AZ-BossEpic-Cipactli Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossEpic-Cipactli: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730205",
+      "ItemName": "Golden Death Head Relic"
+    },
+    {
+      "ItemId": "730209",
+      "ItemName": "Brilliant Night Mask Memento"
+    },
+    {
+      "ItemId": "730237",
+      "ItemName": "Savage Spike Horn Cutter"
+    },
+    {
+      "ItemId": "730243",
+      "ItemName": "Blade of the Green Song"
+    },
+    {
+      "ItemId": "730247",
+      "ItemName": "Vibrant Green Flower Thorn"
+    },
+    {
+      "ItemId": "730250",
+      "ItemName": "Seven Stabs of the Sky Athame"
+    },
+    {
+      "ItemId": "730288",
+      "ItemName": "Falling Star Chac's Helmet"
+    },
+    {
+      "ItemId": "730291",
+      "ItemName": "Winged Tooth Knight's Crown"
+    },
+    {
+      "ItemId": "730317",
+      "ItemName": "Apocalypto Ring"
+    },
+    {
+      "ItemId": "730319",
+      "ItemName": "Ring of Aztlan"
+    },
+    {
+      "ItemId": "730360",
+      "ItemName": "Moon Caiman's Scales"
+    },
+    {
+      "ItemId": "730398",
+      "ItemName": "Moon Caiman's Scaly Boots"
+    },
+    {
+      "ItemId": "730403",
+      "ItemName": "Winged Tooth Knight's Boots"
+    },
+    {
+      "ItemId": "730423",
+      "ItemName": "White Fire Case"
+    },
+    {
+      "ItemId": "730424",
+      "ItemName": "Cold Codex"
+    },
+    {
+      "ItemId": "730428",
+      "ItemName": "Cipactli's Lost Cards"
+    },
+    {
+      "ItemId": "730452",
+      "ItemName": "Brutal Ice Arrow Rod"
+    },
+    {
+      "ItemId": "730853",
+      "ItemName": "Storm Caiman's Sparking Eye"
+    }
+  ]
+}

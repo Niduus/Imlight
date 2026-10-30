@@ -1,0 +1,53 @@
+{
+  "Name": "W404 DS-Supplement-01 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table DS-Supplement-01: the gear drops (11), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104588",
+      "ItemName": "Arbiter's Raiment"
+    },
+    {
+      "ItemId": "104608",
+      "ItemName": "Final Curtain"
+    },
+    {
+      "ItemId": "104624",
+      "ItemName": "Robe of Radiance"
+    },
+    {
+      "ItemId": "104646",
+      "ItemName": "Robe of the Greatest Saga"
+    },
+    {
+      "ItemId": "104669",
+      "ItemName": "Arboreal Robes"
+    },
+    {
+      "ItemId": "104687",
+      "ItemName": "Smock of the Frost Giant"
+    },
+    {
+      "ItemId": "104718",
+      "ItemName": "Whirlwind Wrap"
+    },
+    {
+      "ItemId": "104841",
+      "ItemName": "Dragonclaw Boots"
+    },
+    {
+      "ItemId": "126618",
+      "ItemName": "Dragonscale Ring"
+    },
+    {
+      "ItemId": "146182",
+      "ItemName": "Dragon's Eye Dagger"
+    },
+    {
+      "ItemId": "146216",
+      "ItemName": "Hood of the Vigilant"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "Name": "W404 AZ-BossEpic-Ponce Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossEpic-Ponce: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730207",
+      "ItemName": "Heart of Sky Greenstone Relic"
+    },
+    {
+      "ItemId": "730239",
+      "ItemName": "Beak Breaker's Antique Sliver"
+    },
+    {
+      "ItemId": "730240",
+      "ItemName": "Black Sky Barbed Hook"
+    },
+    {
+      "ItemId": "730245",
+      "ItemName": "Drowned Spirit Knife"
+    },
+    {
+      "ItemId": "730246",
+      "ItemName": "King Neza's Shining Talon"
+    },
+    {
+      "ItemId": "730248",
+      "ItemName": "King Acampi's Cruel Fang"
+    },
+    {
+      "ItemId": "730252",
+      "ItemName": "Athame of the Falling Star"
+    },
+    {
+      "ItemId": "730285",
+      "ItemName": "Cruel Star's Blazing Crown"
+    },
+    {
+      "ItemId": "730289",
+      "ItemName": "Great Coatl's Headdress"
+    },
+    {
+      "ItemId": "730313",
+      "ItemName": "Celestial Codex Ring"
+    },
+    {
+      "ItemId": "730315",
+      "ItemName": "Signet of the Lizard Tyrant"
+    },
+    {
+      "ItemId": "730320",
+      "ItemName": "Lords of Night Challenge Ring"
+    },
+    {
+      "ItemId": "730359",
+      "ItemName": "Cruel Star's Blazing Armor"
+    },
+    {
+      "ItemId": "730362",
+      "ItemName": "Falling Star Chac's Armor"
+    },
+    {
+      "ItemId": "730400",
+      "ItemName": "Falling Star Chac's Wraps"
+    },
+    {
+      "ItemId": "730426",
+      "ItemName": "Case of Mother Moon"
+    },
+    {
+      "ItemId": "730427",
+      "ItemName": "Case of the Worldtree"
+    },
+    {
+      "ItemId": "730454",
+      "ItemName": "Serpent King's Turquoise Arrow"
+    },
+    {
+      "ItemId": "730855",
+      "ItemName": "Storm Caiman's Viscious Mask"
+    }
+  ]
+}

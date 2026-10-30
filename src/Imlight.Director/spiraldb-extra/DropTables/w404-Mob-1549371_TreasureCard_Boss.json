@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Mob-1549371 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of Ixcax Cursedwing's own drops: the treasurecard drops (1), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "GuildReagent01_TC",
+      "ItemName": "Azoth"
+    }
+  ]
+}

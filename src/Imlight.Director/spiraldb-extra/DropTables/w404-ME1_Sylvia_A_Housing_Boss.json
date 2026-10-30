@@ -1,0 +1,21 @@
+{
+  "Name": "W404 ME1_Sylvia_A Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table ME1_Sylvia_A: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "469787",
+      "ItemName": "White Teleporter"
+    },
+    {
+      "ItemId": "469788",
+      "ItemName": "Yellow Teleporter"
+    },
+    {
+      "ItemId": "1317193",
+      "ItemName": "Dragon's Roost Player"
+    }
+  ]
+}

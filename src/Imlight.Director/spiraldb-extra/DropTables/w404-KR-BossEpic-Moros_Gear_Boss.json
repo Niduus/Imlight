@@ -1,0 +1,89 @@
+{
+  "Name": "W404 KR-BossEpic-Moros Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossEpic-Moros: the gear drops (20), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203153",
+      "ItemName": "Burrower Crown of Thunder"
+    },
+    {
+      "ItemId": "1203179",
+      "ItemName": "Gloom Dancer's Band"
+    },
+    {
+      "ItemId": "1203183",
+      "ItemName": "DarkSide's Nightmare Band"
+    },
+    {
+      "ItemId": "1203225",
+      "ItemName": "Grave Digger Drone's Tunic"
+    },
+    {
+      "ItemId": "1203226",
+      "ItemName": "Mantis Captain's Raiment"
+    },
+    {
+      "ItemId": "1203271",
+      "ItemName": "Aged Hundred Legger Boots"
+    },
+    {
+      "ItemId": "1203278",
+      "ItemName": "Zaltanna's Combat Boots"
+    },
+    {
+      "ItemId": "1203349",
+      "ItemName": "Glacier Hopper's Amulet"
+    },
+    {
+      "ItemId": "1203387",
+      "ItemName": "Pyat's Steel of Mourning"
+    },
+    {
+      "ItemId": "1203512",
+      "ItemName": "Archangel's Boots"
+    },
+    {
+      "ItemId": "1203651",
+      "ItemName": "Deck of Charred Shadows"
+    },
+    {
+      "ItemId": "1203652",
+      "ItemName": "Deck of Winter Shadows"
+    },
+    {
+      "ItemId": "1203653",
+      "ItemName": "Deck of Shadow Lightning"
+    },
+    {
+      "ItemId": "1203692",
+      "ItemName": "Dreamscape Sword and Shield"
+    },
+    {
+      "ItemId": "1358862",
+      "ItemName": "Deck of Charred Shadows"
+    },
+    {
+      "ItemId": "1358863",
+      "ItemName": "Deck of Winter Shadows"
+    },
+    {
+      "ItemId": "1358864",
+      "ItemName": "Deck of Shadow Lightning"
+    },
+    {
+      "ItemId": "1358876",
+      "ItemName": "Deck of Charred Shadows"
+    },
+    {
+      "ItemId": "1358877",
+      "ItemName": "Deck of Winter Shadows"
+    },
+    {
+      "ItemId": "1358878",
+      "ItemName": "Deck of Shadow Lightning"
+    }
+  ]
+}

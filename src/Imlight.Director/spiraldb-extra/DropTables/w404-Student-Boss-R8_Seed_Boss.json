@@ -1,0 +1,33 @@
+{
+  "Name": "W404 Student-Boss-R8 Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table Student-Boss-R8: the seed drops (6), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "345982",
+      "ItemName": "Deadly Fly Trap"
+    },
+    {
+      "ItemId": "346003",
+      "ItemName": "Fiery Boom Shroom"
+    },
+    {
+      "ItemId": "346010",
+      "ItemName": "Maelstrom Snap Dragon"
+    },
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion"
+    },
+    {
+      "ItemId": "356092",
+      "ItemName": "White Laugh-o-dil"
+    },
+    {
+      "ItemId": "356144",
+      "ItemName": "King Parsley"
+    }
+  ]
+}

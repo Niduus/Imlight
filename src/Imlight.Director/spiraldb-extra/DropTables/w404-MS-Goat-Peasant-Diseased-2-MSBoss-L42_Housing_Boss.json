@@ -1,0 +1,25 @@
+{
+  "Name": "W404 MS-Goat-Peasant-Diseased-2-MSBoss-L42 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Goat-Peasant-Diseased-2-MSBoss-L42: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160439",
+      "ItemName": "Mushroom"
+    },
+    {
+      "ItemId": "160479",
+      "ItemName": "Skull Obelisk"
+    },
+    {
+      "ItemId": "160571",
+      "ItemName": "Monk Shrine"
+    },
+    {
+      "ItemId": "470216",
+      "ItemName": "Bonsai Plant"
+    }
+  ]
+}

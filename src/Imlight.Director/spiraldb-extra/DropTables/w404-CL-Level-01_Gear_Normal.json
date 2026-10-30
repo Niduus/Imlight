@@ -1,0 +1,197 @@
+{
+  "Name": "W404 CL-Level-01 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table CL-Level-01: the gear drops (47), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243227",
+      "ItemName": "Explorer's Edge"
+    },
+    {
+      "ItemId": "243230",
+      "ItemName": "Living Claw"
+    },
+    {
+      "ItemId": "243232",
+      "ItemName": "Dancing Dirk"
+    },
+    {
+      "ItemId": "243281",
+      "ItemName": "Examiner's Hat"
+    },
+    {
+      "ItemId": "243284",
+      "ItemName": "Versatile Veil"
+    },
+    {
+      "ItemId": "243305",
+      "ItemName": "Gravedigger's Helm"
+    },
+    {
+      "ItemId": "243327",
+      "ItemName": "Ember Helm"
+    },
+    {
+      "ItemId": "243330",
+      "ItemName": "Mask of Devotion"
+    },
+    {
+      "ItemId": "243356",
+      "ItemName": "Frozen Hat"
+    },
+    {
+      "ItemId": "243357",
+      "ItemName": "Insulated Helmet"
+    },
+    {
+      "ItemId": "243358",
+      "ItemName": "Chilled Cowl"
+    },
+    {
+      "ItemId": "243360",
+      "ItemName": "Wintery Veil"
+    },
+    {
+      "ItemId": "243380",
+      "ItemName": "Pure Helm"
+    },
+    {
+      "ItemId": "243401",
+      "ItemName": "Mystifying Helmet"
+    },
+    {
+      "ItemId": "243403",
+      "ItemName": "Curious Mask"
+    },
+    {
+      "ItemId": "243424",
+      "ItemName": "Rain Dance Mask"
+    },
+    {
+      "ItemId": "243427",
+      "ItemName": "Drafty Cap"
+    },
+    {
+      "ItemId": "243451",
+      "ItemName": "Examiner's Outfit"
+    },
+    {
+      "ItemId": "243533",
+      "ItemName": "Bizarre Band"
+    },
+    {
+      "ItemId": "243537",
+      "ItemName": "Imbued Ring"
+    },
+    {
+      "ItemId": "243594",
+      "ItemName": "Tunic of Burden"
+    },
+    {
+      "ItemId": "243615",
+      "ItemName": "Fuming Outfit"
+    },
+    {
+      "ItemId": "243633",
+      "ItemName": "Insulated Armor"
+    },
+    {
+      "ItemId": "243634",
+      "ItemName": "Frozen Tunic"
+    },
+    {
+      "ItemId": "243641",
+      "ItemName": "Rime Raiment"
+    },
+    {
+      "ItemId": "243654",
+      "ItemName": "Innocent Outfit"
+    },
+    {
+      "ItemId": "243675",
+      "ItemName": "Speculator's Outfit"
+    },
+    {
+      "ItemId": "243694",
+      "ItemName": "Drafty Tunic"
+    },
+    {
+      "ItemId": "243713",
+      "ItemName": "Balanced Boots"
+    },
+    {
+      "ItemId": "243714",
+      "ItemName": "Versatile Footwear"
+    },
+    {
+      "ItemId": "243734",
+      "ItemName": "Boots of Burden"
+    },
+    {
+      "ItemId": "243735",
+      "ItemName": "Striders of Ordeal"
+    },
+    {
+      "ItemId": "243755",
+      "ItemName": "Ashen Boots"
+    },
+    {
+      "ItemId": "243782",
+      "ItemName": "Frozen Frostwalkers"
+    },
+    {
+      "ItemId": "243803",
+      "ItemName": "Pure Greaves"
+    },
+    {
+      "ItemId": "243810",
+      "ItemName": "Vital Footwear"
+    },
+    {
+      "ItemId": "243823",
+      "ItemName": "Speculator's Striders"
+    },
+    {
+      "ItemId": "243844",
+      "ItemName": "Drafty Boots"
+    },
+    {
+      "ItemId": "243851",
+      "ItemName": "Lightning Riders"
+    },
+    {
+      "ItemId": "1502457",
+      "ItemName": "Celestian Cinder Helm"
+    },
+    {
+      "ItemId": "1502458",
+      "ItemName": "Celestian Frostbit Helm"
+    },
+    {
+      "ItemId": "1502459",
+      "ItemName": "Celestian Tempest Helm"
+    },
+    {
+      "ItemId": "1502460",
+      "ItemName": "Storied Celestian Helm"
+    },
+    {
+      "ItemId": "1502461",
+      "ItemName": "Everlasting Celestian Helm"
+    },
+    {
+      "ItemId": "1502462",
+      "ItemName": "Celestian Abyss Helm"
+    },
+    {
+      "ItemId": "1502463",
+      "ItemName": "Versatile Celestian Helm"
+    },
+    {
+      "ItemId": "1502464",
+      "ItemName": "Helm of Celestian Totality"
+    }
+  ]
+}

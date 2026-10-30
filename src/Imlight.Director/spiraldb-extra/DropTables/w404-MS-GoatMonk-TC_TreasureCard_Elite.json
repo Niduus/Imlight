@@ -1,0 +1,13 @@
+{
+  "Name": "W404 MS-GoatMonk-TC TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table MS-GoatMonk-TC: the treasurecard drops (1), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Goat Monk TC",
+      "ItemName": "Goat Monk"
+    }
+  ]
+}

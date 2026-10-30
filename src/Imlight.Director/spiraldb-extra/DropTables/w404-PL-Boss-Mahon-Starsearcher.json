@@ -1,0 +1,9 @@
+{
+  "Name": "W404 PL-Boss-Mahon-Starsearcher",
+  "Description": "Gold of the game's table PL-Boss-Mahon-Starsearcher, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 90,
+  "MaxGold": 180,
+  "EachItem": false,
+  "Items": []
+}

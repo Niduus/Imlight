@@ -1,0 +1,17 @@
+{
+  "Name": "W404 DM_Elite Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Elite: the reagent drops (2), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1392207",
+      "ItemName": "Turmeric"
+    },
+    {
+      "ItemId": "276291",
+      "ItemName": "Fish Fin"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "Name": "W404 GH2-Yeti-1-BOSS-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH2-Yeti-1-BOSS-R10: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "455098",
+      "ItemName": "Wyrm's Curse Charm"
+    },
+    {
+      "ItemId": "455113",
+      "ItemName": "Wolf's Garnet Claw"
+    },
+    {
+      "ItemId": "455145",
+      "ItemName": "Horned Helm of the North"
+    },
+    {
+      "ItemId": "455146",
+      "ItemName": "Grizzled Helm"
+    },
+    {
+      "ItemId": "455176",
+      "ItemName": "Ring of Brother Wolf"
+    },
+    {
+      "ItemId": "455177",
+      "ItemName": "Ring of Sister Wolf"
+    },
+    {
+      "ItemId": "455178",
+      "ItemName": "Ring of the Wolf's Song"
+    },
+    {
+      "ItemId": "455206",
+      "ItemName": "Coat of Justice"
+    },
+    {
+      "ItemId": "455207",
+      "ItemName": "Coat of the Crypt"
+    },
+    {
+      "ItemId": "455238",
+      "ItemName": "Snarling Bear Boots"
+    },
+    {
+      "ItemId": "455239",
+      "ItemName": "Growling Bear Boots"
+    },
+    {
+      "ItemId": "455240",
+      "ItemName": "Slashing Bear Boots"
+    },
+    {
+      "ItemId": "455241",
+      "ItemName": "Biting Bear Boots"
+    }
+  ]
+}

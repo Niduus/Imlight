@@ -1,0 +1,21 @@
+{
+  "Name": "W404 DD-DS-01-Spider-Boss-40 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table DD-DS-01-Spider-Boss-40: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160863",
+      "ItemName": "Inferno Marker"
+    },
+    {
+      "ItemId": "160866",
+      "ItemName": "Dragonskull Marker"
+    },
+    {
+      "ItemId": "160869",
+      "ItemName": "Dark Sun Marker"
+    }
+  ]
+}

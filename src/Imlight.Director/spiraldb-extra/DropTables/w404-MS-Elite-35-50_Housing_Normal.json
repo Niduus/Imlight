@@ -1,0 +1,25 @@
+{
+  "Name": "W404 MS-Elite-35-50 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table MS-Elite-35-50: the housing drops (4), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160443",
+      "ItemName": "Red Banner"
+    },
+    {
+      "ItemId": "160579",
+      "ItemName": "Moodha Bust"
+    },
+    {
+      "ItemId": "160588",
+      "ItemName": "Hanging Naginata Spear"
+    },
+    {
+      "ItemId": "470222",
+      "ItemName": "Soji Screen Art"
+    }
+  ]
+}

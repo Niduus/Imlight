@@ -1,0 +1,17 @@
+{
+  "Name": "W404 MB-Cat-Thug-Purple-MBBoss-LXX Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Thug-Purple-MBBoss-LXX: the pet drops (2), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126989",
+      "ItemName": "Myth Ghoul"
+    },
+    {
+      "ItemId": "225402",
+      "ItemName": "White Rat Magician"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "Name": "W404 CL-Eel-Purple-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-Eel-Purple-R10: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243211",
+      "ItemName": "Claw of the Law"
+    },
+    {
+      "ItemId": "243217",
+      "ItemName": "Forsaken Dagger"
+    },
+    {
+      "ItemId": "243323",
+      "ItemName": "Chaos Helm"
+    },
+    {
+      "ItemId": "243422",
+      "ItemName": "Hood of Reverie"
+    },
+    {
+      "ItemId": "243522",
+      "ItemName": "Ring of Wrath"
+    },
+    {
+      "ItemId": "243582",
+      "ItemName": "Loop of Legends"
+    },
+    {
+      "ItemId": "243606",
+      "ItemName": "Chaos Armor"
+    },
+    {
+      "ItemId": "243608",
+      "ItemName": "Raiment of Wrath"
+    },
+    {
+      "ItemId": "243749",
+      "ItemName": "Forbidden Footgear"
+    },
+    {
+      "ItemId": "243853",
+      "ItemName": "Thunderfin's Mistral Mukluks"
+    },
+    {
+      "ItemId": "243882",
+      "ItemName": "Frost Giant's Talisman"
+    },
+    {
+      "ItemId": "243887",
+      "ItemName": "Vial of Rebirth"
+    },
+    {
+      "ItemId": "243932",
+      "ItemName": "Insightful Spyglass"
+    },
+    {
+      "ItemId": "243939",
+      "ItemName": "Blistering Baton"
+    },
+    {
+      "ItemId": "243942",
+      "ItemName": "Shivering Spear"
+    }
+  ]
+}

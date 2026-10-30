@@ -1,0 +1,26 @@
+{
+  "TemplateID": 283088,
+  "DropTableNames": [
+    "W404 CL-Sun-Boss-R10 Gear (Boss)",
+    "W404 CL-Sun-Boss-R10 Jewel (Boss)",
+    "W404 CL-Sun-Boss-R10 Reagent (Boss)",
+    "W404 CL-Sun-Boss-R10 Snack (Boss)",
+    "W404 CL-Sun-Boss-R10 Seed (Boss)",
+    "W404 CL-Sun-Boss-R10 Housing (Boss)",
+    "W404 OCT-LootTable-006 Gear (Boss)",
+    "W404 OCT-LootTable-006 Pet (Boss)",
+    "W404 OCT-LootTable-006 Housing (Boss)",
+    "W404 NOV-LootTable-006 Gear (Boss)",
+    "W404 MAR-LootTable-006 Gear (Boss)",
+    "W404 MAR-LootTable-006 Pet (Boss)",
+    "W404 FEB-LootTable-006 Gear (Boss)",
+    "W404 FEB-LootTable-006 Pet (Boss)",
+    "W404 DEC-LootTable-006 Gear (Boss)",
+    "W404 DEC-LootTable-006 Pet (Boss)",
+    "W404 DEC-LootTable-006 Seed (Boss)",
+    "W404 DEC-LootTable-006 Housing (Boss)",
+    "W404 APR-LootTable-006 Gear (Boss)",
+    "W404 APR-LootTable-006 Pet (Boss)",
+    "W404 APR-LootTable-006 Mount (Boss)"
+  ]
+}

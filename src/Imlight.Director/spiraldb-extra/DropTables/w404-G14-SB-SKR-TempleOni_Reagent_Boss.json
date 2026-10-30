@@ -1,0 +1,21 @@
+{
+  "Name": "W404 G14-SB-SKR-TempleOni Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-SB-SKR-TempleOni: the reagent drops (3), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1340030",
+      "ItemName": "Mote of Wisdom"
+    },
+    {
+      "ItemId": "1494697",
+      "ItemName": "Troll"
+    },
+    {
+      "ItemId": "1494699",
+      "ItemName": "Thunder Snake"
+    }
+  ]
+}

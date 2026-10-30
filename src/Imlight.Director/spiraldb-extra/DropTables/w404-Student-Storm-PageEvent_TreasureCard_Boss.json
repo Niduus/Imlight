@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Student-Storm-PageEvent TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table Student-Storm-PageEvent: the treasurecard drops (3), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Ice Wyvern TC DH",
+      "ItemName": "Ice Wyvern"
+    },
+    {
+      "ItemId": "Fire Wyvern TC DH",
+      "ItemName": "Fire Wyvern"
+    },
+    {
+      "ItemId": "Squall Wyvern TC DH",
+      "ItemName": "Squall Wyvern"
+    }
+  ]
+}

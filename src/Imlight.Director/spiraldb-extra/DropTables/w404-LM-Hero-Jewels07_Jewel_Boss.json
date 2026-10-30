@@ -1,0 +1,13 @@
+{
+  "Name": "W404 LM-Hero-Jewels07 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table LM-Hero-Jewels07: the jewel drops (1), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1537699",
+      "ItemName": "Quartermane Citrine"
+    }
+  ]
+}

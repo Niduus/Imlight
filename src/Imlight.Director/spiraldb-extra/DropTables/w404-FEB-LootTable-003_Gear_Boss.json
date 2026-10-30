@@ -1,0 +1,29 @@
+{
+  "Name": "W404 FEB-LootTable-003 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table FEB-LootTable-003: the gear drops (5), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126956",
+      "ItemName": "Fond Wand"
+    },
+    {
+      "ItemId": "126957",
+      "ItemName": "Wand of Amity"
+    },
+    {
+      "ItemId": "126958",
+      "ItemName": "Baton of Appreciation"
+    },
+    {
+      "ItemId": "126959",
+      "ItemName": "Loyalty's Length"
+    },
+    {
+      "ItemId": "126960",
+      "ItemName": "Putto's Wand"
+    }
+  ]
+}

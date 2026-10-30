@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Raven-Mage-5-GHBoss-R7-1 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Raven-Mage-5-GHBoss-R7-1: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136453",
+      "ItemName": "Cowl of the Apparition"
+    },
+    {
+      "ItemId": "136456",
+      "ItemName": "Mantle of Magnitude"
+    },
+    {
+      "ItemId": "136676",
+      "ItemName": "Coat of the Elixir"
+    },
+    {
+      "ItemId": "136692",
+      "ItemName": "Frostwood Sword"
+    },
+    {
+      "ItemId": "136694",
+      "ItemName": "Reliquary Blade"
+    },
+    {
+      "ItemId": "346492",
+      "ItemName": "Puppetmaster's Footwear"
+    }
+  ]
+}

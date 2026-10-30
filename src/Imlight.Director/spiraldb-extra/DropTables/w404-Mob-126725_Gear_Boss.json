@@ -1,0 +1,65 @@
+{
+  "Name": "W404 Mob-126725 Gear (Boss)",
+  "Description": "Wizard404's drop list of Viktor Snowcrusher's own drops: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1592296",
+      "ItemName": "Snowcrusher Scales Box"
+    },
+    {
+      "ItemId": "1592297",
+      "ItemName": "Snowcrusher Mortalis Box"
+    },
+    {
+      "ItemId": "1592298",
+      "ItemName": "Snowcrusher Melted Box"
+    },
+    {
+      "ItemId": "1592299",
+      "ItemName": "Snowcrusher Iceblock Box"
+    },
+    {
+      "ItemId": "1592300",
+      "ItemName": "Snowcrusher Springbloom Box"
+    },
+    {
+      "ItemId": "1592301",
+      "ItemName": "Snowcrusher Seasons Box"
+    },
+    {
+      "ItemId": "1592302",
+      "ItemName": "Snowcrusher Windstorm Box"
+    },
+    {
+      "ItemId": "1592303",
+      "ItemName": "Snowcrusher Scales Deck"
+    },
+    {
+      "ItemId": "1592304",
+      "ItemName": "Snowcrusher Mortalis Deck"
+    },
+    {
+      "ItemId": "1592305",
+      "ItemName": "Snowcrusher Melted Deck"
+    },
+    {
+      "ItemId": "1592306",
+      "ItemName": "Snowcrusher Iceblock Deck"
+    },
+    {
+      "ItemId": "1592307",
+      "ItemName": "Snowcrusher Springbloom Deck"
+    },
+    {
+      "ItemId": "1592308",
+      "ItemName": "Snowcrusher Seasons Deck"
+    },
+    {
+      "ItemId": "1592309",
+      "ItemName": "Snowcrusher Windstorm Deck"
+    }
+  ]
+}

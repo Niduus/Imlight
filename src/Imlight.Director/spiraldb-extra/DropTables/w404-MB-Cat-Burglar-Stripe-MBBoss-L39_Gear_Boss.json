@@ -1,0 +1,93 @@
+{
+  "Name": "W404 MB-Cat-Burglar-Stripe-MBBoss-L39 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Burglar-Stripe-MBBoss-L39: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "5046",
+      "ItemName": "Mugsy's Meteorite Amulet"
+    },
+    {
+      "ItemId": "39017",
+      "ItemName": "Mugsy's Enkindled Hat"
+    },
+    {
+      "ItemId": "39035",
+      "ItemName": "Mugsy's Frigid Headwrap"
+    },
+    {
+      "ItemId": "39051",
+      "ItemName": "Exquisite Band"
+    },
+    {
+      "ItemId": "77163",
+      "ItemName": "Mugsy's Solar Robe"
+    },
+    {
+      "ItemId": "77164",
+      "ItemName": "Mugsy's Enkindled Cloak"
+    },
+    {
+      "ItemId": "87467",
+      "ItemName": "Mugsy's Staff of Extinction"
+    },
+    {
+      "ItemId": "97087",
+      "ItemName": "Mugsy's Stylish Athame"
+    },
+    {
+      "ItemId": "97108",
+      "ItemName": "Mugsy's Perceptive Knife"
+    },
+    {
+      "ItemId": "97128",
+      "ItemName": "Mugsy's Deck of Ice"
+    },
+    {
+      "ItemId": "97153",
+      "ItemName": "Mugsy's Helm"
+    },
+    {
+      "ItemId": "97166",
+      "ItemName": "Mugsy's Dramatic Cowl"
+    },
+    {
+      "ItemId": "97199",
+      "ItemName": "Mugsy's Distressing Hat"
+    },
+    {
+      "ItemId": "97217",
+      "ItemName": "Mugsy's Black Mantle Cap"
+    },
+    {
+      "ItemId": "97253",
+      "ItemName": "Mugsy's Animated Vest"
+    },
+    {
+      "ItemId": "97265",
+      "ItemName": "Mugsy's Mysterious Tunic"
+    },
+    {
+      "ItemId": "97316",
+      "ItemName": "Mugsy's Consistent Robe"
+    },
+    {
+      "ItemId": "97320",
+      "ItemName": "Mugsy's Robe of Equity"
+    },
+    {
+      "ItemId": "97347",
+      "ItemName": "Mugsy's Affected Slippers"
+    },
+    {
+      "ItemId": "97352",
+      "ItemName": "Mugsy's Aristocratic Boots"
+    },
+    {
+      "ItemId": "97391",
+      "ItemName": "Mugsy's Genteel Slippers"
+    }
+  ]
+}

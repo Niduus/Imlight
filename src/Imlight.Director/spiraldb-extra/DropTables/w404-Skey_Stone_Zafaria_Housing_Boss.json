@@ -1,0 +1,69 @@
+{
+  "Name": "W404 Skey_Stone_Zafaria Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skey_Stone_Zafaria: the housing drops (15), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "643087",
+      "ItemName": "Short Woven Basket"
+    },
+    {
+      "ItemId": "643088",
+      "ItemName": "Tall Woven Basket"
+    },
+    {
+      "ItemId": "643111",
+      "ItemName": "Primitive Firepit"
+    },
+    {
+      "ItemId": "643180",
+      "ItemName": "Clay Teapot"
+    },
+    {
+      "ItemId": "643200",
+      "ItemName": "Desert Festive Table"
+    },
+    {
+      "ItemId": "689320",
+      "ItemName": "Zafarian Hide Rug"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    },
+    {
+      "ItemId": "1260006",
+      "ItemName": "Savannah Wallpaint"
+    },
+    {
+      "ItemId": "1260015",
+      "ItemName": "Lion Plank Wall Covering"
+    },
+    {
+      "ItemId": "1260017",
+      "ItemName": "Rhino Wall Covering"
+    },
+    {
+      "ItemId": "1260018",
+      "ItemName": "Sandstone Brick"
+    },
+    {
+      "ItemId": "1350308",
+      "ItemName": "Novice's Socket Wrench"
+    },
+    {
+      "ItemId": "1350309",
+      "ItemName": "Adept's Socket Wrench"
+    },
+    {
+      "ItemId": "1350310",
+      "ItemName": "Expert's Socket Wrench"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "Name": "W404 GH-Helephant-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Helephant-GHBoss-R7: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136431",
+      "ItemName": "Skystorm Cowl"
+    },
+    {
+      "ItemId": "136446",
+      "ItemName": "Headdress of Expiry"
+    },
+    {
+      "ItemId": "136448",
+      "ItemName": "Cap of Subsistence"
+    },
+    {
+      "ItemId": "136665",
+      "ItemName": "Cloak of Divination"
+    },
+    {
+      "ItemId": "136669",
+      "ItemName": "Tunic of the Everlasting"
+    },
+    {
+      "ItemId": "136683",
+      "ItemName": "Smock of the Haruspex"
+    },
+    {
+      "ItemId": "171217",
+      "ItemName": "Fuming Striders"
+    },
+    {
+      "ItemId": "171229",
+      "ItemName": "Shoes of Serenity"
+    }
+  ]
+}

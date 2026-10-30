@@ -1,0 +1,241 @@
+{
+  "Name": "W404 LM-Mob-Jewels-1 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table LM-Mob-Jewels-1: the jewel drops (58), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1430042",
+      "ItemName": "Sparkling Blocking Citrine +17"
+    },
+    {
+      "ItemId": "1430034",
+      "ItemName": "Sparkling Defense Hematite +54"
+    },
+    {
+      "ItemId": "1462488",
+      "ItemName": "Sparkling Accurate Citrine +13%"
+    },
+    {
+      "ItemId": "1462482",
+      "ItemName": "Sparkling Accurate Ruby +13%"
+    },
+    {
+      "ItemId": "1430049",
+      "ItemName": "Sparkling Damage Onyx +27"
+    },
+    {
+      "ItemId": "1462438",
+      "ItemName": "Sparkling Damage Opal +14"
+    },
+    {
+      "ItemId": "1430041",
+      "ItemName": "Sparkling Blocking Onyx +17"
+    },
+    {
+      "ItemId": "1430052",
+      "ItemName": "Sparkling Critical Ruby +17"
+    },
+    {
+      "ItemId": "1430060",
+      "ItemName": "Sparkling Health Opal +116"
+    },
+    {
+      "ItemId": "1430036",
+      "ItemName": "Sparkling Blocking Ruby +17"
+    },
+    {
+      "ItemId": "1430055",
+      "ItemName": "Sparkling Critical Peridot +17"
+    },
+    {
+      "ItemId": "1430048",
+      "ItemName": "Sparkling Damage Jade +27"
+    },
+    {
+      "ItemId": "1430033",
+      "ItemName": "Sparkling Defense Hematite +53"
+    },
+    {
+      "ItemId": "1430063",
+      "ItemName": "Sparkling Health Opal +119"
+    },
+    {
+      "ItemId": "1462484",
+      "ItemName": "Sparkling Accurate Amethyst +13%"
+    },
+    {
+      "ItemId": "1462489",
+      "ItemName": "Sparkling Accurate Hematite +13%"
+    },
+    {
+      "ItemId": "1462486",
+      "ItemName": "Sparkling Accurate Jade +13%"
+    },
+    {
+      "ItemId": "1462487",
+      "ItemName": "Sparkling Accurate Onyx +13%"
+    },
+    {
+      "ItemId": "1462485",
+      "ItemName": "Sparkling Accurate Peridot +13%"
+    },
+    {
+      "ItemId": "1462483",
+      "ItemName": "Sparkling Accurate Sapphire +13%"
+    },
+    {
+      "ItemId": "1430038",
+      "ItemName": "Sparkling Blocking Amethyst +17"
+    },
+    {
+      "ItemId": "1430043",
+      "ItemName": "Sparkling Blocking Hematite +17"
+    },
+    {
+      "ItemId": "1430040",
+      "ItemName": "Sparkling Blocking Jade +17"
+    },
+    {
+      "ItemId": "1430039",
+      "ItemName": "Sparkling Blocking Peridot +17"
+    },
+    {
+      "ItemId": "1430037",
+      "ItemName": "Sparkling Blocking Sapphire +17"
+    },
+    {
+      "ItemId": "1430054",
+      "ItemName": "Sparkling Critical Amethyst +17"
+    },
+    {
+      "ItemId": "1430058",
+      "ItemName": "Sparkling Critical Citrine +17"
+    },
+    {
+      "ItemId": "1430100",
+      "ItemName": "Sparkling Critical Hematite +17"
+    },
+    {
+      "ItemId": "1430056",
+      "ItemName": "Sparkling Critical Jade +17"
+    },
+    {
+      "ItemId": "1430057",
+      "ItemName": "Sparkling Critical Onyx +17"
+    },
+    {
+      "ItemId": "1462447",
+      "ItemName": "Sparkling Critical Opal +9"
+    },
+    {
+      "ItemId": "1430053",
+      "ItemName": "Sparkling Critical Sapphire +17"
+    },
+    {
+      "ItemId": "1430046",
+      "ItemName": "Sparkling Damage Amethyst +27"
+    },
+    {
+      "ItemId": "1430050",
+      "ItemName": "Sparkling Damage Citrine +27"
+    },
+    {
+      "ItemId": "1430051",
+      "ItemName": "Sparkling Damage Hematite +54"
+    },
+    {
+      "ItemId": "1430047",
+      "ItemName": "Sparkling Damage Peridot +27"
+    },
+    {
+      "ItemId": "1430044",
+      "ItemName": "Sparkling Damage Ruby +27"
+    },
+    {
+      "ItemId": "1430045",
+      "ItemName": "Sparkling Damage Sapphire +27"
+    },
+    {
+      "ItemId": "1430023",
+      "ItemName": "Sparkling Defense Amethyst +53"
+    },
+    {
+      "ItemId": "1430024",
+      "ItemName": "Sparkling Defense Amethyst +54"
+    },
+    {
+      "ItemId": "1430031",
+      "ItemName": "Sparkling Defense Citrine +53"
+    },
+    {
+      "ItemId": "1430032",
+      "ItemName": "Sparkling Defense Citrine +54"
+    },
+    {
+      "ItemId": "1430027",
+      "ItemName": "Sparkling Defense Jade +53"
+    },
+    {
+      "ItemId": "1430028",
+      "ItemName": "Sparkling Defense Jade +54"
+    },
+    {
+      "ItemId": "1430029",
+      "ItemName": "Sparkling Defense Onyx +53"
+    },
+    {
+      "ItemId": "1430030",
+      "ItemName": "Sparkling Defense Onyx +54"
+    },
+    {
+      "ItemId": "1430035",
+      "ItemName": "Sparkling Defense Opal +27"
+    },
+    {
+      "ItemId": "1430025",
+      "ItemName": "Sparkling Defense Peridot +53"
+    },
+    {
+      "ItemId": "1430026",
+      "ItemName": "Sparkling Defense Peridot +54"
+    },
+    {
+      "ItemId": "1430019",
+      "ItemName": "Sparkling Defense Ruby +53"
+    },
+    {
+      "ItemId": "1430020",
+      "ItemName": "Sparkling Defense Ruby +54"
+    },
+    {
+      "ItemId": "1430021",
+      "ItemName": "Sparkling Defense Sapphire +53"
+    },
+    {
+      "ItemId": "1430022",
+      "ItemName": "Sparkling Defense Sapphire +54"
+    },
+    {
+      "ItemId": "1514588",
+      "ItemName": "Sparkling Health Opal +116"
+    },
+    {
+      "ItemId": "1430061",
+      "ItemName": "Sparkling Health Opal +117"
+    },
+    {
+      "ItemId": "1430062",
+      "ItemName": "Sparkling Health Opal +118"
+    },
+    {
+      "ItemId": "1430065",
+      "ItemName": "Sparkling Mana Opal +49"
+    },
+    {
+      "ItemId": "1462473",
+      "ItemName": "Sparkling Blocking Opal +9"
+    }
+  ]
+}

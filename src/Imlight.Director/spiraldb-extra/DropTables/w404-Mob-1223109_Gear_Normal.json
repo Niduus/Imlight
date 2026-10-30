@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Mob-1223109 Gear (Normal)",
+  "Description": "Wizard404's drop list of Night Flame's own drops: the gear drops (3), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203197",
+      "ItemName": "Battle-Worn Burrower Armor"
+    },
+    {
+      "ItemId": "1203198",
+      "ItemName": "Kermes Fire Miner's Tunic"
+    },
+    {
+      "ItemId": "1203199",
+      "ItemName": "Mantis Plate of Frostfall"
+    }
+  ]
+}

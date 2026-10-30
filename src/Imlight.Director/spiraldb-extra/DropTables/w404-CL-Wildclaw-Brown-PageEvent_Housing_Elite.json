@@ -1,0 +1,29 @@
+{
+  "Name": "W404 CL-Wildclaw-Brown-PageEvent Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table CL-Wildclaw-Brown-PageEvent: the housing drops (5), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160516",
+      "ItemName": "Tall Dragon Vase"
+    },
+    {
+      "ItemId": "160804",
+      "ItemName": "Dragonfire Brazier"
+    },
+    {
+      "ItemId": "160825",
+      "ItemName": "Dragon Claw"
+    },
+    {
+      "ItemId": "160914",
+      "ItemName": "Dragonmoon Plaque"
+    },
+    {
+      "ItemId": "160920",
+      "ItemName": "Dragon Shield"
+    }
+  ]
+}

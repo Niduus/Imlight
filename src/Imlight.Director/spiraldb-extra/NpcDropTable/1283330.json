@@ -1,0 +1,30 @@
+{
+  "TemplateID": 1283330,
+  "DropTableNames": [
+    "W404 KR-Boss-Reagents-02 Reagent (Boss)",
+    "W404 KR-BossEpic-GhostDogSP",
+    "W404 KR-BossEpic-GhostDogSP Gear (Boss)",
+    "W404 KR-BossEpic-GhostDogSP Jewel (Boss)",
+    "W404 KR-BossEpic-GhostDogSP Seed (Boss)",
+    "W404 KR-BossEpic-GhostDogSP Housing (Boss)",
+    "W404 KR-Boss-PetSnacks-07 Snack (Boss)",
+    "W404 KR-Boss-TC-06 TreasureCard (Boss)",
+    "W404 OCT-LootTable-010 Gear (Boss)",
+    "W404 OCT-LootTable-010 Pet (Boss)",
+    "W404 OCT-LootTable-010 Housing (Boss)",
+    "W404 NOV-LootTable-010 Gear (Boss)",
+    "W404 MAR-LootTable-010 Gear (Boss)",
+    "W404 MAR-LootTable-010 Pet (Boss)",
+    "W404 FEB-LootTable-010 Gear (Boss)",
+    "W404 FEB-LootTable-010 Pet (Boss)",
+    "W404 DEC-LootTable-010 Gear (Boss)",
+    "W404 DEC-LootTable-010 Pet (Boss)",
+    "W404 DEC-LootTable-010 Seed (Boss)",
+    "W404 DEC-LootTable-010 Housing (Boss)",
+    "W404 APR-LootTable-010 Gear (Boss)",
+    "W404 APR-LootTable-010 Pet (Boss)",
+    "W404 APR-LootTable-010 Mount (Boss)",
+    "W404 KR-Boss-Jewels Jewel (Boss)",
+    "W404 KR-Boss-Jewels Reagent (Boss)"
+  ]
+}

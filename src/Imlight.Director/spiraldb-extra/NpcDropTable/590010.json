@@ -1,0 +1,16 @@
+{
+  "TemplateID": 590010,
+  "DropTableNames": [
+    "W404 AV-ReagentsBoss Reagent (Boss)",
+    "W404 AV-R11-OgreBoss",
+    "W404 AV-R11-OgreBoss Gear (Boss)",
+    "W404 AV-R11-OgreBoss Snack (Boss)",
+    "W404 AV-R11-OgreBoss Seed (Boss)",
+    "W404 AV-R11-OgreBoss Housing (Boss)",
+    "W404 TC-AV-UncommonsBosses TreasureCard",
+    "W404 TC-AV-Utility-Life TreasureCard (Boss)",
+    "W404 AV-R11-LifeDeck Gear (Boss)",
+    "W404 AV-MiniBoss-Jewels Jewel (Boss)",
+    "W404 AV-MiniBoss-Jewels Reagent (Boss)"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "Name": "W404 CL-Protector-Gold-R10",
+  "Description": "Gold of the game's table CL-Protector-Gold-R10, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 43,
+  "MaxGold": 43,
+  "EachItem": false,
+  "Items": []
+}

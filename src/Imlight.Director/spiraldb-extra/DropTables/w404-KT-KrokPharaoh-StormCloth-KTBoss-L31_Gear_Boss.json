@@ -1,0 +1,93 @@
+{
+  "Name": "W404 KT-KrokPharaoh-StormCloth-KTBoss-L31 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokPharaoh-StormCloth-KTBoss-L31: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4935",
+      "ItemName": "Knife of the Badlands"
+    },
+    {
+      "ItemId": "4949",
+      "ItemName": "Glacial Dagger"
+    },
+    {
+      "ItemId": "4956",
+      "ItemName": "Prince's Dirk of Tempests"
+    },
+    {
+      "ItemId": "4959",
+      "ItemName": "Blade of Proportions"
+    },
+    {
+      "ItemId": "5037",
+      "ItemName": "Glittering Jewel"
+    },
+    {
+      "ItemId": "5042",
+      "ItemName": "Karanahn's Signet"
+    },
+    {
+      "ItemId": "38756",
+      "ItemName": "Karanahn's Brilliant Cloak"
+    },
+    {
+      "ItemId": "38759",
+      "ItemName": "Summertime Robes"
+    },
+    {
+      "ItemId": "38771",
+      "ItemName": "Garment of Patience"
+    },
+    {
+      "ItemId": "39421",
+      "ItemName": "Diviner's Boots"
+    },
+    {
+      "ItemId": "77684",
+      "ItemName": "Mask of Humidity"
+    },
+    {
+      "ItemId": "77705",
+      "ItemName": "Pioneer's Helm"
+    },
+    {
+      "ItemId": "77712",
+      "ItemName": "Cowl of the Temple"
+    },
+    {
+      "ItemId": "77725",
+      "ItemName": "Cowl of Prediction"
+    },
+    {
+      "ItemId": "77735",
+      "ItemName": "Necromancer's Ivory Hat"
+    },
+    {
+      "ItemId": "77747",
+      "ItemName": "Cowl of Sensibility"
+    },
+    {
+      "ItemId": "77794",
+      "ItemName": "Initiate's Boots"
+    },
+    {
+      "ItemId": "87302",
+      "ItemName": "Vest of Alacrity"
+    },
+    {
+      "ItemId": "87315",
+      "ItemName": "Balmy Tunic"
+    },
+    {
+      "ItemId": "87323",
+      "ItemName": "Sorcerer's Maroon Cloak"
+    },
+    {
+      "ItemId": "87328",
+      "ItemName": "Robe of Reason"
+    }
+  ]
+}

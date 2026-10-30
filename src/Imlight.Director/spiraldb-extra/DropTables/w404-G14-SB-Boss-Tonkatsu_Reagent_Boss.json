@@ -1,0 +1,29 @@
+{
+  "Name": "W404 G14-SB-Boss-Tonkatsu Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-SB-Boss-Tonkatsu: the reagent drops (5), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "106941",
+      "ItemName": "Bone"
+    },
+    {
+      "ItemId": "106942",
+      "ItemName": "Leather Straps"
+    },
+    {
+      "ItemId": "106943",
+      "ItemName": "Ectoplasm"
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk"
+    },
+    {
+      "ItemId": "1340030",
+      "ItemName": "Mote of Wisdom"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "Name": "W404 EM2-Boss-Major-02 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM2-Boss-Major-02: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1462340",
+      "ItemName": "Fiery Paradox Dagger"
+    },
+    {
+      "ItemId": "1462341",
+      "ItemName": "Icy Paradox Dagger"
+    },
+    {
+      "ItemId": "1462342",
+      "ItemName": "Stormy Paradox Dagger"
+    },
+    {
+      "ItemId": "1462343",
+      "ItemName": "Mythic Paradox Dagger"
+    },
+    {
+      "ItemId": "1462344",
+      "ItemName": "Lively Paradox Dagger"
+    },
+    {
+      "ItemId": "1462345",
+      "ItemName": "Deathly Paradox Dagger"
+    },
+    {
+      "ItemId": "1462346",
+      "ItemName": "Balanced Paradox Dagger"
+    },
+    {
+      "ItemId": "1462347",
+      "ItemName": "Divine Paradox Dagger"
+    },
+    {
+      "ItemId": "1462420",
+      "ItemName": "Fiery Paradox Deck"
+    },
+    {
+      "ItemId": "1462421",
+      "ItemName": "Icy Paradox Deck"
+    },
+    {
+      "ItemId": "1462422",
+      "ItemName": "Stormy Paradox Deck"
+    },
+    {
+      "ItemId": "1462423",
+      "ItemName": "Mythic Paradox Deck"
+    },
+    {
+      "ItemId": "1462424",
+      "ItemName": "Lively Paradox Deck"
+    },
+    {
+      "ItemId": "1462425",
+      "ItemName": "Deathly Paradox Deck"
+    },
+    {
+      "ItemId": "1462426",
+      "ItemName": "Balanced Paradox Deck"
+    },
+    {
+      "ItemId": "1462427",
+      "ItemName": "Divine Paradox Deck"
+    }
+  ]
+}

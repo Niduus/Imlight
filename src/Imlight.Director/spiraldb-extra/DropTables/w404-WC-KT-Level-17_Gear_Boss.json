@@ -1,0 +1,137 @@
+{
+  "Name": "W404 WC-KT-Level-17 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WC-KT-Level-17: the gear drops (32), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4941",
+      "ItemName": "Dirk of the Wasteland"
+    },
+    {
+      "ItemId": "4942",
+      "ItemName": "Parched Kris"
+    },
+    {
+      "ItemId": "4954",
+      "ItemName": "Dagger of Solitude"
+    },
+    {
+      "ItemId": "4955",
+      "ItemName": "Whirlwind Dagger"
+    },
+    {
+      "ItemId": "4958",
+      "ItemName": "Powerful Stiletto"
+    },
+    {
+      "ItemId": "5016",
+      "ItemName": "Sparkling Band"
+    },
+    {
+      "ItemId": "5026",
+      "ItemName": "Band of the Mirage"
+    },
+    {
+      "ItemId": "5027",
+      "ItemName": "Ring of the Badlands"
+    },
+    {
+      "ItemId": "38748",
+      "ItemName": "Tunic of Energy"
+    },
+    {
+      "ItemId": "38761",
+      "ItemName": "Glacial Tunic"
+    },
+    {
+      "ItemId": "38762",
+      "ItemName": "Vestment of the Arctic"
+    },
+    {
+      "ItemId": "39426",
+      "ItemName": "Boots of the Cyclone"
+    },
+    {
+      "ItemId": "39433",
+      "ItemName": "Crystalline Footwraps"
+    },
+    {
+      "ItemId": "77688",
+      "ItemName": "Cap of the Oasis"
+    },
+    {
+      "ItemId": "77689",
+      "ItemName": "Durable Hood"
+    },
+    {
+      "ItemId": "77699",
+      "ItemName": "Helm of the Cyclone"
+    },
+    {
+      "ItemId": "77708",
+      "ItemName": "Conjurer's Hat"
+    },
+    {
+      "ItemId": "77739",
+      "ItemName": "Mask of Proportions"
+    },
+    {
+      "ItemId": "77740",
+      "ItemName": "Helm of the Bastion"
+    },
+    {
+      "ItemId": "77756",
+      "ItemName": "Boots of Imagination"
+    },
+    {
+      "ItemId": "77765",
+      "ItemName": "Shoes of Adaptation"
+    },
+    {
+      "ItemId": "77775",
+      "ItemName": "Cryptkeeper's Shoes"
+    },
+    {
+      "ItemId": "77784",
+      "ItemName": "Ancient Sandals"
+    },
+    {
+      "ItemId": "77797",
+      "ItemName": "Shoes of Annihilation"
+    },
+    {
+      "ItemId": "77798",
+      "ItemName": "Boots of the Citadel"
+    },
+    {
+      "ItemId": "87266",
+      "ItemName": "Tunic of the Whirlwind"
+    },
+    {
+      "ItemId": "87278",
+      "ItemName": "Runed Vestment"
+    },
+    {
+      "ItemId": "87291",
+      "ItemName": "Cloak of Refuge"
+    },
+    {
+      "ItemId": "87304",
+      "ItemName": "Tunic of Mortality"
+    },
+    {
+      "ItemId": "87317",
+      "ItemName": "Robe of Talent"
+    },
+    {
+      "ItemId": "87331",
+      "ItemName": "Raiment of the Badlands"
+    },
+    {
+      "ItemId": "87333",
+      "ItemName": "Sphinx's Vestment"
+    }
+  ]
+}

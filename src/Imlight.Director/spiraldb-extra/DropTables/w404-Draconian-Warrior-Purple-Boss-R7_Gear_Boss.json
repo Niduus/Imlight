@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Draconian-Warrior-Purple-Boss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Draconian-Warrior-Purple-Boss-R7: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104599",
+      "ItemName": "Drape of Symmetry"
+    },
+    {
+      "ItemId": "104615",
+      "ItemName": "Cloak of the Djinni"
+    },
+    {
+      "ItemId": "104617",
+      "ItemName": "Salamander's Wrap"
+    },
+    {
+      "ItemId": "104731",
+      "ItemName": "Sysiphan's Regal Raiment"
+    },
+    {
+      "ItemId": "104754",
+      "ItemName": "Slippers of the Ice Flow"
+    },
+    {
+      "ItemId": "104757",
+      "ItemName": "Frostwoven Footwraps"
+    },
+    {
+      "ItemId": "104806",
+      "ItemName": "Shoes of Gloom"
+    },
+    {
+      "ItemId": "104869",
+      "ItemName": "Sysiphan's Benevolent Boots"
+    },
+    {
+      "ItemId": "126562",
+      "ItemName": "Ring of Equilibrium"
+    },
+    {
+      "ItemId": "126683",
+      "ItemName": "Deck of Last Departure"
+    },
+    {
+      "ItemId": "146168",
+      "ItemName": "Athame of the Volcano"
+    },
+    {
+      "ItemId": "146169",
+      "ItemName": "Athame of Perserverance"
+    },
+    {
+      "ItemId": "146246",
+      "ItemName": "Sysiphan's Mighty Mantle"
+    },
+    {
+      "ItemId": "146284",
+      "ItemName": "Cowl of the Glacier"
+    },
+    {
+      "ItemId": "146318",
+      "ItemName": "Veil of Fire"
+    },
+    {
+      "ItemId": "146332",
+      "ItemName": "Mantle of the Undying"
+    }
+  ]
+}

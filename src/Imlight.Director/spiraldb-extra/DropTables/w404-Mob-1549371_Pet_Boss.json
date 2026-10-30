@@ -1,0 +1,49 @@
+{
+  "Name": "W404 Mob-1549371 Pet (Boss)",
+  "Description": "Wizard404's drop list of Ixcax Cursedwing's own drops: the pet drops (10), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "100416",
+      "ItemName": "Scarab"
+    },
+    {
+      "ItemId": "164422",
+      "ItemName": "Death Scarab"
+    },
+    {
+      "ItemId": "225450",
+      "ItemName": "Life Scarab"
+    },
+    {
+      "ItemId": "713257",
+      "ItemName": "Velociraptor"
+    },
+    {
+      "ItemId": "713289",
+      "ItemName": "Babydactyl"
+    },
+    {
+      "ItemId": "713299",
+      "ItemName": "Stegosaurus"
+    },
+    {
+      "ItemId": "733071",
+      "ItemName": "Therizinosaurus"
+    },
+    {
+      "ItemId": "733072",
+      "ItemName": "Leaf Foot"
+    },
+    {
+      "ItemId": "1257439",
+      "ItemName": "Pesky Beetle"
+    },
+    {
+      "ItemId": "1317620",
+      "ItemName": "Royal Ibis"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "Name": "W404 Scarecrow-WCBoss-L18 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Scarecrow-WCBoss-L18: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160230",
+      "ItemName": "Pumpkin"
+    },
+    {
+      "ItemId": "160265",
+      "ItemName": "Tall Vase"
+    },
+    {
+      "ItemId": "160360",
+      "ItemName": "Heated Stone Tower"
+    },
+    {
+      "ItemId": "512115",
+      "ItemName": "Wizard City Haunted Theme"
+    }
+  ]
+}

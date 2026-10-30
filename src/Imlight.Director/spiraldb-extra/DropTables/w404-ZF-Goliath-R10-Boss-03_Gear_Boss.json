@@ -1,0 +1,61 @@
+{
+  "Name": "W404 ZF-Goliath-R10-Boss-03 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Goliath-R10-Boss-03: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "526682",
+      "ItemName": "Sun's Light Spear"
+    },
+    {
+      "ItemId": "540093",
+      "ItemName": "Mirror Shard Charm"
+    },
+    {
+      "ItemId": "540124",
+      "ItemName": "Berserker's Blade"
+    },
+    {
+      "ItemId": "540169",
+      "ItemName": "Elephant Graveyard Shroud"
+    },
+    {
+      "ItemId": "540171",
+      "ItemName": "Cold At Night Cover"
+    },
+    {
+      "ItemId": "540205",
+      "ItemName": "Nergal's Burning Brand"
+    },
+    {
+      "ItemId": "540232",
+      "ItemName": "Fire-Feather Robes"
+    },
+    {
+      "ItemId": "540236",
+      "ItemName": "Big Sky Outfit"
+    },
+    {
+      "ItemId": "540279",
+      "ItemName": "Life's Circle Safari Boots"
+    },
+    {
+      "ItemId": "540282",
+      "ItemName": "Dancing Queen Dancers"
+    },
+    {
+      "ItemId": "540301",
+      "ItemName": "Dead Chieftain's Fanged Deck"
+    },
+    {
+      "ItemId": "540305",
+      "ItemName": "Bundle of Ananse's Stories"
+    },
+    {
+      "ItemId": "540306",
+      "ItemName": "Hand-Chased Box of Thunder"
+    }
+  ]
+}

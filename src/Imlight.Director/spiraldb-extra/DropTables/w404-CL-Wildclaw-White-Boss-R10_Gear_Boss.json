@@ -1,0 +1,49 @@
+{
+  "Name": "W404 CL-Wildclaw-White-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-Wildclaw-White-Boss-R10: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243206",
+      "ItemName": "Examiner's Shortblade"
+    },
+    {
+      "ItemId": "243220",
+      "ItemName": "Blistering Bodkin"
+    },
+    {
+      "ItemId": "243369",
+      "ItemName": "Wintertide Topper"
+    },
+    {
+      "ItemId": "243439",
+      "ItemName": "Wildcrag's Typhoon Helm"
+    },
+    {
+      "ItemId": "243460",
+      "ItemName": "Congruent Costume"
+    },
+    {
+      "ItemId": "243544",
+      "ItemName": "Survivor's Signet"
+    },
+    {
+      "ItemId": "243561",
+      "ItemName": "Echo Ring"
+    },
+    {
+      "ItemId": "243638",
+      "ItemName": "Icestar Outfit"
+    },
+    {
+      "ItemId": "243716",
+      "ItemName": "Attuned Footguards"
+    },
+    {
+      "ItemId": "243737",
+      "ItemName": "Forsaken Footguards"
+    }
+  ]
+}

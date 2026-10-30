@@ -1,0 +1,69 @@
+{
+  "Name": "W404 Mob-1223121 Gear (Boss)",
+  "Description": "Wizard404's drop list of Viridan GreenOak's own drops: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203202",
+      "ItemName": "Mantis Armor of Purpose"
+    },
+    {
+      "ItemId": "1203203",
+      "ItemName": "Robes of Burrower Strife"
+    },
+    {
+      "ItemId": "1203252",
+      "ItemName": "Blighted Burrower Boots"
+    },
+    {
+      "ItemId": "1203253",
+      "ItemName": "Digger Drone's Dirty Boots"
+    },
+    {
+      "ItemId": "1203288",
+      "ItemName": "Banetail's Charged Sting"
+    },
+    {
+      "ItemId": "1203290",
+      "ItemName": "Goliath's Savage Slasher"
+    },
+    {
+      "ItemId": "1203292",
+      "ItemName": "Yellow Jacket's Avenger"
+    },
+    {
+      "ItemId": "1203331",
+      "ItemName": "Benzzi's Campaign Memento"
+    },
+    {
+      "ItemId": "1203332",
+      "ItemName": "Collar of the Besieged"
+    },
+    {
+      "ItemId": "1203333",
+      "ItemName": "Mantis Prophet's Ornament"
+    },
+    {
+      "ItemId": "1203334",
+      "ItemName": "Jewel of the Apiary"
+    },
+    {
+      "ItemId": "1203366",
+      "ItemName": "Besieged Burrower's Knife"
+    },
+    {
+      "ItemId": "1203406",
+      "ItemName": "Cell of Survival"
+    },
+    {
+      "ItemId": "1203407",
+      "ItemName": "Gallery of the Woebegone"
+    },
+    {
+      "ItemId": "1203408",
+      "ItemName": "LimeBlight's Gallery"
+    }
+  ]
+}

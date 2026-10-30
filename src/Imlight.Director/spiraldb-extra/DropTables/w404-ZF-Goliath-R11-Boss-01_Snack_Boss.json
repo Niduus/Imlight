@@ -1,0 +1,53 @@
+{
+  "Name": "W404 ZF-Goliath-R11-Boss-01 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Goliath-R11-Boss-01: the snack drops (11), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220215",
+      "ItemName": "Golden Apple"
+    },
+    {
+      "ItemId": "220217",
+      "ItemName": "Golden Grapes"
+    },
+    {
+      "ItemId": "220304",
+      "ItemName": "Flaming Soup"
+    },
+    {
+      "ItemId": "220310",
+      "ItemName": "King Banana"
+    },
+    {
+      "ItemId": "220311",
+      "ItemName": "Glowing Star Fruit"
+    },
+    {
+      "ItemId": "220326",
+      "ItemName": "Goat Cheese"
+    },
+    {
+      "ItemId": "220331",
+      "ItemName": "Gummy Humongofrog"
+    },
+    {
+      "ItemId": "240118",
+      "ItemName": "Cauliflowers"
+    },
+    {
+      "ItemId": "473221",
+      "ItemName": "Flapjacks"
+    },
+    {
+      "ItemId": "473582",
+      "ItemName": "Kola Nuts"
+    },
+    {
+      "ItemId": "473583",
+      "ItemName": "Jelly Baby"
+    }
+  ]
+}

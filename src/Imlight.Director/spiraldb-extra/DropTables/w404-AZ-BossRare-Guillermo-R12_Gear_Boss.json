@@ -1,0 +1,45 @@
+{
+  "Name": "W404 AZ-BossRare-Guillermo-R12 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossRare-Guillermo-R12: the gear drops (9), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "470720",
+      "ItemName": "The Enchanter"
+    },
+    {
+      "ItemId": "730190",
+      "ItemName": "Golden Head of the Cold House"
+    },
+    {
+      "ItemId": "730203",
+      "ItemName": "House of Plague Greenstone"
+    },
+    {
+      "ItemId": "730277",
+      "ItemName": "Philosoraptor's Ideal Mantle"
+    },
+    {
+      "ItemId": "730278",
+      "ItemName": "Keeper of the Codex Crown"
+    },
+    {
+      "ItemId": "730345",
+      "ItemName": "Philososaur's Robes"
+    },
+    {
+      "ItemId": "730347",
+      "ItemName": "Black Sun Chac's Armor"
+    },
+    {
+      "ItemId": "730417",
+      "ItemName": "Winter's Pyramid Deck"
+    },
+    {
+      "ItemId": "730448",
+      "ItemName": "Lord of the Swamp's Scepter"
+    }
+  ]
+}

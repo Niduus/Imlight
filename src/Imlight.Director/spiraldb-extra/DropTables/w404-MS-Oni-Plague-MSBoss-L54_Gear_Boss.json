@@ -1,0 +1,69 @@
+{
+  "Name": "W404 MS-Oni-Plague-MSBoss-L54 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Oni-Plague-MSBoss-L54: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "87776",
+      "ItemName": "Plague Oni's Sapphire Blade"
+    },
+    {
+      "ItemId": "97432",
+      "ItemName": "Plagued Collar of the Beast"
+    },
+    {
+      "ItemId": "97549",
+      "ItemName": "Plagued Cowl of Aspirations"
+    },
+    {
+      "ItemId": "97764",
+      "ItemName": "Plague Oni's Vacant Robe"
+    },
+    {
+      "ItemId": "97788",
+      "ItemName": "Friendly Garments"
+    },
+    {
+      "ItemId": "97809",
+      "ItemName": "Tunic of the Whim"
+    },
+    {
+      "ItemId": "97838",
+      "ItemName": "Tunic of Chimes"
+    },
+    {
+      "ItemId": "97857",
+      "ItemName": "Garment of Yodels"
+    },
+    {
+      "ItemId": "97886",
+      "ItemName": "Zippy Tunic"
+    },
+    {
+      "ItemId": "97900",
+      "ItemName": "Garment of Sandcastles"
+    },
+    {
+      "ItemId": "97925",
+      "ItemName": "Plagued Boots"
+    },
+    {
+      "ItemId": "97926",
+      "ItemName": "Plague Oni's Footwraps"
+    },
+    {
+      "ItemId": "97986",
+      "ItemName": "Footwraps of Pictures"
+    },
+    {
+      "ItemId": "98037",
+      "ItemName": "Vexing Boots"
+    },
+    {
+      "ItemId": "126142",
+      "ItemName": "Dreamer's Band of Reality"
+    }
+  ]
+}

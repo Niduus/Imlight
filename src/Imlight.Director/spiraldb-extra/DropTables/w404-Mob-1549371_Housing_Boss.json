@@ -1,0 +1,185 @@
+{
+  "Name": "W404 Mob-1549371 Housing (Boss)",
+  "Description": "Wizard404's drop list of Ixcax Cursedwing's own drops: the housing drops (44), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "470682",
+      "ItemName": "Tezcat Threestar Bobblehead"
+    },
+    {
+      "ItemId": "470683",
+      "ItemName": "Zaylin Reedwalker Bobblehead"
+    },
+    {
+      "ItemId": "470684",
+      "ItemName": "King Axaya Bobblehead"
+    },
+    {
+      "ItemId": "470685",
+      "ItemName": "King Acampi Bobblehead"
+    },
+    {
+      "ItemId": "470686",
+      "ItemName": "Queen Chasca Bobblehead"
+    },
+    {
+      "ItemId": "512211",
+      "ItemName": "Azteca Haunted Theme"
+    },
+    {
+      "ItemId": "512212",
+      "ItemName": "Azteca Swamp Theme"
+    },
+    {
+      "ItemId": "683258",
+      "ItemName": "Aztecan Bath Sink"
+    },
+    {
+      "ItemId": "683259",
+      "ItemName": "Aztecan Bath Tub"
+    },
+    {
+      "ItemId": "683260",
+      "ItemName": "Aztecan Bed"
+    },
+    {
+      "ItemId": "683261",
+      "ItemName": "Aztecan Bed Table"
+    },
+    {
+      "ItemId": "683262",
+      "ItemName": "Aztecan Bookshelf"
+    },
+    {
+      "ItemId": "683263",
+      "ItemName": "Aztecan Cabinet"
+    },
+    {
+      "ItemId": "683264",
+      "ItemName": "Aztecan Settee"
+    },
+    {
+      "ItemId": "683265",
+      "ItemName": "Aztecan Coffee Table"
+    },
+    {
+      "ItemId": "683266",
+      "ItemName": "Aztecan Couch"
+    },
+    {
+      "ItemId": "683267",
+      "ItemName": "Aztecan Cupboards"
+    },
+    {
+      "ItemId": "683268",
+      "ItemName": "Aztecan Dining Chair"
+    },
+    {
+      "ItemId": "683269",
+      "ItemName": "Aztecan Dining Table"
+    },
+    {
+      "ItemId": "683270",
+      "ItemName": "Aztecan Fireplace"
+    },
+    {
+      "ItemId": "683271",
+      "ItemName": "Aztecan Rug"
+    },
+    {
+      "ItemId": "683272",
+      "ItemName": "Aztecan Sink"
+    },
+    {
+      "ItemId": "683273",
+      "ItemName": "Aztecan Towel Rack"
+    },
+    {
+      "ItemId": "739073",
+      "ItemName": "Aztecosaur Stela"
+    },
+    {
+      "ItemId": "739074",
+      "ItemName": "Butterfly Shrine"
+    },
+    {
+      "ItemId": "739075",
+      "ItemName": "Small Throne"
+    },
+    {
+      "ItemId": "739076",
+      "ItemName": "Codex Stand"
+    },
+    {
+      "ItemId": "739077",
+      "ItemName": "Stone Azteca Head"
+    },
+    {
+      "ItemId": "739079",
+      "ItemName": "Azteca Fire Pit"
+    },
+    {
+      "ItemId": "739080",
+      "ItemName": "Purple Lily"
+    },
+    {
+      "ItemId": "739082",
+      "ItemName": "Gold Bars"
+    },
+    {
+      "ItemId": "739083",
+      "ItemName": "Light Pillar"
+    },
+    {
+      "ItemId": "739088",
+      "ItemName": "Engraved Pillar"
+    },
+    {
+      "ItemId": "739100",
+      "ItemName": "Azteca Water Lily"
+    },
+    {
+      "ItemId": "739101",
+      "ItemName": "Bundle of Wood"
+    },
+    {
+      "ItemId": "739123",
+      "ItemName": "Ritual Codex"
+    },
+    {
+      "ItemId": "739148",
+      "ItemName": "Lava Bulb"
+    },
+    {
+      "ItemId": "739149",
+      "ItemName": "Pink Lily"
+    },
+    {
+      "ItemId": "739178",
+      "ItemName": "Azteca Fern"
+    },
+    {
+      "ItemId": "739185",
+      "ItemName": "Notch Leaf"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    },
+    {
+      "ItemId": "1217523",
+      "ItemName": "Gold Skeleton Key"
+    },
+    {
+      "ItemId": "1350309",
+      "ItemName": "Adept's Socket Wrench"
+    }
+  ]
+}

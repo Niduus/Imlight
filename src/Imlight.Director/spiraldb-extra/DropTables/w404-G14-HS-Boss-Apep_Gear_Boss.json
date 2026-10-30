@@ -1,0 +1,121 @@
+{
+  "Name": "W404 G14-HS-Boss-Apep Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-HS-Boss-Apep: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1338108",
+      "ItemName": "Boots of the Burning Scales"
+    },
+    {
+      "ItemId": "1338109",
+      "ItemName": "Boots of the Frozen Desert"
+    },
+    {
+      "ItemId": "1338110",
+      "ItemName": "Desert Rain Mukluks"
+    },
+    {
+      "ItemId": "1338111",
+      "ItemName": "Ancient Rebus Sandals"
+    },
+    {
+      "ItemId": "1338112",
+      "ItemName": "Hands of Anubis Boots"
+    },
+    {
+      "ItemId": "1338113",
+      "ItemName": "Soul Devourer's Footwraps"
+    },
+    {
+      "ItemId": "1338114",
+      "ItemName": "Shoes of Anubis' Judgment"
+    },
+    {
+      "ItemId": "1338199",
+      "ItemName": "Kris of the Ravenous Teeth"
+    },
+    {
+      "ItemId": "1338200",
+      "ItemName": "Condemned Soldier's Bodkin"
+    },
+    {
+      "ItemId": "1338201",
+      "ItemName": "Moh'Lharz's Ravenous Fang"
+    },
+    {
+      "ItemId": "1338202",
+      "ItemName": "Hieroglyph Kris of Riddles"
+    },
+    {
+      "ItemId": "1338203",
+      "ItemName": "Mander Survival Knife"
+    },
+    {
+      "ItemId": "1338204",
+      "ItemName": "Army of the Condemned Kris"
+    },
+    {
+      "ItemId": "1338205",
+      "ItemName": "Hall of Justice Shortblade"
+    },
+    {
+      "ItemId": "1338451",
+      "ItemName": "Sands of Zigazag Cards"
+    },
+    {
+      "ItemId": "1338452",
+      "ItemName": "Upper Zigazag Arcana"
+    },
+    {
+      "ItemId": "1338453",
+      "ItemName": "Ammit's Hand of Revolution"
+    },
+    {
+      "ItemId": "1338454",
+      "ItemName": "Ancient Hieroglyph Cards"
+    },
+    {
+      "ItemId": "1338455",
+      "ItemName": "Baruti's Deck of Revival"
+    },
+    {
+      "ItemId": "1338456",
+      "ItemName": "Hand of the Wicked Heart"
+    },
+    {
+      "ItemId": "1338457",
+      "ItemName": "Scales of Justice Arcana"
+    },
+    {
+      "ItemId": "1338528",
+      "ItemName": "Rod of the Burning Scales"
+    },
+    {
+      "ItemId": "1338529",
+      "ItemName": "Stave of Cold Justice"
+    },
+    {
+      "ItemId": "1338530",
+      "ItemName": "Wrath of Anubis Staff"
+    },
+    {
+      "ItemId": "1338531",
+      "ItemName": "Rebus Breaker's Stave"
+    },
+    {
+      "ItemId": "1338532",
+      "ItemName": "Hands of Anubis Staff"
+    },
+    {
+      "ItemId": "1338533",
+      "ItemName": "Stave of the Devoured"
+    },
+    {
+      "ItemId": "1338534",
+      "ItemName": "Anubis' Staff of Redress"
+    }
+  ]
+}

@@ -1,0 +1,209 @@
+{
+  "Name": "W404 NV_Dog_DogofWar_B_01 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Dog_DogofWar_B_01: the jewel drops (50), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1535634",
+      "ItemName": "Amazing Critical Amethyst +22"
+    },
+    {
+      "ItemId": "1535635",
+      "ItemName": "Amazing Critical Citrine +21"
+    },
+    {
+      "ItemId": "1535640",
+      "ItemName": "Amazing Critical Jade +22"
+    },
+    {
+      "ItemId": "1535641",
+      "ItemName": "Amazing Critical Onyx +21"
+    },
+    {
+      "ItemId": "1535642",
+      "ItemName": "Amazing Critical Onyx +22"
+    },
+    {
+      "ItemId": "1535644",
+      "ItemName": "Amazing Critical Peridot +21"
+    },
+    {
+      "ItemId": "1535646",
+      "ItemName": "Amazing Critical Ruby +21"
+    },
+    {
+      "ItemId": "1535648",
+      "ItemName": "Amazing Critical Sapphire +21"
+    },
+    {
+      "ItemId": "1535649",
+      "ItemName": "Amazing Critical Sapphire +22"
+    },
+    {
+      "ItemId": "1535650",
+      "ItemName": "Amazing Damage Amethyst +31"
+    },
+    {
+      "ItemId": "1535653",
+      "ItemName": "Amazing Damage Citrine +32"
+    },
+    {
+      "ItemId": "1535657",
+      "ItemName": "Amazing Damage Jade +32"
+    },
+    {
+      "ItemId": "1535659",
+      "ItemName": "Amazing Damage Onyx +32"
+    },
+    {
+      "ItemId": "1535664",
+      "ItemName": "Amazing Damage Ruby +32"
+    },
+    {
+      "ItemId": "1535665",
+      "ItemName": "Amazing Damage Sapphire +31"
+    },
+    {
+      "ItemId": "1514464",
+      "ItemName": "Dazzling Critical Amethyst +20"
+    },
+    {
+      "ItemId": "1514468",
+      "ItemName": "Dazzling Critical Jade +20"
+    },
+    {
+      "ItemId": "1514470",
+      "ItemName": "Dazzling Critical Onyx +20"
+    },
+    {
+      "ItemId": "1514465",
+      "ItemName": "Dazzling Critical Peridot +19"
+    },
+    {
+      "ItemId": "1514466",
+      "ItemName": "Dazzling Critical Peridot +20"
+    },
+    {
+      "ItemId": "1514461",
+      "ItemName": "Dazzling Critical Sapphire +19"
+    },
+    {
+      "ItemId": "1514450",
+      "ItemName": "Dazzling Damage Jade +30"
+    },
+    {
+      "ItemId": "1514452",
+      "ItemName": "Dazzling Damage Onyx +30"
+    },
+    {
+      "ItemId": "1514441",
+      "ItemName": "Dazzling Damage Ruby +29"
+    },
+    {
+      "ItemId": "1514443",
+      "ItemName": "Dazzling Damage Sapphire +29"
+    },
+    {
+      "ItemId": "1514444",
+      "ItemName": "Dazzling Damage Sapphire +30"
+    },
+    {
+      "ItemId": "1514458",
+      "ItemName": "Dazzling Mending Opal +7%"
+    },
+    {
+      "ItemId": "1352780",
+      "ItemName": "Polished Piercing Amethyst +6%"
+    },
+    {
+      "ItemId": "1352787",
+      "ItemName": "Polished Piercing Peridot +6%"
+    },
+    {
+      "ItemId": "1352808",
+      "ItemName": "Polished Piercing Citrine +6%"
+    },
+    {
+      "ItemId": "1352794",
+      "ItemName": "Polished Piercing Jade +6%"
+    },
+    {
+      "ItemId": "1352801",
+      "ItemName": "Polished Piercing Onyx +6%"
+    },
+    {
+      "ItemId": "1352766",
+      "ItemName": "Polished Piercing Ruby +6%"
+    },
+    {
+      "ItemId": "1587352",
+      "ItemName": "Balance Accurate Pin (100)"
+    },
+    {
+      "ItemId": "1578417",
+      "ItemName": "Balance Conversion Pin (140)"
+    },
+    {
+      "ItemId": "1578584",
+      "ItemName": "Balance Conversion Pin (150)"
+    },
+    {
+      "ItemId": "1587353",
+      "ItemName": "Death Accurate Pin (100)"
+    },
+    {
+      "ItemId": "1578585",
+      "ItemName": "Death Conversion Pin (150)"
+    },
+    {
+      "ItemId": "1587354",
+      "ItemName": "Fire Accurate Pin (100)"
+    },
+    {
+      "ItemId": "1578586",
+      "ItemName": "Fire Conversion Pin (150)"
+    },
+    {
+      "ItemId": "1587351",
+      "ItemName": "Ice Accurate Pin (110)"
+    },
+    {
+      "ItemId": "1578420",
+      "ItemName": "Ice Conversion Pin (140)"
+    },
+    {
+      "ItemId": "1587355",
+      "ItemName": "Life Accurate Pin (100)"
+    },
+    {
+      "ItemId": "1578421",
+      "ItemName": "Life Conversion Pin (140)"
+    },
+    {
+      "ItemId": "1578588",
+      "ItemName": "Life Conversion Pin (150)"
+    },
+    {
+      "ItemId": "1587356",
+      "ItemName": "Myth Accurate Pin (100)"
+    },
+    {
+      "ItemId": "1578422",
+      "ItemName": "Myth Conversion Pin (140)"
+    },
+    {
+      "ItemId": "1578589",
+      "ItemName": "Myth Conversion Pin (150)"
+    },
+    {
+      "ItemId": "1587357",
+      "ItemName": "Storm Accurate Pin (80)"
+    },
+    {
+      "ItemId": "1578423",
+      "ItemName": "Storm Conversion Pin (140)"
+    }
+  ]
+}

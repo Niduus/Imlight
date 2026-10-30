@@ -1,0 +1,61 @@
+{
+  "Name": "W404 Skeleton-Gold-WCBoss-130 Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skeleton-Gold-WCBoss-130: the seed drops (13), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346010",
+      "ItemName": "Maelstrom Snap Dragon"
+    },
+    {
+      "ItemId": "346017",
+      "ItemName": "Deadly Ninja Fig"
+    },
+    {
+      "ItemId": "355080",
+      "ItemName": "Burning Snap Dragon"
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon"
+    },
+    {
+      "ItemId": "356113",
+      "ItemName": "Cornbread Fruit Bush"
+    },
+    {
+      "ItemId": "356120",
+      "ItemName": "Rye Bread Fruit Bush"
+    },
+    {
+      "ItemId": "356127",
+      "ItemName": "Bread Fruit Bush"
+    },
+    {
+      "ItemId": "653111",
+      "ItemName": "Alligator Pear Tree"
+    },
+    {
+      "ItemId": "653139",
+      "ItemName": "Angel Oak"
+    },
+    {
+      "ItemId": "713168",
+      "ItemName": "Red Couch Potatoes"
+    },
+    {
+      "ItemId": "713175",
+      "ItemName": "Golden Couch Potatoes"
+    },
+    {
+      "ItemId": "1248255",
+      "ItemName": "Face Palm"
+    },
+    {
+      "ItemId": "1248268",
+      "ItemName": "Queen Crape Myrtle"
+    }
+  ]
+}

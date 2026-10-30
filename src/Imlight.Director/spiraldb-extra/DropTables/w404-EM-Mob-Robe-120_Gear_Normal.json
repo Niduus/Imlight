@@ -1,0 +1,41 @@
+{
+  "Name": "W404 EM-Mob-Robe-120 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table EM-Mob-Robe-120: the gear drops (8), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1430450",
+      "ItemName": "Interstellar Engineer Suit"
+    },
+    {
+      "ItemId": "1430451",
+      "ItemName": "Interstellar Explorer's Uniform"
+    },
+    {
+      "ItemId": "1430452",
+      "ItemName": "Interstellar Navigator Suit"
+    },
+    {
+      "ItemId": "1430453",
+      "ItemName": "Interstellar Hero's Uniform"
+    },
+    {
+      "ItemId": "1430454",
+      "ItemName": "Medic's Interstellar Uniform"
+    },
+    {
+      "ItemId": "1430455",
+      "ItemName": "Interstellar Warrior Uniform"
+    },
+    {
+      "ItemId": "1430456",
+      "ItemName": "Interstellar Delegate's Suit"
+    },
+    {
+      "ItemId": "1430457",
+      "ItemName": "Interstellar Officer's Uniform"
+    }
+  ]
+}

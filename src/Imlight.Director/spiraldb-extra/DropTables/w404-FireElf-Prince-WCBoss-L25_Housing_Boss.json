@@ -1,0 +1,25 @@
+{
+  "Name": "W404 FireElf-Prince-WCBoss-L25 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table FireElf-Prince-WCBoss-L25: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160335",
+      "ItemName": "Firecat Statue"
+    },
+    {
+      "ItemId": "160370",
+      "ItemName": "Fire Bush"
+    },
+    {
+      "ItemId": "160377",
+      "ItemName": "Small Fern"
+    },
+    {
+      "ItemId": "512113",
+      "ItemName": "Wizard101 Theme"
+    }
+  ]
+}

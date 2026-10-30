@@ -1,0 +1,65 @@
+{
+  "Name": "W404 Mob-1302674 Gear (Boss)",
+  "Description": "Wizard404's drop list of Doctor Jackall's own drops: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330926",
+      "ItemName": "Palace Guard's Stovepipe"
+    },
+    {
+      "ItemId": "1330927",
+      "ItemName": "Yeoman's Winter Top"
+    },
+    {
+      "ItemId": "1330928",
+      "ItemName": "Palace Guard's Rain Topper"
+    },
+    {
+      "ItemId": "1330929",
+      "ItemName": "Yeoman's Top Hat of Reverie"
+    },
+    {
+      "ItemId": "1330930",
+      "ItemName": "Yeoman's Cap of Bounty"
+    },
+    {
+      "ItemId": "1330931",
+      "ItemName": "Hat of the Forlorn Watch"
+    },
+    {
+      "ItemId": "1330932",
+      "ItemName": "Yeoman's Topper of Unity"
+    },
+    {
+      "ItemId": "1338514",
+      "ItemName": "Regal Token of Luminosity"
+    },
+    {
+      "ItemId": "1338515",
+      "ItemName": "Relic of the Reign of Ice"
+    },
+    {
+      "ItemId": "1338516",
+      "ItemName": "Trophy of the Raucous Court"
+    },
+    {
+      "ItemId": "1338517",
+      "ItemName": "Royal Bequest of Eidolon"
+    },
+    {
+      "ItemId": "1338518",
+      "ItemName": "Relic of Imperial Perpetuum"
+    },
+    {
+      "ItemId": "1338519",
+      "ItemName": "Solemn Kingdom Heirloom"
+    },
+    {
+      "ItemId": "1338520",
+      "ItemName": "Noble Trophy of Equality"
+    }
+  ]
+}

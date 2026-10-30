@@ -1,0 +1,297 @@
+{
+  "Name": "W404 LM-Boss-Seeds Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table LM-Boss-Seeds: the seed drops (72), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "653139",
+      "ItemName": "Angel Oak"
+    },
+    {
+      "ItemId": "589145",
+      "ItemName": "Angora Bunny Ears"
+    },
+    {
+      "ItemId": "589194",
+      "ItemName": "Blue Huckleberries"
+    },
+    {
+      "ItemId": "473654",
+      "ItemName": "Boon Tree"
+    },
+    {
+      "ItemId": "713126",
+      "ItemName": "Clockwork Flower"
+    },
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion"
+    },
+    {
+      "ItemId": "404123",
+      "ItemName": "Deadly Helephant Ears"
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus"
+    },
+    {
+      "ItemId": "1248255",
+      "ItemName": "Face Palm"
+    },
+    {
+      "ItemId": "713154",
+      "ItemName": "Green Snow Apples"
+    },
+    {
+      "ItemId": "355199",
+      "ItemName": "Honey Sickle"
+    },
+    {
+      "ItemId": "473638",
+      "ItemName": "Ivy League"
+    },
+    {
+      "ItemId": "473194",
+      "ItemName": "Maltese Tiger Lily"
+    },
+    {
+      "ItemId": "473647",
+      "ItemName": "Moon Flower"
+    },
+    {
+      "ItemId": "346031",
+      "ItemName": "Ninja Fig"
+    },
+    {
+      "ItemId": "589187",
+      "ItemName": "Pink Huckleberries"
+    },
+    {
+      "ItemId": "355108",
+      "ItemName": "Prickly Bear Cactus"
+    },
+    {
+      "ItemId": "713161",
+      "ItemName": "Purple Snow Apples"
+    },
+    {
+      "ItemId": "473131",
+      "ItemName": "Red Bell Pepper"
+    },
+    {
+      "ItemId": "713168",
+      "ItemName": "Red Couch Potatoes"
+    },
+    {
+      "ItemId": "589180",
+      "ItemName": "Red Huckleberries"
+    },
+    {
+      "ItemId": "1350198",
+      "ItemName": "Rotten Beets"
+    },
+    {
+      "ItemId": "356120",
+      "ItemName": "Rye Bread Fruit Bush"
+    },
+    {
+      "ItemId": "1248248",
+      "ItemName": "Saw Palmetto"
+    },
+    {
+      "ItemId": "345989",
+      "ItemName": "Silver Trumpet Vine"
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon"
+    },
+    {
+      "ItemId": "713140",
+      "ItemName": "Snow Apples"
+    },
+    {
+      "ItemId": "713147",
+      "ItemName": "Sour Fickle Pickle"
+    },
+    {
+      "ItemId": "1248066",
+      "ItemName": "Sugar Khrystal"
+    },
+    {
+      "ItemId": "1248008",
+      "ItemName": "Sword Fern"
+    },
+    {
+      "ItemId": "1350124",
+      "ItemName": "Ultra Helephant Ears"
+    },
+    {
+      "ItemId": "1350111",
+      "ItemName": "Ultra Huckleberries"
+    },
+    {
+      "ItemId": "1350094",
+      "ItemName": "Ultra Snow Apples"
+    },
+    {
+      "ItemId": "1350206",
+      "ItemName": "Vampire Carrots"
+    },
+    {
+      "ItemId": "355073",
+      "ItemName": "Venus Fly Trap"
+    },
+    {
+      "ItemId": "346052",
+      "ItemName": "White Desparagus"
+    },
+    {
+      "ItemId": "356092",
+      "ItemName": "White Laugh-o-dil"
+    },
+    {
+      "ItemId": "473152",
+      "ItemName": "Yellow Bell Pepper"
+    },
+    {
+      "ItemId": "345982",
+      "ItemName": "Deadly Fly Trap"
+    },
+    {
+      "ItemId": "346010",
+      "ItemName": "Maelstrom Snap Dragon"
+    },
+    {
+      "ItemId": "733190",
+      "ItemName": "Missile Toe"
+    },
+    {
+      "ItemId": "473166",
+      "ItemName": "Purple Grapes of Wrath"
+    },
+    {
+      "ItemId": "355080",
+      "ItemName": "Burning Snap Dragon"
+    },
+    {
+      "ItemId": "473138",
+      "ItemName": "Orange Bell Pepper"
+    },
+    {
+      "ItemId": "653111",
+      "ItemName": "Alligator Pear Tree"
+    },
+    {
+      "ItemId": "404116",
+      "ItemName": "Evil Magma Peas"
+    },
+    {
+      "ItemId": "355101",
+      "ItemName": "Fickle Pickle"
+    },
+    {
+      "ItemId": "653146",
+      "ItemName": "Fish on a Vine"
+    },
+    {
+      "ItemId": "589159",
+      "ItemName": "Goose Tree"
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears"
+    },
+    {
+      "ItemId": "473145",
+      "ItemName": "Purple Bell Pepper"
+    },
+    {
+      "ItemId": "1248268",
+      "ItemName": "Queen Crape Myrtle"
+    },
+    {
+      "ItemId": "1350155",
+      "ItemName": "Ultra Fly Trap"
+    },
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots"
+    },
+    {
+      "ItemId": "589173",
+      "ItemName": "Bamboo Shoots"
+    },
+    {
+      "ItemId": "346017",
+      "ItemName": "Deadly Ninja Fig"
+    },
+    {
+      "ItemId": "346003",
+      "ItemName": "Fiery Boom Shroom"
+    },
+    {
+      "ItemId": "473078",
+      "ItemName": "Key Limes"
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "Laugh-o-dil"
+    },
+    {
+      "ItemId": "653153",
+      "ItemName": "Melting Cheese Tree"
+    },
+    {
+      "ItemId": "355115",
+      "ItemName": "Orange Dandelion"
+    },
+    {
+      "ItemId": "473173",
+      "ItemName": "Red Grapes of Wrath"
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily"
+    },
+    {
+      "ItemId": "473187",
+      "ItemName": "White Tiger Lily"
+    },
+    {
+      "ItemId": "356113",
+      "ItemName": "Cornbread Fruit Bush"
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas"
+    },
+    {
+      "ItemId": "1248001",
+      "ItemName": "Sunion"
+    },
+    {
+      "ItemId": "356144",
+      "ItemName": "King Parsley"
+    },
+    {
+      "ItemId": "346045",
+      "ItemName": "Trumpet Vine"
+    },
+    {
+      "ItemId": "1350131",
+      "ItemName": "Ultra Snap Dragon"
+    },
+    {
+      "ItemId": "713119",
+      "ItemName": "Boiled Peanuts"
+    },
+    {
+      "ItemId": "473159",
+      "ItemName": "Grapes of Wrath"
+    }
+  ]
+}

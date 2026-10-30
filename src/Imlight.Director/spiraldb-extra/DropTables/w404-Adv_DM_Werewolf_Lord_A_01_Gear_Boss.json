@@ -1,0 +1,177 @@
+{
+  "Name": "W404 Adv_DM_Werewolf_Lord_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Adv_DM_Werewolf_Lord_A_01: the gear drops (42), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1707784",
+      "ItemName": "Ancient Dhampir Crown"
+    },
+    {
+      "ItemId": "1707785",
+      "ItemName": "Ancient Living Dead Crown"
+    },
+    {
+      "ItemId": "1707786",
+      "ItemName": "Ancient Hemavore Crown"
+    },
+    {
+      "ItemId": "1707787",
+      "ItemName": "Ancient Nightstalker Crown"
+    },
+    {
+      "ItemId": "1707788",
+      "ItemName": "Ancient Immortal Crown"
+    },
+    {
+      "ItemId": "1707789",
+      "ItemName": "Ancient Vampire Crown"
+    },
+    {
+      "ItemId": "1707790",
+      "ItemName": "Ancient Nosferatu Crown"
+    },
+    {
+      "ItemId": "1707798",
+      "ItemName": "Ancient Dhampir Shoes"
+    },
+    {
+      "ItemId": "1707799",
+      "ItemName": "Ancient Living Dead Shoes"
+    },
+    {
+      "ItemId": "1707800",
+      "ItemName": "Ancient Hemavore Shoes"
+    },
+    {
+      "ItemId": "1707801",
+      "ItemName": "Ancient Nightstalker Shoes"
+    },
+    {
+      "ItemId": "1707802",
+      "ItemName": "Ancient Immortal Shoes"
+    },
+    {
+      "ItemId": "1707803",
+      "ItemName": "Ancient Vampire Shoes"
+    },
+    {
+      "ItemId": "1707804",
+      "ItemName": "Ancient Nosferatu Shoes"
+    },
+    {
+      "ItemId": "1707917",
+      "ItemName": "Ancient Dhampir Cup"
+    },
+    {
+      "ItemId": "1707918",
+      "ItemName": "Ancient Living Dead Cup"
+    },
+    {
+      "ItemId": "1707919",
+      "ItemName": "Ancient Hemavore Cup"
+    },
+    {
+      "ItemId": "1707920",
+      "ItemName": "Ancient Nightstalker Cup"
+    },
+    {
+      "ItemId": "1707921",
+      "ItemName": "Ancient Immortal Cup"
+    },
+    {
+      "ItemId": "1707922",
+      "ItemName": "Ancient Vampire Cup"
+    },
+    {
+      "ItemId": "1707923",
+      "ItemName": "Ancient Nosferatu Cup"
+    },
+    {
+      "ItemId": "1707924",
+      "ItemName": "Scepter of the Turning Wheel"
+    },
+    {
+      "ItemId": "1707925",
+      "ItemName": "Scepter of the Doomed"
+    },
+    {
+      "ItemId": "1707926",
+      "ItemName": "Scepter of the Burnt Forest"
+    },
+    {
+      "ItemId": "1707927",
+      "ItemName": "Scepter of the Coldhearted"
+    },
+    {
+      "ItemId": "1707928",
+      "ItemName": "Scepter of the Living Lie"
+    },
+    {
+      "ItemId": "1707929",
+      "ItemName": "Scepter of False Promises"
+    },
+    {
+      "ItemId": "1707930",
+      "ItemName": "Scepter of the Changing Tide"
+    },
+    {
+      "ItemId": "1712453",
+      "ItemName": "Fledgling Dhampir Crown"
+    },
+    {
+      "ItemId": "1712454",
+      "ItemName": "Fledgling Living Dead Crown"
+    },
+    {
+      "ItemId": "1712455",
+      "ItemName": "Fledgling Hemavore Crown"
+    },
+    {
+      "ItemId": "1712456",
+      "ItemName": "Fledgling Nightstalker Crown"
+    },
+    {
+      "ItemId": "1712457",
+      "ItemName": "Fledgling Immortal Crown"
+    },
+    {
+      "ItemId": "1712458",
+      "ItemName": "Fledgling Vampire Crown"
+    },
+    {
+      "ItemId": "1712459",
+      "ItemName": "Fledgling Nosferatu Crown"
+    },
+    {
+      "ItemId": "1712467",
+      "ItemName": "Fledgling Dhampir Shoes"
+    },
+    {
+      "ItemId": "1712468",
+      "ItemName": "Fledgling Living Dead Shoes"
+    },
+    {
+      "ItemId": "1712469",
+      "ItemName": "Fledgling Hemavore Shoes"
+    },
+    {
+      "ItemId": "1712470",
+      "ItemName": "Fledgling Nightstalker Shoes"
+    },
+    {
+      "ItemId": "1712471",
+      "ItemName": "Fledgling Immortal Shoes"
+    },
+    {
+      "ItemId": "1712472",
+      "ItemName": "Fledgling Vampire Shoes"
+    },
+    {
+      "ItemId": "1712473",
+      "ItemName": "Fledgling Nosferatu Shoes"
+    }
+  ]
+}

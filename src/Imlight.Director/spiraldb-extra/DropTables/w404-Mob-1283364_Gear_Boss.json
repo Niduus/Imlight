@@ -1,0 +1,93 @@
+{
+  "Name": "W404 Mob-1283364 Gear (Boss)",
+  "Description": "Wizard404's drop list of Morganthe's own drops: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1592870",
+      "ItemName": "Kris of the Chosen One"
+    },
+    {
+      "ItemId": "1592871",
+      "ItemName": "Kris of Shadow and Light"
+    },
+    {
+      "ItemId": "1592872",
+      "ItemName": "Kris of the Shadow Web"
+    },
+    {
+      "ItemId": "1592873",
+      "ItemName": "Shadow Spider's Kris"
+    },
+    {
+      "ItemId": "1592874",
+      "ItemName": "The Dark Woman's Kris"
+    },
+    {
+      "ItemId": "1592875",
+      "ItemName": "Morganthe's Kris"
+    },
+    {
+      "ItemId": "1592876",
+      "ItemName": "Kris of the Shadow Palace"
+    },
+    {
+      "ItemId": "1592878",
+      "ItemName": "Sigil of the Umbra Legion"
+    },
+    {
+      "ItemId": "1592879",
+      "ItemName": "Sigil of the Dark Woman"
+    },
+    {
+      "ItemId": "1592880",
+      "ItemName": "Sigil of the Shadow Palace"
+    },
+    {
+      "ItemId": "1592881",
+      "ItemName": "Sigil of Shadows"
+    },
+    {
+      "ItemId": "1592882",
+      "ItemName": "Lady of Spiders' Royal Sigil"
+    },
+    {
+      "ItemId": "1592883",
+      "ItemName": "Sigil of the Shadow Queen"
+    },
+    {
+      "ItemId": "1592884",
+      "ItemName": "Sigil of the Shadow Web"
+    },
+    {
+      "ItemId": "1592886",
+      "ItemName": "Morganthe's Amulet of Amber"
+    },
+    {
+      "ItemId": "1592887",
+      "ItemName": "Shadow Queen's Amulet"
+    },
+    {
+      "ItemId": "1592888",
+      "ItemName": "Morganthe's Dark Amulet"
+    },
+    {
+      "ItemId": "1592889",
+      "ItemName": "Amulet of the Grand Prophecy"
+    },
+    {
+      "ItemId": "1592890",
+      "ItemName": "Amulet of the Shadow Web"
+    },
+    {
+      "ItemId": "1592891",
+      "ItemName": "Amulet of the Shadow Palace"
+    },
+    {
+      "ItemId": "1592892",
+      "ItemName": "Lady of Spiders' Amulet"
+    }
+  ]
+}

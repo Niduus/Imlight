@@ -1,0 +1,41 @@
+{
+  "Name": "W404 LM-Mob-Reagents-Common Reagent (Normal)",
+  "Description": "Wizard404's drop list of the game's table LM-Mob-Reagents-Common: the reagent drops (8), one picked when it rolls. How often: DropOdds.json Normal/Reagent.",
+  "Odds": "Normal/Reagent",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel"
+    },
+    {
+      "ItemId": "258579",
+      "ItemName": "Scales"
+    },
+    {
+      "ItemId": "106944",
+      "ItemName": "Spider Silk"
+    },
+    {
+      "ItemId": "1350011",
+      "ItemName": "Tin"
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass"
+    },
+    {
+      "ItemId": "106945",
+      "ItemName": "Bronze Gear"
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt"
+    },
+    {
+      "ItemId": "106943",
+      "ItemName": "Ectoplasm"
+    }
+  ]
+}

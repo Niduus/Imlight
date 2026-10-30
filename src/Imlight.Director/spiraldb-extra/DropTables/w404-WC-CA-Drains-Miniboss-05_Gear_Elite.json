@@ -1,0 +1,37 @@
+{
+  "Name": "W404 WC-CA-Drains-Miniboss-05 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table WC-CA-Drains-Miniboss-05: the gear drops (7), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1489387",
+      "ItemName": "Soldier's Vibrant Charm"
+    },
+    {
+      "ItemId": "1489388",
+      "ItemName": "Soldier's Deadly Charm"
+    },
+    {
+      "ItemId": "1489389",
+      "ItemName": "Soldier's Balanced Charm"
+    },
+    {
+      "ItemId": "1489390",
+      "ItemName": "Dragonspyre Soldier's Charm"
+    },
+    {
+      "ItemId": "1489450",
+      "ItemName": "Soldier's Mythic War Axe"
+    },
+    {
+      "ItemId": "1489451",
+      "ItemName": "Soldier's Vibrant Saber"
+    },
+    {
+      "ItemId": "1489454",
+      "ItemName": "Dragonspyre Soldier Cleaver"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "Name": "W404 G14-CD-Boss-ShaneV1 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-CD-Boss-ShaneV1: the snack drops (10), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1257594",
+      "ItemName": "Cornbread Fruit"
+    },
+    {
+      "ItemId": "1257595",
+      "ItemName": "Cold Snap Peas"
+    },
+    {
+      "ItemId": "1257596",
+      "ItemName": "Wrath's Grape Juice"
+    },
+    {
+      "ItemId": "1257597",
+      "ItemName": "Boom Stroganoff"
+    },
+    {
+      "ItemId": "1257598",
+      "ItemName": "Rye Bread Fruit"
+    },
+    {
+      "ItemId": "1257599",
+      "ItemName": "Bread Fruit Fruit"
+    },
+    {
+      "ItemId": "1257600",
+      "ItemName": "Desparagus Salad"
+    },
+    {
+      "ItemId": "1257601",
+      "ItemName": "Huckleberry Pie"
+    },
+    {
+      "ItemId": "1257606",
+      "ItemName": "Granny Snow Apple"
+    },
+    {
+      "ItemId": "1257607",
+      "ItemName": "Snow Apple Pie"
+    }
+  ]
+}

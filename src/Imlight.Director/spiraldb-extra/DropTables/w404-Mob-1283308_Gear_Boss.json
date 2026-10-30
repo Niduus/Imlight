@@ -1,0 +1,69 @@
+{
+  "Name": "W404 Mob-1283308 Gear (Boss)",
+  "Description": "Wizard404's drop list of Xestia SixStripes's own drops: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203146",
+      "ItemName": "Mantis Guard's Headgear"
+    },
+    {
+      "ItemId": "1203147",
+      "ItemName": "Scarred Burrower Greathelm"
+    },
+    {
+      "ItemId": "1203148",
+      "ItemName": "Kermes Fire-Hardened Mask"
+    },
+    {
+      "ItemId": "1203215",
+      "ItemName": "Beleaguered Mouse Gear"
+    },
+    {
+      "ItemId": "1203334",
+      "ItemName": "Jewel of the Apiary"
+    },
+    {
+      "ItemId": "1203335",
+      "ItemName": "CurdWright Medallion"
+    },
+    {
+      "ItemId": "1203336",
+      "ItemName": "Death's Head Talisman"
+    },
+    {
+      "ItemId": "1203385",
+      "ItemName": "Ghostmane's Fabled Cutter"
+    },
+    {
+      "ItemId": "1203404",
+      "ItemName": "Lightning Rider's Deck"
+    },
+    {
+      "ItemId": "1203405",
+      "ItemName": "Barbed Case of Stratagem"
+    },
+    {
+      "ItemId": "1203413",
+      "ItemName": "Box of Indomitable Spirit"
+    },
+    {
+      "ItemId": "1203668",
+      "ItemName": "Sword of Burrower Vengeance"
+    },
+    {
+      "ItemId": "1203678",
+      "ItemName": "Halberd of Mesmerizing"
+    },
+    {
+      "ItemId": "1203679",
+      "ItemName": "Spear of Mantis Voracity"
+    },
+    {
+      "ItemId": "1203680",
+      "ItemName": "Halberd of Extermination"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Mob-1371027 Mount (Boss)",
+  "Description": "Wizard404's drop list of Warlord Minak's own drops: the mount drops (1), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1317674",
+      "ItemName": "Himoolayan Yak (PERM)"
+    }
+  ]
+}

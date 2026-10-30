@@ -1,0 +1,93 @@
+{
+  "Name": "W404 G14-CD-Boss-Blackwater Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-CD-Boss-Blackwater: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1338220",
+      "ItemName": "Dragonbone Blade"
+    },
+    {
+      "ItemId": "1338221",
+      "ItemName": "Athame of the Blue Ague"
+    },
+    {
+      "ItemId": "1338222",
+      "ItemName": "Blackwater's Dirk of Havoc"
+    },
+    {
+      "ItemId": "1338223",
+      "ItemName": "Dagger of Bent Reality"
+    },
+    {
+      "ItemId": "1338224",
+      "ItemName": "Heart's Knife of Tenacity"
+    },
+    {
+      "ItemId": "1338225",
+      "ItemName": "Razor of Unrelenting Night"
+    },
+    {
+      "ItemId": "1338226",
+      "ItemName": "Claw of the Bone Dragon"
+    },
+    {
+      "ItemId": "1338297",
+      "ItemName": "Brimstone Torc of Darkmoor"
+    },
+    {
+      "ItemId": "1338298",
+      "ItemName": "Darkmoor Frost Collar"
+    },
+    {
+      "ItemId": "1338299",
+      "ItemName": "Relic of the Fetid Lagoon"
+    },
+    {
+      "ItemId": "1338300",
+      "ItemName": "Kan Davasi Medallion"
+    },
+    {
+      "ItemId": "1338301",
+      "ItemName": "Pendant of Love's Grace"
+    },
+    {
+      "ItemId": "1338302",
+      "ItemName": "Embodiment of Death Charm"
+    },
+    {
+      "ItemId": "1338303",
+      "ItemName": "Vial From the Fetid Lagoon"
+    },
+    {
+      "ItemId": "1338465",
+      "ItemName": "Darkmoor's Brimstone Deck"
+    },
+    {
+      "ItemId": "1338466",
+      "ItemName": "Cards of the Blue Ague"
+    },
+    {
+      "ItemId": "1338467",
+      "ItemName": "Thunderous Darkmoor Hand"
+    },
+    {
+      "ItemId": "1338468",
+      "ItemName": "Arcana of Kan Davasi"
+    },
+    {
+      "ItemId": "1338469",
+      "ItemName": "Deck of Unchecked Passion"
+    },
+    {
+      "ItemId": "1338470",
+      "ItemName": "Von Shane's Hand of Doom"
+    },
+    {
+      "ItemId": "1338471",
+      "ItemName": "Darkmoor's Case of Scrutiny"
+    }
+  ]
+}

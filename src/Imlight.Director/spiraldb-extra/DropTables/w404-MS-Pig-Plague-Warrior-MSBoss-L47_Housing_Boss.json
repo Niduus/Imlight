@@ -1,0 +1,21 @@
+{
+  "Name": "W404 MS-Pig-Plague-Warrior-MSBoss-L47 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-Plague-Warrior-MSBoss-L47: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160451",
+      "ItemName": "Stone Bowl"
+    },
+    {
+      "ItemId": "160578",
+      "ItemName": "Monk Bust"
+    },
+    {
+      "ItemId": "470232",
+      "ItemName": "Dark Tori Gates"
+    }
+  ]
+}

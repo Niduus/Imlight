@@ -1,0 +1,21 @@
+{
+  "Name": "W404 KrokBurly-Ice-1-PageEvent TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table KrokBurly-Ice-1-PageEvent: the treasurecard drops (3), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Ice Wyvern TC DH",
+      "ItemName": "Ice Wyvern"
+    },
+    {
+      "ItemId": "Fire Wyvern TC DH",
+      "ItemName": "Fire Wyvern"
+    },
+    {
+      "ItemId": "Squall Wyvern TC DH",
+      "ItemName": "Squall Wyvern"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "Name": "W404 G14-Make-A-Wish-01 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-Make-A-Wish-01: the snack drops (23), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220302",
+      "ItemName": "Shanta Pudding"
+    },
+    {
+      "ItemId": "240117",
+      "ItemName": "Submarine Sandwich"
+    },
+    {
+      "ItemId": "473527",
+      "ItemName": "Atomic Fireball"
+    },
+    {
+      "ItemId": "473717",
+      "ItemName": "Treant Bark"
+    },
+    {
+      "ItemId": "589099",
+      "ItemName": "Sweet and Sour Chow"
+    },
+    {
+      "ItemId": "589103",
+      "ItemName": "Fido's Fortune Puffs"
+    },
+    {
+      "ItemId": "589104",
+      "ItemName": "Basil Poodle Noodles"
+    },
+    {
+      "ItemId": "589106",
+      "ItemName": "Chow Chow Chow"
+    },
+    {
+      "ItemId": "589107",
+      "ItemName": "Kapow Pug Poppers"
+    },
+    {
+      "ItemId": "641596",
+      "ItemName": "Shepherd's Crook Pie"
+    },
+    {
+      "ItemId": "641605",
+      "ItemName": "Bog Witch Beetroot"
+    },
+    {
+      "ItemId": "641613",
+      "ItemName": "Caliburnt Toast"
+    },
+    {
+      "ItemId": "641696",
+      "ItemName": "Chocolate Moousse"
+    },
+    {
+      "ItemId": "733129",
+      "ItemName": "Pyramints"
+    },
+    {
+      "ItemId": "733132",
+      "ItemName": "Saber-tooth Cider"
+    },
+    {
+      "ItemId": "733138",
+      "ItemName": "Bronto Burger"
+    },
+    {
+      "ItemId": "789215",
+      "ItemName": "Gator Tots"
+    },
+    {
+      "ItemId": "789218",
+      "ItemName": "Krokodill Pickles"
+    },
+    {
+      "ItemId": "789220",
+      "ItemName": "Kountry-Krok Butter"
+    },
+    {
+      "ItemId": "1248051",
+      "ItemName": "Gummy Bees"
+    },
+    {
+      "ItemId": "1248052",
+      "ItemName": "Sugar Khrystals"
+    },
+    {
+      "ItemId": "1257597",
+      "ItemName": "Boom Stroganoff"
+    },
+    {
+      "ItemId": "1359612",
+      "ItemName": "Polaris Fries"
+    }
+  ]
+}

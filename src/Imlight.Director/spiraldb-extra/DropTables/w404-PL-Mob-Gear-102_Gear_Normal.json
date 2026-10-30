@@ -1,0 +1,265 @@
+{
+  "Name": "W404 PL-Mob-Gear-102 Gear (Normal)",
+  "Description": "Wizard404's drop list of the game's table PL-Mob-Gear-102: the gear drops (64), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1363653",
+      "ItemName": "Urville Papakh of Flames"
+    },
+    {
+      "ItemId": "1363654",
+      "ItemName": "Urville Papakh of Wintertide"
+    },
+    {
+      "ItemId": "1363655",
+      "ItemName": "Urville Fur Hat of Snowgusts"
+    },
+    {
+      "ItemId": "1363656",
+      "ItemName": "Urville Papakh of Guile"
+    },
+    {
+      "ItemId": "1363657",
+      "ItemName": "Urville Fur Hat of Elation"
+    },
+    {
+      "ItemId": "1363658",
+      "ItemName": "Urville Papakh of Anguish"
+    },
+    {
+      "ItemId": "1363659",
+      "ItemName": "Urville Fur Hat of Honor"
+    },
+    {
+      "ItemId": "1363660",
+      "ItemName": "Urville Station Papakh"
+    },
+    {
+      "ItemId": "1363685",
+      "ItemName": "Urville Cloak of Flames"
+    },
+    {
+      "ItemId": "1363686",
+      "ItemName": "Urville Robes of Wintertide"
+    },
+    {
+      "ItemId": "1363687",
+      "ItemName": "Urville Snowgusts Coat"
+    },
+    {
+      "ItemId": "1363688",
+      "ItemName": "Urville Cherkesska of Guile"
+    },
+    {
+      "ItemId": "1363689",
+      "ItemName": "Urville Chokha of Elation"
+    },
+    {
+      "ItemId": "1363690",
+      "ItemName": "Urville Jacket of Anguish"
+    },
+    {
+      "ItemId": "1363691",
+      "ItemName": "Urville Longcoat of Honor"
+    },
+    {
+      "ItemId": "1363692",
+      "ItemName": "Urville Station Cherkesska"
+    },
+    {
+      "ItemId": "1363717",
+      "ItemName": "Urville Boots of Flames"
+    },
+    {
+      "ItemId": "1363718",
+      "ItemName": "Urville Shoes of Wintertide"
+    },
+    {
+      "ItemId": "1363719",
+      "ItemName": "Urville Boots of Snowgusts"
+    },
+    {
+      "ItemId": "1363720",
+      "ItemName": "Urville Walkers of Guile"
+    },
+    {
+      "ItemId": "1363721",
+      "ItemName": "Urville Trekkers of Elation"
+    },
+    {
+      "ItemId": "1363722",
+      "ItemName": "Urville Footgear of Anguish"
+    },
+    {
+      "ItemId": "1363723",
+      "ItemName": "Urville Striders of Honor"
+    },
+    {
+      "ItemId": "1363724",
+      "ItemName": "Urville Station Snowboots"
+    },
+    {
+      "ItemId": "1363941",
+      "ItemName": "Mage's Smoldering Spike"
+    },
+    {
+      "ItemId": "1363942",
+      "ItemName": "Mage's Wintry Blade"
+    },
+    {
+      "ItemId": "1363943",
+      "ItemName": "Mage's Blustery Razor"
+    },
+    {
+      "ItemId": "1363944",
+      "ItemName": "Mage's Dirk of Guile"
+    },
+    {
+      "ItemId": "1363945",
+      "ItemName": "Mage's Hardy Edge"
+    },
+    {
+      "ItemId": "1363946",
+      "ItemName": "Mage's Dolorous Edge"
+    },
+    {
+      "ItemId": "1363947",
+      "ItemName": "Mage's Blade of Aplomb"
+    },
+    {
+      "ItemId": "1363948",
+      "ItemName": "Mage's Roughhewn Dagger"
+    },
+    {
+      "ItemId": "1363973",
+      "ItemName": "Mage's Smoldering Bauble"
+    },
+    {
+      "ItemId": "1363974",
+      "ItemName": "Mage's Wintry Chaplet"
+    },
+    {
+      "ItemId": "1363975",
+      "ItemName": "Mage's Blustery Pendant"
+    },
+    {
+      "ItemId": "1363976",
+      "ItemName": "Mage's Torc of Guile"
+    },
+    {
+      "ItemId": "1363977",
+      "ItemName": "Mage's Hardy Carcanet"
+    },
+    {
+      "ItemId": "1363978",
+      "ItemName": "Mage's Dolorous Amulet"
+    },
+    {
+      "ItemId": "1363979",
+      "ItemName": "Mage's Collar of Aplomb"
+    },
+    {
+      "ItemId": "1363980",
+      "ItemName": "Ampul of the Polarian Mage"
+    },
+    {
+      "ItemId": "1369005",
+      "ItemName": "Mage's Smoldering Loop"
+    },
+    {
+      "ItemId": "1369006",
+      "ItemName": "Mage's Wintry Ringlet"
+    },
+    {
+      "ItemId": "1369007",
+      "ItemName": "Mage's Blustery Seal"
+    },
+    {
+      "ItemId": "1369008",
+      "ItemName": "Mage's Circle of Guile"
+    },
+    {
+      "ItemId": "1369009",
+      "ItemName": "Mage's Hardy Band"
+    },
+    {
+      "ItemId": "1369010",
+      "ItemName": "Mage's Dolorous Ring"
+    },
+    {
+      "ItemId": "1369011",
+      "ItemName": "Mage's Signet of Justice"
+    },
+    {
+      "ItemId": "1369012",
+      "ItemName": "Band of the Polarian Mage"
+    },
+    {
+      "ItemId": "1369325",
+      "ItemName": "Mage's Smoldering Stave"
+    },
+    {
+      "ItemId": "1369326",
+      "ItemName": "Mage's Wintry Wand"
+    },
+    {
+      "ItemId": "1369327",
+      "ItemName": "Mage's Blustery Stave"
+    },
+    {
+      "ItemId": "1369328",
+      "ItemName": "Mage's Wand of Guile"
+    },
+    {
+      "ItemId": "1369329",
+      "ItemName": "Mage's Hardy Stave"
+    },
+    {
+      "ItemId": "1369330",
+      "ItemName": "Mage's Dolorous Wand"
+    },
+    {
+      "ItemId": "1369331",
+      "ItemName": "Mage's Stave of Aplomb"
+    },
+    {
+      "ItemId": "1369332",
+      "ItemName": "Polarian Mage's Wand"
+    },
+    {
+      "ItemId": "1369453",
+      "ItemName": "Mage's Smoldering Parcel"
+    },
+    {
+      "ItemId": "1369454",
+      "ItemName": "Mage's Wintry Fascicle"
+    },
+    {
+      "ItemId": "1369455",
+      "ItemName": "Mage's Blustery Stack"
+    },
+    {
+      "ItemId": "1369456",
+      "ItemName": "Mage's Case of Guile"
+    },
+    {
+      "ItemId": "1369457",
+      "ItemName": "Mage's Hardy Spread"
+    },
+    {
+      "ItemId": "1369458",
+      "ItemName": "Mage's Dolorous Hand"
+    },
+    {
+      "ItemId": "1369459",
+      "ItemName": "Mage's Cards of Aplomb"
+    },
+    {
+      "ItemId": "1369460",
+      "ItemName": "Polarian Mage's Gallery"
+    }
+  ]
+}

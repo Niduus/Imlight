@@ -1,0 +1,41 @@
+{
+  "Name": "W404 Gobbler-Hick-Baron-WCBoss-L22 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Gobbler-Hick-Baron-WCBoss-L22: the housing drops (8), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160231",
+      "ItemName": "Tall Sundae"
+    },
+    {
+      "ItemId": "160271",
+      "ItemName": "Carved Endtable"
+    },
+    {
+      "ItemId": "160295",
+      "ItemName": "Crate of Pies"
+    },
+    {
+      "ItemId": "160296",
+      "ItemName": "Crate of Pudding"
+    },
+    {
+      "ItemId": "160364",
+      "ItemName": "Frozen Stone Tower"
+    },
+    {
+      "ItemId": "160383",
+      "ItemName": "Maple Tree"
+    },
+    {
+      "ItemId": "512119",
+      "ItemName": "Wizard City Combat Theme"
+    },
+    {
+      "ItemId": "512196",
+      "ItemName": "Grumpy Gobblers Theme"
+    }
+  ]
+}

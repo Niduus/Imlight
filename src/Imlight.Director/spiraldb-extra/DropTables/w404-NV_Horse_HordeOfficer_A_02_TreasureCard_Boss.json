@@ -1,0 +1,77 @@
+{
+  "Name": "W404 NV_Horse_HordeOfficer_A_02 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Horse_HordeOfficer_A_02: the treasurecard drops (17), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "GuildReagent01_TC",
+      "ItemName": "Azoth"
+    },
+    {
+      "ItemId": "Dream Shield TC",
+      "ItemName": "Dream Shield"
+    },
+    {
+      "ItemId": "Tri Shield TC",
+      "ItemName": "Elemental Shield"
+    },
+    {
+      "ItemId": "Tri Spear TC",
+      "ItemName": "Elemental Spear"
+    },
+    {
+      "ItemId": "Ether Shield TC",
+      "ItemName": "Ether Shield"
+    },
+    {
+      "ItemId": "Galvanic Field TC",
+      "ItemName": "Galvanic Field"
+    },
+    {
+      "ItemId": "Black Widow TC",
+      "ItemName": "Green Widow"
+    },
+    {
+      "ItemId": "Guidance TC",
+      "ItemName": "Guidance"
+    },
+    {
+      "ItemId": "Mass Death Prism TC",
+      "ItemName": "Mass Death Prism"
+    },
+    {
+      "ItemId": "Mass Fire Prism TC",
+      "ItemName": "Mass Fire Prism"
+    },
+    {
+      "ItemId": "Mass Ice Prism TC",
+      "ItemName": "Mass Ice Prism"
+    },
+    {
+      "ItemId": "Mass Life Prism TC",
+      "ItemName": "Mass Life Prism"
+    },
+    {
+      "ItemId": "Mass Myth Prism TC",
+      "ItemName": "Mass Myth Prism"
+    },
+    {
+      "ItemId": "Mass Storm Prism TC",
+      "ItemName": "Mass Storm Prism"
+    },
+    {
+      "ItemId": "Sanctuary TC",
+      "ItemName": "Sanctuary"
+    },
+    {
+      "ItemId": "Taunt TC",
+      "ItemName": "Taunt"
+    },
+    {
+      "ItemId": "Triage TC",
+      "ItemName": "Triage"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Mob-1283252 Gear (Boss)",
+  "Description": "Wizard404's drop list of Stieg Quicksand's own drops: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203214",
+      "ItemName": "Mantis Robe of Secrecy"
+    },
+    {
+      "ItemId": "1203261",
+      "ItemName": "Burrower Scout's Hoppers"
+    },
+    {
+      "ItemId": "1203265",
+      "ItemName": "Flame Legs Captain's Boots"
+    },
+    {
+      "ItemId": "1203331",
+      "ItemName": "Benzzi's Campaign Memento"
+    },
+    {
+      "ItemId": "1203332",
+      "ItemName": "Collar of the Besieged"
+    },
+    {
+      "ItemId": "1203333",
+      "ItemName": "Mantis Prophet's Ornament"
+    },
+    {
+      "ItemId": "1203382",
+      "ItemName": "Hisser's Burning Cleaver"
+    },
+    {
+      "ItemId": "1203383",
+      "ItemName": "Blue Razor Hailstone Blade"
+    },
+    {
+      "ItemId": "1203402",
+      "ItemName": "Case of Engulfing Flames"
+    },
+    {
+      "ItemId": "1203403",
+      "ItemName": "Bumbler's Sleetfall Pack"
+    },
+    {
+      "ItemId": "1203412",
+      "ItemName": "House of the Old Times"
+    },
+    {
+      "ItemId": "1203667",
+      "ItemName": "Umbra Spear of Suppression"
+    },
+    {
+      "ItemId": "1203674",
+      "ItemName": "Dirk of Burrower Harmony"
+    },
+    {
+      "ItemId": "1203675",
+      "ItemName": "Halberd of Fulmination"
+    },
+    {
+      "ItemId": "1203676",
+      "ItemName": "Spear of Cold Truth"
+    },
+    {
+      "ItemId": "1203677",
+      "ItemName": "Stave of Duststorms"
+    }
+  ]
+}

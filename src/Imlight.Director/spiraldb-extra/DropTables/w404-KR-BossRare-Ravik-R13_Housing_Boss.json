@@ -1,0 +1,17 @@
+{
+  "Name": "W404 KR-BossRare-Ravik-R13 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossRare-Ravik-R13: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1212017",
+      "ItemName": "Khrysalis Arachna Theme"
+    },
+    {
+      "ItemId": "1212018",
+      "ItemName": "Khrysalis Combat Theme"
+    }
+  ]
+}

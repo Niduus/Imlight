@@ -1,0 +1,57 @@
+{
+  "Name": "W404 AZ-BossRare-LaJefa-R13 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossRare-LaJefa-R13: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730196",
+      "ItemName": "Speaking Water Ornament"
+    },
+    {
+      "ItemId": "730197",
+      "ItemName": "Shining Cold House Amulet"
+    },
+    {
+      "ItemId": "730209",
+      "ItemName": "Brilliant Night Mask Memento"
+    },
+    {
+      "ItemId": "730308",
+      "ItemName": "Bleeding Sun Warrior's Loop"
+    },
+    {
+      "ItemId": "730351",
+      "ItemName": "Fiery Chac's Great Armor"
+    },
+    {
+      "ItemId": "730353",
+      "ItemName": "Storm Owl's Favored Robes"
+    },
+    {
+      "ItemId": "730390",
+      "ItemName": "White Fire Chac's Footgear"
+    },
+    {
+      "ItemId": "730416",
+      "ItemName": "Codex of the Lost Fire"
+    },
+    {
+      "ItemId": "730420",
+      "ItemName": "King's Royal Portraits"
+    },
+    {
+      "ItemId": "730427",
+      "ItemName": "Case of the Worldtree"
+    },
+    {
+      "ItemId": "730444",
+      "ItemName": "Fire Quetzal Wand"
+    },
+    {
+      "ItemId": "730456",
+      "ItemName": "Arrow of the Hungry Dead"
+    }
+  ]
+}

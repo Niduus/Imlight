@@ -1,0 +1,49 @@
+{
+  "Name": "W404 CL-SharkCaster-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-SharkCaster-Boss-R10: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243214",
+      "ItemName": "Duskweb's Dire Dirk"
+    },
+    {
+      "ItemId": "243272",
+      "ItemName": "Mystic Blade"
+    },
+    {
+      "ItemId": "243342",
+      "ItemName": "Brim of Brimstone"
+    },
+    {
+      "ItemId": "243416",
+      "ItemName": "Inquisitor's Cap"
+    },
+    {
+      "ItemId": "243518",
+      "ItemName": "Duskweb's Corrupt Ring"
+    },
+    {
+      "ItemId": "243580",
+      "ItemName": "Mystic Ring"
+    },
+    {
+      "ItemId": "243598",
+      "ItemName": "Tunic of Catastrophe"
+    },
+    {
+      "ItemId": "243637",
+      "ItemName": "Shivering Surcoat"
+    },
+    {
+      "ItemId": "243837",
+      "ItemName": "Arcane Shoes"
+    },
+    {
+      "ItemId": "243854",
+      "ItemName": "Furious Rain Runners"
+    }
+  ]
+}

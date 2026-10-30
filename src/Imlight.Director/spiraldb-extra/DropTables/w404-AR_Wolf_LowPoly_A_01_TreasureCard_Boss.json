@@ -1,0 +1,33 @@
+{
+  "Name": "W404 AR_Wolf_LowPoly_A_01 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table AR_Wolf_LowPoly_A_01: the treasurecard drops (6), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Tri Shield TC",
+      "ItemName": "Elemental Shield"
+    },
+    {
+      "ItemId": "Tri Spear TC",
+      "ItemName": "Elemental Spear"
+    },
+    {
+      "ItemId": "Mass Death Prism TC",
+      "ItemName": "Mass Death Prism"
+    },
+    {
+      "ItemId": "Mass Ice Prism TC",
+      "ItemName": "Mass Ice Prism"
+    },
+    {
+      "ItemId": "Triage TC",
+      "ItemName": "Triage"
+    },
+    {
+      "ItemId": "Dream Shield TC",
+      "ItemName": "Dream Shield"
+    }
+  ]
+}

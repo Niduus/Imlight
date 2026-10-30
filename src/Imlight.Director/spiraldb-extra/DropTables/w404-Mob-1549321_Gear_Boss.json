@@ -1,0 +1,93 @@
+{
+  "Name": "W404 Mob-1549321 Gear (Boss)",
+  "Description": "Wizard404's drop list of Spirit of Ignorance's own drops: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1456621",
+      "ItemName": "Gleeman's Cap"
+    },
+    {
+      "ItemId": "1456622",
+      "ItemName": "Gleeman's Tunic"
+    },
+    {
+      "ItemId": "1456623",
+      "ItemName": "Gleeman's Shoes"
+    },
+    {
+      "ItemId": "1456624",
+      "ItemName": "Rhapsodist's Cap"
+    },
+    {
+      "ItemId": "1456625",
+      "ItemName": "Rhapsodist's Tunic"
+    },
+    {
+      "ItemId": "1456626",
+      "ItemName": "Rhapsodist's Shoes"
+    },
+    {
+      "ItemId": "1456627",
+      "ItemName": "Troubador's Cap"
+    },
+    {
+      "ItemId": "1456628",
+      "ItemName": "Troubador's Tunic"
+    },
+    {
+      "ItemId": "1456629",
+      "ItemName": "Troubador's Shoes"
+    },
+    {
+      "ItemId": "1456630",
+      "ItemName": "Bardic Cap"
+    },
+    {
+      "ItemId": "1456631",
+      "ItemName": "Bardic Tunic"
+    },
+    {
+      "ItemId": "1456632",
+      "ItemName": "Bardic Shoes"
+    },
+    {
+      "ItemId": "1456633",
+      "ItemName": "Songster's Cap"
+    },
+    {
+      "ItemId": "1456634",
+      "ItemName": "Songster's Tunic"
+    },
+    {
+      "ItemId": "1456635",
+      "ItemName": "Songster's Shoes"
+    },
+    {
+      "ItemId": "1456636",
+      "ItemName": "Trouper's Cap"
+    },
+    {
+      "ItemId": "1456637",
+      "ItemName": "Trouper's Tunic"
+    },
+    {
+      "ItemId": "1456638",
+      "ItemName": "Trouper's Shoes"
+    },
+    {
+      "ItemId": "1456639",
+      "ItemName": "Sonneteer's Cap"
+    },
+    {
+      "ItemId": "1456640",
+      "ItemName": "Sonneteer's Tunic"
+    },
+    {
+      "ItemId": "1456641",
+      "ItemName": "Sonneteer's Shoes"
+    }
+  ]
+}

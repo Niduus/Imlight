@@ -1,0 +1,69 @@
+{
+  "Name": "W404 CL-Moon-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-Moon-Boss-R10: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243205",
+      "ItemName": "Jewel of the Feint"
+    },
+    {
+      "ItemId": "243223",
+      "ItemName": "Moon Dagger"
+    },
+    {
+      "ItemId": "243262",
+      "ItemName": "Diamond Dust Dagger"
+    },
+    {
+      "ItemId": "243303",
+      "ItemName": "Moon Cover"
+    },
+    {
+      "ItemId": "243400",
+      "ItemName": "Cover of Rapture"
+    },
+    {
+      "ItemId": "243570",
+      "ItemName": "Sub Zero Signet"
+    },
+    {
+      "ItemId": "243583",
+      "ItemName": "Moon Ring"
+    },
+    {
+      "ItemId": "243611",
+      "ItemName": "Eclipse Cloak"
+    },
+    {
+      "ItemId": "243631",
+      "ItemName": "Volatile Vestment"
+    },
+    {
+      "ItemId": "243669",
+      "ItemName": "Euphoric Outfit"
+    },
+    {
+      "ItemId": "243709",
+      "ItemName": "Eureka Raiment"
+    },
+    {
+      "ItemId": "243731",
+      "ItemName": "United Footwear"
+    },
+    {
+      "ItemId": "243820",
+      "ItemName": "Wraps of Rapture"
+    },
+    {
+      "ItemId": "243884",
+      "ItemName": "Vial of Frozen Fury"
+    },
+    {
+      "ItemId": "243894",
+      "ItemName": "Moon Pendant"
+    }
+  ]
+}

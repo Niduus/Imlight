@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-Boss-Rings-140 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-Boss-Rings-140: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1515154",
+      "ItemName": "Guten Freshbaker Ring"
+    },
+    {
+      "ItemId": "1515155",
+      "ItemName": "Guten Wonderneer Ring"
+    },
+    {
+      "ItemId": "1515156",
+      "ItemName": "Guten Sciencer Ring"
+    },
+    {
+      "ItemId": "1515157",
+      "ItemName": "Guten Artisan Ring"
+    },
+    {
+      "ItemId": "1515158",
+      "ItemName": "Guten Sweetsmith Ring"
+    },
+    {
+      "ItemId": "1515159",
+      "ItemName": "Guten Sentamentalist Ring"
+    },
+    {
+      "ItemId": "1515160",
+      "ItemName": "Guten Dreamsearcher Ring"
+    },
+    {
+      "ItemId": "1515161",
+      "ItemName": "Guten Candymancer Ring"
+    },
+    {
+      "ItemId": "1515178",
+      "ItemName": "Wunderbar Freshbaker Ring"
+    },
+    {
+      "ItemId": "1515179",
+      "ItemName": "Wunderbar Wonderneer Ring"
+    },
+    {
+      "ItemId": "1515180",
+      "ItemName": "Wunderbar Sciencer Ring"
+    },
+    {
+      "ItemId": "1515181",
+      "ItemName": "Wunderbar Artisan Ring"
+    },
+    {
+      "ItemId": "1515182",
+      "ItemName": "Wunderbar Sweetsmith Ring"
+    },
+    {
+      "ItemId": "1515183",
+      "ItemName": "Wunderbar Sentamentalist Ring"
+    },
+    {
+      "ItemId": "1515184",
+      "ItemName": "Wunderbar Dreamsearcher Ring"
+    },
+    {
+      "ItemId": "1515185",
+      "ItemName": "Wunderbar Candymancer Ring"
+    },
+    {
+      "ItemId": "1515202",
+      "ItemName": "Uber Freshbaker Ring"
+    },
+    {
+      "ItemId": "1515203",
+      "ItemName": "Uber Wonderneer Ring"
+    },
+    {
+      "ItemId": "1515204",
+      "ItemName": "Uber Sciencer Ring"
+    },
+    {
+      "ItemId": "1515205",
+      "ItemName": "Uber Artisan Ring"
+    },
+    {
+      "ItemId": "1515206",
+      "ItemName": "Uber Sweetsmith Ring"
+    },
+    {
+      "ItemId": "1515207",
+      "ItemName": "Uber Sentamentalist Ring"
+    },
+    {
+      "ItemId": "1515208",
+      "ItemName": "Uber Dreamsearcher Ring"
+    },
+    {
+      "ItemId": "1515209",
+      "ItemName": "Uber Candymancer Ring"
+    }
+  ]
+}

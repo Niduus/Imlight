@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Colossus-Stone-R5 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Colossus-Stone-R5: the snack drops (6), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220209",
+      "ItemName": "Diamond Carrot"
+    },
+    {
+      "ItemId": "220210",
+      "ItemName": "Flaming Jalapeno"
+    },
+    {
+      "ItemId": "220211",
+      "ItemName": "Cheese"
+    },
+    {
+      "ItemId": "220212",
+      "ItemName": "Fries"
+    },
+    {
+      "ItemId": "220219",
+      "ItemName": "Heavenly Bubblegum"
+    },
+    {
+      "ItemId": "220240",
+      "ItemName": "Green Banana"
+    }
+  ]
+}

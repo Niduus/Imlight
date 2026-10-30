@@ -1,0 +1,153 @@
+{
+  "Name": "W404 Mob-589462 Gear (Normal)",
+  "Description": "Wizard404's drop list of Deep Dark Goblin's own drops: the gear drops (36), one picked when it rolls. How often: DropOdds.json Normal/Gear.",
+  "Odds": "Normal/Gear",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635288",
+      "ItemName": "Honor Bound Helm"
+    },
+    {
+      "ItemId": "635289",
+      "ItemName": "Brave One's Mantle"
+    },
+    {
+      "ItemId": "635290",
+      "ItemName": "Wrath of the Wild"
+    },
+    {
+      "ItemId": "635291",
+      "ItemName": "Fire Elf Champion's Helm"
+    },
+    {
+      "ItemId": "635292",
+      "ItemName": "Paladin's Frosty Helmet"
+    },
+    {
+      "ItemId": "635293",
+      "ItemName": "Lightning Lizard Rider's Helm"
+    },
+    {
+      "ItemId": "635294",
+      "ItemName": "Great Faerie Knight Helm"
+    },
+    {
+      "ItemId": "635295",
+      "ItemName": "Mother Oak's Guard"
+    },
+    {
+      "ItemId": "635296",
+      "ItemName": "Last Knight's Guard"
+    },
+    {
+      "ItemId": "635297",
+      "ItemName": "Order's Princely Guard"
+    },
+    {
+      "ItemId": "635328",
+      "ItemName": "Bad Host Band"
+    },
+    {
+      "ItemId": "635329",
+      "ItemName": "Bannerman's Honorbound Ring"
+    },
+    {
+      "ItemId": "635331",
+      "ItemName": "Circle of High Order"
+    },
+    {
+      "ItemId": "635332",
+      "ItemName": "Black Annie's Band"
+    },
+    {
+      "ItemId": "635333",
+      "ItemName": "Knight of the Wyrd's Band"
+    },
+    {
+      "ItemId": "635334",
+      "ItemName": "Toasty Band of the Fire Elves"
+    },
+    {
+      "ItemId": "635355",
+      "ItemName": "Honor Bound Surcoat"
+    },
+    {
+      "ItemId": "635356",
+      "ItemName": "Brave One's Plate"
+    },
+    {
+      "ItemId": "635357",
+      "ItemName": "Drape of the Wild"
+    },
+    {
+      "ItemId": "635358",
+      "ItemName": "Courageous Armiger's Vestment"
+    },
+    {
+      "ItemId": "635359",
+      "ItemName": "Noble Armiger's Armor"
+    },
+    {
+      "ItemId": "635360",
+      "ItemName": "Merciful Armiger's Armor"
+    },
+    {
+      "ItemId": "635361",
+      "ItemName": "Just Armiger's Armor"
+    },
+    {
+      "ItemId": "635362",
+      "ItemName": "Hospitable Armiger's Tartan"
+    },
+    {
+      "ItemId": "635363",
+      "ItemName": "Loyal Armiger's Armor"
+    },
+    {
+      "ItemId": "635364",
+      "ItemName": "Jouster's Plate"
+    },
+    {
+      "ItemId": "635365",
+      "ItemName": "Kin Bound Robes"
+    },
+    {
+      "ItemId": "635403",
+      "ItemName": "Long as Night Walkers"
+    },
+    {
+      "ItemId": "635404",
+      "ItemName": "Hanging Stones Striders"
+    },
+    {
+      "ItemId": "635405",
+      "ItemName": "Boots of the Lake Shore"
+    },
+    {
+      "ItemId": "635406",
+      "ItemName": "Deep Water Splashers"
+    },
+    {
+      "ItemId": "635407",
+      "ItemName": "Jouster's Footguards"
+    },
+    {
+      "ItemId": "635408",
+      "ItemName": "Whitehaven Boots"
+    },
+    {
+      "ItemId": "635409",
+      "ItemName": "Boots of Giant Dancing"
+    },
+    {
+      "ItemId": "635410",
+      "ItemName": "Froudling Creepers"
+    },
+    {
+      "ItemId": "635411",
+      "ItemName": "Courtly Armored Boots"
+    }
+  ]
+}

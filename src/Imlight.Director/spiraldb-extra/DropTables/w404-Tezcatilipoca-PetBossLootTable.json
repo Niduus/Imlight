@@ -1,0 +1,9 @@
+{
+  "Name": "W404 Tezcatilipoca-PetBossLootTable",
+  "Description": "Gold of the game's table Tezcatilipoca-PetBossLootTable, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 1000,
+  "MaxGold": 5000,
+  "EachItem": false,
+  "Items": []
+}

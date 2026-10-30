@@ -1,0 +1,53 @@
+{
+  "Name": "W404 AZ-BossRare-MaktheKnife-R13 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossRare-MaktheKnife-R13: the gear drops (11), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730241",
+      "ItemName": "Kronosaur's Grim Cutter"
+    },
+    {
+      "ItemId": "730242",
+      "ItemName": "Sacred Sunblade of Alto Alto"
+    },
+    {
+      "ItemId": "730249",
+      "ItemName": "Vicious Sky's Sacred Athame"
+    },
+    {
+      "ItemId": "730309",
+      "ItemName": "Mother Moon's Count Ring"
+    },
+    {
+      "ItemId": "730354",
+      "ItemName": "Black Butterfly Guard's Armor"
+    },
+    {
+      "ItemId": "730391",
+      "ItemName": "Philosoraptor's Abstract Feet"
+    },
+    {
+      "ItemId": "730395",
+      "ItemName": "Grinning Death Stompers"
+    },
+    {
+      "ItemId": "730417",
+      "ItemName": "Winter's Pyramid Deck"
+    },
+    {
+      "ItemId": "730424",
+      "ItemName": "Cold Codex"
+    },
+    {
+      "ItemId": "730445",
+      "ItemName": "Rod of Icy Tears"
+    },
+    {
+      "ItemId": "730457",
+      "ItemName": "Coatl's Biting Wand"
+    }
+  ]
+}

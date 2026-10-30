@@ -1,0 +1,81 @@
+{
+  "Name": "W404 MB-Golem-Steel-MBBoss-L50 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Golem-Steel-MBBoss-L50: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "5049",
+      "ItemName": "Bellows' Bitter Cold Amulet"
+    },
+    {
+      "ItemId": "38997",
+      "ItemName": "Bellows' Aristocratic Hat"
+    },
+    {
+      "ItemId": "39005",
+      "ItemName": "Bellows' Helm of Civility"
+    },
+    {
+      "ItemId": "39021",
+      "ItemName": "Bellows' Pompous Hat"
+    },
+    {
+      "ItemId": "39053",
+      "ItemName": "Bellows's Band of Numbness"
+    },
+    {
+      "ItemId": "77139",
+      "ItemName": "Bellows's Confined Robe"
+    },
+    {
+      "ItemId": "77166",
+      "ItemName": "Bellows' Robe of Courtesy"
+    },
+    {
+      "ItemId": "77214",
+      "ItemName": "Bellows' Shoes of Disposition"
+    },
+    {
+      "ItemId": "77243",
+      "ItemName": "Bellows' Boots of Accuracy"
+    },
+    {
+      "ItemId": "97081",
+      "ItemName": "Bellows' Dirk of Restoration"
+    },
+    {
+      "ItemId": "97082",
+      "ItemName": "Bellows' Stiletto of Tragedy"
+    },
+    {
+      "ItemId": "97169",
+      "ItemName": "Bellows' Graceful Cap"
+    },
+    {
+      "ItemId": "97219",
+      "ItemName": "Bellows' Polished Hat"
+    },
+    {
+      "ItemId": "97267",
+      "ItemName": "Bellows' Famous Vest"
+    },
+    {
+      "ItemId": "97302",
+      "ItemName": "Bellows' Intolerant Robe"
+    },
+    {
+      "ItemId": "97365",
+      "ItemName": "Bellows' Shoes of the Bubble"
+    },
+    {
+      "ItemId": "97409",
+      "ItemName": "Bellows' Shoes of the Hushed"
+    },
+    {
+      "ItemId": "126153",
+      "ItemName": "Ringlet of Fire"
+    }
+  ]
+}

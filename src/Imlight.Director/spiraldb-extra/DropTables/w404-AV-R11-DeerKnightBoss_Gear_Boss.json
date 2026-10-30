@@ -1,0 +1,61 @@
+{
+  "Name": "W404 AV-R11-DeerKnightBoss Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AV-R11-DeerKnightBoss: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635216",
+      "ItemName": "Mystery of the Druids"
+    },
+    {
+      "ItemId": "635217",
+      "ItemName": "Proven Armiger's Pendant"
+    },
+    {
+      "ItemId": "635246",
+      "ItemName": "Dryad's Burning Nettle"
+    },
+    {
+      "ItemId": "635247",
+      "ItemName": "Owl's Talon"
+    },
+    {
+      "ItemId": "635302",
+      "ItemName": "Hunter's Helm of Mercy"
+    },
+    {
+      "ItemId": "635303",
+      "ItemName": "Catacombs Helm"
+    },
+    {
+      "ItemId": "635336",
+      "ItemName": "Deep Water Rising Ring"
+    },
+    {
+      "ItemId": "635377",
+      "ItemName": "Three Color Serpent's Robes"
+    },
+    {
+      "ItemId": "635378",
+      "ItemName": "Bane Wyrm's Tartan"
+    },
+    {
+      "ItemId": "635416",
+      "ItemName": "Loyal Knight's Boots"
+    },
+    {
+      "ItemId": "635417",
+      "ItemName": "Hospitable Knight's Boots"
+    },
+    {
+      "ItemId": "635618",
+      "ItemName": "Rosewood Persuader"
+    },
+    {
+      "ItemId": "635619",
+      "ItemName": "Chivalric Mallet"
+    }
+  ]
+}

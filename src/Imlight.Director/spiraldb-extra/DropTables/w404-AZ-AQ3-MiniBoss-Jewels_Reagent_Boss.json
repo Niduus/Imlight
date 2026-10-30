@@ -1,0 +1,21 @@
+{
+  "Name": "W404 AZ-AQ3-MiniBoss-Jewels Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-AQ3-MiniBoss-Jewels: the reagent drops (3), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt"
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze"
+    },
+    {
+      "ItemId": "1350235",
+      "ItemName": "Tungsten"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "Name": "W404 ZF-TseTse-Main-R11-Boss Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-TseTse-Main-R11-Boss: the jewel drops (2), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1358983",
+      "ItemName": "Giant Opal"
+    },
+    {
+      "ItemId": "1358984",
+      "ItemName": "Accurate Opal"
+    }
+  ]
+}

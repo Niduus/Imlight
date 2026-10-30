@@ -1,0 +1,9 @@
+{
+  "Name": "W404 ME1_Ant_Aunt_B",
+  "Description": "Gold of the game's table ME1_Ant_Aunt_B, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 50,
+  "MaxGold": 90,
+  "EachItem": false,
+  "Items": []
+}

@@ -1,0 +1,121 @@
+{
+  "Name": "W404 DM_Werewolf_Base_A_08 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Werewolf_Base_A_08: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1707840",
+      "ItemName": "Ancient Dhampir Impaler"
+    },
+    {
+      "ItemId": "1707842",
+      "ItemName": "Ancient Hemavore Impaler"
+    },
+    {
+      "ItemId": "1707844",
+      "ItemName": "Ancient Immortal Impaler"
+    },
+    {
+      "ItemId": "1707841",
+      "ItemName": "Ancient Living Dead Impaler"
+    },
+    {
+      "ItemId": "1707843",
+      "ItemName": "Ancient Nightstalker Impaler"
+    },
+    {
+      "ItemId": "1707846",
+      "ItemName": "Ancient Nosferatu Impaler"
+    },
+    {
+      "ItemId": "1707845",
+      "ItemName": "Ancient Vampire Impaler"
+    },
+    {
+      "ItemId": "1712411",
+      "ItemName": "Fledgling Dhampir Impaler"
+    },
+    {
+      "ItemId": "1712413",
+      "ItemName": "Fledgling Hemavore Impaler"
+    },
+    {
+      "ItemId": "1712415",
+      "ItemName": "Fledgling Immortal Impaler"
+    },
+    {
+      "ItemId": "1712412",
+      "ItemName": "Fledgling Living Dead Impaler"
+    },
+    {
+      "ItemId": "1712414",
+      "ItemName": "Fledgling Nightstalker Impaler"
+    },
+    {
+      "ItemId": "1712417",
+      "ItemName": "Fledgling Nosferatu Impaler"
+    },
+    {
+      "ItemId": "1712416",
+      "ItemName": "Fledgling Vampire Impaler"
+    },
+    {
+      "ItemId": "1707847",
+      "ItemName": "Ancient Dhampir Signet"
+    },
+    {
+      "ItemId": "1707849",
+      "ItemName": "Ancient Hemavore Signet"
+    },
+    {
+      "ItemId": "1707851",
+      "ItemName": "Ancient Immortal Signet"
+    },
+    {
+      "ItemId": "1707848",
+      "ItemName": "Ancient Living Dead Signet"
+    },
+    {
+      "ItemId": "1707850",
+      "ItemName": "Ancient Nightstalker Signet"
+    },
+    {
+      "ItemId": "1707853",
+      "ItemName": "Ancient Nosferatu Signet"
+    },
+    {
+      "ItemId": "1707852",
+      "ItemName": "Ancient Vampire Signet"
+    },
+    {
+      "ItemId": "1712432",
+      "ItemName": "Fledgling Dhampir Signet"
+    },
+    {
+      "ItemId": "1712434",
+      "ItemName": "Fledgling Hemavore Signet"
+    },
+    {
+      "ItemId": "1712436",
+      "ItemName": "Fledgling Immortal Signet"
+    },
+    {
+      "ItemId": "1712433",
+      "ItemName": "Fledgling Living Dead Signet"
+    },
+    {
+      "ItemId": "1712435",
+      "ItemName": "Fledgling Nightstalker Signet"
+    },
+    {
+      "ItemId": "1712438",
+      "ItemName": "Fledgling Nosferatu Signet"
+    },
+    {
+      "ItemId": "1712437",
+      "ItemName": "Fledgling Vampire Signet"
+    }
+  ]
+}

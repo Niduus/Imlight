@@ -1,0 +1,9 @@
+{
+  "Name": "W404 TriUW-Boss1",
+  "Description": "Gold of the game's table TriUW-Boss1, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 6,
+  "MaxGold": 12,
+  "EachItem": false,
+  "Items": []
+}

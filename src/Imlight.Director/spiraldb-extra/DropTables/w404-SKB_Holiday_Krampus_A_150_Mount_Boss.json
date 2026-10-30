@@ -1,0 +1,21 @@
+{
+  "Name": "W404 SKB_Holiday_Krampus_A_150 Mount (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_Holiday_Krampus_A_150: the mount drops (3), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "470165",
+      "ItemName": "Red Candy-cane (PERM)"
+    },
+    {
+      "ItemId": "470166",
+      "ItemName": "Blue Candy-cane (PERM)"
+    },
+    {
+      "ItemId": "470167",
+      "ItemName": "Green Candy-cane (PERM)"
+    }
+  ]
+}

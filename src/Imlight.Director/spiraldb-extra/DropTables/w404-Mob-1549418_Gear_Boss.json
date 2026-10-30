@@ -1,0 +1,69 @@
+{
+  "Name": "W404 Mob-1549418 Gear (Boss)",
+  "Description": "Wizard404's drop list of High Loremagus's own drops: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "667430",
+      "ItemName": "Silver Order of the Spiral"
+    },
+    {
+      "ItemId": "667431",
+      "ItemName": "Silver Order of the Spiral"
+    },
+    {
+      "ItemId": "667439",
+      "ItemName": "Golden Dragon Fear Banner"
+    },
+    {
+      "ItemId": "667440",
+      "ItemName": "Golden Dragon Fear Banner"
+    },
+    {
+      "ItemId": "667448",
+      "ItemName": "Order of High Glory Banner"
+    },
+    {
+      "ItemId": "667449",
+      "ItemName": "Order of High Glory Banner"
+    },
+    {
+      "ItemId": "667538",
+      "ItemName": "Jade Hood of Mystery"
+    },
+    {
+      "ItemId": "667547",
+      "ItemName": "Mysterious Jade Boots"
+    },
+    {
+      "ItemId": "667556",
+      "ItemName": "Jade Robe of Mystery"
+    },
+    {
+      "ItemId": "667565",
+      "ItemName": "Golden Hood of Serenity"
+    },
+    {
+      "ItemId": "667574",
+      "ItemName": "Golden Boots of Serenity"
+    },
+    {
+      "ItemId": "667583",
+      "ItemName": "Golden Robes of Serenity"
+    },
+    {
+      "ItemId": "667592",
+      "ItemName": "Violet Hood of Bitter Truth"
+    },
+    {
+      "ItemId": "667601",
+      "ItemName": "Violet Boots of Bitter Truth"
+    },
+    {
+      "ItemId": "667610",
+      "ItemName": "Violet Robes of Bitter Truth"
+    }
+  ]
+}

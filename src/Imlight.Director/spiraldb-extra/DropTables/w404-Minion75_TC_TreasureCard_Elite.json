@@ -1,0 +1,65 @@
+{
+  "Name": "W404 Minion75_TC TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table Minion75_TC: the treasurecard drops (14), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Phoenix TC",
+      "ItemName": "Phoenix"
+    },
+    {
+      "ItemId": "Helephant TC",
+      "ItemName": "Helephant"
+    },
+    {
+      "ItemId": "Colossus TC",
+      "ItemName": "Colossus"
+    },
+    {
+      "ItemId": "Ice Wyvern TC",
+      "ItemName": "Ice Wyvern"
+    },
+    {
+      "ItemId": "Stormzilla TC",
+      "ItemName": "Stormzilla"
+    },
+    {
+      "ItemId": "Triton TC",
+      "ItemName": "Triton"
+    },
+    {
+      "ItemId": "Satyr TC",
+      "ItemName": "Satyr"
+    },
+    {
+      "ItemId": "Centaur TC",
+      "ItemName": "Centaur"
+    },
+    {
+      "ItemId": "Minotaur TC",
+      "ItemName": "Minotaur"
+    },
+    {
+      "ItemId": "Earthquake TC",
+      "ItemName": "Earthquake"
+    },
+    {
+      "ItemId": "Skeletal Pirate TC",
+      "ItemName": "Skeletal Pirate"
+    },
+    {
+      "ItemId": "Wraith TC",
+      "ItemName": "Wraith"
+    },
+    {
+      "ItemId": "Spectral Blast TC",
+      "ItemName": "Spectral Blast"
+    },
+    {
+      "ItemId": "Hydra TC",
+      "ItemName": "Hydra"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "Name": "W404 MB-Cat-Thug-Green-MBBoss-L42 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Thug-Green-MBBoss-L42: the gear drops (20), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "5050",
+      "ItemName": "O'Leary's Briney Amulet"
+    },
+    {
+      "ItemId": "38992",
+      "ItemName": "Pops O'Leary's Sun Visor"
+    },
+    {
+      "ItemId": "39034",
+      "ItemName": "Pops' Icy Hat of the Feline"
+    },
+    {
+      "ItemId": "39065",
+      "ItemName": "Pops' Band of Stability"
+    },
+    {
+      "ItemId": "77076",
+      "ItemName": "O'Leary's Forest Band"
+    },
+    {
+      "ItemId": "77084",
+      "ItemName": "Pops's Band of the Mender"
+    },
+    {
+      "ItemId": "77140",
+      "ItemName": "Pops' Tunic of Severity"
+    },
+    {
+      "ItemId": "77144",
+      "ItemName": "Pops' Tunic of Subtlety"
+    },
+    {
+      "ItemId": "77211",
+      "ItemName": "Pops O'Leary's Shoes"
+    },
+    {
+      "ItemId": "77217",
+      "ItemName": "Pops' Sandals of Expertise"
+    },
+    {
+      "ItemId": "77241",
+      "ItemName": "Pops O'Leary Slippers"
+    },
+    {
+      "ItemId": "97093",
+      "ItemName": "Pops O'Leary Shifty Dagger"
+    },
+    {
+      "ItemId": "97126",
+      "ItemName": "Pops' Deck of Stasis"
+    },
+    {
+      "ItemId": "97165",
+      "ItemName": "Pops' Puzzling Cap"
+    },
+    {
+      "ItemId": "97183",
+      "ItemName": "Pops' Theraputic Hat"
+    },
+    {
+      "ItemId": "97216",
+      "ItemName": "Pops' Headwrap of Equity"
+    },
+    {
+      "ItemId": "97249",
+      "ItemName": "Pops'  Vest of Invigoration"
+    },
+    {
+      "ItemId": "97299",
+      "ItemName": "Pops' Uniform of Horrors"
+    },
+    {
+      "ItemId": "97376",
+      "ItemName": "Pops O'Leary's Savvy Shoes"
+    },
+    {
+      "ItemId": "97418",
+      "ItemName": "Pops' Skillful Boots"
+    }
+  ]
+}

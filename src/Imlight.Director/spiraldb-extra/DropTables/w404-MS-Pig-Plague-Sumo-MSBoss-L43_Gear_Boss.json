@@ -1,0 +1,97 @@
+{
+  "Name": "W404 MS-Pig-Plague-Sumo-MSBoss-L43 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-Plague-Sumo-MSBoss-L43: the gear drops (22), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97442",
+      "ItemName": "Usegi's Speculative Dirk"
+    },
+    {
+      "ItemId": "97470",
+      "ItemName": "Knife of Preoccupation"
+    },
+    {
+      "ItemId": "97473",
+      "ItemName": "Dagger of Detachment"
+    },
+    {
+      "ItemId": "97502",
+      "ItemName": "Usegi's Careful Deck"
+    },
+    {
+      "ItemId": "97575",
+      "ItemName": "Cowl of Tact"
+    },
+    {
+      "ItemId": "97603",
+      "ItemName": "Shroud of Conceit"
+    },
+    {
+      "ItemId": "97623",
+      "ItemName": "Shroud of Music"
+    },
+    {
+      "ItemId": "97651",
+      "ItemName": "Cap of Tribulations"
+    },
+    {
+      "ItemId": "97657",
+      "ItemName": "Usegi's Dazed Helm"
+    },
+    {
+      "ItemId": "97671",
+      "ItemName": "Enlivened Cowl"
+    },
+    {
+      "ItemId": "97698",
+      "ItemName": "Band of Sandcastles"
+    },
+    {
+      "ItemId": "97712",
+      "ItemName": "Usegi Ring of Domain"
+    },
+    {
+      "ItemId": "97725",
+      "ItemName": "Usegi's Band"
+    },
+    {
+      "ItemId": "97807",
+      "ItemName": "Impulsive Vestment"
+    },
+    {
+      "ItemId": "97839",
+      "ItemName": "Concordant Robes"
+    },
+    {
+      "ItemId": "97866",
+      "ItemName": "Painful Vestment"
+    },
+    {
+      "ItemId": "97877",
+      "ItemName": "Usegi's Dazed Garments"
+    },
+    {
+      "ItemId": "97888",
+      "ItemName": "Dashing Cloak"
+    },
+    {
+      "ItemId": "98029",
+      "ItemName": "Sandals of Nuisance"
+    },
+    {
+      "ItemId": "98060",
+      "ItemName": "Shoes of Dreaming"
+    },
+    {
+      "ItemId": "98063",
+      "ItemName": "Shoes of Deliberation"
+    },
+    {
+      "ItemId": "98065",
+      "ItemName": "Slippers of the Lotus"
+    }
+  ]
+}

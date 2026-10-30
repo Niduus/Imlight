@@ -1,0 +1,125 @@
+{
+  "Name": "W404 SKB_GH_KingBoar_A_30 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_GH_KingBoar_A_30: the housing drops (29), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "181067",
+      "ItemName": "Wild Fern"
+    },
+    {
+      "ItemId": "181068",
+      "ItemName": "Fire Pit and Kettle"
+    },
+    {
+      "ItemId": "181076",
+      "ItemName": "Wild Mushrooms"
+    },
+    {
+      "ItemId": "181120",
+      "ItemName": "Tall Wooden Shelf"
+    },
+    {
+      "ItemId": "181121",
+      "ItemName": "Rough Wooden Shelf"
+    },
+    {
+      "ItemId": "181122",
+      "ItemName": "Barbaric Wood Shelf"
+    },
+    {
+      "ItemId": "184173",
+      "ItemName": "Kitchen Ware Rack"
+    },
+    {
+      "ItemId": "184174",
+      "ItemName": "Kitchen Ware Pots"
+    },
+    {
+      "ItemId": "512091",
+      "ItemName": "Grizzleheim Main Theme"
+    },
+    {
+      "ItemId": "512149",
+      "ItemName": "Grizzleheim Theme 1"
+    },
+    {
+      "ItemId": "512150",
+      "ItemName": "Grizzleheim Combat Theme"
+    },
+    {
+      "ItemId": "537556",
+      "ItemName": "Broken Viking Statue"
+    },
+    {
+      "ItemId": "537557",
+      "ItemName": "Viking Sword Statue"
+    },
+    {
+      "ItemId": "537558",
+      "ItemName": "Viking Axe Statue"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    },
+    {
+      "ItemId": "1217523",
+      "ItemName": "Gold Skeleton Key"
+    },
+    {
+      "ItemId": "1350309",
+      "ItemName": "Adept's Socket Wrench"
+    },
+    {
+      "ItemId": "1374582",
+      "ItemName": "Ravenscar Throne"
+    },
+    {
+      "ItemId": "1374586",
+      "ItemName": "Grizzleheim Game Trap"
+    },
+    {
+      "ItemId": "1374589",
+      "ItemName": "Grizzleheim Stone Oven"
+    },
+    {
+      "ItemId": "1374590",
+      "ItemName": "Grizzleheim Furnace"
+    },
+    {
+      "ItemId": "1374591",
+      "ItemName": "Grizzleheim Breadboard"
+    },
+    {
+      "ItemId": "1374592",
+      "ItemName": "Hrundle Fjord Shield"
+    },
+    {
+      "ItemId": "1374593",
+      "ItemName": "Northguard Shield"
+    },
+    {
+      "ItemId": "1374594",
+      "ItemName": "Austrilund Shield"
+    },
+    {
+      "ItemId": "1479030",
+      "ItemName": "Ravenscar Anvil"
+    },
+    {
+      "ItemId": "1479031",
+      "ItemName": "Cooking Fire"
+    },
+    {
+      "ItemId": "1479032",
+      "ItemName": "Redclaw Tent"
+    }
+  ]
+}

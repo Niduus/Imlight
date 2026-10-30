@@ -1,0 +1,229 @@
+{
+  "Name": "W404 MR-Boss-Jewels Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table MR-Boss-Jewels: the jewel drops (55), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1405666",
+      "ItemName": "Shiny Defense Ruby +51"
+    },
+    {
+      "ItemId": "1405667",
+      "ItemName": "Shiny Defense Ruby +52"
+    },
+    {
+      "ItemId": "1405670",
+      "ItemName": "Shiny Defense Sapphire +51"
+    },
+    {
+      "ItemId": "1405671",
+      "ItemName": "Shiny Defense Sapphire +52"
+    },
+    {
+      "ItemId": "1405674",
+      "ItemName": "Shiny Defense Amethyst +51"
+    },
+    {
+      "ItemId": "1405675",
+      "ItemName": "Shiny Defense Amethyst +52"
+    },
+    {
+      "ItemId": "1405678",
+      "ItemName": "Shiny Defense Peridot +51"
+    },
+    {
+      "ItemId": "1405679",
+      "ItemName": "Shiny Defense Peridot +52"
+    },
+    {
+      "ItemId": "1405682",
+      "ItemName": "Shiny Defense Jade +51"
+    },
+    {
+      "ItemId": "1405683",
+      "ItemName": "Shiny Defense Jade +52"
+    },
+    {
+      "ItemId": "1405685",
+      "ItemName": "Shiny Defense Onyx +50"
+    },
+    {
+      "ItemId": "1405687",
+      "ItemName": "Shiny Defense Onyx +52"
+    },
+    {
+      "ItemId": "1405689",
+      "ItemName": "Shiny Defense Citrine +50"
+    },
+    {
+      "ItemId": "1405691",
+      "ItemName": "Shiny Defense Citrine +52"
+    },
+    {
+      "ItemId": "1405694",
+      "ItemName": "Shiny Defense Hematite +51"
+    },
+    {
+      "ItemId": "1405695",
+      "ItemName": "Shiny Defense Hematite +52"
+    },
+    {
+      "ItemId": "1405699",
+      "ItemName": "Shiny Blocking Ruby +16"
+    },
+    {
+      "ItemId": "1405701",
+      "ItemName": "Shiny Blocking Sapphire +16"
+    },
+    {
+      "ItemId": "1405703",
+      "ItemName": "Shiny Blocking Amethyst +16"
+    },
+    {
+      "ItemId": "1405705",
+      "ItemName": "Shiny Blocking Peridot +16"
+    },
+    {
+      "ItemId": "1405707",
+      "ItemName": "Shiny Blocking Jade +16"
+    },
+    {
+      "ItemId": "1405709",
+      "ItemName": "Shiny Blocking Onyx +16"
+    },
+    {
+      "ItemId": "1405711",
+      "ItemName": "Shiny Blocking Citrine +16"
+    },
+    {
+      "ItemId": "1405713",
+      "ItemName": "Shiny Blocking Hematite +16"
+    },
+    {
+      "ItemId": "1405716",
+      "ItemName": "Shiny Damage Ruby +26"
+    },
+    {
+      "ItemId": "1405718",
+      "ItemName": "Shiny Damage Sapphire +26"
+    },
+    {
+      "ItemId": "1405720",
+      "ItemName": "Shiny Damage Amethyst +26"
+    },
+    {
+      "ItemId": "1405722",
+      "ItemName": "Shiny Damage Peridot +26"
+    },
+    {
+      "ItemId": "1405724",
+      "ItemName": "Shiny Damage Jade +26"
+    },
+    {
+      "ItemId": "1405726",
+      "ItemName": "Shiny Damage Onyx +26"
+    },
+    {
+      "ItemId": "1405728",
+      "ItemName": "Shiny Damage Citrine +26"
+    },
+    {
+      "ItemId": "1405730",
+      "ItemName": "Shiny Damage Hematite +52"
+    },
+    {
+      "ItemId": "1405733",
+      "ItemName": "Shiny Critical Ruby +16"
+    },
+    {
+      "ItemId": "1405735",
+      "ItemName": "Shiny Critical Sapphire +16"
+    },
+    {
+      "ItemId": "1405737",
+      "ItemName": "Shiny Critical Amethyst +16"
+    },
+    {
+      "ItemId": "1405739",
+      "ItemName": "Shiny Critical Peridot +16"
+    },
+    {
+      "ItemId": "1405741",
+      "ItemName": "Shiny Critical Jade +16"
+    },
+    {
+      "ItemId": "1405743",
+      "ItemName": "Shiny Critical Onyx +16"
+    },
+    {
+      "ItemId": "1405745",
+      "ItemName": "Shiny Critical Citrine +16"
+    },
+    {
+      "ItemId": "1405747",
+      "ItemName": "Shiny Critical Hematite +16"
+    },
+    {
+      "ItemId": "1405750",
+      "ItemName": "Shiny PIP Hematite +2"
+    },
+    {
+      "ItemId": "1405760",
+      "ItemName": "Radical Opal"
+    },
+    {
+      "ItemId": "1405761",
+      "ItemName": "Epic Opal"
+    },
+    {
+      "ItemId": "1405763",
+      "ItemName": "Brace Opal"
+    },
+    {
+      "ItemId": "1405764",
+      "ItemName": "Magnify Opal"
+    },
+    {
+      "ItemId": "1405765",
+      "ItemName": "Flawless Opal"
+    },
+    {
+      "ItemId": "1405766",
+      "ItemName": "Adapt Opal"
+    },
+    {
+      "ItemId": "1405767",
+      "ItemName": "Renew Opal"
+    },
+    {
+      "ItemId": "1405781",
+      "ItemName": "Shiny Health Opal +111"
+    },
+    {
+      "ItemId": "1405782",
+      "ItemName": "Shiny Health Opal +112"
+    },
+    {
+      "ItemId": "1405783",
+      "ItemName": "Shiny Health Opal +113"
+    },
+    {
+      "ItemId": "1405784",
+      "ItemName": "Shiny Health Opal +114"
+    },
+    {
+      "ItemId": "1407046",
+      "ItemName": "Shiny Mana Opal +45"
+    },
+    {
+      "ItemId": "1407047",
+      "ItemName": "Shiny Mana Opal +46"
+    },
+    {
+      "ItemId": "1407048",
+      "ItemName": "Shiny Mana Opal +47"
+    }
+  ]
+}

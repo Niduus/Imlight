@@ -1,0 +1,49 @@
+{
+  "Name": "W404 AZ-Boss-PetSnacks-02 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-Boss-PetSnacks-02: the snack drops (10), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "473222",
+      "ItemName": "Dr. Jalapeno"
+    },
+    {
+      "ItemId": "733113",
+      "ItemName": "Pterotomatoes"
+    },
+    {
+      "ItemId": "733114",
+      "ItemName": "Maize"
+    },
+    {
+      "ItemId": "733115",
+      "ItemName": "Apatotatoes"
+    },
+    {
+      "ItemId": "733121",
+      "ItemName": "Aztecan Hot Chocolate"
+    },
+    {
+      "ItemId": "733123",
+      "ItemName": "Guava"
+    },
+    {
+      "ItemId": "733134",
+      "ItemName": "Rex Tea"
+    },
+    {
+      "ItemId": "733137",
+      "ItemName": "Quetzal Pretzel"
+    },
+    {
+      "ItemId": "733139",
+      "ItemName": "Zocalo Wings"
+    },
+    {
+      "ItemId": "733141",
+      "ItemName": "Stego Waffles"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "W404 MB-Cat-Hobo-HatGray-MBBoss-L38 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Hobo-HatGray-MBBoss-L38: the pet drops (1), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "100325",
+      "ItemName": "Frog"
+    }
+  ]
+}

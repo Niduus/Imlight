@@ -1,0 +1,85 @@
+{
+  "Name": "W404 Wizard-Male-Cloak-Blue-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Wizard-Male-Cloak-Blue-Boss-R8: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104592",
+      "ItemName": "Bristleback's Robe of Awe"
+    },
+    {
+      "ItemId": "104599",
+      "ItemName": "Drape of Symmetry"
+    },
+    {
+      "ItemId": "104656",
+      "ItemName": "Cloak of the Seasons"
+    },
+    {
+      "ItemId": "104664",
+      "ItemName": "Tunic of Effervescence"
+    },
+    {
+      "ItemId": "104754",
+      "ItemName": "Slippers of the Ice Flow"
+    },
+    {
+      "ItemId": "104781",
+      "ItemName": "Footgear of Craftsmanship"
+    },
+    {
+      "ItemId": "104806",
+      "ItemName": "Shoes of Gloom"
+    },
+    {
+      "ItemId": "104812",
+      "ItemName": "Mocassins of Mortality"
+    },
+    {
+      "ItemId": "104875",
+      "ItemName": "Slippers of the Slipstream"
+    },
+    {
+      "ItemId": "126568",
+      "ItemName": "Signet of the Reaper"
+    },
+    {
+      "ItemId": "126613",
+      "ItemName": "Oroboros Band"
+    },
+    {
+      "ItemId": "126651",
+      "ItemName": "Bristleback's Thunderblade"
+    },
+    {
+      "ItemId": "126681",
+      "ItemName": "Bristleback's Singed Deck"
+    },
+    {
+      "ItemId": "146166",
+      "ItemName": "Soothing Steel"
+    },
+    {
+      "ItemId": "146198",
+      "ItemName": "Infinity's Edge"
+    },
+    {
+      "ItemId": "146241",
+      "ItemName": "Hood of the Historian"
+    },
+    {
+      "ItemId": "146271",
+      "ItemName": "Shroud of the Green"
+    },
+    {
+      "ItemId": "146294",
+      "ItemName": "Headgear of the Ice Pilot"
+    },
+    {
+      "ItemId": "146308",
+      "ItemName": "Cowl of Blazes"
+    }
+  ]
+}

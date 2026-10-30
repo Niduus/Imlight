@@ -1,0 +1,53 @@
+{
+  "Name": "W404 AV-R12-FroudlingBoss Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table AV-R12-FroudlingBoss: the snack drops (11), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220217",
+      "ItemName": "Golden Grapes"
+    },
+    {
+      "ItemId": "220292",
+      "ItemName": "Uni-corn"
+    },
+    {
+      "ItemId": "220305",
+      "ItemName": "Buttered Bread"
+    },
+    {
+      "ItemId": "220325",
+      "ItemName": "Shiny Tomato"
+    },
+    {
+      "ItemId": "446071",
+      "ItemName": "Salmonberry"
+    },
+    {
+      "ItemId": "473716",
+      "ItemName": "Bogwich"
+    },
+    {
+      "ItemId": "473717",
+      "ItemName": "Treant Bark"
+    },
+    {
+      "ItemId": "473718",
+      "ItemName": "Gummy Wyrms"
+    },
+    {
+      "ItemId": "473719",
+      "ItemName": "Deviled Eggs"
+    },
+    {
+      "ItemId": "473720",
+      "ItemName": "Roasted Chickpeas"
+    },
+    {
+      "ItemId": "473721",
+      "ItemName": "Pigeon Pie"
+    }
+  ]
+}

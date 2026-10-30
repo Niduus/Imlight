@@ -1,0 +1,25 @@
+{
+  "Name": "W404 Mob-1705043 Jewel (Boss)",
+  "Description": "Wizard404's drop list of Balaur's own drops: the jewel drops (4), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1654195",
+      "ItemName": "Star Blade Opal"
+    },
+    {
+      "ItemId": "1654199",
+      "ItemName": "Potent Trap Opal"
+    },
+    {
+      "ItemId": "1705856",
+      "ItemName": "Life Disabling Pin (180)"
+    },
+    {
+      "ItemId": "1578818",
+      "ItemName": "Flawless Accurate Peridot +16%"
+    }
+  ]
+}

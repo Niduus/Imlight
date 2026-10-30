@@ -1,0 +1,65 @@
+{
+  "Name": "W404 G14-Make-A-Wish-01 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-Make-A-Wish-01: the housing drops (14), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "164217",
+      "ItemName": "Chessboard"
+    },
+    {
+      "ItemId": "164220",
+      "ItemName": "White Rook Chesspiece"
+    },
+    {
+      "ItemId": "164221",
+      "ItemName": "Black Rook Chesspiece"
+    },
+    {
+      "ItemId": "164222",
+      "ItemName": "White Queen Chesspiece"
+    },
+    {
+      "ItemId": "164223",
+      "ItemName": "Black Queen Chesspiece"
+    },
+    {
+      "ItemId": "164224",
+      "ItemName": "White Bishop Chesspiece"
+    },
+    {
+      "ItemId": "164225",
+      "ItemName": "Black Bishop Chesspiece"
+    },
+    {
+      "ItemId": "164226",
+      "ItemName": "White Pawn Chesspiece"
+    },
+    {
+      "ItemId": "164227",
+      "ItemName": "Black Pawn Chesspiece"
+    },
+    {
+      "ItemId": "164228",
+      "ItemName": "White Knight Chesspiece"
+    },
+    {
+      "ItemId": "164229",
+      "ItemName": "Black Knight Chesspiece"
+    },
+    {
+      "ItemId": "164230",
+      "ItemName": "White King Chesspiece"
+    },
+    {
+      "ItemId": "164231",
+      "ItemName": "Black King Chesspiece"
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    }
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "Name": "W404 KT-SKR-Ra Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-SKR-Ra: the housing drops (55), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82709",
+      "ItemName": "Red Urn"
+    },
+    {
+      "ItemId": "82710",
+      "ItemName": "Blue Urn"
+    },
+    {
+      "ItemId": "82711",
+      "ItemName": "Purple Urn"
+    },
+    {
+      "ItemId": "82731",
+      "ItemName": "Krok Tree Obelisk"
+    },
+    {
+      "ItemId": "82735",
+      "ItemName": "Krok Sun Obelisk"
+    },
+    {
+      "ItemId": "82736",
+      "ItemName": "Krok Snake Obelisk"
+    },
+    {
+      "ItemId": "82737",
+      "ItemName": "Krok Moon Obelisk"
+    },
+    {
+      "ItemId": "82738",
+      "ItemName": "Krok Skull Obelisk"
+    },
+    {
+      "ItemId": "82741",
+      "ItemName": "Krok Insect Obelisk"
+    },
+    {
+      "ItemId": "82756",
+      "ItemName": "Krok Bird Obelisk"
+    },
+    {
+      "ItemId": "82784",
+      "ItemName": "Fire Mummy"
+    },
+    {
+      "ItemId": "82785",
+      "ItemName": "Ice Mummy"
+    },
+    {
+      "ItemId": "82811",
+      "ItemName": "Storm Mummy"
+    },
+    {
+      "ItemId": "82838",
+      "ItemName": "Hieroglyphic Fire Tablet"
+    },
+    {
+      "ItemId": "82859",
+      "ItemName": "Krokotopian Hammock"
+    },
+    {
+      "ItemId": "82878",
+      "ItemName": "Krokotopia Grand Tent"
+    },
+    {
+      "ItemId": "82881",
+      "ItemName": "Prince Meti Karanahn"
+    },
+    {
+      "ItemId": "82882",
+      "ItemName": "Prince Suten Sokkwi"
+    },
+    {
+      "ItemId": "82884",
+      "ItemName": "Prince Biti Nirini"
+    },
+    {
+      "ItemId": "82886",
+      "ItemName": "Prince Aka Karanahn"
+    },
+    {
+      "ItemId": "82887",
+      "ItemName": "Khai Amahte Statue"
+    },
+    {
+      "ItemId": "82888",
+      "ItemName": "Prince Manu Nirini Statue"
+    },
+    {
+      "ItemId": "82906",
+      "ItemName": "Krok Chalkboard"
+    },
+    {
+      "ItemId": "82907",
+      "ItemName": "Hieroglyphic Ice Tablet"
+    },
+    {
+      "ItemId": "82908",
+      "ItemName": "Hieroglyphic Storm Tablet"
+    },
+    {
+      "ItemId": "160640",
+      "ItemName": "Krokotopian Mummy"
+    },
+    {
+      "ItemId": "160641",
+      "ItemName": "Krokotopian Scarab"
+    },
+    {
+      "ItemId": "160734",
+      "ItemName": "Krokotopian Houseboat"
+    },
+    {
+      "ItemId": "160735",
+      "ItemName": "Krokotopian Sphinx"
+    },
+    {
+      "ItemId": "160987",
+      "ItemName": "Lunar-Emblem Bed"
+    },
+    {
+      "ItemId": "537111",
+      "ItemName": "Tapestry to The Oasis"
+    },
+    {
+      "ItemId": "537115",
+      "ItemName": "Tapestry to School of Balance"
+    },
+    {
+      "ItemId": "689340",
+      "ItemName": "Krokotopian Rug"
+    },
+    {
+      "ItemId": "689341",
+      "ItemName": "Krokotopian Bath Sink"
+    },
+    {
+      "ItemId": "689343",
+      "ItemName": "Krokotopian Bath Tub"
+    },
+    {
+      "ItemId": "689344",
+      "ItemName": "Krokotopian Bed"
+    },
+    {
+      "ItemId": "689345",
+      "ItemName": "Krokotopian Bed Table"
+    },
+    {
+      "ItemId": "689346",
+      "ItemName": "Krokotopian Bookshelf"
+    },
+    {
+      "ItemId": "689347",
+      "ItemName": "Krokotopian Cabinet"
+    },
+    {
+      "ItemId": "689348",
+      "ItemName": "Krokotopian Chair"
+    },
+    {
+      "ItemId": "689349",
+      "ItemName": "Krokotopian Coffee Table"
+    },
+    {
+      "ItemId": "689350",
+      "ItemName": "Krokotopian Couch"
+    },
+    {
+      "ItemId": "689351",
+      "ItemName": "Krokotopian Cupboards"
+    },
+    {
+      "ItemId": "689352",
+      "ItemName": "Krokotopian Dining Chair"
+    },
+    {
+      "ItemId": "689353",
+      "ItemName": "Krokotopian Dining Table"
+    },
+    {
+      "ItemId": "689354",
+      "ItemName": "Krokotopian Fireplace"
+    },
+    {
+      "ItemId": "689355",
+      "ItemName": "Krokotopian Sink"
+    },
+    {
+      "ItemId": "689356",
+      "ItemName": "Krokotopian Towel Rack"
+    },
+    {
+      "ItemId": "689361",
+      "ItemName": "Krokotopian Stone Floor"
+    },
+    {
+      "ItemId": "689365",
+      "ItemName": "Krokotopian Brick Wallpaper"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    },
+    {
+      "ItemId": "1350308",
+      "ItemName": "Novice's Socket Wrench"
+    },
+    {
+      "ItemId": "1350309",
+      "ItemName": "Adept's Socket Wrench"
+    },
+    {
+      "ItemId": "1350310",
+      "ItemName": "Expert's Socket Wrench"
+    }
+  ]
+}

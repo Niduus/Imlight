@@ -1,0 +1,93 @@
+{
+  "Name": "W404 MB-Golem-Steel-MBBoss-L43 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Golem-Steel-MBBoss-L43: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "5057",
+      "ItemName": "Old Smokey's Froggy Loop"
+    },
+    {
+      "ItemId": "38994",
+      "ItemName": "Old Smokey's Hat"
+    },
+    {
+      "ItemId": "39004",
+      "ItemName": "Old Smokey's Formal Cap"
+    },
+    {
+      "ItemId": "39032",
+      "ItemName": "Old Smokey's Proficient Hat"
+    },
+    {
+      "ItemId": "39054",
+      "ItemName": "Smokey's Intense Band"
+    },
+    {
+      "ItemId": "39060",
+      "ItemName": "Old Smokey's Band"
+    },
+    {
+      "ItemId": "77138",
+      "ItemName": "Smokey's Cultured Cloak"
+    },
+    {
+      "ItemId": "77148",
+      "ItemName": "Smokey's Genteel Vest"
+    },
+    {
+      "ItemId": "77161",
+      "ItemName": "Smokey's Pompous Cloak"
+    },
+    {
+      "ItemId": "77209",
+      "ItemName": "Old Smokey's Footwraps"
+    },
+    {
+      "ItemId": "77213",
+      "ItemName": "Old Smokey's Boots"
+    },
+    {
+      "ItemId": "77242",
+      "ItemName": "Smokey's Sandals of Clarity"
+    },
+    {
+      "ItemId": "87470",
+      "ItemName": "Smokey's Staff of the Sun"
+    },
+    {
+      "ItemId": "97085",
+      "ItemName": "Old Smokey's Dagger"
+    },
+    {
+      "ItemId": "97094",
+      "ItemName": "Smokey's Pompous Dagger"
+    },
+    {
+      "ItemId": "97109",
+      "ItemName": "Smokey's Clever Dagger"
+    },
+    {
+      "ItemId": "97180",
+      "ItemName": "Old Smokey's Noble Hat"
+    },
+    {
+      "ItemId": "97263",
+      "ItemName": "Old Smokey's Vestment"
+    },
+    {
+      "ItemId": "97314",
+      "ItemName": "Smokey's Robe of Integrity"
+    },
+    {
+      "ItemId": "97374",
+      "ItemName": "Smokey's Emotional Shoes"
+    },
+    {
+      "ItemId": "126149",
+      "ItemName": "Power Enfused Blade"
+    }
+  ]
+}

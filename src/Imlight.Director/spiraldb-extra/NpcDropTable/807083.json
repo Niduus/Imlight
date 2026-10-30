@@ -1,0 +1,21 @@
+{
+  "TemplateID": 807083,
+  "DropTableNames": [
+    "W404 Student-Myth-PageEvent",
+    "W404 Student-Myth-PageEvent Gear (Boss)",
+    "W404 Student-Myth-PageEvent Pet (Boss)",
+    "W404 Student-Myth-PageEvent Mount (Boss)",
+    "W404 Student-Myth-PageEvent TreasureCard (Boss)",
+    "W404 Student-Myth-PageEvent Snack (Boss)",
+    "W404 Student-Myth-PageEvent Housing (Boss)",
+    "W404 AV-R11-DeerKnightBoss",
+    "W404 AV-R11-DeerKnightBoss Gear (Boss)",
+    "W404 AV-R11-DeerKnightBoss TreasureCard (Boss)",
+    "W404 AV-R11-DeerKnightBoss Snack (Boss)",
+    "W404 AV-R11-DeerKnightBoss Seed (Boss)",
+    "W404 AV-R11-DeerKnightBoss Housing (Boss)",
+    "W404 TC-AV-UncommonsBosses TreasureCard",
+    "W404 TC-AV-Utility-Myth TreasureCard (Boss)",
+    "W404 AV-ReagentsBoss Reagent (Boss)"
+  ]
+}

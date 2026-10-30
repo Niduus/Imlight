@@ -1,0 +1,93 @@
+{
+  "Name": "W404 G14-CD-Boss-Cheney Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-CD-Boss-Cheney: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330961",
+      "ItemName": "Brimstone Helm of Darkmoor"
+    },
+    {
+      "ItemId": "1330962",
+      "ItemName": "Darkmoor Helmet of Shivers"
+    },
+    {
+      "ItemId": "1330963",
+      "ItemName": "Raging Blackwater's Helm"
+    },
+    {
+      "ItemId": "1330964",
+      "ItemName": "Darkmoor Barbut of Delusion"
+    },
+    {
+      "ItemId": "1330965",
+      "ItemName": "Helm of the Living Dead"
+    },
+    {
+      "ItemId": "1330966",
+      "ItemName": "Depths of Darkmoor Cover"
+    },
+    {
+      "ItemId": "1330967",
+      "ItemName": "Darkmoor Herald's Mantle"
+    },
+    {
+      "ItemId": "1338129",
+      "ItemName": "Brimstone Boots of Darkmoor"
+    },
+    {
+      "ItemId": "1338130",
+      "ItemName": "Sabatons of Frozen Furor"
+    },
+    {
+      "ItemId": "1338131",
+      "ItemName": "Raging Blackwater's Boots"
+    },
+    {
+      "ItemId": "1338132",
+      "ItemName": "Darkmoor Boots of Delusion"
+    },
+    {
+      "ItemId": "1338133",
+      "ItemName": "Sabatons of the Living Dead"
+    },
+    {
+      "ItemId": "1338134",
+      "ItemName": "Depths of Darkmoor Stalkers"
+    },
+    {
+      "ItemId": "1338135",
+      "ItemName": "Herald of Darkmoor's Shoes"
+    },
+    {
+      "ItemId": "1338472",
+      "ItemName": "Array of the Daystar"
+    },
+    {
+      "ItemId": "1338473",
+      "ItemName": "Arcana of Neverwhere"
+    },
+    {
+      "ItemId": "1338474",
+      "ItemName": "Duplicitous Squire's Deck"
+    },
+    {
+      "ItemId": "1338475",
+      "ItemName": "Dimwood Vale Case"
+    },
+    {
+      "ItemId": "1338476",
+      "ItemName": "Spirit of Darkmoor's Hand"
+    },
+    {
+      "ItemId": "1338477",
+      "ItemName": "Cards of the Walking Dead"
+    },
+    {
+      "ItemId": "1338478",
+      "ItemName": "Arcana of the Outer Void"
+    }
+  ]
+}

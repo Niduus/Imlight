@@ -1,0 +1,97 @@
+{
+  "Name": "W404 MS-Ghost-Red-L46 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Ghost-Red-L46: the gear drops (22), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97471",
+      "ItemName": "Athame of Attention"
+    },
+    {
+      "ItemId": "97474",
+      "ItemName": "Dirk of Sandcastles"
+    },
+    {
+      "ItemId": "97476",
+      "ItemName": "Akuji's Entranced Knife"
+    },
+    {
+      "ItemId": "97506",
+      "ItemName": "Akuji's Deck of Premise"
+    },
+    {
+      "ItemId": "97576",
+      "ItemName": "Shroud of Afterthoughts"
+    },
+    {
+      "ItemId": "97577",
+      "ItemName": "Akuji's Helm of Forethought"
+    },
+    {
+      "ItemId": "97602",
+      "ItemName": "Mask of Impression"
+    },
+    {
+      "ItemId": "97624",
+      "ItemName": "Headwraps of Resonance"
+    },
+    {
+      "ItemId": "97650",
+      "ItemName": "Tormented Mask"
+    },
+    {
+      "ItemId": "97672",
+      "ItemName": "Hood of the Resolute"
+    },
+    {
+      "ItemId": "97703",
+      "ItemName": "Discerning Ring"
+    },
+    {
+      "ItemId": "97717",
+      "ItemName": "Akuji's Meditative Band"
+    },
+    {
+      "ItemId": "97893",
+      "ItemName": "Akuji's Cloak of the Zealous"
+    },
+    {
+      "ItemId": "97954",
+      "ItemName": "Shoes of the Observant"
+    },
+    {
+      "ItemId": "97981",
+      "ItemName": "Meticulous Footwraps"
+    },
+    {
+      "ItemId": "98004",
+      "ItemName": "Boots of Melodies"
+    },
+    {
+      "ItemId": "98009",
+      "ItemName": "Akuji's Slippers of the Chorus"
+    },
+    {
+      "ItemId": "98032",
+      "ItemName": "Problematic Boots"
+    },
+    {
+      "ItemId": "98055",
+      "ItemName": "Slippers of the Eager"
+    },
+    {
+      "ItemId": "98061",
+      "ItemName": "Entranced Slippers"
+    },
+    {
+      "ItemId": "98064",
+      "ItemName": "Sandals of Soul-Searching"
+    },
+    {
+      "ItemId": "98066",
+      "ItemName": "Footwraps of Sandcastles"
+    }
+  ]
+}

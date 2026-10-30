@@ -1,0 +1,25 @@
+{
+  "Name": "W404 SKB_CL_Dan_A_60 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_CL_Dan_A_60: the reagent drops (4), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1505299",
+      "ItemName": "Ship of Fools"
+    },
+    {
+      "ItemId": "1505300",
+      "ItemName": "Spiritual Tribunal"
+    },
+    {
+      "ItemId": "1505298",
+      "ItemName": "Nautilus Unleashed"
+    },
+    {
+      "ItemId": "1505297",
+      "ItemName": "Celestial Intervention"
+    }
+  ]
+}

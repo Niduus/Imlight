@@ -1,0 +1,65 @@
+{
+  "Name": "W404 AQ-Mob-70 Snack (Elite)",
+  "Description": "Wizard404's drop list of the game's table AQ-Mob-70: the snack drops (14), one picked when it rolls. How often: DropOdds.json Elite/Snack.",
+  "Odds": "Elite/Snack",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220204",
+      "ItemName": "Crunch Apple"
+    },
+    {
+      "ItemId": "220205",
+      "ItemName": "Square Watermelon"
+    },
+    {
+      "ItemId": "220206",
+      "ItemName": "Ape Grapes"
+    },
+    {
+      "ItemId": "220216",
+      "ItemName": "Large Watermelon"
+    },
+    {
+      "ItemId": "220256",
+      "ItemName": "Caramel Popcorn"
+    },
+    {
+      "ItemId": "220257",
+      "ItemName": "Stinky Cheese"
+    },
+    {
+      "ItemId": "220258",
+      "ItemName": "Wheat Cracker"
+    },
+    {
+      "ItemId": "220259",
+      "ItemName": "Redskin Peanut"
+    },
+    {
+      "ItemId": "220268",
+      "ItemName": "Medium Fish"
+    },
+    {
+      "ItemId": "220285",
+      "ItemName": "Gummy Bloodbat"
+    },
+    {
+      "ItemId": "220291",
+      "ItemName": "Golden Squash"
+    },
+    {
+      "ItemId": "220296",
+      "ItemName": "Fire Cracker"
+    },
+    {
+      "ItemId": "220297",
+      "ItemName": "Golden Peanut"
+    },
+    {
+      "ItemId": "220306",
+      "ItemName": "Large Fish"
+    }
+  ]
+}

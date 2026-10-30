@@ -1,0 +1,109 @@
+{
+  "Name": "W404 TriUW-Boss1 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table TriUW-Boss1: the gear drops (25), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4673",
+      "ItemName": "Swooping Necklace"
+    },
+    {
+      "ItemId": "4676",
+      "ItemName": "Amulet of the Fay"
+    },
+    {
+      "ItemId": "4679",
+      "ItemName": "Bogeyman's Pendant"
+    },
+    {
+      "ItemId": "4682",
+      "ItemName": "Choker of Ferocity"
+    },
+    {
+      "ItemId": "4712",
+      "ItemName": "Citrine Studded Athame"
+    },
+    {
+      "ItemId": "4720",
+      "ItemName": "Jade Studded Athame"
+    },
+    {
+      "ItemId": "4728",
+      "ItemName": "Studded Knife"
+    },
+    {
+      "ItemId": "4733",
+      "ItemName": "Jeweled Dagger"
+    },
+    {
+      "ItemId": "4775",
+      "ItemName": "Lord's Signet"
+    },
+    {
+      "ItemId": "4779",
+      "ItemName": "Hallowed Band"
+    },
+    {
+      "ItemId": "4855",
+      "ItemName": "Goldleaf Shoes"
+    },
+    {
+      "ItemId": "4860",
+      "ItemName": "Barkskin Boots"
+    },
+    {
+      "ItemId": "4864",
+      "ItemName": "Venemous Footwraps"
+    },
+    {
+      "ItemId": "4866",
+      "ItemName": "Slippers of Repose"
+    },
+    {
+      "ItemId": "4873",
+      "ItemName": "Senior Novice's Shoes"
+    },
+    {
+      "ItemId": "77571",
+      "ItemName": "Charbane's Helm"
+    },
+    {
+      "ItemId": "77578",
+      "ItemName": "Cold Forged Helm"
+    },
+    {
+      "ItemId": "77583",
+      "ItemName": "Stormweave Hood"
+    },
+    {
+      "ItemId": "77585",
+      "ItemName": "Hood of Tension"
+    },
+    {
+      "ItemId": "77588",
+      "ItemName": "Trollskin Hat"
+    },
+    {
+      "ItemId": "77621",
+      "ItemName": "Sapphyra's Studded Helm"
+    },
+    {
+      "ItemId": "87194",
+      "ItemName": "Ashen Cloak"
+    },
+    {
+      "ItemId": "87211",
+      "ItemName": "Tunic of Disturbance"
+    },
+    {
+      "ItemId": "87235",
+      "ItemName": "Cloak of the Watchful"
+    },
+    {
+      "ItemId": "470716",
+      "ItemName": "The Bewitcher"
+    }
+  ]
+}

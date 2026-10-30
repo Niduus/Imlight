@@ -1,0 +1,265 @@
+{
+  "Name": "W404 PL-Mob-Gear-106 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table PL-Mob-Gear-106: the gear drops (64), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1363861",
+      "ItemName": "Enchanter's Fervid Hat"
+    },
+    {
+      "ItemId": "1363862",
+      "ItemName": "Enchanter's Ice Floe Hat"
+    },
+    {
+      "ItemId": "1363863",
+      "ItemName": "Enchanter's Lightning Hat"
+    },
+    {
+      "ItemId": "1363864",
+      "ItemName": "Enchanter's Hat of Reverie"
+    },
+    {
+      "ItemId": "1363865",
+      "ItemName": "Enchanter's Hat of Courage"
+    },
+    {
+      "ItemId": "1363866",
+      "ItemName": "Enchanter's Terminus Hat"
+    },
+    {
+      "ItemId": "1363867",
+      "ItemName": "Enchanter's Hat of Poise"
+    },
+    {
+      "ItemId": "1363868",
+      "ItemName": "Enchanter's New Horizon Hat"
+    },
+    {
+      "ItemId": "1363893",
+      "ItemName": "Enchanter's Fervid Cloak"
+    },
+    {
+      "ItemId": "1363894",
+      "ItemName": "Enchanter's Ice Floe Jacket"
+    },
+    {
+      "ItemId": "1363895",
+      "ItemName": "Enchanter's Lightning Vesment"
+    },
+    {
+      "ItemId": "1363896",
+      "ItemName": "Enchanter's Cloak of Reverie"
+    },
+    {
+      "ItemId": "1363897",
+      "ItemName": "Enchanter's Drape of Courage"
+    },
+    {
+      "ItemId": "1363898",
+      "ItemName": "Enchanter's Terminus Garb"
+    },
+    {
+      "ItemId": "1363899",
+      "ItemName": "Enchanter's Robes of Poise"
+    },
+    {
+      "ItemId": "1363900",
+      "ItemName": "Enchanter's New Horizon Garb"
+    },
+    {
+      "ItemId": "1363925",
+      "ItemName": "Enchanter's Fervid Trekkers"
+    },
+    {
+      "ItemId": "1363926",
+      "ItemName": "Enchanter's Ice Floe Waders"
+    },
+    {
+      "ItemId": "1363927",
+      "ItemName": "Enchanter's Lightning Riders"
+    },
+    {
+      "ItemId": "1363928",
+      "ItemName": "Enchanter's Shoes of Reverie"
+    },
+    {
+      "ItemId": "1363929",
+      "ItemName": "Enchanter's Boots of Courage"
+    },
+    {
+      "ItemId": "1363930",
+      "ItemName": "Enchanter's Terminus Shoes"
+    },
+    {
+      "ItemId": "1363931",
+      "ItemName": "Enchanter's Clogs of Poise"
+    },
+    {
+      "ItemId": "1363932",
+      "ItemName": "Enchanter's New Horizon Boots"
+    },
+    {
+      "ItemId": "1369053",
+      "ItemName": "Tayg Sliver of Steam"
+    },
+    {
+      "ItemId": "1369054",
+      "ItemName": "Snowbound Tayg Dirk"
+    },
+    {
+      "ItemId": "1369055",
+      "ItemName": "Tayg Dagger of Sleetfall"
+    },
+    {
+      "ItemId": "1369056",
+      "ItemName": "Tayg Bodkin of Folklore"
+    },
+    {
+      "ItemId": "1369057",
+      "ItemName": "Tayg Stylet of Vitality"
+    },
+    {
+      "ItemId": "1369058",
+      "ItemName": "Tayg Dagger of Wrath"
+    },
+    {
+      "ItemId": "1369059",
+      "ItemName": "Tayg Chisel of Leveling"
+    },
+    {
+      "ItemId": "1369060",
+      "ItemName": "Athame of the Forlorn Tayg"
+    },
+    {
+      "ItemId": "1369085",
+      "ItemName": "Tayg Chaplet of Steam"
+    },
+    {
+      "ItemId": "1369086",
+      "ItemName": "Relic of the Snowbound Tayg"
+    },
+    {
+      "ItemId": "1369087",
+      "ItemName": "Tayg Charm of Sleetfall"
+    },
+    {
+      "ItemId": "1369088",
+      "ItemName": "Tayg Collar of Folklore"
+    },
+    {
+      "ItemId": "1369089",
+      "ItemName": "Tayg Pendant of Vitality"
+    },
+    {
+      "ItemId": "1369090",
+      "ItemName": "Tayg Somber Ampul"
+    },
+    {
+      "ItemId": "1369091",
+      "ItemName": "Tayg Bauble of Harmony"
+    },
+    {
+      "ItemId": "1369092",
+      "ItemName": "Amulet of the Forlorn Tayg"
+    },
+    {
+      "ItemId": "1369117",
+      "ItemName": "Tayg Band of Steam"
+    },
+    {
+      "ItemId": "1369118",
+      "ItemName": "Snowbound Tayg Ringlet"
+    },
+    {
+      "ItemId": "1369119",
+      "ItemName": "Tayg Band of Sleetfall"
+    },
+    {
+      "ItemId": "1369120",
+      "ItemName": "Tayg Ring of Folklore"
+    },
+    {
+      "ItemId": "1369121",
+      "ItemName": "Tayg Signet of Vitality"
+    },
+    {
+      "ItemId": "1369122",
+      "ItemName": "Tayg Ring of the Crypt"
+    },
+    {
+      "ItemId": "1369123",
+      "ItemName": "Tayg Loop of Justice"
+    },
+    {
+      "ItemId": "1369124",
+      "ItemName": "Band of the Forlorn Tayg"
+    },
+    {
+      "ItemId": "1369405",
+      "ItemName": "Tundarian Saber of Rage"
+    },
+    {
+      "ItemId": "1369406",
+      "ItemName": "Tundarian Iceblade"
+    },
+    {
+      "ItemId": "1369407",
+      "ItemName": "Tundarian Cutlass of Flux"
+    },
+    {
+      "ItemId": "1369408",
+      "ItemName": "Fancy Tundarian Saber"
+    },
+    {
+      "ItemId": "1369409",
+      "ItemName": "Tundarian Sword of Resolve"
+    },
+    {
+      "ItemId": "1369410",
+      "ItemName": "Tundarian Sword of Dread"
+    },
+    {
+      "ItemId": "1369411",
+      "ItemName": "Tundarian Cutlass of Fusion"
+    },
+    {
+      "ItemId": "1369412",
+      "ItemName": "Tundarian Bear's Saber"
+    },
+    {
+      "ItemId": "1369533",
+      "ItemName": "Enchanter's Case of Rage"
+    },
+    {
+      "ItemId": "1369534",
+      "ItemName": "Enchanter's Set of Frostbite"
+    },
+    {
+      "ItemId": "1369535",
+      "ItemName": "Enchanter's Bevy of Flux"
+    },
+    {
+      "ItemId": "1369536",
+      "ItemName": "Enchanter's Fancy Parcel"
+    },
+    {
+      "ItemId": "1369537",
+      "ItemName": "Enchanter's Hand of Resolve"
+    },
+    {
+      "ItemId": "1369538",
+      "ItemName": "Enchanter's Sheaf of Dread"
+    },
+    {
+      "ItemId": "1369539",
+      "ItemName": "Enchanter's Gallery of Fusion"
+    },
+    {
+      "ItemId": "1369540",
+      "ItemName": "Arcanum Enchanter's Deck"
+    }
+  ]
+}

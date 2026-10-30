@@ -1,0 +1,37 @@
+{
+  "Name": "W404 MS-Wraith-MSBoss-L56 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Wraith-MSBoss-L56: the housing drops (7), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82927",
+      "ItemName": "Low Jade Table"
+    },
+    {
+      "ItemId": "160223",
+      "ItemName": "Rib Cage of the Defiler"
+    },
+    {
+      "ItemId": "160511",
+      "ItemName": "White Ceramic Vase"
+    },
+    {
+      "ItemId": "160529",
+      "ItemName": "Stone Lantern Column"
+    },
+    {
+      "ItemId": "160599",
+      "ItemName": "Lotus Flower"
+    },
+    {
+      "ItemId": "470225",
+      "ItemName": "House Stage Set"
+    },
+    {
+      "ItemId": "512099",
+      "ItemName": "MooShu Combat Theme"
+    }
+  ]
+}

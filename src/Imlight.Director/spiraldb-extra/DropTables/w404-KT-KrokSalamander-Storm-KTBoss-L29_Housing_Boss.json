@@ -1,0 +1,25 @@
+{
+  "Name": "W404 KT-KrokSalamander-Storm-KTBoss-L29 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokSalamander-Storm-KTBoss-L29: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82729",
+      "ItemName": "Fat Pumpkin"
+    },
+    {
+      "ItemId": "82745",
+      "ItemName": "Tomb Map"
+    },
+    {
+      "ItemId": "82900",
+      "ItemName": "Blue Krok Sconce"
+    },
+    {
+      "ItemId": "1335016",
+      "ItemName": "Krokotopia Dance Theme"
+    }
+  ]
+}

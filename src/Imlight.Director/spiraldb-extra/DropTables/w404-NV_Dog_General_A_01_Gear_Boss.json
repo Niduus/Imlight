@@ -1,0 +1,121 @@
+{
+  "Name": "W404 NV_Dog_General_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Dog_General_A_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1577684",
+      "ItemName": "Cavalry Officer Uniform"
+    },
+    {
+      "ItemId": "1577686",
+      "ItemName": "Medic Officer Uniform"
+    },
+    {
+      "ItemId": "1577683",
+      "ItemName": "Infantry Officer Uniform"
+    },
+    {
+      "ItemId": "1577687",
+      "ItemName": "Messenger Officer Uniform"
+    },
+    {
+      "ItemId": "1577688",
+      "ItemName": "Artillery Officer Uniform"
+    },
+    {
+      "ItemId": "1577682",
+      "ItemName": "Scout Officer Uniform"
+    },
+    {
+      "ItemId": "1577685",
+      "ItemName": "Trooper Officer Uniform"
+    },
+    {
+      "ItemId": "1577625",
+      "ItemName": "Regulation Artillery Uniform"
+    },
+    {
+      "ItemId": "1577621",
+      "ItemName": "Regulation Cavalry Uniform"
+    },
+    {
+      "ItemId": "1577620",
+      "ItemName": "Regulation Infantry Uniform"
+    },
+    {
+      "ItemId": "1577623",
+      "ItemName": "Regulation Medic Uniform"
+    },
+    {
+      "ItemId": "1577624",
+      "ItemName": "Regulation Messenger Uniform"
+    },
+    {
+      "ItemId": "1577619",
+      "ItemName": "Regulation Scout Uniform"
+    },
+    {
+      "ItemId": "1577622",
+      "ItemName": "Regulation Trooper Uniform"
+    },
+    {
+      "ItemId": "1577695",
+      "ItemName": "Artillery Officer Footwear"
+    },
+    {
+      "ItemId": "1577691",
+      "ItemName": "Cavalry Officer Footwear"
+    },
+    {
+      "ItemId": "1577690",
+      "ItemName": "Infantry Officer Footwear"
+    },
+    {
+      "ItemId": "1577693",
+      "ItemName": "Medic Officer Footwear"
+    },
+    {
+      "ItemId": "1577694",
+      "ItemName": "Messenger Officer Footwear"
+    },
+    {
+      "ItemId": "1577689",
+      "ItemName": "Scout Officer Footwear"
+    },
+    {
+      "ItemId": "1577692",
+      "ItemName": "Trooper Officer Footwear"
+    },
+    {
+      "ItemId": "1577632",
+      "ItemName": "Regulation Artillery Footwear"
+    },
+    {
+      "ItemId": "1577628",
+      "ItemName": "Regulation Cavalry Footwear"
+    },
+    {
+      "ItemId": "1577627",
+      "ItemName": "Regulation Infantry Footwear"
+    },
+    {
+      "ItemId": "1577630",
+      "ItemName": "Regulation Medic Footwear"
+    },
+    {
+      "ItemId": "1577631",
+      "ItemName": "Regulation Messenger Footwear"
+    },
+    {
+      "ItemId": "1577626",
+      "ItemName": "Regulation Scout Footwear"
+    },
+    {
+      "ItemId": "1577629",
+      "ItemName": "Regulation Trooper Footwear"
+    }
+  ]
+}

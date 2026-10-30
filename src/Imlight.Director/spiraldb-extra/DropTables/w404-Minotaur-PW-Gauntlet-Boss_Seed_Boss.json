@@ -1,0 +1,29 @@
+{
+  "Name": "W404 Minotaur-PW-Gauntlet-Boss Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table Minotaur-PW-Gauntlet-Boss: the seed drops (5), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "345982",
+      "ItemName": "Deadly Fly Trap"
+    },
+    {
+      "ItemId": "345989",
+      "ItemName": "Silver Trumpet Vine"
+    },
+    {
+      "ItemId": "346010",
+      "ItemName": "Maelstrom Snap Dragon"
+    },
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion"
+    },
+    {
+      "ItemId": "473187",
+      "ItemName": "White Tiger Lily"
+    }
+  ]
+}

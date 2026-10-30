@@ -1,0 +1,21 @@
+{
+  "Name": "W404 NV_Monkey_SoldierBoss_A_01 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Monkey_SoldierBoss_A_01: the reagent drops (3), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "537982",
+      "ItemName": "Amber Dust"
+    },
+    {
+      "ItemId": "1350017",
+      "ItemName": "Silver"
+    },
+    {
+      "ItemId": "1350016",
+      "ItemName": "Steel"
+    }
+  ]
+}

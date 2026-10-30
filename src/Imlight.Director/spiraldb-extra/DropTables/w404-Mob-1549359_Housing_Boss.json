@@ -1,0 +1,153 @@
+{
+  "Name": "W404 Mob-1549359 Housing (Boss)",
+  "Description": "Wizard404's drop list of Drowned Dan's own drops: the housing drops (36), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "342074",
+      "ItemName": "Celestian Bookshelf"
+    },
+    {
+      "ItemId": "342098",
+      "ItemName": "Celestian Lamp"
+    },
+    {
+      "ItemId": "342117",
+      "ItemName": "Star Chalice"
+    },
+    {
+      "ItemId": "342141",
+      "ItemName": "Lantern"
+    },
+    {
+      "ItemId": "342143",
+      "ItemName": "Wheelbarrow"
+    },
+    {
+      "ItemId": "512090",
+      "ItemName": "Celestia Main Theme"
+    },
+    {
+      "ItemId": "512134",
+      "ItemName": "Celestia Combat Theme"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    },
+    {
+      "ItemId": "1217523",
+      "ItemName": "Gold Skeleton Key"
+    },
+    {
+      "ItemId": "1350313",
+      "ItemName": "Artisan's Socket Wrench"
+    },
+    {
+      "ItemId": "1374567",
+      "ItemName": "Water Mole Supplies"
+    },
+    {
+      "ItemId": "1374569",
+      "ItemName": "Zoa Coral"
+    },
+    {
+      "ItemId": "1374571",
+      "ItemName": "Branching Coral"
+    },
+    {
+      "ItemId": "1374572",
+      "ItemName": "Fan Coral"
+    },
+    {
+      "ItemId": "1374573",
+      "ItemName": "Pink Coral"
+    },
+    {
+      "ItemId": "1374577",
+      "ItemName": "Celestian Hut"
+    },
+    {
+      "ItemId": "1374578",
+      "ItemName": "Island Gazebo"
+    },
+    {
+      "ItemId": "1374712",
+      "ItemName": "Naval Supply Crate"
+    },
+    {
+      "ItemId": "1504018",
+      "ItemName": "Warden Painting"
+    },
+    {
+      "ItemId": "1504019",
+      "ItemName": "Stag Painting"
+    },
+    {
+      "ItemId": "1504020",
+      "ItemName": "Serpent Painting"
+    },
+    {
+      "ItemId": "1504021",
+      "ItemName": "Phoenix Painting"
+    },
+    {
+      "ItemId": "1504022",
+      "ItemName": "Messenger Painting"
+    },
+    {
+      "ItemId": "1504023",
+      "ItemName": "Loom Painting"
+    },
+    {
+      "ItemId": "1504024",
+      "ItemName": "Kraken Painting"
+    },
+    {
+      "ItemId": "1504025",
+      "ItemName": "Hound Painting"
+    },
+    {
+      "ItemId": "1504026",
+      "ItemName": "Galleon Painting"
+    },
+    {
+      "ItemId": "1504027",
+      "ItemName": "Fountain Painting"
+    },
+    {
+      "ItemId": "1504028",
+      "ItemName": "Crab Painting"
+    },
+    {
+      "ItemId": "1504029",
+      "ItemName": "Chariot Painting"
+    },
+    {
+      "ItemId": "1504030",
+      "ItemName": "Galactic Water Spout"
+    },
+    {
+      "ItemId": "1504031",
+      "ItemName": "Celestian Device"
+    },
+    {
+      "ItemId": "1504032",
+      "ItemName": "Orrery"
+    },
+    {
+      "ItemId": "1504033",
+      "ItemName": "Galvanic Tower"
+    },
+    {
+      "ItemId": "1504034",
+      "ItemName": "Celestian Cube Sculpture"
+    }
+  ]
+}

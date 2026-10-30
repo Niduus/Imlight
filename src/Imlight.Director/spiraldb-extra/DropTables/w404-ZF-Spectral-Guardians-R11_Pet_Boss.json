@@ -1,0 +1,37 @@
+{
+  "Name": "W404 ZF-Spectral-Guardians-R11 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Spectral-Guardians-R11: the pet drops (7), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "473441",
+      "ItemName": "Primal Wildclaw"
+    },
+    {
+      "ItemId": "473442",
+      "ItemName": "Skeletal Knight"
+    },
+    {
+      "ItemId": "473443",
+      "ItemName": "Muscled Cat"
+    },
+    {
+      "ItemId": "473446",
+      "ItemName": "Burning Pixie"
+    },
+    {
+      "ItemId": "473447",
+      "ItemName": "Pink Jellyfish"
+    },
+    {
+      "ItemId": "473580",
+      "ItemName": "Skink"
+    },
+    {
+      "ItemId": "473581",
+      "ItemName": "Leopard"
+    }
+  ]
+}

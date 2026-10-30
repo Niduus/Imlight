@@ -1,0 +1,45 @@
+{
+  "Name": "W404 ZF-Nergal-Burned-Lion-R10-Boss Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Nergal-Burned-Lion-R10-Boss: the seed drops (9), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355073",
+      "ItemName": "Venus Fly Trap"
+    },
+    {
+      "ItemId": "355080",
+      "ItemName": "Burning Snap Dragon"
+    },
+    {
+      "ItemId": "355136",
+      "ItemName": "Baby Carrots"
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears"
+    },
+    {
+      "ItemId": "355157",
+      "ItemName": "Snap Dragon"
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas"
+    },
+    {
+      "ItemId": "356120",
+      "ItemName": "Rye Bread Fruit Bush"
+    },
+    {
+      "ItemId": "473131",
+      "ItemName": "Red Bell Pepper"
+    },
+    {
+      "ItemId": "473138",
+      "ItemName": "Orange Bell Pepper"
+    }
+  ]
+}

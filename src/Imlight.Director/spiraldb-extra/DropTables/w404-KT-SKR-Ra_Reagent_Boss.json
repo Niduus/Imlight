@@ -1,0 +1,101 @@
+{
+  "Name": "W404 KT-SKR-Ra Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-SKR-Ra: the reagent drops (23), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "106961",
+      "ItemName": "Parchment"
+    },
+    {
+      "ItemId": "106962",
+      "ItemName": "Ancient Scroll"
+    },
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether"
+    },
+    {
+      "ItemId": "473722",
+      "ItemName": "Agave Leaves"
+    },
+    {
+      "ItemId": "473723",
+      "ItemName": "Agave Nectar"
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber"
+    },
+    {
+      "ItemId": "1340030",
+      "ItemName": "Mote of Wisdom"
+    },
+    {
+      "ItemId": "1340031",
+      "ItemName": "Mote of Beauty"
+    },
+    {
+      "ItemId": "1340032",
+      "ItemName": "Mote of Severity"
+    },
+    {
+      "ItemId": "1340033",
+      "ItemName": "Mote of Eternity"
+    },
+    {
+      "ItemId": "1350013",
+      "ItemName": "Copper"
+    },
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel"
+    },
+    {
+      "ItemId": "1350231",
+      "ItemName": "Pyrite"
+    },
+    {
+      "ItemId": "1350232",
+      "ItemName": "Iron"
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt"
+    },
+    {
+      "ItemId": "1359495",
+      "ItemName": "Mote of Transport"
+    },
+    {
+      "ItemId": "1492248",
+      "ItemName": "Fire Cat"
+    },
+    {
+      "ItemId": "1494689",
+      "ItemName": "Dark Sprite"
+    },
+    {
+      "ItemId": "1494693",
+      "ItemName": "Fire Elf"
+    },
+    {
+      "ItemId": "1494696",
+      "ItemName": "Blood Bat"
+    },
+    {
+      "ItemId": "1350011",
+      "ItemName": "Tin"
+    },
+    {
+      "ItemId": "1350012",
+      "ItemName": "Lead"
+    },
+    {
+      "ItemId": "1350015",
+      "ItemName": "Brass"
+    }
+  ]
+}

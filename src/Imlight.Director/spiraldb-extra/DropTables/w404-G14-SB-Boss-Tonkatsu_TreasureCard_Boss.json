@@ -1,0 +1,109 @@
+{
+  "Name": "W404 G14-SB-Boss-Tonkatsu TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-SB-Boss-Tonkatsu: the treasurecard drops (25), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Goat Monk TC",
+      "ItemName": "Goat Monk"
+    },
+    {
+      "ItemId": "Samoorai TC",
+      "ItemName": "Samoorai"
+    },
+    {
+      "ItemId": "Ninja Pig TC",
+      "ItemName": "Ninja Pigs"
+    },
+    {
+      "ItemId": "Goat Monk Death TC",
+      "ItemName": "Monk of Mourning"
+    },
+    {
+      "ItemId": "Fire Prism TC",
+      "ItemName": "Fire Prism"
+    },
+    {
+      "ItemId": "Ice Prism TC",
+      "ItemName": "Ice Prism"
+    },
+    {
+      "ItemId": "Storm Prism TC",
+      "ItemName": "Storm Prism"
+    },
+    {
+      "ItemId": "Myth Prism TC",
+      "ItemName": "Myth Prism"
+    },
+    {
+      "ItemId": "Life Prism TC",
+      "ItemName": "Life Prism"
+    },
+    {
+      "ItemId": "Death Prism TC",
+      "ItemName": "Death Prism"
+    },
+    {
+      "ItemId": "Glacial Shield TC",
+      "ItemName": "Glacial Shield"
+    },
+    {
+      "ItemId": "Volcanic Shield TC",
+      "ItemName": "Volcanic Shield"
+    },
+    {
+      "ItemId": "Thermic Shield TC",
+      "ItemName": "Thermic Shield"
+    },
+    {
+      "ItemId": "Legend Shield TC",
+      "ItemName": "Legend Shield"
+    },
+    {
+      "ItemId": "Ether Shield TC",
+      "ItemName": "Ether Shield"
+    },
+    {
+      "ItemId": "Dream Shield TC",
+      "ItemName": "Dream Shield"
+    },
+    {
+      "ItemId": "Locust Swarm TC",
+      "ItemName": "Locust Swarm"
+    },
+    {
+      "ItemId": "Banshee TC",
+      "ItemName": "Banshee"
+    },
+    {
+      "ItemId": "Cyclops TC",
+      "ItemName": "Cyclops"
+    },
+    {
+      "ItemId": "Nature's Wrath TC",
+      "ItemName": "Nature's Wrath"
+    },
+    {
+      "ItemId": "Storm SharkTC",
+      "ItemName": "Storm Shark"
+    },
+    {
+      "ItemId": "Evil Snowman TC",
+      "ItemName": "Evil Snowman"
+    },
+    {
+      "ItemId": "Sunbird TC",
+      "ItemName": "Sunbird"
+    },
+    {
+      "ItemId": "Fire Wyvern TC",
+      "ItemName": "Fire Wyvern"
+    },
+    {
+      "ItemId": "Ice Wyvern TC",
+      "ItemName": "Ice Wyvern"
+    }
+  ]
+}

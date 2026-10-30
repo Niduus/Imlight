@@ -1,0 +1,33 @@
+{
+  "Name": "W404 MS-Level-40-42 Housing (Elite)",
+  "Description": "Wizard404's drop list of the game's table MS-Level-40-42: the housing drops (6), one picked when it rolls. How often: DropOdds.json Elite/Housing.",
+  "Odds": "Elite/Housing",
+  "RollChance": 0.08,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160483",
+      "ItemName": "Tree Obelisk"
+    },
+    {
+      "ItemId": "160495",
+      "ItemName": "Mantis Tablet"
+    },
+    {
+      "ItemId": "160499",
+      "ItemName": "Lunar Tablet"
+    },
+    {
+      "ItemId": "470194",
+      "ItemName": "Yellow and Blue Chest"
+    },
+    {
+      "ItemId": "470205",
+      "ItemName": "Long Lantern"
+    },
+    {
+      "ItemId": "470230",
+      "ItemName": "Stone Marker"
+    }
+  ]
+}

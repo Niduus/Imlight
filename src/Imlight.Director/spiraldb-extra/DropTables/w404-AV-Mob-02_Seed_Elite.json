@@ -1,0 +1,33 @@
+{
+  "Name": "W404 AV-Mob-02 Seed (Elite)",
+  "Description": "Wizard404's drop list of the game's table AV-Mob-02: the seed drops (6), one picked when it rolls. How often: DropOdds.json Elite/Seed.",
+  "Odds": "Elite/Seed",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346038",
+      "ItemName": "Pink Dandelion"
+    },
+    {
+      "ItemId": "346045",
+      "ItemName": "Trumpet Vine"
+    },
+    {
+      "ItemId": "346052",
+      "ItemName": "White Desparagus"
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap"
+    },
+    {
+      "ItemId": "473078",
+      "ItemName": "Key Limes"
+    },
+    {
+      "ItemId": "653139",
+      "ItemName": "Angel Oak"
+    }
+  ]
+}

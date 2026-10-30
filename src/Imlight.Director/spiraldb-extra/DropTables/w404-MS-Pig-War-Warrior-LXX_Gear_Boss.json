@@ -1,0 +1,57 @@
+{
+  "Name": "W404 MS-Pig-War-Warrior-LXX Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-War-Warrior-LXX: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97552",
+      "ItemName": "Yakedo's Shroud"
+    },
+    {
+      "ItemId": "97553",
+      "ItemName": "Yakedo's Hypothetical Helm"
+    },
+    {
+      "ItemId": "97555",
+      "ItemName": "Yakedo's Cap of Premise"
+    },
+    {
+      "ItemId": "97769",
+      "ItemName": "Yakedo's Brainstorming Robe"
+    },
+    {
+      "ItemId": "97770",
+      "ItemName": "Yakedo's Rational Cloak"
+    },
+    {
+      "ItemId": "97772",
+      "ItemName": "Yakedo's Hypothetical Robe"
+    },
+    {
+      "ItemId": "97929",
+      "ItemName": "Yakedo's Abstract Shoes"
+    },
+    {
+      "ItemId": "97932",
+      "ItemName": "Yakedo's Boots"
+    },
+    {
+      "ItemId": "97934",
+      "ItemName": "Yakedo's Sandals of Belief"
+    },
+    {
+      "ItemId": "97935",
+      "ItemName": "Yakedo's Slippers"
+    },
+    {
+      "ItemId": "161032",
+      "ItemName": "Bodkin of the Hearty"
+    },
+    {
+      "ItemId": "161061",
+      "ItemName": "Invigorating Signet"
+    }
+  ]
+}

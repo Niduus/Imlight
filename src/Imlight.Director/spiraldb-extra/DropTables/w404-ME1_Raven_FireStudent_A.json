@@ -1,0 +1,9 @@
+{
+  "Name": "W404 ME1_Raven_FireStudent_A",
+  "Description": "Gold of the game's table ME1_Raven_FireStudent_A, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 10,
+  "MaxGold": 50,
+  "EachItem": false,
+  "Items": []
+}

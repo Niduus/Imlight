@@ -1,0 +1,109 @@
+{
+  "Name": "W404 AZ-Mob-03 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table AZ-Mob-03: the gear drops (25), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730300",
+      "ItemName": "Chac's Challenge Loop"
+    },
+    {
+      "ItemId": "730301",
+      "ItemName": "Twisting Season Ring"
+    },
+    {
+      "ItemId": "730302",
+      "ItemName": "Storm Quetzal's Signet"
+    },
+    {
+      "ItemId": "730303",
+      "ItemName": "Seal of Thunder Horn's Glory"
+    },
+    {
+      "ItemId": "730304",
+      "ItemName": "Smoking Mirror's War Ring"
+    },
+    {
+      "ItemId": "730305",
+      "ItemName": "Twin Giants Fashioned Stone"
+    },
+    {
+      "ItemId": "730306",
+      "ItemName": "Underworld Stone"
+    },
+    {
+      "ItemId": "730308",
+      "ItemName": "Bleeding Sun Warrior's Loop"
+    },
+    {
+      "ItemId": "730309",
+      "ItemName": "Mother Moon's Count Ring"
+    },
+    {
+      "ItemId": "730310",
+      "ItemName": "Falling Star's End Time Band"
+    },
+    {
+      "ItemId": "730311",
+      "ItemName": "Acampi Reedfist's Lost Seal"
+    },
+    {
+      "ItemId": "730376",
+      "ItemName": "Fiery Chac's Great Boots"
+    },
+    {
+      "ItemId": "730377",
+      "ItemName": "Ice Age Tyrant's Walkers"
+    },
+    {
+      "ItemId": "730378",
+      "ItemName": "Storm Owl's Favored Trackers"
+    },
+    {
+      "ItemId": "730379",
+      "ItemName": "Black Butterfly Guard's Wraps"
+    },
+    {
+      "ItemId": "730380",
+      "ItemName": "Smoking Obsidian Rangers"
+    },
+    {
+      "ItemId": "730381",
+      "ItemName": "Death Moon's Chosen Gliders"
+    },
+    {
+      "ItemId": "730382",
+      "ItemName": "Jaguar Prince's Leapers"
+    },
+    {
+      "ItemId": "730383",
+      "ItemName": "Elite Jura Guard Stalkers"
+    },
+    {
+      "ItemId": "730384",
+      "ItemName": "Twisted Fang Boots"
+    },
+    {
+      "ItemId": "730385",
+      "ItemName": "Indigo Wing Striders"
+    },
+    {
+      "ItemId": "730386",
+      "ItemName": "Tree of Secrets Chac Runners"
+    },
+    {
+      "ItemId": "730387",
+      "ItemName": "Five Fangs of Fury Boots"
+    },
+    {
+      "ItemId": "730388",
+      "ItemName": "Black Tears of Night Wraps"
+    },
+    {
+      "ItemId": "730389",
+      "ItemName": "Heart of Sky Boots"
+    }
+  ]
+}

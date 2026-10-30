@@ -1,0 +1,65 @@
+{
+  "Name": "W404 Minion75_12Boss Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Minion75_12Boss: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "540217",
+      "ItemName": "Witch Doctor's Fiery Garb"
+    },
+    {
+      "ItemId": "540218",
+      "ItemName": "Irontrunk Cloak of Dreams"
+    },
+    {
+      "ItemId": "540219",
+      "ItemName": "Outsider's Grim Garb"
+    },
+    {
+      "ItemId": "540220",
+      "ItemName": "Jambo Jacket"
+    },
+    {
+      "ItemId": "540221",
+      "ItemName": "Shaman's Storm Sky Cloak"
+    },
+    {
+      "ItemId": "540222",
+      "ItemName": "Cold River Cloak"
+    },
+    {
+      "ItemId": "540223",
+      "ItemName": "Outsider's Symmetrical Jacket"
+    },
+    {
+      "ItemId": "635350",
+      "ItemName": "Fire Spirits' Toasty Tunic"
+    },
+    {
+      "ItemId": "635351",
+      "ItemName": "Windbreaker of Nodor"
+    },
+    {
+      "ItemId": "635352",
+      "ItemName": "Bad Storm Armor"
+    },
+    {
+      "ItemId": "635353",
+      "ItemName": "Robes of the Silent Hunter"
+    },
+    {
+      "ItemId": "635354",
+      "ItemName": "Tunic of Nature's Wrath"
+    },
+    {
+      "ItemId": "635355",
+      "ItemName": "Honor Bound Surcoat"
+    },
+    {
+      "ItemId": "635356",
+      "ItemName": "Brave One's Plate"
+    }
+  ]
+}

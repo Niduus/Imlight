@@ -1,0 +1,29 @@
+{
+  "Name": "W404 TC-AV-Utility-Myth TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-AV-Utility-Myth: the treasurecard drops (5), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Myth Prism TC",
+      "ItemName": "Myth Prism"
+    },
+    {
+      "ItemId": "Pierce TC",
+      "ItemName": "Pierce"
+    },
+    {
+      "ItemId": "Cleanse Ward TC",
+      "ItemName": "Cleanse Ward"
+    },
+    {
+      "ItemId": "Blinding Light TC",
+      "ItemName": "Blinding Light"
+    },
+    {
+      "ItemId": "Shatter TC",
+      "ItemName": "Shatter"
+    }
+  ]
+}

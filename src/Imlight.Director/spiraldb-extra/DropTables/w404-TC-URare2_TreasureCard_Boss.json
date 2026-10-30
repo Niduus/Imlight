@@ -1,0 +1,37 @@
+{
+  "Name": "W404 TC-URare2 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-URare2: the treasurecard drops (7), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Empower TC",
+      "ItemName": "Empower"
+    },
+    {
+      "ItemId": "Link TC",
+      "ItemName": "Link"
+    },
+    {
+      "ItemId": "Nature's Wrath TC",
+      "ItemName": "Nature's Wrath"
+    },
+    {
+      "ItemId": "Tri Blade TC",
+      "ItemName": "Elemental Blade"
+    },
+    {
+      "ItemId": "Steal Ward TC",
+      "ItemName": "Steal Ward"
+    },
+    {
+      "ItemId": "Blinding Light TC",
+      "ItemName": "Blinding Light"
+    },
+    {
+      "ItemId": "Disarm TC",
+      "ItemName": "Disarm"
+    }
+  ]
+}

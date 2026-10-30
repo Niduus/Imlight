@@ -1,0 +1,85 @@
+{
+  "Name": "W404 Warrior-Male-Crystal-Purple-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Warrior-Male-Crystal-Purple-Boss-R8: the gear drops (19), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104666",
+      "ItemName": "Vestment of the Spring"
+    },
+    {
+      "ItemId": "104715",
+      "ItemName": "Wrap of the Monsoon"
+    },
+    {
+      "ItemId": "104740",
+      "ItemName": "Snowcrusher's Shoes of Shelter"
+    },
+    {
+      "ItemId": "104753",
+      "ItemName": "Snowcrusher's Snowstompers"
+    },
+    {
+      "ItemId": "104784",
+      "ItemName": "Snowcrusher's Tread of Tension"
+    },
+    {
+      "ItemId": "104811",
+      "ItemName": "Footgear of Corporeality"
+    },
+    {
+      "ItemId": "104835",
+      "ItemName": "Vineyard Shoes"
+    },
+    {
+      "ItemId": "104874",
+      "ItemName": "Stormbreaker Sandals"
+    },
+    {
+      "ItemId": "126579",
+      "ItemName": "Snowcrusher's Bombastic Band"
+    },
+    {
+      "ItemId": "126581",
+      "ItemName": "Seal of the Saga"
+    },
+    {
+      "ItemId": "126613",
+      "ItemName": "Oroboros Band"
+    },
+    {
+      "ItemId": "146105",
+      "ItemName": "Snowcrusher's Flame Pendant"
+    },
+    {
+      "ItemId": "146130",
+      "ItemName": "Snowcrusher's Sliver of Frost"
+    },
+    {
+      "ItemId": "146180",
+      "ItemName": "Dragon's Claw Blade"
+    },
+    {
+      "ItemId": "146232",
+      "ItemName": "Snowcrusher's Galvanic Shroud"
+    },
+    {
+      "ItemId": "146249",
+      "ItemName": "Headdress of Refutation"
+    },
+    {
+      "ItemId": "146250",
+      "ItemName": "Hat of the Endless"
+    },
+    {
+      "ItemId": "146295",
+      "ItemName": "Hood of Hibernation"
+    },
+    {
+      "ItemId": "146323",
+      "ItemName": "Snowcrusher's Mantle of Embers"
+    }
+  ]
+}

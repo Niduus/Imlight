@@ -1,0 +1,17 @@
+{
+  "Name": "W404 SKB_WC_SpiritIgnorance_A_20 Pet (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_WC_SpiritIgnorance_A_20: the pet drops (2), one picked when it rolls. How often: DropOdds.json Boss/Pet.",
+  "Odds": "Boss/Pet",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "100432",
+      "ItemName": "Green Ghost"
+    },
+    {
+      "ItemId": "100434",
+      "ItemName": "Red Ghost"
+    }
+  ]
+}

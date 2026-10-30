@@ -1,0 +1,109 @@
+{
+  "Name": "W404 CL-SharkKing-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-SharkKing-Boss-R10: the gear drops (25), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243210",
+      "ItemName": "Versatile Steel"
+    },
+    {
+      "ItemId": "243259",
+      "ItemName": "Hexfin's Frostbit Bodkin"
+    },
+    {
+      "ItemId": "243318",
+      "ItemName": "Forsaken Headgear"
+    },
+    {
+      "ItemId": "243370",
+      "ItemName": "Shroud of Snowfall"
+    },
+    {
+      "ItemId": "243515",
+      "ItemName": "Ring of Rapport"
+    },
+    {
+      "ItemId": "243564",
+      "ItemName": "Hexfin's Flurry Band"
+    },
+    {
+      "ItemId": "243610",
+      "ItemName": "Vile Outfit"
+    },
+    {
+      "ItemId": "243667",
+      "ItemName": "Mako's Wanderlust Raiment"
+    },
+    {
+      "ItemId": "243725",
+      "ItemName": "Boots of Accord"
+    },
+    {
+      "ItemId": "243813",
+      "ItemName": "Mako's Timeless Trekkers"
+    },
+    {
+      "ItemId": "243890",
+      "ItemName": "Legendary Vial"
+    },
+    {
+      "ItemId": "1689417",
+      "ItemName": "Atavistic Balance Dirk"
+    },
+    {
+      "ItemId": "1689418",
+      "ItemName": "Atavistic Death Dirk"
+    },
+    {
+      "ItemId": "1689419",
+      "ItemName": "Atavistic Fire Dirk"
+    },
+    {
+      "ItemId": "1689420",
+      "ItemName": "Atavistic Ice Dirk"
+    },
+    {
+      "ItemId": "1689421",
+      "ItemName": "Atavistic Life Dirk"
+    },
+    {
+      "ItemId": "1689422",
+      "ItemName": "Atavistic Myth Dirk"
+    },
+    {
+      "ItemId": "1689423",
+      "ItemName": "Atavistic Storm Dirk"
+    },
+    {
+      "ItemId": "1689484",
+      "ItemName": "Bygone Balance Dirk"
+    },
+    {
+      "ItemId": "1689485",
+      "ItemName": "Bygone Death Dirk"
+    },
+    {
+      "ItemId": "1689486",
+      "ItemName": "Bygone Fire Dirk"
+    },
+    {
+      "ItemId": "1689487",
+      "ItemName": "Bygone Ice Dirk"
+    },
+    {
+      "ItemId": "1689488",
+      "ItemName": "Bygone Life Dirk"
+    },
+    {
+      "ItemId": "1689489",
+      "ItemName": "Bygone Myth Dirk"
+    },
+    {
+      "ItemId": "1689490",
+      "ItemName": "Bygone Storm Dirk"
+    }
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "Name": "W404 Mob-126504 Gear (Boss)",
+  "Description": "Wizard404's drop list of Malistaire Drake's own drops: the gear drops (55), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1548890",
+      "ItemName": "Kraysys' Hood of the Hidden"
+    },
+    {
+      "ItemId": "1548891",
+      "ItemName": "Spiderkeeper's Darkshroud"
+    },
+    {
+      "ItemId": "1548892",
+      "ItemName": "Snowcrusher's Mantle of Embers"
+    },
+    {
+      "ItemId": "1548893",
+      "ItemName": "Spiderkeeper's Icemantle"
+    },
+    {
+      "ItemId": "1548894",
+      "ItemName": "Kraysys' Unfaithful Cowl"
+    },
+    {
+      "ItemId": "1548895",
+      "ItemName": "Spiderkeeper's Storyveil"
+    },
+    {
+      "ItemId": "1548896",
+      "ItemName": "Snowcrusher's Galvanic Shroud"
+    },
+    {
+      "ItemId": "1548897",
+      "ItemName": "Malistaire's Tunic of Torment"
+    },
+    {
+      "ItemId": "1548898",
+      "ItemName": "Malistaire Drake's Ebon Robe"
+    },
+    {
+      "ItemId": "1548899",
+      "ItemName": "Malistaire's Dragonfire Cloak"
+    },
+    {
+      "ItemId": "1548900",
+      "ItemName": "Malistaire's Iceflame Tunic"
+    },
+    {
+      "ItemId": "1548901",
+      "ItemName": "Malistaire's Purgatory Coat"
+    },
+    {
+      "ItemId": "1548902",
+      "ItemName": "Malistaire's Unhallowed Tunic"
+    },
+    {
+      "ItemId": "1548903",
+      "ItemName": "Malistaire's Wrathful Wrap"
+    },
+    {
+      "ItemId": "1548904",
+      "ItemName": "Snowcrusher's Tread of Tension"
+    },
+    {
+      "ItemId": "1548905",
+      "ItemName": "Kraysys' Boots of Retreat"
+    },
+    {
+      "ItemId": "1548906",
+      "ItemName": "Spiderkeeper's Charstriders"
+    },
+    {
+      "ItemId": "1548908",
+      "ItemName": "Snowcrusher's Shoes of Shelter"
+    },
+    {
+      "ItemId": "1548909",
+      "ItemName": "Kraysys' Subterfuge Slippers"
+    },
+    {
+      "ItemId": "1548910",
+      "ItemName": "Spiderkeeper's Thundershoes"
+    },
+    {
+      "ItemId": "1548934",
+      "ItemName": "Sword of the Steward"
+    },
+    {
+      "ItemId": "1548935",
+      "ItemName": "Soulsinger's Soulsword"
+    },
+    {
+      "ItemId": "1548936",
+      "ItemName": "Dean Darkflame's Cleaver"
+    },
+    {
+      "ItemId": "1548937",
+      "ItemName": "Longblade of the Homunculus"
+    },
+    {
+      "ItemId": "1548938",
+      "ItemName": "Redwind's Viridian Blade"
+    },
+    {
+      "ItemId": "1548939",
+      "ItemName": "Avalanche's Legendary Cutlass"
+    },
+    {
+      "ItemId": "1548940",
+      "ItemName": "Shockblade of the Hoarder"
+    },
+    {
+      "ItemId": "1592310",
+      "ItemName": "Spellsword of the Steward"
+    },
+    {
+      "ItemId": "1592311",
+      "ItemName": "Soulsinger's Spellsword"
+    },
+    {
+      "ItemId": "1592312",
+      "ItemName": "Dean Darkflame's Spellsword"
+    },
+    {
+      "ItemId": "1592313",
+      "ItemName": "Spellsword of the Homunculus"
+    },
+    {
+      "ItemId": "1592314",
+      "ItemName": "Redwind's Viridian Spellsword"
+    },
+    {
+      "ItemId": "1592315",
+      "ItemName": "Avalanche Legendary Spellsword"
+    },
+    {
+      "ItemId": "1592316",
+      "ItemName": "Spellsword of the Hoarder"
+    },
+    {
+      "ItemId": "1592318",
+      "ItemName": "Kraysys' Hat of the Hidden"
+    },
+    {
+      "ItemId": "1592319",
+      "ItemName": "Spiderkeeper's Dark Hat"
+    },
+    {
+      "ItemId": "1592320",
+      "ItemName": "Snowcrusher's Hat of Embers"
+    },
+    {
+      "ItemId": "1592321",
+      "ItemName": "Spiderkeeper's Ice Hat"
+    },
+    {
+      "ItemId": "1592322",
+      "ItemName": "Kraysys' Unfaithful Hat"
+    },
+    {
+      "ItemId": "1592323",
+      "ItemName": "Spiderkeeper's Story Hat"
+    },
+    {
+      "ItemId": "1592324",
+      "ItemName": "Snowcrusher's Galvanic Hat"
+    },
+    {
+      "ItemId": "1592326",
+      "ItemName": "Malistaire's Suit of Torment"
+    },
+    {
+      "ItemId": "1592327",
+      "ItemName": "Malistaire Drake's Ebon Suit"
+    },
+    {
+      "ItemId": "1592328",
+      "ItemName": "Malistaire's Dragonfire Suit"
+    },
+    {
+      "ItemId": "1592329",
+      "ItemName": "Malistaire's Iceflame Suit"
+    },
+    {
+      "ItemId": "1592330",
+      "ItemName": "Malistaire's Purgatory Suit"
+    },
+    {
+      "ItemId": "1592331",
+      "ItemName": "Malistaire's Unhallowed Suit"
+    },
+    {
+      "ItemId": "1592332",
+      "ItemName": "Malistaire's Wrathful Suit"
+    },
+    {
+      "ItemId": "1592334",
+      "ItemName": "Snowcrusher Tension Walkers"
+    },
+    {
+      "ItemId": "1592335",
+      "ItemName": "Kraysys' Walkers of Retreat"
+    },
+    {
+      "ItemId": "1592336",
+      "ItemName": "Spiderkeeper's Charwalkers"
+    },
+    {
+      "ItemId": "1592337",
+      "ItemName": "Snowcrusher's Snowwalkers"
+    },
+    {
+      "ItemId": "1592338",
+      "ItemName": "Snowcrusher Shelter Walkers"
+    },
+    {
+      "ItemId": "1592339",
+      "ItemName": "Kraysys' Subterfuge Walkers"
+    },
+    {
+      "ItemId": "1592340",
+      "ItemName": "Spiderkeeper's Thunderwalkers"
+    }
+  ]
+}

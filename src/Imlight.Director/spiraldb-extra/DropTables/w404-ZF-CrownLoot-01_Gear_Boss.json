@@ -1,0 +1,41 @@
+{
+  "Name": "W404 ZF-CrownLoot-01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-CrownLoot-01: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "532278",
+      "ItemName": "Sidhe Cowl"
+    },
+    {
+      "ItemId": "532295",
+      "ItemName": "Flameborn Sidhe Cowl"
+    },
+    {
+      "ItemId": "532296",
+      "ItemName": "Frostborn Sidhe Cowl"
+    },
+    {
+      "ItemId": "532297",
+      "ItemName": "Cowl of Thornwood"
+    },
+    {
+      "ItemId": "532298",
+      "ItemName": "Squamish Cowl of the Sidhe"
+    },
+    {
+      "ItemId": "532299",
+      "ItemName": "Sidhe Cowl of Attunement"
+    },
+    {
+      "ItemId": "532300",
+      "ItemName": "Restless Cowl of Oblivion"
+    },
+    {
+      "ItemId": "532301",
+      "ItemName": "Storyborn Cowl of Mist"
+    }
+  ]
+}

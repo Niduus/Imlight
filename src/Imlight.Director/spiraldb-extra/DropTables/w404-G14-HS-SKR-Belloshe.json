@@ -1,0 +1,9 @@
+{
+  "Name": "W404 G14-HS-SKR-Belloshe",
+  "Description": "Gold of the game's table G14-HS-SKR-Belloshe, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 800,
+  "MaxGold": 1000,
+  "EachItem": false,
+  "Items": []
+}

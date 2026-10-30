@@ -1,0 +1,25 @@
+{
+  "Name": "W404 WC-CA-Drains-Mob-06 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WC-CA-Drains-Mob-06: the gear drops (4), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1489395",
+      "ItemName": "Soldier's Vibrant Ring"
+    },
+    {
+      "ItemId": "1489396",
+      "ItemName": "Soldier's Deadly Ring"
+    },
+    {
+      "ItemId": "1489397",
+      "ItemName": "Soldier's Balanced Ring"
+    },
+    {
+      "ItemId": "1489398",
+      "ItemName": "Dragonspyre Soldier's Ring"
+    }
+  ]
+}

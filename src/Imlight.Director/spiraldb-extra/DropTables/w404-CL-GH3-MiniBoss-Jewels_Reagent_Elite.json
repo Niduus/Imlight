@@ -1,0 +1,17 @@
+{
+  "Name": "W404 CL-GH3-MiniBoss-Jewels Reagent (Elite)",
+  "Description": "Wizard404's drop list of the game's table CL-GH3-MiniBoss-Jewels: the reagent drops (2), one picked when it rolls. How often: DropOdds.json Elite/Reagent.",
+  "Odds": "Elite/Reagent",
+  "RollChance": 0.35,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1350014",
+      "ItemName": "Nickel"
+    },
+    {
+      "ItemId": "1350233",
+      "ItemName": "Cobalt"
+    }
+  ]
+}

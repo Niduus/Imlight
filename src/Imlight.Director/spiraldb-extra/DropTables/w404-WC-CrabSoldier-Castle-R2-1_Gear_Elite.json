@@ -1,0 +1,33 @@
+{
+  "Name": "W404 WC-CrabSoldier-Castle-R2-1 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table WC-CrabSoldier-Castle-R2-1: the gear drops (6), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4779",
+      "ItemName": "Hallowed Band"
+    },
+    {
+      "ItemId": "4780",
+      "ItemName": "Fine Jade Ring"
+    },
+    {
+      "ItemId": "77568",
+      "ItemName": "Embershroud"
+    },
+    {
+      "ItemId": "77582",
+      "ItemName": "Gustshroud"
+    },
+    {
+      "ItemId": "77596",
+      "ItemName": "Bloomshroud"
+    },
+    {
+      "ItemId": "77610",
+      "ItemName": "Carbonshroud"
+    }
+  ]
+}

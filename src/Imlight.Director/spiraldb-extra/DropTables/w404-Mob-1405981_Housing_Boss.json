@@ -1,0 +1,113 @@
+{
+  "Name": "W404 Mob-1405981 Housing (Boss)",
+  "Description": "Wizard404's drop list of Krampus's own drops: the housing drops (26), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "537487",
+      "ItemName": "Big Holiday Tree"
+    },
+    {
+      "ItemId": "537488",
+      "ItemName": "Tree Wrapped Gift"
+    },
+    {
+      "ItemId": "537496",
+      "ItemName": "Large Snowflake"
+    },
+    {
+      "ItemId": "537498",
+      "ItemName": "Snowman"
+    },
+    {
+      "ItemId": "537611",
+      "ItemName": "Holiday Wreath"
+    },
+    {
+      "ItemId": "724292",
+      "ItemName": "Yellow Holiday Ornament"
+    },
+    {
+      "ItemId": "724293",
+      "ItemName": "Red Holiday Ornament"
+    },
+    {
+      "ItemId": "724294",
+      "ItemName": "Green Holiday Ornament"
+    },
+    {
+      "ItemId": "724295",
+      "ItemName": "Blue Holiday Ornament"
+    },
+    {
+      "ItemId": "724298",
+      "ItemName": "Spiral Wrapped Gift"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    },
+    {
+      "ItemId": "1217523",
+      "ItemName": "Gold Skeleton Key"
+    },
+    {
+      "ItemId": "1317731",
+      "ItemName": "Frosty Yuletree"
+    },
+    {
+      "ItemId": "1317732",
+      "ItemName": "Jubilant Yuletree"
+    },
+    {
+      "ItemId": "1317733",
+      "ItemName": "Festive Yuletree"
+    },
+    {
+      "ItemId": "1317738",
+      "ItemName": "Snowflake Rug"
+    },
+    {
+      "ItemId": "1335011",
+      "ItemName": "Jingle Bells Theme"
+    },
+    {
+      "ItemId": "1335012",
+      "ItemName": "Deck the Halls Theme"
+    },
+    {
+      "ItemId": "1335013",
+      "ItemName": "Carol of the Bells Theme"
+    },
+    {
+      "ItemId": "1335014",
+      "ItemName": "Yuletide Jingle"
+    },
+    {
+      "ItemId": "1350313",
+      "ItemName": "Artisan's Socket Wrench"
+    },
+    {
+      "ItemId": "1374095",
+      "ItemName": "Red String Lights"
+    },
+    {
+      "ItemId": "1374126",
+      "ItemName": "Majestic Reindeer Decoration"
+    },
+    {
+      "ItemId": "1374127",
+      "ItemName": "Lively Reindeer Decoration"
+    },
+    {
+      "ItemId": "1638002",
+      "ItemName": "Krampus Banner"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "Name": "W404 CL-FishbotGold-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-FishbotGold-Boss-R10: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243208",
+      "ItemName": "Sliver of Insight"
+    },
+    {
+      "ItemId": "243215",
+      "ItemName": "Edge of Shadows"
+    },
+    {
+      "ItemId": "243301",
+      "ItemName": "Veil of Principles"
+    },
+    {
+      "ItemId": "243324",
+      "ItemName": "Sinister Shroud"
+    },
+    {
+      "ItemId": "243512",
+      "ItemName": "Band of Principles"
+    },
+    {
+      "ItemId": "243531",
+      "ItemName": "Crustacean Band"
+    },
+    {
+      "ItemId": "243581",
+      "ItemName": "Loop of Illusions"
+    },
+    {
+      "ItemId": "243658",
+      "ItemName": "Spirit Armor"
+    },
+    {
+      "ItemId": "243724",
+      "ItemName": "Congruent Clogs"
+    },
+    {
+      "ItemId": "243812",
+      "ItemName": "Wanderlust Runners"
+    }
+  ]
+}

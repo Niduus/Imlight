@@ -1,0 +1,149 @@
+{
+  "Name": "W404 G14-BP-Mob-02 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table G14-BP-Mob-02: the gear drops (35), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330919",
+      "ItemName": "Barkingham Derby of Cinders"
+    },
+    {
+      "ItemId": "1330920",
+      "ItemName": "Barkingham Frost Cover"
+    },
+    {
+      "ItemId": "1330921",
+      "ItemName": "Barkingham Fog Bowler"
+    },
+    {
+      "ItemId": "1330922",
+      "ItemName": "Topper of Royal Wit"
+    },
+    {
+      "ItemId": "1330923",
+      "ItemName": "Barkingham Bombin of Brio"
+    },
+    {
+      "ItemId": "1330924",
+      "ItemName": "Barkingham Derby of Repose"
+    },
+    {
+      "ItemId": "1330925",
+      "ItemName": "Royal Cap of Alliance"
+    },
+    {
+      "ItemId": "1338003",
+      "ItemName": "Barkingham Cinder Smock"
+    },
+    {
+      "ItemId": "1338004",
+      "ItemName": "Barkingham Frostbreaker"
+    },
+    {
+      "ItemId": "1338005",
+      "ItemName": "Barkingham Fog Coat"
+    },
+    {
+      "ItemId": "1338006",
+      "ItemName": "Royal Coat of Wit"
+    },
+    {
+      "ItemId": "1338007",
+      "ItemName": "Smock of Barkingham Brio"
+    },
+    {
+      "ItemId": "1338008",
+      "ItemName": "Barkingham Robe of Repose"
+    },
+    {
+      "ItemId": "1338009",
+      "ItemName": "Royal Coat of Alliance"
+    },
+    {
+      "ItemId": "1338087",
+      "ItemName": "Barkingham Cinder Shoes"
+    },
+    {
+      "ItemId": "1338088",
+      "ItemName": "Barkingham Frost Striders"
+    },
+    {
+      "ItemId": "1338089",
+      "ItemName": "Barkingham Fog Walkers"
+    },
+    {
+      "ItemId": "1338090",
+      "ItemName": "Barkingham Shoes of Wit"
+    },
+    {
+      "ItemId": "1338091",
+      "ItemName": "Barkingham Boots of Brio"
+    },
+    {
+      "ItemId": "1338092",
+      "ItemName": "Barkingham Clogs of Repose"
+    },
+    {
+      "ItemId": "1338093",
+      "ItemName": "Royal Boots of Alliance"
+    },
+    {
+      "ItemId": "1338255",
+      "ItemName": "Barkingham Hearthfire Relic"
+    },
+    {
+      "ItemId": "1338256",
+      "ItemName": "Barkingham Vial of Numbing"
+    },
+    {
+      "ItemId": "1338257",
+      "ItemName": "Amulet of the Misty Palace"
+    },
+    {
+      "ItemId": "1338258",
+      "ItemName": "Crown's Charm of Adroitness"
+    },
+    {
+      "ItemId": "1338259",
+      "ItemName": "Necklace of the Monarchy"
+    },
+    {
+      "ItemId": "1338260",
+      "ItemName": "Empire's Torc of Calamity"
+    },
+    {
+      "ItemId": "1338261",
+      "ItemName": "Jackall's Vial of Duplicity"
+    },
+    {
+      "ItemId": "1338423",
+      "ItemName": "Case of the Royal Flame"
+    },
+    {
+      "ItemId": "1338424",
+      "ItemName": "Frosted Deck of Barkingham"
+    },
+    {
+      "ItemId": "1338425",
+      "ItemName": "Rains of Barkingham Set"
+    },
+    {
+      "ItemId": "1338426",
+      "ItemName": "Barkingham Cards of Acumen"
+    },
+    {
+      "ItemId": "1338427",
+      "ItemName": "Deck of the Lush Kingdom"
+    },
+    {
+      "ItemId": "1338428",
+      "ItemName": "Haze Over Barkingham Cards"
+    },
+    {
+      "ItemId": "1338429",
+      "ItemName": "Barkingham Set of Integrity"
+    }
+  ]
+}

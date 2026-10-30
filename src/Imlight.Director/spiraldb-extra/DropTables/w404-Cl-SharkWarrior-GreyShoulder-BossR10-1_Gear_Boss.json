@@ -1,0 +1,57 @@
+{
+  "Name": "W404 Cl-SharkWarrior-GreyShoulder-BossR10-1 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Cl-SharkWarrior-GreyShoulder-BossR10-1: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243216",
+      "ItemName": "Dirk of Disorder"
+    },
+    {
+      "ItemId": "243259",
+      "ItemName": "Hexfin's Frostbit Bodkin"
+    },
+    {
+      "ItemId": "243295",
+      "ItemName": "United Headdress"
+    },
+    {
+      "ItemId": "243320",
+      "ItemName": "Headwrap of Wrath"
+    },
+    {
+      "ItemId": "243564",
+      "ItemName": "Hexfin's Flurry Band"
+    },
+    {
+      "ItemId": "243574",
+      "ItemName": "Circle of Life"
+    },
+    {
+      "ItemId": "243647",
+      "ItemName": "Wintertide Tunic"
+    },
+    {
+      "ItemId": "243649",
+      "ItemName": "Hexfin's Ice Armor"
+    },
+    {
+      "ItemId": "243764",
+      "ItemName": "Firestar Shoes"
+    },
+    {
+      "ItemId": "243833",
+      "ItemName": "Walkers of Wonder"
+    },
+    {
+      "ItemId": "243876",
+      "ItemName": "Wyldfire Collar"
+    },
+    {
+      "ItemId": "243890",
+      "ItemName": "Legendary Vial"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "Name": "W404 GH2-Wolf-Scout-1-BOSS-R9 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH2-Wolf-Scout-1-BOSS-R9: the gear drops (11), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "455098",
+      "ItemName": "Wyrm's Curse Charm"
+    },
+    {
+      "ItemId": "455116",
+      "ItemName": "Wolf's Topaz Claw"
+    },
+    {
+      "ItemId": "455145",
+      "ItemName": "Horned Helm of the North"
+    },
+    {
+      "ItemId": "455146",
+      "ItemName": "Grizzled Helm"
+    },
+    {
+      "ItemId": "455179",
+      "ItemName": "Ring of the Wolf Warrior"
+    },
+    {
+      "ItemId": "455206",
+      "ItemName": "Coat of Justice"
+    },
+    {
+      "ItemId": "455207",
+      "ItemName": "Coat of the Crypt"
+    },
+    {
+      "ItemId": "455238",
+      "ItemName": "Snarling Bear Boots"
+    },
+    {
+      "ItemId": "455239",
+      "ItemName": "Growling Bear Boots"
+    },
+    {
+      "ItemId": "455240",
+      "ItemName": "Slashing Bear Boots"
+    },
+    {
+      "ItemId": "455241",
+      "ItemName": "Biting Bear Boots"
+    }
+  ]
+}

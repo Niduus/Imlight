@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Raven-Mage-4-GHBoss-R7-1 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Raven-Mage-4-GHBoss-R7-1: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136452",
+      "ItemName": "Hat of the Stormwracked"
+    },
+    {
+      "ItemId": "136454",
+      "ItemName": "Hood of Longevity"
+    },
+    {
+      "ItemId": "136678",
+      "ItemName": "Evenhanded Robe"
+    },
+    {
+      "ItemId": "136691",
+      "ItemName": "Lambent Blade"
+    },
+    {
+      "ItemId": "136695",
+      "ItemName": "Wildbranch Sword"
+    },
+    {
+      "ItemId": "346491",
+      "ItemName": "Puppetmaster's Costume"
+    }
+  ]
+}

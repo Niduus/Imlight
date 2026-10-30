@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Mob-1530878 Gear (Boss)",
+  "Description": "Wizard404's drop list of Snow Queen's own drops: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1537342",
+      "ItemName": "Magician's Fire Athame"
+    },
+    {
+      "ItemId": "1537343",
+      "ItemName": "Magician's Ice Athame"
+    },
+    {
+      "ItemId": "1537344",
+      "ItemName": "Magician's Storm Athame"
+    },
+    {
+      "ItemId": "1537345",
+      "ItemName": "Magician's Myth Athame"
+    },
+    {
+      "ItemId": "1537346",
+      "ItemName": "Magician's Life Athame"
+    },
+    {
+      "ItemId": "1537347",
+      "ItemName": "Magician's Death Athame"
+    },
+    {
+      "ItemId": "1537348",
+      "ItemName": "Magician's Balance Athame"
+    },
+    {
+      "ItemId": "1537349",
+      "ItemName": "Magician's Power Athame"
+    },
+    {
+      "ItemId": "1537366",
+      "ItemName": "Malevolent Fire Athame"
+    },
+    {
+      "ItemId": "1537367",
+      "ItemName": "Malevolent Ice Athame"
+    },
+    {
+      "ItemId": "1537368",
+      "ItemName": "Malevolent Storm Athame"
+    },
+    {
+      "ItemId": "1537369",
+      "ItemName": "Malevolent Myth Athame"
+    },
+    {
+      "ItemId": "1537370",
+      "ItemName": "Malevolent Life Athame"
+    },
+    {
+      "ItemId": "1537371",
+      "ItemName": "Malevolent Death Athame"
+    },
+    {
+      "ItemId": "1537372",
+      "ItemName": "Malevolent Balance Athame"
+    },
+    {
+      "ItemId": "1537373",
+      "ItemName": "Malevolent Power Athame"
+    }
+  ]
+}

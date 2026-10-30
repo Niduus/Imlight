@@ -1,0 +1,17 @@
+{
+  "Name": "W404 KT-Ghost-Blue-KTBoss-L28 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-Ghost-Blue-KTBoss-L28: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82749",
+      "ItemName": "Blue Floor Torch"
+    },
+    {
+      "ItemId": "82845",
+      "ItemName": "Ice Chameleon Statue"
+    }
+  ]
+}

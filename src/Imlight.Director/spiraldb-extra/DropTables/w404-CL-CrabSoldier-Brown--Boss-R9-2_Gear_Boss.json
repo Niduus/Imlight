@@ -1,0 +1,49 @@
+{
+  "Name": "W404 CL-CrabSoldier-Brown--Boss-R9-2 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-CrabSoldier-Brown--Boss-R9-2: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243245",
+      "ItemName": "Majestic Dagger"
+    },
+    {
+      "ItemId": "243269",
+      "ItemName": "Dirk of Delusion"
+    },
+    {
+      "ItemId": "243384",
+      "ItemName": "Tangleroot's Spirit Mask"
+    },
+    {
+      "ItemId": "243407",
+      "ItemName": "Mythical Mantle"
+    },
+    {
+      "ItemId": "243457",
+      "ItemName": "Tunic of Tolerance"
+    },
+    {
+      "ItemId": "243523",
+      "ItemName": "Combustible Band"
+    },
+    {
+      "ItemId": "243577",
+      "ItemName": "Ring of Fallacy"
+    },
+    {
+      "ItemId": "243659",
+      "ItemName": "Longcoat of Long Life"
+    },
+    {
+      "ItemId": "243758",
+      "ItemName": "Cinder Striders"
+    },
+    {
+      "ItemId": "243811",
+      "ItemName": "Festive Footwear"
+    }
+  ]
+}

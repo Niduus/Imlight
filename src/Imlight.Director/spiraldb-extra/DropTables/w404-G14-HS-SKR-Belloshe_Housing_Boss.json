@@ -1,0 +1,29 @@
+{
+  "Name": "W404 G14-HS-SKR-Belloshe Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-HS-SKR-Belloshe: the housing drops (5), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    },
+    {
+      "ItemId": "1317371",
+      "ItemName": "Orange Waves Wallpaper"
+    },
+    {
+      "ItemId": "1317372",
+      "ItemName": "Pink Waves Wallpaper"
+    },
+    {
+      "ItemId": "1317389",
+      "ItemName": "Red Waves Floor"
+    },
+    {
+      "ItemId": "1317390",
+      "ItemName": "Salmon Waves Floor"
+    }
+  ]
+}

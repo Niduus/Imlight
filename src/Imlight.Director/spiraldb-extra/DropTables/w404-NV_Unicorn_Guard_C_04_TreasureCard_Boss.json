@@ -1,0 +1,109 @@
+{
+  "Name": "W404 NV_Unicorn_Guard_C_04 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Unicorn_Guard_C_04: the treasurecard drops (25), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "GuildReagent01_TC",
+      "ItemName": "Azoth"
+    },
+    {
+      "ItemId": "Banshee - T02 - B - TC",
+      "ItemName": "Banshee"
+    },
+    {
+      "ItemId": "Bloodbat - T02 - A - TC",
+      "ItemName": "Blood Bat"
+    },
+    {
+      "ItemId": "Cyclops - T02 - B - TC",
+      "ItemName": "Cyclops"
+    },
+    {
+      "ItemId": "Dark Sprite - T02 - A - TC",
+      "ItemName": "Dark Sprite"
+    },
+    {
+      "ItemId": "Fire Cat - T02 - A - TC",
+      "ItemName": "Fire Cat"
+    },
+    {
+      "ItemId": "Fire Elf - T02 - B - TC",
+      "ItemName": "Fire Elf"
+    },
+    {
+      "ItemId": "Fortify TC",
+      "ItemName": "Fortify"
+    },
+    {
+      "ItemId": "Frost Beetle - T02 - A - TC",
+      "ItemName": "Frost Beetle"
+    },
+    {
+      "ItemId": "Ghoul - T02 - B - TC",
+      "ItemName": "Ghoul"
+    },
+    {
+      "ItemId": "Imp - T02 - A - TC",
+      "ItemName": "Imp"
+    },
+    {
+      "ItemId": "Leprechaun - T02 - B - TC",
+      "ItemName": "Leprechaun"
+    },
+    {
+      "ItemId": "Lightning Bats - T02 - B - TC",
+      "ItemName": "Lightning Bats"
+    },
+    {
+      "ItemId": "Locust Swarm - T02 - B - TC",
+      "ItemName": "Locust Swarm"
+    },
+    {
+      "ItemId": "Nature's Wrath - T02 - B - TC",
+      "ItemName": "Nature's Wrath"
+    },
+    {
+      "ItemId": "Nested Fury TC",
+      "ItemName": "Nested Fury"
+    },
+    {
+      "ItemId": "Scarab - T02 - A - TC",
+      "ItemName": "Scarab"
+    },
+    {
+      "ItemId": "Scorpion - T02 - B - TC",
+      "ItemName": "Scorpion"
+    },
+    {
+      "ItemId": "Snow Serpent - T02 - B - TC",
+      "ItemName": "Snow Serpent"
+    },
+    {
+      "ItemId": "Storm Shark - T02 - B - TC",
+      "ItemName": "Storm Shark"
+    },
+    {
+      "ItemId": "Sunbird - T02 - B - TC",
+      "ItemName": "Sunbird"
+    },
+    {
+      "ItemId": "Thunder Snake - T02 - A - TC",
+      "ItemName": "Thunder Snake"
+    },
+    {
+      "ItemId": "Troll - T02 - B - TC",
+      "ItemName": "Troll"
+    },
+    {
+      "ItemId": "Winged Sorrow TC",
+      "ItemName": "Winged Sorrow"
+    },
+    {
+      "ItemId": "Witch's Housecall TC",
+      "ItemName": "Witch's House Call"
+    }
+  ]
+}

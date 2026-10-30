@@ -1,0 +1,109 @@
+{
+  "Name": "W404 OCT-LootTable-008 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table OCT-LootTable-008: the gear drops (25), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "126395",
+      "ItemName": "Hallowe'en Hat"
+    },
+    {
+      "ItemId": "126396",
+      "ItemName": "Ninja Pig Hat"
+    },
+    {
+      "ItemId": "126397",
+      "ItemName": "Cool Pumpkin Mask"
+    },
+    {
+      "ItemId": "126398",
+      "ItemName": "Hallowe'en Shoes"
+    },
+    {
+      "ItemId": "126399",
+      "ItemName": "Hallowe'en Robe"
+    },
+    {
+      "ItemId": "126400",
+      "ItemName": "Cyclops Pumpkin Mask"
+    },
+    {
+      "ItemId": "126401",
+      "ItemName": "Goofy Pumpkin Mask"
+    },
+    {
+      "ItemId": "126402",
+      "ItemName": "Happy Pumpkin Mask"
+    },
+    {
+      "ItemId": "126403",
+      "ItemName": "Boo Pumpkin Mask"
+    },
+    {
+      "ItemId": "126404",
+      "ItemName": "Kitty Pumpkin Mask"
+    },
+    {
+      "ItemId": "126405",
+      "ItemName": "Ninja Pig Shoes"
+    },
+    {
+      "ItemId": "126406",
+      "ItemName": "Ninja Pig Robe"
+    },
+    {
+      "ItemId": "126415",
+      "ItemName": "Scary Pumpkin Mask"
+    },
+    {
+      "ItemId": "126416",
+      "ItemName": "Pirate Pumpkin Mask"
+    },
+    {
+      "ItemId": "126418",
+      "ItemName": "Plain Pumpkin Mask"
+    },
+    {
+      "ItemId": "1248144",
+      "ItemName": "Smirking Pumpkin Stave"
+    },
+    {
+      "ItemId": "1248145",
+      "ItemName": "Wimpering Pumpking Stave"
+    },
+    {
+      "ItemId": "1248146",
+      "ItemName": "Intimidating Pumpkin Stave"
+    },
+    {
+      "ItemId": "1248147",
+      "ItemName": "Broom of Toil and Trouble"
+    },
+    {
+      "ItemId": "1363260",
+      "ItemName": "Vampire Costume Wig"
+    },
+    {
+      "ItemId": "1363261",
+      "ItemName": "Vampire Costume Coat"
+    },
+    {
+      "ItemId": "1363262",
+      "ItemName": "Vampire Costume Boots"
+    },
+    {
+      "ItemId": "1363263",
+      "ItemName": "Mummy Costume Headwraps"
+    },
+    {
+      "ItemId": "1363264",
+      "ItemName": "Mummy Costume Bodywraps"
+    },
+    {
+      "ItemId": "1363265",
+      "ItemName": "Mummy Costume Footwraps"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "Name": "W404 MB-Cat-Scratcher-Doctor-MBBoss-L50 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Cat-Scratcher-Doctor-MBBoss-L50: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160684",
+      "ItemName": "Wide Meter Stand"
+    },
+    {
+      "ItemId": "160685",
+      "ItemName": "Tri-gage Meter Stand"
+    },
+    {
+      "ItemId": "160686",
+      "ItemName": "Tall Meter Stand"
+    },
+    {
+      "ItemId": "512128",
+      "ItemName": "Marleybone Combat Theme"
+    }
+  ]
+}

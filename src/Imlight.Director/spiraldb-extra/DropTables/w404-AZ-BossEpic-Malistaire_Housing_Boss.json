@@ -1,0 +1,65 @@
+{
+  "Name": "W404 AZ-BossEpic-Malistaire Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossEpic-Malistaire: the housing drops (14), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "512209",
+      "ItemName": "Azteca Dungeon Theme"
+    },
+    {
+      "ItemId": "512210",
+      "ItemName": "Azteca Mountain Theme"
+    },
+    {
+      "ItemId": "512213",
+      "ItemName": "Azteca Zultun Theme"
+    },
+    {
+      "ItemId": "512222",
+      "ItemName": "Azteca Post Apocalypse Theme"
+    },
+    {
+      "ItemId": "739124",
+      "ItemName": "Earth Codex"
+    },
+    {
+      "ItemId": "739167",
+      "ItemName": "Magic Orb"
+    },
+    {
+      "ItemId": "1346123",
+      "ItemName": "Rattlebones Exalted Duel"
+    },
+    {
+      "ItemId": "1346124",
+      "ItemName": "Rattlebones Master Duel"
+    },
+    {
+      "ItemId": "1346126",
+      "ItemName": "Krokopatra Master Duel"
+    },
+    {
+      "ItemId": "1346128",
+      "ItemName": "Krokopatra Exalted Duel"
+    },
+    {
+      "ItemId": "1346131",
+      "ItemName": "Meowiarty Archmage Duel"
+    },
+    {
+      "ItemId": "1346132",
+      "ItemName": "Meowiarty Exalted Duel"
+    },
+    {
+      "ItemId": "1346134",
+      "ItemName": "Zeus Exalted Duel"
+    },
+    {
+      "ItemId": "1350312",
+      "ItemName": "Master's Socket Wrench"
+    }
+  ]
+}

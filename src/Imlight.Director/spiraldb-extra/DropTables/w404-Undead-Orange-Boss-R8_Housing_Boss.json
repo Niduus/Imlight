@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Undead-Orange-Boss-R8 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Undead-Orange-Boss-R8: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160252",
+      "ItemName": "Great Spiral Glyph"
+    },
+    {
+      "ItemId": "160842",
+      "ItemName": "Arboreal Obelisk"
+    },
+    {
+      "ItemId": "160885",
+      "ItemName": "Short Pillar"
+    }
+  ]
+}

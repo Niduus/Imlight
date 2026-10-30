@@ -1,0 +1,25 @@
+{
+  "Name": "W404 NV_Tessellate_Base_A_01 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Tessellate_Base_A_01: the treasurecard drops (4), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "GuildReagent01_TC",
+      "ItemName": "Azoth"
+    },
+    {
+      "ItemId": "Tri Spear TC",
+      "ItemName": "Elemental Spear"
+    },
+    {
+      "ItemId": "Mass Death Prism TC",
+      "ItemName": "Mass Death Prism"
+    },
+    {
+      "ItemId": "Triage TC",
+      "ItemName": "Triage"
+    }
+  ]
+}

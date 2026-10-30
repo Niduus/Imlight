@@ -1,0 +1,37 @@
+{
+  "Name": "W404 MS-Oni-Plague-MSBoss-L54 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Oni-Plague-MSBoss-L54: the housing drops (7), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160567",
+      "ItemName": "Imperial Shrine"
+    },
+    {
+      "ItemId": "160596",
+      "ItemName": "Tea Plant"
+    },
+    {
+      "ItemId": "470218",
+      "ItemName": "Green Samoorai Armor"
+    },
+    {
+      "ItemId": "512102",
+      "ItemName": "MooShu War Theme"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1430801",
+      "ItemName": "MooShu Mystical Theme"
+    },
+    {
+      "ItemId": "1430802",
+      "ItemName": "MooShu Battle Theme"
+    }
+  ]
+}

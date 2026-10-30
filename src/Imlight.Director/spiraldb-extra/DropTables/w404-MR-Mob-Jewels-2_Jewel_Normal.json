@@ -1,0 +1,205 @@
+{
+  "Name": "W404 MR-Mob-Jewels-2 Jewel (Normal)",
+  "Description": "Wizard404's drop list of the game's table MR-Mob-Jewels-2: the jewel drops (49), one picked when it rolls. How often: DropOdds.json Normal/Jewel.",
+  "Odds": "Normal/Jewel",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1352412",
+      "ItemName": "Polished Health Opal +86"
+    },
+    {
+      "ItemId": "1352413",
+      "ItemName": "Polished Health Opal +87"
+    },
+    {
+      "ItemId": "1352414",
+      "ItemName": "Polished Health Opal +88"
+    },
+    {
+      "ItemId": "1352415",
+      "ItemName": "Polished Health Opal +89"
+    },
+    {
+      "ItemId": "1352416",
+      "ItemName": "Polished Health Opal +90"
+    },
+    {
+      "ItemId": "1352417",
+      "ItemName": "Polished Health Opal +91"
+    },
+    {
+      "ItemId": "1352418",
+      "ItemName": "Polished Health Opal +92"
+    },
+    {
+      "ItemId": "1352419",
+      "ItemName": "Polished Health Opal +93"
+    },
+    {
+      "ItemId": "1352420",
+      "ItemName": "Polished Health Opal +94"
+    },
+    {
+      "ItemId": "1352421",
+      "ItemName": "Polished Health Opal +95"
+    },
+    {
+      "ItemId": "1352465",
+      "ItemName": "Polished Mana Opal +37"
+    },
+    {
+      "ItemId": "1352466",
+      "ItemName": "Polished Mana Opal +38"
+    },
+    {
+      "ItemId": "1352467",
+      "ItemName": "Polished Mana Opal +39"
+    },
+    {
+      "ItemId": "1352468",
+      "ItemName": "Polished Mana Opal +40"
+    },
+    {
+      "ItemId": "1352597",
+      "ItemName": "Polished Damage Ruby +21"
+    },
+    {
+      "ItemId": "1352621",
+      "ItemName": "Polished Damage Sapphire +21"
+    },
+    {
+      "ItemId": "1352645",
+      "ItemName": "Polished Damage Amethyst +21"
+    },
+    {
+      "ItemId": "1352669",
+      "ItemName": "Polished Damage Peridot +21"
+    },
+    {
+      "ItemId": "1352693",
+      "ItemName": "Polished Damage Jade +21"
+    },
+    {
+      "ItemId": "1352717",
+      "ItemName": "Polished Damage Onyx +21"
+    },
+    {
+      "ItemId": "1352741",
+      "ItemName": "Polished Damage Citrine +21"
+    },
+    {
+      "ItemId": "1352954",
+      "ItemName": "Polished Blocking Ruby +11"
+    },
+    {
+      "ItemId": "1352967",
+      "ItemName": "Polished Blocking Sapphire +11"
+    },
+    {
+      "ItemId": "1352980",
+      "ItemName": "Polished Blocking Amethyst +11"
+    },
+    {
+      "ItemId": "1352993",
+      "ItemName": "Polished Blocking Peridot +11"
+    },
+    {
+      "ItemId": "1357006",
+      "ItemName": "Polished Blocking Jade +11"
+    },
+    {
+      "ItemId": "1357019",
+      "ItemName": "Polished Blocking Onyx +11"
+    },
+    {
+      "ItemId": "1357032",
+      "ItemName": "Polished Blocking Citrine +11"
+    },
+    {
+      "ItemId": "1357063",
+      "ItemName": "Polished Accurate Ruby +10%"
+    },
+    {
+      "ItemId": "1357072",
+      "ItemName": "Polished Accurate Sapphire +10%"
+    },
+    {
+      "ItemId": "1357081",
+      "ItemName": "Polished Accurate Amethyst +10%"
+    },
+    {
+      "ItemId": "1357090",
+      "ItemName": "Polished Accurate Peridot +10%"
+    },
+    {
+      "ItemId": "1357099",
+      "ItemName": "Polished Accurate Jade +10%"
+    },
+    {
+      "ItemId": "1357108",
+      "ItemName": "Polished Accurate Onyx +10%"
+    },
+    {
+      "ItemId": "1357117",
+      "ItemName": "Polished Accurate Citrine +10%"
+    },
+    {
+      "ItemId": "1357277",
+      "ItemName": "Polished Defense Ruby +41"
+    },
+    {
+      "ItemId": "1357278",
+      "ItemName": "Polished Defense Ruby +42"
+    },
+    {
+      "ItemId": "1357322",
+      "ItemName": "Polished Defense Sapphire +41"
+    },
+    {
+      "ItemId": "1357323",
+      "ItemName": "Polished Defense Sapphire +42"
+    },
+    {
+      "ItemId": "1357367",
+      "ItemName": "Polished Defense Amethyst +41"
+    },
+    {
+      "ItemId": "1357368",
+      "ItemName": "Polished Defense Amethyst +42"
+    },
+    {
+      "ItemId": "1357412",
+      "ItemName": "Polished Defense Peridot +41"
+    },
+    {
+      "ItemId": "1357413",
+      "ItemName": "Polished Defense Peridot +42"
+    },
+    {
+      "ItemId": "1357457",
+      "ItemName": "Polished Defense Jade +41"
+    },
+    {
+      "ItemId": "1357458",
+      "ItemName": "Polished Defense Jade +42"
+    },
+    {
+      "ItemId": "1357502",
+      "ItemName": "Polished Defense Onyx +41"
+    },
+    {
+      "ItemId": "1357503",
+      "ItemName": "Polished Defense Onyx +42"
+    },
+    {
+      "ItemId": "1357547",
+      "ItemName": "Polished Defense Citrine +41"
+    },
+    {
+      "ItemId": "1357548",
+      "ItemName": "Polished Defense Citrine +42"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "Name": "W404 AZ-BossRare-Caquix-R12 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossRare-Caquix-R12: the gear drops (7), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730189",
+      "ItemName": "Horizon of Underworld Charm"
+    },
+    {
+      "ItemId": "730276",
+      "ItemName": "White Fire Chac's Helmet"
+    },
+    {
+      "ItemId": "730277",
+      "ItemName": "Philosoraptor's Ideal Mantle"
+    },
+    {
+      "ItemId": "730344",
+      "ItemName": "White Fire Chac's Armor"
+    },
+    {
+      "ItemId": "730346",
+      "ItemName": "Keeper of the Codex Vest"
+    },
+    {
+      "ItemId": "730421",
+      "ItemName": "Lords of Night Pyramid Deck"
+    },
+    {
+      "ItemId": "730447",
+      "ItemName": "Mace of the Aztecosaurs"
+    }
+  ]
+}

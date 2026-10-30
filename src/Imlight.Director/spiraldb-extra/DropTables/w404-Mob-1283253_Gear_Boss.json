@@ -1,0 +1,81 @@
+{
+  "Name": "W404 Mob-1283253 Gear (Boss)",
+  "Description": "Wizard404's drop list of Deep Spawn's own drops: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203143",
+      "ItemName": "Mantis Shroud of Secrecy"
+    },
+    {
+      "ItemId": "1203144",
+      "ItemName": "Beleaguered Mouse Cowl"
+    },
+    {
+      "ItemId": "1203145",
+      "ItemName": "Flame Legs Captain's Helm"
+    },
+    {
+      "ItemId": "1203160",
+      "ItemName": "Dragonfly Keeper's Cap"
+    },
+    {
+      "ItemId": "1203213",
+      "ItemName": "Dragonfly Rider's Garment"
+    },
+    {
+      "ItemId": "1203263",
+      "ItemName": "Mantis Guard Stonesteppers"
+    },
+    {
+      "ItemId": "1203264",
+      "ItemName": "Last Wood Defender's Boots"
+    },
+    {
+      "ItemId": "1203328",
+      "ItemName": "Stinger's Carcanet"
+    },
+    {
+      "ItemId": "1203329",
+      "ItemName": "Mouse Revenant's Talisman"
+    },
+    {
+      "ItemId": "1203330",
+      "ItemName": "ToeBiter's Cursed Relic"
+    },
+    {
+      "ItemId": "1203380",
+      "ItemName": "Corrupted Queen's Barb"
+    },
+    {
+      "ItemId": "1203381",
+      "ItemName": "Revenant's Edge of Strife"
+    },
+    {
+      "ItemId": "1203406",
+      "ItemName": "Cell of Survival"
+    },
+    {
+      "ItemId": "1203407",
+      "ItemName": "Gallery of the Woebegone"
+    },
+    {
+      "ItemId": "1203411",
+      "ItemName": "Spiked Set"
+    },
+    {
+      "ItemId": "1203671",
+      "ItemName": "Edge of the Lost King"
+    },
+    {
+      "ItemId": "1203672",
+      "ItemName": "Sword of Bastion's Revival"
+    },
+    {
+      "ItemId": "1203673",
+      "ItemName": "Razor of the Felled Forest"
+    }
+  ]
+}

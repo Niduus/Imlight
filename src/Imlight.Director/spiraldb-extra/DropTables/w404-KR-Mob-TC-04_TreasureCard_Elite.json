@@ -1,0 +1,133 @@
+{
+  "Name": "W404 KR-Mob-TC-04 TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table KR-Mob-TC-04: the treasurecard drops (31), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Scarab TC KR",
+      "ItemName": "Scarab"
+    },
+    {
+      "ItemId": "Scarab Death TC KR",
+      "ItemName": "Death Scarab"
+    },
+    {
+      "ItemId": "Crystal Spider TC KR",
+      "ItemName": "Crystal Spider"
+    },
+    {
+      "ItemId": "Giant Spider TC KR",
+      "ItemName": "Giant Spider"
+    },
+    {
+      "ItemId": "Scarab Life TC KR",
+      "ItemName": "Life Scarab"
+    },
+    {
+      "ItemId": "O'Leary Charlatan TC KR",
+      "ItemName": "O'Leary Charlatan"
+    },
+    {
+      "ItemId": "Doom and Gloom TC KR",
+      "ItemName": "Doom and Gloom"
+    },
+    {
+      "ItemId": "Sun Serpent TC",
+      "ItemName": "Sun Serpent"
+    },
+    {
+      "ItemId": "Rat Illusionist TC",
+      "ItemName": "Rat Illusionist"
+    },
+    {
+      "ItemId": "Scorpion TC KR",
+      "ItemName": "Scorpion"
+    },
+    {
+      "ItemId": "Spider Black Widow TC KR",
+      "ItemName": "Black Widow"
+    },
+    {
+      "ItemId": "Frost Beetle TC KR",
+      "ItemName": "Frost Beetle"
+    },
+    {
+      "ItemId": "Choke TC KR",
+      "ItemName": "Choke"
+    },
+    {
+      "ItemId": "Sanctuary TC KR",
+      "ItemName": "Sanctuary"
+    },
+    {
+      "ItemId": "Pierce TC KR",
+      "ItemName": "Pierce"
+    },
+    {
+      "ItemId": "Disarm TC KR",
+      "ItemName": "Disarm"
+    },
+    {
+      "ItemId": "Mass Infection TC KR",
+      "ItemName": "Mass Infection"
+    },
+    {
+      "ItemId": "Avenging Fossil TC",
+      "ItemName": "Avenging Fossil"
+    },
+    {
+      "ItemId": "Reliquary TC - KR",
+      "ItemName": "Reliquary"
+    },
+    {
+      "ItemId": "Cycle of Life TC - KR",
+      "ItemName": "Cycle of Life"
+    },
+    {
+      "ItemId": "Virulence TC - KR",
+      "ItemName": "Virulence"
+    },
+    {
+      "ItemId": "Chastisement TC - KR",
+      "ItemName": "Chastisement"
+    },
+    {
+      "ItemId": "Punishment TC - KR",
+      "ItemName": "Punishment"
+    },
+    {
+      "ItemId": "Galvanic Field TC - KR",
+      "ItemName": "Galvanic Field"
+    },
+    {
+      "ItemId": "Furnace TC - KR",
+      "ItemName": "Furnace"
+    },
+    {
+      "ItemId": "Sleet Storm TC - KR",
+      "ItemName": "Sleet Storm"
+    },
+    {
+      "ItemId": "Lord of Winter TC",
+      "ItemName": "Lord of Winter"
+    },
+    {
+      "ItemId": "Storm Owl TC",
+      "ItemName": "Storm Owl"
+    },
+    {
+      "ItemId": "Celestial Calendar TC",
+      "ItemName": "Celestial Calendar"
+    },
+    {
+      "ItemId": "Spinysaur TC",
+      "ItemName": "Spinysaur"
+    },
+    {
+      "ItemId": "Sabertooth TC",
+      "ItemName": "Sabertooth"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Grendel-Large-2-GHBoss-R7 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Grendel-Large-2-GHBoss-R7: the snack drops (6), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220258",
+      "ItemName": "Wheat Cracker"
+    },
+    {
+      "ItemId": "220260",
+      "ItemName": "Tasty Biscuit"
+    },
+    {
+      "ItemId": "220262",
+      "ItemName": "Spicy Chips"
+    },
+    {
+      "ItemId": "220266",
+      "ItemName": "Meat Soup"
+    },
+    {
+      "ItemId": "220287",
+      "ItemName": "Star Lollipop"
+    },
+    {
+      "ItemId": "220289",
+      "ItemName": "Rock Candy"
+    }
+  ]
+}

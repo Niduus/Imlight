@@ -1,0 +1,13 @@
+{
+  "Name": "W404 TC-Ghoul TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table TC-Ghoul: the treasurecard drops (1), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Ghoul TC",
+      "ItemName": "Ghoul"
+    }
+  ]
+}

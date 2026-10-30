@@ -1,0 +1,33 @@
+{
+  "Name": "W404 DM_Player_BranchBoss_A_06 TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table DM_Player_BranchBoss_A_06: the treasurecard drops (6), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Lord of Winter TC",
+      "ItemName": "Lord of Winter"
+    },
+    {
+      "ItemId": "Rebirth TC",
+      "ItemName": "Rebirth"
+    },
+    {
+      "ItemId": "Snow Angel TC",
+      "ItemName": "Snow Angel"
+    },
+    {
+      "ItemId": "Woolly Mammoth TC",
+      "ItemName": "Woolly Mammoth"
+    },
+    {
+      "ItemId": "Katzenstein's Monster TC",
+      "ItemName": "Dr. Von's Monster"
+    },
+    {
+      "ItemId": "Medusa TC",
+      "ItemName": "Medusa"
+    }
+  ]
+}

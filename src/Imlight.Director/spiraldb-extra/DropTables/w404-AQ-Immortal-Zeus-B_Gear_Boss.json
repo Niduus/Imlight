@@ -1,0 +1,121 @@
+{
+  "Name": "W404 AQ-Immortal-Zeus-B Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AQ-Immortal-Zeus-B: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "819509",
+      "ItemName": "Zeus' Eternal Flame Helm"
+    },
+    {
+      "ItemId": "819510",
+      "ItemName": "Zeus' Helmet of Blizzards"
+    },
+    {
+      "ItemId": "819511",
+      "ItemName": "Clangor From Olympus Brim"
+    },
+    {
+      "ItemId": "819512",
+      "ItemName": "Zeus' Divine Right Helm"
+    },
+    {
+      "ItemId": "819513",
+      "ItemName": "Zeus' Helm of Kings"
+    },
+    {
+      "ItemId": "819514",
+      "ItemName": "Zeus' Helm of the Moribund"
+    },
+    {
+      "ItemId": "819515",
+      "ItemName": "Helm of the Heavens"
+    },
+    {
+      "ItemId": "819516",
+      "ItemName": "Zeus' Skyforged Plate"
+    },
+    {
+      "ItemId": "819517",
+      "ItemName": "Zeus' Frozen Skies Armor"
+    },
+    {
+      "ItemId": "819518",
+      "ItemName": "Zeus' Ominous Skies Armor"
+    },
+    {
+      "ItemId": "819519",
+      "ItemName": "Zeus' Garb of Mischief"
+    },
+    {
+      "ItemId": "819520",
+      "ItemName": "Zeus' War Eagle Raiment"
+    },
+    {
+      "ItemId": "819521",
+      "ItemName": "Zeus' Wicked Ploy Armor"
+    },
+    {
+      "ItemId": "819522",
+      "ItemName": "Armor of Zeus' Law"
+    },
+    {
+      "ItemId": "819701",
+      "ItemName": "Zeus' Smoke Cloud Scepter"
+    },
+    {
+      "ItemId": "819702",
+      "ItemName": "Zeus' Hailstone Bolt"
+    },
+    {
+      "ItemId": "819703",
+      "ItemName": "Zeus' Thunderstrike Staff"
+    },
+    {
+      "ItemId": "819704",
+      "ItemName": "Zeus' Bolt of Genius"
+    },
+    {
+      "ItemId": "819705",
+      "ItemName": "Zeus' Scepter of Creation"
+    },
+    {
+      "ItemId": "819706",
+      "ItemName": "Staff of Zeus' Curses"
+    },
+    {
+      "ItemId": "819707",
+      "ItemName": "Bolt of Zeus' Justice"
+    },
+    {
+      "ItemId": "1203007",
+      "ItemName": "Zeus' Flamewalkers"
+    },
+    {
+      "ItemId": "1203008",
+      "ItemName": "Zeus' Iceshelf Striders"
+    },
+    {
+      "ItemId": "1203009",
+      "ItemName": "Zeus' Cloud Stalkers"
+    },
+    {
+      "ItemId": "1203010",
+      "ItemName": "Zeus' Boots of Ambition"
+    },
+    {
+      "ItemId": "1203011",
+      "ItemName": "Zeus' Striders of Vitality"
+    },
+    {
+      "ItemId": "1203012",
+      "ItemName": "Zeus' Soulless Walkers"
+    },
+    {
+      "ItemId": "1203013",
+      "ItemName": "Zeus' Majestic Skyriders"
+    }
+  ]
+}

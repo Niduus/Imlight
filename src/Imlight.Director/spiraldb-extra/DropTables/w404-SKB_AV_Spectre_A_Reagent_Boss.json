@@ -1,0 +1,13 @@
+{
+  "Name": "W404 SKB_AV_Spectre_A Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_AV_Spectre_A: the reagent drops (1), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1659388",
+      "ItemName": "Spectral Shard"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "Name": "W404 Mob-589448 Gear (Boss)",
+  "Description": "Wizard404's drop list of Battling Jackie's own drops: the gear drops (15), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635227",
+      "ItemName": "Barbarian Philosopher's Mark"
+    },
+    {
+      "ItemId": "635228",
+      "ItemName": "Chosen Chief's Amulet"
+    },
+    {
+      "ItemId": "635267",
+      "ItemName": "Spriggan's Wicked Spike"
+    },
+    {
+      "ItemId": "635268",
+      "ItemName": "Lord of the Wild Hunt's Steel"
+    },
+    {
+      "ItemId": "635307",
+      "ItemName": "Lake Knight's Helm"
+    },
+    {
+      "ItemId": "635308",
+      "ItemName": "Jouster's Helm"
+    },
+    {
+      "ItemId": "635342",
+      "ItemName": "Stone of the Other Side"
+    },
+    {
+      "ItemId": "635383",
+      "ItemName": "Storm Crown Tunic"
+    },
+    {
+      "ItemId": "635384",
+      "ItemName": "Weirwood Champion's Armor"
+    },
+    {
+      "ItemId": "635421",
+      "ItemName": "Scaith Striders"
+    },
+    {
+      "ItemId": "635422",
+      "ItemName": "Dread Keep Strollers"
+    },
+    {
+      "ItemId": "635639",
+      "ItemName": "Highland Walking Stick"
+    },
+    {
+      "ItemId": "789098",
+      "ItemName": "Knight's Armet"
+    },
+    {
+      "ItemId": "789102",
+      "ItemName": "Knight's Sabatons"
+    },
+    {
+      "ItemId": "789106",
+      "ItemName": "Knight's Cuirass"
+    }
+  ]
+}

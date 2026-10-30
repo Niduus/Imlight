@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Mob-1299003 Gear (Elite)",
+  "Description": "Wizard404's drop list of Riptide Goliath's own drops: the gear drops (3), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203176",
+      "ItemName": "Moon's Tear Band"
+    },
+    {
+      "ItemId": "1203210",
+      "ItemName": "Gorge Excavator's Outfit"
+    },
+    {
+      "ItemId": "1203211",
+      "ItemName": "Mantis Chitin Armor"
+    }
+  ]
+}

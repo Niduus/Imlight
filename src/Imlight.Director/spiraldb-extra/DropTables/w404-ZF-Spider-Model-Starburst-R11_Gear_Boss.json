@@ -1,0 +1,145 @@
+{
+  "Name": "W404 ZF-Spider-Model-Starburst-R11 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-Spider-Model-Starburst-R11: the gear drops (34), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "526680",
+      "ItemName": "Staff of Solomon"
+    },
+    {
+      "ItemId": "526681",
+      "ItemName": "Staff of Shadow and Light"
+    },
+    {
+      "ItemId": "532557",
+      "ItemName": "Splendid Boots"
+    },
+    {
+      "ItemId": "532558",
+      "ItemName": "Branded Chapeau"
+    },
+    {
+      "ItemId": "532562",
+      "ItemName": "Whiteblind Tunic"
+    },
+    {
+      "ItemId": "532566",
+      "ItemName": "Quick Stepping Boots"
+    },
+    {
+      "ItemId": "532567",
+      "ItemName": "Wild Monsoon Brim"
+    },
+    {
+      "ItemId": "532571",
+      "ItemName": "Tunic of the Paragon"
+    },
+    {
+      "ItemId": "532575",
+      "ItemName": "Soul Stepping Boots"
+    },
+    {
+      "ItemId": "532576",
+      "ItemName": "Mischievous Brim"
+    },
+    {
+      "ItemId": "540101",
+      "ItemName": "Zafarite Amulet"
+    },
+    {
+      "ItemId": "540132",
+      "ItemName": "Scimitar of Substance"
+    },
+    {
+      "ItemId": "540137",
+      "ItemName": "Long Night's Mandible"
+    },
+    {
+      "ItemId": "540175",
+      "ItemName": "Ghostgrass Hood"
+    },
+    {
+      "ItemId": "540178",
+      "ItemName": "Hat of the Old Kings"
+    },
+    {
+      "ItemId": "540179",
+      "ItemName": "Griot's Hood"
+    },
+    {
+      "ItemId": "540181",
+      "ItemName": "War Olyphant's Wrap"
+    },
+    {
+      "ItemId": "540206",
+      "ItemName": "Shaka's Lightning Loop"
+    },
+    {
+      "ItemId": "540241",
+      "ItemName": "Sinister Medicine Cloak"
+    },
+    {
+      "ItemId": "540242",
+      "ItemName": "Sun's Circle Cloak"
+    },
+    {
+      "ItemId": "540245",
+      "ItemName": "Wicked Cold Clothes"
+    },
+    {
+      "ItemId": "540246",
+      "ItemName": "Olyphant's Balanced Jacket"
+    },
+    {
+      "ItemId": "540247",
+      "ItemName": "Zafaria Tour Jacket"
+    },
+    {
+      "ItemId": "540248",
+      "ItemName": "Spider's Storied Robe"
+    },
+    {
+      "ItemId": "540251",
+      "ItemName": "Storm Chaser's Outfit"
+    },
+    {
+      "ItemId": "540252",
+      "ItemName": "Hunter's Kin Garb"
+    },
+    {
+      "ItemId": "540284",
+      "ItemName": "Lion King's Balanced Pads"
+    },
+    {
+      "ItemId": "540286",
+      "ItemName": "Graveyard Walkers"
+    },
+    {
+      "ItemId": "540288",
+      "ItemName": "No Worries Footgear"
+    },
+    {
+      "ItemId": "540290",
+      "ItemName": "Spirit Drummer's Boots"
+    },
+    {
+      "ItemId": "540303",
+      "ItemName": "Hand-Chased Box of Winter"
+    },
+    {
+      "ItemId": "540304",
+      "ItemName": "Chieftain's Smiling Deck"
+    },
+    {
+      "ItemId": "540305",
+      "ItemName": "Bundle of Ananse's Stories"
+    },
+    {
+      "ItemId": "540306",
+      "ItemName": "Hand-Chased Box of Thunder"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "Name": "W404 WC-CrabKing-Henry-R2 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WC-CrabKing-Henry-R2: the gear drops (10), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4733",
+      "ItemName": "Jeweled Dagger"
+    },
+    {
+      "ItemId": "4800",
+      "ItemName": "Princely Slippers"
+    },
+    {
+      "ItemId": "4841",
+      "ItemName": "Northland Footwraps"
+    },
+    {
+      "ItemId": "87163",
+      "ItemName": "Robe of Horror"
+    },
+    {
+      "ItemId": "87199",
+      "ItemName": "Soot Stained Tunic"
+    },
+    {
+      "ItemId": "87204",
+      "ItemName": "Robe of the Lifeblood"
+    },
+    {
+      "ItemId": "87211",
+      "ItemName": "Tunic of Disturbance"
+    },
+    {
+      "ItemId": "87217",
+      "ItemName": "Adventurer's Robe"
+    },
+    {
+      "ItemId": "87221",
+      "ItemName": "Barkskin Tunic"
+    },
+    {
+      "ItemId": "87235",
+      "ItemName": "Cloak of the Watchful"
+    }
+  ]
+}

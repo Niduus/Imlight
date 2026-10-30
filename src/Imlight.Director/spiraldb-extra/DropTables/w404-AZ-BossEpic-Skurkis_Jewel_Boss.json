@@ -1,0 +1,17 @@
+{
+  "Name": "W404 AZ-BossEpic-Skurkis Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossEpic-Skurkis: the jewel drops (2), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1358996",
+      "ItemName": "Berserk Opal"
+    },
+    {
+      "ItemId": "1358997",
+      "ItemName": "Mend Opal"
+    }
+  ]
+}

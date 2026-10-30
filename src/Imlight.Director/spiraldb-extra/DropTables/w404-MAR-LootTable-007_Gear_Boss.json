@@ -1,0 +1,25 @@
+{
+  "Name": "W404 MAR-LootTable-007 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MAR-LootTable-007: the gear drops (4), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1248093",
+      "ItemName": "Adventurer's Shillelagh"
+    },
+    {
+      "ItemId": "1248094",
+      "ItemName": "Sacred Heart Staff"
+    },
+    {
+      "ItemId": "1248095",
+      "ItemName": "Staff of Gracious Fortune"
+    },
+    {
+      "ItemId": "1248096",
+      "ItemName": "Clover of Prosperity"
+    }
+  ]
+}

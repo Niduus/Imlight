@@ -1,0 +1,9 @@
+{
+  "Name": "W404 MS-Oni-War-MSBoss-L50",
+  "Description": "Gold of the game's table MS-Oni-War-MSBoss-L50, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 60,
+  "MaxGold": 70,
+  "EachItem": false,
+  "Items": []
+}

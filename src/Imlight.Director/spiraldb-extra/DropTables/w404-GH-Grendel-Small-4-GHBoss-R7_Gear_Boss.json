@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Grendel-Small-4-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Grendel-Small-4-GHBoss-R7: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136294",
+      "ItemName": "Hepatizon Knife"
+    },
+    {
+      "ItemId": "136437",
+      "ItemName": "Headdress of Fancy"
+    },
+    {
+      "ItemId": "136438",
+      "ItemName": "Cowl of the Rime"
+    },
+    {
+      "ItemId": "136501",
+      "ItemName": "Signet Stone of Fate"
+    },
+    {
+      "ItemId": "136502",
+      "ItemName": "Sigil of the Return"
+    },
+    {
+      "ItemId": "171212",
+      "ItemName": "Slippers of Essence"
+    }
+  ]
+}

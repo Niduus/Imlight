@@ -1,0 +1,13 @@
+{
+  "Name": "W404 Level-15 Seed (Normal)",
+  "Description": "Wizard404's drop list of the game's table Level-15: the seed drops (1), one picked when it rolls. How often: DropOdds.json Normal/Seed.",
+  "Odds": "Normal/Seed",
+  "RollChance": 0.06,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355199",
+      "ItemName": "Honey Sickle"
+    }
+  ]
+}

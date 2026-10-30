@@ -1,0 +1,65 @@
+{
+  "Name": "W404 PL-Boss-Gear-108 Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-Boss-Gear-108: the seed drops (14), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346052",
+      "ItemName": "White Desparagus"
+    },
+    {
+      "ItemId": "346059",
+      "ItemName": "Frozen Fly Trap"
+    },
+    {
+      "ItemId": "355143",
+      "ItemName": "Helephant Ears"
+    },
+    {
+      "ItemId": "355185",
+      "ItemName": "Evil Snow Peas"
+    },
+    {
+      "ItemId": "356092",
+      "ItemName": "White Laugh-o-dil"
+    },
+    {
+      "ItemId": "404123",
+      "ItemName": "Deadly Helephant Ears"
+    },
+    {
+      "ItemId": "473187",
+      "ItemName": "White Tiger Lily"
+    },
+    {
+      "ItemId": "653146",
+      "ItemName": "Fish on a Vine"
+    },
+    {
+      "ItemId": "713140",
+      "ItemName": "Snow Apples"
+    },
+    {
+      "ItemId": "713154",
+      "ItemName": "Green Snow Apples"
+    },
+    {
+      "ItemId": "713161",
+      "ItemName": "Purple Snow Apples"
+    },
+    {
+      "ItemId": "1248268",
+      "ItemName": "Queen Crape Myrtle"
+    },
+    {
+      "ItemId": "1350094",
+      "ItemName": "Ultra Snow Apples"
+    },
+    {
+      "ItemId": "1350124",
+      "ItemName": "Ultra Helephant Ears"
+    }
+  ]
+}

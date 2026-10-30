@@ -1,0 +1,121 @@
+{
+  "Name": "W404 AZ-Boss-R12-02 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-Boss-R12-02: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "730186",
+      "ItemName": "Amulet of the Third Sun"
+    },
+    {
+      "ItemId": "730187",
+      "ItemName": "Tears of the Sky Jade Charm"
+    },
+    {
+      "ItemId": "730188",
+      "ItemName": "Children of the Sea Medallion"
+    },
+    {
+      "ItemId": "730224",
+      "ItemName": "Brutal Azteca Horn"
+    },
+    {
+      "ItemId": "730225",
+      "ItemName": "Stone Quetzal's Tooth"
+    },
+    {
+      "ItemId": "730226",
+      "ItemName": "Zero Hour Eagle Talon"
+    },
+    {
+      "ItemId": "730300",
+      "ItemName": "Chac's Challenge Loop"
+    },
+    {
+      "ItemId": "730301",
+      "ItemName": "Twisting Season Ring"
+    },
+    {
+      "ItemId": "730302",
+      "ItemName": "Storm Quetzal's Signet"
+    },
+    {
+      "ItemId": "730303",
+      "ItemName": "Seal of Thunder Horn's Glory"
+    },
+    {
+      "ItemId": "730304",
+      "ItemName": "Smoking Mirror's War Ring"
+    },
+    {
+      "ItemId": "730305",
+      "ItemName": "Twin Giants Fashioned Stone"
+    },
+    {
+      "ItemId": "730306",
+      "ItemName": "Underworld Stone"
+    },
+    {
+      "ItemId": "730336",
+      "ItemName": "Elite Jura Guard Garb"
+    },
+    {
+      "ItemId": "730337",
+      "ItemName": "Twisted Fang Vestments"
+    },
+    {
+      "ItemId": "730338",
+      "ItemName": "Indigo Wing Raiment"
+    },
+    {
+      "ItemId": "730339",
+      "ItemName": "Tree of Secrets Chac Armor"
+    },
+    {
+      "ItemId": "730340",
+      "ItemName": "Five Fangs of Fury Scales"
+    },
+    {
+      "ItemId": "730341",
+      "ItemName": "Thirteen Death Robe"
+    },
+    {
+      "ItemId": "730342",
+      "ItemName": "Dawn Hour Xicolli Vest"
+    },
+    {
+      "ItemId": "730343",
+      "ItemName": "Black Tears of the Sky Drape"
+    },
+    {
+      "ItemId": "730416",
+      "ItemName": "Codex of the Lost Fire"
+    },
+    {
+      "ItemId": "730417",
+      "ItemName": "Winter's Pyramid Deck"
+    },
+    {
+      "ItemId": "730418",
+      "ItemName": "Storm Sun Gallery"
+    },
+    {
+      "ItemId": "730433",
+      "ItemName": "Twin Kings' Serpent Standard"
+    },
+    {
+      "ItemId": "730434",
+      "ItemName": "Green Standard of Mother Moon"
+    },
+    {
+      "ItemId": "730435",
+      "ItemName": "Banner of the Lords of Night"
+    },
+    {
+      "ItemId": "730436",
+      "ItemName": "Sign of Cipactli"
+    }
+  ]
+}

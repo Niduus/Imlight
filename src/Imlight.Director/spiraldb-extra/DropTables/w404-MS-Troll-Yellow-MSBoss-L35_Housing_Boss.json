@@ -1,0 +1,25 @@
+{
+  "Name": "W404 MS-Troll-Yellow-MSBoss-L35 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Troll-Yellow-MSBoss-L35: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160442",
+      "ItemName": "Green Banner"
+    },
+    {
+      "ItemId": "160523",
+      "ItemName": "Wooden Pedestal"
+    },
+    {
+      "ItemId": "470212",
+      "ItemName": "Tree Painting"
+    },
+    {
+      "ItemId": "1335018",
+      "ItemName": "MooShu Dance Theme"
+    }
+  ]
+}

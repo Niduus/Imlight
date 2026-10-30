@@ -1,0 +1,33 @@
+{
+  "Name": "W404 TC-AV-Utility-Fire TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-AV-Utility-Fire: the treasurecard drops (6), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Steal Charm TC",
+      "ItemName": "Steal Charm"
+    },
+    {
+      "ItemId": "Immolate TC",
+      "ItemName": "Immolate"
+    },
+    {
+      "ItemId": "Choke TC",
+      "ItemName": "Choke"
+    },
+    {
+      "ItemId": "Scald TC",
+      "ItemName": "Scald"
+    },
+    {
+      "ItemId": "Fuel TC",
+      "ItemName": "Fuel"
+    },
+    {
+      "ItemId": "Power Link TC",
+      "ItemName": "Power Link"
+    }
+  ]
+}

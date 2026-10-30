@@ -1,0 +1,33 @@
+{
+  "Name": "W404 EM-SKR-CorpoalTennisyn Mount (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM-SKR-CorpoalTennisyn: the mount drops (6), one picked when it rolls. How often: DropOdds.json Boss/Mount.",
+  "Odds": "Boss/Mount",
+  "RollChance": 0.03,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1254266",
+      "ItemName": "Junk-Copter (1 Day)"
+    },
+    {
+      "ItemId": "1254267",
+      "ItemName": "Junk-Copter (7 Day)"
+    },
+    {
+      "ItemId": "1317299",
+      "ItemName": "Royal Lioness (1 Day)"
+    },
+    {
+      "ItemId": "1392076",
+      "ItemName": "Gobbler (7 Day)"
+    },
+    {
+      "ItemId": "1421913",
+      "ItemName": "Light Blades (1 Day)"
+    },
+    {
+      "ItemId": "1421914",
+      "ItemName": "Light Blades (7 Day)"
+    }
+  ]
+}

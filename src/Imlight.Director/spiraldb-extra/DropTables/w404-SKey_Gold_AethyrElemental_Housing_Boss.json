@@ -1,0 +1,65 @@
+{
+  "Name": "W404 SKey_Gold_AethyrElemental Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKey_Gold_AethyrElemental: the housing drops (14), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    },
+    {
+      "ItemId": "1407008",
+      "ItemName": "Grandmaster Socket Wrench"
+    },
+    {
+      "ItemId": "1421934",
+      "ItemName": "Fire Dwarf Bed"
+    },
+    {
+      "ItemId": "1421940",
+      "ItemName": "Ice Dwarf Chair"
+    },
+    {
+      "ItemId": "1421941",
+      "ItemName": "Dwarven Table"
+    },
+    {
+      "ItemId": "1421942",
+      "ItemName": "Fire Dwarf Settee"
+    },
+    {
+      "ItemId": "1421943",
+      "ItemName": "Ice Dwarf Settee"
+    },
+    {
+      "ItemId": "1421946",
+      "ItemName": "Dwarven Side Table"
+    },
+    {
+      "ItemId": "1441466",
+      "ItemName": "Kalamar Basket with Handle"
+    },
+    {
+      "ItemId": "1441477",
+      "ItemName": "Kalamar Bed"
+    },
+    {
+      "ItemId": "1441479",
+      "ItemName": "Kalamar Chair"
+    },
+    {
+      "ItemId": "1441534",
+      "ItemName": "Aero Dwarf Potted Plant"
+    },
+    {
+      "ItemId": "1441638",
+      "ItemName": "Nimbari Brazier"
+    }
+  ]
+}

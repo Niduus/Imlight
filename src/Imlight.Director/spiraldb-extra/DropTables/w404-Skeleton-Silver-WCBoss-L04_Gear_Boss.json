@@ -1,0 +1,45 @@
+{
+  "Name": "W404 Skeleton-Silver-WCBoss-L04 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skeleton-Silver-WCBoss-L04: the gear drops (9), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4810",
+      "ItemName": "Frost-touched Shoes"
+    },
+    {
+      "ItemId": "4814",
+      "ItemName": "Footwraps of Calamity"
+    },
+    {
+      "ItemId": "4815",
+      "ItemName": "Frost Wolf Boots"
+    },
+    {
+      "ItemId": "4862",
+      "ItemName": "Rattlebones' Footwraps"
+    },
+    {
+      "ItemId": "4874",
+      "ItemName": "Roughspun Shoes"
+    },
+    {
+      "ItemId": "4875",
+      "ItemName": "Slippers of Rites"
+    },
+    {
+      "ItemId": "77565",
+      "ItemName": "Firestorm Cap"
+    },
+    {
+      "ItemId": "77600",
+      "ItemName": "Rattlebones' Cowl"
+    },
+    {
+      "ItemId": "87237",
+      "ItemName": "Novice's Robe"
+    }
+  ]
+}

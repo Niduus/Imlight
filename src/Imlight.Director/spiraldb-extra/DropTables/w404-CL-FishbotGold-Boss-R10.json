@@ -1,0 +1,9 @@
+{
+  "Name": "W404 CL-FishbotGold-Boss-R10",
+  "Description": "Gold of the game's table CL-FishbotGold-Boss-R10, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 38,
+  "MaxGold": 38,
+  "EachItem": false,
+  "Items": []
+}

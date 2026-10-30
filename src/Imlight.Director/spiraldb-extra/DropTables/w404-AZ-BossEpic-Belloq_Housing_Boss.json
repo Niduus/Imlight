@@ -1,0 +1,37 @@
+{
+  "Name": "W404 AZ-BossEpic-Belloq Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table AZ-BossEpic-Belloq: the housing drops (7), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "512208",
+      "ItemName": "Azteca Combat Theme"
+    },
+    {
+      "ItemId": "512209",
+      "ItemName": "Azteca Dungeon Theme"
+    },
+    {
+      "ItemId": "512211",
+      "ItemName": "Azteca Haunted Theme"
+    },
+    {
+      "ItemId": "512222",
+      "ItemName": "Azteca Post Apocalypse Theme"
+    },
+    {
+      "ItemId": "739124",
+      "ItemName": "Earth Codex"
+    },
+    {
+      "ItemId": "739172",
+      "ItemName": "Palma Dino"
+    },
+    {
+      "ItemId": "739213",
+      "ItemName": "Toucan Mask"
+    }
+  ]
+}

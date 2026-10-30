@@ -1,0 +1,93 @@
+{
+  "Name": "W404 EM-Boss-Furniture Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM-Boss-Furniture: the housing drops (21), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1421928",
+      "ItemName": "Dwarven File"
+    },
+    {
+      "ItemId": "1421934",
+      "ItemName": "Fire Dwarf Bed"
+    },
+    {
+      "ItemId": "1421935",
+      "ItemName": "Ice Dwarf Bed"
+    },
+    {
+      "ItemId": "1421938",
+      "ItemName": "Dwarven Book Case"
+    },
+    {
+      "ItemId": "1421939",
+      "ItemName": "Fire Dwarf Chair"
+    },
+    {
+      "ItemId": "1421940",
+      "ItemName": "Ice Dwarf Chair"
+    },
+    {
+      "ItemId": "1421944",
+      "ItemName": "Dwarven Dinner Table"
+    },
+    {
+      "ItemId": "1421946",
+      "ItemName": "Dwarven Side Table"
+    },
+    {
+      "ItemId": "1439007",
+      "ItemName": "Empyrea Sepidious Combat Theme"
+    },
+    {
+      "ItemId": "1439008",
+      "ItemName": "Empyrea Sepidious Theme"
+    },
+    {
+      "ItemId": "1439009",
+      "ItemName": "Empyrea Khan Theme"
+    },
+    {
+      "ItemId": "1439010",
+      "ItemName": "Empyrea Zanadu Combat Theme"
+    },
+    {
+      "ItemId": "1439011",
+      "ItemName": "Empyrea Zanadu Theme"
+    },
+    {
+      "ItemId": "1439012",
+      "ItemName": "Empyrea Leisure Dome Theme"
+    },
+    {
+      "ItemId": "1439013",
+      "ItemName": "Empyrea Lava Lock Theme"
+    },
+    {
+      "ItemId": "1439014",
+      "ItemName": "Empyrea Dance Hall Theme"
+    },
+    {
+      "ItemId": "1439015",
+      "ItemName": "Pirate Party Barge Theme"
+    },
+    {
+      "ItemId": "1439017",
+      "ItemName": "Empyrea Brain Theme 1"
+    },
+    {
+      "ItemId": "1439018",
+      "ItemName": "Empyrea Brain Theme 2"
+    },
+    {
+      "ItemId": "1439019",
+      "ItemName": "Empyrea Brain Theme 3"
+    },
+    {
+      "ItemId": "1439021",
+      "ItemName": "Empyrea Sewer Theme"
+    }
+  ]
+}

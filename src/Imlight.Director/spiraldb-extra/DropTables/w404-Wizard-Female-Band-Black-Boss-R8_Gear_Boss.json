@@ -1,0 +1,81 @@
+{
+  "Name": "W404 Wizard-Female-Band-Black-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Wizard-Female-Band-Black-Boss-R8: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104598",
+      "ItemName": "Coat of Impartiality"
+    },
+    {
+      "ItemId": "104640",
+      "ItemName": "Librarian's Robes"
+    },
+    {
+      "ItemId": "104679",
+      "ItemName": "Chilling Cloak"
+    },
+    {
+      "ItemId": "104715",
+      "ItemName": "Wrap of the Monsoon"
+    },
+    {
+      "ItemId": "104756",
+      "ItemName": "Blizzard Boots"
+    },
+    {
+      "ItemId": "104811",
+      "ItemName": "Footgear of Corporeality"
+    },
+    {
+      "ItemId": "104822",
+      "ItemName": "Shoes of Equilibrium"
+    },
+    {
+      "ItemId": "104835",
+      "ItemName": "Vineyard Shoes"
+    },
+    {
+      "ItemId": "104874",
+      "ItemName": "Stormbreaker Sandals"
+    },
+    {
+      "ItemId": "126562",
+      "ItemName": "Ring of Equilibrium"
+    },
+    {
+      "ItemId": "126586",
+      "ItemName": "Heartwood Band"
+    },
+    {
+      "ItemId": "126654",
+      "ItemName": "Shadowcrown's Icy Blade"
+    },
+    {
+      "ItemId": "126679",
+      "ItemName": "Shadowcrown's Hurricane Deck"
+    },
+    {
+      "ItemId": "146167",
+      "ItemName": "Scaled Smallsword"
+    },
+    {
+      "ItemId": "146176",
+      "ItemName": "Talon of the Wyrmkin"
+    },
+    {
+      "ItemId": "146259",
+      "ItemName": "Herbalist's Hood"
+    },
+    {
+      "ItemId": "146320",
+      "ItemName": "Blazing Bonnet"
+    },
+    {
+      "ItemId": "146332",
+      "ItemName": "Mantle of the Undying"
+    }
+  ]
+}

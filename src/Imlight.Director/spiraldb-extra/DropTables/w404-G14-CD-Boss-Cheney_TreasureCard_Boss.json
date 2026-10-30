@@ -1,0 +1,161 @@
+{
+  "Name": "W404 G14-CD-Boss-Cheney TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table G14-CD-Boss-Cheney: the treasurecard drops (38), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Reliquary TC - KR",
+      "ItemName": "Reliquary"
+    },
+    {
+      "ItemId": "Cycle of Life TC - KR",
+      "ItemName": "Cycle of Life"
+    },
+    {
+      "ItemId": "Virulence TC - KR",
+      "ItemName": "Virulence"
+    },
+    {
+      "ItemId": "Chastisement TC - KR",
+      "ItemName": "Chastisement"
+    },
+    {
+      "ItemId": "Punishment TC - KR",
+      "ItemName": "Punishment"
+    },
+    {
+      "ItemId": "Galvanic Field TC - KR",
+      "ItemName": "Galvanic Field"
+    },
+    {
+      "ItemId": "Furnace TC - KR",
+      "ItemName": "Furnace"
+    },
+    {
+      "ItemId": "Sleet Storm TC - KR",
+      "ItemName": "Sleet Storm"
+    },
+    {
+      "ItemId": "Sun Serpent TC",
+      "ItemName": "Sun Serpent"
+    },
+    {
+      "ItemId": "Lord of Winter TC",
+      "ItemName": "Lord of Winter"
+    },
+    {
+      "ItemId": "Storm Owl TC",
+      "ItemName": "Storm Owl"
+    },
+    {
+      "ItemId": "Celestial Calendar TC",
+      "ItemName": "Celestial Calendar"
+    },
+    {
+      "ItemId": "Spinysaur TC",
+      "ItemName": "Spinysaur"
+    },
+    {
+      "ItemId": "Avenging Fossil TC",
+      "ItemName": "Avenging Fossil"
+    },
+    {
+      "ItemId": "Sabertooth TC",
+      "ItemName": "Sabertooth"
+    },
+    {
+      "ItemId": "Hex TC",
+      "ItemName": "Hex"
+    },
+    {
+      "ItemId": "Plague TC",
+      "ItemName": "Plague"
+    },
+    {
+      "ItemId": "Katzenstein's Monster TC",
+      "ItemName": "Dr. Von's Monster"
+    },
+    {
+      "ItemId": "Banshee TC",
+      "ItemName": "Banshee"
+    },
+    {
+      "ItemId": "Black Cat TC",
+      "ItemName": "Black Cat"
+    },
+    {
+      "ItemId": "Skeletal Dragon TC",
+      "ItemName": "Skeletal Dragon"
+    },
+    {
+      "ItemId": "Dark Pact TC",
+      "ItemName": "Dark Tribute"
+    },
+    {
+      "ItemId": "Lady Blackhope TC",
+      "ItemName": "Lady Blackhope"
+    },
+    {
+      "ItemId": "Poison TC",
+      "ItemName": "Poison"
+    },
+    {
+      "ItemId": "The Bonekeeper TC",
+      "ItemName": "The Bonekeeper"
+    },
+    {
+      "ItemId": "Vampire TC",
+      "ItemName": "Vampire"
+    },
+    {
+      "ItemId": "Samoorai TC",
+      "ItemName": "Samoorai"
+    },
+    {
+      "ItemId": "Savage Paw TC",
+      "ItemName": "Savage Paw"
+    },
+    {
+      "ItemId": "Deer Knight TC",
+      "ItemName": "Deer Knight"
+    },
+    {
+      "ItemId": "Lord of Night TC",
+      "ItemName": "Lord of Night"
+    },
+    {
+      "ItemId": "Ninja Pig TC",
+      "ItemName": "Ninja Pigs"
+    },
+    {
+      "ItemId": "Keeper Sacred Flame TC",
+      "ItemName": "Keeper of the Flame"
+    },
+    {
+      "ItemId": "Goat Monk TC",
+      "ItemName": "Goat Monk"
+    },
+    {
+      "ItemId": "Luminous Weaver TC",
+      "ItemName": "Luminous Weaver"
+    },
+    {
+      "ItemId": "Catalan TC",
+      "ItemName": "Catalan"
+    },
+    {
+      "ItemId": "Handsome Fomori TC",
+      "ItemName": "Handsome Fomori"
+    },
+    {
+      "ItemId": "Winter Moon TC",
+      "ItemName": "Winter Moon"
+    },
+    {
+      "ItemId": "Brimstone Revenant TC",
+      "ItemName": "Brimstone Revenant"
+    }
+  ]
+}

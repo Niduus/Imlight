@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Elemental-Fire-GHBoss-R6 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Elemental-Fire-GHBoss-R6: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136401",
+      "ItemName": "Veil of Vitae"
+    },
+    {
+      "ItemId": "136402",
+      "ItemName": "Cowl of the Torrent"
+    },
+    {
+      "ItemId": "136497",
+      "ItemName": "Inflammatory Seal"
+    },
+    {
+      "ItemId": "136633",
+      "ItemName": "Burning Vestment"
+    },
+    {
+      "ItemId": "171204",
+      "ItemName": "Wave Walkers"
+    },
+    {
+      "ItemId": "171205",
+      "ItemName": "Vault Keeper's Boots"
+    }
+  ]
+}

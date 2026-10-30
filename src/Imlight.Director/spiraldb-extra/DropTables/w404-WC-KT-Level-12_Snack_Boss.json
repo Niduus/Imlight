@@ -1,0 +1,45 @@
+{
+  "Name": "W404 WC-KT-Level-12 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table WC-KT-Level-12: the snack drops (9), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220193",
+      "ItemName": "Blonde Strawberry"
+    },
+    {
+      "ItemId": "220197",
+      "ItemName": "Green Grapes"
+    },
+    {
+      "ItemId": "220208",
+      "ItemName": "Cheese Broccoli"
+    },
+    {
+      "ItemId": "220213",
+      "ItemName": "Chocolate Strawberry"
+    },
+    {
+      "ItemId": "220218",
+      "ItemName": "Sugar Donut"
+    },
+    {
+      "ItemId": "220220",
+      "ItemName": "Gummy Firecat"
+    },
+    {
+      "ItemId": "220225",
+      "ItemName": "Nettle Root"
+    },
+    {
+      "ItemId": "220227",
+      "ItemName": "Cracker"
+    },
+    {
+      "ItemId": "220237",
+      "ItemName": "Tiny Fish"
+    }
+  ]
+}

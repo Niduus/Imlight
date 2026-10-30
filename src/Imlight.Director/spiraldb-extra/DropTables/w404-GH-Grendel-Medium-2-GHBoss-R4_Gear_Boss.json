@@ -1,0 +1,41 @@
+{
+  "Name": "W404 GH-Grendel-Medium-2-GHBoss-R4 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Grendel-Medium-2-GHBoss-R4: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136261",
+      "ItemName": "Talon of the Runechanter"
+    },
+    {
+      "ItemId": "136262",
+      "ItemName": "Stormshadow's Claw"
+    },
+    {
+      "ItemId": "136362",
+      "ItemName": "Stormsquall Crown"
+    },
+    {
+      "ItemId": "136470",
+      "ItemName": "Shimmerstone"
+    },
+    {
+      "ItemId": "136471",
+      "ItemName": "Seal of the Icicle"
+    },
+    {
+      "ItemId": "136558",
+      "ItemName": "Frigid Longcoat"
+    },
+    {
+      "ItemId": "136579",
+      "ItemName": "Axiomatic Wrap"
+    },
+    {
+      "ItemId": "171116",
+      "ItemName": "Boots of Cessation"
+    }
+  ]
+}

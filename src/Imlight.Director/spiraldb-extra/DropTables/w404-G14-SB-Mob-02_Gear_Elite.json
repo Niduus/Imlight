@@ -1,0 +1,177 @@
+{
+  "Name": "W404 G14-SB-Mob-02 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table G14-SB-Mob-02: the gear drops (42), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1330898",
+      "ItemName": "Helm of the Smoking Ember"
+    },
+    {
+      "ItemId": "1330899",
+      "ItemName": "Himoolayan Snow Cap"
+    },
+    {
+      "ItemId": "1330900",
+      "ItemName": "Himoolayan Blizzard Helmet"
+    },
+    {
+      "ItemId": "1330901",
+      "ItemName": "Mind Monk's Headgear"
+    },
+    {
+      "ItemId": "1330902",
+      "ItemName": "Spirit Monk's Helmet"
+    },
+    {
+      "ItemId": "1330903",
+      "ItemName": "Vanquished Asura's Mantle"
+    },
+    {
+      "ItemId": "1330904",
+      "ItemName": "Helm of the Harmonious"
+    },
+    {
+      "ItemId": "1330982",
+      "ItemName": "Armor of the Smoking Ember"
+    },
+    {
+      "ItemId": "1330983",
+      "ItemName": "Himoolayan Snow Cover"
+    },
+    {
+      "ItemId": "1330984",
+      "ItemName": "Himoolayan Blizzard Gear"
+    },
+    {
+      "ItemId": "1330985",
+      "ItemName": "Armor of the Mind Monk"
+    },
+    {
+      "ItemId": "1330986",
+      "ItemName": "Spirit Monk's Warplate"
+    },
+    {
+      "ItemId": "1330987",
+      "ItemName": "Vanquished Asura's Raiment"
+    },
+    {
+      "ItemId": "1330988",
+      "ItemName": "Harmonious One's Vestment"
+    },
+    {
+      "ItemId": "1338066",
+      "ItemName": "Smoking Ember Walkers"
+    },
+    {
+      "ItemId": "1338067",
+      "ItemName": "Himoolayan Snowshoes"
+    },
+    {
+      "ItemId": "1338068",
+      "ItemName": "Himoolayan Blizzard Boots"
+    },
+    {
+      "ItemId": "1338069",
+      "ItemName": "Mind Monk's Footgear"
+    },
+    {
+      "ItemId": "1338070",
+      "ItemName": "Spirit Monk' Footwraps"
+    },
+    {
+      "ItemId": "1338071",
+      "ItemName": "Vanquished Asura's Shoes"
+    },
+    {
+      "ItemId": "1338072",
+      "ItemName": "Harmonious One's Striders"
+    },
+    {
+      "ItemId": "1338150",
+      "ItemName": "Edge of the Himoolayan Sun"
+    },
+    {
+      "ItemId": "1338151",
+      "ItemName": "Himoolayan Ice Pick"
+    },
+    {
+      "ItemId": "1338152",
+      "ItemName": "Athame of Himoolayan Sleet"
+    },
+    {
+      "ItemId": "1338153",
+      "ItemName": "Edge of the Beguiling Song"
+    },
+    {
+      "ItemId": "1338154",
+      "ItemName": "Mountain Paradise Claw"
+    },
+    {
+      "ItemId": "1338155",
+      "ItemName": "Temple Scourge's Hook"
+    },
+    {
+      "ItemId": "1338156",
+      "ItemName": "Talon of the Harmonious One"
+    },
+    {
+      "ItemId": "1338234",
+      "ItemName": "Monk's Jewel of Radiance"
+    },
+    {
+      "ItemId": "1338235",
+      "ItemName": "Himoolayan Hailstone Vial"
+    },
+    {
+      "ItemId": "1338236",
+      "ItemName": "Kembaalung Blizzard Charm"
+    },
+    {
+      "ItemId": "1338237",
+      "ItemName": "Pagoda of Harmony Memento"
+    },
+    {
+      "ItemId": "1338238",
+      "ItemName": "Spirit Monk's Torc of Grit"
+    },
+    {
+      "ItemId": "1338239",
+      "ItemName": "Ampul of the Discordant"
+    },
+    {
+      "ItemId": "1338240",
+      "ItemName": "Monk's Charm of Aplomb"
+    },
+    {
+      "ItemId": "1338486",
+      "ItemName": "Sword of Fervent Resolve"
+    },
+    {
+      "ItemId": "1338487",
+      "ItemName": "Blade of Himoolayan Ice"
+    },
+    {
+      "ItemId": "1338488",
+      "ItemName": "Snows of Kembaalung Saber"
+    },
+    {
+      "ItemId": "1338489",
+      "ItemName": "Kembaalung Sword of Guile"
+    },
+    {
+      "ItemId": "1338490",
+      "ItemName": "Stout Himoolayan Sword"
+    },
+    {
+      "ItemId": "1338491",
+      "ItemName": "Longblade of the Asura"
+    },
+    {
+      "ItemId": "1338492",
+      "ItemName": "Scimitar of the Harmonious"
+    }
+  ]
+}

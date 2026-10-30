@@ -1,0 +1,53 @@
+{
+  "Name": "W404 Wizard-Male-Jacket-Red-Boss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Wizard-Male-Jacket-Red-Boss-R7: the gear drops (11), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104678",
+      "ItemName": "Wintertide Wrap"
+    },
+    {
+      "ItemId": "104705",
+      "ItemName": "Dragonscale Wrap"
+    },
+    {
+      "ItemId": "104759",
+      "ItemName": "Gloomstrider's Frosty Slippers"
+    },
+    {
+      "ItemId": "104790",
+      "ItemName": "Firewalker's Footwraps"
+    },
+    {
+      "ItemId": "104825",
+      "ItemName": "Destiny Waders"
+    },
+    {
+      "ItemId": "104844",
+      "ItemName": "Grounded Boots"
+    },
+    {
+      "ItemId": "104870",
+      "ItemName": "Boots of the Emerald Grove"
+    },
+    {
+      "ItemId": "146227",
+      "ItemName": "Veil of Clouds"
+    },
+    {
+      "ItemId": "146269",
+      "ItemName": "Hood of the Gnome"
+    },
+    {
+      "ItemId": "146317",
+      "ItemName": "Gloomstrider's Sparking Veil"
+    },
+    {
+      "ItemId": "146361",
+      "ItemName": "Hood of Propriety"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "Name": "W404 AV-R12-BalanceDeck Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table AV-R12-BalanceDeck: the gear drops (2), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635544",
+      "ItemName": "Clockwork Deck"
+    },
+    {
+      "ItemId": "635551",
+      "ItemName": "Astrological Gallery"
+    }
+  ]
+}

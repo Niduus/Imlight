@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Wolf-Warrior-5-GHBoss-R5 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Wolf-Warrior-5-GHBoss-R5: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136280",
+      "ItemName": "Banewarden's Cutter"
+    },
+    {
+      "ItemId": "136376",
+      "ItemName": "Hood of the Hallowed"
+    },
+    {
+      "ItemId": "136390",
+      "ItemName": "Flaring Cap"
+    },
+    {
+      "ItemId": "136609",
+      "ItemName": "Flamewoven Garments"
+    },
+    {
+      "ItemId": "171167",
+      "ItemName": "Winter-soled Shoes"
+    },
+    {
+      "ItemId": "171177",
+      "ItemName": "Placid Boots"
+    }
+  ]
+}

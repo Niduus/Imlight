@@ -1,0 +1,25 @@
+{
+  "Name": "W404 MS-Pig-Plague-Ninja-MSBoss-L42 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-Plague-Ninja-MSBoss-L42: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160507",
+      "ItemName": "Pagoda-shaped Urn"
+    },
+    {
+      "ItemId": "160604",
+      "ItemName": "Windswept Tree"
+    },
+    {
+      "ItemId": "470196",
+      "ItemName": "Red Clan Banner"
+    },
+    {
+      "ItemId": "512197",
+      "ItemName": "Way Of The Ninja Pig Theme"
+    }
+  ]
+}

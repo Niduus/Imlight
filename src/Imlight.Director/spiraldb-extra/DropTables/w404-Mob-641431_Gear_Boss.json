@@ -1,0 +1,93 @@
+{
+  "Name": "W404 Mob-641431 Gear (Boss)",
+  "Description": "Wizard404's drop list of Mika Skarka's own drops: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "87779",
+      "ItemName": "Jade Oni's Amethyst Blade"
+    },
+    {
+      "ItemId": "97433",
+      "ItemName": "Jade Oni's Amulet of Duplicity"
+    },
+    {
+      "ItemId": "97544",
+      "ItemName": "Jade Oni's Cap"
+    },
+    {
+      "ItemId": "97546",
+      "ItemName": "Jade Oni's Shroud of Nothing"
+    },
+    {
+      "ItemId": "97610",
+      "ItemName": "Helm of Disquiet"
+    },
+    {
+      "ItemId": "97658",
+      "ItemName": "Brooding Cap"
+    },
+    {
+      "ItemId": "97674",
+      "ItemName": "Headwraps of the Zealous"
+    },
+    {
+      "ItemId": "97762",
+      "ItemName": "Jade Oni's Garments"
+    },
+    {
+      "ItemId": "97766",
+      "ItemName": "Jade Oni's Vestment"
+    },
+    {
+      "ItemId": "97808",
+      "ItemName": "Peculiar Garments"
+    },
+    {
+      "ItemId": "97827",
+      "ItemName": "Tunic of Discontent"
+    },
+    {
+      "ItemId": "97858",
+      "ItemName": "Tunic of Anthems"
+    },
+    {
+      "ItemId": "97899",
+      "ItemName": "Vestment of the Lotus"
+    },
+    {
+      "ItemId": "97927",
+      "ItemName": "Jade Oni's Boots"
+    },
+    {
+      "ItemId": "97972",
+      "ItemName": "Slippers of Enthusiasm"
+    },
+    {
+      "ItemId": "98002",
+      "ItemName": "Slippers of Inflection"
+    },
+    {
+      "ItemId": "98022",
+      "ItemName": "Gogi Berry Stained Boots"
+    },
+    {
+      "ItemId": "98053",
+      "ItemName": "Dashing Shoes"
+    },
+    {
+      "ItemId": "161049",
+      "ItemName": "Angelic Helm"
+    },
+    {
+      "ItemId": "164079",
+      "ItemName": "Tunic of Fiery Renewal"
+    },
+    {
+      "ItemId": "164099",
+      "ItemName": "Even Footing"
+    }
+  ]
+}

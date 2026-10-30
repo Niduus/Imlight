@@ -1,0 +1,85 @@
+{
+  "Name": "W404 PL-SKR-OmenStribog Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-SKR-OmenStribog: the reagent drops (19), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "258582",
+      "ItemName": "Aether"
+    },
+    {
+      "ItemId": "473722",
+      "ItemName": "Agave Leaves"
+    },
+    {
+      "ItemId": "473723",
+      "ItemName": "Agave Nectar"
+    },
+    {
+      "ItemId": "537974",
+      "ItemName": "Amber"
+    },
+    {
+      "ItemId": "537982",
+      "ItemName": "Amber Dust"
+    },
+    {
+      "ItemId": "537985",
+      "ItemName": "Merle's Whisker"
+    },
+    {
+      "ItemId": "1206362",
+      "ItemName": "Astral Shard"
+    },
+    {
+      "ItemId": "1340030",
+      "ItemName": "Mote of Wisdom"
+    },
+    {
+      "ItemId": "1340031",
+      "ItemName": "Mote of Beauty"
+    },
+    {
+      "ItemId": "1340032",
+      "ItemName": "Mote of Severity"
+    },
+    {
+      "ItemId": "1340033",
+      "ItemName": "Mote of Eternity"
+    },
+    {
+      "ItemId": "1350234",
+      "ItemName": "Bronze"
+    },
+    {
+      "ItemId": "1350235",
+      "ItemName": "Tungsten"
+    },
+    {
+      "ItemId": "1350236",
+      "ItemName": "Mithril"
+    },
+    {
+      "ItemId": "1350237",
+      "ItemName": "Orichalcum"
+    },
+    {
+      "ItemId": "1350238",
+      "ItemName": "Draconium"
+    },
+    {
+      "ItemId": "1359495",
+      "ItemName": "Mote of Transport"
+    },
+    {
+      "ItemId": "1494697",
+      "ItemName": "Troll"
+    },
+    {
+      "ItemId": "1494699",
+      "ItemName": "Thunder Snake"
+    }
+  ]
+}

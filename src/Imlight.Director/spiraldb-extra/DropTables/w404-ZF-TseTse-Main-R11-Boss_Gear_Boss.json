@@ -1,0 +1,93 @@
+{
+  "Name": "W404 ZF-TseTse-Main-R11-Boss Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-TseTse-Main-R11-Boss: the gear drops (21), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "526684",
+      "ItemName": "Quagga Blade"
+    },
+    {
+      "ItemId": "532555",
+      "ItemName": "Splendid Chapeau"
+    },
+    {
+      "ItemId": "532559",
+      "ItemName": "Fire Quenching Tunic"
+    },
+    {
+      "ItemId": "532563",
+      "ItemName": "Snowbank Boots"
+    },
+    {
+      "ItemId": "532564",
+      "ItemName": "Espirit Chapeau"
+    },
+    {
+      "ItemId": "532568",
+      "ItemName": "Electrifyin' Tunic"
+    },
+    {
+      "ItemId": "532572",
+      "ItemName": "Boots of Sincerity"
+    },
+    {
+      "ItemId": "532573",
+      "ItemName": "Forlorn Chapeau"
+    },
+    {
+      "ItemId": "532577",
+      "ItemName": "Lucas'  Tunic of the Wars"
+    },
+    {
+      "ItemId": "540091",
+      "ItemName": "Star Shard Charm"
+    },
+    {
+      "ItemId": "540122",
+      "ItemName": "Pride's Maul"
+    },
+    {
+      "ItemId": "540168",
+      "ItemName": "Mask of the Great Patapon"
+    },
+    {
+      "ItemId": "540173",
+      "ItemName": "Turban of the Olyphants"
+    },
+    {
+      "ItemId": "540203",
+      "ItemName": "Inyanga's Baobab Loop"
+    },
+    {
+      "ItemId": "540236",
+      "ItemName": "Big Sky Outfit"
+    },
+    {
+      "ItemId": "540238",
+      "ItemName": "Tunic of Long Memory"
+    },
+    {
+      "ItemId": "540277",
+      "ItemName": "Shaman's Cold River Wraps"
+    },
+    {
+      "ItemId": "540280",
+      "ItemName": "Nemean Rock Climbers"
+    },
+    {
+      "ItemId": "540302",
+      "ItemName": "Bundle of Eternal Flame"
+    },
+    {
+      "ItemId": "540303",
+      "ItemName": "Hand-Chased Box of Winter"
+    },
+    {
+      "ItemId": "540304",
+      "ItemName": "Chieftain's Smiling Deck"
+    }
+  ]
+}

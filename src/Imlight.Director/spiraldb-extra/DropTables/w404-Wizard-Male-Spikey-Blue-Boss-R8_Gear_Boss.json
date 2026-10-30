@@ -1,0 +1,81 @@
+{
+  "Name": "W404 Wizard-Male-Spikey-Blue-Boss-R8 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Wizard-Male-Spikey-Blue-Boss-R8: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104591",
+      "ItemName": "Wrap of Equity"
+    },
+    {
+      "ItemId": "104617",
+      "ItemName": "Salamander's Wrap"
+    },
+    {
+      "ItemId": "104660",
+      "ItemName": "Flamesoul's Frosted Longcoat"
+    },
+    {
+      "ItemId": "104707",
+      "ItemName": "Robe of the Gale"
+    },
+    {
+      "ItemId": "104710",
+      "ItemName": "Smock of the Squall"
+    },
+    {
+      "ItemId": "104768",
+      "ItemName": "Sandals of Scorching"
+    },
+    {
+      "ItemId": "104789",
+      "ItemName": "Slippers of the Sunflame"
+    },
+    {
+      "ItemId": "126592",
+      "ItemName": "Sapphire Studded Band"
+    },
+    {
+      "ItemId": "126609",
+      "ItemName": "Band of the Boundless"
+    },
+    {
+      "ItemId": "126612",
+      "ItemName": "Flamesoul's Ring of the Cycle"
+    },
+    {
+      "ItemId": "146126",
+      "ItemName": "Searing Knife"
+    },
+    {
+      "ItemId": "146168",
+      "ItemName": "Athame of the Volcano"
+    },
+    {
+      "ItemId": "146175",
+      "ItemName": "Smallsword of Euphoria"
+    },
+    {
+      "ItemId": "146218",
+      "ItemName": "Cap of the Unflinching"
+    },
+    {
+      "ItemId": "146284",
+      "ItemName": "Cowl of the Glacier"
+    },
+    {
+      "ItemId": "146295",
+      "ItemName": "Hood of Hibernation"
+    },
+    {
+      "ItemId": "146335",
+      "ItemName": "Helm of Oblivion"
+    },
+    {
+      "ItemId": "146359",
+      "ItemName": "Hood of Equity"
+    }
+  ]
+}

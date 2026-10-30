@@ -1,0 +1,45 @@
+{
+  "Name": "W404 ZF-QueenElsa-Ghostmane-Fire-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table ZF-QueenElsa-Ghostmane-Fire-R10: the gear drops (9), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "540082",
+      "ItemName": "Collar of the Storm Hound"
+    },
+    {
+      "ItemId": "540113",
+      "ItemName": "Striped Spear Blade"
+    },
+    {
+      "ItemId": "540167",
+      "ItemName": "Mantle of the Grasslands"
+    },
+    {
+      "ItemId": "540168",
+      "ItemName": "Mask of the Great Patapon"
+    },
+    {
+      "ItemId": "540201",
+      "ItemName": "Mansa's Dream Stone"
+    },
+    {
+      "ItemId": "540232",
+      "ItemName": "Fire-Feather Robes"
+    },
+    {
+      "ItemId": "540233",
+      "ItemName": "Cloak of Dreaming Medicine"
+    },
+    {
+      "ItemId": "540281",
+      "ItemName": "Ananse's Dark Rangers"
+    },
+    {
+      "ItemId": "540282",
+      "ItemName": "Dancing Queen Dancers"
+    }
+  ]
+}

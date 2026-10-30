@@ -1,0 +1,97 @@
+{
+  "Name": "W404 MS-Pig-Plague-Warrior-MSBoss-L46 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Pig-Plague-Warrior-MSBoss-L46: the gear drops (22), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97471",
+      "ItemName": "Athame of Attention"
+    },
+    {
+      "ItemId": "97474",
+      "ItemName": "Dirk of Sandcastles"
+    },
+    {
+      "ItemId": "97478",
+      "ItemName": "Kyuto's Kris of Questions"
+    },
+    {
+      "ItemId": "97510",
+      "ItemName": "Kyuto's Deck of Expectations"
+    },
+    {
+      "ItemId": "97570",
+      "ItemName": "Gallant Shroud"
+    },
+    {
+      "ItemId": "97592",
+      "ItemName": "Hat of Enthusiasm"
+    },
+    {
+      "ItemId": "97618",
+      "ItemName": "Concordant Headwraps"
+    },
+    {
+      "ItemId": "97640",
+      "ItemName": "Hat of the Nimble"
+    },
+    {
+      "ItemId": "97666",
+      "ItemName": "Zippy Shroud"
+    },
+    {
+      "ItemId": "97703",
+      "ItemName": "Discerning Ring"
+    },
+    {
+      "ItemId": "97714",
+      "ItemName": "Kyuto's Apprehensive Ring"
+    },
+    {
+      "ItemId": "97830",
+      "ItemName": "Kyuto's Vestment of Disquiet"
+    },
+    {
+      "ItemId": "97879",
+      "ItemName": "Kyuto's Vestment of Frailty"
+    },
+    {
+      "ItemId": "97948",
+      "ItemName": "Boots of Cooperation"
+    },
+    {
+      "ItemId": "97971",
+      "ItemName": "Sandals of Exertion"
+    },
+    {
+      "ItemId": "97998",
+      "ItemName": "Footwraps of Chants"
+    },
+    {
+      "ItemId": "98021",
+      "ItemName": "Footwraps of Anthems"
+    },
+    {
+      "ItemId": "98026",
+      "ItemName": "Kyuto's Lively Footwraps"
+    },
+    {
+      "ItemId": "98049",
+      "ItemName": "Sandals of the Quick-Witted"
+    },
+    {
+      "ItemId": "98061",
+      "ItemName": "Entranced Slippers"
+    },
+    {
+      "ItemId": "98064",
+      "ItemName": "Sandals of Soul-Searching"
+    },
+    {
+      "ItemId": "98066",
+      "ItemName": "Footwraps of Sandcastles"
+    }
+  ]
+}

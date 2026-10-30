@@ -1,0 +1,345 @@
+{
+  "Name": "W404 MR-Boss-Gear-118 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MR-Boss-Gear-118: the gear drops (84), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1402869",
+      "ItemName": "Eerem Spread of Char"
+    },
+    {
+      "ItemId": "1402870",
+      "ItemName": "Eerem Hailstone Spread"
+    },
+    {
+      "ItemId": "1402871",
+      "ItemName": "Eerem Spread of Clangor"
+    },
+    {
+      "ItemId": "1402872",
+      "ItemName": "Eerem Spread of Discovery"
+    },
+    {
+      "ItemId": "1402873",
+      "ItemName": "Eerem Spread of Pulse"
+    },
+    {
+      "ItemId": "1402874",
+      "ItemName": "Eerem Spread of Menace"
+    },
+    {
+      "ItemId": "1402875",
+      "ItemName": "Eerem Spread of Harmony"
+    },
+    {
+      "ItemId": "1402933",
+      "ItemName": "Istanboa Heatwave Array"
+    },
+    {
+      "ItemId": "1402934",
+      "ItemName": "Istanboa Array of Icefall"
+    },
+    {
+      "ItemId": "1402937",
+      "ItemName": "Gallant Istanboa Array"
+    },
+    {
+      "ItemId": "1402965",
+      "ItemName": "Alkali Burning Sands Kalpak"
+    },
+    {
+      "ItemId": "1402966",
+      "ItemName": "Alkali Wintertide Kalpak"
+    },
+    {
+      "ItemId": "1402967",
+      "ItemName": "Alkali Monsoon Kalpak"
+    },
+    {
+      "ItemId": "1402968",
+      "ItemName": "Alkali Kalpak of Fiction"
+    },
+    {
+      "ItemId": "1402969",
+      "ItemName": "Alkali Kalpak of Vibrancy"
+    },
+    {
+      "ItemId": "1402970",
+      "ItemName": "Alkali Kalpak of Withering"
+    },
+    {
+      "ItemId": "1402971",
+      "ItemName": "Alkali Kalpak of Fealty"
+    },
+    {
+      "ItemId": "1402997",
+      "ItemName": "Alkali Burning Sands Armor"
+    },
+    {
+      "ItemId": "1402998",
+      "ItemName": "Alkali Wintertide Armor"
+    },
+    {
+      "ItemId": "1402999",
+      "ItemName": "Alkali Monsoon Armor"
+    },
+    {
+      "ItemId": "1405000",
+      "ItemName": "Alkali Armor of Fiction"
+    },
+    {
+      "ItemId": "1405001",
+      "ItemName": "Alkali Armor of Vibrancy"
+    },
+    {
+      "ItemId": "1405002",
+      "ItemName": "Alkali Armor of Withering"
+    },
+    {
+      "ItemId": "1405003",
+      "ItemName": "Alkali Armor of Fealty"
+    },
+    {
+      "ItemId": "1405029",
+      "ItemName": "Alkali Burning Sands Walkers"
+    },
+    {
+      "ItemId": "1405030",
+      "ItemName": "Alkali Wintertide Walkers"
+    },
+    {
+      "ItemId": "1405031",
+      "ItemName": "Alkali Monsoon Walkers"
+    },
+    {
+      "ItemId": "1405032",
+      "ItemName": "Alkali Walkers of Fiction"
+    },
+    {
+      "ItemId": "1405033",
+      "ItemName": "Alkali Walkers of Vibrancy"
+    },
+    {
+      "ItemId": "1405034",
+      "ItemName": "Alkali Walkers of Withering"
+    },
+    {
+      "ItemId": "1405035",
+      "ItemName": "Alkali Walkers of Fealty"
+    },
+    {
+      "ItemId": "1405157",
+      "ItemName": "Charred Eerem Headwrap"
+    },
+    {
+      "ItemId": "1405159",
+      "ItemName": "Eerem Headwrap of Clangor"
+    },
+    {
+      "ItemId": "1405161",
+      "ItemName": "Eerem Headwrap of Pulse"
+    },
+    {
+      "ItemId": "1405163",
+      "ItemName": "Eerem Headwrap of Harmony"
+    },
+    {
+      "ItemId": "1405190",
+      "ItemName": "Eerem Raiment of Hail"
+    },
+    {
+      "ItemId": "1405194",
+      "ItemName": "Eerem Raiment of Menace"
+    },
+    {
+      "ItemId": "1405195",
+      "ItemName": "Eerem Raiment of Harmony"
+    },
+    {
+      "ItemId": "1405223",
+      "ItemName": "Eerem Givehs of Clangor"
+    },
+    {
+      "ItemId": "1405224",
+      "ItemName": "Eerem Givehs of Discovery"
+    },
+    {
+      "ItemId": "1405226",
+      "ItemName": "Eerem Givehs of Menace"
+    },
+    {
+      "ItemId": "1405227",
+      "ItemName": "Eerem Givehs of Harmony"
+    },
+    {
+      "ItemId": "1405253",
+      "ItemName": "Charred Eerem Razor"
+    },
+    {
+      "ItemId": "1405254",
+      "ItemName": "Eerem Razor of Hail"
+    },
+    {
+      "ItemId": "1405255",
+      "ItemName": "Eerem Razor of Clangor"
+    },
+    {
+      "ItemId": "1405256",
+      "ItemName": "Eerem Razor of Discovery"
+    },
+    {
+      "ItemId": "1405257",
+      "ItemName": "Eerem Razor of Pulse"
+    },
+    {
+      "ItemId": "1405258",
+      "ItemName": "Eerem Razor of Menace"
+    },
+    {
+      "ItemId": "1405259",
+      "ItemName": "Eerem Razor of Harmony"
+    },
+    {
+      "ItemId": "1405285",
+      "ItemName": "Eerem Talisman of Char"
+    },
+    {
+      "ItemId": "1405286",
+      "ItemName": "Eerem Hailstone Talisman"
+    },
+    {
+      "ItemId": "1405287",
+      "ItemName": "Eerem Talisman of Clangor"
+    },
+    {
+      "ItemId": "1405288",
+      "ItemName": "Eerem Talisman of Discovery"
+    },
+    {
+      "ItemId": "1405289",
+      "ItemName": "Eerem Talisman of Pulse"
+    },
+    {
+      "ItemId": "1405290",
+      "ItemName": "Eerem Talisman of Menace"
+    },
+    {
+      "ItemId": "1405291",
+      "ItemName": "Eerem Talisman of Harmony"
+    },
+    {
+      "ItemId": "1405317",
+      "ItemName": "Charred Eerem Band"
+    },
+    {
+      "ItemId": "1405318",
+      "ItemName": "Eerem Hailstone Band"
+    },
+    {
+      "ItemId": "1405319",
+      "ItemName": "Eerem Band of Clangor"
+    },
+    {
+      "ItemId": "1405320",
+      "ItemName": "Eerem Band of Discovery"
+    },
+    {
+      "ItemId": "1405321",
+      "ItemName": "Eerem Band of Pulse"
+    },
+    {
+      "ItemId": "1405322",
+      "ItemName": "Eerem Band of Menace"
+    },
+    {
+      "ItemId": "1405323",
+      "ItemName": "Eerem Band of Harmony"
+    },
+    {
+      "ItemId": "1405445",
+      "ItemName": "Istanboa Heatwave Khanjar"
+    },
+    {
+      "ItemId": "1405446",
+      "ItemName": "Istanboa Khanjar of Icefall"
+    },
+    {
+      "ItemId": "1405450",
+      "ItemName": "Istanboa Khanjar of Ruin"
+    },
+    {
+      "ItemId": "1405451",
+      "ItemName": "Istanboa Khanjar of Scruples"
+    },
+    {
+      "ItemId": "1405477",
+      "ItemName": "Istanboa Heatwave Pendant"
+    },
+    {
+      "ItemId": "1405482",
+      "ItemName": "Istanboa Pendant of Ruin"
+    },
+    {
+      "ItemId": "1405483",
+      "ItemName": "Istanboa Pendant of Scruples"
+    },
+    {
+      "ItemId": "1405509",
+      "ItemName": "Istanboa Heatwave Signet"
+    },
+    {
+      "ItemId": "1405511",
+      "ItemName": "Istanboa Sandspouts Signet"
+    },
+    {
+      "ItemId": "1405514",
+      "ItemName": "Istanboa Signet of Ruin"
+    },
+    {
+      "ItemId": "1405541",
+      "ItemName": "Scorpion Bow of Frenzy"
+    },
+    {
+      "ItemId": "1405542",
+      "ItemName": "Scorpion Bow of Numbing"
+    },
+    {
+      "ItemId": "1405543",
+      "ItemName": "Scorpion Bow of Lightning"
+    },
+    {
+      "ItemId": "1405544",
+      "ItemName": "Scorpion Bow of Answers"
+    },
+    {
+      "ItemId": "1405545",
+      "ItemName": "Scorpion Bow of Fervor"
+    },
+    {
+      "ItemId": "1405546",
+      "ItemName": "Scorpion Bow of Desolation"
+    },
+    {
+      "ItemId": "1405547",
+      "ItemName": "Scorpion Bow of Composure"
+    },
+    {
+      "ItemId": "1405605",
+      "ItemName": "Myriarch Tabarzin of Fevers"
+    },
+    {
+      "ItemId": "1405606",
+      "ItemName": "Myriarch Tabarzin of Rime"
+    },
+    {
+      "ItemId": "1405608",
+      "ItemName": "Myriarch Tabarzin of Musing"
+    },
+    {
+      "ItemId": "1405609",
+      "ItemName": "Myriarch Tabarzin of Renewal"
+    }
+  ]
+}

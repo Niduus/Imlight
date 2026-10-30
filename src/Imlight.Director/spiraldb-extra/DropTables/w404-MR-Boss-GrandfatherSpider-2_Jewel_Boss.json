@@ -1,0 +1,49 @@
+{
+  "Name": "W404 MR-Boss-GrandfatherSpider-2 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table MR-Boss-GrandfatherSpider-2: the jewel drops (10), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1405768",
+      "ItemName": "Firespear Ruby"
+    },
+    {
+      "ItemId": "1405769",
+      "ItemName": "Icespear Sapphire"
+    },
+    {
+      "ItemId": "1405770",
+      "ItemName": "Stormspear Amethyst"
+    },
+    {
+      "ItemId": "1405771",
+      "ItemName": "Mythspear Peridot"
+    },
+    {
+      "ItemId": "1405772",
+      "ItemName": "Lifespear Jade"
+    },
+    {
+      "ItemId": "1405773",
+      "ItemName": "Deathspear Onyx"
+    },
+    {
+      "ItemId": "1405774",
+      "ItemName": "Elemental Spear Citrine"
+    },
+    {
+      "ItemId": "1405775",
+      "ItemName": "Spirit Spear Citrine"
+    },
+    {
+      "ItemId": "1405785",
+      "ItemName": "Shiny Health Opal +115"
+    },
+    {
+      "ItemId": "1407049",
+      "ItemName": "Shiny Mana Opal +48"
+    }
+  ]
+}

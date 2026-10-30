@@ -1,0 +1,17 @@
+{
+  "Name": "W404 CL-Level-05 TreasureCard (Elite)",
+  "Description": "Wizard404's drop list of the game's table CL-Level-05: the treasurecard drops (2), one picked when it rolls. How often: DropOdds.json Elite/TreasureCard.",
+  "Odds": "Elite/TreasureCard",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Pest Zapper TC",
+      "ItemName": "Pest Zapper"
+    },
+    {
+      "ItemId": "Dragonflies TC",
+      "ItemName": "Dragonflies"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "Name": "W404 Wizard-Female-Band-Black-Boss-R8-1 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table Wizard-Female-Band-Black-Boss-R8-1: the housing drops (4), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160336",
+      "ItemName": "Obsidian Firecat Statue"
+    },
+    {
+      "ItemId": "160835",
+      "ItemName": "Inferno Obelisk"
+    },
+    {
+      "ItemId": "160868",
+      "ItemName": "Thunder Marker"
+    },
+    {
+      "ItemId": "512129",
+      "ItemName": "Dragonspyre Theme 1"
+    }
+  ]
+}

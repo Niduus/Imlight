@@ -1,0 +1,21 @@
+{
+  "Name": "W404 TC-GH2-Utility-Balance TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-GH2-Utility-Balance: the treasurecard drops (3), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Availing Hands TC",
+      "ItemName": "Availing Hands"
+    },
+    {
+      "ItemId": "Elemental Defuse TC",
+      "ItemName": "Elemental Defuse"
+    },
+    {
+      "ItemId": "Spirit Defuse TC",
+      "ItemName": "Spirit Defuse"
+    }
+  ]
+}

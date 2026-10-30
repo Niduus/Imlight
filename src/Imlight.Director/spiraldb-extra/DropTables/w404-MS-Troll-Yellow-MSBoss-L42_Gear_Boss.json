@@ -1,0 +1,81 @@
+{
+  "Name": "W404 MS-Troll-Yellow-MSBoss-L42 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MS-Troll-Yellow-MSBoss-L42: the gear drops (18), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "87497",
+      "ItemName": "Grum's Staff of the Muse"
+    },
+    {
+      "ItemId": "97454",
+      "ItemName": "Grum's Dirk of Realization"
+    },
+    {
+      "ItemId": "97464",
+      "ItemName": "Student's Shortblade"
+    },
+    {
+      "ItemId": "97469",
+      "ItemName": "Kris of the Pensive Ones"
+    },
+    {
+      "ItemId": "97472",
+      "ItemName": "Shortblade of a Daydreamer"
+    },
+    {
+      "ItemId": "97574",
+      "ItemName": "Hat of the Observant"
+    },
+    {
+      "ItemId": "97601",
+      "ItemName": "Cowl of Watchfulness"
+    },
+    {
+      "ItemId": "97622",
+      "ItemName": "Hood of Melodies"
+    },
+    {
+      "ItemId": "97649",
+      "ItemName": "Helm of Struggling"
+    },
+    {
+      "ItemId": "97668",
+      "ItemName": "Grum's Dashing Headwrap"
+    },
+    {
+      "ItemId": "97670",
+      "ItemName": "Hat of the Eager"
+    },
+    {
+      "ItemId": "97697",
+      "ItemName": "Ring of Detachment"
+    },
+    {
+      "ItemId": "97704",
+      "ItemName": "Band of Hope"
+    },
+    {
+      "ItemId": "97862",
+      "ItemName": "Grum's Tunic of the Agile"
+    },
+    {
+      "ItemId": "97967",
+      "ItemName": "Sandals of Humor"
+    },
+    {
+      "ItemId": "98017",
+      "ItemName": "Boots of the Triad"
+    },
+    {
+      "ItemId": "98057",
+      "ItemName": "Foultooth's Resolute Boots"
+    },
+    {
+      "ItemId": "98062",
+      "ItemName": "Boots of Consideration"
+    }
+  ]
+}

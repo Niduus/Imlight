@@ -1,0 +1,25 @@
+{
+  "Name": "W404 SKB_DS_Loremaster_A_100 Reagent (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_DS_Loremaster_A_100: the reagent drops (4), one picked when it rolls. How often: DropOdds.json Boss/Reagent.",
+  "Odds": "Boss/Reagent",
+  "RollChance": 0.6,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1528497",
+      "ItemName": "Brimstone Revenant"
+    },
+    {
+      "ItemId": "1551167",
+      "ItemName": "Loremaster"
+    },
+    {
+      "ItemId": "1528498",
+      "ItemName": "Luminous Weaver"
+    },
+    {
+      "ItemId": "1528499",
+      "ItemName": "Keeper of the Flame"
+    }
+  ]
+}

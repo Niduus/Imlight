@@ -1,0 +1,113 @@
+{
+  "Name": "W404 KM-Boss-TC-Common TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-Boss-TC-Common: the treasurecard drops (26), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Berserk TC",
+      "ItemName": "Berserk"
+    },
+    {
+      "ItemId": "Brilliant Light TC",
+      "ItemName": "Brilliant Light"
+    },
+    {
+      "ItemId": "Dream Shield TC",
+      "ItemName": "Dream Shield"
+    },
+    {
+      "ItemId": "Ether Shield TC",
+      "ItemName": "Ether Shield"
+    },
+    {
+      "ItemId": "Frostbite TC",
+      "ItemName": "Frostbite"
+    },
+    {
+      "ItemId": "Galvanic Field TC",
+      "ItemName": "Galvanic Field"
+    },
+    {
+      "ItemId": "Link TC",
+      "ItemName": "Link"
+    },
+    {
+      "ItemId": "Sirens TC",
+      "ItemName": "Sirens"
+    },
+    {
+      "ItemId": "Storm Shield TC",
+      "ItemName": "Storm Shield"
+    },
+    {
+      "ItemId": "Baby Sunbird TC",
+      "ItemName": "Baby Sunbird"
+    },
+    {
+      "ItemId": "Dragonflies TC",
+      "ItemName": "Dragonflies"
+    },
+    {
+      "ItemId": "Flood TC",
+      "ItemName": "Flood"
+    },
+    {
+      "ItemId": "Flute Symphony TC",
+      "ItemName": "Flute Symphony"
+    },
+    {
+      "ItemId": "Massive Pest Zapper TC",
+      "ItemName": "Massive Pest Zapper"
+    },
+    {
+      "ItemId": "Miniature Bloodbats TC",
+      "ItemName": "Miniature Bloodbats"
+    },
+    {
+      "ItemId": "Pest Zapper TC",
+      "ItemName": "Pest Zapper"
+    },
+    {
+      "ItemId": "Pungent Bug Spray TC",
+      "ItemName": "Pungent Bug Spray"
+    },
+    {
+      "ItemId": "Putrid Bug Spray TC",
+      "ItemName": "Putrid Bug Spray"
+    },
+    {
+      "ItemId": "Supreme Sunburst TC",
+      "ItemName": "Supreme Sunburst"
+    },
+    {
+      "ItemId": "Uncanny Magic TC",
+      "ItemName": "Uncanny Magic"
+    },
+    {
+      "ItemId": "Tri Blade TC",
+      "ItemName": "Elemental Blade"
+    },
+    {
+      "ItemId": "Elemental Defuse TC",
+      "ItemName": "Elemental Defuse"
+    },
+    {
+      "ItemId": "Tri Shield TC",
+      "ItemName": "Elemental Shield"
+    },
+    {
+      "ItemId": "Tri Spear TC",
+      "ItemName": "Elemental Spear"
+    },
+    {
+      "ItemId": "Tri Trap TC",
+      "ItemName": "Elemental Trap"
+    },
+    {
+      "ItemId": "Zounds...Bees! TC",
+      "ItemName": "Zounds...Bees!"
+    }
+  ]
+}

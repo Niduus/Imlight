@@ -1,0 +1,37 @@
+{
+  "Name": "W404 PL-Mob-Gear-104 Pet (Elite)",
+  "Description": "Wizard404's drop list of the game's table PL-Mob-Gear-104: the pet drops (7), one picked when it rolls. How often: DropOdds.json Elite/Pet.",
+  "Odds": "Elite/Pet",
+  "RollChance": 0.04,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "225453",
+      "ItemName": "Ice Bird"
+    },
+    {
+      "ItemId": "473444",
+      "ItemName": "Arctic Ninja Pig"
+    },
+    {
+      "ItemId": "473680",
+      "ItemName": "Snowball"
+    },
+    {
+      "ItemId": "589640",
+      "ItemName": "Glacier Dragon"
+    },
+    {
+      "ItemId": "653164",
+      "ItemName": "White Winter Owl"
+    },
+    {
+      "ItemId": "789210",
+      "ItemName": "Polar Bear Cub"
+    },
+    {
+      "ItemId": "1317711",
+      "ItemName": "Nodori Winged Ram"
+    }
+  ]
+}

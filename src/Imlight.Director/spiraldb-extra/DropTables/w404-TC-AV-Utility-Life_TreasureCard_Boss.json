@@ -1,0 +1,33 @@
+{
+  "Name": "W404 TC-AV-Utility-Life TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table TC-AV-Utility-Life: the treasurecard drops (6), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Life Prism TC",
+      "ItemName": "Life Prism"
+    },
+    {
+      "ItemId": "Lifeblade TC",
+      "ItemName": "Lifeblade"
+    },
+    {
+      "ItemId": "Guidance TC",
+      "ItemName": "Guidance"
+    },
+    {
+      "ItemId": "Guiding Light TC",
+      "ItemName": "Guiding Light"
+    },
+    {
+      "ItemId": "Triage TC",
+      "ItemName": "Triage"
+    },
+    {
+      "ItemId": "Brilliant Light TC",
+      "ItemName": "Brilliant Light"
+    }
+  ]
+}

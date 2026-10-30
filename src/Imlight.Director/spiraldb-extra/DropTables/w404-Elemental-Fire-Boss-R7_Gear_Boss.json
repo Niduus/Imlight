@@ -1,0 +1,89 @@
+{
+  "Name": "W404 Elemental-Fire-Boss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Elemental-Fire-Boss-R7: the gear drops (20), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "104596",
+      "ItemName": "Robe of Equivalence"
+    },
+    {
+      "ItemId": "104617",
+      "ItemName": "Salamander's Wrap"
+    },
+    {
+      "ItemId": "104642",
+      "ItemName": "Coat of the Cryptid"
+    },
+    {
+      "ItemId": "104707",
+      "ItemName": "Robe of the Gale"
+    },
+    {
+      "ItemId": "104732",
+      "ItemName": "Cloak of Forgotten Lore"
+    },
+    {
+      "ItemId": "104762",
+      "ItemName": "Slippers of the Glacier"
+    },
+    {
+      "ItemId": "104768",
+      "ItemName": "Sandals of Scorching"
+    },
+    {
+      "ItemId": "104775",
+      "ItemName": "Blasting Boots"
+    },
+    {
+      "ItemId": "126588",
+      "ItemName": "Flamebringer's Fiery Circle"
+    },
+    {
+      "ItemId": "126592",
+      "ItemName": "Sapphire Studded Band"
+    },
+    {
+      "ItemId": "146161",
+      "ItemName": "Flamebringer's Lancet"
+    },
+    {
+      "ItemId": "146168",
+      "ItemName": "Athame of the Volcano"
+    },
+    {
+      "ItemId": "146174",
+      "ItemName": "Soulwoven Stylet"
+    },
+    {
+      "ItemId": "146211",
+      "ItemName": "Stormwatcher's Hood"
+    },
+    {
+      "ItemId": "146218",
+      "ItemName": "Cap of the Unflinching"
+    },
+    {
+      "ItemId": "146284",
+      "ItemName": "Cowl of the Glacier"
+    },
+    {
+      "ItemId": "146286",
+      "ItemName": "Veil of Sleet"
+    },
+    {
+      "ItemId": "146315",
+      "ItemName": "Hood of Fulmination"
+    },
+    {
+      "ItemId": "146335",
+      "ItemName": "Helm of Oblivion"
+    },
+    {
+      "ItemId": "146363",
+      "ItemName": "Flamebringer's Cowl"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "W404 KR-BossEpic-Morganthe TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossEpic-Morganthe: the treasurecard drops (1), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Avenging Fossil TC",
+      "ItemName": "Avenging Fossil"
+    }
+  ]
+}

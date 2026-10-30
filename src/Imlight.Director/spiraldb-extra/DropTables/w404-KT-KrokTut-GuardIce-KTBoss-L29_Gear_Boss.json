@@ -1,0 +1,101 @@
+{
+  "Name": "W404 KT-KrokTut-GuardIce-KTBoss-L29 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokTut-GuardIce-KTBoss-L29: the gear drops (23), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4915",
+      "ItemName": "Sokkwi's Weathered Amulet"
+    },
+    {
+      "ItemId": "4938",
+      "ItemName": "Ancient Kris"
+    },
+    {
+      "ItemId": "5005",
+      "ItemName": "Victor's Signet"
+    },
+    {
+      "ItemId": "5019",
+      "ItemName": "Ring of Mortality"
+    },
+    {
+      "ItemId": "5038",
+      "ItemName": "Kebi's Blustery Seal"
+    },
+    {
+      "ItemId": "38751",
+      "ItemName": "Pyromancer's Lambent Robe"
+    },
+    {
+      "ItemId": "38771",
+      "ItemName": "Garment of Patience"
+    },
+    {
+      "ItemId": "77704",
+      "ItemName": "Headwrap of Originality"
+    },
+    {
+      "ItemId": "77712",
+      "ItemName": "Cowl of the Temple"
+    },
+    {
+      "ItemId": "77718",
+      "ItemName": "Kebi's Quixotic Hood"
+    },
+    {
+      "ItemId": "77725",
+      "ItemName": "Cowl of Prediction"
+    },
+    {
+      "ItemId": "77752",
+      "ItemName": "Hood of the Stronghold"
+    },
+    {
+      "ItemId": "77760",
+      "ItemName": "Rough-hewn Boots"
+    },
+    {
+      "ItemId": "77762",
+      "ItemName": "Shoes of Figments"
+    },
+    {
+      "ItemId": "77790",
+      "ItemName": "Threadbare Boots"
+    },
+    {
+      "ItemId": "77793",
+      "ItemName": "Slippers of Sensibility"
+    },
+    {
+      "ItemId": "77799",
+      "ItemName": "Shoes of the Fortress"
+    },
+    {
+      "ItemId": "87270",
+      "ItemName": "Robe of Ingenuity"
+    },
+    {
+      "ItemId": "87294",
+      "ItemName": "Kebi's Tunic of Slumber"
+    },
+    {
+      "ItemId": "87309",
+      "ItemName": "Robes of Dormancy"
+    },
+    {
+      "ItemId": "87310",
+      "ItemName": "Garments of Repose"
+    },
+    {
+      "ItemId": "87323",
+      "ItemName": "Sorcerer's Maroon Cloak"
+    },
+    {
+      "ItemId": "87328",
+      "ItemName": "Robe of Reason"
+    }
+  ]
+}

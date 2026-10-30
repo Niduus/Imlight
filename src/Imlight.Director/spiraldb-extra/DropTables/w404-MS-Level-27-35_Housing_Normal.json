@@ -1,0 +1,33 @@
+{
+  "Name": "W404 MS-Level-27-35 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table MS-Level-27-35: the housing drops (6), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160491",
+      "ItemName": "Straw Pile"
+    },
+    {
+      "ItemId": "160518",
+      "ItemName": "Small Woodpile"
+    },
+    {
+      "ItemId": "160537",
+      "ItemName": "Haystack"
+    },
+    {
+      "ItemId": "470192",
+      "ItemName": "Fancy Bench"
+    },
+    {
+      "ItemId": "470206",
+      "ItemName": "Fancy Lantern"
+    },
+    {
+      "ItemId": "470228",
+      "ItemName": "Stone Base"
+    }
+  ]
+}

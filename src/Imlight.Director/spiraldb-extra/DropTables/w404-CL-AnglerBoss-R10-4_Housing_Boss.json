@@ -1,0 +1,17 @@
+{
+  "Name": "W404 CL-AnglerBoss-R10-4 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-AnglerBoss-R10-4: the housing drops (2), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "342123",
+      "ItemName": "Cephalopod Statue"
+    },
+    {
+      "ItemId": "512138",
+      "ItemName": "Celestia Tribal Theme"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "Name": "W404 SKB_WY_DarkBramble_A_100 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table SKB_WY_DarkBramble_A_100: the gear drops (22), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1418415",
+      "ItemName": "Wysteria Warrior's Helmet"
+    },
+    {
+      "ItemId": "1418414",
+      "ItemName": "Wysteria Warrior's Helmet"
+    },
+    {
+      "ItemId": "1418457",
+      "ItemName": "Wysteria Warrior's Warhelm"
+    },
+    {
+      "ItemId": "1418456",
+      "ItemName": "Wysteria Warrior's Warhelm"
+    },
+    {
+      "ItemId": "1418373",
+      "ItemName": "Wysteria Warrior's Armet"
+    },
+    {
+      "ItemId": "1418372",
+      "ItemName": "Wysteria Warrior's Armet"
+    },
+    {
+      "ItemId": "1418470",
+      "ItemName": "Wysteria Warrior's Armor"
+    },
+    {
+      "ItemId": "1418471",
+      "ItemName": "Wysteria Warrior's Armor"
+    },
+    {
+      "ItemId": "1418512",
+      "ItemName": "Wysteria Warrior's Broadsword"
+    },
+    {
+      "ItemId": "1418513",
+      "ItemName": "Wysteria Warrior's Broadsword"
+    },
+    {
+      "ItemId": "1418499",
+      "ItemName": "Wysteria Warrior's Claymore"
+    },
+    {
+      "ItemId": "1418498",
+      "ItemName": "Wysteria Warrior's Claymore"
+    },
+    {
+      "ItemId": "1418429",
+      "ItemName": "Wysteria Warrior's Cuirass"
+    },
+    {
+      "ItemId": "1418428",
+      "ItemName": "Wysteria Warrior's Cuirass"
+    },
+    {
+      "ItemId": "1418527",
+      "ItemName": "Wysteria Warrior's Longsword"
+    },
+    {
+      "ItemId": "1418526",
+      "ItemName": "Wysteria Warrior's Longsword"
+    },
+    {
+      "ItemId": "1418387",
+      "ItemName": "Wysteria Warrior's Plate"
+    },
+    {
+      "ItemId": "1418386",
+      "ItemName": "Wysteria Warrior's Plate"
+    },
+    {
+      "ItemId": "1418443",
+      "ItemName": "Wysteria Warrior's Sabatons"
+    },
+    {
+      "ItemId": "1418442",
+      "ItemName": "Wysteria Warrior's Sabatons"
+    },
+    {
+      "ItemId": "1418485",
+      "ItemName": "Wysteria Warrior's Sollerets"
+    },
+    {
+      "ItemId": "1418484",
+      "ItemName": "Wysteria Warrior's Sollerets"
+    }
+  ]
+}

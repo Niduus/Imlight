@@ -1,0 +1,97 @@
+{
+  "Name": "W404 KM-Boss-Furniture Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-Boss-Furniture: the housing drops (22), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1480284",
+      "ItemName": "Karamelle Jingle Theme"
+    },
+    {
+      "ItemId": "1480285",
+      "ItemName": "Karamelle Cavity Combat Theme"
+    },
+    {
+      "ItemId": "1480287",
+      "ItemName": "Karamelle City Combat Theme"
+    },
+    {
+      "ItemId": "1480288",
+      "ItemName": "Karamelle City Theme"
+    },
+    {
+      "ItemId": "1480289",
+      "ItemName": "Karamelle Forest Combat Theme"
+    },
+    {
+      "ItemId": "1480290",
+      "ItemName": "Karamelle Forest Theme"
+    },
+    {
+      "ItemId": "1480291",
+      "ItemName": "Karamelle Neglected Com Theme"
+    },
+    {
+      "ItemId": "1480292",
+      "ItemName": "Karamelle Neglected Theme"
+    },
+    {
+      "ItemId": "1480293",
+      "ItemName": "Karamelle Rural Combat Theme"
+    },
+    {
+      "ItemId": "1480294",
+      "ItemName": "Karamelle Rural Theme"
+    },
+    {
+      "ItemId": "1480295",
+      "ItemName": "Karamelle Worker Combat Theme"
+    },
+    {
+      "ItemId": "1480296",
+      "ItemName": "Karamelle Worker Theme"
+    },
+    {
+      "ItemId": "1504154",
+      "ItemName": "Karamelle Barrel"
+    },
+    {
+      "ItemId": "1504155",
+      "ItemName": "Karamelle Crate"
+    },
+    {
+      "ItemId": "1504159",
+      "ItemName": "Oil Drum"
+    },
+    {
+      "ItemId": "1504160",
+      "ItemName": "Gum Drop Container"
+    },
+    {
+      "ItemId": "1511113",
+      "ItemName": "Von Trap Estate Poster"
+    },
+    {
+      "ItemId": "1511115",
+      "ItemName": "Gumdrop Forest Poster"
+    },
+    {
+      "ItemId": "1511117",
+      "ItemName": "Rock Candy Mountains Poster"
+    },
+    {
+      "ItemId": "1511120",
+      "ItemName": "Licorice Tree"
+    },
+    {
+      "ItemId": "1511121",
+      "ItemName": "Gumdrop Tree"
+    },
+    {
+      "ItemId": "1511123",
+      "ItemName": "Trash Pile"
+    }
+  ]
+}

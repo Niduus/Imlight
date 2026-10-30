@@ -1,0 +1,57 @@
+{
+  "Name": "W404 CL-AnglerBoss-R10-2 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-AnglerBoss-R10-2: the gear drops (12), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243205",
+      "ItemName": "Jewel of the Feint"
+    },
+    {
+      "ItemId": "243216",
+      "ItemName": "Dirk of Disorder"
+    },
+    {
+      "ItemId": "243266",
+      "ItemName": "Edge of Essence"
+    },
+    {
+      "ItemId": "243299",
+      "ItemName": "Cap of Accord"
+    },
+    {
+      "ItemId": "243396",
+      "ItemName": "Timeless Topper"
+    },
+    {
+      "ItemId": "243514",
+      "ItemName": "Eye of Insight"
+    },
+    {
+      "ItemId": "243574",
+      "ItemName": "Circle of Life"
+    },
+    {
+      "ItemId": "243642",
+      "ItemName": "Tundric Tunic"
+    },
+    {
+      "ItemId": "243708",
+      "ItemName": "Jolted Jerkin"
+    },
+    {
+      "ItemId": "243793",
+      "ItemName": "Shoes of Cold Intent"
+    },
+    {
+      "ItemId": "243794",
+      "ItemName": "Snowfall Striders"
+    },
+    {
+      "ItemId": "243876",
+      "ItemName": "Wyldfire Collar"
+    }
+  ]
+}

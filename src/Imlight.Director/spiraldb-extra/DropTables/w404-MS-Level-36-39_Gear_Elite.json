@@ -1,0 +1,289 @@
+{
+  "Name": "W404 MS-Level-36-39 Gear (Elite)",
+  "Description": "Wizard404's drop list of the game's table MS-Level-36-39: the gear drops (70), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "97465",
+      "ItemName": "Shortsword of Scrutiny"
+    },
+    {
+      "ItemId": "97466",
+      "ItemName": "Dagger of Soul-Searching"
+    },
+    {
+      "ItemId": "97565",
+      "ItemName": "Cowl of Sympathy"
+    },
+    {
+      "ItemId": "97568",
+      "ItemName": "Cowl of Cooperation"
+    },
+    {
+      "ItemId": "97571",
+      "ItemName": "Heedful Headwraps"
+    },
+    {
+      "ItemId": "97575",
+      "ItemName": "Cowl of Tact"
+    },
+    {
+      "ItemId": "97580",
+      "ItemName": "Engrossed Hat"
+    },
+    {
+      "ItemId": "97582",
+      "ItemName": "Industrial Helm"
+    },
+    {
+      "ItemId": "97587",
+      "ItemName": "Cowl of Humor"
+    },
+    {
+      "ItemId": "97591",
+      "ItemName": "Cap of Exertion"
+    },
+    {
+      "ItemId": "97597",
+      "ItemName": "Nunu's Mask of the Twisted"
+    },
+    {
+      "ItemId": "97600",
+      "ItemName": "Hat of Niceties"
+    },
+    {
+      "ItemId": "97603",
+      "ItemName": "Shroud of Conceit"
+    },
+    {
+      "ItemId": "97607",
+      "ItemName": "Hat of Discontent"
+    },
+    {
+      "ItemId": "97613",
+      "ItemName": "Cap of Song"
+    },
+    {
+      "ItemId": "97616",
+      "ItemName": "Shroud of Chants"
+    },
+    {
+      "ItemId": "97619",
+      "ItemName": "Euphonic Cap"
+    },
+    {
+      "ItemId": "97623",
+      "ItemName": "Shroud of Music"
+    },
+    {
+      "ItemId": "97629",
+      "ItemName": "Cap of the Verse"
+    },
+    {
+      "ItemId": "97632",
+      "ItemName": "Shroud of the Opus"
+    },
+    {
+      "ItemId": "97635",
+      "ItemName": "Cowl of Rhyming"
+    },
+    {
+      "ItemId": "97639",
+      "ItemName": "Gogi Berry Stained Cap"
+    },
+    {
+      "ItemId": "97645",
+      "ItemName": "Hat of Nuisance"
+    },
+    {
+      "ItemId": "97648",
+      "ItemName": "Problematic Headwraps"
+    },
+    {
+      "ItemId": "97651",
+      "ItemName": "Cap of Tribulations"
+    },
+    {
+      "ItemId": "97655",
+      "ItemName": "Stressed Mask"
+    },
+    {
+      "ItemId": "97661",
+      "ItemName": "Headwraps of Generations"
+    },
+    {
+      "ItemId": "97667",
+      "ItemName": "Mask of the Chipper"
+    },
+    {
+      "ItemId": "97671",
+      "ItemName": "Enlivened Cowl"
+    },
+    {
+      "ItemId": "97678",
+      "ItemName": "Cowl of Soul-Searching"
+    },
+    {
+      "ItemId": "97706",
+      "ItemName": "Ring of Regard"
+    },
+    {
+      "ItemId": "97709",
+      "ItemName": "Band of the Primitives"
+    },
+    {
+      "ItemId": "97786",
+      "ItemName": "Cloak of Charity"
+    },
+    {
+      "ItemId": "97789",
+      "ItemName": "Gallant Tunic"
+    },
+    {
+      "ItemId": "97801",
+      "ItemName": "Industrial Uniform"
+    },
+    {
+      "ItemId": "97803",
+      "ItemName": "Ecstatic Garments"
+    },
+    {
+      "ItemId": "97807",
+      "ItemName": "Impulsive Vestment"
+    },
+    {
+      "ItemId": "97817",
+      "ItemName": "Nunu's Twisted Uniform"
+    },
+    {
+      "ItemId": "97820",
+      "ItemName": "Vestment of Niceties"
+    },
+    {
+      "ItemId": "97824",
+      "ItemName": "Cloak of Pictures"
+    },
+    {
+      "ItemId": "97834",
+      "ItemName": "Robe of Song"
+    },
+    {
+      "ItemId": "97836",
+      "ItemName": "Vestment of Arias"
+    },
+    {
+      "ItemId": "97839",
+      "ItemName": "Concordant Robes"
+    },
+    {
+      "ItemId": "97849",
+      "ItemName": "Robe of the Verse"
+    },
+    {
+      "ItemId": "97850",
+      "ItemName": "Warbled Cloak"
+    },
+    {
+      "ItemId": "97852",
+      "ItemName": "Garments of the Opus"
+    },
+    {
+      "ItemId": "97856",
+      "ItemName": "Vestment of Hymns"
+    },
+    {
+      "ItemId": "97866",
+      "ItemName": "Painful Vestment"
+    },
+    {
+      "ItemId": "97868",
+      "ItemName": "Problematic Tunic"
+    },
+    {
+      "ItemId": "97872",
+      "ItemName": "Garments of Unrest"
+    },
+    {
+      "ItemId": "97881",
+      "ItemName": "Garments of Generations"
+    },
+    {
+      "ItemId": "97882",
+      "ItemName": "Robe of the Lithe"
+    },
+    {
+      "ItemId": "97884",
+      "ItemName": "Quick-Witted Vestment"
+    },
+    {
+      "ItemId": "97888",
+      "ItemName": "Dashing Cloak"
+    },
+    {
+      "ItemId": "97897",
+      "ItemName": "Cloak of Deliberation"
+    },
+    {
+      "ItemId": "97947",
+      "ItemName": "Footwraps of Charity"
+    },
+    {
+      "ItemId": "97960",
+      "ItemName": "Engrossed Shoes"
+    },
+    {
+      "ItemId": "97961",
+      "ItemName": "Immersive Sandals"
+    },
+    {
+      "ItemId": "97964",
+      "ItemName": "Ecstatic Boots"
+    },
+    {
+      "ItemId": "97978",
+      "ItemName": "Shoes of Scruples"
+    },
+    {
+      "ItemId": "97980",
+      "ItemName": "Vigilant Sandals"
+    },
+    {
+      "ItemId": "97994",
+      "ItemName": "Haskarr's Barbarish Boots"
+    },
+    {
+      "ItemId": "98011",
+      "ItemName": "Druidic Sandals"
+    },
+    {
+      "ItemId": "98012",
+      "ItemName": "Boots of the Verse"
+    },
+    {
+      "ItemId": "98028",
+      "ItemName": "Shoes of Hinderance"
+    },
+    {
+      "ItemId": "98029",
+      "ItemName": "Sandals of Nuisance"
+    },
+    {
+      "ItemId": "98031",
+      "ItemName": "Footwraps of Predicament"
+    },
+    {
+      "ItemId": "98045",
+      "ItemName": "Sandals of the Universe"
+    },
+    {
+      "ItemId": "98046",
+      "ItemName": "Footwraps of Generations"
+    },
+    {
+      "ItemId": "98048",
+      "ItemName": "Proficient Shoes"
+    }
+  ]
+}

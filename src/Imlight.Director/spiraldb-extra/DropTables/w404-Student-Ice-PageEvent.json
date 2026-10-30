@@ -1,0 +1,9 @@
+{
+  "Name": "W404 Student-Ice-PageEvent",
+  "Description": "Gold of the game's table Student-Ice-PageEvent, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 20,
+  "MaxGold": 30,
+  "EachItem": false,
+  "Items": []
+}

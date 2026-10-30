@@ -1,0 +1,133 @@
+{
+  "Name": "W404 KT-KrokPharaoh-IceTut-KTBoss-L28 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-KrokPharaoh-IceTut-KTBoss-L28: the gear drops (31), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4908",
+      "ItemName": "Sokkwi's Necklace of Skies"
+    },
+    {
+      "ItemId": "4938",
+      "ItemName": "Ancient Kris"
+    },
+    {
+      "ItemId": "4945",
+      "ItemName": "Athame of Mortality"
+    },
+    {
+      "ItemId": "4948",
+      "ItemName": "Cryptkeeper's Shortsword"
+    },
+    {
+      "ItemId": "4950",
+      "ItemName": "Flamedancer's Athame"
+    },
+    {
+      "ItemId": "4970",
+      "ItemName": "Pharaohs Deck"
+    },
+    {
+      "ItemId": "4972",
+      "ItemName": "Mummified Deck"
+    },
+    {
+      "ItemId": "5005",
+      "ItemName": "Victor's Signet"
+    },
+    {
+      "ItemId": "5007",
+      "ItemName": "Partisan's Ring"
+    },
+    {
+      "ItemId": "5011",
+      "ItemName": "Loop of Talent"
+    },
+    {
+      "ItemId": "5019",
+      "ItemName": "Ring of Mortality"
+    },
+    {
+      "ItemId": "5024",
+      "ItemName": "Advocate's Ring"
+    },
+    {
+      "ItemId": "5029",
+      "ItemName": "Band of Energy"
+    },
+    {
+      "ItemId": "5031",
+      "ItemName": "Loop of Tall Tales"
+    },
+    {
+      "ItemId": "38751",
+      "ItemName": "Pyromancer's Lambent Robe"
+    },
+    {
+      "ItemId": "38764",
+      "ItemName": "Durable Robe"
+    },
+    {
+      "ItemId": "39427",
+      "ItemName": "Odji Sokkwi's Bitter Boots"
+    },
+    {
+      "ItemId": "77706",
+      "ItemName": "Odji's Hat of Artistry"
+    },
+    {
+      "ItemId": "77752",
+      "ItemName": "Hood of the Stronghold"
+    },
+    {
+      "ItemId": "77782",
+      "ItemName": "Odji's Sandals of Repose"
+    },
+    {
+      "ItemId": "77799",
+      "ItemName": "Shoes of the Fortress"
+    },
+    {
+      "ItemId": "87268",
+      "ItemName": "Rugged Robe"
+    },
+    {
+      "ItemId": "87270",
+      "ItemName": "Robe of Ingenuity"
+    },
+    {
+      "ItemId": "87281",
+      "ItemName": "Conjurer's Cloak"
+    },
+    {
+      "ItemId": "87296",
+      "ItemName": "Garments of the Augur"
+    },
+    {
+      "ItemId": "87309",
+      "ItemName": "Robes of Dormancy"
+    },
+    {
+      "ItemId": "87322",
+      "ItemName": "Threadbare Robe"
+    },
+    {
+      "ItemId": "87328",
+      "ItemName": "Robe of Reason"
+    },
+    {
+      "ItemId": "87334",
+      "ItemName": "Ceremonial Vest"
+    },
+    {
+      "ItemId": "87357",
+      "ItemName": "Odji's Staff of Downpour"
+    },
+    {
+      "ItemId": "346486",
+      "ItemName": "Swindler Shoes"
+    }
+  ]
+}

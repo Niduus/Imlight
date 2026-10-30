@@ -1,0 +1,41 @@
+{
+  "Name": "W404 MR-Boss-Gear-120 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table MR-Boss-Gear-120: the gear drops (8), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1407069",
+      "ItemName": "Time Warden's Ornate Kavuk"
+    },
+    {
+      "ItemId": "1407077",
+      "ItemName": "Time Warden's Ornate Thobe"
+    },
+    {
+      "ItemId": "1407085",
+      "ItemName": "Time Warden's Ornate Galesh"
+    },
+    {
+      "ItemId": "1407093",
+      "ItemName": "Khanjar of Tetrus Prison"
+    },
+    {
+      "ItemId": "1407101",
+      "ItemName": "Ampul of Tetrus Prison"
+    },
+    {
+      "ItemId": "1407109",
+      "ItemName": "Ringlet of Tetrus Prison"
+    },
+    {
+      "ItemId": "1407117",
+      "ItemName": "Time Warden's Ornate Kilij"
+    },
+    {
+      "ItemId": "1407125",
+      "ItemName": "Tetrus Prison Deck"
+    }
+  ]
+}

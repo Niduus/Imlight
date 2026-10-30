@@ -1,0 +1,65 @@
+{
+  "Name": "W404 EM2-Boss-Basics Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table EM2-Boss-Basics: the housing drops (14), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1441470",
+      "ItemName": "Tall Kalamar Vase"
+    },
+    {
+      "ItemId": "1441471",
+      "ItemName": "Wide Kalamar Vase"
+    },
+    {
+      "ItemId": "1441472",
+      "ItemName": "Ornate Nimbari Vase"
+    },
+    {
+      "ItemId": "1441474",
+      "ItemName": "Nimbari Sword Rack"
+    },
+    {
+      "ItemId": "1441479",
+      "ItemName": "Kalamar Chair"
+    },
+    {
+      "ItemId": "1441481",
+      "ItemName": "Kalamar Side Table"
+    },
+    {
+      "ItemId": "1441485",
+      "ItemName": "Nimbari Chair"
+    },
+    {
+      "ItemId": "1441534",
+      "ItemName": "Aero Dwarf Potted Plant"
+    },
+    {
+      "ItemId": "1441536",
+      "ItemName": "Aero Dwarf Blue Vase"
+    },
+    {
+      "ItemId": "1441543",
+      "ItemName": "Aero Dwarf Chair"
+    },
+    {
+      "ItemId": "1441521",
+      "ItemName": "Empyrea Husk Storm Combat"
+    },
+    {
+      "ItemId": "1441522",
+      "ItemName": "Empyrea Husk Combat"
+    },
+    {
+      "ItemId": "1441523",
+      "ItemName": "Empyrea Husk Aethyr Combat"
+    },
+    {
+      "ItemId": "1441524",
+      "ItemName": "Empyrea Husk Theme"
+    }
+  ]
+}

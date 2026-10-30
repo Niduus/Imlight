@@ -1,0 +1,73 @@
+{
+  "Name": "W404 Mob-1549349 Housing (Boss)",
+  "Description": "Wizard404's drop list of High Loremagus's own drops: the housing drops (16), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "82914",
+      "ItemName": "Clawed Wall Sconce"
+    },
+    {
+      "ItemId": "160813",
+      "ItemName": "Dragonspyre Sarcophagus"
+    },
+    {
+      "ItemId": "160819",
+      "ItemName": "Plundered Crystal Rack"
+    },
+    {
+      "ItemId": "160871",
+      "ItemName": "Dragonflame Torch"
+    },
+    {
+      "ItemId": "160886",
+      "ItemName": "Claw Fence Segment"
+    },
+    {
+      "ItemId": "160901",
+      "ItemName": "Dragonspyre Gate"
+    },
+    {
+      "ItemId": "470471",
+      "ItemName": "Boris Blackrock Bobblehead"
+    },
+    {
+      "ItemId": "470472",
+      "ItemName": "Crystal Guide Bobblehead"
+    },
+    {
+      "ItemId": "470473",
+      "ItemName": "Draconian Knight Bobblehead"
+    },
+    {
+      "ItemId": "470474",
+      "ItemName": "Malistaire Bobblehead"
+    },
+    {
+      "ItemId": "512189",
+      "ItemName": "Marleybone Pet Derby Theme"
+    },
+    {
+      "ItemId": "512190",
+      "ItemName": "MooShu Pet Derby Theme"
+    },
+    {
+      "ItemId": "1217521",
+      "ItemName": "Wooden Skeleton Key"
+    },
+    {
+      "ItemId": "1217522",
+      "ItemName": "Stone Skeleton Key"
+    },
+    {
+      "ItemId": "1217523",
+      "ItemName": "Gold Skeleton Key"
+    },
+    {
+      "ItemId": "1350313",
+      "ItemName": "Artisan's Socket Wrench"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "Name": "W404 KM-Mob-PetSnacks-Common Snack (Normal)",
+  "Description": "Wizard404's drop list of the game's table KM-Mob-PetSnacks-Common: the snack drops (20), one picked when it rolls. How often: DropOdds.json Normal/Snack.",
+  "Odds": "Normal/Snack",
+  "RollChance": 0.15,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220222",
+      "ItemName": "Squash"
+    },
+    {
+      "ItemId": "220234",
+      "ItemName": "Drumstick"
+    },
+    {
+      "ItemId": "220239",
+      "ItemName": "Pizza"
+    },
+    {
+      "ItemId": "220245",
+      "ItemName": "Cherry Pie"
+    },
+    {
+      "ItemId": "220258",
+      "ItemName": "Wheat Cracker"
+    },
+    {
+      "ItemId": "220284",
+      "ItemName": "Glowing Taffy"
+    },
+    {
+      "ItemId": "220303",
+      "ItemName": "BBQ Drumstick"
+    },
+    {
+      "ItemId": "220313",
+      "ItemName": "Sprinkle Cupcake"
+    },
+    {
+      "ItemId": "220333",
+      "ItemName": "Rock and Roll Candy"
+    },
+    {
+      "ItemId": "641700",
+      "ItemName": "Antheneum Delight"
+    },
+    {
+      "ItemId": "733120",
+      "ItemName": "Fern Jelly"
+    },
+    {
+      "ItemId": "733121",
+      "ItemName": "Aztecan Hot Chocolate"
+    },
+    {
+      "ItemId": "1257588",
+      "ItemName": "Discord Grape Jelly"
+    },
+    {
+      "ItemId": "1257599",
+      "ItemName": "Bread Fruit Fruit"
+    },
+    {
+      "ItemId": "1359618",
+      "ItemName": "Veggie Juice"
+    },
+    {
+      "ItemId": "1359619",
+      "ItemName": "Hot Cross Buns"
+    },
+    {
+      "ItemId": "1359622",
+      "ItemName": "Eye Candy"
+    },
+    {
+      "ItemId": "1359623",
+      "ItemName": "Satyr Chow"
+    },
+    {
+      "ItemId": "1359624",
+      "ItemName": "Decimatoes"
+    },
+    {
+      "ItemId": "1359625",
+      "ItemName": "Beast Wellington"
+    }
+  ]
+}

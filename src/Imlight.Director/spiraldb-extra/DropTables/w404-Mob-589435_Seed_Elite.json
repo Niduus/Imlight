@@ -1,0 +1,21 @@
+{
+  "Name": "W404 Mob-589435 Seed (Elite)",
+  "Description": "Wizard404's drop list of Death Seraph's own drops: the seed drops (3), one picked when it rolls. How often: DropOdds.json Elite/Seed.",
+  "Odds": "Elite/Seed",
+  "RollChance": 0.1,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "346031",
+      "ItemName": "Ninja Fig"
+    },
+    {
+      "ItemId": "356092",
+      "ItemName": "White Laugh-o-dil"
+    },
+    {
+      "ItemId": "404123",
+      "ItemName": "Deadly Helephant Ears"
+    }
+  ]
+}

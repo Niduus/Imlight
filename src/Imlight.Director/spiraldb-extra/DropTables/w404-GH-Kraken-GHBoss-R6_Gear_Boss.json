@@ -1,0 +1,33 @@
+{
+  "Name": "W404 GH-Kraken-GHBoss-R6 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Kraken-GHBoss-R6: the gear drops (6), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136295",
+      "ItemName": "Telluric Stylet"
+    },
+    {
+      "ItemId": "136435",
+      "ItemName": "Crown of Culmination"
+    },
+    {
+      "ItemId": "136436",
+      "ItemName": "Hood of Combustion"
+    },
+    {
+      "ItemId": "136503",
+      "ItemName": "Seal of the Valkyrie"
+    },
+    {
+      "ItemId": "136641",
+      "ItemName": "Vestment of the Nixie"
+    },
+    {
+      "ItemId": "171213",
+      "ItemName": "Hinterland Wraps"
+    }
+  ]
+}

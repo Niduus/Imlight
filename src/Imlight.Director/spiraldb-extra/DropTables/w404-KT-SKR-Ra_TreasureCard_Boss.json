@@ -1,0 +1,29 @@
+{
+  "Name": "W404 KT-SKR-Ra TreasureCard (Boss)",
+  "Description": "Wizard404's drop list of the game's table KT-SKR-Ra: the treasurecard drops (5), one picked when it rolls. How often: DropOdds.json Boss/TreasureCard.",
+  "Odds": "Boss/TreasureCard",
+  "RollChance": 0.5,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "Krokenkhamen TC",
+      "ItemName": "Krokenkahmen"
+    },
+    {
+      "ItemId": "Krokhotep TC",
+      "ItemName": "Krokhotep"
+    },
+    {
+      "ItemId": "Krokopatra TC",
+      "ItemName": "Krokopatra"
+    },
+    {
+      "ItemId": "Minion Krokopatra TC",
+      "ItemName": "Krokopatra"
+    },
+    {
+      "ItemId": "Ra TC",
+      "ItemName": "Ra"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "Name": "W404 AV-Mob-03 Housing (Normal)",
+  "Description": "Wizard404's drop list of the game's table AV-Mob-03: the housing drops (3), one picked when it rolls. How often: DropOdds.json Normal/Housing.",
+  "Odds": "Normal/Housing",
+  "RollChance": 0.05,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "641571",
+      "ItemName": "Wooden Mirror"
+    },
+    {
+      "ItemId": "641584",
+      "ItemName": "Avalon Statue"
+    },
+    {
+      "ItemId": "641588",
+      "ItemName": "Covered Wagon"
+    }
+  ]
+}

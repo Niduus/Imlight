@@ -1,0 +1,9 @@
+{
+  "Name": "W404 G14-SB-Boss-Tsutsui",
+  "Description": "Gold of the game's table G14-SB-Boss-Tsutsui, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 50,
+  "MaxGold": 60,
+  "EachItem": false,
+  "Items": []
+}

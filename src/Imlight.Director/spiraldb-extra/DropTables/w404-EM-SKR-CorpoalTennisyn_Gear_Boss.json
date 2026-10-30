@@ -1,0 +1,333 @@
+{
+  "Name": "W404 EM-SKR-CorpoalTennisyn Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table EM-SKR-CorpoalTennisyn: the gear drops (81), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1430201",
+      "ItemName": "Leisure Dome Cap"
+    },
+    {
+      "ItemId": "1430215",
+      "ItemName": "Leisure Dome Suit"
+    },
+    {
+      "ItemId": "1430229",
+      "ItemName": "Leisure Dome Dancing Shoes"
+    },
+    {
+      "ItemId": "1430243",
+      "ItemName": "Comfort Zone Hat"
+    },
+    {
+      "ItemId": "1430257",
+      "ItemName": "Comfort Zone Leisure Suit"
+    },
+    {
+      "ItemId": "1430271",
+      "ItemName": "Comfort Zone Stompers"
+    },
+    {
+      "ItemId": "1430285",
+      "ItemName": "Leisure Dome Topper"
+    },
+    {
+      "ItemId": "1430299",
+      "ItemName": "Leisure Dome Costume"
+    },
+    {
+      "ItemId": "1430313",
+      "ItemName": "Leisure Dome Steppers"
+    },
+    {
+      "ItemId": "1430442",
+      "ItemName": "Interstellar Engineer Helm"
+    },
+    {
+      "ItemId": "1430443",
+      "ItemName": "Interstellar Explorer's Helm"
+    },
+    {
+      "ItemId": "1430444",
+      "ItemName": "Interstellar Navigator Helm"
+    },
+    {
+      "ItemId": "1430445",
+      "ItemName": "Interstellar Hero's Helm"
+    },
+    {
+      "ItemId": "1430446",
+      "ItemName": "Medic's Interstellar Helm"
+    },
+    {
+      "ItemId": "1430447",
+      "ItemName": "Interstellar Warrior Helm"
+    },
+    {
+      "ItemId": "1430448",
+      "ItemName": "Interstellar Delegate's Helm"
+    },
+    {
+      "ItemId": "1430449",
+      "ItemName": "Interstellar Officer's Helm"
+    },
+    {
+      "ItemId": "1430488",
+      "ItemName": "Interstellar Engineer's Knife"
+    },
+    {
+      "ItemId": "1430489",
+      "ItemName": "Interstellar Explorer's Knife"
+    },
+    {
+      "ItemId": "1430490",
+      "ItemName": "Interstellar Navigator's Knife"
+    },
+    {
+      "ItemId": "1430491",
+      "ItemName": "Interstellar Hero's Knife"
+    },
+    {
+      "ItemId": "1430492",
+      "ItemName": "Interstellar Medic's Scalpel"
+    },
+    {
+      "ItemId": "1430493",
+      "ItemName": "Interstellar Warrior's Knife"
+    },
+    {
+      "ItemId": "1430494",
+      "ItemName": "Interstellar Delegate's Knife"
+    },
+    {
+      "ItemId": "1430495",
+      "ItemName": "Interstellar Officer's Knife"
+    },
+    {
+      "ItemId": "1430496",
+      "ItemName": "Interstellar Engineer's Charm"
+    },
+    {
+      "ItemId": "1430497",
+      "ItemName": "Interstellar Explorer's Charm"
+    },
+    {
+      "ItemId": "1430498",
+      "ItemName": "Interstellar Navigator's Charm"
+    },
+    {
+      "ItemId": "1430499",
+      "ItemName": "Interstellar Hero's Charm"
+    },
+    {
+      "ItemId": "1430500",
+      "ItemName": "Interstellar Medic's Charm"
+    },
+    {
+      "ItemId": "1430501",
+      "ItemName": "Interstellar Warrior's Charm"
+    },
+    {
+      "ItemId": "1430502",
+      "ItemName": "Interstellar Delegate's Charm"
+    },
+    {
+      "ItemId": "1430503",
+      "ItemName": "Interstellar Officer's Charm"
+    },
+    {
+      "ItemId": "1430504",
+      "ItemName": "Interstellar Engineer's Band"
+    },
+    {
+      "ItemId": "1430505",
+      "ItemName": "Interstellar Explorer's Band"
+    },
+    {
+      "ItemId": "1430506",
+      "ItemName": "Interstellar Navigator's Band"
+    },
+    {
+      "ItemId": "1430507",
+      "ItemName": "Interstellar Hero's Band"
+    },
+    {
+      "ItemId": "1430508",
+      "ItemName": "Interstellar Medic's Band"
+    },
+    {
+      "ItemId": "1430509",
+      "ItemName": "Interstellar Warrior's Band"
+    },
+    {
+      "ItemId": "1430510",
+      "ItemName": "Interstellar Delegate's Band"
+    },
+    {
+      "ItemId": "1430511",
+      "ItemName": "Interstellar Officer's Band"
+    },
+    {
+      "ItemId": "1430512",
+      "ItemName": "Interstellar Engineer's Deck"
+    },
+    {
+      "ItemId": "1430513",
+      "ItemName": "Interstellar Explorer's Deck"
+    },
+    {
+      "ItemId": "1430514",
+      "ItemName": "Interstellar Navigator's Deck"
+    },
+    {
+      "ItemId": "1430515",
+      "ItemName": "Interstellar Hero's Deck"
+    },
+    {
+      "ItemId": "1430516",
+      "ItemName": "Interstellar Medic's Deck"
+    },
+    {
+      "ItemId": "1430517",
+      "ItemName": "Interstellar Warrior's Deck"
+    },
+    {
+      "ItemId": "1430518",
+      "ItemName": "Interstellar Delegate's Deck"
+    },
+    {
+      "ItemId": "1430519",
+      "ItemName": "Interstellar Officer's Deck"
+    },
+    {
+      "ItemId": "1430609",
+      "ItemName": "Mirrorsphere Relic"
+    },
+    {
+      "ItemId": "1430623",
+      "ItemName": "Zanadu Mirror Relic"
+    },
+    {
+      "ItemId": "1430637",
+      "ItemName": "Alphoi Reflector Relic"
+    },
+    {
+      "ItemId": "1446119",
+      "ItemName": "Radiant Light Brigade Armor"
+    },
+    {
+      "ItemId": "1446120",
+      "ItemName": "Frosty Light Brigade Armor"
+    },
+    {
+      "ItemId": "1446121",
+      "ItemName": "Charged Light Brigade Armor"
+    },
+    {
+      "ItemId": "1446122",
+      "ItemName": "Quixotic Light Brigade Armor"
+    },
+    {
+      "ItemId": "1446123",
+      "ItemName": "Ornate Light Brigade Armor"
+    },
+    {
+      "ItemId": "1446124",
+      "ItemName": "Baleful Light Brigade Armor"
+    },
+    {
+      "ItemId": "1446125",
+      "ItemName": "Virtuous Light Brigade Armor"
+    },
+    {
+      "ItemId": "1446126",
+      "ItemName": "Armor of the Light Brigade"
+    },
+    {
+      "ItemId": "1446423",
+      "ItemName": "Cape of Fire Light"
+    },
+    {
+      "ItemId": "1446424",
+      "ItemName": "Cape of Refraction"
+    },
+    {
+      "ItemId": "1446425",
+      "ItemName": "Heat Lightning Robes"
+    },
+    {
+      "ItemId": "1446426",
+      "ItemName": "Will-o'-the-Wisp Cape"
+    },
+    {
+      "ItemId": "1446427",
+      "ItemName": "Spark of Life Cape"
+    },
+    {
+      "ItemId": "1446428",
+      "ItemName": "Cape of the Brief Candle"
+    },
+    {
+      "ItemId": "1446429",
+      "ItemName": "Twilight Cape"
+    },
+    {
+      "ItemId": "1446430",
+      "ItemName": "Conical of Fire Light"
+    },
+    {
+      "ItemId": "1446431",
+      "ItemName": "Boots of Fire Light"
+    },
+    {
+      "ItemId": "1446432",
+      "ItemName": "Conical of Refraction"
+    },
+    {
+      "ItemId": "1446433",
+      "ItemName": "Boots of Refraction"
+    },
+    {
+      "ItemId": "1446434",
+      "ItemName": "Heat Lightning Conical"
+    },
+    {
+      "ItemId": "1446435",
+      "ItemName": "Heat Lightning Boots"
+    },
+    {
+      "ItemId": "1446436",
+      "ItemName": "Will-o'-the-Wisp Conical"
+    },
+    {
+      "ItemId": "1446437",
+      "ItemName": "Will-o'-the-Wisp Boots"
+    },
+    {
+      "ItemId": "1446438",
+      "ItemName": "Spark of Life Conical"
+    },
+    {
+      "ItemId": "1446439",
+      "ItemName": "Spark of Life Boots"
+    },
+    {
+      "ItemId": "1446440",
+      "ItemName": "Conical of the Brief Candle"
+    },
+    {
+      "ItemId": "1446441",
+      "ItemName": "Boots of the Brief Candle"
+    },
+    {
+      "ItemId": "1446442",
+      "ItemName": "Twilight Conical"
+    },
+    {
+      "ItemId": "1446443",
+      "ItemName": "Twilight Boots"
+    }
+  ]
+}

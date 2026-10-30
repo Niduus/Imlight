@@ -1,0 +1,113 @@
+{
+  "Name": "W404 CL-AnglerBoss-R10-3 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table CL-AnglerBoss-R10-3: the gear drops (26), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243210",
+      "ItemName": "Versatile Steel"
+    },
+    {
+      "ItemId": "243267",
+      "ItemName": "Razor of Rapture"
+    },
+    {
+      "ItemId": "243322",
+      "ItemName": "Forbidden Mask"
+    },
+    {
+      "ItemId": "243394",
+      "ItemName": "Centaur's Helm"
+    },
+    {
+      "ItemId": "243463",
+      "ItemName": "Lawful Garment"
+    },
+    {
+      "ItemId": "243515",
+      "ItemName": "Ring of Rapport"
+    },
+    {
+      "ItemId": "243575",
+      "ItemName": "Nellek's Willow Ring"
+    },
+    {
+      "ItemId": "243686",
+      "ItemName": "Raiment of Wonder"
+    },
+    {
+      "ItemId": "243835",
+      "ItemName": "Epic Greaves"
+    },
+    {
+      "ItemId": "243855",
+      "ItemName": "Thunderstruck Striders"
+    },
+    {
+      "ItemId": "243890",
+      "ItemName": "Legendary Vial"
+    },
+    {
+      "ItemId": "243896",
+      "ItemName": "Windstorm Choker"
+    },
+    {
+      "ItemId": "1689424",
+      "ItemName": "Atavistic Balance Ampul"
+    },
+    {
+      "ItemId": "1689425",
+      "ItemName": "Atavistic Death Ampul"
+    },
+    {
+      "ItemId": "1689426",
+      "ItemName": "Atavistic Fire Ampul"
+    },
+    {
+      "ItemId": "1689427",
+      "ItemName": "Atavistic Ice Ampul"
+    },
+    {
+      "ItemId": "1689428",
+      "ItemName": "Atavistic Life Ampul"
+    },
+    {
+      "ItemId": "1689429",
+      "ItemName": "Atavistic Myth Ampul"
+    },
+    {
+      "ItemId": "1689430",
+      "ItemName": "Atavistic Storm Ampul"
+    },
+    {
+      "ItemId": "1689491",
+      "ItemName": "Bygone Balance Ampul"
+    },
+    {
+      "ItemId": "1689492",
+      "ItemName": "Bygone Death Ampul"
+    },
+    {
+      "ItemId": "1689493",
+      "ItemName": "Bygone Fire Ampul"
+    },
+    {
+      "ItemId": "1689494",
+      "ItemName": "Bygone Ice Ampul"
+    },
+    {
+      "ItemId": "1689495",
+      "ItemName": "Bygone Life Ampul"
+    },
+    {
+      "ItemId": "1689496",
+      "ItemName": "Bygone Myth Ampul"
+    },
+    {
+      "ItemId": "1689497",
+      "ItemName": "Bygone Storm Ampul"
+    }
+  ]
+}

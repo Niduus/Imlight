@@ -1,0 +1,9 @@
+{
+  "Name": "W404 Skeleton-Silver-WCBoss-L04",
+  "Description": "Gold of the game's table Skeleton-Silver-WCBoss-L04, from Wizard404.",
+  "RollChance": 1.0,
+  "MinGold": 3,
+  "MaxGold": 5,
+  "EachItem": false,
+  "Items": []
+}

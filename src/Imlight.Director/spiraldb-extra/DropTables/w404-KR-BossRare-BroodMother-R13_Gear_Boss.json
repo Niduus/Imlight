@@ -1,0 +1,53 @@
+{
+  "Name": "W404 KR-BossRare-BroodMother-R13 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KR-BossRare-BroodMother-R13: the gear drops (11), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203137",
+      "ItemName": "Gloom Dancer's Shroud"
+    },
+    {
+      "ItemId": "1203206",
+      "ItemName": "Armor of the Mouse Knight"
+    },
+    {
+      "ItemId": "1203293",
+      "ItemName": "Kermes Fireclaw"
+    },
+    {
+      "ItemId": "1203295",
+      "ItemName": "Tarantula Hawk's Black Wind"
+    },
+    {
+      "ItemId": "1203302",
+      "ItemName": "Black Cloud Carnage"
+    },
+    {
+      "ItemId": "1203338",
+      "ItemName": "BurrowBuilder's Medallion"
+    },
+    {
+      "ItemId": "1203339",
+      "ItemName": "Charm of the Fierce Mantis"
+    },
+    {
+      "ItemId": "1203343",
+      "ItemName": "Memento of the Moon Cliffs"
+    },
+    {
+      "ItemId": "1203405",
+      "ItemName": "Barbed Case of Stratagem"
+    },
+    {
+      "ItemId": "1203407",
+      "ItemName": "Gallery of the Woebegone"
+    },
+    {
+      "ItemId": "1203414",
+      "ItemName": "Mago's Death's Head Set"
+    }
+  ]
+}

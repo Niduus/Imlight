@@ -1,0 +1,16 @@
+{
+  "TemplateID": 590012,
+  "DropTableNames": [
+    "W404 AV-Reagents Reagent (Boss)",
+    "W404 AV-Mob-02",
+    "W404 AV-Mob-02 Gear (Boss)",
+    "W404 AV-Mob-02 Snack (Boss)",
+    "W404 AV-Mob-02 Seed (Boss)",
+    "W404 AV-Mob-02 Housing (Boss)",
+    "W404 TC-AV-Uncommons TreasureCard (Boss)",
+    "W404 TC-AV-Rares TreasureCard (Boss)",
+    "W404 TC-AV-Rares Seed (Boss)",
+    "W404 AV-MiniBoss-Jewels Jewel (Boss)",
+    "W404 AV-MiniBoss-Jewels Reagent (Boss)"
+  ]
+}

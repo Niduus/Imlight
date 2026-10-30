@@ -1,0 +1,301 @@
+{
+  "Name": "W404 PL-Boss-Ludus Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table PL-Boss-Ludus: the gear drops (73), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "470720",
+      "ItemName": "The Enchanter"
+    },
+    {
+      "ItemId": "1217004",
+      "ItemName": "The Stalwart Guardian"
+    },
+    {
+      "ItemId": "1217212",
+      "ItemName": "The Stardust"
+    },
+    {
+      "ItemId": "1217358",
+      "ItemName": "The Warlock"
+    },
+    {
+      "ItemId": "1217362",
+      "ItemName": "The Kroktop"
+    },
+    {
+      "ItemId": "1317802",
+      "ItemName": "The Manticore"
+    },
+    {
+      "ItemId": "1359662",
+      "ItemName": "The Goat Horns"
+    },
+    {
+      "ItemId": "1359663",
+      "ItemName": "The Ice Horns"
+    },
+    {
+      "ItemId": "1363610",
+      "ItemName": "Taig Cloak of Wrath"
+    },
+    {
+      "ItemId": "1363669",
+      "ItemName": "Tundarian Cap of Rage"
+    },
+    {
+      "ItemId": "1363670",
+      "ItemName": "Tundarian Icecap"
+    },
+    {
+      "ItemId": "1363671",
+      "ItemName": "Tundarian Furcap of Flux"
+    },
+    {
+      "ItemId": "1363672",
+      "ItemName": "Fancy Tundarian Papakh"
+    },
+    {
+      "ItemId": "1363673",
+      "ItemName": "Tundarian Papakh of Resolve"
+    },
+    {
+      "ItemId": "1363674",
+      "ItemName": "Tundarian Fur Hat of Dread"
+    },
+    {
+      "ItemId": "1363675",
+      "ItemName": "Tundarian Papakh of Fusion"
+    },
+    {
+      "ItemId": "1363676",
+      "ItemName": "Tundarian Bear's Papakh"
+    },
+    {
+      "ItemId": "1363701",
+      "ItemName": "Tundarian Uniform of Rage"
+    },
+    {
+      "ItemId": "1363702",
+      "ItemName": "Tundarian Sleet Parka"
+    },
+    {
+      "ItemId": "1363703",
+      "ItemName": "Tundarian Chokha of Flux"
+    },
+    {
+      "ItemId": "1363704",
+      "ItemName": "Fancy Tundarian Chokha"
+    },
+    {
+      "ItemId": "1363705",
+      "ItemName": "Tundarian Jacket of Resolve"
+    },
+    {
+      "ItemId": "1363706",
+      "ItemName": "Tundarian Cloak of Dread"
+    },
+    {
+      "ItemId": "1363707",
+      "ItemName": "Tundarian Coat of Fusion"
+    },
+    {
+      "ItemId": "1363708",
+      "ItemName": "Tundarian Bear's Cherkesska"
+    },
+    {
+      "ItemId": "1363733",
+      "ItemName": "Tundarian Stalkers of Rage"
+    },
+    {
+      "ItemId": "1363734",
+      "ItemName": "Tundarian Icecleats"
+    },
+    {
+      "ItemId": "1363735",
+      "ItemName": "Tundarian Striders of Flux"
+    },
+    {
+      "ItemId": "1363736",
+      "ItemName": "Fancy Tundarian Footwear"
+    },
+    {
+      "ItemId": "1363737",
+      "ItemName": "Tundarian Boots of Resolve"
+    },
+    {
+      "ItemId": "1363738",
+      "ItemName": "Tundarian Walkers of Dread"
+    },
+    {
+      "ItemId": "1363739",
+      "ItemName": "Tundarian Mukluks of Fusion"
+    },
+    {
+      "ItemId": "1363740",
+      "ItemName": "Tundarian Osky's Snowshoes"
+    },
+    {
+      "ItemId": "1363957",
+      "ItemName": "Enchanter's Fervid Blade"
+    },
+    {
+      "ItemId": "1363958",
+      "ItemName": "Enchanter's Ice Floe Dagger"
+    },
+    {
+      "ItemId": "1363959",
+      "ItemName": "Enchanter's Dirk of Lightning"
+    },
+    {
+      "ItemId": "1363960",
+      "ItemName": "Enchanter's Blade of Reverie"
+    },
+    {
+      "ItemId": "1363961",
+      "ItemName": "Enchanter's Talon of Courage"
+    },
+    {
+      "ItemId": "1363962",
+      "ItemName": "Enchanter's Terminus Chisel"
+    },
+    {
+      "ItemId": "1363963",
+      "ItemName": "Enchanter's Knife of Poise"
+    },
+    {
+      "ItemId": "1363964",
+      "ItemName": "Enchanter's New Horizon Razor"
+    },
+    {
+      "ItemId": "1363989",
+      "ItemName": "Enchanter's Fervid Carcanet"
+    },
+    {
+      "ItemId": "1363990",
+      "ItemName": "Enchanter's Ice Floe Charm"
+    },
+    {
+      "ItemId": "1363991",
+      "ItemName": "Enchanter's Torc of Lightning"
+    },
+    {
+      "ItemId": "1363992",
+      "ItemName": "Enchanter's Reverie Pendant"
+    },
+    {
+      "ItemId": "1363993",
+      "ItemName": "Enchanter's Ampul of Courage"
+    },
+    {
+      "ItemId": "1363994",
+      "ItemName": "Enchanter's Terminus Amulet"
+    },
+    {
+      "ItemId": "1363995",
+      "ItemName": "Enchanter's Pendant of Poise"
+    },
+    {
+      "ItemId": "1363996",
+      "ItemName": "Enchanter's New Horizon Charm"
+    },
+    {
+      "ItemId": "1369021",
+      "ItemName": "Enchanter's Fervid Circle"
+    },
+    {
+      "ItemId": "1369022",
+      "ItemName": "Enchanter's Ice Floe Band"
+    },
+    {
+      "ItemId": "1369023",
+      "ItemName": "Enchanter's Ring of Lightning"
+    },
+    {
+      "ItemId": "1369024",
+      "ItemName": "Enchanter's Reverie Band"
+    },
+    {
+      "ItemId": "1369025",
+      "ItemName": "Enchanter's Loop of Courage"
+    },
+    {
+      "ItemId": "1369026",
+      "ItemName": "Enchanter's Terminus Ring"
+    },
+    {
+      "ItemId": "1369027",
+      "ItemName": "Enchanter's Seal of Poise"
+    },
+    {
+      "ItemId": "1369028",
+      "ItemName": "Enchanter's Ring of Potential"
+    },
+    {
+      "ItemId": "1369373",
+      "ItemName": "Tayg Bardiche of Steam"
+    },
+    {
+      "ItemId": "1369374",
+      "ItemName": "Axe of the Snowbound Tayg"
+    },
+    {
+      "ItemId": "1369375",
+      "ItemName": "Tayg Hatchet of Sleetfall"
+    },
+    {
+      "ItemId": "1369376",
+      "ItemName": "Tayg Axe of Folklore"
+    },
+    {
+      "ItemId": "1369377",
+      "ItemName": "Tayg Hatchet of Vitality"
+    },
+    {
+      "ItemId": "1369378",
+      "ItemName": "Tayg Bardiche of Wrath"
+    },
+    {
+      "ItemId": "1369379",
+      "ItemName": "Tayg Handaxe of Leveling"
+    },
+    {
+      "ItemId": "1369380",
+      "ItemName": "Forlorn Tayg Curved Axe"
+    },
+    {
+      "ItemId": "1369501",
+      "ItemName": "Tayg Pasteboards of Steam"
+    },
+    {
+      "ItemId": "1369502",
+      "ItemName": "Snowbound Tayg Gallery"
+    },
+    {
+      "ItemId": "1369503",
+      "ItemName": "Sleetfall Array of the Tayg"
+    },
+    {
+      "ItemId": "1369504",
+      "ItemName": "Tayg Hand of Folklore"
+    },
+    {
+      "ItemId": "1369505",
+      "ItemName": "Tayg Pack of Vitality"
+    },
+    {
+      "ItemId": "1369506",
+      "ItemName": "Tayg Deck of Wrath"
+    },
+    {
+      "ItemId": "1369507",
+      "ItemName": "Tayg Set of Leveling"
+    },
+    {
+      "ItemId": "1369508",
+      "ItemName": "Hand of the Forlorn Tayg"
+    }
+  ]
+}

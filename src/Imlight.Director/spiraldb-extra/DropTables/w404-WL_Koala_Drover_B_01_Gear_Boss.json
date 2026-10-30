@@ -1,0 +1,121 @@
+{
+  "Name": "W404 WL_Koala_Drover_B_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WL_Koala_Drover_B_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1628397",
+      "ItemName": "Elegant City Dweller Amulet"
+    },
+    {
+      "ItemId": "1628398",
+      "ItemName": "Gothic City Dweller Amulet"
+    },
+    {
+      "ItemId": "1628399",
+      "ItemName": "Flashy City Dweller Amulet"
+    },
+    {
+      "ItemId": "1628400",
+      "ItemName": "Crisp City Dweller Amulet"
+    },
+    {
+      "ItemId": "1628401",
+      "ItemName": "Vibrant City Dweller Amulet"
+    },
+    {
+      "ItemId": "1628402",
+      "ItemName": "Iconic City Dweller Amulet"
+    },
+    {
+      "ItemId": "1628403",
+      "ItemName": "Striking City Dweller Amulet"
+    },
+    {
+      "ItemId": "1628439",
+      "ItemName": "Elegant City Dweller Cane"
+    },
+    {
+      "ItemId": "1628440",
+      "ItemName": "Gothic City Dweller Cane"
+    },
+    {
+      "ItemId": "1628441",
+      "ItemName": "Flashy City Dweller Cane"
+    },
+    {
+      "ItemId": "1628442",
+      "ItemName": "Crisp City Dweller Cane"
+    },
+    {
+      "ItemId": "1628443",
+      "ItemName": "Vibrant City Dweller Cane"
+    },
+    {
+      "ItemId": "1628444",
+      "ItemName": "Iconic City Dweller Cane"
+    },
+    {
+      "ItemId": "1628445",
+      "ItemName": "Striking City Dweller Cane"
+    },
+    {
+      "ItemId": "1628544",
+      "ItemName": "Elegant Townie Amulet"
+    },
+    {
+      "ItemId": "1628545",
+      "ItemName": "Gothic Townie Amulet"
+    },
+    {
+      "ItemId": "1628546",
+      "ItemName": "Flashy Townie Amulet"
+    },
+    {
+      "ItemId": "1628547",
+      "ItemName": "Crisp Townie Amulet"
+    },
+    {
+      "ItemId": "1628548",
+      "ItemName": "Vibrant Townie Amulet"
+    },
+    {
+      "ItemId": "1628549",
+      "ItemName": "Iconic Townie Amulet"
+    },
+    {
+      "ItemId": "1628550",
+      "ItemName": "Striking Townie Amulet"
+    },
+    {
+      "ItemId": "1628600",
+      "ItemName": "Elegant Townie Cane"
+    },
+    {
+      "ItemId": "1628601",
+      "ItemName": "Gothic Townie Cane"
+    },
+    {
+      "ItemId": "1628602",
+      "ItemName": "Flashy Townie Cane"
+    },
+    {
+      "ItemId": "1628603",
+      "ItemName": "Crisp Townie Cane"
+    },
+    {
+      "ItemId": "1628604",
+      "ItemName": "Vibrant Townie Cane"
+    },
+    {
+      "ItemId": "1628605",
+      "ItemName": "Iconic Townie Cane"
+    },
+    {
+      "ItemId": "1628606",
+      "ItemName": "Striking Townie Cane"
+    }
+  ]
+}

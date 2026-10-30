@@ -1,0 +1,45 @@
+{
+  "Name": "W404 Cl-SharkWarrior-Green-Boss-R10 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Cl-SharkWarrior-Green-Boss-R10: the gear drops (9), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "243212",
+      "ItemName": "Sliver of Regret"
+    },
+    {
+      "ItemId": "243271",
+      "ItemName": "Storied Stiletto"
+    },
+    {
+      "ItemId": "243314",
+      "ItemName": "Cap of Catastrophe"
+    },
+    {
+      "ItemId": "243383",
+      "ItemName": "Innate Cap"
+    },
+    {
+      "ItemId": "243517",
+      "ItemName": "Seal of Ordeal"
+    },
+    {
+      "ItemId": "243578",
+      "ItemName": "Storied Signet"
+    },
+    {
+      "ItemId": "243664",
+      "ItemName": "Festive Costume"
+    },
+    {
+      "ItemId": "243703",
+      "ItemName": "Stormy Surcoat"
+    },
+    {
+      "ItemId": "243850",
+      "ItemName": "Stormy Shoes"
+    }
+  ]
+}

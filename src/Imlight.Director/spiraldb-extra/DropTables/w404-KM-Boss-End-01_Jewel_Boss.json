@@ -1,0 +1,25 @@
+{
+  "Name": "W404 KM-Boss-End-01 Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-Boss-End-01: the jewel drops (4), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1514508",
+      "ItemName": "Dazzling Mana Opal +55"
+    },
+    {
+      "ItemId": "1514509",
+      "ItemName": "Dazzling Mana Opal +56"
+    },
+    {
+      "ItemId": "1514569",
+      "ItemName": "Dazzling Health Opal +134"
+    },
+    {
+      "ItemId": "1514570",
+      "ItemName": "Dazzling Health Opal +135"
+    }
+  ]
+}

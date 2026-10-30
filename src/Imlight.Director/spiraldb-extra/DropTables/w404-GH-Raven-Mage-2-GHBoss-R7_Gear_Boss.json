@@ -1,0 +1,37 @@
+{
+  "Name": "W404 GH-Raven-Mage-2-GHBoss-R7 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table GH-Raven-Mage-2-GHBoss-R7: the gear drops (7), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "136449",
+      "ItemName": "Permafrost Cap"
+    },
+    {
+      "ItemId": "136672",
+      "ItemName": "Flamewarden's Outfit"
+    },
+    {
+      "ItemId": "136674",
+      "ItemName": "Raiment of the Naiad"
+    },
+    {
+      "ItemId": "136675",
+      "ItemName": "Outfit of the Scholar"
+    },
+    {
+      "ItemId": "136677",
+      "ItemName": "Vestment of the Last Veil"
+    },
+    {
+      "ItemId": "136693",
+      "ItemName": "Galvanic Blade"
+    },
+    {
+      "ItemId": "346503",
+      "ItemName": "Arcane Staff"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "Name": "W404 WC-CA-Drains-Boss-06 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WC-CA-Drains-Boss-06: the gear drops (16), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1489415",
+      "ItemName": "Vanguard's Fiery Ring"
+    },
+    {
+      "ItemId": "1489416",
+      "ItemName": "Vanguard's Icy Ring"
+    },
+    {
+      "ItemId": "1489417",
+      "ItemName": "Vanguard's Shocking Ring"
+    },
+    {
+      "ItemId": "1489418",
+      "ItemName": "Vanguard's Mythic Ring"
+    },
+    {
+      "ItemId": "1489419",
+      "ItemName": "Vanguard's Vibrant Ring"
+    },
+    {
+      "ItemId": "1489420",
+      "ItemName": "Vanguard's Deadly Ring"
+    },
+    {
+      "ItemId": "1489421",
+      "ItemName": "Vanguard's Balanced Ring"
+    },
+    {
+      "ItemId": "1489422",
+      "ItemName": "Dragonspyre Vanguard's Ring"
+    },
+    {
+      "ItemId": "1489455",
+      "ItemName": "Vanguard's Fiery Sword"
+    },
+    {
+      "ItemId": "1489456",
+      "ItemName": "Vanguard's Icy Sword"
+    },
+    {
+      "ItemId": "1489457",
+      "ItemName": "Vanguard's Shocking Sword"
+    },
+    {
+      "ItemId": "1489458",
+      "ItemName": "Vanguard's Mythic Sword"
+    },
+    {
+      "ItemId": "1489459",
+      "ItemName": "Vanguard's Vibrant Sword"
+    },
+    {
+      "ItemId": "1489460",
+      "ItemName": "Vanguard's Deadly Sword"
+    },
+    {
+      "ItemId": "1489461",
+      "ItemName": "Vanguard's Balanced Sword"
+    },
+    {
+      "ItemId": "1489462",
+      "ItemName": "Dragonspyre Vanguard Sword"
+    }
+  ]
+}

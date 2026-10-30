@@ -1,0 +1,77 @@
+{
+  "Name": "W404 Cyclops-RedHelmet-WCBoss-L18 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table Cyclops-RedHelmet-WCBoss-L18: the gear drops (17), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "4676",
+      "ItemName": "Amulet of the Fay"
+    },
+    {
+      "ItemId": "4720",
+      "ItemName": "Jade Studded Athame"
+    },
+    {
+      "ItemId": "4733",
+      "ItemName": "Jeweled Dagger"
+    },
+    {
+      "ItemId": "4779",
+      "ItemName": "Hallowed Band"
+    },
+    {
+      "ItemId": "4841",
+      "ItemName": "Northland Footwraps"
+    },
+    {
+      "ItemId": "4844",
+      "ItemName": "Cloudburst Wraps"
+    },
+    {
+      "ItemId": "4855",
+      "ItemName": "Goldleaf Shoes"
+    },
+    {
+      "ItemId": "77569",
+      "ItemName": "Akilles' Blazing Helm"
+    },
+    {
+      "ItemId": "77581",
+      "ItemName": "Cloudburst Helm"
+    },
+    {
+      "ItemId": "77583",
+      "ItemName": "Stormweave Hood"
+    },
+    {
+      "ItemId": "77588",
+      "ItemName": "Trollskin Hat"
+    },
+    {
+      "ItemId": "87207",
+      "ItemName": "Canvas Cloak"
+    },
+    {
+      "ItemId": "87211",
+      "ItemName": "Tunic of Disturbance"
+    },
+    {
+      "ItemId": "87221",
+      "ItemName": "Barkskin Tunic"
+    },
+    {
+      "ItemId": "160098",
+      "ItemName": "Scepter of Tribute"
+    },
+    {
+      "ItemId": "160099",
+      "ItemName": "Resplendent Rod"
+    },
+    {
+      "ItemId": "346502",
+      "ItemName": "Bolt Blade"
+    }
+  ]
+}

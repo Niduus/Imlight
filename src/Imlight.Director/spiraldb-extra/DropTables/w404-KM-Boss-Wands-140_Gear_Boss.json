@@ -1,0 +1,105 @@
+{
+  "Name": "W404 KM-Boss-Wands-140 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table KM-Boss-Wands-140: the gear drops (24), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1515296",
+      "ItemName": "Guten Freshbaker Staff"
+    },
+    {
+      "ItemId": "1515297",
+      "ItemName": "Guten Wonderneer Staff"
+    },
+    {
+      "ItemId": "1515298",
+      "ItemName": "Guten Sciencer Staff"
+    },
+    {
+      "ItemId": "1515299",
+      "ItemName": "Guten Artisan Staff"
+    },
+    {
+      "ItemId": "1515300",
+      "ItemName": "Guten Sweetsmith Staff"
+    },
+    {
+      "ItemId": "1515301",
+      "ItemName": "Guten Sentamentalist Staff"
+    },
+    {
+      "ItemId": "1515302",
+      "ItemName": "Guten Dreamsearcher Staff"
+    },
+    {
+      "ItemId": "1515303",
+      "ItemName": "Guten Candymancer Staff"
+    },
+    {
+      "ItemId": "1515305",
+      "ItemName": "Wunderbar Freshbaker Staff"
+    },
+    {
+      "ItemId": "1515306",
+      "ItemName": "Wunderbar Wonderneer Staff"
+    },
+    {
+      "ItemId": "1515307",
+      "ItemName": "Wunderbar Sciencer Staff"
+    },
+    {
+      "ItemId": "1515308",
+      "ItemName": "Wunderbar Artisan Staff"
+    },
+    {
+      "ItemId": "1515309",
+      "ItemName": "Wunderbar Sweetsmith Staff"
+    },
+    {
+      "ItemId": "1515310",
+      "ItemName": "Wunderbar Sentamentalist Staff"
+    },
+    {
+      "ItemId": "1515311",
+      "ItemName": "Wunderbar Dreamsearcher Staff"
+    },
+    {
+      "ItemId": "1515312",
+      "ItemName": "Wunderbar Candymancer Staff"
+    },
+    {
+      "ItemId": "1515314",
+      "ItemName": "Uber Freshbaker Staff"
+    },
+    {
+      "ItemId": "1515315",
+      "ItemName": "Uber Wonderneer Staff"
+    },
+    {
+      "ItemId": "1515316",
+      "ItemName": "Uber Sciencer Staff"
+    },
+    {
+      "ItemId": "1515317",
+      "ItemName": "Uber Artisan Staff"
+    },
+    {
+      "ItemId": "1515318",
+      "ItemName": "Uber Sweetsmith Staff"
+    },
+    {
+      "ItemId": "1515319",
+      "ItemName": "Uber Sentamentalist Staff"
+    },
+    {
+      "ItemId": "1515320",
+      "ItemName": "Uber Dreamsearcher Staff"
+    },
+    {
+      "ItemId": "1515321",
+      "ItemName": "Uber Candymancer Staff"
+    }
+  ]
+}

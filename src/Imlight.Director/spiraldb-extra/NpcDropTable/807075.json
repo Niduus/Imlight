@@ -1,0 +1,18 @@
+{
+  "TemplateID": 807075,
+  "DropTableNames": [
+    "W404 Student-Storm-PageEvent",
+    "W404 Student-Storm-PageEvent Gear (Boss)",
+    "W404 Student-Storm-PageEvent Pet (Boss)",
+    "W404 Student-Storm-PageEvent Mount (Boss)",
+    "W404 Student-Storm-PageEvent TreasureCard (Boss)",
+    "W404 Student-Storm-PageEvent Snack (Boss)",
+    "W404 Student-Storm-PageEvent Housing (Boss)",
+    "W404 Cyclops-BlueHelmet-WCBoss-L15",
+    "W404 Cyclops-BlueHelmet-WCBoss-L15 Gear (Boss)",
+    "W404 Cyclops-BlueHelmet-WCBoss-L15 TreasureCard (Boss)",
+    "W404 Cyclops-BlueHelmet-WCBoss-L15 Housing (Boss)",
+    "W404 TC-CommonsBosses TreasureCard",
+    "W404 ReagentLT-Drop-Leather-02 Reagent (Boss)"
+  ]
+}

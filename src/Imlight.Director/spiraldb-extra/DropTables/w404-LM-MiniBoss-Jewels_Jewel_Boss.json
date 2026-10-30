@@ -1,0 +1,217 @@
+{
+  "Name": "W404 LM-MiniBoss-Jewels Jewel (Boss)",
+  "Description": "Wizard404's drop list of the game's table LM-MiniBoss-Jewels: the jewel drops (52), one picked when it rolls. How often: DropOdds.json Boss/Jewel.",
+  "Odds": "Boss/Jewel",
+  "RollChance": 0.25,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1514484",
+      "ItemName": "Dazzling Accurate Jade +14%"
+    },
+    {
+      "ItemId": "1514483",
+      "ItemName": "Dazzling Accurate Peridot +14%"
+    },
+    {
+      "ItemId": "1514481",
+      "ItemName": "Dazzling Accurate Sapphire +14%"
+    },
+    {
+      "ItemId": "1514549",
+      "ItemName": "Dazzling Blocking Amethyst +19"
+    },
+    {
+      "ItemId": "1514553",
+      "ItemName": "Dazzling Blocking Jade +19"
+    },
+    {
+      "ItemId": "1514465",
+      "ItemName": "Dazzling Critical Peridot +19"
+    },
+    {
+      "ItemId": "1514525",
+      "ItemName": "Dazzling Defense Peridot +60"
+    },
+    {
+      "ItemId": "1430061",
+      "ItemName": "Sparkling Health Opal +117"
+    },
+    {
+      "ItemId": "1430065",
+      "ItemName": "Sparkling Mana Opal +49"
+    },
+    {
+      "ItemId": "1514487",
+      "ItemName": "Dazzling Accurate Hematite +14%"
+    },
+    {
+      "ItemId": "1514463",
+      "ItemName": "Dazzling Critical Amethyst +19"
+    },
+    {
+      "ItemId": "1514453",
+      "ItemName": "Dazzling Damage Citrine +29"
+    },
+    {
+      "ItemId": "1514542",
+      "ItemName": "Dazzling Defense Opal +29"
+    },
+    {
+      "ItemId": "1462488",
+      "ItemName": "Sparkling Accurate Citrine +13%"
+    },
+    {
+      "ItemId": "1430040",
+      "ItemName": "Sparkling Blocking Jade +17"
+    },
+    {
+      "ItemId": "1430052",
+      "ItemName": "Sparkling Critical Ruby +17"
+    },
+    {
+      "ItemId": "1430025",
+      "ItemName": "Sparkling Defense Peridot +53"
+    },
+    {
+      "ItemId": "1430019",
+      "ItemName": "Sparkling Defense Ruby +53"
+    },
+    {
+      "ItemId": "1514456",
+      "ItemName": "Dazzling Damage Hematite +60"
+    },
+    {
+      "ItemId": "1514486",
+      "ItemName": "Dazzling Accurate Citrine +14%"
+    },
+    {
+      "ItemId": "1514480",
+      "ItemName": "Dazzling Accurate Ruby +14%"
+    },
+    {
+      "ItemId": "1514557",
+      "ItemName": "Dazzling Blocking Citrine +19"
+    },
+    {
+      "ItemId": "1514547",
+      "ItemName": "Dazzling Blocking Sapphire +19"
+    },
+    {
+      "ItemId": "1514521",
+      "ItemName": "Dazzling Defense Amethyst +60"
+    },
+    {
+      "ItemId": "1462487",
+      "ItemName": "Sparkling Accurate Onyx +13%"
+    },
+    {
+      "ItemId": "1462482",
+      "ItemName": "Sparkling Accurate Ruby +13%"
+    },
+    {
+      "ItemId": "1430051",
+      "ItemName": "Sparkling Damage Hematite +54"
+    },
+    {
+      "ItemId": "1430048",
+      "ItemName": "Sparkling Damage Jade +27"
+    },
+    {
+      "ItemId": "1430049",
+      "ItemName": "Sparkling Damage Onyx +27"
+    },
+    {
+      "ItemId": "1430027",
+      "ItemName": "Sparkling Defense Jade +53"
+    },
+    {
+      "ItemId": "1430035",
+      "ItemName": "Sparkling Defense Opal +27"
+    },
+    {
+      "ItemId": "1514485",
+      "ItemName": "Dazzling Accurate Onyx +14%"
+    },
+    {
+      "ItemId": "1514551",
+      "ItemName": "Dazzling Blocking Peridot +19"
+    },
+    {
+      "ItemId": "1514473",
+      "ItemName": "Dazzling Critical Hematite +19"
+    },
+    {
+      "ItemId": "1514461",
+      "ItemName": "Dazzling Critical Sapphire +19"
+    },
+    {
+      "ItemId": "1514449",
+      "ItemName": "Dazzling Damage Jade +29"
+    },
+    {
+      "ItemId": "1514541",
+      "ItemName": "Dazzling Defense Hematite +60"
+    },
+    {
+      "ItemId": "1514527",
+      "ItemName": "Dazzling Defense Jade +58"
+    },
+    {
+      "ItemId": "1514533",
+      "ItemName": "Dazzling Defense Onyx +60"
+    },
+    {
+      "ItemId": "1430063",
+      "ItemName": "Sparkling Health Opal +119"
+    },
+    {
+      "ItemId": "1514482",
+      "ItemName": "Dazzling Accurate Amethyst +14%"
+    },
+    {
+      "ItemId": "1514555",
+      "ItemName": "Dazzling Blocking Onyx +19"
+    },
+    {
+      "ItemId": "1514545",
+      "ItemName": "Dazzling Blocking Ruby +19"
+    },
+    {
+      "ItemId": "1514511",
+      "ItemName": "Dazzling Defense Ruby +58"
+    },
+    {
+      "ItemId": "1430041",
+      "ItemName": "Sparkling Blocking Onyx +17"
+    },
+    {
+      "ItemId": "1430054",
+      "ItemName": "Sparkling Critical Amethyst +17"
+    },
+    {
+      "ItemId": "1462447",
+      "ItemName": "Sparkling Critical Opal +9"
+    },
+    {
+      "ItemId": "1430047",
+      "ItemName": "Sparkling Damage Peridot +27"
+    },
+    {
+      "ItemId": "1430023",
+      "ItemName": "Sparkling Defense Amethyst +53"
+    },
+    {
+      "ItemId": "1514537",
+      "ItemName": "Dazzling Defense Citrine +60"
+    },
+    {
+      "ItemId": "1514523",
+      "ItemName": "Dazzling Defense Peridot +58"
+    },
+    {
+      "ItemId": "1514588",
+      "ItemName": "Sparkling Health Opal +116"
+    }
+  ]
+}

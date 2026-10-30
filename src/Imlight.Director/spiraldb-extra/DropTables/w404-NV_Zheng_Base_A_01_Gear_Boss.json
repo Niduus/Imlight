@@ -1,0 +1,65 @@
+{
+  "Name": "W404 NV_Zheng_Base_A_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table NV_Zheng_Base_A_01: the gear drops (14), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1577681",
+      "ItemName": "Artillery Officer Hat"
+    },
+    {
+      "ItemId": "1577677",
+      "ItemName": "Cavalry Officer Hat"
+    },
+    {
+      "ItemId": "1577676",
+      "ItemName": "Infantry Officer Hat"
+    },
+    {
+      "ItemId": "1577679",
+      "ItemName": "Medic Officer Hat"
+    },
+    {
+      "ItemId": "1577680",
+      "ItemName": "Messenger Officer Hat"
+    },
+    {
+      "ItemId": "1577618",
+      "ItemName": "Regulation Artillery Hat"
+    },
+    {
+      "ItemId": "1577614",
+      "ItemName": "Regulation Cavalry Hat"
+    },
+    {
+      "ItemId": "1577613",
+      "ItemName": "Regulation Infantry Hat"
+    },
+    {
+      "ItemId": "1577616",
+      "ItemName": "Regulation Medic Hat"
+    },
+    {
+      "ItemId": "1577617",
+      "ItemName": "Regulation Messenger Hat"
+    },
+    {
+      "ItemId": "1577612",
+      "ItemName": "Regulation Scout Hat"
+    },
+    {
+      "ItemId": "1577615",
+      "ItemName": "Regulation Trooper Hat"
+    },
+    {
+      "ItemId": "1577675",
+      "ItemName": "Scout Officer Hat"
+    },
+    {
+      "ItemId": "1577678",
+      "ItemName": "Trooper Officer Hat"
+    }
+  ]
+}

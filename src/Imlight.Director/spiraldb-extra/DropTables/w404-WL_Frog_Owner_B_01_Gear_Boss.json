@@ -1,0 +1,121 @@
+{
+  "Name": "W404 WL_Frog_Owner_B_01 Gear (Boss)",
+  "Description": "Wizard404's drop list of the game's table WL_Frog_Owner_B_01: the gear drops (28), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1628355",
+      "ItemName": "Elegant City Dweller Athame"
+    },
+    {
+      "ItemId": "1628356",
+      "ItemName": "Gothic City Dweller Athame"
+    },
+    {
+      "ItemId": "1628357",
+      "ItemName": "Flashy City Dweller Athame"
+    },
+    {
+      "ItemId": "1628358",
+      "ItemName": "Crisp City Dweller Athame"
+    },
+    {
+      "ItemId": "1628359",
+      "ItemName": "Vibrant City Dweller Athame"
+    },
+    {
+      "ItemId": "1628360",
+      "ItemName": "Iconic City Dweller Athame"
+    },
+    {
+      "ItemId": "1628361",
+      "ItemName": "Striking City Dweller Athame"
+    },
+    {
+      "ItemId": "1628418",
+      "ItemName": "Elegant City Dweller Deck"
+    },
+    {
+      "ItemId": "1628419",
+      "ItemName": "Gothic City Dweller Deck"
+    },
+    {
+      "ItemId": "1628420",
+      "ItemName": "Flashy City Dweller Deck"
+    },
+    {
+      "ItemId": "1628421",
+      "ItemName": "Crisp City Dweller Deck"
+    },
+    {
+      "ItemId": "1628422",
+      "ItemName": "Vibrant City Dweller Deck"
+    },
+    {
+      "ItemId": "1628423",
+      "ItemName": "Iconic City Dweller Deck"
+    },
+    {
+      "ItemId": "1628424",
+      "ItemName": "Striking City Dweller Deck"
+    },
+    {
+      "ItemId": "1628558",
+      "ItemName": "Elegant Townie Athame"
+    },
+    {
+      "ItemId": "1628559",
+      "ItemName": "Gothic Townie Athame"
+    },
+    {
+      "ItemId": "1628560",
+      "ItemName": "Flashy Townie Athame"
+    },
+    {
+      "ItemId": "1628561",
+      "ItemName": "Crisp Townie Athame"
+    },
+    {
+      "ItemId": "1628562",
+      "ItemName": "Vibrant Townie Athame"
+    },
+    {
+      "ItemId": "1628563",
+      "ItemName": "Iconic Townie Athame"
+    },
+    {
+      "ItemId": "1628564",
+      "ItemName": "Striking Townie Athame"
+    },
+    {
+      "ItemId": "1628586",
+      "ItemName": "Elegant Townie Deck"
+    },
+    {
+      "ItemId": "1628587",
+      "ItemName": "Gothic Townie Deck"
+    },
+    {
+      "ItemId": "1628588",
+      "ItemName": "Flashy Townie Deck"
+    },
+    {
+      "ItemId": "1628589",
+      "ItemName": "Crisp Townie Deck"
+    },
+    {
+      "ItemId": "1628590",
+      "ItemName": "Vibrant Townie Deck"
+    },
+    {
+      "ItemId": "1628591",
+      "ItemName": "Iconic Townie Deck"
+    },
+    {
+      "ItemId": "1628592",
+      "ItemName": "Striking Townie Deck"
+    }
+  ]
+}

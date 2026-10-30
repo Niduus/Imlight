@@ -1,0 +1,61 @@
+{
+  "Name": "W404 Mob-589449 Gear (Boss)",
+  "Description": "Wizard404's drop list of Moros Blunt's own drops: the gear drops (13), one picked when it rolls. How often: DropOdds.json Boss/Gear.",
+  "Odds": "Boss/Gear",
+  "RollChance": 0.3,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "635230",
+      "ItemName": "Seely Wizard's Torc"
+    },
+    {
+      "ItemId": "635231",
+      "ItemName": "Knight's Torc of Virtue"
+    },
+    {
+      "ItemId": "635261",
+      "ItemName": "Guest Right Blade"
+    },
+    {
+      "ItemId": "635262",
+      "ItemName": "Inhospitable Knife"
+    },
+    {
+      "ItemId": "635310",
+      "ItemName": "Chaos Lord's Helm"
+    },
+    {
+      "ItemId": "635311",
+      "ItemName": "Helm of the Lady's Chosen One"
+    },
+    {
+      "ItemId": "635341",
+      "ItemName": "Crystal Cave Rose"
+    },
+    {
+      "ItemId": "635385",
+      "ItemName": "High Court Robes"
+    },
+    {
+      "ItemId": "635386",
+      "ItemName": "Horned One's Tunic"
+    },
+    {
+      "ItemId": "635423",
+      "ItemName": "Hundred Year Bridge Walkers"
+    },
+    {
+      "ItemId": "635424",
+      "ItemName": "Deep Is The Well Waders"
+    },
+    {
+      "ItemId": "635632",
+      "ItemName": "Blade of Mettle"
+    },
+    {
+      "ItemId": "635633",
+      "ItemName": "Steel-Bladed Doom"
+    }
+  ]
+}

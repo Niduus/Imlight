@@ -1,0 +1,101 @@
+{
+  "Name": "W404 Skey-G-KMBoss-130 Snack (Boss)",
+  "Description": "Wizard404's drop list of the game's table Skey-G-KMBoss-130: the snack drops (23), one picked when it rolls. How often: DropOdds.json Boss/Snack.",
+  "Odds": "Boss/Snack",
+  "RollChance": 0.4,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "220195",
+      "ItemName": "Wormy Apple"
+    },
+    {
+      "ItemId": "220222",
+      "ItemName": "Squash"
+    },
+    {
+      "ItemId": "220316",
+      "ItemName": "Moon Pie"
+    },
+    {
+      "ItemId": "220320",
+      "ItemName": "Golden Taffy"
+    },
+    {
+      "ItemId": "220322",
+      "ItemName": "Swirled Lollipop"
+    },
+    {
+      "ItemId": "220326",
+      "ItemName": "Goat Cheese"
+    },
+    {
+      "ItemId": "473716",
+      "ItemName": "Bogwich"
+    },
+    {
+      "ItemId": "641605",
+      "ItemName": "Bog Witch Beetroot"
+    },
+    {
+      "ItemId": "1317837",
+      "ItemName": "Pitch Black Licorice"
+    },
+    {
+      "ItemId": "1317840",
+      "ItemName": "Wampyrnickel Bread"
+    },
+    {
+      "ItemId": "1359622",
+      "ItemName": "Eye Candy"
+    },
+    {
+      "ItemId": "1359625",
+      "ItemName": "Beast Wellington"
+    },
+    {
+      "ItemId": "1504007",
+      "ItemName": "Trolly Pops"
+    },
+    {
+      "ItemId": "1504008",
+      "ItemName": "Cacao Ka-POWS!"
+    },
+    {
+      "ItemId": "1504009",
+      "ItemName": "Nana Smith Apples"
+    },
+    {
+      "ItemId": "1504010",
+      "ItemName": "Nana's Choco-Waffles"
+    },
+    {
+      "ItemId": "1504011",
+      "ItemName": "Nana's Pumpkin Spice Milkshake"
+    },
+    {
+      "ItemId": "1504012",
+      "ItemName": "Wysteri-Os"
+    },
+    {
+      "ItemId": "1504013",
+      "ItemName": "Moochi Ice"
+    },
+    {
+      "ItemId": "1504014",
+      "ItemName": "Nana's Energy Drink"
+    },
+    {
+      "ItemId": "1504015",
+      "ItemName": "Zesty Zip-Zaps"
+    },
+    {
+      "ItemId": "1504016",
+      "ItemName": "Zigazagnut Bars"
+    },
+    {
+      "ItemId": "1504017",
+      "ItemName": "Choccoli"
+    }
+  ]
+}

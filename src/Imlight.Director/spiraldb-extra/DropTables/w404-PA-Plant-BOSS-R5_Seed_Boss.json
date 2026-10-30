@@ -1,0 +1,41 @@
+{
+  "Name": "W404 PA-Plant-BOSS-R5 Seed (Boss)",
+  "Description": "Wizard404's drop list of the game's table PA-Plant-BOSS-R5: the seed drops (8), one picked when it rolls. How often: DropOdds.json Boss/Seed.",
+  "Odds": "Boss/Seed",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "355150",
+      "ItemName": "Dandelion"
+    },
+    {
+      "ItemId": "355171",
+      "ItemName": "Desparagus"
+    },
+    {
+      "ItemId": "355199",
+      "ItemName": "Honey Sickle"
+    },
+    {
+      "ItemId": "356106",
+      "ItemName": "Laugh-o-dil"
+    },
+    {
+      "ItemId": "473124",
+      "ItemName": "Bell Pepper"
+    },
+    {
+      "ItemId": "473131",
+      "ItemName": "Red Bell Pepper"
+    },
+    {
+      "ItemId": "473138",
+      "ItemName": "Orange Bell Pepper"
+    },
+    {
+      "ItemId": "473180",
+      "ItemName": "Tiger Lily"
+    }
+  ]
+}

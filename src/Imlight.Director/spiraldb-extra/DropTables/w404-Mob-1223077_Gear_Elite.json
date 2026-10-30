@@ -1,0 +1,45 @@
+{
+  "Name": "W404 Mob-1223077 Gear (Elite)",
+  "Description": "Wizard404's drop list of Devil's Flower's own drops: the gear drops (9), one picked when it rolls. How often: DropOdds.json Elite/Gear.",
+  "Odds": "Elite/Gear",
+  "RollChance": 0.12,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "1203168",
+      "ItemName": "Mouse Knight's Loop"
+    },
+    {
+      "ItemId": "1203169",
+      "ItemName": "Seal of the WoodWard"
+    },
+    {
+      "ItemId": "1203176",
+      "ItemName": "Moon's Tear Band"
+    },
+    {
+      "ItemId": "1203177",
+      "ItemName": "Mantis Prophet's Ringlet"
+    },
+    {
+      "ItemId": "1203247",
+      "ItemName": "Flame Legs Coalwalkers"
+    },
+    {
+      "ItemId": "1203248",
+      "ItemName": "Mantis Boots of Patience"
+    },
+    {
+      "ItemId": "1203249",
+      "ItemName": "CloudDancer's Footwraps"
+    },
+    {
+      "ItemId": "1203250",
+      "ItemName": "Digger Drone Boots of Duty"
+    },
+    {
+      "ItemId": "1203251",
+      "ItemName": "Leaf Shield Brisk Walkers"
+    }
+  ]
+}

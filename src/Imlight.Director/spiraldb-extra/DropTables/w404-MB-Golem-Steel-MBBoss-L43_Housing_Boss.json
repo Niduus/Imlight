@@ -1,0 +1,21 @@
+{
+  "Name": "W404 MB-Golem-Steel-MBBoss-L43 Housing (Boss)",
+  "Description": "Wizard404's drop list of the game's table MB-Golem-Steel-MBBoss-L43: the housing drops (3), one picked when it rolls. How often: DropOdds.json Boss/Housing.",
+  "Odds": "Boss/Housing",
+  "RollChance": 0.2,
+  "EachItem": false,
+  "Items": [
+    {
+      "ItemId": "160700",
+      "ItemName": "Open Furnace"
+    },
+    {
+      "ItemId": "160745",
+      "ItemName": "Marleybonian Street Sign"
+    },
+    {
+      "ItemId": "512124",
+      "ItemName": "Marleybone Theme 1"
+    }
+  ]
+}
