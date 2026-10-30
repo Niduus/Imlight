@@ -41,36 +41,10 @@ internal class CommandFusionProtocol : CommandProtocol {
 
     [Command("fusions")]
     [Alias("formulas")]
-    private void FusionsCommand([Remainder] string name = "") {
+    private void FusionsCommand() {
         var wizard = Context.Character;
         if (!SpellFusions.Enabled) {
             InformSenderClient("Spell Fusion is switched off ([SpellFusion] Enabled).");
-
-            return;
-        }
-
-        name = (name ?? "").Trim();
-        if (name.Length > 0) {
-            // .fusions Desert Banshee: one formula, every card that counts for it.
-            var picked = SpellFusions.Recipes.Where(r => Matches(r, name)).ToList();
-            if (picked.Count == 0) {
-                InformSenderClient($"No Fusion Formula is named {name}. Type .fusions for yours.");
-
-                return;
-            }
-
-            var detail = new StringBuilder();
-            foreach (var recipe in picked) {
-                var mine = SpellFusions.KnownRecipes(wizard).Contains(recipe);
-                detail.Append($"{FusedName(recipe)}{SchoolOf(recipe)} ({(mine ? "you know this formula" : "you don't know this formula yet")})\n");
-                detail.Append($"Material 1: {Material(recipe.Primary, wizard)}\n");
-                detail.Append($"   any of: {string.Join(", ", SpellFusions.CardsOf(recipe.Primary).Select(Shown).Distinct())}\n");
-                detail.Append($"Material 2: {Material(recipe.Secondary, wizard)}\n");
-                detail.Append($"   any of: {string.Join(", ", SpellFusions.CardsOf(recipe.Secondary).Select(Shown).Distinct())}\n");
-            }
-
-            detail.Append("Put both materials in your deck. In battle, when both are in your hand, drag one onto the other, then cast the fused card.");
-            InformSenderClient(detail.ToString(), true);
 
             return;
         }
@@ -82,34 +56,14 @@ internal class CommandFusionProtocol : CommandProtocol {
             return;
         }
 
-        var text = new StringBuilder($"Your Fusion Formulas ({known.Count}). Fused spell = material 1 + material 2:");
-        foreach (var recipe in known.OrderBy(r => FusedName(r))) {
-            text.Append($"\n{FusedName(recipe)}{SchoolOf(recipe)} = {Material(recipe.Primary, wizard)} + {Material(recipe.Secondary, wizard)}");
+        var text = new StringBuilder($"Your Fusion Formulas ({known.Count}):");
+        foreach (var recipe in known.OrderBy(r => r.Name)) {
+            text.Append($"\n{FusedName(recipe)}: {Ingredient(recipe.Primary)} + {Ingredient(recipe.Secondary)}");
         }
 
-        text.Append("\n[deck] = in your deck, [known] = you know it but it's not in your deck, [missing] = you don't know it yet.");
-        text.Append("\nPut both materials in your deck. In battle, drag one onto the other, then cast the fused card. .fusions <name> shows every card that counts.");
+        text.Append("\nIn battle, drag one card onto the other to fuse them, then cast the fused card.");
         InformSenderClient(text.ToString(), true);
     }
-
-    // "Banshee [deck]": the material's card name and whether the wizard knows it and has it in the deck.
-    private static string Material(string adjective, Wizard wizard) {
-        var cards = SpellFusions.CardsOf(adjective);
-        var main = SpellFusions.MainCardOf(adjective);
-        var name = main != 0 ? Shown(main) : Ingredient(adjective);
-        var deck = wizard.SpellbookBehavior?.SpellList?.Select(d => d.m_templateID).ToHashSet() ?? [];
-        var state = cards.Any(deck.Contains) ? "deck"
-            : cards.Any(wizard.SpellbookBehavior.HasSpell) ? "known"
-            : "missing";
-
-        return $"{name} [{state}]";
-    }
-
-    private static string SchoolOf(SpellFusions.Recipe recipe)
-        => recipe.Outputs.Count > 0 && CoreObjectFactory.GetCoreTemplate(recipe.Outputs[0]) is SpellTemplate t
-           && !string.IsNullOrEmpty((string) t.m_sMagicSchoolName)
-            ? $" ({(string) t.m_sMagicSchoolName})"
-            : "";
 
     [Command("fusion")]
     [AuthRequired(AuthLevel.QualityAssurance)]
