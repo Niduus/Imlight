@@ -127,7 +127,8 @@
       "m_displayImage1": "GUI/QuestButtons/Use_StarTemple_Gate.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "AR-PortalToSandSea"
+        "CL_Teleporter_Stars",
+        "CL_HubTeleporter"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -140,7 +141,8 @@
       "m_goalTitle": "WizardQuestGoals_UseItem",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "AR-PortalToSandSea.AdjRef"
+        "CL_Teleporter_Stars.AdjRef",
+        "CL_HubTeleporter.AdjRef"
       ],
       "m_itemTotal": 1
     },
