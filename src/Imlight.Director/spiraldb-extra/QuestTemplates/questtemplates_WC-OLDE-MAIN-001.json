@@ -1807,7 +1807,9 @@
         "WC_Olde_Town_T02",
         "Ddl_WC_OT_Tower02"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "TalkingToPets"
+      ],
       "m_autoQualify": false,
       "m_autoComplete": false,
       "m_destinationZone": "",
