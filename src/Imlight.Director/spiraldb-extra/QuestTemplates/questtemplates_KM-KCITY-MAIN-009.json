@@ -154,7 +154,7 @@
             "m_dialogEntries": [
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "KM-KCITY-NPC01-H_Persona",
+                "m_personaName": "KM-KCITY-NPC01-K",
                 "m_nameOverride": "",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
@@ -179,7 +179,7 @@
       "m_goalName": "4_WizardQuestGoalsTalkNPC",
       "m_goalTitle": "WizardQuestGoals_TalkNPC",
       "m_goalType": "GOAL_TYPE_PERSONA",
-      "m_personaName": "KM-KCITY-NPC01-H_Persona",
+      "m_personaName": "KM-KCITY-NPC01-K",
       "m_usePatron": false
     }
   ],

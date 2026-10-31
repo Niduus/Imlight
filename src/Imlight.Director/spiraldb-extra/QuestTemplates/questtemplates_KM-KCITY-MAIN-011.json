@@ -249,7 +249,7 @@
         ]
       },
       "m_noQuestHelper": false,
-      "m_destinationZone": "Karamelle/Interiors/KM_Z00_NanasOffice",
+      "m_destinationZone": "Karamelle/Interiors/KM_Z00_NanasHQ",
       "m_locationName": "Karamelle City",
       "m_goalName": "6_WizardQuestGoalsTalkNPC",
       "m_goalTitle": "WizardQuestGoals_TalkNPC",

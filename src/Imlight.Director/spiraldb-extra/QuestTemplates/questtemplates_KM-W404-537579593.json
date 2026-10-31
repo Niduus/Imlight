@@ -153,13 +153,14 @@
       "m_autoComplete": false,
       "m_dialogList": null,
       "m_noQuestHelper": false,
-      "m_destinationZone": "Karamelle/Interiors/KM_Z09_Silo",
+      "m_destinationZone": "Karamelle/Interiors/KM_Z09_HotHouse",
       "m_locationName": "ZoneLocName_1513081",
       "m_goalName": "4_WizardQuestGoalsKill",
       "m_goalTitle": "WizardQuestGoals_Kill",
       "m_goalType": "GOAL_TYPE_BOUNTY",
       "m_npcAdjectives": [
-        "KM-NIBB-NPC18.AdjRef"
+        "KM-NIBB-NPC18.AdjRef",
+        "KM_Hamster_Hazmatt_A_02.AdjRef"
       ],
       "m_bountyTotal": 1,
       "m_bountyType": "BT_MOB_KILL"
@@ -260,7 +261,7 @@
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_Photomancy.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "CL-Polymorph-Mob-Gobbler"
+        "KM-Gobbler_Box"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -273,7 +274,7 @@
       "m_goalTitle": "WizardQuestGoals_00000672",
       "m_goalType": "GOAL_TYPE_SCAVENGE",
       "m_itemAdjectives": [
-        "CL-Polymorph-Mob-Gobbler.AdjRef"
+        "KM-Gobbler_Box.AdjRef"
       ],
       "m_itemTotal": 1
     },
@@ -299,14 +300,7 @@
       "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Art_Quest_Lever.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "PL_FishCrateElevator-Lever",
-        "KR-Rachias-Lever",
-        "MS_Lever_Plague3",
-        "G14-KT-Lever",
-        "VA-Lever-Clock",
-        "VA-Lever-Clock2",
-        "MR_Lever",
-        "MR_Lever2"
+        "KM-Sweatbox"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -319,14 +313,7 @@
       "m_goalTitle": "WizardQuestGoals_00000184",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "PL_FishCrateElevator-Lever.AdjRef",
-        "KR-Rachias-Lever.AdjRef",
-        "MS_Lever_Plague3.AdjRef",
-        "G14-KT-Lever.AdjRef",
-        "VA-Lever-Clock.AdjRef",
-        "VA-Lever-Clock2.AdjRef",
-        "MR_Lever.AdjRef",
-        "MR_Lever2.AdjRef"
+        "KM-Sweatbox.AdjRef"
       ],
       "m_itemTotal": 1
     },
@@ -406,7 +393,11 @@
         "KM_Gobbler_Skinny_A_01.AdjRef",
         "KM_Gobbler_Skinny_A_02.AdjRef",
         "KM_Gobbler_Skinny_A_03.AdjRef",
-        "KM_StandIn_HangryGobbler_01.AdjRef"
+        "KM_StandIn_HangryGobbler_01.AdjRef",
+        "KM_Gobbler_Skinny_A_04.AdjRef",
+        "KM_Gobbler_Skinny_A_05.AdjRef",
+        "KM_Gobbler_Skinny_A_06.AdjRef",
+        "KM_Gobbler_SkinnyF_A_02.AdjRef"
       ],
       "m_bountyTotal": 1,
       "m_bountyType": "BT_MOB_KILL"

@@ -61,6 +61,98 @@ GIVER_FIX = ("The quest checker (2026-10-27) found this quest's giver wasn't pla
              "names the placed NPC of the same name, so you can pick it up.",
              "The giver stands in the world with a quest marker over them, and talking to them offers the quest.", "0.10.534")
 UNTESTED = {
+    'SL-W404-754784803': ('The Arc 4 main quest check (2026-10-31) found its giver was an NPC that stands nowhere, so nobody could offer it and Selenopolis stopped here. Now Brother Helio in the Forgotten Tombs offers it.',
+        'After the quest before it, Brother Helio in the Forgotten Tombs has a quest marker and offers this quest.', "0.10.681"),
+    'SL-W404-754719267': ('The Arc 4 main quest check (2026-10-31) found its giver was an NPC that stands nowhere, so nobody could offer it and Selenopolis stopped here. Now Brother Helio in the Chamber of Amalthea offers it.',
+        'After the quest before it, Brother Helio in the Chamber of Amalthea has a quest marker and offers this quest.', "0.10.681"),
+    'SL-W404-754651683': ('The Arc 4 main quest check (2026-10-31) found its giver was an NPC that stands nowhere, so nobody could offer it and Selenopolis stopped here. Now Phoebe offers it.',
+        'After the quest before it, Phoebe has a quest marker and offers this quest.', "0.10.681"),
+    'SL-W404-754586147': ('The Arc 4 main quest check (2026-10-31) found its giver was an NPC that stands nowhere, so nobody could offer it and Selenopolis stopped here. Now Dione in the Chamber of Darkness offers it.',
+        'After the quest before it, Dione in the Chamber of Darkness has a quest marker and offers this quest.', "0.10.681"),
+    'WL-W404-448485130': ('The Arc 4 main quest check (2026-10-31) found its talk step named an Opal Bilburrow who stands nowhere. Now it is the Opal in the Juggernaut Crab Theater.',
+        'Talking to Opal in the theater ticks the step.', "0.10.681"),
+    'WL-W404-552418397': ('The Arc 4 main quest check (2026-10-31) found its talk step named a Judge Veg who stands nowhere. Now it is the Judge Veg in Conatus.',
+        'Talking to Judge Veg in Conatus ticks the step.', "0.10.681"),
+    'LM-W404-1197532866': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'LM-W404-1198253762': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'LM-W404-1198515906': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'LM-W404-2015057784': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'LM-W404-785409580': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'LM-W404-785540652': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'NV-W404-1028659802': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'NV-W404-1029182042': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'NV-W404-1029511770': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'NV-W404-1029577306': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'NV-W404-650038354': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'NV-W404-650040402': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'WL-W404-1154868716': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'WL-W404-1154999788': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'WL-W404-1366025812': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'WL-W404-1366156884': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'WL-W404-1780226535': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'WL-W404-1780292071': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'WL-W404-448491274': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'WL-W404-763017149': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'KM-KCITY-MAIN-009': ('The Arc 4 main quest check (2026-10-31) found a talk step named the NPC of that name from another place, so the arrow led one way and the NPC stood somewhere else. Now it is the one standing where the arrow points.',
+        'Follow the arrow: the NPC is there and talking to them ticks the step.', "0.10.681"),
+    'KM-KCITY-MAIN-011': ("The Arc 4 main quest check (2026-10-31) found a step pointed to Nana's Office, a place the game doesn't have. Now it points to Nana's HQ, where Greta stands.",
+        "The arrow leads to Greta in Nana's HQ.", "0.10.681"),
+    'KM-W404-1058385782': ('The Arc 4 main quest check (2026-10-31) found the Oogie Boogies in the Gym were other copies than the ones the steps count, so the fights never counted.',
+        'Each Oogie Boogie fight ticks its step.', "0.10.681"),
+    'KM-W404-933916414': ('The Arc 4 main quest check (2026-10-31) found the Ubear in the Power Room was another copy than the one the step counts.',
+        'Beating the Ubear ticks the last step.', "0.10.681"),
+    'KM-W404-537579593': ("The Arc 4 main quest check (2026-10-31) found the Hazmat Hamster step pointed to the Silo, the photo step wanted a Celestia Gobbler, the lever step levers from other worlds and the last fight creatures that aren't in the Hot House. Now: Hamster in the Hot House, photograph the Sweating Gobblers, use the Sweatbox (a guess: it's the room's only usable object), and Augustus, Charlie, Mikey or Veruca count.",
+        'Every step of the Hot House ticks off and the quest ends.', "0.10.681"),
+    'KM-W404-1078418835': ("The Arc 4 main quest check (2026-10-31) found Scarlet Shrimpernel waits in the hideout's second room, but the steps pointed to the first.",
+        'The arrow leads to the second room and beating Shrimpernel ticks the step.', "0.10.681"),
+    'NV-W404-1544180588': ("The Arc 4 main quest check (2026-10-31) found the Aeon of Atavus fight is against the Atavus creatures, which the step didn't count.",
+        'Beating the Aeon of Atavus fight ends the quest.', "0.10.681"),
+    'AR-PreLM-MAIN-001': ('The Arc 4 main quest check (2026-10-31) found collecting the Mosaic in the Backroom finished just by walking in. Now you click the Mosaic, as in the real game.',
+        'Clicking the Mosaic ticks the step.', "0.10.681"),
+    'AR-PreLM-MAIN-003': ("The Arc 4 main quest check (2026-10-31) found restoring Lemuria in the Old One's Office finished just by walking in. Now you use the orb holder, as in the real game.",
+        'Using the orb holder ticks the step.', "0.10.681"),
+    'KM-FARM-MAIN-004': ('The Arc 4 main quest check (2026-10-31) found its Photomance step could never finish: nothing counted photos of the thing to photograph. Since this version a photo of it counts.',
+        'Press the photo key at the thing the step names: the step ticks.', "0.10.681"),
+    'KM-FARM-MAIN-005': ('The Arc 4 main quest check (2026-10-31) found its Photomance step could never finish: nothing counted photos of the thing to photograph. Since this version a photo of it counts.',
+        'Press the photo key at the thing the step names: the step ticks.', "0.10.681"),
+    'KM-NIBB-MAIN-007': ('The Arc 4 main quest check (2026-10-31) found its Photomance step could never finish: nothing counted photos of the thing to photograph. Since this version a photo of it counts.',
+        'Press the photo key at the thing the step names: the step ticks.', "0.10.681"),
+    'KM-W404-1064382326': ('The Arc 4 main quest check (2026-10-31) found its Photomance step could never finish: nothing counted photos of the thing to photograph. Since this version a photo of it counts.',
+        'Press the photo key at the thing the step names: the step ticks.', "0.10.681"),
+    'KM-W404-537579529': ('The Arc 4 main quest check (2026-10-31) found its Photomance step could never finish: nothing counted photos of the thing to photograph. Since this version a photo of it counts.',
+        'Press the photo key at the thing the step names: the step ticks.', "0.10.681"),
+    'LM-W404-915715270': ('The Arc 4 main quest check (2026-10-31) found its Photomance step could never finish: nothing counted photos of the thing to photograph. Since this version a photo of it counts.',
+        'Press the photo key at the thing the step names: the step ticks.', "0.10.681"),
+    'KM-FARM-MAIN-001': ('The Arc 4 main quest check (2026-10-31) found the real game does one more thing when it starts (a world teleport entry, or shows or hides an Arcanum NPC) that ours skipped.',
+        'It starts and plays as before.', "0.10.681"),
+    'KM-GOBB-MAIN-001': ('The Arc 4 main quest check (2026-10-31) found the real game does one more thing when it starts (a world teleport entry, or shows or hides an Arcanum NPC) that ours skipped.',
+        'It starts and plays as before.', "0.10.681"),
+    'KM-NIBB-MAIN-001': ('The Arc 4 main quest check (2026-10-31) found the real game does one more thing when it starts (a world teleport entry, or shows or hides an Arcanum NPC) that ours skipped.',
+        'It starts and plays as before.', "0.10.681"),
+    'AR-PreLM-MAIN-004': ('The Arc 4 main quest check (2026-10-31) found the real game does one more thing when it starts (a world teleport entry, or shows or hides an Arcanum NPC) that ours skipped.',
+        'It starts and plays as before.', "0.10.681"),
+    'AR-PostLM-MAIN-001': ('The Arc 4 main quest check (2026-10-31) found the real game does one more thing when it starts (a world teleport entry, or shows or hides an Arcanum NPC) that ours skipped.',
+        'It starts and plays as before.', "0.10.681"),
     "MS-MAIN-C07-001": ("Rematch: reaching the obelisk in the Jade Palace should spawn the Jade Oni (v0.10.285, PR #412). "
                         "Before, the Oni never came.",
                         "Walk up to the obelisk: the Jade Oni appears and the fight can start.", ""),
@@ -99,6 +191,9 @@ RAW_TEXT = {
     "WC-PreKR-C05-001": "a dialog page", "WC-PreKR-C06-001": "two dialog pages", "WL-W404-595066559": "a step's text",
     "AZ-ZOCA-C15-002": "a step's text",
 }
+
+# Quests Spiral Tracker lists twice under two spellings.
+SPELLED_TWICE = [{"prawntokingsfourth", "prawntokingsforth"}]
 
 # Kinds of flag for fixes made from v0.10.590 on: the Manager's "Recent fixes" view shows them.
 RECENT_KINDS = {"Text fixed", "Dialog on arrival", "Fight counts now"}
@@ -248,9 +343,13 @@ def main(lookup, spiraldb, rewards_md, out_path):
         world_name = "Wizard City" if w["Key"] == "catacombs" else w["Name"]
         rows = []
         for m in w["Main"]:
+            # Spiral Tracker lists a quest once per area it passes through ("La Mort Et Lemuria" three times): one row.
+            if any(norm(r["Name"]) == norm(m["Name"]) or {norm(r["Name"]), norm(m["Name"])} in SPELLED_TWICE for r in rows):
+                continue
             q = match(m["Name"], world_name)
             if q is not None and q["Code"] in placed:
-                q = None if any(r["Code"] == q["Code"] for r in rows) else q
+                if any(r["Code"] == q["Code"] for r in rows):
+                    continue
             rows.append({"Tree": m, "Code": q["Code"] if q else "", "Name": m["Name"].strip(), "Area": m.get("Area", "")})
             if q:
                 placed.add(q["Code"])

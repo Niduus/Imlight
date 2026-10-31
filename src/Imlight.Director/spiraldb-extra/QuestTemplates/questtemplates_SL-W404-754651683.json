@@ -101,7 +101,7 @@
         "m_dialogEntries": [
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "KT-SE-Phoebe",
+            "m_personaName": "KT-SE-TOMBS-NPC15-A",
             "m_nameOverride": "WizardNPC_00001148",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -118,7 +118,7 @@
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "KT-SE-Phoebe",
+            "m_personaName": "KT-SE-TOMBS-NPC15-A",
             "m_nameOverride": "WizardNPC_00001148",
             "m_nameSTKey": null,
             "m_guiDisplay": "",

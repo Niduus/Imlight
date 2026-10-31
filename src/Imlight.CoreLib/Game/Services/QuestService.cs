@@ -628,6 +628,102 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         }
     }
 
+    // A photo counts for every active "Photomance" step that names a photographed object: the step's tag is the object's
+    // file name (KM-GummyVat) or its adjective the object's own. Such objects (marked PhotoQuest) have no photo results,
+    // so nothing counted these photos before and Karamelle's and Lemuria's photo steps could not be finished (Arc 4 main
+    // quest check, 2026-10-31). When the game's photo can't be read, a photo taken in a photo step's own place counts.
+    private const string PHOTO_QUEST_ADJECTIVE = "PhotoQuest";
+    private static readonly TimeSpan SAME_PHOTO_AGAIN_AFTER = TimeSpan.FromSeconds(3);
+    private readonly Dictionary<(string Quest, string Goal, uint Template), DateTime> _photoCounted = [];
+
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_PHOTOTAKENFORQUESTS))]
+    private void ReceivePhotoTakenForQuests(CHARACTER_103_PROTOCOL.MSG_PHOTOTAKENFORQUESTS message) {
+        try {
+            var wizard = GetActiveWizard();
+            if (wizard?.QuestBehavior is null) {
+                return;
+            }
+
+            var photographed = (message.TemplateIds ?? []).Select(id => {
+                var template = Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(id) as GameObjectTemplate;
+                var adjectives = (template?.m_adjectiveList ?? []).Select(a => (string) a).Where(a => !string.IsNullOrEmpty(a))
+                    .ToHashSet(StringComparer.Ordinal);
+                return (Id: id, FileName: Imlight.CoreLib.Shared.Resources.CoreObjectFactory.FileNameOf(id),
+                    ObjectName: (string) template?.m_objectName, Adjectives: adjectives);
+            }).ToList();
+
+            var now = DateTime.UtcNow;
+            foreach (var qInstance in wizard.QuestBehavior.CurrentQuestInstances.ToList()) {
+                var qTemplate = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == qInstance.QuestName);
+                foreach (var goal in qTemplate?.m_goals ?? []) {
+                    if (goal is not ScavengeGoalTemplate scavenge || !qInstance.IsGoalActive(goal.m_goalName)) {
+                        continue;
+                    }
+
+                    var photoStep = IsPhotoStep(scavenge);
+                    uint counted = 0;
+                    if (message.Readable) {
+                        var match = photographed.FirstOrDefault(p => (photoStep || p.Adjectives.Contains(PHOTO_QUEST_ADJECTIVE))
+                            && ((scavenge.m_clientTags ?? []).Any(tag => (string) tag is { Length: > 0 } text
+                                    && (string.Equals(text, p.FileName, StringComparison.OrdinalIgnoreCase)
+                                        || string.Equals(text, p.ObjectName, StringComparison.OrdinalIgnoreCase)))
+                                || (scavenge.m_itemAdjectives ?? []).Any(a => p.Adjectives.Contains(a))));
+                        if (match.Id == 0) {
+                            continue;
+                        }
+
+                        counted = match.Id;
+                    }
+                    else if (!photoStep || !string.Equals(goal.m_destinationZone, wizard.Zone, StringComparison.OrdinalIgnoreCase)) {
+                        continue;
+                    }
+
+                    // A burst of photos of the same thing counts once.
+                    var key = (qInstance.QuestName, goal.m_goalName, counted);
+                    if (_photoCounted.TryGetValue(key, out var last) && now - last < SAME_PHOTO_AGAIN_AFTER) {
+                        continue;
+                    }
+
+                    var gInstance = qInstance.GoalProgress.FirstOrDefault(g => g.GoalName == goal.m_goalName);
+                    var goalMax = QuestMadlibs.GetGoalTotal(goal);
+                    if (gInstance is null || gInstance.CurrentProgress >= goalMax) {
+                        continue;
+                    }
+
+                    _photoCounted[key] = now;
+                    wizard.IncrementQuestGoal(qInstance.QuestName, goal.m_goalName);
+                    Logger.Information("Quest goal progress: {0} quest '{1}' goal '{2}' at {3}/{4} after a photo ({5}).",
+                        Logger.Args(wizard.CharId, qInstance.QuestName, goal.m_goalName, gInstance.CurrentProgress, goalMax,
+                            counted != 0 ? counted.ToString() : "photo not readable, taken in the step's place"));
+                    if (gInstance.CurrentProgress >= goalMax) {
+                        CompleteGoal(qInstance, goal);
+                    }
+                    else {
+                        SendGoalMessage(goal, qInstance, 2);
+                    }
+                }
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Quest photo steps: counting a photo failed. {0}", Logger.Args(ex));
+        }
+    }
+
+    // A "Photomance" step: its picture is the photo one, or its title says Photomance.
+    private static bool IsPhotoStep(GoalTemplate goal) {
+        if (((string) goal.m_displayImage1 ?? "").Contains("Photomancy", StringComparison.OrdinalIgnoreCase)) {
+            return true;
+        }
+
+        try {
+            return ((string) goal.m_goalTitle is { Length: > 0 } key ? Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(key) ?? "" : "")
+                .Contains("Photomanc", StringComparison.OrdinalIgnoreCase);
+        }
+        catch (Exception) {
+            return false;
+        }
+    }
+
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_COMPLETEPROXIMITYGOAL))]
     private void ReceiveCompleteProximityGoal(ZONE_102_PROTOCOL.MSG_COMPLETEPROXIMITYGOAL message) {
         // A volume component matched one of this player's active proximity goals to the

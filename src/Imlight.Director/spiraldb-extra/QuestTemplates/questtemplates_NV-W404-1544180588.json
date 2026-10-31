@@ -43,7 +43,11 @@
       "m_goalTitle": "WizardQuestGoals_Kill",
       "m_goalType": "GOAL_TYPE_BOUNTY",
       "m_npcAdjectives": [
-        "NV_Monstrosity_Croneberg_A_01.AdjRef"
+        "NV_Monstrosity_Croneberg_A_01.AdjRef",
+        "NV_Dog_DogOfWar_C_01.AdjRef",
+        "NV_Monkey_Monquistador_B_01.AdjRef",
+        "NV_Penguin_Revolutionary_E_01.AdjRef",
+        "NV_Unicorn_Guard_D_01.AdjRef"
       ],
       "m_bountyTotal": 1,
       "m_bountyType": "BT_MOB_KILL"

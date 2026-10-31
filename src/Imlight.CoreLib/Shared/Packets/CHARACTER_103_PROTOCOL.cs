@@ -854,4 +854,18 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// The player took a photo (PhotomancyService): a quest's "Photomance" step that names one of the photographed
+    /// objects counts it (QuestService). Readable is false when the photo's data could not be read.
+    /// </summary>
+    public sealed class MSG_PHOTOTAKENFORQUESTS : IServerMessage {
+
+        public byte MessageOrder { get; } = 153;
+        public byte ServiceID { get; } = 103;
+
+        public uint[] TemplateIds = [];
+        public bool Readable;
+
+    }
+
 }
