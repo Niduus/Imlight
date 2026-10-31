@@ -32,6 +32,9 @@
       "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Use_MU_Fire.dds",
       "m_displayImage2": "",
       "m_clientTags": [
+        "MS-Catmandu-Fire01",
+        "MS-Catmandu-Fire02",
+        "MS-Catmandu-Fire03",
         "MS_SpotFire"
       ],
       "m_genericEvents": [],
@@ -45,6 +48,9 @@
       "m_goalTitle": "WizardQuestGoals_00000412",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
+        "MS-Catmandu-Fire01.AdjRef",
+        "MS-Catmandu-Fire02.AdjRef",
+        "MS-Catmandu-Fire03.AdjRef",
         "MS_SpotFire.AdjRef"
       ],
       "m_itemTotal": 1
