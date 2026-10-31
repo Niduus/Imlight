@@ -42,7 +42,9 @@ internal sealed class ReqHasGoalHandler : BaseRequirementHandler<ReqHasGoal> {
         var quest = wizard.QuestBehavior.CurrentQuestInstances
             .FirstOrDefault(q => q.QuestName == questName);
         if (quest == null) {
-            return false;
+            // A step of a quest the server does not have: still under way while the quest that replaced it is.
+            return Requirement.m_requiredStatus is GoalStatusRequirement.Incomplete or GoalStatusRequirement.DontCare
+                && RetiredQuestStandIn.IsMet(context, questName);
         }
 
         var goal = quest.GoalProgress

@@ -57,4 +57,9 @@ public class ZoneRequirementContext(RequirementList requirements,
     /// </summary>
     public IReadOnlyList<string> EventAdjectives { get; init; }
 
+    /// <summary>
+    /// The zone of the trigger being checked (null for checks that are not zone triggers).
+    /// </summary>
+    public string TriggerZonePath { get; init; }
+
 }

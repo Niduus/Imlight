@@ -106,6 +106,7 @@ public sealed class ZoneTrigger(IActorRef zoneRef, Zone zone, Trigger trigger)
                 ) {
                     ScriptState = Zone.ScriptState,
                     EventAdjectives = message.Adjectives,
+                    TriggerZonePath = Zone.ZonePath,
                 }
             );
 

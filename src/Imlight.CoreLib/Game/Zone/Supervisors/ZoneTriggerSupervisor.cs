@@ -551,6 +551,7 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
                 trigger.m_triggerName) {
                 ScriptState = Zone.ScriptState,
                 EventAdjectives = message.Adjectives,
+                TriggerZonePath = Zone.ZonePath,
             });
     }
 

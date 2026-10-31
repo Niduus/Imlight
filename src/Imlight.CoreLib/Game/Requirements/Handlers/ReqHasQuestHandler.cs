@@ -45,7 +45,8 @@ internal sealed class ReqHasQuestHandler : BaseRequirementHandler<ReqHasQuest> {
             return completed || wizard.QuestBehavior.CurrentQuestInstances.Any(q => q.QuestName == questName);
         }
 
-        return HasQuestActiveOrCompleted(wizard, questName);
+        return HasQuestActiveOrCompleted(wizard, questName)
+            || RetiredQuestStandIn.IsMet(context, questName);
     }
 
     private static bool HasQuestActiveOrCompleted(Wizard wizard, string questName) {
