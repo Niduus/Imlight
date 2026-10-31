@@ -68,8 +68,9 @@ internal sealed partial class ManagerWindow {
             ["Customs", "Share", "Player Cheats", "Boss Test", "Announcements"]),
         // Niduus, 2026-10-30: the Server tab held a pile of cards that change how the game plays; they get a page of their own.
         ("Game Rules", "dice", "Modes, battles, events, shops",
-            "Change how the game plays on your server: game modes and spell trainers, battle and world switches, events, and the shops and codes.",
-            ["Game Modes", "Battles and World", "Events", "Shops and Codes"]),
+            "Change how the game plays on your server: game modes and spell trainers, battle and world switches, what is turned on or off, events, and the shops and codes.",
+            // Niduus, 2026-10-31: any NPC, creature, zone or world, the game's own or a custom, can be turned off and on.
+            ["Game Modes", "Battles and World", "On and Off", "Events", "Shops and Codes"]),
         ("Server", "server", "Start, settings, accounts, logs",
             "Run the server and set it up: start and stop, every setting, who can log in, logs, game files, and Ahziael itself.",
             // Niduus, 2026-10-30: Ahziael on a server hosted on another PC, for its admins.

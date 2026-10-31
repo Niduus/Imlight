@@ -79,6 +79,13 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
                 continue;
             }
 
+            // One the On and Off tab turned off (TurnedOff) is kept without an entity, so it can come back.
+            if (IsOff(objectInfo)) {
+                _placed.Add(new PlacedObject(objectInfo, template, coreObject, null) { Off = true });
+
+                continue;
+            }
+
             // Determine if this is a critical object.
             // If so, register it with the Zone.
             if (IsCriticalObject(template)) {
@@ -164,6 +171,11 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED))]
     public override void ReceiveZoneObjectsChanged(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED message) {
         base.ReceiveZoneObjectsChanged(message);
+        if (message.SwitchesChanged) {
+            ApplySwitches();
+
+            return;
+        }
 
         foreach (var placed in _placed.Where(p => message.Removed.Contains(p.Object.m_globalID.Full)).ToList()) {
             if (placed.Actor is not null) {
@@ -188,14 +200,57 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
                 continue;
             }
 
+            if (IsOff(objectInfo)) {
+                _placed.Add(new PlacedObject(objectInfo, template, coreObject, null) { Off = true });
+
+                continue;
+            }
+
             var actor = CreateEntityActor(coreObject, template, objectInfo, $"_{++_addedWhileRunning}");
             _placed.Add(new PlacedObject(objectInfo, template, coreObject, actor));
         }
     }
 
+    private static bool IsOff(CoreObjectInfo info)
+        => Imlight.CoreLib.Game.World.TurnedOff.IsObjectOff(info.m_templateID.Full, info.m_zoneTag);
+
+    // The On and Off switches changed (TurnedOff): an object now off leaves the players, one on again comes back (unless a
+    // trigger has it taken away).
+    private void ApplySwitches() {
+        var gone = 0;
+        var back = 0;
+        foreach (var placed in _placed) {
+            var off = IsOff(placed.Info);
+            if (off == placed.Off) {
+                continue;
+            }
+
+            placed.Off = off;
+            if (off && placed.Actor is not null) {
+                RemoveEntity(placed.Actor, placed.Object);
+                placed.Actor = null;
+                gone++;
+            }
+            else if (!off && placed.Actor is null && !placed.TriggerRemoved) {
+                placed.Object = CoreObjectFactory.FinalizeCoreObject(placed.Info, placed.Template);
+                placed.Actor = CreateEntityActor(placed.Object, placed.Template, placed.Info, $"_{++_addedWhileRunning}");
+                back++;
+            }
+        }
+
+        if (gone + back > 0) {
+            Logger.Information("Zone {0}: {1} objects turned off and {2} turned on again.", Logger.Args(Zone.ZonePath, gone, back));
+        }
+    }
+
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT))]
     private void ReceiveRemoveTriggerObject(ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT message) {
-        foreach (var placed in _placed.Where(p => p.Actor is not null && IsNamed(p, message.ObjectName))) {
+        foreach (var placed in _placed.Where(p => IsNamed(p, message.ObjectName))) {
+            placed.TriggerRemoved = true;
+            if (placed.Actor is null) {
+                continue;
+            }
+
             ZoneRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
                 Message = new GAME_5_PROTOCOL.MSG_REMOVEOBJECT { GameObjectID = placed.Object.m_globalID },
                 Targets = ZoneBroadcastTarget.Players,
@@ -221,6 +276,11 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
         }
 
         foreach (var placed in named) {
+            placed.TriggerRemoved = false;
+            if (placed.Off) {
+                continue;
+            }
+
             if (placed.Actor is null) {
                 placed.Object = CoreObjectFactory.FinalizeCoreObject(placed.Info, placed.Template);
                 placed.Actor = CreateEntityActor(placed.Object, placed.Template, placed.Info);
@@ -278,6 +338,9 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
         public GameObjectTemplate Template { get; } = template;
         public CoreObject Object { get; set; } = coreObject;
         public IActorRef Actor { get; set; } = actor;
+        // Taken away by a trigger, and turned off on the On and Off tab: it has an entity only when it is neither.
+        public bool TriggerRemoved { get; set; }
+        public bool Off { get; set; }
 
     }
 

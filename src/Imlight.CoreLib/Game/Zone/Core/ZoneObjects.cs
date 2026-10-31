@@ -396,8 +396,16 @@ internal static class ZoneObjects {
 
     /// <summary>A loaded copy of a zone, which a change to the files reaches.</summary>
     internal static void Register(IActorRef zone, string zonePath, string variant) {
-        if (Enabled && zone is not null && !string.IsNullOrEmpty(zonePath)) {
+        // Kept with the files off too, so the On and Off switches (TurnedOff) still reach it.
+        if (zone is not null && !string.IsNullOrEmpty(zonePath)) {
             s_live[zone] = (zonePath, Imlight.CoreLib.Game.World.AdvancedMode.BaseVariant(variant));
+        }
+    }
+
+    /// <summary>Tells every loaded copy of every zone a message, such as a change of the On and Off switches (TurnedOff).</summary>
+    internal static void TellEveryZone(object message) {
+        foreach (var zone in s_live.Keys) {
+            zone.Tell(message);
         }
     }
 

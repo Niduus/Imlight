@@ -177,6 +177,20 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             : null;
         DungeonRecall.OnAttach(SessionActor.ActorRef, wizard.CharId);
 
+        // Logged in inside a zone the On and Off tab turned off: off to the Commons (never turned off), so nobody is stuck.
+        if (Imlight.CoreLib.Game.World.TurnedOff.IsZoneOff(wizard.Zone) && !Timers.IsTimerActive("zonetransfer")) {
+            Logger.Information("{0} logged in inside {1}, which is turned off; sending them to the Commons.",
+                Logger.Args(wizard.CharId, wizard.Zone));
+            InformGameClient(Imlight.CoreLib.Game.World.TurnedOff.ZONE_OFF_MESSAGE + " You are going to the Commons.", true);
+            SendTeleportEffects();
+            Timers.StartSingleTimer("zonetransfer", new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                DestinationZone = Imlight.CoreLib.Game.World.TurnedOff.ALWAYS_ON_ZONE,
+                DestinationLocation = "Start",
+                SendToClient = true,
+                OwnerCharId = wizard.CharId,
+            }, TimeSpan.FromSeconds(TELEPORT_EFFECTS_TIME));
+        }
+
         // Sync crowns. Send an immediate sync, then periodic sync so that whenever the
         // character stats page or Crown Shop is opened, the crowns display correctly.
         var crownMsg = new WIZARD_12_PROTOCOL.MSG_CROWNBALANCE {
@@ -265,6 +279,17 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             message.DestinationZone = leaving.SafeZone;
             message.DestinationLocation = leaving.SafeLocation;
             message.OwnerCharId = leaving.CharId;
+        }
+
+        // A zone (or world) the On and Off tab turned off (TurnedOff) cannot be gone into: the player is told and stays put.
+        // A move inside the zone they are in is still fine.
+        if (message.SendToClient && Imlight.CoreLib.Game.World.TurnedOff.IsZoneOff(message.DestinationZone)
+            && !string.Equals(message.DestinationZone, GetActiveWizard()?.Zone, StringComparison.OrdinalIgnoreCase)) {
+            Logger.Information("Session {0}: {1} is turned off; the transfer there was refused.",
+                Logger.Args(SessionActor.SessionID, message.DestinationZone));
+            InformGameClient(Imlight.CoreLib.Game.World.TurnedOff.ZONE_OFF_MESSAGE, true);
+
+            return null;
         }
 
         // A trigger or a script that teleports into a house zone names no lot, so the player's own house in that zone is used.
