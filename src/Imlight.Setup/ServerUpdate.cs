@@ -65,6 +65,7 @@ internal static class ServerUpdate {
         "GlobalRegistry/", "NpcDropTable/", "NpcInventory/", "NpcSeamstress/", "NpcSpellInventory/", "Packs/",
         "QuestTemplates/", "TradeTrainers/", "TreasureCardInventory/", "VanillaTrainers/", "WoodenChests/", "ZoneObjects/",
         "ZoneTransfer/", "Shops/live-shop-lists.json", "DropOdds.json", "QuestGoalEvents.json", "QuestSpellRewards.json",
+        "QuestFixes.json",
     ];
 
     /// <summary>Sorts what installing the server in <paramref name="build"/> over <paramref name="server"/> changes.</summary>
