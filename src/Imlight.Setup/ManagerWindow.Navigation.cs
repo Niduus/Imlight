@@ -54,8 +54,8 @@ internal sealed partial class ManagerWindow {
         // Niduus, 2026-10-29: "help guide the player softly to the stage they want to be in": catch up to a level or a
         // world with the quests' real rewards, and the best gear for your level with where to get it.
         ("Progress", "bolt", "Fast forward, best gear, spells",
-            "Bring a wizard up to a level or a world with the quests' real rewards, find the best gear for your level and where to get it, and collect the spells you should have.",
-            ["Fast Forward", "Best Gear", "Collect Spells"]),
+            "Bring a wizard up to a level or a world with the quests' real rewards, find the best gear for your level and where to get it, collect the spells you should have, and unlearn the ones you don't want.",
+            ["Fast Forward", "Best Gear", "Collect Spells", "Unlearn Spells"]),
         // Niduus, 2026-10-25: "move Bosses to Database". Niduus, 2026-10-30: "make it less confusing and more organized":
         // what you look up for your wizard first (spells, gear, items), then the house, places and pets, then the rest.
         ("Database", "search", "IDs, spells, gear, bosses",
