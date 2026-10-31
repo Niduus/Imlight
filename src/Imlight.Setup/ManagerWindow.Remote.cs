@@ -218,7 +218,7 @@ internal sealed partial class ManagerWindow {
 
         return Fold("server", "Settings", "Let admins manage this server from their PC",
             "Remote Admin: off until you turn it on. Only accounts with the Administrator rank can use it.",
-            SwitchRow("Remote Admin", _remoteHostSwitch, "Applies right away, no restart. While it is off, no port is opened."),
+            SwitchRow("Remote Admin", _remoteHostSwitch, "Applies right away, no restart. While it and \"Let players download their account\" (Account Transfer tab) are both off, no port is opened."),
             _remoteHostInfo,
             Sub("The admin account every server starts with (admin, password compsci) is not let in until it has a new password: " +
                 "change it on the Accounts tab."),

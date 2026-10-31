@@ -414,6 +414,7 @@ internal static class ManagerTheme {
         ["Learn on my wizard"] = "sparkle", ["What's new"] = "sparkle", ["Send to my gifts"] = "gift",
         ["Export ticked…"] = "download", ["Open a customs file…"] = "file", ["Import ticked"] = "check", ["Undo last import"] = "undo",
         ["Open backups folder"] = "folder", ["Tick all"] = "check", ["Share or import customs…"] = "link", ["Replace all of mine"] = "swap", ["Add all as new ones"] = "plus",
+        ["Download my account"] = "download", ["Open an account file…"] = "file", ["Import"] = "check", ["Save as a file…"] = "download",
     };
 
     /// <summary>A button with its label's icon. Primary ones are filled with the accent colour.</summary>

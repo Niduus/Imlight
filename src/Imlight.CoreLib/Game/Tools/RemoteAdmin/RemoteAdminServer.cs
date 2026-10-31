@@ -48,6 +48,11 @@ namespace Imlight.CoreLib.Game.Tools.RemoteAdmin;
 /// certificate made here once; Ahziael remembers its fingerprint. Logins are checked against the server's own accounts,
 /// and an address with 5 wrong ones in 15 minutes is turned away until they age out. What a remote admin can change is
 /// limited to data files (RemoteAdminPaths) and the settings RemoteAdminIni does not lock; nothing is sent anywhere else.
+///
+/// The same port lets any player download a copy of their own account to take to another server (Niduus, 2026-10-31:
+/// "Allow for players using the Ahziael application whilst in another server, to copy their player data"), while
+/// [Remote Admin] PlayerDownloads is on (the default). A player logs in with their own game username and password and
+/// can do nothing else: no files, no settings, no other account (AccountTransfer).
 /// </summary>
 public static class RemoteAdminServer {
 
@@ -93,14 +98,14 @@ public static class RemoteAdminServer {
 
     private static void Apply() {
         try {
-            var enabled = ConfigurationManager.GetValue("Remote Admin.Enabled", false);
+            var enabled = AdminsOn || PlayersOn;
             var port = ConfigurationManager.GetValue("Remote Admin.Port", RemoteAdminWire.DEFAULT_PORT);
             var bind = ConfigurationManager.GetValue("Remote Admin.ListenAddress", "");
             lock (s_lock) {
                 if (!enabled) {
                     if (s_listener is not null) {
                         StopListening();
-                        Logger.Information("Remote Admin is off: Ahziael on other PCs can no longer connect.");
+                        Logger.Information("Remote Admin and account downloads are off: Ahziael on other PCs can no longer connect.");
                     }
 
                     return;
@@ -117,14 +122,21 @@ public static class RemoteAdminServer {
                 s_listening = (port, bind);
                 s_stop = new CancellationTokenSource();
                 _ = AcceptAsync(listener, s_stop.Token);
-                Logger.Information("Remote Admin is on: Ahziael on other PCs can connect on port {0} with an Administrator account. " +
-                    "Certificate fingerprint: {1}", Logger.Args(port, RemoteAdminWire.ShortFingerprint(RemoteAdminWire.Fingerprint(s_certificate.RawData))));
+                Logger.Information("Remote Admin is listening on port {0}: {1}. Certificate fingerprint: {2}", Logger.Args(port,
+                    AdminsOn && PlayersOn ? "Administrator accounts can manage this server, and players can download their own account"
+                        : AdminsOn ? "Administrator accounts can manage this server"
+                        : "players can download their own account (Remote Admin itself is off)",
+                    RemoteAdminWire.ShortFingerprint(RemoteAdminWire.Fingerprint(s_certificate.RawData))));
             }
         }
         catch (Exception ex) {
             Logger.Error("Remote Admin could not start: {0}", Logger.Args(ex.Message));
         }
     }
+
+    private static bool AdminsOn => ConfigurationManager.GetValue("Remote Admin.Enabled", false);
+
+    private static bool PlayersOn => ConfigurationManager.GetValue("Remote Admin.PlayerDownloads", true);
 
     // Every address of this PC (IPv4 and IPv6) unless ListenAddress names one.
     private static TcpListener Listen(string bind, int port) {
@@ -216,6 +228,9 @@ public static class RemoteAdminServer {
         internal string Address;
         internal DateTime CheckedUtc;
 
+        /// <summary>Logged in only to download their own account.</summary>
+        internal bool PlayerOnly;
+
     }
 
     private static async Task ServeAsync(TcpClient client, CancellationToken stop) {
@@ -269,8 +284,8 @@ public static class RemoteAdminServer {
                         reply = RemoteAdminWire.Error("Log in first.");
                     }
                 }
-                else if (!StillAdmin(session)) {
-                    await RemoteAdminWire.WriteAsync(tls, RemoteAdminWire.Error("Your account is no longer an Administrator on this server."), null, stop);
+                else if (StillAllowed(session) is { } gone) {
+                    await RemoteAdminWire.WriteAsync(tls, RemoteAdminWire.Error(gone), null, stop);
 
                     return;
                 }
@@ -367,7 +382,14 @@ public static class RemoteAdminServer {
             return (RemoteAdminWire.Error("Wrong username or password."), null);
         }
 
-        if (account.AuthLevel < AuthLevel.Administrator) {
+        var playerOnly = (string) header["purpose"] == "account";
+        if (playerOnly ? !PlayersOn : !AdminsOn) {
+            return (RemoteAdminWire.Error(playerOnly
+                ? "The host has turned off account downloads on this server. Ask them to turn on \"Let players download their account\" on Ahziael's Account Transfer tab."
+                : "Remote Admin is off on this server. Ask the host to turn it on (Server > Remote in their Ahziael)."), null);
+        }
+
+        if (!playerOnly && account.AuthLevel < AuthLevel.Administrator) {
             Logger.Warning("Remote Admin: {0} from {1} is not an Administrator, so it was not let in.", Logger.Args(account.Username, address));
 
             return (RemoteAdminWire.Error("That account is not an Administrator on this server, so it can't use Ahziael here. Ask the host to give it the Administrator rank."), null);
@@ -383,31 +405,38 @@ public static class RemoteAdminServer {
         }
 
         s_failures.TryRemove(address, out _);
-        Logger.Information("Remote admin {0} logged in from {1}.", Logger.Args(account.Username, address));
+        Logger.Information(playerOnly ? "Account download: {0} logged in from {1}." : "Remote admin {0} logged in from {1}.", Logger.Args(account.Username, address));
         var reply = RemoteAdminWire.Ok();
         reply["account"] = account.Username;
         reply["accountId"] = account.AccountId.ToString();
         reply["name"] = ConfigurationManager.GetValue("Remote Admin.ServerName", "");
 
-        return (reply, new Session { AccountId = account.AccountId, Username = account.Username, Address = address, CheckedUtc = DateTime.UtcNow });
+        return (reply, new Session {
+            AccountId = account.AccountId, Username = account.Username, Address = address, CheckedUtc = DateTime.UtcNow, PlayerOnly = playerOnly,
+        });
     }
 
-    // A rank taken away or an account locked ends the connection within a minute.
-    private static bool StillAdmin(Session session) {
+    // A switch turned off ends the connection at once; a rank taken away or an account locked within a minute.
+    // Null while the session may go on, else why it ends.
+    private static string StillAllowed(Session session) {
+        if (session.PlayerOnly ? !PlayersOn : !AdminsOn) {
+            return session.PlayerOnly ? "The host turned off account downloads." : "The host turned Remote Admin off.";
+        }
+
         if (DateTime.UtcNow - session.CheckedUtc < TimeSpan.FromMinutes(1)) {
-            return true;
+            return null;
         }
 
         var account = AccountCollection.GetAccountForCharacterList(session.AccountId);
-        if (account is null || account.IsLocked || account.AuthLevel < AuthLevel.Administrator) {
-            Logger.Warning("Remote admin {0} lost the Administrator rank and was disconnected.", Logger.Args(session.Username));
+        if (account is null || account.IsLocked || (!session.PlayerOnly && account.AuthLevel < AuthLevel.Administrator)) {
+            Logger.Warning("Remote Admin: {0} can no longer log in here and was disconnected.", Logger.Args(session.Username));
 
-            return false;
+            return session.PlayerOnly ? "Your account can no longer log in to this server." : "Your account is no longer an Administrator on this server.";
         }
 
         session.CheckedUtc = DateTime.UtcNow;
 
-        return true;
+        return null;
     }
 
     // ---------------------------------------------------------------------
@@ -415,6 +444,12 @@ public static class RemoteAdminServer {
     // ---------------------------------------------------------------------
 
     private static async Task<(JsonObject, byte[])> HandleAsync(Session session, string op, JsonObject header, byte[] body) {
+        if (session.PlayerOnly) {
+            return op == "export"
+                ? await ExportAsync(session, header)
+                : (RemoteAdminWire.Error("This login can only download your own account."), null);
+        }
+
         switch (op) {
             case "status": {
                 var reply = RemoteAdminWire.Ok();
@@ -436,6 +471,10 @@ public static class RemoteAdminServer {
                 return (Announce(session, header), null);
             case "db":
                 return (await DatabaseAsync(header), null);
+            case "export":
+                return await ExportAsync(session, header);
+            case "import":
+                return (await ImportAsync(session, header, body), null);
             default:
                 return (RemoteAdminWire.Error($"This server does not know \"{op}\". Update it."), null);
         }
@@ -599,6 +638,98 @@ public static class RemoteAdminServer {
     /// The Accounts tab's two requests, passed to the server's own database: the account list, one account by name,
     /// and saving one account. Nothing else in the database can be read or changed this way.
     /// </summary>
+    // ---------------------------------------------------------------------
+    // Moving accounts (AccountTransfer)
+    // ---------------------------------------------------------------------
+
+    private static RavenHttp PlayerDatabaseHttp() {
+        if (!string.IsNullOrWhiteSpace(ConfigurationManager.GetValue("Database.PlayerDatabaseUrl", ""))) {
+            throw new InvalidDataException("This server keeps its accounts in a database of its own, so accounts can't be moved from here.");
+        }
+
+        var port = ConfigurationManager.GetValue("Database.EmbeddedDatabasePort", 8080);
+
+        return new RavenHttp(s_database, $"http://127.0.0.1:{port}", ConfigurationManager.GetValue("Database.PlayerDatabaseName", "Playerdata"));
+    }
+
+    // A player gets their own account; an admin may name any.
+    private static async Task<(JsonObject, byte[])> ExportAsync(Session session, JsonObject header) {
+        var username = !session.PlayerOnly && ((string) header["username"])?.Trim() is { Length: > 0 } named ? named : session.Username;
+        var account = AccountCollection.GetAccountForCharacterList(username);
+        if (account is null) {
+            return (RemoteAdminWire.Error($"There is no account named {username} on this server."), null);
+        }
+
+        JsonObject file;
+        try {
+            file = await AccountTransfer.ExportAsync(PlayerDatabaseHttp(), account.Username, ConfigurationManager.GetValue("Remote Admin.ServerName", ""),
+                CharactersOf(account.AccountId));
+        }
+        catch (AccountTransferException ex) {
+            return (RemoteAdminWire.Error(ex.Message), null);
+        }
+
+        var online = OnlinePlayerCollection.GetOnlinePlayers().Any(p => p.AccountId == account.AccountId);
+        var counts = (file["Counts"] as JsonObject ?? []).ToDictionary(c => c.Key, c => (int?) c.Value ?? 0);
+        Logger.Information("Account download: {0} downloaded {1} from {2} ({3}).",
+            Logger.Args(session.Username, account.Username, session.Address, AccountTransfer.Describe(counts)));
+        var reply = RemoteAdminWire.Ok();
+        reply["account"] = account.Username;
+        reply["summary"] = AccountTransfer.Describe(counts);
+        reply["online"] = online;
+
+        return (reply, RemoteAdminWire.Gzip(AccountTransfer.ToBytes(file)));
+    }
+
+    // The wizards' names, schools and levels, for the person importing the file.
+    private static JsonArray CharactersOf(ulong accountId) {
+        var list = new JsonArray();
+        try {
+            using var session = Imlight.CoreLib.WizardData.Databases.PlayerDatabase.Instance.Store.OpenSession();
+            foreach (var wizard in session.Query<Wizard>(collectionName: WizardCollection.CollectionName)
+                         .Customize(q => q.WaitForNonStaleResults())
+                         .Where(w => w.AccountId == accountId).ToList().Where(w => w is not null)) {
+                string name;
+                try {
+                    name = wizard.PlayerNameBehavior?.GetWizardName() ?? "";
+                }
+                catch (Exception) {
+                    name = "";
+                }
+
+                list.Add(new JsonObject {
+                    ["Name"] = name,
+                    ["School"] = wizard.MagicSchoolBehavior?.MagicSchool.ToString() ?? "",
+                    ["Level"] = wizard.MagicSchoolBehavior?.Level ?? 0,
+                });
+            }
+        }
+        catch (Exception ex) {
+            Logger.Warning("Account download: could not name the wizards: {0}", Logger.Args(ex.Message));
+        }
+
+        return list;
+    }
+
+    // An admin brings an account file into this server, as the host can on their own PC.
+    private static async Task<JsonObject> ImportAsync(Session session, JsonObject header, byte[] body) {
+        try {
+            var file = AccountTransfer.Read(RemoteAdminWire.Gunzip(body));
+            var username = ((string) header["username"])?.Trim() is { Length: > 0 } named ? named : file.Username;
+            var password = (string) header["password"];
+            await AccountTransfer.ImportAsync(PlayerDatabaseHttp(), file, username,
+                string.IsNullOrEmpty(password) ? null : DatabaseUtilities.CreateHashedPassword(password));
+            Logger.Information("Remote admin {0} imported the account {1} ({2}).", Logger.Args(session.Username, username, AccountTransfer.Describe(file.Counts)));
+            var reply = RemoteAdminWire.Ok();
+            reply["account"] = username;
+
+            return reply;
+        }
+        catch (AccountTransferException ex) {
+            return RemoteAdminWire.Error(ex.Message);
+        }
+    }
+
     private static async Task<JsonObject> DatabaseAsync(JsonObject header) {
         if (!string.IsNullOrWhiteSpace(ConfigurationManager.GetValue("Database.PlayerDatabaseUrl", ""))) {
             return RemoteAdminWire.Error("This server keeps its accounts in a database of its own. Manage them there.");

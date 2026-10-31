@@ -402,6 +402,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Game Files", GameFilesTab),
             Tab(Edition.NAME, AhziaelTab),
             Tab("Remote", RemoteTab),
+            Tab("Account Transfer", AccountTransferTab),
         }.ToDictionary(t => (string) t.Tag!);
         // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
         var nav = Navigation(tabs);
@@ -530,6 +531,7 @@ internal sealed partial class ManagerWindow : Window {
                 break;
             case "Settings" when _settings.Count == 0: LoadSettings(); break;
             case "Accounts": await LoadAccountsAsync(); break;
+            case "Account Transfer": await LoadTransferAccountsAsync(); break;
             case WHATS_NEW: await LoadNotesAsync(); break;
         }
 
@@ -2717,7 +2719,7 @@ internal sealed partial class ManagerWindow : Window {
         try {
             await action();
         }
-        catch (Exception ex) when (ex is PanelException or AccountException) {
+        catch (Exception ex) when (ex is PanelException or AccountException or Imlight.RemoteAdmin.AccountTransferException) {
             Say(ex.Message, isError: true);
         }
         catch (Exception ex) {
@@ -2836,6 +2838,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Game Files"] = ("folder", "Read the game's data files without ever changing them, and download them with Aurorium."),
         [Edition.NAME] = ("wrench", "Ahziael itself: updates, how it looks, privacy, its folders, and removing it."),
         ["Remote"] = ("link", "Manage an Imlight server on another PC with your Administrator account there, or let admins manage this one."),
+        ["Account Transfer"] = ("download", "Download your account from a server you play on, and bring accounts from other servers into this one."),
     };
 
     /// <summary>

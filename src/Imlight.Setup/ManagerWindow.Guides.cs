@@ -433,6 +433,33 @@ internal sealed partial class ManagerWindow {
                              ServerSource.DefaultName + ". With another copy they say \"This server copy doesn't have this feature\" " +
                              "instead of doing nothing."),
             ]),
+        // Niduus, 2026-10-31: players take their account from one server to another.
+        new("move", "download", "Accounts", "Move an account", "How to move your account to another server",
+            "Take every wizard, item, pet, quest and house from one Imlight server to another.",
+            [
+                new GuideSteps("If you are the player",
+                    "Log out of the game on the server you are leaving.",
+                    "In Ahziael, click [Server] in the menu on the left, then the [Account Transfer] tab.",
+                    "Under [Download my account], type the server's address (the one you play on), leave the port at `12410`, " +
+                    "and type your username and password for that server.",
+                    "Press [Download my account]. The first time, Ahziael shows the server's fingerprint: ask the host to read theirs " +
+                    "out from the same tab, and press OK only if they match.",
+                    "Pick where to save the file (your Desktop is fine) and press Save.",
+                    "Send that file to the host of the server you are moving to."),
+                new GuideSteps("If you are the host bringing someone in",
+                    "Start your server ([Server] tab, [Start server]) and wait until it is ready.",
+                    "Click [Server] in the menu on the left, then the [Account Transfer] tab.",
+                    "Under [Bring an account into this server], press [Open an account file…] and pick the file the player sent you.",
+                    "Check the wizards listed. Change [Username] if someone on your server already has that name.",
+                    "Leave [Password] empty so they keep their old password, or type a new one and tell them.",
+                    "Press [Import]. They can log in right away."),
+                new GuideSteps("If you are the host of the server they are leaving",
+                    "Nothing to do: players can download their own account unless you switch off [Let players download their account] " +
+                    "on the [Account Transfer] tab.",
+                    "For players on the internet, press [Let friends connect] on the [Play] tab once so your router lets port `12410` through."),
+                new GuideTip("Friends lists, guilds and Loyalty Store tokens stay on the old server. The account arrives as a plain player; " +
+                             "give it a rank on the [Accounts] tab if it needs one."),
+            ]),
     ];
 
     private static Guide GuideOf(string id) => s_guides.First(g => g.Id == id);

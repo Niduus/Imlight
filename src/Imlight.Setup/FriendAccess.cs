@@ -66,8 +66,10 @@ internal static class FriendAccess {
         var realms = Math.Max(1, Math.Max(Number("Game Server", "GameServerCount", 3), Number("Game Server", "MaxGameServersAllowed", 3)));
 
         var ports = new[] { login }.Concat(Enumerable.Range(game, realms)).ToList();
-        // Remote Admin's port too, while it is on (Server > Remote), so admins on the internet can reach it.
-        if (string.Equals(IniFile.Get(config, "Remote Admin", "Enabled"), "true", StringComparison.OrdinalIgnoreCase)) {
+        // Remote Admin's port too, while it is on (Server > Remote), so admins on the internet can reach it, and while
+        // players may download their own account (Server > Account Transfer; on unless turned off).
+        if (string.Equals(IniFile.Get(config, "Remote Admin", "Enabled"), "true", StringComparison.OrdinalIgnoreCase)
+            || !string.Equals(IniFile.Get(config, "Remote Admin", "PlayerDownloads"), "false", StringComparison.OrdinalIgnoreCase)) {
             ports.Add(Number("Remote Admin", "Port", Imlight.RemoteAdmin.RemoteAdminWire.DEFAULT_PORT));
         }
 
