@@ -393,6 +393,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Server", ServerTab),
             Tab("Game Modes", GameModesTab),
             Tab("Battles and World", BattlesTab),
+            Tab("On and Off", TurnedOffTab),
             Tab("Events", EventsTab),
             Tab("Shops and Codes", ShopsTab),
             Tab("Announcements", AnnouncementsTab),
@@ -504,6 +505,7 @@ internal sealed partial class ManagerWindow : Window {
             case "Lookup": await LoadLookupAsync(); break;
             case "Quests": LoadQuests(); break;
             case "Vendors": await LoadVendorsAsync(); break;
+            case "On and Off": await LoadTurnedOffAsync(); break;
             case "Pet Talents": await LoadPetTalentsAsync(_petTalentPage); break;
             case "Pet Derby": await LoadPetTalentsAsync(_petDerbyPage); break;
             case "Quest Tree": await LoadQuestTreeAsync(); break;
@@ -2827,6 +2829,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Server"] = ("server", "Start, restart and stop the server, and pick where the server comes from."),
         ["Game Modes"] = ("dice", "Whole-server modes such as Randomizer and Die = Delete, and what spell trainers ask for."),
         ["Battles and World"] = ("sword", "Switches for battles, pips, pets, jewels, houses and the world, Tamed Drops, and how fast plants grow."),
+        ["On and Off"] = ("power", "Turn any NPC, creature, zone or world of the game, or any of your customs, on or off, with no restart."),
         ["Events"] = ("clock", "Run the game's own events, such as the Deckathalon, Side Activity and Monthly Gauntlets, one after another from a queue."),
         ["Shops and Codes"] = ("bag", "Codes to redeem, member benefits, the Crown Shop, the Loyalty Store and the Bazaar bot."),
         ["Announcements"] = ("chat", "Change the words of everything the server announces or tells a player, turn any of it off, and send your own."),

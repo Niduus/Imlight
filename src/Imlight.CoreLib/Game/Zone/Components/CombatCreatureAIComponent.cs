@@ -183,6 +183,11 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         }
 
         _isInDuel = true;
+        // The On and Off tab does not take a creature out of its battle (ZonePath.ApplySwitches).
+        if (Entity.ActiveGameObject is { } fighter) {
+            Imlight.CoreLib.Game.Zone.Core.ZonePath.Fighting[fighter.m_globalID.Full] = 0;
+        }
+
         _currentDuelComponent = message.Duel;
         _currentSubCircle = message.SubCircle;
         _pathMovementComponent?.Stop(); // null for a summoned minion, which has no world movement

@@ -148,6 +148,7 @@ internal static class ManagerTheme {
         [Edition.NAME] = Color.FromRgb(140, 150, 165),
         ["Game Modes"] = Color.FromRgb(154, 92, 201),
         ["Battles and World"] = Color.FromRgb(217, 101, 59),
+        ["On and Off"] = Color.FromRgb(63, 166, 90),
         ["Events"] = Color.FromRgb(70, 130, 220),
         ["Shops and Codes"] = Color.FromRgb(201, 162, 39),
         // The boss editor's sections.

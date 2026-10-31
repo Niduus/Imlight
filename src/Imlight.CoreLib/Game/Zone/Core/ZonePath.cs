@@ -96,6 +96,12 @@ public sealed class ZonePath : ZoneEntity {
     // spawn point is not used up: it spawns again (a fresh roll with the randomizer) a few seconds later.
     internal static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, byte> Spared = new();
     private const int SPARED_RESPAWN_DELAY_IN_SECONDS = 10;
+    // Creatures that joined a battle (CombatCreatureAIComponent), by global id: the On and Off tab leaves them in it.
+    internal static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, byte> Fighting = new();
+    // Each living creature's actor, object, the template it is and the custom it is (0 for none), for the On and Off tab.
+    private readonly Dictionary<ulong, (IActorRef Actor, CoreObject Object, ulong Template, int Custom)> _living = [];
+    // Which spawn items of each spawner were off last time, so a spawner whose creatures were turned on again fills up.
+    private readonly Dictionary<SpawnObject, string> _offSign = new(ReferenceEqualityComparer.Instance);
     // Spawners a ResSpawn switched off (m_activate false).
     private readonly HashSet<SpawnObject> _deactivated = new(ReferenceEqualityComparer.Instance);
     // Players that caused a spawn (quest or trigger result); the creature checks aggro against them once loaded.
@@ -118,6 +124,7 @@ public sealed class ZonePath : ZoneEntity {
         for (var i = 0; i < creatures.Count; i++) {
             var spawnObject = creatures[i];
             _creatureCount.Add(spawnObject, 0);
+            _offSign[spawnObject] = OffSign(spawnObject);
 
             if (!spawnObject.m_active) {
                 continue;
@@ -243,6 +250,12 @@ public sealed class ZonePath : ZoneEntity {
     // leaves the players and the path stops (ZonePathSupervisor makes the new one).
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED))]
     private void ReceiveZoneObjectsChanged(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED message) {
+        if (message.SwitchesChanged) {
+            ApplySwitches();
+
+            return;
+        }
+
         if (!message.RemovedCreatures.Contains(_template.m_id.Full)) {
             foreach (var actor in _creatureActors) {
                 actor.Forward(message);
@@ -282,6 +295,8 @@ public sealed class ZonePath : ZoneEntity {
 
             _spawnObjectInfo.Remove(message.GameObjectID);
             _spawnedTemplate.Remove(message.GameObjectID);
+            _living.Remove(message.GameObjectID);
+            Fighting.TryRemove(message.GameObjectID, out _);
             _creatureActors.RemoveAll(x => x == Sender);
             if (_loadingCreatures.Remove(Sender)) {
                 Timers.Cancel(Sender);
@@ -399,6 +414,13 @@ public sealed class ZonePath : ZoneEntity {
             templateId = Randomizer.MapCreature(originalTemplateId);
         }
 
+        // A creature the On and Off tab turned off (TurnedOff) is not spawned; a randomized one that became it is not either.
+        var ownCustom = ZoneObjects.CustomOfSpawner(spawnObject.m_id.Full);
+        if (Imlight.CoreLib.Game.World.TurnedOff.IsTemplateOff(templateId)
+            || Imlight.CoreLib.Game.World.TurnedOff.IsCustomOff(ownCustom)) {
+            return;
+        }
+
         // Create the creature using the data we have.
         var template = CoreObjectFactory.GetCoreTemplate(templateId);
         if (template is null) {
@@ -414,10 +436,13 @@ public sealed class ZonePath : ZoneEntity {
         creatureObj = CoreObjectFactory.InitializeCoreObjectBehaviors(creatureObj, template);
         // A creature this copy of the zone spawns as a custom of the Customs tab (a ZoneObjects creature's own Custom,
         // ReplaceSpawns, the tab's rooms) is marked before its actor is made, so it has the custom's name and changes.
-        var ownCustom = ZoneObjects.CustomOfSpawner(spawnObject.m_id.Full);
+        // A custom turned off on the On and Off tab that a room swaps in leaves the game's own creature.
+        var spawnedCustom = 0;
         if (!isWisp && (ownCustom > 0 ? ownCustom : Zone.Extras.CustomFor(templateId)) is var customId and > 0
+            && !Imlight.CoreLib.Game.World.TurnedOff.IsCustomOff(customId)
             && Imlight.CoreLib.Game.Combat.Customs.Get(customId)?.BaseTemplateID == templateId) {
             Imlight.CoreLib.Game.Combat.Customs.Mark(creatureObj.m_globalID.Full, customId);
+            spawnedCustom = customId;
         }
 
         if (templateId != originalTemplateId) {
@@ -446,6 +471,7 @@ public sealed class ZonePath : ZoneEntity {
         _creatureActors.Add(creatureActor);
         _spawnObjectInfo.Add(creatureObj.m_globalID, spawnObject);
         _spawnedTemplate[creatureObj.m_globalID] = originalTemplateId;
+        _living[creatureObj.m_globalID] = (creatureActor, creatureObj, templateId, spawnedCustom);
         if (cause?.PlayerObject is not null && cause.PlayerActor is not null) {
             _aggroOnLoad[creatureActor] = new ZONE_102_PROTOCOL.MSG_PLAYERMOVE {
                 PlayerObject = cause.PlayerObject,
@@ -461,6 +487,73 @@ public sealed class ZonePath : ZoneEntity {
 
         // Increment the creature count.
         SetCreatureCount(spawnObject, CreatureCount(spawnObject) + 1);
+    }
+
+    private static bool IsItemOff(SpawnItem item)
+        => item?.m_objectInfo is not null && Imlight.CoreLib.Game.World.TurnedOff.IsTemplateOff(item.m_objectInfo.m_templateID);
+
+    private string OffSign(SpawnObject spawnObject)
+        => string.Concat(spawnObject.m_spawnList.Select(i => IsItemOff(i) ? '1' : '0'))
+           + (Imlight.CoreLib.Game.World.TurnedOff.IsCustomOff(ZoneObjects.CustomOfSpawner(spawnObject.m_id.Full)) ? "c" : "");
+
+    // The On and Off switches changed (TurnedOff): a living creature that is now off leaves (one in a battle finishes it),
+    // and a spawner whose creatures are on again fills up.
+    private void ApplySwitches() {
+        var gone = 0;
+        foreach (var (id, creature) in _living.ToList()) {
+            var customOff = creature.Custom > 0 && Imlight.CoreLib.Game.World.TurnedOff.IsCustomOff(creature.Custom);
+            var off = Imlight.CoreLib.Game.World.TurnedOff.IsTemplateOff(creature.Template)
+                      || Imlight.CoreLib.Game.World.TurnedOff.IsTemplateOff(_spawnedTemplate.GetValueOrDefault(id))
+                      || customOff;
+            if (!off || Fighting.ContainsKey(id)) {
+                continue;
+            }
+
+            // A swapped-in custom turned off comes back as the game's own creature, so its spawner fills up again below.
+            ZoneRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+                Message = new GAME_5_PROTOCOL.MSG_REMOVEOBJECT { GameObjectID = id },
+                Targets = ZoneBroadcastTarget.Players,
+            });
+            ZoneRef.Tell(new ZONE_102_PROTOCOL.MSG_RELEASEMOBILEID { MobileId = creature.Object.m_nMobileID });
+            if (_spawnObjectInfo.Remove(id, out var spawner)) {
+                SetCreatureCount(spawner, Math.Max(0, CreatureCount(spawner) - 1));
+                _offSign.Remove(spawner);
+            }
+
+            _spawnedTemplate.Remove(id);
+            _living.Remove(id);
+            _creatureActors.Remove(creature.Actor);
+            _aggroOnLoad.Remove(creature.Actor);
+            if (_loadingCreatures.Remove(creature.Actor)) {
+                Timers.Cancel(creature.Actor);
+            }
+
+            Context.Stop(creature.Actor);
+            gone++;
+        }
+
+        var refilled = 0;
+        for (var i = 0; i < _creatures.Count; i++) {
+            var spawnObject = _creatures[i];
+            var sign = OffSign(spawnObject);
+            var was = _offSign.GetValueOrDefault(spawnObject);
+            _offSign[spawnObject] = sign;
+            if (was == sign || !spawnObject.m_active || _deactivated.Contains(spawnObject)
+                || spawnObject.m_zoneLevelMin != 0 || spawnObject.m_zoneLevelMax != 0) {
+                continue;
+            }
+
+            Timers.StartSingleTimer($"SwitchedOn_{i}", new ZONE_102_PROTOCOL.MSG_PATHSPAWNINTERVAL {
+                SpawnObject = spawnObject,
+                Count = (int) Math.Clamp(spawnObject.m_maxNumberOfSpawns, 1u, MAX_SPAWNS_ALLOWED),
+            }, TimeSpan.FromMilliseconds(FILL_STAGGER_IN_MS));
+            refilled++;
+        }
+
+        if (gone + refilled > 0) {
+            Logger.Information("Zone {0}: path {1}: {2} creatures turned off, {3} spawners checked again.",
+                Logger.Args(Zone.ZonePath, _template.m_name, gone, refilled));
+        }
     }
 
     private bool CanSpawn(SpawnObject spawnObject) {
@@ -498,14 +591,21 @@ public sealed class ZonePath : ZoneEntity {
     private SpawnItem PickSpawnItem(SpawnObject spawnObject) {
         // A ZoneObjects distinct spawner (Niduus, 2026-10-22: Malistaire's 3 Draconians are 3 different ones) picks
         // by chance among the templates it has no living creature of; with none left it spawns nothing.
+        // Creatures the On and Off tab turned off are left out; the others share their chance.
+        var on = spawnObject.m_spawnList.Where(i => !IsItemOff(i)).ToList();
+        if (on.Count == 0) {
+            return null;
+        }
+
         if (!Zone.Extras.IsDistinctSpawner(spawnObject.m_name)) {
-            return PickRandomSpawnObject(spawnObject.m_spawnList);
+            return on.Count == spawnObject.m_spawnList.Count
+                ? PickRandomSpawnObject(spawnObject.m_spawnList)
+                : PickRandomSpawnObject(on, Math.Max(1, on.Sum(i => i.m_percentChance)));
         }
 
         var living = _spawnObjectInfo.Where(x => ReferenceEquals(x.Value, spawnObject))
             .Select(x => _spawnedTemplate.GetValueOrDefault(x.Key)).ToHashSet();
-        var left = spawnObject.m_spawnList.Where(i => i?.m_objectInfo is not null
-                                                      && !living.Contains(i.m_objectInfo.m_templateID)).ToList();
+        var left = on.Where(i => i?.m_objectInfo is not null && !living.Contains(i.m_objectInfo.m_templateID)).ToList();
 
         return left.Count == 0 ? null : PickRandomSpawnObject(left, Math.Max(1, left.Sum(i => i.m_percentChance)));
     }

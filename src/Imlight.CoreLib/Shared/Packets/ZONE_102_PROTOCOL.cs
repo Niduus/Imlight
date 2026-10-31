@@ -1236,6 +1236,10 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public List<(PathObjectTemplate Path, List<NodeObject> Nodes, SpawnObject Spawner)> AddedCreatures = [];
         public HashSet<ulong> RemovedCreatures = [];
 
+        // The app's On and Off switches changed (Game/World/TurnedOff): each object and creature that is now off leaves,
+        // and each one that is on again comes back.
+        public bool SwitchesChanged;
+
     }
 
     /// <summary>

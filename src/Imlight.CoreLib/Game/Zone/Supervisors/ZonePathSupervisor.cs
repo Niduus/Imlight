@@ -73,6 +73,15 @@ internal sealed class ZonePathSupervisor(Core.Zone zone) : ZoneEntitySupervisor(
     public override void ReceiveZoneObjectsChanged(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSCHANGED message) {
         base.ReceiveZoneObjectsChanged(message);
 
+        // The On and Off switches changed (TurnedOff): every path checks its creatures.
+        if (message.SwitchesChanged) {
+            foreach (var pathActor in _paths.Values) {
+                pathActor.Tell(message);
+            }
+
+            return;
+        }
+
         foreach (var id in message.RemovedCreatures) {
             if (_paths.Remove(id, out var pathActor)) {
                 pathActor.Tell(message);
