@@ -70,7 +70,7 @@
       "m_displayImage1": "GUI/QuestButtons/Location_ZF_Tower_on_fire.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "MS_SpotFire"
+        "ZF_Tower_Burning"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -83,7 +83,7 @@
       "m_goalTitle": "Put Out",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "MS_SpotFire.AdjRef"
+        "ZF_Tower_Burning.AdjRef"
       ],
       "m_itemTotal": 1
     },

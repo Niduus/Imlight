@@ -67,7 +67,7 @@
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_Textbook01.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "MS_BookPedestalHistory"
+        "ZF-Library_Book"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -80,7 +80,7 @@
       "m_goalTitle": "WizardQuestGoals_00000790",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "MS_BookPedestalHistory.AdjRef"
+        "ZF-Library_Book.AdjRef"
       ],
       "m_itemTotal": 1
     },

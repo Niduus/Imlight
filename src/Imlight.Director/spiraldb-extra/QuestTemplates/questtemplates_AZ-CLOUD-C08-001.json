@@ -32,6 +32,7 @@
       "m_displayImage1": "GUI/QuestButtons/Location_AZ_Cloud_Alcove.dds",
       "m_displayImage2": "",
       "m_clientTags": [
+        "AZ-Starfall-Lily2",
         "AZ-Starfall-Lily"
       ],
       "m_genericEvents": [],
@@ -45,6 +46,7 @@
       "m_goalTitle": "WizardQuestGoals_UseItem",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
+        "AZ-Starfall-Lily2.AdjRef",
         "AZ-Starfall-Lily.AdjRef"
       ],
       "m_itemTotal": 1

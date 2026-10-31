@@ -32,8 +32,9 @@
       "m_displayImage1": "GUI/QuestButtons/Location_ZF_Grave_Markers.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "ZF_Grave_Drum",
-        "GH_Drum"
+        "ZF_Gravestone_Interactable1",
+        "ZF_Placed_Drum",
+        "ZF_Grave_Drum"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -46,8 +47,9 @@
       "m_goalTitle": "WizardQuestGoals_00000192",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "ZF_Grave_Drum.AdjRef",
-        "GH_Drum.AdjRef"
+        "ZF_Gravestone_Interactable1.AdjRef",
+        "ZF_Placed_Drum.AdjRef",
+        "ZF_Grave_Drum.AdjRef"
       ],
       "m_itemTotal": 1
     },
@@ -73,8 +75,9 @@
       "m_displayImage1": "GUI/QuestButtons/Location_ZF_Grave_Markers.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "ZF_Grave_Drum",
-        "GH_Drum"
+        "ZF_Gravestone_Interactable2",
+        "ZF_Placed_Drum",
+        "ZF_Grave_Drum"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -87,8 +90,9 @@
       "m_goalTitle": "WizardQuestGoals_00000192",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "ZF_Grave_Drum.AdjRef",
-        "GH_Drum.AdjRef"
+        "ZF_Gravestone_Interactable2.AdjRef",
+        "ZF_Placed_Drum.AdjRef",
+        "ZF_Grave_Drum.AdjRef"
       ],
       "m_itemTotal": 1
     },
