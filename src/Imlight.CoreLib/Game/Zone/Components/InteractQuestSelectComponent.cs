@@ -161,6 +161,35 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
 
             Entity.DeleteObject();
         }
+        else {
+            ShowUsedLook(playerActor, activeGoals);
+        }
+    }
+
+    // A used quest object takes its used look for this wizard and keeps it (UsedQuestObjects): the bubble pops, the
+    // crystal ball shatters. Left to the quest when one of its goals already changes the object itself.
+    private void ShowUsedLook(IActorRef playerActor, List<(QuestInstance Quest, GoalTemplate Goal, GoalInstance GoalProgress)> activeGoals) {
+        if (Entity.Info?.m_zoneTag is not { Length: > 0 } tag
+            || UsedQuestObjects.UsedState(Entity.Template as GameObjectTemplate) is not { } usedState
+            || InteractObjectStateComponent.KeepsStateAfterGoalUse(Entity.Template as GameObjectTemplate)) {
+            return;
+        }
+
+        var questChangesIt = activeGoals.Any(g => g.Goal.m_completeResults?.m_results?.Any(r =>
+            (r is ResAddDynaMod add && (string) add.m_dynaModClientTag == tag)
+            || (r is ResRemoveDynaMod remove && (string) remove.m_dynaModClientTag == tag)) == true);
+        if (questChangesIt) {
+            return;
+        }
+
+        playerActor.Tell(new CHARACTER_103_PROTOCOL.MSG_ADDDYNAMOD {
+            DynaMod = new ResAddDynaMod {
+                m_dynaModClientTag = tag,
+                m_dynaModState = usedState,
+                m_zoneName = Entity.Zone?.ZonePath,
+            },
+            ContextActor = playerActor,
+        });
     }
 
     private bool HasActiveMatchingUsageGoal(Wizard playerCharacter)
