@@ -647,13 +647,17 @@ internal sealed partial class ServerManager(string installFolder) {
             throw new PanelException("Type a command first, such as .elixir50.");
         }
 
-        if (!HasCommandBox) {
-            throw new PanelException("This server copy doesn't have the app's command box. Type the command in the game's chat instead.");
+        // Playing on a server that isn't on this PC: Ahziael types the command into the game's chat (GameInput), so it
+        // runs on any server for an account allowed to use it (Niduus, 2026-10-31).
+        if (TypesIntoGame) {
+            GameInput.Send(command);
+            RememberCommand(command);
+
+            return;
         }
 
-        // Only whether it runs: the full status also tries the login port, which can keep the window waiting.
-        if (!InstalledCommands.IsServerRunning(InstallFolder)) {
-            throw new PanelException("Start the server and log in to Wizard101 on this PC first.");
+        if (!HasCommandBox) {
+            throw new PanelException("This server copy doesn't have the app's command box. Type the command in the game's chat instead.");
         }
 
         var line = (wizardId is { Length: > 0 } ? $"@{wizardId} " : "") + command.ReplaceLineEndings(" ");
@@ -662,10 +666,29 @@ internal sealed partial class ServerManager(string installFolder) {
     }
 
     /// <summary>
+    /// Whether commands go to the game by typing them into its chat: when the server on this PC is not running and Ahziael
+    /// isn't managing another PC's server (Server > Remote), the game must be playing on someone else's server.
+    /// </summary>
+    internal bool TypesIntoGame
+        => RemoteSession.Current is null && !InstalledCommands.IsServerRunning(InstallFolder);
+
+    /// <summary>
     /// Runs one command several times in a row, for commands that give one at a time (.mod addreagent gives one reagent),
     /// and remembers it once in the previous commands.
     /// </summary>
     internal void SendCommand(string command, int times) {
+        if (TypesIntoGame) {
+            command = command.Trim();
+            if (command.Length == 0) {
+                throw new PanelException("Type a command first, such as .elixir50.");
+            }
+
+            GameInput.Send([.. Enumerable.Repeat(command, Math.Max(1, times))]);
+            RememberCommand(command);
+
+            return;
+        }
+
         SendCommand(command);
         var line = command.Trim().ReplaceLineEndings(" ") + Environment.NewLine;
         if (times > 1) {
