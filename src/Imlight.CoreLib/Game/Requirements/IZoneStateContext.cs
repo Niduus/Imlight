@@ -20,4 +20,10 @@ public interface IZoneStateContext {
     /// </summary>
     Func<string, bool?> InstanceQuestCompleted => null;
 
+    /// <summary>
+    /// The zone a zone trigger's requirements are checked in (null for every other check). Lets a trigger that names a
+    /// quest the server does not have stand in the quest that leads there (RetiredQuestStandIn).
+    /// </summary>
+    string TriggerZonePath => null;
+
 }
