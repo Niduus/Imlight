@@ -197,7 +197,7 @@
       "m_usePatron": false
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -210,16 +210,18 @@
         "m_percentChance": 1.0,
         "m_descriptor": "Phoenix Tower Key",
         "m_descriptor2": "",
-        "m_count": 0,
+        "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
       "m_displayImage1": "GUI/QuestButtons/KR_Phoenix_Tower_Key.dds",
       "m_displayImage2": "",
-      "m_clientTags": [],
+      "m_clientTags": [
+        "KR-PhoenixKey"
+      ],
       "m_genericEvents": [],
-      "m_autoQualify": false,
+      "m_autoQualify": true,
       "m_autoComplete": false,
       "m_dialogList": null,
       "m_noQuestHelper": false,
@@ -227,11 +229,11 @@
       "m_locationName": "Phoenix Tower",
       "m_goalName": "4_WizardQuestGoals00000018",
       "m_goalTitle": "WizardQuestGoals_00000018",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Khrysalis/Interiors/KR_Z07_I06_PhoenixBot",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "KR-PhoenixKey.AdjRef"
+      ],
+      "m_itemTotal": 1
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",

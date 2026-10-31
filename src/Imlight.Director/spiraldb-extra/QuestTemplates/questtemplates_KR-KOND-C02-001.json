@@ -49,7 +49,7 @@
       "m_bountyType": "BT_MOB_KILL"
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -62,16 +62,18 @@
         "m_percentChance": 1.0,
         "m_descriptor": "Comestibles",
         "m_descriptor2": "",
-        "m_count": 0,
+        "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_KR_Comestible.dds",
       "m_displayImage2": "",
-      "m_clientTags": [],
+      "m_clientTags": [
+        "KR_Kondha_Comestibles"
+      ],
       "m_genericEvents": [],
-      "m_autoQualify": false,
+      "m_autoQualify": true,
       "m_autoComplete": false,
       "m_dialogList": null,
       "m_noQuestHelper": false,
@@ -79,14 +81,14 @@
       "m_locationName": "Kondha Desert",
       "m_goalName": "2_WizardQuestGoals00000058",
       "m_goalTitle": "WizardQuestGoals_00000058",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Khrysalis/KR_Z10_KondhaDesert",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "KR_Kondha_Comestibles.AdjRef"
+      ],
+      "m_itemTotal": 1
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -97,7 +99,7 @@
       "m_goalRequirements": null,
       "m_tallyCounter": {
         "m_percentChance": 1.0,
-        "m_descriptor": "Bolthy PatternDancer",
+        "m_descriptor": "",
         "m_descriptor2": "",
         "m_count": 0,
         "m_tallyResults": {
@@ -116,11 +118,9 @@
       "m_locationName": "Kondha Desert",
       "m_goalName": "3_WizardQuestGoalsTalkNPC",
       "m_goalTitle": "WizardQuestGoals_TalkNPC",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Khrysalis/KR_Z10_KondhaDesert",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "KR-KondhaDesert-NPC34_Persona",
+      "m_usePatron": false
     }
   ],
   "m_startResults": {

@@ -376,9 +376,7 @@
   "m_prepRequirements": null,
   "m_pruneRequirements": null,
   "m_prepAlways": false,
-  "m_clientTags": [
-    "ImlightAutoStart"
-  ],
+  "m_clientTags": [],
   "m_goalLogic": [
     {
       "m_goalsAND": [
@@ -420,6 +418,62 @@
     "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
     "m_dialogs": [
       {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-KondhaDesert-NPC34_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Hoppers are nomadic. We hop through the desert to hide from the fire-gaze of the Shadow Queen.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/BolthyPatternDancer_KH2_16.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1240257,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-KondhaDesert-NPC34_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "We have battled her for generations, since she burned down the Kondha Forest, and turned it into this sandy waste.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/BolthyPatternDancer_KH2_17.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1240257,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-KondhaDesert-NPC34_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "It is time you met our wise-ones, the Elders: Prester the BlazingWind, Edwin the ArcaneArchitect, and Saul the OneWhoKnows.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/BolthyPatternDancer_KH2_18.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1240257,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
         "m_dialogTag": "Underway",
         "m_dialogEntries": [
           {
@@ -436,7 +490,7 @@
             "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/BolthyPatternDancer_KH2_19.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 0,
+            "m_actorTemplateID": 1240257,
             "m_cameraName": ""
           }
         ]
