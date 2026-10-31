@@ -410,6 +410,13 @@
         "m_dynaModClientTag": "KM-FARM-NPC01 instance",
         "m_useQuestAsOriginator": false,
         "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResModifyEntry, Imcodec.ObjectProperty",
+        "m_entryName": "WorldTelelport-CCF",
+        "m_isQuestRegistry": false,
+        "m_value": 0,
+        "m_questName": ""
       }
     ]
   },

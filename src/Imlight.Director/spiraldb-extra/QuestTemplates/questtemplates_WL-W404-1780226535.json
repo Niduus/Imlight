@@ -42,7 +42,7 @@
       "m_goalName": "1_WizardQuestGoalsTalkNPC",
       "m_goalTitle": "WizardQuestGoals_TalkNPC",
       "m_goalType": "GOAL_TYPE_PERSONA",
-      "m_personaName": "WL-OUT-NPC10",
+      "m_personaName": "WL-RANCH-NPC03",
       "m_usePatron": false
     },
     {
@@ -78,7 +78,7 @@
             "m_dialogEntries": [
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "WL-OUT-NPC11",
+                "m_personaName": "WL-RANCH-NPC02",
                 "m_nameOverride": "NPCs_01749341",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
@@ -95,7 +95,7 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "WL-OUT-NPC11",
+                "m_personaName": "WL-RANCH-NPC02",
                 "m_nameOverride": "NPCs_01749341",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
@@ -112,7 +112,7 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "WL-OUT-NPC11",
+                "m_personaName": "WL-RANCH-NPC02",
                 "m_nameOverride": "NPCs_01749341",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
@@ -129,7 +129,7 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "WL-OUT-NPC11",
+                "m_personaName": "WL-RANCH-NPC02",
                 "m_nameOverride": "NPCs_01749341",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
@@ -154,7 +154,7 @@
       "m_goalName": "2_WizardQuestGoalsTalkNPC",
       "m_goalTitle": "WizardQuestGoals_TalkNPC",
       "m_goalType": "GOAL_TYPE_PERSONA",
-      "m_personaName": "WL-OUT-NPC11",
+      "m_personaName": "WL-RANCH-NPC02",
       "m_usePatron": false
     },
     {
@@ -189,7 +189,7 @@
       "m_goalName": "3_WizardQuestGoalsTalkNPC",
       "m_goalTitle": "WizardQuestGoals_TalkNPC",
       "m_goalType": "GOAL_TYPE_PERSONA",
-      "m_personaName": "WL-OUT-NPC12",
+      "m_personaName": "WL-RANCH-NPC04",
       "m_usePatron": false
     }
   ],

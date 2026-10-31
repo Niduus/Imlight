@@ -43,7 +43,7 @@
             "m_dialogEntries": [
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "LM-URSAI-NPC01-E",
+                "m_personaName": "LM-URSAI-NPC01",
                 "m_nameOverride": "NPCs_01749140",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
@@ -60,7 +60,7 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "LM-URSAI-NPC01-E",
+                "m_personaName": "LM-URSAI-NPC01",
                 "m_nameOverride": "NPCs_01749140",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
@@ -85,7 +85,7 @@
       "m_goalName": "1_WizardQuestGoalsTalkNPC",
       "m_goalTitle": "WizardQuestGoals_TalkNPC",
       "m_goalType": "GOAL_TYPE_PERSONA",
-      "m_personaName": "LM-URSAI-NPC01-E",
+      "m_personaName": "LM-URSAI-NPC01",
       "m_usePatron": false
     }
   ],

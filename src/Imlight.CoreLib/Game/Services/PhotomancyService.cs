@@ -33,6 +33,8 @@ internal class PhotomancyService(SessionActor sessionActor) : MessageService(ses
             byte[] buffer = message.Buffer;
 
             if (!Photomancy.Photomancy.TryReadPhoto(message.Buffer, out var items)) {
+                // Quest photo steps still get their chance (by the step's place) when the photo can't be read.
+                SessionActor.ActorRef.Tell(new CHARACTER_103_PROTOCOL.MSG_PHOTOTAKENFORQUESTS { Readable = false });
                 if (!_loggedUnread) {
                     _loggedUnread = true;
                     Logger.Warning("Photomancy: {0} took a photo (filter \"{1}\") but its data could not be read: {2}",
@@ -44,6 +46,12 @@ internal class PhotomancyService(SessionActor sessionActor) : MessageService(ses
 
             Logger.Information("Photomancy: {0} took a photo (filter \"{1}\") with {2} photographed objects: {3}.",
                 Logger.Args(wizard?.CharId, filter, items.Count, string.Join(", ", items)));
+
+            // Quest "Photomance" steps that name a photographed object count it (Karamelle's Gummy Vat, Lemuria's Mana
+            // Fountain...): those objects have no photo results of their own, so nothing moved the step on before.
+            SessionActor.ActorRef.Tell(new CHARACTER_103_PROTOCOL.MSG_PHOTOTAKENFORQUESTS {
+                TemplateIds = [.. items.Distinct()], Readable = true,
+            });
 
             var playerObject = wizard?.GetInitializedGameObject();
             if (playerObject is null) {

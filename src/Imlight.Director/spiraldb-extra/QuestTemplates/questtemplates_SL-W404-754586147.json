@@ -104,7 +104,7 @@
         "m_dialogEntries": [
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "KT-SE-Dione",
+            "m_personaName": "KT-SE-TOMBS-NPC20-A",
             "m_nameOverride": "WizardNPC_00001149",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -138,7 +138,7 @@
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "KT-SE-Dione",
+            "m_personaName": "KT-SE-TOMBS-NPC20-A",
             "m_nameOverride": "WizardNPC_00001149",
             "m_nameSTKey": null,
             "m_guiDisplay": "",
@@ -155,7 +155,7 @@
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "KT-SE-Dione",
+            "m_personaName": "KT-SE-TOMBS-NPC20-A",
             "m_nameOverride": "WizardNPC_00001149",
             "m_nameSTKey": null,
             "m_guiDisplay": "",

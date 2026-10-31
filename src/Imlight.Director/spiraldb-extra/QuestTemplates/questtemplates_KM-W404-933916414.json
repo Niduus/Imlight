@@ -228,7 +228,8 @@
       "m_goalTitle": "WizardQuestGoals_Kill",
       "m_goalType": "GOAL_TYPE_BOUNTY",
       "m_npcAdjectives": [
-        "KM_Gummy_Bear_Uber_A_01.AdjRef"
+        "KM_Gummy_Bear_Uber_A_01.AdjRef",
+        "KM_Gummy_Bear_Uber_A_02.AdjRef"
       ],
       "m_bountyTotal": 1,
       "m_bountyType": "BT_MOB_KILL"
