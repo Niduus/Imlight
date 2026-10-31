@@ -599,13 +599,7 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
     }
 
     // A creature's natural attack: the game names those cards "NA <creature>" (and a few "<name> NA").
-    private static bool IsNaturalAttack(Spell spell) {
-        var name = CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is SpellTemplate template
-            ? (string) template.m_name ?? ""
-            : "";
-
-        return name.StartsWith("NA ", StringComparison.Ordinal) || name.EndsWith(" NA", StringComparison.Ordinal);
-    }
+    private static bool IsNaturalAttack(Spell spell) => CombatCreatureDeckComponent.IsNaturalAttack(spell);
 
     private List<Spell> GetCastableSpells(List<Spell> spells) {
         var castableSpells = new List<Spell>();
