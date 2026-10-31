@@ -47,6 +47,7 @@
     <Compile Include="..\Imlight.CoreLib\Game\Tools\ServerMessageCatalog.Generated.cs" Link="Shared\ServerMessageCatalog.Generated.cs" />
     <!-- Remote Admin's wire format and file rules (Server > Remote), the same file the server uses. -->
     <Compile Include="..\Imlight.CoreLib\Game\Tools\RemoteAdmin\RemoteAdminWire.cs" Link="Shared\RemoteAdminWire.cs" />
+    <Compile Include="..\Imlight.CoreLib\Game\Tools\RemoteAdmin\AccountTransfer.cs" Link="Shared\AccountTransfer.cs" />
   </ItemGroup>
 
   <ItemGroup>

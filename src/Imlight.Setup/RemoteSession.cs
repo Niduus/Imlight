@@ -215,16 +215,24 @@ internal sealed class RemoteSession : IDisposable {
     // Opens the encrypted connection and returns the server's fingerprint. A known server must show the same one.
     private async Task<string> OpenAsync() {
         Close();
+        var (tcp, tls, seen) = await OpenTlsAsync(Server);
+        (_tcp, _tls) = (tcp, tls);
+
+        return seen;
+    }
+
+    private static async Task<(TcpClient Tcp, SslStream Tls, string Fingerprint)> OpenTlsAsync(RemoteServer server, bool forAccount = false) {
         var tcp = new TcpClient { NoDelay = true };
         try {
             using (var wait = new CancellationTokenSource(TimeSpan.FromSeconds(10))) {
-                await tcp.ConnectAsync(Server.Host, Server.Port, wait.Token);
+                await tcp.ConnectAsync(server.Host, server.Port, wait.Token);
             }
         }
         catch (Exception ex) when (ex is SocketException or OperationCanceledException) {
             tcp.Dispose();
-            throw new PanelException($"Could not reach {Server.Host} on port {Server.Port}. Check the address, and ask the host to turn on " +
-                "Remote Admin (Server > Remote) and let that port through their router.");
+            throw new PanelException($"Could not reach {server.Host} on port {server.Port}. Check the address, and ask the host to " + (forAccount
+                ? "update Ahziael, leave \"Let players download their account\" on (Server > Account Transfer) and click \"Let friends connect\" once more on the Play tab."
+                : "turn on Remote Admin (Server > Remote) and let that port through their router."));
         }
 
         string? seen = null;
@@ -232,7 +240,7 @@ internal sealed class RemoteSession : IDisposable {
             seen = certificate is null ? null : RemoteAdminWire.Fingerprint(certificate.GetRawCertData());
 
             // The server's certificate is its own, not from an authority: it is trusted by its fingerprint.
-            return seen is not null && (Server.Fingerprint is null || seen == Server.Fingerprint);
+            return seen is not null && (server.Fingerprint is null || seen == server.Fingerprint);
         });
         try {
             using var wait = new CancellationTokenSource(TimeSpan.FromSeconds(15));
@@ -244,17 +252,94 @@ internal sealed class RemoteSession : IDisposable {
         catch (Exception ex) when (ex is AuthenticationException or IOException or OperationCanceledException) {
             tls.Dispose();
             tcp.Dispose();
-            if (seen is not null && Server.Fingerprint is not null && seen != Server.Fingerprint) {
-                throw new PanelException($"{Server.Label} has a different fingerprint than last time ({RemoteAdminWire.ShortFingerprint(seen)}). " +
+            if (seen is not null && server.Fingerprint is not null && seen != server.Fingerprint) {
+                if (forAccount) {
+                    throw new FingerprintChangedException(RemoteAdminWire.ShortFingerprint(seen));
+                }
+
+                throw new PanelException($"{server.Label} has a different fingerprint than last time ({RemoteAdminWire.ShortFingerprint(seen)}). " +
                     "Not connected, to keep your password safe. If the host made a new one, remove the server here and add it again.");
             }
 
-            throw new PanelException($"{Server.Host} port {Server.Port} answered, but not as an Imlight server with Remote Admin.");
+            throw new PanelException($"{server.Host} port {server.Port} answered, but not as an Imlight server with Remote Admin.");
         }
 
-        (_tcp, _tls) = (tcp, tls);
+        return (tcp, tls, seen!);
+    }
 
-        return seen!;
+    // ---------------------------------------------------------------------
+    // Moving accounts (AccountTransfer)
+    // ---------------------------------------------------------------------
+
+    /// <summary>A server known before showed another fingerprint; nothing was sent to it.</summary>
+    internal sealed class FingerprintChangedException(string fingerprint)
+        : Exception($"The server has a different fingerprint than last time ({fingerprint}). Nothing was sent, to keep your password safe.") {
+
+        internal string Fingerprint { get; } = fingerprint;
+
+    }
+
+    /// <summary>A downloaded account file, with what the server said about it.</summary>
+    internal sealed record DownloadedAccount(byte[] File, string Account, string Summary, bool WasOnline, string Fingerprint);
+
+    /// <summary>
+    /// Logs in to a server with a player's own game account, only to download that account, and closes again. Any player
+    /// can, while the host leaves PlayerDownloads on. A server seen for the first time shows its fingerprint to
+    /// <paramref name="trust"/> before the password is sent.
+    /// </summary>
+    internal static async Task<DownloadedAccount> DownloadAccountAsync(RemoteServer server, string password, Func<string, Task<bool>> trust) {
+        var (tcp, tls, fingerprint) = await OpenTlsAsync(server, forAccount: true);
+        using var _ = tcp;
+        await using var __ = tls;
+        if (server.Fingerprint is null && !await trust(RemoteAdminWire.ShortFingerprint(fingerprint))) {
+            throw new PanelException("Not downloaded. Check the fingerprint with the host first.");
+        }
+
+        var id = 0;
+        async Task<(JsonObject Header, byte[] Body)> Ask(JsonObject header) {
+            header["id"] = ++id;
+            using var wait = new CancellationTokenSource(TimeSpan.FromMinutes(3));
+            try {
+                await RemoteAdminWire.WriteAsync(tls, header, null, wait.Token);
+                var reply = await RemoteAdminWire.ReadAsync(tls, RemoteAdminWire.MAX_HEADER, RemoteAdminWire.MAX_BODY, wait.Token);
+                if (reply.Header["ok"]?.GetValue<bool>() != true) {
+                    throw new PanelException((string?) reply.Header["error"] ?? "The server refused.");
+                }
+
+                return reply;
+            }
+            catch (Exception ex) when (ex is OperationCanceledException or IOException or SocketException or InvalidDataException) {
+                throw new PanelException("The connection to the server was lost. Try again.");
+            }
+        }
+
+        var hello = await Ask(new JsonObject { ["op"] = "hello" });
+        if ((int?) hello.Header["protocol"] != RemoteAdminWire.PROTOCOL) {
+            throw new PanelException("Ahziael and that server are different versions. Update Ahziael, and ask the host to update theirs.");
+        }
+
+        await Ask(new JsonObject {
+            ["op"] = "login", ["username"] = server.Username, ["password"] = password, ["protocol"] = RemoteAdminWire.PROTOCOL, ["purpose"] = "account",
+        });
+        var export = await Ask(new JsonObject { ["op"] = "export" });
+        if (export.Body.Length == 0) {
+            throw new PanelException("That server does not know how to send accounts yet. Ask the host to update their Ahziael.");
+        }
+
+        return new DownloadedAccount(RemoteAdminWire.Gunzip(export.Body), (string?) export.Header["account"] ?? server.Username,
+            (string?) export.Header["summary"] ?? "", export.Header["online"]?.GetValue<bool>() == true, fingerprint);
+    }
+
+    /// <summary>As a remote admin: any account of the server, as a file.</summary>
+    internal async Task<byte[]> ExportAccountAsync(string username) {
+        var (_, body) = await AskAsync(new JsonObject { ["op"] = "export", ["username"] = username });
+
+        return RemoteAdminWire.Gunzip(body);
+    }
+
+    /// <summary>As a remote admin: adds the account in an account file to the server.</summary>
+    internal async Task ImportAccountAsync(byte[] file, string username, string? password) {
+        await AskAsync(new JsonObject { ["op"] = "import", ["username"] = username, ["password"] = password }, RemoteAdminWire.Gzip(file));
     }
 
     private async Task LoginAsync() {

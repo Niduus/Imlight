@@ -429,6 +429,17 @@ internal sealed partial class ServerManager(string installFolder) {
             ? new PlayerAccounts(new System.Net.Http.HttpClient(remote.DatabaseHandler()) { BaseAddress = new Uri("http://remote-admin/"), Timeout = TimeSpan.FromSeconds(30) }, "Playerdata")
             : PlayerAccounts.FromConfig(ConfigFile, out var reason) ?? throw new PanelException(reason!);
 
+    /// <summary>The embedded player database of the server on this PC, as raw documents (Account Transfer).</summary>
+    internal Imlight.RemoteAdmin.RavenHttp LocalPlayerDatabase(System.Net.Http.HttpClient http) {
+        if (!string.IsNullOrWhiteSpace(IniFile.Get(ConfigFile, "Database", "PlayerDatabaseUrl"))) {
+            throw new PanelException("This server uses a remote database, so Ahziael can't move accounts in or out of it.");
+        }
+
+        var port = IniFile.Get(ConfigFile, "Database", "EmbeddedDatabasePort") ?? "8080";
+
+        return new Imlight.RemoteAdmin.RavenHttp(http, $"http://127.0.0.1:{port}", IniFile.Get(ConfigFile, "Database", "PlayerDatabaseName") ?? "Playerdata");
+    }
+
     // ---------------------------------------------------------------------
     // Tools
     // ---------------------------------------------------------------------
