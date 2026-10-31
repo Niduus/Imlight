@@ -66,7 +66,43 @@ internal class CombatDeck {
     private readonly List<CombatDeckSpellData> _treasureVaultUsed;
     private readonly List<Spell> _cardsDiscardedThisTurn;
     // Cards put in the hand by .draw: they never came from the deck, so using them must not use up a deck copy.
-    private readonly HashSet<Spell> _extraCards = [];
+    // Spells are records, so two copies of one card are "equal": every list here goes by the card itself, not its value.
+    private readonly HashSet<Spell> _extraCards = new(ReferenceEqualityComparer.Instance);
+
+    // Takes this very card out of the list. List.Remove took the first equal one, so with two copies of a card in hand,
+    // playing one and drawing again took the other one too: a card packed several times showed up only once
+    // (Niduus, 2026-10-31, "happens a lot with prisms").
+    private static bool RemoveSame(List<Spell> cards, Spell spell) {
+        var index = cards.FindIndex(x => ReferenceEquals(x, spell));
+        if (index < 0) {
+            return false;
+        }
+
+        cards.RemoveAt(index);
+
+        return true;
+    }
+
+    private static bool HasSame(List<Spell> cards, Spell spell) => cards.Exists(x => ReferenceEquals(x, spell));
+
+    // A random deck entry, weighted by its copies left, as the game draws: a card packed four times is four times as
+    // likely as one packed once. It used to pick each different spell alike, so extra copies hardly ever came up.
+    private static int WeightedPick(List<CombatDeckSpellData> entries) {
+        var total = entries.Sum(e => (long) Math.Max(0, (int) e.Quantity));
+        if (total <= 0) {
+            return Random.Shared.Next(0, entries.Count);
+        }
+
+        var pick = Random.Shared.NextInt64(total);
+        for (var i = 0; i < entries.Count; i++) {
+            pick -= Math.Max(0, (int) entries[i].Quantity);
+            if (pick < 0) {
+                return i;
+            }
+        }
+
+        return entries.Count - 1;
+    }
 
     // ctor
     internal CombatDeck(List<CombatDeckSpellData> spellDatas, List<CombatDeckSpellData> treasureVault, byte handSize) {
@@ -111,7 +147,7 @@ internal class CombatDeck {
         var newCards = new List<Spell>();
         // Discard the cards that were used up or discarded.
         foreach (var spell in _cardsDiscardedThisTurn) {
-            LastGivenHand.Remove(spell);
+            RemoveSame(LastGivenHand, spell);
             if (_extraCards.Remove(spell)) {
                 continue;
             }
@@ -147,7 +183,7 @@ internal class CombatDeck {
                 break; // No more spells available.
             }
 
-            var randomIndex = Random.Shared.Next(0, _usedUpSpellData.Count);
+            var randomIndex = WeightedPick(_usedUpSpellData);
             var spellData = _usedUpSpellData[randomIndex];
             var spellTemplateId = spellData.TemplateId;
 
@@ -186,7 +222,7 @@ internal class CombatDeck {
             _cardsDiscardedThisTurn.Add(spell);
 
             // Free the slot now so a vault draw can be made this turn; GetHand's removal is a no-op.
-            LastGivenHand.Remove(spell);
+            RemoveSame(LastGivenHand, spell);
         }
     }
 
@@ -200,7 +236,7 @@ internal class CombatDeck {
         }
 
         _cardsDiscardedThisTurn.Add(spell);
-        LastGivenHand.Remove(spell);
+        RemoveSame(LastGivenHand, spell);
     }
 
     /// <summary>
@@ -219,7 +255,7 @@ internal class CombatDeck {
     /// </summary>
     internal void ReturnHandToDeck() {
         foreach (var spell in LastGivenHand) {
-            if (_extraCards.Contains(spell) || spell.m_treasureCard || _cardsDiscardedThisTurn.Contains(spell)) {
+            if (_extraCards.Contains(spell) || spell.m_treasureCard || HasSame(_cardsDiscardedThisTurn, spell)) {
                 continue;
             }
 
@@ -252,7 +288,7 @@ internal class CombatDeck {
     /// from the deck (.draw, a treasure card) just leaves the hand.
     /// </summary>
     internal void ReturnCardToDeck(Spell spell) {
-        if (!LastGivenHand.Remove(spell)) {
+        if (!RemoveSame(LastGivenHand, spell)) {
             return;
         }
 
@@ -290,7 +326,7 @@ internal class CombatDeck {
             return;
         }
 
-        if (LastGivenHand.Remove(spell)) {
+        if (RemoveSame(LastGivenHand, spell)) {
             _extraCards.Remove(spell);
         }
     }
@@ -326,8 +362,8 @@ internal class CombatDeck {
     /// place of the first one in the hand.
     /// </summary>
     internal void Fuse(Spell first, Spell second, Spell fused) {
-        var at = LastGivenHand.IndexOf(first);
-        var secondAt = LastGivenHand.IndexOf(second);
+        var at = LastGivenHand.FindIndex(x => ReferenceEquals(x, first));
+        var secondAt = LastGivenHand.FindIndex(x => ReferenceEquals(x, second));
         if (secondAt >= 0 && secondAt < at) {
             at--;
         }
@@ -378,7 +414,7 @@ internal class CombatDeck {
             return null;
         }
 
-        var randomIndex = Random.Shared.Next(0, _treasureVaultUsed.Count);
+        var randomIndex = WeightedPick(_treasureVaultUsed);
         var vaultData = _treasureVaultUsed[randomIndex];
 
         var spell = SpellFactory.GetSpell(vaultData.TemplateId);
@@ -410,7 +446,7 @@ internal class CombatDeck {
         }
 
         // Remove from hand.
-        LastGivenHand.Remove(spell);
+        RemoveSame(LastGivenHand, spell);
         if (TreasureCardsInHand > 0) {
             TreasureCardsInHand--;
         }
@@ -439,7 +475,7 @@ internal class CombatDeck {
         }
 
         // Remove from hand.
-        LastGivenHand.Remove(spell);
+        RemoveSame(LastGivenHand, spell);
         if (TreasureCardsInHand > 0) {
             TreasureCardsInHand--;
         }
