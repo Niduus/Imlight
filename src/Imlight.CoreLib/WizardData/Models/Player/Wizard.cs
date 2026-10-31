@@ -86,6 +86,11 @@ public class Wizard {
     public List<string> RewardRepairs { get; set; } = [];
     // The best reward each finished quest gave, where it is more than its first one (Game/Quests/QuestRewardCatchUp).
     public Dictionary<string, QuestRewardCredit> QuestRewardCredits { get; set; } = [];
+    // Quest steps whose rewards this wizard already got on a run that was later removed or started over, by quest
+    // ("start", "end", or a step's name); a retaken quest gives them no second time (Game/Quests/QuestSafety).
+    public Dictionary<string, List<string>> QuestRewardsGiven { get; set; } = [];
+    // Quest objects that took their used look for this wizard (Game/Quests/QuestSafety brings them back when needed).
+    public List<UsedQuestLook> UsedQuestLooks { get; set; } = [];
     // The tutorial tips this wizard read; the game shows them no more (Game/Quests/TutorialTipGate).
     public List<uint> TutorialTipsRead { get; set; } = [];
     // Badges earned by older fork builds. BadgeService moves them into BadgeBehavior at login.

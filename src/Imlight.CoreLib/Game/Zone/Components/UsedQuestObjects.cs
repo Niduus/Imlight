@@ -34,6 +34,21 @@ internal static class UsedQuestObjects {
         return s_byTemplate.GetOrAdd(template.m_templateID, _ => Find(template));
     }
 
+    /// <summary>The look the object starts in (before it was used), or null when it has none to go back to.</summary>
+    internal static string StartState(GameObjectTemplate template) {
+        var setName = template?.m_behaviors?.OfType<ObjectStateBehaviorTemplate>().Select(b => (string) b.m_stateSetName)
+            .FirstOrDefault(n => !string.IsNullOrEmpty(n));
+        if (setName is null) {
+            return null;
+        }
+
+        var category = StateFactory.GetStateSet(setName)?.m_categories?
+            .FirstOrDefault(c => c is not null && !string.Equals(c.m_categoryName, "Interacting", StringComparison.OrdinalIgnoreCase));
+        string start = category?.m_startState;
+
+        return string.IsNullOrEmpty(start) ? null : start;
+    }
+
     private static string Find(GameObjectTemplate template) {
         var behaviors = template.m_behaviors ?? [];
         // Only objects whose goal option is a plain one: a state option already names the state it enters.

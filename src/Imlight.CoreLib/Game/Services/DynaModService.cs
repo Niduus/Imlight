@@ -37,6 +37,7 @@
  * Last Updated: 3/18/2025
  */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
@@ -51,6 +52,13 @@ using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Services;
+
+/// <summary>Asks the session's DynaModService to send the wizard's mods again and give these objects (tag, look) their first look.</summary>
+internal sealed class RestoreQuestObjectLooks : IServerMessage {
+    public byte MessageOrder { get; } = 7;
+    public byte ServiceID { get; } = 105;
+    public List<(string Tag, string State)> Looks { get; init; } = [];
+}
 
 internal class DynaModService(SessionActor sessionActor) : MessageService(sessionActor) {
 
@@ -126,6 +134,12 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
 
         wizard.AddDynamod(zoneName, dynaModClientTag, dynaModState);
 
+        // A used quest object's used look is remembered with its object, so the quest safety guards can bring the
+        // object back for a later step that needs it again (Game/Quests/QuestSafety).
+        if (message.UsedLookTemplateId != 0 && !string.IsNullOrEmpty(dynaModClientTag)) {
+            Imlight.CoreLib.Game.Quests.QuestSafety.NoteUsedLook(wizard, zoneName, dynaModClientTag, message.UsedLookTemplateId, dynaModState);
+        }
+
         // A mod added by a quest result (not echoed from the client) must reach the client as well: mods on
         // client-only objects such as the arena gates are otherwise never applied. Live sends it to the owner.
         if (message.ContextActor is not null) {
@@ -168,6 +182,34 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
         var dynaModClientTag = message.DynaMod.m_dynaModClientTag;
 
         wizard.RemoveDynamod(dynaModClientTag);
+    }
+
+    // The quest safety guards took a used look off: the client gets the wizard's mods again and the object its first look.
+    [InternalMessageHandler(typeof(RestoreQuestObjectLooks))]
+    private void ReceiveRestoreQuestObjectLooks(RestoreQuestObjectLooks message) {
+        try {
+            var wizard = GetActiveWizard();
+            var dynamodsMsg = BuildUpdateAll(wizard.GameObjectID, wizard.DynamodSet?.Dynamods ?? []);
+            if (dynamodsMsg is not null) {
+                SendToSocket(dynamodsMsg);
+            }
+
+            foreach (var (tag, state) in message.Looks ?? []) {
+                if (string.IsNullOrEmpty(tag) || string.IsNullOrEmpty(state)) {
+                    continue;
+                }
+
+                ZoneBroadcastNoPlayers(new ZONE_102_PROTOCOL.MSG_ENTERSTATE {
+                    ObjectName = tag,
+                    StateName = state,
+                    ExclusiveToSender = true,
+                    Sender = SessionActor.ActorRef,
+                });
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Could not bring quest objects back: {0}", Logger.Args(ex.Message));
+        }
     }
 
     private static DynaMod ToWireMod(Dynamod mod, int index) {

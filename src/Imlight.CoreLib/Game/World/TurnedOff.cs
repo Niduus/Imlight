@@ -105,6 +105,9 @@ internal static class TurnedOff {
     /// <summary>Whether NPCs, creatures and objects of this template are turned off.</summary>
     internal static bool IsTemplateOff(ulong templateId) => templateId != 0 && Current.Templates.Contains(templateId);
 
+    /// <summary>Every template turned off now (the quest safety guards look for steps that need one).</summary>
+    internal static IReadOnlyCollection<ulong> OffTemplates => Current.Templates;
+
     /// <summary>Whether a custom creature of the Customs tab is turned off.</summary>
     internal static bool IsCustomOff(int customId) => customId > 0 && Current.Customs.Contains(customId);
 

@@ -502,6 +502,21 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Persists <see cref="Wizard.QuestRewardsGiven"/>.
+    /// </summary>
+    public static void UpdateCharacterQuestRewardsGiven(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter => existingCharacter.QuestRewardsGiven =
+            wizard.QuestRewardsGiven.ToDictionary(p => p.Key, p => new List<string>(p.Value)));
+    }
+
+    /// <summary>
+    /// Persists <see cref="Wizard.UsedQuestLooks"/>.
+    /// </summary>
+    public static void UpdateCharacterUsedQuestLooks(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter => existingCharacter.UsedQuestLooks = [.. wizard.UsedQuestLooks]);
+    }
+
+    /// <summary>
     /// Persists <see cref="Wizard.TutorialTipsRead"/>.
     /// </summary>
     public static void UpdateCharacterTutorialTipsRead(Wizard wizard) {

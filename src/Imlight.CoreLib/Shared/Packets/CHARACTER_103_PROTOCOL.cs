@@ -100,6 +100,8 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
         public ResAddDynaMod DynaMod;
         public IActorRef ContextActor;
+        // Set when the mod is a used quest object's used look: the template of that object (Quests/QuestSafety).
+        public ulong UsedLookTemplateId;
 
     }
 
