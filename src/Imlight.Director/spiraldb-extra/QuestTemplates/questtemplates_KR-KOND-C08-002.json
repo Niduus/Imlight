@@ -70,10 +70,7 @@
       "m_displayImage1": "GUI/QuestButtons/Quest_KR_CorruptedPool.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "KT-Collect-Water-01_AR-SPELL-STORM-170",
-        "KT-Collect-Water-02_AR-SPELL-STORM-170",
-        "KT-Collect-Water-03_AR-SPELL-STORM-170",
-        "GH-HALL-Water"
+        "KR_KondhaWater_01"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -86,10 +83,7 @@
       "m_goalTitle": "Heal",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "KT-Collect-Water-01_AR-SPELL-STORM-170.AdjRef",
-        "KT-Collect-Water-02_AR-SPELL-STORM-170.AdjRef",
-        "KT-Collect-Water-03_AR-SPELL-STORM-170.AdjRef",
-        "GH-HALL-Water.AdjRef"
+        "KR_KondhaWater_01.AdjRef"
       ],
       "m_itemTotal": 1
     },

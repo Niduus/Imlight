@@ -70,7 +70,8 @@
       "m_displayImage1": "GUI/NpcPortraits/Portraits_Trees_Primordial_G_NPC.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "EM_Primal_Elemental_Trees"
+        "EM_Primal_Elemental_Trees",
+        "EM_Primal_Elemental_G_Trees"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -83,7 +84,8 @@
       "m_goalTitle": "Tune",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "EM_Primal_Elemental_Trees.AdjRef"
+        "EM_Primal_Elemental_Trees.AdjRef",
+        "EM_Primal_Elemental_G_Trees.AdjRef"
       ],
       "m_itemTotal": 1
     },

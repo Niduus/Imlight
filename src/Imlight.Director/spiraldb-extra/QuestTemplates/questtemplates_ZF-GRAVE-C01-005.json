@@ -71,14 +71,7 @@
       "m_displayImage1": "GUI/QuestButtons/Quest_ZF_Elephant_Graveyard_Brazier.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "G14-SB-Obelisk_Frost",
-        "WL_Dungeon_Brazier",
-        "KT-Brazier",
-        "KT-SE-Brazier-NoInteract",
-        "DM_Brazier_WingedSorrow",
-        "MS_Brazier",
-        "DynaTrigger_KT_Brazier",
-        "MS_BrazierPLAG1"
+        "ZF_ElephantGraveyard_Brazier"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -91,14 +84,7 @@
       "m_goalTitle": "WizardQuestGoals_UseItem",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "G14-SB-Obelisk_Frost.AdjRef",
-        "WL_Dungeon_Brazier.AdjRef",
-        "KT-Brazier.AdjRef",
-        "KT-SE-Brazier-NoInteract.AdjRef",
-        "DM_Brazier_WingedSorrow.AdjRef",
-        "MS_Brazier.AdjRef",
-        "DynaTrigger_KT_Brazier.AdjRef",
-        "MS_BrazierPLAG1.AdjRef"
+        "ZF_ElephantGraveyard_Brazier.AdjRef"
       ],
       "m_itemTotal": 1
     },
@@ -124,14 +110,7 @@
       "m_displayImage1": "GUI/QuestButtons/Quest_ZF_Elephant_Graveyard_Brazier.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "G14-SB-Obelisk_Frost",
-        "WL_Dungeon_Brazier",
-        "KT-Brazier",
-        "KT-SE-Brazier-NoInteract",
-        "DM_Brazier_WingedSorrow",
-        "MS_Brazier",
-        "DynaTrigger_KT_Brazier",
-        "MS_BrazierPLAG1"
+        "ZF_ElephantGraveyard_Brazier2"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -144,14 +123,7 @@
       "m_goalTitle": "WizardQuestGoals_UseItem",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "G14-SB-Obelisk_Frost.AdjRef",
-        "WL_Dungeon_Brazier.AdjRef",
-        "KT-Brazier.AdjRef",
-        "KT-SE-Brazier-NoInteract.AdjRef",
-        "DM_Brazier_WingedSorrow.AdjRef",
-        "MS_Brazier.AdjRef",
-        "DynaTrigger_KT_Brazier.AdjRef",
-        "MS_BrazierPLAG1.AdjRef"
+        "ZF_ElephantGraveyard_Brazier2.AdjRef"
       ],
       "m_itemTotal": 1
     },

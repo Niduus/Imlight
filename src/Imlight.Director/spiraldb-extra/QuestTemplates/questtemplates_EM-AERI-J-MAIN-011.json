@@ -145,7 +145,8 @@
       "m_displayImage2": "",
       "m_clientTags": [
         "EM-Incantation",
-        "EM-IncantationRecited"
+        "EM-IncantationRecited",
+        "EM-Speak"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -159,7 +160,8 @@
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
         "EM-Incantation.AdjRef",
-        "EM-IncantationRecited.AdjRef"
+        "EM-IncantationRecited.AdjRef",
+        "EM-Speak.AdjRef"
       ],
       "m_itemTotal": 1
     },

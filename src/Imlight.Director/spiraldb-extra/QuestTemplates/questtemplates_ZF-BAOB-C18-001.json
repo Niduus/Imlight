@@ -32,11 +32,7 @@
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_ZF_Candle_Heart_of_Darkness.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "MS_Candle",
-        "MS_PortalCandle",
-        "MS_CandleDeath1",
-        "MS_Candle2",
-        "MS_Candle3"
+        "ZF-Candles-Witchdoctor"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -49,11 +45,7 @@
       "m_goalTitle": "Light",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "MS_Candle.AdjRef",
-        "MS_PortalCandle.AdjRef",
-        "MS_CandleDeath1.AdjRef",
-        "MS_Candle2.AdjRef",
-        "MS_Candle3.AdjRef"
+        "ZF-Candles-Witchdoctor.AdjRef"
       ],
       "m_itemTotal": 1
     },

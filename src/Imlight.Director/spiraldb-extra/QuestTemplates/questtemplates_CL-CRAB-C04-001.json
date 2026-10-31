@@ -69,7 +69,7 @@
       "m_displayImage1": "GUI/QuestButtons/Quest_CL_pirate_treasure.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "WV_S05_Elemental_BallXibalba_A_01"
+        "CL-Treasure"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -82,7 +82,7 @@
       "m_goalTitle": "WizardQuestGoals_UseItem",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "WV_S05_Elemental_BallXibalba_A_01.AdjRef"
+        "CL-Treasure.AdjRef"
       ],
       "m_itemTotal": 1
     },

@@ -32,6 +32,7 @@
       "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Quest_LM_Stone_Ice.dds",
       "m_displayImage2": "",
       "m_clientTags": [
+        "LM_SixFoldDoor-Ice",
         "LM_AttunementStone-2-Life",
         "LM_AttunementStone-4-Myth",
         "LM_AttunementStone-1",
@@ -52,6 +53,7 @@
       "m_goalTitle": "WizardQuestGoals_00000192",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
+        "LM_SixFoldDoor-Ice.AdjRef",
         "LM_AttunementStone-2-Life.AdjRef",
         "LM_AttunementStone-4-Myth.AdjRef",
         "LM_AttunementStone-1.AdjRef",

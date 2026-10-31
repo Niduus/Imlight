@@ -69,6 +69,7 @@
       "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/LM-Location-Mandoria-MetalDoor.dds",
       "m_displayImage2": "",
       "m_clientTags": [
+        "LM_SealedDoor",
         "LM_AncientDoor"
       ],
       "m_genericEvents": [],
@@ -82,6 +83,7 @@
       "m_goalTitle": "WizardQuestGoals_00000015",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
+        "LM_SealedDoor.AdjRef",
         "LM_AncientDoor.AdjRef"
       ],
       "m_itemTotal": 1
