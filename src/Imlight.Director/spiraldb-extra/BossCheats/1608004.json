@@ -1,0 +1,38 @@
+{
+  // Twin: same game cheat file as Shattered Sky Spirit (Rank 15) (1371185), trigger PL-BalOff-01.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1608004,
+  "Name": "Pit Fiend (Rank 14)",
+  "Cheats": [
+    {
+      "When": "RoundStart",
+      "Round": 5,
+      "Every": 5,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Balanceblade",
+          "SpellID": 514206205,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Every 5th round: Balanceblade."
+    },
+    {
+      "When": "RoundStart",
+      "Round": 6,
+      "Every": 5,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Balanceblade",
+          "SpellID": 514203989,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "The round after: Balanceblade again."
+    }
+  ]
+}

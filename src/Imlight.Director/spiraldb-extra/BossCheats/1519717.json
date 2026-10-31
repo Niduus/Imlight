@@ -1,0 +1,64 @@
+{
+  // Twin: same game cheat file as Daniel McCoil (Rank 19) (1519720), trigger HG_TRAIN_Ophidian_Western_B_01.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1519717,
+  "Name": "Daniel McCoil (Rank 10)",
+  "Cheats": [
+    {
+      "When": "RoundStart",
+      "Round": 2,
+      "Every": 3,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00001789"
+        },
+        {
+          "Do": "PickOne",
+          "Count": 3
+        },
+        {
+          "Do": "Cast",
+          "Spell": "ASTH",
+          "SpellID": 1754598286,
+          "Target": "Enemy",
+          "DispelImmune": false
+        },
+        {
+          "Do": "Cast",
+          "Spell": "ASTH",
+          "SpellID": 1426960849,
+          "Target": "Enemy",
+          "DispelImmune": false
+        },
+        {
+          "Do": "Cast",
+          "Spell": "ASTH",
+          "SpellID": 2036227208,
+          "Target": "Enemy",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A wizard gets a Snake Oil, Essential Snake Oil or Free Sample card. When is unknown: round 2 and every 3 rounds (a guess)."
+    },
+    {
+      "When": "AllyHealthBelow",
+      "Percent": 20,
+      "Creature": 1519727,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00001790"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Expel",
+          "SpellID": 343003124,
+          "Target": "Caster",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "\"I'm afraid you're of no further use\" Ms. Felicity under 20%: Expel."
+    }
+  ]
+}

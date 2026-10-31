@@ -1,0 +1,97 @@
+{
+  // Twin: same game cheat file as King Borr (Rank 8) (1523277), trigger GH_SkeletonKey_Boar_Boss_Grey_01.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1523279,
+  "Name": "King Borr (Rank 19)",
+  "Cheats": [
+    {
+      "When": "EnemyJoins",
+      "Round": 1,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00001774"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Medusa",
+          "SpellID": 1823190379,
+          "Target": "Caster",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A wizard joins after round 1: Medusa on them."
+    },
+    {
+      "When": "BattleStart",
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00001776"
+        },
+        {
+          "Do": "CastBy",
+          "By": "Creature",
+          "Spell": "Intercept - 75",
+          "SpellID": 1288204461,
+          "Target": "Owner",
+          "DispelImmune": false,
+          "Creature": 1523282
+        }
+      ],
+      "Notes": "Round 1: Grendelynn casts Intercept on him."
+    },
+    {
+      "When": "MinionDefeated",
+      "Creature": 1523282,
+      "Once": true,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00001777"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Blessing",
+          "SpellID": 1641304242,
+          "Target": "Receiver",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Grendelynn falls before him: Blessing brings her back."
+    },
+    {
+      "When": "PlayerCasts",
+      "Spells": [
+        "Feint",
+        "Mass Feint"
+      ],
+      "OnBoss": true,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00001775"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Cleanse Ward",
+          "SpellID": 275121201,
+          "Target": "AllAllies",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A Feint on him: Cleanse Ward on all his side."
+    },
+    {
+      "When": "BossDefeated",
+      "HasAllies": true,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00001778"
+        }
+      ],
+      "Notes": "Defeated before his minion."
+    }
+  ]
+}

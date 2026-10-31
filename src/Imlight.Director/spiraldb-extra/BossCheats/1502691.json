@@ -1,0 +1,41 @@
+{
+  // Twin: same game cheat file as Broodmother (Rank 15) (1502695), trigger HG_AKT_BeeMonsterF_A.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1502691,
+  "Name": "Broodmother (Rank 6)",
+  "ShadowPips": 2,
+  "Cheats": [
+    {
+      "When": "RoundStart",
+      "Every": 3,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "WizardBossFights_00000194"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Cheat",
+          "SpellID": 1235168433,
+          "Target": "Summoner",
+          "DispelImmune": false
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Dragonblade",
+          "SpellID": 736547457,
+          "Target": "Ally",
+          "DispelImmune": false
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Mass Tower Shield",
+          "SpellID": 2090465101,
+          "Target": "",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Every 3 rounds: Cheat on Time Butterfly, Dragonblade on a random ally, Mass Tower Shield."
+    }
+  ]
+}

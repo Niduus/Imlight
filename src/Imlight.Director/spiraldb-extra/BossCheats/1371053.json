@@ -1,0 +1,39 @@
+{
+  // Twin: same game cheat file as Snowbeard (Rank 15) (1340527), trigger PL-LifeOff-02.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1371053,
+  "Name": "Marshal Gill (Rank 15)",
+  "ShadowPips": 2,
+  "Cheats": [
+    {
+      "When": "RoundStart",
+      "Round": 5,
+      "Every": 5,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Lifeblade",
+          "SpellID": 603728324,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Every 5th round: Lifeblade."
+    },
+    {
+      "When": "RoundStart",
+      "Round": 6,
+      "Every": 5,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Lifeblade",
+          "SpellID": 850143684,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "The round after: Lifeblade again."
+    }
+  ]
+}

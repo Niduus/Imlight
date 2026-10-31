@@ -1,0 +1,16 @@
+{
+  // Twin: same game cheat file as Meowiarty (Rank 9) (1654459), trigger BR_MB_Meowiarty_A_150.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1557335,
+  "Name": "Meowiarty (Advanced) (Rank 9)",
+  "Cheats": [
+    {
+      "When": "Passive",
+      "Passive": "Minions",
+      "Brings": [
+        "1561262"
+      ],
+      "Notes": "It fights with Protection Pox (Wizard404: its minions). New block: comes with."
+    }
+  ]
+}

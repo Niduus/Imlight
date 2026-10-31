@@ -1,0 +1,88 @@
+{
+  // Twin: same game cheat file as The Malughast (Rank 20) (1530774), trigger LM_Malughast_Base_01.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1530765,
+  "Name": "The Malughast (Rank 20)",
+  "ShadowPips": 2,
+  "Cheats": [
+    {
+      "When": "BattleStart",
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00001988"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Malughast's Feint",
+          "SpellID": 196895132,
+          "Target": "AllEnemies",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Round 1: three Malughast's Feints for each wizard."
+    },
+    {
+      "When": "EnemyJoins",
+      "Round": 1,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Malughast's Feint",
+          "SpellID": 506789355,
+          "Target": "Caster",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A late wizard: their three."
+    },
+    {
+      "When": "PlayerCasts",
+      "Spells": [
+        "Feint",
+        "Mass Feint"
+      ],
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00001989"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Cleanse Ward",
+          "SpellID": 1018758999,
+          "Target": "Self",
+          "DispelImmune": false
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Cleanse Ward",
+          "SpellID": 1018758999,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A Feint or Mass Feint: Cleanse Ward twice."
+    },
+    {
+      "When": "PlayerCasts",
+      "Spells": [
+        "Malughast's Feint"
+      ],
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00001990"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Sacrifice",
+          "SpellID": 1781924367,
+          "Target": "AllAllies",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Malughast's Feint: Sacrifice (1,000 off its side, 1,000 to the wizards)."
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  // Malistaire Drake (Rank 8, Death, 4,800 health), Khrysalis (Radiance Reborn). Death Prism in rounds 4 and 8; the duel ends after round 11.
+  // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove). Added 2026-10-31
+  // ("expand more on cheats"): built from blocks that were there; timings Wizard404 does not give are guesses, listed in
+  // the project's "Cheats to verify". Lines are the game's own, by key.
+  "TemplateID": 1283351,
+  "Name": "Malistaire Drake (Rank 8)",
+  "Cheats": [
+    { "When": "RoundStart", "Round": 4,
+      "Actions": [
+        {"Do": "Say", "Line": "WizardBossFights_00000227"},
+        {"Do": "Cast", "Spell": "Death Prism", "SpellID": 93660952, "Target": "Enemy", "DispelImmune": false}
+      ],
+      "Notes": "Round 4: \"Curious... a vulnerability\" and Death Prism on a wizard." },
+
+    { "When": "RoundStart", "Round": 8,
+      "Actions": [
+        {"Do": "Say", "Line": "WizardBossFights_00000227"},
+        {"Do": "Cast", "Spell": "Death Prism", "SpellID": 93660952, "Target": "Enemy", "DispelImmune": false}
+      ],
+      "Notes": "Round 8: the same again." },
+
+    { "When": "RoundEnd", "Round": 11, "Once": true,
+      "Actions": [
+        {"Do": "Defeat"}
+      ],
+      "Notes": "The duel ends by itself after round 11 (made as the drake leaving the battle; how the real one ends is a guess)." }
+  ]
+}

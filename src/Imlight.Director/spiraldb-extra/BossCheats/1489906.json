@@ -1,0 +1,45 @@
+{
+  // Twin: same game cheat file as Renegade Druid (Rank 18) (1489905), trigger CC_Druid_Warrior_B_Minion.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1489906,
+  "Name": "Renegade Druid (Rank 18)",
+  "ShadowPips": 1,
+  "Cheats": [
+    {
+      "When": "RoundEnd",
+      "Round": 4,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00001404"
+        },
+        {
+          "Do": "PickOne",
+          "Count": 3
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Vengeance",
+          "SpellID": 1162096324,
+          "Target": "",
+          "DispelImmune": false
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Brace",
+          "SpellID": 1776642642,
+          "Target": "Self",
+          "DispelImmune": false
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Quicken",
+          "SpellID": 1493197621,
+          "Target": "",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "End of round 4: Vengeance, Brace or Quicken."
+    }
+  ]
+}

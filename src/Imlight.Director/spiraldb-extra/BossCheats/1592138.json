@@ -1,0 +1,132 @@
+{
+  // Twin: same game cheat file as Black Dragon (Rank 14) (1663261), trigger BR_AV_BlackDragon_A_160.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1592138,
+  "Name": "Black Dragon (Advanced) (Rank 14)",
+  "Cheats": [
+    {
+      "When": "PlayerCasts",
+      "Category": "Damage",
+      "SingleTarget": true,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00002938"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Blessing",
+          "SpellID": 1641304242,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "\"You are myopic...\" One-target damage: Blessing on itself."
+    },
+    {
+      "When": "PlayerCasts",
+      "Category": "Heal",
+      "SingleTarget": true,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Celestial Calendar",
+          "SpellID": 119326103,
+          "Target": "",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A one-target heal: Celestial Calendar."
+    },
+    {
+      "When": "PlayerCasts",
+      "Category": "Blade",
+      "SingleTarget": true,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Disarm",
+          "SpellID": 22564810,
+          "Target": "Receiver",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A one-target blade: Disarm."
+    },
+    {
+      "When": "PlayerCasts",
+      "Category": "HoT",
+      "SingleTarget": true,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Remove HOT",
+          "SpellID": 506040222,
+          "Target": "Receiver",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A one-target heal over time: Remove HOT."
+    },
+    {
+      "When": "PlayerCasts",
+      "Category": "DoT",
+      "SingleTarget": true,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Triage",
+          "SpellID": 394618746,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A one-target damage over time: Triage."
+    },
+    {
+      "When": "PlayerCasts",
+      "Category": "Shield",
+      "SingleTarget": true,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Pierce",
+          "SpellID": 399299614,
+          "Target": "Receiver",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A one-target shield: Pierce."
+    },
+    {
+      "When": "PlayerCasts",
+      "Category": "Trap",
+      "SingleTarget": true,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Cleanse Ward",
+          "SpellID": 1744091377,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A one-target trap: Cleanse Ward."
+    },
+    {
+      "When": "PlayerCasts",
+      "Category": "Weakness",
+      "SingleTarget": true,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Cleanse Charm",
+          "SpellID": 731187518,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A one-target weakness: Cleanse Charm."
+    }
+  ]
+}

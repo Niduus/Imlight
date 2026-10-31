@@ -1,0 +1,68 @@
+{
+  // Twin: same game cheat file as King Avernus (Rank 3) (1681275), trigger HG_RPG_Lich_Boss_A_01.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1681276,
+  "Name": "King Avernus (Rank 3)",
+  "Cheats": [
+    {
+      "When": "RoundEnd",
+      "Every": 2,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00003554"
+        },
+        {
+          "Do": "PickOne",
+          "Count": 4,
+          "Group": 2
+        },
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00003558"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Freeze the Heart",
+          "SpellID": 462313666,
+          "Target": "Enemy",
+          "DispelImmune": false
+        },
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00003557"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Freeze the Heart",
+          "SpellID": 1685169981,
+          "Target": "Enemy",
+          "DispelImmune": false
+        },
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00003556"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Deathly Toll",
+          "SpellID": 462313667,
+          "Target": "Enemy",
+          "DispelImmune": false
+        },
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00003555"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Deathly Toll",
+          "SpellID": 1685169980,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "\"Gut Punch of Paralysis. Does it succeed?\" The end of every second round, one of four with its line: a stunning 200 Ice hit, a 200 Ice hit, a fizzle, or a stun on himself. Pick one takes a group size now (2: a line and its spell)."
+    }
+  ]
+}

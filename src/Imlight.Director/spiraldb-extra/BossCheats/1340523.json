@@ -1,0 +1,38 @@
+{
+  // Twin: same game cheat file as Lesser Borealis Golem (Rank 15) (1340985), trigger PL-FireOff-01.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1340523,
+  "Name": "Imperial Guard (Rank 14)",
+  "Cheats": [
+    {
+      "When": "RoundStart",
+      "Round": 5,
+      "Every": 5,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Fireblade",
+          "SpellID": 603748810,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Every 5th round: Fireblade."
+    },
+    {
+      "When": "RoundStart",
+      "Round": 6,
+      "Every": 5,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Fireblade",
+          "SpellID": 850164170,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "The round after: Fireblade."
+    }
+  ]
+}

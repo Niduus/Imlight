@@ -1,0 +1,53 @@
+{
+  // Twin: same game cheat file as Young Morganthe (Rank 15) (1502655), trigger AV-MorgantheCombatTrigger.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1502653,
+  "Name": "Young Morganthe (Rank 10)",
+  "ShadowPips": 2,
+  "Cheats": [
+    {
+      "When": "Pips",
+      "Pips": 7,
+      "PipsOf": "Enemy",
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "WizardBossFights_00000060"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Mana Burn",
+          "SpellID": 69336200,
+          "Target": "Caster",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A wizard with 7 or more pips: Mana Burn on them."
+    },
+    {
+      "When": "PlayerCasts",
+      "Category": "Ward,Trap",
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "WizardBossFights_00000139"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Power Nova",
+          "SpellID": 2062835293,
+          "Target": "",
+          "DispelImmune": false
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Earthquake",
+          "SpellID": 1699344601,
+          "Target": "",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A wizard's ward or jinx: Power Nova and Earthquake."
+    }
+  ]
+}

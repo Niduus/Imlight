@@ -1,0 +1,28 @@
+{
+  // King Tusk (Rank 12, Myth, 5,595 health), King Tusk's Bungalow. Sets traps; a wizard who sets one off gets Immolate.
+  // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove). Added 2026-10-31
+  // ("expand more on cheats"): built from blocks that were there; timings Wizard404 does not give are guesses, listed in
+  // the project's "Cheats to verify". Lines are the game's own, by key.
+  "TemplateID": 1681463,
+  "Name": "King Tusk (Rank 12)",
+  "Cheats": [
+    { "When": "RoundStart", "Round": 1, "Every": 3,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00003605"},
+        {"Do": "PickOne", "Count": 5},
+        {"Do": "Cast", "Spell": "Myth Trap", "SpellID": 400226031, "Target": "Enemy", "DispelImmune": false},
+        {"Do": "Cast", "Spell": "Mythic Fuel", "SpellID": 13902312, "Target": "", "DispelImmune": false},
+        {"Do": "Cast", "Spell": "Yellow Troll", "SpellID": 1850931282, "Target": "Enemy", "DispelImmune": false},
+        {"Do": "Cast", "Spell": "Keeper of the Flame", "SpellID": 875215502, "Target": "Enemy", "DispelImmune": false},
+        {"Do": "Cast", "Spell": "Hex", "SpellID": 92296, "Target": "Enemy", "DispelImmune": false}
+      ],
+      "Notes": "\"Watch out for the traps\" and one of his five trap spells; round 1 and every 3 rounds is a guess." },
+
+    { "When": "EffectUsed", "RemovedFrom": "AnyEnemy", "RemovedKind": "Trap", "Cooldown": 1,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00003606"},
+        {"Do": "Cast", "Spell": "Tusk - Immolate - GiveSpell", "SpellID": 158304947, "Target": "AllEnemies", "DispelImmune": false}
+      ],
+      "Notes": "A trap on a wizard is set off: \"You fell right into my trap\" and every wizard gets an Immolate card (the game's own give spell)." }
+  ]
+}

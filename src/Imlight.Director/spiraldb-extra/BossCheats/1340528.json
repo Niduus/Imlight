@@ -1,0 +1,23 @@
+{
+  // Twin: same game cheat file as Iceblight Elf (Rank 14) (1340540), trigger PL-IceTricky-01.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1340528,
+  "Name": "Polarian Evil Snowman (Rank 14)",
+  "Cheats": [
+    {
+      "When": "RoundStart",
+      "Round": 2,
+      "Every": 2,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Steal Ward",
+          "SpellID": 991342922,
+          "Target": "Enemy",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Every 2 rounds: Steal Ward on a wizard."
+    }
+  ]
+}

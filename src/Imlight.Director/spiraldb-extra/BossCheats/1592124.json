@@ -1,0 +1,64 @@
+{
+  // Twin: same game cheat file as Ptolemos (Rank 14) (1663251), trigger BR_CL_Ptolemos_A_100.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1592124,
+  "Name": "Ptolemos (Advanced) (Rank 14)",
+  "Cheats": [
+    {
+      "When": "MinionDefeated",
+      "Creature": 1592126,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00003321"
+        },
+        {
+          "Do": "PickOne",
+          "Count": 4
+        },
+        {
+          "Do": "Polymorph",
+          "Spell": "Polymorph Colossus",
+          "SpellID": 1787930693,
+          "Target": "Enemy"
+        },
+        {
+          "Do": "Polymorph",
+          "Spell": "Polymorph Elemental",
+          "SpellID": 1989117861,
+          "Target": "Enemy"
+        },
+        {
+          "Do": "Polymorph",
+          "Spell": "Polymorph Treant",
+          "SpellID": 266245838,
+          "Target": "Enemy"
+        },
+        {
+          "Do": "Polymorph",
+          "Spell": "Polymorph Elemental",
+          "SpellID": 292362260,
+          "Target": "Enemy"
+        }
+      ],
+      "Notes": "Astraeus falls: a random wizard is polymorphed into a Colossus, Fire or Storm Elemental, or Treant."
+    },
+    {
+      "When": "BossDefeated",
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00003323"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Hatch",
+          "SpellID": 400037182,
+          "Target": "",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Defeated: Hatch (Wizard404: needs confirming)."
+    }
+  ]
+}

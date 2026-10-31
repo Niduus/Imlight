@@ -1,0 +1,139 @@
+{
+  // Twin: same game cheat file as Gray Man Golem (Rank 24) (1702089), trigger DM_Mutant_Darkmoor_A_01.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1713331,
+  "Name": "Gray Man Golem",
+  "ShadowPips": 2,
+  "Cheats": [
+    {
+      "When": "BattleStart",
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00003928"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Guardian Spirit",
+          "SpellID": 630100933,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Round 1: Guardian Spirit (back with 15% when defeated)."
+    },
+    {
+      "When": "RoundEnd",
+      "HasWho": "AnyEnemy",
+      "HasKind": "Charm",
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00003931"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Pips for Enemy Blades",
+          "SpellID": 20959416,
+          "Target": "Matched",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "End of each round, a wizard with a charm: Pips for Enemy Blades."
+    },
+    {
+      "When": "RoundStart",
+      "HealthUnder": 90,
+      "HealthAbove": 70,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00003930"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Bladestorm",
+          "SpellID": 1568997937,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Under 90% (a guess): Bladestorm."
+    },
+    {
+      "When": "RoundStart",
+      "HealthUnder": 70,
+      "HealthAbove": 50,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00003930"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Bladestorm",
+          "SpellID": 1527056215,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "70-50%: Bladestorm."
+    },
+    {
+      "When": "RoundStart",
+      "HealthUnder": 50,
+      "HealthAbove": 30,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00003930"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Bladestorm",
+          "SpellID": 1527056217,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "50-30%: Bladestorm."
+    },
+    {
+      "When": "RoundStart",
+      "HealthUnder": 30,
+      "HealthAbove": 15,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00003930"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Bladestorm",
+          "SpellID": 1527056219,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "30-15%: Bladestorm."
+    },
+    {
+      "When": "RoundStart",
+      "HealthUnder": 15,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00003930"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Bladestorm",
+          "SpellID": 1387645309,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Under 15%: Bladestorm."
+    }
+  ]
+}

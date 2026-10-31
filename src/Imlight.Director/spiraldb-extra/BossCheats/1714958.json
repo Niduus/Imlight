@@ -1,0 +1,33 @@
+{
+  // Twin: same game cheat file as Orange Iguana Champion (Rank 24) (1714992), trigger HG_Iguana_Base_B.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1714958,
+  "Name": "Orange Iguana Champion (Rank 14)",
+  "Cheats": [
+    {
+      "When": "PlayerCasts",
+      "Category": "Blade",
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00004304"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Balanceblade",
+          "SpellID": 403616231,
+          "Target": "Self",
+          "DispelImmune": false
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Tower Shield",
+          "SpellID": 432324968,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "\"Are these Orange Iguanas, or chameleons?\" A wizard's blade: a 45% Balanceblade and a Tower Shield on itself (Wizard404: spells to be verified). Existing blocks."
+    }
+  ]
+}
