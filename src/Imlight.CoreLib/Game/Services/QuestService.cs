@@ -1818,6 +1818,16 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             PlayerActor = SessionActor.ActorRef,
             PlayerGameObject = GetActiveGameObject(),
         });
+
+        // The game's triggers wait on its own names for the steps of quests we rebuilt ("GoalComplete_<quest>_Goal 6").
+        var template = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == questName);
+        foreach (var gameName in Imlight.CoreLib.Game.Quests.VanillaGoalNames.GameNames(template, goalName)) {
+            zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
+                EventName = $"{GOAL_COMPLETE_EVENT_PREFIX}{questName}_{gameName}",
+                PlayerActor = SessionActor.ActorRef,
+                PlayerGameObject = GetActiveGameObject(),
+            });
+        }
     }
 
     private void CompleteQuest(QuestInstance questInstance) {

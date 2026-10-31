@@ -2746,6 +2746,18 @@ public class Wizard {
 
         QuestBehavior.CurrentQuestInstances = [.. uniqueQuests.OrderBy(originalOrder.IndexOf)];
 
+        // A step we fixed (a walk-in step that is a "use this object" step in the game) keeps the kind of step it was
+        // when the wizard got it; it takes the quest's kind now, so a wizard already on it can finish it.
+        foreach (var quest in QuestBehavior.CurrentQuestInstances) {
+            var goals = QuestTemplateCollection.GetQuestByName(quest.QuestName)?.m_goals;
+            foreach (var goal in quest.GoalProgress ?? []) {
+                var template = goals?.FirstOrDefault(g => g is not null && g.m_goalName == goal.GoalName);
+                if (template is not null && goal.GoalType != template.m_goalType) {
+                    goal.GoalType = template.m_goalType;
+                }
+            }
+        }
+
         // Prune stale quest IDs whose instance docs were removed above, and persist.
         var questIdsBefore = QuestBehavior.CurrentQuestIDs.ToList();
         QuestBehavior.CurrentQuestIDs.Clear();

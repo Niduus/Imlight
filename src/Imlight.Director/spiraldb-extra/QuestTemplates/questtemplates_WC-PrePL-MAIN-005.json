@@ -127,7 +127,15 @@
     }
   ],
   "m_startResults": {
-    "m_results": []
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResModifyEntry, Imcodec.ObjectProperty",
+        "m_entryName": "AccessToPolaris",
+        "m_isQuestRegistry": false,
+        "m_value": 0,
+        "m_questName": ""
+      }
+    ]
   },
   "m_endResults": {
     "m_results": [

@@ -48,7 +48,7 @@
       "m_zoneExit": false
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -61,16 +61,18 @@
         "m_percentChance": 1.0,
         "m_descriptor": "Sulfur Barrels",
         "m_descriptor2": "",
-        "m_count": 0,
+        "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
       "m_displayImage1": "GUI/QuestButtons/Quest_EM_SulfurBarrel.dds",
       "m_displayImage2": "",
-      "m_clientTags": [],
+      "m_clientTags": [
+        "EM-SulphurBarrel"
+      ],
       "m_genericEvents": [],
-      "m_autoQualify": false,
+      "m_autoQualify": true,
       "m_autoComplete": false,
       "m_dialogList": null,
       "m_noQuestHelper": false,
@@ -78,14 +80,14 @@
       "m_locationName": "The Stomach",
       "m_goalName": "2_WizardQuestGoals00000058",
       "m_goalTitle": "WizardQuestGoals_00000058",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Empyrea/EM_Z05_Sepidious",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "EM-SulphurBarrel.AdjRef"
+      ],
+      "m_itemTotal": 1
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -98,16 +100,18 @@
         "m_percentChance": 1.0,
         "m_descriptor": "Charcoal Crates",
         "m_descriptor2": "",
-        "m_count": 0,
+        "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
       "m_displayImage1": "GUI/QuestButtons/Quest_EM_CharcoalCrate.dds",
       "m_displayImage2": "",
-      "m_clientTags": [],
+      "m_clientTags": [
+        "EM-CharcoalBarrel"
+      ],
       "m_genericEvents": [],
-      "m_autoQualify": false,
+      "m_autoQualify": true,
       "m_autoComplete": false,
       "m_dialogList": null,
       "m_noQuestHelper": false,
@@ -115,14 +119,14 @@
       "m_locationName": "The Stomach",
       "m_goalName": "3_WizardQuestGoals00000058",
       "m_goalTitle": "WizardQuestGoals_00000058",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Empyrea/EM_Z05_Sepidious",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "EM-CharcoalBarrel.AdjRef"
+      ],
+      "m_itemTotal": 1
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -135,16 +139,18 @@
         "m_percentChance": 1.0,
         "m_descriptor": "Sulfur and Charcoal",
         "m_descriptor2": "",
-        "m_count": 0,
+        "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
       "m_displayImage1": "GUI/QuestButtons/Location_EM_Blockage.dds",
       "m_displayImage2": "",
-      "m_clientTags": [],
+      "m_clientTags": [
+        "EM-Blockage"
+      ],
       "m_genericEvents": [],
-      "m_autoQualify": false,
+      "m_autoQualify": true,
       "m_autoComplete": false,
       "m_dialogList": null,
       "m_noQuestHelper": false,
@@ -152,14 +158,14 @@
       "m_locationName": "The Stomach",
       "m_goalName": "4_WizardQuestGoals00000192",
       "m_goalTitle": "WizardQuestGoals_00000192",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Empyrea/EM_Z05_Sepidious",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "EM-Blockage.AdjRef"
+      ],
+      "m_itemTotal": 1
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -172,16 +178,18 @@
         "m_percentChance": 1.0,
         "m_descriptor": "Saltpetre",
         "m_descriptor2": "",
-        "m_count": 0,
+        "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
       "m_displayImage1": "GUI/QuestButtons/Quest_EM_SaltPetre.dds",
       "m_displayImage2": "",
-      "m_clientTags": [],
+      "m_clientTags": [
+        "EM-Saltpetere"
+      ],
       "m_genericEvents": [],
-      "m_autoQualify": false,
+      "m_autoQualify": true,
       "m_autoComplete": false,
       "m_dialogList": null,
       "m_noQuestHelper": false,
@@ -189,11 +197,11 @@
       "m_locationName": "The Stomach",
       "m_goalName": "5_WizardQuestGoals00000058",
       "m_goalTitle": "WizardQuestGoals_00000058",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Empyrea/EM_Z05_Sepidious",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "EM-Saltpetere.AdjRef"
+      ],
+      "m_itemTotal": 1
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",

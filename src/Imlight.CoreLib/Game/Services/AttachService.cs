@@ -399,6 +399,8 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
 
         GiveStartingPotions();
         GiveCrowns();
+        // Story flags of quests the wizard is past that the quests once forgot to set (Game/Quests/QuestFlagCatchUp).
+        Quests.QuestFlagCatchUp.Apply(_wizard);
         TellMemberBenefits();
     }
 
