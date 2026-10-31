@@ -144,6 +144,7 @@
       "m_displayImage1": "GUI/QuestButtons/Quest_SP_KnowledgeCrystals.dds",
       "m_displayImage2": "",
       "m_clientTags": [
+        "WC-KnowledgeCrystal_Blocker_03",
         "WC-KnowledgeCrystal_Blocker_05",
         "WC-KnowledgeCrystal_Blocker"
       ],
@@ -158,6 +159,7 @@
       "m_goalTitle": "WizardQuestGoals_00000142",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
+        "WC-KnowledgeCrystal_Blocker_03.AdjRef",
         "WC-KnowledgeCrystal_Blocker_05.AdjRef",
         "WC-KnowledgeCrystal_Blocker.AdjRef"
       ],
