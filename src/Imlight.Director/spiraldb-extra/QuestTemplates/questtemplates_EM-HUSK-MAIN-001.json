@@ -144,7 +144,8 @@
       "m_displayImage1": "GUI/NpcPortraits/Portraits_Trees_Primordial_A_NPC.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "EM_Primal_Astral_Trees"
+        "EM_Primal_Astral_Trees",
+        "EM_Primal_Astral_A_Trees"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -157,7 +158,8 @@
       "m_goalTitle": "Tune",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "EM_Primal_Astral_Trees.AdjRef"
+        "EM_Primal_Astral_Trees.AdjRef",
+        "EM_Primal_Astral_A_Trees.AdjRef"
       ],
       "m_itemTotal": 1
     },

@@ -33,7 +33,8 @@
       "m_displayImage2": "",
       "m_clientTags": [
         "EM-StreamportalBrainVersion",
-        "EM-Streamportal"
+        "EM-Streamportal",
+        "EM-Streamportal-FX"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -47,7 +48,8 @@
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
         "EM-StreamportalBrainVersion.AdjRef",
-        "EM-Streamportal.AdjRef"
+        "EM-Streamportal.AdjRef",
+        "EM-Streamportal-FX.AdjRef"
       ],
       "m_itemTotal": 1
     },

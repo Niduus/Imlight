@@ -292,7 +292,7 @@
       "m_displayImage1": "GUI/QuestButtons/Quest_EM_CartPyre.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "GH2_Fire"
+        "EM-SignalFire"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -305,7 +305,7 @@
       "m_goalTitle": "Light",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "GH2_Fire.AdjRef"
+        "EM-SignalFire.AdjRef"
       ],
       "m_itemTotal": 1
     },
