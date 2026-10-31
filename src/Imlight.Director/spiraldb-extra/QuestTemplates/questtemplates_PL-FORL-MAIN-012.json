@@ -121,6 +121,13 @@
         "m_bShowsObject": false,
         "m_persist": false,
         "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResModifyEntry, Imcodec.ObjectProperty",
+        "m_entryName": "AccessToArcanum",
+        "m_isQuestRegistry": false,
+        "m_value": 0,
+        "m_questName": ""
       }
     ]
   },

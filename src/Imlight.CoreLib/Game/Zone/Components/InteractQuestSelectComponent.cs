@@ -320,6 +320,11 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
                     }
 
                     Add(_byGoal, (quest.m_questName, goal.m_goalName), index);
+                    // Objects name the steps of quests we rebuilt by the game's names ("Goal 3"), Game/Quests/VanillaGoalNames.
+                    foreach (var gameName in Quests.VanillaGoalNames.GameNames(quest, goal.m_goalName)) {
+                        Add(_byGoal, (quest.m_questName, gameName), index);
+                    }
+
                     if (goal is ScavengeGoalTemplate scavengeGoal) {
                         foreach (var adjective in scavengeGoal.m_itemAdjectives ?? []) {
                             Add(_byAdjective, (string) adjective, index);

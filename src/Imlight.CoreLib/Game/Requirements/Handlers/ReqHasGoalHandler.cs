@@ -49,6 +49,11 @@ internal sealed class ReqHasGoalHandler : BaseRequirementHandler<ReqHasGoal> {
 
         var goal = quest.GoalProgress
             .FirstOrDefault(g => g.GoalName == goalName);
+        // The game's name for a step of a quest we rebuilt ("Goal 6" for our "7_WizardQuestGoalsKill").
+        if (goal == null && Imlight.CoreLib.Game.Quests.VanillaGoalNames.OurName(questName, goalName) is { } ourName) {
+            goal = quest.GoalProgress.FirstOrDefault(g => g.GoalName == ourName);
+        }
+
         if (goal == null) {
             return false;
         }
