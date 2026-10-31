@@ -136,7 +136,10 @@ internal static class BossDevSpells {
         return result;
     }
 
-    private static string NameOf(uint id) {
+    /// <summary>"Boss" or "Dev" for a boss or dev spell, else null.</summary>
+    internal static string KindOf(uint id) => s_kinds.Value.GetValueOrDefault(id);
+
+    internal static string NameOf(uint id) {
         if (CoreObjectFactory.GetCoreTemplate(id) is SpellTemplate spell) {
             string key = spell.m_displayName;
             var shown = string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key);

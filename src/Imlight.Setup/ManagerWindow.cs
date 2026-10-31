@@ -383,6 +383,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Fast Forward", FastForwardTab),
             Tab("Best Gear", BestGearTab),
             Tab("Collect Spells", CollectSpellsTab),
+            Tab("Unlearn Spells", UnlearnSpellsTab),
             Tab("Bosses", BossesTab),
             Tab("Player Cheats", PlayerCheatsTab),
             Tab("Boss Test", BossTestTab),
@@ -516,6 +517,7 @@ internal sealed partial class ManagerWindow : Window {
             case "Fast Forward": LoadFastForward(); break;
             case "Best Gear": await LoadBestGearAsync(); break;
             case "Collect Spells": LoadCollectSpells(); break;
+            case "Unlearn Spells": LoadUnlearnSpells(); break;
             case "Bosses": await LoadBossesAsync(); break;
             case "Player Cheats": ShowPlayerCheats(); break;
             case "Boss Test": await LoadBossTestAsync(); break;
@@ -2819,6 +2821,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Spell Quests"] = ("star", "Every quest chain that ends in a spell, in order, with what each NPC says and where your wizard is."),
         ["Quest Testing"] = ("check", "Every main story quest from start to finish: why it may not work here, what to do, what should happen, and a tick when it did."),
         ["Fast Forward"] = ("bolt", "Bring a wizard up to a level or a world: the server finishes the quests before it, in story order, with their real rewards and XP."),
+        ["Unlearn Spells"] = ("undo", "Pick any spell your wizard knows and unlearn it: it leaves the spellbook and decks, and the training points it cost come back."),
         ["Collect Spells"] = ("sparkle", "Give a wizard every spell their finished quests, skipped side quests and trainers should have given them by now."),
         ["Best Gear"] = ("shield", "The best gear for your level and school by the stat you want, slot by slot, and where to get each piece."),
         ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),
