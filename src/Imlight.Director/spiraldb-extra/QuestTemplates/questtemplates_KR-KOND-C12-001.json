@@ -288,9 +288,7 @@
   "m_prepRequirements": null,
   "m_pruneRequirements": null,
   "m_prepAlways": false,
-  "m_clientTags": [
-    "ImlightAutoStart"
-  ],
+  "m_clientTags": [],
   "m_goalLogic": [
     {
       "m_goalsAND": [
@@ -310,6 +308,45 @@
     "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
     "m_dialogs": [
       {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-KondhaDesert-NPC35_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "You have restored the Solar Arc and rescued the relic's guardian from the web of Shadow.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/EmperorofMooShu_KH2_35.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1240275,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-KondhaDesert-NPC35_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Speak to Elana DarkSun now, to see how she fares.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/EmperorofMooShu_KH2_36.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1240275,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
         "m_dialogTag": "Underway",
         "m_dialogEntries": [
           {
@@ -326,7 +363,7 @@
             "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/EmperorofMooShu_KH2_37.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 0,
+            "m_actorTemplateID": 1240275,
             "m_cameraName": ""
           }
         ]

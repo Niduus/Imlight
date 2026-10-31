@@ -188,6 +188,15 @@
         "m_questName": "AZ-MANG-C03-003",
         "m_applyNOT": false,
         "m_operator": "ROP_AND"
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "AZ-MANG-C04-001",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
       }
     ],
     "m_applyNOT": false,

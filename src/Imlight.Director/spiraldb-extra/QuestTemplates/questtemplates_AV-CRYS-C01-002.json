@@ -165,7 +165,7 @@
       "m_itemTotal": 1
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -178,16 +178,18 @@
         "m_percentChance": 1.0,
         "m_descriptor": "Statue of Merle Ambrose",
         "m_descriptor2": "",
-        "m_count": 0,
+        "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
       "m_displayImage1": "GUI/QuestButtons/Use_AV_Statue_Headmaster.dds",
       "m_displayImage2": "",
-      "m_clientTags": [],
+      "m_clientTags": [
+        "AV-CATA-Statue-Ambrose"
+      ],
       "m_genericEvents": [],
-      "m_autoQualify": false,
+      "m_autoQualify": true,
       "m_autoComplete": false,
       "m_dialogList": null,
       "m_noQuestHelper": false,
@@ -195,11 +197,11 @@
       "m_locationName": "Crystal Caves",
       "m_goalName": "5_WizardQuestGoalsUseItem",
       "m_goalTitle": "WizardQuestGoals_UseItem",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Avalon/AV_Z11_CrystalCaves",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "AV-CATA-Statue-Ambrose.AdjRef"
+      ],
+      "m_itemTotal": 1
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",

@@ -139,9 +139,7 @@
   "m_prepRequirements": null,
   "m_pruneRequirements": null,
   "m_prepAlways": false,
-  "m_clientTags": [
-    "ImlightAutoStart"
-  ],
+  "m_clientTags": [],
   "m_goalLogic": [
     {
       "m_goalsAND": [
@@ -172,6 +170,79 @@
     "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
     "m_dialogs": [
       {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-KondhaDesert-NPC36_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Hive is a dark and twisted maze. Shrines to pain and cruelty, and estates built on the blood and tears of the weak.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/DiegoTheDuelmaster_KH2_02.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1240295,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-KondhaDesert-NPC36_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I do not like to call a culture evil, but there is little good or kind in the Spider Arachna.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/DiegoTheDuelmaster_KH2_03.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1240295,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-KondhaDesert-NPC36_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The darkness is so strong, however, that we of the Council of Light cannot follow you in. You must walk this path without us.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/DiegoTheDuelmaster_KH2_04.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1240295,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-KondhaDesert-NPC36_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Head through the Atramental Gate and search for a road to the Shadow Palace. Defeat the guards and find one who can help you!",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/DiegoTheDuelmaster_KH2_05.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1240295,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
         "m_dialogTag": "Underway",
         "m_dialogEntries": [
           {
@@ -188,7 +259,7 @@
             "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/DiegoTheDuelmaster_KH2_06.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 0,
+            "m_actorTemplateID": 1240295,
             "m_cameraName": ""
           }
         ]

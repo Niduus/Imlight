@@ -48,7 +48,7 @@
       "m_zoneExit": false
     },
     {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
       "m_goalUnderway": null,
       "m_hyperlink": null,
@@ -59,7 +59,7 @@
       "m_goalRequirements": null,
       "m_tallyCounter": {
         "m_percentChance": 1.0,
-        "m_descriptor": "Emperor of Mooshu",
+        "m_descriptor": "",
         "m_descriptor2": "",
         "m_count": 0,
         "m_tallyResults": {
@@ -121,11 +121,9 @@
       "m_locationName": "Solar Arc",
       "m_goalName": "2_WizardQuestGoalsTalkNPC",
       "m_goalTitle": "WizardQuestGoals_TalkNPC",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Khrysalis/Interiors/KR_Z10_I08_SolarArcMain",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "KR-KondhaDesert-NPC35_Persona",
+      "m_usePatron": false
     }
   ],
   "m_startResults": {
@@ -157,9 +155,7 @@
   "m_prepRequirements": null,
   "m_pruneRequirements": null,
   "m_prepAlways": false,
-  "m_clientTags": [
-    "ImlightAutoStart"
-  ],
+  "m_clientTags": [],
   "m_goalLogic": [
     {
       "m_goalsAND": [
@@ -190,6 +186,28 @@
     "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
     "m_dialogs": [
       {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-KondhaDesert-NPC35_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The old stories give Myth school much of its power. The Mythic sun is a far-seeing eye, able to see the truth in these tales.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Cow_Emperor_A.dds",
+            "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/EmperorofMooShu_KH2_25.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1240275,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
         "m_dialogTag": "Underway",
         "m_dialogEntries": [
           {
@@ -206,7 +224,7 @@
             "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/EmperorofMooShu_KH2_26.mp3",
             "m_action": "",
             "m_dialogEvent": "",
-            "m_actorTemplateID": 0,
+            "m_actorTemplateID": 1240275,
             "m_cameraName": ""
           }
         ]
