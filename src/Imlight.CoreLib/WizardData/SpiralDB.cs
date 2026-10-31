@@ -215,6 +215,9 @@ public static class SpiralDB {
             s_badgeDefinitions = badgeDefinitions;
             s_npcSeamstresses = npcSeamstresses;
 
+            // Lines and defeat counts the captured quests got wrong or lack, checked against the game's quest files.
+            QuestFixes.ApplyAll(questTemplates, extraPath);
+
             // Our own quests are written in English; give them the game's own lines.
             QuestTextKeys.ResolveAll(questTemplates);
 
