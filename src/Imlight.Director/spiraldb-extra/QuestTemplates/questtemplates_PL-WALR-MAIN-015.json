@@ -32,7 +32,7 @@
       "m_displayImage1": "GUI/QuestButtons/Art_Mount_Rowboat.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "HG_HIGHLANDS_Dinghy_02"
+        "PL-TeleportToKabata"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -45,7 +45,7 @@
       "m_goalTitle": "Board",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "HG_HIGHLANDS_Dinghy_02.AdjRef"
+        "PL-TeleportToKabata.AdjRef"
       ],
       "m_itemTotal": 1
     },

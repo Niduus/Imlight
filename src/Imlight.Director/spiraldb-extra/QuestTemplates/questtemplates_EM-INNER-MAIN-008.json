@@ -146,7 +146,8 @@
       "m_displayImage1": "GUI/QuestButtons/Quest_EM_ElementLevers.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "EM-HydraulicLever"
+        "EM-HydraulicLever",
+        "EM_ElementLevers"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -159,7 +160,8 @@
       "m_goalTitle": "WizardQuestGoals_UseItem",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "EM-HydraulicLever.AdjRef"
+        "EM-HydraulicLever.AdjRef",
+        "EM_ElementLevers.AdjRef"
       ],
       "m_itemTotal": 1
     },
