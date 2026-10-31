@@ -1,0 +1,45 @@
+{
+  // Twin: same game cheat file as Kenny Rooster (Rank 19) (1519725), trigger HG_TRAIN_Chicken_Pugilist_B_01.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1519724,
+  "Name": "Kenny Rooster (Rank 15)",
+  "Cheats": [
+    {
+      "When": "PlayerCasts",
+      "Category": "Aura",
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00001782"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Natural Attack",
+          "SpellID": 1188791231,
+          "Target": "Caster",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "\"The chickens come home to roast!\" A wizard's aura: Natural Attack destroys it."
+    },
+    {
+      "When": "AllyHealthBelow",
+      "Percent": 20,
+      "Creature": 1519719,
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00001783"
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Expel",
+          "SpellID": 343003124,
+          "Target": "Caster",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "\"Time to fold 'em, partner\" Daniel McCoil under 20%: Expel."
+    }
+  ]
+}

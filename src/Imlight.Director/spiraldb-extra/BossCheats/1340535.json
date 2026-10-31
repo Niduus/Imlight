@@ -1,0 +1,52 @@
+{
+  // Twin: same game cheat file as Inspector Clooso (Rank 15) (1340517), trigger PL-FireDef-02.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1340535,
+  "Name": "Dyomo The Bridgebuilder (Rank 15)",
+  "ShadowPips": 2,
+  "Cheats": [
+    {
+      "When": "AllyHealthBelow",
+      "Percent": 50,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Tower Shield",
+          "SpellID": 432324968,
+          "Target": "Hit",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "An ally first under half: Tower Shield on it."
+    },
+    {
+      "When": "HealthBelow",
+      "Percent": 50,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Tower Shield",
+          "SpellID": 432324968,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Itself under half: Tower Shield."
+    },
+    {
+      "When": "RoundStart",
+      "Round": 6,
+      "Every": 6,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Smoke Screen",
+          "SpellID": 496482937,
+          "Target": "AllEnemies",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Every six rounds: Smoke Screen on the wizards."
+    }
+  ]
+}

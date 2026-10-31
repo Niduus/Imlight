@@ -1,0 +1,23 @@
+{
+  // Union Jack Golem (Rank 5, Fire, 3,500 health), Marleybone (Barkingham Palace). Mass Fire Trap, and a Scald bomb when hurt. Its Advanced copy uses this file too.
+  // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove). Added 2026-10-31
+  // ("expand more on cheats"): built from blocks that were there; timings Wizard404 does not give are guesses, listed in
+  // the project's "Cheats to verify". Lines are the game's own, by key.
+  "TemplateID": 1201768,
+  "Name": "Union Jack Golem (Rank 5)",
+  "Cheats": [
+    { "When": "RoundStart", "Round": 1, "Every": 3,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00004442"},
+        {"Do": "Cast", "Spell": "Mass Fire Trap - Amulet", "SpellID": 2050136640, "Target": "", "DispelImmune": false}
+      ],
+      "Notes": "\"Initiate: Trap Protocol\": Mass Fire Trap on the wizards. Round 1 and every 3 rounds is a guess." },
+
+    { "When": "BossHit", "Category": "Damage", "Cooldown": 2,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00004492"},
+        {"Do": "Cast", "Spell": "Scald - 100 - Bomb", "SpellID": 1674940976, "Target": "", "DispelImmune": false}
+      ],
+      "Notes": "\"Initiate: Defensive Countermeasure\": hurt, it answers with Scald (at most every other round, a guess)." }
+  ]
+}

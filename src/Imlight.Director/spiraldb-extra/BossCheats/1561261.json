@@ -1,0 +1,51 @@
+{
+  // Twin: same game cheat file as Numbskull Ogre (Rank 14) (1340542), trigger PL-FireDef-01.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1561261,
+  "Name": "Numbskull Ogre (Rank 14)",
+  "Cheats": [
+    {
+      "When": "AllyHealthBelow",
+      "Percent": 50,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Tower Shield",
+          "SpellID": 432324968,
+          "Target": "Hit",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Someone of its side drops under half: Tower Shield on them."
+    },
+    {
+      "When": "HealthBelow",
+      "Percent": 50,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Tower Shield",
+          "SpellID": 432324968,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Itself under half: Tower Shield."
+    },
+    {
+      "When": "RoundStart",
+      "Round": 6,
+      "Every": 6,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Smoke Screen",
+          "SpellID": 496482937,
+          "Target": "AllEnemies",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Every sixth round: Smoke Screen on the wizards."
+    }
+  ]
+}

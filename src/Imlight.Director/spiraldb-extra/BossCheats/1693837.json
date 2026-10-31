@@ -1,0 +1,36 @@
+{
+  // Sisyphus Stone Thrower (Rank 13, Myth, 16,100 health), Aquila (Temple of Sisyphus). A stone to push back, and his own boulder.
+  // From Wizard404's data (fetched 2026-10-24; its cheat notes are wiki-written, so they guide, not prove). Added 2026-10-31
+  // ("expand more on cheats"): built from blocks that were there; timings Wizard404 does not give are guesses, listed in
+  // the project's "Cheats to verify". Lines are the game's own, by key.
+  "TemplateID": 1693837,
+  "Name": "Sisyphus Stone Thrower (Rank 13)",
+  "Cheats": [
+    { "When": "BattleStart",
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00003855"}
+      ],
+      "Notes": "Round 1: \"This isn't a sprint. It's a test of endurance!\"" },
+
+    { "When": "RoundStart", "Round": 2, "Every": 3,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00003856"},
+        {"Do": "Cast", "Spell": "ASTH Sisyphus Rock", "SpellID": 882899278, "Target": "AllEnemies", "DispelImmune": false},
+        {"Do": "Cast", "Spell": "Rock Throw - Sisyphus", "SpellID": 990533779, "Target": "Enemy", "DispelImmune": false}
+      ],
+      "Notes": "\"Who will cast the first stone?\": every wizard gets a Rock Put card and he throws his own. Round 2 and every 3 rounds is a guess." },
+
+    { "When": "PlayerCasts", "Spells": ["Rock Put"], "AnyVersion": true,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00003853"}
+      ],
+      "Notes": "A wizard puts the rock back: \"Hya! Pushed Away!\"" },
+
+    { "When": "RoundStart", "Round": 4, "Every": 4,
+      "Actions": [
+        {"Do": "Say", "Line": "CombatMessages_00003854"},
+        {"Do": "Cast", "Spell": "Natural Attack", "SpellID": 1103160749, "Target": "Enemy", "DispelImmune": false}
+      ],
+      "Notes": "\"Boulder you than me!\" and his Natural Attack; every 4th round is a guess. His Equalize (Wizard404 is unsure which) is left out." }
+  ]
+}

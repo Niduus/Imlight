@@ -1,0 +1,27 @@
+{
+  // Twin: same game cheat file as Assistant Warden Porfiry (Rank 15) (1340657), trigger PL-BalTricky-02.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1340786,
+  "Name": "Captain Kravchuck (Rank 15)",
+  "ShadowPips": 2,
+  "Cheats": [
+    {
+      "When": "PlayerCasts",
+      "Category": "Aura",
+      "Actions": [
+        {
+          "Do": "Wait",
+          "Rounds": 1
+        },
+        {
+          "Do": "Cast",
+          "Spell": "Supernova",
+          "SpellID": 1493403952,
+          "Target": "Caster",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "A wizard's aura: Supernova on them the next round."
+    }
+  ]
+}

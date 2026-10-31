@@ -1,0 +1,38 @@
+{
+  // Twin: same game cheat file as Tundarian Enforcer (Rank 14) (1340520), trigger PL-IceOff-01.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1340536,
+  "Name": "Blizzard Elemental (Rank 14)",
+  "Cheats": [
+    {
+      "When": "RoundStart",
+      "Round": 5,
+      "Every": 5,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Iceblade",
+          "SpellID": 2032132496,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "Every 5th round: Iceblade."
+    },
+    {
+      "When": "RoundStart",
+      "Round": 6,
+      "Every": 5,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Iceblade",
+          "SpellID": 2039832976,
+          "Target": "Self",
+          "DispelImmune": false
+        }
+      ],
+      "Notes": "The round after: Iceblade again."
+    }
+  ]
+}

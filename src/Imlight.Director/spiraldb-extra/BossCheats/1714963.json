@@ -1,0 +1,40 @@
+{
+  // Twin: same game cheat file as Belloq (Rank 24) (1714997), trigger HG_Elephant_Belloq_A.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1714963,
+  "Name": "Belloq (Rank 14)",
+  "Cheats": [
+    {
+      "When": "BattleStart",
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00004375"
+        }
+      ],
+      "Notes": "\"This is Belloq's game now.\" Round 1 (a guess)."
+    },
+    {
+      "When": "PlayerCasts",
+      "Category": "Trap",
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00004377"
+        }
+      ],
+      "Notes": "\"Traps? My specialty.\" A wizard's trap (a guess)."
+    },
+    {
+      "When": "PlayerCasts",
+      "Category": "Blade",
+      "Actions": [
+        {
+          "Do": "Say",
+          "Line": "CombatMessages_00004341"
+        }
+      ],
+      "Notes": "\"Building up your attack? I did already!\" A wizard's blade (a guess)."
+    }
+  ]
+}

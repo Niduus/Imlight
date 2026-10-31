@@ -1,0 +1,33 @@
+{
+  // Twin: same game cheat file as Imperial Justice Payne (Rank 15) (1340658), trigger PL-MythOff-02.
+  // Made by tools/boss-twins/build_twins.py; change the source boss and rerun, not this file.
+  "TemplateID": 1371095,
+  "Name": "Cyrio Cassini (Rank 15)",
+  "ShadowPips": 2,
+  "Cheats": [
+    {
+      "When": "Pips",
+      "Pips": 2,
+      "PipsKind": "Shadow",
+      "HasWho": "Self",
+      "HasSpell": "Dark Fiend",
+      "HasNot": true,
+      "Chance": 75,
+      "Actions": [
+        {
+          "Do": "Cast",
+          "Spell": "Dark Fiend",
+          "SpellID": 1675274933,
+          "Target": "Self",
+          "DispelImmune": false
+        },
+        {
+          "Do": "Pips",
+          "Amount": -2,
+          "Kind": "Shadow"
+        }
+      ],
+      "Notes": "2 shadow pips and no Dark Fiend on it: Dark Fiend (likely)."
+    }
+  ]
+}
