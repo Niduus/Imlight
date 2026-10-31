@@ -248,7 +248,10 @@ internal partial class QuestService {
             }
         }
 
-        // A copy in the quest book goes; it is finished below.
+        // A copy in the quest book goes; it is finished below. What a run already rewarded is noted (QuestSafety).
+        if (held is not null || wizard.HasCompletedQuest(name)) {
+            QuestSafety.RememberRewardsBeforeReset(wizard, name);
+        }
         if (held is not null && wizard.RemoveQuest(held.QuestName)) {
             SendRemoveQuest(held.ID);
         }

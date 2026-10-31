@@ -189,6 +189,8 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
                 m_zoneName = Entity.Zone?.ZonePath,
             },
             ContextActor = playerActor,
+            // Remembered, so a later step that needs this object again can bring it back (Quests/QuestSafety).
+            UsedLookTemplateId = (Entity.Template as GameObjectTemplate)?.m_templateID ?? 0,
         });
     }
 

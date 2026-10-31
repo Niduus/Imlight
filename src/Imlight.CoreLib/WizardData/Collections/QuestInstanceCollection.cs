@@ -101,6 +101,29 @@ public static class QuestInstanceCollection {
     }
 
     /// <summary>
+    /// Adds goals a quest got after this instance was made (a game update or the Quest Editor added steps), not started.
+    /// </summary>
+    public static bool AddMissingGoals(ulong questInstanceID, IReadOnlyCollection<GoalInstance> goals) {
+        if (goals is null || goals.Count == 0) {
+            return false;
+        }
+
+        using var session = s_store.OpenSession();
+
+        var questInstance = session.Query<QuestInstance>(collectionName: CollectionName)
+            .FirstOrDefault(q => q.ID == questInstanceID);
+        if (questInstance == null) {
+            return false;
+        }
+
+        var known = questInstance.GoalProgress.Select(g => g.GoalName).ToHashSet();
+        questInstance.GoalProgress = [.. questInstance.GoalProgress, .. goals.Where(g => !known.Contains(g.GoalName))];
+        session.SaveChanges();
+
+        return true;
+    }
+
+    /// <summary>
     /// Starts tracking progress for a specific goal within a quest instance.
     /// </summary>
     /// <param name="questInstanceID">The ID of the quest instance.</param>

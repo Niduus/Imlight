@@ -149,6 +149,10 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         RemoveDungeonQuestsOutsideZone(wizard);
         ForgetStaleClientQuests(wizard);
 
+        // Quests that got new steps since they were started get them, and quest objects the active steps need again lose
+        // their used look before the zone sends the wizard's mods (QuestSafety).
+        PrepareQuestsForZone(wizard);
+
         foreach (var qInstance in wizard.QuestBehavior.CurrentQuestInstances) {
             // A client back on a retry or reattach still lists the quests it had: take each off before it is resent,
             // or the quest helper shows it twice.
@@ -196,6 +200,9 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
 
         // Exiting the previous zone may have triggered waypoint goals for quests.
         CheckForWaypointGoalZoneExit(wizard);
+
+        // A quest with nothing to do, or a step that needs something turned off, is put right (QuestSafety).
+        RepairActiveQuests(wizard, fromCommand: false);
 
         // The zone checked its EnterZone triggers before these goals moved on; triggers waiting on the next goal
         // (Old Judd in Caretaker's Tower needs "Goal 2" active) get another look now.
@@ -885,6 +892,9 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             case "removespells":
                 CommandRemoveSpells(wizard);
                 return;
+            case "stuck":
+                CommandStuck(wizard);
+                return;
         }
 
         // The remaining actions act on an active quest. The server does not learn which quest the client
@@ -1038,6 +1048,7 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             .FirstOrDefault(q => q is not null && q.QuestName.Equals(questName, StringComparison.OrdinalIgnoreCase));
         var registryName = qInstance?.QuestName ?? questName;
         var wasActive = qInstance is not null;
+        QuestSafety.RememberRewardsBeforeReset(wizard, QuestTemplateCollection.GetQuestByName(registryName)?.m_questName ?? registryName);
 
         if (wasActive) {
             var questId = qInstance.ID;
@@ -1092,7 +1103,8 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         string questName = template.m_questName;
         var earlier = MarkEarlierQuestsDone(wizard, template);
 
-        // Start over even when the quest is active or already done.
+        // Start over even when the quest is active or already done. What it already rewarded is noted (QuestSafety).
+        QuestSafety.RememberRewardsBeforeReset(wizard, questName);
         var active = wizard.QuestBehavior.CurrentQuestInstances
             .FirstOrDefault(q => q is not null && q.QuestName.Equals(questName, StringComparison.OrdinalIgnoreCase));
         if (active is not null && wizard.RemoveQuest(active.QuestName)) {
@@ -1215,6 +1227,9 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
 
                 var active = wizard.QuestBehavior.CurrentQuestInstances
                     .FirstOrDefault(q => q is not null && q.QuestName.Equals(earlierName, StringComparison.OrdinalIgnoreCase));
+                if (active is not null) {
+                    QuestSafety.RememberRewardsBeforeReset(wizard, active.QuestName);
+                }
                 if (active is not null && wizard.RemoveQuest(active.QuestName)) {
                     SendRemoveQuest(active.ID);
                 }
@@ -1317,6 +1332,7 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         // during zone transfers").
         var again = force && wizard.HasCompletedQuest(template.m_questName);
         if (again) {
+            QuestSafety.RememberRewardsBeforeReset(wizard, template.m_questName);
             wizard.QuestBehavior.RemoveAllQuestRegistryEntries(template.m_questName);
             WizardCollection.UpdateCharacterQuestBehavior(wizard);
         }
@@ -1455,16 +1471,23 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         ShowQuestStartDialogue(qTemplate);
 
         // Send the quest starting goals now.
+        var startedGoals = 0;
         foreach (var gTemplate in qTemplate.m_goals) {
             if (!qTemplate.m_startGoals.Contains(gTemplate.m_goalName)) {
                 continue;
             }
 
-            StartGoal(questInstance, gTemplate);
+            if (StartGoal(questInstance, gTemplate)) {
+                startedGoals++;
+            }
         }
 
-        // Init quest start results.
-        var startResults = qTemplate.m_startResults;
+        // A step can't be started for this wizard (all its requirements failed): the quest still gets one (QuestSafety).
+        EnsureAStepStarted(questInstance, qTemplate, qTemplate.m_goals.Where(g => qTemplate.m_startGoals.Contains(g.m_goalName)).ToList(), startedGoals);
+
+        // Init quest start results. A run after a reset gives no second rewards (QuestSafety.RewardsOnce).
+        var startResults = QuestSafety.WithoutRepeatRewards(GetActiveWizard(), questInstance.QuestName, QuestSafety.START_STEP,
+            qTemplate.m_startResults, out _);
         ResultDispatcher.ExecuteResults(
             actorContext: Context,
             results: startResults,
@@ -1754,11 +1777,12 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         }
     }
 
-    private void StartGoal(QuestInstance questInstance, GoalTemplate goalTemplate) {
+    // False when the goal did not start (the wizard doesn't meet its requirements).
+    private bool StartGoal(QuestInstance questInstance, GoalTemplate goalTemplate, bool ignoreRequirements = false) {
         var wizard = GetActiveWizard();
 
         // Goals with requirements only activate for wizards that meet them (e.g. per-school goals).
-        if (goalTemplate.m_goalRequirements is not null
+        if (!ignoreRequirements && goalTemplate.m_goalRequirements is not null
             && goalTemplate.m_goalRequirements.m_requirements is not null
             && goalTemplate.m_goalRequirements.m_requirements.Count > 0) {
             var requirementsMet = RequirementDispatcher.EvaluateRequirements(
@@ -1773,7 +1797,7 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
                 )
             );
             if (!requirementsMet) {
-                return;
+                return false;
             }
         }
 
@@ -1781,13 +1805,14 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             Logger.Error("Failed to start goal '{0}' for quest '{1}' for player '{2}'",
                 Logger.Args(goalTemplate.m_goalName, questInstance.QuestName, wizard.CharId));
 
-            return;
+            return false;
         }
 
         SendGoalMessage(goalTemplate, questInstance, 1);
 
         // Init goal activation results.
-        var activationResults = goalTemplate.m_activateResults;
+        var activationResults = QuestSafety.WithoutRepeatRewards(wizard, questInstance.QuestName,
+            QuestSafety.ActivateStep(goalTemplate.m_goalName), goalTemplate.m_activateResults, out _);
         ResultDispatcher.ExecuteResults(
             actorContext: Context,
             results: activationResults,
@@ -1810,12 +1835,17 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
                 Logger.Args(wizard.CharId, questInstance.QuestName, goalTemplate.m_goalName));
             CompleteGoal(questInstance, goalTemplate, showCompletionDialogue: false);
 
-            return;
+            return true;
         }
 
         // A zone-entry goal that starts while the player is already in its zone would otherwise wait for
         // the next zone attach. Complete it now, after the start message, as the attach path does.
         TryCompleteZoneEntryGoal(questInstance, goalTemplate, wizard);
+
+        // A step that needs something turned off, or an object the wizard already used up (QuestSafety).
+        GuardStartedGoal(questInstance, goalTemplate);
+
+        return true;
     }
 
     private void TryCompleteZoneEntryGoal(QuestInstance questInstance, GoalTemplate goalTemplate, Wizard wizard) {
@@ -1864,7 +1894,8 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
                 && ClaimInstanceStep(InstanceQuestClaimKind.GoalComplete, questInstance.QuestName, goalTemplate.m_goalName);
             ResultDispatcher.ExecuteResults(
                 actorContext: Context,
-                results: goalTemplate.m_completeResults,
+                results: QuestSafety.WithoutRepeatRewards(wizard, questInstance.QuestName, goalTemplate.m_goalName,
+                    goalTemplate.m_completeResults, out _),
                 playerRef: SessionActor.ActorRef,
                 playerObj: GetActiveGameObject(),
                 zoneActor: SessionActor.GetZoneActor(),
@@ -1894,9 +1925,15 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             return;
         }
 
+        var startedGoals = 0;
         foreach (var g in gTemplates) {
-            StartGoal(questInstance, g);
+            if (StartGoal(questInstance, g)) {
+                startedGoals++;
+            }
         }
+
+        // None of the next steps could start for this wizard: one still does, or the quest would have nothing to do.
+        EnsureAStepStarted(questInstance, qTemplate, [.. gTemplates], startedGoals);
 
         // The Manager's Spell Quests tab shows which step each wizard is on.
         NoteProgress(wizard);
@@ -1973,9 +2010,15 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         };
         AppendSpellRewards(spellRewards.m_loot, qTemplate, wizard);
 
+        var endResults = QuestSafety.WithoutRepeatRewards(wizard, questInstance.QuestName, QuestSafety.END_STEP,
+            qTemplate.m_endResults, out var rewardsAlreadyGiven);
+        if (rewardsAlreadyGiven) {
+            CommandReply($"You already got the rewards of '{QuestTitleOf(qTemplate)}' the first time you finished it, so it gives no gold, XP or items this time.");
+        }
+
         ResultDispatcher.ExecuteResults(
             actorContext: Context,
-            results: qTemplate.m_endResults,
+            results: endResults,
             playerRef: SessionActor.ActorRef,
             playerObj: GetActiveGameObject(),
             zoneActor: SessionActor.GetZoneActor(),
