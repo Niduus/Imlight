@@ -32,7 +32,7 @@
       "m_displayImage1": "GUI/QuestButtons/Art_Mount_White_Stag.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "AV-OUTER-White-Hart"
+        "AV_White_Hart"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -45,7 +45,7 @@
       "m_goalTitle": "WizardQuestGoals_00000006",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "AV-OUTER-White-Hart.AdjRef"
+        "AV_White_Hart.AdjRef"
       ],
       "m_itemTotal": 1
     },

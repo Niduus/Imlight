@@ -107,7 +107,7 @@
       "m_displayImage1": "GUI/QuestButtons/Quest_KR_Bee_Lever.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "KR-Rachias-Lever"
+        "KR-GenericLever"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -120,7 +120,7 @@
       "m_goalTitle": "WizardQuestGoals_UseItem",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "KR-Rachias-Lever.AdjRef"
+        "KR-GenericLever.AdjRef"
       ],
       "m_itemTotal": 1
     },

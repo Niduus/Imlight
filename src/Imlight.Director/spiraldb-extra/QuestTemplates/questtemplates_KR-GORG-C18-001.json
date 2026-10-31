@@ -182,8 +182,7 @@
       "m_displayImage1": "GUI/QuestButtons/Art_Portrait_HOUSE_ZF_Jewelpile.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "DM-BLACK-NPC-006",
-        "DM-BLACK-NPC-007"
+        "KR-Shadow-Self-Projector"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -196,8 +195,7 @@
       "m_goalTitle": "Project",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "DM-BLACK-NPC-006.AdjRef",
-        "DM-BLACK-NPC-007.AdjRef"
+        "KR-Shadow-Self-Projector.AdjRef"
       ],
       "m_itemTotal": 1
     },

@@ -32,7 +32,7 @@
       "m_displayImage1": "GUI/QuestButtons/Location_ZF_Drum_House.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "ZF_Spider_Webbed_Student"
+        "ZF_Drum_House_Webs"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -45,7 +45,7 @@
       "m_goalTitle": "Clear",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "ZF_Spider_Webbed_Student.AdjRef"
+        "ZF_Drum_House_Webs.AdjRef"
       ],
       "m_itemTotal": 1
     },
