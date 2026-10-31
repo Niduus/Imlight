@@ -463,7 +463,11 @@
         "CL_ZodiacTome_Hound",
         "CL_ZodiacTome_Kraken",
         "CL_ZodiacTome_Loom",
-        "CL_ZodiacTome_Messenger"
+        "CL_ZodiacTome_Messenger",
+        "CL_ZodiacTome_Phoenix",
+        "CL_ZodiacTome_Serpent",
+        "CL_ZodiacTome_Stag",
+        "CL_ZodiacTome_Warden"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -483,7 +487,11 @@
         "CL_ZodiacTome_Hound.AdjRef",
         "CL_ZodiacTome_Kraken.AdjRef",
         "CL_ZodiacTome_Loom.AdjRef",
-        "CL_ZodiacTome_Messenger.AdjRef"
+        "CL_ZodiacTome_Messenger.AdjRef",
+        "CL_ZodiacTome_Phoenix.AdjRef",
+        "CL_ZodiacTome_Serpent.AdjRef",
+        "CL_ZodiacTome_Stag.AdjRef",
+        "CL_ZodiacTome_Warden.AdjRef"
       ],
       "m_itemTotal": 1
     },
@@ -516,7 +524,11 @@
         "CL_ZodiacTome_Hound",
         "CL_ZodiacTome_Kraken",
         "CL_ZodiacTome_Loom",
-        "CL_ZodiacTome_Messenger"
+        "CL_ZodiacTome_Messenger",
+        "CL_ZodiacTome_Phoenix",
+        "CL_ZodiacTome_Serpent",
+        "CL_ZodiacTome_Stag",
+        "CL_ZodiacTome_Warden"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -536,7 +548,11 @@
         "CL_ZodiacTome_Hound.AdjRef",
         "CL_ZodiacTome_Kraken.AdjRef",
         "CL_ZodiacTome_Loom.AdjRef",
-        "CL_ZodiacTome_Messenger.AdjRef"
+        "CL_ZodiacTome_Messenger.AdjRef",
+        "CL_ZodiacTome_Phoenix.AdjRef",
+        "CL_ZodiacTome_Serpent.AdjRef",
+        "CL_ZodiacTome_Stag.AdjRef",
+        "CL_ZodiacTome_Warden.AdjRef"
       ],
       "m_itemTotal": 1
     },
@@ -569,7 +585,11 @@
         "CL_ZodiacTome_Hound",
         "CL_ZodiacTome_Kraken",
         "CL_ZodiacTome_Loom",
-        "CL_ZodiacTome_Messenger"
+        "CL_ZodiacTome_Messenger",
+        "CL_ZodiacTome_Phoenix",
+        "CL_ZodiacTome_Serpent",
+        "CL_ZodiacTome_Stag",
+        "CL_ZodiacTome_Warden"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -589,7 +609,11 @@
         "CL_ZodiacTome_Hound.AdjRef",
         "CL_ZodiacTome_Kraken.AdjRef",
         "CL_ZodiacTome_Loom.AdjRef",
-        "CL_ZodiacTome_Messenger.AdjRef"
+        "CL_ZodiacTome_Messenger.AdjRef",
+        "CL_ZodiacTome_Phoenix.AdjRef",
+        "CL_ZodiacTome_Serpent.AdjRef",
+        "CL_ZodiacTome_Stag.AdjRef",
+        "CL_ZodiacTome_Warden.AdjRef"
       ],
       "m_itemTotal": 1
     },
@@ -622,7 +646,11 @@
         "CL_ZodiacTome_Hound",
         "CL_ZodiacTome_Kraken",
         "CL_ZodiacTome_Loom",
-        "CL_ZodiacTome_Messenger"
+        "CL_ZodiacTome_Messenger",
+        "CL_ZodiacTome_Phoenix",
+        "CL_ZodiacTome_Serpent",
+        "CL_ZodiacTome_Stag",
+        "CL_ZodiacTome_Warden"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -642,7 +670,11 @@
         "CL_ZodiacTome_Hound.AdjRef",
         "CL_ZodiacTome_Kraken.AdjRef",
         "CL_ZodiacTome_Loom.AdjRef",
-        "CL_ZodiacTome_Messenger.AdjRef"
+        "CL_ZodiacTome_Messenger.AdjRef",
+        "CL_ZodiacTome_Phoenix.AdjRef",
+        "CL_ZodiacTome_Serpent.AdjRef",
+        "CL_ZodiacTome_Stag.AdjRef",
+        "CL_ZodiacTome_Warden.AdjRef"
       ],
       "m_itemTotal": 1
     },

@@ -32,7 +32,7 @@
       "m_displayImage1": "GUI/QuestButtons/Quest_CL_celestian_pedestal_04.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "KM-Key-Nana"
+        "CL-DIST-C02-002Pedestal"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -45,7 +45,7 @@
       "m_goalTitle": "WizardQuestGoals_UseItem",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "KM-Key-Nana.AdjRef"
+        "CL-DIST-C02-002Pedestal.AdjRef"
       ],
       "m_itemTotal": 1
     },
