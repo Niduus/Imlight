@@ -450,7 +450,13 @@ public static class Randomizer {
     /// <summary>
     /// Every combat spell in the game files, trainer spells or not. Treasure cards are left out.
     /// </summary>
-    private static List<(ulong Id, SpellTemplate Spell)> CombatSpells() {
+    private static List<(ulong Id, SpellTemplate Spell)> CombatSpells()
+        => [.. CombatSpellsWithPaths().Select(s => (s.Id, s.Spell))];
+
+    /// <summary>
+    /// The spells of <see cref="CombatSpells"/>, each with its file in the game files (RoshamboDecks leaves some folders out).
+    /// </summary>
+    internal static List<(ulong Id, SpellTemplate Spell, string Path)> CombatSpellsWithPaths() {
         var idsByPath = new Dictionary<string, ulong>(StringComparer.OrdinalIgnoreCase);
         foreach (var location in CoreObjectFactory.TemplateManifest.m_serializedTemplates) {
             if (location is null) {
@@ -467,7 +473,7 @@ public static class Randomizer {
         _ = Imlight.CoreLib.Game.Spells.SpellCinematics.Instance;
         var checkAnimations = Imlight.CoreLib.Game.Spells.SpellCinematics.Count > 0;
 
-        var spells = new List<(ulong, SpellTemplate)>();
+        var spells = new List<(ulong, SpellTemplate, string)>();
         foreach (var (path, spell) in Imlight.CoreLib.Game.Spells.SpellFactory.AllSpellTemplates()) {
             string name = spell.m_name;
             string school = spell.m_sMagicSchoolName;
@@ -488,7 +494,7 @@ public static class Randomizer {
             }
 
             if (idsByPath.TryGetValue(path, out var id) && id <= uint.MaxValue) {
-                spells.Add((id, spell));
+                spells.Add((id, spell, path));
             }
         }
 
