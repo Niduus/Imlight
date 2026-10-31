@@ -1291,7 +1291,9 @@ internal sealed partial class ManagerWindow : Window {
                     _commandBox,
                 },
             }, "Runs a command as the wizard playing on this PC, the same as typing it in chat. "
-               + "Friends playing from other PCs are never affected. The Lookup tab lists every command. "
+               + "Friends playing from other PCs are never affected. On a server that isn't on this PC, Ahziael types the command "
+               + "into Wizard101's chat for you (the game comes to the front for a moment), so it works anywhere your account may use it. "
+               + "The Lookup tab lists every command. "
                + "Previous commands lists the last ones you ran: pick one to run it again."));
     }
 
@@ -1419,6 +1421,11 @@ internal sealed partial class ManagerWindow : Window {
         // What the remote server said back: a lost connection, a command no wizard ran, a setting only the host may change.
         if (RemoteSession.Current?.TakeNotice() is { } notice) {
             Say(notice);
+        }
+
+        // A command Ahziael could not type into the game (GameInput).
+        if (GameInput.TakeProblem() is { } problem) {
+            Say(problem, isError: true);
         }
 
         RefreshLog();
