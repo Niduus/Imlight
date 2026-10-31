@@ -1366,6 +1366,7 @@
       "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Art_Quest_LM_FrozenHorse.dds",
       "m_displayImage2": "",
       "m_clientTags": [
+        "PL-FrozenHorse",
         "KT-SE-TOMBS-StandIn-StallionQuartermane_01"
       ],
       "m_genericEvents": [],
@@ -1379,6 +1380,7 @@
       "m_goalTitle": "Thaw",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
+        "PL-FrozenHorse.AdjRef",
         "KT-SE-TOMBS-StandIn-StallionQuartermane_01.AdjRef"
       ],
       "m_itemTotal": 1

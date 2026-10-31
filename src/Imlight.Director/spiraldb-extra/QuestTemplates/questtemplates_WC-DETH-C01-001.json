@@ -32,7 +32,7 @@
       "m_displayImage1": "GUI/QuestButtons/Quest_Gravestone.dds",
       "m_displayImage2": "",
       "m_clientTags": [
-        "Housing_GraveholmInn_Daily"
+        "WC_Invisible_Usable_Object"
       ],
       "m_genericEvents": [],
       "m_autoQualify": true,
@@ -45,7 +45,7 @@
       "m_goalTitle": "WizardQuestGoals_00000018",
       "m_goalType": "GOAL_TYPE_USAGE",
       "m_itemAdjectives": [
-        "Housing_GraveholmInn_Daily.AdjRef"
+        "WC_Invisible_Usable_Object.AdjRef"
       ],
       "m_itemTotal": 1
     },
