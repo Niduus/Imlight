@@ -1117,6 +1117,10 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         kEffectTarget.kEnemyTeam, kEffectTarget.kEnemyTeamAllAtOnce, kEffectTarget.kFriendlyTeam, kEffectTarget.kFriendlyTeamAllAtOnce,
     ];
 
+    private static readonly HashSet<kEffectTarget> s_onCasterOnly = [
+        kEffectTarget.kSelf, kEffectTarget.kGlobal, kEffectTarget.kCasterMinion,
+    ];
+
     private static readonly HashSet<kEffectTarget> s_onePicked = [
         kEffectTarget.kEnemySingle, kEffectTarget.kPreselectedEnemySingle, kEffectTarget.kFriendlySingle,
         kEffectTarget.kFriendlySingleNotMe,
@@ -1143,6 +1147,19 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         }
 
         var effects = AllEffects(spell).ToList();
+        // A spell only on the caster (a blade, shield, aura or global on yourself) needs no target, but the game still
+        // sends one, often circle 0. Once the first enemy was defeated such spells were lost as "target is dead"
+        // (Niduus, 2026-10-31: "killing target in first slot makes self targeting spells not work"). They go on the caster.
+        // A cheat that casts a self spell onto someone else (SelfOnTarget) is left alone.
+        if (!action.SelfOnTarget && action.SpellCaster is { } caster && effects.Count > 0
+            && effects.All(e => s_onCasterOnly.Contains(e.m_effectTarget))) {
+            Logger.Information("Duel {0} | Slot {1} | {2} goes on the caster: slot {3} the game sent is gone.",
+                Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, (string) spell.m_name, picked.SlotIndex));
+            action.SelectedTarget = caster;
+
+            return;
+        }
+
         if (!effects.Any(e => s_wholeSide.Contains(e.m_effectTarget)) || effects.Any(e => s_onePicked.Contains(e.m_effectTarget))) {
             return;
         }
