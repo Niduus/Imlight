@@ -40,6 +40,7 @@
  * Last Updated: 3/18/2025
  */
 
+using System;
 using System.Collections.Generic;
 using Imlight.Common;
 using Imlight.CoreLib.Shared.Resources;
@@ -54,7 +55,14 @@ internal class MagicLevelsConfig : RootSingleResourceSingleton<MagicLevelsConfig
 
     protected override string ResourceName => "MagicXPConfig.xml";
 
-    public static int MaxLevel { get; private set; }
+    // The highest level the game's own table has; MaxLevel also follows Character.MaxLevel live.
+    private static int s_tableMaxLevel;
+    public static int MaxLevel {
+        get {
+            var setting = s_imlightMaxLevel;
+            return setting > 0 && setting < s_tableMaxLevel ? setting : s_tableMaxLevel;
+        }
+    }
 
     private static int s_imlightMaxLevel => ConfigurationManager.Settings["Character.MaxLevel"].AsInt();
     private static Dictionary<int, int> s_mobLevelConfig;
@@ -149,15 +157,18 @@ internal class MagicLevelsConfig : RootSingleResourceSingleton<MagicLevelsConfig
 
         // All classes need the same amount of XP to level up.
         // We will use the first class to determine the level.
+        // Entry i is level i, and its m_xpToLevel is the total XP that finishes level i (level 1 ends at 45, level 6
+        // runs from 1200 to 1870), so the level is the first entry the XP has not reached yet.
         var levelInfo = s_playerLevelConfig.Values.First();
-        for (int i = 0; i < levelInfo.Count; i++) {
+        for (int i = 1; i < levelInfo.Count; i++) {
             var level = levelInfo[i];
             if (xp < level.m_xpToLevel) {
                 return (byte) i;
             }
         }
 
-        return 0;
+        // More XP than the table's last level needs: that last level (this returned 0 before, so no level up).
+        return (byte) Math.Max(1, levelInfo.Count - 1);
     }
 
     /// <summary>
@@ -183,10 +194,7 @@ internal class MagicLevelsConfig : RootSingleResourceSingleton<MagicLevelsConfig
     private static void LoadMaxLevel(MagicXPConfig magicXPConfig) {
         // If the configuration deems the max level to be lower than the one recorded here,
         // we will use the configuration's max level instead.
-        MaxLevel = magicXPConfig.m_maxSchoolLevel;
-        if (s_imlightMaxLevel < MaxLevel) {
-            MaxLevel = s_imlightMaxLevel;
-        }
+        s_tableMaxLevel = magicXPConfig.m_maxSchoolLevel;
 
         Logger.Information("Imlight max level set to {0}", Logger.Args(MaxLevel));
     }

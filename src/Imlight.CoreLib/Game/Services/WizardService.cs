@@ -115,13 +115,12 @@ internal class WizardService(SessionActor sessionActor) : MessageService(session
 
         GiveLevelTrainingPoints(beforeLevel, _activeWizard.MagicSchoolBehavior.Level);
 
-        var levelUpMessage = new WIZARD_12_PROTOCOL.MSG_LEVELUP {
-            GlobalID = _activeWizard.GameObjectID,
-            NewLevel = _activeWizard.MagicSchoolBehavior.Level,
-            Data = "0000000000"
-        };
-        ZoneBroadcast(levelUpMessage, false);
+        // The XP moves to the start of the new level, so the bar isn't past its end (or before its start) and the
+        // next XP gain doesn't jump the level back.
+        var beforeXP = _activeWizard.FitExperienceToLevel();
+        SendXpChange(beforeXP);
 
+        SendLevelUp(_activeWizard.MagicSchoolBehavior.Level);
         SendLevelUpStats(_activeWizard.MagicSchoolBehavior.Level);
         AnnounceLevelChange();
     }
@@ -192,29 +191,50 @@ internal class WizardService(SessionActor sessionActor) : MessageService(session
         _activeWizard.AddExperiencePoints(xpGained);
         var afterLevel = _activeWizard.MagicSchoolBehavior.Level;
 
+        // Inform the client of the XP change first, then of the level it reached.
+        SendXpChange(beforeXP);
+
         if (beforeLevel != afterLevel) {
             GiveLevelTrainingPoints(beforeLevel, afterLevel);
 
             // The player leveled up. AddExperiencePoints already called SetLevel internally,
-            // so we just need to broadcast the level-up and send stat updates to the client.
-            var levelUpMessage = new WIZARD_12_PROTOCOL.MSG_LEVELUP {
-                GlobalID = _activeWizard.GameObjectID,
-                NewLevel = afterLevel,
-                Data = "0000000000"
-            };
-            ZoneBroadcast(levelUpMessage, false);
-
+            // so we just need to tell the game and send stat updates to the client.
+            SendLevelUp(afterLevel);
             SendLevelUpStats(afterLevel);
             AnnounceLevelChange();
         }
+    }
 
-        // Inform the client of the XP change.
-        var addXpMsg = new WIZARD_12_PROTOCOL.MSG_UPDATEXP {
+    /// <summary>
+    /// Tells the game the wizard's XP changed from <paramref name="beforeXP"/> to what it is now.
+    /// </summary>
+    private void SendXpChange(int beforeXP) {
+        var nowXP = _activeWizard.MagicSchoolBehavior.ExperiencePoints;
+        if (nowXP == beforeXP) {
+            return;
+        }
+
+        SendToSocket(new WIZARD_12_PROTOCOL.MSG_UPDATEXP {
             GlobalID = _activeWizard.GameObjectID,
-            XP = xpGained,
+            XP = nowXP - beforeXP,
             OldXP = beforeXP,
+        });
+    }
+
+    /// <summary>
+    /// Tells the wizard's own game straight away that it reached <paramref name="level"/>, and the others in the zone.
+    /// The level up used to go only through the zone, so a game that was between zones or just arriving never got it:
+    /// the server had the new level but the game kept the old one and showed the XP past the end of the bar
+    /// (Niduus, 2026-11-01: "865 out of 670").
+    /// </summary>
+    private void SendLevelUp(int level) {
+        var levelUpMessage = new WIZARD_12_PROTOCOL.MSG_LEVELUP {
+            GlobalID = _activeWizard.GameObjectID,
+            NewLevel = level,
+            Data = "0000000000"
         };
-        SendToSocket(addXpMsg);
+        SendToSocket(levelUpMessage);
+        ZoneBroadcast(levelUpMessage, true);
     }
 
     private void AnnounceLevelChange()
