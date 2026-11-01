@@ -127,10 +127,116 @@ internal static class SpellUnlearn {
             playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_UPDATETRAINING { TrainingPoints = newPoints });
         }
 
+        Remember(wizard.CharId, taken);
         Logger.Information("Unlearn | {0}: {1} spells unlearned ({2}), {3} training points back.",
             Logger.Args(wizard.PlayerNameBehavior?.GetWizardName(), taken.Count, string.Join(", ", taken.Select(t => t.Name)), points));
 
         return taken;
+    }
+
+    /// <summary>
+    /// The spells this wizard unlearned and has not been given back, with the points each gave back. Kept in
+    /// fast-forward/&lt;wizard id&gt;-unlearned.txt; before that file existed (v0.10.685), Ahziael's last unlearn result.
+    /// </summary>
+    internal static List<(uint SpellId, int Points)> Unlearned(ulong charId) {
+        var list = new List<(uint, int)>();
+        var path = PathOf(charId, "-unlearned.txt");
+        var seed = PathOf(charId, "-unlearn-picked-result.txt");
+        try {
+            if (File.Exists(path)) {
+                foreach (var parts in File.ReadLines(path).Select(l => l.Split('\t'))) {
+                    if (parts.Length > 2 && parts[0] == "spell"
+                        && uint.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var id)) {
+                        int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out var points);
+                        list.Add((id, points));
+                    }
+                }
+            }
+            else if (File.Exists(seed)) {
+                // removed <name> <id> <points>
+                foreach (var parts in File.ReadLines(seed).Select(l => l.Split('\t'))) {
+                    if (parts.Length > 3 && parts[0] == "removed"
+                        && uint.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out var id)) {
+                        int.TryParse(parts[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out var points);
+                        list.Add((id, points));
+                    }
+                }
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            Logger.Debug("Unlearn | The unlearned list could not be read: {0}", Logger.Args(ex.Message));
+        }
+
+        return [.. list.GroupBy(x => x.Item1).Select(g => (g.Key, g.Max(x => x.Item2)))];
+    }
+
+    // Adds what was just unlearned to the wizard's unlearned list, so it can be given back.
+    private static void Remember(ulong charId, List<Known> taken) {
+        if (taken.Count == 0) {
+            return;
+        }
+
+        var all = Unlearned(charId).ToDictionary(x => x.SpellId, x => x.Points);
+        foreach (var spell in taken) {
+            all[spell.SpellId] = spell.PointsBack;
+        }
+
+        SaveUnlearned(charId, all);
+    }
+
+    private static void SaveUnlearned(ulong charId, Dictionary<uint, int> spells) {
+        var text = Header();
+        foreach (var (id, points) in spells) {
+            text.Append("spell\t").Append(id.ToString(CultureInfo.InvariantCulture)).Append('\t')
+                .Append(points.ToString(CultureInfo.InvariantCulture)).Append('\t')
+                .Append(Clean(BossDevSpells.NameOf(id))).Append('\n');
+        }
+
+        Write(PathOf(charId, "-unlearned.txt"), text);
+    }
+
+    /// <summary>
+    /// Gives back every spell the wizard unlearned (or only these), and takes back the training points unlearning
+    /// gave for the ones that come back, as far as the wizard still has them.
+    /// </summary>
+    /// <returns>How many spells came back and how many training points were taken back.</returns>
+    internal static (int Spells, int Points) GiveBack(IActorRef playerActor, Wizard wizard, ICollection<uint> only = null) {
+        var unlearned = Unlearned(wizard.CharId);
+        var left = unlearned.ToDictionary(x => x.SpellId, x => x.Points);
+        var back = 0;
+        var owed = 0;
+        foreach (var (id, points) in unlearned) {
+            if (only is not null && !only.Contains(id)) {
+                continue;
+            }
+
+            if (wizard.SpellbookBehavior?.HasSpell(id) == true) {
+                left.Remove(id);
+                continue;
+            }
+
+            if (SpellTeacher.TryTeach(playerActor, wizard, id, randomize: false) == SpellTeachResult.Learned) {
+                left.Remove(id);
+                back++;
+                if (points > 0) {
+                    owed += points;
+                    TrainingReset.Record(wizard, id, points);
+                }
+            }
+        }
+
+        var taken = Math.Min(owed, (int) Math.Max(0, wizard.MagicSchoolBehavior.TrainingPoints));
+        if (taken > 0) {
+            var newPoints = wizard.MagicSchoolBehavior.TrainingPoints - taken;
+            wizard.UpdateTrainingPoints(newPoints);
+            playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_UPDATETRAINING { TrainingPoints = newPoints });
+        }
+
+        SaveUnlearned(wizard.CharId, left);
+        Logger.Information("Unlearn | {0}: {1} unlearned spells given back, {2} training points taken back ({3} owed).",
+            Logger.Args(wizard.PlayerNameBehavior?.GetWizardName(), back, taken, owed));
+
+        return (back, taken);
     }
 
     /// <summary>The spells Ahziael picked, from the wizard's pick file (which is then deleted).</summary>
@@ -158,7 +264,9 @@ internal static class SpellUnlearn {
     /// <summary>Writes the wizard's spellbook for Ahziael's Unlearn Spells page.</summary>
     internal static void WriteBook(Wizard wizard) {
         var text = Header()
-            .Append("points\t").Append((wizard.MagicSchoolBehavior?.TrainingPoints ?? 0).ToString(CultureInfo.InvariantCulture)).Append('\n');
+            .Append("points\t").Append((wizard.MagicSchoolBehavior?.TrainingPoints ?? 0).ToString(CultureInfo.InvariantCulture)).Append('\n')
+            .Append("unlearned\t").Append(Unlearned(wizard.CharId).Count(x => wizard.SpellbookBehavior?.HasSpell(x.SpellId) != true)
+                .ToString(CultureInfo.InvariantCulture)).Append('\n');
         foreach (var spell in Book(wizard)) {
             text.Append("spell\t").Append(Clean(spell.Name)).Append('\t')
                 .Append(spell.SpellId.ToString(CultureInfo.InvariantCulture)).Append('\t')

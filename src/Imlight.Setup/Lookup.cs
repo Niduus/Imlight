@@ -128,7 +128,7 @@ internal sealed class Lookup {
             ".respec yes takes every spell you bought with training points out of your spellbook and decks and gives the points back. Also .resettp."),
         Command("Unlearn a spell", ".unlearn <spell name>", "Every player", "Says what unlearning that spell gives back. " +
             ".unlearn <spell name> yes takes it out of your spellbook and decks and gives back the training points it cost (spells bought at a trainer; " +
-            "your own school's, quest and dropped spells were free). A spell's template ID works too. Ahziael's Progress > Unlearn Spells page lets you tick any. Also .unlearnspell."),
+            "your own school's, quest and dropped spells were free). A spell's template ID works too. .unlearn undo gives back every spell you unlearned (and takes back the points it gave). Ahziael's Progress > Unlearn Spells page lets you tick any. Also .unlearnspell."),
         Command("Unlearn boss and dev spells", ".unlearnboss", "Every player", "Lists the boss and dev (test) spells you know. " +
             ".unlearnboss yes takes them out of your spellbook and decks and gives back any training points they cost, so the wizard is legit again. " +
             "Ahziael's Spells page has a button for it. Also .unlearndev."),

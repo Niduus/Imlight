@@ -108,7 +108,20 @@ internal class CommandRespecProtocol : CommandProtocol {
         if (text.Length == 0 || text.Equals("list", StringComparison.OrdinalIgnoreCase)) {
             SpellUnlearn.WriteBook(wizard);
             InformSenderClient($"You know {SpellUnlearn.Book(wizard).Count} spells. Type .unlearn and a spell's name to see what "
-                + "unlearning it gives back, then .unlearn <spell name> yes to do it. Ahziael's Progress > Unlearn Spells page lists them all.");
+                + "unlearning it gives back, then .unlearn <spell name> yes to do it. .unlearn undo gives back what you unlearned. "
+                + "Ahziael's Progress > Unlearn Spells page lists them all.");
+
+            return;
+        }
+
+        // Niduus, 2026-11-01: unlearning everything also took cantrips, fishing, gardening and lore spells that Collect
+        // Spells can't give back. `.unlearn undo` gives back every spell unlearned since.
+        if (text.ToLowerInvariant() is "undo" or "giveback" or "give back" or "back") {
+            var (spells, points) = SpellUnlearn.GiveBack(Context.SessionActor, wizard);
+            SpellUnlearn.WriteBook(wizard);
+            InformSenderClient(spells == 0
+                ? "No unlearned spells to give back: you know them all again."
+                : $"Gave back {spells} spells you had unlearned" + (points > 0 ? $" and took back the {points} training points they had given." : "."));
 
             return;
         }
