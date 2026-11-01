@@ -57,8 +57,18 @@ internal class CommandFusionProtocol : CommandProtocol {
         }
 
         var text = new StringBuilder($"Your Fusion Formulas ({known.Count}):");
+        var anyMissing = false;
         foreach (var recipe in known.OrderBy(r => r.Name)) {
-            text.Append($"\n{FusedName(recipe)}: {Ingredient(recipe.Primary)} + {Ingredient(recipe.Secondary)}");
+            text.Append($"\n{FusedName(recipe)}: {CardName(recipe.Primary)} + {CardName(recipe.Secondary)}");
+            var missing = SpellFusions.MissingIngredients(wizard, recipe);
+            if (missing.Count > 0) {
+                anyMissing = true;
+                text.Append($" (you still need to learn {string.Join(" and ", missing.Select(CardName))})");
+            }
+        }
+
+        if (anyMissing) {
+            text.Append("\nA formula only goes into your deck once you know both of its cards.");
         }
 
         text.Append("\nIn battle, drag one card onto the other to fuse them, then cast the fused card.");
@@ -87,16 +97,24 @@ internal class CommandFusionProtocol : CommandProtocol {
         }
 
         var count = 0;
+        var cards = 0;
         foreach (var recipe in picked) {
             if (action == "learn") {
+                // The two cards too: the deck takes a formula only when the wizard knows a card of each.
+                foreach (var adjective in SpellFusions.MissingIngredients(wizard, recipe)) {
+                    var cardId = SpellFusions.MainCardOf(adjective);
+                    if (cardId != 0 && Learn(wizard, cardId)) {
+                        cards++;
+                    }
+                }
+
                 // One fused spell per formula is what makes it the wizard's; the plain one (not an upgraded tier).
                 if (recipe.Outputs.Any(wizard.SpellbookBehavior.HasSpell)) {
                     continue;
                 }
 
                 var id = recipe.Outputs.OrderBy(o => Name(o).Contains(" - T0", StringComparison.Ordinal) ? 1 : 0).First();
-                if (SpellFactory.GetSpell(id) is { } spell && wizard.LearnSpell(spell)) {
-                    Context.SessionActor.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) id }, Akka.Actor.ActorRefs.NoSender);
+                if (Learn(wizard, id)) {
                     count++;
                 }
             }
@@ -111,8 +129,20 @@ internal class CommandFusionProtocol : CommandProtocol {
         }
 
         InformSenderClient(action == "learn"
-            ? $"Learned {count} Fusion Formula{(count == 1 ? "" : "s")}. .fusions lists them; they work in your next battle."
+            ? $"Learned {count} Fusion Formula{(count == 1 ? "" : "s")}"
+              + (cards > 0 ? $" and {cards} card{(cards == 1 ? "" : "s")} they fuse" : "")
+              + ". .fusions lists them; they work in your next battle."
             : $"Forgot {count} fused spell{(count == 1 ? "" : "s")}.");
+    }
+
+    private bool Learn(Wizard wizard, uint id) {
+        if (wizard.SpellbookBehavior.HasSpell(id) || SpellFactory.GetSpell(id) is not { } spell || !wizard.LearnSpell(spell)) {
+            return false;
+        }
+
+        Context.SessionActor.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) id }, Akka.Actor.ActorRefs.NoSender);
+
+        return true;
     }
 
     private static bool Matches(SpellFusions.Recipe recipe, string text)
@@ -135,6 +165,13 @@ internal class CommandFusionProtocol : CommandProtocol {
 
     private static string FusedName(SpellFusions.Recipe recipe)
         => recipe.Outputs.Count == 0 ? recipe.Name : Shown(recipe.Outputs[0]);
+
+    // The name the ingredient's card shows ("Dark Shepherd" for Fusion_DarkShepherd).
+    private static string CardName(string adjective) {
+        var id = SpellFusions.MainCardOf(adjective);
+
+        return id != 0 && Shown(id) is { Length: > 0 } shown ? shown : Ingredient(adjective);
+    }
 
     // "Fusion_Banshee" -> "Banshee"; the adjective names the card family.
     private static string Ingredient(string adjective)
