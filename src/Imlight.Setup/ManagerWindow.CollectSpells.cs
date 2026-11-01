@@ -23,6 +23,8 @@ internal sealed partial class ManagerWindow {
     private readonly CheckBox _csFinished = new() { Content = "Spells from quests I finished (main and side)", IsChecked = true };
     private readonly CheckBox _csSide = new() { Content = "Spells from quests at or below my level I haven't done (main story and side)", IsChecked = true };
     private readonly CheckBox _csTrainers = new() { Content = "Trainer spells my level and school allow (the free ones)", IsChecked = true };
+    private readonly CheckBox _csSkills = new() { Content = "Cantrips, and fishing, gardening and monster magic spells my ranks allow", IsChecked = true };
+    private readonly CheckBox _csDrops = new() { Content = "Spells creatures at or below my level drop (lore spells such as Fire Dragon)", IsChecked = true };
     private readonly CheckBox _csPaid = new() { Content = "Also train spells that cost training points, while I have them", IsChecked = false };
     private readonly CheckBox _csCheck = new() { Content = "Check my spellbook (spells not from the real game, spells still missing)", IsChecked = true };
     private readonly StackPanel _csResult = new() { Spacing = 4 };
@@ -56,12 +58,14 @@ internal sealed partial class ManagerWindow {
                     Children = { Spaced(_csWizard), Spaced(Action(refresh, () => { LoadCollectSpells(); return Task.CompletedTask; })) },
                 }, "Pick your wizard. Log in with that wizard on this PC before you press Collect spells."),
                 WithHint(new WrapPanel {
-                    Children = { SearchTick(_csFinished), SearchTick(_csSide), SearchTick(_csTrainers), SearchTick(_csPaid), SearchTick(_csCheck) },
+                    Children = { SearchTick(_csFinished), SearchTick(_csSide), SearchTick(_csTrainers), SearchTick(_csSkills), SearchTick(_csDrops), SearchTick(_csPaid), SearchTick(_csCheck) },
                 }, "Quests: every spell a quest gives, for your school only. Quests you haven't done: their spells too, but not " +
                    "the quests themselves, and only quests of your level or lower. Trainers: the spells of every game " +
                    "trainer that your level, school and earlier spells allow and that cost no training points (your own " +
                    "school's). Training points: also buys the spells that cost points (astral, shadow, your second school), " +
-                   "paying like the trainer would. Check: lists the spells in your book that the real game never gives, so " +
+                   "paying like the trainer would. Cantrips and skills: every cantrip, and the fishing, gardening and monster " +
+                   "magic spells your ranks allow (no gold taken). Drops: every spell a creature of your level or lower can " +
+                   "drop, such as the lore spells. Check: lists the spells in your book that the real game never gives, so " +
                    "you can take them out, and the real game spells you're still missing, with what's in the way. " +
                    "Spells you already know are left alone."),
                 new WrapPanel { Children = { Spaced(Action(go, StartCollectSpellsAsync)) } }),
@@ -97,6 +101,14 @@ internal sealed partial class ManagerWindow {
 
         if (_csTrainers.IsChecked == true) {
             kinds.Add("trainers");
+        }
+
+        if (_csSkills.IsChecked == true) {
+            kinds.Add("skills");
+        }
+
+        if (_csDrops.IsChecked == true) {
+            kinds.Add("drops");
         }
 
         if (_csPaid.IsChecked == true) {

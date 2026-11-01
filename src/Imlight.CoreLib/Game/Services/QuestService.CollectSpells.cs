@@ -76,7 +76,7 @@ internal partial class QuestService {
 
     private void CommandCollectSpells(Wizard wizard) {
         // Without a plan (the command typed in chat) it collects everything.
-        var kinds = new HashSet<string>(["finished", "side", "trainers"], StringComparer.OrdinalIgnoreCase);
+        var kinds = new HashSet<string>(["finished", "side", "trainers", "skills", "drops"], StringComparer.OrdinalIgnoreCase);
         try {
             if (File.Exists(CollectSpellsPlanPath(wizard.CharId))) {
                 kinds = new HashSet<string>(File.ReadLines(CollectSpellsPlanPath(wizard.CharId)).Select(l => l.Trim()).Where(l => l.Length > 0),
@@ -109,6 +109,14 @@ internal partial class QuestService {
                 trainerSpells = taught.Count - before;
             }
 
+            if (kinds.Contains("skills")) {
+                CollectSkillSpells(wizard, taught);
+            }
+
+            if (kinds.Contains("drops")) {
+                CollectDropSpells(wizard, taught);
+            }
+
             if (kinds.Contains("check")) {
                 extras = NotFromRealGame(wizard);
                 missing = StillMissing(wizard);
@@ -124,7 +132,8 @@ internal partial class QuestService {
         Logger.Information("Collect Spells for {0}: {1} spells taught.", Logger.Args(wizard.CharId, taught.Count));
         CommandReply(taught.Count == 0
             ? "Collect Spells: no new spells to give."
-            : $"Collect Spells: you learned {taught.Count} spells ({taught.Count - trainerSpells} from quests, {trainerSpells} from trainers" +
+            : $"Collect Spells: you learned {taught.Count} spells ({taught.Count(t => t.From.StartsWith("quest", StringComparison.Ordinal))} from quests, "
+              + $"{trainerSpells} from school trainers, {taught.Count(t => t.From.StartsWith("drop", StringComparison.Ordinal))} that creatures drop" +
               (points > 0 ? $", {points} training points spent" : "") + ").");
         if (kinds.Contains("check")) {
             CommandReply($"Collect Spells: {extras.Count} spells in your book don't come from the real game, and {missing.Count} real game spells " +
@@ -299,6 +308,103 @@ internal partial class QuestService {
         return spent;
     }
 
+    // Niduus, 2026-11-01: Collect Spells left out cantrips, fishing, gardening and lore spells. "skills": every player
+    // cantrip, and the fishing, gardening and monster magic trainer spells the wizard's ranks allow (their gold is not
+    // taken: they are owed spells).
+    private void CollectSkillSpells(Wizard wizard, List<(string Spell, string From)> taught) {
+        foreach (var (id, _) in CantripFactory.PlayerCantrips()) {
+            if (!wizard.SpellbookBehavior.HasSpell(id)
+                && SpellTeacher.TryTeach(SessionActor.ActorRef, wizard, id, randomize: false) == SpellTeachResult.Learned) {
+                taught.Add((SpellNameOf(id), "cantrips"));
+            }
+        }
+
+        var seen = new HashSet<uint>();
+        for (var round = 0; round < COLLECT_TRAINER_ROUNDS; round++) {
+            var learned = 0;
+            foreach (var trainer in VanillaTrainers.All) {
+                foreach (var spell in trainer.Spells.Where(s => s.Kind is "Fishing" or "Gardening" or "MonsterMagic")) {
+                    if (wizard.SpellbookBehavior.HasSpell(spell.Id) || CoreObjectFactory.GetCoreTemplate(spell.Id) is not SpellTemplate template) {
+                        continue;
+                    }
+
+                    var verdict = VanillaTrainers.Judge(wizard, spell, template);
+                    // Gold is not asked, so only what stands in the way besides gold counts.
+                    if (!verdict.CanTrain && !(verdict.Why ?? "").Contains("gold", StringComparison.Ordinal)) {
+                        continue;
+                    }
+
+                    if (seen.Add(spell.Id)
+                        && SpellTeacher.TryTeach(SessionActor.ActorRef, wizard, spell.Id, randomize: false) == SpellTeachResult.Learned) {
+                        VanillaTrainers.Trained(wizard, spell);
+                        taught.Add((SpellNameOf(spell.Id), $"{spell.Kind switch { "MonsterMagic" => "monster magic", _ => spell.Kind.ToLowerInvariant() }} trainer {trainer.Name}"));
+                        learned++;
+                    }
+                }
+            }
+
+            if (learned == 0) {
+                break;
+            }
+        }
+    }
+
+    // Spells creatures drop (the lore spells, such as Fire Dragon or Loremaster): every spell a creature at or below
+    // the wizard's level can drop. Treasure cards, boss and dev spells are left out.
+    private static readonly Lazy<Dictionary<uint, (int Level, string Creature)>> s_dropSpells = new(BuildDropSpells);
+
+    private static Dictionary<uint, (int Level, string Creature)> BuildDropSpells() {
+        var spells = new Dictionary<uint, (int, string)>();
+        try {
+            foreach (var npcTables in SpiralDB.NpcDropTables.Values) {
+                if (npcTables?.DropTableNames is not { Count: > 0 }
+                    || CoreObjectFactory.GetCoreTemplate(npcTables.TemplateID) is not GameObjectTemplate creature) {
+                    continue;
+                }
+
+                var level = Math.Max(1, creature.m_behaviors?.OfType<NPCBehaviorTemplate>().FirstOrDefault()?.m_nLevel ?? 1);
+                foreach (var name in npcTables.DropTableNames) {
+                    if (!SpiralDB.DropTables.TryGetValue(name ?? "", out var table) || table?.Items is null) {
+                        continue;
+                    }
+
+                    foreach (var item in table.Items) {
+                        if (!uint.TryParse(item?.ItemId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id)
+                            || CoreObjectFactory.GetCoreTemplate(id) is not SpellTemplate { m_Treasure: false } spell
+                            || spell is CantripsSpellTemplate || BossDevSpells.KindOf(id) is not null) {
+                            continue;
+                        }
+
+                        if (!spells.TryGetValue(id, out var known) || level < known.Item1) {
+                            string objectName = creature.m_objectName;
+                            spells[id] = (level, objectName ?? "a creature");
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Collect Spells | Could not list the spells creatures drop: {0}", Logger.Args(ex.Message));
+        }
+
+        Logger.Information("Collect Spells | {0} spells creatures drop.", Logger.Args(spells.Count));
+
+        return spells;
+    }
+
+    private void CollectDropSpells(Wizard wizard, List<(string Spell, string From)> taught) {
+        var level = (int) wizard.MagicSchoolBehavior.Level;
+        foreach (var (id, (dropLevel, creature)) in s_dropSpells.Value.OrderBy(x => x.Value.Level)) {
+            if (dropLevel > level || wizard.SpellbookBehavior.HasSpell(id)) {
+                continue;
+            }
+
+            if (SpellTeacher.TryTeach(SessionActor.ActorRef, wizard, id, randomize: false) == SpellTeachResult.Learned) {
+                taught.Add((SpellNameOf(id), $"drop: {creature} (level {dropLevel})"));
+            }
+        }
+    }
+
     private static List<(VanillaTrainers.Trainer Trainer, VanillaTrainers.Spell Spell)> SchoolTrainerSpells()
         => [
             .. VanillaTrainers.All
@@ -332,6 +438,8 @@ internal partial class QuestService {
             foreach (var (id, _) in CantripFactory.PlayerCantrips()) {
                 ids.Add(id);
             }
+
+            ids.UnionWith(s_dropSpells.Value.Keys);
         }
         catch (Exception ex) {
             Logger.Error("Collect Spells | Could not list the real game's spells: {0}", Logger.Args(ex.Message));
