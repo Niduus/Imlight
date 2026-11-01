@@ -34,6 +34,11 @@ namespace Imlight.CoreLib.Game.Requirements;
 /// Gobleian, Galvanost's and Firecat Alley's towers and Rattlebones.
 /// A trigger's quest the server does not have stands for the quest of the same world that sends the wizard into this
 /// zone (a "go to" step here) and then has them defeat something: met from that "go to" step until the defeat is done.
+/// It only stands in for what happens on the way to the fight (taunts, onlookers coming out), never for what a defeat
+/// sets off: the Fire Globe Theater's "Prince NPC Trigger" brought out the old quest's Alicane Swiftarrow (WC-ST05-NPC04)
+/// at the battle circle once the boss was beaten, next to the new quest's own Alicane, and he stayed there after the
+/// new one left (Niduus 2026-11-01: "acting like he is supposed to be in sigil after i beat him but he is an NPC and he
+/// alrdy left after the quest"). The new quests bring out their own people after a fight.
 /// </summary>
 internal static class RetiredQuestStandIn {
 
@@ -44,7 +49,8 @@ internal static class RetiredQuestStandIn {
         if (context is not IZoneStateContext { TriggerZonePath: { Length: > 0 } zonePath }
             || string.IsNullOrEmpty(retiredQuest)
             || SpiralDB.QuestExists(retiredQuest)
-            || context.GetWizard() is not { } wizard) {
+            || context.GetWizard() is not { } wizard
+            || SetOffByADefeat(context)) {
             return false;
         }
 
@@ -93,6 +99,15 @@ internal static class RetiredQuestStandIn {
 
         return false;
     }
+
+    // A trigger fired by a monster's defeat (Monster_Killed carries the monster's adjectives) or one that asks for it.
+    private static bool SetOffByADefeat(IRequirementContext context)
+        => context is Contexts.ZoneRequirementContext { EventAdjectives: not null }
+           || AsksForADefeat(context.GetFullRequirementList());
+
+    private static bool AsksForADefeat(RequirementList requirements)
+        => requirements?.m_requirements is { } list
+           && list.Any(r => r is ReqMonsterKilled || r is RequirementList nested && AsksForADefeat(nested));
 
     // "WC" of "WC-ST03-C01-005": a stand-in only comes from the same world, so an event quest (HO-Halloween_2013-...)
     // never turns into a story quest of the zone.
