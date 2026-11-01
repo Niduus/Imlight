@@ -34,6 +34,7 @@ internal sealed partial class ManagerWindow {
     private DateTime _usUnlearnSent;
     private string _usLastResult = "";
     private bool _usFilling;
+    private readonly Button _usGiveBack = ManagerTheme.MakeButton("Give back unlearned spells", primary: false);
 
     private sealed record UsSpell(string Name, uint Id, string School, int Points, string Kind);
 
@@ -57,6 +58,10 @@ internal sealed partial class ManagerWindow {
         var go = Primary("Unlearn the ticked spells");
         ToolTip.SetTip(go, "Takes the ticked spells out of the wizard's spellbook and every deck, and gives back the training points they cost.");
 
+        ToolTip.SetTip(_usGiveBack, "Teaches the picked wizard every spell they unlearned again (also .unlearn undo in the game), " +
+                                    "and takes back the training points unlearning gave for them, as far as the wizard still has them.");
+        _usGiveBack.IsVisible = false;
+
         return Page(
             Fold("undo", "Unlearn Spells", "Unlearn Spells",
                 "Take any spell your wizard knows out of their spellbook and decks, and get back the training points it cost.",
@@ -67,7 +72,8 @@ internal sealed partial class ManagerWindow {
                    "astral, shadow) give their points back; your own school's spells, quest spells and dropped spells were free, so they " +
                    "give nothing. A quest spell does not come back by itself: Progress > Collect Spells can give it again. " +
                    "On any server, the chat command .unlearn <spell name> does the same for one spell."),
-                _usStatus),
+                _usStatus,
+                new WrapPanel { Children = { Spaced(Action(_usGiveBack, GiveBackUnlearnedAsync)) } }),
             Fold("list", "Unlearn Spells", "Your spellbook", "Tick the spells to unlearn, then press Unlearn the ticked spells.",
                 new WrapPanel {
                     Children = {
@@ -140,7 +146,8 @@ internal sealed partial class ManagerWindow {
         var shown = string.Join(", ", ids.Take(8).Select(s => s.Name)) + (ids.Count > 8 ? $" and {ids.Count - 8} more" : "");
         if (!await ConfirmAsync($"Unlearn {ids.Count} spells from {name}: {shown}? They leave the spellbook and every deck" +
                                 (points > 0 ? $", and {points} training points come back." : ". They were free, so no training points come back.") +
-                                $" {name} must be logged in on this PC.")) {
+                                $" {name} must be logged in on this PC." +
+                                (ids.Count > 30 ? " That is a lot of spells: Give back unlearned spells undoes it if you change your mind." : ""))) {
             return;
         }
 
@@ -156,6 +163,27 @@ internal sealed partial class ManagerWindow {
         _usStatus.Text = $"Sent. Unlearning {ids.Count} spells from {name}...";
         _usStatus.Foreground = null;
         Say($"Unlearn sent for {ids.Count} spells from {name}.");
+    }
+
+    // '.unlearn undo': every spell the wizard unlearned comes back.
+    private async Task GiveBackUnlearnedAsync() {
+        if (_usWizard.SelectedItem is not FfWizard wizard) {
+            throw new PanelException("Pick a wizard first.");
+        }
+
+        var name = UsName(wizard);
+        if (!await ConfirmAsync($"Give {name} back every spell they unlearned? The training points unlearning gave for them are taken " +
+                                $"back, as far as {name} still has them. {name} must be logged in on this PC.")) {
+            return;
+        }
+
+        _manager.SendCommand(".unlearn undo", wizard.Id);
+        _usSent = DateTime.UtcNow;
+        _usLastResult = "Gave back the unlearned spells.";
+        _usTimer.Start();
+        _usStatus.Text = $"Sent. Giving {name} their unlearned spells back...";
+        _usStatus.Foreground = null;
+        Say($"Give back unlearned spells sent for {name}.");
     }
 
     private void TickShownSpells(bool tick) {
@@ -227,6 +255,7 @@ internal sealed partial class ManagerWindow {
 
             var when = "";
             var points = 0;
+            var unlearned = 0;
             var book = new List<UsSpell>();
             foreach (var line in File.ReadLines(path)) {
                 var parts = line.Split('\t');
@@ -237,6 +266,9 @@ internal sealed partial class ManagerWindow {
                     case "points" when parts.Length > 1:
                         int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out points);
                         break;
+                    case "unlearned" when parts.Length > 1:
+                        int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out unlearned);
+                        break;
                     case "spell" when parts.Length > 4 && uint.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out var id):
                         int.TryParse(parts[4], NumberStyles.Integer, CultureInfo.InvariantCulture, out var back);
                         book.Add(new UsSpell(parts[1], id, parts[3], back, parts.Length > 5 ? parts[5] : ""));
@@ -245,6 +277,8 @@ internal sealed partial class ManagerWindow {
             }
 
             _usBook = book;
+            _usGiveBack.IsVisible = unlearned > 0;
+            _usGiveBack.Content = $"Give back {unlearned} unlearned spell{(unlearned == 1 ? "" : "s")}";
             _usTicked.IntersectWith(book.Select(s => s.Id));
             _usStatus.Text = (_usLastResult.Length > 0 ? _usLastResult + "  " : "") +
                              $"{UsName(wizard)} knows {book.Count} spells and has {points} training points" +
