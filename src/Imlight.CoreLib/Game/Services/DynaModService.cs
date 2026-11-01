@@ -179,9 +179,36 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_REMOVEDYNAMOD))]
     private void ReceiveRemoveDynaMod(CHARACTER_103_PROTOCOL.MSG_REMOVEDYNAMOD message) {
         var wizard = GetActiveWizard();
-        var dynaModClientTag = message.DynaMod.m_dynaModClientTag;
+        string dynaModClientTag = message.DynaMod is null ? null : (string) message.DynaMod.m_dynaModClientTag;
+        if (wizard is null || string.IsNullOrEmpty(dynaModClientTag)) {
+            return;
+        }
 
-        wizard.RemoveDynamod(dynaModClientTag);
+        var removed = wizard.DynamodSet?.Dynamods?.FirstOrDefault(d => d is not null
+            && string.Equals(d.ClientTag, dynaModClientTag, StringComparison.OrdinalIgnoreCase));
+        if (!wizard.RemoveDynamod(dynaModClientTag) || removed is null) {
+            return;
+        }
+
+        // A mod that hid its object (Watson leaving the Scotland Yard roof in Weird Science): taking it off brings the
+        // object back now, for this player, instead of only after the next zone change. The client gets its mods again.
+        var hid = string.IsNullOrEmpty(removed.ModState)
+            || string.Equals(removed.ModState, "Off", StringComparison.OrdinalIgnoreCase);
+        if (!hid || message.ContextActor is null) {
+            return;
+        }
+
+        var dynamodsMsg = BuildUpdateAll(wizard.GameObjectID, wizard.DynamodSet?.Dynamods ?? []);
+        if (dynamodsMsg is not null) {
+            SendToSocket(dynamodsMsg);
+        }
+
+        ZoneBroadcastNoPlayers(new ZONE_102_PROTOCOL.MSG_ENTERSTATE {
+            ObjectName = dynaModClientTag,
+            StateName = SHOW_STATE_NAME,
+            ExclusiveToSender = true,
+            Sender = SessionActor.ActorRef,
+        });
     }
 
     // The quest safety guards took a used look off: the client gets the wizard's mods again and the object its first look.

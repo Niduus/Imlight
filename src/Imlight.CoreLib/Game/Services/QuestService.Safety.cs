@@ -54,6 +54,9 @@ internal partial class QuestService {
                 }
             }
 
+            // NPCs and objects a quest hid only while part of it ran come back once that part is over (Watson, Weird Science).
+            QuestHiddenObjects.ReleaseFinishedHides(wizard);
+
             // The zone sends the wizard's mods after this, so the objects come back with their first look by themselves.
             QuestSafety.RestoreUsedLooks(wizard, (quest, goal) => IsActiveUseStep(wizard, quest, goal));
         }

@@ -5,6 +5,10 @@
 [
   // Rematch: reaching the obelisk in the Jade Palace makes the palace script spawn the Jade Oni (trigger CheckObelisk).
   { "quest": "MS-MAIN-C07-001", "goal": "Goal", "when": "complete", "events": [ "GoSpawnOni" ] },
+  // Weird Science: the Clockwork step waits for "TalkToClockwork", which our Katzenstein's Lab never sends, so the quest
+  // stopped there and Watson (hidden on the Scotland Yard roof until this step is done) never came back to give
+  // "Fetch Bones!" (Niduus 2026-11-01). The step now finishes as soon as it starts, right after the Katzenstein fight.
+  { "quest": "MB-YARDHub-C01-003", "goal": "Goal 3", "when": "start", "events": ["TalkToClockwork"] },
   // flower bridge (Wizard404 start results)
   { "quest": "AZ-CLOUD-C06-002", "when": "start", "events": ["AZ-FlowerBridgeColl"] },
   // fire stairs in Twin Giants (Wizard404 start results)
