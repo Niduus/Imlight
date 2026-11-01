@@ -250,6 +250,10 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
         HouseDeeds.ApplyLots(_wizard);
         AtticRegistry.Describe(_wizard);
 
+        // A wizard whose XP went past the bar without the level following (or whose level a command set above its
+        // XP) is put right before the game gets the wizard, so the bar always fits (Niduus, 2026-11-01).
+        RepairLevelAndExperience();
+
         // Tiny anti-cheat measure. When the character object is created, we recalculate the game stats.
         CharacterHelper.RecalculateGameStats(_wizard);
         // That dropped every effect the gear doesn't give, the pet's look (Play as Pet) among them.
@@ -710,4 +714,26 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
 
     private static CriticalObjectList GetCriticalObjects(List<GID> objectIDs) => new() { m_objList = objectIDs };
 
+    /// <summary>
+    /// Makes the level and the XP agree (Wizard.MatchLevelToExperience); levels gained this way bring their training
+    /// points, as a level up would.
+    /// </summary>
+    private void RepairLevelAndExperience() {
+        try {
+            var (before, after) = _wizard.MatchLevelToExperience();
+            if (after > before) {
+                var points = LevelTrainingPoints.ForLevels(_wizard.MagicSchoolBehavior.MagicSchool, before, after);
+                if (points > 0) {
+                    _wizard.UpdateTrainingPoints(_wizard.MagicSchoolBehavior.TrainingPoints + points);
+                }
+
+                Logger.Information("Level repair: {0} had XP {1} past level {2}'s bar, now level {3} (+{4} training points).",
+                    Logger.Args(_wizard.PlayerNameBehavior?.GetWizardName(), _wizard.MagicSchoolBehavior.ExperiencePoints,
+                        before, after, points));
+            }
+        }
+        catch (Exception exception) {
+            Logger.Warning("Level repair failed for {0}: {1}", Logger.Args(_wizard.CharId, exception.Message));
+        }
+    }
 }

@@ -411,8 +411,8 @@ public class Wizard {
     public void AddExperiencePoints(int xp) {
         MagicSchoolBehavior.ExperiencePoints += xp;
 
-        // If the level at XP is greater than the current level, we need to level up.
-        var levelAtXp = MagicLevelsConfig.GetPlayerLevelAtExperience(MagicSchoolBehavior.ExperiencePoints);
+        // If the level at XP is greater than the current level, we need to level up (never past the max level).
+        var levelAtXp = LevelAtExperienceCapped();
         if (levelAtXp > MagicSchoolBehavior.Level) {
             var levelUpSuccess = SetLevel(levelAtXp);
             if (!levelUpSuccess) {
@@ -428,6 +428,62 @@ public class Wizard {
 
         // Only save to database if we didn't level up (SetLevel already saved).
         WizardCollection.UpdateCharacterLevel(this);
+    }
+
+    /// <summary>
+    /// The level this wizard's XP reaches, no higher than the max level (Character.MaxLevel, live).
+    /// </summary>
+    private byte LevelAtExperienceCapped() {
+        var level = MagicLevelsConfig.GetPlayerLevelAtExperience(MagicSchoolBehavior.ExperiencePoints);
+        var max = MagicLevelsConfig.MaxLevel;
+        return max > 0 && level > max ? (byte) max : level;
+    }
+
+    /// <summary>
+    /// Makes the level and the XP agree, so the XP bar is never past its end or before its start (Niduus, 2026-11-01:
+    /// "865 out of 670"). XP past the bar levels the wizard up; a wizard whose level was set by a command or an elixir
+    /// and whose XP is below the bar gets the XP that level starts at. Nothing is ever taken away.
+    /// </summary>
+    /// <returns>The level before and after.</returns>
+    public (int Before, int After) MatchLevelToExperience() {
+        var before = MagicSchoolBehavior.Level;
+        var levelAtXp = LevelAtExperienceCapped();
+        if (levelAtXp <= 0) {
+            // The level table isn't loaded.
+            return (before, before);
+        }
+
+        if (levelAtXp > before) {
+            SetLevel(levelAtXp);
+        }
+        else if (levelAtXp < before) {
+            var start = MagicLevelsConfig.GetExperiencePointsAtLevel(before);
+            if (start > MagicSchoolBehavior.ExperiencePoints) {
+                MagicSchoolBehavior.ExperiencePoints = start;
+                WizardCollection.UpdateCharacterLevel(this);
+            }
+        }
+
+        return (before, MagicSchoolBehavior.Level);
+    }
+
+    /// <summary>
+    /// After a level was set by a command or an elixir: puts the XP at the start of the new level when it is outside
+    /// that level's bar, so the next XP gain doesn't jump the level back.
+    /// </summary>
+    /// <returns>The XP before the change.</returns>
+    public int FitExperienceToLevel() {
+        var before = MagicSchoolBehavior.ExperiencePoints;
+        var level = MagicSchoolBehavior.Level;
+        var start = MagicLevelsConfig.GetExperiencePointsAtLevel(level);
+        var next = MagicLevelsConfig.GetExperiencePointsAtLevel(level + 1);
+        var pastBar = next > start && before >= next && level < MagicLevelsConfig.MaxLevel;
+        if (before < start || pastBar) {
+            MagicSchoolBehavior.ExperiencePoints = start;
+            WizardCollection.UpdateCharacterLevel(this);
+        }
+
+        return before;
     }
 
     public void RemoveExperiencePoints(int xp) {
