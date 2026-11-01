@@ -53,6 +53,7 @@ using System.Linq;
 using Imcodec.Cryptography;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -78,6 +79,8 @@ internal static class SpellFusions {
     private static readonly object s_lock = new();
     private static List<Recipe> s_recipes;
     private static Dictionary<uint, Recipe> s_recipeOfOutput;
+    // Ingredient adjective -> every card with it (template ID and the template).
+    private static Dictionary<string, List<(uint Id, SpellTemplate Template)>> s_cardsByAdjective;
 
     /// <summary>Every recipe the game has.</summary>
     internal static IReadOnlyList<Recipe> Recipes {
@@ -130,8 +133,21 @@ internal static class SpellFusions {
                 }
 
                 var outputs = new Dictionary<uint, Recipe>();
+                var adjectives = new HashSet<string>(recipes.SelectMany(r => new[] { r.Primary, r.Secondary }), StringComparer.OrdinalIgnoreCase);
+                var cards = new Dictionary<string, List<(uint Id, SpellTemplate Template)>>(StringComparer.OrdinalIgnoreCase);
                 foreach (var (_, spell) in SpellFactory.AllSpellTemplates()) {
-                    if (spell is null || spell.m_spellFusion == 0 || !byId.TryGetValue(spell.m_spellFusion, out var recipe)) {
+                    if (spell is null) {
+                        continue;
+                    }
+
+                    foreach (var adjective in spell.m_adjectives?.Select(a => (string) a).Where(a => a is not null && adjectives.Contains(a)) ?? []) {
+                        var cardId = SpellFactory.TemplateIdOf(spell);
+                        if (cardId != 0) {
+                            (cards.TryGetValue(adjective, out var list) ? list : cards[adjective] = []).Add((cardId, spell));
+                        }
+                    }
+
+                    if (spell.m_spellFusion == 0 || !byId.TryGetValue(spell.m_spellFusion, out var recipe)) {
                         continue;
                     }
 
@@ -145,15 +161,74 @@ internal static class SpellFusions {
                 }
 
                 s_recipeOfOutput = outputs;
+                s_cardsByAdjective = cards;
                 Logger.Information("Spell Fusion: {0} recipes, {1} fused spells.", Logger.Args(recipes.Count, outputs.Count));
             }
             catch (Exception ex) {
                 Logger.Error("Spell Fusion: could not read the recipes: {0}", Logger.Args(ex));
                 s_recipeOfOutput ??= [];
+                s_cardsByAdjective ??= [];
             }
 
             s_recipes = recipes;
         }
+    }
+
+    /// <summary>Every card that is this ingredient (template IDs): all tiers, pet and amulet versions.</summary>
+    internal static List<uint> CardsOf(string adjective) {
+        EnsureLoaded();
+
+        return s_cardsByAdjective.TryGetValue(adjective ?? "", out var list) ? [.. list.Select(c => c.Id)] : [];
+    }
+
+    /// <summary>
+    /// The card a wizard trains for an ingredient ("Shadow Creature Healer" for Fusion_DarkShepherd): a trained spell
+    /// before a boss copy, a treasure card or an upgraded tier.
+    /// </summary>
+    internal static uint MainCardOf(string adjective) {
+        EnsureLoaded();
+        if (!s_cardsByAdjective.TryGetValue(adjective ?? "", out var list) || list.Count == 0) {
+            return 0;
+        }
+
+        // A trainer's spell (the trainers' lists name them), not a boss copy ("Dark Shepherd NA"), a treasure card
+        // or an upgraded tier.
+        var trained = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        try {
+            trained.UnionWith(VanillaTrainers.All.SelectMany(t => t.Spells).Select(s => s.Name));
+        }
+        catch (Exception ex) {
+            Logger.Warning("Spell Fusion: could not read the trainers' lists: {0}", Logger.Args(ex.Message));
+        }
+
+        int Rank(SpellTemplate t) {
+            var name = (string) t.m_name ?? "";
+            var rank = trained.Contains(name) ? 0 : 4;
+            if (t.m_Treasure) {
+                rank += 2;
+            }
+
+            if (name.Contains(" - T0", StringComparison.Ordinal) && !name.Contains("T01 - Base", StringComparison.Ordinal)) {
+                rank++;
+            }
+
+            return rank;
+        }
+
+        return list.OrderBy(c => Rank(c.Template)).ThenBy(c => ((string) c.Template.m_name ?? "").Length).First().Id;
+    }
+
+    /// <summary>
+    /// The ingredients of a recipe the wizard knows no card of. The game puts a formula in the deck only when the
+    /// wizard knows a card of each ingredient (FusionDeckPage, read 2026-11-01); otherwise the click does nothing.
+    /// </summary>
+    internal static List<string> MissingIngredients(Wizard wizard, Recipe recipe) {
+        var book = wizard?.SpellbookBehavior;
+        if (book is null || recipe is null) {
+            return [];
+        }
+
+        return [.. new[] { recipe.Primary, recipe.Secondary }.Distinct().Where(a => !CardsOf(a).Any(book.HasSpell))];
     }
 
     /// <summary>Whether a spell template has the adjective.</summary>
