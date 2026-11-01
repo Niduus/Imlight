@@ -18,6 +18,8 @@
  *   RewardsOnce              a quest removed and taken again (Ahziael's Start, .quest remove, .toquest) gives no second
  *                            gold, XP or items for the steps it already rewarded (Secret Strife of Pets gave a second
  *                            pet). Repeatable quests (Quest Editor) and dungeon quests keep their own rules.
+ *   BringBackHiddenObjects   an NPC or object a quest hides only while part of it runs (Watson in Weird Science) comes
+ *                            back once that part is over, even when the quest was finished another way (QuestHiddenObjects).
  *   SideQuestsOnly           the guards look after side quests only (off: every quest, main ones too).
  * Players can type .stuck to run every guard at once and see what each of their quests waits on.
  *
@@ -57,6 +59,7 @@ internal static class QuestSafety {
     internal static bool SkipTurnedOffSteps => Enabled && Get("SkipTurnedOffSteps", true);
     internal static bool RestoreUsedObjects => Enabled && Get("RestoreUsedObjects", true);
     internal static bool RewardsOnce => Enabled && Get("RewardsOnce", true);
+    internal static bool BringBackHiddenObjects => Enabled && Get("BringBackHiddenObjects", true);
     internal static bool SideQuestsOnly => Get("SideQuestsOnly", false);
 
     /// <summary>Whether the guards look after this quest.</summary>
