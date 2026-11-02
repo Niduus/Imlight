@@ -58,7 +58,8 @@ namespace Imlight.CoreLib.Game.Combat;
 /// </remarks>
 internal static class CombatEffectApplicator {
 
-    private const float HANGING_EFFECT_CONSUME_TIME = 1.0f;
+    // [Game Rules > Animations] Charm (AnimationTimes.cs).
+    private static float HANGING_EFFECT_CONSUME_TIME => Imlight.CoreLib.Game.Spells.AnimationTimes.General(Imlight.CoreLib.Game.Spells.AnimationTimes.CHARM, 1.0f);
 
     // Charms, wards, auras and other effects that sit on a participant until a spell uses or removes them.
     private static readonly HashSet<kSpellEffects> s_hangingEffects = [

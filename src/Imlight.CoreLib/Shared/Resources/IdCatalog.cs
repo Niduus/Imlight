@@ -165,6 +165,9 @@ public static class IdCatalog {
         RunManagerFile("drop table users", () => Imlight.CoreLib.Game.World.ItemSources.WriteTableUsers(OutputPath));
         // The Manager's Pet Talents and Pet Derby searches: every talent, what it does and which pets can have it.
         RunManagerFile("pet talents", () => Imlight.CoreLib.Game.Tools.PetTalentGuide.Write(OutputPath));
+        // The Manager's Game Rules > Animations tab: every spell's animation, its stages and the seconds a round waits for it.
+        RunManagerFile("spell animations", () => Imlight.CoreLib.Game.Spells.AnimationTimes.WriteReport(OutputPath,
+            Imlight.CoreLib.Game.Combat.CombatResolver.GeneralTimes(), 5.0f));
     }
 
     private static readonly TimeSpan ManagerFilesDelay = TimeSpan.FromSeconds(90);

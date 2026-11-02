@@ -113,13 +113,14 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     // still plays; 1 s each was waited), and a defeat takes 1 to 1.7 s. The casting animation itself takes 3.75 s, but
     // its 5 s also covers the moments between turns the estimate does not count, so it stays.
     internal static bool FastAnimationTiming => ConfigurationManager.GetValue("Battle.FastAnimationTiming", true);
-    private static readonly float SPELL_PASS_TIME = FastAnimationTiming ? 0.5f : 1.0f;
-    private const float SPELL_CAST_TIME = 5.0f;
+    // Each can be changed on the app's Game Rules > Animations tab (AnimationTimes.cs), with no restart.
+    private static float SPELL_PASS_TIME => AnimationTimes.General(AnimationTimes.PASS, FastAnimationTiming ? 0.5f : 1.0f);
+    private static float SPELL_CAST_TIME => AnimationTimes.General(AnimationTimes.CASTING, 5.0f);
     // The most the round waits for a .c1s/.c2s/.cfs/.cls spell, whose casting animation the game skips.
     private static float SkipCastSeconds => Math.Max(0.5f, Imlight.Common.ConfigurationManager.GetValue("Battle.SkipCastSeconds", 2f));
-    private const float HANGING_EFFECT_CONSUME_TIME = 1.0f;
-    private const float OVER_TIME_ACTIVATION_TIME = 2.0f;
-    private static readonly float DEATH_ANIMATION_TIME = FastAnimationTiming ? 1.5f : 2.0f;
+    private static float HANGING_EFFECT_CONSUME_TIME => AnimationTimes.General(AnimationTimes.CHARM, 1.0f);
+    private static float OVER_TIME_ACTIVATION_TIME => AnimationTimes.General(AnimationTimes.OVER_TIME, 2.0f);
+    private static float DEATH_ANIMATION_TIME => AnimationTimes.General(AnimationTimes.DEFEAT, FastAnimationTiming ? 1.5f : 2.0f);
 
     private readonly Duel _duel = duel;
 
@@ -322,7 +323,20 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     // in Niduus's log of 2026-10-22 the spell after one started straight away (Mega Taunt and its line were over in
     // 2.0 s, which waited 4 s; Minotaur Death Sun and Polymorph - Dragon NA started 0.1 s after the turn before them).
     // [Battle] FastAnimationTiming off keeps the old 2 s.
-    private static readonly float ANNOUNCEMENT_SECONDS = FastAnimationTiming ? 0.5f : 2.0f;
+    private static float ANNOUNCEMENT_SECONDS => AnimationTimes.General(AnimationTimes.ANNOUNCEMENT, FastAnimationTiming ? 0.5f : 2.0f);
+
+    /// <summary>
+    /// The waits that are not one spell's animation, as the app's Animations tab lists them: the tab's name, the time
+    /// with [Battle] FastAnimationTiming on and off, and what it is for.
+    /// </summary>
+    internal static List<AnimationTimes.Normal> GeneralTimes() => [
+        new(AnimationTimes.CASTING, 5.0f, 5.0f, "A spell's casting animation, when its animation has no Casting stage of its own. It also covers the moment between turns."),
+        new(AnimationTimes.PASS, 0.5f, 1.0f, "A pass, a fizzle, or a spell not worth casting."),
+        new(AnimationTimes.DEFEAT, 1.5f, 2.0f, "A wizard or creature defeated by a damage over time at the start of its turn (one defeated by a spell is in that spell's own time)."),
+        new(AnimationTimes.ANNOUNCEMENT, 0.5f, 2.0f, "Each line a boss says, or an announcement over the battle."),
+        new(AnimationTimes.CHARM, 1.0f, 1.0f, "Each charm, ward, trap or shield used up, or taken off, by a spell."),
+        new(AnimationTimes.OVER_TIME, 2.0f, 2.0f, "Each damage over time, heal over time or delayed bomb going off at the start of a turn."),
+    ];
 
     /// <summary>
     /// Adds a combat move to the queue for processing.
@@ -1647,7 +1661,12 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         }
 
         var spellName = SpellFactory.GetBaseSpellName(ShownSpell(action).m_templateID);
-        var cinematicFactory = SpellCinematics.Instance;
+        _ = SpellCinematics.Instance;
+
+        // A time set for this animation on the app's Game Rules > Animations tab (AnimationTimes.json).
+        if (AnimationTimes.TrySpell(spellName, out var set)) {
+            return set;
+        }
 
         if (FastAnimationTiming) {
             try {
@@ -1659,23 +1678,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             }
         }
 
-        // All spells will always have a summon time.
-        var count = SpellCinematics.GetSpellSummonTime(spellName);
-
-        // Check if this spell has a special casting time. If not, just add the default casting time.
-        var castTime = SpellCinematics.GetSpellCastingTime(spellName);
-        count += castTime > 0.1f ? castTime : SPELL_CAST_TIME;
-
-        // Check to see if the spell has an act time. If it does, add it to the total time.
-        // Otherwise, return the total time.
-        var actTime = SpellCinematics.GetSpellActTime(spellName);
-        if (actTime <= 0.1f) {
-            return count + SpellCinematics.GetSpellTotalTime(spellName);
-        }
-
-        count += actTime;
-
-        return count;
+        return SpellCinematics.GetOldSpellTime(spellName, SPELL_CAST_TIME);
     }
 
     private static bool SpellHits(CombatDuelSubCircle caster, Spell spell) {
