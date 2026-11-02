@@ -144,6 +144,12 @@ internal sealed partial class ManagerWindow : Window {
         ItemsSource = new[] { "Close (100)", "Moderate (175, default)", "Far (250)", "Game files (350, very far)" },
         SelectedIndex = 1, Width = 170,
     };
+    // [Battle] NoAggroSeconds: how long monsters leave a wizard alone after a won battle (0 = no wait).
+    private static readonly int[] s_noAggroSeconds = [0, 3, 6, 12, 20, 30];
+    private readonly ComboBox _noAggro = new() {
+        ItemsSource = new[] { "No wait", "3 seconds", "6 seconds", "12 seconds (default)", "20 seconds", "30 seconds" },
+        SelectedIndex = 3, Width = 170,
+    };
     private readonly List<(string Section, string Key, string Name, ToggleSwitch Switch)> _battleSwitches = [
         ("Battle", "ManaOnFizzle", "Reduce mana even if fizzle", new() { OnContent = "On", OffContent = "Off" }),
         ("SpellFusion", "Enabled", "Spell Fusion: drag one card of a Fusion Formula onto its other card in battle to fuse them (.fusions lists yours)", new() { OnContent = "On", OffContent = "Off" }),
@@ -349,6 +355,8 @@ internal sealed partial class ManagerWindow : Window {
                     "Off: 2 for 1 wizard, 3 for 2, 4 for 3 or 4 (Unicorn Way 1 per wizard). 1 to 4: always that many at most."));
                 battleRows.Children.Add(SwitchRow("Reach to start a battle", _engageReach,
                     "How close you must walk to a monster to start a battle. Close is nearly touching it; the game files (350) pull you in from far off."));
+                battleRows.Children.Add(SwitchRow("Wait after a won battle", _noAggro,
+                    "How long monsters leave you alone after you win, before walking into one starts the next battle."));
             }
         }
 
@@ -837,6 +845,12 @@ internal sealed partial class ManagerWindow : Window {
                 }
             };
         }
+
+        _noAggro.SelectionChanged += async (_, _) => {
+            if (!_updatingRandomizer && _noAggro.SelectedIndex >= 0) {
+                await Guard(() => SetNoAggroSecondsAsync(s_noAggroSeconds[_noAggro.SelectedIndex]));
+            }
+        };
 
         _engageReach.SelectionChanged += async (_, _) => {
             if (!_updatingRandomizer && _engageReach.SelectedIndex >= 0) {
@@ -1490,6 +1504,9 @@ internal sealed partial class ManagerWindow : Window {
         var reach = int.TryParse(ini.GetValueOrDefault(("Battle", "EngageReach")), out var r) ? r : 175;
         _engageReach.SelectedIndex = Array.IndexOf(s_engageReaches,
             s_engageReaches.OrderBy(x => Math.Abs((x == 0 ? 350 : x) - (reach <= 0 ? 350 : reach))).First());
+        _noAggro.IsEnabled = Has("Battle", "NoAggroSeconds");
+        var noAggro = int.TryParse(ini.GetValueOrDefault(("Battle", "NoAggroSeconds")), out var na) ? na : 12;
+        _noAggro.SelectedIndex = Array.IndexOf(s_noAggroSeconds, s_noAggroSeconds.OrderBy(x => Math.Abs(x - noAggro)).First());
         ShowCreateOnLogin(ini);
         ShowTrainingPoints(ini);
 
@@ -1653,6 +1670,19 @@ internal sealed partial class ManagerWindow : Window {
         if (restart && await ConfirmAsync($"{name} is now {(on ? "on" : "off")}. Restart the server now to use it?")) {
             Say(await _manager.RestartServerAsync());
         }
+    }
+
+    private Task SetNoAggroSecondsAsync(int seconds) {
+        if (!_manager.HasSetting("Battle", "NoAggroSeconds") || _manager.GetSetting("Battle", "NoAggroSeconds") == seconds.ToString()) {
+            return Task.CompletedTask;
+        }
+
+        _manager.SaveSettings([new Setting("Battle", "NoAggroSeconds", seconds.ToString(), "")]);
+        _settings = [];
+        Say(seconds == 0 ? "Monsters can start a new battle right after you win. It applies right away."
+            : $"Monsters now leave you alone for {seconds} seconds after you win a battle. It applies right away.");
+
+        return Task.CompletedTask;
     }
 
     private Task SetEngageReachAsync(int reach) {

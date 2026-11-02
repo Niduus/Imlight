@@ -63,7 +63,9 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
 
     private const uint NO_AGGRO_EFFECT_STRINGID = 1618528611;
 
-    private const uint NO_AGGRO_EFFECT_DURATION_IN_SECONDS = 12;
+    // [Battle] NoAggroSeconds (live): how long monsters leave a wizard alone after a won battle (Niduus, 2026-11-02:
+    // 12, was a fixed 3). 0 = no wait. From 0 to 120.
+    private static uint NoAggroSeconds => (uint) Math.Clamp(ConfigurationManager.GetValue("Battle.NoAggroSeconds", 12), 0, 120);
 
     /// <summary>
     /// Die = Delete mode: a character that is still dead when its battle ends is deleted.
@@ -174,16 +176,20 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         GetActiveWizard().IsInDuel = false;
         _currentDuelActor = null;
         EquipMount();
-        // Creatures leave a wizard alone for 12 seconds after a won battle (Niduus, 2026-11-02: was 3); one touched then starts the next battle
-        // the moment it ends (Niduus, 2026-10-25).
-        SetNoAggroGrace();
+        // Creatures leave a wizard alone for [Battle] NoAggroSeconds (default 12) after a won battle; one touched then
+        // starts the next battle the moment it ends (Niduus, 2026-10-25 / 2026-11-02).
+        var noAggroSeconds = NoAggroSeconds;
+        if (noAggroSeconds > 0) {
+            RemoveNoAggroEffect();
+            SetNoAggroGrace(noAggroSeconds);
 
-        // Send a message to ourselves to end the no aggro grace period.
-        var noAggroGraceOverMsg = new COMBAT_106_PROTOCOL.MSG_NOAGGROGRACEOVER();
-        Timers.StartSingleTimer(
-            "NoAggroGraceOver",
-            noAggroGraceOverMsg,
-            TimeSpan.FromSeconds(NO_AGGRO_EFFECT_DURATION_IN_SECONDS));
+            // Send a message to ourselves to end the no aggro grace period.
+            var noAggroGraceOverMsg = new COMBAT_106_PROTOCOL.MSG_NOAGGROGRACEOVER();
+            Timers.StartSingleTimer(
+                "NoAggroGraceOver",
+                noAggroGraceOverMsg,
+                TimeSpan.FromSeconds(noAggroSeconds));
+        }
 
         // Gain 3 XP per pip used in the duel.
         var usedPips = message.UsedPips;
@@ -757,13 +763,13 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         }
     }
 
-    private void SetNoAggroGrace() {
+    private void SetNoAggroGrace(uint seconds) {
         var wizard = GetActiveWizard();
         var charObjId = GetActiveGameObject().m_globalID;
         var effectInternalId = wizard.NextEffectId();
 
         var epoch = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        var endTime = epoch + NO_AGGRO_EFFECT_DURATION_IN_SECONDS;
+        var endTime = epoch + seconds;
 
         var effect = new NamedEffect {
             m_effectNameID = NO_AGGRO_EFFECT_STRINGID,
