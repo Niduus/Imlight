@@ -214,6 +214,10 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
         public QuestTemplate Quest;
 
+        // Set when the offer came straight after the last quest (the NPC asked the game to talk again): the NPC's
+        // service memento, told MSG_RELEASECHAINEDTALK once the offer is answered.
+        public IActorRef ChainedTalkNpc;
+
     }
 
     public sealed class MSG_COMPLETEPERSONAGOAL : IServerMessage {
