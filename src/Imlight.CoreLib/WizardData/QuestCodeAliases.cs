@@ -31,7 +31,7 @@ public static class QuestCodeAliases {
                 return;
             }
 
-            var read = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(path)) ?? [];
+            var read = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(path)) ?? new Dictionary<string, string>();
             var toOurs = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var (game, ours) in read) {
                 if (!string.IsNullOrEmpty(game) && !string.IsNullOrEmpty(ours)
