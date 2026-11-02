@@ -17,7 +17,17 @@
       "m_hyperlink": null,
       "m_completeText": null,
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResTeleport, Imcodec.ObjectProperty",
+            "m_exitTeleporter": 0,
+            "m_teleporterTag": 0,
+            "m_teleportType": "TELEPORT_STATIC",
+            "m_transitionID": 0,
+            "m_destinationLoc": "Start",
+            "m_destinationZone": "Khrysalis/KR_Z07_RuinedAlcazar"
+          }
+        ]
       },
       "m_goalRequirements": null,
       "m_tallyCounter": {

@@ -3026,6 +3026,17 @@
      "m_teleportType": "TELEPORT_STATIC",
      "m_transitionID": 0
     }
+   },
+   {
+    "TriggerName": "Teleport to StarfallSea",
+    "Teleport": {
+     "m_destinationLoc": "Start",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z06_I01_BeastControl",
+     "m_exitTeleporter": 0,
+     "m_teleporterTag": 0,
+     "m_teleportType": "TELEPORT_STATIC",
+     "m_transitionID": 0
+    }
    }
   ]
  },
