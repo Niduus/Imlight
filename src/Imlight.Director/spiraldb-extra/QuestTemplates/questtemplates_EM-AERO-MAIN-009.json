@@ -35,305 +35,6 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Empyrea/EM_Z10_PortAero",
-      "m_locationName": "ZoneLocName_1447343",
-      "m_goalName": "1_WizardQuestGoals00000146",
-      "m_goalTitle": "WizardQuestGoals_00000146",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Empyrea/EM_Z10_PortAero",
-      "m_proximityTag": "",
-      "m_zoneExit": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "First Aero Dwarf House",
-        "m_descriptor2": "",
-        "m_count": 0,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/QuestButtons/Location_EM_1stDwarfHouse.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Empyrea/Interiors/EM_Z10_1stAeroDwarfHouse",
-      "m_locationName": "First Aero Dwarf House",
-      "m_goalName": "2_WizardQuestGoalsExplore",
-      "m_goalTitle": "WizardQuestGoals_Explore",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Empyrea/Interiors/EM_Z10_1stAeroDwarfHouse",
-      "m_proximityTag": "",
-      "m_zoneExit": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 100,
-        "m_descriptor": "",
-        "m_descriptor2": "Aerobot",
-        "m_count": 1,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/NpcPortraits/Portrait_Robot_Drone_C_MOB.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Empyrea/Interiors/EM_Z10_1stAeroDwarfHouse",
-      "m_locationName": "First Aero Dwarf House",
-      "m_goalName": "3_WizardQuestGoalsKill",
-      "m_goalTitle": "WizardQuestGoals_Kill",
-      "m_goalType": "GOAL_TYPE_BOUNTY",
-      "m_npcAdjectives": [
-        "EM_Robot_Drone_C_01.AdjRef"
-      ],
-      "m_bountyTotal": 1,
-      "m_bountyType": "BT_MOB_KILL"
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Second Aero Dwarf House",
-        "m_descriptor2": "",
-        "m_count": 0,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/QuestButtons/Location_EM_2ndDwarfHouse.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Empyrea/Interiors/EM_Z10_2ndAeroDwarfHouse",
-      "m_locationName": "Second Aero Dwarf House",
-      "m_goalName": "4_WizardQuestGoalsExplore",
-      "m_goalTitle": "WizardQuestGoals_Explore",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Empyrea/Interiors/EM_Z10_2ndAeroDwarfHouse",
-      "m_proximityTag": "",
-      "m_zoneExit": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 100,
-        "m_descriptor": "",
-        "m_descriptor2": "Dark Cloud Cabalist",
-        "m_count": 1,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/NpcPortraits/Druid_Agent_A_MOB.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Empyrea/Interiors/EM_Z10_2ndAeroDwarfHouse",
-      "m_locationName": "Second Aero Dwarf House",
-      "m_goalName": "5_WizardQuestGoalsKill",
-      "m_goalTitle": "WizardQuestGoals_Kill",
-      "m_goalType": "GOAL_TYPE_BOUNTY",
-      "m_npcAdjectives": [
-        "EM_Druid_Agent_A_02.AdjRef"
-      ],
-      "m_bountyTotal": 1,
-      "m_bountyType": "BT_MOB_KILL"
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Third Aero Dwarf House",
-        "m_descriptor2": "",
-        "m_count": 0,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/QuestButtons/Location_EM_3rdDwarfHouse.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Empyrea/Interiors/EM_Z10_3rdAeroDwarfHouse",
-      "m_locationName": "Third Aero Dwarf House",
-      "m_goalName": "6_WizardQuestGoalsExplore",
-      "m_goalTitle": "WizardQuestGoals_Explore",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Empyrea/Interiors/EM_Z10_3rdAeroDwarfHouse",
-      "m_proximityTag": "",
-      "m_zoneExit": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 100,
-        "m_descriptor": "",
-        "m_descriptor2": "Babe the Not-Blue Ox",
-        "m_count": 1,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/NpcPortraits/Portrait_Oxen_Shaggy_B_MOB.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Empyrea/Interiors/EM_Z10_3rdAeroDwarfHouse",
-      "m_locationName": "Third Aero Dwarf House",
-      "m_goalName": "7_WizardQuestGoalsKill",
-      "m_goalTitle": "WizardQuestGoals_Kill",
-      "m_goalType": "GOAL_TYPE_BOUNTY",
-      "m_npcAdjectives": [
-        "EM_Oxen_Shaggy_B_01.AdjRef"
-      ],
-      "m_bountyTotal": 1,
-      "m_bountyType": "BT_MOB_KILL"
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Your Friends",
-        "m_descriptor2": "",
-        "m_count": 0,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/QuestButtons/Location_EM_PortAero.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Empyrea/EM_Z10_PortAero",
-      "m_locationName": "Port Aero",
-      "m_goalName": "8_WizardQuestGoals00000506",
-      "m_goalTitle": "WizardQuestGoals_00000506",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Empyrea/EM_Z10_PortAero",
-      "m_proximityTag": "",
-      "m_zoneExit": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "",
-        "m_descriptor2": "",
-        "m_count": 0,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/NpcPortraits/Dwarf_AeroCitizen_D_NPC.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
       "m_dialogList": {
         "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
         "m_dialogs": [
@@ -407,7 +108,726 @@
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1447326,
                 "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Empyrea/EM_Z10_PortAero",
+      "m_locationName": "ZoneLocName_1447343",
+      "m_goalName": "1_WizardQuestGoals00000146",
+      "m_goalTitle": "WizardQuestGoals_00000146",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Empyrea/EM_Z10_PortAero",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "First Aero Dwarf House",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Location_EM_1stDwarfHouse.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z10_1stAeroDwarfHouse",
+      "m_locationName": "First Aero Dwarf House",
+      "m_goalName": "2_WizardQuestGoalsExplore",
+      "m_goalTitle": "WizardQuestGoals_Explore",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Empyrea/Interiors/EM_Z10_1stAeroDwarfHouse",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "Aerobot",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Portrait_Robot_Drone_C_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC11_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Just in time, Wizard. You saved these evil robots from a vicious dropkicking. Now hit them with fireballs or whatever.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_70.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447335,
+                "m_cameraName": ""
               },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC11_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Excellent work, Wizard. I'll clean up here. There are more Dwarves that need your help.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_71.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447335,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z10_1stAeroDwarfHouse",
+      "m_locationName": "First Aero Dwarf House",
+      "m_goalName": "3_WizardQuestGoalsKill",
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_npcAdjectives": [
+        "EM_Robot_Drone_C_01.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Second Aero Dwarf House",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Location_EM_2ndDwarfHouse.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Dark Cloud Cabalist",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Oh, wonderful, now the Wizard that wrecked the base is here. What a great day I'm having.",
+                "m_picture": "GUI/NpcPortraits/Druid_Agent_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/DarkCloudCabalistC_EM2_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Dark Cloud Cabalist",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Isn't that the one the boss told us to keep from reaching Nimbus?",
+                "m_picture": "GUI/NpcPortraits/Druid_Agent_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/DarkCloudCabalistD_EM2_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Dark Cloud Cabalist",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Yeah, but we're not supposed to say that, you maroon. Just point the hacked robots and the new Mythie at the town and run.",
+                "m_picture": "GUI/NpcPortraits/Druid_Agent_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/DarkCloudCabalistC_EM2_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Dark Cloud Cabalist",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I couldn't run, my shoe was untied. Maybe we should just fight instead.",
+                "m_picture": "GUI/NpcPortraits/Druid_Agent_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/DarkCloudCabalistD_EM2_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z10_2ndAeroDwarfHouse",
+      "m_locationName": "Second Aero Dwarf House",
+      "m_goalName": "4_WizardQuestGoalsExplore",
+      "m_goalTitle": "WizardQuestGoals_Explore",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Empyrea/Interiors/EM_Z10_2ndAeroDwarfHouse",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "Dark Cloud Cabalist",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Druid_Agent_A_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC10_2ndHouse_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Looks like a few of the worms slipped through your grasp, Wizard. Good. My squad deserves more personal payback. For RAVEN!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_JusticarF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Ariadne_EM2_09.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447362,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC10_2ndHouse_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "These fiends aren't going anywhere. And when we're done, they'll face Nimbari justice. I'll keep watch here, Wizard, you continue on.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_JusticarF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Ariadne_EM2_10.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447362,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z10_2ndAeroDwarfHouse",
+      "m_locationName": "Second Aero Dwarf House",
+      "m_goalName": "5_WizardQuestGoalsKill",
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_npcAdjectives": [
+        "EM_Druid_Agent_A_02.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Third Aero Dwarf House",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Location_EM_3rdDwarfHouse.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Vanitus",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Wizard, you are a stubborn one, aren't you? I kidnapped your friend, sabotaged that Dwarf's Ship... all to keep you away. Yet here you stand.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Robot_Drone_C_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Vanitus_EM2_29.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Vanitus",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Yes, it's me, Lord Vanitus. My Cabal friends alerted me that you freed the Captain; I thought you'd be coming back here and arranged a diversion.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Robot_Drone_C_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Vanitus_EM2_30.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Vanitus",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Dwarven machines are elegant in their simplicity; intruding upon these systems was easy. And it bought me enough time to complete my goals.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Robot_Drone_C_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Vanitus_EM2_31.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC07_3rdHouse_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "What poisonous goals might those be, Vanitus? What new treasons are you concocting?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_50.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447363,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Vanitus",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Helena! Impossible... you... you're...",
+                "m_picture": "GUI/NpcPortraits/Portrait_Robot_Drone_C_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Vanitus_EM2_32.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC07_3rdHouse_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Coming for you.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_51.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447363,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z10_3rdAeroDwarfHouse",
+      "m_locationName": "Third Aero Dwarf House",
+      "m_goalName": "6_WizardQuestGoalsExplore",
+      "m_goalTitle": "WizardQuestGoals_Explore",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Empyrea/Interiors/EM_Z10_3rdAeroDwarfHouse",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "Babe the Not-Blue Ox",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Portrait_Oxen_Shaggy_B_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC07_3rdHouse_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "That shut him up. Things sound like they're quieting down. Let's meet the others outside.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_52.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447363,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z10_3rdAeroDwarfHouse",
+      "m_locationName": "Third Aero Dwarf House",
+      "m_goalName": "7_WizardQuestGoalsKill",
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_npcAdjectives": [
+        "EM_Oxen_Shaggy_B_01.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Your Friends",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Location_EM_PortAero.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC11_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "That takes care of that mess. Now we just need to get back to Nimbus. Wizard, I assume you placed a Streamportal?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_72.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447335,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Streamportal? Keras often talked of making something like that.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_53.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447331,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC11_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Sparck built it, a teleportation network connecting all of Empyrea.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_73.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447335,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Sparck? Good. But we can't use it. Vanitus is expecting us. Your landing point in Nimbus will be guarded. We must take an Aeroship to another dock.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_54.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447331,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC10_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "That Mayor Quill owes us a favor. Let's borrow one from him.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_JusticarF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Ariadne_EM2_11.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447334,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Yes. Wizard, you and Pork go talk to the Mayor. We'll meet you at the Aero Pad.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_55.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447331,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Empyrea/EM_Z10_PortAero",
+      "m_locationName": "Port Aero",
+      "m_goalName": "8_WizardQuestGoals00000506",
+      "m_goalTitle": "WizardQuestGoals_00000506",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Empyrea/EM_Z10_PortAero",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Dwarf_AeroCitizen_D_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "EM-AERO-NPC02_Persona",
@@ -427,6 +847,40 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC11_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The monsters are coming from your imaginations. Your stress, your fear, is bringing your nightmares to life. I'm afraid there is no easy fix.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_74.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447335,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC11_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "But tell your people to stop dreading the past, to look toward tomorrow. Believe the world is a better place and you will make it one... together.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_75.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447335,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "EM-AERO-NPC02_Persona",
                 "m_nameOverride": "",
                 "m_nameSTKey": null,
@@ -440,6 +894,23 @@
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1447326,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Cheesy as a fondue party.",
+                "m_picture": "GUI/NpcPortraits/Dwarf_AeroCitizen_C_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Josiah_EM2_17.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447325,
                 "m_cameraName": ""
               },
               {
@@ -514,7 +985,67 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Looks like this is our Aeroship. Is everyone ready? There's no telling what Vanitus has in store for us.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_56.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447331,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC10_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Vanitus is a serpent around the Vicereine's neck; he poisons our destiny for his greed. He must be stopped. I stand with you, my Lady.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_JusticarF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Ariadne_EM2_12.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447334,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC11_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "We have to save Sparck... even if he didn't come to save me... er... us. And we have to do it together. Let's go.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_76.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447335,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/EM_Z10_PortAero",
       "m_locationName": "Port Aero",
@@ -590,7 +1121,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-NIMB-NPC02-E_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Sparck? Sparck! Come in, Mr. Sparck! Ah, blast this communicator. He's not answering. Sorry, Lady Helena, I can't find your son.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_77.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1413289,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z07_SecondaryDock",
       "m_locationName": "Nimbus Citadel",
@@ -905,6 +1462,74 @@
             "m_dialog": "WizQst16158D_00000003",
             "m_picture": "",
             "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_46.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1447331,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-AERO-NPC10_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "He staged everything, didn't he? The explosion, the treason, all of it? So he could maintain his secret ties to this Admiral and this Cabal.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_JusticarF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Ariadne_EM2_08.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1447334,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-AERO-NPC07_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "That's why I gave my children to Pork to be taken safely away. Then I tried to fight back. I failed. I fled. And I learned to forget.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_47.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1447331,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-AERO-NPC11_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But now, it's time you remembered. It's time to strike back. For Nimbus. For Empyrea. For... your son.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_69.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1447335,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-AERO-NPC07_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Perhaps... you are right.... Perhaps it is time. Let us convene at Port Aero. And prepare yourselves for war!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_48.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1447331,

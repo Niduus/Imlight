@@ -70,7 +70,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Yakhal Ice Keeper",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Why you meddle in the internal politics of Yakhal Mountain I cannot imagine, but the Ice Princess is not in hiding. She is in the Deep Freeze.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Sorcerer_H_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/YakhalIceKeeper_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/MR_Z06_YakhalMountain",
       "m_locationName": "Yakhal Mountain",
@@ -108,7 +134,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC06_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "She's in the Deep Freeze? Brr! I get shivers just thinking about it. Hardly seems a place for a Princess, or anyone for that matter.",
+                "m_picture": "",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/PrefectJosapat_MIR_13.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389043,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/MR_Z06_YakhalMountain",
       "m_locationName": "Yakhal Mountain",
@@ -284,23 +336,6 @@
             "m_dialog": "This self-styled \"Princess\" could be holding rallies anywhere down here. You'll have to challenge the Ice Keepers to find out where.",
             "m_picture": "",
             "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/PrefectJosapat_MIR_12.mp3",
-            "m_action": "",
-            "m_dialogEvent": "",
-            "m_actorTemplateID": 1389043,
-            "m_cameraName": ""
-          },
-          {
-            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-            "m_personaName": "MR-YAKH-NPC06_Persona",
-            "m_nameOverride": "",
-            "m_nameSTKey": null,
-            "m_guiDisplay": "",
-            "m_maxTimeSeconds": 0,
-            "m_invisible": false,
-            "m_requirements": null,
-            "m_dialog": "She's in the Deep Freeze? Brr! I get shivers just thinking about it. Hardly seems a place for a Princess, or anyone for that matter.",
-            "m_picture": "",
-            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/PrefectJosapat_MIR_13.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1389043,
