@@ -223,28 +223,59 @@ internal class SpellCinematics : RootDirectoryResourceSingleton<SpellCinematics>
     /// <param name="name">The spell's base name (its cinematic).</param>
     /// <param name="castSeconds">The casting animation, for a cinematic with no Casting stage of its own.</param>
     internal static float GetMeasuredSpellTime(string name, float castSeconds) {
+        var time = 0f;
+        foreach (var part in MeasuredParts(name, castSeconds)) {
+            time += part.Seconds;
+        }
+
+        return time;
+    }
+
+    /// <summary>
+    /// What <see cref="GetMeasuredSpellTime"/> adds up, part by part (the app's Animations tab shows each part).
+    /// </summary>
+    internal static List<AnimationTimes.Part> MeasuredParts(string name, float castSeconds) {
         var template = string.IsNullOrEmpty(name) ? null : GetCinematicTemplate(name);
-        if (template?.m_stages is not { Count: > 0 } stages || s_castOnly.Contains(name)) {
-            return castSeconds;
+        if (template?.m_stages is not { Count: > 0 } stages) {
+            return [new("Casting animation (the game files have no animation of this name)", castSeconds)];
+        }
+
+        if (s_castOnly.Contains(name)) {
+            return [new("Casting animation only (measured in the game: it plays no more than that)", castSeconds)];
         }
 
         if (s_measuredSeconds.TryGetValue(name, out var measured)) {
-            return measured;
+            return [new("Measured in the game (its stages do not say how long it plays)", measured)];
         }
+
+        var parts = new List<AnimationTimes.Part>();
 
         // The stage GetSpellSummonTime reads.
         var summon = stages.FirstOrDefault(s => s is SummonCinematicStageTemplate)
             ?? stages.FirstOrDefault(s => s is not null && s.m_name == "Summon");
         var casting = stages.FirstOrDefault(s => s is not null && s.m_name == "Casting");
-        var time = (summon?.m_duration ?? 0f) + (casting is { m_duration: > 0.1f } ? casting.m_duration : castSeconds);
-
-        var acts = stages.Where(s => s is ActCinematicStageTemplate && s.m_duration > 0.1f).Select(s => s.m_duration).ToList();
-        if (acts.Count == 0 && stages.FirstOrDefault(s => s is not null && s.m_name == "Act") is { m_duration: > 0.1f } act) {
-            acts.Add(act.m_duration);
+        parts.Add(casting is { m_duration: > 0.1f }
+            ? new("Casting stage", casting.m_duration)
+            : new("Casting animation (no Casting stage, so the usual one)", castSeconds));
+        if (summon is { m_duration: > 0f }) {
+            parts.Add(new($"Summon stage ({(string) summon.m_name})", summon.m_duration));
         }
 
-        if (acts.Count > 0) {
-            time += acts.Count == 2 ? acts.Sum() : acts.Max();
+        var acts = stages.Where(s => s is ActCinematicStageTemplate && s.m_duration > 0.1f).ToList();
+        if (acts.Count == 0 && stages.FirstOrDefault(s => s is not null && s.m_name == "Act") is { m_duration: > 0.1f } act) {
+            acts.Add(act);
+        }
+
+        if (acts.Count == 2) {
+            // Both acts of a two-act cinematic such as Minotaur or Empower: the game plays one after the other.
+            parts.Add(new($"Act stage ({(string) acts[0].m_name}), first of two", acts[0].m_duration));
+            parts.Add(new($"Act stage ({(string) acts[1].m_name}), second of two", acts[1].m_duration));
+        }
+        else if (acts.Count > 0) {
+            // Three or more are variants (Scarab): one of them plays.
+            var longest = acts.OrderByDescending(a => a.m_duration).First();
+            parts.Add(new(acts.Count == 1 ? $"Act stage ({(string) longest.m_name})"
+                : $"Act stage ({(string) longest.m_name}), the longest of {acts.Count} variants, of which one plays", longest.m_duration));
         }
         else {
             // The other stages, each once (the old sum counted the summon and casting a second time: Ghoul waited 19.7 s
@@ -255,12 +286,41 @@ internal class SpellCinematics : RootDirectoryResourceSingleton<SpellCinematics>
                 }
 
                 if (stage.m_name.ToString().Contains("AddHanging")) {
-                    time += HANGING_EFFECT_ADD_TIME;
+                    parts.Add(new($"{(string) stage.m_name} (a charm or ward going on, counted as 1 s)", HANGING_EFFECT_ADD_TIME));
                     continue;
                 }
 
-                time += stage.m_duration;
+                parts.Add(new($"{(string) stage.m_name} stage", stage.m_duration));
             }
+        }
+
+        return parts;
+    }
+
+    /// <summary>
+    /// The old, longer estimate ([Battle] FastAnimationTiming off), part by part: the summon, the casting animation, and
+    /// the act, or with no act every stage again.
+    /// </summary>
+    internal static List<AnimationTimes.Part> OldParts(string name, float castSeconds) {
+        var parts = new List<AnimationTimes.Part>();
+        var summon = GetSpellSummonTime(name);
+        if (summon > 0f) {
+            parts.Add(new("Summon stage", summon));
+        }
+
+        var castTime = GetSpellCastingTime(name);
+        parts.Add(castTime > 0.1f ? new("Casting stage", castTime) : new("Casting animation (the usual one)", castSeconds));
+        var actTime = GetSpellActTime(name);
+        parts.Add(actTime > 0.1f ? new("Act stage", actTime) : new("Every stage again (no Act stage)", GetSpellTotalTime(name)));
+
+        return parts;
+    }
+
+    /// <summary>The old, longer estimate ([Battle] FastAnimationTiming off).</summary>
+    internal static float GetOldSpellTime(string name, float castSeconds) {
+        var time = 0f;
+        foreach (var part in OldParts(name, castSeconds)) {
+            time += part.Seconds;
         }
 
         return time;
