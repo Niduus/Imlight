@@ -1,6 +1,8 @@
 // Spells the real game's quests teach that our quest files lacked (Niduus 2026-10-27, from Wizard404's quest data).
 // At boot each entry adds a "learn this spell" result to the quest's completion; "school" limits it to wizards of
 // that school (no school: everyone who does the quest). Spell = the game's spell template ID, name is only a note.
+// "goal": also teach it when that step is done (the real game teaches it there). "badge": give this badge at the end.
+// QA quest guides (Niduus 2026-11-02): Letters of Light, Finally Growing Into It, A Pact with Darkness, Back to Balance.
 [
   {"quest": "AR-MR-SPEL-001-Balance", "school": "Balance", "spell": 1373405296, "name": "Sand Wurm"},
   {"quest": "AR-MR-SPEL-001-Death", "school": "Death", "spell": 754271745, "name": "Qismah's Curse"},
@@ -156,5 +158,29 @@
   {"quest": "WC-STRM-C05-004", "spell": 1730466188, "name": "Triton"},
   {"quest": "WC-STRM-C06-004", "spell": 82896576, "name": "Storm Lord"},
   {"quest": "WC-STRM-C07-003", "spell": 1405772650, "name": "Leviathan"},
-  {"quest": "WC-STRM-C12-002", "spell": 990349312, "name": "Storm Owl"}
+  {"quest": "WC-STRM-C12-002", "spell": 990349312, "name": "Storm Owl"},
+  {"quest": "WC-PreKR-C01-001", "goal": "2_WizardQuestGoalsTalkNPC", "school": "Balance", "spell": 1637842235, "name": "King Artorius"},
+  {"quest": "WC-PreKR-C01-001", "goal": "2_WizardQuestGoalsTalkNPC", "school": "Death", "spell": 720848047, "name": "King Artorius"},
+  {"quest": "WC-PreKR-C01-001", "goal": "2_WizardQuestGoalsTalkNPC", "school": "Fire", "spell": 411746265, "name": "King Artorius"},
+  {"quest": "WC-PreKR-C01-001", "goal": "2_WizardQuestGoalsTalkNPC", "school": "Ice", "spell": 976896005, "name": "King Artorius"},
+  {"quest": "WC-PreKR-C01-001", "goal": "2_WizardQuestGoalsTalkNPC", "school": "Life", "spell": 1216397273, "name": "King Artorius"},
+  {"quest": "WC-PreKR-C01-001", "goal": "2_WizardQuestGoalsTalkNPC", "school": "Myth", "spell": 2105425953, "name": "King Artorius"},
+  {"quest": "WC-PreKR-C01-001", "goal": "2_WizardQuestGoalsTalkNPC", "school": "Storm", "spell": 281036030, "name": "King Artorius"},
+  {"quest": "WC-MidEM-MAIN-002", "goal": "4_WizardQuestGoalsTalkNPC", "school": "Balance", "spell": 205203928, "name": "Scion of Balance"},
+  {"quest": "WC-MidEM-MAIN-002", "goal": "4_WizardQuestGoalsTalkNPC", "school": "Death", "spell": 1521078555, "name": "Scion of Death"},
+  {"quest": "WC-MidEM-MAIN-002", "goal": "4_WizardQuestGoalsTalkNPC", "school": "Fire", "spell": 1125749132, "name": "Scion of Fire"},
+  {"quest": "WC-MidEM-MAIN-002", "goal": "4_WizardQuestGoalsTalkNPC", "school": "Ice", "spell": 414216592, "name": "Scion of Ice"},
+  {"quest": "WC-MidEM-MAIN-002", "goal": "4_WizardQuestGoalsTalkNPC", "school": "Life", "spell": 1226363276, "name": "Scion of Life"},
+  {"quest": "WC-MidEM-MAIN-002", "goal": "4_WizardQuestGoalsTalkNPC", "school": "Myth", "spell": 1873219188, "name": "Scion of Myth"},
+  {"quest": "WC-MidEM-MAIN-002", "goal": "4_WizardQuestGoalsTalkNPC", "school": "Storm", "spell": 1039085841, "name": "Scion of Storm"},
+  {"quest": "WC-MidEM-MAIN-002", "badge": "Empyrea2-BecomeScion-1", "name": "Scion of Bartleby badge"},
+  {"quest": "KR-MOON-TUT-002", "school": "Death", "spell": 618112933, "name": "Shadow Shepherd"},
+  {"quest": "KR-MOON-TUT-002", "school": "Fire", "spell": 880498565, "name": "Shadow Fiend"},
+  {"quest": "KR-MOON-TUT-002", "school": "Ice", "spell": 339705174, "name": "Shadow Sentinel"},
+  {"quest": "KR-MOON-TUT-002", "school": "Life", "spell": 734050659, "name": "Shadow Seraph"},
+  {"quest": "KR-MOON-TUT-002", "school": "Myth", "spell": 1270928567, "name": "Shadow Nova"},
+  {"quest": "KR-MOON-TUT-002", "school": "Storm", "spell": 339557111, "name": "Shadow Shrike"},
+  {"quest": "KR-MOON-TUT-002", "school": "Balance", "spell": 1681884339, "name": "Shadow Trickster"},
+  {"quest": "KR-MOON-TUT-002", "badge": "ShadowMagic", "name": "Initiate Shadowmancer badge"},
+  {"quest": "KT-SPHUB-C01-005", "badge": "FinishKT-HUB", "name": "Order of the Fang badge"}
 ]
