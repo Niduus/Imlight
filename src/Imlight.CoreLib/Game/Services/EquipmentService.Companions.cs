@@ -102,6 +102,11 @@ internal partial class EquipmentService {
 
             entity.m_inactiveBehaviors[companion.LeashSlot] = QuestCompanions.MakeLeash(companion, playerObj.m_globalID);
 
+            // The companion templates are pet templates, sent like a summoned pet (ZoneEntity.BuildClientPet).
+            if (entity is WizClientPet pet) {
+                pet.m_leashed = true;
+            }
+
             zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_SPAWNENTITY {
                 CoreObject = entity,
                 Template = companion.Template,

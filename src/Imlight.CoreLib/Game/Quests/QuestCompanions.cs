@@ -162,24 +162,24 @@ internal static class QuestCompanions {
         }
 
         // Started by a running quest, or kept away by one.
-        var started = new Dictionary<ulong, string>();
+        var started = new Dictionary<ulong, (string Quest, QuestEffectTemplate Effect)>();
         var keptAway = new HashSet<ulong>();
         foreach (var questName in quests) {
             var results = SpiralDB.GetQuestByName(questName)?.m_startResults?.m_results;
             foreach (var result in results ?? []) {
                 switch (result) {
                     case ResToggleAccompanyNPC toggle when toggle.m_templateID != 0:
-                        Note(toggle.m_templateID, toggle.m_add, questName);
+                        Note(toggle.m_templateID, toggle.m_add, questName, null);
                         break;
                     case ResToggleQuestEffect effect when GetEffect($"{effect.m_effectName}") is { m_accompanyID: not 0 } template:
-                        Note(template.m_accompanyID, effect.m_addEffect, questName);
+                        Note(template.m_accompanyID, effect.m_addEffect, questName, template);
                         break;
                 }
             }
         }
 
-        foreach (var (templateId, questName) in started) {
-            if (!keptAway.Contains(templateId) && MayGo(wizard, Get(templateId), questName)) {
+        foreach (var (templateId, (questName, effect)) in started) {
+            if (!keptAway.Contains(templateId) && MayGo(wizard, Get(templateId), questName, effect)) {
                 wanted.Add(templateId);
             }
         }
@@ -187,16 +187,16 @@ internal static class QuestCompanions {
         // A running quest on a companion's own list brings it along too (the steps in between its start and end).
         foreach (var companion in Known().Where(c => !started.ContainsKey(c.TemplateId) && !keptAway.Contains(c.TemplateId))) {
             var quest = companion.Accompany?.m_allowedQuests?.Select(q => $"{q}").FirstOrDefault(quests.Contains);
-            if (quest is not null && MayGo(wizard, companion, quest)) {
+            if (quest is not null && MayGo(wizard, companion, quest, null)) {
                 wanted.Add(companion.TemplateId);
             }
         }
 
         return wanted;
 
-        void Note(ulong templateId, bool add, string questName) {
+        void Note(ulong templateId, bool add, string questName, QuestEffectTemplate effect) {
             if (add) {
-                started.TryAdd(templateId, questName);
+                started.TryAdd(templateId, (questName, effect));
             }
             else {
                 keptAway.Add(templateId);
@@ -242,8 +242,8 @@ internal static class QuestCompanions {
     }
 
     // Whether the companion may come into the wizard's area: its own area list when it keeps to one, and the start
-    // requirements of its quest effect (where the game lets it go).
-    private static bool MayGo(Wizard wizard, Companion companion, string questName) {
+    // requirements of the quest effect that brought it, or else of its own (the areas the game lets it go into).
+    private static bool MayGo(Wizard wizard, Companion companion, string questName, QuestEffectTemplate effect) {
         if (companion is null) {
             return false;
         }
@@ -254,7 +254,7 @@ internal static class QuestCompanions {
             return false;
         }
 
-        var requirements = accompany?.m_questEffectTemplate?.m_startReqs;
+        var requirements = effect?.m_startReqs ?? accompany?.m_questEffectTemplate?.m_startReqs;
         if (requirements?.m_requirements is not { Count: > 0 }) {
             return true;
         }
