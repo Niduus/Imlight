@@ -198,6 +198,11 @@
         "m_bShowsObject": false,
         "m_persist": false,
         "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleAccompanyNPC, Imcodec.ObjectProperty",
+        "m_add": true,
+        "m_templateID": 1513100
       }
     ]
   },

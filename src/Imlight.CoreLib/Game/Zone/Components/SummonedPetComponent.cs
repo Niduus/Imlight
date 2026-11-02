@@ -54,7 +54,8 @@ internal sealed class SummonedPetComponent(ZoneEntity entity) : ZoneEntityCompon
     private bool _dismissed;
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
-        => template is GameObjectTemplate { m_templateID: PetFactory.GENERIC_PET_TEMPLATE_ID };
+        => template is GameObjectTemplate { m_templateID: PetFactory.GENERIC_PET_TEMPLATE_ID }
+           || Imlight.CoreLib.Game.Quests.QuestCompanions.IsCompanionTemplate(template);
 
     public override void OnPlayerLeave(IActorRef playerActor, ulong id) {
         if (id != 0 && id == GetOwnerId()) {

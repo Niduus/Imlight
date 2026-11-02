@@ -635,6 +635,11 @@
         "m_bShowsObject": false,
         "m_persist": false,
         "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleQuestEffect, Imcodec.ObjectProperty",
+        "m_addEffect": true,
+        "m_effectName": "Istar"
       }
     ]
   },

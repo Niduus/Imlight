@@ -533,7 +533,15 @@ public class ZoneEntity(
 
         // A pet's behaviors come from PetFactory (look, name, and the leash after the template's slots).
         if (ActiveGameObject is not WizClientPet) {
+            var own = ActiveGameObject.m_inactiveBehaviors;
             gameObj = CoreObjectFactory.InitializeCoreObjectBehaviors(gameObj, Template);
+
+            // A leash the server tied (a quest companion, QuestCompanions) stays in its slot; the template alone has none.
+            for (var i = 0; own is not null && i < own.Count && i < gameObj.m_inactiveBehaviors.Count; i++) {
+                if (own[i] is LeashBehavior leash && gameObj.m_inactiveBehaviors[i] is null) {
+                    gameObj.m_inactiveBehaviors[i] = leash;
+                }
+            }
         }
 
         // Let each component contribute its behaviors.

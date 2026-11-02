@@ -156,6 +156,11 @@
         "m_dynaModClientTag": "KR-KondhaDesert-NPC34 instance",
         "m_useQuestAsOriginator": false,
         "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleQuestEffect, Imcodec.ObjectProperty",
+        "m_addEffect": true,
+        "m_effectName": "Bolthy"
       }
     ]
   },
