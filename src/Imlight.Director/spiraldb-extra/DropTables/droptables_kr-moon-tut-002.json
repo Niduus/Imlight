@@ -1,0 +1,13 @@
+{
+  "Name": "KR-MOON-TUT-002",
+  "Description": "Khrysalis quest A Pact with Darkness (QA wiki guide, Niduus 2026-11-02): 290 gold, no XP",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 290,
+  "MaxGold": 290,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

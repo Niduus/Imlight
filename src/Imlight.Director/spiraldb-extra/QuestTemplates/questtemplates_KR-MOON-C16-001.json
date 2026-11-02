@@ -149,6 +149,15 @@
         "m_questName": "KR-MOON-C14-001",
         "m_applyNOT": false,
         "m_operator": "ROP_AND"
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "KR-MOON-TUT-002",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
       }
     ],
     "m_applyNOT": false,
