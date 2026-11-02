@@ -35,7 +35,101 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Not much, I realize, but it's home. Has been for quite a while. Anyway, I believe I have who you're looking for inside my hut.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_15.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447331,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "One of the Justicars, suffering the Frog Prince's poison. She's the only one from her squad that made it. And she doesn't have much longer.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_16.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447331,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I was in those fields to get enough Humongishfrog Venom to work up an antidote, but I still need one more thing.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_17.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447331,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "A Snipe. Go hunt for one. Take this bag, find some Snipe, battle them until you catch one.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_18.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447331,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Then bring me that Snipe and I can save the Justicar. She may know something about your captive friend.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_19.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447331,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z09_HelenasCamp",
       "m_locationName": "Northeast Aero Plains",
@@ -108,7 +202,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You caught a Snipe? Good. I can use its saliva in a potion to stabilize our friend here. But it could still be days before she wakes.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_HelenaF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Helena_EM2_20.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447331,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/EM_Z09_NEAeroplains",
       "m_locationName": "Northeast Aero Plains",

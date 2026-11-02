@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-HUSK-NPC02-A_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "We're too late!",
+                "m_picture": "GUI/NpcPortraits/Human_Mellori_C_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/Mellori_EM2_99.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1448072,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z16_I05_BrokenBough_A",
       "m_locationName": "ZoneLocName_1448105",
@@ -182,8 +208,8 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "EM-ZANA-NPC29",
-                "m_nameOverride": "WC-NPCs_00002498",
+                "m_personaName": "EM-HUSK-NPC03-E_Persona",
+                "m_nameOverride": "",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
@@ -194,7 +220,7 @@
                 "m_soundFile": "Sound/Dialogue/Bat_EM2_70.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
-                "m_actorTemplateID": 1254475,
+                "m_actorTemplateID": 1448092,
                 "m_cameraName": ""
               },
               {
@@ -209,6 +235,40 @@
                 "m_dialog": "WizQst1618DC_00000039",
                 "m_picture": "GUI/NpcPortraits/Portrait_Tree_BartlebyProjection_A_NPC.dds",
                 "m_soundFile": "Sound/Dialogue/Bartleby_EM2_46.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254475,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-ZANA-NPC29",
+                "m_nameOverride": "WC-NPCs_00002498",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You must infuse the Chaos Heart with your Paradox Essence!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Tree_BartlebyProjection_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/Bartleby_EM2_58.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254475,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-ZANA-NPC29",
+                "m_nameOverride": "WC-NPCs_00002498",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "With the healed Heart as the backbeat, we can Sing the Song of Creation, and reweave the threads of Reality that have been torn. Go!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Tree_BartlebyProjection_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/Bartleby_EM2_49.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1254475,

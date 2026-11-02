@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-RUBAL-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Whoah! Talk about scary! I don't know how dangerous they are, but these titles sure are intimidating!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_106.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397034,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z04_HallsOfConfusion",
       "m_locationName": "Rubal Wastes",
@@ -72,7 +98,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-RUBAL-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "That was... elucidating. I think I even expanded my vocabulary. Let's see what's next.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_107.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397034,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z04_HallsOfConfusion",
       "m_locationName": "Rubal Wastes",
@@ -110,7 +162,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-RUBAL-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Look, Master! It's the Ark already! Antipathy, that's the same as Empathy, right?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_108.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397034,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z04_HallsOfConfusion",
       "m_locationName": "Rubal Wastes",
@@ -147,7 +225,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-RUBAL-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "All right, so maybe I was wrong. Note to self: Antipathy is not a good thing. Let's just move on now.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_109.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397034,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z04_HallsOfConfusion",
       "m_locationName": "Rubal Wastes",
@@ -185,7 +289,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Spirit of Intolerance",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "And what are YOU doing in here? This chamber is for Spirits only. One step further and you will be banished... with extreme prejudice.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Spirit_Ignornance_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SpiritofIntolerance_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z04_HallsOfConfusion",
       "m_locationName": "Rubal Wastes",
@@ -222,7 +352,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-RUBAL-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "All right. That must be the real Ark of Empathy there. Let's take it and leave before we run into some other form of foolishness.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_110.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397034,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z04_HallsOfConfusion",
       "m_locationName": "Rubal Wastes",
@@ -262,7 +418,33 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-RUBAL-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Back to Nabo-whatever-his-name-is. We need to get the Yakhal Chronoshard too, unless we want to turn Shamiss against us.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_111.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397034,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z04_HallsOfConfusion",
       "m_locationName": "Rubal Wastes",
@@ -305,57 +487,6 @@
           {
             "m_dialogTag": "Completion",
             "m_dialogEntries": [
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "MR-RUBAL-NPC01_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "The Ark of Empathy? So not all the House Qhats have forgotten? The Qhats once used the Ark often. We kept it here in the Halls of Clarity.",
-                "m_picture": "GUI/NpcPortraits/Portrait_Fish_Scholar_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Nabopolassar_MIR_04.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1379039,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "MR-RUBAL-NPC01_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "But over time, the House Qhats withdrew from world politics and quit communicating. The Halls of Clarity have become the Halls of Confusion.",
-                "m_picture": "GUI/NpcPortraits/Portrait_Fish_Scholar_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Nabopolassar_MIR_05.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1379039,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "MR-RUBAL-NPC01_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "The Ark of Empathy remains, and you are welcome to it, but I fear disuse has driven even the books in there to turn dangerous. Good luck to you.",
-                "m_picture": "GUI/NpcPortraits/Portrait_Fish_Scholar_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Nabopolassar_MIR_06.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1379039,
-                "m_cameraName": ""
-              },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "MR-RUBAL-NPC01_Persona",
@@ -573,6 +704,74 @@
             "m_dialog": "That is why you've come, isn't it? I would be horribly disappointed otherwise.",
             "m_picture": "GUI/NpcPortraits/Portrait_Fish_Scholar_A_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Nabopolassar_MIR_03.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1379039,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-RUBAL-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Of course. My Master and I came here seeking a magical artifact. It's supposed to help overcome communication barriers...?",
+            "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_105.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1397034,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-RUBAL-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Ark of Empathy? So not all the House Qhats have forgotten? The Qhats once used the Ark often. We kept it here in the Halls of Clarity.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Fish_Scholar_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Nabopolassar_MIR_04.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1379039,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-RUBAL-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But over time, the House Qhats withdrew from world politics and quit communicating. The Halls of Clarity have become the Halls of Confusion.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Fish_Scholar_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Nabopolassar_MIR_05.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1379039,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-RUBAL-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Ark of Empathy remains, and you are welcome to it, but I fear disuse has driven even the books in there to turn dangerous. Good luck to you.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Fish_Scholar_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Nabopolassar_MIR_06.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1379039,

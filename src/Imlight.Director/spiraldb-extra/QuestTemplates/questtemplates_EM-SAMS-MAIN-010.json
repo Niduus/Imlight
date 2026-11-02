@@ -118,6 +118,23 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-CHAOS-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Wizard, we can cover more ground if we split up. Go!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_93.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1451083,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "EM-DEST-NPC01_Persona",
                 "m_nameOverride": "NPCs_01748898",
                 "m_nameSTKey": null,
@@ -241,6 +258,23 @@
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1451215,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-CHAOS-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Listen, Koel, our Streamportal can get your people away from here if you evacuate them to the clearing below. How can we help?",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_92.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1451083,
             "m_cameraName": ""
           }
         ]

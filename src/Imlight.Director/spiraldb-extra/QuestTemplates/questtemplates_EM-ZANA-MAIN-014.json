@@ -96,7 +96,101 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-ZANA-NPC36_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "They are now that I'm here.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_CaptainF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/CaptainThuria_EM2_07.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447315,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-ZANA-NPC14_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Captain Thuria, this Beacon was a gift from Raven herself, the light to inspire Empyrea against the Shadow. Please try not to blow it up.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Alphoi_CasterF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/ZigiStardust_EM2_05.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254375,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-ZANA-NPC36_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Relax, I won't. Only thing I'm bringing is a Light Net. Hope you don't mind, Wizard, but I recruited your Technologist to handle it.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_CaptainF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/CaptainThuria_EM2_08.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447315,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-ZANA-NPC06_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Hmm, I suppose I am a Technologist. And I must confess this Light Net device is quite intriguing.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Sparck_EM2_27.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254357,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-ZANA-NPC36_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Latest thing off the line from the boys in the Academy. Should stop a Shadow Creature in its tracks. Now, let's go Bat hunting.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_CaptainF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/CaptainThuria_EM2_09.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447315,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z02_BeaconHope",
       "m_locationName": "ZoneLocName_1447317",
@@ -133,7 +227,118 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-ZANA-NPC30_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Paradox, paradox, where to find a paradox? Hard to think in this light, but I need it to... WIZARD! What are you...",
+                "m_picture": "GUI/NpcPortraits/Portrait_Shadow_Bat_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Bat_EM2_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254476,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-ZANA-NPC06_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Firing Light Net!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Sparck_EM2_34.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254357,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-ZANA-NPC30_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "*Snarls* Nimbari. You always did have such wonderful toys.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Shadow_Bat_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Bat_EM2_04.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254476,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-ZANA-NPC36_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "So did you. What exactly were you working on here? Something with the Luminiferous Essence maybe? Where is it?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_CaptainF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/CaptainThuria_EM2_15.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447315,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-ZANA-NPC30_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I don't have it.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Shadow_Bat_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Bat_EM2_05.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254476,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-ZANA-NPC36_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Sure you don't. The Justicars will get it out of you. Good work, Wizard, Technologist. Report back to Zigi. I'll mop up here.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_CaptainF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/CaptainThuria_EM2_16.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447315,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z02_BeaconHope",
       "m_locationName": "ZoneLocName_1447317",
@@ -265,7 +470,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-ZANA-NPC01-C_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Wizard, I hear congratulations are in order. At last, we have captured the Bat. Now the question is: what to do with him?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Alphoi_King_C_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Khan_EM2_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254433,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z02_ThroneRoom",
       "m_locationName": "Zanadu",

@@ -35,7 +35,84 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-RUBAL-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "My lord, I must urge you to reconsider. I think it would be wise to at least talk to them...",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_SorcererF_D_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/AdvisorFancyFries_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397051,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-RUBAL-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "How dare you question my decision? You... h-h-hrar! Hairball! Now, where was I? I don't pay you to be wise, I pay you to protect me...!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Stout_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/BaronHairkonnen_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397052,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-RUBAL-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Um... I believe this is the negotiator here now...",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_SorcererF_D_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/AdvisorFancyFries_MIR_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397051,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-RUBAL-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "What? How did they just waltz in here? H-h-hrar! Nevermind! They're here to get me! Quickly - save me! Get them!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Stout_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/BaronHairkonnen_MIR_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397052,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z04_BaronsAudienceChamber",
       "m_locationName": "Baron's Audience Chamber",
@@ -72,7 +149,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-RUBAL-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "If you had just been patient, I was trying to reason with him, but now orders have been issued, and they must be followed. Guards!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_SorcererF_D_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/AdvisorFancyFries_MIR_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397051,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR_StandIn_AdvisorFancyFries_NPC_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You may have defeated us, but the Baron has safeguards to prevent you from ever getting into his Retreat. You might as well leave the Manor.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_SorcererF_D_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/AdvisorFancyFries_MIR_04.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1404012,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z04_BaronsAudienceChamber",
       "m_locationName": "Baron's Audience Chamber",
@@ -110,7 +230,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-RUBAL-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "There you are! I guess I forgot to tell you to turn right when you got into the Manor... silly me! Anyways, come this way and meet the Baroness.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_67.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397034,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z04_CalixcoManor",
       "m_locationName": "Rubal Wastes",

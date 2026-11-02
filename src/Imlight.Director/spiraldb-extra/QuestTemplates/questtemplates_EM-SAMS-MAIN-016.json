@@ -135,7 +135,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Feral Kalamar",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Grrrrrrr!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Kalamar_Citizen_C_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/FeralKalamar_EM2_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-CHAOS-NPC01-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Take them down, Wizard, but be gentle! Then feed them the Lichen.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Kalamar_Citizen_H_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Maram_EM2_22.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1451088,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z14_FeralClearing",
       "m_locationName": "Savage Clearing",
@@ -212,7 +255,33 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Kalamar Gatherer",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The madness has left me. Thank you, stranger!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Kalamar_Citizen_I_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/KalamarGatherer_EM2_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z14_FeralClearing",
       "m_locationName": "Savage Clearing",
@@ -249,7 +318,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-CHAOS-NPC01-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Let's get out of here, and then you can tell me why you're running into the jungle instead of out of it.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Kalamar_Citizen_H_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Maram_EM2_18.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1451088,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/EM_Z14_ChaosJungle",
       "m_locationName": "Chaos Jungle",
@@ -301,23 +396,6 @@
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "Wizard, I found you! What did I miss?",
-                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_105.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1451083,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "EM-CHAOS-NPC02_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "Remember the Aethyr Sensors we set up on Aeriel? I got one and modified it to receive Communicator signals.",
                 "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_106.mp3",
@@ -338,6 +416,23 @@
                 "m_dialog": "If Beans keeps transmitting, we should be able to triangulate his position. I'll need to take several readings to do it.",
                 "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_107.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1451083,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-CHAOS-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Wizard, I found you! What did I miss?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_105.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1451083,

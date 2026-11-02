@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Ice Foreman",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I'm impressed. I knew the Sayameez would send someone, but I didn't think you could handle the cold. Let's turn down the temperature, shall we?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Sorcerer_H_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/IceForeman_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z06_DeepFreeze",
       "m_locationName": "Deep Freeze",
@@ -72,7 +98,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I was trying to be tough, Master, but now that the Qhat's out of the bag, I have to admit, I am a little chilly. Let's keep moving.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_94.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389038,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z06_DeepFreeze",
       "m_locationName": "Deep Freeze",
@@ -110,7 +162,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Freezy Qhat",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The Sayameez had me working down here so long, I froze solid, but somehow I developed powers too. Come closer. Let me show you!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Stout_E_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/FreezyQhat_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z06_DeepFreeze_02",
       "m_locationName": "Deep Freeze",
@@ -147,7 +225,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Ooh, that was chilling, wasn't it, Master? Heehee. I made a joke. What? You don't think I'm funny? Fine. Last time I try to cheer you up.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_95.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389038,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z06_DeepFreeze_02",
       "m_locationName": "Deep Freeze",
@@ -185,7 +289,84 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "What's the meaning of this? An outsider? I know you didn't just wander into the Deep Freeze, so am I to assume the Sayameez sent you?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_SorcererF_G_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Miriam_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389044,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You assume correctly, but I'm not sure we came to the right place, unless... are you the Ice Princess?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_96.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389038,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "My comrades have taken to calling me that, but it's not a title of my choosing. My name is Miriam, and I am really just a humble Ice Keeper.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_SorcererF_G_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Miriam_MIR_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389044,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I was, at least... until I saw the truth - the Sayameez bask in the sun, while we freeze down here. They must fall! Just as those who stand with them!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_SorcererF_G_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Miriam_MIR_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389044,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z06_DeepFreeze_03",
       "m_locationName": "Deep Freeze",
@@ -222,7 +403,118 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You've proven your magic is superior to mine, Wizard, but you cannot convince me to abandon my cause. Until justice is done, I will not rest!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_SorcererF_G_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Miriam_MIR_04.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389044,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The Sayameez designed this Mountain, but that doesn't give them the right to bask in the sun all day while we toil!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_SorcererF_G_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Miriam_MIR_05.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389044,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC02-C_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Oh no! I knew this would happen. I told you, Miriam... you can't be so exposed! If you were lost, your followers would be devastated, as would I.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Sorcerer_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ViceChairFreeder_MIR_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401003,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Your concern is touching, my love, but what we're fighting for is too important. I can't allow our relationship to interfere...",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_SorcererF_G_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Miriam_MIR_06.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389044,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC02-C_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "And I wouldn't ask that... bah! You're just as stubborn as the Chairman. Neither of you has expressed even the slightest willingness to talk!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Sorcerer_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ViceChairFreeder_MIR_04.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401003,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC02-C_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "There may be a way to work all this out, however. Wizard, I could use your help. Let us leave the Freeze and meet in Miriam's Hovel.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Sorcerer_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ViceChairFreeder_MIR_05.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401003,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z06_DeepFreeze_03",
       "m_locationName": "Deep Freeze",

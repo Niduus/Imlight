@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AZ-ZOCOLO-NPC14_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You there! Got a second? Please, it's an emergency! Life or death!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Beans_EMP_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254319,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Azteca/AZ_Z00_Zocalo",
       "m_locationName": "The Zocalo",
@@ -87,23 +113,6 @@
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "You there! Got a second? Please, it's an emergency! Life or death!",
-                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Beans_EMP_01.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1254319,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "AZ-ZOCOLO-NPC14_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "So, are you a powerful Wizard, or do you just dress like one?",
                 "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Beans_EMP_02.mp3",
@@ -124,40 +133,6 @@
                 "m_dialog": "You are? Great. Whatever powerful Wizard stuff you're up to is going to have to wait. My Captain needs your help! Follow me!",
                 "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Beans_EMP_03.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1254319,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "AZ-ZOCOLO-NPC14_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Here's where the frenzied she-beasts captured him. I'm no good in a fight, but I'll do what I can. We just gotta hurry!",
-                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Beans_EMP_04.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1254319,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "AZ-ZOCOLO-NPC14_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Darn it, James, I'm a doctor not a locksmith! Wizard, would you be so kind as to use the Priestess' Key to let Captain Pork out of his pen?",
-                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Beans_EMP_05.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1254319,
@@ -238,7 +213,84 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AZ-ZOCOLO-NPC14_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Here's where the frenzied she-beasts captured him. I'm no good in a fight, but I'll do what I can. We just gotta hurry!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Beans_EMP_04.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254319,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AZ-ZOCOLO-NPC15_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Beans, my trusted companion, I knew you'd bring help. Get me out of here before these morosely magnificent Priestesses sacrifice me!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254321,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AZ-ZOCOLO-NPC15_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The one with the soulful eyes and the flawless scaly skin has the Key to the Cage. Careful. She bites.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254321,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Crying Sky Priestess",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Only the worthy may enter this Shrine to the Crying Sky!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Parasaur_drkPriestF_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/CryingSkyPriestess_EMP_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z00_CryingSkyShrine",
       "m_locationName": "Crying Sky Shrine",
@@ -275,7 +327,67 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Crying Sky Priestess",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Enough! Such unrest only further angers the Crying Sky! Here's the Key to the Cage. Just promise you'll take the Pigman far away!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Parasaur_drkPriestF_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/CryingSkyPriestess_EMP_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AZ-ZOCOLO-NPC15_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Aww, don't pretend you won't miss me. Beans, you heard the lovely lady. Let me out of this cage. We've got places to go.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254321,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AZ-ZOCOLO-NPC14_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Darn it, James, I'm a doctor not a locksmith! Wizard, would you be so kind as to use the Priestess' Key to let Captain Pork out of his pen?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Beans_EMP_05.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254319,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z00_CryingSkyShrine",
       "m_locationName": "Crying Sky Shrine",
@@ -322,7 +434,67 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AZ-ZOCOLO-NPC15_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Freedom at last! I warned you captivating captors that my Crew would come for me. There will be no sacrifice this day!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_04.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254321,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Crying Sky Priestess",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "What? We never planned to sacrifice you! We locked you up to keep you out of our personal space while we prayed.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Parasaur_drkPriestF_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/CryingSkyPriestess_EMP_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AZ-ZOCOLO-NPC15_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "And that only caused you more grief, didn't it? Beans, new Wizard friend, let's leave these gals to their prayers.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_05.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1254321,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z00_CryingSkyShrine",
       "m_locationName": "Crying Sky Shrine",

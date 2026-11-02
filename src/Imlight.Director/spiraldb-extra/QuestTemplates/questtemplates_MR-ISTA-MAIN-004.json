@@ -35,7 +35,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-ISTA-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Look at this place, will you? To think, Catstantinople was once the capital of the Ancient Qhat Empire. In the end? Buried and forgotten.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Ophidian_Thug_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SnakePlizkin_MIR_19.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1378130,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-ISTA-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "All right, well, enough sightseeing. The entrance to the Snakish Passage should be right over there. That'll get us into the Prison.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Ophidian_Thug_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SnakePlizkin_MIR_20.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1378130,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z05_CatstanRuins",
       "m_locationName": "Istanboa",
@@ -72,7 +115,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-ISTA-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Looks like this is the welcoming party... quiet bunch, eh? Look, Wizard, you're gonna have to take the lead here. Ghosts are not my thing.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Ophidian_Thug_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SnakePlizkin_MIR_21.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1378130,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z05_SnakishPass",
       "m_locationName": "Snakish Pass",
@@ -109,7 +178,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-ISTA-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "What? No repentant apology? No throwaway sour grapes line? Just plain, dumb silence. I know they're ghosts, but I expected something. Let's go.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Ophidian_Thug_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SnakePlizkin_MIR_22.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1378130,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z05_SnakishPass",
       "m_locationName": "Snakish Pass",
@@ -147,7 +242,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-ISTA-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Oh, you gotta be kidding me! More of these quiet Qhats? It's a little unnerving. Yeah, I don't like this, not at all. Let's get it over with.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Ophidian_Thug_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SnakePlizkin_MIR_23.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1378130,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z05_SnakishPass",
       "m_locationName": "Snakish Pass",
@@ -184,7 +305,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-ISTA-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "So... what do you do when you're not Wizarding? Actually, never mind. I hate small talk, but this silence is killing me. Let's just keep moving.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Ophidian_Thug_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SnakePlizkin_MIR_24.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1378130,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z05_SnakishPass",
       "m_locationName": "Snakish Pass",
@@ -222,7 +369,67 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-ISTA-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Finally, the Emperor himself... C'mon! Surely you've got something to say for yourself... some vague, empty threat? This is crazy!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Ophidian_Thug_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SnakePlizkin_MIR_25.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1378130,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Emperor Paleolo",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Meoww... meoww...",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Sorcerer_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/EmperorPaleolos_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-ISTA-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Really? A haunted meow? Now I see why you guys keep quiet. The silence was better than that. Wizard, let's wipe the floor with this guy.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Ophidian_Thug_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SnakePlizkin_MIR_26.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1378130,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z05_SnakishPass",
       "m_locationName": "Snakish Pass",
@@ -259,7 +466,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-ISTA-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "All right, I have to admit, those Ancient Qhats weren't nearly as tough as I expected. Guess that's why they got beat by Baboolon.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Ophidian_Thug_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SnakePlizkin_MIR_27.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1378130,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-ISTA-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Anyhow, this should lead us straight into the heart of Tetrus Prison, and I believe that's where we'll find our girl.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Ophidian_Thug_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SnakePlizkin_MIR_28.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1378130,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z05_SnakishPass",
       "m_locationName": "Snakish Pass",
@@ -297,7 +547,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-ISTA-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "We're in. You see? When Snake Plizkin strikes a deal, he delivers. Our girl's behind bars somewhere on this cell block.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Ophidian_Thug_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SnakePlizkin_MIR_29.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1378130,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z05_TetrusPrison",
       "m_locationName": "Istanboa",
@@ -545,6 +821,74 @@
             "m_dialog": "As much as I enjoy sowing the seeds of chaos and disorder among the Serpentines, I must admit, I am more than ready to leave this hole.",
             "m_picture": "",
             "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/TaffyMongu_MIR_26.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1378128,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-ISTA-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Don't count your snake eggs before they hatch, Mongu. Looking at these Blueprints - we can't break in the way I broke out.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Ophidian_Thug_F_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SnakePlizkin_MIR_16.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1378130,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-ISTA-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Only way we're getting in is through the Ruins of Catstantinople. I assume you know Istanboa was Catstantinople. Long time gone now, of course.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Ophidian_Thug_F_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SnakePlizkin_MIR_17.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1378130,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-ISTA-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Don't ask me why it got the works. I just know there's a path in the Ruins, the Snakish Passage - and we can use that to get into Tetrus Prison.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Ophidian_Thug_F_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SnakePlizkin_MIR_18.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1378130,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-ISTA-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Troubling. I heard those Ruins are haunted by the ghosts of the Ancient Qhats. But if you are sure this is the only way, then so be it.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Mongoose_Warrior_C_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/TaffyMongu_MIR_27.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1378128,

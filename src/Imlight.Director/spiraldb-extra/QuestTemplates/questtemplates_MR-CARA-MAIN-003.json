@@ -101,6 +101,23 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-CARA-NPC06_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "He speaks truly. The Ghultures are undead. Death is a function of Time, and Time is my specialty. Bring me Ghulture Bones and I can dispel them.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Sorcerer_K_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ChronomancerMauris_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1379038,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "MR-CARA-NPC02_Persona",
                 "m_nameOverride": "",
                 "m_nameSTKey": null,
@@ -114,6 +131,40 @@
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1379034,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-CARA-NPC06_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Stand back. Mmm. Meow! That isn't going to work.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Sorcerer_K_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ChronomancerMauris_MIR_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1379038,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-CARA-NPC06_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Whatever enchantment was used to manipulate time and re-animate the Ghultures... it is too strong for me to dispel. I am sorry, my friends.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Sorcerer_K_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ChronomancerMauris_MIR_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1379038,
                 "m_cameraName": ""
               },
               {
@@ -224,6 +275,23 @@
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1379034,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-CARA-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Terrified? I'd call it smart. I'm bright yellow - the perfect target for those birds. Until they vacate those trees, I'll be staying right here.",
+            "m_picture": "GUI/NpcPortraits/Portrait_PaKMan_Merchant_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/PallyPackman_MIR_01.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1381111,
             "m_cameraName": ""
           }
         ]

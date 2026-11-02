@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-MINE-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Zut Alors! What is my father doing down here? Probably some crazy, new prediction. Come on, it's dangerous. We have to tell him to leave.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Penguin_Prisoner_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Cesar_POL_27.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1346306,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Polaris/PL_Z05_FrigidMine",
       "m_locationName": "Frigid Maw",
@@ -110,6 +136,23 @@
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1346309,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-MINE-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You don't need psychic abilities to see that. Rasputin has her. That's why we need to hurry. We don't have time for this nonsense right now...",
+                "m_picture": "GUI/NpcPortraits/Portrait_Penguin_Prisoner_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Cesar_POL_28.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1346306,
                 "m_cameraName": ""
               }
             ]
@@ -200,6 +243,74 @@
             "m_dialog": "She said she needed Ivan's help to steal something from Rasputin, but what does it matter now? You must go after them!",
             "m_picture": "",
             "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/RedRosa_POL_71.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1346303,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "PL-MINE-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "This passage will take us deeper into the Frigid Maw. It goes past the Pebble Trough. It's a cave where we have this silly old tradition.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Penguin_Prisoner_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Cesar_POL_24.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1346306,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "PL-MINE-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "To court a woman in Urville, young men are supposed to collect a Betrothal Pebble from the Trough and give it to their sweetheart.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Penguin_Prisoner_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Cesar_POL_25.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1346306,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "PL-MINE-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Clementine's been expecting me to present her with one, and if times were better, I would. But right now, I just want to make sure she's safe.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Penguin_Prisoner_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Cesar_POL_26.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1346306,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "PL-MINE-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Don't worry. She will be fine. If anyone can save her, this Wizard can. You go on. I will wait outside the mine. Good luck, mes amis.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Penguin_TownieF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/RedRosa_POL_72.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1346303,

@@ -35,7 +35,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Shazin Deshekels",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Haha! You fools posture with your politics and battles while the Fortee Thieves steal everything right out from under your snouts!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Baboon_Thug_B_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ShazinDeshekels_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-AGGR-NPC08_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Is that a joke about me not having a nose? If so, it's not a good one. And what are you bragging about stealing? All the treasure's still here.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Skull_King_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Ozzy_MIR_56.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1381259,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z02_PalaceTreasureVault02",
       "m_locationName": "Palace Treasure Vault",
@@ -72,7 +115,67 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Shazin Deshekels",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Ali Baboon's already collected what he came for, including your precious little Djinni's lamp. He left me to get the rest, after I defeat you!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Baboon_Thug_B_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ShazinDeshekels_MIR_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Shazin Deshekels",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Fine! I leave the rest of the treasures... maybe I can still catch up! Boss! Ali! Wait for me!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Baboon_Thug_B_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ShazinDeshekels_MIR_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-AGGR-NPC08_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Does that mean Ali Baboon made off with Istar's lamp? That's not good. Not good at all. Guess we need to tell the Sultana.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Skull_King_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Ozzy_MIR_57.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1381259,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z02_PalaceTreasureVault02",
       "m_locationName": "Palace Treasure Vault",
@@ -116,23 +219,6 @@
           {
             "m_dialogTag": "Completion",
             "m_dialogEntries": [
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "MR-AGGR-NPC04-D_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Are they still in there? This seems like a strange coincidence. Quickly, Wizard, you must go in and try to apprehend them.",
-                "m_picture": "GUI/NpcPortraits/Portrait_Human_SultanaF_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SultanaSharzad_MIR_79.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1397102,
-                "m_cameraName": ""
-              },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "MR-AGGR-NPC04-D_Persona",
@@ -261,6 +347,40 @@
             "m_dialog": "This Grandfather Spider said the battle was just a feint. If so, what was his plan...? And I just realized... where is Istar? Has anyone seen her?",
             "m_picture": "GUI/NpcPortraits/Portrait_Human_SultanaF_A_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SultanaSharzad_MIR_78.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1397102,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-AGGR-NPC03-E_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Sultana, I have some bad news. During the battle, the Thuggies seized the opportunity to break into the Palace Treasure Vault!",
+            "m_picture": "GUI/NpcPortraits/Portrait_FennecFox_Boss_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Swan_MIR_14.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1404010,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-AGGR-NPC04-D_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Are they still in there? This seems like a strange coincidence. Quickly, Wizard, you must go in and try to apprehend them.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Human_SultanaF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SultanaSharzad_MIR_79.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1397102,

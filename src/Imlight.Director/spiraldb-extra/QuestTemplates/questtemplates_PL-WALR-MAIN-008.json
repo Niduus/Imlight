@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Tundarian Enforcer",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Grr. The Armory is restricted to Enforcers only. You know the rules. I suggest you leave before we arrest you on curfew violation.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Bear_Solider_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/TundarianEnforcer_POL_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Polaris/Interiors/PL_Z00_I14_Barracks_A",
       "m_locationName": "Walruskberg Armory",
@@ -72,7 +98,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Tundarian Enforcer",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Very well. Then we will just look the other way this time. In fact, we'll just go the other way.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Bear_Solider_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/TundarianEnforcer_POL_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Polaris/Interiors/PL_Z00_I14_Barracks_A",
       "m_locationName": "Walruskberg Armory",
@@ -110,7 +162,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Marshal Kamensky",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "It's about time! I've been waiting over an hour. That stroganoff better not be cold!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Bear_Officer_B_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/MarshalKamensky_POL_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Marshal Kamensky",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Wait a minute. You don't look like the serving girl. What are you doing in here?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Bear_Officer_B_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/MarshalKamensky_POL_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Polaris/Interiors/PL_Z00_I14_Barracks_B",
       "m_locationName": "Walruskberg",
@@ -147,7 +242,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Marshal Kamensky",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Umph! I guess I will go out for stroganoff today.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Bear_Officer_B_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/MarshalKamensky_POL_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Polaris/Interiors/PL_Z00_I14_Barracks_B",
       "m_locationName": "Walruskberg",
@@ -187,7 +308,50 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS> You stamp Bearyshnakov's papers with the Marshal's Seal, authorizing him to leave the city. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Art_Quest_Parchment.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Narrator_POL_07.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS> Now you need only to deliver the papers to the Captain of The Hummingbird down at the Harbor. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Art_Quest_Parchment.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Narrator_POL_08.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Polaris/Interiors/PL_Z00_I14_Barracks_B",
       "m_locationName": "Walruskberg",

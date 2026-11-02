@@ -35,7 +35,67 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-AGGR-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Well, here we are - the River District. I know. It's so dingy. So let's not dilly-dally. We do our work here and get back to my Master.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_04.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1381237,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-AGGR-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "She's amazing, isn't she? The Sultana. The best master I've ever had. My last master was a military captain. He was sweet, but it didn't last.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_05.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1381237,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-AGGR-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Now, where were we? Oh, getting into the Ferals' Waterfront Warehouse. We'll have to rough up the Felons until one of them coughs up a key.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_06.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1381237,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/MR_Z02_Aggrobah",
       "m_locationName": "Aggrobah",
@@ -72,7 +132,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Feral Felon",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Meow! Mother told me to stay away from Alley Qhats! I should've listened. All my potential, wasted. You want the Warehouse Key? Fine - take it!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Warrior_D_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/FeralFelon_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/MR_Z02_Aggrobah",
       "m_locationName": "Aggrobah",
@@ -110,7 +196,67 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Feral Felon",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Intruders in the Warehouse! We keep them away from the treasures at all cost!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Warrior_D_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/FeralGuard_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-AGGR-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Ugh! More Ferals to fight? Really? How boring! Oh, I have an idea! With just a little Djinni magic... and now we have...",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_07.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1381237,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-AGGR-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Hmm... that didn't help, did it? Phooey! They were supposed to be little bugs, not scarabs - I hate scarabs! Those clicky mandibles creep me out!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_08.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1381237,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z02_Warehouse01",
       "m_locationName": "Warehouse",
@@ -147,7 +293,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-AGGR-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "All right, now that we're done with those nasty scarabs, we can get what we came for. The Armband of Zaimeer is probably in that chest.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_09.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1381237,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z02_Warehouse01",
       "m_locationName": "Warehouse",
@@ -190,7 +362,50 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-AGGR-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Perfect. Now just a little more Djinni magic... and we leave evidence here that the Thuggie gang was behind this.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_10.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1381237,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-AGGR-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Oh goodness! I had no idea this would be so much fun! Let's get back to the apartment and tell my Master the good news!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_11.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1381237,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z02_Warehouse01",
       "m_locationName": "Warehouse",
@@ -245,46 +460,29 @@
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "Humor me, Faizal. I believe it will. Istar will accompany the Wizard. First, they will steal back the Armband of Zaimeer from the Ferals gang.",
-                "m_picture": "GUI/NpcPortraits/Portrait_Human_SultanaF_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SultanaSharzad_MIR_15.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1381236,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "MR-AGGR-NPC04_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "That would be all right, I suppose. Perhaps you can tell me more about this \"Overlord Xerxes\". Wizard, Istar, our hopes go with you. Good luck.",
-                "m_picture": "GUI/NpcPortraits/Portrait_Human_SultanaF_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SultanaSharzad_MIR_16.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1381236,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "MR-AGGR-NPC04_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "That was fast! You recovered the Armband of Zaimeer? Excellent! I'll see it returned to its rightful owner. Good work, you two!",
                 "m_picture": "GUI/NpcPortraits/Portrait_Human_SultanaF_A_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SultanaSharzad_MIR_18.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1381236,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-ALKA-NPC05-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Yes, Absolutely! Fantastic stuff. We're so pleased.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Skull_King_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Ozzy_MIR_35.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1381172,
                 "m_cameraName": ""
               }
             ]
@@ -493,6 +691,91 @@
             "m_dialog": "When the gangs go to war, we step in and negotiate a truce requiring all gangs to stay out of the Bazaar. We restore order to the city's center.",
             "m_picture": "GUI/NpcPortraits/Portrait_Human_SultanaF_A_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SultanaSharzad_MIR_14.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1381236,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-AGGR-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Oh please! This plan is preposterous. With all due respect, Sultana, it would be better to leave the city. This plan will never work.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Dromel_Wizard_B_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/VizierFaizal_MIR_03.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1381239,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-AGGR-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Humor me, Faizal. I believe it will. Istar will accompany the Wizard. First, they will steal back the Armband of Zaimeer from the Ferals gang.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Human_SultanaF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SultanaSharzad_MIR_15.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1381236,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-AGGR-NPC05_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Don't worry, Wizard. I'll show you the way. Your part is to get in and steal back the treasure. I'll make sure the Thuggies gang gets the blame.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_03.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1381237,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-ALKA-NPC05-B_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I guess if the Djinni's going along, I'd just be dead weight. Undead weight, I suppose. How about I just stay here with the Sultana?",
+            "m_picture": "GUI/NpcPortraits/Portrait_Skull_King_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Ozzy_MIR_34.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1381172,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-AGGR-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "That would be all right, I suppose. Perhaps you can tell me more about this \"Overlord Xerxes\". Wizard, Istar, our hopes go with you. Good luck.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Human_SultanaF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/SultanaSharzad_MIR_16.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1381236,

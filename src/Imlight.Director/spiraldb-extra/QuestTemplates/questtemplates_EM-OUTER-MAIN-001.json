@@ -262,6 +262,23 @@
             "m_dialogEvent": "",
             "m_actorTemplateID": 1391489,
             "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-OUTER-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Wait! We come in peace - this is all just a terrible accident! The Wizard can help you - just tell us what to do!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_150.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1391490,
+            "m_cameraName": ""
           }
         ]
       },

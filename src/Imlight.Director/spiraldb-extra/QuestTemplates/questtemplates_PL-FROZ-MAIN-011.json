@@ -60,6 +60,23 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC20_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I know. It's kinda fun, isn't it? So many exciting things going on. Have you heard the riddles the Auroracle spoke to the Wizard?",
+                "m_picture": "GUI/NpcPortraits/Human_Mellori_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Mellori_POL_33.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340507,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "PL-BLEAK-NPC10_Persona",
                 "m_nameOverride": "",
                 "m_nameSTKey": null,
@@ -73,6 +90,74 @@
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1346220,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Yes. Ivan comes from Urville Station. Very bad there. Rasputin has turned town into prison camp. This is where he takes prisoners from Basstille!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Bear_Strongman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/IvanTheGreat_POL_49.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340488,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Many, many Pingouins there, being forced to work in Rasputin's mine. Ivan needs Wizard's help to free them. What do you say, comrade?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Bear_Strongman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/IvanTheGreat_POL_50.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340488,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC20_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You should go. They need you, and that'll give us time to research and try to figure out the meaning of the Auroracle's riddles.",
+                "m_picture": "GUI/NpcPortraits/Human_Mellori_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Mellori_POL_34.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340507,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Perfect! Then Ivan will go ahead. He will meet you on road near Urville Station.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Bear_Strongman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/IvanTheGreat_POL_51.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340488,
                 "m_cameraName": ""
               },
               {
@@ -130,7 +215,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Ivan is glad you are here, comrade. Urville Station was cozy village, but Rasputin has built walls and gates, turned it into prison camp.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Bear_Strongman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/IvanTheGreat_POL_52.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340488,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Polaris/PL_Z04_UrvilleStation",
       "m_locationName": "Urville Station",

@@ -173,6 +173,40 @@
             "m_dialogEvent": "",
             "m_actorTemplateID": 1379033,
             "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-CARA-NPC16_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Then I should return to the Sultana. I'd say it was fun, Wizard, and actually it was, except the last part. I'll see you again. I hope.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_163.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1378206,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "MR-CARA-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I will leave soon and wander the desert sands to meditate on our troubles. Resolve matters swiftly in Wizard City, and then meet me back here.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Dromel_Wizard_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Sandiago_MIR_52.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1379033,
+            "m_cameraName": ""
           }
         ]
       },

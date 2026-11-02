@@ -35,7 +35,135 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-CHRO-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You'll be surprised to hear it, but I actually waited for you to finish this. You've worked so hard, I wanted to at least give you a chance.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Spider_Grandfather_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/GrandfatherSpider_MIR_07.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401017,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-CHRO-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Really? You'd risk your Master Plan of destroying the Spiral just for the opportunity to rub our noses in it?",
+                "m_picture": "GUI/NpcPortraits/Human_Mellori_B_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Mellori_MIR_26.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401024,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-CHRO-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I would. It's one of the prerogatives of being a Primal Divine Force. I can be as petty and absurd as I want.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Spider_Grandfather_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/GrandfatherSpider_MIR_08.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401017,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-CHRO-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "But look at you, young lady! All grown up, confident and outspoken. Another drop of potential lost amid this sea of mediocrity.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Spider_Grandfather_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/GrandfatherSpider_MIR_09.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401017,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-CHRO-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "And you, Wizard, with you, I feel a special kinship at this point. That's why I've prepared a gift of sorts, a surprise from your past.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Spider_Grandfather_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/GrandfatherSpider_MIR_10.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401017,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-CHRO-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Using the Eye of History, I found a few creatures who sorely hoped to see you again. You'll find them guarding the Chronoshards.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Spider_Grandfather_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/GrandfatherSpider_MIR_11.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401017,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-CHRO-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "If you manage to overcome each of them, I'll be waiting with the Eye of History. You might want to be quick. Time is slipping away!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Spider_Grandfather_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/GrandfatherSpider_MIR_12.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401017,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z10_SandsofTime",
       "m_locationName": "Sands of Time",
@@ -72,7 +200,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Shadowbones",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I can't believe this! When Grandfather Spider dragged me from the grave, I thought he was pulling my leg, and he was! Ha!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Skeleton_Shadow_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Shadowbones_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Shadowbones",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "But how could I pass up even a remote chance to face you again? And with Shadow Magic? If only I had this before! Come! Give me my vengeance!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Skeleton_Shadow_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Shadowbones_MIR_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z10_EastTimeDunes",
       "m_locationName": "East Sands of Time",
@@ -109,7 +280,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-CHRO-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Was that the guy from Unicorn Way? Wow! When Grandfather Spider said he was digging up the past, I never dreamed he'd go THAT far back!",
+                "m_picture": "GUI/NpcPortraits/Human_Mellori_B_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Mellori_MIR_27.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401024,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-CHRO-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I wonder who's next. Grab that Chronoshard and let's go to the next Dune!",
+                "m_picture": "GUI/NpcPortraits/Human_Mellori_B_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Mellori_MIR_28.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401024,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z10_EastTimeDunes",
       "m_locationName": "East Sands of Time",
@@ -150,7 +364,33 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>As you collect the Chronoshard, it dissolves one of the Shadow Rays that was projected into the Sands of Time. <ITALICS>",
+                "m_picture": "GUI/QuestButtons/Art_Quest_ChronoShard_A01.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Narrator_MIR_64.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z10_EastTimeDunes",
       "m_locationName": "East Sands of Time",
@@ -188,7 +428,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Bort Shadowmane",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You! You stole all my fame and glory... and with no showmanship whatsoever! Now, I will finally get my rematch, and prove I am the best warrior!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cyclops_Shadow_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/BortShadowmane_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z10_WestTimeDune",
       "m_locationName": "West Sands of Time",
@@ -225,260 +491,12 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Mirage/Interiors/MR_Z10_WestTimeDune",
-      "m_locationName": "West Sands of Time",
-      "m_goalName": "6_WizardQuestGoalsKill",
-      "m_goalTitle": "WizardQuestGoals_Kill",
-      "m_goalType": "GOAL_TYPE_BOUNTY",
-      "m_npcAdjectives": [
-        "MR_Cyclops02WHelmet_Model_01.AdjRef"
-      ],
-      "m_bountyTotal": 1,
-      "m_bountyType": "BT_MOB_KILL"
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Aridian Chronoshard",
-        "m_descriptor2": "",
-        "m_count": 1,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/QuestButtons/Art_Quest_ChronoShard_A01.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [
-        "MR_AridianChronoshard",
-        "MR_AridianChronoshard_SandsofTime"
-      ],
-      "m_genericEvents": [],
-      "m_autoQualify": true,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Mirage/Interiors/MR_Z10_WestTimeDune",
-      "m_locationName": "West Sands of Time",
-      "m_goalName": "7_WizardQuestGoals00000058",
-      "m_goalTitle": "WizardQuestGoals_00000058",
-      "m_goalType": "GOAL_TYPE_USAGE",
-      "m_itemAdjectives": [
-        "MR_AridianChronoshard.AdjRef",
-        "MR_AridianChronoshard_SandsofTime.AdjRef"
-      ],
-      "m_itemTotal": 1
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Entrance",
-        "m_descriptor2": "",
-        "m_count": 0,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/QuestButtons/Location_MR_SandsOfTimeEntrance.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Mirage/Interiors/MR_Z10_SouthTimeDune",
-      "m_locationName": "South Sands of Time",
-      "m_goalName": "8_WizardQuestGoalsExplore",
-      "m_goalTitle": "WizardQuestGoals_Explore",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Mirage/Interiors/MR_Z10_SouthTimeDune",
-      "m_proximityTag": "",
-      "m_zoneExit": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 100,
-        "m_descriptor": "",
-        "m_descriptor2": "Shadowwock",
-        "m_count": 1,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/NpcPortraits/Portrait_Wyrm_Shadow_A_MOB.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Mirage/Interiors/MR_Z10_SouthTimeDune",
-      "m_locationName": "South Sands of Time",
-      "m_goalName": "9_WizardQuestGoalsKill",
-      "m_goalTitle": "WizardQuestGoals_Kill",
-      "m_goalType": "GOAL_TYPE_BOUNTY",
-      "m_npcAdjectives": [
-        "MR_Wyrm_Jabberwock_01.AdjRef"
-      ],
-      "m_bountyTotal": 1,
-      "m_bountyType": "BT_MOB_KILL"
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Yakhal Chronoshard",
-        "m_descriptor2": "",
-        "m_count": 1,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/QuestButtons/Art_Quest_ChronoShard_A01.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [
-        "MR-YakhalChronoshard",
-        "MR_YakhalChronoshard",
-        "MR_YakhalChronoshard_SandsofTime"
-      ],
-      "m_genericEvents": [],
-      "m_autoQualify": true,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Mirage/Interiors/MR_Z10_SouthTimeDune",
-      "m_locationName": "South Sands of Time",
-      "m_goalName": "10_WizardQuestGoals00000058",
-      "m_goalTitle": "WizardQuestGoals_00000058",
-      "m_goalType": "GOAL_TYPE_USAGE",
-      "m_itemAdjectives": [
-        "MR-YakhalChronoshard.AdjRef",
-        "MR_YakhalChronoshard.AdjRef",
-        "MR_YakhalChronoshard_SandsofTime.AdjRef"
-      ],
-      "m_itemTotal": 1
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "",
-        "m_descriptor2": "",
-        "m_count": 0,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/NpcPortraits/Human_Mellori_B_NPC.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
       "m_dialogList": {
         "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
         "m_dialogs": [
           {
             "m_dialogTag": "Completion",
             "m_dialogEntries": [
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "MR-CHRO-NPC05_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Really? You'd risk your Master Plan of destroying the Spiral just for the opportunity to rub our noses in it?",
-                "m_picture": "GUI/NpcPortraits/Human_Mellori_B_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Mellori_MIR_26.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1401024,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "MR-CHRO-NPC05_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Was that the guy from Unicorn Way? Wow! When Grandfather Spider said he was digging up the past, I never dreamed he'd go THAT far back!",
-                "m_picture": "GUI/NpcPortraits/Human_Mellori_B_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Mellori_MIR_27.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1401024,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "MR-CHRO-NPC05_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "I wonder who's next. Grab that Chronoshard and let's go to the next Dune!",
-                "m_picture": "GUI/NpcPortraits/Human_Mellori_B_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Mellori_MIR_28.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1401024,
-                "m_cameraName": ""
-              },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "MR-CHRO-NPC05_Persona",
@@ -529,7 +547,184 @@
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1401024,
                 "m_cameraName": ""
-              },
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Mirage/Interiors/MR_Z10_WestTimeDune",
+      "m_locationName": "West Sands of Time",
+      "m_goalName": "6_WizardQuestGoalsKill",
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_npcAdjectives": [
+        "MR_Cyclops02WHelmet_Model_01.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Aridian Chronoshard",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Art_Quest_ChronoShard_A01.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "MR_AridianChronoshard",
+        "MR_AridianChronoshard_SandsofTime"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>As you collect the Chronoshard, it dissolves another one of the Shadow Rays that was projected into the Sands of Time. <ITALICS>",
+                "m_picture": "GUI/QuestButtons/Art_Quest_ChronoShard_A01.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Narrator_MIR_65.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Mirage/Interiors/MR_Z10_WestTimeDune",
+      "m_locationName": "West Sands of Time",
+      "m_goalName": "7_WizardQuestGoals00000058",
+      "m_goalTitle": "WizardQuestGoals_00000058",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "MR_AridianChronoshard.AdjRef",
+        "MR_AridianChronoshard_SandsofTime.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Entrance",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Location_MR_SandsOfTimeEntrance.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Shadowwock",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Brillig is past, and arrived is my hour. You once took my Hearts, but left my head. Now I've grown in power. This time, you will be dead!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Wyrm_Shadow_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Shadowwock_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Mirage/Interiors/MR_Z10_SouthTimeDune",
+      "m_locationName": "South Sands of Time",
+      "m_goalName": "8_WizardQuestGoalsExplore",
+      "m_goalTitle": "WizardQuestGoals_Explore",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Mirage/Interiors/MR_Z10_SouthTimeDune",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "Shadowwock",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Portrait_Wyrm_Shadow_A_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "MR-CHRO-NPC05_Persona",
@@ -580,7 +775,123 @@
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1401024,
                 "m_cameraName": ""
-              },
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Mirage/Interiors/MR_Z10_SouthTimeDune",
+      "m_locationName": "South Sands of Time",
+      "m_goalName": "9_WizardQuestGoalsKill",
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_npcAdjectives": [
+        "MR_Wyrm_Jabberwock_01.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Yakhal Chronoshard",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Art_Quest_ChronoShard_A01.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "MR-YakhalChronoshard",
+        "MR_YakhalChronoshard",
+        "MR_YakhalChronoshard_SandsofTime"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>As you collect the Chronoshard, it dissolves the third Shadow Ray that was projected into the Sands of Time. Only one remains. <ITALICS>",
+                "m_picture": "GUI/QuestButtons/Art_Quest_ChronoShard_A01.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Narrator_MIR_66.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Mirage/Interiors/MR_Z10_SouthTimeDune",
+      "m_locationName": "South Sands of Time",
+      "m_goalName": "10_WizardQuestGoals00000058",
+      "m_goalTitle": "WizardQuestGoals_00000058",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "MR-YakhalChronoshard.AdjRef",
+        "MR_YakhalChronoshard.AdjRef",
+        "MR_YakhalChronoshard_SandsofTime.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Human_Mellori_B_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "MR-CHRO-NPC05_Persona",

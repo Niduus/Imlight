@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "OX ALARM! OX ALARM! THIS IS YOUR HELPFULLY LOUD OX ALARM! THE OXEN ARE ANXIOUS. REPEAT... *smash*",
+                "m_picture": "GUI/QuestButtons/Art_Quest_Start.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/OxAlarm_EM2_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/EM_Z08_SWAeroplains",
       "m_locationName": "ZoneLocName_1447342",
@@ -73,7 +99,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Doctor Demented",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Now, Wizard, what is your worst fear... oh, my connection to the Chain was severed in the fight. Pity.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Doll_ScientistF_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/DoctorDemented_EM2_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z08_DarkCloudBase",
       "m_locationName": "ZoneLocName_1447354",
@@ -110,7 +162,84 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC11_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The jig is up, you devilish wielder of personal demons! Now tell us, what does this Admiral character want with the Nimbari?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_43.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447335,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Doctor Demented",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Fine. As you know, we are making them afraid - of Dark Cloud attacks, of Myth Monsters, etc - because when they get nervous, they make weapons.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Doll_ScientistF_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/DoctorDemented_EM2_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Doctor Demented",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Such delightfully fiendish weapons, including a large Storm Cannon. The Admiral has need of it in his newest scheme. That is all I cared to know.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Doll_ScientistF_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/DoctorDemented_EM2_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERO-NPC11_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Hmm, hmm, hmm. Wizard, let's meet outside.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_44.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1447335,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z08_DarkCloudBase",
       "m_locationName": "ZoneLocName_1447354",
@@ -154,40 +283,6 @@
           {
             "m_dialogTag": "Completion",
             "m_dialogEntries": [
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "EM-AERO-NPC11_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "The jig is up, you devilish wielder of personal demons! Now tell us, what does this Admiral character want with the Nimbari?",
-                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_43.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1447335,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "EM-AERO-NPC11_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Hmm, hmm, hmm. Wizard, let's meet outside.",
-                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Pork_EM2_44.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1447335,
-                "m_cameraName": ""
-              },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "EM-AERO-NPC11_Persona",

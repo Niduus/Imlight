@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Tundra Troll",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Fine. Fine. Take the stupid Flapjack Pan! I don't know why she needs it though. Pingouins are supposed to eat crêpes! Is nothing sacred anymore? Gah!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Troll_Hunter_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/TundraTroll_POL_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Polaris/PL_Z02_ForlornTaig",
       "m_locationName": "Forlorn Tayg",
@@ -98,6 +124,23 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-BLEAK-NPC02-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Oh Lilly! It's time for us to depart. We've lost the wagon now, so you'll just have to carry the luggage...",
+                "m_picture": "GUI/NpcPortraits/Portrait_Walrus_AristocratF_B_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/DuchessCarwalina_POL_15.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1346204,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "PL-BLEAK-NPC03-B_Persona",
                 "m_nameOverride": "",
                 "m_nameSTKey": null,
@@ -111,6 +154,23 @@
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1346206,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-BLEAK-NPC02-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Don't be silly. I need you to carry the luggage...",
+                "m_picture": "GUI/NpcPortraits/Portrait_Walrus_AristocratF_B_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/DuchessCarwalina_POL_16.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1346204,
                 "m_cameraName": ""
               },
               {
@@ -223,6 +283,23 @@
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1346195,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-BLEAK-NPC05-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You don't understand, Mariya. Ivan and Wizard must get through! Ivan must visit Urville Station and Wizard must find Baba Yaga.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Bear_Strongman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/IvanTheGreat_POL_41.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1346203,
                 "m_cameraName": ""
               }
             ]

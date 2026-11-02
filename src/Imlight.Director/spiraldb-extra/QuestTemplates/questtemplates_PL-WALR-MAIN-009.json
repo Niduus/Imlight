@@ -37,230 +37,6 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Polaris/Interiors/PL_Z00_Operahouse_Dressingroom",
-      "m_locationName": "Walruskberg",
-      "m_goalName": "1_PutOn",
-      "m_goalTitle": "Put On",
-      "m_goalType": "GOAL_TYPE_USAGE",
-      "m_itemAdjectives": [
-        "PL-WAL-DancingBear.AdjRef"
-      ],
-      "m_itemTotal": 1
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Bolshoi Theater",
-        "m_descriptor2": "",
-        "m_count": 0,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/QuestButtons/Location_PL_Bolshoi_Theatre_Stage.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Polaris/Interiors/PL_Z00_Operahouse_Dressingroom",
-      "m_locationName": "Walruskberg",
-      "m_goalName": "2_WizardQuestGoals00000274",
-      "m_goalTitle": "WizardQuestGoals_00000274",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Polaris/Interiors/PL_Z00_Operahouse_Dressingroom",
-      "m_proximityTag": "",
-      "m_zoneExit": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Bolshoi Theater",
-        "m_descriptor2": "",
-        "m_count": 0,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/QuestButtons/Location_PL_Bolshoi_Theatre_Stage.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Polaris/Interiors/PL_Z00_OperaHouse",
-      "m_locationName": "Walruskberg",
-      "m_goalName": "3_WizardQuestGoals00000274",
-      "m_goalTitle": "WizardQuestGoals_00000274",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Polaris/Interiors/PL_Z00_OperaHouse",
-      "m_proximityTag": "",
-      "m_zoneExit": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Basstille Key",
-        "m_descriptor2": "",
-        "m_count": 1,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/QuestButtons/Quest_BastilleKey.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [
-        "PL-WAL-EmpressPillow"
-      ],
-      "m_genericEvents": [],
-      "m_autoQualify": true,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Polaris/Interiors/PL_Z00_OperaHouse",
-      "m_locationName": "Walruskberg",
-      "m_goalName": "4_WizardQuestGoals00000196",
-      "m_goalTitle": "WizardQuestGoals_00000196",
-      "m_goalType": "GOAL_TYPE_USAGE",
-      "m_itemAdjectives": [
-        "PL-WAL-EmpressPillow.AdjRef"
-      ],
-      "m_itemTotal": 1
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "",
-        "m_descriptor2": "",
-        "m_count": 0,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/NpcPortraits/Portrait_Bear_Ballerina_B_NPC.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Polaris/Interiors/PL_Z00_OperaHouse",
-      "m_locationName": "Walruskberg",
-      "m_goalName": "5_WizardQuestGoalsTalkNPC",
-      "m_goalTitle": "WizardQuestGoals_TalkNPC",
-      "m_goalType": "GOAL_TYPE_PERSONA",
-      "m_personaName": "PL-WAL-NPC07-B_Persona",
-      "m_usePatron": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Center Stage",
-        "m_descriptor2": "",
-        "m_count": 1,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/QuestButtons/Location_PL_Bolshoi_Theatre_Stage.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [
-        "PL-WAL-CenterStage"
-      ],
-      "m_genericEvents": [],
-      "m_autoQualify": true,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Polaris/Interiors/PL_Z00_OperaHouse",
-      "m_locationName": "Walruskberg",
-      "m_goalName": "6_Dance",
-      "m_goalTitle": "Dance",
-      "m_goalType": "GOAL_TYPE_USAGE",
-      "m_itemAdjectives": [
-        "PL-WAL-CenterStage.AdjRef"
-      ],
-      "m_itemTotal": 1
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "",
-        "m_descriptor2": "",
-        "m_count": 0,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/NpcPortraits/Portrait_Bear_Ballerina_B_NPC.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
       "m_dialogList": {
         "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
         "m_dialogs": [
@@ -317,7 +93,346 @@
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1340494,
                 "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Polaris/Interiors/PL_Z00_Operahouse_Dressingroom",
+      "m_locationName": "Walruskberg",
+      "m_goalName": "1_PutOn",
+      "m_goalTitle": "Put On",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "PL-WAL-DancingBear.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Bolshoi Theater",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Location_PL_Bolshoi_Theatre_Stage.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "What's this? A new dancer? You're late. Not the way to make a good first impression.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Seal_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/CaptainWinters_POL_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340491,
+                "m_cameraName": ""
               },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Well, what's the problem? Get in there. Don't keep the Empress waiting.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Seal_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/CaptainWinters_POL_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340491,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Polaris/Interiors/PL_Z00_Operahouse_Dressingroom",
+      "m_locationName": "Walruskberg",
+      "m_goalName": "2_WizardQuestGoals00000274",
+      "m_goalTitle": "WizardQuestGoals_00000274",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Polaris/Interiors/PL_Z00_Operahouse_Dressingroom",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Bolshoi Theater",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Location_PL_Bolshoi_Theatre_Stage.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS> The Theater is richly decorated, red velvet curtains trimmed with Tundarian gold. Very fancy. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Location_PL_Bolshoi_Theatre_Stage.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Narrator_POL_09.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS> Bearyshnakov is center stage, putting on an impressive performance. Even the guards are mesmerized. </ITALICS>",
+                "m_picture": "GUI/NpcPortraits/Portrait_Bear_Ballerina_B_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Narrator_POL_10.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS> In the balcony above, you can see Empress Antuskutte, enraptured by Bearyshnakov's bold routine. </ITALICS>",
+                "m_picture": "GUI/NpcPortraits/Portrait_Walrus_AristocratF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Narrator_POL_11.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Polaris/Interiors/PL_Z00_OperaHouse",
+      "m_locationName": "Walruskberg",
+      "m_goalName": "3_WizardQuestGoals00000274",
+      "m_goalTitle": "WizardQuestGoals_00000274",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Polaris/Interiors/PL_Z00_OperaHouse",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Basstille Key",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Quest_BastilleKey.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "PL-WAL-EmpressPillow"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>You gently pull the key out from under the Empress's pillow, but somehow, the movement catches her attention. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Quest_BastilleKey.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Narrator_POL_12.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Bravo, my little Bearyshnakov. Bravo!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Walrus_AristocratF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/EmpressAntuskette_POL_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340490,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Oh... but who is this? A new dancer? Oh, how exciting! I think I want to see you dance! Oh, yes, I do!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Walrus_AristocratF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/EmpressAntuskette_POL_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340490,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Go on down to the stage, darling. Oh, this will be such a treat!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Walrus_AristocratF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/EmpressAntuskette_POL_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340490,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Polaris/Interiors/PL_Z00_OperaHouse",
+      "m_locationName": "Walruskberg",
+      "m_goalName": "4_WizardQuestGoals00000196",
+      "m_goalTitle": "WizardQuestGoals_00000196",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "PL-WAL-EmpressPillow.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Portrait_Bear_Ballerina_B_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "PL-WAL-NPC07_Persona",
@@ -351,6 +466,86 @@
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1340494,
                 "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Polaris/Interiors/PL_Z00_OperaHouse",
+      "m_locationName": "Walruskberg",
+      "m_goalName": "5_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "PL-WAL-NPC07-B_Persona",
+      "m_usePatron": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Center Stage",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Location_PL_Bolshoi_Theatre_Stage.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "PL-WAL-CenterStage"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>At first, you feel clumsy and awkward, but after a moment, the music seems to take over, directing your movements. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Location_PL_Bolshoi_Theatre_Stage.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/Narrator_POL_13.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "How very... modern? I don't think I've ever seen anyone dance like that.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Walrus_AristocratF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/EmpressAntuskette_POL_04.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340490,
+                "m_cameraName": ""
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
@@ -367,6 +562,23 @@
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1340494,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Oh, well, if it's fashionable in Marleybone... we should see more of it. Haha! Very good. Yes. Bravo. Uh, you can stop now.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Walrus_AristocratF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/EmpressAntuskette_POL_05.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340490,
                 "m_cameraName": ""
               },
               {
@@ -402,7 +614,53 @@
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1340494,
                 "m_cameraName": ""
-              },
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Polaris/Interiors/PL_Z00_OperaHouse",
+      "m_locationName": "Walruskberg",
+      "m_goalName": "6_Dance",
+      "m_goalTitle": "Dance",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [
+        "PL-WAL-CenterStage.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Portrait_Bear_Ballerina_B_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "PL-WAL-NPC07_Persona",
@@ -418,6 +676,23 @@
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1340494,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Bearyshnakov, soon as you're dressed, the Empress wants a word. Bring that new dancer, too.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Seal_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/CaptainWinters_POL_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340491,
                 "m_cameraName": ""
               },
               {
@@ -509,7 +784,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "PL-WAL-NPC09-C_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Ah, there you are! I was worried. I heard there was some kind of scandal at the Bolshoi Theater.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Penguin_TownieF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_POL|WorldData|Sound/Dialogue/RedRosa_POL_38.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1346112,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Polaris/Interiors/PL_Z00_MidnightInn",
       "m_locationName": "Walruskberg",

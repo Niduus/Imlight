@@ -35,7 +35,84 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "This isn't politics, Sir. It's personal. The moment I met her, I knew she was the one, and nothing could keep us apart.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Sorcerer_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ViceChairFreeder_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389039,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Geez, Freeder. Why are you acting like some kind of lovesick puppy dog? Stop being so serious. Get out and bask in the sun, why don't you?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Stout_B_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ChairmanMeow_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389040,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The chairman has guests. If the Vice-Chair would be so kind as to excuse himself, we can move on to more pertinent business.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_Sorcerer_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Shamiss_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389041,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "If you don't want me here, then I will indeed make myself scarce. But we will discuss this matter at a later time. I am resolved.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Sorcerer_F_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ViceChairFreeder_MIR_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389039,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z06_ChairmanSuite",
       "m_locationName": "Chairman's Suite",
@@ -87,9 +164,9 @@
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "Geez, Freeder. Why are you acting like some kind of lovesick puppy dog? Stop being so serious. Get out and bask in the sun, why don't you?",
+                "m_dialog": "So... look what the Qhat dragged in. Finally we get the real negotiator from Aggrobah. This prissy little Djinni gets on my nerves.",
                 "m_picture": "GUI/NpcPortraits/Portrait_Cat_Stout_B_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ChairmanMeow_MIR_01.mp3",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ChairmanMeow_MIR_02.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1389040,
@@ -97,19 +174,19 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "MR-YAKH-NPC03_Persona",
+                "m_personaName": "MR-YAKH-NPC01_Persona",
                 "m_nameOverride": "",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "So... look what the Qhat dragged in. Finally we get the real negotiator from Aggrobah. This prissy little Djinni gets on my nerves.",
-                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Stout_B_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/ChairmanMeow_MIR_02.mp3",
+                "m_dialog": "It's Istar. My name? It's Istar.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_89.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
-                "m_actorTemplateID": 1389040,
+                "m_actorTemplateID": 1389038,
                 "m_cameraName": ""
               },
               {
@@ -144,6 +221,23 @@
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1389040,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "It's infuriating. We Sayameez designed this Mountain. We allow the brutish Bumbai to stay, but only if they keep the cool air coming!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Cat_Sorcerer_G_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Goofang_MIR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389042,
                 "m_cameraName": ""
               },
               {
@@ -201,7 +295,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "MR-YAKH-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Is it me, Master, or were those Qhats really rude? Not that it matters, I suppose. For now, we just have to play along and find this Prefect.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_MIR|WorldData|Sound/Dialogue/Istar_MIR_90.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1389038,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Mirage/MR_Z06_YakhalMountain",
       "m_locationName": "Yakhal Mountain",
