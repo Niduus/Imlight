@@ -278,6 +278,11 @@
         "m_dynaModClientTag": "KR-MoonCliffs-NPC17-Quest",
         "m_useQuestAsOriginator": false,
         "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleQuestEffect, Imcodec.ObjectProperty",
+        "m_addEffect": true,
+        "m_effectName": "Dyvim"
       }
     ]
   },

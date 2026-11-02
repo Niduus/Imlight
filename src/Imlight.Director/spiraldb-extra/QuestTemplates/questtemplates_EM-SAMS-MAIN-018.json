@@ -618,6 +618,11 @@
         "m_dynaModClientTag": "EM-CHAOS-NPC02-B instance",
         "m_useQuestAsOriginator": false,
         "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleAccompanyNPC, Imcodec.ObjectProperty",
+        "m_add": true,
+        "m_templateID": 1397652
       }
     ]
   },

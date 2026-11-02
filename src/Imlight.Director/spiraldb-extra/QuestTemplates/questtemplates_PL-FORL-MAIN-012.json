@@ -247,6 +247,11 @@
         "m_isQuestRegistry": false,
         "m_value": 0,
         "m_questName": ""
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleQuestEffect, Imcodec.ObjectProperty",
+        "m_addEffect": true,
+        "m_effectName": "BabaYaga"
       }
     ]
   },

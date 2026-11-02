@@ -258,6 +258,11 @@
         "m_dynaModClientTag": "EM-ZANA-NPC01-B instance",
         "m_useQuestAsOriginator": false,
         "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleAccompanyNPC, Imcodec.ObjectProperty",
+        "m_add": true,
+        "m_templateID": 1254436
       }
     ]
   },

@@ -341,6 +341,16 @@
         "m_bShowsObject": true,
         "m_persist": false,
         "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleAccompanyNPC, Imcodec.ObjectProperty",
+        "m_add": false,
+        "m_templateID": 1206089
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleQuestEffect, Imcodec.ObjectProperty",
+        "m_addEffect": false,
+        "m_effectName": "Dyvim"
       }
     ]
   },

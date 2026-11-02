@@ -213,6 +213,11 @@
         "m_dynaModClientTag": "KM-KCITY-NPC07 instance",
         "m_useQuestAsOriginator": false,
         "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleAccompanyNPC, Imcodec.ObjectProperty",
+        "m_add": true,
+        "m_templateID": 1513246
       }
     ]
   },

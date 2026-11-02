@@ -393,6 +393,16 @@
         "m_dynaModClientTag": "KR-Hive-NPC30 instance",
         "m_useQuestAsOriginator": false,
         "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleQuestEffect, Imcodec.ObjectProperty",
+        "m_addEffect": true,
+        "m_effectName": "TaylorColeridge"
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleQuestEffect, Imcodec.ObjectProperty",
+        "m_addEffect": true,
+        "m_effectName": "OldCob"
       }
     ]
   },

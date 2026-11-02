@@ -377,6 +377,11 @@
         "m_dynaModClientTag": "KR-CrescentBeach-NPC23 instance",
         "m_useQuestAsOriginator": false,
         "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleAccompanyNPC, Imcodec.ObjectProperty",
+        "m_add": true,
+        "m_templateID": 1206091
       }
     ]
   },

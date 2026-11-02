@@ -367,6 +367,11 @@
         "m_dynaModClientTag": "PL-BLEAK-NPC05-B-Fire",
         "m_useQuestAsOriginator": false,
         "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleAccompanyNPC, Imcodec.ObjectProperty",
+        "m_add": true,
+        "m_templateID": 1217845
       }
     ]
   },

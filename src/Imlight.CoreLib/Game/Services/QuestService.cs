@@ -1370,6 +1370,9 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
     }
 
     private void StartQuest(QuestTemplate quest, Wizard wizard) {
+        // Quest companions follow the quests the wizard has (QuestCompanions).
+        SessionActor.ActorRef.Tell(new RefreshQuestCompanions());
+
         // A quest the wizard already holds is never added again, so the client is not sent a second copy of it.
         if (wizard.HasQuest(quest.m_questName)) {
             Logger.Warning("Player '{0}' already has quest '{1}'; it is not started again.",
@@ -1668,6 +1671,9 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
     }
 
     private void SendRemoveQuest(ulong questId) {
+        // Quest companions follow the quests the wizard has (QuestCompanions).
+        SessionActor.ActorRef.Tell(new RefreshQuestCompanions());
+
         var wizard = GetActiveWizard();
         if (wizard is not null) {
             ForgetHelperQuest(wizard.CharId, questId);
@@ -1991,6 +1997,9 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
     }
 
     private void CompleteQuest(QuestInstance questInstance) {
+        // Quest companions follow the quests the wizard has (QuestCompanions).
+        SessionActor.ActorRef.Tell(new RefreshQuestCompanions());
+
         var wizard = GetActiveWizard();
 
         var xpScale = GetRunXpScale(wizard, questInstance.QuestName);

@@ -132,6 +132,9 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
                 SpawnPetEntity();
             }
 
+            // The quest companions of the old area went with it; the ones wanted here come in a moment.
+            QuestCompanionsAfterZoneChange();
+
             // Restore active elixirs HUD countdown and start the playtime ticker.
             RestoreActiveElixirs(playerCharacter);
             StartElixirPlaytimeTicker();

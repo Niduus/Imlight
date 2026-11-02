@@ -313,6 +313,11 @@
         "m_isQuestRegistry": false,
         "m_value": 0,
         "m_questName": ""
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleAccompanyNPC, Imcodec.ObjectProperty",
+        "m_add": true,
+        "m_templateID": 1391512
       }
     ]
   },

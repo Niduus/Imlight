@@ -181,6 +181,11 @@
         "m_dynaModClientTag": "WC-CATA-NPC10-A instance",
         "m_useQuestAsOriginator": false,
         "m_requirements": null
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleAccompanyNPC, Imcodec.ObjectProperty",
+        "m_add": true,
+        "m_templateID": 1451831
       }
     ]
   },
