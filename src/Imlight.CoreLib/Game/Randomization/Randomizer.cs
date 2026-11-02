@@ -216,6 +216,12 @@ public static class Randomizer {
         => s_replacedCreatures.TryRemove(spawnGlobalId, out originalTemplateId);
 
     /// <summary>
+    /// Finds the creature a swapped spawn stands in for, and keeps it remembered.
+    /// </summary>
+    internal static bool TryPeekReplacedCreature(ulong spawnGlobalId, out ulong originalTemplateId)
+        => s_replacedCreatures.TryGetValue(spawnGlobalId, out originalTemplateId);
+
+    /// <summary>
     /// Returns a random spell of the same type and pip cost for a creature's deck. Different every spawn.
     /// </summary>
     internal static uint RollCreatureSpell(uint spellTemplateId)

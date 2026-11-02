@@ -4065,6 +4065,19 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
         _encounterResetIds = [.. _encounterZoneMinions];
 
+        // A boss, or a creature a wizard here still needs for a quest, defeated in this lost battle comes back for the
+        // next try instead of leaving its spawn point used up for the rest of the instance (LostBattle.cs).
+        var comeBack = DefeatedThatComeBack();
+        if (comeBack.Count > 0) {
+            foreach (var id in comeBack) {
+                // Not deleted yet (its death scene still playing): the delete sees the mark and spawns it again.
+                ZonePath.Spared[id] = 0;
+            }
+
+            // Deleted already: the spawn point gives it back.
+            Entity.ZoneRef.Tell(new ZONE_102_PROTOCOL.MSG_ENCOUNTERBATTLEENDED { ResetIds = comeBack, OnlyReset = true });
+        }
+
         // Inform each player that they've been defeated.
         var defeatMsg = NewDefeat(diedInDuel: false);
         EnactActionOnSubCircles(circle => {
