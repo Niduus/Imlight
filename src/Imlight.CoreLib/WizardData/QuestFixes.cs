@@ -23,7 +23,8 @@ public static class QuestFixes {
 
     internal const string FILE_NAME = "QuestFixes.json";
 
-    private sealed record Line(string Persona, string Text, string Sound, string Picture, uint Actor);
+    // Name: the speaker's name written out, for a creature with no persona (a boss's lines); QuestTextKeys keys it.
+    private sealed record Line(string Persona, string Text, string Sound, string Picture, uint Actor, string Name = null);
 
     private sealed record Entry(string Quest, string Goal, string Tag, bool Replace, List<Line> Lines, int Count);
 
@@ -124,7 +125,7 @@ public static class QuestFixes {
 
             dialog.m_dialogEntries.Add(new NPCDialogEntry {
                 m_personaName = line.Persona ?? "",
-                m_nameOverride = "",
+                m_nameOverride = line.Name ?? "",
                 m_guiDisplay = "",
                 m_action = "",
                 m_dialogEvent = "",
