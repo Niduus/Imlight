@@ -6,7 +6,7 @@ tower has "Target location (Street6 Tower1 Entrance)"; a floor's "Trigger (Level
 "Target location (Level15 Level16 Entrance)". This pairs them up.
 
 Input: a folder of decoded zone wads (one folder per wad with gamedata.bin.json and triggers.xml.json, as the
-Manager's Game Files reader writes them) and a SpiralDB ZoneTransfer folder. Output: spiraldb-extra/DungeonTeleports
+Manager's Game Files reader writes them) and a SpiralDB ZoneTransfer folder. Output: data/imlight/DungeonTeleports
 JSON (a list of {ZoneName, Teleports}) and a plain report of what could not be paired.
 
     python3 make_dungeon_teleports.py <decoded wads> <spiraldb ZoneTransfer> <out.json> <report.txt>

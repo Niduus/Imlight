@@ -1,5 +1,5 @@
 """
-Writes spiraldb-extra/WoodenChests/WoodenChests.json, what the world's wooden chests give (WoodenChestComponent.cs).
+Writes data/imlight/WoodenChests/WoodenChests.json, what the world's wooden chests give (WoodenChestComponent.cs).
 
 - Chests: every wooden chest template on Wizard404 (api-scene-object, display name "Wooden Chest") with the game's
   own loot table names for it and the world its name starts with.
@@ -9,7 +9,7 @@ Writes spiraldb-extra/WoodenChests/WoodenChests.json, what the world's wooden ch
 - Worlds: each world's basic drops, the reagents, pet snacks and treasure cards its creatures drop (Wizard404 zones:
   spawn_mob_ids, mob pages: lootEntryCatalog). Weight = how many of the world's creatures drop it; rare ones are left out.
 
-Run: python3 -I make_wooden_chests.py <wizard404-data/raw> <wizard404-complete/raw> <spiraldb-extra/WoodenChests>
+Run: python3 -I make_wooden_chests.py <wizard404-data/raw> <wizard404-complete/raw> <data/imlight/WoodenChests>
 """
 import collections, glob, gzip, json, os, re, sys
 

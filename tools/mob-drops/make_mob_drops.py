@@ -1,5 +1,5 @@
 """
-Gives every creature Wizard404 lists drops for its drop tables (spiraldb-extra/NpcDropTable + DropTables/w404-*).
+Gives every creature Wizard404 lists drops for its drop tables (data/spiraldb/NpcDropTable + DropTables/w404-*).
 
 Before this only the gauntlet creatures and a few bosses had tables (838 creatures); every other creature dropped gold
 and nothing else. Wizard404's mob pages name each of the game's loot tables a creature uses, what is in each one and its
@@ -11,7 +11,7 @@ Treasure cards are named by their spell name ("Blademaster TC"): Wizard404 numbe
 
 Creatures and tables that already have a file are kept as they are (Central bosses, hand-made ones).
 
-Run: python3 -I make_mob_drops.py <wizard404-data/raw> <wizard404-complete/raw> <spiraldb-extra>
+Run: python3 -I make_mob_drops.py <wizard404-data/raw> <wizard404-complete/raw> <data/spiraldb>
 """
 import collections, glob, gzip, json, os, re, sys
 

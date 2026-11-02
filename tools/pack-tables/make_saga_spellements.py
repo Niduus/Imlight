@@ -1,12 +1,12 @@
 """
 Writes the Spellements of each Saga Spellement Pack (Malistaire, Morganthe, Spider, Dasein) from Wizard404's pack
-pages (data-pack.jsonl.gz) into spiraldb-extra/Packs/SagaSpellements.json, by arc and school.
+pages (data-pack.jsonl.gz) into data/imlight/Packs/SagaSpellements.json, by arc and school.
 
 The packs' slots (Spellements_P_Elemental_Arc01_01, _Spiritual_, _School_) have no loot table anywhere we can read,
 so the server rolls them from this list (SagaSpellements.cs). A Spellement's school is the one in its icon's name
 (Praxis/Praxis_Fire_Immolate.dds).
 
-Run: python3 -I make_saga_spellements.py <data-pack.jsonl.gz> <spiraldb-extra/Packs/SagaSpellements.json>
+Run: python3 -I make_saga_spellements.py <data-pack.jsonl.gz> <data/imlight/Packs/SagaSpellements.json>
 """
 import gzip, json, re, sys
 

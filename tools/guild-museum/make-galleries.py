@@ -1,5 +1,5 @@
 """
-Makes src/Imlight.Director/spiraldb-extra/GuildMuseum/Galleries.json, the Guild Museum's galleries, exhibits and
+Makes data/imlight/GuildMuseum/Galleries.json, the Guild Museum's galleries, exhibits and
 artifacts, from a COPY of the game files (nothing in the game folder is changed).
 
   python3 make-galleries.py <decoded Root.wad folder> "<Key details folder>" <out.json>

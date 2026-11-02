@@ -1,12 +1,12 @@
 """
 Writes the real booster pack loot tables from Wizard404's pack pages (data-pack.jsonl.gz) into
-spiraldb-extra/DropTables/droptables_pack_<name>.json, one file per table.
+data/spiraldb/DropTables/droptables_pack_<name>.json, one file per table.
 
 - Each gear piece that comes in level versions is listed once (its lowest level version); the server swaps it for
   the wizard's level when the pack opens (PackGearLevels.cs), as the real game picks among the versions for your level.
 - Chance is the item's weight in the table (Wizard404's drop_rate_ratio, in percent).
 
-Run: python3 -I make_pack_tables.py <data-pack.jsonl.gz> <spiraldb-extra/DropTables>
+Run: python3 -I make_pack_tables.py <data-pack.jsonl.gz> <data/spiraldb/DropTables>
 """
 import gzip, json, os, re, sys
 from collections import OrderedDict

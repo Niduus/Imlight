@@ -21,7 +21,9 @@ import re
 import sys
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-EXTRA = os.path.join(ROOT, "src", "Imlight.Director", "spiraldb-extra")
+# Our own data (data/README.md): SpiralDB-format records, and this server's own files.
+EXTRA_SPIRALDB = os.path.join(ROOT, "data", "spiraldb")
+EXTRA_IMLIGHT = os.path.join(ROOT, "data", "imlight")
 TREE = os.path.join(ROOT, "src", "Imlight.Setup", "Assets", "quest-tree.json.gz")
 
 # The worlds by quest code, as the Manager's Quests tab has them (ManagerWindow.Quests.cs s_questWorlds).
@@ -227,7 +229,7 @@ def comments_and_entries(path):
 
 def raw_quests(spiraldb):
     quests, source = {}, collections.defaultdict(set)
-    for folder, tag in [(os.path.join(spiraldb, "QuestTemplates"), "game"), (os.path.join(EXTRA, "QuestTemplates"), "ours")]:
+    for folder, tag in [(os.path.join(spiraldb, "QuestTemplates"), "game"), (os.path.join(EXTRA_SPIRALDB, "QuestTemplates"), "ours")]:
         for path in glob.glob(os.path.join(folder, "*.json")):
             try:
                 data = load_json(path)
@@ -298,13 +300,13 @@ def main(lookup, spiraldb, rewards_md, out_path):
     tree = json.load(gzip.open(TREE, "rt", encoding="utf-8"))
     fixes = reward_fixes(rewards_md)
     spells = collections.defaultdict(list)
-    for s in load_json(os.path.join(EXTRA, "QuestSpellRewards.json")):
+    for s in load_json(os.path.join(EXTRA_IMLIGHT, "QuestSpellRewards.json")):
         spells[s["quest"]].append(f"{s.get('name') or s['spell']}" + (f" ({s['school']} wizards)" if s.get("school") else ""))
     events = collections.defaultdict(list)
-    for comment, e in comments_and_entries(os.path.join(EXTRA, "QuestGoalEvents.json")):
+    for comment, e in comments_and_entries(os.path.join(EXTRA_IMLIGHT, "QuestGoalEvents.json")):
         events[e["quest"]].append((comment, e))
     dungeon_zones = set()
-    for path in glob.glob(os.path.join(EXTRA, "DungeonTeleports", "*.json")):
+    for path in glob.glob(os.path.join(EXTRA_IMLIGHT, "DungeonTeleports", "*.json")):
         for zone in load_json(path):
             for t in zone.get("Teleports", []):
                 dest = (t.get("Teleport") or {}).get("m_destinationZone")
