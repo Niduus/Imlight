@@ -233,6 +233,57 @@
             "m_dialogEvent": "",
             "m_actorTemplateID": 1513183,
             "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Maulwurf von Trap",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "WizQst170A8D_00000002",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/KM-Sweet-Cavity.dds",
+            "m_soundFile": "_CUES/_Worlds/KM/ForestStump_Cavity/KM_Stinger_ForestStump_StrangeNoise_02.ogg",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KM-KCITY-NPC17_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "WizQst170A8D_00000003",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Chicken_Miner_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_003|WorldData|Sound/Dialogue/TheQuakeCharmer_003_25.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1513260,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KM-KCITY-NPC01-H_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "WizQst170A8D_00000004",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Mole_Scholar_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_003|WorldData|Sound/Dialogue/MaulwurfvonTrap_003_126.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1513183,
+            "m_cameraName": ""
           }
         ]
       }

@@ -155,6 +155,23 @@
             "m_dialogEntries": [
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Cinnamon Troll",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst16FCD4_00000006",
+                "m_picture": "GUI/NpcPortraits/Portrait_Troll_Sweets_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_003|WorldData|Sound/Dialogue/CinnamonTroll_003_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "KM-NIBB-NPC12_Persona",
                 "m_nameOverride": "",
                 "m_nameSTKey": null,

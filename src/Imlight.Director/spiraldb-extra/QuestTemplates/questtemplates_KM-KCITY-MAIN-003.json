@@ -352,6 +352,57 @@
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1510014,
                 "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KM-KCITY-NPC03-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst170A7D_00000009",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Hamster_SecretaryF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_003|WorldData|Sound/Dialogue/Secretary_003_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1513005,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KM-KCITY-NPC03-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst16B09A_00000000",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Hamster_SecretaryF_A_NPC.dds",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1513005,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KM-KCITY-NPC03-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst170A7D_00000010",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Hamster_SecretaryF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_003|WorldData|Sound/Dialogue/Secretary_003_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1513005,
+                "m_cameraName": ""
               }
             ]
           }

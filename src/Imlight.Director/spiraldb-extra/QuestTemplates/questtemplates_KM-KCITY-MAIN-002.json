@@ -648,6 +648,23 @@
             "m_dialogEvent": "",
             "m_actorTemplateID": 1510012,
             "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KM-KCITY-NPC01-C_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "WizQst16B11C_00000003",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Mole_Scholar_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_003|WorldData|Sound/Dialogue/MaulwurfvonTrap_003_37.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1510046,
+            "m_cameraName": ""
           }
         ]
       },

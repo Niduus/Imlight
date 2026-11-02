@@ -1974,20 +1974,19 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             return;
         }
 
-        zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
-            EventName = $"{GOAL_COMPLETE_EVENT_PREFIX}{questName}_{goalName}",
-            PlayerActor = SessionActor.ActorRef,
-            PlayerGameObject = GetActiveGameObject(),
-        });
-
-        // The game's triggers wait on its own names for the steps of quests we rebuilt ("GoalComplete_<quest>_Goal 6").
+        // The game's triggers wait on its own names for the steps of quests we rebuilt ("GoalComplete_<quest>_Goal 6"),
+        // and on its own code for quests rebuilt from Wizard404's recordings ("GoalComplete_LM-NIGHT-MAIN-001_Goal").
         var template = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == questName);
-        foreach (var gameName in Imlight.CoreLib.Game.Quests.VanillaGoalNames.GameNames(template, goalName)) {
-            zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
-                EventName = $"{GOAL_COMPLETE_EVENT_PREFIX}{questName}_{gameName}",
-                PlayerActor = SessionActor.ActorRef,
-                PlayerGameObject = GetActiveGameObject(),
-            });
+        string[] goalNames = [goalName, .. Imlight.CoreLib.Game.Quests.VanillaGoalNames.GameNames(template, goalName)];
+        string[] questNames = [questName, .. Imlight.CoreLib.WizardData.QuestCodeAliases.GameCodes(questName)];
+        foreach (var quest in questNames) {
+            foreach (var goal in goalNames) {
+                zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
+                    EventName = $"{GOAL_COMPLETE_EVENT_PREFIX}{quest}_{goal}",
+                    PlayerActor = SessionActor.ActorRef,
+                    PlayerGameObject = GetActiveGameObject(),
+                });
+            }
         }
     }
 

@@ -288,6 +288,40 @@
             "m_dialogEvent": "",
             "m_actorTemplateID": 1488307,
             "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Gustaf the Not So Gallant Beggar",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "WizQst16B5B5_00000002",
+            "m_picture": "GUI/NpcPortraits/Hamster_Beggar_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_003|WorldData|Sound/Dialogue/Gustaf_003_12.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Gustaf the Not So Gallant Beggar",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "WizQst16B5B5_00000003",
+            "m_picture": "GUI/NpcPortraits/Hamster_Beggar_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_003|WorldData|Sound/Dialogue/Gustaf_003_13.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
           }
         ]
       }

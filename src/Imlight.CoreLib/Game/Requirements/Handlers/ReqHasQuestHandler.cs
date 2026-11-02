@@ -35,7 +35,8 @@ internal sealed class ReqHasQuestHandler : BaseRequirementHandler<ReqHasQuest> {
             return false;
         }
 
-        var questName = Requirement.m_questName;
+        // The game's code for a quest we rebuilt ("LM-NIGHT-MAIN-001" for our "LM-W404-...").
+        var questName = Imlight.CoreLib.WizardData.QuestCodeAliases.Resolve(Requirement.m_questName);
         if (string.IsNullOrEmpty(questName)) {
             return false;
         }
