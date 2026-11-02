@@ -128,23 +128,6 @@
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "I've never heard of an intelligent Goliath before, let alone a benign one. Still, it's worth a shot. I'll wait here for you!",
-                "m_picture": "GUI/NpcPortraits/Portrait_Mice_Knight_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/DyvimWhiteHart_KHR_43.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1205094,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "KR-Bastion-NPC27_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "The Goliath came through? Strange times!",
                 "m_picture": "GUI/NpcPortraits/Portrait_Mice_Knight_A_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/DyvimWhiteHart_KHR_45.mp3",
@@ -168,7 +151,19 @@
     }
   ],
   "m_startResults": {
-    "m_results": []
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "KR-SilentMarket-NPC01",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": null,
+        "m_zoneName": "Khrysalis/KR_Z01_SilentMarket",
+        "m_bShowsObject": true,
+        "m_persist": false,
+        "m_requirements": null
+      }
+    ]
   },
   "m_endResults": {
     "m_results": [
@@ -275,6 +270,40 @@
             "m_dialog": "I'm not sure how we can get a Rune to unlock the gate to the Moon Cliffs. You know someone who might help us?",
             "m_picture": "GUI/NpcPortraits/Portrait_Mice_Knight_A_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/DyvimWhiteHart_KHR_42.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1205094,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "<ITALICS>That Goliath you spared, Kaliklak, did say he owed you one. If you can find him, maybe he can help you out? </ITALICS>",
+            "m_picture": "GUI/NpcPortraits/Portrait_Goliath_Crusher_E_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/Narrator_KHR_22.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-Bastion-NPC27_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I've never heard of an intelligent Goliath before, let alone a benign one. Still, it's worth a shot. I'll wait here for you!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Mice_Knight_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/DyvimWhiteHart_KHR_43.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1205094,
