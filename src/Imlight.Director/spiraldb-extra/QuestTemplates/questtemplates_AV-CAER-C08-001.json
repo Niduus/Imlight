@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Red Cap",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The lute? We gave that to our master, Feva Earlicker. He lives in that building!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_AV_Redcap_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_AVA|WorldData|Sound/Dialogue/RedCap_AVA_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Avalon/AV_Z03_CaerLyon",
       "m_locationName": "Caer Lyon",
@@ -73,7 +99,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Feva Earlicker",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Take your silly lute! It didn't taste good, anyway!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_AV_Redcap_Boss_02_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_AVA|WorldData|Sound/Dialogue/FevaEarlicker_AVA_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Avalon/Interiors/AV_Z03_Froudling02",
       "m_locationName": "Feva's Hideout",
@@ -117,40 +169,6 @@
           {
             "m_dialogTag": "Completion",
             "m_dialogEntries": [
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "AV-CAER-NPC11_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Do you think you could find the Red Caps who have my Lute? I think they are still here in the city.",
-                "m_picture": "GUI/NpcPortraits/Art_Portrait_AV_Weasel_Minstrel.dds",
-                "m_soundFile": "|Sound_Dialogue_AVA|WorldData|Sound/Dialogue/InnesIdle_AVA_09.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 537881,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "AV-CAER-NPC11_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Perhaps then I could remember your Axe of Ages or whatever it was.",
-                "m_picture": "GUI/NpcPortraits/Art_Portrait_AV_Weasel_Minstrel.dds",
-                "m_soundFile": "|Sound_Dialogue_AVA|WorldData|Sound/Dialogue/InnesIdle_AVA_10.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 537881,
-                "m_cameraName": ""
-              },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "AV-CAER-NPC11_Persona",
@@ -284,6 +302,40 @@
             "m_dialog": "I tried to replace it with this Fruit Lute, but it's not working out for me.",
             "m_picture": "GUI/NpcPortraits/Art_Portrait_AV_Weasel_Minstrel.dds",
             "m_soundFile": "|Sound_Dialogue_AVA|WorldData|Sound/Dialogue/InnesIdle_AVA_07.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 537881,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AV-CAER-NPC11_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Do you think you could find the Red Caps who have my Lute? I think they are still here in the city.",
+            "m_picture": "GUI/NpcPortraits/Art_Portrait_AV_Weasel_Minstrel.dds",
+            "m_soundFile": "|Sound_Dialogue_AVA|WorldData|Sound/Dialogue/InnesIdle_AVA_09.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 537881,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AV-CAER-NPC11_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Perhaps then I could remember your Axe of Ages or whatever it was.",
+            "m_picture": "GUI/NpcPortraits/Art_Portrait_AV_Weasel_Minstrel.dds",
+            "m_soundFile": "|Sound_Dialogue_AVA|WorldData|Sound/Dialogue/InnesIdle_AVA_10.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 537881,

@@ -494,6 +494,23 @@
             "m_dialogEvent": "",
             "m_actorTemplateID": 227165,
             "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "CL-CAMP-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Can you go and collect the Leiden jars and use them to jump-start the galvanic towers? Be careful not to shock yourself!",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/PiperMelville_CEL_18.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
           }
         ]
       },

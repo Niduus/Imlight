@@ -37,7 +37,50 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>The wagon was attacked by a cowardly ambush. A trail leads off into the jungle, with Jackal prints alongside. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Art_Quest_ZF_BrokenWagon.dds",
+                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/Narrator_ZFA_47.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>The trail leads that way. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Location_ZF_Zamunda_Trail.dds",
+                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/Narrator_ZFA_48.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Zafaria/ZF_Z05_Zamunda_Outskirts",
       "m_locationName": "ZoneLocName_466150",
@@ -74,7 +117,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>You find the sacks of provisions the Jackals took from the wagons. Now to return them to Captain Sunrunner. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Quest_GH_Bundle.dds",
+                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/Narrator_ZFA_49.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Zafaria/ZF_Z05_Zamunda_Outskirts",
       "m_locationName": "ZoneLocName_466150",
@@ -164,6 +233,23 @@
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
+                "m_dialog": "Did you find those Jackal Bandits yet? The city could really use those provisions. Start looking at the wagon.",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_Sizana_Sunrunner_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/SizaniSunrunner_ZFA_07.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 465281,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "ZF-OUT-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
                 "m_dialog": "Who did you say you were again? No matter. If Captain Blackhoof vouches for you, you're well-striped in my book.",
                 "m_picture": "GUI/NpcPortraits/Art_Portrait_Sizana_Sunrunner_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/SizaniSunrunner_ZFA_03.mp3",
@@ -218,23 +304,6 @@
                 "m_dialog": "Hunt down the Jackal Bandits and recover our provisions! Look for clues at the wagon.",
                 "m_picture": "GUI/NpcPortraits/Art_Portrait_Sizana_Sunrunner_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/SizaniSunrunner_ZFA_06.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 465281,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "ZF-OUT-NPC01_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Did you find those Jackal Bandits yet? The city could really use those provisions. Start looking at the wagon.",
-                "m_picture": "GUI/NpcPortraits/Art_Portrait_Sizana_Sunrunner_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/SizaniSunrunner_ZFA_07.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 465281,

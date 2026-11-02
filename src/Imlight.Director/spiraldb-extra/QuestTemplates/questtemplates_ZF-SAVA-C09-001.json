@@ -95,6 +95,23 @@
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 466161,
                 "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>The last Fire Lion Ravager drops a carved staff that is Zebra-made. It looks like something a guide might carry. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Art_Quest_Zebra_Staff.dds",
+                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/Narrator_ZFA_30.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
               }
             ]
           }
