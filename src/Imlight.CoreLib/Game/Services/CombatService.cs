@@ -63,7 +63,7 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
 
     private const uint NO_AGGRO_EFFECT_STRINGID = 1618528611;
 
-    private const uint NO_AGGRO_EFFECT_DURATION_IN_SECONDS = 3;
+    private const uint NO_AGGRO_EFFECT_DURATION_IN_SECONDS = 12;
 
     /// <summary>
     /// Die = Delete mode: a character that is still dead when its battle ends is deleted.
@@ -174,7 +174,7 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         GetActiveWizard().IsInDuel = false;
         _currentDuelActor = null;
         EquipMount();
-        // Creatures leave a wizard alone for 3 seconds after a won battle; one touched then starts the next battle
+        // Creatures leave a wizard alone for 12 seconds after a won battle (Niduus, 2026-11-02: was 3); one touched then starts the next battle
         // the moment it ends (Niduus, 2026-10-25).
         SetNoAggroGrace();
 
