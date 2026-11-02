@@ -110,7 +110,11 @@ public static class QuestFixes {
         }
 
         dialog.m_dialogEntries ??= [];
+        // "replace" rebuilds the dialog in the listed order. A line the capture already had (same sound) is moved, not
+        // rebuilt, so its camera, animations and walk-away NPC stay; its speaker and picture take the listed ones.
+        var kept = new List<NPCDialogEntry>();
         if (entry.Replace) {
+            kept.AddRange(dialog.m_dialogEntries.OfType<NPCDialogEntry>());
             dialog.m_dialogEntries.Clear();
         }
 
@@ -120,6 +124,26 @@ public static class QuestFixes {
             if (dialog.m_dialogEntries.OfType<NPCDialogEntry>().Any(e =>
                     (!string.IsNullOrEmpty(line.Sound) && string.Equals(e.m_soundFile, line.Sound, StringComparison.OrdinalIgnoreCase))
                     || e.m_dialog == line.Text)) {
+                continue;
+            }
+
+            var old = string.IsNullOrEmpty(line.Sound) ? null : kept.FirstOrDefault(e =>
+                string.Equals(SoundName(e.m_soundFile), SoundName(line.Sound), StringComparison.OrdinalIgnoreCase));
+            if (old is not null) {
+                if (!string.IsNullOrEmpty(line.Persona)) {
+                    old.m_personaName = line.Persona;
+                }
+
+                if (!string.IsNullOrEmpty(line.Picture)) {
+                    old.m_picture = line.Picture;
+                }
+
+                if (line.Name is not null) {
+                    old.m_nameOverride = line.Name;
+                }
+
+                dialog.m_dialogEntries.Add(old);
+                added++;
                 continue;
             }
 
@@ -139,6 +163,13 @@ public static class QuestFixes {
         }
 
         return added;
+    }
+
+    // "|Sound_Dialogue_002|WorldData|Sound/Dialogue/Gamma_002_09.mp3" -> "Gamma_002_09.mp3".
+    private static string SoundName(string sound) {
+        sound ??= "";
+        var slash = sound.LastIndexOfAny(['/', '|']);
+        return slash < 0 ? sound : sound[(slash + 1)..];
     }
 
 }
