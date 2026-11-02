@@ -1702,6 +1702,9 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
 
         public HashSet<ulong> ResetIds = [];
 
+        // Only give the ResetIds back (a lost battle's defeated boss): spawners held for a running encounter keep waiting.
+        public bool OnlyReset;
+
     }
 
     /// <summary>

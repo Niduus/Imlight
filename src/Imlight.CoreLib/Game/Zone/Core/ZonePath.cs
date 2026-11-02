@@ -320,7 +320,19 @@ public sealed class ZonePath : ZoneEntity {
                 _defeatedInInstance.Remove(spawnObject);
             }
 
+            if (message.OnlyReset) {
+                var index = _creatures.FindIndex(x => ReferenceEquals(x, spawnObject));
+                Timers.StartSingleTimer($"LostBattleRefill_{index}_{id}",
+                    new ZONE_102_PROTOCOL.MSG_PATHSPAWNINTERVAL { SpawnObject = spawnObject },
+                    TimeSpan.FromSeconds(SPARED_RESPAWN_DELAY_IN_SECONDS));
+                continue;
+            }
+
             _heldDistinct.Add(spawnObject);
+        }
+
+        if (message.OnlyReset) {
+            return;
         }
 
         foreach (var spawnObject in _heldDistinct) {
