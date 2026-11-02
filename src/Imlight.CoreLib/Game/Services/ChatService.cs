@@ -100,7 +100,9 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
-        if (!TryApplyChatLevel(message.Message, wizard, out var shown, out var asTyped)) {
+        // The game's own wide text, read without its count and zeros (see RadialChatText).
+        var typed = RadialChatText.Text(message.Message);
+        if (!TryApplyChatLevel(typed, wizard, out var shown, out var asTyped)) {
             return;
         }
 
@@ -109,9 +111,9 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
         // Broadcast the message to the zone, skipping players who have ignored the sender.
         var msg = asTyped
-            ? (IMessage) ShownAsTyped(sourceName, charObj.m_globalID, message.Message, ChatFilter.RadialChatType, filter: 2)
+            ? (IMessage) ShownAsTyped(sourceName, charObj.m_globalID, typed, ChatFilter.RadialChatType, filter: 2)
             : new GAME_5_PROTOCOL.MSG_RADIALCHAT {
-                Message = shown is null ? message.Message : (ByteString) shown,
+                Message = shown is null ? message.Message : RadialChatText.Like(message.Message, shown),
                 SourceID = charObj.m_globalID,
                 SourceName = sourceName,
                 Filter = 2,
@@ -266,7 +268,8 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
-        if (!TryApplyChatLevel(message.Message, wizard, out var shown, out var asTyped)) {
+        var typed = RadialChatText.Text(message.Message);
+        if (!TryApplyChatLevel(typed, wizard, out var shown, out var asTyped)) {
             return;
         }
 
@@ -274,9 +277,9 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         SaveChatLog(cleanedMessage, charObj, wizard);
 
         SendToNearbyFriends(message.PlayerGID, wizard, asTyped
-            ? (IMessage) ShownAsTyped(GetSourceName(wizard), charObj.m_globalID, message.Message, ChatFilter.RadialChatType, filter: 2)
+            ? (IMessage) ShownAsTyped(GetSourceName(wizard), charObj.m_globalID, typed, ChatFilter.RadialChatType, filter: 2)
             : new GAME_5_PROTOCOL.MSG_RADIALCHAT {
-                Message = shown is null ? message.Message : (ByteString) shown,
+                Message = shown is null ? message.Message : RadialChatText.Like(message.Message, shown),
                 SourceID = charObj.m_globalID,
                 SourceName = GetSourceName(wizard),
                 Filter = 2,
