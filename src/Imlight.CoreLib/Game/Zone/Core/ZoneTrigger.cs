@@ -125,6 +125,8 @@ public sealed class ZoneTrigger(IActorRef zoneRef, Zone zone, Trigger trigger)
         }
 
         results = WithoutNonLoopSelfPosts(results, TriggerData);
+        // A trigger waiting for a quest the game rebuilt keeps its spawns but not the old quest's speech.
+        results = RetiredQuestStandIn.WithoutRetiredLines(results, TriggerData.m_requirements);
 
         ResultDispatcher.ExecuteResults(Context, results, message.PlayerActor, message.PlayerGameObject,
                                        Sender, ZoneRef, triggerName: TriggerData.m_triggerName,

@@ -100,6 +100,36 @@ internal static class RetiredQuestStandIn {
         return false;
     }
 
+    /// <summary>
+    /// A trigger standing in for an old quest still brings out what the old quest brought out, but never says the old
+    /// quest's lines: they are the boss's speech from before the game rebuilt the quest. The live game never plays them
+    /// (its triggers wait for the old quest too), and the new quest gives the boss its own lines on the "go to" and
+    /// defeat steps (QuestFixes). Bastilla Gravewynd greeted the wizard with the old "So, you are the one who has been
+    /// undoing my work! The Fire Elves were to remain cursed until Wizard City was in ruins!" (Niduus 2026-11-02:
+    /// "using the wrong Dialogue for her first time encounter dialogue. This is the speech from before the revamp").
+    /// </summary>
+    public static ResultList WithoutRetiredLines(ResultList results, RequirementList requirements) {
+        if (results?.m_results is not { Count: > 0 } list
+            || !list.Any(r => r is ResActorDialog)
+            || !NamesRetiredQuest(requirements)) {
+            return results;
+        }
+
+        return new ResultList { m_results = list.Where(r => r is not ResActorDialog).ToList() };
+    }
+
+    private static bool NamesRetiredQuest(RequirementList requirements)
+        => requirements?.m_requirements is { } list
+           && list.Any(r => r switch {
+               ReqHasQuest q => !q.m_applyNOT && IsRetired(q.m_questName),
+               ReqHasGoal g => !g.m_applyNOT && IsRetired(g.m_questName),
+               RequirementList nested => !nested.m_applyNOT && NamesRetiredQuest(nested),
+               _ => false,
+           });
+
+    private static bool IsRetired(string quest)
+        => !string.IsNullOrEmpty(quest) && !SpiralDB.QuestExists(quest);
+
     // A trigger fired by a monster's defeat (Monster_Killed carries the monster's adjectives) or one that asks for it.
     private static bool SetOffByADefeat(IRequirementContext context)
         => context is Contexts.ZoneRequirementContext { EventAdjectives: not null }
