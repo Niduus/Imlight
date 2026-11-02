@@ -153,4 +153,7 @@
   { "quest": "ZF-GRAVE-C01-008", "goal": "1_WizardQuestGoals00000274", "when": "complete", "events": ["HideEvilDoers"] },
   // Zafaria-ZF_Z13_Mirror_Lake_Drained: spawns starburst spider
   { "quest": "ZF-BAOB-C18-002", "goal": "1_WizardQuestGoalsKill", "when": "start", "events": ["CreateMOBSpiders"] },
+  // Arc 1 playthrough check (Niduus 2026-11-02): the game's quest start posts an event named after the quest (Wizard404 start results).
+  { "quest": "WC-CYCLOPS-MAIN-002", "when": "start", "events": ["WC-CYCLOPS-MAIN-002"] },
+  { "quest": "WC-TRITON-MAIN-008", "when": "start", "events": ["WC-TRITON-MAIN-008"] },
 ]

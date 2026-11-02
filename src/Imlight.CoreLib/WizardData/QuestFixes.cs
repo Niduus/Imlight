@@ -26,7 +26,12 @@ public static class QuestFixes {
     // Name: the speaker's name written out, for a creature with no persona (a boss's lines); QuestTextKeys keys it.
     private sealed record Line(string Persona, string Text, string Sound, string Picture, uint Actor, string Name = null);
 
-    private sealed record Entry(string Quest, string Goal, string Tag, bool Replace, List<Line> Lines, int Count);
+    // A dynamod the game's quest start adds or removes (an NPC coming out or leaving, a sigil glowing) that the capture
+    // lacked. Type "add" or "remove"; the rest as the game's ResAddDynaMod has them.
+    private sealed record Mod(string Type, string Tag, string Zone, string State, bool Shows, bool Remove, bool Persist);
+
+    private sealed record Entry(string Quest, string Goal, string Tag, bool Replace, List<Line> Lines, int Count,
+        List<Mod> Start = null);
 
     private static readonly JsonSerializerOptions s_options = new() {
         PropertyNameCaseInsensitive = true,
@@ -47,7 +52,7 @@ public static class QuestFixes {
                 .GroupBy(q => (string) q.m_questName, StringComparer.OrdinalIgnoreCase)
                 .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
 
-            int lines = 0, counts = 0;
+            int lines = 0, counts = 0, mods = 0;
             foreach (var entry in entries) {
                 if (entry?.Quest is null || !byName.TryGetValue(entry.Quest, out var quest)) {
                     continue;
@@ -76,13 +81,17 @@ public static class QuestFixes {
                     if (entry.Lines is { Count: > 0 } && !string.IsNullOrEmpty(entry.Tag)) {
                         lines += AddLines(quest, goal, entry);
                     }
+
+                    if (entry.Start is { Count: > 0 }) {
+                        mods += AddStartMods(quest, entry.Start);
+                    }
                 } catch (Exception ex) {
                     Logger.Warning("Quest fixes: '{0}' could not be fixed: {1}", Logger.Args(entry.Quest, ex.Message));
                 }
             }
 
-            Logger.Information("Quest fixes: {0} dialog lines and {1} defeat counts set to the game's own.",
-                Logger.Args(lines, counts));
+            Logger.Information("Quest fixes: {0} dialog lines, {1} defeat counts and {2} quest-start dynamods set to the game's own.",
+                Logger.Args(lines, counts, mods));
         } catch (Exception ex) {
             Logger.Warning("Quest fixes could not be applied: {0}", Logger.Args(ex.Message));
         }
@@ -159,6 +168,38 @@ public static class QuestFixes {
                 m_picture = line.Picture ?? "",
                 m_actorTemplateID = line.Actor,
             });
+            added++;
+        }
+
+        return added;
+    }
+
+    private static int AddStartMods(QuestTemplate quest, List<Mod> mods) {
+        quest.m_startResults ??= new ResultList();
+        quest.m_startResults.m_results ??= [];
+        var results = quest.m_startResults.m_results;
+        var added = 0;
+        foreach (var mod in mods.Where(m => !string.IsNullOrEmpty(m?.Tag))) {
+            var remove = string.Equals(mod.Type, "remove", StringComparison.OrdinalIgnoreCase);
+            // Already there (a reload, or the capture had it): leave it.
+            if (remove ? results.OfType<ResRemoveDynaMod>().Any(r => (string) r.m_dynaModClientTag == mod.Tag)
+                    : results.OfType<ResAddDynaMod>().Any(r => (string) r.m_dynaModClientTag == mod.Tag)) {
+                continue;
+            }
+
+            if (remove) {
+                results.Add(new ResRemoveDynaMod { m_dynaModClientTag = mod.Tag });
+            } else {
+                results.Add(new ResAddDynaMod {
+                    m_dynaModClientTag = mod.Tag,
+                    m_dynaModState = mod.State ?? "",
+                    m_zoneName = mod.Zone ?? "",
+                    m_bShowsObject = mod.Shows,
+                    m_dynaModRemove = mod.Remove,
+                    m_persist = mod.Persist,
+                });
+            }
+
             added++;
         }
 
