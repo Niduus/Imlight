@@ -45,6 +45,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Akka.Actor;
@@ -69,6 +70,12 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
 
     // How far in front of the stone the wizard lands, clear of its collision.
     private const float ARRIVE_DISTANCE = 150f;
+
+    // How far from the stone the walk point it lands on may be, how far above or below it, and how much further than
+    // the nearest walk point another one may be and still be picked for being on the open side.
+    private const float WALK_POINT_REACH = 800f;
+    private const float WALK_POINT_HEIGHT = 200f;
+    private const float WALK_POINT_SLACK = 150f;
 
     // The words that make a stone the far one of its pair, and the hub stone's own word.
     [GeneratedRegex(@"BackToHub|ToHub|ToMain|Secondary", RegexOptions.IgnoreCase)]
@@ -129,9 +136,22 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
         var length = MathF.Max(MathF.Sqrt((dx * dx) + (dy * dy)), 0.001f);
         var x = partner.m_location.X + (dx / length * ARRIVE_DISTANCE);
         var y = partner.m_location.Y + (dy / length * ARRIVE_DISTANCE);
-        // Facing on along that line (a wizard with yaw w faces (-sin w, -cos w)).
+        var z = partner.m_location.Z;
+
+        // That guess can be inside a wall where the street bends (Niduus 2026-11-02, Firecat Alley), so the wizard
+        // lands on the game's own walk grid instead: of the walk points near the stone, the one nearest the guess.
+        if (WalkPoint(partner, x, y) is { } ground) {
+            // A little above the point's ground height, so the wizard drops onto the floor rather than into it.
+            (x, y, z) = (ground.X, ground.Y, ground.Z + 10f);
+            var (awayX, awayY) = (x - partner.m_location.X, y - partner.m_location.Y);
+            if ((awayX * awayX) + (awayY * awayY) > 900f) {
+                (dx, dy) = (awayX, awayY);
+            }
+        }
+
+        // Facing on along that line, away from the stone (a wizard with yaw w faces (-sin w, -cos w)).
         var wizardYaw = MathF.Atan2(-dx, -dy);
-        var spot = string.Join(",", new[] { x, y, partner.m_location.Z, wizardYaw }.Select(v => v.ToString(CultureInfo.InvariantCulture)));
+        var spot = string.Join(",", new[] { x, y, z, wizardYaw }.Select(v => v.ToString(CultureInfo.InvariantCulture)));
 
         Logger.Information("Street teleporter: {0} uses {1} in {2} and goes to {3} at {4}.",
             Logger.Args(playerCharacter?.CharId ?? 0, (Entity.Template as GameObjectTemplate)?.m_objectName, Entity.Zone?.ZonePath,
@@ -174,6 +194,36 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
 
         return _partner;
     }
+
+    // A walk point of the zone's own walk grid by the stone: of the points on its floor no more than a little further
+    // than the nearest one, the one nearest (guessX, guessY). Null when the zone has no walk grid or none is close.
+    private Vector3? WalkPoint(CoreObjectInfo stone, float guessX, float guessY) {
+        var zonePath = Entity.Zone?.ZonePath;
+        var at = stone.m_location;
+        var nearest = ZoneNav.Nearest(zonePath, at.X, at.Y, at.Z, WALK_POINT_REACH, WALK_POINT_HEIGHT);
+        if (nearest is not { } first) {
+            return null;
+        }
+
+        var limit = MathF.Sqrt(Flat(first.X - at.X, first.Y - at.Y)) + WALK_POINT_SLACK;
+        Vector3? best = null;
+        var bestToGuess = float.MaxValue;
+        foreach (var point in ZoneNav.Points(zonePath)) {
+            if (MathF.Abs(point.Z - at.Z) > WALK_POINT_HEIGHT || Flat(point.X - at.X, point.Y - at.Y) > limit * limit) {
+                continue;
+            }
+
+            var toGuess = Flat(point.X - guessX, point.Y - guessY);
+            if (toGuess < bestToGuess) {
+                bestToGuess = toGuess;
+                best = point;
+            }
+        }
+
+        return best ?? first;
+    }
+
+    private static float Flat(float dx, float dy) => (dx * dx) + (dy * dy);
 
     // The middle of the hub stones round whichever of the pair is the hub one, or null with fewer than two.
     private (float X, float Y)? HubMiddle() {
