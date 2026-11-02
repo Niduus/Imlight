@@ -224,8 +224,12 @@ internal static class QuestMadlibs {
     private static (string First, string Last) StandInNameKeys(GameObjectTemplate template) {
         ulong templateId = template.m_templateID;
         string objectName = template.m_objectName;
-        if (string.IsNullOrEmpty(objectName) || !s_standInMark.IsMatch(objectName)) {
+        if (string.IsNullOrEmpty(objectName)) {
             return (string.Empty, string.Empty);
+        }
+
+        if (!s_standInMark.IsMatch(objectName)) {
+            return s_standInNames.GetOrAdd(templateId, _ => StandInOfNamelessKeys(templateId, objectName));
         }
 
         return s_standInNames.GetOrAdd(templateId, _ => {
@@ -250,6 +254,40 @@ internal static class QuestMadlibs {
             var (first, last) = Locale.GetEnglishNameKeys(key);
             return string.IsNullOrEmpty(first) ? (key, string.Empty) : (first, last);
         });
+    }
+
+    /// <summary>
+    /// The name keys of a nameless NPC that has a named stand-in of the same character: WC_Malistaire_NPC (the speaker
+    /// in "Nightside", Death School) has no name, WC_StandIn_Malistaire is "Malistaire Drake". Without it his lines
+    /// showed no name (Niduus, 2026-11-02). Empty when no such stand-in has a name.
+    /// </summary>
+    private static (string First, string Last) StandInOfNamelessKeys(ulong templateId, string objectName) {
+        var parts = objectName.Split(['-', '_'], StringSplitOptions.RemoveEmptyEntries).ToList();
+        if (parts.Count < 2) {
+            return (string.Empty, string.Empty);
+        }
+
+        // The world code first (WC, DS, KM), then the character; "NPC", "NPC01" and the like say nothing about who.
+        var world = parts[0];
+        var core = parts.Skip(1)
+            .Where(p => !System.Text.RegularExpressions.Regex.IsMatch(p, @"^NPC\d*$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            .ToList();
+        if (core.Count == 0 || !core.Any(p => p.Any(char.IsLower))) {
+            return (string.Empty, string.Empty);
+        }
+
+        var byFile = TemplatesByFileName();
+        // File names are matched ignoring case, so this also finds WC-Standin-... spellings.
+        foreach (var sep in new[] { "_", "-" }) {
+            var name = string.Join(sep, new[] { world, "StandIn" }.Concat(core));
+            if (byFile.GetValueOrDefault(name) is var id and not 0 && id != templateId
+                && CoreObjectFactory.GetCoreTemplate(id) is GameObjectTemplate standIn
+                && !string.IsNullOrEmpty(standIn.m_displayName)) {
+                return NameKeysOfTemplate(id);
+            }
+        }
+
+        return (string.Empty, string.Empty);
     }
 
     private static readonly ConcurrentDictionary<string, uint> s_personaTemplates = new(StringComparer.Ordinal);
@@ -408,6 +446,14 @@ internal static class QuestMadlibs {
                     templateId = TemplateOfPersona(pictured);
                 }
 
+                // The speaker's own portrait, named or not: a line with none kept the one before's on screen, so
+                // Malistaire's lines in "Nightside" wore Dworgyn's face (Niduus, 2026-11-02).
+                if (string.IsNullOrEmpty(entry.m_picture)
+                    && CoreObjectFactory.GetCoreTemplate(templateId) is GameObjectTemplate npc
+                    && !string.IsNullOrEmpty(npc.m_sIcon)) {
+                    entry.m_picture = npc.m_sIcon;
+                }
+
                 var (first, last) = NameKeysOfTemplate(templateId);
                 if (string.IsNullOrEmpty(first)) {
                     continue;
@@ -415,12 +461,6 @@ internal static class QuestMadlibs {
 
                 string format = string.IsNullOrEmpty(last) ? "NPCFormats_First_Only" : "NPCFormats_First_Last";
                 entry.m_nameSTKey = format;
-
-                if (string.IsNullOrEmpty(entry.m_picture)
-                    && CoreObjectFactory.GetCoreTemplate(templateId) is GameObjectTemplate npc
-                    && !string.IsNullOrEmpty(npc.m_sIcon)) {
-                    entry.m_picture = npc.m_sIcon;
-                }
 
                 string persona = entry.m_personaName;
                 if (string.IsNullOrEmpty(persona)) {
