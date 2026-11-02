@@ -143,6 +143,23 @@
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1562793,
                 "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AR-ARC-NPC36",
+                "m_nameOverride": "NPCs_01748570",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst1852CE_00000018",
+                "m_picture": "GUI/NpcPortraits/Portrait_Dromel_Wizard_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/Sandiago_WL-WOBB_075.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1575100,
+                "m_cameraName": ""
               }
             ]
           }

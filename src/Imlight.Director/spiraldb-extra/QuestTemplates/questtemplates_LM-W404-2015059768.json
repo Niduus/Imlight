@@ -240,6 +240,240 @@
       "m_goalType": "GOAL_TYPE_PERSONA",
       "m_personaName": "LM-HEAP-NPC04",
       "m_usePatron": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC03e",
+                "m_nameOverride": "WizardNPC_00000943",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst174428_00000016",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-HEAP_006.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487540,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC03e",
+                "m_nameOverride": "WizardNPC_00000943",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst174428_00000017",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-HEAP_007.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487540,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC03e",
+                "m_nameOverride": "WizardNPC_00000943",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst174428_00000028",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-HEAP_008.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487540,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/Interiors/LM_Z07_Precinct",
+      "m_locationName": "ZoneLocName_1524902",
+      "m_goalName": "Goal 2",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "LM-HEAP-NPC03e",
+      "m_usePatron": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC03e",
+                "m_nameOverride": "WizardNPC_00000943",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst174428_00000030",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-HEAP_009.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487540,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/Interiors/LM_Z07_Precinct",
+      "m_locationName": "ZoneLocName_1524902",
+      "m_goalName": "Goal 3",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "LM-HEAP-NPC03e",
+      "m_usePatron": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Cow_BullGangster_C_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC03e",
+                "m_nameOverride": "WizardNPC_00000943",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst174428_00000032",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-HEAP_010.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487540,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC06",
+                "m_nameOverride": "WizardNPC_00000946",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst174428_00000040",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Cow_BullGangster_C_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Stoolie_LM-HEAP_003.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1524752,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/LM_Z07_Heap",
+      "m_locationName": "ZoneLocName_1524839",
+      "m_goalName": "Goal 6",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "LM-HEAP-NPC06",
+      "m_usePatron": false
     }
   ],
   "m_startResults": {
@@ -276,6 +510,39 @@
     {
       "m_goalsAND": [
         "1_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 2"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 2"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 3"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 3"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 6"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 6"
       ],
       "m_goalsOR": [],
       "m_goalsToAdd": [],

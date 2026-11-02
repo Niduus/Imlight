@@ -332,6 +332,40 @@
             "m_dialogEvent": "",
             "m_actorTemplateID": 1513122,
             "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KM-BLACK-NPC14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "WizQst1716AA_00000001",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Gobbler_Skinny_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_003|WorldData|Sound/Dialogue/Augustus_003_10.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1513234,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KM-BLACK-NPC11-B_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "WizQst1716AA_00000002",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Alphoi_WitchF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_003|WorldData|Sound/Dialogue/Rosina_003_11.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1513122,
+            "m_cameraName": ""
           }
         ]
       }

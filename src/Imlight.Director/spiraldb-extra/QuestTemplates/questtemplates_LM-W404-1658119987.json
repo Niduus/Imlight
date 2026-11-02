@@ -50,6 +50,152 @@
       ],
       "m_bountyTotal": 1,
       "m_bountyType": "BT_MOB_KILL"
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Resistance_E_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-NIGHT-NPC15",
+                "m_nameOverride": "NPCs_01749156",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17321B_00000005",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_Citizen_D_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Ichabod_Crane_LM-WILD_003.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487463,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-TELOS-NPC11-I",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17321B_00000006",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Khrulhu_LinNoHat_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Dasein_LM-WILD_056.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487594,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-NIGHT-NPC15",
+                "m_nameOverride": "NPCs_01749156",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17321B_00000007",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_Citizen_D_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Ichabod_Crane_LM-WILD_004.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487463,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-NIGHT-NPC15",
+                "m_nameOverride": "NPCs_01749156",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17321B_00000009",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_Citizen_D_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Ichabod_Crane_LM-WILD_005.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487463,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-NIGHT-NPC15",
+                "m_nameOverride": "NPCs_01749156",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17321B_00000012",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_Citizen_D_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Ichabod_Crane_LM-WILD_006.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487463,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-NIGHT-NPC01",
+                "m_nameOverride": "NPCs_01749149",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17321B_00000023",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Resistance_E_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Hierarch_Lucien_LM-WILD_002_B.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487462,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/Interiors/LM_Z03_LucienHouseCombat",
+      "m_locationName": "ZoneLocName_1520238",
+      "m_goalName": "Goal 3",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "LM-NIGHT-NPC01",
+      "m_usePatron": false
     }
   ],
   "m_startResults": {
@@ -86,6 +232,17 @@
     {
       "m_goalsAND": [
         "1_WizardQuestGoalsKill"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 3"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 3"
       ],
       "m_goalsOR": [],
       "m_goalsToAdd": [],
