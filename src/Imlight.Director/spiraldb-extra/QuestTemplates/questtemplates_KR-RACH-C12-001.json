@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Wazz",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Who are you? Egads, it's the Spellbinder!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Mantis_HunterF_P_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/BlackShield_KH2_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z05_SaqqaraBird",
       "m_locationName": "Saqqara Bird",
@@ -72,7 +98,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Wazz",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Oh, you want this old wooden thing? Sure, take it. Take it.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Mantis_HunterF_P_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/BlackShield_KH2_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z05_SaqqaraBird",
       "m_locationName": "Saqqara Bird",
@@ -125,23 +177,6 @@
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "If you fetched it for me from the Black Shields who now possess it, it would be a balm to my spirit.",
-                "m_picture": "GUI/NpcPortraits/Portrait_Ghost_Pirate_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/Yadullah_KH2_06.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1283113,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "KR-FortRachias-NPC01_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "Heehee! The Saqqara Bird! Ah, she led us on some exciting adventures.",
                 "m_picture": "GUI/NpcPortraits/Portrait_Ghost_Pirate_A_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/Yadullah_KH2_08.mp3",
@@ -165,7 +200,19 @@
     }
   ],
   "m_startResults": {
-    "m_results": []
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "KR-QuestLight-SaqqaraBird",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "Quest",
+        "m_zoneName": "Khrysalis/KR_Z05_FortRachias",
+        "m_bShowsObject": false,
+        "m_persist": false,
+        "m_requirements": null
+      }
+    ]
   },
   "m_endResults": {
     "m_results": [
@@ -249,6 +296,23 @@
             "m_dialog": "Yes, yes, it has been a long, long time since I've seen a Wizard. My last encounter with one... did not end well.",
             "m_picture": "GUI/NpcPortraits/Portrait_Ghost_Pirate_A_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/Yadullah_KH2_02.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1283113,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-FortRachias-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "If you fetched it for me from the Black Shields who now possess it, it would be a balm to my spirit.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Ghost_Pirate_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/Yadullah_KH2_06.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1283113,

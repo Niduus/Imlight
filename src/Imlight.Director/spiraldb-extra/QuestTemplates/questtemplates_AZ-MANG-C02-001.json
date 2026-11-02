@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Mozar Turtle Hunter",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "What comes into my lair? You wish a War Challenge? It is a pretty, pretty thing. I'll give you a War Challenge!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Tritops_Undead_E_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/MozarTurtleHunter_AZT_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z03_Tomb03",
       "m_locationName": "Mozar Turtle Hunter's Tomb",
@@ -72,7 +98,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Mozar Turtle Hunter",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I am battled and broken and beaten!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Tritops_Undead_E_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/MozarTurtleHunter_AZT_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z03_Tomb03",
       "m_locationName": "Mozar Turtle Hunter's Tomb",
@@ -112,7 +164,50 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>The War Challenge appears to be a fancy shield and bundle of arrows, arranged symbolically. It's half-buried in the Ghoul nest. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Art_Quest_AZ_WarBundle.dds",
+                "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/Narrator_AZT_20.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>It's a bit slimy, but you figure the Smoking Mirrors can be the ones to clean it up. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Art_Quest_AZ_WarBundle.dds",
+                "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/Narrator_AZT_21.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z03_Tomb03",
       "m_locationName": "Mozar Turtle Hunter's Tomb",

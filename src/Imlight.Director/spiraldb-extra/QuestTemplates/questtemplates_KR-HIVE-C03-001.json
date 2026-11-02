@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Warped Weaver",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "More volunteers? I do not know what will happen if I put you through the Mutation Chamber, but I'm willing to experiment.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Spider_Mage_C_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/WarpedWeaver_KH2_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Khrysalis/KR_Z11_TheHive",
       "m_locationName": "The Hive",
@@ -109,7 +135,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Pit Goliath",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "RAAAAAAAARR!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Goliath_Crusher_H_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/SavageGoliath_KH2_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z11_I21_MutationChamb01",
       "m_locationName": "Mutation Chamber A",
@@ -147,7 +199,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Warped Weaver",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I did not expect you to be able to defeat a pair of Savage Goliaths. You are most formidable. Luckily, I have more.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Spider_Mage_C_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/WarpedWeaver_KH2_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Warped Weaver",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Enough! Here is the Band you need. But you'll find only terrors and abominations in the Black Hole!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Spider_Mage_C_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/WarpedWeaver_KH2_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z11_I21_MutationChamb01",
       "m_locationName": "Mutation Chamber A",
@@ -194,23 +289,6 @@
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "KR-Hive-NPC23_Persona",
-                "m_nameOverride": "Taylor Coleridge",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "We go in here, this pit of despair! The Warped Weaver holds the unlocking Band we need!",
-                "m_picture": "GUI/NpcPortraits/Portrait_Rat_Captain_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/TaylorColeridge_KH2_113.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1233354,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "KR-Hive-NPC23_Persona",
                 "m_nameOverride": "",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
@@ -220,6 +298,23 @@
                 "m_dialog": "Yes, good, the Black Hole. That is where our path must go. Long ago I heard the Magi whisper its secrets.",
                 "m_picture": "GUI/NpcPortraits/Portrait_Rat_Captain_A_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/TaylorColeridge_KH2_114.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1233354,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KR-Hive-NPC23_Persona",
+                "m_nameOverride": "Taylor Coleridge",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "We go in here, this pit of despair! The Warped Weaver holds the unlocking Band we need!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Rat_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/TaylorColeridge_KH2_113.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1233354,

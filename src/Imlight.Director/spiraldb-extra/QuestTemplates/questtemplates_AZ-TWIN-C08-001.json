@@ -35,7 +35,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Nezahual Savage Paw",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Well fought, Magician. You need to know how to scale the White Hot Stairs?",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Jaguar_Shaman_E_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/NezahualSavagePaw_AZT_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Nezahual Savage Paw",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Here, let me show you how to make this secret Ointment. It will keep your paws safe as you climb the White Hot Stairs.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Jaguar_Shaman_E_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/NezahualSavagePaw_AZT_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z11_Cave04",
       "m_locationName": "Nezahual's Cave",

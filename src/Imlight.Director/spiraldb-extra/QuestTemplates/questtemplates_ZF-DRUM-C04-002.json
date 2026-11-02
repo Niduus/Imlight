@@ -35,7 +35,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>You feel the blades pulling you this way, towards the waterfall. There's an unusual looking rock here. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Location_ZF_Stone_Elephant.dds",
+                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/Narrator_ZFA_111.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>You slot the silver sword into the rock, and you can hear stone grinding. There's a cave behind the waterfall. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Location_ZF_Stone_Elephant.dds",
+                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/Narrator_ZFA_112.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Zafaria/ZF_Z09_Drum_Jungle",
       "m_locationName": "Drum Jungle",
@@ -72,7 +115,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Ghadir DreamDrinker",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Take the gem eye for the Mammoth Doors, you accursed Wizard!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_CL_Shadow_Weaver_Boss.dds",
+                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/KhadirDreameater_ZFA_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Zafaria/Interiors/ZF_Z09_I05_Waterfall_Cliff_Cave",
       "m_locationName": "Waterfall Cave",

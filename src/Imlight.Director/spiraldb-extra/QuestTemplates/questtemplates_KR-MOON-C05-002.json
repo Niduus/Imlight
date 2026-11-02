@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KR-MoonCliffs-NPC12_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Thank you for freeing us. Jhaelen sent you? We will glide over the Moon Cliffs to Last Wood and rejoin him in Queen Myrtle Town.",
+                "m_picture": "",
+                "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/SabraSoaringKnife_KHR_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z02_DetentionBlock",
       "m_locationName": "Moon Cliffs",
@@ -75,7 +101,33 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KR-MoonCliffs-NPC12_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You'll need a Comb Key to get through the Honeycomb Gate. I saw one in the Tamarind Tower, but it is heavily guarded.",
+                "m_picture": "",
+                "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/SabraSoaringKnife_KHR_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z02_DetentionBlock",
       "m_locationName": "Moon Cliffs",
@@ -325,6 +377,91 @@
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1223217,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Sugar Gliders, always flighty. But her advice seems sound.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/DyvimWhiteHart_KHR_89.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Yellow Jacket Royal Guard",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Who are you? What's your operating number?",
+            "m_picture": "GUI/NpcPortraits/Portrait_Bee_Warrior_G_MOB.dds",
+            "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/RoyalGuard_KHR_02.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "<ITALICS>You quickly throw down the Summoning Stone like Jhaelen taught you. It flares brightly and smoke billows from it! </ITALICS>",
+            "m_picture": "GUI/NpcPortraits/Art_Portrait_Elemental_Wind_MOB.dds",
+            "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/Narrator_KHR_35.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Smoke Elemental",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Cinder and smoke!",
+            "m_picture": "GUI/NpcPortraits/Art_Portrait_Elemental_Wind_MOB.dds",
+            "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/SmokeElemental_KHR_03.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Yellow Jacket Royal Guard",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Cough! Cough! Cough!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Bee_Warrior_G_MOB.dds",
+            "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/RoyalGuard_KHR_03.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
             "m_cameraName": ""
           }
         ]

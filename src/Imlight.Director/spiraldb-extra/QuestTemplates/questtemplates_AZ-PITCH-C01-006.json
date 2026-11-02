@@ -74,6 +74,23 @@
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 470558,
                 "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AZ-LAKE-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "My jaw still stings! So what can old Mak do you for you?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Piranha_Hunter_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/MaktheKnife_AZT_18.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 470558,
+                "m_cameraName": ""
               }
             ]
           }
@@ -113,7 +130,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Mak the Knife",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Okay, okay, I'll help you out. Meet me back by the Coral wall.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Piranha_Hunter_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/MaktheKnife_AZT_17.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z08_MakKnifeCave",
       "m_locationName": "Cave of Mak The Knife",
@@ -159,19 +202,19 @@
             "m_dialogEntries": [
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "AZ-LAKE-NPC03_Persona",
-                "m_nameOverride": "",
+                "m_personaName": "",
+                "m_nameOverride": "Mak the Knife",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "My jaw still stings! So what can old Mak do you for you?",
+                "m_dialog": "Uncle! Uncle! Man, you pack one heck of a punch, don't you?",
                 "m_picture": "GUI/NpcPortraits/Portrait_Piranha_Hunter_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/MaktheKnife_AZT_18.mp3",
+                "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/MaktheKnife_AZT_16.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
-                "m_actorTemplateID": 470558,
+                "m_actorTemplateID": 0,
                 "m_cameraName": ""
               }
             ]

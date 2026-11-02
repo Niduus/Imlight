@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Optio Misemos",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "What's the big idea?! You just bought yourself a thrashing for bothering me!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_CL_Crab_Warrior_03.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/OptioMisemos_CEL_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z02i4_Crab_Realm",
       "m_locationName": "Misemos's Retreat",
@@ -72,7 +98,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Optio Misemos",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Don’t hurt me! I’ll tell you anything you want to know!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_CL_Crab_Warrior_03.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/OptioMisemos_CEL_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Optio Misemos",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The starfish likes to eat algae! When we feed it algae it relaxes and opens the door!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_CL_Crab_Warrior_03.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/OptioMisemos_CEL_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z02i4_Crab_Realm",
       "m_locationName": "Misemos's Retreat",
@@ -128,23 +197,6 @@
                 "m_dialog": "Find and defeat Optio Misemos, and force him to tell you how to get that Starfish Gate open. He’s a coward... he’ll tell you.",
                 "m_picture": "GUI/NpcPortraits/Art_Portrait_CL_DogWorker_08_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/RupertFleming_CEL_PU_22.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 227130,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "CL-REALM-NPC01_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "The Crustacean boss around here is Optio Misemos. \"Optio\" is some sort of rank among their legions, like a lieutenant.",
-                "m_picture": "GUI/NpcPortraits/Art_Portrait_CL_DogWorker_08_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/RupertFleming_CEL_31.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 227130,
@@ -278,6 +330,23 @@
             "m_dialog": "The Crustaceans wouldn’t be using that starfish unless they knew some easy way of getting past it.",
             "m_picture": "GUI/NpcPortraits/Art_Portrait_CL_DogWorker_08_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/RupertFleming_CEL_PU_17.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 227130,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "CL-REALM-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Crustacean boss around here is Optio Misemos. \"Optio\" is some sort of rank among their legions, like a lieutenant.",
+            "m_picture": "GUI/NpcPortraits/Art_Portrait_CL_DogWorker_08_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/RupertFleming_CEL_31.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 227130,

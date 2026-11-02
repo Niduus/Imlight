@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>Skull Rock, you presume. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Location_KR_Gorge_SkullRock.dds",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/Narrator_KH2_04.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Khrysalis/KR_Z06_CrescentBeach",
       "m_locationName": "Crescent Beach",
@@ -72,7 +98,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KR-CrescentBeach-NPC23_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Do you think this might be it? Too crafty, the White Razors said. :Tsssk:",
+                "m_picture": "",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/ZaroziniatheDeathSong_KH2_31.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z06_I01_Hermitcave",
       "m_locationName": "Crescent Beach",
@@ -109,7 +161,84 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KR-CrescentBeach-NPC23_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": ":Tsssk: These fragments are from some strange vessel. Whoever, or whatever, lives here is in a wretched state. Be on your guard.",
+                "m_picture": "",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/ZaroziniatheDeathSong_KH2_32.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KR-CrescentBeach-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "And now the storm blast came, and he was tyrannous and strong! He struck with his o'ertaking wings, and chased us south along!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Rat_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/TaylorColeridge_KH2_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1283092,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KR-CrescentBeach-NPC23_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "What madness is this? Spellbinder, defend yourself!",
+                "m_picture": "",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/ZaroziniatheDeathSong_KH2_33.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KR-CrescentBeach-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Down dropt the breeze, the sails dropt down, 'Twas sad as sad could be; And we did speak only to break the silence of the sea!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Rat_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/TaylorColeridge_KH2_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1283092,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z06_I01_Hermitcave02",
       "m_locationName": "Skull Rock Cave",
@@ -146,7 +275,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KR-CrescentBeach-NPC23_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "More gibberish. This wretch is of no use to us. Let us end his pain.",
+                "m_picture": "",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/ZaroziniatheDeathSong_KH2_34.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KR-CrescentBeach-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Wait... no. Come. Follow. Follow!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Rat_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/TaylorColeridge_KH2_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1283092,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z06_I01_Hermitcave02",
       "m_locationName": "Skull Rock Cave",
@@ -190,57 +362,6 @@
           {
             "m_dialogTag": "Completion",
             "m_dialogEntries": [
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "KR-CrescentBeach-NPC01_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "And now the storm blast came, and he was tyrannous and strong! He struck with his o'ertaking wings, and chased us south along!",
-                "m_picture": "GUI/NpcPortraits/Portrait_Rat_Captain_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/TaylorColeridge_KH2_01.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1283092,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "KR-CrescentBeach-NPC01_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Down dropt the breeze, the sails dropt down, 'Twas sad as sad could be; And we did speak only to break the silence of the sea!",
-                "m_picture": "GUI/NpcPortraits/Portrait_Rat_Captain_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/TaylorColeridge_KH2_02.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1283092,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "KR-CrescentBeach-NPC01_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Wait... no. Come. Follow. Follow!",
-                "m_picture": "GUI/NpcPortraits/Portrait_Rat_Captain_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/TaylorColeridge_KH2_03.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1283092,
-                "m_cameraName": ""
-              },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "KR-CrescentBeach-NPC01_Persona",

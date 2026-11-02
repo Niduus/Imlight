@@ -35,43 +35,6 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Zafaria/Interiors/ZF_Z08_I02_Belloqs_Tent",
-      "m_locationName": "Belloq's Tent",
-      "m_goalName": "1_WizardQuestGoals00000274",
-      "m_goalTitle": "WizardQuestGoals_00000274",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Zafaria/Interiors/ZF_Z08_I02_Belloqs_Tent",
-      "m_proximityTag": "",
-      "m_zoneExit": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "",
-        "m_descriptor2": "",
-        "m_count": 0,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_ZF_Belloq.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
-      "m_autoComplete": false,
       "m_dialogList": {
         "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
         "m_dialogs": [
@@ -97,19 +60,19 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "ZF-WATER-NPC04_Persona",
-                "m_nameOverride": "",
+                "m_personaName": "",
+                "m_nameOverride": "Rasik Pridefall",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "Enough! I surrender.",
-                "m_picture": "GUI/NpcPortraits/Art_Portrait_ZF_Belloq.dds",
-                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/Belloq_ZFA_02.mp3",
+                "m_dialog": "I can't be seen here!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_ZF_Rasik_Breakheart.dds",
+                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/RasikPridefall_ZFA_06.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
-                "m_actorTemplateID": 527099,
+                "m_actorTemplateID": 0,
                 "m_cameraName": ""
               },
               {
@@ -179,10 +142,101 @@
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 527099,
                 "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "ZF-WATER-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You found Belloq, eh? Did he have anything useful to tell you?",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_Sobaka_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/Sobaka_ZFA_21.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 527097,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>You enter the tent and see someone who can only be Belloq deep in conversation with Councilor Rasik Pridefall.</ITALICS>",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_ZF_Belloq.dds",
+                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/Narrator_ZFA_74.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>And look at what Councilor Rasik is wearing! </ITALICS>",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_ZF_Rasik_Breakheart.dds",
+                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/Narrator_ZFA_75.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
               }
             ]
           }
         ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Zafaria/Interiors/ZF_Z08_I02_Belloqs_Tent",
+      "m_locationName": "Belloq's Tent",
+      "m_goalName": "1_WizardQuestGoals00000274",
+      "m_goalTitle": "WizardQuestGoals_00000274",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Zafaria/Interiors/ZF_Z08_I02_Belloqs_Tent",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_ZF_Belloq.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": []
       },
       "m_noQuestHelper": false,
       "m_destinationZone": "Zafaria/Interiors/ZF_Z08_I02_Belloqs_Tent",
@@ -218,7 +272,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "ZF-WATER-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Enough! I surrender.",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_ZF_Belloq.dds",
+                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/Belloq_ZFA_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 527099,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Zafaria/Interiors/ZF_Z08_I02_Belloqs_Tent",
       "m_locationName": "Belloq's Tent",
@@ -293,30 +373,7 @@
       "m_autoComplete": false,
       "m_dialogList": {
         "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
-        "m_dialogs": [
-          {
-            "m_dialogTag": "Completion",
-            "m_dialogEntries": [
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "ZF-WATER-NPC02_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "You found Belloq, eh? Did he have anything useful to tell you?",
-                "m_picture": "GUI/NpcPortraits/Art_Portrait_Sobaka_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/Sobaka_ZFA_21.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 527097,
-                "m_cameraName": ""
-              }
-            ]
-          }
-        ]
+        "m_dialogs": []
       },
       "m_noQuestHelper": false,
       "m_destinationZone": "Zafaria/ZF_Z08_Waterfront",

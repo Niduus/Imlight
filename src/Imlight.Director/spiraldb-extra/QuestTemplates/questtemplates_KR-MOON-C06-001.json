@@ -76,7 +76,67 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>The Comb Key slots into place and the Honeycomb Gate opens up for you, allowing you to slip through the Honeycomb Wall. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Location_KR_Honeycomb_Gate.dds",
+                "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/Narrator_KHR_40.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>You need to hurry out before more of the Apiary warriors reach you. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Location_KR_Honeycomb_Gate.dds",
+                "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/Narrator_KHR_41.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>It's time to enter the Last Wood, and search for Dyvim's kin. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Location_KR_Honeycomb_Gate.dds",
+                "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/Narrator_KHR_42.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Khrysalis/KR_Z02_MoonCliffs",
       "m_locationName": "Moon Cliffs",
@@ -226,6 +286,23 @@
         "m_dialogEntries": [
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "<ITALICS>You remember Dyvim telling you to go through the Honeycomb Gate to the Last Wood, to find his kin. </ITALICS>",
+            "m_picture": "GUI/QuestButtons/Location_KR_Honeycomb_Gate.dds",
+            "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/Narrator_KHR_38.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "KR-MoonCliffs-NPC19_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
@@ -256,6 +333,23 @@
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1217108,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "<ITALICS>The Royal Guard are swarming. You need to battle through them quickly! </ITALICS>",
+            "m_picture": "GUI/NpcPortraits/Portrait_Bee_Warrior_RoyalGuard_MOB.dds",
+            "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/Narrator_KHR_37.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
             "m_cameraName": ""
           }
         ]

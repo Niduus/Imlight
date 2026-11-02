@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Desiccated Treebeard",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I splinter and return to the sand!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_AV_Treant_Tormented.dds",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/DessicatedTreebeard_KH2_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z10_I05_TreeBeardCave",
       "m_locationName": "Treebeard Cave",
@@ -127,40 +153,6 @@
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "There is one more task to finish before I owe my favor. Go to Treebeard Cave and round up some Desert Aloe.",
-                "m_picture": "GUI/NpcPortraits/Portrait_BarbQueenF_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/SonyaJadeEye_KH2_13.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1283172,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "KR-KondhaDesert-NPC14_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Once you have rounded up the Desert Aloe from the Desiccated Treebeards, use it to purify Big Water.",
-                "m_picture": "GUI/NpcPortraits/Portrait_BarbQueenF_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/SonyaJadeEye_KH2_14.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1283172,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "KR-KondhaDesert-NPC14_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "I am wide-eyed by your competence! With Big Water lush once more, my people have clean drinking water. The dark sun shines upon us.",
                 "m_picture": "GUI/NpcPortraits/Portrait_BarbQueenF_A_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/SonyaJadeEye_KH2_16.mp3",
@@ -184,7 +176,19 @@
     }
   ],
   "m_startResults": {
-    "m_results": []
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "To_TreebeardCave",
+        "m_dynaModRemove": false,
+        "m_useQuestAsOriginator": false,
+        "m_dynaModState": "Glowy",
+        "m_zoneName": "Khrysalis/KR_Z10_KondhaDesert",
+        "m_bShowsObject": false,
+        "m_persist": false,
+        "m_requirements": null
+      }
+    ]
   },
   "m_endResults": {
     "m_results": [
@@ -268,6 +272,57 @@
             "m_dialog": "I grow light-hearted by your victory over the Creeping Water Bug. Big Water is ours again, but the foul stench remains.",
             "m_picture": "GUI/NpcPortraits/Portrait_BarbQueenF_A_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/SonyaJadeEye_KH2_11.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1283172,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-KondhaDesert-NPC14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "There is one more task to finish before I owe my favor. Go to Treebeard Cave and round up some Desert Aloe.",
+            "m_picture": "GUI/NpcPortraits/Portrait_BarbQueenF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/SonyaJadeEye_KH2_13.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1283172,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-KondhaDesert-NPC33_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Let me guess, the Treebeards are as friendly and joyful as you, yes?",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/DyvimWhiteHart_KH2_30.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-KondhaDesert-NPC14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Once you have rounded up the Desert Aloe from the Desiccated Treebeards, use it to purify Big Water.",
+            "m_picture": "GUI/NpcPortraits/Portrait_BarbQueenF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/SonyaJadeEye_KH2_14.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1283172,

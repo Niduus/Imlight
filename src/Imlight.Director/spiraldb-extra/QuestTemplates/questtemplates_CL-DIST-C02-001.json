@@ -37,7 +37,50 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Configuration Station",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>There is an extremely long lecture about Celestian philosophy, astronomy, and magic theory. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Quest_CL_magic_object.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/Narrator_CEL_83.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Configuration Station",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>At the end of the lecture, the Preceptor produces a small metal token for you. Shiny! </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Quest_CL_magic_object.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/Narrator_CEL_84.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Celestia/CL_Z03_District_Of_The_Stars",
       "m_locationName": "District of the Stars",
@@ -76,7 +119,50 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Conflict Station",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>The Preceptor lectures for a little while about identifying and resolving disagreements of all sort. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Quest_CL_war_object.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/Narrator_CEL_85.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Conflict Station",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>When the lecture is complete, the Preceptor produces a small metal token for you. Congratulations! </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Quest_CL_war_object.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/Narrator_CEL_86.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Celestia/CL_Z03_District_Of_The_Stars",
       "m_locationName": "District of the Stars",
@@ -115,7 +201,50 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Contrivance Station",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>The Preceptor speaks at length about the creation of devices with magical properties. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Quest_CL_device_object.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/Narrator_CEL_87.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Contrivance Station",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>When it is finished lecturing you, the Preceptor produces a small metal token for you. Good job! </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Quest_CL_device_object.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/Narrator_CEL_88.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Celestia/CL_Z03_District_Of_The_Stars",
       "m_locationName": "District of the Stars",
@@ -154,7 +283,33 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Security Plinth",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>You fit the three course completion tokens into slots on the security plinth. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Quest_CL_security_plinth.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/Narrator_CEL_89.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Celestia/CL_Z03_District_Of_The_Stars",
       "m_locationName": "District of the Stars",

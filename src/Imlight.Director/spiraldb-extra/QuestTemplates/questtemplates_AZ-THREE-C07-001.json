@@ -154,6 +154,40 @@
         "m_dialogEntries": [
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "King Axaya",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I do not know this Horn of Huracan you speak of. Nor this Belloq. He sounds untrustworthy. Next time, give him to us.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Raptor_King_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/AxayaKnifemoon_AZT_14.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "King Axaya",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Perhaps the mystics can help you decipher the Shadow Queen's plan? Speak to Pacal Redmask, then return to me with his words.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Raptor_King_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/AxayaKnifemoon_AZT_15.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "AZ-ZOCOLO-NPC02_Persona",
             "m_nameOverride": "",
             "m_nameSTKey": null,
@@ -218,6 +252,23 @@
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 643253,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "King Axaya",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Did Pacal Redmask shed any light on the Shadow Queen's plotting?",
+            "m_picture": "GUI/NpcPortraits/Portrait_Raptor_King_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/AxayaKnifemoon_AZT_17.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
             "m_cameraName": ""
           }
         ]

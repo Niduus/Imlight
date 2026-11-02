@@ -192,6 +192,23 @@
             "m_dialogEntries": [
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KR-Rachias-NPC04_Persona",
+                "m_nameOverride": "Zarozinia",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I would be honored to accompany you, Spellbinder. :Tsssk:",
+                "m_picture": "GUI/NpcPortraits/Portrait_Mantis_HunterF_E_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/ZaroziniatheDeathSong_KH2_36.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "KR-Sardonyx-NPC01_Persona",
                 "m_nameOverride": "",
                 "m_nameSTKey": null,
@@ -205,6 +222,23 @@
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1283115,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KR-Rachias-NPC04_Persona",
+                "m_nameOverride": "Zarozinia",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Tell me what is going on in Sardonyx, monk!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Mantis_HunterF_E_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/ZaroziniatheDeathSong_KH2_37.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
                 "m_cameraName": ""
               },
               {

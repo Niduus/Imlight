@@ -47,7 +47,14 @@
     }
   ],
   "m_startResults": {
-    "m_results": []
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+        "m_dynaModClientTag": "AZ-ALTO-NPC07 instance",
+        "m_useQuestAsOriginator": false,
+        "m_requirements": null
+      }
+    ]
   },
   "m_endResults": {
     "m_results": [
@@ -112,6 +119,23 @@
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 724156,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "It's impossible to believe that King Neza is gone, but I'm going to have to take on my duties at once.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/ZenzenSevenStar_AZT_91.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
             "m_cameraName": ""
           }
         ]

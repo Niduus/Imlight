@@ -296,6 +296,57 @@
             "m_dialogEvent": "",
             "m_actorTemplateID": 1223157,
             "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "<ITALICS>Zaltanna seems to be the logical answer. </ITALICS>",
+            "m_picture": "GUI/NpcPortraits/Portrait_Mice_Summoner_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/Narrator_KHR_18.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "<ITALICS>Zaltanna does seem to be the resident expert on Bastion's history and the current state of affairs. </ITALICS>",
+            "m_picture": "GUI/NpcPortraits/Portrait_Mice_Summoner_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/Narrator_KHR_16.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "<ITALICS>You aren't sure how Zaltanna and Una will get along. Maybe you had better ask and then return with the answer. </ITALICS>",
+            "m_picture": "GUI/NpcPortraits/Portrait_Mice_Summoner_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/Narrator_KHR_17.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
           }
         ]
       }

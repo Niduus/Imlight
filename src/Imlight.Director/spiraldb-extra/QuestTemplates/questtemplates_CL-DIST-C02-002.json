@@ -37,7 +37,33 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Stellarium Pedestal",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>The pedestal appears to be missing a small section of metal... a key of some kind. Perhaps Thornton Lewis knows about it. </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Quest_CL_celestian_pedestal_04.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/Narrator_CEL_90.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Celestia/CL_Z03_District_Of_The_Stars",
       "m_locationName": "District of the Stars",
@@ -130,23 +156,6 @@
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 227117,
                 "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "CL-DIST-NPC01_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "I think you’ve finally got it!",
-                "m_picture": "GUI/NpcPortraits/Art_Portrait_CL_Excavator02.dds",
-                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/ThorntonLewis_CEL_61.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 227117,
-                "m_cameraName": ""
               }
             ]
           }
@@ -223,7 +232,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Brutus Starkwave",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "This is no place for a surface dweller! Come on, boys! Fresh meat!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_CL_Shark_Warrior_01.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/BrutusStarkwave_CEL_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>The Piscean leader drops a piece of curiously-shaped metal. It must be the missing key! </ITALICS>",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_CL_Shark_Warrior_01.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/Narrator_CEL_91.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z03i1_District_of_the_Stars",
       "m_locationName": "Starkwave's Lair",
@@ -261,7 +313,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "CL-DIST-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I think you’ve finally got it!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_CL_Excavator02.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/ThorntonLewis_CEL_61.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 227117,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Celestia/CL_Z03_District_Of_The_Stars",
       "m_locationName": "District of the Stars",

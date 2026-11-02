@@ -173,6 +173,40 @@
             "m_dialogEvent": "",
             "m_actorTemplateID": 470648,
             "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AZ-LAKE-NPC07_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I have been down here for too long. It will take one of yours to guide him.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/OzelUnderwaterCat_AZT_09.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AZ-LAKE-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Return to Cloudburst Forest and find Lady Zenzen there. She will have to help you reach new heights.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/KingNeza_AZT_27.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 470648,
+            "m_cameraName": ""
           }
         ]
       },

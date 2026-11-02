@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Glauco",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "What’sa that smell? I heared sumna puny little Wizard froma da surface is a gonna defeat me. Lets a see ‘em try!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_CL_Angler_Boss.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/Glauco_CEL_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z10i5_Kingdom_Of_The_Crabs",
       "m_locationName": "Senate Chamber",
@@ -72,7 +98,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Glauco",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Ya got the wrong guy! I was set up by the Shadow Weavers. Dey was a callin’ the shots! I was a just a patsy!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_CL_Angler_Boss.dds",
+                "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/Glauco_CEL_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z10i5_Kingdom_Of_The_Crabs",
       "m_locationName": "Senate Chamber",
@@ -261,6 +313,40 @@
             "m_dialog": "I’ve sent word along that we have a Wizard who is going to trounce him! Eat that sea-mold and wait for the effects to kick in!",
             "m_picture": "",
             "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/SenatorXanthus_CEL_13.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 225851,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Sea Mold",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "<ITALICS>You eat the sea-mold. It smells terrible, and you feel a little sick... and now you feel a lot sick. </ITALICS>",
+            "m_picture": "GUI/QuestButtons/Quest_CL_sea_mold.dds",
+            "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/Narrator_CEL_61.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "CL-CRAB-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Great! I can see from your face that you’re ready to rumble! My men will sound the shell horns to announce you’re on your way!",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_CL|WorldData|Sound/Dialogue/SenatorXanthus_CEL_14.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 225851,

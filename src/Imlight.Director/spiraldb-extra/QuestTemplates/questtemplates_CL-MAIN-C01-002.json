@@ -139,6 +139,23 @@
             "m_dialogEvent": "",
             "m_actorTemplateID": 211488,
             "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "CL-HUB-NPC001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Go and speak to Thornton Lewis in the District of the Stars. He’ll be ever-so-grateful to see you!",
+            "m_picture": "",
+            "m_soundFile": "|Celestia|WorldData|Sound/Dialogue/EdithBenchley_CEL_16.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 211488,
+            "m_cameraName": ""
           }
         ]
       },

@@ -157,6 +157,23 @@
             "m_dialogEvent": "",
             "m_actorTemplateID": 1223188,
             "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KR-MoonCliffs-NPC14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "We may as well find this Zam, if only to keep up the disguise and get a lay of the land.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/DyvimWhiteHart_KHR_69.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
           }
         ]
       },

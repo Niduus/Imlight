@@ -38,7 +38,33 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AV-WYRD-NPC06_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "With my Tomb restored, my essence is replenished!",
+                "m_picture": "GUI/NpcPortraits/Art_Portrait_AV_Gwendolyn_Brigid.dds",
+                "m_soundFile": "|Sound_Dialogue_AVA|WorldData|Sound/Dialogue/Brigid_AVA_09.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 611107,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Avalon/AV_Z05_TheWyrd",
       "m_locationName": "The Wyrd",
@@ -78,30 +104,7 @@
       "m_autoComplete": false,
       "m_dialogList": {
         "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
-        "m_dialogs": [
-          {
-            "m_dialogTag": "Completion",
-            "m_dialogEntries": [
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "AV-WYRD-NPC06_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "With my Tomb restored, my essence is replenished!",
-                "m_picture": "GUI/NpcPortraits/Art_Portrait_AV_Gwendolyn_Brigid.dds",
-                "m_soundFile": "|Sound_Dialogue_AVA|WorldData|Sound/Dialogue/Brigid_AVA_09.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 611107,
-                "m_cameraName": ""
-              }
-            ]
-          }
-        ]
+        "m_dialogs": []
       },
       "m_noQuestHelper": false,
       "m_destinationZone": "Avalon/AV_Z05_TheWyrd",

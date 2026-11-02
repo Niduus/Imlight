@@ -581,9 +581,17 @@ internal sealed class InteractTrainerComponent(ZoneEntity entity) : ZoneEntityCo
             return TeachesAsListed ? _serviceOptionBases.Take(TEST_TRAINER_MAX_OPTIONS) : _serviceOptionBases;
         }
 
-        // If this trainer also completes an active quest or offers a training point reset, first offer one trainer
+        // A quest goal here comes first, as in the real game: the talk plays, then the game opens the training window
+        // by itself and ShowSpellsAfterGoal fills it. The "Spell List" choice this trainer used to show beside the goal
+        // is opened by the game on its own, without asking the server, from the options it already holds, and those
+        // held no spells: Dworgyn's window was empty (page 1/0) until the goal was done (Niduus 2026-11-02).
+        if (InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard) && !_showingSpellOptions.Contains(wizard.CharId)) {
+            return [];
+        }
+
+        // If this trainer also offers a training point reset, sells fish or runs a shop, first offer one trainer
         // choice. The client interprets individual WizTrainingOption entries as the spell picker, so putting them
-        // beside GoalEntry or RespecOption skips the shared "What can I do for you?" choice entirely.
+        // beside RespecOption skips the shared "What can I do for you?" choice entirely.
         if (HasOtherChoice(wizard) && !_showingSpellOptions.Contains(wizard.CharId)) {
             return [new WizTrainingInteraction {
                 m_iconKey = WizBang.ToString(),
