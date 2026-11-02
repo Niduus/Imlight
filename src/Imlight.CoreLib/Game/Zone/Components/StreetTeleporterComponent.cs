@@ -77,6 +77,10 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
     private const float WALK_POINT_HEIGHT = 200f;
     private const float WALK_POINT_SLACK = 150f;
 
+    // How much room a landing spot needs from the nearest wall, and how far above the ground the wizard is put down.
+    private const float WALK_POINT_ROOM = 50f;
+    private const float LAND_LIFT = 10f;
+
     // The words that make a stone the far one of its pair, and the hub stone's own word.
     [GeneratedRegex(@"BackToHub|ToHub|ToMain|Secondary", RegexOptions.IgnoreCase)]
     private static partial Regex FarWord();
@@ -139,10 +143,10 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
         var z = partner.m_location.Z;
 
         // That guess can be inside a wall where the street bends (Niduus 2026-11-02, Firecat Alley), so the wizard
-        // lands on the game's own walk grid instead: of the walk points near the stone, the one nearest the guess.
+        // lands on the game's own walk grid instead, on a point clear of walls and fountains (see WalkPoint).
         if (WalkPoint(partner, x, y) is { } ground) {
             // A little above the point's ground height, so the wizard drops onto the floor rather than into it.
-            (x, y, z) = (ground.X, ground.Y, ground.Z + 10f);
+            (x, y, z) = (ground.X, ground.Y, ground.Z + LAND_LIFT);
             var (awayX, awayY) = (x - partner.m_location.X, y - partner.m_location.Y);
             if ((awayX * awayX) + (awayY * awayY) > 900f) {
                 (dx, dy) = (awayX, awayY);
@@ -195,32 +199,37 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
         return _partner;
     }
 
-    // A walk point of the zone's own walk grid by the stone: of the points on its floor no more than a little further
-    // than the nearest one, the one nearest (guessX, guessY). Null when the zone has no walk grid or none is close.
+    // A walk point of the zone's own walk grid by the stone, clear of the zone's walls and fountains (some grid points
+    // are inside them: Niduus 2026-11-02, the Wormguts Tower stone put him in Firecat Alley's fountain). Of the clear
+    // points on the stone's floor no more than a little further than the nearest clear one, the one nearest (guessX,
+    // guessY); with no clear point, the one with the most room. Null when the zone has no walk grid or none is close.
     private Vector3? WalkPoint(CoreObjectInfo stone, float guessX, float guessY) {
         var zonePath = Entity.Zone?.ZonePath;
         var at = stone.m_location;
-        var nearest = ZoneNav.Nearest(zonePath, at.X, at.Y, at.Z, WALK_POINT_REACH, WALK_POINT_HEIGHT);
-        if (nearest is not { } first) {
-            return null;
-        }
-
-        var limit = MathF.Sqrt(Flat(first.X - at.X, first.Y - at.Y)) + WALK_POINT_SLACK;
-        Vector3? best = null;
-        var bestToGuess = float.MaxValue;
+        var near = new List<(Vector3 Point, float Distance, float Room)>();
         foreach (var point in ZoneNav.Points(zonePath)) {
-            if (MathF.Abs(point.Z - at.Z) > WALK_POINT_HEIGHT || Flat(point.X - at.X, point.Y - at.Y) > limit * limit) {
+            var distance = Flat(point.X - at.X, point.Y - at.Y);
+            if (MathF.Abs(point.Z - at.Z) > WALK_POINT_HEIGHT || distance > WALK_POINT_REACH * WALK_POINT_REACH) {
                 continue;
             }
 
-            var toGuess = Flat(point.X - guessX, point.Y - guessY);
-            if (toGuess < bestToGuess) {
-                bestToGuess = toGuess;
-                best = point;
-            }
+            var room = ZoneCollision.Clearance(zonePath, new Vector3(point.X, point.Y, point.Z + LAND_LIFT));
+            near.Add((point, MathF.Sqrt(distance), room));
         }
 
-        return best ?? first;
+        if (near.Count == 0) {
+            return null;
+        }
+
+        var clear = near.Where(p => p.Room >= WALK_POINT_ROOM).ToList();
+        if (clear.Count == 0) {
+            return near.MaxBy(p => p.Room).Point;
+        }
+
+        var limit = clear.Min(p => p.Distance) + WALK_POINT_SLACK;
+
+        return clear.Where(p => p.Distance <= limit)
+            .MinBy(p => Flat(p.Point.X - guessX, p.Point.Y - guessY)).Point;
     }
 
     private static float Flat(float dx, float dy) => (dx * dx) + (dy * dy);
