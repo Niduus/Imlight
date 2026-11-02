@@ -74,7 +74,33 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SEP-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Intriguing, this appears to have been a mining ship. How fortuitous. I have an idea. Collect some of those Sulfur Barrels and Charcoal Crates.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Sparck_EMP_86.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401199,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/EM_Z05_Sepidious",
       "m_locationName": "The Stomach",
@@ -113,7 +139,33 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SEP-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I can use these two components to synthesize explosive Black Powder. Or nearly, anyway. We still need a carbon-based catalyst... Ah ha.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Sparck_EMP_88.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401199,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/EM_Z05_Sepidious",
       "m_locationName": "The Stomach",
@@ -152,7 +204,33 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SEP-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Notice the numerous crystalline mineral accumulations. That is potassium nitrate, or Saltpetre. It will be ideal. Gather some quickly.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Sparck_EMP_89.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401199,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/EM_Z05_Sepidious",
       "m_locationName": "The Stomach",
@@ -191,7 +269,50 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SEP-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Excellent. Adding the Saltpetre to the Sulfur and Charcoal will induce a chemical reaction that should create the proper incendiary event.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Sparck_EMP_90.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401199,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SEP-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Perhaps we should alert the others first, so they are not caught off-guard by the detonation.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Sparck_EMP_91.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401199,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/EM_Z05_Sepidious",
       "m_locationName": "The Stomach",
@@ -253,6 +374,40 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SEP-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Perhaps there is something amongst the detritus that could prove useful in clearing it. Wizard, will you help me search?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Sparck_EMP_85.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401199,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SEP-002_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Well, would you look at that - We just arrived, and already a chance to <ITALICS>work together </ITALICS>. Just be quick about it.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Shadow_Bat_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Bat_EMP_50.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401197,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "EM-SEP-003_Persona",
                 "m_nameOverride": "",
                 "m_nameSTKey": null,
@@ -266,6 +421,91 @@
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1401198,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SEP-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Yes, Captain. We have the ingredients to make explosive Black Powder.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Sparck_EMP_92.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401199,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SEP-002_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You want to trigger an explosion inside a living creature with no idea how the animal might react?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Shadow_Bat_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Bat_EMP_52.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401197,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SEP-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Yes. Unless you have an idea that you find more logical which you would like to proffer to the group.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Sparck_EMP_93.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401199,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SEP-002_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Nah, I'm good. Just making sure we're all on the same page. Go ahead, Wizard. Just try not to blow us all up.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Shadow_Bat_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Bat_EMP_53.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401197,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SEP-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Excellent. Now let us place these objects near the Blockage.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Sparck_EMP_87.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1401199,
                 "m_cameraName": ""
               }
             ]
@@ -308,7 +548,33 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM_StandIn_Dynt_01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "YAR! What in the seventy skies do you scallywags think you're doing?!?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pirate_Cabalist_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Dynt_EMP_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1404208,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/EM_Z05_Sepidious",
       "m_locationName": "The Stomach",

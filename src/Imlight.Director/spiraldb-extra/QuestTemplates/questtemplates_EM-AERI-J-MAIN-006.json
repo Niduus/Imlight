@@ -60,6 +60,23 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERI-NPC03-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Darn it, James, I'm a doctor, not a security guard!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Beans_EMP_14.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397548,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "EM-AERI-NPC01-B_Persona",
                 "m_nameOverride": "",
                 "m_nameSTKey": null,
@@ -70,108 +87,6 @@
                 "m_dialog": "And these castaways all appear to be in perfect health. So what else have you got to do? Come on, Wizard - let's go!",
                 "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_49.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1397532,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "EM-AERI-NPC01-B_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "They've found us, Wizard! Look out!",
-                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_50.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1397532,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "EM-AERI-NPC01-B_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "This is it, Wizard! Engage!",
-                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_51.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1397532,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "EM-AERI-NPC01-B_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Well done, Wezlee. You Beastmen can overcome your savage past, and build a better destiny. The Jewel will... hold on...",
-                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_58.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1397532,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "EM-AERI-NPC01-B_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Wait - this isn't a Storm Jewel - it's just worthless quartz! But why did Khan say...",
-                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_59.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1397532,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "EM-AERI-NPC01-B_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Khan lied to us! He wanted us to come up here... and leave the Ark unguarded! We have to go, before it's too late!",
-                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_60.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1397532,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "EM-AERI-NPC01-B_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "Beans! What happened?",
-                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_61.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1397532,
@@ -215,7 +130,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-JUNG-NPC02-C_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Greetings!",
+                "m_picture": "GUI/NpcPortraits/Beastman_Child_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Wezlee_EMP_11.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397549,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/EM_Z01_Jungle",
       "m_locationName": "Aeriel Jungle",
@@ -252,7 +193,67 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERI-NPC01-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "They've found us, Wizard! Look out!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_50.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397532,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-JUNG-NPC02-C_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "No, wait - I'm a friend! Look, Wizard - there's an Elevator up there that lowers to this spot.",
+                "m_picture": "GUI/NpcPortraits/Beastman_Child_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Wezlee_EMP_12.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397549,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-JUNG-NPC02-C_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I'll only get in your way in a fight - when you reach the top, use the Elevator to bring me up to you. Now go blow that Horn!",
+                "m_picture": "GUI/NpcPortraits/Beastman_Child_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Wezlee_EMP_13.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397549,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/EM_Z01_Jungle",
       "m_locationName": "Aeriel Jungle",
@@ -289,7 +290,101 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERI-NPC01-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "This is it, Wizard! Engage!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_51.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397532,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-JUNG-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "So, we have guests. You think you fooled me with your Horn? HA! My Raider friends warned me you were coming.",
+                "m_picture": "GUI/NpcPortraits/Beastman_Leader_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Caleban_EMP_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397550,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-JUNG-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "They say you want my Jewel. You will never take it! Lower the Bridge!",
+                "m_picture": "GUI/NpcPortraits/Beastman_Leader_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Caleban_EMP_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397550,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-JUNG-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Now you are doomed, little Wizard, and your Pig friend too! Smash them!",
+                "m_picture": "GUI/NpcPortraits/Beastman_Leader_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Caleban_EMP_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397550,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERI-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Those huts, Wizard - the vines that control the bridge come from them! Let's get in there and raise the Bridge!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_52.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397523,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z01_BeastmanStockade",
       "m_locationName": "Aeriel Jungle",
@@ -370,7 +465,33 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERI-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Looks like we're halfway there, Wizard! Let's find the other... uhhh... plant winchy thing.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_53.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397523,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z01_BeastmanWinchHouse01",
       "m_locationName": "Winch House",
@@ -489,7 +610,33 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERI-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You've done it, Wizard!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_54.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397523,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z01_BeastmanWinchHouse02",
       "m_locationName": "Winch House",
@@ -527,7 +674,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERI-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "It's a long way up, but we can make it if we work together! Let's go!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_55.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397523,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z01_BeastmanStockade",
       "m_locationName": "Aeriel Jungle",
@@ -564,7 +737,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERI-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "We made it! Now let's get young Wezlee up here.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_56.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397523,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z01_BeastmanStockade",
       "m_locationName": "Aeriel Jungle",
@@ -643,7 +842,67 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-JUNG-NPC02-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Thanks for the lift! The shipwreck is Caleban's lair -you should be able to find him on the upper deck.",
+                "m_picture": "GUI/NpcPortraits/Beastman_Child_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Wezlee_EMP_14.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397541,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERI-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Let's get to it! After you, Wizard. Wezlee, you wait out here where it's safe.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_57.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397523,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-JUNG-NPC02-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "If you say so...",
+                "m_picture": "GUI/NpcPortraits/Beastman_Child_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Wezlee_EMP_15.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397541,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z01_MountainVillage",
       "m_locationName": "Aeriel Jungle",
@@ -719,7 +978,67 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-JUNG-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Noooo!",
+                "m_picture": "GUI/NpcPortraits/Beastman_Leader_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Caleban_EMP_09.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397550,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-JUNG-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Son! What are you doing?",
+                "m_picture": "GUI/NpcPortraits/Beastman_Leader_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Caleban_EMP_10.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397550,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-JUNG-NPC02-D_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "There is a better way, father.",
+                "m_picture": "GUI/NpcPortraits/Beastman_Child_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Wezlee_EMP_16.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397552,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z01_CalibansFort",
       "m_locationName": "Caleban's Fort",
@@ -774,23 +1093,6 @@
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "There is a better way, father.",
-                "m_picture": "GUI/NpcPortraits/Beastman_Child_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Wezlee_EMP_16.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1397552,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "EM-JUNG-NPC02-D_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "Sycorax, the evil witch, tricked the Beastmen into believing this Jewel controlled their minds long before I was born. The Beastmen lived as her slaves.",
                 "m_picture": "GUI/NpcPortraits/Beastman_Child_A_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Wezlee_EMP_17.mp3",
@@ -835,6 +1137,23 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-JUNG-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I used the Jewel to keep us strong! We must stand as one against the outsiders! But the Jewel... its power is a lie?",
+                "m_picture": "GUI/NpcPortraits/Beastman_Leader_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Caleban_EMP_11.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397550,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "EM-JUNG-NPC02-D_Persona",
                 "m_nameOverride": "",
                 "m_nameSTKey": null,
@@ -869,6 +1188,23 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Flunki",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Caleban trick us! He must die!",
+                "m_picture": "GUI/NpcPortraits/Beastman_Warrior_B_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/BeastManSoldier_EMP_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "EM-JUNG-NPC02-D_Persona",
                 "m_nameOverride": "",
                 "m_nameSTKey": null,
@@ -882,6 +1218,74 @@
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1397552,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERI-NPC01-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Well done, Wezlee. You Beastmen can overcome your savage past, and build a better destiny. The Jewel will... hold on...",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_58.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397532,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERI-NPC01-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Wait - this isn't a Storm Jewel - it's just worthless quartz! But why did Khan say...",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_59.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397532,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERI-NPC01-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Khan lied to us! He wanted us to come up here... and leave the Ark unguarded! We have to go, before it's too late!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_60.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397532,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERI-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "James! We're in trouble!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Beans_EMP_15.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397525,
                 "m_cameraName": ""
               }
             ]
@@ -959,7 +1363,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-AERI-NPC01-B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Beans! What happened?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_61.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397532,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z00_ArkHold",
       "m_locationName": "Aeriel Shore",
@@ -1243,6 +1673,74 @@
             "m_dialog": "Caleban live on Beast Mountain. Beastmen have fort at bottom, then long path lead up to his House on top. Many guards.",
             "m_picture": "",
             "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Crusher_EMP_12.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1397538,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-JUNG-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Luckily Caleban's followers aren't too bright. Even if you don't look like you belong, they'll mistake you for a Raider if you blow the Horn.",
+            "m_picture": "GUI/NpcPortraits/Beastman_Child_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Wezlee_EMP_08.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1397539,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-JUNG-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Caleban's Jewel will be your biggest problem. Wait, it's a fake? That's great! That will make things much easier.",
+            "m_picture": "GUI/NpcPortraits/Beastman_Child_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Wezlee_EMP_09.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1397539,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-JUNG-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "You have a friend back in Nowhere that can help us? Good - go get him. I'll meet you at the foot of the Mountain.",
+            "m_picture": "GUI/NpcPortraits/Beastman_Child_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Wezlee_EMP_10.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1397539,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-JUNG-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Way up the mountain is hard. Many guard posts - you must fight them all! Take good care of Wezlee.",
+            "m_picture": "GUI/NpcPortraits/Beastman_WarriorF_B_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Crusher_EMP_13.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1397538,

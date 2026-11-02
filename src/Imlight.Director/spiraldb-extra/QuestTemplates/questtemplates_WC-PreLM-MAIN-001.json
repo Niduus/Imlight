@@ -602,7 +602,7 @@
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "MB-HUB-NPC17-B_Persona",
-                "m_nameOverride": "NPCs_01749125",
+                "m_nameOverride": "",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
@@ -619,7 +619,7 @@
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "MB-HUB-NPC17-B_Persona",
-                "m_nameOverride": "NPCs_01749125",
+                "m_nameOverride": "",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
@@ -1814,7 +1814,7 @@
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "MB-HUB-NPC18_Persona",
-                "m_nameOverride": "NPCs_01749125",
+                "m_nameOverride": "",
                 "m_nameSTKey": null,
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,

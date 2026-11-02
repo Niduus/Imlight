@@ -77,7 +77,17 @@ internal static class VanillaGoalNames {
             return null;
         }
 
-        return index >= 0 && index < goals.Count ? (string) goals[index]?.m_goalName : null;
+        return index >= 0 && index < KnownSteps(goals) ? (string) goals[index]?.m_goalName : null;
+    }
+
+    /// <summary>
+    /// How many steps from the start sit where the game has them. A quest Wizard404 recorded only the start of gets its
+    /// later talk steps added under the game's own names ("Goal 4" right after our first step), so from the first step
+    /// named that way on, a step's place no longer says which of the game's steps it is.
+    /// </summary>
+    private static int KnownSteps(List<GoalTemplate> goals) {
+        var first = goals.FindIndex(g => g?.m_goalName is { } name && s_numbered.IsMatch((string) name));
+        return first < 0 ? goals.Count : first;
     }
 
     /// <summary>The names the game gives our step <paramref name="ourName"/> of <paramref name="quest"/> (none for
@@ -89,7 +99,7 @@ internal static class VanillaGoalNames {
         }
 
         var index = goals.FindIndex(g => (string) g?.m_goalName == ourName);
-        if (index < 0) {
+        if (index < 0 || index >= KnownSteps(goals)) {
             yield break;
         }
 

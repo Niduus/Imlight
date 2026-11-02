@@ -46,6 +46,254 @@
       "m_zoneTag": "Lemuria/Interiors/LM_Z01_CentaurzanCabin",
       "m_proximityTag": "",
       "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Musician_A_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-WILD-NPC06",
+                "m_nameOverride": "NPCs_01749139",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17320E_00000005",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Centaur_TarzanF_B_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Centaurzan_LM-WILD_007.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520121,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-WILD-NPC06",
+                "m_nameOverride": "NPCs_01749139",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17320E_00000006",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Centaur_TarzanF_B_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Centaurzan_LM-WILD_008.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520121,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-WILD-NPC06",
+                "m_nameOverride": "NPCs_01749139",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17320E_00000007",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Centaur_TarzanF_B_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Centaurzan_LM-WILD_009.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520121,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-WILD-NPC06",
+                "m_nameOverride": "NPCs_01749139",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17320E_00000008",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Centaur_TarzanF_B_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Centaurzan_LM-WILD_010.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520121,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-WILD-NPC06",
+                "m_nameOverride": "NPCs_01749139",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17320E_00000009",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Centaur_TarzanF_B_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Centaurzan_LM-WILD_011.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520121,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-WILD-NPC06",
+                "m_nameOverride": "NPCs_01749139",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17320E_00000010",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Centaur_TarzanF_B_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Centaurzan_LM-WILD_012.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520121,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-WILD-NPC06",
+                "m_nameOverride": "NPCs_01749139",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17320E_00000011",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Centaur_TarzanF_B_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Centaurzan_LM-WILD_013.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520121,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-WILD-NPC06",
+                "m_nameOverride": "NPCs_01749139",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17320E_00000012",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Centaur_TarzanF_B_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Centaurzan_LM-WILD_014.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520121,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-URSAI-NPC01-C",
+                "m_nameOverride": "NPCs_01749140",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17320E_00000015",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Musician_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Tosh_LM-WILD_002.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487432,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-URSAI-NPC01-C",
+                "m_nameOverride": "NPCs_01749140",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17320E_00000016",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Musician_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Tosh_LM-WILD_003.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487432,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-URSAI-NPC01-C",
+                "m_nameOverride": "NPCs_01749140",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17320E_00000017",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Musician_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Tosh_LM-WILD_004.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487432,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-URSAI-NPC01-C",
+                "m_nameOverride": "NPCs_01749140",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "WizQst17320E_00000018",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Musician_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Tosh_LM-WILD_005.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1487432,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/Interiors/LM_Z02_Volcano",
+      "m_locationName": "ZoneLocName_1520101",
+      "m_goalName": "Goal 7",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "LM-URSAI-NPC01-C",
+      "m_usePatron": false
     }
   ],
   "m_startResults": {
@@ -82,6 +330,17 @@
     {
       "m_goalsAND": [
         "1_WizardQuestGoals00000691"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 7"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 7"
       ],
       "m_goalsOR": [],
       "m_goalsToAdd": [],

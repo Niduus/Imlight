@@ -125,40 +125,6 @@
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1340974,
                 "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "AR-ARC-NPC09_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "You've got that smug, I-just-wiped-the-floor-with-a-Shadow-Trickster look, so I'm guessing your little jaunt was a success.",
-                "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/VelmaVonVenkman_EMP_06.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1340974,
-                "m_cameraName": ""
-              },
-              {
-                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
-                "m_personaName": "AR-ARC-NPC09_Persona",
-                "m_nameOverride": "",
-                "m_nameSTKey": null,
-                "m_guiDisplay": "",
-                "m_maxTimeSeconds": 0,
-                "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "All right, you got the Essence. Now, here's the trick with the Trickster: cast this little Spell, you take on his form. And his skills!",
-                "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/VelmaVonVenkman_EMP_07.mp3",
-                "m_action": "",
-                "m_dialogEvent": "",
-                "m_actorTemplateID": 1340974,
-                "m_cameraName": ""
               }
             ]
           }
@@ -198,7 +164,67 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Shadow Trickster",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Who's there? Oh! You look kind and decent. I'm an innocent captive! Please help- Bah. You're not buying any of that, are you?",
+                "m_picture": "GUI/NpcPortraits/Portrait_SC_Self_TricksterMOB_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/ShadowTricksterA_EMP_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Shadow Trickster",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "HeheHahahaha! Venkman said you were clever. So I'll be straight with you. I could've escaped this rinky-dink study hall at any time, but I wanted to meet you!",
+                "m_picture": "GUI/NpcPortraits/Portrait_SC_Self_TricksterMOB_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/ShadowTricksterA_EMP_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Shadow Trickster",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Grandfather Spider will reward me handsomely for bringing you in. He might even let me keep your head as a trophy. Let's play!",
+                "m_picture": "GUI/NpcPortraits/Portrait_SC_Self_TricksterMOB_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/ShadowTricksterA_EMP_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Arcanum/Interiors/AR_ShadowTricksterLair_01",
       "m_locationName": "Shadow Training Room",
@@ -235,7 +261,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Shadow Trickster",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Gaaah! Fine! Do what you will with my Essence. Grandfather Spider will release me when he destroys you. You and this disgusting Spiral!",
+                "m_picture": "GUI/NpcPortraits/Portrait_SC_Self_TricksterMOB_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/ShadowTricksterA_EMP_04.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Arcanum/Interiors/AR_ShadowTricksterLair_01",
       "m_locationName": "Shadow Training Room",
@@ -273,7 +325,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AR-ARC-NPC09_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You've got that smug, I-just-wiped-the-floor-with-a-Shadow-Trickster look, so I'm guessing your little jaunt was a success.",
+                "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/VelmaVonVenkman_EMP_06.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340974,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AR-ARC-NPC09_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "All right, you got the Essence. Now, here's the trick with the Trickster: cast this little Spell, you take on his form. And his skills!",
+                "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/VelmaVonVenkman_EMP_07.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1340974,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Arcanum/Interiors/AR_Z01_ShadowSchool",
       "m_locationName": "Hall of Shadow",
@@ -528,6 +623,57 @@
             "m_dialog": "We have met, Pork. My brother and I were aboard Coleridge's ship that you navigated out of Empyrea. It was you who delivered us here.",
             "m_picture": "",
             "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/IoneVirga_EMP_24.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1254305,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AR-ARC-NPC16_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Blue Girl! All grown up. And what about little Blue Boy? Have the years here in the Arcanum treated him as well as they have you?",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_15.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1254310,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AR-ARC-NPC04-B_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Yes. <ITALICS>Sparck's </ITALICS> maturation has made me... proud. As he will be the mission's Science Officer, you two should reacquaint yourselves.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Human_StormTrainerF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/IoneVirga_EMP_25.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1254305,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AR-ARC-NPC04-B_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Understudy, while the Crew prepares for takeoff, Velma von Venkman has requested a word with you in her office before you leave.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Human_StormTrainerF_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/IoneVirga_EMP_26.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1254305,

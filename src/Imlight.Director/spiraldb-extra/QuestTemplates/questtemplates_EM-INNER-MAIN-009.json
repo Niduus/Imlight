@@ -236,6 +236,23 @@
             "m_dialogEvent": "",
             "m_actorTemplateID": 1391566,
             "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-INNER-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Run back to the Praesidium and tell them what happened. The Steam will be on by the time you get there!",
+            "m_picture": "GUI/NpcPortraits/Dwarf_FireCitizenF_D_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/ElspethTheClever_EMP_13.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1391566,
+            "m_cameraName": ""
           }
         ]
       },

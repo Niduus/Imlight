@@ -152,7 +152,33 @@
       "m_genericEvents": [],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-INNER-NPC11_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "That should do it. Now let's see if the Dwarves can get the steam going!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Captain_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_217.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1413145,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z04_SteamVentControl",
       "m_locationName": "Steam Plant",
@@ -205,9 +231,9 @@
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "Well done!",
+                "m_dialog": "Once that's done, reset the hydraulics by pulling the Actuator Lever. We'll take it from there. Well come on, ye want the steam, don't ye?",
                 "m_picture": "GUI/NpcPortraits/Dwarf_FireCitizenF_F_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/ElspethTheClever_EMP_07.mp3",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/ElspethTheClever_EMP_12.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1391566,
@@ -222,9 +248,9 @@
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "Once that's done, reset the hydraulics by pulling the Actuator Lever. We'll take it from there. Well come on, ye want the steam, don't ye?",
+                "m_dialog": "Well done!",
                 "m_picture": "GUI/NpcPortraits/Dwarf_FireCitizenF_F_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/ElspethTheClever_EMP_12.mp3",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/ElspethTheClever_EMP_07.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1391566,

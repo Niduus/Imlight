@@ -48,7 +48,7 @@ internal static class RetiredQuestStandIn {
     public static bool IsMet(IRequirementContext context, string retiredQuest) {
         if (context is not IZoneStateContext { TriggerZonePath: { Length: > 0 } zonePath }
             || string.IsNullOrEmpty(retiredQuest)
-            || SpiralDB.QuestExists(retiredQuest)
+            || SpiralDB.QuestExists(QuestCodeAliases.Resolve(retiredQuest))
             || context.GetWizard() is not { } wizard
             || SetOffByADefeat(context)) {
             return false;
@@ -128,7 +128,7 @@ internal static class RetiredQuestStandIn {
            });
 
     private static bool IsRetired(string quest)
-        => !string.IsNullOrEmpty(quest) && !SpiralDB.QuestExists(quest);
+        => !string.IsNullOrEmpty(quest) && !SpiralDB.QuestExists(QuestCodeAliases.Resolve(quest));
 
     // A trigger fired by a monster's defeat (Monster_Killed carries the monster's adjectives) or one that asks for it.
     private static bool SetOffByADefeat(IRequirementContext context)

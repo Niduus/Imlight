@@ -35,7 +35,33 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SAMS-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Looks like all of us will fit... barely. Let's go, Wizard!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Beans_EM2_20.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1451159,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/EM_Z12_LandingZone",
       "m_locationName": "Chaos Jungle",
@@ -229,6 +255,57 @@
             "m_dialog": "Now I have to start over - the fight totally harshed the vibes there. No worries, I can do it. You've just got to be more careful, you know?",
             "m_picture": "",
             "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Maram_EM2_06.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1451200,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-SAMS-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Sorry for the confusion, but we're in a hurry - we need to get this girl to Samsara and get her medical attention.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Beans_EM2_19.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1451159,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-SAMS-NPC01-B_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Samsara? It's close, but you'll never get there on foot: we live above the jungle. In the sky... you'll have to fly... Take my Sky Boat.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Kalamar_Citizen_H_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Maram_EM2_07.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1451200,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-SAMS-NPC01-B_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "When you get there, find my man Koel: he'll welcome you. You'll love it there.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Kalamar_Citizen_H_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Maram_EM2_08.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1451200,

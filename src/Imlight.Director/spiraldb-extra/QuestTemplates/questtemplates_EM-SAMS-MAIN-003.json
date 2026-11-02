@@ -94,6 +94,23 @@
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SAMS-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You don't understand - this isn't just any girl! If she dies it could mean the end of everything!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Beans_EM2_22.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1451159,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "EM-SAMS-NPC05_Persona",
                 "m_nameOverride": "NPCs_01748900",
                 "m_nameSTKey": null,
@@ -141,6 +158,23 @@
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1451170,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM-SAMS-NPC02_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Wizard I want to consult with the Elder a little more. You go get ready to go - I'll catch up",
+                "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Beans_EM2_23.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1451159,
                 "m_cameraName": ""
               }
             ]
@@ -469,6 +503,23 @@
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1451166,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-SAMS-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "This girl is dying - she needs your help! The Chain is why we're here. We need to fill her with the Chain's Life magic to keep her alive.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Pig_Crewman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EM2|WorldData|Sound/Dialogue/Beans_EM2_21.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1451159,
             "m_cameraName": ""
           }
         ]

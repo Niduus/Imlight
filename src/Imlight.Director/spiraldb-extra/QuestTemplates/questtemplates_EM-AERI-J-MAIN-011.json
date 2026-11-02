@@ -72,7 +72,50 @@
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>As you stare at the invocation and memorize it, a chill creeps over your heart. The shadows darken and grow ominous... </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Location_EM_SycoraxWall.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Narrator_EMP_03.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "Shade of Sycorax",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You would steal the secrets of Sycorax? You shall pay for your hubris!",
+                "m_picture": "GUI/NpcPortraits/Portrait_CHR_Witch_Ghost_A_MOB.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Sycorax_EMP_01.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
       "m_noQuestHelper": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z01_CaveScorax",
       "m_locationName": "Aeriel Jungle",
@@ -205,9 +248,9 @@
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "Oh, you did it! I'm free! Hahahaha!",
+                "m_dialog": "Oh now, why are you in such a big hurry?",
                 "m_picture": "GUI/NpcPortraits/Portrait_Seraph_Aerial_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Aeriel_EMP_01.mp3",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Aeriel_EMP_02.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1397564,
@@ -222,9 +265,9 @@
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
                 "m_requirements": null,
-                "m_dialog": "Oh now, why are you in such a big hurry?",
+                "m_dialog": "Oh, you did it! I'm free! Hahahaha!",
                 "m_picture": "GUI/NpcPortraits/Portrait_Seraph_Aerial_A_NPC.dds",
-                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Aeriel_EMP_02.mp3",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Aeriel_EMP_01.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1397564,

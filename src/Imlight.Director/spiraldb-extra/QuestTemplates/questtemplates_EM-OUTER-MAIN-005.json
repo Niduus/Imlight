@@ -149,6 +149,23 @@
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1391509,
                 "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "EM_StandIn_Sparck_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I believe our task here is accomplished. I will return to the Pod and continue calibrating the Streamportal. You inform the Ice Dwarves.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_Crewman_A_NPC.dds",
+                "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Sparck_EMP_71.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1397720,
+                "m_cameraName": ""
               }
             ]
           }
@@ -303,6 +320,23 @@
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1391509,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "EM-OUTER-NPC04-C_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "First we must assess the extent of the damage. Wizard, I will accompany you inside.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Nimbari_Crewman_A_NPC.dds",
+            "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Sparck_EMP_70.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1391517,
             "m_cameraName": ""
           }
         ]

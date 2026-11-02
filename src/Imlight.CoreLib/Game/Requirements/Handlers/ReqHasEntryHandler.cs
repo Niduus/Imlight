@@ -30,12 +30,15 @@ internal sealed class ReqHasEntryHandler : BaseRequirementHandler<ReqHasEntry> {
             return false;
         }
 
-        var questName = Requirement.m_questName;
+        // The game's code for a quest we rebuilt, as the quest or at the front of an entry ("LM-NIGHT-MAIN-001_Complete").
+        var questName = Imlight.CoreLib.WizardData.QuestCodeAliases.Resolve(Requirement.m_questName);
         if (Requirement.m_isQuestRegistry && string.IsNullOrEmpty(questName)) {
             return false;
         }
 
-        var entryName = Requirement.m_entryName;
+        var entryName = Requirement.m_isQuestRegistry
+            ? (string) Requirement.m_entryName
+            : Imlight.CoreLib.WizardData.QuestCodeAliases.ResolveEntry(Requirement.m_entryName);
         if (string.IsNullOrEmpty(entryName)) {
             return false;
         }
