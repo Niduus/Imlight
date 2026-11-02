@@ -90,6 +90,9 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
     private static readonly TimeSpan PERSONA_TRANSITION_DELAY = TimeSpan.FromMilliseconds(100);
 
     private readonly List<QuestTemplate> _cachedQuestOffers = [];
+    // Offers that followed straight on from the quest just finished, by quest name: the NPC to let the game out of
+    // the talk once the offer is answered (MSG_RELEASECHAINEDTALK).
+    private readonly Dictionary<string, IActorRef> _chainedOfferTalks = new(StringComparer.Ordinal);
     private readonly List<QuestTemplate> _questTemplateCache = [];
     private int _questTemplateVersion = QuestOptions.Version;
 
@@ -226,6 +229,30 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         }
 
         _cachedQuestOffers.Add(quest);
+        if (message.ChainedTalkNpc is not null) {
+            _chainedOfferTalks[quest.m_questName] = message.ChainedTalkNpc;
+        }
+        else {
+            _chainedOfferTalks.Remove(quest.m_questName);
+        }
+    }
+
+    [MessageHandler(typeof(QUEST_MESSAGES_52_PROTOCOL.MSG_DECLINEQUEST))]
+    private void ReceiveQuestDecline(QUEST_MESSAGES_52_PROTOCOL.MSG_DECLINEQUEST message)
+        => ReleaseChainedTalk(message.QuestName, accepted: false);
+
+    // The game does not leave a talk the server asked it into (the next quest offered straight after the last one):
+    // without this the camera stayed on the NPC after the offer was answered.
+    private void ReleaseChainedTalk(string questName, bool accepted) {
+        if (questName is null || !_chainedOfferTalks.Remove(questName, out var npc)) {
+            return;
+        }
+
+        npc.Tell(new ZONE_102_PROTOCOL.MSG_RELEASECHAINEDTALK {
+            PlayerActor = SessionActor.ActorRef,
+            QuestName = questName,
+            Accepted = accepted,
+        });
     }
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_COMPLETEPERSONAGOAL))]
@@ -862,6 +889,7 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
 
         // Remove it from the cached offers now that it's accepted.
         _cachedQuestOffers.RemoveAll(q => q.m_questName == quest.m_questName);
+        ReleaseChainedTalk(quest.m_questName, accepted: true);
     }
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND))]

@@ -1028,6 +1028,21 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// Told to an NPC's service memento when a quest it offered right after the last one (the game's camera still on
+    /// the NPC) is accepted or declined: the NPC lets the game out of the talk.
+    /// </summary>
+    public sealed class MSG_RELEASECHAINEDTALK : IServerMessage {
+
+        public byte MessageOrder { get; } = 107;
+        public byte ServiceID { get; } = 102;
+
+        public IActorRef PlayerActor;
+        public string QuestName;
+        public bool Accepted;
+
+    }
+
     public sealed class MSG_STARTSEAMLESSTRANSITION : IServerMessage {
 
         public byte MessageOrder { get; } = 47;

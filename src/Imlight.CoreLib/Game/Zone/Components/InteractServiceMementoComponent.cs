@@ -244,6 +244,9 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         if (serviceComponent is InteractDungeonSigilComponent sigil) {
             sigil.NextRequestedMode = message.RequestedSigilMode;
         }
+        if (serviceComponent is InteractQuestOfferComponent offer) {
+            offer.NextOfferChained = reinteract == 2;
+        }
 
         serviceComponent.OnServiceInteraction(playerActor, playerCharacter, playerObject, localIndex);
     }
@@ -253,6 +256,25 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         => component is not null
            && (string.IsNullOrEmpty(serviceName) || string.IsNullOrEmpty(component.ServiceName)
                || string.Equals(component.ServiceName, serviceName, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    /// A quest this NPC offered straight after the last one was answered. The game came into that offer through the
+    /// server's "talk again" (Reinteract 2) and never left the talk by itself: after accepting The Cure from Gretta
+    /// Darkkettle the camera stayed on her while the wizard walked away (Niduus 2026-11-02). Let the game out of the
+    /// talk, as with an empty one, and give the NPC's options back.
+    /// </summary>
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_RELEASECHAINEDTALK))]
+    private void ReleaseChainedTalk(ZONE_102_PROTOCOL.MSG_RELEASECHAINEDTALK message) {
+        if (message.PlayerActor is null) {
+            return;
+        }
+
+        Logger.Information("Letting {0} out of the talk with NPC {1}: the follow-on quest {2} was {3}.",
+            Logger.Args(message.PlayerActor.Path.Name,
+                Entity.Info?.m_zoneTag is { Length: > 0 } tag ? tag : Entity.ActiveGameObject.m_debugName.ToString(),
+                message.QuestName, message.Accepted ? "accepted" : "declined"));
+        ReleaseTalk(message.PlayerActor);
+    }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_REFRESHSERVICEOPTIONS))]
     private void RefreshServiceOptions(ZONE_102_PROTOCOL.MSG_REFRESHSERVICEOPTIONS message) {
@@ -312,6 +334,11 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         Logger.Warning("Ending an empty talk with NPC {0} for {1}: {2}",
             Logger.Args(Entity.Info?.m_zoneTag is { Length: > 0 } tag ? tag : Entity.ActiveGameObject.m_debugName.ToString(),
                 playerActor.Path.Name, why));
+        ReleaseTalk(playerActor);
+    }
+
+    // Clears the game's interactions (which lets the camera go), then gives the NPC's options back.
+    private void ReleaseTalk(IActorRef playerActor) {
         playerActor.Tell(new WIZARD2_53_PROTOCOL.MSG_CLEARALLINTERACTIONS());
         SendLeaveServiceRange(playerActor);
         if (_playersInInteractionRange.ContainsValue(playerActor)) {

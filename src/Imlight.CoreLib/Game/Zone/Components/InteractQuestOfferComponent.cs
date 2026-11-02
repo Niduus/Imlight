@@ -228,12 +228,21 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
         WizBang = state.HasAvailableQuest ? WizBangs.StartQuest : WizBangs.None;
     }
 
+    /// <summary>
+    /// Set by the service memento just before <see cref="OnServiceInteraction"/> when the offer follows straight on
+    /// from the quest just finished (the server asked the game to talk again, Reinteract 2).
+    /// </summary>
+    internal bool NextOfferChained { get; set; }
+
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
+        var chained = NextOfferChained;
+        NextOfferChained = false;
+
         // The index is this service's own option: the quest at that place in the list it showed.
         var state = GetOrUpdatePlayerState(playerCharacter, forceUpdate: true);
         if (state.HasAvailableQuest) {
             var quests = state.AvailableQuests;
-            HandleQuestOffer(playerActor, quests[(int) Math.Min(serviceOptionIndex, (uint) quests.Count - 1)], playerCharacter);
+            HandleQuestOffer(playerActor, quests[(int) Math.Min(serviceOptionIndex, (uint) quests.Count - 1)], playerCharacter, chained);
 
             return;
         }
@@ -295,11 +304,12 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
         return state;
     }
 
-    private void HandleQuestOffer(IActorRef playerActor, QuestTemplate quest, Wizard playerCharacter) {
+    private void HandleQuestOffer(IActorRef playerActor, QuestTemplate quest, Wizard playerCharacter, bool chained) {
         SendInteractAvailableQuest(playerActor, quest);
         ShowQuestInfoDialog(playerActor, quest);
         SendQuestOfferDialog(playerActor, quest, playerCharacter);
-        SendQuestOfferCacheOption(playerActor, quest);
+        SendQuestOfferCacheOption(playerActor, quest,
+            chained ? Entity.GetComponentOfType<InteractServiceMementoComponent>()?.ActorRef : null);
     }
 
     private void ShowQuestInfoDialog(IActorRef playerActor, QuestTemplate quest) {
@@ -394,9 +404,10 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
         playerActor.Tell(questOfferMsg);
     }
 
-    private static void SendQuestOfferCacheOption(IActorRef playerActor, QuestTemplate quest) {
+    private static void SendQuestOfferCacheOption(IActorRef playerActor, QuestTemplate quest, IActorRef chainedTalkNpc) {
         var cacheMsg = new CHARACTER_103_PROTOCOL.MSG_SENDQUESTOFFERCACHEOPTION {
             Quest = quest,
+            ChainedTalkNpc = chainedTalkNpc,
         };
 
         playerActor.Tell(cacheMsg);
