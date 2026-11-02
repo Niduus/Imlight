@@ -30,8 +30,16 @@
     <Content Include="spiraldb-cache\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <!-- Our own world data (Celestia's quests), laid over SpiralDB's. -->
-    <Content Include="spiraldb-extra\**">
+    <!--
+      Our own data, laid over SpiralDB's (see data/README.md). Both folders of the repo's data/ land in the
+      server's spiraldb-extra folder, exactly where they always did, so installed servers and Ahziael see no change:
+      - data/spiraldb: server-agnostic records in SpiralDB's own folders and format (quests, drop tables, ...).
+      - data/imlight:  this server's own data (boss cheats, shops, Crown Shop, ...).
+    -->
+    <Content Include="..\..\data\spiraldb\**\*.json" Link="spiraldb-extra\%(RecursiveDir)%(Filename)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\data\imlight\**\*.json" Link="spiraldb-extra\%(RecursiveDir)%(Filename)%(Extension)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

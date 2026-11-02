@@ -72,6 +72,8 @@ World data — NPC inventories, zone transfers, quest templates, drop tables, an
 
 You may control the SpiralDB behaviors in the configuration file, such as changing the remote and cache paths, and whether to fetch the latest data on boot.
 
+The quests and other records this fork adds on top of SpiralDB are in [`data/`](data): `data/spiraldb` holds server-agnostic records in SpiralDB's own format, `data/imlight` holds this server's own files. [`data/README.md`](data/README.md) explains where everything lives, and [`data/quest-index.csv`](data/quest-index.csv) lists every added quest.
+
 ### Configuration
 Imlight's configuration is stored in `Imlight.ini`. It is recommended to review the configuration file and adjust it to your needs before booting the server. Additionally, an admin account is always created and the details for this account can be found in the configuration file as well. You should change these details before booting the server.
 

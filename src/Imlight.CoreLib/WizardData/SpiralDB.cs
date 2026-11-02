@@ -50,7 +50,8 @@ public static class SpiralDB {
         = ConfigurationManager.Settings["Database.SpiralDBRollbackOnFailure"].AsBool();
 
     // Our own additions (Celestia's quests, for example), laid over SpiralDB's data. A file here replaces
-    // SpiralDB's file of the same name, and SpiralDB's updates never touch this folder.
+    // SpiralDB's file of the same name, and SpiralDB's updates never touch this folder. In the repository these
+    // files are in data/spiraldb and data/imlight (data/README.md); the build copies both into this one folder.
     private static readonly string s_extraPath
         = ConfigurationManager.GetValue("Database.SpiralDBExtraPath", "./spiraldb-extra");
 

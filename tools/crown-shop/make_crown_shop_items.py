@@ -1,5 +1,5 @@
 """
-Writes spiraldb-extra/CrownShop/GameFileItems.json: every item the game files price in crowns that SpiralDB's Crown Shop
+Writes data/imlight/CrownShop/GameFileItems.json: every item the game files price in crowns that SpiralDB's Crown Shop
 list (CrownShop/Tab*.json) leaves out, with the shop section it goes in.
 
 - Crowns = the item's m_creditsCost and gold = its m_baseCost, which is what SpiralDB's list uses for the items it has.

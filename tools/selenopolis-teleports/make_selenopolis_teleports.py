@@ -6,7 +6,7 @@ destination zone by hand (from the names) and where it lands: a spot by name, or
 destination's own way back (or a step from an object or sigil when there is no spot).
 
 Input: a folder of decoded zone wads (one folder per wad with gamedata.bin.json, triggers.xml.json and volumes.xml.json)
-Output: spiraldb-extra/DungeonTeleports JSON (a list of {ZoneName, Teleports}) and a plain report.
+Output: data/imlight/DungeonTeleports JSON (a list of {ZoneName, Teleports}) and a plain report.
 
     python3 make_selenopolis_teleports.py <decoded wads> <out.json> <report.txt>
 """
