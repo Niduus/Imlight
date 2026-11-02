@@ -1127,8 +1127,17 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         return [PickFreeTarget(caster, template, null)];
     }
 
+    // Spells that go on a whole side, or on enemies the wizard picks (pick-your-enemies AoEs such as Meteor Strike's
+    // and Blizzard's tier B, Qismah's Curse) or "at least one enemy". Each still goes off when the circle the game sent
+    // is gone. The pick-your-enemies and at-least-one-enemy kinds were missing, so with the circle the game sent
+    // defeated or empty (one enemy left, standing on another circle) the card did nothing.
     private static readonly HashSet<kEffectTarget> s_wholeSide = [
         kEffectTarget.kEnemyTeam, kEffectTarget.kEnemyTeamAllAtOnce, kEffectTarget.kFriendlyTeam, kEffectTarget.kFriendlyTeamAllAtOnce,
+        kEffectTarget.kMultiTargetEnemy, kEffectTarget.kAtLeastOneEnemy, kEffectTarget.kMultiTargetFriendly,
+    ];
+
+    private static readonly HashSet<kEffectTarget> s_enemySide = [
+        kEffectTarget.kEnemyTeam, kEffectTarget.kEnemyTeamAllAtOnce, kEffectTarget.kMultiTargetEnemy, kEffectTarget.kAtLeastOneEnemy,
     ];
 
     private static readonly HashSet<kEffectTarget> s_onCasterOnly = [
@@ -1174,12 +1183,26 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             return;
         }
 
-        if (!effects.Any(e => s_wholeSide.Contains(e.m_effectTarget)) || effects.Any(e => s_onePicked.Contains(e.m_effectTarget))) {
+        // What the spell really hits is in its innermost effects. Meteor Strike, Blizzard, Humongofrog, Forest Lord and
+        // Sandstorm (and their tier A) are a random-damage roll (RandomSpellEffect) marked "one enemy" around damage on
+        // every enemy. That outer mark kept them out, so with one enemy left, not on the circle the game sent, these
+        // AoEs did nothing (a player, 2026-11-02: "some AoE spells are uncastable if there's only one opponent").
+        var leaves = Hits(spell.m_effects).ToList();
+        var deep = effects.Concat(leaves).ToList();
+        if (!deep.Any(e => s_wholeSide.Contains(e.m_effectTarget)) || leaves.Any(e => s_onePicked.Contains(e.m_effectTarget))) {
             return;
         }
 
+        // The side the spell goes on. The circle the game sent may be empty (a creature circle no one stands on, or
+        // one a defeated creature left), and an empty circle counts as the players' side (OccupiedTeam), so an
+        // enemy AoE looked for a standing player there. An empty circle takes its side from the spell instead.
+        var side = picked.Occupied
+            ? picked.OccupiedTeam
+            : deep.Any(e => s_enemySide.Contains(e.m_effectTarget)) && action.SpellCaster is { } aoeCaster
+                ? (aoeCaster.FightsFor == CombatTeam.Player ? CombatTeam.Monster : CombatTeam.Player)
+                : action.SpellCaster?.FightsFor ?? picked.OccupiedTeam;
         var standing = picked._duelActor.ActiveSubCircles
-            .Where(c => c.AddedToDuel && c.IsAlive && c.OccupiedTeam == picked.OccupiedTeam).OrderBy(c => c.SlotIndex).FirstOrDefault();
+            .Where(c => c.AddedToDuel && c.IsAlive && c.OccupiedTeam == side).OrderBy(c => c.SlotIndex).FirstOrDefault();
         if (standing is null) {
             return;
         }
@@ -1187,6 +1210,34 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         Logger.Information("Duel {0} | Slot {1} | {2} goes on the whole side: slot {3} is gone, so it aims at slot {4}.",
             Logger.Args(_duel.m_duelID.Full, action.SpellCaster?.SlotIndex, (string) spell.m_name, picked.SlotIndex, standing.SlotIndex));
         action.SelectedTarget = standing;
+    }
+
+    // The effects a spell lands, looking inside the wrappers that only pick one of their effects (a random roll, an
+    // X-pip tier, a list). A conditional on a whole side checks each one there, so its inner effects aimed at "one"
+    // are each of them: it counts as the conditional itself.
+    private static IEnumerable<SpellEffect> Hits(IEnumerable<SpellEffect> effects) {
+        foreach (var effect in effects ?? []) {
+            var inner = effect switch {
+                RandomSpellEffect random => random.m_effectList,
+                VariableSpellEffect variable => variable.m_effectList,
+                EffectListSpellEffect list => list.m_effectList,
+                CountBasedSpellEffect counted => counted.m_effectList,
+                ConditionalSpellEffect conditional when !s_wholeSide.Contains(conditional.m_effectTarget)
+                    => conditional.m_elements?.Select(e => e?.m_pEffect).ToList(),
+                _ => null,
+            };
+            if (inner is null) {
+                if (effect is not null) {
+                    yield return effect;
+                }
+
+                continue;
+            }
+
+            foreach (var hit in Hits(inner)) {
+                yield return hit;
+            }
+        }
     }
 
     // A spell that brings a defeated participant back: it has an afterlife (kAfterlife), at the top or in a list.
