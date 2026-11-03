@@ -1984,11 +1984,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         return slot;
     }
 
-    // Whether a boss (NPCBehaviorTemplate.m_bossMob) stands on the enemy side.
+    // Whether a boss (BossRank.IsBoss) stands on the enemy side.
     private bool HasBossInBattle() => SubCircles.Any(c => c is not null && c.Occupied && c.OccupiedTeam == CombatTeam.Monster
         && c.ParticipantObject is { } obj
         && (CoreObjectFactory.GetCoreTemplate(obj.m_templateID) as GameObjectTemplate)?.m_behaviors?
-            .OfType<NPCBehaviorTemplate>().Any(npc => npc.m_bossMob) == true);
+            .OfType<NPCBehaviorTemplate>().Any(npc => npc.IsBoss()) == true);
 
     // The free enemy circle nearest to where a creature stands, or null when none is free.
     private CombatDuelSubCircle NearestFreeCreatureCircle(CoreObject creature)

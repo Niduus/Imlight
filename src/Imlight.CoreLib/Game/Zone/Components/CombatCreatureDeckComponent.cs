@@ -110,6 +110,8 @@ internal sealed class CombatCreatureDeckComponent : ZoneEntityComponent, ICompon
             }
         }
 
+        var realCards = false;
+
         // MobDeckBehaviorTemplate stores spell names directly, if it exists.
         var mobDeck = allBehaviors.OfType<MobDeckBehaviorTemplate>().FirstOrDefault();
         if (mobDeck != null) {
@@ -121,6 +123,8 @@ internal sealed class CombatCreatureDeckComponent : ZoneEntityComponent, ICompon
                 // Unknown names are skipped; SpellFactory logs the miss.
                 var spell = SpellFactory.GetSpell(spellName.ToString());
                 if (spell is not null) {
+                    // "NA <creature>" is its Natural Attack, the hit it makes with no card.
+                    realCards |= !spellName.ToString().StartsWith("NA ", System.StringComparison.Ordinal);
                     Add(spell.m_templateID);
                 }
             }
@@ -138,9 +142,95 @@ internal sealed class CombatCreatureDeckComponent : ZoneEntityComponent, ICompon
             foreach (var spellId in spellbook?.SpellTemplateIds ?? []) {
                 Add(spellId);
             }
+
+            // From Azteca on most decks (and from Mirage on every deck) live only on the real game's servers: not in
+            // the game files, SpiralDB or Wizard404. [Battle] StandInDecks (live, for creatures that appear after the
+            // change): such a creature plays the school deck of its rank instead of the six starter spells.
+            if (spellbook is null && !realCards && StandInDecksOn) {
+                var npc = template.m_behaviors.OfType<NPCBehaviorTemplate>().FirstOrDefault();
+                foreach (var spellId in StandInDeck(deckBehavior.m_defaultDeck, npc?.m_schoolOfFocus, npc?.m_nLevel ?? 0)) {
+                    Add(spellId);
+                }
+            }
         }
 
         return spellIds;
+    }
+
+    /// <summary>[Battle] StandInDecks (live): creatures whose deck nobody has get the school deck of their rank.</summary>
+    internal static bool StandInDecksOn => ConfigurationManager.GetValue("Battle.StandInDecks", true);
+
+    private static readonly (string Code, string School)[] s_schoolCodes = [
+        ("F", "Fire"), ("I", "Ice"), ("S", "Storm"), ("M", "Myth"), ("L", "Life"), ("D", "Death"), ("B", "Balance"),
+    ];
+
+    private static readonly System.Text.RegularExpressions.Regex s_deckName = new(
+        @"^[MH]deck-(?<schools>[A-Za-z]+)-(?:R(?<rank>\d+))?",
+        System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+
+    private static readonly System.Text.RegularExpressions.Regex s_rankInName = new(
+        @"-R(\d+)(?:-|$)", System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+
+    /// <summary>
+    /// A stand-in for a deck SpiralDB lacks: SpiralDB's plain school deck (Mdeck-F-R13 and so on) for each school the
+    /// deck's name starts with ("Mdeck-LF-R13": Life and Fire), at the rank in its name or else the creature's level
+    /// (from Azteca on a creature's level is its rank). The nearest rank SpiralDB has below it, or above when none is.
+    /// </summary>
+    internal static List<uint> StandInDeck(string deckName, string schoolOfFocus, int level) {
+        var spells = new List<uint>();
+        var match = s_deckName.Match(deckName ?? "");
+        // Only a short code of school letters counts (O is in some, as in Mdeck-FO-R14-EM, and names no school here).
+        // Mdeck-YMorganthe-01, Mdeck-Moon-R9 and Mdeck-Sh-... (Shadow) name none of the seven schools.
+        var codes = match.Success ? match.Groups["schools"].Value.ToUpperInvariant() : "";
+        if (codes.Length > 3 || codes.Any(c => !"FISMLDBO".Contains(c))) {
+            codes = "";
+        }
+
+        // A plain deck with something after its rank (Mdeck-M-R13-AZ, Mdeck-F-R5-KH) is that plain deck.
+        var schools = new List<string>();
+        foreach (var c in codes) {
+            var school = s_schoolCodes.FirstOrDefault(x => x.Code[0] == c).School;
+            if (school is not null && !schools.Contains(school)) {
+                schools.Add(school);
+            }
+        }
+
+        if (schools.Count == 0 && s_schoolCodes.FirstOrDefault(x => x.School.Equals(schoolOfFocus, System.StringComparison.OrdinalIgnoreCase)).School is { } own) {
+            schools.Add(own);
+        }
+
+        var rank = match.Success && match.Groups["rank"].Success ? int.Parse(match.Groups["rank"].Value, System.Globalization.CultureInfo.InvariantCulture)
+            : s_rankInName.Match(deckName ?? "") is { Success: true } inName ? int.Parse(inName.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture)
+            : level;
+
+        foreach (var school in schools) {
+            var code = s_schoolCodes.First(x => x.School == school).Code;
+            var book = NearestPlainDeck(code, rank);
+            foreach (var spellId in book?.SpellTemplateIds ?? []) {
+                if (!spells.Contains(spellId)) {
+                    spells.Add(spellId);
+                }
+            }
+        }
+
+        return spells;
+    }
+
+    private static CreatureSpellbook NearestPlainDeck(string code, int rank) {
+        rank = System.Math.Clamp(rank, 1, 30);
+        for (var r = rank; r >= 1; r--) {
+            if (CreatureSpellbookCollection.GetCreatureSpellbook($"Mdeck-{code}-R{r}") is { SpellTemplateIds.Length: > 0 } book) {
+                return book;
+            }
+        }
+
+        for (var r = rank + 1; r <= 30; r++) {
+            if (CreatureSpellbookCollection.GetCreatureSpellbook($"Mdeck-{code}-R{r}") is { SpellTemplateIds.Length: > 0 } book) {
+                return book;
+            }
+        }
+
+        return null;
     }
 
     private void AddSpell(uint spellId) {

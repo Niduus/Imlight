@@ -306,7 +306,7 @@ public static class IdCatalog {
                 CsvField(entry.School),
                 entry.Level.ToString(CultureInfo.InvariantCulture),
                 npc.m_nStartingHealth.ToString(CultureInfo.InvariantCulture),
-                npc.m_bossMob ? "1" : "0",
+                npc.IsBoss() ? "1" : "0",
                 string.Join(' ', spells.Select(id => id.ToString(CultureInfo.InvariantCulture))),
                 CsvField(Imlight.CoreLib.Game.Combat.BossOverrides.Describe(stats)),
                 CsvField(Imlight.CoreLib.Game.Combat.BossOverrides.GameGrid(stats)));
@@ -339,7 +339,7 @@ public static class IdCatalog {
             return false;
         }
 
-        if (File.ReadAllText(revisionFile).Trim() != s_gameRevision) {
+        if (File.ReadAllText(revisionFile).Trim() != CatalogStamp) {
             return false;
         }
 
@@ -362,6 +362,26 @@ public static class IdCatalog {
         return true;
     }
 
+    // What the files were built from: the game revision, the list's own version and what the creature decks come from.
+    // The decks are not in the game files (SpiralDB and spiraldb-extra add them), so the list is built again when they
+    // change (Niduus, 2026-11-03: the Bosses tab still showed decks from before the Wizard404 decks were added).
+    // Version 2: bosses also by the game's "Boss" title (BossRank).
+    private const int CATALOG_VERSION = 2;
+
+    private static string CatalogStamp {
+        get {
+            var books = Imlight.CoreLib.WizardData.SpiralDB.CreatureSpellbooks;
+            long spells = 0;
+            foreach (var book in books.Values) {
+                spells += book.SpellTemplateIds?.Length ?? 0;
+            }
+
+            var standIn = Imlight.CoreLib.Game.Zone.Components.CombatCreatureDeckComponent.StandInDecksOn ? 1 : 0;
+
+            return $"{s_gameRevision}|v{CATALOG_VERSION}|decks {books.Count}/{spells}|standin {standIn}";
+        }
+    }
+
     private static void WriteToDisk(List<IdCatalogEntry> entries, List<string> creatures) {
         Directory.CreateDirectory(OutputPath);
 
@@ -379,7 +399,7 @@ public static class IdCatalog {
         File.WriteAllLines(Path.Combine(OutputPath, CREATURES_NAME), [CREATURES_HEADER, .. creatures]);
 
         // Written last so an interrupted build is redone on the next boot.
-        File.WriteAllText(Path.Combine(OutputPath, REVISION_NAME), s_gameRevision);
+        File.WriteAllText(Path.Combine(OutputPath, REVISION_NAME), CatalogStamp);
     }
 
     /// <summary>

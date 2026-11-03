@@ -402,7 +402,7 @@ public partial class CombatResolver {
 
     private static bool IsBossCreature(CombatDuelSubCircle c)
         => !c.IsHumanPlayer && (CoreObjectFactory.GetCoreTemplate(TemplateOf(c)) as GameObjectTemplate)?.m_behaviors?
-            .OfType<NPCBehaviorTemplate>().Any(npc => npc.m_bossMob) == true;
+            .OfType<NPCBehaviorTemplate>().Any(npc => npc.IsBoss()) == true;
 
     // Whether a spell is one of these names or IDs (commas between; any version of a name).
     private static bool SpellIsOneOf(string words, uint id, SpellTemplate spell) {
