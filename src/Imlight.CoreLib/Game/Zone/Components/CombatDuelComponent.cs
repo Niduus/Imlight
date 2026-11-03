@@ -1147,6 +1147,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         LogRoundWaitOver();
 
+        // Kick cheats (Niduus, 2026-11-03: "kick that wizard out of the duel and lock his spot"): out once the round has played.
+        KickOut();
+
         // A wizard's minion goes when its wizard is defeated or gone (PlayerMinions.LeaveWithOwner).
         foreach (var orphan in PlayerMinions.Orphaned(SubCircles)) {
             Logger.Information("Duel {0} | Slot {1} | Minion leaves: its wizard is defeated or left the battle.",
@@ -2037,6 +2040,14 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         var alreadyInDuel = SubCircles.Any(x => x?.ParticipantObject?.m_globalID == participantObject.m_globalID);
         if (alreadyInDuel) {
+            return;
+        }
+
+        // A wizard a Kick cheat sent out with Ban does not come back into this battle.
+        if (isPlayer && _bannedFromDuel.Contains(participantObject.m_globalID.Full)) {
+            Logger.Information("Duel {0} | {1} was kicked out of this battle and can't join it again.",
+                Logger.Args(Duel.m_duelID.Full, participantObject.m_debugName));
+
             return;
         }
 
@@ -3110,6 +3121,40 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
     // drainMana: only the Flee button costs mana. Logging out, a dropped connection or leaving the zone took it all as
     // well (Niduus, 2026-10-22: after logging out of a battle and back in to rejoin it, his mana was gone).
+    // The wizards a Kick cheat with Ban sent out of this battle (their global ids).
+    private readonly HashSet<ulong> _bannedFromDuel = [];
+
+    /// <summary>
+    /// Takes out whoever a Kick cheat sent out this round (CombatResolver.Reactions.cs), as if they fled but without the
+    /// mana a flee costs; a creature goes the same way. Their circle was locked by the cheat if it said so.
+    /// </summary>
+    private void KickOut() {
+        if (CombatResolver is null) {
+            return;
+        }
+
+        foreach (var (circle, participant, _, ban) in CombatResolver.TakeKicks()) {
+            try {
+                if (ban) {
+                    _bannedFromDuel.Add(participant);
+                }
+
+                if (!_isActive || circle is null || !circle.Occupied || circle.ParticipantObject?.m_globalID.Full != participant) {
+                    continue;
+                }
+
+                Logger.Information("Duel {0} | Slot {1} | Kicked out of the battle by a cheat.", Logger.Args(Duel.m_duelID.Full, circle.SlotIndex));
+                circle.ParticipantActor?.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
+                    Message = ban ? "You were kicked out of this battle and can't come back." : "You were kicked out of this battle.", Modal = 0,
+                });
+                HandleFleeAction(circle, drainMana: false);
+            }
+            catch (Exception e) {
+                Logger.Error("Duel {0} | A kick failed: {1}", Logger.Args(Duel.m_duelID.Full, e));
+            }
+        }
+    }
+
     private void HandleFleeAction(CombatDuelSubCircle caster, bool drainMana = true) {
         if (!_isActive) {
             return;

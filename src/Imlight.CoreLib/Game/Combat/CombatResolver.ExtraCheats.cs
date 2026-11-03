@@ -71,7 +71,8 @@ public partial class CombatResolver {
                 var copying = step.Is("CopyEffects");
                 var redo = new List<BossCheats.CheatAction>();
                 foreach (var target in On(copying ? "Caster" : "Self").Where(t => t?._hangingEffects is not null && t.IsAlive)) {
-                    var picked = target._hangingEffects.Where(e => Fits(e) && (copying || !e.m_protected) && SizedKind(e) is not null)
+                    // Bypass: protected ones too (Niduus, 2026-11-03: "remove 1 blade ... Even through protection").
+                    var picked = target._hangingEffects.Where(e => Fits(e) && (copying || step.Bypass || !e.m_protected) && SizedKind(e) is not null)
                         .Reverse().Take(step.Count > 0 ? step.Count : int.MaxValue).ToList();
                     if (!copying) {
                         // The game is shown them coming off too, or it keeps drawing them (Niduus, 2026-10-29: "the convert
@@ -92,7 +93,8 @@ public partial class CombatResolver {
 
                         redo.Add(new BossCheats.CheatAction {
                             Do = "AddCharm",
-                            Amount = Math.Abs(e.m_effectParam),
+                            // Scale: a share of the old one's size (200: a 30% shield becomes a 60% trap).
+                            Amount = (int) Math.Round(Math.Abs(e.m_effectParam) * (step.Scale > 0 ? step.Scale : 100) / 100.0),
                             School = school.Equals("All", StringComparison.OrdinalIgnoreCase) ? "" : school,
                             Kind = copying ? SizedKind(e) : (step.To ?? "").Trim().Length > 0 ? step.To.Trim() : "Blade",
                             Target = copying || step.ToMe ? $"slot:{boss.SlotIndex}" : $"slot:{target.SlotIndex}",
@@ -381,7 +383,9 @@ public partial class CombatResolver {
                 return true;
             }
             default:
-                return false;
+                // Niduus, 2026-11-03 (his Malistaire's list): CombatResolver.Reactions.cs.
+                return TryReactionCheatSteps(boss, cheat, step, trigger, receiver, bossName, combatActionList, cinematicTimeSoFar, custom,
+                    out cinematicTime);
         }
     }
 
