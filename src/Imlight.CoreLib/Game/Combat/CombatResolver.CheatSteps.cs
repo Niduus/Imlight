@@ -285,6 +285,9 @@ public partial class CombatResolver {
 
     // How many effects the removal steps of the cheat now going off took off so far (for IfCleared).
     private int _clearedCount;
+
+    // How many effects the ConvertEffects steps of the cheat now going off turned into something else so far (for IfConverted).
+    private int _convertedCount;
     private string _stepMark = "";
 
     // The marks on each participant, by its global id (Mark, Unmark, the If "marked"; Niduus, 2026-10-24: Shadowbones's

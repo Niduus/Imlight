@@ -1043,6 +1043,7 @@ public partial class CombatResolver {
         var defeat = false;
         _lastStepTargets = [];
         _clearedCount = 0;
+        _convertedCount = 0;
         for (var s = 0; s < steps.Count; s++) {
             var step = steps[s];
             if (!boss.IsAlive && !step.Is("Say")) {
@@ -1078,6 +1079,29 @@ public partial class CombatResolver {
                             cinematicTimeSoFar + cinematicTime);
                     }
 
+                    _clearedCount = cleared;
+                    s += next.Count;
+                }
+
+                continue;
+            }
+
+            // IfConverted: the same as IfCleared, for the effects the ConvertEffects steps before it turned into something else
+            // (Niduus, 2026-11-03: "add 'If converted' so it can do actions after conversion").
+            if (step.Is("IfConverted")) {
+                var next = steps.Skip(s + 1).Take(Math.Max(1, step.Count)).ToList();
+                var converted = _convertedCount;
+                var cleared = _clearedCount;
+                var times = step.Each ? converted : converted >= Math.Max(1, step.Amount) ? 1 : 0;
+                Logger.Information("Duel {0} | Slot {1} | {2}: {3} effects were converted, so the next {4} steps go {5} times.",
+                    Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, converted, next.Count, times));
+                if (times != 1) {
+                    for (var t = 0; t < times && boss.IsAlive; t++) {
+                        cinematicTime += RunCheatStepsInOrder(boss, cheat, next, trigger, receiver, bossName, custom, combatActionList,
+                            cinematicTimeSoFar + cinematicTime);
+                    }
+
+                    _convertedCount = converted;
                     _clearedCount = cleared;
                     s += next.Count;
                 }
@@ -1331,6 +1355,8 @@ public partial class CombatResolver {
                 : $"add a {step.Amount}{(step.Kind.Equals("Absorb", StringComparison.OrdinalIgnoreCase) ? "" : "%")} {SchoolText(step.School)}{step.Kind}{on}{(step.Look.Length > 0 && step.Spell.Length == 0 ? $" ({step.Look} cast)" : "")}",
             "ifcleared" => step.Each ? $"the next {Math.Max(1, step.Count)} steps once for each effect cleared"
                 : $"the next {Math.Max(1, step.Count)} steps only if {Math.Max(1, step.Amount)}+ effects were cleared",
+            "ifconverted" => step.Each ? $"the next {Math.Max(1, step.Count)} steps once for each effect converted"
+                : $"the next {Math.Max(1, step.Count)} steps only if {Math.Max(1, step.Amount)}+ effects were converted",
             "boost" => $"{step.Kind} {(step.Amount >= 0 ? "+" : "")}{step.Amount}% {SchoolText(step.School)}for {RoundsText(step.Rounds)}{on}",
             "immune" => $"immune to {SchoolText(step.School)}damage for {RoundsText(step.Rounds)}{on}",
             "stun" => $"stun for {Math.Max(1, step.Rounds)} rounds{on}",
