@@ -339,7 +339,7 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         var level = Math.Max(1, npc?.m_nLevel ?? 1);
         var gold = Random.Shared.Next(level * 3, level * 6 + 1) + 5;
 
-        return npc?.m_bossMob == true ? gold * 3 : gold;
+        return npc?.IsBoss() == true ? gold * 3 : gold;
     }
 
     [MessageHandler(typeof(DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATDRAW))]

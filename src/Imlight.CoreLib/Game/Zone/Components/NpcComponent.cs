@@ -83,7 +83,7 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
             .OfType<DuelistBehaviorTemplate>()
             .FirstOrDefault();
 
-        this.IsBossMonster = _npcBehaviorTemplate.m_bossMob;
+        this.IsBossMonster = _npcBehaviorTemplate.IsBoss();
         this.IntelligenceFactor = _npcBehaviorTemplate.m_fIntelligence;
         this.SelfishnessFactor = _npcBehaviorTemplate.m_fSelfishFactor;
         this.AggressiveFactor = _npcBehaviorTemplate.m_nAggressiveFactor;

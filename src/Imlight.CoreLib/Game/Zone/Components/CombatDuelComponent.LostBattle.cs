@@ -81,7 +81,7 @@ internal sealed partial class CombatDuelComponent {
             templates.Add(replaced);
         }
 
-        if (templates.Any(t => t.m_behaviors?.OfType<NPCBehaviorTemplate>().Any(npc => npc.m_bossMob) == true)) {
+        if (templates.Any(t => t.m_behaviors?.OfType<NPCBehaviorTemplate>().Any(npc => npc.IsBoss()) == true)) {
             return "a boss";
         }
 

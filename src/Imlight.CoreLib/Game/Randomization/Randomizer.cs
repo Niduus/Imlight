@@ -438,7 +438,7 @@ public static class Randomizer {
             }
 
             // Bosses only swap with bosses.
-            var rank = npc.m_bossMob ? "boss" : "mob";
+            var rank = npc.IsBoss() ? "boss" : "mob";
             entries.Add((id, $"{rank}:{LevelBand(npc.m_nLevel)}"));
         }
 

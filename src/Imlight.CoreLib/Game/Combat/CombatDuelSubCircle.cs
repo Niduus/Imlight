@@ -1822,7 +1822,7 @@ public partial class CombatDuelSubCircle {
         // [Roshambo] Enabled (live): the creature fights with Roshambo versions of its cards. A wizard's own minion keeps its deck.
         if (!asMinion || OccupiedTeam == CombatTeam.Monster) {
             var template = CoreObjectFactory.GetCoreTemplate(ParticipantObject.m_templateID.Full) as GameObjectTemplate;
-            var isBoss = template?.m_behaviors?.OfType<NPCBehaviorTemplate>().Any(npc => npc.m_bossMob) == true;
+            var isBoss = template?.m_behaviors?.OfType<NPCBehaviorTemplate>().Any(npc => npc.IsBoss()) == true;
             string who = ParticipantObject.m_debugName;
             spellData = RoshamboDecks.Apply(spellData, isBoss, _bossOverride?.Deck is { Count: > 0 }, who);
         }

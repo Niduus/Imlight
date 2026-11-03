@@ -245,6 +245,6 @@ internal static class TamedDrops {
 
     internal static bool IsBoss(ulong templateId)
         => (CoreObjectFactory.GetCoreTemplate(templateId) as GameObjectTemplate)?.m_behaviors?
-            .OfType<NPCBehaviorTemplate>().Any(npc => npc.m_bossMob) == true;
+            .OfType<NPCBehaviorTemplate>().Any(npc => npc.IsBoss()) == true;
 
 }

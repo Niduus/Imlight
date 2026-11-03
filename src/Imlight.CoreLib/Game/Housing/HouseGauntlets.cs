@@ -66,7 +66,7 @@
  *   their own spawns, so the battles, the creatures and the boss cheats are the zone's own.
  * - A one-shot can be started by the owner of the house only; anyone else gets MSG_DISPOSABLEDUNGEONNOOWNER, the game's
  *   own "the owner must be present" message, and can join the owner's countdown.
- * - A one-shot is used up by a won battle against a boss (NPCBehaviorTemplate.m_bossMob) in its dungeon: the zone the
+ * - A one-shot is used up by a won battle against a boss (BossRank.IsBoss) in its dungeon: the zone the
  *   trip went to, or one under the same gauntlet folder. Its placed item takes the trophy template in the stored house,
  *   the house's next blob shows it, and its pad goes on the next sync.
  *
@@ -552,7 +552,7 @@ internal static class HouseGauntlets {
 
     private static bool IsBoss(ulong templateId)
         => (CoreObjectFactory.GetCoreTemplate(templateId) as GameObjectTemplate)?.m_behaviors?
-            .OfType<NPCBehaviorTemplate>().Any(npc => npc.m_bossMob) == true;
+            .OfType<NPCBehaviorTemplate>().Any(npc => npc.IsBoss()) == true;
 
     private static IReadOnlyList<HouseGauntlet> PadsOf(HouseState house) {
         var revision = house.Revision;
