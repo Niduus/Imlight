@@ -260,6 +260,25 @@
  * those; the When TagGone goes off the moment TagWho ("" itself, AnyAlly, AnyEnemy, Anyone) has none left (TagStart:
  * also at a round's start when there is none).
  *
+ * Reactions (Niduus, 2026-11-03: his own Malistaire's cheat list; CombatResolver.Reactions.cs, for players and creatures
+ * alike):
+ *   SpellEffectSchool   only a spell whose charms, wards, auras or bubble are of this school; Universal: all-school ones
+ *                (a universal blade is Balanceblade, a universal trap Hex, a universal shield Tower Shield).
+ *   SpellDoes    also Beguile, Confuse and Spy.        HasKind / RemoveEffects' Kind also Mantle (an accuracy or healing
+ *                charm: Black Mantle, Smoke Mantle, a -100% healing mantle).
+ *   When PetCasts   a pet on the other side is about to cast (a May Cast or a Will Cast): "the attacker" is its owner,
+ *                Spells / School / Category narrow it to the pet's spell.
+ *   Conditions LastHit  Percent: the hit as a share of the one's most health ("more than 33% in a single hit").
+ *   Actions also:
+ *     ConvertEffects   Bypass: protected ones too; Scale: the new ones are this percent of the old one's size (200 doubles).
+ *     { "Do": "Dispel", "School" (a school, Their: the target's own, TheirWeave: a wizard's second school; commas),
+ *       "Target" (Caster) }   the game's own dispel of each school is cast on the target, so it shows.
+ *     { "Do": "RemoveGlobal" }   the bubble on the battlefield is gone (the game's remove-global spell is cast so it shows).
+ *     { "Do": "Kick", "Target" (Caster), "Lock", "Ban" }   the target leaves the battle once the round has played out, as
+ *       if it fled (no mana lost); Lock keeps its circle locked for the rest of the battle (no one joins or is summoned
+ *       there), Ban keeps that wizard from coming back into this battle.
+ *     AddCharm Aura (or Aura) with a Spell and no stats: that spell's own stats, for Rounds rounds (a 99-round Bulwark).
+ *
  * File settings: ShadowPips is how many shadow pips the boss can hold (0 or left out = the [Battle] settings), and
  * ShadowPipChance the percent a round to gain one when its stats give none (25 if left out).
  */
@@ -400,6 +419,9 @@ internal static class BossCheats {
         // What the spell that set it off does (RemoveCharm, RemoveDoT... commas); NotSpellDoes: none of these.
         public string SpellDoes { get; set; } = "";
         public bool NotSpellDoes { get; set; }
+        // Only a spell whose charms, wards, auras or bubble are of this school ("Universal": all-school ones, such as
+        // Balanceblade, Hex or Tower Shield; Niduus, 2026-11-03: "Whenever a Universal Blade is cast").
+        public string SpellEffectSchool { get; set; } = "";
         // The card's enchantment (names with commas, Any or None); NotEnchant: not one of these.
         public string Enchant { get; set; } = "";
         public bool NotEnchant { get; set; }
@@ -641,6 +663,13 @@ internal static class BossCheats {
         // For ConvertEffects: the new effects go on itself (you, in a player cheat) instead of back on the target: "take an
         // enemy's Death shields, gain a Death blade of each one's size" (Niduus, 2026-10-28).
         public bool ToMe { get; set; }
+        // For ConvertEffects: the new ones are this percent of the old one's size (0 or 100: the same; 200: double;
+        // Niduus, 2026-11-03: "convert that shield into a trap for double it's value").
+        public int Scale { get; set; }
+        // For Kick (Niduus, 2026-11-03: "kick that wizard out of the duel and lock his spot"): Lock keeps its circle locked
+        // for the rest of the battle; Ban keeps that one from coming back into this battle.
+        public bool Lock { get; set; }
+        public bool Ban { get; set; }
         // For Reward: gold, experience and training points, and items (template IDs or treasure card names, commas) given
         // Count times each (1).
         public int Gold { get; set; }

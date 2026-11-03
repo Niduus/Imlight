@@ -760,6 +760,13 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         Logger.Information("Duel {0} | Slot {1} | Pet May Cast {2} casts {3} on slot {4} after {5}{6}.",
             Logger.Args(_duel.m_duelID.Full, owner.SlotIndex, mayCast.Talent, normal ?? mayCast.SpellName, target.SlotIndex,
                 reason, test ? $" (test {PetMayCasts.TestMode}: {PetMayCasts.TestModes[PetMayCasts.TestMode.Value]})" : ""));
+        // A cheat that answers a pet about to cast (When PetCasts; CombatResolver.Reactions.cs) goes first.
+        var cheatTime = PetCastCheats(owner, template, target, combatActionList, cinematicTimeSoFar);
+        cinematicTimeSoFar += cheatTime;
+        if (!owner.IsAlive) {
+            return cheatTime;
+        }
+
         owner._duelActor.CurrentActionCinematicOffsetSeconds = cinematicTimeSoFar;
         var action = new QueuedCombatAction { SpellCaster = owner, SelectedTarget = target, Spell = spell, SpellTemplate = template };
         var before = combatActionList.m_actionList.Count;
@@ -783,7 +790,7 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
         MarkPetCasts(combatActionList, before);
 
-        return cinematicTime;
+        return cinematicTime + cheatTime;
     }
 
     /// <summary>
@@ -1007,6 +1014,14 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                 }
 
                 try {
+                    // A pet's Will Cast about to go off: the When PetCasts (CombatResolver.Reactions.cs) goes first.
+                    if (delayed.Pet) {
+                        cinematicTime += PetCastCheats(caster, action.SpellTemplate, target, combatActionList, cinematicTimeSoFar + cinematicTime);
+                        if (!caster.IsAlive) {
+                            continue;
+                        }
+                    }
+
                     Logger.Information("Duel {0} | Slot {1} | {2} casts its delayed spell {3} ({4}){5} on slot {6}.",
                         Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, atStart ? "Daybreaker" : "Nightbringer",
                             action.Spell?.m_templateID, (string) action.SpellTemplate?.m_name, delayed.Free ? " (command)" : "", target.SlotIndex));

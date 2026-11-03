@@ -96,6 +96,16 @@ public partial class CombatResolver {
                 case kSpellEffects.kPolymorph:
                     found.Add("Polymorph");
                     break;
+                // Crowd control (Niduus, 2026-11-03: "Stun, Beguile, Spy, Confused").
+                case kSpellEffects.kMindControl:
+                    found.Add("Beguile");
+                    break;
+                case kSpellEffects.kConfusion:
+                    found.Add("Confuse");
+                    break;
+                case kSpellEffects.kClue:
+                    found.Add("Spy");
+                    break;
                 case kSpellEffects.kModifyPips or kSpellEffects.kModifyPowerPips or kSpellEffects.kModifyShadowPips or kSpellEffects.kModifySchoolPips:
                     found.Add("Pips");
                     break;

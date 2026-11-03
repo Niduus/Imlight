@@ -217,7 +217,7 @@ internal sealed class CheatRule {
             ["HasWho"] = "", ["HasKind"] = "", ["HasSpell"] = "", ["HasNot"] = false, ["AlliesUp"] = new JsonArray(), ["AlliesDown"] = new JsonArray(),
             ["AlliesMin"] = 0, ["AlliesMax"] = 0, ["Mark"] = "", ["MarkWho"] = "", ["NotMarked"] = false, ["MultiTarget"] = false,
             ["NotOnCaster"] = false, ["NotCategory"] = "", ["HasCount"] = 0, ["PipsKind"] = "", ["CreatureWho"] = "",
-            ["RemovedKind"] = "", ["RemovedSpell"] = "", ["RemovedFrom"] = "", ["SpellDoes"] = "", ["NotSpellDoes"] = false,
+            ["RemovedKind"] = "", ["RemovedSpell"] = "", ["RemovedFrom"] = "", ["SpellDoes"] = "", ["NotSpellDoes"] = false, ["SpellEffectSchool"] = "",
             ["Enchant"] = "", ["NotEnchant"] = false, ["Global"] = "", ["GlobalSchool"] = "", ["GlobalSpell"] = "", ["SchoolPips"] = 0,
             ["SchoolPipsSchool"] = "", ["SchoolPipsWho"] = "", ["SchoolPipsMost"] = false, ["PipsMin"] = 0, ["PipsMax"] = 0, ["PipsWho"] = "",
             ["Circles"] = "", ["CirclesWho"] = "", ["Conditions"] = new JsonArray(),
@@ -445,6 +445,10 @@ internal sealed class CheatRule {
         }
 
         // Closer to the real bosses (Niduus, 2026-10-25).
+        if (Text("SpellEffectSchool").Length > 0) {
+            If("I.SpellEffectSchool", new JsonObject { ["SpellEffectSchool"] = Text("SpellEffectSchool") });
+        }
+
         if (Text("SpellDoes").Length > 0) {
             If("I.SpellDoes", new JsonObject { ["SpellDoes"] = Text("SpellDoes"), ["NotSpellDoes"] = Flag("NotSpellDoes") });
         }

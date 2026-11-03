@@ -840,6 +840,11 @@ public partial class CombatResolver {
             return false;
         }
 
+        // Only a universal blade, trap or shield (Niduus, 2026-11-03; CombatResolver.Reactions.cs).
+        if (!SpellEffectSchoolAllows(cheat, spell)) {
+            return false;
+        }
+
         // What the spell does: "a different spell that also clears DoTs" (CombatResolver.MoreCheats.cs).
         if (!SpellDoesAllows(cheat, spell)) {
             return false;

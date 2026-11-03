@@ -559,8 +559,12 @@ public partial class CombatResolver {
             case "minions":
                 return Measured(boss, c, trigger, receiver, w => MinionsOf(w).Count);
             case "lasthit":
-                return Measured(boss, c, trigger, receiver, w => (c.Kind ?? "").Trim().Equals("Dealt", StringComparison.OrdinalIgnoreCase)
-                    ? w?.CheatLastHitDealt ?? 0 : w?.CheatLastHitTaken ?? 0);
+                // Percent: as a share of that one's most health (Niduus, 2026-11-03: "lose more than 33% of his HP in a single hit").
+                return Measured(boss, c, trigger, receiver, w => {
+                    double hit = (c.Kind ?? "").Trim().Equals("Dealt", StringComparison.OrdinalIgnoreCase) ? w?.CheatLastHitDealt ?? 0 : w?.CheatLastHitTaken ?? 0;
+
+                    return c.Percent ? w is null || MostHealth(w) <= 0 ? 0 : hit * 100.0 / MostHealth(w) : hit;
+                });
             case "wears":
                 return IsTrueOf(boss, c, trigger, receiver, w => Wears(w, c.Name));
             case "quest":

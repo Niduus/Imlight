@@ -406,6 +406,9 @@ public partial class CombatResolver {
             // Niduus, 2026-10-29: a healing trap (Infection: less healing taken) and a healing blade (more healing given).
             "infection" => ward && e.m_effectType is kSpellEffects.kModifyIncomingHeal or kSpellEffects.kModifyIncomingHealFlat && !good,
             "healboost" => charm && e.m_effectType is kSpellEffects.kModifyOutgoingHeal or kSpellEffects.kModifyOutgoingHealFlat && good,
+            // Niduus, 2026-11-03 ("remove all mantles"): an accuracy charm (Black Mantle, Smoke Mantle) or a healing one
+            // (a -100% healing mantle), good or bad.
+            "mantle" => charm && e.m_effectType is kSpellEffects.kModifyAccuracy or kSpellEffects.kModifyOutgoingHeal or kSpellEffects.kModifyOutgoingHealFlat,
             _ => false,
         };
     }
@@ -633,6 +636,12 @@ public partial class CombatResolver {
                                 CombatDuelSubCircle receiver, string bossName, List<string> lines, CombatActionListObj combatActionList,
                                 float cinematicTimeSoFar, bool custom) {
         var stats = AuraStats(step.AuraStats, step.Amount);
+        // A named aura with no stats of its own keeps that spell's own (Niduus, 2026-11-03: "a 99 round version of Bulwark").
+        if (stats.Count == 0 && (step.Spell.Length > 0 || step.SpellID != 0) && FindSpell(step.Spell, step.SpellID).Template is { } ownAura) {
+            stats = [.. Flatten(ownAura).Where(e => e is not null && e.m_effectTarget == kEffectTarget.kSelf && e.m_effectParam != 0)
+                .Select(e => (e.m_effectType, e.m_effectParam, ((string) e.m_sDamageType ?? "").Trim() is { Length: > 0 } s ? s : null))];
+        }
+
         if (stats.Count == 0) {
             Logger.Information("Duel {0} | Slot {1} | {2}: the aura has no stats.", Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName));
 
