@@ -2615,12 +2615,23 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             return;
         }
 
-        var keep = DungeonQuestIndex.GetQuestsForZones(progress.IsInstance ? progress.Zones : [wizard.Zone])
+        IReadOnlyCollection<string> here = progress.IsInstance ? progress.Zones : [wizard.Zone];
+        var keep = DungeonQuestIndex.GetQuestsForZones(here)
             .Select(t => (string)t.m_questName)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
+        // A zone quest held in an open zone (one everybody shares, not a dungeon copy) is marked, so leaving the zone
+        // keeps it; this also marks the ones started before the mark existed.
+        if (!progress.IsInstance) {
+            foreach (var held in wizard.QuestBehavior.CurrentQuestInstances
+                         .Where(q => q is not null && keep.Contains(q.QuestName)).ToList()) {
+                MarkOpenZoneQuest(wizard, held.QuestName);
+            }
+        }
+
         var stale = wizard.QuestBehavior.CurrentQuestInstances
-            .Where(q => DungeonQuestIndex.IsDungeonQuest(q.QuestName) && !keep.Contains(q.QuestName))
+            .Where(q => DungeonQuestIndex.IsDungeonQuest(q.QuestName) && !keep.Contains(q.QuestName)
+                && !KeepsZoneQuestHere(wizard, q.QuestName, here))
             .ToList();
 
         foreach (var qInstance in stale) {
@@ -2633,6 +2644,32 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             Logger.Information("Removed dungeon quest '{0}' from {1}: left its zone (now in '{2}').",
                 Logger.Args(qInstance.QuestName, wizard.CharId, wizard.Zone));
         }
+    }
+
+    // Marks a zone quest got in an open zone (see KeepsZoneQuestHere).
+    private const string OPEN_ZONE_ENTRY = "ImlightOpenZone";
+
+    private static void MarkOpenZoneQuest(Wizard wizard, string questName) {
+        if (!wizard.HasQuestRegistryValue(questName, OPEN_ZONE_ENTRY)) {
+            wizard.SetQuestRegistryValue(questName, OPEN_ZONE_ENTRY, 1);
+        }
+    }
+
+    // A quest that needs the player in a zone to start is only a dungeon's quest when that zone is a dungeon copy.
+    // Some start in an open zone and send the player elsewhere: River Temple (Cliffside Palace, MooShu) has its first
+    // fight, the Gate Key, inside a pagoda that is a copy of its own. Taking such a quest away on the way in wiped it,
+    // and walking back out gave it fresh from the first step, so the player beat the Gate Key over and over (Niduus,
+    // 2026-11-03). Such a quest stays while the player is where one of its steps happens, and one got in an open zone
+    // stays wherever the player goes, as in the real game.
+    private static bool KeepsZoneQuestHere(Wizard wizard, string questName, IReadOnlyCollection<string> here) {
+        if (wizard.HasQuestRegistryValue(questName, OPEN_ZONE_ENTRY)) {
+            return true;
+        }
+
+        var template = QuestTemplateCollection.GetQuestByName(questName);
+
+        return template?.m_goals?.Any(g => g is not null && !string.IsNullOrEmpty(g.m_destinationZone)
+            && here.Contains((string) g.m_destinationZone, StringComparer.OrdinalIgnoreCase)) == true;
     }
 
     private void TryGrantDungeonQuests(Wizard wizard, bool reconcileWithInstance = false) {
@@ -2718,6 +2755,9 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             }
 
             SendQuestStartingMessage(template, questInstance);
+            if (!inInstance) {
+                MarkOpenZoneQuest(wizard, template.m_questName);
+            }
 
             Logger.Information("Granted dungeon quest '{0}' to {1} in '{2}'.",
                 Logger.Args(template.m_questName, wizard.CharId, wizard.Zone));
