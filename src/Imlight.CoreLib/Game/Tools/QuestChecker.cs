@@ -198,6 +198,7 @@ internal static class QuestChecker {
                 problems.Add($"The quest giver {NameOf(giver)} doesn't stand anywhere in the game's zones.");
             }
             else if (giver == 0 && !Quests.QuestOptions.StartsByItself(questName)
+                     && !WizardData.Collections.DungeonQuestIndex.IsDungeonQuest(questName)
                      && quest.m_clientTags?.Any(t => (string) t == AUTO_START_TAG) != true) {
                 notes.Add("Nobody offers it: another quest or a game event has to hand it out.");
             }

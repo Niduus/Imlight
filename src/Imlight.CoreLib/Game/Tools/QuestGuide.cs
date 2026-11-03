@@ -291,7 +291,7 @@ internal static class QuestGuide {
                 }).ToList();
 
                 quests.Add(new QuestDetails(quest.m_questName, TitleOf(quest), quest.m_questLevel, quest.m_mainline || IsMain(quest.m_questName),
-                    giver?.Id ?? 0, giver?.Name ?? "", quest.m_clientTags?.Any(t => (string) t == AUTO_START_TAG) == true,
+                    giver?.Id ?? 0, giver?.Name ?? "", StartsByItself(quest),
                     [.. NeededQuests(quest.m_requirements).Distinct(StringComparer.OrdinalIgnoreCase)], goals, RewardsOf(quest)));
             }
 
@@ -616,10 +616,16 @@ internal static class QuestGuide {
         var stepZone = TeleportZone(firstGoal is WaypointGoalTemplate waypoint && !string.IsNullOrEmpty(waypoint.m_zoneTag)
             ? waypoint.m_zoneTag
             : firstGoal?.m_destinationZone);
-        var auto = quest.m_clientTags?.Any(t => (string) t == AUTO_START_TAG) == true;
+        var auto = StartsByItself(quest);
 
         return (giver, stepZone, auto && npc is null ? "auto" : "step");
     }
+
+    // Our own quests tagged to start by themselves, and the game's quests the server hands out on arrival in a zone
+    // (a "be in this zone" requirement: River Temple in Cliffside Palace), which no NPC offers either.
+    private static bool StartsByItself(QuestTemplate quest)
+        => quest.m_clientTags?.Any(t => (string) t == AUTO_START_TAG) == true
+            || WizardData.Collections.DungeonQuestIndex.IsDungeonQuest(quest.m_questName);
 
     // ---------------------------------------------------------------------
     // Each wizard's quests

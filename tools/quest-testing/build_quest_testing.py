@@ -63,6 +63,8 @@ GIVER_FIX = ("The quest checker (2026-10-27) found this quest's giver wasn't pla
              "names the placed NPC of the same name, so you can pick it up.",
              "The giver stands in the world with a quest marker over them, and talking to them offers the quest.", "0.10.534")
 UNTESTED = {
+    'MS-PLAG3-C01-001': ("You beat the Gate Key in the pagoda, but walking back out the quest started over. The server took the quest away inside the pagoda (it treated it like a dungeon quest) and handed it out fresh outside. Since v0.10.711 it keeps it.",
+        "Beat the Gate Key, walk out of the pagoda: the quest moves on to talking to Din Ho and doesn't start over.", "0.10.711"),
     'SL-W404-754784803': ('The Arc 4 main quest check (2026-10-31) found its giver was an NPC that stands nowhere, so nobody could offer it and Selenopolis stopped here. Now Brother Helio in the Forgotten Tombs offers it.',
         'After the quest before it, Brother Helio in the Forgotten Tombs has a quest marker and offers this quest.', "0.10.681"),
     'SL-W404-754719267': ('The Arc 4 main quest check (2026-10-31) found its giver was an NPC that stands nowhere, so nobody could offer it and Selenopolis stopped here. Now Brother Helio in the Chamber of Amalthea offers it.',
