@@ -510,6 +510,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             NoteHealthBeat(cinematicTime);
             // A spell on a whole side whose picked wizard or creature is gone goes on someone still standing there.
             RetargetGroupSpell(action);
+            // A shield, blade or heal for one teammate never lands on the other side.
+            KeepFriendlySpellOnOwnSide(action);
             // A boss cheat that interrupts goes off before the spell it answers.
             cinematicTime += BossCheatsBefore(action, combatActionList, cinematicTime);
             NoteHealthBeat(cinematicTime);
@@ -1225,6 +1227,53 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         Logger.Information("Duel {0} | Slot {1} | {2} goes on the whole side: slot {3} is gone, so it aims at slot {4}.",
             Logger.Args(_duel.m_duelID.Full, action.SpellCaster?.SlotIndex, (string) spell.m_name, picked.SlotIndex, standing.SlotIndex));
         action.SelectedTarget = standing;
+    }
+
+    /// <summary>
+    /// A spell for one teammate (a shield, blade, heal or ward aimed at kFriendlySingle or kFriendlySingleNotMe) only
+    /// goes on the caster's own side. The server used to land it on whatever circle the game sent, so a friend could
+    /// shield an enemy (Niduus, 2026-11-03: "Friend was able to shield enemies"). Aimed at someone on the other side,
+    /// it goes on the caster instead, or on the first teammate standing for a "not me" spell; with no one fitting the
+    /// caster passes. A beguiled caster is left to AimMindAffected, and a spell that also aims at one enemy is left alone.
+    /// </summary>
+    private void KeepFriendlySpellOnOwnSide(QueuedCombatAction action) {
+        if (action?.SelectedTarget is not { } target || action.Spell is null || action.SpellCaster is not { } caster
+            || action.SelfOnTarget || caster.CombatParticipant?.m_mindcontrolled > 0) {
+            return;
+        }
+
+        try {
+            var spell = action.SpellTemplate ?? CoreObjectFactory.GetCoreTemplate(action.Spell.m_templateID) as SpellTemplate;
+            if (spell is null) {
+                return;
+            }
+
+            var aims = AllEffects(spell).Concat(Hits(spell.m_effects)).Select(e => e.m_effectTarget)
+                .Where(s_onePicked.Contains).Distinct().ToList();
+            if (aims.Count == 0 || aims.Any(a => a is kEffectTarget.kEnemySingle or kEffectTarget.kPreselectedEnemySingle)) {
+                return;
+            }
+
+            var side = caster.FightsFor;
+            if (target.OccupiedTeam == side || !target.Occupied) {
+                return;
+            }
+
+            var notMe = aims.All(a => a == kEffectTarget.kFriendlySingleNotMe);
+            var instead = notMe
+                ? caster._duelActor.ActiveSubCircles
+                    .Where(c => c != caster && c.Occupied && c.AddedToDuel && c.IsAlive && c.OccupiedTeam == side)
+                    .OrderBy(c => c.SlotIndex).FirstOrDefault()
+                : caster;
+            Logger.Information("Duel {0} | Slot {1} | {2} is for a teammate but was aimed at slot {3} on the other side; it goes on {4}.",
+                Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, (string) spell.m_name, target.SlotIndex,
+                    instead is null ? "no one (pass)" : $"slot {instead.SlotIndex}"));
+            action.SelectedTarget = instead;
+            action.PickedTargets = instead is null ? null : [instead];
+        }
+        catch (Exception e) {
+            Logger.Error("Duel {0} | Keeping a friendly spell on its side failed: {1}", Logger.Args(_duel.m_duelID.Full, e));
+        }
     }
 
     // The effects a spell lands, looking inside the wrappers that only pick one of their effects (a random roll, an
