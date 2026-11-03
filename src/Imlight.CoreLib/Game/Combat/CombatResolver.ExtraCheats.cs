@@ -6,6 +6,8 @@
  *                   as one of To (Blade, Weakness, Shield, Trap, Absorb) of the same size and school, drawn by the game as
  *                   "add an effect of your own size" draws one. "Turn every trap on me into a blade." ToMe: the new ones go on
  *                   itself instead: "take every Death shield off the enemy, gain a Death blade of each one's size".
+ *   IfConverted     (in the step runner, CombatResolver.BossCheats.cs) as IfCleared, for what ConvertEffects turned: the next
+ *                   Count steps only if at least Amount effects were converted, or with Each once for each one.
  *   CopyEffects     Count (0: all) of Target's (Caster) effects of Kind are copied onto it (Self), the same size and school;
  *                   Target keeps them.
  *   ScaleEffects    Target's (Self) effects of Kind get Amount percent of their size (200: double, 50: half). Only the
@@ -109,8 +111,14 @@ public partial class CombatResolver {
                 }
 
                 if (redo.Count > 0) {
+                    // The new ones are put on by steps of their own, which start their own counts: this cheat's counts come
+                    // back after them, with what this step converted (IfCleared, IfConverted).
+                    var cleared = _clearedCount;
+                    var converted = _convertedCount;
                     cinematicTime += RunCheatStepsInOrder(boss, cheat, redo, trigger, receiver, bossName, custom, combatActionList,
                         cinematicTimeSoFar + cinematicTime);
+                    _clearedCount = cleared;
+                    _convertedCount = converted + (copying ? 0 : redo.Count);
                 }
 
                 return true;

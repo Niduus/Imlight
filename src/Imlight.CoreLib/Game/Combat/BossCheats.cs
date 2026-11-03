@@ -123,6 +123,9 @@
  *       it (RemoveEffects, RemoveCharms, RemoveWards, RemoveAuras) took off at least Amount effects; with Each, once for
  *       each one taken off. "Clear DoT for +55% Storm blade": RemoveEffects Kind DoT Count 1 Target Receiver, then
  *       IfCleared, then AddCharm Blade 55 Storm Target Self.
+ *     { "Do": "IfConverted", "Count" (1), "Amount" (1), "Each" }   as IfCleared, for the effects the ConvertEffects steps
+ *       before it turned into something else (Niduus, 2026-11-03: "add 'If converted' so it can do actions after
+ *       conversion"). "Turn their shield into a trap, then if one was turned, say a line".
  *     { "Do": "Boost", "Kind": Damage/Resist/Heal/Accuracy, "Amount" (percent, below 0 lowers), "School", "Rounds"
  *       (0 = the rest of the battle), "Target" (Self) }   an aura-like effect that is never used up (enrage: Boost
  *       Damage 10 on a FromRound cheat; it stacks). A new aura cast on that target takes it off, as auras do, unless
@@ -612,7 +615,7 @@ internal static class BossCheats {
         public string Weights { get; set; } = "";
         // Player cheats' FreeCast: how many times, when (First, Last, Before, After, Now), and with an enchantment.
         public int Times { get; set; }
-        // For IfCleared: once for each effect taken off, not just once.
+        // For IfCleared and IfConverted: once for each effect taken off (or converted), not just once.
         public bool Each { get; set; }
         public string Timing { get; set; } = "";
         public bool Enchant { get; set; }
