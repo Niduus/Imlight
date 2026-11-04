@@ -190,7 +190,7 @@ internal sealed class InteractTreasureVendorComponent(ZoneEntity entity) : ZoneE
             });
             _changeRemoved = _change is null ? [] : [.. CustomNpcs.TreasureCardsOf(new CustomNpcs.CustomNpc {
                 Name = _change.Name, TreasureCards = [.. _change.RemoveTreasureCards.Select(id => new CustomNpcs.Entry { ID = id })],
-            }).Select(card => card.Name)];
+            }).Select(card => card.Name), .. _change.RemoveTreasureCardNames];
         }
 
         if (_change is null) {

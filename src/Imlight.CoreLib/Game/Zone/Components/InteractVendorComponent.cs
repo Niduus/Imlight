@@ -105,7 +105,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
     }
 
     // The Customs tab's changes to this game vendor (NpcChanges), used over what it sells by itself (_base).
-    private sealed record BaseShop(List<GID> Inventory, HouseVendors.ShopWindow Window, int Kind, List<ShopSection> MoreShops);
+    private sealed record BaseShop(List<GID> Inventory, List<ByteString> Recipes, HouseVendors.ShopWindow Window, int Kind, List<ShopSection> MoreShops);
     private BaseShop _base;
     private int _changesVersion = -1;
     private Dictionary<uint, int> _changePrices;
@@ -149,7 +149,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
 
     public override void OnStart() {
         StartShop();
-        _base = new BaseShop(_inventory ?? [], _window, _furnitureShop, [.. _moreShops]);
+        _base = new BaseShop(_inventory ?? [], _recipeList ?? [], _window, _furnitureShop, [.. _moreShops]);
     }
 
     // What the Customs tab changed (NpcChanges), applied to what the vendor sells by itself when the file has changed
@@ -166,6 +166,7 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
 
         _changesVersion = version;
         _inventory = _base.Inventory;
+        _recipeList = _base.Recipes;
         _window = _base.Window;
         _furnitureShop = _base.Kind;
         _moreShops.Clear();
@@ -180,6 +181,8 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
 
         _hideShop = change.HideShop;
         var removed = change.RemoveItems.ToHashSet();
+        var recipesOff = change.RemoveRecipes.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        _recipeList = [.. _base.Recipes.Where(name => !recipesOff.Contains((string) name))];
         var items = change.ReplacesItems ? [] : _inventory.Where(item => !removed.Contains(item.MParts.TemplateId)).ToList();
         var added = KnownItems(change.Items.Where(e => !removed.Contains(e.ID)).Select(e => new GID((ulong) e.ID)))
             .Where(item => items.All(had => had.MParts.TemplateId != item.MParts.TemplateId));
@@ -187,8 +190,11 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         _changePrices = change.Items.Where(e => e.Price > 0).ToDictionary(e => e.ID, e => e.Price);
 
         var more = change.ReplacesItems ? [] : _base.MoreShops
-            .Select(shop => shop with { Inventory = [.. shop.Inventory.Where(item => !removed.Contains(item.MParts.TemplateId))] })
-            .Where(shop => shop.Inventory.Count > 0).ToList();
+            .Select(shop => shop with {
+                Inventory = [.. shop.Inventory.Where(item => !removed.Contains(item.MParts.TemplateId))],
+                Recipes = [.. (shop.Recipes ?? []).Where(name => !recipesOff.Contains((string) name))],
+            })
+            .Where(shop => shop.Inventory.Count > 0 || shop.Recipes.Count > 0).ToList();
         _moreShops.Clear();
         _moreShops.AddRange(more);
 

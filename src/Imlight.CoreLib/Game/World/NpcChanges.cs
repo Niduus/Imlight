@@ -34,6 +34,10 @@
  *                RemoveTreasureCards (spell ids).
  *   Training     HideTraining, SpellMode Add or Replace, Spells (ID: the spell, Price: training points; -1 keeps the
  *                game's own cost), RemoveSpells (spell ids).
+ *   Quests       HideQuests (it offers no quest) and QuestsOff (quest codes it no longer offers), from the app's
+ *                Game Rules > NPCs page (Niduus, 2026-11-04: "a npc section too for quests and stuff to be able to be
+ *                toggled of what they can and can't give"); that page also fills RemoveTreasureCardNames (card names)
+ *                and RemoveRecipes (recipe names).
  * The file is read again whenever it changes, and each NPC uses the new changes the next time a player talks to it.
  * An NPC that had no shop or spell list at all gets one when its zone is next loaded.
  *
@@ -76,11 +80,24 @@ internal static class NpcChanges {
         public string TreasureCardMode { get; set; } = ADD;
         public List<Entry> TreasureCards { get; set; } = [];
         public List<uint> RemoveTreasureCards { get; set; } = [];
+        // Cards taken out by the card's own name ("Fire Elf TC"), as the NPC's list has them (the NPCs page's switches).
+        public List<string> RemoveTreasureCardNames { get; set; } = [];
 
         public bool HideTraining { get; set; }
         public string SpellMode { get; set; } = ADD;
         public List<Entry> Spells { get; set; } = [];
         public List<uint> RemoveSpells { get; set; } = [];
+
+        // Recipes it no longer sells, by the recipe's name (a recipe shop lists them by name).
+        public List<string> RemoveRecipes { get; set; } = [];
+
+        // Quests: HideQuests offers none at all; QuestsOff the quests (by code) it no longer offers. A player who has
+        // the quest already keeps it and can still hand it in.
+        public bool HideQuests { get; set; }
+        public List<string> QuestsOff { get; set; } = [];
+
+        internal bool OffersQuest(string quest)
+            => !HideQuests && !QuestsOff.Contains(quest ?? "", StringComparer.OrdinalIgnoreCase);
 
         internal bool ReplacesItems => string.Equals(ShopMode, REPLACE, StringComparison.OrdinalIgnoreCase);
         internal bool ReplacesTreasureCards => string.Equals(TreasureCardMode, REPLACE, StringComparison.OrdinalIgnoreCase);
@@ -161,6 +178,9 @@ internal static class NpcChanges {
                 change.RemoveItems ??= [];
                 change.RemoveTreasureCards ??= [];
                 change.RemoveSpells ??= [];
+                change.RemoveTreasureCardNames ??= [];
+                change.RemoveRecipes ??= [];
+                change.QuestsOff ??= [];
                 changes[change.TemplateID] = change;
             }
 
