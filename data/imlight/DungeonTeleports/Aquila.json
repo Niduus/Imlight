@@ -1,0 +1,110 @@
+[
+  {
+    "ZoneName": "Aquila/AQ_Z00_Hub",
+    "Teleports": [
+      {
+        "TriggerName": "To Z01_Olympus",
+        "Teleport": {
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Aquila/AQ_Z01_MountOlympus",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      },
+      {
+        "TriggerName": "To Z02_Atlantea",
+        "Teleport": {
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Aquila/AQ_Z02_Atlantea",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      },
+      {
+        "TriggerName": "To Z03_Tartartus",
+        "Teleport": {
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Aquila/AQ_Z03_Tartarus",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      },
+      {
+        "TriggerName": "AQ-To_FinalBoss",
+        "Teleport": {
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Aquila/Interiors/AQ_Z01_TempleOfSisyphus",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      },
+      {
+        "TriggerName": "To_PanoptesLairTrigger",
+        "Teleport": {
+          "m_destinationLoc": "From_GardenHesperides",
+          "m_destinationZone": "Aquila/Interiors/AQ_Z00_PanoptesLair",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Aquila/Interiors/AQ_Z00_PanoptesLair",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_to_GardenHesperides",
+        "Teleport": {
+          "m_destinationLoc": "From_PanoptesLair",
+          "m_destinationZone": "Aquila/AQ_Z00_Hub",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Aquila/Interiors/AQ_Z00_I01_GorgonCave",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport_to_GardenHesperides",
+        "Teleport": {
+          "m_destinationLoc": "From GorgonCave",
+          "m_destinationZone": "Aquila/AQ_Z00_Hub",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Aquila/Interiors/AQ_Z01_TempleOfSisyphus",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport location",
+        "Teleport": {
+          "m_destinationLoc": "Target location-FromTempleOfSisyphus",
+          "m_destinationZone": "Aquila/AQ_Z00_Hub",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      }
+    ]
+  }
+]

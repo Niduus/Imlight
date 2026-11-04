@@ -1,0 +1,13 @@
+{
+  "Name": "AQ-OLYM-C01-001",
+  "Description": "Aquila dungeon quest Wisdom and Grace in Mount Olympus (rebuilt from the game's zone scripts; XP and gold from Spiral Tracker)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 695,
+  "MaxGold": 695,
+  "ExperienceAmount": 8670,
+  "TrainingPoints": 0,
+  "Items": []
+}
