@@ -222,6 +222,11 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
             message.IsPrivate = true;
         }
 
+        // A ride (the Krokotopia flying ship) is the player's own fresh copy every time they board (RideZones).
+        if (message.OwnerCharId != 0 && RideZones.IsKnownRide(message.DestinationZone)) {
+            message.ResetInstance = true;
+        }
+
         var hasContainer = _instanceContainers.TryGetValue(message.OwnerCharId, out var instanceContainer);
 
         // If IsPrivate is set but no instance container exists, create one proactively.
@@ -322,8 +327,10 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
         //     entry); WITHOUT this, a dungeon whose hard limit is > the raid threshold loads as a shared
         //     PUBLIC zone, so two independent owners collapse into one copy;
         //   - its hard limit is small enough to be an instance (normal dungeons).
+        //   - it is a ride (a flying ship) a player is boarding: each boarding is their own copy (RideZones).
         var isInstancedZone = wasPrivateRequest
-                           || message.ZoneData.m_nHardLimit <= HARD_LIMIT_INSTANCE_THRESHHOLD;
+                           || message.ZoneData.m_nHardLimit <= HARD_LIMIT_INSTANCE_THRESHHOLD
+                           || ownerId != 0 && RideZones.IsRide(zonePath, message.TriggerData);
 
         // A preloaded zone that turns out to be an instance has no owner yet; the player's own copy is made on entry.
         if (preloaded && isInstancedZone && !anyoneWaiting) {
