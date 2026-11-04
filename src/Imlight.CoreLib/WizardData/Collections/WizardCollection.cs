@@ -674,6 +674,11 @@ public static class WizardCollection {
         });
     }
 
+    public static void UpdateCharacterHiddenQuests(Wizard wizard) {
+        var data = wizard.HiddenQuestsBase64;
+        UpdateCharacter(wizard.CharId, character => character.HiddenQuestsBase64 = data);
+    }
+
     public static void UpdateCharacterCSWishlist(Wizard wizard) {
         UpdateCharacter(wizard.CharId, character =>
             character.CrownShopWishlist = wizard.CrownShopWishlist

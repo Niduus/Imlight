@@ -250,6 +250,13 @@ public class Wizard {
 
     public ByteString CrownShopWishlist { get; set; }
 
+    // The quests the player hid with the quest book's "Hide Quest" button (HiddenQuestsBehavior m_hiddenQuestsData, sent
+    // by the game in MSG_UPDATEUSERHIDDENQUESTS). Kept as base64 like the radial menus so no byte is mangled.
+    [JsonIgnore]
+    public ByteString HiddenQuestsData { get => FromBase64(HiddenQuestsBase64); set => HiddenQuestsBase64 = ToBase64(value); }
+
+    public string HiddenQuestsBase64 { get; set; }
+
     // Pixie Post messages waiting in the Mail tab of the friends window (PixiePostService).
     public List<PixiePost> PixiePosts { get; set; } = new();
 

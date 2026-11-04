@@ -74,6 +74,7 @@ public static class WizardObjectLoader {
         SetFishingBehavior(clientObject, character);
         SetAtticBehavior(clientObject, character);
         SetWishlistBehavior(clientObject, ref character);
+        SetHiddenQuestsBehavior(clientObject, character);
 
         return clientObject;
     }
@@ -258,6 +259,21 @@ public static class WizardObjectLoader {
         }
     }
     
+    // The quests hidden with the quest book's "Hide Quest" button. The game only reads this list from the wizard's
+    // object, which is sent again on every loading screen, so without it hidden quests came back after a zone change.
+    public static void SetHiddenQuestsBehavior(WizClientObject clientObject, Wizard character) {
+        var data = character.HiddenQuestsData;
+        if (CoreObjectFactory.FindBehaviorInstance<HiddenQuestsBehavior>(clientObject, out var existing)) {
+            existing.m_hiddenQuestsData = data;
+        }
+        else if (!data.IsEmpty) {
+            clientObject.m_inactiveBehaviors.Add(new HiddenQuestsBehavior {
+                m_behaviorTemplateNameID = 0x1A22DBF4,
+                m_hiddenQuestsData = data
+            });
+        }
+    }
+
     public static void SetWishlistBehavior(WizClientObject clientObject, ref Wizard character) {
         var wishlistData = character.CrownShopWishlist.IsEmpty
             ? WishlistData.Empty
