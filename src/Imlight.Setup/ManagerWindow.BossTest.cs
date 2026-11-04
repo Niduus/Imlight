@@ -79,6 +79,9 @@ internal sealed partial class ManagerWindow {
         public string Name { get; init; } = "";
         public List<BtPlace> Places { get; init; } = [];
         public List<ulong> MinionOf { get; init; } = [];
+        // The Wiki tab's file (creature-places.json.gz) also has the name-plate title and who it brings along.
+        public string Title { get; init; } = "";
+        public List<ulong> Minions { get; init; } = [];
     }
 
     private sealed class BtPlacesFile {

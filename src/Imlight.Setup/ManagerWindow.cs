@@ -374,6 +374,7 @@ internal sealed partial class ManagerWindow : Window {
         var tabs = new[] {
             Tab("Play", PlayTab),
             Tab("Commands", CommandsTab),
+            Tab(WIKI, WikiTab),
             Tab("Lookup", LookupTab),
             Tab("Quests", QuestsTab),
             Tab("Phrases", PhrasesTab),
@@ -516,6 +517,7 @@ internal sealed partial class ManagerWindow : Window {
         switch (shownTab) {
             case "Play": await LoadPlayAsync(); break;
             case "Lookup": await LoadLookupAsync(); break;
+            case WIKI: await LoadWikiAsync(); break;
             case "Quests": LoadQuests(); break;
             case "Vendors": await LoadVendorsAsync(); break;
             case "On and Off": await LoadTurnedOffAsync(); break;
@@ -2838,6 +2840,7 @@ internal sealed partial class ManagerWindow : Window {
     private static readonly Dictionary<string, (string Icon, string Line)> s_tabs = new() {
         ["Play"] = ("play", "Play Wizard101 on your server, on a friend's, or with friends."),
         ["Commands"] = ("terminal", "Every chat command the server knows, ready to copy."),
+        ["Wiki"] = ("book", "Look up any creature, spell or item like a wiki: a creature's school, rank, health, places, spells, cheats and drops; who casts or teaches a spell; who drops or sells an item."),
         ["Lookup"] = ("search", "Find any command, item, spell, creature, zone or quest and its ID."),
         ["Quests"] = ("flag", "Which quests your wizard has done and which come next, with Start and Teleport buttons."),
         ["Phrases"] = ("quote", "Every line of the game's text, by number, for .ca and boss cheat lines."),
