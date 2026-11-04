@@ -210,7 +210,7 @@ internal class MapService(SessionActor sessionActor) : MessageService(sessionAct
     }
 
     // The same as the quest offer service's check (InteractQuestOfferComponent.GetOrUpdatePlayerState).
-    private static bool IsOfferedTo(QuestTemplate quest, Wizard wizard) {
+    internal static bool IsOfferedTo(QuestTemplate quest, Wizard wizard) {
         if (DungeonQuestIndex.IsDungeonQuest(quest.m_questName) || QuestOptions.IsOff(quest.m_questName)) {
             return false;
         }

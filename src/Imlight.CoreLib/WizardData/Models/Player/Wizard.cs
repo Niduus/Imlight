@@ -639,6 +639,17 @@ public class Wizard {
         WizardCollection.UpdateCharacterGameStats(this);
     }
 
+    /// <summary>
+    /// Turns the spellbook's Quest Finder on or off for this wizard (the game's Options, MSG_QUESTFINDEROPTION). It is on
+    /// unless the player turned it off.
+    /// </summary>
+    public void SetQuestFinder(bool enabled) {
+        GameStats.m_questFinderOff = !enabled;
+
+        // Persistent save.
+        WizardCollection.UpdateCharacterGameStats(this);
+    }
+
     public void SetMaxGold(int maxGold) {
         GameStats.m_baseGoldPouch = maxGold;
 
