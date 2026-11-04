@@ -218,6 +218,12 @@
  *   "has" found with AnyEnemy / AnyAlly, else the player who set it off, such as the one with the pips), Unmarked (each
  *   player without the step's or cheat's mark: Mother Sunn's Ra for a wizard who cast no damage) and MostPips (the
  *   player with the most pips).
+ *   Target also (Niduus, 2026-11-04: "Sharpen targeted. All Players, All Enemies and so on"; enemies and allies as seen by
+ *   whoever's cheat it is, only those standing): AllAlliesButSelf, EnemyPlayers / AllyPlayers (the wizards of a side),
+ *   AllCreatures / EnemyCreatures / AllyCreatures (minions count as creatures), AllMinions / EnemyMinions / AllyMinions,
+ *   StrongestEnemy, MostHurtEnemy (lowest share of health), LastEnemy (highest circle), FirstAlly, RandomEnemyPlayer,
+ *   RandomEnemyCreature, RandomCreature, RandomAnyone, RandomOther (anyone but itself), AnyPlayer (a random wizard),
+ *   CasterSide and CasterSideButCaster (the side of whoever set it off). A FreeCast casts once on each of the many.
  *
  * Closer to the real bosses (Niduus, 2026-10-25: "Expand on existing cheats and search methods"; CombatResolver.MoreCheats.cs,
  * for players and creatures alike). Wizard404's words work too: a jinx is a trap and a curse is a weakness, wherever a
