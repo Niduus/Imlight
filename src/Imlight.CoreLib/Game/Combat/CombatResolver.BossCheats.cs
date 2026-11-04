@@ -1146,6 +1146,9 @@ public partial class CombatResolver {
 
             // A Tag tags whatever this step puts on anyone (CombatResolver.EffectTags.cs); RemoveEffects reads it itself.
             var tagging = (step.Tag ?? "").Trim().Length > 0 && !step.Is("RemoveEffects") ? HangingNow() : null;
+            // The automatic check (CombatResolver.OpenChanges.cs): what the step changes with no spell the game is shown
+            // gets a real spell cast for it.
+            var open = WatchOpenChanges(step, combatActionList);
             switch (step.Do.ToLowerInvariant()) {
                 case "form" or "sethealth":
                     break;
@@ -1283,6 +1286,14 @@ public partial class CombatResolver {
                     Logger.Warning("Duel {0} | Boss cheat of {1}: \"{2}\" is not something a cheat can do.",
                         Logger.Args(_duel.m_duelID.Full, bossName, step.Do));
                     break;
+            }
+
+            if (open is not null) {
+                // Its casts aim by circle, which the next step's "the same as the step before" must not pick up.
+                var targets = _lastStepTargets;
+                cinematicTime += ShowOpenChanges(open, boss, cheat, step, trigger, receiver, bossName, combatActionList,
+                    cinematicTimeSoFar + cinematicTime, custom);
+                _lastStepTargets = targets;
             }
 
             if (tagging is not null) {

@@ -686,11 +686,16 @@ internal sealed partial class ManagerWindow {
 
         if (block.Spec == "D.AddCharm") {
             refreshNote = () => {
-                view.Note(AddCharmWarning(block));
+                view.Note(AddCharmWarning(block) ?? DisplayNote(block));
                 if (_auraPickers.TryGetValue(block, out var aura)) {
                     aura.IsVisible = block.Text("Kind") == "Aura";
                 }
             };
+            refreshNote();
+        }
+        else if (spec.Kind == BlockKind.Do) {
+            // The automatic check: what the game is shown of this step (CheatDisplay, linked from the server).
+            refreshNote = () => view.Note(DisplayNote(block));
             refreshNote();
         }
 
@@ -785,6 +790,15 @@ internal sealed partial class ManagerWindow {
         return $"{fellBack}The game shows {A($"{SchoolWord(shownSchool)} {word}")} ({shown}) but the server uses {A($"{SchoolWord(school)} {word}")}, "
                + $"so the shown {word} {used}.{fix}";
     }
+
+    /// <summary>
+    /// What the game is shown of a Do block (Niduus, 2026-11-04: "intended actions instead of open actions"): the server
+    /// casts a real spell for what a step changes with no spell, and says here which ones the game still can't be shown.
+    /// </summary>
+    private static string? DisplayNote(CheatBlock block)
+        => CheatDisplay.Check(CheatSpecs.DoOf(block.Spec), block.Text("Kind")) is { } shown
+            ? (shown.How == CheatDisplay.Shown.NotShown ? "Not shown in game: " : "") + shown.Note
+            : null;
 
     private Control FieldFor(CheatBoard board, CheatRule rule, CheatBlock block, CheatField field, Action changed) {
         void Set(string key, JsonNode? value) {
