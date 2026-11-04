@@ -220,8 +220,16 @@ internal class GroupService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
-        // As on live, nobody teleports into a dungeon (or any other instance) to a group mate (Niduus, 2026-10-22).
-        if (targetCharacter.Wizard.AttachedLotGid == 0 && World.InstancedPlayers.IsInInstance(targetCharId)) {
+        // As on live, nobody teleports into a dungeon (or any other instance) to a group mate (Niduus, 2026-10-22), unless
+        // Game Rules > Teleport Rooms has that room Open; then they join the group mate's copy (Niduus, 2026-11-04).
+        var copy = targetCharacter.Wizard.AttachedLotGid == 0 ? World.InstancedPlayers.CopyOf(targetCharId) : null;
+        if (houseEntry is null && World.TeleportRooms.Refusal(copy?.ZonePath ?? target.CurrentZone, wizard.Zone) is not null) {
+            RefuseGoTo("friend.busy.closed");
+
+            return;
+        }
+
+        if (copy is { } instance && !World.TeleportRooms.FriendsMayJoin(instance.ZonePath)) {
             Logger.Information("Character {CharId} cannot go to group mate {TargetCharId}, who is in an instance.",
                 Logger.Args(wizard.CharId, targetCharId));
             RefuseGoTo("friend.busy.dungeon");
@@ -229,6 +237,16 @@ internal class GroupService(SessionActor sessionActor) : MessageService(sessionA
             return;
         }
 
+        if (copy is { } open) {
+            Logger.Information("Character {CharId} joins group mate {TargetCharId} in {Zone} (copy of {Owner}): Teleport Rooms has it open.",
+                Logger.Args(wizard.CharId, targetCharId, open.ZonePath, open.OwnerCharId));
+            World.ZoneInstanceOwners.Assign(wizard.CharId, open.ZonePath, open.OwnerCharId);
+            Teleport(destinationZone: open.ZonePath,
+                     destinationLocation: Util.GetCompactStringFromVector((Vector4) targetCharacter.Wizard.Location),
+                     doTeleportEffects: true, makePrivate: true, ownerCharId: open.OwnerCharId);
+
+            return;
+        }
         Teleport(
             destinationZone: target.CurrentZone,
             destinationLocation: Util.GetCompactStringFromVector((Vector4) targetCharacter.Wizard.Location),

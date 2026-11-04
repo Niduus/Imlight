@@ -1174,6 +1174,11 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
                 return;
             }
 
+            if (Imlight.CoreLib.Game.World.TeleportRooms.Refusal(known, wizard.Zone) is { } closed) {
+                CommandReply($"The first step is in {Imlight.CoreLib.Game.World.ZoneNames.Shown(known)}. {closed}");
+                return;
+            }
+
             SessionActor.ActorRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
                 DestinationZone = known,
                 DestinationLocation = "Start",

@@ -72,7 +72,8 @@ internal sealed partial class ManagerWindow {
             // Niduus, 2026-10-31: any NPC, creature, zone or world, the game's own or a custom, can be turned off and on.
             // Niduus, 2026-11-02: every spell's animation time in detail, and times of your own.
             // Niduus, 2026-11-04: what each NPC gives (quests, shop items, treasure cards, spells), each with a switch.
-            ["Game Modes", "Battles and World", "On and Off", "What NPCs Give", "Animations", "Events", "Shops and Codes"]),
+            // Niduus, 2026-11-04: which rooms of dungeons, towers and instances can be teleported into.
+            ["Game Modes", "Battles and World", "On and Off", "What NPCs Give", "Teleport Rooms", "Animations", "Events", "Shops and Codes"]),
         ("Server", "server", "Start, settings, accounts, logs",
             "Run the server and set it up: start and stop, every setting, who can log in, logs, game files, and Ahziael itself.",
             // Niduus, 2026-10-30: Ahziael on a server hosted on another PC, for its admins.

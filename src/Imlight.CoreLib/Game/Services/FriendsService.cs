@@ -656,8 +656,16 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
                     Logger.Args(wizard.CharId, targetID, houseEntry.LotGid, houseEntry.Zone, houseEntry.OwnerCharId));
             }
 
-            // As on live, nobody teleports into a dungeon (or any other instance) to a friend (Niduus, 2026-10-22).
-            if (queryResult.Wizard.AttachedLotGid == 0 && World.InstancedPlayers.IsInInstance(targetID)) {
+            // As on live, nobody teleports into a dungeon (or any other instance) to a friend (Niduus, 2026-10-22), unless
+            // Game Rules > Teleport Rooms has that room Open; then they join the friend's copy (Niduus, 2026-11-04).
+            var copy = queryResult.Wizard.AttachedLotGid == 0 ? World.InstancedPlayers.CopyOf(targetID) : null;
+            if (houseEntry is null && World.TeleportRooms.Refusal(copy?.ZonePath ?? onlinePlayer.CurrentZone, wizard.Zone) is not null) {
+                RefuseGoTo("friend.busy.closed");
+
+                return;
+            }
+
+            if (copy is { } instance && !World.TeleportRooms.FriendsMayJoin(instance.ZonePath)) {
                 Logger.Information("Player {0} cannot go to character ID {1}, who is in an instance.",
                     Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), targetID));
                 RefuseGoTo("friend.busy.dungeon");
@@ -665,6 +673,15 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
                 return;
             }
 
+            if (copy is { } open) {
+                Logger.Information("Player {0} joins character ID {1} in {2} (copy of {3}): Teleport Rooms has it open.",
+                    Logger.Args(wizard.CharId, targetID, open.ZonePath, open.OwnerCharId));
+                World.ZoneInstanceOwners.Assign(wizard.CharId, open.ZonePath, open.OwnerCharId);
+                Teleport(destinationZone: open.ZonePath, destinationLocation: coordinates, doTeleportEffects: true,
+                         makePrivate: true, ownerCharId: open.OwnerCharId);
+
+                return;
+            }
             Teleport(
                 destinationZone: onlinePlayer.CurrentZone,
                 destinationLocation: coordinates,

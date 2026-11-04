@@ -65,4 +65,13 @@ internal static class InstancedPlayers {
     internal static bool IsInInstance(ulong charId)
         => s_zones.ContainsKey(charId);
 
+    /// <summary>
+    /// The instanced zone the character is in and the owner of that copy, so a friend may join them there when
+    /// Teleport Rooms has the room Open; null when they are in none.
+    /// </summary>
+    internal static (string ZonePath, ulong OwnerCharId)? CopyOf(ulong charId)
+        => s_zones.TryGetValue(charId, out var zone) && zone is global::Imlight.CoreLib.Game.Zone.Core.Zone copy
+            ? (copy.ZonePath, copy.ContainerOwnerId)
+            : null;
+
 }

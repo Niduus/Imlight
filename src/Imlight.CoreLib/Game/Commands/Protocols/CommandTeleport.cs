@@ -80,6 +80,13 @@ internal class CommandTeleport : CommandProtocol {
                 (match.Others.Count > 3 ? $" and {match.Others.Count - 3} more." : "."));
         }
 
+        // Game Rules > Teleport Rooms can close a room to teleporting (Niduus, 2026-11-04).
+        if (TeleportRooms.Refusal(target.Code, Context.Character.Zone) is { } closed) {
+            InformSenderClient($"{shown}: {closed}");
+
+            return;
+        }
+
         Logger.Information("Teleport {0} -> {1} (by {2}).", Logger.Args(zone, target.Code, match.How));
         SendTo(target.Code);
     }
@@ -100,6 +107,12 @@ internal class CommandTeleport : CommandProtocol {
         if (!int.TryParse(step, out var number)
             || Tools.QuestStepSpots.Find(template, number) is not { } spot) {
             InformSenderClient($"Step {step} of {quest} has no place the server knows.");
+
+            return;
+        }
+
+        if (TeleportRooms.Refusal(spot.Zone, Context.Character.Zone) is { } closed) {
+            InformSenderClient($"Step {number} is in {ZoneNames.Shown(spot.Zone)}. {closed}");
 
             return;
         }
