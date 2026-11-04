@@ -1838,7 +1838,10 @@ public partial class CombatDuelSubCircle {
             m_isMonster = 0, // Live server sends 0
             // Minions are creatures on the player team; m_isPlayer stays false.
             m_teamID = (int) OccupiedTeam,
-            m_originalTeam = asMinion ? (int) OccupiedTeam : 0,
+            // A creature's original team is its own side. It was 0 (the players' team), and a wizard who came into the
+            // zone after the battle began read those creatures as teammates: blades and shields could pick them
+            // (Niduus, 2026-11-04: "why can I blade them?").
+            m_originalTeam = (int) OccupiedTeam,
             m_isMinion = asMinion,
             m_maxHandSize = PLAYER_HAND_SIZE,
             m_primaryMagicSchoolID = (int) school,
