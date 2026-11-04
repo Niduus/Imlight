@@ -145,26 +145,12 @@ internal class CombatDeck {
     /// <exception cref="InvalidOperationException">Thrown when a spell cannot be created from the template id.</exception>
     internal Hand GetHand() {
         var newCards = new List<Spell>();
-        // Discard the cards that were used up or discarded.
+        // Take the cards that were cast or discarded out of the hand. A deck card already left the deck when it was drawn,
+        // so it must not take another copy now: it used to, so every cast or discard used up two copies and a card packed
+        // four times was "all used" after two casts (player report, 2026-11-04).
         foreach (var spell in _cardsDiscardedThisTurn) {
             RemoveSame(LastGivenHand, spell);
-            if (_extraCards.Remove(spell)) {
-                continue;
-            }
-
-            var spellData = _usedUpSpellData.FirstOrDefault(s => s.TemplateId == spell.m_templateID);
-            if (spellData == null) {
-                // The spell may not be in this list if the previous hand used them all.
-                continue;
-            }
-
-            // Decrement the quantity of the spell, or remove it if the quantity is 0.
-            if (spellData.Quantity - 1 <= 0) {
-                _usedUpSpellData.Remove(spellData);
-            }
-            else {
-                spellData.Quantity--;
-            }
+            _extraCards.Remove(spell);
         }
         _cardsDiscardedThisTurn.Clear();
 
