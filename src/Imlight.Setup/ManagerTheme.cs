@@ -119,6 +119,7 @@ internal static class ManagerTheme {
         ["Commands"] = BLOCK_WHEN,
         ["Lookup"] = BLOCK_IF,
         ["Wiki"] = Color.FromRgb(90, 160, 235),
+        ["Locations"] = Color.FromRgb(70, 175, 120),
         ["Quests"] = Color.FromRgb(214, 150, 48),
         ["Phrases"] = Color.FromRgb(150, 110, 210),
         ["Spells"] = Color.FromRgb(196, 74, 112),
