@@ -144,6 +144,13 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
         teleport = ZoneDataCollection.GetZoneData(zonePath)?.Teleports?
             .FirstOrDefault(t => t.TriggerName == name)?.Teleport;
 
+        // A ride's skip sign (KT_TeleportToOasis on the Krokotopia ships) that SpiralDB has no capture of in this ride
+        // goes where the trip ends (RideZones).
+        if (string.IsNullOrEmpty(teleport?.m_destinationZone)
+            && Imlight.CoreLib.Game.World.RideZones.TryGetTripEnd(zonePath, out var tripZone, out var tripLoc)) {
+            teleport = new ResTeleport { m_destinationZone = tripZone, m_destinationLoc = tripLoc };
+        }
+
         // A copy of the zone with a spiraldb-extra/ZoneObjects exit (an added sigil's instance) leaves there instead.
         if (teleport is not null
             && Entity.Zone.Extras.TryGetExit(name, teleport.m_destinationZone, out var exitZone, out var exitLoc)) {

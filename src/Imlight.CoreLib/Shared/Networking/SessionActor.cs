@@ -443,7 +443,7 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
     }
 
     private void SendToSocket(IMessage message) {
-        if (message is WIZARD_12_PROTOCOL.MSG_ACTORDIALOG && (!_clientZoned || _heldDialogs.Count > 0)) {
+        if (HeldUntilZoned(message) && (!_clientZoned || _heldDialogs.Count > 0)) {
             _heldDialogs.Add((message, Sender));
             if (!_heldDialogFlushScheduled) {
                 _heldDialogFlushScheduled = true;
@@ -455,6 +455,12 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
 
         _socketSenderRef.Forward(message);
     }
+
+    // Besides dialogs, a zone object's state change (a dynamod: a door opening, the Krokotopia flying ship setting off for
+    // the Oasis) is lost on the loading screen too: the ride back sat at the dock until its trip timer sent the player
+    // off (Niduus, 2026-11-04: "Return trip on boat doesn't play"). Messages keep their order.
+    private static bool HeldUntilZoned(IMessage message)
+        => message is WIZARD_12_PROTOCOL.MSG_ACTORDIALOG or GAME_5_PROTOCOL.MSG_DYNAMODBEHAVIOR_UPDATEMODS;
 
     private void NoteClientZoned() {
         if (_clientZoned) {

@@ -32,6 +32,10 @@
  *
  * [Instance] RideCopies (default true, live) turns this off again.
  *
+ * Skipping a ride (Niduus, 2026-11-04: "the boat trip in krok doesn't have a skip"): the ship's own skip sign
+ * (KT_TeleportToOasis) works on both ships and takes the player straight to where the trip ends, and `.skip` does the
+ * same on any ride (the Dragonspyre flight has no sign).
+ *
  * Nothing in the game files is changed; the rides are recognised from their own trigger script.
  */
 
@@ -41,12 +45,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.WizardData.Collections;
 
 namespace Imlight.CoreLib.Game.World;
 
 internal static class RideZones {
 
     private static readonly ConcurrentDictionary<string, bool> s_known = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly ConcurrentDictionary<string, (string Zone, string Location)> s_trips = new(StringComparer.OrdinalIgnoreCase);
 
     public static bool Enabled => ConfigurationManager.GetValue("Instance.RideCopies", true);
 
@@ -65,11 +71,56 @@ internal static class RideZones {
         }
 
         var ride = s_known.GetOrAdd(zonePath, _ => IsRideScript(triggers));
+        if (ride && TripEnd(zonePath, triggers) is { } trip) {
+            s_trips[zonePath] = trip;
+        }
         if (ride && Enabled) {
             Logger.Debug("Zone {0} is a ride; each boarding gets its own fresh copy.", Logger.Args(zonePath));
         }
 
         return ride && Enabled;
+    }
+
+    /// <summary>Where a ride's trip ends: where its own teleport at the end of the trip takes the player.</summary>
+    public static bool TryGetTripEnd(string zonePath, out string zone, out string location) {
+        zone = location = null;
+        if (zonePath is null || !s_known.TryGetValue(zonePath, out var ride) || !ride) {
+            return false;
+        }
+
+        if (!s_trips.TryGetValue(zonePath, out var trip)) {
+            if (Recorded(zonePath) is not { } recorded) {
+                return false;
+            }
+
+            trip = s_trips[zonePath] = recorded;
+        }
+
+        (zone, location) = trip;
+
+        return true;
+    }
+
+    // The game's own teleport in the ride's script, or the one SpiralDB recorded for it when the script names none.
+    private static (string Zone, string Location)? TripEnd(string zonePath, WizZoneTriggers triggers) {
+        var own = triggers?.m_triggers?
+            .Where(t => t?.m_results?.m_results is not null)
+            .SelectMany(t => t.m_results.m_results)
+            .OfType<ResTeleport>()
+            .FirstOrDefault(r => !string.IsNullOrEmpty(r.m_destinationZone));
+        if (own is not null) {
+            return (own.m_destinationZone, own.m_destinationLoc);
+        }
+
+        return Recorded(zonePath);
+    }
+
+    private static (string Zone, string Location)? Recorded(string zonePath) {
+        var recorded = ZoneDataCollection.GetZoneData(zonePath)?.Teleports?
+            .Select(t => t.Teleport)
+            .FirstOrDefault(r => r is not null && !string.IsNullOrEmpty(r.m_destinationZone));
+
+        return recorded is null ? null : (recorded.m_destinationZone, recorded.m_destinationLoc);
     }
 
     private const int MAX_RIDE_TRIGGERS = 4;
