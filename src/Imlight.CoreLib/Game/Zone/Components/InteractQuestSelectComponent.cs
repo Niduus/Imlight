@@ -89,9 +89,11 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
             yield break;
         }
 
-        // Only show interaction option if player has an active usage goal that matches this object.
-        if (HasActiveMatchingUsageGoal(playerCharacter)
-            && Entity.GetComponentOfType<InteractObjectStateComponent>()?.IsInGoalOptionState() != true) {
+        // Only show interaction option if player has an active usage goal that matches this object. An object already
+        // used (the staff stands in the Throne Room of Fire's map platform) stays usable for a wizard whose own step
+        // still needs it: its state is shared by the whole instance, so the step that came later, or a teammate's,
+        // could never be done (Niduus, 2026-11-04).
+        if (HasActiveMatchingUsageGoal(playerCharacter)) {
             yield return new InteractableOption { m_serviceName = ServiceName };
         }
     }
@@ -145,7 +147,11 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
 
         // The object's own options (a state such as "RedDown", posted events such as "InsertCrystalRed")
         // run when it is used for the goal.
-        Entity.GetComponentOfType<InteractObjectStateComponent>()?.ApplyGoalOptions(playerActor, playerObject);
+        // Once only: a second use of an object already in its used state only counts for the steps.
+        var objectState = Entity.GetComponentOfType<InteractObjectStateComponent>();
+        if (objectState?.IsInGoalOptionState() != true) {
+            objectState?.ApplyGoalOptions(playerActor, playerObject);
+        }
 
         var goalMax = activeGoals.Max(g => g.Goal.m_tallyCounter?.m_count ?? 1);
 
