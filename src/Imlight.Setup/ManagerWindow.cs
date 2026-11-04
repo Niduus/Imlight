@@ -414,6 +414,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Battles and World", BattlesTab),
             Tab("On and Off", TurnedOffTab),
             Tab("What NPCs Give", NpcGivesTab),
+            Tab("Teleport Rooms", TeleportRoomsTab),
             Tab("Animations", AnimationsTab),
             Tab("Events", EventsTab),
             Tab("Shops and Codes", ShopsTab),
@@ -531,6 +532,7 @@ internal sealed partial class ManagerWindow : Window {
             case "Vendors": await LoadVendorsAsync(); break;
             case "On and Off": await LoadTurnedOffAsync(); break;
             case "What NPCs Give": await LoadNpcGivesAsync(); break;
+            case "Teleport Rooms": await LoadTeleportRoomsAsync(); break;
             case "Animations": await LoadAnimationsAsync(); break;
             case "Pet Talents": await LoadPetTalentsAsync(_petTalentPage); break;
             case "Pet Derby": await LoadPetTalentsAsync(_petDerbyPage); break;
@@ -2927,6 +2929,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Battles and World"] = ("sword", "Switches for battles, pips, pets, jewels, houses and the world, Tamed Drops, and how fast plants grow."),
         ["On and Off"] = ("power", "Turn any NPC, creature, zone or world of the game, or any of your customs, on or off, with no restart."),
         ["What NPCs Give"] = ("bag", "Pick an NPC and switch each quest it offers, and each item, treasure card or spell it sells or teaches, on or off."),
+        ["Teleport Rooms"] = ("sigil", "Pick which rooms of dungeons, towers and instances can be teleported into: like the game, open to friends, or closed."),
         ["Animations"] = ("clock", "Every spell's animation time in detail: how long a round waits for it, how that adds up, and your own times, with no restart."),
         ["Events"] = ("clock", "Run the game's own events, such as the Deckathalon, Side Activity and Monthly Gauntlets, one after another from a queue."),
         ["Shops and Codes"] = ("bag", "Codes to redeem, member benefits, the Crown Shop, the Loyalty Store and the Bazaar bot."),

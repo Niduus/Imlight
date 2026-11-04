@@ -263,6 +263,11 @@ internal class MoveService : MessageService {
             // a zone change gets it back from ReceivePostAttach instead.
             SendMarkedLocation(wizard);
         }
+        else if (TeleportRooms.Refusal(wizard.MarkedZone, wizard.Zone) is { } closed) {
+            // Game Rules > Teleport Rooms closed the marked room to teleporting (Niduus, 2026-11-04).
+            InformGameClient(closed, true);
+            SendToSocket(new GAME_5_PROTOCOL.MSG_MARK_LOCATION_RESPONSE { Result = 1, MarkType = "1" });
+        }
         else {
             var ml = wizard.MarkedLocation;
             // doTeleportEffects: false — effects already played during the 2s delay above.
