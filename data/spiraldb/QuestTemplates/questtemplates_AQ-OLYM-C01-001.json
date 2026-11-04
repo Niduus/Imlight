@@ -1,0 +1,1812 @@
+{
+  "m_questName": "AQ-OLYM-C01-001",
+  "m_questNameID": 0,
+  "m_questTitle": "Wisdom and Grace",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "Goal"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/AQ_Z01_MountOlympus",
+      "m_locationName": "Mount Olympus",
+      "m_goalName": "Goal",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_personaName": "AQ-OLYM-NPC01_Persona",
+      "m_usePatron": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Hail, Challenger. You have traveled far to reach Mount Olympus. Are you eager to test yourself in our Games?",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824080,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Your first task is to collect three Legion Tokens. You will find the first in the Sun Chamber, defended by Apollo Bright One.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824080,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/Interiors/AQ_Z01_Apollo_Room",
+      "m_locationName": "Sun Chamber",
+      "m_goalName": "Goal 1",
+      "m_goalTitle": "WizardQuestGoals_ExploreZone",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_zoneEntry": true,
+      "m_zoneTag": "Aquila/Interiors/AQ_Z01_Apollo_Room",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "Apollo Bright One",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/Interiors/AQ_Z01_Apollo_Room",
+      "m_locationName": "Sun Chamber",
+      "m_goalName": "Goal 2",
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_npcAdjectives": [
+        "AQ-Immortal-Apollo.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Legion Token",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "AQ-Token-Legion"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/Interiors/AQ_Z01_Apollo_Room",
+      "m_locationName": "Sun Chamber",
+      "m_goalName": "Goal 3",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_itemAdjectives": [
+        "AQ-Token-Legion.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/AQ_Z01_MountOlympus",
+      "m_locationName": "Mount Olympus",
+      "m_goalName": "Goal 4",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_personaName": "AQ-OLYM-NPC01_Persona",
+      "m_usePatron": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Good beginning, Wizard. You will find the next Legion Token in the Moon Chamber.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824080,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Lucky for you, my sister Artemis New Moon is away. However, I doubt she left the Token undefended.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824080,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/Interiors/AQ_Z01_ArtemusRoom",
+      "m_locationName": "Moon Chamber",
+      "m_goalName": "Goal 5",
+      "m_goalTitle": "WizardQuestGoals_ExploreZone",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_zoneEntry": true,
+      "m_zoneTag": "Aquila/Interiors/AQ_Z01_ArtemusRoom",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "Crescent Moon Centaur",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/Interiors/AQ_Z01_ArtemusRoom",
+      "m_locationName": "Moon Chamber",
+      "m_goalName": "Goal 6",
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_npcAdjectives": [
+        "AQ-Centaur-Artemis.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Legion Token",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "AQ-Token-Legion2"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/Interiors/AQ_Z01_ArtemusRoom",
+      "m_locationName": "Moon Chamber",
+      "m_goalName": "Goal 7",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_itemAdjectives": [
+        "AQ-Token-Legion2.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/AQ_Z01_MountOlympus",
+      "m_locationName": "Mount Olympus",
+      "m_goalName": "Goal 8",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_personaName": "AQ-OLYM-NPC01_Persona",
+      "m_usePatron": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "A second victory! Well played,Wizard.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824080,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Now, for the third Legion Token.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824080,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Climb up to the Sky Balcony and take it from the Praetorian Guard. Did I mention they were Zeus' personal guard? Don't fret.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824080,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/AQ_Z01_MountOlympus",
+      "m_locationName": "Sky Balcony",
+      "m_goalName": "Goal 9",
+      "m_goalTitle": "WizardQuestGoals_Explore",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_activateResults": {
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResPostEvent, Imcodec.ObjectProperty",
+            "m_eventName": "EVENT-SpawnSpartan"
+          }
+        ]
+      },
+      "m_zoneEntry": false,
+      "m_zoneTag": "Aquila/AQ_Z01_MountOlympus",
+      "m_proximityTag": "Volume-PraetorianGuardTaunt",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "Praetorian Guard",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/AQ_Z01_MountOlympus",
+      "m_locationName": "Sky Balcony",
+      "m_goalName": "Goal 10",
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_activateResults": {
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResPostEvent, Imcodec.ObjectProperty",
+            "m_eventName": "EVENT-SpawnSpartan"
+          }
+        ]
+      },
+      "m_npcAdjectives": [
+        "AQ-Eagle-Praetorian.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Legion Token",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "AQ-Token-Legion3"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/AQ_Z01_MountOlympus",
+      "m_locationName": "Sky Balcony",
+      "m_goalName": "Goal 11",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_itemAdjectives": [
+        "AQ-Token-Legion3.AdjRef"
+      ],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/AQ_Z01_MountOlympus",
+      "m_locationName": "Mount Olympus",
+      "m_goalName": "Goal 12",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_personaName": "AQ-OLYM-NPC01_Persona",
+      "m_usePatron": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Well done, Wizard. You have acquired the three Legion Tokens you require. Take them down to the Arena.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824080,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You will meet my discordant sister. Call her Eris Golden Apple. She will try to confound and confuse you.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824080,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Unravel Eris' mysteries and get the Key she holds. Then come back to me.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824080,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/AQ_Z01_MountOlympus",
+      "m_locationName": "Arena",
+      "m_goalName": "Goal 13",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_personaName": "AQ-OLYM-NPC05_Persona",
+      "m_usePatron": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "A Wizard come to challenge the Immortals, hmmmm? Prepare to be dazed and confused!",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824089,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You are very fair, I must admit. I'll implore Zeus to let me keep you. I have a golden cage that's just the right size.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824089,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You want the Key I possess? You're going to have to unravel my clever game by brain or brawn before I give it up.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824089,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I have three Legionnaires to defend me. Figure out each one's weakness and you can have the key.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824089,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Eris' puzzle",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [
+        "EVENT-PuzzleFinished"
+      ],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/AQ_Z01_MountOlympus",
+      "m_locationName": "Arena",
+      "m_goalName": "Goal 14",
+      "m_goalTitle": "WizardQuestGoals_Explore",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_activateResults": {
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResPostEvent, Imcodec.ObjectProperty",
+            "m_eventName": "EVENT-SetupPuzzle"
+          }
+        ]
+      },
+      "m_zoneEntry": false,
+      "m_zoneTag": "Aquila/AQ_Z01_MountOlympus",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/AQ_Z01_MountOlympus",
+      "m_locationName": "Mount Olympus",
+      "m_goalName": "Goal 15",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_personaName": "AQ-OLYM-NPC01_Persona",
+      "m_usePatron": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The Key you took from Eris will allow you to open the Hall of the Watchful Eye.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824080,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You will have to pass through the Hall, and the Elite Cyclops Guard, to reach the Forge of Hephaestus.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824080,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You must win Hephaestus to your cause.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824080,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/Interiors/AQ_Z01_HallOfWatchfulEye",
+      "m_locationName": "Hall of the Watchful Eye",
+      "m_goalName": "Goal 16",
+      "m_goalTitle": "WizardQuestGoals_ExploreZone",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_zoneEntry": true,
+      "m_zoneTag": "Aquila/Interiors/AQ_Z01_HallOfWatchfulEye",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "Elite Cyclops Guard",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/Interiors/AQ_Z01_HallOfWatchfulEye",
+      "m_locationName": "Hall of the Watchful Eye",
+      "m_goalName": "Goal 17",
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_npcAdjectives": [
+        "AQ-Cyclops-Guard.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/Interiors/AQ_Z01_HephaestusForge",
+      "m_locationName": "Hephaestus' Forge",
+      "m_goalName": "Goal 18",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_personaName": "AQ-OLYM-NPC03_Persona",
+      "m_usePatron": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Hail, Challenger. It has been a long time since a Wizard has made it this far. Who was the last? One of Cyrus's pupils, I think.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824084,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You want my aid? I am...indisposed. My Bronze Eagles have wandered off and I cannot get around without them.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824084,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Search Olympus for my Bronze Eagles and bring them back here. Then we will talk.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824084,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResPostEvent, Imcodec.ObjectProperty",
+            "m_eventName": "EVENT-ShowStatues"
+          }
+        ]
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Bronze Eagles",
+        "m_descriptor2": "",
+        "m_count": 4,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "AQ-BronzeEagle"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/AQ_Z01_MountOlympus",
+      "m_locationName": "Mount Olympus",
+      "m_goalName": "Goal 19",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_itemAdjectives": [
+        "AQ-BronzeEagle.AdjRef"
+      ],
+      "m_itemTotal": 4
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/Interiors/AQ_Z01_HephaestusForge",
+      "m_locationName": "Hephaestus' Forge",
+      "m_goalName": "Goal 20",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_personaName": "AQ-OLYM-NPC03_Persona",
+      "m_usePatron": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Now, to help your quest. Ultimately, you must face Zeus himself. You'll want a wicked weapon to even the odds.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824084,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I have crafted such a thing recently, for my brother, Ares. Go up to the Sky Balcony and into the Hall of Battle beyond it.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824084,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AQ-OLYM-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Duel Ares Savage Spear and take the Sky Iron Hasta from him. Good luck, Wizard.",
+                "m_picture": "",
+                "m_soundFile": "",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 824084,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/Interiors/AQ_Z01_HallOfBattle",
+      "m_locationName": "Hall of Battle",
+      "m_goalName": "Goal 21",
+      "m_goalTitle": "WizardQuestGoals_ExploreZone",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_zoneEntry": true,
+      "m_zoneTag": "Aquila/Interiors/AQ_Z01_HallOfBattle",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "Ares Savage Spear",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/Interiors/AQ_Z01_HallOfBattle",
+      "m_locationName": "Hall of Battle",
+      "m_goalName": "Goal 22",
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_npcAdjectives": [
+        "AQ-Immortal-Ares.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/Interiors/AQ_Z01_Throne_Room",
+      "m_locationName": "Throne Room",
+      "m_goalName": "Goal 23",
+      "m_goalTitle": "WizardQuestGoals_ExploreZone",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_zoneEntry": true,
+      "m_zoneTag": "Aquila/Interiors/AQ_Z01_Throne_Room",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "Zeus Sky Father",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Aquila/Interiors/AQ_Z01_Throne_Room",
+      "m_locationName": "Throne Room",
+      "m_goalName": "Goal 24",
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_activateResults": {
+        "m_results": []
+      },
+      "m_npcAdjectives": [
+        "AQ-Immortal-Zeus-A.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "AQ-OLYM-C01-001",
+        "m_maxRolls": 1
+      }
+    ]
+  },
+  "m_requirements": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.RequirementList, Imcodec.ObjectProperty",
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND",
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqInZone, Imcodec.ObjectProperty",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND",
+        "m_zoneName": "Aquila/AQ_Z01_MountOlympus"
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "AQ-GARD-C01-001",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ]
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": null,
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "Goal"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 1"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 1"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 2"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 2"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 3"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 3"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 4"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 4"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 5"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 5"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 6"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 6"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 7"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 7"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 8"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 8"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 9"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 9"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 10"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 10"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 11"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 11"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 12"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 12"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 13"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 13"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 14"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 14"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 15"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 15"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 16"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 16"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 17"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 17"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 18"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 18"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 19"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 19"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 20"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 20"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 21"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 21"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 22"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 22"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 23"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 23"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 24"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "Goal 24"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 76,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": null,
+  "m_missionDoors": null,
+  "m_dynaMods": null,
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_defaultDialogAnimation": null,
+  "m_skipQHAutoSelect": false,
+  "m_questEffectInfoList": null,
+  "m_forceInteraction": false,
+  "m_checkInventoryForCrafting": false,
+  "m_playAsYourPetNPC": false,
+  "m_activityType": "ACTIVITY_NotActivity",
+  "m_behaviors": null
+}

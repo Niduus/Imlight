@@ -16,8 +16,8 @@ Same folder names, file names and JSON as SpiralDB, so the folder can be laid ov
 
 | Folder | Files | What |
 |---|---:|---|
-| `QuestTemplates` | 2,419 | Quests SpiralDB does not have (Celestia onward, and gaps in the first worlds), plus 10 repaired SpiralDB quests. One file per quest, named `questtemplates_<quest code>.json`. |
-| `DropTables` | 11,199 | Quest rewards (`droptables_<quest code>.json`), creature drops (`w404-*`), pack and pet-level tables. |
+| `QuestTemplates` | 2,420 | Quests SpiralDB does not have (Celestia onward, and gaps in the first worlds), plus 10 repaired SpiralDB quests. One file per quest, named `questtemplates_<quest code>.json`. |
+| `DropTables` | 11,200 | Quest rewards (`droptables_<quest code>.json`), creature drops (`w404-*`), pack and pet-level tables. |
 | `NpcDropTable` | 4,755 | Which drop tables each creature uses, by creature template id. |
 | `CreatureSpellbook` | 516 | Creature decks. |
 | `NpcInventory` | 10 | NPC shop lists (the garden vendors). |
@@ -38,7 +38,7 @@ Quests by world:
 | Zafaria | 188 | 0 |
 | Avalon | 192 | 0 |
 | Azteca | 228 | 0 |
-| Aquila | 10 | 0 |
+| Aquila | 11 | 0 |
 | Khrysalis | 321 | 0 |
 | Polaris | 83 | 0 |
 | Arcanum | 83 | 0 |
@@ -50,7 +50,7 @@ Quests by world:
 | Wallaru | 82 | 0 |
 | Selenopolis | 32 | 0 |
 | Darkmoor | 80 | 0 |
-| **All** | **2,409** | **10** |
+| **All** | **2,410** | **10** |
 
 Rules for these files:
 
