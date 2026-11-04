@@ -638,6 +638,16 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             return !string.IsNullOrEmpty(_resolved.DestinationZone);
         }
 
+        // The pad's own zone file names where it leads (Grand Arena "Trophy Room" for Oka's Chest, Niduus 2026-11-04).
+        if (SigilFileDestinations.TryGet(zonePath, tag, out var fromFile)) {
+            _resolved = new ResolvedSigil(fromFile.Zone, fromFile.Loc);
+            sigil = _resolved;
+            Logger.Debug("Dungeon sigil {0} in {1} leads to {2} ({3}), as its zone file says.",
+                Logger.Args(tag, zonePath, fromFile.Zone, fromFile.Loc));
+
+            return true;
+        }
+
         if (TryDeriveTowerDestination(zonePath, tag, zoneData, out var destZone, out var destLoc)) {
             _resolved = new ResolvedSigil(destZone, destLoc);
             sigil = _resolved;
