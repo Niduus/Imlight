@@ -218,6 +218,7 @@ internal static class CommandGuide {
             Imlight("Toggle zone change", ".dynamod toggle <tag>", QA, "Flips a zone change between on and off."),
             Imlight("Remove zone change", ".dynamod remove <tag>", QA, "Removes a zone change from your character."),
             Imlight("Set object state", ".debug setobj <state> <object name>", QA, "Sets the state of an object in your zone."),
+            Command("Portals", ".portal new [name]   then   .portal here   or   .portal walk / press / name <words> / list / delete [number]", QA, "Your own teleporters, set up the way a house teleporter is: .portal new puts a Shadow Portal where you stand, then walk to where it should send players (any area) and type .portal here. .portal walk makes walking into it teleport, .portal press makes it press X. .portal name <words> sets the prompt's top line (empty: where it goes). Add a portal's number to pick one; without it, the one you are setting up or the nearest. Ahziael's Customs tab (Portals and prompts) has every setting."),
         ]),
         .. In("Items, gear and crafting", [
             Imlight("Lost and removed items", ".lostitems   or   .lostitems <id>", QA, "Lists the last items that left your wizard (thrown away, sold, used up, ran out, or lost with no room) and why. .lostitems and an id gives that item back. Ahziael's Home page has the same list with Give back buttons."),
@@ -239,6 +240,7 @@ internal static class CommandGuide {
             Command("Add a jewel", ".jewel add <jewel or pin>", QA, "Puts a jewel or pin, by name or ID, into the first empty socket of that shape on what you are wearing. You can also drag jewels onto gear in the game."),
             Command("Clear jewels", ".jewel clear", QA, "Empties every socket on the gear and pet you are wearing."),
             Imlight("Give a house", ".housegrant <house template ID>", QA, "Gives you a house deed by its template ID."),
+            Imlight("Recycling Bin", ".recyclebin   or   .bin", ANYONE_AT_ALL, "Opens the game's Recycling Bin window with the items you threw away (backpack trash, released pets, the bank's trash) in the last [RecyclingBin] Days (30). Picking one and pressing Reclaim gives it back for [RecyclingBin] Cost gold (1000). The game's own Recycling Bin button opens the same window."),
         ]),
         .. In("Pets", [
             Command("Pet cast test", ".petcasttest <0-6> or .petcasttest off", QA, "Changes how a pet's May Cast is sent to the game, to find the way it plays. 0 = plain pet copy, 1 = plain normal card, 2 = pet flags with pet copy, 3 = pet flags with normal card, 4 = pet flags and forced with pet copy, 5 = pet flags and forced with normal card, 6 = forced normal card. Start a new battle after changing it."),
