@@ -174,6 +174,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Archmastery", "AllLevels", "Archmastery at every level, not just 50 and up", new() { OnContent = "On", OffContent = "Off" }),
         ("Archmastery", "FromLevel", "Archmastery from level 50 like the game (off: only from gear, jewels and pets)", new() { OnContent = "On", OffContent = "Off" }),
         ("Archmastery", "Creatures", "Creatures use their Archmastery too (school pips, and they set the pace)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Battle", "MoonPowerPipsDouble", "Power pips count as 2 for Moon spells", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "SchoolPips", "School pips", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "AnySchoolPips", "School pips count as any school pips", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "GainSchoolPips", "Gain school pips without stats (chance under Settings, Battle)", new() { OnContent = "On", OffContent = "Off" }),
