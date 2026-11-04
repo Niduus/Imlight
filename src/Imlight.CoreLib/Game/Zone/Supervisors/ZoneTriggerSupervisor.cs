@@ -161,6 +161,11 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
                 continue;
             }
 
+            // A state trigger (a door that opens) only fires while its object is in the state it starts from.
+            if (!IsInRequiredState(trigger)) {
+                continue;
+            }
+
             if (!EvaluateRequirements(trigger, message)) {
                 // A door that stays shut is otherwise silent ("friend can not enter Hedge Maze", 2026-10-22).
                 if (HasTeleportResult(trigger)) {
@@ -209,6 +214,10 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
                 Adjectives = message.Adjectives,
                 RequirementsChecked = true,
             });
+
+            if (trigger is StateTrigger stateTrigger) {
+                FireStateTrigger(stateTrigger, message);
+            }
         }
 
         // Triggers that fired saw the state from before this event; now the event's own enables and disables land.
@@ -239,6 +248,62 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
         string name = trigger.m_triggerName;
 
         return _unenforceableTriggers.Contains(name) || Zone.ScriptState.IsTriggerEnabled(name);
+    }
+
+    /*
+     * STATE TRIGGERS
+     * A StateTrigger moves its own object from m_requiredState to m_nextState when it fires; the game files never put a
+     * result on it for that. Krokotopia's Throne Room of Fire shortcut is one: "Trigger Door1" fires on Krokenkahmen's
+     * defeat and its portcullis goes Idle_Closed -> Idle_Open, while "Trigger DoorCol1" (m_flagB, no states) fires on the
+     * same chain and its collision wall goes away. The server never read these fields, so the gate stayed shut (Niduus,
+     * 2026-11-04).
+     */
+    private string CurrentObjectState(Trigger trigger) {
+        var info = trigger.m_triggerObjInfo;
+        string tag = info?.m_zoneTag;
+        if (string.IsNullOrEmpty(tag)) {
+            return null;
+        }
+
+        return Zone.ScriptState.GetObjectState(tag) ?? info.m_startState.ToString();
+    }
+
+    private bool IsInRequiredState(Trigger trigger) {
+        if (trigger is not StateTrigger stateTrigger || string.IsNullOrEmpty(stateTrigger.m_requiredState)) {
+            return true;
+        }
+
+        var current = CurrentObjectState(trigger);
+
+        // An object whose state nobody knows counts as in it, so the door is not stuck shut.
+        return string.IsNullOrEmpty(current)
+            || string.Equals(current, stateTrigger.m_requiredState.ToString(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void FireStateTrigger(StateTrigger trigger, ZONE_102_PROTOCOL.MSG_POSTEVENT message) {
+        try {
+            string objectTag = trigger.m_triggerObjInfo?.m_zoneTag;
+            string nextState = trigger.m_nextState;
+            if (!string.IsNullOrEmpty(objectTag) && !string.IsNullOrEmpty(nextState)) {
+                Logger.Information("Zone {0}: state trigger {1} moves {2} from {3} to {4}.",
+                    Logger.Args(Zone.ZonePath, trigger.m_triggerName, objectTag, CurrentObjectState(trigger), nextState));
+                ApplyObjectState(objectTag, nextState, message.PlayerActor, message.PlayerGameObject, message.PlayerSpawned);
+
+                return;
+            }
+
+            // No state to go to, only the flag: the trigger is used up and its object (a collision wall) goes away.
+            if (trigger.m_flagB && !string.IsNullOrEmpty(objectTag)) {
+                Logger.Information("Zone {0}: state trigger {1} fired, its object {2} goes away.",
+                    Logger.Args(Zone.ZonePath, trigger.m_triggerName, objectTag));
+                Zone.ScriptState.SetTriggerEnabled(trigger.m_triggerName, false);
+                ApplyObjectState(objectTag, DEACTIVATED_OBJECT_STATE, message.PlayerActor, message.PlayerGameObject);
+                DespawnTriggerObject(trigger);
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Zone {0}: state trigger {1} failed: {2}", Logger.Args(Zone.ZonePath, trigger.m_triggerName, ex));
+        }
     }
 
     private void ApplyTriggerStateEvents(string eventName, IActorRef playerActor, CoreObject playerObject) {
