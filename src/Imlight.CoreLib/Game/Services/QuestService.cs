@@ -2696,6 +2696,7 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         }
 
         var completedQuests = (progress?.CompletedQuests ?? []).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var startedQuests = (progress?.StartedQuests ?? []).ToHashSet(StringComparer.OrdinalIgnoreCase);
         var zoneQuestNames = templates.Select(t => (string)t.m_questName).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         bool Eligible(QuestTemplate template) {
@@ -2709,6 +2710,11 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
                 : wizard.HasQuestRegistryValue(template.m_questName, QUEST_COMPLETED_ENTRY);
             if (done) {
                 return false;
+            }
+
+            // A quest someone in the instance got goes to everyone in it, whatever they did before.
+            if (inInstance && startedQuests.Contains(template.m_questName)) {
+                return true;
             }
 
             if (template.m_requirements is null) {
@@ -2781,6 +2787,80 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             }
         }
     }
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_INSTANCEQUESTSCHANGED))]
+    private void ReceiveInstanceQuestsChanged(ZONE_102_PROTOCOL.MSG_INSTANCEQUESTSCHANGED message)
+        => SyncWithInstance(GetActiveWizard());
+
+    // Brings the player to the instance's dungeon quests as they are now: quests someone got are given, steps someone
+    // did are done, and quests the instance finished are finished, so everyone inside is on the same step at all times
+    // (Niduus, 2026-11-04). Players in another room of the dungeon are brought along too.
+    private void SyncWithInstance(Wizard wizard) {
+        if (wizard?.QuestBehavior is null) {
+            return;
+        }
+
+        var progress = QueryInstanceProgress();
+        if (progress?.IsInstance != true) {
+            return;
+        }
+
+        TryGrantDungeonQuests(wizard);
+
+        var zoneQuests = DungeonQuestIndex.GetQuestsForZones(progress.Zones)
+            .Select(t => (string) t.m_questName)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var finished = (progress.CompletedQuests ?? []).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var questName in wizard.QuestBehavior.CurrentQuestInstances
+                     .Where(q => q is not null && zoneQuests.Contains(q.QuestName))
+                     .Select(q => q.QuestName).Distinct().ToList()) {
+            var qInstance = HeldQuest(wizard, questName);
+            // A step waiting on its dialog to close finishes then and tells the others itself.
+            if (qInstance is null || _pendingGoalCompletions.Any(p => p.QuestId == qInstance.ID)) {
+                continue;
+            }
+
+            var template = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == questName)
+                ?? QuestTemplateCollection.GetQuestByName(questName);
+            if (template?.m_goals is null) {
+                continue;
+            }
+
+            if (!CachedQuestTemplates.Contains(template)) {
+                CachedQuestTemplates.Add(template);
+            }
+
+            var doneGoals = progress.CompletedGoals.TryGetValue(questName, out var goals)
+                ? goals.ToHashSet(StringComparer.OrdinalIgnoreCase)
+                : [];
+
+            // Steps the instance did that are still open for this player, in quest order, until none is left.
+            for (var guard = 0; guard < 64; guard++) {
+                qInstance = HeldQuest(wizard, questName);
+                var next = qInstance is null ? null : template.m_goals.FirstOrDefault(g => g is not null
+                    && doneGoals.Contains(g.m_goalName) && qInstance.IsGoalActive(g.m_goalName));
+                if (next is null) {
+                    break;
+                }
+
+                Logger.Information("Instance quest sync: {0} catches up on quest '{1}' step '{2}'.",
+                    Logger.Args(wizard.CharId, questName, next.m_goalName));
+                CompleteGoal(qInstance, next, showCompletionDialogue: false, completion: GoalCompletion.Shared);
+            }
+
+            // The instance finished the quest: so does this player, whatever step they were on.
+            qInstance = HeldQuest(wizard, questName);
+            if (qInstance is not null && finished.Contains(questName)) {
+                Logger.Information("Instance quest sync: {0} finishes quest '{1}' with the instance.",
+                    Logger.Args(wizard.CharId, questName));
+                CompleteQuest(qInstance);
+            }
+        }
+    }
+
+    private static QuestInstance HeldQuest(Wizard wizard, string questName)
+        => wizard.QuestBehavior.CurrentQuestInstances.FirstOrDefault(q => q is not null && q.QuestName == questName);
 
     private void DropSavedDungeonQuest(Wizard wizard, QuestInstance saved) {
         wizard.QuestBehavior.RemoveAllQuestRegistryEntries(saved.QuestName, keepComplete: true);

@@ -15,6 +15,7 @@ public sealed class InstanceQuestProgress {
 
     private readonly HashSet<string> _claims = new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> _completedQuests = new(StringComparer.OrdinalIgnoreCase);
+    private readonly HashSet<string> _startedQuests = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, List<string>> _completedGoals = new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> _zones = new(StringComparer.OrdinalIgnoreCase);
     private readonly Lock _lock = new();
@@ -55,6 +56,9 @@ public sealed class InstanceQuestProgress {
 
                     goals.Add(goalName);
                     break;
+                case InstanceQuestClaimKind.QuestStart:
+                    _startedQuests.Add(questName);
+                    break;
                 case InstanceQuestClaimKind.QuestComplete:
                     _completedQuests.Add(questName);
                     break;
@@ -73,6 +77,7 @@ public sealed class InstanceQuestProgress {
                 IsInstance = true,
                 Zones = [.. _zones],
                 CompletedQuests = [.. _completedQuests],
+                StartedQuests = [.. _startedQuests],
                 CompletedGoals = _completedGoals.ToDictionary(kv => kv.Key, kv => kv.Value.ToArray()),
             };
         }

@@ -1603,8 +1603,21 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
 
         public bool IsInstance;
         public string[] CompletedQuests = [];
+        // Dungeon quests a player of the instance got: every player in it gets them too.
+        public string[] StartedQuests = [];
         public Dictionary<string, string[]> CompletedGoals = [];
         public string[] Zones = [];
+
+    }
+
+    /// <summary>
+    /// Sent to every session in an instance (all of its zones) when the instance's dungeon quests move on: a quest
+    /// handed out, a step done or a quest finished. Each player is brought to the same quests and steps.
+    /// </summary>
+    public sealed class MSG_INSTANCEQUESTSCHANGED : IServerMessage {
+
+        public byte MessageOrder { get; } = 108;
+        public byte ServiceID { get; } = 102;
 
     }
 

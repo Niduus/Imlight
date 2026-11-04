@@ -541,6 +541,20 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
                 Targets = ZoneBroadcastTarget.Players,
             });
         }
+
+        // Everyone in the instance, in this room or another of the dungeon's rooms, is brought to the same quests and
+        // steps (Niduus, 2026-11-04: "everyone is to be on the same step at all times").
+        if (first && message.Kind != InstanceQuestClaimKind.GoalStart) {
+            var changed = new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+                Messages = [new ZONE_102_PROTOCOL.MSG_INSTANCEQUESTSCHANGED()],
+                Targets = ZoneBroadcastTarget.Players,
+            };
+            DispatchBroadcast(changed);
+            Context.Parent.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+                Messages = [new ZONE_102_PROTOCOL.MSG_INSTANCEQUESTSCHANGED()],
+                Targets = ZoneBroadcastTarget.Players,
+            }, Self);
+        }
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONESCRIPTRESULT))]
