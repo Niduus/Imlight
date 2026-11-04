@@ -540,10 +540,13 @@ internal static class CombatActionResolver {
 
         var pipCount = caster.CombatParticipant.m_pipCount;
 
-        // All pips, capped at the spell's top tier (a minion stops at 4).
-        var totalPips = (int) pipCount.m_genericPips;
+        // All pips, school pips too, capped at the spell's top tier (a minion stops at 4). Worth what DeductPips
+        // takes for them: a power pip or a school pip of the spell's school is 2 when mastered, any other school
+        // pip is 1. Tempest left school pips out, so they were never spent and piled up (Niduus, 2026-11-04).
         var isSpellMastered = caster.HasSchoolMastery(spell.m_magicSchoolID);
+        var totalPips = (int) pipCount.m_genericPips;
         totalPips += isSpellMastered ? pipCount.m_powerPips * 2 : pipCount.m_powerPips;
+        totalPips += caster.SchoolPipsWorth((Shared.Behaviors.MagicSchool) spell.m_magicSchoolID, isSpellMastered);
 
         return (byte) Math.Min(totalPips, GetMaxXPipTier(spell));
     }
