@@ -287,7 +287,7 @@ internal sealed class Lookup {
         Imlight("No fizzle", ".cheat nofizzle", QA, "Turns spells that never fizzle on or off."),
 
         // Moving around.
-        Imlight("Teleport", ".tp <zone>", QA, "Takes you to a zone. Part of the name works, such as .tp Ravenwood. .tp gm goes to the GM island. Also .teleport or .port. Pick Teleport area in the Lookup tab for every zone, with a Teleport button."),
+        Imlight("Teleport", ".tp <zone>", QA, "Takes you to a place, by the name players know it by or its code name: .tp Unicorn Way, .tp WC_Unicorn and .tp WizardCity/WC_Streets/WC_Unicorn all work, and so do part of a name, small typos and a world's name (.tp Krokotopia goes to its hub). .tp gm goes to the GM island. Also .teleport or .port. Database > Locations lists every place with both names and a Teleport button."),
         Imlight("Teleport to a quest step", ".tpstep <quest code> <step>", QA, "Takes you right to where a step of a quest happens: the spot the game's quest arrow points at, else where the step's NPC stands, else the step's zone. Works even when the quests or doors before it are not done. The step buttons on the Quests page run it. Also .stepto."),
         Imlight("Where am I", ".debug gps", QA, "Shows the zone you are in and where you are standing."),
         Imlight("Hide object", ".debug disableobj <zone tag>", QA, "Hides an object in this zone by its tag."),
