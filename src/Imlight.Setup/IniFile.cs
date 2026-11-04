@@ -88,6 +88,8 @@ internal static class IniFile {
         ("Bazaar", "SendEverything", "true", "false"),
         // Niduus, 2026-10-27 ("Willcasts crash the game"): the pet card sent as a Spell crashed the game.
         ("Pets", "WillCastCardData", "Spell", "Power"),
+        // Niduus, 2026-11-04: "backpack elixir is giving +10 when it should be +50".
+        ("Character", "ExpandBackpackElixirAmount", "10", "50"),
     ];
 
     /// <summary>

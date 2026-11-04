@@ -348,7 +348,7 @@ internal static class BankRules {
         var both = (wizard.EquipmentBehavior?.EquippedItems ?? []).Count(item => item is not null && inventory.HasItem(item.m_globalID));
 
         return $"{counted.Count} in the backpack + {worn} worn gear = {counted.Count + worn} of {inventory.Limit}"
-            + $" (base {inventory.BaseLimit}, elixirs {inventory.ExtraSlots}); free {wizard.BackpackFreeSlots}."
+            + $" (base {inventory.BaseLimit}, elixirs {inventory.ElixirSlots} from {inventory.ElixirsCounted}); free {wizard.BackpackFreeSlots}."
             + $" Counted: {string.Join(", ", kinds)}."
             + $" Not counted: {jewels} jewels, {notCounted} snacks/reagents/emotes, {hidden} the game is not shown."
             + (both > 0 ? $" {both} worn items are also listed in the backpack." : "");
