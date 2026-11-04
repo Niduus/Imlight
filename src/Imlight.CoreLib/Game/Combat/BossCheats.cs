@@ -73,6 +73,8 @@
  *     { "Do": "AddEffects", "Spell", "Target" }   the charms and wards of a spell go on, with no casting.
  *     { "Do": "Heal", "Amount", "Percent" (Amount is percent of the most health), "Target" (Self if left out) }
  *     { "Do": "Minion", "Creature", "Custom" }    a creature (or a custom of the Customs tab) joins the boss's side.
+ *                                           Summon Minion: "Count" (1-4, none = 1) of them; "Side": "Them" brings them
+ *                                           in on the other side (against the boss, or against the wizard in a player cheat).
  *     { "Do": "Form", "Creature", "Custom", "ReplaceBoss" }   a second form, as Spawn (ReplaceBoss as Defeat).
  *     { "Do": "SetHealth", "Amount" }  { "Do": "SetPhase", "Phase" }  { "Do": "Defeat" }
  *     { "Do": "Say", "Line" }               a game line over the boss; "Text": words sent to every player's chat.

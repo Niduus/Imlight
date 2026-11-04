@@ -1253,9 +1253,15 @@ public partial class CombatResolver {
 
                     break;
                 case "minion":
-                    if (SpawnCheatCreature(boss, step, asForm: false) is null) {
-                        Logger.Warning("Duel {0} | Slot {1} | Cheat minion {2} found no free circle.",
-                            Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, step.Custom > 0 ? $"custom {step.Custom}" : step.Creature));
+                    // Summon Minion (Niduus, 2026-11-04): Count of them (none set: 1), on Side Us (its own) or Them.
+                    for (var i = 0; i < Math.Clamp(step.Count, 1, 4); i++) {
+                        if (SpawnCheatCreature(boss, step, asForm: false) is null) {
+                            Logger.Warning("Duel {0} | Slot {1} | Cheat minion {2} found no free circle{3}.",
+                                Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, step.Custom > 0 ? $"custom {step.Custom}" : step.Creature,
+                                    OtherSide(step) ? " on the other side" : ""));
+
+                            break;
+                        }
                     }
 
                     break;
@@ -1735,10 +1741,13 @@ public partial class CombatResolver {
             return null;
         }
 
-        return step.Custom > 0 ? boss._duelActor.SpawnBossMinion(creature, boss, step.Custom)
-            : asForm ? boss._duelActor.SpawnBossForm(creature, boss)
-            : boss._duelActor.SpawnBossMinion(creature, boss, 0);
+        return asForm && step.Custom == 0 ? boss._duelActor.SpawnBossForm(creature, boss)
+            : boss._duelActor.SpawnBossMinion(creature, boss, step.Custom, otherSide: !asForm && OtherSide(step));
     }
+
+    // A Minion step's Side: "Them" brings it in on the side against the cheat's owner; anything else, its own side.
+    private static bool OtherSide(BossCheats.CheatAction step)
+        => step.Is("Minion") && step.Side.Equals("Them", StringComparison.OrdinalIgnoreCase);
 
     // A line with no spell shows after the round's last spell so far, or before the round's first spell.
     private float ShowBossLine(string line, CombatDuelSubCircle boss, CombatActionListObj combatActionList) {

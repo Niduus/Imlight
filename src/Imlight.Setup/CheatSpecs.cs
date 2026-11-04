@@ -155,6 +155,7 @@ internal static class CheatSpecs {
 
     private static readonly (string, string)[] s_dispelThen = [("Retry", "retry")];
     private static readonly (string, string)[] s_fizzles = [("Landed", "lands"), ("Fizzled", "fizzles"), ("Any", "lands or fizzles")];
+    private static readonly (string, string)[] s_minionSides = [("Us", "our side"), ("Them", "the other side")];
     private static readonly (string, string)[] s_sides = [("Us", "we go first"), ("Them", "they go first"), ("Swap", "swap who goes first")];
     private static readonly (string, string)[] s_hasWho = [("Caster", "the attacker"), ("Receiver", "whoever that spell was aimed at"), ("Self", "it"),
         ("AnyEnemy", "someone on the other side"), ("AnyAlly", "someone on its side"),
@@ -805,8 +806,10 @@ internal static class CheatSpecs {
             b => $"health{Target(b).Replace(" on ", " of ")} becomes {b.Number("Amount")}%"),
         new("D.SwapHealth", BlockKind.Do, "swap", "swap health", "It and the target swap their share of health: at 10% it takes a player's 90% and gives them its 10%.",
             "Swap health with {Target}", [F("Target", CheatFieldType.Target, "Caster")], b => $"swap health{Target(b).Replace(" on ", " with ")}"),
-        new("D.Minion", BlockKind.Do, "users", "bring in a minion", "A creature (or one of your customs) joins its side in a free circle and fights from the next round.",
-            "Bring in {Creature} as a minion", [F("Creature", CheatFieldType.Creature)], b => $"bring in {Creature(b)}"),
+        // Niduus, 2026-11-04: "Summon Minion": a real minion, henchman or mob, by name or id, on a side of the field.
+        new("D.Minion", BlockKind.Do, "users", "summon a minion", "Summons a real creature into the battle: a minion, a henchman, any mob, or one of your customs. Search it by name or type its id. It comes in on a free circle of the side you pick, \"our side\" (it fights for whoever has the cheat) or \"the other side\" (it fights against them), and acts from the next round. Up to 4 at once; when that side has no free circle left, the rest don't come. Works the same in a wizard's cheat and a creature's. Example: at round 3, summon 2 Dark Fairies on the other side.",
+            "Summon {Count} {Creature} on {Side}", [F("Count", CheatFieldType.Number, 1, max: 4), F("Creature", CheatFieldType.Creature), F("Side", CheatFieldType.Choice, "Us", s_minionSides)],
+            b => $"summon {(b.Number("Count") > 1 ? $"{b.Number("Count")} x " : "")}{Creature(b)}{(b.Text("Side").Equals("Them", StringComparison.OrdinalIgnoreCase) ? " on the other side" : "")}"),
         new("D.Form", BlockKind.Do, "swap", "change form", "A second form: the creature takes a free circle. With leave on, the boss leaves the battle as it comes.",
             "Come back as {Creature} {ReplaceBoss}", [F("Creature", CheatFieldType.Creature), new("ReplaceBoss", CheatFieldType.Toggle, true, Label: "and leave the battle")],
             b => $"come back as {Creature(b)}"),

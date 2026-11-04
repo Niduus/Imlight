@@ -43,7 +43,7 @@ internal static partial class CheatSearch {
         ["hot", "hots", "heal over time", "regen"],
         ["global", "globals", "bubble"],
         ["aura", "auras"],
-        ["minion", "minions", "summon", "summons"],
+        ["minion", "minions", "summon", "summons", "henchman", "henchmen", "mob", "mobs"],
         ["pip", "pips"],
         ["remove", "removes", "removed", "clear", "clears", "cleared", "cleanse", "strip", "take off", "lose", "loses"],
         ["damage", "hit", "hits", "attack", "hurt", "hurts"],
