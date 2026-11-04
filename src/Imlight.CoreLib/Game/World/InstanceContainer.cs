@@ -113,6 +113,18 @@ internal sealed class InstanceContainer(ulong instanceOwnerId, bool removeWhenEm
         }
     }
 
+    // A zone's news for the players of the instance's other zones (dungeon quests moving on).
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEBROADCAST))]
+    public void ReceiveZoneBroadcast(ZONE_102_PROTOCOL.MSG_ZONEBROADCAST message) {
+        foreach (var zoneActor in _zones.Values) {
+            if (zoneActor.Equals(Sender)) {
+                continue;
+            }
+
+            zoneActor.Tell(message, Self);
+        }
+    }
+
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_DROPINSTANCEZONE))]
     public void ReceiveDropInstanceZone(ZONE_102_PROTOCOL.MSG_DROPINSTANCEZONE message) {
         if (!_zones.Remove(message.ZoneName, out var zoneActor)) {
