@@ -123,6 +123,79 @@ public partial class CombatResolver {
 
                 return true;
             }
+            // Niduus, 2026-11-04: "are swaps, exchange, mirror/echo, and clears in the cheat blocks?". SwapEffects: its own
+            // effects of the kind and the target's trade places (the same size and school); MirrorEffects: copies of its own
+            // go on the target, it keeps them (the other way round from CopyEffects). For players and creatures alike.
+            case "swapeffects":
+            case "mirroreffects": {
+                var swapping = step.Is("SwapEffects");
+                var redo = new List<BossCheats.CheatAction>();
+                List<SpellEffect> Pick(CombatDuelSubCircle who, bool takingOff) => who?._hangingEffects is null ? []
+                    : [.. who._hangingEffects.Where(e => Fits(e) && (!takingOff || step.Bypass || !e.m_protected) && SizedKind(e) is not null)
+                        .Reverse().Take(step.Count > 0 ? step.Count : int.MaxValue)];
+                void Redo(IEnumerable<SpellEffect> effects, CombatDuelSubCircle onto) {
+                    foreach (var e in effects) {
+                        var school = ((string) e.m_sDamageType ?? "").Trim();
+                        redo.Add(new BossCheats.CheatAction {
+                            Do = "AddCharm", Amount = (int) Math.Round((double) Math.Abs(e.m_effectParam)),
+                            School = school.Equals("All", StringComparison.OrdinalIgnoreCase) ? "" : school,
+                            Kind = SizedKind(e), Target = $"slot:{onto.SlotIndex}", Silent = step.Silent, Tag = step.Tag,
+                        });
+                    }
+                }
+
+                foreach (var target in On("Caster").Where(t => t?._hangingEffects is not null && t.IsAlive && t != boss)) {
+                    var mine = Pick(boss, swapping);
+                    if (!swapping) {
+                        Redo(mine, target);
+                        Logger.Information("Duel {0} | Slot {1} | {2} mirrors {3} of its effects onto slot {4}.",
+                            Logger.Args(duel, boss.SlotIndex, bossName, mine.Count, target.SlotIndex));
+
+                        continue;
+                    }
+
+                    var theirs = Pick(target, true);
+                    cinematicTime += ShowRemoval(boss, cheat, step, boss, mine, trigger, receiver, bossName, combatActionList,
+                        cinematicTimeSoFar + cinematicTime, custom);
+                    cinematicTime += ShowRemoval(boss, cheat, step, target, theirs, trigger, receiver, bossName, combatActionList,
+                        cinematicTimeSoFar + cinematicTime, custom);
+                    var goneMine = mine.ToHashSet(ReferenceEqualityComparer.Instance);
+                    var goneTheirs = theirs.ToHashSet(ReferenceEqualityComparer.Instance);
+                    boss._hangingEffects?.RemoveAll(goneMine.Contains);
+                    target._hangingEffects.RemoveAll(goneTheirs.Contains);
+                    _clearedCount += goneMine.Count + goneTheirs.Count;
+                    Redo(mine, target);
+                    Redo(theirs, boss);
+                    Logger.Information("Duel {0} | Slot {1} | {2} swaps {3} of its effects for {4} of slot {5}'s.",
+                        Logger.Args(duel, boss.SlotIndex, bossName, mine.Count, theirs.Count, target.SlotIndex));
+                }
+
+                if (redo.Count > 0) {
+                    var cleared = _clearedCount;
+                    var converted = _convertedCount;
+                    cinematicTime += RunCheatStepsInOrder(boss, cheat, redo, trigger, receiver, bossName, custom, combatActionList,
+                        cinematicTimeSoFar + cinematicTime);
+                    _clearedCount = cleared;
+                    _convertedCount = converted;
+                }
+
+                return true;
+            }
+            // Its pips and the target's trade places (normal, power and shadow), for players and creatures alike.
+            case "swappips": {
+                foreach (var target in On("Caster").Where(t => t is not null && t.IsAlive && t != boss).Take(1)) {
+                    if (boss.CombatParticipant?.m_pipCount is not { } a || target.CombatParticipant?.m_pipCount is not { } b) {
+                        continue;
+                    }
+
+                    (a.m_genericPips, b.m_genericPips) = (b.m_genericPips, a.m_genericPips);
+                    (a.m_powerPips, b.m_powerPips) = (b.m_powerPips, a.m_powerPips);
+                    (a.m_shadowPips, b.m_shadowPips) = (b.m_shadowPips, a.m_shadowPips);
+                    Logger.Information("Duel {0} | Slot {1} | {2} swaps pips with slot {3}.", Logger.Args(duel, boss.SlotIndex, bossName, target.SlotIndex));
+                }
+
+                return true;
+            }
             case "scaleeffects": {
                 var percent = step.Amount;
                 foreach (var target in On("Self").Where(t => t?._hangingEffects is not null)) {

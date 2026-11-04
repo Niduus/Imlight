@@ -226,6 +226,11 @@
  *   StrongestEnemy, MostHurtEnemy (lowest share of health), LastEnemy (highest circle), FirstAlly, RandomEnemyPlayer,
  *   RandomEnemyCreature, RandomCreature, RandomAnyone, RandomOther (anyone but itself), AnyPlayer (a random wizard),
  *   CasterSide and CasterSideButCaster (the side of whoever set it off). A FreeCast casts once on each of the many.
+ *   Actions also (Niduus, 2026-11-04: "are swaps, exchange, mirror/echo, and clears in the cheat blocks?"):
+ *     { "Do": "SwapEffects", "Kind", "EffectSchool", "Count" (0 = all), "Target" (Caster), "Bypass", "Silent" }   its
+ *       effects of the kind and the target's trade places.
+ *     { "Do": "MirrorEffects", "Kind", "EffectSchool", "Count", "Target" (Caster), "Silent" }   copies of its own go on the target.
+ *     { "Do": "SwapPips", "Target" (Caster) }   it and the target trade all their pips.
  *
  * Closer to the real bosses (Niduus, 2026-10-25: "Expand on existing cheats and search methods"; CombatResolver.MoreCheats.cs,
  * for players and creatures alike). Wizard404's words work too: a jinx is a trap and a curse is a weakness, wherever a
