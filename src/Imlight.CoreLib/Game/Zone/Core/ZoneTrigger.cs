@@ -148,6 +148,13 @@ public sealed class ZoneTrigger(IActorRef zoneRef, Zone zone, Trigger trigger)
             return results;
         }
 
+        // A state trigger's self-post is how its partners hear it fired (Throne Room of Fire: "Trigger Door1" posts
+        // "ActivateFrom_Trigger Door1" for the collision wall's "Trigger DoorCol1"). It cannot spin: the supervisor
+        // moves the object out of the required state before the post comes back (ZoneTriggerSupervisor).
+        if (trigger is StateTrigger { m_requiredState: var required } && !string.IsNullOrEmpty(required)) {
+            return results;
+        }
+
         // A self-post spins unless a wait comes first (a wait with requirements can be skipped), and it only echoes an
         // event every listener already got unless the trigger changes something or can stop.
         var canStop = trigger.m_triggerMax != uint.MaxValue
