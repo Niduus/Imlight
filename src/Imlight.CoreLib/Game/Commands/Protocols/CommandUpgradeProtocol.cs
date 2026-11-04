@@ -174,12 +174,12 @@ internal class CommandUpgradeProtocol : CommandProtocol {
             message = "Every path of every upgradable spell you know is already unlocked.";
         }
         else {
-            message = $"Unlocked every path of {groups} spell(s), {tiers} new tier(s): {string.Join(", ", names)}. "
-                + "Your spellbook now shows the top tier of each path; no Spellements were taken.";
+            // Niduus, 2026-11-04: no giant list of spell names on screen, just how many.
+            message = $"Unlocked every path of {groups} spell(s), {tiers} new tier(s). No Spellements were taken.";
         }
 
         WriteMaxResult(wizard, groups, tiers, names, message);
-        InformSenderClient(message, tiers > 0);
+        InformSenderClient(message);
     }
 
     private static void WriteMaxResult(Wizard wizard, int groups, int tiers, System.Collections.Generic.List<string> names, string message) {
