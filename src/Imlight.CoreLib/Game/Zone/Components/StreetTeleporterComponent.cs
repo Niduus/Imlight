@@ -81,6 +81,15 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
     private const float WALK_POINT_ROOM = 50f;
     private const float LAND_LIFT = 10f;
 
+    // How far a landing spot must be from any teleporter stone of the zone: the stones are game objects, not part of
+    // the zone's walls, so the wall check cannot see them, and a walk point can sit right on one (Niduus 2026-11-03:
+    // Royal Hall's Biti's Chamber stone C has a walk point 44 units from it and put him inside the obelisk).
+    private const float STONE_GAP = 140f;
+
+    // The walk grid is coarse (a point every ~480 units), so a far walk point is only the direction: the wizard lands
+    // this far from the stone on the way to it, where that spot has room, like the game's own short step off a stone.
+    private const float LAND_NEAR = 200f;
+
     // The words that make a stone the far one of its pair, and the hub stone's own word.
     [GeneratedRegex(@"BackToHub|ToHub|ToMain|Secondary", RegexOptions.IgnoreCase)]
     private static partial Regex FarWord();
@@ -108,6 +117,7 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
 
     private bool _partnerLooked;
     private CoreObjectInfo _partner;
+    private List<Vector3> _stoneSpots;
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
         => template is GameObjectTemplate go
@@ -207,9 +217,16 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
         var zonePath = Entity.Zone?.ZonePath;
         var at = stone.m_location;
         var near = new List<(Vector3 Point, float Distance, float Room)>();
+        var stones = StoneSpots();
         foreach (var point in ZoneNav.Points(zonePath)) {
             var distance = Flat(point.X - at.X, point.Y - at.Y);
             if (MathF.Abs(point.Z - at.Z) > WALK_POINT_HEIGHT || distance > WALK_POINT_REACH * WALK_POINT_REACH) {
+                continue;
+            }
+
+            // Not on top of the stone itself or another stone (or hub centre piece) nearby.
+            if (distance < STONE_GAP * STONE_GAP
+                || stones.Any(s => MathF.Abs(s.Z - point.Z) <= WALK_POINT_HEIGHT && Flat(s.X - point.X, s.Y - point.Y) < STONE_GAP * STONE_GAP)) {
                 continue;
             }
 
@@ -227,12 +244,54 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
         }
 
         var limit = clear.Min(p => p.Distance) + WALK_POINT_SLACK;
+        var pick = clear.Where(p => p.Distance <= limit)
+            .MinBy(p => Flat(p.Point.X - guessX, p.Point.Y - guessY));
 
-        return clear.Where(p => p.Distance <= limit)
-            .MinBy(p => Flat(p.Point.X - guessX, p.Point.Y - guessY)).Point;
+        return Closer(zonePath, new Vector3(at.X, at.Y, at.Z), pick.Point, pick.Distance, stones) ?? pick.Point;
+    }
+
+    // The spot LAND_NEAR from the stone on the way to a farther walk point, or null when the walk point is near enough
+    // already or that spot lacks room or is by another stone.
+    private static Vector3? Closer(string zonePath, Vector3 stone, Vector3 point, float distance, List<Vector3> stones) {
+        if (distance <= LAND_NEAR + 1f) {
+            return null;
+        }
+
+        var t = LAND_NEAR / distance;
+        var spot = new Vector3(
+            stone.X + ((point.X - stone.X) * t),
+            stone.Y + ((point.Y - stone.Y) * t),
+            stone.Z + ((point.Z - stone.Z) * t));
+        if (stones.Any(s => MathF.Abs(s.Z - spot.Z) <= WALK_POINT_HEIGHT
+                && (s.X != stone.X || s.Y != stone.Y)
+                && Flat(s.X - spot.X, s.Y - spot.Y) < STONE_GAP * STONE_GAP)) {
+            return null;
+        }
+
+        return ZoneCollision.Clearance(zonePath, new Vector3(spot.X, spot.Y, spot.Z + LAND_LIFT)) >= WALK_POINT_ROOM
+            ? spot
+            : null;
     }
 
     private static float Flat(float dx, float dy) => (dx * dx) + (dy * dy);
+
+    // Where the zone's teleporter objects stand: every stone and hub centre piece (KT_Teleporter_Hub and the like).
+    private List<Vector3> StoneSpots() {
+        if (_stoneSpots is not null) {
+            return _stoneSpots;
+        }
+
+        var objects = Entity.Zone?.ZoneData?.m_objectList;
+        _stoneSpots = objects is null
+            ? []
+            : objects.Where(o => o is not null && o.m_templateID != 0
+                    && CoreObjectFactory.FileNameOf(o.m_templateID) is { } file
+                    && file.Contains("Teleport", StringComparison.OrdinalIgnoreCase))
+                .Select(o => new Vector3(o.m_location.X, o.m_location.Y, o.m_location.Z))
+                .ToList();
+
+        return _stoneSpots;
+    }
 
     // The middle of the hub stones round whichever of the pair is the hub one, or null with fewer than two.
     private (float X, float Y)? HubMiddle() {
