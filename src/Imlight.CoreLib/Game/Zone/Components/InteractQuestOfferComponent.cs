@@ -282,6 +282,11 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
                 continue;
             }
 
+            // Switched off for this NPC on the Manager's NPCs page.
+            if (Imlight.CoreLib.Game.World.NpcChanges.For(entity.ActiveGameObject.m_templateID.MParts.TemplateId) is { } npcChange && !npcChange.OffersQuest(quest.m_questName)) {
+                continue;
+            }
+
             var hasQuest = wizard.HasQuest(quest.m_questName);
             var hasCompleted = wizard.HasCompletedQuest(quest.m_questName) && !QuestOptions.IsRepeatable(quest.m_questName);
 

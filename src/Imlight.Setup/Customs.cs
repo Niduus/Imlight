@@ -461,6 +461,12 @@ internal sealed class NpcChange {
     public List<CustomNpcEntry> Spells { get; set; } = [];
     public List<uint> RemoveSpells { get; set; } = [];
 
+    // Game Rules > NPCs: cards and recipes taken out by name, and the quests it no longer offers (by code) or none at all.
+    public List<string> RemoveTreasureCardNames { get; set; } = [];
+    public List<string> RemoveRecipes { get; set; } = [];
+    public bool HideQuests { get; set; }
+    public List<string> QuestsOff { get; set; } = [];
+
     internal const string ADD = "Add";
     internal const string REPLACE = "Replace";
 
@@ -484,6 +490,20 @@ internal sealed class NpcChange {
             Part(HideShop, ShopMode, Items.Count, RemoveItems.Count, "shop", "item");
             Part(HideTreasureCards, TreasureCardMode, TreasureCards.Count, RemoveTreasureCards.Count, "treasure cards", "card");
             Part(HideTraining, SpellMode, Spells.Count, RemoveSpells.Count, "spells", "spell");
+            if (RemoveTreasureCardNames.Count > 0 && !HideTreasureCards) {
+                parts.Add($"{RemoveTreasureCardNames.Count} more card{(RemoveTreasureCardNames.Count == 1 ? "" : "s")} off");
+            }
+
+            if (RemoveRecipes.Count > 0 && !HideShop) {
+                parts.Add($"{RemoveRecipes.Count} recipe{(RemoveRecipes.Count == 1 ? "" : "s")} off");
+            }
+
+            if (HideQuests) {
+                parts.Add("no quests");
+            }
+            else if (QuestsOff.Count > 0) {
+                parts.Add($"{QuestsOff.Count} quest{(QuestsOff.Count == 1 ? "" : "s")} off");
+            }
             if (Window.Length > 0 && !HideShop) {
                 parts.Add($"{Window} window");
             }
@@ -491,6 +511,13 @@ internal sealed class NpcChange {
             return parts.Count == 0 ? "no changes" : string.Join("; ", parts);
         }
     }
+
+    /// <summary>True when it changes nothing at all, so it can be left out of the file.</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    internal bool ChangesNothing => !HideShop && ShopMode != REPLACE && Window.Length == 0 && Items.Count == 0 && RemoveItems.Count == 0
+        && !HideTreasureCards && TreasureCardMode != REPLACE && TreasureCards.Count == 0 && RemoveTreasureCards.Count == 0
+        && !HideTraining && SpellMode != REPLACE && Spells.Count == 0 && RemoveSpells.Count == 0
+        && RemoveTreasureCardNames.Count == 0 && RemoveRecipes.Count == 0 && !HideQuests && QuestsOff.Count == 0;
 
     internal NpcChange Copy() {
         var copy = (NpcChange) MemberwiseClone();
@@ -500,6 +527,9 @@ internal sealed class NpcChange {
         copy.RemoveItems = [.. RemoveItems];
         copy.RemoveTreasureCards = [.. RemoveTreasureCards];
         copy.RemoveSpells = [.. RemoveSpells];
+        copy.RemoveTreasureCardNames = [.. RemoveTreasureCardNames];
+        copy.RemoveRecipes = [.. RemoveRecipes];
+        copy.QuestsOff = [.. QuestsOff];
 
         return copy;
     }
@@ -518,7 +548,20 @@ internal static class NpcChanges {
     internal static List<NpcChange> Load(string folder) {
         var file = Path.Combine(folder, FILE);
 
-        return File.Exists(file) ? JsonSerializer.Deserialize<List<NpcChange>>(File.ReadAllText(file), s_options) ?? [] : [];
+        var changes = File.Exists(file) ? JsonSerializer.Deserialize<List<NpcChange>>(File.ReadAllText(file), s_options) ?? [] : [];
+        foreach (var change in changes) {
+            change.Items ??= [];
+            change.RemoveItems ??= [];
+            change.TreasureCards ??= [];
+            change.RemoveTreasureCards ??= [];
+            change.Spells ??= [];
+            change.RemoveSpells ??= [];
+            change.RemoveTreasureCardNames ??= [];
+            change.RemoveRecipes ??= [];
+            change.QuestsOff ??= [];
+        }
+
+        return changes;
     }
 
     /// <summary>Saves one NPC's changes (over its old ones); null takes all its changes away.</summary>
