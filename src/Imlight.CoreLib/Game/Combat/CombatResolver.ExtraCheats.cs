@@ -700,11 +700,11 @@ public partial class CombatResolver {
         var before = target._hangingEffects.ToList();
         var cinematicTime = 0.0f;
         var onEnemy = target.OccupiedTeam != boss.OccupiedTeam;
-        foreach (var group in picked.GroupBy(e => (Charm: s_charmEffects.Contains(e.m_effectType), Good: CombatRequirements.IsBeneficial(e)))) {
-            var look = RemovalLook(group.Key.Charm ? kSpellEffects.kRemoveCharm : kSpellEffects.kRemoveWard, group.Key.Good, onEnemy, target == boss);
+        foreach (var group in picked.GroupBy(e => (Type: RemovalTypeOf(e), Good: CombatRequirements.IsBeneficial(e)))) {
+            var look = RemovalLook(group.Key.Type, group.Key.Good, onEnemy, target == boss);
             if (look is null) {
                 Logger.Information("Duel {0} | {1}: no game spell takes off {2} {3}s on that side, so the game keeps showing them.",
-                    Logger.Args(_duel.m_duelID.Full, bossName, group.Key.Good ? "good" : "bad", group.Key.Charm ? "charm" : "ward"));
+                    Logger.Args(_duel.m_duelID.Full, bossName, group.Key.Good ? "good" : "bad", RemovalWord(group.Key.Type)));
                 continue;
             }
 
@@ -727,37 +727,69 @@ public partial class CombatResolver {
         return cinematicTime;
     }
 
-    // The game's removal spells of one effect (kRemoveCharm / kRemoveWard) on one target, by whether they take good or bad
-    // ones and whether they go on an enemy or a teammate: the shortest name of each.
-    private static readonly Lazy<List<(string Name, int Index, SpellEffect Effect)>> s_removalLooks = new(() => {
+    // The game's spells of one plain effect on one target (kEnemySingle, kFriendlySingle, kFriendlySingleNotMe), the
+    // shortest name first: removal spells (kRemoveCharm / kRemoveWard / kRemoveOverTime / kRemoveAura) for ShowRemoval,
+    // and heals and over-times for the open-change check (CombatResolver.OpenChanges.cs).
+    private static readonly Lazy<List<(string Name, int Index, SpellEffect Effect)>> s_oneEffectSpells = new(() => {
         try {
             return [.. SpellFactory.AllSpellTemplates()
                 .Where(t => t.Template.m_effects is [{ } e] && e.GetType() == typeof(SpellEffect)
-                            && e.m_effectType is kSpellEffects.kRemoveCharm or kSpellEffects.kRemoveWard
                             && e.m_effectTarget is kEffectTarget.kEnemySingle or kEffectTarget.kFriendlySingle or kEffectTarget.kFriendlySingleNotMe
-                            && e.m_disposition is kHangingDisposition.kBeneficial or kHangingDisposition.kHarmful
+                            && e.m_disposition is kHangingDisposition.kBeneficial or kHangingDisposition.kHarmful or kHangingDisposition.kBoth
                             && SpellFactory.Exists((string) t.Template.m_name))
                 .Select(t => ((string) t.Template.m_name, 0, t.Template.m_effects[0]))
                 .OrderBy(t => t.Item1.Length)];
         }
         catch (Exception e) {
-            Logger.Error("Boss cheats | The removal spells could not be listed: {0}", Logger.Args(e));
+            Logger.Error("Boss cheats | The one-effect spells could not be listed: {0}", Logger.Args(e));
 
             return [];
         }
     });
 
+    // Which removal takes an effect off in the game: an aura, an over-time (or bomb), a charm, else a ward.
+    private static kSpellEffects RemovalTypeOf(SpellEffect e)
+        => CombatRequirements.IsOverTime(e) || e.m_effectType == kSpellEffects.kDeferredDamage ? kSpellEffects.kRemoveOverTime
+            : CombatRequirements.IsAura(e) ? kSpellEffects.kRemoveAura
+            : s_charmEffects.Contains(e.m_effectType) ? kSpellEffects.kRemoveCharm
+            : kSpellEffects.kRemoveWard;
+
+    private static string RemovalWord(kSpellEffects type) => type switch {
+        kSpellEffects.kRemoveCharm => "charm", kSpellEffects.kRemoveOverTime => "over-time effect", kSpellEffects.kRemoveAura => "aura", _ => "ward",
+    };
+
     private static (string Name, int Index)? RemovalLook(kSpellEffects type, bool good, bool onEnemy, bool onSelf) {
         var disposition = good ? kHangingDisposition.kBeneficial : kHangingDisposition.kHarmful;
-        foreach (var (name, index, effect) in s_removalLooks.Value) {
-            if (effect.m_effectType == type && effect.m_disposition == disposition
-                && (effect.m_effectTarget == kEffectTarget.kEnemySingle) == onEnemy
-                && !(onSelf && effect.m_effectTarget == kEffectTarget.kFriendlySingleNotMe)) {
+        // An aura removal of either kind (kBoth) does too, when none is of that kind alone.
+        return OneEffectLook(type, disposition, onEnemy, onSelf) ?? OneEffectLook(type, kHangingDisposition.kBoth, onEnemy, onSelf);
+    }
+
+    // The shortest one-effect spell of this effect type and disposition aimed at that side; with a school, one of that
+    // school (m_sDamageType) first, then any; with rounds, one lasting as long first.
+    private static (string Name, int Index)? OneEffectLook(kSpellEffects type, kHangingDisposition disposition, bool onEnemy, bool onSelf,
+                                                           string school = null, int rounds = 0) {
+        (string Name, int Index)? any = null, near = null;
+        foreach (var (name, index, effect) in s_oneEffectSpells.Value) {
+            if (effect.m_effectType != type || effect.m_disposition != disposition
+                || (effect.m_effectTarget == kEffectTarget.kEnemySingle) != onEnemy
+                || onSelf && effect.m_effectTarget == kEffectTarget.kFriendlySingleNotMe) {
+                continue;
+            }
+
+            var sameSchool = string.IsNullOrEmpty(school) || string.Equals(((string) effect.m_sDamageType ?? "").Trim(), school, StringComparison.OrdinalIgnoreCase);
+            var sameRounds = rounds <= 0 || effect.m_numRounds == rounds;
+            if (sameSchool && sameRounds) {
                 return (name, index);
             }
+
+            if (sameSchool) {
+                near ??= (name, index);
+            }
+
+            any ??= (name, index);
         }
 
-        return null;
+        return near ?? any;
     }
 
     private static string SizedKind(SpellEffect e) {

@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Imlight.CoreLib.Game.Combat;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -86,7 +87,7 @@ internal sealed partial class ManagerWindow {
         public Dictionary<string, BtPlaceEntry> Bosses { get; init; } = [];
     }
 
-    private sealed record BtCheat(string Summary, string Notes, bool Off);
+    private sealed record BtCheat(string Summary, string Notes, bool Off, string NotShown = "");
 
     private sealed class BtBoss {
         public string Key { get; init; } = "";
@@ -284,7 +285,12 @@ internal sealed partial class ManagerWindow {
 
             // The line as the battle shows it, instead of its key.
             summary = s_btLineKey.Replace(summary, m => lines.ByKey(m.Groups["key"].Value) is { Length: > 0 } text ? $"\"{text.Trim()}\"" : m.Value);
-            cheats.Add(new BtCheat(rule.Name.Length > 0 ? $"{rule.Name}: {summary}" : summary, rule.Notes, rule.Off));
+            // The automatic check (CheatDisplay): what of it the game can't be shown, so the tester knows the screen may lag.
+            var notShown = string.Join(" ", rule.Dos.Where(d => d.On)
+                .Select(d => CheatDisplay.Check(CheatSpecs.DoOf(d.Spec), d.Text("Kind")))
+                .Where(c => c is { How: CheatDisplay.Shown.NotShown })
+                .Select(c => c!.Value.Note).Distinct());
+            cheats.Add(new BtCheat(rule.Name.Length > 0 ? $"{rule.Name}: {summary}" : summary, rule.Notes, rule.Off, notShown));
             all.Append(rule.Off ? "off:" : "on:").Append(rule.Canonical().ToJsonString()).Append('\n');
         }
 
@@ -718,6 +724,12 @@ internal sealed partial class ManagerWindow {
             if (cheat.Notes.Length > 0) {
                 block.Children.Add(WithMargin(new SelectableTextBlock { Text = cheat.Notes, TextWrapping = TextWrapping.Wrap, FontSize = 12, Foreground = MUTED },
                     new Thickness(18, 0, 0, 0)));
+            }
+
+            if (cheat.NotShown.Length > 0) {
+                block.Children.Add(WithMargin(new SelectableTextBlock {
+                    Text = "Not shown in game: " + cheat.NotShown, TextWrapping = TextWrapping.Wrap, FontSize = 12, Foreground = WARN,
+                }, new Thickness(18, 0, 0, 0)));
             }
 
             _btDetails.Children.Add(block);

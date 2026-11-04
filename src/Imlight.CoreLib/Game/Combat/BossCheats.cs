@@ -723,6 +723,11 @@ internal static class BossCheats {
     // lookalike cast carries its own size in Spell.m_paramOverrides, so the game can show that number.
     internal static bool ShowOwnValue => ConfigurationManager.GetValue("BossCheats.ShowOwnValue", true);
 
+    // [BossCheats] ShowOpenChanges (Niduus, 2026-11-04: "automated checks ... intended actions instead of open actions"):
+    // a cheat step that changes the battle with no spell the game is shown (effects taken off or put on, a heal) gets a
+    // real spell cast for it, so the game draws it (CombatResolver.OpenChanges.cs). Off leaves them server-only.
+    internal static bool ShowOpenChanges => ConfigurationManager.GetValue("BossCheats.ShowOpenChanges", true);
+
     // [BossCheats] ShowOwnValueGlobals: the same for a global (bubble), on its own switch. Sent as an interrupt the game
     // never drew a cheat's bubble, with or without its own size; in the turn order (GlobalsInTurn) it does, so the own
     // size is on again (Niduus, 2026-10-27: "globals should display like this"). Off: the real bubble closest to the size.
