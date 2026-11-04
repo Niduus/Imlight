@@ -113,6 +113,7 @@ internal static class CustomShare {
         new("npc", "Vendors and trainers", "bag", ShareShape.List, true, "Customs/VendorsTrainers.json", KeyField: "Id", NumberField: "Id"),
         new("npcchange", "Changed vendors and trainers", "bag", ShareShape.List, true, "Customs/NpcChanges.json", KeyField: "TemplateID"),
         new("hub", "Teleporter hubs", "map", ShareShape.List, true, "Customs/Teleporters.json", KeyField: "Id", NumberField: "Id"),
+        new("portal", "Portals and prompts", "map", ShareShape.List, true, "Customs/Portals.json", KeyField: "Id", NumberField: "Id"),
         new("recipe", "Recipe changes", "flask", ShareShape.List, true, "Customs/RecipeChanges.json", KeyField: "Id"),
         new("drops", "Drop tables", "gift", ShareShape.Files, true, "DropTables", OwnOnly: true),
         new("quest", "Quest changes", "flag", ShareShape.List, true, "QuestOptions.json", KeyField: "Quest", ListProperty: "Quests", NameField: "Quest"),

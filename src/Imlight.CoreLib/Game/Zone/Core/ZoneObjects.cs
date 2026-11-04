@@ -75,7 +75,8 @@
  *
  * Teleporter hubs (Niduus, 2026-10-25): the Customs tab's hub and street teleporters, in
  * spiraldb-extra/Customs/Teleporters.json (CustomTeleporters.cs), are added the same way, each named by its zone tag
- * (CustomTeleporter_<Id>_<pad>, with _Street for a street teleporter).
+ * (CustomTeleporter_<Id>_<pad>, with _Street for a street teleporter), and so are its portals, from Portals.json
+ * (CustomTeleporter_Portal_<Id>).
  *
  * All three are watched: a change is applied to every loaded copy of the zone at once. An object that moved or turned is
  * taken away from the players there and sent again at its new place (a sigil pad's radius goes with it); an added
@@ -306,6 +307,7 @@ internal static class ZoneObjects {
     private static FileSystemWatcher s_placementsWatcher;
     private static FileSystemWatcher s_customNpcsWatcher;
     private static FileSystemWatcher s_customTeleportersWatcher;
+    private static FileSystemWatcher s_portalsWatcher;
     private static Timer s_reloadTimer;
 
     // The loaded copies of zones that use these files, so a change reaches them.
@@ -436,6 +438,7 @@ internal static class ZoneObjects {
             s_placementsWatcher = MakeWatcher(placements, PLACEMENTS_FILE);
             s_customNpcsWatcher = MakeWatcher(placements, Imlight.CoreLib.Game.World.CustomNpcs.FILE);
             s_customTeleportersWatcher = MakeWatcher(placements, Imlight.CoreLib.Game.World.CustomTeleporters.FILE);
+            s_portalsWatcher = MakeWatcher(placements, Imlight.CoreLib.Game.World.CustomTeleporters.PORTALS_FILE);
         }
         catch (Exception e) {
             Logger.Warning("Zone objects: changes to the files will need a server restart ({0}).", Logger.Args(e.Message));

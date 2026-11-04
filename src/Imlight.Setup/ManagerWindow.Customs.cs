@@ -120,6 +120,7 @@ internal sealed partial class ManagerWindow {
             CustomNpcsCard(),
             NpcChangesCard(),
             CustomTeleportersCard(),
+            CustomPortalsCard(),
             CustomBattlesCard(),
             GauntletSigilsCard(),
             CustomAreasCard()));
@@ -137,6 +138,7 @@ internal sealed partial class ManagerWindow {
         RenderNpcs();
         RenderNpcChanges();
         RenderHubs();
+        RenderPortals();
         LoadBattleCustoms();
         RenderGauntletSigils();
         RenderAreas();

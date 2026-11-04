@@ -28,6 +28,21 @@
  *
  * The stones are added to their zone's objects by ZoneObjects.cs, which watches this file as it does its own, so a hub
  * or street teleporter that is added, moved or deleted is so at once in every running copy of its zone.
+ *
+ * Portals (Niduus, 2026-11-04: "allow for interaction prompts to be made and customized ... remake how some of the
+ * teleporters are with the shadow gate one ... a prompt that changes the name layer to the direction and able to interact
+ * to teleport when in it. Include a setting in this to allow for interaction or walking. I would also like a 'Teleport
+ * here' feature ... how it does in housing") are single teleporters of their own, in spiraldb-extra/Customs/Portals.json:
+ *   Id          its number (1, 2, 3...); its zone tag is CustomTeleporter_Portal_<Id>.
+ *   Name        the prompt's name line, such as "To Colossus Boulevard" or "North: Ravenwood"; empty: "To <place it goes>".
+ *   Prompt      the prompt's second line: Teleport (the default), Travel, Enter, Exit, Interact (the game's own "Press X
+ *               to ..." lines, which show the player's own key) or Custom, which shows Text as written.
+ *   Text        the Custom prompt line.
+ *   Walk        true: walking into it teleports (no prompt), like a house teleporter. false: press X in it.
+ *   Reach       how near (in game units) a player has to be: to see the prompt, or to be sent when Walk is on.
+ *   Zone, X, Y, Z, Yaw, Look  where it stands and its template (0: the Shadow Portal house teleporter, 1719467).
+ *   ToZone, ToX, ToY, ToZ, ToYaw  where it sends ("Teleport here" sets it to where the wizard stands, in any zone).
+ * Every setting is read when it is used, so a change counts at once; a new look or place makes the portal again.
  */
 
 using System;
@@ -84,7 +99,66 @@ internal static class CustomTeleporters {
 
     /// <summary>One stone in the game: a hub stone or a street teleporter, and where pressing X at it sends.</summary>
     internal sealed record Stone(string Tag, string Name, string Zone, float X, float Y, float Z, float Yaw, ulong Look,
-                                 string ToZone, float ToX, float ToY, float ToZ, float ToYaw);
+                                 string ToZone, float ToX, float ToY, float ToZ, float ToYaw) {
+        /// <summary>The prompt's second line: a lang key of the game's own lines, or the Custom line's key.</summary>
+        public string TextKey { get; init; } = TELEPORT_TEXT_KEY;
+        /// <summary>The Custom prompt line as written, or null.</summary>
+        public string CustomText { get; init; }
+        /// <summary>Walking into it sends the player (no prompt).</summary>
+        public bool WalkIn { get; init; }
+        /// <summary>How near a player has to be (0: the game's usual 300 for the prompt).</summary>
+        public float Reach { get; init; }
+        /// <summary>A portal of Portals.json (not a hub stone).</summary>
+        public int PortalId { get; init; }
+    }
+
+    /// <summary>A portal of Portals.json: one teleporter with its own prompt.</summary>
+    internal sealed class Portal {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string Prompt { get; set; } = "";
+        public string Text { get; set; } = "";
+        public bool Walk { get; set; }
+        public float Reach { get; set; }
+        public string Zone { get; set; } = "";
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Z { get; set; }
+        public float Yaw { get; set; }
+        public ulong Look { get; set; }
+        public string ToZone { get; set; } = "";
+        public float ToX { get; set; }
+        public float ToY { get; set; }
+        public float ToZ { get; set; }
+        public float ToYaw { get; set; }
+    }
+
+    internal const string PORTALS_FILE = "Portals.json";
+    private const string PORTAL_TAG_PREFIX = TAG_PREFIX + "Portal_";
+
+    /// <summary>The Shadow Portal house teleporter (SP_Teleporter_Shadow), a new portal's look.</summary>
+    internal const ulong SHADOW_PORTAL = 1719467;
+
+    // "Press X to Teleport", the Colossus Boulevard stones' own line.
+    internal const string TELEPORT_TEXT_KEY = "GUI_00005578";
+
+    /// <summary>
+    /// The lang line that is only the NPC block's FIRSTNAME ("#1:$NPC_FIRSTNAME$"): with the Custom prompt's text in that
+    /// slot, the prompt's second line shows it as written.
+    /// </summary>
+    internal const string CUSTOM_TEXT_KEY = "NPCFormats_First_Only";
+
+    // The prompt lines a portal can pick: the game's own (they show the player's own interact key).
+    private static readonly Dictionary<string, string> s_prompts = new(StringComparer.OrdinalIgnoreCase) {
+        ["Teleport"] = TELEPORT_TEXT_KEY,      // Press X to Teleport
+        ["Travel"] = "GUI_00008430",            // Press X to Travel
+        ["Enter"] = "GUI_EnterDoor",            // Press X to Enter
+        ["Exit"] = "GUI_00006703",              // Press X to Exit
+        ["Interact"] = "GUI_00000034",          // Press X to Interact
+    };
+
+    // How near a player has to be to a portal by default: in it, not across the street.
+    private const float PORTAL_REACH = 120f;
 
     internal const string FILE = "Teleporters.json";
     private const string FOLDER = "Customs";
@@ -133,24 +207,34 @@ internal static class CustomTeleporters {
     /// </summary>
     internal static List<Stone> Load() {
         var path = Path.Combine(SpiralDB.ExtraPath, FOLDER, FILE);
-        if (!File.Exists(path)) {
-            s_byTag = new(StringComparer.OrdinalIgnoreCase);
-
-            return [];
-        }
-
         List<Hub> hubs;
         try {
-            hubs = JsonSerializer.Deserialize<List<Hub>>(File.ReadAllText(path), s_options) ?? [];
+            hubs = File.Exists(path) ? JsonSerializer.Deserialize<List<Hub>>(File.ReadAllText(path), s_options) ?? [] : [];
         }
         catch (Exception e) {
-            // The last good list stays (the app writes the file whole, so this is a file broken by hand).
+            // The last good hubs stay (the app writes the file whole, so this is a file broken by hand).
             Logger.Warning("Teleporter hubs: {0} could not be read: {1}", Logger.Args(FILE, e.Message));
-
-            return [.. s_byTag.Values];
+            hubs = null;
         }
 
+        var portals = ReadPortals(out var portalsOk);
         var byTag = new Dictionary<string, Stone>(StringComparer.OrdinalIgnoreCase);
+        if (hubs is null) {
+            foreach (var (tag, stone) in s_byTag.Where(kv => kv.Value.PortalId == 0)) {
+                byTag[tag] = stone;
+            }
+        }
+
+        if (!portalsOk) {
+            foreach (var (tag, stone) in s_byTag.Where(kv => kv.Value.PortalId != 0)) {
+                byTag[tag] = stone;
+            }
+        }
+        else {
+            AddPortals(portals, byTag);
+        }
+
+        hubs ??= [];
         var ids = new HashSet<int>();
         foreach (var hub in hubs) {
             if (hub is null || hub.Id <= 0 || string.IsNullOrWhiteSpace(hub.Zone)) {
@@ -209,7 +293,8 @@ internal static class CustomTeleporters {
         }
 
         s_byTag = byTag;
-        Logger.Information("Teleporter hubs: {0} hubs read, with {1} stones in all.", Logger.Args(ids.Count, byTag.Count));
+        Logger.Information("Teleporter hubs: {0} hubs and {1} portals read, with {2} teleporters in all.",
+            Logger.Args(ids.Count, byTag.Values.Count(s => s.PortalId != 0), byTag.Count));
 
         return [.. byTag.Values];
     }
@@ -218,7 +303,119 @@ internal static class CustomTeleporters {
     /// What tells two versions of a stone apart for ZoneObjects: a stone whose name changed is taken away and made again,
     /// so its press-X box shows the new one. Where it sends is read when it is used, so a new destination counts at once.
     /// </summary>
-    internal static string SignatureOf(Stone stone) => "Teleporter:" + stone.Name;
+    internal static string SignatureOf(Stone stone) => stone.PortalId != 0 ? "Portal" : "Teleporter:" + stone.Name;
+
+    /// <summary>
+    /// The prompt's name line: the stone's name, or for a portal without one "To" and the name of the place it goes.
+    /// </summary>
+    internal static string NameOf(Stone stone) {
+        if (stone is null) {
+            return null;
+        }
+
+        if (stone.Name.Length > 0 || stone.PortalId == 0) {
+            return stone.Name;
+        }
+
+        return string.IsNullOrEmpty(stone.ToZone) ? $"Portal {stone.PortalId}" : "To " + PlaceName(stone.ToZone);
+    }
+
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_placeNames = new(StringComparer.OrdinalIgnoreCase);
+
+    // The game's name of a zone ("Colossus Boulevard"), or the last part of its path when it has none.
+    private static string PlaceName(string zone) => s_placeNames.GetOrAdd(zone, z => {
+        try {
+            var key = Imlight.CoreLib.Game.TeamUp.TeamUpSigils.DisplayKeyNow(z);
+            if (key.Length > 0 && Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(key) is { Length: > 0 } name && name != key) {
+                return name;
+            }
+        }
+        catch (Exception e) {
+            Logger.Warning("Portals: the name of {0} could not be read: {1}", Logger.Args(z, e.Message));
+        }
+
+        var last = z.Split('/', '\\').LastOrDefault(p => p.Length > 0) ?? z;
+
+        return last.Contains('_') ? last[(last.LastIndexOf('_') + 1)..] : last;
+    });
+
+    // ---------------------------------------------------------------------
+    // Portals
+    // ---------------------------------------------------------------------
+
+    private static readonly object s_portalsLock = new();
+
+    /// <summary>The portals in Portals.json; ok is false when the file is there but cannot be read.</summary>
+    internal static List<Portal> ReadPortals(out bool ok) {
+        ok = true;
+        var path = Path.Combine(SpiralDB.ExtraPath, FOLDER, PORTALS_FILE);
+        try {
+            return File.Exists(path) ? JsonSerializer.Deserialize<List<Portal>>(File.ReadAllText(path), s_options) ?? [] : [];
+        }
+        catch (Exception e) {
+            Logger.Warning("Portals: {0} could not be read: {1}", Logger.Args(PORTALS_FILE, e.Message));
+            ok = false;
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    /// Changes Portals.json (the in-game .portal command): reads it, lets change edit the list and writes it whole.
+    /// ZoneObjects sees the file change and puts the portals in the game. False when the file cannot be read.
+    /// </summary>
+    internal static bool EditPortals(Func<List<Portal>, bool> change) {
+        lock (s_portalsLock) {
+            var portals = ReadPortals(out var ok);
+            if (!ok) {
+                return false;
+            }
+
+            if (!change(portals)) {
+                return true;
+            }
+
+            var dir = Path.Combine(SpiralDB.ExtraPath, FOLDER);
+            Directory.CreateDirectory(dir);
+            var path = Path.Combine(dir, PORTALS_FILE);
+            File.WriteAllText(path + ".saving", JsonSerializer.Serialize(portals.OrderBy(p => p.Id).ToList(), s_write));
+            File.Move(path + ".saving", path, overwrite: true);
+
+            return true;
+        }
+    }
+
+    private static readonly JsonSerializerOptions s_write = new() { WriteIndented = true };
+
+    private static void AddPortals(List<Portal> portals, Dictionary<string, Stone> byTag) {
+        var ids = new HashSet<int>();
+        foreach (var portal in portals) {
+            if (portal is null || portal.Id <= 0 || string.IsNullOrWhiteSpace(portal.Zone)) {
+                Logger.Warning("Portals: an entry has no Id or Zone; skipped.");
+
+                continue;
+            }
+
+            if (!ids.Add(portal.Id)) {
+                Logger.Warning("Portals: a second portal has Id {0}; skipped.", Logger.Args(portal.Id));
+
+                continue;
+            }
+
+            var custom = string.Equals(portal.Prompt?.Trim(), "Custom", StringComparison.OrdinalIgnoreCase)
+                         && !string.IsNullOrWhiteSpace(portal.Text);
+            var tag = PORTAL_TAG_PREFIX + portal.Id;
+            byTag[tag] = new Stone(tag, portal.Name?.Trim() ?? "", portal.Zone.Trim(), portal.X, portal.Y, portal.Z, portal.Yaw,
+                portal.Look != 0 ? portal.Look : SHADOW_PORTAL,
+                portal.ToZone?.Trim() ?? "", portal.ToX, portal.ToY, portal.ToZ, portal.ToYaw) {
+                TextKey = custom ? CUSTOM_TEXT_KEY : s_prompts.GetValueOrDefault(portal.Prompt?.Trim() ?? "") ?? TELEPORT_TEXT_KEY,
+                CustomText = custom ? portal.Text.Trim() : null,
+                WalkIn = portal.Walk,
+                Reach = portal.Reach > 0 ? Math.Clamp(portal.Reach, 20f, 1000f) : PORTAL_REACH,
+                PortalId = portal.Id,
+            };
+        }
+    }
 
     // A step in front of a spot, the way a wizard standing there with that yaw faces.
     private static (float X, float Y) InFront(float x, float y, float yaw)
