@@ -923,6 +923,9 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             case "stuck":
                 CommandStuck(wizard);
                 return;
+            case "book":
+                CommandQuestBook(wizard);
+                return;
         }
 
         // The remaining actions act on an active quest. The server does not learn which quest the client

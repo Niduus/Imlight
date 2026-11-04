@@ -50,7 +50,7 @@ internal sealed partial class ManagerWindow {
         ("Quests", "flag", "Quests, story, editor",
             "Follow your wizard's quests, see every world's main story in order, and change any quest or make your own.",
             // Niduus, 2026-10-27: a main quest testing list, story order, start to finish.
-            ["Quests", "Spell Quests", "Quest Testing", "Quest Tree", "Quest Editor"]),
+            ["My Quests", "Quests", "Spell Quests", "Quest Testing", "Quest Tree", "Quest Editor"]),
         // Niduus, 2026-10-29: "help guide the player softly to the stage they want to be in": catch up to a level or a
         // world with the quests' real rewards, and the best gear for your level with where to get it.
         ("Progress", "bolt", "Fast forward, best gear, spells",
