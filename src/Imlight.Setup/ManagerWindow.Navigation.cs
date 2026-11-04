@@ -59,8 +59,8 @@ internal sealed partial class ManagerWindow {
         // Niduus, 2026-10-25: "move Bosses to Database". Niduus, 2026-10-30: "make it less confusing and more organized":
         // what you look up for your wizard first (spells, gear, items), then the house, places and pets, then the rest.
         ("Database", "search", "IDs, spells, gear, bosses",
-            "Everything in the game, ready to search: IDs, spell cards, gear, reagents, jewels, snacks and every other item, house items, badges, recipes, vendors and trainers, pet talents, bosses, and every line of text.",
-            ["Lookup", "Spells", "Gear", "Items", "Furniture", "Badges", "Recipes", "Vendors", "Pet Talents", "Pet Derby", "Bosses", "Phrases"]),
+            "Everything in the game, ready to search: a wiki page for every creature, spell and item, IDs, spell cards, gear, reagents, jewels, snacks and every other item, house items, badges, recipes, vendors and trainers, pet talents, bosses, and every line of text.",
+            ["Wiki", "Lookup", "Spells", "Gear", "Items", "Furniture", "Badges", "Recipes", "Vendors", "Pet Talents", "Pet Derby", "Bosses", "Phrases"]),
         ("Create", "puzzle", "Customs, cheats, announcements",
             "Build your own creatures and areas and share them, make cheats for yourself, test the bosses' cheats, and word what the server announces.",
             // Niduus, 2026-10-28: "Make BOSS TEST in the exe": the bosses with cheats to test, beside the cheat editor.
@@ -466,7 +466,15 @@ internal sealed partial class ManagerWindow {
                 var found = _lookup.Search(kind, query, most, out var total);
                 var kindRows = found.Select(entry => ResultRow(KindIcon(entry.Kind), "Lookup", entry.Name,
                     string.Join(" · ", new[] { entry.Kind, entry.Id.Length > 0 ? $"ID {entry.Id}" : "", entry.Typed ?? "", entry.Detail }.Where(t => t.Length > 0)),
-                    () => OpenInLookup(kind, query), entry.Typed ?? (entry.Id.Length > 0 ? entry.Id : null))).ToList();
+                    () => {
+                        // A creature, spell or item opens its Wiki page; the rest the Lookup tab.
+                        if (entry.Kind is "Creature" or "Spell" or "Item" && entry.Id.Length > 0) {
+                            OpenInWiki(entry.Kind, entry.Id);
+                        }
+                        else {
+                            OpenInLookup(kind, query);
+                        }
+                    }, entry.Typed ?? (entry.Id.Length > 0 ? entry.Id : null))).ToList();
                 if (total > most) {
                     kindRows.Add(ResultRow("search", "Lookup", $"See all {total:N0} in Lookup", "Opens the Lookup tab with this search.",
                         () => OpenInLookup(kind, query)));
@@ -520,7 +528,7 @@ internal sealed partial class ManagerWindow {
 
     /// <summary>The tabs with a search box of their own, for Home's "Search a tab" rows.</summary>
     private IEnumerable<(string Tab, TextBox Box)> SearchableTabs() => [
-        ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Furniture", _furnitureSearch), ("Items", _itemsSearch), ("Badges", _badgesSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Pet Talents", _petTalentPage.Search), ("Pet Derby", _petDerbyPage.Search), ("Quest Tree", _qtSearch), ("Quest Testing", _qxSearch), ("Boss Test", _btSearch), ("Spell Quests", _sqSearch), ("Phrases", _phraseSearch),
+        (WIKI, _wikiSearch), ("Spells", _spellsSearch), ("Gear", _gearSearch), ("Furniture", _furnitureSearch), ("Items", _itemsSearch), ("Badges", _badgesSearch), ("Recipes", _recipeSearch), ("Vendors", _vendorSearch), ("Pet Talents", _petTalentPage.Search), ("Pet Derby", _petDerbyPage.Search), ("Quest Tree", _qtSearch), ("Quest Testing", _qxSearch), ("Boss Test", _btSearch), ("Spell Quests", _sqSearch), ("Phrases", _phraseSearch),
         ("Quests", _questSearch), ("Bosses", _bossSearch), ("Commands", _commandSearch), ("Announcements", _announcementSearch),
         ("Lookup", _lookupSearch), ("Settings", _settingSearch), ("Customs", _customListSearch), ("Share", _shareSearch), ("Accounts", _accountSearch),
         ("Logs", _logSearch), (WHATS_NEW, _notesSearch),
