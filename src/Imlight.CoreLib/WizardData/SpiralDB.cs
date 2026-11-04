@@ -234,6 +234,9 @@ public static class SpiralDB {
             // Spells the real game's quests teach that our quest files lack (school spells, Ra, Plow and Revive).
             QuestSpellRewards.ApplyAll(questTemplates, extraPath);
 
+            // Later steps of a quest chain that came with no needs wait for the step before (Alhazred offered them all).
+            QuestChainOrder.ApplyAll(questTemplates);
+
             // The Manager's quest changes (Create page, Quest Editor) go on copies; the files' own quests stay as they are.
             s_originalQuestTemplates = questTemplates;
             Imlight.CoreLib.Game.Quests.QuestOptions.Apply();
