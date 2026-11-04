@@ -121,6 +121,7 @@ internal static class ManagerTheme {
         ["Wiki"] = Color.FromRgb(90, 160, 235),
         ["Locations"] = Color.FromRgb(70, 175, 120),
         ["Quests"] = Color.FromRgb(214, 150, 48),
+        ["My Quests"] = Color.FromRgb(214, 150, 48),
         ["Phrases"] = Color.FromRgb(150, 110, 210),
         ["Spells"] = Color.FromRgb(196, 74, 112),
         ["Gear"] = Color.FromRgb(52, 170, 200),
