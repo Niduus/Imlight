@@ -83,6 +83,7 @@ public partial class CombatDuelSubCircle {
     internal const byte MAX_PIP_COUNT = 7;
 
     private static bool s_schoolPips => ConfigurationManager.GetValue("Battle.SchoolPips", true);
+    private static bool s_moonPowerPipsDouble => ConfigurationManager.GetValue("Battle.MoonPowerPipsDouble", true);
     private const byte PLAYER_HAND_SIZE = 7;
 
     internal string SlotName { get; set; }
@@ -1240,6 +1241,9 @@ public partial class CombatDuelSubCircle {
             MagicSchool.Life    => ParticipantGameStats.m_lifeMastery    > 0,
             MagicSchool.Death   => ParticipantGameStats.m_deathMastery   > 0,
             MagicSchool.Balance => ParticipantGameStats.m_balanceMastery > 0,
+            // Power pips count as 2 for Moon spells (polymorphs and the rest) for every wizard and creature, whatever
+            // their school (Niduus, 2026-11-04). Live: [Battle] MoonPowerPipsDouble.
+            MagicSchool.Moon    => s_moonPowerPipsDouble,
             _ => false,
         };
     }
