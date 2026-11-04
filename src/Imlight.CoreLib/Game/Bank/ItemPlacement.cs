@@ -186,6 +186,14 @@ internal static class ItemPlacement {
         PetTome.Announce(session, wizard, item);
     }
 
+    /// <summary>
+    /// Whether an item would go in the backpack without going past its limit (the Recycling Bin refuses otherwise,
+    /// like the game).
+    /// </summary>
+    internal static bool FitsInBackpack(Wizard wizard, WizClientObjectItem item)
+        => Wizard.IsBagStack(item)
+            || (BankRules.IsJewel(item) ? !IsJewelPouchFull(wizard) : !BankRules.TakesBackpackSlot(item) || wizard.BackpackFreeSlots >= 1);
+
     private static bool IsJewelPouchFull(Wizard wizard) {
         var allowed = ConfigurationManager.GetValue(MaxJewelsAllowedKey, 0);
 
