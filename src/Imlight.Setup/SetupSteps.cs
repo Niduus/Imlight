@@ -78,6 +78,26 @@ internal sealed class SetupSteps : IDisposable {
             return saved;
         }
 
+        if (_options.GameFolder is null && info.RootWad is { } gone) {
+            SetupLog.Info($"Wizard101 is no longer at {gone}, so setup looks for it.");
+        }
+
+        if (_options.GameFolder is null && GameLocator.Search(info.RootWad) is { } found) {
+            SetupLog.Info($"Found Wizard101 at {Path.GetDirectoryName(found)}.");
+            info.RootWad = found;
+            info.Save(_options.InstallFolder);
+
+            return found;
+        }
+
+        // The background update has no window to ask in: a copy Imlight already has is enough to build with, and
+        // the place the game was saved at stays as it is (Play needs the real game).
+        if (_options.GameFolder is null && _options.Unattended && GameLocator.BuildOnlyCopy(_options.InstallFolder) is { } copy) {
+            SetupLog.Info($"Wizard101 was not found, so the update uses the copy of its game files in {Path.GetDirectoryName(copy)}.");
+
+            return copy;
+        }
+
         info.RootWad = Path.GetFullPath(LocateRootWad());
         info.Save(_options.InstallFolder);
 
@@ -92,53 +112,23 @@ internal sealed class SetupSteps : IDisposable {
             return rootWad;
         }
 
-        var programData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-        var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-        var programFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-        var candidates = new[] {
-            Path.Combine(programData, "KingsIsle Entertainment", "Wizard101"),
-            Path.Combine(programFilesX86, "Steam", "steamapps", "common", "Wizard101"),
-            Path.Combine(programFiles, "Steam", "steamapps", "common", "Wizard101"),
-            Path.Combine(programFilesX86, "KingsIsle Entertainment", "Wizard101"),
-            Path.Combine(programFiles, "KingsIsle Entertainment", "Wizard101"),
-        };
-
-        foreach (var candidate in candidates) {
-            if (ResolveRootWad(candidate) is { } found) {
-                SetupLog.Info($"Found Wizard101 at {candidate}.");
-
-                return found;
-            }
-        }
-
         if (_options.Unattended) {
-            throw new SetupException("Wizard101 was not found. Run setup again with --game \"<your Wizard101 folder>\".");
+            throw new SetupException("Wizard101 was not found on this computer. In Ahziael, click \"Update Ahziael\" at the top " +
+                $"and pick your Wizard101 folder when it asks (the one with Bin and Data inside). Or close Ahziael, open the newest " +
+                $"{Edition.RELEASE_ASSET} from the Releases page and paste your Wizard101 folder when it asks.");
         }
 
         while (true) {
             var answer = Prompt.Ask("Wizard101 was not found. Paste the folder it is installed in (the one with Data inside)");
-            if (ResolveRootWad(answer.Trim('"', ' ')) is { } found) {
-                return found;
+            if (ResolveRootWad(answer.Trim('"', ' ')) is { } typed) {
+                return typed;
             }
 
             SetupLog.Info("Root.wad is not in that folder. It should be at <folder>\\Data\\GameData\\Root.wad.");
         }
     }
 
-    private static string? ResolveRootWad(string path) {
-        if (File.Exists(path) && Path.GetFileName(path).Equals("Root.wad", StringComparison.OrdinalIgnoreCase)) {
-            return path;
-        }
-
-        var inGame = Path.Combine(path, "Data", "GameData", "Root.wad");
-        if (File.Exists(inGame)) {
-            return inGame;
-        }
-
-        var inGameData = Path.Combine(path, "Root.wad");
-
-        return File.Exists(inGameData) ? inGameData : null;
-    }
+    private static string? ResolveRootWad(string path) => GameLocator.ResolveRootWad(path);
 
     // ---------------------------------------------------------------------
     // 2. .NET SDK

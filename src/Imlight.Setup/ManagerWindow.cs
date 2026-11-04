@@ -29,6 +29,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Imlight.Setup.Blocks;
 
@@ -2152,8 +2153,49 @@ internal sealed partial class ManagerWindow : Window {
         }
     }
 
+    /// <summary>
+    /// Makes sure the update knows where Wizard101 is before it builds. It looks by itself first (the saved place, the
+    /// running game, Steam and the usual folders on every drive), and only when that finds nothing asks the player to
+    /// pick the folder. A player's update stopped with "Wizard101 was not found" before this (2026-11-04).
+    /// </summary>
+    private async Task<bool> FindGameForUpdateAsync() {
+        var folder = _manager.InstallFolder;
+        if (await Task.Run(() => GameLocator.FindAndRemember(folder)) is not null) {
+            return true;
+        }
+
+        Say("The update could not find Wizard101 on this computer. Pick your Wizard101 folder in the window that opens " +
+            "(the one with Bin and Data inside, often C:\\ProgramData\\KingsIsle Entertainment\\Wizard101).");
+        var picked = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions {
+            Title = "Pick your Wizard101 folder (the one with Bin and Data inside)", AllowMultiple = false,
+        });
+        if (picked.FirstOrDefault()?.TryGetLocalPath() is { } path && GameLocator.ResolveRootWad(path) is { } rootWad) {
+            GameLocator.Remember(folder, rootWad);
+            Say($"Wizard101 is at {path}. The update carries on.");
+
+            return true;
+        }
+
+        if (GameLocator.BuildOnlyCopy(folder) is not null) {
+            // The copy on the Game Files tab is enough to build with; Play still needs the real folder.
+            Say("Wizard101 is still not found, so the update builds from the copy of its game files. Click \"Update Ahziael\" " +
+                "again later to pick the Wizard101 folder, or Play can't start the game.", true);
+
+            return true;
+        }
+
+        Say((picked.Count == 0 ? "No folder was picked" : "That folder has no Data\\GameData\\Root.wad in it") +
+            ", so the update waits. Click \"Update Ahziael\" at the top and pick the Wizard101 folder (the one with Bin and Data inside).", true);
+
+        return false;
+    }
+
     /// <summary>Runs <paramref name="program"/> --prepare-update hidden, showing how far along it is, then offers to restart into it.</summary>
     private async Task BuildPendingAsync(string program, string name) {
+        if (!await FindGameForUpdateAsync()) {
+            return;
+        }
+
         var start = new ProcessStartInfo(program) {
             WorkingDirectory = _manager.InstallFolder,
             UseShellExecute = false,
