@@ -21,8 +21,9 @@
  *
  * PURPOSE:
  * The Expand Backpack Elixir (Elixir-041) makes the backpack bigger for good. Its template has no result the server
- * could run, so the server adds the slots itself: [Character] ExpandBackpackElixirAmount per elixir, up to
- * [Character] MaxBackpackItems.
+ * could run, so the server counts the elixirs a wizard used and adds [Character] ExpandBackpackElixirAmount slots
+ * per elixir (50, like the game), up to [Character] MaxBackpackItems. The slots are worked out live from the count,
+ * so wizards who used one when it gave 10 get the full 50 too.
  *
  * USAGE EXAMPLE:
  * if (BackpackElixirs.Is(template)) { BackpackElixirs.TryUse(session, wizard, out var failure); }
@@ -32,7 +33,7 @@
  *
  * Created by: Jay
  * Version: KALI 1.0
- * Last Updated: 10/26/2026
+ * Last Updated: 11/04/2026
  */
 
 using System;
@@ -54,7 +55,28 @@ internal static class BackpackElixirs {
 
     // The game's Expand Backpack Elixir.
     private const string DefaultTemplates = "1431039";
-    private const int DefaultAmount = 10;
+    // Niduus, 2026-11-04: "backpack elixir is giving +10 when it should be +50".
+    private const int DefaultAmount = 50;
+
+    /// <summary>
+    /// What one elixir gave before 11/04/2026, to count the elixirs on older saves.
+    /// </summary>
+    internal const int OldAmount = 10;
+
+    /// <summary>
+    /// The slots a number of used elixirs add on top of a base backpack size, never past [Character] MaxBackpackItems.
+    /// </summary>
+    internal static int SlotsFor(int elixirs, int baseLimit) {
+        if (elixirs <= 0) {
+            return 0;
+        }
+
+        var amount = Math.Max(0, ConfigurationManager.GetValue(AmountKey, DefaultAmount));
+        var slots = (int)Math.Min(int.MaxValue / 2, (long)elixirs * amount);
+        var max = ConfigurationManager.GetValue(MaxKey, 0);
+
+        return max > 0 ? Math.Min(slots, Math.Max(0, max - baseLimit)) : slots;
+    }
 
     /// <summary>
     /// Whether an item template is an Expand Backpack Elixir.
@@ -79,26 +101,26 @@ internal static class BackpackElixirs {
     /// <returns>False, with the backpack as it was, when it is at [Character] MaxBackpackItems or could not be saved.</returns>
     internal static bool TryUse(IActorRef session, Wizard wizard, out string failure) {
         var inventory = wizard.InventoryBehavior;
-        var amount = Math.Max(0, ConfigurationManager.GetValue(AmountKey, DefaultAmount));
-        var max = ConfigurationManager.GetValue(MaxKey, 0);
-        var room = max > 0 ? Math.Max(0, max - inventory.Limit) : amount;
-        var added = Math.Min(amount, room);
-        if (added <= 0) {
+        var before = inventory.Limit;
+        var counted = inventory.ElixirsCounted;
+        if (SlotsFor(counted + 1, inventory.BaseLimit) <= inventory.ElixirSlots) {
             failure = $"Your backpack is already as big as it can get ({inventory.Limit}).";
 
             return false;
         }
 
-        var before = inventory.Limit;
-        inventory.ExtraSlots += added;
+        var (oldUsed, oldExtra) = (inventory.ElixirsUsed, inventory.ExtraSlots);
+        inventory.ElixirsUsed = counted + 1;
+        inventory.ExtraSlots = inventory.ElixirSlots;
         if (!WizardCollection.UpdateCharacterItems(wizard)) {
-            inventory.ExtraSlots -= added;
+            (inventory.ElixirsUsed, inventory.ExtraSlots) = (oldUsed, oldExtra);
             failure = "The bigger backpack could not be saved.";
 
             return false;
         }
 
-        Logger.Information("{0} used an Expand Backpack Elixir: backpack {1} -> {2}.", Logger.Args(wizard.CharId, before, inventory.Limit));
+        Logger.Information("{0} used an Expand Backpack Elixir ({1} used): backpack {2} -> {3}.",
+            Logger.Args(wizard.CharId, inventory.ElixirsUsed, before, inventory.Limit));
         Announce(session, wizard);
         failure = string.Empty;
 
@@ -110,7 +132,7 @@ internal static class BackpackElixirs {
     /// </summary>
     internal static void Announce(IActorRef session, Wizard wizard)
         => session.Tell(new WIZARD2_53_PROTOCOL.MSG_UPDATEEXTRAINVENTORY {
-            ExtraInventorySpace = wizard.InventoryBehavior.ExtraSlots,
+            ExtraInventorySpace = wizard.InventoryBehavior.ElixirSlots,
             CurrentInventorySpace = wizard.InventoryBehavior.Limit,
         });
 

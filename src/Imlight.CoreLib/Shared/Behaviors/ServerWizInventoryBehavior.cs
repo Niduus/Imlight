@@ -48,9 +48,30 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
     public int ItemLimit { get; set; }
 
     /// <summary>
-    /// The backpack slots Expand Backpack Elixirs added, on top of the base size. See BackpackElixirs.
+    /// The backpack slots Expand Backpack Elixirs added when they were last used or counted. Saves from before
+    /// <see cref="ElixirsUsed"/> only have this (10 slots per elixir back then). The live size is <see cref="ElixirSlots"/>.
     /// </summary>
     public int ExtraSlots { get; set; }
+
+    /// <summary>
+    /// How many Expand Backpack Elixirs this wizard has used. 0 on an older save: <see cref="ElixirsCounted"/> works it
+    /// out from <see cref="ExtraSlots"/>.
+    /// </summary>
+    public int ElixirsUsed { get; set; }
+
+    /// <summary>
+    /// The Expand Backpack Elixirs used, also for saves from before <see cref="ElixirsUsed"/>, when one elixir gave
+    /// 10 slots (Niduus, 2026-11-04: "backpack elixir is giving +10 when it should be +50").
+    /// </summary>
+    [JsonIgnore] public int ElixirsCounted
+        => ElixirsUsed > 0 ? ElixirsUsed : (Math.Max(0, ExtraSlots) + BackpackElixirs.OldAmount - 1) / BackpackElixirs.OldAmount;
+
+    /// <summary>
+    /// The slots the used elixirs add now: [Character] ExpandBackpackElixirAmount each, up to [Character]
+    /// MaxBackpackItems. Read live, so a changed setting applies at once.
+    /// </summary>
+    [JsonIgnore] public int ElixirSlots
+        => BackpackElixirs.SlotsFor(ElixirsCounted, BaseLimit);
 
     /// <summary>
     /// The smallest backpack any wizard has (Niduus, 2026-10-26: "Universal backpack MINIMUM is 80"). A lower
@@ -69,7 +90,7 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
     /// How many items the backpack holds: the base size and the elixir slots.
     /// </summary>
     [JsonIgnore] public int Limit
-        => BaseLimit + Math.Max(0, ExtraSlots);
+        => BaseLimit + ElixirSlots;
 
     [JsonIgnore] public List<WizClientObjectItem> Items { get; set; }
 
