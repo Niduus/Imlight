@@ -353,11 +353,13 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
-        // A boss of this fight takes the free enemy circle nearest to where it stands (the Fairy Queen, placed on circle
-        // 4, takes circle 4). Any other monster fills the first free circle, so two monsters stand on circles 1 and 2,
-        // not 1 and 4 (Niduus, 2026-10-25: two Lost Souls in Wizard City stood on the outer circles with a gap; "The
-        // only time this is to occur is in the rattlebones fight").
-        AddParticipant(creature, suspect, bossOfThisFight ? NearestFreeCreatureCircle(creature) : null);
+        // Every monster that walks in, a boss of this fight too, fills the first free circle, so two monsters stand on
+        // circles 1 and 2, not 1 and 4 (Niduus, 2026-10-25: two Lost Souls in Wizard City stood on the outer circles
+        // with a gap; "The only time this is to occur is in the rattlebones fight"). A boss used to take the circle
+        // nearest to where it stood, which put Krokotopia's second bosses (Prince Mahu's Khurkmummy, Krokenkahmen's)
+        // on circle 3 or 4 with a gap (Niduus, 2026-11-04). The Fairy Queens keep circle 4 by their passive Circle
+        // cheat, which AddParticipant puts first.
+        AddParticipant(creature, suspect);
         var circle = SubCircles.FirstOrDefault(x => x?.ParticipantObject?.m_globalID == creature.m_globalID);
         if (circle is null) {
             entity.ReleaseLateDuelJoin();
@@ -1992,12 +1994,6 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         && c.ParticipantObject is { } obj
         && (CoreObjectFactory.GetCoreTemplate(obj.m_templateID) as GameObjectTemplate)?.m_behaviors?
             .OfType<NPCBehaviorTemplate>().Any(npc => npc.IsBoss()) == true);
-
-    // The free enemy circle nearest to where a creature stands, or null when none is free.
-    private CombatDuelSubCircle NearestFreeCreatureCircle(CoreObject creature)
-        => SubCircles.Take(4).Where(c => c is not null && c.Free)
-            .OrderBy(c => (c.WorldPosition - creature.m_location).LengthSquared())
-            .FirstOrDefault();
 
     // Passive "Circle" (BossCheats.cs; Niduus, 2026-10-24): the circle, 1-4 of its side, a creature's cheat file (or,
     // for the wizard played on this PC, the player cheats) says it always takes, or 0.
