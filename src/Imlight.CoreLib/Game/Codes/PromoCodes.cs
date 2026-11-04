@@ -149,6 +149,47 @@ internal static class PromoCodes {
     }
 
     /// <summary>
+    /// codes.json as it is now, for changing it in game (.code make): the example code when there is no file yet, so a
+    /// first new code doesn't lose HYPER.
+    /// </summary>
+    internal static PromoCodeFile ReadForChange() {
+        lock (s_lock) {
+            var file = File.Exists(FILE)
+                ? JsonSerializer.Deserialize<PromoCodeFile>(File.ReadAllText(FILE), s_options) ?? new()
+                : Defaults();
+            file.Codes ??= [];
+
+            return file;
+        }
+    }
+
+    /// <summary>Writes codes.json whole, as Ahziael's Codes card does; it is read again at the next redeem.</summary>
+    internal static void Save(PromoCodeFile file) {
+        lock (s_lock) {
+            var temp = FILE + ".saving";
+            File.WriteAllText(temp, JsonSerializer.Serialize(file, s_options));
+            File.Move(temp, FILE, overwrite: true);
+        }
+    }
+
+    /// <summary>What a code gives, in words ("1 Hyper Elixir, 500 Gold").</summary>
+    internal static string Gives(PromoCode code)
+        => Describe(new PromoCodeReward { Gold = code.Gold, Crowns = code.Crowns, Items = code.Items ?? [] });
+
+    /// <summary>When a code can be redeemed, in words, or "" when always.</summary>
+    internal static string Window(PromoCode code) {
+        var starts = When(code.Starts);
+        var ends = When(code.Ends);
+
+        return (starts, ends) switch {
+            (null, null) => "",
+            ({ } s, null) => $"from {Shown(s)}",
+            (null, { } e) => $"until {Shown(e)}",
+            ({ } s, { } e) => $"{Shown(s)} to {Shown(e)}",
+        };
+    }
+
+    /// <summary>
     /// Redeems a code for an account. With a wizard (in game) the rewards are given now; without one (character
     /// select) they wait for the next wizard of the account that enters the game.
     /// </summary>

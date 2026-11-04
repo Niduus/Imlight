@@ -113,8 +113,39 @@ internal class CommandQuest : CommandProtocol {
     // Ahziael's Collect Spells: teaches the spells this wizard's quests and trainers should have given by now.
     [Command("collectspells")]
     [AuthRequired(AuthLevel.QualityAssurance)]
-    private void QuestCollectSpellsCommand()
-        => SendQuestAction("collectspells", "");
+    private void QuestCollectSpellsCommand([Remainder] string kinds = "") {
+        // Typed with kinds (".quest collectspells trainers drops"), it picks them as the Collect Spells page's ticks do.
+        var words = (kinds ?? "").Split(' ', ',').Select(w => w.Trim().ToLowerInvariant()).Where(w => w.Length > 0).Distinct().ToList();
+        if (words.Count > 0) {
+            if (words.Contains("all")) {
+                words = ["finished", "side", "trainers", "skills", "drops", "check"];
+            }
+
+            var wrong = words.Where(w => !s_collectKinds.Contains(w)).ToList();
+            if (wrong.Count > 0 || Context.Character is null) {
+                InformSenderClient($"Collect Spells kinds are: {string.Join(", ", s_collectKinds)}, or all. Such as .quest collectspells finished trainers.");
+
+                return;
+            }
+
+            try {
+                System.IO.Directory.CreateDirectory("fast-forward");
+                System.IO.File.WriteAllText(System.IO.Path.Combine("fast-forward",
+                    Context.Character.CharId.ToString(System.Globalization.CultureInfo.InvariantCulture) + "-spells.txt"), string.Join('\n', words) + "\n");
+            }
+            catch (System.Exception ex) when (ex is System.IO.IOException or System.UnauthorizedAccessException) {
+                InformSenderClient($"Collect Spells could not start: {ex.Message}");
+
+                return;
+            }
+        }
+
+        SendQuestAction("collectspells", "");
+    }
+
+    // What the Collect Spells page can tick: quest spells (finished main, side), free trainer spells, skill and dropped
+    // spells, trainer spells that cost training points, and a check of spells the real game never gives.
+    private static readonly string[] s_collectKinds = ["finished", "side", "trainers", "skills", "drops", "paid", "check"];
 
     // Ahziael's Collect Spells: takes out the spells it listed as not from the real game and the player ticked.
     [Command("removespells")]
