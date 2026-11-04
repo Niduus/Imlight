@@ -1514,8 +1514,9 @@ public partial class CombatDuelSubCircle {
 
         // Normal pips go first, like the game: a 1 pip card costs a normal pip, never a power pip, while there is one
         // (Niduus, 2026-10-28). A mastered card pays 2 at a time with power pips (and school pips of its school), and
-        // its odd last pip with a normal pip. We have a second conditional here incase of byte overflow.
-        while (spellRank is > 0 and < (MAX_PIP_COUNT * 2)) {
+        // its odd last pip with a normal pip. Every step pays something or stops, so the loop always ends. (It used to
+        // stop below 14, so a 14 pip X spell, like Tempest with 7 power pips, cost nothing at all.)
+        while (spellRank > 0) {
             var ownSchoolPips = SchoolPips(pipCount, school) ?? 0;
             var otherSchool = s_pipSchools.Where(other => other != school && (SchoolPips(pipCount, other) ?? 0) > 0)
                 .Cast<MagicSchool?>().FirstOrDefault();
@@ -1560,6 +1561,21 @@ public partial class CombatDuelSubCircle {
                 break;
             }
         }
+    }
+
+    /// <summary>
+    /// What the participant's school pips are worth to a spell of <paramref name="school"/>: one of its own school
+    /// is 2 when mastered, every other one 1 (as DeductPips spends them).
+    /// </summary>
+    internal int SchoolPipsWorth(MagicSchool school, bool isMastered) {
+        var pips = CombatParticipant.m_pipCount;
+        var worth = 0;
+        foreach (var each in s_pipSchools) {
+            var have = SchoolPips(pips, each) ?? 0;
+            worth += each == school && isMastered ? have * 2 : have;
+        }
+
+        return worth;
     }
 
     internal void DeductAllPips() {
