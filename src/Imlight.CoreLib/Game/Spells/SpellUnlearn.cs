@@ -95,8 +95,9 @@ internal static class SpellUnlearn {
     /// <summary>
     /// Takes these spells out of the wizard's spellbook and decks, tells the game, and gives back their training points.
     /// </summary>
+    /// <param name="remember">Keeps them on the list `.unlearn undo` gives back (not for a school change).</param>
     /// <returns>The spells taken, each with the points it gave back.</returns>
-    internal static List<Known> Unlearn(IActorRef playerActor, Wizard wizard, IEnumerable<uint> spellIds) {
+    internal static List<Known> Unlearn(IActorRef playerActor, Wizard wizard, IEnumerable<uint> spellIds, bool remember = true) {
         var costs = Costs(wizard);
         var taken = new List<Known>();
         foreach (var id in spellIds.Distinct().ToList()) {
@@ -127,7 +128,10 @@ internal static class SpellUnlearn {
             playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_UPDATETRAINING { TrainingPoints = newPoints });
         }
 
-        Remember(wizard.CharId, taken);
+        if (remember) {
+            Remember(wizard.CharId, taken);
+        }
+
         Logger.Information("Unlearn | {0}: {1} spells unlearned ({2}), {3} training points back.",
             Logger.Args(wizard.PlayerNameBehavior?.GetWizardName(), taken.Count, string.Join(", ", taken.Select(t => t.Name)), points));
 

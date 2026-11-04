@@ -559,6 +559,35 @@ public class Wizard {
     }
 
     /// <summary>
+    /// Makes the wizard a wizard of another school (.changeschool): their school, and the base health, mana and power pip
+    /// chance of that school at their level. Their spells are changed by the command, not here. The game shows the new
+    /// school after the wizard logs out and back in.
+    /// </summary>
+    public void SetSchool(MagicSchool school) {
+        var level = MagicSchoolBehavior.Level;
+        var oldBaseStats = MagicLevelsConfig.GetPlayerLevelInfo(MagicSchoolBehavior.MagicSchool, level);
+        var newBaseStats = MagicLevelsConfig.GetPlayerLevelInfo(school, level);
+
+        MagicSchoolBehavior.MagicSchool = school;
+        GameStats.MagicSchool = school;
+        GameStats.m_schoolID = (uint) school;
+
+        // As SetLevel does: only the school's part changes, so elixir and gear bonuses stay.
+        GameStats.m_baseHitpoints += newBaseStats.m_hitpoints - oldBaseStats.m_hitpoints;
+        GameStats.m_baseMana += newBaseStats.m_mana - oldBaseStats.m_mana;
+        GameStats.m_powerPipBase += newBaseStats.m_pipChance - oldBaseStats.m_pipChance;
+        GameStats.m_energyMax += newBaseStats.m_petEnergy - oldBaseStats.m_petEnergy;
+
+        if (HasInitializedGameObject && CoreObjectFactory.FindBehaviorInstance<ClientMagicSchoolBehavior>(GameObject, out var schoolBehavior)) {
+            schoolBehavior.m_schoolOfFocus = Imlight.CoreLib.Game.Combat.AstralSchools.ShownSchoolId(school, GameStats.m_astralSchool);
+        }
+
+        // Persistent save.
+        WizardCollection.UpdateCharacterSchool(this);
+        WizardCollection.UpdateCharacterGameStats(this);
+    }
+
+    /// <summary>
     /// Sets the teleport effect the game plays when this wizard teleports. The game reads it from the magic school
     /// behavior as an item template id (a CE_Teleport custom emote, such as 1457191 Shadowstride) and plays that item's
     /// animations; 0 plays the normal sparkle (client 0x14133e2e0, read 2026-10-25).

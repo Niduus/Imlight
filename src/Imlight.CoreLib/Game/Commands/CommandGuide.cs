@@ -117,6 +117,10 @@ internal static class CommandGuide {
         .. In("Spells and training points", [
             Command("Reset training points", ".respec", "Every player", "Says how many training points you would get back and which spells you would lose. " +
                 ".respec yes takes every spell you bought with training points out of your spellbook and decks and gives the points back. Also .resettp."),
+            Command("Change school", ".changeschool <school>", "Every player", "Says what turning your wizard into another school (Balance, Death, Fire, Ice, Life, Myth or Storm) would do. " +
+                ".changeschool <school> yes does it: your old school's spells leave your spellbook and decks, then you learn the new school's free trainer spells your level allows and its spells from quests at your level. " +
+                "Training points your old spells cost come back, and so do points you spent on the new school's spells (they are now your own school's, which are free). Cantrips, fishing, gardening, dropped lore spells and other schools' spells stay. " +
+                "Not in battle. Log out and back in to see the new school. The host can make it staff only with Settings, Character, PlayersCanChangeSchool. Also .school."),
             Command("Unlearn a spell", ".unlearn <spell name>", "Every player", "Says what unlearning that spell gives back. " +
                 ".unlearn <spell name> yes takes it out of your spellbook and decks and gives back the training points it cost (spells bought at a trainer; " +
                 "your own school's, quest and dropped spells were free). A spell's template ID works too. .unlearn undo gives back every spell you unlearned (and takes back the points it gave). Ahziael's Progress > Unlearn Spells page lets you tick any. Also .unlearnspell."),
