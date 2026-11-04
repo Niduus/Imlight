@@ -1,0 +1,61 @@
+[
+  {
+    "ZoneName": "Arcanum/Interiors/AR_Z01_ShadowSchool",
+    "Teleports": [
+      {
+        "TriggerName": "Trigger_TeleportToShadowSchool",
+        "Teleport": {
+          "m_destinationLoc": "TargetLocation_From_Arcanum",
+          "m_destinationZone": "Darkmoor/Interiors/DM_Z04I07_ShadowSchool",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      },
+      {
+        "TriggerName": "Trigger_TeleportToEclipseTower",
+        "Teleport": {
+          "m_destinationLoc": "TargetLocation_FromVelmasOffice",
+          "m_destinationZone": "Khrysalis/Interiors/KR_Z02_MoonCliffs_Int01_01",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Darkmoor/Interiors/DM_Z04I07_ShadowSchool",
+    "Teleports": [
+      {
+        "TriggerName": "Trigger_TeleportToArcanum",
+        "Teleport": {
+          "m_destinationLoc": "TargetLocation_From_ShadowSchool",
+          "m_destinationZone": "Arcanum/Interiors/AR_Z01_ShadowSchool",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Khrysalis/Interiors/KR_Z02_MoonCliffs_Int01_01",
+    "Teleports": [
+      {
+        "TriggerName": "Trigger_TeleportToVelmasOffice",
+        "Teleport": {
+          "m_destinationLoc": "TargetLocation_From_EclipseTower",
+          "m_destinationZone": "Arcanum/Interiors/AR_Z01_ShadowSchool",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      }
+    ]
+  }
+]
