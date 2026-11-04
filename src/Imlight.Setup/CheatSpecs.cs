@@ -37,45 +37,72 @@ namespace Imlight.Setup;
 /// </summary>
 internal static class CheatSpecs {
 
+    // Whom a block works on. Niduus, 2026-11-04: "Sharpen targeted. All Players, All Enemies and so on": every choice
+    // says plainly whom it means, in groups (whole sides, wizards only, creatures only, minions only, one picked, random,
+    // from the battle so far, circles). "Enemies" and "allies" are as seen by whoever's cheat it is: a boss's enemies are
+    // the wizards, a wizard's enemies are the creatures. Only those standing count. The values are the server's, so old
+    // files read the same; only the words changed.
     internal static readonly (string Value, string Label)[] TARGETS = [
         ("", "where the spell aims"),
-        // Niduus, 2026-10-27: "blocks to state "ALL PLAYERS" with "ALL PLAYERS (Excluding self)" as an option": every
-        // wizard standing, on either side; the second without whoever's cheat it is.
-        ("AllPlayers", "ALL PLAYERS"),
+        // Whole sides.
+        ("AllEnemies", "ALL ENEMIES (the whole other side)"),
+        ("AllAllies", "ALL ALLIES (its whole side, itself too)"),
+        ("AllAlliesButSelf", "ALL ALLIES (Excluding self)"),
+        ("Everyone", "WHOLE FIELD (both sides, itself too)"),
+        ("EveryoneElse", "WHOLE FIELD (Excluding self)"),
+        // Wizards only. Niduus, 2026-10-27: "blocks to state "ALL PLAYERS" with "ALL PLAYERS (Excluding self)" as an option".
+        ("AllPlayers", "ALL PLAYERS (every wizard, both sides)"),
         ("AllPlayersButSelf", "ALL PLAYERS (Excluding self)"),
-        ("Self", "itself"),
-        ("Caster", "the attacker"),
-        ("Receiver", "whoever that spell was aimed at"),
-        ("Enemy", "a random player"),
-        ("FirstEnemy", "the first player"),
-        ("WeakestEnemy", "the weakest player"),
-        ("AllEnemies", "every enemy (the whole other side)"),
-        ("Ally", "a random ally"),
-        ("WeakestAlly", "its weakest ally"),
-        ("StrongestAlly", "its strongest ally"),
-        ("Summoner", "whoever summoned it"),
+        ("EnemyPlayers", "ALL ENEMY PLAYERS (wizards on the other side)"),
+        ("AllyPlayers", "ALL ALLY PLAYERS (wizards on its side)"),
+        // Creatures only (minions count as creatures).
+        ("AllCreatures", "ALL CREATURES (both sides)"),
+        ("EnemyCreatures", "ALL ENEMY CREATURES (creatures on the other side)"),
+        ("AllyCreatures", "ALL ALLY CREATURES (creatures on its side)"),
+        // Minions only.
+        ("AllMinions", "ALL MINIONS (both sides)"),
+        ("EnemyMinions", "ENEMY MINIONS (minions on the other side)"),
+        ("AllyMinions", "ALLY MINIONS (minions on its side, anyone's)"),
         // Niduus, 2026-10-29: the minions it summoned that stand.
-        ("MyMinions", "its minions"),
-        ("LastAttacker", "the last one who hurt it"),
-        ("AllAllies", "its whole side"),
-        // Niduus, 2026-10-26: both sides, standing.
-        ("Everyone", "everyone (both sides)"),
-        ("EveryoneElse", "everyone but itself"),
-        // Niduus, 2026-10-24 (the gauntlets): the target of the block before, the ally hit (When an ally is hit), and
-        // whoever has the block's mark.
-        ("Last", "the same as the block before"),
-        ("Hit", "the one hit"),
-        ("Marked", "whoever has the mark"),
-        // Niduus, 2026-10-24 (Wizard404's cheats for every creature): whose cheat it is (for "an ally casts"), whom the
-        // "has" If found on a side, the players without the mark, and the player with the most pips.
-        ("Owner", "itself (whose cheat it is)"),
-        ("Matched", "the one the If found"),
-        ("Unmarked", "every player without the mark"),
-        ("MostPips", "the player with the most pips"),
+        ("MyMinions", "ITS OWN MINIONS (the ones it summoned)"),
+        ("Summoner", "ITS SUMMONER (whoever summoned it)"),
+        // Itself and the ones in the move that set the cheat off.
+        ("Self", "SELF (itself)"),
+        ("Owner", "CHEAT OWNER (whose cheat it is)"),
+        ("Caster", "CASTER (whoever set the cheat off)"),
+        ("Receiver", "RECEIVER (whoever that spell was aimed at)"),
+        ("CasterSide", "CASTER'S SIDE (the caster and its teammates)"),
+        ("CasterSideButCaster", "CASTER'S SIDE (Excluding the caster)"),
+        ("LastAttacker", "LAST ATTACKER (the last enemy who hurt it)"),
+        // One picked.
+        ("FirstEnemy", "FIRST ENEMY (the lowest circle on the other side)"),
+        ("LastEnemy", "LAST ENEMY (the highest circle on the other side)"),
+        ("WeakestEnemy", "WEAKEST ENEMY (the least health)"),
+        ("MostHurtEnemy", "MOST HURT ENEMY (the lowest share of health)"),
+        ("StrongestEnemy", "STRONGEST ENEMY (the most health)"),
+        ("MostPips", "ENEMY WITH THE MOST PIPS"),
+        ("FirstAlly", "FIRST ALLY (the lowest circle on its side)"),
+        ("WeakestAlly", "WEAKEST ALLY (the lowest share of health)"),
+        ("StrongestAlly", "STRONGEST ALLY (the most health)"),
+        // Random.
+        ("Enemy", "RANDOM ENEMY"),
+        ("RandomEnemyPlayer", "RANDOM ENEMY PLAYER (a wizard on the other side)"),
+        ("RandomEnemyCreature", "RANDOM ENEMY CREATURE"),
+        ("Ally", "RANDOM ALLY (not itself)"),
+        ("AnyPlayer", "RANDOM PLAYER (any wizard, both sides)"),
+        ("RandomCreature", "RANDOM CREATURE (both sides)"),
+        ("RandomAnyone", "RANDOM ANYONE (both sides, itself too)"),
+        ("RandomOther", "RANDOM ANYONE (Excluding self)"),
+        // Niduus, 2026-10-24 (the gauntlets, Wizard404's cheats for every creature): from the blocks before.
+        ("Last", "SAME AS THE BLOCK BEFORE"),
+        ("Hit", "THE ONE HIT (for an ally is hit)"),
+        ("Matched", "THE ONE THE IF FOUND"),
+        ("Marked", "EVERYONE WITH THE MARK"),
+        ("Unmarked", "EVERY ENEMY WITHOUT THE MARK"),
         // The .c1 commands' circles, for players and bosses alike (Niduus, 2026-10-23).
-        ("p1", "its side's circle 1"), ("p2", "its side's circle 2"), ("p3", "its side's circle 3"), ("p4", "its side's circle 4"),
-        ("e1", "the other side's circle 1"), ("e2", "the other side's circle 2"), ("e3", "the other side's circle 3"),
-        ("e4", "the other side's circle 4"),
+        ("p1", "ALLY CIRCLE 1 (its side)"), ("p2", "ALLY CIRCLE 2 (its side)"), ("p3", "ALLY CIRCLE 3 (its side)"), ("p4", "ALLY CIRCLE 4 (its side)"),
+        ("e1", "ENEMY CIRCLE 1 (the other side)"), ("e2", "ENEMY CIRCLE 2 (the other side)"), ("e3", "ENEMY CIRCLE 3 (the other side)"),
+        ("e4", "ENEMY CIRCLE 4 (the other side)"),
     ];
 
     internal static readonly (string Value, string Label)[] SCHOOLS = [
@@ -91,6 +118,10 @@ internal static class CheatSpecs {
         ("Matched", "the one the If found"), ("Last", "the same as the block before"), ("WeakestAlly", "its weakest allies"),
         ("StrongestAlly", "its strongest allies"), ("Ally", "allies at random"), ("AllAllies", "its whole side"),
         ("Everyone", "everyone (both sides)"), ("EveryoneElse", "everyone but itself"),
+        // Niduus, 2026-11-04: the sharpened targets.
+        ("EnemyPlayers", "the enemy players (wizards)"), ("EnemyCreatures", "the enemy creatures"), ("EnemyMinions", "the enemy minions"),
+        ("MostHurtEnemy", "the most hurt enemies"), ("AllyPlayers", "the ally players (wizards)"), ("AllyCreatures", "the ally creatures"),
+        ("AllyMinions", "the ally minions"), ("AllPlayers", "every player (both sides)"), ("AllCreatures", "every creature (both sides)"),
         ("e1", "the other side's circle 1"), ("e2", "the other side's circle 2"), ("e3", "the other side's circle 3"), ("e4", "the other side's circle 4"),
         ("p1", "its side's circle 1"), ("p2", "its side's circle 2"), ("p3", "its side's circle 3"), ("p4", "its side's circle 4"),
     ];

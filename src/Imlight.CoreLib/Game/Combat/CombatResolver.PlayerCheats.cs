@@ -37,7 +37,10 @@ public partial class CombatResolver {
         return StepTargets(me, target, template, trigger, receiver).FirstOrDefault() is { } circle ? CodeOf(me, circle) : null;
     }
 
+    // Targets that name many: a FreeCast casts once on each one standing (the sharpened ones too, Niduus, 2026-11-04).
     private static bool IsEveryone(string target) => (target ?? "").Trim().ToLowerInvariant() is "everyone" or "everyoneelse" or "allplayers" or "allplayersbutself"
+            or "allalliesbutself" or "enemyplayers" or "allyplayers" or "allcreatures" or "enemycreatures" or "allycreatures" or "allminions"
+            or "enemyminions" or "allyminions" or "casterside" or "castersidebutcaster"
         || (target ?? "").StartsWith("slot:", StringComparison.OrdinalIgnoreCase);
 
     // The .c1 code of a circle as the caster sees it: pN on its own side, eN on the other (FreeTargetCircle the other way).
