@@ -1,0 +1,384 @@
+/*
+ * Imlight
+ * Copyright (C) 2025 Revive101
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#nullable enable
+
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Imlight.CoreLib.Game.Commands;
+
+/// <summary>
+/// One in-game command, as `.help` in the game and Ahziael's Commands and Lookup tabs show it.
+/// </summary>
+/// <param name="Section">The topic `.help` lists it under, such as Battles or Quests.</param>
+/// <param name="Name">What it does, in a few words.</param>
+/// <param name="Typed">What to type in the game's chat to use it.</param>
+/// <param name="Who">Who may use it ("Every player", "Quality assurance or higher"...).</param>
+/// <param name="Help">What it does, in plain words.</param>
+/// <param name="Custom">Added for this build (Niduus's), not part of Imlight itself.</param>
+internal sealed record CommandGuideEntry(string Section, string Name, string Typed, string Who, string Help, bool Custom);
+
+/// <summary>
+/// Every command this server build understands, in one list shared by the server's `.help` and Ahziael's Commands and
+/// Lookup tabs (Niduus, 2026-11-04: "implement a majority of what ahziael can do as commands to help people execute
+/// them properly"). Ahziael compiles this file too (Imlight.Setup.csproj links it), so a command added here shows in
+/// both. Add every new command here, in the topic it belongs to.
+/// </summary>
+internal static class CommandGuide {
+
+    internal const string QA = "Quality assurance or higher";
+    internal const string HM = "Hall monitor or higher";
+    internal const string ADMIN = "Administrator only";
+    internal const string ANYONE = "Any account with a permission level";
+    internal const string ANYONE_AT_ALL = "Every player";
+    private const string SELECTED = " Click a player in game first to select them.";
+    private const string TIME = " Time is like 30m, 12h, 7d or 1d12h.";
+
+    /// <summary>Every command, by topic.</summary>
+    internal static readonly CommandGuideEntry[] All = [
+        .. In("Your wizard", [
+            Command("Help with commands", ".help   or   .help <topic>   or   .help <command>", ANYONE_AT_ALL, "Lists the topics and how many commands you can use in each. "
+                + ".help battles lists a topic's commands, .help joinme says how one command works, and any other words search every command. "
+                + "Only the commands your account may use are shown. Also .commands."),
+            Imlight("Level up", ".mod levelup", QA, "Raises your character by one level. Also .mod lvlup."),
+            Command("Set level", ".level MAX or .level <level>", QA, "Sets your character to the max level, or to the level you type, such as .level 50. Also .mod level."),
+            Imlight("Add experience", ".mod addxp <amount>", QA, "Gives your character experience points."),
+            Imlight("Run speed", ".mod speed <multiplier>", QA, "Changes how fast you run, such as .mod speed 3. Use .mod speed 1 for normal."),
+            Imlight("Give item", ".mod additem <item ID>", QA, "Puts an item in your backpack. Find the ID by searching for the item in Ahziael's Lookup tab, or with .lookup."),
+            Imlight("Give pet snack", ".mod addsnack <item ID>", QA, "Puts a pet snack in your snack bag."),
+            Imlight("Give reagent", ".mod addreagent <item ID>", QA, "Puts a crafting reagent in your reagent bag."),
+            Imlight("Change name", ".mod name <new name>", QA, "Changes the name shown over your character. Log out and back in to see it."),
+            Imlight("Change badge", ".mod badge <badge text>", QA, "Changes the badge shown under your name. Log out and back in to see it."),
+            Imlight("Add gold", ".mod addgold <amount>", QA, "Gives your character gold."),
+            Imlight("Gold limit", ".mod maxgold <amount>", QA, "Changes the most gold your character can carry."),
+            Imlight("Max health", ".mod maxhealth <amount>", QA, "Sets your character's maximum health. Also .mod maxhp."),
+            Imlight("Max mana", ".mod maxmana <amount>", QA, "Sets your character's maximum mana."),
+            Imlight("Max energy", ".mod maxenergy <amount>", QA, "Sets your character's maximum energy. Also .mod maxnrg."),
+            Imlight("Current health", ".mod currenthealth <amount>", QA, "Sets how much health your character has right now. Also .mod currenthp."),
+            Imlight("Current mana", ".mod currentmana <amount>", QA, "Sets how much mana your character has right now."),
+            Imlight("Current energy", ".mod currentenergy <amount>", QA, "Sets how much energy your character has right now. Also .mod currentnrg."),
+            Imlight("Heal", ".mod heal", QA, "Fills your health. Also .mod refillhealth or .mod refillhp."),
+            Imlight("Refill mana", ".mod rejuv", QA, "Fills your mana. Also .mod refillmana, .mod refillmp or .mod rejuvenate."),
+            Imlight("Refill energy", ".mod energize", QA, "Fills your energy. Also .mod refillenergy, .mod refillnrg or .mod refillpet."),
+            Imlight("Potions", ".mod potionmax <amount>", QA, "Sets how many potions you can hold and fills them. Also .mod pmax."),
+            Imlight("Add training points", ".mod addtp <amount>", QA, "Gives your character training points. Also .mod addtrainingpoints."),
+            Imlight("Set training points", ".mod settp <amount>", QA, "Sets your character's training points. Also .mod settrainingpoints."),
+            Command("Gain training points", ".gaintp <amount>", "Every player", "Gives your character 1 to 100 training points. Also .trainingpoints. " +
+                "Works for every player unless the server turned it off (Settings, Trainers, PlayersCanGainTrainingPoints)."),
+            Command("Version", ".ver", "Every player", "Shows the Ahziael version the running server was built by, the commit and when the server started. " +
+                "Use it after an update to check the server was restarted. Also .version."),
+            Imlight("Cantrip level up", ".mod clvlup", QA, "Raises your cantrip level by one. Also .mod cantriplevelup."),
+            Imlight("Set cantrip level", ".mod clvl <level>", QA, "Sets your cantrip level. Also .mod cantriplevel."),
+            Command("Set your password", ".setpassword <password> <password again>", ANYONE_AT_ALL, "Sets your own account's password. An account made by Create Account on Login has none yet and only works on the computer it was made on until you set one. The password never shows in the server log."),
+            Command("Rename window", ".rename", ANYONE_AT_ALL, "Opens the game's own Change Name or Style window, where you pick a new name from the game's lists (and can change your style too). The game only opens it at level 50 or higher. It is free here."),
+            Command("Rename now", ".rename <new name>", ANYONE_AT_ALL, "Renames your wizard straight away. A name from the game's lists (such as .rename Walter Blanco) becomes a real game name; anything else becomes a custom name (up to 31 letters). Relog to see it."),
+            Command("Custom name", ".name self <name> or .name pet <name>", QA, "Changes your wizard's name (relog to see it) or the name of the pet you are wearing. Use reset as the name to go back to the old one."),
+            Command("All teleport effects", ".givemetpstyle", QA, "Unlocks every teleport effect. Log out and back in to see them."),
+            Command("Pick teleport effect", ".tpstyle <number>", QA, "Wears teleport effect number <number> (0 is the normal one). Try 1, 2, 3 and so on, log out and back in, then teleport to see it."),
+            Command("Overdose", ".overdose on", QA, "Your battles start with Quickening already active. Type .overdose off to stop."),
+            Command("All badges", ".givemeallbadges", QA, "Gives your character every badge in the game, so quests and doors that need a badge let you through."),
+            Imlight("Give one badge", ".badge grant <badge name or ID>", QA, "Gives your character one badge and its reward. Type the badge's name or its ID number."),
+            Imlight("Badge progress", ".badge progress <counter> <amount>", QA, "Adds to a badge counter, such as the number of a creature type you have defeated, and gives any badges it reaches."),
+            Imlight("List my badges", ".badge list", QA, "Shows the badges your character has, with their progress."),
+            Imlight("Reset badges", ".badge reset", QA, "Removes all of your character's badges and badge progress."),
+            Command("Shadow magic", ".intothedarkness", QA, "Gives your character shadow magic of its own with 1 shadow pip slot, like the game does when you unlock it, plus the shadow gauge, even with the Shadow pips switch off. Log out and back in to see it."),
+            Command("Backpack size", ".backpack 300   or   .backpack max", QA, "Sets how many items your backpack holds, up to 500 (max). Change area or log out and back in to see it in the backpack window."),
+            Command("Bank size", ".bank 500   or   .bank max", QA, "Sets how many items your bank holds, up to 1000 (max)."),
+            Command("Magic Mirror", ".mirror", ANYONE_AT_ALL, "Takes you to the Wizard City Magic Mirror Shop. Talk to the Magic Mirror there to change your hair, face, skin, eyes and more (free). Your new look comes back each time you enter a zone; character select still shows the old one."),
+            Command("Undo the mirror look", ".mirror reset", ANYONE_AT_ALL, "Drops the look you picked in the Magic Mirror. Change zones or relog to see your old look."),
+            Command("Change gender", ".mirror girl   or   .mirror boy", ANYONE_AT_ALL, "Makes your wizard a girl or a boy. Log out to character select and back in to see it, then visit the Magic Mirror for a new look."),
+            Command("Set mirror look numbers", ".mirror look 3 1 2", QA, "Sets your look by numbers, in this order: hair style, hair color, skin color, face, face paint, eye color, nose, mouth, accessory, eyebrow color, lip color (-1 leaves a part as it is). For finding the right numbers if the mirror picks the wrong ones."),
+            Command("Magic Mirror data", ".mirror data", QA, "Writes magic-mirror-data.txt next to the server: every mirror option and the number it becomes. Open a Magic Mirror first."),
+            Command("Level 50 Elixir", ".elixir50", QA, "Like the crown shop's Level 50 Elixir, for free: sets your character to level 50 with its training points, finishes the main quests through Dragonspyre with the spells they teach, and gives the Dragonspyre quest gear for your school. Log out and back in to see everything."),
+            Command("Level scaling (levelscale)", ".levelscale   or   .levelscale off", ANYONE_AT_ALL, "Says whether a Level Scaling Elixir from a Scales of Knowledge is running and for how long; .levelscale off ends it (throwing the elixir away does too). While one runs, you fight creatures with the stats of its level."),
+            Command("Start level scaling (levelscale)", ".levelscale 70", QA, "Starts a two hour Level Scaling Elixir of that level (20 to 200, in tens) without a Scales of Knowledge or its badge, replacing any running one. In battles against creatures your health, damage, resist and other stats are lowered to that level."),
+            Command("Astral school", ".astral   or   .astral <sun, moon, star or shadow>   or   .astral off", ANYONE_AT_ALL, "Picks an astral school on top of your own school: Sun, Moon, Star or Shadow. You keep your own school (its icon, spells, pips and gear), and the astral school adds its perks to your battle stats from your next battle. .astral alone says yours and its perks; .astral off takes it away (every player can always do that). The perks are under Settings, AstralSchools; turn on ShowAsSchoolIcon there to show the astral school's icon by the name (log out and back in)."),
+            Command("Shadow pip slots", ".sp slots <number>", QA, "Sets how many shadow pip slots your character has, from 1 to 8, such as .sp slots 2 for the second slot. Log out and back in to see it."),
+            Imlight("Bank limit", ".mod maxbank <amount>", QA, "Changes how many items your bank holds."),
+            Imlight("Bigger bank", ".mod expandbank", QA, "Makes your bank bigger, as buying more space in the game does."),
+            Imlight("Set Crowns", ".mod setcrowns <amount>", QA, "Sets how many Crowns your account has. Also .mod crowns."),
+        ]),
+        .. In("Spells and training points", [
+            Command("Reset training points", ".respec", "Every player", "Says how many training points you would get back and which spells you would lose. " +
+                ".respec yes takes every spell you bought with training points out of your spellbook and decks and gives the points back. Also .resettp."),
+            Command("Unlearn a spell", ".unlearn <spell name>", "Every player", "Says what unlearning that spell gives back. " +
+                ".unlearn <spell name> yes takes it out of your spellbook and decks and gives back the training points it cost (spells bought at a trainer; " +
+                "your own school's, quest and dropped spells were free). A spell's template ID works too. .unlearn undo gives back every spell you unlearned (and takes back the points it gave). Ahziael's Progress > Unlearn Spells page lets you tick any. Also .unlearnspell."),
+            Command("Unlearn boss and dev spells", ".unlearnboss", "Every player", "Lists the boss and dev (test) spells you know. " +
+                ".unlearnboss yes takes them out of your spellbook and decks and gives back any training points they cost, so the wizard is legit again. " +
+                "Ahziael's Spells page has a button for it. Also .unlearndev."),
+            Imlight("Learn spell", ".sb learn <spell ID>", QA, "Adds a spell to your spellbook for good. Find the ID by searching for the spell in Ahziael's Lookup tab, or with .lookup."),
+            Imlight("Unlearn spell", ".sb unlearn <spell ID>", QA, "Takes a spell out of your spellbook."),
+            Imlight("Unlearn all spells", ".sb unlearnall", QA, "Takes every learned spell out of your spellbook."),
+            Imlight("Add spell for now", ".sb add <spell ID>", QA, "Gives you a spell until you log out, without learning it."),
+            Imlight("Remove spell for now", ".sb remove <spell ID>", QA, "Takes away a spell added with .sb add."),
+            Imlight("Learn all cantrips", ".sb allcantrips", QA, "Teaches your character every cantrip."),
+            Command("My spell upgrades", ".upgrades", ANYONE_AT_ALL, "Lists the upgradable spells you know (such as Fire Cat), how many of each one's Spellements you have, and what each next tier (path A, B, C or D) costs."),
+            Command("Upgrade a spell", ".upgrade Fire Cat B   or   .upgrade Fire Cat   or   .upgrade reset Mortality", ANYONE_AT_ALL, "Upgrades a spell you know to its next tier along that path (path A when none is given), paying its Spellements, the same as the Upgrade button in the spellbook's spell upgrade page. The new tier is added to your spellbook and the old tier stays, so every path can be unlocked; cards in your decks change to the new tier. .upgrade reset takes all upgraded tiers of a spell away again (back to the plain spell, no Spellements back), such as a top tier learned with Learn spell."),
+            Command("Max every spell upgrade", ".spellement full   or   .spellements full", QA, "Gives you the Spellements it still takes to upgrade every tier of every path of every spell on your spellbook's spell upgrade page, counting the tiers you already have and the Spellements you already hold, and lists each kind. Nothing is taken away. One kind of Spellement stacks to 999, so when a kind needs more, upgrade with what you have and type it again."),
+            Command("Max Spellements (unlock every path)", ".maxspellements", QA, "Unlocks every tier of every path of each upgradable spell you have already trained, for free (no Spellements taken). Your spellbook then shows the top tier of each path, and deck cards of passed tiers change into the top of path A. Ahziael's Spells page has a Max Spellements button for it. Also .maxspellement."),
+            Command("Your Fusion Formulas", ".fusions", ANYONE, "Lists the Fusion Formulas you know and the two cards each one needs. In battle, drag one of the two cards onto the other to fuse them into the fused spell, then cast the fused card. Trainers teach the formulas, like in the real game."),
+            Command("Learn Fusion Formulas", ".fusion learn all   or   .fusion learn Desert Banshee", QA, "Teaches you every Fusion Formula, or one by the fused spell's name. .fusion forget all takes them away again."),
+            Command("Give Spellements", ".spellements 200", QA, "Sets your Spellements to exactly that many (up to 999) for every upgradable spell you know, for trying spell upgrades. The upgrade window shows 999+ when you have more than 999, so this also trims extra ones. The Spellement Seller (.hall vendors) sells them for 1 gold too."),
+            Command("Collect Spells", ".quest collectspells   or   .quest collectspells finished side trainers skills drops paid check", QA,
+                "Teaches the spells your quests, trainers, skills and drops should have given you by now, as Ahziael's Progress > Collect Spells page does. "
+                + "With no words it collects everything free and lists spells the real game never gives. Add kinds to pick: finished (main quests), side, "
+                + "trainers (free trainer spells), skills, drops, paid (trainer spells that cost training points), check (the list), or all."),
+            Command("Remove listed spells", ".quest removespells", QA, "Takes out the spells Ahziael's Collect Spells page listed as not from the real game and you ticked."),
+        ]),
+        .. In("Battles", [
+            Imlight("Your cheats", ".cheats", ANYONE_AT_ALL, "Lists the player cheats your wizard has and whether each is on. Nobody else sees dot commands you type."),
+            Imlight("Switch your cheat", ".cheat off <name>   or   .cheat on <name>   or   .cheat off all", ANYONE_AT_ALL, "Turns one of your player cheats off or back on, for you only. Works on cheats where Ahziael's Player Cheats edit page has \"Players can switch this\" ticked. The name is the one .cheats shows (or its number)."),
+            Command("Draw a card in battle", ".draw 2 Fire Cat   or   .draw Fire Cat", QA, "In battle, when it is your turn to pick, puts that many copies of a card in your hand (up to the room left in your hand of 7), even cards that are not in your deck. A card ID works too."),
+            Command("Give pips in battle", ".pip give power max   or   .pip give fire 2", QA, "In battle, gives pips until the battle ends. Types: light (normal), power, shadow, a school for Archmastery pips (fire, ice, storm, myth, life, death, balance), or all (power and shadow pips only, never Archmastery pips). Use a number or max. It does not use mana."),
+            Command("Harmony mode", ".harmony on   or   .harmony off", QA, "While on, every battle you start or join begins with all 7 pips as power pips and full shadow pips. Stays on until you turn it off."),
+            Command("All-Knowing mode", ".allknowing on   or   .allknowing off", QA, "While on, you have mastery of every school in every battle (the amulet kind, not Archmastery), so power pips count as 2 for all your spells, shadow cards included. You can turn it on anywhere. Stays on until you turn it off."),
+            Command("Light and Shadow mode", ".lightnshadow on   or   .lightnshadow off", QA, "While on, each battle round fills your pips back up as power pips, fills your shadow pips and refills your mana. School (Archmastery) pips stay as they are. Works well with .harmony on."),
+            Command("Cast before your card (c1)", ".c1 e2 Fire Cat   or   .c1 me 12345   or   .c1 p2 Tower Shield", QA, "In battle, while you pick your card: casts that spell for free this round, right before your own card. Type it again to chain more spells, or put several in one line split by commas, each starting with c1, c2, cf or cl to pick its queue: .c1 Tower Shields, c2 Pyrodynamics, cl Fire Cat. The target is optional: me (or self) is you, p1 to p4 are the circles of your own side and e1 to e4 the enemy circles, numbered the way the game shows them (p1 is whoever stands on your side's circle 1, which may be a friend), and all hits everyone. s is only the silent option, so silent on yourself is .c1 s me Tower Shield. An empty circle or a defeated target is refused with a list of who stands on each circle. Without a target (or for spells that hit everyone), spells for enemies hit the enemy you picked (or the first one standing) and others go on you."),
+            Command("Cast after your card (c2)", ".c2 e1 Fire Cat   or   .c2 12345", QA, "Like .c1, but the spell casts right after your own card this round."),
+            Command("Cast first in the round (cf)", ".cf e all Fire Cat   or   .cf s me Tower Shield", QA, "Like .c1, but the spell casts before anyone's turn this round, before the boss cheats of the round's start."),
+            Command("Cast last in the round (cl)", ".cl se all Fire Cat   or   .cl p1 Satyr", QA, "Like .c1, but the spell casts after everyone's turn this round, after the boss cheats of the round's end."),
+            Command("Cast before your card, no animation (c1s)", ".c1s e2 Fire Cat", QA, "Like .c1, but the game skips the spell's casting animation, so the round goes faster. Mix them in one line: .c1s Tower Shields, c2 Pyrodynamics."),
+            Command("Cast after your card, no animation (c2s)", ".c2s e1 Fire Cat", QA, "Like .c2, but the game skips the spell's casting animation."),
+            Command("Cast first or last, no animation (cfs / cls)", ".cfs all Fire Cat   or   .cls e1 Fire Cat", QA, "Like .cf and .cl, but the game skips the spell's casting animation (the same as .cf s and .cl s)."),
+            Command("Skip your casting animation (cast)", ".cast none", QA, "Your spells skip their casting animation until .cast reset or the server restarts. (Picking another school's animation isn't possible: the game always plays the spell's own.)"),
+            Command("Boss-style message (ca)", ".ca 1   or   .ca gained power pip", QA, "In battle, shows one of the game's own lines like a boss's cheat line, before the next round's first spell. Use the phrase's number from the Phrases tab, or words from the line (.ca find <words> lists matches with their numbers). Typed text of your own can't be shown."),
+            Command("Boss-style message in the cast queue", ".c1 Fire Cat, ca 1, Fire Cat", QA, "A ca part in a .c1, .c2, .cf or .cl chain shows that phrase over you just before the next spell in the queue (after the last one if nothing follows). .ca 1, 5 shows several phrases in a row before the round's first spell."),
+            Command("Your battle stats (stats)", ".stats", QA, "Shows the damage, resist, pierce and accuracy the server fights with for each school, plus flat damage. Hold it next to the game's own Stats page: if a number differs, the server is reading your gear wrong. No diminishing returns, just the plain sums of gear, jewels and pet."),
+            Command("Damage lines on or off (stats damage)", ".stats damage", QA, "Turns on or off the chat lines after each of your hits that say what it really dealt to each enemy (the game's own pop-up can show less). Off until you turn them on."),
+            Command("Your side goes first (wegofirst)", ".wegofirst", QA, "In a battle against creatures, your side (you and your friends) acts first, from this round's spells on. The sun moves to your side."),
+            Command("The other side goes first (theygofirst)", ".theygofirst", QA, "In a battle against creatures, the enemies act first, from this round's spells on."),
+            Command("Add an enemy to your battle (joinme)", ".joinme Gobbler", QA, "In a battle against creatures, the creature joins on the enemy side and fights from the next round. Use its name or ID (.lookup mob finds them). x and a number at the end adds that many while there is room: .joinme Gobbler x2 (a plain number that is no custom does too). .joinme Malistaire the Undying gives the Castle Darkmoor one; add Azteca for the Azteca one."),
+            Command("Add one of your customs to your battle (joinme)", ".joinme Malistaire the Undying 1", QA, "Brings in a custom from the Customs tab: the creature it is based on (name or ID), then the custom's number. .joinme 1336035 1 and .joinme Malistaire the Undying custom 1 do the same. It fights with the custom's name, stats, deck, cheats and drops; the creature itself is not changed. A custom based on another creature is refused."),
+            Command("Free cast options (s / e)", ".cl se all Fire Cat   or   .c1 e Fire Cat 3", QA, "Options after .c1, .c2, .cf or .cl: s skips the casting animation, e adds the best enchantment that fits (Epic on attacks, Primordial on heals, Sharpened Blade on blades, Potent Trap on traps, Aegis or Indemnity); mix them like se. First and last in the round are their own commands, .cf and .cl (the old f and l options get a hint to use them). A number after the spell's name repeats it, up to 20 times: .c1 e Fire Cat 3. Target all casts a single-target spell once on every enemy (or every teammate for a heal or blade)."),
+            Command("Mastery in battle", ".mastery fire   or   .mastery astral   or   .mastery all", QA, "In battle, you count as having that school's mastery until the battle ends, so power pips count as 2 for its spells. Schools: fire, ice, storm, myth, life, death, balance, sun, moon, star and shadow; astral means sun, moon and star; shadow also masters the seven schools, because shadow cards belong to one of them; all means every one. This is school mastery (the amulet kind), not Archmastery."),
+            Imlight("Win battle", ".cheat win", QA, "Wins the battle you are in right now."),
+            Imlight("Fast spell animations", ".cheat cinematic", QA, "Turns instant spell animations on or off."),
+            Imlight("No fizzle", ".cheat nofizzle", QA, "Turns spells that never fizzle on or off."),
+            Command("Guild raids", ".raid   or   .raid leave", ANYONE_AT_ALL, "Shows the raid you are in. .raid leave takes you back to the guild grounds. "
+                + "Testing (quality assurance): .raid go void, .raid end, .raid timer 30, .raid event <name>, .raid counter <name> 4, .raid loot. Also .raids."),
+        ]),
+        .. In("Quests", [
+            Command("Skip a ride", ".skip", ANYONE, "On a ride (the Krokotopia flying ship, the Dragonspyre flight, Marleybone's airships), gets you off at the end of the trip right away. On the Krokotopia ships you can also click the sign on deck. Also .skipride."),
+            Command("My quest book", ".questbook", ANYONE, "Lists every quest in your quest book: the step you are on (step 2 of 5) and what it asks, the step after it, and on the last step the quest that comes next. Ahziael's Quests page, My Quests tab, shows the same as a picture of the story with buttons to go to a step, finish it or finish the quest. Also .myquests."),
+            Command("Stuck on a quest", ".stuck", ANYONE, "Checks all your quests and puts right what it can: a quest object you already used comes back when a step needs it again, a quest with no step to do moves on (or finishes when every step is done), and a step that needs an NPC, creature or object turned off on the On and Off tab is done for you. It then says which step each quest is on. The same checks run by themselves every time you change area ([QuestSafety] in Settings). Also .unstuck."),
+            Command("Daily Assignment", ".daily   or   .daily new", ANYONE_AT_ALL, "Shows today's Daily Assignment of the Gravulum Order (the same as Aegon Statz's Daily Assignment option in Ravenwood): a creature to defeat or a place to visit, and the reward for your streak. .daily new swaps it for another one if you have not done it yet."),
+            Command("Test Daily Assignments", ".daily done   or   .daily day 5   or   .daily reset", QA, "For testing: .daily done finishes today's assignment and gives its reward, .daily day 5 makes the next finished one day 5 of your streak (to see each day's reward), .daily reset clears your assignment and streak."),
+            Imlight("Teleport to a quest step", ".tpstep <quest code> <step>", QA, "Takes you right to where a step of a quest happens: the spot the game's quest arrow points at, else where the step's NPC stands, else the step's zone. Works even when the quests or doors before it are not done. The step buttons on the Quests page run it. Also .stepto."),
+            Command("Go to quest", ".toquest \"quest name\"", QA, "Puts you on any quest to test it, by its name (Ghost Hunters) or code: marks the quests before it done, takes you to its first step and lists its steps. Steps that wait on a trigger are marked; skip one with .quest completegoal."),
+            Imlight("Offer quest", ".quest offer <quest name>", QA, "Shows the quest's offer window, as if someone gave it to you. Search Quest in Ahziael's Lookup tab for names."),
+            Imlight("Give quest", ".quest grant <quest name>", QA, "Adds a quest to your quest book."),
+            Imlight("Force give quest", ".quest forcegrant <quest name>", QA, "Adds a quest even when you could not normally get it."),
+            Imlight("Complete quest", ".quest complete <quest name>", QA, "Finishes a quest."),
+            Imlight("Complete current goal", ".quest completegoal", QA, "Finishes the goal you are on in your active quest."),
+            Imlight("Complete quest goal", ".quest completegoalfor <quest name>", QA, "Finishes the goal you are on in a chosen quest."),
+            Imlight("Remove quest", ".quest remove <quest name>", QA, "Takes a quest out of your quest book."),
+            Imlight("My quests", ".quest list", QA, "Lists your quests."),
+            Imlight("Active quest info", ".quest info", QA, "Shows details about your active quest."),
+            Imlight("Show quest", ".quest show <quest name>", QA, "Shows details about any quest."),
+            Command("Fast Forward", ".quest fastforward", QA, "Finishes the quests of the plan made on Ahziael's Progress > Fast Forward page (pick the level or world there first), "
+                + "with their rewards. Without a plan it says so."),
+            Command("Quest arrow log", ".arrowlog", ANYONE_AT_ALL, "Makes the game write every step of its quest arrow search to WizardClient.log, for finding why the arrow does not show. Type it again to stop."),
+        ]),
+        .. In("Travel and places", [
+            Command("Advanced Mode", ".advanced on / off / list", "Every player", ".advanced on makes dungeon sigils that have a harder Advanced Mode copy take you there (the circle glows red). " +
+                ".advanced off goes back to normal, .advanced list names the dungeons that have one. The sigil's own Advanced Mode button works too. Also .challenge."),
+            Imlight("Ride a group mate's mount", ".ride <wizard name>   or   .ride", ANYONE_AT_ALL, "Gets you on a group mate's 2 or 3 seat mount, the same as walking up to it and pressing X. .ride alone lists the mounts in your group with a free seat. Settings are in [Mounts] on the Settings tab."),
+            Imlight("Get off a group mate's mount", ".ride off", ANYONE_AT_ALL, "Gets you off the mount you are riding. Moving or putting on your own mount does the same."),
+            Command("Go to the Bazaar", ".bazaar", QA, "Takes you to the Bazaar in Olde Town."),
+            Command("Set a gauntlet's sigil here", ".sigil here   or   .sigil here face", QA + ", or the owner of the house you are in", "In your house, near a placed gauntlet (the nearest within 600): the gauntlet's sigil moves so its centre is where you stand and its arc faces away from the gauntlet (with face: the way you are facing). It is saved for that gauntlet, so every copy of it in every house uses it, and it moves at once. The Customs tab's House gauntlet sigils card lists what is set."),
+            Command("Gauntlet sigil size", ".sigil size 0.8", QA + ", or the owner of the house you are in", "Sets the size of the nearest gauntlet's sigil (1 is the normal tower sigil, from 0.1 to 5). Saved for that gauntlet everywhere."),
+            Command("Raise or lower a gauntlet sigil", ".sigil up 10   or   .sigil down 10", QA + ", or the owner of the house you are in", "Raises or lowers the nearest gauntlet's sigil by that much, such as onto a porch or a step. Saved for that gauntlet everywhere."),
+            Command("Turn a gauntlet sigil", ".sigil turn 90   or   .sigil turn -45", QA + ", or the owner of the house you are in", "Turns the arc of the nearest gauntlet's sigil by that many degrees. After .sigil here it turns where it stands; otherwise the whole sigil swings round the gauntlet."),
+            Command("Move a gauntlet sigil", ".sigil forward 10   or   .sigil back   or   .sigil left 20   or   .sigil right 5", QA + ", or the owner of the house you are in", "Moves the nearest gauntlet's sigil by that much (10 with no number): forward is further out from the gauntlet's front, back is toward it, and left and right are as you stand before the gauntlet looking at it. It starts from where the sigil is now, set by .sigil here or not, and keeps its turn. Also fwd and backward. Saved for that gauntlet everywhere, and it moves at once."),
+            Command("Gauntlet sigil info", ".sigil info", QA + ", or the owner of the house you are in", "Shows the nearest gauntlet's name and template and its sigil now: how far and which side, how high, its turn and size, and whether it was set by hand."),
+            Command("Reset a gauntlet sigil", ".sigil reset", QA + ", or the owner of the house you are in", "Puts the nearest gauntlet's sigil back to its defaults (the Reset button on the Customs tab's House gauntlet sigils card does the same)."),
+            Imlight("Teleport", ".tp <zone>", QA, "Takes you to a place, by the name players know it by or its code name: .tp Unicorn Way, .tp WC_Unicorn and .tp WizardCity/WC_Streets/WC_Unicorn all work, and so do part of a name, small typos and a world's name (.tp Krokotopia goes to its hub). .tp gm goes to the GM island. Also .teleport or .port. Database > Locations lists every place with both names and a Teleport button."),
+            Imlight("Where am I", ".debug gps", QA, "Shows the zone you are in and where you are standing."),
+            Imlight("Hide object", ".debug disableobj <zone tag>", QA, "Hides an object in this zone by its tag."),
+            Imlight("Show object", ".debug enableobj <zone tag>", QA, "Shows an object hidden with .debug disableobj."),
+            Imlight("List zone changes", ".dynamod list", QA, "Lists the zone changes (dynamods) saved on your character."),
+            Imlight("Set zone change", ".dynamod set <on or off> <tag>", QA, "Turns a zone change on or off for your character."),
+            Imlight("Toggle zone change", ".dynamod toggle <tag>", QA, "Flips a zone change between on and off."),
+            Imlight("Remove zone change", ".dynamod remove <tag>", QA, "Removes a zone change from your character."),
+            Imlight("Set object state", ".debug setobj <state> <object name>", QA, "Sets the state of an object in your zone."),
+            Command("Portals", ".portal new [name]   then   .portal here   or   .portal walk / press / name <words> / list / delete [number]", QA, "Your own teleporters, set up the way a house teleporter is: .portal new puts a Shadow Portal where you stand, then walk to where it should send players (any area) and type .portal here. .portal walk makes walking into it teleport, .portal press makes it press X. .portal name <words> sets the prompt's top line (empty: where it goes). Add a portal's number to pick one; without it, the one you are setting up or the nearest. Ahziael's Customs tab (Portals and prompts) has every setting."),
+        ]),
+        .. In("Items, gear and crafting", [
+            Imlight("Lost and removed items", ".lostitems   or   .lostitems <id>", QA, "Lists the last items that left your wizard (thrown away, sold, used up, ran out, or lost with no room) and why. .lostitems and an id gives that item back. Ahziael's Home page has the same list with Give back buttons."),
+            Imlight("Item Finder", ".itemfinder", ANYONE_AT_ALL, "Opens the game's Item Finder window: it shows where every item is, in your backpack, bank, shared bank, attic and each of your houses. A Backpack Butler placed in your house opens it too (press X at the Butler), and so does every bank (Item Finder next to the bank's own option). Also .finditem."),
+            Command("Give gear by name", ".hat 1 Malistaire Veil   or   .hat 1 60 Malistaire Veil   or   .pet 1 Chromatic Pet   or   .robe 2 1234567", QA, "Gives that many of an item, found by name or ID. Kinds: .hat, .robe, .boot, .wand, .athame, .amulet, .ring, .pet, .deck, .potion, or .gear for any item. The amount can be left out (1). A level after the amount picks the version of gear made for that level; with no level, the highest-level version is given. With a name, the best match of that kind is given; an ID is given as it is."),
+            Command("Give furniture by name", ".furniture 1 Crimson Scroll Stand   or   .furniture 3 82947   or   .furniture find scroll stand", QA, "Gives that many of a house item (furniture, decorations, wall hangings, outdoor items, plants, music scrolls, castle blocks, wallpapers and the rest), found by name or ID. The amount can be left out (1). find lists the first 10 house items with those words and their IDs instead. The Database page's Furniture tab lists every house item. Also .housing, .houseitem and .decor."),
+            Command("Shop window test", ".shoptest 1   or   .shoptest reagent   or   .shoptest off", QA, "For finding the right shop window. A number makes every shop open with that shop type; reagent, snack, jewel, housing, recipe, mount or equipment makes every shop offer that kind of menu option. Walk away from the shop and back after each change. off puts shops back to normal."),
+            Command("Redeem a code", ".code HYPER", ANYONE_AT_ALL, "Redeems a code made on the Shops and Codes tab (Game Rules page) and says what it gave, such as \"Success on redeeming: 1 Hyper Elixir\"."),
+            Command("Watch what the game sends", ".code watch", QA, "For 2 minutes, the server log gets every message your game sends (look for \"Code watch\" in the Logs tab). Use it to see what a button sends."),
+            Command("Crafting window anywhere", ".craft", QA, "Opens the game's crafting window wherever you are, with every recipe you know. Crafting uses up the reagents, items and treasure cards the recipe needs and gives what it makes. Crafting stations in the world, recipe vendors and crafting stations placed in your house open it too, with only their own recipes."),
+            Command("Your recipes", ".recipes", QA, "Lists the recipes you know. Buy recipes at a recipe shop (they go into the recipe book of your spellbook) or use .recipe learn."),
+            Command("Learn a recipe", ".recipe learn <name or id>", QA, "Teaches you a recipe by its game name or number, such as .recipe learn Recipe-Snack-Pizza. Find names with .recipe find. .recipe forget <name> takes one away."),
+            Command("Find a recipe", ".recipe find <text>", QA, "Lists up to 25 of the game's recipe names that contain the text, such as .recipe find Boots."),
+            Command("Crafting cooldowns", ".recipe cooldowns   or   .recipe cooldowns clear", QA, "Shows which crafting slots are in use and how long until each is free. clear frees them all now."),
+            Command("Craft a recipe now", ".recipe make <name or id>   or   .recipe make <name or id> <count>", QA, "Crafts a recipe you know right where you stand, with the amounts the Manager's Recipes tab set. Use it when the game's crafting window greys out Create."),
+            Command("Bundle to gift box", ".bundle <name>", QA, "Puts that bundle in your gifts (the gift button). Claim it there and pick the tier you want. Find the names here: pick Bundle in the list on the right, search, and click Send to my gifts."),
+            Command("Clear gift box", ".bundle clear", QA, "Removes every unclaimed gift from your gift button list."),
+            Command("Jewels you wear", ".jewel list", QA, "Lists the sockets on the gear and pet you are wearing and what is in them."),
+            Command("Add a jewel", ".jewel add <jewel or pin>", QA, "Puts a jewel or pin, by name or ID, into the first empty socket of that shape on what you are wearing. You can also drag jewels onto gear in the game."),
+            Command("Clear jewels", ".jewel clear", QA, "Empties every socket on the gear and pet you are wearing."),
+            Imlight("Give a house", ".housegrant <house template ID>", QA, "Gives you a house deed by its template ID."),
+            Imlight("Recycling Bin", ".recyclebin   or   .bin", ANYONE_AT_ALL, "Opens the game's Recycling Bin window with the items you threw away (backpack trash, released pets, the bank's trash) in the last [RecyclingBin] Days (30). Picking one and pressing Reclaim gives it back for [RecyclingBin] Cost gold (1000). The game's own Recycling Bin button opens the same window."),
+        ]),
+        .. In("Pets", [
+            Command("Pet cast test", ".petcasttest <0-6> or .petcasttest off", QA, "Changes how a pet's May Cast is sent to the game, to find the way it plays. 0 = plain pet copy, 1 = plain normal card, 2 = pet flags with pet copy, 3 = pet flags with normal card, 4 = pet flags and forced with pet copy, 5 = pet flags and forced with normal card, 6 = forced normal card. Start a new battle after changing it."),
+            Command("Look like your pet (petform)", ".petform", QA, "Turns your wizard into the pet you are wearing, like a transformation elixir, and hides your pet meanwhile. The Play as Pet button beside your pet's picture does the same. Other players see it too. Type .petform again to turn back. It wears off when you log out."),
+            Command("Pet Will Casts", ".willcast   or   .willcast <number>   or   .willcast unlock", ANYONE_AT_ALL, "Lists the Will Casts of the pet you are wearing: what each costs, its wait and how often it can go. In a battle, .willcast <number> casts that one before your card this round, like the pet's Will Cast button. .willcast unlock unlocks locked Will Casts with their reagents (free when Settings, Pets, WillCastsFreeReagents is on)."),
+            Command("Pet info", ".pet info", QA, "Shows the level, XP, stats and talents of the pet you are wearing."),
+            Command("Feed your pet", ".pet feed <snack>", QA, "Feeds one snack from your snack bag to the pet you are wearing, by name or ID, for pet XP and stats. .pet feedall <snack> feeds the whole stack. Add snacks with .mod addsnack <id>."),
+            Command("Pet XP", ".pet xp <amount>", QA, "Gives the pet you are wearing that much pet XP. It levels up and shows new talents on the way."),
+            Command("Pet level", ".pet level <level>", QA, "Sets the pet you are wearing to a level, 1 to 7 or Baby, Teen, Adult, Ancient, Epic, Mega or Ultra, with a new talent for each level up to Mega."),
+            Command("Pet talent", ".pet talent <name>", QA, "Gives the pet you are wearing a talent, such as .pet talent Pain-Giver. .pet untalent <name> takes one off."),
+            Command("Pet talent slot", ".pet talent get <slot> <name>", QA, "Puts a talent into a slot of your pet's talent list, 0 at the top of the pet window and 9 at the bottom, without claiming it. .pet talent claim <slot> shows it (5 at most) and .pet talent unclaim <slot> hides it again."),
+            Command("Pet derby slot", ".pet derby get <slot> <name>", QA, "The same as .pet talent get, claim and unclaim, for the derby talents."),
+            Command("Set a pet stat", ".pet stats <stat> <amount|max>", QA, "Sets Strength, Intellect, Agility, Will, Power or Happiness of the pet you are wearing to an amount or its maximum. An amount above the maximum raises the maximum to it, such as .pet stats strength 260."),
+            Command("Max pet stats", ".pet maxstats", QA, "Raises every stat of the pet you are wearing to its maximum."),
+            Command("Hatch two pets", ".hatch <pet 1> <pet 2>", QA, "Hatches two of your own pets (worn or in your backpack) into an egg in your backpack. Type .hatch alone to list your pets with numbers, then use the numbers, such as .hatch 1 2, or names, such as .hatch Fire Cat Storm Dragon. The egg is one of the two kinds and gets talents from both parents. How long it takes and the gold it costs are under Settings, Hatching."),
+            Imlight("Pet level (mod)", ".mod petlevel <level>", QA, "Sets your pet's level."),
+            Imlight("Pet XP (mod)", ".mod petxp <amount>", QA, "Gives your pet experience."),
+            Imlight("Pet happiness", ".mod pethappiness <amount>", QA, "Sets your pet's happiness."),
+            Imlight("Pet talent (mod)", ".mod pettalent <talent name>", QA, "Gives your pet a talent."),
+        ]),
+        .. In("Activities", [
+            Command("Events and the Scroll of Fortune", ".events   or   .events claim", ANYONE_AT_ALL, "Lists the game events on (the Scroll of Fortune is always on; the Events card of the Imlight app queues the others), your points in each and the rewards waiting. .events claim claims every reward you have the points for, like the claim buttons of the event window. Also .scroll."),
+            Command("Deckathalon leaderboard", ".leaderboard   or   .lb", ANYONE_AT_ALL, "Opens the game's leaderboard window of the Deckathalon that is on (the game's event window has no Leaderboard button for it) and lists the best wizards in chat. Also .lb."),
+            Command("Deckathalon credits", ".credits   or   .credits 10", QA, "Shows your credits in the Deckathalon that is on. Each climb of its tower uses a credit, and the tower portal window has a Claim button for free credits (3 every 24 hours; [Deckathalon] ClaimCredits, ClaimHours and EntryCredits in Settings). .credits 10 gives you 10 more, .credits -5 takes 5 away."),
+            Command("Loyalty Store", ".loyalty   or   .loyalty claim", ANYONE_AT_ALL, "Says what Majid (Shopping District) sells now for Loyalty Tokens and how long for, and your tokens. .loyalty go takes you to him. .loyalty claim gets this set's tokens, like the Claim button in his window. Also .majid. The Loyalty Store card of the Imlight app sets when his wares change."),
+            Command("Loyalty Tokens", ".loyalty tokens <number>", QA, "Testers can set their account's Loyalty Tokens, such as .loyalty tokens 50."),
+            Command("Loyalty Claim Reset", ".loyalty resetclaim", QA, "Testers can claim this month's Loyalty Tokens from Majid again."),
+            Command("Castle Magic kit", ".castlemagic   or   .castlemagic objects   or   .castlemagic spells", QA, "Gives your character one of every Castle Magic object (levers, buttons, orbs, timers, detectors) and every Castle Magic spell it does not have yet. Place the objects in your house, then cast the spells onto them from the spellbook's Castle Magic tab. The spells are not used up."),
+            Command("Garden status", ".garden", QA, "Shows your gardening rank and XP, and in a house how much soil and how many plants its garden has, how many are ready to harvest and how many need water, sun, pests taken away and so on."),
+            Command("Garden: grow now", ".garden grow   or   .garden ready", QA, "In your own house: .garden grow moves every plant on to its next stage with all its needs met; .garden ready only makes the grown plants ready to harvest. For testing, so you do not wait hours."),
+            Command("Garden: growth speed", ".garden speed <number>   or   .garden speed <seedling|young|mature|harvest|needs> <number>   or   .garden speed reset", QA, "How many times faster than the game every garden grows, such as .garden speed 60 (an hour becomes a minute), or one part only, such as .garden speed young 10. .garden speed reset goes back to the game's own times. It counts right away, also for plants already growing, and the Server tab's Plant growth card shows the same."),
+            Command("Garden: pause", ".garden pause   or   .garden resume", QA, "Stops every garden (nothing grows, no needs or pests come) until .garden resume. Same as the Pause switch on the Plant growth card."),
+            Command("Garden: set stage or age", ".garden stage <seedling|young|mature|elder|wilting|dead>   or   .garden age <30m|2h|1d>", QA, "In your own house: .garden stage mature puts every plant in that stage with fresh times; .garden age 2h lets two hours of plant time pass, so needs, pests and stages come as they would."),
+            Command("Garden: plant times", ".garden times", QA, "In a house: lists each plant's stage, how long it has been in it, the time to its next stage and harvest, and the growth speed."),
+            Command("Garden: set rank", ".garden rank <1-20>", QA, "Sets your gardening rank, such as .garden rank 5, and teaches the garden spells of that rank."),
+            Command("Garden: spells and seeds", ".garden spells   or   .garden seeds", QA, ".garden spells teaches, for free, every garden spell of your rank you do not know yet (normally you buy them from the garden trainers, Farley and the others). .garden seeds gives you 3 of each of a few seeds Farley sells."),
+            Imlight("Fishing", ".fishing   or   .fishing basket   or   .fishing sell   or   .fishing today", ANYONE_AT_ALL, "Shows your fishing level and XP, how full your fish basket is and which fish swim in this area. .fishing basket lists your fish; .fishing sell sells the whole basket for gold; .fishing today names the Catch of the Day and this week's tournament fish."),
+            Imlight("Fishing (testing)", ".fishing spells   or   .fishing level 10   or   .fishing reset", QA, "Teaches every fishing spell, sets your fishing level, or fills this area's ponds with new fish."),
+            Command("Trainer tomes", ".hall   or   .hall 30   or   .hall flip", QA, "Gives one trainer tome (the lectern Abner sells), or as many as the number. Each tome placed in your house becomes a set trainer: every spell the game's trainers teach, split by school into parts of up to 50 (Fire Trainer 1, Fire Trainer 2, then Ice Trainer 1...). A part never mixes schools. The parts go along your row of tomes starting at the end where you placed the first one, and each tome keeps its part. In the house, .hall flip starts the row from the other end (leave and come back to see it)."),
+            Command("Seller furniture", ".hall vendors", QA, "Gives one piece of furniture per seller: Harvest, Rare Harvest, Shop, Drop, Event and Pet reagents, Spellements, and Circle, Square, Triangle, Tear and Star jewels and Power, Shield and Pip pins. Place one in your house and its seller stands on it, selling every item of its kind for 1 gold."),
+            Command("Photomancy camera", ".photo", ANYONE_AT_ALL, "Opens the Photomancy tome, the game's camera, anywhere. Take a photo there and the game saves it on your computer. Every filter is open. Photos of quest objects (such as the Darkmoor photo quests) count for the quest. The real tome stands in the Golem Tower too: press X at it."),
+            Command("Guild Museum", ".museum   or   .museum avalon   or   .museum khrysalis   or   .museum avalon list   or   .museum back", ANYONE_AT_ALL, "Shows how far your Avalon and Khrysalis museum galleries are. .museum avalon (or khrysalis) takes you into that gallery, list shows each exhibit's tier, back takes you to the museum island of your guild grounds. Defeating a creature fills the museum artifacts it has with essence, and an exhibit goes up a tier when all its artifacts have enough. Press X at an exhibit stand to see what it still needs. A guild fills one museum together."),
+            Command("Guild Museum test", ".museum fill 3   or   .museum fill avalon 1   or   .museum fill 0   or   .museum ids index   or   .museum show", QA, "For testing the museum: fill sets every artifact (of one gallery, or both) to what a tier needs (0 empties it again). ids picks the numbers the museum messages use (hash, index, index1 or door) until the server restarts, to find the ones that make the exhibit stands light up. show sends the gallery's exhibits again."),
+            Command("Test Pixie Post", ".mail   or   .mail Hello there", ANYONE_AT_ALL, "Sends you a Pixie Post from yourself, so you can try the mail without a second wizard. The new mail button lights up; open your friends list and its Mail tab to read it, then try Reply and Delete. Real Pixie Posts are sent from the friends list to a friend."),
+            Command("Monstrology tome", ".tome", ANYONE_AT_ALL, "Opens the Monstrology tome (the T key does too) and says your Monstrology level, XP and how many monsters you have Animus from. Put an Extract spell on a damage spell in battle to collect Animus; win the battle to keep it."),
+            Command("Monstrology level", ".tome level <number>", QA, "Sets your Monstrology level, from 1 to 35, such as .tome level 20. Monsters of a higher rank rarely give Animus and can't be made into cards or house guests."),
+            Command("Add Animus", ".tome animus <monster name or id> <number>", QA, "Adds Animus for a monster to your Monstrology tome, such as .tome animus Dishonored Samoorai 30, so you can test the tome's Create buttons."),
+            Imlight("PvP rating", ".pvp rating show   or   .pvp rating set <rating>   or   .pvp rating clear", QA, "Shows, sets or clears your PvP rating. Add a league name at the end for another league."),
+            Imlight("PvP rank", ".pvp rank set <number or name>", QA, "Sets your PvP rank. Add a league name at the end for another league."),
+            Imlight("PvP season reset", ".pvp season reset", QA, "Starts a new PvP season for you. Add a league name at the end for another league."),
+        ]),
+        .. In("Friends, guilds and groups", [
+            Imlight("Guild", ".guild", ANYONE_AT_ALL, "Shows your guild, its leader and members (who is online), or the guild commands if you have no guild."),
+            Imlight("Make a guild", ".guild create <name>   or   .guild create random", ANYONE_AT_ALL, "Makes a guild with you as leader. The name uses the game's guild words, up to three: a first word, a colour and a last word, such as Valiant Crimson Dragons. .guild names lists the words."),
+            Imlight("Guild invites", ".guild invite <wizard>   .guild accept   .guild decline", ANYONE_AT_ALL, "Invites a wizard who is online to your guild; they type .guild accept within 10 minutes to join."),
+            Imlight("Leave or run a guild", ".guild leave   .guild kick <wizard>   .guild leader <wizard>   .guild rename <name>   .guild disband yes", ANYONE_AT_ALL, "Leaving, and for the leader: removing a member, handing the guild over, renaming it or ending it."),
+            Imlight("Guild house", ".guild house", ANYONE_AT_ALL, "Takes you to your guild's guild house: the leader gets the Guild House deed the first time, members visit the leader's guild house."),
+            Imlight("Guild chat", ".g <words>", ANYONE_AT_ALL, "Says something to everyone in your guild who is online."),
+            Imlight("Recent wizards", ".recent   or   .recent clear", ANYONE_AT_ALL, "Lists the wizards you battled, grouped, hatched or dueled with lately (the same list as the Friends window's Recent tab). .recent clear empties it."),
+            Imlight("Add a recent wizard", ".recent add <wizard name or ID>", QA, "Puts a wizard who is online in your recent wizards list (and you in theirs), to try the Friends window's Recent tab without a battle first."),
+            Command("Join a team", ".teamup", ANYONE_AT_ALL, "Opens Join a Team: pick a world, then a team a player asked for at a dungeon sigil, and you join it. When the team is full (or everyone presses Ready) the whole team goes into the dungeon together. A Join A Team kiosk does the same. Also .team."),
+            Command("Ask for a team", ".teamup ask or .teamup ask <2-4>", ANYONE_AT_ALL, "While standing on a dungeon sigil: asks for a team for that dungeon, the same as the sigil's Team Up! button. .teamup list shows the teams waiting."),
+            Imlight("Group info", ".group info", QA, "Shows who is in your group."),
+            Imlight("Kick from group", ".group kick <name>", QA, "Removes someone from your group. Also .group remove."),
+            Imlight("Group leader", ".group leader <name>", QA, "Makes someone the group's leader."),
+            Imlight("Disband group", ".group disband", QA, "Breaks up your group."),
+            Command("Who's online", ".online   or   .online 2", ANYONE_AT_ALL, "Lists the wizards playing now and the world each is in, like the Who's online card on Ahziael's Home. "
+                + "Hall monitors and up also see the account and the exact zone. Also .who."),
+        ]),
+        .. In("Finding IDs", [
+            Command("Find item ID", ".lookup item <words>", QA, "Searches item names in game and shows their IDs."),
+            Command("Find spell ID", ".lookup spell <words>", QA, "Searches spell names in game and shows their IDs."),
+            Command("Find creature ID", ".lookup mob <words>", QA, "Searches creature names in game and shows their IDs. Also .lookup creature."),
+            Command("Find NPC ID", ".lookup npc <words>", QA, "Searches NPC names in game and shows their IDs."),
+            Command("Find any ID", ".lookup all <words>", QA, "Searches items, spells, creatures and NPCs at once."),
+        ]),
+        .. In("Moderation", [
+            Imlight("Mute player", ".mute <time> <reason>", HM, "Stops the selected player from chatting." + TIME + SELECTED),
+            Imlight("Unmute player", ".unmute", HM, "Lets the selected player chat again." + SELECTED),
+            Imlight("Kick player", ".kick <reason>", HM, "Disconnects the selected player." + SELECTED),
+            Imlight("Warn player", ".warn <reason>", HM, "Adds a warning to the selected player's account." + SELECTED),
+            Imlight("Player info", ".info", HM, "Shows the selected player's account details." + SELECTED),
+            Imlight("Create account", ".account create <username> <password>", HM, "Makes a new account."),
+            Imlight("Delete account", ".account delete <username>", ADMIN, "Deletes an account and its characters."),
+            Imlight("Lock account", ".account lock <username>", HM, "Stops an account from logging in."),
+            Imlight("Unlock account", ".account unlock <username>", HM, "Lets a locked account log in again."),
+            Imlight("Change password", ".account password <username> <new password> <new password again>", ADMIN, "Changes an account's password."),
+            Imlight("Permission level", ".account authlevel <username> <level>", ADMIN,
+                "Changes what an account may do. Levels: None, QualityAssurance, HallMonitor, Developer, Administrator."),
+            Imlight("Account info", ".account info <username>", HM, "Shows an account's details."),
+            Imlight("Account warnings", ".account warnings <username>", ANYONE, "Lists an account's warnings and punishments. Also .account infractions or .account warns."),
+            Imlight("Warn account", ".account warn <username> <reason>", HM, "Adds a warning to an account."),
+            Imlight("Remove warning", ".account removewarn <username> <warning number>", HM, "Removes one of an account's warnings."),
+            Imlight("Ban account", ".ban account <username> <time> <reason>", HM, "Bans an account." + TIME + " Also .ban user."),
+            Imlight("Ban computer", ".ban machine <machine ID> <time> <reason>", HM, "Bans a computer." + TIME + " Also .ban pc."),
+            Imlight("Ban IP address", ".ban ip <IP address> <time> <reason>", HM, "Bans an internet address." + TIME),
+            Imlight("Ban info", ".ban info <username>", HM, "Shows an account's bans."),
+            Imlight("Unban account", ".unban account <username>", HM, "Lifts an account's ban. Also .unban user."),
+            Imlight("Unban computer", ".unban machine <machine ID>", HM, "Lifts a computer's ban. Also .unban pc."),
+            Imlight("Unban IP address", ".unban ip <IP address>", HM, "Lifts an internet address's ban."),
+        ]),
+        .. In("Running the server", [
+            Command("Change a setting", ".setting <section> <name> <new value>", ADMIN, "Changes a setting of Imlight.ini, as Ahziael's Settings and Game Rules pages do, "
+                + "and it counts at once (a few, such as ports, need a restart, and it says so). .settings lists the sections, .setting Battle lists a section's "
+                + "settings, .setting Battle NoAggroSeconds says what one does, and .setting find aggro searches. Switches take on or off. "
+                + "Passwords are never shown, and the Database and Remote Admin sections are changed in Ahziael only. Also .config."),
+            Command("Turn things on or off", ".onoff   or   .onoff off <name>   or   .onoff on <name>", ADMIN, "Ahziael's Game Rules > On and Off: "
+                + ".onoff off Gobbler takes every NPC or creature called that out of every zone, .onoff on Gobbler brings them back. "
+                + "A template ID works too, and .onoff off zone WizardCity/WC_Ravenwood, .onoff off world Krokotopia or .onoff off custom 3 do zones, "
+                + "worlds and customs. .onoff lists what is off. The Commons can never be turned off. Also .turnoff and .turnon."),
+            Command("Make a code", ".code make <CODE> gold <amount> crowns <amount> item <name or ID> x<count> uses <number> for <time>", ADMIN,
+                "Makes a code players redeem with .code, as Ahziael's Codes card does. Use any of gold, crowns and item (more than one item works), "
+                + "uses is how often one account can redeem it (1 if left out, 0 for no limit) and for ends it after a time like 7d. "
+                + "Such as .code make SUMMER gold 5000 item Hyper Elixir x2 for 7d."),
+            Command("Manage codes", ".code list   or   .code off <CODE>   or   .code on <CODE>   or   .code remove <CODE>", ADMIN,
+                "Lists every code with what it gives, stops a code working for now, lets it work again, or removes it."),
+            Command("Member benefits", ".benefit   or   .benefit on <name or all> <time>   or   .benefit off <name or all>", ADMIN,
+                "Ahziael's Member benefits card: .benefit lists them, .benefit on double pet xp 3d switches one on for 3 days (leave the time out for no end), "
+                + ".benefit off all switches them all off. Everyone online is told. Also .benefits."),
+            Command("Announce to everyone", ".announce <words>   or   .announce chat <words>   or   .announce both <words>", HM,
+                "Sends everyone online a message, as Ahziael's Announcement card does: a box on screen, a chat line (chat), or both."),
+            Command("Check all quests", ".questcheck", ADMIN, "Checks every main quest against the game's zone files, as the Check all quests button does. "
+                + "The report shows on Ahziael's Quests > Quest Testing tab."),
+        ]),
+    ];
+
+    /// <summary>The topics, in the order `.help` lists them.</summary>
+    internal static IReadOnlyList<string> Sections { get; } = [.. All.Select(e => e.Section).Distinct()];
+
+    private static CommandGuideEntry[] In(string section, CommandGuideEntry[] entries)
+        => [.. entries.Select(e => e with { Section = section })];
+
+    // Commands added for this build (Niduus's), shown under Custom in Ahziael's Commands tab.
+    private static CommandGuideEntry Command(string name, string typed, string who, string help)
+        => new("", name, typed, who, help, true);
+
+    // Commands that come with Imlight itself.
+    private static CommandGuideEntry Imlight(string name, string typed, string who, string help)
+        => new("", name, typed, who, help, false);
+
+}

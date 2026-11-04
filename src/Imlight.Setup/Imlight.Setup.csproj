@@ -50,6 +50,8 @@
     <!-- Remote Admin's wire format and file rules (Server > Remote), the same file the server uses. -->
     <Compile Include="..\Imlight.CoreLib\Game\Tools\RemoteAdmin\RemoteAdminWire.cs" Link="Shared\RemoteAdminWire.cs" />
     <Compile Include="..\Imlight.CoreLib\Game\Tools\RemoteAdmin\AccountTransfer.cs" Link="Shared\AccountTransfer.cs" />
+    <!-- Every in-game command with its help, the same list the server's .help shows. -->
+    <Compile Include="..\Imlight.CoreLib\Game\Commands\CommandGuide.cs" Link="Shared\CommandGuide.cs" />
   </ItemGroup>
 
   <ItemGroup>

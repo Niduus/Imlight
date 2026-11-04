@@ -142,16 +142,7 @@ internal static class ManagerCommands {
                 // The app's Announcement card puts "box|", "chat|" or "both|" in front; a plain line is a box.
                 var (box, chat, text, fromCard) = Split(line);
                 Logger.Information("Imlight app announcement to everyone ({0}): {1}", Logger.Args(box && chat ? "box and chat" : box ? "box" : "chat", text));
-                foreach (var player in OnlinePlayerCollection.GetOnlinePlayers().Where(p => p.ActorPath is not null)) {
-                    var actor = s_system.ActorSelection(player.ActorPath);
-                    if (box) {
-                        actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = fromCard ? AnnouncementBox(text) : ServerMessages.Own(text), Modal = 1 });
-                    }
-
-                    if (chat) {
-                        actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = AnnouncementChat(text), Modal = 0 });
-                    }
-                }
+                Announce(box, chat, text, fromCard);
             }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
@@ -160,6 +151,32 @@ internal static class ManagerCommands {
         catch (Exception ex) {
             Logger.Error("Could not send the Imlight app's announcement: {0}", Logger.Args(ex.Message));
         }
+    }
+
+    /// <summary>
+    /// Sends everyone online an announcement as the app's Announcement card does: a box on screen, a chat line or both.
+    /// The game's `.announce` uses it too. Returns how many players got it.
+    /// </summary>
+    internal static int Announce(bool box, bool chat, string text, bool fromCard = true) {
+        if (s_system is null) {
+            return 0;
+        }
+
+        var sent = 0;
+        foreach (var player in OnlinePlayerCollection.GetOnlinePlayers().Where(p => p.ActorPath is not null)) {
+            var actor = s_system.ActorSelection(player.ActorPath);
+            if (box) {
+                actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = fromCard ? AnnouncementBox(text) : ServerMessages.Own(text), Modal = 1 });
+            }
+
+            if (chat) {
+                actor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = AnnouncementChat(text), Modal = 0 });
+            }
+
+            sent++;
+        }
+
+        return sent;
     }
 
     /// <summary>

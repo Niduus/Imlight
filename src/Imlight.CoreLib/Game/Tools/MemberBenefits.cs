@@ -220,6 +220,56 @@ internal static class MemberBenefits {
         return $" ({text} left)";
     }
 
+    /// <summary>
+    /// Switches benefits on or off from the game's chat (.benefit), writing member-benefits.json the way Ahziael's
+    /// Member benefits card does, so the card shows the change. The next tick tells everyone online.
+    /// </summary>
+    /// <param name="keys">Keys of <see cref="All"/>.</param>
+    /// <param name="length">How long they stay on, or null for no end.</param>
+    internal static void Switch(IEnumerable<string> keys, bool on, TimeSpan? length) {
+        var rows = new Dictionary<string, System.Text.Json.Nodes.JsonObject>(StringComparer.OrdinalIgnoreCase);
+        if (File.Exists(BENEFITS_FILE)
+            && System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(BENEFITS_FILE))?["Benefits"] is System.Text.Json.Nodes.JsonArray saved) {
+            foreach (var row in saved.OfType<System.Text.Json.Nodes.JsonObject>()) {
+                if (row["Key"]?.GetValue<string>() is { } key) {
+                    rows[key] = (System.Text.Json.Nodes.JsonObject) row.DeepClone();
+                }
+            }
+        }
+
+        // With no file every benefit follows [Character] MemberBenefits; the file keeps that for the others.
+        var active = ActiveNow();
+        foreach (var benefit in All.Where(b => !rows.ContainsKey(b.Key))) {
+            rows[benefit.Key] = new() { ["Key"] = benefit.Key, ["On"] = active.Contains(benefit.Key), ["Days"] = 0, ["Hours"] = 0, ["Until"] = null };
+        }
+
+        foreach (var key in keys) {
+            var row = rows[key];
+            row["On"] = on;
+            row["Days"] = on && length is { } days ? (int) days.TotalDays : 0;
+            row["Hours"] = on && length is { } hours ? hours.Hours : 0;
+            row["Until"] = on && length is { } until ? DateTime.UtcNow.Add(until).ToString("o") : null;
+        }
+
+        var list = new System.Text.Json.Nodes.JsonArray();
+        foreach (var benefit in All) {
+            list.Add(rows[benefit.Key]);
+        }
+
+        var temp = BENEFITS_FILE + ".saving";
+        File.WriteAllText(temp, new System.Text.Json.Nodes.JsonObject { ["Benefits"] = list }
+            .ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
+        File.Move(temp, BENEFITS_FILE, overwrite: true);
+        Load();
+    }
+
+    /// <summary>Each benefit's name, whether it is on now and the time left (" (2d 3h left)" or "").</summary>
+    internal static List<(string Key, string Name, bool On, string Left)> Status() {
+        var active = ActiveNow();
+
+        return [.. All.Select(b => (b.Key, b.Name, active.Contains(b.Key), active.Contains(b.Key) ? TimeLeft(b.Key) : ""))];
+    }
+
     private static void Load() {
         if (!File.Exists(BENEFITS_FILE)) {
             s_hasFile = false;
