@@ -530,9 +530,15 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
 
         // A custom vendor or trainer's dialog shows the name it was given, as written (CustomNpcs), and so does a
         // teleporter hub's stone (CustomTeleporters).
+        var teleporter = Imlight.CoreLib.Game.World.CustomTeleporters.For(Entity.Info?.m_zoneTag);
         if ((Imlight.CoreLib.Game.World.CustomNpcs.NameFor(Entity.Info?.m_zoneTag)
-             ?? Imlight.CoreLib.Game.World.CustomTeleporters.For(Entity.Info?.m_zoneTag)?.Name) is { } customName) {
+             ?? Imlight.CoreLib.Game.World.CustomTeleporters.NameOf(teleporter)) is { } customName) {
             madlibList = [new MadlibArgT_WideByteString { m_madlibArgument = customName, m_madlibToken = "NAME" }];
+        }
+
+        // A portal's Custom prompt line: its text key is the lang line that is only this block's FIRSTNAME.
+        if (teleporter?.CustomText is { Length: > 0 } customText) {
+            madlibList.Add(new MadlibArgT_WideByteString { m_madlibArgument = customText, m_madlibToken = "FIRSTNAME" });
         }
 
         _madlibBlock = new MadlibBlock() {

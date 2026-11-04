@@ -43,7 +43,7 @@ internal sealed partial class ManagerWindow {
     private readonly TextBlock _customsPageLine = Sub("");
     private Control? _customsList;
 
-    // What the open page shows ("mob", "new", "npc", "change", "hub" or "area") and which one of them; null on the list.
+    // What the open page shows ("mob", "new", "npc", "change", "hub", "portal" or "area") and which one of them; null on the list.
     private string? _customsPageKind;
     private string _customsPageKey = "";
     private Action? _customsPageClosed;
@@ -128,6 +128,7 @@ internal sealed partial class ManagerWindow {
         RenderNpcs();
         RenderNpcChanges();
         RenderHubs();
+        RenderPortals();
         RenderAreas();
     }
 
