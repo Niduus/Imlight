@@ -1919,19 +1919,31 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     /// A cheat's minion (or a custom's form): a creature, as that custom when customId is set, on the side of whoever's
     /// cheat it is (a player cheat's minion fights for the wizard).
     /// </summary>
-    internal CombatDuelSubCircle SpawnBossMinion(uint creatureTid, CombatDuelSubCircle boss, int customId)
-        => SpawnAndAssignMinion(creatureTid, boss, forEnemies: boss.OccupiedTeam == CombatTeam.Monster, customId: customId);
+    /// otherSide (Summon Minion's "the other side", Niduus 2026-11-04): it comes in on the side against whoever's cheat
+    /// it is instead (a wizard's cheat brings a creature to fight the wizards; a creature's cheat brings one to the
+    /// wizards' side, where it fights as their minion).
+    internal CombatDuelSubCircle SpawnBossMinion(uint creatureTid, CombatDuelSubCircle boss, int customId, bool otherSide = false) {
+        if (!otherSide) {
+            return SpawnAndAssignMinion(creatureTid, boss, forEnemies: boss.OccupiedTeam == CombatTeam.Monster, customId: customId);
+        }
+
+        var team = boss.OccupiedTeam == CombatTeam.Monster ? CombatTeam.Player : CombatTeam.Monster;
+
+        return SpawnAndAssignMinion(creatureTid, boss, forEnemies: team == CombatTeam.Monster, customId: customId, team: team);
+    }
 
     // forEnemies: .joinme puts the creature on the enemy side (it fights like a boss's minion).
     // customId: it comes in as that custom of the Customs tab (Customs.cs), 0 for the game's creature.
     // Returns the circle it took, or null.
+    // team: the side it comes in on, when that is not the caster's own (Summon Minion on the other side).
     private CombatDuelSubCircle SpawnAndAssignMinion(uint creatureTid, CombatDuelSubCircle caster, bool forEnemies = false,
-                                                     int customId = 0) {
+                                                     int customId = 0, CombatTeam? team = null) {
         // A PvE minion fights for the wizards whoever summoned it; in PvP it fights for its summoner.
-        var creatureSide = forEnemies || (Duel.m_bPVP && caster?.OccupiedTeam == CombatTeam.Monster);
+        var creatureSide = team is { } side ? side == CombatTeam.Monster : forEnemies || (Duel.m_bPVP && caster?.OccupiedTeam == CombatTeam.Monster);
         var slot = PassiveCircle(creatureSide,
                        BossCheats.CircleOf(BossCheats.For(customId > 0 ? Customs.Key(customId) : creatureTid)))
-            ?? (forEnemies ? GetAvailableSubCircleTeamCreature()
+            ?? (team is { } t ? GetAvailableSubCircle(t)
+                : forEnemies ? GetAvailableSubCircleTeamCreature()
                 : Duel.m_bPVP ? GetAvailableSubCircle(caster.OccupiedTeam) : GetAvailableSubCircleTeamPlayer());
         if (slot is null) {
             Logger.Information("Duel {0} | minion summon (tid {1}) skipped, no free slot on the side of the caster.",
@@ -1965,7 +1977,10 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         // An enemy minion belongs to the creature that brought it in, or (.joinme, from a wizard) the first enemy in the fight.
-        var owner = forEnemies && caster?.OccupiedTeam != CombatTeam.Monster
+        // One brought to the other side belongs to the first one standing there (a wizard, for the wizards' side).
+        var owner = team is { } own && caster?.OccupiedTeam != own
+            ? SubCircles.FirstOrDefault(c => c.Occupied && c.OccupiedTeam == own && c != slot)?.SlotIndex ?? slot.SlotIndex
+            : forEnemies && caster?.OccupiedTeam != CombatTeam.Monster
             ? SubCircles.FirstOrDefault(c => c.Occupied && c.OccupiedTeam == CombatTeam.Monster && c != slot)?.SlotIndex ?? slot.SlotIndex
             : caster?.SlotIndex ?? slot.SlotIndex;
         try {
@@ -1982,7 +1997,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         Logger.Information("Duel {0} | summoned minion tid {1} into {2}-team slot {3} (caught up next round).",
-            Logger.Args(Duel.m_duelID.Full, creatureTid, forEnemies ? "enemy" : "player", slot.SlotIndex));
+            Logger.Args(Duel.m_duelID.Full, creatureTid, creatureSide ? "enemy" : "player", slot.SlotIndex));
 
         return slot;
     }
