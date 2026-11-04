@@ -876,6 +876,102 @@ internal static class TieredSpells {
     }
 
     /// <summary>
+    /// Ahziael's Spells page "Max Spellements" and `.maxspellements` (Niduus, 2026-11-04: "so players can get all paths
+    /// for their trained spells more accessibly"): for every upgradable spell group the wizard already knows a spell of,
+    /// teaches every tier of every path for free (no Spellements taken). Retired tiers are skipped. The game is told
+    /// about the new spells, then only the latest tier of each path stays in its list, as after an upgrade. Deck copies
+    /// of a tier that was passed change into the top tier along the first path (A), like `.upgrade` does.
+    /// </summary>
+    /// <returns>How many groups got new tiers and how many tiers were taught.</returns>
+    internal static (int Groups, int Tiers, List<string> Names) MaxKnownGroups(IActorRef playerActor, Wizard wizard) {
+        var names = new List<string>();
+        if (!s_enabled || wizard is null) {
+            return (0, 0, names);
+        }
+
+        Load();
+        var groupsDone = 0;
+        var tiers = 0;
+        foreach (var group in KnownTieredSpells(wizard).Select(k => k.Group).Distinct().OrderBy(g => g).ToList()) {
+            string tierOne = Groups[group]?.m_tierOneSpell;
+            if (string.IsNullOrEmpty(tierOne)) {
+                continue;
+            }
+
+            var before = wizard.SpellbookBehavior.LearnedSpellTemplateIds?.ToHashSet() ?? [];
+            var learned = new List<uint>();
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var queue = new Queue<string>([tierOne]);
+            while (queue.Count > 0) {
+                var name = queue.Dequeue();
+                var id = TemplateIdOf(name);
+                if (!seen.Add(name) || id == 0 || CoreObjectFactory.GetCoreTemplate(id) is not TieredSpellTemplate template || template.m_retired) {
+                    continue;
+                }
+
+                if (!wizard.SpellbookBehavior.HasSpell(id) && SpellFactory.GetSpell(id) is { } spell && wizard.LearnSpell(spell)) {
+                    learned.Add(id);
+                }
+
+                foreach (var next in template.m_nextTierSpells ?? []) {
+                    queue.Enqueue((string) next);
+                }
+            }
+
+            if (learned.Count == 0) {
+                continue;
+            }
+
+            groupsDone++;
+            tiers += learned.Count;
+            names.Add(TierOneNameOf(tierOne));
+            if (playerActor is not null) {
+                foreach (var id in learned) {
+                    playerActor.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) id });
+                }
+
+                HideOlderTiersFromGame(playerActor, wizard, group);
+
+                // Deck cards of a tier that is now passed become the top tier of path A.
+                var top = TopOfFirstPath(tierOne);
+                var hidden = SpellsHiddenFromGame(wizard.SpellbookBehavior.LearnedSpellTemplateIds?.ToList() ?? []);
+                if (top != 0) {
+                    foreach (var id in before.Where(id => id != top && hidden.Contains(id) && GroupOfTemplate(id) == group)) {
+                        SwapInDecks(playerActor, wizard, id, top);
+                    }
+                }
+            }
+        }
+
+        if (tiers > 0) {
+            Logger.Information("Spell upgrades | {0}: Max Spellements taught {1} tiers in {2} spells.",
+                Logger.Args(wizard.PlayerNameBehavior?.GetWizardName(), tiers, groupsDone));
+        }
+
+        return (groupsDone, tiers, names);
+    }
+
+    // The last tier along the first path (A) from a tier one spell, or 0.
+    private static uint TopOfFirstPath(string tierOne) {
+        var name = tierOne;
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        while (seen.Add(name)) {
+            if (CoreObjectFactory.GetCoreTemplate(TemplateIdOf(name)) is not TieredSpellTemplate template) {
+                break;
+            }
+
+            var next = NextTiers(template).OrderBy(n => n.Name, StringComparer.OrdinalIgnoreCase).FirstOrDefault();
+            if (next.Template is null) {
+                break;
+            }
+
+            name = next.Name;
+        }
+
+        return TemplateIdOf(name);
+    }
+
+    /// <summary>
     /// What it still costs to max every spell tree on the wizard's upgrade page (`.spellements full`): every tier of
     /// every path of each group that shows, less the tiers already known (and the tiers before them). Groups that use
     /// the same Spellement are added together. Returns Spellement -> (Spellements still needed, groups counted).

@@ -17,6 +17,8 @@
  */
 
 using System;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Imlight.CoreLib.Auth;
@@ -152,6 +154,56 @@ internal class CommandUpgradeProtocol : CommandProtocol {
         InformSenderClient(given == 0
             ? $"Your Spellements are now {each} for each upgradable spell you know (or you know none)."
             : $"Your Spellements are now {each} for each upgradable spell you know ({given} given).");
+    }
+
+    // Ahziael's Spells page "Max Spellements": every tier of every path of each upgradable spell you know, free.
+    [Command("maxspellements")]
+    [Alias("maxspellement")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void MaxSpellementsCommand() {
+        var wizard = Context.Character;
+        var (groups, tiers, names) = TieredSpells.MaxKnownGroups(Context.SessionActor, wizard);
+        string message;
+        if (!TieredSpells.Enabled) {
+            message = "Spell upgrades are turned off on this server ([SpellUpgrades] Enabled).";
+        }
+        else if (TieredSpells.KnownTieredSpells(wizard).Count == 0) {
+            message = "You know no upgradable spells yet. Train Fire Cat, Thunder Snake, Frost Beetle or another upgradable spell first.";
+        }
+        else if (tiers == 0) {
+            message = "Every path of every upgradable spell you know is already unlocked.";
+        }
+        else {
+            message = $"Unlocked every path of {groups} spell(s), {tiers} new tier(s): {string.Join(", ", names)}. "
+                + "Your spellbook now shows the top tier of each path; no Spellements were taken.";
+        }
+
+        WriteMaxResult(wizard, groups, tiers, names, message);
+        InformSenderClient(message, tiers > 0);
+    }
+
+    private static void WriteMaxResult(Wizard wizard, int groups, int tiers, System.Collections.Generic.List<string> names, string message) {
+        if (wizard is null) {
+            return;
+        }
+
+        try {
+            var text = new StringBuilder()
+                .Append("written\t").Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).Append('\n')
+                .Append("groups\t").Append(groups.ToString(CultureInfo.InvariantCulture)).Append('\n')
+                .Append("tiers\t").Append(tiers.ToString(CultureInfo.InvariantCulture)).Append('\n')
+                .Append("message\t").Append(message.Replace('\t', ' ').Replace('\n', ' ')).Append('\n');
+            foreach (var name in names) {
+                text.Append("spell\t").Append(name.Replace('\t', ' ')).Append('\n');
+            }
+
+            Directory.CreateDirectory("fast-forward");
+            var path = Path.Combine("fast-forward", wizard.CharId.ToString(CultureInfo.InvariantCulture) + "-maxspellements-result.txt");
+            File.WriteAllText(path + ".tmp", text.ToString());
+            File.Move(path + ".tmp", path, overwrite: true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+        }
     }
 
     // .spellements full: tops each Spellement up to what maxing every tree on the upgrade page still costs. Nothing is
