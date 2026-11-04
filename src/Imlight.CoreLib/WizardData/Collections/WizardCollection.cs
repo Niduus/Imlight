@@ -419,6 +419,14 @@ public static class WizardCollection {
     }
 
     /// <summary>
+    /// Saves the wizard's school (.changeschool).
+    /// </summary>
+    public static void UpdateCharacterSchool(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter =>
+            existingCharacter.MagicSchoolBehavior.MagicSchool = wizard.MagicSchoolBehavior.MagicSchool);
+    }
+
+    /// <summary>
     /// Updates the character mount for a wizard.
     /// </summary>
     /// <param name="wizard">The wizard whose character mount is being updated.</param>

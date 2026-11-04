@@ -219,6 +219,16 @@ internal static class VanillaTrainers {
         return value >= 1 && value <= (ulong) s_schools.Length ? s_schools[value - 1] : null;
     }
 
+    /// <summary>
+    /// Forgets the wizard's secondary school when it is this school (it became their own with .changeschool), so they
+    /// can pick another one at a trainer.
+    /// </summary>
+    internal static void ForgetSecondaryIf(Wizard wizard, string school) {
+        if (string.Equals(SecondarySchoolOf(wizard), school, StringComparison.OrdinalIgnoreCase)) {
+            wizard.RemoveRegistryValue(SECONDARY_SCHOOL_KEY);
+        }
+    }
+
     private static string FindSecondary(Need need)
         => need.Class == "SecondarySchool" && !need.Not ? need.School
          : need.Items?.Select(FindSecondary).FirstOrDefault(s => s is not null);

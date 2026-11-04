@@ -920,6 +920,9 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             case "removespells":
                 CommandRemoveSpells(wizard);
                 return;
+            case "changeschool":
+                CommandChangeSchool(wizard, questName);
+                return;
             case "stuck":
                 CommandStuck(wizard);
                 return;

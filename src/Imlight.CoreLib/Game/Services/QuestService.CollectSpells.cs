@@ -212,7 +212,9 @@ internal partial class QuestService {
     // The spells of the wizard's finished quests, and of quests at or below their level they have not done, main story
     // ones too: a wizard levelled by command has done none (a quest with no level of its own is often a later step of a
     // higher chain, so it is left out).
-    private void CollectQuestSpells(Wizard wizard, bool finished, bool side, List<(string Spell, string From)> taught) {
+    // A quest made for another school is left out even when finished (the wizard changed school with .changeschool).
+    // With only, just the spells it lets through are taught.
+    private void CollectQuestSpells(Wizard wizard, bool finished, bool side, List<(string Spell, string From)> taught, Func<uint, bool> only = null) {
         var done = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var (key, value) in wizard.QuestBehavior?.Registry.ToArray() ?? []) {
             if (value != 0 && key.EndsWith(COMPLETE_SUFFIX, StringComparison.Ordinal)) {
@@ -228,11 +230,15 @@ internal partial class QuestService {
             }
 
             var isDone = done.Contains(name);
-            if (!(isDone && finished || !isDone && side && quest.m_questLevel > 0 && quest.m_questLevel <= level && ForSchool(quest, school))) {
+            if (!(isDone && finished || !isDone && side && quest.m_questLevel > 0 && quest.m_questLevel <= level) || !ForSchool(quest, school)) {
                 continue;
             }
 
             foreach (var spell in SpellResultsOf(quest)) {
+                if (only is not null && !only(spell.m_templateID)) {
+                    continue;
+                }
+
                 if (spell.m_requirements?.m_requirements is { Count: > 0 } && !RequirementDispatcher.EvaluateRequirements(spell.m_requirements,
                         new GenericRequirementContext(spell.m_requirements, SessionActor.ActorRef, GetActiveGameObject(), wizard))) {
                     continue;
@@ -268,13 +274,14 @@ internal partial class QuestService {
     // The game trainers' spells the wizard may train now: free ones (their own school's, and any other free school
     // spell) and, with paid, the ones that cost training points while they have enough, paid as at the trainer.
     // Fishing, gardening and monster magic are left out. Returns the training points spent.
-    private int CollectTrainerSpells(Wizard wizard, bool free, bool paid, List<(string Spell, string From)> taught) {
+    private int CollectTrainerSpells(Wizard wizard, bool free, bool paid, List<(string Spell, string From)> taught, Func<uint, bool> only = null) {
         var spells = SchoolTrainerSpells();
         var spent = 0;
         for (var round = 0; round < COLLECT_TRAINER_ROUNDS; round++) {
             var learned = 0;
             foreach (var (trainer, spell) in spells) {
-                if (wizard.SpellbookBehavior.HasSpell(spell.Id) || CoreObjectFactory.GetCoreTemplate(spell.Id) is not SpellTemplate template) {
+                if (wizard.SpellbookBehavior.HasSpell(spell.Id) || CoreObjectFactory.GetCoreTemplate(spell.Id) is not SpellTemplate template
+                    || only is not null && !only(spell.Id)) {
                     continue;
                 }
 
