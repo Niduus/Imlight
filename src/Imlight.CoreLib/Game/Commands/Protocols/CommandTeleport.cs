@@ -35,23 +35,15 @@ internal class CommandTeleport : CommandProtocol {
         "gm", "gmisland", "gm_island", "gmis", "gm_is", "gm_isl", "gm_isla", "gm_islan", "gm_island"
     ];
 
+    // .tp takes a zone's code name (WizardCity/WC_Streets/WC_Unicorn, or just WC_Unicorn) or the name players know it by
+    // (Unicorn Way), with small typos forgiven (Niduus, 2026-11-04: ".tp able to read either"). Database > Locations
+    // in the Manager lists both names of every zone.
     [Command("teleport")]
     [Alias("tp", "port")]
     [AuthRequired(AuthLevel.QualityAssurance)]
-    private void TeleportCommand(string zone) {
-        var actualZoneName = zone;
-        if (!s_gmIslandShortcutNames.Any(x => x == zone)) {
-            // Fallback to the zone name that is contained in the zone name.
-            actualZoneName = AccessPassManager.GetContainedZoneName(zone);
-
-            if (actualZoneName == null | actualZoneName == "") {
-                Logger.Warning("Teleport command was given an invalid zone name {0}", Logger.Args(zone));
-                InformSenderClient($"Zone {zone} does not exist.");
-
-                return;
-            }
-        }
-        else if (s_gmIslandShortcutNames.Any(x => x == zone)) {
+    private void TeleportCommand([Remainder] string zone) {
+        zone = (zone ?? "").Trim();
+        if (s_gmIslandShortcutNames.Any(x => x.Equals(zone, System.StringComparison.OrdinalIgnoreCase))) {
             // Check the account auth level to see if they can teleport to the GM Island.
             if (Context.Account.AuthLevel < AuthLevel.HallMonitor) {
                 InformSenderClient($"Zone {zone} does not exist.");
@@ -59,10 +51,37 @@ internal class CommandTeleport : CommandProtocol {
                 return;
             }
 
-            actualZoneName = s_gmIslandZoneName;
+            SendTo(s_gmIslandZoneName);
+
+            return;
         }
 
-        SendTo(actualZoneName);
+        if (ZoneNames.Find(zone) is not { } match) {
+            Logger.Warning("Teleport command was given an invalid zone name {0}", Logger.Args(zone));
+            InformSenderClient($"No place is called {zone}. Type its name (such as Unicorn Way) or its code name (such as WC_Unicorn). " +
+                "Ahziael's Database > Locations lists every place with both names.");
+
+            return;
+        }
+
+        var target = match.Zone;
+        var shown = target.Name.Length > 0 ? $"{target.Name} ({target.Code})" : target.Code;
+        var same = match.Others.Count(z => z.Name.Length > 0 && z.Name.Equals(target.Name, System.StringComparison.OrdinalIgnoreCase));
+        if (match.How == "code name" || match.Others.Count == 0) {
+            InformSenderClient($"Going to {shown}.");
+        }
+        else if (match.How == "name" && same > 0) {
+            InformSenderClient($"Going to {shown}. {same} more place{(same == 1 ? " is" : "s are")} also called {target.Name}, " +
+                "such as " + string.Join(", ", match.Others.Take(3).Select(z => z.Tail)) + ". To go to one of those, type .tp with its code name.");
+        }
+        else {
+            InformSenderClient($"Going to {shown}, the closest match for {zone}. Others: " +
+                string.Join(", ", match.Others.Take(3).Select(z => z.Name.Length > 0 ? $"{z.Name} ({z.Tail})" : z.Tail)) +
+                (match.Others.Count > 3 ? $" and {match.Others.Count - 3} more." : "."));
+        }
+
+        Logger.Information("Teleport {0} -> {1} (by {2}).", Logger.Args(zone, target.Code, match.How));
+        SendTo(target.Code);
     }
 
     // The Manager's quest step buttons: right to where a step of a quest happens (Game/Tools/QuestStepSpots), even when

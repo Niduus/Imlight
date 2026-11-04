@@ -37,6 +37,7 @@
   <ItemGroup>
     <!-- What a spell name covers in a cheat ("Scald" is every Scald), the same file the server uses. -->
     <Compile Include="..\Imlight.CoreLib\Game\Combat\SpellNameFamily.cs" Link="Shared\SpellNameFamily.cs" />
+    <Compile Include="..\Imlight.CoreLib\Game\World\ZoneNameMatch.cs" Link="Shared\ZoneNameMatch.cs" />
     <Compile Include="..\Imlight.CoreLib\Game\Combat\CheatLookalikes.cs" Link="Shared\CheatLookalikes.cs" />
     <Compile Include="..\Imlight.CoreLib\Game\Combat\CheatDisplay.cs" Link="Shared\CheatDisplay.cs" />
     <!-- The [Trainers] TrainingPointRules words, read and written the same way the server reads them. -->

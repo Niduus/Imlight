@@ -448,6 +448,65 @@ internal static class QuestGuide {
         return text.Replace('|', ',').Trim();
     }
 
+    /// <summary>A step in plain words ("Talk to Headmaster Ambrose", "Defeat 3 Rattlebones"), for the .questbook command.</summary>
+    internal static string StepText(GoalTemplate goal) {
+        if (goal is null) {
+            return "";
+        }
+
+        try {
+            NpcDetails npc = null;
+            if (goal is PersonaGoalTemplate persona
+                && CoreObjectFactory.GetCoreTemplate(QuestMadlibs.SpeakerTemplateOf(persona.m_personaName, 0)) is GameObjectTemplate template) {
+                npc = new NpcDetails(0, NameOf(template), "", "");
+            }
+
+            return DescribeGoal(goal, npc).Text;
+        }
+        catch (Exception) {
+            return (string) goal.m_goalName ?? "";
+        }
+    }
+
+    /// <summary>A quest's English title, or its code when the game has none.</summary>
+    internal static string QuestTitle(QuestTemplate quest) => quest is null ? "" : TitleOf(quest);
+
+    // Quests whose needs include this one: what opens once it is done (cached, rebuilt when the Quest Editor changes quests).
+    private static Dictionary<string, List<QuestTemplate>> s_opensNext;
+    private static int s_opensNextVersion = -1;
+
+    /// <summary>The quests that need this one, main story first (what comes next once it is done).</summary>
+    internal static List<QuestTemplate> QuestsAfter(string questName) {
+        try {
+            var version = Quests.QuestOptions.Version;
+            var map = s_opensNext;
+            if (map is null || s_opensNextVersion != version) {
+                map = new Dictionary<string, List<QuestTemplate>>(StringComparer.OrdinalIgnoreCase);
+                foreach (var quest in QuestTemplateCollection.GetAllQuests()
+                             .Where(q => q is not null && !string.IsNullOrEmpty(q.m_questName) && !Quests.QuestOptions.IsOff(q.m_questName))) {
+                    foreach (var need in NeededQuests(quest.m_requirements).Distinct(StringComparer.OrdinalIgnoreCase)) {
+                        if (!map.TryGetValue(need, out var list)) {
+                            map[need] = list = [];
+                        }
+
+                        if (!list.Any(q => q.m_questName == quest.m_questName)) {
+                            list.Add(quest);
+                        }
+                    }
+                }
+
+                (s_opensNext, s_opensNextVersion) = (map, version);
+            }
+
+            return map.TryGetValue(questName ?? "", out var after)
+                ? [.. after.OrderByDescending(q => IsMain(q.m_questName))]
+                : [];
+        }
+        catch (Exception) {
+            return [];
+        }
+    }
+
     private static int GoalCount(GoalTemplate goal) => goal switch {
         BountyGoalTemplate { m_bountyTotal: > 0 } bounty => bounty.m_bountyTotal,
         ScavengeGoalTemplate { m_itemTotal: > 0 } scavenge => scavenge.m_itemTotal,

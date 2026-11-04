@@ -377,6 +377,8 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Commands", CommandsTab),
             Tab(WIKI, WikiTab),
             Tab("Lookup", LookupTab),
+            Tab(LOCATIONS, LocationsTab),
+            Tab("My Quests", MyQuestsTab),
             Tab("Quests", QuestsTab),
             Tab("Phrases", PhrasesTab),
             Tab("Spells", SpellsTab),
@@ -520,6 +522,7 @@ internal sealed partial class ManagerWindow : Window {
             case "Lookup": await LoadLookupAsync(); break;
             case WIKI: await LoadWikiAsync(); break;
             case "Quests": LoadQuests(); break;
+            case "My Quests": LoadMyQuests(force: true); break;
             case "Vendors": await LoadVendorsAsync(); break;
             case "On and Off": await LoadTurnedOffAsync(); break;
             case "Animations": await LoadAnimationsAsync(); break;
@@ -564,6 +567,7 @@ internal sealed partial class ManagerWindow : Window {
         }
 
         _questTimer.IsEnabled = shownTab == "Quests";
+        _mqTimer.IsEnabled = shownTab == "My Quests";
         _sqTimer.IsEnabled = shownTab == "Spell Quests";
 
         _logTabShown = shownTab == "Logs";
@@ -2842,7 +2846,9 @@ internal sealed partial class ManagerWindow : Window {
         ["Play"] = ("play", "Play Wizard101 on your server, on a friend's, or with friends."),
         ["Commands"] = ("terminal", "Every chat command the server knows, ready to copy."),
         ["Wiki"] = ("book", "Look up any creature, spell or item like a wiki: a creature's school, rank, health, places, spells, cheats and drops; who casts or teaches a spell; who drops or sells an item."),
+        ["Locations"] = ("map", "Every place of the game by the name players know (Unicorn Way) and its code name (WC_Unicorn), with a Teleport button. .tp takes either."),
         ["Lookup"] = ("search", "Find any command, item, spell, creature, zone or quest and its ID."),
+        ["My Quests"] = ("flag", "Your quest book and the story as a path: the step you are on, what comes next, and buttons to go there, complete a step or finish a quest. Updates by itself while you play."),
         ["Quests"] = ("flag", "Which quests your wizard has done and which come next, with Start and Teleport buttons."),
         ["Phrases"] = ("quote", "Every line of the game's text, by number, for .ca and boss cheat lines."),
         ["Spells"] = ("cards", "Every spell card, as the game draws it."),
