@@ -1408,6 +1408,7 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         Imlight.CoreLib.Game.Tools.QuestGuide.Update(wizard, CommandService.IsThisPcCached(SessionActor.RemoteIp));
         Imlight.CoreLib.Game.World.WorldAccess.Remember(wizard);
         RefreshTutorialTips(wizard);
+        RefreshQuestFinder(wizard);
     }
 
     // Tips waiting on a quest show once it is done; the rest stay held back (TutorialTipGate).

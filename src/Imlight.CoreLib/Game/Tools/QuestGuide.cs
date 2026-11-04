@@ -653,6 +653,36 @@ internal static class QuestGuide {
         return AccessPassManager.GetContainedZoneName(zone) ?? "";
     }
 
+    // Where each NPC stands (as PersonaZones), worked out once for each set of quest changes.
+    private static Tuple<int, Dictionary<string, string>> s_personaZones = Tuple.Create(-1, new Dictionary<string, string>());
+    private static readonly object s_personaZonesLock = new();
+
+    /// <summary>
+    /// The zone the giver of this quest stands in, as a "talk to" step of some quest names it, or "" when no step does.
+    /// The spellbook's Quest Finder uses it to point at givers in other zones.
+    /// </summary>
+    internal static string GiverZone(QuestTemplate quest) {
+        var npc = QuestMadlibs.GiverTemplateOf(quest);
+        if (npc == 0 || CoreObjectFactory.GetCoreTemplate(npc) is not GameObjectTemplate template) {
+            return "";
+        }
+
+        var known = s_personaZones;
+        if (known.Item1 != Quests.QuestOptions.Version) {
+            lock (s_personaZonesLock) {
+                known = s_personaZones;
+                var version = Quests.QuestOptions.Version;
+                if (known.Item1 != version) {
+                    _ = AccessPassManager.Zones;
+                    known = Tuple.Create(version, PersonaZones([.. QuestTemplateCollection.GetAllQuests().Where(q => q is not null)]));
+                    s_personaZones = known;
+                }
+            }
+        }
+
+        return known.Item2.TryGetValue(PersonaKey(template.m_objectName), out var zone) ? zone : "";
+    }
+
     private static (string Giver, string Zone, string From) GiverOf(QuestTemplate quest, Dictionary<string, string> personaZones) {
         var templateId = QuestMadlibs.GiverTemplateOf(quest);
         var npc = templateId == 0 ? null : CoreObjectFactory.GetCoreTemplate(templateId) as GameObjectTemplate;

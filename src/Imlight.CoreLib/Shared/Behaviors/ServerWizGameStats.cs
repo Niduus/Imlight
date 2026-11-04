@@ -56,6 +56,10 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
     public bool m_invisibleToFriends;
     public bool m_showItemLock;
     public bool m_questFinderEnabled;
+    // The player turned the spellbook's Quest Finder off in the game's options. It is on otherwise, as on live; the game
+    // only asks for it (MSG_ADDQUESTFINDER) when the stats say it is on, and they always said off (Niduus, 2026-11-04:
+    // "no quest finder in book").
+    public bool m_questFinderOff;
     public int m_buddyListLimit;
     public bool m_dontAllowFriendFinderCodes;
     public bool m_shadowMagicUnlocked;
@@ -363,7 +367,7 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
             m_showItemLock = m_showItemLock,
             // Castle space; never sent before, while equipping a castle did nothing (Niduus, 2026-10-22).
             m_maximumNumberOfIslands = Imlight.CoreLib.Game.Housing.HousingSettings.CastleSpace,
-            m_questFinderEnabled = m_questFinderEnabled,
+            m_questFinderEnabled = !m_questFinderOff,
             m_buddyListLimit = m_buddyListLimit,
             m_dontAllowFriendFinderCodes = m_dontAllowFriendFinderCodes,
             // The client shows the Spell Deck's Shadow tab from this, so it is on whenever shadow pips are on
