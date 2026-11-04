@@ -307,11 +307,13 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // Harvest Lord's battle and stood there).
         // A boss standing in the circle as the battle is made is part of the same fight and joins it before the first
         // round (Niduus, 2026-10-23: the Fairy Queen stood beside Rattlebones in the Rattlebones Exalted Challenge and
-        // never came in, "it is a boss"). Only once the rounds have begun is a boss that walks in turned away.
-        var bossOfThisFight = npc.IsBossMonster && Duel.m_roundNum == 0;
-        if (_tutorialDirector.IsActive || _encounter is not null || _encounterBattleCounted || (npc.IsBossMonster && !bossOfThisFight)) {
-            Refused(_tutorialDirector.IsActive ? "tutorial battle" : npc.IsBossMonster ? "it is a boss"
-                : "the battle has its own minions");
+        // never came in, "it is a boss"). A boss that walks in once the rounds have begun joins too, or vanishes like
+        // any monster when it can't: turned away, it stood on the circle outside the fight (Niduus, 2026-11-04: two
+        // Krokomummies in the Throne Room of Fire came 0.7 s after round 1 began, "They should be in the battle or
+        // despawn").
+        var bossOfThisFight = npc.IsBossMonster;
+        if (_tutorialDirector.IsActive || _encounter is not null || _encounterBattleCounted) {
+            Refused(_tutorialDirector.IsActive ? "tutorial battle" : "the battle has its own minions");
 
             return;
         }
@@ -334,7 +336,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // monster that walks into a full battle vanishes ("They should despawn upon hitting the battle if it's full")
         // and its spawner brings it back later, instead of walking through the fight. A boss fight's own group (the
         // boss, and anyone standing in the circle with it before the first round) is not cut down by this rule.
-        var bossGroup = Duel.m_roundNum == 0 && (bossOfThisFight || HasBossInBattle());
+        var bossGroup = bossOfThisFight || (Duel.m_roundNum == 0 && HasBossInBattle());
         if (bossGroup ? GetAvailableSubCircleTeamCreature() is null : !IsSlotAvailable(CombatTeam.Monster)) {
             Refused(bossGroup ? $"the enemy side is full ({CreatureCount} monsters); it vanishes"
                 : s_maxMonsters is >= 1 and <= 4 ? $"the battle is full ({CreatureCount} monsters, MaxMonsters is {s_maxMonsters}); it vanishes"
