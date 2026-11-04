@@ -23,11 +23,20 @@ internal sealed partial class ManagerWindow {
     private DateTime _ubSent;
     private bool _ubFilling;
 
+    // Max Spellements (Niduus, 2026-11-04: "so players can get all paths for their trained spells more accessibly"):
+    // sends '.maxspellements' to the picked wizard; the server (TieredSpells.MaxKnownGroups) teaches every tier of every
+    // path of the upgradable spells it knows and writes fast-forward/<wizard id>-maxspellements-result.txt, shown here.
+    private readonly StackPanel _msResult = new() { Spacing = 2 };
+    private readonly DispatcherTimer _msTimer = new() { Interval = TimeSpan.FromSeconds(2) };
+    private DateTime _msSent;
+
     private Control UnlearnBossRow() {
         _ubTimer.Tick += (_, _) => ReadUnlearnBossResult();
+        _msTimer.Tick += (_, _) => ReadMaxSpellementsResult();
         _ubWizard.SelectionChanged += (_, _) => {
             if (!_ubFilling) {
                 ReadUnlearnBossResult();
+                ReadMaxSpellementsResult();
             }
         };
 
@@ -35,13 +44,20 @@ internal sealed partial class ManagerWindow {
         ToolTip.SetTip(go, "Takes every boss spell (Merle Ambrose's list) and dev/test spell out of the picked wizard's spellbook " +
                            "and decks, and gives back the training points they cost. Start the server and log in with that wizard on this PC first.");
 
+        var max = Primary("Max Spellements");
+        ToolTip.SetTip(max, "Unlocks every tier of every path (A, B, ...) of each upgradable spell the picked wizard has already trained, " +
+                            "such as Fire Cat or Thunder Snake, without spending Spellements. Start the server and log in with that wizard on this PC first.");
+
         var panel = new StackPanel {
             Spacing = 6,
             Children = {
-                WithHint(new WrapPanel { Children = { Spaced(_ubWizard), Spaced(Action(go, StartUnlearnBossAsync)) } },
+                WithHint(new WrapPanel { Children = { Spaced(_ubWizard), Spaced(Action(go, StartUnlearnBossAsync)), Spaced(Action(max, StartMaxSpellementsAsync)) } },
                     "Tested boss or dev spells and want your wizard legit again? Pick the wizard and press Unlearn dev/boss spells. " +
-                    "Only boss and dev spells go: spells from quests, trainers and drops stay. In the game, .unlearnboss does the same."),
+                    "Only boss and dev spells go: spells from quests, trainers and drops stay. In the game, .unlearnboss does the same. " +
+                    "Max Spellements unlocks every tier of every path of the upgradable spells the wizard has already trained, for free. " +
+                    "In the game, .maxspellements does the same."),
                 _ubResult,
+                _msResult,
             },
         };
         panel.AttachedToVisualTree += (_, _) => LoadUnlearnBossWizards();
@@ -58,6 +74,7 @@ internal sealed partial class ManagerWindow {
         _ubWizard.SelectedItem = wizards.FirstOrDefault(w => w.Id == picked) ?? (wizards.Count == 1 ? wizards[0] : null);
         _ubFilling = false;
         ReadUnlearnBossResult();
+        ReadMaxSpellementsResult();
     }
 
     private async Task StartUnlearnBossAsync() {
@@ -143,6 +160,78 @@ internal sealed partial class ManagerWindow {
                     TextWrapping = TextWrapping.Wrap, Foreground = MUTED,
                 });
             }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+        }
+    }
+
+    private Task StartMaxSpellementsAsync() {
+        if (_ubWizard.SelectedItem is not FfWizard wizard) {
+            throw new PanelException("Pick a wizard first. The list fills once that wizard has played on your server.");
+        }
+
+        var name = wizard.Name.Length > 0 ? wizard.Name : "this wizard";
+        TryDeleteFile(Path.Combine(_manager.ServerFolder, FF_FOLDER, wizard.Id + "-maxspellements-result.txt"));
+        _manager.SendCommand(".maxspellements", wizard.Id);
+        _msSent = DateTime.UtcNow;
+        _msResult.Children.Clear();
+        _msResult.Children.Add(Sub("Max Spellements sent. The game's chat says when it is done."));
+        _msTimer.Start();
+        Say($"Max Spellements sent for {name}.");
+
+        return Task.CompletedTask;
+    }
+
+    private void ReadMaxSpellementsResult() {
+        _msResult.Children.Clear();
+        if (_ubWizard.SelectedItem is not FfWizard wizard) {
+            return;
+        }
+
+        var path = Path.Combine(_manager.ServerFolder, FF_FOLDER, wizard.Id + "-maxspellements-result.txt");
+        try {
+            if (!File.Exists(path)) {
+                if (_msSent == default) {
+                    return;
+                }
+
+                if (DateTime.UtcNow - _msSent > TimeSpan.FromSeconds(30)) {
+                    _msTimer.Stop();
+                    _msSent = default;
+                    _msResult.Children.Add(new TextBlock {
+                        Text = $"Nothing happened yet. Is {(wizard.Name.Length > 0 ? wizard.Name : "the wizard")} logged in on this PC, " +
+                               "with the server running? Log in and press Max Spellements again.",
+                        TextWrapping = TextWrapping.Wrap, Foreground = WARN,
+                    });
+                }
+                else {
+                    _msResult.Children.Add(Sub("Waiting for the server..."));
+                }
+
+                return;
+            }
+
+            _msTimer.Stop();
+            _msSent = default;
+            string when = "", message = "";
+            foreach (var line in File.ReadLines(path)) {
+                var parts = line.Split('\t', 2);
+                if (parts.Length < 2) {
+                    continue;
+                }
+
+                if (parts[0] == "written") {
+                    when = parts[1];
+                }
+                else if (parts[0] == "message") {
+                    message = parts[1];
+                }
+            }
+
+            _msResult.Children.Add(new TextBlock {
+                Text = $"Max Spellements last time: {message}{(when.Length > 0 ? $"  ·  {when}" : "")}",
+                TextWrapping = TextWrapping.Wrap, Foreground = MUTED,
+            });
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
         }
