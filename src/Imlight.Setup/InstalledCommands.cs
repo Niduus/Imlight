@@ -62,6 +62,7 @@ internal static class InstalledCommands {
     /// </summary>
     internal static async Task<int> StartAsync(string installFolder, bool noWait = false) {
         Console.Title = Edition.NAME;
+        AppLogs.Start(installFolder);
         var serverExe = ServerExe(installFolder);
         if (!File.Exists(serverExe)) {
             return Fail($"Imlight is not installed in this folder yet. Run {Edition.RELEASE_ASSET} first.");
@@ -90,6 +91,9 @@ internal static class InstalledCommands {
         Console.WriteLine();
         if (server.ExitCode != 0) {
             ShowLastErrors(installFolder);
+            if (AppLogs.ServerStopped(installFolder, server.ExitCode, Path.Combine(ServerFolder(installFolder), "logs")) is { } report) {
+                Console.WriteLine($"A crash report was saved in {report}.");
+            }
         }
 
         Console.WriteLine($"The server stopped (exit code {server.ExitCode}). Its log is in {Path.Combine(ServerFolder(installFolder), "logs")}.");

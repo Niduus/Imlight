@@ -56,7 +56,9 @@ internal sealed class ManagerApp : Application {
         }
 
         s_manager = manager;
+        AppLogs.Start(installFolder);
         var exitCode = 0;
+        var crashed = false;
 
         // The window needs a thread of its own that Windows treats as a UI thread.
         var ui = new Thread(() => {
@@ -64,8 +66,10 @@ internal sealed class ManagerApp : Application {
                 BuildApp().StartWithClassicDesktopLifetime([]);
             }
             catch (Exception ex) {
+                AppLogs.Error($"The {Edition.NAME} window stopped", ex);
                 Console.WriteLine($"The {Edition.NAME} window could not be opened: {ex.Message}");
                 exitCode = 1;
+                crashed = true;
             }
         });
         if (OperatingSystem.IsWindows()) {
@@ -75,7 +79,9 @@ internal sealed class ManagerApp : Application {
         ui.Start();
         ui.Join();
         RemoteSession.Deactivate();
-        if (!KeepServerRunning) {
+        // A window that stopped because of an error leaves the server running: players stay in the game, and opening
+        // Ahziael again shows it (a tester's server stopped each time Ahziael did, 2026-11-09).
+        if (!KeepServerRunning && !crashed) {
             manager.StopServer();
         }
 
@@ -83,7 +89,19 @@ internal sealed class ManagerApp : Application {
     }
 
     internal static AppBuilder BuildApp()
-        => AppBuilder.Configure<ManagerApp>().UsePlatformDetect().WithInterFont();
+        => AppBuilder.Configure<ManagerApp>().UsePlatformDetect().WithInterFont().AfterSetup(_ => KeepWindowOnErrors());
+
+    /// <summary>
+    /// An error inside the window (a button, a list, a page) is written to Logs\Ahziael and shown in a line, and the
+    /// window stays open: before, any mistake in a page closed the whole app and stopped the server with it.
+    /// </summary>
+    private static void KeepWindowOnErrors() {
+        Avalonia.Threading.Dispatcher.UIThread.UnhandledException += (_, e) => {
+            AppLogs.Error("An error in the window (Ahziael kept running)", e.Exception);
+            e.Handled = true;
+            ManagerWindow.ShowError(e.Exception);
+        };
+    }
 
     /// <summary>For tests, which show the window themselves.</summary>
     internal static void UseManager(ServerManager manager) => s_manager = manager;

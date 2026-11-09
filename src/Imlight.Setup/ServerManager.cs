@@ -187,6 +187,7 @@ internal sealed partial class ServerManager(string installFolder) {
         }
 
         AnnounceBeforeStop(notice ?? StopNotice ?? "The server is shutting down now. You will be disconnected.");
+        AppLogs.ServerStopAsked(InstallFolder);
         var exe = Path.GetFullPath(InstalledCommands.ServerExe(InstallFolder));
         var stopped = 0;
         foreach (var process in Process.GetProcessesByName(Path.GetFileNameWithoutExtension(exe))) {
