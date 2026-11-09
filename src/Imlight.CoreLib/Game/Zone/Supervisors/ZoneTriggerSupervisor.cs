@@ -42,7 +42,7 @@ namespace Imlight.CoreLib.Game.Zone.Supervisors;
 /// <param name="zone">The zone that this supervisor is responsible for.</param>
 /// <remarks>Triggers are any event that can happen within a zone. Zone transfers, POI
 /// text, etc.</remarks>
-internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervisor(zone) {
+internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervisor(zone) {
 
     private static bool s_randomizeGateways => ConfigurationManager.Settings["April Fools.RandomizeGateways"].AsBool();
 
@@ -119,6 +119,11 @@ internal sealed class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntitySupervis
         // Client wads pair multiple triggers on the same event; every passing trigger fires
         // (their results are independent), but paired teleporter triggers must not both win:
         // only one ResTeleport trigger may execute (see PickTeleportTrigger).
+        // A boss that only a live cutscene would bring out is brought out for a wizard who comes to fight it.
+        if (message.EventName == START_ZONE_ENTER_EVENT && message.PlayerActor is not null) {
+            ScheduleWaitingSpawnCheck(message.PlayerActor, message.PlayerGameObject);
+        }
+
         var passing = new List<(Trigger Trigger, IActorRef Actor)>();
         HashSet<string> retry = null;
         if (message.RetryRefused && (message.PlayerActor is null || !_refusedOnEntry.Remove(message.PlayerActor, out retry))) {

@@ -1,0 +1,3 @@
+Fixed: Morganthe shows up for her fight in the Shadow Palace
+In Morganthe's Chamber she only stood there talking and the fight never started, because her room waits for the end of a cutscene the game files never send. The server now sends it for a wizard who has the "Defeat Morganthe" step, so the four Morganthes appear a few seconds after you walk in. The same goes for any other boss room that waits on a cutscene like this before its boss appears.
+Test: With "Defeat Morganthe in Shadow Palace" in your quest book, walk into Morganthe's Chamber, wait a few seconds and walk up to her: the battle should start. Already standing in the room? Leave and come back in.
