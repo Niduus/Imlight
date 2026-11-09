@@ -77,6 +77,16 @@ internal sealed partial class ManagerWindow {
             return;
         }
 
+        // The version used before this update, for the What's New page's "Since your last update".
+        if (seen is not null) {
+            try {
+                await File.WriteAllTextAsync(Path.Combine(_manager.InstallFolder, NOTES_PREVIOUS), seen.ToString());
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                // The page then shows every version instead.
+            }
+        }
+
         // Turned off: the version still counts as seen, so turning it back on shows only the next update's.
         if (WhatsNewPopupOff) {
             try {
@@ -120,7 +130,7 @@ internal sealed partial class ManagerWindow {
 
         var list = new StackPanel { Spacing = 14 };
         if (notes is null) {
-            list.Children.Add(Sub("The notes could not be loaded. Check your internet connection, then open What's New in the menu at the top."));
+            list.Children.Add(Sub("The notes could not be loaded. Check your internet connection, then open Help › What's New in the list on the left."));
         }
         else if (shown.Count == 0) {
             list.Children.Add(Sub(since is null
@@ -130,14 +140,18 @@ internal sealed partial class ManagerWindow {
 
         foreach (var release in shown) {
             var bullets = new StackPanel { Spacing = 6 };
-            foreach (var change in release.Changes) {
+            // New first, then fixes, then the rest, each with its kind (ManagerWindow.PatchNotes.cs).
+            foreach (var note in release.Changes.Select(c => PatchNote.Parse(release.Version, c))
+                         .OrderBy(n => n.Kind == PatchNote.NEW ? 0 : n.Kind == PatchNote.FIXED ? 1 : 2)) {
+                var words = new StackPanel { Spacing = 2, Children = { new TextBlock { Text = note.Title, FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap } } };
+                if (note.Detail.Length > 0) {
+                    words.Children.Add(new TextBlock { Text = note.Detail, Foreground = ManagerTheme.Brush(ManagerTheme.TEXT_SOFT), TextWrapping = TextWrapping.Wrap });
+                }
+
                 bullets.Children.Add(new DockPanel {
                     Children = {
-                        WithDock(new Border {
-                            Width = 7, Height = 7, CornerRadius = new CornerRadius(4), Margin = new Thickness(2, 7, 10, 0),
-                            VerticalAlignment = VerticalAlignment.Top, Background = ManagerTheme.Gradient(),
-                        }, Dock.Left),
-                        new TextBlock { Text = change, TextWrapping = TextWrapping.Wrap },
+                        WithDock(WithMargin(KindPill(note.Kind), new Thickness(0, 1, 10, 0)), Dock.Left),
+                        words,
                     },
                 });
             }
@@ -151,11 +165,20 @@ internal sealed partial class ManagerWindow {
             }));
         }
 
+        Window? shownDialog = null;
+        var all = Action(Plain("See all patch notes"), () => {
+            shownDialog?.Close();
+            SelectTab(WHATS_NEW);
+
+            return Task.CompletedTask;
+        });
+
         var dialog = new Window {
             Title = $"What's new in {Edition.NAME}", Width = 620, Height = 620, MinHeight = 320, Background = BACKGROUND,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
         };
         ManagerTheme.Apply(dialog);
+        shownDialog = dialog;
         var ok = Primary("OK");
         ok.Content = "Got it";
         ok.Click += (_, _) => dialog.Close();
@@ -175,7 +198,7 @@ internal sealed partial class ManagerWindow {
                         },
                     },
                 }, Dock.Top),
-                WithDock(WithMargin(new StackPanel { HorizontalAlignment = HorizontalAlignment.Right, Children = { ok } }, new Thickness(0, 16, 0, 0)), Dock.Bottom),
+                WithDock(WithMargin(new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, HorizontalAlignment = HorizontalAlignment.Right, Children = { all, ok } }, new Thickness(0, 16, 0, 0)), Dock.Bottom),
                 new ScrollViewer { Content = list },
             },
         };
@@ -236,115 +259,15 @@ internal sealed partial class ManagerWindow {
     }
 
 
-    // ---------------------------------------------------------------------
-    // The What's New page
-    // ---------------------------------------------------------------------
-
-    /// <summary>One line of the page: a version's heading (Change is null) or one of its changes.</summary>
-    private sealed record NoteRow(Version Version, string? Change);
-
-    private readonly TextBox _notesSearch = new() { Watermark = "Search the notes, such as Deckathalon, crafting, cheats or 0.10.300" };
-    private readonly TextBlock _notesCount = Sub("");
-    // Niduus, 2026-10-25: every search with filters like the Gear tab's.
-    private readonly TextBox _notesFrom = new() { Watermark = "Such as 0.10.300", Width = 150 };
-    private readonly TextBox _notesTo = new() { Watermark = "Such as 0.10.380", Width = 150 };
-    private readonly ComboBox _notesSort = FilterCombo(["Newest first", "Oldest first"], 150);
-    private readonly CheckBox _notesNewer = new() { Content = "Only versions newer than mine" };
-    private readonly ToggleSwitch _whatsNewPopup = new() { OnContent = "On", OffContent = "Off" };
-    private readonly DispatcherTimer _notesDelay = new() { Interval = TimeSpan.FromMilliseconds(200) };
-    // Only the rows in view are drawn (a recycling, virtualizing list), however many versions there are.
-    private readonly ListBox _notesList = new() {
-        Background = Brushes.Transparent,
-        ItemsPanel = new FuncTemplate<Panel?>(() => new VirtualizingStackPanel()),
-    };
-    private List<ReleaseNotes> _notes = [];
-    private bool _notesFetched;
-
-    private bool WhatsNewPopupOff => File.Exists(Path.Combine(_manager.InstallFolder, WHATS_NEW_OFF));
-
-    private Control WhatsNewPage() {
-        _whatsNewPopup.IsChecked = !WhatsNewPopupOff;
-        _whatsNewPopup.IsCheckedChanged += (_, _) => Guard(() => {
-            var file = Path.Combine(_manager.InstallFolder, WHATS_NEW_OFF);
-            if (_whatsNewPopup.IsChecked == true) {
-                File.Delete(file);
-                Say("The What's New window opens again after each update.");
-            }
-            else {
-                File.WriteAllText(file, "The What's New window is turned off. Delete this file, or turn it on in the app, to see it again.");
-                Say("The What's New window no longer opens after an update. The notes stay on this page.");
-            }
-
-            return Task.CompletedTask;
-        });
-        _notesDelay.Tick += (_, _) => {
-            _notesDelay.Stop();
-            RenderNotes();
-        };
-        _notesSearch.TextChanged += (_, _) => {
-            _notesDelay.Stop();
-            _notesDelay.Start();
-        };
-        WhenFiltersChange(RenderNotes, _notesFrom, _notesTo, _notesSort, _notesNewer);
-        _notesList.ItemTemplate = new FuncDataTemplate<NoteRow>((row, _) => NoteView(row), supportsRecycling: false);
-
-        var content = new DockPanel {
-            Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH,
-            Children = {
-                WithDock(Fold("sparkle", WHATS_NEW, "Pop-up after an update",
-                    "The What's New window the first time the app opens after an update.",
-                    SwitchRow("Show What's New after an update", _whatsNewPopup,
-                        "Off: it stays shut. The notes are always here.")), Dock.Top),
-                WithDock(WithMargin(Fold("search", WHATS_NEW, "Patch notes",
-                    "Every version's changes, newest first.",
-                    new DockPanel {
-                        Children = {
-                            WithDock(WithMargin(Action(Plain("Refresh"), () => LoadNotesAsync(refresh: true)), new Thickness(8, 0, 0, 0)), Dock.Right),
-                            _notesSearch,
-                        },
-                    },
-                    SearchFilters(SearchFilter("From version", _notesFrom), SearchFilter("To version", _notesTo), SearchFilter("Sort by", _notesSort),
-                        SearchTick(_notesNewer)),
-                    _notesCount), new Thickness(0, 14, 0, 0)), Dock.Top),
-                WithMargin(Card(_notesList), new Thickness(0, 14, 0, 0)),
-            },
-        };
-
-        // Its one line comes from the Help page's tab (it was a page of its own, with a header).
-        return content;
-    }
-
-    private static Control NoteView(NoteRow? row) {
-        if (row is null) {
-            return new Panel();
-        }
-
-        if (row.Change is null) {
-            return new TextBlock {
-                Text = $"Version {row.Version}" + (row.Version == SelfUpdate.CurrentVersion ? "  (yours)" : ""),
-                FontSize = ManagerTheme.FONT_HEADING, FontWeight = FontWeight.Bold, Margin = new Thickness(0, 10, 0, 2),
-            };
-        }
-
-        return new DockPanel {
-            Margin = new Thickness(4, 0, 0, 0),
-            Children = {
-                WithDock(new Border {
-                    Width = 7, Height = 7, CornerRadius = new CornerRadius(4), Margin = new Thickness(0, 7, 10, 0),
-                    VerticalAlignment = VerticalAlignment.Top, Background = ManagerTheme.Gradient(),
-                }, Dock.Left),
-                new TextBlock { Text = row.Change, TextWrapping = TextWrapping.Wrap },
-            },
-        };
-    }
-
     /// <summary>The notes kept on this PC at once, then (once per session, or on Refresh) every release's from GitHub.</summary>
     private async Task LoadNotesAsync(bool refresh = false) {
         var cache = Path.Combine(_manager.InstallFolder, NOTES_CACHE);
         if (_notes.Count == 0) {
             _notes = await Task.Run(() => Merge(BuiltInNotes(), ReadNotesCache(cache)));
-            RenderNotes();
         }
+
+        // Drawn at once, also when the search window already read the notes.
+        RenderNotes();
 
         if (_notesFetched && !refresh) {
             return;
@@ -441,41 +364,5 @@ internal sealed partial class ManagerWindow {
         JsonValueKind.String when element.GetString() is { Length: > 0 } one => [one],
         _ => [],
     };
-
-    /// <summary>The rows matching the search: each version with a match gets its heading, then its matching changes.</summary>
-    private void RenderNotes() {
-        var query = (_notesSearch.Text ?? "").Trim();
-        var rows = new List<NoteRow>();
-        var changes = 0;
-        var from = Version.TryParse((_notesFrom.Text ?? "").Trim(), out var least) ? least : null;
-        var to = Version.TryParse((_notesTo.Text ?? "").Trim(), out var most) ? most : null;
-        var newer = _notesNewer.IsChecked == true;
-        var filtered = from is not null || to is not null || newer;
-        IEnumerable<ReleaseNotes> releases = _notes.Where(r => (from is null || r.Version >= from) && (to is null || r.Version <= to)
-                                                               && (!newer || r.Version > SelfUpdate.CurrentVersion));
-        if (_notesSort.SelectedIndex == 1) {
-            releases = releases.Reverse();
-        }
-
-        foreach (var release in releases) {
-            // A version's number finds all of its changes.
-            var whole = query.Length > 0 && release.Version.ToString().StartsWith(query, StringComparison.Ordinal);
-            var matched = query.Length == 0 || whole ? release.Changes : release.Changes.Where(c => SearchText.Matches(c, query)).ToList();
-            if (matched.Count == 0) {
-                continue;
-            }
-
-            rows.Add(new NoteRow(release.Version, null));
-            rows.AddRange(matched.Select(c => new NoteRow(release.Version, c)));
-            changes += matched.Count;
-        }
-
-        _notesList.ItemsSource = rows;
-        var versions = rows.Count - changes;
-        _notesCount.Text = _notes.Count == 0 ? _notesCount.Text
-            : query.Length == 0 && !filtered ? $"{_notes.Count:N0} versions with notes, {(_notesSort.SelectedIndex == 1 ? "oldest" : "newest")} first."
-            : changes == 0 ? "Nothing matches."
-            : $"{changes:N0} change{(changes == 1 ? "" : "s")} in {versions:N0} version{(versions == 1 ? "" : "s")}.";
-    }
 
 }

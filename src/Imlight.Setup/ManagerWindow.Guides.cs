@@ -84,7 +84,7 @@ internal sealed partial class ManagerWindow {
             "Your own creature, copied from one in the game; the game's creature never changes.",
             [
                 new GuideSteps("Make it",
-                    "Click [Guides] in the menu at the top of the window (or press [New custom…] on the [Customs] tab).",
+                    "Click [Guides] under Help in the list on the left (or press [New custom…] on the [Customs] tab).",
                     "Near the top is the section [Make a custom, step by step]. If it is folded shut, click its title to open it.",
                     "Step 1: click in the search box and type the name of the creature to start from, such as `Gobbler` or `Malistaire`. " +
                     "Its ID number works too.",
@@ -412,7 +412,7 @@ internal sealed partial class ManagerWindow {
                                             "(it has Imlight.Director.exe and a Config folder), the app runs it right where it is.")),
                 new GuideSteps("Switch to another copy",
                     "Stop the server: [Server] tab, [Stop server].",
-                    "Click [Tools] in the menu at the top of the window.",
+                    "Click [Server] in the list on the left, then the [Server] tab.",
                     "Open the section [Server source] by clicking its title.",
                     "For a copy on GitHub: pick [Another copy on GitHub]. In the first box type its owner and name as they show on " +
                     "github.com, such as `Revive101/Imlight`. In the second box type the branch, such as `quality-assurance` " +

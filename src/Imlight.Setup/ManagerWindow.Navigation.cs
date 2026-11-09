@@ -189,100 +189,26 @@ internal sealed partial class ManagerWindow {
     // Jump to (in the header, on every page)
     // ---------------------------------------------------------------------
 
-    // Niduus, 2026-10-30: "Some of the UI is confusing to navigate": a box at the top of every page that finds a page,
-    // tab or setting by a few letters and goes there.
-    private readonly TextBox _jumpBox = new() { Watermark = "Search pages and settings", Width = 250, VerticalAlignment = VerticalAlignment.Center };
-    private readonly StackPanel _jumpResults = new() { Spacing = 4 };
-    private readonly Popup _jumpPopup = new() { Placement = PlacementMode.BottomEdgeAlignedRight, IsLightDismissEnabled = true };
-    private Action? _jumpFirst;
+    // Niduus, 2026-10-30: "Some of the UI is confusing to navigate": a box at the top of every page. Niduus, 2026-11-09
+    // (mockup "Search 2"): it opens the search window (ManagerWindow.SearchWindow.cs), which finds everything.
+    private readonly TextBox _jumpBox = new() { Watermark = "Search everything (Ctrl+K)", Width = 300, VerticalAlignment = VerticalAlignment.Center };
 
     private Control JumpBox() {
-        _jumpPopup.PlacementTarget = _jumpBox;
-        _jumpPopup.Child = new Border {
-            Background = ManagerTheme.BACKGROUND_BRUSH, BorderBrush = ManagerTheme.Brush(ManagerTheme.ACCENT_LIGHT, 110), BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(ManagerTheme.RADIUS), Padding = new Thickness(8), Width = 440, Margin = new Thickness(0, 6, 0, 0),
-            Child = new ScrollViewer { MaxHeight = 480, Content = _jumpResults },
-        };
-        _jumpBox.TextChanged += (_, _) => RenderJump();
-        _jumpBox.GotFocus += (_, _) => RenderJump();
-        _jumpBox.KeyDown += (_, e) => {
-            if (e.Key == Key.Enter && _jumpFirst is { } first) {
-                first();
-                e.Handled = true;
-            }
-            else if (e.Key == Key.Escape) {
-                _jumpPopup.IsOpen = false;
-            }
-        };
-        ToolTip.SetTip(_jumpBox, "Ctrl+K. Type a few letters of a page, tab or setting, such as events, crown shop or privacy, then click it or press Enter.");
-
-        return new Panel { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 10, 0), Children = { _jumpBox, _jumpPopup } };
-    }
-
-    /// <summary>The Jump to box's list: the tabs that match, then a few settings, then "Search everything" on Home.</summary>
-    private void RenderJump() {
-        var query = (_jumpBox.Text ?? "").Trim();
-        _jumpResults.Children.Clear();
-        _jumpFirst = null;
-        if (query.Length == 0) {
-            _jumpPopup.IsOpen = false;
-
-            return;
-        }
-
-        void Go(Action open) {
-            _jumpPopup.IsOpen = false;
+        _jumpBox.GotFocus += (_, _) => {
+            var typed = _jumpBox.Text ?? "";
             _jumpBox.Text = "";
-            open();
-        }
-
-        var rows = new List<Control>();
-        void Add(string icon, string accent, string title, string line, Action open) {
-            _jumpFirst ??= () => Go(open);
-            rows.Add(ResultRow(icon, accent, title, line, () => Go(open)));
-        }
-
-        if (SearchText.Matches($"{HOME} start welcome search everything", query)) {
-            Add("home", HOME, HOME, "Start here: run the server and search everything.", () => SelectTab(HOME));
-        }
-
-        foreach (var group in s_groups) {
-            var groupMatches = SearchText.Matches($"{group.Name} {group.Line}", query);
-            foreach (var name in group.Tabs) {
-                var (icon, line) = s_tabs[name];
-                if (groupMatches || SearchText.Matches($"{name} {line}", query)) {
-                    var tab = name;
-                    Add(icon, name, $"{group.Name}  ›  {name}", line, () => SelectTab(tab));
-                }
+            OpenSearchWindow(typed);
+        };
+        _jumpBox.TextChanged += (_, _) => {
+            if (!string.IsNullOrEmpty(_jumpBox.Text)) {
+                var typed = _jumpBox.Text;
+                _jumpBox.Text = "";
+                OpenSearchWindow(typed);
             }
-        }
+        };
+        ToolTip.SetTip(_jumpBox, "Ctrl+K. Finds pages, settings, commands, creatures, NPCs, quests, spells, items, places and patch notes.");
 
-        try {
-            if (_settings.Count == 0) {
-                LoadSettings();
-            }
-        }
-        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or PanelException) {
-            // No settings file yet; the pages still show.
-        }
-
-        foreach (var setting in _settings.SelectMany(g => g.Settings)
-                     .Where(s => SearchText.Matches($"{s.Section} {s.Key} {SearchText.SplitCamel(s.Key)} {s.Help}", query)).Take(5)) {
-            var key = setting.Key;
-            Add("gear", "Settings", $"Setting: {setting.Section}, {SearchText.SplitCamel(key)}", setting.Help, () => {
-                SelectTab("Settings");
-                _settingSearch.Text = key;
-            });
-        }
-
-        Add("search", HOME, $"Search everything for \"{query}\"", "Items, spells, creatures, zones, quests and commands too, on Home.", () => {
-            SelectTab(HOME);
-            _homeSearch.Text = query;
-            FocusLater(_homeSearch);
-        });
-
-        _jumpResults.Children.AddRange(rows);
-        _jumpPopup.IsOpen = true;
+        return new Panel { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 10, 0), Children = { _jumpBox } };
     }
 
     // ---------------------------------------------------------------------
@@ -329,7 +255,7 @@ internal sealed partial class ManagerWindow {
                         Children = {
                             new TextBlock { Text = $"Welcome to {Edition.NAME}", FontSize = 28, FontWeight = FontWeight.Bold },
                             new TextBlock {
-                                Text = "Your own Wizard101 server, all in one place. Pick a page from the menu at the top, or search for anything below.",
+                                Text = "Your own Wizard101 server, all in one place. Pick a page from the list on the left, or search for anything (Ctrl+K).",
                                 Foreground = ManagerTheme.Brush(ManagerTheme.TEXT_SOFT), TextWrapping = TextWrapping.Wrap,
                             },
                             _homeStatus,
@@ -394,7 +320,7 @@ internal sealed partial class ManagerWindow {
     }
 
     private static TextBlock HomeSearchTip() => Sub("Type a name, an ID or a few words, such as Fire Cat, Malistaire, unlimited mana or 1317127. " +
-                                                    "The box at the top of every window (Ctrl+K) finds a page or setting; Ctrl+F searches the tab you are on.");
+                                                    "The search box at the top of every page (Ctrl+K) finds everything too; Ctrl+F searches the tab you are on.");
 
     /// <summary>
     /// Home's results: matching tabs, settings and Lookup entries (a group for each kind), and a quick search of each tab
@@ -675,7 +601,7 @@ internal sealed partial class ManagerWindow {
         }
 
         if (e.Key == Key.K) {
-            FocusLater(_jumpBox);
+            OpenSearchWindow();
             e.Handled = true;
         }
         else if (e.Key == Key.F) {

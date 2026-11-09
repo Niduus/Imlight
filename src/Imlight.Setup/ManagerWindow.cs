@@ -451,9 +451,9 @@ internal sealed partial class ManagerWindow : Window {
         _saveBar.BorderBrush = LINE;
         _saveBar.BorderThickness = new Thickness(0, 1, 0, 0);
 
-        // The pages run along the top as a menu under the header (Niduus, 2026-10-26, mockup L: no side bar, so every
-        // page has the whole width), over the drifting colours behind everything.
-        var body = nav;
+        // Every page and tab in a side bar on the left (Niduus, 2026-11-09, mockup "Navigation 1"), with Back, Forward and
+        // where you are over the tab, over the drifting colours behind everything.
+        var body = SideBarLayout(nav);
 
         Content = new Panel {
             Children = {
@@ -467,6 +467,8 @@ internal sealed partial class ManagerWindow : Window {
                         body,
                     },
                 },
+                // Over everything, shown by Ctrl+K or the search box at the top (ManagerWindow.SearchWindow.cs).
+                SearchWindow(),
             },
         };
 
@@ -522,6 +524,7 @@ internal sealed partial class ManagerWindow : Window {
         }
 
         _shownPage = shownTab;
+        SideBarShown(shownTab);
         RefreshMissingNotes();
         switch (shownTab) {
             case "Play": await LoadPlayAsync(); break;

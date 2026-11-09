@@ -214,8 +214,8 @@ internal sealed partial class ManagerWindow {
             var width = e.NewSize.Width;
             updateWords.IsVisible = width >= 1180;
             whatsNew.IsVisible = width >= 980;
-            _jumpBox.Width = width >= 1100 ? 250 : 180;
-            _jumpBox.Watermark = width >= 1100 ? "Search pages and settings" : "Search pages";
+            _jumpBox.Width = width >= 1100 ? 300 : 180;
+            _jumpBox.Watermark = width >= 1100 ? "Search everything (Ctrl+K)" : "Search (Ctrl+K)";
         };
 
         return bar;

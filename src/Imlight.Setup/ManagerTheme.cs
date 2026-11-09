@@ -735,9 +735,10 @@ internal static class ManagerTheme {
                 new Setter(Border.BorderBrushProperty, Brush(ACCENT_LIGHT, 190)),
             },
         };
-        // The menu sits in a glass strip under the header, the page's own tabs in a row under it.
+        // The pages and their tabs are picked in the side bar (Niduus, 2026-11-09, mockup "Navigation 1"), so the
+        // TabControls' own strips are hidden; the TabControls still hold and switch the tabs.
         yield return new Style(x => x.OfType<TabControl>().Class("topnav").Template().OfType<ItemsPresenter>().Name("PART_ItemsPresenter")) {
-            Setters = { new Setter(Layoutable.MarginProperty, new Thickness(14, 10, 14, 0)) },
+            Setters = { new Setter(Visual.IsVisibleProperty, false) },
         };
 
         // The tabs inside a page: pills along the top, the chosen one lit in the accent.
@@ -763,7 +764,7 @@ internal static class ManagerTheme {
             },
         };
         yield return new Style(x => x.OfType<TabControl>().Class("subnav").Template().OfType<ItemsPresenter>().Name("PART_ItemsPresenter")) {
-            Setters = { new Setter(Layoutable.MarginProperty, new Thickness(18, 10, 18, 0)) },
+            Setters = { new Setter(Visual.IsVisibleProperty, false) },
         };
 
         // The Database lists' rows (Niduus, 2026-10-28: "use up some more of the loose space"): less padding around each
