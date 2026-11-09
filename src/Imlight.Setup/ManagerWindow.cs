@@ -307,6 +307,7 @@ internal sealed partial class ManagerWindow : Window {
 
     internal ManagerWindow(ServerManager manager) {
         _manager = manager;
+        s_shown = this;
         _gameFiles = new GameFiles(manager.InstallFolder);
         Title = Edition.NAME;
         Width = 1240;
@@ -1262,6 +1263,7 @@ internal sealed partial class ManagerWindow : Window {
         // Both logs start folded shut (Niduus, 2026-10-26: "Have server and client logs innate hidden unless revealed"):
         // click a log's title to show it.
         return Page(
+            CrashLogsCard(),
             Shut(Fold("server", "Server", "Server log",
                 "What the server on this computer is doing.",
                 WithHint(Row(_hideDebug, _hideWarnings, _follow, _pauseLog),
@@ -1988,6 +1990,31 @@ internal sealed partial class ManagerWindow : Window {
         var clipboard = GetTopLevel(this)?.Clipboard ?? throw new PanelException("The clipboard is not available.");
         await clipboard.SetTextAsync(string.Join(Environment.NewLine, _shownLog));
         Say($"Copied {_shownLog.Count} log lines. Paste them with Ctrl+V.");
+    }
+
+    /// <summary>
+    /// The logs folder (Niduus, 2026-11-09): Ahziael's errors and the server's crash reports in one place, and one zip
+    /// with everything a tester sends in.
+    /// </summary>
+    private Control CrashLogsCard() => Fold("info", "Server", "Crash and error logs",
+        "Ahziael and the server write every crash and error here by themselves.",
+        Sub("When something goes wrong (Ahziael shows an error, or the server stops by itself), it is written down in the logs " +
+            "folder. To send it in, click Make a zip to send: one zip lands on your desktop with Ahziael's errors, the server's " +
+            "crash reports, the server logs of the last 3 days, the setup log and Aurorium's logs. Windows user names and internet " +
+            "addresses are blanked out first. Drag the zip into the chat to send it."),
+        Row(Action(Primary("Make a zip to send"), MakeLogsZipAsync),
+            Action(Plain("Open logs folder"), () => {
+                var folder = AppLogs.Folder(_manager.InstallFolder);
+                Directory.CreateDirectory(folder);
+
+                return Open(folder);
+            })));
+
+    private async Task MakeLogsZipAsync() {
+        var install = _manager.InstallFolder;
+        var logs = _manager.LogFolder;
+        var zip = await Task.Run(() => AppLogs.MakeZip(install, logs));
+        Say($"Saved \"{Path.GetFileName(zip)}\" on your desktop. Drag it into the chat to send it.");
     }
 
     private Task SaveLogAsync() {
@@ -2800,6 +2827,18 @@ internal sealed partial class ManagerWindow : Window {
     // Messages and dialogs
     // ---------------------------------------------------------------------
 
+    private static ManagerWindow? s_shown;
+
+    /// <summary>An error no page caught: a line in the message bar saying it was written down, instead of closing the app.</summary>
+    internal static void ShowError(Exception ex) {
+        try {
+            s_shown?.Say($"Something went wrong ({ex.Message}). Ahziael kept running and wrote it down: Server > Logs > Make a zip to send.", isError: true);
+        }
+        catch (Exception) {
+            // The message bar itself failed; the error is in the log anyway.
+        }
+    }
+
     private string Say(string text, bool isError = false) {
         _message.Text = text;
         _messageBar.Background = isError ? BAD : CARD;
@@ -3086,6 +3125,9 @@ internal sealed partial class ManagerWindow : Window {
 
     private static T Spaced<T>(T control) where T : Control {
         control.Margin = new Thickness(0, 0, 10, 8);
+        // A box the page keeps (such as the "How many" box on Items, Furniture and Badges) is put in a new row each time
+        // something is clicked: take it out of the old row first, or Avalonia stops the whole app (and the server with it).
+        Detach(control);
 
         return control;
     }
