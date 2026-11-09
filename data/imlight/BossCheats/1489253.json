@@ -31,11 +31,9 @@
     { "When": "RoundStart", "Round": 2,
       "Actions": [
         {"Do": "Say", "Line": "CombatMessages_00001403"},
-        {"Do": "CastBy", "By": "Creature", "Spell": "Intercept 100", "SpellID": 751334567, "Target": "Owner", "DispelImmune": false, "Creature": 1489905},
-        {"Do": "CastBy", "By": "Creature", "Spell": "Intercept 100", "SpellID": 751334567, "Target": "Owner", "DispelImmune": false, "Creature": 1489906},
-        {"Do": "CastBy", "By": "Creature", "Spell": "Intercept 100", "SpellID": 751334567, "Target": "Owner", "DispelImmune": false, "Creature": 1489907}
+        {"Do": "FreeCast", "Spell": "Intercept 100", "SpellID": 751334567, "Target": "MyMinions", "OnTarget": true, "DispelImmune": false}
       ],
-      "Notes": "Round 2: each Druid's Intercept (Shadow Sentinel) on him." },
+      "Notes": "Round 2: he puts an Intercept 100 (Shadow Sentinel) on each of his Druids, so they take the hits meant for him. A tester, 2026-11-07: the Druids cast it themselves before, and they should not be the ones using it." },
 
     { "When": "RoundEnd", "Round": 8,
       "Actions": [

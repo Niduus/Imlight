@@ -1,0 +1,9 @@
+{
+  "Zone": "WizardCity/WC_Streets/Interiors/WC_Catacombs_Crypt01",
+  "Notes": "Foetid Crypt (the Catacombs, No Place Like Catacomb, WC-CATA-MAIN-004). Sir and Squire Greggor stand in the third room, behind two walls: after room 1 a Knowledge Crystal (WC-KnowledgeCrystal_Blocker_01) and an invisible wall (HG-CollisionBlocker_Rm1), after room 2 the same (WC-KnowledgeCrystal_Blocker_02, HG-CollisionBlocker_Rm2). The crystals only open for steps of the crypt's own quest WC-CATA-ENC-002, which only the real game's servers have (not in the game files, SpiralDB or Wizard404), and the walls only go with them, so no one could get past room 1 (a tester, 2026-11-07: 'Well I guess the Greggor fight is unaccessible'). Here the crystals and walls are left out, so the way to the Greggors is open; the room fights are still there on the way.",
+  "Remove": [
+    1487020,
+    1487022,
+    1452178
+  ]
+}

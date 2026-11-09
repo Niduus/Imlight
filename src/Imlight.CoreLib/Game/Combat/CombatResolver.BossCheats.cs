@@ -1896,6 +1896,9 @@ public partial class CombatResolver {
                 : trigger is { IsAlive: true } && trigger.OccupiedTeam != boss.OccupiedTeam ? [trigger] : [],
             // Everyone standing on the other side without the step's (or the cheat's) mark.
             "unmarked" => [.. enemies.Where(c => !HasMark(c, _stepMark))],
+            // One wizard on the other side without the mark, picked at random; no one when all have it (The Devourer
+            // devours a wizard other than the one it just let go, and no one when that is the only wizard).
+            "randomunmarked" => [.. enemies.Where(c => c.IsHumanPlayer && !HasMark(c, _stepMark)).OrderBy(_ => Random.Shared.Next()).Take(1)],
             // The one on the other side with the most pips.
             "mostpips" when enemies.Count > 0 => [enemies.OrderByDescending(c => PipCount(c)).First()],
             // The one who summoned it into the battle (a minion's summoner), while it stands; else no one.

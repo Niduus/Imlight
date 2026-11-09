@@ -182,6 +182,13 @@ internal sealed class CombatCreatureDeckComponent : ZoneEntityComponent, ICompon
         // Only a short code of school letters counts (O is in some, as in Mdeck-FO-R14-EM, and names no school here).
         // Mdeck-YMorganthe-01, Mdeck-Moon-R9 and Mdeck-Sh-... (Shadow) name none of the seven schools.
         var codes = match.Success ? match.Groups["schools"].Value.ToUpperInvariant() : "";
+        // Shadow, Star and Sun decks (Mdeck-SH-, Mdeck-ST-, Mdeck-SU-) play the school deck nearest to them, as the
+        // Moon ones (Mdeck-MO-) already play Myth: before, they kept the six starter spells (a tester, 2026-11-07: "some
+        // bosses/mobs don't have a deck" in the Catacombs).
+        if (s_astralCodes.TryGetValue(codes, out var stand)) {
+            codes = stand;
+        }
+
         if (codes.Length > 3 || codes.Any(c => !"FISMLDBO".Contains(c))) {
             codes = "";
         }
@@ -195,7 +202,8 @@ internal sealed class CombatCreatureDeckComponent : ZoneEntityComponent, ICompon
             }
         }
 
-        if (schools.Count == 0 && s_schoolCodes.FirstOrDefault(x => x.School.Equals(schoolOfFocus, System.StringComparison.OrdinalIgnoreCase)).School is { } own) {
+        var focus = s_astralSchools.TryGetValue(schoolOfFocus ?? "", out var near) ? near : schoolOfFocus;
+        if (schools.Count == 0 && s_schoolCodes.FirstOrDefault(x => x.School.Equals(focus, System.StringComparison.OrdinalIgnoreCase)).School is { } own) {
             schools.Add(own);
         }
 
@@ -211,10 +219,48 @@ internal sealed class CombatCreatureDeckComponent : ZoneEntityComponent, ICompon
                     spells.Add(spellId);
                 }
             }
+
+            // SpiralDB's plain decks stop at rank 13 (Azteca), so a rank 18 creature of the level 130 Catacombs played
+            // Azteca's spells (a tester, 2026-11-07: Renegade Druid "got the classic R18 storm deck"). From rank 14 on,
+            // the school's later attacks come too, each from the rank whose wizards learn it.
+            foreach (var (lateSchool, minRank, spellId, _) in s_lateSpells) {
+                if (lateSchool == school && rank >= minRank && !spells.Contains(spellId)) {
+                    spells.Add(spellId);
+                }
+            }
         }
 
         return spells;
     }
+
+    // Deck codes of the schools beside the seven, and the school whose plain deck stands in for each.
+    private static readonly Dictionary<string, string> s_astralCodes = new(System.StringComparer.OrdinalIgnoreCase) {
+        ["SH"] = "D", ["ST"] = "B", ["SU"] = "F", ["MO"] = "M",
+    };
+
+    private static readonly Dictionary<string, string> s_astralSchools = new(System.StringComparer.OrdinalIgnoreCase) {
+        ["Shadow"] = "Death", ["Star"] = "Balance", ["Sun"] = "Fire", ["Moon"] = "Myth",
+    };
+
+    // The later school attacks (from Root.wad Spells/Tiered Spells, the wizard level they are learned at in the notes),
+    // and the creature rank that gets them: level 100 from rank 14, 110 from 16, 120 from 17, 130 from 18. Pick-your-
+    // targets spells (Qismah's Curse) and the level 170 ones (some pick their targets too) are left out.
+    private static readonly (string School, int MinRank, uint SpellId, string Name)[] s_lateSpells = [
+        ("Fire", 14, 576217214, "Fire from Above (100)"), ("Fire", 16, 1946402814, "Raging Bull (110)"),
+        ("Fire", 17, 592954350, "Scorching Scimitars (120)"), ("Fire", 18, 1125749132, "Scion of Fire (130)"),
+        ("Ice", 14, 1635493379, "Winter's Web (100)"), ("Ice", 17, 2109842312, "Climaclysm (120)"),
+        ("Ice", 18, 414216592, "Scion of Ice (130)"),
+        ("Storm", 14, 1881888814, "Glowbug Squall (100)"), ("Storm", 16, 348289258, "Rusalka's Wrath (110)"),
+        ("Storm", 17, 655769628, "Iron Sultan (120)"), ("Storm", 18, 1039085841, "Scion of Storm (130)"),
+        ("Myth", 14, 2062086375, "Colossus Mantis (100)"), ("Myth", 16, 1305255487, "Witch's Housecall (110)"),
+        ("Myth", 17, 943026498, "Snake Charmer (120)"), ("Myth", 18, 1873219188, "Scion of Myth (130)"),
+        ("Life", 14, 1793130233, "Hungry Caterpillar (100)"), ("Life", 16, 1106087120, "Wings of Fate (110)"),
+        ("Life", 17, 499675719, "Llamasu (120)"), ("Life", 18, 1226363276, "Scion of Life (130)"),
+        ("Death", 14, 169474362, "Call of Khrulhu (100)"), ("Death", 16, 625950838, "Winged Sorrow (110)"),
+        ("Death", 18, 1521078555, "Scion of Death (130)"),
+        ("Balance", 14, 1039918614, "Gaze of Fate (100)"), ("Balance", 16, 1927982914, "Nested Fury (110)"),
+        ("Balance", 17, 1373405296, "Sand Worm (120)"), ("Balance", 18, 205203928, "Scion of Balance (130)"),
+    ];
 
     private static CreatureSpellbook NearestPlainDeck(string code, int rank) {
         rank = System.Math.Clamp(rank, 1, 30);

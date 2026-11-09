@@ -22,22 +22,37 @@
       ],
       "Notes": "A Feint on it: Cleanse Ward." },
 
+    { "When": "RoundEnd", "Round": 4, "Every": 3, "Mark": "Devoured", "MarkWho": "AnyEnemy",
+      "Actions": [
+        {"Do": "Cast", "Spell": "Devour - End DMG", "SpellID": 2108996636, "Target": "Marked", "Mark": "Devoured", "DispelImmune": false},
+        {"Do": "Unmark", "Mark": "Devoured", "Target": "Marked"},
+        {"Do": "Mark", "Mark": "LetGo", "Target": "Last"}
+      ],
+      "Notes": "End of round 4 and every 3rd after: the devoured wizard comes back (Devour ends, 1,500 shadow to all wizards). A tester, 2026-11-07: solo, the wizard was let go and devoured again in the same breath, so they never got a turn back." },
+
     { "When": "RoundEnd", "Round": 4, "Every": 3,
       "Actions": [
-        {"Do": "Cast", "Spell": "Devour - End DMG", "SpellID": 2108996636, "Target": "AllEnemies", "DispelImmune": false},
         {"Do": "Cast", "Spell": "Summon Minions", "SpellID": 281164226, "Target": "", "DispelImmune": false}
       ],
-      "Notes": "End of round 4 and every 3rd after: Devour ends (1,500 shadow to all), and a Bile." },
+      "Notes": "End of round 4 and every 3rd after: a Bile." },
 
     { "When": "RoundEnd", "Round": 1, "Every": 3,
       "Actions": [
-        {"Do": "Cast", "Spell": "Devour", "SpellID": 1325982926, "Target": "Enemy", "DispelImmune": false}
+        {"Do": "Cast", "Spell": "Devour", "SpellID": 1325982926, "Target": "RandomUnmarked", "Mark": "LetGo", "DispelImmune": false},
+        {"Do": "Mark", "Mark": "Devoured", "Target": "Last"}
       ],
-      "Notes": "End of round 1 and every 3rd after: Devour on a wizard." },
+      "Notes": "End of round 1 and every 3rd after: Devour on a wizard, never the one just let go; alone, the wizard gets three rounds back before the next Devour." },
+
+    { "When": "RoundEnd", "Round": 4, "Every": 3,
+      "Actions": [
+        {"Do": "Unmark", "Mark": "LetGo", "Target": "Marked"}
+      ],
+      "Notes": "After that: the one let go may be devoured next time." },
 
     { "When": "EnemyJoins", "Round": 1,
       "Actions": [
-        {"Do": "Cast", "Spell": "Devour", "SpellID": 1325982926, "Target": "Caster", "DispelImmune": false}
+        {"Do": "Cast", "Spell": "Devour", "SpellID": 1325982926, "Target": "Caster", "DispelImmune": false},
+        {"Do": "Mark", "Mark": "Devoured", "Target": "Caster"}
       ],
       "Notes": "A late wizard: devoured." },
 
