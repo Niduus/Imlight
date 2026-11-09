@@ -298,6 +298,43 @@ internal partial class QuestService {
         foreach (var line in lines) {
             CommandReply("  " + line);
         }
+
+        CommandReply("If a door or teleport left you in the wrong place, type .stuck go to be taken to where your quest's step is.");
+    }
+
+    /// <summary>
+    /// .stuck go: a door that sends the wizard to the wrong place must never leave them stuck (Niduus 2026-11-09: the first
+    /// Marleybone quest sent a tester to the everyday Royal Museum instead of the quest's, and only giving the quest again
+    /// got them out). Takes the wizard to the zone of the step they are on: a main quest first, else the newest quest whose
+    /// step is in another zone.
+    /// </summary>
+    private void GoToStuckStep(Wizard wizard) {
+        var here = wizard.Zone ?? "";
+        QuestTemplate pick = null;
+        foreach (var instance in wizard.QuestBehavior.CurrentQuestInstances.Where(q => q is not null).Reverse()) {
+            var template = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == instance.QuestName)
+                           ?? QuestTemplateCollection.GetQuestByName(instance.QuestName);
+            var goal = template?.m_goals?.FirstOrDefault(g => g is not null && instance.IsGoalActive(g.m_goalName));
+            string zone = goal is WaypointGoalTemplate waypoint && !string.IsNullOrEmpty(waypoint.m_zoneTag)
+                ? waypoint.m_zoneTag
+                : goal?.m_destinationZone;
+            if (string.IsNullOrEmpty(zone) || zone.Equals(here, StringComparison.OrdinalIgnoreCase)) {
+                continue;
+            }
+
+            if (pick is null || instance.QuestName.Contains("-MAIN-", StringComparison.OrdinalIgnoreCase)
+                && !((string) pick.m_questName).Contains("-MAIN-", StringComparison.OrdinalIgnoreCase)) {
+                pick = template;
+            }
+        }
+
+        if (pick is null) {
+            CommandReply("Your quests' steps are all here (or name no place), so you stay where you are.");
+            return;
+        }
+
+        CommandReply($"Taking you to where '{QuestTitleOf(pick)}' goes on.");
+        GoToFirstStep(wizard, pick);
     }
 
 }

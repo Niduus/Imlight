@@ -14,24 +14,13 @@
       }
     },
     {
-      "TriggerName": "Trigger (Level1 Level2 Entrance)",
+      "TriggerName": "Trigger (Level1 to Level2)",
       "Teleport": {
         "m_exitTeleporter": 0,
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-13517.9,21001.42,-203.3473,-1.563851",
-        "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
-      }
-    },
-    {
-      "TriggerName": "Trigger (Tower Level 1 Level2 Entrance)",
-      "Teleport": {
-        "m_exitTeleporter": 0,
-        "m_teleporterTag": 0,
-        "m_teleportType": "TELEPORT_STATIC",
-        "m_transitionID": 0,
-        "m_destinationLoc": "-13517.9,21001.42,-203.3473,-1.563851",
+        "m_destinationLoc": "-25611.25,21008.56,-203.3473,-1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -42,7 +31,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-27734.36,21004.29,-203.3473,1.572674",
+        "m_destinationLoc": "-27734.14,20996.81,-203.3473,1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -53,7 +42,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-7587.88,21010.79,-203.3473,-1.613169",
+        "m_destinationLoc": "-19612.45,21008.56,-203.3473,-1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -64,7 +53,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-9875.839,21010.72,-203.3473,1.547879",
+        "m_destinationLoc": "-21741.18,20996.81,-203.3473,1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -75,7 +64,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "4454.529,20999.53,-203.3473,-1.544163",
+        "m_destinationLoc": "-13614.14,21008.56,-203.3473,-1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -86,7 +75,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-3875.875,21011.71,-203.3473,1.610462",
+        "m_destinationLoc": "-15739.27,20996.81,-203.3473,1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -97,7 +86,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "10485.9,20996.18,-203.3473,-1.533566",
+        "m_destinationLoc": "-7609.05,21008.56,-203.3473,-1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -108,7 +97,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "8158.049,21011.71,-203.3473,1.614454",
+        "m_destinationLoc": "-9742.1,20996.81,-203.3473,1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -119,7 +108,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "16570.86,20999.03,-203.3473,-1.553771",
+        "m_destinationLoc": "-1608.09,21008.56,-203.3473,-1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -130,7 +119,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "14147.48,21011.71,-203.3473,1.585426",
+        "m_destinationLoc": "-3739.85,20996.81,-203.3473,1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -141,7 +130,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "22589.13,20995.97,-203.3473,-1.544314",
+        "m_destinationLoc": "4388.26,21008.56,-203.3473,-1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -152,7 +141,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "20149.76,21011.71,-203.3473,1.551681",
+        "m_destinationLoc": "2260.54,20996.81,-203.3473,1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -163,7 +152,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-31369.11,11963.93,-203.3473,-1.557775",
+        "m_destinationLoc": "10384.68,21008.56,-203.3473,-1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -174,7 +163,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "26157.26,21011.71,-203.3473,1.552179",
+        "m_destinationLoc": "8256.85,20996.81,-203.3473,1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -185,7 +174,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-25527.63,11985.47,-203.3473,-1.570282",
+        "m_destinationLoc": "16385.72,21008.56,-203.3473,-1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -196,7 +185,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-27854.03,11976.27,-203.3473,1.581659",
+        "m_destinationLoc": "14266.96,20996.81,-203.3473,1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -207,7 +196,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-13501.98,11950.45,-203.3473,-1.563851",
+        "m_destinationLoc": "22386.01,21008.56,-203.3473,-1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -218,7 +207,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-21859.49,11993.27,-203.3473,1.580231",
+        "m_destinationLoc": "20255.44,20996.81,-203.3473,1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -229,7 +218,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-1501.35,11984.07,-203.3473,-1.577496",
+        "m_destinationLoc": "-31614.39,12002.58,-203.3473,-1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -240,7 +229,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-9859.921,11959.75,-203.3473,1.570796",
+        "m_destinationLoc": "26258.17,20996.81,-203.3473,1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -251,7 +240,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "10607.89,12000,-203.3472,-1.570796",
+        "m_destinationLoc": "-25495.92,11990.13,-203.3473,-1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -262,7 +251,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "2137.653,11990.2,-203.3473,1.590741",
+        "m_destinationLoc": "-27743.19,12001.51,-203.3473,1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -273,7 +262,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "16570.86,11999.03,-203.3473,-1.553771",
+        "m_destinationLoc": "-19611.03,11999.78,-203.3473,-1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -284,7 +273,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "14161.96,11992.13,-203.3473,1.577731",
+        "m_destinationLoc": "-21736.39,12003.79,-203.3473,1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -295,7 +284,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "22484.34,11938.75,-203.3473,-1.570796",
+        "m_destinationLoc": "-13608.78,12011.09,-203.3473,-1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -306,7 +295,7 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "20137.4,12014.68,-203.3473,1.598577",
+        "m_destinationLoc": "-15751.56,11988.03,-203.3473,1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
@@ -317,12 +306,155 @@
         "m_teleporterTag": 0,
         "m_teleportType": "TELEPORT_STATIC",
         "m_transitionID": 0,
-        "m_destinationLoc": "-4.143738,-1926.3,-279.6762,3.047627",
+        "m_destinationLoc": "-7605.74,12009.41,-203.3473,-1.570796",
         "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
       }
     },
     {
       "TriggerName": "Teleport location (Level15 Level14 Exit)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "-9741.95,12018.17,-203.3473,1.570796",
+        "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
+      }
+    },
+    {
+      "TriggerName": "Trigger (Level15 Level16 Entrance)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "-1607.7,11987.05,-203.3473,-1.570796",
+        "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
+      }
+    },
+    {
+      "TriggerName": "Teleport location (Level16 Level15 Exit)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "-3744.13,12005.76,-203.3473,1.570796",
+        "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
+      }
+    },
+    {
+      "TriggerName": "Trigger (Level16 Level17 Entrance)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "4392.15,12005.47,-203.3473,-1.570796",
+        "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
+      }
+    },
+    {
+      "TriggerName": "Teleport location (Level17 Level16 Exit)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "2259.72,12015.74,-203.3473,1.570796",
+        "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
+      }
+    },
+    {
+      "TriggerName": "Trigger (Level17 Level18 Entrance)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "10390.51,11988.98,-203.3473,-1.570796",
+        "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
+      }
+    },
+    {
+      "TriggerName": "Teleport location (Level18 Level17 Exit)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "8262.95,12015.98,-203.3473,1.570796",
+        "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
+      }
+    },
+    {
+      "TriggerName": "Trigger (Level18 Level19 Entrance)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "16390.16,12011.53,-203.3473,-1.570796",
+        "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
+      }
+    },
+    {
+      "TriggerName": "Teleport location (Level19 Level18 Exit)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "14259.07,12012.02,-203.3473,1.570796",
+        "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
+      }
+    },
+    {
+      "TriggerName": "Trigger (Level19 Level20 Entrance)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "22386.79,11982.62,-203.3473,-1.570796",
+        "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
+      }
+    },
+    {
+      "TriggerName": "Teleport location (Level20 Level19 Exit)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "20260.22,11999.78,-203.3473,1.570796",
+        "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
+      }
+    },
+    {
+      "TriggerName": "Trigger (Level20 Boss Entrance)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "-4.143738,-1926.3,-279.6762,3.047627",
+        "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
+      }
+    },
+    {
+      "TriggerName": "Teleport location (Boss Level20 Exit)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "26249.7,12005.98,-203.3473,1.570796",
+        "m_destinationZone": "Marleybone/MB_BigBen/MB_BigBen"
+      }
+    },
+    {
+      "TriggerName": "Trigger-TeleportOutMobDeath",
       "Teleport": {
         "m_exitTeleporter": 0,
         "m_teleporterTag": 0,

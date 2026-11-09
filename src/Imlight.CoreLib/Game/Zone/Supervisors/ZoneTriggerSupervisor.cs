@@ -125,6 +125,8 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         }
 
         var passing = new List<(Trigger Trigger, IActorRef Actor)>();
+        // With OpenAllDoors a door goes through without its quest; these are the passing doors whose quest needs are met too.
+        HashSet<Trigger> doorsWithNeedsMet = null;
         HashSet<string> retry = null;
         if (message.RetryRefused && (message.PlayerActor is null || !_refusedOnEntry.Remove(message.PlayerActor, out retry))) {
             return;
@@ -143,6 +145,9 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             if (s_openAllDoors && HasTeleportResult(trigger)) {
                 if (Zone.ScriptState.HasTriggerFiresLeft(trigger.m_triggerName, trigger.m_triggerMax)) {
                     passing.Add((trigger, triggerActor));
+                    if (!ZoneTrigger.HasUndecodableRequirement(trigger.m_requirements) && EvaluateRequirements(trigger, message)) {
+                        (doorsWithNeedsMet ??= []).Add(trigger);
+                    }
                 }
 
                 continue;
@@ -197,7 +202,7 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             }
         }
 
-        var teleportWinner = PickTeleportTrigger(passing, message);
+        var teleportWinner = PickTeleportTrigger(passing, message, doorsWithNeedsMet);
         if (teleportWinner is not null) {
             Logger.Debug("Zone {0}: event {1} takes the player through teleport trigger {2}.",
                 Logger.Args(Zone.ZonePath, message.EventName, teleportWinner.m_triggerName));
@@ -445,9 +450,23 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         => trigger.m_results?.m_results?.Any(result => result is ResTeleport teleport
             && !string.IsNullOrEmpty(teleport.m_destinationZone)) == true;
 
-    private Trigger PickTeleportTrigger(List<(Trigger Trigger, IActorRef Actor)> passing, ZONE_102_PROTOCOL.MSG_POSTEVENT message) {
+    private Trigger PickTeleportTrigger(List<(Trigger Trigger, IActorRef Actor)> passing, ZONE_102_PROTOCOL.MSG_POSTEVENT message,
+        HashSet<Trigger> doorsWithNeedsMet = null) {
         // ReqHasQuest also passes for a completed quest: prefer the trigger naming a currently active quest, else the last passing one.
         var teleports = passing.Where(x => HasTeleportResult(x.Trigger)).Select(x => x.Trigger).ToList();
+
+        // With OpenAllDoors every door on the event passes, also the ones the game pairs by quest: Regent's Square's museum
+        // door has "Trigger" (to the quest's Royal Museum, while A Mystery in Marleybone is on) and "Trigger 0" (to the
+        // everyday museum, once a later quest is done). The last one always won, so the first Marleybone quest sent the
+        // wizard to the wrong museum and they were stuck (Niduus 2026-11-09). The doors whose needs are really met come first.
+        if (doorsWithNeedsMet is { Count: > 0 } && teleports.Count > 1) {
+            var met = teleports.Where(doorsWithNeedsMet.Contains).ToList();
+            if (met.Count > 0 && met.Count < teleports.Count) {
+                Logger.Information("Zone {0}: doors are open to all, so {1} doors passed; {2} is the one whose quest needs are met.",
+                    Logger.Args(Zone.ZonePath, teleports.Count, met[^1].m_triggerName));
+                teleports = met;
+            }
+        }
 
         // A paired trigger whose teleport names no destination (the client data leaves it blank and spiraldb has none for it)
         // would win and take nobody anywhere, suppressing the one that does lead somewhere. Unicorn Way pairs the Hedge Maze
