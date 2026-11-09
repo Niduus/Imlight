@@ -79,9 +79,10 @@ internal sealed partial class ManagerWindow {
             // Niduus, 2026-10-30: Ahziael on a server hosted on another PC, for its admins.
             // Niduus, 2026-10-31: players take their account from one server to another (Account Transfer).
             ["Server", "Settings", "Accounts", "Logs", "Game Files", Edition.NAME, "Remote", "Account Transfer"]),
-        ("Help", "info", "Guides and what's new",
-            "Step-by-step guides for everything, and what changed in each version.",
-            ["Guides", WHATS_NEW]),
+        ("Help", "info", "Guides, what's new, credits",
+            "Step-by-step guides for everything, what changed in each version, and who made it all.",
+            // Niduus, 2026-11-09: "add credits to Ahziael".
+            ["Guides", WHATS_NEW, CREDITS]),
     ];
 
     private const string HOME = "Home";

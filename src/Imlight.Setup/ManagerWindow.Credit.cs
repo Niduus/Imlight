@@ -78,6 +78,45 @@ internal sealed partial class ManagerWindow {
         return chip;
     }
 
+    private const string CREDITS = "Credits";
+
+    /// <summary>
+    /// Niduus, 2026-11-09: "add credits to Ahziael", with these lines, word for word. Help > Credits shows them, each with
+    /// a heart, and the side bar and the search window find it like every other tab.
+    /// </summary>
+    private static readonly string[] s_credits = [
+        "Credit to the Revive101 Team for Imlight (Myself included)",
+        "Credit to Phill for Aurorium",
+        "Credit to Revive101 Community for bug finding",
+        "Credit to Revive101 Team and QA for bug hunting",
+        "Created by Niduus (of course)",
+    ];
+
+    /// <summary>The Credits tab: a card with each credit line, and the "Created by Niduus" chip under them.</summary>
+    private Control CreditsTab() {
+        var lines = new StackPanel { Spacing = 12 };
+        lines.Children.Add(new TextBlock {
+            Text = "Thank you", FontSize = ManagerTheme.FONT_SECTION, FontWeight = FontWeight.SemiBold,
+        });
+        foreach (var credit in s_credits) {
+            var heart = WithCenter(ManagerTheme.Icon("heart", 16, ManagerTheme.Accent(CREDITS)));
+            heart.Margin = new Thickness(0, 0, 10, 0);
+            lines.Children.Add(new DockPanel {
+                Children = {
+                    WithDock(heart, Dock.Left),
+                    new TextBlock {
+                        Text = credit, TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center,
+                        FontSize = ManagerTheme.FONT_SECTION - 2,
+                    },
+                },
+            });
+        }
+
+        lines.Children.Add(new Border { Margin = new Thickness(0, 6, 0, 0), HorizontalAlignment = HorizontalAlignment.Left, Child = CreditChip() });
+
+        return Page(Card(lines));
+    }
+
     private static Bitmap? LoadAvatar() {
         try {
             // The assembly is ImlightSetup or ImlightManager depending on the edition.
