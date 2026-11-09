@@ -3066,12 +3066,17 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         if (!caster.HasPipsForSpell(spell)) {
-            Logger.Warning("Duel {0} | Slot {1} | Participant does not have enough pips or mana for spell {2}",
-                Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, spell.m_templateID));
+            Logger.Warning("Duel {0} | Slot {1} | The server counts too few pips or mana for spell {2}: {3}",
+                Logger.Args(Duel.m_duelID.Full, caster.SlotIndex, spell.m_templateID, caster.DescribePipsFor(spell)));
 
-            CombatResolver.AddCombatMove(CombatMoveType.Pass, caster, null, null);
+            // The game itself only lets a wizard pick a card they can pay for, so a wizard's pick stands: when the
+            // server counts the pips differently (school pips, Niduus 2026-11-09: 6 Life pips and Regenerate turned
+            // into a pass), the card is cast and the pips they have are spent. Creatures and minions still pass.
+            if (!caster.IsHumanPlayer) {
+                CombatResolver.AddCombatMove(CombatMoveType.Pass, caster, null, null);
 
-            return;
+                return;
+            }
         }
 
         // Find the target sub circle. Valid targets are 1-8.

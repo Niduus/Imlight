@@ -1289,7 +1289,7 @@ public partial class CombatDuelSubCircle {
             return true;
         }
 
-        var spellRank = spell.m_pipCost.m_spellRank;
+        var spellRank = spell.m_pipCost?.m_spellRank ?? 0;
         var genericPips = CombatParticipant.m_pipCount.m_genericPips;
         var powerPips = CombatParticipant.m_pipCount.m_powerPips;
         var isMastered = HasSchoolMastery(spell.m_magicSchoolID);
@@ -1306,6 +1306,23 @@ public partial class CombatDuelSubCircle {
         totalPips += (isMastered ? ownSchool * 2 : ownSchool) + otherSchools;
 
         return totalPips >= spellRank && HasSchoolPipsForSpell(spell) && HasManaForSpell(spell);
+    }
+
+    /// <summary>
+    /// The participant's pips and mana next to what a spell costs, for the log.
+    /// </summary>
+    internal string DescribePipsFor(Spell spell) {
+        var pips = CombatParticipant.m_pipCount;
+        var cost = spell.m_pipCost;
+        var schools = string.Join(" ", s_pipSchools.Select(school => (school, have: SchoolPips(pips, school) ?? 0))
+            .Where(p => p.have > 0).Select(p => $"{p.have} {p.school}"));
+        var costSchools = string.Join(" ", SchoolPipCosts(cost).Where(c => c.Cost > 0).Select(c => $"{c.Cost} {c.School}"));
+
+        return $"has {pips.m_genericPips} pips + {pips.m_powerPips} power + school [{schools}] + {pips.m_shadowPips} shadow, "
+               + $"mana {(_wizard is null ? "-" : ParticipantGameStats.m_currentMana.ToString())}; "
+               + $"card costs {cost?.m_spellRank ?? 0} pips{(costSchools.Length > 0 ? $" + school [{costSchools}]" : "")}"
+               + $"{(cost?.m_shadowPips > 0 ? $" + {cost.m_shadowPips} shadow" : "")}, school {(MagicSchool) spell.m_magicSchoolID}, "
+               + $"mastered {HasSchoolMastery(spell.m_magicSchoolID)}, school pips enough {HasSchoolPipsForSpell(spell)}";
     }
 
     // The school pips not needed for the spell's school pip cost: those of the spell's school and the rest.
@@ -1461,7 +1478,7 @@ public partial class CombatDuelSubCircle {
     /// A wizard needs at least as much mana as the spell's pip cost to cast it (unless UnlimitedMana is on).
     /// </summary>
     private bool HasManaForSpell(Spell spell)
-        => _wizard is null || UnlimitedMana || ParticipantGameStats.m_currentMana >= spell.m_pipCost.m_spellRank;
+        => _wizard is null || UnlimitedMana || ParticipantGameStats.m_currentMana >= (spell.m_pipCost?.m_spellRank ?? 0);
 
     // [Battle] FullPipConversion (on by default, Niduus 2026-10-23): a wizard with any Pip Conversion for a spell's
     // school always gets the conversion. Off, the chance is the rating times the game's first-tier scalar (0.00205,
