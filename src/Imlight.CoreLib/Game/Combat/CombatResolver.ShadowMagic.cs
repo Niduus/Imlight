@@ -14,9 +14,14 @@
  *                  and m_backlashPerRound (5, 10 on the fusion spells). The cards say "ShadowPact: Charm on Self";
  *                  the trainer says "Dark Shrike ... DOTs on the caster keeps him happy". A round that ends with the
  *                  pact's kind on its side is a fed round; one without is "[Unfed pact: +5 Backlash]".
- *   Backlash       CombatParticipant.m_backlash. When the caster's last pact runs out, the backlash hits them
- *                  ("Shadow Backlash Damage", kBacklashDamage): a share of their current health, 1% for each point
- *                  (the old game's "+30 Backlash = -30% of your current health"), then it is back to 0.
+ *   Backlash       CombatParticipant.m_backlash (0 to 100, as the game keeps it). When the caster's last pact runs
+ *                  out, the backlash hits them ("Shadow Backlash Damage", kBacklashDamage): the game's rule is a
+ *                  share of their MAXIMUM health (m_pastBacklash percent), and the backlash goes down by that share.
+ *                  Here the share is 1% a point ([Shadow] BacklashPercentPerPoint), and the hit never defeats.
+ *
+ * The game runs its own copy of these rules while it plays a round (its Common/CombatResolver code, "hmg." lines in
+ * WizardClient.log), so what the server does differently shows up as health that jumps at the next round. Intercept
+ * now follows the game's code exactly; the pact and creature rules below are still the server's own.
  *   Creatures      A fed round keeps the caster's shadow creature happy: it grows (m_shadowCreatureLevel, 1 to 4)
  *                  and may step in with the game's own shadow creature spells (spellSourceType kShadowCreature):
  *                  Fiend: Shadow Creature Fiend Attack 580/690/810/945 to all enemies; Nova: Shadow Creature Big Bomb
@@ -57,8 +62,10 @@ public partial class CombatResolver {
     private const int MOST_CREATURE_LEVEL = 4;
     private const int WHOLE_BATTLE = 999;
 
-    // The shadow self buffs on participants: they are auras, kept apart from the one-aura-at-a-time rule.
+    // The shadow self buffs on participants: they are auras, kept apart from the one-aura-at-a-time rule. The value is
+    // when the buff went on (a running count), so Intercepts take their share in the order they were cast, as in the game.
     private static readonly ConditionalWeakTable<SpellEffect, object> s_shadowSelf = new();
+    private static long s_shadowSelfCount;
 
     internal static bool IsShadowSelf(SpellEffect effect) => effect is not null && s_shadowSelf.TryGetValue(effect, out _);
 
@@ -97,7 +104,7 @@ public partial class CombatResolver {
                 m_spellTemplateID = spellTemplateId,
                 m_disposition = inner.m_disposition == kHangingDisposition.kBoth ? kHangingDisposition.kBeneficial : inner.m_disposition,
             };
-            s_shadowSelf.AddOrUpdate(buff, null);
+            s_shadowSelf.AddOrUpdate(buff, System.Threading.Interlocked.Increment(ref s_shadowSelfCount));
             hanging.Add(buff);
             added++;
         }
@@ -109,12 +116,17 @@ public partial class CombatResolver {
     }
 
     /// <summary>
-    /// Sentinel's Intercept: a standing teammate of <paramref name="target"/> with an Intercept shadow self takes that
-    /// share of the hit. Returns the teammate and the share (0 when no one intercepts).
+    /// Sentinel's Intercept ("Intercept - 100" for Renegade Druid's Druids): every standing teammate of
+    /// <paramref name="target"/> with an Intercept shadow self, in the order their Intercepts were cast. The game's own
+    /// rules (its CombatSpellEffects::ProcessInterceptStageEffect, read from the game's program 2026-11-09): no one
+    /// intercepts for themselves, each interceptor takes its share of what is left of the hit (the target keeps
+    /// hit - hit x share, cut to a whole number), damage over time is never intercepted, and the interceptor is only hit
+    /// when the whole cast is over (CombatEffectApplicator.FlushIntercepts), so it keeps intercepting until then.
     /// </summary>
-    internal static (CombatDuelSubCircle Who, int Percent) Interceptor(CombatDuelSubCircle target) {
+    internal static List<(CombatDuelSubCircle Who, int Percent)> Interceptors(CombatDuelSubCircle target) {
+        var found = new List<(CombatDuelSubCircle Who, int Percent, long Order)>();
         if (!InterceptOn || target?._duelActor is null) {
-            return (null, 0);
+            return [];
         }
 
         foreach (var mate in target._duelActor.ActiveSubCircles) {
@@ -122,13 +134,25 @@ public partial class CombatResolver {
                 continue;
             }
 
-            var intercept = mate._hangingEffects?.FirstOrDefault(e => e?.m_effectType == kSpellEffects.kIntercept && IsShadowSelf(e));
-            if (intercept is not null && intercept.m_effectParam > 0) {
-                return (mate, Math.Clamp(intercept.m_effectParam, 0, 100));
+            foreach (var intercept in mate._hangingEffects?.Where(e => e?.m_effectType == kSpellEffects.kIntercept && e.m_effectParam > 0) ?? []) {
+                if (s_shadowSelf.TryGetValue(intercept, out var order)) {
+                    found.Add((mate, Math.Clamp(intercept.m_effectParam, 0, 100), order is long n ? n : 0));
+                }
             }
         }
 
-        return (null, 0);
+        return [.. found.OrderBy(f => f.Order).Select(f => (f.Who, f.Percent))];
+    }
+
+    /// <summary>The share of <paramref name="damage"/> an interceptor with <paramref name="percent"/> takes, as the game works it out.</summary>
+    internal static int InterceptShare(int damage, int percent) {
+        if (damage <= 0 || percent <= 0) {
+            return 0;
+        }
+
+        var kept = (int) (damage - damage * (percent / 100f));
+
+        return Math.Clamp(damage - kept, 0, damage);
     }
 
     /// <summary>Puts a pact from <paramref name="pact"/> on the duel (CombatActionResolver).</summary>
@@ -210,7 +234,8 @@ public partial class CombatResolver {
 
     private static void AddBacklash(CombatDuelSubCircle who, int amount) {
         if (who?.CombatParticipant is { } participant) {
-            participant.m_backlash = Math.Max(0, participant.m_backlash + amount);
+            // 0 to 100, as the game's CombatParticipant::AddBacklash keeps it.
+            participant.m_backlash = Math.Clamp(participant.m_backlash + amount, 0, 100);
         }
     }
 
@@ -322,6 +347,8 @@ public partial class CombatResolver {
             return;
         }
 
+        // The share of health the hit takes, kept where the game keeps it (m_pastBacklash) for kBacklashDamage.
+        caster.CombatParticipant.m_pastBacklash = BacklashPercent(backlash);
         const string BACKLASH_SPELL = "Shadow Backlash Damage";
         if (SpellFactory.Exists(BACKLASH_SPELL) && SpellFactory.GetSpell(BACKLASH_SPELL) is { } spell
             && AddFreeDelayedCast(caster, spell.m_templateID, false, out _, "me", false, 'l') > 0) {
@@ -335,29 +362,41 @@ public partial class CombatResolver {
         ApplyBacklashDamage([caster]);
     }
 
+    // [Shadow] BacklashPercentPerPoint percent of health for each point of backlash, at most BacklashMostPercent.
+    private static int BacklashPercent(int backlash)
+        => Math.Clamp(Math.Min(s_backlashMostPercent, backlash * s_backlashPercentPerPoint), 0, 100);
+
     /// <summary>
-    /// kBacklashDamage ("Shadow Backlash Damage", CombatEffectApplicator): each target loses [Shadow]
-    /// BacklashPercentPerPoint percent of their current health for each point of backlash (at most
-    /// BacklashMostPercent), and their backlash is back to 0.
+    /// kBacklashDamage ("Shadow Backlash Damage", CombatEffectApplicator). The game's own rule (CombatSpellEffects::
+    /// ProcessDamage, read from the game's program 2026-11-09): the hit is m_pastBacklash percent (at most 100) of the
+    /// target's MAXIMUM health, cut to a whole number, with no resist or shields, and the backlash goes down by that
+    /// much. It used to be a share of the current health and set the backlash to 0, so the game and the server showed
+    /// different numbers. The server's hit never defeats anyone: the game works its own backlash out, and a defeat only
+    /// one side saw left wizards standing "dead" (Niduus's tester, 2026-11-08).
     /// </summary>
     internal static void ApplyBacklashDamage(CombatDuelSubCircle[] targets) {
         foreach (var target in targets.Where(t => t?.CombatParticipant is not null && t.ParticipantGameStats is not null && t.IsAlive)) {
-            var backlash = target.CombatParticipant.m_backlash;
-            target.CombatParticipant.m_pastBacklash = backlash;
-            target.CombatParticipant.m_backlash = 0;
-            if (backlash <= 0 || !s_backlashDamageOn) {
+            var participant = target.CombatParticipant;
+            var backlash = participant.m_backlash;
+            var percent = participant.m_pastBacklash > 0 ? Math.Min(participant.m_pastBacklash, 100) : BacklashPercent(backlash);
+            participant.m_pastBacklash = 0;
+            if (percent <= 0 || !s_backlashDamageOn) {
                 continue;
             }
 
-            var percent = Math.Min(s_backlashMostPercent, backlash * s_backlashPercentPerPoint);
-            var damage = (int) Math.Floor(target.ParticipantGameStats.m_currentHitpoints * percent / 100.0);
+            participant.m_backlash = Math.Max(0, backlash - percent);
+            var most = participant.m_maxPlayerHealth > 0 ? participant.m_maxPlayerHealth : target.ParticipantGameStats.m_baseHitpoints;
+            var damage = (int) (percent * (float) most / 100f);
+            var now = target.ParticipantGameStats.m_currentHitpoints;
+            damage = Math.Min(damage, Math.Max(0, now - 1));
             if (damage > 0) {
                 target.DamageParticipant(damage);
+                target.SyncParticipantHealth();
             }
 
-            Logger.Information("Slot {0} | Backlash {1} hits for {2} ({3}% of current health).",
-                Logger.Args(target.SlotIndex, backlash, damage, percent));
-            Tell(target, $"Backlash! You lose {damage} health ({percent}% of your health).");
+            Logger.Information("Slot {0} | Backlash {1} hits for {2} ({3}% of maximum health), backlash now {4}.",
+                Logger.Args(target.SlotIndex, backlash, damage, percent, participant.m_backlash));
+            Tell(target, $"Backlash! You lose {damage} health ({percent}% of your maximum health).");
         }
     }
 
