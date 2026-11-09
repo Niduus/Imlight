@@ -87,6 +87,10 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     private bool _randomBackflips
         => ConfigurationManager.Settings["April Fools.RandomBackFlips"].AsBool();
     private readonly ZoneTransferGate _transferGate = new();
+
+    // How long other doors wait after the game says it must download the zone a door leads to (it then asks again).
+    private static readonly TimeSpan PatchWaitForDoors = TimeSpan.FromSeconds(45);
+    private DateTime _patchWaitUntil = DateTime.MinValue;
     private uint _currentDynamicZoneId;
     private bool _currentZoneIsInstance;
 
@@ -257,6 +261,19 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     /// </summary>
     private ZONE_102_PROTOCOL.MSG_ZONETRANSFERRSP RequestZoneTransfer(ZONE_102_PROTOCOL.MSG_ZONETRANSFER message) {
         if (_transferGate.IsQueued) {
+            return null;
+        }
+
+        // While the game downloads the place a door leads to, the player still stands where door volumes overlap. Jade
+        // Palace's Water Dojo door (the early MooShu quest) sits partly inside the gate to Shoshun Village, so the gate took
+        // the player away while the dojo loaded and they ended up in the wrong zone (Niduus 2026-11-09). A second door
+        // waits until the first one's download is done; commands and anything else still go through.
+        if (message.ByZoneDoor && _transferGate.State == ZoneTransferState.Nacked && DateTime.UtcNow < _patchWaitUntil
+            && GetActiveWizard() is { QueuedZoneName: { Length: > 0 } waiting }
+            && !string.Equals(waiting, message.DestinationZone, StringComparison.OrdinalIgnoreCase)) {
+            Logger.Information("Session {0}: a door to {1} waits; the game is still loading {2} for the door before it.",
+                Logger.Args(SessionActor.SessionID, message.DestinationZone ?? "(none)", waiting));
+
             return null;
         }
 
@@ -711,6 +728,9 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     private void ReceivePatchingBlocked(WIZARD_12_PROTOCOL.MSG_PATCHINGBLOCKED message) {
         var previous = _transferGate.State;
         var accepted = _transferGate.TryNack();
+        if (accepted) {
+            _patchWaitUntil = DateTime.UtcNow + PatchWaitForDoors;
+        }
         LogTransferStep("PATCHINGBLOCKED received", previous, accepted);
     }
 

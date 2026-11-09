@@ -926,6 +926,10 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             case "stuck":
                 CommandStuck(wizard);
                 return;
+            case "stuckgo":
+                CommandStuck(wizard);
+                GoToStuckStep(wizard);
+                return;
             case "book":
                 CommandQuestBook(wizard);
                 return;
