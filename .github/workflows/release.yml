@@ -76,7 +76,8 @@ jobs:
           foreach ($t in $tags + @($tag | Where-Object { $tags -notcontains $_ })) {
             if ($previous) {
               $end = if ($t -eq $tag) { "HEAD" } else { $t }
-              $lines = @(git log --first-parent --pretty=format:"%s" "$previous..$end" | Where-Object { $_ -and $_ -notmatch '^Merge ' } | ForEach-Object { $_ -replace '\s*\(#\d+\)\s*$', '' })
+              # Each change's note file, else its pull request's title (tools/release-notes.ps1).
+              $lines = @(& ./tools/release-notes.ps1 -From $previous -To $end | Where-Object { $_ })
               if ($lines.Count -gt 0) { $all.Add([pscustomobject]@{ Version = $t.TrimStart('v'); Changes = $lines }) }
             }
             $previous = $t
@@ -134,9 +135,10 @@ jobs:
           $tag = "${{ steps.version.outputs.tag }}"
           $notes = if ($env:GENERATOR_INPUTS) { "ImlightManager.exe installs this build with its Control Panel. ImlightLauncherSetup.exe installs this build; existing installs update through the launcher." } `
                    else { "ImlightManager.exe installs this build with its Control Panel. Launcher only for this build: attach ImlightServer-win-x64.zip so launchers can update the server." }
-          # What changed since the last release, one line per merged change: the app's What's New window shows these.
+          # What changed since the last release, one line per change: the app's What's New page and window show these.
           $previous = git describe --tags --abbrev=0 --exclude $tag HEAD 2>$null
-          $changes = if ($previous) { git log --first-parent --pretty=format:"- %s" "$previous..HEAD" | Where-Object { $_ -notmatch '^- Merge ' } } else { @() }
+          # Each change's note file (docs/release-notes), else its pull request's title; merges no longer hide them.
+          $changes = if ($previous) { @(& ./tools/release-notes.ps1 -From $previous -To HEAD | Where-Object { $_ } | ForEach-Object { "- $_" }) } else { @() }
           if (-not $changes) { $changes = @("- Small fixes and improvements.") }
           $notes = "## What's new`n" + ($changes -join "`n") + "`n`n## Downloads`n" + $notes
           gh release create $tag (Get-ChildItem release/*).FullName --title $tag --notes $notes --target "${{ github.sha }}"
