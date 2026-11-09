@@ -81,7 +81,7 @@ internal sealed partial class ManagerWindow {
     private const string CREDITS = "Credits";
 
     /// <summary>
-    /// Niduus, 2026-11-09: "add credits to Ahziael", with these lines, word for word. Help > Credits shows them, each with
+    /// Niduus, 2026-11-09: "add credits to Ahziael", with these lines, word for word (and Atmoplex, added the same day). Help > Credits shows them, each with
     /// a heart, and the side bar and the search window find it like every other tab.
     /// </summary>
     private static readonly string[] s_credits = [
@@ -89,6 +89,8 @@ internal sealed partial class ManagerWindow {
         "Credit to Phill for Aurorium",
         "Credit to Revive101 Community for bug finding",
         "Credit to Revive101 Team and QA for bug hunting",
+        // Niduus, 2026-11-09: "Add credits to Atmoplex for Wizard404 for Wiki Data".
+        "Credit to Atmoplex for Wizard404 for Wiki Data",
         "Created by Niduus (of course)",
     ];
 
