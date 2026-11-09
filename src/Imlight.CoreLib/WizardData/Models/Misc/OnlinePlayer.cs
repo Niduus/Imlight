@@ -30,5 +30,8 @@ public class OnlinePlayer {
     // For Ahziael's "Who's online" card (OnlineList).
     public string AccountName;
     public string WizardName;
+    // For Ahziael's Overview tab: the wizard's level and school when they entered the zone.
+    public int Level;
+    public string School;
 
 }

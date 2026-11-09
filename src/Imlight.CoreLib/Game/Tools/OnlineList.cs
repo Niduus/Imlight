@@ -29,7 +29,7 @@ namespace Imlight.CoreLib.Game.Tools;
 
 /// <summary>
 /// Writes who is online to online-players.json next to the server, for the "Who's online" card on Ahziael's Home
-/// (Niduus, 2026-10-27). Every 2 seconds it reads the players kept in memory (never the database, so logins are never
+/// (Niduus, 2026-10-27) and the Overview tab (2026-11-09), and saves when each account was last online. Every 2 seconds it reads the players kept in memory (never the database, so logins are never
 /// held up) and writes the file only when the list changed.
 /// </summary>
 internal static class OnlineList {
@@ -38,11 +38,17 @@ internal static class OnlineList {
     // A zone change drops a player for a moment and adds them back; they stay listed that long so the card doesn't flicker.
     private static readonly TimeSpan s_gone = TimeSpan.FromSeconds(8);
 
+    // How often an online account's "last online" is saved, so the Accounts tab is right even after a crash.
+    private static readonly TimeSpan s_saveEvery = TimeSpan.FromMinutes(1);
+
     private static Timer s_timer;
     private static string s_written;
     private static readonly Dictionary<ulong, (Row Row, DateTime Seen)> s_rows = [];
+    // When each account came online this time, and when its "last online" was last saved (and with what).
+    private static readonly Dictionary<ulong, DateTime> s_since = [];
+    private static readonly Dictionary<ulong, (DateTime At, string Wizard, string Zone)> s_saved = [];
 
-    private sealed record Row(string Account, string Wizard, string Zone);
+    private sealed record Row(string Account, string Wizard, string Zone, int Level, string School, bool InBattle, DateTime Since);
 
     /// <summary>Starts writing the list. Calling it again does nothing.</summary>
     internal static void Start() {
@@ -71,18 +77,53 @@ internal static class OnlineList {
 
         try {
             var now = DateTime.UtcNow;
+            var inBattleIds = Zone.Components.CombatDuelComponent.CharactersInBattle();
+            var saves = new List<(ulong Account, DateTime At, string Wizard, string Zone)>();
             foreach (var player in OnlinePlayerCollection.GetCachedOnlinePlayers()) {
-                s_rows[player.AccountId] = (new Row(player.AccountName ?? "", player.CharacterId == 0 ? "" : player.WizardName ?? "",
-                                                    player.CharacterId == 0 ? "" : player.CurrentZone ?? ""), now);
+                var picking = player.CharacterId == 0;
+                if (!s_since.TryGetValue(player.AccountId, out var since)) {
+                    since = now;
+                    s_since[player.AccountId] = since;
+                }
+
+                var row = new Row(player.AccountName ?? "", picking ? "" : player.WizardName ?? "", picking ? "" : player.CurrentZone ?? "",
+                                  picking ? 0 : player.Level, picking ? "" : player.School ?? "",
+                                  !picking && inBattleIds.Contains(player.CharacterId), since);
+                s_rows[player.AccountId] = (row, now);
+
+                // Saved when the wizard or the place changes, and once a minute while they play.
+                var changed = !s_saved.TryGetValue(player.AccountId, out var saved)
+                    || (row.Wizard.Length > 0 && (saved.Wizard != row.Wizard || saved.Zone != row.Zone));
+                if (changed || now - saved.At >= s_saveEvery) {
+                    var wizard = row.Wizard.Length > 0 ? row.Wizard : saved.Wizard ?? "";
+                    var zone = row.Wizard.Length > 0 ? row.Zone : saved.Zone ?? "";
+                    s_saved[player.AccountId] = (now, wizard, zone);
+                    saves.Add((player.AccountId, now, wizard, zone));
+                }
             }
 
-            foreach (var gone in s_rows.Where(r => now - r.Value.Seen > s_gone).Select(r => r.Key).ToList()) {
-                s_rows.Remove(gone);
+            foreach (var gone in s_rows.Where(r => now - r.Value.Seen > s_gone).ToList()) {
+                s_rows.Remove(gone.Key);
+                s_since.Remove(gone.Key);
+                // Logged off: the last time they were seen is when they were last online.
+                var wizard = s_saved.TryGetValue(gone.Key, out var saved) ? saved.Wizard : gone.Value.Row.Wizard;
+                var zone = s_saved.TryGetValue(gone.Key, out saved) ? saved.Zone : gone.Value.Row.Zone;
+                s_saved.Remove(gone.Key);
+                saves.Add((gone.Key, gone.Value.Seen, wizard ?? "", zone ?? ""));
+            }
+
+            if (saves.Count > 0) {
+                // The database is never written from inside the list's round, so a slow save never holds it up.
+                System.Threading.Tasks.Task.Run(() => {
+                    foreach (var save in saves) {
+                        AccountCollection.RecordLastOnline(save.Account, save.At, save.Wizard, save.Zone);
+                    }
+                });
             }
 
             var players = s_rows.Values.Select(r => r.Row)
                 .OrderBy(r => r.Account, StringComparer.OrdinalIgnoreCase).ThenBy(r => r.Wizard, StringComparer.OrdinalIgnoreCase)
-                .Select(r => new { r.Account, r.Wizard, r.Zone });
+                .Select(r => new { r.Account, r.Wizard, r.Zone, r.Level, r.School, r.InBattle, Since = r.Since.ToString("o") });
             // How many are in a battle, so Ahziael can wait for the battles to end before it restarts the server for an update.
             var inBattle = Zone.Components.CombatDuelComponent.PlayersInBattle;
             var json = JsonSerializer.Serialize(new { Players = players, InBattle = inBattle });

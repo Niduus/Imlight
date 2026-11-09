@@ -549,6 +549,29 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     /// </summary>
     internal static int PlayersInBattle => s_playerBattles.Count(pair => pair.Value.Battle.HoldsPlayer(pair.Key));
 
+    /// <summary>The characters standing in a battle right now, for Ahziael's Overview tab (OnlineList).</summary>
+    internal static HashSet<ulong> CharactersInBattle() {
+        var found = new HashSet<ulong>();
+        foreach (var battle in s_playerBattles.Values.Select(v => v.Battle).Distinct()) {
+            try {
+                if (!battle._isActive || battle.SubCircles is not { } circles) {
+                    continue;
+                }
+
+                foreach (var circle in circles) {
+                    if (circle is not null && circle.Occupied && circle.OccupiedTeam == CombatTeam.Player && !circle.IsSummonedMinion
+                        && circle._wizard is { } wizard) {
+                        found.Add(wizard.CharId);
+                    }
+                }
+            } catch (InvalidOperationException) {
+                // The circle list changed mid-read: the next round reads it.
+            }
+        }
+
+        return found;
+    }
+
     // Read from another battle's actor, so a circle list changing mid-read counts as "still holds".
     private bool HoldsPlayer(ulong gid) {
         try {

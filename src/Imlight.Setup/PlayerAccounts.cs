@@ -32,7 +32,8 @@ namespace Imlight.Setup;
 /// A player account as the control panel shows it. The password hash never leaves this class.
 /// </summary>
 internal sealed record AccountSummary(string Username, string AuthLevel, bool IsLocked, int Characters,
-    string? CreationTime, string? LastLoginTime, string AccountId, string ChatMode = "Open");
+    string? CreationTime, string? LastLoginTime, string AccountId, string ChatMode = "Open",
+    string? LastOnlineTime = null, string? LastWizard = null, string? LastZone = null);
 
 /// <summary>
 /// Reads and changes player accounts in the server's embedded RavenDB, through its HTTP API.
@@ -257,7 +258,10 @@ internal sealed class PlayerAccounts : IDisposable {
             (string?) doc["LastLoginTime"],
             // The number the server knows the account by (characters, gifts and logs use it), not the document's own id.
             doc["AccountId"] is JsonValue id ? id.ToString() : "?",
-            chatName);
+            chatName,
+            (string?) doc["LastOnlineTime"],
+            (string?) doc["LastWizardName"],
+            (string?) doc["LastZone"]);
     }
 
     /// <summary>

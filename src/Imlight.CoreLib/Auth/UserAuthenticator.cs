@@ -204,10 +204,11 @@ internal static class UserAuthenticator {
             ClientKeyCollection.AddSessionKey(matchedAccount.AccountId, authMessage.MachineID, sessionKey);
             details._sessionKey = sessionKey;
 
-            // todo: these are only ever cached and not ever persistently saved
             matchedAccount.LastLoginMachineId = authMessage.MachineID;
             matchedAccount.LastLoginTime = DateTime.UtcNow;
             matchedAccount.LastLoginIp = sessionActor.Ip;
+            // Only the time is saved (for Ahziael's Accounts tab), not the address or the machine.
+            AccountCollection.RecordLogin(matchedAccount.AccountId, matchedAccount.LastLoginTime);
 
             // Craft a successful reply and return.
             var rec1 = Rec1.Encode(sessionKey, sessionId, offerTime, offerMilli);

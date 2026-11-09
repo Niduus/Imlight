@@ -47,7 +47,11 @@ internal sealed partial class ManagerWindow {
     private bool _onlineShown;
     private Dictionary<string, string[]>? _onlineZoneNames;
 
-    private sealed record OnlineRow(string Account, string Wizard, string Zone);
+    private sealed record OnlineRow(string Account, string Wizard, string Zone, int Level = 0, string School = "", bool InBattle = false,
+                                    DateTime? Since = null);
+
+    // The last list read, for the Overview and Accounts tabs.
+    private List<OnlineRow> _onlineLatest = [];
 
     private Control HomeWhosOnline() {
         _onlineLine.Text = "Checking the server…";
@@ -63,8 +67,11 @@ internal sealed partial class ManagerWindow {
             return;
         }
 
+        TickOverview();
         if (!running) {
             if (_onlineServerRunning != false) {
+                _onlineLatest = [];
+                ShowOverview(null, true, running: false);
                 _onlineServerRunning = false;
                 _onlineShown = false;
                 _onlineRows.Children.Clear();
@@ -110,7 +117,12 @@ internal sealed partial class ManagerWindow {
             using var document = JsonDocument.Parse(File.ReadAllText(file));
             return [
                 .. document.RootElement.GetProperty("Players").EnumerateArray().Select(p => new OnlineRow(
-                    Text(p, "Account"), Text(p, "Wizard"), Text(p, "Zone"))),
+                    Text(p, "Account"), Text(p, "Wizard"), Text(p, "Zone"),
+                    p.TryGetProperty("Level", out var level) && level.TryGetInt32(out var number) ? number : 0,
+                    Text(p, "School"),
+                    p.TryGetProperty("InBattle", out var battle) && battle.ValueKind == JsonValueKind.True,
+                    DateTime.TryParse(Text(p, "Since"), null, System.Globalization.DateTimeStyles.RoundtripKind, out var since)
+                        ? since.ToLocalTime() : null)),
             ];
         }
         catch (Exception ex) when (ex is JsonException or InvalidOperationException or KeyNotFoundException) {
@@ -122,6 +134,8 @@ internal sealed partial class ManagerWindow {
     }
 
     private void ShowOnline(List<OnlineRow>? rows, bool serverHasIt) {
+        _onlineLatest = rows ?? [];
+        ShowOverview(rows, serverHasIt, running: true);
         _onlineRows.Children.Clear();
         _onlineLine.Foreground = MUTED;
         if (rows is null) {
