@@ -219,7 +219,8 @@
  *   Target also Owner (whose cheat it is: for a CastBy, the one whose file it is, not the caster), Matched (whom the If
  *   "has" found with AnyEnemy / AnyAlly, else the player who set it off, such as the one with the pips), Unmarked (each
  *   player without the step's or cheat's mark: Mother Sunn's Ra for a wizard who cast no damage) and MostPips (the
- *   player with the most pips).
+ *   player with the most pips) and RandomUnmarked (one wizard on the other side without the step's or cheat's mark,
+ *   picked at random; no one when every wizard has it).
  *   Target also (Niduus, 2026-11-04: "Sharpen targeted. All Players, All Enemies and so on"; enemies and allies as seen by
  *   whoever's cheat it is, only those standing): AllAlliesButSelf, EnemyPlayers / AllyPlayers (the wizards of a side),
  *   AllCreatures / EnemyCreatures / AllyCreatures (minions count as creatures), AllMinions / EnemyMinions / AllyMinions,

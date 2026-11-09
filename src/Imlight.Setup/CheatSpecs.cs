@@ -99,6 +99,7 @@ internal static class CheatSpecs {
         ("Matched", "THE ONE THE IF FOUND"),
         ("Marked", "EVERYONE WITH THE MARK"),
         ("Unmarked", "EVERY ENEMY WITHOUT THE MARK"),
+        ("RandomUnmarked", "RANDOM ENEMY PLAYER WITHOUT THE MARK"),
         // The .c1 commands' circles, for players and bosses alike (Niduus, 2026-10-23).
         ("p1", "ALLY CIRCLE 1 (its side)"), ("p2", "ALLY CIRCLE 2 (its side)"), ("p3", "ALLY CIRCLE 3 (its side)"), ("p4", "ALLY CIRCLE 4 (its side)"),
         ("e1", "ENEMY CIRCLE 1 (the other side)"), ("e2", "ENEMY CIRCLE 2 (the other side)"), ("e3", "ENEMY CIRCLE 3 (the other side)"),

@@ -745,6 +745,33 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             var delay = TimeSpan.FromSeconds(PlanningSeconds);
             Timers.StartSingleTimer(PLANNING_TIME_KEY, new COMBAT_106_PROTOCOL.MSG_PLANNINGPHASEOVER(), delay);
         }
+
+        PassForAutoPassing();
+    }
+
+    /// <summary>
+    /// Wizards under a kAutoPass (The Devourer's Devour) pass at once; when that leaves no one to wait for, the round
+    /// goes on (a tester, 2026-11-07: solo, a devour meant an endless wait between turns).
+    /// </summary>
+    private void PassForAutoPassing() {
+        if (IsPvPDuel || !_awaitingCombatMoves) {
+            return;
+        }
+
+        var passed = false;
+        foreach (var circle in SubCircles.Where(c => c is not null && c.AddedToDuel && c.IsHumanPlayer && c.AutoPassing)) {
+            if (CombatResolver.GetQueuedAction(circle) is null) {
+                HandlePassMove(circle);
+                passed = true;
+                Logger.Information("Duel {0} | Slot {1} | Devoured (auto pass): passes this round.",
+                    Logger.Args(Duel.m_duelID.Full, circle.SlotIndex));
+            }
+        }
+
+        if (passed && CombatResolver.HaveAllParticipantsEnqueuedActions()) {
+            _awaitingCombatMoves = false;
+            Timers.StartSingleTimer(PLANNING_TIME_KEY, new COMBAT_106_PROTOCOL.MSG_PLANNINGPHASEOVER(), TimeSpan.FromSeconds(1));
+        }
     }
 
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_ACTORCOMBATDRAW))]
@@ -823,6 +850,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         var moveType = (CombatMoveType) message.MoveType;
+
+        // A devoured wizard (kAutoPass) can only pass or flee.
+        if (caster.AutoPassing && moveType is not (CombatMoveType.Flee or CombatMoveType.Pass)) {
+            moveType = CombatMoveType.Pass;
+        }
 
         // A defeated wizard sits the round out; only fleeing is still theirs to choose.
         if (!caster.IsAlive && moveType != CombatMoveType.Flee) {

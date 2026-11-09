@@ -155,6 +155,11 @@ public partial class CombatDuelSubCircle {
     // crit ("Crit", "NoCrit"), for so many more spells (-1: the rest of the battle).
     // A cheat locked fleeing: the Flee button counts as a pass (NoFlee).
     internal bool CheatNoFlee;
+    // A spell's kAutoPass (The Devourer's Devour): the server passes for this wizard each round until a kStopAutoPass, so
+    // a battle where every wizard is devoured goes on at once instead of waiting out each planning countdown. Kept with
+    // the participant it was put on, so a new one in the circle does not inherit it.
+    internal ulong AutoPassFor;
+    internal bool AutoPassing => AutoPassFor != 0 && ParticipantObject is not null && ParticipantObject.m_globalID.Full == AutoPassFor && IsAlive;
     internal string CheatHitRule = "";
     internal int CheatHitLeft;
     internal string CheatCritRule = "";

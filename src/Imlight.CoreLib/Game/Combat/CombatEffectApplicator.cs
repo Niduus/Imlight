@@ -260,6 +260,20 @@ internal static class CombatEffectApplicator {
             case kSpellEffects.kRemoveAura:
                 cinematicTime += Remove(targets, t => Auras(t, effect.m_disposition), effect);
                 break;
+            // The Devourer's Devour (and its End): the wizard sits out the rounds in between. The game hides them and
+            // gives them no cards; the server passes for them so no one waits out the planning countdown.
+            case kSpellEffects.kAutoPass:
+                foreach (var target in targets.Where(t => t?.ParticipantObject is not null)) {
+                    target.AutoPassFor = target.ParticipantObject.m_globalID.Full;
+                }
+
+                break;
+            case kSpellEffects.kStopAutoPass:
+                foreach (var target in targets.Where(t => t is not null)) {
+                    target.AutoPassFor = 0;
+                }
+
+                break;
             // Push: the caster's own effects go onto the target (Hot Potato, Push Charm).
             case kSpellEffects.kPushCharm:
                 cinematicTime += Move(caster, targets, effect, CombatCharms.All, toTarget: true);
