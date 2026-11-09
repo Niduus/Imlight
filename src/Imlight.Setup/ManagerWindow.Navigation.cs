@@ -78,7 +78,8 @@ internal sealed partial class ManagerWindow {
             "Run the server and set it up: start and stop, every setting, who can log in, logs, game files, and Ahziael itself.",
             // Niduus, 2026-10-30: Ahziael on a server hosted on another PC, for its admins.
             // Niduus, 2026-10-31: players take their account from one server to another (Account Transfer).
-            ["Server", "Settings", "Accounts", "Logs", "Game Files", Edition.NAME, "Remote", "Account Transfer"]),
+            // Niduus, 2026-11-09: an overview of who is online, on what character, at what location.
+            [OVERVIEW, "Server", "Settings", "Accounts", "Logs", "Game Files", Edition.NAME, "Remote", "Account Transfer"]),
         ("Help", "info", "Guides, what's new, credits",
             "Step-by-step guides for everything, what changed in each version, and who made it all.",
             // Niduus, 2026-11-09: "add credits to Ahziael".

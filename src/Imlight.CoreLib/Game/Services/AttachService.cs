@@ -623,6 +623,8 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
             CurrentRealm = realmName,
             ActorPath = playerActor.Path.ToString(),
             WizardName = wizard.PlayerNameBehavior?.GetWizardName(),
+            Level = wizard.MagicSchoolBehavior?.Level ?? 0,
+            School = wizard.MagicSchoolBehavior?.MagicSchool.ToString(),
         };
 
         OnlinePlayerCollection.AddOnlinePlayer(onlinePlayerRef);

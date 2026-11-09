@@ -267,7 +267,7 @@ internal sealed partial class ManagerWindow : Window {
     private readonly ComboBox _accountLogin = FilterCombo([ANY_FILTER, "Today", "In the last 7 days", "In the last 30 days", "Not in 30 days", "Never"], 170);
     private readonly NumericUpDown _accountCharsMin = FilterNumber(1);
     private readonly NumericUpDown _accountCharsMax = FilterNumber(1);
-    private readonly ComboBox _accountSort = FilterCombo(["Username", "Last login (newest first)", "Made (newest first)", "Most characters", "Level"], 190);
+    private readonly ComboBox _accountSort = FilterCombo(["Username", "Last online (newest first)", "Made (newest first)", "Most characters", "Level"], 190);
     private List<AccountSummary> _accountList = [];
 
     // Lookup.
@@ -410,6 +410,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Guides", GuidesTab),
             Tab(WHATS_NEW, WhatsNewPage),
             Tab(CREDITS, CreditsTab),
+            Tab(OVERVIEW, OverviewTab),
             Tab("Server", ServerTab),
             Tab("Game Modes", GameModesTab),
             Tab("Battles and World", BattlesTab),
@@ -565,6 +566,7 @@ internal sealed partial class ManagerWindow : Window {
                 break;
             case "Settings" when _settings.Count == 0: LoadSettings(); break;
             case "Accounts": await LoadAccountsAsync(); break;
+            case OVERVIEW: await LoadOverviewRecentAsync(); break;
             case "Account Transfer": await LoadTransferAccountsAsync(); break;
             case WHATS_NEW: await LoadNotesAsync(); break;
         }
@@ -959,7 +961,7 @@ internal sealed partial class ManagerWindow : Window {
                 },
                 _accountSearch,
                 SearchFilters(SearchFilter("Level", _accountLevel), SearchFilter("Chat", _accountChat), SearchFilter("Can log in", _accountLocked),
-                    SearchFilter("Last login", _accountLogin), SearchFilter("Characters from", _accountCharsMin),
+                    SearchFilter("Last online", _accountLogin), SearchFilter("Characters from", _accountCharsMin),
                     SearchFilter("Characters to", _accountCharsMax), SearchFilter("Sort by", _accountSort)),
                 _accountRows,
                 new TextBlock { Text = "New account", FontWeight = FontWeight.SemiBold, Margin = new Thickness(0, 6, 0, 0) },
@@ -2643,6 +2645,13 @@ internal sealed partial class ManagerWindow : Window {
         RenderAccounts();
     }
 
+    /// <summary>When the account was last online: the later of its last login and its last time seen in game.</summary>
+    private static DateTime? LastOnline(AccountSummary account)
+        => (AccountTime(account.LastOnlineTime), AccountTime(account.LastLoginTime)) switch {
+            ({ } seen, { } login) => seen > login ? seen : login,
+            (var seen, var login) => seen ?? login,
+        };
+
     private static DateTime? AccountTime(string? time)
         => time is not null && !time.StartsWith("0001", StringComparison.Ordinal) && DateTime.TryParse(time, out var parsed) ? parsed.ToLocalTime() : null;
 
@@ -2658,7 +2667,7 @@ internal sealed partial class ManagerWindow : Window {
             && (chat is null || a.ChatMode == chat)
             && _accountLocked.SelectedIndex switch { 1 => !a.IsLocked, 2 => a.IsLocked, _ => true }
             && InFilterRange(a.Characters, _accountCharsMin, _accountCharsMax)
-            && (AccountTime(a.LastLoginTime) is var login) && _accountLogin.SelectedIndex switch {
+            && (LastOnline(a) is var login) && _accountLogin.SelectedIndex switch {
                 1 => login?.Date == now.Date,
                 2 => login > now.AddDays(-7),
                 3 => login > now.AddDays(-30),
@@ -2667,7 +2676,7 @@ internal sealed partial class ManagerWindow : Window {
                 _ => true,
             });
         shown = _accountSort.SelectedIndex switch {
-            1 => shown.OrderByDescending(a => AccountTime(a.LastLoginTime) ?? DateTime.MinValue),
+            1 => shown.OrderByDescending(a => IsOnlineNow(a.Username) ? DateTime.MaxValue : LastOnline(a) ?? DateTime.MinValue),
             2 => shown.OrderByDescending(a => AccountTime(a.CreationTime) ?? DateTime.MinValue),
             3 => shown.OrderByDescending(a => a.Characters),
             4 => shown.OrderByDescending(a => Array.IndexOf(PlayerAccounts.AUTH_LEVELS, a.AuthLevel)),
@@ -2743,12 +2752,9 @@ internal sealed partial class ManagerWindow : Window {
             Danger(lockButton);
         }
 
-        var lastLogin = account.LastLoginTime is { } time && !time.StartsWith("0001", StringComparison.Ordinal) && DateTime.TryParse(time, out var parsed)
-            ? parsed.ToLocalTime().ToString("g")
-            : "Never";
         var details = new TextBlock {
-            Text = $"{account.Characters} character{(account.Characters == 1 ? "" : "s")} · last login {lastLogin}" + (account.IsLocked ? " · Locked" : ""),
-            Foreground = account.IsLocked ? BAD : MUTED,
+            Text = $"{account.Characters} character{(account.Characters == 1 ? "" : "s")} · {LastOnlineWords(account)}" + (account.IsLocked ? " · Locked" : ""),
+            Foreground = account.IsLocked ? BAD : MUTED, TextWrapping = TextWrapping.Wrap,
         };
 
         // Each account's id, the number the server knows it by (Niduus, 2026-10-23: "give them ID's as well").
@@ -2929,6 +2935,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Guides"] = ("info", "Make a custom, and step-by-step help for everything else."),
         [WHATS_NEW] = ("sparkle", "What changed in each version of Ahziael: every version's patch notes, with a search."),
         [CREDITS] = ("heart", "Who made Imlight, Aurorium and Ahziael, and who helped find and hunt the bugs: thanks, credits, about."),
+        [OVERVIEW] = ("eye", "Who is online right now, on which wizard, where and doing what, and when each account was last on: overview, online, players, who's on."),
         ["Server"] = ("server", "Start, restart and stop the server, and pick where the server comes from."),
         ["Game Modes"] = ("dice", "Whole-server modes such as Randomizer and Die = Delete, and what spell trainers ask for."),
         ["Battles and World"] = ("sword", "Switches for battles, pips, pets, jewels, houses and the world, Tamed Drops, and how fast plants grow."),

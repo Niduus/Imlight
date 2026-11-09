@@ -368,6 +368,40 @@ public static class AccountCollection {
     }
 
     /// <summary>
+    /// Saves when an account logged in, so Ahziael's Accounts tab shows it (Niduus, 2026-11-09: every account said
+    /// "Never"; the login time was only kept in memory). Runs off the login path and never throws.
+    /// </summary>
+    internal static void RecordLogin(ulong accountId, DateTime time) {
+        System.Threading.Tasks.Task.Run(() => {
+            try {
+                UpdateAccount(accountId, account => {
+                    account.LastLoginTime = time;
+                    account.LastOnlineTime = time;
+                });
+            } catch (Exception ex) {
+                Logger.Warning("Could not save the login time of account {AccountId}: {Reason}", Logger.Args(accountId, ex.Message));
+            }
+        });
+    }
+
+    /// <summary>
+    /// Saves when an account was last seen online, on which wizard and where (OnlineList, for Ahziael). Never throws.
+    /// </summary>
+    internal static void RecordLastOnline(ulong accountId, DateTime time, string wizardName, string zone) {
+        try {
+            UpdateAccount(accountId, account => {
+                account.LastOnlineTime = time;
+                if (!string.IsNullOrEmpty(wizardName)) {
+                    account.LastWizardName = wizardName;
+                    account.LastZone = zone ?? "";
+                }
+            });
+        } catch (Exception ex) {
+            Logger.Warning("Could not save when account {AccountId} was last online: {Reason}", Logger.Args(accountId, ex.Message));
+        }
+    }
+
+    /// <summary>
     /// Locks the specified account by setting its IsLocked property to true.
     /// </summary>
     /// <param name="account">The account to be locked.</param>

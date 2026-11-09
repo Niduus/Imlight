@@ -94,6 +94,10 @@ public class Account {
     public DateTime LastLoginTime { get; set; }
     public ulong LastLoginMachineId { get; set; }
     public string LastLoginIp { get; set; }
+    // Ahziael's Accounts tab (Niduus, 2026-11-09): when the account was last seen online, on which wizard and where.
+    public DateTime LastOnlineTime { get; set; }
+    public string LastWizardName { get; set; }
+    public string LastZone { get; set; }
     public bool IsLocked { get; set; }
     // Made by Create Account on Login: no password yet (the game never sends it), so only the computer it was made on
     // gets in until the player sets one with .setpassword (or the Accounts tab sets one).
