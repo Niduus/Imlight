@@ -98,7 +98,12 @@ internal static class CombatActionResolver {
         s_picksChosen = action.PicksChosen;
         s_selfGoesOn = action.SelfOnTarget && action.SelectedTarget is { } onTarget && onTarget != action.SpellCaster ? onTarget : null;
         try {
-            return Process(action, ref combatAction, ref cinematicTime, out notes);
+            CombatEffectApplicator.FlushIntercepts();
+            var worth = Process(action, ref combatAction, ref cinematicTime, out notes);
+            // Interceptors are hit once the cast is over, as in the game (CombatResolver.ShadowMagic.cs).
+            CombatEffectApplicator.FlushIntercepts();
+
+            return worth;
         }
         finally {
             s_picked = null;

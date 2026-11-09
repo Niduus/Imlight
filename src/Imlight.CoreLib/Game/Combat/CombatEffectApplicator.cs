@@ -538,21 +538,29 @@ internal static class CombatEffectApplicator {
                 CombatWards.Consume(target, incomingPierce);
             }
 
+            // Teammates with an Intercept (Shadow Sentinel, Renegade Druid's Druids) take their share of the hit before
+            // the target's shields see it, in the order they cast it; they are hit once the cast is over, with only
+            // their resist, as in the game (CombatResolver.ShadowMagic.cs, FlushIntercepts). Before, the interceptor
+            // was hit at once and stopped intercepting when that defeated it, while the game kept it intercepting to
+            // the end of the cast, so the two disagreed on who was hurt and health jumped at the next round.
+            foreach (var (interceptor, interceptPercent) in CombatResolver.Interceptors(target)) {
+                var share = CombatResolver.InterceptShare(damage, interceptPercent);
+                if (share <= 0) {
+                    continue;
+                }
+
+                damage -= share;
+                s_pendingIntercepts.Add(new PendingIntercept(interceptor, share, effect.m_sDamageType,
+                    effect.m_effectType == kSpellEffects.kStealHealth ? caster : null,
+                    effect.m_healModifier > 0 ? effect.m_healModifier : 0.5f));
+                hits.Add($"{TargetName(interceptor)}: intercepts {share}");
+            }
+
             // Calculate damage changes from target hanging effects.
             var wards = CombatWards.FindAppliedWards(target, effect);
             wards = CombatWards.GetWardsBySchool([.. wards], effect.m_sDamageType, out var finalSchool);
             cinematicTime += wards.Count * HANGING_EFFECT_CONSUME_TIME;
             damage = CombatWards.GetIncomingDamageFromWards(wards, damage, ref pierceLeft);
-
-            // A teammate's Shadow Sentinel takes its Intercept share of the hit (CombatResolver.ShadowMagic.cs).
-            var (interceptor, interceptPercent) = CombatResolver.Interceptor(target);
-            if (interceptor is not null && interceptPercent > 0 && damage > 0) {
-                var share = (int) Math.Floor(damage * interceptPercent / 100.0);
-                damage -= share;
-                var taken = DoDamageToTarget(interceptor, share, finalSchool, pierceLeft);
-                damageDealt += taken;
-                hits.Add($"{TargetName(interceptor)}: intercepted {taken}");
-            }
 
             // A cheat's "hits heal me": that share of the hit heals the target instead.
             var turned = (int) Math.Floor(damage * Math.Clamp(target.HitShare("HealFromHits"), 0, 100) / 100.0);
@@ -573,6 +581,41 @@ internal static class CombatEffectApplicator {
         TellRealDamage(caster, hits);
 
         return (cinematicTime, damageDealt);
+    }
+
+    // An interceptor's share of a hit, waiting for the end of the cast (the game's CombatParticipant list at +0x320,
+    // applied by CombatSpellEffects::ProcessInterceptDamage once the action is done). A Steal Health hit heals its caster
+    // from what the interceptor loses.
+    private readonly record struct PendingIntercept(CombatDuelSubCircle Interceptor, int Damage, string School,
+                                                    CombatDuelSubCircle Stealer, float HealModifier);
+
+    // A duel resolves one cast at a time on its thread.
+    [ThreadStatic] private static List<PendingIntercept> s_pendingInterceptsList;
+    private static List<PendingIntercept> s_pendingIntercepts => s_pendingInterceptsList ??= [];
+
+    /// <summary>
+    /// The end of a cast: each interceptor takes the shares it caught, through its own resist (no shields), as the game
+    /// does. Called by CombatActionResolver after every cast and once more at the end of the round.
+    /// </summary>
+    internal static void FlushIntercepts() {
+        if (s_pendingInterceptsList is not { Count: > 0 } pending) {
+            return;
+        }
+
+        var all = pending.ToList();
+        pending.Clear();
+        foreach (var hit in all) {
+            if (hit.Interceptor?.ParticipantGameStats is null || !hit.Interceptor.IsAlive) {
+                continue;
+            }
+
+            var taken = DoDamageToTarget(hit.Interceptor, hit.Damage, hit.School);
+            hit.Interceptor.SyncParticipantHealth();
+            Logger.Information("Slot {0} | Intercepted {1} ({2}), took {3}.", Logger.Args(hit.Interceptor.SlotIndex, hit.Damage, hit.School, taken));
+            if (hit.Stealer is { IsAlive: true } stealer && taken > 0) {
+                DoHealToTarget(stealer, (int) Math.Floor(taken * hit.HealModifier));
+            }
+        }
     }
 
     // The game works out its own damage number with its diminishing returns, so it can show less than the server

@@ -536,6 +536,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             // A beguile or confusion counts down a round on the participant's own turn.
             CountDownMindEffects(action.SpellCaster);
         }
+        // Any Intercept share a cast left waiting lands now (CombatEffectApplicator.FlushIntercepts).
+        CombatEffectApplicator.FlushIntercepts();
         // Spied counts down at the end of every round.
         CountDownSpied();
         // Shadow pacts are fed or not, creatures step in and backlash strikes (CombatResolver.ShadowMagic.cs); their
