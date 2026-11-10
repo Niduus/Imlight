@@ -104,17 +104,27 @@ internal class SpellbookService(SessionActor sessionActor) : MessageService(sess
             DeckID = message.DeckID,
             Success = (byte) (ok ? 1 : 0),
         });
+
+        // The game has nothing that reads the fusion answer: its deck window settles a card (from grey to a real card in
+        // the deck) on a deck add answer for that card, the event DeckConfigurationWindow::OnAddSpellToDeck listens to.
+        // So both cards are confirmed the way a single card is.
+        if (ok) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTODECK { SpellID = message.SpellID1, DeckID = message.DeckID, Success = 1 });
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTODECK { SpellID = message.SpellID2, DeckID = message.DeckID, Success = 1 });
+        }
     }
 
     [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_REMOVESPELLFUSIONFROMDECK))]
     private void ReceiveRemoveSpellFusionFromDeck(WIZARD3_56_PROTOCOL.MSG_REMOVESPELLFUSIONFROMDECK message) {
         var wizard = GetActiveWizard();
         var ok = false;
+        var firstRemoved = false;
+        var secondRemoved = false;
         try {
             var first = TieredSpells.ResolveTemplate((uint) message.SpellID1, out var firstId) is not null ? firstId : 0;
             var second = TieredSpells.ResolveTemplate((uint) message.SpellID2, out var secondId) is not null ? secondId : 0;
-            var firstRemoved = first != 0 && wizard.RemoveSpellFromDeck(first, message.DeckID);
-            var secondRemoved = second != 0 && wizard.RemoveSpellFromDeck(second, message.DeckID);
+            firstRemoved = first != 0 && wizard.RemoveSpellFromDeck(first, message.DeckID);
+            secondRemoved = second != 0 && wizard.RemoveSpellFromDeck(second, message.DeckID);
             ok = firstRemoved || secondRemoved;
         }
         catch (Exception ex) {
@@ -127,6 +137,15 @@ internal class SpellbookService(SessionActor sessionActor) : MessageService(sess
             DeckID = message.DeckID,
             Success = (byte) (ok ? 1 : 0),
         });
+
+        // As for adding: the deck window takes a card out on a single card answer.
+        if (firstRemoved) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_REMOVESPELLFROMDECK { SpellID = message.SpellID1, DeckID = message.DeckID, Success = 1 });
+        }
+
+        if (secondRemoved) {
+            SendToSocket(new WIZARD_12_PROTOCOL.MSG_REMOVESPELLFROMDECK { SpellID = message.SpellID2, DeckID = message.DeckID, Success = 1 });
+        }
     }
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_REMOVESPELLFROMDECK))]
