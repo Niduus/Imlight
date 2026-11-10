@@ -14,6 +14,10 @@
  *                  and m_backlashPerRound (5, 10 on the fusion spells). The cards say "ShadowPact: Charm on Self";
  *                  the trainer says "Dark Shrike ... DOTs on the caster keeps him happy". A round that ends with the
  *                  pact's kind on its side is a fed round; one without is "[Unfed pact: +5 Backlash]".
+ *   Contract       The game shows a pact as a kShadowPact hanging effect on whoever holds it (the caster, or the enemy
+ *                  a one-enemy pact was cast at), listed under "Pacts" when that fighter is hovered with the caster's
+ *                  slot, the kind and the rounds left (CombatMessages "$ShadowPact$$CasterSlot_image$: $Ward_image$").
+ *                  The server now keeps that contract on the holder and counts its rounds down (2026-11-10).
  *   Backlash       CombatParticipant.m_backlash (0 to 100, as the game keeps it). When the caster's last pact runs
  *                  out, the backlash hits them ("Shadow Backlash Damage", kBacklashDamage): the game's rule is a
  *                  share of their MAXIMUM health (m_pastBacklash percent), and the backlash goes down by that share.
@@ -71,6 +75,13 @@ public partial class CombatResolver {
 
     private sealed class ShadowPact {
         internal CombatDuelSubCircle Caster;
+        // Who holds the pact's contract: the caster for a pact on themselves, the enemy hit for a pact on one enemy.
+        // The contract is shown on them (ShowContract).
+        internal CombatDuelSubCircle Holder;
+        internal uint SpellId;
+        // The pact's own m_effectParam and m_effectTarget, carried onto the contract as the game's copy of it has them.
+        internal int Param;
+        internal kEffectTarget Target;
         // Who the pact watches: the caster, or every enemy (the pact is fed if any of them has its kind).
         internal CombatDuelSubCircle[] Watched;
         internal kEffectKinds Kind;
@@ -155,24 +166,60 @@ public partial class CombatResolver {
         return Math.Clamp(damage - kept, 0, damage);
     }
 
-    /// <summary>Puts a pact from <paramref name="pact"/> on the duel (CombatActionResolver).</summary>
-    internal void AddShadowPact(ShadowPactSpellEffect pact, CombatDuelSubCircle caster, CombatDuelSubCircle selected, SpellTemplate spell) {
+    /// <summary>
+    /// Puts a pact from <paramref name="pact"/> on the duel (CombatActionResolver), and its contract on whoever holds it so
+    /// the game shows it.
+    /// </summary>
+    internal void AddShadowPact(ShadowPactSpellEffect pact, CombatDuelSubCircle caster, CombatDuelSubCircle selected, SpellTemplate spell,
+                                uint spellId = 0) {
         if (caster is null || pact.m_numRounds == 0) {
             return;
         }
 
-        CombatDuelSubCircle[] watched = pact.m_effectTarget switch {
-            kEffectTarget.kSelf => [caster],
-            kEffectTarget.kFriendlySingle or kEffectTarget.kFriendlySingleNotMe => [selected ?? caster],
-            kEffectTarget.kFriendlyTeam or kEffectTarget.kFriendlyTeamAllAtOnce or kEffectTarget.kMultiTargetFriendly
-                => [.. _subCircles.Where(c => c is not null && c.Occupied && c.OccupiedTeam == caster.FightsFor)],
-            // On the enemy (one or all): the card says "on All Enemies", so any enemy feeds it.
-            _ => [.. _subCircles.Where(c => c is not null && c.Occupied && c.OccupiedTeam != caster.FightsFor)],
-        };
+        var enemies = _subCircles.Where(c => c is not null && c.Occupied && c.IsAlive && c.OccupiedTeam != caster.FightsFor).ToArray();
+        var friends = _subCircles.Where(c => c is not null && c.Occupied && c.IsAlive && c.OccupiedTeam == caster.FightsFor).ToArray();
+        // The holder, and who the pact watches. A pact on one enemy (Dark Fiend, Dark Shepherd and the Shadow fusion
+        // spells: m_effectTarget kEnemySingle) sits on the enemy the spell was cast at, and only that enemy feeds it,
+        // as the game's own code keeps one contract per caster on its target (CombatParticipant::GetShadowPactEffectCastedBy).
+        CombatDuelSubCircle holder;
+        CombatDuelSubCircle[] watched;
+        switch (pact.m_effectTarget) {
+            case kEffectTarget.kSelf:
+                holder = caster;
+                watched = [caster];
+                break;
+            case kEffectTarget.kFriendlySingle or kEffectTarget.kFriendlySingleNotMe or kEffectTarget.kFriendlyMinion:
+                holder = selected is { IsAlive: true } && selected.OccupiedTeam == caster.FightsFor ? selected : caster;
+                watched = [holder];
+                break;
+            case kEffectTarget.kFriendlyTeam or kEffectTarget.kFriendlyTeamAllAtOnce or kEffectTarget.kMultiTargetFriendly:
+                holder = caster;
+                watched = friends;
+                break;
+            case kEffectTarget.kEnemyTeam or kEffectTarget.kEnemyTeamAllAtOnce or kEffectTarget.kMultiTargetEnemy:
+                holder = caster;
+                watched = enemies;
+                break;
+            default:
+                holder = selected is { IsAlive: true } && selected.OccupiedTeam != caster.FightsFor ? selected : enemies.FirstOrDefault() ?? caster;
+                watched = holder == caster ? enemies : [holder];
+                break;
+        }
 
         var name = (string) spell?.m_name ?? "";
+        var id = spellId;
+        // A new pact from the same caster on the same holder takes the old one's place, as in the game.
+        foreach (var old in _shadowPacts.Where(p => p.Caster == caster && p.Holder == holder).ToList()) {
+            _shadowPacts.Remove(old);
+            HideContract(old);
+        }
+
         var item = new ShadowPact {
             Caster = caster,
+            Holder = holder,
+            SpellId = id,
+            Param = pact.m_effectParam,
+            Target = pact.m_effectTarget,
             Watched = watched,
             Kind = pact.m_pactEffectKind,
             RoundsLeft = pact.m_numRounds > 0 ? pact.m_numRounds : WHOLE_BATTLE,
@@ -182,15 +229,47 @@ public partial class CombatResolver {
             AddedInRound = (int) _duel.m_roundNum,
         };
         _shadowPacts.Add(item);
+        ShowContract(item);
         if (pact.m_initialBacklash > 0) {
             AddBacklash(caster, pact.m_initialBacklash);
         }
 
-        Logger.Information("Duel {0} | Slot {1} | Shadow pact from {2}: {3} on {4} for {5} rounds, {6} backlash a round unfed.",
-            Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, name, KindWords(item.Kind),
-                pact.m_effectTarget == kEffectTarget.kSelf ? "the caster" : "the other side", item.RoundsLeft, item.BacklashPerRound));
-        Tell(caster, $"Shadow Pact: keep {KindWords(item.Kind)} on {(pact.m_effectTarget == kEffectTarget.kSelf ? "yourself" : "the enemy")} for {item.RoundsLeft} rounds.");
+        var on = holder == caster ? (watched.Length > 1 ? (watched == enemies ? "the enemies" : "your team") : "yourself")
+            : holder.OccupiedTeam == caster.FightsFor ? "your teammate" : "the enemy you hit";
+        Logger.Information("Duel {0} | Slot {1} | Shadow pact from {2}: {3} on slot {4} ({5}) for {6} rounds, {7} backlash a round unfed.",
+            Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, name, KindWords(item.Kind), holder.SlotIndex, on, item.RoundsLeft,
+                item.BacklashPerRound));
+        var rounds = item.RoundsLeft >= WHOLE_BATTLE ? "the whole battle" : $"{item.RoundsLeft} rounds";
+        Tell(caster, $"Shadow Pact: keep {KindWords(item.Kind)} on {on} for {rounds}. Each round without it: +{item.BacklashPerRound} Backlash.");
     }
+
+    /// <summary>
+    /// The pact's contract on its holder: the game's own kShadowPact hanging effect, which it lists under "Pacts" when
+    /// the participant is hovered (its StatsOrganizer::GetParticipantHangingEffects, read from the game's program
+    /// 2026-11-10) with the caster's slot, the pact's kind (from the spell) and the rounds left. The server kept its
+    /// pacts only to itself before, so the game never showed a pact at all.
+    /// </summary>
+    private static void ShowContract(ShadowPact pact) {
+        if (pact.Holder?._hangingEffects is not { } hanging) {
+            return;
+        }
+
+        hanging.RemoveAll(e => IsContract(e, pact));
+        hanging.Add(new SpellEffect {
+            m_effectType = kSpellEffects.kShadowPact,
+            m_effectParam = pact.Param,
+            m_disposition = kHangingDisposition.kBoth,
+            m_effectTarget = pact.Target,
+            m_spellTemplateID = pact.SpellId,
+            m_numRounds = pact.RoundsLeft >= WHOLE_BATTLE ? -1 : pact.RoundsLeft,
+            m_shadowPactCasterSC = pact.Caster.SlotIndex,
+        });
+    }
+
+    private static void HideContract(ShadowPact pact) => pact.Holder?._hangingEffects?.RemoveAll(e => IsContract(e, pact));
+
+    private static bool IsContract(SpellEffect e, ShadowPact pact)
+        => e is { m_effectType: kSpellEffects.kShadowPact } && e.m_shadowPactCasterSC == pact.Caster.SlotIndex && e.m_spellTemplateID == pact.SpellId;
 
     // The shadow creature a spell belongs to, from its name (Shadow Creature Shrike is Dark Shrike, Shadow Self Fiend
     // is Shadow Fiend, Big Bomb is Dark Nova, Healer is Dark Shepherd). A school's shadow spell gets the Fiend.
@@ -254,10 +333,19 @@ public partial class CombatResolver {
                 var caster = pact.Caster;
                 if (caster is null || !caster.IsAlive || !caster.AddedToDuel) {
                     _shadowPacts.Remove(pact);
+                    HideContract(pact);
                     if (caster?.CombatParticipant is { } gone) {
                         gone.m_backlash = 0;
                     }
 
+                    continue;
+                }
+
+                // The enemy holding the pact was defeated or left: the contract goes with them, with no backlash.
+                if (pact.Holder is not { IsAlive: true, AddedToDuel: true }) {
+                    _shadowPacts.Remove(pact);
+                    HideContract(pact);
+                    Tell(caster, $"Shadow Pact ({pact.SpellName}) is over: its holder is gone.");
                     continue;
                 }
 
@@ -278,7 +366,12 @@ public partial class CombatResolver {
                 pact.RoundsLeft--;
                 if (pact.RoundsLeft <= 0) {
                     _shadowPacts.Remove(pact);
+                    HideContract(pact);
                     endedFor.Add(caster);
+                    Tell(caster, $"Shadow Pact ({pact.SpellName}) is over. Backlash: {caster.CombatParticipant?.m_backlash ?? 0}.");
+                }
+                else {
+                    ShowContract(pact);
                 }
             }
 

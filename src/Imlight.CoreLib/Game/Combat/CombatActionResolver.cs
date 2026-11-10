@@ -301,7 +301,7 @@ internal static class CombatActionResolver {
             return;
         }
 
-        caster?._duelActor?.CombatResolver?.AddShadowPact(pact, caster, selected, cast.Action.SpellTemplate);
+        caster?._duelActor?.CombatResolver?.AddShadowPact(pact, caster, selected, cast.Action.SpellTemplate, cast.TemplateId);
     }
 
     /// <summary>

@@ -147,7 +147,10 @@ internal static class CombatRequirements {
     private static int CountHanging(CombatDuelSubCircle who, Func<SpellEffect, bool> kind, kHangingDisposition disposition)
         => who?._hangingEffects?.Count(e => e is not null && kind(e) && Disposed(e, disposition)) ?? 0;
 
-    internal static bool IsAura(SpellEffect e) => e is not null && e.m_numRounds > 0 && !IsOverTime(e);
+    // A Shadow Pact's contract (kShadowPact, CombatResolver.ShadowMagic.cs) also counts its rounds but is no aura: it is
+    // never pushed off by a new aura, used up or ticked down with them.
+    internal static bool IsAura(SpellEffect e) => e is not null && e.m_numRounds > 0 && !IsOverTime(e)
+                                                  && e.m_effectType != kSpellEffects.kShadowPact;
 
     private static bool HasAura(CombatDuelSubCircle who, ReqHangingAura req, CombatDuelSubCircle caster) {
         if (req.m_globalEffect) {
