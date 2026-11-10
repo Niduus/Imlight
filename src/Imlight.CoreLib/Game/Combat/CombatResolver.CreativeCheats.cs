@@ -714,21 +714,27 @@ public partial class CombatResolver {
             }
             case "stealeffects": {
                 var kinds = (step.Kind ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                if (boss._hangingEffects is null) {
-                    return true;
-                }
-
                 foreach (var target in On("Caster").Where(t => t?._hangingEffects is not null && t != boss)) {
+                    // Who gets them: itself, or Onto (Niduus, 2026-11-10: "yourself/another ally/same ally"); each one when
+                    // many. No one there: nothing comes off this one.
+                    var onto = OntoTargets(boss, step, target, "Self", trigger, receiver).Where(o => o._hangingEffects is not null && o != target).ToList();
+                    if (onto.Count == 0) {
+                        continue;
+                    }
+
                     var taken = target._hangingEffects.Where(e => e is not null && !e.m_protected && !CombatRequirements.IsOverTime(e)
                                                                   && (kinds.Length == 0 ? s_charmEffects.Contains(e.m_effectType) || s_wardEffects.Contains(e.m_effectType)
                                                                                            || CombatRequirements.IsAura(e)
                                                                       : kinds.Any(k => IsKind(e, k))))
                         .Reverse().Take(step.Count > 0 ? step.Count : int.MaxValue).ToList();
                     target._hangingEffects.RemoveAll(taken.Contains);
-                    boss._hangingEffects.AddRange(taken.Select(e => e with { }));
+                    foreach (var to in onto) {
+                        to._hangingEffects.AddRange(taken.Select(e => e with { }));
+                    }
+
                     _clearedCount += taken.Count;
-                    Logger.Information("Duel {0} | Slot {1} | {2} steals {3} effects from slot {4}.",
-                        Logger.Args(duel, boss.SlotIndex, bossName, taken.Count, target.SlotIndex));
+                    Logger.Information("Duel {0} | Slot {1} | {2} steals {3} effects from slot {4} for slot {5}.",
+                        Logger.Args(duel, boss.SlotIndex, bossName, taken.Count, target.SlotIndex, string.Join(", ", onto.Select(o => o.SlotIndex))));
                 }
 
                 return true;

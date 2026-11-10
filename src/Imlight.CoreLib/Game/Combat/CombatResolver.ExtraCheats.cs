@@ -72,7 +72,18 @@ public partial class CombatResolver {
             case "copyeffects": {
                 var copying = step.Is("CopyEffects");
                 var redo = new List<BossCheats.CheatAction>();
+                var converted = 0;
                 foreach (var target in On(copying ? "Caster" : "Self").Where(t => t?._hangingEffects is not null && t.IsAlive)) {
+                    // Who gets the new ones (Niduus, 2026-11-10: "an effect on yourself/another ally/same ally"); no one
+                    // there: nothing comes off this one.
+                    var onto = OntoTargets(boss, step, target, copying ? "Self" : step.ToMe ? "Self" : "Same", trigger, receiver);
+                    if (onto.Count == 0) {
+                        Logger.Information("Duel {0} | Slot {1} | {2}: no one to give slot {3}'s effects to ({4}).",
+                            Logger.Args(duel, boss.SlotIndex, bossName, target.SlotIndex, step.Onto));
+
+                        continue;
+                    }
+
                     // Bypass: protected ones too (Niduus, 2026-11-03: "remove 1 blade ... Even through protection").
                     var picked = target._hangingEffects.Where(e => Fits(e) && (copying || step.Bypass || !e.m_protected) && SizedKind(e) is not null)
                         .Reverse().Take(step.Count > 0 ? step.Count : int.MaxValue).ToList();
@@ -84,6 +95,7 @@ public partial class CombatResolver {
                         var gone = picked.ToHashSet(ReferenceEqualityComparer.Instance);
                         target._hangingEffects.RemoveAll(gone.Contains);
                         _clearedCount += gone.Count;
+                        converted += gone.Count;
                     }
 
                     foreach (var e in picked) {
@@ -93,32 +105,34 @@ public partial class CombatResolver {
                             school = asSchool.Equals("Universal", StringComparison.OrdinalIgnoreCase) ? "" : asSchool;
                         }
 
-                        redo.Add(new BossCheats.CheatAction {
-                            Do = "AddCharm",
-                            // Scale: a share of the old one's size (200: a 30% shield becomes a 60% trap).
-                            Amount = (int) Math.Round(Math.Abs(e.m_effectParam) * (step.Scale > 0 ? step.Scale : 100) / 100.0),
-                            School = school.Equals("All", StringComparison.OrdinalIgnoreCase) ? "" : school,
-                            Kind = copying ? SizedKind(e) : (step.To ?? "").Trim().Length > 0 ? step.To.Trim() : "Blade",
-                            Target = copying || step.ToMe ? $"slot:{boss.SlotIndex}" : $"slot:{target.SlotIndex}",
-                            Silent = step.Silent,
-                            Tag = step.Tag,
-                        });
+                        foreach (var to in onto) {
+                            redo.Add(new BossCheats.CheatAction {
+                                Do = "AddCharm",
+                                // Scale: a share of the old one's size (200: a 30% shield becomes a 60% trap).
+                                Amount = (int) Math.Round(Math.Abs(e.m_effectParam) * (step.Scale > 0 ? step.Scale : 100) / 100.0),
+                                School = school.Equals("All", StringComparison.OrdinalIgnoreCase) ? "" : school,
+                                Kind = copying ? SizedKind(e) : (step.To ?? "").Trim().Length > 0 ? step.To.Trim() : "Blade",
+                                Target = $"slot:{to.SlotIndex}",
+                                Silent = step.Silent,
+                                Tag = step.Tag,
+                            });
+                        }
                     }
 
-                    Logger.Information("Duel {0} | Slot {1} | {2}: {3} {4} effects of slot {5}{6}.",
+                    Logger.Information("Duel {0} | Slot {1} | {2}: {3} {4} effects of slot {5}{6} onto slot {7}.",
                         Logger.Args(duel, boss.SlotIndex, bossName, copying ? "copies" : "converts", picked.Count, target.SlotIndex,
-                            copying ? "" : $" into {step.To}"));
+                            copying ? "" : $" into {step.To}", string.Join(", ", onto.Select(o => o.SlotIndex))));
                 }
 
                 if (redo.Count > 0) {
                     // The new ones are put on by steps of their own, which start their own counts: this cheat's counts come
                     // back after them, with what this step converted (IfCleared, IfConverted).
                     var cleared = _clearedCount;
-                    var converted = _convertedCount;
+                    var convertedBefore = _convertedCount;
                     cinematicTime += RunCheatStepsInOrder(boss, cheat, redo, trigger, receiver, bossName, custom, combatActionList,
                         cinematicTimeSoFar + cinematicTime);
                     _clearedCount = cleared;
-                    _convertedCount = converted + (copying ? 0 : redo.Count);
+                    _convertedCount = convertedBefore + converted;
                 }
 
                 return true;
@@ -248,23 +262,24 @@ public partial class CombatResolver {
             }
             case "damage":
             case "drain": {
-                var drained = 0;
                 foreach (var target in On("Caster").Where(t => t?.ParticipantGameStats is not null && t.IsAlive)) {
                     var now = target.ParticipantGameStats.m_currentHitpoints;
                     var amount = Math.Max(0, step.Percent ? MostHealth(target) * step.Amount / 100 : step.Amount);
                     var taken = Math.Min(amount, Math.Max(0, now - 1));
                     if (taken > 0) {
                         SetHealthTo(target, now - taken);
-                        drained += taken;
                     }
 
                     Logger.Information("Duel {0} | Slot {1} | {2}: slot {3} loses {4} health.",
                         Logger.Args(duel, boss.SlotIndex, bossName, target.SlotIndex, taken));
+                    // Drain: who gets it back (itself, or Onto: the same one, another on its side...; each, when many).
+                    if (step.Is("Drain") && taken > 0) {
+                        foreach (var to in OntoTargets(boss, step, target, "Self", trigger, receiver)) {
+                            HealFromCheat(to, taken);
+                        }
+                    }
                 }
 
-                if (step.Is("Drain") && drained > 0) {
-                    HealFromCheat(boss, drained);
-                }
 
                 return true;
             }
@@ -405,12 +420,21 @@ public partial class CombatResolver {
                 // Count random cards (or of Spell / Kind) of Target's (Caster) hand leave it at the next hand and go into
                 // its own (yours, in a player cheat) next hand.
                 foreach (var target in On("Caster").Where(t => t?._combatDeck?.LastGivenHand is not null && t.IsAlive && t != boss)) {
+                    // Whose next hand they go into (itself, or Onto); no one there: no card is taken.
+                    var onto = OntoTargets(boss, step, target, "Self", trigger, receiver);
+                    if (onto.Count == 0) {
+                        continue;
+                    }
+
                     var cards = target._combatDeck.LastGivenHand.Where(c => c is not null && (step.Spell.Length == 0 || MatchesCard(c, step.Spell))).ToList();
                     for (var n = 0; n < Math.Clamp(step.Count, 1, 7) && cards.Count > 0; n++) {
                         var card = cards[Random.Shared.Next(cards.Count)];
                         cards.Remove(card);
                         target.CheatHandRules.Add(new CombatDuelSubCircle.CheatHandRule("Discard", 1, card.m_templateID.ToString(), "", 0, false));
-                        boss.CheatHandRules.Add(new CombatDuelSubCircle.CheatHandRule("Add", 1, "", "", card.m_templateID, false));
+                        foreach (var to in onto) {
+                            to.CheatHandRules.Add(new CombatDuelSubCircle.CheatHandRule("Add", 1, "", "", card.m_templateID, false));
+                        }
+
                         Logger.Information("Duel {0} | Slot {1} | {2}: steals card {3} from slot {4}.",
                             Logger.Args(duel, boss.SlotIndex, bossName, card.m_templateID, target.SlotIndex));
                     }
@@ -879,4 +903,55 @@ public partial class CombatResolver {
         return null;
     }
 
+    /// <summary>
+    /// Who gets what a step moves off <paramref name="from"/> (ConvertEffects, CopyEffects, StealEffects, StealPips, Drain,
+    /// StealCard). Niduus, 2026-11-10: "convert an ally effect for an effect on yourself/another ally/same ally". The
+    /// step's Onto, or <paramref name="fallback"/> when it has none: Same (the one it came from), Self (itself: you, in a
+    /// player cheat), the "Their..." choices (seen from the one it came from: another on its side, all of them, its whole
+    /// side, the weakest or strongest other one, a random one or all on the other side), or any Target code (as seen
+    /// from the cheat's owner). Only those standing; players and creatures alike.
+    /// </summary>
+    private List<CombatDuelSubCircle> OntoTargets(CombatDuelSubCircle boss, BossCheats.CheatAction step, CombatDuelSubCircle from,
+                                                  string fallback, CombatDuelSubCircle trigger, CombatDuelSubCircle receiver) {
+        var code = (step.Onto ?? "").Trim();
+        if (code.Length == 0) {
+            code = fallback;
+        }
+
+        var standing = boss._duelActor.ActiveSubCircles.Where(c => c is not null && c.IsAlive && c.AddedToDuel).ToList();
+        var theirs = standing.Where(c => c != from && c.OccupiedTeam == from.OccupiedTeam).OrderBy(c => c.SlotIndex).ToList();
+        var others = standing.Where(c => c.OccupiedTeam != from.OccupiedTeam).OrderBy(c => c.SlotIndex).ToList();
+        static List<CombatDuelSubCircle> OneOf(List<CombatDuelSubCircle> list) => list.Count == 0 ? [] : [list[Random.Shared.Next(list.Count)]];
+        switch (code.ToLowerInvariant()) {
+            case "same":
+                return from.IsAlive ? [from] : [];
+            case "self" or "me":
+                return boss.IsAlive ? [boss] : [];
+            case "theirally":
+                return OneOf(theirs);
+            case "theirallynotself":
+                return OneOf([.. theirs.Where(c => c != boss)]);
+            case "theirallies":
+                return theirs;
+            case "theirside":
+                return [.. standing.Where(c => c.OccupiedTeam == from.OccupiedTeam).OrderBy(c => c.SlotIndex)];
+            case "theirweakestally":
+                return [.. theirs.OrderBy(HealthShare).Take(1)];
+            case "theirstrongestally":
+                return [.. theirs.OrderByDescending(MostHealth).Take(1)];
+            case "theirenemy":
+                return OneOf(others);
+            case "theirenemies":
+                return others;
+        }
+
+        // Any other choice of the Target list, as seen from the cheat's owner; it does not count as "the block before".
+        var last = _lastStepTargets;
+        try {
+            return [.. StepTargets(boss, code, null, trigger, receiver).Where(c => c is not null && c.IsAlive)];
+        }
+        finally {
+            _lastStepTargets = last;
+        }
+    }
 }

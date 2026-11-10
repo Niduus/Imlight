@@ -680,6 +680,12 @@ internal static class BossCheats {
         // For ConvertEffects: the new effects go on itself (you, in a player cheat) instead of back on the target: "take an
         // enemy's Death shields, gain a Death blade of each one's size" (Niduus, 2026-10-28).
         public bool ToMe { get; set; }
+        // For ConvertEffects, CopyEffects, StealEffects, StealPips, Drain and StealCard: who gets what is moved (Niduus,
+        // 2026-11-10: "convert an ally effect for an effect on yourself/another ally/same ally"). "" each block's own way
+        // (ConvertEffects: the same one, or itself with ToMe; the others: itself); Same: the one it came from; Self;
+        // TheirAlly / TheirAllyNotSelf / TheirAllies / TheirSide / TheirWeakestAlly / TheirStrongestAlly / TheirEnemy /
+        // TheirEnemies: seen from the one it came from; any Target code too. Many: each gets one (CombatResolver.ExtraCheats.cs).
+        public string Onto { get; set; } = "";
         // For ConvertEffects: the new ones are this percent of the old one's size (0 or 100: the same; 200: double;
         // Niduus, 2026-11-03: "convert that shield into a trap for double it's value").
         public int Scale { get; set; }

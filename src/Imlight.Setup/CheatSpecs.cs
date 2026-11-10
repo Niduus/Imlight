@@ -106,6 +106,30 @@ internal static class CheatSpecs {
         ("e4", "ENEMY CIRCLE 4 (the other side)"),
     ];
 
+    // Who gets what a block moves (convert, copy, steal effects, steal pips, drain, steal a card). Niduus, 2026-11-10:
+    // "convert an ally effect for an effect on yourself/another ally/same ally". The "THAT ONE'S" choices are seen from
+    // the one it came from (its teammates, its enemies); every choice of the target list works too. Many: each gets one.
+    internal static readonly (string Value, string Label)[] ONTO = [
+        ("", "the block's own way"),
+        ("Same", "THE SAME ONE (the one it came from)"),
+        ("Self", "SELF (itself; you, in a player cheat)"),
+        ("TheirAlly", "ANOTHER ALLY OF THAT ONE (random, maybe itself)"),
+        ("TheirAllyNotSelf", "ANOTHER ALLY OF THAT ONE (random, not itself)"),
+        ("TheirWeakestAlly", "THAT ONE'S WEAKEST ALLY (the lowest share of health)"),
+        ("TheirStrongestAlly", "THAT ONE'S STRONGEST ALLY (the most health)"),
+        ("TheirAllies", "ALL OF THAT ONE'S ALLIES (not that one)"),
+        ("TheirSide", "THAT ONE'S WHOLE SIDE (that one too)"),
+        ("TheirEnemy", "AN ENEMY OF THAT ONE (random)"),
+        ("TheirEnemies", "ALL OF THAT ONE'S ENEMIES"),
+        .. TARGETS.Where(t => t.Value.Length > 0 && t.Value is not ("Self" or "Last")),
+    ];
+
+    private static string Onto(CheatBlock b, string fallback) {
+        var onto = b.Text("Onto");
+
+        return onto.Length == 0 ? fallback : " to " + LabelOf(ONTO, onto);
+    }
+
     internal static readonly (string Value, string Label)[] SCHOOLS = [
         ("", "any school"), ("Fire", "Fire"), ("Ice", "Ice"), ("Storm", "Storm"), ("Myth", "Myth"), ("Life", "Life"),
         ("Death", "Death"), ("Balance", "Balance"), ("Star", "Star"), ("Sun", "Sun"), ("Moon", "Moon"), ("Shadow", "Shadow"),
@@ -865,9 +889,9 @@ internal static class CheatSpecs {
         new("D.Pips", BlockKind.Do, "pips", "give or take pips", "Gives pips (to fill empty slots first) or takes them away. A school's pips too: Crash the Bandit Coot spends his two matching Fire pips (take 2 Fire school pips from itself) after his Crash Attack.",
             "{Amount} {Kind} pips, for {Target} (or as many as variable {AmountVar})", [F("Amount", CheatFieldType.Sign, 1, max: 14), F("Kind", CheatFieldType.Choice, "Normal", s_pipKinds), F("Target", CheatFieldType.Target, "Self"), F("AmountVar", CheatFieldType.Words, "")],
             b => SizeFromVar(b, $"{(b.Number("Amount") < 0 ? "take" : "give")} {Math.Abs(b.Number("Amount"))} {LabelOf(s_pipKinds, b.Text("Kind"))} pips{Target(b).Replace(" on ", b.Number("Amount") < 0 ? " from " : " to ")}")),
-        new("D.StealPips", BlockKind.Do, "pips", "steal pips", "Takes pips from the target and gives them to the boss.",
-            "Steal {Amount} {Kind} pips from {Target}", [F("Amount", CheatFieldType.Number, 2, max: 14), F("Kind", CheatFieldType.Choice, "Normal", s_pipKinds), F("Target", CheatFieldType.Target, "Caster")],
-            b => $"steal {b.Number("Amount")} {LabelOf(s_pipKinds, b.Text("Kind"))} pips{Target(b).Replace(" on ", " from ")}"),
+        new("D.StealPips", BlockKind.Do, "pips", "steal pips", "Takes pips from the target and gives them to itself (the boss; you, in a player cheat), or to whoever \"give them to\" picks: another ally of that one, your weakest ally... (each gets them).",
+            "Steal {Amount} {Kind} pips from {Target} and give them to {Onto}", [F("Amount", CheatFieldType.Number, 2, max: 14), F("Kind", CheatFieldType.Choice, "Normal", s_pipKinds), F("Target", CheatFieldType.Target, "Caster"), new("Onto", CheatFieldType.Choice, "", ONTO)],
+            b => $"steal {b.Number("Amount")} {LabelOf(s_pipKinds, b.Text("Kind"))} pips{Target(b).Replace(" on ", " from ")}{Onto(b, "")}"),
         new("D.Defeat", BlockKind.Do, "skull", "defeat itself", "The boss is defeated after the cheat (its drops still come).",
             "Defeat itself", [], _ => "defeat itself"),
         new("D.RandomOne", BlockKind.Do, "dice", "one spell at random", "Of all its Cast blocks, only one is cast each time, picked at random.",
@@ -921,12 +945,12 @@ internal static class CheatSpecs {
             "Set {Scope} variable {Var}: {Op} {Amount} (or variable {AmountVar})", [F("Scope", CheatFieldType.Choice, "", s_scopes), F("Var", CheatFieldType.Words, "rage"), F("Op", CheatFieldType.Choice, "Add", s_varOps), new("Amount", CheatFieldType.Number, 1, Max: 1_000_000, Min: -1_000_000), F("AmountVar", CheatFieldType.Words, "")],
             b => b.Text("AmountVar").Trim().Length > 0 ? $"{b.Text("Var")}: {LabelOf(s_varOps, b.Text("Op").Length > 0 ? b.Text("Op") : "Set")} {b.Text("AmountVar").Trim()}"
                 : $"{b.Text("Var")}: {LabelOf(s_varOps, b.Text("Op").Length > 0 ? b.Text("Op") : "Set")} {N(b.Number("Amount"))}"),
-        new("D.ConvertEffects", BlockKind.Do, "swap", "convert effects", "Takes effects of a kind off the target and gives each one back as another kind, the same size and school, drawn by the game: every trap on you becomes a blade of its size. 0 means all of them. Ticked \"give them to me\": the new ones go on itself (you, in a player cheat) instead, one for each taken off: every Death shield on the enemy becomes a Death blade of its size on you. Size %: the new ones are this share of the old one's size (100 or 0: the same, 200: double, so a 30% shield becomes a 60% trap). \"Even protected ones\": Aegis, Indemnity and other protected effects are taken too.",
-            "Turn {Count} {EffectSchool} {Kind} on {Target} into {To} {AsSchool} at {Scale} % size {ToMe} {Bypass} {Silent}", [F("Count", CheatFieldType.Number, 0, max: 99), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "Trap", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("To", CheatFieldType.Choice, "Blade", s_convertTo), F("AsSchool", CheatFieldType.Choice, "", s_asSchool), new("Scale", CheatFieldType.Number, 100, Max: 10_000, Min: 0), new("ToMe", CheatFieldType.Toggle, false, Label: "give them to me"), new("Bypass", CheatFieldType.Toggle, false, Label: "even protected ones"), new("Silent", CheatFieldType.Toggle, false, Label: "silent")],
-            b => $"turn {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")}{Universal(b)} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b)}{(b.Flag("Bypass") ? " (even protected ones)" : "")} into {LabelOf(s_convertTo, b.Text("To"))}{(b.Text("AsSchool").Length > 0 ? $" ({LabelOf(s_asSchool, b.Text("AsSchool"))})" : "")}{(b.Number("Scale") is > 0 and not 100 ? $" at {b.Number("Scale")}% size" : "")}{(b.Flag("ToMe") ? " on me" : "")}"),
-        new("D.CopyEffects", BlockKind.Do, "copy", "copy effects", "Copies effects of a kind from the target onto itself (you, in a player cheat), the same size and school; the target keeps them. 0 means all of them.",
-            "Copy {Count} {EffectSchool} {Kind} from {Target} {Silent}", [F("Count", CheatFieldType.Number, 0, max: 99), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "Blade", s_hasKinds), F("Target", CheatFieldType.Target, "Caster"), new("Silent", CheatFieldType.Toggle, false, Label: "silent")],
-            b => $"copy {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")}{Universal(b)} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b).Replace(" on ", " from ")}"),
+        new("D.ConvertEffects", BlockKind.Do, "swap", "convert effects", "Takes effects of a kind off the target and gives each one back as another kind, the same size and school, drawn by the game: every trap on you becomes a blade of its size. 0 means all of them. \"Give them to\" picks who gets the new ones: the same one (as before), yourself, another ally of that one, that one's weakest ally, all of them, any target in the list... When many get them, each gets one of each: an ally's blade becomes a shield on another ally, or every Death shield on the enemy becomes a Death blade of its size on you. (The old \"give them to me\" tick still works: it is the same as \"SELF\".) Size %: the new ones are this share of the old one's size (100 or 0: the same, 200: double, so a 30% shield becomes a 60% trap). \"Even protected ones\": Aegis, Indemnity and other protected effects are taken too.",
+            "Turn {Count} {EffectSchool} {Kind} on {Target} into {To} {AsSchool} at {Scale} % size, give them to {Onto} {ToMe} {Bypass} {Silent}", [F("Count", CheatFieldType.Number, 0, max: 99), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "Trap", s_hasKinds), F("Target", CheatFieldType.Target, "Self"), F("To", CheatFieldType.Choice, "Blade", s_convertTo), F("AsSchool", CheatFieldType.Choice, "", s_asSchool), new("Scale", CheatFieldType.Number, 100, Max: 10_000, Min: 0), new("Onto", CheatFieldType.Choice, "", ONTO), new("ToMe", CheatFieldType.Toggle, false, Label: "give them to me"), new("Bypass", CheatFieldType.Toggle, false, Label: "even protected ones"), new("Silent", CheatFieldType.Toggle, false, Label: "silent")],
+            b => $"turn {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")}{Universal(b)} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b)}{(b.Flag("Bypass") ? " (even protected ones)" : "")} into {LabelOf(s_convertTo, b.Text("To"))}{(b.Text("AsSchool").Length > 0 ? $" ({LabelOf(s_asSchool, b.Text("AsSchool"))})" : "")}{(b.Number("Scale") is > 0 and not 100 ? $" at {b.Number("Scale")}% size" : "")}{(b.Text("Onto").Length > 0 ? Onto(b, "") : b.Flag("ToMe") ? " on me" : "")}"),
+        new("D.CopyEffects", BlockKind.Do, "copy", "copy effects", "Copies effects of a kind from the target onto itself (you, in a player cheat), the same size and school; the target keeps them. 0 means all of them. \"Give them to\" puts the copies on someone else instead: the same one (doubling them), another ally of that one, all of its allies, any target in the list; each gets one of each.",
+            "Copy {Count} {EffectSchool} {Kind} from {Target} and give them to {Onto} {Silent}", [F("Count", CheatFieldType.Number, 0, max: 99), F("EffectSchool", CheatFieldType.Choice, "", s_effectSchools), F("Kind", CheatFieldType.Choice, "Blade", s_hasKinds), F("Target", CheatFieldType.Target, "Caster"), new("Onto", CheatFieldType.Choice, "", ONTO), new("Silent", CheatFieldType.Toggle, false, Label: "silent")],
+            b => $"copy {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")}{Universal(b)} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b).Replace(" on ", " from ")}{Onto(b, "")}"),
         // Niduus, 2026-11-04: "are swaps, exchange, mirror/echo, and clears in the cheat blocks?": swap (exchange) effects,
         // mirror effects and swap pips, for players and creatures alike.
         new("D.SwapEffects", BlockKind.Do, "swap", "swap effects (exchange)", "Its own effects of a kind and the target's trade places, the same size and school: it gets their blades, they get its blades. 0 means all of them. Protected ones stay unless ticked.",
@@ -950,9 +974,9 @@ internal static class CheatSpecs {
         new("D.Damage", BlockKind.Do, "hit", "do damage", "The target loses health, by hit points or by a share of its most health, with no spell. It never goes below 1 (add \"defeat\" to finish one off).",
             "Take {Amount} {Percent} health from {Target} (or variable {AmountVar})", [F("Amount", CheatFieldType.Number, 500, max: 1_000_000), new("Percent", CheatFieldType.Toggle, false, Label: "% of the most"), F("Target", CheatFieldType.Target, "Caster"), F("AmountVar", CheatFieldType.Words, "")],
             b => SizeFromVar(b, $"take {N(b.Number("Amount"))}{(b.Flag("Percent") ? "%" : "")} health{Target(b).Replace(" on ", " from ")}")),
-        new("D.Drain", BlockKind.Do, "heal", "drain health", "The target loses health (hit points or a share of its most) and it (you, in a player cheat) gets as much back.",
-            "Drain {Amount} {Percent} health from {Target} (or variable {AmountVar})", [F("Amount", CheatFieldType.Number, 500, max: 1_000_000), new("Percent", CheatFieldType.Toggle, false, Label: "% of the most"), F("Target", CheatFieldType.Target, "Caster"), F("AmountVar", CheatFieldType.Words, "")],
-            b => SizeFromVar(b, $"drain {N(b.Number("Amount"))}{(b.Flag("Percent") ? "%" : "")} health{Target(b).Replace(" on ", " from ")}")),
+        new("D.Drain", BlockKind.Do, "heal", "drain health", "The target loses health (hit points or a share of its most) and it (you, in a player cheat) gets as much back, or whoever \"give it to\" picks: your weakest ally, another ally of that one, all your allies (each gets as much).",
+            "Drain {Amount} {Percent} health from {Target} (or variable {AmountVar}) and give it to {Onto}", [F("Amount", CheatFieldType.Number, 500, max: 1_000_000), new("Percent", CheatFieldType.Toggle, false, Label: "% of the most"), F("Target", CheatFieldType.Target, "Caster"), F("AmountVar", CheatFieldType.Words, ""), new("Onto", CheatFieldType.Choice, "", ONTO)],
+            b => SizeFromVar(b, $"drain {N(b.Number("Amount"))}{(b.Flag("Percent") ? "%" : "")} health{Target(b).Replace(" on ", " from ")}{Onto(b, "")}")),
         new("D.SpellRule", BlockKind.Do, "bolt", "always land, fizzle or crit", "The target's next spells (how many; 0 is the rest of the battle) always land, always fizzle, always crit or never crit. \"Go back to normal\" ends it. Example: when I pass, my next spell crits.",
             "{Target}'s next {Count} spells {Kind}", [F("Target", CheatFieldType.Target, "Self"), F("Count", CheatFieldType.Number, 1, max: 99), F("Kind", CheatFieldType.Choice, "Crit", s_spellRules)],
             b => $"the next {(b.Number("Count") > 0 ? N(b.Number("Count")) : "all")} spells{Target(b).Replace(" on ", " of ")} {LabelOf(s_spellRules, b.Text("Kind"))}"),
@@ -975,9 +999,9 @@ internal static class CheatSpecs {
             "Give {Target} {Kind} {Amount} % for {Rounds} rounds", [F("Target", CheatFieldType.Target, "Self"), F("Kind", CheatFieldType.Choice, "Thorns", s_hitShares), F("Amount", CheatFieldType.Number, 25, max: 1000), F("Rounds", CheatFieldType.Number, 0, max: 99), F("AmountVar", CheatFieldType.Words, "")],
             b => b.Number("Amount") == 0 && b.Text("AmountVar").Trim().Length == 0 ? $"take {LabelOf(s_hitShares, b.Text("Kind")).Split(':')[0]} off{Target(b)}"
                 : SizeFromVar(b, $"{LabelOf(s_hitShares, b.Text("Kind"))} {b.Number("Amount")}%{Target(b)} for {RoundsFor(b)}")),
-        new("D.StealCard", BlockKind.Do, "cards", "steal a card", "Takes cards (at random, or only of these spells) out of the target's hand at their next hand, and puts them in its own next hand (yours, in a player cheat). A wizard sees the change at the next planning phase.",
-            "Steal {Count} {Spell} cards from {Target}", [F("Count", CheatFieldType.Number, 1, max: 7), F("Spell", CheatFieldType.Words, ""), F("Target", CheatFieldType.Target, "Caster")],
-            b => $"steal {Math.Max(1, b.Number("Count"))} {(b.Text("Spell").Length > 0 ? b.Text("Spell") + " " : "")}card{(b.Number("Count") > 1 ? "s" : "")}{Target(b).Replace(" on ", " from ")}"),
+        new("D.StealCard", BlockKind.Do, "cards", "steal a card", "Takes cards (at random, or only of these spells) out of the target's hand at their next hand, and puts them in its own next hand (yours, in a player cheat), or in the hand of whoever \"give them to\" picks (another ally, a teammate of that one...). A wizard sees the change at the next planning phase.",
+            "Steal {Count} {Spell} cards from {Target} and give them to {Onto}", [F("Count", CheatFieldType.Number, 1, max: 7), F("Spell", CheatFieldType.Words, ""), F("Target", CheatFieldType.Target, "Caster"), new("Onto", CheatFieldType.Choice, "", ONTO)],
+            b => $"steal {Math.Max(1, b.Number("Count"))} {(b.Text("Spell").Length > 0 ? b.Text("Spell") + " " : "")}card{(b.Number("Count") > 1 ? "s" : "")}{Target(b).Replace(" on ", " from ")}{Onto(b, "")}"),
         new("D.Countdown", BlockKind.Do, "hourglass", "countdown", "Shows a number counting down, once a round, to the wizards in the battle (you alone, in a player cheat): this many now, one less at the start of each round, until 1. {n} in the words is the number; {boss}, {player} and a variable's name such as {rage} are filled in too. Put a \"wait … rounds\" block with the same number under it for what happens at the end. Example: \"Doom falls in {n} rounds!\" from 3, then wait 3 rounds and cast Doom.",
             "Count down from {Amount}: {Text} {Style}", [F("Amount", CheatFieldType.Number, 3, max: 99), F("Text", CheatFieldType.Words, "Doom falls in {n} rounds!"), F("Style", CheatFieldType.Choice, "Chat", s_countdownStyles)],
             b => $"count down from {Math.Max(1, b.Number("Amount"))}: \"{b.Text("Text")}\" {LabelOf(s_countdownStyles, b.Text("Style").Length > 0 ? b.Text("Style") : "Chat")}"),
@@ -1007,9 +1031,9 @@ internal static class CheatSpecs {
         new("D.Redirect", BlockKind.Do, "hit", "redirect the spell", "The attacker's spell fizzles, and the attacker casts it (free) on the target picked instead: a random player if none, or e1-e4, AllEnemies... as seen from this one. Like reflect, it goes off before the spell lands.",
             "Stop the attacker's spell and have them cast it on {Target}", [F("Target", CheatFieldType.Target, "Enemy")],
             b => $"redirect it{Target(b, " on a random player")}"),
-        new("D.StealEffects", BlockKind.Do, "shield", "steal effects", "Charms, wards or auras of a kind (any if empty) come off the target and go on this one (0: all of them). They work on the server; the game draws only the ones taken off, not the ones put on.",
-            "Take {Count} {Kind} off {Target} and put them on itself", [F("Count", CheatFieldType.Number, 1, max: 20), F("Kind", CheatFieldType.Choice, "", s_hasKinds), F("Target", CheatFieldType.Target, "Caster")],
-            b => $"steal {(b.Number("Count") > 0 ? b.Number("Count").ToString(CultureInfo.InvariantCulture) : "all")} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b)}"),
+        new("D.StealEffects", BlockKind.Do, "shield", "steal effects", "Charms, wards or auras of a kind (any if empty) come off the target and go on this one (0: all of them), or on whoever \"give them to\" picks: another ally of that one, your weakest ally, all of its enemies... (each gets them). They work on the server; the game draws only the ones taken off, not the ones put on.",
+            "Take {Count} {Kind} off {Target} and give them to {Onto}", [F("Count", CheatFieldType.Number, 1, max: 20), F("Kind", CheatFieldType.Choice, "", s_hasKinds), F("Target", CheatFieldType.Target, "Caster"), new("Onto", CheatFieldType.Choice, "", ONTO)],
+            b => $"steal {(b.Number("Count") > 0 ? b.Number("Count").ToString(CultureInfo.InvariantCulture) : "all")} {LabelOf(s_hasKinds, b.Text("Kind"))}{Target(b)}{Onto(b, "")}"),
         new("D.RunCheat", BlockKind.Do, "puzzle", "run another cheat", "The Do blocks of another of its cheats go off now (1 is the first in its list). Ticked: only if that cheat's own Ifs hold too.",
             "Do cheat {Cheat}'s blocks {Check}", [F("Cheat", CheatFieldType.Number, 1, max: 200), new("Check", CheatFieldType.Toggle, false, Label: "only if its Ifs hold")],
             b => $"run cheat {b.Number("Cheat")}"),
