@@ -967,9 +967,19 @@ public partial class CombatResolver {
                     return true;
                 }
                 case "stealpips": {
-                    var taken = On("Caster").Sum(target => ChangePips(target, step.Kind, -Math.Max(1, Math.Abs(step.Amount))));
-                    if (taken > 0) {
-                        ChangePips(boss, step.Kind, taken);
+                    // Who gets them: itself, or Onto (the same one's teammate, its weakest ally...; each, when many).
+                    foreach (var target in On("Caster")) {
+                        var onto = OntoTargets(boss, step, target, "Self", trigger, receiver).Where(o => o != target).ToList();
+                        if (onto.Count == 0) {
+                            continue;
+                        }
+
+                        var taken = ChangePips(target, step.Kind, -Math.Max(1, Math.Abs(step.Amount)));
+                        if (taken > 0) {
+                            foreach (var to in onto) {
+                                ChangePips(to, step.Kind, taken);
+                            }
+                        }
                     }
 
                     return true;
