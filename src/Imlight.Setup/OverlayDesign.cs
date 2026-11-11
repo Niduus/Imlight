@@ -179,12 +179,57 @@ internal sealed class OverlayDesign {
     internal OverlayDesign Copy() => FromJson(ToJson()) ?? new OverlayDesign();
 
     /// <summary>
-    /// Every value back in range, and the credit line put back to the program's own look and place (Niduus, 2026-11-11:
-    /// "Ahziael is always loaded first and always in it's designated position first. It can not be repositioned or
-    /// disabled or moved in anyway").
+    /// Every value back in range. The credit line keeps the look people gave it (Niduus, 2026-11-11: "allow customization
+    /// of the Ahziael UI but not the ability to modify it's text. It stays the same no matter what"), but its words, its
+    /// place and that it is shown always come from the program ("It can not be repositioned or disabled or moved in
+    /// anyway").
     /// </summary>
     internal OverlayDesign Clean() {
-        // The same object stays (the designer keeps hold of it); every value of it comes from the program.
+        // The same object stays (the designer keeps hold of it).
+        var credit = Credit ??= DefaultCredit();
+        var look = DefaultCredit();
+        credit.Clean();
+
+        // Who it is, where it is and that it is there: never up to anyone.
+        credit.Kind = OverlayElement.TEXT;
+        credit.Name = look.Name;
+        credit.Text = look.Text;
+        credit.Anchor = look.Anchor;
+        credit.X = look.X;
+        credit.Y = look.Y;
+        credit.Width = 0;
+        credit.Height = 0;
+        credit.Rotation = 0;
+        credit.Visible = true;
+        credit.Locked = false;
+        credit.Id = "";
+        credit.Parent = "";
+        credit.Layer = 0;
+        credit.Spacing = 0;
+        credit.Picture = "";
+        credit.Action = look.Action;
+        credit.Command = "";
+        credit.CheatHow = look.CheatHow;
+
+        // Always readable: big enough, not faded away, and the letters always have a colour.
+        credit.Size = Math.Max(credit.Size, 10);
+        credit.Opacity = Math.Max(credit.Opacity, 0.6);
+        if (credit.Fill.IsNone || !Seen(credit.Fill.Color1) || credit.Fill.Kind != OverlayPaint.SOLID && !Seen(credit.Fill.Color2)) {
+            credit.Fill = look.Fill;
+        }
+
+        Elements = (Elements ?? []).Where(e => e is not null).Take(MAX_ELEMENTS).Select(e => e.Clean()).ToList();
+        FixFamily(Elements);
+
+        return this;
+    }
+
+    // A letter colour at least 60% solid (colours are #AARRGGBB once cleaned).
+    private static bool Seen(string color) =>
+        color.Length == 9 && int.TryParse(color.AsSpan(1, 2), System.Globalization.NumberStyles.HexNumber, null, out var alpha) && alpha >= 0x99;
+
+    /// <summary>Puts the Ahziael line's look back to how Ahziael ships it.</summary>
+    internal void ResetCreditLook() {
         var credit = Credit ??= DefaultCredit();
         var look = DefaultCredit();
         foreach (var property in typeof(OverlayElement).GetProperties()) {
@@ -192,11 +237,6 @@ internal sealed class OverlayDesign {
                 property.SetValue(credit, property.GetValue(look));
             }
         }
-
-        Elements = (Elements ?? []).Where(e => e is not null).Take(MAX_ELEMENTS).Select(e => e.Clean()).ToList();
-        FixFamily(Elements);
-
-        return this;
     }
 
 }

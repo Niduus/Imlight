@@ -1736,79 +1736,98 @@ internal sealed partial class ManagerWindow {
 
             var credit = e == _ovDesign.Credit;
 
-            void Changed() => OverlayChanged(false);
+            void Changed() {
+                OverlayChanged(false);
+                if (credit && _ovServerPart) {
+                    // The Ahziael line's look is the player's own (overlay.json), even when it is changed from the server part.
+                    _ovClient.Clean();
+                    OverlayHost.Apply(_ovClient);
+                    _ovSeenStamp = OverlayHost.DesignStamp;
+                }
+            }
 
             // What and where.
             var what = new WrapPanel();
             if (credit) {
-                // Niduus, 2026-11-11: "It can not be repositioned or disabled or moved in anyway".
-                _ovEditor.Children.Add(Sub("The Ahziael line: \"" + OverlayDesign.CreditLine(OverlayHost.Version) + "\". It always sits in the " +
-                    "bottom-left corner, in full, on top of everything, and only Ahziael sets how it looks: it can't be moved, changed or " +
-                    "turned off. The server's texts and boxes, then yours, are placed around it."));
-
-                return;
-            }
-
-            what.Children.Add(OvField("Name in the list", OvText(e.Name, v => { e.Name = v; OverlayChanged(); }, 180)));
-            what.Children.Add(OvField("Shown", OvCheck("Shown", e.Visible, v => { e.Visible = v; OverlayChanged(); })));
-            what.Children.Add(OvField("Belongs to (moves with it)", ParentPicker(e, 220)));
-            what.Children.Add(OvField(e.Parent.Length > 0 ? "Pinned to (its parent's)" : "Pinned to", OvCombo(Enum.GetNames<OverlayAnchor>().Select(SpacedName).ToArray(), (int) e.Anchor, i => { e.Anchor = (OverlayAnchor) i; Changed(); }, 150)));
-            what.Children.Add(OvField("In from the side", OvNumber(e.X, -4000, 4000, 1, v => { e.X = v; Changed(); })));
-            what.Children.Add(OvField("In from the top or bottom", OvNumber(e.Y, -4000, 4000, 1, v => { e.Y = v; Changed(); })));
-            if (!credit) {
-                what.Children.Add(OvField("Layer (higher is on top)", OvNumber(e.Layer, 0, 99, 1, v => { e.Layer = (int) v; Changed(); })));
-                what.Children.Add(OvField("Spacing (0 = may lap over)", OvNumber(e.Spacing, 0, 500, 1, v => { e.Spacing = v; Changed(); })));
-                what.Children.Add(OvField(e.IsBox ? "Width" : "Width (0 = fit)", OvNumber(e.Width, 0, 4000, 5, v => { e.Width = v; Changed(); })));
-                what.Children.Add(OvField(e.IsBox ? "Height" : "Height (0 = fit)", OvNumber(e.Height, 0, 4000, 5, v => { e.Height = v; Changed(); })));
-                what.Children.Add(OvField("Turn (degrees)", OvNumber(e.Rotation, -360, 360, 5, v => { e.Rotation = v; Changed(); })));
-            }
-
-            what.Children.Add(OvField("See-through", OvSlider(e.Opacity, 0, 1, v => { e.Opacity = v; Changed(); })));
-            what.Children.Add(OvField("Locked", OvCheck("Can't be dragged", e.Locked, v => { e.Locked = v; Changed(); })));
-            _ovEditor.Children.Add(OvGroup("What and where", what));
-            if (e.IsButton) {
-                _ovEditor.Children.Add(OvGroup("When it is clicked in the game", ButtonActionEditor(e)));
-            }
-
-            // Put it on a side or the middle of the window in one click (it stays pinned there on any window size).
-            Button AlignButton(string label, int? column, int? row) {
-                var button = Plain(label);
-                button.Click += (_, _) => {
-                    var col = column ?? (int) e.Anchor % 3;
-                    var rw = row ?? (int) e.Anchor / 3;
-                    e.Anchor = (OverlayAnchor) (rw * 3 + col);
-                    if (column is { } c) {
-                        e.X = c == 1 ? 0 : 10;
-                    }
-
-                    if (row is { } r) {
-                        e.Y = r == 1 ? 0 : 10;
-                    }
-
-                    OverlayChanged(false);
+                // Niduus, 2026-11-11: "It can not be repositioned or disabled or moved in anyway", then "allow customization of
+                // the Ahziael UI but not the ability to modify it's text. It stays the same no matter what".
+                _ovEditor.Children.Add(Sub("The Ahziael line: \"" + OverlayDesign.CreditLine(OverlayHost.Version) + "\". You can change how it " +
+                    "looks (font, size, colours, background, edges, shadow), but its words never change, and it always sits in the bottom-left " +
+                    "corner, in full, on top of everything: it can't be moved or turned off. The server's texts and boxes, then yours, are " +
+                    "placed around it."));
+                var reset = Plain("Put its look back to Ahziael's");
+                reset.Click += (_, _) => {
+                    _ovDesign.ResetCreditLook();
+                    Changed();
                     RenderOverlayEditor();
                 };
-
-                return button;
+                _ovEditor.Children.Add(OvGroup("The Ahziael line", Row(
+                    OvField("See-through (stays at least 60% solid)", OvSlider(e.Opacity, 0.6, 1, v => { e.Opacity = v; Changed(); })),
+                    reset)));
             }
+            else {
+                what.Children.Add(OvField("Name in the list", OvText(e.Name, v => { e.Name = v; OverlayChanged(); }, 180)));
+                what.Children.Add(OvField("Shown", OvCheck("Shown", e.Visible, v => { e.Visible = v; OverlayChanged(); })));
+                what.Children.Add(OvField("Belongs to (moves with it)", ParentPicker(e, 220)));
+                what.Children.Add(OvField(e.Parent.Length > 0 ? "Pinned to (its parent's)" : "Pinned to", OvCombo(Enum.GetNames<OverlayAnchor>().Select(SpacedName).ToArray(), (int) e.Anchor, i => { e.Anchor = (OverlayAnchor) i; Changed(); }, 150)));
+                what.Children.Add(OvField("In from the side", OvNumber(e.X, -4000, 4000, 1, v => { e.X = v; Changed(); })));
+                what.Children.Add(OvField("In from the top or bottom", OvNumber(e.Y, -4000, 4000, 1, v => { e.Y = v; Changed(); })));
+                if (!credit) {
+                    what.Children.Add(OvField("Layer (higher is on top)", OvNumber(e.Layer, 0, 99, 1, v => { e.Layer = (int) v; Changed(); })));
+                    what.Children.Add(OvField("Spacing (0 = may lap over)", OvNumber(e.Spacing, 0, 500, 1, v => { e.Spacing = v; Changed(); })));
+                    what.Children.Add(OvField(e.IsBox ? "Width" : "Width (0 = fit)", OvNumber(e.Width, 0, 4000, 5, v => { e.Width = v; Changed(); })));
+                    what.Children.Add(OvField(e.IsBox ? "Height" : "Height (0 = fit)", OvNumber(e.Height, 0, 4000, 5, v => { e.Height = v; Changed(); })));
+                    what.Children.Add(OvField("Turn (degrees)", OvNumber(e.Rotation, -360, 360, 5, v => { e.Rotation = v; Changed(); })));
+                }
 
-            _ovEditor.Children.Add(OvGroup(e.Parent.Length > 0 ? "Line it up with its parent" : "Line it up with the window", new WrapPanel {
-                Children = {
-                    Spaced(AlignButton("Left", 0, null)), Spaced(AlignButton("Centre", 1, null)), Spaced(AlignButton("Right", 2, null)),
-                    Spaced(AlignButton("Top", null, 0)), Spaced(AlignButton("Middle", null, 1)), Spaced(AlignButton("Bottom", null, 2)),
-                },
-            }));
+                what.Children.Add(OvField("See-through", OvSlider(e.Opacity, 0, 1, v => { e.Opacity = v; Changed(); })));
+                what.Children.Add(OvField("Locked", OvCheck("Can't be dragged", e.Locked, v => { e.Locked = v; Changed(); })));
+                _ovEditor.Children.Add(OvGroup("What and where", what));
+                if (e.IsButton) {
+                    _ovEditor.Children.Add(OvGroup("When it is clicked in the game", ButtonActionEditor(e)));
+                }
 
-            if (e.IsPicture) {
-                var change = Action(Plain("Change picture"), async () => {
-                    if (await PickPictureAsync() is { } picture) {
-                        e.Picture = picture;
-                        OverlayChanged();
-                    }
-                });
-                _ovEditor.Children.Add(OvGroup("Picture", Row(change,
-                    OvField("How it fills its box", OvCombo(["Whole picture", "Cover the box", "Stretch"], Array.IndexOf(OverlayElement.PICTURE_FITS, e.PictureFit),
-                        i => { e.PictureFit = OverlayElement.PICTURE_FITS[i]; Changed(); }, 160)))));
+                // Put it on a side or the middle of the window in one click (it stays pinned there on any window size).
+                Button AlignButton(string label, int? column, int? row) {
+                    var button = Plain(label);
+                    button.Click += (_, _) => {
+                        var col = column ?? (int) e.Anchor % 3;
+                        var rw = row ?? (int) e.Anchor / 3;
+                        e.Anchor = (OverlayAnchor) (rw * 3 + col);
+                        if (column is { } c) {
+                            e.X = c == 1 ? 0 : 10;
+                        }
+
+                        if (row is { } r) {
+                            e.Y = r == 1 ? 0 : 10;
+                        }
+
+                        OverlayChanged(false);
+                        RenderOverlayEditor();
+                    };
+
+                    return button;
+                }
+
+                _ovEditor.Children.Add(OvGroup(e.Parent.Length > 0 ? "Line it up with its parent" : "Line it up with the window", new WrapPanel {
+                    Children = {
+                        Spaced(AlignButton("Left", 0, null)), Spaced(AlignButton("Centre", 1, null)), Spaced(AlignButton("Right", 2, null)),
+                        Spaced(AlignButton("Top", null, 0)), Spaced(AlignButton("Middle", null, 1)), Spaced(AlignButton("Bottom", null, 2)),
+                    },
+                }));
+
+                if (e.IsPicture) {
+                    var change = Action(Plain("Change picture"), async () => {
+                        if (await PickPictureAsync() is { } picture) {
+                            e.Picture = picture;
+                            OverlayChanged();
+                        }
+                    });
+                    _ovEditor.Children.Add(OvGroup("Picture", Row(change,
+                        OvField("How it fills its box", OvCombo(["Whole picture", "Cover the box", "Stretch"], Array.IndexOf(OverlayElement.PICTURE_FITS, e.PictureFit),
+                            i => { e.PictureFit = OverlayElement.PICTURE_FITS[i]; Changed(); }, 160)))));
+                }
+
             }
 
             if (!e.IsBox) {
