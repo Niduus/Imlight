@@ -140,8 +140,7 @@ internal sealed partial class ManagerWindow {
         }
 
         var games = OverlayHost.GameWindows;
-        var drawing = !OverlayHost.Design.Enabled ? "The overlay is off."
-            : games == 0 ? "Wizard101 is not open, so there is nothing to draw on yet."
+        var drawing = games == 0 ? "Wizard101 is not open, so there is nothing to draw on yet."
             : $"Drawing on {games} Wizard101 window{(games == 1 ? "" : "s")}.";
 
         return drawing + " " + OverlayHost.Link.Status;
@@ -223,8 +222,8 @@ internal sealed partial class ManagerWindow {
                 if (!_ovFilling) {
                     _ovDesign.Enabled = _ovEnabled.IsChecked == true;
                     OverlayChanged(false);
-                    Say(_ovDesign.Enabled ? "The overlay is on. It shows over Wizard101."
-                        : "The overlay is off. Servers that need it will turn you away until you turn it back on.");
+                    Say(_ovDesign.Enabled ? "Your texts and boxes show over Wizard101 again."
+                        : "Your texts and boxes are hidden. The Ahziael line and the sparkle button always show.");
                 }
             };
             _ovList.SelectionChanged += (_, _) => {
@@ -266,9 +265,9 @@ internal sealed partial class ManagerWindow {
             return button;
         }
 
-        internal Control EnabledRow() => SwitchRow("Show the overlay", _ovEnabled,
-            "On: \"Ahziael made by Niduus | " + OverlayHost.Version + "\" in the bottom-left corner of the game, the sparkle button in the " +
-            "bottom-right, and anything you design. Clicks go straight through it to the game (only the sparkle button takes them).");
+        internal Control EnabledRow() => SwitchRow("Show my texts and boxes", _ovEnabled,
+            "\"Ahziael made by Niduus | " + OverlayHost.Version + "\" and the sparkle button always show on the game and can't be turned off. " +
+            "This switch shows or hides only what you made. Clicks go straight through to the game (only the sparkle button takes them).");
 
         internal Control Build() {
             var editor = new Grid {
@@ -289,7 +288,7 @@ internal sealed partial class ManagerWindow {
                                     Spaced(Danger(Action(Plain("Remove"), RemoveOverlayElement))),
                                 },
                             },
-                            Sub("Lower in the list is drawn on top. The Ahziael line is always on top and can't be removed, moved out of its corner or reworded, but its look can change."),
+                            Sub("A higher Layer is drawn on top; on the same layer, lower in the list is on top. With Spacing above 0, one that laps over another is moved off it, that far away. The Ahziael line is always on top, in full, and can only be moved."),
                         },
                     },
                     WithColumn(_ovEditor, 1),
@@ -352,7 +351,7 @@ internal sealed partial class ManagerWindow {
                         HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top,
                         Background = new RadialGradientBrush { GradientStops = { new GradientStop(Color.FromRgb(0xFF, 0xF2, 0xA8), 0), new GradientStop(Color.FromArgb(0, 0xFF, 0xE0, 0x70), 1) } },
                     },
-                    OverlayRenderer.Build(_ovDesign, words, _ovSelected),
+                    OverlayRenderer.Build(_ovDesign, words, _ovSelected, _ovDesign.Enabled),
                 },
             };
         }
@@ -516,23 +515,34 @@ internal sealed partial class ManagerWindow {
             // What and where.
             var what = new WrapPanel();
             if (credit) {
-                _ovEditor.Children.Add(Sub("The Ahziael line: \"" + OverlayDesign.CreditLine(OverlayHost.Version) + "\", always in the bottom-left corner. Change how it looks below."));
+                // Niduus, 2026-11-11: it can be moved, but only the program sets how it looks, and it is always shown in full.
+                _ovEditor.Children.Add(Sub("The Ahziael line: \"" + OverlayDesign.CreditLine(OverlayHost.Version) + "\". It is always shown, " +
+                    "in full, and its look is set by Ahziael. You can only move it. Everything else keeps clear of it."));
             }
             else {
                 what.Children.Add(OvField("Name in the list", OvText(e.Name, v => { e.Name = v; OverlayChanged(); }, 180)));
                 what.Children.Add(OvField("Shown", OvCheck("Shown", e.Visible, v => { e.Visible = v; OverlayChanged(); })));
-                what.Children.Add(OvField("Pinned to", OvCombo(Enum.GetNames<OverlayAnchor>().Select(SpacedName).ToArray(), (int) e.Anchor, i => { e.Anchor = (OverlayAnchor) i; Changed(); }, 150)));
             }
 
-            what.Children.Add(OvField(credit ? "In from the left" : "Across (X)", OvNumber(e.X, credit ? 0 : -4000, credit ? 200 : 4000, 1, v => { e.X = v; Changed(); })));
-            what.Children.Add(OvField(credit ? "Up from the bottom" : "Down (Y)", OvNumber(e.Y, credit ? 0 : -4000, credit ? 200 : 4000, 1, v => { e.Y = v; Changed(); })));
+            what.Children.Add(OvField("Pinned to", OvCombo(Enum.GetNames<OverlayAnchor>().Select(SpacedName).ToArray(), (int) e.Anchor, i => { e.Anchor = (OverlayAnchor) i; Changed(); }, 150)));
+            var limit = credit ? OverlayDesign.CREDIT_MOVE_MAX : 4000;
+            what.Children.Add(OvField("In from the side", OvNumber(e.X, credit ? 0 : -4000, limit, 1, v => { e.X = v; Changed(); })));
+            what.Children.Add(OvField("In from the top or bottom", OvNumber(e.Y, credit ? 0 : -4000, limit, 1, v => { e.Y = v; Changed(); })));
+            if (credit) {
+                _ovEditor.Children.Add(OvGroup("Where it sits", what));
+
+                return;
+            }
+
             if (!credit) {
+                what.Children.Add(OvField("Layer (higher is on top)", OvNumber(e.Layer, 0, 99, 1, v => { e.Layer = (int) v; Changed(); })));
+                what.Children.Add(OvField("Spacing (0 = may lap over)", OvNumber(e.Spacing, 0, 500, 1, v => { e.Spacing = v; Changed(); })));
                 what.Children.Add(OvField(e.IsBox ? "Width" : "Width (0 = fit)", OvNumber(e.Width, 0, 4000, 5, v => { e.Width = v; Changed(); })));
                 what.Children.Add(OvField(e.IsBox ? "Height" : "Height (0 = fit)", OvNumber(e.Height, 0, 4000, 5, v => { e.Height = v; Changed(); })));
                 what.Children.Add(OvField("Turn (degrees)", OvNumber(e.Rotation, -360, 360, 5, v => { e.Rotation = v; Changed(); })));
             }
 
-            what.Children.Add(OvField("See-through", OvSlider(e.Opacity, credit ? 0.5 : 0, 1, v => { e.Opacity = v; Changed(); })));
+            what.Children.Add(OvField("See-through", OvSlider(e.Opacity, 0, 1, v => { e.Opacity = v; Changed(); })));
             _ovEditor.Children.Add(OvGroup("What and where", what));
 
             if (!e.IsBox) {

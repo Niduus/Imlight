@@ -37,8 +37,16 @@ internal sealed class OverlayDesign {
     internal const string SHARE_EXTENSION = ".ahziaeloverlay";
     internal const string CREDIT_TEXT = "Ahziael made by Niduus";
     internal const int MAX_ELEMENTS = 40;
+    internal const double CREDIT_MOVE_MIN = 0;
+    internal const double CREDIT_MOVE_MAX = 600;
 
-    /// <summary>Off: nothing is drawn over the game (and a server that needs the overlay turns this PC away).</summary>
+    /// <summary>The least room every other text and box keeps from the Ahziael line, so nothing ever covers it.</summary>
+    internal const double CREDIT_CLEARANCE = 4;
+
+    /// <summary>
+    /// Off: the texts and boxes you made are hidden. The Ahziael line and the sparkle button always show (Niduus,
+    /// 2026-11-11: "the Ahziael one can't be turned off either").
+    /// </summary>
     public bool Enabled { get; set; } = true;
 
     /// <summary>How the "Ahziael made by Niduus | version" line looks. Its words and its corner can't change.</summary>
@@ -51,7 +59,7 @@ internal sealed class OverlayDesign {
         Text = CREDIT_TEXT, Size = 13, Bold = true,
         Fill = new OverlayPaint { Kind = OverlayPaint.LINEAR, Color1 = "#FFFFFFFF", Color2 = "#FFC9B6FF", Angle = 90 },
         Background = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#8C140F28" },
-        CornerRadius = 6, Padding = 6, Opacity = 0.9, Shadow = true, ShadowColor = "#C0000000", ShadowBlur = 4, ShadowY = 1,
+        CornerRadius = 6, Padding = 6, Opacity = 1, Shadow = true, ShadowColor = "#C0000000", ShadowBlur = 4, ShadowY = 1,
     };
 
     /// <summary>The words the credit line shows, with the app's version.</summary>
@@ -118,20 +126,27 @@ internal sealed class OverlayDesign {
 
     internal OverlayDesign Copy() => FromJson(ToJson()) ?? new OverlayDesign();
 
-    /// <summary>Every value back in range, and the credit line's words and corner put back.</summary>
+    /// <summary>
+    /// Every value back in range, and the credit line put back to the program's own look (Niduus, 2026-11-11: "the
+    /// Ahziael one ... is permanent. It can be moved but only the program can modify it and must be on full display").
+    /// Only where it sits is kept.
+    /// </summary>
     internal OverlayDesign Clean() {
-        Credit = (Credit ?? DefaultCredit()).Clean();
-        Credit.Kind = OverlayElement.TEXT;
-        Credit.Text = CREDIT_TEXT;
-        Credit.Anchor = OverlayAnchor.BottomLeft;
-        Credit.Visible = true;
-        Credit.Name = "Ahziael credit";
-        // It shows at all times, so it can't be made too small, too faint or pushed off the window.
-        Credit.Size = Math.Max(10, Credit.Size);
-        Credit.Opacity = Math.Max(0.5, Credit.Opacity);
-        Credit.X = Math.Clamp(Credit.X, 0, 200);
-        Credit.Y = Math.Clamp(Credit.Y, 0, 200);
-        Credit.Rotation = 0;
+        // The same object stays (the designer keeps hold of it); everything but where it sits comes from the program.
+        var credit = Credit ??= DefaultCredit();
+        var anchor = Enum.IsDefined(credit.Anchor) ? credit.Anchor : OverlayAnchor.BottomLeft;
+        var (x, y) = (credit.X, credit.Y);
+        var look = DefaultCredit();
+        foreach (var property in typeof(OverlayElement).GetProperties()) {
+            if (property.CanWrite && property.Name is not (nameof(OverlayElement.Anchor) or nameof(OverlayElement.X) or nameof(OverlayElement.Y))) {
+                property.SetValue(credit, property.GetValue(look));
+            }
+        }
+
+        credit.Anchor = anchor;
+        // In from its corner or side, never off the window.
+        credit.X = OverlayElement.Range(x, CREDIT_MOVE_MIN, CREDIT_MOVE_MAX, 10);
+        credit.Y = OverlayElement.Range(y, CREDIT_MOVE_MIN, CREDIT_MOVE_MAX, 8);
         Elements = (Elements ?? []).Where(e => e is not null).Take(MAX_ELEMENTS).Select(e => e.Clean()).ToList();
 
         return this;
@@ -158,6 +173,15 @@ internal sealed class OverlayElement {
     public string Text { get; set; } = "";
 
     public OverlayAnchor Anchor { get; set; } = OverlayAnchor.TopLeft;
+
+    /// <summary>Higher layers are drawn over lower ones; the same layer keeps the list's order.</summary>
+    public int Layer { get; set; }
+
+    /// <summary>
+    /// When this one would lap over another, it is moved off it so this much room is left between them. 0: it may lap
+    /// over others (text on a box). It always keeps clear of the Ahziael line.
+    /// </summary>
+    public double Spacing { get; set; }
 
     /// <summary>How far in from the corner or edge it is pinned to, at 100% scale.</summary>
     public double X { get; set; }
@@ -213,6 +237,8 @@ internal sealed class OverlayElement {
         X = Range(X, -4000, 4000);
         Y = Range(Y, -4000, 4000);
         Width = Range(Width, 0, 4000);
+        Layer = Math.Clamp(Layer, 0, 99);
+        Spacing = Range(Spacing, 0, 500);
         Height = Range(Height, 0, 4000);
         Font = Trim(Font, 80);
         Size = Range(Size, 4, 200, 16);

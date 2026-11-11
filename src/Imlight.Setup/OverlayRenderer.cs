@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -37,17 +38,109 @@ internal static class OverlayRenderer {
     internal static bool UsesClock(OverlayDesign design)
         => design.Elements.Any(e => e.Visible && !e.IsBox && (e.Text.Contains("{time}") || e.Text.Contains("{date}")));
 
-    /// <summary>The whole overlay, filling a game window of this size (in device-independent pixels).</summary>
-    internal static Control Build(OverlayDesign design, Words words, OverlayElement? highlight = null) {
-        var grid = new Grid { Background = Brushes.Transparent, ClipToBounds = true };
-        foreach (var element in design.Elements.Where(e => e.Visible)) {
-            grid.Children.Add(Element(element, words, element == highlight));
+    /// <summary>
+    /// The whole overlay, filling a game window of this size (in device-independent pixels). Your texts and boxes are drawn
+    /// lowest layer first (same layer: list order), the Ahziael line last, so nothing covers it.
+    /// </summary>
+    internal static Control Build(OverlayDesign design, Words words, OverlayElement? highlight = null, bool showMine = true) {
+        var panel = new OverlayPanel { Background = Brushes.Transparent, ClipToBounds = true };
+        if (showMine) {
+            foreach (var element in design.Elements.Where(e => e.Visible).Select((e, i) => (e, i)).OrderBy(p => p.e.Layer).ThenBy(p => p.i).Select(p => p.e)) {
+                panel.Children.Add(Element(element, words, element == highlight));
+            }
         }
 
-        // The credit line is drawn last, so nothing covers it.
-        grid.Children.Add(Element(design.Credit, words, design.Credit == highlight, OverlayDesign.CreditLine(words.Version)));
+        panel.Children.Add(Element(design.Credit, words, design.Credit == highlight, OverlayDesign.CreditLine(words.Version)));
 
-        return grid;
+        return panel;
+    }
+
+    /// <summary>
+    /// Places each text and box from its corner or side, then moves any that laps over one placed before it off that
+    /// one, leaving its Spacing between them (Niduus, 2026-11-11: "Introduce layers and spacing as well so if a UI is
+    /// lapping over another, the spacing allows it to move the overlaying UI over some = to the spacing value"). The
+    /// Ahziael line is placed first and never moves; everything keeps clear of it.
+    /// </summary>
+    private sealed class OverlayPanel : Panel {
+
+        protected override Size MeasureOverride(Size available) {
+            foreach (var child in Children) {
+                child.Measure(Size.Infinity);
+            }
+
+            return available;
+        }
+
+        protected override Size ArrangeOverride(Size final) {
+            var bounds = new Rect(final);
+            // The Ahziael line first (it is the last child), then from the lowest layer up: the one that laps over
+            // another (drawn over it) is the one that moves.
+            var order = new List<Control> { Children[^1] };
+            order.AddRange(Children.Take(Children.Count - 1));
+            var placed = new List<(Rect Rect, double Gap, bool Credit)>();
+            foreach (var child in order) {
+                if (child.Tag is not OverlayElement e) {
+                    child.Arrange(new Rect(child.DesiredSize));
+                    continue;
+                }
+
+                var credit = child == Children[^1];
+                var rect = Start(e, child.DesiredSize, final);
+                if (!credit) {
+                    rect = Clear(rect, e.Spacing, placed, bounds);
+                }
+
+                placed.Add((rect, e.Spacing, credit));
+                child.Arrange(rect);
+            }
+
+            return final;
+        }
+
+        // Where its corner or side and X and Y put it.
+        private static Rect Start(OverlayElement e, Size size, Size area) {
+            var x = e.Anchor switch {
+                OverlayAnchor.TopLeft or OverlayAnchor.Left or OverlayAnchor.BottomLeft => e.X,
+                OverlayAnchor.TopRight or OverlayAnchor.Right or OverlayAnchor.BottomRight => area.Width - size.Width - e.X,
+                _ => (area.Width - size.Width) / 2 + e.X,
+            };
+            var y = e.Anchor switch {
+                OverlayAnchor.TopLeft or OverlayAnchor.Top or OverlayAnchor.TopRight => e.Y,
+                OverlayAnchor.BottomLeft or OverlayAnchor.Bottom or OverlayAnchor.BottomRight => area.Height - size.Height - e.Y,
+                _ => (area.Height - size.Height) / 2 + e.Y,
+            };
+
+            return new Rect(x, y, size.Width, size.Height);
+        }
+
+        // Moved the shortest way off anything it laps over, a few rounds, so moving off one doesn't leave it on another.
+        private static Rect Clear(Rect rect, double spacing, List<(Rect Rect, double Gap, bool Credit)> placed, Rect bounds) {
+            for (var round = 0; round < 8; round++) {
+                var moved = false;
+                foreach (var (other, _, credit) in placed) {
+                    var gap = credit ? Math.Max(spacing, OverlayDesign.CREDIT_CLEARANCE) : spacing;
+                    if (gap <= 0 || !rect.Intersects(other.Inflate(gap - 0.01))) {
+                        continue;
+                    }
+
+                    // The four ways out, the shortest first, preferring one that stays on the window.
+                    var ways = new[] {
+                        new Vector(other.Left - gap - rect.Right, 0), new Vector(other.Right + gap - rect.Left, 0),
+                        new Vector(0, other.Top - gap - rect.Bottom), new Vector(0, other.Bottom + gap - rect.Top),
+                    };
+                    var best = ways.OrderBy(v => bounds.Contains(rect.Translate(v)) ? 0 : 1).ThenBy(v => Math.Abs(v.X) + Math.Abs(v.Y)).First();
+                    rect = rect.Translate(best);
+                    moved = true;
+                }
+
+                if (!moved) {
+                    break;
+                }
+            }
+
+            return rect;
+        }
+
     }
 
     internal static string Fill(string text, Words words) => text
@@ -64,32 +157,8 @@ internal static class OverlayRenderer {
             CornerRadius = new CornerRadius(e.CornerRadius),
             Padding = new Thickness(e.Padding),
             Opacity = e.Opacity,
-            HorizontalAlignment = e.Anchor switch {
-                OverlayAnchor.TopLeft or OverlayAnchor.Left or OverlayAnchor.BottomLeft => HorizontalAlignment.Left,
-                OverlayAnchor.TopRight or OverlayAnchor.Right or OverlayAnchor.BottomRight => HorizontalAlignment.Right,
-                _ => HorizontalAlignment.Center,
-            },
-            VerticalAlignment = e.Anchor switch {
-                OverlayAnchor.TopLeft or OverlayAnchor.Top or OverlayAnchor.TopRight => VerticalAlignment.Top,
-                OverlayAnchor.BottomLeft or OverlayAnchor.Bottom or OverlayAnchor.BottomRight => VerticalAlignment.Bottom,
-                _ => VerticalAlignment.Center,
-            },
+            Tag = e,
         };
-
-        // X and Y push it in from the side it is pinned to; for a centred one they move it right and down.
-        var left = border.HorizontalAlignment == HorizontalAlignment.Right ? 0 : e.X;
-        var right = border.HorizontalAlignment == HorizontalAlignment.Right ? e.X : 0;
-        var top = border.VerticalAlignment == VerticalAlignment.Bottom ? 0 : e.Y;
-        var bottom = border.VerticalAlignment == VerticalAlignment.Bottom ? e.Y : 0;
-        if (border.HorizontalAlignment == HorizontalAlignment.Center) {
-            (left, right) = (Math.Max(0, e.X) * 2, Math.Max(0, -e.X) * 2);
-        }
-
-        if (border.VerticalAlignment == VerticalAlignment.Center) {
-            (top, bottom) = (Math.Max(0, e.Y) * 2, Math.Max(0, -e.Y) * 2);
-        }
-
-        border.Margin = new Thickness(left, top, right, bottom);
 
         if (e.Width > 0) {
             border.Width = e.Width;
@@ -146,11 +215,11 @@ internal static class OverlayRenderer {
             return border;
         }
 
-        // The designer's dashed outline around the one being changed.
+        // The designer's outline around the one being changed.
         return new Panel {
-            HorizontalAlignment = border.HorizontalAlignment, VerticalAlignment = border.VerticalAlignment, Margin = border.Margin,
+            Tag = e,
             Children = {
-                Reset(border),
+                border,
                 new Border {
                     BorderBrush = new SolidColorBrush(Color.FromRgb(0xFF, 0xD2, 0x4A)), BorderThickness = new Thickness(1.5),
                     CornerRadius = new CornerRadius(Math.Max(2, e.CornerRadius)), Margin = new Thickness(-3), IsHitTestVisible = false,
@@ -158,14 +227,6 @@ internal static class OverlayRenderer {
                 },
             },
         };
-
-        static Border Reset(Border b) {
-            b.Margin = default;
-            b.HorizontalAlignment = HorizontalAlignment.Stretch;
-            b.VerticalAlignment = VerticalAlignment.Stretch;
-
-            return b;
-        }
     }
 
     internal static IBrush? Brush(OverlayPaint paint) {
