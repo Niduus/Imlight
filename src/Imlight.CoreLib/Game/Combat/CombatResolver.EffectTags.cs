@@ -60,6 +60,11 @@ public partial class CombatResolver {
         if (from is not null && to is not null && s_effectTags.TryGetValue(from, out var tags)) {
             s_effectTags.AddOrUpdate(to, new HashSet<string>(tags, StringComparer.OrdinalIgnoreCase));
         }
+
+        // Whose cheat made it goes with it too (CombatResolver.CheatOwners.cs).
+        if (from is not null && to is not null && s_effectMakers.TryGetValue(from, out var maker)) {
+            s_effectMakers.AddOrUpdate(to, maker);
+        }
     }
 
     // Everyone's hanging effects before a tagged step, so the ones it puts on can be told apart.

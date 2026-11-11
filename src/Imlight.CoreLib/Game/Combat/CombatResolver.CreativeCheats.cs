@@ -723,6 +723,7 @@ public partial class CombatResolver {
                     }
 
                     var taken = target._hangingEffects.Where(e => e is not null && !e.m_protected && !CombatRequirements.IsOverTime(e)
+                                                                  && !AllyCheatMade(boss, e)
                                                                   && (kinds.Length == 0 ? s_charmEffects.Contains(e.m_effectType) || s_wardEffects.Contains(e.m_effectType)
                                                                                            || CombatRequirements.IsAura(e)
                                                                       : kinds.Any(k => IsKind(e, k))))

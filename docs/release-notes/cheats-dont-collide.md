@@ -1,0 +1,4 @@
+Fixed: Cheats no longer collide when two of your wizards fight together
+Every wizard on your PC runs the same player cheats. One wizard's "put a trap on all allies but me" landed on your other wizard, whose "turn traps on me into shields" grabbed it right away, so the first wizard's "turn traps on allies into blades" never found it. Now each effect remembers whose cheat put it on, and an ally's cheats leave it alone when they convert, remove, steal, swap, resize, change school or protect effects. Traps from enemies and normal spells are still fair game. Works the same for creatures. It can be switched off in Imlight.ini ([BossCheats] KeepAllyCheatEffects, on by default).
+Where: Create > Player Cheats
+Test: Turn on your cheats 6, 7 and 8, bring two of your wizards into one battle, and play to round 2. The 300% trap from cheat 7 should turn into blades (you hear "9555") instead of shields.
