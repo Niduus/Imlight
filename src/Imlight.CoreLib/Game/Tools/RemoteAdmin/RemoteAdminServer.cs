@@ -99,7 +99,8 @@ public static class RemoteAdminServer {
     private static void Apply() {
         try {
             // [Overlay] RequiredToPlay needs the port too: Ahziael's overlay checks in on it.
-            var enabled = AdminsOn || PlayersOn || OverlayGate.Required;
+            // And overlay buttons that run a player's own commands and cheats (OverlayLinks), on unless turned off.
+            var enabled = AdminsOn || PlayersOn || OverlayGate.Required || OverlayLinks.On;
             var port = ConfigurationManager.GetValue("Remote Admin.Port", RemoteAdminWire.DEFAULT_PORT);
             var bind = ConfigurationManager.GetValue("Remote Admin.ListenAddress", "");
             lock (s_lock) {
@@ -353,9 +354,12 @@ public static class RemoteAdminServer {
             return;
         }
 
+        var windows = (int?) header["windows"] ?? 0;
         try {
+            JsonObject reply = null;
             while (!stop.IsCancellationRequested) {
-                var reply = RemoteAdminWire.Ok();
+                // A button press answers with its result; a beat (and the first answer) with the overlay's news.
+                reply ??= RemoteAdminWire.Ok();
                 reply["required"] = OverlayGate.Required;
                 reply["every"] = OverlayGate.BEAT_SECONDS;
                 reply["id"] = header["id"]?.DeepClone();
@@ -367,19 +371,29 @@ public static class RemoteAdminServer {
                 }
 
                 await RemoteAdminWire.WriteAsync(tls, reply, null, stop);
+                reply = null;
 
                 using var wait = CancellationTokenSource.CreateLinkedTokenSource(stop);
                 wait.CancelAfter(TimeSpan.FromSeconds(OverlayGate.BEAT_SECONDS * 4));
                 (header, _) = await RemoteAdminWire.ReadAsync(tls, 4096, 0, wait.Token);
-                if ((string) header["op"] != "beat") {
+                var op = (string) header["op"];
+                if (op == "cmd") {
+                    // An overlay button: a command or cheat for the wizard in that game window only.
+                    reply = await OverlayLinks.RunAsync(id, windows, header, address);
+                    continue;
+                }
+
+                if (op != "beat") {
                     return;
                 }
 
-                OverlayGate.Beat(id, (int?) header["windows"] ?? 0);
+                windows = (int?) header["windows"] ?? 0;
+                OverlayGate.Beat(id, windows);
             }
         }
         finally {
             OverlayGate.Close(id);
+            OverlayLinks.Closed(id);
         }
     }
 

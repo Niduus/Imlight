@@ -1545,7 +1545,9 @@ internal sealed partial class ManagerWindow {
                 case OverlayAction.COMMAND:
                     panel.Children.Add(OvField("Chat command", OvText(e.Command, v => { e.Command = v; OverlayChanged(false); }, 300)));
                     panel.Children.Add(Sub("Any chat command, as you would type it in the game, for example .heal, .tp Ravenwood or " +
-                        ".joinme Malistaire the Undying. For now these buttons can't reach the server, so clicking one says so."));
+                        ".joinme Malistaire the Undying. It runs on the server the game was started on, only for the wizard in the game window the " +
+                        "button is on, with that account's own rights: a command a player can't type, they can't click either. Nothing shows in chat. " +
+                        "No password: with one game window open it links by itself; with several, the window shows a code once (type .link and the code in its chat)."));
                     break;
                 case OverlayAction.CHEAT: {
                     var name = OvText(e.Command, v => { e.Command = v; OverlayChanged(false); }, 240);
@@ -1580,8 +1582,8 @@ internal sealed partial class ManagerWindow {
                                 i => { e.CheatHow = hows[i]; OverlayChanged(false); }, 240)),
                         },
                     });
-                    panel.Children.Add(Sub("The cheat is the clicking player's own cheat on that server (type .cheats in the game to see yours). " +
-                        "For now these buttons can't reach the server, so clicking one says so."));
+                    panel.Children.Add(Sub("The cheat is the own cheat of the wizard in that game window (type .cheats in the game to see yours). " +
+                        "The host's settings decide which cheats each player may use, so a button can't get around them. Load my cheats needs the game open."));
                     break;
                 }
                 case OverlayAction.DESIGNER:

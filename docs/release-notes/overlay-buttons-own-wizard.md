@@ -1,0 +1,4 @@
+New: Command and cheat buttons work again, with no password
+Overlay buttons that run a chat command or use, turn on, turn off or switch a cheat now reach the server again, for the wizard in the game window the button is on and nobody else. Nothing asks for a username or password. With one game window open, the overlay finds your wizard by itself. With several open, the first click on a window shows a short code on that window: type .link and the code in that game's chat once, and that window's buttons act for that wizard. Commands run with your own rank, as if typed in chat, and only your own cheats can be used. Hosts can turn this off with PlayerButtons in the [Overlay] settings (.setting works too).
+Where: Play > Overlay
+Test: Start the game with Play in Ahziael, add a button that runs .heal, click it on the game: it flashes green. Open a second game window and click a button there: type the .link code it shows, then click again.
