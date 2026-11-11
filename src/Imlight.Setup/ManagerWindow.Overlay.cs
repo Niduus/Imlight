@@ -251,7 +251,10 @@ internal sealed partial class ManagerWindow {
         private enum DragMode { Move, Right, Bottom, Corner }
 
         /// <summary>A drag on the picture: what, how, and where it started.</summary>
-        private sealed record Drag(OverlayElement Element, DragMode Mode, Point Start, double X, double Y, double Width, double Height, Rect Bounds);
+        private sealed record Drag(OverlayElement Element, DragMode Mode, Point Start, double X, double Y, double Width, double Height, Rect Bounds, IReadOnlyList<Rect> Others);
+
+        private OverlayGrid _ovGrid = OverlayGrid.Load(OverlayHost.InstallFolder);
+        private readonly List<(Point From, Point To)> _ovGuides = [];
 
         /// <summary>How near an edge (in picture pixels) a press takes the size instead of the place.</summary>
         private const double EDGE = 12;
@@ -312,6 +315,8 @@ internal sealed partial class ManagerWindow {
                     OverlayChanged();
                 }
             };
+            _ovPreview.Focusable = true;
+            _ovPreview.KeyDown += PreviewKey;
             _ovPreview.PointerPressed += PreviewPressed;
             _ovPreview.PointerMoved += PreviewMoved;
             _ovPreview.PointerReleased += PreviewReleased;
@@ -579,7 +584,10 @@ internal sealed partial class ManagerWindow {
                     Children = {
                         new WrapPanel {
                             Children = {
-                                Spaced(_ovParts), Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)), Spaced(_ovQuickWords),
+                                Spaced(_ovParts), Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)),
+                                Spaced(Action(Plain("Picture"), AddPictureAsync)), Spaced(_ovQuickWords),
+                                Spaced(OvCheck("Grid", _ovGrid.Show, v => { _ovGrid.Show = v; GridChanged(); })),
+                                Spaced(OvCheck("Snap", _ovGrid.SnapToGrid || _ovGrid.SnapToPieces, v => { _ovGrid.SnapToGrid = v; _ovGrid.SnapToPieces = v; GridChanged(); })),
                                 Spaced(remove), Spaced(full), Spaced(finish),
                             },
                         },
@@ -592,6 +600,249 @@ internal sealed partial class ManagerWindow {
             return new Panel {
                 Children = { new Viewbox { Stretch = Stretch.Fill, Child = _ovPreview }, bar },
             };
+        }
+
+        private void GridChanged() {
+            _ovGrid.Clean();
+            _ovGrid.Save(OverlayHost.InstallFolder);
+            RenderOverlayPreview();
+        }
+
+        /// <summary>Grid and snapping: every choice there is, for the designer in Ahziael.</summary>
+        private Control GridControls() {
+            var grid = new WrapPanel();
+            grid.Children.Add(OvField("Grid", OvCheck("Show the grid", _ovGrid.Show, v => { _ovGrid.Show = v; GridChanged(); })));
+            grid.Children.Add(OvField("Square size", OvNumber(_ovGrid.Size, 2, 400, 1, v => { _ovGrid.Size = v; GridChanged(); })));
+            grid.Children.Add(OvField("Stronger line every", OvNumber(_ovGrid.MajorEvery, 0, 50, 1, v => { _ovGrid.MajorEvery = (int) v; GridChanged(); })));
+            grid.Children.Add(OvField("Grid colour", OvColor(_ovGrid.Color, v => { _ovGrid.Color = v; GridChanged(); })));
+            grid.Children.Add(OvField("Grid see-through", OvSlider(_ovGrid.Opacity, 0, 1, v => { _ovGrid.Opacity = v; GridChanged(); })));
+            grid.Children.Add(OvField("Snap", Row(
+                OvCheck("To the grid", _ovGrid.SnapToGrid, v => { _ovGrid.SnapToGrid = v; GridChanged(); }),
+                OvCheck("To other pieces", _ovGrid.SnapToPieces, v => { _ovGrid.SnapToPieces = v; GridChanged(); }),
+                OvCheck("Guide lines", _ovGrid.Guides, v => { _ovGrid.Guides = v; GridChanged(); }))));
+            grid.Children.Add(OvField("Snap from (pixels)", OvNumber(_ovGrid.SnapDistance, 1, 40, 1, v => { _ovGrid.SnapDistance = v; GridChanged(); })));
+            grid.Children.Add(OvField("Guide line colour", OvColor(_ovGrid.GuideColor, v => { _ovGrid.GuideColor = v; GridChanged(); })));
+
+            return new StackPanel {
+                Spacing = 4,
+                Children = {
+                    OvGroup("Grid and snapping", grid),
+                    Sub("While dragging, a piece snaps to the window's edges and middle, to other pieces' edges and middles (a guide line shows which), " +
+                        "or else to the grid. Hold Alt to drag freely. Arrow keys move the picked one a pixel; with Shift, a grid square. " +
+                        "The grid only shows while designing, never on the game."),
+                },
+            };
+        }
+
+        /// <summary>A picture from a file on this PC: PNG, JPEG, GIF or BMP, up to 200 KB.</summary>
+        private async Task<string?> PickPictureAsync() {
+            var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
+                Title = "Pick a picture", AllowMultiple = false,
+                FileTypeFilter = [new FilePickerFileType("Pictures") { Patterns = ["*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp"] }],
+            });
+            if (files.Count == 0) {
+                return null;
+            }
+
+            var path = files[0].TryGetLocalPath() ?? throw new PanelException("Pick a picture that is on this computer.");
+            if (new FileInfo(path).Length > OverlayElement.MAX_PICTURE_BYTES) {
+                throw new PanelException($"That picture is too big. Pictures can be up to {OverlayElement.MAX_PICTURE_BYTES / 1024} KB; save a smaller copy first.");
+            }
+
+            var base64 = OverlayElement.CleanPicture(Convert.ToBase64String(await File.ReadAllBytesAsync(path)));
+
+            return base64.Length > 0 ? base64 : throw new PanelException("That file isn't a PNG, JPEG, GIF or BMP picture.");
+        }
+
+        private async Task AddPictureAsync() {
+            if (await PickPictureAsync() is not { } picture) {
+                return;
+            }
+
+            await AddOverlayElement(OverlayElement.PICTURE, null);
+            if (_ovSelected is { IsPicture: true } added) {
+                added.Picture = picture;
+                OverlayChanged();
+                RenderOverlayEditor();
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // Add-ons (OverlayAddon)
+        // ---------------------------------------------------------------------
+
+        private readonly StackPanel _ovAddons = new() { Spacing = 8 };
+
+        private Control AddonsSection() {
+            FillAddons();
+
+            return OvGroup("Add-ons", new StackPanel {
+                Spacing = 8,
+                Children = {
+                    Sub("Add-ons are ready-made widgets (texts, boxes and pictures that go together) and styles (a look to put on any text or box) " +
+                        "that people share as " + OverlayAddon.EXTENSION + " files. Like design files they hold only words, colours, numbers and " +
+                        "pictures, so they can't run anything. Make one from your own design to share it."),
+                    Row(Action(Primary("Add an add-on file"), InstallAddonAsync), Action(Plain("Make an add-on from my design"), MakeAddonAsync)),
+                    _ovAddons,
+                },
+            });
+        }
+
+        private void FillAddons() {
+            _ovAddons.Children.Clear();
+            var addons = OverlayAddon.All(OverlayHost.InstallFolder);
+            if (addons.Count == 0) {
+                _ovAddons.Children.Add(Sub("No add-ons yet."));
+                return;
+            }
+
+            foreach (var addon in addons) {
+                var pieces = new WrapPanel();
+                foreach (var widget in addon.Widgets) {
+                    pieces.Children.Add(Spaced(Action(Plain("+ " + (widget.Name.Length > 0 ? widget.Name : "Widget")), () => AddWidgetAsync(widget))));
+                }
+
+                foreach (var style in addon.Styles) {
+                    pieces.Children.Add(Spaced(Action(Plain("Style: " + (style.Name.Length > 0 ? style.Name : "Look")), () => UseStyleAsync(style))));
+                }
+
+                var remove = Danger(Action(Plain("Remove"), () => RemoveAddonAsync(addon)));
+                _ovAddons.Children.Add(new Border {
+                    BorderBrush = LINE, BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(8), Padding = new Thickness(10, 8),
+                    Child = new StackPanel {
+                        Spacing = 4,
+                        Children = {
+                            new DockPanel {
+                                Children = {
+                                    WithDock(remove, Dock.Right),
+                                    new TextBlock {
+                                        Text = addon.Name + (addon.Author.Length > 0 ? "  by " + addon.Author : "") + (addon.Version.Length > 0 ? "  (" + addon.Version + ")" : ""),
+                                        FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center,
+                                    },
+                                },
+                            },
+                            Sub(addon.Description.Length > 0 ? addon.Description : $"{addon.Widgets.Count} widget(s), {addon.Styles.Count} style(s)."),
+                            pieces,
+                        },
+                    },
+                });
+            }
+        }
+
+        private Task AddWidgetAsync(OverlayWidget widget) {
+            if (_ovDesign.Elements.Count + widget.Elements.Count > OverlayDesign.MAX_ELEMENTS) {
+                throw new PanelException($"The overlay holds up to {OverlayDesign.MAX_ELEMENTS} texts, boxes and pictures; that widget doesn't fit.");
+            }
+
+            OverlayElement? last = null;
+            foreach (var element in widget.Elements) {
+                last = OverlayAddon.Copy(element);
+                _ovDesign.Elements.Add(last);
+            }
+
+            _ovSelected = last ?? _ovSelected;
+            OverlayChanged();
+            RenderOverlayEditor();
+            Say($"Added \"{(widget.Name.Length > 0 ? widget.Name : "the widget")}\".");
+
+            return Task.CompletedTask;
+        }
+
+        private Task UseStyleAsync(OverlayStyle style) {
+            if (_ovSelected is not { } picked || picked == _ovDesign.Credit) {
+                throw new PanelException("Pick one of your texts or boxes first, then click the style.");
+            }
+
+            OverlayAddon.ApplyStyle(picked, style.Look);
+            OverlayChanged();
+            RenderOverlayEditor();
+
+            return Task.CompletedTask;
+        }
+
+        private async Task RemoveAddonAsync(OverlayAddon addon) {
+            if (!await ConfirmAsync($"Remove the add-on \"{addon.Name}\"? What you already added from it stays on your overlay.")) {
+                return;
+            }
+
+            if (File.Exists(addon.Path)) {
+                File.Delete(addon.Path);
+            }
+
+            FillAddons();
+        }
+
+        private async Task InstallAddonAsync() {
+            var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
+                Title = "Add an overlay add-on", AllowMultiple = false,
+                FileTypeFilter = [new FilePickerFileType("Ahziael overlay add-on") { Patterns = ["*" + OverlayAddon.EXTENSION] }, FilePickerFileTypes.All],
+            });
+            if (files.Count == 0) {
+                return;
+            }
+
+            var path = files[0].TryGetLocalPath() ?? throw new PanelException("Ahziael can only open an add-on file that is on this computer.");
+            if (new FileInfo(path).Length > OverlayAddon.MAX_BYTES) {
+                throw new PanelException("That file is too big to be an overlay add-on.");
+            }
+
+            var addon = OverlayAddon.FromJson(await File.ReadAllTextAsync(path))
+                ?? throw new PanelException("That file is not an Ahziael overlay add-on.");
+            if (!await ConfirmAsync($"Add \"{addon.Name}\"{(addon.Author.Length > 0 ? " by " + addon.Author : "")}? It has {addon.Widgets.Count} widget(s) " +
+                                    $"and {addon.Styles.Count} style(s). It can only add texts, boxes and pictures; it can't run anything.")) {
+                return;
+            }
+
+            OverlayAddon.Install(OverlayHost.InstallFolder, addon);
+            FillAddons();
+            Say($"Added \"{addon.Name}\". Its widgets and styles are under Add-ons.");
+        }
+
+        private async Task MakeAddonAsync() {
+            var name = new TextBox { Watermark = "Name", MaxLength = 60 };
+            var author = new TextBox { Watermark = "Made by", MaxLength = 60 };
+            var about = new TextBox { Watermark = "What it is (optional)", MaxLength = 400, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, MinHeight = 60 };
+            var widget = new CheckBox { Content = "My texts, boxes and pictures, as one widget", IsChecked = _ovDesign.Elements.Count > 0 };
+            var picked = _ovSelected is { } p && p != _ovDesign.Credit ? p : null;
+            var style = new CheckBox { Content = "The look of the picked one, as a style", IsChecked = picked is not null, IsEnabled = picked is not null };
+            var dialog = Dialog("Make an add-on from your design", new StackPanel { Spacing = 8, Children = { name, author, about, widget, style } }, out _);
+            if (!await dialog.ShowDialog<bool>(_owner)) {
+                return;
+            }
+
+            var addon = new OverlayAddon { Name = name.Text ?? "", Author = author.Text ?? "", Description = about.Text ?? "" };
+            if (widget.IsChecked == true && _ovDesign.Elements.Count > 0) {
+                addon.Widgets.Add(new OverlayWidget { Name = addon.Name, Elements = _ovDesign.Elements.Select(OverlayAddon.Copy).ToList() });
+            }
+
+            if (style.IsChecked == true && picked is not null) {
+                addon.Styles.Add(new OverlayStyle { Name = picked.Name.Length > 0 ? picked.Name : addon.Name, Look = OverlayAddon.Copy(picked) });
+            }
+
+            addon.Clean();
+            if (addon.Widgets.Count == 0 && addon.Styles.Count == 0) {
+                throw new PanelException("There is nothing to put in it: add some texts or boxes, or pick one for its style.");
+            }
+
+            var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions {
+                Title = "Save the add-on", SuggestedFileName = addon.Name + OverlayAddon.EXTENSION,
+                DefaultExtension = OverlayAddon.EXTENSION.TrimStart('.'), ShowOverwritePrompt = true,
+                FileTypeChoices = [new FilePickerFileType("Ahziael overlay add-on") { Patterns = ["*" + OverlayAddon.EXTENSION] }],
+                SuggestedStartLocation = await StorageProvider.TryGetFolderFromPathAsync(OverlayDesign.DesignsFolder(OverlayHost.InstallFolder)),
+            });
+            if (file is null) {
+                return;
+            }
+
+            await using (var stream = await file.OpenWriteAsync()) {
+                stream.SetLength(0);
+                await using var writer = new StreamWriter(stream);
+                await writer.WriteAsync(addon.ToJson());
+            }
+
+            OverlayAddon.Install(OverlayHost.InstallFolder, addon);
+            FillAddons();
+            Say($"Saved the add-on as \"{file.Name}\". Send that file to a friend: they add it with \"Add an add-on file\".");
         }
 
         internal Control Build() {
@@ -607,6 +858,7 @@ internal sealed partial class ManagerWindow {
                                 Children = {
                                     Spaced(Action(Plain("Add text"), () => AddOverlayElement(OverlayElement.TEXT))),
                                     Spaced(Action(Plain("Add box"), () => AddOverlayElement(OverlayElement.BOX))),
+                                    Spaced(Action(Plain("Add picture"), AddPictureAsync)),
                                     Spaced(Action(Plain("Copy"), DuplicateOverlayElement)),
                                     Spaced(Action(Plain("Up"), () => MoveOverlayElement(-1))),
                                     Spaced(Action(Plain("Down"), () => MoveOverlayElement(1))),
@@ -634,7 +886,9 @@ internal sealed partial class ManagerWindow {
                         "keeps to its corner or side, so the design looks as you set it up on every game window, even several at once."),
                     WithMargin(new Viewbox { Stretch = Stretch.Uniform, MaxHeight = 400, Child = _ovPreview }, new Thickness(0, 0, 0, 6)),
                     Sub("The picture is a stand-in for the game window. Click a text or box to pick it, drag it to move it, and drag its right or bottom edge (or the corner) to size it. The Ahziael line always sits in the bottom-left corner and can't be moved or changed. The outlined one is the one you are changing. Changes show on the game at once."),
+                    GridControls(),
                     editor,
+                    AddonsSection(),
                     WithHint(Row(Action(Plain("Save design to a file"), ExportOverlayAsync), Action(Plain("Open a design file"), ImportOverlayAsync),
                             Danger(Action(Plain("Start over"), ResetOverlayAsync))),
                         "A design file (" + OverlayDesign.SHARE_EXTENSION + ") holds only words, colours and numbers, so it is safe to share: it can't run anything. " +
@@ -652,12 +906,12 @@ internal sealed partial class ManagerWindow {
             try {
                 var names = new List<string> { "Ahziael line (fixed, always shown)" };
                 names.AddRange(_ovDesign.Elements.Select((e, i) => {
-                    var name = e.Name.Length > 0 ? e.Name : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : $"Text {i + 1}";
+                    var name = e.Name.Length > 0 ? e.Name : e.IsPicture ? $"Picture {i + 1}" : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : $"Text {i + 1}";
                     if (name.Length > 34) {
                         name = name[..34] + "…";
                     }
 
-                    return (e.IsBox ? "▭ " : "T  ") + name + (e.Visible ? "" : " (hidden)");
+                    return (e.IsPicture ? "▣ " : e.IsBox ? "▭ " : "T  ") + name + (e.Locked ? " (locked)" : "") + (e.Visible ? "" : " (hidden)");
                 }));
                 _ovList.ItemsSource = names;
                 _ovList.SelectedIndex = _ovSelected == _ovDesign.Credit || _ovSelected is null ? 0 : _ovDesign.Elements.IndexOf(_ovSelected) + 1;
@@ -678,6 +932,7 @@ internal sealed partial class ManagerWindow {
                         (_ovCanvas = (Panel) (_ovServerPart
                             ? OverlayRenderer.Build(_ovClient, words, _ovSelected, showMine: false, server: _ovServer?.Elements)
                             : OverlayRenderer.Build(_ovClient, words, _ovSelected, OverlayHost.ShowsMine(_ovClient), PreviewServer()))),
+                        new OverlayGridLayer(_ovGrid, _ovGuides.ToList()),
                     },
                 };
 
@@ -703,6 +958,7 @@ internal sealed partial class ManagerWindow {
                     (_ovCanvas = (Panel) (_ovServerPart
                         ? OverlayRenderer.Build(_ovClient, words, _ovSelected, showMine: false, server: _ovServer?.Elements)
                         : OverlayRenderer.Build(_ovClient, words, _ovSelected, OverlayHost.ShowsMine(_ovClient), PreviewServer()))),
+                    new OverlayGridLayer(_ovGrid, _ovGuides.ToList()),
                 },
             };
         }
@@ -757,11 +1013,14 @@ internal sealed partial class ManagerWindow {
             }
 
             var point = e.GetPosition(_ovCanvas);
+            _ovPreview.Focus();
             if (HitTest(point) is not var (element, bounds)) {
                 return;
             }
 
             var credit = element == _ovDesign.Credit;
+            // Everything else on the picture, to snap to.
+            var others = _ovCanvas.Children.Where(c => c.Tag != element && c.Tag is OverlayElement && c.Bounds.Width > 0).Select(c => c.Bounds).ToList();
             if (_ovSelected != element) {
                 _ovSelected = element;
                 FillOverlayList();
@@ -769,8 +1028,14 @@ internal sealed partial class ManagerWindow {
                 RenderOverlayPreview();
             }
 
+            if (element.Locked) {
+                Say("That one is locked in place. Untick \"Locked\" in its boxes to move it.");
+                e.Handled = true;
+                return;
+            }
+
             _ovDrag = new Drag(element, ModeAt(bounds, point, credit), point, element.X, element.Y,
-                element.Width > 0 ? element.Width : bounds.Width, element.Height > 0 ? element.Height : bounds.Height, bounds);
+                element.Width > 0 ? element.Width : bounds.Width, element.Height > 0 ? element.Height : bounds.Height, bounds, others);
             _ovPreview.Cursor = CursorFor(_ovDrag.Mode);
             e.Pointer.Capture(_ovPreview);
             e.Handled = true;
@@ -795,10 +1060,19 @@ internal sealed partial class ManagerWindow {
             var element2 = drag.Element;
             // Which way X and Y count from the corner or side it is pinned to.
             var (sx, sy) = Signs(element2.Anchor);
+            _ovGuides.Clear();
+            var free = e.KeyModifiers.HasFlag(KeyModifiers.Alt);
             if (drag.Mode == DragMode.Move) {
                 // Never off the game window: it stops at the edge.
                 dx = Math.Clamp(dx, -drag.Bounds.Left, Math.Max(0, PREVIEW_W - drag.Bounds.Right));
                 dy = Math.Clamp(dy, -drag.Bounds.Top, Math.Max(0, PREVIEW_H - drag.Bounds.Bottom));
+                if (!free) {
+                    var moved = drag.Bounds.Translate(new Vector(dx, dy));
+                    dx += SnapAxis(moved.Left, moved.Right, moved.Center.X, true, drag.Others);
+                    dy += SnapAxis(moved.Top, moved.Bottom, moved.Center.Y, false, drag.Others);
+                    dx = Math.Clamp(dx, -drag.Bounds.Left, Math.Max(0, PREVIEW_W - drag.Bounds.Right));
+                    dy = Math.Clamp(dy, -drag.Bounds.Top, Math.Max(0, PREVIEW_H - drag.Bounds.Bottom));
+                }
                 element2.X = drag.X + sx * dx;
                 element2.Y = drag.Y + sy * dy;
                 _ovDragRect = drag.Bounds.Translate(new Vector(dx, dy));
@@ -807,6 +1081,19 @@ internal sealed partial class ManagerWindow {
                 // Sizing from the right or bottom edge keeps the left and top where they are, up to the window's edge.
                 dx = Math.Min(dx, Math.Max(0, PREVIEW_W - drag.Bounds.Right));
                 dy = Math.Min(dy, Math.Max(0, PREVIEW_H - drag.Bounds.Bottom));
+                if (!free) {
+                    // Only the edge being dragged snaps.
+                    if (drag.Mode is DragMode.Right or DragMode.Corner) {
+                        dx += SnapEdge(drag.Bounds.Right + dx, true, drag.Others);
+                    }
+
+                    if (drag.Mode is DragMode.Bottom or DragMode.Corner) {
+                        dy += SnapEdge(drag.Bounds.Bottom + dy, false, drag.Others);
+                    }
+
+                    dx = Math.Min(dx, Math.Max(0, PREVIEW_W - drag.Bounds.Right));
+                    dy = Math.Min(dy, Math.Max(0, PREVIEW_H - drag.Bounds.Bottom));
+                }
                 if (drag.Mode is DragMode.Right or DragMode.Corner) {
                     var width = Math.Max(10, drag.Width + dx);
                     element2.Width = width;
@@ -847,8 +1134,88 @@ internal sealed partial class ManagerWindow {
             }
 
             _ovDragRect = null;
+            _ovGuides.Clear();
             OverlayChanged(false);
             RenderOverlayEditor();
+        }
+
+        // The lines on one axis a piece can snap to: the window's edges and middle, and every other piece's edges and middle.
+        private List<double> Targets(bool across, IReadOnlyList<Rect> others) {
+            var size = across ? PREVIEW_W : PREVIEW_H;
+            var lines = new List<double> { 0, size / 2, size };
+            if (_ovGrid.SnapToPieces) {
+                foreach (var r in others) {
+                    lines.AddRange(across ? [r.Left, r.Center.X, r.Right] : [r.Top, r.Center.Y, r.Bottom]);
+                }
+            }
+
+            return lines;
+        }
+
+        /// <summary>How far to move a dragged piece on one axis so an edge or its middle lands on a line, or on the grid.</summary>
+        private double SnapAxis(double start, double end, double middle, bool across, IReadOnlyList<Rect> others) {
+            var best = double.MaxValue;
+            var line = 0.0;
+            foreach (var target in Targets(across, others)) {
+                foreach (var edge in new[] { start, end, middle }) {
+                    var by = target - edge;
+                    if (Math.Abs(by) <= _ovGrid.SnapDistance && Math.Abs(by) < Math.Abs(best)) {
+                        (best, line) = (by, target);
+                    }
+                }
+            }
+
+            if (best != double.MaxValue) {
+                Guide(line, across);
+                return best;
+            }
+
+            return _ovGrid.SnapToGrid ? _ovGrid.ToGrid(start) - start : 0;
+        }
+
+        /// <summary>How far to move the edge being sized so it lands on a line, or on the grid.</summary>
+        private double SnapEdge(double edge, bool across, IReadOnlyList<Rect> others) {
+            var best = double.MaxValue;
+            var line = 0.0;
+            foreach (var target in Targets(across, others)) {
+                var by = target - edge;
+                if (Math.Abs(by) <= _ovGrid.SnapDistance && Math.Abs(by) < Math.Abs(best)) {
+                    (best, line) = (by, target);
+                }
+            }
+
+            if (best != double.MaxValue) {
+                Guide(line, across);
+                return best;
+            }
+
+            return _ovGrid.SnapToGrid ? _ovGrid.ToGrid(edge) - edge : 0;
+        }
+
+        private void Guide(double at, bool across) => _ovGuides.Add(across
+            ? (new Point(at, 0), new Point(at, PREVIEW_H))
+            : (new Point(0, at), new Point(PREVIEW_W, at)));
+
+        // Arrow keys move the picked one by a pixel (with Shift, by a grid square).
+        private void PreviewKey(object? sender, KeyEventArgs e) {
+            if (_ovSelected is not { } picked || picked == _ovDesign.Credit || picked.Locked) {
+                return;
+            }
+
+            var step = e.KeyModifiers.HasFlag(KeyModifiers.Shift) ? _ovGrid.Size : 1;
+            var (dx, dy) = e.Key switch {
+                Key.Left => (-step, 0.0), Key.Right => (step, 0.0), Key.Up => (0.0, -step), Key.Down => (0.0, step), _ => (0.0, 0.0),
+            };
+            if (dx == 0 && dy == 0) {
+                return;
+            }
+
+            var (sx, sy) = Signs(picked.Anchor);
+            picked.X += sx * dx;
+            picked.Y += sy * dy;
+            OverlayChanged(false);
+            RenderOverlayEditor();
+            e.Handled = true;
         }
 
         /// <summary>
@@ -1001,7 +1368,9 @@ internal sealed partial class ManagerWindow {
                 throw new PanelException($"The overlay holds up to {OverlayDesign.MAX_ELEMENTS} texts and boxes.");
             }
 
-            var element = kind == OverlayElement.BOX
+            var element = kind == OverlayElement.PICTURE
+                ? new OverlayElement { Kind = OverlayElement.PICTURE, Anchor = OverlayAnchor.TopLeft, X = 20, Y = 20, Background = new OverlayPaint() }
+                : kind == OverlayElement.BOX
                 ? new OverlayElement {
                     Kind = OverlayElement.BOX, Name = "", Anchor = OverlayAnchor.TopRight, X = 20, Y = 20, Width = 220, Height = 80, CornerRadius = 12,
                     Background = new OverlayPaint { Kind = OverlayPaint.LINEAR, Color1 = "#B0281B4D", Color2 = "#B0601E70", Angle = 45 },
@@ -1118,7 +1487,7 @@ internal sealed partial class ManagerWindow {
             }
 
             var path = files[0].TryGetLocalPath() ?? throw new PanelException("Ahziael can only open a design file that is on this computer.");
-            if (new FileInfo(path).Length > 512 * 1024) {
+            if (new FileInfo(path).Length > 12 * 1024 * 1024) {
                 throw new PanelException("That file is too big to be an overlay design.");
             }
 
@@ -1180,7 +1549,49 @@ internal sealed partial class ManagerWindow {
             }
 
             what.Children.Add(OvField("See-through", OvSlider(e.Opacity, 0, 1, v => { e.Opacity = v; Changed(); })));
+            what.Children.Add(OvField("Locked", OvCheck("Can't be dragged", e.Locked, v => { e.Locked = v; Changed(); })));
             _ovEditor.Children.Add(OvGroup("What and where", what));
+
+            // Put it on a side or the middle of the window in one click (it stays pinned there on any window size).
+            Button AlignButton(string label, int? column, int? row) {
+                var button = Plain(label);
+                button.Click += (_, _) => {
+                    var col = column ?? (int) e.Anchor % 3;
+                    var rw = row ?? (int) e.Anchor / 3;
+                    e.Anchor = (OverlayAnchor) (rw * 3 + col);
+                    if (column is { } c) {
+                        e.X = c == 1 ? 0 : 10;
+                    }
+
+                    if (row is { } r) {
+                        e.Y = r == 1 ? 0 : 10;
+                    }
+
+                    OverlayChanged(false);
+                    RenderOverlayEditor();
+                };
+
+                return button;
+            }
+
+            _ovEditor.Children.Add(OvGroup("Line it up with the window", new WrapPanel {
+                Children = {
+                    Spaced(AlignButton("Left", 0, null)), Spaced(AlignButton("Centre", 1, null)), Spaced(AlignButton("Right", 2, null)),
+                    Spaced(AlignButton("Top", null, 0)), Spaced(AlignButton("Middle", null, 1)), Spaced(AlignButton("Bottom", null, 2)),
+                },
+            }));
+
+            if (e.IsPicture) {
+                var change = Action(Plain("Change picture"), async () => {
+                    if (await PickPictureAsync() is { } picture) {
+                        e.Picture = picture;
+                        OverlayChanged();
+                    }
+                });
+                _ovEditor.Children.Add(OvGroup("Picture", Row(change,
+                    OvField("How it fills its box", OvCombo(["Whole picture", "Cover the box", "Stretch"], Array.IndexOf(OverlayElement.PICTURE_FITS, e.PictureFit),
+                        i => { e.PictureFit = OverlayElement.PICTURE_FITS[i]; Changed(); }, 160)))));
+            }
 
             if (!e.IsBox) {
                 if (!credit) {
