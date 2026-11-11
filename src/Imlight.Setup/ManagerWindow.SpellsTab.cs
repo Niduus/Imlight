@@ -561,7 +561,9 @@ internal sealed partial class ManagerWindow {
             Children = {
                 Spaced(Action(Primary("Learn on my wizard"), () => {
                     _manager.SendCommand(card.Command);
-                    Say($"Sent {card.Command} ({card.Name}, {card.School}). Open your spellbook in the game to see it.");
+                    Say(card.Fusion
+                        ? $"Sent {card.Command} ({card.Name}, {card.School}). It is a Fusion Formula, so it shows on the Fusion tab of your deck in the game, not on the {card.School} page. The two cards it fuses are learned with it."
+                        : $"Sent {card.Command} ({card.Name}, {card.School}). Open your spellbook in the game to see it.");
 
                     return Task.CompletedTask;
                 })),

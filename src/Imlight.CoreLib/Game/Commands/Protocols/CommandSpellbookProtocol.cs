@@ -24,6 +24,7 @@ using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Imlight.CoreLib.Game.Commands.Protocols;
 
@@ -52,7 +53,6 @@ internal class CommandSpellbookProtocol : CommandProtocol {
 
             return;
         }
-        var spellName = spellTemplate.m_name;
 
         var spell = SpellFactory.GetSpell(spellTemplateIdUint);
         if (spell == null) {
@@ -61,17 +61,48 @@ internal class CommandSpellbookProtocol : CommandProtocol {
             return;
         }
 
-        if (!Context.Character.LearnSpell(spell)) {
+        var learned = Context.Character.LearnSpell(spell);
+
+        // A shadow-enhanced spell (Wings of Night) and the other fused spells are Fusion Formulas: the game lists them
+        // on the deck's Fusion page, not on a school page, and they only fuse with both of their cards known. So the
+        // cards come with it, as .fusion learn does (reported 2026-11-11: "shadow enhanced spells are learnable but they
+        // won't appear in your spellbook").
+        var fusion = SpellFusions.RecipeOf(spellTemplateIdUint) is not null;
+        var cards = fusion ? SpellFusions.TeachIngredients(Context.Character, spellTemplateIdUint) : [];
+
+        Context.SessionActor.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) spellTemplateIdUint });
+        foreach (var cardId in cards) {
+            Context.SessionActor.Tell(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK { SpellID = (int) cardId });
+        }
+
+        // An upgradable spell's group is shown by the game only once it is told the group is known.
+        if (TieredSpells.Enabled && TieredSpells.GroupOfTemplate(spellTemplateIdUint) >= 0
+            && TieredSpells.VisibilityMessage(Context.Character) is { } visibility) {
+            Context.SessionActor.Tell(visibility);
+        }
+
+        var shownName = ShownName(spellTemplate);
+        if (fusion) {
+            var cardNames = cards.Select(id => CoreObjectFactory.GetCoreTemplate(id) as SpellTemplate).Where(t => t is not null).Select(ShownName).ToList();
+            InformSenderClient((learned ? $"You have learned the Fusion Formula {shownName}." : $"You already know the Fusion Formula {shownName}.")
+                               + (cardNames.Count > 0 ? $" You also learned {string.Join(" and ", cardNames)}, the cards it fuses." : "")
+                               + " Open your deck and click the Fusion tab to see it; it is not on a school page."
+                               + " In battle, drag one of its cards onto the other to fuse them.");
+        }
+        else if (!learned) {
             InformSenderClient("Failed to learn spell. You may already know this spell.");
         }
         else {
-            InformSenderClient($"You have learned the spell {spellName}.");
+            InformSenderClient($"You have learned the spell {shownName}.");
         }
+    }
 
-        var clientMsg = new WIZARD_12_PROTOCOL.MSG_ADDSPELLTOBOOK {
-            SpellID = (int) spellTemplateIdUint
-        };
-        Context.SessionActor.Tell(clientMsg);
+    // The name the game shows ("Wings of Night"), or the file name when it has none.
+    private static string ShownName(SpellTemplate template) {
+        string display = template.m_displayName;
+        var shown = string.IsNullOrEmpty(display) ? null : Locale.GetEnglishName(display);
+
+        return string.IsNullOrEmpty(shown) ? (string) template.m_name : shown;
     }
 
     [Command("unlearn")]
