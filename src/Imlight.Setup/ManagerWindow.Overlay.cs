@@ -26,10 +26,13 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 
 namespace Imlight.Setup;
 
@@ -54,7 +57,7 @@ internal sealed partial class ManagerWindow {
     private readonly TextBlock _ovRuleNote = Sub("");
 
     private const string OVERLAY_DEFAULT_KICK =
-        "This server needs the Ahziael overlay. Open Ahziael on your PC, click Play on the Play tab (or Play Wizard101), keep Ahziael open, and log in again.";
+        "This server needs the Ahziael overlay. Get Ahziael from github.com/Niduus/Imlight/releases (ImlightManager.exe), add this server under Play, click Play in Ahziael, and log in again.";
 
     private static string[]? s_systemFonts;
 
@@ -211,6 +214,17 @@ internal sealed partial class ManagerWindow {
         private readonly StackPanel _ovEditor = new() { Spacing = 10 };
         private readonly ToggleSwitch _ovEnabled = new() { OnContent = "On", OffContent = "Off" };
         private bool _ovFilling;
+        private Panel? _ovCanvas;
+        private Drag? _ovDrag;
+        private int _ovListPressed = -1;
+
+        private enum DragMode { Move, Right, Bottom, Corner }
+
+        /// <summary>A drag on the picture: what, how, and where it started.</summary>
+        private sealed record Drag(OverlayElement Element, DragMode Mode, Point Start, double X, double Y, double Width, double Height);
+
+        /// <summary>How near an edge (in picture pixels) a press takes the size instead of the place.</summary>
+        private const double EDGE = 12;
 
         internal OverlayEditor(Window owner, Action<string, bool> say) {
             _owner = owner;
@@ -234,6 +248,12 @@ internal sealed partial class ManagerWindow {
                 }
             };
             _ovSelected = _ovDesign.Credit;
+            _ovPreview.PointerPressed += PreviewPressed;
+            _ovPreview.PointerMoved += PreviewMoved;
+            _ovPreview.PointerReleased += PreviewReleased;
+            _ovPreview.PointerCaptureLost += (_, _) => EndPreviewDrag();
+            _ovList.AddHandler(InputElement.PointerPressedEvent, ListPressed, RoutingStrategies.Tunnel | RoutingStrategies.Bubble, true);
+            _ovList.AddHandler(InputElement.PointerReleasedEvent, ListReleased, RoutingStrategies.Tunnel | RoutingStrategies.Bubble, true);
             FillOverlayList();
             RenderOverlayEditor();
             RenderOverlayPreview();
@@ -288,6 +308,9 @@ internal sealed partial class ManagerWindow {
                                     Spaced(Danger(Action(Plain("Remove"), RemoveOverlayElement))),
                                 },
                             },
+                            new TextBlock { Text = "Drag onto the picture", FontWeight = FontWeight.SemiBold, Margin = new Thickness(0, 6, 0, 0) },
+                            new WrapPanel { Children = { Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)) } },
+                            Sub("Drag a block onto the picture to put a new text or box right there (or just click it). Drag a line in the list above onto another to change the order."),
                             Sub("A higher Layer is drawn on top; on the same layer, lower in the list is on top. With Spacing above 0, one that laps over another is moved off it, that far away. The Ahziael line is always on top, in full, and can only be moved."),
                         },
                     },
@@ -299,7 +322,7 @@ internal sealed partial class ManagerWindow {
                 Spacing = 10,
                 Children = {
                     WithMargin(new Viewbox { Stretch = Stretch.Uniform, MaxHeight = 400, Child = _ovPreview }, new Thickness(0, 0, 0, 6)),
-                    Sub("The picture is a stand-in for the game at 1280 x 720. The outlined one is the one you are changing. Changes show on the game at once."),
+                    Sub("The picture is a stand-in for the game at 1280 x 720. Click a text or box to pick it, drag it to move it, and drag its right or bottom edge (or the corner) to size it. The Ahziael line can only be moved. The outlined one is the one you are changing. Changes show on the game at once."),
                     editor,
                     WithHint(Row(Action(Plain("Save design to a file"), ExportOverlayAsync), Action(Plain("Open a design file"), ImportOverlayAsync),
                             Danger(Action(Plain("Start over"), ResetOverlayAsync))),
@@ -351,9 +374,226 @@ internal sealed partial class ManagerWindow {
                         HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top,
                         Background = new RadialGradientBrush { GradientStops = { new GradientStop(Color.FromRgb(0xFF, 0xF2, 0xA8), 0), new GradientStop(Color.FromArgb(0, 0xFF, 0xE0, 0x70), 1) } },
                     },
-                    OverlayRenderer.Build(_ovDesign, words, _ovSelected, _ovDesign.Enabled),
+                    (_ovCanvas = (Panel)OverlayRenderer.Build(_ovDesign, words, _ovSelected, _ovDesign.Enabled)),
                 },
             };
+        }
+
+        // ---------------------------------------------------------------------
+        // Click and drag on the picture
+        // ---------------------------------------------------------------------
+
+        /// <summary>The text or box under this point of the picture (the one drawn on top first), and where on it.</summary>
+        private (OverlayElement Element, Rect Bounds)? HitTest(Point point) {
+            if (_ovCanvas is null) {
+                return null;
+            }
+
+            for (var i = _ovCanvas.Children.Count - 1; i >= 0; i--) {
+                var child = _ovCanvas.Children[i];
+                if (child.Tag is OverlayElement element && child.Bounds.Inflate(EDGE / 2).Contains(point)) {
+                    return (element, child.Bounds);
+                }
+            }
+
+            return null;
+        }
+
+        private static DragMode ModeAt(Rect bounds, Point point, bool credit) {
+            if (credit) {
+                return DragMode.Move;
+            }
+
+            var right = Math.Abs(point.X - bounds.Right) <= EDGE;
+            var bottom = Math.Abs(point.Y - bounds.Bottom) <= EDGE;
+
+            return right && bottom ? DragMode.Corner : right ? DragMode.Right : bottom ? DragMode.Bottom : DragMode.Move;
+        }
+
+        private static Cursor CursorFor(DragMode mode) => new(mode switch {
+            DragMode.Right => StandardCursorType.SizeWestEast,
+            DragMode.Bottom => StandardCursorType.SizeNorthSouth,
+            DragMode.Corner => StandardCursorType.BottomRightCorner,
+            _ => StandardCursorType.SizeAll,
+        });
+
+        private void PreviewPressed(object? sender, PointerPressedEventArgs e) {
+            if (_ovCanvas is null || !e.GetCurrentPoint(_ovPreview).Properties.IsLeftButtonPressed) {
+                return;
+            }
+
+            var point = e.GetPosition(_ovCanvas);
+            if (HitTest(point) is not var (element, bounds)) {
+                return;
+            }
+
+            var credit = element == _ovDesign.Credit;
+            if (_ovSelected != element) {
+                _ovSelected = element;
+                FillOverlayList();
+                RenderOverlayEditor();
+                RenderOverlayPreview();
+            }
+
+            _ovDrag = new Drag(element, ModeAt(bounds, point, credit), point, element.X, element.Y,
+                element.Width > 0 ? element.Width : bounds.Width, element.Height > 0 ? element.Height : bounds.Height);
+            _ovPreview.Cursor = CursorFor(_ovDrag.Mode);
+            e.Pointer.Capture(_ovPreview);
+            e.Handled = true;
+        }
+
+        private void PreviewMoved(object? sender, PointerEventArgs e) {
+            if (_ovCanvas is null) {
+                return;
+            }
+
+            var point = e.GetPosition(_ovCanvas);
+            if (_ovDrag is not { } drag) {
+                // Only showing what a press would do there.
+                _ovPreview.Cursor = HitTest(point) is var (element, bounds)
+                    ? CursorFor(ModeAt(bounds, point, element == _ovDesign.Credit))
+                    : Cursor.Default;
+                return;
+            }
+
+            var dx = Math.Round(point.X - drag.Start.X);
+            var dy = Math.Round(point.Y - drag.Start.Y);
+            var element2 = drag.Element;
+            // Which way X and Y count from the corner or side it is pinned to.
+            var (sx, sy) = Signs(element2.Anchor);
+            if (drag.Mode == DragMode.Move) {
+                element2.X = drag.X + sx * dx;
+                element2.Y = drag.Y + sy * dy;
+            }
+            else {
+                // Sizing from the right or bottom edge keeps the left and top where they are.
+                if (drag.Mode is DragMode.Right or DragMode.Corner) {
+                    var width = Math.Max(10, drag.Width + dx);
+                    element2.Width = width;
+                    element2.X = drag.X + KeepStart(element2.Anchor, true) * (width - drag.Width);
+                }
+
+                if (drag.Mode is DragMode.Bottom or DragMode.Corner) {
+                    var height = Math.Max(10, drag.Height + dy);
+                    element2.Height = height;
+                    element2.Y = drag.Y + KeepStart(element2.Anchor, false) * (height - drag.Height);
+                }
+            }
+
+            _ovDesign.Clean();
+            RenderOverlayPreview();
+            e.Handled = true;
+        }
+
+        private void PreviewReleased(object? sender, PointerReleasedEventArgs e) {
+            if (_ovDrag is null) {
+                return;
+            }
+
+            e.Pointer.Capture(null);
+            EndPreviewDrag();
+            e.Handled = true;
+        }
+
+        private void EndPreviewDrag() {
+            if (_ovDrag is null) {
+                return;
+            }
+
+            _ovDrag = null;
+            OverlayChanged(false);
+            RenderOverlayEditor();
+        }
+
+        /// <summary>+1 where X (or Y) grows to the right (or down), -1 where it grows the other way.</summary>
+        private static (double X, double Y) Signs(OverlayAnchor anchor) => (
+            anchor is OverlayAnchor.TopRight or OverlayAnchor.Right or OverlayAnchor.BottomRight ? -1 : 1,
+            anchor is OverlayAnchor.BottomLeft or OverlayAnchor.Bottom or OverlayAnchor.BottomRight ? -1 : 1);
+
+        // How far X moves per pixel of extra size, so the left (top) edge stays put: none from the left, back by all of it
+        // from the right, half from the middle.
+        private static double KeepStart(OverlayAnchor anchor, bool across) {
+            var (sx, sy) = Signs(anchor);
+            var middle = across
+                ? anchor is OverlayAnchor.Top or OverlayAnchor.Center or OverlayAnchor.Bottom
+                : anchor is OverlayAnchor.Left or OverlayAnchor.Center or OverlayAnchor.Right;
+
+            return middle ? 0.5 : (across ? sx : sy) < 0 ? -1 : 0;
+        }
+
+        // ---------------------------------------------------------------------
+        // Building blocks: drag a new text or box onto the picture, drag the list to change the order
+        // ---------------------------------------------------------------------
+
+        private Control Block(string kind) {
+            var box = kind == OverlayElement.BOX;
+            var block = new Border {
+                Padding = new Thickness(14, 8), CornerRadius = new CornerRadius(6), BorderBrush = LINE, BorderThickness = new Thickness(1),
+                Background = ManagerTheme.SURFACE_HIGH_BRUSH, Cursor = new Cursor(StandardCursorType.DragMove),
+                Child = new TextBlock { Text = box ? "▭  Box" : "T  Text", FontWeight = FontWeight.SemiBold },
+            };
+            ToolTip.SetTip(block, box ? "Drag onto the picture to add a box there" : "Drag onto the picture to add a text there");
+            block.PointerPressed += (_, e) => {
+                if (e.GetCurrentPoint(block).Properties.IsLeftButtonPressed) {
+                    e.Pointer.Capture(block);
+                    block.Opacity = 0.6;
+                    e.Handled = true;
+                }
+            };
+            block.PointerReleased += (_, e) => {
+                block.Opacity = 1;
+                e.Pointer.Capture(null);
+                e.Handled = true;
+                Point? at = null;
+                if (_ovCanvas is not null) {
+                    var point = e.GetPosition(_ovCanvas);
+                    if (new Rect(0, 0, PREVIEW_W, PREVIEW_H).Contains(point)) {
+                        at = point;
+                    }
+                }
+
+                try {
+                    AddOverlayElement(kind, at);
+                }
+                catch (PanelException ex) {
+                    Say(ex.Message, true);
+                }
+            };
+
+            return block;
+        }
+
+        private int ListIndexAt(PointerEventArgs e) {
+            var item = (_ovList.InputHitTest(e.GetPosition(_ovList)) as Visual)?.FindAncestorOfType<ListBoxItem>(includeSelf: true);
+
+            return item is null ? -1 : _ovList.IndexFromContainer(item);
+        }
+
+        private void ListPressed(object? sender, PointerPressedEventArgs e) {
+            if (e.Route == RoutingStrategies.Tunnel) {
+                _ovListPressed = e.GetCurrentPoint(_ovList).Properties.IsLeftButtonPressed ? ListIndexAt(e) : -1;
+            }
+        }
+
+        private void ListReleased(object? sender, PointerReleasedEventArgs e) {
+            if (e.Route != RoutingStrategies.Bubble) {
+                return;
+            }
+
+            var from = _ovListPressed;
+            _ovListPressed = -1;
+            var to = ListIndexAt(e);
+            // Line 0 is the Ahziael line: it stays first. Dropping on it puts the item first.
+            if (from < 1 || to < 0 || to == from || from > _ovDesign.Elements.Count) {
+                return;
+            }
+
+            var element = _ovDesign.Elements[from - 1];
+            _ovDesign.Elements.RemoveAt(from - 1);
+            _ovDesign.Elements.Insert(Math.Clamp(to - 1, 0, _ovDesign.Elements.Count), element);
+            _ovSelected = element;
+            OverlayChanged();
+            RenderOverlayEditor();
         }
 
         /// <summary>A change to the design: the picture, the list and the overlay over the game follow at once.</summary>
@@ -367,7 +607,10 @@ internal sealed partial class ManagerWindow {
             OverlayHost.Apply(_ovDesign);
         }
 
-        private Task AddOverlayElement(string kind) {
+        private Task AddOverlayElement(string kind) => AddOverlayElement(kind, null);
+
+        /// <summary>A new text or box; with <paramref name="at"/>, its top left corner there on the picture.</summary>
+        private Task AddOverlayElement(string kind, Point? at) {
             if (_ovDesign.Elements.Count >= OverlayDesign.MAX_ELEMENTS) {
                 throw new PanelException($"The overlay holds up to {OverlayDesign.MAX_ELEMENTS} texts and boxes.");
             }
@@ -382,6 +625,12 @@ internal sealed partial class ManagerWindow {
                     Text = "My server", Anchor = OverlayAnchor.TopLeft, X = 20, Y = 20, Size = 22, Bold = true, Shadow = true,
                     Fill = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#FFFFFFFF" },
                 };
+            if (at is { } point) {
+                element.Anchor = OverlayAnchor.TopLeft;
+                element.X = Math.Round(Math.Clamp(point.X, 0, PREVIEW_W - 20));
+                element.Y = Math.Round(Math.Clamp(point.Y, 0, PREVIEW_H - 20));
+            }
+
             _ovDesign.Elements.Add(element);
             _ovSelected = element;
             OverlayChanged();
