@@ -169,21 +169,13 @@ internal sealed class OverlayDesign {
 
 internal enum OverlayAnchor { TopLeft, Top, TopRight, Left, Center, Right, BottomLeft, Bottom, BottomRight }
 
-/// <summary>One text, box or button of the overlay.</summary>
+/// <summary>One text or box of the overlay.</summary>
 internal sealed class OverlayElement {
 
     internal const string TEXT = "Text";
     internal const string BOX = "Box";
     internal const string PICTURE = "Picture";
-
-    /// <summary>
-    /// A text that can be clicked in game (Niduus, 2026-11-11): it runs its <see cref="Action"/>. Only buttons take
-    /// clicks; everything else on the overlay lets them through to the game.
-    /// </summary>
-    internal const string BUTTON = "Button";
-
     internal const int MAX_TEXT = 300;
-    internal const int MAX_COMMAND = 200;
 
     /// <summary>Largest picture kept in a design, in bytes of the file (PNG, JPEG, GIF or BMP only).</summary>
     internal const int MAX_PICTURE_BYTES = 200 * 1024;
@@ -191,18 +183,6 @@ internal sealed class OverlayElement {
     internal static readonly string[] PICTURE_FITS = ["Fit", "Fill", "Stretch"];
 
     public string Kind { get; set; } = TEXT;
-
-    /// <summary>What a button does when clicked: one of <see cref="OverlayAction"/>'s kinds.</summary>
-    public string Action { get; set; } = OverlayAction.COMMAND;
-
-    /// <summary>
-    /// For <see cref="OverlayAction.COMMAND"/>: the chat command run on the server as the one who clicks
-    /// (".tp Ravenwood"). For <see cref="OverlayAction.CHEAT"/>: the cheat's name. Plain words, never code.
-    /// </summary>
-    public string Command { get; set; } = "";
-
-    /// <summary>For a cheat button: Use (press it), On, Off, or Switch (on when off, off when on).</summary>
-    public string CheatHow { get; set; } = OverlayAction.USE;
     public string Name { get; set; } = "";
     public bool Visible { get; set; } = true;
 
@@ -272,20 +252,15 @@ internal sealed class OverlayElement {
     /// <summary>How a picture fills its box: Fit (whole picture), Fill (covers, cropped) or Stretch.</summary>
     public string PictureFit { get; set; } = "Fit";
 
-    /// <summary>A box or a picture: no words (a button has words).</summary>
-    internal bool IsBox => Kind is BOX or PICTURE;
+    /// <summary>A box or a picture: no words.</summary>
+    internal bool IsBox => Kind != TEXT;
 
     internal bool IsPicture => Kind == PICTURE;
 
-    internal bool IsButton => Kind == BUTTON;
-
     internal OverlayElement Clean() {
-        Kind = Kind is BOX or PICTURE or BUTTON ? Kind : TEXT;
+        Kind = Kind is BOX or PICTURE ? Kind : TEXT;
         Picture = Kind == PICTURE ? CleanPicture(Picture) : "";
         PictureFit = PICTURE_FITS.Contains(PictureFit) ? PictureFit : "Fit";
-        Action = OverlayAction.KINDS.Contains(Action) ? Action : OverlayAction.COMMAND;
-        Command = Trim(Command, MAX_COMMAND).Replace("\n", " ").Trim();
-        CheatHow = OverlayAction.HOWS.Contains(CheatHow) ? CheatHow : OverlayAction.USE;
         Name = Trim(Name, 40);
         Text = Trim(Text, MAX_TEXT);
         if (!Enum.IsDefined(Anchor)) {
@@ -348,48 +323,6 @@ internal sealed class OverlayElement {
 
     internal static double Range(double value, double min, double max, double fallback = 0)
         => double.IsFinite(value) ? Math.Clamp(value, min, max) : fallback;
-
-}
-
-/// <summary>
-/// What an overlay button can do. Each is a fixed choice made in the designer; a design file only names one, so a shared
-/// design can't make a button do anything else.
-/// </summary>
-internal static class OverlayAction {
-
-    /// <summary>Runs a chat command on the server, as the player who clicked, with that player's own rights.</summary>
-    internal const string COMMAND = "Command";
-
-    /// <summary>Uses one of the player's cheats on the server (the host's settings decide which they may use).</summary>
-    internal const string CHEAT = "Cheat";
-
-    /// <summary>Opens the overlay designer.</summary>
-    internal const string DESIGNER = "Designer";
-
-    /// <summary>Shows or hides the player's own texts, boxes and buttons (not the server's or the Ahziael line).</summary>
-    internal const string TOGGLE_MINE = "ToggleMine";
-
-    /// <summary>Brings Ahziael's window to the front.</summary>
-    internal const string OPEN_AHZIAEL = "OpenAhziael";
-
-    internal static readonly string[] KINDS = [COMMAND, CHEAT, DESIGNER, TOGGLE_MINE, OPEN_AHZIAEL];
-
-    /// <summary>The words for each kind in the designer.</summary>
-    internal static readonly string[] LABELS = [
-        "Run a chat command on the server", "Use a cheat", "Open the overlay designer", "Show or hide my own pieces", "Open Ahziael",
-    ];
-
-    internal const string USE = "Use";
-    internal const string ON = "On";
-    internal const string OFF = "Off";
-    internal const string SWITCH = "Switch";
-
-    internal static readonly string[] HOWS = [USE, ON, OFF, SWITCH];
-
-    internal static readonly string[] HOW_LABELS = ["Use it (a \"When pressed\" cheat)", "Turn it on", "Turn it off", "Switch it on or off"];
-
-    /// <summary>True when the action goes to the server (the others happen on this PC).</summary>
-    internal static bool ToServer(string kind) => kind is COMMAND or CHEAT;
 
 }
 

@@ -1,4 +1,0 @@
-New: Buttons on the game overlay
-Add a button to the overlay and click it right in the game. A button can run a chat command (like .heal or .tp Ravenwood) on the server you play on, use or switch one of your cheats, open the overlay designer, show or hide your own pieces, or open Ahziael. Only buttons take clicks; everything else on the overlay still lets clicks through to the game. Commands and cheats run as your own wizard with your own rights, through your signed-in overlay link, and nothing shows in chat. A button flashes green when it worked and red when it didn't. Hosts can put buttons in the Server part for every player.
-Where: Play > Overlay
-Test: In Design it, drag the Button block onto the picture, set it to run .heal, sign in under My cheats on this server, then click the button over the game.
