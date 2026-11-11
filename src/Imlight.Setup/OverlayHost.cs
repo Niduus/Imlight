@@ -230,7 +230,8 @@ internal static class OverlayHost {
             return;
         }
 
-        s_games = s_design.Enabled ? FindGameWindows() : [];
+        // The Ahziael line always shows, so the game windows are followed whatever the design says.
+        s_games = FindGameWindows();
         HookGames();
         var clock = OverlayRenderer.UsesClock(s_design) ? DateTime.Now.ToString("h:mm yyyy-MM-dd") : "";
         if (clock != s_clock) {
@@ -256,7 +257,7 @@ internal static class OverlayHost {
             if (!s_missingSince.TryGetValue(hwnd, out var since)) {
                 s_missingSince[hwnd] = now;
             }
-            else if (now - since > s_vanishGrace || !s_design.Enabled) {
+            else if (now - since > s_vanishGrace) {
                 s_windows[hwnd].Dispose();
                 s_windows.Remove(hwnd);
                 s_missingSince.Remove(hwnd);
@@ -484,7 +485,7 @@ internal static class OverlayHost {
             };
 
             if (version != _drawnVersion || _drawnSize != (width, height, scale)) {
-                var picture = OverlayRenderer.Build(design, new OverlayRenderer.Words(Version, Link.ServerLabel));
+                var picture = OverlayRenderer.Build(design, new OverlayRenderer.Words(Version, Link.ServerLabel), showMine: design.Enabled);
                 Draw(_hwnd, Render(picture, width, height, scale), width, height, origin);
                 _drawnVersion = version;
                 _drawnSize = (width, height, scale);
