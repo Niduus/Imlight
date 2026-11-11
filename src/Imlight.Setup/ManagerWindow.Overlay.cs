@@ -72,6 +72,16 @@ internal sealed partial class ManagerWindow {
                 return;
             }
 
+            // On the game first; its "Full designer" button brings this tab up.
+            if (OverlayGameEditor.Open(ShowOverlayDesigner)) {
+                return;
+            }
+
+            ShowOverlayDesigner();
+        };
+
+        void ShowOverlayDesigner() {
+
             if (WindowState == WindowState.Minimized) {
                 WindowState = WindowState.Normal;
             }
@@ -79,7 +89,7 @@ internal sealed partial class ManagerWindow {
             Show();
             Activate();
             SelectTab(OVERLAY);
-        };
+        }
 
         // The server's switch.
         _ovRequired.IsEnabled = false;
@@ -200,8 +210,15 @@ internal sealed partial class ManagerWindow {
     /// </summary>
     internal sealed class OverlayEditor {
 
-        private const double PREVIEW_W = 1280;
-        private const double PREVIEW_H = 720;
+        // The picture is the game window as the design sees it (Niduus, 2026-11-11: "only be able to be placed within the
+        // regions of the client UI size ... multi clients too with odd res"): a running game window's own shape, or a
+        // size picked from the list, in design pixels (OverlayDesign.Fit).
+        private double PREVIEW_W = OverlayDesign.REFERENCE_W;
+        private double PREVIEW_H = OverlayDesign.REFERENCE_H;
+        private readonly ComboBox _ovSize = new() { MinWidth = 260 };
+        private List<(string Name, double W, double H, bool Game)> _ovSizes = [];
+        private string _ovSizesKey = "";
+        private bool _ovSizePicked;
 
         private readonly Window _owner;
         private readonly Action<string, bool> _say;
@@ -234,12 +251,21 @@ internal sealed partial class ManagerWindow {
         private enum DragMode { Move, Right, Bottom, Corner }
 
         /// <summary>A drag on the picture: what, how, and where it started.</summary>
-        private sealed record Drag(OverlayElement Element, DragMode Mode, Point Start, double X, double Y, double Width, double Height);
+        private sealed record Drag(OverlayElement Element, DragMode Mode, Point Start, double X, double Y, double Width, double Height, Rect Bounds);
 
         /// <summary>How near an edge (in picture pixels) a press takes the size instead of the place.</summary>
         private const double EDGE = 12;
 
-        internal OverlayEditor(Window owner, Action<string, bool> say, Func<string?> serverFile) {
+        /// <summary>True for the editor right on the game (<see cref="OverlayGameEditor"/>): no stand-in picture, no lists.</summary>
+        private readonly bool _inGame;
+        private int _ovSeenStamp;
+        private DateTime _ovServerFileTime;
+        private Rect? _ovDragRect;
+        private readonly TextBox _ovQuickWords = new() { Width = 220, Watermark = "Words of the picked text" };
+
+        internal OverlayEditor(Window owner, Action<string, bool> say, Func<string?> serverFile, bool inGame = false) {
+            _inGame = inGame;
+            _ovSeenStamp = OverlayHost.DesignStamp;
             _owner = owner;
             _say = say;
             _serverFile = serverFile;
@@ -258,6 +284,12 @@ internal sealed partial class ManagerWindow {
             // Niduus, 2026-11-11: "if this is mandatory, it's counter productive to turn it off". While the server you play
             // on needs the overlay, the switch stays on and can't be changed.
             _ovLockTimer.Tick += (_, _) => ShowLock();
+            _ovSize.SelectionChanged += (_, _) => {
+                if (!_ovFilling) {
+                    _ovSizePicked = true;
+                    UseSize();
+                }
+            };
             _ovLockTimer.Start();
             _owner.Closed += (_, _) => _ovLockTimer.Stop();
             ShowLock();
@@ -269,6 +301,17 @@ internal sealed partial class ManagerWindow {
                 }
             };
             _ovSelected = _ovDesign.Credit;
+            if (_inGame) {
+                _ovPreview.CornerRadius = new CornerRadius(0);
+                _ovPreview.BorderThickness = new Thickness(0);
+            }
+
+            _ovQuickWords.TextChanged += (_, _) => {
+                if (!_ovFilling && _ovSelected is { IsBox: false } picked && picked != _ovDesign.Credit && picked.Text != (_ovQuickWords.Text ?? "")) {
+                    picked.Text = _ovQuickWords.Text ?? "";
+                    OverlayChanged();
+                }
+            };
             _ovPreview.PointerPressed += PreviewPressed;
             _ovPreview.PointerMoved += PreviewMoved;
             _ovPreview.PointerReleased += PreviewReleased;
@@ -283,7 +326,97 @@ internal sealed partial class ManagerWindow {
 
         private int _ovServerSeen = -1;
 
+        /// <summary>
+        /// The design changed somewhere else (the other designer, on the game or in Ahziael, or the other copy): this one
+        /// shows it too, keeping the same one picked.
+        /// </summary>
+        private void Follow() {
+            if (_ovDrag is not null) {
+                return;
+            }
+
+            if (!_ovServerPart && OverlayHost.DesignStamp != _ovSeenStamp) {
+                _ovSeenStamp = OverlayHost.DesignStamp;
+                var at = _ovSelected is null ? -1 : _ovClient.Elements.IndexOf(_ovSelected);
+                _ovClient = OverlayHost.Design.Copy();
+                _ovDesign = _ovClient;
+                _ovSelected = at >= 0 && at < _ovClient.Elements.Count ? _ovClient.Elements[at] : _ovClient.Credit;
+                FillOverlayList();
+                RenderOverlayEditor();
+                RenderOverlayPreview();
+            }
+            else if (_ovServerPart && _serverFile() is { } path) {
+                var time = File.Exists(path) ? File.GetLastWriteTimeUtc(path) : DateTime.MinValue;
+                if (time != _ovServerFileTime && _ovServerFileTime != DateTime.MinValue) {
+                    _ovServerFileTime = time;
+                    var at = _ovSelected is null || _ovServer is null ? -1 : _ovServer.Elements.IndexOf(_ovSelected);
+                    _ovServer = OverlayDesign.LoadFile(path);
+                    _ovServer.Credit = _ovClient.Credit;
+                    _ovDesign = _ovServer;
+                    _ovSelected = at >= 0 && at < _ovServer.Elements.Count ? _ovServer.Elements[at] : _ovClient.Credit;
+                    FillOverlayList();
+                    RenderOverlayEditor();
+                    RenderOverlayPreview();
+                }
+            }
+        }
+
+        // The sizes to show the picture at: each open game window first, then common ones.
+        private void FillSizes() {
+            List<(string Name, double W, double H, bool Game)> sizes = OverlayHost.GameSizes.Select((g, i) => {
+                var fit = OverlayDesign.Fit(g.Width, g.Height);
+                return (Name: $"Game window {i + 1}: {g.Width:0} x {g.Height:0}", W: Math.Round(g.Width / fit), H: Math.Round(g.Height / fit), Game: true);
+            }).ToList();
+            sizes.Add(("1280 x 720 (wide)", 1280, 720, false));
+            sizes.Add(("1920 x 1080 (wide)", 1280, 720, false));
+            sizes.Add(("1024 x 768 (square-ish)", 1024 / OverlayDesign.Fit(1024, 768), 768 / OverlayDesign.Fit(1024, 768), false));
+            sizes.Add(("800 x 600 (small)", 800 / OverlayDesign.Fit(800, 600), 600 / OverlayDesign.Fit(800, 600), false));
+            sizes.Add(("2560 x 1080 (extra wide)", 2560 / OverlayDesign.Fit(2560, 1080), 1080 / OverlayDesign.Fit(2560, 1080), false));
+            var key = string.Join("|", sizes.Select(x => x.Item1));
+            if (key == _ovSizesKey) {
+                return;
+            }
+
+            var old = _ovSize.SelectedIndex >= 0 && _ovSize.SelectedIndex < _ovSizes.Count ? _ovSizes[_ovSize.SelectedIndex].Name : null;
+            _ovSizesKey = key;
+            _ovSizes = sizes;
+            _ovFilling = true;
+            try {
+                _ovSize.ItemsSource = sizes.Select(x => x.Item1).ToList();
+                var keep = old is null ? -1 : sizes.FindIndex(x => x.Name == old);
+                // A game window that opens is shown at once, unless a size was picked by hand.
+                _ovSize.SelectedIndex = keep >= 0 && (_ovSizePicked || !sizes[0].Game) ? keep : 0;
+            }
+            finally {
+                _ovFilling = false;
+            }
+
+            UseSize();
+        }
+
+        private void UseSize() {
+            if (_ovSize.SelectedIndex < 0 || _ovSize.SelectedIndex >= _ovSizes.Count) {
+                return;
+            }
+
+            var (_, w, h, _) = _ovSizes[_ovSize.SelectedIndex];
+            if (w == PREVIEW_W && h == PREVIEW_H) {
+                return;
+            }
+
+            PREVIEW_W = w;
+            PREVIEW_H = h;
+            if (_ovDrag is null) {
+                RenderOverlayPreview();
+            }
+        }
+
         private void ShowLock() {
+            if (!_inGame) {
+                FillSizes();
+            }
+
+            Follow();
             var locked = OverlayHost.ServerRequires;
             _ovFilling = true;
             try {
@@ -339,6 +472,7 @@ internal sealed partial class ManagerWindow {
                 _ovServer = OverlayDesign.LoadFile(path);
                 _ovServer.Credit = _ovClient.Credit;
                 _ovDesign = _ovServer;
+                _ovServerFileTime = File.Exists(path) ? File.GetLastWriteTimeUtc(path) : DateTime.UnixEpoch;
             }
             else {
                 _ovDesign = _ovClient;
@@ -410,6 +544,56 @@ internal sealed partial class ManagerWindow {
             "This switch shows or hides only what you made, and stays on while the server you play on needs the overlay. " +
             "Clicks go straight through to the game (only the sparkle button takes them).");
 
+        /// <summary>The game window's inside, in device-independent pixels: the picture takes its shape (on the game).</summary>
+        internal void SetGameArea(double width, double height) {
+            var fit = OverlayDesign.Fit(width, height);
+            var (w, h) = (Math.Round(width / fit), Math.Round(height / fit));
+            if (w == PREVIEW_W && h == PREVIEW_H) {
+                return;
+            }
+
+            PREVIEW_W = w;
+            PREVIEW_H = h;
+            if (_ovDrag is null) {
+                RenderOverlayPreview();
+            }
+        }
+
+        /// <summary>
+        /// The editor right on the game (Niduus, 2026-11-11: "I was also hoping to click the edit button over the game to
+        /// make the UI in the game ... I want both methods to work"): the design over the game, pick, drag and size there,
+        /// and a small bar to add, remove, change words, or open the full designer.
+        /// </summary>
+        internal Control BuildInGame(Action fullDesigner, Action done) {
+            var remove = Danger(Action(Plain("Remove"), RemoveOverlayElement));
+            var full = Plain("Full designer");
+            full.Click += (_, _) => fullDesigner();
+            var finish = ManagerTheme.MakeButton("Done", primary: true);
+            finish.Click += (_, _) => done();
+            var bar = new Border {
+                HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(0, 10, 0, 0),
+                Padding = new Thickness(10, 8), CornerRadius = new CornerRadius(10), BorderBrush = LINE, BorderThickness = new Thickness(1),
+                Background = new SolidColorBrush(Color.FromArgb(0xEE, 0x14, 0x16, 0x22)),
+                Child = new StackPanel {
+                    Spacing = 6,
+                    Children = {
+                        new WrapPanel {
+                            Children = {
+                                Spaced(_ovParts), Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)), Spaced(_ovQuickWords),
+                                Spaced(remove), Spaced(full), Spaced(finish),
+                            },
+                        },
+                        Sub("Click a text or box to pick it, drag to move, drag its right or bottom edge to size it. Drag Text or Box onto the game to add one."),
+                    },
+                },
+            };
+            bar.MaxWidth = 1100;
+
+            return new Panel {
+                Children = { new Viewbox { Stretch = Stretch.Fill, Child = _ovPreview }, bar },
+            };
+        }
+
         internal Control Build() {
             var editor = new Grid {
                 ColumnDefinitions = new ColumnDefinitions("260,*"), ColumnSpacing = 16,
@@ -444,8 +628,12 @@ internal sealed partial class ManagerWindow {
                 Children = {
                     _ovParts,
                     _ovPartNote,
+                    WithHint(Row(new TextBlock { Text = "Picture size", VerticalAlignment = VerticalAlignment.Center }, _ovSize),
+                        "The picture takes the shape of your game window while Wizard101 is open (each open game window is in the list). " +
+                        "Texts and boxes stay inside the window. On a bigger or smaller game window everything grows or shrinks with it and " +
+                        "keeps to its corner or side, so the design looks as you set it up on every game window, even several at once."),
                     WithMargin(new Viewbox { Stretch = Stretch.Uniform, MaxHeight = 400, Child = _ovPreview }, new Thickness(0, 0, 0, 6)),
-                    Sub("The picture is a stand-in for the game at 1280 x 720. Click a text or box to pick it, drag it to move it, and drag its right or bottom edge (or the corner) to size it. The Ahziael line always sits in the bottom-left corner and can't be moved or changed. The outlined one is the one you are changing. Changes show on the game at once."),
+                    Sub("The picture is a stand-in for the game window. Click a text or box to pick it, drag it to move it, and drag its right or bottom edge (or the corner) to size it. The Ahziael line always sits in the bottom-left corner and can't be moved or changed. The outlined one is the one you are changing. Changes show on the game at once."),
                     editor,
                     WithHint(Row(Action(Plain("Save design to a file"), ExportOverlayAsync), Action(Plain("Open a design file"), ImportOverlayAsync),
                             Danger(Action(Plain("Start over"), ResetOverlayAsync))),
@@ -481,6 +669,21 @@ internal sealed partial class ManagerWindow {
 
         private void RenderOverlayPreview() {
             var words = new OverlayRenderer.Words(OverlayHost.Version, string.IsNullOrEmpty(OverlayHost.Link.ServerLabel) ? "127.0.0.1" : OverlayHost.Link.ServerLabel);
+            if (_inGame) {
+                // Right on the game: the game itself is the picture, a little darker so it is plain this is editing.
+                _ovPreview.Child = new Panel {
+                    Width = PREVIEW_W, Height = PREVIEW_H,
+                    Children = {
+                        new Border { Background = new SolidColorBrush(Color.FromArgb(0x30, 0, 0, 0)) },
+                        (_ovCanvas = (Panel) (_ovServerPart
+                            ? OverlayRenderer.Build(_ovClient, words, _ovSelected, showMine: false, server: _ovServer?.Elements)
+                            : OverlayRenderer.Build(_ovClient, words, _ovSelected, OverlayHost.ShowsMine(_ovClient), PreviewServer()))),
+                    },
+                };
+
+                return;
+            }
+
             _ovPreview.Child = new Panel {
                 Width = PREVIEW_W, Height = PREVIEW_H,
                 Children = {
@@ -567,7 +770,7 @@ internal sealed partial class ManagerWindow {
             }
 
             _ovDrag = new Drag(element, ModeAt(bounds, point, credit), point, element.X, element.Y,
-                element.Width > 0 ? element.Width : bounds.Width, element.Height > 0 ? element.Height : bounds.Height);
+                element.Width > 0 ? element.Width : bounds.Width, element.Height > 0 ? element.Height : bounds.Height, bounds);
             _ovPreview.Cursor = CursorFor(_ovDrag.Mode);
             e.Pointer.Capture(_ovPreview);
             e.Handled = true;
@@ -593,11 +796,17 @@ internal sealed partial class ManagerWindow {
             // Which way X and Y count from the corner or side it is pinned to.
             var (sx, sy) = Signs(element2.Anchor);
             if (drag.Mode == DragMode.Move) {
+                // Never off the game window: it stops at the edge.
+                dx = Math.Clamp(dx, -drag.Bounds.Left, Math.Max(0, PREVIEW_W - drag.Bounds.Right));
+                dy = Math.Clamp(dy, -drag.Bounds.Top, Math.Max(0, PREVIEW_H - drag.Bounds.Bottom));
                 element2.X = drag.X + sx * dx;
                 element2.Y = drag.Y + sy * dy;
+                _ovDragRect = drag.Bounds.Translate(new Vector(dx, dy));
             }
             else {
-                // Sizing from the right or bottom edge keeps the left and top where they are.
+                // Sizing from the right or bottom edge keeps the left and top where they are, up to the window's edge.
+                dx = Math.Min(dx, Math.Max(0, PREVIEW_W - drag.Bounds.Right));
+                dy = Math.Min(dy, Math.Max(0, PREVIEW_H - drag.Bounds.Bottom));
                 if (drag.Mode is DragMode.Right or DragMode.Corner) {
                     var width = Math.Max(10, drag.Width + dx);
                     element2.Width = width;
@@ -631,9 +840,27 @@ internal sealed partial class ManagerWindow {
                 return;
             }
 
+            var drag = _ovDrag;
             _ovDrag = null;
+            if (drag.Mode == DragMode.Move && _ovDragRect is { } rect) {
+                Repin(drag.Element, rect);
+            }
+
+            _ovDragRect = null;
             OverlayChanged(false);
             RenderOverlayEditor();
+        }
+
+        /// <summary>
+        /// Pinned to the corner or side it was dropped nearest to, at the same place, so it stays there on a game window
+        /// of another shape (a wider one moves right-hand pieces right, not the left-hand ones).
+        /// </summary>
+        private void Repin(OverlayElement e, Rect rect) {
+            var column = rect.Center.X < PREVIEW_W / 3 ? 0 : rect.Center.X > PREVIEW_W * 2 / 3 ? 2 : 1;
+            var row = rect.Center.Y < PREVIEW_H / 3 ? 0 : rect.Center.Y > PREVIEW_H * 2 / 3 ? 2 : 1;
+            e.Anchor = (OverlayAnchor) (row * 3 + column);
+            e.X = Math.Round(column switch { 0 => rect.Left, 2 => PREVIEW_W - rect.Right, _ => rect.Left - (PREVIEW_W - rect.Width) / 2 });
+            e.Y = Math.Round(row switch { 0 => rect.Top, 2 => PREVIEW_H - rect.Bottom, _ => rect.Top - (PREVIEW_H - rect.Height) / 2 });
         }
 
         /// <summary>+1 where X (or Y) grows to the right (or down), -1 where it grows the other way.</summary>
@@ -751,12 +978,14 @@ internal sealed partial class ManagerWindow {
             RenderOverlayPreview();
             if (!_ovServerPart) {
                 OverlayHost.Apply(_ovDesign);
+                _ovSeenStamp = OverlayHost.DesignStamp;
                 return;
             }
 
             try {
                 if (_serverFile() is { } path) {
                     _ovDesign.SaveFile(path);
+                    _ovServerFileTime = File.GetLastWriteTimeUtc(path);
                 }
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
@@ -784,8 +1013,9 @@ internal sealed partial class ManagerWindow {
                 };
             if (at is { } point) {
                 element.Anchor = OverlayAnchor.TopLeft;
-                element.X = Math.Round(Math.Clamp(point.X, 0, PREVIEW_W - 20));
-                element.Y = Math.Round(Math.Clamp(point.Y, 0, PREVIEW_H - 20));
+                var (w, h) = element.IsBox ? (element.Width, element.Height) : (160, 40);
+                element.X = Math.Round(Math.Clamp(point.X, 0, Math.Max(0, PREVIEW_W - w)));
+                element.Y = Math.Round(Math.Clamp(point.Y, 0, Math.Max(0, PREVIEW_H - h)));
             }
 
             _ovDesign.Elements.Add(element);
@@ -911,6 +1141,16 @@ internal sealed partial class ManagerWindow {
         private void RenderOverlayEditor() {
             _ovEditor.Children.Clear();
             var e = _ovSelected ?? _ovDesign.Credit;
+            _ovFilling = true;
+            try {
+                var words = !e.IsBox && e != _ovDesign.Credit;
+                _ovQuickWords.IsEnabled = words;
+                _ovQuickWords.Text = words ? e.Text : "";
+            }
+            finally {
+                _ovFilling = false;
+            }
+
             var credit = e == _ovDesign.Credit;
 
             void Changed() => OverlayChanged(false);
