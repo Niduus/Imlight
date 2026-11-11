@@ -62,8 +62,25 @@ internal static class OverlayRenderer {
     }
 
     // Lowest layer first (same layer: list order), so the higher one is drawn over.
+    // A child is drawn over its parent (at least its parent's layer) and only while its parent shows.
     private static void Add(Panel panel, IEnumerable<OverlayElement> elements, Words words, OverlayElement? highlight, string part) {
-        foreach (var element in elements.Where(e => e.Visible).Select((e, i) => (e, i)).OrderBy(p => p.e.Layer).ThenBy(p => p.i).Select(p => p.e)) {
+        var list = elements.ToList();
+        var byId = list.Where(e => e.Id.Length > 0).GroupBy(e => e.Id).ToDictionary(g => g.Key, g => g.First());
+        (bool Shown, int Layer, int Depth) Family(OverlayElement e) {
+            var (shown, layer, depth) = (e.Visible, e.Layer, 0);
+            var at = e;
+            for (var guard = 0; guard < OverlayDesign.MAX_ELEMENTS && at.Parent.Length > 0 && byId.TryGetValue(at.Parent, out var up); guard++) {
+                shown &= up.Visible;
+                layer = Math.Max(layer, up.Layer);
+                depth++;
+                at = up;
+            }
+
+            return (shown, layer, depth);
+        }
+
+        foreach (var element in list.Select((e, i) => (e, i, f: Family(e))).Where(p => p.f.Shown)
+                     .OrderBy(p => p.f.Layer).ThenBy(p => p.f.Depth).ThenBy(p => p.i).Select(p => p.e)) {
             var control = Element(element, words, element == highlight);
             control.Classes.Add(part);
             panel.Children.Add(control);
@@ -102,25 +119,67 @@ internal static class OverlayRenderer {
             // The Ahziael line, the server's, the player's; within each, from the lowest layer up: the one that laps
             // over another (drawn over it) is the one that moves.
             var order = Children.Select((c, i) => (c, i)).OrderBy(p => Rank(PartOf(p.c))).ThenBy(p => p.i).Select(p => p.c).ToList();
-            var placed = new List<(Rect Rect, int Rank)>();
+            var placed = new List<(Rect Rect, int Rank, string Part, string Id)>();
+            var where = new Dictionary<Control, Rect>();
+            // Parents by part and Id: a child is placed from its parent's place, so the parent goes first.
+            var parents = new Dictionary<(string, string), Control>();
             foreach (var child in order) {
+                if (child.Tag is OverlayElement { Id.Length: > 0 } tagged) {
+                    parents.TryAdd((PartOf(child), tagged.Id), child);
+                }
+            }
+
+            void Place(Control child, int depth) {
+                if (where.ContainsKey(child)) {
+                    return;
+                }
+
                 if (child.Tag is not OverlayElement e) {
                     child.Arrange(new Rect(child.DesiredSize));
-                    continue;
+                    where[child] = new Rect(child.DesiredSize);
+                    return;
                 }
 
-                var rank = Rank(PartOf(child));
-                var rect = Inside(Start(e, child.DesiredSize, final), bounds);
+                var part = PartOf(child);
+                var area = bounds;
+                if (e.Parent.Length > 0 && depth < OverlayDesign.MAX_ELEMENTS && parents.TryGetValue((part, e.Parent), out var parent)) {
+                    Place(parent, depth + 1);
+                    area = where[parent];
+                }
+
+                var rank = Rank(part);
+                var rect = Inside(Start(e, child.DesiredSize, area), bounds);
                 if (rank > 0) {
-                    rect = Inside(Clear(rect, e.Spacing, rank, placed, bounds), bounds);
+                    // Never pushed off its own parents (a child sits on them).
+                    var family = Ancestors(e, part);
+                    var others = placed.Where(p => !(p.Part == part && family.Contains(p.Id))).Select(p => (p.Rect, p.Rank)).ToList();
+                    rect = Inside(Clear(rect, e.Spacing, rank, others, bounds), bounds);
                 }
 
-                placed.Add((rect, rank));
+                placed.Add((rect, rank, part, e.Id));
+                where[child] = rect;
                 child.Arrange(rect);
+            }
+
+            HashSet<string> Ancestors(OverlayElement e, string part) {
+                var ids = new HashSet<string>();
+                var at = e;
+                while (at.Parent.Length > 0 && ids.Add(at.Parent) && parents.TryGetValue((part, at.Parent), out var up) && up.Tag is OverlayElement next) {
+                    at = next;
+                }
+
+                return ids;
+            }
+
+            foreach (var child in order) {
+                Place(child, 0);
             }
 
             return final;
         }
+
+        /// <summary>Where each drawn piece ended up, after placing and moving: for the designers.</summary>
+        internal static Rect AreaOf(Control child) => child.Bounds;
 
         // Always inside the game window (Niduus, 2026-11-11: "only be able to be placed within the regions of the client UI
         // size"): one that would stick out is moved in; one bigger than the window starts at its top left.
@@ -129,7 +188,8 @@ internal static class OverlayRenderer {
             Math.Max(bounds.Top, Math.Min(rect.Y, bounds.Bottom - rect.Height)), rect.Width, rect.Height);
 
         // Where its corner or side and X and Y put it.
-        private static Rect Start(OverlayElement e, Size size, Size area) {
+        // Where its corner or side and X and Y put it, in the window or in its parent.
+        internal static Rect Start(OverlayElement e, Size size, Rect area) {
             var x = e.Anchor switch {
                 OverlayAnchor.TopLeft or OverlayAnchor.Left or OverlayAnchor.BottomLeft => e.X,
                 OverlayAnchor.TopRight or OverlayAnchor.Right or OverlayAnchor.BottomRight => area.Width - size.Width - e.X,
@@ -141,7 +201,7 @@ internal static class OverlayRenderer {
                 _ => (area.Height - size.Height) / 2 + e.Y,
             };
 
-            return new Rect(x, y, size.Width, size.Height);
+            return new Rect(area.X + x, area.Y + y, size.Width, size.Height);
         }
 
         // Moved the shortest way off anything it laps over, a few rounds, so moving off one doesn't leave it on another.

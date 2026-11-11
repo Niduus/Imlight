@@ -69,6 +69,7 @@ internal sealed class OverlayAddon {
         Widgets = (Widgets ?? []).Where(w => w is not null).Take(MAX_WIDGETS).Select(w => {
             w.Name = Short(w.Name, 60);
             w.Elements = (w.Elements ?? []).Where(e => e is not null).Take(OverlayDesign.MAX_ELEMENTS).Select(e => e.Clean()).ToList();
+            OverlayDesign.FixFamily(w.Elements);
             return w;
         }).Where(w => w.Elements.Count > 0).ToList();
         Styles = (Styles ?? []).Where(st => st?.Look is not null).Take(MAX_STYLES).Select(st => {
@@ -140,16 +141,37 @@ internal sealed class OverlayAddon {
         return addon;
     }
 
+    /// <summary>Copies of pieces with new Ids, keeping who belongs to whom among them (others' parents are let go).</summary>
+    internal static List<OverlayElement> CopyFamily(IEnumerable<OverlayElement> elements) {
+        var copies = elements.Select(e => (Old: e.Id, New: Copy(e))).ToList();
+        var ids = copies.Where(c => c.Old.Length > 0).GroupBy(c => c.Old).ToDictionary(g => g.Key, _ => OverlayElement.NewId());
+        foreach (var (old, copy) in copies) {
+            copy.Id = old.Length > 0 && ids.TryGetValue(old, out var id) ? id : OverlayElement.NewId();
+        }
+
+        foreach (var (_, copy) in copies) {
+            copy.Parent = copy.Parent.Length > 0 && ids.TryGetValue(copy.Parent, out var parent) ? parent : "";
+        }
+
+        return copies.Select(c => c.New).ToList();
+    }
+
     /// <summary>A copy of a text or box (the widget's own stays as it was).</summary>
-    internal static OverlayElement Copy(OverlayElement element)
-        => OverlayDesign.FromJson(new OverlayDesign { Elements = [element] }.ToJson())!.Elements[0];
+    internal static OverlayElement Copy(OverlayElement element) {
+        var copy = OverlayDesign.FromJson(new OverlayDesign { Elements = [element] }.ToJson())!.Elements[0];
+        // Alone in that design its parent is missing, so the links are put back as they were.
+        copy.Id = element.Id;
+        copy.Parent = element.Parent;
+
+        return copy;
+    }
 
     // What a style leaves alone: what the piece is and says, and where it is.
     private static readonly HashSet<string> s_notLook = [
         nameof(OverlayElement.Kind), nameof(OverlayElement.Name), nameof(OverlayElement.Visible), nameof(OverlayElement.Text),
         nameof(OverlayElement.Anchor), nameof(OverlayElement.X), nameof(OverlayElement.Y), nameof(OverlayElement.Layer),
         nameof(OverlayElement.Spacing), nameof(OverlayElement.Width), nameof(OverlayElement.Height), nameof(OverlayElement.Locked),
-        nameof(OverlayElement.Picture), nameof(OverlayElement.PictureFit),
+        nameof(OverlayElement.Picture), nameof(OverlayElement.PictureFit), nameof(OverlayElement.Id), nameof(OverlayElement.Parent),
         nameof(OverlayElement.Action), nameof(OverlayElement.Command), nameof(OverlayElement.CheatHow),
     ];
 

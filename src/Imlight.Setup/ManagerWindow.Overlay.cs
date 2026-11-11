@@ -275,6 +275,7 @@ internal sealed partial class ManagerWindow {
         private DateTime _ovServerFileTime;
         private Rect? _ovDragRect;
         private readonly TextBox _ovQuickWords = new() { Width = 220, Watermark = "Words of the picked text" };
+        private readonly ContentControl _ovQuickParent = new();
 
         internal OverlayEditor(Window owner, Action<string, bool> say, Func<string?> serverFile, bool inGame = false) {
             _inGame = inGame;
@@ -595,9 +596,11 @@ internal sealed partial class ManagerWindow {
                         new WrapPanel {
                             Children = {
                                 Spaced(_ovParts), Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)), Spaced(Block(OverlayElement.BUTTON)),
-                                Spaced(Action(Plain("Picture"), AddPictureAsync)), Spaced(_ovQuickWords),
+                                Spaced(Action(Plain("Picture"), AddPictureAsync)), Spaced(_ovQuickWords), Spaced(_ovQuickParent),
                                 Spaced(OvCheck("Grid", _ovGrid.Show, v => { _ovGrid.Show = v; GridChanged(); })),
-                                Spaced(OvCheck("Snap", _ovGrid.SnapToGrid || _ovGrid.SnapToPieces, v => { _ovGrid.SnapToGrid = v; _ovGrid.SnapToPieces = v; GridChanged(); })),
+                                Spaced(OvCheck("Snap to grid", _ovGrid.SnapToGrid, v => { _ovGrid.SnapToGrid = v; GridChanged(); })),
+                                Spaced(OvCheck("Snap to pieces", _ovGrid.SnapToPieces, v => { _ovGrid.SnapToPieces = v; GridChanged(); })),
+                                Spaced(GridSettingsButton()),
                                 Spaced(remove), Spaced(full), Spaced(finish),
                             },
                         },
@@ -642,6 +645,20 @@ internal sealed partial class ManagerWindow {
                         "The grid only shows while designing, never on the game."),
                 },
             };
+        }
+
+        // Everything about the grid, from the bar on the game.
+        private Button GridSettingsButton() {
+            var button = Plain("Grid settings");
+            button.Click += (_, _) => {
+                button.Flyout = new Flyout {
+                    Placement = PlacementMode.Bottom,
+                    Content = new ScrollViewer { MaxHeight = 460, Width = 560, Content = GridControls() },
+                };
+                button.Flyout.ShowAt(button);
+            };
+
+            return button;
         }
 
         /// <summary>A picture from a file on this PC: PNG, JPEG, GIF or BMP, up to 200 KB.</summary>
@@ -744,13 +761,9 @@ internal sealed partial class ManagerWindow {
                 throw new PanelException($"The overlay holds up to {OverlayDesign.MAX_ELEMENTS} texts, boxes and pictures; that widget doesn't fit.");
             }
 
-            OverlayElement? last = null;
-            foreach (var element in widget.Elements) {
-                last = OverlayAddon.Copy(element);
-                _ovDesign.Elements.Add(last);
-            }
-
-            _ovSelected = last ?? _ovSelected;
+            var copies = OverlayAddon.CopyFamily(widget.Elements);
+            _ovDesign.Elements.AddRange(copies);
+            _ovSelected = copies.FirstOrDefault(c => c.Parent.Length == 0) ?? copies.LastOrDefault() ?? _ovSelected;
             OverlayChanged();
             RenderOverlayEditor();
             Say($"Added \"{(widget.Name.Length > 0 ? widget.Name : "the widget")}\".");
@@ -916,13 +929,11 @@ internal sealed partial class ManagerWindow {
             _ovFilling = true;
             try {
                 var names = new List<string> { "Ahziael line (fixed, always shown)" };
-                names.AddRange(_ovDesign.Elements.Select((e, i) => {
-                    var name = e.Name.Length > 0 ? e.Name : e.IsPicture ? $"Picture {i + 1}" : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : e.IsButton ? $"Button {i + 1}" : $"Text {i + 1}";
-                    if (name.Length > 34) {
-                        name = name[..34] + "…";
-                    }
+                names.AddRange(_ovDesign.Elements.Select(e => {
+                    var name = ListName(e);
+                    var depth = Depth(e);
 
-                    return (e.IsPicture ? "▣ " : e.IsBox ? "▭ " : e.IsButton ? "◉ " : "T  ") + name + (e.Locked ? " (locked)" : "") + (e.Visible ? "" : " (hidden)");
+                    return (depth > 0 ? new string(' ', depth * 3) + "↳ " : "") + (e.IsPicture ? "▣ " : e.IsBox ? "▭ " : e.IsButton ? "◉ " : "T  ") + name + (e.Locked ? " (locked)" : "") + (e.Visible ? "" : " (hidden)");
                 }));
                 _ovList.ItemsSource = names;
                 _ovList.SelectedIndex = _ovSelected == _ovDesign.Credit || _ovSelected is null ? 0 : _ovDesign.Elements.IndexOf(_ovSelected) + 1;
@@ -1031,7 +1042,9 @@ internal sealed partial class ManagerWindow {
 
             var credit = element == _ovDesign.Credit;
             // Everything else on the picture, to snap to.
-            var others = _ovCanvas.Children.Where(c => c.Tag != element && c.Tag is OverlayElement && c.Bounds.Width > 0).Select(c => c.Bounds).ToList();
+            // (not its own children, which move with it).
+            var family = Descendants(element);
+            var others = _ovCanvas.Children.Where(c => c.Tag != element && c.Tag is OverlayElement o && !family.Contains(o) && c.Bounds.Width > 0).Select(c => c.Bounds).ToList();
             if (_ovSelected != element) {
                 _ovSelected = element;
                 FillOverlayList();
@@ -1233,12 +1246,96 @@ internal sealed partial class ManagerWindow {
         /// Pinned to the corner or side it was dropped nearest to, at the same place, so it stays there on a game window
         /// of another shape (a wider one moves right-hand pieces right, not the left-hand ones).
         /// </summary>
-        private void Repin(OverlayElement e, Rect rect) {
-            var column = rect.Center.X < PREVIEW_W / 3 ? 0 : rect.Center.X > PREVIEW_W * 2 / 3 ? 2 : 1;
-            var row = rect.Center.Y < PREVIEW_H / 3 ? 0 : rect.Center.Y > PREVIEW_H * 2 / 3 ? 2 : 1;
+        private void Repin(OverlayElement e, Rect rect) => Repin(e, rect, AreaFor(e));
+
+        // A child is pinned in its parent, the rest in the window.
+        private static void Repin(OverlayElement e, Rect rect, Rect area) {
+            var (cx, cy) = (rect.Center.X - area.X, rect.Center.Y - area.Y);
+            var column = cx < area.Width / 3 ? 0 : cx > area.Width * 2 / 3 ? 2 : 1;
+            var row = cy < area.Height / 3 ? 0 : cy > area.Height * 2 / 3 ? 2 : 1;
             e.Anchor = (OverlayAnchor) (row * 3 + column);
-            e.X = Math.Round(column switch { 0 => rect.Left, 2 => PREVIEW_W - rect.Right, _ => rect.Left - (PREVIEW_W - rect.Width) / 2 });
-            e.Y = Math.Round(row switch { 0 => rect.Top, 2 => PREVIEW_H - rect.Bottom, _ => rect.Top - (PREVIEW_H - rect.Height) / 2 });
+            e.X = Math.Round(column switch { 0 => rect.Left - area.Left, 2 => area.Right - rect.Right, _ => rect.Left - area.Left - (area.Width - rect.Width) / 2 });
+            e.Y = Math.Round(row switch { 0 => rect.Top - area.Top, 2 => area.Bottom - rect.Bottom, _ => rect.Top - area.Top - (area.Height - rect.Height) / 2 });
+        }
+
+        // ---------------------------------------------------------------------
+        // Parents and children
+        // ---------------------------------------------------------------------
+
+        /// <summary>Where a piece is drawn on the picture now, or null.</summary>
+        private Rect? DrawnAt(OverlayElement e)
+            => _ovCanvas?.Children.FirstOrDefault(c => c.Tag == e) is { } child && child.Bounds.Width > 0 ? child.Bounds : null;
+
+        private OverlayElement? ParentOf(OverlayElement e)
+            => e.Parent.Length == 0 ? null : _ovDesign.Elements.FirstOrDefault(p => p.Id == e.Parent);
+
+        /// <summary>What a piece is placed in: its parent's place, or the whole window.</summary>
+        private Rect AreaFor(OverlayElement e)
+            => ParentOf(e) is { } parent && DrawnAt(parent) is { } area ? area : new Rect(0, 0, PREVIEW_W, PREVIEW_H);
+
+        /// <summary>Its children, their children, and so on.</summary>
+        private List<OverlayElement> Descendants(OverlayElement e) {
+            var found = new List<OverlayElement>();
+            var ids = new HashSet<string> { e.Id };
+            for (var grew = true; grew;) {
+                grew = false;
+                foreach (var other in _ovDesign.Elements) {
+                    if (other.Parent.Length > 0 && ids.Contains(other.Parent) && !found.Contains(other) && other != e) {
+                        found.Add(other);
+                        ids.Add(other.Id);
+                        grew = true;
+                    }
+                }
+            }
+
+            return found;
+        }
+
+        private int Depth(OverlayElement e) {
+            var depth = 0;
+            for (var at = ParentOf(e); at is not null && depth < OverlayDesign.MAX_ELEMENTS; at = ParentOf(at)) {
+                depth++;
+            }
+
+            return depth;
+        }
+
+        /// <summary>The pieces this one can belong to: any but itself and its own children.</summary>
+        private List<OverlayElement> ParentChoices(OverlayElement e) {
+            var family = Descendants(e);
+
+            return _ovDesign.Elements.Where(o => o != e && !family.Contains(o)).ToList();
+        }
+
+        /// <summary>Makes a piece a child of another (or of the window), keeping it where it is on the picture.</summary>
+        private void SetParent(OverlayElement e, OverlayElement? parent) {
+            var at = DrawnAt(e);
+            e.Parent = parent?.Id ?? "";
+            if (at is { } rect) {
+                var area = parent is not null && DrawnAt(parent) is { } p ? p : new Rect(0, 0, PREVIEW_W, PREVIEW_H);
+                Repin(e, rect, area);
+            }
+
+            OverlayChanged();
+            RenderOverlayEditor();
+            Say(parent is null ? "It belongs to the game window again." : $"It now belongs to \"{ListName(parent)}\" and moves with it.");
+        }
+
+        private string ListName(OverlayElement e) {
+            var i = _ovDesign.Elements.IndexOf(e);
+            var name = e.Name.Length > 0 ? e.Name : e.IsPicture ? $"Picture {i + 1}" : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : e.IsButton ? $"Button {i + 1}" : $"Text {i + 1}";
+
+            return name.Length > 34 ? name[..34] + "…" : name;
+        }
+
+        /// <summary>A pick list of who it belongs to: the game window, or another piece.</summary>
+        private ComboBox ParentPicker(OverlayElement e, double width) {
+            var choices = ParentChoices(e);
+            var names = new List<string> { "Nothing: the game window" };
+            names.AddRange(choices.Select(ListName));
+            var index = e.Parent.Length == 0 ? 0 : choices.FindIndex(c => c.Id == e.Parent) + 1;
+
+            return OvCombo(names.ToArray(), Math.Max(0, index), i => SetParent(e, i == 0 ? null : choices[i - 1]), width);
         }
 
         /// <summary>+1 where X (or Y) grows to the right (or down), -1 where it grows the other way.</summary>
@@ -1425,10 +1522,19 @@ internal sealed partial class ManagerWindow {
                 throw new PanelException($"The overlay holds up to {OverlayDesign.MAX_ELEMENTS} texts and boxes.");
             }
 
-            var copy = OverlayDesign.FromJson(new OverlayDesign { Elements = [_ovSelected] }.ToJson())!.Elements[0];
+            // With its children: the copy is a whole family of its own, beside the first.
+            var family = new List<OverlayElement> { _ovSelected };
+            family.AddRange(Descendants(_ovSelected));
+            if (_ovDesign.Elements.Count + family.Count > OverlayDesign.MAX_ELEMENTS) {
+                throw new PanelException($"The overlay holds up to {OverlayDesign.MAX_ELEMENTS} texts and boxes; the copy and its children don't fit.");
+            }
+
+            var copies = OverlayAddon.CopyFamily(family);
+            var copy = copies[0];
+            copy.Parent = _ovSelected.Parent;
             copy.X += 16;
             copy.Y += 16;
-            _ovDesign.Elements.Insert(_ovDesign.Elements.IndexOf(_ovSelected) + 1, copy);
+            _ovDesign.Elements.InsertRange(_ovDesign.Elements.IndexOf(_ovSelected) + 1, copies);
             _ovSelected = copy;
             OverlayChanged();
             RenderOverlayEditor();
@@ -1457,11 +1563,14 @@ internal sealed partial class ManagerWindow {
                 throw new PanelException("The Ahziael line is always shown, so it can't be removed. Pick one you added.");
             }
 
-            if (!await ConfirmAsync("Remove this from the overlay?")) {
+            var children = Descendants(_ovSelected);
+            if (!await ConfirmAsync(children.Count == 0 ? "Remove this from the overlay?"
+                    : $"Remove this and the {children.Count} piece{(children.Count == 1 ? "" : "s")} that belong to it?")) {
                 return;
             }
 
             _ovDesign.Elements.Remove(_ovSelected);
+            _ovDesign.Elements.RemoveAll(children.Contains);
             _ovSelected = _ovDesign.Credit;
             OverlayChanged();
             RenderOverlayEditor();
@@ -1619,6 +1728,7 @@ internal sealed partial class ManagerWindow {
                 var words = !e.IsBox && e != _ovDesign.Credit;
                 _ovQuickWords.IsEnabled = words;
                 _ovQuickWords.Text = words ? e.Text : "";
+                _ovQuickParent.Content = e == _ovDesign.Credit ? null : ParentPicker(e, 200);
             }
             finally {
                 _ovFilling = false;
@@ -1641,7 +1751,8 @@ internal sealed partial class ManagerWindow {
 
             what.Children.Add(OvField("Name in the list", OvText(e.Name, v => { e.Name = v; OverlayChanged(); }, 180)));
             what.Children.Add(OvField("Shown", OvCheck("Shown", e.Visible, v => { e.Visible = v; OverlayChanged(); })));
-            what.Children.Add(OvField("Pinned to", OvCombo(Enum.GetNames<OverlayAnchor>().Select(SpacedName).ToArray(), (int) e.Anchor, i => { e.Anchor = (OverlayAnchor) i; Changed(); }, 150)));
+            what.Children.Add(OvField("Belongs to (moves with it)", ParentPicker(e, 220)));
+            what.Children.Add(OvField(e.Parent.Length > 0 ? "Pinned to (its parent's)" : "Pinned to", OvCombo(Enum.GetNames<OverlayAnchor>().Select(SpacedName).ToArray(), (int) e.Anchor, i => { e.Anchor = (OverlayAnchor) i; Changed(); }, 150)));
             what.Children.Add(OvField("In from the side", OvNumber(e.X, -4000, 4000, 1, v => { e.X = v; Changed(); })));
             what.Children.Add(OvField("In from the top or bottom", OvNumber(e.Y, -4000, 4000, 1, v => { e.Y = v; Changed(); })));
             if (!credit) {
@@ -1681,7 +1792,7 @@ internal sealed partial class ManagerWindow {
                 return button;
             }
 
-            _ovEditor.Children.Add(OvGroup("Line it up with the window", new WrapPanel {
+            _ovEditor.Children.Add(OvGroup(e.Parent.Length > 0 ? "Line it up with its parent" : "Line it up with the window", new WrapPanel {
                 Children = {
                     Spaced(AlignButton("Left", 0, null)), Spaced(AlignButton("Centre", 1, null)), Spaced(AlignButton("Right", 2, null)),
                     Spaced(AlignButton("Top", null, 0)), Spaced(AlignButton("Middle", null, 1)), Spaced(AlignButton("Bottom", null, 2)),
