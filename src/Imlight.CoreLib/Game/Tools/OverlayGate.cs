@@ -40,8 +40,8 @@ namespace Imlight.CoreLib.Game.Tools;
 public static class OverlayGate {
 
     public const string DEFAULT_MESSAGE =
-        "This server needs the Ahziael overlay. Open Ahziael on your PC, click Play on the Play tab (or Play Wizard101), " +
-        "keep Ahziael open, and log in again.";
+        "This server needs the Ahziael overlay. Get Ahziael from github.com/Niduus/Imlight/releases " +
+        "(ImlightManager.exe), add this server under Play, click Play in Ahziael, and log in again.";
 
     /// <summary>How often the overlay says it is still there; a link quiet for 3 of these counts as gone.</summary>
     public const int BEAT_SECONDS = 5;
