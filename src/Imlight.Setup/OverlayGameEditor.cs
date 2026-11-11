@@ -80,6 +80,8 @@ internal sealed class OverlayGameEditor : Window {
         Background = Brushes.Transparent;
         ManagerTheme.Apply(this);
         Background = Brushes.Transparent;
+        // Grey smoothing for words on this see-through window too (coloured ClearType smoothing streaks over the game).
+        RenderOptions.SetTextRenderingMode(this, TextRenderingMode.Antialias);
 
         _editor = new ManagerWindow.OverlayEditor(this, Say, () => ManagerWindow.OverlayEditor.ServerFileIn(OverlayHost.InstallFolder), inGame: true);
         _messageBar.Child = _message;
