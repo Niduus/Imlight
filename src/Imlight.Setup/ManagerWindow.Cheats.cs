@@ -226,7 +226,7 @@ internal sealed partial class ManagerWindow {
 
         Control EditLegends() {
             var legends = Legends();
-            ToolTip.SetTip(legends, "Click a block in the palette to add it at the end, or drag it to the place you want. Drag a block's grip to move it.");
+            ToolTip.SetTip(legends, "Click a block in the palette to add it at the end, or drag it to the place you want. Drag any block in the cheat (grab it anywhere but its boxes) to move it.");
 
             return legends;
         }
