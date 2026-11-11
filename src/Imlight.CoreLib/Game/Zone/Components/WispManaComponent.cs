@@ -80,7 +80,7 @@ internal sealed class WispManaComponent : ZoneEntityComponent, IComponentFactory
     public override void OnPlayerLeave(IActorRef playerActor, ulong id) => _pickup.Forget(id);
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
-        if (!_collected && playerWizard is not null && _pickup.Reached(playerObj, Entity.ActiveGameObject)) {
+        if (!_collected && playerWizard is not null && _pickup.Reached(playerObj, playerWizard, Entity.ActiveGameObject)) {
             // Values with gear and effects.
             var baseMana = playerWizard.GameStats.m_baseMana;
             var currentMana = playerWizard.GameStats.m_currentMana;

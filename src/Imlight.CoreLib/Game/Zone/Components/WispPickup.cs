@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Combat;
+using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Zone.Components;
 
@@ -43,14 +44,20 @@ internal sealed class WispPickup {
 
     /// <summary>
     /// True when the wizard is in reach of the wisp at <paramref name="wisp"/> now or passed through it since the last
-    /// check.
+    /// check. A wizard in a battle never takes a wisp (Niduus, 2026-11-11: "Able to collect wisps while in battle.
+    /// Shouldn't be a thing").
     /// </summary>
-    internal bool Reached(CoreObject player, CoreObject wisp) {
+    internal bool Reached(CoreObject player, Wizard wizard, CoreObject wisp) {
         var radius = Radius;
         var now = (player.m_location.X, player.m_location.Y, player.m_location.Z);
         var key = player.m_globalID.Full;
         var from = _lastLocations.TryGetValue(key, out var last) ? last : now;
         _lastLocations[key] = now;
+
+        // In a battle (PvE or PvP) the wizard stands in a duel circle, and a wisp floating by is not theirs to take.
+        if (wizard is { IsInDuel: true }) {
+            return false;
+        }
 
         // A battle wisp that is another wizard's share ([Battle] BattleWispsPerPlayer) is not this wizard's to take.
         var owner = BattleDrops.OwnerOf(wisp.m_globalID.Full);

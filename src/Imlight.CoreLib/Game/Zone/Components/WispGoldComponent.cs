@@ -51,7 +51,7 @@ internal sealed class WispGoldComponent(ZoneEntity entity) : ZoneEntityComponent
     public override void OnPlayerLeave(IActorRef playerActor, ulong id) => _pickup.Forget(id);
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
-        if (_collected || playerWizard is null || !_pickup.Reached(playerObj, Entity.ActiveGameObject)) {
+        if (_collected || playerWizard is null || !_pickup.Reached(playerObj, playerWizard, Entity.ActiveGameObject)) {
             return;
         }
 
