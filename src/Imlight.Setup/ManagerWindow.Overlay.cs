@@ -62,7 +62,7 @@ internal sealed partial class ManagerWindow {
     private static string[]? s_systemFonts;
 
     private Control OverlayTab() {
-        _ovEditorPage = new OverlayEditor(this, (text, error) => Say(text, error));
+        _ovEditorPage = new OverlayEditor(this, (text, error) => Say(text, error), () => _manager.IsInstalled || RemoteSession.Current is not null ? Path.Combine(_manager.CustomsFolder, OverlayDesign.SERVER_FILE) : null);
         _ovTimer.Tick += (_, _) => _ovStatus.Text = OverlayStatus();
         _ovTimer.Start();
         _ovStatus.Text = OverlayStatus();
@@ -205,6 +205,19 @@ internal sealed partial class ManagerWindow {
 
         private readonly Window _owner;
         private readonly Action<string, bool> _say;
+
+        /// <summary>The file of this PC's server's own overlay, or null when this PC has no server.</summary>
+        private readonly Func<string?> _serverFile;
+
+        // Niduus, 2026-11-11: "create 2 seperate sections in the UI overlay: Server and Client". The player's own design
+        // (overlay.json) and the server's (ServerOverlay.json, sent to everyone who plays there); _ovDesign is the one
+        // being changed. Both share the one Ahziael line.
+        private OverlayDesign _ovClient;
+        private OverlayDesign? _ovServer;
+        private bool _ovServerPart;
+        private readonly StackPanel _ovParts = new() { Orientation = Orientation.Horizontal, Spacing = 8 };
+        private readonly TextBlock _ovPartNote = Sub("");
+        private readonly DispatcherTimer _ovLockTimer = new() { Interval = TimeSpan.FromSeconds(1) };
         private OverlayDesign _ovDesign;
         private OverlayElement? _ovSelected;
         private readonly Border _ovPreview = new() {
@@ -226,20 +239,28 @@ internal sealed partial class ManagerWindow {
         /// <summary>How near an edge (in picture pixels) a press takes the size instead of the place.</summary>
         private const double EDGE = 12;
 
-        internal OverlayEditor(Window owner, Action<string, bool> say) {
+        internal OverlayEditor(Window owner, Action<string, bool> say, Func<string?> serverFile) {
             _owner = owner;
             _say = say;
-            _ovDesign = OverlayHost.Design.Copy();
+            _serverFile = serverFile;
+            _ovClient = OverlayHost.Design.Copy();
+            _ovDesign = _ovClient;
             _ovPreview.BorderBrush = LINE;
-            _ovEnabled.IsChecked = _ovDesign.Enabled;
+            _ovEnabled.IsChecked = OverlayHost.ShowsMine(_ovClient);
             _ovEnabled.IsCheckedChanged += (_, _) => {
                 if (!_ovFilling) {
-                    _ovDesign.Enabled = _ovEnabled.IsChecked == true;
+                    _ovClient.Enabled = _ovEnabled.IsChecked == true;
                     OverlayChanged(false);
-                    Say(_ovDesign.Enabled ? "Your texts and boxes show over Wizard101 again."
-                        : "Your texts and boxes are hidden. The Ahziael line and the sparkle button always show.");
+                    Say(_ovClient.Enabled ? "Your texts and boxes show over Wizard101 again."
+                        : "Your texts and boxes are hidden. The Ahziael line, the server's texts and boxes and the sparkle button always show.");
                 }
             };
+            // Niduus, 2026-11-11: "if this is mandatory, it's counter productive to turn it off". While the server you play
+            // on needs the overlay, the switch stays on and can't be changed.
+            _ovLockTimer.Tick += (_, _) => ShowLock();
+            _ovLockTimer.Start();
+            _owner.Closed += (_, _) => _ovLockTimer.Stop();
+            ShowLock();
             _ovList.SelectionChanged += (_, _) => {
                 if (!_ovFilling && _ovList.SelectedIndex >= 0) {
                     _ovSelected = _ovList.SelectedIndex == 0 ? _ovDesign.Credit : _ovDesign.Elements[_ovList.SelectedIndex - 1];
@@ -254,9 +275,108 @@ internal sealed partial class ManagerWindow {
             _ovPreview.PointerCaptureLost += (_, _) => EndPreviewDrag();
             _ovList.AddHandler(InputElement.PointerPressedEvent, ListPressed, RoutingStrategies.Tunnel | RoutingStrategies.Bubble, true);
             _ovList.AddHandler(InputElement.PointerReleasedEvent, ListReleased, RoutingStrategies.Tunnel | RoutingStrategies.Bubble, true);
+            ShowParts();
             FillOverlayList();
             RenderOverlayEditor();
             RenderOverlayPreview();
+        }
+
+        private int _ovServerSeen = -1;
+
+        private void ShowLock() {
+            var locked = OverlayHost.ServerRequires;
+            _ovFilling = true;
+            try {
+                _ovEnabled.IsEnabled = !locked;
+                _ovEnabled.IsChecked = OverlayHost.ShowsMine(_ovClient);
+            }
+            finally {
+                _ovFilling = false;
+            }
+
+            // What the linked server sends changed: the picture shows it.
+            var seen = OverlayHost.ServerElements.GetHashCode();
+            if (seen != _ovServerSeen) {
+                _ovServerSeen = seen;
+                if (_ovDrag is null) {
+                    RenderOverlayPreview();
+                }
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // Server and Client
+        // ---------------------------------------------------------------------
+
+        private void ShowParts() {
+            _ovParts.Children.Clear();
+            var mine = ManagerTheme.MakeButton("Client: my own", primary: !_ovServerPart);
+            mine.Click += (_, _) => UsePart(false);
+            var server = ManagerTheme.MakeButton("Server: everyone on my server", primary: _ovServerPart);
+            server.Click += (_, _) => UsePart(true);
+            _ovParts.Children.Add(mine);
+            _ovParts.Children.Add(server);
+            _ovPartNote.Text = _ovServerPart
+                ? "Server: what every player on your server sees, on everyone's game, whatever they made themselves. It is placed " +
+                  "right after the Ahziael line, and players' own texts and boxes are moved off it, so they never cover it. " +
+                  "Players can't hide it. It reaches them within a few seconds, no restart."
+                : "Client: your own texts and boxes, only on your game. They are placed last: the Ahziael line and the server's " +
+                  "texts and boxes come first, and yours are moved off them.";
+        }
+
+        private void UsePart(bool server) {
+            if (server == _ovServerPart) {
+                return;
+            }
+
+            if (server) {
+                if (_serverFile() is not { } path) {
+                    Say("This PC has no Imlight server, so there is no server overlay to design here. The server overlay is " +
+                        "made in Ahziael on the PC that runs the server.", true);
+                    return;
+                }
+
+                _ovServer = OverlayDesign.LoadFile(path);
+                _ovServer.Credit = _ovClient.Credit;
+                _ovDesign = _ovServer;
+            }
+            else {
+                _ovDesign = _ovClient;
+            }
+
+            _ovServerPart = server;
+            _ovSelected = _ovDesign.Credit;
+            ShowParts();
+            FillOverlayList();
+            RenderOverlayEditor();
+            RenderOverlayPreview();
+        }
+
+        /// <summary>A whole new design for the part being changed (Start over, Open a design file).</summary>
+        private void UseDesign(OverlayDesign design) {
+            if (_ovServerPart) {
+                design.Credit = _ovClient.Credit;
+                _ovServer = design;
+            }
+            else {
+                design.Enabled = _ovClient.Enabled;
+                _ovClient = design;
+            }
+
+            _ovDesign = design;
+            _ovSelected = _ovDesign.Credit;
+        }
+
+        /// <summary>This PC's server's overlay file, from its install folder; null when it has no server.</summary>
+        internal static string? ServerFileIn(string installFolder) {
+            var ini = InstalledCommands.ConfigFile(installFolder);
+            if (!File.Exists(ini)) {
+                return null;
+            }
+
+            var extra = IniFile.Get(ini, "Database", "SpiralDBExtraPath") ?? "./spiraldb-extra";
+
+            return Path.GetFullPath(Path.Combine(InstalledCommands.ServerFolder(installFolder), extra, "Customs", OverlayDesign.SERVER_FILE));
         }
 
         private void Say(string text, bool isError = false) => _say(text, isError);
@@ -286,8 +406,9 @@ internal sealed partial class ManagerWindow {
         }
 
         internal Control EnabledRow() => SwitchRow("Show my texts and boxes", _ovEnabled,
-            "\"Ahziael made by Niduus | " + OverlayHost.Version + "\" and the sparkle button always show on the game and can't be turned off. " +
-            "This switch shows or hides only what you made. Clicks go straight through to the game (only the sparkle button takes them).");
+            "\"Ahziael made by Niduus | " + OverlayHost.Version + "\" (always bottom left), the server's texts and boxes and the sparkle button always show on the game. " +
+            "This switch shows or hides only what you made, and stays on while the server you play on needs the overlay. " +
+            "Clicks go straight through to the game (only the sparkle button takes them).");
 
         internal Control Build() {
             var editor = new Grid {
@@ -311,7 +432,7 @@ internal sealed partial class ManagerWindow {
                             new TextBlock { Text = "Drag onto the picture", FontWeight = FontWeight.SemiBold, Margin = new Thickness(0, 6, 0, 0) },
                             new WrapPanel { Children = { Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)) } },
                             Sub("Drag a block onto the picture to put a new text or box right there (or just click it). Drag a line in the list above onto another to change the order."),
-                            Sub("A higher Layer is drawn on top; on the same layer, lower in the list is on top. With Spacing above 0, one that laps over another is moved off it, that far away. The Ahziael line is always on top, in full, and can only be moved."),
+                            Sub("A higher Layer is drawn on top; on the same layer, lower in the list is on top. With Spacing above 0, one that laps over another is moved off it, that far away. The Ahziael line is always on top, in full, in the bottom-left corner."),
                         },
                     },
                     WithColumn(_ovEditor, 1),
@@ -321,8 +442,10 @@ internal sealed partial class ManagerWindow {
             return new StackPanel {
                 Spacing = 10,
                 Children = {
+                    _ovParts,
+                    _ovPartNote,
                     WithMargin(new Viewbox { Stretch = Stretch.Uniform, MaxHeight = 400, Child = _ovPreview }, new Thickness(0, 0, 0, 6)),
-                    Sub("The picture is a stand-in for the game at 1280 x 720. Click a text or box to pick it, drag it to move it, and drag its right or bottom edge (or the corner) to size it. The Ahziael line can only be moved. The outlined one is the one you are changing. Changes show on the game at once."),
+                    Sub("The picture is a stand-in for the game at 1280 x 720. Click a text or box to pick it, drag it to move it, and drag its right or bottom edge (or the corner) to size it. The Ahziael line always sits in the bottom-left corner and can't be moved or changed. The outlined one is the one you are changing. Changes show on the game at once."),
                     editor,
                     WithHint(Row(Action(Plain("Save design to a file"), ExportOverlayAsync), Action(Plain("Open a design file"), ImportOverlayAsync),
                             Danger(Action(Plain("Start over"), ResetOverlayAsync))),
@@ -339,7 +462,7 @@ internal sealed partial class ManagerWindow {
         private void FillOverlayList() {
             _ovFilling = true;
             try {
-                var names = new List<string> { "Ahziael line (always shown)" };
+                var names = new List<string> { "Ahziael line (fixed, always shown)" };
                 names.AddRange(_ovDesign.Elements.Select((e, i) => {
                     var name = e.Name.Length > 0 ? e.Name : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : $"Text {i + 1}";
                     if (name.Length > 34) {
@@ -374,7 +497,9 @@ internal sealed partial class ManagerWindow {
                         HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top,
                         Background = new RadialGradientBrush { GradientStops = { new GradientStop(Color.FromRgb(0xFF, 0xF2, 0xA8), 0), new GradientStop(Color.FromArgb(0, 0xFF, 0xE0, 0x70), 1) } },
                     },
-                    (_ovCanvas = (Panel)OverlayRenderer.Build(_ovDesign, words, _ovSelected, _ovDesign.Enabled)),
+                    (_ovCanvas = (Panel) (_ovServerPart
+                        ? OverlayRenderer.Build(_ovClient, words, _ovSelected, showMine: false, server: _ovServer?.Elements)
+                        : OverlayRenderer.Build(_ovClient, words, _ovSelected, OverlayHost.ShowsMine(_ovClient), PreviewServer()))),
                 },
             };
         }
@@ -391,6 +516,12 @@ internal sealed partial class ManagerWindow {
 
             for (var i = _ovCanvas.Children.Count - 1; i >= 0; i--) {
                 var child = _ovCanvas.Children[i];
+                var part = OverlayRenderer.PartOf(child);
+                // Only the part being changed; the Ahziael line can't be moved (pick it in the list to read about it).
+                if (part == OverlayRenderer.OverlayPanel.CREDIT || (part == OverlayRenderer.OverlayPanel.SERVER) != _ovServerPart) {
+                    continue;
+                }
+
                 if (child.Tag is OverlayElement element && child.Bounds.Inflate(EDGE / 2).Contains(point)) {
                     return (element, child.Bounds);
                 }
@@ -596,7 +727,21 @@ internal sealed partial class ManagerWindow {
             RenderOverlayEditor();
         }
 
-        /// <summary>A change to the design: the picture, the list and the overlay over the game follow at once.</summary>
+        // The server's texts and boxes on the picture of your own: what the server you play on sent, or else this PC's own.
+        private IReadOnlyList<OverlayElement>? PreviewServer() {
+            if (OverlayHost.ServerElements.Count > 0) {
+                return OverlayHost.ServerElements;
+            }
+
+            if (_ovServer is null && _serverFile() is { } path && File.Exists(path)) {
+                _ovServer = OverlayDesign.LoadFile(path);
+                _ovServer.Credit = _ovClient.Credit;
+            }
+
+            return _ovServer?.Elements;
+        }
+
+        /// <summary>A change to the design: the picture, the list and the overlay over the game (or the server's file) follow at once.</summary>
         private void OverlayChanged(bool list = true) {
             _ovDesign.Clean();
             if (list) {
@@ -604,7 +749,19 @@ internal sealed partial class ManagerWindow {
             }
 
             RenderOverlayPreview();
-            OverlayHost.Apply(_ovDesign);
+            if (!_ovServerPart) {
+                OverlayHost.Apply(_ovDesign);
+                return;
+            }
+
+            try {
+                if (_serverFile() is { } path) {
+                    _ovDesign.SaveFile(path);
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                Say($"Couldn't save the server overlay: {ex.Message}", true);
+            }
         }
 
         private Task AddOverlayElement(string kind) => AddOverlayElement(kind, null);
@@ -695,8 +852,7 @@ internal sealed partial class ManagerWindow {
                 return;
             }
 
-            _ovDesign = new OverlayDesign { Enabled = _ovDesign.Enabled };
-            _ovSelected = _ovDesign.Credit;
+            UseDesign(new OverlayDesign());
             OverlayChanged();
             RenderOverlayEditor();
             Say("The overlay is back to how it started.");
@@ -742,9 +898,7 @@ internal sealed partial class ManagerWindow {
                 return;
             }
 
-            design.Enabled = _ovDesign.Enabled;
-            _ovDesign = design;
-            _ovSelected = _ovDesign.Credit;
+            UseDesign(design);
             OverlayChanged();
             RenderOverlayEditor();
             Say("The overlay now uses that design.");
@@ -764,25 +918,19 @@ internal sealed partial class ManagerWindow {
             // What and where.
             var what = new WrapPanel();
             if (credit) {
-                // Niduus, 2026-11-11: it can be moved, but only the program sets how it looks, and it is always shown in full.
-                _ovEditor.Children.Add(Sub("The Ahziael line: \"" + OverlayDesign.CreditLine(OverlayHost.Version) + "\". It is always shown, " +
-                    "in full, and its look is set by Ahziael. You can only move it. Everything else keeps clear of it."));
-            }
-            else {
-                what.Children.Add(OvField("Name in the list", OvText(e.Name, v => { e.Name = v; OverlayChanged(); }, 180)));
-                what.Children.Add(OvField("Shown", OvCheck("Shown", e.Visible, v => { e.Visible = v; OverlayChanged(); })));
-            }
-
-            what.Children.Add(OvField("Pinned to", OvCombo(Enum.GetNames<OverlayAnchor>().Select(SpacedName).ToArray(), (int) e.Anchor, i => { e.Anchor = (OverlayAnchor) i; Changed(); }, 150)));
-            var limit = credit ? OverlayDesign.CREDIT_MOVE_MAX : 4000;
-            what.Children.Add(OvField("In from the side", OvNumber(e.X, credit ? 0 : -4000, limit, 1, v => { e.X = v; Changed(); })));
-            what.Children.Add(OvField("In from the top or bottom", OvNumber(e.Y, credit ? 0 : -4000, limit, 1, v => { e.Y = v; Changed(); })));
-            if (credit) {
-                _ovEditor.Children.Add(OvGroup("Where it sits", what));
+                // Niduus, 2026-11-11: "It can not be repositioned or disabled or moved in anyway".
+                _ovEditor.Children.Add(Sub("The Ahziael line: \"" + OverlayDesign.CreditLine(OverlayHost.Version) + "\". It always sits in the " +
+                    "bottom-left corner, in full, on top of everything, and only Ahziael sets how it looks: it can't be moved, changed or " +
+                    "turned off. The server's texts and boxes, then yours, are placed around it."));
 
                 return;
             }
 
+            what.Children.Add(OvField("Name in the list", OvText(e.Name, v => { e.Name = v; OverlayChanged(); }, 180)));
+            what.Children.Add(OvField("Shown", OvCheck("Shown", e.Visible, v => { e.Visible = v; OverlayChanged(); })));
+            what.Children.Add(OvField("Pinned to", OvCombo(Enum.GetNames<OverlayAnchor>().Select(SpacedName).ToArray(), (int) e.Anchor, i => { e.Anchor = (OverlayAnchor) i; Changed(); }, 150)));
+            what.Children.Add(OvField("In from the side", OvNumber(e.X, -4000, 4000, 1, v => { e.X = v; Changed(); })));
+            what.Children.Add(OvField("In from the top or bottom", OvNumber(e.Y, -4000, 4000, 1, v => { e.Y = v; Changed(); })));
             if (!credit) {
                 what.Children.Add(OvField("Layer (higher is on top)", OvNumber(e.Layer, 0, 99, 1, v => { e.Layer = (int) v; Changed(); })));
                 what.Children.Add(OvField("Spacing (0 = may lap over)", OvNumber(e.Spacing, 0, 500, 1, v => { e.Spacing = v; Changed(); })));

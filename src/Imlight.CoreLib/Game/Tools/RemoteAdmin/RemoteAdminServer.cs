@@ -359,6 +359,13 @@ public static class RemoteAdminServer {
                 reply["required"] = OverlayGate.Required;
                 reply["every"] = OverlayGate.BEAT_SECONDS;
                 reply["id"] = header["id"]?.DeepClone();
+                // The server's own texts and boxes, sent again only when they changed since the overlay last got them.
+                var (stamp, design) = OverlayGate.ServerDesign();
+                reply["designStamp"] = stamp;
+                if (stamp != (string) header["have"] && design is not null) {
+                    reply["design"] = design.DeepClone();
+                }
+
                 await RemoteAdminWire.WriteAsync(tls, reply, null, stop);
 
                 using var wait = CancellationTokenSource.CreateLinkedTokenSource(stop);

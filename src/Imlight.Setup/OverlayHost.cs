@@ -77,6 +77,7 @@ internal static class OverlayHost {
     private static Mutex? s_mutex;
     private static bool s_drawing;
     private static DateTime s_designFileTime;
+    private static DateTime s_serverFileTime;
     private static readonly List<(uint Pid, IntPtr Hook)> s_processHooks = [];
     private static readonly List<IntPtr> s_globalHooks = [];
     private static Native.WinEventProc? s_hookProc;
@@ -97,6 +98,43 @@ internal static class OverlayHost {
 
     internal static OverlayDesign Design => s_design;
 
+    /// <summary>The texts and boxes the linked server sent (drawn after the Ahziael line, before the player's own).</summary>
+    internal static IReadOnlyList<OverlayElement> ServerElements { get; private set; } = [];
+
+    /// <summary>True when the linked server needs the overlay: then the player's switch can't hide anything.</summary>
+    internal static bool ServerRequires { get; private set; }
+
+    /// <summary>Whether the player's own texts and boxes show: always while the server needs the overlay.</summary>
+    internal static bool ShowsMine(OverlayDesign design) => design.Enabled || ServerRequires;
+
+    // What the link last heard from the server, from the file the drawing copy writes, so both copies know it.
+    private static void LoadFromServer() {
+        var path = Path.Combine(s_installFolder, OverlayDesign.FROM_SERVER_FILE);
+        var time = FileTime(path);
+        if (time == s_serverFileTime) {
+            return;
+        }
+
+        s_serverFileTime = time;
+        var (elements, required) = (new List<OverlayElement>(), false);
+        try {
+            if (time != DateTime.MinValue && new FileInfo(path).Length < 256 * 1024) {
+                var json = JsonNode.Parse(File.ReadAllText(path));
+                required = (bool?) json?["required"] ?? false;
+                if (json?["design"] is JsonObject design && OverlayDesign.FromJson(design.ToJsonString()) is { } parsed) {
+                    elements = parsed.Elements;
+                }
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Text.Json.JsonException or InvalidOperationException or FormatException) {
+            s_serverFileTime = DateTime.MinValue;
+        }
+
+        ServerElements = elements;
+        ServerRequires = required;
+        s_designVersion++;
+    }
+
     internal static string InstallFolder => s_installFolder;
 
     /// <summary>Starts the overlay with the saved design. Only on Windows; elsewhere it does nothing.</summary>
@@ -105,6 +143,7 @@ internal static class OverlayHost {
         Standalone = standalone;
         s_design = OverlayDesign.Load(installFolder);
         s_designFileTime = FileTime(OverlayDesign.PathIn(installFolder));
+        LoadFromServer();
         if (!OperatingSystem.IsWindows() || s_timer is not null) {
             return;
         }
@@ -226,6 +265,7 @@ internal static class OverlayHost {
         }
 
         Link.Load(s_installFolder);
+        LoadFromServer();
         if (!TryTakeTurn()) {
             return;
         }
@@ -485,7 +525,7 @@ internal static class OverlayHost {
             };
 
             if (version != _drawnVersion || _drawnSize != (width, height, scale)) {
-                var picture = OverlayRenderer.Build(design, new OverlayRenderer.Words(Version, Link.ServerLabel), showMine: design.Enabled);
+                var picture = OverlayRenderer.Build(design, new OverlayRenderer.Words(Version, Link.ServerLabel), showMine: ShowsMine(design), server: ServerElements);
                 Draw(_hwnd, Render(picture, width, height, scale), width, height, origin);
                 _drawnVersion = version;
                 _drawnSize = (width, height, scale);
@@ -651,6 +691,7 @@ internal static class OverlayHost {
 
         /// <summary>The server the game was last started on, from the file; before any, this PC's own server.</summary>
         internal static void Load(string installFolder) {
+            s_folder = installFolder;
             var path = Path.Combine(installFolder, FILE);
             var time = FileTime(path);
             if (time == DateTime.MinValue) {
@@ -679,13 +720,58 @@ internal static class OverlayHost {
         }
 
         private static void SetTarget(string host, int port) {
+            bool other;
             lock (s_lock) {
                 if (s_target == (host.Trim(), port)) {
                     return;
                 }
 
+                other = s_target is not null;
                 s_target = (host.Trim(), port);
                 s_retarget?.Cancel();
+            }
+
+            // Another server: the last one's texts and boxes go until this one sends its own.
+            if (other) {
+                Heard(false, "", null);
+            }
+        }
+
+        private static string s_have = "";
+        private static bool s_heardRequired;
+        private static string s_folder = "";
+
+        /// <summary>
+        /// Keeps what the server said (whether it needs the overlay, its own texts and boxes) in a file, so the copy
+        /// that is not linking (Ahziael or the overlay on its own) shows the same.
+        /// </summary>
+        private static void Heard(bool required, string stamp, JsonObject? design) {
+            if (stamp == s_have && required == s_heardRequired && stamp.Length > 0) {
+                return;
+            }
+
+            // The same design as before, kept as it is in the file.
+            if (stamp == s_have && design is null && stamp.Length > 0) {
+                try {
+                    var old = JsonNode.Parse(File.ReadAllText(Path.Combine(s_folder, OverlayDesign.FROM_SERVER_FILE)));
+                    design = old?["design"]?.DeepClone() as JsonObject;
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Text.Json.JsonException or ArgumentException) {
+                }
+            }
+
+            s_have = stamp;
+            s_heardRequired = required;
+            if (s_folder.Length == 0) {
+                return;
+            }
+
+            try {
+                var path = Path.Combine(s_folder, OverlayDesign.FROM_SERVER_FILE);
+                File.WriteAllText(path + ".tmp", new JsonObject { ["required"] = required, ["design"] = design }.ToJsonString());
+                File.Move(path + ".tmp", path, true);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
             }
         }
 
@@ -740,7 +826,7 @@ internal static class OverlayHost {
                 }, handshake.Token);
             }
 
-            var header = new JsonObject { ["op"] = "overlay", ["windows"] = GameWindows, ["version"] = Version };
+            var header = new JsonObject { ["op"] = "overlay", ["windows"] = GameWindows, ["version"] = Version, ["have"] = s_have };
             while (!stop.IsCancellationRequested) {
                 await RemoteAdminWire.WriteAsync(tls, header, null, stop);
                 using var wait = CancellationTokenSource.CreateLinkedTokenSource(stop);
@@ -752,9 +838,15 @@ internal static class OverlayHost {
 
                 Connected = true;
                 Required = reply["required"]?.GetValue<bool>();
+                // The server's own texts and boxes; a server without any (or from before they existed) says "none".
+                var stamp = (string?) reply["designStamp"] ?? "none";
+                if (stamp != s_have || Required == true != s_heardRequired) {
+                    Heard(Required == true, stamp, stamp == "none" ? null : reply["design"]?.DeepClone() as JsonObject);
+                }
+
                 var every = Math.Clamp((int?) reply["every"] ?? 5, 2, 30);
                 await Task.Delay(TimeSpan.FromSeconds(every), stop);
-                header = new JsonObject { ["op"] = "beat", ["windows"] = GameWindows };
+                header = new JsonObject { ["op"] = "beat", ["windows"] = GameWindows, ["have"] = s_have };
             }
         }
 

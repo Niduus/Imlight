@@ -18,10 +18,13 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.Json.Nodes;
 using System.Threading;
 using Imlight.Common;
+using Imlight.CoreLib.WizardData;
 
 namespace Imlight.CoreLib.Game.Tools;
 
@@ -135,6 +138,58 @@ public static class OverlayGate {
         }
 
         return IPAddress.IsLoopback(address) ? "127.0.0.1" : address.ToString();
+    }
+
+    // ---------------------------------------------------------------------
+    // The server's own overlay
+    // ---------------------------------------------------------------------
+
+    /// <summary>
+    /// The texts and boxes the host made for everyone who plays here (Niduus, 2026-11-11: "create 2 seperate sections in
+    /// the UI overlay: Server and Client ... Server always loads first and positions itself first"). Ahziael's
+    /// Play &gt; Overlay &gt; Server saves it to spiraldb-extra/Customs/ServerOverlay.json; it goes to each overlay over the
+    /// link, as data only (the overlay checks every value before drawing it).
+    /// </summary>
+    public const string SERVER_DESIGN_FILE = "ServerOverlay.json";
+
+    /// <summary>Largest server design sent, in bytes.</summary>
+    public const int MAX_DESIGN_BYTES = 48 << 10;
+
+    private static readonly object s_designLock = new();
+    private static DateTime s_designCheck = DateTime.MinValue;
+    private static DateTime s_designTime = DateTime.MinValue;
+    private static string s_designStamp = "none";
+    private static JsonNode s_design;
+
+    /// <summary>The server's design as it is now (re-read when the file changes): its stamp, and the design or null for none.</summary>
+    public static (string Stamp, JsonNode Design) ServerDesign() {
+        lock (s_designLock) {
+            var now = DateTime.UtcNow;
+            if (now - s_designCheck < TimeSpan.FromSeconds(2)) {
+                return (s_designStamp, s_design);
+            }
+
+            s_designCheck = now;
+            try {
+                var path = Path.Combine(SpiralDB.ExtraPath, "Customs", SERVER_DESIGN_FILE);
+                var time = File.Exists(path) ? File.GetLastWriteTimeUtc(path) : DateTime.MinValue;
+                if (time != s_designTime) {
+                    s_designTime = time;
+                    s_design = null;
+                    s_designStamp = "none";
+                    if (time != DateTime.MinValue && new FileInfo(path).Length <= MAX_DESIGN_BYTES) {
+                        s_design = JsonNode.Parse(File.ReadAllText(path)) as JsonObject;
+                        s_designStamp = s_design is null ? "none" : time.Ticks.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                    }
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Text.Json.JsonException) {
+                // Half written or not readable: tried again on the next check.
+                s_designTime = DateTime.MinValue;
+            }
+
+            return (s_designStamp, s_design);
+        }
     }
 
 }
