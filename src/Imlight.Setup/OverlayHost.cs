@@ -570,6 +570,9 @@ internal static class OverlayHost {
 
     /// <summary>Draws any control into a picture of this many pixels, as premultiplied BGRA rows.</summary>
     internal static byte[] Render(Control control, int width, int height, double scale) {
+        // Plain (grey) smoothing for words: Windows' coloured ClearType smoothing only works on a solid background, and on
+        // the see-through overlay it leaves dark streaks at the letters' upright edges over the game (Niduus, 2026-11-11).
+        Avalonia.Media.RenderOptions.SetTextRenderingMode(control, Avalonia.Media.TextRenderingMode.Antialias);
         var size = new Size(width / scale, height / scale);
         control.Measure(size);
         control.Arrange(new Rect(size));
@@ -582,6 +585,23 @@ internal static class OverlayHost {
         }
         finally {
             handle.Free();
+        }
+
+        // Every colour within its own see-through amount, as Windows needs for premultiplied pixels: anything brighter
+        // than that is drawn wrong over the game.
+        for (var i = 0; i < pixels.Length; i += 4) {
+            var alpha = pixels[i + 3];
+            if (pixels[i] > alpha) {
+                pixels[i] = alpha;
+            }
+
+            if (pixels[i + 1] > alpha) {
+                pixels[i + 1] = alpha;
+            }
+
+            if (pixels[i + 2] > alpha) {
+                pixels[i + 2] = alpha;
+            }
         }
 
         return pixels;

@@ -49,6 +49,8 @@ internal static class OverlayRenderer {
     internal static Control Build(OverlayDesign design, Words words, OverlayElement? highlight = null, bool showMine = true,
         IReadOnlyList<OverlayElement>? server = null) {
         var panel = new OverlayPanel { Background = Brushes.Transparent, ClipToBounds = true };
+        // Grey smoothing for words: coloured ClearType smoothing leaves dark streaks on a see-through overlay.
+        RenderOptions.SetTextRenderingMode(panel, TextRenderingMode.Antialias);
         // Hidden, the player's own pieces go, except a button that shows them again (or it could never come back).
         Add(panel, showMine ? design.Elements : design.Elements.Where(e => e.IsButton && e.Action == OverlayAction.TOGGLE_MINE),
             words, highlight, OverlayPanel.CLIENT);
