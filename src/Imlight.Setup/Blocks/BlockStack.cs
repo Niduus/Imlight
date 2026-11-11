@@ -31,7 +31,7 @@ namespace Imlight.Setup.Blocks;
 
 /// <summary>
 /// A script: blocks stacked with no gap so they snap together, the When block on top, then the If blocks, then the Do
-/// blocks. A block is dragged by its grip within its own group; a block from a palette (BlockDrag) can be dropped in
+/// blocks. A block is dragged (by any part of it but its boxes and buttons) within its own group; a block from a palette (BlockDrag) can be dropped in
 /// where the white line shows. The stack only reports the moves; its owner changes its model and shows it again.
 /// </summary>
 internal sealed class BlockStack : Grid {
@@ -74,18 +74,20 @@ internal sealed class BlockStack : Grid {
     }
 
     private void Attach(BlockView block) {
-        block.Grip.PointerPressed += (_, e) => {
-            if (!e.GetCurrentPoint(block.Grip).Properties.IsLeftButtonPressed) {
+        // The whole block is a handle, not only its grip (Niduus, 2026-11-11: "When I try to click and drag it just
+        // doesn't let me"). Its boxes and buttons keep their own clicks: they handle the press before it gets here.
+        block.AddHandler(PointerPressedEvent, (_, e) => {
+            if (!e.GetCurrentPoint(block).Properties.IsLeftButtonPressed || InsideBox(e.Source, block)) {
                 return;
             }
 
             _dragging = block;
             _dragStart = e.GetPosition(this);
             _dragMoved = false;
-            e.Pointer.Capture(block.Grip);
+            e.Pointer.Capture(block);
             e.Handled = true;
-        };
-        block.Grip.PointerMoved += (_, e) => {
+        });
+        block.PointerMoved += (_, e) => {
             if (_dragging != block) {
                 return;
             }
@@ -96,23 +98,22 @@ internal sealed class BlockStack : Grid {
             }
 
             _dragMoved = true;
+            AutoScroll(e);
+            p = e.GetPosition(this);
             block.RenderTransform = new TranslateTransform(0, p.Y - _dragStart.Y);
             block.ZIndex = 10;
             block.Opacity = 0.85;
+            block.Cursor = new Cursor(StandardCursorType.SizeAll);
             ShowMarker(p.Y, block.Kind);
         };
-        block.Grip.PointerReleased += (_, e) => {
+        block.PointerReleased += (_, e) => {
             if (_dragging != block) {
                 return;
             }
 
             var p = e.GetPosition(this);
-            _dragging = null;
+            EndDrag(block);
             e.Pointer.Capture(null);
-            block.RenderTransform = null;
-            block.ZIndex = 0;
-            block.SetOn(block.IsOn);
-            HideMarker();
             if (!_dragMoved) {
                 return;
             }
@@ -126,6 +127,45 @@ internal sealed class BlockStack : Grid {
                 Moved?.Invoke(block, to);
             }
         };
+        block.PointerCaptureLost += (_, _) => {
+            if (_dragging == block) {
+                EndDrag(block);
+            }
+        };
+    }
+
+    private void EndDrag(BlockView block) {
+        _dragging = null;
+        block.RenderTransform = null;
+        block.ZIndex = 0;
+        block.Cursor = BlockView.HAND;
+        block.SetOn(block.IsOn);
+        HideMarker();
+    }
+
+    // Whether a press landed in one of the block's boxes or buttons, which keep the press for themselves.
+    private static bool InsideBox(object? source, BlockView block) {
+        for (var v = source as Visual; v is not null && v != block; v = v.GetVisualParent()) {
+            if (v is TextBox or ComboBox or Button or ToggleButton or NumericUpDown or Slider or CheckBox or AutoCompleteBox) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>While a block is dragged near the top or bottom of the scrolling page, the page scrolls along.</summary>
+    internal void AutoScroll(PointerEventArgs e) {
+        if (this.FindAncestorOfType<ScrollViewer>() is not { } scroll) {
+            return;
+        }
+
+        var y = e.GetPosition(scroll).Y;
+        const double EDGE = 36;
+        var step = y < EDGE ? -Math.Min(24, (EDGE - y) / 2 + 4) : y > scroll.Bounds.Height - EDGE ? Math.Min(24, (y - scroll.Bounds.Height + EDGE) / 2 + 4) : 0;
+        if (step != 0) {
+            scroll.Offset = new Vector(scroll.Offset.X, Math.Clamp(scroll.Offset.Y + step, 0, Math.Max(0, scroll.Extent.Height - scroll.Viewport.Height)));
+        }
     }
 
     // The blocks before the group, and the end of the group: where a block of that kind may go.
@@ -253,6 +293,7 @@ internal static class BlockDrag {
             var over = Over(e);
             foreach (var stack in Stacks()) {
                 if (stack == over) {
+                    stack.AutoScroll(e);
                     stack.ShowMarker(e.GetPosition(stack).Y, kind);
                 }
                 else {

@@ -123,6 +123,9 @@ internal sealed class BlockView : BlockShape {
     /// <summary>The handle it is dragged by.</summary>
     internal Border Grip { get; }
 
+    /// <summary>The pointer over a block: it can be picked up anywhere.</summary>
+    internal static readonly Avalonia.Input.Cursor HAND = new(Avalonia.Input.StandardCursorType.Hand);
+
     internal event Action? Deleted;
     internal event Action? Duplicated;
     internal event Action<bool>? Toggled;
@@ -141,7 +144,8 @@ internal sealed class BlockView : BlockShape {
             VerticalAlignment = VerticalAlignment.Center,
             Child = BlockIcons.Icon("grip", 14, new SolidColorBrush(Color.FromArgb(150, 255, 255, 255))),
         };
-        ToolTip.SetTip(Grip, "Drag to move it");
+        ToolTip.SetTip(Grip, "Drag to move it (you can grab the block anywhere)");
+        Cursor = HAND;
         if (canToggle) {
             _toggle = Tool("eye", "Turn this block off (it stays, but does nothing) or back on", () => SetOn(!_on, notify: true));
             _tools.Children.Add(_toggle);
