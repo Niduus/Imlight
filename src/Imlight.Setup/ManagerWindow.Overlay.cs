@@ -122,6 +122,7 @@ internal sealed partial class ManagerWindow {
                     "(which opens a designer window). It shows a sparkle icon by the clock, where you can open the designer or stop it. " +
                     "Only one of them draws at a time: with both open, whichever started first draws."),
                 Sub("Servers that don't require the overlay don't care whether you have it, with or without Ahziael.")),
+            OverlayCheatsCard(),
             Fold("sliders", "Customs", "Design it", "Fonts, colours, gradients, boxes, shadows, see-through and position. No code: everything is a box to fill in.",
                 _ovEditorPage.Build()),
             Fold("shield", "Server", "Require the overlay on my server",
@@ -130,6 +131,7 @@ internal sealed partial class ManagerWindow {
                     "On: a player whose PC has no Ahziael overlay running (in Ahziael or on its own) is disconnected with the message below. " +
                     "Off (the start): anyone can play. Works right away, no restart, and players already in the game are checked too."),
                 SwitchRow("Seconds before the kick", _ovGrace, "How long a player may be in the game without the overlay first."),
+                OverlayCheatsHostSwitch(),
                 new StackPanel {
                     Spacing = 4,
                     Children = { new TextBlock { Text = "What they see" }, _ovKick, WithMargin(Row(Action(Plain("Save message"), SaveKickMessageAsync)), new Thickness(0, 4, 0, 0)) },
@@ -185,6 +187,7 @@ internal sealed partial class ManagerWindow {
             _ovKick.Text = ini.GetValueOrDefault((OVERLAY_SECTION, "KickMessage")) ?? "";
         }
 
+        ShowOverlayCheatsHostSwitch(ini);
         _ovRuleNote.Text = has ? "" : "Click \"Update Ahziael\" at the top of the app to get this switch.";
         _ovRuleNote.IsVisible = !has;
     }

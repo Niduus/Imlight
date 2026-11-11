@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Imlight.Common;
 using Imlight.CoreLib.WizardData;
@@ -86,5 +87,36 @@ internal static class PlayerCheatSwitches {
             s_switches = [];
         }
     }
+
+}
+
+/// <summary>
+/// Cheats whose When is "Pressed" (Niduus, 2026-11-11: players "activate their cheats" from their Ahziael): a wizard
+/// presses one with `.cheat use &lt;name&gt;` (typed, or sent from Ahziael and its overlay), and it goes off in their battle
+/// at the next look at the Always cheats: the start of the round, or right after the next move. A press waits 90
+/// seconds at most. A player cheat is pressed only by the wizard that has it; a creature's "Pressed" cheat goes off when
+/// a wizard in its battle presses a cheat of that name (that wizard is "the attacker").
+/// </summary>
+internal static class PlayerCheatPresses {
+
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<(ulong CharId, string Key), DateTime> s_pressed = new();
+    private static readonly TimeSpan s_keep = TimeSpan.FromSeconds(90);
+
+    /// <summary>A press of the cheat known as <paramref name="key"/> (PlayerCheatSwitches.KeyOf, or "name:" and a name).</summary>
+    internal static void Press(ulong charId, string key) {
+        var now = DateTime.UtcNow;
+        foreach (var old in s_pressed.Where(p => now - p.Value > s_keep).Select(p => p.Key).ToList()) {
+            s_pressed.TryRemove(old, out _);
+        }
+
+        s_pressed[(charId, key)] = now;
+    }
+
+    /// <summary>Whether the wizard pressed that cheat (and not too long ago); the press is used up.</summary>
+    internal static bool Take(ulong charId, string key)
+        => s_pressed.TryRemove((charId, key), out var at) && DateTime.UtcNow - at < s_keep;
+
+    /// <summary>Whether a wizard has a press waiting, so nothing is looked at when no one pressed anything.</summary>
+    internal static bool Any => !s_pressed.IsEmpty;
 
 }

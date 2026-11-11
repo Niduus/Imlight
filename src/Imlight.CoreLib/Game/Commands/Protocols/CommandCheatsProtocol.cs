@@ -58,6 +58,9 @@ internal static class PlayerCheatChat {
             var on = PlayerCheatSwitches.IsOn(wizard.CharId, cheat);
             text.Append('\n').Append(label).Append(": ").Append(on ? "on" : "off");
             text.Append(cheat.PlayersSwitch ? $" (type .cheat {(on ? "off" : "on")} {label})" : " (always on)");
+            if (cheat.Is("Pressed")) {
+                text.Append($"; use it with .cheat use {label}");
+            }
         }
 
         return text.ToString();
@@ -88,10 +91,7 @@ internal static class PlayerCheatChat {
             return $"All {switchable.Count} of your switchable cheats are {word}. It counts from your next move.";
         }
 
-        // By name, else by number ("3" or "cheat 3").
-        var number = which.StartsWith("cheat ", StringComparison.OrdinalIgnoreCase) ? which[6..].Trim() : which;
-        var found = cheats.FirstOrDefault(c => !string.IsNullOrWhiteSpace(c.Name) && c.Name.Trim().Equals(which, StringComparison.OrdinalIgnoreCase))
-                    ?? (int.TryParse(number, out var n) ? cheats.FirstOrDefault(c => c.Number == n) : null);
+        var found = Find(cheats, which);
         if (found is null) {
             return $"You have no cheat called \"{which}\". Type .cheats to see yours.";
         }
@@ -104,6 +104,50 @@ internal static class PlayerCheatChat {
         PlayerCheatSwitches.Set(wizard.CharId, found, on);
 
         return $"{label} is {word} for you. It counts from your next move.";
+    }
+
+    /// <summary>
+    /// `.cheat use &lt;name&gt;`: presses a cheat whose When is "pressed" (PlayerCheatPresses). One of the wizard's own, else
+    /// a creature's in their battle with that name.
+    /// </summary>
+    internal static string Use(Wizard wizard, string which) {
+        if (wizard is null) {
+            return "Pick a wizard first.";
+        }
+
+        which = (which ?? "").Trim();
+        if (which.Length == 0) {
+            return "Type .cheat use and a cheat's name, such as .cheat use Cheat 1. Type .cheats to see yours.";
+        }
+
+        var found = Find(PlayerCheats.Owned(wizard.CharId), which);
+        if (found is null) {
+            // Maybe a creature's in their battle: those are known by name only.
+            PlayerCheatPresses.Press(wizard.CharId, $"name:{which.ToLowerInvariant()}");
+
+            return $"You have no cheat called \"{which}\". If a creature in your battle has a \"when pressed\" cheat by that name, it goes off at the next move.";
+        }
+
+        var label = PlayerCheatSwitches.LabelOf(found);
+        if (!found.Is("Pressed")) {
+            return $"{label} goes off by itself (its When is not \"pressed\"), so it can't be used like a button.";
+        }
+
+        if (!PlayerCheatSwitches.IsOn(wizard.CharId, found)) {
+            return $"{label} is off. Switch it on first with .cheat on {label}.";
+        }
+
+        PlayerCheatPresses.Press(wizard.CharId, PlayerCheatSwitches.KeyOf(found));
+
+        return $"{label} is used. In a battle it goes off at the start of the round or right after the next move.";
+    }
+
+    // A cheat by name, else by number ("3" or "cheat 3").
+    private static BossCheats.BossCheat Find(System.Collections.Generic.List<BossCheats.BossCheat> cheats, string which) {
+        var number = which.StartsWith("cheat ", StringComparison.OrdinalIgnoreCase) ? which[6..].Trim() : which;
+
+        return cheats.FirstOrDefault(c => !string.IsNullOrWhiteSpace(c.Name) && c.Name.Trim().Equals(which, StringComparison.OrdinalIgnoreCase))
+               ?? (int.TryParse(number, out var n) ? cheats.FirstOrDefault(c => c.Number == n) : null);
     }
 
 }

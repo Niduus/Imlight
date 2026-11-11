@@ -71,7 +71,9 @@ internal static class FriendAccess {
         // And while the server needs the Ahziael overlay (Play > Overlay), which checks in on that port.
         if (string.Equals(IniFile.Get(config, "Remote Admin", "Enabled"), "true", StringComparison.OrdinalIgnoreCase)
             || !string.Equals(IniFile.Get(config, "Remote Admin", "PlayerDownloads"), "false", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(IniFile.Get(config, "Overlay", "RequiredToPlay"), "true", StringComparison.OrdinalIgnoreCase)) {
+            || string.Equals(IniFile.Get(config, "Overlay", "RequiredToPlay"), "true", StringComparison.OrdinalIgnoreCase)
+            // And while players may run their cheats and commands from their Ahziael (on unless turned off).
+            || IniFile.Get(config, "Overlay", "PlayerCommands") is { } commands && !commands.Equals("false", StringComparison.OrdinalIgnoreCase)) {
             ports.Add(Number("Remote Admin", "Port", Imlight.RemoteAdmin.RemoteAdminWire.DEFAULT_PORT));
         }
 
