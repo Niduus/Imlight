@@ -80,6 +80,16 @@ internal sealed partial class ManagerWindow {
             ShowOverlayDesigner();
         };
 
+        // An overlay button that opens Ahziael.
+        OverlayButtons.AhziaelRequested += () => {
+            if (WindowState == WindowState.Minimized) {
+                WindowState = WindowState.Normal;
+            }
+
+            Show();
+            Activate();
+        };
+
         void ShowOverlayDesigner() {
 
             if (WindowState == WindowState.Minimized) {
@@ -587,7 +597,7 @@ internal sealed partial class ManagerWindow {
                     Children = {
                         new WrapPanel {
                             Children = {
-                                Spaced(_ovParts), Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)),
+                                Spaced(_ovParts), Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)), Spaced(Block(OverlayElement.BUTTON)),
                                 Spaced(Action(Plain("Picture"), AddPictureAsync)), Spaced(_ovQuickWords),
                                 Spaced(OvCheck("Grid", _ovGrid.Show, v => { _ovGrid.Show = v; GridChanged(); })),
                                 Spaced(OvCheck("Snap", _ovGrid.SnapToGrid || _ovGrid.SnapToPieces, v => { _ovGrid.SnapToGrid = v; _ovGrid.SnapToPieces = v; GridChanged(); })),
@@ -862,6 +872,7 @@ internal sealed partial class ManagerWindow {
                                     Spaced(Action(Plain("Add text"), () => AddOverlayElement(OverlayElement.TEXT))),
                                     Spaced(Action(Plain("Add box"), () => AddOverlayElement(OverlayElement.BOX))),
                                     Spaced(Action(Plain("Add picture"), AddPictureAsync)),
+                                    Spaced(Action(Plain("Add button"), () => AddOverlayElement(OverlayElement.BUTTON))),
                                     Spaced(Action(Plain("Copy"), DuplicateOverlayElement)),
                                     Spaced(Action(Plain("Up"), () => MoveOverlayElement(-1))),
                                     Spaced(Action(Plain("Down"), () => MoveOverlayElement(1))),
@@ -869,8 +880,8 @@ internal sealed partial class ManagerWindow {
                                 },
                             },
                             new TextBlock { Text = "Drag onto the picture", FontWeight = FontWeight.SemiBold, Margin = new Thickness(0, 6, 0, 0) },
-                            new WrapPanel { Children = { Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)) } },
-                            Sub("Drag a block onto the picture to put a new text or box right there (or just click it). Drag a line in the list above onto another to change the order."),
+                            new WrapPanel { Children = { Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)), Spaced(Block(OverlayElement.BUTTON)) } },
+                            Sub("Drag a block onto the picture to put a new text, box or button right there (or just click it). A button can be clicked in the game to run a command, use a cheat, or open the designer or Ahziael; everything else lets clicks through to the game. Drag a line in the list above onto another to change the order."),
                             Sub("A higher Layer is drawn on top; on the same layer, lower in the list is on top. With Spacing above 0, one that laps over another is moved off it, that far away. The Ahziael line is always on top, in full, in the bottom-left corner."),
                         },
                     },
@@ -909,12 +920,12 @@ internal sealed partial class ManagerWindow {
             try {
                 var names = new List<string> { "Ahziael line (fixed, always shown)" };
                 names.AddRange(_ovDesign.Elements.Select((e, i) => {
-                    var name = e.Name.Length > 0 ? e.Name : e.IsPicture ? $"Picture {i + 1}" : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : $"Text {i + 1}";
+                    var name = e.Name.Length > 0 ? e.Name : e.IsPicture ? $"Picture {i + 1}" : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : e.IsButton ? $"Button {i + 1}" : $"Text {i + 1}";
                     if (name.Length > 34) {
                         name = name[..34] + "…";
                     }
 
-                    return (e.IsPicture ? "▣ " : e.IsBox ? "▭ " : "T  ") + name + (e.Locked ? " (locked)" : "") + (e.Visible ? "" : " (hidden)");
+                    return (e.IsPicture ? "▣ " : e.IsBox ? "▭ " : e.IsButton ? "◉ " : "T  ") + name + (e.Locked ? " (locked)" : "") + (e.Visible ? "" : " (hidden)");
                 }));
                 _ovList.ItemsSource = names;
                 _ovList.SelectedIndex = _ovSelected == _ovDesign.Credit || _ovSelected is null ? 0 : _ovDesign.Elements.IndexOf(_ovSelected) + 1;
@@ -1255,12 +1266,14 @@ internal sealed partial class ManagerWindow {
 
         private Control Block(string kind) {
             var box = kind == OverlayElement.BOX;
+            var button = kind == OverlayElement.BUTTON;
             var block = new Border {
                 Padding = new Thickness(14, 8), CornerRadius = new CornerRadius(6), BorderBrush = LINE, BorderThickness = new Thickness(1),
                 Background = ManagerTheme.SURFACE_HIGH_BRUSH, Cursor = new Cursor(StandardCursorType.DragMove),
-                Child = new TextBlock { Text = box ? "▭  Box" : "T  Text", FontWeight = FontWeight.SemiBold },
+                Child = new TextBlock { Text = box ? "▭  Box" : button ? "◉  Button" : "T  Text", FontWeight = FontWeight.SemiBold },
             };
-            ToolTip.SetTip(block, box ? "Drag onto the picture to add a box there" : "Drag onto the picture to add a text there");
+            ToolTip.SetTip(block, box ? "Drag onto the picture to add a box there"
+                : button ? "Drag onto the picture to add a button there (it can be clicked in the game)" : "Drag onto the picture to add a text there");
             block.PointerPressed += (_, e) => {
                 if (e.GetCurrentPoint(block).Properties.IsLeftButtonPressed) {
                     e.Pointer.Capture(block);
@@ -1373,6 +1386,14 @@ internal sealed partial class ManagerWindow {
 
             var element = kind == OverlayElement.PICTURE
                 ? new OverlayElement { Kind = OverlayElement.PICTURE, Anchor = OverlayAnchor.TopLeft, X = 20, Y = 20, Background = new OverlayPaint() }
+                : kind == OverlayElement.BUTTON
+                ? new OverlayElement {
+                    Kind = OverlayElement.BUTTON, Text = "Heal", Anchor = OverlayAnchor.Right, X = 20, Y = 0, Size = 16, Bold = true,
+                    Padding = 10, CornerRadius = 10, BorderColor = "#A0FFFFFF", BorderWidth = 1, Shadow = true, Spacing = 4,
+                    Fill = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#FFFFFFFF" },
+                    Background = new OverlayPaint { Kind = OverlayPaint.LINEAR, Color1 = "#E07A5CFF", Color2 = "#E0601E70", Angle = 90 },
+                    Action = OverlayAction.COMMAND, Command = ".heal",
+                }
                 : kind == OverlayElement.BOX
                 ? new OverlayElement {
                     Kind = OverlayElement.BOX, Name = "", Anchor = OverlayAnchor.TopRight, X = 20, Y = 20, Width = 220, Height = 80, CornerRadius = 12,
@@ -1385,7 +1406,7 @@ internal sealed partial class ManagerWindow {
                 };
             if (at is { } point) {
                 element.Anchor = OverlayAnchor.TopLeft;
-                var (w, h) = element.IsBox ? (element.Width, element.Height) : (160, 40);
+                var (w, h) = element.IsBox ? (element.Width, element.Height) : element.IsButton ? (90, 44) : (160, 40);
                 element.X = Math.Round(Math.Clamp(point.X, 0, Math.Max(0, PREVIEW_W - w)));
                 element.Y = Math.Round(Math.Clamp(point.Y, 0, Math.Max(0, PREVIEW_H - h)));
             }
@@ -1510,6 +1531,88 @@ internal sealed partial class ManagerWindow {
         // The editor of the picked one
         // ---------------------------------------------------------------------
 
+        /// <summary>
+        /// What a button does (Niduus, 2026-11-11): one of a few fixed choices, filled in with words, never code. A command
+        /// or cheat runs on the server the game is linked to, as whoever clicks it, with their own rights.
+        /// </summary>
+        private Control ButtonActionEditor(OverlayElement e) {
+            var panel = new StackPanel { Spacing = 8 };
+            var kinds = OverlayAction.KINDS;
+            panel.Children.Add(OvField("It does", OvCombo(OverlayAction.LABELS, Math.Max(0, Array.IndexOf(kinds, e.Action)), i => {
+                e.Action = kinds[i];
+                OverlayChanged(false);
+                RenderOverlayEditor();
+            }, 300)));
+
+            switch (e.Action) {
+                case OverlayAction.COMMAND:
+                    panel.Children.Add(OvField("Chat command", OvText(e.Command, v => { e.Command = v; OverlayChanged(false); }, 300)));
+                    panel.Children.Add(Sub("Any chat command, as you would type it in the game, for example .heal, .tp Ravenwood or " +
+                        ".joinme Malistaire the Undying. It runs on the server as the wizard who clicks it, with that account's own rights: " +
+                        "a command a player can't type, they can't click either. Nothing shows in chat."));
+                    break;
+                case OverlayAction.CHEAT: {
+                    var name = OvText(e.Command, v => { e.Command = v; OverlayChanged(false); }, 240);
+                    var hows = OverlayAction.HOWS;
+                    var pick = new ComboBox { MinWidth = 240, PlaceholderText = "Pick one of my cheats" };
+                    pick.SelectionChanged += (_, _) => {
+                        if (pick.SelectedItem is string chosen && chosen.Length > 0) {
+                            name.Text = chosen;
+                        }
+                    };
+                    var load = Plain("Load my cheats");
+                    load.Click += async (_, _) => {
+                        try {
+                            var result = await OverlayCommands.SendAsync("cheats", "");
+                            if (!result.Ok) {
+                                Say(result.Text, true);
+                                return;
+                            }
+
+                            pick.ItemsSource = (result.Cheats ?? []).Select(c => c.Name).Where(n => n.Length > 0).Distinct().ToList();
+                            Say(pick.ItemCount == 0 ? "This server has no cheats for you yet." : "Your cheats on this server are in the list.");
+                        }
+                        catch (Exception ex) when (ex is OperationCanceledException or InvalidOperationException or IOException) {
+                            Say("The server didn't answer: " + ex.Message, true);
+                        }
+                    };
+                    panel.Children.Add(new WrapPanel {
+                        Children = {
+                            OvField("Cheat (name or number)", name),
+                            OvField("Or pick", Row(pick, load)),
+                            OvField("Clicking it will", OvCombo(OverlayAction.HOW_LABELS, Math.Max(0, Array.IndexOf(hows, e.CheatHow)),
+                                i => { e.CheatHow = hows[i]; OverlayChanged(false); }, 240)),
+                        },
+                    });
+                    panel.Children.Add(Sub("The cheat is the clicking player's own cheat on that server (Play > Overlay > My cheats on this server). " +
+                        "The host's settings decide which cheats each player may use, so a button can't get around them."));
+                    break;
+                }
+                case OverlayAction.DESIGNER:
+                    panel.Children.Add(Sub("Opens this designer right on the game, like the sparkle button."));
+                    break;
+                case OverlayAction.TOGGLE_MINE:
+                    panel.Children.Add(Sub("Hides or shows your own texts, boxes and buttons. This button itself always stays, so you can bring " +
+                        "them back. The server's pieces and the Ahziael line always show."));
+                    break;
+                case OverlayAction.OPEN_AHZIAEL:
+                    panel.Children.Add(Sub("Brings Ahziael to the front (or starts it, when only the overlay is running)."));
+                    break;
+            }
+
+            if (_ovServerPart) {
+                panel.Children.Add(Sub("This is a server button: every player on your server gets it, and it runs as the player who clicks it."));
+            }
+
+            panel.Children.Add(Row(Action(Plain("Try it now"), () => {
+                OverlayButtons.Click(e, _ovServerPart, IntPtr.Zero, ok => Say(OverlayButtons.LastResult.Length > 0 ? OverlayButtons.LastResult
+                    : ok ? "Done." : "That didn't work.", !ok));
+                return Task.CompletedTask;
+            })));
+
+            return panel;
+        }
+
         private void RenderOverlayEditor() {
             _ovEditor.Children.Clear();
             var e = _ovSelected ?? _ovDesign.Credit;
@@ -1554,6 +1657,9 @@ internal sealed partial class ManagerWindow {
             what.Children.Add(OvField("See-through", OvSlider(e.Opacity, 0, 1, v => { e.Opacity = v; Changed(); })));
             what.Children.Add(OvField("Locked", OvCheck("Can't be dragged", e.Locked, v => { e.Locked = v; Changed(); })));
             _ovEditor.Children.Add(OvGroup("What and where", what));
+            if (e.IsButton) {
+                _ovEditor.Children.Add(OvGroup("When it is clicked in the game", ButtonActionEditor(e)));
+            }
 
             // Put it on a side or the middle of the window in one click (it stays pinned there on any window size).
             Button AlignButton(string label, int? column, int? row) {

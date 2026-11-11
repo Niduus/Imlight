@@ -91,7 +91,16 @@ internal static class OverlayHost {
     /// <summary>The game window whose sparkle button was clicked last.</summary>
     internal static IntPtr RequestedGame { get; private set; }
 
+    /// <summary>Opens the designer for this game window, as its sparkle button does (an overlay button can too).</summary>
+    internal static void RequestDesigner(IntPtr game) {
+        RequestedGame = game;
+        DesignRequested?.Invoke();
+    }
+
     private static readonly Dictionary<IntPtr, IntPtr> s_buttonGame = [];
+
+    /// <summary>Each overlay button's click window: the button, whether it is the server's, and its game window.</summary>
+    private static readonly Dictionary<IntPtr, (OverlayElement Element, bool Server, IntPtr Game)> s_hitTargets = [];
 
     /// <summary>
     /// True while the design is being changed right on the game (<see cref="OverlayGameEditor"/>): the overlay steps
@@ -565,6 +574,8 @@ internal static class OverlayHost {
 
         private static Native.WndProc? s_proc;
         private static Native.WndProc? s_buttonProc;
+        private static Native.WndProc? s_hitProc;
+        private const string HIT_CLASS = "AhziaelOverlayHit";
         private static bool s_registered;
         private const string CLASS = "AhziaelOverlay";
         private const string BUTTON_CLASS = "AhziaelOverlayButton";
@@ -572,6 +583,11 @@ internal static class OverlayHost {
         // The picture (clicks go through) and the designer button (takes clicks).
         private readonly IntPtr _hwnd;
         private readonly IntPtr _button;
+
+        // One small window over each overlay button (Niduus, 2026-11-11): the picture shows the button, and this almost
+        // invisible window right over it takes its clicks. Everywhere else, clicks still go through to the game.
+        private readonly List<Hit> _hits = [];
+        private Native.POINT _origin;
         private int _drawnVersion = -1;
         private (int W, int H, double Scale) _drawnSize;
         private double _buttonScale;
@@ -583,6 +599,7 @@ internal static class OverlayHost {
             if (!s_registered) {
                 s_proc = Native.DefWindowProcW;
                 s_buttonProc = ButtonProc;
+                s_hitProc = HitProc;
                 var wc = new Native.WNDCLASSEX {
                     cbSize = (uint) Marshal.SizeOf<Native.WNDCLASSEX>(), lpfnWndProc = Marshal.GetFunctionPointerForDelegate(s_proc),
                     hInstance = instance, lpszClassName = CLASS,
@@ -593,6 +610,11 @@ internal static class OverlayHost {
                     hInstance = instance, lpszClassName = BUTTON_CLASS, hCursor = Native.LoadCursorW(IntPtr.Zero, Native.IDC_HAND),
                 };
                 Native.RegisterClassExW(ref bc);
+                var hc = new Native.WNDCLASSEX {
+                    cbSize = (uint) Marshal.SizeOf<Native.WNDCLASSEX>(), lpfnWndProc = Marshal.GetFunctionPointerForDelegate(s_hitProc),
+                    hInstance = instance, lpszClassName = HIT_CLASS, hCursor = Native.LoadCursorW(IntPtr.Zero, Native.IDC_HAND),
+                };
+                Native.RegisterClassExW(ref hc);
                 s_registered = true;
             }
 
@@ -601,6 +623,137 @@ internal static class OverlayHost {
             _button = Native.CreateWindowExW(Native.WS_EX_LAYERED | Native.WS_EX_TOOLWINDOW,
                 BUTTON_CLASS, "Design the Ahziael overlay", Native.WS_POPUP, 0, 0, 1, 1, IntPtr.Zero, IntPtr.Zero, instance, IntPtr.Zero);
         }
+
+        private sealed class Hit {
+
+            internal IntPtr Hwnd;
+            internal Native.RECT Rect;
+
+        }
+
+        // Clicking an overlay button: never takes the keyboard from the game; shows it pressed, then runs it.
+        private static IntPtr HitProc(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam) {
+            switch (msg) {
+                case Native.WM_MOUSEACTIVATE:
+                    return new IntPtr(Native.MA_NOACTIVATE);
+                case Native.WM_LBUTTONDOWN:
+                    Native.SetCapture(hwnd);
+                    Shade(hwnd, 0x40, 0xFF, 0xFF, 0xFF);
+
+                    return IntPtr.Zero;
+                case Native.WM_LBUTTONUP: {
+                    Native.ReleaseCapture();
+                    Shade(hwnd, 0x01, 0, 0, 0);
+                    // Let go inside the button: it runs. Dragged off it first: nothing happens.
+                    var x = (short) (lParam.ToInt64() & 0xFFFF);
+                    var y = (short) ((lParam.ToInt64() >> 16) & 0xFFFF);
+                    if (Native.GetClientRect(hwnd, out var r) && x >= 0 && y >= 0 && x < r.Right && y < r.Bottom
+                        && s_hitTargets.TryGetValue(hwnd, out var target)) {
+                        Dispatcher.UIThread.Post(() => OverlayButtons.Click(target.Element, target.Server, target.Game, ok => Flash(hwnd, ok)));
+                    }
+
+                    return IntPtr.Zero;
+                }
+            }
+
+            return Native.DefWindowProcW(hwnd, msg, wParam, lParam);
+        }
+
+        // A quick tint over the button: green when it worked, red when it didn't.
+        private static void Flash(IntPtr hwnd, bool ok) {
+            if (!s_hitTargets.ContainsKey(hwnd)) {
+                return;
+            }
+
+            if (ok) {
+                Shade(hwnd, 0x50, 0x40, 0xE0, 0x70);
+            }
+            else {
+                Shade(hwnd, 0x60, 0xF0, 0x40, 0x40);
+            }
+
+            DispatcherTimer.RunOnce(() => {
+                if (s_hitTargets.ContainsKey(hwnd)) {
+                    Shade(hwnd, 0x01, 0, 0, 0);
+                }
+            }, TimeSpan.FromMilliseconds(500));
+        }
+
+        // Fills a click window with one colour at this see-through (1 of 255: invisible, but it still takes clicks).
+        private static void Shade(IntPtr hwnd, byte alpha, byte red, byte green, byte blue) {
+            if (!Native.GetWindowRect(hwnd, out var r)) {
+                return;
+            }
+
+            var (w, h) = (Math.Max(1, r.Right - r.Left), Math.Max(1, r.Bottom - r.Top));
+            var pixels = new byte[w * h * 4];
+            // Premultiplied blue, green, red, alpha.
+            byte Pre(byte c) => (byte) (c * alpha / 255);
+            var (b, g, rd) = (Pre(blue), Pre(green), Pre(red));
+            for (var i = 0; i < pixels.Length; i += 4) {
+                pixels[i] = b;
+                pixels[i + 1] = g;
+                pixels[i + 2] = rd;
+                pixels[i + 3] = alpha;
+            }
+
+            Draw(hwnd, pixels, w, h, new Native.POINT { X = r.Left, Y = r.Top });
+        }
+
+        // The overlay buttons of the picture just drawn: a click window over each, where it was drawn.
+        private void PlaceHits(Control picture, double pixelsPerUnit, IntPtr game) {
+            var found = new List<(OverlayElement Element, bool Server, Native.RECT Rect)>();
+            foreach (var child in picture is Panel panel ? panel.Children : []) {
+                if (child.Tag is OverlayElement { IsButton: true } element && child.Bounds.Width > 0 && child.Bounds.Height > 0) {
+                    var b = child.Bounds;
+                    found.Add((element, OverlayRenderer.PartOf(child) == OverlayRenderer.OverlayPanel.SERVER, new Native.RECT {
+                        Left = (int) Math.Floor(b.X * pixelsPerUnit), Top = (int) Math.Floor(b.Y * pixelsPerUnit),
+                        Right = (int) Math.Ceiling(b.Right * pixelsPerUnit), Bottom = (int) Math.Ceiling(b.Bottom * pixelsPerUnit),
+                    }));
+                }
+            }
+
+            // Drawn on top: the last one drawn is the one clicked where two lap over.
+            found.Reverse();
+            while (_hits.Count > found.Count) {
+                var gone = _hits[^1];
+                _hits.RemoveAt(_hits.Count - 1);
+                s_hitTargets.Remove(gone.Hwnd);
+                Native.DestroyWindow(gone.Hwnd);
+            }
+
+            var instance = Native.GetModuleHandleW(null);
+            while (_hits.Count < found.Count) {
+                var hwnd = Native.CreateWindowExW(Native.WS_EX_LAYERED | Native.WS_EX_TOOLWINDOW | Native.WS_EX_NOACTIVATE,
+                    HIT_CLASS, "Ahziael overlay button", Native.WS_POPUP, 0, 0, 1, 1, IntPtr.Zero, IntPtr.Zero, instance, IntPtr.Zero);
+                if (hwnd == IntPtr.Zero) {
+                    break;
+                }
+
+                _hits.Add(new Hit { Hwnd = hwnd });
+            }
+
+            for (var i = 0; i < _hits.Count; i++) {
+                var (element, server, rect) = found[i];
+                var hit = _hits[i];
+                hit.Rect = rect;
+                s_hitTargets[hit.Hwnd] = (element, server, game);
+                var (w, h) = (Math.Max(1, rect.Right - rect.Left), Math.Max(1, rect.Bottom - rect.Top));
+                var pixels = new byte[w * h * 4];
+                for (var p = 3; p < pixels.Length; p += 4) {
+                    pixels[p] = 1;
+                }
+
+                Draw(hit.Hwnd, pixels, w, h, new Native.POINT { X = _origin.X + rect.Left, Y = _origin.Y + rect.Top });
+            }
+
+            // New click windows go into the stacking order on the next StackOver.
+            _stackedHits = -1;
+        }
+
+        private int _stackedHits = -1;
+
+        private bool IsMine(IntPtr hwnd) => hwnd == _hwnd || hwnd == _button || _hits.Any(h => h.Hwnd == hwnd);
 
         private static IntPtr ButtonProc(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam) {
             if (msg == Native.WM_LBUTTONUP) {
@@ -657,6 +810,8 @@ internal static class OverlayHost {
                 // Laid out on the design's 1280 x 720 terms and drawn bigger or smaller to fit this window.
                 var fit = OverlayDesign.Fit(width / scale, height / scale);
                 Draw(_hwnd, Render(picture, width, height, scale * fit), width, height, origin);
+                _origin = origin;
+                PlaceHits(picture, scale * fit, game);
                 _drawnVersion = version;
                 _drawnSize = (width, height, scale);
                 _placed = place;
@@ -670,6 +825,12 @@ internal static class OverlayHost {
             if (!_placed.Equals(place)) {
                 Native.SetWindowPos(_hwnd, IntPtr.Zero, origin.X, origin.Y, 0, 0, Native.SWP_NOSIZE | Native.SWP_NOACTIVATE | Native.SWP_NOZORDER);
                 Native.SetWindowPos(_button, IntPtr.Zero, buttonAt.X, buttonAt.Y, 0, 0, Native.SWP_NOSIZE | Native.SWP_NOACTIVATE | Native.SWP_NOZORDER);
+                _origin = origin;
+                foreach (var hit in _hits) {
+                    Native.SetWindowPos(hit.Hwnd, IntPtr.Zero, origin.X + hit.Rect.Left, origin.Y + hit.Rect.Top, 0, 0,
+                        Native.SWP_NOSIZE | Native.SWP_NOACTIVATE | Native.SWP_NOZORDER);
+                }
+
                 _placed = place;
             }
 
@@ -683,12 +844,13 @@ internal static class OverlayHost {
                 flags |= Native.SWP_SHOWWINDOW;
             }
 
-            if (_shown && NextBelow(_hwnd) == game && Native.GetWindow(game, Native.GW_HWNDPREV) == _hwnd && Native.GetWindow(_hwnd, Native.GW_HWNDPREV) == _button) {
+            if (_shown && _stackedHits == _hits.Count && NextBelow(_hwnd) == game && Native.GetWindow(game, Native.GW_HWNDPREV) == _hwnd
+                && Native.GetWindow(_hwnd, Native.GW_HWNDPREV) == (_hits.Count > 0 ? _hits[0].Hwnd : _button)) {
                 return;
             }
 
             var above = Native.GetWindow(game, Native.GW_HWNDPREV);
-            while (above != IntPtr.Zero && (above == _hwnd || above == _button)) {
+            while (above != IntPtr.Zero && IsMine(above)) {
                 above = Native.GetWindow(above, Native.GW_HWNDPREV);
             }
 
@@ -696,9 +858,15 @@ internal static class OverlayHost {
             var gameTopmost = (Native.GetWindowLongW(game, Native.GWL_EXSTYLE) & Native.WS_EX_TOPMOST) != 0;
             var after = above == IntPtr.Zero || (!gameTopmost && (Native.GetWindowLongW(above, Native.GWL_EXSTYLE) & Native.WS_EX_TOPMOST) != 0)
                 ? Native.HWND_TOP : above;
+            // Each one goes right under "after", so the last placed is the highest: button, click windows, picture, game.
             Native.SetWindowPos(_hwnd, after, 0, 0, 0, 0, flags);
+            foreach (var hit in _hits) {
+                Native.SetWindowPos(hit.Hwnd, after, 0, 0, 0, 0, flags | Native.SWP_SHOWWINDOW);
+            }
+
             Native.SetWindowPos(_button, after, 0, 0, 0, 0, flags);
             _shown = true;
+            _stackedHits = _hits.Count;
 
             // Windows may refuse the order asked for. The overlay is shown only right over the game, never over
             // another window (Ahziael's or any other): if it didn't land there, it waits hidden and tries again.
@@ -710,7 +878,7 @@ internal static class OverlayHost {
         // The next window under this one that is not the button.
         private IntPtr NextBelow(IntPtr hwnd) {
             var below = Native.GetWindow(hwnd, Native.GW_HWNDNEXT);
-            while (below != IntPtr.Zero && below == _button) {
+            while (below != IntPtr.Zero && IsMine(below) && below != _hwnd) {
                 below = Native.GetWindow(below, Native.GW_HWNDNEXT);
             }
 
@@ -721,6 +889,10 @@ internal static class OverlayHost {
             if (_shown) {
                 Native.ShowWindow(_hwnd, Native.SW_HIDE);
                 Native.ShowWindow(_button, Native.SW_HIDE);
+                foreach (var hit in _hits) {
+                    Native.ShowWindow(hit.Hwnd, Native.SW_HIDE);
+                }
+
                 _shown = false;
             }
         }
@@ -764,6 +936,13 @@ internal static class OverlayHost {
                 s_buttonGame.Remove(_button);
                 Native.DestroyWindow(_button);
             }
+
+            foreach (var hit in _hits) {
+                s_hitTargets.Remove(hit.Hwnd);
+                Native.DestroyWindow(hit.Hwnd);
+            }
+
+            _hits.Clear();
         }
 
     }
@@ -1033,6 +1212,18 @@ internal static class OverlayHost {
         internal static extern int GetWindowTextLengthW(IntPtr hwnd);
         internal const int GWL_EXSTYLE = -20;
         internal const uint WM_LBUTTONUP = 0x0202;
+        internal const uint WM_LBUTTONDOWN = 0x0201;
+        internal const uint WM_MOUSEACTIVATE = 0x0021;
+        internal const int MA_NOACTIVATE = 3;
+
+        [DllImport("user32.dll")]
+        internal static extern IntPtr SetCapture(IntPtr hwnd);
+
+        [DllImport("user32.dll")]
+        internal static extern bool ReleaseCapture();
+
+        [DllImport("user32.dll")]
+        internal static extern bool GetWindowRect(IntPtr hwnd, out RECT rect);
         internal static readonly IntPtr IDC_HAND = new(32649);
         internal const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
         internal const uint EVENT_SYSTEM_MINIMIZESTART = 0x0016;
