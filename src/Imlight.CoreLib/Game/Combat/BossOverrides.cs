@@ -111,6 +111,19 @@ internal static class BossOverrides {
         public float? Intellect { get; set; }
         public float? Selfishness { get; set; }
         public float? Aggression { get; set; }
+        // Rewritten AI (RewrittenAI.cs): "On", "Off" or left out for the server's switch; its role; its exclusions; cards it
+        // never casts (names, ; between); and its own weights in percent (left out: the server's).
+        public string RewrittenAI { get; set; }
+        public string AIRole { get; set; }
+        public List<string> AIExclusions { get; set; }
+        public string AINeverCast { get; set; }
+        public float? AIDanger { get; set; }
+        public float? AIDamage { get; set; }
+        public float? AIHealing { get; set; }
+        public float? AILowHealth { get; set; }
+        public float? AIMatchup { get; set; }
+        public float? AIStubborn { get; set; }
+        public float? AISetupRounds { get; set; }
     }
 
     internal sealed class CheatChanges {

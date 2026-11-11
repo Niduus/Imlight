@@ -161,8 +161,9 @@ internal static class CombatEffectApplicator {
             case kSpellEffects.kHealPercent:
             case kSpellEffects.kMaxHealthHeal:
                 foreach (var target in targets.Where(t => t?.ParticipantGameStats is not null)) {
-                    DoHealToTarget(target, (int) Math.Ceiling(target.ParticipantGameStats.m_baseHitpoints * effect.m_effectParam / 100.0),
+                    var healed = DoHealToTarget(target, (int) Math.Ceiling(target.ParticipantGameStats.m_baseHitpoints * effect.m_effectParam / 100.0),
                         RevivesWithHeal(effect, caster, target));
+                    RewrittenAI.OnHeal(caster, target, healed);
                 }
 
                 break;
@@ -474,6 +475,7 @@ internal static class CombatEffectApplicator {
             var percentIncomingHealIncrease = GetPercentIncomingHealIncrease(target);
             var healPerTarget = (int) Math.Ceiling(healFromCaster * (1 + percentIncomingHealIncrease));
 
+            RewrittenAI.OnHeal(caster, target, healPerTarget);
             target._hangingEffects.Add(effect with {
                 m_numRounds = rounds,
                 m_paramPerRound = healPerTarget / rounds,
@@ -639,7 +641,7 @@ internal static class CombatEffectApplicator {
     private static readonly Dictionary<ulong, string> s_creatureNames = [];
 
     // The enemy's name as the game shows it: a custom's own name, else the creature's from the ID catalog.
-    private static string TargetName(CombatDuelSubCircle target) {
+    internal static string TargetName(CombatDuelSubCircle target) {
         var creature = target.ParticipantObject;
         if (target.IsHumanPlayer || creature is null) {
             return $"Slot {target.SlotIndex + 1}";
@@ -708,7 +710,9 @@ internal static class CombatEffectApplicator {
         foreach (var target in targets) {
             if (target is not null) {
                 var heal = (int) Math.Ceiling(healFromCaster * CritOn(target, critMultiplier, isHeal: true));
-                _ = DoHealToTarget(target, heal, RevivesWithHeal(effect, caster, target));
+                var healed = DoHealToTarget(target, heal, RevivesWithHeal(effect, caster, target));
+                // Rewritten AI: healing gives the healer threat (RewrittenAI.cs).
+                RewrittenAI.OnHeal(caster, target, healed);
             }
         }
 
@@ -1051,6 +1055,8 @@ internal static class CombatEffectApplicator {
 
     // Cheats: the last hit each side saw, thorns back on the attacker and lifesteal for it (never below 1 health).
     private static void HitShares(CombatDuelSubCircle caster, CombatDuelSubCircle target, int dealt) {
+        // Rewritten AI: the damage a hit really did counts as threat (RewrittenAI.cs), on or off.
+        RewrittenAI.OnDamage(caster, target, dealt);
         target.CheatLastHitTaken = dealt;
         if (caster is null || caster == target || dealt <= 0) {
             return;

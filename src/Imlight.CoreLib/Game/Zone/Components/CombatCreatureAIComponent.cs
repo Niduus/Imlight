@@ -56,7 +56,7 @@ namespace Imlight.CoreLib.Game.Zone.Components;
 /// <summary>
 /// Handles AI decision-making at a "journeyman" level for NPC entities during combat encounters.
 /// </summary>
-internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityComponent(entity), IComponentFactory, IWithTimers {
+internal sealed partial class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityComponent(entity), IComponentFactory, IWithTimers {
 
     private const int COMBAT_DEATH_ANIMATION_IN_MS = 2000;
 
@@ -230,7 +230,8 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
         _roundHand = _currentSubCircle.DrawFreshHand();
 
         DetermineAttitude();
-        var action = WithPicks(DetermineTurnAction());
+        // Rewritten AI ([RewrittenAI] Enabled, or the creature's own in the Bosses tab): null lets the old AI decide.
+        var action = WithPicks(TryRewrittenTurn() ?? DetermineTurnAction());
         var castSpellId = action.MoveType == (byte) CombatMoveType.Attack
             ? _currentSubCircle.GetSpellFromLastHand((byte) action.SpellSelection)?.m_templateID ?? 0
             : 0;
@@ -269,6 +270,7 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
                 var change = message.Effect.m_effectType == kSpellEffects.kTaunt ? _provokeAggroIncrease * rounds : -_pacifyAggroDecrease * rounds;
                 foreach (var who in onTheirSide) {
                     UpdateHateTable(who.SlotIndex, change);
+                    NoteTaunt(who.SlotIndex, change);
                 }
 
                 return;
@@ -291,6 +293,9 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
             }
 
             UpdateHateTable(message.Caster.SlotIndex, hateValue);
+            if (isPacify || isProvoke) {
+                NoteTaunt(message.Caster.SlotIndex, hateValue);
+            }
         }
         else if (isHealing) {
             UpdateHateTable(message.Caster.SlotIndex, _healingAggroIncrease);
@@ -669,6 +674,11 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
 
         // Joining a second time (or a late re-add) must not throw on keys already there.
         _hateTable.Clear();
+        // The Rewritten AI's memory of this creature starts over with each battle (the battle's own is in RewrittenAI).
+        _tauntPoints.Clear();
+        _rewrittenTarget = -1;
+        _setupStreak = 0;
+        _heldBackLastRound = false;
         for (int i = start; i < end; i++) {
             _hateTable[i] = 0;
         }
