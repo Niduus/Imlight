@@ -113,9 +113,72 @@ public class GameServer : Server {
         Logger.Verbose("New actor created under {Path}: {Name}",
             Logger.Args(Context.Self.Path, processSupervisorActorName));
 
+        // [Overlay] RequiredToPlay: wizards without the Ahziael overlay are kicked (Tools.OverlayGate).
+        _overlayCheck = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(
+            TimeSpan.FromSeconds(Tools.OverlayGate.BEAT_SECONDS), TimeSpan.FromSeconds(Tools.OverlayGate.BEAT_SECONDS), Self, new OverlayCheck(), Self);
+
         // Log
         Logger.Information("Game server created with name {Name} under port {Port}.",
             Logger.Args(serverName, serverPort));
+    }
+
+    private sealed class OverlayCheck;
+
+    private readonly ICancelable _overlayCheck;
+    // Sessions not covered by an overlay, and since when.
+    private readonly System.Collections.Generic.Dictionary<ushort, DateTime> _withoutOverlay = [];
+
+    protected override void PostStop() {
+        _overlayCheck?.Cancel();
+        base.PostStop();
+    }
+
+    [MessageHandler(typeof(OverlayCheck))]
+    private void ReceiveOverlayCheck(OverlayCheck _) {
+        try {
+            if (!Tools.OverlayGate.Required) {
+                _withoutOverlay.Clear();
+
+                return;
+            }
+
+            var now = DateTime.UtcNow;
+            var missing = new System.Collections.Generic.HashSet<ushort>();
+            foreach (var group in ActiveSessions.GroupBy(s => Tools.OverlayGate.Normalize(s.Ip ?? s.RemoteIp))) {
+                var covered = Tools.OverlayGate.Covered(group.Key);
+                // The newest connections are the ones left over.
+                foreach (var session in group.OrderBy(s => _withoutOverlay.TryGetValue(s.SessionID, out var t) ? t : now).ThenBy(s => s.SessionID).Skip(covered)) {
+                    missing.Add(session.SessionID);
+                }
+            }
+
+            foreach (var id in _withoutOverlay.Keys.Where(id => !missing.Contains(id)).ToList()) {
+                _withoutOverlay.Remove(id);
+            }
+
+            var grace = TimeSpan.FromSeconds(Tools.OverlayGate.GraceSeconds);
+            foreach (var session in ActiveSessions.Where(s => missing.Contains(s.SessionID)).ToList()) {
+                if (!_withoutOverlay.TryGetValue(session.SessionID, out var since)) {
+                    _withoutOverlay[session.SessionID] = now;
+
+                    continue;
+                }
+
+                if (now - since < grace) {
+                    continue;
+                }
+
+                _withoutOverlay.Remove(session.SessionID);
+                Logger.Information("Overlay check: {0} ({1}) has no Ahziael overlay running, so it was disconnected.",
+                    Logger.Args(session.GetAssociatedAccount()?.Username ?? $"session {session.SessionID}", Tools.OverlayGate.Normalize(session.Ip ?? session.RemoteIp)));
+                session.ActorRef.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = Tools.OverlayGate.KickMessage, Modal = 1 });
+                // A moment for the message to arrive before the connection closes.
+                Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(2), session.ActorRef, "Close", Self);
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Overlay check failed: {0}", Logger.Args(ex.Message));
+        }
     }
 
     public static Props Props(string serverName, ushort serverPort, string realmName = null)
