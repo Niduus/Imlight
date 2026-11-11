@@ -148,7 +148,7 @@ internal static class OverlayHost {
         s_serverFileTime = time;
         var (elements, required) = (new List<OverlayElement>(), false);
         try {
-            if (time != DateTime.MinValue && new FileInfo(path).Length < 256 * 1024) {
+            if (time != DateTime.MinValue && new FileInfo(path).Length < 2 * 1024 * 1024) {
                 var json = JsonNode.Parse(File.ReadAllText(path));
                 required = (bool?) json?["required"] ?? false;
                 if (json?["design"] is JsonObject design && OverlayDesign.FromJson(design.ToJsonString()) is { } parsed) {
@@ -978,7 +978,7 @@ internal static class OverlayHost {
                 await RemoteAdminWire.WriteAsync(tls, header, null, stop);
                 using var wait = CancellationTokenSource.CreateLinkedTokenSource(stop);
                 wait.CancelAfter(TimeSpan.FromSeconds(30));
-                var (reply, _) = await RemoteAdminWire.ReadAsync(tls, 64 << 10, 0, wait.Token);
+                var (reply, _) = await RemoteAdminWire.ReadAsync(tls, 1 << 20, 0, wait.Token);
                 if (reply["ok"]?.GetValue<bool>() != true) {
                     return;
                 }

@@ -23,6 +23,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 
 namespace Imlight.Setup;
 
@@ -209,6 +210,21 @@ internal static class OverlayRenderer {
             };
         }
 
+        if (e.IsPicture && Picture(e.Picture) is { } bitmap) {
+            border.Child = new Image {
+                Source = bitmap,
+                Stretch = e.PictureFit switch { "Fill" => Stretch.UniformToFill, "Stretch" => Stretch.Fill, _ => Stretch.Uniform },
+            };
+            border.ClipToBounds = true;
+            if (e.Width <= 0) {
+                border.Width = Math.Min(bitmap.Size.Width, 400);
+            }
+
+            if (e.Height <= 0) {
+                border.Height = border.Width * bitmap.Size.Height / Math.Max(1, bitmap.Size.Width);
+            }
+        }
+
         if (!e.IsBox) {
             var decorations = new TextDecorationCollection();
             if (e.Underline) {
@@ -289,6 +305,35 @@ internal static class OverlayRenderer {
             StartPoint = new RelativePoint(0.5 - dx, 0.5 - dy, RelativeUnit.Relative),
             EndPoint = new RelativePoint(0.5 + dx, 0.5 + dy, RelativeUnit.Relative),
         };
+    }
+
+    private static readonly Dictionary<string, Bitmap?> s_pictures = [];
+
+    /// <summary>A picture from its file's base64 (made once and kept); null when it can't be read.</summary>
+    internal static Bitmap? Picture(string base64) {
+        if (string.IsNullOrEmpty(base64)) {
+            return null;
+        }
+
+        lock (s_pictures) {
+            if (s_pictures.TryGetValue(base64, out var known)) {
+                return known;
+            }
+
+            if (s_pictures.Count > 64) {
+                s_pictures.Clear();
+            }
+
+            Bitmap? bitmap = null;
+            try {
+                using var stream = new System.IO.MemoryStream(Convert.FromBase64String(base64));
+                bitmap = new Bitmap(stream);
+            }
+            catch (Exception ex) when (ex is FormatException or ArgumentException or InvalidOperationException or System.IO.IOException or NotSupportedException) {
+            }
+
+            return s_pictures[base64] = bitmap;
+        }
     }
 
     internal static Color? Parse(string text) => !string.IsNullOrWhiteSpace(text) && Color.TryParse(text, out var color) ? color : null;

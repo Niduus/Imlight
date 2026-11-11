@@ -153,7 +153,7 @@ public static class OverlayGate {
     public const string SERVER_DESIGN_FILE = "ServerOverlay.json";
 
     /// <summary>Largest server design sent, in bytes.</summary>
-    public const int MAX_DESIGN_BYTES = 48 << 10;
+    public const int MAX_DESIGN_BYTES = 768 << 10;
 
     private static readonly object s_designLock = new();
     private static DateTime s_designCheck = DateTime.MinValue;

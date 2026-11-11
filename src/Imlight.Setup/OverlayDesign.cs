@@ -112,7 +112,7 @@ internal sealed class OverlayDesign {
 
     internal static OverlayDesign LoadFile(string path) {
         try {
-            if (File.Exists(path) && new FileInfo(path).Length < 512 * 1024) {
+            if (File.Exists(path) && new FileInfo(path).Length < 12 * 1024 * 1024) {
                 return FromJson(File.ReadAllText(path)) ?? new OverlayDesign();
             }
         }
@@ -174,7 +174,13 @@ internal sealed class OverlayElement {
 
     internal const string TEXT = "Text";
     internal const string BOX = "Box";
+    internal const string PICTURE = "Picture";
     internal const int MAX_TEXT = 300;
+
+    /// <summary>Largest picture kept in a design, in bytes of the file (PNG, JPEG, GIF or BMP only).</summary>
+    internal const int MAX_PICTURE_BYTES = 200 * 1024;
+
+    internal static readonly string[] PICTURE_FITS = ["Fit", "Fill", "Stretch"];
 
     public string Kind { get; set; } = TEXT;
     public string Name { get; set; } = "";
@@ -237,10 +243,24 @@ internal sealed class OverlayElement {
     /// <summary>Degrees, clockwise.</summary>
     public double Rotation { get; set; }
 
-    internal bool IsBox => Kind == BOX;
+    /// <summary>Locked in place in the designers: it can't be dragged or sized by mistake (the boxes still change it).</summary>
+    public bool Locked { get; set; }
+
+    /// <summary>A picture's file, as base64 (only PNG, JPEG, GIF and BMP; checked in <see cref="Clean"/>). Only data: nothing in it runs.</summary>
+    public string Picture { get; set; } = "";
+
+    /// <summary>How a picture fills its box: Fit (whole picture), Fill (covers, cropped) or Stretch.</summary>
+    public string PictureFit { get; set; } = "Fit";
+
+    /// <summary>A box or a picture: no words.</summary>
+    internal bool IsBox => Kind != TEXT;
+
+    internal bool IsPicture => Kind == PICTURE;
 
     internal OverlayElement Clean() {
-        Kind = Kind == BOX ? BOX : TEXT;
+        Kind = Kind is BOX or PICTURE ? Kind : TEXT;
+        Picture = Kind == PICTURE ? CleanPicture(Picture) : "";
+        PictureFit = PICTURE_FITS.Contains(PictureFit) ? PictureFit : "Fit";
         Name = Trim(Name, 40);
         Text = Trim(Text, MAX_TEXT);
         if (!Enum.IsDefined(Anchor)) {
@@ -272,6 +292,27 @@ internal sealed class OverlayElement {
         Rotation = Range(Rotation, -360, 360);
 
         return this;
+    }
+
+    /// <summary>The picture if it is a real, small enough PNG, JPEG, GIF or BMP; otherwise none.</summary>
+    internal static string CleanPicture(string? base64) {
+        if (string.IsNullOrEmpty(base64) || base64.Length > MAX_PICTURE_BYTES * 4 / 3 + 8) {
+            return "";
+        }
+
+        try {
+            var bytes = Convert.FromBase64String(base64);
+            var known = bytes.Length > 8 && (
+                (bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47) // PNG
+                || (bytes[0] == 0xFF && bytes[1] == 0xD8) // JPEG
+                || (bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46) // GIF
+                || (bytes[0] == 0x42 && bytes[1] == 0x4D)); // BMP
+
+            return known && bytes.Length <= MAX_PICTURE_BYTES ? base64 : "";
+        }
+        catch (FormatException) {
+            return "";
+        }
     }
 
     private static string Trim(string? text, int max) {
