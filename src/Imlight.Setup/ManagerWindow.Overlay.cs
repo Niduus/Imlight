@@ -1651,13 +1651,55 @@ internal sealed partial class ManagerWindow {
             }, 300)));
 
             switch (e.Action) {
-                case OverlayAction.COMMAND:
-                    panel.Children.Add(OvField("Chat command", OvText(e.Command, v => { e.Command = v; OverlayChanged(false); }, 300)));
+                case OverlayAction.COMMAND: {
+                    var typed = OvText(e.Command, v => { e.Command = v; OverlayChanged(false); }, 300);
+                    // Every Imlight and Ahziael chat command, by topic: picking one puts it in the box to finish off.
+                    var entries = Imlight.CoreLib.Game.Commands.CommandGuide.All.Where(c => c.Typed.StartsWith('.')).ToList();
+                    var pickCommand = new ComboBox {
+                        MinWidth = 300, MaxDropDownHeight = 420, PlaceholderText = "Pick an Imlight or Ahziael command",
+                        ItemsSource = entries.Select(c => $"{c.Section}: {c.Name}  ({c.Typed.Split("   ")[0]})").ToList(),
+                    };
+                    pickCommand.SelectionChanged += (_, _) => {
+                        if (pickCommand.SelectedIndex >= 0 && pickCommand.SelectedIndex < entries.Count) {
+                            var entry = entries[pickCommand.SelectedIndex];
+                            typed.Text = entry.Typed.Split("   ")[0].Trim();
+                            Say($"{entry.Name}: {entry.Help} Change any <...> part in the box to what you want.");
+                        }
+                    };
+                    panel.Children.Add(new WrapPanel { Children = { OvField("Chat command", typed), OvField("Or pick", pickCommand) } });
                     panel.Children.Add(Sub("Any chat command, as you would type it in the game, for example .heal, .tp Ravenwood or " +
                         ".joinme Malistaire the Undying. It runs on the server the game was started on, only for the wizard in the game window the " +
                         "button is on, with that account's own rights: a command a player can't type, they can't click either. Nothing shows in chat. " +
                         "No password: with one game window open it links by itself; with several, the window shows a code once (type .link and the code in its chat)."));
                     break;
+                }
+                case OverlayAction.MOB_CHEAT: {
+                    var name = OvText(e.Command, v => { e.Command = v; OverlayChanged(false); }, 240);
+                    var found = new List<OverlayCommands.CheatInfo>();
+                    var pick = new ComboBox { MinWidth = 300, MaxDropDownHeight = 420, PlaceholderText = "Pick a mob cheat" };
+                    pick.SelectionChanged += (_, _) => {
+                        if (pick.SelectedIndex >= 0 && pick.SelectedIndex < found.Count) {
+                            name.Text = found[pick.SelectedIndex].Name;
+                        }
+                    };
+                    var load = Plain("Load mob cheats");
+                    load.Click += async (_, _) => {
+                        var result = await OverlayCommands.SendAsync("mobcheats", "");
+                        if (!result.Ok) {
+                            Say(result.Text, true);
+                            return;
+                        }
+
+                        found = (result.Cheats ?? []).Where(c => c.Name.Length > 0).ToList();
+                        pick.ItemsSource = found.Select(c => c.Owner.Length > 0 ? $"{c.Name}  ({c.Owner})" : c.Name).ToList();
+                        Say(found.Count == 0 ? result.Text : "The server's mob cheats you can set off are in the list.");
+                    };
+                    panel.Children.Add(new WrapPanel { Children = { OvField("Mob cheat (its name)", name), OvField("Or pick", Row(pick, load)) } });
+                    panel.Children.Add(Sub("Sets off a creature's cheat whose When is \"it is pressed\" (Customs > Bosses: give a creature a cheat with that When " +
+                        "and a name). It goes off in the battle of the wizard in that game window, at the next move, only when a creature " +
+                        "there has a cheat by that name. Nobody else's battle is touched. Load mob cheats needs the game open."));
+                    break;
+                }
                 case OverlayAction.CHEAT: {
                     var name = OvText(e.Command, v => { e.Command = v; OverlayChanged(false); }, 240);
                     var hows = OverlayAction.HOWS;

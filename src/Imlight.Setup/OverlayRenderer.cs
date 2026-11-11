@@ -314,7 +314,27 @@ internal static class OverlayRenderer {
                 text.LineHeight = e.LineHeight;
             }
 
-            border.Child = text;
+            // Words that don't fit a button, or a text given both a width and a height, shrink until they all show
+            // (Niduus, 2026-11-11: "text should shrink to size so it always shows what it's intention is"). Never bigger.
+            var shrink = (e.IsButton && (e.Width > 0 || e.Height > 0)) || (e.Width > 0 && e.Height > 0);
+            if (shrink) {
+                text.TextWrapping = e.IsButton ? TextWrapping.NoWrap : TextWrapping.Wrap;
+                if (!e.IsButton) {
+                    // Wrapped at the box's width, then made smaller only if the lines still don't fit its height.
+                    text.MaxWidth = Math.Max(1, e.Width - 2 * e.Padding - 2 * e.BorderWidth);
+                }
+
+                border.Child = new Viewbox {
+                    Stretch = Stretch.Uniform, StretchDirection = StretchDirection.DownOnly, Child = text,
+                    HorizontalAlignment = e.IsButton ? HorizontalAlignment.Center : e.Align switch {
+                        "Center" => HorizontalAlignment.Center, "Right" => HorizontalAlignment.Right, _ => HorizontalAlignment.Left,
+                    },
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+            }
+            else {
+                border.Child = text;
+            }
         }
 
         if (!highlight) {

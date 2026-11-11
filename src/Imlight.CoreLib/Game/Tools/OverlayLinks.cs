@@ -24,6 +24,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Combat;
 using Imlight.CoreLib.Game.Commands;
 using Imlight.CoreLib.Game.Commands.Protocols;
 using Imlight.RemoteAdmin;
@@ -115,9 +116,29 @@ public static class OverlayLinks {
 
         times.Enqueue(DateTime.UtcNow);
 
+        // The mob (creature) cheats a button can set off: every creature cheat whose When is "pressed", by name.
+        if (kind == "mobcheats") {
+            var list = MobCheats();
+            var answer = RemoteAdminWire.Ok();
+            answer["cheats"] = list;
+            answer["text"] = list.Count == 0 ? "No creature on this server has a \"when pressed\" cheat yet." : "";
+
+            return answer;
+        }
+
         string text;
+        string mobCheat = null;
         switch (kind) {
             case "cheats":
+                text = "";
+                break;
+            case "mobcheat":
+                if (value.Length == 0) {
+                    return RemoteAdminWire.Error("This button has no mob cheat picked yet.");
+                }
+
+                // Pressed below, for this wizard's battle only, once the wizard is known.
+                mobCheat = value;
                 text = "";
                 break;
             case "cheat":
@@ -172,6 +193,14 @@ public static class OverlayLinks {
             return RemoteAdminWire.Error("That wizard is playing from another PC. Buttons only work for the game on this PC.");
         }
 
+        if (mobCheat is not null) {
+            PlayerCheatPresses.Press(charId, $"name:{mobCheat.ToLowerInvariant()}");
+            var pressed = RemoteAdminWire.Ok();
+            pressed["text"] = $"{mobCheat} is pressed. If a creature in your battle has a \"when pressed\" cheat by that name, it goes off at the next move.";
+
+            return pressed;
+        }
+
         if (text.Length > 0) {
             Logger.Information("Overlay buttons: wizard {0} ran \"{1}\".", Logger.Args(charId, text));
             for (var i = 0; i < 15; i++) {
@@ -193,6 +222,31 @@ public static class OverlayLinks {
 
     // The wizard this game window is linked to: as linked before, or by itself when this PC has one wizard in the game
     // and one game window (window 0 is Ahziael's designer: the window's own link when the overlay has only one).
+    // Every creature cheat that goes off when pressed, once per name, with the creatures that have it.
+    private static JsonArray MobCheats() {
+        var names = new System.Collections.Generic.SortedDictionary<string, System.Collections.Generic.List<string>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var (template, cheats) in BossCheats.All()) {
+            foreach (var cheat in cheats.Where(c => c.Is("Pressed") && !string.IsNullOrWhiteSpace(c.Name))) {
+                var name = cheat.Name.Trim();
+                if (!names.TryGetValue(name, out var owners)) {
+                    names[name] = owners = [];
+                }
+
+                var owner = BossCheats.NameOf(template);
+                if (owners.Count < 3 && !string.IsNullOrWhiteSpace(owner) && !owners.Contains(owner)) {
+                    owners.Add(owner);
+                }
+            }
+        }
+
+        var list = new JsonArray();
+        foreach (var (name, owners) in names.Take(500)) {
+            list.Add(new JsonObject { ["number"] = 0, ["name"] = name, ["canUse"] = true, ["owner"] = string.Join(", ", owners) });
+        }
+
+        return list;
+    }
+
     private static async Task<ulong> WizardFor(long link, long window, int linkWindows, string address) {
         if (s_bound.TryGetValue((link, window), out var bound)) {
             return bound;

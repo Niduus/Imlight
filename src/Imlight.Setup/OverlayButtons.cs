@@ -86,7 +86,7 @@ internal static class OverlayButtons {
                 done(true);
 
                 return;
-            case OverlayAction.COMMAND or OverlayAction.CHEAT:
+            case OverlayAction.COMMAND or OverlayAction.CHEAT or OverlayAction.MOB_CHEAT:
                 _ = RunOnServerAsync(button, game, done);
 
                 return;
@@ -101,7 +101,7 @@ internal static class OverlayButtons {
     private static async Task RunOnServerAsync(OverlayElement button, IntPtr game, Action<bool> done) {
         var value = button.Command.Trim();
         if (value.Length == 0) {
-            Report(button.Action == OverlayAction.CHEAT ? "This button has no cheat picked yet." : "This button has no command yet.", false, done);
+            Report(button.Action == OverlayAction.COMMAND ? "This button has no command yet." : "This button has no cheat picked yet.", false, done);
 
             return;
         }
@@ -111,6 +111,10 @@ internal static class OverlayButtons {
             OverlayCommands.Result result;
             if (button.Action == OverlayAction.COMMAND) {
                 result = await OverlayCommands.SendAsync("command", value, game, stop.Token);
+            }
+            else if (button.Action == OverlayAction.MOB_CHEAT) {
+                // A creature's "when pressed" cheat in this wizard's battle, by its name.
+                result = await OverlayCommands.SendAsync("mobcheat", value, game, stop.Token);
             }
             else {
                 var how = button.CheatHow switch {
