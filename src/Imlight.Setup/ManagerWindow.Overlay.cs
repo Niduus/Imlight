@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -41,20 +42,10 @@ internal sealed partial class ManagerWindow {
 
     private const string OVERLAY = "Overlay";
     private const string OVERLAY_SECTION = "Overlay";
-    private const double PREVIEW_W = 1280;
-    private const double PREVIEW_H = 720;
 
-    private OverlayDesign _ovDesign = new();
-    private OverlayElement? _ovSelected;
-    private readonly Border _ovPreview = new() {
-        CornerRadius = new CornerRadius(8), ClipToBounds = true, BorderThickness = new Thickness(1),
-    };
-    private readonly ListBox _ovList = new() { MinHeight = 180, MaxHeight = 320 };
-    private readonly StackPanel _ovEditor = new() { Spacing = 10 };
-    private readonly ToggleSwitch _ovEnabled = new() { OnContent = "On", OffContent = "Off" };
+    private OverlayEditor? _ovEditorPage;
     private readonly TextBlock _ovStatus = Sub("");
     private readonly DispatcherTimer _ovTimer = new() { Interval = TimeSpan.FromSeconds(1) };
-    private bool _ovFilling;
 
     // The server's rule.
     private readonly ToggleSwitch _ovRequired = new() { OnContent = "On", OffContent = "Off" };
@@ -68,26 +59,23 @@ internal sealed partial class ManagerWindow {
     private static string[]? s_systemFonts;
 
     private Control OverlayTab() {
-        _ovDesign = OverlayHost.Design.Copy();
-        _ovEnabled.IsChecked = _ovDesign.Enabled;
-        _ovEnabled.IsCheckedChanged += (_, _) => {
-            if (!_ovFilling) {
-                _ovDesign.Enabled = _ovEnabled.IsChecked == true;
-                OverlayChanged(false);
-                Say(_ovDesign.Enabled ? "The overlay is on. It shows over Wizard101 while Ahziael is open."
-                    : "The overlay is off. Servers that need it will turn you away until you turn it back on.");
-            }
-        };
+        _ovEditorPage = new OverlayEditor(this, (text, error) => Say(text, error));
         _ovTimer.Tick += (_, _) => _ovStatus.Text = OverlayStatus();
         _ovTimer.Start();
         _ovStatus.Text = OverlayStatus();
-        _ovPreview.BorderBrush = LINE;
-        _ovList.SelectionChanged += (_, _) => {
-            if (!_ovFilling && _ovList.SelectedIndex >= 0) {
-                _ovSelected = _ovList.SelectedIndex == 0 ? _ovDesign.Credit : _ovDesign.Elements[_ovList.SelectedIndex - 1];
-                RenderOverlayEditor();
-                RenderOverlayPreview();
+        // The button on the game opens this tab.
+        OverlayHost.DesignRequested += () => {
+            if (OverlayHost.Standalone) {
+                return;
             }
+
+            if (WindowState == WindowState.Minimized) {
+                WindowState = WindowState.Normal;
+            }
+
+            Show();
+            Activate();
+            SelectTab(OVERLAY);
         };
 
         // The server's switch.
@@ -106,63 +94,35 @@ internal sealed partial class ManagerWindow {
             }
         };
 
-        _ovSelected = _ovDesign.Credit;
-        FillOverlayList();
-        RenderOverlayEditor();
-        RenderOverlayPreview();
-
-        var editor = new Grid {
-            ColumnDefinitions = new ColumnDefinitions("260,*"), ColumnSpacing = 16,
-            Children = {
-                new StackPanel {
-                    Spacing = 8,
-                    Children = {
-                        new TextBlock { Text = "What it shows", FontWeight = FontWeight.SemiBold },
-                        _ovList,
-                        new WrapPanel {
-                            Children = {
-                                Spaced(Action(Plain("Add text"), () => AddOverlayElement(OverlayElement.TEXT))),
-                                Spaced(Action(Plain("Add box"), () => AddOverlayElement(OverlayElement.BOX))),
-                                Spaced(Action(Plain("Copy"), DuplicateOverlayElement)),
-                                Spaced(Action(Plain("Up"), () => MoveOverlayElement(-1))),
-                                Spaced(Action(Plain("Down"), () => MoveOverlayElement(1))),
-                                Spaced(Danger(Action(Plain("Remove"), RemoveOverlayElement))),
-                            },
-                        },
-                        Sub("Lower in the list is drawn on top. The Ahziael line is always on top and can't be removed, moved out of its corner or reworded, but its look can change."),
-                    },
-                },
-                WithColumn(_ovEditor, 1),
-            },
-        };
-
         return WidePage(
-            Fold("sparkle", "Play", "Game overlay", "What Ahziael draws over the Wizard101 window while it is open.",
-                SwitchRow("Show the overlay", _ovEnabled,
-                    "On: \"Ahziael made by Niduus | " + OverlayHost.Version + "\" in the bottom-left corner of the game, and anything you add below. " +
-                    "Clicks go straight through it to the game. Keep Ahziael open while you play (it can be minimized)."),
+            Fold("sparkle", "Play", "Game overlay", "What Ahziael draws over the Wizard101 window.",
+                _ovEditorPage.EnabledRow(),
                 _ovStatus,
-                Sub("It only shows while the game window is in front. Wizard101 in true full screen hides every other window, so play in a " +
-                    "window (or the game's windowed full-screen mode) to see it. Ahziael never changes or adds anything inside the game.")),
+                Sub("It sticks to the game window: it moves and resizes with it, stays through loading screens and when you click " +
+                    "another window, and only goes away while the game is minimized. Click the small sparkle button in the game's " +
+                    "bottom-right corner to open the designer below. Wizard101 in true full screen hides every other window, so play in a " +
+                    "window (or the game's windowed full-screen mode) to see it. Nothing inside the game is changed.")),
+            Fold("play", "Play", "Overlay without Ahziael open",
+                "Run just the overlay, on its own, with Ahziael closed.",
+                WithHint(Row(Action(Primary("Start the overlay on its own"), StartStandaloneOverlayAsync),
+                        Action(Plain("Make a desktop shortcut"), MakeOverlayShortcutAsync)),
+                    "\"Ahziael Overlay\" is a small program that only draws the overlay, with the same design and the same sparkle button " +
+                    "(which opens a designer window). It shows a sparkle icon by the clock, where you can open the designer or stop it. " +
+                    "Only one of them draws at a time: with both open, whichever started first draws."),
+                Sub("Servers that don't require the overlay don't care whether you have it, with or without Ahziael.")),
             Fold("sliders", "Customs", "Design it", "Fonts, colours, gradients, boxes, shadows, see-through and position. No code: everything is a box to fill in.",
-                WithMargin(new Viewbox { Stretch = Stretch.Uniform, MaxHeight = 400, Child = _ovPreview }, new Thickness(0, 0, 0, 6)),
-                Sub("The picture is a stand-in for the game at 1280 x 720. The outlined one is the one you are changing."),
-                editor,
-                WithHint(Row(Action(Plain("Save design to a file"), ExportOverlayAsync), Action(Plain("Open a design file"), ImportOverlayAsync),
-                        Danger(Action(Plain("Start over"), ResetOverlayAsync))),
-                    "A design file (" + OverlayDesign.SHARE_EXTENSION + ") holds only words, colours and numbers, so it is safe to share: it can't run anything. " +
-                    "Opening one replaces your design (Start over brings back the plain one).")),
+                _ovEditorPage.Build()),
             Fold("shield", "Server", "Require the overlay on my server",
                 "Turn away players whose Ahziael overlay isn't running.",
                 SwitchRow("Require the Ahziael overlay", _ovRequired,
-                    "On: a player whose PC has no Ahziael overlay running is disconnected with the message below. Off (the start): anyone can play. " +
-                    "Works right away, no restart, and players already in the game are checked too."),
+                    "On: a player whose PC has no Ahziael overlay running (in Ahziael or on its own) is disconnected with the message below. " +
+                    "Off (the start): anyone can play. Works right away, no restart, and players already in the game are checked too."),
                 SwitchRow("Seconds before the kick", _ovGrace, "How long a player may be in the game without the overlay first."),
                 new StackPanel {
                     Spacing = 4,
                     Children = { new TextBlock { Text = "What they see" }, _ovKick, WithMargin(Row(Action(Plain("Save message"), SaveKickMessageAsync)), new Thickness(0, 4, 0, 0)) },
                 },
-                Sub("How it knows: Ahziael on the player's PC keeps a small connection to your server (the same port as Remote Admin, " +
+                Sub("How it knows: the overlay on the player's PC keeps a small connection to your server (the same port as Remote Admin, " +
                     "12410 unless you changed it) and says every 5 seconds how many game windows it draws on. That many game " +
                     "connections from that internet address are let in. It sends no account, password or files. " +
                     "Friends on the internet need that port open too: click \"Let friends connect\" on the Play tab once more after turning this on."),
@@ -170,9 +130,14 @@ internal sealed partial class ManagerWindow {
                 _ovRuleNote));
     }
 
-    private static string OverlayStatus() {
+    internal static string OverlayStatus() {
         if (!OperatingSystem.IsWindows()) {
             return "The overlay works on Windows only.";
+        }
+
+        if (!OverlayHost.IsDrawing) {
+            return OverlayHost.Standalone ? "Ahziael is open and drawing the overlay, so this one waits. Close Ahziael and this one takes over."
+                : "Ahziael Overlay (on its own) is drawing the overlay. Changes made here show there too.";
         }
 
         var games = OverlayHost.GameWindows;
@@ -181,6 +146,23 @@ internal sealed partial class ManagerWindow {
             : $"Drawing on {games} Wizard101 window{(games == 1 ? "" : "s")}.";
 
         return drawing + " " + OverlayHost.Link.Status;
+    }
+
+    private Task StartStandaloneOverlayAsync() {
+        var exe = OverlayShortcut.Exe(_manager.InstallFolder);
+        Process.Start(new ProcessStartInfo(exe) { ArgumentList = { "--overlay", "--dir", _manager.InstallFolder }, UseShellExecute = false, CreateNoWindow = true,
+            WorkingDirectory = _manager.InstallFolder })?.Dispose();
+        Say(OverlayHost.IsDrawing
+            ? "Ahziael Overlay started. Ahziael is drawing for now; when you close Ahziael, Ahziael Overlay takes over by itself."
+            : "Ahziael Overlay started.");
+
+        return Task.CompletedTask;
+    }
+
+    private async Task MakeOverlayShortcutAsync() {
+        Say(await OverlayShortcut.MakeAsync(_manager.InstallFolder)
+            ? "Made \"Ahziael Overlay\" on your desktop. Double-click it to run the overlay without Ahziael."
+            : "The shortcut could not be made. Use \"Start the overlay on its own\" instead.", isError: false);
     }
 
     // ---------------------------------------------------------------------
@@ -217,274 +199,395 @@ internal sealed partial class ManagerWindow {
         return Task.CompletedTask;
     }
 
-    // ---------------------------------------------------------------------
-    // The list and the preview
-    // ---------------------------------------------------------------------
+    /// <summary>
+    /// The no-code designer: the picture, the list of texts and boxes, and the boxes to fill in for the picked one. The
+    /// same on Ahziael's Overlay tab and in the window of the overlay on its own (<see cref="OverlayDesignerWindow"/>).
+    /// </summary>
+    internal sealed class OverlayEditor {
 
-    private void FillOverlayList() {
-        _ovFilling = true;
-        try {
-            var names = new List<string> { "Ahziael line (always shown)" };
-            names.AddRange(_ovDesign.Elements.Select((e, i) => {
-                var name = e.Name.Length > 0 ? e.Name : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : $"Text {i + 1}";
-                if (name.Length > 34) {
-                    name = name[..34] + "…";
-                }
+        private const double PREVIEW_W = 1280;
+        private const double PREVIEW_H = 720;
 
-                return (e.IsBox ? "▭ " : "T  ") + name + (e.Visible ? "" : " (hidden)");
-            }));
-            _ovList.ItemsSource = names;
-            _ovList.SelectedIndex = _ovSelected == _ovDesign.Credit || _ovSelected is null ? 0 : _ovDesign.Elements.IndexOf(_ovSelected) + 1;
-        }
-        finally {
-            _ovFilling = false;
-        }
-    }
-
-    private void RenderOverlayPreview() {
-        var words = new OverlayRenderer.Words(OverlayHost.Version, string.IsNullOrEmpty(OverlayHost.Link.ServerLabel) ? "127.0.0.1" : OverlayHost.Link.ServerLabel);
-        _ovPreview.Child = new Panel {
-            Width = PREVIEW_W, Height = PREVIEW_H,
-            Children = {
-                // A stand-in for the game: sky, hills and a little sun.
-                new Border {
-                    Background = new LinearGradientBrush {
-                        StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative), EndPoint = new RelativePoint(0, 1, RelativeUnit.Relative),
-                        GradientStops = { new GradientStop(Color.FromRgb(0x3A, 0x6F, 0xC4), 0), new GradientStop(Color.FromRgb(0x9C, 0xC8, 0xF0), 0.62),
-                            new GradientStop(Color.FromRgb(0x4E, 0x8A, 0x3C), 0.63), new GradientStop(Color.FromRgb(0x2D, 0x5A, 0x24), 1) },
-                    },
-                },
-                new Border {
-                    Width = 120, Height = 120, CornerRadius = new CornerRadius(60), Margin = new Thickness(0, 80, 160, 0),
-                    HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top,
-                    Background = new RadialGradientBrush { GradientStops = { new GradientStop(Color.FromRgb(0xFF, 0xF2, 0xA8), 0), new GradientStop(Color.FromArgb(0, 0xFF, 0xE0, 0x70), 1) } },
-                },
-                OverlayRenderer.Build(_ovDesign, words, _ovSelected),
-            },
+        private readonly Window _owner;
+        private readonly Action<string, bool> _say;
+        private OverlayDesign _ovDesign;
+        private OverlayElement? _ovSelected;
+        private readonly Border _ovPreview = new() {
+            CornerRadius = new CornerRadius(8), ClipToBounds = true, BorderThickness = new Thickness(1),
         };
-    }
+        private readonly ListBox _ovList = new() { MinHeight = 180, MaxHeight = 320 };
+        private readonly StackPanel _ovEditor = new() { Spacing = 10 };
+        private readonly ToggleSwitch _ovEnabled = new() { OnContent = "On", OffContent = "Off" };
+        private bool _ovFilling;
 
-    /// <summary>A change to the design: the picture, the list and the overlay over the game follow at once.</summary>
-    private void OverlayChanged(bool list = true) {
-        _ovDesign.Clean();
-        if (list) {
-            FillOverlayList();
-        }
-
-        RenderOverlayPreview();
-        OverlayHost.Apply(_ovDesign);
-    }
-
-    private Task AddOverlayElement(string kind) {
-        if (_ovDesign.Elements.Count >= OverlayDesign.MAX_ELEMENTS) {
-            throw new PanelException($"The overlay holds up to {OverlayDesign.MAX_ELEMENTS} texts and boxes.");
-        }
-
-        var element = kind == OverlayElement.BOX
-            ? new OverlayElement {
-                Kind = OverlayElement.BOX, Name = "", Anchor = OverlayAnchor.TopRight, X = 20, Y = 20, Width = 220, Height = 80, CornerRadius = 12,
-                Background = new OverlayPaint { Kind = OverlayPaint.LINEAR, Color1 = "#B0281B4D", Color2 = "#B0601E70", Angle = 45 },
-                BorderColor = "#80FFFFFF", BorderWidth = 1,
-            }
-            : new OverlayElement {
-                Text = "My server", Anchor = OverlayAnchor.TopLeft, X = 20, Y = 20, Size = 22, Bold = true, Shadow = true,
-                Fill = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#FFFFFFFF" },
+        internal OverlayEditor(Window owner, Action<string, bool> say) {
+            _owner = owner;
+            _say = say;
+            _ovDesign = OverlayHost.Design.Copy();
+            _ovPreview.BorderBrush = LINE;
+            _ovEnabled.IsChecked = _ovDesign.Enabled;
+            _ovEnabled.IsCheckedChanged += (_, _) => {
+                if (!_ovFilling) {
+                    _ovDesign.Enabled = _ovEnabled.IsChecked == true;
+                    OverlayChanged(false);
+                    Say(_ovDesign.Enabled ? "The overlay is on. It shows over Wizard101."
+                        : "The overlay is off. Servers that need it will turn you away until you turn it back on.");
+                }
             };
-        _ovDesign.Elements.Add(element);
-        _ovSelected = element;
-        OverlayChanged();
-        RenderOverlayEditor();
-
-        return Task.CompletedTask;
-    }
-
-    private Task DuplicateOverlayElement() {
-        if (_ovSelected is null || _ovSelected == _ovDesign.Credit) {
-            throw new PanelException("Pick a text or box you added to copy it. The Ahziael line can't be copied.");
+            _ovList.SelectionChanged += (_, _) => {
+                if (!_ovFilling && _ovList.SelectedIndex >= 0) {
+                    _ovSelected = _ovList.SelectedIndex == 0 ? _ovDesign.Credit : _ovDesign.Elements[_ovList.SelectedIndex - 1];
+                    RenderOverlayEditor();
+                    RenderOverlayPreview();
+                }
+            };
+            _ovSelected = _ovDesign.Credit;
+            FillOverlayList();
+            RenderOverlayEditor();
+            RenderOverlayPreview();
         }
 
-        if (_ovDesign.Elements.Count >= OverlayDesign.MAX_ELEMENTS) {
-            throw new PanelException($"The overlay holds up to {OverlayDesign.MAX_ELEMENTS} texts and boxes.");
+        private void Say(string text, bool isError = false) => _say(text, isError);
+
+        private Task<bool> ConfirmAsync(string question) => Dialog(question, null, out _).ShowDialog<bool>(_owner);
+
+        private IStorageProvider StorageProvider => _owner.StorageProvider;
+
+        private Button Action(Button button, Func<Task> action) {
+            button.Click += async (_, _) => {
+                button.IsEnabled = false;
+                try {
+                    await action();
+                }
+                catch (Exception ex) when (ex is PanelException) {
+                    Say(ex.Message, true);
+                }
+                catch (Exception ex) {
+                    Say($"Something went wrong: {ex.Message}", true);
+                }
+                finally {
+                    button.IsEnabled = true;
+                }
+            };
+
+            return button;
         }
 
-        var copy = OverlayDesign.FromJson(new OverlayDesign { Elements = [_ovSelected] }.ToJson())!.Elements[0];
-        copy.X += 16;
-        copy.Y += 16;
-        _ovDesign.Elements.Insert(_ovDesign.Elements.IndexOf(_ovSelected) + 1, copy);
-        _ovSelected = copy;
-        OverlayChanged();
-        RenderOverlayEditor();
+        internal Control EnabledRow() => SwitchRow("Show the overlay", _ovEnabled,
+            "On: \"Ahziael made by Niduus | " + OverlayHost.Version + "\" in the bottom-left corner of the game, the sparkle button in the " +
+            "bottom-right, and anything you design. Clicks go straight through it to the game (only the sparkle button takes them).");
 
-        return Task.CompletedTask;
-    }
+        internal Control Build() {
+            var editor = new Grid {
+                ColumnDefinitions = new ColumnDefinitions("260,*"), ColumnSpacing = 16,
+                Children = {
+                    new StackPanel {
+                        Spacing = 8,
+                        Children = {
+                            new TextBlock { Text = "What it shows", FontWeight = FontWeight.SemiBold },
+                            _ovList,
+                            new WrapPanel {
+                                Children = {
+                                    Spaced(Action(Plain("Add text"), () => AddOverlayElement(OverlayElement.TEXT))),
+                                    Spaced(Action(Plain("Add box"), () => AddOverlayElement(OverlayElement.BOX))),
+                                    Spaced(Action(Plain("Copy"), DuplicateOverlayElement)),
+                                    Spaced(Action(Plain("Up"), () => MoveOverlayElement(-1))),
+                                    Spaced(Action(Plain("Down"), () => MoveOverlayElement(1))),
+                                    Spaced(Danger(Action(Plain("Remove"), RemoveOverlayElement))),
+                                },
+                            },
+                            Sub("Lower in the list is drawn on top. The Ahziael line is always on top and can't be removed, moved out of its corner or reworded, but its look can change."),
+                        },
+                    },
+                    WithColumn(_ovEditor, 1),
+                },
+            };
 
-    private Task MoveOverlayElement(int by) {
-        if (_ovSelected is null || _ovSelected == _ovDesign.Credit) {
+            return new StackPanel {
+                Spacing = 10,
+                Children = {
+                    WithMargin(new Viewbox { Stretch = Stretch.Uniform, MaxHeight = 400, Child = _ovPreview }, new Thickness(0, 0, 0, 6)),
+                    Sub("The picture is a stand-in for the game at 1280 x 720. The outlined one is the one you are changing. Changes show on the game at once."),
+                    editor,
+                    WithHint(Row(Action(Plain("Save design to a file"), ExportOverlayAsync), Action(Plain("Open a design file"), ImportOverlayAsync),
+                            Danger(Action(Plain("Start over"), ResetOverlayAsync))),
+                        "A design file (" + OverlayDesign.SHARE_EXTENSION + ") holds only words, colours and numbers, so it is safe to share: it can't run anything. " +
+                        "Opening one replaces your design (Start over brings back the plain one)."),
+                },
+            };
+        }
+
+        // ---------------------------------------------------------------------
+        // The list and the preview
+        // ---------------------------------------------------------------------
+
+        private void FillOverlayList() {
+            _ovFilling = true;
+            try {
+                var names = new List<string> { "Ahziael line (always shown)" };
+                names.AddRange(_ovDesign.Elements.Select((e, i) => {
+                    var name = e.Name.Length > 0 ? e.Name : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : $"Text {i + 1}";
+                    if (name.Length > 34) {
+                        name = name[..34] + "…";
+                    }
+
+                    return (e.IsBox ? "▭ " : "T  ") + name + (e.Visible ? "" : " (hidden)");
+                }));
+                _ovList.ItemsSource = names;
+                _ovList.SelectedIndex = _ovSelected == _ovDesign.Credit || _ovSelected is null ? 0 : _ovDesign.Elements.IndexOf(_ovSelected) + 1;
+            }
+            finally {
+                _ovFilling = false;
+            }
+        }
+
+        private void RenderOverlayPreview() {
+            var words = new OverlayRenderer.Words(OverlayHost.Version, string.IsNullOrEmpty(OverlayHost.Link.ServerLabel) ? "127.0.0.1" : OverlayHost.Link.ServerLabel);
+            _ovPreview.Child = new Panel {
+                Width = PREVIEW_W, Height = PREVIEW_H,
+                Children = {
+                    // A stand-in for the game: sky, hills and a little sun.
+                    new Border {
+                        Background = new LinearGradientBrush {
+                            StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative), EndPoint = new RelativePoint(0, 1, RelativeUnit.Relative),
+                            GradientStops = { new GradientStop(Color.FromRgb(0x3A, 0x6F, 0xC4), 0), new GradientStop(Color.FromRgb(0x9C, 0xC8, 0xF0), 0.62),
+                                new GradientStop(Color.FromRgb(0x4E, 0x8A, 0x3C), 0.63), new GradientStop(Color.FromRgb(0x2D, 0x5A, 0x24), 1) },
+                        },
+                    },
+                    new Border {
+                        Width = 120, Height = 120, CornerRadius = new CornerRadius(60), Margin = new Thickness(0, 80, 160, 0),
+                        HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top,
+                        Background = new RadialGradientBrush { GradientStops = { new GradientStop(Color.FromRgb(0xFF, 0xF2, 0xA8), 0), new GradientStop(Color.FromArgb(0, 0xFF, 0xE0, 0x70), 1) } },
+                    },
+                    OverlayRenderer.Build(_ovDesign, words, _ovSelected),
+                },
+            };
+        }
+
+        /// <summary>A change to the design: the picture, the list and the overlay over the game follow at once.</summary>
+        private void OverlayChanged(bool list = true) {
+            _ovDesign.Clean();
+            if (list) {
+                FillOverlayList();
+            }
+
+            RenderOverlayPreview();
+            OverlayHost.Apply(_ovDesign);
+        }
+
+        private Task AddOverlayElement(string kind) {
+            if (_ovDesign.Elements.Count >= OverlayDesign.MAX_ELEMENTS) {
+                throw new PanelException($"The overlay holds up to {OverlayDesign.MAX_ELEMENTS} texts and boxes.");
+            }
+
+            var element = kind == OverlayElement.BOX
+                ? new OverlayElement {
+                    Kind = OverlayElement.BOX, Name = "", Anchor = OverlayAnchor.TopRight, X = 20, Y = 20, Width = 220, Height = 80, CornerRadius = 12,
+                    Background = new OverlayPaint { Kind = OverlayPaint.LINEAR, Color1 = "#B0281B4D", Color2 = "#B0601E70", Angle = 45 },
+                    BorderColor = "#80FFFFFF", BorderWidth = 1,
+                }
+                : new OverlayElement {
+                    Text = "My server", Anchor = OverlayAnchor.TopLeft, X = 20, Y = 20, Size = 22, Bold = true, Shadow = true,
+                    Fill = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#FFFFFFFF" },
+                };
+            _ovDesign.Elements.Add(element);
+            _ovSelected = element;
+            OverlayChanged();
+            RenderOverlayEditor();
+
             return Task.CompletedTask;
         }
 
-        var at = _ovDesign.Elements.IndexOf(_ovSelected);
-        var to = Math.Clamp(at + by, 0, _ovDesign.Elements.Count - 1);
-        if (to != at) {
-            _ovDesign.Elements.RemoveAt(at);
-            _ovDesign.Elements.Insert(to, _ovSelected);
-            OverlayChanged();
-        }
-
-        return Task.CompletedTask;
-    }
-
-    private async Task RemoveOverlayElement() {
-        if (_ovSelected is null || _ovSelected == _ovDesign.Credit) {
-            throw new PanelException("The Ahziael line is always shown, so it can't be removed. Pick one you added.");
-        }
-
-        if (!await ConfirmAsync("Remove this from the overlay?")) {
-            return;
-        }
-
-        _ovDesign.Elements.Remove(_ovSelected);
-        _ovSelected = _ovDesign.Credit;
-        OverlayChanged();
-        RenderOverlayEditor();
-    }
-
-    private async Task ResetOverlayAsync() {
-        if (!await ConfirmAsync("Start the overlay over? Everything you added is removed and the Ahziael line gets its first look back.")) {
-            return;
-        }
-
-        _ovDesign = new OverlayDesign { Enabled = _ovDesign.Enabled };
-        _ovSelected = _ovDesign.Credit;
-        OverlayChanged();
-        RenderOverlayEditor();
-        Say("The overlay is back to how it started.");
-    }
-
-    private async Task ExportOverlayAsync() {
-        var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions {
-            Title = "Save the overlay design", SuggestedFileName = "My overlay" + OverlayDesign.SHARE_EXTENSION,
-            DefaultExtension = OverlayDesign.SHARE_EXTENSION.TrimStart('.'), ShowOverwritePrompt = true,
-            FileTypeChoices = [new FilePickerFileType("Ahziael overlay design") { Patterns = ["*" + OverlayDesign.SHARE_EXTENSION] }],
-            SuggestedStartLocation = await StorageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Desktop),
-        });
-        if (file is null) {
-            return;
-        }
-
-        await using (var stream = await file.OpenWriteAsync()) {
-            stream.SetLength(0);
-            await using var writer = new StreamWriter(stream);
-            await writer.WriteAsync(_ovDesign.ToJson());
-        }
-
-        Say($"Saved the overlay design as \"{file.Name}\". A friend opens it here with \"Open a design file\".");
-    }
-
-    private async Task ImportOverlayAsync() {
-        var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
-            Title = "Open an overlay design", AllowMultiple = false,
-            FileTypeFilter = [new FilePickerFileType("Ahziael overlay design") { Patterns = ["*" + OverlayDesign.SHARE_EXTENSION, "*.json"] }, FilePickerFileTypes.All],
-        });
-        if (files.Count == 0) {
-            return;
-        }
-
-        var path = files[0].TryGetLocalPath() ?? throw new PanelException("Ahziael can only open a design file that is on this computer.");
-        if (new FileInfo(path).Length > 512 * 1024) {
-            throw new PanelException("That file is too big to be an overlay design.");
-        }
-
-        var design = OverlayDesign.FromJson(await File.ReadAllTextAsync(path))
-            ?? throw new PanelException("That file is not an Ahziael overlay design.");
-        if (!await ConfirmAsync($"Use the design in \"{files[0].Name}\"? It replaces yours ({design.Elements.Count} text{(design.Elements.Count == 1 ? "" : "s")} and boxes).")) {
-            return;
-        }
-
-        design.Enabled = _ovDesign.Enabled;
-        _ovDesign = design;
-        _ovSelected = _ovDesign.Credit;
-        OverlayChanged();
-        RenderOverlayEditor();
-        Say("The overlay now uses that design.");
-    }
-
-    // ---------------------------------------------------------------------
-    // The editor of the picked one
-    // ---------------------------------------------------------------------
-
-    private void RenderOverlayEditor() {
-        _ovEditor.Children.Clear();
-        var e = _ovSelected ?? _ovDesign.Credit;
-        var credit = e == _ovDesign.Credit;
-
-        void Changed() => OverlayChanged(false);
-
-        // What and where.
-        var what = new WrapPanel();
-        if (credit) {
-            _ovEditor.Children.Add(Sub("The Ahziael line: \"" + OverlayDesign.CreditLine(OverlayHost.Version) + "\", always in the bottom-left corner. Change how it looks below."));
-        }
-        else {
-            what.Children.Add(OvField("Name in the list", OvText(e.Name, v => { e.Name = v; OverlayChanged(); }, 180)));
-            what.Children.Add(OvField("Shown", OvCheck("Shown", e.Visible, v => { e.Visible = v; OverlayChanged(); })));
-            what.Children.Add(OvField("Pinned to", OvCombo(Enum.GetNames<OverlayAnchor>().Select(SpacedName).ToArray(), (int) e.Anchor, i => { e.Anchor = (OverlayAnchor) i; Changed(); }, 150)));
-        }
-
-        what.Children.Add(OvField(credit ? "In from the left" : "Across (X)", OvNumber(e.X, credit ? 0 : -4000, credit ? 200 : 4000, 1, v => { e.X = v; Changed(); })));
-        what.Children.Add(OvField(credit ? "Up from the bottom" : "Down (Y)", OvNumber(e.Y, credit ? 0 : -4000, credit ? 200 : 4000, 1, v => { e.Y = v; Changed(); })));
-        if (!credit) {
-            what.Children.Add(OvField(e.IsBox ? "Width" : "Width (0 = fit)", OvNumber(e.Width, 0, 4000, 5, v => { e.Width = v; Changed(); })));
-            what.Children.Add(OvField(e.IsBox ? "Height" : "Height (0 = fit)", OvNumber(e.Height, 0, 4000, 5, v => { e.Height = v; Changed(); })));
-            what.Children.Add(OvField("Turn (degrees)", OvNumber(e.Rotation, -360, 360, 5, v => { e.Rotation = v; Changed(); })));
-        }
-
-        what.Children.Add(OvField("See-through", OvSlider(e.Opacity, credit ? 0.5 : 0, 1, v => { e.Opacity = v; Changed(); })));
-        _ovEditor.Children.Add(OvGroup("What and where", what));
-
-        if (!e.IsBox) {
-            if (!credit) {
-                var words = new TextBox { Text = e.Text, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, MinHeight = 60, MaxLength = OverlayElement.MAX_TEXT };
-                words.TextChanged += (_, _) => { e.Text = words.Text ?? ""; OverlayChanged(); };
-                _ovEditor.Children.Add(OvGroup("Words", new StackPanel {
-                    Spacing = 4,
-                    Children = { words, Sub("Fill-ins: {version} Ahziael's version, {server} the server's address, {time} the time, {date} the date.") },
-                }));
+        private Task DuplicateOverlayElement() {
+            if (_ovSelected is null || _ovSelected == _ovDesign.Credit) {
+                throw new PanelException("Pick a text or box you added to copy it. The Ahziael line can't be copied.");
             }
 
-            var font = new WrapPanel();
-            var fonts = SystemFonts();
-            var fontIndex = Math.Max(0, Array.IndexOf(fonts, e.Font.Length == 0 ? fonts[0] : e.Font));
-            font.Children.Add(OvField("Font", OvCombo(fonts, fontIndex, i => { e.Font = i == 0 ? "" : fonts[i]; Changed(); }, 220)));
-            font.Children.Add(OvField("Size", OvNumber(e.Size, credit ? 10 : 4, 200, 1, v => { e.Size = v; Changed(); })));
-            font.Children.Add(OvField("Letter spacing", OvNumber(e.LetterSpacing, -10, 50, 0.5, v => { e.LetterSpacing = v; Changed(); })));
-            font.Children.Add(OvField("Line height (0 = normal)", OvNumber(e.LineHeight, 0, 300, 1, v => { e.LineHeight = v; Changed(); })));
-            font.Children.Add(OvField("Lines line up", OvCombo(["Left", "Center", "Right"], Array.IndexOf(new[] { "Left", "Center", "Right" }, e.Align), i => { e.Align = new[] { "Left", "Center", "Right" }[i]; Changed(); }, 110)));
-            font.Children.Add(OvField("Style", Row(
-                OvCheck("Bold", e.Bold, v => { e.Bold = v; Changed(); }),
-                OvCheck("Italic", e.Italic, v => { e.Italic = v; Changed(); }),
-                OvCheck("Underline", e.Underline, v => { e.Underline = v; Changed(); }),
-                OvCheck("Strike", e.Strikethrough, v => { e.Strikethrough = v; Changed(); }))));
-            _ovEditor.Children.Add(OvGroup("Font", font));
-            _ovEditor.Children.Add(OvGroup("Letter colour", OvPaint(e.Fill, Changed, allowNone: false)));
+            if (_ovDesign.Elements.Count >= OverlayDesign.MAX_ELEMENTS) {
+                throw new PanelException($"The overlay holds up to {OverlayDesign.MAX_ELEMENTS} texts and boxes.");
+            }
+
+            var copy = OverlayDesign.FromJson(new OverlayDesign { Elements = [_ovSelected] }.ToJson())!.Elements[0];
+            copy.X += 16;
+            copy.Y += 16;
+            _ovDesign.Elements.Insert(_ovDesign.Elements.IndexOf(_ovSelected) + 1, copy);
+            _ovSelected = copy;
+            OverlayChanged();
+            RenderOverlayEditor();
+
+            return Task.CompletedTask;
         }
 
-        _ovEditor.Children.Add(OvGroup(e.IsBox ? "Fill" : "Background behind the words", OvPaint(e.Background, Changed, allowNone: true)));
+        private Task MoveOverlayElement(int by) {
+            if (_ovSelected is null || _ovSelected == _ovDesign.Credit) {
+                return Task.CompletedTask;
+            }
 
-        var edge = new WrapPanel();
-        edge.Children.Add(OvField("Edge colour", OvColor(e.BorderColor, v => { e.BorderColor = v; Changed(); })));
-        edge.Children.Add(OvField("Edge width", OvNumber(e.BorderWidth, 0, 40, 0.5, v => { e.BorderWidth = v; Changed(); })));
-        edge.Children.Add(OvField("Round corners", OvNumber(e.CornerRadius, 0, 500, 1, v => { e.CornerRadius = v; Changed(); })));
-        edge.Children.Add(OvField("Space inside", OvNumber(e.Padding, 0, 200, 1, v => { e.Padding = v; Changed(); })));
-        _ovEditor.Children.Add(OvGroup("Edge and corners", edge));
+            var at = _ovDesign.Elements.IndexOf(_ovSelected);
+            var to = Math.Clamp(at + by, 0, _ovDesign.Elements.Count - 1);
+            if (to != at) {
+                _ovDesign.Elements.RemoveAt(at);
+                _ovDesign.Elements.Insert(to, _ovSelected);
+                OverlayChanged();
+            }
 
-        var shadow = new WrapPanel();
-        shadow.Children.Add(OvField("Shadow", OvCheck("Glow / shadow", e.Shadow, v => { e.Shadow = v; Changed(); })));
-        shadow.Children.Add(OvField("Colour", OvColor(e.ShadowColor, v => { e.ShadowColor = v; Changed(); })));
-        shadow.Children.Add(OvField("Softness", OvNumber(e.ShadowBlur, 0, 50, 1, v => { e.ShadowBlur = v; Changed(); })));
-        shadow.Children.Add(OvField("Across", OvNumber(e.ShadowX, -50, 50, 1, v => { e.ShadowX = v; Changed(); })));
-        shadow.Children.Add(OvField("Down", OvNumber(e.ShadowY, -50, 50, 1, v => { e.ShadowY = v; Changed(); })));
-        _ovEditor.Children.Add(OvGroup("Shadow or glow", shadow));
+            return Task.CompletedTask;
+        }
+
+        private async Task RemoveOverlayElement() {
+            if (_ovSelected is null || _ovSelected == _ovDesign.Credit) {
+                throw new PanelException("The Ahziael line is always shown, so it can't be removed. Pick one you added.");
+            }
+
+            if (!await ConfirmAsync("Remove this from the overlay?")) {
+                return;
+            }
+
+            _ovDesign.Elements.Remove(_ovSelected);
+            _ovSelected = _ovDesign.Credit;
+            OverlayChanged();
+            RenderOverlayEditor();
+        }
+
+        private async Task ResetOverlayAsync() {
+            if (!await ConfirmAsync("Start the overlay over? Everything you added is removed and the Ahziael line gets its first look back.")) {
+                return;
+            }
+
+            _ovDesign = new OverlayDesign { Enabled = _ovDesign.Enabled };
+            _ovSelected = _ovDesign.Credit;
+            OverlayChanged();
+            RenderOverlayEditor();
+            Say("The overlay is back to how it started.");
+        }
+
+        private async Task ExportOverlayAsync() {
+            var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions {
+                Title = "Save the overlay design", SuggestedFileName = "My overlay" + OverlayDesign.SHARE_EXTENSION,
+                DefaultExtension = OverlayDesign.SHARE_EXTENSION.TrimStart('.'), ShowOverwritePrompt = true,
+                FileTypeChoices = [new FilePickerFileType("Ahziael overlay design") { Patterns = ["*" + OverlayDesign.SHARE_EXTENSION] }],
+                SuggestedStartLocation = await StorageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Desktop),
+            });
+            if (file is null) {
+                return;
+            }
+
+            await using (var stream = await file.OpenWriteAsync()) {
+                stream.SetLength(0);
+                await using var writer = new StreamWriter(stream);
+                await writer.WriteAsync(_ovDesign.ToJson());
+            }
+
+            Say($"Saved the overlay design as \"{file.Name}\". A friend opens it here with \"Open a design file\".");
+        }
+
+        private async Task ImportOverlayAsync() {
+            var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
+                Title = "Open an overlay design", AllowMultiple = false,
+                FileTypeFilter = [new FilePickerFileType("Ahziael overlay design") { Patterns = ["*" + OverlayDesign.SHARE_EXTENSION, "*.json"] }, FilePickerFileTypes.All],
+            });
+            if (files.Count == 0) {
+                return;
+            }
+
+            var path = files[0].TryGetLocalPath() ?? throw new PanelException("Ahziael can only open a design file that is on this computer.");
+            if (new FileInfo(path).Length > 512 * 1024) {
+                throw new PanelException("That file is too big to be an overlay design.");
+            }
+
+            var design = OverlayDesign.FromJson(await File.ReadAllTextAsync(path))
+                ?? throw new PanelException("That file is not an Ahziael overlay design.");
+            if (!await ConfirmAsync($"Use the design in \"{files[0].Name}\"? It replaces yours ({design.Elements.Count} text{(design.Elements.Count == 1 ? "" : "s")} and boxes).")) {
+                return;
+            }
+
+            design.Enabled = _ovDesign.Enabled;
+            _ovDesign = design;
+            _ovSelected = _ovDesign.Credit;
+            OverlayChanged();
+            RenderOverlayEditor();
+            Say("The overlay now uses that design.");
+        }
+
+        // ---------------------------------------------------------------------
+        // The editor of the picked one
+        // ---------------------------------------------------------------------
+
+        private void RenderOverlayEditor() {
+            _ovEditor.Children.Clear();
+            var e = _ovSelected ?? _ovDesign.Credit;
+            var credit = e == _ovDesign.Credit;
+
+            void Changed() => OverlayChanged(false);
+
+            // What and where.
+            var what = new WrapPanel();
+            if (credit) {
+                _ovEditor.Children.Add(Sub("The Ahziael line: \"" + OverlayDesign.CreditLine(OverlayHost.Version) + "\", always in the bottom-left corner. Change how it looks below."));
+            }
+            else {
+                what.Children.Add(OvField("Name in the list", OvText(e.Name, v => { e.Name = v; OverlayChanged(); }, 180)));
+                what.Children.Add(OvField("Shown", OvCheck("Shown", e.Visible, v => { e.Visible = v; OverlayChanged(); })));
+                what.Children.Add(OvField("Pinned to", OvCombo(Enum.GetNames<OverlayAnchor>().Select(SpacedName).ToArray(), (int) e.Anchor, i => { e.Anchor = (OverlayAnchor) i; Changed(); }, 150)));
+            }
+
+            what.Children.Add(OvField(credit ? "In from the left" : "Across (X)", OvNumber(e.X, credit ? 0 : -4000, credit ? 200 : 4000, 1, v => { e.X = v; Changed(); })));
+            what.Children.Add(OvField(credit ? "Up from the bottom" : "Down (Y)", OvNumber(e.Y, credit ? 0 : -4000, credit ? 200 : 4000, 1, v => { e.Y = v; Changed(); })));
+            if (!credit) {
+                what.Children.Add(OvField(e.IsBox ? "Width" : "Width (0 = fit)", OvNumber(e.Width, 0, 4000, 5, v => { e.Width = v; Changed(); })));
+                what.Children.Add(OvField(e.IsBox ? "Height" : "Height (0 = fit)", OvNumber(e.Height, 0, 4000, 5, v => { e.Height = v; Changed(); })));
+                what.Children.Add(OvField("Turn (degrees)", OvNumber(e.Rotation, -360, 360, 5, v => { e.Rotation = v; Changed(); })));
+            }
+
+            what.Children.Add(OvField("See-through", OvSlider(e.Opacity, credit ? 0.5 : 0, 1, v => { e.Opacity = v; Changed(); })));
+            _ovEditor.Children.Add(OvGroup("What and where", what));
+
+            if (!e.IsBox) {
+                if (!credit) {
+                    var words = new TextBox { Text = e.Text, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, MinHeight = 60, MaxLength = OverlayElement.MAX_TEXT };
+                    words.TextChanged += (_, _) => { e.Text = words.Text ?? ""; OverlayChanged(); };
+                    _ovEditor.Children.Add(OvGroup("Words", new StackPanel {
+                        Spacing = 4,
+                        Children = { words, Sub("Fill-ins: {version} Ahziael's version, {server} the server's address, {time} the time, {date} the date.") },
+                    }));
+                }
+
+                var font = new WrapPanel();
+                var fonts = SystemFonts();
+                var fontIndex = Math.Max(0, Array.IndexOf(fonts, e.Font.Length == 0 ? fonts[0] : e.Font));
+                font.Children.Add(OvField("Font", OvCombo(fonts, fontIndex, i => { e.Font = i == 0 ? "" : fonts[i]; Changed(); }, 220)));
+                font.Children.Add(OvField("Size", OvNumber(e.Size, credit ? 10 : 4, 200, 1, v => { e.Size = v; Changed(); })));
+                font.Children.Add(OvField("Letter spacing", OvNumber(e.LetterSpacing, -10, 50, 0.5, v => { e.LetterSpacing = v; Changed(); })));
+                font.Children.Add(OvField("Line height (0 = normal)", OvNumber(e.LineHeight, 0, 300, 1, v => { e.LineHeight = v; Changed(); })));
+                font.Children.Add(OvField("Lines line up", OvCombo(["Left", "Center", "Right"], Array.IndexOf(new[] { "Left", "Center", "Right" }, e.Align), i => { e.Align = new[] { "Left", "Center", "Right" }[i]; Changed(); }, 110)));
+                font.Children.Add(OvField("Style", Row(
+                    OvCheck("Bold", e.Bold, v => { e.Bold = v; Changed(); }),
+                    OvCheck("Italic", e.Italic, v => { e.Italic = v; Changed(); }),
+                    OvCheck("Underline", e.Underline, v => { e.Underline = v; Changed(); }),
+                    OvCheck("Strike", e.Strikethrough, v => { e.Strikethrough = v; Changed(); }))));
+                _ovEditor.Children.Add(OvGroup("Font", font));
+                _ovEditor.Children.Add(OvGroup("Letter colour", OvPaint(e.Fill, Changed, allowNone: false)));
+            }
+
+            _ovEditor.Children.Add(OvGroup(e.IsBox ? "Fill" : "Background behind the words", OvPaint(e.Background, Changed, allowNone: true)));
+
+            var edge = new WrapPanel();
+            edge.Children.Add(OvField("Edge colour", OvColor(e.BorderColor, v => { e.BorderColor = v; Changed(); })));
+            edge.Children.Add(OvField("Edge width", OvNumber(e.BorderWidth, 0, 40, 0.5, v => { e.BorderWidth = v; Changed(); })));
+            edge.Children.Add(OvField("Round corners", OvNumber(e.CornerRadius, 0, 500, 1, v => { e.CornerRadius = v; Changed(); })));
+            edge.Children.Add(OvField("Space inside", OvNumber(e.Padding, 0, 200, 1, v => { e.Padding = v; Changed(); })));
+            _ovEditor.Children.Add(OvGroup("Edge and corners", edge));
+
+            var shadow = new WrapPanel();
+            shadow.Children.Add(OvField("Shadow", OvCheck("Glow / shadow", e.Shadow, v => { e.Shadow = v; Changed(); })));
+            shadow.Children.Add(OvField("Colour", OvColor(e.ShadowColor, v => { e.ShadowColor = v; Changed(); })));
+            shadow.Children.Add(OvField("Softness", OvNumber(e.ShadowBlur, 0, 50, 1, v => { e.ShadowBlur = v; Changed(); })));
+            shadow.Children.Add(OvField("Across", OvNumber(e.ShadowX, -50, 50, 1, v => { e.ShadowX = v; Changed(); })));
+            shadow.Children.Add(OvField("Down", OvNumber(e.ShadowY, -50, 50, 1, v => { e.ShadowY = v; Changed(); })));
+            _ovEditor.Children.Add(OvGroup("Shadow or glow", shadow));
+        }
+
+
     }
 
     private static string SpacedName(string name) => string.Concat(name.Select((c, i) => i > 0 && char.IsUpper(c) ? " " + char.ToLowerInvariant(c) : c.ToString()));
@@ -506,7 +609,7 @@ internal sealed partial class ManagerWindow {
     }
 
     // A colour or gradient: what kind, its colours and, for a straight gradient, its direction.
-    private Control OvPaint(OverlayPaint paint, Action changed, bool allowNone) {
+    private static Control OvPaint(OverlayPaint paint, Action changed, bool allowNone) {
         var panel = new WrapPanel();
         string[] kinds = allowNone ? ["None", "One colour", "Straight gradient", "Round gradient"] : ["One colour", "Straight gradient", "Round gradient"];
         var offset = allowNone ? 0 : 1;

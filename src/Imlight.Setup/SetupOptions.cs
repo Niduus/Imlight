@@ -24,7 +24,7 @@ namespace Imlight.Setup;
 /// <summary>
 /// What the program was asked to do. Install also updates an existing install.
 /// </summary>
-internal enum SetupMode { Install, Start, Play, Uninstall, Panel, PrepareUpdate, ApplyUpdate }
+internal enum SetupMode { Install, Start, Play, Uninstall, Panel, PrepareUpdate, ApplyUpdate, Overlay }
 
 /// <summary>
 /// What setup installs and where, from the command line. The defaults install original Imlight.
@@ -128,6 +128,8 @@ internal sealed class SetupOptions {
                 case "--play": options.Mode = SetupMode.Play; break;
                 case "--uninstall": options.Mode = SetupMode.Uninstall; break;
                 case "--panel": options.Mode = SetupMode.Panel; break;
+                // The game overlay on its own, without Ahziael's window (OverlayStandalone).
+                case "--overlay": options.Mode = SetupMode.Overlay; break;
                 case "--update": options.Mode = SetupMode.Install; break;
                 case "--no-wait": options.NoWait = true; break;
                 case "--prepare-update": options.Mode = SetupMode.PrepareUpdate; options.Unattended = true; break;

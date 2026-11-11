@@ -39,11 +39,20 @@ using Imlight.RemoteAdmin;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The game overlay (Niduus, 2026-11-11): while Ahziael is open, a see-through window lies on top of every Wizard101
-/// window, follows it, and shows the <see cref="OverlayDesign"/> ("Ahziael made by Niduus | version" in the bottom-left
-/// at all times). Clicks go straight through it to the game. Nothing is put into the game and no game file is touched:
-/// it is Ahziael's own window, drawn with Windows' layered windows (no Microsoft add-ons). Windows can't put any window
-/// over a game in true (exclusive) full screen, so there it only shows in windowed or borderless mode.
+/// The game overlay (Niduus, 2026-11-11): a see-through window lies on top of every Wizard101 window, sticks to it, and
+/// shows the <see cref="OverlayDesign"/> ("Ahziael made by Niduus | version" in the bottom-left at all times), with a
+/// small button in the bottom-right that opens the designer. Clicks go straight through the overlay to the game; only
+/// the button takes them. Nothing is put into the game and no game file is touched: these are Ahziael's own windows,
+/// drawn with Windows' layered windows (no Microsoft add-ons). Windows can't put any window over a game in true
+/// (exclusive) full screen, so there it only shows in windowed or borderless mode.
+///
+/// It runs inside Ahziael, or on its own ("Ahziael Overlay", Imlight.exe --overlay) without Ahziael open (Niduus,
+/// 2026-11-11: "create a version that is to load WITHOUT and WITH from Ahziael"). Only one of them draws at a time
+/// (a named mutex); they share the design (overlay.json) and the server to tell (overlay-link.json) through files.
+///
+/// It sits just above the game in the stacking order rather than above everything, so it stays on the game through
+/// loading screens and clicks elsewhere ("always stick to Wiz, even through loading and click outs"): another window
+/// moved over the game covers it like it covers the game, and it only goes away while the game is minimized.
 ///
 /// It also tells the server the game was started on that it is running (<see cref="Link"/>), for servers with
 /// [Overlay] RequiredToPlay on.
@@ -51,45 +60,73 @@ namespace Imlight.Setup;
 internal static class OverlayHost {
 
     private const string GAME_PROCESS = "WizardGraphicalClient";
+    private const string MUTEX = "Local\\AhziaelGameOverlay";
+
+    /// <summary>How long a game window that went away (a loading screen that remakes it) keeps its overlay.</summary>
+    private static readonly TimeSpan s_vanishGrace = TimeSpan.FromSeconds(4);
 
     private static string s_installFolder = "";
     private static OverlayDesign s_design = new();
     private static int s_designVersion;
     private static DispatcherTimer? s_timer;
     private static readonly Dictionary<IntPtr, LayeredWindow> s_windows = [];
+    private static readonly Dictionary<IntPtr, DateTime> s_missingSince = [];
     private static DateTime s_lastScan = DateTime.MinValue;
     private static List<IntPtr> s_games = [];
     private static string s_clock = "";
+    private static Mutex? s_mutex;
+    private static bool s_drawing;
+    private static DateTime s_designFileTime;
+    private static readonly List<(uint Pid, IntPtr Hook)> s_processHooks = [];
+    private static readonly List<IntPtr> s_globalHooks = [];
+    private static Native.WinEventProc? s_hookProc;
+
+    /// <summary>True when this is the overlay on its own, without Ahziael's window.</summary>
+    internal static bool Standalone { get; private set; }
+
+    /// <summary>The designer button on the game was clicked.</summary>
+    internal static event Action? DesignRequested;
 
     /// <summary>Game windows the overlay is drawing on now.</summary>
     internal static int GameWindows { get; private set; }
+
+    /// <summary>False while the other copy (Ahziael, or Ahziael Overlay on its own) is the one drawing.</summary>
+    internal static bool IsDrawing => s_drawing;
 
     internal static string Version => SelfUpdate.CurrentVersion == new Version(0, 0, 0) ? "test build" : $"v{SelfUpdate.CurrentVersion}";
 
     internal static OverlayDesign Design => s_design;
 
+    internal static string InstallFolder => s_installFolder;
+
     /// <summary>Starts the overlay with the saved design. Only on Windows; elsewhere it does nothing.</summary>
-    internal static void Start(string installFolder) {
+    internal static void Start(string installFolder, bool standalone = false) {
         s_installFolder = installFolder;
+        Standalone = standalone;
         s_design = OverlayDesign.Load(installFolder);
+        s_designFileTime = FileTime(OverlayDesign.PathIn(installFolder));
         if (!OperatingSystem.IsWindows() || s_timer is not null) {
             return;
         }
 
-        s_timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(120) };
+        Link.Load(installFolder);
+        s_hookProc = OnWinEvent;
+        // The game coming to the front, being minimized and coming back: the overlay follows at once.
+        s_globalHooks.Add(Native.SetWinEventHook(Native.EVENT_SYSTEM_FOREGROUND, Native.EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, s_hookProc, 0, 0, 0));
+        s_globalHooks.Add(Native.SetWinEventHook(Native.EVENT_SYSTEM_MINIMIZESTART, Native.EVENT_SYSTEM_MINIMIZEEND, IntPtr.Zero, s_hookProc, 0, 0, 0));
+        s_timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
         s_timer.Tick += (_, _) => Tick();
         s_timer.Start();
-        // Until the game is started from Ahziael, the server on this PC.
-        Link.Target("127.0.0.1", GameClient.OverlayPort(installFolder, "127.0.0.1"), onlyIfNone: true);
-        Link.Start();
+        Tick();
     }
 
-    /// <summary>Shows a changed design at once and saves it.</summary>
+    /// <summary>Shows a changed design at once and saves it (the copy on its own picks it up from the file).</summary>
     internal static void Apply(OverlayDesign design) {
         s_design = design.Copy();
         s_designVersion++;
         try {
             s_design.Save(s_installFolder);
+            s_designFileTime = FileTime(OverlayDesign.PathIn(s_installFolder));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
         }
@@ -97,48 +134,184 @@ internal static class OverlayHost {
 
     internal static void Stop() {
         s_timer?.Stop();
+        s_timer = null;
+        foreach (var hook in s_globalHooks.Concat(s_processHooks.Select(h => h.Hook))) {
+            Native.UnhookWinEvent(hook);
+        }
+
+        s_globalHooks.Clear();
+        s_processHooks.Clear();
+        StopDrawing();
+    }
+
+    private static void StopDrawing() {
         foreach (var window in s_windows.Values) {
             window.Dispose();
         }
 
         s_windows.Clear();
+        s_missingSince.Clear();
+        GameWindows = 0;
         Link.Stop();
+        if (s_drawing) {
+            try {
+                s_mutex?.ReleaseMutex();
+            }
+            catch (ApplicationException) {
+            }
+
+            s_drawing = false;
+        }
+
+        s_mutex?.Dispose();
+        s_mutex = null;
+    }
+
+    // Only one copy draws: the first to hold the mutex. The other tries again every scan.
+    private static bool TryTakeTurn() {
+        if (s_drawing) {
+            return true;
+        }
+
+        try {
+            s_mutex ??= new Mutex(false, MUTEX);
+            s_drawing = s_mutex.WaitOne(0);
+        }
+        catch (AbandonedMutexException) {
+            // The other copy closed without letting go: it is ours now.
+            s_drawing = true;
+        }
+        catch (Exception ex) when (ex is UnauthorizedAccessException or IOException or WaitHandleCannotBeOpenedException) {
+            s_drawing = false;
+        }
+
+        if (s_drawing) {
+            Link.Start();
+        }
+
+        return s_drawing;
+    }
+
+    private static DateTime FileTime(string path) {
+        try {
+            return File.Exists(path) ? File.GetLastWriteTimeUtc(path) : DateTime.MinValue;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return DateTime.MinValue;
+        }
     }
 
     private static void Tick() {
         try {
             if (DateTime.UtcNow - s_lastScan > TimeSpan.FromSeconds(1)) {
                 s_lastScan = DateTime.UtcNow;
-                s_games = s_design.Enabled ? FindGameWindows() : [];
-                var clock = OverlayRenderer.UsesClock(s_design) ? DateTime.Now.ToString("h:mm yyyy-MM-dd") : "";
-                if (clock != s_clock) {
-                    s_clock = clock;
-                    s_designVersion++;
-                }
+                Scan();
             }
 
-            foreach (var gone in s_windows.Keys.Where(h => !s_games.Contains(h)).ToList()) {
-                s_windows[gone].Dispose();
-                s_windows.Remove(gone);
-            }
-
-            var foreground = Native.GetForegroundWindow();
-            foreach (var game in s_games) {
-                if (!Native.IsWindow(game)) {
-                    continue;
-                }
-
-                if (!s_windows.TryGetValue(game, out var window)) {
-                    window = s_windows[game] = new LayeredWindow();
-                }
-
-                window.Follow(game, foreground == game && !Native.IsIconic(game), s_design, s_designVersion);
-            }
-
-            GameWindows = s_windows.Count;
+            FollowAll();
         }
         catch (Exception ex) {
             Log($"Overlay: {ex.Message}");
+        }
+    }
+
+    // Once a second: the design and server files the other copy may have changed, whose turn it is, the game windows,
+    // and the clock.
+    private static void Scan() {
+        var designTime = FileTime(OverlayDesign.PathIn(s_installFolder));
+        if (designTime != s_designFileTime) {
+            s_designFileTime = designTime;
+            s_design = OverlayDesign.Load(s_installFolder);
+            s_designVersion++;
+        }
+
+        Link.Load(s_installFolder);
+        if (!TryTakeTurn()) {
+            return;
+        }
+
+        s_games = s_design.Enabled ? FindGameWindows() : [];
+        HookGames();
+        var clock = OverlayRenderer.UsesClock(s_design) ? DateTime.Now.ToString("h:mm yyyy-MM-dd") : "";
+        if (clock != s_clock) {
+            s_clock = clock;
+            s_designVersion++;
+        }
+    }
+
+    private static void FollowAll() {
+        if (!s_drawing) {
+            return;
+        }
+
+        var now = DateTime.UtcNow;
+        foreach (var hwnd in s_windows.Keys.ToList()) {
+            var there = s_games.Contains(hwnd) && Native.IsWindow(hwnd);
+            if (there) {
+                s_missingSince.Remove(hwnd);
+                continue;
+            }
+
+            // A window that went for a moment (a loading screen) keeps its overlay where it was for a few seconds.
+            if (!s_missingSince.TryGetValue(hwnd, out var since)) {
+                s_missingSince[hwnd] = now;
+            }
+            else if (now - since > s_vanishGrace || !s_design.Enabled) {
+                s_windows[hwnd].Dispose();
+                s_windows.Remove(hwnd);
+                s_missingSince.Remove(hwnd);
+            }
+        }
+
+        foreach (var game in s_games) {
+            if (!Native.IsWindow(game)) {
+                continue;
+            }
+
+            if (!s_windows.TryGetValue(game, out var window)) {
+                window = s_windows[game] = new LayeredWindow();
+            }
+
+            window.Follow(game, s_design, s_designVersion);
+        }
+
+        GameWindows = s_windows.Count;
+    }
+
+    // The game's own moves, resizes, shows and hides reach the overlay as they happen, not only on the next tick.
+    private static void HookGames() {
+        var pids = new HashSet<uint>();
+        foreach (var game in s_games) {
+            Native.GetWindowThreadProcessId(game, out var pid);
+            pids.Add(pid);
+        }
+
+        foreach (var old in s_processHooks.Where(h => !pids.Contains(h.Pid)).ToList()) {
+            Native.UnhookWinEvent(old.Hook);
+            s_processHooks.Remove(old);
+        }
+
+        foreach (var pid in pids.Where(p => s_processHooks.All(h => h.Pid != p))) {
+            var hook = Native.SetWinEventHook(Native.EVENT_OBJECT_SHOW, Native.EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, s_hookProc!, pid, 0, 0);
+            if (hook != IntPtr.Zero) {
+                s_processHooks.Add((pid, hook));
+            }
+        }
+    }
+
+    private static void OnWinEvent(IntPtr hook, uint type, IntPtr hwnd, int idObject, int idChild, uint thread, uint time) {
+        // Only whole windows, and only when one of them is a game window or the foreground changed.
+        if (idObject != 0 || !s_drawing) {
+            return;
+        }
+
+        if (type == Native.EVENT_SYSTEM_FOREGROUND || s_windows.ContainsKey(hwnd)) {
+            try {
+                FollowAll();
+            }
+            catch (Exception ex) {
+                Log($"Overlay: {ex.Message}");
+            }
         }
     }
 
@@ -179,9 +352,8 @@ internal static class OverlayHost {
         return found;
     }
 
-    /// <summary>Draws the design into a picture of this many pixels, as premultiplied BGRA rows.</summary>
-    internal static byte[] Render(OverlayDesign design, int width, int height, double scale) {
-        var control = OverlayRenderer.Build(design, new OverlayRenderer.Words(Version, Link.ServerLabel));
+    /// <summary>Draws any control into a picture of this many pixels, as premultiplied BGRA rows.</summary>
+    internal static byte[] Render(Control control, int width, int height, double scale) {
         var size = new Size(width / scale, height / scale);
         control.Measure(size);
         control.Arrange(new Rect(size));
@@ -199,46 +371,98 @@ internal static class OverlayHost {
         return pixels;
     }
 
+    /// <summary>The designer button: a small round button with a sparkle.</summary>
+    private static Control ButtonPicture() => new Border {
+        CornerRadius = new CornerRadius(14), BorderThickness = new Thickness(1),
+        BorderBrush = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromArgb(0xC0, 0xFF, 0xFF, 0xFF)),
+        Background = new Avalonia.Media.LinearGradientBrush {
+            StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative), EndPoint = new RelativePoint(1, 1, RelativeUnit.Relative),
+            GradientStops = {
+                new Avalonia.Media.GradientStop(Avalonia.Media.Color.FromArgb(0xF0, 0x7A, 0x5C, 0xFF), 0),
+                new Avalonia.Media.GradientStop(Avalonia.Media.Color.FromArgb(0xF0, 0x60, 0x1E, 0x70), 1),
+            },
+        },
+        Child = new Avalonia.Controls.Shapes.Path {
+            Data = Avalonia.Media.Geometry.Parse("M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z M19 2l.8 2.2L22 5l-2.2.8L19 8l-.8-2.2L16 5l2.2-.8z"),
+            Fill = Avalonia.Media.Brushes.White, Stretch = Avalonia.Media.Stretch.Uniform, Margin = new Thickness(6),
+        },
+    };
+
+    private const int BUTTON_SIZE = 28;
+    private const int BUTTON_MARGIN = 10;
+
     // ---------------------------------------------------------------------
-    // The window over one game window
+    // The windows over one game window
     // ---------------------------------------------------------------------
 
     private sealed class LayeredWindow : IDisposable {
 
         private static Native.WndProc? s_proc;
+        private static Native.WndProc? s_buttonProc;
         private static bool s_registered;
         private const string CLASS = "AhziaelOverlay";
+        private const string BUTTON_CLASS = "AhziaelOverlayButton";
 
+        // The picture (clicks go through) and the designer button (takes clicks).
         private readonly IntPtr _hwnd;
+        private readonly IntPtr _button;
         private int _drawnVersion = -1;
         private (int W, int H, double Scale) _drawnSize;
+        private double _buttonScale;
         private Native.RECT _placed;
         private bool _shown;
 
         internal LayeredWindow() {
+            var instance = Native.GetModuleHandleW(null);
             if (!s_registered) {
                 s_proc = Native.DefWindowProcW;
+                s_buttonProc = ButtonProc;
                 var wc = new Native.WNDCLASSEX {
                     cbSize = (uint) Marshal.SizeOf<Native.WNDCLASSEX>(), lpfnWndProc = Marshal.GetFunctionPointerForDelegate(s_proc),
-                    hInstance = Native.GetModuleHandleW(null), lpszClassName = CLASS,
+                    hInstance = instance, lpszClassName = CLASS,
                 };
                 Native.RegisterClassExW(ref wc);
+                var bc = new Native.WNDCLASSEX {
+                    cbSize = (uint) Marshal.SizeOf<Native.WNDCLASSEX>(), lpfnWndProc = Marshal.GetFunctionPointerForDelegate(s_buttonProc),
+                    hInstance = instance, lpszClassName = BUTTON_CLASS, hCursor = Native.LoadCursorW(IntPtr.Zero, Native.IDC_HAND),
+                };
+                Native.RegisterClassExW(ref bc);
                 s_registered = true;
             }
 
-            _hwnd = Native.CreateWindowExW(
-                Native.WS_EX_LAYERED | Native.WS_EX_TRANSPARENT | Native.WS_EX_TOOLWINDOW | Native.WS_EX_NOACTIVATE | Native.WS_EX_TOPMOST,
-                CLASS, "Ahziael overlay", Native.WS_POPUP, 0, 0, 1, 1, IntPtr.Zero, IntPtr.Zero, Native.GetModuleHandleW(null), IntPtr.Zero);
+            _hwnd = Native.CreateWindowExW(Native.WS_EX_LAYERED | Native.WS_EX_TRANSPARENT | Native.WS_EX_TOOLWINDOW | Native.WS_EX_NOACTIVATE,
+                CLASS, "Ahziael overlay", Native.WS_POPUP, 0, 0, 1, 1, IntPtr.Zero, IntPtr.Zero, instance, IntPtr.Zero);
+            _button = Native.CreateWindowExW(Native.WS_EX_LAYERED | Native.WS_EX_TOOLWINDOW,
+                BUTTON_CLASS, "Design the Ahziael overlay", Native.WS_POPUP, 0, 0, 1, 1, IntPtr.Zero, IntPtr.Zero, instance, IntPtr.Zero);
         }
 
-        internal void Follow(IntPtr game, bool show, OverlayDesign design, int version) {
+        private static IntPtr ButtonProc(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam) {
+            if (msg == Native.WM_LBUTTONUP) {
+                Dispatcher.UIThread.Post(() => DesignRequested?.Invoke());
+
+                return IntPtr.Zero;
+            }
+
+            return Native.DefWindowProcW(hwnd, msg, wParam, lParam);
+        }
+
+        internal void Follow(IntPtr game, OverlayDesign design, int version) {
             if (_hwnd == IntPtr.Zero) {
                 return;
             }
 
-            if (!show || !Native.GetClientRect(game, out var client)) {
+            // Only a minimized game hides it. A busy game (a loading screen) keeps it where it is.
+            if (Native.IsIconic(game) || !Native.IsWindowVisible(game)) {
                 Hide();
 
+                return;
+            }
+
+            if (Native.IsHungAppWindow(game) && _shown) {
+                return;
+            }
+
+            if (!Native.GetClientRect(game, out var client)) {
                 return;
             }
 
@@ -246,46 +470,79 @@ internal static class OverlayHost {
             Native.ClientToScreen(game, ref origin);
             var width = client.Right - client.Left;
             var height = client.Bottom - client.Top;
+            if (width < 50 || height < 50) {
+                return;
+            }
+
             var dpi = Native.GetDpiForWindow(game);
             var scale = dpi == 0 ? 1.0 : dpi / 96.0;
             var place = new Native.RECT { Left = origin.X, Top = origin.Y, Right = origin.X + width, Bottom = origin.Y + height };
+            var buttonPixels = (int) Math.Round(BUTTON_SIZE * scale);
+            var buttonAt = new Native.POINT {
+                X = place.Right - buttonPixels - (int) Math.Round(BUTTON_MARGIN * scale),
+                Y = place.Bottom - buttonPixels - (int) Math.Round(BUTTON_MARGIN * scale),
+            };
 
             if (version != _drawnVersion || _drawnSize != (width, height, scale)) {
-                Draw(Render(design, width, height, scale), width, height, origin);
+                var picture = OverlayRenderer.Build(design, new OverlayRenderer.Words(Version, Link.ServerLabel));
+                Draw(_hwnd, Render(picture, width, height, scale), width, height, origin);
                 _drawnVersion = version;
                 _drawnSize = (width, height, scale);
                 _placed = place;
             }
-            else if (!_placed.Equals(place)) {
-                Native.SetWindowPos(_hwnd, Native.HWND_TOPMOST, origin.X, origin.Y, 0, 0,
-                    Native.SWP_NOSIZE | Native.SWP_NOACTIVATE);
+
+            if (_buttonScale != scale && _button != IntPtr.Zero) {
+                Draw(_button, Render(ButtonPicture(), buttonPixels, buttonPixels, scale), buttonPixels, buttonPixels, buttonAt);
+                _buttonScale = scale;
+            }
+
+            if (!_placed.Equals(place)) {
+                Native.SetWindowPos(_hwnd, IntPtr.Zero, origin.X, origin.Y, 0, 0, Native.SWP_NOSIZE | Native.SWP_NOACTIVATE | Native.SWP_NOZORDER);
+                Native.SetWindowPos(_button, IntPtr.Zero, buttonAt.X, buttonAt.Y, 0, 0, Native.SWP_NOSIZE | Native.SWP_NOACTIVATE | Native.SWP_NOZORDER);
                 _placed = place;
             }
 
+            StackOver(game);
+        }
+
+        // Button, picture, game: right on top of each other, wherever the game is in the stacking order.
+        private void StackOver(IntPtr game) {
+            var flags = Native.SWP_NOSIZE | Native.SWP_NOMOVE | Native.SWP_NOACTIVATE | Native.SWP_NOOWNERZORDER;
             if (!_shown) {
-                Native.SetWindowPos(_hwnd, Native.HWND_TOPMOST, origin.X, origin.Y, 0, 0,
-                    Native.SWP_NOSIZE | Native.SWP_NOACTIVATE | Native.SWP_SHOWWINDOW);
-                _shown = true;
+                flags |= Native.SWP_SHOWWINDOW;
             }
-            else {
-                // The game may have been brought to the front over it.
-                Native.SetWindowPos(_hwnd, Native.HWND_TOPMOST, 0, 0, 0, 0,
-                    Native.SWP_NOSIZE | Native.SWP_NOMOVE | Native.SWP_NOACTIVATE);
+
+            if (_shown && Native.GetWindow(game, Native.GW_HWNDPREV) == _hwnd && Native.GetWindow(_hwnd, Native.GW_HWNDPREV) == _button) {
+                return;
             }
+
+            var above = Native.GetWindow(game, Native.GW_HWNDPREV);
+            while (above != IntPtr.Zero && (above == _hwnd || above == _button)) {
+                above = Native.GetWindow(above, Native.GW_HWNDPREV);
+            }
+
+            // Nothing over the game, or only always-on-top windows: the top of the ordinary windows.
+            var gameTopmost = (Native.GetWindowLongW(game, Native.GWL_EXSTYLE) & Native.WS_EX_TOPMOST) != 0;
+            var after = above == IntPtr.Zero || (!gameTopmost && (Native.GetWindowLongW(above, Native.GWL_EXSTYLE) & Native.WS_EX_TOPMOST) != 0)
+                ? Native.HWND_TOP : above;
+            Native.SetWindowPos(_hwnd, after, 0, 0, 0, 0, flags);
+            Native.SetWindowPos(_button, after, 0, 0, 0, 0, flags);
+            _shown = true;
         }
 
         private void Hide() {
             if (_shown) {
                 Native.ShowWindow(_hwnd, Native.SW_HIDE);
+                Native.ShowWindow(_button, Native.SW_HIDE);
                 _shown = false;
             }
         }
 
-        private void Draw(byte[] pixels, int width, int height, Native.POINT origin) {
+        private static void Draw(IntPtr hwnd, byte[] pixels, int width, int height, Native.POINT origin) {
             var screen = Native.GetDC(IntPtr.Zero);
             var memory = Native.CreateCompatibleDC(screen);
             var info = new Native.BITMAPINFO {
-                biSize = (uint) Marshal.SizeOf<Native.BITMAPINFO>(), biWidth = width, biHeight = -height, biPlanes = 1, biBitCount = 32,
+                biSize = (uint) Marshal.SizeOf<Native.BITMAPINFO>() - 4, biWidth = width, biHeight = -height, biPlanes = 1, biBitCount = 32,
             };
             var dib = Native.CreateDIBSection(screen, ref info, 0, out var bits, IntPtr.Zero, 0);
             try {
@@ -298,7 +555,7 @@ internal static class OverlayHost {
                 var size = new Native.SIZE { cx = width, cy = height };
                 var source = new Native.POINT();
                 var blend = new Native.BLENDFUNCTION { BlendOp = 0, SourceConstantAlpha = 255, AlphaFormat = 1 };
-                Native.UpdateLayeredWindow(_hwnd, screen, ref origin, ref size, memory, ref source, 0, ref blend, Native.ULW_ALPHA);
+                Native.UpdateLayeredWindow(hwnd, screen, ref origin, ref size, memory, ref source, 0, ref blend, Native.ULW_ALPHA);
                 Native.SelectObject(memory, old);
             }
             finally {
@@ -314,6 +571,10 @@ internal static class OverlayHost {
         public void Dispose() {
             if (_hwnd != IntPtr.Zero) {
                 Native.DestroyWindow(_hwnd);
+            }
+
+            if (_button != IntPtr.Zero) {
+                Native.DestroyWindow(_button);
             }
         }
 
@@ -344,7 +605,7 @@ internal static class OverlayHost {
         internal static bool? Required { get; private set; }
 
         internal static string Status => s_target is not { } target
-            ? "Not linked to a server yet: click Play on the Play tab (or Play Wizard101) and it links to that server."
+            ? "Not linked to a server yet: start the game with Play in Ahziael and it links to that server."
             : Connected
                 ? $"Linked to {target.Host}. " + (Required == true ? "That server needs the overlay, and it sees yours." : "That server doesn't need the overlay right now.")
                 : $"Trying to reach {target.Host} on port {target.Port}. A server that doesn't need the overlay may not answer, which is fine.";
@@ -369,14 +630,60 @@ internal static class OverlayHost {
             }
         }
 
-        /// <summary>Links to the server the game was just started on: its Remote Admin port at the same address.</summary>
-        internal static void Target(string host, int remoteAdminPort, bool onlyIfNone = false) {
+        private const string FILE = "overlay-link.json";
+        private static DateTime s_fileTime = DateTime.MinValue;
+
+        /// <summary>
+        /// Links to the server the game was just started on: its Remote Admin port at the same address. Written to a
+        /// file too, so the overlay on its own (or Ahziael) links there as well.
+        /// </summary>
+        internal static void Target(string installFolder, string host, int remoteAdminPort) {
+            SetTarget(host, remoteAdminPort);
+            try {
+                var path = Path.Combine(installFolder, FILE);
+                File.WriteAllText(path, new JsonObject { ["host"] = host.Trim(), ["port"] = remoteAdminPort }.ToJsonString());
+                s_fileTime = File.GetLastWriteTimeUtc(path);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            }
+        }
+
+        /// <summary>The server the game was last started on, from the file; before any, this PC's own server.</summary>
+        internal static void Load(string installFolder) {
+            var path = Path.Combine(installFolder, FILE);
+            var time = FileTime(path);
+            if (time == DateTime.MinValue) {
+                if (s_target is null && File.Exists(InstalledCommands.ConfigFile(installFolder))) {
+                    SetTarget("127.0.0.1", GameClient.OverlayPort(installFolder, "127.0.0.1"));
+                }
+
+                return;
+            }
+
+            if (time == s_fileTime) {
+                return;
+            }
+
+            s_fileTime = time;
+            try {
+                var json = JsonNode.Parse(File.ReadAllText(path));
+                var host = (string?) json?["host"];
+                var port = (int?) json?["port"] ?? RemoteAdminWire.DEFAULT_PORT;
+                if (!string.IsNullOrWhiteSpace(host) && host.Length < 256 && port is > 0 and < 65536) {
+                    SetTarget(host, port);
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Text.Json.JsonException or InvalidOperationException or FormatException) {
+            }
+        }
+
+        private static void SetTarget(string host, int port) {
             lock (s_lock) {
-                if (onlyIfNone && s_target is not null) {
+                if (s_target == (host.Trim(), port)) {
                     return;
                 }
 
-                s_target = (host.Trim(), remoteAdminPort);
+                s_target = (host.Trim(), port);
                 s_retarget?.Cancel();
             }
         }
@@ -472,6 +779,35 @@ internal static class OverlayHost {
         internal const uint GW_OWNER = 4;
         internal const uint ULW_ALPHA = 2;
         internal static readonly IntPtr HWND_TOPMOST = new(-1);
+        internal static readonly IntPtr HWND_TOP = IntPtr.Zero;
+        internal const uint SWP_NOZORDER = 0x0004;
+        internal const uint SWP_NOOWNERZORDER = 0x0200;
+        internal const uint GW_HWNDPREV = 3;
+        internal const int GWL_EXSTYLE = -20;
+        internal const uint WM_LBUTTONUP = 0x0202;
+        internal static readonly IntPtr IDC_HAND = new(32649);
+        internal const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
+        internal const uint EVENT_SYSTEM_MINIMIZESTART = 0x0016;
+        internal const uint EVENT_SYSTEM_MINIMIZEEND = 0x0017;
+        internal const uint EVENT_OBJECT_SHOW = 0x8002;
+        internal const uint EVENT_OBJECT_LOCATIONCHANGE = 0x800B;
+
+        internal delegate void WinEventProc(IntPtr hook, uint type, IntPtr hwnd, int idObject, int idChild, uint thread, uint time);
+
+        [DllImport("user32.dll")]
+        internal static extern IntPtr SetWinEventHook(uint min, uint max, IntPtr module, WinEventProc proc, uint pid, uint thread, uint flags);
+
+        [DllImport("user32.dll")]
+        internal static extern bool UnhookWinEvent(IntPtr hook);
+
+        [DllImport("user32.dll")]
+        internal static extern bool IsHungAppWindow(IntPtr hwnd);
+
+        [DllImport("user32.dll")]
+        internal static extern int GetWindowLongW(IntPtr hwnd, int index);
+
+        [DllImport("user32.dll")]
+        internal static extern IntPtr LoadCursorW(IntPtr instance, IntPtr name);
 
         internal delegate IntPtr WndProc(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
 

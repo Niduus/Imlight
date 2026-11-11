@@ -113,7 +113,20 @@ internal sealed class ManagerApp : Application {
         Name = Edition.NAME;
     }
 
+    private static string? s_overlayOnly;
+
+    /// <summary>The app shows only the game overlay, with no Ahziael window (Ahziael Overlay, --overlay).</summary>
+    internal static void OverlayOnly(string installFolder) => s_overlayOnly = installFolder;
+
     public override void OnFrameworkInitializationCompleted() {
+        if (s_overlayOnly is not null) {
+            OverlayStandalone.Begin(this, s_overlayOnly);
+            HideConsole();
+            base.OnFrameworkInitializationCompleted();
+
+            return;
+        }
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && s_manager is not null) {
             desktop.MainWindow = new ManagerWindow(s_manager);
             HideConsole();

@@ -82,7 +82,7 @@ internal static class GameClient {
         startInfo.ArgumentList.Add(port.ToString());
         Process.Start(startInfo)?.Dispose();
         // The overlay tells this server it runs (for servers with [Overlay] RequiredToPlay on).
-        OverlayHost.Link.Target(host, OverlayPort(installFolder, host));
+        OverlayHost.Link.Target(installFolder, host, OverlayPort(installFolder, host));
     }
 
     /// <summary>
