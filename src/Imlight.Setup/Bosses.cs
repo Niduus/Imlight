@@ -33,8 +33,18 @@ namespace Imlight.Setup;
 /// <param name="Stats">Its other battle stats in words, from its gear and the game, or empty.</param>
 /// <param name="Grid">The game's value of each school grid row (BossChanges.GRID_ROWS), one per school of
 /// BossChanges.SCHOOLS; empty when the server's list is from before the grid.</param>
+/// <param name="Attitude">The game's Intellect, Selfishness and Aggression in percent, or empty when the server's list
+/// is from before them.</param>
 internal sealed record BossInfo(string Id, string Name, string School, int Level, int Health, bool IsBoss, List<uint> Spells, string Stats,
-                                Dictionary<string, float[]> Grid) {
+                                Dictionary<string, float[]> Grid, int[]? Attitude = null) {
+
+    /// <summary>The game's value of an Intellect, Selfishness or Aggression box, or null when unknown.</summary>
+    internal int? GameAttitude(string key) {
+        var at = Array.IndexOf(BossChanges.ATTITUDE, key);
+
+        return at >= 0 && Attitude is { } values && at < values.Length ? values[at] : null;
+    }
+
 
     internal string Haystack { get; } = SearchText.Normalize($"{Name} {Id} {School}");
 
@@ -73,10 +83,17 @@ internal sealed class BossChanges {
         ("StartingPowerPips", "Starting power pips", "Power pips it has when the battle starts (0 to 7)."),
         ("ShadowPips", "Most shadow pips", "Shadow pips it can hold. 0 means none. Wins over its boss cheat file."),
         ("ShadowPipChance", "Shadow pip chance %", "Chance each round to gain a shadow pip, until it holds the most."),
+        ("Intellect", "Intellect %", "Chance each round it picks its biggest attack or heal instead of a random one. 0 to 100."),
+        ("Selfishness", "Selfishness %", "Chance it casts a buff, or a heal when hurt, on itself instead of a teammate. 0 to 100."),
+        ("Aggression", "Aggression %", "Chance each round it attacks instead of preparing (blades, traps, shields, heals). 0 to 100."),
     ];
 
+    /// <summary>How it thinks in battle: these boxes count from its next round, even in a battle already going.</summary>
+    internal static readonly string[] ATTITUDE = ["Intellect", "Selfishness", "Aggression"];
+
     /// <summary>The boxes that take whole numbers only.</summary>
-    internal static bool IsWhole(string key) => key is "StartingPips" or "StartingPowerPips" or "ShadowPips" or "ShadowPipChance";
+    internal static bool IsWhole(string key) => key is "StartingPips" or "StartingPowerPips" or "ShadowPips" or "ShadowPipChance"
+        || Array.IndexOf(ATTITUDE, key) >= 0;
 
     /// <summary>
     /// The rows of the school grid, in order: the file's key (saved as &lt;Key&gt;BySchool), the label and what it means.
@@ -366,10 +383,18 @@ internal sealed class BossCatalog {
 
             creatures.Add(new BossInfo(f[0], f[1], f[2], Int(f[3]), Int(f[4]), f[5] == "1",
                 [.. f[6].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(s => uint.TryParse(s, out var id) ? id : 0).Where(id => id != 0)],
-                f[7], f.Count > 8 ? ParseGrid(f[8]) : []));
+                f[7], f.Count > 8 ? ParseGrid(f[8]) : [], f.Count > 9 ? ParseAttitude(f[9]) : null));
         }
 
         return new BossCatalog(creatures, spells, null, paths);
+    }
+
+    // "80 60 70": the game's Intellect, Selfishness and Aggression in percent.
+    private static int[]? ParseAttitude(string text) {
+        var parts = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var values = parts.Select(p => int.TryParse(p, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) ? n : -1).ToArray();
+
+        return values.Length == BossChanges.ATTITUDE.Length && values.All(v => v >= 0) ? values : null;
     }
 
     /// <summary>

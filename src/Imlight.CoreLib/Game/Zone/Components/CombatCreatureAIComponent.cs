@@ -347,9 +347,15 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
     }
 
     private void DetermineAttitude() {
-        _determinedSmartThisTurn = _random.NextDouble() < _intelligenceFactor;
-        _determinedAggressiveThisTurn = _random.NextDouble() < _aggressivenessFactor;
-        _determinedSelfishThisTurn = _random.NextDouble() < _selfishnessFactor;
+        // Read every round: the creature's own in the app's Bosses tab, else [Combat] CreatureIntellect and the
+        // others, else the game's (CreatureAttitude), so a change counts in a battle already going.
+        var own = BossOverrides.For(Customs.KeyOf(Entity.ActiveGameObject));
+        var intellect = CreatureAttitude.Effective(CreatureAttitude.INTELLECT, own?.Intellect, _intelligenceFactor);
+        var aggression = CreatureAttitude.Effective(CreatureAttitude.AGGRESSION, own?.Aggression, _aggressivenessFactor);
+        var selfishness = CreatureAttitude.Effective(CreatureAttitude.SELFISHNESS, own?.Selfishness, _selfishnessFactor);
+        _determinedSmartThisTurn = _random.NextDouble() < intellect;
+        _determinedAggressiveThisTurn = _random.NextDouble() < aggression;
+        _determinedSelfishThisTurn = _random.NextDouble() < selfishness;
         _avoidRepeatThisTurn = _lastCastSpellId != 0 && _random.NextDouble() < s_avoidRepeatChance;
         var maxInARow = s_maxSameSpellInARow;
         _mustSkipRepeatThisTurn = _lastCastSpellId != 0 && maxInARow > 0 && _sameSpellStreak >= maxInARow;
@@ -358,12 +364,15 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
                 Logger.Args(_currentDuelComponent.SigilId, _currentSubCircle.SlotIndex, _lastCastSpellId, _sameSpellStreak));
         }
 
-        Logger.Debug("Duel {0} | Slot {1} | Smart: {2} | Aggressive: {3} | Selfish: {4}",
+        Logger.Debug("Duel {0} | Slot {1} | Smart: {2} | Aggressive: {3} | Selfish: {4} | Intellect {5}% Aggression {6}% Selfishness {7}%",
             Logger.Args(_currentDuelComponent.SigilId,
                 _currentSubCircle.SlotIndex,
                 _determinedSmartThisTurn,
                 _determinedAggressiveThisTurn,
-                _determinedSelfishThisTurn));
+                _determinedSelfishThisTurn,
+                CreatureAttitude.Percent(intellect),
+                CreatureAttitude.Percent(aggression),
+                CreatureAttitude.Percent(selfishness)));
     }
 
     private COMBAT_106_PROTOCOL.MSG_ACTORCOMBATMOVE DetermineTurnAction() {
@@ -565,19 +574,14 @@ internal sealed class CombatCreatureAIComponent(ZoneEntity entity) : ZoneEntityC
             SpellTarget = 0,
         };
 
-        // Determine if we're smart enough to use the highest pip healing spell.
-        if (_determinedSmartThisTurn) {
-            var highestPipHealingSpell = castableHealingSpells
-                .OrderByDescending(x => x.m_pipCost.m_spellRank)
-                .FirstOrDefault();
-            if (highestPipHealingSpell is not null) {
-                msg.SpellSelection = (byte) _roundHand.m_spellList.IndexOf(highestPipHealingSpell);
-            }
-        }
+        // Smart enough this round (Intellect): the highest pip healing spell. The random pick below used to replace
+        // it every time, so Intellect did nothing for heals.
+        var selectedSpell = _determinedSmartThisTurn
+            ? castableHealingSpells.OrderByDescending(x => x.m_pipCost.m_spellRank).FirstOrDefault()
+            : null;
 
         // Otherwise, choose a random healing spell.
-        var randomIdx = _random.Next(castableHealingSpells.Count);
-        var selectedSpell = castableHealingSpells[randomIdx];
+        selectedSpell ??= castableHealingSpells[_random.Next(castableHealingSpells.Count)];
         msg.SpellSelection = (byte) _roundHand.m_spellList.IndexOf(selectedSpell);
 
         // If we're below the healing threshold, and selfish enough, heal ourselves.

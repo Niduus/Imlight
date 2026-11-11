@@ -84,7 +84,8 @@ public static class IdCatalog {
     private const string BUNDLES_NAME = "bundles.csv";
     private const string CREATURES_NAME = "creatures.csv";
     // Grid: the game's value of each row of the Bosses tab's school grid (BossOverrides.GameGrid).
-    private const string CREATURES_HEADER = "Id,Name,School,Level,Health,Boss,Spells,Stats,Grid";
+    // Attitude: the game's Intellect, Selfishness and Aggression in percent, "80 60 70" (CreatureAttitude).
+    private const string CREATURES_HEADER = "Id,Name,School,Level,Health,Boss,Spells,Stats,Grid,Attitude";
     private const string CSV_HEADER = "Id,Kind,Name,School,Level,Path";
     private const int INFORM_ALIVE_INTERVAL = 10000;
 
@@ -309,7 +310,10 @@ public static class IdCatalog {
                 npc.IsBoss() ? "1" : "0",
                 string.Join(' ', spells.Select(id => id.ToString(CultureInfo.InvariantCulture))),
                 CsvField(Imlight.CoreLib.Game.Combat.BossOverrides.Describe(stats)),
-                CsvField(Imlight.CoreLib.Game.Combat.BossOverrides.GameGrid(stats)));
+                CsvField(Imlight.CoreLib.Game.Combat.BossOverrides.GameGrid(stats)),
+                string.Join(' ', Imlight.CoreLib.Game.Combat.CreatureAttitude.Percent(Imlight.CoreLib.Game.Combat.CreatureAttitude.GameIntellect(npc)),
+                    Imlight.CoreLib.Game.Combat.CreatureAttitude.Percent(Imlight.CoreLib.Game.Combat.CreatureAttitude.GameSelfishness(npc)),
+                    Imlight.CoreLib.Game.Combat.CreatureAttitude.Percent(Imlight.CoreLib.Game.Combat.CreatureAttitude.GameAggression(npc))));
         }
         catch (Exception ex) {
             Logger.Debug("ID lookup left creature {Id} out of the creature list. {Message}", Logger.Args(entry.Id, ex.Message));
@@ -331,7 +335,7 @@ public static class IdCatalog {
     private static bool TryLoadFromDisk() {
         var revisionFile = Path.Combine(OutputPath, REVISION_NAME);
         var csvFile = Path.Combine(OutputPath, CSV_NAME);
-        // A list from before the Bosses tab (or before its school grid) has no creatures.csv of this kind, so it is
+        // A list from before the Bosses tab (or before its school grid or Attitude) has no creatures.csv of this kind, so it is
         // built again once.
         var creaturesFile = Path.Combine(OutputPath, CREATURES_NAME);
         if (!File.Exists(revisionFile) || !File.Exists(csvFile) || !File.Exists(creaturesFile)
