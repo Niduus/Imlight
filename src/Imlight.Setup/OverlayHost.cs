@@ -293,6 +293,14 @@ internal static class OverlayHost {
                 continue;
             }
 
+            // The game is closed, or its window is still there but no longer on the screen: gone now.
+            if (!s_gameRunning || (Native.IsWindow(hwnd) && !Native.IsHungAppWindow(hwnd))) {
+                s_windows[hwnd].Dispose();
+                s_windows.Remove(hwnd);
+                s_missingSince.Remove(hwnd);
+                continue;
+            }
+
             // A window that went for a moment (a loading screen) keeps its overlay where it was for a few seconds.
             if (!s_missingSince.TryGetValue(hwnd, out var since)) {
                 s_missingSince[hwnd] = now;
@@ -310,6 +318,11 @@ internal static class OverlayHost {
             }
 
             if (!s_windows.TryGetValue(game, out var window)) {
+                // Never a new overlay on anything but a game window that is on the screen now.
+                if (!IsGameWindow(game)) {
+                    continue;
+                }
+
                 window = s_windows[game] = new LayeredWindow();
             }
 
@@ -368,29 +381,94 @@ internal static class OverlayHost {
     }
 
     // The visible main windows of the game's processes.
+    /// <summary>When each game window was first seen; one shows its overlay only once it has been there a moment.</summary>
+    private static readonly Dictionary<IntPtr, DateTime> s_firstSeen = [];
+
+    private static readonly TimeSpan s_settle = TimeSpan.FromSeconds(2);
+
+    /// <summary>False once no WizardGraphicalClient.exe runs: then every overlay goes at once, no waiting.</summary>
+    private static bool s_gameRunning;
+
+    /// <summary>
+    /// The Wizard101 game windows (Niduus, 2026-11-11: "Have the hook wait until the EXE is found"): only windows of a
+    /// running WizardGraphicalClient.exe that are really on the screen (shown, not cloaked or on another desktop, with a
+    /// title, a sensible size) and have been there for a moment. Never a window of Ahziael or any other program; with no
+    /// game running there is nothing to draw on, so nothing is drawn.
+    /// </summary>
     private static List<IntPtr> FindGameWindows() {
         var ids = new HashSet<uint>();
+        var self = (uint) Environment.ProcessId;
         foreach (var process in Process.GetProcessesByName(GAME_PROCESS)) {
-            ids.Add((uint) process.Id);
-            process.Dispose();
+            try {
+                if (!process.HasExited && process.Id != self) {
+                    ids.Add((uint) process.Id);
+                }
+            }
+            catch (Exception ex) when (ex is InvalidOperationException or System.ComponentModel.Win32Exception) {
+            }
+            finally {
+                process.Dispose();
+            }
         }
 
         var found = new List<IntPtr>();
+        s_gameRunning = ids.Count > 0;
         if (ids.Count == 0) {
+            s_firstSeen.Clear();
             return found;
         }
 
+        var candidates = new List<IntPtr>();
         Native.EnumWindows((hwnd, _) => {
             Native.GetWindowThreadProcessId(hwnd, out var pid);
-            if (ids.Contains(pid) && Native.IsWindowVisible(hwnd) && Native.GetWindow(hwnd, Native.GW_OWNER) == IntPtr.Zero
-                && Native.GetClientRect(hwnd, out var r) && r.Right - r.Left > 200 && r.Bottom - r.Top > 150) {
-                found.Add(hwnd);
+            if (pid != 0 && ids.Contains(pid) && IsGameWindow(hwnd)) {
+                candidates.Add(hwnd);
             }
 
             return true;
         }, IntPtr.Zero);
 
+        var now = DateTime.UtcNow;
+        foreach (var gone in s_firstSeen.Keys.Except(candidates).ToList()) {
+            s_firstSeen.Remove(gone);
+        }
+
+        foreach (var hwnd in candidates) {
+            if (!s_firstSeen.TryGetValue(hwnd, out var since)) {
+                s_firstSeen[hwnd] = since = now;
+            }
+
+            // Already drawn on (a loading screen that comes back) or there long enough.
+            if (s_windows.ContainsKey(hwnd) || now - since >= s_settle) {
+                found.Add(hwnd);
+            }
+        }
+
         return found;
+    }
+
+    /// <summary>A game window really on the screen: shown, not cloaked, not owned by another, titled, big enough.</summary>
+    internal static bool IsGameWindow(IntPtr hwnd) {
+        if (!Native.IsWindow(hwnd) || !Native.IsWindowVisible(hwnd) || Native.GetWindow(hwnd, Native.GW_OWNER) != IntPtr.Zero) {
+            return false;
+        }
+
+        Native.GetWindowThreadProcessId(hwnd, out var pid);
+        if (pid == (uint) Environment.ProcessId) {
+            return false;
+        }
+
+        // Cloaked: hidden by Windows (another virtual desktop, a window still being made).
+        if (Native.DwmGetWindowAttribute(hwnd, Native.DWMWA_CLOAKED, out var cloaked, sizeof(int)) == 0 && cloaked != 0) {
+            return false;
+        }
+
+        if (Native.GetWindowTextLengthW(hwnd) == 0) {
+            return false;
+        }
+
+        // Minimized counts (its overlay waits hidden until it comes back).
+        return Native.IsIconic(hwnd) || (Native.GetClientRect(hwnd, out var r) && r.Right - r.Left > 200 && r.Bottom - r.Top > 150);
     }
 
     /// <summary>Draws any control into a picture of this many pixels, as premultiplied BGRA rows.</summary>
@@ -553,7 +631,7 @@ internal static class OverlayHost {
                 flags |= Native.SWP_SHOWWINDOW;
             }
 
-            if (_shown && Native.GetWindow(game, Native.GW_HWNDPREV) == _hwnd && Native.GetWindow(_hwnd, Native.GW_HWNDPREV) == _button) {
+            if (_shown && NextBelow(_hwnd) == game && Native.GetWindow(game, Native.GW_HWNDPREV) == _hwnd && Native.GetWindow(_hwnd, Native.GW_HWNDPREV) == _button) {
                 return;
             }
 
@@ -569,6 +647,22 @@ internal static class OverlayHost {
             Native.SetWindowPos(_hwnd, after, 0, 0, 0, 0, flags);
             Native.SetWindowPos(_button, after, 0, 0, 0, 0, flags);
             _shown = true;
+
+            // Windows may refuse the order asked for. The overlay is shown only right over the game, never over
+            // another window (Ahziael's or any other): if it didn't land there, it waits hidden and tries again.
+            if (NextBelow(_hwnd) != game) {
+                Hide();
+            }
+        }
+
+        // The next window under this one that is not the button.
+        private IntPtr NextBelow(IntPtr hwnd) {
+            var below = Native.GetWindow(hwnd, Native.GW_HWNDNEXT);
+            while (below != IntPtr.Zero && below == _button) {
+                below = Native.GetWindow(below, Native.GW_HWNDNEXT);
+            }
+
+            return below;
         }
 
         private void Hide() {
@@ -876,6 +970,14 @@ internal static class OverlayHost {
         internal const uint SWP_NOZORDER = 0x0004;
         internal const uint SWP_NOOWNERZORDER = 0x0200;
         internal const uint GW_HWNDPREV = 3;
+        internal const uint GW_HWNDNEXT = 2;
+        internal const int DWMWA_CLOAKED = 14;
+
+        [DllImport("dwmapi.dll")]
+        internal static extern int DwmGetWindowAttribute(IntPtr hwnd, int attribute, out int value, int size);
+
+        [DllImport("user32.dll")]
+        internal static extern int GetWindowTextLengthW(IntPtr hwnd);
         internal const int GWL_EXSTYLE = -20;
         internal const uint WM_LBUTTONUP = 0x0202;
         internal static readonly IntPtr IDC_HAND = new(32649);
