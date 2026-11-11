@@ -1047,10 +1047,14 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                     var before = combatActionList.m_actionList.Count;
                     // A cheat's tagged free cast tags what it puts on (CombatResolver.EffectTags.cs).
                     var tagging = string.IsNullOrWhiteSpace(delayed.Tag) ? null : HangingNow();
+                    // A cheat's free cast marks what it puts on as its caster's (CombatResolver.CheatOwners.cs).
+                    var making = delayed.Cheat ? tagging ?? HangingNow() : null;
                     var time = HandleSuccessfulAction(cast, combatActionList, alreadyPaid: true);
                     if (tagging is not null) {
                         TagNewEffects(tagging, delayed.Tag);
                     }
+
+                    MarkCheatEffects(making, caster);
                     // Chained .ca lines show just before this spell.
                     if (lines.Count > 0 && before < combatActionList.m_actionList.Count) {
                         cinematicTime += InsertAnnouncements(combatActionList, before, combatActionList.m_actionList[before], lines, caster.SlotIndex);

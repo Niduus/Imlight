@@ -1146,6 +1146,8 @@ public partial class CombatResolver {
 
             // A Tag tags whatever this step puts on anyone (CombatResolver.EffectTags.cs); RemoveEffects reads it itself.
             var tagging = (step.Tag ?? "").Trim().Length > 0 && !step.Is("RemoveEffects") ? HangingNow() : null;
+            // Whose cheat made what this step puts on (CombatResolver.CheatOwners.cs), so an ally's cheats leave it alone.
+            var making = s_changeSteps.Contains(step.Do ?? "") ? null : tagging ?? HangingNow();
             // The automatic check (CombatResolver.OpenChanges.cs): what the step changes with no spell the game is shown
             // gets a real spell cast for it.
             var open = WatchOpenChanges(step, combatActionList);
@@ -1242,7 +1244,7 @@ public partial class CombatResolver {
                     break;
                 case "removecharms" or "removewards":
                     foreach (var target in StepTargets(boss, step.Target.Length > 0 ? step.Target : "Self", null, trigger, receiver)) {
-                        _clearedCount += RemoveHanging(target, step.Is("RemoveCharms") ? s_charmEffects : s_wardEffects, step.Kind, step.Count, step.Spell);
+                        _clearedCount += RemoveHanging(target, step.Is("RemoveCharms") ? s_charmEffects : s_wardEffects, step.Kind, step.Count, step.Spell, boss);
                     }
 
                     break;
@@ -1305,6 +1307,8 @@ public partial class CombatResolver {
             if (tagging is not null) {
                 TagNewEffects(tagging, step.Tag);
             }
+
+            MarkCheatEffects(making, boss);
         }
 
         // A form brought back in its own circle stays up; Defeat counts for the boss the form would have replaced.
@@ -1630,7 +1634,9 @@ public partial class CombatResolver {
     // RemoveCharms / RemoveWards: Kind Good, Bad or All (empty), newest first, Count of them (0 = all); with a Spell, only
     // those that came from a spell of that name (any version).
     // Returns how many came off (for IfCleared).
-    private int RemoveHanging(CombatDuelSubCircle target, HashSet<kSpellEffects> kinds, string kind, int count, string fromSpell = "") {
+    // An ally's cheat's effects stay (owner: whose cheat this is; CombatResolver.CheatOwners.cs).
+    private int RemoveHanging(CombatDuelSubCircle target, HashSet<kSpellEffects> kinds, string kind, int count, string fromSpell = "",
+                              CombatDuelSubCircle owner = null) {
         if (target?._hangingEffects is not { } hanging) {
             return 0;
         }
@@ -1638,7 +1644,8 @@ public partial class CombatResolver {
         var good = kind.Equals("Good", StringComparison.OrdinalIgnoreCase);
         var bad = kind.Equals("Bad", StringComparison.OrdinalIgnoreCase);
         var gone = hanging.Where(e => kinds.Contains(e.m_effectType) && e.m_numRounds <= 0 && !e.m_protected
-                                      && (!good || IsGood(e)) && (!bad || !IsGood(e)) && FromSpell(e, fromSpell))
+                                      && (!good || IsGood(e)) && (!bad || !IsGood(e)) && FromSpell(e, fromSpell)
+                                      && !AllyCheatMade(owner, e))
             .Reverse()
             .Take(count > 0 ? count : int.MaxValue)
             .ToList();

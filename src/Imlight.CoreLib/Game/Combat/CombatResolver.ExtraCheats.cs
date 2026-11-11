@@ -85,7 +85,12 @@ public partial class CombatResolver {
                     }
 
                     // Bypass: protected ones too (Niduus, 2026-11-03: "remove 1 blade ... Even through protection").
-                    var picked = target._hangingEffects.Where(e => Fits(e) && (copying || step.Bypass || !e.m_protected) && SizedKind(e) is not null)
+                    // An ally's cheat's effects stay where they are (CombatResolver.CheatOwners.cs): Lena's "turn traps on me
+                    // into shields" left Walter's cheat's trap for his "turn traps on allies into blades" (2026-11-11).
+                    var kept = copying ? 0 : target._hangingEffects.Count(e => Fits(e) && AllyCheatMade(boss, e, step.Tag));
+                    LogKeptForAllies(boss, target, kept, "convert");
+                    var picked = target._hangingEffects.Where(e => Fits(e) && (copying || step.Bypass || !e.m_protected) && SizedKind(e) is not null
+                                                                   && (copying || !AllyCheatMade(boss, e, step.Tag)))
                         .Reverse().Take(step.Count > 0 ? step.Count : int.MaxValue).ToList();
                     if (!copying) {
                         // The game is shown them coming off too, or it keeps drawing them (Niduus, 2026-10-29: "the convert
@@ -145,7 +150,8 @@ public partial class CombatResolver {
                 var swapping = step.Is("SwapEffects");
                 var redo = new List<BossCheats.CheatAction>();
                 List<SpellEffect> Pick(CombatDuelSubCircle who, bool takingOff) => who?._hangingEffects is null ? []
-                    : [.. who._hangingEffects.Where(e => Fits(e) && (!takingOff || step.Bypass || !e.m_protected) && SizedKind(e) is not null)
+                    : [.. who._hangingEffects.Where(e => Fits(e) && (!takingOff || step.Bypass || !e.m_protected) && SizedKind(e) is not null
+                                                         && (!takingOff || !AllyCheatMade(boss, e, step.Tag)))
                         .Reverse().Take(step.Count > 0 ? step.Count : int.MaxValue)];
                 void Redo(IEnumerable<SpellEffect> effects, CombatDuelSubCircle onto) {
                     foreach (var e in effects) {
@@ -216,11 +222,13 @@ public partial class CombatResolver {
                     var hanging = target._hangingEffects;
                     var scaled = 0;
                     for (var i = 0; i < hanging.Count; i++) {
-                        if (Fits(hanging[i])) {
-                            hanging[i] = hanging[i] with {
-                                m_effectParam = (int) Math.Round(hanging[i].m_effectParam * percent / 100.0),
-                                m_paramPerRound = (int) Math.Round(hanging[i].m_paramPerRound * percent / 100.0),
+                        if (Fits(hanging[i]) && !AllyCheatMade(boss, hanging[i], step.Tag)) {
+                            var old = hanging[i];
+                            hanging[i] = old with {
+                                m_effectParam = (int) Math.Round(old.m_effectParam * percent / 100.0),
+                                m_paramPerRound = (int) Math.Round(old.m_paramPerRound * percent / 100.0),
                             };
+                            CarryTags(old, hanging[i]);
                             scaled++;
                         }
                     }
@@ -237,8 +245,10 @@ public partial class CombatResolver {
                 foreach (var target in On("Self").Where(t => t?._hangingEffects is not null)) {
                     var hanging = target._hangingEffects;
                     for (var i = 0; i < hanging.Count; i++) {
-                        if (Fits(hanging[i])) {
-                            hanging[i] = hanging[i] with { m_sDamageType = school };
+                        if (Fits(hanging[i]) && !AllyCheatMade(boss, hanging[i], step.Tag)) {
+                            var old = hanging[i];
+                            hanging[i] = old with { m_sDamageType = school };
+                            CarryTags(old, hanging[i]);
                         }
                     }
                 }
@@ -252,8 +262,10 @@ public partial class CombatResolver {
                 foreach (var target in On("Self").Where(t => t?._hangingEffects is not null)) {
                     var hanging = target._hangingEffects;
                     for (var i = 0; i < hanging.Count; i++) {
-                        if (Fits(hanging[i])) {
-                            hanging[i] = hanging[i] with { m_protected = !off };
+                        if (Fits(hanging[i]) && !AllyCheatMade(boss, hanging[i], step.Tag)) {
+                            var old = hanging[i];
+                            hanging[i] = old with { m_protected = !off };
+                            CarryTags(old, hanging[i]);
                         }
                     }
                 }
