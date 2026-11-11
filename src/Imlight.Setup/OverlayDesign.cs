@@ -71,6 +71,19 @@ internal sealed class OverlayDesign {
 
     internal static string PathIn(string installFolder) => Path.Combine(installFolder, FILE);
 
+    /// <summary>Where saved design files go by default: Ahziael's own folder, never the desktop (Niduus, 2026-11-11).</summary>
+    internal static string DesignsFolder(string installFolder) {
+        var folder = Path.Combine(installFolder, "Overlay designs");
+        try {
+            Directory.CreateDirectory(folder);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return installFolder;
+        }
+
+        return folder;
+    }
+
     internal static OverlayDesign Load(string installFolder) {
         try {
             var path = PathIn(installFolder);

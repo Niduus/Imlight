@@ -104,6 +104,13 @@ internal static class OverlayStandalone {
         s_designer.Activate();
     }
 
+    /// <summary>The installed Imlight.exe, or this program when there is none.</summary>
+    internal static string Exe(string installFolder) {
+        var installed = Path.Combine(installFolder, InstalledCommands.INSTALLED_EXE);
+
+        return File.Exists(installed) ? installed : Environment.ProcessPath ?? installed;
+    }
+
     internal static void Quit() {
         OverlayHost.Stop();
         if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
@@ -139,9 +146,6 @@ internal sealed class OverlayDesignerWindow : Window {
 
         var stop = ManagerTheme.MakeButton("Stop the overlay", primary: false);
         stop.Click += (_, _) => OverlayStandalone.Quit();
-        var shortcut = ManagerTheme.MakeButton("Make a desktop shortcut", primary: false);
-        shortcut.Click += async (_, _) => Say(await OverlayShortcut.MakeAsync(OverlayHost.InstallFolder)
-            ? $"Made \"{OverlayStandalone.NAME}\" on your desktop." : "The shortcut could not be made.", false);
 
         Content = new ScrollViewer {
             Content = new StackPanel {
@@ -149,7 +153,7 @@ internal sealed class OverlayDesignerWindow : Window {
                 Children = {
                     new DockPanel {
                         Children = {
-                            WithDock(new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, Children = { shortcut, stop } }, Dock.Right),
+                            WithDock(new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, Children = { stop } }, Dock.Right),
                             new TextBlock { Text = OverlayStandalone.NAME + "  " + OverlayHost.Version, FontSize = ManagerTheme.FONT_HEADING + 4, FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center },
                         },
                     },
@@ -177,35 +181,6 @@ internal sealed class OverlayDesignerWindow : Window {
         _message.Text = text;
         _messageBar.Background = isError ? new SolidColorBrush(Color.FromRgb(0x8E, 0x2A, 0x2A)) : ManagerTheme.SURFACE_HIGH_BRUSH;
         _messageBar.IsVisible = true;
-    }
-
-}
-
-/// <summary>The desktop shortcut that starts the overlay on its own.</summary>
-internal static class OverlayShortcut {
-
-    internal const string FILE = OverlayStandalone.NAME + ".lnk";
-
-    /// <summary>The installed Imlight.exe, or this program when there is none.</summary>
-    internal static string Exe(string installFolder) {
-        var installed = Path.Combine(installFolder, InstalledCommands.INSTALLED_EXE);
-
-        return File.Exists(installed) ? installed : Environment.ProcessPath ?? installed;
-    }
-
-    internal static async Task<bool> MakeAsync(string installFolder) {
-        if (!OperatingSystem.IsWindows()) {
-            return false;
-        }
-
-        var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-        static string Escape(string value) => value.Replace("'", "''");
-        var script = "$shell = New-Object -ComObject WScript.Shell\n" +
-                     $"$s = $shell.CreateShortcut('{Escape(Path.Combine(desktop, FILE))}'); $s.TargetPath = '{Escape(Exe(installFolder))}'; " +
-                     $"$s.Arguments = '--overlay --dir \"{Escape(installFolder)}\"'; $s.WorkingDirectory = '{Escape(installFolder)}'; " +
-                     "$s.WindowStyle = 7; $s.Description = 'The Ahziael game overlay, without Ahziael open'; $s.Save()";
-
-        return await ProcessRunner.RunAsync("powershell", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", script]) == 0;
     }
 
 }

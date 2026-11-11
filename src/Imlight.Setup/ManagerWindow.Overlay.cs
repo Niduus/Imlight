@@ -104,8 +104,7 @@ internal sealed partial class ManagerWindow {
                     "window (or the game's windowed full-screen mode) to see it. Nothing inside the game is changed.")),
             Fold("play", "Play", "Overlay without Ahziael open",
                 "Run just the overlay, on its own, with Ahziael closed.",
-                WithHint(Row(Action(Primary("Start the overlay on its own"), StartStandaloneOverlayAsync),
-                        Action(Plain("Make a desktop shortcut"), MakeOverlayShortcutAsync)),
+                WithHint(Row(Action(Primary("Start the overlay on its own"), StartStandaloneOverlayAsync)),
                     "\"Ahziael Overlay\" is a small program that only draws the overlay, with the same design and the same sparkle button " +
                     "(which opens a designer window). It shows a sparkle icon by the clock, where you can open the designer or stop it. " +
                     "Only one of them draws at a time: with both open, whichever started first draws."),
@@ -149,7 +148,7 @@ internal sealed partial class ManagerWindow {
     }
 
     private Task StartStandaloneOverlayAsync() {
-        var exe = OverlayShortcut.Exe(_manager.InstallFolder);
+        var exe = OverlayStandalone.Exe(_manager.InstallFolder);
         Process.Start(new ProcessStartInfo(exe) { ArgumentList = { "--overlay", "--dir", _manager.InstallFolder }, UseShellExecute = false, CreateNoWindow = true,
             WorkingDirectory = _manager.InstallFolder })?.Dispose();
         Say(OverlayHost.IsDrawing
@@ -157,12 +156,6 @@ internal sealed partial class ManagerWindow {
             : "Ahziael Overlay started.");
 
         return Task.CompletedTask;
-    }
-
-    private async Task MakeOverlayShortcutAsync() {
-        Say(await OverlayShortcut.MakeAsync(_manager.InstallFolder)
-            ? "Made \"Ahziael Overlay\" on your desktop. Double-click it to run the overlay without Ahziael."
-            : "The shortcut could not be made. Use \"Start the overlay on its own\" instead.", isError: false);
     }
 
     // ---------------------------------------------------------------------
@@ -466,7 +459,7 @@ internal sealed partial class ManagerWindow {
                 Title = "Save the overlay design", SuggestedFileName = "My overlay" + OverlayDesign.SHARE_EXTENSION,
                 DefaultExtension = OverlayDesign.SHARE_EXTENSION.TrimStart('.'), ShowOverwritePrompt = true,
                 FileTypeChoices = [new FilePickerFileType("Ahziael overlay design") { Patterns = ["*" + OverlayDesign.SHARE_EXTENSION] }],
-                SuggestedStartLocation = await StorageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Desktop),
+                SuggestedStartLocation = await StorageProvider.TryGetFolderFromPathAsync(OverlayDesign.DesignsFolder(OverlayHost.InstallFolder)),
             });
             if (file is null) {
                 return;
