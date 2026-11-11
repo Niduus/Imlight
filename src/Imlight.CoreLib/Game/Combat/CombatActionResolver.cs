@@ -143,6 +143,10 @@ internal static class CombatActionResolver {
         combatAction.m_stunResistRoll = (byte) Random.Shared.Next(0, 100);
         CombatEffectApplicator.StunResistRoll = combatAction.m_stunResistRoll;
 
+        // Rewritten AI: who stood on the other side before the cast, to know whether it defeated someone.
+        var standingBefore = action.SpellCaster?._duelActor?.ActiveSubCircles
+            .Where(c => c is { Occupied: true, IsAlive: true } && c.OccupiedTeam != action.SpellCaster.OccupiedTeam).ToList() ?? [];
+
         foreach (var spellEffect in topEffects) {
             // A broken effect must not take the rest of the spell (or the round) with it: exceptions in the duel's
             // actor vanish, and the round then never plays.
@@ -176,6 +180,9 @@ internal static class CombatActionResolver {
                 combatAction.m_spellHits = (char) 2;
             }
         }
+
+        // Rewritten AI: blades this cast used up leave threat behind (all of it when it defeated someone).
+        RewrittenAI.OnCastDone(action.SpellCaster, cast.UsedCharms, standingBefore.Any(c => !c.IsAlive));
 
         // The charms this spell used come off the caster, one entry each; an aura stays until its rounds run out.
         CombatCharms.RemoveExact(action.SpellCaster._hangingEffects, cast.UsedCharms.Where(x => !CombatRequirements.IsAura(x)));
@@ -436,6 +443,7 @@ internal static class CombatActionResolver {
         // Inform each of the targets of this spell that they've been targeted by this effect.
         UpdateCombatActionTargets(ref cast.CombatAction, targets);
         InformDuelParticipantsOfEffect(caster, targets, chosenEffect);
+        RewrittenAI.OnEffect(caster, targets, chosenEffect);
 
         // A lasting polymorph on a creature (CombatPolymorph.cs): the game swaps the model from the cast itself.
         if (chosenEffect.m_effectType == kSpellEffects.kPolymorph) {
@@ -496,6 +504,7 @@ internal static class CombatActionResolver {
             }
 
             InformDuelParticipantsOfEffect(caster, [target], chosenEffect);
+            RewrittenAI.OnEffect(caster, [target], chosenEffect);
             cast.CinematicTime += CombatEffectApplicator.ApplyEffect(chosenEffect, [], caster, [target], 1f, cast.TemplateId);
         }
     }

@@ -167,6 +167,7 @@ internal sealed partial class ManagerWindow {
         stats.Children.Add(StatRow("Can be stunned", _bossStunable, "No: stun spells do nothing to it."));
         stats.Children.Add(StatRow("Can be beguiled", _bossBeguilable,
             "No: a beguile spell cannot take it over. The server has no beguile spells yet, so this counts once it does."));
+        AddBossAIRows(stats);
 
         BuildBossSections(stats);
 
@@ -472,6 +473,7 @@ internal sealed partial class ManagerWindow {
 
         _bossStunable.SelectedItem = Tri(changes?.Stunable);
         _bossBeguilable.SelectedItem = Tri(changes?.Beguilable);
+        ShowBossAI(changes);
 
         _bossDeck = changes?.Deck ?? _bossCatalog.GameDeck(boss);
         _bossDeckChanged = changes?.Deck is not null;
@@ -599,6 +601,14 @@ internal sealed partial class ManagerWindow {
                 changes.Stats[key] = v;
             }
         }
+
+        foreach (var (key, label, _) in BossChanges.AI_STATS) {
+            if (AIStatNumber(key, _bossStatBoxes[key], label) is { } v) {
+                changes.Stats[key] = v;
+            }
+        }
+
+        BossAIInto(changes);
 
         foreach (var ((row, column), box) in _bossGridBoxes) {
             var label = BossChanges.GRID_ROWS.First(r => r.Key == row).Label;

@@ -184,6 +184,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Battle", "ShadowMagicNeedsQuest", "Shadow pips only after the quest Shadow Dancer (or shadow pip rating gear), like the game", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "CreatureShadowPips", "Creatures can get shadow pips", new() { OnContent = "On", OffContent = "Off" }),
         ("Battle", "RandomCreatureShadowPips", "Creatures get shadow magic only by chance (chance under Settings, Battle)", new() { OnContent = "On", OffContent = "Off" }),
+        (REWRITTEN_AI, "Enabled", "Rewritten AI: creatures fight with reason. They target the most threatening wizard (big blade stacks and pips first), only cast cards that make sense (no myth shield when nobody uses myth), set up and hit as a team, and read feeds. Off: they fight as before. Counts from the next round; fine-tuning just below, each creature's own in Database > Bosses", new() { OnContent = "On", OffContent = "Off" }),
         ("Roshambo", "Enabled", "Roshambo decks: creatures fight with Roshambo cards (cards that Clear, Echo or Gambit) in place of their own; counts from the next battle", new() { OnContent = "On", OffContent = "Off" }),
         ("QuestSafety", "Enabled", "Quest safety guards: quests can't leave a wizard stuck (steps that can't start, turned-off NPCs, used-up objects) and a quest taken again doesn't pay twice; players can type .stuck", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "Tame", "Randomizer: tame mode (creatures, their decks and pips stay normal so quests can be done)", new() { OnContent = "On", OffContent = "Off" }),
@@ -344,7 +345,7 @@ internal sealed partial class ManagerWindow : Window {
             trainerRows));
         _trainersCard.IsVisible = false;
         var battleRows = new StackPanel { Spacing = 4 };
-        foreach (var (_, key, name, toggle) in _battleSwitches) {
+        foreach (var (section, key, name, toggle) in _battleSwitches) {
             var row = SwitchRow(name, toggle);
             if (key == "MobsJoinLate") {
                 ToolTip.SetTip(row, "A monster that walks into a battle with a free enemy circle joins it and fights from the next round, " +
@@ -357,6 +358,10 @@ internal sealed partial class ManagerWindow : Window {
             }
 
             battleRows.Children.Add(row);
+            if (section == REWRITTEN_AI && key == "Enabled") {
+                battleRows.Children.Add(RewrittenAISliders());
+            }
+
             if (key == "MobsJoinLate") {
                 battleRows.Children.Add(SwitchRow("Most monsters in a battle", _maxMonsters,
                     "Off: 2 for 1 wizard, 3 for 2, 4 for 3 or 4 (Unicorn Way 1 per wizard). 1 to 4: always that many at most."));
@@ -1534,6 +1539,7 @@ internal sealed partial class ManagerWindow : Window {
         var reach = int.TryParse(ini.GetValueOrDefault(("Battle", "EngageReach")), out var r) ? r : 175;
         _engageReach.SelectedIndex = Array.IndexOf(s_engageReaches,
             s_engageReaches.OrderBy(x => Math.Abs((x == 0 ? 350 : x) - (reach <= 0 ? 350 : reach))).First());
+        ShowRewrittenSliders(ini);
         _noAggro.IsEnabled = Has("Battle", "NoAggroSeconds");
         var noAggro = int.TryParse(ini.GetValueOrDefault(("Battle", "NoAggroSeconds")), out var na) ? na : 12;
         _noAggro.SelectedIndex = Array.IndexOf(s_noAggroSeconds, s_noAggroSeconds.OrderBy(x => Math.Abs(x - noAggro)).First());
@@ -3096,7 +3102,7 @@ internal sealed partial class ManagerWindow : Window {
         "Global Settings" => ("gear", "Settings"),
         "Logging" => ("log", "Logs"),
         "Locale" or "World" => ("globe", "Lookup"),
-        "Combat" or "Battle" or "Archmastery" or "Roshambo" => ("sword", "Bosses"),
+        "Combat" or "Battle" or "Archmastery" or "Roshambo" or REWRITTEN_AI => ("sword", "Bosses"),
         "QuestSafety" => ("shield", "Quests"),
         "PvP" => ("swords", "Bosses"),
         "Die Delete" => ("skull", "bad"),

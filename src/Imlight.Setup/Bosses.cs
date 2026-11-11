@@ -88,12 +88,38 @@ internal sealed class BossChanges {
         ("Aggression", "Aggression %", "Chance each round it attacks instead of preparing (blades, traps, shields, heals). 0 to 100."),
     ];
 
+    /// <summary>
+    /// The Rewritten AI's numbers for this creature (the server's RewrittenAI.TuningFor), in percent, or rounds for
+    /// AISetupRounds. Empty uses the server's setting. Shown under "Rewritten AI", not with the other stats.
+    /// </summary>
+    internal static readonly (string Key, string Label, string Help)[] AI_STATS = [
+        ("AIDanger", "Blades and pips count %", "How much a wizard's blades and pips make it target them. 100 is normal."),
+        ("AIDamage", "Damage done counts %", "How much the damage a wizard did makes it target them."),
+        ("AIHealing", "Healing counts %", "How much a wizard's healing makes it target them."),
+        ("AILowHealth", "Low health counts %", "How strongly it goes after a wizard who is nearly out."),
+        ("AIMatchup", "School matchup counts %", "How strongly it prefers wizards weak to its school. 0 ignores schools."),
+        ("AIStubborn", "Stubborn %", "How far ahead another wizard must be before it switches target."),
+        ("AISetupRounds", "Most setup rounds", "How many rounds in a row it may spend on blades and traps before it must hit (0 to 10)."),
+    ];
+
+    /// <summary>Its Rewritten AI choice: null uses the server's switch, else "On" or "Off".</summary>
+    internal string? AIMode { get; set; }
+
+    /// <summary>Its part in the team (Leader, Protector, Healer, Striker, Support, Free), or null for Automatic.</summary>
+    internal string? AIRole { get; set; }
+
+    /// <summary>What it never does (RewrittenAI exclusions: NoTeamShields, NoTraps ...).</summary>
+    internal List<string> AIExclusions { get; set; } = [];
+
+    /// <summary>Cards it never casts, by name, ; between them.</summary>
+    internal string? AINeverCast { get; set; }
+
     /// <summary>How it thinks in battle: these boxes count from its next round, even in a battle already going.</summary>
     internal static readonly string[] ATTITUDE = ["Intellect", "Selfishness", "Aggression"];
 
     /// <summary>The boxes that take whole numbers only.</summary>
     internal static bool IsWhole(string key) => key is "StartingPips" or "StartingPowerPips" or "ShadowPips" or "ShadowPipChance"
-        || Array.IndexOf(ATTITUDE, key) >= 0;
+        || Array.IndexOf(ATTITUDE, key) >= 0 || AI_STATS.Any(a => a.Key == key);
 
     /// <summary>
     /// The rows of the school grid, in order: the file's key (saved as &lt;Key&gt;BySchool), the label and what it means.
@@ -173,10 +199,18 @@ internal sealed class BossChanges {
             Level = (int?) Number(json, "Level"),
             School = Text(json, "School") is { Length: > 0 } school ? school : null,
         };
-        foreach (var (key, _, _) in STATS) {
+        foreach (var (key, _, _) in STATS.Concat(AI_STATS)) {
             if (Number(json, key) is { } value) {
                 changes.Stats[key] = (float) value;
             }
+        }
+
+        changes.AIMode = Text(json, "RewrittenAI") is { Length: > 0 } mode ? mode : null;
+        changes.AIRole = Text(json, "AIRole") is { Length: > 0 } role ? role : null;
+        changes.AINeverCast = Text(json, "AINeverCast") is { Length: > 0 } never ? never : null;
+        if (Find(json, "AIExclusions") is JsonArray exclusions) {
+            changes.AIExclusions = [.. exclusions.OfType<JsonValue>().Select(v => v.TryGetValue<string>(out var x) ? x : null)
+                .Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x!)];
         }
 
         foreach (var (key, _, _) in GRID_ROWS) {
@@ -223,8 +257,10 @@ internal sealed class BossChanges {
 
         var handled = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
             "TemplateID", "Name", "Notes", "Health", "Level", "School", "Stunable", "Beguilable", "Deck", "Cheats",
+            "RewrittenAI", "AIRole", "AINeverCast", "AIExclusions",
         };
         handled.UnionWith(STATS.Select(s => s.Key));
+        handled.UnionWith(AI_STATS.Select(s => s.Key));
         handled.UnionWith(GRID_ROWS.SelectMany(r => new[] { r.Key, r.Key + "BySchool" }));
         foreach (var (key, node) in json.Where(p => !handled.Contains(p.Key))) {
             changes.Extra[key] = node?.DeepClone();
@@ -264,10 +300,26 @@ internal sealed class BossChanges {
             json["School"] = school;
         }
 
-        foreach (var (key, _, _) in STATS) {
+        foreach (var (key, _, _) in STATS.Concat(AI_STATS)) {
             if (Stats.TryGetValue(key, out var value)) {
                 json[key] = IsWhole(key) ? (int) value : value;
             }
+        }
+
+        if (AIMode is { Length: > 0 } mode) {
+            json["RewrittenAI"] = mode;
+        }
+
+        if (AIRole is { Length: > 0 } role) {
+            json["AIRole"] = role;
+        }
+
+        if (AIExclusions.Count > 0) {
+            json["AIExclusions"] = new JsonArray([.. AIExclusions.Select(x => (JsonNode) JsonValue.Create(x)!)]);
+        }
+
+        if (AINeverCast is { Length: > 0 } never) {
+            json["AINeverCast"] = never;
         }
 
         foreach (var (key, row) in Grid.Where(g => g.Value.Count > 0)) {
@@ -307,7 +359,8 @@ internal sealed class BossChanges {
     /// <summary>True when nothing is changed, so there is no need for a file.</summary>
     internal bool IsEmpty => Health is null && Level is null && School is null && Stats.Count == 0 && Deck is null
                              && Grid.Values.All(r => r.Count == 0) && Stunable is null && Beguilable is null
-                             && Cheats is null && Extra.Count == 0;
+                             && Cheats is null && Extra.Count == 0
+                             && AIMode is null && AIRole is null && AIExclusions.Count == 0 && AINeverCast is null;
 
     /// <summary>A field of a JSON object, its name in any case.</summary>
     internal static JsonNode? FindIn(JsonObject json, string key) => Find(json, key);
