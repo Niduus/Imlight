@@ -67,7 +67,12 @@ internal static class OverlayStandalone {
     /// <summary>Called once the app is up: the overlay, its icon by the clock, and the designer on request.</summary>
     internal static void Begin(Application app, string installFolder) {
         OverlayHost.Start(installFolder, standalone: true);
-        OverlayHost.DesignRequested += OpenDesigner;
+        // The sparkle button on the game: change it right there; "Full designer" opens the designer window.
+        OverlayHost.DesignRequested += () => {
+            if (!OverlayGameEditor.Open(OpenDesigner)) {
+                OpenDesigner();
+            }
+        };
 
         var menu = new NativeMenu();
         var design = new NativeMenuItem("Design the overlay");

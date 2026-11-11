@@ -109,9 +109,9 @@ internal static class OverlayRenderer {
                 }
 
                 var rank = Rank(PartOf(child));
-                var rect = Start(e, child.DesiredSize, final);
+                var rect = Inside(Start(e, child.DesiredSize, final), bounds);
                 if (rank > 0) {
-                    rect = Clear(rect, e.Spacing, rank, placed, bounds);
+                    rect = Inside(Clear(rect, e.Spacing, rank, placed, bounds), bounds);
                 }
 
                 placed.Add((rect, rank));
@@ -120,6 +120,12 @@ internal static class OverlayRenderer {
 
             return final;
         }
+
+        // Always inside the game window (Niduus, 2026-11-11: "only be able to be placed within the regions of the client UI
+        // size"): one that would stick out is moved in; one bigger than the window starts at its top left.
+        private static Rect Inside(Rect rect, Rect bounds) => new(
+            Math.Max(bounds.Left, Math.Min(rect.X, bounds.Right - rect.Width)),
+            Math.Max(bounds.Top, Math.Min(rect.Y, bounds.Bottom - rect.Height)), rect.Width, rect.Height);
 
         // Where its corner or side and X and Y put it.
         private static Rect Start(OverlayElement e, Size size, Size area) {

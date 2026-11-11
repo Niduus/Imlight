@@ -88,6 +88,36 @@ internal static class OverlayHost {
     /// <summary>The designer button on the game was clicked.</summary>
     internal static event Action? DesignRequested;
 
+    /// <summary>The game window whose sparkle button was clicked last.</summary>
+    internal static IntPtr RequestedGame { get; private set; }
+
+    private static readonly Dictionary<IntPtr, IntPtr> s_buttonGame = [];
+
+    /// <summary>
+    /// True while the design is being changed right on the game (<see cref="OverlayGameEditor"/>): the overlay steps
+    /// aside, the editing window over the game shows it instead.
+    /// </summary>
+    internal static bool EditingInGame { get; set; }
+
+    /// <summary>Goes up whenever the design changes (here or in the other copy's file), so an open designer can follow.</summary>
+    internal static int DesignStamp { get; private set; }
+
+    /// <summary>Where a game window's inside is on the screen, in pixels, and its scale; null when it is gone or minimized.</summary>
+    internal static (int X, int Y, int Width, int Height, double Scale)? GameClient(IntPtr game) {
+        if (!OperatingSystem.IsWindows() || game == IntPtr.Zero || !Native.IsWindow(game) || Native.IsIconic(game) || !Native.GetClientRect(game, out var r)) {
+            return null;
+        }
+
+        var origin = new Native.POINT();
+        Native.ClientToScreen(game, ref origin);
+        var dpi = Native.GetDpiForWindow(game);
+
+        return (origin.X, origin.Y, r.Right - r.Left, r.Bottom - r.Top, dpi == 0 ? 1.0 : dpi / 96.0);
+    }
+
+    /// <summary>The size of each open game window (device-independent pixels), for the designer's picture.</summary>
+    internal static IReadOnlyList<(double Width, double Height)> GameSizes { get; private set; } = [];
+
     /// <summary>Game windows the overlay is drawing on now.</summary>
     internal static int GameWindows { get; private set; }
 
@@ -163,6 +193,7 @@ internal static class OverlayHost {
     internal static void Apply(OverlayDesign design) {
         s_design = design.Copy();
         s_designVersion++;
+        DesignStamp++;
         try {
             s_design.Save(s_installFolder);
             s_designFileTime = FileTime(OverlayDesign.PathIn(s_installFolder));
@@ -262,6 +293,7 @@ internal static class OverlayHost {
             s_designFileTime = designTime;
             s_design = OverlayDesign.Load(s_installFolder);
             s_designVersion++;
+            DesignStamp++;
         }
 
         Link.Load(s_installFolder);
@@ -272,6 +304,12 @@ internal static class OverlayHost {
 
         // The Ahziael line always shows, so the game windows are followed whatever the design says.
         s_games = FindGameWindows();
+        GameSizes = s_games.Where(g => !Native.IsIconic(g) && Native.GetClientRect(g, out _)).Select(g => {
+            Native.GetClientRect(g, out var r);
+            var dpi = Native.GetDpiForWindow(g);
+            var scale = dpi == 0 ? 1.0 : dpi / 96.0;
+            return ((r.Right - r.Left) / scale, (r.Bottom - r.Top) / scale);
+        }).ToList();
         HookGames();
         var clock = OverlayRenderer.UsesClock(s_design) ? DateTime.Now.ToString("h:mm yyyy-MM-dd") : "";
         if (clock != s_clock) {
@@ -282,6 +320,15 @@ internal static class OverlayHost {
 
     private static void FollowAll() {
         if (!s_drawing) {
+            return;
+        }
+
+        // Being changed right on the game: the editing window shows it there.
+        if (EditingInGame) {
+            foreach (var layered in s_windows.Values) {
+                layered.Hide();
+            }
+
             return;
         }
 
@@ -557,6 +604,7 @@ internal static class OverlayHost {
 
         private static IntPtr ButtonProc(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam) {
             if (msg == Native.WM_LBUTTONUP) {
+                RequestedGame = s_buttonGame.TryGetValue(hwnd, out var game) ? game : IntPtr.Zero;
                 Dispatcher.UIThread.Post(() => DesignRequested?.Invoke());
 
                 return IntPtr.Zero;
@@ -569,6 +617,8 @@ internal static class OverlayHost {
             if (_hwnd == IntPtr.Zero) {
                 return;
             }
+
+            s_buttonGame[_button] = game;
 
             // Only a minimized game hides it. A busy game (a loading screen) keeps it where it is.
             if (Native.IsIconic(game) || !Native.IsWindowVisible(game)) {
@@ -604,7 +654,9 @@ internal static class OverlayHost {
 
             if (version != _drawnVersion || _drawnSize != (width, height, scale)) {
                 var picture = OverlayRenderer.Build(design, new OverlayRenderer.Words(Version, Link.ServerLabel), showMine: ShowsMine(design), server: ServerElements);
-                Draw(_hwnd, Render(picture, width, height, scale), width, height, origin);
+                // Laid out on the design's 1280 x 720 terms and drawn bigger or smaller to fit this window.
+                var fit = OverlayDesign.Fit(width / scale, height / scale);
+                Draw(_hwnd, Render(picture, width, height, scale * fit), width, height, origin);
                 _drawnVersion = version;
                 _drawnSize = (width, height, scale);
                 _placed = place;
@@ -665,7 +717,7 @@ internal static class OverlayHost {
             return below;
         }
 
-        private void Hide() {
+        internal void Hide() {
             if (_shown) {
                 Native.ShowWindow(_hwnd, Native.SW_HIDE);
                 Native.ShowWindow(_button, Native.SW_HIDE);
@@ -709,6 +761,7 @@ internal static class OverlayHost {
             }
 
             if (_button != IntPtr.Zero) {
+                s_buttonGame.Remove(_button);
                 Native.DestroyWindow(_button);
             }
         }
@@ -790,7 +843,7 @@ internal static class OverlayHost {
             var time = FileTime(path);
             if (time == DateTime.MinValue) {
                 if (s_target is null && File.Exists(InstalledCommands.ConfigFile(installFolder))) {
-                    SetTarget("127.0.0.1", GameClient.OverlayPort(installFolder, "127.0.0.1"));
+                    SetTarget("127.0.0.1", Setup.GameClient.OverlayPort(installFolder, "127.0.0.1"));
                 }
 
                 return;

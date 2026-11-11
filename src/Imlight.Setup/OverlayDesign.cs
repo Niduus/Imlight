@@ -44,6 +44,18 @@ internal sealed class OverlayDesign {
     /// <summary>What the linked server sent last, kept beside overlay.json so both copies (Ahziael, on its own) see it.</summary>
     internal const string FROM_SERVER_FILE = "overlay-server.json";
 
+    /// <summary>The game window a design is laid out on: sizes and places are in pixels of a 1280 x 720 window.</summary>
+    internal const double REFERENCE_W = 1280;
+    internal const double REFERENCE_H = 720;
+
+    /// <summary>
+    /// How much bigger a game window of this size (device-independent pixels) draws the design than the 1280 x 720 one
+    /// it is set up on (Niduus, 2026-11-11: "multi clients too with odd res from one another. This way, it's still set up
+    /// as projected"). The same for width and height, so nothing is stretched; corners and sides keep their pieces.
+    /// </summary>
+    internal static double Fit(double width, double height)
+        => width <= 0 || height <= 0 ? 1 : Math.Clamp(Math.Min(width / REFERENCE_W, height / REFERENCE_H), 0.6, 4);
+
     /// <summary>The least room every other text and box keeps from the Ahziael line, so nothing ever covers it.</summary>
     internal const double CREDIT_CLEARANCE = 4;
 
