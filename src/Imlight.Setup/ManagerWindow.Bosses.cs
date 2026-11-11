@@ -458,6 +458,9 @@ internal sealed partial class ManagerWindow {
 
         var cheatShadowPips = CheatShadowPips(boss.Id);
         _bossStatBoxes["ShadowPips"].Watermark = cheatShadowPips is { } most ? $"Game: {most}" : "Game's value";
+        foreach (var key in BossChanges.ATTITUDE) {
+            _bossStatBoxes[key].Watermark = boss.GameAttitude(key) is { } game ? $"Game: {game}" : "Game's value";
+        }
         foreach (var ((row, column), box) in _bossGridBoxes) {
             box.Text = changes?.Grid.GetValueOrDefault(row)?.TryGetValue(column, out var value) == true
                 ? value.ToString(CultureInfo.InvariantCulture) : "";
@@ -589,7 +592,7 @@ internal sealed partial class ManagerWindow {
             float? value = key switch {
                 "StartingPips" or "StartingPowerPips" => WholeNumber(box, label, 0, 7),
                 "ShadowPips" => WholeNumber(box, label, 0, 50),
-                "ShadowPipChance" => WholeNumber(box, label, 0, 100),
+                "ShadowPipChance" or "Intellect" or "Selfishness" or "Aggression" => WholeNumber(box, label, 0, 100),
                 _ => Number(box, label),
             };
             if (value is { } v) {

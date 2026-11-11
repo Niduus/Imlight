@@ -84,9 +84,10 @@ internal sealed class NpcComponent : ZoneEntityComponent, IComponentFactory, ICl
             .FirstOrDefault();
 
         this.IsBossMonster = _npcBehaviorTemplate.IsBoss();
-        this.IntelligenceFactor = _npcBehaviorTemplate.m_fIntelligence;
-        this.SelfishnessFactor = _npcBehaviorTemplate.m_fSelfishFactor;
-        this.AggressiveFactor = _npcBehaviorTemplate.m_nAggressiveFactor;
+        // The game's own, as chances of 0 to 1 (Aggression is kept out of 10): CreatureAttitude.
+        this.IntelligenceFactor = Imlight.CoreLib.Game.Combat.CreatureAttitude.GameIntellect(_npcBehaviorTemplate);
+        this.SelfishnessFactor = Imlight.CoreLib.Game.Combat.CreatureAttitude.GameSelfishness(_npcBehaviorTemplate);
+        this.AggressiveFactor = Imlight.CoreLib.Game.Combat.CreatureAttitude.GameAggression(_npcBehaviorTemplate);
         this.StartingHealth = _npcBehaviorTemplate.m_nStartingHealth;
 
         // A custom vendor or trainer with a creature's look never starts a battle (CustomNpcs).

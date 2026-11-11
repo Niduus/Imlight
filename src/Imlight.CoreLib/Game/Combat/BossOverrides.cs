@@ -19,6 +19,9 @@
  *   StartingPips, StartingPowerPips    the pips it starts the battle with.
  *   ShadowPips, ShadowPipChance        the most shadow pips it holds (0 = none) and its percent a round to gain one.
  *                            They win over a BossCheats file's ShadowPips and the [Battle] creature settings.
+ *   Intellect, Selfishness, Aggression   how it thinks in battle, percent 0 to 100 (CreatureAttitude): the chance a
+ *                            round to pick its biggest spell, to buff or heal itself over a teammate, and to attack
+ *                            instead of preparing. Read every round, so a change counts in a battle already going.
  *   Stunable, Beguilable     false: stun spells do nothing to it, or it cannot be beguiled. The server has no
  *                            beguile (mind control) effect yet, so Beguilable is kept for when it does (CanBeBeguiled).
  *   Deck                     the spells it casts, replacing its game deck when there is at least one. Copies: how many
@@ -104,6 +107,10 @@ internal static class BossOverrides {
         public int? GoldMax { get; set; }
         // True: the XP and gold above are split between the wizards who fought; false or left out: each gets all.
         public bool? RewardShared { get; set; }
+        // How it thinks in battle, in percent (CreatureAttitude): left out keeps the game's own.
+        public float? Intellect { get; set; }
+        public float? Selfishness { get; set; }
+        public float? Aggression { get; set; }
     }
 
     internal sealed class CheatChanges {
