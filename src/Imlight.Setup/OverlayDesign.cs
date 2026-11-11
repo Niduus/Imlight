@@ -143,6 +143,39 @@ internal sealed class OverlayDesign {
         }
     }
 
+    /// <summary>
+    /// Every piece gets its own Id, and a Parent that is another piece of the same list, never itself or one of its own
+    /// children (so a family can't go round in a circle); anything else is cleared.
+    /// </summary>
+    internal static void FixFamily(List<OverlayElement> elements) {
+        var ids = new HashSet<string>();
+        foreach (var e in elements) {
+            if (e.Id.Length == 0 || !ids.Add(e.Id)) {
+                e.Id = OverlayElement.NewId();
+                ids.Add(e.Id);
+            }
+        }
+
+        var byId = elements.ToDictionary(e => e.Id);
+        foreach (var e in elements) {
+            if (e.Parent.Length == 0) {
+                continue;
+            }
+
+            // Up the family from the parent: reaching this one again, or a missing one, ends it.
+            var seen = new HashSet<string> { e.Id };
+            var at = e.Parent;
+            while (at.Length > 0) {
+                if (!seen.Add(at) || !byId.TryGetValue(at, out var up)) {
+                    e.Parent = "";
+                    break;
+                }
+
+                at = up.Parent;
+            }
+        }
+    }
+
     internal OverlayDesign Copy() => FromJson(ToJson()) ?? new OverlayDesign();
 
     /// <summary>
@@ -161,6 +194,7 @@ internal sealed class OverlayDesign {
         }
 
         Elements = (Elements ?? []).Where(e => e is not null).Take(MAX_ELEMENTS).Select(e => e.Clean()).ToList();
+        FixFamily(Elements);
 
         return this;
     }
@@ -204,6 +238,18 @@ internal sealed class OverlayElement {
     /// <summary>For a cheat button: Use (press it), On, Off, or Switch (on when off, off when on).</summary>
     public string CheatHow { get; set; } = OverlayAction.USE;
     public string Name { get; set; } = "";
+
+    /// <summary>Its own name for the family links (made by Ahziael).</summary>
+    public string Id { get; set; } = "";
+
+    /// <summary>
+    /// The Id of the piece it belongs to, or empty for the game window (Niduus, 2026-11-11: "make sure parenting and
+    /// childing is supported for the UI's ... Children moving with parents"). A child is pinned to a corner or side of
+    /// its parent instead of the window, so it moves with it, and is hidden when its parent is.
+    /// </summary>
+    public string Parent { get; set; } = "";
+
+    internal static string NewId() => Guid.NewGuid().ToString("N")[..10];
     public bool Visible { get; set; } = true;
 
     /// <summary>
@@ -287,6 +333,8 @@ internal sealed class OverlayElement {
         Command = Trim(Command, MAX_COMMAND).Replace("\n", " ").Trim();
         CheatHow = OverlayAction.HOWS.Contains(CheatHow) ? CheatHow : OverlayAction.USE;
         Name = Trim(Name, 40);
+        Id = new string((Id ?? "").Where(char.IsAsciiLetterOrDigit).Take(32).ToArray());
+        Parent = new string((Parent ?? "").Where(char.IsAsciiLetterOrDigit).Take(32).ToArray());
         Text = Trim(Text, MAX_TEXT);
         if (!Enum.IsDefined(Anchor)) {
             Anchor = OverlayAnchor.TopLeft;
