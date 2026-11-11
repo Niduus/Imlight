@@ -137,7 +137,7 @@ internal sealed class OverlayDesignerWindow : Window {
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
         ManagerTheme.Apply(this);
 
-        var editor = new ManagerWindow.OverlayEditor(this, Say);
+        var editor = new ManagerWindow.OverlayEditor(this, Say, () => ManagerWindow.OverlayEditor.ServerFileIn(OverlayHost.InstallFolder));
         _messageBar.Child = _message;
         _timer.Tick += (_, _) => _status.Text = ManagerWindow.OverlayStatus();
         _timer.Start();

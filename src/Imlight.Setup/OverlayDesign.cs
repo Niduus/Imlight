@@ -37,8 +37,12 @@ internal sealed class OverlayDesign {
     internal const string SHARE_EXTENSION = ".ahziaeloverlay";
     internal const string CREDIT_TEXT = "Ahziael made by Niduus";
     internal const int MAX_ELEMENTS = 40;
-    internal const double CREDIT_MOVE_MIN = 0;
-    internal const double CREDIT_MOVE_MAX = 600;
+
+    /// <summary>The server's own texts and boxes, in the server's spiraldb-extra/Customs folder (OverlayGate reads it).</summary>
+    internal const string SERVER_FILE = "ServerOverlay.json";
+
+    /// <summary>What the linked server sent last, kept beside overlay.json so both copies (Ahziael, on its own) see it.</summary>
+    internal const string FROM_SERVER_FILE = "overlay-server.json";
 
     /// <summary>The least room every other text and box keeps from the Ahziael line, so nothing ever covers it.</summary>
     internal const double CREDIT_CLEARANCE = 4;
@@ -92,9 +96,10 @@ internal sealed class OverlayDesign {
         return folder;
     }
 
-    internal static OverlayDesign Load(string installFolder) {
+    internal static OverlayDesign Load(string installFolder) => LoadFile(PathIn(installFolder));
+
+    internal static OverlayDesign LoadFile(string path) {
         try {
-            var path = PathIn(installFolder);
             if (File.Exists(path) && new FileInfo(path).Length < 512 * 1024) {
                 return FromJson(File.ReadAllText(path)) ?? new OverlayDesign();
             }
@@ -105,8 +110,10 @@ internal sealed class OverlayDesign {
         return new OverlayDesign();
     }
 
-    internal void Save(string installFolder) {
-        var path = PathIn(installFolder);
+    internal void Save(string installFolder) => SaveFile(PathIn(installFolder));
+
+    internal void SaveFile(string path) {
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         var temp = path + ".tmp";
         File.WriteAllText(temp, ToJson());
         File.Move(temp, path, true);
@@ -127,26 +134,20 @@ internal sealed class OverlayDesign {
     internal OverlayDesign Copy() => FromJson(ToJson()) ?? new OverlayDesign();
 
     /// <summary>
-    /// Every value back in range, and the credit line put back to the program's own look (Niduus, 2026-11-11: "the
-    /// Ahziael one ... is permanent. It can be moved but only the program can modify it and must be on full display").
-    /// Only where it sits is kept.
+    /// Every value back in range, and the credit line put back to the program's own look and place (Niduus, 2026-11-11:
+    /// "Ahziael is always loaded first and always in it's designated position first. It can not be repositioned or
+    /// disabled or moved in anyway").
     /// </summary>
     internal OverlayDesign Clean() {
-        // The same object stays (the designer keeps hold of it); everything but where it sits comes from the program.
+        // The same object stays (the designer keeps hold of it); every value of it comes from the program.
         var credit = Credit ??= DefaultCredit();
-        var anchor = Enum.IsDefined(credit.Anchor) ? credit.Anchor : OverlayAnchor.BottomLeft;
-        var (x, y) = (credit.X, credit.Y);
         var look = DefaultCredit();
         foreach (var property in typeof(OverlayElement).GetProperties()) {
-            if (property.CanWrite && property.Name is not (nameof(OverlayElement.Anchor) or nameof(OverlayElement.X) or nameof(OverlayElement.Y))) {
+            if (property.CanWrite) {
                 property.SetValue(credit, property.GetValue(look));
             }
         }
 
-        credit.Anchor = anchor;
-        // In from its corner or side, never off the window.
-        credit.X = OverlayElement.Range(x, CREDIT_MOVE_MIN, CREDIT_MOVE_MAX, 10);
-        credit.Y = OverlayElement.Range(y, CREDIT_MOVE_MIN, CREDIT_MOVE_MAX, 8);
         Elements = (Elements ?? []).Where(e => e is not null).Take(MAX_ELEMENTS).Select(e => e.Clean()).ToList();
 
         return this;

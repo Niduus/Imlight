@@ -39,29 +39,54 @@ internal static class OverlayRenderer {
         => design.Elements.Any(e => e.Visible && !e.IsBox && (e.Text.Contains("{time}") || e.Text.Contains("{date}")));
 
     /// <summary>
-    /// The whole overlay, filling a game window of this size (in device-independent pixels). Your texts and boxes are drawn
-    /// lowest layer first (same layer: list order), the Ahziael line last, so nothing covers it.
+    /// The whole overlay, filling a game window of this size (in device-independent pixels), in three parts (Niduus,
+    /// 2026-11-11: "Ahziael is always loaded first and always in it's designated position first ... Server always loads
+    /// first and positions itself first. Client loads second"): the Ahziael line, then the server's texts and boxes
+    /// (<paramref name="server"/>), then the player's own. Each part is placed around the ones before it and drawn under
+    /// them, so the player's never cover the server's and nothing covers the Ahziael line.
     /// </summary>
-    internal static Control Build(OverlayDesign design, Words words, OverlayElement? highlight = null, bool showMine = true) {
+    internal static Control Build(OverlayDesign design, Words words, OverlayElement? highlight = null, bool showMine = true,
+        IReadOnlyList<OverlayElement>? server = null) {
         var panel = new OverlayPanel { Background = Brushes.Transparent, ClipToBounds = true };
         if (showMine) {
-            foreach (var element in design.Elements.Where(e => e.Visible).Select((e, i) => (e, i)).OrderBy(p => p.e.Layer).ThenBy(p => p.i).Select(p => p.e)) {
-                panel.Children.Add(Element(element, words, element == highlight));
-            }
+            Add(panel, design.Elements, words, highlight, OverlayPanel.CLIENT);
         }
 
-        panel.Children.Add(Element(design.Credit, words, design.Credit == highlight, OverlayDesign.CreditLine(words.Version)));
+        Add(panel, server ?? [], words, highlight, OverlayPanel.SERVER);
+        var credit = Element(design.Credit, words, design.Credit == highlight, OverlayDesign.CreditLine(words.Version));
+        credit.Classes.Add(OverlayPanel.CREDIT);
+        panel.Children.Add(credit);
 
         return panel;
     }
+
+    // Lowest layer first (same layer: list order), so the higher one is drawn over.
+    private static void Add(Panel panel, IEnumerable<OverlayElement> elements, Words words, OverlayElement? highlight, string part) {
+        foreach (var element in elements.Where(e => e.Visible).Select((e, i) => (e, i)).OrderBy(p => p.e.Layer).ThenBy(p => p.i).Select(p => p.e)) {
+            var control = Element(element, words, element == highlight);
+            control.Classes.Add(part);
+            panel.Children.Add(control);
+        }
+    }
+
+    /// <summary>Which part a drawn text or box belongs to.</summary>
+    internal static string PartOf(Control control)
+        => control.Classes.Contains(OverlayPanel.CREDIT) ? OverlayPanel.CREDIT : control.Classes.Contains(OverlayPanel.SERVER) ? OverlayPanel.SERVER : OverlayPanel.CLIENT;
 
     /// <summary>
     /// Places each text and box from its corner or side, then moves any that laps over one placed before it off that
     /// one, leaving its Spacing between them (Niduus, 2026-11-11: "Introduce layers and spacing as well so if a UI is
     /// lapping over another, the spacing allows it to move the overlaying UI over some = to the spacing value"). The
-    /// Ahziael line is placed first and never moves; everything keeps clear of it.
+    /// Ahziael line is placed first and never moves, then the server's, then the player's; a later part always keeps
+    /// clear of an earlier one.
     /// </summary>
-    private sealed class OverlayPanel : Panel {
+    internal sealed class OverlayPanel : Panel {
+
+        internal const string CREDIT = "credit";
+        internal const string SERVER = "server";
+        internal const string CLIENT = "client";
+
+        private static int Rank(string part) => part switch { CREDIT => 0, SERVER => 1, _ => 2 };
 
         protected override Size MeasureOverride(Size available) {
             foreach (var child in Children) {
@@ -73,24 +98,23 @@ internal static class OverlayRenderer {
 
         protected override Size ArrangeOverride(Size final) {
             var bounds = new Rect(final);
-            // The Ahziael line first (it is the last child), then from the lowest layer up: the one that laps over
-            // another (drawn over it) is the one that moves.
-            var order = new List<Control> { Children[^1] };
-            order.AddRange(Children.Take(Children.Count - 1));
-            var placed = new List<(Rect Rect, double Gap, bool Credit)>();
+            // The Ahziael line, the server's, the player's; within each, from the lowest layer up: the one that laps
+            // over another (drawn over it) is the one that moves.
+            var order = Children.Select((c, i) => (c, i)).OrderBy(p => Rank(PartOf(p.c))).ThenBy(p => p.i).Select(p => p.c).ToList();
+            var placed = new List<(Rect Rect, int Rank)>();
             foreach (var child in order) {
                 if (child.Tag is not OverlayElement e) {
                     child.Arrange(new Rect(child.DesiredSize));
                     continue;
                 }
 
-                var credit = child == Children[^1];
+                var rank = Rank(PartOf(child));
                 var rect = Start(e, child.DesiredSize, final);
-                if (!credit) {
-                    rect = Clear(rect, e.Spacing, placed, bounds);
+                if (rank > 0) {
+                    rect = Clear(rect, e.Spacing, rank, placed, bounds);
                 }
 
-                placed.Add((rect, e.Spacing, credit));
+                placed.Add((rect, rank));
                 child.Arrange(rect);
             }
 
@@ -114,11 +138,11 @@ internal static class OverlayRenderer {
         }
 
         // Moved the shortest way off anything it laps over, a few rounds, so moving off one doesn't leave it on another.
-        private static Rect Clear(Rect rect, double spacing, List<(Rect Rect, double Gap, bool Credit)> placed, Rect bounds) {
+        private static Rect Clear(Rect rect, double spacing, int rank, List<(Rect Rect, int Rank)> placed, Rect bounds) {
             for (var round = 0; round < 8; round++) {
                 var moved = false;
-                foreach (var (other, _, credit) in placed) {
-                    var gap = credit ? Math.Max(spacing, OverlayDesign.CREDIT_CLEARANCE) : spacing;
+                foreach (var (other, otherRank) in placed) {
+                    var gap = otherRank < rank ? Math.Max(spacing, OverlayDesign.CREDIT_CLEARANCE) : spacing;
                     if (gap <= 0 || !rect.Intersects(other.Inflate(gap - 0.01))) {
                         continue;
                     }
