@@ -587,9 +587,13 @@ internal static class CombatActionResolver {
     private static void CheckForPolarCombatActionTargets(ref CombatAction combatAction, SpellTemplate spellTemplate) {
         // Spells that target both the caster and target(s) should be treated as targeting the target(s) only.
         // If the caster is left as a target, they will receive the benefit/curse from the spell twice.
+        // The self part can sit inside a wrapper: Scorching Scimitars hits the picked enemies and puts its heal over
+        // time on the caster from inside a TargetCountSpellEffect. Only the top effects were looked at, so the caster
+        // stayed in the list and the game played the blades striking the caster too (Niduus, 2026-11-11: "just casted
+        // scimitar and I WAS HIT").
         var casterIndex = combatAction.m_spellCaster;
         if (combatAction.m_targetSubcircleList.Count > 1
-            && spellTemplate.m_effects.Any(x => x?.m_effectTarget == kEffectTarget.kSelf)) {
+            && MultiPicks.All(spellTemplate.m_effects).Any(x => x.m_effectTarget == kEffectTarget.kSelf)) {
             combatAction.m_targetSubcircleList.Remove(casterIndex);
         }
     }

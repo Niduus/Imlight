@@ -16,7 +16,7 @@ namespace Imlight.CoreLib.Game.Combat;
 internal static class MultiPicks {
 
     // Every effect of a spell, with the ones inside lists, random picks, conditionals and target counts.
-    private static IEnumerable<SpellEffect> All(IEnumerable<SpellEffect> effects, int depth = 0) {
+    internal static IEnumerable<SpellEffect> All(IEnumerable<SpellEffect> effects, int depth = 0) {
         foreach (var effect in effects ?? []) {
             if (effect is null || depth > 6) {
                 continue;
