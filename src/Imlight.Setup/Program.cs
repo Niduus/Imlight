@@ -64,6 +64,8 @@ internal static class Program {
                 return await InstalledCommands.StartAsync(options.InstallFolder, options.NoWait);
             case SetupMode.Panel:
                 return ManagerApp.Run(options.InstallFolder, options.StartServer);
+            case SetupMode.Overlay:
+                return OverlayStandalone.Run(options.InstallFolder);
             case SetupMode.PrepareUpdate:
                 return await PrepareUpdateAsync(options);
             case SetupMode.ApplyUpdate:
