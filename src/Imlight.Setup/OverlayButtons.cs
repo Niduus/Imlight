@@ -27,9 +27,8 @@ namespace Imlight.Setup;
 
 /// <summary>
 /// What happens when a button on the game overlay is clicked (Niduus, 2026-11-11: overlay buttons that run cheats and
-/// commands on the host's server). Server actions go through the player's signed command link
-/// (<see cref="OverlayCommands"/>), so they run as the player's own wizard with that account's own rights, exactly as if
-/// typed in chat; the host's settings still decide which cheats each player may use. A button can only do one of the
+/// commands on the host's server). Server actions go through <see cref="OverlayCommands"/>, which for now can't reach the
+/// server (the password sign-in was taken out), so those buttons say so. A button can only do one of the
 /// fixed <see cref="OverlayAction"/> kinds, so a shared design can't make it do anything else.
 /// </summary>
 internal static class OverlayButtons {

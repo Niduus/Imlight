@@ -53,7 +53,7 @@ internal sealed record AgentRunCommand(string Text, ConcurrentQueue<string> Outp
 internal sealed record RemoteAdminCommand(ulong AccountId, ulong? WizardId, string Text, Action<string> Ran);
 
 /// <summary>
-/// A player's own command from their Ahziael (Tools.RemoteAdmin.PlayerCommands), already checked: the service whose
+/// A player's own command from their overlay, already checked by whatever link carried it: the service whose
 /// account is AccountId tells Found its wizard and whether its game connects from Address, and, when it does and Text
 /// is not empty, runs Text as that wizard (with the account's own rank) and puts the answers in Output.
 /// </summary>

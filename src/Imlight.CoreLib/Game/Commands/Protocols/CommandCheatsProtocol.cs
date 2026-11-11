@@ -142,6 +142,25 @@ internal static class PlayerCheatChat {
         return $"{label} is used. In a battle it goes off at the start of the round or right after the next move.";
     }
 
+    /// <summary>
+    /// The player cheats a wizard has, for the overlay's cheat buttons: number, name, on, canSwitch (players may switch
+    /// it) and canUse (its When is "pressed").
+    /// </summary>
+    internal static System.Text.Json.Nodes.JsonArray ListJson(ulong charId) {
+        var list = new System.Text.Json.Nodes.JsonArray();
+        foreach (var cheat in PlayerCheats.Owned(charId)) {
+            list.Add(new System.Text.Json.Nodes.JsonObject {
+                ["number"] = cheat.Number,
+                ["name"] = PlayerCheatSwitches.LabelOf(cheat),
+                ["on"] = PlayerCheatSwitches.IsOn(charId, cheat),
+                ["canSwitch"] = cheat.PlayersSwitch,
+                ["canUse"] = cheat.Is("Pressed"),
+            });
+        }
+
+        return list;
+    }
+
     // A cheat by name, else by number ("3" or "cheat 3").
     private static BossCheats.BossCheat Find(System.Collections.Generic.List<BossCheats.BossCheat> cheats, string which) {
         var number = which.StartsWith("cheat ", StringComparison.OrdinalIgnoreCase) ? which[6..].Trim() : which;
