@@ -36,7 +36,7 @@ namespace Imlight.Setup;
 internal static class OverlayCommands {
 
     /// <summary>One of the player's cheats, as a server would list it.</summary>
-    internal sealed record CheatInfo(int Number, string Name, bool On, bool CanSwitch, bool CanUse);
+    internal sealed record CheatInfo(int Number, string Name, bool On, bool CanSwitch, bool CanUse, string Owner = "");
 
     /// <summary>Whether it worked, and what to show; <see cref="Code"/> is a ".link" code the player must type first.</summary>
     internal sealed record Result(bool Ok, string Text, IReadOnlyList<CheatInfo> Cheats, string Code = "");
@@ -56,7 +56,7 @@ internal static class OverlayCommands {
         if (answer["cheats"] is JsonArray list) {
             foreach (var item in list.OfType<JsonObject>().Take(500)) {
                 cheats.Add(new CheatInfo((int?) item["number"] ?? 0, ((string?) item["name"] ?? "").Trim(),
-                    (bool?) item["on"] ?? false, (bool?) item["canSwitch"] ?? false, (bool?) item["canUse"] ?? false));
+                    (bool?) item["on"] ?? false, (bool?) item["canSwitch"] ?? false, (bool?) item["canUse"] ?? false, ((string?) item["owner"] ?? "").Trim()));
             }
         }
 

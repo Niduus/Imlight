@@ -451,6 +451,12 @@ internal static class OverlayAction {
     /// <summary>Uses one of the player's cheats on the server (the host's settings decide which they may use).</summary>
     internal const string CHEAT = "Cheat";
 
+    /// <summary>
+    /// Presses a mob (creature) cheat whose When is "pressed", by name, in the battle of the wizard who clicked (Niduus,
+    /// 2026-11-11: "link to player/mob cheats").
+    /// </summary>
+    internal const string MOB_CHEAT = "MobCheat";
+
     /// <summary>Opens the overlay designer.</summary>
     internal const string DESIGNER = "Designer";
 
@@ -460,11 +466,11 @@ internal static class OverlayAction {
     /// <summary>Brings Ahziael's window to the front.</summary>
     internal const string OPEN_AHZIAEL = "OpenAhziael";
 
-    internal static readonly string[] KINDS = [COMMAND, CHEAT, DESIGNER, TOGGLE_MINE, OPEN_AHZIAEL];
+    internal static readonly string[] KINDS = [COMMAND, CHEAT, MOB_CHEAT, DESIGNER, TOGGLE_MINE, OPEN_AHZIAEL];
 
     /// <summary>The words for each kind in the designer.</summary>
     internal static readonly string[] LABELS = [
-        "Run a chat command on the server", "Use a cheat", "Open the overlay designer", "Show or hide my own pieces", "Open Ahziael",
+        "Run an Imlight or Ahziael command", "Use one of my player cheats", "Set off a mob (creature) cheat", "Open the overlay designer", "Show or hide my own pieces", "Open Ahziael",
     ];
 
     internal const string USE = "Use";
@@ -477,7 +483,7 @@ internal static class OverlayAction {
     internal static readonly string[] HOW_LABELS = ["Use it (a \"When pressed\" cheat)", "Turn it on", "Turn it off", "Switch it on or off"];
 
     /// <summary>True when the action goes to the server (the others happen on this PC).</summary>
-    internal static bool ToServer(string kind) => kind is COMMAND or CHEAT;
+    internal static bool ToServer(string kind) => kind is COMMAND or CHEAT or MOB_CHEAT;
 
 }
 
