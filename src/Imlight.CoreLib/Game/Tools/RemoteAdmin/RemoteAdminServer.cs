@@ -98,14 +98,15 @@ public static class RemoteAdminServer {
 
     private static void Apply() {
         try {
-            var enabled = AdminsOn || PlayersOn;
+            // [Overlay] RequiredToPlay needs the port too: Ahziael's overlay checks in on it.
+            var enabled = AdminsOn || PlayersOn || OverlayGate.Required;
             var port = ConfigurationManager.GetValue("Remote Admin.Port", RemoteAdminWire.DEFAULT_PORT);
             var bind = ConfigurationManager.GetValue("Remote Admin.ListenAddress", "");
             lock (s_lock) {
                 if (!enabled) {
                     if (s_listener is not null) {
                         StopListening();
-                        Logger.Information("Remote Admin and account downloads are off: Ahziael on other PCs can no longer connect.");
+                        Logger.Information("Remote Admin, account downloads and the overlay check are off: Ahziael on other PCs can no longer connect.");
                     }
 
                     return;
@@ -125,7 +126,8 @@ public static class RemoteAdminServer {
                 Logger.Information("Remote Admin is listening on port {0}: {1}. Certificate fingerprint: {2}", Logger.Args(port,
                     AdminsOn && PlayersOn ? "Administrator accounts can manage this server, and players can download their own account"
                         : AdminsOn ? "Administrator accounts can manage this server"
-                        : "players can download their own account (Remote Admin itself is off)",
+                        : PlayersOn ? "players can download their own account (Remote Admin itself is off)"
+                        : "only for the Ahziael overlay check (Remote Admin and account downloads are off)",
                     RemoteAdminWire.ShortFingerprint(RemoteAdminWire.Fingerprint(s_certificate.RawData))));
             }
         }
@@ -246,6 +248,7 @@ public static class RemoteAdminServer {
         }
 
         Session session = null;
+        var overlay = false;
         try {
             using var _ = client;
             client.NoDelay = true;
@@ -272,6 +275,20 @@ public static class RemoteAdminServer {
                 if (session is null) {
                     if (op == "hello") {
                         reply = Hello();
+                    }
+                    else if (op == "overlay") {
+                        // An overlay stays connected as long as it draws; it is not a login, so it leaves the
+                        // connection limits for logins and has its own (OverlayGate.MAX_PER_ADDRESS).
+                        Interlocked.Decrement(ref s_connections);
+                        overlay = true;
+                        if (waiting) {
+                            waiting = false;
+                            s_waiting.AddOrUpdate(address, 0, (_, n) => n - 1);
+                        }
+
+                        await ServeOverlayAsync(tls, address, header, stop);
+
+                        return;
                     }
                     else if (op == "login") {
                         (reply, session) = await LoginAsync(header, address);
@@ -310,7 +327,10 @@ public static class RemoteAdminServer {
             Logger.Error("Remote Admin: a connection from {0} failed: {1}", Logger.Args(address, ex.Message));
         }
         finally {
-            Interlocked.Decrement(ref s_connections);
+            if (!overlay) {
+                Interlocked.Decrement(ref s_connections);
+            }
+
             if (waiting) {
                 s_waiting.AddOrUpdate(address, 0, (_, n) => n - 1);
             }
@@ -318,6 +338,41 @@ public static class RemoteAdminServer {
             if (session is not null) {
                 Logger.Information("Remote admin {0} ({1}) disconnected.", Logger.Args(session.Username, address));
             }
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // The Ahziael overlay (OverlayGate)
+    // ---------------------------------------------------------------------
+
+    private static async Task ServeOverlayAsync(SslStream tls, string address, JsonObject header, CancellationToken stop) {
+        var id = OverlayGate.Open(address, (int?) header["windows"] ?? 0, (string) header["version"]);
+        if (id == 0) {
+            await RemoteAdminWire.WriteAsync(tls, RemoteAdminWire.Error("Too many overlays from this address."), null, stop);
+
+            return;
+        }
+
+        try {
+            while (!stop.IsCancellationRequested) {
+                var reply = RemoteAdminWire.Ok();
+                reply["required"] = OverlayGate.Required;
+                reply["every"] = OverlayGate.BEAT_SECONDS;
+                reply["id"] = header["id"]?.DeepClone();
+                await RemoteAdminWire.WriteAsync(tls, reply, null, stop);
+
+                using var wait = CancellationTokenSource.CreateLinkedTokenSource(stop);
+                wait.CancelAfter(TimeSpan.FromSeconds(OverlayGate.BEAT_SECONDS * 4));
+                (header, _) = await RemoteAdminWire.ReadAsync(tls, 4096, 0, wait.Token);
+                if ((string) header["op"] != "beat") {
+                    return;
+                }
+
+                OverlayGate.Beat(id, (int?) header["windows"] ?? 0);
+            }
+        }
+        finally {
+            OverlayGate.Close(id);
         }
     }
 

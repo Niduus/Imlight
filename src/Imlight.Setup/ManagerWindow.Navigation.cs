@@ -44,7 +44,8 @@ internal sealed partial class ManagerWindow {
     /// <summary>The side bar's pages after Home: name, icon, the short line under it, what it is for, and its tabs.</summary>
     private static readonly (string Name, string Icon, string Line, string About, string[] Tabs)[] s_groups = [
         ("Play", "play", "Play and chat commands",
-            "Play Wizard101 and find every chat command.", ["Play", "Commands"]),
+            // Niduus, 2026-11-11: the game overlay and its designer.
+            "Play Wizard101, design the game overlay, and find every chat command.", ["Play", OVERLAY, "Commands"]),
         // Niduus, 2026-10-26: "Try to keep all relevant tabs together": your quests, the story's quest tree and the quest
         // editor sit on one page.
         ("Quests", "flag", "Quests, story, editor",

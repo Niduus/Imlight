@@ -68,8 +68,10 @@ internal static class FriendAccess {
         var ports = new[] { login }.Concat(Enumerable.Range(game, realms)).ToList();
         // Remote Admin's port too, while it is on (Server > Remote), so admins on the internet can reach it, and while
         // players may download their own account (Server > Account Transfer; on unless turned off).
+        // And while the server needs the Ahziael overlay (Play > Overlay), which checks in on that port.
         if (string.Equals(IniFile.Get(config, "Remote Admin", "Enabled"), "true", StringComparison.OrdinalIgnoreCase)
-            || !string.Equals(IniFile.Get(config, "Remote Admin", "PlayerDownloads"), "false", StringComparison.OrdinalIgnoreCase)) {
+            || !string.Equals(IniFile.Get(config, "Remote Admin", "PlayerDownloads"), "false", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(IniFile.Get(config, "Overlay", "RequiredToPlay"), "true", StringComparison.OrdinalIgnoreCase)) {
             ports.Add(Number("Remote Admin", "Port", Imlight.RemoteAdmin.RemoteAdminWire.DEFAULT_PORT));
         }
 

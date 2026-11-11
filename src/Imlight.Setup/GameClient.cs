@@ -81,6 +81,21 @@ internal static class GameClient {
         startInfo.ArgumentList.Add(host);
         startInfo.ArgumentList.Add(port.ToString());
         Process.Start(startInfo)?.Dispose();
+        // The overlay tells this server it runs (for servers with [Overlay] RequiredToPlay on).
+        OverlayHost.Link.Target(host, OverlayPort(installFolder, host));
+    }
+
+    /// <summary>
+    /// The port the overlay checks in on: the [Remote Admin] Port of this PC's server for its own address, otherwise
+    /// the port every server starts with.
+    /// </summary>
+    internal static int OverlayPort(string installFolder, string host) {
+        var local = host is "127.0.0.1" or "localhost" or "::1";
+        if (local && int.TryParse(IniFile.Get(InstalledCommands.ConfigFile(installFolder), "Remote Admin", "Port"), out var port) && port is > 0 and < 65536) {
+            return port;
+        }
+
+        return Imlight.RemoteAdmin.RemoteAdminWire.DEFAULT_PORT;
     }
 
     /// <summary>

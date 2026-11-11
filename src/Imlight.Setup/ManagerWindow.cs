@@ -380,6 +380,7 @@ internal sealed partial class ManagerWindow : Window {
         var tabs = new[] {
             Tab("Play", PlayTab),
             Tab("Commands", CommandsTab),
+            Tab(OVERLAY, OverlayTab),
             Tab(WIKI, WikiTab),
             Tab("Lookup", LookupTab),
             Tab(LOCATIONS, LocationsTab),
@@ -512,7 +513,10 @@ internal sealed partial class ManagerWindow : Window {
             _timer.Stop();
             _positionTimer.Stop();
             _clientLogTimer.Stop();
+            OverlayHost.Stop();
         };
+        // The game overlay (Play > Overlay): drawn over Wizard101 while Ahziael is open.
+        OverlayHost.Start(manager.InstallFolder);
     }
 
     // ---------------------------------------------------------------------
@@ -1534,6 +1538,7 @@ internal sealed partial class ManagerWindow : Window {
         var noAggro = int.TryParse(ini.GetValueOrDefault(("Battle", "NoAggroSeconds")), out var na) ? na : 12;
         _noAggro.SelectedIndex = Array.IndexOf(s_noAggroSeconds, s_noAggroSeconds.OrderBy(x => Math.Abs(x - noAggro)).First());
         ShowCreateOnLogin(ini);
+        ShowOverlayRule(ini);
         ShowTrainingPoints(ini);
 
         _updatingRandomizer = false;
@@ -2943,6 +2948,7 @@ internal sealed partial class ManagerWindow : Window {
     private static readonly Dictionary<string, (string Icon, string Line)> s_tabs = new() {
         ["Play"] = ("play", "Play Wizard101 on your server, on a friend's, or with friends."),
         ["Commands"] = ("terminal", "Every chat command the server knows, ready to copy."),
+        [OVERLAY] = ("sparkle", "What Ahziael draws over the Wizard101 window: design it with fonts, colours and gradients, no code. The server can require it."),
         ["Wiki"] = ("book", "Look up any creature, spell or item like a wiki: a creature's school, rank, health, places, spells, cheats and drops; who casts or teaches a spell; who drops or sells an item."),
         ["Locations"] = ("map", "Every place of the game by the name players know (Unicorn Way) and its code name (WC_Unicorn), with a Teleport button. .tp takes either."),
         ["Lookup"] = ("search", "Find any command, item, spell, creature, zone or quest and its ID."),
