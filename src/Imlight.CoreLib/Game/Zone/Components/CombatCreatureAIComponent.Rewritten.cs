@@ -257,6 +257,8 @@ internal sealed partial class CombatCreatureAIComponent {
             var otherBlades = RewrittenAI.BladesOn(enemy) - blades;
             var pips = enemy.CombatParticipant?.m_pipCount;
             var pipPoints = pips is null ? 0 : (pips.m_genericPips * 6f) + (pips.m_powerPips * 12f);
+            // School pips are as good as power pips for that school's spells; its own school's count a bit more.
+            pipPoints += RewrittenAI.SchoolPipsOf(enemy).Sum(p => p.Value * (RewrittenAI.Same(p.Key, school) ? 14f : 12f));
             var traps = turn.Ledger.Get(turn.Ledger.TrapsLaid, me.SlotIndex, slot) * 0.5f;
             var danger = (blades + (otherBlades * 0.5f) + pipPoints + traps) * t.Danger;
 
@@ -487,8 +489,10 @@ internal sealed partial class CombatCreatureAIComponent {
         }
 
         var danger = ready.FirstOrDefault() ?? turn.Target;
-        var dangerSchool = RewrittenAI.SchoolOf(danger);
-        var enemySchools = turn.Enemies.Select(RewrittenAI.SchoolOf).Where(s => s.Length > 0).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        // A stack of school pips says which school the hit will be (3 storm pips = storm is coming), so it shields that.
+        var dangerSchool = RewrittenAI.LikelyHitSchool(danger);
+        var enemySchools = turn.Enemies.Select(RewrittenAI.SchoolOf).Concat(turn.Enemies.Select(RewrittenAI.LikelyHitSchool))
+            .Where(s => s.Length > 0).ToHashSet(StringComparer.OrdinalIgnoreCase);
         var shields = turn.Castable.Where(c => c.Shield && ShieldMakesSense(c, enemySchools)).ToList();
         if (shields.Count == 0) {
             return;
@@ -515,8 +519,15 @@ internal sealed partial class CombatCreatureAIComponent {
         }
 
         options.Add(new Choice(card2, who, "shield", ready.Count > 0
-            ? $"{Name(danger)} has {RewrittenAI.BladesOn(danger):0}% blades and {RewrittenAI.PipsOf(danger)} pips ready ({dangerSchool})"
+            ? $"{Name(danger)} has {RewrittenAI.BladesOn(danger):0}% blades and {RewrittenAI.PipsOf(danger)} pips ready ({dangerSchool}{SchoolPipNote(danger)})"
             : $"its health is down to {RewrittenAI.Percent(myShare)}%"));
+    }
+
+    /// <summary>", 3 storm pips" when it has school pips, for the log.</summary>
+    private static string SchoolPipNote(CombatDuelSubCircle circle) {
+        var stacks = RewrittenAI.SchoolPipsOf(circle);
+
+        return stacks.Count == 0 ? "" : ", " + string.Join(", ", stacks.Select(p => $"{p.Value} {p.Key.ToLowerInvariant()} pips"));
     }
 
     private static bool ShieldMakesSense(Card card, HashSet<string> enemySchools)
@@ -567,7 +578,8 @@ internal sealed partial class CombatCreatureAIComponent {
         var me = turn.Me;
         var target = turn.Target;
         // The hit it plans: its best hit in hand that it can pay for now or next round.
-        var plannedHit = turn.Hand.Where(c => c.Hit && c.Rank <= turn.Pips + 1)
+        // School pips only pay for that school's spells, so a hit of the school it has pips in can be bigger.
+        var plannedHit = turn.Hand.Where(c => c.Hit && c.Rank <= RewrittenAI.PipsFor(me, c.DamageSchool) + 1)
             .OrderByDescending(c => RewrittenAI.Estimate(c, me, target, ignoreWards: true)).FirstOrDefault();
 
         var selfBlades = new List<Choice>();
@@ -578,7 +590,7 @@ internal sealed partial class CombatCreatureAIComponent {
             var now = RewrittenAI.Estimate(plannedHit, me, target) + PlannedOn(turn, target);
             var enough = now >= RewrittenAI.Health(target) || now >= RewrittenAI.BigHitShare * RewrittenAI.MostHealth(target);
             if (!enough) {
-                bool PipsLeft(Card c) => turn.Pips - c.Rank + 1 >= plannedHit.Rank;
+                bool PipsLeft(Card c) => RewrittenAI.PipsFor(me, school) - c.Rank + 1 >= plannedHit.Rank;
                 foreach (var card in turn.Castable.Where(c => c.Blade && !c.BladeOnlyTeammate && RewrittenAI.Fits(c.BladeSchool, school)
                                                               && !RewrittenAI.HasEffectOfSpell(me, c.Id) && PipsLeft(c))) {
                     selfBlades.Add(new Choice(card, me, "blade", $"setting up its {school} hit ({plannedHit.Shown}) on {Name(target)}", Setup: true));
@@ -603,10 +615,10 @@ internal sealed partial class CombatCreatureAIComponent {
         // never gives a myth teammate a fire blade. The leader is fed first.
         if (!t.Excludes(RewrittenAI.NO_TEAM_BLADES)) {
             foreach (var card in turn.Castable.Where(c => c.Blade && (c.BladeForTeammate || c.BladeWholeTeam))) {
-                var mate = turn.Friends.Where(f => f != me && RewrittenAI.PipsOf(f) >= 2 && !RewrittenAI.HasEffectOfSpell(f, card.Id)
+                var mate = turn.Friends.Where(f => f != me && RewrittenAI.PipsFor(f, card.BladeSchool ?? "") >= 2 && !RewrittenAI.HasEffectOfSpell(f, card.Id)
                                                    && HitsWith(turn, f).Any(s => RewrittenAI.Fits(card.BladeSchool, s)))
                     .OrderByDescending(f => f == turn.Leader)
-                    .ThenByDescending(RewrittenAI.PipsOf)
+                    .ThenByDescending(f => RewrittenAI.PipsFor(f, card.BladeSchool ?? ""))
                     .FirstOrDefault();
                 if (mate is not null) {
                     teamBlades.Add(new Choice(card, mate, "blade", mate == turn.Leader
@@ -721,7 +733,7 @@ internal sealed partial class CombatCreatureAIComponent {
 
         // Hold back (smart only, never two rounds in a row): a much bigger hit is affordable next round.
         if (_determinedSmartThisTurn && !_heldBackLastRound && !turn.Tuning.Excludes(RewrittenAI.NO_HOLD_BACK) && best.Damage > 0) {
-            var bigger = turn.Hand.Where(c => c.Hit && !turn.Castable.Contains(c) && c.Rank <= turn.Pips + 1)
+            var bigger = turn.Hand.Where(c => c.Hit && !turn.Castable.Contains(c) && c.Rank <= RewrittenAI.PipsFor(me, c.DamageSchool) + 1)
                 .Select(c => (Card: c, Damage: RewrittenAI.Estimate(c, me, best.Target)))
                 .OrderByDescending(x => x.Damage).FirstOrDefault();
             if (bigger.Card is not null && bigger.Damage >= best.Damage * 2.5f && RewrittenAI.Health(best.Target) > best.Damage) {

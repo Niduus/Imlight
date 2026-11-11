@@ -202,11 +202,61 @@ internal static class RewrittenAI {
         }
     }
 
-    /// <summary>Its pips as the AI counts them: a power pip is worth 2.</summary>
+    /// <summary>Its pips as the AI counts them: a power pip and a school pip are worth 2.</summary>
     internal static int PipsOf(CombatDuelSubCircle circle) {
         var pips = circle?.CombatParticipant?.m_pipCount;
 
-        return pips is null ? 0 : pips.m_genericPips + (pips.m_powerPips * 2);
+        return pips is null ? 0 : pips.m_genericPips + (pips.m_powerPips * 2) + (SchoolPipsOf(circle).Values.Sum() * 2);
+    }
+
+    /// <summary>
+    /// What it can pay toward a spell of this school (Niduus, 2026-11-11: "take into account School Pips"): ordinary and
+    /// power pips, plus school pips of that school only.
+    /// </summary>
+    internal static int PipsFor(CombatDuelSubCircle circle, string school) {
+        var pips = circle?.CombatParticipant?.m_pipCount;
+        if (pips is null) {
+            return 0;
+        }
+
+        var own = string.IsNullOrEmpty(school) ? 0 : SchoolPipsOf(circle).GetValueOrDefault(school);
+
+        return pips.m_genericPips + (pips.m_powerPips * 2) + (own * 2);
+    }
+
+    /// <summary>Its school pips, by school ("Fire" = 3), only the schools it has any of.</summary>
+    internal static Dictionary<string, int> SchoolPipsOf(CombatDuelSubCircle circle) {
+        var result = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        var pips = circle?.CombatParticipant?.m_pipCount;
+        if (pips is null) {
+            return result;
+        }
+
+        void Add(string school, int count) {
+            if (count > 0) {
+                result[school] = count;
+            }
+        }
+
+        Add("Balance", pips.m_balancePips);
+        Add("Death", pips.m_deathPips);
+        Add("Fire", pips.m_firePips);
+        Add("Ice", pips.m_icePips);
+        Add("Life", pips.m_lifePips);
+        Add("Myth", pips.m_mythPips);
+        Add("Storm", pips.m_stormPips);
+
+        return result;
+    }
+
+    /// <summary>
+    /// The school its next big hit is likely in: a stack of 2 or more school pips of one school says that school is coming
+    /// (3 storm pips = a storm hit); otherwise its own school.
+    /// </summary>
+    internal static string LikelyHitSchool(CombatDuelSubCircle circle) {
+        var stack = SchoolPipsOf(circle).OrderByDescending(p => p.Value).FirstOrDefault();
+
+        return stack.Value >= 2 ? stack.Key : SchoolOf(circle);
     }
 
     internal static int Health(CombatDuelSubCircle circle) => Math.Max(0, circle?.ParticipantGameStats?.m_currentHitpoints ?? 0);

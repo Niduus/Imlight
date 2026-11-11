@@ -1,0 +1,4 @@
+New: Rewritten AI reads school pips
+With Rewritten AI on, creatures now see a wizard's school pips. School pips make a wizard more dangerous, like power pips, and pips of their own school count a little more. A stack of one school's pips tells creatures which school is coming (3 storm pips means a storm hit), so they put up a shield of that school when that wizard is bladed up and ready. Creatures also count their own school pips, and their teammates', when they plan a hit and decide how much setup they can afford.
+Where: Game Rules > Battles and World (Rewritten AI switch)
+Test: Turn on Rewritten AI. Get 3 or more school pips of a school, blade up in that school, and wait a round. A creature with a shield of that school should cast it, and the server log line starting with "Rewritten AI" should name your school pips.
