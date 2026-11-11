@@ -99,7 +99,8 @@ public static class RemoteAdminServer {
     private static void Apply() {
         try {
             // [Overlay] RequiredToPlay needs the port too: Ahziael's overlay checks in on it.
-            var enabled = AdminsOn || PlayersOn || OverlayGate.Required;
+            // And players' cheats and commands from their Ahziael (PlayerCommands), on unless turned off.
+            var enabled = AdminsOn || PlayersOn || OverlayGate.Required || PlayerCommands.On;
             var port = ConfigurationManager.GetValue("Remote Admin.Port", RemoteAdminWire.DEFAULT_PORT);
             var bind = ConfigurationManager.GetValue("Remote Admin.ListenAddress", "");
             lock (s_lock) {
@@ -290,6 +291,10 @@ public static class RemoteAdminServer {
 
                         return;
                     }
+                    else if (op == "pcmd") {
+                        // A player's own signed command (PlayerCommands): each one carries its own proof, no login.
+                        reply = await PlayerCommands.RunAsync(header, address);
+                    }
                     else if (op == "login") {
                         (reply, session) = await LoginAsync(header, address);
                         if (session is not null && waiting) {
@@ -444,14 +449,15 @@ public static class RemoteAdminServer {
             return (RemoteAdminWire.Error("Wrong username or password."), null);
         }
 
+        var forCommands = (string) header["purpose"] == "commands";
         var playerOnly = (string) header["purpose"] == "account";
-        if (playerOnly ? !PlayersOn : !AdminsOn) {
+        if (!forCommands && (playerOnly ? !PlayersOn : !AdminsOn)) {
             return (RemoteAdminWire.Error(playerOnly
                 ? "The host has turned off account downloads on this server. Ask them to turn on \"Let players download their account\" on Ahziael's Account Transfer tab."
                 : "Remote Admin is off on this server. Ask the host to turn it on (Server > Remote in their Ahziael)."), null);
         }
 
-        if (!playerOnly && account.AuthLevel < AuthLevel.Administrator) {
+        if (!playerOnly && !forCommands && account.AuthLevel < AuthLevel.Administrator) {
             Logger.Warning("Remote Admin: {0} from {1} is not an Administrator, so it was not let in.", Logger.Args(account.Username, address));
 
             return (RemoteAdminWire.Error("That account is not an Administrator on this server, so it can't use Ahziael here. Ask the host to give it the Administrator rank."), null);
@@ -464,6 +470,18 @@ public static class RemoteAdminServer {
 
             return (RemoteAdminWire.Error("That account still has the password every Imlight server starts with, so Remote Admin won't take it. " +
                 "Give it a new password first: on the host's Accounts tab, or with .setpassword in the game."), null);
+        }
+
+        // A player signing in for their cheats and commands from Ahziael: gets a key for signing them, and no session.
+        if (forCommands) {
+            if (!PlayerCommands.On) {
+                return (RemoteAdminWire.Error("The host has turned off cheats and commands from Ahziael on this server. " +
+                    "Ask them to turn on \"Let players use their cheats from Ahziael\" on their Play > Overlay tab."), null);
+            }
+
+            s_failures.TryRemove(address, out _);
+
+            return (PlayerCommands.Issue(account.AccountId, account.Username), null);
         }
 
         s_failures.TryRemove(address, out _);

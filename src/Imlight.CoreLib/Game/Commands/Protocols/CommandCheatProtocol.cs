@@ -36,6 +36,11 @@ internal class CommandCheatProtocol : CommandProtocol {
     [Command("off")]
     private void OffCommand([Remainder] string which = "") => InformSenderClient(PlayerCheatChat.Switch(Context.Character, which, false));
 
+    // A cheat whose When is "pressed" goes off in your battle (PlayerCheatPresses), the same as its button in Ahziael.
+    [Command("use")]
+    [Alias("press")]
+    private void UseCommand([Remainder] string which = "") => InformSenderClient(PlayerCheatChat.Use(Context.Character, which));
+
     [Command("win")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void InstaWinCommand() 

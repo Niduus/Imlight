@@ -110,6 +110,23 @@ public partial class CombatResolver {
         }
     }
 
+    // Who pressed a "Pressed" cheat: for a wizard's own cheat that wizard; for a creature's, a wizard in this battle who
+    // pressed a cheat of its name. Null when no one did.
+    private CombatDuelSubCircle PressedBy(CombatDuelSubCircle owner, BossCheats.BossCheat cheat) {
+        if (owner.IsHumanPlayer) {
+            return owner._wizard is { } wizard && PlayerCheatPresses.Take(wizard.CharId, PlayerCheatSwitches.KeyOf(cheat)) ? owner : null;
+        }
+
+        if (string.IsNullOrWhiteSpace(cheat.Name)) {
+            return null;
+        }
+
+        var key = $"name:{cheat.Name.Trim().ToLowerInvariant()}";
+
+        return _subCircles.FirstOrDefault(c => c is { Occupied: true, AddedToDuel: true, IsHumanPlayer: true, _wizard: { } w }
+                                                && PlayerCheatPresses.Take(w.CharId, key));
+    }
+
     private float WatchCheats(bool roundStart, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
         var cinematicTime = 0.0f;
         foreach (var (boss, cheats) in BossesWithCheats().ToList()) {
@@ -119,6 +136,16 @@ public partial class CombatResolver {
                 if (cheat.Is("Always") && boss.IsAlive && InPhase(boss, cheat)) {
                     cinematicTime += TryBossCheat(boss, i, cheat, boss, boss, "its Ifs holding", combatActionList,
                         cinematicTimeSoFar + cinematicTime);
+
+                    continue;
+                }
+
+                // Pressed: a wizard pressed it (`.cheat use`, or a button in their Ahziael): its own, or a creature's by name.
+                if (cheat.Is("Pressed")) {
+                    if (PlayerCheatPresses.Any && boss.IsAlive && InPhase(boss, cheat) && PressedBy(boss, cheat) is { } presser) {
+                        cinematicTime += TryBossCheat(boss, i, cheat, presser, presser, "a press of its button", combatActionList,
+                            cinematicTimeSoFar + cinematicTime);
+                    }
 
                     continue;
                 }
