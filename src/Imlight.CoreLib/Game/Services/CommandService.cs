@@ -236,36 +236,6 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
         });
     }
 
-    [InternalMessageHandler(typeof(OverlayPlayerCommand))]
-    private void ReceiveOverlayPlayerCommand(OverlayPlayerCommand message) {
-        var wizard = GetActiveWizard();
-        var account = GetActiveAccount();
-        if (wizard is null || GetActiveGameObject() is null || account is null || account.AccountId != message.AccountId) {
-            return;
-        }
-
-        // Only from the PC the game runs on: the command came from the same address as this game connection.
-        var same = Tools.OverlayGate.Normalize(SessionActor.Ip ?? SessionActor.RemoteIp) == message.Address;
-        message.Found.TrySetResult((wizard.CharId, same));
-        if (!same || string.IsNullOrEmpty(message.Text)) {
-            return;
-        }
-
-        var capture = Context.ActorOf(Akka.Actor.Props.Create(() => new AgentCaptureActor(SessionActor.ActorRef, message.Output)));
-        Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(30), capture, PoisonPill.Instance, Self);
-        _dispatcherRef.Tell(new SERVER_100_PROTOCOL.MSG_COMMAND() {
-            CommandText = message.Text,
-            ActorRef = capture,
-            CoreObject = GetActiveGameObject(),
-            Wizard = wizard,
-            Account = account,
-            ZoneActor = SessionActor.GetZoneActor(),
-            ServerActor = SessionActor.ServerRef,
-            SelectedWizard = _selectedWizard,
-            SelectedAccount = _selectedAccount
-        });
-    }
-
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_BUDDYSTATS))]
     private void ReceivePlayerSelect(GAME_5_PROTOCOL.MSG_BUDDYSTATS message) {
         // We only care about the ID sent here. It's the ID of the core object, but Imlight serialized

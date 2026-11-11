@@ -170,20 +170,6 @@ public static class RemoteAdminWire {
 
     public static JsonObject Ok() => new() { ["ok"] = true };
 
-    // ---------------------------------------------------------------------
-    // Player commands from Ahziael and its overlay (PlayerCommands)
-    // ---------------------------------------------------------------------
-
-    /// <summary>Seconds a signed player command stays good: older (or clocks further apart) is refused.</summary>
-    public const int COMMAND_WINDOW_SECONDS = 120;
-
-    /// <summary>
-    /// The signature on one player command: HMAC-SHA256 with the secret the server gave at sign-in, over the key's name,
-    /// the command's number (only ever goes up), when it was sent, its kind and its value. Both sides build it here.
-    /// </summary>
-    public static string SignCommand(byte[] secret, string key, long number, long at, string kind, string value)
-        => Convert.ToBase64String(HMACSHA256.HashData(secret, Encoding.UTF8.GetBytes($"{key}\n{number}\n{at}\n{kind}\n{value}")));
-
 }
 
 /// <summary>

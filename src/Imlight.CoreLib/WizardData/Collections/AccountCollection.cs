@@ -434,8 +434,6 @@ public static class AccountCollection {
             var passwordHash = DatabaseUtilities.CreateHashedPassword(newPassword);
             account.PasswordHash = passwordHash;
             account.PasswordNotSet = false;
-            // A new password signs the account out of Ahziael's cheats and commands on every PC.
-            Game.Tools.RemoteAdmin.PlayerCommands.Forget(account.AccountId);
         });
     }
 
@@ -447,7 +445,6 @@ public static class AccountCollection {
         return UpdateAccount(accountId, account => {
             account.PasswordHash = DatabaseUtilities.CreateHashedPassword(newPassword);
             account.PasswordNotSet = false;
-            Game.Tools.RemoteAdmin.PlayerCommands.Forget(account.AccountId);
         });
     }
 
