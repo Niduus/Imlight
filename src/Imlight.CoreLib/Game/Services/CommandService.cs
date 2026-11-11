@@ -240,13 +240,13 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
     private void ReceiveOverlayPlayerCommand(OverlayPlayerCommand message) {
         var wizard = GetActiveWizard();
         var account = GetActiveAccount();
-        if (wizard is null || GetActiveGameObject() is null || account is null || account.AccountId != message.AccountId) {
+        if (wizard is null || GetActiveGameObject() is null || account is null || wizard.CharId != message.CharId) {
             return;
         }
 
         // Only from the PC the game runs on: the command came from the same address as this game connection.
         var same = Tools.OverlayGate.Normalize(SessionActor.Ip ?? SessionActor.RemoteIp) == message.Address;
-        message.Found.TrySetResult((wizard.CharId, same));
+        message.Found.TrySetResult(same);
         if (!same || string.IsNullOrEmpty(message.Text)) {
             return;
         }
@@ -264,6 +264,15 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
             SelectedWizard = _selectedWizard,
             SelectedAccount = _selectedAccount
         });
+    }
+
+    [InternalMessageHandler(typeof(OverlayWizardsAt))]
+    private void ReceiveOverlayWizardsAt(OverlayWizardsAt message) {
+        var wizard = GetActiveWizard();
+        if (wizard is not null && GetActiveGameObject() is not null
+            && Tools.OverlayGate.Normalize(SessionActor.Ip ?? SessionActor.RemoteIp) == message.Address) {
+            message.Found.Enqueue(wizard.CharId);
+        }
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_BUDDYSTATS))]

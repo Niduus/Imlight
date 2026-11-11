@@ -53,12 +53,15 @@ internal sealed record AgentRunCommand(string Text, ConcurrentQueue<string> Outp
 internal sealed record RemoteAdminCommand(ulong AccountId, ulong? WizardId, string Text, Action<string> Ran);
 
 /// <summary>
-/// A player's own command from their overlay, already checked by whatever link carried it: the service whose
-/// account is AccountId tells Found its wizard and whether its game connects from Address, and, when it does and Text
-/// is not empty, runs Text as that wizard (with the account's own rank) and puts the answers in Output.
+/// A player's own command from the overlay over their game window (OverlayLinks): the service whose wizard is CharId
+/// tells Found whether its game connects from Address, and, when it does and Text is not empty, runs Text as that wizard
+/// (with the account's own rank) and puts the answers in Output.
 /// </summary>
-internal sealed record OverlayPlayerCommand(ulong AccountId, string Address, string Text, ConcurrentQueue<string> Output,
-                                            TaskCompletionSource<(ulong CharId, bool SameAddress)> Found);
+internal sealed record OverlayPlayerCommand(ulong CharId, string Address, string Text, ConcurrentQueue<string> Output,
+                                            TaskCompletionSource<bool> Found);
+
+/// <summary>Every service whose wizard is in the game from Address puts its wizard in Found (for linking an overlay).</summary>
+internal sealed record OverlayWizardsAt(string Address, ConcurrentQueue<ulong> Found);
 
 /// <summary>Asks a player's command service who it belongs to.</summary>
 internal sealed record AgentDescribe(TaskCompletionSource<Dictionary<string, object>> Reply);

@@ -87,7 +87,7 @@ internal static class OverlayButtons {
 
                 return;
             case OverlayAction.COMMAND or OverlayAction.CHEAT:
-                _ = RunOnServerAsync(button, done);
+                _ = RunOnServerAsync(button, game, done);
 
                 return;
         }
@@ -98,7 +98,7 @@ internal static class OverlayButtons {
         done(ok);
     }
 
-    private static async Task RunOnServerAsync(OverlayElement button, Action<bool> done) {
+    private static async Task RunOnServerAsync(OverlayElement button, IntPtr game, Action<bool> done) {
         var value = button.Command.Trim();
         if (value.Length == 0) {
             Report(button.Action == OverlayAction.CHEAT ? "This button has no cheat picked yet." : "This button has no command yet.", false, done);
@@ -110,16 +110,24 @@ internal static class OverlayButtons {
             using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(15));
             OverlayCommands.Result result;
             if (button.Action == OverlayAction.COMMAND) {
-                result = await OverlayCommands.SendAsync("command", value, stop.Token);
+                result = await OverlayCommands.SendAsync("command", value, game, stop.Token);
             }
             else {
                 var how = button.CheatHow switch {
                     OverlayAction.ON => "on",
                     OverlayAction.OFF => "off",
-                    OverlayAction.SWITCH => await IsOnAsync(value, stop.Token) ? "off" : "on",
+                    OverlayAction.SWITCH => await IsOnAsync(value, game, stop.Token) ? "off" : "on",
                     _ => "use",
                 };
-                result = await OverlayCommands.SendAsync("cheat", $"{how} {value}", stop.Token);
+                result = await OverlayCommands.SendAsync("cheat", $"{how} {value}", game, stop.Token);
+            }
+
+            // Not linked to a wizard yet: the code shows on that game window, for ".link code" in its chat.
+            if (result.Code.Length > 0) {
+                OverlayHost.ShowNotice(game, $"Type .link {result.Code} in this game's chat once, then click again.");
+            }
+            else if (result.Ok) {
+                OverlayHost.ShowNotice(game, "");
             }
 
             Report(result.Text, result.Ok, done);
@@ -130,8 +138,8 @@ internal static class OverlayButtons {
     }
 
     // Whether the player's cheat of this name (or number) is on now, for a Switch button.
-    private static async Task<bool> IsOnAsync(string cheat, CancellationToken stop) {
-        var list = await OverlayCommands.SendAsync("cheats", "", stop);
+    private static async Task<bool> IsOnAsync(string cheat, IntPtr game, CancellationToken stop) {
+        var list = await OverlayCommands.SendAsync("cheats", "", game, stop);
         var match = list.Cheats?.FirstOrDefault(c => string.Equals(c.Name, cheat, StringComparison.OrdinalIgnoreCase)
                                                      || c.Number.ToString(System.Globalization.CultureInfo.InvariantCulture) == cheat);
 

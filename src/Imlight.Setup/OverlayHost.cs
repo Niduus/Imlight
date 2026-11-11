@@ -296,7 +296,48 @@ internal static class OverlayHost {
 
     // Once a second: the design and server files the other copy may have changed, whose turn it is, the game windows,
     // and the clock.
+    // A note shown on one game window for a while (an overlay button's ".link" code), by game window.
+    private static readonly Dictionary<IntPtr, (string Text, DateTime Until)> s_notices = [];
+
+    /// <summary>Shows <paramref name="text"/> on that game window for two minutes (empty: takes it away).</summary>
+    internal static void ShowNotice(IntPtr game, string text) {
+        if (game == IntPtr.Zero) {
+            return;
+        }
+
+        if (text.Length == 0 ? s_notices.Remove(game) : true) {
+            if (text.Length > 0) {
+                s_notices[game] = (text, DateTime.UtcNow + TimeSpan.FromMinutes(2));
+            }
+
+            s_designVersion++;
+        }
+    }
+
+    // The server's pieces, and this window's note on top in the middle when it has one.
+    private static IReadOnlyList<OverlayElement> WithNotice(IntPtr game) {
+        if (!s_notices.TryGetValue(game, out var notice)) {
+            return ServerElements;
+        }
+
+        var note = new OverlayElement {
+            Kind = OverlayElement.TEXT, Name = "Ahziael note", Text = notice.Text, Anchor = OverlayAnchor.Top, Y = 60, Size = 20, Bold = true,
+            Padding = 12, CornerRadius = 10, Layer = 99, Shadow = true, BorderColor = "#C0FFD24A", BorderWidth = 1.5,
+            Fill = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#FFFFFFFF" },
+            Background = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#E0140F28" },
+        };
+
+        return [note, .. ServerElements];
+    }
+
     private static void Scan() {
+        foreach (var (game, notice) in s_notices.ToList()) {
+            if (notice.Until < DateTime.UtcNow || !Native.IsWindow(game)) {
+                s_notices.Remove(game);
+                s_designVersion++;
+            }
+        }
+
         var designTime = FileTime(OverlayDesign.PathIn(s_installFolder));
         if (designTime != s_designFileTime) {
             s_designFileTime = designTime;
@@ -806,7 +847,7 @@ internal static class OverlayHost {
             };
 
             if (version != _drawnVersion || _drawnSize != (width, height, scale)) {
-                var picture = OverlayRenderer.Build(design, new OverlayRenderer.Words(Version, Link.ServerLabel), showMine: ShowsMine(design), server: ServerElements);
+                var picture = OverlayRenderer.Build(design, new OverlayRenderer.Words(Version, Link.ServerLabel), showMine: ShowsMine(design), server: WithNotice(game));
                 // Laid out on the design's 1280 x 720 terms and drawn bigger or smaller to fit this window.
                 var fit = OverlayDesign.Fit(width / scale, height / scale);
                 Draw(_hwnd, Render(picture, width, height, scale * fit), width, height, origin);
@@ -1153,26 +1194,110 @@ internal static class OverlayHost {
             }
 
             var header = new JsonObject { ["op"] = "overlay", ["windows"] = GameWindows, ["version"] = Version, ["have"] = s_have };
-            while (!stop.IsCancellationRequested) {
-                await RemoteAdminWire.WriteAsync(tls, header, null, stop);
-                using var wait = CancellationTokenSource.CreateLinkedTokenSource(stop);
-                wait.CancelAfter(TimeSpan.FromSeconds(30));
-                var (reply, _) = await RemoteAdminWire.ReadAsync(tls, 1 << 20, 0, wait.Token);
-                if (reply["ok"]?.GetValue<bool>() != true) {
-                    return;
-                }
+            try {
+                while (!stop.IsCancellationRequested) {
+                    await RemoteAdminWire.WriteAsync(tls, header, null, stop);
+                    using var wait = CancellationTokenSource.CreateLinkedTokenSource(stop);
+                    wait.CancelAfter(TimeSpan.FromSeconds(30));
+                    var (reply, _) = await RemoteAdminWire.ReadAsync(tls, 1 << 20, 0, wait.Token);
+                    if (reply["ok"]?.GetValue<bool>() != true) {
+                        return;
+                    }
 
-                Connected = true;
-                Required = reply["required"]?.GetValue<bool>();
-                // The server's own texts and boxes; a server without any (or from before they existed) says "none".
-                var stamp = (string?) reply["designStamp"] ?? "none";
-                if (stamp != s_have || Required == true != s_heardRequired) {
-                    Heard(Required == true, stamp, stamp == "none" ? null : reply["design"]?.DeepClone() as JsonObject);
-                }
+                    Connected = true;
+                    Listen(reply);
 
-                var every = Math.Clamp((int?) reply["every"] ?? 5, 2, 30);
-                await Task.Delay(TimeSpan.FromSeconds(every), stop);
-                header = new JsonObject { ["op"] = "beat", ["windows"] = GameWindows, ["have"] = s_have };
+                    // Until the next beat, overlay buttons' commands go over this same connection, each answered at once.
+                    var every = Math.Clamp((int?) reply["every"] ?? 5, 2, 30);
+                    var beatAt = DateTime.UtcNow + TimeSpan.FromSeconds(every);
+                    while (DateTime.UtcNow < beatAt) {
+                        Pending press;
+                        using (var nap = CancellationTokenSource.CreateLinkedTokenSource(stop)) {
+                            nap.CancelAfter(beatAt - DateTime.UtcNow);
+                            try {
+                                press = await s_presses.Reader.ReadAsync(nap.Token);
+                            }
+                            catch (OperationCanceledException) when (!stop.IsCancellationRequested) {
+                                break;
+                            }
+                        }
+
+                        // A click from before a dropped connection is not run late.
+                        if (DateTime.UtcNow - press.At > TimeSpan.FromSeconds(20)) {
+                            press.Answer.TrySetResult(new OverlayCommands.Result(false, "The server didn't answer in time.", []));
+                            continue;
+                        }
+
+                        s_current = press;
+                        await RemoteAdminWire.WriteAsync(tls, new JsonObject {
+                            ["op"] = "cmd", ["window"] = press.Window, ["kind"] = press.Kind, ["value"] = press.Value, ["have"] = s_have,
+                        }, null, stop);
+                        using var answerWait = CancellationTokenSource.CreateLinkedTokenSource(stop);
+                        answerWait.CancelAfter(TimeSpan.FromSeconds(20));
+                        var (answer, _) = await RemoteAdminWire.ReadAsync(tls, 1 << 20, 0, answerWait.Token);
+                        s_current = null;
+                        press.Answer.TrySetResult(OverlayCommands.Read(answer));
+                    }
+
+                    header = new JsonObject { ["op"] = "beat", ["windows"] = GameWindows, ["have"] = s_have };
+                }
+            }
+            finally {
+                Connected = false;
+                // A server from before overlay buttons hangs up on them.
+                s_current?.Answer.TrySetResult(new OverlayCommands.Result(false,
+                    "The server hung up. Its Imlight may be too old for command and cheat buttons: ask the host to update it.", []));
+                s_current = null;
+            }
+        }
+
+        // What a beat's answer says: whether the server needs the overlay, and its own texts and boxes.
+        private static void Listen(JsonObject reply) {
+            Required = reply["required"]?.GetValue<bool>();
+            // The server's own texts and boxes; a server without any (or from before they existed) says "none".
+            var stamp = (string?) reply["designStamp"] ?? "none";
+            if (stamp != s_have || Required == true != s_heardRequired) {
+                Heard(Required == true, stamp, stamp == "none" ? null : reply["design"]?.DeepClone() as JsonObject);
+            }
+        }
+
+        // ---- Overlay buttons' commands (OverlayCommands) ----
+
+        private sealed record Pending(long Window, string Kind, string Value, TaskCompletionSource<OverlayCommands.Result> Answer) {
+
+            internal DateTime At { get; } = DateTime.UtcNow;
+
+        }
+
+        private static readonly System.Threading.Channels.Channel<Pending> s_presses =
+            System.Threading.Channels.Channel.CreateBounded<Pending>(new System.Threading.Channels.BoundedChannelOptions(8) {
+                FullMode = System.Threading.Channels.BoundedChannelFullMode.DropWrite,
+            });
+
+        private static Pending? s_current;
+
+        /// <summary>Sends a button's command over the link, for the wizard in game window <paramref name="window"/> (0: any).</summary>
+        internal static async Task<OverlayCommands.Result> SendAsync(long window, string kind, string value, CancellationToken stop) {
+            if (!s_drawing || !Connected) {
+                var target = s_target;
+
+                return new OverlayCommands.Result(false, !s_drawing
+                    ? "The other Ahziael copy is drawing the overlay: use the buttons on the game."
+                    : target is null
+                        ? "Not linked to a server yet: start the game with Play in Ahziael."
+                        : $"Can't reach {target.Value.Host} right now. The host needs Imlight running, with its Remote Admin port reachable.", []);
+            }
+
+            var pending = new Pending(window, kind, value, new TaskCompletionSource<OverlayCommands.Result>(TaskCreationOptions.RunContinuationsAsynchronously));
+            if (!s_presses.Writer.TryWrite(pending)) {
+                return new OverlayCommands.Result(false, "Too many clicks at once. Wait a moment.", []);
+            }
+
+            try {
+                return await pending.Answer.Task.WaitAsync(TimeSpan.FromSeconds(30), stop);
+            }
+            catch (Exception ex) when (ex is OperationCanceledException or TimeoutException) {
+                return new OverlayCommands.Result(false, "The server didn't answer in time.", []);
             }
         }
 
