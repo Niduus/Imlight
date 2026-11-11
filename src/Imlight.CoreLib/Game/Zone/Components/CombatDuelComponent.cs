@@ -399,6 +399,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         try {
+            // The round's pip was handed out before it stood on the circle, so it gets its own now.
+            GiveLateJoinerRoundPip(circle);
             AddCombatParticipant(circle);
             if (!circle.AddedToDuel) {
                 return false;
@@ -3370,6 +3372,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
+        // The round's pip was handed out before this wizard stood on the circle, so they get theirs now.
+        if (Duel.m_duelPhase is kDuelPhase.kPhase_PrePlanning or kDuelPhase.kPhase_Planning) {
+            GiveLateJoinerRoundPip(circle);
+        }
+
         // Before planning (the round's opening): planning, which starts in a moment, deals the wizard in with everyone.
         if (Duel.m_duelPhase == kDuelPhase.kPhase_PrePlanning) {
             AddCombatParticipant(circle);
@@ -3422,13 +3429,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     private bool IsAlternatingPvP => IsPvPDuel && _pvp.Rules.AlternateTurns;
 
     private void DoPipGain(CombatTeam? onlyTeam = null) {
-        // Archmastery fills fastest for whoever has the most of it in the battle.
-        var highestArchmastery = 0f;
-        EnactActionOnSubCircles(circle => {
-            if (circle.AddedToDuel && circle.IsAlive) {
-                highestArchmastery = Math.Max(highestArchmastery, circle.ArchmasteryRating);
-            }
-        });
+        var highestArchmastery = HighestArchmastery();
 
         EnactActionOnSubCircles(circle => {
             if (!circle.AddedToDuel || !circle.IsAlive) {
@@ -3441,6 +3442,33 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
             circle.DoPipGain(highestArchmastery);
         });
+    }
+
+    // Archmastery fills fastest for whoever has the most of it in the battle.
+    private float HighestArchmastery() {
+        var highest = 0f;
+        EnactActionOnSubCircles(circle => {
+            if (circle.AddedToDuel && circle.IsAlive) {
+                highest = Math.Max(highest, circle.ArchmasteryRating);
+            }
+        });
+
+        return highest;
+    }
+
+    /// <summary>
+    /// A wizard or monster who joins once the round has begun missed that round's pip, which DoPipGain gave out at the
+    /// round's start, and started with only their gear's pips: a wizard with no pip gear had none at all
+    /// (Niduus, 2026-11-11: "my second test wizard started with NO PIPS"). They play this round, so they get it now.
+    /// </summary>
+    private void GiveLateJoinerRoundPip(CombatDuelSubCircle circle) {
+        if (circle.CombatParticipant is null || !circle.IsAlive) {
+            return;
+        }
+
+        circle.DoPipGain(HighestArchmastery());
+        Logger.Debug("Duel {0} | Slot {1} | Late joiner gets this round's pip (round {2}).",
+            Logger.Args(Duel.m_duelID.Full, circle.SlotIndex, Duel.m_roundNum));
     }
 
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_CHEATINSTAWIN))]
