@@ -1,0 +1,4 @@
+Fixed: Learning a shadow-enhanced spell from Ahziael now gives you everything it needs
+Shadow-enhanced spells such as Wings of Night (Wings of Fate made shadow-enhanced) are Fusion Formulas, so the game lists them on the Fusion tab of your deck, never on a school page of the spellbook. Learning one with "Learn on my wizard" now also teaches the two cards it fuses (for Wings of Night: Wings of Fate and Dark Seraph), so the formula can go in your deck and be fused in battle. Ahziael and the game's chat now say where to find it, and the game is told about it straight away. Other fusion spells work the same way.
+Where: Database > Spells
+Test: Search Wings of Night, click "Learn on my wizard", then in the game open your deck and click its Fusion tab. Wings of Night is there; put it in the deck, and in a battle drag Wings of Fate onto Dark Seraph to fuse them.

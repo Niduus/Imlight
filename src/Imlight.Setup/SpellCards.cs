@@ -153,6 +153,12 @@ internal sealed class SpellCard {
 
     internal string Command => $".sb learn {Id}";
 
+    /// <summary>
+    /// A Fusion Formula's fused spell (the shadow-enhanced spells such as Wings of Night, and the other fusions): the game
+    /// lists it on the deck's Fusion page, not on a school page.
+    /// </summary>
+    internal bool Fusion { get; init; }
+
     /// <summary>What it costs, such as "3 pips", "X pips" or "4 pips + 2 shadow".</summary>
     internal string Cost {
         get {
@@ -325,6 +331,7 @@ internal sealed partial class SpellBook {
             MaxCopies = (int) spell.m_maxCopies,
             Category = spell.m_spellCategory.ToString() ?? "",
             Minion = Summons(spell.m_effects),
+            Fusion = spell.m_spellFusion != 0,
         };
         card.Hidden = IsHidden(card, Text(displayName).Length > 0);
         card.Short = Plain(card);

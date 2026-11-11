@@ -231,6 +231,31 @@ internal static class SpellFusions {
         return [.. new[] { recipe.Primary, recipe.Secondary }.Distinct().Where(a => !CardsOf(a).Any(book.HasSpell))];
     }
 
+    /// <summary>
+    /// Teaches the wizard the cards a fused spell's formula fuses that the wizard knows no card of (Wings of Night needs
+    /// Wings of Fate and Dark Seraph), so a formula learned straight away, such as from Ahziael's Spells page, can be
+    /// put in the deck and fused. Returns the template IDs learned; the caller tells the game. Nothing for other spells.
+    /// </summary>
+    internal static List<uint> TeachIngredients(Wizard wizard, uint fusedTemplateId) {
+        var learned = new List<uint>();
+        if (wizard?.SpellbookBehavior is null || RecipeOf(fusedTemplateId) is not { } recipe) {
+            return learned;
+        }
+
+        foreach (var adjective in MissingIngredients(wizard, recipe)) {
+            var cardId = MainCardOf(adjective);
+            if (cardId == 0 || wizard.SpellbookBehavior.HasSpell(cardId) || SpellFactory.GetSpell(cardId) is not { } card) {
+                continue;
+            }
+
+            if (wizard.LearnSpell(card)) {
+                learned.Add(cardId);
+            }
+        }
+
+        return learned;
+    }
+
     /// <summary>Whether a spell template has the adjective.</summary>
     internal static bool HasAdjective(SpellTemplate template, string adjective)
         => template?.m_adjectives?.Any(a => string.Equals((string) a, adjective, StringComparison.OrdinalIgnoreCase)) == true;
