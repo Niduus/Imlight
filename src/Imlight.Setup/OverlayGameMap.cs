@@ -209,7 +209,7 @@ internal static class OverlayGameMap {
         if (ground is { IsEmpty: false } g) {
             var right = g.Left + (g.Width * g.Cell);
             var bottom = g.Top - (g.Height * g.Cell);
-            var margin = 4 * g.Cell;
+            var margin = Math.Max(4 * g.Cell, 150);
             var on = pins.Count(p => p.X >= g.Left - margin && p.X <= right + margin && p.Y <= g.Top + margin && p.Y >= bottom - margin);
             if (on * 4 < pins.Count * 3) {
                 return null;
@@ -322,16 +322,9 @@ internal static class OverlayGameMap {
         (double X, double Y) Turn(double x, double y) => ((x * cos) + (y * sin), (x * sin) - (y * cos));
 
         double minX = double.MaxValue, maxX = double.MinValue, minY = double.MaxValue, maxY = double.MinValue;
-        for (var row = 0; row < g.Height; row += 2) {
-            for (var col = 0; col < g.Width; col += 2) {
-                var kind = g.Cells[(row * g.Width) + col];
-                if (kind is 0 or 4) {
-                    continue;
-                }
-
-                var (tx, ty) = Turn(g.Left + (col * g.Cell), g.Top - (row * g.Cell));
-                minX = Math.Min(minX, tx); maxX = Math.Max(maxX, tx); minY = Math.Min(minY, ty); maxY = Math.Max(maxY, ty);
-            }
+        foreach (var (x, y) in g.Spots()) {
+            var (tx, ty) = Turn(x, y);
+            minX = Math.Min(minX, tx); maxX = Math.Max(maxX, tx); minY = Math.Min(minY, ty); maxY = Math.Max(maxY, ty);
         }
 
         if (minX >= maxX || minY >= maxY) {

@@ -279,7 +279,9 @@ public static class OverlayLinks {
 
         var reply = new TaskCompletionSource<(JsonObject Map, IActorRef Zone, string Error)>(TaskCreationOptions.RunContinuationsAsynchronously);
         var others = new ConcurrentQueue<(ulong CharId, IActorRef Zone, string Name, float X, float Y)>();
-        var ask2 = new OverlayMapAsk(charId, address, reply, others);
+        // The full screen map reaches farther than the minimap, so it may ask for more (never past 20000).
+        var reach = header["reach"] is JsonValue far && far.TryGetValue<double>(out var wanted) && double.IsFinite(wanted) ? (float) wanted : 0f;
+        var ask2 = new OverlayMapAsk(charId, address, reply, others, reach);
         foreach (var service in AgentBridge.CommandServices) {
             service.Tell(ask2);
         }
@@ -303,8 +305,15 @@ public static class OverlayLinks {
         // The streets of the zone, drawn from above (ZoneGround), sent once per zone: the overlay says which it has.
         var zonePath = (string) map["zone"] ?? "";
         if (OverlayMinimap.Streets && zonePath.Length > 0 && !string.Equals((string) header["ground"] ?? "", zonePath, StringComparison.OrdinalIgnoreCase)) {
-            var ground = Zone.Core.ZoneGround.Of(zonePath);
-            map["ground"] = ground.IsEmpty
+            // An overlay that draws shapes gets the exact shapes; an older one the grid.
+            var shapes = header["shapes"] is JsonValue asked && asked.TryGetValue<bool>(out var wants) && wants
+                ? Zone.Core.ZoneGround.ShapesOf(zonePath) : null;
+            var ground = shapes is null ? Zone.Core.ZoneGround.Of(zonePath) : Zone.Core.ZoneGround.Ground.Empty;
+            map["ground"] = shapes is not null
+                ? shapes.IsEmpty
+                    ? new JsonObject { ["zone"] = zonePath }
+                    : new JsonObject { ["zone"] = zonePath, ["left"] = shapes.Left, ["bottom"] = shapes.Bottom, ["unit"] = shapes.Unit, ["shapes"] = shapes.Data }
+                : ground.IsEmpty
                 ? new JsonObject { ["zone"] = zonePath }
                 : new JsonObject {
                     ["zone"] = zonePath, ["left"] = ground.Left, ["top"] = ground.Top, ["cell"] = ground.Cell,

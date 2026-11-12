@@ -291,7 +291,7 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
         }
 
         try {
-            message.Reply.TrySetResult((Tools.OverlayMinimap.Build(wizard, zone), zone, ""));
+            message.Reply.TrySetResult((Tools.OverlayMinimap.Build(wizard, zone, message.Reach), zone, ""));
         }
         catch (Exception ex) {
             Logger.Error("Minimap: the map of {0} could not be made: {1}", Logger.Args(wizard.CharId, ex));

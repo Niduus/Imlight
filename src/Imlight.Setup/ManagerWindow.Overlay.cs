@@ -1894,7 +1894,6 @@ internal sealed partial class ManagerWindow {
             how.Children.Add(OvField("How far it shows (smaller is closer)", OvNumber(map.Zoom, 300, 12000, 100, v => Set(() => map.Zoom = v))));
             how.Children.Add(OvField("Icon size", OvNumber(map.IconSize, 4, 30, 1, v => Set(() => map.IconSize = v))));
             how.Children.Add(OvField("Name size", OvNumber(map.NameSize, 6, 30, 1, v => Set(() => map.NameSize = v))));
-            how.Children.Add(OvField("Quest lines under it (0 = none)", OvNumber(map.QuestLines, 0, 8, 1, v => Set(() => map.QuestLines = (int) v))));
             how.Children.Add(OvField("Words", Row(
                 OvCheck("Names", map.Names, v => Set(() => map.Names = v)),
                 OvCheck("Place's name", map.Place, v => Set(() => map.Place = v)))));
@@ -1922,10 +1921,7 @@ internal sealed partial class ManagerWindow {
         shows.Children.Add(OvField("Grass", OvColor(map.GrassColor, v => Set(() => map.GrassColor = v))));
         shows.Children.Add(OvField("Water", OvColor(map.WaterColor, v => Set(() => map.WaterColor = v))));
         shows.Children.Add(OvField("Walls and fences", OvColor(map.WallColor, v => Set(() => map.WallColor = v))));
-        Kind("Main quest steps (star)", map.Quests, v => map.Quests = v, map.MainColor, v => map.MainColor = v);
-            Kind("Side quest steps (diamond)", map.Quests, v => map.Quests = v, map.SideColor, v => map.SideColor = v);
-            Kind("Quest givers (!)", map.Givers, v => map.Givers = v, map.GiverColor, v => map.GiverColor = v);
-            Kind("Other NPCs", map.Npcs, v => map.Npcs = v, map.NpcColor, v => map.NpcColor = v);
+        Kind("NPCs", map.Npcs, v => map.Npcs = v, map.NpcColor, v => map.NpcColor = v);
             Kind("Mobs", map.Mobs, v => map.Mobs = v, map.MobColor, v => map.MobColor = v);
             Kind("Bosses (skull)", map.Bosses, v => map.Bosses = v, map.BossColor, v => map.BossColor = v);
             Kind("Sigils", map.Sigils, v => map.Sigils = v, map.SigilColor, v => map.SigilColor = v);
@@ -1939,7 +1935,8 @@ internal sealed partial class ManagerWindow {
                 Spacing = 6,
                 Children = {
                     shows,
-                    Sub("A mob a quest needs has a ring in that quest's colour. Quest steps and teammates off the map show as an arrow on its edge."),
+                    Sub("Teammates off the map show as an arrow on its edge. Quests are not shown on the minimap. In the game, the small button " +
+                        "on the minimap's corner opens it full screen, with + and - to see closer or farther and X to close it."),
                 },
             }));
         }

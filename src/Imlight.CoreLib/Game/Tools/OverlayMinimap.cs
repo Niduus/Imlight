@@ -39,8 +39,8 @@ namespace Imlight.CoreLib.Game.Tools;
 /// Quest zones, objectives and so on. Icons of where mobs are or boss locations as well with Sigils and so on"). Each
 /// game window's overlay asks about once a second (op "map" on the overlay link, <see cref="OverlayLinks.MapAsync"/>);
 /// the wizard's own session answers with where the wizard stands and faces, and what is around: creatures and bosses
-/// (<see cref="MinimapIndex"/>), NPCs with a quest to give, quest steps here (main and side), sigils, doors, chests and
-/// other wizards. Only what the game already shows the player; nothing is changed.
+/// (<see cref="MinimapIndex"/>), NPCs, sigils, doors, chests and other wizards. Quests are not tracked here; that is
+/// for a separate add-on. Only what the game already shows the player; nothing is changed.
 /// </summary>
 internal static class OverlayMinimap {
 
@@ -57,16 +57,16 @@ internal static class OverlayMinimap {
     internal static bool Streets => ConfigurationManager.GetValue("Overlay.MinimapStreets", true);
 
     private const int MAX_MARKS = 300;
-    private const int MAX_QUESTS = 200;
 
     /// <summary>
     /// What one wizard's minimap shows, built on that wizard's own session. <paramref name="zone"/> is the zone actor the
-    /// wizard is in.
+    /// wizard is in; <paramref name="reach"/> is how far the overlay's full screen map shows (more than [Overlay]
+    /// MinimapRange then).
     /// </summary>
-    internal static JsonObject Build(Wizard wizard, IActorRef zone) {
+    internal static JsonObject Build(Wizard wizard, IActorRef zone, float reach = 0) {
         var here = wizard.Location;
         string zonePath = wizard.Zone ?? "";
-        var range = Range;
+        var range = Math.Max(Range, Math.Clamp(reach, 0f, 20000f));
         var map = new JsonObject {
             ["zone"] = zonePath,
             ["place"] = zonePath.Length == 0 ? "" : ZoneNames.Shown(zonePath),
@@ -78,7 +78,7 @@ internal static class OverlayMinimap {
 
         var live = MinimapIndex.In(zone);
         var marks = new List<(JsonObject Mark, float Far, int Rank)>();
-        void Add(string kind, float x, float y, string name, string quest = "", int level = 0, int rank = 5) {
+        void Add(string kind, float x, float y, string name, int level = 0, int rank = 5) {
             var far = Far(here.X, here.Y, x, y);
             if (far > range && rank > 1) {
                 return;
@@ -89,10 +89,6 @@ internal static class OverlayMinimap {
                 mark["n"] = name.Length > 60 ? name[..60] : name;
             }
 
-            if (quest.Length > 0) {
-                mark["q"] = quest;
-            }
-
             if (level > 0) {
                 mark["l"] = level;
             }
@@ -100,93 +96,8 @@ internal static class OverlayMinimap {
             marks.Add((mark, far, rank));
         }
 
-        // The quests held now: their steps here get a mark, steps elsewhere a line under the map.
-        var quests = new JsonArray();
-        var wantedMobs = new List<(string[] Adjectives, string Kind)>();
-        var wantedNpcs = new Dictionary<ulong, string>();
-        var current = wizard.QuestBehavior?.CurrentQuestInstances?.Where(q => q is not null).ToList() ?? [];
-        foreach (var held in current) {
-            try {
-                if (QuestTemplateCollection.GetQuestByName(held.QuestName) is not { } quest) {
-                    continue;
-                }
-
-                var main = quest.m_mainline || ((string) quest.m_questName ?? "").Contains("MAIN", StringComparison.OrdinalIgnoreCase);
-                var kind = main ? "main" : "side";
-                var title = English(quest.m_questTitle, held.QuestName);
-                foreach (var progress in held.GoalProgress ?? []) {
-                    if (progress is null || !held.IsGoalActive(progress.GoalName)) {
-                        continue;
-                    }
-
-                    var goal = quest.m_goals?.FirstOrDefault(g => g is not null && (string) g.m_goalName == progress.GoalName);
-                    if (goal is null || goal.m_hideGoal) {
-                        continue;
-                    }
-
-                    var step = StepTitle(goal);
-                    var stepZone = StepZone(goal);
-                    var isHere = stepZone.Length == 0 || SameZone(stepZone, zonePath);
-                    var marked = false;
-                    foreach (var (spotZone, spot) in QuestArrowGoals.GetSpots(quest, goal)) {
-                        if (SameZone(spotZone, zonePath)) {
-                            Add(kind, spot.X, spot.Y, step.Length > 0 ? step : title, kind, rank: 0);
-                            marked = isHere = true;
-                        }
-                    }
-
-                    if (goal is PersonaGoalTemplate persona) {
-                        var npc = QuestMadlibs.SpeakerTemplateOf(persona.m_personaName, 0);
-                        if (npc != 0) {
-                            wantedNpcs.TryAdd(npc, kind);
-                            if (!marked && live.FirstOrDefault(m => m.Template == npc) is { } standing) {
-                                Add(kind, standing.Object.m_location.X, standing.Object.m_location.Y, step.Length > 0 ? step : title, kind, rank: 0);
-                                marked = isHere = true;
-                            }
-                        }
-                    }
-
-                    if (goal is BountyGoalTemplate bounty) {
-                        var adjectives = (bounty.m_npcAdjectives ?? []).Select(a => (string) a).Where(a => !string.IsNullOrEmpty(a)).ToArray();
-                        if (adjectives.Length > 0) {
-                            wantedMobs.Add((adjectives, kind));
-                        }
-                    }
-
-                    if (quests.Count < MAX_QUESTS) {
-                        quests.Add(new JsonObject {
-                            ["t"] = title, ["main"] = main, ["step"] = step,
-                            ["where"] = isHere ? "" : ZoneNames.Shown(stepZone), ["here"] = isHere,
-                        });
-                    }
-                }
-            }
-            catch (Exception ex) {
-                Logger.Debug("Minimap: quest {0} could not be read: {1}", Logger.Args(held.QuestName, ex.Message));
-            }
-        }
-
-        // The main story's steps and this area's own; steps of side quests in other worlds stay off the map.
-        // Main quests first, then the ones in this zone.
-        map["quests"] = new JsonArray([.. quests.OfType<JsonObject>()
-            .Where(q => (bool?) q["main"] == true || (bool?) q["here"] == true)
-            .OrderByDescending(q => (bool?) q["main"] == true).ThenByDescending(q => (bool?) q["here"] == true)
-            .Select(q => (JsonNode) q.DeepClone())]);
-
-        // Who has a quest to give this wizard, among the NPCs here.
-        var givers = new HashSet<ulong>();
-        try {
-            var npcsHere = live.Where(m => m.Kind == MinimapIndex.NPC).Select(m => m.Template).ToHashSet();
-            foreach (var (quest, giver) in QuestService.QuestFinderGivers()) {
-                if (npcsHere.Contains(giver) && !givers.Contains(giver) && MapService.IsOfferedTo(quest, wizard)) {
-                    givers.Add(giver);
-                }
-            }
-        }
-        catch (Exception ex) {
-            Logger.Debug("Minimap: quest givers could not be read: {0}", Logger.Args(ex.Message));
-        }
-
+        // No quests here: quest tracking will be its own add-on (Niduus, 2026-11-12: "Do not track quests. That will be
+        // a different plugin").
         var creatures = Creatures;
         foreach (var mark in live) {
             var spot = mark.Object.m_location;
@@ -196,14 +107,10 @@ internal static class OverlayMinimap {
                         continue;
                     }
 
-                    var wanted = wantedMobs.FirstOrDefault(w => mark.Adjectives.Any(a => w.Adjectives.Contains(a, StringComparer.Ordinal))
-                                                            || Quests.BountyStandIns.Counts(w.Adjectives, mark.Template)).Kind ?? "";
-                    Add(mark.Kind, spot.X, spot.Y, mark.Name, wanted, mark.Level, mark.Kind == MinimapIndex.BOSS ? 1 : wanted.Length > 0 ? 2 : 6);
+                    Add(mark.Kind, spot.X, spot.Y, mark.Name, mark.Level, mark.Kind == MinimapIndex.BOSS ? 1 : 6);
                     break;
                 case MinimapIndex.NPC:
-                    var questFor = wantedNpcs.GetValueOrDefault(mark.Template, "");
-                    var gives = givers.Contains(mark.Template);
-                    Add(gives ? "giver" : MinimapIndex.NPC, spot.X, spot.Y, mark.Name, questFor, rank: gives || questFor.Length > 0 ? 2 : 7);
+                    Add(MinimapIndex.NPC, spot.X, spot.Y, mark.Name, rank: 7);
                     break;
                 default:
                     Add(mark.Kind, spot.X, spot.Y, mark.Name, rank: mark.Kind == MinimapIndex.SIGIL ? 1 : 4);
@@ -257,44 +164,5 @@ internal static class OverlayMinimap {
     }
 
     private static int Round(float value) => float.IsFinite(value) ? (int) MathF.Round(value) : 0;
-
-    private static bool SameZone(string a, string b) {
-        if (string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b)) {
-            return false;
-        }
-
-        if (string.Equals(a.Trim(), b.Trim(), StringComparison.OrdinalIgnoreCase)) {
-            return true;
-        }
-
-        var contained = AccessPassManager.GetContainedZoneName(a.Trim());
-
-        return contained is not null && string.Equals(contained, b.Trim(), StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static string StepZone(GoalTemplate goal) {
-        string zone = goal is WaypointGoalTemplate { m_zoneTag.IsEmpty: false } waypoint ? (string) waypoint.m_zoneTag : (string) goal.m_destinationZone;
-        if (string.IsNullOrWhiteSpace(zone)) {
-            return "";
-        }
-
-        return AccessPassManager.GetContainedZoneName(zone.Trim()) ?? zone.Trim();
-    }
-
-    // The step in plain words, with who or what ("Talk to Headmaster Ambrose", "Defeat 3 Rattlebones"); the goal's own
-    // title alone is only its verb ("Talk To", "Defeat": Niduus, 2026-11-12).
-    private static string StepTitle(GoalTemplate goal) {
-        var text = QuestGuide.StepText(goal);
-
-        return string.IsNullOrWhiteSpace(text) ? English(goal.m_goalTitle, (string) goal.m_goalName ?? "") : English(text, text);
-    }
-
-    private static string English(string key, string fallback) {
-        var text = string.IsNullOrEmpty(key) || key.Contains(' ') ? key : Locale.GetEnglishName(key);
-        text = string.IsNullOrWhiteSpace(text) ? fallback ?? "" : text;
-        text = text.Replace('\n', ' ').Replace('\r', ' ').Trim();
-
-        return text.Length > 120 ? text[..120] : text;
-    }
 
 }

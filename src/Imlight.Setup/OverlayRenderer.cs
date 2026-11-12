@@ -59,8 +59,104 @@ internal static class OverlayRenderer {
         var credit = Element(design.Credit, words, design.Credit == highlight, OverlayDesign.CreditLine(words.Version));
         credit.Classes.Add(OverlayPanel.CREDIT);
         panel.Children.Add(credit);
+        if (window != 0) {
+            AddMapButtons(panel, window);
+        }
 
         return panel;
+    }
+
+    /// <summary>
+    /// Over a game: a small full screen button on the minimap's corner (Niduus, 2026-11-12: "Allow a full screen button"),
+    /// and while it is full screen, the big map with X (back to the corner), + (closer) and - (farther). They go under the
+    /// Ahziael line, over everything else, and never push anything aside.
+    /// </summary>
+    private static void AddMapButtons(Panel panel, long window) {
+        if (panel.Children.FirstOrDefault(c => c.Tag is OverlayElement { IsMinimap: true }) is not { Tag: OverlayElement minimap } corner) {
+            return;
+        }
+
+        var at = panel.Children.Count - 1;
+        if (OverlayMinimapData.FullZoom(window) is null) {
+            panel.Children.Insert(at, new MapButton(corner, 0, OverlayAction.MAP_FULL, minimap));
+
+            return;
+        }
+
+        // The minimap in the corner stays where it is (so nothing else moves) but isn't seen under the big one.
+        corner.Opacity = 0;
+        var full = new FullMap { Child = new MinimapView(minimap, OverlayMinimapData.For(window), window, full: true) };
+        full.Classes.Add(OverlayPanel.FULL);
+        panel.Children.Insert(at, full);
+        panel.Children.Insert(at + 1, new MapButton(full, 0, OverlayAction.MAP_FULL, minimap));
+        panel.Children.Insert(at + 2, new MapButton(full, 1, OverlayAction.MAP_IN, minimap));
+        panel.Children.Insert(at + 3, new MapButton(full, 2, OverlayAction.MAP_OUT, minimap));
+    }
+
+    /// <summary>The full screen map: it fills the game window, less a margin, whatever its design.</summary>
+    internal sealed class FullMap : Border {
+
+        internal const double MARGIN = 36;
+
+    }
+
+    /// <summary>
+    /// One of the minimap's own buttons, on the top right corner of <see cref="Over"/> (<see cref="Slot"/> 0 is the
+    /// right-most). Its tag is a button piece, so the overlay puts a click window over it like any other button.
+    /// </summary>
+    internal sealed class MapButton : Border {
+
+        internal const double SIZE = 22;
+
+        internal Control Over { get; }
+
+        internal int Slot { get; }
+
+        internal MapButton(Control over, int slot, string action, OverlayElement minimap) {
+            Over = over;
+            Slot = slot;
+            Width = Height = SIZE;
+            CornerRadius = new CornerRadius(5);
+            Background = new SolidColorBrush(Color.FromArgb(0xD8, 0x10, 0x14, 0x24));
+            BorderBrush = new SolidColorBrush(Color.FromArgb(0xC0, 0xFF, 0xFF, 0xFF));
+            BorderThickness = new Thickness(1);
+            Tag = new OverlayElement { Kind = OverlayElement.BUTTON, Action = action, Map = minimap.Map, Visible = true };
+            Child = new MapIcon(action == OverlayAction.MAP_FULL && over is FullMap ? "close" : action);
+            Classes.Add(OverlayPanel.FULL);
+        }
+
+    }
+
+    // The drawing on a minimap button: corners (full screen), X (close), + and -.
+    private sealed class MapIcon(string what) : Control {
+
+        public override void Render(DrawingContext context) {
+            var (w, h) = (Bounds.Width, Bounds.Height);
+            var pen = new Pen(Brushes.White, 1.8, lineCap: PenLineCap.Round);
+            var (l, t, r, b) = (w * 0.27, h * 0.27, w * 0.73, h * 0.73);
+            switch (what) {
+                case OverlayAction.MAP_FULL:
+                    var k = w * 0.14;
+                    foreach (var (x, y, dx, dy) in new[] { (l, t, 1, 1), (r, t, -1, 1), (l, b, 1, -1), (r, b, -1, -1) }) {
+                        context.DrawLine(pen, new Point(x, y), new Point(x + dx * k, y));
+                        context.DrawLine(pen, new Point(x, y), new Point(x, y + dy * k));
+                    }
+
+                    break;
+                case "close":
+                    context.DrawLine(pen, new Point(l, t), new Point(r, b));
+                    context.DrawLine(pen, new Point(r, t), new Point(l, b));
+                    break;
+                case OverlayAction.MAP_IN:
+                    context.DrawLine(pen, new Point(l, h / 2), new Point(r, h / 2));
+                    context.DrawLine(pen, new Point(w / 2, t), new Point(w / 2, b));
+                    break;
+                default:
+                    context.DrawLine(pen, new Point(l, h / 2), new Point(r, h / 2));
+                    break;
+            }
+        }
+
     }
 
     // Lowest layer first (same layer: list order), so the higher one is drawn over.
@@ -91,7 +187,8 @@ internal static class OverlayRenderer {
 
     /// <summary>Which part a drawn text or box belongs to.</summary>
     internal static string PartOf(Control control)
-        => control.Classes.Contains(OverlayPanel.CREDIT) ? OverlayPanel.CREDIT : control.Classes.Contains(OverlayPanel.SERVER) ? OverlayPanel.SERVER : OverlayPanel.CLIENT;
+        => control.Classes.Contains(OverlayPanel.CREDIT) ? OverlayPanel.CREDIT : control.Classes.Contains(OverlayPanel.SERVER) ? OverlayPanel.SERVER
+            : control.Classes.Contains(OverlayPanel.FULL) ? OverlayPanel.FULL : OverlayPanel.CLIENT;
 
     /// <summary>
     /// Places each text and box from its corner or side, then moves any that laps over one placed before it off that
@@ -106,7 +203,10 @@ internal static class OverlayRenderer {
         internal const string SERVER = "server";
         internal const string CLIENT = "client";
 
-        private static int Rank(string part) => part switch { CREDIT => 0, SERVER => 1, _ => 2 };
+        /// <summary>The minimap's own buttons and its full screen map: placed last, and never moved or moving anything.</summary>
+        internal const string FULL = "fullmap";
+
+        private static int Rank(string part) => part switch { CREDIT => 0, SERVER => 1, FULL => 3, _ => 2 };
 
         protected override Size MeasureOverride(Size available) {
             foreach (var child in Children) {
@@ -133,6 +233,23 @@ internal static class OverlayRenderer {
 
             void Place(Control child, int depth) {
                 if (where.ContainsKey(child)) {
+                    return;
+                }
+
+                if (child is FullMap) {
+                    var inside = bounds.Deflate(FullMap.MARGIN);
+                    where[child] = inside;
+                    child.Arrange(inside);
+                    return;
+                }
+
+                if (child is MapButton button) {
+                    Place(button.Over, depth + 1);
+                    var over = where.GetValueOrDefault(button.Over, button.Over.Bounds);
+                    var size = MapButton.SIZE;
+                    var spot = new Rect(over.Right - ((button.Slot + 1) * (size + 4)), over.Top + 4, size, size);
+                    where[child] = spot;
+                    child.Arrange(spot);
                     return;
                 }
 

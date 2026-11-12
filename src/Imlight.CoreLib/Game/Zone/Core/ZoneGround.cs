@@ -30,6 +30,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Imlight.Common;
 using Imlight.CoreLib.Shared.Resources;
 
@@ -58,6 +59,106 @@ internal static class ZoneGround {
 
     }
 
+    /// <summary>
+    /// A zone's ground as exact shapes (Niduus, 2026-11-12: "Make sure they are fully accurate"): every ground triangle,
+    /// wall and round thing as the game's collision has it, with no grid. Points are whole steps of <c>Unit</c> game
+    /// units from (Left, Bottom). Packed, base64: blocks of a kind (1 path, 2 grass, 3 water, 4 wall: triangles of six
+    /// 16-bit numbers; 5 round things: circles of three: x, y, radius), each block a kind byte and a 32-bit count.
+    /// </summary>
+    internal sealed record Outline(float Left, float Bottom, float Unit, string Data) {
+
+        internal static readonly Outline Empty = new(0, 0, 0, "");
+
+        internal bool IsEmpty => Data.Length == 0;
+
+    }
+
+    internal const byte ROUND = 5;
+
+    private static readonly ConcurrentDictionary<string, Lazy<Outline>> s_outlines = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>The shapes of this zone's ground (read once), or <see cref="Outline.Empty"/> when it has none.</summary>
+    internal static Outline ShapesOf(string zonePath)
+        => string.IsNullOrEmpty(zonePath) ? Outline.Empty : s_outlines.GetOrAdd(zonePath, z => new Lazy<Outline>(() => LoadShapes(z))).Value;
+
+    private static Outline LoadShapes(string zonePath) {
+        try {
+            if (!ResourceManager.TryLoadArchive(zonePath, out var wad) || wad.OpenFile("collision.bcd") is not { } memory) {
+                return Outline.Empty;
+            }
+
+            return Shapes(memory.ToArray());
+        }
+        catch (Exception ex) {
+            Logger.Debug("Zone {0}: could not draw its ground shapes for the minimap ({1}).", Logger.Args(zonePath, ex.Message));
+
+            return Outline.Empty;
+        }
+    }
+
+    internal static Outline Shapes(byte[] data) {
+        var triangles = Read(data, out var circles);
+        float left = float.MaxValue, right = float.MinValue, bottom = float.MaxValue, top = float.MinValue;
+        void Take(float x, float y) {
+            if (float.IsFinite(x) && float.IsFinite(y)) {
+                (left, right, bottom, top) = (Math.Min(left, x), Math.Max(right, x), Math.Min(bottom, y), Math.Max(top, y));
+            }
+        }
+
+        foreach (var t in triangles) {
+            Take(t.X1, t.Y1);
+            Take(t.X2, t.Y2);
+            Take(t.X3, t.Y3);
+        }
+
+        foreach (var c in circles) {
+            Take(c.X - c.R, c.Y - c.R);
+            Take(c.X + c.R, c.Y + c.R);
+        }
+
+        if (triangles.Count == 0 || left >= right || bottom >= top) {
+            return Outline.Empty;
+        }
+
+        var unit = Math.Max(1f, Math.Max(right - left, top - bottom) / 65000f);
+        ushort Q(float v, float from) => (ushort) Math.Clamp(MathF.Round((v - from) / unit), 0, 65535);
+        bool Finite(Triangle t) => float.IsFinite(t.X1 + t.Y1 + t.X2 + t.Y2 + t.X3 + t.Y3);
+
+        using var stream = new MemoryStream();
+        using var writer = new BinaryWriter(stream);
+        foreach (var kind in new[] { GRASS, PATH, WATER, WALL }) {
+            var mine = triangles.Where(t => t.Kind == kind && Finite(t)).ToList();
+            if (mine.Count == 0) {
+                continue;
+            }
+
+            writer.Write(kind);
+            writer.Write((uint) mine.Count);
+            foreach (var t in mine) {
+                writer.Write(Q(t.X1, left));
+                writer.Write(Q(t.Y1, bottom));
+                writer.Write(Q(t.X2, left));
+                writer.Write(Q(t.Y2, bottom));
+                writer.Write(Q(t.X3, left));
+                writer.Write(Q(t.Y3, bottom));
+            }
+        }
+
+        if (circles.Count > 0) {
+            writer.Write(ROUND);
+            writer.Write((uint) circles.Count);
+            foreach (var c in circles) {
+                writer.Write(Q(c.X, left));
+                writer.Write(Q(c.Y, bottom));
+                writer.Write((ushort) Math.Clamp(MathF.Round(c.R / unit), 1, 65535));
+            }
+        }
+
+        writer.Flush();
+
+        return new Outline(left, bottom, unit, Convert.ToBase64String(stream.ToArray()));
+    }
+
     private static readonly ConcurrentDictionary<string, Lazy<Ground>> s_grounds = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>The ground of this zone (read once), or <see cref="Ground.Empty"/> when it has none.</summary>
@@ -81,8 +182,14 @@ internal static class ZoneGround {
 
     private readonly record struct Triangle(float X1, float Y1, float X2, float Y2, float X3, float Y3, byte Kind);
 
-    internal static Ground Build(byte[] data) {
+    private readonly record struct Circle(float X, float Y, float R);
+
+    internal static Ground Build(byte[] data) => Grid(Read(data, out _));
+
+    // Every ground triangle and wall (two triangles a box) from above, and the round things (trees, posts, pillars).
+    private static List<Triangle> Read(byte[] data, out List<Circle> circles) {
         var triangles = new List<Triangle>();
+        circles = [];
         var at = 0;
         uint U() { var v = BitConverter.ToUInt32(data, at); at += 4; return v; }
         float F() { var v = BitConverter.ToSingle(data, at); at += 4; return v; }
@@ -151,7 +258,18 @@ internal static class ZoneGround {
                 case 2:
                     at += 4;
                     break;
-                case 3 or 4:
+                case 3: {
+                    // A cylinder standing up (a tree, a post, a pillar): its length, then its radius.
+                    F();
+                    var radius = F() * (scale is > 0 and < 1000 ? scale : 1f);
+                    if (category == 1 && MathF.Abs(rot[8]) > 0.9f && radius is > 5 and < 3000) {
+                        circles.Add(new Circle(mx, my, radius));
+                    }
+
+                    break;
+                }
+
+                case 4:
                     at += 8;
                     break;
                 case 5:
@@ -178,6 +296,10 @@ internal static class ZoneGround {
             }
         }
 
+        return triangles;
+    }
+
+    private static Ground Grid(List<Triangle> triangles) {
         // The grid covers the ground (walls alone don't set it).
         float left = float.MaxValue, right = float.MinValue, bottom = float.MaxValue, top = float.MinValue;
         foreach (var t in triangles) {
