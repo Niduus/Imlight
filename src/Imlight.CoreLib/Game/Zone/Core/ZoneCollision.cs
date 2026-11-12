@@ -27,7 +27,7 @@
  * The file: u32 shape count; per shape u32 type, u32 category, u32 collide flags; a mesh (type 6) then has u32 point
  * count, u32 face count, the points (3 floats) and faces (3 u32 + 3 floats); then every shape has its name (u32
  * length + text), a 3x3 rotation, its middle (3 floats), scale, material (u32 length + text) and its type again,
- * followed by its size: box 3 floats (full lengths), ray 2, sphere 1 (radius), cylinder and tube 2 (radius, length),
+ * followed by its size: box 3 floats (full lengths), ray 2, sphere 1 (radius), cylinder and tube 2 (length, radius),
  * plane 4, mesh none. Meshes are the ground and are not needed here.
  */
 
@@ -152,8 +152,11 @@ internal static class ZoneCollision {
                 }
 
                 case ShapeType.Cylinder or ShapeType.Tube: {
-                    var radius = F() * scale;
+                    // Length first, then radius, in the game's files (Niduus 2026-11-12, the Headmistress's house: its
+                    // pillars are 318 long and 55 wide; read the other way round they were 318-wide discs no taller
+                    // than a step, so a teleport could land inside a pillar).
                     var length = F() * scale;
+                    var radius = F() * scale;
                     solids.Add(new Solid(ShapeType.Cylinder, middle, row0, row1, row2, new Vector3(radius, radius, length / 2f)));
 
                     break;

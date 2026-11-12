@@ -653,6 +653,24 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
         var parsedLoc = Util.GetVectorFromCompactString(location);
         if (parsedLoc.X != 0 || parsedLoc.Y != 0 || parsedLoc.Z != 0) {
             actualLocation = parsedLoc;
+
+            // A spot given by x, y, z (TP buttons, teleports to a wizard, going back after a battle) is checked so the
+            // wizard never lands inside a wall, a pillar or furniture (Niduus 2026-11-12, see SafeLanding).
+            if (SafeLanding.Enabled) {
+                var wanted = new System.Numerics.Vector3(parsedLoc.X, parsedLoc.Y, parsedLoc.Z);
+                var landing = SafeLanding.Check(ZonePath, wanted);
+                if (landing is { Moved: true } moved) {
+                    Logger.Information("Safe landing: {0} at {1} is {2}; the wizard lands at {3} instead.",
+                        Logger.Args(ZonePath, wanted, moved.Why, moved.Spot));
+                    actualLocation = new Vector4(moved.Spot.X, moved.Spot.Y, moved.Spot.Z, parsedLoc.W);
+                }
+                else if (landing is null && ZoneData.m_locationList.FirstOrDefault(x => x.m_locName == "Start") is { } start) {
+                    Logger.Information("Safe landing: {0} at {1} has no open floor near it; the wizard goes to the area's start.",
+                        Logger.Args(ZonePath, wanted));
+                    actualLocation = (Vector4) start.m_location;
+                    actualLocation.W = start.m_direction;
+                }
+            }
         }
         else {
             var searchedLoc = ZoneData.m_locationList.FirstOrDefault(x => x.m_locName == location);
