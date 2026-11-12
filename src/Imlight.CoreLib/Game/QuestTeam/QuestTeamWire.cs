@@ -70,6 +70,8 @@ internal static class QuestTeamWire {
     internal const string ISSUES_SEEN_FILE = "issues-seen.txt";
     // Ahziael writes this file to make four new level 1 wizards (its Restart button); the server deletes it when done.
     internal const string RESTART_FILE = "restart-request.txt";
+    // Ahziael's Pause: there while the team stands still.
+    internal const string PAUSE_FILE = "paused.txt";
 
     internal static string Folder => Path.GetFullPath(FOLDER);
 
@@ -81,7 +83,9 @@ internal static class QuestTeamWire {
     internal static double SlowFactor => System.Math.Clamp(ConfigurationManager.GetValue("QuestTeam.SlowFactor", 2.0), 1.2, 20);
 
     /// <summary>How many times the team may lose the same fight before it is an issue.</summary>
-    internal static int LossesBeforeIssue => System.Math.Clamp(ConfigurationManager.GetValue("QuestTeam.LossesBeforeIssue", 3), 1, 20);
+    internal static int QuestMinutes => System.Math.Clamp(ConfigurationManager.GetValue("QuestTeam.QuestMinutes", 45), 0, 100000);
+
+    internal static int LossesBeforeIssue => System.Math.Clamp(ConfigurationManager.GetValue("QuestTeam.LossesBeforeIssue", 2), 1, 20);
 
     /// <summary>How many minutes without any progress before the team counts as stuck.</summary>
     internal static int StuckMinutes => System.Math.Clamp(ConfigurationManager.GetValue("QuestTeam.StuckMinutes", 8), 2, 120);

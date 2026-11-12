@@ -45,6 +45,7 @@ internal sealed partial class QuestTeamDirectorActor {
     private static (List<string[]> Names, Dictionary<uint, int[]> Of)? s_vendorZones;
     private QuestTeamPlanner.Target _shopTrip;
     private readonly HashSet<uint> _shopSkipped = [];
+    private readonly HashSet<string> _mountGiven = [];
 
     private static BotStyle StyleOf(QuestTeamMember.Status member) => BotGear.StyleOfRole(member.Role);
 
@@ -59,6 +60,27 @@ internal sealed partial class QuestTeamDirectorActor {
             var member = _team[i];
             if (member.Wizard is not { } wizard || CombatDuelComponent.IsInBattle(member.GlobalId)) {
                 continue;
+            }
+
+            // Short of gold: Ahziael gives it, so shopping and potions never hold the quests up (Niduus, 2026-11-12:
+            // "Give them gold to prevent slow downs"), and the log says so.
+            var level = wizard.MagicSchoolBehavior?.Level ?? 1;
+            var floor = 500 + (level * 200);
+            if (wizard.GameStats is { } stats && stats.m_currentGold < floor / 4) {
+                var give = floor - stats.m_currentGold;
+                wizard.AddGold(give);
+                Note(member.Role, $"{member.Name} was short of gold; Ahziael gives it {give} gold (now {stats.m_currentGold}).");
+            }
+
+            // Their school's Ghulture, ridden between quests for its speed and stats (Niduus, 2026-11-12: "they are given
+            // the class ghulture mounts for speed and stats").
+            if (wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Mount) is null && _mountGiven.Add(member.Role)) {
+                var mountId = Imlight.CoreLib.Shared.Character.AdeptStarterGear.GhultureFor(wizard.MagicSchoolBehavior?.MagicSchool ?? Imlight.CoreLib.Shared.Behaviors.MagicSchool.Balance);
+                var mount = (wizard.InventoryBehavior?.Items ?? []).FirstOrDefault(it => (ulong) it.m_templateID == mountId);
+                if (mount is not null || wizard.AddItemToInventory(mountId, out mount)) {
+                    _actors[i].Tell(new QuestTeamMember.Equip(mount.m_globalID, "Mount", "its Ghulture"));
+                    continue;
+                }
             }
 
             // Developers' and testers' gear never stays on (a Deckathalon deck stays until a fair deck replaces it).

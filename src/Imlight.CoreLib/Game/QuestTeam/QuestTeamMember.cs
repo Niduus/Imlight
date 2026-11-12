@@ -76,6 +76,9 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
 
     private sealed record ClickNow(BotShared.BotBattle.Move Move);
 
+    /// <summary>Ahziael finishes the step it is on in a quest (.quest completegoalfor), for a step that is broken.</summary>
+    internal sealed record SkipStep(string Quest);
+
     /// <summary>Leave the battle, as the Flee button does.</summary>
     internal sealed record Flee;
 
@@ -108,6 +111,9 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
 
     /// <summary>A player's running pace, in game units a second.</summary>
     private const float RUN_SPEED = 280f;
+
+    // A mount's extra speed (a Ghulture: 40%).
+    private const float MOUNT_SPEED = 1.4f;
 
     /// <summary>What a Quest Team wizard is doing and sees, for the Director (written by this actor only).</summary>
     internal sealed class Status {
@@ -218,6 +224,7 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
                 Timers.StartSingleTimer($"click-{_clicks++}", new ClickNow(m.Each[i].Move), TimeSpan.FromSeconds(Math.Max(0.05, m.Each[i].AfterSeconds)));
             }
         });
+        Receive<SkipStep>(m => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "completegoal", QuestName = m.Quest }));
         Receive<ClickNow>(m => Send(BotShared.BotBattle.ToGameMessage(m.Move)));
         Receive<Flee>(_ => Send(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATMOVE {
             MoveType = (byte) Combat.CombatMoveType.Flee, SpellSelection = 0, SpellTarget = 0, TimeLeft = 0,
@@ -490,7 +497,9 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
             return;
         }
 
-        var stride = RUN_SPEED * (float) TICK_SECONDS;
+        // On its Ghulture it goes faster, as a player on a mount does.
+        var mounted = View.Wizard?.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Mount) is not null;
+        var stride = RUN_SPEED * (mounted ? MOUNT_SPEED : 1f) * (float) TICK_SECONDS;
         var (x, y) = (View.X, View.Y);
         var next = _route.Peek();
         var left = Far(x, y, next.X, next.Y);
