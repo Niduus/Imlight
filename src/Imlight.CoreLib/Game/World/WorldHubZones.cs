@@ -37,6 +37,7 @@
  * Last Updated: 3/18/2025
  */
 
+using System.Collections.Generic;
 using System.Linq;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
@@ -82,6 +83,9 @@ internal class WorldHubZones : RootSingleResourceSingleton<WorldHubZones>, IMemo
 
         return s_worldHubZoneMap.m_hubZoneMapping.FirstOrDefault(hubMap => hubMap.m_world == worldName);
     }
+
+    /// <summary>Every world's hub mapping (where the Spiral Door brings travellers), or none before the file is read.</summary>
+    internal static IReadOnlyList<HubZoneMapping> All() => s_worldHubZoneMap?.m_hubZoneMapping is { } all ? [.. all] : [];
 
     public void DisposeStream() => Stream.Dispose();
 

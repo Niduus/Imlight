@@ -88,7 +88,12 @@ internal static class OverlayQuestData {
 
     internal sealed record Step(string Text, string Where, bool Here);
 
-    internal sealed record Quest(string Id, string Title, string Kind, string World, int Level, bool Here, IReadOnlyList<Step> Steps);
+    internal sealed record Quest(string Id, string Title, string Kind, string World, int Level, bool Here, IReadOnlyList<Step> Steps) {
+
+        /// <summary>For the picked quest with nothing to do here: the areas to go through, in order.</summary>
+        internal IReadOnlyList<string> Way { get; init; } = [];
+
+    }
 
     internal sealed record Snapshot(string Place, IReadOnlyList<Quest> Quests, string Note, DateTime At) {
 
@@ -108,6 +113,17 @@ internal static class OverlayQuestData {
     private static readonly Dictionary<long, OverlayQuestList> s_looks = [];
     private static readonly Dictionary<long, (string Quest, DateTime At)> s_lastPick = [];
     private static int s_version;
+    private static bool s_askSoon;
+
+    /// <summary>True once after a quest was picked or let go (the link then asks for the quests at once).</summary>
+    internal static bool TakeAskSoon() {
+        lock (s_lock) {
+            var soon = s_askSoon;
+            s_askSoon = false;
+
+            return soon;
+        }
+    }
     private static long[] s_wanted = [];
 
     /// <summary>The game windows whose overlay shows a Quest Tracker now; set by the overlay, read by the link.</summary>
@@ -167,6 +183,7 @@ internal static class OverlayQuestData {
 
             s_routes.Remove(window);
             s_version++;
+            s_askSoon = true;
         }
 
         OverlayMinimapData.Redraw();
@@ -295,7 +312,7 @@ internal static class OverlayQuestData {
 
         for (var i = 0; i < a.Quests.Count; i++) {
             var (qa, qb) = (a.Quests[i], b.Quests[i]);
-            if (qa.Id != qb.Id || qa.Kind != qb.Kind || qa.Here != qb.Here || !qa.Steps.SequenceEqual(qb.Steps)) {
+            if (qa.Id != qb.Id || qa.Kind != qb.Kind || qa.Here != qb.Here || !qa.Steps.SequenceEqual(qb.Steps) || !qa.Way.SequenceEqual(qb.Way)) {
                 return false;
             }
         }
@@ -313,7 +330,9 @@ internal static class OverlayQuestData {
 
             var kind = Short((string?) item["k"], 8) is "story" or "main" ? (string) item["k"]! : "side";
             quests.Add(new Quest(Short((string?) item["id"], 120), Short((string?) item["t"], 120), kind, Short((string?) item["w"], 8),
-                (int) Number(item["l"]), item["here"]?.GetValueKind() == System.Text.Json.JsonValueKind.True, steps));
+                (int) Number(item["l"]), item["here"]?.GetValueKind() == System.Text.Json.JsonValueKind.True, steps) {
+                Way = [.. (item["way"] as JsonArray ?? []).Take(12).Select(w => Short(w?.GetValueKind() == System.Text.Json.JsonValueKind.String ? (string?) w : "", 80)).Where(w => w.Length > 0)],
+            });
         }
 
         return new Snapshot(Short((string?) sent["place"], 80), quests, "", DateTime.UtcNow);
@@ -337,17 +356,19 @@ internal static class OverlayQuestData {
     }
 
     // Made-up quests for the designers, matching the made-up minimap (Unicorn Way, the wizard at 0, 0).
-    private const string SamplePick = "sample-story";
+    private const string SamplePick = "sample-main";
 
     private static readonly Snapshot Sample = new("Unicorn Way", [
-        new Quest(SamplePick, "A Familiar Face", "story", "WC", 3, true, [new Step("Talk to Ambrose", "", true)]),
-        new Quest("sample-main", "Unicorn Way Ghosts", "main", "WC", 4, false, [new Step("Defeat 3 Lost Souls", "Triton Avenue", false)]),
-        new Quest("sample-side-1", "Lost Souls", "side", "WC", 2, true, [new Step("Defeat 3 Lost Souls", "", true)]),
-        new Quest("sample-side-2", "Trouble in the Commons", "side", "WC", 2, false, [new Step("Talk to Mindy Pixiecrumb", "The Commons", false)]),
+        new Quest("sample-story", "A Familiar Face", "story", "WC", 3, true, [new Step("Talk to Headmaster Ambrose", "Wizard City / Unicorn Way", true)]),
+        new Quest(SamplePick, "Unicorn Way Ghosts", "main", "WC", 4, false, [new Step("Defeat 3 Lost Souls", "Wizard City / Triton Avenue", false)]) {
+            Way = ["Ravenwood", "Triton Avenue"],
+        },
+        new Quest("sample-side-1", "Lost Souls", "side", "WC", 2, true, [new Step("Defeat 3 Lost Souls", "Wizard City / Unicorn Way", true)]),
+        new Quest("sample-side-2", "Trouble in the Commons", "side", "WC", 2, false, [new Step("Talk to Mindy Pixiecrumb", "Wizard City / The Commons", false)]),
     ], "", DateTime.MaxValue);
 
-    private static readonly Route SampleRoute = new(SamplePick, "A Familiar Face", "story", [(900, 1300, "Talk to Ambrose")],
-        [(0, 520), (380, 640), (900, 1300)], "", "");
+    private static readonly Route SampleRoute = new(SamplePick, "Unicorn Way Ghosts", "main", [(0, -1800, "To Ravenwood")],
+        [(0, -700), (-150, -1200), (0, -1800)], "Triton Avenue", "");
 
 }
 
@@ -481,16 +502,28 @@ internal sealed class QuestTrackerView : Control {
                 name.MaxLineCount = 2;
                 var nameAt = y + 2;
                 y = nameAt + name.Height;
-                FormattedText? step = null;
-                double stepAt = 0;
+                var below = new List<(FormattedText Text, double At, IBrush Brush)>();
+                void Below(string words, double size, IBrush brush, bool bold = false) {
+                    var line = Text(words, size, brush, bold, width - 14);
+                    line.MaxLineCount = 2;
+                    below.Add((line, y + 1, brush));
+                    y += 1 + line.Height;
+                }
+
                 if (_look.Steps && quest.Steps.Count > 0) {
                     var first = quest.Steps[0];
-                    var more = quest.Steps.Count > 1 ? $" (+{quest.Steps.Count - 1})" : "";
-                    var where = first.Where.Length > 0 && !first.Here ? $" ({first.Where})" : "";
-                    step = Text(first.Text + where + more, _look.StepSize, stepBrush, false, width - 14);
-                    step.MaxLineCount = 2;
-                    stepAt = y + 1;
-                    y = stepAt + step.Height;
+                    var more = quest.Steps.Count > 1 ? $" (+{quest.Steps.Count - 1} more)" : "";
+                    Below(first.Text + more, _look.StepSize, stepBrush);
+                    // Where it is, as the game's quest book says it ("Azteca / Xibalba").
+                    if (first.Where.Length > 0) {
+                        Below(first.Here ? $"{first.Where} (you're here)" : first.Where, _look.StepSize - 1, stepBrush);
+                    }
+                }
+
+                // The picked quest's step is in another area: the areas to go through, door by door.
+                if (picked && quest.Way.Count > 0) {
+                    var kindBrush = Brush(_look.ColorOf(quest.Kind));
+                    Below("Way: " + string.Join("  >  ", quest.Way), _look.StepSize, kindBrush, true);
                 }
 
                 y += 4;
@@ -505,8 +538,8 @@ internal sealed class QuestTrackerView : Control {
                     // The quest's kind as a small bar at its left.
                     c.DrawRectangle(new SolidColorBrush(kindColor), null, new Rect(3, top + 4, 3, Math.Max(4, bottom - top - 8)), 1.5, 1.5);
                     Words(c, name, new Point(11, nameAt), text);
-                    if (step is not null) {
-                        Words(c, step, new Point(11, stepAt), stepBrush);
+                    foreach (var (line, at, brush) in below) {
+                        Words(c, line, new Point(11, at), brush);
                     }
                 });
                 _lines.Add(new Line(area, OverlayAction.QUEST_PICK, quest.Id));
@@ -586,21 +619,6 @@ internal static class OverlayQuestRouteDrawing {
                 var at = project(x, y);
                 context.DrawEllipse(null, new Pen(new SolidColorBrush(Color.FromArgb(0xB0, 0, 0, 0)), 4), at, iconSize, iconSize);
                 context.DrawEllipse(null, new Pen(new SolidColorBrush(color), 2.2), at, iconSize, iconSize);
-            }
-        }
-
-        if (route.To.Length > 0 || route.Via.Length > 0) {
-            var words = route.Via.Length > 0 ? $"Go to {route.Via}, then {route.To}" : $"This step is in {route.To}";
-            var text = new FormattedText(words, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
-                new Typeface(FontFamily.Default, FontStyle.Normal, FontWeight.SemiBold), 10, Brushes.White) {
-                MaxTextWidth = Math.Max(20, mapW * 0.8), MaxLineCount = 2, Trimming = TextTrimming.CharacterEllipsis,
-                TextAlignment = TextAlignment.Center,
-            };
-            var at = new Point((mapW - text.MaxTextWidth) / 2, 14);
-            context.DrawRectangle(new SolidColorBrush(Color.FromArgb(0xC0, 0x0A, 0x0A, 0x14)), new Pen(new SolidColorBrush(color), 1),
-                new Rect(at.X - 4, at.Y - 3, text.MaxTextWidth + 8, text.Height + 6), 5, 5);
-            if (text.BuildGeometry(at) is { } outline) {
-                context.DrawGeometry(new SolidColorBrush(color), null, outline);
             }
         }
     }

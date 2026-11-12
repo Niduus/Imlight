@@ -46,7 +46,7 @@ internal static class OverlayQuestTracker {
     private const int MAX_STEPS = 6;
 
     /// <summary>Every quest the wizard holds now, story first, then main, then side; the ones here before the rest.</summary>
-    internal static JsonObject Build(Wizard wizard) {
+    internal static JsonObject Build(Wizard wizard, Akka.Actor.IActorRef zone = null, string pick = "") {
         string zonePath = wizard.Zone ?? "";
         var rows = new List<(JsonObject Row, int Order, bool Here, int Level)>();
         foreach (var held in wizard.QuestBehavior?.CurrentQuestInstances?.Where(q => q is not null).ToList() ?? []) {
@@ -58,6 +58,7 @@ internal static class OverlayQuestTracker {
                 var kind = QuestStory.KindOf(quest);
                 var steps = new JsonArray();
                 var here = false;
+                var elsewhere = "";
                 foreach (var progress in held.GoalProgress ?? []) {
                     if (progress is null || !held.IsGoalActive(progress.GoalName) || steps.Count >= MAX_STEPS) {
                         continue;
@@ -72,8 +73,12 @@ internal static class OverlayQuestTracker {
                     var stepHere = stepZone.Length == 0 || SameZone(stepZone, zonePath)
                                    || QuestArrowGoals.GetSpots(quest, goal).Any(s => SameZone(s.Zone, zonePath));
                     here |= stepHere;
+                    if (!stepHere && elsewhere.Length == 0) {
+                        elsewhere = stepZone;
+                    }
+
                     steps.Add(new JsonObject {
-                        ["s"] = StepTitle(goal), ["where"] = stepHere || stepZone.Length == 0 ? "" : ZoneNames.Shown(stepZone), ["here"] = stepHere,
+                        ["s"] = StepTitle(goal), ["where"] = StepWhere(goal, stepZone), ["here"] = stepHere,
                     });
                 }
 
@@ -81,6 +86,12 @@ internal static class OverlayQuestTracker {
                     ["id"] = held.QuestName, ["t"] = English(quest.m_questTitle, held.QuestName), ["k"] = kind,
                     ["w"] = QuestStory.WorldOf(quest), ["l"] = (int) quest.m_questLevel, ["steps"] = steps, ["here"] = here,
                 };
+                // The picked quest, with nothing to do here: the areas to go through to reach its step.
+                if (!here && elsewhere.Length > 0 && string.Equals(pick, held.QuestName, StringComparison.OrdinalIgnoreCase)) {
+                    var spiralDoorHere = zone is not null && MinimapIndex.In(zone).Any(m => m.Template == OverlayQuestRoute.SPIRAL_DOOR);
+                    row["way"] = OverlayQuestRoute.WayWords(zonePath, elsewhere, spiralDoorHere);
+                }
+
                 var order = kind == QuestStory.STORY ? 0 : kind == QuestStory.MAIN ? 1 : 2;
                 rows.Add((row, order, here, quest.m_questLevel));
             }
@@ -123,9 +134,70 @@ internal static class OverlayQuestTracker {
 
     /// <summary>The step in plain words, with who or what ("Talk to Headmaster Ambrose", "Defeat 3 Rattlebones").</summary>
     internal static string StepTitle(GoalTemplate goal) {
+        // A creature step names the creature, as the game's quest book does ("Stop Morganthe", not "Defeat 1 creatures").
+        if (goal is BountyGoalTemplate bounty && FoeNames(bounty) is { Count: > 0 } foes) {
+            string title = goal.m_goalTitle;
+            var verb = string.IsNullOrWhiteSpace(title) ? "Defeat" : English(title, title);
+            if (verb.StartsWith("WizardQuestGoals", StringComparison.OrdinalIgnoreCase)) {
+                verb = "Defeat";
+            }
+
+            var count = bounty.m_bountyTotal > 1 ? $"{bounty.m_bountyTotal} " : "";
+
+            return English($"{verb} {count}{string.Join(" or ", foes.Take(2))}", "");
+        }
+
         var text = QuestGuide.StepText(goal);
 
         return string.IsNullOrWhiteSpace(text) ? English(goal.m_goalTitle, (string) goal.m_goalName ?? "") : English(text, text);
+    }
+
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_adjectiveNames = new(StringComparer.Ordinal);
+
+    // The names of the creatures a step's adjectives stand for ("AZ-Tritops-Mummy-B.AdjRef" is Morganthe).
+    private static List<string> FoeNames(BountyGoalTemplate bounty) {
+        var names = new List<string>();
+        foreach (var adjective in (bounty.m_npcAdjectives ?? []).Select(a => (string) a).Where(a => !string.IsNullOrEmpty(a))) {
+            var name = s_adjectiveNames.GetOrAdd(adjective, a => {
+                try {
+                    var file = a.EndsWith(".AdjRef", StringComparison.OrdinalIgnoreCase) ? a[..^".AdjRef".Length] : a;
+                    var id = CoreObjectFactory.IdOfFileName(file);
+
+                    return id != 0 && CoreObjectFactory.GetCoreTemplate(id) is GameObjectTemplate template ? MinimapIndex.NameOf(template) : "";
+                }
+                catch (Exception) {
+                    return "";
+                }
+            });
+            if (name.Length > 0 && !names.Contains(name, StringComparer.OrdinalIgnoreCase)) {
+                names.Add(name);
+            }
+        }
+
+        return names;
+    }
+
+    /// <summary>Where a step is, as the game's quest book says it: "Azteca / Xibalba".</summary>
+    internal static string StepWhere(GoalTemplate goal, string stepZone) {
+        if (stepZone.Length == 0) {
+            return "";
+        }
+
+        string location = goal.m_locationName;
+        var place = string.IsNullOrWhiteSpace(location) ? ZoneNames.Shown(stepZone) : English(location, location);
+        var worldName = WorldName(stepZone);
+
+        return string.Equals(worldName, place, StringComparison.OrdinalIgnoreCase) ? place : $"{worldName} / {place}";
+    }
+
+    /// <summary>A zone's world as players say it ("Wizard City" for WizardCity/WC_Hub).</summary>
+    internal static string WorldName(string zone) {
+        var world = (zone ?? "").Split('/')[0].Trim();
+        return world.ToLowerInvariant() switch {
+            "mooshu" => "Mooshu",
+            "dragonspire" or "dragonspyre" => "Dragonspyre",
+            _ => System.Text.RegularExpressions.Regex.Replace(world, "(?<=[a-z])(?=[A-Z])", " "),
+        };
     }
 
     internal static string English(string key, string fallback) {

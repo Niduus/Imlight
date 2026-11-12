@@ -458,7 +458,8 @@ public static class OverlayLinks {
         }
 
         var reply = new TaskCompletionSource<(JsonObject Quests, string Error)>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var question = new OverlayQuestsAsk(charId, address, reply);
+        var pick = ((string) header["quest"] ?? "").Trim();
+        var question = new OverlayQuestsAsk(charId, address, reply, pick.Length > 120 ? "" : pick);
         foreach (var service in AgentBridge.CommandServices) {
             service.Tell(question);
         }
