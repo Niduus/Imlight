@@ -84,8 +84,15 @@ internal static class OverlayRenderer {
 
         var at = panel.Children.Count - 1;
         if (OverlayMinimapData.FullZoom(window) is null) {
+            var slot = 0;
             if (minimap.Map?.FullButton != false) {
-                panel.Children.Insert(at, new MapButton(corner, 0, OverlayAction.MAP_FULL, minimap));
+                panel.Children.Insert(at++, new MapButton(corner, slot++, OverlayAction.MAP_FULL, minimap));
+            }
+
+            // + and - on the corner minimap too (Niduus, 2026-11-12: "custom zoom options").
+            if (minimap.Map?.ZoomButtons != false) {
+                panel.Children.Insert(at++, new MapButton(corner, slot++, OverlayAction.MAP_IN, minimap));
+                panel.Children.Insert(at, new MapButton(corner, slot, OverlayAction.MAP_OUT, minimap));
             }
 
 

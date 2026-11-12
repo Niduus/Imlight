@@ -1985,6 +1985,24 @@ internal sealed partial class ManagerWindow {
             _ovEditor.Children.Add(OvGroup("Minimap look", new StackPanel { Spacing = 6, Children = { look, Sub("Sizes are times the icon size above (1 = the same).") } }));
 
             var full = new WrapPanel();
+            var zoom = new WrapPanel();
+            zoom.Children.Add(OvField("Zoom buttons", OvCheck("+ and - on the minimap's corner", map.ZoomButtons, v => Set(() => map.ZoomButtons = v))));
+            zoom.Children.Add(OvField("Zoom close (presets)", OvCombo(["Very close", "Close", "Normal", "Far", "Very far"], -1,
+                i => { if (i >= 0) { Set(() => map.Zoom = new[] { 700.0, 1300, 2200, 4000, 7000 }[i]); } }, 130)));
+            zoom.Children.Add(OvField("One press zooms (times)", OvNumber(map.ZoomStep, 1.05, 4, 0.05, v => Set(() => map.ZoomStep = v))));
+            zoom.Children.Add(OvField("Closest it can zoom", OvNumber(map.ZoomMin, 100, 30000, 50, v => Set(() => map.ZoomMin = v))));
+            zoom.Children.Add(OvField("Farthest it can zoom", OvNumber(map.ZoomMax, 100, 60000, 500, v => Set(() => map.ZoomMax = v))));
+            _ovEditor.Children.Add(OvGroup("Minimap zoom", new StackPanel { Spacing = 6, Children = { zoom,
+                Sub("In the game, + and - on the minimap (or on the full screen map) zoom it, and how close you left it is kept on this PC.") } }));
+
+            var extra = new WrapPanel();
+            extra.Children.Add(OvField("The way you face", Row(OvCheck("Soft wedge", map.ViewCone, v => Set(() => map.ViewCone = v)), OvColor(map.ViewConeColor, v => Set(() => map.ViewConeColor = v)))));
+            extra.Children.Add(OvField("Grid lines", Row(OvCheck("Show", map.Grid, v => Set(() => map.Grid = v)), OvColor(map.GridColor, v => Set(() => map.GridColor = v)))));
+            extra.Children.Add(OvField("Grid every (game units)", OvNumber(map.GridSize, 100, 20000, 100, v => Set(() => map.GridSize = v))));
+            extra.Children.Add(OvField("Edge of the ground", Row(OvCheck("Thin line", map.GroundEdge, v => Set(() => map.GroundEdge = v)), OvColor(map.GroundEdgeColor, v => Set(() => map.GroundEdgeColor = v)))));
+            extra.Children.Add(OvField("Name colours", OvCheck("Same colour as their icon", map.NamesInKindColor, v => Set(() => map.NamesInKindColor = v))));
+            _ovEditor.Children.Add(OvGroup("Minimap extras", new StackPanel { Spacing = 6, Children = { extra } }));
+
             full.Children.Add(OvField("Full screen button", OvCheck("On the minimap's corner", map.FullButton, v => Set(() => map.FullButton = v))));
             full.Children.Add(OvField("Space round it", OvNumber(map.FullMargin, 0, 250, 2, v => Set(() => map.FullMargin = v))));
             full.Children.Add(OvField("Background", OvColor(map.FullBackground, v => Set(() => map.FullBackground = v))));

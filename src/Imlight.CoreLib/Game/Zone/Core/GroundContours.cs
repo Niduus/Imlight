@@ -39,8 +39,10 @@ internal static class GroundContours {
     /// <summary>
     /// The outlines (closed, as x, y pairs in world units) of the area the triangles cover (x1, y1, x2, y2, x3, y3 each),
     /// smoothed by about <paramref name="smoothing"/> game units. Holes are outlines too: fill them even-odd.
+    /// <paramref name="level"/> under a half grows the shape a little, so kinds drawn side by side overlap and leave no
+    /// crack between them.
     /// </summary>
-    internal static List<float[]> Trace(IReadOnlyList<float[]> triangles, float smoothing) {
+    internal static List<float[]> Trace(IReadOnlyList<float[]> triangles, float smoothing, float level = 0.5f) {
         var outlines = new List<float[]>();
         if (triangles.Count == 0) {
             return outlines;
@@ -92,7 +94,7 @@ internal static class GroundContours {
         }
 
         Blur(grid, width, height, sigma);
-        foreach (var loop in March(grid, width, height)) {
+        foreach (var loop in March(grid, width, height, level)) {
             var thin = Thin(loop, 0.35f);
             if (thin.Count < 3 || MathF.Abs(Area(thin)) < 4) {
                 continue;
@@ -162,8 +164,8 @@ internal static class GroundContours {
     }
 
     // The closed outlines where the grid is half full, in grid units.
-    private static List<List<(float X, float Y)>> March(float[] grid, int width, int height) {
-        const float LEVEL = 0.5f;
+    private static List<List<(float X, float Y)>> March(float[] grid, int width, int height, float level) {
+        var LEVEL = Math.Clamp(level, 0.05f, 0.95f);
         var links = new Dictionary<long, (long A, long B)>();
         void Link(long from, long to) {
             links[from] = links.TryGetValue(from, out var known) ? (known.A, to) : (to, -1);

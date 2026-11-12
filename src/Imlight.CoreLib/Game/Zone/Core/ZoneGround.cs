@@ -85,6 +85,10 @@ internal static class ZoneGround {
     /// (Niduus, 2026-11-12: the Commons' little fishing dock came out as a pale blob).</summary>
     internal const byte WOOD = 8;
 
+    /// <summary>All the ground at once, drawn first under the kinds, so no crack between two kinds shows the dark
+    /// background (Niduus, 2026-11-12: "Not missing gaps"). Only sent smoothed.</summary>
+    internal const byte BASE = 9;
+
     private static readonly ConcurrentDictionary<(string Zone, float Smoothing), Lazy<Outline>> s_outlines = new();
 
     /// <summary>
@@ -121,6 +125,30 @@ internal static class ZoneGround {
 
     internal static Outline Shapes(byte[] data, float smoothing = 0) {
         var triangles = Read(data, out var circles);
+
+        // A post or pillar standing in a wall or building is part of it: drawn with the wall as one smooth shape, not a
+        // circle bulging out of a block (Niduus, 2026-11-12: "blob textures"). Trees standing free stay round.
+        var walls = triangles.Where(t => t.Kind == WALL).ToList();
+        if (walls.Count > 0 && circles.Count > 0) {
+            var free = new List<Circle>();
+            foreach (var c in circles) {
+                var touches = walls.Any(w => Math.Max(w.X1, Math.Max(w.X2, w.X3)) >= c.X - c.R && Math.Min(w.X1, Math.Min(w.X2, w.X3)) <= c.X + c.R
+                                             && Math.Max(w.Y1, Math.Max(w.Y2, w.Y3)) >= c.Y - c.R && Math.Min(w.Y1, Math.Min(w.Y2, w.Y3)) <= c.Y + c.R);
+                if (!touches) {
+                    free.Add(c);
+                    continue;
+                }
+
+                const int SIDES = 16;
+                for (var k = 0; k < SIDES; k++) {
+                    var (a, b) = (k * MathF.Tau / SIDES, (k + 1) * MathF.Tau / SIDES);
+                    triangles.Add(new Triangle(c.X, c.Y, c.X + (c.R * MathF.Cos(a)), c.Y + (c.R * MathF.Sin(a)), c.X + (c.R * MathF.Cos(b)), c.Y + (c.R * MathF.Sin(b)), WALL));
+                }
+            }
+
+            circles = free;
+        }
+
         float left = float.MaxValue, right = float.MinValue, bottom = float.MaxValue, top = float.MinValue;
         void Take(float x, float y) {
             if (float.IsFinite(x) && float.IsFinite(y)) {
@@ -149,8 +177,8 @@ internal static class ZoneGround {
 
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream);
-        foreach (var kind in new[] { GRASS, PATH, WATER, WALL, PATH_OVER, GRASS_OVER, WOOD }) {
-            var mine = triangles.Where(t => t.Kind == kind && Finite(t)).ToList();
+        foreach (var kind in smoothing > 0 ? new[] { BASE, GRASS, PATH, WATER, WALL, PATH_OVER, GRASS_OVER, WOOD } : new[] { GRASS, PATH, WATER, WALL, PATH_OVER, GRASS_OVER, WOOD }) {
+            var mine = triangles.Where(t => (kind == BASE ? t.Kind != WALL : t.Kind == kind) && Finite(t)).ToList();
             if (mine.Count == 0) {
                 continue;
             }
@@ -159,8 +187,14 @@ internal static class ZoneGround {
             // Walls, bridges and docks are only rounded a little (thin fences and planks would melt away), so their corners
             // don't stick out.
             if (smoothing > 0) {
+                // Each kind a little fuller than half, so kinds side by side overlap with no crack; the base and walls exact.
                 var outlines = GroundContours.Trace([.. mine.Select(t => new[] { t.X1, t.Y1, t.X2, t.Y2, t.X3, t.Y3 })],
-                        kind is WALL or PATH_OVER or GRASS_OVER or WOOD ? Math.Min(smoothing * 0.3f, 15f) : smoothing)
+                        kind switch {
+                            WALL => Math.Min(smoothing * 0.5f, 25f),
+                            PATH_OVER or GRASS_OVER or WOOD => Math.Min(smoothing * 0.3f, 15f),
+                            _ => smoothing,
+                        },
+                        kind is BASE or WALL ? 0.5f : 0.4f)
                     .Where(o => o.Length / 2 <= ushort.MaxValue).ToList();
                 writer.Write((byte) (kind + 16));
                 writer.Write((uint) outlines.Count);
