@@ -62,7 +62,7 @@ internal static class ZoneGround {
     /// <summary>
     /// A zone's ground as exact shapes (Niduus, 2026-11-12: "Make sure they are fully accurate"): every ground triangle,
     /// wall and round thing as the game's collision has it, with no grid. Points are whole steps of <c>Unit</c> game
-    /// units from (Left, Bottom). Packed, base64: blocks of a kind (1 path, 2 grass, 3 water, 4 wall, 6 path and 7 grass above water: triangles of six
+    /// units from (Left, Bottom). Packed, base64: blocks of a kind (1 path, 2 grass, 3 water, 4 wall, 6 path and 7 grass above water, 8 wooden floors: triangles of six
     /// 16-bit numbers; 5 round things: circles of three: x, y, radius), each block a kind byte and a 32-bit count.
     /// </summary>
     internal sealed record Outline(float Left, float Bottom, float Unit, string Data) {
@@ -80,6 +80,10 @@ internal static class ZoneGround {
 
     /// <summary>Grass above water, drawn over the water.</summary>
     internal const byte GRASS_OVER = 7;
+
+    /// <summary>Wooden floors: docks, piers, plank bridges and decks, drawn over the ground and water in their own colour
+    /// (Niduus, 2026-11-12: the Commons' little fishing dock came out as a pale blob).</summary>
+    internal const byte WOOD = 8;
 
     private static readonly ConcurrentDictionary<(string Zone, float Smoothing), Lazy<Outline>> s_outlines = new();
 
@@ -145,17 +149,18 @@ internal static class ZoneGround {
 
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream);
-        foreach (var kind in new[] { GRASS, PATH, WATER, WALL, PATH_OVER, GRASS_OVER }) {
+        foreach (var kind in new[] { GRASS, PATH, WATER, WALL, PATH_OVER, GRASS_OVER, WOOD }) {
             var mine = triangles.Where(t => t.Kind == kind && Finite(t)).ToList();
             if (mine.Count == 0) {
                 continue;
             }
 
             // Smoothed: the kind's outlines (kind + 16, a count, then each with its own count of points), filled even-odd.
-            // Walls are only rounded a little (thin fences would melt away), so their corners don't stick out.
+            // Walls, bridges and docks are only rounded a little (thin fences and planks would melt away), so their corners
+            // don't stick out.
             if (smoothing > 0) {
                 var outlines = GroundContours.Trace([.. mine.Select(t => new[] { t.X1, t.Y1, t.X2, t.Y2, t.X3, t.Y3 })],
-                        kind == WALL ? Math.Min(smoothing * 0.3f, 15f) : smoothing)
+                        kind is WALL or PATH_OVER or GRASS_OVER or WOOD ? Math.Min(smoothing * 0.3f, 15f) : smoothing)
                     .Where(o => o.Length / 2 <= ushort.MaxValue).ToList();
                 writer.Write((byte) (kind + 16));
                 writer.Write((uint) outlines.Count);
@@ -334,13 +339,14 @@ internal static class ZoneGround {
                     }
 
                     triangles.Add(new Triangle(points[p1], points[p1 + 1], points[p2], points[p2 + 1], points[p3], points[p3 + 1], kind,
-                        (points[p1 + 2] + points[p2 + 2] + points[p3 + 2]) / 3));
+                        Math.Min(points[p1 + 2], Math.Min(points[p2 + 2], points[p3 + 2]))));
                 }
             }
         }
 
-        // Water lies over the ground under it (the Commons' pond has a walkable floor); ground well above the water (a
-        // bridge, a dock, a bank) goes over the water.
+        // Water lies over the ground under it (the Commons' pond has a walkable floor); ground wholly well above the water
+        // (a bridge, a dock) goes over the water. A bank slopes down into the water, so its lowest corner is under it and
+        // the water covers it (Niduus, 2026-11-12: tan dashes all along Unicorn Way's river).
         var waters = triangles.Where(t => t.Kind == WATER).ToList();
         if (waters.Count > 0) {
             for (var i = 0; i < triangles.Count; i++) {
@@ -353,7 +359,7 @@ internal static class ZoneGround {
                 var (y0, y1) = (Math.Min(t.Y1, Math.Min(t.Y2, t.Y3)), Math.Max(t.Y1, Math.Max(t.Y2, t.Y3)));
                 var under = waters.Where(w => Math.Max(w.X1, Math.Max(w.X2, w.X3)) >= x0 && Math.Min(w.X1, Math.Min(w.X2, w.X3)) <= x1
                                               && Math.Max(w.Y1, Math.Max(w.Y2, w.Y3)) >= y0 && Math.Min(w.Y1, Math.Min(w.Y2, w.Y3)) <= y1).ToList();
-                if (under.Count > 0 && t.Z > under.Max(w => w.Z) + 15) {
+                if (under.Count > 0 && t.Z > under.Max(w => w.Z) + 20) {
                     triangles[i] = t with { Kind = t.Kind == PATH ? PATH_OVER : GRASS_OVER };
                 }
             }
@@ -386,10 +392,10 @@ internal static class ZoneGround {
         var grid = new byte[width * height];
 
         // Grass, paths, water over them, ground above the water over that, and walls last, each drawn over the one before.
-        foreach (var kind in new[] { GRASS, PATH, WATER, GRASS_OVER, PATH_OVER, WALL }) {
+        foreach (var kind in new[] { GRASS, PATH, WATER, GRASS_OVER, PATH_OVER, WOOD, WALL }) {
             foreach (var t in triangles) {
                 if (t.Kind == kind) {
-                    Fill(grid, width, height, left, top, cell, t with { Kind = kind switch { PATH_OVER => PATH, GRASS_OVER => GRASS, _ => kind } });
+                    Fill(grid, width, height, left, top, cell, t with { Kind = kind switch { PATH_OVER or WOOD => PATH, GRASS_OVER => GRASS, _ => kind } });
                 }
             }
         }
@@ -400,6 +406,7 @@ internal static class ZoneGround {
     private static byte KindOf(string material) => (material ?? "").Trim().ToLowerInvariant() switch {
         "grass" or "leaves" or "moss" or "hay" or "flowers" => GRASS,
         "water" or "lava" or "goo" or "ooze" => WATER,
+        "wood" => WOOD,
         _ => PATH,
     };
 

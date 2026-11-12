@@ -118,8 +118,12 @@ internal static class MinimapIndex {
             return new Mark(DOOR, name.Length == 0 ? "Teleporter" : name, id, adjectives, entity.ActiveGameObject, 0);
         }
 
-        if (entity.GetComponentOfType<SilverChestComponent>() is not null || entity.GetComponentOfType<WoodenChestComponent>() is not null) {
-            return new Mark(CHEST, "Chest", id, adjectives, entity.ActiveGameObject, 0);
+        if (entity.GetComponentOfType<SilverChestComponent>() is not null) {
+            return new Mark(CHEST, "Silver chest", id, adjectives, entity.ActiveGameObject, 0);
+        }
+
+        if (entity.GetComponentOfType<WoodenChestComponent>() is not null) {
+            return new Mark(CHEST, "Wooden chest", id, adjectives, entity.ActiveGameObject, 0);
         }
 
         return null;
