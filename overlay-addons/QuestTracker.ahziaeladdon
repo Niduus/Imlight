@@ -2,8 +2,8 @@
   "Format": "Ahziael overlay add-on",
   "Name": "Quest Tracker",
   "Author": "Niduus",
-  "Description": "Your quests in three lists: Story (the main quests you need to finish the world), Main and Side, each with its step now. Click a quest to pick it, and its way is drawn on the Minimap (only on the Minimap: get the Minimap add-on too). Click a list's name to fold it away.",
-  "Version": "1",
+  "Description": "Your quests in three lists: Instance (dungeon quests), Story (the main quests you need to finish the world), Main and Side, each with its step now. Click a quest to pick it, and its way is drawn on the Minimap (only on the Minimap: get the Minimap add-on too). Click a list's name to fold it away.",
+  "Version": "2",
   "Widgets": [
     {
       "Name": "Quest Tracker",

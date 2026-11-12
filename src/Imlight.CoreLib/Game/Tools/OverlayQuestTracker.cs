@@ -92,7 +92,7 @@ internal static class OverlayQuestTracker {
                     row["way"] = OverlayQuestRoute.WayWords(zonePath, elsewhere, spiralDoorHere);
                 }
 
-                var order = kind == QuestStory.STORY ? 0 : kind == QuestStory.MAIN ? 1 : 2;
+                var order = kind switch { QuestStory.INSTANCE => 0, QuestStory.STORY => 1, QuestStory.MAIN => 2, _ => 3 };
                 rows.Add((row, order, here, quest.m_questLevel));
             }
             catch (Exception ex) {

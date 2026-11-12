@@ -1998,6 +1998,7 @@ internal sealed partial class ManagerWindow {
 
             var shows = new WrapPanel();
             shows.Children.Add(OvField("Words at the top (empty for none)", OvText(list.Title, v => Set(() => list.Title = v), 160)));
+            shows.Children.Add(OvField("Instance (dungeon) quests", Row(OvCheck("Show", list.Instance, v => Set(() => list.Instance = v)), OvColor(list.InstanceColor, v => Set(() => list.InstanceColor = v)))));
             shows.Children.Add(OvField("Story quests", Row(OvCheck("Show", list.Story, v => Set(() => list.Story = v)), OvColor(list.StoryColor, v => Set(() => list.StoryColor = v)))));
             shows.Children.Add(OvField("Main quests", Row(OvCheck("Show", list.Main, v => Set(() => list.Main = v)), OvColor(list.MainColor, v => Set(() => list.MainColor = v)))));
             shows.Children.Add(OvField("Side quests", Row(OvCheck("Show", list.Side, v => Set(() => list.Side = v)), OvColor(list.SideColor, v => Set(() => list.SideColor = v)))));
@@ -2011,7 +2012,7 @@ internal sealed partial class ManagerWindow {
                 Spacing = 6,
                 Children = {
                     shows,
-                    Sub("It lists your wizard's quests in this game window, from the server: Story (the main quests you need to finish the world), " +
+                    Sub("It lists your wizard's quests in this game window, from the server: Instance (a dungeon's own quests), Story (the main quests you need to finish the world), " +
                         "Main (the other main quests) and Side. Click a list's name in the game to fold it away. Fill and Edge below set its background " +
                         "and rim; a height of 0 makes it grow to fit. Here in the designer it shows made-up quests."),
                 },

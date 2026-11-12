@@ -35,6 +35,7 @@ namespace Imlight.CoreLib.Game.Tools;
 /// </summary>
 internal static class QuestStory {
 
+    internal const string INSTANCE = "instance";
     internal const string STORY = "story";
     internal const string MAIN = "main";
     internal const string SIDE = "side";
@@ -47,8 +48,12 @@ internal static class QuestStory {
     internal static bool IsMain(QuestTemplate quest)
         => quest is not null && (quest.m_mainline || ((string) quest.m_questName ?? "").Contains("MAIN", StringComparison.OrdinalIgnoreCase));
 
-    /// <summary>"story", "main" or "side".</summary>
+    /// <summary>"instance" (a dungeon's own quest), "story", "main" or "side".</summary>
     internal static string KindOf(QuestTemplate quest) {
+        if (quest is not null && DungeonQuestIndex.IsDungeonQuest(quest.m_questName)) {
+            return INSTANCE;
+        }
+
         if (!IsMain(quest)) {
             return SIDE;
         }

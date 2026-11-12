@@ -37,6 +37,9 @@ internal sealed class OverlayQuestList {
     /// <summary>The words at the top ("Quests"); empty for none.</summary>
     public string Title { get; set; } = "Quests";
 
+    /// <summary>Dungeon quests (they only count inside their dungeon).</summary>
+    public bool Instance { get; set; } = true;
+
     public bool Story { get; set; } = true;
     public bool Main { get; set; } = true;
     public bool Side { get; set; } = true;
@@ -55,6 +58,7 @@ internal sealed class OverlayQuestList {
     public double TitleSize { get; set; } = 13;
     public double StepSize { get; set; } = 11;
 
+    public string InstanceColor { get; set; } = "#FFC07CFF";
     public string StoryColor { get; set; } = "#FFFFC83C";
     public string MainColor { get; set; } = "#FFFF9A4A";
     public string SideColor { get; set; } = "#FF4AB4FF";
@@ -66,6 +70,7 @@ internal sealed class OverlayQuestList {
         RouteWidth = OverlayElement.Range(RouteWidth, 1, 10, 3);
         TitleSize = OverlayElement.Range(TitleSize, 6, 30, 13);
         StepSize = OverlayElement.Range(StepSize, 6, 30, 11);
+        InstanceColor = OverlayPaint.CleanColor(InstanceColor, "#FFC07CFF");
         StoryColor = OverlayPaint.CleanColor(StoryColor, "#FFFFC83C");
         MainColor = OverlayPaint.CleanColor(MainColor, "#FFFF9A4A");
         SideColor = OverlayPaint.CleanColor(SideColor, "#FF4AB4FF");
@@ -75,7 +80,7 @@ internal sealed class OverlayQuestList {
         return this;
     }
 
-    internal string ColorOf(string kind) => kind switch { "story" => StoryColor, "main" => MainColor, _ => SideColor };
+    internal string ColorOf(string kind) => kind switch { "instance" => InstanceColor, "story" => StoryColor, "main" => MainColor, _ => SideColor };
 
 }
 
@@ -290,7 +295,7 @@ internal static class OverlayQuestData {
                 }
             }
 
-            s_routes[window] = new Route(Short((string?) sent["quest"], 120), Short((string?) sent["t"], 120), Short((string?) sent["k"], 8),
+            s_routes[window] = new Route(Short((string?) sent["quest"], 120), Short((string?) sent["t"], 120), Short((string?) sent["k"], 10),
                 points, path, Short((string?) sent["to"], 80), Short((string?) sent["via"], 80));
         }
     }
@@ -328,7 +333,7 @@ internal static class OverlayQuestData {
                 steps.Add(new Step(Short((string?) step["s"], 120), Short((string?) step["where"], 80), step["here"]?.GetValueKind() == System.Text.Json.JsonValueKind.True));
             }
 
-            var kind = Short((string?) item["k"], 8) is "story" or "main" ? (string) item["k"]! : "side";
+            var kind = Short((string?) item["k"], 10) is "instance" or "story" or "main" ? (string) item["k"]! : "side";
             quests.Add(new Quest(Short((string?) item["id"], 120), Short((string?) item["t"], 120), kind, Short((string?) item["w"], 8),
                 (int) Number(item["l"]), item["here"]?.GetValueKind() == System.Text.Json.JsonValueKind.True, steps) {
                 Way = [.. (item["way"] as JsonArray ?? []).Take(12).Select(w => Short(w?.GetValueKind() == System.Text.Json.JsonValueKind.String ? (string?) w : "", 80)).Where(w => w.Length > 0)],
@@ -359,6 +364,7 @@ internal static class OverlayQuestData {
     private const string SamplePick = "sample-main";
 
     private static readonly Snapshot Sample = new("Unicorn Way", [
+        new Quest("sample-instance", "Cleanse the Tower", "instance", "WC", 5, false, [new Step("Defeat Rattlebones", "Wizard City / Rattlebones's Tower", false)]),
         new Quest("sample-story", "A Familiar Face", "story", "WC", 3, true, [new Step("Talk to Headmaster Ambrose", "Wizard City / Unicorn Way", true)]),
         new Quest(SamplePick, "Unicorn Way Ghosts", "main", "WC", 4, false, [new Step("Defeat 3 Lost Souls", "Wizard City / Triton Avenue", false)]) {
             Way = ["Ravenwood", "Triton Avenue"],
@@ -391,7 +397,7 @@ internal sealed class QuestTrackerView : Control {
     private double _laidOutFor = -1;
     private double _height;
 
-    private static readonly (string Kind, string Label)[] s_kinds = [("story", "Story"), ("main", "Main"), ("side", "Side")];
+    private static readonly (string Kind, string Label)[] s_kinds = [("instance", "Instance"), ("story", "Story"), ("main", "Main"), ("side", "Side")];
 
     internal QuestTrackerView(OverlayElement element, long window, bool hasMap) {
         _element = element;
@@ -473,7 +479,7 @@ internal sealed class QuestTrackerView : Control {
         var pick = OverlayQuestData.Pick(_window);
         var any = false;
         foreach (var (kind, label) in s_kinds) {
-            var on = kind switch { "story" => _look.Story, "main" => _look.Main, _ => _look.Side };
+            var on = kind switch { "instance" => _look.Instance, "story" => _look.Story, "main" => _look.Main, _ => _look.Side };
             if (!on) {
                 continue;
             }

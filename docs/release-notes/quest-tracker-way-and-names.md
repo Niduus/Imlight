@@ -5,3 +5,8 @@ Fixed: the Quest Tracker reads steps the way the game's quest book does: "Stop M
 Fixed: the Minimap no longer shows "Go to Savarstaad Pass, then Savarstaad Pass".
 Where: Play > Overlay
 Test: Pick a quest whose step is in another world. The tracker should list the way under it, and the Minimap should show no text banner. Check that "Tall Enough to Meet the Sun" reads "Stop Morganthe" and "Azteca / Xibalba".
+
+New: Instance group in the Quest Tracker
+Dungeon quests now get their own group at the top. The order is Instance, Story, Main, Side. Each group can be turned off and given its own colour.
+Where: Play > Overlay
+Test: Enter a dungeon that gives its own quest, and check that the quest shows under Instance at the top of the tracker.
