@@ -49,7 +49,7 @@ internal static class OverlayMinimapData {
     }
 
     internal sealed record Snapshot(string Place, double X, double Y, double Yaw, IReadOnlyList<Mark> Marks, IReadOnlyList<Quest> Quests, string Note,
-                                    DateTime At, Ground? Ground = null) {
+                                    DateTime At, Ground? Ground = null, string Zone = "") {
 
         internal bool Stale => DateTime.UtcNow - At > s_staleAfter;
 
@@ -129,6 +129,15 @@ internal static class OverlayMinimapData {
         }
     }
 
+    /// <summary>Every window's minimap is drawn again (the game's map page of its area is ready).</summary>
+    internal static void Redraw() {
+        lock (s_lock) {
+            foreach (var window in s_versions.Keys.ToList()) {
+                s_versions[window]++;
+            }
+        }
+    }
+
     /// <summary>Once a second: a map that stopped coming is drawn again once, with a note.</summary>
     internal static void Tick() {
         lock (s_lock) {
@@ -195,7 +204,8 @@ internal static class OverlayMinimapData {
             }
         }
 
-        return new Snapshot(Short((string?) map["place"], 80), Number(map["x"]), Number(map["y"]), Number(map["yaw"]), marks, quests, "", DateTime.UtcNow);
+        return new Snapshot(Short((string?) map["place"], 80), Number(map["x"]), Number(map["y"]), Number(map["yaw"]), marks, quests, "", DateTime.UtcNow,
+            Zone: Short((string?) map["zone"], 200));
     }
 
     private static double Number(JsonNode? node) {
@@ -324,6 +334,10 @@ internal sealed class MinimapView : Control {
                 context.DrawRectangle(null, faint, new Rect(center.X - radiusX / 2, center.Y - radiusY / 2, radiusX, radiusY));
             }
 
+            if (data is { Note.Length: 0, Zone.Length: > 0 } && _map.GamePicture) {
+                DrawGamePicture(context, data, center, radiusX, radiusY);
+            }
+
             if (data is { Note.Length: 0, Ground: { IsEmpty: false } ground } && _map.Streets) {
                 DrawGround(context, data, ground, center, radiusX, radiusY);
             }
@@ -392,6 +406,25 @@ internal sealed class MinimapView : Control {
         using (context.PushOpacity(_map.StreetsOpacity)) {
             RenderOptions.SetBitmapInterpolationMode(this, Avalonia.Media.Imaging.BitmapInterpolationMode.HighQuality);
             context.DrawImage(picture, new Rect(picture.Size), area);
+        }
+    }
+
+    // The game's own map page of the area (OverlayGameMap), turned and sized with the icons.
+    private void DrawGamePicture(DrawingContext context, OverlayMinimapData.Snapshot data, Point center, double radiusX, double radiusY) {
+        if (OverlayGameMap.For(data.Zone, data.Ground) is not { } page) {
+            return;
+        }
+
+        Projector(data, center, radiusX, radiusY, out var turn);
+        var scale = Math.Min(radiusX, radiusY) / _map.Zoom;
+        var mirror = _map.Mirror ? -1 : 1;
+        // Page pixel -> the wizard's frame (east right, north up: u = x - X, v = -(y - Y)), then as the streets.
+        var toWizard = new Matrix(page.A, -page.D, page.B, -page.E, page.C - data.X, data.Y - page.F);
+        var matrix = toWizard * Matrix.CreateScale(scale * mirror, scale) * Matrix.CreateRotation(turn) * Matrix.CreateTranslation(center.X, center.Y);
+        using (context.PushTransform(matrix))
+        using (context.PushOpacity(_map.GamePictureOpacity)) {
+            RenderOptions.SetBitmapInterpolationMode(this, Avalonia.Media.Imaging.BitmapInterpolationMode.HighQuality);
+            context.DrawImage(page.Bitmap, page.Inside, page.Inside);
         }
     }
 

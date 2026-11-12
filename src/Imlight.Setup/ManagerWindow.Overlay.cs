@@ -1916,6 +1916,8 @@ internal sealed partial class ManagerWindow {
 
             shows.Children.Add(OvField("Streets, grass, water and walls", Row(OvCheck("Show", map.Streets, v => Set(() => map.Streets = v)),
             OvSlider(map.StreetsOpacity, 0, 1, v => Set(() => map.StreetsOpacity = v)))));
+        shows.Children.Add(OvField("The game's own map page (lines up roughly)", Row(OvCheck("Show", map.GamePicture, v => Set(() => map.GamePicture = v)),
+            OvSlider(map.GamePictureOpacity, 0, 1, v => Set(() => map.GamePictureOpacity = v)))));
         shows.Children.Add(OvField("Streets", OvColor(map.PathColor, v => Set(() => map.PathColor = v))));
         shows.Children.Add(OvField("Grass", OvColor(map.GrassColor, v => Set(() => map.GrassColor = v))));
         shows.Children.Add(OvField("Water", OvColor(map.WaterColor, v => Set(() => map.WaterColor = v))));
