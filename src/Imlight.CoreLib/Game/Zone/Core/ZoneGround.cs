@@ -36,7 +36,7 @@ using Imlight.CoreLib.Shared.Resources;
 
 namespace Imlight.CoreLib.Game.Zone.Core;
 
-internal static class ZoneGround {
+internal static partial class ZoneGround {
 
     internal const byte NONE = 0;
     internal const byte PATH = 1;
@@ -257,7 +257,9 @@ internal static class ZoneGround {
         }
     }
 
-    private readonly record struct Triangle(float X1, float Y1, float X2, float Y2, float X3, float Y3, byte Kind, float Z = 0);
+    // Z is the lowest corner's height; Z1 to Z3 each corner's (ground meshes only; the Quest Tracker's walk uses them).
+    private readonly record struct Triangle(float X1, float Y1, float X2, float Y2, float X3, float Y3, byte Kind, float Z = 0,
+        float Z1 = float.NaN, float Z2 = float.NaN, float Z3 = float.NaN);
 
     private readonly record struct Circle(float X, float Y, float R);
 
@@ -373,7 +375,7 @@ internal static class ZoneGround {
                     }
 
                     triangles.Add(new Triangle(points[p1], points[p1 + 1], points[p2], points[p2 + 1], points[p3], points[p3 + 1], kind,
-                        Math.Min(points[p1 + 2], Math.Min(points[p2 + 2], points[p3 + 2]))));
+                        Math.Min(points[p1 + 2], Math.Min(points[p2 + 2], points[p3 + 2])), points[p1 + 2], points[p2 + 2], points[p3 + 2]));
                 }
             }
         }

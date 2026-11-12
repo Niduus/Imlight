@@ -26,18 +26,44 @@ namespace Imlight.CoreLib.Game.Tools;
 /// <summary>
 /// The walk from the wizard to a quest step along the area's streets, for the route line on the Minimap (the Quest
 /// Tracker's picked quest). Found on the area's ground from above (<see cref="ZoneGround"/>, read only from the game's
-/// collision file): streets and grass are walked, water mostly gone around, walls never crossed. When no walk is found
-/// (no ground, or an area with floors above each other), the line goes straight.
+/// collision file): streets and grass are walked, water mostly gone around, walls never crossed, and no ledge, drop or
+/// sunken pool walked over (the ground's height between two cells; Niduus, 2026-11-12, the Vault of Ice's pool). When
+/// no walk is found that way, heights are let go; when none is found at all, the line goes straight.
 /// </summary>
 internal static class OverlayQuestPath {
 
-    // The ground is looked at on a grid no bigger than this each way (finer grids are made coarser first).
-    private const int MAX_SIDE = 256;
     private const int MAX_POINTS = 60;
 
     private const byte BLOCKED = 255;
 
-    private sealed record Grid(float Left, float Top, float Cell, int Width, int Height, byte[] Cost);
+    private sealed record Grid(float Left, float Top, float Cell, int Width, int Height, byte[] Cost, float[] Heights, float[] Lows = null) {
+
+        /// <summary>
+        /// Whether a step between two cells this far apart (in cells) climbs or drops more than a wizard can walk. A cell
+        /// with ground at two heights (a hall under a balcony, a stream under a bridge) can be walked at either.
+        /// </summary>
+        internal bool TooSteep(int a, int b, float length) {
+            if (Heights is null) {
+                return false;
+            }
+
+            var most = 30f + (Cell * length);
+            bool Near(float za, float zb) => float.IsNaN(za) || float.IsNaN(zb) || MathF.Abs(za - zb) <= most;
+            var (ha, hb) = (Heights[a], Heights[b]);
+            if (Near(ha, hb)) {
+                return false;
+            }
+
+            if (Lows is null) {
+                return true;
+            }
+
+            var (la, lb) = (Lows[a], Lows[b]);
+
+            return !(Near(la, lb) || Near(ha, lb) || Near(la, hb));
+        }
+
+    }
 
     private static readonly ConcurrentDictionary<string, Grid> s_grids = new(StringComparer.OrdinalIgnoreCase);
 
@@ -63,7 +89,14 @@ internal static class OverlayQuestPath {
                 return last.Points;
             }
 
-            var cells = Search(grid, Open(grid, start), Open(grid, goal));
+            var (from, to) = (Open(grid, start), Open(grid, goal));
+            var cells = Search(grid, from, to);
+            // No way without a ledge (a ramp the file doesn't show as one): the way past walls only.
+            if (cells is null) {
+                grid = grid with { Heights = null };
+                cells = Search(grid, from, to);
+            }
+
             var points = cells is null ? straight : Smooth(grid, cells, toX, toY);
             s_walks[charId] = (zonePath, goal, start, DateTime.UtcNow, points);
 
@@ -83,8 +116,8 @@ internal static class OverlayQuestPath {
             return known;
         }
 
-        var ground = ZoneGround.Of(zonePath);
-        var grid = ground.IsEmpty ? null : Coarse(ground);
+        var ground = ZoneGround.WalkOf(zonePath);
+        var grid = ground is null ? null : Costs(ground);
         if (s_grids.Count > 24) {
             s_grids.Clear();
         }
@@ -94,52 +127,19 @@ internal static class OverlayQuestPath {
         return grid;
     }
 
-    // The ground's cells as walking costs, at most MAX_SIDE each way: a coarse cell can be walked when any of its
-    // cells is a street or grass, and is a wall only when it has a wall and nothing to walk on.
-    private static Grid Coarse(ZoneGround.Ground ground) {
-        var cells = new byte[ground.Width * ground.Height];
-        var runs = Convert.FromBase64String(ground.Runs);
-        var at = 0;
-        for (var i = 0; i + 2 < runs.Length && at < cells.Length; i += 3) {
-            var count = Math.Min(runs[i + 1] | (runs[i + 2] << 8), cells.Length - at);
-            Array.Fill(cells, runs[i], at, count);
-            at += count;
+    // Each cell's walking cost: streets and grass 1; nothing known (a floor the file doesn't mark) 20; water 25; walls never.
+    private static Grid Costs(ZoneGround.WalkGround ground) {
+        var cost = new byte[ground.Kinds.Length];
+        for (var i = 0; i < cost.Length; i++) {
+            cost[i] = ground.Kinds[i] switch {
+                ZoneGround.PATH or ZoneGround.GRASS => 1,
+                ZoneGround.WALL => BLOCKED,
+                ZoneGround.WATER => 25,
+                _ => 20,
+            };
         }
 
-        var step = Math.Max(1, (int) Math.Ceiling(Math.Max(ground.Width, ground.Height) / (double) MAX_SIDE));
-        var width = (ground.Width + step - 1) / step;
-        var height = (ground.Height + step - 1) / step;
-        var cost = new byte[width * height];
-        for (var y = 0; y < height; y++) {
-            for (var x = 0; x < width; x++) {
-                bool walk = false, wall = false, water = false;
-                for (var dy = 0; dy < step && !walk; dy++) {
-                    for (var dx = 0; dx < step; dx++) {
-                        var (fx, fy) = ((x * step) + dx, (y * step) + dy);
-                        if (fx >= ground.Width || fy >= ground.Height) {
-                            continue;
-                        }
-
-                        switch (cells[(fy * ground.Width) + fx]) {
-                            case ZoneGround.PATH or ZoneGround.GRASS:
-                                walk = true;
-                                break;
-                            case ZoneGround.WALL:
-                                wall = true;
-                                break;
-                            case ZoneGround.WATER:
-                                water = true;
-                                break;
-                        }
-                    }
-                }
-
-                // Streets and grass 1; nothing known (a bridge, a floor the file doesn't mark) 8; water 25; walls never.
-                cost[(y * width) + x] = walk ? (byte) 1 : wall ? BLOCKED : water ? (byte) 25 : (byte) 8;
-            }
-        }
-
-        return new Grid(ground.Left, ground.Top, ground.Cell * step, width, height, cost);
+        return new Grid(ground.Left, ground.Top, ground.Cell, ground.Width, ground.Height, cost, ground.Heights, ground.Lows);
     }
 
     private static int Cell(Grid grid, float x, float y) {
@@ -212,7 +212,7 @@ internal static class OverlayQuestPath {
                 return path;
             }
 
-            if (++looked > 120000) {
+            if (++looked > 400000) {
                 return null;
             }
 
@@ -231,7 +231,8 @@ internal static class OverlayQuestPath {
                 var next = (ny * grid.Width) + nx;
                 var cost = grid.Cost[next];
                 // No cutting a wall's corner on a slant.
-                if (cost == BLOCKED || (dx != 0 && dy != 0 && (grid.Cost[(y * grid.Width) + nx] == BLOCKED || grid.Cost[(ny * grid.Width) + x] == BLOCKED))) {
+                if (cost == BLOCKED || grid.TooSteep(cell, next, len)
+                    || (dx != 0 && dy != 0 && (grid.Cost[(y * grid.Width) + nx] == BLOCKED || grid.Cost[(ny * grid.Width) + x] == BLOCKED))) {
                     continue;
                 }
 
@@ -288,10 +289,14 @@ internal static class OverlayQuestPath {
         var (dx, dy) = (Math.Abs(x1 - x0), -Math.Abs(y1 - y0));
         var (sx, sy) = (x0 < x1 ? 1 : -1, y0 < y1 ? 1 : -1);
         var err = dx + dy;
+        var before = -1;
         while (true) {
-            if (grid.Cost[(y0 * grid.Width) + x0] > most) {
+            var here = (y0 * grid.Width) + x0;
+            if (grid.Cost[here] > most || (before >= 0 && grid.TooSteep(before, here, 1.4142f))) {
                 return false;
             }
+
+            before = here;
 
             if (x0 == x1 && y0 == y1) {
                 return true;
