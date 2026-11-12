@@ -84,6 +84,30 @@ public partial class CombatDuelSubCircle {
 
     private static bool s_schoolPips => ConfigurationManager.GetValue("Battle.SchoolPips", true);
     private static bool s_moonPowerPipsDouble => ConfigurationManager.GetValue("Battle.MoonPowerPipsDouble", true);
+
+    // TEST (Niduus, 2026-11-12: "small school icon is missing from the name plate"): the Ahmarra game fills the plate's
+    // School corner from the participant's m_primaryMagicSchoolID, only when m_pvp is off (or a game option is on), yet
+    // it stays empty for everyone. Bit 1 sends m_pvp the other way, bit 2 also sends m_savedPrimaryMagicSchoolID, to
+    // see which the game wants. Read at each battle, so a change works at the next battle.
+    private static int s_plateSchoolTest => ConfigurationManager.GetValue("Battle.PlateSchoolTest", 0);
+
+    private void ApplyPlateSchoolTest() {
+        var test = s_plateSchoolTest;
+        if (test == 0 || CombatParticipant is not { } participant) {
+            return;
+        }
+
+        if ((test & 1) != 0) {
+            participant.m_pvp = !participant.m_pvp;
+        }
+
+        if ((test & 2) != 0) {
+            participant.m_savedPrimaryMagicSchoolID = participant.m_primaryMagicSchoolID;
+        }
+
+        Logger.Information("Plate school test {0} for {1}: pvp {2}, school {3}, saved school {4}.",
+            Logger.Args(test, SlotName, participant.m_pvp, participant.m_primaryMagicSchoolID, participant.m_savedPrimaryMagicSchoolID));
+    }
     private const byte PLAYER_HAND_SIZE = 7;
 
     internal string SlotName { get; set; }
@@ -1898,6 +1922,7 @@ public partial class CombatDuelSubCircle {
             m_rotation = _rotation,
             m_radius = _radius,
         };
+        ApplyPlateSchoolTest();
         ApplyPipGauges(CombatParticipant.m_pGameStats);
     }
 
@@ -1980,6 +2005,7 @@ public partial class CombatDuelSubCircle {
             m_rotation = _rotation,
             m_radius = _radius,
         };
+        ApplyPlateSchoolTest();
         // A creature with Archmastery in its stats has a Power Orb of its own school.
         if (ArchmasterySchool is var orbSchool and not 0) {
             CombatParticipant.m_maxArchmasteryPoints = GAUGE_FULL;
