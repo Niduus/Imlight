@@ -66,7 +66,7 @@ internal sealed record OverlayPlayerCommand(ulong CharId, string Address, string
 /// wizards in the same zone show on the map.
 /// </summary>
 internal sealed record OverlayMapAsk(ulong CharId, string Address, TaskCompletionSource<(System.Text.Json.Nodes.JsonObject Map, Akka.Actor.IActorRef Zone, string Error)> Reply,
-                                     ConcurrentQueue<(ulong CharId, Akka.Actor.IActorRef Zone, string Name, float X, float Y)> Others);
+                                     ConcurrentQueue<(ulong CharId, Akka.Actor.IActorRef Zone, string Name, float X, float Y)> Others, float Reach = 0);
 
 /// <summary>Every service whose wizard is in the game from Address puts its wizard in Found (for linking an overlay).</summary>
 internal sealed record OverlayWizardsAt(string Address, ConcurrentQueue<ulong> Found);

@@ -86,6 +86,16 @@ internal static class OverlayButtons {
                 done(true);
 
                 return;
+            case OverlayAction.MAP_FULL:
+                OverlayMinimapData.ToggleFull(game.ToInt64(), (button.Map?.Zoom ?? 2200) * 2.5);
+                done(true);
+
+                return;
+            case OverlayAction.MAP_IN or OverlayAction.MAP_OUT:
+                OverlayMinimapData.ZoomFull(game.ToInt64(), button.Action == OverlayAction.MAP_IN);
+                done(true);
+
+                return;
             case OverlayAction.COMMAND or OverlayAction.CHEAT or OverlayAction.MOB_CHEAT:
                 _ = RunOnServerAsync(button, game, done);
 

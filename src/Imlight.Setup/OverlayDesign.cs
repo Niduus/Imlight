@@ -481,6 +481,11 @@ internal static class OverlayAction {
 
     internal static readonly string[] KINDS = [COMMAND, CHEAT, MOB_CHEAT, DESIGNER, TOGGLE_MINE, OPEN_AHZIAEL];
 
+    // The minimap's own buttons (not a choice in the designer): full screen or back, closer, farther.
+    internal const string MAP_FULL = "MapFull";
+    internal const string MAP_IN = "MapIn";
+    internal const string MAP_OUT = "MapOut";
+
     /// <summary>The words for each kind in the designer.</summary>
     internal static readonly string[] LABELS = [
         "Run an Imlight or Ahziael command", "Use one of my player cheats", "Set off a mob (creature) cheat", "Open the overlay designer", "Show or hide my own pieces", "Open Ahziael",
@@ -569,16 +574,13 @@ internal sealed class OverlayMap {
     /// <summary>How big the icons are, in pixels at 100%.</summary>
     public double IconSize { get; set; } = 9;
 
-    /// <summary>Names beside quest steps, bosses, sigils and doors.</summary>
+    /// <summary>Names beside bosses, sigils and doors (and NPCs on the full screen map).</summary>
     public bool Names { get; set; } = true;
 
     public double NameSize { get; set; } = 10;
 
     /// <summary>The place's name at the top of the map.</summary>
     public bool Place { get; set; } = true;
-
-    /// <summary>How many quest lines under the map (0 to 8).</summary>
-    public int QuestLines { get; set; } = 3;
 
     /// <summary>Swaps left and right, in case the map comes out mirrored on some game.</summary>
     public bool Mirror { get; set; }
@@ -598,8 +600,6 @@ internal sealed class OverlayMap {
     public string WaterColor { get; set; } = "#FF3A6BAA";
     public string WallColor { get; set; } = "#FF1C1C26";
 
-    public bool Quests { get; set; } = true;
-    public bool Givers { get; set; } = true;
     public bool Npcs { get; set; } = true;
     public bool Mobs { get; set; } = true;
     public bool Bosses { get; set; } = true;
@@ -608,9 +608,6 @@ internal sealed class OverlayMap {
     public bool Chests { get; set; } = true;
     public bool Wizards { get; set; } = true;
 
-    public string MainColor { get; set; } = "#FFFFD24A";
-    public string SideColor { get; set; } = "#FF4AB4FF";
-    public string GiverColor { get; set; } = "#FFFFE14A";
     public string NpcColor { get; set; } = "#C0E6E6F0";
     public string MobColor { get; set; } = "#FFFF5050";
     public string BossColor { get; set; } = "#FFFF2D6E";
@@ -622,20 +619,18 @@ internal sealed class OverlayMap {
     public string YouColor { get; set; } = "#FFFFFFFF";
     public string TextColor { get; set; } = "#FFFFFFFF";
 
+    internal OverlayMap Copy() => (OverlayMap) MemberwiseClone();
+
     internal OverlayMap Clean() {
         Zoom = OverlayElement.Range(Zoom, 300, 12000, 2200);
         IconSize = OverlayElement.Range(IconSize, 4, 30, 9);
         NameSize = OverlayElement.Range(NameSize, 6, 30, 10);
-        QuestLines = Math.Clamp(QuestLines, 0, 8);
         StreetsOpacity = OverlayElement.Range(StreetsOpacity, 0, 1, 0.9);
         GamePictureOpacity = OverlayElement.Range(GamePictureOpacity, 0, 1, 0.85);
         PathColor = OverlayPaint.CleanColor(PathColor, "#FFB9A47C");
         GrassColor = OverlayPaint.CleanColor(GrassColor, "#FF3C6236");
         WaterColor = OverlayPaint.CleanColor(WaterColor, "#FF3A6BAA");
         WallColor = OverlayPaint.CleanColor(WallColor, "#FF1C1C26");
-        MainColor = OverlayPaint.CleanColor(MainColor, "#FFFFD24A");
-        SideColor = OverlayPaint.CleanColor(SideColor, "#FF4AB4FF");
-        GiverColor = OverlayPaint.CleanColor(GiverColor, "#FFFFE14A");
         NpcColor = OverlayPaint.CleanColor(NpcColor, "#C0E6E6F0");
         MobColor = OverlayPaint.CleanColor(MobColor, "#FFFF5050");
         BossColor = OverlayPaint.CleanColor(BossColor, "#FFFF2D6E");
