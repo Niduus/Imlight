@@ -2981,6 +2981,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Fast Forward"] = ("bolt", "Bring a wizard up to a level or a world: the server finishes the quests before it, in story order, with their real rewards and XP."),
         ["Unlearn Spells"] = ("undo", "Pick any spell your wizard knows and unlearn it: it leaves the spellbook and decks, and the training points it cost come back."),
         ["Collect Spells"] = ("sparkle", "Give a wizard every spell their finished quests, skipped side quests and trainers should have given them by now."),
+        ["Monstrology"] = ("sparkle", "Give your wizard the game's own Summon Monster and Expel Monster treasure cards, for any monster with a Monstrology page."),
         ["Best Gear"] = ("shield", "The best gear for your level and school by the stat you want, slot by slot, and where to get each piece."),
         ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),
         ["Player Cheats"] = ("bolt", "Your own cheats in battle, made from the same blocks as a boss's."),
@@ -3011,14 +3012,40 @@ internal sealed partial class ManagerWindow : Window {
         ["Account Transfer"] = ("download", "Download your account from a server you play on, and bring accounts from other servers into this one."),
     };
 
+    /// <summary>What a tab that could not be built shows instead: the reason, and where it was written down.</summary>
+    private static Control BrokenTab(string header, Exception ex) => new Border {
+        Margin = new Thickness(26, 16), Padding = new Thickness(16), CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL),
+        Background = ManagerTheme.SURFACE_HIGH_BRUSH, BorderBrush = BAD, BorderThickness = new Thickness(1),
+        Child = new StackPanel {
+            Spacing = 6,
+            Children = {
+                new TextBlock { Text = $"The {header} tab could not open.", FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap },
+                Sub($"Reason: {ex.Message}"),
+                Sub("Every other tab works. This was written down in the logs folder: Server > Logs > Make a zip to send, " +
+                    "then drag the zip into the chat."),
+            },
+        },
+    };
+
     /// <summary>
     /// A tab inside one of the menu's pages: its icon and name along the top, and its one line on what it is for, small,
     /// over the tab (Niduus, 2026-10-26, mockup L: no big title block over each tab, so the tab has the room; 2026-10-30:
     /// "make it less confusing", so the line shows without pointing at the tab).
     /// </summary>
     private static TabItem Tab(string header, Func<Control> build) {
-        var content = UiTiming.Measure($"build {header} tab", build);
-        var (icon, line) = s_tabs[header];
+        Control content;
+        try {
+            content = UiTiming.Measure($"build {header} tab", build);
+        }
+        catch (Exception ex) {
+            // One broken tab shows what went wrong in its own place; the rest of Ahziael opens as usual.
+            AppLogs.Error($"The {header} tab could not be built (Ahziael opened without it)", ex);
+            content = BrokenTab(header, ex);
+        }
+
+        // A tab missing from the list above gets a plain icon instead of stopping the whole app (v0.10.793-794 would not
+        // open at all because the Monstrology tab had no line here).
+        var (icon, line) = s_tabs.TryGetValue(header, out var look) ? look : ("sliders", "");
         var about = new TextBlock {
             Text = line, FontSize = ManagerTheme.FONT_SMALL, Foreground = MUTED, TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(26, 2, 26, 0), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH - 4,
