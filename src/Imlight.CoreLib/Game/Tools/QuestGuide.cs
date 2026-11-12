@@ -566,7 +566,7 @@ internal static class QuestGuide {
     }
 
     // The quests that must be done first: the "has this quest's entry" requirements that must be true, at any depth.
-    private static IEnumerable<string> NeededQuests(Requirement requirement) {
+    internal static IEnumerable<string> NeededQuests(Requirement requirement) {
         switch (requirement) {
             case ReqHasEntry entry when !entry.m_applyNOT && entry.m_isQuestRegistry && !string.IsNullOrEmpty(entry.m_questName):
                 yield return entry.m_questName;

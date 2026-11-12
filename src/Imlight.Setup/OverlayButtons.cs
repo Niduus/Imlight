@@ -96,6 +96,16 @@ internal static class OverlayButtons {
                 done(true);
 
                 return;
+            case OverlayAction.QUEST_PICK:
+                OverlayQuestData.TogglePick(game.ToInt64(), button.Command);
+                done(true);
+
+                return;
+            case OverlayAction.QUEST_FOLD:
+                OverlayQuestData.ToggleFold(game.ToInt64(), button.Command);
+                done(true);
+
+                return;
             case OverlayAction.COMMAND or OverlayAction.CHEAT or OverlayAction.MOB_CHEAT:
                 _ = RunOnServerAsync(button, game, done);
 

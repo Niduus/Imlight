@@ -138,6 +138,8 @@ internal static class OverlayMinimapData {
             }
 
             snapshot = Read(map);
+            // The Quest Tracker's picked quest: its way comes with the map (drawn by OverlayQuestRouteDrawing).
+            OverlayQuestData.HeardMap(window, map);
             var zone = Short((string?) map["zone"], 200);
             lock (s_lock) {
                 if (s_grounds.TryGetValue(window, out var known) && string.Equals(known.Zone, zone, StringComparison.OrdinalIgnoreCase)) {
@@ -550,6 +552,12 @@ internal sealed class MinimapView : Control {
 
             if (data is { Note.Length: 0, Ground: { IsEmpty: false } ground } && _map.Streets) {
                 DrawGround(context, data, ground, center, radiusX, radiusY);
+            }
+
+            // The quest picked in the Quest Tracker: its way, turned and zoomed with the map.
+            if (data is { Note.Length: 0 }) {
+                var project = Projector(data, center, radiusX, radiusY, out _);
+                OverlayQuestRouteDrawing.Draw(context, _window, project, project(data.X, data.Y), _mapW, _mapH, _map.IconSize);
             }
 
             // The place's name at the bottom, under the icons (the N goes over it).

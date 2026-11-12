@@ -363,7 +363,7 @@ public static class RemoteAdminServer {
                 reply["required"] = OverlayGate.Required;
                 reply["every"] = OverlayGate.BEAT_SECONDS;
                 // What this server can do for the overlay beyond the beat (an older one hangs up on anything else).
-                reply["features"] = new JsonArray("cmd", "map");
+                reply["features"] = new JsonArray("cmd", "map", "quests");
                 reply["id"] = header["id"]?.DeepClone();
                 // The server's own texts and boxes, sent again only when they changed since the overlay last got them.
                 var (stamp, design) = OverlayGate.ServerDesign();
@@ -394,6 +394,19 @@ public static class RemoteAdminServer {
                         // A map that could not be made shows as a note on the minimap; the overlay stays connected.
                         Logger.Error("Overlay minimap: the map could not be made: {0}", Logger.Args(ex));
                         reply = RemoteAdminWire.Error("The server could not make the map just now: " + ex.Message);
+                    }
+
+                    continue;
+                }
+
+                if (op == "quests") {
+                    // The Quest Tracker of one game window (OverlayQuestTracker): every couple of seconds while it shows.
+                    try {
+                        reply = await OverlayLinks.QuestsAsync(id, windows, header, address);
+                    }
+                    catch (Exception ex) when (ex is not OperationCanceledException) {
+                        Logger.Error("Overlay quest tracker: the quests could not be read: {0}", Logger.Args(ex));
+                        reply = RemoteAdminWire.Error("The server could not read the quests just now: " + ex.Message);
                     }
 
                     continue;

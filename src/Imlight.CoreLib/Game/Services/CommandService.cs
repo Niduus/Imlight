@@ -291,11 +291,40 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
         }
 
         try {
-            message.Reply.TrySetResult((Tools.OverlayMinimap.Build(wizard, zone, message.Reach), zone, ""));
+            var map = Tools.OverlayMinimap.Build(wizard, zone, message.Reach);
+            // The Quest Tracker's picked quest: its way, drawn on the minimap only.
+            if (!string.IsNullOrEmpty(message.Quest) && Tools.OverlayQuestTracker.On && Tools.OverlayQuestRoute.Build(wizard, zone, message.Quest) is { } route) {
+                map["route"] = route;
+            }
+
+            message.Reply.TrySetResult((map, zone, ""));
         }
         catch (Exception ex) {
             Logger.Error("Minimap: the map of {0} could not be made: {1}", Logger.Args(wizard.CharId, ex));
             message.Reply.TrySetResult((null, null, "The server could not make the map just now."));
+        }
+    }
+
+    [InternalMessageHandler(typeof(OverlayQuestsAsk))]
+    private void ReceiveOverlayQuestsAsk(OverlayQuestsAsk message) {
+        var wizard = GetActiveWizard();
+        if (wizard is null || GetActiveGameObject() is null || wizard.CharId != message.CharId) {
+            return;
+        }
+
+        // Only for the PC the game runs on, like the minimap.
+        if (Tools.OverlayGate.Normalize(SessionActor.Ip ?? SessionActor.RemoteIp) != message.Address) {
+            message.Reply.TrySetResult((null, "That wizard is playing from another PC. The Quest Tracker only works for the game on this PC."));
+
+            return;
+        }
+
+        try {
+            message.Reply.TrySetResult((Tools.OverlayQuestTracker.Build(wizard), ""));
+        }
+        catch (Exception ex) {
+            Logger.Error("Quest tracker: the quests of {0} could not be read: {1}", Logger.Args(wizard.CharId, ex));
+            message.Reply.TrySetResult((null, "The server could not read the quests just now."));
         }
     }
 

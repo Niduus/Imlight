@@ -599,6 +599,7 @@ internal sealed partial class ManagerWindow {
                             Children = {
                                 Spaced(_ovParts), Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)), Spaced(Block(OverlayElement.BUTTON)),
                                 Spaced(Action(Plain("Picture"), AddPictureAsync)), Spaced(Action(Plain("Minimap"), () => AddOverlayElement(OverlayElement.MINIMAP))),
+                                Spaced(Action(Plain("Quest Tracker"), () => AddOverlayElement(OverlayElement.QUEST_TRACKER))),
                                 Spaced(_ovQuickWords), Spaced(_ovQuickParent),
                                 Spaced(OvCheck("Grid", _ovGrid.Show, v => { _ovGrid.Show = v; GridChanged(); })),
                                 Spaced(OvCheck("Snap to grid", _ovGrid.SnapToGrid, v => { _ovGrid.SnapToGrid = v; GridChanged(); })),
@@ -994,6 +995,7 @@ internal sealed partial class ManagerWindow {
                                     Spaced(Action(Plain("Add picture"), AddPictureAsync)),
                                     Spaced(Action(Plain("Add button"), () => AddOverlayElement(OverlayElement.BUTTON))),
                                     Spaced(Action(Plain("Add minimap"), () => AddOverlayElement(OverlayElement.MINIMAP))),
+                                    Spaced(Action(Plain("Add Quest Tracker"), () => AddOverlayElement(OverlayElement.QUEST_TRACKER))),
                                     Spaced(Action(Plain("Copy"), DuplicateOverlayElement)),
                                     Spaced(Action(Plain("Up"), () => MoveOverlayElement(-1))),
                                     Spaced(Action(Plain("Down"), () => MoveOverlayElement(1))),
@@ -1044,7 +1046,7 @@ internal sealed partial class ManagerWindow {
                     var name = ListName(e);
                     var depth = Depth(e);
 
-                    return (depth > 0 ? new string(' ', depth * 3) + "↳ " : "") + (e.IsMinimap ? "◎ " : e.IsPicture ? "▣ " : e.IsBox ? "▭ " : e.IsButton ? "◉ " : "T  ") + name + (e.Locked ? " (locked)" : "") + (e.Visible ? "" : " (hidden)");
+                    return (depth > 0 ? new string(' ', depth * 3) + "↳ " : "") + (e.IsMinimap ? "◎ " : e.IsQuestTracker ? "☰ " : e.IsPicture ? "▣ " : e.IsBox ? "▭ " : e.IsButton ? "◉ " : "T  ") + name + (e.Locked ? " (locked)" : "") + (e.Visible ? "" : " (hidden)");
                 }));
                 _ovList.ItemsSource = names;
                 _ovList.SelectedIndex = _ovSelected == _ovDesign.Credit || _ovSelected is null ? 0 : _ovDesign.Elements.IndexOf(_ovSelected) + 1;
@@ -1434,7 +1436,7 @@ internal sealed partial class ManagerWindow {
 
         private string ListName(OverlayElement e) {
             var i = _ovDesign.Elements.IndexOf(e);
-            var name = e.Name.Length > 0 ? e.Name : e.IsMinimap ? $"Minimap {i + 1}" : e.IsPicture ? $"Picture {i + 1}" : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : e.IsButton ? $"Button {i + 1}" : $"Text {i + 1}";
+            var name = e.Name.Length > 0 ? e.Name : e.IsMinimap ? $"Minimap {i + 1}" : e.IsQuestTracker ? $"Quest Tracker {i + 1}" : e.IsPicture ? $"Picture {i + 1}" : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : e.IsButton ? $"Button {i + 1}" : $"Text {i + 1}";
 
             return name.Length > 34 ? name[..34] + "…" : name;
         }
@@ -1594,6 +1596,12 @@ internal sealed partial class ManagerWindow {
                     Kind = OverlayElement.MINIMAP, Name = "Minimap", Anchor = OverlayAnchor.TopRight, X = 20, Y = 20, Width = 200, Height = 200,
                     Background = new OverlayPaint { Kind = OverlayPaint.RADIAL, Color1 = "#C8202A44", Color2 = "#C80A0E1C" },
                     BorderColor = "#D0FFD24A", BorderWidth = 2, CornerRadius = 16, Shadow = true, ShadowBlur = 8, Map = new OverlayMap(),
+                }
+                : kind == OverlayElement.QUEST_TRACKER
+                ? new OverlayElement {
+                    Kind = OverlayElement.QUEST_TRACKER, Name = "Quest Tracker", Anchor = OverlayAnchor.Right, X = 20, Y = 0, Width = 260, Height = 0,
+                    Background = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#B40A0E1C" }, Padding = 10,
+                    BorderColor = "#A0FFD24A", BorderWidth = 1, CornerRadius = 12, Shadow = true, ShadowBlur = 8, Quests = new OverlayQuestList(),
                 }
                 : kind == OverlayElement.PICTURE
                 ? new OverlayElement { Kind = OverlayElement.PICTURE, Anchor = OverlayAnchor.TopLeft, X = 20, Y = 20, Background = new OverlayPaint() }
@@ -1935,8 +1943,52 @@ internal sealed partial class ManagerWindow {
                 Spacing = 6,
                 Children = {
                     shows,
-                    Sub("Teammates off the map show as an arrow on its edge. Quests are not shown on the minimap. In the game, the small button " +
+                    Sub("Teammates off the map show as an arrow on its edge. Quests show on the minimap only as the way to the quest picked in a Quest Tracker. In the game, the small button " +
                         "on the minimap's corner opens it full screen, with + and - to see closer or farther and X to close it."),
+                },
+            }));
+        }
+
+        // The Quest Tracker's own choices (Niduus, 2026-11-12: "show all your quest in catagory in the UI. Story, Main and Side
+        // quests ... click the quest and it will visually draw lines of where you have to go").
+        private void QuestTrackerEditor(OverlayElement e, Action changed) {
+            var list = e.Quests ??= new OverlayQuestList();
+            void Set(Action change) {
+                change();
+                changed();
+            }
+
+            var shows = new WrapPanel();
+            shows.Children.Add(OvField("Words at the top (empty for none)", OvText(list.Title, v => Set(() => list.Title = v), 160)));
+            shows.Children.Add(OvField("Story quests", Row(OvCheck("Show", list.Story, v => Set(() => list.Story = v)), OvColor(list.StoryColor, v => Set(() => list.StoryColor = v)))));
+            shows.Children.Add(OvField("Main quests", Row(OvCheck("Show", list.Main, v => Set(() => list.Main = v)), OvColor(list.MainColor, v => Set(() => list.MainColor = v)))));
+            shows.Children.Add(OvField("Side quests", Row(OvCheck("Show", list.Side, v => Set(() => list.Side = v)), OvColor(list.SideColor, v => Set(() => list.SideColor = v)))));
+            shows.Children.Add(OvField("Story quests under Main too", OvCheck("Show them twice", list.StoryInMain, v => Set(() => list.StoryInMain = v))));
+            shows.Children.Add(OvField("Each quest's step now", OvCheck("Show", list.Steps, v => Set(() => list.Steps = v))));
+            shows.Children.Add(OvField("Quest name size", OvNumber(list.TitleSize, 6, 30, 1, v => Set(() => list.TitleSize = v))));
+            shows.Children.Add(OvField("Step size", OvNumber(list.StepSize, 6, 30, 1, v => Set(() => list.StepSize = v))));
+            shows.Children.Add(OvField("Quest names", OvColor(list.TextColor, v => Set(() => list.TextColor = v))));
+            shows.Children.Add(OvField("Steps", OvColor(list.StepColor, v => Set(() => list.StepColor = v))));
+            _ovEditor.Children.Add(OvGroup("Quest Tracker", new StackPanel {
+                Spacing = 6,
+                Children = {
+                    shows,
+                    Sub("It lists your wizard's quests in this game window, from the server: Story (the main quests you need to finish the world), " +
+                        "Main (the other main quests) and Side. Click a list's name in the game to fold it away. Fill and Edge below set its background " +
+                        "and rim; a height of 0 makes it grow to fit. Here in the designer it shows made-up quests."),
+                },
+            }));
+
+            var way = new WrapPanel();
+            way.Children.Add(OvField("Draw the picked quest's way on the Minimap", OvCheck("Draw it", list.Route, v => Set(() => list.Route = v))));
+            way.Children.Add(OvField("Line width", OvNumber(list.RouteWidth, 1, 10, 0.5, v => Set(() => list.RouteWidth = v))));
+            _ovEditor.Children.Add(OvGroup("The way to a quest", new StackPanel {
+                Spacing = 6,
+                Children = {
+                    way,
+                    Sub("Click a quest in the game to pick it (click it again to let it go). Its way shows ONLY on the Minimap: a line along the " +
+                        "streets to its step, in the quest's colour, and a ring on each step spot. Without a Minimap there are no lines. When the " +
+                        "step is in another area, the Minimap says where to go and points at the door that leads there."),
                 },
             }));
         }
@@ -2039,6 +2091,10 @@ internal sealed partial class ManagerWindow {
 
                 if (e.IsMinimap) {
                     MinimapEditor(e, Changed);
+                }
+
+                if (e.IsQuestTracker) {
+                    QuestTrackerEditor(e, Changed);
                 }
 
                 if (e.IsPicture) {

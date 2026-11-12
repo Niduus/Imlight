@@ -365,6 +365,7 @@ internal static class OverlayHost {
         Link.Load(s_installFolder);
         LoadFromServer();
         OverlayMinimapData.Tick();
+        OverlayQuestData.Tick();
         if (!TryTakeTurn()) {
             return;
         }
@@ -448,6 +449,9 @@ internal static class OverlayHost {
         // The game windows whose overlay shows a minimap: the link asks the server for their maps.
         var wantsMap = (ShowsMine(s_design) && OverlayRenderer.HasMinimap(s_design.Elements)) || OverlayRenderer.HasMinimap(ServerElements);
         OverlayMinimapData.Wanted = wantsMap ? [.. s_windows.Keys.Select(w => w.ToInt64())] : [];
+        // And the ones that show a Quest Tracker: the link asks the server for their quests.
+        var wantsQuests = (ShowsMine(s_design) && OverlayRenderer.HasQuestTracker(s_design.Elements)) || OverlayRenderer.HasQuestTracker(ServerElements);
+        OverlayQuestData.Wanted = wantsQuests ? [.. s_windows.Keys.Select(w => w.ToInt64())] : [];
     }
 
     // The game's own moves, resizes, shows and hides reach the overlay as they happen, not only on the next tick.
@@ -707,6 +711,7 @@ internal static class OverlayHost {
         private int _drawnMap = -1;
         private (int W, int H, double Scale) _drawnSize;
         private (bool Full, bool Note) _drawnLayout;
+        private int _drawnQuests = -1;
         private Control? _picture;
         private byte[]? _pixels;
         private double _pixelsPerUnit = 1;
@@ -847,6 +852,21 @@ internal static class OverlayHost {
         // The overlay buttons of the picture just drawn: a click window over each, where it was drawn.
         private void PlaceHits(Control picture, double pixelsPerUnit, IntPtr game) {
             var found = new List<(OverlayElement Element, bool Server, Native.RECT Rect)>();
+            Native.RECT Pixels(Rect b) => new() {
+                Left = (int) Math.Floor(b.X * pixelsPerUnit), Top = (int) Math.Floor(b.Y * pixelsPerUnit),
+                Right = (int) Math.Ceiling(b.Right * pixelsPerUnit), Bottom = (int) Math.Ceiling(b.Bottom * pixelsPerUnit),
+            };
+
+            // Each Quest Tracker line (a quest picks it, a list's name folds it), under the full screen map's buttons
+            // and not while the full screen map covers the game.
+            if (OverlayMinimapData.FullZoom(game.ToInt64()) is null) {
+                foreach (var tracker in Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(picture).OfType<QuestTrackerView>()) {
+                    foreach (var (area, line) in tracker.Lines(picture)) {
+                        found.Add((new OverlayElement { Kind = OverlayElement.BUTTON, Action = line.Action, Command = line.Value, Visible = true }, false, Pixels(area)));
+                    }
+                }
+            }
+
             foreach (var child in picture is Panel panel ? panel.Children : []) {
                 if (child.Tag is OverlayElement { IsButton: true } element && child.Bounds.Width > 0 && child.Bounds.Height > 0) {
                     var b = child.Bounds;
@@ -953,7 +973,11 @@ internal static class OverlayHost {
             // the whole overlay is laid out again only when the design, the window or the minimap's size changes.
             var map = OverlayMinimapData.VersionOf(game.ToInt64());
             var layout = OverlayMinimapData.LayoutOf(game.ToInt64());
-            if (version != _drawnVersion || layout != _drawnLayout || _drawnSize != (width, height, scale) || (_mapParts.Count == 0 && map != _drawnMap)) {
+            // A Quest Tracker's quests, pick or folding changed: laid out again too.
+            var quests = OverlayQuestData.Wanted.Length > 0 ? OverlayQuestData.Version : _drawnQuests;
+            if (version != _drawnVersion || layout != _drawnLayout || quests != _drawnQuests || _drawnSize != (width, height, scale)
+                || (_mapParts.Count == 0 && map != _drawnMap)) {
+                _drawnQuests = quests;
                 _drawnMap = map;
                 _drawnLayout = layout;
                 var picture = OverlayRenderer.Build(design, new OverlayRenderer.Words(Version, Link.ServerLabel), showMine: ShowsMine(design), server: WithNotice(game),
@@ -1142,6 +1166,14 @@ internal static class OverlayHost {
         /// <summary>Whether the linked server sends minimap data (an older Imlight hangs up on op "map").</summary>
         internal static bool SendsMap { get; private set; }
 
+        /// <summary>Whether the linked server sends Quest Tracker data (an older Imlight hangs up on op "quests").</summary>
+        internal static bool SendsQuests { get; private set; }
+
+        private static DateTime s_nextQuests = DateTime.MinValue;
+
+        // How often each game window's Quest Tracker is asked for.
+        private static readonly TimeSpan s_questsEvery = TimeSpan.FromSeconds(2);
+
         private static DateTime s_nextMap = DateTime.MinValue;
 
         // How often each game window's minimap is asked for.
@@ -1303,6 +1335,7 @@ internal static class OverlayHost {
 
                 Connected = false;
                 SendsMap = false;
+                SendsQuests = false;
                 try {
                     await Task.Delay(TimeSpan.FromSeconds(target is null ? 1 : 10), retarget.Token);
                 }
@@ -1352,7 +1385,9 @@ internal static class OverlayHost {
                     var beatAt = DateTime.UtcNow + TimeSpan.FromSeconds(every);
                     while (DateTime.UtcNow < beatAt) {
                         var mapAt = SendsMap && OverlayMinimapData.Wanted.Length > 0 ? s_nextMap : DateTime.MaxValue;
+                        var questsAt = SendsQuests && OverlayQuestData.Wanted.Length > 0 ? s_nextQuests : DateTime.MaxValue;
                         var wakeAt = mapAt < beatAt ? mapAt : beatAt;
+                        wakeAt = questsAt < wakeAt ? questsAt : wakeAt;
                         Pending? press = null;
                         var napFor = wakeAt - DateTime.UtcNow;
                         if (napFor > TimeSpan.Zero) {
@@ -1368,6 +1403,10 @@ internal static class OverlayHost {
                         if (press is null) {
                             if (DateTime.UtcNow >= mapAt) {
                                 await AskMapsAsync(tls, stop);
+                            }
+
+                            if (DateTime.UtcNow >= questsAt) {
+                                await AskQuestsAsync(tls, stop);
                             }
 
                             continue;
@@ -1396,6 +1435,7 @@ internal static class OverlayHost {
             finally {
                 Connected = false;
                 SendsMap = false;
+                SendsQuests = false;
                 // A server from before overlay buttons hangs up on them.
                 s_current?.Answer.TrySetResult(new OverlayCommands.Result(false,
                     "The server hung up. Its Imlight may be too old for command and cheat buttons: ask the host to update it.", []));
@@ -1408,7 +1448,7 @@ internal static class OverlayHost {
             s_nextMap = DateTime.UtcNow + s_mapEvery;
             foreach (var window in OverlayMinimapData.Wanted) {
                 await RemoteAdminWire.WriteAsync(tls, new JsonObject { ["op"] = "map", ["window"] = window, ["have"] = s_have, ["ground"] = OverlayMinimapData.GroundZone(window), ["shapes"] = true,
-                                    ["reach"] = (OverlayMinimapData.FullZoom(window) ?? 0) * 2 }, null, stop);
+                                    ["reach"] = (OverlayMinimapData.FullZoom(window) ?? 0) * 2, ["quest"] = OverlayQuestData.Pick(window) }, null, stop);
                 using var answerWait = CancellationTokenSource.CreateLinkedTokenSource(stop);
                 answerWait.CancelAfter(TimeSpan.FromSeconds(10));
                 var (answer, _) = await RemoteAdminWire.ReadAsync(tls, 1 << 20, 0, answerWait.Token);
@@ -1418,9 +1458,24 @@ internal static class OverlayHost {
             s_nextMap = DateTime.UtcNow + s_mapEvery;
         }
 
+        // Each game window's Quest Tracker, one after the other on this connection.
+        private static async Task AskQuestsAsync(SslStream tls, CancellationToken stop) {
+            s_nextQuests = DateTime.UtcNow + s_questsEvery;
+            foreach (var window in OverlayQuestData.Wanted) {
+                await RemoteAdminWire.WriteAsync(tls, new JsonObject { ["op"] = "quests", ["window"] = window, ["have"] = s_have }, null, stop);
+                using var answerWait = CancellationTokenSource.CreateLinkedTokenSource(stop);
+                answerWait.CancelAfter(TimeSpan.FromSeconds(10));
+                var (answer, _) = await RemoteAdminWire.ReadAsync(tls, 1 << 20, 0, answerWait.Token);
+                OverlayQuestData.Heard(window, answer);
+            }
+
+            s_nextQuests = DateTime.UtcNow + s_questsEvery;
+        }
+
         // What a beat's answer says: whether the server needs the overlay, and its own texts and boxes.
         private static void Listen(JsonObject reply) {
             SendsMap = reply["features"] is JsonArray features && features.Any(f => f?.GetValueKind() == System.Text.Json.JsonValueKind.String && (string?) f == "map");
+            SendsQuests = reply["features"] is JsonArray offered && offered.Any(f => f?.GetValueKind() == System.Text.Json.JsonValueKind.String && (string?) f == "quests");
             Required = reply["required"]?.GetValue<bool>();
             // The server's own texts and boxes; a server without any (or from before they existed) says "none".
             var stamp = (string?) reply["designStamp"] ?? "none";
