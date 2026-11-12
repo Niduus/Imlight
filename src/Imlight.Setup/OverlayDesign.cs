@@ -616,6 +616,7 @@ internal sealed class OverlayMap {
     public string GrassColor { get; set; } = "#FF3C6236";
     public string WaterColor { get; set; } = "#FF3A6BAA";
     public string WallColor { get; set; } = "#FF1C1C26";
+    public string WoodColor { get; set; } = "#FF8A6440";
 
     public bool Npcs { get; set; } = true;
     public bool Mobs { get; set; } = true;
@@ -678,6 +679,28 @@ internal sealed class OverlayMap {
     public bool Trees { get; set; } = true;
     public string TreeColor { get; set; } = "#D91C1C26";
 
+    // More detail (Niduus, 2026-11-12: "highlight areas of mobs, show names of mobs and so on. Chest reveals and where").
+
+    /// <summary>A soft patch round every creature, joined into areas.</summary>
+    public bool MobAreas { get; set; } = true;
+
+    public string MobAreaColor { get; set; } = "#33FF5050";
+
+    /// <summary>How far round each creature its patch reaches (game units).</summary>
+    public double MobAreaSize { get; set; } = 450;
+
+    /// <summary>How many creatures are in each area, over it.</summary>
+    public bool MobAreaCount { get; set; } = true;
+
+    /// <summary>A ring round each boss.</summary>
+    public bool BossGlow { get; set; } = true;
+
+    /// <summary>What each chest is (wooden or silver) under it.</summary>
+    public bool ChestNames { get; set; }
+
+    /// <summary>A name that would cover another moves above its icon, or is left out.</summary>
+    public bool TidyNames { get; set; } = true;
+
     /// <summary>The full screen button on the minimap's corner (over the game).</summary>
     public bool FullButton { get; set; } = true;
 
@@ -694,6 +717,24 @@ internal sealed class OverlayMap {
 
     internal OverlayMap Copy() => (OverlayMap) MemberwiseClone();
 
+    /// <summary>
+    /// Sets how much the map shows at once: 0 just the map (no names but bosses, sigils and doors), 1 as it comes, 2 names
+    /// of mobs and chests with levels, 3 everything (every name, NPCs too).
+    /// </summary>
+    internal void Detail(int level) {
+        Npcs = Mobs = Bosses = Sigils = Doors = Chests = Wizards = true;
+        Names = Place = Walls = Trees = Streets = true;
+        MobAreas = level >= 1;
+        MobAreaCount = BossGlow = level >= 1;
+        MobNames = Levels = ChestNames = level >= 2;
+        NpcNames = level >= 3;
+        FullNames = level >= 1;
+        TidyNames = level < 3;
+        if (level == 0) {
+            Npcs = false;
+        }
+    }
+
     internal OverlayMap Clean() {
         Zoom = OverlayElement.Range(Zoom, 300, 12000, 2200);
         IconSize = OverlayElement.Range(IconSize, 4, 30, 9);
@@ -704,6 +745,7 @@ internal sealed class OverlayMap {
         GrassColor = OverlayPaint.CleanColor(GrassColor, "#FF3C6236");
         WaterColor = OverlayPaint.CleanColor(WaterColor, "#FF3A6BAA");
         WallColor = OverlayPaint.CleanColor(WallColor, "#FF1C1C26");
+        WoodColor = OverlayPaint.CleanColor(WoodColor, "#FF8A6440");
         NpcColor = OverlayPaint.CleanColor(NpcColor, "#C0E6E6F0");
         MobColor = OverlayPaint.CleanColor(MobColor, "#FFFF5050");
         BossColor = OverlayPaint.CleanColor(BossColor, "#FFFF2D6E");
@@ -719,6 +761,8 @@ internal sealed class OverlayMap {
         OutlineColor = OverlayPaint.CleanColor(OutlineColor, "#D0000000");
         TreeColor = OverlayPaint.CleanColor(TreeColor, "#D91C1C26");
         FullBackground = OverlayPaint.CleanColor(FullBackground, "#F00C101C");
+        MobAreaColor = OverlayPaint.CleanColor(MobAreaColor, "#33FF5050");
+        MobAreaSize = OverlayElement.Range(MobAreaSize, 100, 3000, 450);
         YouSize = OverlayElement.Range(YouSize, 0.3, 5, 1.5);
         MobSize = OverlayElement.Range(MobSize, 0.2, 5, 1);
         BossSize = OverlayElement.Range(BossSize, 0.2, 5, 1);

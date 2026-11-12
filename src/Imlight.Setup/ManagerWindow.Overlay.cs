@@ -1897,6 +1897,10 @@ internal sealed partial class ManagerWindow {
             }
 
             var how = new WrapPanel();
+            // One choice for how much it shows; every part can still be changed by itself below (Niduus, 2026-11-12:
+            // "Get in detail, then get in more detail").
+            how.Children.Add(OvField("How much it shows (sets the choices below)", OvCombo(["Just the map", "Normal", "Detailed", "Everything"], -1,
+                i => { if (i >= 0) { Set(() => map.Detail(i)); } }, 160)));
             how.Children.Add(OvField("Turns with me", OvCheck("The way I face is up", map.Turn, v => Set(() => map.Turn = v))));
             how.Children.Add(OvField("Shape", OvCombo(["Round", "Square"], map.Round ? 0 : 1, i => Set(() => map.Round = i == 0), 110)));
             how.Children.Add(OvField("How far it shows (smaller is closer)", OvNumber(map.Zoom, 300, 12000, 100, v => Set(() => map.Zoom = v))));
@@ -1928,6 +1932,7 @@ internal sealed partial class ManagerWindow {
         shows.Children.Add(OvField("Streets", OvColor(map.PathColor, v => Set(() => map.PathColor = v))));
         shows.Children.Add(OvField("Grass", OvColor(map.GrassColor, v => Set(() => map.GrassColor = v))));
         shows.Children.Add(OvField("Water", OvColor(map.WaterColor, v => Set(() => map.WaterColor = v))));
+        shows.Children.Add(OvField("Docks, decks and plank bridges", OvColor(map.WoodColor, v => Set(() => map.WoodColor = v))));
         shows.Children.Add(OvField("Walls, fences and buildings", Row(OvCheck("Show", map.Walls, v => Set(() => map.Walls = v)), OvColor(map.WallColor, v => Set(() => map.WallColor = v)))));
         shows.Children.Add(OvField("Trees, posts and pillars", Row(OvCheck("Show", map.Trees, v => Set(() => map.Trees = v)), OvColor(map.TreeColor, v => Set(() => map.TreeColor = v)))));
         Kind("NPCs", map.Npcs, v => map.Npcs = v, map.NpcColor, v => map.NpcColor = v);
@@ -1959,6 +1964,14 @@ internal sealed partial class ManagerWindow {
                 OvCheck("NPCs", map.NpcNames, v => Set(() => map.NpcNames = v)),
                 OvCheck("Levels", map.Levels, v => Set(() => map.Levels = v)),
                 OvCheck("Dark band under names", map.NameBackground, v => Set(() => map.NameBackground = v)))));
+            look.Children.Add(OvField("Mob areas", Row(
+                OvCheck("Show", map.MobAreas, v => Set(() => map.MobAreas = v)),
+                OvColor(map.MobAreaColor, v => Set(() => map.MobAreaColor = v)),
+                OvCheck("How many", map.MobAreaCount, v => Set(() => map.MobAreaCount = v)))));
+            look.Children.Add(OvField("Mob area reach", OvNumber(map.MobAreaSize, 100, 3000, 50, v => Set(() => map.MobAreaSize = v))));
+            look.Children.Add(OvField("Bosses", OvCheck("Ring round each boss", map.BossGlow, v => Set(() => map.BossGlow = v))));
+            look.Children.Add(OvField("Chests", OvCheck("Say wooden or silver", map.ChestNames, v => Set(() => map.ChestNames = v))));
+            look.Children.Add(OvField("Crowded names", OvCheck("Move or hide names that would cover others", map.TidyNames, v => Set(() => map.TidyNames = v))));
             look.Children.Add(OvField("Icon outline", OvColor(map.OutlineColor, v => Set(() => map.OutlineColor = v))));
             look.Children.Add(OvField("Teammates off the map", OvCheck("Arrow on the edge", map.EdgeArrows, v => Set(() => map.EdgeArrows = v))));
             look.Children.Add(OvField("Your arrow size", OvNumber(map.YouSize, 0.3, 5, 0.1, v => Set(() => map.YouSize = v))));

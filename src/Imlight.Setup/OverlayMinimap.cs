@@ -73,7 +73,7 @@ internal static class OverlayMinimapData {
     }
 
     /// <summary>The kinds that are ground (paths, grass, water, and paths and grass above water).</summary>
-    internal static readonly int[] GroundKinds = [1, 2, 3, 6, 7];
+    internal static readonly int[] GroundKinds = [1, 2, 3, 6, 7, 8];
 
     /// <summary>
     /// The shapes of an area's ground, in world units: for each kind (1 path, 2 grass, 3 water, 4 wall, 6 path and
@@ -366,9 +366,9 @@ internal static class OverlayMinimapData {
                 return none;
             }
 
-            var triangles = new List<float>[8];
-            var outlines = new List<float[]>[8];
-            for (var k = 0; k < 8; k++) {
+            var triangles = new List<float>[9];
+            var outlines = new List<float[]>[9];
+            for (var k = 0; k < 9; k++) {
                 triangles[k] = [];
                 outlines[k] = [];
             }
@@ -382,7 +382,7 @@ internal static class OverlayMinimapData {
                 var count = (int) Math.Min(BitConverter.ToUInt32(data, at + 1), 2_000_000u);
                 at += 5;
                 // Smoothed outlines (kind + 16): each its own count of points.
-                if (kind is >= 17 and <= 23 and not 21) {
+                if (kind is >= 17 and <= 24 and not 21) {
                     for (var n = 0; n < count && at + 2 <= data.Length; n++) {
                         var points = BitConverter.ToUInt16(data, at);
                         at += 2;
@@ -406,7 +406,7 @@ internal static class OverlayMinimapData {
                 }
 
                 var each = kind == 5 ? 6 : 12;
-                if (kind is < 1 or > 7 || at + ((long) count * each) > data.Length) {
+                if (kind is < 1 or > 8 || at + ((long) count * each) > data.Length) {
                     break;
                 }
 
@@ -675,12 +675,13 @@ internal sealed class MinimapView : Control {
         if (ground.Exact is { } exact) {
             // Shapes are kept as (x, -y): east right, north up. Moved so the wizard is at 0, 0.
             var matrix = Matrix.CreateTranslation(-data.X, data.Y) * placed;
-            var colors = new[] { "", _map.PathColor, _map.GrassColor, _map.WaterColor, _map.WallColor, _map.TreeColor, _map.PathColor, _map.GrassColor };
+            var colors = new[] { "", _map.PathColor, _map.GrassColor, _map.WaterColor, _map.WallColor, _map.TreeColor, _map.PathColor, _map.GrassColor, _map.WoodColor };
             var geometry = Outlines(exact);
             // Each kind is one filled outline, so the triangles in it leave no seams and nothing is drawn twice.
             using (context.PushTransform(matrix)) {
-                // Grass, paths, water over them, bridges and banks above the water, then walls, trees and posts.
-                foreach (var kind in new[] { 2, 1, 3, 7, 6, 4, 5 }) {
+                // Grass, paths, water over them, bridges and banks above the water, wooden docks and decks, then walls,
+                // trees and posts.
+                foreach (var kind in new[] { 2, 1, 3, 7, 6, 8, 4, 5 }) {
                     if ((kind == 4 && !_map.Walls) || (kind == 5 && !_map.Trees)) {
                         continue;
                     }
@@ -711,8 +712,8 @@ internal sealed class MinimapView : Control {
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<OverlayMinimapData.Shapes, Geometry?[]> s_outlines = new();
 
     private static Geometry?[] Outlines(OverlayMinimapData.Shapes shapes) => s_outlines.GetValue(shapes, made => {
-        var outlines = new Geometry?[8];
-        foreach (var kind in new[] { 1, 2, 3, 4, 6, 7 }) {
+        var outlines = new Geometry?[9];
+        foreach (var kind in new[] { 1, 2, 3, 4, 6, 7, 8 }) {
             var points = made.Triangles[kind];
             var smooth = made.Outlines[kind];
             if (points.Length < 6 && smooth.Length == 0) {
@@ -826,6 +827,12 @@ internal sealed class MinimapView : Control {
     private void DrawMarks(DrawingContext context, OverlayMinimapData.Snapshot data, Point center, double radiusX, double radiusY) {
         var project = Projector(data, center, radiusX, radiusY, out var turn);
         var size = _map.IconSize;
+        var unit = Math.Min(radiusX, radiusY) / Zoom;
+        if (_map.MobAreas) {
+            DrawMobAreas(context, data, project, center, radiusX, radiusY, unit);
+        }
+
+        var names = new List<(string Words, Point At, int Rank)>();
 
         // The least important first, so bosses and sigils are on top.
         foreach (var mark in data.Marks.OrderBy(Order)) {
@@ -851,10 +858,36 @@ internal sealed class MinimapView : Control {
 
             var own = size * SizeOf(mark);
             Icon(context, mark, at, own);
+            if (mark.Kind == "boss" && _map.BossGlow) {
+                context.DrawEllipse(null, new Pen(Brush(_map.BossColor), Math.Max(1.2, size / 6)), at, own * 1.25, own * 1.25);
+            }
+
             if (mark.Name.Length > 0 && Named(mark)) {
                 var words = _map.Levels && mark.Level > 0 && mark.Kind is "mob" or "boss" ? $"{mark.Name} ({mark.Level})" : mark.Name;
-                Label(context, words, new Point(at.X, at.Y + own * 0.9), _map.NameSize, Brush(_map.TextColor), centered: true, pill: _map.NameBackground);
+                names.Add((words, new Point(at.X, at.Y + own * 0.9), Order(mark)));
             }
+        }
+
+        // Names last, the most important first; with Tidy names, one that would cover another is tried above its icon,
+        // then left out (Niduus, 2026-11-12: names piled on top of each other).
+        var taken = new List<Rect>();
+        foreach (var (words, at, _) in names.OrderByDescending(n => n.Rank)) {
+            var text = Text(words, _map.NameSize, Brush(_map.TextColor), false);
+            var (w, h) = (Math.Min(text.Width, Math.Max(20, _mapW * 0.8)), text.Height);
+            Rect Box(Point p) => new(p.X - w / 2 - 4, p.Y - 1, w + 8, h + 2);
+            var place = at;
+            if (_map.TidyNames) {
+                var above = new Point(at.X, at.Y - h - size * 1.6);
+                if (taken.Any(r => r.Intersects(Box(place)))) {
+                    place = above;
+                    if (taken.Any(r => r.Intersects(Box(place)))) {
+                        continue;
+                    }
+                }
+            }
+
+            taken.Add(Box(place));
+            Label(context, words, place, _map.NameSize, Brush(_map.TextColor), centered: true, pill: _map.NameBackground);
         }
 
         // North, on the edge, over the icons.
@@ -873,9 +906,55 @@ internal sealed class MinimapView : Control {
         Arrow(context, center, _map.Turn ? 0 : Math.Atan2(faceX, -faceY), size * _map.YouSize, Brush(_map.YouColor), new Pen(Brushes.Black, 1.2));
     }
 
+    // Where mobs are: a soft patch round every creature, patches that touch joined into one area, and how many are in
+    // each area (Niduus, 2026-11-12: "highlight areas of mobs").
+    private void DrawMobAreas(DrawingContext context, OverlayMinimapData.Snapshot data, Func<double, double, Point> project, Point center,
+                              double radiusX, double radiusY, double unit) {
+        var r = Math.Max(3, _map.MobAreaSize * unit);
+        var spots = data.Marks.Where(m => m.Kind is "mob" or "boss" && Shows(m)).Select(m => project(m.X, m.Y))
+            .Where(p => Math.Abs(p.X - center.X) < radiusX + r && Math.Abs(p.Y - center.Y) < radiusY + r).ToList();
+        if (spots.Count == 0) {
+            return;
+        }
+
+        // One filled shape (non-zero), so where patches overlap the colour doesn't get darker.
+        var patches = new GeometryGroup { FillRule = FillRule.NonZero };
+        foreach (var p in spots) {
+            patches.Children.Add(new EllipseGeometry(new Rect(p.X - r, p.Y - r, r * 2, r * 2)));
+        }
+
+        context.DrawGeometry(Brush(_map.MobAreaColor), null, patches);
+        if (!_map.MobAreaCount) {
+            return;
+        }
+
+        // Areas: spots closer than two patches apart are one.
+        var group = Enumerable.Range(0, spots.Count).ToArray();
+        int Root(int i) => group[i] == i ? i : group[i] = Root(group[i]);
+        for (var i = 0; i < spots.Count; i++) {
+            for (var j = i + 1; j < spots.Count; j++) {
+                var (dx, dy) = (spots[i].X - spots[j].X, spots[i].Y - spots[j].Y);
+                if (dx * dx + dy * dy < 4 * r * r) {
+                    group[Root(i)] = Root(j);
+                }
+            }
+        }
+
+        foreach (var area in Enumerable.Range(0, spots.Count).GroupBy(Root).Where(g => g.Count() > 1)) {
+            var top = area.Min(i => spots[i].Y) - r;
+            var x = area.Average(i => spots[i].X);
+            if (Math.Abs(x - center.X) > radiusX || Math.Abs(top - center.Y) > radiusY) {
+                continue;
+            }
+
+            Label(context, $"{area.Count()} mobs", new Point(x, top - _map.NameSize * 0.2), _map.NameSize * 0.9, Brush(_map.MobColor), centered: true, bold: true);
+        }
+    }
+
     // Which names show: bosses, sigils and doors with Names; creatures and NPCs each by their own choice; NPCs on the full screen map.
     private bool Named(OverlayMinimapData.Mark mark) => mark.Kind switch {
         "boss" or "sigil" or "door" => _map.Names,
+        "chest" => _map.ChestNames,
         "mob" => _map.MobNames,
         "npc" => _map.NpcNames || (_full && _map.FullNames),
         _ => false,
