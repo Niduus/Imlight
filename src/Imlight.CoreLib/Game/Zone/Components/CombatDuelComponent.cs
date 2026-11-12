@@ -2423,7 +2423,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
             var newHand = circle.DrawHand();
 
-            if (!_serializer.Serialize(newHand, _combatParticipantHandFlags, out var buffer)) {
+            if (!_serializer.Serialize(circle.ForGame(newHand), _combatParticipantHandFlags, out var buffer)) {
                 Logger.Error("Failed to serialize combat hand for duel {0}",
                     Logger.Args(SigilId));
 
@@ -2488,7 +2488,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         var hand = circle.WithFusions(new Hand { m_spellList = [.. cards, .. extra] });
-        if (!_serializer.Serialize(hand, _combatParticipantHandFlags, out var buffer)) {
+        if (!_serializer.Serialize(circle.ForGame(hand), _combatParticipantHandFlags, out var buffer)) {
             Logger.Error("Failed to serialize pet cast hand for duel {0}", Logger.Args(SigilId));
 
             return;
@@ -2510,7 +2510,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         var hand = circle.GetCurrentHand();
-        if (!_serializer.Serialize(hand, _combatParticipantHandFlags, out var buffer)) {
+        if (!_serializer.Serialize(circle.ForGame(hand), _combatParticipantHandFlags, out var buffer)) {
             Logger.Error("Failed to serialize current combat hand for duel {0}", Logger.Args(SigilId));
 
             return;
