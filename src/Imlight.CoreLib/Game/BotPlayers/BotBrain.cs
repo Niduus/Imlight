@@ -298,12 +298,17 @@ public static class BotBrain {
 
     private static BotWalkPlan Walk(BotRequest request) {
         lock (s_lock) {
-            // Stage 0 (the test): a short loop around where it came in, at a walk, with short stops.
-            var plan = new BotWalkPlan {
-                Radius = 180 + s_random.Next(120),
-                Points = 5 + s_random.Next(3),
-                Speed = 260,
-                PauseSeconds = 1 + (float) s_random.NextDouble() * 3,
+            // Like players in a street (Niduus, 2026-11-12: "only moving a few inches ... doesn't feel lively"): most run
+            // across the street from place to place; some stay around one part of it with longer stops, as if shopping or
+            // reading their quests; a few run all over it.
+            var style = s_random.Next(10);
+            var plan = style switch {
+                < 6 => new BotWalkPlan { Radius = 1800 + s_random.Next(1700), Points = 7 + s_random.Next(4), Speed = 380 + s_random.Next(60),
+                    PauseSeconds = 1 + (float) s_random.NextDouble() * 3 },
+                < 9 => new BotWalkPlan { Radius = 700 + s_random.Next(600), Points = 5 + s_random.Next(3), Speed = 330 + s_random.Next(60),
+                    PauseSeconds = 3 + (float) s_random.NextDouble() * 6 },
+                _ => new BotWalkPlan { Radius = 3500 + s_random.Next(2500), Points = 9 + s_random.Next(4), Speed = 420 + s_random.Next(40),
+                    PauseSeconds = 0.5f + (float) s_random.NextDouble() },
             };
             Logger.Information("Bot #{0} ({1}) walks a loop of {2} points, {3:0} out, with stops of about {4:0.0} s.",
                 Logger.Args(request.Id, NameOf(request), plan.Points, plan.Radius, plan.PauseSeconds));
