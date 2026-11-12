@@ -502,6 +502,7 @@ internal static class OverlayAction {
     // A Quest Tracker's own lines (not a choice in the designer): pick a quest (its way shows on the minimap), fold a list.
     internal const string QUEST_PICK = "QuestPick";
     internal const string QUEST_FOLD = "QuestFold";
+    internal const string QUEST_SCROLL = "QuestScroll";
 
     /// <summary>The words for each kind in the designer.</summary>
     internal static readonly string[] LABELS = [

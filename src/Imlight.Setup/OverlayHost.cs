@@ -878,6 +878,18 @@ internal static class OverlayHost {
             switch (msg) {
                 case Native.WM_MOUSEACTIVATE:
                     return new IntPtr(Native.MA_NOACTIVATE);
+                // The mouse wheel over a Quest Tracker line scrolls its list.
+                case Native.WM_MOUSEWHEEL:
+                    if (s_hitTargets.TryGetValue(hwnd, out var wheeled)
+                        && wheeled.Element.Action is OverlayAction.QUEST_PICK or OverlayAction.QUEST_FOLD or OverlayAction.QUEST_SCROLL) {
+                        var notches = (short) ((wParam.ToInt64() >> 16) & 0xFFFF) / 120.0;
+                        var window = wheeled.Game.ToInt64();
+                        Dispatcher.UIThread.Post(() => OverlayQuestData.ScrollBy(window, -notches * QuestTrackerView.SCROLL_STEP));
+
+                        return IntPtr.Zero;
+                    }
+
+                    break;
                 case Native.WM_LBUTTONDOWN:
                     Native.SetCapture(hwnd);
                     Shade(hwnd, 0x40, 0xFF, 0xFF, 0xFF);
@@ -1662,6 +1674,7 @@ internal static class OverlayHost {
         internal static extern int GetWindowTextLengthW(IntPtr hwnd);
         internal const int GWL_EXSTYLE = -20;
         internal const uint WM_LBUTTONUP = 0x0202;
+        internal const uint WM_MOUSEWHEEL = 0x020A;
         internal const uint WM_LBUTTONDOWN = 0x0201;
         internal const uint WM_MOUSEACTIVATE = 0x0021;
         internal const int MA_NOACTIVATE = 3;

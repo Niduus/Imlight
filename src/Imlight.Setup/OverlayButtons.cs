@@ -123,6 +123,11 @@ internal static class OverlayButtons {
                 done(true);
 
                 return;
+            case OverlayAction.QUEST_SCROLL:
+                OverlayQuestData.ScrollBy(game.ToInt64(), button.Command == "up" ? -QuestTrackerView.SCROLL_STEP * 2 : QuestTrackerView.SCROLL_STEP * 2);
+                done(true);
+
+                return;
             case OverlayAction.COMMAND or OverlayAction.CHEAT or OverlayAction.MOB_CHEAT:
                 _ = RunOnServerAsync(button, game, done);
 

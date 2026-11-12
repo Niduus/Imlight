@@ -2037,6 +2037,7 @@ internal sealed partial class ManagerWindow {
             shows.Children.Add(OvField("Each quest's step now", OvCheck("Show", list.Steps, v => Set(() => list.Steps = v))));
             shows.Children.Add(OvField("Quest name size", OvNumber(list.TitleSize, 6, 30, 1, v => Set(() => list.TitleSize = v))));
             shows.Children.Add(OvField("Step size", OvNumber(list.StepSize, 6, 30, 1, v => Set(() => list.StepSize = v))));
+            shows.Children.Add(OvField("Tallest before it scrolls", OvNumber(list.MaxHeight, 80, 1200, 10, v => Set(() => list.MaxHeight = v))));
             shows.Children.Add(OvField("Quest names", OvColor(list.TextColor, v => Set(() => list.TextColor = v))));
             shows.Children.Add(OvField("Steps", OvColor(list.StepColor, v => Set(() => list.StepColor = v))));
             _ovEditor.Children.Add(OvGroup("Quest Tracker", new StackPanel {
