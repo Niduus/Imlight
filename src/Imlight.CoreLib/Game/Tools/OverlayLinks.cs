@@ -252,13 +252,13 @@ public static class OverlayLinks {
             return RemoteAdminWire.Error("The host has turned off the minimap on this server.");
         }
 
-        // A few windows each asking once a second is fine; more is slowed down.
+        // A few windows each asking four times a second is fine; more is slowed down.
         var times = s_mapAsks.GetOrAdd(link, _ => new ConcurrentQueue<DateTime>());
         while (times.TryPeek(out var oldest) && DateTime.UtcNow - oldest > TimeSpan.FromSeconds(1)) {
             times.TryDequeue(out _);
         }
 
-        if (times.Count >= 8) {
+        if (times.Count >= 16) {
             return RemoteAdminWire.Error("busy");
         }
 

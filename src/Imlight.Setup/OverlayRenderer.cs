@@ -277,7 +277,7 @@ internal static class OverlayRenderer {
 
         if (e.IsMinimap) {
             // The minimap draws its own background and edge (round or square), and the quest lines under it.
-            var map = new MinimapView(e, OverlayMinimapData.For(window));
+            var map = new MinimapView(e, OverlayMinimapData.For(window), window);
             border.Background = null;
             border.BorderThickness = default;
             border.Padding = default;

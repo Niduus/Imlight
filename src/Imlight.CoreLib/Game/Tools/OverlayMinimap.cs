@@ -57,7 +57,7 @@ internal static class OverlayMinimap {
     internal static bool Streets => ConfigurationManager.GetValue("Overlay.MinimapStreets", true);
 
     private const int MAX_MARKS = 300;
-    private const int MAX_QUESTS = 30;
+    private const int MAX_QUESTS = 200;
 
     /// <summary>
     /// What one wizard's minimap shows, built on that wizard's own session. <paramref name="zone"/> is the zone actor the
@@ -166,8 +166,10 @@ internal static class OverlayMinimap {
             }
         }
 
+        // The main story's steps and this area's own; steps of side quests in other worlds stay off the map.
         // Main quests first, then the ones in this zone.
         map["quests"] = new JsonArray([.. quests.OfType<JsonObject>()
+            .Where(q => (bool?) q["main"] == true || (bool?) q["here"] == true)
             .OrderByDescending(q => (bool?) q["main"] == true).ThenByDescending(q => (bool?) q["here"] == true)
             .Select(q => (JsonNode) q.DeepClone())]);
 
@@ -279,7 +281,13 @@ internal static class OverlayMinimap {
         return AccessPassManager.GetContainedZoneName(zone.Trim()) ?? zone.Trim();
     }
 
-    private static string StepTitle(GoalTemplate goal) => English(goal.m_goalTitle, (string) goal.m_goalName ?? "");
+    // The step in plain words, with who or what ("Talk to Headmaster Ambrose", "Defeat 3 Rattlebones"); the goal's own
+    // title alone is only its verb ("Talk To", "Defeat": Niduus, 2026-11-12).
+    private static string StepTitle(GoalTemplate goal) {
+        var text = QuestGuide.StepText(goal);
+
+        return string.IsNullOrWhiteSpace(text) ? English(goal.m_goalTitle, (string) goal.m_goalName ?? "") : English(text, text);
+    }
 
     private static string English(string key, string fallback) {
         var text = string.IsNullOrEmpty(key) || key.Contains(' ') ? key : Locale.GetEnglishName(key);
