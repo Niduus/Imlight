@@ -75,6 +75,11 @@ internal static class QuestTeamRoster {
         var members = new List<Member>();
         foreach (var role in Roles) {
             var member = saved?.Members.FirstOrDefault(m => m.Role == role);
+            if (member is not null && AccountCollection.GetAccountForCharacterList(member.AccountId) is { } known
+                && known.CharacterIds.Contains(member.CharId)) {
+                MakeHuman(known.Characters?.FirstOrDefault(c => c.CharId == member.CharId));
+            }
+
             if (member is null || AccountCollection.GetAccountForCharacterList(member.AccountId) is not { } account
                 || !account.CharacterIds.Contains(member.CharId)) {
                 member = Make(role);
@@ -89,6 +94,26 @@ internal static class QuestTeamRoster {
         Write(new Saved { Generation = saved?.Generation ?? 1, Made = saved?.Made ?? DateTime.UtcNow, Members = members });
 
         return members;
+    }
+
+    /// <summary>A team wizard made before v0.10.819 had no race, so the game showed pet names over it: made human.</summary>
+    internal static void MakeHuman(Wizard wizard) {
+        try {
+            if (wizard?.WizardAvatar is not { } avatar || (avatar.m_eRace == eRace.Human && wizard.PlayerNameBehavior?.Race == eRace.Human)) {
+                return;
+            }
+
+            avatar.m_eRace = eRace.Human;
+            if (wizard.PlayerNameBehavior is { } name) {
+                name.Race = eRace.Human;
+            }
+
+            WizardCollection.UpdateCharacterRace(wizard);
+            Logger.Information("Quest Team: {0} is made human, so its name shows right.", Logger.Args(wizard.PlayerNameBehavior?.GetWizardName()));
+        }
+        catch (Exception e) {
+            Logger.Warning("Quest Team: could not fix a wizard's race: {0}", Logger.Args(e.Message));
+        }
     }
 
     /// <summary>Four new level 1 wizards in place of the old ones (Ahziael's Restart). The team must be logged out.</summary>
@@ -153,6 +178,7 @@ internal static class QuestTeamRoster {
             // A wizard the team made before (a crash before team.json was written) is used again.
             var existing = account.Characters?.FirstOrDefault();
             if (existing is not null) {
+                MakeHuman(existing);
                 return new Member { Role = role, Username = username, AccountId = account.AccountId, CharId = existing.CharId,
                     Name = existing.PlayerNameBehavior?.GetWizardName() ?? role };
             }
@@ -166,6 +192,9 @@ internal static class QuestTeamRoster {
             var nameKeys = (uint) ((first << 16) | (middle << 8) | last);
 
             var avatar = BotLooks.NewAvatar(new WizardCharacterBehavior(), gender, random);
+            // A new avatar has no race; the game reads a wizard's name keys from the human name lists only for a human
+            // (without it the name plates showed pet names: "Baby Millie", "Sparky").
+            avatar.m_eRace = eRace.Human;
             var wizard = new Wizard(SchoolOf(role), avatar, nameKeys);
             Randomizer.GiveStartingSpells(wizard);
             if (!account.AddCharacter(wizard)) {

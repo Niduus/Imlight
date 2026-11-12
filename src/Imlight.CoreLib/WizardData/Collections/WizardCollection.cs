@@ -470,6 +470,14 @@ public static class WizardCollection {
             existingCharacter.PlayerNameBehavior.NameOverride = wizard.PlayerNameBehavior.NameOverride);
     }
 
+    /// <summary>Persists the wizard's race (avatar and name), for the Quest Team's wizards made without one.</summary>
+    public static void UpdateCharacterRace(Wizard wizard) {
+        UpdateCharacter(wizard.CharId, existingCharacter => {
+            existingCharacter.WizardAvatar = wizard.WizardAvatar;
+            existingCharacter.PlayerNameBehavior.Race = wizard.PlayerNameBehavior.Race;
+        });
+    }
+
     /// <summary>
     /// Persists the wizard's name keys, custom name and name gender (the rename window, `.rename`).
     /// </summary>

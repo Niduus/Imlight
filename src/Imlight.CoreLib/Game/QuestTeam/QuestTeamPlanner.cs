@@ -61,12 +61,60 @@ internal static class QuestTeamPlanner {
                                             && MathF.Abs(other.X - X) < 60 && MathF.Abs(other.Y - Y) < 60;
     }
 
+    // The main story's worlds (Niduus, 2026-11-12: "I want them in Main Story worlds. Not Grizzle, Wintertusk or the Academy
+    // world", "Wizard City, Krok, Marlybone, Mooshu, Dragonspyre, these types of worlds"), by their zone folder.
+    private static readonly HashSet<string> s_storyWorlds = new(StringComparer.OrdinalIgnoreCase) {
+        "WizardCity", "Krokotopia", "Marleybone", "MooShu", "DragonSpire", "Celestia", "Zafaria", "Avalon", "Azteca", "Khrysalis",
+        "Arcanum", "Polaris", "Mirage", "Empyrea", "Karamelle", "Lemuria", "Novus", "Wallaru", "Selenopolis", "Ahmarra",
+    };
+
+    // Quest codes of the side worlds (Grizzleheim, Wintertusk, Wysteria's academy, Aquila, Darkmoor).
+    private static readonly HashSet<string> s_sideWorldCodes = new(StringComparer.OrdinalIgnoreCase) { "GH", "WT", "PA", "WY", "AQ", "DM" };
+
+    /// <summary>Whether a quest belongs to a main story world (never Grizzleheim, Wintertusk, Wysteria, Aquila or Darkmoor).</summary>
+    internal static bool IsMainStoryWorld(QuestTemplate quest) {
+        if (quest is null) {
+            return false;
+        }
+
+        var name = (string) quest.m_questName ?? "";
+        var dash = name.IndexOf('-');
+        if (dash is > 0 and <= 5 && s_sideWorldCodes.Contains(name[..dash])) {
+            return false;
+        }
+
+        if (name.Contains("Wintertusk", StringComparison.OrdinalIgnoreCase) || name.Contains("Grizzle", StringComparison.OrdinalIgnoreCase)
+            || name.Contains("Wysteria", StringComparison.OrdinalIgnoreCase)) {
+            return false;
+        }
+
+        // Where its giver stands and where its steps go: all in story worlds (a Wizard City giver can send them to Grizzleheim).
+        var zones = (quest.m_goals ?? []).Where(g => g is not null).Select(g => (string) g.m_destinationZone)
+            .Append(QuestGuide.GiverZone(quest));
+        foreach (var zone in zones) {
+            if (string.IsNullOrWhiteSpace(zone)) {
+                continue;
+            }
+
+            var world = zone.Split('/')[0];
+            if (!s_storyWorlds.Contains(world)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /// <summary>The quest the team works on: a story quest first, then a main quest, the one most of them hold.</summary>
     internal static string PickQuest(IReadOnlyList<QuestTeamMember.Status> team) {
         var held = new Dictionary<string, (int Count, int Rank, int Order)>(StringComparer.OrdinalIgnoreCase);
         for (var i = 0; i < team.Count; i++) {
             foreach (var quest in team[i].Wizard?.QuestBehavior?.CurrentQuestInstances?.ToList() ?? []) {
                 if (quest is null || QuestTemplateCollection.GetQuestByName(quest.QuestName) is not { } template) {
+                    continue;
+                }
+
+                if (!IsMainStoryWorld(template)) {
                     continue;
                 }
 
@@ -90,7 +138,7 @@ internal static class QuestTeamPlanner {
     internal static (QuestTemplate Quest, ulong Giver)? NextQuest(Wizard leader) {
         var world = (leader.Zone ?? "").Split('/')[0];
         return QuestService.QuestFinderGivers()
-            .Where(g => QuestStory.IsMain(g.Quest) && MapService.IsOfferedTo(g.Quest, leader))
+            .Where(g => QuestStory.IsMain(g.Quest) && IsMainStoryWorld(g.Quest) && MapService.IsOfferedTo(g.Quest, leader))
             .OrderByDescending(g => QuestStory.KindOf(g.Quest) == QuestStory.STORY)
             .ThenByDescending(g => string.Equals(QuestGuide.GiverZone(g.Quest).Split('/')[0], world, StringComparison.OrdinalIgnoreCase))
             .Select(g => ((QuestTemplate, ulong)?) (g.Quest, g.Giver))

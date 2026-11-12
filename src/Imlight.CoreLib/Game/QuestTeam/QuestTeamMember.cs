@@ -475,7 +475,8 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
             _route.Dequeue();
         }
 
-        var yaw = MathF.Atan2(next.Y - y, next.X - x);
+        // Facing where it walks: a wizard with yaw w faces (-sin w, -cos w) (Niduus, 2026-11-12: they were "shuffling sideways").
+        var yaw = MathF.Atan2(-(next.X - x), -(next.Y - y));
         if (yaw < 0) {
             yaw += MathF.Tau;
         }

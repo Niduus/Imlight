@@ -27,3 +27,18 @@ Fixed: Bots no longer wear developers' gear or Deckathalon decks
 Quest Team wizards and Bot Players never pick, buy or put on the developers' and testers' own gear (like the QA robe, or anything marked Dev, Debug, GM, Admin or Test), and never equip a Deckathalon deck. A Quest Team wizard already wearing such gear takes it off; a Deckathalon deck is swapped for a normal deck as soon as it has one. Developers' test spells never go into a bot's deck, and any already there are taken out.
 Where: Quest Team > Quest Team (each wizard's gear and deck); Bot Players on the streets
 Test: Turn the Quest Team on and open each wizard's "Quests, gear, deck and trained spells". No QA or dev gear and no Deckathlete's Deck should show, and Team log should show "takes off ..." for anything that was on.
+
+Fixed: Quest Team walks facing forward
+The Quest Team wizards walked sideways. They now face the way they walk.
+Where: in game, near the Quest Team
+Test: Watch a Quest Team wizard walk. It should face where it is going.
+
+Fixed: Quest Team names show right in game
+The name plates over the Quest Team wizards showed pet names (like "Baby Millie" or "Sparky"), because the game didn't know they were human wizards. Their real names now show, and wizards made before this update are fixed when the team starts.
+Where: in game, above each Quest Team wizard
+Test: Turn the Quest Team on and go to them. The names over their heads should match the names on the Quest Team page.
+
+Changed: Quest Team only plays the main story worlds
+The team only does quests in the main story worlds (Wizard City, Krokotopia, Marleybone, MooShu, Dragonspyre, Celestia and on). It skips Grizzleheim, Wintertusk, Wysteria, Aquila and Darkmoor.
+Where: Quest Team > Quest Team
+Test: Let the team play. "Doing now" and Team log should never send them to Grizzleheim, Wintertusk or Wysteria.
