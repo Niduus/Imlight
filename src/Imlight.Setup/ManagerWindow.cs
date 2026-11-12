@@ -209,7 +209,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Shadow", "BacklashDamage", "Backlash hits the caster when their last pact runs out (a share of their health)", new() { OnContent = "On", OffContent = "Off" }),
         ("Shadow", "Creatures", "Shadow creatures: a fed pact may bring the caster's Dark Fiend, Nova, Shepherd, Shrike, Sentinel, Seraph or Trickster in to help", new() { OnContent = "On", OffContent = "Off" }),
         ("Minions", "SapNeedsMinion", "Sap cards (Draw Health, Drain Health, Draw Power) need a minion to sacrifice (off: they work without one)", new() { OnContent = "On", OffContent = "Off" }),
-        ("Minions", "OnePerWizard", "One minion per wizard at a time, like the game", new() { OnContent = "On", OffContent = "Off" }),
+        ("Minions", "OnePerWizard", "One minion per wizard at a time, like the game (a new one replaces the old)", new() { OnContent = "On", OffContent = "Off" }),
         ("Minions", "LeaveWithOwner", "A wizard's minion leaves the battle when its wizard is defeated or leaves", new() { OnContent = "On", OffContent = "Off" }),
         ("Minions", "Taunt", "Mega Taunt and minion Taunts pull enemy attacks; Mega Pacify cards push them away", new() { OnContent = "On", OffContent = "Off" }),
         ("Randomizer", "RandomizeShadowPips", "Randomizer: random shadow pip limits and creature shadow magic", new() { OnContent = "On", OffContent = "Off" }),

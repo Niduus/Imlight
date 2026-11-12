@@ -15,7 +15,8 @@
  *
  * The rules here, each one a [Minions] setting that applies right away:
  *   SapNeedsMinion   a Sap card with no minion to sacrifice does nothing: it plays as a pass and costs no pips.
- *   OnePerWizard     a wizard who has a minion standing cannot summon another (the card plays as a pass).
+ *   OnePerWizard     a wizard has one minion at a time: summoning a new one sends the old one away and the new one
+ *                    takes its circle (CombatDuelComponent.Minions.cs; it used to play as a pass, Niduus 2026-11-12).
  *   LeaveWithOwner   a minion a wizard's card summoned leaves the battle when its wizard is defeated or leaves (flees, logs out).
  *   Taunt            Taunt and Pacify on one's own side change whom the enemies attack.
  */
@@ -65,12 +66,6 @@ internal static class PlayerMinions {
             if (!picked && !OwnMinions(caster).Any()) {
                 return "no minion to sacrifice (Minions.SapNeedsMinion)";
             }
-        }
-
-        if (OnePerWizard && caster.IsHumanPlayer
-            && leaves.Any(e => e.m_effectType is kSpellEffects.kSummonCreature or kSpellEffects.kSpawnCreature)
-            && OwnMinions(caster, summonedOnly: true).Any()) {
-            return "the wizard has a minion already (Minions.OnePerWizard)";
         }
 
         return null;
