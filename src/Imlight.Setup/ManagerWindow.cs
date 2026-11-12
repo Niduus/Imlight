@@ -408,6 +408,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Best Gear", BestGearTab),
             Tab("Collect Spells", CollectSpellsTab),
             Tab("Unlearn Spells", UnlearnSpellsTab),
+            Tab("Monstrology", MonstrologyTab),
             Tab("Bosses", BossesTab),
             Tab("Player Cheats", PlayerCheatsTab),
             Tab("Boss Test", BossTestTab),
@@ -561,6 +562,7 @@ internal sealed partial class ManagerWindow : Window {
             case "Best Gear": await LoadBestGearAsync(); break;
             case "Collect Spells": LoadCollectSpells(); break;
             case "Unlearn Spells": LoadUnlearnSpells(); break;
+            case "Monstrology": await LoadMonstrologyAsync(); break;
             case "Bosses": await LoadBossesAsync(); break;
             case "Player Cheats": ShowPlayerCheats(); break;
             case "Boss Test": await LoadBossTestAsync(); break;
