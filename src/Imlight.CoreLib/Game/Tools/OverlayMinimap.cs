@@ -221,9 +221,9 @@ internal static class OverlayMinimap {
             return;
         }
 
-        var x = (float?) map["x"] ?? 0;
-        var y = (float?) map["y"] ?? 0;
-        var range = (float?) map["range"] ?? Range;
+        var x = Number(map["x"], 0);
+        var y = Number(map["y"], 0);
+        var range = Number(map["range"], Range);
         foreach (var other in others.Where(o => o.CharId != charId && Equals(o.Zone, zone)).DistinctBy(o => o.CharId).Take(60)) {
             if (Far(x, y, other.X, other.Y) > range) {
                 continue;
@@ -235,6 +235,24 @@ internal static class OverlayMinimap {
     }
 
     private static float Far(float x1, float y1, float x2, float y2) => MathF.Sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
+
+    // A number this map was built with: stored as a whole number or not, so read as either (a (float) cast of a whole
+    // number throws, and that hung up every overlay asking for a map: Niduus, 2026-11-12, "Waiting for the map...").
+    private static float Number(JsonNode node, float fallback) {
+        if (node is not JsonValue value) {
+            return fallback;
+        }
+
+        if (value.TryGetValue<int>(out var whole)) {
+            return whole;
+        }
+
+        if (value.TryGetValue<float>(out var single)) {
+            return single;
+        }
+
+        return value.TryGetValue<double>(out var wide) ? (float) wide : fallback;
+    }
 
     private static int Round(float value) => float.IsFinite(value) ? (int) MathF.Round(value) : 0;
 
