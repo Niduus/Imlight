@@ -114,6 +114,7 @@ internal static class ManagerTheme {
         ["Create"] = Color.FromRgb(217, 101, 59),
         ["Game Rules"] = Color.FromRgb(46, 170, 98),
         ["Help"] = Color.FromRgb(46, 160, 140),
+        ["Quest Team"] = Color.FromRgb(120, 150, 235),
         // Tabs.
         ["Play"] = Color.FromRgb(46, 170, 98),
         ["Commands"] = BLOCK_WHEN,

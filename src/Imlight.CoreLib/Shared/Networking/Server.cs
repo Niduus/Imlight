@@ -115,6 +115,28 @@ public abstract class Server : ReceiveProtocolDispatcher {
         }
     }
 
+    /// <summary>
+    /// A session with no socket for the Quest Team's pretend game (Game/QuestTeam): made like a connection the listener
+    /// took, with an id of its own, and answered with the session.
+    /// </summary>
+    [MessageHandler(typeof(HeadlessSessionOpen))]
+    protected void ReceiveHeadlessSessionOpen(HeadlessSessionOpen message) {
+        try {
+            var id = GetNewUniqueId();
+            while (!Context.Child($"SessionActor.{id}").IsNobody()) {
+                id = GetNewUniqueId();
+            }
+
+            var session = Context.ActorOf(SessionActor.HeadlessProps(message.Client, id, Context.Self, _actorFactoryRef), $"SessionActor.{id}");
+            Logger.Information("{0}: Quest Team session {1} opened for {2}.", Logger.Args(Name, id, message.Who));
+            Sender.Tell(new HeadlessSessionOpened(session, id));
+        }
+        catch (Exception ex) {
+            Logger.Error("{0} could not open a Quest Team session: {1}", Logger.Args(Name, ex.Message));
+            Sender.Tell(new HeadlessSessionOpened(null, 0));
+        }
+    }
+
     [MessageHandler(typeof(SERVER_100_PROTOCOL.MSG_DEALLOCATESOCKET))]
     protected virtual void ReceiveDeallocateSocket(SERVER_100_PROTOCOL.MSG_DEALLOCATESOCKET message) {
         if (!ActiveSessions.Remove(ActiveSessions.FirstOrDefault(x => x.SessionID == message.Id))) {
@@ -256,3 +278,9 @@ public abstract class Server : ReceiveProtocolDispatcher {
     }
 
 }
+
+/// <summary>Asks a server for a session with no socket (the Quest Team's pretend game).</summary>
+public sealed record HeadlessSessionOpen(IActorRef Client, string Who);
+
+/// <summary>The session a server opened for the Quest Team, or a null session when it could not.</summary>
+public sealed record HeadlessSessionOpened(IActorRef Session, ushort Id);

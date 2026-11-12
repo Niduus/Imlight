@@ -436,6 +436,9 @@ internal sealed partial class ManagerWindow : Window {
             Tab(Edition.NAME, AhziaelTab),
             Tab("Remote", RemoteTab),
             Tab("Account Transfer", AccountTransferTab),
+            Tab(QUEST_TEAM_TAB, QuestTeamTab),
+            Tab(QUEST_TEAM_ISSUES_TAB, QuestTeamIssuesTab),
+            Tab(QUEST_TEAM_LOGS_TAB, QuestTeamLogsTab),
         }.ToDictionary(t => (string) t.Tag!);
         // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
         var nav = Navigation(tabs);
@@ -472,6 +475,8 @@ internal sealed partial class ManagerWindow : Window {
                     Children = {
                         WithDock(header, Dock.Top),
                         WithDock(RemoteBanner() ?? new Panel(), Dock.Top),
+                        // "If a issue occures, it will announce it in Ahziael" (Niduus, 2026-11-12): the Quest Team's banner.
+                        WithDock(QuestTeamBanner(), Dock.Top),
                         WithDock(_messageBar, Dock.Bottom),
                         WithDock(_saveBar, Dock.Bottom),
                         body,
@@ -3037,6 +3042,9 @@ internal sealed partial class ManagerWindow : Window {
         [Edition.NAME] = ("wrench", "Ahziael itself: updates, how it looks, privacy, its folders, and removing it."),
         ["Remote"] = ("link", "Manage an Imlight server on another PC with your Administrator account there, or let admins manage this one."),
         ["Account Transfer"] = ("download", "Download your account from a server you play on, and bring accounts from other servers into this one."),
+        [QUEST_TEAM_TAB] = ("users", "Four wizards the server plays through the story by itself, like players: turn them on, see what they are doing, and when to tell you about an issue."),
+        [QUEST_TEAM_ISSUES_TAB] = ("flag", "Every quest the Quest Team could not finish, when it got stuck, and quests that took too long, with what happened."),
+        [QUEST_TEAM_LOGS_TAB] = ("log", "The Quest Team's quest log (each quest, its steps and how long it took) and what each wizard did."),
     };
 
     /// <summary>What a tab that could not be built shows instead: the reason, and where it was written down.</summary>

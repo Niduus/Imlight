@@ -75,6 +75,11 @@ internal sealed partial class ManagerWindow {
             // Niduus, 2026-11-04: what each NPC gives (quests, shop items, treasure cards, spells), each with a switch.
             // Niduus, 2026-11-04: which rooms of dungeons, towers and instances can be teleported into.
             ["Game Modes", "Battles and World", "On and Off", "What NPCs Give", "Teleport Rooms", "Animations", "Events", "Shops and Codes"]),
+        // Niduus, 2026-11-12: "Make them their own section and server": four wizards that play the story together and
+        // say which quests do not work (ManagerWindow.QuestTeam.cs).
+        ("Quest Team", "users", "Bots that test the story",
+            "Four wizards (Ice, Life, Death and Storm) the server plays by itself through the story, like players, and what they ran into.",
+            [QUEST_TEAM_TAB, QUEST_TEAM_ISSUES_TAB, QUEST_TEAM_LOGS_TAB]),
         ("Server", "server", "Start, settings, accounts, logs",
             "Run the server and set it up: start and stop, every setting, who can log in, logs, game files, and Ahziael itself.",
             // Niduus, 2026-10-30: Ahziael on a server hosted on another PC, for its admins.

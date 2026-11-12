@@ -114,6 +114,9 @@ public class GameServer : Server {
         Logger.Verbose("New actor created under {Path}: {Name}",
             Logger.Args(Context.Self.Path, processSupervisorActorName));
 
+        // The Quest Team (Game/QuestTeam) opens its sessions on this server.
+        QuestTeam.QuestTeamHost.GameServerReady(Self, Context.System);
+
         // [Overlay] RequiredToPlay: wizards without the Ahziael overlay are kicked (Tools.OverlayGate).
         _overlayCheck = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(
             TimeSpan.FromSeconds(Tools.OverlayGate.BEAT_SECONDS), TimeSpan.FromSeconds(Tools.OverlayGate.BEAT_SECONDS), Self, new OverlayCheck(), Self);
@@ -145,7 +148,8 @@ public class GameServer : Server {
 
             var now = DateTime.UtcNow;
             var missing = new System.Collections.Generic.HashSet<ushort>();
-            foreach (var group in ActiveSessions.GroupBy(s => Tools.OverlayGate.Normalize(s.Ip ?? s.RemoteIp))) {
+            // The Quest Team's sessions have no game window, so no overlay; they are never kicked for it.
+            foreach (var group in ActiveSessions.Where(s => !s.IsHeadless).GroupBy(s => Tools.OverlayGate.Normalize(s.Ip ?? s.RemoteIp))) {
                 var covered = Tools.OverlayGate.Covered(group.Key);
                 // The newest connections are the ones left over.
                 foreach (var session in group.OrderBy(s => _withoutOverlay.TryGetValue(s.SessionID, out var t) ? t : now).ThenBy(s => s.SessionID).Skip(covered)) {

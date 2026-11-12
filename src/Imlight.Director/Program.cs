@@ -125,6 +125,17 @@ internal static class Program {
             return;
         }
 
+        // The Quest Team's mini server is this program started again with --questteam by the game server (see
+        // QuestTeamLink) while [QuestTeam] Enabled is on: it keeps the team's quest log, issues and quest times.
+        if (Array.IndexOf(args, "--questteam") >= 0) {
+            ConfigurationManager.Initialize(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Imlight.ini"));
+            AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+                Logger.Fatal("The Quest Team mini server stopped because of an error: {Exception}", Logger.Args(e.ExceptionObject));
+            Imlight.CoreLib.Game.QuestTeam.QuestTeamBrain.Run(args);
+
+            return;
+        }
+
         // =============================================================
         // THREAD POOL
         // =============================================================
@@ -250,6 +261,9 @@ internal static class Program {
 
         // Bot Players: their mini server runs only while [BotPlayers] Enabled is on, and is stopped when it is turned off.
         Imlight.CoreLib.Game.BotPlayers.BotLink.StartWatching();
+
+        // The Quest Team: its mini server and its four wizards run only while [QuestTeam] Enabled is on.
+        Imlight.CoreLib.Game.QuestTeam.QuestTeamLink.StartWatching();
 
         // Keep program busy with a while loop.
         Logger.Information("Imlight may now be connected to.");

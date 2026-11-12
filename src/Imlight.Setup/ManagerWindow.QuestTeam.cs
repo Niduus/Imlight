@@ -1,0 +1,502 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Layout;
+using Avalonia.Media;
+using Avalonia.Threading;
+
+namespace Imlight.Setup;
+
+/// <summary>
+/// The Quest Team section of the side bar (Niduus, 2026-11-12: "Make them their own section and server, using the same bot
+/// features. Party of 4."). Four wizards (Ice, Life, Death, Storm) play the story by themselves on the server, walking,
+/// training and fighting like players, and say which quests do not work. The server runs them only while [QuestTeam]
+/// Enabled is on; its little program writes everything in Server\logs\quest-team, which these tabs read. A new issue shows a
+/// banner at the top of Ahziael ("If a issue occures, it will announce it in Ahziael").
+/// </summary>
+internal sealed partial class ManagerWindow {
+
+    private const string QUEST_TEAM_FOLDER = "quest-team";
+    private const string QUEST_TEAM_TAB = "Quest Team";
+    private const string QUEST_TEAM_ISSUES_TAB = "Team Issues";
+    private const string QUEST_TEAM_LOGS_TAB = "Team Logs";
+    private const int QUEST_TEAM_LOG_LINES = 300;
+
+    private readonly TextBlock _teamState = new() { TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold };
+    private readonly TextBlock _teamDoing = new() { TextWrapping = TextWrapping.Wrap };
+    private readonly TextBlock _teamQuest = new() { TextWrapping = TextWrapping.Wrap };
+    private readonly StackPanel _teamMembers = new() { Spacing = 6 };
+    private readonly ToggleSwitch _teamEnabled = new() { OnContent = "On", OffContent = "Off" };
+    private readonly NumericUpDown _teamSlow = new() { Minimum = 1.2m, Maximum = 20, Increment = 0.5m, FormatString = "0.0", Width = 140 };
+    private readonly NumericUpDown _teamLosses = new() { Minimum = 1, Maximum = 20, Increment = 1, FormatString = "0", Width = 140 };
+    private readonly NumericUpDown _teamStuck = new() { Minimum = 2, Maximum = 120, Increment = 1, FormatString = "0", Width = 140 };
+    private readonly StackPanel _teamIssues = new() { Spacing = 10 };
+    private readonly TextBlock _teamIssuesEmpty = new() { TextWrapping = TextWrapping.Wrap, Foreground = MUTED, Text = "No issues yet." };
+    private readonly DispatcherTimer _teamTimer = new() { Interval = TimeSpan.FromSeconds(3) };
+    private readonly Border _teamBanner = new() { IsVisible = false };
+    private readonly TextBlock _teamBannerText = new() { TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center };
+    private TextBox? _teamLogBox;
+    private TextBox? _teamQuestLogBox;
+    private string _teamLogText = "";
+    private string _teamQuestLogText = "";
+    private DateTime _teamIssuesWritten = DateTime.MinValue;
+    private List<QuestTeamIssue> _teamIssueList = [];
+    private int _teamIssuesShown = -1;
+    private bool _showingTeam;
+    private bool _teamTimerStarted;
+
+    private sealed class QuestTeamIssue {
+        public int Id { get; set; }
+        public DateTime At { get; set; }
+        public string Kind { get; set; } = "";
+        public string Quest { get; set; } = "";
+        public string Title { get; set; } = "";
+        public string World { get; set; } = "";
+        public string Text { get; set; } = "";
+        public List<string> Log { get; set; } = [];
+    }
+
+    private string QuestTeamFolder => Path.Combine(_manager.LogFolder, QUEST_TEAM_FOLDER);
+
+    private void StartQuestTeamTimer() {
+        if (_teamTimerStarted) {
+            return;
+        }
+
+        _teamTimerStarted = true;
+        _teamTimer.Tick += (_, _) => RefreshQuestTeam();
+        _teamTimer.Start();
+        Dispatcher.UIThread.Post(RefreshQuestTeam, DispatcherPriority.Background);
+    }
+
+    // ---------------------------------------------------------------------
+    // Quest Team tab: the switch, the four wizards, what they are doing, the settings and Restart
+    // ---------------------------------------------------------------------
+
+    private Control QuestTeamTab() {
+        _teamEnabled.IsCheckedChanged += async (_, _) => {
+            if (!_showingTeam) {
+                await Guard(() => SetQuestTeamEnabledAsync(_teamEnabled.IsChecked == true));
+            }
+        };
+        foreach (var (box, key) in new[] { (_teamSlow, "SlowFactor"), (_teamLosses, "LossesBeforeIssue"), (_teamStuck, "StuckMinutes") }) {
+            box.ValueChanged += (_, _) => {
+                if (!_showingTeam && box.Value is { } value) {
+                    _ = Guard(() => SaveQuestTeamNumberAsync(key, value));
+                }
+            };
+        }
+
+        LoadQuestTeamSettings();
+        StartQuestTeamTimer();
+
+        return Page(
+            Fold("users", QUEST_TEAM_TAB, "Quest Team",
+                "Four wizards the server plays by itself, always together and always in this order: Ice (tanks and supports), " +
+                "Life (heals and supports), Death (backup hitter and support) and Storm (hits and blades itself). They start at " +
+                "level 1 in Wizard City and play the story like players do: they walk everywhere (no teleporting), talk to the " +
+                "quest givers, fight as a team, and walk to the Ravenwood trainers to learn spells with their own training points " +
+                "(Ice also learns Feint, Life also learns Tower Shield). When a quest does not work, when they are stuck, or when a " +
+                "quest takes much longer than it should, a banner at the top of Ahziael says so and Team Issues shows what happened. " +
+                "They run in a little program of their own next to the server; they never touch your own wizards.",
+                _teamState,
+                SwitchRow("Quest Team", _teamEnabled, "On: the four wizards log in a few seconds later and start questing. Off: they log out."),
+                _teamDoing,
+                _teamQuest,
+                _teamMembers,
+                Row(Action(Plain("Restart with four new wizards"), RestartQuestTeamAsync), Action(Plain("Open its folder"), () => {
+                    Directory.CreateDirectory(QuestTeamFolder);
+
+                    return Open(QuestTeamFolder);
+                }))),
+            Fold("sliders", QUEST_TEAM_TAB, "When to tell you",
+                "When the Quest Team counts something as an issue. Changes count right away.",
+                SwitchRow("A quest is too slow at (times the expected time)", _teamSlow,
+                    "2 means a quest that takes twice as long as expected is reported. The first time a quest is played its time is a guess; after that the team learns the real time."),
+                SwitchRow("Lost fights before it is an issue", _teamLosses,
+                    "When the team loses the same fight this many times, the quest is reported."),
+                SwitchRow("Minutes with no progress before it is stuck", _teamStuck,
+                    "When nothing moves forward for this long, the team reports that it is stuck.")));
+    }
+
+    private void LoadQuestTeamSettings() {
+        _showingTeam = true;
+        try {
+            _teamEnabled.IsChecked = _manager.GetSwitch("QuestTeam", "Enabled");
+            _teamSlow.Value = (decimal) Number("SlowFactor", 2);
+            _teamLosses.Value = (decimal) Number("LossesBeforeIssue", 3);
+            _teamStuck.Value = (decimal) Number("StuckMinutes", 8);
+        }
+        finally {
+            _showingTeam = false;
+        }
+
+        double Number(string key, double fallback)
+            => double.TryParse(_manager.GetSetting("QuestTeam", key), NumberStyles.Float, CultureInfo.InvariantCulture, out var value) ? value : fallback;
+    }
+
+    private Task SetQuestTeamEnabledAsync(bool on) {
+        if (!_manager.HasSetting("QuestTeam", "Enabled")) {
+            LoadQuestTeamSettings();
+            throw new PanelException("This server's Imlight.ini has no [QuestTeam] section yet. Click \"Update Ahziael\" once, then try again.");
+        }
+
+        _manager.SaveSettings([new Setting("QuestTeam", "Enabled", on ? "true" : "false", "")]);
+        _settings = [];
+        Say(on ? "The Quest Team is on. With the server running, the four wizards log in within a few seconds and start questing."
+            : "The Quest Team is off. The four wizards log out within a few seconds.");
+        RefreshQuestTeam();
+
+        return Task.CompletedTask;
+    }
+
+    private Task SaveQuestTeamNumberAsync(string key, decimal value) {
+        if (!_manager.HasSetting("QuestTeam", key)) {
+            throw new PanelException("This server's Imlight.ini has no [QuestTeam] " + key + " yet. Click \"Update Ahziael\" once, then try again.");
+        }
+
+        var text = key == "SlowFactor" ? ((double) value).ToString("0.0", CultureInfo.InvariantCulture) : ((int) value).ToString(CultureInfo.InvariantCulture);
+        if (_manager.GetSetting("QuestTeam", key) == text) {
+            return Task.CompletedTask;
+        }
+
+        _manager.SaveSettings([new Setting("QuestTeam", key, text, "")]);
+        _settings = [];
+        Say("Saved. The Quest Team uses it right away.");
+
+        return Task.CompletedTask;
+    }
+
+    private async Task RestartQuestTeamAsync() {
+        if (!await ConfirmAsync("Make four new level 1 wizards for the Quest Team? The four they play now are deleted, and the new ones " +
+                                "start again at the beginning of Wizard City. Their issues and quest log stay.")) {
+            return;
+        }
+
+        Directory.CreateDirectory(QuestTeamFolder);
+        await File.WriteAllTextAsync(Path.Combine(QuestTeamFolder, "restart-request.txt"), DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+        Say(InstalledCommands.IsServerRunning(_manager.InstallFolder) && _teamEnabled.IsChecked == true
+            ? "Asked. The team logs out, four new wizards are made, and they log in again within half a minute."
+            : "Asked. Four new wizards are made the next time the Quest Team runs (server started and the Quest Team on).");
+    }
+
+    // ---------------------------------------------------------------------
+    // Team Issues tab
+    // ---------------------------------------------------------------------
+
+    private Control QuestTeamIssuesTab() {
+        StartQuestTeamTimer();
+
+        return Page(Fold("flag", QUEST_TEAM_TAB, "Team Issues",
+            "Everything the Quest Team ran into, newest first: a quest that does not work, the team being stuck, a fight lost " +
+            "again and again, or a quest that took much longer than expected. Each one shows the last lines of the team's log " +
+            "from when it happened, so you can see what led up to it.",
+            Row(Action(Plain("Copy all"), () => CopyAsync(IssuesText(_teamIssueList))), Action(Plain("Open its folder"), () => {
+                Directory.CreateDirectory(QuestTeamFolder);
+
+                return Open(QuestTeamFolder);
+            })),
+            _teamIssuesEmpty,
+            _teamIssues));
+    }
+
+    private static string IssueKind(string kind) => kind switch {
+        "quest" => "Quest problem",
+        "team" => "Quest Team stuck",
+        "slow" => "Taking too long",
+        _ => "Issue",
+    };
+
+    private static string IssuesText(IEnumerable<QuestTeamIssue> issues) {
+        var text = new StringBuilder();
+        foreach (var issue in issues) {
+            text.AppendLine($"#{issue.Id}  {issue.At.ToLocalTime():yyyy-MM-dd HH:mm}  {IssueKind(issue.Kind)}  {issue.Title} {(issue.World.Length > 0 ? $"({issue.World})" : "")}");
+            text.AppendLine(issue.Text);
+            foreach (var line in issue.Log) {
+                text.AppendLine("    " + line);
+            }
+
+            text.AppendLine();
+        }
+
+        return text.ToString();
+    }
+
+    private void ShowQuestTeamIssues() {
+        if (_teamIssuesShown == (_teamIssueList.Count == 0 ? 0 : _teamIssueList.Max(i => i.Id))) {
+            return;
+        }
+
+        _teamIssuesShown = _teamIssueList.Count == 0 ? 0 : _teamIssueList.Max(i => i.Id);
+        _teamIssues.Children.Clear();
+        _teamIssuesEmpty.IsVisible = _teamIssueList.Count == 0;
+        foreach (var issue in _teamIssueList.OrderByDescending(i => i.Id).Take(100)) {
+            var head = new TextBlock {
+                Text = $"{IssueKind(issue.Kind)}: {(issue.Title.Length > 0 ? issue.Title : "the Quest Team")}{(issue.World.Length > 0 ? $" ({issue.World})" : "")}",
+                FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap,
+                Foreground = issue.Kind == "slow" ? ManagerTheme.Accent("Progress") : ManagerTheme.Accent("Create"),
+            };
+            var when = new TextBlock {
+                Text = $"{issue.At.ToLocalTime():dddd d MMMM, HH:mm}{(issue.Quest.Length > 0 ? $"  ·  {issue.Quest}" : "")}",
+                Foreground = MUTED, FontSize = ManagerTheme.FONT_SMALL, TextWrapping = TextWrapping.Wrap,
+            };
+            var body = new TextBlock { Text = issue.Text, TextWrapping = TextWrapping.Wrap };
+            var log = new TextBox {
+                IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12,
+                MaxHeight = 260, Text = issue.Log.Count == 0 ? "(no log lines)" : string.Join('\n', issue.Log),
+            };
+            var logFold = new Expander { Header = "What happened (the team's log)", Content = LogWell(log), HorizontalAlignment = HorizontalAlignment.Stretch };
+            _teamIssues.Children.Add(new Border {
+                Background = ManagerTheme.SURFACE_HIGH_BRUSH, CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(14, 10),
+                Child = new StackPanel { Spacing = 6, Children = { head, when, body, logFold } },
+            });
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Team Logs tab
+    // ---------------------------------------------------------------------
+
+    private Control QuestTeamLogsTab() {
+        StartQuestTeamTimer();
+        _teamQuestLogBox = new TextBox {
+            IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12.5,
+            Height = 300, Text = "Turn the Quest Team on and start the server; every quest it starts and finishes is written here.",
+        };
+        _teamLogBox = new TextBox {
+            IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12.5,
+            Height = 420, Text = "Turn the Quest Team on and start the server; what each wizard does is written here.",
+        };
+
+        return Page(
+            Fold("flag", QUEST_TEAM_TAB, "Quest log",
+                "Every quest the team started and finished, each step, how long it took and how long it was expected to take.",
+                LogWell(_teamQuestLogBox),
+                Row(Action(Plain("Copy all"), () => CopyAsync(_teamQuestLogText)))),
+            Fold("users", QUEST_TEAM_TAB, "Team log",
+                "What each wizard does: where they walk, who they talk to, what they train, each spell they cast in a battle, and " +
+                "why they wait. Updated every 3 seconds.",
+                LogWell(_teamLogBox),
+                Row(Action(Plain("Copy all"), () => CopyAsync(_teamLogText)), Action(Plain("Open its folder"), () => {
+                    Directory.CreateDirectory(QuestTeamFolder);
+
+                    return Open(QuestTeamFolder);
+                }))));
+    }
+
+    // ---------------------------------------------------------------------
+    // The banner at the top of Ahziael
+    // ---------------------------------------------------------------------
+
+    private Control QuestTeamBanner() {
+        var bar = ManagerTheme.GlassPanel(new DockPanel {
+            Children = {
+                WithDock(new StackPanel {
+                    Orientation = Orientation.Horizontal, Spacing = 8,
+                    Children = {
+                        Action(Primary("Show what happened"), () => {
+                            SelectTab(QUEST_TEAM_ISSUES_TAB);
+                            MarkQuestTeamIssuesSeen();
+
+                            return Task.CompletedTask;
+                        }),
+                        Action(Plain("Dismiss"), () => {
+                            MarkQuestTeamIssuesSeen();
+
+                            return Task.CompletedTask;
+                        }),
+                    },
+                }, Dock.Right),
+                WithDock(WithMargin(ManagerTheme.Tile("flag", ManagerTheme.Accent("Create"), 26), new Thickness(0, 0, 10, 0)), Dock.Left),
+                WithCenter(_teamBannerText),
+            },
+        }, 14);
+        bar.Padding = new Thickness(12, 6);
+        bar.Margin = new Thickness(12, 8, 12, 0);
+        _teamBanner.Child = bar;
+        StartQuestTeamTimer();
+
+        return _teamBanner;
+    }
+
+    private int QuestTeamIssuesSeen() {
+        try {
+            var path = Path.Combine(QuestTeamFolder, "issues-seen.txt");
+
+            return File.Exists(path) && int.TryParse(File.ReadAllText(path).Trim(), out var seen) ? seen : 0;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return int.MaxValue;
+        }
+    }
+
+    private void MarkQuestTeamIssuesSeen() {
+        var newest = _teamIssueList.Count == 0 ? 0 : _teamIssueList.Max(i => i.Id);
+        try {
+            Directory.CreateDirectory(QuestTeamFolder);
+            File.WriteAllText(Path.Combine(QuestTeamFolder, "issues-seen.txt"), newest.ToString(CultureInfo.InvariantCulture));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // Shown again next time; nothing lost.
+        }
+
+        _teamBanner.IsVisible = false;
+    }
+
+    // ---------------------------------------------------------------------
+    // Reading the team's files
+    // ---------------------------------------------------------------------
+
+    private void RefreshQuestTeam() {
+        ReadQuestTeamIssues();
+
+        // The banner: issues newer than the last one Ahziael showed.
+        var seen = QuestTeamIssuesSeen();
+        var fresh = _teamIssueList.Where(i => i.Id > seen).OrderBy(i => i.Id).ToList();
+        if (_teamIssues.IsEffectivelyVisible) {
+            ShowQuestTeamIssues();
+            if (fresh.Count > 0) {
+                MarkQuestTeamIssuesSeen();
+                fresh.Clear();
+            }
+        }
+
+        if (fresh.Count > 0) {
+            var last = fresh[^1];
+            _teamBannerText.Text = (fresh.Count == 1 ? "An issue with the Quest Team has occurred: " : $"{fresh.Count} issues with the Quest Team have occurred. Newest: ") +
+                                   $"{IssueKind(last.Kind).ToLowerInvariant()}, {(last.Title.Length > 0 ? last.Title : "the Quest Team")}. {last.Text}";
+        }
+
+        _teamBanner.IsVisible = fresh.Count > 0;
+
+        if (_teamState.IsEffectivelyVisible) {
+            ShowQuestTeamStatus();
+        }
+
+        if (_teamLogBox?.IsEffectivelyVisible == true) {
+            ShowLog(_teamLogBox, ReadNewest("quest-team*.txt", _teamLogText), ref _teamLogText);
+            ShowLog(_teamQuestLogBox!, ReadNewest("quest-log.txt", _teamQuestLogText), ref _teamQuestLogText);
+        }
+
+        static void ShowLog(TextBox box, string text, ref string shown) {
+            if (text == shown || text.Length == 0) {
+                return;
+            }
+
+            shown = text;
+            box.Text = string.Join('\n', text.Split('\n').TakeLast(QUEST_TEAM_LOG_LINES));
+            box.CaretIndex = box.Text.Length;
+        }
+    }
+
+    private void ReadQuestTeamIssues() {
+        try {
+            var path = Path.Combine(QuestTeamFolder, "issues.json");
+            if (!File.Exists(path)) {
+                _teamIssueList = [];
+
+                return;
+            }
+
+            var written = File.GetLastWriteTimeUtc(path);
+            if (written == _teamIssuesWritten) {
+                return;
+            }
+
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            _teamIssueList = JsonSerializer.Deserialize<List<QuestTeamIssue>>(stream) ?? [];
+            _teamIssuesWritten = written;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException) {
+            // Being written right now: read it on the next tick.
+        }
+    }
+
+    private void ShowQuestTeamStatus() {
+        JsonObject? status = null;
+        try {
+            var path = Path.Combine(QuestTeamFolder, "status.json");
+            if (File.Exists(path)) {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                status = JsonNode.Parse(stream) as JsonObject;
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException) {
+            return;
+        }
+
+        var at = DateTime.TryParse((string?) status?["at"], CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var written)
+            ? written.ToUniversalTime() : DateTime.MinValue;
+        var live = status is not null && DateTime.UtcNow - at < TimeSpan.FromSeconds(30);
+        var running = InstalledCommands.IsServerRunning(_manager.InstallFolder);
+        var on = _teamEnabled.IsChecked == true;
+
+        _teamState.Text = !running ? "The server is not running, so the Quest Team is not either."
+            : !on ? "Off: the Quest Team is not playing."
+            : live ? $"Playing. {Capital((string?) status!["why"] ?? "")}".TrimEnd()
+            : "Starting: the server starts the Quest Team within a few seconds, then the four wizards log in one after the other.";
+        _teamState.Foreground = running && on && live ? ManagerTheme.Accent("good") : MUTED;
+
+        _teamDoing.IsVisible = _teamQuest.IsVisible = _teamMembers.IsVisible = running && on && live;
+        if (!_teamDoing.IsVisible) {
+            return;
+        }
+
+        _teamDoing.Text = "Doing now: " + ((string?) status!["doing"] ?? "-");
+        var quest = (string?) status["quest"] ?? "";
+        var questFor = (int?) status["questFor"] ?? 0;
+        var expected = (int?) status["questExpected"] ?? 0;
+        _teamQuest.Text = quest.Length == 0 ? "Quest: none right now."
+            : $"Quest: {quest}, for {Minutes(questFor)} so far" + (expected > 0 ? $" (expected about {Minutes(expected)})." : ".");
+        _teamQuest.Foreground = expected > 0 && questFor > expected * (double) (_teamSlow.Value ?? 2) ? ManagerTheme.Accent("Create") : ManagerTheme.TEXT_BRUSH;
+
+        _teamMembers.Children.Clear();
+        foreach (var node in status["members"] as JsonArray ?? []) {
+            if (node is not JsonObject member) {
+                continue;
+            }
+
+            var role = (string?) member["role"] ?? "";
+            var line = $"{role}  ·  {(string?) member["name"]}  ·  level {(int?) member["level"] ?? 0}  ·  {(string?) member["zone"]}  ·  " +
+                       $"health {(string?) member["health"]}  ·  {(int?) member["gold"] ?? 0} gold  ·  {(int?) member["training"] ?? 0} training points  ·  " +
+                       $"{(int?) member["quests"] ?? 0} quests" + ((bool?) member["battle"] == true ? "  ·  in a battle" : "") +
+                       ((string?) member["state"] is { } state && state != "playing" ? $"  ·  {state}" : "");
+            _teamMembers.Children.Add(new Border {
+                Background = ManagerTheme.SURFACE_HIGH_BRUSH, CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(12, 6),
+                Child = new TextBlock { Text = line, TextWrapping = TextWrapping.Wrap },
+            });
+        }
+
+        static string Capital(string text) => text.Length == 0 ? "" : char.ToUpperInvariant(text[0]) + text[1..];
+        static string Minutes(int seconds) => seconds < 90 ? $"{seconds} seconds" : $"{seconds / 60} minutes";
+    }
+
+    private string ReadNewest(string pattern, string fallback) {
+        try {
+            var file = Directory.Exists(QuestTeamFolder)
+                ? new DirectoryInfo(QuestTeamFolder).EnumerateFiles(pattern).OrderByDescending(f => f.LastWriteTimeUtc).FirstOrDefault()
+                : null;
+            if (file is null) {
+                return "";
+            }
+
+            using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            stream.Seek(Math.Max(0, stream.Length - 128 * 1024), SeekOrigin.Begin);
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+
+            return reader.ReadToEnd().ReplaceLineEndings("\n").TrimEnd();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return fallback;
+        }
+    }
+
+}
