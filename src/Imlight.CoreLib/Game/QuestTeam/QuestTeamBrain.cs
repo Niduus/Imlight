@@ -66,6 +66,11 @@ public static class QuestTeamBrain {
         public string Title { get; set; } = "";
         public string World { get; set; } = "";
         public string Text { get; set; } = "";
+        // What a player would do and see at that step (Niduus, 2026-11-12: "with expected behavior noted ... so I can
+        // find the intended behavior in a human stance").
+        public string Expected { get; set; } = "";
+        // Where each wizard was and what it held when it happened.
+        public List<string> Seen { get; set; } = [];
         // The last lines of the team's log when it happened, so Ahziael shows what led up to it.
         public List<string> Log { get; set; } = [];
     }
@@ -314,6 +319,8 @@ public static class QuestTeamBrain {
                 Title = request.Title ?? "",
                 World = request.World ?? "",
                 Text = request.Text ?? "",
+                Expected = request.Expected ?? "",
+                Seen = request.Seen ?? [],
                 Log = [.. s_recent],
             };
             s_issues.Add(issue);

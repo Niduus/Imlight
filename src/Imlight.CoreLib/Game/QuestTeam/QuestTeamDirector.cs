@@ -474,6 +474,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         _currentQuest = QuestTeamPlanner.PickQuest(_team);
+        CheckInStep(_currentQuest);
         if (_currentQuest is not null) {
             var target = QuestTeamPlanner.ForQuest(group, _currentQuest);
             if (target is not null) {
@@ -493,6 +494,61 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         return null;
+    }
+
+    private string _apartQuestKey = "";
+    private DateTime _apartQuestSince = DateTime.MaxValue;
+
+    // All four are on the same quest and the same step at all times (Niduus, 2026-11-12: "QT members will never advance
+    // ahead of another. All of them are required on the same quest at all times. If a quest fails, it is a alert of which
+    // one failed at what quest and why"). A short gap is normal (one talks before the next); a long one is an issue
+    // naming the wizard that is off.
+    private void CheckInStep(string quest) {
+        if (string.IsNullOrEmpty(quest)) {
+            _apartQuestKey = "";
+            _apartQuestSince = DateTime.MaxValue;
+
+            return;
+        }
+
+        var where = _team.Select(m => {
+            var held = m.Wizard?.QuestBehavior?.CurrentQuestInstances?.FirstOrDefault(q => q is not null
+                && string.Equals(q.QuestName, quest, StringComparison.OrdinalIgnoreCase));
+            if (held is null) {
+                return (Member: m, Step: m.Wizard?.HasCompletedQuest(quest) == true ? "finished it (ahead)" : "does not have it");
+            }
+
+            var goals = held.GoalProgress?.Where(g => g is not null && held.IsGoalActive(g.GoalName)).Select(g => (string) g.GoalName).OrderBy(g => g).ToList() ?? [];
+
+            return (Member: m, Step: goals.Count == 0 ? "no step open" : string.Join(", ", goals));
+        }).ToList();
+        var common = where.GroupBy(w => w.Step).OrderByDescending(g => g.Count()).First().Key;
+        var off = where.Where(w => w.Step != common).ToList();
+        var key = quest + "|" + string.Join(";", off.Select(o => o.Member.Role + "=" + o.Step));
+        if (off.Count == 0) {
+            _apartQuestKey = "";
+            _apartQuestSince = DateTime.MaxValue;
+
+            return;
+        }
+
+        if (key != _apartQuestKey) {
+            _apartQuestKey = key;
+            _apartQuestSince = DateTime.UtcNow;
+
+            return;
+        }
+
+        if (DateTime.UtcNow - _apartQuestSince < TimeSpan.FromMinutes(2)) {
+            return;
+        }
+
+        foreach (var (member, step) in off) {
+            Issue("quest", quest, $"{member.Name} ({member.Role}) is not on the same step of {QuestTeamText.Title(quest)} as the others: " +
+                                  $"it {(step.Contains(' ') ? step : "is on " + step)}, while the others are on {common}. " +
+                                  "The step that would bring it level did not work for it.",
+                key: $"apart|{quest}|{member.Role}|{step}");
+        }
     }
 
     private QuestTeamPlanner.Target TrainingTarget(List<QuestTeamMember.Status> group) {
@@ -1096,7 +1152,50 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         _reported[key] = DateTime.UtcNow;
         var template = string.IsNullOrEmpty(quest) ? null : QuestTemplateCollection.GetQuestByName(quest);
         QuestTeamLink.Issue(kind, quest ?? "", string.IsNullOrEmpty(quest) ? "" : QuestTeamText.Title(quest),
-            template is null ? "" : QuestStory.WorldOf(template), text);
+            template is null ? "" : QuestStory.WorldOf(template), text, Expected(kind, _target), Seen(quest));
+    }
+
+    /// <summary>What a player would do and see at the step the team is on, in plain words, for an issue.</summary>
+    private static string Expected(string kind, QuestTeamPlanner.Target target) {
+        if (kind == "slow") {
+            return "A player finishes this quest in about the time it took before (the expected time above).";
+        }
+
+        if (target is null) {
+            return kind == "team"
+                ? "A player always has a story quest to follow: the quest arrow points to the next step, and a quest giver offers the next quest."
+                : "A player can do every step of the quest from what is in the game.";
+        }
+
+        var step = $"\"{target.What}\"";
+        return target.Kind switch {
+            QuestTeamPlanner.TALK => $"A player walks to the NPC the quest arrow points at for {step}, clicks it, reads the dialog, and the step is done.",
+            QuestTeamPlanner.OFFER => $"A player walks to the quest giver, clicks it and is offered the quest {QuestTeamText.Title(target.Quest)}.",
+            QuestTeamPlanner.FIGHT => $"A player walks into the creature for {step}; a battle starts, and winning it counts for the step. " +
+                                      "Several players together win it within a few tries.",
+            QuestTeamPlanner.USE => $"A player walks to the quest arrow's spot for {step}, clicks the object there, and the step is done.",
+            QuestTeamPlanner.SPOT => $"A player walks to the place the quest arrow points at for {step}, and the step is done on arrival.",
+            QuestTeamPlanner.EXIT or QuestTeamPlanner.DOOR or QuestTeamPlanner.SPIRAL =>
+                $"A player can walk from where they stand to {QuestTeamText.Zone(target.To)} through this way for {step}.",
+            QuestTeamPlanner.TRAIN => "A player walks to the trainer, opens the training window and learns the spell with training points.",
+            QuestTeamPlanner.SHOP => "A player walks to the shop, opens it and buys the item with gold.",
+            _ => $"A player can do {step} from what is in the game.",
+        };
+    }
+
+    /// <summary>Where each wizard was and what it held for the quest when the issue came up.</summary>
+    private List<string> Seen(string quest) {
+        var lines = new List<string>();
+        foreach (var member in _team) {
+            var held = string.IsNullOrEmpty(quest) ? null : member.Wizard?.QuestBehavior?.CurrentQuestInstances?
+                .FirstOrDefault(q => q is not null && string.Equals(q.QuestName, quest, StringComparison.OrdinalIgnoreCase));
+            var goals = held?.GoalProgress?.Where(g => g is not null && held.IsGoalActive(g.GoalName)).Select(g => (string) g.GoalName).ToList() ?? [];
+            lines.Add($"{member.Role} {member.Name}: level {member.Wizard?.MagicSchoolBehavior?.Level ?? 0}, {member.State}, " +
+                      $"{QuestTeamText.Zone(member.Zone)} at ({member.X:0}, {member.Y:0}){(CombatDuelComponent.IsInBattle(member.GlobalId) ? ", in a battle" : "")}" +
+                      (string.IsNullOrEmpty(quest) ? "" : held is null ? ", does not hold the quest" : $", on step {(goals.Count == 0 ? "(none active)" : string.Join(", ", goals))}"));
+        }
+
+        return lines;
     }
 
     private void WriteStatus(string state, string why) {

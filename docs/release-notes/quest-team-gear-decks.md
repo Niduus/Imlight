@@ -52,3 +52,13 @@ Fixed: Quest Team blades the right wizards
 Teammates now only blade the team's hitters, Storm first and then Death. They used to blade whoever was in the first circle.
 Where: in a Quest Team battle
 Test: Watch a Quest Team fight. Life and Ice should put blades on Storm (or Death), never on Ice.
+
+New: Quest Team issues say what a player would expect
+Each issue on Team Issues now says what a player would do and see at that step ("Expected, as a player: ..."), and where each of the four wizards was, what level, and which step of the quest it was on. This lets you check the step yourself as a player.
+Where: Quest Team > Team Issues
+Test: When an issue shows, open it. Under the problem you should see the "Expected, as a player" line and one line per wizard.
+
+New: The Quest Team stays on the same quest together
+All four always work on the same quest and the same step. If one of them is on a different step (or finished the quest ahead of the others) for more than two minutes, an issue names that wizard, the quest, and where it is versus the others. They also turn down quests that are not the team's story (side quests and quests of other worlds), so nobody gets ahead.
+Where: Quest Team > Team Issues, Team Logs ("leaves it (not the team's story)")
+Test: Let the team play a while. Their quest and step on the Quest Team page should always match.

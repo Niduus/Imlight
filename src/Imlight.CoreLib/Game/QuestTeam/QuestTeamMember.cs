@@ -264,6 +264,15 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
         Receive<GAME_5_PROTOCOL.MSG_LEAVESERVICERANGE>(m => View.Options.TryRemove(m.MobileID, out _));
         Receive<QUEST_MESSAGES_52_PROTOCOL.MSG_QUESTOFFER>(m => {
             string quest = m.QuestName;
+            // Only the story the whole team follows; a side quest or another world's quest is left (so nobody gets ahead).
+            var template = QuestTemplateCollection.GetQuestByName(quest);
+            if (template is null || !Tools.QuestStory.IsMain(template) || !QuestTeamPlanner.IsMainStoryWorld(template)) {
+                Note($"is offered {QuestTeamText.Title(quest)}; leaves it (not the team's story)");
+                Send(new QUEST_MESSAGES_52_PROTOCOL.MSG_DECLINEQUEST { QuestName = quest });
+
+                return;
+            }
+
             Note($"is offered {QuestTeamText.Title(quest)}; accepts it");
             // A moment to "read" the offer, as a player does.
             Timers.StartSingleTimer("offer-" + quest, new AcceptOffer(m.MobileID, quest), TimeSpan.FromSeconds(1.2));

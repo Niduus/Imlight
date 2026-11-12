@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Generic;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -263,9 +264,10 @@ public static class QuestTeamLink {
     }
 
     /// <summary>Tells the brain of an issue, which Ahziael announces.</summary>
-    internal static void Issue(string kind, string quest, string title, string world, string text) {
-        Logger.Warning("Quest Team | ISSUE ({0}) {1}: {2}", Logger.Args(kind, string.IsNullOrEmpty(title) ? quest : title, text));
-        Send(new TeamRequest { Op = "issue", Kind = kind, Quest = quest, Title = title, World = world, Text = text });
+    internal static void Issue(string kind, string quest, string title, string world, string text, string expected = "",
+                               List<string> seen = null) {
+        Logger.Warning("Quest Team | ISSUE ({0}) {1}: {2} Expected: {3}", Logger.Args(kind, string.IsNullOrEmpty(title) ? quest : title, text, expected));
+        Send(new TeamRequest { Op = "issue", Kind = kind, Quest = quest, Title = title, World = world, Text = text, Expected = expected, Seen = seen ?? [] });
     }
 
     /// <summary>Tells the brain without waiting for its answer.</summary>
