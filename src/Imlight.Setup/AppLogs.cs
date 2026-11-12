@@ -22,6 +22,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -61,7 +62,7 @@ internal static partial class AppLogs {
         s_installFolder = installFolder;
         WriteReadme(installFolder);
         AppDomain.CurrentDomain.UnhandledException += (_, e) =>
-            Error("Ahziael stopped because of an error", e.ExceptionObject as Exception, e.ExceptionObject?.ToString());
+            Error("Ahziael stopped because of an error", e.ExceptionObject as Exception, e.ExceptionObject?.ToString(), CRASH);
         TaskScheduler.UnobservedTaskException += (_, e) => {
             Error("An error in the background (Ahziael kept running)", e.Exception);
             e.SetObserved();
@@ -100,25 +101,191 @@ internal static partial class AppLogs {
         }
     }
 
-    /// <summary>Writes an error to today's Ahziael log (Logs\Ahziael\ahziael-yyyy-MM-dd.txt).</summary>
-    internal static void Error(string what, Exception? ex, string? extra = null) {
+    // What kind of thing went wrong, as Server > Logs > "Ahziael's crashes and refusals" shows it (Niduus, 2026-11-12:
+    // "provide Ahziael logs section that log when the program crashes or refuses").
+    /// <summary>Ahziael (or a part of it, such as its window or a tab) stopped.</summary>
+    internal const string CRASH = "Crash";
+    /// <summary>Something failed but Ahziael kept running.</summary>
+    internal const string ERROR = "Error";
+    /// <summary>Ahziael said no: the red line at the bottom of the window.</summary>
+    internal const string REFUSED = "Refused";
+    /// <summary>The server stopped by itself.</summary>
+    internal const string SERVER_STOPPED = "Server stopped";
+
+    /// <summary>One thing that went wrong, as the Logs list shows it.</summary>
+    internal sealed record Event(DateTime Time, string Kind, string What, string Details, string Version, string? File = null);
+
+    /// <summary>Raised (on any thread) each time something is written, so an open Logs list shows it right away.</summary>
+    internal static event Action? Logged;
+
+    // When each message was last written, so the same one within a few minutes is not written again.
+    private static readonly Dictionary<string, DateTime> s_recent = [];
+    private static readonly TimeSpan SAME_AGAIN = TimeSpan.FromMinutes(5);
+
+    /// <summary>Writes an error to today's Ahziael log (Logs\Ahziael\ahziael-yyyy-MM-dd.txt) and to the Logs list.</summary>
+    internal static void Error(string what, Exception? ex, string? extra = null, string kind = ERROR) {
         if (s_installFolder is not { } install) {
             return;
         }
 
         try {
+            var details = ex?.ToString() ?? extra ?? "";
             var text = new StringBuilder()
-                .Append($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {Edition.NAME} {SelfUpdate.CurrentVersion}: {what}").AppendLine()
-                .AppendLine(ex?.ToString() ?? extra ?? "(no details)")
+                .Append($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {Edition.NAME} {SelfUpdate.CurrentVersion}: [{kind}] {what}").AppendLine()
+                .AppendLine(details.Length > 0 ? details : "(no details)")
                 .AppendLine();
             var folder = Path.Combine(Folder(install), "Ahziael");
             lock (s_lock) {
+                // The same thing again (same kind, message and first line of details) within a few minutes is written
+                // once: one broken box that fails each time it is drawn would fill the list with hundreds of copies.
+                var key = kind + "|" + what + "|" + details.Split('\n', 2)[0];
+                if (s_recent.TryGetValue(key, out var last) && DateTime.UtcNow - last < SAME_AGAIN) {
+                    return;
+                }
+
+                s_recent[key] = DateTime.UtcNow;
                 Directory.CreateDirectory(folder);
-                File.AppendAllText(Path.Combine(folder, $"ahziael-{DateTime.Now:yyyy-MM-dd}.txt"), Scrub(text.ToString()));
+                Append(Path.Combine(folder, $"ahziael-{DateTime.Now:yyyy-MM-dd}.txt"), Scrub(text.ToString()));
+                var line = JsonSerializer.Serialize(new Event(DateTime.Now, kind, Scrub(what), Scrub(details), SelfUpdate.CurrentVersion.ToString()));
+                Append(Path.Combine(folder, $"{EVENTS}{DateTime.Now:yyyy-MM-dd}.jsonl"), line + "\n");
             }
+
+            Logged?.Invoke();
         }
         catch (Exception) {
             // Writing the log must never be what stops the app.
+        }
+    }
+
+    /// <summary>Ahziael said no (a red line at the bottom of the window): written to the Logs list too.</summary>
+    internal static void Refused(string text) => Error(text, null, kind: REFUSED);
+
+    private const string EVENTS = "events-";
+    private const string CLEARED = ".list-cleared";
+
+    // Ahziael, its overlay and the server's start window can write at the same moment: try again for a moment.
+    private static void Append(string file, string text) {
+        for (var attempt = 0; ; attempt++) {
+            try {
+                File.AppendAllText(file, text);
+
+                return;
+            }
+            catch (IOException) when (attempt < 5) {
+                System.Threading.Thread.Sleep(20);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Everything in the Logs list, newest first: Ahziael's crashes, errors and refusals, and the server's crash reports,
+    /// from the last 30 days and since the list was last cleared.
+    /// </summary>
+    internal static List<Event> ReadEvents(string installFolder) {
+        var events = new List<Event>();
+        var root = Folder(installFolder);
+        var since = DateTime.Now.AddDays(-KEEP_DAYS);
+        try {
+            var cleared = Path.Combine(root, CLEARED);
+            if (File.Exists(cleared) && DateTime.TryParse(File.ReadAllText(cleared).Trim(), System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.RoundtripKind, out var at) && at.ToLocalTime() > since) {
+                since = at.ToLocalTime();
+            }
+        }
+        catch (Exception) {
+            // Without the note the whole month shows.
+        }
+
+        var ahziael = Path.Combine(root, "Ahziael");
+        if (Directory.Exists(ahziael)) {
+            foreach (var file in Directory.EnumerateFiles(ahziael, EVENTS + "*.jsonl")) {
+                foreach (var line in ReadShared(file).Split('\n')) {
+                    if (line.Trim().Length == 0) {
+                        continue;
+                    }
+
+                    try {
+                        if (JsonSerializer.Deserialize<Event>(line) is { } e && e.Time > since) {
+                            events.Add(e);
+                        }
+                    }
+                    catch (JsonException) {
+                        // A line cut short (the app stopped while writing it) is left out.
+                    }
+                }
+            }
+        }
+
+        var server = Path.Combine(root, "Server");
+        if (Directory.Exists(server)) {
+            foreach (var file in new DirectoryInfo(server).EnumerateFiles("server-stopped-*.txt").Where(f => f.LastWriteTime > since)) {
+                var text = ReadShared(file.FullName);
+                var first = text.ReplaceLineEndings("\n").Split('\n')[0];
+                var what = first.Length > 20 ? first[20..] : first;
+                var version = text.ReplaceLineEndings("\n").Split('\n').Skip(1).FirstOrDefault()?.Split(' ').LastOrDefault() ?? "";
+                events.Add(new Event(file.LastWriteTime, SERVER_STOPPED, what, text, version, file.FullName));
+            }
+        }
+
+        return events.OrderByDescending(e => e.Time).ToList();
+    }
+
+    /// <summary>Empties the Logs list. The log files themselves stay, so "Make a zip to send" still has them.</summary>
+    internal static void ClearList(string installFolder) {
+        Directory.CreateDirectory(Folder(installFolder));
+        File.WriteAllText(Path.Combine(Folder(installFolder), CLEARED), DateTime.UtcNow.ToString("O"));
+        Logged?.Invoke();
+    }
+
+    private static string ReadShared(string file) {
+        try {
+            using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            using var reader = new StreamReader(stream);
+
+            return reader.ReadToEnd();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return "";
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Opening safely
+    // ---------------------------------------------------------------------
+
+    private const string OPENING = ".ahziael-opening";
+
+    /// <summary>
+    /// Notes that Ahziael's window is being opened. If the app vanishes before <see cref="Opened"/> (a crash no error
+    /// could catch), the note is still there next time: <see cref="LastOpenFailed"/> says so and Ahziael opens in safe start.
+    /// </summary>
+    internal static void Opening(string installFolder) {
+        try {
+            Directory.CreateDirectory(Folder(installFolder));
+            File.WriteAllText(Path.Combine(Folder(installFolder), OPENING), DateTime.UtcNow.ToString("O"));
+        }
+        catch (Exception) {
+            // Without the note there is no safe start next time; nothing else changes.
+        }
+    }
+
+    /// <summary>The window is open: the note from <see cref="Opening"/> is taken away.</summary>
+    internal static void Opened(string installFolder) {
+        try {
+            File.Delete(Path.Combine(Folder(installFolder), OPENING));
+        }
+        catch (Exception) {
+            // Next time opens in safe start once; nothing else changes.
+        }
+    }
+
+    /// <summary>True when the last time Ahziael was opened, it closed before its window showed.</summary>
+    internal static bool LastOpenFailed(string installFolder) {
+        try {
+            return File.Exists(Path.Combine(Folder(installFolder), OPENING));
+        }
+        catch (Exception) {
+            return false;
         }
     }
 
@@ -143,6 +310,7 @@ internal static partial class AppLogs {
             Directory.CreateDirectory(folder);
             var file = Path.Combine(folder, $"server-stopped-{DateTime.Now:yyyy-MM-dd HH-mm-ss}.txt");
             File.WriteAllText(file, Scrub(text.ToString()));
+            Logged?.Invoke();
 
             return file;
         }
@@ -268,7 +436,7 @@ internal static partial class AppLogs {
             Directory.CreateDirectory(Folder(installFolder));
             File.WriteAllText(file,
                 "Crash and error logs for Imlight, Ahziael, Aurorium, Imcodec and SpiralDB.\r\n\r\n" +
-                "Ahziael\\  errors and crashes of the Ahziael app.\r\n" +
+                "Ahziael\\  crashes, errors and refusals of the Ahziael app (shown in Ahziael under Server > Logs).\r\n" +
                 "Server\\   a report each time the server stopped by itself, with the last lines it wrote.\r\n" +
                 "          (Imcodec and SpiralDB run inside the server, so their errors are in these reports and in Server\\logs.)\r\n\r\n" +
                 "To send them: in Ahziael go to Server > Logs and click \"Make a zip to send\". The zip lands on your desktop\r\n" +
@@ -287,8 +455,8 @@ internal static partial class AppLogs {
                 return;
             }
 
-            foreach (var file in new DirectoryInfo(Folder(install)).EnumerateFiles("*.txt", SearchOption.AllDirectories)
-                         .Where(f => f.LastWriteTime < DateTime.Now.AddDays(-KEEP_DAYS))) {
+            foreach (var file in new DirectoryInfo(Folder(install)).EnumerateFiles("*", SearchOption.AllDirectories)
+                         .Where(f => f.Extension is ".txt" or ".jsonl" && f.LastWriteTime < DateTime.Now.AddDays(-KEEP_DAYS))) {
                 file.Delete();
             }
         }

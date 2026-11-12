@@ -178,6 +178,16 @@ internal static class OverlayHost {
     internal static string InstallFolder => s_installFolder;
 
     /// <summary>Starts the overlay with the saved design. Only on Windows; elsewhere it does nothing.</summary>
+    /// <summary>
+    /// Knows the install and its overlay design, without drawing over the game (Ahziael's safe start): the overlay
+    /// pages can still be edited and saved.
+    /// </summary>
+    internal static void LoadOnly(string installFolder) {
+        s_installFolder = installFolder;
+        s_design = OverlayDesign.Load(installFolder);
+        s_designFileTime = FileTime(OverlayDesign.PathIn(installFolder));
+    }
+
     internal static void Start(string installFolder, bool standalone = false) {
         s_installFolder = installFolder;
         Standalone = standalone;

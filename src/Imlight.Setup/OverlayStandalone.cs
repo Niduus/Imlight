@@ -43,6 +43,7 @@ internal static class OverlayStandalone {
     private static OverlayDesignerWindow? s_designer;
 
     internal static int Run(string installFolder) {
+        AppLogs.Start(installFolder);
         var exitCode = 0;
         var ui = new Thread(() => {
             try {
@@ -50,7 +51,7 @@ internal static class OverlayStandalone {
                 ManagerApp.BuildApp().StartWithClassicDesktopLifetime([], ShutdownMode.OnExplicitShutdown);
             }
             catch (Exception ex) {
-                AppLogs.Error($"{NAME} stopped", ex);
+                AppLogs.Error($"{NAME} stopped", ex, kind: AppLogs.CRASH);
                 exitCode = 1;
             }
         });
@@ -183,6 +184,10 @@ internal sealed class OverlayDesignerWindow : Window {
     }
 
     private void Say(string text, bool isError) {
+        if (isError) {
+            AppLogs.Refused(text);
+        }
+
         _message.Text = text;
         _messageBar.Background = isError ? new SolidColorBrush(Color.FromRgb(0x8E, 0x2A, 0x2A)) : ManagerTheme.SURFACE_HIGH_BRUSH;
         _messageBar.IsVisible = true;

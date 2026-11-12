@@ -48,15 +48,34 @@ internal sealed class ManagerApp : Application {
     internal static int Run(string installFolder, bool startServer = false) {
         StartServerOnOpen = startServer;
         Console.Title = Edition.NAME;
-        var manager = new ServerManager(installFolder);
-        if (!manager.IsInstalled) {
-            Console.WriteLine($"Imlight is not installed in {installFolder} yet. Run {Edition.RELEASE_ASSET} first.");
+        // Written down from the very first step, so even a start that fails before the window shows leaves a reason
+        // (Niduus, 2026-11-12: a player's Ahziael flashed in the taskbar and closed, with nothing to go on).
+        AppLogs.Start(installFolder);
+        ServerManager manager;
+        try {
+            manager = new ServerManager(installFolder);
+            if (!manager.IsInstalled) {
+                StartupSafety.NotInstalled(installFolder, manager.ConfigFile);
+
+                return 1;
+            }
+        }
+        catch (Exception ex) {
+            StartupSafety.CouldNotOpen(installFolder, ex, windowWasOpen: false);
 
             return 1;
         }
 
         s_manager = manager;
-        AppLogs.Start(installFolder);
+        // The last start closed before its window showed and before any error could be written: this time the parts
+        // that hook into the game wait, and the window says so.
+        SafeStart = AppLogs.LastOpenFailed(installFolder);
+        if (SafeStart) {
+            AppLogs.Error($"Last time {Edition.NAME} closed while it was opening, before it could say why. It opened in safe start this time.",
+                null, "Safe start leaves the game overlay off until the next time Ahziael opens.", AppLogs.CRASH);
+        }
+
+        AppLogs.Opening(installFolder);
         var exitCode = 0;
         var crashed = false;
 
@@ -66,10 +85,9 @@ internal sealed class ManagerApp : Application {
                 BuildApp().StartWithClassicDesktopLifetime([]);
             }
             catch (Exception ex) {
-                AppLogs.Error($"The {Edition.NAME} window stopped", ex);
-                Console.WriteLine($"The {Edition.NAME} window could not be opened: {ex.Message}");
                 exitCode = 1;
                 crashed = true;
+                StartupSafety.CouldNotOpen(installFolder, ex, WindowShown);
             }
         });
         if (OperatingSystem.IsWindows()) {
@@ -78,6 +96,8 @@ internal sealed class ManagerApp : Application {
 
         ui.Start();
         ui.Join();
+        // Closed normally, or the reason is written down already: no safe start next time.
+        AppLogs.Opened(installFolder);
         RemoteSession.Deactivate();
         // A window that stopped because of an error leaves the server running: players stay in the game, and opening
         // Ahziael again shows it (a tester's server stopped each time Ahziael did, 2026-11-09).
@@ -87,6 +107,12 @@ internal sealed class ManagerApp : Application {
 
         return exitCode;
     }
+
+    /// <summary>True when the last start closed before its window showed: the game overlay waits until the next start.</summary>
+    internal static bool SafeStart { get; private set; }
+
+    /// <summary>True once Ahziael's window has shown, so a later error is "the window stopped", not "could not open".</summary>
+    internal static bool WindowShown { get; set; }
 
     internal static AppBuilder BuildApp()
         => AppBuilder.Configure<ManagerApp>().UsePlatformDetect().WithInterFont().AfterSetup(_ => KeepWindowOnErrors());
