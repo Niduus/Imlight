@@ -198,10 +198,14 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
         var grid = ZoneNav.Points(_info.ZonePath);
         if (grid.Length > 0) {
             // Places of the street's own walk grid within its range, spread apart, clear of walls.
+            // Only places on its paths, away from water (Niduus, 2026-11-12: a bot stood in a pond), and among them the
+            // open ones more often: a square, a shop front, a wide street.
             var near = grid.Where(p => NVector3.Distance(p, home) <= _radius && MathF.Abs(p.Z - home.Z) < 400).ToArray();
-            for (var tries = 0; tries < count * 12 && _loop.Count < count && near.Length > 0; tries++) {
+            for (var tries = 0; tries < count * 20 && _loop.Count < count && near.Length > 0; tries++) {
                 var p = near[Random.Shared.Next(near.Length)];
                 if (!NearAvoided(p) && _loop.All(q => NVector3.Distance(p, q) > _radius / 4)
+                    && BotGround.GoodSpot(_info.ZonePath, p)
+                    && (Random.Shared.Next(3) == 0 || BotGround.Openness(_info.ZonePath, p) >= 30)
                     && ZoneCollision.Clearance(_info.ZonePath, p) >= WALL_CLEARANCE) {
                     _loop.Add(p);
                 }
@@ -213,7 +217,8 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
                 var angle = start + (MathF.Tau * i / count);
                 var reach = _radius * (0.4f + (Random.Shared.NextSingle() * 0.6f));
                 var wanted = new NVector3(home.X + (MathF.Cos(angle) * reach), home.Y + (MathF.Sin(angle) * reach), home.Z);
-                if (ZoneCollision.Clearance(_info.ZonePath, wanted) >= WALL_CLEARANCE && !NearAvoided(wanted)) {
+                if (ZoneCollision.Clearance(_info.ZonePath, wanted) >= WALL_CLEARANCE && !NearAvoided(wanted)
+                    && BotGround.CanStep(_info.ZonePath, wanted)) {
                     _loop.Add(wanted);
                 }
             }
@@ -360,10 +365,11 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
                 var left = NVector3.Distance(at, destination);
                 var here = at;
                 var next = grid
-                    .Where(p => MathF.Abs(p.Z - here.Z) < 120)
+                    .Where(p => MathF.Abs(p.Z - here.Z) < 120 && BotGround.CanStep(_info.ZonePath, p))
                     .Select(p => (Point: p, Step: NVector3.Distance(p, here), Left: NVector3.Distance(p, destination)))
                     .Where(x => x.Step is >= HOP_MIN and <= HOP_MAX && x.Left < left - 40
-                                && ZoneCollision.Clearance(_info.ZonePath, (x.Point + here) / 2) >= 20)
+                                && ZoneCollision.Clearance(_info.ZonePath, (x.Point + here) / 2) >= 20
+                                && BotGround.CanStep(_info.ZonePath, (x.Point + here) / 2))
                     .OrderBy(x => x.Left).Take(3).ToList();
                 if (next.Count == 0) {
                     break;

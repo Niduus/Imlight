@@ -137,7 +137,8 @@ internal static class BotBodies {
                 new CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD(), TimeSpan.FromSeconds(3))
             .ContinueWith(task => {
                 if (task.IsCompletedSuccessfully && task.Result?.Wizard is { } wizard && wizard.Zone == zonePath) {
-                    var level = Math.Clamp((int) wizard.MagicSchoolBehavior.Level + Random.Shared.Next(-4, 3), 1, 200);
+                    // A level that fits the world, not the player's own when the player is far above it.
+                    var level = BotPopulation.LevelFor(zonePath, (int) wizard.MagicSchoolBehavior.Level, Random.Shared);
                     Spawn(wizard, zone, level, BotPopulation.SpotIn(zonePath, wizard.Location), out _);
                 }
             });
@@ -195,7 +196,7 @@ internal static class BotBodies {
         var at = player.Location;
         var side = player.Orientation.Z + (MathF.PI / 2);
         var near = new Imcodec.Math.Vector3(at.X + (MathF.Cos(side) * 90), at.Y + (MathF.Sin(side) * 90), at.Z);
-        Spawn(player, zone, Math.Clamp((int) player.MagicSchoolBehavior.Level, 1, 200), near, out var said);
+        Spawn(player, zone, BotPopulation.LevelFor(player.Zone, (int) player.MagicSchoolBehavior.Level, Random.Shared), near, out var said);
 
         return said;
     }
