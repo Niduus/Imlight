@@ -185,6 +185,9 @@ internal sealed class SetupSteps : IDisposable {
     // What the server is built from (repository, branch and commit, or the folder), written next to it (ServerSource.STAMP_FILE).
     private string? _sourceStamp;
 
+    // The fingerprint of the game's message files the server is built with (GamePatch.STAMP_FILE).
+    private string? _gameMessages;
+
     /// <summary>
     /// Downloads the latest Imlight source and the exact Imcodec version it uses. Git is not needed. With a source
     /// folder on this PC (the Server source card), that folder is copied instead and left as it is.
@@ -411,20 +414,30 @@ internal sealed class SetupSteps : IDisposable {
         var archive = ArchiveParser.Parse(stream)
             ?? throw new SetupException($"{rootWadPath} could not be read. Make sure the game is fully installed and patched.");
 
+        // Message files from an older game version would be built in next to these ones.
+        foreach (var stale in Directory.EnumerateFiles(messageInput, "*.xml")) {
+            File.Delete(stale);
+        }
+
         var count = 0;
+        var read = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
         foreach (var name in archive.Files.Keys) {
-            var fileName = Path.GetFileName(name.Replace('\\', '/'));
-            if (!fileName.Contains("Messages", StringComparison.OrdinalIgnoreCase)
-                || !fileName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)) {
+            if (!GamePatch.IsMessageFile(name)) {
                 continue;
             }
 
+            var fileName = Path.GetFileName(name.Replace('\\', '/'));
             var data = archive.OpenFile(name)
                 ?? throw new SetupException($"{name} could not be read from Root.wad.");
-            File.WriteAllBytes(Path.Combine(messageInput, fileName), data.ToArray());
+            var bytes = data.ToArray();
+            File.WriteAllBytes(Path.Combine(messageInput, fileName), bytes);
+            read[fileName] = bytes;
             SetupLog.Detail($"Extracted {name}");
             count++;
         }
+
+        // Written next to the server, so the app can tell when Wizard101 patches its messages (GamePatch).
+        _gameMessages = GamePatch.Fingerprint(read);
 
         if (count == 0) {
             throw new SetupException("No message files were found in Root.wad. Make sure the game is fully installed and patched.");
@@ -459,6 +472,10 @@ internal sealed class SetupSteps : IDisposable {
 
         if (_sourceStamp is not null) {
             File.WriteAllText(Path.Combine(staging, ServerSource.STAMP_FILE), _sourceStamp);
+        }
+
+        if (_gameMessages is not null) {
+            File.WriteAllText(Path.Combine(staging, GamePatch.STAMP_FILE), _gameMessages);
         }
 
         // The app's own version, for the server's .ver command.

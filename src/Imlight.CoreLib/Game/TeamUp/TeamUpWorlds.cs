@@ -78,6 +78,8 @@ internal static class TeamUpWorlds {
         new("GUI/Buttons/Button_World_Novus.dds", 21, ["Novus"]),
         new("GUI/Buttons/Button_World_Wallaru.dds", 22, ["Wallaru"]),
         new("GUI/Buttons/Button_World_Darkmoor.dds", 23, ["Darkmoor"]),
+        // The Ahmarra update (2026-11-12, Test Realm r811339): the last tab of its TeamHelpWorldInfo.xml.
+        new("GUI/Buttons/Button_World_Ahmarra.dds", 24, ["Ahmarra"]),
     ];
 
     /// <summary>The world tab first in the window (the lowest display index): Wizard City.</summary>

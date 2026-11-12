@@ -67,7 +67,7 @@ internal sealed partial class ManagerWindow {
     private static readonly string[] s_btWorldOrder = [
         "Wizard City", "Krokotopia", "Marleybone", "MooShu", "Dragonspyre", "Celestia", "Wysteria", "Grizzleheim", "Zafaria",
         "Avalon", "Azteca", "Aquila", "Khrysalis", "Polaris", "Arcanum", "Mirage", "Empyrea", "Karamelle", "Lemuria", "Novus", "Wallaru",
-        "Selenopolis", "Darkmoor", "Dungeons",
+        "Selenopolis", "Darkmoor", "Ahmarra", "Dungeons",
     ];
 
     private sealed class BtPlace {

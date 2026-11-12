@@ -52,6 +52,7 @@ internal sealed partial class ManagerWindow {
         ("GH", "Grizzleheim"), ("CL", "Celestia"), ("WY", "Wysteria"), ("ZF", "Zafaria"), ("AV", "Avalon"),
         ("AZ", "Azteca"), ("KR", "Khrysalis"), ("KH", "Khrysalis"), ("PL", "Polaris"), ("AR", "Arcanum"), ("MR", "Mirage"), ("EM", "Empyrea"),
         ("KM", "Karamelle"), ("LM", "Lemuria"), ("NV", "Novus"), ("WL", "Wallaru"), ("SL", "Selenopolis"), ("DM", "Darkmoor"),
+        ("AH", "Ahmarra"),
     ];
 
     private enum QuestState { Done, InProgress, NextUp, Later }

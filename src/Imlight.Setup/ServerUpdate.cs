@@ -55,7 +55,7 @@ internal static class ServerUpdate {
     internal const string WAITING_FILE = "server-waits-for-restart.txt";
 
     // Files the build writes that say which version it is: never a reason to restart.
-    private static readonly string[] s_stamps = ["ahziael-version.txt", ServerSource.STAMP_FILE];
+    private static readonly string[] s_stamps = ["ahziael-version.txt", ServerSource.STAMP_FILE, GamePatch.STAMP_FILE];
 
     // The spiraldb-extra folders and files the server reads again while it runs: SpiralDB's own folders
     // (SpiralDB.Reload), the files its load applies (quest goal events, quest spells), the ones it watches (ZoneObjects,
