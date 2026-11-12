@@ -17,3 +17,8 @@ New: See each Quest Team wizard's quests, gear, deck and spells
 Each wizard on the Quest Team page has a "Quests, gear, deck and trained spells" section showing the quest it is on and its other quests, every piece of gear it wears, the cards in its deck and what the deck was made for, and every spell it has trained.
 Where: Quest Team > Quest Team
 Test: With the team playing, open the section under each wizard and check it matches what you see in game.
+
+Fixed: Quest Team wizards never logged in
+Turning the Quest Team on showed all four wizards "offline" at level 0, with the team stuck on "waiting for everyone to be in the game". The wizards could not start at all, so they never tried to log in. They now log in one after the other a few seconds after the team starts.
+Where: Quest Team > Quest Team
+Test: Start the server and turn the Quest Team on. Within a minute, Team log should show each wizard "is in ..." and the page should show them playing.

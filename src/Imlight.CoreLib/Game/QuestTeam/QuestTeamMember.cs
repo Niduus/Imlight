@@ -140,7 +140,7 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
     private readonly Queue<(float X, float Y)> _route = new();
     private (string Zone, ulong ZoneId, string Location)? _transfer;
 
-    internal QuestTeamMember(QuestTeamRoster.Member member, Status view) {
+    public QuestTeamMember(QuestTeamRoster.Member member, Status view) {
         _member = member;
         View = view;
         View.Name = member.Name;
