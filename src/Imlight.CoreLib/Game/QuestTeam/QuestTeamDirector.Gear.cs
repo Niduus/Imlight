@@ -105,6 +105,29 @@ internal sealed partial class QuestTeamDirectorActor {
         }
     }
 
+    private readonly Dictionary<string, uint> _badgeAsked = new(StringComparer.Ordinal);
+
+    private static readonly string[] s_storyBadgeWords = [
+        "Quest", "Story", "Wizard City", "Krokotopia", "Marleybone", "MooShu", "Dragonspyre", "DragonSpire", "Celestia", "Zafaria",
+        "Avalon", "Azteca", "Khrysalis", "Polaris", "Mirage", "Empyrea", "Karamelle", "Lemuria", "Novus", "Wallaru", "Selenopolis", "Ahmarra",
+    ];
+
+    private static Imlight.CoreLib.WizardData.Models.World.BadgeDefinition NewestStoryBadge(Wizard wizard) {
+        var catalog = Imlight.CoreLib.Game.Badges.BadgeCatalog.Current;
+        if (wizard.BadgeBehavior?.Earned is not { Count: > 0 } earned || !catalog.IsReady) {
+            return null;
+        }
+
+        foreach (var (id, _) in earned.OrderByDescending(e => e.Value.AwardSequence)) {
+            if (catalog.TryGet(id, out var badge) && !string.IsNullOrWhiteSpace(badge.Title)
+                && s_storyBadgeWords.Any(w => (badge.Filter ?? "").Contains(w, StringComparison.OrdinalIgnoreCase))) {
+                return badge;
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>Out of a battle: better gear from the backpack goes on, and a deck that misses newly learned spells is redone.</summary>
     private void KeepGearAndDecks() {
         if (DateTime.UtcNow < _nextGearLook) {
@@ -125,7 +148,8 @@ internal sealed partial class QuestTeamDirectorActor {
             if (wizard.GameStats is { } stats && stats.m_currentGold < floor / 4) {
                 var give = floor - stats.m_currentGold;
                 wizard.AddGold(give);
-                Note(member.Role, $"{member.Name} was short of gold; Ahziael gives it {give} gold (now {stats.m_currentGold}).");
+                Count("gold given", give);
+                Note(member.Role, $"{member.Name} was short of gold; Ahziael gives it {give} gold (now {stats.m_currentGold}).", QuestTeamLink.COMMAND);
             }
 
             // A full backpack: the gear it will never wear is sold, as a player quick-sells (Niduus, 2026-11-12: "sell junk
@@ -137,6 +161,7 @@ internal sealed partial class QuestTeamDirectorActor {
                         as Imcodec.ObjectProperty.TypeCache.WizItemTemplate)?.m_baseCost ?? 0) * 0.05f));
                 if (sold.Count > 0) {
                     wizard.AddGold(gold);
+                    Count("things sold", sold.Count);
                     Note(member.Role, $"backpack full: sells {sold.Count} things it will not wear for {gold} gold " +
                                       $"({string.Join(", ", junk.Where(j => sold.Contains(j.Item.m_globalID.Full)).Select(j => j.Piece.Name).Take(8))}).");
                 }
@@ -147,7 +172,11 @@ internal sealed partial class QuestTeamDirectorActor {
             if (wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Mount) is null && _mountGiven.Add(member.Role)) {
                 var mountId = Imlight.CoreLib.Shared.Character.AdeptStarterGear.GhultureFor(wizard.MagicSchoolBehavior?.MagicSchool ?? Imlight.CoreLib.Shared.Behaviors.MagicSchool.Balance);
                 var mount = (wizard.InventoryBehavior?.Items ?? []).FirstOrDefault(it => (ulong) it.m_templateID == mountId);
-                if (mount is not null || wizard.AddItemToInventory(mountId, out mount)) {
+                if (mount is null && wizard.AddItemToInventory(mountId, out mount)) {
+                    Note(member.Role, $"{member.Name} has no mount: Ahziael gives it its school's Ghulture.", QuestTeamLink.COMMAND);
+                }
+
+                if (mount is not null) {
                     _actors[i].Tell(new QuestTeamMember.Equip(mount.m_globalID, "Mount", "its Ghulture"));
                     continue;
                 }
@@ -163,6 +192,14 @@ internal sealed partial class QuestTeamDirectorActor {
             if (BotGear.BetterInBackpack(wizard, StyleOf(member)).OrderByDescending(b => b.Gain).FirstOrDefault() is { Item: not null } better) {
                 _actors[i].Tell(new QuestTeamMember.Equip(better.Item.m_globalID, better.Slot, better.Piece.Name));
                 continue;
+            }
+
+            // The newest story badge as their title (Niduus, 2026-11-12: "latest story badge"), picked as a player picks it.
+            if (NewestStoryBadge(wizard) is { } badge && badge.Id != wizard.BadgeBehavior.SelectedBadgeId
+                && _badgeAsked.GetValueOrDefault(member.Role) != badge.Id) {
+                _badgeAsked[member.Role] = badge.Id;
+                Note(member.Role, $"{member.Name} wears its newest story badge: {badge.Title}.");
+                _actors[i].Tell(new QuestTeamMember.SelectBadge(badge.Id));
             }
 
             // New spells learned (or a new deck worn) since the deck was made: the deck again, for the fight it was made for.

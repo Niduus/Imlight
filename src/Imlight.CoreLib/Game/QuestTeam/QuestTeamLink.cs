@@ -258,7 +258,19 @@ public static class QuestTeamLink {
     }
 
     /// <summary>Tells the brain what a wizard of the team did, for its log, without waiting.</summary>
-    internal static void Note(string who, string text) {
+    // How a Team Logs line is coloured in Ahziael (Niduus, 2026-11-12): no tag is white (normal), MINOR yellow (does not
+    // hold the quest back), NOTABLE orange (could stop a quest finishing), CRITICAL red (stops or stopped the story, fix now),
+    // COMMAND cyan (something Ahziael did for them, with the reason).
+    internal const string MINOR = "MINOR";
+    internal const string NOTABLE = "NOTABLE";
+    internal const string CRITICAL = "CRITICAL";
+    internal const string COMMAND = "COMMAND";
+
+    internal static void Note(string who, string text, string level = null) {
+        if (!string.IsNullOrEmpty(level)) {
+            text = $"{level}: {text}";
+        }
+
         Logger.Information("Quest Team | {0}: {1}", Logger.Args(who, text));
         Send(new TeamRequest { Op = "note", Who = who, Text = text });
     }

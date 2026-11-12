@@ -373,7 +373,55 @@ internal static class OverlayHost {
         return [note, .. ServerElements];
     }
 
+    private static DateTime s_teamIssuesTime;
+    private static int s_teamIssueSeen = -1;
+
+    // A new Quest Team alert also shows on the games on this PC, the one Ahziael runs on (Niduus, 2026-11-12: "alerts go to
+    // Ahziael AND the in-game overlay of the logged-in client hosting Ahziael"). Only the ones that come after the overlay
+    // started; Ahziael's Team Issues keeps them all.
+    private static void QuestTeamAlerts() {
+        try {
+            var path = Path.Combine(InstalledCommands.ServerFolder(s_installFolder), "logs", "quest-team", "issues.json");
+            if (!File.Exists(path)) {
+                s_teamIssueSeen = Math.Max(s_teamIssueSeen, 0);
+
+                return;
+            }
+
+            var written = File.GetLastWriteTimeUtc(path);
+            if (written == s_teamIssuesTime) {
+                return;
+            }
+
+            s_teamIssuesTime = written;
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            var newest = (JsonNode.Parse(stream) as JsonArray ?? []).OfType<JsonObject>().OrderByDescending(i => (int?) i["Id"] ?? 0).FirstOrDefault();
+            var id = (int?) newest?["Id"] ?? 0;
+            if (s_teamIssueSeen < 0 || id <= s_teamIssueSeen) {
+                s_teamIssueSeen = Math.Max(s_teamIssueSeen, id);
+
+                return;
+            }
+
+            s_teamIssueSeen = id;
+            var text = ((string?) newest!["Text"] ?? "").Trim();
+            if (text.Length > 160) {
+                text = text[..157] + "...";
+            }
+
+            var title = (string?) newest["Title"] ?? "";
+            foreach (var game in s_games) {
+                ShowNotice(game, $"Quest Team alert{(title.Length > 0 ? $" in {title}" : "")}: {text} (see Ahziael > Quest Team > Team Issues)");
+            }
+        }
+        catch (Exception) {
+            // Being written right now (or no server here): read again next time it changes.
+            s_teamIssuesTime = DateTime.MinValue;
+        }
+    }
+
     private static void Scan() {
+        QuestTeamAlerts();
         foreach (var (game, notice) in s_notices.ToList()) {
             if (notice.Until < DateTime.UtcNow || !Native.IsWindow(game)) {
                 s_notices.Remove(game);

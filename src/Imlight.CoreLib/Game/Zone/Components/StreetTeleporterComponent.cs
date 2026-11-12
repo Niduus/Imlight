@@ -176,6 +176,10 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
         Task.Delay(EFFECT_DELAY_IN_MS).ContinueWith(_ => playerActor.Tell(move, ActorRefs.NoSender));
     }
 
+    /// <summary>Where the pair's other stone stands (for the Quest Team's shortcuts), or null.</summary>
+    internal (float X, float Y)? PartnerSpot
+        => CustomTeleporters.For(Entity.Info?.m_zoneTag) is null && Partner() is { } partner ? (partner.m_location.X, partner.m_location.Y) : null;
+
     // The other stone of the pair in this zone: the hub stone for a far one, the far one for a hub stone.
     private CoreObjectInfo Partner() {
         if (_partnerLooked) {

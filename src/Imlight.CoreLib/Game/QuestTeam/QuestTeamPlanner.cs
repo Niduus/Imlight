@@ -47,6 +47,7 @@ internal static class QuestTeamPlanner {
     internal const string SPIRAL = "spiral";
     internal const string TRAIN = "train";
     internal const string SHOP = "shop";
+    internal const string STONE = "stone";
     internal const string NONE = "none";
 
     /// <summary>
@@ -70,6 +71,61 @@ internal static class QuestTeamPlanner {
 
     // Quest codes of the side worlds (Grizzleheim, Wintertusk, Wysteria's academy, Aquila, Darkmoor).
     private static readonly HashSet<string> s_sideWorldCodes = new(StringComparer.OrdinalIgnoreCase) { "GH", "WT", "PA", "WY", "AQ", "DM" };
+
+    // The story's worlds in the order they are played (Arcanum is a hub, not a step of the ladder).
+    private static readonly string[] s_ladder = [
+        "WizardCity", "Krokotopia", "Marleybone", "MooShu", "DragonSpire", "Celestia", "Zafaria", "Avalon", "Azteca", "Khrysalis",
+        "Polaris", "Mirage", "Empyrea", "Karamelle", "Lemuria", "Novus", "Wallaru", "Selenopolis", "Ahmarra",
+    ];
+
+    /// <summary>
+    /// Whether the leader has played the last world of the story this server's data has (Niduus, 2026-11-12: "Stop. But
+    /// that's assuming they finish ... the Ladder depends on the data at the time"): a story quest given there is done.
+    /// </summary>
+    internal static bool FinishedLastWorld(Wizard leader, out string world) {
+        world = "";
+        var mains = QuestService.QuestFinderGivers().Where(g => QuestStory.IsMain(g.Quest) && IsMainStoryWorld(g.Quest))
+            .Select(g => (Quest: g.Quest, World: QuestGuide.GiverZone(g.Quest).Split('/')[0])).ToList();
+        world = s_ladder.LastOrDefault(w => mains.Any(m => string.Equals(m.World, w, StringComparison.OrdinalIgnoreCase))) ?? "";
+        var last = world;
+
+        return last.Length > 0 && mains.Any(m => string.Equals(m.World, last, StringComparison.OrdinalIgnoreCase)
+                                                 && leader.HasCompletedQuest(m.Quest.m_questName));
+    }
+
+    /// <summary>
+    /// A street teleporter that brings the team much closer to a story quest's goal in this area (Niduus, 2026-11-12: "Bots
+    /// can use teleporters on streets if it gets them closer to their objective for the STORY quest. This is the only type
+    /// of teleportation that can be used"), or null. <paramref name="avoid"/>: stones just used, never used straight back.
+    /// </summary>
+    internal static Target Shortcut(QuestTeamMember.Status leader, Target goal, ICollection<ulong> avoid) {
+        if (goal is null || goal.Problem.Length > 0 || goal.Kind is STONE or SPIRAL or NONE || string.IsNullOrEmpty(goal.Quest)
+            || QuestTemplateCollection.GetQuestByName(goal.Quest) is not { } quest || !QuestStory.IsMain(quest)) {
+            return null;
+        }
+
+        var direct = Far(leader.X, leader.Y, goal.X, goal.Y);
+        if (direct < 2500) {
+            return null;
+        }
+
+        Target best = null;
+        var bestWay = direct * 0.6f;
+        foreach (var mark in MinimapIndex.In(leader.ZoneActor).Where(m => m.Kind == MinimapIndex.DOOR && m.Entity is not null)) {
+            if (mark.Entity.GetComponentOfType<StreetTeleporterComponent>()?.PartnerSpot is not { } lands || avoid.Contains(mark.Object.m_globalID.Full)) {
+                continue;
+            }
+
+            var way = Far(leader.X, leader.Y, mark.Object.m_location.X, mark.Object.m_location.Y) + Far(lands.X, lands.Y, goal.X, goal.Y);
+            if (way < bestWay) {
+                bestWay = way;
+                best = new Target(STONE, mark.Object.m_location.X, mark.Object.m_location.Y, $"the street teleporter ({mark.Name}) toward {goal.What}",
+                    goal.Quest, goal.Goal, mark.Template, mark.Object.m_globalID.Full, Key: "stone|" + mark.Object.m_globalID.Full);
+            }
+        }
+
+        return best;
+    }
 
     /// <summary>Whether a quest belongs to a main story world (never Grizzleheim, Wintertusk, Wysteria, Aquila or Darkmoor).</summary>
     internal static bool IsMainStoryWorld(QuestTemplate quest) {

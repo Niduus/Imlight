@@ -90,3 +90,35 @@ Changed: Quest Team plays steadier and reports more
 - The quest log notes how many battles each fighting step took, and a step that takes more than 12 is reported as a possibly broken drop.
 Where: Quest Team > Quest Team, Team Issues, Team Logs
 Test: Let the team play for a while, then check Team Logs for "drinks a potion before the fight", "rides"/"puts on its Ghulture" and the battle counts in the quest log.
+
+New: Colored Team log
+Each line in Team log now has a color, and a word at the start that says the same thing, so a copied log keeps it:
+- White: normal.
+- Yellow (MINOR): something is off but the quest still goes on, like a lost fight or a step that took too many battles.
+- Orange (NOTABLE): something that could stop a quest from finishing, like a dialog that never ends or a wizard on a different step.
+- Red (CRITICAL): the story is stopped or was stopped, like a broken step or no quest left to get. Fix these first.
+- Cyan (COMMAND): something Ahziael did for them, with the reason: XP to catch up a level, gold, a Ghulture, a skipped step, a save.
+Where: Quest Team > Team Logs (the colors are listed above the log)
+Test: Let the team play a while and open Team Logs. Normal lines are white; any "COMMAND:" line is cyan.
+
+New: The Quest Team keeps going on its own
+- Under-leveled: when the next story quest needs a higher level, Ahziael gives each wizard below it just enough XP to reach it. Team log says how much XP and which level (cyan).
+- They never join a battle that already has another player or street bot in it. They walk past and pick another creature.
+- Before each new world, Ahziael saves the team's accounts and wizards to logs\quest-team\Snapshots. To undo a broken world, load the file in Account Transfer.
+- The four are friends with each other. One left alone in a dungeon tries to go to each teammate. If they are all busy in their own copy of the same place, it treats it as a solo dungeon and makes its deck ready to fight alone.
+- When the backpack is nearly full, they sell gear they will never wear, and Team log lists what went and for how much.
+- Training follows the team role: each also learns a heal and a shield of its own so it can fight alone. They now train at any trainer in the area they are in, not only in Ravenwood, while they have the training points and level for it.
+- They use the game's street teleporters only when one brings them much closer to a story quest goal. All four wait at the stone and go together. They do no other teleporting.
+- They wear their newest story badge as their title.
+- After the last world the server's data has, they stop (paused). Team log says "MAIN STORY COMPLETE".
+- After a server restart or crash they pick up the same step, so a battle that was cut off is fought again.
+- Their gear is checked all the time, so it is also checked after every quest and in each new world.
+Where: Quest Team > Quest Team, Team Logs, logs\quest-team\Snapshots
+Test: Watch Team log for "gains ... XP", "SNAPSHOT before", "sells", "uses the street teleporter", and "wears its newest story badge".
+
+New: Daily summary and alerts over the game
+- The Quest Team page shows "Today so far": quests finished, battles won and lost, issues, steps skipped, XP and gold given, things sold. At midnight the day's summary goes into Team log and the quest log.
+- A new Quest Team issue also shows for two minutes over the games on this PC, in the overlay.
+- A dialog that keeps going for over a minute without ending is reported (orange).
+Where: Quest Team > Quest Team; the game overlay; Team Issues
+Test: Look at "Today so far" on the Quest Team page. With the overlay on, a new team issue should show over your game.
