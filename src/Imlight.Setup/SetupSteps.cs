@@ -390,20 +390,44 @@ internal sealed class SetupSteps : IDisposable {
     /// Puts the two files Imcodec needs in place: the type dump and the message definitions, which come
     /// from the person's own game client, so nothing copyrighted is ever downloaded or shared.
     /// </summary>
+    /// <summary>
+    /// The type dump of the newest game version in <paramref name="folders"/>, going by the revision number its name
+    /// starts with (r813697_Wizard_1_620.json beats r806919_Wizard_1_610.json), or null when there is none.
+    /// </summary>
+    internal static string? NewestTypeDump(params string[] folders)
+        => folders.Where(Directory.Exists)
+            .SelectMany(folder => Directory.EnumerateFiles(folder, "*.json"))
+            .OrderByDescending(TypeDumpRevision)
+            .ThenByDescending(Path.GetFileName, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
+
+    private static long TypeDumpRevision(string path) {
+        var match = System.Text.RegularExpressions.Regex.Match(Path.GetFileName(path), @"^r(\d+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        return match.Success && long.TryParse(match.Groups[1].Value, out var revision) ? revision : -1;
+    }
+
     internal void PrepareGeneratorInputs(string rootWadPath) {
         var typeInput = Path.Combine(ImcodecFolder, "src", "Imcodec.ObjectProperty", "GeneratorInput");
         var messageInput = Path.Combine(ImcodecFolder, "src", "Imcodec.MessageLayer", "GeneratorInput");
         Directory.CreateDirectory(typeInput);
         Directory.CreateDirectory(messageInput);
 
-        // The type dump: the person's own, or the one Imcodec ships for its tests.
+        // The type dump: the person's own, else the newest game version's of the ones this repository ships
+        // (data/typedump, read from each new Wizard101 program: the Ahmarra update of 2026-11-12 changed the layout
+        // of players, creatures and battles, so a server built on an older dump can't talk to the patched game)
+        // and the one Imcodec ships for its tests.
         var typeDump = _options.TypeDump
-            ?? Directory.EnumerateFiles(Path.Combine(ImcodecFolder, "test", "CodeGen", "Inputs"), "*.json")
-                .OrderByDescending(f => f, StringComparer.OrdinalIgnoreCase)
-                .FirstOrDefault()
+            ?? NewestTypeDump(Path.Combine(SourceFolder, "data", "typedump"), Path.Combine(ImcodecFolder, "test", "CodeGen", "Inputs"))
             ?? throw new SetupException("No type dump was found. Make one with wiztype and run setup again with --type-dump \"<file>\".");
         if (!File.Exists(typeDump)) {
             throw new SetupException($"The type dump {typeDump} does not exist.");
+        }
+
+        // Only one dump may sit there: a dump from an older game version next to it would be built in as well.
+        foreach (var stale in Directory.EnumerateFiles(typeInput, "*.json")) {
+            if (!string.Equals(Path.GetFileName(stale), Path.GetFileName(typeDump), StringComparison.OrdinalIgnoreCase)) {
+                File.Delete(stale);
+            }
         }
 
         File.Copy(typeDump, Path.Combine(typeInput, Path.GetFileName(typeDump)), overwrite: true);

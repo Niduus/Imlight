@@ -1,0 +1,107 @@
+diff --git a/src/Imcodec.TypeDump/RegistrationAnchors.cs b/src/Imcodec.TypeDump/RegistrationAnchors.cs
+index 9a2a85b..e06b282 100644
+--- a/src/Imcodec.TypeDump/RegistrationAnchors.cs
++++ b/src/Imcodec.TypeDump/RegistrationAnchors.cs
+@@ -262,7 +262,8 @@ internal sealed class RegistrationAnchors {
+         }
+ 
+         if (hits.Count < MINIMUM_REGISTRY_ANCHOR_HITS) {
+-            throw new InvalidOperationException("The type name registry anchor was not found.");
++            NameRegistryGetter = 0;
++            return;
+         }
+ 
+         NameRegistryGetter = _exe.Base + hits.MaxBy(p => p.Value).Key;
+diff --git a/src/Imcodec.TypeDump/TypeDumper.cs b/src/Imcodec.TypeDump/TypeDumper.cs
+index 9f579dc..229f346 100644
+--- a/src/Imcodec.TypeDump/TypeDumper.cs
++++ b/src/Imcodec.TypeDump/TypeDumper.cs
+@@ -69,6 +69,13 @@ public static class TypeDumper {
+         // The static initializers register every type and its properties; the getters that follow
+         // fill in the per-type detail the initializers leave for first access.
+         using var emulator = new TypeSystemEmulator(exe, runtime);
++        // Clients from r813697 (the Ahmarra update, 2026-11-12) wake threads waiting on a function-local static through
++        // an encoded pointer the CRT fills in at startup (_Init_thread_notify). That startup never runs here, so the
++        // decoded pointer is garbage and every getter faults. Nothing waits on another thread here: make it return.
++        foreach (var notify in FindInitThreadNotify(exe)) {
++            emulator.WriteBytes(notify, [0xC3]);
++            log?.WriteLine($"_Init_thread_notify at {notify:x} made a no-op");
++        }
+         var started = DateTime.UtcNow;
+         foreach (var function in anchors.ReadTable(anchors.InitializerTable)) {
+             emulator.Run(function);
+@@ -118,6 +125,24 @@ public static class TypeDumper {
+         return (manifest, detail);
+     }
+ 
++    private static IEnumerable<ulong> FindInitThreadNotify(ClientImage exe) {
++        // sub rsp,28 / mov rcx,[rip+x] / test rcx,rcx / jne +y / mov rax,[rip+z] / mov ecx,eax / xor rax,[rip+w]
++        byte?[] pattern = [0x48, 0x83, 0xEC, 0x28, 0x48, 0x8B, 0x0D, null, null, null, null, 0x48, 0x85, 0xC9, 0x75, null,
++            0x48, 0x8B, 0x05, null, null, null, null, 0x8B, 0xC8, 0x48, 0x33, 0x05];
++        var memory = exe.Memory;
++        foreach (var section in exe.Sections.Where(s => s.Executable)) {
++            var end = (int) (section.Rva + section.Size) - pattern.Length;
++            for (var at = (int) section.Rva; at < end; at++) {
++                if (memory[at] != 0x48 || memory[at + 1] != 0x83) continue;
++                var match = true;
++                for (var i = 0; i < pattern.Length && match; i++) {
++                    match = pattern[i] is not { } b || memory[at + i] == b;
++                }
++                if (match) yield return exe.Base + (ulong) at;
++            }
++        }
++    }
++
+     /// <summary>
+     /// Writes <paramref name="manifest"/> to <paramref name="stream"/>. The relaxed encoder and the
+     /// explicit newline reproduce the manifest format exactly, so the output can be diffed byte for byte.
+diff --git a/src/Imcodec.TypeDump/TypeRegistryWalker.cs b/src/Imcodec.TypeDump/TypeRegistryWalker.cs
+index 8432808..d09e126 100644
+--- a/src/Imcodec.TypeDump/TypeRegistryWalker.cs
++++ b/src/Imcodec.TypeDump/TypeRegistryWalker.cs
+@@ -73,7 +73,7 @@ internal sealed partial class TypeRegistryWalker(TypeSystemEmulator emulator) {
+     public SortedSet<string> EnumTypesWithoutOptions { get; } = [];
+ 
+     public JsonDumpManifest Walk(ulong nameRegistryGetter) {
+-        var registry = emulator.Call(nameRegistryGetter);
++        var registry = nameRegistryGetter == 0 ? ScanForRegistry() : emulator.Call(nameRegistryGetter);
+         var types = CollectTypes(emulator.U64(registry));
+         TypeAddresses = types;
+         var classes = new List<JsonDumpClass>();
+@@ -90,6 +90,36 @@ internal sealed partial class TypeRegistryWalker(TypeSystemEmulator emulator) {
+         return manifest;
+     }
+ 
++    public ulong ScanForRegistry() {
++        // Fallback: look through the client's writable data for a std::map {head, size} whose head is a nil
++        // sentinel and whose nodes hold types with readable "class ..." names.
++        var exe = emulator.Exe;
++        ulong best = 0; ulong bestSize = 0;
++        foreach (var section in exe.Sections.Where(s => !s.Executable)) {
++            for (ulong a0 = exe.Base + section.Rva; a0 + 16 <= exe.Base + section.Rva + section.Size; a0 += 8) {
++              ulong ind = 0; try { ind = emulator.U64(a0); } catch { }
++              foreach (var a in new[] { a0, ind >= 0x2000_0000 && ind < 0x6000_0000 ? ind : 0 }) {
++                if (a == 0) continue;
++                ulong head, size;
++                try { head = emulator.U64(a); size = emulator.U64(a + 8); } catch { continue; }
++                if (size < 1000 || size > 1_000_000 || head < 0x1000) continue;
++                try {
++                    if (emulator.U8(head + NODE_IS_NIL_OFFSET) == 0) continue;
++                    var root = emulator.U64(head + NODE_PARENT_OFFSET);
++                    if (emulator.U8(root + NODE_IS_NIL_OFFSET) != 0) continue;
++                    var type = emulator.U64(root + NODE_VALUE_OFFSET);
++                    var name = emulator.StdString(type + TYPE_NAME_OFFSET);
++                    if (!(name.StartsWith("class ") || name.StartsWith("struct ") || name.StartsWith("enum ") || name.Length > 0 && name.Length < 200 && name.All(c => c >= 32 && c < 127))) continue;
++                    Console.Error.WriteLine($"registry candidate {a:x} size {size} root type '{name}'");
++                    if (size > bestSize) { best = a; bestSize = size; }
++                } catch { }
++              }
++            }
++        }
++        if (best == 0) throw new InvalidOperationException("No registry found by scanning.");
++        return best;
++    }
++
+     private List<ulong> CollectTypes(ulong head) {
+         // The registry is a red-black tree (a std::map). Walk it iteratively from the root, skipping the
+         // shared nil sentinel the leaves point at.
