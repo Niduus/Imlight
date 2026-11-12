@@ -483,4 +483,18 @@ public sealed class COMBAT_106_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// The game's Dismiss button on a wizard's minion (MSG_DISMISS_SUMMON): the minion leaves the battle. Subcircle is
+    /// the minion's circle as the game sent it.
+    /// </summary>
+    internal sealed class MSG_DISMISSMINION : IServerMessage {
+
+        public byte MessageOrder => 39;
+        public byte ServiceID => 106;
+
+        public uint Subcircle;
+        public IActorRef Actor;
+
+    }
+
 }

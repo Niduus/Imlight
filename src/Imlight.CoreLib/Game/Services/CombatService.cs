@@ -452,6 +452,16 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         });
     }
 
+    // The game's Dismiss button on the wizard's minion (Niduus, 2026-11-12: "dismiss button is not working").
+    [MessageHandler(typeof(DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_DISMISS_SUMMON))]
+    private void ReceiveDismissSummon(DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_DISMISS_SUMMON message) {
+        Logger.Information("Session {0} | Dismiss button on the minion in circle {1}.",
+            Logger.Args(SessionActor.SessionID, message.Subcircle));
+        _currentDuelActor?.Tell(new COMBAT_106_PROTOCOL.MSG_DISMISSMINION {
+            Subcircle = message.Subcircle, Actor = SessionActor.ActorRef,
+        });
+    }
+
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_PETWILLCASTREQUEST))]
     private void ReceivePetWillCastRequest(COMBAT_106_PROTOCOL.MSG_PETWILLCASTREQUEST message) {
         if (_currentDuelActor is null) {
