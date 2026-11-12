@@ -12,3 +12,8 @@ New: Ahmarra on the Spiral Door, Team Up, .tp and the Quests tab
 Ahmarra is listed on the Spiral Door once your quests open it (or with Open All Doors on), has its own Team Up tab, `.tp Ahmarra` takes you to the Bale Flotilla, and the Quests and Boss Test tabs sort Ahmarra quests and bosses under Ahmarra. Before the game updates, none of this shows, so the current game keeps working as it is.
 Where: Quests > My Quests
 Test: After the update, turn on Open All Doors, use the Spiral Door in the Commons and pick Ahmarra. Or type `.tp Ahmarra` in chat.
+
+Fixed: Team Up only shows Ahmarra once your game has it
+The Ahmarra tab of the Join a Team window is only sent to a Wizard101 that already has Ahmarra, so the current game sees the same tabs as before.
+Where: In the game, the Team Up kiosk
+Test: Before the update, open Team Up in the game: the tabs are the same as yesterday. After the update, the Ahmarra tab is there.

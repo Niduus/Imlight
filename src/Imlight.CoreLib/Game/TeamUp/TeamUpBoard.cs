@@ -174,7 +174,7 @@ internal static class TeamUpBoard {
         }
 
         return new WIZARD2_53_PROTOCOL.MSG_REQUESTTEAMHELPINFO {
-            WorldInfo = Serialize(new TeamHelpUpdateInfo { m_worldList = [.. TeamUpWorlds.All.Select(w => w.Id)] }),
+            WorldInfo = Serialize(new TeamHelpUpdateInfo { m_worldList = [.. TeamUpWorlds.InThisGame.Select(w => w.Id)] }),
             SigilInfo = Serialize(new TeamHelpUpdateSigilInfoList { m_sigilInfoList = sigils }),
         };
     }
