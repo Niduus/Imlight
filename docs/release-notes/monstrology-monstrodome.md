@@ -7,3 +7,8 @@ New: The Monstrodome works
 You can place a Monstrodome in your house. In house edit mode, click it and press Set Monsters to add up to 4 of your Summon Monster treasure cards (the card is used up) or erase a monster. Press X on the Monstrodome to go into its arena: your monsters wait beside the duel circle, ready to fight. Monsters fought there give no Animus, as in the game. The glowing way out in the arena takes you back to the house. The Autumn, Summer and Krampus Monstrodomes work the same way.
 Where: In the game, your house
 Test: Make a Summon card first (.tome animus Lost Soul 30, then press T and make a Summon card). Place a Monstrodome, open Set Monsters, add the card, then press X on the Monstrodome. The Lost Soul stands in the arena; walk into it to fight. Use the way out to go home.
+
+Fixed: The Monstrodome arena could not be entered
+The arena is a place the game's travel list does not name, so the server refused to open it. It now opens.
+Where: In the game, your house
+Test: Press X on a placed Monstrodome: you arrive in its arena instead of seeing "Failed to transfer to zone".
