@@ -2301,6 +2301,14 @@ internal sealed partial class ManagerWindow : Window {
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
         await process.WaitForExitAsync();
+        if (process.ExitCode == 3) {
+            // Another setup (usually the last update still installing, which makes a backup first) has the log open: not a
+            // failed build (Niduus, 2026-11-12: "0.10.814 could not be built" with an empty setup-log.txt).
+            Say($"{name} waits: another update is still installing. Click Update Ahziael at the top in a few minutes to build it.");
+
+            return;
+        }
+
         if (process.ExitCode != 0) {
             Say($"{name} could not be built. The reason is in setup-log.txt in the install folder (Server page, Ahziael tab, Open install folder).", true);
 

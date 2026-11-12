@@ -272,6 +272,7 @@ internal static class Program {
             // needs a restart, and Ahziael does that when it is safe. An older app stopped the server before this runs.
             var running = InstalledCommands.IsServerRunning(options.InstallFolder);
             // A backup of everything made on this PC before anything is replaced (Documents\Ahziael backups).
+            SetupLog.Info($"Installing Imlight {SelfUpdate.CurrentVersion}: making a backup first (Documents\\Ahziael backups).");
             try {
                 SetupLog.Detail("Backup before the update: " + ServerBackup.Make(options.InstallFolder, ServerBackup.BEFORE_UPDATE));
             }
