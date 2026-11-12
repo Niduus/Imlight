@@ -98,6 +98,17 @@ internal static class SpellFusions {
         return s_recipeOfOutput.GetValueOrDefault(fusedTemplateId);
     }
 
+    /// <summary>
+    /// Reads the recipes now (BattleWarmUp), so the first battle after a start does not wait for them: read by the
+    /// first hand sent to the game, they held up the cards 6 to 12 seconds (Niduus, 2026-11-12: "battle takes a bit
+    /// longer to start and pop up the cards now"). Returns the number of recipes.
+    /// </summary>
+    internal static int WarmUp() {
+        EnsureLoaded();
+
+        return s_recipes?.Count ?? 0;
+    }
+
     private static void EnsureLoaded() {
         if (s_recipes is not null) {
             return;
