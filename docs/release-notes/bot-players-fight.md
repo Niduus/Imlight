@@ -1,0 +1,4 @@
+New: Bot Players fight
+A bot in your battle now really fights. It has the spells a wizard of its school has at its level (some also learned Life heals as a second school), and it picks its card right after you pick yours, and again if you change your mind. It heals a real player who is low first, finishes off an enemy it can defeat, blades you for your hit, and only traps your target when that makes your hit defeat it. It stays on one enemy, and it won't hit an enemy you are about to hit through traps unless its own hit defeats it. Out of mana with nothing to cast, it flees, and after a fight it drinks a potion when low.
+Where: Game Rules > Battles and World
+Test: Turn on Bot Players, type .bot test, start a battle and type .bot join. Pick a card and watch what the bot picks; then look at its lines in Server > Logs > Bot Players log.

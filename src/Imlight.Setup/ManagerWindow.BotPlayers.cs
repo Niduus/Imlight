@@ -57,7 +57,7 @@ internal sealed partial class ManagerWindow {
             "Wizards the server plays by itself, so the game feels like a busy live server. They run in a little program of " +
             "their own next to the server (like the Bazaar bot). Off: that program does not run at all, and turning it off " +
             "stops it and every bot leaves. This is the first test: in the game, type .bot test and a bot comes out next to " +
-            "you and walks a short loop. In a battle, .bot join brings it onto your side (it passes every round for now), and " +
+            "you and walks a short loop. In a battle, .bot join brings it onto your side (it fights: it picks after you, heals and blades you, and finishes enemies), and " +
             ".bot kick takes the bots out of your battle; no bot joins that battle again. .bot remove sends the bots here " +
             "away, .bot list shows them. Changes count right away.",
             _botState,

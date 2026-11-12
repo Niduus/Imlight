@@ -313,8 +313,9 @@ public static class BotBrain {
     }
 
     private static string Round(BotRequest request) {
-        // Stage 0 (the test): a bot only passes. Stage 1 gives it real choices.
-        Logger.Information("Bot #{0} ({1}) round {2}: passes (test bots only pass).",
+        // Not asked any more: the battle picks a bot's card itself (BotTactics), where it sees every hand at once, and
+        // tells this log what it picked. Kept for an older game server that still asks.
+        Logger.Information("Bot #{0} ({1}) round {2}: asked to pick; it passes.",
             Logger.Args(request.Id, NameOf(request), request.Round));
 
         return "pass";
