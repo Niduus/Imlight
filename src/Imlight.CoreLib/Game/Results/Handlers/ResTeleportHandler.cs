@@ -56,9 +56,14 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
             // The exits of a house zone name no destination, so the player leaves to the hub of the house's world.
             if (!HouseExits.TryResolve(context.GetZonePath(), out destinationZone, out destinationLocation)) {
                 // A dungeon's exit that names none takes the player back to where they were before the dungeon (their
-                // session knows whether this zone is an instance and where that was).
-                if ((context as GenericResultContext)?.TriggerName is { } exitName
-                    && exitName.Contains("Exit", StringComparison.OrdinalIgnoreCase)) {
+                // session knows whether this zone is an instance and where that was). Some exits are not called Exit:
+                // the Besieged Ship's is Teleport_2_Bale and the Hungry Lizard's "Teleport location", and they name no
+                // spot either, so any such teleport inside an interior is its way out (Niduus, 2026-11-12: stuck there).
+                var exitName = (context as GenericResultContext)?.TriggerName;
+                var interiorWayOut = string.IsNullOrEmpty(Result.m_destinationLoc)
+                    && (context.GetZonePath() ?? "").Contains("/Interiors/", StringComparison.OrdinalIgnoreCase);
+                if (exitName is not null
+                    && (exitName.Contains("Exit", StringComparison.OrdinalIgnoreCase) || interiorWayOut)) {
                     context.GetPlayerRef().Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
                         LeaveInstance = true,
                         ByZoneDoor = true,
