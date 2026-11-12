@@ -184,7 +184,6 @@ internal sealed partial class CombatDuelComponent {
         }
 
         var circles = ActiveSubCircles.ToList();
-        var played = false;
         foreach (var bot in BotCircles.OrderBy(c => c.SlotIndex).ToList()) {
             // It waits for the real players before it on its side (lower circles), until the last call; players after it
             // it adapts to when they pick (Niduus, 2026-11-12: "if it's in slot 2, it will wait for player 1's pick, then
@@ -193,14 +192,6 @@ internal sealed partial class CombatDuelComponent {
                                            && c.IsAlive && c.AddedToDuel && !IsBot(c) && CombatResolver.GetQueuedAction(c) is null);
             if (waiting && _botDeadlineRound != message.Round) {
                 continue;
-            }
-
-            // Once a round, the cards it won't play go, as a player discards (Game/BotShared/BotCards).
-            if (_botDiscarded.Add((Duel.m_roundNum, bot.SlotIndex))) {
-                var style = BotGear.StyleOf(RewrittenAI.SchoolOf(bot) ?? "");
-                foreach (var index in BotCards.Discards(bot, circles, style)) {
-                    HandleDiscardMove(bot, index);
-                }
             }
 
             BotTactics.Choice choice;
@@ -213,7 +204,12 @@ internal sealed partial class CombatDuelComponent {
             }
 
             var pick = $"{choice.Move}:{choice.Card}:{choice.Target}";
-            if (_botPicks.TryGetValue(bot.SlotIndex, out var before) && before == pick && CombatResolver.GetQueuedAction(bot) is not null) {
+            if (_botPicks.TryGetValue(bot.SlotIndex, out var before) && before == pick) {
+                // The same pick: at the last call, a click that never landed is made again.
+                if (message.Deadline && CombatResolver.GetQueuedAction(bot) is null) {
+                    PlayBotClicks(bot, [ToBattleMove(choice)], choice, false, quick: true);
+                }
+
                 continue;
             }
 
@@ -223,14 +219,62 @@ internal sealed partial class CombatDuelComponent {
                 _botTargets[bot.SlotIndex] = choice.TargetSlotKept;
             }
 
-            PlayBotChoice(bot, choice, changed);
-            played = true;
+            // As a person clicks (Niduus, 2026-11-12: "ALL BOTS ... will mimic actual player activity"): once a round the
+            // cards it won't play are discarded first, one click each, then the pick, each after a person's moment
+            // (Game/BotShared/BotBattle).
+            var moves = new List<BotBattle.Move>();
+            if (_botDiscarded.Add((Duel.m_roundNum, bot.SlotIndex))) {
+                var style = BotGear.StyleOf(RewrittenAI.SchoolOf(bot) ?? "");
+                foreach (var index in BotCards.Discards(bot, circles, style)) {
+                    if (!(choice.Move == BotTactics.Move.Cast && index == choice.Card)) {
+                        moves.Add(BotBattle.Move.Discard(index, "won't play it"));
+                    }
+                }
+            }
+
+            moves.Add(ToBattleMove(choice));
+            PlayBotClicks(bot, moves, choice, changed, quick: message.Deadline);
+        }
+    }
+
+    // A bot's click, made later: dropped when the round moved on or the bot picked again since.
+    private sealed record BotClick(int Round, int Slot, int Generation, BotBattle.Move Move);
+
+    private readonly Dictionary<int, int> _botClickGeneration = [];
+
+    private static BotBattle.Move ToBattleMove(BotTactics.Choice choice) => choice.Move switch {
+        BotTactics.Move.Cast => BotBattle.Move.Cast(choice.Card, choice.Target, choice.Why),
+        BotTactics.Move.Flee => BotBattle.Move.Flee(choice.Why),
+        _ => BotBattle.Move.Pass(choice.Why),
+    };
+
+    private void PlayBotClicks(CombatDuelSubCircle bot, List<BotBattle.Move> moves, BotTactics.Choice choice, bool changed, bool quick) {
+        PlayBotChoice(bot, choice, changed);
+        var generation = _botClickGeneration.GetValueOrDefault(bot.SlotIndex) + 1;
+        _botClickGeneration[bot.SlotIndex] = generation;
+        var left = PlanningSeconds - (DateTime.UtcNow - _planningStartedAt).TotalSeconds;
+        // A change of mind is quicker than the first look: the hand is already read.
+        var clicks = quick || changed ? BotBattle.Timed(moves, 0, Math.Min(left, 3)) : BotBattle.Timed(moves, bot.GetCurrentHand().m_spellList.Count, left);
+        for (var i = 0; i < clicks.Count; i++) {
+            Timers.StartSingleTimer($"BotClick:{bot.SlotIndex}:{generation}:{i}",
+                new BotClick(Duel.m_roundNum, bot.SlotIndex, generation, clicks[i].Move), TimeSpan.FromSeconds(Math.Max(0.1, clicks[i].AfterSeconds)));
+        }
+    }
+
+    [MessageHandler(typeof(BotClick))]
+    private void ReceiveBotClick(BotClick message) {
+        if (!_isActive || !_awaitingCombatMoves || Duel is null || Duel.m_roundNum != message.Round
+            || _botClickGeneration.GetValueOrDefault(message.Slot) != message.Generation) {
+            return;
         }
 
-        if (played && _isActive && _awaitingCombatMoves && CombatResolver.HaveAllParticipantsEnqueuedActions()) {
-            _awaitingCombatMoves = false;
-            Timers.StartSingleTimer(PLANNING_TIME_KEY, new COMBAT_106_PROTOCOL.MSG_PLANNINGPHASEOVER(), TimeSpan.FromSeconds(1));
+        var bot = BotCircles.FirstOrDefault(c => c.SlotIndex == message.Slot);
+        if (bot?.ParticipantActor is not { } actor) {
+            return;
         }
+
+        // The same message the battle gets from a person's game; it also ends the planning once everyone has picked.
+        ReceiveCombatMove(BotBattle.ToBattleMessage(message.Move, actor));
     }
 
     private void PlayBotChoice(CombatDuelSubCircle bot, BotTactics.Choice choice, bool changed) {
@@ -242,18 +286,6 @@ internal sealed partial class CombatDuelComponent {
             BotLink.Note(who.Id, name, changed ? "changes its pick" : "round " + Duel.m_roundNum, choice.Why);
         }
 
-        switch (choice.Move) {
-            case BotTactics.Move.Cast:
-                var target = choice.Target < 0 ? uint.MaxValue : (uint) choice.Target;
-                HandleAttackMove(bot, choice.Card, target, choice.Target < 0 ? uint.MaxValue : 1u << choice.Target);
-                break;
-            case BotTactics.Move.Flee:
-                HandleFleeAction(bot, drainMana: false);
-                break;
-            default:
-                HandlePassMove(bot);
-                break;
-        }
     }
 
 }
