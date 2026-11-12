@@ -34,7 +34,8 @@ namespace Imlight.Setup;
 /// </summary>
 internal static class OverlayMinimapData {
 
-    internal sealed record Mark(string Kind, double X, double Y, string Name, int Level);
+    /// <summary>One thing on the map; Id (when the server sends one) is which thing it is, so it glides from map to map.</summary>
+    internal sealed record Mark(string Kind, double X, double Y, string Name, int Level, string Id = "");
 
     /// <summary>
     /// An area's ground from above (Niduus, 2026-11-12: "I want the street actually mapped out in the minimap"). Either
@@ -49,10 +50,11 @@ internal static class OverlayMinimapData {
         /// <summary>Spots on the ground (paths, grass, water; not walls), for fitting the game's map page to it.</summary>
         internal IEnumerable<(double X, double Y)> Spots() {
             if (Exact is not null) {
-                for (var kind = 1; kind <= 3; kind++) {
-                    var points = Exact.Triangles[kind];
-                    for (var i = 0; i + 1 < points.Length; i += 2) {
-                        yield return (points[i], points[i + 1]);
+                foreach (var kind in GroundKinds) {
+                    foreach (var points in Exact.Triangles[kind..(kind + 1)].Concat(Exact.Outlines[kind])) {
+                        for (var i = 0; i + 1 < points.Length; i += 2) {
+                            yield return (points[i], points[i + 1]);
+                        }
                     }
                 }
 
@@ -70,13 +72,18 @@ internal static class OverlayMinimapData {
 
     }
 
-    /// <summary>
-    /// The exact shapes of an area's ground, in world units: for each kind (1 path, 2 grass, 3 water, 4 wall) its
-    /// triangles as x, y pairs, three a triangle; and its round things (trees, posts, pillars) as x, y, radius.
-    /// </summary>
-    internal sealed record Shapes(float[][] Triangles, float[] Rounds) {
+    /// <summary>The kinds that are ground (paths, grass, water, and paths and grass above water).</summary>
+    internal static readonly int[] GroundKinds = [1, 2, 3, 6, 7];
 
-        internal bool IsEmpty => Triangles.All(t => t.Length == 0);
+    /// <summary>
+    /// The shapes of an area's ground, in world units: for each kind (1 path, 2 grass, 3 water, 4 wall, 6 path and
+    /// 7 grass above water such as bridges and banks) its triangles
+    /// as x, y pairs, three a triangle, or its smoothed outlines (x, y pairs each, filled even-odd: holes are outlines
+    /// too); and its round things (trees, posts, pillars) as x, y, radius.
+    /// </summary>
+    internal sealed record Shapes(float[][] Triangles, float[][][] Outlines, float[] Rounds) {
+
+        internal bool IsEmpty => Triangles.All(t => t.Length == 0) && Outlines.All(o => o.Length == 0);
 
     }
 
@@ -127,6 +134,15 @@ internal static class OverlayMinimapData {
         }
     }
 
+    /// <summary>Which streets this window has (area and smoothing): the server sends them again when its smoothing changes.</summary>
+    internal static string GroundKey(long window) {
+        lock (s_lock) {
+            return s_groundKeys.GetValueOrDefault(window, "");
+        }
+    }
+
+    private static readonly Dictionary<long, string> s_groundKeys = [];
+
     /// <summary>The server's answer to op "map" for one window.</summary>
     internal static void Heard(long window, JsonObject answer) {
         Snapshot? snapshot;
@@ -134,6 +150,7 @@ internal static class OverlayMinimapData {
             if (map["ground"] is JsonObject sent && ReadGround(sent) is { } ground) {
                 lock (s_lock) {
                     s_grounds[window] = ground;
+                    s_groundKeys[window] = Short((string?) sent["key"], 260) is { Length: > 0 } key ? key : ground.Zone;
                 }
             }
 
@@ -192,9 +209,21 @@ internal static class OverlayMinimapData {
 
             var t = Math.Clamp((DateTime.UtcNow - now.At).TotalSeconds / gap, 0, 1);
             var turn = Math.IEEERemainder(now.Yaw - before.Yaw, 2 * Math.PI);
+            // Creatures, NPCs and other wizards glide too, each from where it was on the last map (Niduus, 2026-11-12:
+            // "choppy live updates of mobs. I want them smooth"). One that jumped far (a teleport) is just put there.
+            var was = new Dictionary<string, Mark>(before.Marks.Count);
+            foreach (var mark in before.Marks) {
+                if (mark.Id.Length > 0) {
+                    was.TryAdd(mark.Id, mark);
+                }
+            }
+
+            var marks = was.Count == 0 || t >= 1 ? now.Marks : now.Marks.Select(m =>
+                m.Id.Length > 0 && was.TryGetValue(m.Id, out var from) && Math.Abs(m.X - from.X) + Math.Abs(m.Y - from.Y) < 1500
+                    ? m with { X = from.X + ((m.X - from.X) * t), Y = from.Y + ((m.Y - from.Y) * t) } : m).ToList();
 
             return now with {
-                X = before.X + ((now.X - before.X) * t), Y = before.Y + ((now.Y - before.Y) * t), Yaw = before.Yaw + (turn * t),
+                X = before.X + ((now.X - before.X) * t), Y = before.Y + ((now.Y - before.Y) * t), Yaw = before.Yaw + (turn * t), Marks = marks,
             };
         }
     }
@@ -253,7 +282,8 @@ internal static class OverlayMinimapData {
         var gap = (now.At - before.At).TotalSeconds;
         var far = Math.Sqrt(((now.X - before.X) * (now.X - before.X)) + ((now.Y - before.Y) * (now.Y - before.Y)));
         var turned = Math.Abs(Math.IEEERemainder(now.Yaw - before.Yaw, 2 * Math.PI));
-        if (gap is <= 0.02 or > 1.5 || far > 1500 || !string.Equals(before.Zone, now.Zone, StringComparison.OrdinalIgnoreCase) || (far < 0.5 && turned < 0.001)) {
+        // Glides even when the wizard stands still: the creatures around may be walking.
+        if (gap is <= 0.02 or > 1.5 || far > 1500 || turned > Math.PI * 2 || !string.Equals(before.Zone, now.Zone, StringComparison.OrdinalIgnoreCase)) {
             return null;
         }
 
@@ -283,6 +313,7 @@ internal static class OverlayMinimapData {
                 s_maps.Remove(gone);
                 s_previous.Remove(gone);
                 s_grounds.Remove(gone);
+                s_groundKeys.Remove(gone);
                 s_staleShown.Remove(gone);
                 s_full.Remove(gone);
             }
@@ -335,9 +366,11 @@ internal static class OverlayMinimapData {
                 return none;
             }
 
-            var triangles = new List<float>[5];
-            for (var k = 0; k < 5; k++) {
+            var triangles = new List<float>[8];
+            var outlines = new List<float[]>[8];
+            for (var k = 0; k < 8; k++) {
                 triangles[k] = [];
+                outlines[k] = [];
             }
 
             var rounds = new List<float>();
@@ -348,8 +381,32 @@ internal static class OverlayMinimapData {
                 var kind = data[at];
                 var count = (int) Math.Min(BitConverter.ToUInt32(data, at + 1), 2_000_000u);
                 at += 5;
+                // Smoothed outlines (kind + 16): each its own count of points.
+                if (kind is >= 17 and <= 23 and not 21) {
+                    for (var n = 0; n < count && at + 2 <= data.Length; n++) {
+                        var points = BitConverter.ToUInt16(data, at);
+                        at += 2;
+                        if (at + (points * 4) > data.Length) {
+                            at = data.Length;
+                            break;
+                        }
+
+                        var outline = new float[points * 2];
+                        for (var p = 0; p < points; p++, at += 4) {
+                            outline[p * 2] = X(at);
+                            outline[(p * 2) + 1] = Y(at + 2);
+                        }
+
+                        if (points >= 3) {
+                            outlines[kind - 16].Add(outline);
+                        }
+                    }
+
+                    continue;
+                }
+
                 var each = kind == 5 ? 6 : 12;
-                if (kind is < 1 or > 5 || at + ((long) count * each) > data.Length) {
+                if (kind is < 1 or > 7 || at + ((long) count * each) > data.Length) {
                     break;
                 }
 
@@ -368,15 +425,14 @@ internal static class OverlayMinimapData {
                 }
             }
 
-            var shapes = new Shapes([.. triangles.Select(t => t.ToArray())], [.. rounds]);
+            var shapes = new Shapes([.. triangles.Select(t => t.ToArray())], [.. outlines.Select(o => o.ToArray())], [.. rounds]);
             if (shapes.IsEmpty) {
                 return none;
             }
 
             // Bounds of the ground (for the game's map page): paths, grass and water.
             double minX = double.MaxValue, maxX = double.MinValue, minY = double.MaxValue, maxY = double.MinValue;
-            for (var kind = 1; kind <= 3; kind++) {
-                var points = shapes.Triangles[kind];
+            foreach (var points in GroundKinds.SelectMany(kind => shapes.Outlines[kind].Prepend(shapes.Triangles[kind]))) {
                 for (var i = 0; i + 1 < points.Length; i += 2) {
                     (minX, maxX) = (Math.Min(minX, points[i]), Math.Max(maxX, points[i]));
                     (minY, maxY) = (Math.Min(minY, points[i + 1]), Math.Max(maxY, points[i + 1]));
@@ -399,7 +455,7 @@ internal static class OverlayMinimapData {
         if (map["marks"] is JsonArray list) {
             foreach (var item in list.OfType<JsonObject>().Take(500)) {
                 marks.Add(new Mark(Short((string?) item["k"], 12), Number(item["x"]), Number(item["y"]), Short((string?) item["n"], 60),
-                    (int) Number(item["l"])));
+                    (int) Number(item["l"]), Short((string?) item["i"], 40)));
             }
         }
 
@@ -517,7 +573,7 @@ internal sealed class MinimapView : Control {
     private double _mapH => _full ? Math.Max(50, Bounds.Height) : _fixedH;
 
     // How far the map reaches from the wizard to its nearer edge: the minimap's Zoom, or the full screen map's own.
-    private double Zoom => _full ? OverlayMinimapData.FullZoom(_window) ?? _map.Zoom * 2.5 : _map.Zoom;
+    private double Zoom => _full ? OverlayMinimapData.FullZoom(_window) ?? (_map.FullZoom > 0 ? _map.FullZoom : _map.Zoom * 2.5) : _map.Zoom;
 
     public override void Render(DrawingContext context) {
         var area = new Rect(0, 0, _mapW, _mapH);
@@ -525,7 +581,7 @@ internal sealed class MinimapView : Control {
         var radiusX = _mapW / 2;
         var radiusY = _mapH / 2;
         // Full screen it covers the game, so it gets a solid dark background.
-        var fill = _full ? new SolidColorBrush(Color.FromArgb(0xF0, 0x0C, 0x10, 0x1C))
+        var fill = _full ? Brush(_map.FullBackground)
             : OverlayRenderer.Brush(_element.Background) ?? new SolidColorBrush(Color.FromArgb(0xB4, 0x10, 0x14, 0x24));
         var edge = _element.BorderWidth > 0 && OverlayRenderer.Parse(_element.BorderColor) is { } edgeColor
             ? new Pen(new SolidColorBrush(edgeColor), _element.BorderWidth) : null;
@@ -534,12 +590,14 @@ internal sealed class MinimapView : Control {
         context.DrawGeometry(fill, null, shape);
 
         // Read again each time it is drawn, so the overlay can draw just the minimap again while it glides.
-        var data = _window != 0 ? OverlayMinimapData.Shown(_window) ?? _data : _data;
+        var data = _window != 0 ? (_map.Glide ? OverlayMinimapData.Shown(_window) : OverlayMinimapData.For(_window)) ?? _data : _data;
         var stale = data is null || data.Stale;
         using (context.PushGeometryClip(shape)) {
             // A faint ring half way out, so distances read at a glance.
-            var faint = new Pen(new SolidColorBrush(Color.FromArgb(0x30, 0xFF, 0xFF, 0xFF)), 1);
-            if (_map.Round) {
+            var faint = new Pen(Brush(_map.RingColor), 1);
+            if (!_map.ShowRing) {
+            }
+            else if (_map.Round) {
                 context.DrawEllipse(null, faint, center, radiusX / 2, radiusY / 2);
             }
             else if (!_full) {
@@ -562,7 +620,8 @@ internal sealed class MinimapView : Control {
 
             // The place's name at the bottom, under the icons (the N goes over it).
             if (data is { Note.Length: 0 } && _map.Place && data.Place.Length > 0) {
-                Label(context, data.Place, new Point(center.X, _mapH - _map.NameSize - 12), _map.NameSize + 1, Brush(_map.TextColor), centered: true, bold: true, pill: true);
+                var top = _map.PlaceAt == "Top" ? (_map.ShowNorth ? _map.NameSize * 2.2 + 6 : 8) : _mapH - _map.NameSize - 12;
+                Label(context, data.Place, new Point(center.X, top), _map.NameSize + 1, Brush(_map.TextColor), centered: true, bold: true, pill: true);
             }
 
             // The last map stays under a note while a new one doesn't come.
@@ -616,13 +675,18 @@ internal sealed class MinimapView : Control {
         if (ground.Exact is { } exact) {
             // Shapes are kept as (x, -y): east right, north up. Moved so the wizard is at 0, 0.
             var matrix = Matrix.CreateTranslation(-data.X, data.Y) * placed;
-            var colors = new[] { "", _map.PathColor, _map.GrassColor, _map.WaterColor, _map.WallColor };
+            var colors = new[] { "", _map.PathColor, _map.GrassColor, _map.WaterColor, _map.WallColor, _map.TreeColor, _map.PathColor, _map.GrassColor };
             var geometry = Outlines(exact);
             // Each kind is one filled outline, so the triangles in it leave no seams and nothing is drawn twice.
             using (context.PushTransform(matrix)) {
-                foreach (var kind in new[] { 2, 1, 3, 4, 5 }) {
-                    if (geometry[kind] is { } shape && OverlayRenderer.Parse(colors[Math.Min(kind, 4)]) is { A: > 0 } color) {
-                        context.DrawGeometry(new SolidColorBrush(color, _map.StreetsOpacity * (kind == 5 ? 0.85 : 1)), null, shape);
+                // Grass, paths, water over them, bridges and banks above the water, then walls, trees and posts.
+                foreach (var kind in new[] { 2, 1, 3, 7, 6, 4, 5 }) {
+                    if ((kind == 4 && !_map.Walls) || (kind == 5 && !_map.Trees)) {
+                        continue;
+                    }
+
+                    if (geometry[kind] is { } shape && OverlayRenderer.Parse(colors[kind]) is { A: > 0 } color) {
+                        context.DrawGeometry(new SolidColorBrush(color, _map.StreetsOpacity), null, shape);
                     }
                 }
             }
@@ -647,16 +711,27 @@ internal sealed class MinimapView : Control {
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<OverlayMinimapData.Shapes, Geometry?[]> s_outlines = new();
 
     private static Geometry?[] Outlines(OverlayMinimapData.Shapes shapes) => s_outlines.GetValue(shapes, made => {
-        var outlines = new Geometry?[6];
-        for (var kind = 1; kind <= 4; kind++) {
+        var outlines = new Geometry?[8];
+        foreach (var kind in new[] { 1, 2, 3, 4, 6, 7 }) {
             var points = made.Triangles[kind];
-            if (points.Length < 6) {
+            var smooth = made.Outlines[kind];
+            if (points.Length < 6 && smooth.Length == 0) {
                 continue;
             }
 
             var geometry = new StreamGeometry();
             using (var g = geometry.Open()) {
-                g.SetFillRule(FillRule.NonZero);
+                // Smoothed outlines: holes are outlines too, so even-odd. Triangles overlap: non-zero.
+                g.SetFillRule(smooth.Length > 0 ? FillRule.EvenOdd : FillRule.NonZero);
+                foreach (var outline in smooth) {
+                    g.BeginFigure(new Point(outline[0], -outline[1]), true);
+                    for (var i = 2; i + 1 < outline.Length; i += 2) {
+                        g.LineTo(new Point(outline[i], -outline[i + 1]));
+                    }
+
+                    g.EndFigure(true);
+                }
+
                 for (var i = 0; i + 5 < points.Length; i += 6) {
                     g.BeginFigure(new Point(points[i], -points[i + 1]), true);
                     g.LineTo(new Point(points[i + 2], -points[i + 3]));
@@ -761,7 +836,7 @@ internal sealed class MinimapView : Control {
             var at = project(mark.X, mark.Y);
             var (ox, oy) = ((at.X - center.X) / radiusX, (at.Y - center.Y) / radiusY);
             var outside = _map.Round ? ox * ox + oy * oy > 1 : Math.Abs(ox) > 1 || Math.Abs(oy) > 1;
-            var pinned = mark.Kind is "team";
+            var pinned = mark.Kind is "team" && _map.EdgeArrows;
             if (outside && !pinned) {
                 continue;
             }
@@ -774,25 +849,42 @@ internal sealed class MinimapView : Control {
                 continue;
             }
 
-            Icon(context, mark, at, size);
-            if (_map.Names && mark.Name.Length > 0 && mark.Kind is "boss" or "sigil" or "door" || (_full && mark.Kind is "npc")) {
-                Label(context, mark.Name, new Point(at.X, at.Y + size * 0.9), _map.NameSize, Brush(_map.TextColor), centered: true);
+            var own = size * SizeOf(mark);
+            Icon(context, mark, at, own);
+            if (mark.Name.Length > 0 && Named(mark)) {
+                var words = _map.Levels && mark.Level > 0 && mark.Kind is "mob" or "boss" ? $"{mark.Name} ({mark.Level})" : mark.Name;
+                Label(context, words, new Point(at.X, at.Y + own * 0.9), _map.NameSize, Brush(_map.TextColor), centered: true, pill: _map.NameBackground);
             }
         }
 
         // North, on the edge, over the icons.
-        var (northSin, northCos) = Math.SinCos(turn);
-        var northR = _map.NameSize * 0.85;
-        var north = new Point(center.X + (radiusX - northR - 2) * northSin, center.Y - (radiusY - northR - 2) * northCos);
-        context.DrawEllipse(new SolidColorBrush(Color.FromArgb(0xE0, 0x0A, 0x0A, 0x14)), new Pen(Brush("#FFFF6B6B"), 1), north, northR, northR);
-        var n = Text("N", _map.NameSize, Brush("#FFFF6B6B"), true);
-        Words(context, n, new Point(north.X - n.Width / 2, north.Y - n.Height / 2), Brush("#FFFF6B6B"));
+        if (_map.ShowNorth) {
+            var (northSin, northCos) = Math.SinCos(turn);
+            var northR = _map.NameSize * 0.85;
+            var north = new Point(center.X + (radiusX - northR - 2) * northSin, center.Y - (radiusY - northR - 2) * northCos);
+            context.DrawEllipse(new SolidColorBrush(Color.FromArgb(0xE0, 0x0A, 0x0A, 0x14)), new Pen(Brush(_map.NorthColor), 1), north, northR, northR);
+            var n = Text("N", _map.NameSize, Brush(_map.NorthColor), true);
+            Words(context, n, new Point(north.X - n.Width / 2, north.Y - n.Height / 2), Brush(_map.NorthColor));
+        }
 
         // You, in the middle: pointing up when the map turns with you, else the way you face.
         var faceX = -Math.Sin(data.Yaw) * (_map.Mirror ? -1 : 1);
         var faceY = Math.Cos(data.Yaw);
-        Arrow(context, center, _map.Turn ? 0 : Math.Atan2(faceX, -faceY), size * 1.5, Brush(_map.YouColor), new Pen(Brushes.Black, 1.2));
+        Arrow(context, center, _map.Turn ? 0 : Math.Atan2(faceX, -faceY), size * _map.YouSize, Brush(_map.YouColor), new Pen(Brushes.Black, 1.2));
     }
+
+    // Which names show: bosses, sigils and doors with Names; creatures and NPCs each by their own choice; NPCs on the full screen map.
+    private bool Named(OverlayMinimapData.Mark mark) => mark.Kind switch {
+        "boss" or "sigil" or "door" => _map.Names,
+        "mob" => _map.MobNames,
+        "npc" => _map.NpcNames || (_full && _map.FullNames),
+        _ => false,
+    };
+
+    private double SizeOf(OverlayMinimapData.Mark mark) => mark.Kind switch {
+        "mob" => _map.MobSize, "boss" => _map.BossSize, "npc" => _map.NpcSize, "sigil" => _map.SigilSize, "door" => _map.DoorSize,
+        "chest" => _map.ChestSize, "wizard" or "team" => _map.WizardSize, _ => 1,
+    };
 
     private static int Order(OverlayMinimapData.Mark mark) => mark.Kind switch {
         "npc" => 0, "chest" => 1, "door" => 2, "mob" => 3, "wizard" => 5, "team" => 6, "sigil" => 7, "boss" => 9, _ => 0,
@@ -815,7 +907,9 @@ internal sealed class MinimapView : Control {
         "wizard" => _map.WizardColor, "team" => _map.TeamColor, _ => _map.TextColor,
     };
 
-    private static readonly Pen Outline = new(new SolidColorBrush(Color.FromArgb(0xD0, 0, 0, 0)), 1);
+    private Pen Outline => _outline ??= new Pen(Brush(_map.OutlineColor), 1);
+
+    private Pen? _outline;
 
     private void Icon(DrawingContext context, OverlayMinimapData.Mark mark, Point at, double size) {
         var brush = Brush(ColorOf(mark));
@@ -847,7 +941,7 @@ internal sealed class MinimapView : Control {
         }
     }
 
-    private static void Skull(DrawingContext context, Point at, double r, IBrush brush) {
+    private void Skull(DrawingContext context, Point at, double r, IBrush brush) {
         // A round head over a jaw, with two dark eyes.
         context.DrawRectangle(brush, Outline, new Rect(at.X - r * 0.5, at.Y + r * 0.1, r, r * 0.75), r * 0.2, r * 0.2);
         context.DrawEllipse(brush, Outline, new Point(at.X, at.Y - r * 0.1), r * 0.85, r * 0.75);

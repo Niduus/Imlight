@@ -87,12 +87,17 @@ internal static class OverlayButtons {
 
                 return;
             case OverlayAction.MAP_FULL:
-                OverlayMinimapData.ToggleFull(game.ToInt64(), (button.Map?.Zoom ?? 2200) * 2.5);
+                OverlayMinimapData.ToggleFull(game.ToInt64(), button.Map is { FullZoom: > 0 } kept ? kept.FullZoom : (button.Map?.Zoom ?? 2200) * 2.5);
                 done(true);
 
                 return;
             case OverlayAction.MAP_IN or OverlayAction.MAP_OUT:
                 OverlayMinimapData.ZoomFull(game.ToInt64(), button.Action == OverlayAction.MAP_IN);
+                // Kept in the design on this PC, so the full screen map opens this close next time.
+                if (button.Map is { } map && OverlayMinimapData.FullZoom(game.ToInt64()) is { } zoom) {
+                    map.FullZoom = Math.Round(zoom);
+                    OverlayHost.SaveQuietly();
+                }
                 done(true);
 
                 return;

@@ -448,6 +448,34 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     /// own (a shop, a trainer, the stitcher Eloise Merryweather) is placed the same way yet always stands there, so it is
     /// never held back. Niduus 2026-10-25: quest objects stood in the world for everyone; then "Where did the stitcher go?".
     /// </summary>
+    /// <summary>
+    /// Whether this wizard's game is shown the object now: not held back for a quest, not hidden by a dynamod, its spawn
+    /// requirements met, and the object turned on. For the overlay's minimap, read from another thread, so a best guess
+    /// (Niduus, 2026-11-12: the map "is showing NPC's that are hidden").
+    /// </summary>
+    internal bool ShownTo(Wizard wizard) {
+        if (wizard is null) {
+            return true;
+        }
+
+        try {
+            if (!IsEnabled) {
+                return false;
+            }
+
+            bool Same(Wizard other) => other is not null && other.CharId == wizard.CharId;
+            if (_hiddenUntilQuest.Values.Any(Same) || _playerIgnoreBecauseDynamod.Values.Any(Same)) {
+                return false;
+            }
+
+            return !(IsQuestOnly || Entity.Info?.m_spawnRequirements is not null) || _playersWithRequirementsMet.Keys.Any(Same);
+        }
+        catch (System.Exception ex) when (ex is System.InvalidOperationException or System.ArgumentException or System.NullReferenceException) {
+            // Changed while read: asked again on the next map.
+            return true;
+        }
+    }
+
     private bool IsQuestOnly
         => _isQuestOnly ??= Entity.Info is { m_bUndetectable: true, m_spawnRequirements: null } info
            && info.GetType() == typeof(CoreObjectInfo)

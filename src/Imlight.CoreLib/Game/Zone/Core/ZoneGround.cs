@@ -62,7 +62,7 @@ internal static class ZoneGround {
     /// <summary>
     /// A zone's ground as exact shapes (Niduus, 2026-11-12: "Make sure they are fully accurate"): every ground triangle,
     /// wall and round thing as the game's collision has it, with no grid. Points are whole steps of <c>Unit</c> game
-    /// units from (Left, Bottom). Packed, base64: blocks of a kind (1 path, 2 grass, 3 water, 4 wall: triangles of six
+    /// units from (Left, Bottom). Packed, base64: blocks of a kind (1 path, 2 grass, 3 water, 4 wall, 6 path and 7 grass above water: triangles of six
     /// 16-bit numbers; 5 round things: circles of three: x, y, radius), each block a kind byte and a 32-bit count.
     /// </summary>
     internal sealed record Outline(float Left, float Bottom, float Unit, string Data) {
@@ -75,19 +75,38 @@ internal static class ZoneGround {
 
     internal const byte ROUND = 5;
 
-    private static readonly ConcurrentDictionary<string, Lazy<Outline>> s_outlines = new(StringComparer.OrdinalIgnoreCase);
+    /// <summary>A path above water (a bridge or dock), drawn over the water.</summary>
+    internal const byte PATH_OVER = 6;
 
-    /// <summary>The shapes of this zone's ground (read once), or <see cref="Outline.Empty"/> when it has none.</summary>
-    internal static Outline ShapesOf(string zonePath)
-        => string.IsNullOrEmpty(zonePath) ? Outline.Empty : s_outlines.GetOrAdd(zonePath, z => new Lazy<Outline>(() => LoadShapes(z))).Value;
+    /// <summary>Grass above water, drawn over the water.</summary>
+    internal const byte GRASS_OVER = 7;
 
-    private static Outline LoadShapes(string zonePath) {
+    private static readonly ConcurrentDictionary<(string Zone, float Smoothing), Lazy<Outline>> s_outlines = new();
+
+    /// <summary>
+    /// The shapes of this zone's ground (made once for each smoothing), or <see cref="Outline.Empty"/> when it has none.
+    /// <paramref name="smoothing"/> (game units, 0 = the exact triangles) rounds off the rough edges of paths, grass and water.
+    /// </summary>
+    internal static Outline ShapesOf(string zonePath, float smoothing = 0) {
+        if (string.IsNullOrEmpty(zonePath)) {
+            return Outline.Empty;
+        }
+
+        smoothing = Math.Clamp(MathF.Round(smoothing), 0, 400);
+        if (s_outlines.Count > 64) {
+            s_outlines.Clear();
+        }
+
+        return s_outlines.GetOrAdd((zonePath.ToLowerInvariant(), smoothing), key => new Lazy<Outline>(() => LoadShapes(key.Zone, key.Smoothing))).Value;
+    }
+
+    private static Outline LoadShapes(string zonePath, float smoothing) {
         try {
             if (!ResourceManager.TryLoadArchive(zonePath, out var wad) || wad.OpenFile("collision.bcd") is not { } memory) {
                 return Outline.Empty;
             }
 
-            return Shapes(memory.ToArray());
+            return Shapes(memory.ToArray(), smoothing);
         }
         catch (Exception ex) {
             Logger.Debug("Zone {0}: could not draw its ground shapes for the minimap ({1}).", Logger.Args(zonePath, ex.Message));
@@ -96,7 +115,7 @@ internal static class ZoneGround {
         }
     }
 
-    internal static Outline Shapes(byte[] data) {
+    internal static Outline Shapes(byte[] data, float smoothing = 0) {
         var triangles = Read(data, out var circles);
         float left = float.MaxValue, right = float.MinValue, bottom = float.MaxValue, top = float.MinValue;
         void Take(float x, float y) {
@@ -126,9 +145,28 @@ internal static class ZoneGround {
 
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream);
-        foreach (var kind in new[] { GRASS, PATH, WATER, WALL }) {
+        foreach (var kind in new[] { GRASS, PATH, WATER, WALL, PATH_OVER, GRASS_OVER }) {
             var mine = triangles.Where(t => t.Kind == kind && Finite(t)).ToList();
             if (mine.Count == 0) {
+                continue;
+            }
+
+            // Smoothed: the kind's outlines (kind + 16, a count, then each with its own count of points), filled even-odd.
+            // Walls are only rounded a little (thin fences would melt away), so their corners don't stick out.
+            if (smoothing > 0) {
+                var outlines = GroundContours.Trace([.. mine.Select(t => new[] { t.X1, t.Y1, t.X2, t.Y2, t.X3, t.Y3 })],
+                        kind == WALL ? Math.Min(smoothing * 0.3f, 15f) : smoothing)
+                    .Where(o => o.Length / 2 <= ushort.MaxValue).ToList();
+                writer.Write((byte) (kind + 16));
+                writer.Write((uint) outlines.Count);
+                foreach (var outline in outlines) {
+                    writer.Write((ushort) (outline.Length / 2));
+                    for (var i = 0; i + 1 < outline.Length; i += 2) {
+                        writer.Write(Q(outline[i], left));
+                        writer.Write(Q(outline[i + 1], bottom));
+                    }
+                }
+
                 continue;
             }
 
@@ -180,7 +218,7 @@ internal static class ZoneGround {
         }
     }
 
-    private readonly record struct Triangle(float X1, float Y1, float X2, float Y2, float X3, float Y3, byte Kind);
+    private readonly record struct Triangle(float X1, float Y1, float X2, float Y2, float X3, float Y3, byte Kind, float Z = 0);
 
     private readonly record struct Circle(float X, float Y, float R);
 
@@ -226,7 +264,7 @@ internal static class ZoneGround {
             }
 
             var (mx, my) = (F(), F());
-            F(); // middle height
+            var mz = F();
             var scale = F();
             // A mesh's points are its own: turned, sized and moved by the shape like a box's corners (Niduus, 2026-11-12:
             // Unicorn Way's ground came out about 12000 to one side, so the map didn't match the street).
@@ -236,6 +274,7 @@ internal static class ZoneGround {
                     var (px, py, pz) = (points[p] * size, points[p + 1] * size, points[p + 2] * size);
                     points[p] = mx + (rot[0] * px) + (rot[3] * py) + (rot[6] * pz);
                     points[p + 1] = my + (rot[1] * px) + (rot[4] * py) + (rot[7] * pz);
+                    points[p + 2] = mz + (rot[2] * px) + (rot[5] * py) + (rot[8] * pz);
                 }
             }
             var material = Text();
@@ -282,16 +321,38 @@ internal static class ZoneGround {
                     break;
             }
 
-            // Ground meshes (category 2); the fishing spots' water is another category and is left out.
-            if (points is not null && category == 2) {
-                var kind = KindOf(material);
+            // Ground meshes (category 2), and the water of lakes and fishing spots (category 64, Water).
+            var lake = category == 64 && string.Equals((material ?? "").Trim(), "Water", StringComparison.OrdinalIgnoreCase);
+            if (points is not null && (category == 2 || lake)) {
+                var kind = lake ? WATER : KindOf(material);
                 for (var f = 0; f + 2 < faces.Length; f += 3) {
                     var (p1, p2, p3) = ((int) faces[f] * 3, (int) faces[f + 1] * 3, (int) faces[f + 2] * 3);
                     if (Math.Max(p1, Math.Max(p2, p3)) + 2 >= points.Length) {
                         continue;
                     }
 
-                    triangles.Add(new Triangle(points[p1], points[p1 + 1], points[p2], points[p2 + 1], points[p3], points[p3 + 1], kind));
+                    triangles.Add(new Triangle(points[p1], points[p1 + 1], points[p2], points[p2 + 1], points[p3], points[p3 + 1], kind,
+                        (points[p1 + 2] + points[p2 + 2] + points[p3 + 2]) / 3));
+                }
+            }
+        }
+
+        // Water lies over the ground under it (the Commons' pond has a walkable floor); ground well above the water (a
+        // bridge, a dock, a bank) goes over the water.
+        var waters = triangles.Where(t => t.Kind == WATER).ToList();
+        if (waters.Count > 0) {
+            for (var i = 0; i < triangles.Count; i++) {
+                var t = triangles[i];
+                if (t.Kind is not (PATH or GRASS)) {
+                    continue;
+                }
+
+                var (x0, x1) = (Math.Min(t.X1, Math.Min(t.X2, t.X3)), Math.Max(t.X1, Math.Max(t.X2, t.X3)));
+                var (y0, y1) = (Math.Min(t.Y1, Math.Min(t.Y2, t.Y3)), Math.Max(t.Y1, Math.Max(t.Y2, t.Y3)));
+                var under = waters.Where(w => Math.Max(w.X1, Math.Max(w.X2, w.X3)) >= x0 && Math.Min(w.X1, Math.Min(w.X2, w.X3)) <= x1
+                                              && Math.Max(w.Y1, Math.Max(w.Y2, w.Y3)) >= y0 && Math.Min(w.Y1, Math.Min(w.Y2, w.Y3)) <= y1).ToList();
+                if (under.Count > 0 && t.Z > under.Max(w => w.Z) + 15) {
+                    triangles[i] = t with { Kind = t.Kind == PATH ? PATH_OVER : GRASS_OVER };
                 }
             }
         }
@@ -322,11 +383,11 @@ internal static class ZoneGround {
         var height = Math.Clamp((int) MathF.Ceiling((top - bottom) / cell) + 1, 1, MAX_CELLS + 2);
         var grid = new byte[width * height];
 
-        // Ground first (grass under paths under water), walls last, so each is drawn over the one before.
-        foreach (var kind in new[] { GRASS, PATH, WATER, WALL }) {
+        // Grass, paths, water over them, ground above the water over that, and walls last, each drawn over the one before.
+        foreach (var kind in new[] { GRASS, PATH, WATER, GRASS_OVER, PATH_OVER, WALL }) {
             foreach (var t in triangles) {
                 if (t.Kind == kind) {
-                    Fill(grid, width, height, left, top, cell, t);
+                    Fill(grid, width, height, left, top, cell, t with { Kind = kind switch { PATH_OVER => PATH, GRASS_OVER => GRASS, _ => kind } });
                 }
             }
         }

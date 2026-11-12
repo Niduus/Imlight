@@ -636,6 +636,62 @@ internal sealed class OverlayMap {
     public string YouColor { get; set; } = "#FFFFFFFF";
     public string TextColor { get; set; } = "#FFFFFFFF";
 
+    // Everything else about its look (Niduus, 2026-11-12: "Allow for the Mini Map UI to also be customizable to any and all extent").
+
+    /// <summary>Creatures, wizards and the map glide between updates (off: they jump to each new spot).</summary>
+    public bool Glide { get; set; } = true;
+
+    public bool ShowNorth { get; set; } = true;
+    public string NorthColor { get; set; } = "#FFFF6B6B";
+    public bool ShowRing { get; set; } = true;
+    public string RingColor { get; set; } = "#30FFFFFF";
+
+    /// <summary>How big your arrow is, times the icon size.</summary>
+    public double YouSize { get; set; } = 1.5;
+
+    /// <summary>The colour round each icon.</summary>
+    public string OutlineColor { get; set; } = "#D0000000";
+
+    /// <summary>Teammates off the map show as an arrow on its edge.</summary>
+    public bool EdgeArrows { get; set; } = true;
+
+    public bool MobNames { get; set; }
+    public bool NpcNames { get; set; }
+    public bool Levels { get; set; }
+
+    /// <summary>A dark band under names, so they read on any ground.</summary>
+    public bool NameBackground { get; set; }
+
+    /// <summary>Where the place's name goes: Bottom or Top.</summary>
+    public string PlaceAt { get; set; } = "Bottom";
+
+    // Each kind's icon size, times the icon size.
+    public double MobSize { get; set; } = 1;
+    public double BossSize { get; set; } = 1;
+    public double NpcSize { get; set; } = 1;
+    public double SigilSize { get; set; } = 1;
+    public double DoorSize { get; set; } = 1;
+    public double ChestSize { get; set; } = 1;
+    public double WizardSize { get; set; } = 1;
+
+    public bool Walls { get; set; } = true;
+    public bool Trees { get; set; } = true;
+    public string TreeColor { get; set; } = "#D91C1C26";
+
+    /// <summary>The full screen button on the minimap's corner (over the game).</summary>
+    public bool FullButton { get; set; } = true;
+
+    /// <summary>Space round the full screen map, in pixels at 100%.</summary>
+    public double FullMargin { get; set; } = 36;
+
+    public string FullBackground { get; set; } = "#F00C101C";
+
+    /// <summary>Names of NPCs on the full screen map.</summary>
+    public bool FullNames { get; set; } = true;
+
+    /// <summary>How far the full screen map shows (game units); 0 = 2.5 times the minimap. Kept as you zoom it.</summary>
+    public double FullZoom { get; set; }
+
     internal OverlayMap Copy() => (OverlayMap) MemberwiseClone();
 
     internal OverlayMap Clean() {
@@ -658,6 +714,22 @@ internal sealed class OverlayMap {
         TeamColor = OverlayPaint.CleanColor(TeamColor, "#FF6BFF8A");
         YouColor = OverlayPaint.CleanColor(YouColor, "#FFFFFFFF");
         TextColor = OverlayPaint.CleanColor(TextColor, "#FFFFFFFF");
+        NorthColor = OverlayPaint.CleanColor(NorthColor, "#FFFF6B6B");
+        RingColor = OverlayPaint.CleanColor(RingColor, "#30FFFFFF");
+        OutlineColor = OverlayPaint.CleanColor(OutlineColor, "#D0000000");
+        TreeColor = OverlayPaint.CleanColor(TreeColor, "#D91C1C26");
+        FullBackground = OverlayPaint.CleanColor(FullBackground, "#F00C101C");
+        YouSize = OverlayElement.Range(YouSize, 0.3, 5, 1.5);
+        MobSize = OverlayElement.Range(MobSize, 0.2, 5, 1);
+        BossSize = OverlayElement.Range(BossSize, 0.2, 5, 1);
+        NpcSize = OverlayElement.Range(NpcSize, 0.2, 5, 1);
+        SigilSize = OverlayElement.Range(SigilSize, 0.2, 5, 1);
+        DoorSize = OverlayElement.Range(DoorSize, 0.2, 5, 1);
+        ChestSize = OverlayElement.Range(ChestSize, 0.2, 5, 1);
+        WizardSize = OverlayElement.Range(WizardSize, 0.2, 5, 1);
+        FullMargin = OverlayElement.Range(FullMargin, 0, 250, 36);
+        FullZoom = FullZoom <= 0 || !double.IsFinite(FullZoom) ? 0 : Math.Clamp(FullZoom, 300, 30000);
+        PlaceAt = PlaceAt == "Top" ? "Top" : "Bottom";
 
         return this;
     }

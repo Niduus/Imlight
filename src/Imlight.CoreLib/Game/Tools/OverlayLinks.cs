@@ -253,13 +253,13 @@ public static class OverlayLinks {
             return RemoteAdminWire.Error("The host has turned off the minimap on this server.");
         }
 
-        // A few windows each asking four times a second is fine; more is slowed down.
+        // A few windows each asking about seven times a second is fine; more is slowed down.
         var times = s_mapAsks.GetOrAdd(link, _ => new ConcurrentQueue<DateTime>());
         while (times.TryPeek(out var oldest) && DateTime.UtcNow - oldest > TimeSpan.FromSeconds(1)) {
             times.TryDequeue(out _);
         }
 
-        if (times.Count >= 16) {
+        if (times.Count >= 40) {
             return RemoteAdminWire.Error("busy");
         }
 
@@ -307,15 +307,21 @@ public static class OverlayLinks {
         OverlayMinimap.AddWizards(map, charId, zone, others);
         // The streets of the zone, drawn from above (ZoneGround), sent once per zone: the overlay says which it has.
         var zonePath = (string) map["zone"] ?? "";
-        if (OverlayMinimap.Streets && zonePath.Length > 0 && !string.Equals((string) header["ground"] ?? "", zonePath, StringComparison.OrdinalIgnoreCase)) {
-            // An overlay that draws shapes gets the exact shapes; an older one the grid.
-            var shapes = header["shapes"] is JsonValue asked && asked.TryGetValue<bool>(out var wants) && wants
-                ? Zone.Core.ZoneGround.ShapesOf(zonePath) : null;
+        // An overlay that draws shapes gets the shapes (smoothed by [Overlay] MinimapSmoothing); an older one the grid.
+        var drawsShapes = header["shapes"] is JsonValue asked && asked.TryGetValue<bool>(out var wants) && wants;
+        var smoothing = OverlayMinimap.Smoothing;
+        var groundKey = drawsShapes ? zonePath + "#" + smoothing.ToString(System.Globalization.CultureInfo.InvariantCulture) : zonePath;
+        var has = (string) header["groundKey"] ?? (string) header["ground"] ?? "";
+        if (OverlayMinimap.Streets && zonePath.Length > 0 && !string.Equals(has, groundKey, StringComparison.OrdinalIgnoreCase)) {
+            var shapes = drawsShapes ? Zone.Core.ZoneGround.ShapesOf(zonePath, smoothing) : null;
             var ground = shapes is null ? Zone.Core.ZoneGround.Of(zonePath) : Zone.Core.ZoneGround.Ground.Empty;
             map["ground"] = shapes is not null
                 ? shapes.IsEmpty
-                    ? new JsonObject { ["zone"] = zonePath }
-                    : new JsonObject { ["zone"] = zonePath, ["left"] = shapes.Left, ["bottom"] = shapes.Bottom, ["unit"] = shapes.Unit, ["shapes"] = shapes.Data }
+                    ? new JsonObject { ["zone"] = zonePath, ["key"] = groundKey }
+                    : new JsonObject {
+                        ["zone"] = zonePath, ["key"] = groundKey, ["left"] = shapes.Left, ["bottom"] = shapes.Bottom, ["unit"] = shapes.Unit,
+                        ["shapes"] = shapes.Data,
+                    }
                 : ground.IsEmpty
                 ? new JsonObject { ["zone"] = zonePath }
                 : new JsonObject {

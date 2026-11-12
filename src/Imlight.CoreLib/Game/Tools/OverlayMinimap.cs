@@ -56,6 +56,12 @@ internal static class OverlayMinimap {
     /// <summary>[Overlay] MinimapStreets: the minimap gets each area's streets, grass, water and walls; live.</summary>
     internal static bool Streets => ConfigurationManager.GetValue("Overlay.MinimapStreets", true);
 
+    /// <summary>
+    /// [Overlay] MinimapSmoothing: how much the rough edges of paths, grass and water are rounded off (game units, 0 = the
+    /// game's exact collision shapes, up to 400); live, for each overlay's next area.
+    /// </summary>
+    internal static float Smoothing => Math.Clamp(ConfigurationManager.GetValue("Overlay.MinimapSmoothing", 45f), 0f, 400f);
+
     private const int MAX_MARKS = 300;
 
     /// <summary>
@@ -78,7 +84,7 @@ internal static class OverlayMinimap {
 
         var live = MinimapIndex.In(zone);
         var marks = new List<(JsonObject Mark, float Far, int Rank)>();
-        void Add(string kind, float x, float y, string name, int level = 0, int rank = 5) {
+        void Add(string kind, float x, float y, string name, int level = 0, int rank = 5, ulong id = 0) {
             var far = Far(here.X, here.Y, x, y);
             if (far > range && rank > 1) {
                 return;
@@ -93,6 +99,12 @@ internal static class OverlayMinimap {
                 mark["l"] = level;
             }
 
+            // Which thing it is, so the overlay can glide it from where it was (Niduus, 2026-11-12: "choppy live
+            // updates of mobs. I want them smooth").
+            if (id != 0) {
+                mark["i"] = id.ToString(CultureInfo.InvariantCulture);
+            }
+
             marks.Add((mark, far, rank));
         }
 
@@ -100,20 +112,26 @@ internal static class OverlayMinimap {
         // a different plugin").
         var creatures = Creatures;
         foreach (var mark in live) {
+            // Only what this wizard's game shows: no NPC held back for a quest, hidden by a dynamod or turned off.
+            if (mark.Entity?.GetComponentOfType<Zone.Components.RenderComponent>() is { } render && !render.ShownTo(wizard)) {
+                continue;
+            }
+
             var spot = mark.Object.m_location;
+            var id = (ulong) mark.Object.m_globalID.Full;
             switch (mark.Kind) {
                 case MinimapIndex.MOB or MinimapIndex.BOSS:
                     if (!creatures) {
                         continue;
                     }
 
-                    Add(mark.Kind, spot.X, spot.Y, mark.Name, mark.Level, mark.Kind == MinimapIndex.BOSS ? 1 : 6);
+                    Add(mark.Kind, spot.X, spot.Y, mark.Name, mark.Level, mark.Kind == MinimapIndex.BOSS ? 1 : 6, id);
                     break;
                 case MinimapIndex.NPC:
-                    Add(MinimapIndex.NPC, spot.X, spot.Y, mark.Name, rank: 7);
+                    Add(MinimapIndex.NPC, spot.X, spot.Y, mark.Name, rank: 7, id: id);
                     break;
                 default:
-                    Add(mark.Kind, spot.X, spot.Y, mark.Name, rank: mark.Kind == MinimapIndex.SIGIL ? 1 : 4);
+                    Add(mark.Kind, spot.X, spot.Y, mark.Name, rank: mark.Kind == MinimapIndex.SIGIL ? 1 : 4, id: id);
                     break;
             }
         }
@@ -139,7 +157,10 @@ internal static class OverlayMinimap {
             }
 
             var team = Groups.GroupRegistry.AreGrouped(charId, other.CharId);
-            marks.Add(new JsonObject { ["k"] = team ? "team" : "wizard", ["x"] = Round(other.X), ["y"] = Round(other.Y), ["n"] = other.Name ?? "" });
+            marks.Add(new JsonObject {
+                ["k"] = team ? "team" : "wizard", ["x"] = Round(other.X), ["y"] = Round(other.Y), ["n"] = other.Name ?? "",
+                ["i"] = "w" + other.CharId.ToString(CultureInfo.InvariantCulture),
+            });
         }
     }
 

@@ -196,8 +196,8 @@ internal static class OverlayHost {
         s_timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
         s_timer.Tick += (_, _) => Tick();
         s_timer.Start();
-        // While a minimap shows, its corner is drawn again about 25 times a second as it glides between maps.
-        s_glideTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(40) };
+        // About 60 times a second, so creatures and the map glide smoothly (only the minimap's corner is drawn again).
+        s_glideTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
         s_glideTimer.Tick += (_, _) => {
             try {
                 if (OverlayMinimapData.Wanted.Length > 0) {
@@ -222,6 +222,23 @@ internal static class OverlayHost {
             s_designFileTime = FileTime(OverlayDesign.PathIn(s_installFolder));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            Log($"Overlay: couldn't save the design: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Saves the design as it is now on this PC without drawing it again (a change made from the game, such as the full
+    /// screen map's zoom). A minimap of the server's part isn't the player's to keep, so only the player's own is saved.
+    /// </summary>
+    internal static void SaveQuietly() {
+        try {
+            s_design.Save(s_installFolder);
+            s_designFileTime = FileTime(OverlayDesign.PathIn(s_installFolder));
+            // Ahziael's designer picks the change up, so its next save keeps it.
+            DesignStamp++;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            Log($"Overlay: couldn't save the design: {ex.Message}");
         }
     }
 
@@ -717,6 +734,82 @@ internal static class OverlayHost {
         private double _pixelsPerUnit = 1;
         private List<PixelRect> _mapParts = [];
         private bool _gliding;
+        private DateTime _patchedAt;
+        private TimeSpan _patchEvery;
+
+        // The picture's own drawing surface, kept between draws: a minimap's glide copies in only its corner.
+        private IntPtr _surfaceDc;
+        private IntPtr _surface;
+        private IntPtr _surfaceOld;
+        private IntPtr _surfaceBits;
+        private (int W, int H) _surfaceSize;
+
+        // The picture onto the screen: all of it (parts null), or only these parts copied into the kept surface.
+        private void DrawParts(byte[] pixels, int width, int height, Native.POINT origin, List<PixelRect>? parts) {
+            if (_surfaceSize != (width, height) || _surface == IntPtr.Zero) {
+                FreeSurface();
+                var screenDc = Native.GetDC(IntPtr.Zero);
+                try {
+                    var info = new Native.BITMAPINFO {
+                        biSize = (uint) Marshal.SizeOf<Native.BITMAPINFO>() - 4, biWidth = width, biHeight = -height, biPlanes = 1, biBitCount = 32,
+                    };
+                    _surfaceDc = Native.CreateCompatibleDC(screenDc);
+                    _surface = Native.CreateDIBSection(screenDc, ref info, 0, out _surfaceBits, IntPtr.Zero, 0);
+                    if (_surface == IntPtr.Zero || _surfaceDc == IntPtr.Zero) {
+                        FreeSurface();
+                        Draw(_hwnd, pixels, width, height, origin);
+
+                        return;
+                    }
+
+                    _surfaceOld = Native.SelectObject(_surfaceDc, _surface);
+                    _surfaceSize = (width, height);
+                    parts = null;
+                }
+                finally {
+                    Native.ReleaseDC(IntPtr.Zero, screenDc);
+                }
+            }
+
+            if (parts is null) {
+                Marshal.Copy(pixels, 0, _surfaceBits, Math.Min(pixels.Length, width * height * 4));
+            }
+            else {
+                foreach (var part in parts) {
+                    for (var row = 0; row < part.Height; row++) {
+                        var at = (((part.Y + row) * width) + part.X) * 4;
+                        Marshal.Copy(pixels, at, _surfaceBits + at, part.Width * 4);
+                    }
+                }
+            }
+
+            var screen = Native.GetDC(IntPtr.Zero);
+            try {
+                var size = new Native.SIZE { cx = width, cy = height };
+                var source = new Native.POINT();
+                var blend = new Native.BLENDFUNCTION { BlendOp = 0, SourceConstantAlpha = 255, AlphaFormat = 1 };
+                Native.UpdateLayeredWindow(_hwnd, screen, ref origin, ref size, _surfaceDc, ref source, 0, ref blend, Native.ULW_ALPHA);
+            }
+            finally {
+                Native.ReleaseDC(IntPtr.Zero, screen);
+            }
+        }
+
+        private void FreeSurface() {
+            if (_surfaceDc != IntPtr.Zero && _surfaceOld != IntPtr.Zero) {
+                Native.SelectObject(_surfaceDc, _surfaceOld);
+            }
+
+            if (_surface != IntPtr.Zero) {
+                Native.DeleteObject(_surface);
+            }
+
+            if (_surfaceDc != IntPtr.Zero) {
+                Native.DeleteDC(_surfaceDc);
+            }
+
+            (_surfaceDc, _surface, _surfaceOld, _surfaceBits, _surfaceSize) = (IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, (0, 0));
+        }
 
         // Where the minimaps are in the picture, in pixels, with room for their shadow.
         private static List<PixelRect> MapParts(Control picture, double pixelsPerUnit, int width, int height) {
@@ -985,7 +1078,7 @@ internal static class OverlayHost {
                 // Laid out on the design's 1280 x 720 terms and drawn bigger or smaller to fit this window.
                 var fit = OverlayDesign.Fit(width / scale, height / scale);
                 var pixels = Render(picture, width, height, scale * fit);
-                Draw(_hwnd, pixels, width, height, origin);
+                DrawParts(pixels, width, height, origin, null);
                 _origin = origin;
                 PlaceHits(picture, scale * fit, game);
                 _drawnVersion = version;
@@ -997,10 +1090,12 @@ internal static class OverlayHost {
                 _mapParts = MapParts(picture, scale * fit, width, height);
             }
             else if (_mapParts.Count > 0 && _picture is not null && _pixels is not null
-                     && (map != _drawnMap || OverlayMinimapData.Moving(game.ToInt64()) || _gliding)) {
+                     && (map != _drawnMap || OverlayMinimapData.Moving(game.ToInt64()) || _gliding)
+                     && DateTime.UtcNow - _patchedAt >= _patchEvery) {
                 // One more draw after the glide ends, so it stops right on the newest map.
                 _gliding = OverlayMinimapData.Moving(game.ToInt64());
                 _drawnMap = map;
+                var took = System.Diagnostics.Stopwatch.StartNew();
                 foreach (var part in _mapParts) {
                     var patch = RenderPart(_picture, part, _pixelsPerUnit);
                     for (var row = 0; row < part.Height; row++) {
@@ -1008,8 +1103,11 @@ internal static class OverlayHost {
                     }
                 }
 
-                Draw(_hwnd, _pixels, width, height, origin);
+                DrawParts(_pixels, width, height, origin, _mapParts);
                 _origin = origin;
+                // As often as the PC keeps up with (a big full screen map on a slow PC draws less often, never the game).
+                _patchedAt = DateTime.UtcNow;
+                _patchEvery = TimeSpan.FromMilliseconds(Math.Clamp(took.Elapsed.TotalMilliseconds * 1.5, 0, 100));
             }
 
             if (_buttonScale != scale && _button != IntPtr.Zero) {
@@ -1123,6 +1221,7 @@ internal static class OverlayHost {
         }
 
         public void Dispose() {
+            FreeSurface();
             if (_hwnd != IntPtr.Zero) {
                 Native.DestroyWindow(_hwnd);
             }
@@ -1177,7 +1276,8 @@ internal static class OverlayHost {
         private static DateTime s_nextMap = DateTime.MinValue;
 
         // How often each game window's minimap is asked for.
-        private static readonly TimeSpan s_mapEvery = TimeSpan.FromMilliseconds(250);
+        // About seven maps a second for each minimap; the overlay glides between them.
+        private static readonly TimeSpan s_mapEvery = TimeSpan.FromMilliseconds(150);
 
         /// <summary>What the server said last: true when it needs the overlay, null when it has not answered.</summary>
         internal static bool? Required { get; private set; }
@@ -1447,7 +1547,8 @@ internal static class OverlayHost {
         private static async Task AskMapsAsync(SslStream tls, CancellationToken stop) {
             s_nextMap = DateTime.UtcNow + s_mapEvery;
             foreach (var window in OverlayMinimapData.Wanted) {
-                await RemoteAdminWire.WriteAsync(tls, new JsonObject { ["op"] = "map", ["window"] = window, ["have"] = s_have, ["ground"] = OverlayMinimapData.GroundZone(window), ["shapes"] = true,
+                await RemoteAdminWire.WriteAsync(tls, new JsonObject { ["op"] = "map", ["window"] = window, ["have"] = s_have, ["ground"] = OverlayMinimapData.GroundZone(window),
+                                    ["groundKey"] = OverlayMinimapData.GroundKey(window), ["shapes"] = true,
                                     ["reach"] = (OverlayMinimapData.FullZoom(window) ?? 0) * 2, ["quest"] = OverlayQuestData.Pick(window) }, null, stop);
                 using var answerWait = CancellationTokenSource.CreateLinkedTokenSource(stop);
                 answerWait.CancelAfter(TimeSpan.FromSeconds(10));
