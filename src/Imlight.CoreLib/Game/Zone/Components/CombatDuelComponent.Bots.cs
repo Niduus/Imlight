@@ -32,8 +32,8 @@ namespace Imlight.CoreLib.Game.Zone.Components;
 /// <summary>
 /// Bot Players (Game/BotPlayers) in a battle. A bot stands on a players' circle as a wizard and counts as a player for
 /// everything (battle size included); its body answers the battle's questions like a player's session would. A bot picks
-/// its card right after the real players on its side have picked theirs, and picks again when one of them changes their
-/// mind (BotTactics). A player can kick the bots out of their battle; after that no bot joins it again (Niduus, 2026-11-12).
+/// its card right after the real players before it (lower circles) on its side have picked theirs, and picks again when
+/// any player on its side picks or changes their mind (BotTactics). A player can kick the bots out of their battle; after that no bot joins it again (Niduus, 2026-11-12).
 /// </summary>
 internal sealed partial class CombatDuelComponent {
 
@@ -181,10 +181,12 @@ internal sealed partial class CombatDuelComponent {
 
         var circles = ActiveSubCircles.ToList();
         var played = false;
-        foreach (var bot in BotCircles.ToList()) {
-            // It waits for the real players on its side, until the last call.
-            var waiting = circles.Any(c => c.OccupiedTeam == bot.OccupiedTeam && c.IsHumanPlayer && c.IsAlive && c.AddedToDuel
-                                           && !IsBot(c) && CombatResolver.GetQueuedAction(c) is null);
+        foreach (var bot in BotCircles.OrderBy(c => c.SlotIndex).ToList()) {
+            // It waits for the real players before it on its side (lower circles), until the last call; players after it
+            // it adapts to when they pick (Niduus, 2026-11-12: "if it's in slot 2, it will wait for player 1's pick, then
+            // adapt to 3 and 4's selection").
+            var waiting = circles.Any(c => c.OccupiedTeam == bot.OccupiedTeam && c.SlotIndex < bot.SlotIndex && c.IsHumanPlayer
+                                           && c.IsAlive && c.AddedToDuel && !IsBot(c) && CombatResolver.GetQueuedAction(c) is null);
             if (waiting && _botDeadlineRound != message.Round) {
                 continue;
             }

@@ -27,6 +27,11 @@ internal sealed partial class ManagerWindow {
     private readonly ToggleSwitch _botEnabled = new() { OnContent = "On", OffContent = "Off" };
     private readonly NumericUpDown _botJoinWait = new() { Minimum = 0, Maximum = 60, Increment = 1, FormatString = "0", Width = 140 };
     private readonly NumericUpDown _botReturning = new() { Minimum = 0, Maximum = 100, Increment = 5, FormatString = "0", Width = 140 };
+    private readonly ToggleSwitch _botPopulate = new() { OnContent = "On", OffContent = "Off" };
+    private readonly NumericUpDown _botMinPer = new() { Minimum = 0, Maximum = 18, Increment = 1, FormatString = "0", Width = 140 };
+    private readonly NumericUpDown _botMaxPer = new() { Minimum = 0, Maximum = 18, Increment = 1, FormatString = "0", Width = 140 };
+    private readonly NumericUpDown _botMaxStreet = new() { Minimum = 0, Maximum = 40, Increment = 1, FormatString = "0", Width = 140 };
+    private readonly NumericUpDown _botMaxCommons = new() { Minimum = 0, Maximum = 40, Increment = 1, FormatString = "0", Width = 140 };
     private readonly DispatcherTimer _botTimer = new() { Interval = TimeSpan.FromSeconds(3) };
     private TextBox? _botLogBox;
     private bool _showingBots;
@@ -40,7 +45,15 @@ internal sealed partial class ManagerWindow {
                 await Guard(() => SetBotsEnabledAsync(_botEnabled.IsChecked == true));
             }
         };
-        foreach (var (box, key) in new[] { (_botJoinWait, "JoinWaitSeconds"), (_botReturning, "ReturningPercent") }) {
+        _botPopulate.IsCheckedChanged += async (_, _) => {
+            if (!_showingBots) {
+                await Guard(() => SaveBotSwitchAsync("Populate", _botPopulate.IsChecked == true));
+            }
+        };
+        foreach (var (box, key) in new[] {
+                     (_botJoinWait, "JoinWaitSeconds"), (_botReturning, "ReturningPercent"), (_botMinPer, "MinPerPlayer"),
+                     (_botMaxPer, "MaxPerPlayer"), (_botMaxStreet, "MaxPerStreet"), (_botMaxCommons, "MaxInCommons"),
+                 }) {
             box.ValueChanged += (_, _) => {
                 if (!_showingBots && box.Value is { } value) {
                     _ = Guard(() => SaveBotNumberAsync(key, (int) value));
@@ -53,15 +66,20 @@ internal sealed partial class ManagerWindow {
         _botTimer.Start();
         RefreshBotPlayers();
 
-        return Shut(Fold("users", "Battles", "Bot Players (test)",
+        return Shut(Fold("users", "Battles", "Bot Players",
             "Wizards the server plays by itself, so the game feels like a busy live server. They run in a little program of " +
             "their own next to the server (like the Bazaar bot). Off: that program does not run at all, and turning it off " +
-            "stops it and every bot leaves. This is the first test: in the game, type .bot test and a bot comes out next to " +
-            "you and walks a short loop. In a battle, .bot join brings it onto your side (it fights: it picks after you, heals and blades you, and finishes enemies), and " +
+            "stops it and every bot leaves. Bots fill the streets real players are in (never dungeons, houses, guild areas or " +
+            "the arena) and walk around there. In the game, .bot test brings one out next to you. In a battle, .bot join brings it onto your side (it fights: it picks after you, heals and blades you, and finishes enemies), and " +
             ".bot kick takes the bots out of your battle; no bot joins that battle again. .bot remove sends the bots here " +
             "away, .bot list shows them. Changes count right away.",
             _botState,
             SwitchRow("Bot Players", _botEnabled, "On starts the Bot Players program within a few seconds. Off stops it and every bot leaves."),
+            SwitchRow("Fill the streets", _botPopulate, "On: every street with real players in it gets bots, walking in one by one."),
+            SwitchRow("Bots each player brings, at least", _botMinPer, "Each real player in a street brings a random number of bots from this..."),
+            SwitchRow("Bots each player brings, at most", _botMaxPer, "...to this."),
+            SwitchRow("Most bots in one street", _botMaxStreet, "However many players are there."),
+            SwitchRow("Most bots in the Commons", _botMaxCommons, "The Commons of Wizard City has its own, smaller limit."),
             SwitchRow("Wait before joining a battle (seconds)", _botJoinWait,
                 "How long a bot waits before it joins a battle, so a real friend can take the circle first."),
             SwitchRow("Bots that come back (percent)", _botReturning,
@@ -97,6 +115,11 @@ internal sealed partial class ManagerWindow {
             _botEnabled.IsChecked = _manager.GetSwitch("BotPlayers", "Enabled");
             _botJoinWait.Value = Number("JoinWaitSeconds", 5);
             _botReturning.Value = Number("ReturningPercent", 70);
+            _botPopulate.IsChecked = !_manager.HasSetting("BotPlayers", "Populate") || _manager.GetSwitch("BotPlayers", "Populate");
+            _botMinPer.Value = Number("MinPerPlayer", 3);
+            _botMaxPer.Value = Number("MaxPerPlayer", 6);
+            _botMaxStreet.Value = Number("MaxPerStreet", 18);
+            _botMaxCommons.Value = Number("MaxInCommons", 12);
         }
         finally {
             _showingBots = false;
@@ -116,6 +139,19 @@ internal sealed partial class ManagerWindow {
         _settings = [];
         Say(on ? "Bot Players is on. Its program starts within a few seconds; then type .bot test in the game."
             : "Bot Players is off. Its program stops and every bot leaves within a few seconds.");
+
+        return Task.CompletedTask;
+    }
+
+    private Task SaveBotSwitchAsync(string key, bool on) {
+        if (!_manager.HasSetting("BotPlayers", key)) {
+            LoadBotSettings();
+            throw new PanelException("This server's Imlight.ini has no [BotPlayers] " + key + " yet. Click \"Update Ahziael\" once, then try again.");
+        }
+
+        _manager.SaveSettings([new Setting("BotPlayers", key, on ? "true" : "false", "")]);
+        _settings = [];
+        Say("Saved. The bots use it right away.");
 
         return Task.CompletedTask;
     }
