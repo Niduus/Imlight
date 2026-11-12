@@ -204,7 +204,10 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONETRANSFER))]
     private void ReceiveZoneTransfer(ZONE_102_PROTOCOL.MSG_ZONETRANSFER message) {
         // First, make sure this zone is valid by checking the AccessPassManager.
-        if (!AccessPassManager.DoesZoneExist(message.DestinationZone)) {
+        // A Monstrodome's arena (Housing_MonsterMagicArena/Interior and its copies) is not in AccessPass.xml, but the
+        // game has its zone files.
+        if (!AccessPassManager.DoesZoneExist(message.DestinationZone)
+            && !Imlight.CoreLib.Game.MonsterMagic.Monstrodome.IsArenaZone(message.DestinationZone)) {
             Logger.Error("{Name} received invalid zone name {ZoneName}",
                 Logger.Args(nameof(GameWorld), message.DestinationZone));
 
