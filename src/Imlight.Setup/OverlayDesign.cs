@@ -677,7 +677,7 @@ internal sealed class OverlayMap {
 
     public bool Walls { get; set; } = true;
     public bool Trees { get; set; } = true;
-    public string TreeColor { get; set; } = "#D91C1C26";
+    public string TreeColor { get; set; } = "#B0213A26";
 
     // More detail (Niduus, 2026-11-12: "highlight areas of mobs, show names of mobs and so on. Chest reveals and where").
 
@@ -759,7 +759,8 @@ internal sealed class OverlayMap {
         NorthColor = OverlayPaint.CleanColor(NorthColor, "#FFFF6B6B");
         RingColor = OverlayPaint.CleanColor(RingColor, "#30FFFFFF");
         OutlineColor = OverlayPaint.CleanColor(OutlineColor, "#D0000000");
-        TreeColor = OverlayPaint.CleanColor(TreeColor, "#D91C1C26");
+        // Trees in a dark green, not the walls' near black (Niduus, 2026-11-12: "blob textures"); the old default moves over.
+        TreeColor = OverlayPaint.CleanColor(TreeColor == "#D91C1C26" ? "#B0213A26" : TreeColor, "#B0213A26");
         FullBackground = OverlayPaint.CleanColor(FullBackground, "#F00C101C");
         MobAreaColor = OverlayPaint.CleanColor(MobAreaColor, "#33FF5050");
         MobAreaSize = OverlayElement.Range(MobAreaSize, 100, 3000, 450);

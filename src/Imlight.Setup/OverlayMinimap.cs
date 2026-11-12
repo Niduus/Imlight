@@ -366,9 +366,9 @@ internal static class OverlayMinimapData {
                 return none;
             }
 
-            var triangles = new List<float>[9];
-            var outlines = new List<float[]>[9];
-            for (var k = 0; k < 9; k++) {
+            var triangles = new List<float>[10];
+            var outlines = new List<float[]>[10];
+            for (var k = 0; k < 10; k++) {
                 triangles[k] = [];
                 outlines[k] = [];
             }
@@ -382,7 +382,7 @@ internal static class OverlayMinimapData {
                 var count = (int) Math.Min(BitConverter.ToUInt32(data, at + 1), 2_000_000u);
                 at += 5;
                 // Smoothed outlines (kind + 16): each its own count of points.
-                if (kind is >= 17 and <= 24 and not 21) {
+                if (kind is >= 17 and <= 25 and not 21) {
                     for (var n = 0; n < count && at + 2 <= data.Length; n++) {
                         var points = BitConverter.ToUInt16(data, at);
                         at += 2;
@@ -621,6 +621,15 @@ internal sealed class MinimapView : Control {
             // The place's name at the bottom, under the icons (the N goes over it).
             if (data is { Note.Length: 0 } && _map.Place && data.Place.Length > 0) {
                 var top = _map.PlaceAt == "Top" ? (_map.ShowNorth ? _map.NameSize * 2.2 + 6 : 8) : _mapH - _map.NameSize - 12;
+                // The N marker comes round to the bottom as the map turns: the name moves up over it, not under it
+                // (Niduus, 2026-11-12: "Northguard" was covered by the N).
+                Projector(data, center, radiusX, radiusY, out var placeTurn);
+                if (_map.PlaceAt != "Top" && _map.ShowNorth && Math.Cos(placeTurn) < -0.6) {
+                    top -= _map.NameSize * 2.4;
+                }
+                else if (_map.PlaceAt == "Top" && _map.ShowNorth && Math.Cos(placeTurn) < 0.6) {
+                    top = 8;
+                }
                 Label(context, data.Place, new Point(center.X, top), _map.NameSize + 1, Brush(_map.TextColor), centered: true, bold: true, pill: true);
             }
 
@@ -675,13 +684,14 @@ internal sealed class MinimapView : Control {
         if (ground.Exact is { } exact) {
             // Shapes are kept as (x, -y): east right, north up. Moved so the wizard is at 0, 0.
             var matrix = Matrix.CreateTranslation(-data.X, data.Y) * placed;
-            var colors = new[] { "", _map.PathColor, _map.GrassColor, _map.WaterColor, _map.WallColor, _map.TreeColor, _map.PathColor, _map.GrassColor, _map.WoodColor };
+            var colors = new[] { "", _map.PathColor, _map.GrassColor, _map.WaterColor, _map.WallColor, _map.TreeColor, _map.PathColor, _map.GrassColor, _map.WoodColor, _map.PathColor };
             var geometry = Outlines(exact);
             // Each kind is one filled outline, so the triangles in it leave no seams and nothing is drawn twice.
             using (context.PushTransform(matrix)) {
                 // Grass, paths, water over them, bridges and banks above the water, wooden docks and decks, then walls,
                 // trees and posts.
-                foreach (var kind in new[] { 2, 1, 3, 7, 6, 8, 4, 5 }) {
+                // All the ground first, in the streets' colour, so no crack between two kinds shows through.
+                foreach (var kind in new[] { 9, 2, 1, 3, 7, 6, 8, 4, 5 }) {
                     if ((kind == 4 && !_map.Walls) || (kind == 5 && !_map.Trees)) {
                         continue;
                     }
@@ -712,8 +722,8 @@ internal sealed class MinimapView : Control {
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<OverlayMinimapData.Shapes, Geometry?[]> s_outlines = new();
 
     private static Geometry?[] Outlines(OverlayMinimapData.Shapes shapes) => s_outlines.GetValue(shapes, made => {
-        var outlines = new Geometry?[9];
-        foreach (var kind in new[] { 1, 2, 3, 4, 6, 7, 8 }) {
+        var outlines = new Geometry?[10];
+        foreach (var kind in new[] { 1, 2, 3, 4, 6, 7, 8, 9 }) {
             var points = made.Triangles[kind];
             var smooth = made.Outlines[kind];
             if (points.Length < 6 && smooth.Length == 0) {
