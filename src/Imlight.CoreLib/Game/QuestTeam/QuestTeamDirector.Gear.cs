@@ -118,14 +118,23 @@ internal sealed partial class QuestTeamDirectorActor {
             return null;
         }
 
+        // Badge filters are written "WizardCity" as well as "Wizard City", so spaces do not count.
+        static string Squash(string text) => (text ?? "").Replace(" ", "", StringComparison.Ordinal);
+        Imlight.CoreLib.WizardData.Models.World.BadgeDefinition anyTitle = null;
         foreach (var (id, _) in earned.OrderByDescending(e => e.Value.AwardSequence)) {
-            if (catalog.TryGet(id, out var badge) && !string.IsNullOrWhiteSpace(badge.Title)
-                && s_storyBadgeWords.Any(w => (badge.Filter ?? "").Contains(w, StringComparison.OrdinalIgnoreCase))) {
+            if (!catalog.TryGet(id, out var badge) || string.IsNullOrWhiteSpace(badge.Title)) {
+                continue;
+            }
+
+            if (s_storyBadgeWords.Any(w => Squash(badge.Filter).Contains(Squash(w), StringComparison.OrdinalIgnoreCase))) {
                 return badge;
             }
+
+            anyTitle ??= badge;
         }
 
-        return null;
+        // No story badge yet (a new wizard): the newest badge it did earn, so a title still shows.
+        return anyTitle;
     }
 
     /// <summary>Out of a battle: better gear from the backpack goes on, and a deck that misses newly learned spells is redone.</summary>

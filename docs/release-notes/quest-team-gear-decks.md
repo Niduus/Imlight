@@ -142,3 +142,23 @@ New: OK button on Quest Team alerts over the game
 The Quest Team alert that shows over your game now has an OK button under it. Click it to take the alert away.
 Where: over the game, in the overlay
 Test: When a Quest Team alert shows over the game, click OK. It should go away.
+
+Fixed: Three of the wizards stayed with Merle at the start
+When Ice took Merle Ambrose's first quest, the game sent Ice on to Unicorn Way, but the other three never talked to Merle, so they stood where Ice had been. Now each teammate talks to the same person the leader talked to (and takes the same quest), then follows the leader the same way.
+Where: Quest Team > Team Logs
+Test: Press Restart. All four should talk to Merle and all four should end up on Unicorn Way together.
+
+Fixed: No title under the Quest Team wizards' names
+The team looked for its newest story badge with the world names written with spaces ("Wizard City"), but the badge list writes some of them without ("WizardCity"), so none was found. Both spellings count now. A new wizard with no story badge yet wears the newest badge it did earn, so a title shows as soon as it has one.
+Where: in the game, under each Quest Team wizard's name; Team Logs ("wears its newest story badge")
+Test: Let the team win a few fights. A title should show under their names.
+
+Fixed: The Badges page was empty for a wizard with many badges
+A wizard with hundreds of badges (like after .givemeallbadges) got them sent in cut pieces, and the game showed an empty Badges page. Now the list goes out as several whole lists, so every badge shows.
+Where: in the game, Character > Badges
+Test: Log in on the wizard you ran .givemeallbadges on and open Badges. They should all be there.
+
+Changed: The Quest Team no longer stands in the road between fights
+When the team rests after a battle, or has nothing to walk to for a moment, the leader now walks to the closest path spot well away from the creatures, and the others follow. When the next creature it needs is ready, it goes straight for it.
+Where: in the game; Team Logs
+Test: Watch the team after a battle on Unicorn Way. They should step off to the side, away from the creatures, and not stand among them.
