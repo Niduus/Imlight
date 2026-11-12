@@ -583,6 +583,15 @@ internal sealed class OverlayMap {
     /// <summary>Swaps left and right, in case the map comes out mirrored on some game.</summary>
     public bool Mirror { get; set; }
 
+    /// <summary>The area's streets, grass, water and walls under the icons (from the server).</summary>
+    public bool Streets { get; set; } = true;
+
+    public double StreetsOpacity { get; set; } = 0.9;
+    public string PathColor { get; set; } = "#FFB9A47C";
+    public string GrassColor { get; set; } = "#FF3C6236";
+    public string WaterColor { get; set; } = "#FF3A6BAA";
+    public string WallColor { get; set; } = "#FF1C1C26";
+
     public bool Quests { get; set; } = true;
     public bool Givers { get; set; } = true;
     public bool Npcs { get; set; } = true;
@@ -612,6 +621,11 @@ internal sealed class OverlayMap {
         IconSize = OverlayElement.Range(IconSize, 4, 30, 9);
         NameSize = OverlayElement.Range(NameSize, 6, 30, 10);
         QuestLines = Math.Clamp(QuestLines, 0, 8);
+        StreetsOpacity = OverlayElement.Range(StreetsOpacity, 0, 1, 0.9);
+        PathColor = OverlayPaint.CleanColor(PathColor, "#FFB9A47C");
+        GrassColor = OverlayPaint.CleanColor(GrassColor, "#FF3C6236");
+        WaterColor = OverlayPaint.CleanColor(WaterColor, "#FF3A6BAA");
+        WallColor = OverlayPaint.CleanColor(WallColor, "#FF1C1C26");
         MainColor = OverlayPaint.CleanColor(MainColor, "#FFFFD24A");
         SideColor = OverlayPaint.CleanColor(SideColor, "#FF4AB4FF");
         GiverColor = OverlayPaint.CleanColor(GiverColor, "#FFFFE14A");

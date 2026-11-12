@@ -38,8 +38,18 @@ internal static class OverlayMinimapData {
 
     internal sealed record Quest(string Title, bool Main, string Step, string Where, bool Here);
 
+    /// <summary>
+    /// An area's ground from above (Niduus, 2026-11-12: "I want the street actually mapped out in the minimap"): a grid of
+    /// cells (0 nothing, 1 path, 2 grass, 3 water, 4 wall), its top left corner in the world and each cell's size.
+    /// </summary>
+    internal sealed record Ground(string Zone, double Left, double Top, double Cell, int Width, int Height, byte[] Cells) {
+
+        internal bool IsEmpty => Width == 0 || Cells.Length != Width * Height;
+
+    }
+
     internal sealed record Snapshot(string Place, double X, double Y, double Yaw, IReadOnlyList<Mark> Marks, IReadOnlyList<Quest> Quests, string Note,
-                                    DateTime At) {
+                                    DateTime At, Ground? Ground = null) {
 
         internal bool Stale => DateTime.UtcNow - At > s_staleAfter;
 
@@ -48,6 +58,7 @@ internal static class OverlayMinimapData {
     private static readonly TimeSpan s_staleAfter = TimeSpan.FromSeconds(6);
     private static readonly object s_lock = new();
     private static readonly Dictionary<long, Snapshot> s_maps = [];
+    private static readonly Dictionary<long, Ground> s_grounds = [];
     private static readonly Dictionary<long, int> s_versions = [];
     private static readonly HashSet<long> s_staleShown = [];
     private static long[] s_wanted = [];
@@ -76,11 +87,30 @@ internal static class OverlayMinimapData {
         }
     }
 
+    /// <summary>The area whose streets this window has (sent with op "map", so the server sends them only once per area).</summary>
+    internal static string GroundZone(long window) {
+        lock (s_lock) {
+            return s_grounds.TryGetValue(window, out var ground) ? ground.Zone : "";
+        }
+    }
+
     /// <summary>The server's answer to op "map" for one window.</summary>
     internal static void Heard(long window, JsonObject answer) {
         Snapshot? snapshot;
         if (answer["ok"]?.GetValue<bool>() == true && answer["map"] is JsonObject map) {
+            if (map["ground"] is JsonObject sent && ReadGround(sent) is { } ground) {
+                lock (s_lock) {
+                    s_grounds[window] = ground;
+                }
+            }
+
             snapshot = Read(map);
+            var zone = Short((string?) map["zone"], 200);
+            lock (s_lock) {
+                if (s_grounds.TryGetValue(window, out var known) && string.Equals(known.Zone, zone, StringComparison.OrdinalIgnoreCase)) {
+                    snapshot = snapshot with { Ground = known };
+                }
+            }
         }
         else {
             var error = ((string?) answer["error"] ?? "").Trim();
@@ -111,8 +141,40 @@ internal static class OverlayMinimapData {
 
             foreach (var gone in s_maps.Keys.Where(w => !Wanted.Contains(w)).ToList()) {
                 s_maps.Remove(gone);
+                s_grounds.Remove(gone);
                 s_staleShown.Remove(gone);
             }
+        }
+    }
+
+    // The streets as the server packs them: runs of (kind, 16-bit count), base64.
+    private static Ground? ReadGround(JsonObject sent) {
+        var zone = Short((string?) sent["zone"], 200);
+        var (width, height) = ((int) Number(sent["w"]), (int) Number(sent["h"]));
+        if (zone.Length == 0) {
+            return null;
+        }
+
+        if (width <= 0 || height <= 0 || width > 1100 || height > 1100) {
+            return new Ground(zone, 0, 0, 0, 0, 0, []);
+        }
+
+        try {
+            var runs = Convert.FromBase64String((string?) sent["runs"] ?? "");
+            var cells = new byte[width * height];
+            var at = 0;
+            for (var i = 0; i + 2 < runs.Length && at < cells.Length; i += 3) {
+                var count = Math.Min(runs[i + 1] | (runs[i + 2] << 8), cells.Length - at);
+                var kind = runs[i] <= 4 ? runs[i] : (byte) 0;
+                Array.Fill(cells, kind, at, count);
+                at += count;
+            }
+
+            var cell = Number(sent["cell"]);
+            return cell > 0 ? new Ground(zone, Number(sent["left"]), Number(sent["top"]), cell, width, height, cells) : new Ground(zone, 0, 0, 0, 0, 0, []);
+        }
+        catch (FormatException) {
+            return new Ground(zone, 0, 0, 0, 0, 0, []);
         }
     }
 
@@ -172,7 +234,36 @@ internal static class OverlayMinimapData {
         new Quest("A Familiar Face", true, "Talk to Ambrose", "", true),
         new Quest("Lost Souls", false, "Defeat 3 Lost Souls", "", true),
         new Quest("Trouble in the Commons", false, "Talk to Mindy Pixiecrumb", "The Commons", false),
-    ], "", DateTime.MaxValue);
+    ], "", DateTime.MaxValue, SampleGround());
+
+    // A made-up street for the designers: a crossroads with a plaza, grass around, a pond and a few walls.
+    private static Ground SampleGround() {
+        const int size = 160;
+        const double cell = 40;
+        var cells = new byte[size * size];
+        for (var y = 0; y < size; y++) {
+            for (var x = 0; x < size; x++) {
+                var (wx, wy) = (-3200 + x * cell, 3200 - y * cell);
+                byte kind = 2;
+                if (Math.Abs(wx) < 260 || Math.Abs(wy + 200) < 260 || Math.Sqrt(wx * wx + wy * wy) < 700
+                    || Math.Abs(wx - wy * 0.6 - 900) < 200 && wx > 0) {
+                    kind = 1;
+                }
+
+                if (Math.Sqrt((wx + 1600) * (wx + 1600) + (wy - 1200) * (wy - 1200)) < 420) {
+                    kind = 3;
+                }
+
+                if ((Math.Abs(wx) is > 330 and < 420 && Math.Abs(wy) is > 900 and < 2600) || (Math.Abs(wy - 1700) < 50 && wx is > 600 and < 2400)) {
+                    kind = 4;
+                }
+
+                cells[y * size + x] = Math.Abs(wx) > 3000 || Math.Abs(wy) > 3000 ? (byte) 0 : kind;
+            }
+        }
+
+        return new Ground("sample", -3200, 3200, cell, size, size, cells);
+    }
 
 }
 
@@ -233,6 +324,15 @@ internal sealed class MinimapView : Control {
                 context.DrawRectangle(null, faint, new Rect(center.X - radiusX / 2, center.Y - radiusY / 2, radiusX, radiusY));
             }
 
+            if (data is { Note.Length: 0, Ground: { IsEmpty: false } ground } && _map.Streets) {
+                DrawGround(context, data, ground, center, radiusX, radiusY);
+            }
+
+            // The place's name at the bottom, under the icons (the N goes over it).
+            if (data is { Note.Length: 0 } && _map.Place && data.Place.Length > 0) {
+                Label(context, data.Place, new Point(center.X, _mapH - _map.NameSize - 12), _map.NameSize + 1, Brush(_map.TextColor), centered: true, bold: true, pill: true);
+            }
+
             // The last map stays under a note while a new one doesn't come.
             if (data is { Note.Length: 0 }) {
                 DrawMarks(context, data, center, radiusX, radiusY);
@@ -243,9 +343,6 @@ internal sealed class MinimapView : Control {
             context.DrawGeometry(null, edge, shape);
         }
 
-        if (data is not null && data.Note.Length == 0 && _map.Place && data.Place.Length > 0) {
-            Label(context, data.Place, new Point(center.X, _mapH - _map.NameSize - 12), _map.NameSize + 1, Brush(_map.TextColor), centered: true, bold: true, pill: true);
-        }
 
         var note = stale
             ? data is { Note.Length: > 0 } ? data.Note : OverlayHost.Link.Connected ? OverlayHost.Link.SendsMap
@@ -277,6 +374,73 @@ internal sealed class MinimapView : Control {
 
             return new Point(center.X + dx * cos - dy * sin, center.Y + dx * sin + dy * cos);
         };
+    }
+
+    // The area's streets, grass, water and walls, as one picture placed, scaled and turned like the icons.
+    private void DrawGround(DrawingContext context, OverlayMinimapData.Snapshot data, OverlayMinimapData.Ground ground, Point center, double radiusX, double radiusY) {
+        if (GroundPicture(ground) is not { } picture) {
+            return;
+        }
+
+        Projector(data, center, radiusX, radiusY, out var turn);
+        var scale = Math.Min(radiusX, radiusY) / _map.Zoom;
+        var mirror = _map.Mirror ? -1 : 1;
+        // In the wizard's frame (east right, north up), then sized, mirrored, turned and moved to the middle.
+        var area = new Rect(ground.Left - data.X, -(ground.Top - data.Y), ground.Width * ground.Cell, ground.Height * ground.Cell);
+        var matrix = Matrix.CreateScale(scale * mirror, scale) * Matrix.CreateRotation(turn) * Matrix.CreateTranslation(center.X, center.Y);
+        using (context.PushTransform(matrix))
+        using (context.PushOpacity(_map.StreetsOpacity)) {
+            RenderOptions.SetBitmapInterpolationMode(this, Avalonia.Media.Imaging.BitmapInterpolationMode.HighQuality);
+            context.DrawImage(picture, new Rect(picture.Size), area);
+        }
+    }
+
+    // Each area's picture in this map's colours, made once.
+    private static readonly Dictionary<(OverlayMinimapData.Ground, string), Avalonia.Media.Imaging.WriteableBitmap> s_pictures = [];
+
+    private Avalonia.Media.Imaging.WriteableBitmap? GroundPicture(OverlayMinimapData.Ground ground) {
+        var colors = string.Join(",", _map.PathColor, _map.GrassColor, _map.WaterColor, _map.WallColor);
+        lock (s_pictures) {
+            if (s_pictures.TryGetValue((ground, colors), out var known)) {
+                return known;
+            }
+
+            if (s_pictures.Count > 12) {
+                foreach (var old in s_pictures.Values) {
+                    old.Dispose();
+                }
+
+                s_pictures.Clear();
+            }
+
+            uint Pixel(string text) {
+                if (OverlayRenderer.Parse(text) is not { } c) {
+                    return 0;
+                }
+
+                // Premultiplied BGRA.
+                var a = c.A / 255.0;
+                return (uint) c.A << 24 | (uint) Math.Round(c.R * a) << 16 | (uint) Math.Round(c.G * a) << 8 | (uint) Math.Round(c.B * a);
+            }
+
+            var palette = new[] { 0u, Pixel(_map.PathColor), Pixel(_map.GrassColor), Pixel(_map.WaterColor), Pixel(_map.WallColor) };
+            var bitmap = new Avalonia.Media.Imaging.WriteableBitmap(new PixelSize(ground.Width, ground.Height), new Vector(96, 96),
+                Avalonia.Platform.PixelFormat.Bgra8888, Avalonia.Platform.AlphaFormat.Premul);
+            using (var buffer = bitmap.Lock()) {
+                var row = new int[ground.Width];
+                for (var y = 0; y < ground.Height; y++) {
+                    for (var x = 0; x < ground.Width; x++) {
+                        row[x] = unchecked((int) palette[ground.Cells[y * ground.Width + x]]);
+                    }
+
+                    System.Runtime.InteropServices.Marshal.Copy(row, 0, buffer.Address + y * buffer.RowBytes, ground.Width);
+                }
+            }
+
+            s_pictures[(ground, colors)] = bitmap;
+
+            return bitmap;
+        }
     }
 
     private void DrawMarks(DrawingContext context, OverlayMinimapData.Snapshot data, Point center, double radiusX, double radiusY) {

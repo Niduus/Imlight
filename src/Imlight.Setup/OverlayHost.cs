@@ -1307,7 +1307,7 @@ internal static class OverlayHost {
         private static async Task AskMapsAsync(SslStream tls, CancellationToken stop) {
             s_nextMap = DateTime.UtcNow + s_mapEvery;
             foreach (var window in OverlayMinimapData.Wanted) {
-                await RemoteAdminWire.WriteAsync(tls, new JsonObject { ["op"] = "map", ["window"] = window, ["have"] = s_have }, null, stop);
+                await RemoteAdminWire.WriteAsync(tls, new JsonObject { ["op"] = "map", ["window"] = window, ["have"] = s_have, ["ground"] = OverlayMinimapData.GroundZone(window) }, null, stop);
                 using var answerWait = CancellationTokenSource.CreateLinkedTokenSource(stop);
                 answerWait.CancelAfter(TimeSpan.FromSeconds(10));
                 var (answer, _) = await RemoteAdminWire.ReadAsync(tls, 1 << 20, 0, answerWait.Token);
