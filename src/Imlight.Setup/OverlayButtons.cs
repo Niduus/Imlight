@@ -91,8 +91,20 @@ internal static class OverlayButtons {
                 done(true);
 
                 return;
+            case OverlayAction.MAP_IN or OverlayAction.MAP_OUT when OverlayMinimapData.FullZoom(game.ToInt64()) is null:
+                // The corner minimap: its own zoom, by the minimap's step and limits, kept on this PC.
+                if (button.Map is { } small) {
+                    var closer = button.Action == OverlayAction.MAP_IN;
+                    small.Zoom = Math.Round(Math.Clamp(closer ? small.Zoom / small.ZoomStep : small.Zoom * small.ZoomStep, Math.Max(300, small.ZoomMin), Math.Min(12000, small.ZoomMax)));
+                    OverlayHost.SaveQuietly();
+                }
+
+                done(true);
+
+                return;
             case OverlayAction.MAP_IN or OverlayAction.MAP_OUT:
-                OverlayMinimapData.ZoomFull(game.ToInt64(), button.Action == OverlayAction.MAP_IN);
+                OverlayMinimapData.ZoomFull(game.ToInt64(), button.Action == OverlayAction.MAP_IN, button.Map?.ZoomStep ?? 1.5,
+                    button.Map?.ZoomMin ?? OverlayMinimapData.MIN_ZOOM, button.Map?.ZoomMax ?? OverlayMinimapData.MAX_ZOOM);
                 // Kept in the design on this PC, so the full screen map opens this close next time.
                 if (button.Map is { } map && OverlayMinimapData.FullZoom(game.ToInt64()) is { } zoom) {
                     map.FullZoom = Math.Round(zoom);

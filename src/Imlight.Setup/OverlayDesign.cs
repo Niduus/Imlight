@@ -701,6 +701,38 @@ internal sealed class OverlayMap {
     /// <summary>A name that would cover another moves above its icon, or is left out.</summary>
     public bool TidyNames { get; set; } = true;
 
+    // Zoom and more (Niduus, 2026-11-12: "Allow for Mini Map to have custom zoom options and more in depth options").
+
+    /// <summary>+ and - buttons on the minimap's corner, to see closer or farther in the game (kept on this PC).</summary>
+    public bool ZoomButtons { get; set; } = true;
+
+    /// <summary>How much one press of + or - zooms (times).</summary>
+    public double ZoomStep { get; set; } = 1.4;
+
+    /// <summary>The closest and farthest the minimap and the full screen map can zoom (game units to the edge).</summary>
+    public double ZoomMin { get; set; } = 300;
+
+    public double ZoomMax { get; set; } = 30000;
+
+    /// <summary>A soft wedge the way you face.</summary>
+    public bool ViewCone { get; set; }
+
+    public string ViewConeColor { get; set; } = "#40FFFFFF";
+
+    /// <summary>Grid lines every GridSize game units.</summary>
+    public bool Grid { get; set; }
+
+    public double GridSize { get; set; } = 1000;
+    public string GridColor { get; set; } = "#26FFFFFF";
+
+    /// <summary>A thin line round the edge of the ground you can walk on.</summary>
+    public bool GroundEdge { get; set; }
+
+    public string GroundEdgeColor { get; set; } = "#80000000";
+
+    /// <summary>Names in their icon's colour (else the Words colour).</summary>
+    public bool NamesInKindColor { get; set; }
+
     /// <summary>The full screen button on the minimap's corner (over the game).</summary>
     public bool FullButton { get; set; } = true;
 
@@ -763,6 +795,13 @@ internal sealed class OverlayMap {
         TreeColor = OverlayPaint.CleanColor(TreeColor == "#D91C1C26" ? "#B0213A26" : TreeColor, "#B0213A26");
         FullBackground = OverlayPaint.CleanColor(FullBackground, "#F00C101C");
         MobAreaColor = OverlayPaint.CleanColor(MobAreaColor, "#33FF5050");
+        ViewConeColor = OverlayPaint.CleanColor(ViewConeColor, "#40FFFFFF");
+        GridColor = OverlayPaint.CleanColor(GridColor, "#26FFFFFF");
+        GroundEdgeColor = OverlayPaint.CleanColor(GroundEdgeColor, "#80000000");
+        GridSize = OverlayElement.Range(GridSize, 100, 20000, 1000);
+        ZoomStep = OverlayElement.Range(ZoomStep, 1.05, 4, 1.4);
+        ZoomMin = OverlayElement.Range(ZoomMin, 100, 30000, 300);
+        ZoomMax = Math.Max(ZoomMin, OverlayElement.Range(ZoomMax, 100, 60000, 30000));
         MobAreaSize = OverlayElement.Range(MobAreaSize, 100, 3000, 450);
         YouSize = OverlayElement.Range(YouSize, 0.3, 5, 1.5);
         MobSize = OverlayElement.Range(MobSize, 0.2, 5, 1);
