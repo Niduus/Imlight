@@ -41,8 +41,15 @@ internal static class WorldAccess {
     private static readonly string[] s_worlds = [
         "WizardCity", "Krokotopia", "Marleybone", "MooShu", "DragonSpire", "Grizzleheim", "Celestia", "Wysteria",
         "Zafaria", "Avalon", "Azteca", "Aquila", "Khrysalis", "Polaris", "Mirage", "Empyrea", "Karamelle", "Lemuria",
-        "Novus", "Wallaru", "Darkmoor",
+        "Novus", "Wallaru", "Darkmoor", "Ahmarra",
     ];
+
+    // Worlds newer than some players' game: listed only when the game files have the world (its hub in WorldHubZones),
+    // so a Wizard101 from before the Ahmarra update (2026-11-12) never gets a door button it can't show.
+    private static readonly HashSet<string> s_newWorlds = new(["Ahmarra"], StringComparer.Ordinal);
+
+    private static bool InThisGame(string world)
+        => !s_newWorlds.Contains(world) || WorldHubZones.GetHubForZone(world) is not null;
 
     // Open from the start, as before: Wizard City is home, and Grizzleheim and Wysteria are side worlds no main quest
     // sends anyone to.
@@ -69,7 +76,7 @@ internal static class WorldAccess {
         var openAll = AllOpen;
         var here = wizard?.Zone?.Split('/')[0];
 
-        return [.. s_worlds.Where(world => openAll || wizard is null || s_alwaysOpen.Contains(world) || world == here
+        return [.. s_worlds.Where(InThisGame).Where(world => openAll || wizard is null || s_alwaysOpen.Contains(world) || world == here
             || wizard.HasRegistryValue(OPEN_ENTRY_PREFIX + world) || QuestsOpen(wizard, world))];
     }
 

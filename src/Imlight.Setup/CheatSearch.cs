@@ -233,7 +233,7 @@ internal static partial class CheatSearch {
         ("WC", "Wizard City"), ("KT", "Krokotopia"), ("MB", "Marleybone"), ("MS", "MooShu"), ("DS", "Dragonspyre"),
         ("GH", "Grizzleheim"), ("CL", "Celestia"), ("WY", "Wysteria"), ("ZF", "Zafaria"), ("AV", "Avalon"), ("AZ", "Azteca"),
         ("KR", "Khrysalis"), ("PL", "Polaris"), ("MR", "Mirage"), ("EM", "Empyrea"), ("KA", "Karamelle"), ("LM", "Lemuria"),
-        ("NV", "Novus"), ("WL", "Wallaru"), ("DM", "Darkmoor"), ("AQ", "Aquila"),
+        ("NV", "Novus"), ("WL", "Wallaru"), ("DM", "Darkmoor"), ("AQ", "Aquila"), ("AH", "Ahmarra"),
     ];
 
     /// <summary>The world of a creature from its template file ("ObjectData/DM/DM_WingedSorrow_Boss_A_01.xml" is Darkmoor), or "".</summary>

@@ -140,7 +140,7 @@ internal static class ZoneNameMatch {
         return new ZoneMatch(ordered[0], how, [.. ordered.Skip(1)]);
     }
 
-    // Each world's hub, where `.tp <world>` goes (zone-details.json; Ahmarra left out until it is out).
+    // Each world's hub, where `.tp <world>` goes (zone-details.json). Ahmarra's is its WorldHubZones hub (Test Realm r811339).
     private static readonly (string World, string Hub)[] s_worldHubs = [
         ("Wizard City", "WizardCity/WC_Hub"), ("Krokotopia", "Krokotopia/KT_Hub"), ("Marleybone", "Marleybone/MB_Hub"),
         ("Mooshu", "MooShu/MS_Hub"), ("Dragonspyre", "DragonSpire/DS_Hub_Cathedral"), ("Grizzleheim", "Grizzleheim/GH_MainHub"),
@@ -150,6 +150,7 @@ internal static class ZoneNameMatch {
         ("Empyrea", "Empyrea/EM_Z00_Aeriel_HUB"), ("Karamelle", "Karamelle/KM_Z00_HUB"), ("Lemuria", "Lemuria/LM_Z00_Hub"),
         ("Novus", "Novus/NV_Z01_Conatus"), ("Wallaru", "Wallaru/WL_Z01_Hub"), ("Darkmoor", "Darkmoor/DM_Z01_Graveholm"),
         ("Arcanum", "Arcanum/AR_Z01_Hub"), ("Selenopolis", "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis"),
+        ("Ahmarra", "Ahmarra/AH_Z00_BaleFlotilla"),
     ];
 
     // Smaller is better: a main world area before a house, an instance, a retired zone or a test zone, and a zone whose

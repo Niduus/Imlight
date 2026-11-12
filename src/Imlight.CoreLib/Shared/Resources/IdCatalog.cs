@@ -382,7 +382,23 @@ public static class IdCatalog {
 
             var standIn = Imlight.CoreLib.Game.Zone.Components.CombatCreatureDeckComponent.StandInDecksOn ? 1 : 0;
 
-            return $"{s_gameRevision}|v{CATALOG_VERSION}|decks {books.Count}/{spells}|standin {standIn}";
+            return $"{s_gameRevision}|v{CATALOG_VERSION}|decks {books.Count}/{spells}|standin {standIn}|root {RootWadIdentity()}";
+        }
+    }
+
+    // The game's own Root.wad, by size and file count. GameRevision in Imlight.ini stays the same when Wizard101 patches
+    // (an Ahziael update keeps the player's ini), so without this a patched game (the Ahmarra update, 2026-11-12: 6,450
+    // new items, spells, creatures and badges) kept the lists from before the patch.
+    private static string RootWadIdentity() {
+        try {
+            if (RootArchiveLoader.GetRootWad() is null) {
+                RootArchiveLoader.ReloadRootWad();
+            }
+
+            return RootArchiveLoader.GetRootWad() is { } wad ? $"{wad.Size()}/{wad.FileCount}" : "unknown";
+        }
+        catch (Exception) {
+            return "unknown";
         }
     }
 
