@@ -1309,6 +1309,77 @@ public partial class CombatDuelSubCircle {
     }
 
     /// <summary>
+    /// Whether the game itself counts power pips as 2 for a school. It does that only for the wizard's own school
+    /// (CombatParticipant m_primaryMagicSchoolID) and for the 7 schools with a mastery stat (an amulet). Taken from the
+    /// client's CombatParticipant::CanCastSpell (r806919, 0x14202aaa0 and 0x141c78730). Moon, Sun, Star and Shadow have
+    /// no mastery stat, so the game never doubles power pips for them.
+    /// </summary>
+    internal bool GameSeesMastery(uint magicSchoolID) {
+        if (CombatParticipant is { } participant && (uint) participant.m_primaryMagicSchoolID == magicSchoolID) {
+            return true;
+        }
+
+        var stats = ParticipantGameStats;
+        if (stats is null) {
+            return false;
+        }
+
+        return (MagicSchool) magicSchoolID switch {
+            MagicSchool.Storm   => stats.m_stormMastery   > 0,
+            MagicSchool.Fire    => stats.m_fireMastery    > 0,
+            MagicSchool.Ice     => stats.m_iceMastery     > 0,
+            MagicSchool.Myth    => stats.m_mythMastery    > 0,
+            MagicSchool.Life    => stats.m_lifeMastery    > 0,
+            MagicSchool.Death   => stats.m_deathMastery   > 0,
+            MagicSchool.Balance => stats.m_balanceMastery > 0,
+            _ => false,
+        };
+    }
+
+    /// <summary>
+    /// A hand as the game should get it. Where the server counts power pips as 2 for a card and the game does not
+    /// (Moon spells with [Battle] MoonPowerPipsDouble, cheat masteries), the game greyed the card out although the
+    /// wizard could cast it (Niduus, 2026-11-12: Shift Dread Paladin, 3 pips, with 1 pip + 1 power pip). The game
+    /// checks a card against its m_pipCost, so such a card goes to the game with the pip cost the game can see the
+    /// wizard paying. The card face keeps its own number (the game draws that from the template), and the server
+    /// still charges the real cost. The server's own hand is not changed.
+    /// </summary>
+    internal Hand ForGame(Hand hand) {
+        if (hand?.m_spellList is not { Count: > 0 } list || !IsHumanPlayer || CombatParticipant?.m_pipCount is null) {
+            return hand;
+        }
+
+        List<Spell> cards = null;
+        for (var i = 0; i < list.Count; i++) {
+            var shown = CostTheGameAccepts(list[i]);
+            if (!ReferenceEquals(shown, list[i])) {
+                cards ??= [.. list];
+                cards[i] = shown;
+            }
+        }
+
+        return cards is null ? hand : new Hand { m_spellList = cards, m_spellFusionIDList = hand.m_spellFusionIDList };
+    }
+
+    private Spell CostTheGameAccepts(Spell spell) {
+        if (spell?.m_pipCost is not { m_spellRank: > 0 } cost || CombatActionResolver.IsXPipSpell(spell)
+            || !HasSchoolMastery(spell.m_magicSchoolID) || GameSeesMastery(spell.m_magicSchoolID)
+            || !HasPipsForSpell(spell)) {
+            return spell;
+        }
+
+        // What the game counts without mastery: every pip 1, power pips 1, spare school pips 1.
+        var pips = CombatParticipant.m_pipCount;
+        var (own, other) = SpareSchoolPips(spell);
+        var gameCounts = pips.m_genericPips + pips.m_powerPips + own + other;
+        if (gameCounts >= cost.m_spellRank) {
+            return spell;
+        }
+
+        return spell with { m_pipCost = cost with { m_spellRank = (byte) Math.Max(0, gameCounts) } };
+    }
+
+    /// <summary>
     /// The participant's pips and mana next to what a spell costs, for the log.
     /// </summary>
     internal string DescribePipsFor(Spell spell) {

@@ -1,0 +1,4 @@
+Fixed: Moon cards stayed grey when power pips should have paid for them
+Power pips count as 2 for Moon spells, but the game only does that for your own school, so it greyed out a Moon card you could really afford (for example Shift Dread Paladin, 3 pips, with 1 pip and 1 power pip). Now the server tells the game a cost it will accept for that card, so you can click it. The number on the card stays the same, and the real cost is still taken from your pips. This also helps any other school the server lets you double power pips for.
+Where: In battle, any Moon card (with Game Rules setting "Power pips count as 2 for Moon spells" on)
+Test: Go into a battle with a Moon card that costs 3 (like Shift Dread Paladin) in your deck. Wait for a round where you have 1 normal pip and 1 power pip. The Moon card is no longer grey: click it and it casts, and both pips are used up.
