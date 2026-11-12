@@ -134,10 +134,18 @@ internal class Locale : RootDirectoryResourceSingleton<Locale>, IMemoryStreamDis
     }
 
     private static List<(string Key, string Text)> s_phrases;
+    private static HashSet<string> s_newPhraseKeys = [];
+    private static readonly object s_phraseLock = new();
+
+    /// <summary>The file that keeps every phrase's number, so a game update never moves them (Niduus, 2026-11-12).</summary>
+    internal const string PHRASE_NUMBERS_NAME = "phrase-numbers.txt";
 
     /// <summary>
-    /// The game's short lines (100 letters or fewer, each text once), in key order, so their numbers stay the same
-    /// from boot to boot. `.ca 1` shows the first; the app's Lookup tab lists them with their numbers (phrases.csv).
+    /// The game's short lines (100 letters or fewer, each text once), numbered for good: `.ca 1` shows the first, and
+    /// the app's Phrases tab lists them with their numbers (phrases.csv). The numbers are kept in phrase-numbers.txt
+    /// of the ID lookup folder, so a line keeps its number through game updates: lines an update adds get the next
+    /// numbers, and a line an update takes out leaves its number empty (Niduus, 2026-11-12: the Ahmarra update's new
+    /// lines moved the numbers of the old ones).
     /// </summary>
     public static List<(string Key, string Text)> Phrases {
         get {
@@ -145,25 +153,150 @@ internal class Locale : RootDirectoryResourceSingleton<Locale>, IMemoryStreamDis
                 return s_phrases;
             }
 
-            if (s_data.Count == 0) {
-                _ = Instance;
-            }
+            lock (s_phraseLock) {
+                if (s_phrases is not null) {
+                    return s_phrases;
+                }
 
-            var seen = new HashSet<string>(StringComparer.Ordinal);
-            var phrases = new List<(string Key, string Text)>();
-            foreach (var (table, lines) in s_data) {
-                foreach (var (id, text) in lines) {
-                    var line = text?.Trim() ?? "";
-                    if (line.Length > 0 && line.Length <= 100) {
-                        phrases.Add(($"{table}_{id}", line));
+                if (s_data.Count == 0) {
+                    _ = Instance;
+                }
+
+                var lines = new Dictionary<string, string>(StringComparer.Ordinal);
+                foreach (var (table, tableLines) in s_data) {
+                    foreach (var (id, text) in tableLines) {
+                        var line = text?.Trim() ?? "";
+                        if (line.Length > 0 && line.Length <= 100) {
+                            lines[$"{table}_{id}"] = line;
+                        }
                     }
                 }
+
+                var file = Path.Combine(IdCatalog.OutputPath, PHRASE_NUMBERS_NAME);
+                var saved = ReadPhraseNumbers(file, out var batches);
+                var (phrases, newKeys) = NumberPhrases(lines, saved);
+                if (newKeys.Count > 0 || saved.Count == 0) {
+                    // A first list is the starting point; later additions are a game update's new lines.
+                    var batch = saved.Count == 0 ? 0 : batches.Count + 1;
+                    if (batch > 0) {
+                        batches.Add($"#batch\t{batch}\t{DateTime.Now:yyyy-MM-dd}\t{newKeys.Count}");
+                    }
+
+                    WritePhraseNumbers(file, phrases, saved, newKeys, batch, batches);
+                    if (batch > 0) {
+                        Logger.Information("Phrases: the game has {0} new lines; they get numbers {1} to {2}, and the old lines keep theirs.",
+                            Logger.Args(newKeys.Count, phrases.Count - newKeys.Count + 1, phrases.Count));
+                    }
+                }
+
+                // The lines of the latest update that added any, for the Phrases tab's "New in the last game update".
+                var latest = saved.Count == 0 ? 0 : saved.Values.Max(v => v.Batch);
+                s_newPhraseKeys = newKeys.Count > 0 && saved.Count > 0
+                    ? [.. newKeys]
+                    : [.. saved.Where(s => s.Value.Batch == latest && latest > 0).Select(s => s.Key)];
+                s_phrases = phrases;
+
+                return s_phrases;
+            }
+        }
+    }
+
+    /// <summary>True for a line the latest game update added (see <see cref="Phrases"/>).</summary>
+    public static bool IsNewPhrase(string key) {
+        _ = Phrases;
+
+        return s_newPhraseKeys.Contains(key);
+    }
+
+    /// <summary>
+    /// Numbers the lines: the saved keys keep their numbers (an empty text where the game no longer has the line),
+    /// then the lines that have none yet, in key order, each text once.
+    /// </summary>
+    internal static (List<(string Key, string Text)> Phrases, List<string> NewKeys) NumberPhrases(
+        IReadOnlyDictionary<string, string> lines, IReadOnlyDictionary<string, (int Number, int Batch)> saved) {
+        var count = saved.Count == 0 ? 0 : saved.Values.Max(v => v.Number);
+        var phrases = new List<(string Key, string Text)>(count + lines.Count);
+        for (var i = 0; i < count; i++) {
+            phrases.Add(("", ""));
+        }
+
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var (key, (number, _)) in saved) {
+            var text = lines.GetValueOrDefault(key) ?? "";
+            phrases[number - 1] = (key, text);
+            if (text.Length > 0) {
+                seen.Add(text);
+            }
+        }
+
+        var newKeys = new List<string>();
+        foreach (var key in lines.Keys.Where(k => !saved.ContainsKey(k)).OrderBy(k => k, StringComparer.Ordinal)) {
+            if (seen.Add(lines[key])) {
+                phrases.Add((key, lines[key]));
+                newKeys.Add(key);
+            }
+        }
+
+        return (phrases, newKeys);
+    }
+
+    private static Dictionary<string, (int Number, int Batch)> ReadPhraseNumbers(string file, out List<string> batches) {
+        var saved = new Dictionary<string, (int Number, int Batch)>(StringComparer.Ordinal);
+        batches = [];
+        if (!File.Exists(file)) {
+            return saved;
+        }
+
+        try {
+            var number = 0;
+            foreach (var line in File.ReadLines(file)) {
+                if (line.StartsWith("#batch", StringComparison.Ordinal)) {
+                    batches.Add(line);
+
+                    continue;
+                }
+
+                if (line.StartsWith('#')) {
+                    continue;
+                }
+
+                number++;
+                var parts = line.Split('\t');
+                if (parts[0].Length > 0) {
+                    saved[parts[0]] = (number, parts.Length > 1 && int.TryParse(parts[1], out var b) ? b : 0);
+                }
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            Logger.Warning("Phrases: could not read {0}, so the lines are numbered again: {1}", Logger.Args(file, ex.Message));
+            saved.Clear();
+        }
+
+        return saved;
+    }
+
+    private static void WritePhraseNumbers(string file, List<(string Key, string Text)> phrases,
+        IReadOnlyDictionary<string, (int Number, int Batch)> saved, List<string> newKeys, int batch, List<string> batches) {
+        try {
+            Directory.CreateDirectory(Path.GetDirectoryName(file)!);
+            var added = new HashSet<string>(newKeys, StringComparer.Ordinal);
+            var text = new StringBuilder()
+                .AppendLine("# The number of every game line (.ca and the Phrases tab), one key per line in number order, and")
+                .AppendLine("# the game update that added it (0 = the first list). Kept so game updates never move a number.");
+            foreach (var b in batches) {
+                text.AppendLine(b);
             }
 
-            phrases.Sort((a, b) => string.CompareOrdinal(a.Key, b.Key));
-            s_phrases = [.. phrases.Where(p => seen.Add(p.Text))];
+            foreach (var (key, _) in phrases) {
+                var lineBatch = added.Contains(key) ? batch : saved.TryGetValue(key, out var s) ? s.Batch : 0;
+                text.Append(key).Append('\t').Append(lineBatch).AppendLine();
+            }
 
-            return s_phrases;
+            File.WriteAllText(file + ".tmp", text.ToString());
+            File.Move(file + ".tmp", file, overwrite: true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            Logger.Warning("Phrases: could not save the line numbers to {0}: {1}", Logger.Args(file, ex.Message));
         }
     }
 

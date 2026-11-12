@@ -54,7 +54,9 @@ internal class CommandAnnounceProtocol : CommandProtocol {
             }
 
             var list = new StringBuilder().AppendLine($"<center>Lines with \"{query}\":</center>\n");
-            var numbers = Locale.Phrases.Select((p, i) => (p.Key, Number: i + 1)).ToDictionary(p => p.Key, p => p.Number);
+            // A number an update emptied has no key (see Locale.Phrases).
+            var numbers = Locale.Phrases.Select((p, i) => (p.Key, Number: i + 1)).Where(p => p.Key.Length > 0)
+                .GroupBy(p => p.Key).ToDictionary(g => g.Key, g => g.First().Number);
             foreach (var (lineKey, line) in matches) {
                 list.AppendLine(numbers.TryGetValue(lineKey, out var n) ? $"{n}  {line}" : line);
             }
@@ -97,6 +99,11 @@ internal class CommandAnnounceProtocol : CommandProtocol {
             }
 
             (key, shown) = phrases[number - 1];
+            if (string.IsNullOrEmpty(shown)) {
+                problem = $"Phrase {number} was taken out of the game by an update. Pick another in the app's Phrases tab.";
+
+                return false;
+            }
 
             return true;
         }
