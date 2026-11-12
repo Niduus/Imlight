@@ -50,9 +50,59 @@ internal sealed partial class CombatDuelComponent {
     private IEnumerable<CombatDuelSubCircle> QuestTeamCircles
         => SubCircles.Where(c => c is { Occupied: true, AddedToDuel: true, IsAlive: true } && QuestTeamRole(c) is not null);
 
+    private static readonly string[] s_questTeamOrder = ["Ice", "Life", "Death", "Storm"];
+
+    /// <summary>
+    /// Why the Quest Team's formation is broken in this battle, or null when it holds (Niduus, 2026-11-12: "1st: Ice, 2nd:
+    /// Life, 3rd: Death, 4th: Storm. They will never break this formation, if they do, they are punished by fleeing").
+    /// Broken when anyone else (a player or a bot, not a minion) stands on their side, or a team wizard is not on its own
+    /// circle of the four.
+    /// </summary>
+    private string QuestTeamFormationBroken() {
+        var team = SubCircles.Where(c => c is { Occupied: true } && QuestTeamRole(c) is not null).ToList();
+        if (team.Count == 0) {
+            return null;
+        }
+
+        var side = SubCircles.Where(c => c is not null && c.SlotType == team[0].SlotType).OrderBy(c => c.SlotIndex).ToList();
+        if (side.FirstOrDefault(c => c.Occupied && !c.IsSummonedMinion && QuestTeamRole(c) is null && (c.IsHumanPlayer || IsBot(c))) is { } outsider) {
+            return $"{outsider.ParticipantObject?.m_debugName ?? "someone else"} took a place in their battle";
+        }
+
+        foreach (var member in team) {
+            var role = QuestTeamRole(member);
+            var place = side.IndexOf(member);
+            var wanted = Array.IndexOf(s_questTeamOrder, role);
+            if (wanted >= 0 && place != wanted) {
+                return $"{role} stood on circle {place + 1} instead of {wanted + 1}";
+            }
+        }
+
+        return null;
+    }
+
+    // The formation broke: every team wizard in this battle flees, as a player would, and the team regroups outside.
+    private bool QuestTeamKeepFormation() {
+        if (IsPvPDuel || !_isActive || QuestTeamFormationBroken() is not { } why) {
+            return false;
+        }
+
+        QuestTeamLink.Note("Team", $"leaves the battle to keep its formation: {why}.");
+        QuestTeamDirector.FormationBroke(why);
+        foreach (var member in SubCircles.Where(c => c is { Occupied: true } && QuestTeamRole(c) is not null).ToList()) {
+            HandleFleeAction(member);
+        }
+
+        return true;
+    }
+
     private void QuestTeamPlanningBegins() {
         _questTeamPicks.Clear();
         if (IsPvPDuel || !_awaitingCombatMoves || !QuestTeamCircles.Any()) {
+            return;
+        }
+
+        if (QuestTeamKeepFormation()) {
             return;
         }
 
@@ -78,6 +128,10 @@ internal sealed partial class CombatDuelComponent {
 
         if (message.Deadline) {
             _questTeamDeadlineRound = message.Round;
+        }
+
+        if (QuestTeamKeepFormation()) {
+            return;
         }
 
         var circles = ActiveSubCircles.ToList();

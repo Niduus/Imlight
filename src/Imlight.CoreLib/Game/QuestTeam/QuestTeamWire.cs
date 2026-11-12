@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using Imlight.Common;
@@ -41,6 +42,9 @@ internal sealed class TeamRequest {
     public double Seconds { get; set; }
     // "issue": "quest" (the quest is broken) or "team" (the Quest Team itself got stuck), or "slow".
     public string Kind { get; set; }
+    // "issue": what a player would do and see at that step, and where each wizard was and what it held.
+    public string Expected { get; set; }
+    public List<string> Seen { get; set; }
     // "status": the whole status as JSON, written as it is for Ahziael.
     public string Json { get; set; }
 }

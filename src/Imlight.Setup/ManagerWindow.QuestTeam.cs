@@ -61,6 +61,8 @@ internal sealed partial class ManagerWindow {
         public string Title { get; set; } = "";
         public string World { get; set; } = "";
         public string Text { get; set; } = "";
+        public string Expected { get; set; } = "";
+        public List<string> Seen { get; set; } = [];
         public List<string> Log { get; set; } = [];
     }
 
@@ -220,6 +222,14 @@ internal sealed partial class ManagerWindow {
         foreach (var issue in issues) {
             text.AppendLine($"#{issue.Id}  {issue.At.ToLocalTime():yyyy-MM-dd HH:mm}  {IssueKind(issue.Kind)}  {issue.Title} {(issue.World.Length > 0 ? $"({issue.World})" : "")}");
             text.AppendLine(issue.Text);
+            if (issue.Expected.Length > 0) {
+                text.AppendLine("Expected (as a player): " + issue.Expected);
+            }
+
+            foreach (var line in issue.Seen ?? []) {
+                text.AppendLine("  " + line);
+            }
+
             foreach (var line in issue.Log) {
                 text.AppendLine("    " + line);
             }
@@ -249,6 +259,14 @@ internal sealed partial class ManagerWindow {
                 Foreground = MUTED, FontSize = ManagerTheme.FONT_SMALL, TextWrapping = TextWrapping.Wrap,
             };
             var body = new TextBlock { Text = issue.Text, TextWrapping = TextWrapping.Wrap };
+            var expected = new TextBlock {
+                Text = issue.Expected.Length == 0 ? "" : "Expected, as a player: " + issue.Expected, TextWrapping = TextWrapping.Wrap,
+                IsVisible = issue.Expected.Length > 0, FontStyle = FontStyle.Italic,
+            };
+            var seen = new TextBlock {
+                Text = string.Join('\n', issue.Seen ?? []), TextWrapping = TextWrapping.Wrap, Foreground = MUTED, FontSize = ManagerTheme.FONT_SMALL,
+                IsVisible = (issue.Seen?.Count ?? 0) > 0,
+            };
             var log = new TextBox {
                 IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12,
                 MaxHeight = 260, Text = issue.Log.Count == 0 ? "(no log lines)" : string.Join('\n', issue.Log),
@@ -256,7 +274,7 @@ internal sealed partial class ManagerWindow {
             var logFold = new Expander { Header = "What happened (the team's log)", Content = LogWell(log), HorizontalAlignment = HorizontalAlignment.Stretch };
             _teamIssues.Children.Add(new Border {
                 Background = ManagerTheme.SURFACE_HIGH_BRUSH, CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(14, 10),
-                Child = new StackPanel { Spacing = 6, Children = { head, when, body, logFold } },
+                Child = new StackPanel { Spacing = 6, Children = { head, when, body, expected, seen, logFold } },
             });
         }
     }

@@ -68,6 +68,15 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
     /// <summary>Put on an item from the backpack, as the game's backpack does.</summary>
     internal sealed record Equip(ulong ItemId, string Slot, string What);
 
+    /// <summary>Take an item off into the backpack, as the game's backpack does.</summary>
+    internal sealed record Unequip(ulong ItemId, string Slot, string What);
+
+    /// <summary>Leave the battle, as the Flee button does.</summary>
+    internal sealed record Flee;
+
+    /// <summary>Press the Dungeon Recall button.</summary>
+    internal sealed record UseDungeonRecall;
+
     /// <summary>Buy one item at a shop (the shopkeeper by global id), as the shop window does.</summary>
     internal sealed record Buy(ulong NpcGlobalId, uint ItemTemplate, string What);
 
@@ -198,6 +207,14 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
             Note($"puts on {m.What}.");
             Send(new GAME_5_PROTOCOL.MSG_EQUIPITEM { IsEquip = 1, ItemID = m.ItemId, SlotName = m.Slot });
         });
+        Receive<Flee>(_ => Send(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATMOVE {
+            MoveType = (byte) Combat.CombatMoveType.Flee, SpellSelection = 0, SpellTarget = 0, TimeLeft = 0,
+        }));
+        Receive<UseDungeonRecall>(_ => Send(new WIZARD2_53_PROTOCOL.MSG_RESUMEINSTANCETELEPORTPLAYER()));
+        Receive<Unequip>(m => {
+            Note($"takes off {m.What} (developers' gear is not for the team).");
+            Send(new GAME_5_PROTOCOL.MSG_EQUIPITEM { IsEquip = 0, ItemID = m.ItemId, SlotName = m.Slot });
+        });
         Receive<Buy>(m => {
             Note($"buys {m.What}.");
             Send(new WIZARD_12_PROTOCOL.MSG_SHOPBUYREQUEST { npcGlobalID = m.NpcGlobalId, ShopID = m.ItemTemplate, quantity = 1, CurrencyType = 0 });
@@ -247,6 +264,15 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
         Receive<GAME_5_PROTOCOL.MSG_LEAVESERVICERANGE>(m => View.Options.TryRemove(m.MobileID, out _));
         Receive<QUEST_MESSAGES_52_PROTOCOL.MSG_QUESTOFFER>(m => {
             string quest = m.QuestName;
+            // Only the story the whole team follows; a side quest or another world's quest is left (so nobody gets ahead).
+            var template = QuestTemplateCollection.GetQuestByName(quest);
+            if (template is null || !Tools.QuestStory.IsMain(template) || !QuestTeamPlanner.IsMainStoryWorld(template)) {
+                Note($"is offered {QuestTeamText.Title(quest)}; leaves it (not the team's story)");
+                Send(new QUEST_MESSAGES_52_PROTOCOL.MSG_DECLINEQUEST { QuestName = quest });
+
+                return;
+            }
+
             Note($"is offered {QuestTeamText.Title(quest)}; accepts it");
             // A moment to "read" the offer, as a player does.
             Timers.StartSingleTimer("offer-" + quest, new AcceptOffer(m.MobileID, quest), TimeSpan.FromSeconds(1.2));
@@ -468,7 +494,8 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
             _route.Dequeue();
         }
 
-        var yaw = MathF.Atan2(next.Y - y, next.X - x);
+        // Facing where it walks: a wizard with yaw w faces (-sin w, -cos w) (Niduus, 2026-11-12: they were "shuffling sideways").
+        var yaw = MathF.Atan2(-(next.X - x), -(next.Y - y));
         if (yaw < 0) {
             yaw += MathF.Tau;
         }
