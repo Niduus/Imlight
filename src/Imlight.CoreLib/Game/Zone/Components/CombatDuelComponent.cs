@@ -207,6 +207,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         _renderComponent?.Disable();
 
         _tutorialDirector = new TutorialDuelDirector(this, Entity.Zone?.ZonePath ?? "");
+        _ref = Self;
     }
 
     // A duel circle is on the floor before its first duel. Sent without a duel, the game's circle never takes one later
@@ -784,11 +785,14 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         var passed = false;
-        foreach (var circle in SubCircles.Where(c => c is not null && c.AddedToDuel && c.IsHumanPlayer && c.AutoPassing)) {
+        foreach (var circle in SubCircles.Where(c => c is not null && c.AddedToDuel && c.IsHumanPlayer
+                                                     && (c.AutoPassing || (IsBot(c) && c.IsAlive)))) {
             if (CombatResolver.GetQueuedAction(circle) is null) {
                 HandlePassMove(circle);
                 passed = true;
-                Logger.Information("Duel {0} | Slot {1} | Devoured (auto pass): passes this round.",
+                Logger.Information(circle.AutoPassing
+                        ? "Duel {0} | Slot {1} | Devoured (auto pass): passes this round."
+                        : "Duel {0} | Slot {1} | Bot (test stage): passes this round.",
                     Logger.Args(Duel.m_duelID.Full, circle.SlotIndex));
             }
         }
@@ -1461,6 +1465,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         CombatResolver = new Combat.CombatResolver(Duel, SubCircles);
         _defeatedEnemyMinions.Clear();
         _enemyDefeated = false;
+        _botsKicked = false;
 
         // Determine which team goes up first. Tutorial duels override this with the golems first.
         Duel.m_firstTeamToAct = (int) DetermineFirstTeam();

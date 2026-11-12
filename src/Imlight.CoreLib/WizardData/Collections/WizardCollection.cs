@@ -104,6 +104,11 @@ public static class WizardCollection {
     /// </param>
     /// <returns><c>false</c> when the character is missing or <paramref name="work"/> returned <c>false</c>.</returns>
     internal static bool UpdateCharacterWithSession(ulong charId, Func<IDocumentSession, Wizard, bool> work) {
+        // A Bot Players wizard (Game/BotPlayers) is never stored.
+        if (Imlight.CoreLib.Game.BotPlayers.BotIds.IsBot(charId)) {
+            return false;
+        }
+
         return WithWriteLane(charId, () => {
             using var session = s_store.OpenSession();
             var existingCharacter = LoadCharacterByDocumentId(session, charId)

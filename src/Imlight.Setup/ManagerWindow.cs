@@ -932,7 +932,7 @@ internal sealed partial class ManagerWindow : Window {
     // the game plays, which all sat on the Server tab, a tab for each kind.
     private Control GameModesTab() => Page(RulesWaitNote(), _modesCard, _trainersCard);
 
-    private Control BattlesTab() => Page(RulesWaitNote(), _battleCard, TamedDropsCard(), PlantGrowthCard());
+    private Control BattlesTab() => Page(RulesWaitNote(), _battleCard, BotPlayersCard(), TamedDropsCard(), PlantGrowthCard());
 
     private Control EventsTab() => Page(EventsCard());
 
@@ -1305,6 +1305,7 @@ internal sealed partial class ManagerWindow : Window {
                 LogWell(_logScroll),
                 Row(Action(Plain("Copy all"), CopyLogAsync), Action(Plain("Save log to desktop"), SaveLogAsync)))),
             BazaarBotLogCard(),
+            BotPlayersLogCard(),
             Shut(Fold("log", "Logs", "Game log",
                 "The newest log Wizard101 wrote, updated every 2 seconds.",
                 _clientLogFile,

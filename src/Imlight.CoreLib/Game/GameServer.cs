@@ -95,6 +95,7 @@ public class GameServer : Server {
         Quests.QuestRewardCatchUp.Start();
         Events.GameEvents.Start(Context.System);
         Loyalty.LoyaltyStore.Start(Context.System);
+        BotPlayers.BotBodies.Start(Context.System);
         World.HouseTrainers.ForgetOldSpots();
 
         // Create actor children.
