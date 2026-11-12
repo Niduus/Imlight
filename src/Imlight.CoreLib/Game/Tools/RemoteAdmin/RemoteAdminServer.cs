@@ -387,7 +387,15 @@ public static class RemoteAdminServer {
 
                 if (op == "map") {
                     // The minimap of one game window (OverlayMinimap): about once a second while it shows.
-                    reply = await OverlayLinks.MapAsync(id, windows, header, address);
+                    try {
+                        reply = await OverlayLinks.MapAsync(id, windows, header, address);
+                    }
+                    catch (Exception ex) when (ex is not OperationCanceledException) {
+                        // A map that could not be made shows as a note on the minimap; the overlay stays connected.
+                        Logger.Error("Overlay minimap: the map could not be made: {0}", Logger.Args(ex));
+                        reply = RemoteAdminWire.Error("The server could not make the map just now: " + ex.Message);
+                    }
+
                     continue;
                 }
 
