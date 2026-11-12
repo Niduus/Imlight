@@ -22,6 +22,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -710,11 +712,118 @@ internal sealed partial class ManagerWindow {
                     Sub("Add-ons are ready-made widgets (texts, boxes and pictures that go together) and styles (a look to put on any text or box) " +
                         "that people share as " + OverlayAddon.EXTENSION + " files. Like design files they hold only words, colours, numbers and " +
                         "pictures, so they can't run anything. Make one from your own design to share it."),
+                    ShelfSection(),
+                    new TextBlock { Text = "Your add-ons", FontWeight = FontWeight.SemiBold, Margin = new Thickness(0, 6, 0, 0) },
                     Row(Action(Primary("Add an add-on file"), InstallAddonAsync), Action(Plain("Make an add-on from my design"), MakeAddonAsync)),
                     _ovAddons,
                 },
             });
         }
+
+        // Niduus's own add-ons, from his GitHub repo (OverlayAddonShelf).
+        private readonly StackPanel _ovShelf = new() { Spacing = 8 };
+
+        private Control ShelfSection() {
+            _ = FillShelfAsync(false);
+
+            return new Border {
+                BorderBrush = LINE, BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(8), Padding = new Thickness(10, 8),
+                Child = new StackPanel {
+                    Spacing = 6,
+                    Children = {
+                        new TextBlock { Text = "Niduus's add-ons", FontWeight = FontWeight.SemiBold },
+                        Sub("Overlay add-ons made by Niduus, ready to download. Ahziael gets them from Niduus/Imlight on GitHub " +
+                            "(the " + OverlayAddonShelf.REPO_FOLDER + " folder). Each one is checked the same way as an add-on file, so it can't run anything. " +
+                            "After you download one, its pieces show under Your add-ons: click one to put it on your overlay."),
+                        Row(Action(Plain("Look again"), () => FillShelfAsync(true)), Action(Plain("Download all"), DownloadAllShelfAsync)),
+                        _ovShelf,
+                    },
+                },
+            };
+        }
+
+        private async Task FillShelfAsync(bool again) {
+            _ovShelf.Children.Clear();
+            _ovShelf.Children.Add(Sub("Looking for Niduus's add-ons..."));
+            List<OverlayAddonShelf.Item> items;
+            try {
+                items = await OverlayAddonShelf.ListAsync(again);
+            }
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException or InvalidOperationException) {
+                _ovShelf.Children.Clear();
+                _ovShelf.Children.Add(Sub("Couldn't reach GitHub just now (no internet, or GitHub asked Ahziael to wait a while). Click Look again in a minute."));
+                return;
+            }
+
+            ShowShelf(items);
+        }
+
+        private void ShowShelf(List<OverlayAddonShelf.Item> items) {
+            _ovShelf.Children.Clear();
+            if (items.Count == 0) {
+                _ovShelf.Children.Add(Sub("Niduus hasn't put any add-ons up yet."));
+                return;
+            }
+
+            var installed = OverlayAddon.All(OverlayHost.InstallFolder);
+            foreach (var item in items) {
+                var addon = item.Addon;
+                var state = OverlayAddonShelf.StateOf(addon, installed);
+                Control button = state == OverlayAddonShelf.State.Have
+                    ? new TextBlock { Text = "Downloaded", Foreground = MUTED, VerticalAlignment = VerticalAlignment.Center }
+                    : Action(Primary(state == OverlayAddonShelf.State.Newer ? "Get the newer one" : "Download"), () => DownloadShelfAsync(item));
+                var what = string.Join(", ", addon.Widgets.Select(w => w.Name.Length > 0 ? w.Name : "Widget")
+                    .Concat(addon.Styles.Select(st => "Style: " + (st.Name.Length > 0 ? st.Name : "Look"))));
+                _ovShelf.Children.Add(new Border {
+                    BorderBrush = LINE, BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(8), Padding = new Thickness(10, 8),
+                    Child = new StackPanel {
+                        Spacing = 4,
+                        Children = {
+                            new DockPanel {
+                                Children = {
+                                    WithDock(button, Dock.Right),
+                                    new TextBlock {
+                                        Text = addon.Name + (addon.Author.Length > 0 ? "  by " + addon.Author : "") + (addon.Version.Length > 0 ? "  (" + addon.Version + ")" : ""),
+                                        FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center,
+                                    },
+                                },
+                            },
+                            Sub(addon.Description.Length > 0 ? addon.Description : $"{addon.Widgets.Count} widget(s), {addon.Styles.Count} style(s)."),
+                            Sub("Has: " + what),
+                        },
+                    },
+                });
+            }
+        }
+
+        private async Task DownloadShelfAsync(OverlayAddonShelf.Item item) {
+            InstallFromShelf(item.Addon);
+            FillAddons();
+            ShowShelf(await OverlayAddonShelf.ListAsync());
+            Say($"Downloaded \"{item.Addon.Name}\". Its pieces are under Your add-ons: click one to put it on your overlay.");
+        }
+
+        private async Task DownloadAllShelfAsync() {
+            var items = await OverlayAddonShelf.ListAsync();
+            var installed = OverlayAddon.All(OverlayHost.InstallFolder);
+            var wanted = items.Where(i => OverlayAddonShelf.StateOf(i.Addon, installed) != OverlayAddonShelf.State.Have).ToList();
+            if (wanted.Count == 0) {
+                Say(items.Count == 0 ? "Niduus hasn't put any add-ons up yet." : "You already have all of Niduus's add-ons.");
+                return;
+            }
+
+            foreach (var item in wanted) {
+                InstallFromShelf(item.Addon);
+            }
+
+            FillAddons();
+            ShowShelf(items);
+            Say($"Downloaded {wanted.Count} add-on(s). Their pieces are under Your add-ons.");
+        }
+
+        /// <summary>A fresh checked copy each time, so the shelf's own stays as it came.</summary>
+        private static void InstallFromShelf(OverlayAddon addon) =>
+            OverlayAddon.Install(OverlayHost.InstallFolder, OverlayAddon.FromJson(addon.ToJson()) ?? throw new PanelException("That add-on didn't pass the check."));
 
         private void FillAddons() {
             _ovAddons.Children.Clear();
