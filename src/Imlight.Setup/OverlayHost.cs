@@ -69,6 +69,7 @@ internal static class OverlayHost {
     private static OverlayDesign s_design = new();
     private static int s_designVersion;
     private static DispatcherTimer? s_timer;
+    private static DispatcherTimer? s_glideTimer;
     private static readonly Dictionary<IntPtr, LayeredWindow> s_windows = [];
     private static readonly Dictionary<IntPtr, DateTime> s_missingSince = [];
     private static DateTime s_lastScan = DateTime.MinValue;
@@ -195,6 +196,19 @@ internal static class OverlayHost {
         s_timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
         s_timer.Tick += (_, _) => Tick();
         s_timer.Start();
+        // While a minimap shows, its corner is drawn again about 25 times a second as it glides between maps.
+        s_glideTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(40) };
+        s_glideTimer.Tick += (_, _) => {
+            try {
+                if (OverlayMinimapData.Wanted.Length > 0) {
+                    FollowAll();
+                }
+            }
+            catch (Exception ex) {
+                Log($"Overlay: {ex.Message}");
+            }
+        };
+        s_glideTimer.Start();
         Tick();
     }
 
@@ -213,6 +227,8 @@ internal static class OverlayHost {
 
     internal static void Stop() {
         s_timer?.Stop();
+        s_glideTimer?.Stop();
+        s_glideTimer = null;
         s_timer = null;
         foreach (var hook in s_globalHooks.Concat(s_processHooks.Select(h => h.Hook))) {
             Native.UnhookWinEvent(hook);
@@ -612,6 +628,39 @@ internal static class OverlayHost {
         return pixels;
     }
 
+    /// <summary>
+    /// Draws just one part of a control (in pixels of the whole picture) again, as premultiplied BGRA rows: the minimap
+    /// glides several times a second, and drawing only its corner keeps that cheap.
+    /// </summary>
+    internal static byte[] RenderPart(Control control, PixelRect part, double scale) {
+        control.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Absolute);
+        control.RenderTransform = new Avalonia.Media.TranslateTransform(-part.X / scale, -part.Y / scale);
+        try {
+            using var bitmap = new RenderTargetBitmap(new PixelSize(part.Width, part.Height), new Vector(96 * scale, 96 * scale));
+            bitmap.Render(control);
+            var pixels = new byte[part.Width * part.Height * 4];
+            var handle = GCHandle.Alloc(pixels, GCHandleType.Pinned);
+            try {
+                bitmap.CopyPixels(new PixelRect(0, 0, part.Width, part.Height), handle.AddrOfPinnedObject(), pixels.Length, part.Width * 4);
+            }
+            finally {
+                handle.Free();
+            }
+
+            for (var i = 0; i < pixels.Length; i += 4) {
+                var alpha = pixels[i + 3];
+                pixels[i] = Math.Min(pixels[i], alpha);
+                pixels[i + 1] = Math.Min(pixels[i + 1], alpha);
+                pixels[i + 2] = Math.Min(pixels[i + 2], alpha);
+            }
+
+            return pixels;
+        }
+        finally {
+            control.RenderTransform = null;
+        }
+    }
+
     /// <summary>The designer button: a small round button with a sparkle.</summary>
     private static Control ButtonPicture() => new Border {
         CornerRadius = new CornerRadius(14), BorderThickness = new Thickness(1),
@@ -657,6 +706,34 @@ internal static class OverlayHost {
         private int _drawnVersion = -1;
         private int _drawnMap = -1;
         private (int W, int H, double Scale) _drawnSize;
+        private (int Quests, bool Note) _drawnLayout;
+        private Control? _picture;
+        private byte[]? _pixels;
+        private double _pixelsPerUnit = 1;
+        private List<PixelRect> _mapParts = [];
+        private bool _gliding;
+
+        // Where the minimaps are in the picture, in pixels, with room for their shadow.
+        private static List<PixelRect> MapParts(Control picture, double pixelsPerUnit, int width, int height) {
+            var parts = new List<PixelRect>();
+            foreach (var view in Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(picture).OfType<MinimapView>()) {
+                if (view.TranslatePoint(new Point(0, 0), picture) is not { } at) {
+                    continue;
+                }
+
+                const double ROOM = 24;
+                var left = (int) Math.Floor((at.X - ROOM) * pixelsPerUnit);
+                var top = (int) Math.Floor((at.Y - ROOM) * pixelsPerUnit);
+                var right = (int) Math.Ceiling((at.X + view.Bounds.Width + ROOM) * pixelsPerUnit);
+                var bottom = (int) Math.Ceiling((at.Y + view.Bounds.Height + ROOM) * pixelsPerUnit);
+                (left, top, right, bottom) = (Math.Max(0, left), Math.Max(0, top), Math.Min(width, right), Math.Min(height, bottom));
+                if (right - left > 0 && bottom - top > 0) {
+                    parts.Add(new PixelRect(left, top, right - left, bottom - top));
+                }
+            }
+
+            return parts;
+        }
         private double _buttonScale;
         private Native.RECT _placed;
         private bool _shown;
@@ -872,20 +949,43 @@ internal static class OverlayHost {
                 Y = place.Bottom - buttonPixels - (int) Math.Round(BUTTON_MARGIN * scale),
             };
 
-            // A minimap's new map from the server draws it again too (about twice a second while one shows).
+            // A minimap's new map from the server, and its glide between maps, draw only the minimap's corner again;
+            // the whole overlay is laid out again only when the design, the window or the minimap's size changes.
             var map = OverlayMinimapData.VersionOf(game.ToInt64());
-            if (version != _drawnVersion || map != _drawnMap || _drawnSize != (width, height, scale)) {
+            var layout = OverlayMinimapData.LayoutOf(game.ToInt64());
+            if (version != _drawnVersion || layout != _drawnLayout || _drawnSize != (width, height, scale) || (_mapParts.Count == 0 && map != _drawnMap)) {
                 _drawnMap = map;
+                _drawnLayout = layout;
                 var picture = OverlayRenderer.Build(design, new OverlayRenderer.Words(Version, Link.ServerLabel), showMine: ShowsMine(design), server: WithNotice(game),
                     window: game.ToInt64());
                 // Laid out on the design's 1280 x 720 terms and drawn bigger or smaller to fit this window.
                 var fit = OverlayDesign.Fit(width / scale, height / scale);
-                Draw(_hwnd, Render(picture, width, height, scale * fit), width, height, origin);
+                var pixels = Render(picture, width, height, scale * fit);
+                Draw(_hwnd, pixels, width, height, origin);
                 _origin = origin;
                 PlaceHits(picture, scale * fit, game);
                 _drawnVersion = version;
                 _drawnSize = (width, height, scale);
                 _placed = place;
+                _picture = picture;
+                _pixels = pixels;
+                _pixelsPerUnit = scale * fit;
+                _mapParts = MapParts(picture, scale * fit, width, height);
+            }
+            else if (_mapParts.Count > 0 && _picture is not null && _pixels is not null
+                     && (map != _drawnMap || OverlayMinimapData.Moving(game.ToInt64()) || _gliding)) {
+                // One more draw after the glide ends, so it stops right on the newest map.
+                _gliding = OverlayMinimapData.Moving(game.ToInt64());
+                _drawnMap = map;
+                foreach (var part in _mapParts) {
+                    var patch = RenderPart(_picture, part, _pixelsPerUnit);
+                    for (var row = 0; row < part.Height; row++) {
+                        Buffer.BlockCopy(patch, row * part.Width * 4, _pixels, (((part.Y + row) * width) + part.X) * 4, part.Width * 4);
+                    }
+                }
+
+                Draw(_hwnd, _pixels, width, height, origin);
+                _origin = origin;
             }
 
             if (_buttonScale != scale && _button != IntPtr.Zero) {
@@ -1045,7 +1145,7 @@ internal static class OverlayHost {
         private static DateTime s_nextMap = DateTime.MinValue;
 
         // How often each game window's minimap is asked for.
-        private static readonly TimeSpan s_mapEvery = TimeSpan.FromMilliseconds(500);
+        private static readonly TimeSpan s_mapEvery = TimeSpan.FromMilliseconds(250);
 
         /// <summary>What the server said last: true when it needs the overlay, null when it has not answered.</summary>
         internal static bool? Required { get; private set; }

@@ -205,7 +205,7 @@ internal static class OverlayGameMap {
             return null;
         }
 
-        // Out of date markers (Unicorn Way's are from before it was rebuilt) lie off the area's ground.
+        // Markers that lie off the area's ground don't belong to this version of it.
         if (ground is { IsEmpty: false } g) {
             var right = g.Left + (g.Width * g.Cell);
             var bottom = g.Top - (g.Height * g.Cell);

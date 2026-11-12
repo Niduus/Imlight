@@ -121,6 +121,16 @@ internal static class ZoneGround {
             var (mx, my) = (F(), F());
             F(); // middle height
             var scale = F();
+            // A mesh's points are its own: turned, sized and moved by the shape like a box's corners (Niduus, 2026-11-12:
+            // Unicorn Way's ground came out about 12000 to one side, so the map didn't match the street).
+            if (points is not null) {
+                var size = scale is > 0 and < 1000 ? scale : 1f;
+                for (var p = 0; p + 2 < points.Length; p += 3) {
+                    var (px, py, pz) = (points[p] * size, points[p + 1] * size, points[p + 2] * size);
+                    points[p] = mx + (rot[0] * px) + (rot[3] * py) + (rot[6] * pz);
+                    points[p + 1] = my + (rot[1] * px) + (rot[4] * py) + (rot[7] * pz);
+                }
+            }
             var material = Text();
             var sizeType = U();
             switch (sizeType) {

@@ -58,6 +58,7 @@ internal static class OverlayMinimapData {
     private static readonly TimeSpan s_staleAfter = TimeSpan.FromSeconds(6);
     private static readonly object s_lock = new();
     private static readonly Dictionary<long, Snapshot> s_maps = [];
+    private static readonly Dictionary<long, Snapshot> s_previous = [];
     private static readonly Dictionary<long, Ground> s_grounds = [];
     private static readonly Dictionary<long, int> s_versions = [];
     private static readonly HashSet<long> s_staleShown = [];
@@ -123,10 +124,72 @@ internal static class OverlayMinimapData {
         }
 
         lock (s_lock) {
+            // The last map stays as where the glide starts from (OverlayMinimapData.Shown).
+            if (s_maps.TryGetValue(window, out var before) && before.Note.Length == 0 && snapshot.Note.Length == 0) {
+                s_previous[window] = before;
+            }
+            else {
+                s_previous.Remove(window);
+            }
+
             s_maps[window] = snapshot;
             s_staleShown.Remove(window);
             s_versions[window] = s_versions.GetValueOrDefault(window) + 1;
         }
+    }
+
+    /// <summary>
+    /// The map as it is drawn right now: the wizard glides from the last map's spot and facing to the newest over the
+    /// time between the two (Niduus, 2026-11-12: updates were "shotty"), so the map moves smoothly a little behind.
+    /// </summary>
+    internal static Snapshot? Shown(long window) {
+        if (window == 0) {
+            return Sample;
+        }
+
+        lock (s_lock) {
+            if (!s_maps.TryGetValue(window, out var now)) {
+                return null;
+            }
+
+            if (!s_previous.TryGetValue(window, out var before) || Glide(before, now) is not { } gap) {
+                return now;
+            }
+
+            var t = Math.Clamp((DateTime.UtcNow - now.At).TotalSeconds / gap, 0, 1);
+            var turn = Math.IEEERemainder(now.Yaw - before.Yaw, 2 * Math.PI);
+
+            return now with {
+                X = before.X + ((now.X - before.X) * t), Y = before.Y + ((now.Y - before.Y) * t), Yaw = before.Yaw + (turn * t),
+            };
+        }
+    }
+
+    /// <summary>Whether this window's minimap is still gliding to its newest map (it is drawn again often until then).</summary>
+    internal static bool Moving(long window) {
+        lock (s_lock) {
+            return s_maps.TryGetValue(window, out var now) && s_previous.TryGetValue(window, out var before) && Glide(before, now) is { } gap
+                   && (DateTime.UtcNow - now.At).TotalSeconds < gap + 0.05;
+        }
+    }
+
+    /// <summary>What sizes the minimap (its quest lines and whether it shows a note): when this changes, the overlay is laid out again.</summary>
+    internal static (int Quests, bool Note) LayoutOf(long window) {
+        lock (s_lock) {
+            return s_maps.TryGetValue(window, out var now) ? (Math.Min(now.Quests.Count, 8), now.Note.Length > 0) : (0, false);
+        }
+    }
+
+    // Seconds to glide over, or null when there is nothing to glide (no move, a jump, another area, a long gap).
+    private static double? Glide(Snapshot before, Snapshot now) {
+        var gap = (now.At - before.At).TotalSeconds;
+        var far = Math.Sqrt(((now.X - before.X) * (now.X - before.X)) + ((now.Y - before.Y) * (now.Y - before.Y)));
+        var turned = Math.Abs(Math.IEEERemainder(now.Yaw - before.Yaw, 2 * Math.PI));
+        if (gap is <= 0.02 or > 1.5 || far > 1500 || !string.Equals(before.Zone, now.Zone, StringComparison.OrdinalIgnoreCase) || (far < 0.5 && turned < 0.001)) {
+            return null;
+        }
+
+        return gap;
     }
 
     /// <summary>Every window's minimap is drawn again (the game's map page of its area is ready).</summary>
@@ -150,6 +213,7 @@ internal static class OverlayMinimapData {
 
             foreach (var gone in s_maps.Keys.Where(w => !Wanted.Contains(w)).ToList()) {
                 s_maps.Remove(gone);
+                s_previous.Remove(gone);
                 s_grounds.Remove(gone);
                 s_staleShown.Remove(gone);
             }
@@ -286,13 +350,15 @@ internal sealed class MinimapView : Control {
     private readonly OverlayElement _element;
     private readonly OverlayMap _map;
     private readonly OverlayMinimapData.Snapshot? _data;
+    private readonly long _window;
     private readonly double _mapW;
     private readonly double _mapH;
 
-    internal MinimapView(OverlayElement element, OverlayMinimapData.Snapshot? data) {
+    internal MinimapView(OverlayElement element, OverlayMinimapData.Snapshot? data, long window = 0) {
         _element = element;
         _map = element.Map ?? new OverlayMap();
         _data = data;
+        _window = window;
         _mapW = element.Width > 0 ? element.Width : 200;
         _mapH = element.Height > 0 ? element.Height : 200;
         if (_map.Round) {
@@ -322,7 +388,8 @@ internal sealed class MinimapView : Control {
         Geometry shape = _map.Round ? new EllipseGeometry(area) : new RectangleGeometry(area, corner, corner);
         context.DrawGeometry(fill, null, shape);
 
-        var data = _data;
+        // Read again each time it is drawn, so the overlay can draw just the minimap again while it glides.
+        var data = _window != 0 ? OverlayMinimapData.Shown(_window) ?? _data : _data;
         var stale = data is null || data.Stale;
         using (context.PushGeometryClip(shape)) {
             // A faint ring half way out, so distances read at a glance.
