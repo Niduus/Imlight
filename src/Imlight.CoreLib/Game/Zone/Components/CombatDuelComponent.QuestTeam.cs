@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Imlight.Common;
+using Imlight.CoreLib.Game.BotShared;
 using Imlight.CoreLib.Game.Combat;
 using Imlight.CoreLib.Game.QuestTeam;
 using Imlight.CoreLib.Shared.Networking;
@@ -40,6 +41,7 @@ internal sealed partial class CombatDuelComponent {
     private const string QUEST_TEAM_THINK_KEY = "QuestTeamThink";
     private const string QUEST_TEAM_DEADLINE_KEY = "QuestTeamDeadline";
     private readonly Dictionary<int, string> _questTeamPicks = [];
+    private readonly HashSet<(int Round, int Slot)> _questTeamDiscarded = [];
     private int _questTeamDeadlineRound = -1;
 
     private static string QuestTeamRole(CombatDuelSubCircle circle)
@@ -91,6 +93,16 @@ internal sealed partial class CombatDuelComponent {
             }
 
             var role = QuestTeamRole(member);
+
+            // First, once a round, the cards its job won't play go (Game/BotShared/BotCards), as a player discards.
+            if (_questTeamDiscarded.Add((Duel.m_roundNum, member.SlotIndex))) {
+                foreach (var index in BotCards.Discards(member, circles, BotGear.StyleOfRole(role))) {
+                    var thrown = member.GetSpellFromLastHand((byte) index);
+                    QuestTeamLink.Note(role, $"round {Duel.m_roundNum}: discards {(thrown is null ? "a card" : RewrittenAI.Read(thrown)?.Shown ?? "a card")}");
+                    HandleDiscardMove(member, index);
+                }
+            }
+
             QuestTeamTactics.Choice choice;
             try {
                 choice = QuestTeamTactics.Decide(role, member, circles, CombatResolver);

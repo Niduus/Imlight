@@ -23,6 +23,7 @@ using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
 using Imlight.CoreLib.Game.BotPlayers;
+using Imlight.CoreLib.Game.BotShared;
 using Imlight.CoreLib.Game.Combat;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -67,6 +68,10 @@ internal sealed partial class CombatDuelComponent {
         }
 
         if (refusal is null) {
+            // Its deck made ready for these enemies before it sits down (Niduus, 2026-11-12: "adjust decks on the fly to
+            // prepare for the next fight").
+            BotCards.PrepareBot(message.BotObject.m_globalID.Full,
+                BotCards.SituationOf(SubCircles.Where(c => c is { Occupied: true } && c.IsAiCreature)));
             AddParticipant(message.BotObject, message.BotActor);
             var circle = SubCircles.FirstOrDefault(c => c?.ParticipantObject?.m_globalID == message.BotObject.m_globalID);
             if (circle is null) {
@@ -125,6 +130,7 @@ internal sealed partial class CombatDuelComponent {
 
     // What each bot picked this round (slot -> card and target), so the same pick is not sent twice.
     private readonly Dictionary<int, string> _botPicks = [];
+    private readonly HashSet<(int Round, int Slot)> _botDiscarded = [];
     private int _botDeadlineRound = -1;
 
     private IEnumerable<CombatDuelSubCircle> BotCircles
@@ -142,8 +148,6 @@ internal sealed partial class CombatDuelComponent {
                 bot.Reshuffle();
             }
 
-            // A fresh hand each round, as a player who discards what they can't use.
-            bot.DrawFreshHand();
         }
 
         // A first look a moment in (when no real player is on their side, that is when they pick), and a last call before
@@ -189,6 +193,14 @@ internal sealed partial class CombatDuelComponent {
                                            && c.IsAlive && c.AddedToDuel && !IsBot(c) && CombatResolver.GetQueuedAction(c) is null);
             if (waiting && _botDeadlineRound != message.Round) {
                 continue;
+            }
+
+            // Once a round, the cards it won't play go, as a player discards (Game/BotShared/BotCards).
+            if (_botDiscarded.Add((Duel.m_roundNum, bot.SlotIndex))) {
+                var style = BotGear.StyleOf(RewrittenAI.SchoolOf(bot) ?? "");
+                foreach (var index in BotCards.Discards(bot, circles, style)) {
+                    HandleDiscardMove(bot, index);
+                }
             }
 
             BotTactics.Choice choice;

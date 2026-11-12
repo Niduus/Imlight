@@ -259,11 +259,18 @@ internal static class BotBodies {
         }
 
         Wizard bot;
+        var gearWorn = 0;
         try {
             bot = Wizard.NewBot(BotIds.CharIdOf(who.Id), botSchool, BotLooks.NewAvatar(player.WizardAvatar, gender, new Random(who.Id)), who.NameKeys,
                 (byte) Math.Clamp(who.Level, 1, 200));
-            // Its spells: what a wizard of its school has at its level. A third of the bots took Life as a second school.
-            bot.SpellbookBehavior.SpellList = BotDeck.For(botSchool, Math.Clamp(who.Level, 1, 200), who.Id % 3 == 0);
+            // Its gear: the best a wizard of its school and level can get, one of the best few so bots differ (Niduus,
+            // 2026-11-12; Game/BotShared/BotGear). Put on before its deck, as a deck worn sets how many cards it holds.
+            var worn = BotShared.BotGear.Dress(bot, BotShared.BotGear.StyleOf(botSchool.ToString()), new Random(who.Id * 31));
+            gearWorn = worn.Count;
+
+            // Its spells: what a wizard of its school has at its level (a third of the bots took Life as a second school),
+            // in the mix its job wants; a battle makes it ready for its enemies before it sits down (BotShared/BotCards).
+            bot.SpellbookBehavior.SpellList = BotShared.BotCards.BotDeck(bot, BotDeck.For(botSchool, Math.Clamp(who.Level, 1, 200), who.Id % 3 == 0));
 
             // The title of a badge a wizard of its level has most likely earned (Niduus, 2026-11-12: "no badge on test wizard").
             if (BotLooks.Badge(who.Level, new Random(who.Id * 7919)) is var (badgeId, title)) {
@@ -299,7 +306,7 @@ internal static class BotBodies {
         s_out[who.Id] = new Out(who.Id, name, body, zone, player.Zone, bot.GameObjectID);
         s_lastSpawnOk = true;
         BotLink.Note(who.Id, name, "spawned", $"{(who.Returning ? "came back" : "new")}, {botSchool} level {who.Level}, " +
-                                               $"{bot.SpellbookBehavior.SpellList.Count} spells in its deck, " +
+                                               $"{bot.SpellbookBehavior.SpellList.Count} spells in its deck, {gearWorn} pieces of gear, " +
                                                $"made after {player.PlayerNameBehavior.GetWizardName()} in {player.Zone}");
 
         return $"{name} ({botSchool}, level {who.Level}) came out next to you{(who.Returning ? ", back for the " + who.Times + (who.Times == 2 ? "nd" : who.Times == 3 ? "rd" : "th") + " time" : "")}.";

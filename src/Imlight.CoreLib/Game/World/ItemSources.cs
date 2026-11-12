@@ -142,6 +142,24 @@ internal static class ItemSources {
         return list;
     }
 
+    /// <summary>Every item a shop sells, a boss drops or a quest gives (Game/BotShared/BotGear reads it).</summary>
+    internal static HashSet<uint> ObtainableIds() {
+        var index = Current();
+
+        return [.. index.Vendors.Keys, .. index.Bosses.Keys, .. index.Quests.Keys];
+    }
+
+    /// <summary>The NPCs (by template) that sell an item; empty when no shop does.</summary>
+    internal static IReadOnlyList<uint> VendorsOf(uint templateId)
+        => Current().Vendors.TryGetValue(templateId, out var vendors) ? vendors : [];
+
+    /// <summary>Whether a shop sells it, a quest gives it, a boss drops it.</summary>
+    internal static (bool Shop, bool Quest, bool Drop) KindsOf(uint templateId) {
+        var index = Current();
+
+        return (index.Vendors.ContainsKey(templateId), index.Quests.ContainsKey(templateId), index.Bosses.ContainsKey(templateId));
+    }
+
     private static string FirstGoalLocation(QuestTemplate quest)
         => quest.m_goals?.Select(goal => (string) goal?.m_locationName).FirstOrDefault(name => !string.IsNullOrEmpty(name)) ?? string.Empty;
 

@@ -46,6 +46,7 @@ internal static class QuestTeamPlanner {
     internal const string DOOR = "door";
     internal const string SPIRAL = "spiral";
     internal const string TRAIN = "train";
+    internal const string SHOP = "shop";
     internal const string NONE = "none";
 
     /// <summary>

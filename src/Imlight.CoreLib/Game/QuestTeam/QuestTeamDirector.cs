@@ -23,6 +23,7 @@ using System.Linq;
 using System.Text.Json.Nodes;
 using Akka.Actor;
 using Imlight.Common;
+using Imlight.CoreLib.Game.BotShared;
 using Imlight.CoreLib.Game.Groups;
 using Imlight.CoreLib.Game.Tools;
 using Imlight.CoreLib.Game.Zone.Components;
@@ -82,18 +83,27 @@ internal static class QuestTeamDirector {
     // ---- the team's wizards, for the battles (CombatDuelComponent.QuestTeam.cs) ----
 
     private static volatile Dictionary<ulong, string> s_roles = [];
+    private static volatile List<QuestTeamMember.Status> s_members = [];
 
-    internal static void Remember(IEnumerable<QuestTeamMember.Status> members)
-        => s_roles = members.ToDictionary(m => m.GlobalId, m => m.Role);
+    internal static void Remember(IEnumerable<QuestTeamMember.Status> members) {
+        s_members = [.. members];
+        s_roles = s_members.ToDictionary(m => m.GlobalId, m => m.Role);
+    }
 
-    internal static void Forget() => s_roles = [];
+    internal static void Forget() {
+        s_roles = [];
+        s_members = [];
+    }
+
+    /// <summary>The team's four wizards as they are now (for .questteam tp), empty while the team is not playing.</summary>
+    internal static IReadOnlyList<QuestTeamMember.Status> Members => s_members;
 
     /// <summary>The role (Ice, Life, Death, Storm) of a Quest Team wizard by its object id, or null for anyone else.</summary>
     internal static string RoleOf(ulong globalId) => s_roles.GetValueOrDefault(globalId);
 
 }
 
-internal sealed class QuestTeamDirectorActor : ReceiveActor, IWithTimers {
+internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers {
 
     internal sealed record Halt(string Why);
 
@@ -288,6 +298,9 @@ internal sealed class QuestTeamDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
 
+        // Better gear on, and decks that miss new spells redone (QuestTeamDirector.Gear.cs).
+        KeepGearAndDecks();
+
         // Members in another area than the leader catch up the way the leader went.
         var leader = _team[0];
         NoteLeaderZone(leader);
@@ -349,6 +362,10 @@ internal sealed class QuestTeamDirectorActor : ReceiveActor, IWithTimers {
             _target = target;
             _targetSince = DateTime.UtcNow;
             Note("Team", $"next: {Describe(target)}.");
+            // A fight is next: each deck made ready for it.
+            if (target.Kind == QuestTeamPlanner.FIGHT) {
+                PrepareDecks(BotCards.SituationOf(target.Template));
+            }
         }
 
         if (target.Problem.Length > 0) {
@@ -361,7 +378,7 @@ internal sealed class QuestTeamDirectorActor : ReceiveActor, IWithTimers {
 
         _doing = Describe(target);
         var reach = target.Kind switch {
-            QuestTeamPlanner.TALK or QuestTeamPlanner.OFFER or QuestTeamPlanner.TRAIN => 160f,
+            QuestTeamPlanner.TALK or QuestTeamPlanner.OFFER or QuestTeamPlanner.TRAIN or QuestTeamPlanner.SHOP => 160f,
             QuestTeamPlanner.DOOR or QuestTeamPlanner.SPIRAL => 140f,
             QuestTeamPlanner.FIGHT => 40f,
             _ => 25f,
@@ -419,6 +436,9 @@ internal sealed class QuestTeamDirectorActor : ReceiveActor, IWithTimers {
             case QuestTeamPlanner.TRAIN:
                 TrainHere(group, target);
                 break;
+            case QuestTeamPlanner.SHOP:
+                ShopHere(group, target);
+                break;
         }
     }
 
@@ -428,6 +448,11 @@ internal sealed class QuestTeamDirectorActor : ReceiveActor, IWithTimers {
         // Training: when someone has spells waiting and the team is in Wizard City (or two spells wait), a trip to Ravenwood.
         if (TrainingTarget(group) is { } training) {
             return training;
+        }
+
+        // Shopping: better gear one of them can pay for, at a shop in this world.
+        if (ShoppingTarget(group) is { } shopping) {
+            return shopping;
         }
 
         _currentQuest = QuestTeamPlanner.PickQuest(_team);
@@ -1021,6 +1046,16 @@ internal sealed class QuestTeamDirectorActor : ReceiveActor, IWithTimers {
                     ["training"] = wizard?.MagicSchoolBehavior?.TrainingPoints ?? 0,
                     ["battle"] = CombatDuelComponent.IsInBattle(member.GlobalId),
                     ["quests"] = wizard?.QuestBehavior?.CurrentQuestInstances?.Count ?? 0,
+                    // What Ahziael's Quest Team page shows under each wizard: its quests, gear, deck and trained spells.
+                    ["questList"] = new JsonArray([.. (wizard?.QuestBehavior?.CurrentQuestInstances?.ToList() ?? [])
+                        .Where(q => q is not null).Select(q => (JsonNode) QuestTeamText.Title(q.QuestName))]),
+                    ["gear"] = new JsonArray([.. BotShared.BotGear.Describe(wizard).Select(g => (JsonNode) g)]),
+                    ["deck"] = wizard?.SpellbookBehavior?.SpellList is { } deck
+                        ? BotShared.BotCards.Describe(deck.Where(d => d is not null).Select(d => ((uint) d.m_templateID, (int) d.m_quantity)))
+                        : "",
+                    ["deckFor"] = _deckFor.GetValueOrDefault(member.Role) ?? "",
+                    ["spells"] = new JsonArray([.. (wizard?.SpellbookBehavior?.LearnedSpellTemplateIds?.ToList() ?? [])
+                        .Select(id => QuestTeamText.SpellName(id)).Where(n => !string.IsNullOrEmpty(n)).Distinct().Order().Select(n => (JsonNode) n)]),
                 });
             }
 
