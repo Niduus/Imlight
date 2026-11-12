@@ -90,6 +90,7 @@ internal static class OverlayQuestTracker {
                 if (!here && elsewhere.Length > 0 && string.Equals(pick, held.QuestName, StringComparison.OrdinalIgnoreCase)) {
                     var live = MinimapIndex.In(zone);
                     var spiralDoorHere = live.Any(m => m.Template == OverlayQuestRoute.SPIRAL_DOOR);
+                    OverlayQuestRoute.NoteDoor(zonePath, live);
                     var exits = OverlayQuestRoute.ExitsHere(zonePath, live).Select(e => e.To);
                     row["way"] = OverlayQuestRoute.WayWords(zonePath, elsewhere, spiralDoorHere, exits);
                 }

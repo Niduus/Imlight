@@ -116,6 +116,7 @@ internal static class OverlayQuestRoute {
         if (targets.Count == 0 && elsewhere.Count > 0) {
             var exits = ExitsHere(zonePath, live);
             var spiralDoors = live.Where(m => m.Template == SPIRAL_DOOR).ToList();
+            NoteDoor(zonePath, live);
             var hops = Way(zonePath, elsewhere[0], spiralDoors.Count > 0, exits.Select(e => e.To));
             route["to"] = ZoneNames.Shown(elsewhere[0]);
             if (hops.Count > 0) {
@@ -191,7 +192,7 @@ internal static class OverlayQuestRoute {
         var toWorld = to.Split('/')[0];
         var otherWorld = !string.Equals(fromWorld, toWorld, StringComparison.OrdinalIgnoreCase);
         var toArrival = arrivals.FirstOrDefault(a => string.Equals(a.Split('/')[0], toWorld, StringComparison.OrdinalIgnoreCase));
-        var homeArrival = arrivals.FirstOrDefault(a => string.Equals(a.Split('/')[0], fromWorld, StringComparison.OrdinalIgnoreCase));
+        var homeDoors = DoorZones().Where(a => string.Equals(a.Split('/')[0], fromWorld, StringComparison.OrdinalIgnoreCase)).ToList();
 
         // The whole way; else to the step's world's arrival area, then the step; else to this world's Spiral Door, then
         // through it to the step's world, then the step.
@@ -205,8 +206,8 @@ internal static class OverlayQuestRoute {
             return toWorldFirst;
         }
 
-        if (otherWorld && toArrival is not null && homeArrival is not null && !spiralDoorHere
-            && Walk(from, homeArrival, false, extra) is { Count: > 0 } toDoor) {
+        if (otherWorld && toArrival is not null && !spiralDoorHere
+            && homeDoors.Select(door => Walk(from, door, false, extra)).Where(w => w is { Count: > 0 }).MinBy(w => w.Count) is { } toDoor) {
             toDoor.Add((toArrival, true));
             toDoor.Add((to, false));
 
@@ -262,7 +263,7 @@ internal static class OverlayQuestRoute {
                 }
             }
 
-            if (arrivals.Contains(at) || (first && spiralDoorHere)) {
+            if (IsDoorZone(at) || (first && spiralDoorHere)) {
                 foreach (var next in arrivals) {
                     Consider(next, true);
                 }
@@ -283,6 +284,36 @@ internal static class OverlayQuestRoute {
 
         return null;
     }
+
+    // ---- Where the Spiral Door stands: each world's arrival area unless seen otherwise, Wizard City's Spiral Chamber,
+    // and every area it has been seen in (Niduus, 2026-11-12: in the Commons the way said "Spiral Door to Grizzleheim"
+    // but no door stands there, so no line was drawn) ----
+
+    private static readonly string[] s_knownDoorZones = ["WizardCity/WC_Ravenwood_Teleporter"];
+    private static readonly string[] s_knownNoDoorZones = ["WizardCity/WC_Hub"];
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, bool> s_doorSeen = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>What a loaded area shows: whether the Spiral Door stands in it (only noted for an area with things in it).</summary>
+    internal static void NoteDoor(string zonePath, List<MinimapIndex.Mark> live) {
+        if (string.IsNullOrEmpty(zonePath) || live is null || live.Count == 0) {
+            return;
+        }
+
+        var has = live.Any(m => m.Template == SPIRAL_DOOR);
+        if (!s_doorSeen.TryGetValue(zonePath, out var before) || before != has) {
+            s_doorSeen[zonePath] = has;
+            s_left.Clear();
+        }
+    }
+
+    private static bool IsDoorZone(string zone)
+        => s_doorSeen.TryGetValue(zone, out var seen) ? seen
+            : s_knownDoorZones.Contains(zone, StringComparer.OrdinalIgnoreCase)
+              || ((s_arrivals ?? []).Contains(zone) && !s_knownNoDoorZones.Contains(zone, StringComparer.OrdinalIgnoreCase));
+
+    private static IEnumerable<string> DoorZones()
+        => (s_arrivals ?? []).Concat(s_knownDoorZones).Concat(s_doorSeen.Where(p => p.Value).Select(p => p.Key))
+            .Distinct(StringComparer.OrdinalIgnoreCase).Where(IsDoorZone);
 
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Dictionary<string, int>> s_left = new(StringComparer.OrdinalIgnoreCase);
 
@@ -308,8 +339,9 @@ internal static class OverlayQuestRoute {
                 }
             }
 
+            // The Spiral Door brings you here from any area it stands in.
             if (arrivals.Contains(zone)) {
-                foreach (var before in arrivals) {
+                foreach (var before in DoorZones()) {
                     if (left.TryAdd(before, count)) {
                         waiting.Enqueue(before);
                     }
