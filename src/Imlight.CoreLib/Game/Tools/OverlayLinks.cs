@@ -408,4 +408,67 @@ public static class OverlayLinks {
         }
     }
 
+
+    // ---- The Quest Tracker (op "quests", OverlayQuestTracker) ----
+
+    private static readonly ConcurrentDictionary<long, ConcurrentQueue<DateTime>> s_questAsks = new();
+
+    /// <summary>
+    /// The quests of one game window's wizard for its Quest Tracker (op "quests"), linked the same way as the minimap;
+    /// otherwise the tracker shows the ".link" code to type.
+    /// </summary>
+    public static async Task<JsonObject> QuestsAsync(long link, int linkWindows, JsonObject header, string address) {
+        address = OverlayGate.Normalize(address);
+        var window = (long?) header["window"] ?? 0;
+        if (!OverlayQuestTracker.On) {
+            return RemoteAdminWire.Error("The host has turned off the Quest Tracker on this server.");
+        }
+
+        var times = s_questAsks.GetOrAdd(link, _ => new ConcurrentQueue<DateTime>());
+        while (times.TryPeek(out var oldest) && DateTime.UtcNow - oldest > TimeSpan.FromSeconds(1)) {
+            times.TryDequeue(out _);
+        }
+
+        if (times.Count >= 8) {
+            return RemoteAdminWire.Error("busy");
+        }
+
+        times.Enqueue(DateTime.UtcNow);
+
+        var charId = await WizardFor(link, window, linkWindows, address);
+        if (charId == 0) {
+            if (!(await WizardsAt(address)).Any()) {
+                return RemoteAdminWire.Error("Log in to the game to see your quests.");
+            }
+
+            var code = CodeFor(link, window, address);
+            var ask = RemoteAdminWire.Error($"Type .link {code} in this game's chat once to show your quests here.");
+            ask["link"] = code;
+
+            return ask;
+        }
+
+        var reply = new TaskCompletionSource<(JsonObject Quests, string Error)>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var question = new OverlayQuestsAsk(charId, address, reply);
+        foreach (var service in AgentBridge.CommandServices) {
+            service.Tell(question);
+        }
+
+        if (await Task.WhenAny(reply.Task, Task.Delay(2000)) != reply.Task) {
+            s_bound.TryRemove((link, window), out _);
+
+            return RemoteAdminWire.Error("The wizard this game window was linked to isn't in the game any more.");
+        }
+
+        var (quests, error) = reply.Task.Result;
+        if (quests is null) {
+            return RemoteAdminWire.Error(error);
+        }
+
+        var answer = RemoteAdminWire.Ok();
+        answer["quests"] = quests;
+
+        return answer;
+    }
+
 }

@@ -68,6 +68,12 @@ internal sealed record OverlayPlayerCommand(ulong CharId, string Address, string
 internal sealed record OverlayMapAsk(ulong CharId, string Address, TaskCompletionSource<(System.Text.Json.Nodes.JsonObject Map, Akka.Actor.IActorRef Zone, string Error)> Reply,
                                      ConcurrentQueue<(ulong CharId, Akka.Actor.IActorRef Zone, string Name, float X, float Y)> Others, float Reach = 0);
 
+/// <summary>
+/// The overlay's Quest Tracker (OverlayQuestTracker): the service whose wizard is CharId answers Reply with that wizard's
+/// quests when its game connects from Address (an error text otherwise).
+/// </summary>
+internal sealed record OverlayQuestsAsk(ulong CharId, string Address, TaskCompletionSource<(System.Text.Json.Nodes.JsonObject Quests, string Error)> Reply);
+
 /// <summary>Every service whose wizard is in the game from Address puts its wizard in Found (for linking an overlay).</summary>
 internal sealed record OverlayWizardsAt(string Address, ConcurrentQueue<ulong> Found);
 
