@@ -1738,6 +1738,24 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
     private void DoTeleport(string location) {
         var coords = Util.GetVectorFromCompactString(location);
+
+        // The spot is checked first, so the wizard never lands inside a wall, a pillar or furniture (Niduus 2026-11-12,
+        // see SafeLanding): street teleporters, custom teleporters, raids and teleports within the same area.
+        var zonePath = GetActiveWizard()?.Zone;
+        if (Zone.Core.SafeLanding.Enabled && !string.IsNullOrEmpty(zonePath) && (coords.X != 0 || coords.Y != 0 || coords.Z != 0)) {
+            var wanted = new System.Numerics.Vector3(coords.X, coords.Y, coords.Z);
+            var landing = Zone.Core.SafeLanding.Check(zonePath, wanted);
+            if (landing is { Moved: true } moved) {
+                Logger.Information("Safe landing: {0} at {1} is {2}; the wizard lands at {3} instead.",
+                    Logger.Args(zonePath, wanted, moved.Why, moved.Spot));
+                coords = new Imcodec.Math.Vector4(moved.Spot.X, moved.Spot.Y, moved.Spot.Z, coords.W);
+            }
+            else if (landing is null) {
+                Logger.Warning("Safe landing: {0} at {1} has no open floor near it; the wizard lands there anyway.",
+                    Logger.Args(zonePath, wanted));
+            }
+        }
+
         var compressedCoords = coords / 4;
 
         var directionYaw = coords.W % (2 * Math.PI);
