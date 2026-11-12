@@ -365,11 +365,15 @@ internal static partial class ZoneGround {
                 case 0: {
                     // A box: a wall or fence, its four corners from above.
                     var (hx, hy) = (F() * scale / 2f, F() * scale / 2f);
-                    F();
+                    var hz = F() * scale / 2f;
                     (float X, float Y) Corner(float sx, float sy) => (mx + (rot[0] * sx * hx) + (rot[1] * sy * hy), my + (rot[3] * sx * hx) + (rot[4] * sy * hy));
                     var (a, b, c, d) = (Corner(-1, -1), Corner(1, -1), Corner(1, 1), Corner(-1, 1));
-                    triangles.Add(new Triangle(a.X, a.Y, b.X, b.Y, c.X, c.Y, WALL));
-                    triangles.Add(new Triangle(a.X, a.Y, c.X, c.Y, d.X, d.Y, WALL));
+                    // How far up and down it reaches (Z its bottom, Z1 its top), so the Quest Tracker's walk can pass under
+                    // an arch or a roof.
+                    var reach = (MathF.Abs(rot[6] * hx) + MathF.Abs(rot[7] * hy) + MathF.Abs(rot[8] * hz));
+                    var (low, high) = float.IsFinite(reach) && reach > 0 ? (mz - reach, mz + reach) : (float.NegativeInfinity, float.PositiveInfinity);
+                    triangles.Add(new Triangle(a.X, a.Y, b.X, b.Y, c.X, c.Y, WALL, low, high));
+                    triangles.Add(new Triangle(a.X, a.Y, c.X, c.Y, d.X, d.Y, WALL, low, high));
                     break;
                 }
 
