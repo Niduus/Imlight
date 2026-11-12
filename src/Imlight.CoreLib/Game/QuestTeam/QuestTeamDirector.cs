@@ -95,6 +95,20 @@ internal static class QuestTeamDirector {
         s_members = [];
     }
 
+    private static volatile Dictionary<string, IActorRef> s_actors = [];
+    private static long s_mobsComingUntil;
+
+    /// <summary>The actor (pretend game) of a Quest Team wizard by role, or null.</summary>
+    internal static IActorRef ActorOf(string role) => role is null ? null : s_actors.GetValueOrDefault(role);
+
+    internal static void RememberActors(Dictionary<string, IActorRef> actors) => s_actors = actors;
+
+    /// <summary>Whether more of the creatures the team fights for are near its battle and may still walk in.</summary>
+    internal static bool MobsComing => DateTime.UtcNow.Ticks < System.Threading.Interlocked.Read(ref s_mobsComingUntil);
+
+    internal static void SetMobsComing(bool coming)
+        => System.Threading.Interlocked.Exchange(ref s_mobsComingUntil, coming ? DateTime.UtcNow.AddSeconds(6).Ticks : 0);
+
     private static long s_formationBrokeAt;
     private static volatile string s_formationWhy = "";
 
@@ -236,6 +250,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         QuestTeamDirector.Remember(_team);
+        QuestTeamDirector.RememberActors(_team.Select((m, i) => (m.Role, Actor: _actors[i])).ToDictionary(x => x.Role, x => x.Actor));
         Note("Team", $"is {string.Join(", ", _team.Select(m => $"{m.Name} ({m.Role})"))}. They log in one after the other.");
 
         // They log in in their order, a moment apart.
@@ -926,6 +941,11 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         _doing = $"in a battle ({fighting.Count} of 4 in it)";
+        // More of what they came for near the battle, not in it yet (on the battle's circles a creature stands close).
+        var near = MinimapIndex.In(fighting[0].ZoneActor).Count(m => m.Kind == MinimapIndex.MOB
+            && (_target is not { Kind: QuestTeamPlanner.FIGHT } || _target.Template == 0 || m.Template == _target.Template)
+            && QuestTeamPlanner.Far(fighting[0].X, fighting[0].Y, m.Object.m_location.X, m.Object.m_location.Y) is > 320 and < 1400);
+        QuestTeamDirector.SetMobsComing(near > 0);
         _lastProgress = DateTime.UtcNow;
 
         // The next one in the team's order who isn't in walks onto the battle (only one at a time, so they join in order).
