@@ -765,6 +765,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // Bot Players think once the real players have picked (CombatDuelComponent.Bots.cs).
         BotsPlanningBegins();
 
+        // The Quest Team's picks are made here too (CombatDuelComponent.QuestTeam.cs).
+        QuestTeamPlanningBegins();
+
         // Tutorial duels flush queued card grants and re-script the golems before planning.
         _tutorialDirector.OnPlanningPhaseBegin();
 
@@ -941,6 +944,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         // A real player picked or changed their pick: the bots on their side think again.
         BotsNoticeMove(caster);
+        QuestTeamNoticeMove(caster);
 
         // If by this point all participants have inputted their moves, we can start the next phase.
         var participantCount = AlivePlayerCount + AliveCreatureCount;

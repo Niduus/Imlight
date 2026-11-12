@@ -143,6 +143,45 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
         ConfigureReceivers();
     }
 
+    /// <summary>
+    /// A session with no socket: the Quest Team's pretend game (Game/QuestTeam). Everything the server sends this session
+    /// goes to <paramref name="client"/> as the message itself, and the client sends its own messages back as
+    /// MSG_RECEIVEDPACKET, so the server's own services run exactly as they do for a real game.
+    /// </summary>
+    public SessionActor(IActorRef client, ushort sessionId, IActorRef server, IActorRef actorFactoryRef) {
+        this._socket = null;
+        this.IsHeadless = true;
+        // Not a network address on purpose: the Quest Team is never "the game on this PC" (the overlay, the quest guide
+        // and the minimap go by that), and a transfer's fallback (kept by address) is never mixed up with a player's.
+        this.Ip = $"questteam-{sessionId}";
+        this.RemoteIp = $"questteam-{sessionId}";
+        this.LocalIp = System.Net.IPAddress.Loopback;
+        this.SessionID = sessionId;
+        this._services = new Dictionary<IActorRef, MessageService>();
+        this.ServerRef = server;
+        this._actorFactoryRef = actorFactoryRef;
+        ActorRef = Context.Self;
+
+        _socketSenderRef = client;
+        _headlessClient = client;
+        Context.Watch(client);
+        ConfigureReceivers();
+        Receive<Terminated>(t => {
+            if (t.ActorRef.Equals(_headlessClient)) {
+                Dispose("the Quest Team's game closed");
+            }
+        });
+    }
+
+    /// <summary>Whether this is a Quest Team session (no socket, no real game behind it).</summary>
+    public bool IsHeadless { get; }
+
+    private readonly IActorRef _headlessClient;
+
+    public static Props HeadlessProps(IActorRef client, ushort sessionId, IActorRef server, IActorRef actorFactoryRef)
+        => Akka.Actor.Props.Create(() => new SessionActor(client, sessionId, server, actorFactoryRef))
+            .WithDispatcher(SESSION_DISPATCHER);
+
     // Akka.NET ctor
     public static Props Props(Socket socket, ushort sessionId, IActorRef server, IActorRef actorFactoryRef = null)
         => Akka.Actor.Props.Create(() => new SessionActor(socket, sessionId, server, actorFactoryRef))
