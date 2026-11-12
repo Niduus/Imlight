@@ -97,6 +97,8 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
             Timers.StartSingleTimer(STEP_TIMER, new Step(), TimeSpan.FromSeconds(1));
         });
         Receive<BotLeave>(m => Leave(m.Why));
+        // Out of its battle: kicked (it fled), defeated, or sent out. It steps off the circle at once.
+        Receive<COMBAT_106_PROTOCOL.MSG_COMBATDEFEAT>(m => OutOfBattle(m.DiedInDuel ? "defeated" : "left the battle"));
         Receive<Terminated>(_ => Leave("its area closed"));
         // Everything a battle or the zone sends a player's game (combat messages, health, victory, defeat...) ends here.
         ReceiveAny(_ => { });
@@ -189,7 +191,7 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
         for (var i = 0; i < count; i++) {
             var angle = start + (MathF.Tau * i / count);
             var wanted = new NVector3(home.X + (MathF.Cos(angle) * plan.Radius), home.Y + (MathF.Sin(angle) * plan.Radius), home.Z);
-            if (Walkable(wanted, home.Z) is { } point) {
+            if (Walkable(wanted, home.Z) is { } point && !NearAvoided(point)) {
                 _loop.Add(point);
             }
         }
@@ -202,6 +204,7 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
         }
 
         _next = 0;
+        _onLeg = false;
         BotLink.Note(_info.Id, _info.Name, "walking", $"{_loop.Count} points in {_info.ZonePath}");
     }
 
@@ -217,16 +220,56 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
         return ZoneCollision.Clearance(_info.ZonePath, p) < WALL_CLEARANCE ? null : p;
     }
 
+    // A real player's game sends where it is a few times a second, and the other games draw the walk between those.
+    // One move to a far point made the bot slide or jump there (Niduus, 2026-11-12: "has weird movement"), so it walks
+    // in short steps the same way.
+    private const float TICK_SECONDS = 0.3f;
+
+    private NVector3 _legTo;
+    private bool _onLeg;
+
+    // A battle it was kicked out of (or lost): it keeps its walk clear of that place for a while.
+    private NVector3? _avoid;
+    private DateTime _avoidUntil;
+    private const float AVOID_RADIUS = 420f;
+
+    private bool NearAvoided(NVector3 point)
+        => _avoid is { } spot && DateTime.UtcNow < _avoidUntil && NVector3.Distance(spot, point) < AVOID_RADIUS;
+
     private void WalkOn() {
         if (_gone || _inBattle || _loop.Count == 0) {
             return;
         }
 
-        var from = new NVector3(_wizard.Location.X, _wizard.Location.Y, _wizard.Location.Z);
-        var to = _loop[_next];
-        _next = (_next + 1) % _loop.Count;
+        var from = Here;
+        if (!_onLeg) {
+            _legTo = _loop[_next];
+            _next = (_next + 1) % _loop.Count;
+            _onLeg = true;
+        }
 
-        var yaw = MathF.Atan2(to.Y - from.Y, to.X - from.X);
+        var left = NVector3.Distance(from, _legTo);
+        var stride = _speed * TICK_SECONDS;
+        var arrived = left <= stride;
+        var to = arrived ? _legTo : from + ((_legTo - from) / left * stride);
+        MoveTo(from, _legTo, to);
+
+        if (!arrived) {
+            Timers.StartSingleTimer(STEP_TIMER, new Step(), TimeSpan.FromSeconds(TICK_SECONDS));
+
+            return;
+        }
+
+        _onLeg = false;
+        var pause = _pause * (0.5f + Random.Shared.NextSingle());
+        Timers.StartSingleTimer(STEP_TIMER, new Step(), TimeSpan.FromSeconds(Math.Clamp(TICK_SECONDS + pause, TICK_SECONDS, 60)));
+    }
+
+    private NVector3 Here => new(_wizard.Location.X, _wizard.Location.Y, _wizard.Location.Z);
+
+    // One step: faces where it is heading, and is drawn at the new place by every game in the area.
+    private void MoveTo(NVector3 from, NVector3 heading, NVector3 to) {
+        var yaw = NVector3.DistanceSquared(from, heading) < 1 ? _wizard.Orientation.Z : MathF.Atan2(heading.Y - from.Y, heading.X - from.X);
         if (yaw < 0) {
             yaw += MathF.Tau;
         }
@@ -242,10 +285,6 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
         // Where it is for a player who comes in later (they are sent the object with this place).
         _wizard.Location = new Imcodec.Math.Vector3(to.X, to.Y, to.Z);
         _wizard.Orientation = new Imcodec.Math.Vector3(0, 0, yaw);
-
-        var seconds = NVector3.Distance(from, to) / _speed;
-        var pause = _pause * (0.5f + Random.Shared.NextSingle());
-        Timers.StartSingleTimer(STEP_TIMER, new Step(), TimeSpan.FromSeconds(Math.Clamp(seconds + pause, 0.5, 60)));
     }
 
     private static ushort Compress(float coordinate) => unchecked((ushort) (short) MathF.Round(coordinate / 4));
@@ -301,17 +340,48 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
             return;
         }
 
-        // The battle is over, or it fled (kicked).
+        // The battle is over (a won battle sends the bot nothing that says so).
+        OutOfBattle("battle over");
+    }
+
+    // Leaves the battle behind: a defeated bot leaves the area; otherwise it walks off the circle, away from the battle,
+    // and plans a new walk that keeps clear of it.
+    private void OutOfBattle(string why) {
+        if (_gone || !_inBattle) {
+            return;
+        }
+
         _inBattle = false;
-        if (_wizard.GameStats.m_currentHitpoints <= 0) {
+        Timers.Cancel(JOIN_TIMER);
+        if (why == "defeated" || _wizard.GameStats.m_currentHitpoints <= 0) {
             Leave("it was defeated");
 
             return;
         }
 
-        BotLink.Note(_info.Id, _info.Name, "battle over", $"back to walking with {_wizard.GameStats.m_currentHitpoints} health");
+        var circle = Here;
+        _avoid = circle;
+        _avoidUntil = DateTime.UtcNow.AddMinutes(2);
+        BotLink.Note(_info.Id, _info.Name, why, $"walks away from the battle with {_wizard.GameStats.m_currentHitpoints} health");
+
+        // A first leg straight away from the battle, then a new loop around there.
+        var angle = Random.Shared.NextSingle() * MathF.Tau;
+        NVector3? away = null;
+        for (var tries = 0; tries < 8 && away is null; tries++, angle += MathF.Tau / 8) {
+            var wanted = new NVector3(circle.X + (MathF.Cos(angle) * AVOID_RADIUS * 1.2f), circle.Y + (MathF.Sin(angle) * AVOID_RADIUS * 1.2f), circle.Z);
+            away = Walkable(wanted, circle.Z);
+        }
+
+        var target = away ?? new NVector3(circle.X + (AVOID_RADIUS * 1.2f), circle.Y, circle.Z);
+        _wizard.Location = new Imcodec.Math.Vector3(circle.X, circle.Y, circle.Z);
+        var home = _wizard.Location;
+        _wizard.Location = new Imcodec.Math.Vector3(target.X, target.Y, target.Z);
         PlanWalk();
-        Timers.StartSingleTimer(STEP_TIMER, new Step(), TimeSpan.FromSeconds(2));
+        _wizard.Location = home;
+        _loop.Insert(0, target);
+        _next = 0;
+        _onLeg = false;
+        Timers.StartSingleTimer(STEP_TIMER, new Step(), TimeSpan.FromSeconds(0.5));
     }
 
     // ---------------------------------------------------------------------
