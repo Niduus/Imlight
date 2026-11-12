@@ -420,7 +420,9 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
 
     // One step: faces where it is heading, and is drawn at the new place by every game in the area.
     private void MoveTo(NVector3 from, NVector3 heading, NVector3 to) {
-        var yaw = NVector3.DistanceSquared(from, heading) < 1 ? _wizard.Orientation.Z : MathF.Atan2(heading.Y - from.Y, heading.X - from.X);
+        // The game's yaw w faces (-sin w, -cos w) (as the minimap's arrow and the street teleporters found), so facing
+        // (dx, dy) is atan2(-dx, -dy) (Niduus, 2026-11-12: the bots "shuffle sideways").
+        var yaw = NVector3.DistanceSquared(from, heading) < 1 ? _wizard.Orientation.Z : MathF.Atan2(from.X - heading.X, from.Y - heading.Y);
         if (yaw < 0) {
             yaw += MathF.Tau;
         }
