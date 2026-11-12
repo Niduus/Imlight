@@ -271,6 +271,20 @@ internal static class InstalledCommands {
             return Fail("Close the Imlight server window first, then run Uninstall again.");
         }
 
+        // Everything made on this PC goes into a backup outside this folder first (Niduus, 2026-11-12: "preserve a
+        // servers custom data to avoid a total wipe"), so reinstalling can bring it all back.
+        try {
+            var backup = ServerBackup.Make(installFolder, ServerBackup.BEFORE_UNINSTALL);
+            Console.WriteLine($"Saved a backup of your settings, customs, overlay, add-ons, accounts and characters to {backup}.");
+            Console.WriteLine("Installing again offers it back.");
+        }
+        catch (Exception ex) {
+            Console.WriteLine($"The backup could not be made: {ex.Message}");
+            if (unattended || !Prompt.YesNo("Uninstall anyway, without a backup?", false)) {
+                return 1;
+            }
+        }
+
         var database = DatabaseFolder(installFolder);
         var keepData = database is not null && Directory.Exists(database)
             && (unattended || !Prompt.YesNo("Also delete every account and character on this server?", false));
@@ -336,7 +350,7 @@ internal static class InstalledCommands {
     /// <summary>
     /// The embedded player database folder, when it lives inside the install folder.
     /// </summary>
-    private static string? DatabaseFolder(string installFolder) {
+    internal static string? DatabaseFolder(string installFolder) {
         var setting = IniFile.Get(ConfigFile(installFolder), "Database", "EmbeddedDatabaseDataDirectory") ?? "../ImlightEmbeddedDatabase/";
         var full = Path.GetFullPath(Path.Combine(ServerFolder(installFolder), setting)).TrimEnd(Path.DirectorySeparatorChar, '/');
         var root = Path.GetFullPath(installFolder).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;

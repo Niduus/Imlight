@@ -493,6 +493,7 @@ internal sealed partial class ManagerWindow : Window {
 
             Refresh();
             RefreshMissingNotes();
+            DailyBackup();
             await LoadPlayAsync();
             _timer.Start();
             _shownPage = ShownPage();
@@ -1437,6 +1438,7 @@ internal sealed partial class ManagerWindow : Window {
                 "How Ahziael looks.",
                 SwitchRow("Moving background", _movingBackground,
                     "The colours behind the panels drift slowly and the server light breathes. They stop while you play.")),
+            IsRemote ? new Panel() : BackupsCard(),
             PrivacyCard(),
             Fold("folder", "Tools", "Files and folders", $"Installed in {_manager.InstallFolder}.",
                 new WrapPanel {
@@ -2345,7 +2347,8 @@ internal sealed partial class ManagerWindow : Window {
 
     private async Task UninstallAsync() {
         if (await ConfirmAsync("Uninstall Imlight? The server stops, this app closes, and the uninstaller opens in its own window. " +
-                "It asks whether to keep your accounts and characters. Wizard101 itself is not touched.")) {
+                "It first saves a backup of everything you made (and your accounts and characters) to Documents\\Ahziael backups, then " +
+                "asks whether to keep your accounts and characters. Wizard101 itself is not touched.")) {
             _manager.RunInstaller("--uninstall");
             Close();
         }
