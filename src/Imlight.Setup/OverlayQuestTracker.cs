@@ -58,6 +58,9 @@ internal sealed class OverlayQuestList {
     public double TitleSize { get; set; } = 13;
     public double StepSize { get; set; } = 11;
 
+    /// <summary>How tall the list gets before it scrolls (mouse wheel over it, or its arrows).</summary>
+    public double MaxHeight { get; set; } = 320;
+
     public string InstanceColor { get; set; } = "#FFC07CFF";
     public string StoryColor { get; set; } = "#FFFFC83C";
     public string MainColor { get; set; } = "#FFFF9A4A";
@@ -70,6 +73,7 @@ internal sealed class OverlayQuestList {
         RouteWidth = OverlayElement.Range(RouteWidth, 1, 10, 3);
         TitleSize = OverlayElement.Range(TitleSize, 6, 30, 13);
         StepSize = OverlayElement.Range(StepSize, 6, 30, 11);
+        MaxHeight = OverlayElement.Range(MaxHeight, 80, 1200, 320);
         InstanceColor = OverlayPaint.CleanColor(InstanceColor, "#FFC07CFF");
         StoryColor = OverlayPaint.CleanColor(StoryColor, "#FFFFC83C");
         MainColor = OverlayPaint.CleanColor(MainColor, "#FFFF9A4A");
@@ -211,6 +215,38 @@ internal static class OverlayQuestData {
                 folded.Add(kind);
             }
 
+            s_version++;
+        }
+    }
+
+    private static readonly Dictionary<long, double> s_scroll = [];
+    private static readonly Dictionary<long, double> s_scrollMax = [];
+
+    /// <summary>How far this window's list is scrolled down, in overlay units.</summary>
+    internal static double Scroll(long window) {
+        lock (s_lock) {
+            return Math.Clamp(s_scroll.GetValueOrDefault(window), 0, s_scrollMax.GetValueOrDefault(window));
+        }
+    }
+
+    /// <summary>How far the list can scroll (set by the tracker each time it is drawn; 0 when it all fits).</summary>
+    internal static void ScrollRoom(long window, double max) {
+        lock (s_lock) {
+            s_scrollMax[window] = Math.Max(0, max);
+        }
+    }
+
+    /// <summary>Scrolls this window's list (down for more than 0).</summary>
+    internal static void ScrollBy(long window, double by) {
+        lock (s_lock) {
+            var max = s_scrollMax.GetValueOrDefault(window);
+            var now = Math.Clamp(s_scroll.GetValueOrDefault(window), 0, max);
+            var next = Math.Clamp(now + by, 0, max);
+            if (Math.Abs(next - now) < 0.5) {
+                return;
+            }
+
+            s_scroll[window] = next;
             s_version++;
         }
     }
@@ -394,8 +430,14 @@ internal sealed class QuestTrackerView : Control {
     private readonly bool _hasMap;
     private readonly List<Line> _lines = [];
     private readonly List<Action<DrawingContext>> _drawing = [];
+    private readonly List<Action<DrawingContext>> _body = [];
+    private readonly List<Line> _bodyLines = [];
     private double _laidOutFor = -1;
     private double _height;
+    private double _bodyTop;
+
+    /// <summary>How far one wheel notch or arrow click scrolls.</summary>
+    internal const double SCROLL_STEP = 48;
 
     private static readonly (string Kind, string Label)[] s_kinds = [("instance", "Instance"), ("story", "Story"), ("main", "Main"), ("side", "Side")];
 
@@ -415,20 +457,50 @@ internal sealed class QuestTrackerView : Control {
             yield break;
         }
 
-        foreach (var line in _lines) {
-            // Only what is seen (a tracker with a set height cuts off what doesn't fit).
-            var seen = line.Area.Intersect(new Rect(Bounds.Size));
+        var shown = new Rect(Bounds.Size);
+        var body = BodyArea();
+        var scroll = ScrollNow();
+        var all = _lines.Select(l => (Area: l.Area.Intersect(shown), Line: l))
+            .Concat(_bodyLines.Select(l => (Area: l.Area.Translate(new Vector(0, -scroll)).Intersect(body), Line: l)))
+            .Concat(Arrows().Select(l => (Area: l.Area.Intersect(shown), Line: l)));
+        foreach (var (seen, line) in all) {
+            // Only what is seen (the list scrolls; what is above or below isn't clickable).
             if (seen.Width > 2 && seen.Height > 2) {
                 yield return (seen.Translate(new Vector(at.X, at.Y)), line);
             }
         }
     }
 
+    // The part of the tracker the list scrolls in (under the title).
+    private Rect BodyArea() => new(0, _bodyTop, Bounds.Width, Math.Max(0, Bounds.Height - _bodyTop));
+
+    private double Room() => Math.Max(0, _height - Bounds.Height);
+
+    private double ScrollNow() {
+        OverlayQuestData.ScrollRoom(_window, Room());
+
+        return OverlayQuestData.Scroll(_window);
+    }
+
+    // The scroll arrows at the right, when the list doesn't fit: up at the top of the list, down at the bottom.
+    private IEnumerable<Line> Arrows() {
+        if (Room() < 1 || Bounds.Height - _bodyTop < 40) {
+            yield break;
+        }
+
+        var size = Math.Max(16, _look.StepSize + 8);
+        var x = Bounds.Width - size;
+        yield return new Line(new Rect(x, _bodyTop, size, size), OverlayAction.QUEST_SCROLL, "up");
+        yield return new Line(new Rect(x, Bounds.Height - size, size, size), OverlayAction.QUEST_SCROLL, "down");
+    }
+
     protected override Size MeasureOverride(Size availableSize) {
         var width = double.IsFinite(availableSize.Width) && availableSize.Width > 0 ? availableSize.Width : 260;
         LayOut(width);
 
-        return new Size(width, double.IsFinite(availableSize.Height) && _element.Height > 0 ? Math.Min(_height, availableSize.Height) : Math.Min(_height, 900));
+        var tallest = double.IsFinite(availableSize.Height) && _element.Height > 0 ? availableSize.Height : _look.MaxHeight;
+
+        return new Size(width, Math.Min(_height, Math.Max(40, tallest)));
     }
 
     protected override Size ArrangeOverride(Size finalSize) {
@@ -441,6 +513,46 @@ internal sealed class QuestTrackerView : Control {
         foreach (var draw in _drawing) {
             draw(context);
         }
+
+        var scroll = ScrollNow();
+        using (context.PushClip(BodyArea())) {
+            using (context.PushTransform(Matrix.CreateTranslation(0, -scroll))) {
+                foreach (var draw in _body) {
+                    draw(context);
+                }
+            }
+        }
+
+        // When the list doesn't all fit: a thin bar showing where you are, and the two arrows.
+        var room = Room();
+        var body = BodyArea();
+        if (room < 1 || body.Height < 40) {
+            return;
+        }
+
+        var color = OverlayRenderer.Parse(_look.StepColor) ?? Colors.White;
+        var size = Math.Max(16, _look.StepSize + 8);
+        var track = new Rect(Bounds.Width - size / 2 - 1.5, body.Top + size + 2, 3, Math.Max(4, body.Height - (2 * size) - 4));
+        context.DrawRectangle(new SolidColorBrush(color, 0.18), null, track, 1.5, 1.5);
+        var thumbHeight = Math.Max(10, track.Height * body.Height / _height);
+        var thumbTop = track.Top + ((track.Height - thumbHeight) * (scroll / room));
+        context.DrawRectangle(new SolidColorBrush(color, 0.75), null, new Rect(track.X, thumbTop, track.Width, thumbHeight), 1.5, 1.5);
+        foreach (var arrow in Arrows()) {
+            var up = arrow.Value == "up";
+            var can = up ? scroll > 0.5 : scroll < room - 0.5;
+            var box = arrow.Area.Deflate(1);
+            context.DrawRectangle(new SolidColorBrush(Color.FromArgb(0xB0, 0x10, 0x14, 0x22)), new Pen(new SolidColorBrush(color, can ? 0.8 : 0.3), 1), box, 4, 4);
+            var (cx, cy, r) = (box.Center.X, box.Center.Y, box.Width * 0.22);
+            var geometry = new StreamGeometry();
+            using (var g = geometry.Open()) {
+                g.BeginFigure(new Point(cx - r, up ? cy + (r / 2) : cy - (r / 2)), true);
+                g.LineTo(new Point(cx + r, up ? cy + (r / 2) : cy - (r / 2)));
+                g.LineTo(new Point(cx, up ? cy - (r / 2) - 1 : cy + (r / 2) + 1));
+                g.EndFigure(true);
+            }
+
+            context.DrawGeometry(new SolidColorBrush(color, can ? 1 : 0.35), null, geometry);
+        }
     }
 
     // Works out every line and what is drawn where, for this width.
@@ -450,8 +562,18 @@ internal sealed class QuestTrackerView : Control {
         }
 
         _laidOutFor = width;
+        Fill(width);
+        // Too tall: laid out again, narrower, so the scroll arrows don't cover the words.
+        if (_height > _look.MaxHeight || (_element.Height > 0 && _height > _element.Height)) {
+            Fill(Math.Max(60, width - Math.Max(16, _look.StepSize + 8) - 4));
+        }
+    }
+
+    private void Fill(double width) {
         _lines.Clear();
         _drawing.Clear();
+        _body.Clear();
+        _bodyLines.Clear();
         var y = 0.0;
         var text = Brush(_look.TextColor);
         var stepBrush = Brush(_look.StepColor);
@@ -462,6 +584,8 @@ internal sealed class QuestTrackerView : Control {
             y += title.Height + 4;
         }
 
+        _bodyTop = y;
+
         var data = OverlayQuestData.For(_window);
         var note = data is null || (data.Stale && data.Note.Length == 0)
             ? OverlayHost.Link.Connected ? OverlayHost.Link.SendsQuests ? "Waiting for your quests..." : "This server's Imlight is too old for the Quest Tracker. The host needs to update it."
@@ -470,7 +594,7 @@ internal sealed class QuestTrackerView : Control {
         if (note.Length > 0 || data is null) {
             var words = Text(note, _look.StepSize, stepBrush, false, width);
             var at = y;
-            _drawing.Add(c => Words(c, words, new Point(0, at), stepBrush));
+            _body.Add(c => Words(c, words, new Point(0, at), stepBrush));
             _height = y + words.Height + 2;
 
             return;
@@ -494,8 +618,8 @@ internal sealed class QuestTrackerView : Control {
             var folded = OverlayQuestData.Folded(_window, kind);
             var header = Text($"{(folded ? "▸" : "▾")} {label} ({quests.Count})", _look.TitleSize, color, true, width);
             var headerAt = y;
-            _drawing.Add(c => Words(c, header, new Point(0, headerAt), color));
-            _lines.Add(new Line(new Rect(0, y - 1, width, header.Height + 2), OverlayAction.QUEST_FOLD, kind));
+            _body.Add(c => Words(c, header, new Point(0, headerAt), color));
+            _bodyLines.Add(new Line(new Rect(0, y - 1, width, header.Height + 2), OverlayAction.QUEST_FOLD, kind));
             y += header.Height + 3;
             if (folded) {
                 continue;
@@ -536,7 +660,7 @@ internal sealed class QuestTrackerView : Control {
                 var bottom = y;
                 var area = new Rect(0, top, width, bottom - top);
                 var kindColor = OverlayRenderer.Parse(_look.ColorOf(quest.Kind)) ?? Colors.White;
-                _drawing.Add(c => {
+                _body.Add(c => {
                     if (picked) {
                         c.DrawRectangle(new SolidColorBrush(kindColor, 0.22), new Pen(new SolidColorBrush(kindColor, 0.8), 1), area.Deflate(new Thickness(0, 0, 0, 1)), 5, 5);
                     }
@@ -548,7 +672,7 @@ internal sealed class QuestTrackerView : Control {
                         Words(c, line, new Point(11, at), brush);
                     }
                 });
-                _lines.Add(new Line(area, OverlayAction.QUEST_PICK, quest.Id));
+                _bodyLines.Add(new Line(area, OverlayAction.QUEST_PICK, quest.Id));
             }
 
             y += 2;
@@ -557,7 +681,7 @@ internal sealed class QuestTrackerView : Control {
         if (!any) {
             var none = Text("No quests right now.", _look.StepSize, stepBrush, false, width);
             var at = y;
-            _drawing.Add(c => Words(c, none, new Point(0, at), stepBrush));
+            _body.Add(c => Words(c, none, new Point(0, at), stepBrush));
             y += none.Height + 2;
         }
 
@@ -565,7 +689,7 @@ internal sealed class QuestTrackerView : Control {
         if (pick.Length > 0 && _look.Route && !_hasMap) {
             var hint = Text("Add the Minimap to see the way to the picked quest.", _look.StepSize, stepBrush, false, width);
             var at = y + 2;
-            _drawing.Add(c => Words(c, hint, new Point(0, at), stepBrush));
+            _body.Add(c => Words(c, hint, new Point(0, at), stepBrush));
             y = at + hint.Height + 2;
         }
 
