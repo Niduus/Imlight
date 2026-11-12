@@ -1485,7 +1485,8 @@ internal static class OverlayHost {
                     var beatAt = DateTime.UtcNow + TimeSpan.FromSeconds(every);
                     while (DateTime.UtcNow < beatAt) {
                         var mapAt = SendsMap && OverlayMinimapData.Wanted.Length > 0 ? s_nextMap : DateTime.MaxValue;
-                        var questsAt = SendsQuests && OverlayQuestData.Wanted.Length > 0 ? s_nextQuests : DateTime.MaxValue;
+                        // A new pick is asked about at once (its way to another area comes with the quests).
+                        var questsAt = SendsQuests && OverlayQuestData.Wanted.Length > 0 ? OverlayQuestData.TakeAskSoon() ? DateTime.MinValue : s_nextQuests : DateTime.MaxValue;
                         var wakeAt = mapAt < beatAt ? mapAt : beatAt;
                         wakeAt = questsAt < wakeAt ? questsAt : wakeAt;
                         Pending? press = null;
@@ -1563,7 +1564,7 @@ internal static class OverlayHost {
         private static async Task AskQuestsAsync(SslStream tls, CancellationToken stop) {
             s_nextQuests = DateTime.UtcNow + s_questsEvery;
             foreach (var window in OverlayQuestData.Wanted) {
-                await RemoteAdminWire.WriteAsync(tls, new JsonObject { ["op"] = "quests", ["window"] = window, ["have"] = s_have }, null, stop);
+                await RemoteAdminWire.WriteAsync(tls, new JsonObject { ["op"] = "quests", ["window"] = window, ["have"] = s_have, ["quest"] = OverlayQuestData.Pick(window) }, null, stop);
                 using var answerWait = CancellationTokenSource.CreateLinkedTokenSource(stop);
                 answerWait.CancelAfter(TimeSpan.FromSeconds(10));
                 var (answer, _) = await RemoteAdminWire.ReadAsync(tls, 1 << 20, 0, answerWait.Token);

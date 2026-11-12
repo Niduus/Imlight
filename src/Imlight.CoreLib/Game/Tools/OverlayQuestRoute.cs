@@ -110,19 +110,19 @@ internal static class OverlayQuestRoute {
             ["k"] = QuestStory.KindOf(quest),
         };
 
-        // Nothing to do here: the way out toward the step's area.
+        // Nothing to do here: the way out toward the step's area, door by door (the tracker lists the areas; the minimap
+        // draws the line to the door here that starts it).
         if (targets.Count == 0 && elsewhere.Count > 0) {
-            var goingTo = elsewhere[0];
-            route["to"] = ZoneNames.Shown(goingTo);
-            if (NextZone(zonePath, goingTo) is { } next) {
+            var hops = Way(zonePath, elsewhere[0], live.Any(m => m.Template == SPIRAL_DOOR));
+            route["to"] = ZoneNames.Shown(elsewhere[0]);
+            if (hops.Count > 0) {
+                var (next, world) = hops[0];
                 var doorName = "To " + ZoneNames.Shown(next);
-                var door = live.Where(m => m.Kind == MinimapIndex.DOOR && string.Equals(m.Name, doorName, StringComparison.OrdinalIgnoreCase))
+                var door = live.Where(m => world ? m.Template == SPIRAL_DOOR
+                                             : m.Kind == MinimapIndex.DOOR && string.Equals(m.Name, doorName, StringComparison.OrdinalIgnoreCase))
                     .OrderBy(m => Far(here.X, here.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault();
                 if (door is not null) {
-                    targets.Add((door.Object.m_location.X, door.Object.m_location.Y, doorName));
-                }
-                else {
-                    route["via"] = ZoneNames.Shown(next);
+                    targets.Add((door.Object.m_location.X, door.Object.m_location.Y, world ? "Spiral Door" : doorName));
                 }
             }
         }
@@ -148,41 +148,86 @@ internal static class OverlayQuestRoute {
         return route;
     }
 
-    // ---- Which area to go through next: every area's doors and exits (SpiralDB's zone data), searched breadth first ----
+    // ---- The areas to go through: every area's doors and exits (SpiralDB's zone data), and the Spiral Door between
+    // worlds (it stands where each world's travellers arrive), searched breadth first ----
+
+    /// <summary>The Spiral Door's object (it takes you to any world's arrival area).</summary>
+    internal const ulong SPIRAL_DOOR = 84113;
 
     private static Dictionary<string, HashSet<string>> s_links;
+    private static HashSet<string> s_arrivals;
     private static readonly System.Threading.Lock s_lock = new();
 
-    /// <summary>The area right after <paramref name="from"/> on the shortest way to <paramref name="to"/>, or null.</summary>
-    internal static string NextZone(string from, string to) {
+    /// <summary>
+    /// The areas after <paramref name="from"/> on the shortest way to <paramref name="to"/>, the last being the step's area;
+    /// World is true for a trip through the Spiral Door. Empty when no way is known.
+    /// </summary>
+    internal static List<(string Zone, bool World)> Way(string from, string to, bool spiralDoorHere) {
         if (string.IsNullOrEmpty(from) || string.IsNullOrEmpty(to)) {
-            return null;
+            return [];
         }
 
         var links = Links();
-        var cameFrom = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { [from] = null };
+        var arrivals = s_arrivals ?? [];
+        var cameFrom = new Dictionary<string, (string Zone, bool World)>(StringComparer.OrdinalIgnoreCase) { [from] = (null, false) };
         var waiting = new Queue<string>([from]);
         while (waiting.Count > 0 && cameFrom.Count < 20000) {
             var zone = waiting.Dequeue();
             if (OverlayQuestTracker.SameZone(to, zone)) {
-                var step = zone;
-                while (cameFrom[step] is { } before && !string.Equals(before, from, StringComparison.OrdinalIgnoreCase)) {
-                    step = before;
+                var hops = new List<(string, bool)>();
+                for (var at = zone; cameFrom[at].Zone is { } before; at = before) {
+                    hops.Add((at, cameFrom[at].World));
                 }
 
-                return string.Equals(step, from, StringComparison.OrdinalIgnoreCase) ? null : step;
+                hops.Reverse();
+
+                return hops;
             }
 
             foreach (var next in links.GetValueOrDefault(zone) ?? []) {
-                if (cameFrom.TryAdd(next, zone)) {
+                if (cameFrom.TryAdd(next, (zone, false))) {
                     waiting.Enqueue(next);
+                }
+            }
+
+            // The Spiral Door: from any world's arrival area (or here, when one stands here) to every other's.
+            if (arrivals.Contains(zone) || (spiralDoorHere && string.Equals(zone, from, StringComparison.OrdinalIgnoreCase))) {
+                foreach (var next in arrivals) {
+                    if (cameFrom.TryAdd(next, (zone, true))) {
+                        waiting.Enqueue(next);
+                    }
                 }
             }
         }
 
-        // No known way: a door straight to it, if there is one.
-        return to;
+        // No way known through the doors on record: through the Spiral Door to the step's world first, when it is another
+        // world, then the step's area.
+        var hopsGuess = new List<(string, bool)>();
+        var toWorld = to.Split('/')[0];
+        if (!string.Equals(from.Split('/')[0], toWorld, StringComparison.OrdinalIgnoreCase)
+            && arrivals.FirstOrDefault(a => string.Equals(a.Split('/')[0], toWorld, StringComparison.OrdinalIgnoreCase)) is { } arrival) {
+            hopsGuess.Add((arrival, true));
+        }
+
+        if (hopsGuess.Count == 0 || !OverlayQuestTracker.SameZone(to, hopsGuess[^1].Item1)) {
+            hopsGuess.Add((to, false));
+        }
+
+        return hopsGuess;
     }
+
+    /// <summary>The way in words, for the Quest Tracker ("Ravenwood, Spiral Door to Grizzleheim, Savarstaad Pass").</summary>
+    internal static JsonArray WayWords(string from, string to, bool spiralDoorHere) {
+        var words = new JsonArray();
+        foreach (var (zone, world) in Way(from, to, spiralDoorHere).Take(12)) {
+            var shown = ZoneNames.Shown(zone);
+            words.Add(world ? $"Spiral Door to {WorldName(zone)}" + (string.Equals(shown, WorldName(zone), StringComparison.OrdinalIgnoreCase) ? "" : $" ({shown})") : shown);
+        }
+
+        return words;
+    }
+
+    private static string WorldName(string zone) => OverlayQuestTracker.WorldName(zone);
 
     private static Dictionary<string, HashSet<string>> Links() {
         lock (s_lock) {
@@ -216,7 +261,20 @@ internal static class OverlayQuestRoute {
             Logger.Warning("Quest tracker: the areas' doors could not be read: {0}", Logger.Args(ex.Message));
         }
 
+        var arrivals = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        try {
+            foreach (var hub in WorldHubZones.All()) {
+                if (!string.IsNullOrWhiteSpace(hub?.m_universeTPZone)) {
+                    arrivals.Add(((string) hub.m_universeTPZone).Trim());
+                }
+            }
+        }
+        catch (Exception ex) {
+            Logger.Warning("Quest tracker: the worlds' arrival areas could not be read: {0}", Logger.Args(ex.Message));
+        }
+
         lock (s_lock) {
+            s_arrivals ??= arrivals;
             s_links ??= links;
 
             return s_links;

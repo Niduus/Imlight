@@ -73,7 +73,8 @@ internal sealed record OverlayMapAsk(ulong CharId, string Address, TaskCompletio
 /// The overlay's Quest Tracker (OverlayQuestTracker): the service whose wizard is CharId answers Reply with that wizard's
 /// quests when its game connects from Address (an error text otherwise).
 /// </summary>
-internal sealed record OverlayQuestsAsk(ulong CharId, string Address, TaskCompletionSource<(System.Text.Json.Nodes.JsonObject Quests, string Error)> Reply);
+internal sealed record OverlayQuestsAsk(ulong CharId, string Address, TaskCompletionSource<(System.Text.Json.Nodes.JsonObject Quests, string Error)> Reply,
+                                       string Pick = "");
 
 /// <summary>Every service whose wizard is in the game from Address puts its wizard in Found (for linking an overlay).</summary>
 internal sealed record OverlayWizardsAt(string Address, ConcurrentQueue<ulong> Found);

@@ -320,7 +320,7 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
         }
 
         try {
-            message.Reply.TrySetResult((Tools.OverlayQuestTracker.Build(wizard), ""));
+            message.Reply.TrySetResult((Tools.OverlayQuestTracker.Build(wizard, SessionActor.GetZoneActor(), message.Pick), ""));
         }
         catch (Exception ex) {
             Logger.Error("Quest tracker: the quests of {0} could not be read: {1}", Logger.Args(wizard.CharId, ex));
