@@ -265,10 +265,10 @@ internal static class OverlayMinimapData {
     }
 
     /// <summary>The full screen map shows closer (in) or farther (out).</summary>
-    internal static void ZoomFull(long window, bool closer) {
+    internal static void ZoomFull(long window, bool closer, double step = 1.5, double min = MIN_ZOOM, double max = MAX_ZOOM) {
         lock (s_lock) {
             if (s_full.TryGetValue(window, out var zoom)) {
-                s_full[window] = Math.Clamp(closer ? zoom / 1.5 : zoom * 1.5, MIN_ZOOM, MAX_ZOOM);
+                s_full[window] = Math.Clamp(closer ? zoom / step : zoom * step, Math.Min(min, max), max);
                 s_versions[window] = s_versions.GetValueOrDefault(window) + 1;
             }
         }
@@ -613,6 +613,10 @@ internal sealed class MinimapView : Control {
             }
 
             // The quest picked in the Quest Tracker: its way, turned and zoomed with the map.
+            if (data is { Note.Length: 0 } && _map.Grid) {
+                DrawGrid(context, data, center, radiusX, radiusY);
+            }
+
             if (data is { Note.Length: 0 }) {
                 var project = Projector(data, center, radiusX, radiusY, out _);
                 OverlayQuestRouteDrawing.Draw(context, _window, project, project(data.X, data.Y), _mapW, _mapH, _map.IconSize);
@@ -699,6 +703,11 @@ internal sealed class MinimapView : Control {
                     if (geometry[kind] is { } shape && OverlayRenderer.Parse(colors[kind]) is { A: > 0 } color) {
                         context.DrawGeometry(new SolidColorBrush(color, _map.StreetsOpacity), null, shape);
                     }
+                }
+
+                // A thin line round all the ground you can walk on.
+                if (_map.GroundEdge && geometry[9] is { } edge && OverlayRenderer.Parse(_map.GroundEdgeColor) is { A: > 0 } edgeColor) {
+                    context.DrawGeometry(null, new Pen(new SolidColorBrush(edgeColor), 1.5 / Math.Max(1e-6, scale)), edge);
                 }
             }
 
@@ -842,7 +851,7 @@ internal sealed class MinimapView : Control {
             DrawMobAreas(context, data, project, center, radiusX, radiusY, unit);
         }
 
-        var names = new List<(string Words, Point At, int Rank)>();
+        var names = new List<(string Words, Point At, int Rank, IBrush Brush)>();
 
         // The least important first, so bosses and sigils are on top.
         foreach (var mark in data.Marks.OrderBy(Order)) {
@@ -874,14 +883,14 @@ internal sealed class MinimapView : Control {
 
             if (mark.Name.Length > 0 && Named(mark)) {
                 var words = _map.Levels && mark.Level > 0 && mark.Kind is "mob" or "boss" ? $"{mark.Name} ({mark.Level})" : mark.Name;
-                names.Add((words, new Point(at.X, at.Y + own * 0.9), Order(mark)));
+                names.Add((words, new Point(at.X, at.Y + own * 0.9), Order(mark), _map.NamesInKindColor ? Brush(ColorOf(mark)) : Brush(_map.TextColor)));
             }
         }
 
         // Names last, the most important first; with Tidy names, one that would cover another is tried above its icon,
         // then left out (Niduus, 2026-11-12: names piled on top of each other).
         var taken = new List<Rect>();
-        foreach (var (words, at, _) in names.OrderByDescending(n => n.Rank)) {
+        foreach (var (words, at, _, nameBrush) in names.OrderByDescending(n => n.Rank)) {
             var text = Text(words, _map.NameSize, Brush(_map.TextColor), false);
             var (w, h) = (Math.Min(text.Width, Math.Max(20, _mapW * 0.8)), text.Height);
             Rect Box(Point p) => new(p.X - w / 2 - 4, p.Y - 1, w + 8, h + 2);
@@ -897,7 +906,7 @@ internal sealed class MinimapView : Control {
             }
 
             taken.Add(Box(place));
-            Label(context, words, place, _map.NameSize, Brush(_map.TextColor), centered: true, pill: _map.NameBackground);
+            Label(context, words, place, _map.NameSize, nameBrush, centered: true, pill: _map.NameBackground);
         }
 
         // North, on the edge, over the icons.
@@ -913,7 +922,47 @@ internal sealed class MinimapView : Control {
         // You, in the middle: pointing up when the map turns with you, else the way you face.
         var faceX = -Math.Sin(data.Yaw) * (_map.Mirror ? -1 : 1);
         var faceY = Math.Cos(data.Yaw);
-        Arrow(context, center, _map.Turn ? 0 : Math.Atan2(faceX, -faceY), size * _map.YouSize, Brush(_map.YouColor), new Pen(Brushes.Black, 1.2));
+        var facing = _map.Turn ? 0 : Math.Atan2(faceX, -faceY);
+        if (_map.ViewCone) {
+            // A soft wedge the way you face, 70 degrees wide.
+            var reach = size * _map.YouSize * 5;
+            var wedge = new StreamGeometry();
+            using (var g = wedge.Open()) {
+                g.BeginFigure(center, true);
+                for (var k = 0; k <= 12; k++) {
+                    var a = facing - (35 * Math.PI / 180) + (k * 70 * Math.PI / 180 / 12);
+                    g.LineTo(new Point(center.X + reach * Math.Sin(a), center.Y - reach * Math.Cos(a)));
+                }
+
+                g.EndFigure(true);
+            }
+
+            context.DrawGeometry(Brush(_map.ViewConeColor), null, wedge);
+        }
+
+        Arrow(context, center, facing, size * _map.YouSize, Brush(_map.YouColor), new Pen(Brushes.Black, 1.2));
+    }
+
+    // Grid lines every GridSize game units, east-west and north-south, turned with the map.
+    private void DrawGrid(DrawingContext context, OverlayMinimapData.Snapshot data, Point center, double radiusX, double radiusY) {
+        var project = Projector(data, center, radiusX, radiusY, out _);
+        var scale = Math.Min(radiusX, radiusY) / Zoom;
+        var step = _map.GridSize;
+        var reach = Math.Max(radiusX, radiusY) / scale * 1.5;
+        if (reach / step > 120) {
+            return;
+        }
+
+        var pen = new Pen(Brush(_map.GridColor), 1);
+        var (x0, x1) = (Math.Floor((data.X - reach) / step) * step, data.X + reach);
+        var (y0, y1) = (Math.Floor((data.Y - reach) / step) * step, data.Y + reach);
+        for (var x = x0; x <= x1; x += step) {
+            context.DrawLine(pen, project(x, data.Y - reach), project(x, data.Y + reach));
+        }
+
+        for (var y = y0; y <= y1; y += step) {
+            context.DrawLine(pen, project(data.X - reach, y), project(data.X + reach, y));
+        }
     }
 
     // Where mobs are: a soft patch round every creature, patches that touch joined into one area, and how many are in
