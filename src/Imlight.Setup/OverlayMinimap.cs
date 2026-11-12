@@ -481,7 +481,7 @@ internal sealed class MinimapView : Control {
         var north = new Point(center.X + (radiusX - northR - 2) * northSin, center.Y - (radiusY - northR - 2) * northCos);
         context.DrawEllipse(new SolidColorBrush(Color.FromArgb(0xE0, 0x0A, 0x0A, 0x14)), new Pen(Brush("#FFFF6B6B"), 1), north, northR, northR);
         var n = Text("N", _map.NameSize, Brush("#FFFF6B6B"), true);
-        context.DrawText(n, new Point(north.X - n.Width / 2, north.Y - n.Height / 2));
+        Words(context, n, new Point(north.X - n.Width / 2, north.Y - n.Height / 2), Brush("#FFFF6B6B"));
 
         // You, in the middle: pointing up when the map turns with you, else the way you face.
         var faceX = -Math.Sin(data.Yaw) * (_map.Mirror ? -1 : 1);
@@ -648,7 +648,7 @@ internal sealed class MinimapView : Control {
             text.MaxTextWidth = Math.Max(10, _mapW - 22);
             text.MaxLineCount = 1;
             text.Trimming = TextTrimming.CharacterEllipsis;
-            context.DrawText(text, new Point(16, y));
+            Words(context, text, new Point(16, y), Brush(_map.TextColor));
             y += LineHeight;
         }
     }
@@ -660,7 +660,7 @@ internal sealed class MinimapView : Control {
         var at = new Point(area.Center.X - text.MaxTextWidth / 2, area.Center.Y - text.Height / 2);
         context.DrawRectangle(new SolidColorBrush(Color.FromArgb(0xC8, 0x0A, 0x0A, 0x14)), null,
             new Rect(at.X - 6, at.Y - 4, text.MaxTextWidth + 12, text.Height + 8), 6, 6);
-        context.DrawText(text, at);
+        Words(context, text, at, Brush(_map.TextColor));
     }
 
     private void Label(DrawingContext context, string words, Point at, double size, IBrush brush, bool centered = false, bool bold = false, bool pill = false) {
@@ -679,10 +679,18 @@ internal sealed class MinimapView : Control {
             shadow.MaxTextWidth = text.MaxTextWidth;
             shadow.MaxLineCount = 1;
             shadow.Trimming = TextTrimming.CharacterEllipsis;
-            context.DrawText(shadow, new Point(x + 1, at.Y + 1));
+            Words(context, shadow, new Point(x + 1, at.Y + 1), Brushes.Black);
         }
 
-        context.DrawText(text, new Point(x, at.Y));
+        Words(context, text, new Point(x, at.Y), brush);
+    }
+
+    // Words drawn as their letters' outlines, like the map's other shapes. Drawn as text they came out blank on the
+    // overlay over the game on Windows (Niduus, 2026-11-12: an empty dark bar where the note's words should be).
+    private static void Words(DrawingContext context, FormattedText text, Point at, IBrush brush) {
+        if (text.BuildGeometry(at) is { } outline) {
+            context.DrawGeometry(brush, null, outline);
+        }
     }
 
     private FormattedText Text(string words, double size, IBrush brush, bool bold) {

@@ -70,6 +70,9 @@ public static class OverlayLinks {
 
         s_recent.TryRemove(link, out _);
         s_mapAsks.TryRemove(link, out _);
+        foreach (var key in s_mapNotes.Keys.Where(k => k.Link == link).ToList()) {
+            s_mapNotes.TryRemove(key, out _);
+        }
     }
 
     /// <summary>".link code" typed in the game by <paramref name="charId"/>: links that code's game window to this wizard.</summary>
@@ -228,6 +231,21 @@ public static class OverlayLinks {
     /// itself like a button, otherwise the map shows the ".link" code to type.
     /// </summary>
     public static async Task<JsonObject> MapAsync(long link, int linkWindows, JsonObject header, string address) {
+        var answer = await MapOfAsync(link, linkWindows, header, address);
+        // What the minimap shows instead of a map goes in the log once each time it changes, so a blank map can be told apart.
+        var error = answer["ok"]?.GetValue<bool>() == true ? "" : (string) answer["error"] ?? "";
+        var key = (link, (long?) header["window"] ?? 0);
+        if (error != "busy" && (!s_mapNotes.TryGetValue(key, out var said) || said != error)) {
+            s_mapNotes[key] = error;
+            Logger.Information("Overlay minimap from {0}: {1}", Logger.Args(OverlayGate.Normalize(address), error.Length == 0 ? "the map is sent." : error));
+        }
+
+        return answer;
+    }
+
+    private static readonly ConcurrentDictionary<(long Link, long Window), string> s_mapNotes = new();
+
+    private static async Task<JsonObject> MapOfAsync(long link, int linkWindows, JsonObject header, string address) {
         address = OverlayGate.Normalize(address);
         var window = (long?) header["window"] ?? 0;
         if (!OverlayMinimap.On) {

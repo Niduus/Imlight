@@ -117,7 +117,10 @@ public static class OverlayGate {
 
     /// <summary>
     /// The plain address of "1.2.3.4", "1.2.3.4:5678", "[::ffff:1.2.3.4]:5678" or "::1", as both sides write it:
-    /// IPv4 for an IPv4 address dressed as IPv6, and every loopback address as 127.0.0.1.
+    /// IPv4 for an IPv4 address dressed as IPv6, and every loopback address as 127.0.0.1. So is any address of this PC
+    /// itself: a game on the server's own PC can reach it by a LAN or VPN address (Niduus, 2026-11-12: his game came in
+    /// by his Tailscale address 100.x while Ahziael's overlay came by 127.0.0.1, so the two never matched and the
+    /// minimap only said "Log in to the game").
     /// </summary>
     public static string Normalize(string text) {
         text = (text ?? "").Trim();
@@ -137,7 +140,32 @@ public static class OverlayGate {
             address = address.MapToIPv4();
         }
 
-        return IPAddress.IsLoopback(address) ? "127.0.0.1" : address.ToString();
+        return IPAddress.IsLoopback(address) || IsThisPc(address) ? "127.0.0.1" : address.ToString();
+    }
+
+    private static IPAddress[] s_ownAddresses = [];
+    private static DateTime s_ownAddressesAt = DateTime.MinValue;
+
+    // This PC's own addresses, looked up again every half minute (a VPN or Wi-Fi can come up after the server starts).
+    private static bool IsThisPc(IPAddress address) {
+        var own = s_ownAddresses;
+        if (DateTime.UtcNow - s_ownAddressesAt > TimeSpan.FromSeconds(30)) {
+            try {
+                own = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces()
+                    .Where(n => n.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up)
+                    .SelectMany(n => n.GetIPProperties().UnicastAddresses)
+                    .Select(u => u.Address.IsIPv4MappedToIPv6 ? u.Address.MapToIPv4() : u.Address)
+                    .ToArray();
+            }
+            catch (Exception) {
+                // Can't ask Windows just now: the last list stays.
+            }
+
+            s_ownAddresses = own;
+            s_ownAddressesAt = DateTime.UtcNow;
+        }
+
+        return own.Any(a => a.Equals(address));
     }
 
     // ---------------------------------------------------------------------
