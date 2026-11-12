@@ -61,6 +61,12 @@ internal sealed partial class QuestTeamDirectorActor {
                 continue;
             }
 
+            // Developers' and testers' gear never stays on (a Deckathalon deck stays until a fair deck replaces it).
+            if (BotGear.ForbiddenWorn(wizard).FirstOrDefault() is { Item: not null } banned) {
+                _actors[i].Tell(new QuestTeamMember.Unequip(banned.Item.m_globalID, banned.Slot, banned.Name));
+                continue;
+            }
+
             // One piece at a time, the best gain first.
             if (BotGear.BetterInBackpack(wizard, StyleOf(member)).OrderByDescending(b => b.Gain).FirstOrDefault() is { Item: not null } better) {
                 _actors[i].Tell(new QuestTeamMember.Equip(better.Item.m_globalID, better.Slot, better.Piece.Name));
@@ -107,7 +113,11 @@ internal sealed partial class QuestTeamDirectorActor {
         _deckFor[member.Role] = key;
         _deckKnown[member.Role] = (book.LearnedSpellTemplateIds?.Count ?? 0) * 1000 + book.MaxSpells;
         var (take, put) = BotCards.Changes(now, wanted);
-        if (take.Count + put.Count == 0 || (!force && take.Count + put.Count < 2)) {
+        // Developers' test cards come out, every copy.
+        var dev = (book.SpellList ?? []).Where(s => s is not null && BotCards.IsDevSpell((uint) s.m_templateID))
+            .SelectMany(s => Enumerable.Repeat((uint) s.m_templateID, Math.Max(1, (int) s.m_quantity))).ToList();
+        take.AddRange(dev);
+        if (take.Count + put.Count == 0 || (!force && dev.Count == 0 && take.Count + put.Count < 2)) {
             return;
         }
 

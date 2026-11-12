@@ -22,3 +22,8 @@ Fixed: Quest Team wizards never logged in
 Turning the Quest Team on showed all four wizards "offline" at level 0, with the team stuck on "waiting for everyone to be in the game". The wizards could not start at all, so they never tried to log in. They now log in one after the other a few seconds after the team starts.
 Where: Quest Team > Quest Team
 Test: Start the server and turn the Quest Team on. Within a minute, Team log should show each wizard "is in ..." and the page should show them playing.
+
+Fixed: Bots no longer wear developers' gear or Deckathalon decks
+Quest Team wizards and Bot Players never pick, buy or put on the developers' and testers' own gear (like the QA robe, or anything marked Dev, Debug, GM, Admin or Test), and never equip a Deckathalon deck. A Quest Team wizard already wearing such gear takes it off; a Deckathalon deck is swapped for a normal deck as soon as it has one. Developers' test spells never go into a bot's deck, and any already there are taken out.
+Where: Quest Team > Quest Team (each wizard's gear and deck); Bot Players on the streets
+Test: Turn the Quest Team on and open each wizard's "Quests, gear, deck and trained spells". No QA or dev gear and no Deckathlete's Deck should show, and Team log should show "takes off ..." for anything that was on.

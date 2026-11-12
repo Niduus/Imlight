@@ -68,6 +68,9 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
     /// <summary>Put on an item from the backpack, as the game's backpack does.</summary>
     internal sealed record Equip(ulong ItemId, string Slot, string What);
 
+    /// <summary>Take an item off into the backpack, as the game's backpack does.</summary>
+    internal sealed record Unequip(ulong ItemId, string Slot, string What);
+
     /// <summary>Buy one item at a shop (the shopkeeper by global id), as the shop window does.</summary>
     internal sealed record Buy(ulong NpcGlobalId, uint ItemTemplate, string What);
 
@@ -197,6 +200,10 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
         Receive<Equip>(m => {
             Note($"puts on {m.What}.");
             Send(new GAME_5_PROTOCOL.MSG_EQUIPITEM { IsEquip = 1, ItemID = m.ItemId, SlotName = m.Slot });
+        });
+        Receive<Unequip>(m => {
+            Note($"takes off {m.What} (developers' gear is not for the team).");
+            Send(new GAME_5_PROTOCOL.MSG_EQUIPITEM { IsEquip = 0, ItemID = m.ItemId, SlotName = m.Slot });
         });
         Receive<Buy>(m => {
             Note($"buys {m.What}.");

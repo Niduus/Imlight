@@ -46,7 +46,7 @@ internal static class QuestTeamHost {
             s_server = server;
             // The gear the server's own wizards pick from (Quest Team and Bot Players) is read once the game's data is
             // loaded, in the background, so the first wizard out already has it.
-            _ = Task.Delay(TimeSpan.FromSeconds(45)).ContinueWith(_ => BotShared.BotGear.Catalog.Count);
+            _ = Task.Delay(TimeSpan.FromSeconds(45)).ContinueWith(_ => (BotShared.BotGear.Catalog.Count, BotShared.BotCards.IsDevSpell(1)));
         }
     }
 

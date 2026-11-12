@@ -157,6 +157,10 @@ internal static class BotGear {
         }
 
         var adjectives = (template.m_adjectiveList ?? []).Select(a => (string) a ?? "").ToList();
+        if (Forbidden(id)) {
+            return null;
+        }
+
         var (level, schoolNeeded) = Requirements(template.m_equipRequirements);
         var stats = new List<Stat>();
         foreach (var effect in template.m_equipEffects ?? []) {
@@ -179,6 +183,94 @@ internal static class BotGear {
             adjectives.Any(a => a.Equals("FLAG_CrownsOnly", StringComparison.OrdinalIgnoreCase)),
             adjectives.Any(a => a.Equals("FLAG_Retired", StringComparison.OrdinalIgnoreCase)),
             stats, deck?.m_maxSpells ?? 0, deck?.m_schoolMaxInstances ?? 0, (string) deck?.m_primarySchoolName ?? "");
+    }
+
+    // ---------------------------------------------------------------------
+    // Gear the server's wizards never wear (Niduus, 2026-11-12: "noticed the bots putting on dev gear like the QA robe.
+    // Prevent that. Not just QA gear but any Dev gear and spells" and "Remove Deckathalon decks from all bots. They are
+    // not allowed to equip them")
+    // ---------------------------------------------------------------------
+
+    private static readonly ConcurrentDictionary<uint, bool> s_forbidden = new();
+    private static readonly Lazy<Dictionary<uint, string>> s_files = new(() => {
+        var files = new Dictionary<uint, string>();
+        foreach (var location in CoreObjectFactory.TemplateManifest?.m_serializedTemplates ?? []) {
+            files.TryAdd(location.m_id, ((string) location.m_filename ?? "").Replace('\\', '/'));
+        }
+
+        return files;
+    });
+
+    // Words that mark the developers' and testers' own items (as the Dev trainer's spells are found).
+    private static readonly System.Text.RegularExpressions.Regex s_devWord
+        = new(@"(^|[^A-Za-z])((Dev|Debug|GM|Admin|QA|Test|Testing|Tester)([^a-z]|$)|(DEV|DEBUG|ADMIN|TEST|TESTING)([^A-Za-z]|$))");
+
+    /// <summary>
+    /// Whether the server's wizards may never wear this item: the developers' and testers' own gear (QA, Dev, Debug, GM,
+    /// Admin or Test in its name or file, or in a Test or Dev folder) and every Deckathalon deck.
+    /// </summary>
+    internal static bool Forbidden(uint templateId) => templateId != 0 && s_forbidden.GetOrAdd(templateId, id => {
+        try {
+            if (CoreObjectFactory.GetCoreTemplate(id) is not WizItemTemplate template) {
+                return false;
+            }
+
+            string objectName = (string) template.m_objectName ?? "";
+            string key = template.m_displayName;
+            var shown = string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key) ?? "";
+            var file = s_files.Value.GetValueOrDefault(id) ?? "";
+            var folders = file.Contains("/Test/", StringComparison.OrdinalIgnoreCase) || file.StartsWith("Test/", StringComparison.OrdinalIgnoreCase)
+                || file.Contains("/Dev/", StringComparison.OrdinalIgnoreCase) || file.StartsWith("Dev/", StringComparison.OrdinalIgnoreCase)
+                || file.Contains("/QA/", StringComparison.OrdinalIgnoreCase);
+            var dev = folders || s_devWord.IsMatch(objectName) || s_devWord.IsMatch(shown)
+                || s_devWord.IsMatch(System.IO.Path.GetFileNameWithoutExtension(file));
+            var deckathalon = shown.Contains("Deckathlete", StringComparison.OrdinalIgnoreCase)
+                || shown.Contains("Deckathalon", StringComparison.OrdinalIgnoreCase)
+                || objectName.Contains("Deckathalon", StringComparison.OrdinalIgnoreCase)
+                || objectName.StartsWith("Deck-DU", StringComparison.OrdinalIgnoreCase) || objectName.Contains("-DU-T", StringComparison.OrdinalIgnoreCase)
+                || file.Contains("Deckathalon", StringComparison.OrdinalIgnoreCase) || file.Contains("Deck-DU", StringComparison.OrdinalIgnoreCase);
+
+            return dev || deckathalon;
+        }
+        catch (Exception) {
+            return false;
+        }
+    });
+
+    /// <summary>
+    /// Forbidden gear a wizard wears that can come off now (a forbidden deck stays until a fair one replaces it, so the
+    /// wizard still has cards): item, slot, name.
+    /// </summary>
+    internal static List<(WizClientObjectItem Item, string Slot, string Name)> ForbiddenWorn(Wizard wizard) {
+        var found = new List<(WizClientObjectItem, string, string)>();
+        foreach (var slot in Slots) {
+            if (slot == EquipmentSlotType.Deck || wizard?.EquipmentBehavior?.GetItemInSlot(slot) is not { } item) {
+                continue;
+            }
+
+            var id = (uint) Math.Min((ulong) item.m_templateID, uint.MaxValue);
+            if (Forbidden(id)) {
+                found.Add((item, slot.ToString(), NameOf(id)));
+            }
+        }
+
+        return found;
+    }
+
+    private static string NameOf(uint id) {
+        try {
+            if (CoreObjectFactory.GetCoreTemplate(id) is WizItemTemplate template) {
+                string key = template.m_displayName;
+                var shown = string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key);
+
+                return string.IsNullOrWhiteSpace(shown) ? (string) template.m_objectName ?? id.ToString() : shown.Trim();
+            }
+        }
+        catch (Exception) {
+            // The id is enough.
+        }
+
+        return id.ToString();
     }
 
     private static Stat ReadStat(StatisticEffectInfo info) {

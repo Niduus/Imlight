@@ -94,13 +94,26 @@ internal static class BotCards {
     /// <summary>A card of a spell, or null when it is not one that goes in a deck to fight with.</summary>
     internal static Card CardOf(uint spellId) {
         if (spellId == 0 || !SpellFactory.CanGoInDeck(spellId) || CoreObjectFactory.GetCoreTemplate(spellId) is not SpellTemplate template
-            || template.m_Treasure || CombatEnchantments.IsEnchantment(template) || DivideCards.IsPickCard(template)) {
+            || template.m_Treasure || CombatEnchantments.IsEnchantment(template) || DivideCards.IsPickCard(template) || IsDevSpell(spellId)) {
             return null;
         }
 
         var card = RewrittenAI.Read(SpellFactory.GetSpell(template, spellId));
 
         return card is null || card.Natural ? null : card;
+    }
+
+    /// <summary>
+    /// A spell the developers made for testing (the Dev trainer's list: a Test folder, or named Dev, Debug, GM or Admin).
+    /// The server's wizards never put one in a deck (Niduus, 2026-11-12: "any Dev gear and spells").
+    /// </summary>
+    internal static bool IsDevSpell(uint spellId) {
+        try {
+            return BossDevSpells.KindOf(spellId) == "Dev";
+        }
+        catch (Exception) {
+            return false;
+        }
     }
 
     /// <summary>
