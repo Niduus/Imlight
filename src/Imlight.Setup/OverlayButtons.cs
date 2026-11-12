@@ -61,6 +61,11 @@ internal static class OverlayButtons {
         }
 
         switch (button.Action) {
+            case OverlayAction.DISMISS_NOTE:
+                OverlayHost.ShowNotice(game, "");
+                done(true);
+
+                return;
             case OverlayAction.DESIGNER:
                 OverlayHost.RequestDesigner(game);
                 done(true);

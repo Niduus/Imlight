@@ -148,8 +148,20 @@ internal static class QuestTeamRoster {
     /// <summary>Four new level 1 wizards in place of the old ones (Ahziael's Restart). The team must be logged out.</summary>
     internal static List<Member> Restart() {
         var saved = Read();
+        // The old wizards were just logged out: a moment for their last saves before they are deleted.
+        System.Threading.Thread.Sleep(3000);
         foreach (var role in Roles) {
             DeleteAccount(USERNAME_PREFIX + role);
+        }
+
+        // The database finds accounts by name through an index that catches up a moment after a delete. Asking for a new
+        // account before then found the deleted one still there, so the new one was never made (Niduus, 2026-11-12:
+        // Restart gave "The Quest Team's wizards could not be made or loaded"). Wait until the old names are gone.
+        foreach (var role in Roles) {
+            var username = USERNAME_PREFIX + role;
+            if (!WaitFor(() => AccountCollection.GetAccountForCharacterList(username) is null)) {
+                Logger.Warning("Quest Team: the old account {0} still shows after 20 seconds; making the new one anyway.", Logger.Args(username));
+            }
         }
 
         var members = new List<Member>();
@@ -192,9 +204,14 @@ internal static class QuestTeamRoster {
             var account = AccountCollection.GetAccountForCharacterList(username);
             if (account is null) {
                 var secret = Convert.ToBase64String(RandomNumberGenerator.GetBytes(48));
-                AccountCollection.CreateAccount(new Account(username, "", DatabaseUtilities.CreateHashedPassword(secret)) {
-                    AuthLevel = AuthLevel.None,
-                });
+                if (!AccountCollection.CreateAccount(new Account(username, "", DatabaseUtilities.CreateHashedPassword(secret)) {
+                        AuthLevel = AuthLevel.None,
+                    })) {
+                    Logger.Warning("Quest Team: the database still had an account named {0}; waiting for it.", Logger.Args(username));
+                }
+
+                // The new account shows in the name index a moment after it is saved.
+                WaitFor(() => AccountCollection.GetAccountForCharacterList(username) is not null);
                 account = AccountCollection.GetAccountForCharacterList(username);
             }
 
@@ -242,6 +259,24 @@ internal static class QuestTeamRoster {
 
             return null;
         }
+    }
+
+    // Up to 20 seconds for the database to show a change.
+    private static bool WaitFor(Func<bool> done) {
+        for (var i = 0; i < 40; i++) {
+            try {
+                if (done()) {
+                    return true;
+                }
+            }
+            catch (Exception e) {
+                Logger.Debug("Quest Team: waiting for the database: {0}", Logger.Args(e.Message));
+            }
+
+            System.Threading.Thread.Sleep(500);
+        }
+
+        return false;
     }
 
     private static Saved Read() {

@@ -423,6 +423,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
     private DateTime _restingSince = DateTime.MaxValue;
     private DateTime _dialogSince = DateTime.MaxValue;
     private readonly Dictionary<ulong, DateTime> _stonesUsed = [];
+    private readonly List<DateTime> _zoneChanges = [];
 
     // Never into a fight weak (Niduus, 2026-11-12): before walking onto a creature, anyone low drinks a potion, and without
     // one they rest a while (up to a minute) as a player waits for health to come back.
@@ -476,12 +477,16 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         if (!target.Same(_target)) {
+            // A creature that walks about moves the target, but it is the same step: said once (it was said every second).
+            var sameStep = _target is not null && _target.Kind == target.Kind && _target.Key == target.Key;
             _target = target;
-            _targetSince = DateTime.UtcNow;
-            Note("Team", $"next: {Describe(target)}.");
-            // A fight is next: each deck made ready for it.
-            if (target.Kind == QuestTeamPlanner.FIGHT) {
-                PrepareDecks(BotCards.SituationOf(target.Template));
+            if (!sameStep) {
+                _targetSince = DateTime.UtcNow;
+                Note("Team", $"next: {Describe(target)}.");
+                // A fight is next: each deck made ready for it.
+                if (target.Kind == QuestTeamPlanner.FIGHT) {
+                    PrepareDecks(BotCards.SituationOf(target.Template));
+                }
             }
         }
 
@@ -1089,6 +1094,20 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             }
 
             Note("Team", $"{leader.Name} is now in {QuestTeamText.Zone(leader.Zone)}; the others follow.");
+
+            // Going in and out of areas again and again is a way that loops (Niduus's log, 2026-11-12: "to Savarstaad Pass"
+            // while already in Savarstaad Pass, every few seconds): an issue, and the step is skipped, as a player would
+            // be stuck there.
+            _zoneChanges.Add(DateTime.UtcNow);
+            _zoneChanges.RemoveAll(t => DateTime.UtcNow - t > TimeSpan.FromSeconds(90));
+            if (_zoneChanges.Count >= 8) {
+                _zoneChanges.Clear();
+                var what = _target?.What ?? "the next step";
+                Issue("quest", _target?.Quest ?? _currentQuest, $"The way to \"{what}\" goes round in a loop: {leader.Name} went in and out of " +
+                                                               $"{QuestTeamText.Zone(leader.Zone)} 8 times in 90 seconds without reaching it.",
+                    key: "loop|" + (_target?.Key ?? leader.Zone));
+                StopWalking(0);
+            }
         }
 
         _leaderZone = leader.Zone ?? "";
