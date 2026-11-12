@@ -241,6 +241,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         QuestTeamRoster.Remember(loaded.Members);
+        _usernames = loaded.Members.Select(m => m.Username).Where(u => !string.IsNullOrEmpty(u)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         _team.Clear();
         _actors.Clear();
         foreach (var member in loaded.Members) {
@@ -348,9 +349,23 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         // Anyone reading a dialog: the team waits for them.
         if (_team.Any(m => m.Talking || DateTime.UtcNow - m.LastDialog < TimeSpan.FromSeconds(1))) {
             _doing = "reading a dialog";
+            if (_dialogSince == DateTime.MaxValue) {
+                _dialogSince = DateTime.UtcNow;
+            }
+
+            // Dialogs read to the end (Niduus, 2026-11-12: "read dialogs to the end and flag dialogs that never finish"):
+            // a minute of dialog after dialog with no end is a dialog that never finishes.
+            if (DateTime.UtcNow - _dialogSince > TimeSpan.FromSeconds(60)) {
+                var stuck = _team.Where(m => m.Talking || DateTime.UtcNow - m.LastDialog < TimeSpan.FromSeconds(1)).Select(m => m.Role).ToList();
+                var quest = _currentQuest ?? _target?.Quest;
+                Issue("quest", quest, $"A dialog never finishes for {string.Join(", ", stuck)}: it has gone on for over a minute, one dialog after another" +
+                                      (_target is null ? "." : $", at \"{_target.What}\"."), key: "dialog|" + quest + "|" + _target?.Key, skipStep: false, level: QuestTeamLink.NOTABLE);
+            }
 
             return;
         }
+
+        _dialogSince = DateTime.MaxValue;
 
         // Better gear on, and decks that miss new spells redone (QuestTeamDirector.Gear.cs).
         KeepGearAndDecks();
@@ -358,6 +373,8 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         // Members in another area than the leader catch up the way the leader went.
         var leader = _team[0];
         NoteLeaderZone(leader);
+        RollDay();
+        KeepSoloInstances();
         var behind = _team.Skip(1).Where(m => m.ZoneActor is null || !m.ZoneActor.Equals(leader.ZoneActor)).ToList();
         if (behind.Count > 0) {
             if (_apartSince == DateTime.MinValue) {
@@ -404,6 +421,8 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
     // ---------------------------------------------------------------------
 
     private DateTime _restingSince = DateTime.MaxValue;
+    private DateTime _dialogSince = DateTime.MaxValue;
+    private readonly Dictionary<ulong, DateTime> _stonesUsed = [];
 
     // Never into a fight weak (Niduus, 2026-11-12): before walking onto a creature, anyone low drinks a potion, and without
     // one they rest a while (up to a minute) as a player waits for health to come back.
@@ -477,7 +496,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         _doing = Describe(target);
         var reach = target.Kind switch {
             QuestTeamPlanner.TALK or QuestTeamPlanner.OFFER or QuestTeamPlanner.TRAIN or QuestTeamPlanner.SHOP => 160f,
-            QuestTeamPlanner.DOOR or QuestTeamPlanner.SPIRAL => 140f,
+            QuestTeamPlanner.DOOR or QuestTeamPlanner.SPIRAL or QuestTeamPlanner.STONE => 140f,
             QuestTeamPlanner.FIGHT => 40f,
             _ => 25f,
         };
@@ -534,6 +553,34 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             case QuestTeamPlanner.TRAIN:
                 TrainHere(group, target);
                 break;
+            case QuestTeamPlanner.STONE:
+                // All four at the stone, then each presses it, so they arrive together.
+                if (group.Count < _team.Count || group.Any(m => QuestTeamPlanner.Far(m.X, m.Y, target.X, target.Y) > 260)) {
+                    _doing = "waiting at the street teleporter for the team";
+                    StopWalking(0);
+                    break;
+                }
+
+                if (!_team.All(m => m.Options.ContainsKey(target.GlobalId))) {
+                    for (var i = 0; i < _team.Count; i++) {
+                        if (!_team[i].Options.ContainsKey(target.GlobalId)) {
+                            WalkTo(i, target with { X = target.X - 20 });
+                        }
+                    }
+
+                    break;
+                }
+
+                Note("Team", $"uses {target.What}: it brings them closer to the story quest.");
+                for (var i = 0; i < _team.Count; i++) {
+                    var option = _team[i].Options[target.GlobalId].FirstOrDefault(o => o.Service == "Interact");
+                    Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromMilliseconds(300 + (i * 700)), _actors[i],
+                        new QuestTeamMember.Interact(target.GlobalId, option.Service ?? "Interact", option.Index, target.What), Self);
+                }
+
+                _stonesUsed[target.GlobalId] = DateTime.UtcNow;
+                _nextClick = DateTime.UtcNow.AddSeconds(4);
+                break;
             case QuestTeamPlanner.SHOP:
                 ShopHere(group, target);
                 break;
@@ -559,13 +606,42 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         if (_currentQuest is not null) {
             var target = QuestTeamPlanner.ForQuest(group, _currentQuest);
             if (target is not null) {
-                return target;
+                foreach (var old in _stonesUsed.Where(s => DateTime.UtcNow - s.Value > TimeSpan.FromSeconds(90)).Select(s => s.Key).ToList()) {
+                    _stonesUsed.Remove(old);
+                }
+
+                return QuestTeamPlanner.Shortcut(leader, target, _stonesUsed.Keys) ?? target;
             }
         }
 
         // Nobody here has a story quest: the next one, from whoever gives it.
         if (QuestTeamPlanner.NextQuest(leader.Wizard) is var (quest, giver)) {
             return QuestTeamPlanner.ForGiver(leader, quest, giver);
+        }
+
+        // Under-leveled for the next story quest: XP up to the level it needs, logged (no farming).
+        if (_currentQuest is null && QuestTeamPlanner.LevelBlocked(leader.Wizard) is var (blocked, level)) {
+            CatchUpXp(blocked, level);
+
+            return null;
+        }
+
+        // The whole story played, to the last world the data has: they stop (paused, so Ahziael's Resume or Restart decides).
+        if (_currentQuest is null && QuestTeamPlanner.FinishedLastWorld(leader.Wizard, out var lastWorld)) {
+            Note("Team", $"MAIN STORY COMPLETE: the last world, {lastWorld}, is done ({DateTime.Now.ToString("dddd d MMMM yyyy, HH:mm", System.Globalization.CultureInfo.InvariantCulture)}). " +
+                         "The team stops here.", QuestTeamLink.COMMAND);
+            QuestTeamLink.Send(new TeamRequest { Op = "quest", Event = "story done", Quest = "", Title = "Main Story", Text = $"finished with {lastWorld}; the team stopped" });
+            try {
+                File.WriteAllText(Path.Combine(QuestTeamWire.Folder, QuestTeamWire.PAUSE_FILE), "Main Story complete");
+            }
+            catch (IOException) {
+                // Paused next look anyway: the note says it.
+            }
+
+            _paused = true;
+            _doing = "finished the Main Story; stopped";
+
+            return null;
         }
 
         if (_currentQuest is null) {
@@ -575,6 +651,28 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         return null;
+    }
+
+    // Niduus, 2026-11-12: "If under-leveled ... Have them execute a command to gain XP to get to the level required.
+    // Logging this as well of how much xp and the goal level". Every member below the goal gets just the XP to reach it.
+    private void CatchUpXp(Imcodec.ObjectProperty.TypeCache.QuestTemplate quest, int level) {
+        var need = Imlight.CoreLib.Shared.Character.MagicLevelsConfig.GetExperiencePointsAtLevel(level);
+        var title = QuestTeamText.Title((string) quest.m_questName);
+        for (var i = 0; i < _team.Count && i < _actors.Count; i++) {
+            var wizard = _team[i].Wizard;
+            if (wizard?.MagicSchoolBehavior is not { } school || school.Level >= level) {
+                continue;
+            }
+
+            var xp = Math.Max(1, need - school.ExperiencePoints);
+            _actors[i].Tell(new QuestTeamMember.GainXp(xp));
+            Count("XP given to catch up", xp);
+            Note(_team[i].Role, $"is level {school.Level}, under the level {level} that '{title}' needs: gains {xp:N0} XP to reach level {level}.", QuestTeamLink.COMMAND);
+            QuestTeamLink.Send(new TeamRequest { Op = "quest", Event = "xp", Quest = quest.m_questName, Title = title,
+                Text = $"{_team[i].Role} was level {school.Level}; given {xp:N0} XP to reach level {level} for this quest" });
+        }
+
+        _doing = $"catching up to level {level} for '{title}'";
     }
 
     private string _storyWorld;
@@ -594,11 +692,38 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         if (_storyWorld is not null) {
             var at = DateTime.Now.ToString("dddd d MMMM yyyy, HH:mm", System.Globalization.CultureInfo.InvariantCulture);
             Note("Team", $"WORLD COMPLETE: {_storyWorld} on {at}; on to {world}.");
+            Count("worlds completed");
             QuestTeamLink.Send(new TeamRequest { Op = "quest", Event = "world done", Quest = _storyWorld, Title = $"World {_storyWorld}",
                 Text = $"story finished on {at}; the team goes on to {world} (levels {string.Join(", ", _team.Select(m => $"{m.Role} {m.Wizard?.MagicSchoolBehavior?.Level ?? 0}"))})" });
         }
 
+        Snapshot(world);
         _storyWorld = world;
+    }
+
+    private List<string> _usernames = [];
+
+    // A copy of the team's accounts and wizards before each new world (Niduus, 2026-11-12: "a snapshot before each new
+    // world"), saved as Account Transfer files in the Quest Team folder's Snapshots, so a broken world can be undone by
+    // loading one in Ahziael's Account Transfer tab.
+    private void Snapshot(string world) {
+        var names = _usernames.ToList();
+        var folder = Path.Combine(QuestTeamWire.Folder, "Snapshots");
+        var stamp = DateTime.Now.ToString("yyyy-MM-dd HH-mm", System.Globalization.CultureInfo.InvariantCulture);
+        _ = System.Threading.Tasks.Task.Run(async () => {
+            try {
+                Directory.CreateDirectory(folder);
+                foreach (var username in names) {
+                    var file = await global::Imlight.RemoteAdmin.AccountTransfer.ExportAsync(Tools.RemoteAdmin.RemoteAdminServer.PlayerDatabaseHttp(), username, "Quest Team", null);
+                    var path = Path.Combine(folder, $"{stamp} before {world} - {username}{(global::Imlight.RemoteAdmin.AccountTransfer.EXTENSION)}");
+                    await File.WriteAllBytesAsync(path, global::Imlight.RemoteAdmin.AccountTransfer.ToBytes(file));
+                    Note("Team", $"SNAPSHOT before {world}: saved {Path.GetFileName(path)}.", QuestTeamLink.COMMAND);
+                }
+            }
+            catch (Exception ex) {
+                Note("Team", $"could not save the snapshot before {world}: {ex.Message}", QuestTeamLink.NOTABLE);
+            }
+        });
     }
 
     private string _apartQuestKey = "";
@@ -675,20 +800,28 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             return null;
         }
 
+        // A trainer right here: trained on the way. Otherwise a trip to Ravenwood when in Wizard City or when three wait.
+        var here = lessons.SelectMany(l => l.Lessons.Where(x => OverlayQuestTracker.SameZone(x.Zone, leader.Zone)).Select(x => (l.Member, Lesson: x))).FirstOrDefault();
         var inWizardCity = (leader.Zone ?? "").StartsWith("WizardCity/", StringComparison.OrdinalIgnoreCase);
-        if (!inWizardCity && lessons.Sum(l => l.Lessons.Count) < 3) {
+        if (here.Lesson is null && !inWizardCity && lessons.Sum(l => l.Lessons.Count) < 3) {
             _nextTraining = DateTime.UtcNow.AddSeconds(30);
 
             return null;
         }
 
-        if (!OverlayQuestTracker.SameZone(QuestTeamTraining.TRAINER_ZONE, leader.Zone)) {
+        if (here.Lesson is null && !OverlayQuestTracker.SameZone(QuestTeamTraining.TRAINER_ZONE, leader.Zone)) {
             return QuestTeamPlanner.Travel(leader, QuestTeamTraining.TRAINER_ZONE, "training");
         }
 
-        // The first lesson in the team's order; its trainer's spot.
-        var (member, list) = lessons[0];
-        var lesson = list[0];
+        // The first lesson in the team's order here; its trainer's spot.
+        var (member, lesson) = here.Lesson is not null ? here
+            : lessons.SelectMany(l => l.Lessons.Where(x => OverlayQuestTracker.SameZone(x.Zone, leader.Zone)).Select(x => (l.Member, Lesson: x))).FirstOrDefault();
+        if (lesson is null) {
+            _nextTraining = DateTime.UtcNow.AddSeconds(30);
+
+            return null;
+        }
+
         var live = MinimapIndex.In(leader.ZoneActor);
         var trainer = live.FirstOrDefault(m => m.Template == lesson.TrainerTemplate);
         var (x, y) = trainer is null ? (lesson.X, lesson.Y) : (trainer.Object.m_location.X, trainer.Object.m_location.Y);
@@ -1076,7 +1209,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             _regroupSeen = at;
             _regroupUntil = DateTime.UtcNow.AddSeconds(12);
             _target = null;
-            Note("Team", $"regroups ({why}); they go back to their fight together, in their order.");
+            Note("Team", $"regroups ({why}); they go back to their fight together, in their order.", QuestTeamLink.MINOR);
         }
 
         if (DateTime.UtcNow >= _regroupUntil) {
@@ -1127,6 +1260,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         if (!lost || index != 0) {
             if (index == 0) {
                 Note("Team", "won the battle.");
+                Count("battles won");
                 // Fights won for each step, to see how many kills a drop or a count takes (Niduus: "flag abnormal drops").
                 if (_target is { Kind: QuestTeamPlanner.FIGHT } fought) {
                     _fightsFor[fought.Key] = _fightsFor.GetValueOrDefault(fought.Key) + 1;
@@ -1138,7 +1272,8 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
 
         var key = _target?.Key ?? member.Zone;
         _losses[key] = _losses.GetValueOrDefault(key) + 1;
-        Note("Team", $"lost the battle ({_losses[key]} time(s) at this step).");
+        Note("Team", $"lost the battle ({_losses[key]} time(s) at this step).", QuestTeamLink.MINOR);
+        Count("battles lost");
         if (_losses[key] >= QuestTeamWire.LossesBeforeIssue) {
             Issue("quest", _target?.Quest, $"The team lost the fight for \"{_target?.What ?? "this step"}\" {_losses[key]} times.", key: key + "|losses" + (_losses[key] > QuestTeamWire.LossesBeforeIssue ? "|skip" : ""),
                 skipStep: _losses[key] > QuestTeamWire.LossesBeforeIssue);
@@ -1204,7 +1339,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                             Text = $"\"{done.GoalName}\" took {fights} battle(s) won" });
                         if (fights > DROP_FIGHTS_ODD) {
                             Issue("quest", quest.QuestName, $"The step \"{done.GoalName}\" took {fights} battles won to finish, far more than a player expects. " +
-                                                            "The drop chance or the creatures that count for it may be wrong.", key: "drops|" + quest.QuestName + "|" + done.GoalName, skipStep: false);
+                                                            "The drop chance or the creatures that count for it may be wrong.", key: "drops|" + quest.QuestName + "|" + done.GoalName, skipStep: false, level: QuestTeamLink.MINOR);
                         }
                     }
 
@@ -1223,6 +1358,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             if (!holder && finished) {
                 var seconds = (DateTime.UtcNow - run.Started).TotalSeconds;
                 Note("Team", $"FINISHED {run.Title} in {Minutes(seconds)}.");
+                Count("quests finished");
                 QuestTeamLink.Send(new TeamRequest { Op = "quest", Event = "done", Quest = run.Quest, Title = run.Title, World = run.World, Seconds = seconds });
                 _runs.Remove(run.Quest);
             }
@@ -1278,18 +1414,22 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         });
     }
 
-    private void Issue(string kind, string quest, string text, string key = null, bool skipStep = true) {
+    private void Issue(string kind, string quest, string text, string key = null, bool skipStep = true, string level = null) {
         key ??= kind + "|" + quest + "|" + text;
         if (_reported.ContainsKey(key)) {
             return;
         }
 
         _reported[key] = DateTime.UtcNow;
+        Count("issues raised");
         var template = string.IsNullOrEmpty(quest) ? null : QuestTemplateCollection.GetQuestByName(quest);
 
         // A broken step is not a dead end (Niduus, 2026-11-12: "Never stuck forever ... skip it with Ahziael's help, and move
         // on"): after the tries that raised this issue, Ahziael finishes the step for each of them and the run goes on.
-        if (kind == "quest" && skipStep && !string.IsNullOrEmpty(quest)) {
+        level ??= kind switch { "slow" => QuestTeamLink.MINOR, "team" => QuestTeamLink.CRITICAL, _ => QuestTeamLink.NOTABLE };
+        var skipping = kind == "quest" && skipStep && !string.IsNullOrEmpty(quest);
+        Note("Team", $"ISSUE{(string.IsNullOrEmpty(quest) ? "" : $" in {QuestTeamText.Title(quest)}")}: {text}", skipping ? QuestTeamLink.CRITICAL : level);
+        if (skipping) {
             for (var i = 0; i < _team.Count; i++) {
                 if (_team[i].Wizard?.HasQuest(quest) == true) {
                     _actors[i].Tell(new QuestTeamMember.SkipStep(quest));
@@ -1297,7 +1437,8 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             }
 
             text += " Ahziael finished the step for them so the run goes on (the step is marked broken).";
-            Note("Team", $"STEP SKIPPED (broken) in {QuestTeamText.Title(quest)}.");
+            Note("Team", $"STEP SKIPPED (broken) in {QuestTeamText.Title(quest)}: Ahziael finishes the step for them so the story goes on.", QuestTeamLink.COMMAND);
+            Count("broken steps skipped");
             QuestTeamLink.Send(new TeamRequest { Op = "quest", Event = "skipped", Quest = quest, Title = QuestTeamText.Title(quest), Text = "a broken step, finished by Ahziael" });
         }
 
@@ -1389,6 +1530,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                 ["questExpected"] = run is null ? 0 : (int) run.Expected,
                 ["lastProgress"] = _lastProgress.ToString("o"),
                 ["at"] = DateTime.UtcNow.ToString("o"),
+                ["today"] = Summary(),
                 ["members"] = members,
             };
             QuestTeamLink.Send(new TeamRequest { Op = "status", Json = status.ToJsonString() });
@@ -1398,7 +1540,34 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
     }
 
-    private static void Note(string who, string text) => QuestTeamLink.Note(who, text);
+    private static void Note(string who, string text, string level = null) => QuestTeamLink.Note(who, text, level);
+
+    // The day's tally, for Ahziael's Quest Team page and a summary at the end of each day (Niduus, 2026-11-12: "daily
+    // summary").
+    private readonly Dictionary<string, long> _today = new(StringComparer.Ordinal);
+    private DateTime _todayDate = DateTime.Now.Date;
+
+    private void Count(string what, long amount = 1) => _today[what] = _today.GetValueOrDefault(what) + amount;
+
+    private string Summary() {
+        var levels = string.Join(", ", _team.Select(m => $"{m.Role} {m.Wizard?.MagicSchoolBehavior?.Level ?? 0}"));
+        var counts = _today.Count == 0 ? "nothing yet" : string.Join(", ", _today.Select(c => $"{c.Value:N0} {c.Key}"));
+
+        return $"{counts}. Levels: {levels}.";
+    }
+
+    private void RollDay() {
+        if (DateTime.Now.Date == _todayDate) {
+            return;
+        }
+
+        var day = _todayDate.ToString("dddd d MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture);
+        var summary = Summary();
+        Note("Team", $"DAILY SUMMARY for {day}: {summary}");
+        QuestTeamLink.Send(new TeamRequest { Op = "quest", Event = "daily summary", Quest = "", Title = $"Day {day}", Text = summary });
+        _today.Clear();
+        _todayDate = DateTime.Now.Date;
+    }
 
     private static string Describe(QuestTeamPlanner.Target target) => target.Kind switch {
         QuestTeamPlanner.TALK => $"{target.What} ({QuestTeamText.Title(target.Quest)})",

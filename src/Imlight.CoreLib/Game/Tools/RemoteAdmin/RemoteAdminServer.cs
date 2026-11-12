@@ -747,7 +747,7 @@ public static class RemoteAdminServer {
     // Moving accounts (AccountTransfer)
     // ---------------------------------------------------------------------
 
-    private static RavenHttp PlayerDatabaseHttp() {
+    internal static RavenHttp PlayerDatabaseHttp() {
         if (!string.IsNullOrWhiteSpace(ConfigurationManager.GetValue("Database.PlayerDatabaseUrl", ""))) {
             throw new InvalidDataException("This server keeps its accounts in a database of its own, so accounts can't be moved from here.");
         }

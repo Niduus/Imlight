@@ -39,25 +39,52 @@ internal static class QuestTeamTraining {
 
     internal const string TRAINER_ZONE = "WizardCity/WC_Ravenwood";
 
-    // The spells each job trains outside its school, by name, first wanted first.
+    // The spells each job trains outside its school, by name, first wanted first. Training follows the team role, and every
+    // one of them can also fight alone for the solo story instances (Niduus, 2026-11-12: "Life heals, Ice protects and
+    // supplies, all must be able to solo later"): each has a heal and a shield of its own.
     private static readonly Dictionary<string, string[]> s_extra = new(StringComparer.OrdinalIgnoreCase) {
-        ["Ice"] = ["Feint"],
-        ["Life"] = ["Tower Shield"],
-        ["Death"] = [],
-        ["Storm"] = [],
+        ["Ice"] = ["Feint", "Tower Shield", "Sprite", "Fairy"],
+        ["Life"] = ["Tower Shield", "Feint"],
+        ["Death"] = ["Feint", "Sprite", "Tower Shield", "Fairy"],
+        ["Storm"] = ["Sprite", "Tower Shield", "Fairy"],
     };
 
-    internal sealed record Lesson(uint TrainerTemplate, uint SpellId, string Spell, float X, float Y);
+    internal sealed record Lesson(uint TrainerTemplate, uint SpellId, string Spell, float X, float Y, string Zone = TRAINER_ZONE);
 
-    /// <summary>What this wizard can learn at the Ravenwood trainers right now, own school first.</summary>
+    /// <summary>
+    /// What this wizard can learn right now, own school first: at the trainers of the area it stands in (any trainer the
+    /// team can reach, Niduus, 2026-11-12: "able to visit other trainers that are accessible and learn spells that are
+    /// accessible at their level and if they have a training point"), then at the Ravenwood trainers.
+    /// </summary>
     internal static List<Lesson> Learnable(QuestTeamMember.Status member) {
         var lessons = new List<Lesson>();
         if (member.Wizard is not { } wizard) {
             return lessons;
         }
 
+        var zones = new List<string>();
+        if (!string.IsNullOrEmpty(member.Zone) && member.Wizard?.ZoneIsInstance != true) {
+            zones.Add(member.Zone);
+        }
+
+        if (!zones.Any(z => string.Equals(z, TRAINER_ZONE, StringComparison.OrdinalIgnoreCase))) {
+            zones.Add(TRAINER_ZONE);
+        }
+
         try {
-            var placed = QuestStepSpots.Zone(TRAINER_ZONE).Objects;
+            foreach (var zone in zones) {
+                Add(zone);
+            }
+        }
+        catch (Exception e) {
+            Imlight.Common.Logger.Debug("Quest Team: could not read the trainers: {0}", Imlight.Common.Logger.Args(e.Message));
+        }
+
+        return [.. lessons.DistinctBy(l => l.SpellId)
+            .OrderBy(l => string.Equals(SchoolOfSpell(l.SpellId), member.Role, StringComparison.OrdinalIgnoreCase) ? 0 : 1)];
+
+        void Add(string zone) {
+            var placed = QuestStepSpots.Zone(zone).Objects ?? [];
             var extra = s_extra.GetValueOrDefault(member.Role) ?? [];
             foreach (var trainer in VanillaTrainers.All) {
                 var spot = placed.FirstOrDefault(o => o.Template == trainer.TemplateId);
@@ -81,15 +108,10 @@ internal static class QuestTeamTraining {
                         continue;
                     }
 
-                    lessons.Add(new Lesson(trainer.TemplateId, spell.Id, QuestTeamText.SpellName(spell.Id), spot.Spot.X, spot.Spot.Y));
+                    lessons.Add(new Lesson(trainer.TemplateId, spell.Id, QuestTeamText.SpellName(spell.Id), spot.Spot.X, spot.Spot.Y, zone));
                 }
             }
         }
-        catch (Exception e) {
-            Imlight.Common.Logger.Debug("Quest Team: could not read the trainers: {0}", Imlight.Common.Logger.Args(e.Message));
-        }
-
-        return [.. lessons.DistinctBy(l => l.SpellId).OrderBy(l => string.Equals(SchoolOfSpell(l.SpellId), member.Role, StringComparison.OrdinalIgnoreCase) ? 0 : 1)];
     }
 
     /// <summary>The index of a spell in a trainer's list (as its training window shows it), or -1.</summary>

@@ -32,6 +32,7 @@ internal sealed partial class ManagerWindow {
 
     private readonly TextBlock _teamState = new() { TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold };
     private readonly TextBlock _teamDoing = new() { TextWrapping = TextWrapping.Wrap };
+    private readonly TextBlock _teamToday = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _teamQuest = new() { TextWrapping = TextWrapping.Wrap };
     private readonly StackPanel _teamMembers = new() { Spacing = 6 };
     private readonly ToggleSwitch _teamEnabled = new() { OnContent = "On", OffContent = "Off" };
@@ -44,7 +45,8 @@ internal sealed partial class ManagerWindow {
     private readonly DispatcherTimer _teamTimer = new() { Interval = TimeSpan.FromSeconds(3) };
     private readonly Border _teamBanner = new() { IsVisible = false };
     private readonly TextBlock _teamBannerText = new() { TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center };
-    private TextBox? _teamLogBox;
+    private SelectableTextBlock? _teamLogBox;
+    private ScrollViewer? _teamLogScroll;
     private TextBox? _teamQuestLogBox;
     private string _teamLogText = "";
     private string _teamQuestLogText = "";
@@ -107,12 +109,13 @@ internal sealed partial class ManagerWindow {
                 "Life (heals and supports), Death (backup hitter and support) and Storm (hits and blades itself). They start at " +
                 "level 1 in Wizard City and play the story like players do: they walk everywhere (no teleporting), talk to the " +
                 "quest givers, fight as a team, and walk to the Ravenwood trainers to learn spells with their own training points " +
-                "(Ice also learns Feint, Life also learns Tower Shield). When a quest does not work, when they are stuck, or when a " +
+                "(each also learns the spells its team role needs plus a heal and a shield of its own, so it can fight alone). When a quest does not work, when they are stuck, or when a " +
                 "quest takes much longer than it should, a banner at the top of Ahziael says so and Team Issues shows what happened. " +
                 "They run in a little program of their own next to the server; they never touch your own wizards.",
                 _teamState,
                 SwitchRow("Quest Team", _teamEnabled, "On: the four wizards log in a few seconds later and start questing. Off: they log out."),
                 _teamDoing,
+                _teamToday,
                 _teamQuest,
                 _teamMembers,
                 Row(Action(Plain("Pause or resume"), PauseQuestTeamAsync), Action(Plain("Stop and save"), StopQuestTeam), Action(Plain("Restart with four new wizards"), RestartQuestTeamAsync), Action(Plain("Open its folder"), () => {
@@ -319,10 +322,11 @@ internal sealed partial class ManagerWindow {
             IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12.5,
             Height = 300, Text = "Turn the Quest Team on and start the server; every quest it starts and finishes is written here.",
         };
-        _teamLogBox = new TextBox {
-            IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12.5,
-            Height = 420, Text = "Turn the Quest Team on and start the server; what each wizard does is written here.",
+        _teamLogBox = new SelectableTextBlock {
+            TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12.5, Margin = new Thickness(10, 8),
+            Text = "Turn the Quest Team on and start the server; what each wizard does is written here.",
         };
+        _teamLogScroll = new ScrollViewer { Height = 420, Content = _teamLogBox, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
 
         return Page(
             Fold("flag", QUEST_TEAM_TAB, "Quest log",
@@ -332,7 +336,8 @@ internal sealed partial class ManagerWindow {
             Fold("users", QUEST_TEAM_TAB, "Team log",
                 "What each wizard does: where they walk, who they talk to, what they train, each spell they cast in a battle, and " +
                 "why they wait. Updated every 3 seconds.",
-                LogWell(_teamLogBox),
+                TeamLogColors(),
+                LogWell(_teamLogScroll),
                 Row(Action(Plain("Copy all"), () => CopyAsync(_teamLogText)), Action(Plain("Open its folder"), () => {
                     Directory.CreateDirectory(QuestTeamFolder);
 
@@ -430,7 +435,7 @@ internal sealed partial class ManagerWindow {
         }
 
         if (_teamLogBox?.IsEffectivelyVisible == true) {
-            ShowLog(_teamLogBox, ReadNewest("quest-team*.txt", _teamLogText), ref _teamLogText);
+            ShowColoredLog(ReadNewest("quest-team*.txt", _teamLogText));
             ShowLog(_teamQuestLogBox!, ReadNewest("quest-log.txt", _teamQuestLogText), ref _teamQuestLogText);
         }
 
@@ -442,6 +447,58 @@ internal sealed partial class ManagerWindow {
             shown = text;
             box.Text = string.Join('\n', text.Split('\n').TakeLast(QUEST_TEAM_LOG_LINES));
             box.CaretIndex = box.Text.Length;
+        }
+    }
+
+    // Team log colours (Niduus, 2026-11-12): white normal; yellow minor (does not hold the quest back); orange notable (could
+    // stop a quest finishing); red critical (stops or stopped the story, fix it now); cyan a command Ahziael ran for them,
+    // with the reason. The server tags each line with the word (QuestTeamLink.Note), so a copied log still says it.
+    private static readonly (string Tag, string Color, string Meaning)[] s_teamLogLevels = [
+        ("CRITICAL", "#FF5A5A", "Red: critical, stops or stopped the story, fix it now"),
+        ("NOTABLE", "#FFA040", "Orange: notable, could stop a quest from finishing"),
+        ("MINOR", "#FFE45C", "Yellow: minor, does not hold the quest back"),
+        ("COMMAND", "#5CE1FF", "Cyan: something Ahziael did for them, and why"),
+    ];
+
+    private static IBrush TeamLogBrush(string line) {
+        foreach (var (tag, color, _) in s_teamLogLevels) {
+            if (line.Contains(": " + tag + ": ", StringComparison.Ordinal)) {
+                return new SolidColorBrush(Color.Parse(color));
+            }
+        }
+
+        return ManagerTheme.TEXT_BRUSH;
+    }
+
+    private static Control TeamLogColors() {
+        var row = new WrapPanel();
+        row.Children.Add(new TextBlock { Text = "White: normal", Foreground = ManagerTheme.TEXT_BRUSH, Margin = new Thickness(0, 0, 16, 4), FontSize = ManagerTheme.FONT_SMALL });
+        foreach (var (_, color, meaning) in s_teamLogLevels) {
+            row.Children.Add(new TextBlock { Text = meaning, Foreground = new SolidColorBrush(Color.Parse(color)), Margin = new Thickness(0, 0, 16, 4), FontSize = ManagerTheme.FONT_SMALL });
+        }
+
+        return row;
+    }
+
+    private void ShowColoredLog(string text) {
+        if (_teamLogBox is null || text == _teamLogText || text.Length == 0) {
+            return;
+        }
+
+        _teamLogText = text;
+        var atEnd = _teamLogScroll is null || _teamLogScroll.Offset.Y >= _teamLogScroll.Extent.Height - _teamLogScroll.Viewport.Height - 20;
+        var inlines = new Avalonia.Controls.Documents.InlineCollection();
+        foreach (var line in text.Split('\n').TakeLast(QUEST_TEAM_LOG_LINES)) {
+            if (inlines.Count > 0) {
+                inlines.Add(new Avalonia.Controls.Documents.LineBreak());
+            }
+
+            inlines.Add(new Avalonia.Controls.Documents.Run(line.TrimEnd('\r')) { Foreground = TeamLogBrush(line) });
+        }
+
+        _teamLogBox.Inlines = inlines;
+        if (atEnd) {
+            _teamLogScroll?.ScrollToEnd();
         }
     }
 
@@ -493,12 +550,13 @@ internal sealed partial class ManagerWindow {
             : "Starting: the server starts the Quest Team within a few seconds, then the four wizards log in one after the other.";
         _teamState.Foreground = running && on && live ? ManagerTheme.Accent("good") : MUTED;
 
-        _teamDoing.IsVisible = _teamQuest.IsVisible = _teamMembers.IsVisible = running && on && live;
+        _teamDoing.IsVisible = _teamToday.IsVisible = _teamQuest.IsVisible = _teamMembers.IsVisible = running && on && live;
         if (!_teamDoing.IsVisible) {
             return;
         }
 
         _teamDoing.Text = "Doing now: " + ((string?) status!["doing"] ?? "-");
+        _teamToday.Text = "Today so far: " + ((string?) status["today"] ?? "nothing yet.");
         var quest = (string?) status["quest"] ?? "";
         var questFor = (int?) status["questFor"] ?? 0;
         var expected = (int?) status["questExpected"] ?? 0;

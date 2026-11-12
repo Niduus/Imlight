@@ -92,8 +92,37 @@ internal static class QuestTeamRoster {
         }
 
         Write(new Saved { Generation = saved?.Generation ?? 1, Made = saved?.Made ?? DateTime.UtcNow, Members = members });
+        MakeFriends(members);
 
         return members;
+    }
+
+    /// <summary>
+    /// The four are friends with each other (Niduus, 2026-11-12: "QT will friend each other"), so their friends lists
+    /// show the team and one left alone can try to go to the others.
+    /// </summary>
+    internal static void MakeFriends(List<Member> members) {
+        foreach (var member in members) {
+            try {
+                if (WizardCollection.GetCharacter(member.CharId) is not { FriendsBehavior: not null } wizard) {
+                    continue;
+                }
+
+                var added = false;
+                foreach (var other in members.Where(o => o.CharId != member.CharId)) {
+                    if (!wizard.FriendsBehavior.HasRelationshipWith(other.CharId)) {
+                        added |= wizard.AddOrRepairRelationship(other.CharId);
+                    }
+                }
+
+                if (added) {
+                    WizardCollection.UpdateCharacterFriendBehavior(wizard);
+                }
+            }
+            catch (Exception ex) {
+                Logger.Warning("Quest Team: could not friend {0} with the team: {1}", Logger.Args(member.Name, ex.Message));
+            }
+        }
     }
 
     /// <summary>A team wizard made before v0.10.819 had no race, so the game showed pet names over it: made human.</summary>

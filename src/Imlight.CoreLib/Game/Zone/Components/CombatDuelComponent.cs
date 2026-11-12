@@ -2141,6 +2141,12 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
+        // The Quest Team never joins a battle with someone else's wizard in it (Niduus, 2026-11-12: "never join battles
+        // that have players in them"); walking past one, they keep walking.
+        if (isPlayer && QuestTeamRefusesBattle(participantObject)) {
+            return;
+        }
+
         if (isPlayer && !TryClaimPlayer(participantObject)) {
             return;
         }

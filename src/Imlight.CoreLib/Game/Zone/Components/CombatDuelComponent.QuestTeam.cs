@@ -50,6 +50,24 @@ internal sealed partial class CombatDuelComponent {
     private IEnumerable<CombatDuelSubCircle> QuestTeamCircles
         => SubCircles.Where(c => c is { Occupied: true, AddedToDuel: true, IsAlive: true } && QuestTeamRole(c) is not null);
 
+    // A Quest Team wizard stays out of a battle any other wizard (a player or a street bot) is already in.
+    private bool QuestTeamRefusesBattle(Imcodec.ObjectProperty.TypeCache.CoreObject joiner) {
+        if (QuestTeamDirector.RoleOf(joiner.m_globalID.Full) is null) {
+            return false;
+        }
+
+        var outsider = SubCircles.FirstOrDefault(c => c is { Occupied: true, IsSummonedMinion: false } && QuestTeamRole(c) is null
+                                                      && (c.IsHumanPlayer || IsBot(c)));
+        if (outsider is null) {
+            return false;
+        }
+
+        Logger.Debug("Duel {0} | Quest Team wizard {1} stays out: {2} is already in this battle.",
+            Logger.Args(Duel.m_duelID.Full, joiner.m_debugName, outsider.ParticipantObject.m_debugName));
+
+        return true;
+    }
+
     private static readonly string[] s_questTeamOrder = ["Ice", "Life", "Death", "Storm"];
 
     /// <summary>
