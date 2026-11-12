@@ -51,6 +51,15 @@ internal static class TeamUpWorlds {
         public uint Id { get; } = StringHash.Compute(ButtonName);
     }
 
+    // Tabs of worlds newer than some players' game (Ahmarra, 2026-11-12): sent to the game only when its files have the
+    // world, so a Wizard101 from before that update never gets a tab it doesn't know.
+    private static readonly HashSet<string> s_newWorlds = new(["Ahmarra"], StringComparer.Ordinal);
+
+    /// <summary>The tabs this game has: every tab, less a newer world the game files don't have yet.</summary>
+    internal static IEnumerable<World> InThisGame
+        => All.Where(w => !w.Paths.Any(s_newWorlds.Contains)
+            || w.Paths.Any(p => Imlight.CoreLib.Game.World.WorldHubZones.GetHubForZone(p) is not null));
+
     // TeamHelpWorldInfo.xml, in its own order. Dungeons (G14 and the monthly events) and Skeleton Key come first by
     // path so their dungeons are not filed under the world they stand in.
     internal static readonly IReadOnlyList<World> All = [
