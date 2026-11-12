@@ -362,6 +362,8 @@ public static class RemoteAdminServer {
                 reply ??= RemoteAdminWire.Ok();
                 reply["required"] = OverlayGate.Required;
                 reply["every"] = OverlayGate.BEAT_SECONDS;
+                // What this server can do for the overlay beyond the beat (an older one hangs up on anything else).
+                reply["features"] = new JsonArray("cmd", "map");
                 reply["id"] = header["id"]?.DeepClone();
                 // The server's own texts and boxes, sent again only when they changed since the overlay last got them.
                 var (stamp, design) = OverlayGate.ServerDesign();
@@ -380,6 +382,12 @@ public static class RemoteAdminServer {
                 if (op == "cmd") {
                     // An overlay button: a command or cheat for the wizard in that game window only.
                     reply = await OverlayLinks.RunAsync(id, windows, header, address);
+                    continue;
+                }
+
+                if (op == "map") {
+                    // The minimap of one game window (OverlayMinimap): about once a second while it shows.
+                    reply = await OverlayLinks.MapAsync(id, windows, header, address);
                     continue;
                 }
 

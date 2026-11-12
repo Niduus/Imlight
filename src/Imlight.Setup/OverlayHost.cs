@@ -348,6 +348,7 @@ internal static class OverlayHost {
 
         Link.Load(s_installFolder);
         LoadFromServer();
+        OverlayMinimapData.Tick();
         if (!TryTakeTurn()) {
             return;
         }
@@ -427,6 +428,10 @@ internal static class OverlayHost {
         }
 
         GameWindows = s_windows.Count;
+
+        // The game windows whose overlay shows a minimap: the link asks the server for their maps.
+        var wantsMap = (ShowsMine(s_design) && OverlayRenderer.HasMinimap(s_design.Elements)) || OverlayRenderer.HasMinimap(ServerElements);
+        OverlayMinimapData.Wanted = wantsMap ? [.. s_windows.Keys.Select(w => w.ToInt64())] : [];
     }
 
     // The game's own moves, resizes, shows and hides reach the overlay as they happen, not only on the next tick.
@@ -650,6 +655,7 @@ internal static class OverlayHost {
         private readonly List<Hit> _hits = [];
         private Native.POINT _origin;
         private int _drawnVersion = -1;
+        private int _drawnMap = -1;
         private (int W, int H, double Scale) _drawnSize;
         private double _buttonScale;
         private Native.RECT _placed;
@@ -866,8 +872,12 @@ internal static class OverlayHost {
                 Y = place.Bottom - buttonPixels - (int) Math.Round(BUTTON_MARGIN * scale),
             };
 
-            if (version != _drawnVersion || _drawnSize != (width, height, scale)) {
-                var picture = OverlayRenderer.Build(design, new OverlayRenderer.Words(Version, Link.ServerLabel), showMine: ShowsMine(design), server: WithNotice(game));
+            // A minimap's new map from the server draws it again too (about twice a second while one shows).
+            var map = OverlayMinimapData.VersionOf(game.ToInt64());
+            if (version != _drawnVersion || map != _drawnMap || _drawnSize != (width, height, scale)) {
+                _drawnMap = map;
+                var picture = OverlayRenderer.Build(design, new OverlayRenderer.Words(Version, Link.ServerLabel), showMine: ShowsMine(design), server: WithNotice(game),
+                    window: game.ToInt64());
                 // Laid out on the design's 1280 x 720 terms and drawn bigger or smaller to fit this window.
                 var fit = OverlayDesign.Fit(width / scale, height / scale);
                 Draw(_hwnd, Render(picture, width, height, scale * fit), width, height, origin);
@@ -1029,6 +1039,14 @@ internal static class OverlayHost {
 
         internal static bool Connected { get; private set; }
 
+        /// <summary>Whether the linked server sends minimap data (an older Imlight hangs up on op "map").</summary>
+        internal static bool SendsMap { get; private set; }
+
+        private static DateTime s_nextMap = DateTime.MinValue;
+
+        // How often each game window's minimap is asked for.
+        private static readonly TimeSpan s_mapEvery = TimeSpan.FromMilliseconds(500);
+
         /// <summary>What the server said last: true when it needs the overlay, null when it has not answered.</summary>
         internal static bool? Required { get; private set; }
 
@@ -1184,6 +1202,7 @@ internal static class OverlayHost {
                 }
 
                 Connected = false;
+                SendsMap = false;
                 try {
                     await Task.Delay(TimeSpan.FromSeconds(target is null ? 1 : 10), retarget.Token);
                 }
@@ -1227,19 +1246,31 @@ internal static class OverlayHost {
                     Connected = true;
                     Listen(reply);
 
-                    // Until the next beat, overlay buttons' commands go over this same connection, each answered at once.
+                    // Until the next beat, overlay buttons' commands go over this same connection, each answered at once,
+                    // and the minimaps' maps are asked for.
                     var every = Math.Clamp((int?) reply["every"] ?? 5, 2, 30);
                     var beatAt = DateTime.UtcNow + TimeSpan.FromSeconds(every);
                     while (DateTime.UtcNow < beatAt) {
-                        Pending press;
-                        using (var nap = CancellationTokenSource.CreateLinkedTokenSource(stop)) {
-                            nap.CancelAfter(beatAt - DateTime.UtcNow);
+                        var mapAt = SendsMap && OverlayMinimapData.Wanted.Length > 0 ? s_nextMap : DateTime.MaxValue;
+                        var wakeAt = mapAt < beatAt ? mapAt : beatAt;
+                        Pending? press = null;
+                        var napFor = wakeAt - DateTime.UtcNow;
+                        if (napFor > TimeSpan.Zero) {
+                            using var nap = CancellationTokenSource.CreateLinkedTokenSource(stop);
+                            nap.CancelAfter(napFor);
                             try {
                                 press = await s_presses.Reader.ReadAsync(nap.Token);
                             }
                             catch (OperationCanceledException) when (!stop.IsCancellationRequested) {
-                                break;
                             }
+                        }
+
+                        if (press is null) {
+                            if (DateTime.UtcNow >= mapAt) {
+                                await AskMapsAsync(tls, stop);
+                            }
+
+                            continue;
                         }
 
                         // A click from before a dropped connection is not run late.
@@ -1264,6 +1295,7 @@ internal static class OverlayHost {
             }
             finally {
                 Connected = false;
+                SendsMap = false;
                 // A server from before overlay buttons hangs up on them.
                 s_current?.Answer.TrySetResult(new OverlayCommands.Result(false,
                     "The server hung up. Its Imlight may be too old for command and cheat buttons: ask the host to update it.", []));
@@ -1271,8 +1303,23 @@ internal static class OverlayHost {
             }
         }
 
+        // Each game window's minimap, one after the other on this connection.
+        private static async Task AskMapsAsync(SslStream tls, CancellationToken stop) {
+            s_nextMap = DateTime.UtcNow + s_mapEvery;
+            foreach (var window in OverlayMinimapData.Wanted) {
+                await RemoteAdminWire.WriteAsync(tls, new JsonObject { ["op"] = "map", ["window"] = window, ["have"] = s_have }, null, stop);
+                using var answerWait = CancellationTokenSource.CreateLinkedTokenSource(stop);
+                answerWait.CancelAfter(TimeSpan.FromSeconds(10));
+                var (answer, _) = await RemoteAdminWire.ReadAsync(tls, 1 << 20, 0, answerWait.Token);
+                OverlayMinimapData.Heard(window, answer);
+            }
+
+            s_nextMap = DateTime.UtcNow + s_mapEvery;
+        }
+
         // What a beat's answer says: whether the server needs the overlay, and its own texts and boxes.
         private static void Listen(JsonObject reply) {
+            SendsMap = reply["features"] is JsonArray features && features.Any(f => f?.GetValueKind() == System.Text.Json.JsonValueKind.String && (string?) f == "map");
             Required = reply["required"]?.GetValue<bool>();
             // The server's own texts and boxes; a server without any (or from before they existed) says "none".
             var stamp = (string?) reply["designStamp"] ?? "none";

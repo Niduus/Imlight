@@ -266,6 +266,39 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
         });
     }
 
+    [InternalMessageHandler(typeof(OverlayMapAsk))]
+    private void ReceiveOverlayMapAsk(OverlayMapAsk message) {
+        var wizard = GetActiveWizard();
+        if (wizard is null || GetActiveGameObject() is null) {
+            return;
+        }
+
+        var zone = SessionActor.GetZoneActor();
+        if (wizard.CharId != message.CharId) {
+            if (zone is not null) {
+                var spot = wizard.Location;
+                message.Others.Enqueue((wizard.CharId, zone, wizard.PlayerNameBehavior?.GetWizardName() ?? "", spot.X, spot.Y));
+            }
+
+            return;
+        }
+
+        // Only for the PC the game runs on, like the overlay's buttons.
+        if (Tools.OverlayGate.Normalize(SessionActor.Ip ?? SessionActor.RemoteIp) != message.Address) {
+            message.Reply.TrySetResult((null, null, "That wizard is playing from another PC. The minimap only works for the game on this PC."));
+
+            return;
+        }
+
+        try {
+            message.Reply.TrySetResult((Tools.OverlayMinimap.Build(wizard, zone), zone, ""));
+        }
+        catch (Exception ex) {
+            Logger.Error("Minimap: the map of {0} could not be made: {1}", Logger.Args(wizard.CharId, ex));
+            message.Reply.TrySetResult((null, null, "The server could not make the map just now."));
+        }
+    }
+
     [InternalMessageHandler(typeof(OverlayWizardsAt))]
     private void ReceiveOverlayWizardsAt(OverlayWizardsAt message) {
         var wizard = GetActiveWizard();
