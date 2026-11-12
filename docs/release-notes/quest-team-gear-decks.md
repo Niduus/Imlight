@@ -122,3 +122,23 @@ New: Daily summary and alerts over the game
 - A dialog that keeps going for over a minute without ending is reported (orange).
 Where: Quest Team > Quest Team; the game overlay; Team Issues
 Test: Look at "Today so far" on the Quest Team page. With the overlay on, a new team issue should show over your game.
+
+Fixed: Restart in the Quest Team page failed
+Pressing "Restart with four new wizards" could end with "The Quest Team's wizards could not be made or loaded". The database still listed the old accounts for a moment after they were deleted, so the new ones were never made. Now the team waits until the old accounts are really gone (and the new ones are saved) before going on.
+Where: Quest Team > Quest Team > Restart with four new wizards
+Test: Press Restart. Within about half a minute Team log should say "Restart: four new level 1 wizards were made", and the four should log in.
+
+Fixed: Team log said "next: Defeat ..." every second
+A creature that walks about made the team announce the same step again and again. Now each step is said once.
+Where: Quest Team > Team Logs
+Test: Watch a fighting step. "next: Defeat ..." should show once.
+
+New: A way that loops is reported
+If the leader goes in and out of areas 8 times in 90 seconds without reaching the step (like walking between two areas with the same name), it is reported as an issue and the step is skipped so the run goes on.
+Where: Quest Team > Team Issues
+Test: Nothing to set up; if it happens, Team Issues shows "goes round in a loop".
+
+New: OK button on Quest Team alerts over the game
+The Quest Team alert that shows over your game now has an OK button under it. Click it to take the alert away.
+Where: over the game, in the overlay
+Test: When a Quest Team alert shows over the game, click OK. It should go away.

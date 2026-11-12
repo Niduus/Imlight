@@ -370,7 +370,15 @@ internal static class OverlayHost {
             Background = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#E0140F28" },
         };
 
-        return [note, .. ServerElements];
+        // An OK button under it takes it away (Niduus, 2026-11-12: "give okay button to remove this notification").
+        var ok = new OverlayElement {
+            Kind = OverlayElement.BUTTON, Name = "Ahziael note OK", Text = "OK", Action = OverlayAction.DISMISS_NOTE, Anchor = OverlayAnchor.Top,
+            Y = 128, Size = 16, Bold = true, Padding = 8, CornerRadius = 8, Layer = 99, Shadow = true, BorderColor = "#C0FFD24A", BorderWidth = 1.5,
+            Fill = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#FFFFFFFF" },
+            Background = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#E0352A6B" },
+        };
+
+        return [note, ok, .. ServerElements];
     }
 
     private static DateTime s_teamIssuesTime;
