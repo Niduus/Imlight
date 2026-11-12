@@ -200,23 +200,27 @@ internal static class QuestTeamTactics {
         return trap is null ? null : new(Move.Cast, trap.Index, trap.Card.TrapAll ? -1 : on.SlotIndex, $"traps {Name(on)} with {trap.Card.Shown}");
     }
 
-    // A blade on a teammate who is hitting (Storm first).
+    // A blade on the team's designated hitters only: Storm first, then Death (Niduus, 2026-11-12: "I see them all blading
+    // the first player instead of the designated hitters"). Ice and Life are never bladed by a teammate.
     private static Choice BladeFor(CombatDuelSubCircle me, List<InHand> hand, List<CombatDuelSubCircle> allies,
                                    List<(CombatDuelSubCircle Who, Card Card, CombatDuelSubCircle On)> hits) {
-        foreach (var (who, card, _) in hits.OrderByDescending(h => RewrittenAI.Same(RewrittenAI.SchoolOf(h.Who), "Storm"))) {
-            var blade = hand.FirstOrDefault(h => h.Card.Blade && (h.Card.BladeForTeammate || h.Card.BladeWholeTeam) && Fits(h.Card.BladeSchool, card.DamageSchool));
+        foreach (var role in new[] { "Storm", "Death" }) {
+            var hitter = allies.FirstOrDefault(a => a != me && a.IsAlive
+                                                    && QuestTeamDirector.RoleOf(a.ParticipantObject?.m_globalID.Full ?? 0) == role);
+            if (hitter is null) {
+                continue;
+            }
+
+            // The school of the hit it has queued, else its own school.
+            var school = hits.Where(h => h.Who == hitter).Select(h => h.Card.DamageSchool).FirstOrDefault() ?? RewrittenAI.SchoolOf(hitter);
+            var blade = hand.FirstOrDefault(h => h.Card.Blade && (h.Card.BladeForTeammate || h.Card.BladeWholeTeam)
+                                                 && Fits(h.Card.BladeSchool, school) && !RewrittenAI.HasEffectOfSpell(hitter, h.Card.Id));
             if (blade is not null) {
-                return new(Move.Cast, blade.Index, blade.Card.BladeWholeTeam ? -1 : who.SlotIndex, $"blades {Name(who)} for their {card.Shown}");
+                return new(Move.Cast, blade.Index, blade.Card.BladeWholeTeam ? -1 : hitter.SlotIndex, $"blades {Name(hitter)} ({role}) with {blade.Card.Shown}");
             }
         }
 
-        // Nobody hitting yet: a blade on the Storm wizard, for its next hit.
-        var storm = allies.FirstOrDefault(a => a != me && RewrittenAI.Same(RewrittenAI.SchoolOf(a), "Storm"));
-        var stormBlade = storm is null ? null : hand.FirstOrDefault(h => h.Card.Blade && (h.Card.BladeForTeammate || h.Card.BladeWholeTeam)
-                                                                         && Fits(h.Card.BladeSchool, "Storm") && !RewrittenAI.HasEffectOfSpell(storm, h.Card.Id));
-
-        return stormBlade is null ? null : new(Move.Cast, stormBlade.Index, stormBlade.Card.BladeWholeTeam ? -1 : storm.SlotIndex,
-            $"blades {Name(storm)} with {stormBlade.Card.Shown}");
+        return null;
     }
 
     private static Choice SelfBlade(CombatDuelSubCircle me, List<InHand> hand) {

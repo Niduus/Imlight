@@ -71,6 +71,12 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
     /// <summary>Take an item off into the backpack, as the game's backpack does.</summary>
     internal sealed record Unequip(ulong ItemId, string Slot, string What);
 
+    /// <summary>Leave the battle, as the Flee button does.</summary>
+    internal sealed record Flee;
+
+    /// <summary>Press the Dungeon Recall button.</summary>
+    internal sealed record UseDungeonRecall;
+
     /// <summary>Buy one item at a shop (the shopkeeper by global id), as the shop window does.</summary>
     internal sealed record Buy(ulong NpcGlobalId, uint ItemTemplate, string What);
 
@@ -201,6 +207,10 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
             Note($"puts on {m.What}.");
             Send(new GAME_5_PROTOCOL.MSG_EQUIPITEM { IsEquip = 1, ItemID = m.ItemId, SlotName = m.Slot });
         });
+        Receive<Flee>(_ => Send(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATMOVE {
+            MoveType = (byte) Combat.CombatMoveType.Flee, SpellSelection = 0, SpellTarget = 0, TimeLeft = 0,
+        }));
+        Receive<UseDungeonRecall>(_ => Send(new WIZARD2_53_PROTOCOL.MSG_RESUMEINSTANCETELEPORTPLAYER()));
         Receive<Unequip>(m => {
             Note($"takes off {m.What} (developers' gear is not for the team).");
             Send(new GAME_5_PROTOCOL.MSG_EQUIPITEM { IsEquip = 0, ItemID = m.ItemId, SlotName = m.Slot });

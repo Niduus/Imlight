@@ -42,3 +42,13 @@ Changed: Quest Team only plays the main story worlds
 The team only does quests in the main story worlds (Wizard City, Krokotopia, Marleybone, MooShu, Dragonspyre, Celestia and on). It skips Grizzleheim, Wintertusk, Wysteria, Aquila and Darkmoor.
 Where: Quest Team > Quest Team
 Test: Let the team play. "Doing now" and Team log should never send them to Grizzleheim, Wintertusk or Wysteria.
+
+New: Quest Team keeps its fixed formation
+The team always stands Ice 1st, Life 2nd, Death 3rd and Storm 4th in battle. If anyone else (a player or a bot) takes one of their places, or one of them ends up out of order, all of them flee, gather by Ice, and go back to the fight together in order. If fleeing put them out of a dungeon, they use Dungeon Recall to go back in, Ice first.
+Where: Quest Team > Team Logs ("leaves the battle to keep its formation", "regroups")
+Test: Walk into a Quest Team battle with your own wizard. They should all flee, gather, and start the fight again without you.
+
+Fixed: Quest Team blades the right wizards
+Teammates now only blade the team's hitters, Storm first and then Death. They used to blade whoever was in the first circle.
+Where: in a Quest Team battle
+Test: Watch a Quest Team fight. Life and Ice should put blades on Storm (or Death), never on Ice.

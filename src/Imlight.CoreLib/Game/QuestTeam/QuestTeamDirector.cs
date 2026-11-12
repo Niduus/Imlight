@@ -95,6 +95,19 @@ internal static class QuestTeamDirector {
         s_members = [];
     }
 
+    private static long s_formationBrokeAt;
+    private static volatile string s_formationWhy = "";
+
+    /// <summary>A battle saw the team's formation broken and the team fled (CombatDuelComponent.QuestTeam.cs).</summary>
+    internal static void FormationBroke(string why) {
+        s_formationWhy = why ?? "";
+        System.Threading.Interlocked.Exchange(ref s_formationBrokeAt, DateTime.UtcNow.Ticks);
+    }
+
+    /// <summary>When the formation last broke (UTC), and why.</summary>
+    internal static (DateTime At, string Why) LastFormationBreak
+        => (new DateTime(System.Threading.Interlocked.Read(ref s_formationBrokeAt), DateTimeKind.Utc), s_formationWhy);
+
     /// <summary>The team's four wizards as they are now (for .questteam tp), empty while the team is not playing.</summary>
     internal static IReadOnlyList<QuestTeamMember.Status> Members => s_members;
 
@@ -285,6 +298,11 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
 
         KeepGrouped();
         UsePotions();
+
+        // The formation broke in a battle and they fled: they gather again before anything else.
+        if (Regroup()) {
+            return;
+        }
 
         // A battle: the ones not in it join, in the team's order.
         if (HandleBattle()) {
@@ -869,6 +887,58 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             WalkTo(index, new QuestTeamPlanner.Target("battle", battle.X, battle.Y, "joins the battle", Key: "battle"));
 
             break;
+        }
+
+        return true;
+    }
+
+    private DateTime _regroupSeen = DateTime.MinValue;
+    private DateTime _regroupUntil = DateTime.MinValue;
+    private DateTime _nextRecall = DateTime.MinValue;
+
+    // After a broken formation (CombatDuelComponent.QuestTeam.cs): nobody stays in a battle, they gather by Ice, and a
+    // dungeon left by fleeing is entered again with Dungeon Recall, Ice first, before they go back to their quest's fight.
+    private bool Regroup() {
+        var (at, why) = QuestTeamDirector.LastFormationBreak;
+        if (at > _regroupSeen) {
+            _regroupSeen = at;
+            _regroupUntil = DateTime.UtcNow.AddSeconds(12);
+            _target = null;
+            Note("Team", $"regroups ({why}); they go back to their fight together, in their order.");
+        }
+
+        if (DateTime.UtcNow >= _regroupUntil) {
+            return false;
+        }
+
+        _doing = "regrouping to keep the formation";
+        _lastProgress = DateTime.UtcNow;
+
+        // Still in the battle: they leave it (as a player clicks Flee).
+        foreach (var member in _team.Where(m => CombatDuelComponent.IsInBattle(m.GlobalId))) {
+            _actors[_team.IndexOf(member)].Tell(new QuestTeamMember.Flee());
+        }
+
+        // Thrown out of a dungeon by fleeing: Dungeon Recall, Ice first and the rest after it.
+        if (DateTime.UtcNow >= _nextRecall) {
+            for (var i = 0; i < _team.Count; i++) {
+                if (_team[i].Wizard?.ZoneIsInstance != true && World.DungeonRecall.TryGet(_team[i].CharId, out _)) {
+                    Note(_team[i].Role, $"{_team[i].Name} uses Dungeon Recall.");
+                    _actors[i].Tell(new QuestTeamMember.UseDungeonRecall());
+                    _nextRecall = DateTime.UtcNow.AddSeconds(4);
+                    _regroupUntil = DateTime.UtcNow.AddSeconds(12);
+
+                    return true;
+                }
+            }
+        }
+
+        // The rest gather by Ice.
+        var ice = _team[0];
+        for (var i = 1; i < _team.Count; i++) {
+            if (_team[i].ZoneActor is not null && _team[i].ZoneActor.Equals(ice.ZoneActor) && Far(_team[i], ice) > 120) {
+                WalkTo(i, new QuestTeamPlanner.Target("regroup", ice.X - (40 * i), ice.Y, "regroups by Ice", Key: "regroup"));
+            }
         }
 
         return true;
