@@ -299,6 +299,38 @@ public class Wizard {
         DynamodCollection.AddDynamodSet(DynamodSet);
     }
 
+    /// <summary>
+    /// A wizard the server plays (Game/BotPlayers): never stored. Its character id is in the bots' own range
+    /// (BotIds), so a save for it finds no character and writes nothing.
+    /// </summary>
+    [JsonIgnore] public bool IsBot { get; private set; }
+
+    /// <summary>
+    /// A Bot Players wizard: made like a new character from the character maker, but kept in memory only (no dynamod set,
+    /// no starter items, nothing written to the database).
+    /// </summary>
+    internal static Wizard NewBot(ulong charId, MagicSchool school, WizardCharacterBehavior avatar, uint nameIndices, byte level) {
+        var bot = new Wizard { IsBot = true };
+        bot.CharId = charId;
+        bot.LastLoginTime = (uint) DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        bot.WizardAvatar = avatar;
+        bot.InitializeDefaultEquipment();
+        bot.InitializePlayerName(nameIndices);
+        bot.InitializeMagicSchoolBehavior(school, level);
+        bot.InitializeSpellbookBehavior();
+        bot.InitializeMountOwnerBehavior();
+        bot.InitializeWizardGameStats(school, level);
+        bot.InitializeDefaultPetSnackBehavior();
+        bot.InitializePetOwnerBehavior();
+        bot.InitializeDefaultInventory();
+        bot.InitializeDefaultStorage();
+        bot.InitializeAlchemyBehavior();
+        bot.ObjectStateBehavior = new ServerObjectStateBehavior("PlayerMobileStates");
+        bot.QuestBehavior = new ServerQuestBehavior();
+
+        return bot;
+    }
+
     public WizClientObject GetInitializedGameObject()
         => HasInitializedGameObject ? GameObject : null;
 

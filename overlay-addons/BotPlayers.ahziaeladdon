@@ -1,0 +1,182 @@
+{
+  "Format": "Ahziael overlay add-on",
+  "Name": "Bot Players",
+  "Author": "Niduus",
+  "Description": "Buttons for the Bot Players test: call a bot next to you, have it join your battle, kick it from your battle, send it away, and list the bots out. Bot Players must be on (Game Rules > Battles and World).",
+  "Version": "1",
+  "Widgets": [
+    {
+      "Name": "Bot buttons",
+      "Elements": [
+        {
+          "Kind": "Button",
+          "Name": "Bot: come here",
+          "Text": "Bot: come here",
+          "Anchor": "TopLeft",
+          "X": 12,
+          "Y": 180,
+          "Width": 170,
+          "Height": 32,
+          "Size": 13,
+          "Bold": true,
+          "Fill": {
+            "Kind": "Solid",
+            "Color1": "#FFFFFFFF"
+          },
+          "Background": {
+            "Kind": "Solid",
+            "Color1": "#C81A2238"
+          },
+          "BorderColor": "#D0FFD24A",
+          "BorderWidth": 1,
+          "CornerRadius": 8,
+          "Padding": 6,
+          "Shadow": true,
+          "Action": "Command",
+          "Command": ".bot test"
+        },
+        {
+          "Kind": "Button",
+          "Name": "Bot: join my battle",
+          "Text": "Bot: join my battle",
+          "Anchor": "TopLeft",
+          "X": 12,
+          "Y": 220,
+          "Width": 170,
+          "Height": 32,
+          "Size": 13,
+          "Bold": true,
+          "Fill": {
+            "Kind": "Solid",
+            "Color1": "#FFFFFFFF"
+          },
+          "Background": {
+            "Kind": "Solid",
+            "Color1": "#C81A2238"
+          },
+          "BorderColor": "#D0FFD24A",
+          "BorderWidth": 1,
+          "CornerRadius": 8,
+          "Padding": 6,
+          "Shadow": true,
+          "Action": "Command",
+          "Command": ".bot join"
+        },
+        {
+          "Kind": "Button",
+          "Name": "Bot: kick from battle",
+          "Text": "Bot: kick from battle",
+          "Anchor": "TopLeft",
+          "X": 12,
+          "Y": 260,
+          "Width": 170,
+          "Height": 32,
+          "Size": 13,
+          "Bold": true,
+          "Fill": {
+            "Kind": "Solid",
+            "Color1": "#FFFFFFFF"
+          },
+          "Background": {
+            "Kind": "Solid",
+            "Color1": "#C81A2238"
+          },
+          "BorderColor": "#D0FFD24A",
+          "BorderWidth": 1,
+          "CornerRadius": 8,
+          "Padding": 6,
+          "Shadow": true,
+          "Action": "Command",
+          "Command": ".bot kick"
+        },
+        {
+          "Kind": "Button",
+          "Name": "Bot: send away",
+          "Text": "Bot: send away",
+          "Anchor": "TopLeft",
+          "X": 12,
+          "Y": 300,
+          "Width": 170,
+          "Height": 32,
+          "Size": 13,
+          "Bold": true,
+          "Fill": {
+            "Kind": "Solid",
+            "Color1": "#FFFFFFFF"
+          },
+          "Background": {
+            "Kind": "Solid",
+            "Color1": "#C81A2238"
+          },
+          "BorderColor": "#D0FFD24A",
+          "BorderWidth": 1,
+          "CornerRadius": 8,
+          "Padding": 6,
+          "Shadow": true,
+          "Action": "Command",
+          "Command": ".bot remove"
+        },
+        {
+          "Kind": "Button",
+          "Name": "Bot: list",
+          "Text": "Bot: list",
+          "Anchor": "TopLeft",
+          "X": 12,
+          "Y": 340,
+          "Width": 170,
+          "Height": 32,
+          "Size": 13,
+          "Bold": true,
+          "Fill": {
+            "Kind": "Solid",
+            "Color1": "#FFFFFFFF"
+          },
+          "Background": {
+            "Kind": "Solid",
+            "Color1": "#C81A2238"
+          },
+          "BorderColor": "#D0FFD24A",
+          "BorderWidth": 1,
+          "CornerRadius": 8,
+          "Padding": 6,
+          "Shadow": true,
+          "Action": "Command",
+          "Command": ".bot list"
+        }
+      ]
+    },
+    {
+      "Name": "Kick bot button",
+      "Elements": [
+        {
+          "Kind": "Button",
+          "Name": "Kick bot from battle",
+          "Text": "Kick bot from battle",
+          "Anchor": "TopLeft",
+          "X": 12,
+          "Y": 180,
+          "Width": 170,
+          "Height": 32,
+          "Size": 13,
+          "Bold": true,
+          "Fill": {
+            "Kind": "Solid",
+            "Color1": "#FFFFFFFF"
+          },
+          "Background": {
+            "Kind": "Solid",
+            "Color1": "#C81A2238"
+          },
+          "BorderColor": "#D0FFD24A",
+          "BorderWidth": 1,
+          "CornerRadius": 8,
+          "Padding": 6,
+          "Shadow": true,
+          "Action": "Command",
+          "Command": ".bot kick"
+        }
+      ]
+    }
+  ],
+  "Styles": []
+}

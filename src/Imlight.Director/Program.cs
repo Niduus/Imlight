@@ -114,6 +114,17 @@ internal static class Program {
             return;
         }
 
+        // The Bot Players mini server is this program started again with --bots by the game server (see BotLink) while
+        // [BotPlayers] Enabled is on: it keeps the bots' roster, decides what they do and writes their log.
+        if (Array.IndexOf(args, "--bots") >= 0) {
+            ConfigurationManager.Initialize(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Imlight.ini"));
+            AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+                Logger.Fatal("The Bot Players mini server stopped because of an error: {Exception}", Logger.Args(e.ExceptionObject));
+            Imlight.CoreLib.Game.BotPlayers.BotBrain.Run(args);
+
+            return;
+        }
+
         // =============================================================
         // THREAD POOL
         // =============================================================
@@ -236,6 +247,9 @@ internal static class Program {
 
         // The Bazaar runs as a program of its own, so its lists and stock never slow the game server down.
         Imlight.CoreLib.Game.Bazaar.BazaarLink.StartWatching();
+
+        // Bot Players: their mini server runs only while [BotPlayers] Enabled is on, and is stopped when it is turned off.
+        Imlight.CoreLib.Game.BotPlayers.BotLink.StartWatching();
 
         // Keep program busy with a while loop.
         Logger.Information("Imlight may now be connected to.");

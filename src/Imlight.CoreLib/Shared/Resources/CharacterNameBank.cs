@@ -206,6 +206,18 @@ public class WizardNameBank : RootSingleResourceSingleton<WizardNameBank>, IMemo
     }
 
     /// <summary>
+    /// How many first, middle and last names the character maker's lists hold for a gender (Bot Players picks a bot's
+    /// name from them).
+    /// </summary>
+    public static (int firsts, int middles, int lasts) WizardNameListSizes(eGender gender) {
+        // Read the lists first, if nothing has needed a name yet.
+        _ = Instance;
+
+        return (GetTableSize(gender == eGender.Male ? FirstNameHumanMaleTableName : FirstNameHumanFemaleTableName),
+            GetTableSize(MiddleNameHumanTableName), GetTableSize(LastNameHumanTableName));
+    }
+
+    /// <summary>
     /// Checks that packed wizard name keys point into the name lists of the gender.
     /// </summary>
     public static bool IsValidWizardName(uint nameKeys, eGender gender) {

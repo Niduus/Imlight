@@ -89,6 +89,7 @@ internal static class PrivacyCleanup {
 
         // The Bazaar bot's log; its stock and status beside it are kept.
         files.AddRange(Matching(Path.Combine(logs, "bazaar-bot"), "bazaar-bot*.txt"));
+        files.AddRange(Matching(Path.Combine(logs, "bot-players"), "bot-players*.txt"));
 
         return files;
     }
