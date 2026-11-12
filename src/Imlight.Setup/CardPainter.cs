@@ -349,7 +349,7 @@ internal sealed class CardCanvas(int width, int height, int originX = 0, int ori
 /// 2026-10-22: "Improve Render of Spell Cards (Also including the x1 symbol)"): the card frame from GUI/Cards (the
 /// school's, or the treasure or item frame), the spell's art behind it, the name across the top in the game's card
 /// font, the pip cost in the triangle, the school icon in the round socket, the spell's own accuracy on the target,
-/// the type icon in the square, the "can't be enchanted" and PvP or PvE only marks over the art, an "x1" count on the
+/// the type icon in the square, the "can't be enchanted" mark over the art, the Standard/Advanced restriction bar under it, an "x1" count on the
 /// right, and the description on the parchment with the game's own small icons. A piece that is not in the game files
 /// is drawn as a plain stand-in, so a card always comes out whole.
 /// </summary>
@@ -554,28 +554,80 @@ internal static class CardPainter {
             }
         }
 
-        /// <summary>The marks the game shows over the art: can't be enchanted, and PvP or PvE only.</summary>
+        /// <summary>
+        /// The marks the game shows on the card: can't be enchanted over the art, and, since the Ahmarra update, the
+        /// "where it can be used" bar under the art (Niduus, 2026-11-12, with the update notes' "Card Frame Update: Spell
+        /// Restrictions"): the Standard icon when the spell works in Standard content, the level that content must be
+        /// where levels apply, and the Advanced icon (PvP and Challenge) when it works there. It replaced the old
+        /// "No PvP" and "No PvE" marks.
+        /// </summary>
         private void Restrictions() {
-            var marks = new List<Action<float, float, float>>();
             if (card.NoPvEEnchant || card.NoPvPEnchant) {
-                marks.Add(NoEnchant);
+                NoEnchant(N(64), N(95), N(20));
             }
 
-            // PvP only shows "not in PvE"; PvE only (such as most item and pet cards) shows "not in PvP".
-            if (card.PvP && !card.PvE) {
-                marks.Add((x, y, size) => Mark("Type_Card_PVP.dds", "PvE", x, y, size));
-            }
-            else if (card.PvE && !card.PvP) {
-                marks.Add((x, y, size) => Mark("Type_Card_PVE.dds", "PvP", x, y, size));
+            var (standard, advanced) = (card.UsableInStandard, card.UsableInAdvanced);
+            var level = card.Level > 0 ? card.Level.ToString(CultureInfo.InvariantCulture) : "";
+            const float ICON = 9.5f;
+            var textWidth = level.Length == 0 || _normal is null ? 0 : _normal.Measure(level, N(9) / _normal.CellHeight) / scale + 3;
+            var width = (standard ? ICON + 1 : 0) + (advanced ? ICON + 1 : 0) + textWidth + 4;
+            if (width < 8) {
+                return;
             }
 
-            const float SIZE = 24;
-            var left = 64 - (marks.Count - 1) * (SIZE + 2) / 2;
-            foreach (var mark in marks) {
-                mark(N(left), N(106), N(SIZE));
-                left += SIZE + 2;
+            const float CY = 111;
+            var left = 64 - width / 2;
+            _canvas.FillRect(N(left - 0.8f), N(CY - 6.8f), N(width + 1.6f), N(13.6f), 0xFF20304A, N(3.5f));
+            _canvas.FillRect(N(left), N(CY - 6), N(width), N(12), 0xFF4FA8E0, N(3));
+            _canvas.FillRect(N(left + 1), N(CY - 5), N(width - 2), N(10), 0xFF1C4E86, N(2.5f));
+            var x = left + 2 + ICON / 2;
+            if (standard) {
+                StandardIcon(N(x), N(CY), N(ICON));
+                x += ICON + 1;
+            }
+
+            if (textWidth > 0 && _normal is not null) {
+                Outlined(_normal, level, N(x - ICON / 2 + textWidth / 2), N(CY - 4.6f), N(9), 0xFFFFFFFF, center: true, outline: 0.5f);
+                x += textWidth;
+            }
+
+            if (advanced) {
+                AdvancedIcon(N(x), N(CY), N(ICON));
             }
         }
+
+        /// <summary>The Standard content icon: a light shield on blue (the game's own picture when this copy has it).</summary>
+        private void StandardIcon(float x, float y, float size) {
+            if (s_standardIcons.Select(book.Image).FirstOrDefault(i => i is not null) is { } own) {
+                Fit(own, x, y, size);
+
+                return;
+            }
+
+            _canvas.FillCircle(x, y, size * 0.5f, 0xFF0E2A4A);
+            _canvas.FillCircle(x, y, size * 0.42f, 0xFF7CC4F0);
+            _canvas.FillRect(x - size * 0.2f, y - size * 0.26f, size * 0.4f, size * 0.3f, 0xFFFFFFFF, size * 0.05f);
+            _canvas.FillCircle(x, y + size * 0.04f, size * 0.2f, 0xFFFFFFFF);
+        }
+
+        /// <summary>The Advanced content icon (PvP and Challenge together): crossed swords on red.</summary>
+        private void AdvancedIcon(float x, float y, float size) {
+            if (s_advancedIcons.Select(book.Image).FirstOrDefault(i => i is not null) is { } own) {
+                Fit(own, x, y, size);
+
+                return;
+            }
+
+            _canvas.FillCircle(x, y, size * 0.5f, 0xFF3A0A06);
+            _canvas.FillCircle(x, y, size * 0.42f, 0xFFD8231A);
+            var d = size * 0.24f;
+            _canvas.Line(x - d, y - d, x + d, y + d, size * 0.1f, 0xFFFFFFFF);
+            _canvas.Line(x - d, y + d, x + d, y - d, size * 0.1f, 0xFFFFFFFF);
+        }
+
+        // The game's own pictures for the two kinds of content, if this copy of the game has them under one of these names.
+        private static readonly string[] s_standardIcons = ["Icon_Content_Standard.dds", "Icon_Standard_Content.dds", "Icon_Flag_Standard.dds"];
+        private static readonly string[] s_advancedIcons = ["Icon_Content_Advanced.dds", "Icon_Advanced_Content.dds", "Icon_Flag_Advanced.dds"];
 
         private void NoEnchant(float x, float y, float size) {
             if (s_noEnchantIcons.Select(book.Image).FirstOrDefault(i => i is not null) is { } own) {
@@ -590,27 +642,6 @@ internal static class CardPainter {
             }
             else {
                 DrawnEnchantCard(x, y, size * 0.62f);
-            }
-
-            if (book.Image("Art_Not.dds") is { } not) {
-                Fit(not, x, y, size);
-            }
-            else {
-                DrawnNot(x, y, size);
-            }
-        }
-
-        private void Mark(string file, string word, float x, float y, float size) {
-            if (book.Image(file) is { } icon) {
-                Fit(icon, x, y, size);
-
-                return;
-            }
-
-            // The word it rules out, struck through with the game's red "not" circle.
-            _canvas.FillCircle(x, y, size * 0.42f, 0xC0201810);
-            if (_normal is not null) {
-                Outlined(_normal, word, x, y - size * 0.2f, size * 0.38f, 0xFFFFFFFF, center: true, outline: 0.4f);
             }
 
             if (book.Image("Art_Not.dds") is { } not) {

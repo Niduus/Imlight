@@ -81,7 +81,7 @@ internal sealed partial class ManagerWindow {
     private readonly ComboBox _spellsCategory = FilterCombo([ANY_FILTER], 150);
     private readonly ComboBox _spellsSource = FilterCombo([ANY_FILTER], 130);
     private readonly ComboBox _spellsWorks = FilterCombo([ANY_FILTER, "Works on this server", "Partly works", "Doesn't work yet"], 170);
-    private readonly ComboBox _spellsMode = FilterCombo([ANY_FILTER, "PvP and PvE", "PvP only", "PvE (monsters) only"], 160);
+    private readonly ComboBox _spellsMode = FilterCombo([ANY_FILTER, "Standard and Advanced", "Advanced only (PvP)", "Standard only (no PvP)"], 190);
     private readonly ComboBox _spellsEffect = FilterCombo([ANY_FILTER], 170);
     private readonly ComboBox _spellsTarget = FilterCombo([ANY_FILTER], 170);
     private readonly CheckBox _spellsShadow = new() { Content = "Uses shadow pips" };
@@ -332,7 +332,8 @@ internal sealed partial class ManagerWindow {
             && (effect is null || s.Effects.Any(e => EffectWords(e.Kind).Equals(effect, StringComparison.OrdinalIgnoreCase)))
             && (target is null || s.Effects.Any(e => EffectWords(e.Target).Equals(target, StringComparison.OrdinalIgnoreCase)))
             && _spellsWorks.SelectedIndex switch { 1 => !s.Broken && !s.Partly, 2 => s.Partly, 3 => s.Broken, _ => true }
-            && _spellsMode.SelectedIndex switch { 1 => s.PvP && s.PvE, 2 => s.PvP && !s.PvE, 3 => s.PvE && !s.PvP, _ => true }
+            && _spellsMode.SelectedIndex switch {
+                1 => s.UsableInStandard && s.UsableInAdvanced, 2 => !s.UsableInStandard, 3 => !s.UsableInAdvanced, _ => true }
             && (!shadow || s.ShadowPips > 0)
             && (!schoolPips || s.SchoolPips.Count > 0)
             && (!noEnchant || s.NoPvEEnchant || s.NoPvPEnchant)
@@ -607,7 +608,8 @@ internal sealed partial class ManagerWindow {
             var other => other,
         });
         Fact("Level", card.Level > 0 ? $"{card.Level} or higher" : "");
-        Fact("PvP / PvE", card.PvP && card.PvE ? "Both" : card.PvP ? "PvP only" : card.PvE ? "PvE only" : "Neither");
+        // The card's restriction bar since the Ahmarra update: Standard and Advanced (PvP and Challenge) content.
+        Fact("Usable in", card.UsableIn);
         Fact("Enchantable", card.NoPvEEnchant && card.NoPvPEnchant ? "No"
             : card.NoPvEEnchant ? "Not in PvE" : card.NoPvPEnchant ? "Not in PvP" : "Yes");
         Fact("Discardable", YesNo(!card.NoDiscard));

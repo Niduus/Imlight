@@ -1,0 +1,4 @@
+New: Spell cards show where they can be used, like the Ahmarra game
+The Ahmarra update put a small bar under each card's picture: a Standard icon when the spell works in normal play, the level that content must be where levels apply, and an Advanced icon (PvP and Challenge fights) when it works there. Ahziael's spell cards now draw the same bar, in place of the old "No PvP" and "No PvE" marks. A spell's details say "Usable in" (for example "Standard and Advanced, level 20 where levels apply"), and the old PvP/PvE filter is now "Standard and Advanced", "Advanced only (PvP)" or "Standard only (no PvP)".
+Where: Database > Spells
+Test: Open Database > Spells and search Tower Shield. Its card should show the blue Standard icon, 20, and the red Advanced icon under the picture, like the game. Search Hurricane: it shows the Standard icon and 190 only.
