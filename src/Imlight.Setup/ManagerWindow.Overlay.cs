@@ -1910,7 +1910,7 @@ internal sealed partial class ManagerWindow {
                 Spacing = 6,
                 Children = {
                     how,
-                    Sub("It shows what is around your wizard in this game window, from the server, twice a second. Width and height above set its size; " +
+                    Sub("It shows what is around your wizard in this game window, from the server, several times a second. Width and height above set its size; " +
                         "Fill and Edge below set its background and rim. With one game open it links by itself; with more, it shows a .link code to type " +
                         "in that game's chat once. Here in the designer it shows a made-up map."),
                 },
@@ -1928,7 +1928,8 @@ internal sealed partial class ManagerWindow {
         shows.Children.Add(OvField("Streets", OvColor(map.PathColor, v => Set(() => map.PathColor = v))));
         shows.Children.Add(OvField("Grass", OvColor(map.GrassColor, v => Set(() => map.GrassColor = v))));
         shows.Children.Add(OvField("Water", OvColor(map.WaterColor, v => Set(() => map.WaterColor = v))));
-        shows.Children.Add(OvField("Walls and fences", OvColor(map.WallColor, v => Set(() => map.WallColor = v))));
+        shows.Children.Add(OvField("Walls, fences and buildings", Row(OvCheck("Show", map.Walls, v => Set(() => map.Walls = v)), OvColor(map.WallColor, v => Set(() => map.WallColor = v)))));
+        shows.Children.Add(OvField("Trees, posts and pillars", Row(OvCheck("Show", map.Trees, v => Set(() => map.Trees = v)), OvColor(map.TreeColor, v => Set(() => map.TreeColor = v)))));
         Kind("NPCs", map.Npcs, v => map.Npcs = v, map.NpcColor, v => map.NpcColor = v);
             Kind("Mobs", map.Mobs, v => map.Mobs = v, map.MobColor, v => map.MobColor = v);
             Kind("Bosses (skull)", map.Bosses, v => map.Bosses = v, map.BossColor, v => map.BossColor = v);
@@ -1943,8 +1944,45 @@ internal sealed partial class ManagerWindow {
                 Spacing = 6,
                 Children = {
                     shows,
-                    Sub("Teammates off the map show as an arrow on its edge. Quests show on the minimap only as the way to the quest picked in a Quest Tracker. In the game, the small button " +
-                        "on the minimap's corner opens it full screen, with + and - to see closer or farther and X to close it."),
+                    Sub("Quests show on the minimap only as the way to the quest picked in a Quest Tracker."),
+                },
+            }));
+
+            // Everything else about its look (Niduus, 2026-11-12: "Allow for the Mini Map UI to also be customizable to any and all extent").
+            var look = new WrapPanel();
+            look.Children.Add(OvField("Movement", OvCheck("Glide smoothly between updates", map.Glide, v => Set(() => map.Glide = v))));
+            look.Children.Add(OvField("North marker", Row(OvCheck("Show", map.ShowNorth, v => Set(() => map.ShowNorth = v)), OvColor(map.NorthColor, v => Set(() => map.NorthColor = v)))));
+            look.Children.Add(OvField("Half way ring", Row(OvCheck("Show", map.ShowRing, v => Set(() => map.ShowRing = v)), OvColor(map.RingColor, v => Set(() => map.RingColor = v)))));
+            look.Children.Add(OvField("Place's name at", OvCombo(["Bottom", "Top"], map.PlaceAt == "Top" ? 1 : 0, i => Set(() => map.PlaceAt = i == 1 ? "Top" : "Bottom"), 110)));
+            look.Children.Add(OvField("More names", Row(
+                OvCheck("Mobs", map.MobNames, v => Set(() => map.MobNames = v)),
+                OvCheck("NPCs", map.NpcNames, v => Set(() => map.NpcNames = v)),
+                OvCheck("Levels", map.Levels, v => Set(() => map.Levels = v)),
+                OvCheck("Dark band under names", map.NameBackground, v => Set(() => map.NameBackground = v)))));
+            look.Children.Add(OvField("Icon outline", OvColor(map.OutlineColor, v => Set(() => map.OutlineColor = v))));
+            look.Children.Add(OvField("Teammates off the map", OvCheck("Arrow on the edge", map.EdgeArrows, v => Set(() => map.EdgeArrows = v))));
+            look.Children.Add(OvField("Your arrow size", OvNumber(map.YouSize, 0.3, 5, 0.1, v => Set(() => map.YouSize = v))));
+            look.Children.Add(OvField("Mob size", OvNumber(map.MobSize, 0.2, 5, 0.1, v => Set(() => map.MobSize = v))));
+            look.Children.Add(OvField("Boss size", OvNumber(map.BossSize, 0.2, 5, 0.1, v => Set(() => map.BossSize = v))));
+            look.Children.Add(OvField("NPC size", OvNumber(map.NpcSize, 0.2, 5, 0.1, v => Set(() => map.NpcSize = v))));
+            look.Children.Add(OvField("Sigil size", OvNumber(map.SigilSize, 0.2, 5, 0.1, v => Set(() => map.SigilSize = v))));
+            look.Children.Add(OvField("Door size", OvNumber(map.DoorSize, 0.2, 5, 0.1, v => Set(() => map.DoorSize = v))));
+            look.Children.Add(OvField("Chest size", OvNumber(map.ChestSize, 0.2, 5, 0.1, v => Set(() => map.ChestSize = v))));
+            look.Children.Add(OvField("Wizard size", OvNumber(map.WizardSize, 0.2, 5, 0.1, v => Set(() => map.WizardSize = v))));
+            _ovEditor.Children.Add(OvGroup("Minimap look", new StackPanel { Spacing = 6, Children = { look, Sub("Sizes are times the icon size above (1 = the same).") } }));
+
+            var full = new WrapPanel();
+            full.Children.Add(OvField("Full screen button", OvCheck("On the minimap's corner", map.FullButton, v => Set(() => map.FullButton = v))));
+            full.Children.Add(OvField("Space round it", OvNumber(map.FullMargin, 0, 250, 2, v => Set(() => map.FullMargin = v))));
+            full.Children.Add(OvField("Background", OvColor(map.FullBackground, v => Set(() => map.FullBackground = v))));
+            full.Children.Add(OvField("NPC names", OvCheck("Show on the full screen map", map.FullNames, v => Set(() => map.FullNames = v))));
+            full.Children.Add(OvField("How far it shows (0 = 2.5 times the minimap)", OvNumber(map.FullZoom, 0, 30000, 100, v => Set(() => map.FullZoom = v))));
+            _ovEditor.Children.Add(OvGroup("Full screen map", new StackPanel {
+                Spacing = 6,
+                Children = {
+                    full,
+                    Sub("In the game, the small button on the minimap's corner opens it full screen, north up, with + and - to see closer or farther " +
+                        "and X to close it. How far it shows is kept as you zoom it."),
                 },
             }));
         }

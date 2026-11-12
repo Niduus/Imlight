@@ -84,14 +84,17 @@ internal static class OverlayRenderer {
 
         var at = panel.Children.Count - 1;
         if (OverlayMinimapData.FullZoom(window) is null) {
-            panel.Children.Insert(at, new MapButton(corner, 0, OverlayAction.MAP_FULL, minimap));
+            if (minimap.Map?.FullButton != false) {
+                panel.Children.Insert(at, new MapButton(corner, 0, OverlayAction.MAP_FULL, minimap));
+            }
+
 
             return;
         }
 
         // The minimap in the corner stays where it is (so nothing else moves) but isn't seen under the big one.
         corner.Opacity = 0;
-        var full = new FullMap { Child = new MinimapView(minimap, OverlayMinimapData.For(window), window, full: true) };
+        var full = new FullMap { Child = new MinimapView(minimap, OverlayMinimapData.For(window), window, full: true), Space = minimap.Map?.FullMargin ?? FullMap.MARGIN };
         full.Classes.Add(OverlayPanel.FULL);
         panel.Children.Insert(at, full);
         panel.Children.Insert(at + 1, new MapButton(full, 0, OverlayAction.MAP_FULL, minimap));
@@ -103,6 +106,9 @@ internal static class OverlayRenderer {
     internal sealed class FullMap : Border {
 
         internal const double MARGIN = 36;
+
+        /// <summary>Space round it (the minimap's Full screen margin).</summary>
+        internal double Space { get; init; } = MARGIN;
 
     }
 
@@ -243,7 +249,7 @@ internal static class OverlayRenderer {
                 }
 
                 if (child is FullMap) {
-                    var inside = bounds.Deflate(FullMap.MARGIN);
+                    var inside = bounds.Deflate(Math.Min(((FullMap) child).Space, Math.Min(bounds.Width, bounds.Height) / 3));
                     where[child] = inside;
                     child.Arrange(inside);
                     return;

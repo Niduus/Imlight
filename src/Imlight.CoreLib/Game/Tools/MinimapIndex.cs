@@ -45,7 +45,12 @@ internal static class MinimapIndex {
     internal const string CHEST = "chest";
 
     /// <summary>One thing on the map: what kind it is, its name, and the live object whose spot it shows.</summary>
-    internal sealed record Mark(string Kind, string Name, ulong Template, string[] Adjectives, CoreObject Object, int Level);
+    internal sealed record Mark(string Kind, string Name, ulong Template, string[] Adjectives, CoreObject Object, int Level) {
+
+        /// <summary>The entity, to ask whether a wizard's game is shown it (RenderComponent.ShownTo).</summary>
+        internal ZoneEntity Entity { get; init; }
+
+    }
 
     private static readonly ConcurrentDictionary<IActorRef, ConcurrentDictionary<ZoneEntity, Mark>> s_zones = new();
 
@@ -56,11 +61,11 @@ internal static class MinimapIndex {
     /// <summary>An entity finished loading (on its own thread): noted when it is something a map shows.</summary>
     internal static void Loaded(ZoneEntity entity) {
         try {
-            if (entity?.ActiveGameObject is null || entity.ZoneRef is null || Describe(entity) is not { } mark) {
+            if (entity?.ActiveGameObject is null || entity.ZoneRef is null || Describe(entity) is not { } described) {
                 return;
             }
 
-            s_zones.GetOrAdd(entity.ZoneRef, _ => new ConcurrentDictionary<ZoneEntity, Mark>(ReferenceEqualityComparer.Instance))[entity] = mark;
+            s_zones.GetOrAdd(entity.ZoneRef, _ => new ConcurrentDictionary<ZoneEntity, Mark>(ReferenceEqualityComparer.Instance))[entity] = described with { Entity = entity };
         }
         catch (Exception ex) {
             Logger.Debug("Minimap: could not note an object: {0}", Logger.Args(ex.Message));
