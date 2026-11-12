@@ -110,6 +110,19 @@ internal static partial class ZoneGround {
         return new WalkGround(left, top, cell, width, height, kinds, heights, lows);
     }
 
+    // A wizard is about this tall; a wall whose bottom is higher than that over every floor of the cell is walked under.
+    private const float HEAD_ROOM = 70f;
+
+    private static bool Blocks(Triangle wall, float high, float low) {
+        if (float.IsNaN(high) || float.IsNaN(wall.Z1) || !float.IsFinite(wall.Z) || !float.IsFinite(wall.Z1)) {
+            return true;
+        }
+
+        bool BlocksAt(float floor) => float.IsNaN(floor) || (wall.Z < floor + HEAD_ROOM && wall.Z1 > floor + 5f);
+
+        return BlocksAt(high) || (!float.IsNaN(low) && BlocksAt(low));
+    }
+
     private static void FillWalk(byte[] kinds, float[] heights, float[] lows, int width, int height, float left, float top, float cell, Triangle t) {
         float Gx(float x) => (x - left) / cell;
         float Gy(float y) => (top - y) / cell;
@@ -134,8 +147,10 @@ internal static partial class ZoneGround {
                 var inside = area > 0 ? w0 >= 0 && w1 >= 0 && w2 >= 0 : w0 <= 0 && w1 <= 0 && w2 <= 0;
                 var at = (y * width) + x;
                 if (kind == WALL) {
-                    // A sliver smaller than a cell (a thin fence) still marks its cell.
-                    if (inside || small) {
+                    // A sliver smaller than a cell (a thin fence) still marks its cell; but not a wall wholly over a
+                    // wizard's head (an arch, a roof walked under) or wholly under the ground (Niduus, 2026-11-12: the
+                    // line went the long way round a street's archway).
+                    if ((inside || small) && Blocks(t, heights[at], lows[at])) {
                         kinds[at] = WALL;
                     }
 
