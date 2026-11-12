@@ -89,11 +89,29 @@ internal sealed partial class CombatDuelComponent {
 
         QuestTeamLink.Note("Team", $"leaves the battle to keep its formation: {why}.");
         QuestTeamDirector.FormationBroke(why);
+        // Each clicks Flee, as a player does.
         foreach (var member in SubCircles.Where(c => c is { Occupied: true } && QuestTeamRole(c) is not null).ToList()) {
-            HandleFleeAction(member);
+            if (QuestTeamDirector.ActorOf(QuestTeamRole(member)) is { } wizard) {
+                wizard.Tell(new QuestTeamMember.Clicks([new BotBattle.Click(BotBattle.Move.Flee("keeps the formation"), 0.3 + Random.Shared.NextDouble())]), Akka.Actor.ActorRefs.NoSender);
+            }
+            else {
+                HandleFleeAction(member);
+            }
         }
 
         return true;
+    }
+
+    // The first rounds, while their side's creatures' circles are not full and more of what they came for is near.
+    private bool QuestTeamHoldsForMobs() {
+        if (Duel.m_roundNum > 4 || !QuestTeamDirector.MobsComing) {
+            return false;
+        }
+
+        var creatures = SubCircles.Count(c => c is { Occupied: true, IsAiCreature: true });
+        var team = QuestTeamCircles.ToList();
+
+        return creatures < 4 && team.All(c => RewrittenAI.HealthShare(c) > 0.5f);
     }
 
     private void QuestTeamPlanningBegins() {
@@ -147,13 +165,13 @@ internal sealed partial class CombatDuelComponent {
             }
 
             var role = QuestTeamRole(member);
+            var moves = new List<BotBattle.Move>();
 
             // First, once a round, the cards its job won't play go (Game/BotShared/BotCards), as a player discards.
             if (_questTeamDiscarded.Add((Duel.m_roundNum, member.SlotIndex))) {
                 foreach (var index in BotCards.Discards(member, circles, BotGear.StyleOfRole(role))) {
                     var thrown = member.GetSpellFromLastHand((byte) index);
-                    QuestTeamLink.Note(role, $"round {Duel.m_roundNum}: discards {(thrown is null ? "a card" : RewrittenAI.Read(thrown)?.Shown ?? "a card")}");
-                    HandleDiscardMove(member, index);
+                    moves.Add(BotBattle.Move.Discard(index, $"discards {(thrown is null ? "a card" : RewrittenAI.Read(thrown)?.Shown ?? "a card")}"));
                 }
             }
 
@@ -166,31 +184,35 @@ internal sealed partial class CombatDuelComponent {
                 choice = new(QuestTeamTactics.Move.Pass, 0, -1, "could not decide");
             }
 
+            // More of the creatures they came for may still walk in: no hit yet, so the battle is not won before they join
+            // (Niduus, 2026-11-12: "QT will wait for mobs to join the battle as much as possible to get all the mobs they desire").
+            if (choice.Move == QuestTeamTactics.Move.Cast && QuestTeamHoldsForMobs()
+                && member.GetSpellFromLastHand((byte) choice.Card) is { } card && RewrittenAI.Read(card) is { Hit: true }) {
+                choice = new(QuestTeamTactics.Move.Pass, 0, -1, "waits for more creatures to join before hitting");
+            }
+
             var pick = $"{choice.Move}:{choice.Card}:{choice.Target}";
-            if (_questTeamPicks.TryGetValue(member.SlotIndex, out var before) && before == pick && CombatResolver.GetQueuedAction(member) is not null) {
+            // The same pick is not clicked again, unless at the last call its click never landed.
+            if (_questTeamPicks.TryGetValue(member.SlotIndex, out var before) && before == pick
+                && (!message.Deadline || CombatResolver.GetQueuedAction(member) is not null)) {
                 continue;
             }
 
             _questTeamPicks[member.SlotIndex] = pick;
             QuestTeamLink.Note(role, $"round {Duel.m_roundNum}: {choice.Why}");
-            if (choice.Move == QuestTeamTactics.Move.Cast) {
-                var target = choice.Target < 0 ? uint.MaxValue : (uint) choice.Target;
-                HandleAttackMove(member, choice.Card, target, choice.Target < 0 ? uint.MaxValue : 1u << choice.Target);
-            }
-            else {
-                HandlePassMove(member);
+            moves.Add(choice.Move == QuestTeamTactics.Move.Cast ? BotBattle.Move.Cast(choice.Card, choice.Target, choice.Why) : BotBattle.Move.Pass(choice.Why));
+
+            // The clicks go through its own game, as a person's do, after a person's moment to read the hand.
+            var left = PlanningSeconds - (DateTime.UtcNow - _planningStartedAt).TotalSeconds;
+            var clicks = message.Deadline ? BotBattle.Timed(moves, 0, Math.Min(left, 3)) : BotBattle.Timed(moves, 7, left);
+            if (QuestTeamDirector.ActorOf(role) is { } wizard) {
+                wizard.Tell(new QuestTeamMember.Clicks(clicks), Akka.Actor.ActorRefs.NoSender);
             }
 
             played = true;
-
-            // A real player or bot after it may adapt to its pick.
-            BotsNoticeMove(member);
         }
 
-        if (played && _isActive && _awaitingCombatMoves && CombatResolver.HaveAllParticipantsEnqueuedActions()) {
-            _awaitingCombatMoves = false;
-            Timers.StartSingleTimer(PLANNING_TIME_KEY, new COMBAT_106_PROTOCOL.MSG_PLANNINGPHASEOVER(), TimeSpan.FromSeconds(1));
-        }
+        _ = played;
     }
 
 }

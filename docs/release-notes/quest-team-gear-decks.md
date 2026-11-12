@@ -62,3 +62,13 @@ New: The Quest Team stays on the same quest together
 All four always work on the same quest and the same step. If one of them is on a different step (or finished the quest ahead of the others) for more than two minutes, an issue names that wizard, the quest, and where it is versus the others. They also turn down quests that are not the team's story (side quests and quests of other worlds), so nobody gets ahead.
 Where: Quest Team > Team Issues, Team Logs ("leaves it (not the team's story)")
 Test: Let the team play a while. Their quest and step on the Quest Team page should always match.
+
+Changed: The Quest Team battles like a person
+Each Quest Team wizard now plays its battle turn through the same clicks a game sends: it takes a moment to read its hand, discards one card at a time, then picks its card and target (or passes or flees). A wizard on a lower circle can still pick before them. The same click path is ready for the street bots.
+Where: in a Quest Team battle; Quest Team > Team Logs
+Test: Watch a Quest Team battle. The cards should go in a few seconds apart, not all at once.
+
+New: The Quest Team waits for more creatures to join
+In the first rounds, while there is room on the creatures' side and more of the creatures they need are close by, the team holds its hits (blades, shields and heals still go) so those creatures can walk into the battle. Once their side is full, or nothing more is coming, they attack.
+Where: in a Quest Team battle; Team Logs ("waits for more creatures to join before hitting")
+Test: Let the team start a fight near several of the same creature. They should hold their hits for a round or two while the others join.

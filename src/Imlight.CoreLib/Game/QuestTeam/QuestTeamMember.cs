@@ -71,6 +71,11 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
     /// <summary>Take an item off into the backpack, as the game's backpack does.</summary>
     internal sealed record Unequip(ulong ItemId, string Slot, string What);
 
+    /// <summary>Clicks in the battle window, each after its delay, as a person makes them (Game/BotShared/BotBattle).</summary>
+    internal sealed record Clicks(List<BotShared.BotBattle.Click> Each);
+
+    private sealed record ClickNow(BotShared.BotBattle.Move Move);
+
     /// <summary>Leave the battle, as the Flee button does.</summary>
     internal sealed record Flee;
 
@@ -147,6 +152,7 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
     private ushort _mobileId;
     private byte _zoneCounter;
     private readonly Queue<(float X, float Y)> _route = new();
+    private long _clicks;
     private (string Zone, ulong ZoneId, string Location)? _transfer;
 
     public QuestTeamMember(QuestTeamRoster.Member member, Status view) {
@@ -207,6 +213,12 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
             Note($"puts on {m.What}.");
             Send(new GAME_5_PROTOCOL.MSG_EQUIPITEM { IsEquip = 1, ItemID = m.ItemId, SlotName = m.Slot });
         });
+        Receive<Clicks>(m => {
+            for (var i = 0; i < m.Each.Count; i++) {
+                Timers.StartSingleTimer($"click-{_clicks++}", new ClickNow(m.Each[i].Move), TimeSpan.FromSeconds(Math.Max(0.05, m.Each[i].AfterSeconds)));
+            }
+        });
+        Receive<ClickNow>(m => Send(BotShared.BotBattle.ToGameMessage(m.Move)));
         Receive<Flee>(_ => Send(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATMOVE {
             MoveType = (byte) Combat.CombatMoveType.Flee, SpellSelection = 0, SpellTarget = 0, TimeLeft = 0,
         }));
