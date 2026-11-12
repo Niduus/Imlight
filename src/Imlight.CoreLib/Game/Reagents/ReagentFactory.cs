@@ -38,6 +38,7 @@
  * Last Updated: 09/26/2026
  */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -104,6 +105,7 @@ internal class ReagentFactory : RootDirectoryResourceSingleton<ReagentFactory>, 
     /// <param name="reagentName">The base name of the reagent.</param>
     /// <returns>A <see cref="ClientReagentItem"/> instance if found; otherwise, null.</returns>
     internal static ClientReagentItem GetHarvestable(string reagentName) {
+        reagentName = NodeReagentName(reagentName);
         var normalized = reagentName.ToLowerInvariant();
         if (!normalized.Contains("harvest")) {
             normalized = "harvest-" + normalized;
@@ -122,7 +124,7 @@ internal class ReagentFactory : RootDirectoryResourceSingleton<ReagentFactory>, 
     /// <param name="reagentName">The base name of the reagent.</param>
     /// <returns>A <see cref="ClientReagentItem"/> instance for the rare variant if found; otherwise, null.</returns>
     internal static ClientReagentItem GetHarvestableRareVariant(string reagentName) {
-        var baseName = NormalizeName(reagentName);
+        var baseName = NormalizeName(NodeReagentName(reagentName));
 
         if (!baseName.Contains("harvest")) {
             baseName = "harvest-" + baseName;
@@ -146,7 +148,7 @@ internal class ReagentFactory : RootDirectoryResourceSingleton<ReagentFactory>, 
     /// <param name="reagentName">The name of the reagent.</param>
     /// <returns>A <see cref="ReagentItemTemplate"/> if found; otherwise, null.</returns>
     internal static ReagentItemTemplate GetReagentTemplate(string reagentName) {
-        var normalized = NormalizeName(reagentName);
+        var normalized = NormalizeName(NodeReagentName(reagentName));
 
         if (s_reagentTemplates.TryGetValue(normalized, out var exact)) {
             return exact;
@@ -174,6 +176,46 @@ internal class ReagentFactory : RootDirectoryResourceSingleton<ReagentFactory>, 
             Logger.Args(reagentName));
 
         return null;
+    }
+
+    private static readonly Dictionary<string, string> s_nodeReagents = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// The reagent a reagent spot gives, for a spot whose name is not its reagent's: Ahmarra's AhmarricRelic spot gives
+    /// Eldritch Sign (Niduus, 2026-11-12: "Could not find reagent template by name AhmarricRelic"). The spot's file
+    /// (ObjectData/Reagent_Nodes) names its loot table, ReagentLT-Harvest-EldritchSign-01, which names the reagent.
+    /// Any other name comes back as it is.
+    /// </summary>
+    internal static string NodeReagentName(string nodeName) {
+        if (string.IsNullOrEmpty(nodeName)) {
+            return nodeName;
+        }
+
+        lock (s_nodeReagents) {
+            if (s_nodeReagents.TryGetValue(nodeName, out var known)) {
+                return known;
+            }
+
+            var name = nodeName;
+            if (FindTemplateByName(nodeName) is null && FindTemplateByName("harvest-" + nodeName) is null) {
+                try {
+                    using var stream = RootArchiveLoader.GetFileStream($"ObjectData/Reagent_Nodes/{nodeName}.xml");
+                    var text = System.Text.Encoding.Latin1.GetString(stream.ToArray());
+                    var match = Regex.Match(text, @"ReagentLT-(?:Harvest-)?([A-Za-z]+)");
+                    if (match.Success && FindTemplateByName("harvest-" + match.Groups[1].Value) is not null) {
+                        name = match.Groups[1].Value;
+                        Logger.Information("Reagent spot {0} gives {1}, as its loot table says.", Logger.Args(nodeName, name));
+                    }
+                }
+                catch (Exception) {
+                    // No such spot file: the name stays as it is.
+                }
+            }
+
+            s_nodeReagents[nodeName] = name;
+
+            return name;
+        }
     }
 
     private static string NormalizeName(string name) {

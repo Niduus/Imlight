@@ -42,7 +42,7 @@ internal sealed partial class ManagerWindow {
 
     private const string ALL_PHRASES = "All groups";
 
-    private sealed record PhraseRow(int Number, string Text, string Key, string Group, string Haystack);
+    private sealed record PhraseRow(int Number, string Text, string Key, string Group, string Haystack, bool IsNew);
 
     private List<PhraseRow>? _phrases;
     private readonly TextBox _phraseSearch = new() { Watermark = "Search by words, number or key, such as cannot be stopped, 588 or Malistaire" };
@@ -62,6 +62,8 @@ internal sealed partial class ManagerWindow {
     private readonly CheckBox _phraseFilled = new() { Content = "Has words the game fills in (such as %s)" };
     private readonly CheckBox _phraseLines = new() { Content = "More than one line" };
     private readonly CheckBox _phraseFavoritesOnly = FavoritesOnlyTick();
+    // Niduus, 2026-11-12: the Ahmarra update's new lines. A game update's new lines get the next numbers; old ones keep theirs.
+    private readonly CheckBox _phraseNewOnly = new() { Content = "New in the last game update" };
 
     private Control PhrasesTab() {
         _phraseDelay.Tick += (_, _) => {
@@ -77,7 +79,7 @@ internal sealed partial class ManagerWindow {
                 RenderPhrases();
             }
         };
-        WhenFiltersChange(RenderPhrases, _phraseFrom, _phraseTo, _phraseLength, _phraseSort, _phraseKey, _phraseExact, _phraseFilled, _phraseLines, _phraseFavoritesOnly);
+        WhenFiltersChange(RenderPhrases, _phraseFrom, _phraseTo, _phraseLength, _phraseSort, _phraseKey, _phraseExact, _phraseFilled, _phraseLines, _phraseFavoritesOnly, _phraseNewOnly);
         WhenFavoritesChange(FAV_PHRASES, RenderPhrases);
         // Short rows: a ListBoxItem's own padding and height would make each row twice as tall.
         _phraseList.Styles.Add(new Style(x => x.OfType<ListBoxItem>()) {
@@ -110,7 +112,8 @@ internal sealed partial class ManagerWindow {
                        "CombatMessages) to find it, or pick a group on the right. Battle lines are in the CombatMessages group. " +
                        "In battle, .ca and its number shows the line over you like a boss's cheat line. The filters narrow it by number, " +
                        "key, length, and lines with words the game fills in (a name or number). " +
-                       "Click the star on a line to make it a favorite: favorites show first."),
+                       "Click the star on a line to make it a favorite: favorites show first. A line keeps its number through game " +
+                       "updates: the lines an update adds get the next numbers, and \"New in the last game update\" shows only those."),
                     WithCount(SearchFilters(
                         SearchFilter("Number from", _phraseFrom),
                         SearchFilter("Number to", _phraseTo),
@@ -120,6 +123,7 @@ internal sealed partial class ManagerWindow {
                         SearchTick(_phraseExact),
                         SearchTick(_phraseFilled),
                         SearchTick(_phraseLines),
+                        SearchTick(_phraseNewOnly),
                         SearchTick(_phraseFavoritesOnly)),
                     _phraseCount)), Dock.Top),
                 WithMargin(Card(_phraseList), new Thickness(0, 14, 0, 0)),
@@ -142,7 +146,7 @@ internal sealed partial class ManagerWindow {
         grid.Children.Add(number);
         Grid.SetColumn(text, 2);
         grid.Children.Add(text);
-        var key = new TextBlock { Text = row.Key, FontSize = 11, Foreground = MUTED, Margin = new Thickness(12, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
+        var key = new TextBlock { Text = row.IsNew ? "New  " + row.Key : row.Key, FontSize = 11, Foreground = MUTED, Margin = new Thickness(12, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
         Grid.SetColumn(key, 3);
         grid.Children.Add(key);
 
@@ -162,7 +166,8 @@ internal sealed partial class ManagerWindow {
                     if (f.Count >= 3 && int.TryParse(f[0], NumberStyles.None, CultureInfo.InvariantCulture, out var number)) {
                         var key = f[2];
                         var cut = key.IndexOf('_');
-                        rows.Add(new PhraseRow(number, f[1], key, cut > 0 ? key[..cut] : key, SearchText.Normalize(f[1] + " " + key)));
+                        rows.Add(new PhraseRow(number, f[1], key, cut > 0 ? key[..cut] : key, SearchText.Normalize(f[1] + " " + key),
+                            f.Count >= 4 && f[3] == "1"));
                     }
                 }
 
@@ -207,6 +212,7 @@ internal sealed partial class ManagerWindow {
         var lines = _phraseLines.IsChecked == true;
         var favorites = Favorites(FAV_PHRASES);
         var favoritesOnly = _phraseFavoritesOnly.IsChecked == true;
+        var newOnly = _phraseNewOnly.IsChecked == true;
         IEnumerable<PhraseRow> matched = phrases.Where(p => (group is null || p.Group == group)
                                                             && (p.Number == number || (inOrder is null ? words.All(p.Haystack.Contains)
                                                                 : string.Join(' ', SearchText.Words(p.Text)).Contains(inOrder, StringComparison.Ordinal)))
@@ -220,6 +226,7 @@ internal sealed partial class ManagerWindow {
                                                             }
                                                             && (!filled || p.Text.Contains('%') || p.Text.Contains('{') || p.Text.Contains('<'))
                                                             && (!lines || p.Text.Contains('\n'))
+                                                            && (!newOnly || p.IsNew)
                                                             && (!favoritesOnly || favorites.Contains(PhraseKey(p))));
         matched = _phraseSort.SelectedIndex switch {
             1 => matched.OrderByDescending(p => p.Number),

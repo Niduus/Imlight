@@ -445,10 +445,17 @@ public static class IdCatalog {
             File.WriteAllText(Path.Combine(OutputPath, QUESTS_NAME), quests.ToString());
 
             // The game's own lines for .ca, numbered (Niduus, 2026-10-20: `.ca 1` plays the first phrase).
-            var phrases = new StringBuilder().AppendLine("Number,Text,Key");
+            // New: 1 for a line the latest game update added (the Phrases tab's "New in the last game update").
+            var phrases = new StringBuilder().AppendLine("Number,Text,Key,New");
             var number = 0;
             foreach (var (key, text) in Locale.Phrases) {
-                phrases.Append(++number).Append(',').Append(CsvField(text)).Append(',').AppendLine(CsvField(key));
+                number++;
+                if (text.Length == 0) {
+                    continue;
+                }
+
+                phrases.Append(number).Append(',').Append(CsvField(text)).Append(',').Append(CsvField(key))
+                    .Append(',').AppendLine(Locale.IsNewPhrase(key) ? "1" : "0");
             }
             File.WriteAllText(Path.Combine(OutputPath, PHRASES_NAME), phrases.ToString());
         }
