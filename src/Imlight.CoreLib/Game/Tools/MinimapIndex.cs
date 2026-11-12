@@ -50,6 +50,9 @@ internal static class MinimapIndex {
         /// <summary>The entity, to ask whether a wizard's game is shown it (RenderComponent.ShownTo).</summary>
         internal ZoneEntity Entity { get; init; }
 
+        /// <summary>A door's destination zone (empty for anything else), for the Quest Tracker's way.</summary>
+        internal string To { get; init; } = "";
+
     }
 
     private static readonly ConcurrentDictionary<IActorRef, ConcurrentDictionary<ZoneEntity, Mark>> s_zones = new();
@@ -102,13 +105,13 @@ internal static class MinimapIndex {
             var key = sigil.NpcNameKey;
             var where = string.IsNullOrEmpty(key) ? "" : Locale.GetEnglishName(key);
 
-            return new Mark(SIGIL, string.IsNullOrWhiteSpace(where) ? "Sigil" : where.Trim(), id, adjectives, entity.ActiveGameObject, 0);
+            return new Mark(SIGIL, string.IsNullOrWhiteSpace(where) ? "Sigil" : where.Trim(), id, adjectives, entity.ActiveGameObject, 0) { To = sigil.DestinationZoneName };
         }
 
         if (entity.GetComponentOfType<InteractDoorTeleportComponent>() is { } door) {
             var to = door.DestinationZone();
 
-            return new Mark(DOOR, to.Length == 0 ? "Door" : "To " + World.ZoneNames.Shown(to), id, adjectives, entity.ActiveGameObject, 0);
+            return new Mark(DOOR, to.Length == 0 ? "Door" : "To " + World.ZoneNames.Shown(to), id, adjectives, entity.ActiveGameObject, 0) { To = to };
         }
 
         if (entity.GetComponentOfType<StreetTeleporterComponent>() is not null || entity.GetComponentOfType<WorldTeleportDoorComponent>() is not null

@@ -88,8 +88,10 @@ internal static class OverlayQuestTracker {
                 };
                 // The picked quest, with nothing to do here: the areas to go through to reach its step.
                 if (!here && elsewhere.Length > 0 && string.Equals(pick, held.QuestName, StringComparison.OrdinalIgnoreCase)) {
-                    var spiralDoorHere = zone is not null && MinimapIndex.In(zone).Any(m => m.Template == OverlayQuestRoute.SPIRAL_DOOR);
-                    row["way"] = OverlayQuestRoute.WayWords(zonePath, elsewhere, spiralDoorHere);
+                    var live = MinimapIndex.In(zone);
+                    var spiralDoorHere = live.Any(m => m.Template == OverlayQuestRoute.SPIRAL_DOOR);
+                    var exits = OverlayQuestRoute.ExitsHere(zonePath, live).Select(e => e.To);
+                    row["way"] = OverlayQuestRoute.WayWords(zonePath, elsewhere, spiralDoorHere, exits);
                 }
 
                 var order = kind switch { QuestStory.INSTANCE => 0, QuestStory.STORY => 1, QuestStory.MAIN => 2, _ => 3 };
@@ -186,6 +188,15 @@ internal static class OverlayQuestTracker {
         string location = goal.m_locationName;
         var place = string.IsNullOrWhiteSpace(location) ? ZoneNames.Shown(stepZone) : English(location, location);
         var worldName = WorldName(stepZone);
+        // The game writes some places as "World|Place" ("Grizzleheim|Savarstaad Pass").
+        if (place.Contains('|')) {
+            var parts = place.Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            if (parts.Length > 1) {
+                worldName = parts[0];
+            }
+
+            place = parts.Length > 0 ? parts[^1] : "";
+        }
 
         return string.Equals(worldName, place, StringComparison.OrdinalIgnoreCase) ? place : $"{worldName} / {place}";
     }

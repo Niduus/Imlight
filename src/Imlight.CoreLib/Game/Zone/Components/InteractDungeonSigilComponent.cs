@@ -90,6 +90,18 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
     public string NpcIcon => "";
     // The prompt names the dungeon by its zone's own name (WizardZone_*), the same text as the game's sigil names
     // (SigilText.lang); without it the pad said only "Press X to Talk" (Niduus, 2026-10-25).
+    /// <summary>The dungeon zone this sigil sends you to, or empty (for the Quest Tracker's way).</summary>
+    internal string DestinationZoneName {
+        get {
+            try {
+                return TryResolveDestination(out var sigil) ? sigil.DestinationZone ?? "" : "";
+            }
+            catch (System.Exception) {
+                return "";
+            }
+        }
+    }
+
     public string NpcNameKey => TryResolveDestination(out var sigil) ? TeamUpSigils.DisplayKeyNow(sigil.DestinationZone) : "";
     public string NpcTextKey => string.IsNullOrEmpty(NpcNameKey) ? "" : "GUI_EnterDoor";
     public WizBangs WizBang => WizBangs.None;
