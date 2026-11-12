@@ -317,7 +317,7 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
     private void Seated(BotSeated message) {
         _wizard.Location = message.Where;
         _wizard.Orientation = new Imcodec.Math.Vector3(0, 0, message.Yaw);
-        BotLink.Note(_info.Id, _info.Name, "joined", "a battle; it passes every round (test bot)");
+        BotLink.Note(_info.Id, _info.Name, "joined", "a battle");
     }
 
     // Every few seconds: is a real player still here, and is its battle over?
@@ -357,6 +357,14 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
             Leave("it was defeated");
 
             return;
+        }
+
+        // Low after a fight, it drinks a potion, as a player would before the next one (Niduus, 2026-11-12).
+        var stats = _wizard.GameStats;
+        if (stats.m_currentHitpoints < stats.m_baseHitpoints / 2 || stats.m_currentMana < stats.m_baseMana / 4) {
+            stats.m_currentHitpoints = Math.Max(stats.m_currentHitpoints, stats.m_baseHitpoints);
+            stats.m_currentMana = Math.Max(stats.m_currentMana, stats.m_baseMana);
+            BotLink.Note(_info.Id, _info.Name, "potion", $"drinks a potion: back to {stats.m_currentHitpoints} health and {stats.m_currentMana} mana");
         }
 
         var circle = Here;

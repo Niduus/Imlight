@@ -762,6 +762,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // Re-telegraph minion AI moves now that the planning HUD exists.
         ResendMinionMoveSelections();
 
+        // Bot Players think once the real players have picked (CombatDuelComponent.Bots.cs).
+        BotsPlanningBegins();
+
         // Tutorial duels flush queued card grants and re-script the golems before planning.
         _tutorialDirector.OnPlanningPhaseBegin();
 
@@ -785,14 +788,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         var passed = false;
-        foreach (var circle in SubCircles.Where(c => c is not null && c.AddedToDuel && c.IsHumanPlayer
-                                                     && (c.AutoPassing || (IsBot(c) && c.IsAlive)))) {
+        foreach (var circle in SubCircles.Where(c => c is not null && c.AddedToDuel && c.IsHumanPlayer && c.AutoPassing)) {
             if (CombatResolver.GetQueuedAction(circle) is null) {
                 HandlePassMove(circle);
                 passed = true;
-                Logger.Information(circle.AutoPassing
-                        ? "Duel {0} | Slot {1} | Devoured (auto pass): passes this round."
-                        : "Duel {0} | Slot {1} | Bot (test stage): passes this round.",
+                Logger.Information("Duel {0} | Slot {1} | Devoured (auto pass): passes this round.",
                     Logger.Args(Duel.m_duelID.Full, circle.SlotIndex));
             }
         }
@@ -933,6 +933,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         _tutorialDirector.OnCombatMoveQueued();
+
+        // A real player picked or changed their pick: the bots on their side think again.
+        BotsNoticeMove(caster);
 
         // If by this point all participants have inputted their moves, we can start the next phase.
         var participantCount = AlivePlayerCount + AliveCreatureCount;
@@ -1466,6 +1469,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         _defeatedEnemyMinions.Clear();
         _enemyDefeated = false;
         _botsKicked = false;
+        _botTargets.Clear();
 
         // Determine which team goes up first. Tutorial duels override this with the golems first.
         Duel.m_firstTeamToAct = (int) DetermineFirstTeam();

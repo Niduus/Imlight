@@ -166,6 +166,8 @@ internal static class BotBodies {
         try {
             bot = Wizard.NewBot(BotIds.CharIdOf(who.Id), botSchool, player.WizardAvatar, who.NameKeys,
                 (byte) Math.Clamp(who.Level, 1, 200));
+            // Its spells: what a wizard of its school has at its level. A third of the bots took Life as a second school.
+            bot.SpellbookBehavior.SpellList = BotDeck.For(botSchool, Math.Clamp(who.Level, 1, 200), who.Id % 3 == 0);
         }
         catch (Exception e) {
             Logger.Error("Bot Players: could not make bot #{0}: {1}", Logger.Args(who.Id, e));
@@ -198,6 +200,7 @@ internal static class BotBodies {
 
         s_out[who.Id] = new Out(who.Id, name, body, zone, player.Zone, bot.GameObjectID);
         BotLink.Note(who.Id, name, "spawned", $"{(who.Returning ? "came back" : "new")}, {botSchool} level {who.Level}, " +
+                                               $"{bot.SpellbookBehavior.SpellList.Count} spells in its deck, " +
                                                $"next to {player.PlayerNameBehavior.GetWizardName()} in {player.Zone}");
 
         return $"{name} ({botSchool}, level {who.Level}) came out next to you{(who.Returning ? ", back for the " + who.Times + (who.Times == 2 ? "nd" : who.Times == 3 ? "rd" : "th") + " time" : "")}.";
