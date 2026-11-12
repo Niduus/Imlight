@@ -40,6 +40,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.CoreLib.Game.Combat;
 using Imlight.CoreLib.Shared.Resources;
 
 namespace Imlight.CoreLib.Game.Spells;
@@ -64,15 +65,9 @@ internal static class SpellEffectFilter {
                 continue;
             }
 
-            // Filter spells that deal damage to the enemy team.
-            foreach (var effect in spellTemplate.m_effects) {
-                if (!IsEnemyTarget(effect)) {
-                    continue;
-                }
-                if (!IsDamageEffect(effect)) {
-                    continue;
-                }
-
+            // Filter spells that deal damage to the enemy team. The damage of an X pip spell (Judgement, Heck Hound) sits
+            // inside its VariableSpellEffect, whose own target is not an enemy, so the inner effects are looked at too.
+            if (Lands(spellTemplate, e => IsEnemyTarget(e) && IsDamageEffect(e))) {
                 filteredSpells.Add(spell);
             }
         }
@@ -96,11 +91,7 @@ internal static class SpellEffectFilter {
             }
 
             // Filter spells that heal the caster or their team.
-            foreach (var effect in spellTemplate.m_effects) {
-                if (!IsHealingEffect(effect)) {
-                    continue;
-                }
-
+            if (Lands(spellTemplate, IsHealingEffect)) {
                 filteredSpells.Add(spell);
             }
         }
@@ -124,11 +115,7 @@ internal static class SpellEffectFilter {
             }
 
             // Filter spells that buff the caster or their team.
-            foreach (var effect in spellTemplate.m_effects) {
-                if (!IsBuffEffect(effect) || !IsFriendlyTarget(effect)) {
-                    continue;
-                }
-
+            if (Lands(spellTemplate, e => IsBuffEffect(e) && IsFriendlyTarget(e))) {
                 filteredSpells.Add(spell);
             }
         }
@@ -151,12 +138,8 @@ internal static class SpellEffectFilter {
                 continue;
             }
 
-            // Filter spells that debuff the enemy team.
-            foreach (var effect in spellTemplate.m_effects) {
-                if (!IsBuffEffect(effect) || !IsEnemyTarget(effect)) {
-                    continue;
-                }
-
+            // Filter spells that debuff the enemy team (an X pip trap such as Backdraft keeps it inside).
+            if (Lands(spellTemplate, e => IsBuffEffect(e) && IsEnemyTarget(e))) {
                 filteredSpells.Add(spell);
             }
         }
@@ -167,9 +150,20 @@ internal static class SpellEffectFilter {
     /// <summary>
     /// Whether any of the spell's effects lands on the other side.
     /// </summary>
+    /// The inner effects count too: an X pip spell (Judgement, Heck Hound, Backdraft) keeps its enemy part inside a
+    /// VariableSpellEffect whose own target is not an enemy, so monsters aimed those cards at themselves (a player,
+    /// 2026-11-12: "Creatures are systematically sending X per pip spells on themselves").
     internal static bool TargetsEnemy(Spell spell)
-        => CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is SpellTemplate { m_effects: { } effects }
-        && effects.Any(e => e is not null && IsEnemyTarget(e));
+        => CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is SpellTemplate template
+        && Lands(template, IsEnemyTarget);
+
+    // Whether a top effect, or one inside it (random, X pip tier, list, count based, conditional), matches. A spell used
+    // to be listed once for each matching effect, which made a card with two hits twice as likely in a random pick.
+    private static bool Lands(SpellTemplate template, System.Func<SpellEffect, bool> match) {
+        var top = (template.m_effects ?? []).Where(e => e is not null).ToList();
+
+        return top.Any(match) || CombatEnchantments.Leaves(top).Any(e => e is not null && match(e));
+    }
 
     private static bool IsEnemyTarget(SpellEffect effect)
         => effect.m_effectTarget is kEffectTarget.kAtLeastOneEnemy
