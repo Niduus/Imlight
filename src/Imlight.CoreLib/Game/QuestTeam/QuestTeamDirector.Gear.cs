@@ -1,0 +1,224 @@
+/*
+ * Imlight
+ * Copyright (C) 2026 Revive101
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Akka.Actor;
+using Imlight.CoreLib.Game.BotShared;
+using Imlight.CoreLib.Game.Tools;
+using Imlight.CoreLib.Game.Zone.Components;
+using Imlight.CoreLib.WizardData.Models.Player;
+
+namespace Imlight.CoreLib.Game.QuestTeam;
+
+/// <summary>
+/// The Quest Team's gear and decks (Niduus, 2026-11-12): each wizard wears the best gear for its school and level that it
+/// has, walks to a shop in the world it is in to buy better gear with its own gold, and changes its deck before each fight
+/// for what is coming (Game/BotShared). All of it the way a player does: the backpack's equip, the shop window's buy and
+/// the deck window's add and remove.
+/// </summary>
+internal sealed partial class QuestTeamDirectorActor {
+
+    // The gold a wizard keeps for potions and the next trainer.
+    private const double GOLD_KEPT = 0.25;
+
+    private DateTime _nextGearLook = DateTime.MinValue;
+    private DateTime _nextShopping = DateTime.MinValue;
+    private readonly Dictionary<string, string> _deckFor = [];
+    private readonly Dictionary<string, int> _deckKnown = [];
+    private static (List<string[]> Names, Dictionary<uint, int[]> Of)? s_vendorZones;
+    private QuestTeamPlanner.Target _shopTrip;
+    private readonly HashSet<uint> _shopSkipped = [];
+
+    private static BotStyle StyleOf(QuestTeamMember.Status member) => BotGear.StyleOfRole(member.Role);
+
+    /// <summary>Out of a battle: better gear from the backpack goes on, and a deck that misses newly learned spells is redone.</summary>
+    private void KeepGearAndDecks() {
+        if (DateTime.UtcNow < _nextGearLook) {
+            return;
+        }
+
+        _nextGearLook = DateTime.UtcNow.AddSeconds(6);
+        for (var i = 0; i < _team.Count; i++) {
+            var member = _team[i];
+            if (member.Wizard is not { } wizard || CombatDuelComponent.IsInBattle(member.GlobalId)) {
+                continue;
+            }
+
+            // One piece at a time, the best gain first.
+            if (BotGear.BetterInBackpack(wizard, StyleOf(member)).OrderByDescending(b => b.Gain).FirstOrDefault() is { Item: not null } better) {
+                _actors[i].Tell(new QuestTeamMember.Equip(better.Item.m_globalID, better.Slot, better.Piece.Name));
+                continue;
+            }
+
+            // New spells learned (or a new deck worn) since the deck was made: the deck again, for the fight it was made for.
+            var known = (wizard.SpellbookBehavior?.LearnedSpellTemplateIds?.Count ?? 0) * 1000 + (wizard.SpellbookBehavior?.MaxSpells ?? 0);
+            if (_deckKnown.GetValueOrDefault(member.Role) != known) {
+                PrepareDeck(i, _target?.Kind == QuestTeamPlanner.FIGHT ? BotCards.SituationOf(_target.Template) : BotCards.Situation.Unknown, force: true);
+            }
+        }
+    }
+
+    /// <summary>Before a fight: each wizard's deck for what it is about to fight.</summary>
+    private void PrepareDecks(BotCards.Situation situation) {
+        for (var i = 0; i < _team.Count; i++) {
+            PrepareDeck(i, situation, force: false);
+        }
+    }
+
+    private void PrepareDeck(int index, BotCards.Situation situation, bool force) {
+        var member = _team[index];
+        if (member.Wizard is not { SpellbookBehavior: { } book } wizard || CombatDuelComponent.IsInBattle(member.GlobalId)) {
+            return;
+        }
+
+        var key = situation.Describe();
+        if (!force && _deckFor.GetValueOrDefault(member.Role) == key) {
+            return;
+        }
+
+        var deckItem = wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Deck);
+        if (deckItem is null || book.MaxSpells <= 0) {
+            return;
+        }
+
+        var wanted = BotCards.Plan(book.LearnedSpellTemplateIds ?? [], BotGear.SchoolOf(wizard), StyleOf(member), situation,
+            book.MaxSpells, Math.Max(1, book.SchoolMaxInstances), Math.Max(1, book.GenericMaxInstances));
+        // Treasure cards and anything that is not a fighting card stay as they are.
+        var now = (book.SpellList ?? []).Where(s => s is not null && BotCards.CardOf(s.m_templateID) is not null)
+            .GroupBy(s => s.m_templateID).ToDictionary(g => (uint) g.Key, g => g.Sum(s => (int) s.m_quantity));
+
+        _deckFor[member.Role] = key;
+        _deckKnown[member.Role] = (book.LearnedSpellTemplateIds?.Count ?? 0) * 1000 + book.MaxSpells;
+        var (take, put) = BotCards.Changes(now, wanted);
+        if (take.Count + put.Count == 0 || (!force && take.Count + put.Count < 2)) {
+            return;
+        }
+
+        Note(member.Role, $"{member.Name} makes its deck ready for {key}: {BotCards.Describe(wanted.Select(w => (w.Key, w.Value)))}.");
+        _actors[index].Tell(new QuestTeamMember.EditDeck(deckItem.m_globalID, take, put, "for " + key));
+    }
+
+    // ---------------------------------------------------------------------
+    // Shopping
+    // ---------------------------------------------------------------------
+
+    /// <summary>A trip to a shop in this world that sells better gear one of them can pay for, or null.</summary>
+    private QuestTeamPlanner.Target ShoppingTarget(List<QuestTeamMember.Status> group) {
+        if (DateTime.UtcNow < _nextShopping) {
+            return _shopTrip;
+        }
+
+        _nextShopping = DateTime.UtcNow.AddSeconds(10);
+        _shopTrip = group.Any(m => m.Wizard?.ZoneIsInstance == true) ? null : FindShopTrip(group);
+        if (_shopTrip is null) {
+            _nextShopping = DateTime.UtcNow.AddMinutes(5);
+        }
+
+        return _shopTrip;
+    }
+
+    private QuestTeamPlanner.Target FindShopTrip(List<QuestTeamMember.Status> group) {
+        var leader = group[0];
+        var world = (leader.Zone ?? "").Split('/')[0];
+        var live = MinimapIndex.In(leader.ZoneActor);
+        foreach (var member in group) {
+            if (member.Wizard is not { } wizard) {
+                continue;
+            }
+
+            var gold = (int) ((wizard.GameStats?.m_currentGold ?? 0) * (1 - GOLD_KEPT));
+            var owned = (wizard.InventoryBehavior?.Items ?? []).Select(i => (uint) Math.Min((ulong) i.m_templateID, uint.MaxValue)).ToHashSet();
+            foreach (var (piece, vendors, _) in BotGear.ShopUpgrades(wizard, StyleOf(member), gold)) {
+                if (owned.Contains(piece.Id) || _shopSkipped.Contains(piece.Id)) {
+                    continue;
+                }
+
+                // A shopkeeper of it here first.
+                var here = live.FirstOrDefault(m => vendors.Contains((uint) m.Template));
+                if (here is not null) {
+                    return new QuestTeamPlanner.Target(QuestTeamPlanner.SHOP, here.Object.m_location.X, here.Object.m_location.Y,
+                        $"{member.Name} buys {piece.Name} from {here.Name}", Template: here.Template, GlobalId: here.Object.m_globalID.Full,
+                        Key: $"shop|{member.Role}|{piece.Id}");
+                }
+
+                // Else one in another area of this world.
+                var zone = VendorZones(vendors).FirstOrDefault(z => string.Equals(z.Split('/')[0], world, StringComparison.OrdinalIgnoreCase));
+                if (zone is not null && QuestTeamPlanner.Travel(leader, zone, $"shopping for {member.Name}'s {piece.Name}") is { Problem.Length: 0 } way) {
+                    return way;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static IEnumerable<string> VendorZones(IReadOnlyList<uint> vendors) {
+        s_vendorZones ??= VendorGuide.LoadZones();
+        var (names, of) = s_vendorZones.Value;
+        foreach (var vendor in vendors) {
+            foreach (var number in of.GetValueOrDefault(vendor) ?? []) {
+                if (number >= 0 && number < names.Count && names[number][0].Length > 0) {
+                    yield return names[number][0];
+                }
+            }
+        }
+    }
+
+    private void ShopHere(List<QuestTeamMember.Status> group, QuestTeamPlanner.Target target) {
+        var parts = target.Key.Split('|');
+        var member = _team.FirstOrDefault(m => m.Role == parts[1]);
+        if (member is null || !uint.TryParse(parts[2], out var itemId)) {
+            return;
+        }
+
+        var index = _team.IndexOf(member);
+        if (QuestTeamPlanner.Far(member.X, member.Y, target.X, target.Y) > 200) {
+            WalkTo(index, target with { X = target.X - 40 });
+
+            return;
+        }
+
+        var key = $"{target.Key}|{index}";
+        if (!CanClick(key)) {
+            if (TimesClicked(key) >= 2) {
+                // The shop would not sell it: on with the quests, back to shopping later.
+                Note(member.Role, $"{member.Name} could not buy {BotGear.Read(itemId)?.Name ?? itemId.ToString()} here.");
+                _shopSkipped.Add(itemId);
+                _shopTrip = null;
+                _nextShopping = DateTime.UtcNow.AddSeconds(10);
+            }
+
+            return;
+        }
+
+        Clicked(key);
+        if (member.Options.TryGetValue(target.GlobalId, out var options) && options.FirstOrDefault(o => o.Service == "WizShoppingService") is { Service: not null } open) {
+            _actors[index].Tell(new QuestTeamMember.Interact(target.GlobalId, open.Service, open.Index, "shopping"));
+        }
+
+        Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(1.5), _actors[index],
+            new QuestTeamMember.Buy(target.GlobalId, itemId, BotGear.Read(itemId)?.Name ?? itemId.ToString()), Self);
+        // The next one in a moment; the new piece goes on at the next look at the backpack.
+        _shopTrip = null;
+        _nextShopping = DateTime.UtcNow.AddSeconds(5);
+        _nextGearLook = DateTime.UtcNow.AddSeconds(3);
+    }
+
+}

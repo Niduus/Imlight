@@ -458,25 +458,69 @@ internal sealed partial class ManagerWindow {
             : $"Quest: {quest}, for {Minutes(questFor)} so far" + (expected > 0 ? $" (expected about {Minutes(expected)})." : ".");
         _teamQuest.Foreground = expected > 0 && questFor > expected * (double) (_teamSlow.Value ?? 2) ? ManagerTheme.Accent("Create") : ManagerTheme.TEXT_BRUSH;
 
-        _teamMembers.Children.Clear();
         foreach (var node in status["members"] as JsonArray ?? []) {
             if (node is not JsonObject member) {
                 continue;
             }
 
             var role = (string?) member["role"] ?? "";
-            var line = $"{role}  ·  {(string?) member["name"]}  ·  level {(int?) member["level"] ?? 0}  ·  {(string?) member["zone"]}  ·  " +
-                       $"health {(string?) member["health"]}  ·  {(int?) member["gold"] ?? 0} gold  ·  {(int?) member["training"] ?? 0} training points  ·  " +
-                       $"{(int?) member["quests"] ?? 0} quests" + ((bool?) member["battle"] == true ? "  ·  in a battle" : "") +
-                       ((string?) member["state"] is { } state && state != "playing" ? $"  ·  {state}" : "");
-            _teamMembers.Children.Add(new Border {
-                Background = ManagerTheme.SURFACE_HIGH_BRUSH, CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(12, 6),
-                Child = new TextBlock { Text = line, TextWrapping = TextWrapping.Wrap },
-            });
+            var card = TeamMemberCard(role);
+            card.Line.Text = $"{role}  ·  {(string?) member["name"]}  ·  level {(int?) member["level"] ?? 0}  ·  {(string?) member["zone"]}  ·  " +
+                             $"health {(string?) member["health"]}  ·  {(int?) member["gold"] ?? 0} gold  ·  {(int?) member["training"] ?? 0} training points" +
+                             ((bool?) member["battle"] == true ? "  ·  in a battle" : "") +
+                             ((string?) member["state"] is { } state && state != "playing" ? $"  ·  {state}" : "");
+            card.Quests.Text = "Quests: " + List(member["questList"], "none");
+            card.Gear.Text = "Gear: " + List(member["gear"], "none yet");
+            var deckFor = (string?) member["deckFor"] ?? "";
+            card.Deck.Text = "Deck" + (deckFor.Length > 0 ? $" (made ready for {deckFor})" : "") + ": " +
+                             ((string?) member["deck"] is { Length: > 0 } deck ? deck : "empty");
+            card.Spells.Text = "Trained spells: " + List(member["spells"], "none");
         }
+
+        static string List(JsonNode? node, string none)
+            => node is JsonArray { Count: > 0 } array ? string.Join(", ", array.Select(n => (string?) n).Where(t => !string.IsNullOrEmpty(t))) : none;
 
         static string Capital(string text) => text.Length == 0 ? "" : char.ToUpperInvariant(text[0]) + text[1..];
         static string Minutes(int seconds) => seconds < 90 ? $"{seconds} seconds" : $"{seconds / 60} minutes";
+    }
+
+    private sealed record TeamCard(TextBlock Line, TextBlock Quests, TextBlock Gear, TextBlock Deck, TextBlock Spells);
+
+    private readonly Dictionary<string, TeamCard> _teamCards = [];
+
+    // One card per wizard, made once (so an opened "Quests, gear, deck and spells" stays open while it updates).
+    private TeamCard TeamMemberCard(string role) {
+        if (_teamCards.TryGetValue(role, out var known)) {
+            return known;
+        }
+
+        TextBlock Text(bool strong = false) => new() { TextWrapping = TextWrapping.Wrap, FontWeight = strong ? FontWeight.SemiBold : FontWeight.Normal };
+        var card = new TeamCard(Text(true), Text(), Text(), Text(), Text());
+        var tp = Action(Plain("TP to " + role), () => {
+            if (!InstalledCommands.IsServerRunning(_manager.InstallFolder)) {
+                throw new PanelException("Start the server and log in to your wizard first.");
+            }
+
+            _manager.SendCommand(".questteam tp " + role);
+            Say($"Sent: your wizard goes to the Quest Team's {role} wizard, wherever it is.");
+
+            return Task.CompletedTask;
+        });
+        ToolTip.SetTip(tp, $"Your wizard (logged in on this PC) goes right next to {role}, even inside its dungeon. In the game: .questteam tp {role}");
+        var details = new Expander {
+            Header = "Quests, gear, deck and trained spells", HorizontalAlignment = HorizontalAlignment.Stretch,
+            Content = new StackPanel { Spacing = 6, Children = { card.Quests, card.Gear, card.Deck, card.Spells } },
+        };
+        _teamMembers.Children.Add(new Border {
+            Background = ManagerTheme.SURFACE_HIGH_BRUSH, CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(12, 8),
+            Child = new StackPanel {
+                Spacing = 6,
+                Children = { new DockPanel { Children = { WithDock(tp, Dock.Right), WithCenter(card.Line) } }, details },
+            },
+        });
+        _teamCards[role] = card;
+
+        return card;
     }
 
     private string ReadNewest(string pattern, string fallback) {

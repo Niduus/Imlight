@@ -65,6 +65,15 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
 
     internal sealed record WorldTeleport(ulong DoorGlobalId, string World);
 
+    /// <summary>Put on an item from the backpack, as the game's backpack does.</summary>
+    internal sealed record Equip(ulong ItemId, string Slot, string What);
+
+    /// <summary>Buy one item at a shop (the shopkeeper by global id), as the shop window does.</summary>
+    internal sealed record Buy(ulong NpcGlobalId, uint ItemTemplate, string What);
+
+    /// <summary>Change the deck, as the deck window does: these out (one per copy), then these in.</summary>
+    internal sealed record EditDeck(ulong DeckId, List<uint> Out, List<uint> In, string Why);
+
     /// <summary>Ice asks a teammate into its group.</summary>
     internal sealed record Invite(ulong CharId, ulong GlobalId);
 
@@ -183,6 +192,25 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
         Receive<GAME_5_PROTOCOL.MSG_PARTYREQUESTJOIN>(m => {
             if (QuestTeamRoster.IsMember(m.CharacterID)) {
                 Send(new GAME_5_PROTOCOL.MSG_PARTYREQUESTACCEPT { SourceCharacterID = _member.CharId, PartyID = m.PartyID });
+            }
+        });
+        Receive<Equip>(m => {
+            Note($"puts on {m.What}.");
+            Send(new GAME_5_PROTOCOL.MSG_EQUIPITEM { IsEquip = 1, ItemID = m.ItemId, SlotName = m.Slot });
+        });
+        Receive<Buy>(m => {
+            Note($"buys {m.What}.");
+            Send(new WIZARD_12_PROTOCOL.MSG_SHOPBUYREQUEST { npcGlobalID = m.NpcGlobalId, ShopID = m.ItemTemplate, quantity = 1, CurrencyType = 0 });
+            Send(new WIZARD_12_PROTOCOL.MSG_DONESHOPPING());
+        });
+        Receive<EditDeck>(m => {
+            Note($"changes its deck ({m.Why}): {m.Out.Count} out, {m.In.Count} in.");
+            foreach (var id in m.Out) {
+                Send(new WIZARD_12_PROTOCOL.MSG_REMOVESPELLFROMDECK { SpellID = (int) id, DeckID = m.DeckId });
+            }
+
+            foreach (var id in m.In) {
+                Send(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTODECK { SpellID = (int) id, DeckID = m.DeckId });
             }
         });
         Receive<AcceptOffer>(m => Send(new QUEST_MESSAGES_52_PROTOCOL.MSG_ACCEPTQUEST { MobileID = m.MobileId, QuestName = m.Quest }));
