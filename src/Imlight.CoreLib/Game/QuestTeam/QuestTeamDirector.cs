@@ -241,6 +241,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         QuestTeamRoster.Remember(loaded.Members);
+        _usernames = loaded.Members.Select(m => m.Username).Where(u => !string.IsNullOrEmpty(u)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         _team.Clear();
         _actors.Clear();
         foreach (var member in loaded.Members) {
@@ -358,6 +359,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         // Members in another area than the leader catch up the way the leader went.
         var leader = _team[0];
         NoteLeaderZone(leader);
+        KeepSoloInstances();
         var behind = _team.Skip(1).Where(m => m.ZoneActor is null || !m.ZoneActor.Equals(leader.ZoneActor)).ToList();
         if (behind.Count > 0) {
             if (_apartSince == DateTime.MinValue) {
@@ -568,6 +570,13 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             return QuestTeamPlanner.ForGiver(leader, quest, giver);
         }
 
+        // Under-leveled for the next story quest: XP up to the level it needs, logged (no farming).
+        if (_currentQuest is null && QuestTeamPlanner.LevelBlocked(leader.Wizard) is var (blocked, level)) {
+            CatchUpXp(blocked, level);
+
+            return null;
+        }
+
         if (_currentQuest is null) {
             _doing = "no World or Story quest is left to get";
             Issue("team", null, "There is no World or Story quest left for the team to get. If they have not reached the last world, " +
@@ -575,6 +584,27 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         return null;
+    }
+
+    // Niduus, 2026-11-12: "If under-leveled ... Have them execute a command to gain XP to get to the level required.
+    // Logging this as well of how much xp and the goal level". Every member below the goal gets just the XP to reach it.
+    private void CatchUpXp(Imcodec.ObjectProperty.TypeCache.QuestTemplate quest, int level) {
+        var need = Imlight.CoreLib.Shared.Character.MagicLevelsConfig.GetExperiencePointsAtLevel(level);
+        var title = QuestTeamText.Title((string) quest.m_questName);
+        for (var i = 0; i < _team.Count && i < _actors.Count; i++) {
+            var wizard = _team[i].Wizard;
+            if (wizard?.MagicSchoolBehavior is not { } school || school.Level >= level) {
+                continue;
+            }
+
+            var xp = Math.Max(1, need - school.ExperiencePoints);
+            _actors[i].Tell(new QuestTeamMember.GainXp(xp));
+            Note(_team[i].Role, $"is level {school.Level}, under the level {level} that '{title}' needs: gains {xp:N0} XP to reach level {level}.");
+            QuestTeamLink.Send(new TeamRequest { Op = "quest", Event = "xp", Quest = quest.m_questName, Title = title,
+                Text = $"{_team[i].Role} was level {school.Level}; given {xp:N0} XP to reach level {level} for this quest" });
+        }
+
+        _doing = $"catching up to level {level} for '{title}'";
     }
 
     private string _storyWorld;
@@ -598,7 +628,33 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                 Text = $"story finished on {at}; the team goes on to {world} (levels {string.Join(", ", _team.Select(m => $"{m.Role} {m.Wizard?.MagicSchoolBehavior?.Level ?? 0}"))})" });
         }
 
+        Snapshot(world);
         _storyWorld = world;
+    }
+
+    private List<string> _usernames = [];
+
+    // A copy of the team's accounts and wizards before each new world (Niduus, 2026-11-12: "a snapshot before each new
+    // world"), saved as Account Transfer files in the Quest Team folder's Snapshots, so a broken world can be undone by
+    // loading one in Ahziael's Account Transfer tab.
+    private void Snapshot(string world) {
+        var names = _usernames.ToList();
+        var folder = Path.Combine(QuestTeamWire.Folder, "Snapshots");
+        var stamp = DateTime.Now.ToString("yyyy-MM-dd HH-mm", System.Globalization.CultureInfo.InvariantCulture);
+        _ = System.Threading.Tasks.Task.Run(async () => {
+            try {
+                Directory.CreateDirectory(folder);
+                foreach (var username in names) {
+                    var file = await global::Imlight.RemoteAdmin.AccountTransfer.ExportAsync(Tools.RemoteAdmin.RemoteAdminServer.PlayerDatabaseHttp(), username, "Quest Team", null);
+                    var path = Path.Combine(folder, $"{stamp} before {world} - {username}{(global::Imlight.RemoteAdmin.AccountTransfer.EXTENSION)}");
+                    await File.WriteAllBytesAsync(path, global::Imlight.RemoteAdmin.AccountTransfer.ToBytes(file));
+                    Note("Team", $"SNAPSHOT before {world}: saved {Path.GetFileName(path)}.");
+                }
+            }
+            catch (Exception ex) {
+                Note("Team", $"could not save the snapshot before {world}: {ex.Message}");
+            }
+        });
     }
 
     private string _apartQuestKey = "";

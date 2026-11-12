@@ -78,6 +78,8 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
 
     /// <summary>Ahziael finishes the step it is on in a quest (.quest completegoalfor), for a step that is broken.</summary>
     internal sealed record SkipStep(string Quest);
+    internal sealed record GainXp(int Xp);
+    internal sealed record GoToTeammate(ulong CharId);
 
     /// <summary>Leave the battle, as the Flee button does.</summary>
     internal sealed record Flee;
@@ -225,6 +227,8 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
             }
         });
         Receive<SkipStep>(m => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "completegoal", QuestName = m.Quest }));
+        Receive<GoToTeammate>(m => Send(new WIZARD_12_PROTOCOL.MSG_GOTOFRIENDLYPLAYER { TargetCharacterID = m.CharId }));
+        Receive<GainXp>(m => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_GAINXP { XP = m.Xp }));
         Receive<ClickNow>(m => Send(BotShared.BotBattle.ToGameMessage(m.Move)));
         Receive<Flee>(_ => Send(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATMOVE {
             MoveType = (byte) Combat.CombatMoveType.Flee, SpellSelection = 0, SpellTarget = 0, TimeLeft = 0,

@@ -454,6 +454,38 @@ internal static class BotGear {
     }
 
     /// <summary>
+    /// Gear in the backpack worth nothing to this wizard: not worn, not better than what it wears, and not a Crowns item.
+    /// Sold when the backpack is full (Niduus, 2026-11-12). Anything the gear list does not know is left alone.
+    /// </summary>
+    internal static List<(WizClientObjectItem Item, Piece Piece)> Junk(Wizard wizard, BotStyle style) {
+        var junk = new List<(WizClientObjectItem, Piece)>();
+        if (wizard?.InventoryBehavior?.Items is not { } items) {
+            return junk;
+        }
+
+        var worn = Slots.Append(EquipmentSlotType.Mount).Append(EquipmentSlotType.Pet)
+            .Select(s => wizard.EquipmentBehavior?.GetItemInSlot(s)?.m_globalID.Full ?? 0).Where(id => id != 0).ToHashSet();
+        var school = SchoolOf(wizard);
+        foreach (var item in items.ToList()) {
+            if (item is null || worn.Contains(item.m_globalID.Full) || ItemHelper.IsLocked(item)) {
+                continue;
+            }
+
+            var piece = Read((uint) Math.Min((ulong) item.m_templateID, uint.MaxValue));
+            if (piece is null || piece.CrownsOnly || !Enum.TryParse<EquipmentSlotType>(piece.Slot, out var slot)) {
+                continue;
+            }
+
+            var (_, wearing) = Wearing(wizard, slot, style);
+            if (Score(piece, school, style) <= wearing) {
+                junk.Add((item, piece));
+            }
+        }
+
+        return junk;
+    }
+
+    /// <summary>
     /// What a shop sells that is better than what the wizard wears and that it can pay for, best gain first: the piece, the
     /// shops that sell it (by NPC template) and how much better it is.
     /// </summary>

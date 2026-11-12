@@ -146,6 +146,40 @@ internal static class QuestTeamPlanner {
     }
 
     /// <summary>
+    /// The next story quest the leader could take if only they were a higher level, and the lowest level that opens it
+    /// (Niduus, 2026-11-12: "If under-leveled ... execute a command to gain XP to get to the level required"). Null when
+    /// no story quest is waiting on a level alone.
+    /// </summary>
+    internal static (QuestTemplate Quest, int Level)? LevelBlocked(Wizard leader) {
+        var have = leader.MagicSchoolBehavior?.Level ?? 1;
+        var max = Imlight.CoreLib.Shared.Character.MagicLevelsConfig.MaxLevel;
+        var world = (leader.Zone ?? "").Split('/')[0];
+        foreach (var g in QuestService.QuestFinderGivers()
+                     .Where(g => QuestStory.IsMain(g.Quest) && IsMainStoryWorld(g.Quest))
+                     .OrderByDescending(g => QuestStory.KindOf(g.Quest) == QuestStory.STORY)
+                     .ThenByDescending(g => string.Equals(QuestGuide.GiverZone(g.Quest).Split('/')[0], world, StringComparison.OrdinalIgnoreCase))) {
+            var quest = g.Quest;
+            if (quest.m_requirements is null || DungeonQuestIndex.IsDungeonQuest(quest.m_questName) || Imlight.CoreLib.Game.Quests.QuestOptions.IsOff(quest.m_questName)
+                || leader.HasQuest(quest.m_questName) || leader.HasCompletedQuest(quest.m_questName)) {
+                continue;
+            }
+
+            var context = new Imlight.CoreLib.Game.Requirements.Contexts.QuestRequirementContext(quest.m_requirements, null, null, leader, quest.m_questName);
+            if (!QuestService.FastForwardMeets(quest.m_requirements, context, true, have)) {
+                continue;
+            }
+
+            for (var level = have + 1; level <= max; level++) {
+                if (QuestService.FastForwardMeets(quest.m_requirements, context, false, level)) {
+                    return (quest, level);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
     /// What the wizards in <paramref name="group"/> (all in the same area, the first leading) do next for
     /// <paramref name="questName"/>; null when none of them holds it.
     /// </summary>

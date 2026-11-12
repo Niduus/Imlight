@@ -408,7 +408,7 @@ internal partial class QuestService {
     /// The quest's requirements, folded left to right as RequirementDispatcher does, with the wizard's level taken as the
     /// level the quests finished so far add up to (their XP is only given at the end), or not checked at all.
     /// </summary>
-    private static bool FastForwardMeets(RequirementList requirements, IRequirementContext context, bool passLevels, int level) {
+    internal static bool FastForwardMeets(RequirementList requirements, IRequirementContext context, bool passLevels, int level) {
         if (requirements?.m_requirements is not { Count: > 0 } list) {
             return true;
         }
