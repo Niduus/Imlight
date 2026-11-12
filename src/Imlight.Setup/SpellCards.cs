@@ -91,6 +91,18 @@ internal sealed class SpellCard {
 
     internal bool NoPvPEnchant { get; init; }
 
+    // Where the spell can be used, as the card's restriction bar shows it since the Ahmarra update: m_PvP alone was
+    // "PvP only" and m_PvE alone "No PvP"; the bar shows both kinds it works in (a spell with neither flag works in both).
+    internal bool UsableInStandard => !(PvP && !PvE);
+    internal bool UsableInAdvanced => !(PvE && !PvP);
+
+    /// <summary>"Standard and Advanced", "Standard only" or "Advanced only", plus the level where levels apply.</summary>
+    internal string UsableIn => (UsableInStandard, UsableInAdvanced) switch {
+        (true, true) => "Standard and Advanced",
+        (true, false) => "Standard only (not PvP or Challenge)",
+        _ => "Advanced only (PvP and Challenge)",
+    } + (Level > 0 ? $", level {Level} where levels apply" : "");
+
     internal bool NoDiscard { get; init; }
 
     internal bool PvP { get; init; } = true;
