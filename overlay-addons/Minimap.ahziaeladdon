@@ -1,0 +1,52 @@
+{
+  "Format": "Ahziael overlay add-on",
+  "Name": "Minimap",
+  "Author": "Niduus",
+  "Description": "A detailed map of what is around your wizard: the streets, quest steps, quest givers, mobs, bosses, sigils, doors and chests. Pick a size and it goes in the top-right corner.",
+  "Version": "1",
+  "Widgets": [
+    {
+      "Name": "Minimap",
+      "Elements": [
+        {
+          "Kind": "Minimap", "Name": "Minimap", "Anchor": "TopRight", "X": 20, "Y": 20, "Width": 200, "Height": 200,
+          "Background": { "Kind": "Radial", "Color1": "#C8202A44", "Color2": "#C80A0E1C" },
+          "BorderColor": "#D0FFD24A", "BorderWidth": 2, "CornerRadius": 16, "Shadow": true, "ShadowBlur": 8,
+          "Map": {}
+        }
+      ]
+    },
+    {
+      "Name": "Big minimap",
+      "Elements": [
+        {
+          "Kind": "Minimap", "Name": "Big minimap", "Anchor": "TopRight", "X": 20, "Y": 20, "Width": 300, "Height": 300,
+          "Background": { "Kind": "Radial", "Color1": "#C8202A44", "Color2": "#C80A0E1C" },
+          "BorderColor": "#D0FFD24A", "BorderWidth": 2, "CornerRadius": 20, "Shadow": true, "ShadowBlur": 10,
+          "Map": { "Zoom": 3000, "IconSize": 10, "NameSize": 11, "QuestLines": 4 }
+        }
+      ]
+    },
+    {
+      "Name": "Square minimap (north up)",
+      "Elements": [
+        {
+          "Kind": "Minimap", "Name": "Square minimap", "Anchor": "TopRight", "X": 20, "Y": 20, "Width": 220, "Height": 220,
+          "Background": { "Kind": "Solid", "Color1": "#D00A0E1C" },
+          "BorderColor": "#D0FFD24A", "BorderWidth": 2, "CornerRadius": 6, "Shadow": true, "ShadowBlur": 8,
+          "Map": { "Round": false, "Turn": false }
+        }
+      ]
+    }
+  ],
+  "Styles": [
+    {
+      "Name": "Gold map frame",
+      "Look": {
+        "Kind": "Box",
+        "Background": { "Kind": "Radial", "Color1": "#C8202A44", "Color2": "#C80A0E1C" },
+        "BorderColor": "#D0FFD24A", "BorderWidth": 2, "CornerRadius": 16, "Shadow": true, "ShadowBlur": 8
+      }
+    }
+  ]
+}
