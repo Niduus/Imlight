@@ -126,6 +126,45 @@ internal static class ZoneGround {
     internal static Outline Shapes(byte[] data, float smoothing = 0) {
         var triangles = Read(data, out var circles);
 
+        // Walls out in the empty sky round the edge of the world (invisible fences, big blocks under the floor) aren't
+        // drawn: only walls that touch ground you can walk on (Niduus, 2026-11-12: grey blocks all round The Zocalo).
+        {
+            const float CELL = 250f;
+            var ground = new HashSet<(int, int)>();
+            foreach (var t in triangles.Where(t => t.Kind != WALL)) {
+                var (x0, x1) = ((int) MathF.Floor(Math.Min(t.X1, Math.Min(t.X2, t.X3)) / CELL), (int) MathF.Floor(Math.Max(t.X1, Math.Max(t.X2, t.X3)) / CELL));
+                var (y0, y1) = ((int) MathF.Floor(Math.Min(t.Y1, Math.Min(t.Y2, t.Y3)) / CELL), (int) MathF.Floor(Math.Max(t.Y1, Math.Max(t.Y2, t.Y3)) / CELL));
+                if ((long) (x1 - x0 + 1) * (y1 - y0 + 1) > 40000) {
+                    continue;
+                }
+
+                for (var x = x0; x <= x1; x++) {
+                    for (var y = y0; y <= y1; y++) {
+                        ground.Add((x, y));
+                    }
+                }
+            }
+
+            bool Touches(float ax0, float ax1, float ay0, float ay1) {
+                for (var x = (int) MathF.Floor(ax0 / CELL); x <= (int) MathF.Floor(ax1 / CELL); x++) {
+                    for (var y = (int) MathF.Floor(ay0 / CELL); y <= (int) MathF.Floor(ay1 / CELL); y++) {
+                        if (ground.Contains((x, y))) {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            if (ground.Count > 0) {
+                triangles.RemoveAll(t => t.Kind == WALL && float.IsFinite(t.X1 + t.X2 + t.X3 + t.Y1 + t.Y2 + t.Y3)
+                                         && !Touches(Math.Min(t.X1, Math.Min(t.X2, t.X3)), Math.Max(t.X1, Math.Max(t.X2, t.X3)),
+                                             Math.Min(t.Y1, Math.Min(t.Y2, t.Y3)), Math.Max(t.Y1, Math.Max(t.Y2, t.Y3))));
+                circles = circles.Where(c => Touches(c.X - c.R, c.X + c.R, c.Y - c.R, c.Y + c.R)).ToList();
+            }
+        }
+
         // A post or pillar standing in a wall or building is part of it: drawn with the wall as one smooth shape, not a
         // circle bulging out of a block (Niduus, 2026-11-12: "blob textures"). Trees standing free stay round.
         var walls = triangles.Where(t => t.Kind == WALL).ToList();
@@ -296,7 +335,7 @@ internal static class ZoneGround {
                 }
             }
 
-            Text(); // name
+            var shapeName = Text();
             // The turn is stored row by row: world x = row 0 . point (Niduus, 2026-11-12: walls and bridges stuck out at
             // odd angles, turned the wrong way round).
             var rot = new float[9];
@@ -364,11 +403,26 @@ internal static class ZoneGround {
 
             // Ground meshes (category 2), and the water of lakes and fishing spots (category 64, Water).
             var lake = category == 64 && string.Equals((material ?? "").Trim(), "Water", StringComparison.OrdinalIgnoreCase);
-            if (points is not null && (category == 2 || lake)) {
+            // A boat's route is a walkable band the boat rides along, not ground: drawn, it made a long stripe round the
+            // sky (Niduus, 2026-11-12: Krokosphinx's dock by the boat to the Oasis didn't match).
+            var route = shapeName.Contains("spline", StringComparison.OrdinalIgnoreCase);
+            if (points is not null && !route && (category == 2 || lake)) {
+                // Wood only for floors made of boards (docks, decks, planks, bridges), not tree roots or shadows that
+                // happen to be marked wood.
                 var kind = lake ? WATER : KindOf(material);
+                if (kind == WOOD && !IsBoards(shapeName)) {
+                    kind = PATH;
+                }
+
                 for (var f = 0; f + 2 < faces.Length; f += 3) {
                     var (p1, p2, p3) = ((int) faces[f] * 3, (int) faces[f + 1] * 3, (int) faces[f + 2] * 3);
                     if (Math.Max(p1, Math.Max(p2, p3)) + 2 >= points.Length) {
+                        continue;
+                    }
+
+                    // A lake's surface lies flat; its steep sides (falls, edges, the walls of a channel) aren't water
+                    // seen from above (Niduus, 2026-11-12: The Zocalo's channels came out as wide blue blocks).
+                    if (lake && !Flat(points, p1, p2, p3)) {
                         continue;
                     }
 
@@ -435,6 +489,26 @@ internal static class ZoneGround {
         }
 
         return new Ground(left, top, cell, width, height, Pack(grid));
+    }
+
+    private static bool IsBoards(string name) {
+        foreach (var word in new[] { "plank", "deck", "dock", "pier", "bridge", "board", "floorwood", "wood_floor", "woodfloor", "boardwalk", "walkway", "boat", "ship", "raft" }) {
+            if (name.Contains(word, StringComparison.OrdinalIgnoreCase)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Whether a triangle faces up (its slope under about 45 degrees).
+    private static bool Flat(float[] points, int a, int b, int c) {
+        var (ux, uy, uz) = (points[b] - points[a], points[b + 1] - points[a + 1], points[b + 2] - points[a + 2]);
+        var (vx, vy, vz) = (points[c] - points[a], points[c + 1] - points[a + 1], points[c + 2] - points[a + 2]);
+        var (nx, ny, nz) = ((uy * vz) - (uz * vy), (uz * vx) - (ux * vz), (ux * vy) - (uy * vx));
+        var length = MathF.Sqrt((nx * nx) + (ny * ny) + (nz * nz));
+
+        return length > 1e-6f && MathF.Abs(nz) / length > 0.7f;
     }
 
     private static byte KindOf(string material) => (material ?? "").Trim().ToLowerInvariant() switch {
