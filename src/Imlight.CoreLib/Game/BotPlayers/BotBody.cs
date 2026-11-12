@@ -58,6 +58,10 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
     private const float NAV_HEIGHT = 90f;
     private const float WALL_CLEARANCE = 40f;
 
+    // How far apart the walk grid points of one hop of a walk are.
+    private const float HOP_MIN = 80f;
+    private const float HOP_MAX = 700f;
+
     public ITimerScheduler Timers { get; set; }
 
     private readonly Info _info;
@@ -72,6 +76,9 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
     private int _next;
     private float _speed = 260;
     private float _pause = 2;
+
+    // How far from where it came in it goes.
+    private float _radius = 1500;
 
     // In a battle (or on its way to one): it stands still until the battle no longer has it.
     private bool _inBattle;
@@ -185,22 +192,43 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
         _pause = Math.Clamp(plan.PauseSeconds, 0, 30);
 
         var home = new NVector3(_wizard.Location.X, _wizard.Location.Y, _wizard.Location.Z);
-        var start = Random.Shared.NextSingle() * MathF.Tau;
         var count = Math.Clamp(plan.Points, 3, 16);
+        _radius = Math.Clamp(plan.Radius, 300, 8000);
         _loop.Clear();
-        for (var i = 0; i < count; i++) {
-            var angle = start + (MathF.Tau * i / count);
-            var wanted = new NVector3(home.X + (MathF.Cos(angle) * plan.Radius), home.Y + (MathF.Sin(angle) * plan.Radius), home.Z);
-            if (Walkable(wanted, home.Z) is { } point && !NearAvoided(point)) {
-                _loop.Add(point);
+        var grid = ZoneNav.Points(_info.ZonePath);
+        if (grid.Length > 0) {
+            // Places of the street's own walk grid within its range, spread apart, clear of walls.
+            // Only places on its paths, away from water (Niduus, 2026-11-12: a bot stood in a pond), and among them the
+            // open ones more often: a square, a shop front, a wide street.
+            var near = grid.Where(p => NVector3.Distance(p, home) <= _radius && MathF.Abs(p.Z - home.Z) < 400).ToArray();
+            for (var tries = 0; tries < count * 20 && _loop.Count < count && near.Length > 0; tries++) {
+                var p = near[Random.Shared.Next(near.Length)];
+                if (!NearAvoided(p) && _loop.All(q => NVector3.Distance(p, q) > _radius / 4)
+                    && BotGround.GoodSpot(_info.ZonePath, p)
+                    && (Random.Shared.Next(3) == 0 || BotGround.Openness(_info.ZonePath, p) >= 30)
+                    && ZoneCollision.Clearance(_info.ZonePath, p) >= WALL_CLEARANCE) {
+                    _loop.Add(p);
+                }
+            }
+        }
+        else {
+            var start = Random.Shared.NextSingle() * MathF.Tau;
+            for (var i = 0; i < count; i++) {
+                var angle = start + (MathF.Tau * i / count);
+                var reach = _radius * (0.4f + (Random.Shared.NextSingle() * 0.6f));
+                var wanted = new NVector3(home.X + (MathF.Cos(angle) * reach), home.Y + (MathF.Sin(angle) * reach), home.Z);
+                if (ZoneCollision.Clearance(_info.ZonePath, wanted) >= WALL_CLEARANCE && !NearAvoided(wanted)
+                    && BotGround.CanStep(_info.ZonePath, wanted)) {
+                    _loop.Add(wanted);
+                }
             }
         }
 
-        // No walk grid and nothing clear: it stays near where it came in.
+        // Nothing clear: it stays near where it came in.
         if (_loop.Count < 2) {
             _loop.Clear();
             _loop.Add(home);
-            _loop.Add(new NVector3(home.X + 60, home.Y, home.Z));
+            _loop.Add(new NVector3(home.X + 150, home.Y, home.Z));
         }
 
         _next = 0;
@@ -318,19 +346,41 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
             _nextIsFixed = false;
         }
         else {
-            // Anywhere in its area but where it stands; nearer places a little more often.
-            var choices = _loop.Where(p => NVector3.Distance(p, from) > 40).ToList();
+            // Anywhere in its area but where it stands.
+            var choices = _loop.Where(p => NVector3.Distance(p, from) > 150).ToList();
             if (choices.Count == 0) {
                 choices = [.. _loop];
             }
 
-            destination = choices.OrderBy(p => NVector3.Distance(p, from) * (0.6f + Random.Shared.NextSingle())).First();
+            destination = choices[Random.Shared.Next(choices.Count)];
         }
 
         _route.Clear();
-        var distance = NVector3.Distance(from, destination);
-        if (distance > 120) {
-            // A bend to one side, of up to a quarter of the way, through points on the walk grid.
+        var grid = ZoneNav.Points(_info.ZonePath);
+        if (grid.Length > 0) {
+            // Along the street's walk grid, hop by hop toward the place, so it follows the street around corners and
+            // buildings instead of a straight line through them.
+            var at = from;
+            for (var hop = 0; hop < 80 && NVector3.Distance(at, destination) > HOP_MAX; hop++) {
+                var left = NVector3.Distance(at, destination);
+                var here = at;
+                var next = grid
+                    .Where(p => MathF.Abs(p.Z - here.Z) < 120 && BotGround.CanStep(_info.ZonePath, p))
+                    .Select(p => (Point: p, Step: NVector3.Distance(p, here), Left: NVector3.Distance(p, destination)))
+                    .Where(x => x.Step is >= HOP_MIN and <= HOP_MAX && x.Left < left - 40
+                                && ZoneCollision.Clearance(_info.ZonePath, (x.Point + here) / 2) >= 20
+                                && BotGround.CanStep(_info.ZonePath, (x.Point + here) / 2))
+                    .OrderBy(x => x.Left).Take(3).ToList();
+                if (next.Count == 0) {
+                    break;
+                }
+
+                at = next[Random.Shared.Next(next.Count)].Point;
+                _route.Enqueue(at);
+            }
+        }
+        else if (NVector3.Distance(from, destination) is var distance && distance > 120) {
+            // No walk grid: a gentle curve there.
             var dir = (destination - from) / distance;
             var side = new NVector3(-dir.Y, dir.X, 0) * (distance * (0.08f + (Random.Shared.NextSingle() * 0.17f)) * (Random.Shared.Next(2) == 0 ? -1 : 1));
             var control = ((from + destination) / 2) + side;
@@ -338,8 +388,8 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
                 var t = i / 4f;
                 var u = 1 - t;
                 var point = (u * u * from) + (2 * u * t * control) + (t * t * destination);
-                if (Walkable(point, from.Z) is { } snapped && !NearAvoided(snapped)) {
-                    _route.Enqueue(snapped);
+                if (ZoneCollision.Clearance(_info.ZonePath, point) >= WALL_CLEARANCE && !NearAvoided(point)) {
+                    _route.Enqueue(point);
                 }
             }
         }

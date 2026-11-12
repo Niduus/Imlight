@@ -59,29 +59,93 @@ internal static class BotPopulation {
     }
 
     /// <summary>
-    /// A place in the area for a bot to come in: a random point of the area's walk grid, not right next to the player
-    /// (bots walk in from somewhere else, as players do); without a walk grid, somewhere around the player.
+    /// A place in the area for a bot to come in (Niduus, 2026-11-12: "bot placements are very random and don't seem
+    /// organic"): a point of the walk grid that is on a path and away from water, in sight of the player more often than
+    /// not, and among those the open places (squares, wide streets) where players gather. Without a walk grid, somewhere
+    /// around the player.
     /// </summary>
     internal static Imcodec.Math.Vector3 SpotIn(string zonePath, Imcodec.Math.Vector3 player) {
         var points = ZoneNav.Points(zonePath);
         var me = new NVector3(player.X, player.Y, player.Z);
         if (points.Length > 0) {
-            for (var tries = 0; tries < 30; tries++) {
+            // Two of three come in where the player can see them; the rest further along the street.
+            var (near, far) = Random.Shared.Next(3) < 2 ? (400f, 2500f) : (2500f, 6000f);
+            var best = new List<(NVector3 Point, int Score)>();
+            for (var tries = 0; tries < 300 && best.Count < 24; tries++) {
                 var point = points[Random.Shared.Next(points.Length)];
                 var distance = NVector3.Distance(point, me);
-                if (distance is > 400 and < 6000 && ZoneCollision.Clearance(zonePath, point) >= 40) {
-                    return new Imcodec.Math.Vector3(point.X, point.Y, point.Z);
+                if (distance > near && distance < far && MathF.Abs(point.Z - me.Z) < 600
+                    && BotGround.GoodSpot(zonePath, point) && ZoneCollision.Clearance(zonePath, point) >= 40) {
+                    best.Add((point, BotGround.Openness(zonePath, point)));
                 }
+            }
+
+            if (best.Count > 0) {
+                var pick = best.OrderByDescending(b => b.Score).Take(5).ToList()[Random.Shared.Next(Math.Min(5, best.Count))].Point;
+
+                return new Imcodec.Math.Vector3(pick.X, pick.Y, pick.Z);
             }
         }
 
-        var angle = Random.Shared.NextSingle() * MathF.Tau;
-        var away = 300 + (Random.Shared.NextSingle() * 600);
-        var wanted = new NVector3(me.X + (MathF.Cos(angle) * away), me.Y + (MathF.Sin(angle) * away), me.Z);
-        var snapped = points.Length > 0 ? ZoneNav.Nearest(zonePath, wanted.X, wanted.Y, me.Z, 400, 200) : null;
-        var spot = snapped ?? wanted;
+        // Nothing found on a path: near the player, where the player can surely stand.
+        for (var tries = 0; tries < 20; tries++) {
+            var angle = Random.Shared.NextSingle() * MathF.Tau;
+            var away = 200 + (Random.Shared.NextSingle() * 400);
+            var wanted = new NVector3(me.X + (MathF.Cos(angle) * away), me.Y + (MathF.Sin(angle) * away), me.Z);
+            var spot = points.Length > 0 ? ZoneNav.Nearest(zonePath, wanted.X, wanted.Y, me.Z, 400, 200) : wanted;
+            if (spot is { } s && BotGround.CanStep(zonePath, s) && ZoneCollision.Clearance(zonePath, s) >= 40) {
+                return new Imcodec.Math.Vector3(s.X, s.Y, s.Z);
+            }
+        }
 
-        return new Imcodec.Math.Vector3(spot.X, spot.Y, spot.Z);
+        return player;
+    }
+
+    // Each world's levels (Niduus, 2026-11-12: "what is a 177 and 181 doing in Azteca. It's level max is 90"): the level
+    // players reach it at and its level cap (each world raises the cap by about 10). Selenopolis lives in Krokotopia's folder.
+    private static readonly (string Folder, int From, int Cap)[] s_worldLevels = [
+        ("KT_Selenopolis", 180, 190), ("WizardCity", 1, 15), ("Krokotopia", 10, 25), ("Marleybone", 20, 30), ("MooShu", 25, 35),
+        ("Dragonspyre", 35, 50), ("Grizzleheim", 20, 50), ("Wysteria", 20, 50), ("Celestia", 50, 60), ("Zafaria", 60, 70),
+        ("Avalon", 70, 80), ("Azteca", 80, 90), ("Aquila", 75, 90), ("Khrysalis", 90, 100), ("Darkmoor", 95, 100),
+        ("Polaris", 100, 110), ("Mirage", 110, 120), ("Empyrea", 120, 140), ("Karamelle", 140, 150), ("Lemuria", 150, 160),
+        ("Novus", 160, 170), ("Wallaru", 170, 180), ("Selenopolis", 180, 190),
+    ];
+
+    // How far over a world's cap a wizard is still believable there.
+    private const int OVER_CAP = 3;
+
+    /// <summary>
+    /// A level that fits the world: near the player's own when the player belongs there, otherwise one of the levels
+    /// wizards questing that world have (a few slightly over its cap). Streets of unknown worlds go by the player.
+    /// </summary>
+    internal static int LevelFor(string zonePath, int playerLevel, Random random) {
+        var nearPlayer = Math.Clamp(playerLevel + random.Next(-4, 3), 1, 200);
+        if (World(zonePath) is not var (from, cap)) {
+            return nearPlayer;
+        }
+
+        var top = cap + OVER_CAP;
+        if (playerLevel >= from && playerLevel <= top) {
+            return Math.Clamp(nearPlayer, from, top);
+        }
+
+        // Most are still questing the world; one in six has finished it and stayed a little over the cap.
+        return random.Next(6) == 0 ? random.Next(cap, top + 1) : random.Next(from, cap + 1);
+    }
+
+    private static (int From, int Cap)? World(string zonePath) {
+        if (string.IsNullOrEmpty(zonePath)) {
+            return null;
+        }
+
+        foreach (var (folder, from, cap) in s_worldLevels) {
+            if (folder.Contains('_') ? zonePath.Contains(folder, StringComparison.OrdinalIgnoreCase)
+                    : zonePath.StartsWith(folder + "/", StringComparison.OrdinalIgnoreCase)) {
+                return (from, cap);
+            }
+        }
+
+        return null;
     }
 
 }
