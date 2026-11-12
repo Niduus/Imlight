@@ -25,6 +25,7 @@ using Imcodec.CoreObject;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Shared.Behaviors;
+using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -86,7 +87,61 @@ internal static class BotBodies {
 
     internal static int Count => s_out.Count;
 
-    internal static void Start(ActorSystem system) => s_system = system;
+    internal static void Start(ActorSystem system) {
+        s_system = system;
+        system.Scheduler.Advanced.ScheduleRepeatedly(TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(BotPopulation.TICK_SECONDS), Populate);
+    }
+
+    // ---------------------------------------------------------------------
+    // Filling the areas real players are in (Niduus, 2026-11-12: "Begin to populate")
+    // ---------------------------------------------------------------------
+
+    private static int s_populating;
+
+    // Every few seconds: each area with real players in it gets bots until it has its share, one at a time, so they
+    // come in one by one as players would; an area with too many (players left) lets one go.
+    private static void Populate() {
+        if (!BotWire.Enabled || !BotLink.Ready || !BotPopulation.On || s_system is null
+            || System.Threading.Interlocked.Exchange(ref s_populating, 1) == 1) {
+            return;
+        }
+
+        try {
+            foreach (var (zone, players) in s_players) {
+                if (players.IsEmpty || !s_zones.TryGetValue(zone, out var info) || !BotPopulation.Allowed(info.Path, info.Instance)) {
+                    continue;
+                }
+
+                var wanted = BotPopulation.Wanted(info.Path, players.Values.Select(v => (int) v));
+                var here = InZone(zone);
+                if (here.Count < wanted) {
+                    var someone = players.Keys.ElementAt(Random.Shared.Next(players.Count));
+                    SpawnFor(zone, info.Path, someone);
+                }
+                else if (here.Count > wanted + 1) {
+                    here[Random.Shared.Next(here.Count)].Body.Tell(new BotLeave("its area has enough bots for the players there"));
+                }
+            }
+        }
+        catch (Exception e) {
+            Logger.Warning("Bot Players: filling the areas failed: {0}", Logger.Args(e.Message));
+        }
+        finally {
+            System.Threading.Interlocked.Exchange(ref s_populating, 0);
+        }
+    }
+
+    // A bot for an area, made after one of its players (their level and where they are), somewhere in the area.
+    private static void SpawnFor(IActorRef zone, string zonePath, IActorRef player) {
+        player.Ask<CHARACTER_103_PROTOCOL.MSG_CHARACTER>(
+                new CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD(), TimeSpan.FromSeconds(3))
+            .ContinueWith(task => {
+                if (task.IsCompletedSuccessfully && task.Result?.Wizard is { } wizard && wizard.Zone == zonePath) {
+                    var level = Math.Clamp((int) wizard.MagicSchoolBehavior.Level + Random.Shared.Next(-4, 3), 1, 200);
+                    Spawn(wizard, zone, level, BotPopulation.SpotIn(zonePath, wizard.Location), out _);
+                }
+            });
+    }
 
     internal static IReadOnlyList<Out> All => [.. s_out.Values.OrderBy(o => o.Id)];
 
@@ -104,9 +159,15 @@ internal static class BotBodies {
         }
     }
 
+    // What each area is (its path, and whether it is a copy for one group: a dungeon or other instance).
+    private static readonly ConcurrentDictionary<IActorRef, (string Path, bool Instance)> s_zones = new();
+
     /// <summary>A player came into an area: every bot there shows itself to them.</summary>
-    internal static void PlayerEntered(IActorRef zone, IActorRef player) {
-        s_players.GetOrAdd(zone, _ => new ConcurrentDictionary<IActorRef, byte>())[player] = 0;
+    internal static void PlayerEntered(IActorRef zone, IActorRef player, string zonePath, bool isInstance) {
+        s_zones[zone] = (zonePath ?? "", isInstance);
+        // How many bots this player brings to the area: 3 to 6 (Niduus, 2026-11-12).
+        s_players.GetOrAdd(zone, _ => new ConcurrentDictionary<IActorRef, byte>())[player] =
+            (byte) Random.Shared.Next(BotPopulation.MinPerPlayer, BotPopulation.MaxPerPlayer + 1);
         if (s_out.IsEmpty) {
             return;
         }
@@ -130,6 +191,33 @@ internal static class BotBodies {
     /// body walks a loop near where it came in. Returns what to tell the player.
     /// </summary>
     internal static string SpawnNear(Wizard player, IActorRef playerSession, IActorRef zone) {
+        // A few steps to the side of the player.
+        var at = player.Location;
+        var side = player.Orientation.Z + (MathF.PI / 2);
+        var near = new Imcodec.Math.Vector3(at.X + (MathF.Cos(side) * 90), at.Y + (MathF.Sin(side) * 90), at.Z);
+        Spawn(player, zone, Math.Clamp((int) player.MagicSchoolBehavior.Level, 1, 200), near, out var said);
+
+        return said;
+    }
+
+    /// <summary>
+    /// Brings a bot out in an area at a place, made after a player there (their look as a base, their area); the brain
+    /// picks who it is. Returns whether it came out; said is what to tell a player.
+    /// </summary>
+    private static bool Spawn(Wizard player, IActorRef zone, int wantedLevel, Imcodec.Math.Vector3 where, out string said) {
+        said = Precheck(zone);
+        if (said is not null) {
+            return false;
+        }
+
+        said = SpawnNow(player, zone, wantedLevel, where);
+
+        return s_lastSpawnOk;
+    }
+
+    [ThreadStatic] private static bool s_lastSpawnOk;
+
+    private static string Precheck(IActorRef zone) {
         if (!BotWire.Enabled) {
             return "Bot Players is off. Turn it on in Ahziael (Game Rules > Battles and World > Bot Players), wait about 10 seconds, then try again.";
         }
@@ -142,10 +230,17 @@ internal static class BotBodies {
             return "Bots can't come out here.";
         }
 
-        var gender = player.WizardAvatar.m_eGender;
+        return null;
+    }
+
+    private static string SpawnNow(Wizard player, IActorRef zone, int wantedLevel, Imcodec.Math.Vector3 where) {
+        s_lastSpawnOk = false;
+
+        // Its own gender and look, not a copy of the player's (Niduus, 2026-11-12: "random looks").
+        var gender = Random.Shared.Next(2) == 0 ? eGender.Male : eGender.Female;
         var (firsts, middles, lasts) = WizardNameBank.WizardNameListSizes(gender);
         var school = s_schools[Random.Shared.Next(s_schools.Length)];
-        var level = (byte) Math.Clamp((int) player.MagicSchoolBehavior.Level, 1, 200);
+        var level = (byte) Math.Clamp(wantedLevel, 1, 200);
         var answer = BotLink.Ask(new BotRequest {
             Op = "make", Gender = gender.ToString(), Firsts = Math.Min(firsts, 256), Middles = Math.Min(middles, 256),
             Lasts = Math.Min(lasts, 256), School = school.ToString(), Level = level, Zone = player.Zone,
@@ -164,10 +259,16 @@ internal static class BotBodies {
 
         Wizard bot;
         try {
-            bot = Wizard.NewBot(BotIds.CharIdOf(who.Id), botSchool, player.WizardAvatar, who.NameKeys,
+            bot = Wizard.NewBot(BotIds.CharIdOf(who.Id), botSchool, BotLooks.NewAvatar(player.WizardAvatar, gender, new Random(who.Id)), who.NameKeys,
                 (byte) Math.Clamp(who.Level, 1, 200));
             // Its spells: what a wizard of its school has at its level. A third of the bots took Life as a second school.
             bot.SpellbookBehavior.SpellList = BotDeck.For(botSchool, Math.Clamp(who.Level, 1, 200), who.Id % 3 == 0);
+
+            // The title of a badge a wizard of its level has most likely earned (Niduus, 2026-11-12: "no badge on test wizard").
+            if (BotLooks.Badge(who.Level, new Random(who.Id * 7919)) is var (badgeId, title)) {
+                bot.BadgeBehavior.SelectedBadgeId = badgeId;
+                bot.PlayerNameBehavior.BadgeTitle = title;
+            }
         }
         catch (Exception e) {
             Logger.Error("Bot Players: could not make bot #{0}: {1}", Logger.Args(who.Id, e));
@@ -176,17 +277,13 @@ internal static class BotBodies {
             return "The bot could not be made. The server log says why.";
         }
 
-        // A few steps to the side of the player, facing the same way.
-        var at = player.Location;
-        var yaw = player.Orientation.Z;
-        var side = yaw + (MathF.PI / 2);
-        bot.Location = new Imcodec.Math.Vector3(at.X + (MathF.Cos(side) * 90), at.Y + (MathF.Sin(side) * 90), at.Z);
-        bot.Orientation = player.Orientation;
+        bot.Location = where;
+        bot.Orientation = new Imcodec.Math.Vector3(0, 0, Random.Shared.NextSingle() * MathF.Tau);
         bot.Zone = player.Zone;
         bot.ZoneDisplayName = player.ZoneDisplayName;
 
         var name = bot.PlayerNameBehavior.GetWizardName();
-        var info = new BotBody.Info(who.Id, name, bot, zone, player.Zone, playerSession);
+        var info = new BotBody.Info(who.Id, name, bot, zone, player.Zone, ActorRefs.Nobody);
         IActorRef body;
         try {
             body = s_system.ActorOf(Props.Create(() => new BotBody(info)), $"bot-{who.Id}-{Guid.NewGuid():N}");
@@ -199,9 +296,10 @@ internal static class BotBodies {
         }
 
         s_out[who.Id] = new Out(who.Id, name, body, zone, player.Zone, bot.GameObjectID);
+        s_lastSpawnOk = true;
         BotLink.Note(who.Id, name, "spawned", $"{(who.Returning ? "came back" : "new")}, {botSchool} level {who.Level}, " +
                                                $"{bot.SpellbookBehavior.SpellList.Count} spells in its deck, " +
-                                               $"next to {player.PlayerNameBehavior.GetWizardName()} in {player.Zone}");
+                                               $"made after {player.PlayerNameBehavior.GetWizardName()} in {player.Zone}");
 
         return $"{name} ({botSchool}, level {who.Level}) came out next to you{(who.Returning ? ", back for the " + who.Times + (who.Times == 2 ? "nd" : who.Times == 3 ? "rd" : "th") + " time" : "")}.";
     }

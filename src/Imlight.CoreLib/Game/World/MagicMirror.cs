@@ -294,6 +294,35 @@ internal static class MagicMirror {
         return look;
     }
 
+    /// <summary>
+    /// A random look a new wizard could have picked (Bot Players, Niduus 2026-11-12: "random looks"): a hair style and a
+    /// color of that style, skin, face, eyes, nose and mouth from the game's own lists; face paint and an accessory now
+    /// and then. Eyebrow and lip colors stay as they are (-1). Null when the game's lists can't be read.
+    /// </summary>
+    internal static int[] RandomLook(eGender gender, Random random) {
+        var table = TableOf(gender);
+        if (table?.m_hairElementList is not { Count: > 0 } styles || table.m_hairTextureList is not { Count: > 0 } colors) {
+            return null;
+        }
+
+        int Pick(int count, int max = int.MaxValue) => count <= 0 ? UNCHANGED : random.Next(Math.Min(count, max));
+
+        var look = Enumerable.Repeat(UNCHANGED, Parts.Length).ToArray();
+        look[0] = Pick(styles.Count, 16);
+        var style = styles[look[0]]?.m_id;
+        var ofStyle = Enumerable.Range(0, colors.Count).Where(i => colors[i]?.m_id == style).ToList();
+        look[1] = ofStyle.Count > 0 ? ofStyle[random.Next(ofStyle.Count)] : UNCHANGED;
+        look[2] = Pick(table.m_skinTextureList?.Count ?? 0, 16);
+        look[3] = Pick(table.m_faceElementList?.Count ?? 0, 64);
+        look[4] = random.NextDouble() < 0.25 ? Pick(table.m_skinDecalList2?.Count ?? 0) + 1 : 0;
+        look[5] = Pick(table.m_eyeColorTextureList?.Count ?? 0, 32);
+        look[6] = Pick(table.m_noseElementList?.Count ?? 0, 8);
+        look[7] = Pick(table.m_mouthElementList?.Count ?? 0, 64);
+        look[8] = random.NextDouble() < 0.3 ? Pick(table.m_accessoryElementList?.Count ?? 0, 126) + 1 : 0;
+
+        return look;
+    }
+
     /// <summary>The look stored in an avatar (see the note at the top for where each part sits).</summary>
     internal static int[] FromAvatar(WizardCharacterBehavior a) {
         var options = a.m_newPlayerOptions;

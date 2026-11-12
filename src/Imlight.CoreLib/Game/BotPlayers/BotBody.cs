@@ -205,6 +205,7 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
 
         _next = 0;
         _onLeg = false;
+        _route.Clear();
         BotLink.Note(_info.Id, _info.Name, "walking", $"{_loop.Count} points in {_info.ZonePath}");
     }
 
@@ -225,8 +226,14 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
     // in short steps the same way.
     private const float TICK_SECONDS = 0.3f;
 
-    private NVector3 _legTo;
+    // The way to where it is going now: a few points along a gentle curve, as a person rarely walks a ruler-straight line.
+    private readonly Queue<NVector3> _route = new();
     private bool _onLeg;
+    private float _legSpeed;
+    private int _lookTurns;
+
+    // After a battle the first leg goes straight away from it (OutOfBattle).
+    private bool _nextIsFixed;
 
     // A battle it was kicked out of (or lost): it keeps its walk clear of that place for a while.
     private NVector3? _avoid;
@@ -236,33 +243,127 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
     private bool NearAvoided(NVector3 point)
         => _avoid is { } spot && DateTime.UtcNow < _avoidUntil && NVector3.Distance(spot, point) < AVOID_RADIUS;
 
+    // Walks like a person (Niduus, 2026-11-12: "make the movements more human"): it wanders between the places of its
+    // area in no set order, along a slight curve, at a pace that changes a little from walk to walk; at the end of a walk it
+    // goes on at once, or stops a moment and looks around, or now and then stands a while.
     private void WalkOn() {
         if (_gone || _inBattle || _loop.Count == 0) {
             return;
         }
 
         var from = Here;
-        if (!_onLeg) {
-            _legTo = _loop[_next];
-            _next = (_next + 1) % _loop.Count;
-            _onLeg = true;
+        if (_lookTurns > 0) {
+            LookAroundOnce();
+
+            return;
         }
 
-        var left = NVector3.Distance(from, _legTo);
-        var stride = _speed * TICK_SECONDS;
-        var arrived = left <= stride;
-        var to = arrived ? _legTo : from + ((_legTo - from) / left * stride);
-        MoveTo(from, _legTo, to);
+        if (!_onLeg) {
+            StartLeg(from);
+        }
 
-        if (!arrived) {
+        if (_route.Count == 0) {
+            _onLeg = false;
+            Timers.StartSingleTimer(STEP_TIMER, new Step(), TimeSpan.FromSeconds(1));
+
+            return;
+        }
+
+        var next = _route.Peek();
+        var left = NVector3.Distance(from, next);
+        var stride = _legSpeed * TICK_SECONDS;
+        while (left <= stride && _route.Count > 1) {
+            // Past a bend point: on to the next one in the same step.
+            _route.Dequeue();
+            next = _route.Peek();
+            left = NVector3.Distance(from, next);
+        }
+
+        var arrived = left <= stride;
+        var to = arrived ? next : from + ((next - from) / left * stride);
+        MoveTo(from, next, to);
+        if (arrived) {
+            _route.Dequeue();
+        }
+
+        if (_route.Count > 0) {
             Timers.StartSingleTimer(STEP_TIMER, new Step(), TimeSpan.FromSeconds(TICK_SECONDS));
 
             return;
         }
 
         _onLeg = false;
-        var pause = _pause * (0.5f + Random.Shared.NextSingle());
-        Timers.StartSingleTimer(STEP_TIMER, new Step(), TimeSpan.FromSeconds(Math.Clamp(TICK_SECONDS + pause, TICK_SECONDS, 60)));
+        var roll = Random.Shared.NextDouble();
+        double pause;
+        if (roll < 0.5) {
+            pause = 0.1 + (Random.Shared.NextDouble() * 1.2);           // walks on, almost at once
+        }
+        else if (roll < 0.85) {
+            pause = 0.6 + (Random.Shared.NextDouble() * _pause);       // stops and looks around
+            _lookTurns = Random.Shared.Next(1, 4);
+        }
+        else {
+            pause = 5 + (Random.Shared.NextDouble() * 8);               // stands a while
+            _lookTurns = Random.Shared.Next(0, 2);
+        }
+
+        Timers.StartSingleTimer(STEP_TIMER, new Step(), TimeSpan.FromSeconds(Math.Clamp(pause, TICK_SECONDS, 30)));
+    }
+
+    // The next place to go, and the curve there.
+    private void StartLeg(NVector3 from) {
+        NVector3 destination;
+        if (_nextIsFixed) {
+            destination = _loop[_next];
+            _nextIsFixed = false;
+        }
+        else {
+            // Anywhere in its area but where it stands; nearer places a little more often.
+            var choices = _loop.Where(p => NVector3.Distance(p, from) > 40).ToList();
+            if (choices.Count == 0) {
+                choices = [.. _loop];
+            }
+
+            destination = choices.OrderBy(p => NVector3.Distance(p, from) * (0.6f + Random.Shared.NextSingle())).First();
+        }
+
+        _route.Clear();
+        var distance = NVector3.Distance(from, destination);
+        if (distance > 120) {
+            // A bend to one side, of up to a quarter of the way, through points on the walk grid.
+            var dir = (destination - from) / distance;
+            var side = new NVector3(-dir.Y, dir.X, 0) * (distance * (0.08f + (Random.Shared.NextSingle() * 0.17f)) * (Random.Shared.Next(2) == 0 ? -1 : 1));
+            var control = ((from + destination) / 2) + side;
+            for (var i = 1; i <= 3; i++) {
+                var t = i / 4f;
+                var u = 1 - t;
+                var point = (u * u * from) + (2 * u * t * control) + (t * t * destination);
+                if (Walkable(point, from.Z) is { } snapped && !NearAvoided(snapped)) {
+                    _route.Enqueue(snapped);
+                }
+            }
+        }
+
+        _route.Enqueue(destination);
+        _legSpeed = _speed * (0.85f + (Random.Shared.NextSingle() * 0.25f));
+        _onLeg = true;
+    }
+
+    // Standing, it turns its head this way and that: a turn on the spot.
+    private void LookAroundOnce() {
+        _lookTurns--;
+        var yaw = _wizard.Orientation.Z + ((Random.Shared.NextSingle() - 0.5f) * MathF.PI * 1.2f);
+        yaw = ((yaw % MathF.Tau) + MathF.Tau) % MathF.Tau;
+        var here = Here;
+        Broadcast(new GAME_5_PROTOCOL.MSG_SERVERMOVE {
+            Direction = (byte) (yaw / MathF.Tau * 250),
+            LocationX = Compress(here.X),
+            LocationY = Compress(here.Y),
+            LocationZ = Compress(here.Z),
+            MobileID = _mobileId,
+        });
+        _wizard.Orientation = new Imcodec.Math.Vector3(0, 0, yaw);
+        Timers.StartSingleTimer(STEP_TIMER, new Step(), TimeSpan.FromSeconds(0.8 + (Random.Shared.NextDouble() * 1.6)));
     }
 
     private NVector3 Here => new(_wizard.Location.X, _wizard.Location.Y, _wizard.Location.Z);
@@ -388,7 +489,10 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
         _wizard.Location = home;
         _loop.Insert(0, target);
         _next = 0;
+        _nextIsFixed = true;
         _onLeg = false;
+        _route.Clear();
+        _lookTurns = 0;
         Timers.StartSingleTimer(STEP_TIMER, new Step(), TimeSpan.FromSeconds(0.5));
     }
 

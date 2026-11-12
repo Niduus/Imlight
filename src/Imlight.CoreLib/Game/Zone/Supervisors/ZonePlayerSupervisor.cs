@@ -114,7 +114,7 @@ internal sealed class ZonePlayerSupervisor(Core.Zone zone) : ZoneEntitySuperviso
         }
 
         // The Bot Players walking here show themselves to the newcomer, as every player here does (Game/BotPlayers).
-        Imlight.CoreLib.Game.BotPlayers.BotBodies.PlayerEntered(Context.Parent, message.PlayerActor);
+        Imlight.CoreLib.Game.BotPlayers.BotBodies.PlayerEntered(Context.Parent, message.PlayerActor, _zone.ZonePath, _zone.IsInstance);
 
         Logger.Debug("{Name} added to zone {ZoneName}.",
             Logger.Args(message.ActualWizardName, _zone.ZoneName));
