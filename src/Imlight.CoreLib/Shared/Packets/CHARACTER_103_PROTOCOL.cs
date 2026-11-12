@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Generic;
 using Akka.Actor;
 using Imcodec.IO;
 using Imcodec.MessageLayer.Generated;
@@ -871,6 +872,30 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
         public uint[] TemplateIds = [];
         public bool Readable;
+
+    }
+
+    /// <summary>
+    /// The player kept Animus after a won battle (MonstrologyService): a quest's "Extract" step whose tally names one of
+    /// these monsters ("Lost Soul Essence") counts it (QuestService). Keys are the tome's monster template ids.
+    /// </summary>
+    public sealed class MSG_ANIMUSKEPTFORQUESTS : IServerMessage {
+
+        public byte MessageOrder { get; } = 154;
+        public byte ServiceID { get; } = 103;
+
+        public Dictionary<uint, int> Animus = [];
+
+    }
+
+    /// <summary>
+    /// The player used the way home in a Monstrodome's arena (InteractHousingReturnComponent): back to the house they
+    /// came from (ZoneService).
+    /// </summary>
+    public sealed class MSG_LEAVEMONSTRODOME : IServerMessage {
+
+        public byte MessageOrder { get; } = 155;
+        public byte ServiceID { get; } = 103;
 
     }
 

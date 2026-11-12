@@ -59,6 +59,7 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Bank;
 using Imlight.CoreLib.Game.Housing;
+using Imlight.CoreLib.Game.MonsterMagic;
 using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Game.Housing.Families;
 using Imlight.CoreLib.Game.ItemSafety;
@@ -242,6 +243,8 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         var teleporterData = HouseTeleporters.IsTeleporter(templateId, out _) ? HouseTeleporters.PendingFor(item.m_globalID, house.LotGid) : null;
         // A Castle Magic object is a custom entry from the start, so the client takes the patches of its spells.
         var magicData = HouseCastleMagic.IsObject(placedTemplateId) ? HouseCastleMagic.Empty : null;
+        // So is a Monstrodome, which takes the patches of its monsters.
+        magicData ??= Monstrodome.IsArena(placedTemplateId, out _) ? Monstrodome.Empty : null;
         var placed = new PlacedItem {
             ItemGid = item.m_globalID,
             TemplateId = placedTemplateId,
@@ -791,6 +794,11 @@ internal partial class HousingService(SessionActor sessionActor) : MessageServic
         try {
             var snapshot = house.Snapshot();
             if (!HousingGids.TryGetSlot(objectId, snapshot.GidBase, snapshot.Slots.Count, out var slot) || snapshot.Slots[slot] is not { } item) {
+                return;
+            }
+
+            // A Monstrodome goes into its arena.
+            if (TryEnterMonstrodome(house, item)) {
                 return;
             }
 

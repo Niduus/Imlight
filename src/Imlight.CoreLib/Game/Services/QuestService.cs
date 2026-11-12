@@ -662,6 +662,75 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         }
     }
 
+    // Kept Animus counts for every active "Extract" step whose tally names the monster: Know Thine Enemy (Monstrologist
+    // Burke) asks for 1 "Lost Soul Essence" with no item to collect, so nothing counted it before (Monstrology, 2026-11-12).
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_ANIMUSKEPTFORQUESTS))]
+    private void ReceiveAnimusKeptForQuests(CHARACTER_103_PROTOCOL.MSG_ANIMUSKEPTFORQUESTS message) {
+        try {
+            var wizard = GetActiveWizard();
+            if (wizard?.QuestBehavior is null || message.Animus is not { Count: > 0 }) {
+                return;
+            }
+
+            var kept = message.Animus.Where(a => a.Value > 0)
+                .Select(a => (Name: Imlight.CoreLib.Game.MonsterMagic.Monstrology.NameOf(a.Key), Count: a.Value))
+                .ToList();
+            foreach (var qInstance in wizard.QuestBehavior.CurrentQuestInstances.ToList()) {
+                var qTemplate = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == qInstance.QuestName);
+                foreach (var goal in qTemplate?.m_goals ?? []) {
+                    if (goal is not ScavengeGoalTemplate scavenge || !qInstance.IsGoalActive(goal.m_goalName)
+                        || (scavenge.m_itemAdjectives?.Count ?? 0) > 0) {
+                        continue;
+                    }
+
+                    var tally = AnimusTallyName(scavenge);
+                    if (tally is null) {
+                        continue;
+                    }
+
+                    var count = kept.Where(k => string.Equals(k.Name, tally, StringComparison.OrdinalIgnoreCase)).Sum(k => k.Count);
+                    var gInstance = qInstance.GoalProgress.FirstOrDefault(g => g.GoalName == goal.m_goalName);
+                    var goalMax = QuestMadlibs.GetGoalTotal(goal);
+                    if (count <= 0 || gInstance is null || gInstance.CurrentProgress >= goalMax) {
+                        continue;
+                    }
+
+                    for (var i = 0; i < count && gInstance.CurrentProgress < goalMax; i++) {
+                        wizard.IncrementQuestGoal(qInstance.QuestName, goal.m_goalName);
+                    }
+
+                    Logger.Information("Quest goal progress: {0} quest '{1}' goal '{2}' at {3}/{4} after keeping {5} Animus.",
+                        Logger.Args(wizard.CharId, qInstance.QuestName, goal.m_goalName, gInstance.CurrentProgress, goalMax, tally));
+                    if (gInstance.CurrentProgress >= goalMax) {
+                        CompleteGoal(qInstance, goal);
+                    }
+                    else {
+                        SendGoalMessage(goal, qInstance, 2);
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            Logger.Error("Quest goal progress from kept Animus failed: {0}", Logger.Args(e));
+        }
+    }
+
+    // The monster an "Extract" step's tally names: "Lost Soul Essence" (or "... Animus") is the Lost Soul; null otherwise.
+    private static string AnimusTallyName(ScavengeGoalTemplate goal) {
+        string descriptor = goal.m_tallyCounter?.m_descriptor;
+        if (string.IsNullOrWhiteSpace(descriptor)) {
+            return null;
+        }
+
+        foreach (var suffix in new[] { " Essence", " Animus" }) {
+            if (descriptor.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)) {
+                return descriptor[..^suffix.Length].Trim();
+            }
+        }
+
+        return null;
+    }
+
     // A photo counts for every active "Photomance" step that names a photographed object: the step's tag is the object's
     // file name (KM-GummyVat) or its adjective the object's own. Such objects (marked PhotoQuest) have no photo results,
     // so nothing counted these photos before and Karamelle's and Lemuria's photo steps could not be finished (Arc 4 main

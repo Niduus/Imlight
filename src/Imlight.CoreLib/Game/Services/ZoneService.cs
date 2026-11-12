@@ -939,6 +939,51 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         });
     }
 
+    // The way home in a Monstrodome's arena goes back into the house the player came from; with nothing remembered (a
+    // server restart), to the last spot outside, as a dungeon's way out does.
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_LEAVEMONSTRODOME))]
+    private void ReceiveLeaveMonstrodome(CHARACTER_103_PROTOCOL.MSG_LEAVEMONSTRODOME message) {
+        if (_transferGate.IsQueued || Timers.IsTimerActive("zonetransfer")) {
+            return;
+        }
+
+        var wizard = GetActiveWizard();
+        if (wizard is null || !Imlight.CoreLib.Game.MonsterMagic.Monstrodome.IsArenaZone(wizard.Zone)) {
+            return;
+        }
+
+        if (Imlight.CoreLib.Game.MonsterMagic.Monstrodome.TryGetReturn(wizard.CharId, out var ownerCharId, out var houseTemplateId)) {
+            if (HouseTravel.TryEnterHouseOf(wizard, ownerCharId, houseTemplateId, out var entry, out var failure)) {
+                Logger.Information("Monstrodome: {0} goes home to the house of {1} ({2}).", Logger.Args(wizard.CharId, ownerCharId, entry.Zone));
+                ReceiveZoneTransferRequest(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                    DestinationZone = entry.Zone,
+                    DestinationLocation = HouseDeeds.EntryLocation,
+                    SendToClient = true,
+                    IsPrivate = true,
+                    OwnerCharId = entry.OwnerCharId,
+                    HouseEntry = entry,
+                });
+
+                return;
+            }
+
+            if (failure == HouseTravelFailure.BackpackFull) {
+                InformGameClient(BackpackFullForHouseText, true);
+
+                return;
+            }
+
+            Logger.Warning("Monstrodome: {0} cannot go back into the house of {1}: {2}.", Logger.Args(wizard.CharId, ownerCharId, failure));
+        }
+
+        ReceiveZoneTransferRequest(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+            LeaveInstance = true,
+            ByZoneDoor = true,
+            SendToClient = true,
+            OwnerCharId = wizard.CharId,
+        });
+    }
+
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_WORLDTELEPORTREQUEST))]
     private void ReceiveWorldTeleportRequest(WIZARD_12_PROTOCOL.MSG_WORLDTELEPORTREQUEST message) {
         if (message.World.Length == 0) { // user clicked "exit", remove the wizbang
