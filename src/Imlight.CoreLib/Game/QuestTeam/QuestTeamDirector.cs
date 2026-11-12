@@ -458,9 +458,49 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
 
         _doing = "resting before the fight";
         _lastProgress = DateTime.UtcNow;
-        StopWalking(0);
+        // Never rest in the road among the creatures (Niduus, 2026-11-12): off to a path away from them first.
+        if (SafeSpot(group[0]) is { } safe) {
+            WalkTo(0, safe);
+        } else {
+            StopWalking(0);
+        }
 
         return false;
+    }
+
+    private const float SAFE_FROM_MOBS = 900f;
+
+    /// <summary>
+    /// Where the leader should stand while not fighting: null when it already stands on a path well away from the
+    /// creatures; otherwise the closest walkable path point that is. A street with no walk grid gives null.
+    /// </summary>
+    private static QuestTeamPlanner.Target SafeSpot(QuestTeamMember.Status leader) {
+        if (leader.ZoneActor is not { } zone || string.IsNullOrEmpty(leader.Zone)) {
+            return null;
+        }
+
+        var mobs = MinimapIndex.In(zone).Where(m => m.Kind == MinimapIndex.MOB)
+            .Select(m => (m.Object.m_location.X, m.Object.m_location.Y)).ToList();
+        if (mobs.Count == 0) {
+            return null;
+        }
+
+        float Nearest(float x, float y) => mobs.Min(m => QuestTeamPlanner.Far(x, y, m.X, m.Y));
+        var here = new System.Numerics.Vector3(leader.X, leader.Y, leader.Z);
+        if (Nearest(leader.X, leader.Y) >= SAFE_FROM_MOBS && Imlight.CoreLib.Game.BotPlayers.BotGround.GoodSpot(leader.Zone, here)) {
+            return null;
+        }
+
+        var best = Imlight.CoreLib.Game.Zone.Core.ZoneNav.Points(leader.Zone)
+            .Where(p => MathF.Abs(p.Z - leader.Z) < 400 && System.Numerics.Vector3.Distance(p, here) < 3000
+                        && Nearest(p.X, p.Y) >= SAFE_FROM_MOBS && Imlight.CoreLib.Game.BotPlayers.BotGround.GoodSpot(leader.Zone, p))
+            .OrderBy(p => System.Numerics.Vector3.Distance(p, here))
+            .Select(p => (System.Numerics.Vector3?) p)
+            .FirstOrDefault();
+
+        return best is { } spot
+            ? new QuestTeamPlanner.Target(QuestTeamPlanner.SPOT, spot.X, spot.Y, "a safe spot off the road, away from the creatures", Key: "safe")
+            : null;
     }
 
     private void Lead(List<QuestTeamMember.Status> group) {
@@ -471,7 +511,12 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         if (target is null) {
-            StopWalking(0);
+            // Nothing to do this moment: off the road, not standing among the creatures.
+            if (SafeSpot(leader) is { } safe) {
+                WalkTo(0, safe);
+            } else {
+                StopWalking(0);
+            }
 
             return;
         }
@@ -905,6 +950,11 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             Clicked(key);
             Note(member.Role, $"{member.Name} talks to them ({option.Service}).");
             _actors[index].Tell(new QuestTeamMember.Interact(target.GlobalId, option.Service, option.Index, target.What));
+            // Talking can take the leader somewhere (Merle Ambrose sends a new wizard on to Unicorn Way): the others, left
+            // behind, then talk to the same NPC to follow (Niduus, 2026-11-12: "they are stuck facing Merle").
+            if (index == 0) {
+                _leaderLastTarget = target;
+            }
 
             return;
         }
@@ -1123,12 +1173,29 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         var step = _trail.LastOrDefault(t => string.Equals(t.Zone, member.Zone, StringComparison.OrdinalIgnoreCase));
+
+        // The leader left this area by talking to someone (the NPC sent it on): this one talks to the same NPC, the same way.
+        if (step.Zone is not null && step.How is { Kind: QuestTeamPlanner.OFFER or QuestTeamPlanner.TALK } said
+            && !(said.Kind == QuestTeamPlanner.OFFER && member.Wizard?.HasQuest(said.Quest) == true)
+            && TimesClicked($"{said.Key}|{index}") < 3) {
+            var services = said.Kind == QuestTeamPlanner.OFFER
+                ? new[] { "QuestOfferService" }
+                : ["QuestPersonaGoalService", "QuestOfferService", "QuestUnderwayService"];
+            ClickEach([member], said, services, _ => true);
+
+            return;
+        }
+
         QuestTeamPlanner.Target how;
         if (step.Zone is not null && step.How is { } way && way.Kind is QuestTeamPlanner.DOOR or QuestTeamPlanner.SPIRAL or QuestTeamPlanner.EXIT) {
             how = way;
         }
-        else if (step.Zone is not null) {
+        else if (step.Zone is not null && QuestTeamPlanner.Far(member.X, member.Y, step.X, step.Y) > 40) {
             how = new QuestTeamPlanner.Target(QuestTeamPlanner.EXIT, step.X, step.Y, $"where {_team[0].Name} left", Key: "trail|" + member.Zone);
+        }
+        else if (step.Zone is not null) {
+            // Already where the leader left and nothing took it on: the way to the leader's area instead.
+            how = QuestTeamPlanner.Travel(member, _team[0].Zone, $"to {_team[0].Name}");
         }
         else {
             how = QuestTeamPlanner.Travel(member, _team[0].Zone, $"to {_team[0].Name}");

@@ -58,8 +58,36 @@ internal static class BadgeWire {
     private const uint SerializationFlags = 4;
 
     internal static List<IMessage> Build(Wizard wizard, BadgeCatalog catalog, IReadOnlyCollection<BadgeDefinition> entries, bool full) {
+        var ordered = full ? entries.OrderBy(d => d.Id).ToList() : entries.OrderBy(d => d.Index).ThenBy(d => d.Id).ToList();
+
+        // A long list (a wizard with hundreds of badges) went out cut into MSG_BADGESEGMENT pieces, and the game showed an
+        // empty Badges page (Niduus, 2026-11-12, after .givemeallbadges). It now goes out as several whole lists that each
+        // fit in one message: the first replaces the list, the others add to it, like newly earned badges do.
+        if (ordered.Count > 1 && PackedSize(wizard, catalog, ordered) > MaxChunkBytes) {
+            var parts = Math.Max(2, (PackedSize(wizard, catalog, ordered) / (MaxChunkBytes * 3 / 4)) + 1);
+            var size = (ordered.Count + parts - 1) / parts;
+            var messages = new List<IMessage>();
+            for (var start = 0; start < ordered.Count; start += size) {
+                var part = ordered.GetRange(start, Math.Min(size, ordered.Count - start));
+                messages.AddRange(Build(wizard, catalog, part, full && start == 0));
+            }
+
+            return messages;
+        }
+
+        return BuildOne(wizard, catalog, ordered, full);
+    }
+
+    private static int PackedSize(Wizard wizard, BadgeCatalog catalog, IEnumerable<BadgeDefinition> entries) {
+        var list = new BadgeInfoList { m_badges = [.. entries.Select(d => ToBadgeInfo(wizard.BadgeBehavior, catalog, d))] };
+
+        return new ObjectSerializer(Versionable: false).Serialize(list, SerializationFlags, out var bytes)
+            ? Compression.CompressWithLength(bytes).Length
+            : 0;
+    }
+
+    private static List<IMessage> BuildOne(Wizard wizard, BadgeCatalog catalog, IReadOnlyList<BadgeDefinition> ordered, bool full) {
         var state = wizard.BadgeBehavior;
-        var ordered = full ? entries.OrderBy(d => d.Id) : entries.OrderBy(d => d.Index).ThenBy(d => d.Id);
         var badgeList = new BadgeInfoList { m_badges = [.. ordered.Select(d => ToBadgeInfo(state, catalog, d))] };
         var filterList = new BadgeFilterInfoList { m_badgeFilterInfoList = [.. GetHeldFilters(state, catalog)] };
 
