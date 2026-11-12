@@ -69,6 +69,7 @@ public static class OverlayLinks {
         }
 
         s_recent.TryRemove(link, out _);
+        s_mapAsks.TryRemove(link, out _);
     }
 
     /// <summary>".link code" typed in the game by <paramref name="charId"/>: links that code's game window to this wizard.</summary>
@@ -218,6 +219,80 @@ public static class OverlayLinks {
         }
 
         return reply;
+    }
+
+    private static readonly ConcurrentDictionary<long, ConcurrentQueue<DateTime>> s_mapAsks = new();
+
+    /// <summary>
+    /// The minimap of one game window (op "map", OverlayMinimap), for the wizard that window is linked to; linked by
+    /// itself like a button, otherwise the map shows the ".link" code to type.
+    /// </summary>
+    public static async Task<JsonObject> MapAsync(long link, int linkWindows, JsonObject header, string address) {
+        address = OverlayGate.Normalize(address);
+        var window = (long?) header["window"] ?? 0;
+        if (!OverlayMinimap.On) {
+            return RemoteAdminWire.Error("The host has turned off the minimap on this server.");
+        }
+
+        // A few windows each asking once a second is fine; more is slowed down.
+        var times = s_mapAsks.GetOrAdd(link, _ => new ConcurrentQueue<DateTime>());
+        while (times.TryPeek(out var oldest) && DateTime.UtcNow - oldest > TimeSpan.FromSeconds(1)) {
+            times.TryDequeue(out _);
+        }
+
+        if (times.Count >= 8) {
+            return RemoteAdminWire.Error("busy");
+        }
+
+        times.Enqueue(DateTime.UtcNow);
+
+        var charId = await WizardFor(link, window, linkWindows, address);
+        if (charId == 0) {
+            if (!(await WizardsAt(address)).Any()) {
+                return RemoteAdminWire.Error("Log in to the game to see the map.");
+            }
+
+            var code = CodeFor(link, window, address);
+            var ask = RemoteAdminWire.Error($"Type .link {code} in this game's chat once to show your map here.");
+            ask["link"] = code;
+
+            return ask;
+        }
+
+        var reply = new TaskCompletionSource<(JsonObject Map, IActorRef Zone, string Error)>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var others = new ConcurrentQueue<(ulong CharId, IActorRef Zone, string Name, float X, float Y)>();
+        var ask2 = new OverlayMapAsk(charId, address, reply, others);
+        foreach (var service in AgentBridge.CommandServices) {
+            service.Tell(ask2);
+        }
+
+        if (await Task.WhenAny(reply.Task, Task.Delay(2000)) != reply.Task) {
+            s_bound.TryRemove((link, window), out _);
+
+            return RemoteAdminWire.Error("The wizard this game window was linked to isn't in the game any more.");
+        }
+
+        var (map, zone, error) = reply.Task.Result;
+        if (map is null) {
+            s_bound.TryRemove((link, window), out _);
+
+            return RemoteAdminWire.Error(error);
+        }
+
+        // The other sessions answer about as fast; a short wait lets them.
+        await Task.Delay(60);
+        OverlayMinimap.AddWizards(map, charId, zone, others);
+        var answer = RemoteAdminWire.Ok();
+        answer["map"] = map;
+
+        return answer;
+    }
+
+    // The code waiting for this game window, or a new one (the map asks every second; the code stays the same).
+    private static string CodeFor(long link, long window, string address) {
+        var waiting = s_codes.FirstOrDefault(c => c.Value.Link == link && c.Value.Window == window && c.Value.Until > DateTime.UtcNow + TimeSpan.FromMinutes(1));
+
+        return waiting.Key ?? NewCode(link, window, address);
     }
 
     // The wizard this game window is linked to: as linked before, or by itself when this PC has one wizard in the game

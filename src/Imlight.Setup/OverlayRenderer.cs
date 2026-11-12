@@ -47,15 +47,15 @@ internal static class OverlayRenderer {
     /// them, so the player's never cover the server's and nothing covers the Ahziael line.
     /// </summary>
     internal static Control Build(OverlayDesign design, Words words, OverlayElement? highlight = null, bool showMine = true,
-        IReadOnlyList<OverlayElement>? server = null) {
+        IReadOnlyList<OverlayElement>? server = null, long window = 0) {
         var panel = new OverlayPanel { Background = Brushes.Transparent, ClipToBounds = true };
         // Grey smoothing for words: coloured ClearType smoothing leaves dark streaks on a see-through overlay.
         RenderOptions.SetTextRenderingMode(panel, TextRenderingMode.Antialias);
         // Hidden, the player's own pieces go, except a button that shows them again (or it could never come back).
         Add(panel, showMine ? design.Elements : design.Elements.Where(e => e.IsButton && e.Action == OverlayAction.TOGGLE_MINE),
-            words, highlight, OverlayPanel.CLIENT);
+            words, highlight, OverlayPanel.CLIENT, window);
 
-        Add(panel, server ?? [], words, highlight, OverlayPanel.SERVER);
+        Add(panel, server ?? [], words, highlight, OverlayPanel.SERVER, window);
         var credit = Element(design.Credit, words, design.Credit == highlight, OverlayDesign.CreditLine(words.Version));
         credit.Classes.Add(OverlayPanel.CREDIT);
         panel.Children.Add(credit);
@@ -65,7 +65,7 @@ internal static class OverlayRenderer {
 
     // Lowest layer first (same layer: list order), so the higher one is drawn over.
     // A child is drawn over its parent (at least its parent's layer) and only while its parent shows.
-    private static void Add(Panel panel, IEnumerable<OverlayElement> elements, Words words, OverlayElement? highlight, string part) {
+    private static void Add(Panel panel, IEnumerable<OverlayElement> elements, Words words, OverlayElement? highlight, string part, long window) {
         var list = elements.ToList();
         var byId = list.Where(e => e.Id.Length > 0).GroupBy(e => e.Id).ToDictionary(g => g.Key, g => g.First());
         (bool Shown, int Layer, int Depth) Family(OverlayElement e) {
@@ -83,7 +83,7 @@ internal static class OverlayRenderer {
 
         foreach (var element in list.Select((e, i) => (e, i, f: Family(e))).Where(p => p.f.Shown)
                      .OrderBy(p => p.f.Layer).ThenBy(p => p.f.Depth).ThenBy(p => p.i).Select(p => p.e)) {
-            var control = Element(element, words, element == highlight);
+            var control = Element(element, words, element == highlight, window: window);
             control.Classes.Add(part);
             panel.Children.Add(control);
         }
@@ -242,7 +242,10 @@ internal static class OverlayRenderer {
         .Replace("{time}", DateTime.Now.ToString("h:mm tt"), StringComparison.OrdinalIgnoreCase)
         .Replace("{date}", DateTime.Now.ToString("MMM d, yyyy"), StringComparison.OrdinalIgnoreCase);
 
-    private static Control Element(OverlayElement e, Words words, bool highlight, string? fixedText = null) {
+    /// <summary>Whether a minimap shows in this design (the overlay then asks the server for the map).</summary>
+    internal static bool HasMinimap(IEnumerable<OverlayElement> elements) => elements.Any(e => e.IsMinimap && e.Visible);
+
+    private static Control Element(OverlayElement e, Words words, bool highlight, string? fixedText = null, long window = 0) {
         var border = new Border {
             Background = Brush(e.Background),
             BorderBrush = Brush(new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = e.BorderColor }),
@@ -270,6 +273,18 @@ internal static class OverlayRenderer {
             border.Effect = new DropShadowEffect {
                 Color = shadow, BlurRadius = e.ShadowBlur, OffsetX = e.ShadowX, OffsetY = e.ShadowY, Opacity = 1,
             };
+        }
+
+        if (e.IsMinimap) {
+            // The minimap draws its own background and edge (round or square), and the quest lines under it.
+            var map = new MinimapView(e, OverlayMinimapData.For(window));
+            border.Background = null;
+            border.BorderThickness = default;
+            border.Padding = default;
+            border.CornerRadius = default;
+            border.Child = map;
+            border.Width = map.Width;
+            border.Height = map.Height;
         }
 
         if (e.IsPicture && Picture(e.Picture) is { } bitmap) {

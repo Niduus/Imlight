@@ -121,6 +121,16 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
         });
     }
 
+    /// <summary>The zone this door leads to, or empty when it can't be told (for the overlay's minimap).</summary>
+    internal string DestinationZone() {
+        try {
+            return TryResolveTeleport(out var teleport) ? teleport.m_destinationZone ?? "" : "";
+        }
+        catch (Exception) {
+            return "";
+        }
+    }
+
     private bool TryResolveTeleport(out ResTeleport teleport) {
         teleport = null;
         var zonePath = Entity.Zone?.ZonePath;

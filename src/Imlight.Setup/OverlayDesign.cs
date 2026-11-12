@@ -256,6 +256,13 @@ internal sealed class OverlayElement {
     /// </summary>
     internal const string BUTTON = "Button";
 
+    /// <summary>
+    /// The minimap (Niduus, 2026-11-12: "mini map that is very detailed"): a map of what is around the wizard in this game
+    /// window, from the server (quest steps, quest givers, mobs, bosses, sigils, doors, other wizards). How it looks and
+    /// what it shows is in <see cref="Map"/>. Like a box it has no words and lets clicks through to the game.
+    /// </summary>
+    internal const string MINIMAP = "Minimap";
+
     internal const int MAX_TEXT = 300;
     internal const int MAX_COMMAND = 200;
 
@@ -358,15 +365,21 @@ internal sealed class OverlayElement {
     /// <summary>How a picture fills its box: Fit (whole picture), Fill (covers, cropped) or Stretch.</summary>
     public string PictureFit { get; set; } = "Fit";
 
-    /// <summary>A box or a picture: no words (a button has words).</summary>
-    internal bool IsBox => Kind is BOX or PICTURE;
+    /// <summary>For a minimap: what it shows and how (null for anything else).</summary>
+    public OverlayMap? Map { get; set; }
+
+    /// <summary>A box, a picture or a minimap: no words (a button has words).</summary>
+    internal bool IsBox => Kind is BOX or PICTURE or MINIMAP;
+
+    internal bool IsMinimap => Kind == MINIMAP;
 
     internal bool IsPicture => Kind == PICTURE;
 
     internal bool IsButton => Kind == BUTTON;
 
     internal OverlayElement Clean() {
-        Kind = Kind is BOX or PICTURE or BUTTON ? Kind : TEXT;
+        Kind = Kind is BOX or PICTURE or BUTTON or MINIMAP ? Kind : TEXT;
+        Map = Kind == MINIMAP ? (Map ?? new OverlayMap()).Clean() : null;
         Picture = Kind == PICTURE ? CleanPicture(Picture) : "";
         PictureFit = PICTURE_FITS.Contains(PictureFit) ? PictureFit : "Fit";
         Action = OverlayAction.KINDS.Contains(Action) ? Action : OverlayAction.COMMAND;
@@ -535,6 +548,85 @@ internal sealed class OverlayPaint {
         }
 
         return hex.Length == 8 && hex.All(Uri.IsHexDigit) ? "#" + hex.ToUpperInvariant() : fallback;
+    }
+
+}
+
+/// <summary>
+/// What a minimap shows and how (Niduus, 2026-11-12: "Showing main quest objectives, Side Quest zones, objectives and so
+/// on. Icons of where mobs are or boss locations as well with Sigils and so on"). Plain choices and colours only.
+/// </summary>
+internal sealed class OverlayMap {
+
+    /// <summary>Turns with the wizard (the way they face is always up); off, north is always up.</summary>
+    public bool Turn { get; set; } = true;
+
+    /// <summary>How far from the middle to the edge, in game units (smaller is closer in).</summary>
+    public double Zoom { get; set; } = 2200;
+
+    public bool Round { get; set; } = true;
+
+    /// <summary>How big the icons are, in pixels at 100%.</summary>
+    public double IconSize { get; set; } = 9;
+
+    /// <summary>Names beside quest steps, bosses, sigils and doors.</summary>
+    public bool Names { get; set; } = true;
+
+    public double NameSize { get; set; } = 10;
+
+    /// <summary>The place's name at the top of the map.</summary>
+    public bool Place { get; set; } = true;
+
+    /// <summary>How many quest lines under the map (0 to 8).</summary>
+    public int QuestLines { get; set; } = 3;
+
+    /// <summary>Swaps left and right, in case the map comes out mirrored on some game.</summary>
+    public bool Mirror { get; set; }
+
+    public bool Quests { get; set; } = true;
+    public bool Givers { get; set; } = true;
+    public bool Npcs { get; set; } = true;
+    public bool Mobs { get; set; } = true;
+    public bool Bosses { get; set; } = true;
+    public bool Sigils { get; set; } = true;
+    public bool Doors { get; set; } = true;
+    public bool Chests { get; set; } = true;
+    public bool Wizards { get; set; } = true;
+
+    public string MainColor { get; set; } = "#FFFFD24A";
+    public string SideColor { get; set; } = "#FF4AB4FF";
+    public string GiverColor { get; set; } = "#FFFFE14A";
+    public string NpcColor { get; set; } = "#C0E6E6F0";
+    public string MobColor { get; set; } = "#FFFF5050";
+    public string BossColor { get; set; } = "#FFFF2D6E";
+    public string SigilColor { get; set; } = "#FFB57CFF";
+    public string DoorColor { get; set; } = "#FF4ADE80";
+    public string ChestColor { get; set; } = "#FFD69A4A";
+    public string WizardColor { get; set; } = "#FF5FE1FF";
+    public string TeamColor { get; set; } = "#FF6BFF8A";
+    public string YouColor { get; set; } = "#FFFFFFFF";
+    public string TextColor { get; set; } = "#FFFFFFFF";
+
+    internal OverlayMap Clean() {
+        Zoom = OverlayElement.Range(Zoom, 300, 12000, 2200);
+        IconSize = OverlayElement.Range(IconSize, 4, 30, 9);
+        NameSize = OverlayElement.Range(NameSize, 6, 30, 10);
+        QuestLines = Math.Clamp(QuestLines, 0, 8);
+        MainColor = OverlayPaint.CleanColor(MainColor, "#FFFFD24A");
+        SideColor = OverlayPaint.CleanColor(SideColor, "#FF4AB4FF");
+        GiverColor = OverlayPaint.CleanColor(GiverColor, "#FFFFE14A");
+        NpcColor = OverlayPaint.CleanColor(NpcColor, "#C0E6E6F0");
+        MobColor = OverlayPaint.CleanColor(MobColor, "#FFFF5050");
+        BossColor = OverlayPaint.CleanColor(BossColor, "#FFFF2D6E");
+        SigilColor = OverlayPaint.CleanColor(SigilColor, "#FFB57CFF");
+        DoorColor = OverlayPaint.CleanColor(DoorColor, "#FF4ADE80");
+        ChestColor = OverlayPaint.CleanColor(ChestColor, "#FFD69A4A");
+        WizardColor = OverlayPaint.CleanColor(WizardColor, "#FF5FE1FF");
+        TeamColor = OverlayPaint.CleanColor(TeamColor, "#FF6BFF8A");
+        YouColor = OverlayPaint.CleanColor(YouColor, "#FFFFFFFF");
+        TextColor = OverlayPaint.CleanColor(TextColor, "#FFFFFFFF");
+
+        return this;
     }
 
 }

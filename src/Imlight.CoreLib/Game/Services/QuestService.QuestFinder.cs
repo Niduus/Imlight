@@ -251,7 +251,7 @@ internal partial class QuestService {
     private static readonly Lock s_questFinderGiversLock = new();
 
     // Every quest an NPC gives with that NPC, worked out once for each set of quest changes.
-    private static List<(QuestTemplate Quest, ulong Giver)> QuestFinderGivers() {
+    internal static List<(QuestTemplate Quest, ulong Giver)> QuestFinderGivers() {
         var known = s_questFinderGivers;
         if (known.Item1 == QuestOptions.Version) {
             return known.Item2;

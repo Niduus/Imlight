@@ -596,7 +596,8 @@ internal sealed partial class ManagerWindow {
                         new WrapPanel {
                             Children = {
                                 Spaced(_ovParts), Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)), Spaced(Block(OverlayElement.BUTTON)),
-                                Spaced(Action(Plain("Picture"), AddPictureAsync)), Spaced(_ovQuickWords), Spaced(_ovQuickParent),
+                                Spaced(Action(Plain("Picture"), AddPictureAsync)), Spaced(Action(Plain("Minimap"), () => AddOverlayElement(OverlayElement.MINIMAP))),
+                                Spaced(_ovQuickWords), Spaced(_ovQuickParent),
                                 Spaced(OvCheck("Grid", _ovGrid.Show, v => { _ovGrid.Show = v; GridChanged(); })),
                                 Spaced(OvCheck("Snap to grid", _ovGrid.SnapToGrid, v => { _ovGrid.SnapToGrid = v; GridChanged(); })),
                                 Spaced(OvCheck("Snap to pieces", _ovGrid.SnapToPieces, v => { _ovGrid.SnapToPieces = v; GridChanged(); })),
@@ -883,6 +884,7 @@ internal sealed partial class ManagerWindow {
                                     Spaced(Action(Plain("Add box"), () => AddOverlayElement(OverlayElement.BOX))),
                                     Spaced(Action(Plain("Add picture"), AddPictureAsync)),
                                     Spaced(Action(Plain("Add button"), () => AddOverlayElement(OverlayElement.BUTTON))),
+                                    Spaced(Action(Plain("Add minimap"), () => AddOverlayElement(OverlayElement.MINIMAP))),
                                     Spaced(Action(Plain("Copy"), DuplicateOverlayElement)),
                                     Spaced(Action(Plain("Up"), () => MoveOverlayElement(-1))),
                                     Spaced(Action(Plain("Down"), () => MoveOverlayElement(1))),
@@ -933,7 +935,7 @@ internal sealed partial class ManagerWindow {
                     var name = ListName(e);
                     var depth = Depth(e);
 
-                    return (depth > 0 ? new string(' ', depth * 3) + "↳ " : "") + (e.IsPicture ? "▣ " : e.IsBox ? "▭ " : e.IsButton ? "◉ " : "T  ") + name + (e.Locked ? " (locked)" : "") + (e.Visible ? "" : " (hidden)");
+                    return (depth > 0 ? new string(' ', depth * 3) + "↳ " : "") + (e.IsMinimap ? "◎ " : e.IsPicture ? "▣ " : e.IsBox ? "▭ " : e.IsButton ? "◉ " : "T  ") + name + (e.Locked ? " (locked)" : "") + (e.Visible ? "" : " (hidden)");
                 }));
                 _ovList.ItemsSource = names;
                 _ovList.SelectedIndex = _ovSelected == _ovDesign.Credit || _ovSelected is null ? 0 : _ovDesign.Elements.IndexOf(_ovSelected) + 1;
@@ -1323,7 +1325,7 @@ internal sealed partial class ManagerWindow {
 
         private string ListName(OverlayElement e) {
             var i = _ovDesign.Elements.IndexOf(e);
-            var name = e.Name.Length > 0 ? e.Name : e.IsPicture ? $"Picture {i + 1}" : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : e.IsButton ? $"Button {i + 1}" : $"Text {i + 1}";
+            var name = e.Name.Length > 0 ? e.Name : e.IsMinimap ? $"Minimap {i + 1}" : e.IsPicture ? $"Picture {i + 1}" : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : e.IsButton ? $"Button {i + 1}" : $"Text {i + 1}";
 
             return name.Length > 34 ? name[..34] + "…" : name;
         }
@@ -1478,7 +1480,13 @@ internal sealed partial class ManagerWindow {
                 throw new PanelException($"The overlay holds up to {OverlayDesign.MAX_ELEMENTS} texts and boxes.");
             }
 
-            var element = kind == OverlayElement.PICTURE
+            var element = kind == OverlayElement.MINIMAP
+                ? new OverlayElement {
+                    Kind = OverlayElement.MINIMAP, Name = "Minimap", Anchor = OverlayAnchor.TopRight, X = 20, Y = 20, Width = 200, Height = 200,
+                    Background = new OverlayPaint { Kind = OverlayPaint.RADIAL, Color1 = "#C8202A44", Color2 = "#C80A0E1C" },
+                    BorderColor = "#D0FFD24A", BorderWidth = 2, CornerRadius = 16, Shadow = true, ShadowBlur = 8, Map = new OverlayMap(),
+                }
+                : kind == OverlayElement.PICTURE
                 ? new OverlayElement { Kind = OverlayElement.PICTURE, Anchor = OverlayAnchor.TopLeft, X = 20, Y = 20, Background = new OverlayPaint() }
                 : kind == OverlayElement.BUTTON
                 ? new OverlayElement {
@@ -1762,6 +1770,63 @@ internal sealed partial class ManagerWindow {
             return panel;
         }
 
+        // The minimap's own choices (Niduus, 2026-11-12: "mini map that is very detailed"): how it turns and zooms, what it
+        // shows, and each kind's colour.
+        private void MinimapEditor(OverlayElement e, Action changed) {
+            var map = e.Map ??= new OverlayMap();
+            void Set(Action change) {
+                change();
+                changed();
+            }
+
+            var how = new WrapPanel();
+            how.Children.Add(OvField("Turns with me", OvCheck("The way I face is up", map.Turn, v => Set(() => map.Turn = v))));
+            how.Children.Add(OvField("Shape", OvCombo(["Round", "Square"], map.Round ? 0 : 1, i => Set(() => map.Round = i == 0), 110)));
+            how.Children.Add(OvField("How far it shows (smaller is closer)", OvNumber(map.Zoom, 300, 12000, 100, v => Set(() => map.Zoom = v))));
+            how.Children.Add(OvField("Icon size", OvNumber(map.IconSize, 4, 30, 1, v => Set(() => map.IconSize = v))));
+            how.Children.Add(OvField("Name size", OvNumber(map.NameSize, 6, 30, 1, v => Set(() => map.NameSize = v))));
+            how.Children.Add(OvField("Quest lines under it (0 = none)", OvNumber(map.QuestLines, 0, 8, 1, v => Set(() => map.QuestLines = (int) v))));
+            how.Children.Add(OvField("Words", Row(
+                OvCheck("Names", map.Names, v => Set(() => map.Names = v)),
+                OvCheck("Place's name", map.Place, v => Set(() => map.Place = v)))));
+            how.Children.Add(OvField("If left and right look swapped", OvCheck("Swap left and right", map.Mirror, v => Set(() => map.Mirror = v))));
+            _ovEditor.Children.Add(OvGroup("Minimap", new StackPanel {
+                Spacing = 6,
+                Children = {
+                    how,
+                    Sub("It shows what is around your wizard in this game window, from the server, twice a second. Width and height above set its size; " +
+                        "Fill and Edge below set its background and rim. With one game open it links by itself; with more, it shows a .link code to type " +
+                        "in that game's chat once. Here in the designer it shows a made-up map."),
+                },
+            }));
+
+            var shows = new WrapPanel();
+            void Kind(string label, bool on, Action<bool> set, string color, Action<string> setColor) {
+                shows.Children.Add(OvField(label, Row(OvCheck("Show", on, v => Set(() => set(v))), OvColor(color, v => Set(() => setColor(v))))));
+            }
+
+            Kind("Main quest steps (star)", map.Quests, v => map.Quests = v, map.MainColor, v => map.MainColor = v);
+            Kind("Side quest steps (diamond)", map.Quests, v => map.Quests = v, map.SideColor, v => map.SideColor = v);
+            Kind("Quest givers (!)", map.Givers, v => map.Givers = v, map.GiverColor, v => map.GiverColor = v);
+            Kind("Other NPCs", map.Npcs, v => map.Npcs = v, map.NpcColor, v => map.NpcColor = v);
+            Kind("Mobs", map.Mobs, v => map.Mobs = v, map.MobColor, v => map.MobColor = v);
+            Kind("Bosses (skull)", map.Bosses, v => map.Bosses = v, map.BossColor, v => map.BossColor = v);
+            Kind("Sigils", map.Sigils, v => map.Sigils = v, map.SigilColor, v => map.SigilColor = v);
+            Kind("Doors and teleporters", map.Doors, v => map.Doors = v, map.DoorColor, v => map.DoorColor = v);
+            Kind("Chests", map.Chests, v => map.Chests = v, map.ChestColor, v => map.ChestColor = v);
+            Kind("Other wizards", map.Wizards, v => map.Wizards = v, map.WizardColor, v => map.WizardColor = v);
+            shows.Children.Add(OvField("Teammates", OvColor(map.TeamColor, v => Set(() => map.TeamColor = v))));
+            shows.Children.Add(OvField("You (arrow)", OvColor(map.YouColor, v => Set(() => map.YouColor = v))));
+            shows.Children.Add(OvField("Words", OvColor(map.TextColor, v => Set(() => map.TextColor = v))));
+            _ovEditor.Children.Add(OvGroup("What the minimap shows", new StackPanel {
+                Spacing = 6,
+                Children = {
+                    shows,
+                    Sub("A mob a quest needs has a ring in that quest's colour. Quest steps and teammates off the map show as an arrow on its edge."),
+                },
+            }));
+        }
+
         private void RenderOverlayEditor() {
             _ovEditor.Children.Clear();
             var e = _ovSelected ?? _ovDesign.Credit;
@@ -1857,6 +1922,10 @@ internal sealed partial class ManagerWindow {
                         Spaced(AlignButton("Top", null, 0)), Spaced(AlignButton("Middle", null, 1)), Spaced(AlignButton("Bottom", null, 2)),
                     },
                 }));
+
+                if (e.IsMinimap) {
+                    MinimapEditor(e, Changed);
+                }
 
                 if (e.IsPicture) {
                     var change = Action(Plain("Change picture"), async () => {

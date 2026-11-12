@@ -172,7 +172,7 @@ internal sealed class OverlayAddon {
         nameof(OverlayElement.Anchor), nameof(OverlayElement.X), nameof(OverlayElement.Y), nameof(OverlayElement.Layer),
         nameof(OverlayElement.Spacing), nameof(OverlayElement.Width), nameof(OverlayElement.Height), nameof(OverlayElement.Locked),
         nameof(OverlayElement.Picture), nameof(OverlayElement.PictureFit), nameof(OverlayElement.Id), nameof(OverlayElement.Parent),
-        nameof(OverlayElement.Action), nameof(OverlayElement.Command), nameof(OverlayElement.CheatHow),
+        nameof(OverlayElement.Action), nameof(OverlayElement.Command), nameof(OverlayElement.CheatHow), nameof(OverlayElement.Map),
     ];
 
     /// <summary>Puts a style's look (fonts, colours, edges, shadow...) on a text or box.</summary>

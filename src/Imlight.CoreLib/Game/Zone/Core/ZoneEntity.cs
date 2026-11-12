@@ -282,11 +282,19 @@ public class ZoneEntity(
 
         Sender.Tell(new ZONE_102_PROTOCOL.MSG_ZONEOBJECTLOADRESULTS());
 
+        // The overlay's minimap shows creatures, NPCs, sigils, doors and chests (Tools.MinimapIndex).
+        Imlight.CoreLib.Game.Tools.MinimapIndex.Loaded(this);
+
         // Zone loads after a start took a minute (Niduus's log of 2026-10-26): name the slow part.
         if (stopwatch.ElapsedMilliseconds >= SLOW_LOAD_MS) {
             Logger.Warning("Slow load: {0} took {1} ms (choosing its parts {2} ms).",
                 Logger.Args(DescribeForLog(), stopwatch.ElapsedMilliseconds, attachMs));
         }
+    }
+
+    protected override void PostStop() {
+        Imlight.CoreLib.Game.Tools.MinimapIndex.Stopped(this);
+        base.PostStop();
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_QUERYZONEENTITY))]
