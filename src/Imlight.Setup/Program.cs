@@ -64,6 +64,33 @@ internal static class Program {
         }
     }
 
+    /// <summary>
+    /// A new install on a PC that has a backup (an uninstall, a broken install, or a new copy of Windows with the same
+    /// Documents folder): offers the newest one back, so settings, customs and characters are not lost.
+    /// </summary>
+    private static void OfferBackBackup(SetupOptions options, bool isNewConfig) {
+        if (!isNewConfig || options.Unattended) {
+            return;
+        }
+
+        try {
+            if (ServerBackup.List(options.InstallFolder).FirstOrDefault() is not { } newest) {
+                return;
+            }
+
+            SetupLog.Info($"Found a backup from {newest.Made:yyyy-MM-dd HH:mm} ({newest.Kind}) in {ServerBackup.Folder(options.InstallFolder)}.");
+            if (!Prompt.YesNo("Bring back your settings, customs, overlay and add-ons" + (newest.HasDatabase ? ", accounts and characters" : "") + " from it?", true)) {
+                return;
+            }
+
+            var count = ServerBackup.Restore(options.InstallFolder, newest.Path);
+            SetupLog.Info($"Brought back {count} files from the backup.");
+        }
+        catch (Exception ex) {
+            SetupLog.Error($"The backup could not be brought back: {ex.Message}. It is still there; restore it later in Ahziael under Server > Ahziael > Backups.");
+        }
+    }
+
     private static async Task<int> Main(string[] args) {
         SetupOptions options;
         try {
@@ -148,6 +175,7 @@ internal static class Program {
 
             SetupLog.Step(6, STEPS, "Setting up the server");
             steps.Configure(isNewConfig);
+            OfferBackBackup(options, isNewConfig);
 
             SetupLog.Step(7, STEPS, "Adding shortcuts");
             await steps.CreateShortcutsAsync();
@@ -243,6 +271,14 @@ internal static class Program {
             // The server keeps running whenever the update allows it (Niduus, 2026-10-28): only a change to its program
             // needs a restart, and Ahziael does that when it is safe. An older app stopped the server before this runs.
             var running = InstalledCommands.IsServerRunning(options.InstallFolder);
+            // A backup of everything made on this PC before anything is replaced (Documents\Ahziael backups).
+            try {
+                SetupLog.Detail("Backup before the update: " + ServerBackup.Make(options.InstallFolder, ServerBackup.BEFORE_UPDATE));
+            }
+            catch (Exception ex) {
+                SetupLog.Detail("The backup before the update could not be made: " + ex.Message);
+            }
+
             var sort = running ? steps.SortPendingServer() : null;
             if (sort is { NeedsRestart: true }) {
                 steps.LeavePendingServerForRestart();
