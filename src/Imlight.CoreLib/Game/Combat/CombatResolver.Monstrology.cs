@@ -99,6 +99,11 @@ public partial class CombatResolver {
     // One monster hit by an Extract spell: the line the wizard is told.
     private string Extract(CombatDuelSubCircle mover, Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, CombatDuelSubCircle target,
                            HashSet<string> kinds, int level) {
+        // The game's own words: a Monstrodome's monsters give no Animus (GUI2_00000271).
+        if (Monstrodome.IsArenaZone(wizard.Zone)) {
+            return "Failed to collect any Monster Animus - Monstrodome prevents";
+        }
+
         var monster = Monstrology.MonsterOf((uint) target.ParticipantObject.m_templateID);
         if (monster is null) {
             return "Failed to collect any Monster Animus - Monster not collectable";

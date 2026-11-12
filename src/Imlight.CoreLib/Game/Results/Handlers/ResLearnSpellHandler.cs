@@ -19,9 +19,13 @@
 using System;
 using Akka.Actor;
 using Imcodec.ObjectProperty.TypeCache;
+using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
+using Imlight.CoreLib.Game.MonsterMagic;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.Shared.Resources;
+using Imlight.CoreLib.WizardData.Collections;
 
 namespace Imlight.CoreLib.Game.Results.Handlers;
 
@@ -47,6 +51,20 @@ internal sealed class ResLearnSpellHandler : BaseResultHandler<ResLearnSpell> {
 
         // A spell that is already known is fine; the learn is idempotent.
         var outcome = SpellTeacher.TryTeach(context.GetPlayerRef(), wizard, Result.m_templateID);
+
+        // Learning an Extract spell (Know Thine Enemy gives Extract Undead) opens Monstrology at once, so the spell
+        // book's Monstrology tab works without logging out first.
+        if (outcome != SpellTeachResult.Failed
+            && CoreObjectFactory.GetCoreTemplate(Result.m_templateID) is SpellTemplate learned
+            && Monstrology.IsExtract(learned) && Monstrology.Open(wizard)) {
+            WizardCollection.UpdateCharacterMonsterTome(wizard);
+            context.GetPlayerRef().Tell(new WIZARD2_53_PROTOCOL.MSG_UPDATEMONSTERMAGICXP {
+                GlobalID = wizard.GameObjectID,
+                XP = wizard.GameStats.m_monsterMagicXP,
+                Level = Monstrology.LevelOf(wizard),
+            });
+            Logger.Information("Monstrology: opened for {0} by learning {1}.", Logger.Args(wizard.CharId, (string) learned.m_name));
+        }
 
         return outcome != SpellTeachResult.Failed;
     }

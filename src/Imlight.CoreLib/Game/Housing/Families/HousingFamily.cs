@@ -116,6 +116,12 @@ internal static class HousingFamilies {
     /// </summary>
     internal static HousingFamily Magic { get; } = Declare("Magic", "Magic", "MagicAttic", [typeof(CastleMagicBehaviorTemplate)], enabled: true);
 
+    /// <summary>
+    /// The family of Monstrodomes. They are placed among the plain items: their monsters are the custom data of their
+    /// Item blob entry, which the client loads into the object's MonsterArenaBehavior (Game/MonsterMagic/Monstrodome).
+    /// </summary>
+    internal static HousingFamily Monster { get; } = Declare("Monster", "Monster", "MonsterAttic", [typeof(MonsterArenaBehaviorTemplate)], enabled: true);
+
     // The family of objects a player clicks. The client runs the click of a Castle Magic object itself, so a Castle Magic
     // object is not in this family.
     private const string InteractId = "Interact";
@@ -140,7 +146,7 @@ internal static class HousingFamilies {
         Declare("Teleport", "Teleport", "TeleportAttic", [typeof(HousingTeleporterBehaviorTemplate)], enabled: true),
         Declare("Sign", null, "SignAttic", [typeof(HousingSignBehaviorTemplate)]),
         Magic,
-        Declare("Monster", "Monster", "MonsterAttic", [typeof(MonsterArenaBehaviorTemplate)]),
+        Monster,
         Declare("Train", "Train", "TrainAttic", [typeof(TrainBehaviorTemplate)]),
         Declare("Equip", null, "EquipAttic", [typeof(EquipmentBehaviorTemplate)]),
         // Aquariums keep the fish put in them (Game/Housing/HouseVaults, HousingService.Vaults).
@@ -201,6 +207,12 @@ internal static class HousingFamilies {
         // A Castle Magic lever or button is clicked, which the client's Castle Magic answers itself.
         if (declared.Contains(Magic)) {
             declared.RemoveAll(family => family.Id == InteractId);
+        }
+
+        // A Monstrodome is clicked to go into its arena, a zone of its own, which the server does itself
+        // (HousingService.Monstrodome).
+        if (declared.Contains(Monster)) {
+            declared.RemoveAll(family => family.Id is InteractId or "ExtraZone");
         }
 
         return declared.Count == 0 ? [Plain] : declared;

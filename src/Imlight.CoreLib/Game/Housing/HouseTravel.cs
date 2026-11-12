@@ -150,6 +150,26 @@ internal static class HouseTravel {
         return TryOpen(player, owner, target, (lotGid, newItems) => HouseEntry.ForTeleport(lotGid, owner.CharId, target, newItems), out entry, out failure);
     }
 
+    /// <summary>
+    /// Prepares the way back into a given house of a given owner: the Monstrodome's way home (Game/MonsterMagic/Monstrodome).
+    /// </summary>
+    /// <param name="player">The player who goes.</param>
+    /// <param name="ownerCharId">The house's owner.</param>
+    /// <param name="houseTemplateId">The house's template.</param>
+    /// <param name="entry">What the zone transfer needs when this returns <c>true</c>.</param>
+    /// <param name="failure">Why the player cannot go when this returns <c>false</c>.</param>
+    /// <returns><c>false</c> when the owner or the house cannot be loaded, or the player may not enter it.</returns>
+    internal static bool TryEnterHouseOf(Wizard player, ulong ownerCharId, uint houseTemplateId, out HouseEntry entry, out HouseTravelFailure failure) {
+        entry = null;
+        failure = HouseTravelFailure.Unavailable;
+        var owner = ownerCharId == player.CharId ? player : WizardCollection.GetCharacterUnloaded(ownerCharId);
+        if (owner is null || !HouseTemplates.TryGet(houseTemplateId, out var target)) {
+            return false;
+        }
+
+        return TryOpen(player, owner, target, (lotGid, newItems) => HouseEntry.ForTeleport(lotGid, owner.CharId, target, newItems), out entry, out failure);
+    }
+
     private static bool TryLoadCurrentHouse(Wizard player, out Wizard owner, out HouseTemplateInfo template, out HouseTravelFailure failure) {
         owner = null;
         template = default;

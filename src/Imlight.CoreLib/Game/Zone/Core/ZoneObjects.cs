@@ -321,12 +321,18 @@ internal static class ZoneObjects {
     /// is loaded for, and leaves out what the files remove. Returns what the copy keeps for later (encounters, exit).
     /// </summary>
     internal static Applied AddTo(string zonePath, string variant, ZONE_102_PROTOCOL.MSG_ZONELOADRESULTS results) {
+        // A Monstrodome's arena: the monsters its owner set wait beside the duel circle.
+        var isArena = Imlight.CoreLib.Game.MonsterMagic.Monstrodome.TryReadVariant(variant, out var arenaMonsters);
+        if (isArena && results?.ZoneData is not null) {
+            AddArenaMonsters(zonePath, variant, arenaMonsters, results);
+        }
+
         if (!Enabled || results?.ZoneData is null || string.IsNullOrEmpty(zonePath)) {
             return Applied.None;
         }
 
         var files = FilesFor(zonePath, variant);
-        if (!string.IsNullOrEmpty(Imlight.CoreLib.Game.World.AdvancedMode.BaseVariant(variant)) && !Zones.ContainsKey(KeyOf(zonePath, variant))) {
+        if (!isArena && !string.IsNullOrEmpty(Imlight.CoreLib.Game.World.AdvancedMode.BaseVariant(variant)) && !Zones.ContainsKey(KeyOf(zonePath, variant))) {
             Logger.Warning("Zone {0}: no {1} file for variant {2}.", Logger.Args(zonePath, FOLDER, variant));
         }
 
@@ -709,6 +715,46 @@ internal static class ZoneObjects {
         results.SpawnData.m_spawners.Add(made.Spawner);
 
         return true;
+    }
+
+    private static void AddArenaMonsters(string zonePath, string variant, IReadOnlyList<uint> monsters,
+                                         ZONE_102_PROTOCOL.MSG_ZONELOADRESULTS results) {
+        if (monsters.Count == 0) {
+            Logger.Information("Zone {0}: the Monstrodome has no monsters set.", Logger.Args(zonePath));
+
+            return;
+        }
+
+        var circle = results.ZoneData.m_objectList?.OfType<CombatSigilObjectInfo>().FirstOrDefault();
+        if (circle is null) {
+            Logger.Warning("Zone {0}: the Monstrodome arena has no duel circle; its monsters are not added.", Logger.Args(zonePath));
+
+            return;
+        }
+
+        var start = results.ZoneData.m_locationList?.FirstOrDefault(l => string.Equals(l?.m_locName,
+            Imlight.CoreLib.Game.MonsterMagic.Monstrodome.START_LOCATION, StringComparison.OrdinalIgnoreCase));
+        var places = Imlight.CoreLib.Game.MonsterMagic.Monstrodome.Places(monsters,
+            (circle.m_location.X, circle.m_location.Y, circle.m_location.Z),
+            start is null ? null : (start.m_location.X, start.m_location.Y));
+        var added = 0;
+        for (var i = 0; i < places.Count; i++) {
+            var (templateId, x, y, z, yaw) = places[i];
+            var creature = new ZoneObject {
+                Name = $"Monstrodome{i + 1}_{templateId}",
+                TemplateID = templateId,
+                X = x,
+                Y = y,
+                Z = z,
+                Yaw = yaw,
+            };
+            if (AddCreature(zonePath, variant, creature, results)) {
+                added++;
+            }
+        }
+
+        Logger.Information("Zone {0}: the Monstrodome's {1} monster(s) wait beside the duel circle ({2}).",
+            Logger.Args(zonePath, added, string.Join(", ", monsters)));
     }
 
     // The customs of the files' creatures, by their spawner's id (ZonePath marks what such a spawner spawns).

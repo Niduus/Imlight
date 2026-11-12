@@ -143,6 +143,9 @@ internal class MonstrologyService(SessionActor sessionActor) : MessageService(se
             }
 
             SendTome(wizard);
+            SessionActor.ActorRef.Tell(new CHARACTER_103_PROTOCOL.MSG_ANIMUSKEPTFORQUESTS {
+                Animus = new Dictionary<uint, int>(animus),
+            });
         }
         catch (Exception e) {
             Logger.Error("Monstrology: keeping the battle's Animus failed: {0}", Logger.Args(e));
