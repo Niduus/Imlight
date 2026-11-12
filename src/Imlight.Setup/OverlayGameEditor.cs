@@ -132,6 +132,10 @@ internal sealed class OverlayGameEditor : Window {
     }
 
     private void Say(string text, bool isError) {
+        if (isError) {
+            AppLogs.Refused(text);
+        }
+
         _message.Text = text;
         _messageBar.Background = isError ? new SolidColorBrush(Color.FromRgb(0x8E, 0x2A, 0x2A)) : new SolidColorBrush(Color.FromArgb(0xEE, 0x14, 0x16, 0x22));
         _messageBar.IsVisible = true;

@@ -48,6 +48,22 @@ internal static class Program {
 
     private const int STEPS = 7;
 
+    /// <summary>
+    /// Opens Ahziael (or its overlay) with a last safety net: anything that still goes wrong is written to the Logs
+    /// folder and shown in a message box, instead of the app closing in a split second with nothing to go on.
+    /// </summary>
+    private static int SafelyOpen(string installFolder, Func<int> open) {
+        try {
+            return open();
+        }
+        catch (Exception ex) {
+            AppLogs.Start(installFolder);
+            StartupSafety.CouldNotOpen(installFolder, ex, ManagerApp.WindowShown);
+
+            return 1;
+        }
+    }
+
     private static async Task<int> Main(string[] args) {
         SetupOptions options;
         try {
@@ -63,9 +79,9 @@ internal static class Program {
             case SetupMode.Start:
                 return await InstalledCommands.StartAsync(options.InstallFolder, options.NoWait);
             case SetupMode.Panel:
-                return ManagerApp.Run(options.InstallFolder, options.StartServer);
+                return SafelyOpen(options.InstallFolder, () => ManagerApp.Run(options.InstallFolder, options.StartServer));
             case SetupMode.Overlay:
-                return OverlayStandalone.Run(options.InstallFolder);
+                return SafelyOpen(options.InstallFolder, () => OverlayStandalone.Run(options.InstallFolder));
             case SetupMode.PrepareUpdate:
                 return await PrepareUpdateAsync(options);
             case SetupMode.ApplyUpdate:

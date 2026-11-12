@@ -484,6 +484,13 @@ internal sealed partial class ManagerWindow : Window {
 
         _timer.Tick += (_, _) => Refresh();
         Opened += async (_, _) => {
+            ManagerApp.WindowShown = true;
+            AppLogs.Opened(_manager.InstallFolder);
+            if (ManagerApp.SafeStart) {
+                Say($"Safe start: last time {Edition.NAME} closed while it was opening. The game overlay is off until the next start. " +
+                    "Server > Logs shows what happened.", isError: true, log: false);
+            }
+
             Refresh();
             RefreshMissingNotes();
             await LoadPlayAsync();
@@ -524,8 +531,13 @@ internal sealed partial class ManagerWindow : Window {
             _clientLogTimer.Stop();
             OverlayHost.Stop();
         };
-        // The game overlay (Play > Overlay): drawn over Wizard101 while Ahziael is open.
-        OverlayHost.Start(manager.InstallFolder);
+        // The game overlay (Play > Overlay): drawn over Wizard101 while Ahziael is open. Not in a safe start.
+        if (ManagerApp.SafeStart) {
+            OverlayHost.LoadOnly(manager.InstallFolder);
+        }
+        else {
+            OverlayHost.Start(manager.InstallFolder);
+        }
     }
 
     // ---------------------------------------------------------------------
@@ -1280,6 +1292,7 @@ internal sealed partial class ManagerWindow : Window {
         // Both logs start folded shut (Niduus, 2026-10-26: "Have server and client logs innate hidden unless revealed"):
         // click a log's title to show it.
         return Page(
+            AhziaelLogsCard(),
             CrashLogsCard(),
             Shut(Fold("server", "Server", "Server log",
                 "What the server on this computer is doing.",
@@ -2855,14 +2868,22 @@ internal sealed partial class ManagerWindow : Window {
     /// <summary>An error no page caught: a line in the message bar saying it was written down, instead of closing the app.</summary>
     internal static void ShowError(Exception ex) {
         try {
-            s_shown?.Say($"Something went wrong ({ex.Message}). Ahziael kept running and wrote it down: Server > Logs > Make a zip to send.", isError: true);
+            s_shown?.Say($"Something went wrong ({ex.Message}). Ahziael kept running and wrote it down in Server > Logs.", isError: true, log: false);
         }
         catch (Exception) {
             // The message bar itself failed; the error is in the log anyway.
         }
     }
 
-    private string Say(string text, bool isError = false) {
+    /// <summary>
+    /// A line in the message bar at the bottom. A red one (Ahziael refused or something failed) is also written to
+    /// Server > Logs > "Ahziael's crashes and refusals", unless it was written there already.
+    /// </summary>
+    private string Say(string text, bool isError = false, bool log = true) {
+        if (isError && log) {
+            AppLogs.Refused(text);
+        }
+
         _message.Text = text;
         _messageBar.Background = isError ? BAD : CARD;
         _message.Foreground = isError ? Brushes.White : null;
@@ -2882,7 +2903,9 @@ internal sealed partial class ManagerWindow : Window {
             Say(ex.Message, isError: true);
         }
         catch (Exception ex) {
-            Say($"Something went wrong: {ex.Message}", isError: true);
+            // Not a "no" Ahziael meant to say: written down with where in the code it happened.
+            AppLogs.Error($"Something went wrong: {ex.Message}", ex);
+            Say($"Something went wrong: {ex.Message}", isError: true, log: false);
         }
     }
 
@@ -3003,7 +3026,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Events"] = ("clock", "Run the game's own events, such as the Deckathalon, Side Activity and Monthly Gauntlets, one after another from a queue."),
         ["Shops and Codes"] = ("bag", "Codes to redeem, member benefits, the Crown Shop, the Loyalty Store and the Bazaar bot."),
         ["Announcements"] = ("chat", "Change the words of everything the server announces or tells a player, turn any of it off, and send your own."),
-        ["Logs"] = ("log", "What the server and the game are writing down, as it happens."),
+        ["Logs"] = ("log", "Ahziael's crashes and refusals, and what the server and the game are writing down, as it happens."),
         ["Settings"] = ("gear", "Every setting of the server, with what each one does."),
         ["Accounts"] = ("users", "Who can log in to your server, and what they may do."),
         ["Game Files"] = ("folder", "Read the game's data files without ever changing them, and download them with Aurorium."),
@@ -3021,8 +3044,7 @@ internal sealed partial class ManagerWindow : Window {
             Children = {
                 new TextBlock { Text = $"The {header} tab could not open.", FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap },
                 Sub($"Reason: {ex.Message}"),
-                Sub("Every other tab works. This was written down in the logs folder: Server > Logs > Make a zip to send, " +
-                    "then drag the zip into the chat."),
+                Sub("Every other tab works. This was written down in Server > Logs, under Ahziael's crashes and refusals."),
             },
         },
     };
@@ -3039,7 +3061,7 @@ internal sealed partial class ManagerWindow : Window {
         }
         catch (Exception ex) {
             // One broken tab shows what went wrong in its own place; the rest of Ahziael opens as usual.
-            AppLogs.Error($"The {header} tab could not be built (Ahziael opened without it)", ex);
+            AppLogs.Error($"The {header} tab could not be built (Ahziael opened without it)", ex, kind: AppLogs.CRASH);
             content = BrokenTab(header, ex);
         }
 
