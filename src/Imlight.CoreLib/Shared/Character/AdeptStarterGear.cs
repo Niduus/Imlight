@@ -43,6 +43,17 @@ internal static class AdeptStarterGear {
     private const ulong DECK = 1712599;
     private const ulong GHULTURE = 1392135;
 
+    /// <summary>The school's Ghulture (PERM), whatever the setting (the Quest Team rides one).</summary>
+    internal static ulong GhultureFor(MagicSchool school) => GHULTURE + school switch {
+        MagicSchool.Death => 1UL,
+        MagicSchool.Fire => 2UL,
+        MagicSchool.Ice => 3UL,
+        MagicSchool.Life => 4UL,
+        MagicSchool.Myth => 5UL,
+        MagicSchool.Storm => 6UL,
+        _ => 0UL,
+    };
+
     /// <summary>
     /// The Adept set and Ghulture for the wizard's school, or nothing when the setting is off. Schools without an
     /// Adept set of their own (astral, shadow) get the Balance set.

@@ -72,3 +72,21 @@ New: The Quest Team waits for more creatures to join
 In the first rounds, while there is room on the creatures' side and more of the creatures they need are close by, the team holds its hits (blades, shields and heals still go) so those creatures can walk into the battle. Once their side is full, or nothing more is coming, they attack.
 Where: in a Quest Team battle; Team Logs ("waits for more creatures to join before hitting")
 Test: Let the team start a fight near several of the same creature. They should hold their hits for a round or two while the others join.
+
+New: Pause and Stop buttons for the Quest Team
+"Pause or resume" makes the four stand still where they are without logging out, so you can walk over and look. A battle they are in still finishes. "Stop and save" logs them out cleanly at the step they are on, and turning the Quest Team on again picks up from there.
+Where: Quest Team > Quest Team
+Test: Click "Pause or resume" while they walk. They should stop, and Team log should say "is paused". Click it again and they go on.
+
+Changed: Quest Team plays steadier and reports more
+- They never walk into a fight weak. Anyone low on health or mana drinks a potion, or they rest for up to a minute first.
+- Losing the same fight twice is now an issue (it was three). Note: if your Quest Team settings already say 3, change "Lost fights before it is an issue" to 2.
+- New setting "Time limit for one quest (minutes)", 45 by default. A quest that takes longer than that is reported.
+- A broken step no longer stops the run. After the tries that raise the issue (or one more lost fight than the issue limit), Ahziael finishes that step for them, the issue says so, and the quest log marks it SKIPPED.
+- Each bug is reported once, not again every half hour.
+- If they run short of gold, Ahziael gives them some, and Team log says how much.
+- They ride their school's Ghulture and walk faster on it.
+- The quest log bookmarks each world they finish with the date and time ("WORLD DONE").
+- The quest log notes how many battles each fighting step took, and a step that takes more than 12 is reported as a possibly broken drop.
+Where: Quest Team > Quest Team, Team Issues, Team Logs
+Test: Let the team play for a while, then check Team Logs for "drinks a potion before the fight", "rides"/"puts on its Ghulture" and the battle counts in the quest log.

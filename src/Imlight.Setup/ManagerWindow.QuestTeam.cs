@@ -37,6 +37,7 @@ internal sealed partial class ManagerWindow {
     private readonly ToggleSwitch _teamEnabled = new() { OnContent = "On", OffContent = "Off" };
     private readonly NumericUpDown _teamSlow = new() { Minimum = 1.2m, Maximum = 20, Increment = 0.5m, FormatString = "0.0", Width = 140 };
     private readonly NumericUpDown _teamLosses = new() { Minimum = 1, Maximum = 20, Increment = 1, FormatString = "0", Width = 140 };
+    private readonly NumericUpDown _teamQuestMinutes = new() { Minimum = 0, Maximum = 600, Increment = 5, FormatString = "0", Width = 140 };
     private readonly NumericUpDown _teamStuck = new() { Minimum = 2, Maximum = 120, Increment = 1, FormatString = "0", Width = 140 };
     private readonly StackPanel _teamIssues = new() { Spacing = 10 };
     private readonly TextBlock _teamIssuesEmpty = new() { TextWrapping = TextWrapping.Wrap, Foreground = MUTED, Text = "No issues yet." };
@@ -89,7 +90,7 @@ internal sealed partial class ManagerWindow {
                 await Guard(() => SetQuestTeamEnabledAsync(_teamEnabled.IsChecked == true));
             }
         };
-        foreach (var (box, key) in new[] { (_teamSlow, "SlowFactor"), (_teamLosses, "LossesBeforeIssue"), (_teamStuck, "StuckMinutes") }) {
+        foreach (var (box, key) in new[] { (_teamSlow, "SlowFactor"), (_teamLosses, "LossesBeforeIssue"), (_teamStuck, "StuckMinutes"), (_teamQuestMinutes, "QuestMinutes") }) {
             box.ValueChanged += (_, _) => {
                 if (!_showingTeam && box.Value is { } value) {
                     _ = Guard(() => SaveQuestTeamNumberAsync(key, value));
@@ -114,7 +115,7 @@ internal sealed partial class ManagerWindow {
                 _teamDoing,
                 _teamQuest,
                 _teamMembers,
-                Row(Action(Plain("Restart with four new wizards"), RestartQuestTeamAsync), Action(Plain("Open its folder"), () => {
+                Row(Action(Plain("Pause or resume"), PauseQuestTeamAsync), Action(Plain("Stop and save"), StopQuestTeam), Action(Plain("Restart with four new wizards"), RestartQuestTeamAsync), Action(Plain("Open its folder"), () => {
                     Directory.CreateDirectory(QuestTeamFolder);
 
                     return Open(QuestTeamFolder);
@@ -126,7 +127,9 @@ internal sealed partial class ManagerWindow {
                 SwitchRow("Lost fights before it is an issue", _teamLosses,
                     "When the team loses the same fight this many times, the quest is reported."),
                 SwitchRow("Minutes with no progress before it is stuck", _teamStuck,
-                    "When nothing moves forward for this long, the team reports that it is stuck.")));
+                    "When nothing moves forward for this long, the team reports that it is stuck."),
+                SwitchRow("Time limit for one quest (minutes)", _teamQuestMinutes,
+                    "A quest that takes longer than this is reported, however long it was expected to take. 0 means no limit.")));
     }
 
     private void LoadQuestTeamSettings() {
@@ -134,8 +137,9 @@ internal sealed partial class ManagerWindow {
         try {
             _teamEnabled.IsChecked = _manager.GetSwitch("QuestTeam", "Enabled");
             _teamSlow.Value = (decimal) Number("SlowFactor", 2);
-            _teamLosses.Value = (decimal) Number("LossesBeforeIssue", 3);
+            _teamLosses.Value = (decimal) Number("LossesBeforeIssue", 2);
             _teamStuck.Value = (decimal) Number("StuckMinutes", 8);
+            _teamQuestMinutes.Value = (decimal) Number("QuestMinutes", 45);
         }
         finally {
             _showingTeam = false;
@@ -175,6 +179,32 @@ internal sealed partial class ManagerWindow {
         Say("Saved. The Quest Team uses it right away.");
 
         return Task.CompletedTask;
+    }
+
+    // Pause (Niduus, 2026-11-12: "Please!"): the four stand still where they are, still logged in, so he can walk over and
+    // look; a battle they are in still plays out. The file is there while paused.
+    private async Task PauseQuestTeamAsync() {
+        Directory.CreateDirectory(QuestTeamFolder);
+        var file = Path.Combine(QuestTeamFolder, "paused.txt");
+        if (File.Exists(file)) {
+            File.Delete(file);
+            Say("Resumed. The team goes on with its quest.");
+
+            return;
+        }
+
+        await File.WriteAllTextAsync(file, DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+        Say("Paused. The four stand where they are and stay logged in (a battle they are in still finishes). Click again to resume.");
+    }
+
+    // Stop and save: the team logs out cleanly where it is (its progress is the wizards' own, saved as it goes); turning it
+    // on again picks up from the same step.
+    private async Task StopQuestTeam() {
+        _showingTeam = true;
+        _teamEnabled.IsChecked = false;
+        _showingTeam = false;
+        await SetQuestTeamEnabledAsync(false);
+        Say("Stopped. The four log out where they are, with their quests and steps kept. Turn the Quest Team on to pick up from there.");
     }
 
     private async Task RestartQuestTeamAsync() {
