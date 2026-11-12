@@ -282,6 +282,18 @@ public static class OverlayLinks {
         // The other sessions answer about as fast; a short wait lets them.
         await Task.Delay(60);
         OverlayMinimap.AddWizards(map, charId, zone, others);
+        // The streets of the zone, drawn from above (ZoneGround), sent once per zone: the overlay says which it has.
+        var zonePath = (string) map["zone"] ?? "";
+        if (OverlayMinimap.Streets && zonePath.Length > 0 && !string.Equals((string) header["ground"] ?? "", zonePath, StringComparison.OrdinalIgnoreCase)) {
+            var ground = Zone.Core.ZoneGround.Of(zonePath);
+            map["ground"] = ground.IsEmpty
+                ? new JsonObject { ["zone"] = zonePath }
+                : new JsonObject {
+                    ["zone"] = zonePath, ["left"] = ground.Left, ["top"] = ground.Top, ["cell"] = ground.Cell,
+                    ["w"] = ground.Width, ["h"] = ground.Height, ["runs"] = ground.Runs,
+                };
+        }
+
         var answer = RemoteAdminWire.Ok();
         answer["map"] = map;
 

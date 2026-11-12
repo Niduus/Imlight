@@ -53,6 +53,9 @@ internal static class OverlayMinimap {
     /// <summary>[Overlay] MinimapCreatures: creatures and bosses show on the minimap; live.</summary>
     internal static bool Creatures => ConfigurationManager.GetValue("Overlay.MinimapCreatures", true);
 
+    /// <summary>[Overlay] MinimapStreets: the minimap gets each area's streets, grass, water and walls; live.</summary>
+    internal static bool Streets => ConfigurationManager.GetValue("Overlay.MinimapStreets", true);
+
     private const int MAX_MARKS = 300;
     private const int MAX_QUESTS = 30;
 

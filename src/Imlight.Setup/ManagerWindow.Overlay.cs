@@ -1805,7 +1805,13 @@ internal sealed partial class ManagerWindow {
                 shows.Children.Add(OvField(label, Row(OvCheck("Show", on, v => Set(() => set(v))), OvColor(color, v => Set(() => setColor(v))))));
             }
 
-            Kind("Main quest steps (star)", map.Quests, v => map.Quests = v, map.MainColor, v => map.MainColor = v);
+            shows.Children.Add(OvField("Streets, grass, water and walls", Row(OvCheck("Show", map.Streets, v => Set(() => map.Streets = v)),
+            OvSlider(map.StreetsOpacity, 0, 1, v => Set(() => map.StreetsOpacity = v)))));
+        shows.Children.Add(OvField("Streets", OvColor(map.PathColor, v => Set(() => map.PathColor = v))));
+        shows.Children.Add(OvField("Grass", OvColor(map.GrassColor, v => Set(() => map.GrassColor = v))));
+        shows.Children.Add(OvField("Water", OvColor(map.WaterColor, v => Set(() => map.WaterColor = v))));
+        shows.Children.Add(OvField("Walls and fences", OvColor(map.WallColor, v => Set(() => map.WallColor = v))));
+        Kind("Main quest steps (star)", map.Quests, v => map.Quests = v, map.MainColor, v => map.MainColor = v);
             Kind("Side quest steps (diamond)", map.Quests, v => map.Quests = v, map.SideColor, v => map.SideColor = v);
             Kind("Quest givers (!)", map.Givers, v => map.Givers = v, map.GiverColor, v => map.GiverColor = v);
             Kind("Other NPCs", map.Npcs, v => map.Npcs = v, map.NpcColor, v => map.NpcColor = v);
