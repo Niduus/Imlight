@@ -258,6 +258,8 @@ internal static class ZoneGround {
             }
 
             Text(); // name
+            // The turn is stored row by row: world x = row 0 . point (Niduus, 2026-11-12: walls and bridges stuck out at
+            // odd angles, turned the wrong way round).
             var rot = new float[9];
             for (var r = 0; r < 9; r++) {
                 rot[r] = F();
@@ -272,9 +274,9 @@ internal static class ZoneGround {
                 var size = scale is > 0 and < 1000 ? scale : 1f;
                 for (var p = 0; p + 2 < points.Length; p += 3) {
                     var (px, py, pz) = (points[p] * size, points[p + 1] * size, points[p + 2] * size);
-                    points[p] = mx + (rot[0] * px) + (rot[3] * py) + (rot[6] * pz);
-                    points[p + 1] = my + (rot[1] * px) + (rot[4] * py) + (rot[7] * pz);
-                    points[p + 2] = mz + (rot[2] * px) + (rot[5] * py) + (rot[8] * pz);
+                    points[p] = mx + (rot[0] * px) + (rot[1] * py) + (rot[2] * pz);
+                    points[p + 1] = my + (rot[3] * px) + (rot[4] * py) + (rot[5] * pz);
+                    points[p + 2] = mz + (rot[6] * px) + (rot[7] * py) + (rot[8] * pz);
                 }
             }
             var material = Text();
@@ -284,7 +286,7 @@ internal static class ZoneGround {
                     // A box: a wall or fence, its four corners from above.
                     var (hx, hy) = (F() * scale / 2f, F() * scale / 2f);
                     F();
-                    (float X, float Y) Corner(float sx, float sy) => (mx + (rot[0] * sx * hx) + (rot[3] * sy * hy), my + (rot[1] * sx * hx) + (rot[4] * sy * hy));
+                    (float X, float Y) Corner(float sx, float sy) => (mx + (rot[0] * sx * hx) + (rot[1] * sy * hy), my + (rot[3] * sx * hx) + (rot[4] * sy * hy));
                     var (a, b, c, d) = (Corner(-1, -1), Corner(1, -1), Corner(1, 1), Corner(-1, 1));
                     triangles.Add(new Triangle(a.X, a.Y, b.X, b.Y, c.X, c.Y, WALL));
                     triangles.Add(new Triangle(a.X, a.Y, c.X, c.Y, d.X, d.Y, WALL));
