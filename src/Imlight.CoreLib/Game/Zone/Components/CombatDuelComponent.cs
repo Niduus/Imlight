@@ -853,8 +853,13 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         // Find which sub circle this is.
-        var caster = SubCircles.FirstOrDefault(x => x.ParticipantActor == message.Actor)
-            ?? throw new Exception("Combat move received from an actor that is not in the duel.");
+        // A minion dismissed or replaced this planning phase may still send the move it picked: it is no longer in.
+        var caster = SubCircles.FirstOrDefault(x => x.ParticipantActor == message.Actor);
+        if (caster is null) {
+            Logger.Debug("Duel {0} | Combat move from an actor that is not in the duel; dropped.", Logger.Args(Duel.m_duelID.Full));
+
+            return;
+        }
 
         // Tutorial duels script the golems' moves server-side; drop their own AI moves so a pass cannot
         // overwrite the scripted attack. Player moves still flow through normally.
@@ -1222,6 +1227,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // Kick cheats (Niduus, 2026-11-03: "kick that wizard out of the duel and lock his spot"): out once the round has played.
         KickOut();
 
+        // Minions their wizards dismissed while the spells went off (CombatDuelComponent.Minions.cs).
+        SendDismissedMinionsAway();
+
         // A wizard's minion goes when its wizard is defeated or gone (PlayerMinions.LeaveWithOwner).
         foreach (var orphan in PlayerMinions.Orphaned(SubCircles)) {
             Logger.Information("Duel {0} | Slot {1} | Minion leaves: its wizard is defeated or left the battle.",
@@ -1448,17 +1456,13 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return;
         }
 
-        // Two summons in one round: the second finds the first's minion standing (PlayerMinions.OnePerWizard).
-        if (PlayerMinions.OnePerWizard && message.Caster.IsHumanPlayer && PlayerMinions.OwnMinions(message.Caster, summonedOnly: true).Any()) {
-            Logger.Information("Duel {0} | Slot {1} | minion summon (tid {2}) dropped, the wizard has a minion already.",
-                Logger.Args(Duel.m_duelID.Full, message.Caster.SlotIndex, message.CreatureTid));
-
-            return;
-        }
+        // A wizard who has a minion already sends it away for the new one, which takes its circle
+        // (PlayerMinions.OnePerWizard; Niduus, 2026-11-12: casting a new minion only passed).
+        var replaced = ReplaceOwnMinions(message.Caster);
 
         // A creature's summon (the Fairy Queen's fairies) brings its minion in on its own side, not the wizards'.
         var slot = SpawnAndAssignMinion(message.CreatureTid, message.Caster,
-            forEnemies: !Duel.m_bPVP && message.Caster.OccupiedTeam == CombatTeam.Monster);
+            forEnemies: !Duel.m_bPVP && message.Caster.OccupiedTeam == CombatTeam.Monster, preferred: replaced);
 
         // A wizard's own minion (from a card) leaves with them and counts for OnePerWizard; a cheat's does not.
         if (slot is not null && message.Caster.IsHumanPlayer && message.Caster.ParticipantObject is { } summoner) {
@@ -1471,6 +1475,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         SubCircles = CreateDuelActorSubCircles(_sigilTemplate);
         CombatResolver = new Combat.CombatResolver(Duel, SubCircles);
         _defeatedEnemyMinions.Clear();
+        _dismissLater.Clear();
         _enemyDefeated = false;
         _botsKicked = false;
         _botTargets.Clear();
@@ -2011,10 +2016,12 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     // Returns the circle it took, or null.
     // team: the side it comes in on, when that is not the caster's own (Summon Minion on the other side).
     private CombatDuelSubCircle SpawnAndAssignMinion(uint creatureTid, CombatDuelSubCircle caster, bool forEnemies = false,
-                                                     int customId = 0, CombatTeam? team = null) {
+                                                     int customId = 0, CombatTeam? team = null,
+                                                     CombatDuelSubCircle preferred = null) {
         // A PvE minion fights for the wizards whoever summoned it; in PvP it fights for its summoner.
         var creatureSide = team is { } side ? side == CombatTeam.Monster : forEnemies || (Duel.m_bPVP && caster?.OccupiedTeam == CombatTeam.Monster);
-        var slot = PassiveCircle(creatureSide,
+        // preferred: the circle a replaced minion just left (CombatDuelComponent.Minions.cs).
+        var slot = (preferred is { Occupied: false } ? preferred : null) ?? PassiveCircle(creatureSide,
                        BossCheats.CircleOf(BossCheats.For(customId > 0 ? Customs.Key(customId) : creatureTid)))
             ?? (team is { } t ? GetAvailableSubCircle(t)
                 : forEnemies ? GetAvailableSubCircleTeamCreature()

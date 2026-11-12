@@ -424,6 +424,10 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     public QueuedCombatAction GetQueuedAction(CombatDuelSubCircle caster)
         => _queuedCombatActions.FirstOrDefault(a => a.SpellCaster == caster);
 
+    /// <summary>Forgets the move a circle queued this round (a minion dismissed in planning).</summary>
+    internal void DropQueuedAction(CombatDuelSubCircle caster)
+        => _queuedCombatActions.RemoveAll(action => action.SpellCaster == caster);
+
     private bool IsActing(CombatDuelSubCircle circle)
         => ActingTeam is null || circle.OccupiedTeam == ActingTeam;
 
