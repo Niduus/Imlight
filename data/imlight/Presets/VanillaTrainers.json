@@ -166,6 +166,10 @@
    {
     "Shown": "Precision",
     "Template": "Precision"
+   },
+   {
+    "Shown": "Eldritch Ritual",
+    "Template": "Eldritch Ritual"
    }
   ],
   "Death": [
@@ -313,6 +317,10 @@
    {
     "Shown": "Death Trap",
     "Template": "Death Trap"
+   },
+   {
+    "Shown": "Ravenous Swarm",
+    "Template": "Ravenous Swarm"
    }
   ],
   "Fire": [
@@ -452,6 +460,10 @@
    {
     "Shown": "Link",
     "Template": "Link"
+   },
+   {
+    "Shown": "Flamelash Squid",
+    "Template": "Flamelash Squid"
    }
   ],
   "Ice": [
@@ -607,6 +619,10 @@
    {
     "Shown": "Ice Trap",
     "Template": "Ice Trap"
+   },
+   {
+    "Shown": "Great Tri-Roga",
+    "Template": "Great Tri-Roga"
    }
   ],
   "Life": [
@@ -762,6 +778,10 @@
    {
     "Shown": "Namaste",
     "Template": "Namaste"
+   },
+   {
+    "Shown": "Resurrected Lament",
+    "Template": "Resurrected Lament"
    }
   ],
   "Myth": [
@@ -921,6 +941,10 @@
    {
     "Shown": "Gobbler",
     "Template": "Gobbler"
+   },
+   {
+    "Shown": "Akashic Library",
+    "Template": "Akashic Library"
    }
   ],
   "Storm": [
@@ -1056,6 +1080,10 @@
    {
     "Shown": "Astraphobia",
     "Template": "Astraphobia"
+   },
+   {
+    "Shown": "Hurricane",
+    "Template": "Hurricane"
    }
   ]
  }
