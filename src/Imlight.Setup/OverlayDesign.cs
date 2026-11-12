@@ -587,6 +587,12 @@ internal sealed class OverlayMap {
     public bool Streets { get; set; } = true;
 
     public double StreetsOpacity { get; set; } = 0.9;
+
+    /// <summary>The game's own map page of the area under the streets and icons (read from the game files; lines up roughly).</summary>
+    public bool GamePicture { get; set; }
+
+    public double GamePictureOpacity { get; set; } = 0.85;
+
     public string PathColor { get; set; } = "#FFB9A47C";
     public string GrassColor { get; set; } = "#FF3C6236";
     public string WaterColor { get; set; } = "#FF3A6BAA";
@@ -622,6 +628,7 @@ internal sealed class OverlayMap {
         NameSize = OverlayElement.Range(NameSize, 6, 30, 10);
         QuestLines = Math.Clamp(QuestLines, 0, 8);
         StreetsOpacity = OverlayElement.Range(StreetsOpacity, 0, 1, 0.9);
+        GamePictureOpacity = OverlayElement.Range(GamePictureOpacity, 0, 1, 0.85);
         PathColor = OverlayPaint.CleanColor(PathColor, "#FFB9A47C");
         GrassColor = OverlayPaint.CleanColor(GrassColor, "#FF3C6236");
         WaterColor = OverlayPaint.CleanColor(WaterColor, "#FF3A6BAA");
