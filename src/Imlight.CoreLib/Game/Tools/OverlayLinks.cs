@@ -70,6 +70,7 @@ public static class OverlayLinks {
 
         s_recent.TryRemove(link, out _);
         s_mapAsks.TryRemove(link, out _);
+        s_questAsks.TryRemove(link, out _);
         foreach (var key in s_mapNotes.Keys.Where(k => k.Link == link).ToList()) {
             s_mapNotes.TryRemove(key, out _);
         }
@@ -281,7 +282,9 @@ public static class OverlayLinks {
         var others = new ConcurrentQueue<(ulong CharId, IActorRef Zone, string Name, float X, float Y)>();
         // The full screen map reaches farther than the minimap, so it may ask for more (never past 20000).
         var reach = header["reach"] is JsonValue far && far.TryGetValue<double>(out var wanted) && double.IsFinite(wanted) ? (float) wanted : 0f;
-        var ask2 = new OverlayMapAsk(charId, address, reply, others, reach);
+        // The quest picked in this window's Quest Tracker (its way is drawn on the map).
+        var picked = ((string) header["quest"] ?? "").Trim();
+        var ask2 = new OverlayMapAsk(charId, address, reply, others, reach, picked.Length > 120 ? "" : picked);
         foreach (var service in AgentBridge.CommandServices) {
             service.Tell(ask2);
         }

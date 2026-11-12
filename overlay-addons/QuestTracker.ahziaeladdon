@@ -1,0 +1,41 @@
+{
+  "Format": "Ahziael overlay add-on",
+  "Name": "Quest Tracker",
+  "Author": "Niduus",
+  "Description": "Your quests in three lists: Story (the main quests you need to finish the world), Main and Side, each with its step now. Click a quest to pick it, and its way is drawn on the Minimap (only on the Minimap: get the Minimap add-on too). Click a list's name to fold it away.",
+  "Version": "1",
+  "Widgets": [
+    {
+      "Name": "Quest Tracker",
+      "Elements": [
+        {
+          "Kind": "QuestTracker", "Name": "Quest Tracker", "Anchor": "Right", "X": 20, "Y": 0, "Width": 260, "Height": 0,
+          "Background": { "Kind": "Solid", "Color1": "#B40A0E1C" }, "Padding": 10,
+          "BorderColor": "#A0FFD24A", "BorderWidth": 1, "CornerRadius": 12, "Shadow": true, "ShadowBlur": 8,
+          "Quests": {}
+        }
+      ]
+    },
+    {
+      "Name": "Compact Quest Tracker (names only)",
+      "Elements": [
+        {
+          "Kind": "QuestTracker", "Name": "Compact Quest Tracker", "Anchor": "Right", "X": 20, "Y": 0, "Width": 220, "Height": 0,
+          "Background": { "Kind": "Solid", "Color1": "#A00A0E1C" }, "Padding": 8,
+          "BorderColor": "#80FFD24A", "BorderWidth": 1, "CornerRadius": 10, "Shadow": true, "ShadowBlur": 6,
+          "Quests": { "Title": "", "Steps": false, "TitleSize": 12 }
+        }
+      ]
+    }
+  ],
+  "Styles": [
+    {
+      "Name": "Dark quest panel",
+      "Look": {
+        "Kind": "Box",
+        "Background": { "Kind": "Solid", "Color1": "#B40A0E1C" }, "Padding": 10,
+        "BorderColor": "#A0FFD24A", "BorderWidth": 1, "CornerRadius": 12, "Shadow": true, "ShadowBlur": 8
+      }
+    }
+  ]
+}

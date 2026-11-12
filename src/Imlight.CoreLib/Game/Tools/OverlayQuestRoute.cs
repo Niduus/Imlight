@@ -135,6 +135,16 @@ internal static class OverlayQuestRoute {
 
         route["points"] = points;
 
+        // The line along the streets to the nearest one.
+        if (points.Count > 0 && points[0] is JsonObject nearest) {
+            var walk = new JsonArray();
+            foreach (var (x, y) in OverlayQuestPath.Walk(wizard.CharId, zonePath, here.X, here.Y, (int) nearest["x"], (int) nearest["y"])) {
+                walk.Add(new JsonArray(Round(x), Round(y)));
+            }
+
+            route["path"] = walk;
+        }
+
         return route;
     }
 

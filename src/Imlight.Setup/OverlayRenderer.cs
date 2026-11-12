@@ -49,6 +49,12 @@ internal static class OverlayRenderer {
     internal static Control Build(OverlayDesign design, Words words, OverlayElement? highlight = null, bool showMine = true,
         IReadOnlyList<OverlayElement>? server = null, long window = 0) {
         var panel = new OverlayPanel { Background = Brushes.Transparent, ClipToBounds = true };
+        // A Quest Tracker's picked quest shows its way on a minimap only, so it needs to know if one is drawn.
+        s_buildHasMap = (showMine && HasMinimap(design.Elements)) || HasMinimap(server ?? []);
+        if (window == 0) {
+            OverlayQuestData.DesignHasTracker = (showMine && HasQuestTracker(design.Elements)) || HasQuestTracker(server ?? []);
+        }
+
         // Grey smoothing for words: coloured ClearType smoothing leaves dark streaks on a see-through overlay.
         RenderOptions.SetTextRenderingMode(panel, TextRenderingMode.Antialias);
         // Hidden, the player's own pieces go, except a button that shows them again (or it could never come back).
@@ -362,6 +368,12 @@ internal static class OverlayRenderer {
     /// <summary>Whether a minimap shows in this design (the overlay then asks the server for the map).</summary>
     internal static bool HasMinimap(IEnumerable<OverlayElement> elements) => elements.Any(e => e.IsMinimap && e.Visible);
 
+    /// <summary>Whether a Quest Tracker shows in this design (the overlay then asks the server for the quests).</summary>
+    internal static bool HasQuestTracker(IEnumerable<OverlayElement> elements) => elements.Any(e => e.IsQuestTracker && e.Visible);
+
+    // Whether the overlay being built has a minimap (for its Quest Trackers' hint).
+    private static bool s_buildHasMap;
+
     private static Control Element(OverlayElement e, Words words, bool highlight, string? fixedText = null, long window = 0) {
         var border = new Border {
             Background = Brush(e.Background),
@@ -402,6 +414,15 @@ internal static class OverlayRenderer {
             border.Child = map;
             border.Width = map.Width;
             border.Height = map.Height;
+        }
+
+        if (e.IsQuestTracker) {
+            // The tracker draws its quests inside the box's own background, edge and padding; with no height it grows to fit.
+            border.Child = new QuestTrackerView(e, window, s_buildHasMap);
+            border.ClipToBounds = true;
+            if (e.Width <= 0) {
+                border.Width = 260;
+            }
         }
 
         if (e.IsPicture && Picture(e.Picture) is { } bitmap) {

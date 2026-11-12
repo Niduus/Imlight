@@ -263,6 +263,13 @@ internal sealed class OverlayElement {
     /// </summary>
     internal const string MINIMAP = "Minimap";
 
+    /// <summary>
+    /// The Quest Tracker (Niduus, 2026-11-12: "show all your quest in catagory in the UI. Story, Main and Side quests ...
+    /// click the quest and it will visually draw lines of where you have to go"): the wizard's quests in this game window,
+    /// from the server. Clicking a quest picks it; its way is drawn on the Minimap only. Its choices are in <see cref="Quests"/>.
+    /// </summary>
+    internal const string QUEST_TRACKER = "QuestTracker";
+
     internal const int MAX_TEXT = 300;
     internal const int MAX_COMMAND = 200;
 
@@ -368,18 +375,24 @@ internal sealed class OverlayElement {
     /// <summary>For a minimap: what it shows and how (null for anything else).</summary>
     public OverlayMap? Map { get; set; }
 
+    /// <summary>For a Quest Tracker: what it shows and how (null for anything else).</summary>
+    public OverlayQuestList? Quests { get; set; }
+
     /// <summary>A box, a picture or a minimap: no words (a button has words).</summary>
-    internal bool IsBox => Kind is BOX or PICTURE or MINIMAP;
+    internal bool IsBox => Kind is BOX or PICTURE or MINIMAP or QUEST_TRACKER;
 
     internal bool IsMinimap => Kind == MINIMAP;
+
+    internal bool IsQuestTracker => Kind == QUEST_TRACKER;
 
     internal bool IsPicture => Kind == PICTURE;
 
     internal bool IsButton => Kind == BUTTON;
 
     internal OverlayElement Clean() {
-        Kind = Kind is BOX or PICTURE or BUTTON or MINIMAP ? Kind : TEXT;
+        Kind = Kind is BOX or PICTURE or BUTTON or MINIMAP or QUEST_TRACKER ? Kind : TEXT;
         Map = Kind == MINIMAP ? (Map ?? new OverlayMap()).Clean() : null;
+        Quests = Kind == QUEST_TRACKER ? (Quests ?? new OverlayQuestList()).Clean() : null;
         Picture = Kind == PICTURE ? CleanPicture(Picture) : "";
         PictureFit = PICTURE_FITS.Contains(PictureFit) ? PictureFit : "Fit";
         Action = OverlayAction.KINDS.Contains(Action) ? Action : OverlayAction.COMMAND;
@@ -485,6 +498,10 @@ internal static class OverlayAction {
     internal const string MAP_FULL = "MapFull";
     internal const string MAP_IN = "MapIn";
     internal const string MAP_OUT = "MapOut";
+
+    // A Quest Tracker's own lines (not a choice in the designer): pick a quest (its way shows on the minimap), fold a list.
+    internal const string QUEST_PICK = "QuestPick";
+    internal const string QUEST_FOLD = "QuestFold";
 
     /// <summary>The words for each kind in the designer.</summary>
     internal static readonly string[] LABELS = [

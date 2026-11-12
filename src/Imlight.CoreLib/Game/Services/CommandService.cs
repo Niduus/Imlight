@@ -291,7 +291,13 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
         }
 
         try {
-            message.Reply.TrySetResult((Tools.OverlayMinimap.Build(wizard, zone, message.Reach), zone, ""));
+            var map = Tools.OverlayMinimap.Build(wizard, zone, message.Reach);
+            // The Quest Tracker's picked quest: its way, drawn on the minimap only.
+            if (!string.IsNullOrEmpty(message.Quest) && Tools.OverlayQuestTracker.On && Tools.OverlayQuestRoute.Build(wizard, zone, message.Quest) is { } route) {
+                map["route"] = route;
+            }
+
+            message.Reply.TrySetResult((map, zone, ""));
         }
         catch (Exception ex) {
             Logger.Error("Minimap: the map of {0} could not be made: {1}", Logger.Args(wizard.CharId, ex));

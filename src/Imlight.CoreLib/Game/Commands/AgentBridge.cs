@@ -63,10 +63,11 @@ internal sealed record OverlayPlayerCommand(ulong CharId, string Address, string
 /// <summary>
 /// The overlay's minimap (OverlayMinimap): the service whose wizard is CharId answers Reply with that wizard's map when its
 /// game connects from Address (an error text otherwise); every other service in the game puts its wizard in Others, so
-/// wizards in the same zone show on the map.
+/// wizards in the same zone show on the map. Quest: the quest picked in the Quest Tracker, whose way is drawn on the map.
 /// </summary>
 internal sealed record OverlayMapAsk(ulong CharId, string Address, TaskCompletionSource<(System.Text.Json.Nodes.JsonObject Map, Akka.Actor.IActorRef Zone, string Error)> Reply,
-                                     ConcurrentQueue<(ulong CharId, Akka.Actor.IActorRef Zone, string Name, float X, float Y)> Others, float Reach = 0);
+                                     ConcurrentQueue<(ulong CharId, Akka.Actor.IActorRef Zone, string Name, float X, float Y)> Others, float Reach = 0,
+                                     string Quest = "");
 
 /// <summary>
 /// The overlay's Quest Tracker (OverlayQuestTracker): the service whose wizard is CharId answers Reply with that wizard's
