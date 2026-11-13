@@ -548,7 +548,14 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 WalkTo(0, target with { X = target.X + 5, Y = target.Y + 5 });
                 break;
             case UltimusPlanner.DOOR:
-                ClickOnce(0, target, ["Interact"], "opens the door " + target.What);
+                if (leader.Options.ContainsKey(target.GlobalId)) {
+                    _doorWait = null;
+                    ClickOnce(0, target, ["Interact"], "opens the door " + target.What);
+                }
+                else {
+                    DoorWithoutOptions(leader, target);
+                }
+
                 break;
             case UltimusPlanner.SPIRAL:
                 if (CanClick(target.Key + "|0")) {
@@ -1342,6 +1349,51 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     }
 
     private readonly HashSet<string> _noWaySaid = [];
+    // At a door that offers nothing to click (Niduus, 2026-11-13: Ultimus stood in the Pyramid's doorway in The Oasis,
+    // "I need him more responsive and more active to correct mistakes"): a doorway is walked through, as a player walks in;
+    // still nothing, the door is pressed straight away, as a player presses X; and it is written up when nothing works.
+    private (string Key, DateTime Since, float FromX, float FromY)? _doorWait;
+
+    private void DoorWithoutOptions(UltimusMember.Status leader, UltimusPlanner.Target target) {
+        if (_doorWait is not { } wait || wait.Key != target.Key) {
+            _doorWait = wait = (target.Key, DateTime.UtcNow, leader.X, leader.Y);
+        }
+
+        var waited = DateTime.UtcNow - wait.Since;
+        if (waited < TimeSpan.FromSeconds(2)) {
+            WalkTo(0, target with { X = target.X - 20 });
+
+            return;
+        }
+
+        // Through the doorway: on past the door's middle, the way it came.
+        var (dx, dy) = (target.X - wait.FromX, target.Y - wait.FromY);
+        var length = MathF.Max(1, MathF.Sqrt((dx * dx) + (dy * dy)));
+        var past = (X: target.X + (dx / length * 220), Y: target.Y + (dy / length * 220));
+        if (CanClick(target.Key + "|through")) {
+            Clicked(target.Key + "|through");
+            Note("Ultimus", $"{leader.Name}: the door {target.What} offers nothing to click, so it walks on through the doorway.");
+            var points = OverlayQuestPath.Walk(leader.CharId, leader.Zone, leader.X, leader.Y, past.X, past.Y, body: true);
+            points.Add(past);
+            _actors[0].Tell(new UltimusMember.WalkTo(points, "walks through the doorway " + target.What));
+            _sent[0] = (target, DateTime.UtcNow, leader.X, leader.Y);
+
+            return;
+        }
+
+        if (waited > TimeSpan.FromSeconds(8) && CanClick(target.Key + "|press")) {
+            Clicked(target.Key + "|press");
+            Note("Ultimus", $"{leader.Name} presses the door {target.What} straight away (it offered nothing to click).", UltimusLink.ABNORMAL);
+            _actors[0].Tell(new UltimusMember.Interact(target.GlobalId, "Interact", 0, "opens the door " + target.What));
+            _leaderLastTarget = target;
+        }
+
+        if (waited > TimeSpan.FromSeconds(45)) {
+            Issue("quest", target.Quest, $"{target.What}: {leader.Name} stands at the door, walked through the doorway and pressed it, and it does not take it anywhere.",
+                key: target.Key + "|door-dead", skipStep: false, level: UltimusLink.ABNORMAL);
+        }
+    }
+
     private int _idleRestarts;
     private DateTime _idleRestartAt = DateTime.MinValue;
 
