@@ -78,7 +78,7 @@ internal static class QuestStory {
         return (slash > 0 ? zone[..slash] : zone).Trim().ToUpperInvariant();
     }
 
-    private static HashSet<string> Story() {
+    internal static HashSet<string> Story() {
         var version = Quests.QuestOptions.Version;
         lock (s_lock) {
             if (s_story is not null && s_version == version) {

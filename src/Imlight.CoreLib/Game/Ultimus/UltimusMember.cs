@@ -340,14 +340,18 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
             string quest = m.QuestName;
             // Only the main story: a side quest or a side world's quest is left (its goal is the Main Story above all).
             var template = QuestTemplateCollection.GetQuestByName(quest);
-            if (template is null || !Tools.QuestStory.IsMain(template) || !UltimusPlanner.IsMainStoryWorld(template)) {
+            // Niduus, 2026-11-13: a main quest is taken even when it is not the story (the game may not let it be left),
+            // then ignored unless the story needs it.
+            if (template is null || !BotStory.Takes(template) || !UltimusPlanner.IsMainStoryWorld(template)) {
                 Note($"is offered {UltimusText.Title(quest)}; leaves it (not the Main Story)");
                 Send(new QUEST_MESSAGES_52_PROTOCOL.MSG_DECLINEQUEST { QuestName = quest });
 
                 return;
             }
 
-            Note($"is offered {UltimusText.Title(quest)}; accepts it");
+            Note(BotStory.Plays(template)
+                ? $"is offered {UltimusText.Title(quest)}; accepts it"
+                : $"is offered {UltimusText.Title(quest)}; accepts it but ignores it (a main quest, not the story; done only if the story needs it)");
             // A moment to "read" the offer, as a player does.
             Timers.StartSingleTimer("offer-" + quest, new AcceptOffer(m.MobileID, quest), TimeSpan.FromSeconds(1.2));
         });
