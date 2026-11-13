@@ -9,3 +9,10 @@ Where: no new settings.
 Test:
 1. Let Ultimus quest with little gold near a shop that sells a much better piece for his level: he should get the gold and wear the new piece.
 2. Use Ultimus tp while he is near the "To Lower Triton" teleporter: he should take the teleporter instead of standing still.
+
+Fixed: Ultimus could be stuck behind the low stone fence by the houses in Triton Avenue, pressed on a wall. When he stands on a small patch cut off by a fence or a ledge with no teleporter on it, he now goes straight back to the area start instead of trying to step aside three times first.
+
+Changed: the routes now follow the Minimap. Where the Minimap is black there is no floor, and no route goes there any more (before, the route finder treated it like plain ground, so a line could cut across it). This one route finder is shared: the Minimap's quest line, Ultimus and the Quest Team all use it, so all three now keep to ground you can really walk.
+
+Test (more):
+3. Open the Minimap with the Quest Tracker on in Triton Avenue: the red line should never cross a black area.

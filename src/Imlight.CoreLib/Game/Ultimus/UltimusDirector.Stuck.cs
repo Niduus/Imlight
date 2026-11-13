@@ -61,6 +61,19 @@ internal sealed partial class UltimusDirectorActor {
         OverlayQuestPath.Forget(member.CharId);
         _target = null;
 
+        // Boxed in (Niduus, 2026-11-13: "stuck", pressed on a house wall behind the low stone fence in Triton Avenue): a small
+        // patch cut off by a fence or a ledge with no teleporter on it can't be walked off, so stepping aside is no use and
+        // it goes back to the area's start at once rather than after three tries.
+        var boxedIn = tries < 3 && BoxedIn(member);
+        if (boxedIn) {
+            Note("Ultimus", $"{member.Name} is boxed in at {where} (a small patch cut off by a fence or a ledge, no teleporter on it): goes back to where {UltimusText.Zone(member.Zone)} starts.",
+                UltimusLink.ABNORMAL);
+            _actors[index].Tell(new UltimusMember.Recall());
+            _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
+
+            return;
+        }
+
         if (tries >= 3) {
             Issue("team", quest,
                 $"{member.Name} is stuck in {where} while {_doing}: it stood still over {seconds} seconds {tries} times and stepping aside did not free it.",
@@ -100,6 +113,15 @@ internal sealed partial class UltimusDirectorActor {
         _actors[index].Tell(new UltimusMember.WalkTo(aside, "steps aside to get unstuck"));
         _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
         OverlayQuestPath.Forget(member.CharId);
+    }
+
+    // A patch under a twentieth of the area's main ground with no teleporter on it.
+    private const double BOXED_IN_SHARE = 0.05;
+
+    private static bool BoxedIn(UltimusMember.Status member) {
+        var share = OverlayQuestPath.IslandShare(member.Zone, member.X, member.Y);
+
+        return share is >= 0 and < BOXED_IN_SHARE && UltimusPads.Nearest(member.Zone, member.X, member.Y, [], 100000f) is null;
     }
 
 }
