@@ -51,6 +51,7 @@ internal sealed partial class UltimusDirectorActor {
     private UltimusPlanner.Target _shopTrip;
     private readonly HashSet<uint> _shopSkipped = [];
     private readonly HashSet<string> _mountGiven = [];
+    private readonly HashSet<string> _robeGiven = [];
 
     // Ultimus fights alone: a balanced deck of hits, heals and shields, and gear for living alone and for the schools its
     // hits land as (BotGear.SoloDamageMix).
@@ -178,6 +179,19 @@ internal sealed partial class UltimusDirectorActor {
                 if (mount is not null) {
                     _actors[i].Tell(new UltimusMember.Equip(mount.m_globalID, "Mount", "its Ghulture"));
                     continue;
+                }
+            }
+
+            // Its school's Adept robe, as every new wizard starts in (Niduus, 2026-11-13: "still curious as to why it doesn't
+            // wear the robe"): once off, it was held to level 30 and never went back on, and a robe that went missing is
+            // given again, once. BetterInBackpack weighs it against the robe it wears.
+            if (Imlight.CoreLib.Shared.Character.AdeptStarterGear.Enabled && _robeGiven.Add(member.Role)) {
+                var robeId = Imlight.CoreLib.Shared.Character.AdeptStarterGear.RobeFor(wizard.MagicSchoolBehavior?.MagicSchool ?? Imlight.CoreLib.Shared.Behaviors.MagicSchool.Balance);
+                var wornRobe = wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Robe);
+                var hasRobe = (ulong) (wornRobe?.m_templateID ?? 0) == robeId
+                              || (wizard.InventoryBehavior?.Items ?? []).Any(it => it is not null && (ulong) it.m_templateID == robeId);
+                if (!hasRobe && wizard.AddItemToInventory(robeId, out _)) {
+                    Note(member.Role, $"{member.Name} has lost its Adept robe: Ahziael gives it back.", UltimusLink.COMMAND);
                 }
             }
 

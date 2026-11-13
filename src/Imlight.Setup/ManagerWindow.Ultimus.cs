@@ -52,6 +52,13 @@ internal sealed partial class ManagerWindow {
     private ScrollViewer? _ultLogScroll;
     private TextBox? _ultQuestLogBox;
     private string _ultLogText = "";
+    // Ultimus Thoughts (Niduus, 2026-11-13): only its THOUGHT lines, in brown; and the bots' mistakes book.
+    private SelectableTextBlock? _ultThoughtsBox;
+    private ScrollViewer? _ultThoughtsScroll;
+    private string _ultThoughtsText = "";
+    private TextBox? _ultMistakesBox;
+    private string _ultMistakesText = "";
+    private const string THOUGHT_COLOR = "#C48A52";
     private string _ultQuestLogText = "";
     private DateTime _ultIssuesWritten = DateTime.MinValue;
     private List<UltimusIssue> _ultIssueList = [];
@@ -365,7 +372,34 @@ internal sealed partial class ManagerWindow {
         };
         _ultLogScroll = new ScrollViewer { Height = 420, Content = _ultLogBox, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
 
+        _ultThoughtsBox = new SelectableTextBlock {
+            TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12.5, Margin = new Thickness(10, 8),
+            Foreground = new SolidColorBrush(Color.Parse(THOUGHT_COLOR)),
+            Text = "Turn Ultimus on and start the server; what it thinks, and why, is written here.",
+        };
+        _ultThoughtsScroll = new ScrollViewer { Height = 320, Content = _ultThoughtsBox, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
+        _ultMistakesBox = new TextBox {
+            IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12.5,
+            Height = 300, Text = "No mistakes written down yet.",
+        };
+
         return Page(
+            Fold("sparkle", ULTIMUS_TAB, "Ultimus Thoughts",
+                "Ultimus thinking out loud: why it picks what it picks, what it remembers of a creature or a spot where it got " +
+                "stuck, and what it will do differently next time. Also in its log, in brown. Updated every 3 seconds.",
+                LogWell(_ultThoughtsScroll),
+                Row(Action(Plain("Copy all"), () => CopyAsync(_ultThoughtsText)))),
+            Fold("book", ULTIMUS_TAB, "Mistakes book",
+                "Every mistake Ultimus made, newest first: what went wrong and where, its reasoning at the time, what it tried, " +
+                "what worked and what prevents it. The Quest Team reads it when it gets stuck at the same spot. " +
+                "Kept in the server's logs\\bots folder (mistakes.txt to read, mistakes.json for the bots).",
+                LogWell(_ultMistakesBox),
+                Row(Action(Plain("Copy all"), () => CopyAsync(_ultMistakesText)), Action(Plain("Open its folder"), () => {
+                    var folder = Path.Combine(_manager.LogFolder, "bots");
+                    Directory.CreateDirectory(folder);
+
+                    return Open(folder);
+                }))),
             Fold("flag", ULTIMUS_TAB, "Quest log",
                 "Every quest Ultimus started and finished, each step, how long it took and how long it was expected to take.",
                 LogWell(_ultQuestLogBox),
@@ -473,6 +507,8 @@ internal sealed partial class ManagerWindow {
 
         if (_ultLogBox?.IsEffectivelyVisible == true) {
             ShowUltimusColoredLog(ReadUltimusNewest("ultimus*.txt", _ultLogText));
+            ShowUltimusThoughts(_ultLogText);
+            ShowUltimusMistakes();
             ShowLog(_ultQuestLogBox!, ReadUltimusNewest("quest-log.txt", _ultQuestLogText), ref _ultQuestLogText);
         }
 
@@ -496,6 +532,7 @@ internal sealed partial class ManagerWindow {
         ("MINOR", "#FFE45C", "Yellow: minor, does not hold the quest back"),
         ("COMMAND", "#5CE1FF", "Cyan: something Ahziael did for it, and why"),
         ("ABNORMAL", "#FF6EC7", "Pink: something abnormal it noticed"),
+        ("THOUGHT", THOUGHT_COLOR, "Brown: Ultimus thinking out loud"),
     ];
 
     private static IBrush UltimusLogBrush(string line) {
@@ -537,6 +574,49 @@ internal sealed partial class ManagerWindow {
         _ultLogBox.Inlines = inlines;
         if (atEnd) {
             _ultLogScroll?.ScrollToEnd();
+        }
+    }
+
+    private void ShowUltimusThoughts(string log) {
+        if (_ultThoughtsBox is null || log.Length == 0) {
+            return;
+        }
+
+        var thoughts = string.Join('\n', log.Split('\n').Where(l => l.Contains(": THOUGHT: ", StringComparison.Ordinal))
+            .Select(l => l.TrimEnd('\r').Replace("THOUGHT: ", "", StringComparison.Ordinal)).TakeLast(ULTIMUS_LOG_LINES));
+        if (thoughts == _ultThoughtsText || thoughts.Length == 0) {
+            return;
+        }
+
+        _ultThoughtsText = thoughts;
+        var atEnd = _ultThoughtsScroll is null || _ultThoughtsScroll.Offset.Y >= _ultThoughtsScroll.Extent.Height - _ultThoughtsScroll.Viewport.Height - 20;
+        _ultThoughtsBox.Text = thoughts;
+        if (atEnd) {
+            _ultThoughtsScroll?.ScrollToEnd();
+        }
+    }
+
+    private void ShowUltimusMistakes() {
+        if (_ultMistakesBox is null) {
+            return;
+        }
+
+        try {
+            var path = Path.Combine(_manager.LogFolder, "bots", "mistakes.txt");
+            if (!File.Exists(path)) {
+                return;
+            }
+
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+            var text = reader.ReadToEnd().ReplaceLineEndings("\n").TrimEnd();
+            if (text != _ultMistakesText) {
+                _ultMistakesText = text;
+                _ultMistakesBox.Text = text;
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // Read again on the next refresh.
         }
     }
 

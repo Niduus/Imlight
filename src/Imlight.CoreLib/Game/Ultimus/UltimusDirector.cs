@@ -451,6 +451,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                     // Its deck read first, as a player who knows the creature (UltimusScout): shields for what it hits with.
                     UltimusScout.Expect(target.Template);
                     Note("Ultimus", $"knows what it is about to fight: {UltimusScout.OfCreature(target.Template).Describe()}.");
+                    ThinkAboutFight(target);
                     PrepareDecks(UltimusScout.SituationOf(target.Template));
                 }
             }
@@ -544,8 +545,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 WalkTo(0, target with { X = target.X + 1 });
                 break;
             case UltimusPlanner.EXIT:
-                // On into the exit: a step past its middle.
-                WalkTo(0, target with { X = target.X + 5, Y = target.Y + 5 });
+                IntoExit(leader, target);
                 break;
             case UltimusPlanner.DOOR:
                 if (leader.Options.ContainsKey(target.GlobalId)) {
@@ -1053,7 +1053,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         // The street's creature areas too, walked or not right now (MobSpawnAreas), except the step's own creatures.
         var walkAvoid = RouteMobs.Avoid(member.ZoneActor, toX, toY, target.Template == 0 ? null : [target.Template], avoid);
-        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, toX, toY, body: true, avoid: walkAvoid);
+        var points = SightWalk(member, toX, toY, what, target.Kind == UltimusPlanner.FIGHT ? null : avoid) ?? OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, toX, toY, body: true, avoid: walkAvoid);
         // A walk that goes nowhere while the step is far: said once per step, with the spots, so the log shows where the
         // map gives no way (Niduus's log, 2026-11-13: it stood at The Oasis's start for an hour with nothing said).
         if (UltimusPlanner.Far(member.X, member.Y, toX, toY) > 300
@@ -1158,6 +1158,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         if (!_wasInBattle[0] && now) {
             _battleSince = DateTime.UtcNow;
+            FightStarted(me);
             var others = CombatDuelComponent.UltimusBattleCompany(me.GlobalId);
             _battleCompany = others.Count > 0;
             _companyCount = others.Count;
@@ -1212,6 +1213,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         var lost = CombatDuelComponent.TakeLostBattle(member.GlobalId) || stats.m_currentHitpoints <= 1;
+        if (index == 0) {
+            FightEnded(member, !lost);
+        }
+
         if (!lost || index != 0) {
             if (index == 0) {
                 Note("Ultimus", "won the battle.");
@@ -1394,11 +1399,54 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
     }
 
+    // At a walk-through exit that does not take it on: standing inside it already (arrived there, so the game never saw
+    // it walk in), it steps back out and walks in again, as a player does (Niduus's log, 2026-11-13: stuck at The Oasis's
+    // start, where it lands, on the way to Altar of Kings).
+    private (string Key, DateTime Since)? _exitWait;
+
+    private void IntoExit(UltimusMember.Status leader, UltimusPlanner.Target target) {
+        if (UltimusPlanner.Far(leader.X, leader.Y, target.X, target.Y) > 150) {
+            _exitWait = null;
+            WalkTo(0, target with { X = target.X + 5, Y = target.Y + 5 });
+
+            return;
+        }
+
+        if (_exitWait is not { } wait || wait.Key != target.Key) {
+            _exitWait = wait = (target.Key, DateTime.UtcNow);
+        }
+
+        if (DateTime.UtcNow - wait.Since < TimeSpan.FromSeconds(6)) {
+            WalkTo(0, target with { X = target.X + 5, Y = target.Y + 5 });
+
+            return;
+        }
+
+        if (!CanClick(target.Key + "|out-and-in")) {
+            return;
+        }
+
+        Clicked(target.Key + "|out-and-in");
+        _exitWait = (target.Key, DateTime.UtcNow);
+        var angle = Random.Shared.NextSingle() * MathF.Tau;
+        var outside = (X: target.X + (MathF.Cos(angle) * 450), Y: target.Y + (MathF.Sin(angle) * 450));
+        var points = OverlayQuestPath.Walk(leader.CharId, leader.Zone, leader.X, leader.Y, outside.X, outside.Y, body: true);
+        if (points.Count == 0) {
+            points.Add(outside);
+        }
+
+        points.Add((target.X, target.Y));
+        points.Add((target.X + 5, target.Y + 5));
+        Note("Ultimus", $"{leader.Name} stands in the exit {target.What} and it does not take it on: steps back out and walks in again.", UltimusLink.ABNORMAL);
+        _actors[0].Tell(new UltimusMember.WalkTo(points, "steps out of the exit and walks in again"));
+        _sent[0] = (target, DateTime.UtcNow, leader.X, leader.Y);
+        _leaderLastTarget = target;
+    }
+
     private int _idleRestarts;
     private DateTime _idleRestartAt = DateTime.MinValue;
 
-    // No progress for a long while: the way is looked at fresh (the old walks forgotten, another way tried), and when that
-    // did not help last time either, the leader goes back to where the area starts and finds the way from there.
+    // No progress for a long while: the way is looked at fresh (the old walks forgotten) and the next fix for the spot is made.
     private void RestartIdle(double minutes) {
         if (_team.Count == 0) {
             return;
@@ -1418,23 +1466,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
 
-        RouteMemory.Stuck(leader.CharId, leader.Zone, leader.X, leader.Y);
-        if (_idleRestarts == 1 && TryAnotherWay(0)) {
-            Note("Ultimus", $"{leader.Name} made no progress for {minutes} minutes: looks at the way fresh and tries another way.", UltimusLink.ABNORMAL);
-
-            return;
-        }
-
-        if (StartIsHere(0, leader, $"{UltimusText.Zone(leader.Zone)} at ({leader.X:0}, {leader.Y:0})", _target?.Quest ?? _currentQuest)) {
-            _idleRestarts = 0;
-
-            return;
-        }
-
-        Note("Ultimus", $"{leader.Name} made no progress for {minutes} minutes: goes back to where {UltimusText.Zone(leader.Zone)} starts and finds the way from there.",
-            UltimusLink.ABNORMAL);
-        Recall(0, leader);
-        _idleRestarts = 0;
+        // The same flags and fixes as standing still (UltimusFixes): a spot where no progress was made gets the next fix not
+        // tried there yet, never the same one again (Niduus's log, 2026-11-13: "goes back to where The Oasis starts" every
+        // six minutes, for hours).
+        Unstick(0, $"made no progress for {minutes} minutes");
     }
 
     private void StartRun(string questName) {

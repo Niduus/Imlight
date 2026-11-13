@@ -1037,6 +1037,12 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
                     OwnerCharId = wizard.CharId,
                 });
                 return;
+            // A server-run wizard (Ultimus) stuck where nothing else freed it: sent to the area of its step, as .stuck go does,
+            // without .stuck's resets (Niduus, 2026-11-13: it stood at The Oasis's start for hours).
+            case "botgo":
+                Logger.Information("Bot go: {0} is sent to the area of its quest step from {1}.", Logger.Args(wizard.CharId, wizard.Zone));
+                GoToStuckStep(wizard);
+                return;
             case "book":
                 CommandQuestBook(wizard);
                 return;

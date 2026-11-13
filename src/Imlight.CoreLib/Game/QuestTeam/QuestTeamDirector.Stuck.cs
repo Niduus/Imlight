@@ -113,7 +113,18 @@ internal sealed partial class QuestTeamDirectorActor {
             _clicks.Clear();
         }
 
-        var (near, far) = tries >= 2 ? (600f, 1600f) : (150f, 600f);
+        // What Ultimus learned at this spot (the bots' mistakes book, Niduus, 2026-11-13: "other bots know what mistakes were
+        // made and what to do to prevent them"): when stepping a little aside did not free him here, the team goes further.
+        var lesson = BotMistakes.Near(BotMistakes.STUCK, member.Zone, member.X, member.Y);
+        var goFar = tries >= 2;
+        if (lesson is not null && index == 0) {
+            Note(member.Role, $"{member.Name}: {lesson.Bot} was stuck here too ({lesson.Times} time(s)); " +
+                              (lesson.Worked.Length > 0 ? $"what freed it: {lesson.Worked}." : "nothing has freed it yet.") +
+                              (lesson.Reasoning.Length > 0 ? $" Its reasoning: {lesson.Reasoning}" : ""));
+            goFar |= lesson.Worked.Length > 0 && lesson.Worked != "step aside" || lesson.Tried.Contains("step aside") && lesson.Worked.Length == 0;
+        }
+
+        var (near, far) = goFar ? (600f, 1600f) : (150f, 600f);
         var spot = BotStuck.StepAside(member.Zone, member.X, member.Y, member.Z, near, far);
         if (spot is null) {
             // No walk points here: a few steps back the way it faces is better than nothing.
