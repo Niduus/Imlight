@@ -202,6 +202,7 @@ internal sealed partial class ManagerWindow : Window {
         ("Battle", "DaybreakerNightbringerAddPips", "Daybreaker and Nightbringer add a pip to the card's cost (off: the card costs what it did)", new() { OnContent = "On", OffContent = "Off" }),
         ("Housing", "PlaceAnyAsDecoration", "Houses: place any furniture as decoration (vaults, signs, music players show but do not work yet)", new() { OnContent = "On", OffContent = "Off" }),
         ("Instance", "ResetWhenEmpty", "Dungeons start fresh once everyone has left (off: kept for 10 minutes)", new() { OnContent = "On", OffContent = "Off" }),
+        ("Instance", "KeepRoomsWhileInside", "Dungeon rooms stay as they were while anyone is still in the dungeon (towers, side rooms)", new() { OnContent = "On", OffContent = "Off" }),
         ("Instance", "RideCopies", "Rides (the Krokotopia flying ship, airships): each boarding is your own fresh ship that flies (off: one shared ship that stays where it stopped)", new() { OnContent = "On", OffContent = "Off" }),
         ("Instance", "DungeonRecall", "Dungeon Recall: leaving a dungeon by fleeing, losing, Commons, Home or logging out gives the button back in (lasts RecallMinutes, stands still while anyone is inside)", new() { OnContent = "On", OffContent = "Off" }),
         ("Shadow", "ShadowSelf", "Shadow Shrike, Seraph, Sentinel and Trickster give their buffs for their rounds (off: only their pip)", new() { OnContent = "On", OffContent = "Off" }),

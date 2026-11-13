@@ -259,6 +259,11 @@ internal static class DungeonRecall {
         }
     }
 
+    /// <summary>Whether anyone is in any room of this owner's dungeon copy right now (a tower of the Emperor's Retreat
+    /// while the Retreat itself stands empty). Those rooms are kept, so what was done in them stays done (Zone).</summary>
+    internal static bool AnyoneInside(ulong ownerCharId)
+        => ownerCharId != 0 && s_inside.TryGetValue(ownerCharId, out var chars) && !chars.IsEmpty;
+
     private static bool IsOpen(ulong ownerCharId, string zone)
         => zone is not null && s_openZones.ContainsKey((ownerCharId, zone));
 

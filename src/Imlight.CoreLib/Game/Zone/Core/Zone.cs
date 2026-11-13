@@ -154,6 +154,9 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
     private const string IDLE_EXPIRE_TIMER = "instance-idle-expire";
     private const int DEFAULT_INSTANCE_IDLE_MINUTES = 10;
     private const int RESET_WHEN_EMPTY_SECONDS = 5;
+
+    // How often an empty room kept for the rest of its dungeon (KeepRoomsWhileInside) looks again.
+    private const int HELD_ROOM_RECHECK_SECONDS = 10;
     private readonly List<ZONE_102_PROTOCOL.MSG_PLAYERMOVE> _pendingPlayerMoves = [];
     private readonly List<ZONE_102_PROTOCOL.MSG_CREATUREMOVE> _pendingCreatureMoves = [];
 
@@ -264,6 +267,7 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
         ScriptState.PlayerCount = _players.Count;
         NoteInstancedPlayer(message.PlayerActor, message.Wizard);
         Timers.Cancel(IDLE_EXPIRE_TIMER);
+        _heldForOtherRooms = false;
         InformZoneSupervisors(message.PlayerActor, message);
         RestoreRememberedSpawns(message.Wizard);
         
@@ -721,6 +725,7 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
                 ScriptState.PlayerCount = _players.Count;
                 NoteInstancedPlayer(playerActor, addPlayer.Wizard);
                 Timers.Cancel(IDLE_EXPIRE_TIMER);
+                _heldForOtherRooms = false;
                 InformZoneSupervisors(playerActor, addPlayer);
                 RestoreRememberedSpawns(addPlayer.Wizard);
                 
@@ -737,6 +742,9 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
         
         _pendingPlayerEvents.Clear();
     }
+
+    // Kept because someone was in another room of the dungeon (ReceiveInstanceIdleExpire).
+    private bool _heldForOtherRooms;
 
     private void ScheduleIdleExpiryIfEmpty() {
         // Instance.IdleMinutes of 0 or less disables the expiry; a join cancels the timer.
@@ -774,6 +782,33 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_INSTANCEIDLEEXPIRE))]
     private void ReceiveInstanceIdleExpire(ZONE_102_PROTOCOL.MSG_INSTANCEIDLEEXPIRE message) {
         if (!IsInstance || _players.Count > 0) {
+            return;
+        }
+
+        // [Instance] KeepRoomsWhileInside: a room of a dungeon stays as it is while anyone is still in another room of the
+        // same copy. The Emperor's Retreat was thrown away the moment a wizard walked into one of its towers, so the
+        // lever the tower boss's quest step unlocks was unlocked in nothing, and the fresh Retreat they came back to had
+        // it locked for good (Niduus, 2026-11-13: "not performing correct checks thus soft locking it"). Bosses beaten
+        // in a tower came back too. Once everyone has left the whole dungeon, the usual reset below applies.
+        if (!message.Force && ConfigurationManager.GetValue("Instance.KeepRoomsWhileInside", true)
+            && World.DungeonRecall.AnyoneInside(ContainerOwnerId)) {
+            if (!_heldForOtherRooms) {
+                _heldForOtherRooms = true;
+                Logger.Information("Instance zone {ZoneName} is kept: someone is still in another room of the same dungeon.",
+                    Logger.Args(ZonePath));
+            }
+
+            Timers.StartSingleTimer(IDLE_EXPIRE_TIMER, new ZONE_102_PROTOCOL.MSG_INSTANCEIDLEEXPIRE(),
+                TimeSpan.FromSeconds(HELD_ROOM_RECHECK_SECONDS));
+
+            return;
+        }
+
+        // The rooms it waited for are empty now: the usual wait starts from here.
+        if (_heldForOtherRooms && !message.Force) {
+            _heldForOtherRooms = false;
+            ScheduleIdleExpiryIfEmpty();
+
             return;
         }
 

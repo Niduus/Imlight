@@ -247,6 +247,7 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
             if (message.ResetInstance) {
                 instanceContainer.Tell(new ZONE_102_PROTOCOL.MSG_DROPINSTANCEZONE {
                     ZoneName = message.DestinationZone,
+                    FreshRun = true,
                 });
             }
 
