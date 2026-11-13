@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Linq;
 using Imlight.Common;
 using Imlight.CoreLib.Shared.Resources;
@@ -58,7 +59,7 @@ internal static partial class ZoneGround {
                 return null;
             }
 
-            return BuildWalk(memory.ToArray());
+            return BuildWalk(memory.ToArray(), ZoneNav.Points(zonePath));
         }
         catch (Exception ex) {
             Logger.Debug("Zone {0}: could not read its ground for the quest line ({1}).", Logger.Args(zonePath, ex.Message));
@@ -68,7 +69,7 @@ internal static partial class ZoneGround {
     }
 
     /// <summary>The walking ground of a collision file's bytes.</summary>
-    internal static WalkGround BuildWalk(byte[] data) {
+    internal static WalkGround BuildWalk(byte[] data, Vector3[] navPoints = null) {
         var triangles = Read(data, out var circles, forWalking: true);
         float left = float.MaxValue, right = float.MinValue, bottom = float.MaxValue, top = float.MinValue;
         foreach (var t in triangles) {
@@ -128,6 +129,9 @@ internal static partial class ZoneGround {
                 }
             }
         }
+
+        // After the walls and posts, so a hole walled off from the open void outside counts as ringed.
+        FillNavHoles(kinds, heights, lows, width, height, left, top, cell, navPoints);
 
         return new WalkGround(left, top, cell, width, height, kinds, heights, lows);
     }
@@ -205,6 +209,163 @@ internal static partial class ZoneGround {
                 kinds[i] = kind;
                 heights[i] = level;
                 lows[i] = level;
+            }
+        }
+    }
+
+    // The biggest hole (game units across, about) that the game's walk map can close up.
+    private const float NAV_HOLE_SPAN = 6000f;
+    // How far above or below a walk point the floor round its hole may be.
+    private const float NAV_HOLE_RISE = 100f;
+    // How far a walk point looks for the floor round it, each way.
+    private const float NAV_HOLE_REACH = 480f;
+
+    /// <summary>
+    /// Bigger holes the game itself walks over: a patch of no ground, wholly ringed by floor, with one of the game's own
+    /// walk points (zone.nav) in it at about the height of that floor, is floor (Niduus, 2026-11-13: "use the map data
+    /// here to refine the mini map"). Checking every place against his game's files found 13 such spots in 9 places
+    /// (the seams across Avalon's High Road, Khrysalis's Central Keep, three in Dragonspyre, two house interiors), each
+    /// a wall to the quest line, Ultimus and the Quest Team. Each cell takes the height of the floor next to it, so a
+    /// sloped road stays a slope. A patch open to the edge, too big, or with no walk point stays as it is.
+    /// </summary>
+    private static void FillNavHoles(byte[] kinds, float[] heights, float[] lows, int width, int height, float left, float top, float cell, Vector3[] navPoints) {
+        if (navPoints is not { Length: > 0 }) {
+            return;
+        }
+
+        bool Void(int i) => kinds[i] == NONE && float.IsNaN(heights[i]);
+
+        // Looking out from the walk point every way (east, west, north, south), floor at about its height comes before
+        // any wall and within NAV_HOLE_REACH. The game's walk map also has points inside buildings and walled-off
+        // corners; those meet a wall first and stay shut.
+        var reach = Math.Max(1, (int) Math.Ceiling(NAV_HOLE_REACH / cell));
+        bool Ringed(int px, int py, float z) {
+            foreach (var (dx, dy) in new[] { (1, 0), (-1, 0), (0, 1), (0, -1) }) {
+                var found = false;
+                for (var step = 1; step <= reach; step++) {
+                    var (x, y) = (px + (dx * step), py + (dy * step));
+                    if (x < 0 || y < 0 || x >= width || y >= height) {
+                        break;
+                    }
+
+                    var i = (y * width) + x;
+                    if (Void(i)) {
+                        continue;
+                    }
+
+                    found = kinds[i] != WALL && MathF.Abs(heights[i] - z) <= NAV_HOLE_RISE;
+                    break;
+                }
+
+                if (!found) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        var most = Math.Max(1, (int) Math.Ceiling(NAV_HOLE_SPAN / cell));
+        var seen = new bool[kinds.Length];
+        var patch = new List<int>();
+        var queue = new Queue<int>();
+        foreach (var point in navPoints) {
+            var (px, py) = ((int) MathF.Floor((point.X - left) / cell), (int) MathF.Floor((top - point.Y) / cell));
+            if (px < 0 || py < 0 || px >= width || py >= height) {
+                continue;
+            }
+
+            var start = (py * width) + px;
+            if (seen[start] || !Void(start) || !Ringed(px, py, point.Z)) {
+                continue;
+            }
+
+            patch.Clear();
+            queue.Clear();
+            queue.Enqueue(start);
+            seen[start] = true;
+            var (open, minX, maxX, minY, maxY) = (false, px, px, py, py);
+            int ring = 0, near = 0;
+            var ringKinds = new int[8];
+            while (queue.Count > 0 && !open) {
+                var i = queue.Dequeue();
+                patch.Add(i);
+                var (x, y) = (i % width, i / width);
+                (minX, maxX, minY, maxY) = (Math.Min(minX, x), Math.Max(maxX, x), Math.Min(minY, y), Math.Max(maxY, y));
+                if (maxX - minX + 1 > most || maxY - minY + 1 > most) {
+                    open = true;
+                    break;
+                }
+
+                foreach (var (nx, ny) in new[] { (x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1) }) {
+                    if (nx < 0 || ny < 0 || nx >= width || ny >= height) {
+                        open = true;
+                        break;
+                    }
+
+                    var n = (ny * width) + nx;
+                    if (Void(n)) {
+                        if (!seen[n]) {
+                            seen[n] = true;
+                            queue.Enqueue(n);
+                        }
+
+                        continue;
+                    }
+
+                    if (!float.IsNaN(heights[n])) {
+                        ring++;
+                        ringKinds[Math.Min(kinds[n], (byte) 7)]++;
+                        if (MathF.Abs(heights[n] - point.Z) <= NAV_HOLE_RISE) {
+                            near++;
+                        }
+                    }
+                }
+            }
+
+            // Leave the rest of an open or too-big patch marked seen: no other walk point in it can close it either.
+            if (open || ring == 0 || near * 2 < ring) {
+                while (queue.Count > 0) {
+                    queue.Dequeue();
+                }
+
+                continue;
+            }
+
+            var kind = (byte) (ringKinds[GRASS] > ringKinds[PATH] && ringKinds[GRASS] >= ringKinds[WATER] ? GRASS
+                : ringKinds[WATER] > ringKinds[PATH] ? WATER : PATH);
+
+            // Fill from the rim inward, each cell at the mean height of its filled neighbours.
+            var left2 = new HashSet<int>(patch);
+            while (left2.Count > 0) {
+                var filled = new List<(int Cell, float Height)>();
+                foreach (var i in left2) {
+                    var (x, y) = (i % width, i / width);
+                    float sum = 0;
+                    var count = 0;
+                    foreach (var (nx, ny) in new[] { (x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1) }) {
+                        var n = (ny * width) + nx;
+                        if (!left2.Contains(n) && !float.IsNaN(heights[n])) {
+                            sum += heights[n];
+                            count++;
+                        }
+                    }
+
+                    if (count > 0) {
+                        filled.Add((i, sum / count));
+                    }
+                }
+
+                if (filled.Count == 0) {
+                    break;
+                }
+
+                foreach (var (i, h) in filled) {
+                    kinds[i] = kind;
+                    heights[i] = h;
+                    lows[i] = h;
+                    left2.Remove(i);
+                }
             }
         }
     }
