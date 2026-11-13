@@ -34,7 +34,10 @@ internal sealed partial class UltimusDirectorActor {
     /// <summary>How long a wizard that is stepping aside is left to it before orders come again.</summary>
     private static readonly TimeSpan UNSTICK_FOR = TimeSpan.FromSeconds(6);
 
-    private readonly BotStuck _stuck = new();
+    // Ultimus acts on standing still a quarter sooner than the Quest Team (Niduus, 2026-11-13: "Ultimus needs to engage
+    // with its restart timer 25% sooner if idle for too long"): about 56 seconds, not 75.
+    internal const double SOONER = 0.75;
+    private readonly BotStuck _stuck = new(BotStuck.STILL * SOONER);
     private readonly Dictionary<int, DateTime> _unstickUntil = [];
 
     // Stepping aside: the other orders wait a few seconds.
@@ -44,6 +47,7 @@ internal sealed partial class UltimusDirectorActor {
         var resting = _healWaiting;
         for (var i = 0; i < _team.Count; i++) {
             var member = _team[i];
+            RouteMemory.Track("Ultimus", member.CharId, member.Zone, member.X, member.Y);
             if (_stuck.Look(i, member.Zone, member.X, member.Y, resting) is var tries and > 0) {
                 Unstick(i, tries);
             }
@@ -53,8 +57,12 @@ internal sealed partial class UltimusDirectorActor {
     private void Unstick(int index, int tries) {
         var member = _team[index];
         var where = $"{UltimusText.Zone(member.Zone)} at ({member.X:0}, {member.Y:0})";
-        var seconds = (int) BotStuck.STILL.TotalSeconds;
+        var seconds = (int) _stuck.Still.TotalSeconds;
         var quest = _target?.Quest ?? _currentQuest;
+
+        // Written down (RouteMemory): the way finder bends round this spot from now on, for every bot, and a proven walk
+        // through it no longer counts (Niduus, 2026-11-13: "adapt to new paths to get to his quest goal").
+        RouteMemory.Stuck(member.CharId, member.Zone, member.X, member.Y);
 
         // A fresh look at the way: the old walk and the old order are forgotten.
         _sent.Remove(index);

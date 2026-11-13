@@ -63,6 +63,10 @@ internal sealed partial class QuestTeamDirectorActor {
                 excused = resting || (sameArea && Far(member, ahead) < FOLLOW_GAP * 1.6f);
             }
 
+            if (i == 0) {
+                RouteMemory.Track("Quest Team", member.CharId, member.Zone, member.X, member.Y);
+            }
+
             if (_stuck.Look(i, member.Zone, member.X, member.Y, excused) is var tries and > 0) {
                 Unstick(i, tries);
             }
@@ -86,6 +90,8 @@ internal sealed partial class QuestTeamDirectorActor {
         OverlayQuestPath.Forget(member.CharId);
         if (index == 0) {
             _target = null;
+            // Written down for every bot (RouteMemory): the way finder bends round this spot from now on.
+            RouteMemory.Stuck(member.CharId, member.Zone, member.X, member.Y);
         }
 
         if (tries >= 3) {

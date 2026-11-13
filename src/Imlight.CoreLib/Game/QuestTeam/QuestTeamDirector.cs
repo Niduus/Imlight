@@ -569,6 +569,9 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             return;
         }
 
+        // There: the walk that got it here is written down as a proven way (RouteMemory).
+        RouteMemory.Arrived(leader.CharId, leader.Zone, leader.X, leader.Y);
+
         // There: what is done here, one wizard at a time in the team's order.
         switch (target.Kind) {
             case QuestTeamPlanner.TALK:

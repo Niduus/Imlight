@@ -80,8 +80,24 @@ internal static class OverlayQuestPath {
     /// <param name="avoid">Creatures to keep away from (a wizard collecting quest objects goes around them, Niduus,
     /// 2026-11-13: "avoid battles as much as possible"): ground near them costs as much as water, so the way bends round.</param>
     internal static List<(float X, float Y)> Walk(ulong charId, string zonePath, float fromX, float fromY, float toX, float toY, bool body = false,
-        IReadOnlyList<(float X, float Y)> avoid = null)
-        => WalkCore(charId, zonePath, fromX, fromY, toX, toY, body, avoid, remember: true);
+        IReadOnlyList<(float X, float Y)> avoid = null) {
+        if (body) {
+            // A walk that already got a wizard from about here to about there (RouteMemory): taken as it is. Else the way
+            // finder's own, bent round the spots where wizards got stuck on this street.
+            try {
+                if (RouteMemory.Proven(zonePath, fromX, fromY, toX, toY, avoid) is { Count: > 0 } proven) {
+                    return proven;
+                }
+
+                avoid = RouteMemory.WithStuckSpots(zonePath, toX, toY, avoid);
+            }
+            catch (Exception) {
+                // The way finder's own below.
+            }
+        }
+
+        return WalkCore(charId, zonePath, fromX, fromY, toX, toY, body, avoid, remember: true);
+    }
 
     // Whether this thread's last WalkCore found a way on the floor (not the straight fallback).
     [ThreadStatic]
