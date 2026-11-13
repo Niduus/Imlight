@@ -110,10 +110,11 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     private sealed record Retry;
 
     private const string TICK = "tick";
-    private const double TICK_SECONDS = 0.25;
+    private const double TICK_SECONDS = BotShared.BotWalk.TICK_SECONDS;
 
-    /// <summary>A player's running pace, in game units a second.</summary>
-    private const float RUN_SPEED = 280f;
+    // When the last step was taken (MinValue while standing), so each step is as long as the time that passed.
+    private DateTime _lastStep = DateTime.MinValue;
+
 
     /// <summary>The least time a wizard stands after arriving in an area, while its walls and paths are read.</summary>
     internal const double ARRIVE_SECONDS = 2.5;
@@ -545,6 +546,7 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     private void Step() {
         if (!_attached || _route.Count == 0) {
             View.Walking = false;
+            _lastStep = DateTime.MinValue;
 
             return;
         }
@@ -559,27 +561,10 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
 
         // On its Ghulture it goes faster, as a player on a mount does.
         var mounted = View.Wizard?.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Mount) is not null;
-        var stride = RUN_SPEED * (mounted ? MOUNT_SPEED : 1f) * (float) TICK_SECONDS;
-        var (x, y) = (View.X, View.Y);
-        var next = _route.Peek();
-        var left = Far(x, y, next.X, next.Y);
-        while (left <= stride && _route.Count > 1) {
-            _route.Dequeue();
-            next = _route.Peek();
-            left = Far(x, y, next.X, next.Y);
-        }
-
-        var arrived = left <= stride;
-        var (nx, ny) = arrived ? next : (x + ((next.X - x) / left * stride), y + ((next.Y - y) / left * stride));
-        if (arrived) {
-            _route.Dequeue();
-        }
-
-        // Facing where it walks: a wizard with yaw w faces (-sin w, -cos w) (Niduus, 2026-11-12: they were "shuffling sideways").
-        var yaw = MathF.Atan2(-(next.X - x), -(next.Y - y));
-        if (yaw < 0) {
-            yaw += MathF.Tau;
-        }
+        var now = DateTime.UtcNow;
+        var seconds = _lastStep == DateTime.MinValue ? TICK_SECONDS : (now - _lastStep).TotalSeconds;
+        _lastStep = now;
+        var (nx, ny, yaw) = BotShared.BotWalk.Step(_route, View.X, View.Y, seconds, BotShared.BotWalk.RunSpeed * (mounted ? MOUNT_SPEED : 1f));
 
         var nz = UltimusGround.HeightAt(View.Zone, nx, ny, View.Z);
         Place(nx, ny, nz);
