@@ -265,6 +265,9 @@ public static class QuestTeamLink {
     internal const string NOTABLE = "NOTABLE";
     internal const string CRITICAL = "CRITICAL";
     internal const string COMMAND = "COMMAND";
+    // PINK (Niduus, 2026-11-12): something abnormal the team noticed (odd drops, a fight that lasts far too long), not
+    // necessarily a broken quest.
+    internal const string ABNORMAL = "ABNORMAL";
 
     internal static void Note(string who, string text, string level = null) {
         if (!string.IsNullOrEmpty(level)) {
