@@ -172,6 +172,7 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     private ushort _mobileId;
     private byte _zoneCounter;
     private readonly Queue<(float X, float Y)> _route = new();
+    private DateTime _recalledAt = DateTime.MinValue;
     private long _clicks;
     private (string Zone, ulong ZoneId, string Location)? _transfer;
 
@@ -258,7 +259,10 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
             }
         });
         Receive<SkipStep>(m => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "completegoal", QuestName = m.Quest }));
-        Receive<Recall>(_ => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "botrecall" }));
+        Receive<Recall>(_ => {
+            _recalledAt = DateTime.UtcNow;
+            _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "botrecall" });
+        });
         Receive<GoToTeammate>(m => Send(new WIZARD_12_PROTOCOL.MSG_GOTOFRIENDLYPLAYER { TargetCharacterID = m.CharId }));
         Receive<SelectBadge>(m => Send(new GAME_5_PROTOCOL.MSG_SELECT_BADGE { BadgeNameID = m.Id }));
         Receive<GainXp>(m => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_GAINXP { XP = m.Xp }));
@@ -326,8 +330,17 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
                 _route.Clear();
                 View.Walking = false;
                 var (x, y) = (Expand(m.LocationX), Expand(m.LocationY));
+                // Moved far in a moment in the same area, while walking its way: a teleporter it stepped on. Remembered
+                // (UltimusPads), so the next time it knows where that pad goes, as a player would.
+                var settled = _attached && DateTime.UtcNow - View.AttachedAt > TimeSpan.FromSeconds(5) && DateTime.UtcNow - _recalledAt > TimeSpan.FromSeconds(30);
+                var padHere = UltimusPads.In(View.Zone).Any(p => Far(p.X, p.Y, View.X, View.Y) < 300 && Far(p.ToX, p.ToY, x, y) < 400);
+                if (settled && Far(View.X, View.Y, x, y) > 800 && !padHere && UltimusPads.Learn(View.Zone, View.X, View.Y, x, y)) {
+                    Note($"learns a teleporter in {UltimusText.Zone(View.Zone)}: ({View.X:0}, {View.Y:0}) goes to ({x:0}, {y:0}).");
+                    padHere = true;
+                }
+
                 // Moved far by the server without asking (it did not walk there or use a door): odd for a player.
-                if (_attached && Far(View.X, View.Y, x, y) > 1500 && DateTime.UtcNow - View.AttachedAt > TimeSpan.FromSeconds(5)) {
+                if (settled && !padHere && Far(View.X, View.Y, x, y) > 1500) {
                     UltimusLink.Abnormal($"was moved by the server in {UltimusText.Zone(View.Zone)} from ({View.X:0}, {View.Y:0}) to ({x:0}, {y:0}) without asking.");
                 }
 

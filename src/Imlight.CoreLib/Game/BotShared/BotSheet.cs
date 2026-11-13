@@ -59,6 +59,12 @@ internal static class BotSheet {
         member["deckGrid"] = Grid(spells);
         member["deckMax"] = wizard?.SpellbookBehavior?.MaxSpells ?? 0;
         member["treasureGrid"] = Grid(treasure);
+
+        // The XP bar and the quest book (BotQuestBook), live with every status.
+        var (xpNow, xpMax) = BotQuestBook.Xp(wizard);
+        member["xp"] = xpNow;
+        member["xpMax"] = xpMax;
+        member["questBook"] = BotQuestBook.Book(wizard, (string) (member["questNow"] as JsonValue) ?? "");
         member["itemGrid"] = new JsonArray([.. ItemCopies(wizard).Select(c => (JsonNode) new JsonObject {
             ["id"] = c.Id, ["school"] = SchoolOf(c.Id), ["off"] = c.Off,
         })]);

@@ -1023,15 +1023,13 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
 
-        // Collecting quest objects: round the creatures, not into a battle (Niduus, 2026-11-13: "avoid battles as much as
-        // possible when collecting interactable quest items that are in the way of mobs").
-        var avoid = target.Kind == UltimusPlanner.USE
-            ? MinimapIndex.In(member.ZoneActor).Where(m => m.Kind is MinimapIndex.MOB or MinimapIndex.BOSS && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full))
-                .Select(m => (m.Object.m_location.X, m.Object.m_location.Y)).ToList()
-            : null;
-        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, target.X, target.Y, body: true, avoid: avoid);
+        // Round the creatures it does not need to fight, not into a battle (Niduus, 2026-11-13: "avoid battles as much as
+        // possible"), and by the area's teleporters when walls or water cut the step off (UltimusDirector.Routes.cs).
+        var avoid = CreaturesToAvoid(member, target);
+        var (toX, toY, what) = WayTo(member, target);
+        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, toX, toY, body: true, avoid: avoid);
         _sent[index] = (target, DateTime.UtcNow, member.X, member.Y);
-        _actors[index].Tell(new UltimusMember.WalkTo(points, target.What));
+        _actors[index].Tell(new UltimusMember.WalkTo(points, what));
         if (index == 0) {
             _leaderLastTarget = target;
         }
