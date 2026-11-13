@@ -305,7 +305,12 @@ internal static partial class ZoneGround {
     internal static Ground Build(byte[] data) => Grid(Read(data, out _));
 
     // Every ground triangle and wall (two triangles a box) from above, and the round things (trees, posts, pillars).
-    private static List<Triangle> Read(byte[] data, out List<Circle> circles) {
+    /// <param name="forWalking">
+    /// For a server-played wizard's walk (Niduus, 2026-11-13: "bots visually to players go through walls"): a box is
+    /// taken by all eight corners (one turned on its side has its height lying flat), every round post counts whatever
+    /// its category, and the steep faces of solid meshes (a building's sides) are walls too. The maps keep the old reading.
+    /// </param>
+    private static List<Triangle> Read(byte[] data, out List<Circle> circles, bool forWalking = false) {
         var triangles = new List<Triangle>();
         circles = [];
         var at = 0;
@@ -372,6 +377,31 @@ internal static partial class ZoneGround {
                     // an arch or a roof.
                     var reach = (MathF.Abs(rot[6] * hx) + MathF.Abs(rot[7] * hy) + MathF.Abs(rot[8] * hz));
                     var (low, high) = float.IsFinite(reach) && reach > 0 ? (mz - reach, mz + reach) : (float.NegativeInfinity, float.PositiveInfinity);
+                    if (forWalking) {
+                        // All eight corners from above, and the outline round them.
+                        var corners = new List<(float X, float Y)>();
+                        foreach (var sx in new[] { -1f, 1f }) {
+                            foreach (var sy in new[] { -1f, 1f }) {
+                                foreach (var sz in new[] { -1f, 1f }) {
+                                    corners.Add((mx + (rot[0] * sx * hx) + (rot[1] * sy * hy) + (rot[2] * sz * hz),
+                                        my + (rot[3] * sx * hx) + (rot[4] * sy * hy) + (rot[5] * sz * hz)));
+                                }
+                            }
+                        }
+
+                        var hull = Hull(corners);
+                        for (var k = 1; k + 1 < hull.Count; k++) {
+                            triangles.Add(new Triangle(hull[0].X, hull[0].Y, hull[k].X, hull[k].Y, hull[k + 1].X, hull[k + 1].Y, WALL, low, high));
+                        }
+
+                        // A box flat as a sheet from above (a fence seen edge on): its outline as a thin wall.
+                        if (hull.Count == 2) {
+                            triangles.Add(new Triangle(hull[0].X, hull[0].Y, hull[1].X, hull[1].Y, hull[1].X, hull[1].Y, WALL, low, high));
+                        }
+
+                        break;
+                    }
+
                     triangles.Add(new Triangle(a.X, a.Y, b.X, b.Y, c.X, c.Y, WALL, low, high));
                     triangles.Add(new Triangle(a.X, a.Y, c.X, c.Y, d.X, d.Y, WALL, low, high));
                     break;
@@ -387,7 +417,7 @@ internal static partial class ZoneGround {
                     // A cylinder standing up (a tree, a post, a pillar): its length, then its radius.
                     F();
                     var radius = F() * (scale is > 0 and < 1000 ? scale : 1f);
-                    if (category == 1 && MathF.Abs(rot[8]) > 0.9f && radius is > 5 and < 3000) {
+                    if ((category == 1 || forWalking) && MathF.Abs(rot[8]) > 0.9f && radius is > 5 and < 3000) {
                         circles.Add(new Circle(mx, my, radius));
                     }
 
@@ -412,6 +442,25 @@ internal static partial class ZoneGround {
             // A boat's route is a walkable band the boat rides along, not ground: drawn, it made a long stripe round the
             // sky (Niduus, 2026-11-12: Krokosphinx's dock by the boat to the Oasis didn't match).
             var route = shapeName.Contains("spline", StringComparison.OrdinalIgnoreCase);
+            // A solid mesh's steep faces (a building's sides): walls for a wizard's walk, from its lowest to its highest point.
+            if (forWalking && points is not null && !route && category != 2 && !lake) {
+                for (var f = 0; f + 2 < faces.Length; f += 3) {
+                    var (p1, p2, p3) = ((int) faces[f] * 3, (int) faces[f + 1] * 3, (int) faces[f + 2] * 3);
+                    if (Math.Max(p1, Math.Max(p2, p3)) + 2 >= points.Length || Flat(points, p1, p2, p3)) {
+                        continue;
+                    }
+
+                    var low = Math.Min(points[p1 + 2], Math.Min(points[p2 + 2], points[p3 + 2]));
+                    var high = Math.Max(points[p1 + 2], Math.Max(points[p2 + 2], points[p3 + 2]));
+                    // A step's rise (a stair, a kerb) is climbed, not a wall.
+                    if (high - low < 40) {
+                        continue;
+                    }
+
+                    triangles.Add(new Triangle(points[p1], points[p1 + 1], points[p2], points[p2 + 1], points[p3], points[p3 + 1], WALL, low, high));
+                }
+            }
+
             if (points is not null && !route && (category == 2 || lake)) {
                 // Wood only for floors made of boards (docks, decks, planks, bridges), not tree roots or shadows that
                 // happen to be marked wood.
@@ -460,6 +509,31 @@ internal static partial class ZoneGround {
         }
 
         return triangles;
+    }
+
+    // The outline round some points from above (Andrew's monotone chain), in order.
+    private static List<(float X, float Y)> Hull(List<(float X, float Y)> points) {
+        var sorted = points.Where(p => float.IsFinite(p.X) && float.IsFinite(p.Y)).Distinct().OrderBy(p => p.X).ThenBy(p => p.Y).ToList();
+        if (sorted.Count < 3) {
+            return sorted;
+        }
+
+        static float Cross((float X, float Y) o, (float X, float Y) a, (float X, float Y) b) => ((a.X - o.X) * (b.Y - o.Y)) - ((a.Y - o.Y) * (b.X - o.X));
+        var hull = new List<(float X, float Y)>();
+        foreach (var pass in new[] { sorted, Enumerable.Reverse(sorted).ToList() }) {
+            var start = hull.Count;
+            foreach (var p in pass) {
+                while (hull.Count >= start + 2 && Cross(hull[^2], hull[^1], p) <= 0.01f) {
+                    hull.RemoveAt(hull.Count - 1);
+                }
+
+                hull.Add(p);
+            }
+
+            hull.RemoveAt(hull.Count - 1);
+        }
+
+        return hull.Count >= 2 ? hull : sorted;
     }
 
     private static Ground Grid(List<Triangle> triangles) {
