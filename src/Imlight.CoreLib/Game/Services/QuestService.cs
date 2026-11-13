@@ -364,10 +364,11 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             Logger.Args(GetActiveWizard()?.CharId, message.ActiveQuestGID, message.ActiveGoalGID));
     }
 
-    // The quest book's Review Dialog button asks for a quest's dialog by the hash of its name. It replays what the
-    // player was last told for that quest: the lines of the step that led to the current one, or the offer if no step
-    // is done yet. Always sending the offer ("Prep") gave the wrong lines after the first step, and quests without
-    // quest-level lines showed nothing (Niduus, 2026-10-28).
+    // The quest book's dialog history asks for a quest's dialog by the hash of its name. The game keeps its own copy
+    // of every line it was shown (Data\GameData\DialogCache\<wizard>\<quest hash>.quest) and replaces that copy with
+    // our answer, keeping only lines marked m_meetsRequirements. The quest files leave that mark off, so every answer
+    // wiped the history to empty rows (Niduus, 2026-11-13: "dialog history wiped again"). We answer with every line
+    // the wizard has been told for the quest so far, each marked, which also refills a history that was wiped.
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_REQUESTQUESTDIALOG))]
     private void ReceiveRequestQuestDialog(WIZARD_12_PROTOCOL.MSG_REQUESTQUESTDIALOG message) {
         var wizard = GetActiveWizard();
@@ -383,24 +384,23 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             }
         }
 
-        string from = "";
-        var dialog = qTemplate is null ? null : FindReviewDialog(qTemplate, qInstance, out from);
+        int parts = 0;
+        var dialog = qTemplate is null ? null : BuildDialogHistory(qTemplate, qInstance, wizard, out parts);
         if (dialog is null) {
-            Logger.Information("Quest book: no dialog to review for quest hash {0} ({1}).",
+            Logger.Information("Quest book: no dialog history for quest hash {0} ({1}).",
                 Logger.Args(message.QuestNameID, qTemplate?.m_questName ?? "not one of the player's quests"));
 
             return;
         }
 
-        QuestMadlibs.NameDialogSpeakers(dialog);
         if (!new ObjectSerializer(false).Serialize(dialog, 16, out var data)) {
-            Logger.Error("Quest book: the dialog of quest {0} could not be serialized.", Logger.Args(qTemplate.m_questName));
+            Logger.Error("Quest book: the dialog history of quest {0} could not be serialized.", Logger.Args(qTemplate.m_questName));
 
             return;
         }
 
-        Logger.Information("Quest book: Review Dialog for quest {0} plays {1} ({2} lines).",
-            Logger.Args(qTemplate.m_questName, from, dialog.m_dialogEntries.Count));
+        Logger.Information("Quest book: dialog history for quest {0}: {1} lines from {2} dialogs.",
+            Logger.Args(qTemplate.m_questName, dialog.m_dialogEntries.Count, parts));
         SendToSocket(new WIZARD_12_PROTOCOL.MSG_QUESTDIALOG {
             QuestNameID = message.QuestNameID,
             ActorDialog = data,
@@ -408,58 +408,83 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
     }
 
     /// <summary>
-    /// The lines Review Dialog replays: the "Completion" lines of the finished step that opened the current step,
-    /// else of the last finished step with lines, else the quest's offer, else the current step's own lines.
+    /// Every line the wizard has been told for this quest, in the order told: the offer ("Prep") and start of the
+    /// quest, then for each step started its "Prep" and for each step done its "Completion". The lines are copies
+    /// marked m_meetsRequirements (the game drops unmarked ones from its history); lines whose own needs the wizard
+    /// does not meet are left out. Null when there is nothing to show.
     /// </summary>
-    private static ActorDialog FindReviewDialog(QuestTemplate qTemplate, QuestInstance qInstance, out string from) {
-        bool Done(string goal) => qInstance?.IsGoalCompleted(goal) == true;
-        GoalTemplate Goal(string goal) => qTemplate.m_goals?.FirstOrDefault(g => (string) g?.m_goalName == goal);
-        var active = qTemplate.m_goals?
-            .Where(g => g is not null && qInstance?.IsGoalActive(g.m_goalName) == true)
-            .ToList() ?? [];
+    private static ActorDialog BuildDialogHistory(QuestTemplate qTemplate, QuestInstance qInstance, Wizard wizard, out int parts) {
+        parts = 0;
+        var told = new List<ActorDialog>();
+        void Add(ActorDialogListBase list, string tag) {
+            if (FindDialogue(list, tag) is { } found && !told.Contains(found)) {
+                told.Add(found);
+            }
+        }
 
-        // The steps whose finishing added the step the player is on now.
-        foreach (var logic in qTemplate.m_goalLogic ?? []) {
-            if (logic?.m_goalsToAdd is null || !active.Any(g => logic.m_goalsToAdd.Contains(g.m_goalName))) {
+        Add(qTemplate.m_dialogList, "Prep");
+        Add(qTemplate.m_dialogList, "Start");
+        foreach (var goal in qTemplate.m_goals ?? []) {
+            if (goal is null || qInstance is null) {
                 continue;
             }
 
-            var before = (logic.m_goalsAND ?? []).Concat(logic.m_goalsOR ?? []).Select(n => (string) n).Where(Done);
-            foreach (var name in before.Reverse()) {
-                if (FindDialogue(Goal(name)?.m_dialogList, GOAL_COMPLETION_DIALOG_TAG) is { } lines) {
-                    from = $"what was said when step '{name}' was done";
+            bool done = qInstance.IsGoalCompleted(goal.m_goalName);
+            if (done || qInstance.IsGoalActive(goal.m_goalName)) {
+                Add(goal.m_dialogList, "Prep");
+            }
 
-                    return lines;
+            if (done) {
+                Add(goal.m_dialogList, GOAL_COMPLETION_DIALOG_TAG);
+            }
+        }
+
+        var history = new ActorDialog {
+            m_dialogTag = told.FirstOrDefault()?.m_dialogTag ?? "",
+            m_dialogEntries = [],
+            m_madlibs = [],
+            m_dialogEvents = [],
+        };
+        foreach (var dialog in told) {
+            QuestMadlibs.NameDialogSpeakers(dialog);
+            foreach (var entry in dialog.m_dialogEntries ?? []) {
+                if (entry is null || !MeetsLineNeeds(entry, wizard)) {
+                    continue;
+                }
+
+                var copy = (ActorDialogEntry) s_memberwiseClone.Invoke(entry, null);
+                copy.m_meetsRequirements = true;
+                history.m_dialogEntries.Add(copy);
+            }
+
+            foreach (var madlib in dialog.m_madlibs ?? []) {
+                if (madlib is not null && !history.m_madlibs.Any(m => m.m_index == madlib.m_index)) {
+                    history.m_madlibs.Add(madlib);
                 }
             }
         }
 
-        foreach (var goal in Enumerable.Reverse(qTemplate.m_goals ?? [])) {
-            if (goal is not null && Done(goal.m_goalName)
-                && FindDialogue(goal.m_dialogList, GOAL_COMPLETION_DIALOG_TAG) is { } lines) {
-                from = $"what was said when step '{goal.m_goalName}' was done";
+        parts = told.Count;
 
-                return lines;
-            }
+        return history.m_dialogEntries.Count > 0 ? history : null;
+    }
+
+    private static readonly System.Reflection.MethodInfo s_memberwiseClone = typeof(object).GetMethod(
+        "MemberwiseClone", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+    private static bool MeetsLineNeeds(ActorDialogEntry entry, Wizard wizard) {
+        if (entry.m_requirements?.m_requirements is not { Count: > 0 } || wizard is null) {
+            return true;
         }
 
-        if (FindDialogue(qTemplate.m_dialogList, "Prep") is { } offer) {
-            from = "the quest offer";
+        try {
+            return RequirementDispatcher.EvaluateRequirements(entry.m_requirements,
+                new GenericRequirementContext(requirements: entry.m_requirements, playerRef: null, playerObj: null, wizard: wizard));
+        } catch (Exception ex) {
+            Logger.Debug("Quest book: a dialog line's needs could not be checked ({0}); it is shown.", Logger.Args(ex.Message));
 
-            return offer;
+            return true;
         }
-
-        foreach (var goal in active) {
-            if (FindDialogue(goal.m_dialogList, "Prep") is { } prep) {
-                from = $"the start of step '{goal.m_goalName}'";
-
-                return prep;
-            }
-        }
-
-        from = "";
-
-        return null;
     }
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_COMPLETEDIALOG))]
