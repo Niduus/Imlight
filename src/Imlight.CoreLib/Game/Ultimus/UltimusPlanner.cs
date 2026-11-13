@@ -25,6 +25,8 @@ using Imlight.CoreLib.Game.Services;
 using Imlight.CoreLib.Game.Tools;
 using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Game.Zone.Components;
+using Imlight.CoreLib.Shared.Resources;
+using Imlight.CoreLib.WizardData;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -305,6 +307,19 @@ internal static class UltimusPlanner {
                         standing.Object.m_globalID.Full, Key: key);
                 }
 
+                // Not here and the step names no area: where this person stands, as a player knows (Niduus, 2026-11-13:
+                // "Run and Done" had its Cyrus Drake, Victor Darkwood and Merle Ambrose steps skipped in seconds).
+                if (stepZone.Length == 0 && spots.Count == 0) {
+                    var where = NpcZone(persona.m_personaName, npc, zone, out var looking);
+                    if (looking) {
+                        return new Target(WAIT, leader.X, leader.Y, $"{step} (works out where they stand)", questName, goalName, Key: key + "|lookup");
+                    }
+
+                    if (where.Length > 0 && !OverlayQuestTracker.SameZone(where, zone)) {
+                        stepZone = where;
+                    }
+                }
+
                 break;
             }
 
@@ -389,6 +404,66 @@ internal static class UltimusPlanner {
             BountyGoalTemplate => $"no creature for this step is in {UltimusText.Zone(zone)} and the quest names no other area",
             _ => $"the quest arrow has no spot for this step and the quest names no area",
         }, Key: key);
+    }
+
+    // Where each "talk to" person stands, by persona and the area asked from ("" none known, null still being found).
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_npcZones = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// The area a quest's person stands in: the area the other quests' "talk to" steps name for them, else the nearest
+    /// area of the game's files that places them (found in the background; <paramref name="looking"/> while it is).
+    /// "" when nobody knows.
+    /// </summary>
+    internal static string NpcZone(string persona, ulong npc, string from, out bool looking) {
+        looking = false;
+        var named = Imlight.CoreLib.Game.Tools.QuestGuide.PersonaZone(persona);
+        if (named.Length == 0 && CoreObjectFactory.GetCoreTemplate(npc) is GameObjectTemplate template && !template.m_objectName.IsEmpty) {
+            named = Imlight.CoreLib.Game.Tools.QuestGuide.PersonaZone(template.m_objectName);
+        }
+
+        if (named.Length > 0 || npc == 0) {
+            return named;
+        }
+
+        var key = npc + "|" + (from ?? "").Split('/')[0];
+        if (s_npcZones.TryGetValue(key, out var known)) {
+            looking = known is null;
+
+            return known ?? "";
+        }
+
+        if (s_npcZones.TryAdd(key, null)) {
+            looking = true;
+            System.Threading.Tasks.Task.Run(() => s_npcZones[key] = PlacedZone(npc, from));
+        }
+
+        return "";
+    }
+
+    // The area of the game's files that places this NPC fewest areas away (its own world first).
+    private static string PlacedZone(ulong npc, string from) {
+        try {
+            var world = (from ?? "").Split('/')[0];
+            var zones = SpiralDB.GetAllZoneData().Select(z => z?.ZoneName).Where(z => !string.IsNullOrEmpty(z))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderByDescending(z => z.StartsWith(world + "/", StringComparison.OrdinalIgnoreCase)).ToList();
+            var best = (Zone: "", Hops: int.MaxValue);
+            foreach (var zone in zones) {
+                if (!QuestStepSpots.Zone(zone).Objects.Any(o => o.Template == npc)) {
+                    continue;
+                }
+
+                var hops = OverlayQuestTracker.SameZone(zone, from) ? 0 : OverlayQuestRoute.Way(from, zone, false).Count;
+                if (best.Zone.Length == 0 || (hops > 0 && hops < best.Hops)) {
+                    best = (zone, hops > 0 ? hops : int.MaxValue - 1);
+                }
+            }
+
+            return best.Zone;
+        }
+        catch (Exception) {
+            return "";
+        }
     }
 
     /// <summary>The way out of this area toward <paramref name="toZone"/>: a door, a walk-through exit, or the Spiral Door.</summary>

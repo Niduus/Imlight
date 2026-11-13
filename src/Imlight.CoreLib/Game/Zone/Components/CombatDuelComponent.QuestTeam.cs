@@ -150,7 +150,9 @@ internal sealed partial class CombatDuelComponent {
 
     // A real player picked: the team looks again.
     private void QuestTeamNoticeMove(CombatDuelSubCircle caster) {
-        if (caster is null || QuestTeamRole(caster) is not null || IsPvPDuel || !QuestTeamCircles.Any()) {
+        // Only a real player's pick, in planning (creatures pick before planning begins: see PlanningMayEnd).
+        if (caster is null || !caster.IsHumanPlayer || IsBot(caster) || QuestTeamRole(caster) is not null || IsPvPDuel
+            || !PlanningMayEnd || !QuestTeamCircles.Any()) {
             return;
         }
 
@@ -159,7 +161,7 @@ internal sealed partial class CombatDuelComponent {
 
     [MessageHandler(typeof(QuestTeamThink))]
     private void ReceiveQuestTeamThink(QuestTeamThink message) {
-        if (!_isActive || !_awaitingCombatMoves || IsPvPDuel || Duel.m_roundNum != message.Round) {
+        if (!_isActive || !_awaitingCombatMoves || IsPvPDuel || Duel.m_roundNum != message.Round || !PlanningMayEnd) {
             return;
         }
 

@@ -448,18 +448,38 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 Note("Ultimus", $"next: {Describe(target)}.");
                 // A fight is next: each deck made ready for it.
                 if (target.Kind == UltimusPlanner.FIGHT) {
-                    PrepareDecks(BotCards.SituationOf(target.Template));
+                    // Its deck read first, as a player who knows the creature (UltimusScout): shields for what it hits with.
+                    UltimusScout.Expect(target.Template);
+                    Note("Ultimus", $"knows what it is about to fight: {UltimusScout.OfCreature(target.Template).Describe()}.");
+                    PrepareDecks(UltimusScout.SituationOf(target.Template));
                 }
             }
         }
 
         if (target.Problem.Length > 0) {
+            // A person does not give up on a step at once (Niduus, 2026-11-13: steps were skipped within seconds): it
+            // looks about the area first, and only a step that stays unworkable for a while is written up and skipped.
+            if (!_problemSince.TryGetValue(target.Key, out var since)) {
+                _problemSince[target.Key] = since = DateTime.UtcNow;
+                Note("Ultimus", $"can't see how to do \"{target.What}\" yet ({target.Problem}): looks around the area before giving up.");
+            }
+
+            if (DateTime.UtcNow - since < s_problemPatience) {
+                _doing = $"looking around for: {target.What}";
+                _lastProgress = DateTime.UtcNow;
+                LookAround(leader, target);
+
+                return;
+            }
+
             _doing = $"stuck: {target.What}: {target.Problem}";
             StopWalking(0);
             Issue("quest", target.Quest, $"{target.What}: {target.Problem}.", key: target.Key + "|problem");
 
             return;
         }
+
+        _problemSince.Remove(target.Key);
 
         _doing = Describe(target);
         if (target.Kind == UltimusPlanner.WAIT) {
@@ -797,7 +817,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 if (UltimusPlanner.Far(member.X, member.Y, target.X, target.Y) > 80) {
                     WalkTo(index, target with { X = target.X - 30 });
                 }
-                else if (TimesClicked(key) == 0 && DateTime.UtcNow - _targetSince > TimeSpan.FromSeconds(30)) {
+                else if (TimesClicked(key) == 0 && DateTime.UtcNow - _targetSince > TimeSpan.FromSeconds(90)) {
                     Issue("quest", target.Quest, $"{target.What}: {member.Name} stands next to the NPC, but it offers nothing to click.",
                         key: key + "|nooptions");
                 }
@@ -975,14 +995,33 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         var member = _team[index];
-        if (_sent.TryGetValue(index, out var last) && last.Target is not null && last.Target.Same(target) && member.Walking
+
+        // Creatures it is not here to fight, watched all the way, as a player watches them walk about (Niduus,
+        // 2026-11-13: "I just saw him willingly put himself in battle. Have detections for mobs"): one walking up close
+        // has it step back out of its reach, and one near the way has the way planned again round it.
+        var avoid = CreaturesToAvoid(member, target);
+        var near = avoid?.Select(c => (c.X, c.Y, Far: UltimusPlanner.Far(member.X, member.Y, c.X, c.Y))).OrderBy(c => c.Far).FirstOrDefault();
+        var replanSoon = near is { Far: < MOB_WATCH } && DateTime.UtcNow - _sent.GetValueOrDefault(index).At > TimeSpan.FromSeconds(2);
+        if (near is { Far: < MOB_TOO_CLOSE and > 1 } close && DateTime.UtcNow - _sent.GetValueOrDefault(index).At > TimeSpan.FromSeconds(1.5)) {
+            var away = (X: member.X + ((member.X - close.X) / close.Far * MOB_STEP_BACK), Y: member.Y + ((member.Y - close.Y) / close.Far * MOB_STEP_BACK));
+            var back = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, away.X, away.Y, body: true, avoid: avoid);
+            _sent[index] = (null, DateTime.UtcNow, member.X, member.Y);
+            _actors[index].Tell(new UltimusMember.WalkTo(back, "steps back from a creature it does not need to fight"));
+            if (_mobDodgeSaid.AddSeconds(30) < DateTime.UtcNow) {
+                _mobDodgeSaid = DateTime.UtcNow;
+                Note("Ultimus", $"{member.Name} steps back from a creature {close.Far:0} away that its step does not need it to fight.");
+            }
+
+            return;
+        }
+
+        if (!replanSoon && _sent.TryGetValue(index, out var last) && last.Target is not null && last.Target.Same(target) && member.Walking
             && DateTime.UtcNow - last.At < TimeSpan.FromSeconds(15)) {
             return;
         }
 
         // Round the creatures it does not need to fight, not into a battle (Niduus, 2026-11-13: "avoid battles as much as
         // possible"), and by the area's teleporters when walls or water cut the step off (UltimusDirector.Routes.cs).
-        var avoid = CreaturesToAvoid(member, target);
         var (toX, toY, what) = WayTo(member, target);
         var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, toX, toY, body: true, avoid: avoid);
         _sent[index] = (target, DateTime.UtcNow, member.X, member.Y);
@@ -991,6 +1030,40 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             _leaderLastTarget = target;
         }
     }
+
+    // A creature this near the way has the way planned again; this near Ultimus, it steps back (a creature starts a
+    // battle within about 175).
+    // How long a step that can't be worked out is looked into before it is written up and skipped.
+    private static readonly TimeSpan s_problemPatience = TimeSpan.FromMinutes(2);
+    private readonly Dictionary<string, DateTime> _problemSince = new(StringComparer.Ordinal);
+    private (float X, float Y, DateTime At)? _lookingAt;
+
+    // Walks about the area, from one landmark to another (the step's person or creature may turn up, or a "go to"
+    // spot may count on the way), as a player looks round a room for what the quest book means.
+    private void LookAround(UltimusMember.Status leader, UltimusPlanner.Target target) {
+        if (_lookingAt is { } at && DateTime.UtcNow - at.At < TimeSpan.FromSeconds(20)
+                                 && UltimusPlanner.Far(leader.X, leader.Y, at.X, at.Y) > 60) {
+            return;
+        }
+
+        var marks = MinimapIndex.In(leader.ZoneActor).Where(m => m.Kind is not (MinimapIndex.MOB or MinimapIndex.BOSS))
+            .Select(m => (m.Object.m_location.X, m.Object.m_location.Y))
+            .Where(m => UltimusPlanner.Far(leader.X, leader.Y, m.X, m.Y) is > 300 and < 4000).ToList();
+        if (marks.Count == 0) {
+            StopWalking(0);
+            return;
+        }
+
+        var (x, y) = marks[Random.Shared.Next(marks.Count)];
+        _lookingAt = (x, y, DateTime.UtcNow);
+        WalkTo(0, new UltimusPlanner.Target(UltimusPlanner.SPOT, x, y, "looking around for " + target.What, target.Quest, target.Goal,
+            Key: target.Key + "|look"));
+    }
+
+    private const float MOB_WATCH = 450f;
+    private const float MOB_TOO_CLOSE = 240f;
+    private const float MOB_STEP_BACK = 260f;
+    private DateTime _mobDodgeSaid = DateTime.MinValue;
 
     private void StopWalking(int index) {
         if (_team[index].Walking && !Unsticking(index)) {
@@ -1095,7 +1168,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
 
-        var lost = stats.m_currentHitpoints <= 1;
+        var lost = CombatDuelComponent.TakeLostBattle(member.GlobalId) || stats.m_currentHitpoints <= 1;
         if (!lost || index != 0) {
             if (index == 0) {
                 Note("Ultimus", "won the battle.");

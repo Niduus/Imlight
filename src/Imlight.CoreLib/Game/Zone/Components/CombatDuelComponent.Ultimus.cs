@@ -44,6 +44,8 @@ internal sealed partial class CombatDuelComponent {
     private const string ULTIMUS_DEADLINE_KEY = "UltimusDeadline";
     private readonly Dictionary<int, string> _ultimusPicks = [];
     private readonly HashSet<(int Round, int Slot)> _ultimusDiscarded = [];
+    // The Ultimus circles that have read this battle's enemy decks (said once a battle).
+    private readonly HashSet<int> _ultimusScouted = [];
     private int _ultimusDeadlineRound = -1;
 
     private static string UltimusRole(CombatDuelSubCircle circle)
@@ -133,18 +135,38 @@ internal sealed partial class CombatDuelComponent {
 
     private void UltimusPlanningBegins() {
         _ultimusPicks.Clear();
+        if (Duel.m_roundNum <= 1) {
+            _ultimusScouted.Clear();
+        }
         if (IsPvPDuel || !_awaitingCombatMoves || !UltimusCircles.Any()) {
             return;
         }
 
-        Timers.StartSingleTimer(ULTIMUS_THINK_KEY, new UltimusThink(Duel.m_roundNum, false), TimeSpan.FromSeconds(2 + Random.Shared.NextDouble()));
+        // A person's moment to look at the hand before reaching for a card (2.5 to 5 s; the clicks take a few more).
+        Timers.StartSingleTimer(ULTIMUS_THINK_KEY, new UltimusThink(Duel.m_roundNum, false), TimeSpan.FromSeconds(2.5 + (Random.Shared.NextDouble() * 2.5)));
         Timers.StartSingleTimer(ULTIMUS_DEADLINE_KEY, new UltimusThink(Duel.m_roundNum, true),
             TimeSpan.FromSeconds(Math.Max(3, PlanningSeconds - BOT_DEADLINE_BEFORE_END)));
     }
 
+    // Ultimus came into the battle mid-planning: its look and its last call, by the time left.
+    private void UltimusJoinedPlanning(CombatDuelSubCircle circle, double secondsLeft) {
+        if (UltimusRole(circle) is null || IsPvPDuel || !PlanningMayEnd) {
+            return;
+        }
+
+        _ultimusPicks.Remove(circle.SlotIndex);
+        Timers.StartSingleTimer(ULTIMUS_THINK_KEY, new UltimusThink(Duel.m_roundNum, false),
+            TimeSpan.FromSeconds(Math.Min(2.5 + (Random.Shared.NextDouble() * 2.5), Math.Max(1, secondsLeft / 3))));
+        Timers.StartSingleTimer(ULTIMUS_DEADLINE_KEY, new UltimusThink(Duel.m_roundNum, true),
+            TimeSpan.FromSeconds(Math.Max(3, secondsLeft - BOT_DEADLINE_BEFORE_END)));
+    }
+
     // A real player picked or changed their mind: Ultimus looks again.
     private void UltimusNoticeMove(CombatDuelSubCircle caster) {
-        if (caster is null || UltimusRole(caster) is not null || IsPvPDuel || !UltimusCircles.Any()) {
+        // Only a real player's pick, in planning: creatures pick as the round opens, and a look then had Ultimus pick
+        // before planning began, which ended the round early (Niduus, 2026-11-13).
+        if (caster is null || !caster.IsHumanPlayer || IsBot(caster) || UltimusRole(caster) is not null || IsPvPDuel
+            || !PlanningMayEnd || !UltimusCircles.Any()) {
             return;
         }
 
@@ -153,7 +175,7 @@ internal sealed partial class CombatDuelComponent {
 
     [MessageHandler(typeof(UltimusThink))]
     private void ReceiveUltimusThink(UltimusThink message) {
-        if (!_isActive || !_awaitingCombatMoves || IsPvPDuel || Duel.m_roundNum != message.Round) {
+        if (!_isActive || !_awaitingCombatMoves || IsPvPDuel || Duel.m_roundNum != message.Round || !PlanningMayEnd) {
             return;
         }
 
@@ -175,7 +197,12 @@ internal sealed partial class CombatDuelComponent {
 
             // First, once a round, the cards a solo wizard won't play go, as a player discards.
             if (_ultimusDiscarded.Add((Duel.m_roundNum, member.SlotIndex))) {
-                foreach (var index in BotCards.Discards(member, circles, BotStyle.Backup)) {
+                var threat = UltimusScout.InBattle(circles.Where(c => c.OccupiedTeam != member.OccupiedTeam));
+                if (_ultimusScouted.Add(member.SlotIndex)) {
+                    UltimusLink.Note(UltimusRoster.NAME, $"reads the enemies' decks: {threat.Describe()}.");
+                }
+
+                foreach (var index in BotCards.Discards(member, circles, BotStyle.Backup, c => UltimusTactics.UselessShield(c, threat))) {
                     var thrown = member.GetSpellFromLastHand((byte) index);
                     moves.Add(BotBattle.Move.Discard(index, $"discards {(thrown is null ? "a card" : RewrittenAI.Read(thrown)?.Shown ?? "a card")}"));
                 }

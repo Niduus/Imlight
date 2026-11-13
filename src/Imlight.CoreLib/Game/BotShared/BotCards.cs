@@ -44,7 +44,13 @@ internal static class BotCards {
 
         internal static readonly Situation Unknown = new("", false, 0);
 
+        /// <summary>The schools the enemies' decks can hit with, most first (Ultimus reads them: UltimusScout); empty when not known.</summary>
+        internal IReadOnlyList<string> HitSchools { get; init; } = [];
+
         internal string Describe()
+            => HitSchools.Count > 0 ? $"{DescribeFoe()}, hitting with {string.Join(", ", HitSchools.Take(3))}" : DescribeFoe();
+
+        private string DescribeFoe()
             => Boss ? $"a boss{(EnemySchool.Length > 0 ? $" ({EnemySchool})" : "")}"
                 : Enemies >= 3 ? $"{Enemies} enemies{(EnemySchool.Length > 0 ? $" ({EnemySchool})" : "")}"
                 : EnemySchool.Length > 0 ? $"{EnemySchool} enemies" : "any fight";
@@ -198,7 +204,12 @@ internal static class BotCards {
                 .ThenByDescending(c => c.Rank).ThenByDescending(c => c.BaseDamage)],
             Kind.Heal => [.. cards.OrderByDescending(c => (situation.Boss || style == BotStyle.Healer) && c.HealWholeTeam ? 1 : 0)
                 .ThenByDescending(c => c.HealForTeammate || c.HealWholeTeam ? 1 : 0).ThenByDescending(c => c.HealAmount)],
-            Kind.Shield => [.. cards.OrderByDescending(c => enemy.Length > 0 && RewrittenAI.Same(c.ShieldSchool, enemy) ? 2 : 0)
+            // Shields: the ones for schools the enemies' decks hit with first, when those are known; else the enemy's school.
+            Kind.Shield => [.. cards.OrderByDescending(c => situation.HitSchools.Count > 0
+                    ? (c.ShieldSchools.Length == 0 || c.ShieldSchools.Any(x => x.Length == 0 || x.Equals("All", StringComparison.OrdinalIgnoreCase)
+                                                                     || situation.HitSchools.Contains(x, StringComparer.OrdinalIgnoreCase)) ? 3 : 0)
+                    : 0)
+                .ThenByDescending(c => enemy.Length > 0 && RewrittenAI.Same(c.ShieldSchool, enemy) ? 2 : 0)
                 .ThenByDescending(c => string.IsNullOrEmpty(c.ShieldSchool) || c.ShieldSchool.Equals("All", StringComparison.OrdinalIgnoreCase) ? 1 : 0)
                 .ThenByDescending(c => c.ShieldWholeTeam || c.ShieldForTeammate ? 1 : 0)],
             Kind.Blade => [.. cards.OrderByDescending(c => RewrittenAI.Same(c.BladeSchool, school) || string.IsNullOrEmpty(c.BladeSchool) ? 1 : 0)
@@ -362,7 +373,8 @@ internal static class BotCards {
     /// hitter's heals and shields), a second copy of a charm already on everyone it can go on, and spare heals while the
     /// whole team is healthy and the hand is full.
     /// </summary>
-    internal static List<int> Discards(CombatDuelSubCircle me, IReadOnlyList<CombatDuelSubCircle> circles, BotStyle style) {
+    internal static List<int> Discards(CombatDuelSubCircle me, IReadOnlyList<CombatDuelSubCircle> circles, BotStyle style,
+                                       Func<Card, bool> uselessHere = null) {
         var hand = new List<(int Index, Card Card)>();
         for (byte i = 0; i < 24; i++) {
             if (me.GetSpellFromLastHand(i) is not { } spell || CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is not SpellTemplate template
@@ -380,6 +392,11 @@ internal static class BotCards {
 
         var allies = circles.Where(c => c.OccupiedTeam == me.OccupiedTeam && c.IsAlive).ToList();
         var healthy = allies.All(a => RewrittenAI.HealthShare(a) >= 0.85f);
+
+        // Cards that do nothing in this fight (Ultimus: a shield for schools no enemy here can hit with).
+        if (uselessHere is not null) {
+            throwAway.AddRange(hand.Where(h => uselessHere(h.Card)).Select(h => h.Index));
+        }
 
         // Cards its job never plays.
         if (style == BotStyle.Hitter) {

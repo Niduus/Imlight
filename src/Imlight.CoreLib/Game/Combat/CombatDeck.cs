@@ -55,6 +55,10 @@ internal class CombatDeck {
     internal int VaultRemainingCount => (int) _treasureVaultUsed.Sum(s => s.Quantity);
     internal int TreasureCardsInHand { get; private set; }
 
+    /// <summary>Every card the deck was made with (and its treasure cards), whether drawn yet or not.</summary>
+    internal IEnumerable<(uint Id, int Copies)> AllCards
+        => _spellData.Concat(_treasureVault).Where(s => s is not null).Select(s => (s.TemplateId, (int) Math.Max(1, s.Quantity)));
+
     private readonly List<CombatDeckSpellData> _spellData;
     private readonly List<CombatDeckSpellData> _treasureVault;
     private readonly byte _handSize;

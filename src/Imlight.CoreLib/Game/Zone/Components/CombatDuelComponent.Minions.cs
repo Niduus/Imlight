@@ -114,7 +114,7 @@ internal sealed partial class CombatDuelComponent {
 
     // A minion that left in planning may have been the last one the round waited for.
     private void EndPlanningIfAllMoved() {
-        if (!_awaitingCombatMoves || CombatResolver is null || !CombatResolver.HaveAllParticipantsEnqueuedActions()) {
+        if (!_awaitingCombatMoves || !PlanningMayEnd || CombatResolver is null || !CombatResolver.HaveAllParticipantsEnqueuedActions()) {
             return;
         }
 

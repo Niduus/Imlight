@@ -72,13 +72,25 @@ internal static class UltimusTactics {
         var hurt = allies.Where(a => !teamHealed && !healed.Contains(a) && RewrittenAI.HealthShare(a) < HURT)
             .OrderBy(RewrittenAI.HealthShare).ToList();
 
-        return Solo(me, castable, enemies, focus, hurt);
+        // What the enemies can hit with, read from their decks (UltimusScout).
+        var threat = UltimusScout.InBattle(enemies);
+
+        return Solo(me, castable, enemies, focus, hurt, threat);
     }
+
+    /// <summary>
+    /// A shield that guards against none of what the enemies here can hit with (an Elemental Shield against a Myth
+    /// creature): useless in this fight, so it is not cast, and it may be discarded.
+    /// </summary>
+    internal static bool UselessShield(Card card, UltimusScout.Threat threat)
+        => card.Shield && !card.Hit && !card.Heal && threat.Known && threat.Covered(card.ShieldSchools) < MIN_COVER;
+
+    private const double MIN_COVER = 0.25;
 
     // ---- alone (with any players who joined) ----
 
     private static Choice Solo(CombatDuelSubCircle me, List<InHand> hand, List<CombatDuelSubCircle> enemies, CombatDuelSubCircle focus,
-                               List<CombatDuelSubCircle> hurt) {
+                               List<CombatDuelSubCircle> hurt, UltimusScout.Threat threat) {
         var mine = RewrittenAI.HealthShare(me);
         var myHurt = mine < HURT ? new List<CombatDuelSubCircle> { me } : [];
         var playersInDanger = hurt.Where(h => h != me && RewrittenAI.HealthShare(h) < DANGER).ToList();
@@ -92,7 +104,7 @@ internal static class UltimusTactics {
         return (mine < DANGER ? Heal(me, hand, myHurt) : null)
                ?? Finish(me, hand, enemies)
                ?? Heal(me, hand, playersInDanger)
-               ?? (mine < HURT ? Heal(me, hand, myHurt) ?? Shield(me, hand, myHurt) : null)
+               ?? (mine < HURT ? Heal(me, hand, myHurt) ?? Shield(me, hand, myHurt, threat) : null)
                ?? (finishesFocus ? null : SelfBlade(me, hand))
                ?? (finishesFocus ? null : TrapFor(me, hand, [], focus, RewrittenAI.SchoolOf(me)))
                ?? Hit(me, hand, focus, enemies, enemies.Count >= 2 ? "hits" : "hits its target")
@@ -121,18 +133,27 @@ internal static class UltimusTactics {
             : $"heals {Name(who)} ({RewrittenAI.Percent(RewrittenAI.HealthShare(who))}% health) with {heal.Card.Shown}");
     }
 
-    private static Choice Shield(CombatDuelSubCircle me, List<InHand> hand, List<CombatDuelSubCircle> hurt) {
+    private static Choice Shield(CombatDuelSubCircle me, List<InHand> hand, List<CombatDuelSubCircle> hurt, UltimusScout.Threat threat) {
         var who = hurt.FirstOrDefault(h => !hand.Any(s => s.Card.Shield && RewrittenAI.HasEffectOfSpell(h, s.Card.Id)));
         if (who is null) {
             return null;
         }
 
-        var shield = hand.Where(h => h.Card.Shield && (h.Card.ShieldWholeTeam || h.Card.ShieldForTeammate || who == me)).FirstOrDefault();
+        // The shield that stops most of what the enemies' decks can hit with; none that stops nothing here.
+        var (shield, covers) = hand.Where(h => h.Card.Shield && (h.Card.ShieldWholeTeam || h.Card.ShieldForTeammate || who == me))
+            .Select(h => (Hand: h, Covers: threat.Covered(h.Card.ShieldSchools)))
+            .Where(x => x.Covers >= MIN_COVER)
+            .OrderByDescending(x => x.Covers).ThenByDescending(x => x.Hand.Card.ShieldWholeTeam ? 1 : 0)
+            .FirstOrDefault();
         if (shield is null) {
             return null;
         }
 
-        return new(Move.Cast, shield.Index, shield.Card.ShieldWholeTeam ? -1 : who.SlotIndex, $"shields {Name(who)} with {shield.Card.Shown}");
+        var why = threat.Known && threat.Hits.Count > 0
+            ? $" (stops {RewrittenAI.Percent((float) covers)}% of what they hit with: {string.Join(", ", threat.Schools.Take(3))})"
+            : "";
+
+        return new(Move.Cast, shield.Index, shield.Card.ShieldWholeTeam ? -1 : who.SlotIndex, $"shields {Name(who)} with {shield.Card.Shown}{why}");
     }
 
     private static Choice Finish(CombatDuelSubCircle me, List<InHand> hand, List<CombatDuelSubCircle> enemies) {
@@ -203,7 +224,15 @@ internal static class UltimusTactics {
     private static bool Fits(string charmSchool, string hitSchool)
         => string.IsNullOrEmpty(charmSchool) || charmSchool.Equals("All", StringComparison.OrdinalIgnoreCase) || RewrittenAI.Same(charmSchool, hitSchool);
 
-    private static string Name(CombatDuelSubCircle circle)
-        => circle.ParticipantObject?.m_debugName is { Length: > 0 } name ? name : $"slot {circle.SlotIndex}";
+    // The name as the game shows it ("Cyclops Legionnaire", not its object's short debug name "0" or "95DD"); a wizard
+    // by its name, itself as "itself".
+    private static string Name(CombatDuelSubCircle circle) {
+        if (circle.IsHumanPlayer) {
+            return UltimusDirector.RoleOf(circle.ParticipantObject?.m_globalID.Full ?? 0) is not null ? "itself"
+                : circle.ParticipantObject?.m_debugName is { Length: > 0 } wizard ? wizard : $"slot {circle.SlotIndex + 1}";
+        }
+
+        return CombatEffectApplicator.TargetName(circle);
+    }
 
 }
