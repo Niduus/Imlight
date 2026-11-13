@@ -71,7 +71,12 @@ internal static class OverlayQuestPath {
     private static readonly ConcurrentDictionary<ulong, (string Zone, int Goal, int Start, DateTime At, List<(float X, float Y)> Points)> s_walks = new();
 
     /// <summary>The points to walk through from (<paramref name="fromX"/>, <paramref name="fromY"/>) to the step, ending at the step; straight when unknown.</summary>
-    internal static List<(float X, float Y)> Walk(ulong charId, string zonePath, float fromX, float fromY, float toX, float toY) {
+    /// <remarks>
+    /// <paramref name="body"/>: for a server-played wizard's own feet (the Quest Team, Ultimus), never through a wall
+    /// (Niduus, 2026-11-13: "bots visually to players go through walls"): with no way all the way, it walks as far as
+    /// the walls let it, and a step inside a wall ends on the nearest floor instead.
+    /// </remarks>
+    internal static List<(float X, float Y)> Walk(ulong charId, string zonePath, float fromX, float fromY, float toX, float toY, bool body = false) {
         var straight = new List<(float X, float Y)> { (toX, toY) };
         try {
             if (GridOf(zonePath) is not { } grid) {
@@ -94,10 +99,25 @@ internal static class OverlayQuestPath {
             // No way without a ledge (a ramp the file doesn't show as one): the way past walls only.
             if (cells is null) {
                 grid = grid with { Heights = null };
-                cells = Search(grid, from, to);
+                cells = Search(grid, from, to, partial: body);
             }
 
-            var points = cells is null ? straight : Smooth(grid, cells, toX, toY);
+            // A wizard's step inside a wall (the grid is coarse, a door sits in its wall): kept when it is just by the
+            // floor, otherwise it stops on the floor nearest it.
+            var (endX, endY) = (toX, toY);
+            if (body && cells is not null && cells.Count > 0) {
+                var reached = cells[^1];
+                var (cx, cy) = Center(grid, reached);
+                if (grid.Cost[goal] == BLOCKED && MathF.Sqrt(((cx - toX) * (cx - toX)) + ((cy - toY) * (cy - toY))) > grid.Cell * 2) {
+                    (endX, endY) = (cx, cy);
+                }
+                else if (reached != to && MathF.Sqrt(((cx - toX) * (cx - toX)) + ((cy - toY) * (cy - toY))) > 300) {
+                    // Only part of the way: it ends where the walls let it (a door or exit just past its wall still counts).
+                    (endX, endY) = (cx, cy);
+                }
+            }
+
+            var points = cells is null ? straight : Smooth(grid, cells, endX, endY);
             s_walks[charId] = (zonePath, goal, start, DateTime.UtcNow, points);
 
             return points;
@@ -183,8 +203,11 @@ internal static class OverlayQuestPath {
         (1, 0, 1), (-1, 0, 1), (0, 1, 1), (0, -1, 1), (1, 1, 1.4142f), (1, -1, 1.4142f), (-1, 1, 1.4142f), (-1, -1, 1.4142f),
     ];
 
-    // A* from start to goal over the costs; null when there is no way.
-    private static List<int> Search(Grid grid, int start, int goal) {
+    private static (float X, float Y) Center(Grid grid, int cell)
+        => (grid.Left + ((cell % grid.Width) + 0.5f) * grid.Cell, grid.Top - ((cell / grid.Width) + 0.5f) * grid.Cell);
+
+    // A* from start to goal over the costs; null when there is no way (with partial, the way to the cell it got nearest).
+    private static List<int> Search(Grid grid, int start, int goal, bool partial = false) {
         if (start == goal) {
             return [goal];
         }
@@ -206,20 +229,29 @@ internal static class OverlayQuestPath {
         cameFrom[start] = -1;
         open.Enqueue(start, Guess(start));
         var looked = 0;
+        var (nearest, nearestGuess) = (start, Guess(start));
+        List<int> PathTo(int end) {
+            var path = new List<int>();
+            for (var at = end; at != -1; at = cameFrom[at]) {
+                path.Add(at);
+            }
+
+            path.Reverse();
+
+            return path;
+        }
+
         while (open.TryDequeue(out var cell, out var priority)) {
             if (cell == goal) {
-                var path = new List<int>();
-                for (var at = goal; at != -1; at = cameFrom[at]) {
-                    path.Add(at);
-                }
-
-                path.Reverse();
-
-                return path;
+                return PathTo(goal);
             }
 
             if (++looked > 400000) {
-                return null;
+                return partial ? PathTo(nearest) : null;
+            }
+
+            if (Guess(cell) < nearestGuess) {
+                (nearest, nearestGuess) = (cell, Guess(cell));
             }
 
             // An old entry for a cell reached more cheaply since.
@@ -251,7 +283,7 @@ internal static class OverlayQuestPath {
             }
         }
 
-        return null;
+        return partial ? PathTo(nearest) : null;
     }
 
     // Straight runs where the cells between are as easy to walk, so the line has few bends; then the step itself.
@@ -309,12 +341,18 @@ internal static class OverlayQuestPath {
             }
 
             var e2 = 2 * err;
-            if (e2 >= dy) {
+            var (stepX, stepY) = (e2 >= dy, e2 <= dx);
+            // A slant between two wall cells (their corners touch) is a wall too: the line can't slip through it.
+            if (stepX && stepY && (grid.Cost[(y0 * grid.Width) + x0 + sx] == BLOCKED || grid.Cost[((y0 + sy) * grid.Width) + x0] == BLOCKED)) {
+                return false;
+            }
+
+            if (stepX) {
                 err += dy;
                 x0 += sx;
             }
 
-            if (e2 <= dx) {
+            if (stepY) {
                 err += dx;
                 y0 += sy;
             }

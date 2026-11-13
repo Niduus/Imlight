@@ -40,10 +40,62 @@ internal static class BotSheet {
         member["school"] = school ?? "";
         member["mana"] = stats is null ? "" : $"{stats.m_currentMana}/{stats.m_baseMana + stats.m_bonusMana}";
         member["stats"] = new JsonArray([.. Lines(wizard, school).Select(l => (JsonNode) l)]);
-        var deck = wizard?.SpellbookBehavior?.SpellList?.Where(d => d is not null && d.m_quantity > 0).ToList() ?? [];
-        member["deckCards"] = new JsonArray([.. BotCards.Describe(deck.Select(d => ((uint) d.m_templateID, (int) d.m_quantity)))
-            .Split(", ", StringSplitOptions.RemoveEmptyEntries).Select(c => (JsonNode) c)]);
-        member["deckSize"] = deck.Sum(d => (int) d.m_quantity);
+        // The deck as the game's deck window sorts it (Niduus, 2026-11-13: "Include Item and Treasure cards as in the deck
+        // per those classifications"): its spells, the item cards its gear gives, and its treasure cards, as a battle deals them.
+        var (spells, items, treasure) = DeckParts(wizard);
+        member["deckCards"] = Cards(spells);
+        member["deckSize"] = spells.Sum(c => c.Count);
+        member["itemCards"] = Cards(items);
+        member["itemCount"] = items.Sum(c => c.Count);
+        member["treasureCards"] = Cards(treasure);
+        member["treasureCount"] = treasure.Sum(c => c.Count);
+    }
+
+    private static JsonArray Cards(List<(uint Id, int Count)> cards)
+        => new([.. BotCards.Describe(cards).Split(", ", StringSplitOptions.RemoveEmptyEntries).Select(c => (JsonNode) c)]);
+
+    /// <summary>The deck's spells, item cards and treasure cards, sorted the way CombatDuelSubCircle builds a battle deck.</summary>
+    private static (List<(uint Id, int Count)> Spells, List<(uint Id, int Count)> Items, List<(uint Id, int Count)> Treasure) DeckParts(Wizard wizard) {
+        var (spells, items, treasure) = (new List<(uint Id, int Count)>(), new List<(uint Id, int Count)>(), new List<(uint Id, int Count)>());
+        var book = wizard?.SpellbookBehavior;
+        if (book is null) {
+            return (spells, items, treasure);
+        }
+
+        foreach (var entry in (book.SpellList ?? []).Where(d => d is not null && d.m_quantity > 0)) {
+            var template = Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(entry.m_templateID) as Imcodec.ObjectProperty.TypeCache.SpellTemplate;
+            var isTreasure = template is not null && (template.m_Treasure || ((string) template.m_name ?? "").EndsWith(" TC", StringComparison.Ordinal));
+            if (!isTreasure && book.LearnedSpellTemplateIds is { Count: > 0 } && !book.LearnedSpellTemplateIds.Contains(entry.m_templateID)
+                && book.TreasureCardCount(entry.m_templateID) > 0) {
+                isTreasure = true;
+            }
+
+            (isTreasure ? treasure : spells).Add(((uint) entry.m_templateID, (int) entry.m_quantity));
+        }
+
+        // Item cards: one for each the gear gives, less the ones crossed out for the deck worn.
+        var deckId = wizard.EquipmentBehavior?.SlotList?.FirstOrDefault(s => s.SlotType == EquipmentSlotType.Deck)?.ItemId;
+        var skipped = new Dictionary<uint, int>();
+        foreach (var temp in (book.TemporarySpells ?? []).Where(t => t is not null)) {
+            var id = (uint) temp.m_templateID;
+            if (deckId is { } worn) {
+                skipped.TryGetValue(id, out var done);
+                if (done < book.ExcludedItemSpellCount(worn, temp.m_templateID)) {
+                    skipped[id] = done + 1;
+                    continue;
+                }
+            }
+
+            var at = items.FindIndex(c => c.Id == id);
+            if (at >= 0) {
+                items[at] = (id, items[at].Count + 1);
+            }
+            else {
+                items.Add((id, 1));
+            }
+        }
+
+        return (spells, items, treasure);
     }
 
     private static List<string> Lines(Wizard wizard, string school) {
