@@ -313,6 +313,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         UsePotions();
         NoticeOddities();
+        AnswerPlayers();
 
         // Paused in Ahziael: they stand where they are, logged in (a battle still plays out by itself).
         if (DateTime.UtcNow >= _nextPauseLook) {
@@ -1058,6 +1059,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
     private DateTime _battleSince = DateTime.MaxValue;
     private int _battlesWithPlayers;
+    private bool _battleCompany;
 
     private bool HandleBattle() {
         var me = _team[0];
@@ -1069,9 +1071,12 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         if (!_wasInBattle[0] && now) {
             _battleSince = DateTime.UtcNow;
             var others = CombatDuelComponent.UltimusBattleCompany(me.GlobalId);
+            _battleCompany = others.Count > 0;
             if (others.Count > 0) {
                 _battlesWithPlayers++;
                 Note("Ultimus", $"is in a battle with {string.Join(", ", others)}; it welcomes them and plays with them.");
+                // It says hello in Menu Chat: "I'll help" when it walked into theirs, a welcome when they walked into its.
+                Speak(_target?.Key?.EndsWith("|join", StringComparison.Ordinal) == true ? "join" : "welcome", 0.6);
             }
         }
 
@@ -1112,6 +1117,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         if (!lost || index != 0) {
             if (index == 0) {
                 Note("Ultimus", "won the battle.");
+                if (_battleCompany) {
+                    Speak("won", 0.5);
+                }
+
                 Count("battles won");
                 // Fights won for each step, to see how many kills a drop or a count takes (Niduus: "flag abnormal drops").
                 if (_target is { Kind: UltimusPlanner.FIGHT } fought) {

@@ -63,6 +63,9 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
 
     internal sealed record UsePotion;
 
+    /// <summary>Say a Menu Chat phrase by its chat ID, as a player picks it from the menu.</summary>
+    internal sealed record SayMenuChat(uint PhraseId);
+
     internal sealed record WorldTeleport(ulong DoorGlobalId, string World);
 
     /// <summary>Put on an item from the backpack, as the game's backpack does.</summary>
@@ -218,6 +221,7 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
             View.Options.TryRemove(m.GlobalId, out _);
         });
         Receive<Train>(m => Send(new WIZARD_12_PROTOCOL.MSG_TRAIN { MobileID = m.TrainerGlobalId, TrainingIndex = m.Index }));
+        Receive<SayMenuChat>(m => Send(new GAME_5_PROTOCOL.MSG_REQUESTRADIALQUICKCHAT { MessageID = m.PhraseId }));
         Receive<UsePotion>(_ => Send(new WIZARD_12_PROTOCOL.MSG_USEPOTION()));
         Receive<WorldTeleport>(m => Send(new WIZARD_12_PROTOCOL.MSG_WORLDTELEPORTREQUEST { TeleportID = m.DoorGlobalId, World = m.World }));
         Receive<CloseDialog>(m => FinishDialog(m.Number));
