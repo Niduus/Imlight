@@ -56,6 +56,12 @@ internal static class MinimapIndex {
         /// <summary>A door's destination zone (empty for anything else), for the Quest Tracker's way.</summary>
         internal string To { get; init; } = "";
 
+        /// <summary>
+        /// Where a door lands in its destination zone: a named spot of that zone or "x,y,z,yaw" (empty when unknown), so a
+        /// door within the same area (Triton Avenue's "To Triton Avenue" pads) is a teleporter the way finders can use.
+        /// </summary>
+        internal string ToLoc { get; init; } = "";
+
     }
 
     private static readonly ConcurrentDictionary<IActorRef, ConcurrentDictionary<ZoneEntity, Mark>> s_zones = new();
@@ -114,7 +120,9 @@ internal static class MinimapIndex {
         if (entity.GetComponentOfType<InteractDoorTeleportComponent>() is { } door) {
             var to = door.DestinationZone();
 
-            return new Mark(DOOR, to.Length == 0 ? "Door" : "To " + World.ZoneNames.Shown(to), id, adjectives, entity.ActiveGameObject, 0) { To = to };
+            return new Mark(DOOR, to.Length == 0 ? "Door" : "To " + World.ZoneNames.Shown(to), id, adjectives, entity.ActiveGameObject, 0) {
+                To = to, ToLoc = door.DestinationLoc(),
+            };
         }
 
         if (entity.GetComponentOfType<StreetTeleporterComponent>() is not null || entity.GetComponentOfType<WorldTeleportDoorComponent>() is not null

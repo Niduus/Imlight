@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Imlight.CoreLib.Game.Zone.Core;
 
 namespace Imlight.CoreLib.Game.Tools;
@@ -82,9 +83,15 @@ internal static class OverlayQuestPath {
         IReadOnlyList<(float X, float Y)> avoid = null)
         => WalkCore(charId, zonePath, fromX, fromY, toX, toY, body, avoid, remember: true);
 
+    // Whether this thread's last WalkCore found a way on the floor (not the straight fallback).
+    [ThreadStatic]
+    private static bool t_found;
+
     private static List<(float X, float Y)> WalkCore(ulong charId, string zonePath, float fromX, float fromY, float toX, float toY, bool body,
         IReadOnlyList<(float X, float Y)> avoid, bool remember) {
         var straight = new List<(float X, float Y)> { (toX, toY) };
+        // Ground not known (no collision file, a spot off the map): the straight line is all there is.
+        t_found = true;
         try {
             if (GridOf(zonePath) is not { } grid) {
                 return straight;
@@ -131,6 +138,7 @@ internal static class OverlayQuestPath {
                 }
             }
 
+            t_found = cells is not null && (!body || cells.Count == 0 || cells[^1] == to);
             var points = cells is null ? straight : Smooth(grid, cells, endX, endY);
             if (remember) {
                 s_walks[charId] = (zonePath, goal, start, DateTime.UtcNow, points);
@@ -172,7 +180,9 @@ internal static class OverlayQuestPath {
             var (x, y) = (fromX, fromY);
             var taken = new List<Ultimus.UltimusPads.Pad>();
             for (var hop = 0; hop < 4 && Apart(zonePath, x, y, toX, toY); hop++) {
-                if (Ultimus.UltimusPads.Toward(zonePath, x, y, toX, toY, taken) is not { } pad) {
+                // The pads that chain to the step's ground; else, as a player would try, a pad here that lands nearer it.
+                if ((Ultimus.UltimusPads.Toward(zonePath, x, y, toX, toY, taken)
+                     ?? Ultimus.UltimusPads.Another(zonePath, x, y, toX, toY, taken)) is not { } pad) {
                     break;
                 }
 
@@ -186,8 +196,18 @@ internal static class OverlayQuestPath {
                 spots.Add(new Spot(x, y));
             }
 
-            foreach (var (px, py) in WalkCore(charId, zonePath, x, y, toX, toY, false, avoid, remember: false)) {
-                spots.Add(new Spot(px, py));
+            // The last walk, only when it is a real one: never a straight line over the Minimap's black, through a wall or
+            // off a ledge (Niduus, 2026-11-13: "it still draws through"). With no legal way, the line stops where the
+            // known way stops (at the wizard when there is none): the ring still shows the step.
+            if (!Apart(zonePath, x, y, toX, toY)) {
+                var final = WalkCore(charId, zonePath, x, y, toX, toY, false, avoid, remember: false);
+                if (t_found) {
+                    spots.AddRange(final.Select(p => new Spot(p.X, p.Y)));
+                }
+            }
+
+            if (spots.Count == 0) {
+                spots.Add(new Spot(fromX, fromY));
             }
         }
         catch (Exception) {
