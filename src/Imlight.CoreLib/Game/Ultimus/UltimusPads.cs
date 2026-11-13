@@ -154,6 +154,17 @@ internal static class UltimusPads {
             .FirstOrDefault();
     }
 
+    /// <summary>The nearest teleporter within <paramref name="most"/> on the ground the spot is on (null when none).</summary>
+    internal static Pad Nearest(string zonePath, float x, float y, ICollection<Pad> skip, float most) {
+        var here = OverlayQuestPath.IslandOf(zonePath, x, y);
+
+        return In(zonePath)
+            .Where(p => !skip.Contains(p) && (here < 0 || OverlayQuestPath.IslandOf(zonePath, p.X, p.Y) == here)
+                        && UltimusPlanner.Far(x, y, p.X, p.Y) <= most)
+            .OrderBy(p => UltimusPlanner.Far(x, y, p.X, p.Y))
+            .FirstOrDefault();
+    }
+
     private static bool Near(float ax, float ay, float bx, float by, float most) => UltimusPlanner.Far(ax, ay, bx, by) <= most;
 
     // ---- The area's files: a trigger that teleports within the area, its volume, and the named spot it lands on. ----

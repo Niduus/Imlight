@@ -38,6 +38,10 @@ internal sealed partial class UltimusDirectorActor {
     // The gold a wizard keeps for potions and the next trainer.
     private const double GOLD_KEPT = 0.25;
 
+    // The most a shop piece may cost for Ahziael to top up its gold for it, and how much better it must be.
+    private const int MAX_GEAR_TOP_UP = 60000;
+    private const double BIG_GAIN = 8;
+
     private DateTime _nextGearLook = DateTime.MinValue;
     private DateTime _nextShopping = DateTime.MinValue;
     private readonly Dictionary<string, string> _deckFor = [];
@@ -314,9 +318,26 @@ internal sealed partial class UltimusDirectorActor {
 
             var gold = (int) ((wizard.GameStats?.m_currentGold ?? 0) * (1 - GOLD_KEPT));
             var owned = (wizard.InventoryBehavior?.Items ?? []).Select(i => (uint) Math.Min((ulong) i.m_templateID, uint.MaxValue)).ToHashSet();
-            foreach (var (piece, vendors, _) in BotGear.ShopUpgrades(wizard, StyleOf(member), gold)) {
+            // What it can pay for; and, when nothing is, a clearly better piece it can't pay for yet (Niduus, 2026-11-13:
+            // "why is Ultimus wearing this instead of Adept robe?": the Adept Sorcerer's Robe costs 21,880 gold, more than
+            // he had, so he kept a dropped Cloak of the Watchful). Ahziael gives the difference, as it gives gold so
+            // shopping never holds the quests up.
+            var affordable = BotGear.ShopUpgrades(wizard, StyleOf(member), gold);
+            var upgrades = affordable.Count > 0 ? affordable
+                : BotGear.ShopUpgrades(wizard, StyleOf(member), MAX_GEAR_TOP_UP).Where(u => u.Gain >= BIG_GAIN).ToList();
+            foreach (var (piece, vendors, _) in upgrades) {
                 if (owned.Contains(piece.Id) || _shopSkipped.Contains(piece.Id)) {
                     continue;
+                }
+
+                if (piece.Gold > gold && wizard.GameStats is { } stats) {
+                    var give = (int) Math.Ceiling(piece.Gold / (1 - GOLD_KEPT)) - stats.m_currentGold + 1;
+                    if (give > 0) {
+                        wizard.AddGold(give);
+                        Count("gold given", give);
+                        Note(member.Role, $"{member.Name} can't afford {piece.Name} ({piece.Gold} gold), a clear upgrade; Ahziael gives it {give} gold.",
+                            UltimusLink.COMMAND);
+                    }
                 }
 
                 // A shopkeeper of it here first.

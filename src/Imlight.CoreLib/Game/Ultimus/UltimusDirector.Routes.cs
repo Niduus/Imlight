@@ -99,6 +99,9 @@ internal sealed partial class UltimusDirectorActor {
         return list.Count > 0 ? list : null;
     }
 
+    // How far the nearest teleporter may be when it can't move at all.
+    private const float PAD_LAST_RESORT = 3000f;
+
     /// <summary>
     /// Stuck a second time: another way, as a player would try, before going back to the area's start. True when there is
     /// one (a teleporter here whose landing is nearer the step).
@@ -114,7 +117,10 @@ internal sealed partial class UltimusDirectorActor {
             left.Add(_viaPad);
         }
 
-        if (UltimusPads.Another(member.Zone, member.X, member.Y, goal.X, goal.Y, left) is not { } pad) {
+        // A teleporter whose landing is nearer the step; else, when it can't move at all (stood still on the same spot each
+        // time), the nearest teleporter on the ground it stands on, as a player who can't get off a ledge takes the pad.
+        if ((UltimusPads.Another(member.Zone, member.X, member.Y, goal.X, goal.Y, left)
+             ?? UltimusPads.Nearest(member.Zone, member.X, member.Y, left, PAD_LAST_RESORT)) is not { } pad) {
             return false;
         }
 
