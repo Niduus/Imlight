@@ -108,6 +108,7 @@ internal sealed partial class ManagerWindow {
 
         LoadUltimusSettings();
         StartUltimusTimer();
+        ShowCardsOn(_ultSheet);
 
         return Page(
             Fold("users", ULTIMUS_TAB, "Ultimus",

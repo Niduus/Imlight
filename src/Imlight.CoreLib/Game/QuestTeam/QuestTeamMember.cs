@@ -27,6 +27,7 @@ using Imcodec.MessageLayer;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.CoreLib.Game.BotShared;
 using Imlight.Common;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
@@ -95,6 +96,7 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
 
     /// <summary>Change the deck, as the deck window does: these out (one per copy), then these in.</summary>
     internal sealed record EditDeck(ulong DeckId, List<uint> Out, List<uint> In, string Why);
+    internal sealed record ItemCards(ulong DeckId, List<(uint Id, bool Off)> Clicks);
 
     /// <summary>Ice asks a teammate into its group.</summary>
     internal sealed record Invite(ulong CharId, ulong GlobalId);
@@ -259,6 +261,14 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
             Note($"buys {m.What}.");
             Send(new WIZARD_12_PROTOCOL.MSG_SHOPBUYREQUEST { npcGlobalID = m.NpcGlobalId, ShopID = m.ItemTemplate, quantity = 1, CurrencyType = 0 });
             Send(new WIZARD_12_PROTOCOL.MSG_DONESHOPPING());
+        });
+        Receive<ItemCards>(m => {
+            // One click per copy in the deck window: the server crosses out (or puts back) one copy each time.
+            foreach (var (id, off) in m.Clicks) {
+                if (BotCards.SpellHash(id) is var hash and not 0) {
+                    Send(new WIZARD2_53_PROTOCOL.MSG_UPDATEITEMSPELLEXCLUSIONLIST { SpellID = hash, DeckID = m.DeckId, Exclude = (byte) (off ? 1 : 0) });
+                }
+            }
         });
         Receive<EditDeck>(m => {
             Note($"changes its deck ({m.Why}): {m.Out.Count} out, {m.In.Count} in.");

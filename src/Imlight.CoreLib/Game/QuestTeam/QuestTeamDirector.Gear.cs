@@ -216,7 +216,41 @@ internal sealed partial class QuestTeamDirectorActor {
             if (_deckKnown.GetValueOrDefault(member.Role) != known) {
                 PrepareDeck(i, _target?.Kind == QuestTeamPlanner.FIGHT ? BotCards.SituationOf(_target.Template) : BotCards.Situation.Unknown, force: true);
             }
+
+            KeepItemCards(i);
         }
+    }
+
+    // What was last clicked for each wizard's item cards, and when, so the same clicks are not sent again while the server
+    // is still saving them.
+    private readonly Dictionary<string, (string Clicks, DateTime At)> _itemCardsSent = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Turns off the item cards its gear gives that it never plays, and turns back on the ones it plays, as a player clicks
+    /// them in the deck window (Niduus, 2026-11-13: "They're also able to disable item cards"). Ahziael shows them crossed out.
+    /// </summary>
+    private void KeepItemCards(int index) {
+        var member = _team[index];
+        if (member.Wizard is not { } wizard || CombatDuelComponent.IsInBattle(member.GlobalId)) {
+            return;
+        }
+
+        var (deckId, clicks) = BotCards.ItemCardClicks(wizard, StyleOf(member));
+        if (clicks.Count == 0) {
+            _itemCardsSent.Remove(member.Role);
+            return;
+        }
+
+        var key = deckId + ":" + string.Join(",", clicks.Select(c => $"{c.Id}{(c.Off ? "-" : "+")}"));
+        if (_itemCardsSent.TryGetValue(member.Role, out var sent) && sent.Clicks == key && DateTime.UtcNow - sent.At < TimeSpan.FromMinutes(1)) {
+            return;
+        }
+
+        _itemCardsSent[member.Role] = (key, DateTime.UtcNow);
+        var said = clicks.GroupBy(c => (c.Id, c.Off, c.Why)).Select(g =>
+            $"{(g.Key.Off ? "off" : "on")}: {BotCards.Describe([(g.Key.Id, g.Count())])} ({g.Key.Why})");
+        Note(member.Role, $"{member.Name} turns item cards {string.Join("; ", said)}.");
+        _actors[index].Tell(new QuestTeamMember.ItemCards(deckId, [.. clicks.Select(c => (c.Id, c.Off))]));
     }
 
     /// <summary>Before a fight: each wizard's deck for what it is about to fight.</summary>
