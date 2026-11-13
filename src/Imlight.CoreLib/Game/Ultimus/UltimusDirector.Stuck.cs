@@ -77,7 +77,7 @@ internal sealed partial class UltimusDirectorActor {
 
         Note("Ultimus", $"{member.Name} has stood still over {seconds} seconds in {where} while {_doing}: steps aside and finds the way again.",
             UltimusLink.ABNORMAL);
-        var aside = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, spot.X, spot.Y);
+        var aside = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, spot.X, spot.Y, body: true);
         _actors[index].Tell(new UltimusMember.WalkTo(aside, "steps aside to get unstuck"));
         _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
         OverlayQuestPath.Forget(member.CharId);

@@ -106,10 +106,23 @@ internal sealed class WizardSheet {
         }
 
         Lines(_deck, cards, "Empty.");
+
+        // Item cards and treasure cards under their own headings, as the game's deck window shows them.
+        Group(_deck, "Item Cards", (int?) m["itemCount"] ?? 0, List(m["itemCards"]), "None from gear.");
+        Group(_deck, "Treasure Cards", (int?) m["treasureCount"] ?? 0, List(m["treasureCards"]), "None.");
         _spells.Text = List(m["spells"]) is { Count: > 0 } spells ? string.Join(", ", spells) : "None yet.";
     }
 
     private static string Key(JsonObject m) => Or(S(m, "role"), S(m, "name"));
+
+    private static void Group(StackPanel panel, string title, int count, List<string> lines, string none) {
+        var header = Text(title + (count > 0 ? $" ({count} cards)" : ""), strong: true);
+        header.Margin = new Thickness(0, 8, 0, 0);
+        panel.Children.Add(header);
+        foreach (var line in lines.Count == 0 ? [none] : lines) {
+            panel.Children.Add(Text(line));
+        }
+    }
 
     private static void Lines(StackPanel panel, List<string> lines, string none) {
         panel.Children.Clear();

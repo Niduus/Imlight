@@ -116,7 +116,7 @@ internal sealed partial class QuestTeamDirectorActor {
 
         Note(member.Role, $"{member.Name} has stood still over {seconds} seconds in {where} while {_doing}: steps aside and finds the way again.",
             QuestTeamLink.ABNORMAL);
-        var aside = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, spot.Value.X, spot.Value.Y);
+        var aside = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, spot.Value.X, spot.Value.Y, body: true);
         _actors[index].Tell(new QuestTeamMember.WalkTo(aside, "steps aside to get unstuck"));
         _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
         OverlayQuestPath.Forget(member.CharId);

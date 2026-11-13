@@ -1108,7 +1108,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             return;
         }
 
-        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, target.X, target.Y);
+        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, target.X, target.Y, body: true);
         _sent[index] = (target, DateTime.UtcNow, member.X, member.Y);
         _actors[index].Tell(new QuestTeamMember.WalkTo(points, target.What));
         if (index == 0) {
@@ -1166,7 +1166,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             return;
         }
 
-        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, x, y);
+        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, x, y, body: true);
         _sent[index] = (follow, DateTime.UtcNow, member.X, member.Y);
         _actors[index].Tell(new QuestTeamMember.WalkTo(points, follow.What));
     }

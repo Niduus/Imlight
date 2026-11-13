@@ -237,3 +237,13 @@ Fixed: The Quest Team and Ultimus walked slowly and choppily
 They walked at about two thirds of a player's running pace, and sent where they were only four times a second, so on your screen they looked slow and jumpy. They now run at a player's pace (400, the RunSpeed setting under [Bots], changes live), send where they are ten times a second, and take corners without stopping on them.
 Where: in the game, wherever they walk
 Test: Run next to the team or Ultimus. They should keep up with you and glide smoothly, not hop.
+
+Fixed: The Quest Team and Ultimus walked through walls
+Their walks already went around walls, but three things let them pass through one. When no way around was found, they walked straight to the spot. A straight stretch could slip between two wall corners that touch. And a spot inside a wall was walked into. Now, when there is no way all the way, they walk as far as the walls let them (a door or exit just past its wall still counts). A straight stretch never slips between touching corners. And a spot deep in a wall ends on the nearest floor. If they then can't go on, the stuck check frees them.
+Where: in the game, wherever they walk
+Test: Watch them walk past buildings, fences and walls. They should go around them, not through them.
+
+Changed: Item and Treasure cards on the Team Wizards and Ultimus pages
+Under Deck, the page now lists the deck's spells, then "Item Cards" (the cards their gear gives, without the ones crossed out for that deck), then "Treasure Cards", each with its own count, as the game's deck window sorts them.
+Where: Ahziael > Quest Team > Team Wizards; Ahziael > Ultimus (its wizard page)
+Test: Open a wizard's page. Under Deck you should see Item Cards and Treasure Cards headings with their cards.
