@@ -70,6 +70,65 @@ internal sealed partial class ManagerWindow {
         public string Expected { get; set; } = "";
         public List<string> Seen { get; set; } = [];
         public List<string> Log { get; set; } = [];
+        public string Level { get; set; } = "";
+    }
+
+    // The newest issue already popped up (-1: not read yet, so issues from before Ahziael opened do not pop up).
+    private int _teamPopped = -1;
+    private Window? _teamPopup;
+
+    // A CRITICAL issue (the story is stopped) pops up over Ahziael with an OK button (Niduus, 2026-11-13: "this should also
+    // pop up in Ahziael for critical issues"), as well as the banner.
+    private void PopUpCriticalIssues() {
+        var newest = _teamIssueList.Count == 0 ? 0 : _teamIssueList.Max(i => i.Id);
+        if (_teamPopped < 0) {
+            _teamPopped = newest;
+
+            return;
+        }
+
+        var critical = _teamIssueList.Where(i => i.Id > _teamPopped
+                                                 && (i.Level == "CRITICAL" || (i.Level.Length == 0 && i.Kind == "team"))).OrderBy(i => i.Id).ToList();
+        _teamPopped = Math.Max(_teamPopped, newest);
+        if (critical.Count == 0) {
+            return;
+        }
+
+        var last = critical[^1];
+        var text = (critical.Count == 1 ? "Critical Quest Team issue" : $"{critical.Count} critical Quest Team issues. Newest") +
+                   $" ({(last.Title.Length > 0 ? last.Title : "the Quest Team")}): {last.Text}";
+        _teamPopup?.Close();
+        var ok = Primary("OK");
+        var issues = Plain("Open Team Issues");
+        var dialog = new Window {
+            Title = Edition.NAME + " - Quest Team", Width = 460, SizeToContent = SizeToContent.Height, CanResize = false, Background = BACKGROUND,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+        };
+        ManagerTheme.Apply(dialog);
+        ok.Click += (_, _) => dialog.Close();
+        issues.Click += (_, _) => {
+            dialog.Close();
+            SelectTab(QUEST_TEAM_ISSUES_TAB);
+        };
+        dialog.Content = new StackPanel {
+            Margin = new Thickness(22), Spacing = 16,
+            Children = {
+                new DockPanel {
+                    Children = {
+                        WithDock(WithMargin(new Border { VerticalAlignment = VerticalAlignment.Top, Child = ManagerTheme.Tile("flag", new SolidColorBrush(Color.Parse("#FF5A5A")), 32) }, new Thickness(0, 0, 14, 0)), Dock.Left),
+                        WithCenter(new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = ManagerTheme.FONT_HEADING - 2 }),
+                    },
+                },
+                new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, HorizontalAlignment = HorizontalAlignment.Right, Children = { issues, ok } },
+            },
+        };
+        dialog.Closed += (_, _) => {
+            if (_teamPopup == dialog) {
+                _teamPopup = null;
+            }
+        };
+        _teamPopup = dialog;
+        dialog.Show(this);
     }
 
     private string QuestTeamFolder => Path.Combine(_manager.LogFolder, QUEST_TEAM_FOLDER);
@@ -424,6 +483,7 @@ internal sealed partial class ManagerWindow {
 
     private void RefreshQuestTeam() {
         ReadQuestTeamIssues();
+        PopUpCriticalIssues();
 
         // The banner: issues newer than the last one Ahziael showed.
         var seen = QuestTeamIssuesSeen();

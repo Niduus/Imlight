@@ -45,6 +45,8 @@ internal sealed class TeamRequest {
     // "issue": what a player would do and see at that step, and where each wizard was and what it held.
     public string Expected { get; set; }
     public List<string> Seen { get; set; }
+    // "issue": how bad (QuestTeamLink.MINOR, NOTABLE, CRITICAL, ABNORMAL); Ahziael pops up the CRITICAL ones.
+    public string Level { get; set; }
     // "status": the whole status as JSON, written as it is for Ahziael.
     public string Json { get; set; }
 }

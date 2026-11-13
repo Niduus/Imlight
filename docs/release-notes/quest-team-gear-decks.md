@@ -187,3 +187,13 @@ New: A shout-out for the bot idea
 "Shout out to Discord user gese11 for sharing the bot concept" is now on the Quest Team page and in Credits.
 Where: Quest Team > Quest Team; Credits
 Test: Look at the Quest Team page text and the Credits page.
+
+New: Critical Quest Team issues pop up in Ahziael
+When the Quest Team hits a critical issue (red: the story is stopped, like "No progress for 8 minutes"), a window pops up over Ahziael with the issue, an OK button, and "Open Team Issues". The banner at the top still shows too.
+Where: over Ahziael
+Test: When a red issue shows in Team Logs, the window should pop up. Click OK to close it.
+
+Fixed: The team stood still on "Go to Wizard City, Unicorn Way" in "Finding Out Why"
+Those four steps mean opening the four fairy cages on Unicorn Way, but the team only walked to each cage and waited. Steps like this are now clicked, as a player clicks the cage.
+Where: Wizard City, Unicorn Way, "Finding Out Why"
+Test: Let the team reach "Finding Out Why". Team Logs should show "uses something for ..." at each cage, and the quest should move on.
