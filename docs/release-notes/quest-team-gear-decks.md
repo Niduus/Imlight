@@ -282,3 +282,13 @@ New: Game icons for gear and stats on the Quest Team and Ultimus wizard pages
 Gear now shows one line per slot (hat, robe, boots, wand, athame, amulet, ring, pet, mount, deck). Each line has the slot's round icon from the game's backpack tabs, with the item's name and level next to it. Stats now look like the game's stat tooltip: yellow numbers on a dark blue panel, with the game's icons for health, mana, power pip chance, damage, accuracy, pierce, critical, block, healing, pip conversion, shadow pips, archmastery, stun resist and each school's resist. The pictures are read from your game files and nothing in them is changed. Until they're read, or if one isn't found, a drawn icon shows in its place.
 Where: Ahziael > Quest Team > The team's wizards, and the Ultimus page
 Test: Open a wizard there. Gear should show the slot icons with the item names, and stats should show the game's icons beside the numbers.
+
+Changed: Wizard pages show only the stats a wizard has
+The Stats panel on the Quest Team and Ultimus pages now leaves out stats at 0 (like 0 critical rating or 0% Fire resist). Health and mana always show.
+Where: Ahziael > Quest Team > The team's wizards, and the Ultimus page
+Test: Open a wizard. Every stat line should be 1 or more, apart from health and mana.
+
+Fixed: Gear slot icons showed four small icons instead of one
+The game keeps each backpack tab's four looks (normal, pointed at, pressed, greyed) in one picture, and the wizard pages showed all four. Now only the top-left one shows, for every slot.
+Where: Ahziael > Quest Team > The team's wizards, and the Ultimus page (Gear)
+Test: Each gear line should have one round slot icon, then the item's name.
