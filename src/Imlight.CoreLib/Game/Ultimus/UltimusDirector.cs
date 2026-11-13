@@ -1023,6 +1023,15 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // Round the creatures it does not need to fight, not into a battle (Niduus, 2026-11-13: "avoid battles as much as
         // possible"), and by the area's teleporters when walls or water cut the step off (UltimusDirector.Routes.cs).
         var (toX, toY, what) = WayTo(member, target);
+        // By a door or street teleporter stone of the way: pressed, as a player presses X (standing by it does nothing).
+        if (PadToPress(member) is { } press && UltimusPlanner.Far(member.X, member.Y, press.X, press.Y) <= PRESS_REACH
+            && member.Options.ContainsKey(press.Click)) {
+            ClickOnce(index, new UltimusPlanner.Target(UltimusPlanner.STONE, press.X, press.Y, press.Name, GlobalId: press.Click, Key: "pad|" + press.Click),
+                ["Interact"], $"presses {press.Name}, the teleporter toward \"{target.What}\"");
+
+            return;
+        }
+
         // The street's creature areas too, walked or not right now (MobSpawnAreas), except the step's own creatures.
         var walkAvoid = RouteMobs.Avoid(member.ZoneActor, toX, toY, target.Template == 0 ? null : [target.Template], avoid);
         var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, toX, toY, body: true, avoid: walkAvoid);

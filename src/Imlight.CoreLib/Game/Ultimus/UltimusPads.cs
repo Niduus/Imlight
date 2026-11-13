@@ -25,6 +25,7 @@ using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Tools;
+using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Collections;
 
@@ -40,7 +41,12 @@ namespace Imlight.CoreLib.Game.Ultimus;
 /// </summary>
 internal static class UltimusPads {
 
-    internal sealed record Pad(float X, float Y, float ToX, float ToY, string Name, bool Learned = false);
+    /// <param name="Click">
+    /// The door or street teleporter stone to press there (its global id), 0 for a pad that is walked onto. A "To Teleporter
+    /// Hub" stone or a "To Triton Avenue" door does nothing to a wizard who only stands by it (Niduus, 2026-11-13: "bot
+    /// can't use"): it has to be pressed, as a player presses X.
+    /// </param>
+    internal sealed record Pad(float X, float Y, float ToX, float ToY, string Name, bool Learned = false, ulong Click = 0);
 
     private const string PADS_FILE = "pads.json";
 
@@ -65,7 +71,8 @@ internal static class UltimusPads {
 
         lock (s_lock) {
             if (Learned().TryGetValue(zonePath, out var learned)) {
-                pads.AddRange(learned);
+                // One it learned by being moved by a door or stone it knows now is that door or stone (which is pressed).
+                pads.AddRange(learned.Where(l => doors is null || !doors.Any(d => Near(d.X, d.Y, l.X, l.Y, 300) && Near(d.ToX, d.ToY, l.ToX, l.ToY, 800))));
             }
         }
 
@@ -83,6 +90,11 @@ internal static class UltimusPads {
 
         // A teleporter the files already know (its pad near where it stood, its landing near where it came out).
         if (s_files.GetOrAdd(zonePath, FromFiles).Any(p => Near(p.X, p.Y, fromX, fromY, 300) && Near(p.ToX, p.ToY, toX, toY, 400))) {
+            return false;
+        }
+
+        // A door or street teleporter stone it pressed.
+        if (s_doors.TryGetValue(zonePath, out var doors) && doors.Any(p => Near(p.X, p.Y, fromX, fromY, 300) && Near(p.ToX, p.ToY, toX, toY, 800))) {
             return false;
         }
 
@@ -173,6 +185,13 @@ internal static class UltimusPads {
             .FirstOrDefault();
     }
 
+    /// <summary>
+    /// The door or stone to press when a wizard at (x, y) is by the first pad of the way to (toX, toY) and that pad has to
+    /// be pressed (null when the way has no such pad here). The same for Ultimus and the Quest Team.
+    /// </summary>
+    internal static Pad PressHere(string zonePath, float x, float y, float toX, float toY, ICollection<Pad> skip = null, float reach = 160f)
+        => Toward(zonePath, x, y, toX, toY, skip) is { Click: not 0 } pad && Near(x, y, pad.X, pad.Y, reach) ? pad : null;
+
     private static bool Near(float ax, float ay, float bx, float by, float most) => UltimusPlanner.Far(ax, ay, bx, by) <= most;
 
     /// <summary>
@@ -189,7 +208,16 @@ internal static class UltimusPads {
             foreach (var door in live.Where(m => m.Kind == MinimapIndex.DOOR && string.Equals(m.To?.Trim(), zonePath, StringComparison.OrdinalIgnoreCase))) {
                 if (Landing(zonePath, door.ToLoc) is { } to
                     && !Near(door.Object.m_location.X, door.Object.m_location.Y, to.X, to.Y, 200)) {
-                    pads.Add(new Pad(door.Object.m_location.X, door.Object.m_location.Y, to.X, to.Y, door.Name));
+                    pads.Add(new Pad(door.Object.m_location.X, door.Object.m_location.Y, to.X, to.Y, door.Name, Click: door.Object.m_globalID.Full));
+                }
+            }
+
+            // The street teleporter stones ("To Teleporter Hub" and the hub's stones): each sends the wizard to its
+            // partner stone in the same area, once pressed.
+            foreach (var stone in live.Where(m => m.Kind == MinimapIndex.DOOR && m.Entity is not null)) {
+                if (stone.Entity.GetComponentOfType<StreetTeleporterComponent>()?.PartnerSpot is { } lands
+                    && !Near(stone.Object.m_location.X, stone.Object.m_location.Y, lands.X, lands.Y, 200)) {
+                    pads.Add(new Pad(stone.Object.m_location.X, stone.Object.m_location.Y, lands.X, lands.Y, stone.Name, Click: stone.Object.m_globalID.Full));
                 }
             }
 
