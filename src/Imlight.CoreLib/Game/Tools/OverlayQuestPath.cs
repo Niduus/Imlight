@@ -186,6 +186,36 @@ internal static class OverlayQuestPath {
         return a >= 0 && b >= 0 && a != b;
     }
 
+    /// <summary>
+    /// How big the island the spot is on is, against the biggest island of the area (0 to 1; -1 when unknown). A small patch
+    /// cut off by a fence or a ledge (a grass strip behind a low wall) is a tiny share.
+    /// </summary>
+    internal static double IslandShare(string zonePath, float x, float y) {
+        try {
+            var island = IslandOf(zonePath, x, y);
+            if (island < 0 || !s_islands.TryGetValue(zonePath, out var labels)) {
+                return -1;
+            }
+
+            var sizes = new Dictionary<int, int>();
+            foreach (var label in labels) {
+                if (label >= 0) {
+                    sizes[label] = sizes.GetValueOrDefault(label) + 1;
+                }
+            }
+
+            var biggest = 0;
+            foreach (var size in sizes.Values) {
+                biggest = Math.Max(biggest, size);
+            }
+
+            return biggest <= 0 ? -1 : sizes.GetValueOrDefault(island) / (double) biggest;
+        }
+        catch (Exception) {
+            return -1;
+        }
+    }
+
     private const byte WATER_COST = 25;
 
     // Each dry floor cell's island number (walls and water are -1), found by flooding out from every unnumbered cell.
@@ -251,19 +281,35 @@ internal static class OverlayQuestPath {
         return grid;
     }
 
-    // Each cell's walking cost: streets and grass 1; nothing known (a floor the file doesn't mark) 20; water 25; walls never.
+    // Each cell's walking cost: streets and grass 1; a floor the file doesn't mark 20; water 25; walls never; and never where
+    // there is no floor at all, the black of the Minimap (Niduus, 2026-11-13: "the black zones are barrier ... Can we have
+    // Ultimus train off that intel so it knows where the valid zone walks are?"). Such void was costed as an unmarked
+    // floor, so a way could cut across it, off the edge of a raised lawn or into the gap behind a fence.
     private static Grid Costs(ZoneGround.WalkGround ground) {
         var cost = new byte[ground.Kinds.Length];
         for (var i = 0; i < cost.Length; i++) {
-            cost[i] = ground.Kinds[i] switch {
+            var noFloor = Void(ground, i) && !Between(ground, i);
+            cost[i] = noFloor ? BLOCKED : (byte) (ground.Kinds[i] switch {
                 ZoneGround.PATH or ZoneGround.GRASS => 1,
                 ZoneGround.WALL => BLOCKED,
                 ZoneGround.WATER => 25,
                 _ => 20,
-            };
+            });
         }
 
         return new Grid(ground.Left, ground.Top, ground.Cell, ground.Width, ground.Height, cost, ground.Heights, ground.Lows);
+    }
+
+    private static bool Void(ZoneGround.WalkGround ground, int i)
+        => ground.Kinds[i] == ZoneGround.NONE && (ground.Heights is null || float.IsNaN(ground.Heights[i]));
+
+    // A one-cell crack with floor on both sides (a plank or ledge thinner than a cell missed the cell's middle): floor too.
+    private static bool Between(ZoneGround.WalkGround ground, int i) {
+        var (x, y, w, h) = (i % ground.Width, i / ground.Width, ground.Width, ground.Height);
+        bool Floor(int nx, int ny) => nx >= 0 && ny >= 0 && nx < w && ny < h && ground.Kinds[(ny * w) + nx] != ZoneGround.WALL
+                                      && !Void(ground, (ny * w) + nx);
+
+        return (Floor(x - 1, y) && Floor(x + 1, y)) || (Floor(x, y - 1) && Floor(x, y + 1));
     }
 
     private static int Cell(Grid grid, float x, float y) {
