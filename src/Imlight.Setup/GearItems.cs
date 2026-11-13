@@ -125,6 +125,9 @@ internal sealed class GearItem {
 
     internal required int CrownsCost { get; init; }
 
+    /// <summary>Its price in Arena tickets and PvP coins together, or 0 (bought with neither).</summary>
+    internal int OtherCurrencyCost { get; init; }
+
     /// <summary>A bundle's items by template ID (what it gives, free items included), or empty for anything else.</summary>
     internal IReadOnlyList<uint> BundleItems { get; init; } = [];
 
@@ -352,6 +355,8 @@ internal sealed partial class GearBook {
             Deck = deck,
             GoldCost = (int) Math.Max(0, template.m_baseCost),
             CrownsCost = (int) Math.Max(0, template.m_creditsCost),
+            OtherCurrencyCost = (int) Math.Min(int.MaxValue, Math.Max(0L, (long) template.m_arenaPointCost) + Math.Max(0L, (long) template.m_pvpCurrencyCost)
+                + Math.Max(0L, (long) template.m_pvpTourneyCurrencyCost)),
             SetId = template.m_itemSetBonusTemplateID,
             BundleItems = bundle is null ? [] : [.. (bundle.m_bundleItems ?? []).Concat(bundle.m_bundleFreeItems ?? []).Select(g => (uint) (ulong) g).Distinct()],
         };

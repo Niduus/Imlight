@@ -177,6 +177,45 @@ internal sealed partial class ManagerWindow {
         box.SelectedItem = picked is not null && list.Contains(picked) ? picked : first;
     }
 
+    // Niduus, 2026-11-13: "add sort and searches for schools: Moon, Sun, Star and Shadow". The seven schools, then the
+    // astral schools and Shadow, always offered in this order even when the game files have none of that school yet.
+    private static readonly string[] s_schoolOrder = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance", "Moon", "Sun", "Star", "Shadow"];
+
+    /// <summary>Where a school goes when sorting by school: the schools in game order, then any other, then none.</summary>
+    private static int SchoolRank(string school)
+        => school.Length == 0 ? 1000 : Array.FindIndex(s_schoolOrder, s => s.Equals(school, StringComparison.OrdinalIgnoreCase)) is var i and >= 0 ? i : 100;
+
+    /// <summary>Every school in game order (Moon, Sun, Star and Shadow included), then any other school found in the data.</summary>
+    private static IEnumerable<string> SchoolChoices(IEnumerable<string> found)
+        => s_schoolOrder.Concat(found.Where(s => s.Length > 0)
+            .Distinct(StringComparer.OrdinalIgnoreCase).Where(s => SchoolRank(s) >= 100).OrderBy(s => s, StringComparer.OrdinalIgnoreCase));
+
+    /// <summary>The game's words for "no one school": All, Any and Generic.</summary>
+    private static bool IsAnySchool(string school)
+        => school.Equals("All", StringComparison.OrdinalIgnoreCase) || school.Equals("Any", StringComparison.OrdinalIgnoreCase)
+           || school.Equals("Generic", StringComparison.OrdinalIgnoreCase);
+
+    // Niduus, 2026-11-13: "Add option to search items that are auctionable and non."
+    private const string AUCTION_YES = "Can be auctioned";
+    private const string AUCTION_NO = "Can't be auctioned";
+
+    /// <summary>The Bazaar / Auction House drop-down: Any, can be auctioned, can't be auctioned.</summary>
+    private static ComboBox AuctionFilter() => FilterCombo([ANY_FILTER, AUCTION_YES, AUCTION_NO], 160);
+
+    /// <summary>Whether an item's marks fit the Auction drop-down. The game's No Auction mark keeps an item out of the Bazaar.</summary>
+    private static bool AuctionMatches(ComboBox box, IReadOnlyList<string> flags) => FilterPick(box) switch {
+        AUCTION_YES => !flags.Contains("NoAuction", StringComparer.OrdinalIgnoreCase),
+        AUCTION_NO => flags.Contains("NoAuction", StringComparer.OrdinalIgnoreCase),
+        _ => true,
+    };
+
+    /// <summary>
+    /// Niduus, 2026-11-13: "Add option to search items that cost purely gold". True when the item has a gold price and
+    /// nothing else: no Crowns price, no Crowns Only mark, and no Arena tickets or PvP coins.
+    /// </summary>
+    private static bool CostsGoldOnly(int gold, int crowns, bool crownsOnly, int otherCurrency)
+        => gold > 0 && crowns == 0 && !crownsOnly && otherCurrency == 0;
+
     /// <summary>A number box for a "from" or "to" filter, empty (any) at first.</summary>
     private static NumericUpDown FilterNumber(decimal step = 1, double width = 120) => new() {
         Minimum = 0, Maximum = 999_999_999, Increment = step, FormatString = "0", Width = width, Watermark = ANY_FILTER,

@@ -71,6 +71,9 @@ internal sealed class OtherItem {
 
     internal required int CrownsCost { get; init; }
 
+    /// <summary>Its price in Arena tickets and PvP coins together, or 0 (bought with neither).</summary>
+    internal int OtherCurrencyCost { get; init; }
+
     internal bool CrownsOnly => Flags.Contains("CrownsOnly", StringComparer.OrdinalIgnoreCase);
 
     internal bool Test { get; init; }
@@ -187,6 +190,8 @@ internal sealed class ItemBook {
             Spells = spells,
             GoldCost = (int) Math.Max(0, template.m_baseCost),
             CrownsCost = (int) Math.Max(0, template.m_creditsCost),
+            OtherCurrencyCost = (int) Math.Min(int.MaxValue, Math.Max(0L, (long) template.m_arenaPointCost) + Math.Max(0L, (long) template.m_pvpCurrencyCost)
+                + Math.Max(0L, (long) template.m_pvpTourneyCurrencyCost)),
             // Unnamed copies and the game's own test and "do not use" items.
             Test = name.Length == 0 || Has("EditorOnly") || name.Contains("Do Not Use", StringComparison.OrdinalIgnoreCase)
                 || name.Contains("DoNotUse", StringComparison.OrdinalIgnoreCase) || name.StartsWith("Test ", StringComparison.OrdinalIgnoreCase),

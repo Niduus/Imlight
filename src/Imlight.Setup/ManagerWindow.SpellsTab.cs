@@ -259,10 +259,7 @@ internal sealed partial class ManagerWindow {
         }
 
         _spellsFiltersFilled = true;
-        string[] mainSchools = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance", "Star", "Sun", "Moon", "Shadow"];
-        var schools = book.Spells.Select(s => s.School).Where(s => s.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(s => Array.IndexOf(mainSchools, s) is var i and >= 0 ? i : 100).ThenBy(s => s, StringComparer.OrdinalIgnoreCase);
-        _spellsSchool.ItemsSource = new[] { ALL_SCHOOLS }.Concat(schools).ToList();
+        _spellsSchool.ItemsSource = new[] { ALL_SCHOOLS }.Concat(SchoolChoices(book.Spells.Select(s => s.School))).ToList();
         _spellsSchool.SelectedIndex = 0;
         var pips = book.Spells.Where(s => !s.XPips).Select(s => s.Pips).Distinct().Order().Select(p => p.ToString(CultureInfo.InvariantCulture));
         _spellsPips.ItemsSource = new[] { ANY }.Concat(pips).Append("X").ToList();
@@ -352,7 +349,7 @@ internal sealed partial class ManagerWindow {
         IOrderedEnumerable<SpellCard> sorted = _spellsSort.SelectedIndex switch {
             1 => found.OrderBy(s => s.PipSort),
             2 => found.OrderByDescending(s => s.PipSort),
-            3 => found.OrderBy(s => s.School, StringComparer.OrdinalIgnoreCase),
+            3 => found.OrderBy(s => SchoolRank(s.School)).ThenBy(s => s.School, StringComparer.OrdinalIgnoreCase),
             4 => found.OrderByDescending(s => s.Accuracy),
             5 => found.OrderBy(s => s.Type, StringComparer.OrdinalIgnoreCase),
             6 => found.OrderBy(s => s.Id),
