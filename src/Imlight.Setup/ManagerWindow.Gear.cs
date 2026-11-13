@@ -942,13 +942,16 @@ internal sealed partial class ManagerWindow {
 
     // Where the liquid sits behind the glass (out of 128), wide enough to fill the ball's sides and trimmed off the top
     // (Niduus, 2026-11-13: "need a bit of filling on the sides, little trim of the top and have the globes in front of the
-    // liquids in terms of layers"), and how much the glass's milky body thins over it (its dark outline stays).
+    // liquids in terms of layers"), and over it only the glass's shine and dark outline stay, so the colour is as lively as in the game.
     private const double GLOBE_LIQUID_WIDTH = 92 / 128.0;
     private const double GLOBE_LIQUID_HEIGHT = 72 / 128.0;
     private const double GLOBE_LIQUID_LEFT = 18 / 128.0;
     private const double GLOBE_LIQUID_TOP = 8 / 128.0;
-    private const double GLOBE_GLASS_THIN = 0.75;
-    private const int GLOBE_OUTLINE_DARK = 70;
+    private const double GLOBE_MASK_FULL = 0.4;
+    private const double GLOBE_SHINE_FROM = 215;
+    private const double GLOBE_SHINE_SPAN = 35;
+    private const double GLOBE_OUTLINE_DARK = 60;
+    private const double GLOBE_DARK_SPAN = 35;
 
     /// <summary>A health, mana or energy globe: the liquid ball (the full frame of its animation) inside the glass; null without the game files.</summary>
     private Bitmap? GlobePicture(string key) {
@@ -1005,15 +1008,20 @@ internal sealed partial class ManagerWindow {
                                             + (At(x0, y0 + 1, k) * (1 - dx) * dy) + (At(x0 + 1, y0 + 1, k) * dx * dy);
 
                     (lr, lg, lb) = (Sample(0), Sample(1), Sample(2));
-                    la = Sample(3) / 255.0 * (glass.Pixels[o + 3] / 255.0);
+                    // Solid inside the globe (the glass's milky body is only part opaque, so its alpha alone left the
+                    // liquid see-through: Niduus, 2026-11-13, "more transparent now instead of lively like in game").
+                    la = Sample(3) / 255.0 * Math.Clamp(glass.Pixels[o + 3] / 255.0 / GLOBE_MASK_FULL, 0, 1);
                 }
 
                 // Then the glass in front: its dark outline as it is, its milky body thinner over the liquid.
                 var (gr, gg, gb) = (glass.Pixels[o], (double) glass.Pixels[o + 1], (double) glass.Pixels[o + 2]);
                 var ga = glass.Pixels[o + 3] / 255.0;
-                if ((gr + gg + gb) / 3 >= GLOBE_OUTLINE_DARK) {
-                    ga *= 1 - (GLOBE_GLASS_THIN * la);
-                }
+                // Over the liquid only the glass's shine and its dark outline stay.
+                var lum = (gr + gg + gb) / 3;
+                var shine = Math.Clamp((lum - GLOBE_SHINE_FROM) / GLOBE_SHINE_SPAN, 0, 1);
+                shine = shine * shine * (3 - (2 * shine));
+                var dark = Math.Clamp((GLOBE_OUTLINE_DARK - lum) / GLOBE_DARK_SPAN, 0, 1);
+                ga *= 1 - (la * (1 - Math.Max(shine, dark)));
 
                 var oa = ga + (la * (1 - ga));
                 if (oa <= 0) {
