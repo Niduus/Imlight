@@ -267,3 +267,13 @@ Fixed: The Badges page was empty (one group showing 0/0)
 The Ahmarra game update changed how the game reads the badge list. It now expects only each badge's id and progress, and it takes the names and pictures from its own files. The server still sent the names too, so the game read a name as the next badge and threw the whole list away. The list now goes out the way the new game reads it. Older games still get everything.
 Where: in the game, Character > Badges
 Test: Log in on the wizard you ran .givemeallbadges on and open Badges. You should see all the groups with their counts, and the badges inside them.
+
+New: The deck on the Quest Team and Ultimus wizard pages looks like the game's deck window
+The deck now shows as card pictures in slots, 8 to a row, the way the game's deck window shows it. Empty slots fill up to what the deck holds. The item cards from gear sit in their own rows underneath, and the treasure cards are below them with how many it has. Point at any card to see it big.
+Where: Ahziael > Quest Team > The team's wizards, and the Ultimus page
+Test: Open a wizard there. Its deck should look like the in-game deck window.
+
+New: The Quest Team and Ultimus turn off item cards they never play
+Like a player clicking item cards in the deck window, they now turn off the item cards from their gear that they would never cast. That means enchantments, pick cards, cards from developers' gear, and (for the hitter) plain heals and shields. This keeps those cards out of their hand. If a card becomes useful to them again, they turn it back on. Ahziael shows the turned-off ones with a red X as soon as they change, and the team log says which cards and why.
+Where: Ahziael wizard pages (item card rows); Team Logs ("turns item cards off: ...")
+Test: Give a team wizard gear with an enchantment item card (or give the Storm hitter gear with a heal item card). Within a few seconds the card should show a red X on its page, and in the game's deck window if you log in as that wizard.

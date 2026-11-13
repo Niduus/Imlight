@@ -381,6 +381,7 @@ internal sealed partial class ManagerWindow {
     // Pick a wizard of the team and see its stats, gear, deck and quest (Niduus, 2026-11-13). The view is shared with Ultimus.
     private Control QuestTeamWizardsTab() {
         StartQuestTeamTimer();
+        ShowCardsOn(_teamSheet);
 
         return Page(
             Fold("users", QUEST_TEAM_TAB, "The team's wizards",

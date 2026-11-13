@@ -49,6 +49,47 @@ internal static class BotSheet {
         member["itemCount"] = items.Sum(c => c.Count);
         member["treasureCards"] = Cards(treasure);
         member["treasureCount"] = treasure.Sum(c => c.Count);
+
+        // The same as pictures for Ahziael, laid out like the game's deck window (Niduus, 2026-11-13: "I want the deck UI to
+        // be similar to how it is in game"): each card with its count, and every item card with whether it is turned off.
+        member["deckGrid"] = Grid(spells);
+        member["deckMax"] = wizard?.SpellbookBehavior?.MaxSpells ?? 0;
+        member["treasureGrid"] = Grid(treasure);
+        member["itemGrid"] = new JsonArray([.. ItemCopies(wizard).Select(c => (JsonNode) new JsonObject {
+            ["id"] = c.Id, ["school"] = SchoolOf(c.Id), ["off"] = c.Off,
+        })]);
+    }
+
+    private static JsonArray Grid(List<(uint Id, int Count)> cards)
+        => new([.. cards.Select(c => (JsonNode) new JsonObject { ["id"] = c.Id, ["n"] = c.Count, ["school"] = SchoolOf(c.Id) })]);
+
+    private static string SchoolOf(uint spellId)
+        => Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(spellId) is Imcodec.ObjectProperty.TypeCache.SpellTemplate t
+            ? (string) t.m_sMagicSchoolName ?? "" : "";
+
+    /// <summary>Every item card the gear gives, one per copy in the order the gear gives them, and whether it is crossed out.</summary>
+    private static List<(uint Id, bool Off)> ItemCopies(Wizard wizard) {
+        var copies = new List<(uint Id, bool Off)>();
+        var book = wizard?.SpellbookBehavior;
+        if (book is null) {
+            return copies;
+        }
+
+        var deckId = wizard.EquipmentBehavior?.SlotList?.FirstOrDefault(s => s.SlotType == EquipmentSlotType.Deck)?.ItemId;
+        var crossed = new Dictionary<uint, int>();
+        foreach (var temp in (book.TemporarySpells ?? []).Where(t => t is not null)) {
+            var id = (uint) temp.m_templateID;
+            crossed.TryGetValue(id, out var done);
+            var off = deckId is { } worn && done < book.ExcludedItemSpellCount(worn, temp.m_templateID);
+            if (off) {
+                crossed[id] = done + 1;
+            }
+
+            copies.Add((id, off));
+        }
+
+        // As in Niduus's screenshot of the game's deck window: the crossed-out ones first, then the ones in play.
+        return [.. copies.OrderBy(c => c.Off ? 0 : 1)];
     }
 
     private static JsonArray Cards(List<(uint Id, int Count)> cards)

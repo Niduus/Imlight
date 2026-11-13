@@ -153,6 +153,15 @@ internal sealed partial class ManagerWindow {
     }
 
     /// <summary>
+    /// Lets a Quest Team or Ultimus wizard sheet draw its deck with the game's card pictures, like the game's deck window,
+    /// and reads the game's spells if that has not happened yet (the sheet draws again once they are read).
+    /// </summary>
+    private void ShowCardsOn(WizardSheet sheet) {
+        sheet.CardThumb ??= (id, school, width, count) => SpellThumb(id, school, width, count > 0 ? count : 0);
+        EnsureGameIcons(() => Avalonia.Threading.Dispatcher.UIThread.Post(sheet.Redraw));
+    }
+
+    /// <summary>
     /// Pointing at <paramref name="target"/> (a search result row) shows the spell's card big, as a card in a deck does,
     /// so versions with the same name can be told apart before one is picked (player suggestion, 2026-10-27).
     /// </summary>

@@ -209,6 +209,75 @@ internal static class BotCards {
         };
     }
 
+    /// <summary>
+    /// Why a wizard turns an item card (one its gear gives) off, or null to keep it on. A player turns them off by clicking
+    /// them in the deck window (a red X); the server's wizards do the same for the ones they never play, so those do not
+    /// fill their hand (Niduus, 2026-11-13: "They're also able to disable item cards"): enchantments and pick cards (their
+    /// battle plans skip them), cards they cannot read, developers' cards, and a hitter's plain heals and shields.
+    /// </summary>
+    internal static string ItemCardOff(uint spellId, BotStyle style) {
+        if (CoreObjectFactory.GetCoreTemplate(spellId) is not SpellTemplate template) {
+            return "not a spell it knows";
+        }
+
+        if (CombatEnchantments.IsEnchantment(template)) {
+            return "an enchantment, which it does not use";
+        }
+
+        if (DivideCards.IsPickCard(template)) {
+            return "a pick card, which it does not use";
+        }
+
+        if (IsDevSpell(spellId)) {
+            return "a developers' card";
+        }
+
+        if (RewrittenAI.Read(SpellFactory.GetSpell(template, spellId)) is not { } card) {
+            return "a card it cannot plan with";
+        }
+
+        if (style == BotStyle.Hitter && ((card.Heal && !card.Hit && !card.HealTakesFromEnemy) || (card.Shield && !card.Hit))) {
+            return card.Heal ? "a heal, and it hits" : "a shield, and it hits";
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// The item cards to turn off or back on for the deck worn, one entry per copy (one click in the deck window each),
+    /// with the reason; the deck's global id (0 when no deck is worn).
+    /// </summary>
+    internal static (ulong DeckId, List<(uint Id, bool Off, string Why)> Clicks) ItemCardClicks(Wizard wizard, BotStyle style) {
+        var clicks = new List<(uint Id, bool Off, string Why)>();
+        var book = wizard?.SpellbookBehavior;
+        // The deck's id as the battle reads the crossed-out cards (CombatDuelSubCircle: the Deck slot's item).
+        var worn = wizard?.EquipmentBehavior?.SlotList?.FirstOrDefault(s => s.SlotType == EquipmentSlotType.Deck)?.ItemId;
+        if (book is null || worn is not { } wornId || wornId.Full == 0) {
+            return (0, clicks);
+        }
+
+        ulong deckId = wornId.Full;
+        foreach (var group in (book.TemporarySpells ?? []).Where(t => t is not null).GroupBy(t => (uint) t.m_templateID)) {
+            var copies = group.Count();
+            var why = ItemCardOff(group.Key, style);
+            var want = why is null ? 0 : copies;
+            var now = book.ExcludedItemSpellCount(deckId, group.Key);
+            for (var i = now; i < want; i++) {
+                clicks.Add((group.Key, true, why));
+            }
+
+            for (var i = want; i < now; i++) {
+                clicks.Add((group.Key, false, "a card it plays"));
+            }
+        }
+
+        return (deckId, clicks);
+    }
+
+    /// <summary>The id the game's deck window sends for a spell (the hash of its name), as MSG_UPDATEITEMSPELLEXCLUSIONLIST carries it.</summary>
+    internal static int SpellHash(uint spellId)
+        => CoreObjectFactory.GetCoreTemplate(spellId) is SpellTemplate t ? (int) Imcodec.Cryptography.StringHash.Compute((string) t.m_name ?? "") : 0;
+
     /// <summary>What changes from one deck to another: the spells to take out (one per copy) and to put in (one per copy).</summary>
     internal static (List<uint> Out, List<uint> In) Changes(IReadOnlyDictionary<uint, int> now, IReadOnlyDictionary<uint, int> wanted) {
         var take = new List<uint>();
