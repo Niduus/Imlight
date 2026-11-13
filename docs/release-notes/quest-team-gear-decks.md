@@ -262,3 +262,8 @@ Fixed: The Quest Team and Ultimus still walked through some walls
 The server's walking map for them is made from the area's collision file, and it was missing many solid things. A wall standing straight up has no width when seen from above, so it was never marked. A box turned on its side lost its length. Round posts, trees and pillars were left out, and so were the sides of solid shapes like buildings. All of these are now marked as walls on their walking map. Small steps like stairs and kerbs still aren't walls. The Quest Tracker's line on the minimap uses the same map, so it now goes round these too.
 Where: in the game, wherever they walk
 Test: Watch them walk past buildings, fences, posts and trees. They should go around them.
+
+Fixed: The Badges page was empty (one group showing 0/0)
+The Ahmarra game update changed how the game reads the badge list. It now expects only each badge's id and progress, and it takes the names and pictures from its own files. The server still sent the names too, so the game read a name as the next badge and threw the whole list away. The list now goes out the way the new game reads it. Older games still get everything.
+Where: in the game, Character > Badges
+Test: Log in on the wizard you ran .givemeallbadges on and open Badges. You should see all the groups with their counts, and the badges inside them.
