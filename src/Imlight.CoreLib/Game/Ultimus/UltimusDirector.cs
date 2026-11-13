@@ -1060,6 +1060,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     private DateTime _battleSince = DateTime.MaxValue;
     private int _battlesWithPlayers;
     private bool _battleCompany;
+    private int _companyCount;
 
     private bool HandleBattle() {
         var me = _team[0];
@@ -1072,6 +1073,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             _battleSince = DateTime.UtcNow;
             var others = CombatDuelComponent.UltimusBattleCompany(me.GlobalId);
             _battleCompany = others.Count > 0;
+            _companyCount = others.Count;
             if (others.Count > 0) {
                 _battlesWithPlayers++;
                 Note("Ultimus", $"is in a battle with {string.Join(", ", others)}; it welcomes them and plays with them.");
@@ -1087,6 +1089,15 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return false;
         }
 
+        // A player walked into its battle after it began: a welcome in Menu Chat.
+        var company = CombatDuelComponent.UltimusBattleCompany(me.GlobalId).Count;
+        if (company > _companyCount && _companyCount >= 0 && _battleSince < DateTime.UtcNow.AddSeconds(-3)) {
+            _battleCompany = true;
+            Note("Ultimus", "a player joined its battle; it welcomes them.");
+            Speak("welcome", 0.7);
+        }
+
+        _companyCount = company;
         _doing = "in a battle";
         _lastProgress = DateTime.UtcNow;
         UltimusDirector.SetBusy(me.ZoneActor, me.X, me.Y);
