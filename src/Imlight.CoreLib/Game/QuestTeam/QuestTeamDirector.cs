@@ -1544,7 +1544,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         QuestTeamLink.Issue(kind, quest ?? "", string.IsNullOrEmpty(quest) ? "" : QuestTeamText.Title(quest),
-            template is null ? "" : QuestStory.WorldOf(template), text, Expected(kind, _target), Seen(quest));
+            template is null ? "" : QuestStory.WorldOf(template), text, Expected(kind, _target), Seen(quest), skipping ? QuestTeamLink.CRITICAL : level);
     }
 
     /// <summary>What a player would do and see at the step the team is on, in plain words, for an issue.</summary>

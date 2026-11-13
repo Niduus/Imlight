@@ -71,6 +71,7 @@ public static class QuestTeamBrain {
         public string Expected { get; set; } = "";
         // Where each wizard was and what it held when it happened.
         public List<string> Seen { get; set; } = [];
+        public string Level { get; set; } = "";
         // The last lines of the team's log when it happened, so Ahziael shows what led up to it.
         public List<string> Log { get; set; } = [];
     }
@@ -321,6 +322,7 @@ public static class QuestTeamBrain {
                 Text = request.Text ?? "",
                 Expected = request.Expected ?? "",
                 Seen = request.Seen ?? [],
+                Level = request.Level ?? "",
                 Log = [.. s_recent],
             };
             s_issues.Add(issue);

@@ -317,12 +317,15 @@ internal static class QuestTeamPlanner {
                 break;
             }
 
-            case WaypointGoalTemplate when nearest is { } spot:
+            // A "use" step written as a waypoint (Finding Out Why: open the fairy cages) is clicked, not walked onto
+            // (Niduus, 2026-11-13: the team stood 8 minutes on "Go to Wizard City, Unicorn Way").
+            case WaypointGoalTemplate when nearest is { } spot && goal.m_goalType != GOAL_TYPE.GOAL_TYPE_USAGE:
                 return new Target(SPOT, spot.Item1, spot.Item2, step, questName, goalName, Key: key);
         }
 
         // A thing to use or pick up where the quest arrow points.
-        if (goal is not (PersonaGoalTemplate or BountyGoalTemplate or WaypointGoalTemplate) && nearest is { } useSpot) {
+        var usage = goal.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE;
+        if ((usage || goal is not (PersonaGoalTemplate or BountyGoalTemplate or WaypointGoalTemplate)) && nearest is { } useSpot) {
             return new Target(USE, useSpot.Item1, useSpot.Item2, step, questName, goalName, Key: key);
         }
 

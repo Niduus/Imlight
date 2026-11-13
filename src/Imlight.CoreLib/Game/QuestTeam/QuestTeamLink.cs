@@ -280,9 +280,9 @@ public static class QuestTeamLink {
 
     /// <summary>Tells the brain of an issue, which Ahziael announces.</summary>
     internal static void Issue(string kind, string quest, string title, string world, string text, string expected = "",
-                               List<string> seen = null) {
+                               List<string> seen = null, string level = null) {
         Logger.Warning("Quest Team | ISSUE ({0}) {1}: {2} Expected: {3}", Logger.Args(kind, string.IsNullOrEmpty(title) ? quest : title, text, expected));
-        Send(new TeamRequest { Op = "issue", Kind = kind, Quest = quest, Title = title, World = world, Text = text, Expected = expected, Seen = seen ?? [] });
+        Send(new TeamRequest { Op = "issue", Kind = kind, Quest = quest, Title = title, World = world, Text = text, Expected = expected, Seen = seen ?? [], Level = level ?? "" });
     }
 
     /// <summary>Tells the brain without waiting for its answer.</summary>
