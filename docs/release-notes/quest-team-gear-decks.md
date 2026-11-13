@@ -232,3 +232,8 @@ New: Quest Team issues say why a step can't be done
 Every Quest Team issue about a quest now runs the same quest check Ultimus uses. It looks at the quest's data, the wizard, and whether the NPC, object or creature is really there and clickable. The issue then says the most likely cause, how sure it is (High, Medium or Low), and whether the step can be done at all. Every check it made is listed under what the team saw. A cause it is sure of also shows in pink in Team Logs.
 Where: Quest Team > Team Issues; Team Logs ("DIAGNOSIS: ...")
 Test: When the next quest issue comes up, open it in Team Issues. It should start with "Likely cause" and "Can the step be done", followed by the "Check OK/PROBLEM/INFO" lines.
+
+Fixed: The Quest Team and Ultimus walked slowly and choppily
+They walked at about two thirds of a player's running pace, and sent where they were only four times a second, so on your screen they looked slow and jumpy. They now run at a player's pace (400, the RunSpeed setting under [Bots], changes live), send where they are ten times a second, and take corners without stopping on them.
+Where: in the game, wherever they walk
+Test: Run next to the team or Ultimus. They should keep up with you and glide smoothly, not hop.
