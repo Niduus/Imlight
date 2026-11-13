@@ -667,6 +667,18 @@ internal static class QuestGuide {
             return "";
         }
 
+        return KnownPersonaZones().TryGetValue(PersonaKey(template.m_objectName), out var zone) ? zone : "";
+    }
+
+    /// <summary>
+    /// The zone an NPC (by persona or object name) stands in, as the "talk to" steps of every quest name it, or "".
+    /// Ultimus finds the person of a "talk to" step that names no area this way, as a player knows where they stand.
+    /// </summary>
+    internal static string PersonaZone(string personaOrObjectName)
+        => string.IsNullOrWhiteSpace(personaOrObjectName) ? ""
+            : KnownPersonaZones().TryGetValue(PersonaKey(personaOrObjectName), out var zone) ? zone : "";
+
+    private static Dictionary<string, string> KnownPersonaZones() {
         var known = s_personaZones;
         if (known.Item1 != Quests.QuestOptions.Version) {
             lock (s_personaZonesLock) {
@@ -680,7 +692,7 @@ internal static class QuestGuide {
             }
         }
 
-        return known.Item2.TryGetValue(PersonaKey(template.m_objectName), out var zone) ? zone : "";
+        return known.Item2;
     }
 
     private static (string Giver, string Zone, string From) GiverOf(QuestTemplate quest, Dictionary<string, string> personaZones) {

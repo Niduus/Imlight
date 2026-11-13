@@ -357,6 +357,13 @@ internal static class BotGear {
     /// </summary>
     internal static volatile IReadOnlyDictionary<string, double> SoloDamageMix = new Dictionary<string, double>();
 
+    /// <summary>
+    /// Alone: the share of the recent creatures' hits each school carries (the biggest 1), read from their decks
+    /// (UltimusScout.Expect). A resist of those schools counts by that share (never under the usual 0.3), so its gear
+    /// leans toward what the area's creatures hit with.
+    /// </summary>
+    internal static volatile IReadOnlyDictionary<string, double> SoloResistMix = new Dictionary<string, double>();
+
     private static readonly HashSet<string> s_hitKinds = new(StringComparer.Ordinal) { "Damage", "FlatDamage", "ArmorPiercing" };
 
     /// <summary>How good a piece is for a wizard of this school and style; 0 for nothing it uses.</summary>
@@ -374,6 +381,11 @@ internal static class BotGear {
             var share = own ? 1.0 : all ? 0.8 : stat.Kind.Contains("ReduceDamage", StringComparison.Ordinal) ? (style == BotStyle.Solo ? 0.3 : 0.15) : 0;
             // Alone, its hits land as the damage types of its spells: those schools' damage and pierce count by how much
             // of its damage they carry (its own school's by that too, but never under half).
+            if (style == BotStyle.Solo && !own && stat.School.Length > 0 && stat.Kind.Contains("ReduceDamage", StringComparison.Ordinal)
+                && SoloResistMix.TryGetValue(stat.School, out var hitBy)) {
+                share = Math.Max(share, Math.Min(0.8, hitBy));
+            }
+
             if (style == BotStyle.Solo && stat.School.Length > 0 && s_hitKinds.Contains(stat.Kind)) {
                 var mix = SoloDamageMix.TryGetValue(stat.School, out var part) ? part : 0;
                 share = own ? Math.Max(0.5, mix) : Math.Max(share, mix);

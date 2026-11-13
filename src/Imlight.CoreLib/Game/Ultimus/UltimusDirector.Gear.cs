@@ -201,7 +201,7 @@ internal sealed partial class UltimusDirectorActor {
             // New spells learned (or a new deck worn) since the deck was made: the deck again, for the fight it was made for.
             var known = (wizard.SpellbookBehavior?.LearnedSpellTemplateIds?.Count ?? 0) * 1000 + (wizard.SpellbookBehavior?.MaxSpells ?? 0);
             if (_deckKnown.GetValueOrDefault(member.Role) != known) {
-                PrepareDeck(i, _target?.Kind == UltimusPlanner.FIGHT ? BotCards.SituationOf(_target.Template) : BotCards.Situation.Unknown, force: true);
+                PrepareDeck(i, _target?.Kind == UltimusPlanner.FIGHT ? UltimusScout.SituationOf(_target.Template) : BotCards.Situation.Unknown, force: true);
             }
 
             KeepItemCards(i);

@@ -159,7 +159,7 @@ internal sealed partial class CombatDuelComponent {
 
     // A real player picked a card (or changed their mind): the bots on their side look again shortly.
     private void BotsNoticeMove(CombatDuelSubCircle caster) {
-        if (caster is null || !caster.IsHumanPlayer || IsBot(caster) || IsPvPDuel
+        if (caster is null || !caster.IsHumanPlayer || IsBot(caster) || IsPvPDuel || !PlanningMayEnd
             || !BotCircles.Any(b => b.OccupiedTeam == caster.OccupiedTeam)) {
             return;
         }
@@ -175,7 +175,7 @@ internal sealed partial class CombatDuelComponent {
 
     [MessageHandler(typeof(BotThink))]
     private void ReceiveBotThink(BotThink message) {
-        if (!_isActive || !_awaitingCombatMoves || IsPvPDuel || Duel.m_roundNum != message.Round) {
+        if (!_isActive || !_awaitingCombatMoves || IsPvPDuel || Duel.m_roundNum != message.Round || !PlanningMayEnd) {
             return;
         }
 
@@ -263,7 +263,7 @@ internal sealed partial class CombatDuelComponent {
 
     [MessageHandler(typeof(BotClick))]
     private void ReceiveBotClick(BotClick message) {
-        if (!_isActive || !_awaitingCombatMoves || Duel is null || Duel.m_roundNum != message.Round
+        if (!_isActive || !_awaitingCombatMoves || Duel is null || Duel.m_roundNum != message.Round || !PlanningMayEnd
             || _botClickGeneration.GetValueOrDefault(message.Slot) != message.Generation) {
             return;
         }

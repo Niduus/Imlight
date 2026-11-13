@@ -85,7 +85,7 @@ internal sealed partial class UltimusDirectorActor {
     /// running to the next step does not run through a pack of creatures).
     /// </summary>
     private static List<(float X, float Y)> CreaturesToAvoid(UltimusMember.Status member, UltimusPlanner.Target target) {
-        if (target.Kind is UltimusPlanner.FIGHT or UltimusPlanner.WAIT) {
+        if (target.Kind is UltimusPlanner.FIGHT) {
             return null;
         }
 

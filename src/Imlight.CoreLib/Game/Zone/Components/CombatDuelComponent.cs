@@ -745,6 +745,16 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_PLANNINGPHASEBEGIN))]
     private void ReceivePlanningPhaseBegin() {
+        // A planning phase never begins over a round whose spells are playing, nor twice: the game then rushes the
+        // round's animations to show the planning screen (Niduus, 2026-11-13: "the whole first round set of damage and
+        // animations all popped off in a few seconds"). A round that ended before its planning began left this timer.
+        if (!_isActive || Duel.m_duelPhase is kDuelPhase.kPhase_Execution or kDuelPhase.kPhase_Planning) {
+            Logger.Debug("Duel {0} | Round {1} | Planning not begun again: the round is in {2}.",
+                Logger.Args(Duel?.m_duelID.Full ?? 0, Duel?.m_roundNum ?? 0, Duel?.m_duelPhase));
+
+            return;
+        }
+
         // Planning phase is when each participant notices their new stats and "plans" accordingly.
         Duel.m_duelPhase = kDuelPhase.kPhase_Planning;
         SendCombatPhase((byte) Duel.m_duelPhase);
@@ -782,7 +792,18 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         PassForAutoPassing();
+
+        // Every move came in before planning began (creatures pick at the round's start): the round ends now as it
+        // would have, a second into planning.
+        EndPlanningIfAllMoved();
     }
+
+    /// <summary>
+    /// Whether the round may end because everyone has moved. Creatures pick as the round opens, before planning; a round
+    /// that ended then played its spells while the planning phase that followed began over them, and the game rushed
+    /// the animations through (Niduus, 2026-11-13). Only a round in planning ends.
+    /// </summary>
+    private bool PlanningMayEnd => Duel?.m_duelPhase == kDuelPhase.kPhase_Planning;
 
     /// <summary>
     /// Wizards under a kAutoPass (The Devourer's Devour) pass at once; when that leaves no one to wait for, the round
@@ -803,7 +824,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             }
         }
 
-        if (passed && CombatResolver.HaveAllParticipantsEnqueuedActions()) {
+        if (passed && PlanningMayEnd && CombatResolver.HaveAllParticipantsEnqueuedActions()) {
             _awaitingCombatMoves = false;
             Timers.StartSingleTimer(PLANNING_TIME_KEY, new COMBAT_106_PROTOCOL.MSG_PLANNINGPHASEOVER(), TimeSpan.FromSeconds(1));
         }
@@ -951,8 +972,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         UltimusNoticeMove(caster);
 
         // If by this point all participants have inputted their moves, we can start the next phase.
-        var participantCount = AlivePlayerCount + AliveCreatureCount;
-        if (CombatResolver.HaveAllParticipantsEnqueuedActions()) {
+        if (PlanningMayEnd && CombatResolver.HaveAllParticipantsEnqueuedActions()) {
             _awaitingCombatMoves = false;
 
             // Adding a new timer will cancel the old one.
@@ -969,6 +989,14 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         // A repeated timer must not execute a half turn twice.
         if (IsPvPDuel && Duel.m_duelPhase != kDuelPhase.kPhase_Planning) {
+            return;
+        }
+
+        // Nor a round twice: a stale timer while the round's spells play is dropped.
+        if (Duel.m_duelPhase is kDuelPhase.kPhase_Execution or kDuelPhase.kPhase_Resolution) {
+            Logger.Debug("Duel {0} | Round {1} | Planning end dropped: the round is already in {2}.",
+                Logger.Args(Duel.m_duelID.Full, Duel.m_roundNum, Duel.m_duelPhase));
+
             return;
         }
 
@@ -3459,6 +3487,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         Logger.Debug("Duel {0} | Slot {1} | Late joiner plays this round ({2:0} s of planning left).",
             Logger.Args(Duel.m_duelID.Full, circle.SlotIndex, left));
+
+        // Ultimus stepping in mid-planning looks at its hand like anyone else, with the time that is left.
+        UltimusJoinedPlanning(circle, left);
     }
 
     private bool IsAlternatingPvP => IsPvPDuel && _pvp.Rules.AlternateTurns;
@@ -4222,8 +4253,22 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
     }
 
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, DateTime> s_lostBattle = new();
+
+    /// <summary>Whether this wizard's last battle (in the last few minutes) was lost; the answer is given once.</summary>
+    internal static bool TakeLostBattle(ulong globalId)
+        => s_lostBattle.TryRemove(globalId, out var at) && DateTime.UtcNow - at < TimeSpan.FromMinutes(5);
+
     private void CreatureWin() {
         Logger.Debug("Duel {0} | Duel ended. Creatures win.", Logger.Args(Duel.m_duelID.Full));
+
+        // Each wizard on the losing side, for the server's own wizards to know they lost (a defeated wizard comes back
+        // with some health, so its health alone does not tell: Ultimus wrote "won the battle" after losing one).
+        EnactActionOnSubCircles(circle => {
+            if (circle.OccupiedTeam != CombatTeam.Monster && circle.IsHumanPlayer && circle.ParticipantObject is { } wizard) {
+                s_lostBattle[wizard.m_globalID.Full] = DateTime.UtcNow;
+            }
+        });
 
         // Send combat death to all creatures anyways. This will get rid of their game object. The ones still
         // standing were not defeated, so their spawn points spawn again, even in a private instance.

@@ -382,6 +382,9 @@ public partial class CombatDuelSubCircle {
     /// </summary>
     internal int HandRoom => _combatDeck?.HandRoom ?? 0;
 
+    /// <summary>The cards this circle's deck holds for the battle (empty before its deck is made).</summary>
+    internal List<(uint Id, int Copies)> DeckCards => _combatDeck?.AllCards.ToList() ?? [];
+
     /// <summary>
     /// Empties the current hand.
     /// </summary>

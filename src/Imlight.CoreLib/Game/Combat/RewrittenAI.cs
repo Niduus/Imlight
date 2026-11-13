@@ -281,6 +281,8 @@ internal static class RewrittenAI {
         internal bool ShieldForTeammate;
         internal bool ShieldWholeTeam;
         internal string ShieldSchool = "";
+        // Every school a shield guards (Elemental Shield: Fire, Ice and Storm); empty or "All" for every school.
+        internal string[] ShieldSchools = [];
 
         internal bool Weakness;
         internal bool RemovesCharms;
@@ -314,11 +316,16 @@ internal static class RewrittenAI {
             BladeWholeTeam = known.BladeWholeTeam, BladeSchool = known.BladeSchool, BladePercent = known.BladePercent,
             Trap = known.Trap, TrapAll = known.TrapAll, TrapSchool = known.TrapSchool,
             Shield = known.Shield, ShieldForTeammate = known.ShieldForTeammate, ShieldWholeTeam = known.ShieldWholeTeam, ShieldSchool = known.ShieldSchool,
+            ShieldSchools = known.ShieldSchools,
             Weakness = known.Weakness, RemovesCharms = known.RemovesCharms, Stun = known.Stun,
             Heal = known.Heal, HealForTeammate = known.HealForTeammate, HealWholeTeam = known.HealWholeTeam,
             HealTakesFromEnemy = known.HealTakesFromEnemy, HealAmount = known.HealAmount, Natural = known.Natural,
         };
     }
+
+    /// <summary>A card by its spell's template, with no hand behind it (a card seen in another's deck).</summary>
+    internal static Card ReadTemplate(uint id)
+        => CoreObjectFactory.GetCoreTemplate(id) is SpellTemplate template ? s_cards.GetValue(template, tpl => Build(tpl, id)) : null;
 
     private static Card Build(SpellTemplate template, uint id) {
         var name = (string) template.m_name ?? "";
@@ -366,6 +373,7 @@ internal static class RewrittenAI {
                 case kSpellEffects.kAbsorbDamage when friendly:
                     card.Shield = true;
                     card.ShieldSchool = (string) e.m_sDamageType ?? "";
+                    card.ShieldSchools = [.. card.ShieldSchools.Append(card.ShieldSchool).Distinct(StringComparer.OrdinalIgnoreCase)];
                     card.ShieldForTeammate |= e.m_effectTarget is kEffectTarget.kFriendlySingle or kEffectTarget.kFriendlySingleNotMe;
                     card.ShieldWholeTeam |= e.m_effectTarget is kEffectTarget.kFriendlyTeam or kEffectTarget.kFriendlyTeamAllAtOnce;
                     break;
