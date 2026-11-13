@@ -1572,6 +1572,12 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
     }
 
     private void Issue(string kind, string quest, string text, string key = null, bool skipStep = true, string level = null) {
+        // A quest issue from a target that carries no quest (a way out of an area): the quest the team is on, so the step
+        // can still be skipped (found by the Ultimus thread: a door loop never moved on).
+        if (kind == "quest" && string.IsNullOrEmpty(quest)) {
+            quest = _currentQuest;
+        }
+
         key ??= kind + "|" + quest + "|" + text;
         if (_reported.ContainsKey(key)) {
             return;
