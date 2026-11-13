@@ -350,6 +350,27 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             // Check if the destination zone is the same as the current zone. If so, just teleport the player.
             var wizard = GetActiveWizard();
             if (!message.ForceReload && message.DestinationZone == wizard.Zone && message.HouseLotGid == wizard.AttachedLotGid) {
+                // A teleporter within the area (Triton Avenue's "To Lower Triton", the Kraken isle's way over) waits a moment
+                // with its sparkle before it sends the wizard, as in the game. It sent them the instant they touched it, so
+                // whoever landed beside the way back was sent straight back, over and over (Niduus, 2026-11-13: "there is no
+                // delays to this teleporter"). While one is on its way, touching another does nothing.
+                var delay = TeleporterDelaySeconds;
+                if (message.ByZoneDoor && delay > 0) {
+                    if (Timers.IsTimerActive(IN_AREA_TELEPORT)) {
+                        return zoneDetails;
+                    }
+
+                    SendTeleportEffects();
+                    Timers.StartSingleTimer(IN_AREA_TELEPORT, new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                        DestinationZone = message.DestinationZone,
+                        DestinationLocation = message.DestinationLocation,
+                        SendToClient = true,
+                        OwnerCharId = message.OwnerCharId,
+                    }, TimeSpan.FromSeconds(delay));
+
+                    return zoneDetails;
+                }
+
                 DoTeleport(message.DestinationLocation);
 
                 return zoneDetails;
@@ -1735,6 +1756,11 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             GameServerPort = character.GameServerPort
         });
     }
+
+    private const string IN_AREA_TELEPORT = "in-area-teleport";
+
+    /// <summary>How long a teleporter within an area waits before sending the wizard ([World] TeleporterDelaySeconds, live).</summary>
+    private static double TeleporterDelaySeconds => Math.Clamp(ConfigurationManager.GetValue("World.TeleporterDelaySeconds", 1.5), 0, 10);
 
     private void DoTeleport(string location) {
         var coords = Util.GetVectorFromCompactString(location);
