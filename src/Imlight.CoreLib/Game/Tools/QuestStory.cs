@@ -48,6 +48,9 @@ internal static class QuestStory {
     internal static bool IsMain(QuestTemplate quest)
         => quest is not null && (quest.m_mainline || ((string) quest.m_questName ?? "").Contains("MAIN", StringComparison.OrdinalIgnoreCase));
 
+    /// <summary>A quest of a world's story chain (the main quests that lead to the world's end).</summary>
+    internal static bool IsStory(QuestTemplate quest) => KindOf(quest) == STORY;
+
     /// <summary>"instance" (a dungeon's own quest), "story", "main" or "side".</summary>
     internal static string KindOf(QuestTemplate quest) {
         if (quest is not null && DungeonQuestIndex.IsDungeonQuest(quest.m_questName)) {

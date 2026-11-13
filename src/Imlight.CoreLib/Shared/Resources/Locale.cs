@@ -124,6 +124,28 @@ internal class Locale : RootDirectoryResourceSingleton<Locale>, IMemoryStreamDis
         return value;
     }
 
+    /// <summary>
+    /// A key with no table in front of it ("chatEntryKey73", as Menu Chat phrases name their text): its line from whichever
+    /// text table has it, a chat table first; "" when none does.
+    /// </summary>
+    public static string FindInAnyTable(string key) {
+        if (string.IsNullOrEmpty(key)) {
+            return "";
+        }
+
+        if (s_data.Count == 0) {
+            _ = Instance;
+        }
+
+        foreach (var (name, table) in s_data.OrderByDescending(t => t.Key.Contains("Chat", StringComparison.OrdinalIgnoreCase))) {
+            if (table.TryGetValue(key, out var value) && !string.IsNullOrEmpty(value)) {
+                return value;
+            }
+        }
+
+        return "";
+    }
+
     /// <summary>One of the game's text tables (ZoneLocName), id to line, or null when the game has no such table.</summary>
     public static IReadOnlyDictionary<string, string> Table(string tableName) {
         if (s_data.Count == 0) {
