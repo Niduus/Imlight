@@ -179,11 +179,20 @@ internal static class BotSheet {
         static float At(List<float> list, string name)
             => list is not null && MagicSchools.GetMagicSchool(name) is { } s && s.m_schoolIndex < list.Count ? list[(int) s.m_schoolIndex] : 0f;
         static string Pct(float fraction) => $"{Math.Round(fraction * 100f)}%";
-        void Row(string value, string after, string words, string rowSchool, params string[] icons)
-            => rows.Add(new JsonObject {
+        // Only stats of 1 or more show (Niduus, 2026-11-13: "display stats that are only 1 or greater"); health and mana always.
+        static bool Shown(string value)
+            => value.Contains('/') || (double.TryParse(value.TrimEnd('%'), System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture, out var number) && number >= 1);
+        void Row(string value, string after, string words, string rowSchool, params string[] icons) {
+            if (!Shown(value)) {
+                return;
+            }
+
+            rows.Add(new JsonObject {
                 ["value"] = value, ["after"] = after, ["words"] = words, ["school"] = rowSchool,
                 ["icons"] = new JsonArray([.. icons.Select(i => (JsonNode) i)]),
             });
+        }
 
         var own = string.IsNullOrEmpty(school) ? "Fire" : school;
         Row($"{stats.m_currentHitpoints}/{stats.m_baseHitpoints + stats.m_bonusHitpoints}", "", "Health: now and most", "", "health");
