@@ -85,6 +85,9 @@ internal static class BotSheet {
             })]);
         member["spellsOther"] = new JsonArray([.. cardsOf.Where(c => !Card(c)).Select(c => SpellName(c.Id))
             .Where(n => n.Length > 0).Distinct().Order().Select(n => (JsonNode) n)]);
+        member["otherGrid"] = new JsonArray([.. cardsOf.Where(c => !Card(c)).Select(c => (JsonNode) new JsonObject {
+            ["id"] = c.Id, ["school"] = (string) c.Template.m_sMagicSchoolName ?? "", ["name"] = SpellName(c.Id),
+        })]);
         if (member["spells"] is null) {
             member["spells"] = new JsonArray([.. learned.Select(SpellName).Where(n => n.Length > 0).Distinct().Order().Select(n => (JsonNode) n)]);
         }

@@ -43,6 +43,7 @@ internal sealed partial class UltimusDirectorActor {
     private const double BIG_GAIN = 8;
 
     private DateTime _nextGearLook = DateTime.MinValue;
+    private readonly HashSet<uint> _unreadNoted = [];
     private DateTime _nextShopping = DateTime.MinValue;
     private readonly Dictionary<string, string> _deckFor = [];
     private readonly Dictionary<string, int> _deckKnown = [];
@@ -188,8 +189,20 @@ internal sealed partial class UltimusDirectorActor {
 
             // One piece at a time, the best gain first.
             if (BotGear.BetterInBackpack(wizard, StyleOf(member)).OrderByDescending(b => b.Gain).FirstOrDefault() is { Item: not null } better) {
+                // What it weighed, so a swap can be checked (Niduus, 2026-11-13: "Why does Ultimus not use the Adept robe").
+                var slotType = Enum.TryParse<Imlight.CoreLib.WizardData.Models.Player.EquipmentSlotType>(better.Slot, out var parsed) ? parsed : default;
+                var (worn, wornScore) = BotGear.Wearing(wizard, slotType, StyleOf(member));
+                Note(member.Role, $"{member.Name} weighs {better.Piece.Name} ({wornScore + better.Gain:0.#}) against {worn?.Name ?? "nothing"} ({wornScore:0.#}).");
                 _actors[i].Tell(new UltimusMember.Equip(better.Item.m_globalID, better.Slot, better.Piece.Name));
                 continue;
+            }
+
+            // Gear whose stats it can't all read is left as it is, and said once, so it can be looked into.
+            foreach (var item in wizard.InventoryBehavior?.Items ?? []) {
+                var id = (uint) Math.Min((ulong) item.m_templateID, uint.MaxValue);
+                if (BotGear.Read(id) is { } unread && BotGear.PartlyRead(id) && _unreadNoted.Add(id)) {
+                    Note(member.Role, $"{member.Name} can't read all the stats of {unread.Name}, so it leaves that piece as it is.", UltimusLink.NOTABLE);
+                }
             }
 
             // Always the Essential badge as their title, picked as a player picks it, and picked again if anything changes
