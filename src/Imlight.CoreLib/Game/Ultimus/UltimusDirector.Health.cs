@@ -55,14 +55,15 @@ internal sealed partial class UltimusDirectorActor {
     // Standing still on purpose until it can heal: not "stuck".
     private bool _healWaiting;
 
-    private static bool Hurt(UltimusMember.Status member, out bool lowHealth, out bool lowMana) {
+    private static bool Hurt(UltimusMember.Status member, out bool lowHealth, out bool lowMana, bool tough = false) {
         lowHealth = lowMana = false;
         if (member.Wizard?.GameStats is not { } stats) {
             return false;
         }
 
-        lowHealth = stats.m_currentHitpoints < Math.Max(1, stats.m_baseHitpoints + stats.m_bonusHitpoints) * READY_HEALTH;
-        lowMana = stats.m_currentMana < Math.Max(1, stats.m_baseMana + stats.m_bonusMana) * READY_MANA;
+        // A creature that beat it before, or that takes most of its health, is met at full health (UltimusFoes).
+        lowHealth = stats.m_currentHitpoints < Math.Max(1, stats.m_baseHitpoints + stats.m_bonusHitpoints) * (tough ? TOUGH_READY_HEALTH : READY_HEALTH);
+        lowMana = stats.m_currentMana < Math.Max(1, stats.m_baseMana + stats.m_bonusMana) * (tough ? TOUGH_READY_MANA : READY_MANA);
 
         return lowHealth || lowMana;
     }
@@ -74,7 +75,7 @@ internal sealed partial class UltimusDirectorActor {
     private bool HealFirst(List<UltimusMember.Status> group, UltimusPlanner.Target target) {
         var leader = group[0];
         _healWaiting = false;
-        if (CombatDuelComponent.IsInBattle(leader.GlobalId) || !Hurt(leader, out var lowHealth, out var lowMana)) {
+        if (CombatDuelComponent.IsInBattle(leader.GlobalId) || !Hurt(leader, out var lowHealth, out var lowMana, ToughFoeNow(target))) {
             _hurtSince = DateTime.MaxValue;
             _toldNoHeal = false;
 

@@ -43,6 +43,12 @@ internal static class AdeptStarterGear {
     private const ulong DECK = 1712599;
     private const ulong GHULTURE = 1392135;
 
+    /// <summary>Whether the item is a piece of an Adept set (any school's hat, robe, shoes, wand, dirk, ring, ampul or deck).</summary>
+    internal static bool IsAdept(ulong templateId) => templateId >= HAT && templateId < DECK + 7;
+
+    /// <summary>The school's Adept robe, whatever the setting.</summary>
+    internal static ulong RobeFor(MagicSchool school) => ROBE + (GhultureFor(school) - GHULTURE);
+
     /// <summary>The school's Ghulture (PERM), whatever the setting (the Quest Team rides one).</summary>
     internal static ulong GhultureFor(MagicSchool school) => GHULTURE + school switch {
         MagicSchool.Death => 1UL,

@@ -266,6 +266,8 @@ public static class UltimusLink {
     internal const string CRITICAL = "CRITICAL";
     internal const string COMMAND = "COMMAND";
     internal const string ABNORMAL = "ABNORMAL";
+    // Ultimus thinking out loud (brown in Ahziael's Ultimus Thoughts; Niduus, 2026-11-13).
+    internal const string THOUGHT = "THOUGHT";
 
     /// <summary>Tells the brain what Ultimus did, for its log, without waiting.</summary>
     internal static void Note(string who, string text, string level = null) {

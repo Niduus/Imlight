@@ -29,8 +29,8 @@ namespace Imlight.CoreLib.Game.Ultimus;
 /// What Ultimus did each time it was flagged ABNORMAL for being stuck, and what got it free (Niduus, 2026-11-13: "Each time
 /// it gets flagged as abnormal, it then marks it down, making the bot forcefully pick new routes to achieve it's goal. It
 /// should never allow itself to make the same or adjacent abnormal flags more than once. I want Ultimus to strictly
-/// improve"). A flag is kept by its street, its spot and the step it was on; a flag at the same or a nearby spot for the
-/// same step is the same flag. The next time, the fix that worked there is tried first; when none has worked yet, a fix
+/// improve"). A flag is kept by its street and its spot (and the step it was last on); a flag at the same or a nearby spot
+/// is the same flag. The next time, the fix that worked there is tried first; when none has worked yet, a fix
 /// not tried there before; a fix is never tried twice at one flag until every other one was. Kept in
 /// logs/ultimus/abnormal-fixes.json, so it is not lost when the server restarts or updates.
 /// </summary>
@@ -39,13 +39,16 @@ internal static class UltimusFixes {
     // The fixes, in the order they are tried when nothing is known yet: the cheapest first.
     internal const string ASIDE = "step aside";
     internal const string OTHER_WAY = "another way (a teleporter or a new route)";
+    internal const string HOP = "hop to a clear spot by its goal (line of sight)";
     internal const string AWAY = "walk well away and come back another way";
     internal const string START = "go back to where the area starts";
+    internal const string GO = "have Ahziael take it to the area of its step";
     internal const string SKIP = "have Ahziael finish the step";
 
-    internal static readonly string[] Order = [ASIDE, OTHER_WAY, AWAY, START, SKIP];
+    internal static readonly string[] Order = [ASIDE, OTHER_WAY, HOP, AWAY, START, GO, SKIP];
 
-    // A flag this near another one for the same step is the same flag.
+    // A flag this near another one is the same flag, whatever step it was on (Niduus's log, 2026-11-13: at The Oasis's
+    // start the same spot was flagged again and again; what failed there fails there for the next step too).
     private const float ADJACENT = 600f;
 
     private const string FILE = "abnormal-fixes.json";
@@ -73,9 +76,8 @@ internal static class UltimusFixes {
     internal static (string Fix, Flag Flag) Next(string zone, float x, float y, string step, ICollection<string> skip = null) {
         lock (s_lock) {
             var all = Flags();
-            var flag = all.Where(f => string.Equals(f.Zone, zone, StringComparison.OrdinalIgnoreCase) && f.Step == (step ?? "")
-                                      && Far(f.X, f.Y, x, y) <= ADJACENT)
-                .OrderBy(f => Far(f.X, f.Y, x, y)).FirstOrDefault();
+            var flag = all.Where(f => string.Equals(f.Zone, zone, StringComparison.OrdinalIgnoreCase) && Far(f.X, f.Y, x, y) <= ADJACENT)
+                .OrderByDescending(f => f.Step == (step ?? "")).ThenBy(f => Far(f.X, f.Y, x, y)).FirstOrDefault();
             if (flag is null) {
                 all.Add(flag = new Flag { Zone = zone ?? "", X = x, Y = y, Step = step ?? "" });
                 if (all.Count > MOST) {
@@ -85,6 +87,7 @@ internal static class UltimusFixes {
 
             flag.Times++;
             flag.Last = DateTime.UtcNow;
+            flag.Step = step ?? "";
 
             // What worked here before, once; then what was not tried yet; then, all tried, round again from the start.
             var allowed = Order.Where(f => skip is null || !skip.Contains(f)).ToList();

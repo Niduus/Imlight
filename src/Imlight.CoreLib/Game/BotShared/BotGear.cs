@@ -367,6 +367,15 @@ internal static class BotGear {
     // ---------------------------------------------------------------------
 
     /// <summary>Whether a wizard of this school and level may wear it.</summary>
+    /// <summary>
+    /// The wizard's own school's Adept set, which a new wizard starts out wearing: it is worn whatever the wizard's level
+    /// ("L30" is only in its file names), so a piece taken off is put back on (Niduus, 2026-11-13: "still curious as to why
+    /// it doesn't wear the robe": the robe, once off, was held to level 30 and never went back on).
+    /// </summary>
+    internal static bool IsStarterAdept(Piece piece, string school)
+        => piece is not null && Imlight.CoreLib.Shared.Character.AdeptStarterGear.IsAdept(piece.Id)
+           && (piece.SchoolNeeded.Length == 0 || piece.SchoolNeeded.Equals(school, StringComparison.OrdinalIgnoreCase));
+
     internal static bool CanWear(Piece piece, string school, int level)
         => piece is not null && piece.Level <= level
            && (piece.SchoolNeeded.Length == 0 || piece.SchoolNeeded.Equals(school, StringComparison.OrdinalIgnoreCase));
@@ -502,7 +511,8 @@ internal static class BotGear {
             }
 
             var best = items.Select(i => (Item: i, Piece: Read((uint) Math.Min((ulong) i.m_templateID, uint.MaxValue))))
-                .Where(x => x.Piece is not null && x.Piece.Slot == slot.ToString() && CanWear(x.Piece, school, level) && !PartlyRead(x.Piece.Id))
+                .Where(x => x.Piece is not null && x.Piece.Slot == slot.ToString() && !PartlyRead(x.Piece.Id)
+                            && (CanWear(x.Piece, school, level) || IsStarterAdept(x.Piece, school)))
                 .Select(x => (x.Item, x.Piece, Score: Score(x.Piece, school, style)))
                 .OrderByDescending(x => x.Score).FirstOrDefault();
             if (best.Item is not null && best.Score > wearing + 0.5) {

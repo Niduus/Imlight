@@ -54,17 +54,22 @@ internal sealed partial class UltimusDirectorActor {
             NoteStartLanding(i, member);
             NoteFreed(i, member);
             if (_stuck.Look(i, member.Zone, member.X, member.Y, resting) is var tries and > 0) {
-                Unstick(i, tries);
+                Unstick(i);
             }
         }
     }
 
-    private void Unstick(int index, int tries) {
+    /// <summary>
+    /// Stuck: written down as a flag, and the next fix for that spot made (UltimusFixes). <paramref name="why"/>: what was
+    /// seen ("has stood still over 30 seconds", "made no progress for 6 minutes").
+    /// </summary>
+    private void Unstick(int index, string why = null) {
         var member = _team[index];
         var where = $"{UltimusText.Zone(member.Zone)} at ({member.X:0}, {member.Y:0})";
-        var seconds = (int) _stuck.Still.TotalSeconds;
+        why ??= $"has stood still over {(int) _stuck.Still.TotalSeconds} seconds";
         var quest = _target?.Quest ?? _currentQuest;
-        var step = (_target ?? _leaderLastTarget) is { } goal ? $"{goal.Quest}|{goal.Goal}|{goal.What}" : _doing;
+        var goal = _target ?? _leaderLastTarget;
+        var step = goal is not null ? $"{goal.Quest}|{goal.Goal}|{goal.What}" : _doing;
 
         // Written down (RouteMemory): the way finder bends round this spot from now on, for every bot, and a proven walk
         // through it no longer counts (Niduus, 2026-11-13: "adapt to new paths to get to his quest goal").
@@ -90,14 +95,23 @@ internal sealed partial class UltimusDirectorActor {
             skip.Add(UltimusFixes.START);
         }
 
+        // The line of sight circle's hop: only by a goal in sight with a clear spot next to it.
+        var hop = goal is not null && UltimusSight.InSight(member.X, member.Y, goal.X, goal.Y)
+            ? UltimusSight.HopBy(member.Zone, goal.X, goal.Y, member.Z) : null;
+        if (hop is null) {
+            skip.Add(UltimusFixes.HOP);
+        }
+
         if (string.IsNullOrEmpty(quest)) {
+            skip.Add(UltimusFixes.GO);
             skip.Add(UltimusFixes.SKIP);
         }
 
         var (fix, flag) = UltimusFixes.Next(member.Zone, member.X, member.Y, step, skip);
         _openFlag[index] = (flag, member.Zone ?? "", member.X, member.Y);
         var seen = flag.Times > 1 ? $" (flagged here {flag.Times} times; tried before: {string.Join(", ", flag.Tried.SkipLast(1).Distinct())})" : "";
-        Note("Ultimus", $"{member.Name} has stood still over {seconds} seconds in {where} while {_doing}{seen}: {fix}.", UltimusLink.ABNORMAL);
+        Note("Ultimus", $"{member.Name} {why} in {where} while {_doing}{seen}: {fix}.", UltimusLink.ABNORMAL);
+        ThinkAboutStuck(member, why, fix, flag, step);
         if (flag.Times > 1) {
             Issue("team", quest, $"{member.Name} is stuck again in {where} while {_doing}: flagged here {flag.Times} times; now tries: {fix}.",
                 key: $"unstick|{member.Zone}|{(int) (flag.X / 600)}|{(int) (flag.Y / 600)}|{flag.Times}", skipStep: false, level: UltimusLink.ABNORMAL);
@@ -120,6 +134,21 @@ internal sealed partial class UltimusDirectorActor {
                 return;
             case UltimusFixes.START:
                 Recall(index, member);
+                return;
+            case UltimusFixes.HOP when hop is { } spot:
+                Think($"\"{goal!.What}\" is right there, {UltimusPlanner.Far(member.X, member.Y, goal.X, goal.Y):0} away in my circle of sight, but I can't walk to it. " +
+                      "I hop to a clear spot next to it; the route there needs fixing, so I write it down.");
+                BotMistakes.Record("Ultimus", BotMistakes.NO_WAY, member.Zone, member.X, member.Y, step,
+                    $"Could not walk to \"{goal.What}\" {UltimusPlanner.Far(member.X, member.Y, goal.X, goal.Y):0} away; hopped to ({spot.X:0}, {spot.Y:0}).",
+                    _lastReasoning, "The walk data between these two spots needs fixing.", fix);
+                _actors[index].Tell(new UltimusMember.Hop(spot.X, spot.Y, spot.Z, "next to " + goal.What));
+                _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
+                return;
+            case UltimusFixes.GO:
+                // As a player types .stuck go: the server sends it to the area its step is in (nothing happens when the step
+                // is in this area, and the next flag here goes on to the next fix).
+                _actors[index].Tell(new UltimusMember.GoToStep());
+                _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
                 return;
             case UltimusFixes.SKIP:
                 Issue("quest", quest, $"{member.Name} tried every fix at {where} while {_doing} and is still stuck there: Ahziael finishes the step.",
@@ -151,6 +180,7 @@ internal sealed partial class UltimusDirectorActor {
 
         _openFlag.Remove(index);
         UltimusFixes.Worked(open.Flag);
+        ThinkFreed(member, open.Flag);
         var (flags, worked) = UltimusFixes.Count();
         Note("Ultimus", $"{member.Name} got free with \"{open.Flag.Worked}\" and remembers it for that spot ({flags} stuck spots known, {worked} with a fix that works).");
     }
@@ -158,7 +188,7 @@ internal sealed partial class UltimusDirectorActor {
     private void Aside(int index, UltimusMember.Status member, float near, float far, string why) {
         var spot = BotStuck.StepAside(member.Zone, member.X, member.Y, member.Z, near, far)
                    ?? (member.X + Random.Shared.Next((int) -far, (int) far), member.Y + Random.Shared.Next((int) -far, (int) far));
-        var aside = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, spot.X, spot.Y, body: true);
+        var aside = WalkOrStraight(member, spot.X, spot.Y);
         _actors[index].Tell(new UltimusMember.WalkTo(aside, why));
         _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
         OverlayQuestPath.Forget(member.CharId);
@@ -185,28 +215,23 @@ internal sealed partial class UltimusDirectorActor {
     }
 
     /// <summary>
-    /// Stuck right where going back to the area's start puts it (Niduus's log, 2026-11-13: Ultimus went back to The Oasis's
-    /// start every minute and a half for over an hour, and stood still there each time): going back again is no use, so it
-    /// walks well away instead (over floor the file does not show, if that is the only way), and it is written up once.
-    /// True when that was done.
+    /// The way to a spot to get unstuck; when the map gives no way from here at all (a walk that goes nowhere), a straight
+    /// line, as a player who can't see the way just walks off in one direction (Niduus's log, 2026-11-13: at The Oasis's
+    /// start every step aside went nowhere, so it never moved at all).
     /// </summary>
-    private bool StartIsHere(int index, UltimusMember.Status member, string where, string quest) {
-        if (!_startLanding.TryGetValue(member.Zone ?? "", out var start) || UltimusPlanner.Far(start.X, start.Y, member.X, member.Y) > 400) {
-            return false;
+    private List<(float X, float Y)> WalkOrStraight(UltimusMember.Status member, float toX, float toY) {
+        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, toX, toY, body: true);
+        if (points.Count > 0 && UltimusPlanner.Far(member.X, member.Y, points[^1].X, points[^1].Y) >= 60) {
+            return points;
         }
 
-        Issue("team", quest, $"{member.Name} is stuck at {where}, where {UltimusText.Zone(member.Zone)} starts, while {_doing}: going back to the start would put it here again.",
-            key: $"start-stuck|{member.Zone}", skipStep: false, level: UltimusLink.ABNORMAL);
-        var spot = BotStuck.StepAside(member.Zone, member.X, member.Y, member.Z, 900f, 2500f)
-                   ?? (member.X + Random.Shared.Next(-900, 900), member.Y + Random.Shared.Next(-900, 900));
-        Note("Ultimus", $"{member.Name} is stuck where {UltimusText.Zone(member.Zone)} starts, so going back there is no use: walks well away and finds the way from there.",
+        Note("Ultimus", $"{member.Name}: the map gives no way from ({member.X:0}, {member.Y:0}) in {UltimusText.Zone(member.Zone)}, so it walks straight toward ({toX:0}, {toY:0}).",
             UltimusLink.ABNORMAL);
-        var away = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, spot.X, spot.Y, body: true);
-        _actors[index].Tell(new UltimusMember.WalkTo(away, "walks away from the area's start to get unstuck"));
-        _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
-        OverlayQuestPath.Forget(member.CharId);
+        BotMistakes.Record("Ultimus", BotMistakes.NO_WAY, member.Zone, member.X, member.Y, _doing,
+            $"The map gave no way from ({member.X:0}, {member.Y:0}) to ({toX:0}, {toY:0}).",
+            "The way finder found nothing, so I walked straight instead of standing still.", "The area's walk data needs a look at this spot.");
 
-        return true;
+        return [((member.X + toX) / 2, (member.Y + toY) / 2), (toX, toY)];
     }
 
     // A patch under a twentieth of the area's main ground with no teleporter on it.

@@ -88,6 +88,10 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
 
     /// <summary>Ahziael finishes the step it is on in a quest (.quest completegoalfor), for a step that is broken.</summary>
     internal sealed record SkipStep(string Quest);
+    /// <summary>Ahziael sends it to the area its quest step is in, as a player's .stuck go does.</summary>
+    internal sealed record GoToStep;
+    /// <summary>A small hop to a clear spot by its goal (the line of sight circle's last resort).</summary>
+    internal sealed record Hop(float X, float Y, float Z, string Why);
     // Stuck past stepping aside: the server takes it back to where its area starts.
     internal sealed record Recall;
     internal sealed record GainXp(int Xp);
@@ -268,6 +272,23 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
             for (var i = 0; i < m.Each.Count; i++) {
                 Timers.StartSingleTimer($"click-{_clicks++}", new ClickNow(m.Each[i].Move), TimeSpan.FromSeconds(Math.Max(0.05, m.Each[i].AfterSeconds)));
             }
+        });
+        Receive<Hop>(m => {
+            if (!_attached) {
+                return;
+            }
+
+            _route.Clear();
+            View.Walking = false;
+            Note($"hops to ({m.X:0}, {m.Y:0}): {m.Why}.");
+            Place(m.X, m.Y, m.Z);
+            Send(new GAME_5_PROTOCOL.MSG_CLIENTMOVE {
+                LocationX = Compress(m.X), LocationY = Compress(m.Y), LocationZ = Compress(m.Z), Direction = 0, ZoneCounter = _zoneCounter,
+            });
+        });
+        Receive<GoToStep>(_ => {
+            _recalledAt = DateTime.UtcNow;
+            _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "botgo" });
         });
         Receive<SkipStep>(m => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "completegoal", QuestName = m.Quest }));
         Receive<Recall>(_ => {
