@@ -1283,6 +1283,29 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Timer-fired message: an enemy looks again at every player near it, and sends itself to any whose game was never
+    /// sent it (Niduus, 2026-11-12: enemies sometimes showed as an empty battle circle).
+    /// </summary>
+    public sealed class MSG_ENEMYSHOWCHECK : IServerMessage {
+
+        public byte MessageOrder { get; } = 109;
+        public byte ServiceID { get; } = 102;
+
+    }
+
+    /// <summary>
+    /// Timer-fired message: a creature is sent once more to a wizard who came into its battle, a moment after the first
+    /// copy, in case the wizard's game was still busy and let the first one go.
+    /// </summary>
+    public sealed class MSG_ENEMYRESEND : IServerMessage {
+
+        public byte MessageOrder { get; } = 110;
+        public byte ServiceID { get; } = 102;
+        public IActorRef PlayerActor;
+
+    }
+
+    /// <summary>
     /// Timer-fired message: a dungeon sigil pad sends its look again, to one player (Player set) or to every player in
     /// the zone (Player null, after the Customs tab changed the pad while the zone runs). LastOnly sends only the look's
     /// final state, a second time, for a game that was still busy with the first.

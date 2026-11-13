@@ -92,6 +92,19 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     private readonly Dictionary<IActorRef, System.DateTime> _questCheckedAt = [];
     private static readonly System.TimeSpan QUEST_CHECK_INTERVAL = System.TimeSpan.FromSeconds(2);
 
+    // The enemy show check (Niduus, 2026-11-12: "tighten enemy appearances. Sometimes they do project as invisible. Have
+    // the server do a constant check"). Every player whose game this object was sent to, and has not been taken from
+    // since, and where each player in the zone was last seen. An enemy looks at them every few seconds and sends itself
+    // to anyone near it who should see it and was never sent it.
+    private const string SHOW_CHECK_TIMER = "EnemyShowCheck";
+    private readonly HashSet<IActorRef> _sentTo = [];
+    private readonly Dictionary<IActorRef, (CoreObject Object, Wizard Wizard)> _lastSeen = [];
+    // A trigger or animation took the object away from everyone (ZoneEntity.DespawnObject); the check leaves it away.
+    private bool _removedByScript;
+    private static double ShowCheckSeconds
+        => System.Math.Clamp(ConfigurationManager.GetValue("World.EnemyShowCheckSeconds", 3.0), 0, 60);
+    private static readonly System.TimeSpan DUEL_RESEND_DELAY = System.TimeSpan.FromSeconds(3);
+
     public static bool ShouldAttachToEntity(CoreTemplate template)
         => template is GameObjectTemplate gameObjectTemplate
         && gameObjectTemplate.m_behaviors.Any(x => x is RenderBehaviorTemplate)
@@ -123,9 +136,16 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         if (!IsQuestOnly) {
             CreateObjectForAllPlayers();
         }
+
+        if (IsEnemy) {
+            // Started at once and looked at each tick, so a change to the setting applies without a restart.
+            Timers.StartPeriodicTimer(SHOW_CHECK_TIMER, new ZONE_102_PROTOCOL.MSG_ENEMYSHOWCHECK(),
+                System.TimeSpan.FromSeconds(1), System.TimeSpan.FromSeconds(1));
+        }
     }
 
     public override void OnEnabled() {
+        _removedByScript = false;
         if (IsQuestOnly) {
             foreach (var player in _playersWithRequirementsMet.Values.Where(p => !_playerIgnoreBecauseDynamod.ContainsKey(p))) {
                 CreateObjectForPlayer(player);
@@ -151,10 +171,12 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
         // Nobody has the object any more. The requirements record stays so a re-enable can send it again.
         _playersInRange.Clear();
+        _sentTo.Clear();
     }
 
     public override void OnPlayerJoin(CoreObject player, IActorRef suspect, Wizard wizard) {
         _joinedPlayers.Add(suspect);
+        _lastSeen[suspect] = (player, wizard);
 
         // Check to see if dynamods would enable/disable this object.
         // We don't need to check for spawns, only despawns.
@@ -247,6 +269,8 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         // Remove the player from the list of players in range.
         _playersInRange.Remove(suspect);
         _questCheckedAt.Remove(suspect);
+        _lastSeen.Remove(suspect);
+        _sentTo.Remove(suspect);
 
         if (_playerIgnoreBecauseDynamod.Remove(suspect) | _hiddenUntilQuest.Remove(suspect)) {
             return;
@@ -256,6 +280,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     }
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
+        _lastSeen[playerActor] = (playerObj, playerWizard ?? _lastSeen.GetValueOrDefault(playerActor).Wizard);
         if (playerWizard is not null && Entity.Info?.m_spawnRequirements is null && _joinedPlayers.Add(playerActor)) {
             if (IsQuestOnly) {
                 // This player was in the zone before the object was made, so OnStart did not send it to them.
@@ -265,6 +290,10 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             else {
                 _playersWithRequirementsMet[playerWizard] = playerActor;
                 _playersInRange.Add(playerActor);
+                // OnStart sent it to everyone in the zone, this player too (unless the object was taken away since).
+                if (!_removedByScript && IsEnabled) {
+                    _sentTo.Add(playerActor);
+                }
             }
         }
 
@@ -274,7 +303,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             return;
         }
 
-        if (!_doesDistanceCheck || _heldByDuel) {
+        if (!_doesDistanceCheck) {
             return;
         }
 
@@ -292,7 +321,10 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
             _playersInRange.Add(playerActor);
         }
-        else if (!IsInRadius(playerObj, _renderDistance) && _playersInRange.Contains(playerActor)) {
+        // A creature in a battle stays with everyone who has it, however far they go (the battle's wizards must keep it).
+        // It is still sent to a player who comes near: before, a player who walked or teleported up to a battle that
+        // started while they were away saw an empty enemy circle until the creature died (Niduus, 2026-11-12, the Kraken).
+        else if (!_heldByDuel && !IsInRadius(playerObj, _renderDistance) && _playersInRange.Contains(playerActor)) {
             // If the player is out of range, despawn the object for them.
             DespawnObjectForPlayer(playerActor);
             _playersInRange.Remove(playerActor);
@@ -351,6 +383,85 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         CreateObjectForPlayer(player);
         _playersInRange.Add(player);
         _joinedPlayers.Add(player);
+
+        // Once more a moment later: a game still loading the battle can let the first copy go, and one that has it
+        // already ignores the second.
+        Timers.StartSingleTimer($"EnemyResend_{player.Path}", new ZONE_102_PROTOCOL.MSG_ENEMYRESEND { PlayerActor = player },
+            DUEL_RESEND_DELAY);
+    }
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ENEMYRESEND))]
+    private void ReceiveEnemyResend(ZONE_102_PROTOCOL.MSG_ENEMYRESEND message) {
+        if (message.PlayerActor is null || !IsEnabled || _removedByScript || Entity.ActiveGameObject is null
+            || !_sentTo.Contains(message.PlayerActor)) {
+            return;
+        }
+
+        CreateObjectForPlayer(message.PlayerActor);
+    }
+
+    // The constant check. Each player near this enemy who should see it (not hidden from them by a dynamod, a quest or
+    // its spawn requirements) and whose game was never sent it, or was last told to take it away, is sent it now.
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ENEMYSHOWCHECK))]
+    private void ReceiveEnemyShowCheck() {
+        var interval = ShowCheckSeconds;
+        if (interval <= 0 || !IsEnabled || _removedByScript || Entity.ActiveGameObject is null || _lastSeen.Count == 0) {
+            return;
+        }
+
+        var now = System.DateTime.UtcNow;
+        if ((now - _lastShowCheck).TotalSeconds < interval) {
+            return;
+        }
+
+        _lastShowCheck = now;
+        foreach (var (player, (playerObj, wizard)) in _lastSeen.ToList()) {
+            if (_sentTo.Contains(player) || !ShouldSee(player, playerObj, wizard)) {
+                continue;
+            }
+
+            Logger.Information("Enemy show check | {0} ({1}) was missing from {2}'s game; sent it again.",
+                Logger.Args((Entity.Template as GameObjectTemplate)?.m_objectName, Entity.ActiveGameObject.m_globalID.Full,
+                    wizard?.CharId.ToString() ?? player.Path.Name));
+            CreateObjectForPlayer(player);
+            _playersInRange.Add(player);
+            if (wizard is not null) {
+                _playersWithRequirementsMet[wizard] = player;
+            }
+        }
+    }
+
+    private System.DateTime _lastShowCheck = System.DateTime.MinValue;
+
+    private bool ShouldSee(IActorRef player, CoreObject playerObj, Wizard wizard) {
+        if (_playerIgnoreBecauseDynamod.ContainsKey(player) || _hiddenUntilQuest.ContainsKey(player)) {
+            return false;
+        }
+
+        // Spawn requirements (or a quest) decide it: only a player already found to meet them.
+        if ((Entity.Info?.m_spawnRequirements is not null || IsQuestOnly)
+            && (wizard is null || !_playersWithRequirementsMet.ContainsKey(wizard))) {
+            return false;
+        }
+
+        return !_doesDistanceCheck || playerObj is null || IsInRadius(playerObj, _renderDistance);
+    }
+
+    // A creature that fights (a monster or boss), as the AI component is given to.
+    private bool IsEnemy
+        => Entity.Template is GameObjectTemplate goT
+           && goT.m_behaviors.Any(b => b is NPCBehaviorTemplate)
+           && goT.m_behaviors.Any(b => b is DuelistBehaviorTemplate);
+
+    // A trigger result or an animation took the object away from everyone (AnimationComponent.ReceiveRemoveObject, with
+    // the same match); the check must not bring it back.
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_REMOVEOBJECT))]
+    private void ReceiveRemovedByScript(ZONE_102_PROTOCOL.MSG_REMOVEOBJECT msg) {
+        if (Entity.Template is GameObjectTemplate goTemplate
+            && (msg.ObjectName == goTemplate.m_objectName || msg.TemplateID == goTemplate.m_templateID)) {
+            _removedByScript = true;
+            _sentTo.Clear();
+        }
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSHOWAGAIN))]
@@ -681,6 +792,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             Data = serializedData
         };
         player.Tell(newObjectMsg);
+        _sentTo.Add(player);
         LogMajid("sent to", player);
 
         foreach (var stateMsg in CreateCurrentStateMessages()) {
@@ -701,6 +813,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         PlayerBroadcast(new GAME_5_PROTOCOL.MSG_NEWOBJECT {
             Data = serializedData
         });
+        _sentTo.UnionWith(_lastSeen.Keys);
 
         foreach (var stateMsg in CreateCurrentStateMessages()) {
             PlayerBroadcast(stateMsg);
@@ -748,6 +861,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             GameObjectID = Entity.ActiveGameObject.m_globalID
         };
         player.Tell(despawnObjectMsg);
+        _sentTo.Remove(player);
     }
 
 }
