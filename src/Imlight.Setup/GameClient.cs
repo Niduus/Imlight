@@ -57,7 +57,9 @@ internal static class GameClient {
     ];
 
     internal static string? ClientExe(string installFolder) {
-        var game = InstallInfo.Load(installFolder).GameFolder;
+        var info = InstallInfo.Load(installFolder);
+        // A downloaded copy (Aurorium's) has the game program but can't run it: the game stops at "Base Messages".
+        var game = GameLocator.IsDownloadCopy(info.RootWad) ? null : info.GameFolder;
         var client = game is null ? null : Path.Combine(game, "Bin", "WizardGraphicalClient.exe");
 
         return client is not null && File.Exists(client) ? client : null;
@@ -67,8 +69,11 @@ internal static class GameClient {
     /// Starts Wizard101 connected to a private server. Throws a <see cref="PanelException"/> with the reason when it cannot.
     /// </summary>
     internal static async Task LaunchAsync(string installFolder, string host, int port) {
+        // Saved somewhere the game can't run from (a downloaded copy) or moved: look for the real one first.
         var client = ClientExe(installFolder)
-            ?? throw new PanelException("Wizard101 could not be found. Click \"Update Ahziael\" at the top of the app once, then try again.");
+            ?? (await Task.Run(() => GameLocator.FindAndRemember(installFolder)) is not null ? ClientExe(installFolder) : null)
+            ?? throw new PanelException("Wizard101 could not be found. Click \"Update Ahziael\" at the top of the app once, then try again. " +
+                "If it asks for the folder, pick the one Wizard101 is installed in, not Aurorium's.");
         if (await IsLiveRealmAsync(host)) {
             throw new PanelException("That is the live Wizard101 game. This app only plays on private servers.");
         }
