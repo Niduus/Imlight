@@ -26,6 +26,8 @@ using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Zone.Components;
+using Imlight.CoreLib.Game.QuestTeam;
+using Imlight.CoreLib.Game.Tools;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -204,6 +206,7 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
             for (var tries = 0; tries < count * 20 && _loop.Count < count && near.Length > 0; tries++) {
                 var p = near[Random.Shared.Next(near.Length)];
                 if (!NearAvoided(p) && _loop.All(q => NVector3.Distance(p, q) > _radius / 4)
+                    && !OverlayQuestPath.Apart(_info.ZonePath, home.X, home.Y, p.X, p.Y)
                     && BotGround.GoodSpot(_info.ZonePath, p)
                     && (Random.Shared.Next(3) == 0 || BotGround.Openness(_info.ZonePath, p) >= 30)
                     && ZoneCollision.Clearance(_info.ZonePath, p) >= WALL_CLEARANCE) {
@@ -309,6 +312,8 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
 
         var arrived = left <= stride;
         var to = arrived ? next : from + ((next - from) / left * stride);
+        // Feet on the ground where it steps (a slope, stairs), as the Quest Team walks.
+        to = to with { Z = QuestTeamGround.HeightAt(_info.ZonePath, to.X, to.Y, from.Z) };
         MoveTo(from, next, to);
         if (arrived) {
             _route.Dequeue();
@@ -355,43 +360,19 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
             destination = choices[Random.Shared.Next(choices.Count)];
         }
 
+        // The same legal way the Minimap's quest line, Ultimus and the Quest Team walk (Niduus, 2026-11-13: "learn off this
+        // data as a solidified rule"): only floor that can be walked, never the Minimap's black, never through a wall or
+        // across water (Game/Tools/OverlayQuestPath).
         _route.Clear();
-        var grid = ZoneNav.Points(_info.ZonePath);
-        if (grid.Length > 0) {
-            // Along the street's walk grid, hop by hop toward the place, so it follows the street around corners and
-            // buildings instead of a straight line through them.
-            var at = from;
-            for (var hop = 0; hop < 80 && NVector3.Distance(at, destination) > HOP_MAX; hop++) {
-                var left = NVector3.Distance(at, destination);
-                var here = at;
-                var next = grid
-                    .Where(p => MathF.Abs(p.Z - here.Z) < 120 && BotGround.CanStep(_info.ZonePath, p))
-                    .Select(p => (Point: p, Step: NVector3.Distance(p, here), Left: NVector3.Distance(p, destination)))
-                    .Where(x => x.Step is >= HOP_MIN and <= HOP_MAX && x.Left < left - 40
-                                && ZoneCollision.Clearance(_info.ZonePath, (x.Point + here) / 2) >= 20
-                                && BotGround.CanStep(_info.ZonePath, (x.Point + here) / 2))
-                    .OrderBy(x => x.Left).Take(3).ToList();
-                if (next.Count == 0) {
-                    break;
-                }
-
-                at = next[Random.Shared.Next(next.Count)].Point;
-                _route.Enqueue(at);
-            }
+        var way = OverlayQuestPath.Walk(_wizard.CharId, _info.ZonePath, from.X, from.Y, destination.X, destination.Y, body: true);
+        foreach (var (x, y) in way.Take(way.Count - 1)) {
+            _route.Enqueue(new NVector3(x, y, QuestTeamGround.HeightAt(_info.ZonePath, x, y, from.Z)));
         }
-        else if (NVector3.Distance(from, destination) is var distance && distance > 120) {
-            // No walk grid: a gentle curve there.
-            var dir = (destination - from) / distance;
-            var side = new NVector3(-dir.Y, dir.X, 0) * (distance * (0.08f + (Random.Shared.NextSingle() * 0.17f)) * (Random.Shared.Next(2) == 0 ? -1 : 1));
-            var control = ((from + destination) / 2) + side;
-            for (var i = 1; i <= 3; i++) {
-                var t = i / 4f;
-                var u = 1 - t;
-                var point = (u * u * from) + (2 * u * t * control) + (t * t * destination);
-                if (ZoneCollision.Clearance(_info.ZonePath, point) >= WALL_CLEARANCE && !NearAvoided(point)) {
-                    _route.Enqueue(point);
-                }
-            }
+
+        // Where the way ends (short of the place when the walls stop it there).
+        var (endX, endY) = way.Count > 0 ? way[^1] : (destination.X, destination.Y);
+        if (MathF.Abs(endX - destination.X) > 1 || MathF.Abs(endY - destination.Y) > 1) {
+            destination = new NVector3(endX, endY, QuestTeamGround.HeightAt(_info.ZonePath, endX, endY, from.Z));
         }
 
         _route.Enqueue(destination);
