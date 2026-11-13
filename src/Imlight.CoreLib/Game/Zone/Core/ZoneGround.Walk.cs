@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using Imlight.Common;
 using Imlight.CoreLib.Shared.Resources;
 
@@ -67,7 +68,7 @@ internal static partial class ZoneGround {
 
     /// <summary>The walking ground of a collision file's bytes.</summary>
     internal static WalkGround BuildWalk(byte[] data) {
-        var triangles = Read(data, out _);
+        var triangles = Read(data, out var circles, forWalking: true);
         float left = float.MaxValue, right = float.MinValue, bottom = float.MaxValue, top = float.MinValue;
         foreach (var t in triangles) {
             if (t.Kind == WALL) {
@@ -107,6 +108,24 @@ internal static partial class ZoneGround {
             }
         }
 
+        // Round posts, trees and pillars (a wizard walks round them, not through).
+        foreach (var c in circles.Where(c => c.R is >= 10 and <= 400)) {
+            var reach = (int) MathF.Ceiling(c.R / cell);
+            var (gx, gy) = ((int) MathF.Floor((c.X - left) / cell), (int) MathF.Floor((top - c.Y) / cell));
+            for (var y = gy - reach; y <= gy + reach; y++) {
+                for (var x = gx - reach; x <= gx + reach; x++) {
+                    if (x < 0 || y < 0 || x >= width || y >= height) {
+                        continue;
+                    }
+
+                    var (cx, cy) = (left + ((x + 0.5f) * cell), top - ((y + 0.5f) * cell));
+                    if (MathF.Sqrt(((cx - c.X) * (cx - c.X)) + ((cy - c.Y) * (cy - c.Y))) <= c.R + (cell * 0.35f)) {
+                        kinds[(y * width) + x] = WALL;
+                    }
+                }
+            }
+        }
+
         return new WalkGround(left, top, cell, width, height, kinds, heights, lows);
     }
 
@@ -123,11 +142,40 @@ internal static partial class ZoneGround {
         return BlocksAt(high) || (!float.IsNaN(low) && BlocksAt(low));
     }
 
+    // Every cell a wall's edge (in grid terms) runs through is a wall, unless walked under or wholly under ground.
+    private static void WallEdge(byte[] kinds, float[] heights, float[] lows, int width, int height, Triangle t, float x0, float y0, float x1, float y1) {
+        var steps = (int) MathF.Ceiling(MathF.Max(MathF.Abs(x1 - x0), MathF.Abs(y1 - y0)) * 2) + 1;
+        if (steps > 20000 || !float.IsFinite(x0 + y0 + x1 + y1)) {
+            return;
+        }
+
+        for (var i = 0; i <= steps; i++) {
+            var f = (float) i / steps;
+            var (x, y) = ((int) MathF.Floor(x0 + ((x1 - x0) * f)), (int) MathF.Floor(y0 + ((y1 - y0) * f)));
+            if (x < 0 || y < 0 || x >= width || y >= height) {
+                continue;
+            }
+
+            var at = (y * width) + x;
+            if (Blocks(t, heights[at], lows[at])) {
+                kinds[at] = WALL;
+            }
+        }
+    }
+
     private static void FillWalk(byte[] kinds, float[] heights, float[] lows, int width, int height, float left, float top, float cell, Triangle t) {
         float Gx(float x) => (x - left) / cell;
         float Gy(float y) => (top - y) / cell;
         var (ax, ay, bx, by, cx, cy) = (Gx(t.X1), Gy(t.Y1), Gx(t.X2), Gy(t.Y2), Gx(t.X3), Gy(t.Y3));
         var area = ((bx - ax) * (cy - ay)) - ((by - ay) * (cx - ax));
+        if (t.Kind == WALL) {
+            // Its edges first: a wall standing straight up is only a line from above, and a line has no inside
+            // (Niduus, 2026-11-13: the team walked through such walls).
+            WallEdge(kinds, heights, lows, width, height, t, ax, ay, bx, by);
+            WallEdge(kinds, heights, lows, width, height, t, bx, by, cx, cy);
+            WallEdge(kinds, heights, lows, width, height, t, cx, cy, ax, ay);
+        }
+
         if (MathF.Abs(area) < 1e-6f) {
             return;
         }

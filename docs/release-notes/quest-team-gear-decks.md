@@ -257,3 +257,8 @@ Fixed: A Quest Team issue on a door or exit could not skip the broken step
 Some issues come from walking a way out of an area, which has no quest of its own. Those issues could not skip the step, so the team could loop. They now use the quest the team is on, and the step gets skipped as with any other quest issue.
 Where: Quest Team > Team Issues
 Test: Nothing to do by hand. If the team loops at a door, the issue should say "Ahziael finished the step for them".
+
+Fixed: The Quest Team and Ultimus still walked through some walls
+The server's walking map for them is made from the area's collision file, and it was missing many solid things. A wall standing straight up has no width when seen from above, so it was never marked. A box turned on its side lost its length. Round posts, trees and pillars were left out, and so were the sides of solid shapes like buildings. All of these are now marked as walls on their walking map. Small steps like stairs and kerbs still aren't walls. The Quest Tracker's line on the minimap uses the same map, so it now goes round these too.
+Where: in the game, wherever they walk
+Test: Watch them walk past buildings, fences, posts and trees. They should go around them.
