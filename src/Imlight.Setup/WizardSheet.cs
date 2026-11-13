@@ -42,6 +42,18 @@ internal sealed class WizardSheet {
     /// </summary>
     internal Func<uint, string, double, int, Control>? CardThumb { get; set; }
 
+    /// <summary>A stat icon by its key ("health", "critical", ...) with its tip and size: the game's own picture when found.</summary>
+    internal Func<string, string, double, Control>? StatIcon { get; set; }
+
+    /// <summary>A school's icon at a size.</summary>
+    internal Func<string, double, Control>? SchoolIcon { get; set; }
+
+    /// <summary>A gear slot's icon ("Hat", "Robe", ... "Deck") at a size, as the game's backpack tabs show them.</summary>
+    internal Func<string, double, Control>? SlotIcon { get; set; }
+
+    private string _statsKey = "";
+    private string _gearKey = "";
+
     internal Control View { get; }
 
     internal WizardSheet(string emptyText) {
@@ -95,6 +107,8 @@ internal sealed class WizardSheet {
     /// <summary>Draws the shown wizard again, as when the game's card pictures have just been read.</summary>
     internal void Redraw() {
         _gridKey = "";
+        _statsKey = "";
+        _gearKey = "";
         if (_shown is not null) {
             Fill(_shown);
         }
@@ -113,8 +127,35 @@ internal sealed class WizardSheet {
         var others = List(m["questList"]).Where(q => q != quest).ToList();
         _quest.Text = (quest.Length > 0 ? $"Quest now: {quest}" + (step.Length > 0 ? $"\nStep: {step}" : "") : "Quest now: none") +
                       (others.Count > 0 ? $"\nAlso holds: {string.Join(", ", others)}" : "");
-        Lines(_stats, List(m["stats"]), "No stats yet (update the server to see them).");
-        Lines(_gear, List(m["gear"]), "Nothing worn yet.");
+        // With the game's icons when the window gives them and the server sends the rows (Niduus, 2026-11-13); built again
+        // only when they change.
+        if (StatIcon is not null && m["statRows"] is JsonArray statRows && statRows.Count > 0) {
+            var key = Key(m) + statRows.ToJsonString();
+            if (key != _statsKey) {
+                _statsKey = key;
+                _stats.Children.Clear();
+                _stats.Children.Add(StatPanel(statRows));
+            }
+        }
+        else {
+            _statsKey = "";
+            Lines(_stats, List(m["stats"]), "No stats yet (update the server to see them).");
+        }
+
+        if (SlotIcon is not null && m["gearRows"] is JsonArray gearRows && gearRows.Count > 0) {
+            var key = Key(m) + gearRows.ToJsonString();
+            if (key != _gearKey) {
+                _gearKey = key;
+                _gear.Children.Clear();
+                foreach (var row in gearRows.OfType<JsonObject>()) {
+                    _gear.Children.Add(GearRow(row));
+                }
+            }
+        }
+        else {
+            _gearKey = "";
+            Lines(_gear, List(m["gear"]), "Nothing worn yet.");
+        }
         var size = (int?) m["deckSize"] ?? 0;
         var deckFor = S(m, "deckFor");
         _deckTitle.Text = "Deck" + (size > 0 ? $" ({size} cards)" : "") + (deckFor.Length > 0 ? $", made ready for {deckFor}" : "");
@@ -143,6 +184,68 @@ internal sealed class WizardSheet {
         }
 
         _spells.Text = List(m["spells"]) is { Count: > 0 } spells ? string.Join(", ", spells) : "None yet.";
+    }
+
+    // The game's stat tooltip: yellow words on a dark blue panel, the icons beside the numbers.
+    private static readonly IBrush s_tipPanel = new SolidColorBrush(Color.FromRgb(0x14, 0x1E, 0x3C));
+    private static readonly IBrush s_tipYellow = new SolidColorBrush(Color.FromRgb(0xFF, 0xE8, 0x34));
+
+    private Control StatPanel(JsonArray rows) {
+        var list = new StackPanel { Spacing = 3 };
+        foreach (var row in rows.OfType<JsonObject>()) {
+            var words = S(row, "words");
+            var line = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 5 };
+            line.Children.Add(new TextBlock {
+                Text = S(row, "value"), Foreground = s_tipYellow, FontWeight = FontWeight.Bold, FontSize = 15, MinWidth = 64,
+                TextAlignment = TextAlignment.Right, VerticalAlignment = VerticalAlignment.Center,
+            });
+            if (S(row, "school") is { Length: > 0 } school && SchoolIcon is not null) {
+                line.Children.Add(SchoolIcon(school, 20));
+            }
+
+            foreach (var icon in List(row["icons"])) {
+                line.Children.Add(StatIcon!(icon, words, 22));
+            }
+
+            if (S(row, "after") is { Length: > 0 } after) {
+                line.Children.Add(new TextBlock {
+                    Text = after, Foreground = s_tipYellow, FontWeight = FontWeight.Bold, FontSize = 15, VerticalAlignment = VerticalAlignment.Center,
+                });
+            }
+
+            line.Children.Add(new TextBlock {
+                Text = words, Foreground = Brushes.White, Opacity = 0.75, FontSize = 12, Margin = new Thickness(6, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+            });
+            ToolTip.SetTip(line, words);
+            list.Children.Add(line);
+        }
+
+        return new Border {
+            Background = s_tipPanel, CornerRadius = new CornerRadius(4), Padding = new Thickness(8, 6), BorderThickness = new Thickness(2),
+            BorderBrush = new SolidColorBrush(Color.FromRgb(0xC8, 0x9A, 0x3A)), HorizontalAlignment = HorizontalAlignment.Left,
+            Child = list,
+        };
+    }
+
+    private Control GearRow(JsonObject row) {
+        var slot = S(row, "slot");
+        var name = S(row, "name");
+        var level = (int?) row["level"] ?? 0;
+        var line = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+        line.Children.Add(SlotIcon!(slot, 32));
+        line.Children.Add(new StackPanel {
+            VerticalAlignment = VerticalAlignment.Center,
+            Children = {
+                Text(name.Length > 0 ? name : "Nothing", strong: name.Length > 0),
+                new TextBlock { Text = slot + (level > 0 ? $"  ·  level {level}" : ""), Foreground = ManagerTheme.MUTED_BRUSH, FontSize = 11 },
+            },
+        });
+        if (name.Length == 0) {
+            line.Opacity = 0.55;
+        }
+
+        return line;
     }
 
     // The game's deck window: tan slots with a gold edge in a blue frame, 8 to a row.

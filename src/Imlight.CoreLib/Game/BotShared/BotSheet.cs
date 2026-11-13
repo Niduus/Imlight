@@ -40,6 +40,10 @@ internal static class BotSheet {
         member["school"] = school ?? "";
         member["mana"] = stats is null ? "" : $"{stats.m_currentMana}/{stats.m_baseMana + stats.m_bonusMana}";
         member["stats"] = new JsonArray([.. Lines(wizard, school).Select(l => (JsonNode) l)]);
+        // The same with the game's icons for Ahziael (Niduus, 2026-11-13: "Use the in-game icons to present those stats"),
+        // and each slot's item for the gear list with the slot's icon ("it would have the hat icon then say the hat's name").
+        member["statRows"] = StatRows(wizard, school);
+        member["gearRows"] = GearRows(wizard);
         // The deck as the game's deck window sorts it (Niduus, 2026-11-13: "Include Item and Treasure cards as in the deck
         // per those classifications"): its spells, the item cards its gear gives, and its treasure cards, as a battle deals them.
         var (spells, items, treasure) = DeckParts(wizard);
@@ -137,6 +141,74 @@ internal static class BotSheet {
         }
 
         return (spells, items, treasure);
+    }
+
+    // The slots in the order of the game's backpack tabs.
+    private static readonly (EquipmentSlotType Slot, string Name)[] s_slots = [
+        (EquipmentSlotType.Hat, "Hat"), (EquipmentSlotType.Robe, "Robe"), (EquipmentSlotType.Shoes, "Boots"), (EquipmentSlotType.Weapon, "Wand"),
+        (EquipmentSlotType.Athame, "Athame"), (EquipmentSlotType.Amulet, "Amulet"), (EquipmentSlotType.Ring, "Ring"), (EquipmentSlotType.Pet, "Pet"),
+        (EquipmentSlotType.Mount, "Mount"), (EquipmentSlotType.Deck, "Deck"),
+    ];
+
+    private static JsonArray GearRows(Wizard wizard) {
+        var rows = new JsonArray();
+        foreach (var (slot, name) in s_slots) {
+            var item = wizard?.EquipmentBehavior?.GetItemInSlot(slot);
+            var id = item is null ? 0u : (uint) Math.Min((ulong) item.m_templateID, uint.MaxValue);
+            var piece = id == 0 ? null : BotGear.Read(id);
+            var shown = piece?.Name is { Length: > 0 } n ? n : id == 0 ? "" : Imlight.CoreLib.Game.Pet.PetWillCasts.ItemName(id);
+            rows.Add(new JsonObject {
+                ["slot"] = name, ["id"] = id, ["name"] = shown ?? "", ["level"] = piece?.Level ?? 0,
+            });
+        }
+
+        return rows;
+    }
+
+    /// <summary>
+    /// The wizard's stats as rows of the game's stat tooltip: the icon keys (Ahziael's GearIcon names, such as "health" or
+    /// "critical"), a school's icon in front for school stats, the number, the words after the icons, and what it means.
+    /// </summary>
+    private static JsonArray StatRows(Wizard wizard, string school) {
+        var rows = new JsonArray();
+        var stats = wizard?.GameStats;
+        if (stats is null) {
+            return rows;
+        }
+
+        static float At(List<float> list, string name)
+            => list is not null && MagicSchools.GetMagicSchool(name) is { } s && s.m_schoolIndex < list.Count ? list[(int) s.m_schoolIndex] : 0f;
+        static string Pct(float fraction) => $"{Math.Round(fraction * 100f)}%";
+        void Row(string value, string after, string words, string rowSchool, params string[] icons)
+            => rows.Add(new JsonObject {
+                ["value"] = value, ["after"] = after, ["words"] = words, ["school"] = rowSchool,
+                ["icons"] = new JsonArray([.. icons.Select(i => (JsonNode) i)]),
+            });
+
+        var own = string.IsNullOrEmpty(school) ? "Fire" : school;
+        Row($"{stats.m_currentHitpoints}/{stats.m_baseHitpoints + stats.m_bonusHitpoints}", "", "Health: now and most", "", "health");
+        Row($"{stats.m_currentMana}/{stats.m_baseMana + stats.m_bonusMana}", "", "Mana: now and most", "", "mana");
+        Row(Pct(stats.m_powerPipBase + stats.m_powerPipBonusPercentAll), "CHANCE", "Power pip chance", "", "powerpip");
+        Row(Pct(At(stats.m_dmgBonusPercent, own) + stats.m_dmgBonusPercentAll), "", $"{own} damage", own, "damage");
+        if (At(stats.m_dmgBonusFlat, own) + stats.m_dmgBonusFlatAll is var flat and > 0) {
+            Row($"{flat:0}", "", $"{own} flat damage", own, "damageflat");
+        }
+
+        Row(Pct(At(stats.m_accBonusPercent, own) + stats.m_accBonusPercentAll), "", $"{own} accuracy", own, "accuracy");
+        Row(Pct(At(stats.m_apBonusPercent, own) + stats.m_apBonusPercentAll), "", $"{own} pierce", own, "pierce");
+        Row($"{At(stats.m_criticalHitRatingBySchool, own) + stats.m_criticalHitRatingAll:0}", "RATING", $"{own} critical rating", own, "critical");
+        Row($"{stats.m_blockRatingAll:0}", "RATING", "Block rating", "", "block");
+        Row(Pct(stats.m_healBonusPercentAll), "", "Outgoing healing", "", "outgoing", "heal");
+        Row(Pct(stats.m_healIncBonusPercentAll), "", "Incoming healing", "", "incoming", "heal");
+        Row($"{At(stats.m_pipConversionRatingPerSchool, own) + stats.m_pipConversionRatingAll:0}", "RATING", $"{own} pip conversion rating", own, "pipconversion");
+        Row($"{stats.m_shadowPipRating + stats.m_bonusShadowPipRating:0}", "RATING", "Shadow pip rating", "", "shadowpip");
+        Row($"{stats.m_archmasteryBase:0}", "RATING", "Archmastery rating", "", "archmastery");
+        Row(Pct(stats.m_stunResistancePercent), "", "Stun resistance", "", "stunresist");
+        foreach (var s in s_schools.Where(s => s != "Shadow")) {
+            Row(Pct(At(stats.m_dmgReducePercent, s) + stats.m_dmgReducePercentAll), "", $"{s} resist", s, "resist");
+        }
+
+        return rows;
     }
 
     private static List<string> Lines(Wizard wizard, string school) {
