@@ -75,7 +75,7 @@ internal sealed record BotLeave(string Why);
 /// </summary>
 internal static class BotBodies {
 
-    internal sealed record Out(int Id, string Name, IActorRef Body, IActorRef Zone, string ZonePath, ulong GlobalId);
+    internal sealed record Out(int Id, string Name, IActorRef Body, IActorRef Zone, string ZonePath, ulong GlobalId, Wizard Wizard = null);
 
     private static readonly ConcurrentDictionary<int, Out> s_out = new();
     private static ActorSystem s_system;
@@ -90,6 +90,45 @@ internal static class BotBodies {
     internal static void Start(ActorSystem system) {
         s_system = system;
         system.Scheduler.Advanced.ScheduleRepeatedly(TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(BotPopulation.TICK_SECONDS), Populate);
+        system.Scheduler.Advanced.ScheduleRepeatedly(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5), WriteSheets);
+    }
+
+    internal const string SHEETS_FILE = "sheets.json";
+
+    // The bots out, as the Quest Team and Ultimus pages show their wizards (BotSheet): stats, gear, deck and trained spells
+    // for Ahziael's Bot Players card (Niduus, 2026-11-13: the Trained Spells section "goes to QT and Bots as well").
+    private static void WriteSheets() {
+        try {
+            var path = System.IO.Path.Combine(BotWire.Folder, SHEETS_FILE);
+            if (!BotWire.Enabled) {
+                return;
+            }
+
+            var members = new System.Text.Json.Nodes.JsonArray();
+            foreach (var bot in s_out.Values.OrderBy(o => o.Name, StringComparer.OrdinalIgnoreCase).Take(40)) {
+                var wizard = bot.Wizard;
+                var stats = wizard?.GameStats;
+                var member = new System.Text.Json.Nodes.JsonObject {
+                    ["role"] = bot.Name,
+                    ["name"] = bot.Name,
+                    ["state"] = "out",
+                    ["level"] = wizard?.MagicSchoolBehavior?.Level ?? 0,
+                    ["zone"] = Imlight.CoreLib.Game.Ultimus.UltimusText.Zone(wizard?.Zone ?? bot.ZonePath),
+                    ["health"] = stats is null ? "" : $"{stats.m_currentHitpoints}/{stats.m_baseHitpoints + stats.m_bonusHitpoints}",
+                    ["gear"] = new System.Text.Json.Nodes.JsonArray([.. BotShared.BotGear.Describe(wizard).Select(g => (System.Text.Json.Nodes.JsonNode) g)]),
+                };
+                members.Add(member);
+                BotShared.BotSheet.Fill(member, wizard, BotShared.BotGear.SchoolOf(wizard));
+            }
+
+            System.IO.Directory.CreateDirectory(BotWire.Folder);
+            var temp = path + ".tmp";
+            System.IO.File.WriteAllText(temp, new System.Text.Json.Nodes.JsonObject { ["members"] = members, ["at"] = DateTime.UtcNow.ToString("O") }.ToJsonString());
+            System.IO.File.Move(temp, path, true);
+        }
+        catch (Exception e) {
+            Logger.Debug("Bot Players: could not write the bots' sheets ({0}).", Logger.Args(e.Message));
+        }
     }
 
     // ---------------------------------------------------------------------
@@ -303,7 +342,7 @@ internal static class BotBodies {
             return "The bot could not come out. The server log says why.";
         }
 
-        s_out[who.Id] = new Out(who.Id, name, body, zone, player.Zone, bot.GameObjectID);
+        s_out[who.Id] = new Out(who.Id, name, body, zone, player.Zone, bot.GameObjectID, bot);
         s_lastSpawnOk = true;
         BotLink.Note(who.Id, name, "spawned", $"{(who.Returning ? "came back" : "new")}, {botSchool} level {who.Level}, " +
                                                $"{bot.SpellbookBehavior.SpellList.Count} spells in its deck, {gearWorn} pieces of gear, " +
