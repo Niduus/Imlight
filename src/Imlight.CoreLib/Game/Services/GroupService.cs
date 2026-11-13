@@ -52,6 +52,7 @@ using Imcodec.MessageLayer.Generated;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Groups;
 using Imlight.CoreLib.Game.Housing;
+using Imlight.CoreLib.Game.Social;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
@@ -261,6 +262,11 @@ internal class GroupService(SessionActor sessionActor) : MessageService(sessionA
         // The client only answers the prompt when the player says yes. A sigil sends that prompt when it
         // holds a circle for a group mate; only group mates are answered here.
         var wizard = GetActiveWizard();
+        // A yes to "Do you want to go to your friend?" from the friends list is FriendsService's, not a sigil's.
+        if (FriendGoToPrompts.IsFriendAnswer(wizard.CharId, message.TargetCharacterID)) {
+            return;
+        }
+
         if (wizard.IsInDuel || !GroupRegistry.AreGrouped(wizard.CharId, message.TargetCharacterID)) {
             return;
         }
