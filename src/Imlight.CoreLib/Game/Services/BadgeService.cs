@@ -43,9 +43,11 @@ using System.Linq;
 using Akka.Actor;
 using Imcodec.Cryptography;
 using Imcodec.MessageLayer.Generated;
+using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Badges;
+using Imlight.CoreLib.Game.DropTables;
 using Imlight.CoreLib.Game.Requirements;
 using Imlight.CoreLib.Game.Requirements.Contexts;
 using Imlight.CoreLib.Game.Results;
@@ -62,6 +64,8 @@ namespace Imlight.CoreLib.Game.Services;
 internal class BadgeService(SessionActor sessionActor) : MessageService(sessionActor) {
 
     private const int MAX_LISTED_BADGES = 25;
+    // The badge window reads a reward's loot list with the Transmit and AuthorityTransmit flags.
+    private const uint LOOT_SERIALIZATION_FLAGS = (uint) (PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit);
 
     private static readonly uint s_selectBadgeError = StringHash.Compute("SelectBadgeError");
     private static readonly uint s_badgeDoesNotExist = StringHash.Compute("BadgeDoesNotExist");
@@ -293,6 +297,67 @@ internal class BadgeService(SessionActor sessionActor) : MessageService(sessionA
         var now = DateTimeOffset.UtcNow;
         state.AddNewBadge(new NewBadgeEntry { BadgeId = message.BadgeID, Time = (uint) now.ToUnixTimeSeconds() }, now);
         Persist(wizard);
+    }
+
+    [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_REQUESTBADGELOOT))]
+    private void ReceiveRequestBadgeLoot(WIZARD3_56_PROTOCOL.MSG_REQUESTBADGELOOT message) {
+        // The gift box beside a badge (Niduus, 2026-11-13: "badges with rewards are bugged when clicking the gift box").
+        // The game puts Data in the badge's m_badgeLoot and Data2 in its m_overcountLoot, each a LootInfoList, and with
+        // OpenDetails opens the badge window, which shows the first item's icon and name (or the reward text).
+        var catalog = BadgeCatalog.Current;
+        if (!catalog.IsReady || !catalog.TryGet(message.BadgeID, out var definition)) {
+            return;
+        }
+
+        SendToSocket(new WIZARD3_56_PROTOCOL.MSG_REQUESTBADGELOOT {
+            BadgeID = message.BadgeID,
+            Data = SerializeLoot(definition.RewardLootTable),
+            Data2 = SerializeLoot(definition.OvercountLootTable),
+            OpenDetails = message.OpenDetails
+        });
+    }
+
+    [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_REQUESTBADGEREWARD))]
+    private void ReceiveRequestBadgeReward(WIZARD3_56_PROTOCOL.MSG_REQUESTBADGEREWARD message) {
+        // The Claim Reward button of the badge window. The answer (Overcount 0) puts the badge in the game's claimed list.
+        var catalog = BadgeCatalog.Current;
+        var wizard = GetActiveWizard();
+        if (!catalog.IsReady || wizard is null || !catalog.TryGet(message.BadgeID, out var definition)) {
+            return;
+        }
+
+        var state = wizard.BadgeBehavior;
+        if (message.Overcount != 0 || !definition.HasReward || !BadgeView.IsComplete(state, definition)) {
+            Logger.Warning("{0} asked for the reward of badge {1}, which has none to claim (overcount {2}).",
+                Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), message.BadgeID, message.Overcount));
+
+            return;
+        }
+
+        if (!state.ClaimedRewards.Contains(definition.Id)) {
+            var reward = BadgeRewards.ResultOf(definition.RewardLootTable);
+            state.ClaimedRewards.Add(definition.Id);
+            Persist(wizard);
+
+            if (reward.HasRewards) {
+                LootGranter.GrantAndDisplay(SessionActor.ActorRef, wizard, reward);
+            }
+            else {
+                CommandReply("This badge's reward is not on this server yet.");
+            }
+        }
+
+        SendToSocket(new WIZARD3_56_PROTOCOL.MSG_REQUESTBADGEREWARD { BadgeID = definition.Id, Overcount = 0 });
+    }
+
+    private static byte[] SerializeLoot(string lootTable) {
+        if (string.IsNullOrEmpty(lootTable)) {
+            return [];
+        }
+
+        var list = DropTableConverter.ToLootInfoList(BadgeRewards.ResultOf(lootTable));
+
+        return new ObjectSerializer(Versionable: false).Serialize(list, LOOT_SERIALIZATION_FLAGS, out var bytes) ? bytes : [];
     }
 
     private void FinishChanges(Wizard wizard, BadgeEngine.Changes changes, bool sendBatches) {

@@ -204,8 +204,10 @@ internal sealed partial class ManagerWindow {
 
         _badgesCount.Text = "Reading the badges…";
         var folder = BadgeFolder();
+        var gameData = new[] { _gameFiles.GameDataFolder, _gameFiles.CopyFolder }
+            .FirstOrDefault(f => f is not null && File.Exists(Path.Combine(f, "Root.wad")));
         try {
-            _badges = await Task.Run(() => ReadBadges(folder));
+            _badges = await Task.Run(() => AddGameBadges(ReadBadges(folder), gameData));
             _badgesProblem = _badges.Count == 0
                 ? "The badge list isn't here yet. Start the server once (it downloads the game's world data, badges included), then open this tab again."
                 : null;
@@ -246,6 +248,117 @@ internal sealed partial class ManagerWindow {
 
         return [.. badges.GroupBy(b => b.Id).Select(g => g.First()).OrderBy(b => b.Name, StringComparer.OrdinalIgnoreCase)];
     }
+
+    /// <summary>
+    /// The game's own badge templates (Root.wad Badges/*.xml) over SpiralDB's list, as the server reads them: the badges
+    /// SpiralDB lacks (Ahmarra, PvP ranks, pets, events) are added, and the game's group, extra credit and reward win.
+    /// </summary>
+    private static List<BadgeRow> AddGameBadges(List<BadgeRow> badges, string? gameData) {
+        if (gameData is null) {
+            return badges;
+        }
+
+        Imcodec.Wad.Archive? root;
+        try {
+            using var stream = new FileStream(Path.Combine(gameData, "Root.wad"), FileMode.Open, FileAccess.Read,
+                FileShare.ReadWrite | FileShare.Delete, 1 << 16);
+            root = Imcodec.Wad.ArchiveParser.Parse(stream);
+        }
+        catch (Exception) {
+            return badges;
+        }
+
+        if (root is null) {
+            return badges;
+        }
+
+        var byId = badges.ToDictionary(b => b.Id);
+        Dictionary<string, string>? text = null;
+        foreach (var name in root.Files.Keys.Where(n => n.StartsWith("Badges/", StringComparison.Ordinal))) {
+            Imcodec.ObjectProperty.TypeCache.BadgeTemplate? template;
+            try {
+                template = root.OpenFile(name) is { } data
+                    && new Imcodec.ObjectProperty.BindSerializer().Deserialize<Imcodec.ObjectProperty.PropertyClass>(data.ToArray(), 1, out var decoded)
+                    ? decoded as Imcodec.ObjectProperty.TypeCache.BadgeTemplate : null;
+            }
+            catch (Exception) {
+                template = null;
+            }
+
+            if (template is null || template.m_badgeName.IsEmpty) {
+                continue;
+            }
+
+            var id = BadgeHash(template.m_badgeName.ToString());
+            if (!byId.TryGetValue(id, out var badge)) {
+                text ??= ReadBadgeText(root);
+                badge = new BadgeRow {
+                    Id = id,
+                    DisplayName = Regex.Replace(LangText(text, template.m_badgeTitle.ToString()) is { Length: > 0 } t ? t : template.m_badgeName.ToString(), "<[^>]*>", "").Trim(),
+                    Description = Regex.Replace(LangText(text, template.m_badgeInfo.ToString()), "<[^>]*>", "").Trim(),
+                    ProgressInfo = template.m_badgeProgressInfo.ToString(),
+                    Image = template.m_badgeImage.ToString(),
+                };
+                byId[id] = badge;
+                badges.Add(badge);
+            }
+
+            var reward = template.m_rewardLootTable.ToString();
+            badge.Filter = template.m_badgeFilterName.ToString();
+            badge.ExtraCredit = template.m_extraCredit;
+            badge.Index = template.m_index;
+            badge.Max = Math.Max(0, template.m_registryValue);
+            badge.RegistryName = template.m_registryName.IsEmpty ? badge.RegistryName : template.m_registryName.ToString();
+            badge.AutoAdd = template.m_autoAddBadge;
+            badge.HasReward = reward.Length > 0;
+            badge.RewardLootTable = reward.Length > 0 ? reward : null;
+            badge.Group = BadgeGroup(badge.Filter);
+            badge.Haystack = SearchText.Normalize($"{badge.Name} {badge.Description} {badge.Id} {badge.Group} {badge.Filter}");
+        }
+
+        return [.. badges.OrderBy(b => b.Name, StringComparer.OrdinalIgnoreCase)];
+    }
+
+    /// <summary>The game's name hash, which is a badge's ID (the same as the server's StringHash).</summary>
+    private static uint BadgeHash(string name) {
+        int result = 0, shift1 = 0, shift2 = 32;
+        foreach (var c in name) {
+            var cb = (byte) c;
+            result ^= (cb - 32) << shift1;
+            if (shift1 > 24) {
+                result ^= (cb - 32) >> shift2;
+                if (shift1 >= 27) {
+                    shift1 -= 32;
+                    shift2 += 32;
+                }
+            }
+
+            shift1 += 5;
+            shift2 -= 5;
+        }
+
+        return (uint) (result < 0 ? -result : result);
+    }
+
+    private static Dictionary<string, string> ReadBadgeText(Imcodec.Wad.Archive root) {
+        var lines = new Dictionary<string, string>(StringComparer.Ordinal);
+        if (root.OpenFile("Locale/en-US/Badges.lang") is not { } data) {
+            return lines;
+        }
+
+        // First line "1:Badges", then each line of text as three lines: key, note, text.
+        var all = System.Text.Encoding.Unicode.GetString(data.Span).TrimStart('\uFEFF').Split(["\r\n", "\n"], StringSplitOptions.None);
+        for (var i = 1; i + 2 < all.Length; i += 3) {
+            if (all[i].Length > 0) {
+                lines[all[i]] = all[i + 2];
+            }
+        }
+
+        return lines;
+    }
+
+    private static string LangText(Dictionary<string, string> text, string key)
+        => key.StartsWith("Badges_", StringComparison.Ordinal) && text.TryGetValue(key["Badges_".Length..], out var line) ? line : "";
 
     /// <summary>A group of the game's badge list in plain words: WizardCity is Wizard City, IceSpellements is Ice Spellements.</summary>
     private static string BadgeGroup(string filter) {

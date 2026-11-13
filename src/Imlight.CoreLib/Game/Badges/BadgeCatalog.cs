@@ -74,7 +74,7 @@ internal sealed class BadgeCatalog {
     internal static BadgeCatalog Current {
         get {
             lock (s_lock) {
-                return field ??= Create(BadgeDefinitionCollection.GetAll(), QuestTemplateCollection.GetAllQuests());
+                return field ??= Create(GameBadges.Merge(BadgeDefinitionCollection.GetAll()), QuestTemplateCollection.GetAllQuests());
             }
         }
     }
