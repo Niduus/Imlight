@@ -65,9 +65,55 @@ internal static class BotSheet {
         member["xp"] = xpNow;
         member["xpMax"] = xpMax;
         member["questBook"] = BotQuestBook.Book(wizard, (string) (member["questNow"] as JsonValue) ?? "");
+        // The trained spells as the game's spellbook shows them (Niduus, 2026-11-13: "Include a Trained Spell Section next to
+        // this"): the cards it can put in a deck, by school then rank, each with how many are in the deck now; then the rest
+        // (fishing, gardening, utility spells) by name.
+        var inDeck = spells.GroupBy(c => c.Id).ToDictionary(g => g.Key, g => g.Sum(c => c.Count));
+        var learned = (wizard?.SpellbookBehavior?.LearnedSpellTemplateIds ?? []).Select(i => (uint) i).Distinct().ToList();
+        var cardsOf = learned.Select(id => (Id: id, Template: Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(id)
+                as Imcodec.ObjectProperty.TypeCache.SpellTemplate))
+            .Where(c => c.Template is not null).ToList();
+        bool Card((uint Id, Imcodec.ObjectProperty.TypeCache.SpellTemplate Template) c)
+            => SpellFactory.CanGoInDeck(c.Id) && !c.Template.m_Treasure && !BotCards.IsDevSpell(c.Id);
+        member["spellGrid"] = new JsonArray([.. cardsOf.Where(Card)
+            .OrderBy(c => SchoolRank((string) c.Template.m_sMagicSchoolName))
+            .ThenBy(c => c.Template.m_spellRank?.m_spellRank ?? 0)
+            .ThenBy(c => SpellName(c.Id))
+            .Select(c => (JsonNode) new JsonObject {
+                ["id"] = c.Id, ["school"] = (string) c.Template.m_sMagicSchoolName ?? "", ["n"] = inDeck.GetValueOrDefault(c.Id),
+                ["name"] = SpellName(c.Id),
+            })]);
+        member["spellsOther"] = new JsonArray([.. cardsOf.Where(c => !Card(c)).Select(c => SpellName(c.Id))
+            .Where(n => n.Length > 0).Distinct().Order().Select(n => (JsonNode) n)]);
+        if (member["spells"] is null) {
+            member["spells"] = new JsonArray([.. learned.Select(SpellName).Where(n => n.Length > 0).Distinct().Order().Select(n => (JsonNode) n)]);
+        }
+
         member["itemGrid"] = new JsonArray([.. ItemCopies(wizard).Select(c => (JsonNode) new JsonObject {
             ["id"] = c.Id, ["school"] = SchoolOf(c.Id), ["off"] = c.Off,
         })]);
+    }
+
+    private static int SchoolRank(string school) {
+        var at = Array.FindIndex(s_schools, x => string.Equals(x, school, StringComparison.OrdinalIgnoreCase));
+
+        return at < 0 ? s_schools.Length : at;
+    }
+
+    private static string SpellName(uint id) {
+        try {
+            if (Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(id) is Imcodec.ObjectProperty.TypeCache.SpellTemplate spell) {
+                string key = spell.m_displayName;
+                var shown = string.IsNullOrEmpty(key) ? "" : Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(key);
+
+                return string.IsNullOrWhiteSpace(shown) ? (string) spell.m_name ?? "" : shown;
+            }
+        }
+        catch (Exception) {
+            // A name it can't read is left out.
+        }
+
+        return "";
     }
 
     private static JsonArray Grid(List<(uint Id, int Count)> cards)

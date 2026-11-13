@@ -36,6 +36,11 @@ internal sealed partial class ManagerWindow {
     private TextBox? _botLogBox;
     private bool _showingBots;
     private string _botLogText = "";
+    private string _botSheetsText = "";
+
+    // The bots out now, as the Quest Team and Ultimus pages show their wizards: stats, gear, deck and trained spells
+    // (Niduus, 2026-11-13: the Trained Spells section "goes to QT and Bots as well").
+    private readonly WizardSheet _botSheet = new("No bots out right now. Once bots are out, pick one here to see its stats, gear, deck and trained spells.") { Compact = true };
 
     private string BotPlayersFolder => Path.Combine(_manager.LogFolder, BOT_PLAYERS_FOLDER);
 
@@ -62,6 +67,7 @@ internal sealed partial class ManagerWindow {
         }
 
         LoadBotSettings();
+        ShowCardsOn(_botSheet);
         _botTimer.Tick += (_, _) => RefreshBotPlayers();
         _botTimer.Start();
         RefreshBotPlayers();
@@ -84,6 +90,10 @@ internal sealed partial class ManagerWindow {
                 "How long a bot waits before it joins a battle, so a real friend can take the circle first."),
             SwitchRow("Bots that come back (percent)", _botReturning,
                 "How often a bot that comes out is one you have seen before (same name), rather than a new one."),
+            new Expander {
+                Header = "Bots out now: stats, gear, deck and trained spells", HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
+                HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Stretch, Content = _botSheet.View,
+            },
             Row(Action(Plain("Restart Bot Players program"), RestartBotPlayersAsync), Action(Plain("Open its folder"), () => {
                 Directory.CreateDirectory(BotPlayersFolder);
 
@@ -210,6 +220,9 @@ internal sealed partial class ManagerWindow {
                     ? $"Running: {status.Value.Out} bot{(status.Value.Out == 1 ? "" : "s")} out, {status.Value.Known} in the roster."
                 : "Starting: the server starts the Bot Players program within a few seconds.";
             _botState.Foreground = fresh && status!.Value.State == "ready" ? ManagerTheme.Accent("good") : MUTED;
+            if (_botSheet.View.IsEffectivelyVisible) {
+                ShowBotSheets(fresh && status!.Value.State == "ready");
+            }
         }
 
         if (!logShown) {
@@ -221,6 +234,23 @@ internal sealed partial class ManagerWindow {
             _botLogText = text;
             _botLogBox!.Text = string.Join('\n', text.Split('\n').TakeLast(BOT_LOG_SHOWN_LINES));
             _botLogBox.CaretIndex = _botLogBox.Text.Length;
+        }
+    }
+
+    private void ShowBotSheets(bool running) {
+        try {
+            var path = Path.Combine(BotPlayersFolder, "sheets.json");
+            var text = running && File.Exists(path) && DateTime.UtcNow - File.GetLastWriteTimeUtc(path) < TimeSpan.FromSeconds(30)
+                ? File.ReadAllText(path) : "";
+            if (text == _botSheetsText) {
+                return;
+            }
+
+            _botSheetsText = text;
+            _botSheet.Show(text.Length == 0 ? null : System.Text.Json.Nodes.JsonNode.Parse(text)?["members"] as System.Text.Json.Nodes.JsonArray);
+        }
+        catch (Exception) {
+            // Half written: the next tick reads it again.
         }
     }
 

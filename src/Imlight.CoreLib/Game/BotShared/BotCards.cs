@@ -73,7 +73,7 @@ internal static class BotCards {
     private static Dictionary<Kind, double> Shares(BotStyle style, Situation situation) {
         var shares = style switch {
             BotStyle.Hitter => new Dictionary<Kind, double> { [Kind.Hit] = 0.65, [Kind.Blade] = 0.2, [Kind.Trap] = 0.1, [Kind.Heal] = 0.05, [Kind.Shield] = 0, [Kind.Other] = 0 },
-            BotStyle.Backup or BotStyle.Solo => new Dictionary<Kind, double> { [Kind.Hit] = 0.45, [Kind.Trap] = 0.2, [Kind.Blade] = 0.15, [Kind.Heal] = 0.1, [Kind.Shield] = 0.1, [Kind.Other] = 0 },
+            BotStyle.Backup or BotStyle.Solo => new Dictionary<Kind, double> { [Kind.Hit] = 0.45, [Kind.Trap] = 0.15, [Kind.Blade] = 0.15, [Kind.Heal] = 0.1, [Kind.Shield] = 0.1, [Kind.Other] = 0.05 },
             BotStyle.Tank => new Dictionary<Kind, double> { [Kind.Shield] = 0.3, [Kind.Hit] = 0.25, [Kind.Trap] = 0.15, [Kind.Blade] = 0.15, [Kind.Heal] = 0.15, [Kind.Other] = 0 },
             _ => new Dictionary<Kind, double> { [Kind.Heal] = 0.45, [Kind.Shield] = 0.15, [Kind.Blade] = 0.15, [Kind.Hit] = 0.2, [Kind.Trap] = 0.05, [Kind.Other] = 0 },
         };
@@ -123,8 +123,11 @@ internal static class BotCards {
     }
 
     /// <summary>
-    /// The deck a wizard wants for a fight: spell to copies, from the spells it knows, no more than its deck holds (and
-    /// no more copies of a spell than the deck allows).
+    /// The deck a wizard wants for a fight: spell to copies, from the spells it knows. A compact deck, as a good player
+    /// builds it (Niduus, 2026-11-13: "Ultimus is spamming his deck ... compress his deck efficiently instead of spamming
+    /// it with spells all willy nilly"): about 16 cards (more for a boss or a crowd), never the whole deck just because it
+    /// holds more; the main hits get the most copies, a shield or charm only a copy or two, shields only for schools the
+    /// enemies can hit with, and nothing in just to fill space. Never more than its deck holds or allows of a spell.
     /// </summary>
     internal static Dictionary<uint, int> Plan(IEnumerable<uint> known, string school, BotStyle style, Situation situation,
                                               int maxSpells, int schoolMaxCopies, int otherMaxCopies) {
@@ -135,28 +138,36 @@ internal static class BotCards {
             return deck;
         }
 
-        int Cap(Card card) => Math.Max(1, string.Equals(card.School, school, StringComparison.OrdinalIgnoreCase) ? schoolMaxCopies : otherMaxCopies);
+        // Shields only for a school that can hit it, when the enemies' decks are known.
+        if (situation.HitSchools.Count > 0) {
+            cards.RemoveAll(c => KindOf(c) == Kind.Shield && !Covers(c, situation.HitSchools));
+        }
+
+        var size = Math.Min(maxSpells, CompactSize(style, situation));
+        int Cap(Card card) {
+            var deckCap = Math.Max(1, string.Equals(card.School, school, StringComparison.OrdinalIgnoreCase) ? schoolMaxCopies : otherMaxCopies);
+
+            return Math.Min(deckCap, CopiesOf(KindOf(card), style));
+        }
 
         var shares = Shares(style, situation);
-        var byKind = cards.GroupBy(KindOf).ToDictionary(g => g.Key, g => Order(g.Key, g.ToList(), school, style, situation));
-        var left = maxSpells;
+        var byKind = cards.GroupBy(KindOf).ToDictionary(g => g.Key, g => Order(g.Key, g.ToList(), school, style, situation)
+            .Take(MostOfKind(g.Key, style)).ToList());
+        var left = size;
         foreach (var (kind, share) in shares.OrderByDescending(s => s.Value)) {
             if (!byKind.TryGetValue(kind, out var ofKind) || share <= 0) {
                 continue;
             }
 
-            var slots = Math.Min(left, (int) Math.Round(share * maxSpells));
+            var slots = Math.Min(left, (int) Math.Round(share * size));
             left -= Fill(deck, ofKind, slots, Cap);
         }
 
-        // What is left goes to hits, then to anything it has.
-        foreach (var kind in new[] { Kind.Hit, Kind.Blade, Kind.Trap, Kind.Shield, Kind.Heal, Kind.Other }) {
+        // What is left goes to hits (a deck runs on them), then to blades and traps; never shields, heals or charms just to
+        // fill it: a smaller deck draws its best cards more often.
+        foreach (var kind in new[] { Kind.Hit, Kind.Blade, Kind.Trap }) {
             if (left <= 0) {
                 break;
-            }
-
-            if (style == BotStyle.Hitter && kind is Kind.Shield or Kind.Heal) {
-                continue;
             }
 
             if (byKind.TryGetValue(kind, out var ofKind)) {
@@ -167,14 +178,50 @@ internal static class BotCards {
         return deck;
     }
 
+    // How big a compact deck is: a hand is 7 cards, and a few rounds' worth of draws past that.
+    private static int CompactSize(BotStyle style, Situation situation) {
+        var size = style is BotStyle.Tank or BotStyle.Healer ? 18 : 16;
+        if (situation.Boss) {
+            size += 4;
+        }
+        else if (situation.Enemies >= 3) {
+            size += 2;
+        }
+
+        return size;
+    }
+
+    // The copies of one spell a good player takes, by kind: the main hits most, a shield or charm a copy or two.
+    private static int CopiesOf(Kind kind, BotStyle style) => kind switch {
+        Kind.Hit => 5,
+        Kind.Heal => style == BotStyle.Healer ? 4 : 2,
+        Kind.Shield => style == BotStyle.Tank ? 3 : 2,
+        Kind.Blade or Kind.Trap => 3,
+        _ => 2,
+    };
+
+    // How many different spells of a kind: a few hits, one or two of the rest.
+    private static int MostOfKind(Kind kind, BotStyle style) => kind switch {
+        Kind.Hit => 3,
+        Kind.Heal => style == BotStyle.Healer ? 3 : 1,
+        Kind.Shield => 2,
+        Kind.Blade or Kind.Trap => 2,
+        _ => 1,
+    };
+
+    private static bool Covers(Card card, IReadOnlyList<string> hitSchools)
+        => card.ShieldSchools.Length == 0 && string.IsNullOrEmpty(card.ShieldSchool)
+           || card.ShieldSchools.Any(x => x.Length == 0 || x.Equals("All", StringComparison.OrdinalIgnoreCase) || hitSchools.Contains(x, StringComparer.OrdinalIgnoreCase))
+           || hitSchools.Contains(card.ShieldSchool ?? "", StringComparer.OrdinalIgnoreCase)
+           || string.Equals(card.ShieldSchool, "All", StringComparison.OrdinalIgnoreCase);
+
     // The best few of a kind get the most copies: round after round over them until the slots are used.
     private static int Fill(Dictionary<uint, int> deck, List<Card> ofKind, int slots, Func<Card, int> cap) {
         var used = 0;
-        var top = ofKind.Take(5).ToList();
         var progress = true;
         while (used < slots && progress) {
             progress = false;
-            foreach (var card in top) {
+            foreach (var card in ofKind) {
                 if (used >= slots) {
                     break;
                 }

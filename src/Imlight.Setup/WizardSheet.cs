@@ -20,7 +20,7 @@ namespace Imlight.Setup;
 /// </summary>
 internal sealed class WizardSheet {
 
-    private readonly StackPanel _picker = new() { Orientation = Orientation.Horizontal, Spacing = 8 };
+    private readonly WrapPanel _picker = new() { Orientation = Orientation.Horizontal, ItemSpacing = 8, LineSpacing = 6 };
     private readonly Dictionary<string, ToggleButton> _buttons = new(StringComparer.Ordinal);
     private readonly TextBlock _title = Text(strong: true, size: 16);
     private readonly TextBlock _where = Text();
@@ -29,7 +29,9 @@ internal sealed class WizardSheet {
     private readonly StackPanel _gear = new() { Spacing = 2 };
     private readonly TextBlock _deckTitle = Text(strong: true);
     private readonly StackPanel _deck = new() { Spacing = 2 };
-    private readonly TextBlock _spells = Text();
+    private readonly StackPanel _spells = new() { Spacing = 4 };
+    private readonly TextBlock _spellsTitle = Text("Trained spells", strong: true);
+    private string _spellsKey = "";
     private readonly TextBlock _empty = Text();
     private readonly XpBar _xp = new();
     private readonly Control _xpRow;
@@ -84,7 +86,7 @@ internal sealed class WizardSheet {
         columns.Children.Add(Section("Gear", _gear, 0, 2));
         var deck = Section(null, _deck, 1, 0, _deckTitle);
         columns.Children.Add(deck);
-        columns.Children.Add(Section("Trained spells", _spells, 1, 2));
+        columns.Children.Add(Section(null, _spells, 1, 2, _spellsTitle));
         // The XP bar under the name, as the game shows it at the bottom of the screen (Niduus, 2026-11-13), and the quest
         // book under the rest, a drop-down that opens as the game's "All Current Quests" page.
         var xpLabel = Text("XP", strong: true);
@@ -138,6 +140,7 @@ internal sealed class WizardSheet {
     /// <summary>Draws the shown wizard again, as when the game's card pictures have just been read.</summary>
     internal void Redraw() {
         _gridKey = "";
+        _spellsKey = "";
         _statsKey = "";
         _gearKey = "";
         if (_shown is not null) {
@@ -225,7 +228,7 @@ internal sealed class WizardSheet {
             Group(_deck, "Treasure Cards", (int?) m["treasureCount"] ?? 0, List(m["treasureCards"]), "None.");
         }
 
-        _spells.Text = List(m["spells"]) is { Count: > 0 } spells ? string.Join(", ", spells) : "None yet.";
+        ShowSpells(m);
     }
 
     // The game's stat tooltip: yellow words on a dark blue panel, the icons beside the numbers.
@@ -343,6 +346,76 @@ internal sealed class WizardSheet {
         });
 
         return window;
+    }
+
+    // The trained spells beside the deck, as the game's spellbook (Niduus, 2026-11-13: "Include a Trained Spell Section next
+    // to this"): the cards it can put in a deck by school, the number on a card how many copies are in the deck now, the ones
+    // left out faded; then its other spells (fishing, gardening, travel) by name. Built again only when they change.
+    private void ShowSpells(JsonObject m) {
+        var grid = m["spellGrid"] as JsonArray;
+        var others = List(m["spellsOther"]);
+        var key = Key(m) + "|" + grid?.ToJsonString() + "|" + string.Join(",", others) + "|" + (CardThumb is null);
+        if (key == _spellsKey) {
+            return;
+        }
+
+        _spellsKey = key;
+        _spells.Children.Clear();
+        var cards = (grid ?? []).OfType<JsonObject>()
+            .Select(c => (Id: (uint?) c["id"] ?? 0, School: (string?) c["school"] ?? "", N: (int?) c["n"] ?? 0, Name: (string?) c["name"] ?? ""))
+            .Where(c => c.Id != 0).ToList();
+        if (grid is null) {
+            // An older server: the names only.
+            _spellsTitle.Text = "Trained spells";
+            _spells.Children.Add(Text(List(m["spells"]) is { Count: > 0 } names ? string.Join(", ", names) : "None yet."));
+
+            return;
+        }
+
+        var inDeck = cards.Count(c => c.N > 0);
+        _spellsTitle.Text = $"Trained spells ({cards.Count} cards, {inDeck} in the deck)";
+        if (cards.Count == 0) {
+            _spells.Children.Add(Text("None yet."));
+        }
+
+        foreach (var school in cards.GroupBy(c => c.School.Length > 0 ? c.School : "Other")) {
+            var header = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6 };
+            if (SchoolIcon is not null && school.Key != "Other") {
+                header.Children.Add(SchoolIcon(school.Key, 16));
+            }
+
+            header.Children.Add(Text($"{school.Key} ({school.Count()})", strong: true));
+            _spells.Children.Add(header);
+            if (CardThumb is null) {
+                foreach (var card in school) {
+                    _spells.Children.Add(Text(card.N > 0 ? $"{card.Name} (x{card.N} in deck)" : card.Name));
+                }
+
+                continue;
+            }
+
+            var slots = new UniformGrid { Columns = COLUMNS, HorizontalAlignment = HorizontalAlignment.Left };
+            foreach (var card in school) {
+                var thumb = Card(card.Id, card.School, card.N, false);
+                thumb.Opacity = card.N > 0 ? 1 : 0.5;
+                ToolTip.SetTip(thumb, card.N > 0 ? $"{card.Name}: {card.N} in the deck" : $"{card.Name}: not in the deck");
+                slots.Children.Add(Slot(thumb, s_slot));
+            }
+
+            _spells.Children.Add(Frame(slots));
+        }
+
+        if (others.Count > 0) {
+            var header = Text($"Other spells ({others.Count})", strong: true);
+            header.Margin = new Thickness(0, 6, 0, 0);
+            _spells.Children.Add(header);
+            _spells.Children.Add(new TextBlock { Text = string.Join(", ", others), TextWrapping = TextWrapping.Wrap, Foreground = ManagerTheme.MUTED_BRUSH });
+        }
+
+        _spells.Children.Add(new TextBlock {
+            Text = "The number on a card is how many copies are in the deck. Faded cards are trained but left out.",
+            Foreground = ManagerTheme.MUTED_BRUSH, FontSize = 11, TextWrapping = TextWrapping.Wrap,
+        });
     }
 
     private static Border Frame(Control content) => new() {
