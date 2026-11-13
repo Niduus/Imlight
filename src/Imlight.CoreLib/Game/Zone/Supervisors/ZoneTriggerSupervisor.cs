@@ -96,6 +96,17 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         }
         Zone.TriggersByName = byName;
 
+        // The state sets of the triggers' own objects (doors, gates), so a change plays its animation (StateTransitions).
+        foreach (var info in replacedTriggers.Select(t => t?.m_triggerObjInfo).Where(i => i is not null && i.m_templateID != 0)) {
+            try {
+                Imlight.CoreLib.Game.States.StateTransitions.Note(Zone.ZonePath, info.m_zoneTag,
+                    CoreObjectFactory.GetCoreTemplate(info.m_templateID));
+            }
+            catch (Exception ex) {
+                Logger.Debug("Zone {0}: no state set for trigger object {1}: {2}", Logger.Args(Zone.ZonePath, info.m_zoneTag, ex.Message));
+            }
+        }
+
         _orderedTriggers.Clear();
         foreach (var trigger in replacedTriggers) {
             var triggerActor = Context.ActorOf(Props.Create(() => new ZoneTrigger(ZoneRef, Zone, trigger)));
@@ -643,8 +654,45 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             return;
         }
 
+        var previousState = Zone.ScriptState.GetObjectState(objectName);
         Zone.ScriptState.SetObjectState(objectName, stateName);
 
+        // A gate that opens plays its opening on the way (Closed to Open through Opening): the in-between state goes out
+        // first and the end state once it has played (StateTransitions).
+        if (Imlight.CoreLib.Game.States.StateTransitions.TryFind(Zone.ZonePath, objectName, previousState, stateName,
+                out var passState, out var wait)) {
+            Logger.Debug("Zone {0}: {1} plays {2} on its way to {3} ({4:0.#} s).",
+                Logger.Args(Zone.ZonePath, objectName, passState, stateName, wait.TotalSeconds));
+            SendObjectState(objectName, passState);
+            Timers.StartSingleTimer($"state-pass-{objectName}", new ObjectStatePassDone(objectName, stateName), wait);
+        }
+        else {
+            Timers.Cancel($"state-pass-{objectName}");
+            SendObjectState(objectName, stateName);
+        }
+
+        Self.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
+            EventName = $"{objectName}.{stateName}.EnterState",
+            PlayerActor = playerActor,
+            PlayerGameObject = playerObject,
+            PlayerSpawned = playerSpawned,
+        });
+    }
+
+    private sealed record ObjectStatePassDone(string ObjectName, string StateName);
+
+    // The animation on the way has played: the object settles in its end state, unless something moved it on since.
+    [InternalMessageHandler(typeof(ObjectStatePassDone))]
+    private void ReceiveObjectStatePassDone(ObjectStatePassDone message) {
+        var current = Zone.ScriptState.GetObjectState(message.ObjectName);
+        if (!string.Equals(current, message.StateName, StringComparison.OrdinalIgnoreCase)) {
+            return;
+        }
+
+        SendObjectState(message.ObjectName, message.StateName);
+    }
+
+    private void SendObjectState(string objectName, string stateName) {
         ZoneRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
             Messages = [new ZONE_102_PROTOCOL.MSG_ENTERSTATE {
                 ObjectName = objectName,
@@ -661,13 +709,6 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
                 StateName = stateName,
             }],
             Targets = ZoneBroadcastTarget.Players,
-        });
-
-        Self.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
-            EventName = $"{objectName}.{stateName}.EnterState",
-            PlayerActor = playerActor,
-            PlayerGameObject = playerObject,
-            PlayerSpawned = playerSpawned,
         });
     }
 
