@@ -999,6 +999,19 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
                 CommandStuck(wizard);
                 GoToStuckStep(wizard);
                 return;
+            // A server-run wizard (Ultimus) that stepping aside did not free goes back to where its area starts: it stood on the
+            // Kraken isle, which only a teleporter leaves, for hours (Niduus, 2026-11-13: "he's not actively moving or questing").
+            case "botrecall":
+                Logger.Information("Bot recall: {0} goes back to where {1} starts.", Logger.Args(wizard.CharId, wizard.Zone));
+                SessionActor.ActorRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                    DestinationZone = wizard.Zone,
+                    DestinationLocation = "Start",
+                    SendToClient = true,
+                    // Through a real zone transfer: a teleport within the area needs a spot, not "Start".
+                    ForceReload = true,
+                    OwnerCharId = wizard.CharId,
+                });
+                return;
             case "book":
                 CommandQuestBook(wizard);
                 return;

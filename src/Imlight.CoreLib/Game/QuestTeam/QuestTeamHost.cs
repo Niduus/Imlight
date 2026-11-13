@@ -17,7 +17,9 @@
  */
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Imlight.Common;
 using Akka.Actor;
 using Imcodec.IO;
 using Imlight.CoreLib.Shared.Networking;
@@ -37,13 +39,47 @@ internal static class QuestTeamHost {
 
     internal static IActorRef Server => s_server;
 
+    /// <summary>The realm the bots play on, or null before a game server started.</summary>
+    internal static string Realm => s_realm;
+
+    private static string PreferredRealm {
+        get {
+            try {
+                return ConfigurationManager.GetValue("Game Server.RealmNames", "")
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).FirstOrDefault();
+            }
+            catch (Exception) {
+                return null;
+            }
+        }
+    }
+
     internal static ActorSystem System => s_system;
 
-    /// <summary>A game server started: the first one is the Quest Team's.</summary>
-    internal static void GameServerReady(IActorRef server, ActorSystem system) {
+    private static volatile string s_realm;
+
+    /// <summary>
+    /// A game server started: the Quest Team, Ultimus and the Bot Players play on the first realm of [Game Server]
+    /// RealmNames (Centaur), the one players are on; until it is up, on the first server that starts. Each realm is a
+    /// world of its own, so on another realm they were invisible to everyone (Niduus, 2026-11-13: "Ultimus is here and
+    /// online but can't see him": after a restart Phoenix started first and Ultimus played in Phoenix's Triton Avenue).
+    /// </summary>
+    internal static void GameServerReady(IActorRef server, ActorSystem system, string realm = null) {
+        var preferred = PreferredRealm;
+        var takeOver = s_server is not null && preferred is not null
+                       && string.Equals(realm, preferred, StringComparison.OrdinalIgnoreCase)
+                       && !string.Equals(s_realm, preferred, StringComparison.OrdinalIgnoreCase);
+        if (takeOver) {
+            Logger.Information("Quest Team, Ultimus and Bot Players: they play on realm {0}, where the players are (not {1}).",
+                Logger.Args(realm, s_realm));
+            s_server = server;
+            s_realm = realm;
+        }
+
         if (s_server is null) {
             s_system = system;
             s_server = server;
+            s_realm = realm;
             // The gear the server's own wizards pick from (Quest Team and Bot Players) is read once the game's data is
             // loaded, in the background, so the first wizard out already has it.
             _ = Task.Delay(TimeSpan.FromSeconds(45)).ContinueWith(_ => (BotShared.BotGear.Catalog.Count, BotShared.BotCards.IsDevSpell(1)));

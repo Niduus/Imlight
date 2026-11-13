@@ -67,6 +67,17 @@ internal sealed partial class UltimusDirectorActor {
                 key: $"unstick|{member.Zone}|{index}", skipStep: false, level: UltimusLink.ABNORMAL);
         }
 
+        // The self-check: stepping aside twice did not free it, so the server takes it back to where the area starts (a
+        // place cut off from the way on, such as the Kraken isle, is left that way), and the way is found again from there.
+        if (tries >= 3) {
+            Note("Ultimus", $"{member.Name} is still stuck in {where}: goes back to where {UltimusText.Zone(member.Zone)} starts and finds the way from there.",
+                UltimusLink.ABNORMAL);
+            _actors[index].Tell(new UltimusMember.Recall());
+            _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
+
+            return;
+        }
+
         if (tries >= 2) {
             _clicks.Clear();
         }

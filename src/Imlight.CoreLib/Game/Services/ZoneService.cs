@@ -365,8 +365,20 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
                     return zoneDetails;
                 }
 
+                // Still standing where the last teleporter put them (the pad of the way back): its edge can fire again
+                // while they stand there, which sent Niduus back after the cool down (log 2026-11-12 23:42:48). Only once
+                // they have walked off it does a teleporter there work again.
+                if (message.ByZoneDoor && _doorLanding is not null) {
+                    Logger.Debug("Session {0}: a teleporter was touched before the wizard walked off the spot the last one put them; ignored.",
+                        Logger.Args(SessionActor.SessionID));
+
+                    return zoneDetails;
+                }
+
                 if (message.ByZoneDoor) {
                     _doorCooldownUntil = DateTime.UtcNow + TimeSpan.FromSeconds(Math.Max(0, delay) + TeleporterCooldownSeconds);
+                    var lands = Util.GetVectorFromCompactString(message.DestinationLocation ?? "");
+                    _doorLanding = lands.X != 0 || lands.Y != 0 ? (lands.X, lands.Y) : null;
                 }
 
                 if (message.ByZoneDoor && delay > 0) {
@@ -1775,6 +1787,26 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
 
     // Until when a teleporter within the area does nothing for this wizard: the delay plus the cool down after one sent them.
     private DateTime _doorCooldownUntil = DateTime.MinValue;
+
+    // Where the last teleporter within the area put the wizard, until they walk WALKED_OFF_PAD away from it.
+    private (float X, float Y)? _doorLanding;
+    private const float WALKED_OFF_PAD = 300f;
+
+    [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_CLIENTMOVE))]
+    private void ReceiveClientMoveForTeleporters(GAME_5_PROTOCOL.MSG_CLIENTMOVE message) {
+        if (_doorLanding is not { } pad) {
+            return;
+        }
+
+        // Locations arrive divided by 4.
+        var x = unchecked((short) message.LocationX) * 4f;
+        var y = unchecked((short) message.LocationY) * 4f;
+        var dx = x - pad.X;
+        var dy = y - pad.Y;
+        if (dx * dx + dy * dy > WALKED_OFF_PAD * WALKED_OFF_PAD && DateTime.UtcNow >= _doorCooldownUntil) {
+            _doorLanding = null;
+        }
+    }
 
     /// <summary>How long after a teleporter within an area sends a wizard no teleporter works for them ([World] TeleporterCooldownSeconds, live).</summary>
     private static double TeleporterCooldownSeconds => Math.Clamp(ConfigurationManager.GetValue("World.TeleporterCooldownSeconds", 5.0), 0, 60);
