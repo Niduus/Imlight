@@ -826,18 +826,52 @@ internal sealed partial class ManagerWindow {
         private static void InstallFromShelf(OverlayAddon addon) =>
             OverlayAddon.Install(OverlayHost.InstallFolder, OverlayAddon.FromJson(addon.ToJson()) ?? throw new PanelException("That add-on didn't pass the check."));
 
+        // The add-ons on this PC, read from their folder by FillAddons; ShowAddons draws them with what is on the overlay now.
+        private List<OverlayAddon> _ovAddonList = [];
+
         private void FillAddons() {
+            _ovAddonList = OverlayAddon.All(OverlayHost.InstallFolder);
+            ShowAddons();
+        }
+
+        /// <summary>
+        /// The add-ons, each widget with a tick when it is on the overlay being changed now (Niduus, 2026-11-13: "Overlay UI
+        /// is not saying what I have active"). Ticking puts it on, unticking takes it off.
+        /// </summary>
+        private void ShowAddons() {
             _ovAddons.Children.Clear();
-            var addons = OverlayAddon.All(OverlayHost.InstallFolder);
-            if (addons.Count == 0) {
+            if (_ovAddonList.Count == 0) {
                 _ovAddons.Children.Add(Sub("No add-ons yet."));
                 return;
             }
 
-            foreach (var addon in addons) {
+            var where = _ovServerPart ? "on the server's overlay" : "on your overlay";
+            _ovAddons.Children.Add(Sub($"A ticked widget is {where} now. Tick one to put it on, untick it to take it off."));
+            foreach (var addon in _ovAddonList) {
                 var pieces = new WrapPanel();
                 foreach (var widget in addon.Widgets) {
-                    pieces.Children.Add(Spaced(Action(Plain("+ " + (widget.Name.Length > 0 ? widget.Name : "Widget")), () => AddWidgetAsync(widget))));
+                    var on = OverlayAddon.OnOverlay(addon, widget, _ovDesign.Elements);
+                    var name = widget.Name.Length > 0 ? widget.Name : "Widget";
+                    var tick = new CheckBox {
+                        Content = on.Count > 0 ? name + "  (on)" : name, IsChecked = on.Count > 0, Margin = new Thickness(0, 0, 14, 4),
+                        FontWeight = on.Count > 0 ? FontWeight.SemiBold : FontWeight.Normal,
+                    };
+                    tick.IsCheckedChanged += async (_, _) => {
+                        try {
+                            if (tick.IsChecked == true) {
+                                AddWidget(addon, widget);
+                            }
+                            else {
+                                await TakeOffWidgetAsync(addon, widget);
+                            }
+                        }
+                        catch (PanelException ex) {
+                            Say(ex.Message, true);
+                        }
+
+                        ShowAddons();
+                    };
+                    pieces.Children.Add(tick);
                 }
 
                 foreach (var style in addon.Styles) {
@@ -867,19 +901,42 @@ internal sealed partial class ManagerWindow {
             }
         }
 
-        private Task AddWidgetAsync(OverlayWidget widget) {
+        private void AddWidget(OverlayAddon addon, OverlayWidget widget) {
             if (_ovDesign.Elements.Count + widget.Elements.Count > OverlayDesign.MAX_ELEMENTS) {
                 throw new PanelException($"The overlay holds up to {OverlayDesign.MAX_ELEMENTS} texts, boxes and pictures; that widget doesn't fit.");
             }
 
             var copies = OverlayAddon.CopyFamily(widget.Elements);
+            foreach (var copy in copies) {
+                copy.From = OverlayAddon.FromKey(addon, widget);
+            }
+
             _ovDesign.Elements.AddRange(copies);
             _ovSelected = copies.FirstOrDefault(c => c.Parent.Length == 0) ?? copies.LastOrDefault() ?? _ovSelected;
             OverlayChanged();
             RenderOverlayEditor();
-            Say($"Added \"{(widget.Name.Length > 0 ? widget.Name : "the widget")}\".");
+            Say($"Put \"{(widget.Name.Length > 0 ? widget.Name : "the widget")}\" on the overlay.");
+        }
 
-            return Task.CompletedTask;
+        private async Task TakeOffWidgetAsync(OverlayAddon addon, OverlayWidget widget) {
+            var on = OverlayAddon.OnOverlay(addon, widget, _ovDesign.Elements);
+            if (on.Count == 0) {
+                return;
+            }
+
+            var name = widget.Name.Length > 0 ? widget.Name : "the widget";
+            if (!await ConfirmAsync($"Take \"{name}\" off the overlay? Any changes you made to it go with it (ticking it again puts on a fresh one).")) {
+                return;
+            }
+
+            _ovDesign.Elements.RemoveAll(on.Contains);
+            if (_ovSelected is not null && on.Contains(_ovSelected)) {
+                _ovSelected = _ovDesign.Credit;
+            }
+
+            OverlayChanged();
+            RenderOverlayEditor();
+            Say($"Took \"{name}\" off the overlay.");
         }
 
         private Task UseStyleAsync(OverlayStyle style) {
@@ -1054,6 +1111,9 @@ internal sealed partial class ManagerWindow {
             finally {
                 _ovFilling = false;
             }
+
+            // The add-ons' ticks follow what is on the overlay (added, removed, the other part picked, or changed on the game).
+            ShowAddons();
         }
 
         private void RenderOverlayPreview() {

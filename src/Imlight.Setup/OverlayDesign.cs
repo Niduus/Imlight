@@ -110,25 +110,136 @@ internal sealed class OverlayDesign {
 
     internal static OverlayDesign Load(string installFolder) => LoadFile(PathIn(installFolder));
 
+    /// <summary>
+    /// The design in the file; a new one only when there is no file. A file that can't be read (another copy of Ahziael
+    /// writing it, an update's backup or a virus checker holding it, or a broken file) never comes back empty (Niduus,
+    /// 2026-11-13: the Minimap and Quest Tracker had to be put back on after every update): the last good copy beside it
+    /// is used, and the unreadable one is kept aside before anything can be saved over it.
+    /// </summary>
     internal static OverlayDesign LoadFile(string path) {
+        if (TryLoadFile(path) is { } design) {
+            return design;
+        }
+
+        KeepAside(path);
+
+        return TryLoadFile(path + BACKUP) ?? new OverlayDesign();
+    }
+
+    /// <summary>The last good copy of a design file, written beside it whenever it is saved with something on it.</summary>
+    internal const string BACKUP = ".last-good";
+
+    /// <summary>The design in the file, a new one when there is no file, or null when it can't be read just now.</summary>
+    internal static OverlayDesign? TryLoadFile(string path) {
+        for (var attempt = 0; ; attempt++) {
+            try {
+                if (!File.Exists(path)) {
+                    return new OverlayDesign();
+                }
+
+                if (new FileInfo(path).Length >= 12 * 1024 * 1024) {
+                    return null;
+                }
+
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                using var reader = new StreamReader(stream);
+
+                return FromJsonTolerant(reader.ReadToEnd());
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                if (attempt >= 4) {
+                    return null;
+                }
+
+                System.Threading.Thread.Sleep(50 * (attempt + 1));
+            }
+        }
+    }
+
+    // An unreadable design file is copied aside (once per minute at most) so a save can't lose it for good.
+    private static void KeepAside(string path) {
         try {
-            if (File.Exists(path) && new FileInfo(path).Length < 12 * 1024 * 1024) {
-                return FromJson(File.ReadAllText(path)) ?? new OverlayDesign();
+            if (File.Exists(path) && new FileInfo(path).Length > 0) {
+                File.Copy(path, $"{path}.unreadable-{DateTime.Now:yyyyMMdd-HHmm}", overwrite: true);
             }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // Still held: the last good copy is used and the file itself isn't touched until it can be read.
         }
-
-        return new OverlayDesign();
     }
 
     internal void Save(string installFolder) => SaveFile(PathIn(installFolder));
 
     internal void SaveFile(string path) {
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        var json = ToJson();
         var temp = path + ".tmp";
-        File.WriteAllText(temp, ToJson());
+        File.WriteAllText(temp, json);
         File.Move(temp, path, true);
+        if (Elements.Count > 0) {
+            try {
+                File.WriteAllText(temp, json);
+                File.Move(temp, path + BACKUP, true);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                // The design itself is saved; the spare copy waits for the next save.
+            }
+        }
+    }
+
+    /// <summary>
+    /// A design from its JSON, like <see cref="FromJson"/>, but a piece Ahziael can't read (one from a newer or older
+    /// Ahziael) is left out instead of the whole design. Null when it is not a design at all.
+    /// </summary>
+    internal static OverlayDesign? FromJsonTolerant(string json) {
+        if (FromJson(json) is { } whole) {
+            return whole;
+        }
+
+        try {
+            if (System.Text.Json.Nodes.JsonNode.Parse(json, documentOptions: new JsonDocumentOptions { MaxDepth = 8 }) is not System.Text.Json.Nodes.JsonObject root) {
+                return null;
+            }
+
+            var design = new OverlayDesign();
+            foreach (var (key, value) in root) {
+                if (value is null) {
+                    continue;
+                }
+
+                try {
+                    switch (key.ToLowerInvariant()) {
+                        case "enabled":
+                            design.Enabled = value.Deserialize<bool>(s_json);
+                            break;
+                        case "credit":
+                            design.Credit = value.Deserialize<OverlayElement>(s_json) ?? DefaultCredit();
+                            break;
+                        case "elements" when value is System.Text.Json.Nodes.JsonArray elements:
+                            foreach (var element in elements) {
+                                try {
+                                    if (element?.Deserialize<OverlayElement>(s_json) is { } piece) {
+                                        design.Elements.Add(piece);
+                                    }
+                                }
+                                catch (Exception ex) when (ex is JsonException or NotSupportedException or ArgumentException or InvalidOperationException) {
+                                    // That one piece is left out.
+                                }
+                            }
+
+                            break;
+                    }
+                }
+                catch (Exception ex) when (ex is JsonException or NotSupportedException or ArgumentException or InvalidOperationException) {
+                    // That part keeps its default.
+                }
+            }
+
+            return design.Clean();
+        }
+        catch (Exception ex) when (ex is JsonException or ArgumentException or InvalidOperationException) {
+            return null;
+        }
     }
 
     internal string ToJson() => JsonSerializer.Serialize(this, s_json);
@@ -204,6 +315,7 @@ internal sealed class OverlayDesign {
         credit.Locked = false;
         credit.Id = "";
         credit.Parent = "";
+        credit.From = "";
         credit.Layer = 0;
         credit.Spacing = 0;
         credit.Picture = "";
@@ -386,6 +498,12 @@ internal sealed class OverlayElement {
     /// <summary>For a Quest Tracker: what it shows and how (null for anything else).</summary>
     public OverlayQuestList? Quests { get; set; }
 
+    /// <summary>
+    /// The add-on widget it was put on from ("add-on name/widget name"), so the Add-ons list can show what is on the
+    /// overlay; empty for a piece made by hand.
+    /// </summary>
+    public string From { get; set; } = "";
+
     /// <summary>A box, a picture or a minimap: no words (a button has words).</summary>
     internal bool IsBox => Kind is BOX or PICTURE or MINIMAP or QUEST_TRACKER;
 
@@ -409,6 +527,7 @@ internal sealed class OverlayElement {
         Command = Trim(Command, MAX_COMMAND).Replace("\n", " ").Trim();
         CheatHow = OverlayAction.HOWS.Contains(CheatHow) ? CheatHow : OverlayAction.USE;
         Name = Trim(Name, 40);
+        From = Trim(From, 120);
         Id = new string((Id ?? "").Where(char.IsAsciiLetterOrDigit).Take(32).ToArray());
         Parent = new string((Parent ?? "").Where(char.IsAsciiLetterOrDigit).Take(32).ToArray());
         Text = Trim(Text, MAX_TEXT);
