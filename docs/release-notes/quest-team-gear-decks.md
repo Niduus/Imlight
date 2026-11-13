@@ -227,3 +227,8 @@ Changed: Quest Team and Ultimus alerts on the game are now the "Bot Alerts" add-
 The alert on the game now stays inside the window, with its words wrapped so you can read all of it, at the top in the middle, with an Acknowledge button that takes it away. It stays until you click Acknowledge. It is now an add-on for both the Quest Team and Ultimus, so it only shows on a game if you add it. Without it, alerts still show in Ahziael (the pop-up and the Issues pages). You can change its colours, size and how far down it sits, like any text.
 Where: Play > Overlay > Add-ons > Niduus's add-ons > Bot Alerts > Download, then add it to your overlay
 Test: Add Bot Alerts to your overlay. When the next Quest Team or Ultimus alert comes, it should show at the top in the middle, fully inside the window, and go away when you click Acknowledge.
+
+New: Quest Team issues say why a step can't be done
+Every Quest Team issue about a quest now runs the same quest check Ultimus uses. It looks at the quest's data, the wizard, and whether the NPC, object or creature is really there and clickable. The issue then says the most likely cause, how sure it is (High, Medium or Low), and whether the step can be done at all. Every check it made is listed under what the team saw. A cause it is sure of also shows in pink in Team Logs.
+Where: Quest Team > Team Issues; Team Logs ("DIAGNOSIS: ...")
+Test: When the next quest issue comes up, open it in Team Issues. It should start with "Likely cause" and "Can the step be done", followed by the "Check OK/PROBLEM/INFO" lines.
