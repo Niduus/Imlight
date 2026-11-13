@@ -35,7 +35,7 @@ namespace Imlight.CoreLib.Game.Ultimus;
 /// </summary>
 internal static class UltimusVoice {
 
-    internal sealed record Heard(IActorRef Zone, float X, float Y, ulong SpeakerCharId, string SpeakerName, string Text);
+    internal sealed record Heard(IActorRef Zone, float X, float Y, ulong SpeakerCharId, string SpeakerName, string Text, bool Whisper = false);
 
     private static readonly ConcurrentQueue<Heard> s_heard = new();
 
@@ -46,6 +46,15 @@ internal static class UltimusVoice {
         }
 
         s_heard.Enqueue(new Heard(zone, x, y, charId, name ?? "a player", text ?? ""));
+    }
+
+    /// <summary>A player whispered to Ultimus (Menu Chat or typed): it answers in Menu Chat, whispered back, wherever they are.</summary>
+    internal static void PlayerWhispered(ulong charId, string name, string text) {
+        if (s_heard.Count > 20) {
+            return;
+        }
+
+        s_heard.Enqueue(new Heard(null, 0, 0, charId, name ?? "a player", text ?? "", Whisper: true));
     }
 
     internal static bool TryTake(out Heard heard) => s_heard.TryDequeue(out heard);
@@ -71,6 +80,9 @@ internal sealed partial class UltimusDirectorActor {
         ["no"] = ["No thanks", "No, thank you", "Sorry", "Not now", "No"],
         ["thanks"] = ["You're welcome", "No problem", "Thanks", "Thank you"],
         ["bye"] = ["Goodbye", "Bye", "See you", "Later"],
+        // A whisper it has no answer for: it is busy questing.
+        ["busy"] = ["I'm busy", "Busy", "Sorry", "Not now", "Maybe later"],
+        ["questing"] = ["Questing", "I'm questing", "On a quest", "Busy"],
     };
 
     // A player's phrase that asks to fight with it: yes while it is in a battle.
@@ -83,7 +95,7 @@ internal sealed partial class UltimusDirectorActor {
     ];
 
     /// <summary>Says a moment's line through Ultimus's Menu Chat, if it has not spoken lately and the dice allow.</summary>
-    private void Speak(string moment, double chance, bool force = false) {
+    private void Speak(string moment, double chance, bool force = false, ulong whisperTo = 0) {
         if (_actors.Count == 0 || (!force && (DateTime.UtcNow < _nextLine || _voiceRandom.NextDouble() > chance))) {
             return;
         }
@@ -93,6 +105,13 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         _nextLine = DateTime.UtcNow + s_lineGap;
+        if (whisperTo != 0) {
+            Note("Ultimus", $"whispers back in Menu Chat: \"{phrase.Text}\"");
+            _actors[0].Tell(new UltimusMember.WhisperMenuChat(phrase.Id, whisperTo));
+
+            return;
+        }
+
         Note("Ultimus", $"says in Menu Chat: \"{phrase.Text}\"");
         _actors[0].Tell(new UltimusMember.SayMenuChat(phrase.Id));
     }
@@ -101,7 +120,7 @@ internal sealed partial class UltimusDirectorActor {
     private void AnswerPlayers() {
         while (UltimusVoice.TryTake(out var heard)) {
             var me = _team.Count > 0 ? _team[0] : null;
-            if (me?.ZoneActor is null || !me.ZoneActor.Equals(heard.Zone) || UltimusPlanner.Far(me.X, me.Y, heard.X, heard.Y) > 700) {
+            if (me is null || (!heard.Whisper && (me.ZoneActor is null || !me.ZoneActor.Equals(heard.Zone) || UltimusPlanner.Far(me.X, me.Y, heard.X, heard.Y) > 700))) {
                 continue;
             }
 
@@ -116,8 +135,11 @@ internal sealed partial class UltimusDirectorActor {
                 : MenuChatBook.Says(text, "thank") || MenuChatBook.Says(text, "thanks") ? "thanks"
                 : new[] { "bye", "goodbye", "see you", "later" }.Any(w => MenuChatBook.Says(text, w)) ? "bye"
                 : new[] { "hello", "hi", "hey", "greetings" }.Any(w => MenuChatBook.Says(text, w)) ? "hello"
+                // Whispered: asked what it is doing, it is questing; anything else gets a polite "busy".
+                : heard.Whisper && new[] { "what", "doing", "where", "how" }.Any(w => MenuChatBook.Says(text, w)) ? "questing"
+                : heard.Whisper ? "busy"
                 : null;
-            Note("Ultimus", $"{heard.SpeakerName} said in Menu Chat: \"{text}\"" + moment switch {
+            Note("Ultimus", $"{heard.SpeakerName} {(heard.Whisper ? "whispered" : "said in Menu Chat")}: \"{text}\"" + moment switch {
                 "yes" => "; Ultimus is fighting, so it welcomes them in.",
                 "no" => "; Ultimus turns it down (its quest comes first).",
                 null => "; Ultimus carries on.",
@@ -128,7 +150,7 @@ internal sealed partial class UltimusDirectorActor {
             }
 
             _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
-            Speak(moment, 1, force: true);
+            Speak(moment, 1, force: true, whisperTo: heard.Whisper ? heard.SpeakerCharId : 0);
         }
     }
 

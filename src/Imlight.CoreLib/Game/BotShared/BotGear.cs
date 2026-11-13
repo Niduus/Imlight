@@ -43,6 +43,9 @@ internal enum BotStyle {
     Backup,
     // Storm, Fire, Myth: only hits.
     Hitter,
+    // Ultimus alone: hits, keeps itself alive, and its hits land as other schools' damage (Balance's Hydra, Spectral
+    // Blast, Nested Fury as Fire, Ice or Storm; Chimera as Life, Death or Myth), so gear for those counts too.
+    Solo,
 }
 
 /// <summary>
@@ -346,6 +349,16 @@ internal static class BotGear {
         => piece is not null && piece.Level <= level
            && (piece.SchoolNeeded.Length == 0 || piece.SchoolNeeded.Equals(school, StringComparison.OrdinalIgnoreCase));
 
+    /// <summary>
+    /// For the Solo style (Ultimus): the share of its attack damage each damage type takes, the biggest 1 (Niduus,
+    /// 2026-11-13: "Given that it's a balance ... Hydra, Spectral Blast and Nested Fury do elemental and some that do
+    /// spiritual like Chimera"). The server boosts a hit by the caster's damage for the hit's damage type, so a Balance
+    /// wizard whose Hydra lands as Fire, Ice and Storm gains from those schools' damage and pierce. Set from its deck.
+    /// </summary>
+    internal static volatile IReadOnlyDictionary<string, double> SoloDamageMix = new Dictionary<string, double>();
+
+    private static readonly HashSet<string> s_hitKinds = new(StringComparer.Ordinal) { "Damage", "FlatDamage", "ArmorPiercing" };
+
     /// <summary>How good a piece is for a wizard of this school and style; 0 for nothing it uses.</summary>
     internal static double Score(Piece piece, string school, BotStyle style) {
         if (piece is null) {
@@ -358,7 +371,14 @@ internal static class BotGear {
             var all = stat.School.Length == 0;
             // Its own school's stats count fully; every school's a little less (class over universal); other schools' a
             // resist still helps a bit, the rest not at all.
-            var share = own ? 1.0 : all ? 0.8 : stat.Kind.Contains("ReduceDamage", StringComparison.Ordinal) ? 0.15 : 0;
+            var share = own ? 1.0 : all ? 0.8 : stat.Kind.Contains("ReduceDamage", StringComparison.Ordinal) ? (style == BotStyle.Solo ? 0.3 : 0.15) : 0;
+            // Alone, its hits land as the damage types of its spells: those schools' damage and pierce count by how much
+            // of its damage they carry (its own school's by that too, but never under half).
+            if (style == BotStyle.Solo && stat.School.Length > 0 && s_hitKinds.Contains(stat.Kind)) {
+                var mix = SoloDamageMix.TryGetValue(stat.School, out var part) ? part : 0;
+                share = own ? Math.Max(0.5, mix) : Math.Max(share, mix);
+            }
+
             if (share > 0) {
                 score += share * stat.Value * Weight(stat.Kind, style);
             }
@@ -378,17 +398,18 @@ internal static class BotGear {
     }
 
     private static double Weight(string kind, BotStyle style) => kind switch {
-        "Damage" => style switch { BotStyle.Hitter => 4, BotStyle.Backup => 3.5, BotStyle.Tank => 1.5, _ => 1 },
-        "FlatDamage" => style is BotStyle.Hitter or BotStyle.Backup ? 1.2 : 0.4,
-        "ReduceDamage" => style switch { BotStyle.Tank => 4, BotStyle.Healer => 3, BotStyle.Backup => 2.5, _ => 2 },
-        "FlatReduceDamage" => style == BotStyle.Tank ? 1.5 : 1,
-        "MaxHealth" => style switch { BotStyle.Tank => 0.1, BotStyle.Healer => 0.07, _ => 0.06 },
-        "Accuracy" => style == BotStyle.Hitter ? 1.5 : 1,
-        "ArmorPiercing" => style switch { BotStyle.Hitter => 2.5, BotStyle.Backup => 2, _ => 1 },
-        "CriticalHit" => style is BotStyle.Hitter or BotStyle.Backup ? 0.25 : 0.12,
-        "Block" => style == BotStyle.Tank ? 0.2 : 0.1,
-        "Healing" => style == BotStyle.Healer ? 3 : 0.5,
-        "IncHealing" => style == BotStyle.Tank ? 1.5 : 1,
+        // Solo: as much hit as a backup hitter, and more health, resist, block and healing taken, as nobody else heals it.
+        "Damage" => style switch { BotStyle.Hitter => 4, BotStyle.Backup or BotStyle.Solo => 3.5, BotStyle.Tank => 1.5, _ => 1 },
+        "FlatDamage" => style is BotStyle.Hitter or BotStyle.Backup or BotStyle.Solo ? 1.2 : 0.4,
+        "ReduceDamage" => style switch { BotStyle.Tank => 4, BotStyle.Healer or BotStyle.Solo => 3, BotStyle.Backup => 2.5, _ => 2 },
+        "FlatReduceDamage" => style is BotStyle.Tank or BotStyle.Solo ? 1.5 : 1,
+        "MaxHealth" => style switch { BotStyle.Tank => 0.1, BotStyle.Solo => 0.09, BotStyle.Healer => 0.07, _ => 0.06 },
+        "Accuracy" => style is BotStyle.Hitter or BotStyle.Solo ? 1.5 : 1,
+        "ArmorPiercing" => style switch { BotStyle.Hitter => 2.5, BotStyle.Backup or BotStyle.Solo => 2, _ => 1 },
+        "CriticalHit" => style is BotStyle.Hitter or BotStyle.Backup or BotStyle.Solo ? 0.25 : 0.12,
+        "Block" => style is BotStyle.Tank or BotStyle.Solo ? 0.2 : 0.1,
+        "Healing" => style == BotStyle.Healer ? 3 : style == BotStyle.Solo ? 1 : 0.5,
+        "IncHealing" => style is BotStyle.Tank or BotStyle.Solo ? 1.5 : 1,
         "PowerPips" => 2.5,
         "MaxMana" => 0.02,
         "StartingPips" => 15,

@@ -377,7 +377,6 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     // The leader: what to do next
     // ---------------------------------------------------------------------
 
-    private DateTime _restingSince = DateTime.MaxValue;
     private DateTime _dialogSince = DateTime.MaxValue;
     private readonly Dictionary<ulong, DateTime> _stonesUsed = [];
     private readonly List<DateTime> _zoneChanges = [];
@@ -385,49 +384,6 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     // Alone, it needs more in the tank than a team member before a fight.
     private const double READY_HEALTH = 0.75;
     private const double READY_MANA = 0.25;
-
-    // Never into a fight weak (Niduus, 2026-11-12): before walking onto a creature, anyone low drinks a potion, and without
-    // one they rest a while (up to a minute) as a player waits for health to come back.
-    private bool ReadyToFight(List<UltimusMember.Status> group) {
-        var weak = group.Where(m => m.Wizard?.GameStats is { } stats
-                                    && (stats.m_currentHitpoints < Math.Max(1, stats.m_baseHitpoints + stats.m_bonusHitpoints) * READY_HEALTH
-                                        || stats.m_currentMana < Math.Max(1, stats.m_baseMana + stats.m_bonusMana) * READY_MANA)).ToList();
-        if (weak.Count == 0) {
-            _restingSince = DateTime.MaxValue;
-
-            return true;
-        }
-
-        foreach (var member in weak) {
-            var i = _team.IndexOf(member);
-            var key = "potion|" + i;
-            if (member.Wizard.GameStats.m_potionCharge >= 1 && CanClick(key)) {
-                Clicked(key);
-                Note(member.Role, $"{member.Name} drinks a potion before the fight.");
-                _actors[i].Tell(new UltimusMember.UsePotion());
-            }
-        }
-
-        if (_restingSince == DateTime.MaxValue) {
-            _restingSince = DateTime.UtcNow;
-            Note("Ultimus", $"rests before the fight ({string.Join(", ", weak.Select(m => m.Role))} low on health or mana).");
-        }
-
-        if (DateTime.UtcNow - _restingSince > TimeSpan.FromMinutes(1)) {
-            return true;
-        }
-
-        _doing = "resting before the fight";
-        _lastProgress = DateTime.UtcNow;
-        // Never rest in the road among the creatures (Niduus, 2026-11-12): off to a path away from them first.
-        if (SafeSpot(group[0]) is { } safe) {
-            WalkTo(0, safe);
-        } else {
-            StopWalking(0);
-        }
-
-        return false;
-    }
 
     private const float SAFE_FROM_MOBS = 900f;
 
@@ -467,7 +423,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     private void Lead(List<UltimusMember.Status> group) {
         var leader = group[0];
         var target = PickTarget(group);
-        if (target?.Kind == UltimusPlanner.FIGHT && !ReadyToFight(group)) {
+        // Healing first, above all before a fight (UltimusDirector.Health.cs).
+        if (HealFirst(group, target)) {
             return;
         }
 

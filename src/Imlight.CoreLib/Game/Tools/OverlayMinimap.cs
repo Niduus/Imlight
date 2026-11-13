@@ -127,6 +127,8 @@ internal static class OverlayMinimap {
 
                     Add(mark.Kind, spot.X, spot.Y, mark.Name, mark.Level, mark.Kind == MinimapIndex.BOSS ? 1 : 6, id);
                     break;
+                case MinimapIndex.WISP_HEALTH or MinimapIndex.WISP_MANA:
+                    continue;
                 case MinimapIndex.NPC:
                     Add(MinimapIndex.NPC, spot.X, spot.Y, mark.Name, rank: 7, id: id);
                     break;

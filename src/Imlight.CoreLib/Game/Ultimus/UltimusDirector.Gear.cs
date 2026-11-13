@@ -47,8 +47,39 @@ internal sealed partial class UltimusDirectorActor {
     private readonly HashSet<uint> _shopSkipped = [];
     private readonly HashSet<string> _mountGiven = [];
 
-    // Ultimus fights alone: a balanced deck of hits, heals and shields.
-    private static BotStyle StyleOf(UltimusMember.Status member) => BotStyle.Backup;
+    // Ultimus fights alone: a balanced deck of hits, heals and shields, and gear for living alone and for the schools its
+    // hits land as (BotGear.SoloDamageMix).
+    private static BotStyle StyleOf(UltimusMember.Status member) => BotStyle.Solo;
+
+    /// <summary>
+    /// The share of its deck's attack damage each damage type carries, the biggest 1: Hydra's three heads count for Fire,
+    /// Ice and Storm, Spectral Blast's for each it may land as, Chimera's for Life, Death or Myth, Judgment for Balance.
+    /// </summary>
+    private static Dictionary<string, double> DamageMix(Wizard wizard) {
+        var mix = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
+        var deck = wizard?.SpellbookBehavior?.SpellList?.Where(s => s is not null).Select(s => ((uint) s.m_templateID, Math.Max(1, (int) s.m_quantity))).ToList() ?? [];
+        if (deck.Count == 0) {
+            deck = [.. (wizard?.SpellbookBehavior?.LearnedSpellTemplateIds?.ToList() ?? []).Select(id => ((uint) id, 1))];
+        }
+
+        foreach (var (id, copies) in deck) {
+            if (Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(id) is not Imcodec.ObjectProperty.TypeCache.SpellTemplate spell) {
+                continue;
+            }
+
+            var hits = Combat.CombatEnchantments.Leaves(spell.m_effects ?? [])
+                .Where(e => e is not null && Combat.CombatCharms.DamageEffects.Contains(e.m_effectType) && !string.IsNullOrEmpty((string) e.m_sDamageType))
+                .ToList();
+            foreach (var hit in hits) {
+                // Each way a hit may land shares the card (a random head is one of several).
+                mix[(string) hit.m_sDamageType] = mix.GetValueOrDefault((string) hit.m_sDamageType) + (Math.Max(1, hit.m_effectParam) * copies / (double) hits.Count);
+            }
+        }
+
+        var most = mix.Count == 0 ? 0 : mix.Values.Max();
+
+        return most <= 0 ? mix : mix.ToDictionary(m => m.Key, m => m.Value / most, StringComparer.OrdinalIgnoreCase);
+    }
 
     private readonly Dictionary<string, uint> _badgeAsked = new(StringComparer.Ordinal);
     private readonly Dictionary<string, DateTime> _badgeAskedAt = new(StringComparer.Ordinal);
@@ -90,6 +121,10 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         _nextGearLook = DateTime.UtcNow.AddSeconds(6);
+        if (_team.Count > 0 && _team[0].Wizard is { } solo) {
+            BotGear.SoloDamageMix = DamageMix(solo);
+        }
+
         for (var i = 0; i < _team.Count; i++) {
             var member = _team[i];
             if (member.Wizard is not { } wizard || CombatDuelComponent.IsInBattle(member.GlobalId)) {

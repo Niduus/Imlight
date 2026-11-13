@@ -564,6 +564,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         var refusal = wizard is null ? HatchStatus.Failed
             : !PetHatching.Enabled ? HatchStatus.CannotHatchNow
             : wizard.PrivacyOptions.AllowHatchRequest == 0 ? HatchStatus.NotAccepting
+            // Server-played wizards never hatch (Niduus, 2026-11-13: "Have Ultimus also reject Hatching Requests").
+            : Ultimus.UltimusRoster.IsMember(wizard.CharId) || QuestTeam.QuestTeamRoster.IsMember(wizard.CharId) ? HatchStatus.NotAccepting
             : BuddyRelationshipCollection.HasBlocked(wizard.CharId, message.FromCharId) ? HatchStatus.NotAccepting
             : _peerCharId != 0 && _peerCharId != message.FromCharId ? HatchStatus.AlreadyHatching
             : wizard.IsInDuel ? HatchStatus.CannotHatchNow
@@ -571,6 +573,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             : HatchStatus.Success;
 
         if (refusal != HatchStatus.Success) {
+            if (wizard is not null && Ultimus.UltimusRoster.IsMember(wizard.CharId)) {
+                Ultimus.UltimusLink.Note(Ultimus.UltimusRoster.NAME, "turns down a pet hatching request (it does not hatch pets).");
+            }
+
             Logger.Information("Hatching: {0} refused the hatch request of {1}: {2}.", Logger.Args(wizard?.CharId, message.FromCharId, refusal));
             message.FromSession?.Tell(new CHARACTER_103_PROTOCOL.MSG_HATCHPEER {
                 Kind = CHARACTER_103_PROTOCOL.HatchPeerKind.Refused,

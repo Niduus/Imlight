@@ -41,7 +41,7 @@ internal sealed partial class UltimusDirectorActor {
     private bool Unsticking(int index) => _unstickUntil.TryGetValue(index, out var until) && DateTime.UtcNow < until;
 
     private void LookForStuck() {
-        var resting = _restingSince != DateTime.MaxValue;
+        var resting = _healWaiting;
         for (var i = 0; i < _team.Count; i++) {
             var member = _team[i];
             if (_stuck.Look(i, member.Zone, member.X, member.Y, resting) is var tries and > 0) {
