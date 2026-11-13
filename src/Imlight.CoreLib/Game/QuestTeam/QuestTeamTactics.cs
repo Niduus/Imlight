@@ -232,6 +232,28 @@ internal static class QuestTeamTactics {
 
     private static Choice Pass(string why) => new(Move.Pass, 0, -1, why);
 
+    /// <summary>
+    /// While the team holds its hits for more creatures to walk in: a blade or a trap that readies the hit to come, or null
+    /// (then it passes).
+    /// </summary>
+    internal static Choice WhileWaiting(string role, CombatDuelSubCircle me, IReadOnlyList<CombatDuelSubCircle> circles) {
+        var allies = circles.Where(c => c.OccupiedTeam == me.OccupiedTeam && c.IsAlive).ToList();
+        var enemies = circles.Where(c => c.OccupiedTeam != me.OccupiedTeam && c.IsAlive).ToList();
+        var hand = Hand(me).Where(h => h.Castable).ToList();
+        if (enemies.Count == 0 || hand.Count == 0) {
+            return null;
+        }
+
+        var focus = enemies.OrderBy(RewrittenAI.Health).First();
+        var none = new List<(CombatDuelSubCircle Who, Card Card, CombatDuelSubCircle On)>();
+        var readied = role is "Ice" or "Life" or "Death"
+            ? BladeFor(me, hand, allies, none) ?? TrapFor(me, hand, none, focus, "Storm")
+            : null;
+        readied ??= role is "Death" or "Storm" || allies.Count == 1 ? SelfBlade(me, hand) : null;
+
+        return readied is null ? null : readied with { Why = readied.Why + " while more creatures walk in" };
+    }
+
     private static List<InHand> Hand(CombatDuelSubCircle me) {
         var hand = new List<InHand>();
         for (byte i = 0; i < 24; i++) {
