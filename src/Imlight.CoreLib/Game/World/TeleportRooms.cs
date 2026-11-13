@@ -26,8 +26,6 @@
  *   Default   the choice of every dungeon or instance room with none of its own: "Game", "Open" or "Closed".
  *   Rooms     zone path to its own choice, such as "Azteca/Interiors/AZ_Z01_BlackSunPyramid_Room05": "Closed". Any
  *             zone can have one, not only instance rooms.
- *   AskBeforeFriendTeleport  true (the default): teleporting to a friend from the friends list asks "Do you want to go
- *             to your friend?" first, so one stray click never teleports (Niduus, 2026-11-13).
  * The choices:
  *   Game      as before: .tp, the app's step buttons and quest Go buttons work, and nobody teleports to a friend or
  *             group mate inside it (as on live).
@@ -65,10 +63,9 @@ internal static class TeleportRooms {
     internal sealed class Rules {
         public string Default { get; set; } = nameof(TeleportRule.Game);
         public Dictionary<string, string> Rooms { get; set; } = [];
-        public bool AskBeforeFriendTeleport { get; set; } = true;
     }
 
-    private sealed record State(TeleportRule Default, Dictionary<string, TeleportRule> Rooms, bool AskBeforeFriendTeleport);
+    private sealed record State(TeleportRule Default, Dictionary<string, TeleportRule> Rooms);
 
     private const string FOLDER = "Customs";
     internal const string FILE = "TeleportRooms.json";
@@ -84,7 +81,7 @@ internal static class TeleportRooms {
         ReadCommentHandling = JsonCommentHandling.Skip,
     };
 
-    private static readonly State s_empty = new(TeleportRule.Game, new(StringComparer.OrdinalIgnoreCase), AskBeforeFriendTeleport: true);
+    private static readonly State s_empty = new(TeleportRule.Game, new(StringComparer.OrdinalIgnoreCase));
     private static readonly object s_lock = new();
     private static State? s_state;
     private static FileSystemWatcher? s_watcher;
@@ -137,12 +134,6 @@ internal static class TeleportRooms {
 
         return CLOSED_MESSAGE;
     }
-
-    /// <summary>
-    /// Whether teleporting to a friend from the friends list first asks "Do you want to go to your friend?" (Niduus,
-    /// 2026-11-13: one click on a friend sometimes teleported). On unless the file says false.
-    /// </summary>
-    internal static bool AskBeforeFriendTeleport => Current.AskBeforeFriendTeleport;
 
     /// <summary>Whether friends and group mates may teleport in to someone inside this zone (it is Open).</summary>
     internal static bool FriendsMayJoin(string? zonePath) => RuleOf(zonePath) == TeleportRule.Open;
@@ -203,11 +194,9 @@ internal static class TeleportRooms {
                 }
             }
 
-            var state = new State(Parse(rules.Default, TeleportRule.Game), rooms, rules.AskBeforeFriendTeleport);
-            Logger.Information("Teleport Rooms: dungeon and instance rooms are {0} by default; {1} closed, {2} open on their own. "
-                + "Ask before teleporting to a friend: {3}.",
-                Logger.Args(state.Default, rooms.Count(r => r.Value == TeleportRule.Closed), rooms.Count(r => r.Value == TeleportRule.Open),
-                    state.AskBeforeFriendTeleport ? "on" : "off"));
+            var state = new State(Parse(rules.Default, TeleportRule.Game), rooms);
+            Logger.Information("Teleport Rooms: dungeon and instance rooms are {0} by default; {1} closed, {2} open on their own.",
+                Logger.Args(state.Default, rooms.Count(r => r.Value == TeleportRule.Closed), rooms.Count(r => r.Value == TeleportRule.Open)));
 
             return state;
         }
