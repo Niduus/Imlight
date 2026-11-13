@@ -2123,9 +2123,24 @@ internal sealed partial class ManagerWindow : Window {
             return;
         }
 
-        if (await _manager.Source.NewerCommitAsync(_manager.InstallFolder) is not null) {
+        if (await _manager.Source.NewerCommitAsync(_manager.InstallFolder) is not null || ServerIsOtherVersion()) {
             await PrepareSourceUpdateAsync();
         }
+    }
+
+    /// <summary>
+    /// Whether the server was built by a different Ahziael than this one, with nothing waiting to fix it: an update that
+    /// got mixed up with another (Niduus, 2026-11-13) or stopped halfway. Building it again with this version repairs it.
+    /// </summary>
+    private bool ServerIsOtherVersion() {
+        var folder = _manager.InstallFolder;
+        if (SelfUpdate.CurrentVersion == new Version(0, 0, 0) || _manager.Source.Kind != ServerSourceKind.Default
+            || SetupSteps.ServerWaits(folder) || UpdateLock.IsHeld(folder)) {
+            return false;
+        }
+
+        return SetupSteps.InstallWasInterrupted(folder)
+               || (SetupSteps.BuiltBy(_manager.ServerFolder) is { } built && built != SelfUpdate.CurrentVersion);
     }
 
     private async Task UpdateAsync() {
@@ -2147,8 +2162,23 @@ internal sealed partial class ManagerWindow : Window {
             return;
         }
 
+        if (await Task.Run(() => UpdateLock.IsHeld(_manager.InstallFolder))) {
+            Say("Another Ahziael update is still being put together on this PC (often a game patch rebuild or a second Ahziael " +
+                "window). Only one runs at a time, so wait a few minutes, then click Update Ahziael again.");
+
+            return;
+        }
+
         if (await SelfUpdate.NewerReleaseAsync() is not null) {
             await PrepareUpdateAsync();
+
+            return;
+        }
+
+        if (ServerIsOtherVersion()) {
+            Say($"Your server was built by a different version than this Ahziael ({SelfUpdate.CurrentVersion}), usually from an " +
+                "update that got mixed up or stopped halfway. It is being built again for this version in the background.");
+            await PrepareSourceUpdateAsync();
 
             return;
         }
@@ -2190,14 +2220,29 @@ internal sealed partial class ManagerWindow : Window {
                 $"This can take a few minutes; {whenReady}. The update panel at the top of the window shows how far along it is.");
             _updateButton.Content = "Downloading...";
             var progress = new Progress<int>(percent => _updateButton.Content = percent >= 0 ? $"Downloading {percent}%" : "Downloading...");
-            if (await SelfUpdate.DownloadNewerAsync(Path.Combine(_manager.InstallFolder, "Pending"), progress) is not { } download) {
-                Say("The new Imlight could not be downloaded. Check your internet connection, then click Update Ahziael at the top of the window.", true);
+            (Version Version, string Path)? download;
+            // One update at a time: the download holds the lock, then the hidden build takes it over. A release that
+            // comes out meanwhile waits until this one is in (Niduus, 2026-11-13).
+            using (var updateLock = UpdateLock.TryTake(_manager.InstallFolder, "Downloading an update")) {
+                if (updateLock is null) {
+                    Say("Another Ahziael update is still being put together on this PC, so this one waits. Click Update Ahziael " +
+                        "again in a few minutes.");
+
+                    return;
+                }
+
+                download = await SelfUpdate.DownloadNewerAsync(Path.Combine(_manager.InstallFolder, "Pending"), progress);
+            }
+
+            if (download is not { } got) {
+                Say("The new Imlight could not be downloaded whole (or it is still being published). Check your internet connection, " +
+                    "then click Update Ahziael at the top of the window in a few minutes.", true);
 
                 return;
             }
 
-            Say($"Imlight {download.Version} is downloaded and building in the background. Keep playing; {whenReady}.");
-            await BuildPendingAsync(download.Path, $"Imlight {download.Version}");
+            Say($"Imlight {got.Version} is downloaded and building in the background. Keep playing; {whenReady}.");
+            await BuildPendingAsync(got.Path, $"Imlight {got.Version}", got.Version);
         }
         finally {
             _preparingUpdate = false;
@@ -2272,7 +2317,8 @@ internal sealed partial class ManagerWindow : Window {
     }
 
     /// <summary>Runs <paramref name="program"/> --prepare-update hidden, showing how far along it is, then offers to restart into it.</summary>
-    private async Task BuildPendingAsync(string program, string name) {
+    /// <param name="version">The release being built, checked against what lands in the Pending folder; null for this version.</param>
+    private async Task BuildPendingAsync(string program, string name, Version? version = null) {
         if (!await FindGameForUpdateAsync()) {
             return;
         }
@@ -2320,6 +2366,15 @@ internal sealed partial class ManagerWindow : Window {
             return;
         }
 
+        // The build in the Pending folder must be the one just made, never another update's (Niduus, 2026-11-13).
+        var expected = version ?? SelfUpdate.CurrentVersion;
+        var pendingServer = Path.Combine(_manager.InstallFolder, "Pending", "Server");
+        if (Directory.Exists(pendingServer) && SetupSteps.BuiltBy(pendingServer) is { } built && built != expected) {
+            Say($"{name} was replaced by another update while it built ({built}). Click Update Ahziael to get the newest one.", true);
+
+            return;
+        }
+
         _readyUpdate = (name, program);
         await OfferRestartAsync(_manager.AutoInstallUpdates);
     }
@@ -2330,6 +2385,15 @@ internal sealed partial class ManagerWindow : Window {
     /// </summary>
     private async Task OfferRestartAsync(bool withoutAsking = false) {
         if (_readyUpdate is not { } update) {
+            return;
+        }
+
+        if (!File.Exists(update.Path)) {
+            // Removed by another Ahziael window's update; that one is the update now.
+            _readyUpdate = null;
+            _updateButton.Content = "Update Ahziael";
+            Say("The update that was ready was replaced by another one. Click Update Ahziael to get the newest.", true);
+
             return;
         }
 

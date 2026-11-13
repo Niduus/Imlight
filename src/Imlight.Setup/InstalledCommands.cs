@@ -109,11 +109,27 @@ internal static class InstalledCommands {
     /// now that the server is stopped. If it can't go in, the server starts as it was and the update keeps waiting.
     /// </summary>
     private static void InstallWaitingServer(string installFolder) {
-        if (!SetupSteps.ServerWaits(installFolder)) {
+        if (!SetupSteps.ServerWaits(installFolder) && !SetupSteps.InstallWasInterrupted(installFolder)) {
+            return;
+        }
+
+        // Never while another update step is busy with the Pending folder (one update at a time, Niduus 2026-11-13).
+        using var updateLock = UpdateLock.TryTake(installFolder, "Starting the server");
+        if (updateLock is null) {
+            Console.WriteLine("An Ahziael update is still being prepared, so the server starts as it was. The update goes in after.");
+
             return;
         }
 
         try {
+            if (SetupSteps.FinishInterruptedInstall(installFolder) is { } repaired) {
+                Console.WriteLine(repaired);
+            }
+
+            if (!SetupSteps.ServerWaits(installFolder)) {
+                return;
+            }
+
             using var steps = new SetupSteps(SetupOptions.Parse(["--dir", installFolder]));
             steps.InstallPendingServer();
             Console.WriteLine("Installed the server update that waited for a restart.");

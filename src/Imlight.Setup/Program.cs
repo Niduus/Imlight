@@ -145,6 +145,15 @@ internal static class Program {
             return 1;
         }
 
+        using var updateLock = UpdateLock.TryTake(options.InstallFolder, $"Installing Imlight {SelfUpdate.CurrentVersion}");
+        if (updateLock is null) {
+            SetupLog.Info("Another Ahziael update is still running. Wait for it to finish (a few minutes), then run setup again.");
+            SetupLog.Close();
+            WaitForKey(options);
+
+            return 1;
+        }
+
         SetupLog.Detail($"Setup {SelfUpdate.CurrentVersion}. Options: repo={options.Repository} branch={options.Branch} dir={options.InstallFolder}");
         using var steps = new SetupSteps(options);
 
@@ -213,11 +222,14 @@ internal static class Program {
     /// The app runs this hidden, then offers to restart into the update (--apply-update).
     /// </summary>
     private static async Task<int> PrepareUpdateAsync(SetupOptions options) {
-        if (!SetupLog.Open(options.InstallFolder)) {
+        // One update at a time: exit code 3 tells the app another update is still going, so this one waits its turn.
+        using var updateLock = UpdateLock.TryTake(options.InstallFolder, $"Building Imlight {SelfUpdate.CurrentVersion}");
+        if (updateLock is null || !SetupLog.Open(options.InstallFolder)) {
             return 3;
         }
 
-        SetupLog.Detail($"Preparing the update to {SelfUpdate.CurrentVersion} in the background.");
+        SetupLog.Detail($"Preparing the update to {SelfUpdate.CurrentVersion} in the background" +
+                        (SelfUpdate.SourceCommit is { } commit ? $" (commit {commit})." : "."));
         using var steps = new SetupSteps(options);
         try {
             var rootWad = steps.FindRootWad();
@@ -261,16 +273,39 @@ internal static class Program {
             }
         }
 
-        if (!SetupLog.Open(options.InstallFolder)) {
+        // Another update step may still be finishing (a build the app started for a game patch, say): wait for it
+        // rather than put two updates in at once. If it never finishes, the app opens as it was.
+        var updateLock = UpdateLock.TryTake(options.InstallFolder, $"Installing Imlight {SelfUpdate.CurrentVersion}");
+        for (var waited = 0; updateLock is null && waited < 600; waited += 5) {
+            await Task.Delay(TimeSpan.FromSeconds(5));
+            updateLock = UpdateLock.TryTake(options.InstallFolder, $"Installing Imlight {SelfUpdate.CurrentVersion}");
+        }
+
+        if (updateLock is null || !SetupLog.Open(options.InstallFolder)) {
+            updateLock?.Dispose();
+            OpenApp(options.InstallFolder, options.StartServer);
+
             return 3;
         }
 
+        using var heldLock = updateLock;
         using var steps = new SetupSteps(options);
         var exitCode = 0;
         try {
+            // Never a server built by another version (Niduus, 2026-11-13: two updates at once broke Ahziael). Nothing is
+            // changed; the app opens as it was and builds the right one.
+            if (steps.PendingServerBuiltBy() is { } builtBy && builtBy != SelfUpdate.CurrentVersion && SelfUpdate.CurrentVersion != new Version(0, 0, 0)) {
+                throw new SetupException($"The prepared server is Imlight {builtBy}, not {SelfUpdate.CurrentVersion}, so nothing was changed. " +
+                    "Ahziael builds the right one again.");
+            }
+
             // The server keeps running whenever the update allows it (Niduus, 2026-10-28): only a change to its program
             // needs a restart, and Ahziael does that when it is safe. An older app stopped the server before this runs.
             var running = InstalledCommands.IsServerRunning(options.InstallFolder);
+            if (!running && SetupSteps.FinishInterruptedInstall(options.InstallFolder) is { } repaired) {
+                SetupLog.Info(repaired);
+            }
+
             // A backup of everything made on this PC before anything is replaced (Documents\Ahziael backups).
             SetupLog.Info($"Installing Imlight {SelfUpdate.CurrentVersion}: making a backup first (Documents\\Ahziael backups).");
             try {
@@ -309,19 +344,25 @@ internal static class Program {
         }
 
         // The app opens again either way; a failed update leaves the old server in place.
+        heldLock.Dispose();
+
+        return OpenApp(options.InstallFolder, options.StartServer) ? exitCode : 1;
+    }
+
+    private static bool OpenApp(string installFolder, bool startServer) {
         try {
-            var exe = Path.Combine(options.InstallFolder, InstalledCommands.INSTALLED_EXE);
+            var exe = Path.Combine(installFolder, InstalledCommands.INSTALLED_EXE);
             Process.Start(new ProcessStartInfo(exe) {
-                Arguments = options.StartServer ? "--start-server" : "",
-                WorkingDirectory = options.InstallFolder,
+                Arguments = startServer ? "--start-server" : "",
+                WorkingDirectory = installFolder,
                 UseShellExecute = true,
             })?.Dispose();
+
+            return true;
         }
         catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or IOException) {
-            return 1;
+            return false;
         }
-
-        return exitCode;
     }
 
     private static void OpenApp(string installFolder) {

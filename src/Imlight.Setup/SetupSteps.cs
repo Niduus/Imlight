@@ -206,21 +206,38 @@ internal sealed class SetupSteps : IDisposable {
         var repo = _options.Repository;
         var branch = _options.Branch;
 
-        SetupLog.Info($"Downloading Imlight from github.com/{repo} ({branch})..");
+        // A release builds the server from the exact commit it was made from, so the app and the server are always the
+        // same version even when the branch already has the next release's changes (Niduus, 2026-11-13). Another GitHub
+        // copy (the Server source card) and older releases follow the branch as before.
+        var pinned = PinnedCommit(repo, branch);
+        SetupLog.Info(pinned is not null
+            ? $"Downloading Imlight {SelfUpdate.CurrentVersion} from github.com/{repo} (commit {pinned[..7]}).."
+            : $"Downloading Imlight from github.com/{repo} ({branch})..");
         // Only remembered so the app can tell when the branch has something newer; the build does not need it.
-        _sourceStamp = await ServerSource.LatestCommitAsync(repo, branch) is { } commit ? ServerSource.Stamp(repo, branch, commit) : null;
-        var (imcodecRepo, imcodecCommit) = await ImcodecVersionAsync(repo, branch);
+        var commit = pinned ?? await ServerSource.LatestCommitAsync(repo, branch);
+        _sourceStamp = commit is not null ? ServerSource.Stamp(repo, branch, commit) : null;
+        var (imcodecRepo, imcodecCommit) = await ImcodecVersionAsync(repo, pinned ?? branch);
 
         if (Directory.Exists(SourceFolder)) {
             Directory.Delete(SourceFolder, recursive: true);
         }
 
-        await DownloadAndExtractAsync($"https://codeload.github.com/{repo}/zip/refs/heads/{branch}", SourceFolder);
+        await DownloadAndExtractAsync(pinned is not null
+            ? $"https://codeload.github.com/{repo}/zip/{pinned}"
+            : $"https://codeload.github.com/{repo}/zip/refs/heads/{branch}", SourceFolder);
         SetupLog.Info("Downloading Imcodec..");
         await DownloadAndExtractAsync($"https://codeload.github.com/{imcodecRepo}/zip/{imcodecCommit}", ImcodecFolder);
     }
 
-    /// <summary>Which Imcodec repository and commit a branch of Imlight uses, read from GitHub.</summary>
+    /// <summary>The commit this release was made from, when the server comes from the release's own repository and branch.</summary>
+    internal static string? PinnedCommit(string repo, string branch)
+        => SelfUpdate.SourceCommit is { } commit
+           && repo.Equals(SelfUpdate.RELEASE_REPOSITORY, StringComparison.OrdinalIgnoreCase)
+           && branch.Equals(ServerSource.DEFAULT_BRANCH, StringComparison.Ordinal)
+            ? commit
+            : null;
+
+    /// <summary>Which Imcodec repository and commit a branch (or commit) of Imlight uses, read from GitHub.</summary>
     private async Task<(string Repository, string Commit)> ImcodecVersionAsync(string repo, string branch) {
         var submodule = await GetJsonAsync($"https://api.github.com/repos/{repo}/contents/submodule/Imcodec?ref={Uri.EscapeDataString(branch)}");
         var imcodecCommit = submodule.GetProperty("sha").GetString()
@@ -506,6 +523,13 @@ internal sealed class SetupSteps : IDisposable {
         File.WriteAllText(Path.Combine(staging, "ahziael-version.txt"), SelfUpdate.CurrentVersion.ToString());
 
         if (toPending) {
+            // An older update still waiting for a server restart is replaced by this one; its mark goes first, so the
+            // server never starts with a half-replaced folder. --apply-update marks this one if it has to wait.
+            var waiting = Path.Combine(PendingFolder, ServerUpdate.WAITING_FILE);
+            if (File.Exists(waiting)) {
+                File.Delete(waiting);
+            }
+
             if (Directory.Exists(PendingServerFolder)) {
                 Directory.Delete(PendingServerFolder, recursive: true);
             }
@@ -517,6 +541,7 @@ internal sealed class SetupSteps : IDisposable {
         }
 
         InstallServer(staging);
+        ClearUnfinishedMark(_options.InstallFolder);
         Directory.Delete(staging, recursive: true);
 
         // An older update left waiting for a restart would put the older server back the next time it starts.
@@ -541,9 +566,83 @@ internal sealed class SetupSteps : IDisposable {
             throw new SetupException("There is no prepared update to install.");
         }
 
+        // Never a server built by another version: with releases minutes apart, a newer one's build could be sitting
+        // here (Niduus, 2026-11-13). It is rebuilt for this version instead.
+        var builtBy = BuiltBy(PendingServerFolder);
+        if (SelfUpdate.CurrentVersion != new Version(0, 0, 0) && builtBy is not null && builtBy != SelfUpdate.CurrentVersion) {
+            Directory.Delete(PendingServerFolder, recursive: true);
+            File.Delete(Path.Combine(PendingFolder, ServerUpdate.WAITING_FILE));
+            throw new SetupException($"The prepared server is Imlight {builtBy}, not {SelfUpdate.CurrentVersion}, so it is not put in. " +
+                "Click Update Ahziael to build the right one.");
+        }
+
         InstallServer(PendingServerFolder);
+        ClearUnfinishedMark(_options.InstallFolder);
         Directory.Delete(PendingServerFolder, recursive: true);
         File.Delete(Path.Combine(PendingFolder, ServerUpdate.WAITING_FILE));
+    }
+
+    /// <summary>The version of Ahziael that built the server waiting in the Pending folder, or null when there is none.</summary>
+    internal Version? PendingServerBuiltBy() => Directory.Exists(PendingServerFolder) ? BuiltBy(PendingServerFolder) : null;
+
+    /// <summary>The version of Ahziael that built a server folder (its ahziael-version.txt), or null when it doesn't say.</summary>
+    internal static Version? BuiltBy(string serverFolder) {
+        try {
+            var file = Path.Combine(serverFolder, "ahziael-version.txt");
+
+            return File.Exists(file) ? SelfUpdate.ParseVersion(File.ReadAllText(file)) : null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return null;
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Interrupted updates
+    // ---------------------------------------------------------------------
+
+    /// <summary>
+    /// Left in the Pending folder while a server build is being copied over the Server folder, naming the build. If the
+    /// copy is cut off (the PC turned off, the program closed), the Server folder holds a mix of two versions; this mark
+    /// says so, and <see cref="FinishInterruptedInstall"/> copies the same build again to make it whole.
+    /// </summary>
+    internal const string UNFINISHED_FILE = "install-not-finished.txt";
+
+    private static string UnfinishedMark(string installFolder) => Path.Combine(installFolder, "Pending", UNFINISHED_FILE);
+
+    private static void ClearUnfinishedMark(string installFolder) {
+        if (File.Exists(UnfinishedMark(installFolder))) {
+            File.Delete(UnfinishedMark(installFolder));
+        }
+    }
+
+    /// <summary>Whether an earlier update stopped halfway through putting the server in.</summary>
+    internal static bool InstallWasInterrupted(string installFolder) => File.Exists(UnfinishedMark(installFolder));
+
+    /// <summary>
+    /// Finishes an update that stopped halfway through putting the server in, by copying the same build in again. The
+    /// server must not be running. Call it while holding the <see cref="UpdateLock"/>.
+    /// </summary>
+    /// <returns>What happened, for the log, or null when nothing was interrupted.</returns>
+    internal static string? FinishInterruptedInstall(string installFolder) {
+        var mark = UnfinishedMark(installFolder);
+        if (!File.Exists(mark)) {
+            return null;
+        }
+
+        var build = File.ReadAllText(mark).Trim();
+        if (build.Length == 0 || !Directory.Exists(build) || !Directory.EnumerateFileSystemEntries(build).Any()) {
+            // The build it came from is gone: a rebuild (Update Ahziael) is the only way to make the server whole.
+            return "An earlier update stopped halfway and its files are gone. Click Update Ahziael to repair the server.";
+        }
+
+        using var steps = new SetupSteps(SetupOptions.Parse(["--dir", installFolder]));
+        steps.InstallServer(build);
+        File.Delete(mark);
+        Directory.Delete(build, recursive: true);
+        File.Delete(Path.Combine(installFolder, "Pending", ServerUpdate.WAITING_FILE));
+
+        return $"Finished an earlier update that had stopped halfway (Imlight {BuiltBy(steps.ServerFolder)?.ToString() ?? "unknown version"}).";
     }
 
     /// <summary>
@@ -566,6 +665,8 @@ internal sealed class SetupSteps : IDisposable {
            && Directory.Exists(Path.Combine(installFolder, "Pending", "Server"));
 
     private void InstallServer(string build) {
+        Directory.CreateDirectory(PendingFolder);
+        File.WriteAllText(UnfinishedMark(_options.InstallFolder), Path.GetFullPath(build));
         var existingConfig = File.Exists(ConfigFile);
         // DropOdds.json is tuned by hand on this PC (the drop chances of every Wizard404 drop table), so an update keeps it.
         // Any other spiraldb-extra file changed or deleted on this PC is kept as it is too (ShippedExtraFiles).
@@ -775,12 +876,17 @@ internal sealed class SetupSteps : IDisposable {
             return;
         }
 
+        // Copied beside it first and then swapped in by renaming, so a copy cut off halfway never leaves a broken
+        // Ahziael: the old one stays until the new one is whole.
+        var copy = target + ".new";
+        File.Copy(self, copy, overwrite: true);
         try {
-            File.Copy(self, target, overwrite: true);
+            File.Move(copy, target, overwrite: true);
         }
-        catch (IOException) when (File.Exists(target) && !File.Exists(aside)) {
+        catch (Exception ex) when ((ex is IOException or UnauthorizedAccessException) && File.Exists(target) && !File.Exists(aside)) {
+            // Ahziael is still running from it: Windows lets a running program be renamed, not replaced.
             File.Move(target, aside);
-            File.Copy(self, target);
+            File.Move(copy, target);
         }
     }
 
