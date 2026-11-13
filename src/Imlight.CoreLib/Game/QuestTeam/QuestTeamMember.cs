@@ -117,6 +117,9 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
     /// <summary>A player's running pace, in game units a second.</summary>
     private const float RUN_SPEED = 280f;
 
+    /// <summary>The least time a wizard stands after arriving in an area, while its walls and paths are read.</summary>
+    internal const double ARRIVE_SECONDS = 2.5;
+
     // A mount's extra speed (a Ghulture: 40%).
     private const float MOUNT_SPEED = 1.4f;
 
@@ -187,8 +190,16 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
         });
         Receive<Opened>(OnOpened);
         Receive<Attached>(OnAttached);
+        Receive<Arrived>(OnArrived);
         Receive<WalkTo>(m => {
             _route.Clear();
+            // Not while arriving in an area: a walk planned from where it stood before is not walked here.
+            if (!_attached || View.State != "playing") {
+                View.Walking = false;
+
+                return;
+            }
+
             foreach (var point in m.Points) {
                 _route.Enqueue(point);
             }
@@ -285,6 +296,9 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
         Receive<GAME_5_PROTOCOL.MSG_SERVERTRANSFER>(OnServerTransfer);
         Receive<GAME_5_PROTOCOL.MSG_SERVERTELEPORT>(m => {
             if (m.MobileID == _mobileId && _mobileId != 0) {
+                // Sent somewhere else in the area: a walk planned from the old spot is not walked from the new one.
+                _route.Clear();
+                View.Walking = false;
                 Place(Expand(m.LocationX), Expand(m.LocationY), Expand(m.LocationZ));
             }
         });
@@ -450,9 +464,26 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
         Place(spot.X, spot.Y, spot.Z);
         View.AttachedAt = DateTime.UtcNow;
         View.AttachFailures = 0;
-        View.State = "playing";
         Note($"is in {QuestTeamText.Zone(View.Zone)}");
         Timers.StartPeriodicTimer(TICK, new Tick(), TimeSpan.FromSeconds(TICK_SECONDS));
+
+        // A moment after arriving, before the first step: the area's walls, ground and paths are read first, as a player's
+        // game loads them behind the loading screen (Niduus, 2026-11-13: "take a moment after each zone transfer for those
+        // collisions to be recognized"). The Director gives no orders until it is "playing".
+        View.State = "arriving";
+        var self = Self;
+        var zone = View.Zone;
+        var counter = _zoneCounter;
+        _ = System.Threading.Tasks.Task.Run(async () => {
+            var started = DateTime.UtcNow;
+            BotShared.BotStuck.ReadArea(zone);
+            var left = TimeSpan.FromSeconds(ARRIVE_SECONDS) - (DateTime.UtcNow - started);
+            if (left > TimeSpan.Zero) {
+                await System.Threading.Tasks.Task.Delay(left);
+            }
+
+            self.Tell(new Arrived(counter));
+        });
 
         // A new wizard starts in the tutorial; a player may skip it, and so does the team (Niduus's rules: from the very
         // start, as a player would).
@@ -461,6 +492,16 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
             Send(new GAME_5_PROTOCOL.MSG_SERVERTUTORIALCOMMAND {
                 QuestToAdd = "", QuestToRemove = "", GoalToComplete = "SkipTutorialGoal", EventToPost = "", Action = "", Value = 0,
             });
+        }
+    }
+
+    private sealed record Arrived(byte ZoneCounter);
+
+    // The area is read and the moment has passed: the Director may move this wizard again.
+    private void OnArrived(Arrived arrived) {
+        if (_attached && arrived.ZoneCounter == _zoneCounter && View.State == "arriving") {
+            _route.Clear();
+            View.State = "playing";
         }
     }
 

@@ -107,6 +107,12 @@ internal static class OverlayQuestPath {
         }
     }
 
+    /// <summary>Reads an area's walk grid ahead of the first walk there (a server-played wizard that just arrived).</summary>
+    internal static void Warm(string zonePath) => GridOf(zonePath);
+
+    /// <summary>Forgets the last walk found for this wizard, so the next is found again from where it stands.</summary>
+    internal static void Forget(ulong charId) => s_walks.TryRemove(charId, out _);
+
     private static Grid GridOf(string zonePath) {
         if (string.IsNullOrEmpty(zonePath)) {
             return null;

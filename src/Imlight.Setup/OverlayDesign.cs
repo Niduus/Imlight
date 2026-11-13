@@ -270,6 +270,14 @@ internal sealed class OverlayElement {
     /// </summary>
     internal const string QUEST_TRACKER = "QuestTracker";
 
+    /// <summary>
+    /// Bot Alerts (Niduus, 2026-11-13: "Should be a Addon for QT and Ultimus"): where the Quest Team's and Ultimus's
+    /// alerts show on a game, and how they look. Over a game it draws nothing itself; a new alert shows at the top in the
+    /// middle in its look, wrapped to stay inside the window, with an Acknowledge button that takes it away. Without one in
+    /// the design, alerts show in Ahziael only.
+    /// </summary>
+    internal const string BOT_ALERTS = "BotAlerts";
+
     internal const int MAX_TEXT = 300;
     internal const int MAX_COMMAND = 200;
 
@@ -385,12 +393,14 @@ internal sealed class OverlayElement {
 
     internal bool IsQuestTracker => Kind == QUEST_TRACKER;
 
+    internal bool IsBotAlerts => Kind == BOT_ALERTS;
+
     internal bool IsPicture => Kind == PICTURE;
 
     internal bool IsButton => Kind == BUTTON;
 
     internal OverlayElement Clean() {
-        Kind = Kind is BOX or PICTURE or BUTTON or MINIMAP or QUEST_TRACKER ? Kind : TEXT;
+        Kind = Kind is BOX or PICTURE or BUTTON or MINIMAP or QUEST_TRACKER or BOT_ALERTS ? Kind : TEXT;
         Map = Kind == MINIMAP ? (Map ?? new OverlayMap()).Clean() : null;
         Quests = Kind == QUEST_TRACKER ? (Quests ?? new OverlayQuestList()).Clean() : null;
         Picture = Kind == PICTURE ? CleanPicture(Picture) : "";
