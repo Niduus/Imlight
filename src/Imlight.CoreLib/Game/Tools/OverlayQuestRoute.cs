@@ -96,6 +96,14 @@ internal static class OverlayQuestRoute {
                         targets.Add((mob.Object.m_location.X, mob.Object.m_location.Y, step));
                         found = true;
                     }
+
+                    // None up right now: the street area where they spawn (Niduus, 2026-11-13: head into the area when
+                    // the step needs those mobs).
+                    if (!found && RouteMobs.SeekFor(zone, here.X, here.Y, adjectives) is { } area) {
+                        var (ax, ay) = RouteMobs.Nearest(area, here.X, here.Y);
+                        targets.Add((ax, ay, step));
+                        found = true;
+                    }
                 }
             }
 
@@ -155,7 +163,9 @@ internal static class OverlayQuestRoute {
         // step is cut off): a spot with a third number 1 is a teleporter, the line jumps from it to the next spot.
         if (points.Count > 0 && points[0] is JsonObject nearest) {
             var walk = new JsonArray();
-            foreach (var spot in OverlayQuestPath.Route(wizard.CharId, zonePath, here.X, here.Y, (int) nearest["x"], (int) nearest["y"])) {
+            // Round the street's creature areas the step does not need (their walks by the step are left in).
+            var (gx, gy) = ((int) nearest["x"], (int) nearest["y"]);
+            foreach (var spot in OverlayQuestPath.Route(wizard.CharId, zonePath, here.X, here.Y, gx, gy, RouteMobs.Avoid(zone, gx, gy))) {
                 walk.Add(spot.Pad ? new JsonArray(Round(spot.X), Round(spot.Y), 1) : new JsonArray(Round(spot.X), Round(spot.Y)));
             }
 

@@ -1023,7 +1023,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // Round the creatures it does not need to fight, not into a battle (Niduus, 2026-11-13: "avoid battles as much as
         // possible"), and by the area's teleporters when walls or water cut the step off (UltimusDirector.Routes.cs).
         var (toX, toY, what) = WayTo(member, target);
-        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, toX, toY, body: true, avoid: avoid);
+        // The street's creature areas too, walked or not right now (MobSpawnAreas), except the step's own creatures.
+        var walkAvoid = RouteMobs.Avoid(member.ZoneActor, toX, toY, target.Template == 0 ? null : [target.Template], avoid);
+        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, toX, toY, body: true, avoid: walkAvoid);
         _sent[index] = (target, DateTime.UtcNow, member.X, member.Y);
         _actors[index].Tell(new UltimusMember.WalkTo(points, what));
         if (index == 0) {
