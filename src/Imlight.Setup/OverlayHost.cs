@@ -428,8 +428,53 @@ internal static class OverlayHost {
         }
     }
 
+    private static DateTime s_ultimusIssuesTime;
+    private static int s_ultimusIssueSeen = -1;
+
+    // Ultimus's alerts show on the games on this PC too, like the Quest Team's (ManagerWindow.Ultimus.cs keeps them all).
+    private static void UltimusAlerts() {
+        try {
+            var path = Path.Combine(InstalledCommands.ServerFolder(s_installFolder), "logs", "ultimus", "issues.json");
+            if (!File.Exists(path)) {
+                s_ultimusIssueSeen = Math.Max(s_ultimusIssueSeen, 0);
+
+                return;
+            }
+
+            var written = File.GetLastWriteTimeUtc(path);
+            if (written == s_ultimusIssuesTime) {
+                return;
+            }
+
+            s_ultimusIssuesTime = written;
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            var newest = (JsonNode.Parse(stream) as JsonArray ?? []).OfType<JsonObject>().OrderByDescending(i => (int?) i["Id"] ?? 0).FirstOrDefault();
+            var id = (int?) newest?["Id"] ?? 0;
+            if (s_ultimusIssueSeen < 0 || id <= s_ultimusIssueSeen) {
+                s_ultimusIssueSeen = Math.Max(s_ultimusIssueSeen, id);
+
+                return;
+            }
+
+            s_ultimusIssueSeen = id;
+            var text = ((string?) newest!["Text"] ?? "").Trim();
+            if (text.Length > 160) {
+                text = text[..157] + "...";
+            }
+
+            var title = (string?) newest["Title"] ?? "";
+            foreach (var game in s_games) {
+                ShowNotice(game, $"Ultimus alert{(title.Length > 0 ? $" in {title}" : "")}: {text} (see Ahziael > Ultimus > Ultimus Issues)");
+            }
+        }
+        catch (Exception) {
+            s_ultimusIssuesTime = DateTime.MinValue;
+        }
+    }
+
     private static void Scan() {
         QuestTeamAlerts();
+        UltimusAlerts();
         foreach (var (game, notice) in s_notices.ToList()) {
             if (notice.Until < DateTime.UtcNow || !Native.IsWindow(game)) {
                 s_notices.Remove(game);

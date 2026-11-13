@@ -1,0 +1,685 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Layout;
+using Avalonia.Media;
+using Avalonia.Threading;
+
+namespace Imlight.Setup;
+
+/// <summary>
+/// The Ultimus section of the side bar (Niduus, 2026-11-12: "Can we create a Solo Quester called Ultimus? ... a fork of
+/// current QT. It's own mini server, logs, logic and reasoning"). Forked from the Quest Team section
+/// (ManagerWindow.QuestTeam.cs). One Balance wizard named Ultimus plays the Main Story alone; the server runs it only while
+/// [Ultimus] Enabled is on, and its little program writes everything in Server\logs\ultimus, which these tabs read. Its
+/// page shows its gear, stats, deck and quest (Niduus, 2026-11-13), and each issue has a debug report a quest can be fixed
+/// from.
+/// </summary>
+internal sealed partial class ManagerWindow {
+
+    private const string ULTIMUS_FOLDER = "ultimus";
+    private const string ULTIMUS_TAB = "Ultimus";
+    private const string ULTIMUS_ISSUES_TAB = "Ultimus Issues";
+    private const string ULTIMUS_LOGS_TAB = "Ultimus Logs";
+    private const int ULTIMUS_LOG_LINES = 300;
+
+    private readonly TextBlock _ultState = new() { TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold };
+    private readonly TextBlock _ultDoing = new() { TextWrapping = TextWrapping.Wrap };
+    private readonly TextBlock _ultToday = new() { TextWrapping = TextWrapping.Wrap };
+    private readonly TextBlock _ultQuest = new() { TextWrapping = TextWrapping.Wrap };
+    private readonly StackPanel _ultMembers = new() { Spacing = 6 };
+    // Its stats, gear, deck and quest, the same sheet as the Quest Team's (Niduus, 2026-11-13); with one Ultimus the picker hides.
+    private readonly WizardSheet _ultSheet = new("Turn Ultimus on and start the server; once it is playing, its stats, gear, deck and quest show here.");
+    private readonly ToggleSwitch _ultEnabled = new() { OnContent = "On", OffContent = "Off" };
+    private readonly NumericUpDown _ultSlow = new() { Minimum = 1.2m, Maximum = 20, Increment = 0.5m, FormatString = "0.0", Width = 140 };
+    private readonly NumericUpDown _ultLosses = new() { Minimum = 1, Maximum = 20, Increment = 1, FormatString = "0", Width = 140 };
+    private readonly NumericUpDown _ultQuestMinutes = new() { Minimum = 0, Maximum = 600, Increment = 5, FormatString = "0", Width = 140 };
+    private readonly NumericUpDown _ultStuck = new() { Minimum = 2, Maximum = 120, Increment = 1, FormatString = "0", Width = 140 };
+    private readonly StackPanel _ultIssues = new() { Spacing = 10 };
+    private readonly TextBlock _ultIssuesEmpty = new() { TextWrapping = TextWrapping.Wrap, Foreground = MUTED, Text = "No issues yet." };
+    private readonly DispatcherTimer _ultTimer = new() { Interval = TimeSpan.FromSeconds(3) };
+    private readonly Border _ultBanner = new() { IsVisible = false };
+    private readonly TextBlock _ultBannerText = new() { TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center };
+    private SelectableTextBlock? _ultLogBox;
+    private ScrollViewer? _ultLogScroll;
+    private TextBox? _ultQuestLogBox;
+    private string _ultLogText = "";
+    private string _ultQuestLogText = "";
+    private DateTime _ultIssuesWritten = DateTime.MinValue;
+    private List<UltimusIssue> _ultIssueList = [];
+    private int _ultIssuesShown = -1;
+    private bool _showingUlt;
+    private bool _ultTimerStarted;
+
+    private sealed class UltimusIssue {
+        public int Id { get; set; }
+        public DateTime At { get; set; }
+        public string Kind { get; set; } = "";
+        public string Quest { get; set; } = "";
+        public string Title { get; set; } = "";
+        public string World { get; set; } = "";
+        public string Text { get; set; } = "";
+        public string Expected { get; set; } = "";
+        public List<string> Seen { get; set; } = [];
+        public string Step { get; set; } = "";
+        public List<string> Debug { get; set; } = [];
+        public string Report { get; set; } = "";
+        public List<string> Log { get; set; } = [];
+    }
+
+    private string UltimusFolder => Path.Combine(_manager.LogFolder, ULTIMUS_FOLDER);
+
+    private void StartUltimusTimer() {
+        if (_ultTimerStarted) {
+            return;
+        }
+
+        _ultTimerStarted = true;
+        _ultTimer.Tick += (_, _) => RefreshUltimus();
+        _ultTimer.Start();
+        Dispatcher.UIThread.Post(RefreshUltimus, DispatcherPriority.Background);
+    }
+
+    // ---------------------------------------------------------------------
+    // Ultimus tab: the switch, Ultimus itself (gear, stats, deck, quest), what it is doing, the settings and Restart
+    // ---------------------------------------------------------------------
+
+    private Control UltimusTab() {
+        _ultEnabled.IsCheckedChanged += async (_, _) => {
+            if (!_showingUlt) {
+                await Guard(() => SetUltimusEnabledAsync(_ultEnabled.IsChecked == true));
+            }
+        };
+        foreach (var (box, key) in new[] { (_ultSlow, "SlowFactor"), (_ultLosses, "LossesBeforeIssue"), (_ultStuck, "StuckMinutes"), (_ultQuestMinutes, "QuestMinutes") }) {
+            box.ValueChanged += (_, _) => {
+                if (!_showingUlt && box.Value is { } value) {
+                    _ = Guard(() => SaveUltimusNumberAsync(key, value));
+                }
+            };
+        }
+
+        LoadUltimusSettings();
+        StartUltimusTimer();
+
+        return Page(
+            Fold("users", ULTIMUS_TAB, "Ultimus",
+                "Ultimus is the Solo Quester: one Balance wizard the server plays by itself, alone, through the Main Story, from " +
+                "level 1 in Wizard City to the last world. Its goal is the Main Story above all. It plays like a player: it walks " +
+                "everywhere, talks to the quest givers, fights, trains and shops with its own gold. Players are welcome in its " +
+                "battles, and it joins a player's battle when the creature its quest needs is in it. It never joins the Quest " +
+                "Team, and the Quest Team keeps out of its way. When a quest does not work, a banner at the top of Ahziael says so, " +
+                "and Ultimus Issues shows what happened with a debug report you can copy (or hand to Claude) to fix the quest. " +
+                "Something odd it notices shows in pink in its log. It runs in a little program of its own next to the server; " +
+                "it never touches your own wizards.",
+                _ultState,
+                SwitchRow("Ultimus", _ultEnabled, "On: Ultimus logs in a few seconds later and starts questing. Off: it logs out."),
+                _ultDoing,
+                _ultToday,
+                _ultQuest,
+                _ultMembers,
+                _ultSheet.View,
+                UltimusThanks(),
+                Row(Action(Plain("Pause or resume"), PauseUltimusAsync), Action(Plain("Stop and save"), StopUltimus), Action(Plain("Restart with a new Ultimus"), RestartUltimusAsync), Action(Plain("Open its folder"), () => {
+                    Directory.CreateDirectory(UltimusFolder);
+
+                    return Open(UltimusFolder);
+                }))),
+            Fold("sliders", ULTIMUS_TAB, "When to tell you",
+                "When Ultimus counts something as an issue. Changes count right away.",
+                SwitchRow("A quest is too slow at (times the expected time)", _ultSlow,
+                    "2 means a quest that takes twice as long as expected is reported. The first time a quest is played its time is a guess; after that Ultimus learns the real time."),
+                SwitchRow("Lost fights before it is an issue", _ultLosses,
+                    "When Ultimus loses the same fight this many times, the quest is reported."),
+                SwitchRow("Minutes with no progress before it is stuck", _ultStuck,
+                    "When nothing moves forward for this long, Ultimus reports that it is stuck."),
+                SwitchRow("Time limit for one quest (minutes)", _ultQuestMinutes,
+                    "A quest that takes longer than this is reported, however long it was expected to take. 0 means no limit.")));
+    }
+
+    private void LoadUltimusSettings() {
+        _showingUlt = true;
+        try {
+            _ultEnabled.IsChecked = _manager.GetSwitch("Ultimus", "Enabled");
+            _ultSlow.Value = (decimal) Number("SlowFactor", 2);
+            _ultLosses.Value = (decimal) Number("LossesBeforeIssue", 3);
+            _ultStuck.Value = (decimal) Number("StuckMinutes", 8);
+            _ultQuestMinutes.Value = (decimal) Number("QuestMinutes", 45);
+        }
+        finally {
+            _showingUlt = false;
+        }
+
+        double Number(string key, double fallback)
+            => double.TryParse(_manager.GetSetting("Ultimus", key), NumberStyles.Float, CultureInfo.InvariantCulture, out var value) ? value : fallback;
+    }
+
+    private Task SetUltimusEnabledAsync(bool on) {
+        if (!_manager.HasSetting("Ultimus", "Enabled")) {
+            LoadUltimusSettings();
+            throw new PanelException("This server's Imlight.ini has no [Ultimus] section yet. Click \"Update Ahziael\" once, then try again.");
+        }
+
+        _manager.SaveSettings([new Setting("Ultimus", "Enabled", on ? "true" : "false", "")]);
+        _settings = [];
+        Say(on ? "Ultimus is on. With the server running, it logs in within a few seconds and starts questing."
+            : "Ultimus is off. It logs out within a few seconds.");
+        RefreshUltimus();
+
+        return Task.CompletedTask;
+    }
+
+    private Task SaveUltimusNumberAsync(string key, decimal value) {
+        if (!_manager.HasSetting("Ultimus", key)) {
+            throw new PanelException("This server's Imlight.ini has no [Ultimus] " + key + " yet. Click \"Update Ahziael\" once, then try again.");
+        }
+
+        var text = key == "SlowFactor" ? ((double) value).ToString("0.0", CultureInfo.InvariantCulture) : ((int) value).ToString(CultureInfo.InvariantCulture);
+        if (_manager.GetSetting("Ultimus", key) == text) {
+            return Task.CompletedTask;
+        }
+
+        _manager.SaveSettings([new Setting("Ultimus", key, text, "")]);
+        _settings = [];
+        Say("Saved. Ultimus uses it right away.");
+
+        return Task.CompletedTask;
+    }
+
+    // Pause: Ultimus stands still where it is, still logged in, so you can walk over and look; a battle it is in still plays
+    // out. The file is there while paused.
+    private async Task PauseUltimusAsync() {
+        Directory.CreateDirectory(UltimusFolder);
+        var file = Path.Combine(UltimusFolder, "paused.txt");
+        if (File.Exists(file)) {
+            File.Delete(file);
+            Say("Resumed. Ultimus goes on with its quest.");
+
+            return;
+        }
+
+        await File.WriteAllTextAsync(file, DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+        Say("Paused. Ultimus stands where it is and stays logged in (a battle it is in still finishes). Click again to resume.");
+    }
+
+    // Stop and save: Ultimus logs out cleanly where it is (its progress is its own, saved as it goes); turning it on again
+    // picks up from the same step.
+    private async Task StopUltimus() {
+        _showingUlt = true;
+        _ultEnabled.IsChecked = false;
+        _showingUlt = false;
+        await SetUltimusEnabledAsync(false);
+        Say("Stopped. Ultimus logs out where it is, with its quests and steps kept. Turn Ultimus on to pick up from there.");
+    }
+
+    private async Task RestartUltimusAsync() {
+        if (!await ConfirmAsync("Make a new level 1 Ultimus? The one playing now is deleted, and the new one " +
+                                "starts again at the beginning of Wizard City. Its issues, reports and quest log stay.")) {
+            return;
+        }
+
+        Directory.CreateDirectory(UltimusFolder);
+        await File.WriteAllTextAsync(Path.Combine(UltimusFolder, "restart-request.txt"), DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+        Say(InstalledCommands.IsServerRunning(_manager.InstallFolder) && _ultEnabled.IsChecked == true
+            ? "Asked. Ultimus logs out, a new one is made, and it logs in again within half a minute."
+            : "Asked. A new Ultimus is made the next time it runs (server started and Ultimus on).");
+    }
+
+    // ---------------------------------------------------------------------
+    // Ultimus Issues tab
+    // ---------------------------------------------------------------------
+
+    private Control UltimusIssuesTab() {
+        StartUltimusTimer();
+
+        return Page(Fold("flag", ULTIMUS_TAB, "Ultimus Issues",
+            "Everything Ultimus ran into, newest first: a quest that does not work, Ultimus being stuck, a fight lost again " +
+            "and again, or a quest that took much longer than expected. Each one has a debug report: what went wrong, what a " +
+            "player would expect, where Ultimus was, the quest's and step's codes and data file, and the log that led up to " +
+            "it. Copy a report (or open the debug folder) and hand it to Claude to fix the quest.",
+            Row(Action(Plain("Copy all"), () => CopyAsync(UltimusIssuesText(_ultIssueList))), Action(Plain("Open its folder"), () => {
+                Directory.CreateDirectory(UltimusFolder);
+
+                return Open(UltimusFolder);
+            })),
+            _ultIssuesEmpty,
+            _ultIssues));
+    }
+
+    private static string UltimusIssueKind(string kind) => kind switch {
+        "quest" => "Quest problem",
+        "team" => "Ultimus stuck",
+        "slow" => "Taking too long",
+        _ => "Issue",
+    };
+
+    private static string UltimusIssuesText(IEnumerable<UltimusIssue> issues) {
+        var text = new StringBuilder();
+        foreach (var issue in issues) {
+            text.AppendLine($"#{issue.Id}  {issue.At.ToLocalTime():yyyy-MM-dd HH:mm}  {UltimusIssueKind(issue.Kind)}  {issue.Title} {(issue.World.Length > 0 ? $"({issue.World})" : "")}");
+            text.AppendLine(issue.Text);
+            if (issue.Expected.Length > 0) {
+                text.AppendLine("Expected (as a player): " + issue.Expected);
+            }
+
+            foreach (var line in issue.Seen ?? []) {
+                text.AppendLine("  " + line);
+            }
+
+            foreach (var line in issue.Debug ?? []) {
+                text.AppendLine("  " + line);
+            }
+
+            foreach (var line in issue.Log) {
+                text.AppendLine("    " + line);
+            }
+
+            text.AppendLine();
+        }
+
+        return text.ToString();
+    }
+
+    // The issue's own report file (debug/issue-0001.txt), or the same made from the issue when the file is not there.
+    private string UltimusReportText(UltimusIssue issue) {
+        try {
+            if (issue.Report.Length > 0 && Path.Combine(UltimusFolder, issue.Report) is var path && File.Exists(path)) {
+                return File.ReadAllText(path);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // Made from the issue below.
+        }
+
+        return UltimusIssuesText([issue]);
+    }
+
+    private void ShowUltimusIssues() {
+        if (_ultIssuesShown == (_ultIssueList.Count == 0 ? 0 : _ultIssueList.Max(i => i.Id))) {
+            return;
+        }
+
+        _ultIssuesShown = _ultIssueList.Count == 0 ? 0 : _ultIssueList.Max(i => i.Id);
+        _ultIssues.Children.Clear();
+        _ultIssuesEmpty.IsVisible = _ultIssueList.Count == 0;
+        foreach (var issue in _ultIssueList.OrderByDescending(i => i.Id).Take(100)) {
+            var head = new TextBlock {
+                Text = $"{UltimusIssueKind(issue.Kind)}: {(issue.Title.Length > 0 ? issue.Title : "Ultimus")}{(issue.World.Length > 0 ? $" ({issue.World})" : "")}",
+                FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap,
+                Foreground = issue.Kind == "slow" ? ManagerTheme.Accent("Progress") : ManagerTheme.Accent("Create"),
+            };
+            var when = new TextBlock {
+                Text = $"{issue.At.ToLocalTime():dddd d MMMM, HH:mm}{(issue.Quest.Length > 0 ? $"  ·  {issue.Quest}" : "")}",
+                Foreground = MUTED, FontSize = ManagerTheme.FONT_SMALL, TextWrapping = TextWrapping.Wrap,
+            };
+            var body = new TextBlock { Text = issue.Text, TextWrapping = TextWrapping.Wrap };
+            var expected = new TextBlock {
+                Text = issue.Expected.Length == 0 ? "" : "Expected, as a player: " + issue.Expected, TextWrapping = TextWrapping.Wrap,
+                IsVisible = issue.Expected.Length > 0, FontStyle = FontStyle.Italic,
+            };
+            var seen = new TextBlock {
+                Text = string.Join('\n', issue.Seen ?? []), TextWrapping = TextWrapping.Wrap, Foreground = MUTED, FontSize = ManagerTheme.FONT_SMALL,
+                IsVisible = (issue.Seen?.Count ?? 0) > 0,
+            };
+            var log = new TextBox {
+                IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12,
+                MaxHeight = 260, Text = issue.Log.Count == 0 ? "(no log lines)" : string.Join('\n', issue.Log),
+            };
+            var logFold = new Expander { Header = "What happened (Ultimus's log)", Content = LogWell(log), HorizontalAlignment = HorizontalAlignment.Stretch };
+            var facts = new TextBox {
+                IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12,
+                MaxHeight = 260, Text = (issue.Debug?.Count ?? 0) == 0 ? "(no debug facts)" : string.Join('\n', issue.Debug!),
+            };
+            var debugFold = new Expander { Header = "Debug facts (quest and step codes, game data)", Content = LogWell(facts), HorizontalAlignment = HorizontalAlignment.Stretch };
+            var shown = issue;
+            var copy = Row(Action(Plain("Copy debug report"), () => CopyAsync(UltimusReportText(shown))));
+            ToolTip.SetTip(copy, "Copies everything about this issue in one go, ready to paste to Claude to fix the quest.");
+            _ultIssues.Children.Add(new Border {
+                Background = ManagerTheme.SURFACE_HIGH_BRUSH, CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(14, 10),
+                Child = new StackPanel { Spacing = 6, Children = { head, when, body, expected, seen, debugFold, logFold, copy } },
+            });
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Ultimus Logs tab
+    // ---------------------------------------------------------------------
+
+    private Control UltimusLogsTab() {
+        StartUltimusTimer();
+        _ultQuestLogBox = new TextBox {
+            IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12.5,
+            Height = 300, Text = "Turn Ultimus on and start the server; every quest it starts and finishes is written here.",
+        };
+        _ultLogBox = new SelectableTextBlock {
+            TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12.5, Margin = new Thickness(10, 8),
+            Text = "Turn Ultimus on and start the server; what it does is written here.",
+        };
+        _ultLogScroll = new ScrollViewer { Height = 420, Content = _ultLogBox, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
+
+        return Page(
+            Fold("flag", ULTIMUS_TAB, "Quest log",
+                "Every quest Ultimus started and finished, each step, how long it took and how long it was expected to take.",
+                LogWell(_ultQuestLogBox),
+                Row(Action(Plain("Copy all"), () => CopyAsync(_ultQuestLogText)))),
+            Fold("users", ULTIMUS_TAB, "Ultimus log",
+                "What Ultimus does: where it walks, who it talks to, what it trains, each spell it casts in a battle and why, " +
+                "and why it waits. Updated every 3 seconds.",
+                UltimusLogColors(),
+                LogWell(_ultLogScroll),
+                Row(Action(Plain("Copy all"), () => CopyAsync(_ultLogText)), Action(Plain("Open its folder"), () => {
+                    Directory.CreateDirectory(UltimusFolder);
+
+                    return Open(UltimusFolder);
+                }))));
+    }
+
+    // ---------------------------------------------------------------------
+    // The banner at the top of Ahziael
+    // ---------------------------------------------------------------------
+
+    private Control UltimusBanner() {
+        var bar = ManagerTheme.GlassPanel(new DockPanel {
+            Children = {
+                WithDock(new StackPanel {
+                    Orientation = Orientation.Horizontal, Spacing = 8,
+                    Children = {
+                        Action(Primary("Show what happened"), () => {
+                            SelectTab(ULTIMUS_ISSUES_TAB);
+                            MarkUltimusIssuesSeen();
+
+                            return Task.CompletedTask;
+                        }),
+                        Action(Plain("Dismiss"), () => {
+                            MarkUltimusIssuesSeen();
+
+                            return Task.CompletedTask;
+                        }),
+                    },
+                }, Dock.Right),
+                WithDock(WithMargin(ManagerTheme.Tile("flag", ManagerTheme.Accent("Create"), 26), new Thickness(0, 0, 10, 0)), Dock.Left),
+                WithCenter(_ultBannerText),
+            },
+        }, 14);
+        bar.Padding = new Thickness(12, 6);
+        bar.Margin = new Thickness(12, 8, 12, 0);
+        _ultBanner.Child = bar;
+        StartUltimusTimer();
+
+        return _ultBanner;
+    }
+
+    private int UltimusIssuesSeen() {
+        try {
+            var path = Path.Combine(UltimusFolder, "issues-seen.txt");
+
+            return File.Exists(path) && int.TryParse(File.ReadAllText(path).Trim(), out var seen) ? seen : 0;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return int.MaxValue;
+        }
+    }
+
+    private void MarkUltimusIssuesSeen() {
+        var newest = _ultIssueList.Count == 0 ? 0 : _ultIssueList.Max(i => i.Id);
+        try {
+            Directory.CreateDirectory(UltimusFolder);
+            File.WriteAllText(Path.Combine(UltimusFolder, "issues-seen.txt"), newest.ToString(CultureInfo.InvariantCulture));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // Shown again next time; nothing lost.
+        }
+
+        _ultBanner.IsVisible = false;
+    }
+
+    // ---------------------------------------------------------------------
+    // Reading the team's files
+    // ---------------------------------------------------------------------
+
+    private void RefreshUltimus() {
+        ReadUltimusIssues();
+
+        // The banner: issues newer than the last one Ahziael showed.
+        var seen = UltimusIssuesSeen();
+        var fresh = _ultIssueList.Where(i => i.Id > seen).OrderBy(i => i.Id).ToList();
+        if (_ultIssues.IsEffectivelyVisible) {
+            ShowUltimusIssues();
+            if (fresh.Count > 0) {
+                MarkUltimusIssuesSeen();
+                fresh.Clear();
+            }
+        }
+
+        if (fresh.Count > 0) {
+            var last = fresh[^1];
+            _ultBannerText.Text = (fresh.Count == 1 ? "Ultimus found an issue: " : $"Ultimus found {fresh.Count} issues. Newest: ") +
+                                   $"{UltimusIssueKind(last.Kind).ToLowerInvariant()}, {(last.Title.Length > 0 ? last.Title : "the Ultimus")}. {last.Text}";
+        }
+
+        _ultBanner.IsVisible = fresh.Count > 0;
+
+        if (_ultState.IsEffectivelyVisible) {
+            ShowUltimusStatus();
+        }
+
+        if (_ultLogBox?.IsEffectivelyVisible == true) {
+            ShowUltimusColoredLog(ReadUltimusNewest("ultimus*.txt", _ultLogText));
+            ShowLog(_ultQuestLogBox!, ReadUltimusNewest("quest-log.txt", _ultQuestLogText), ref _ultQuestLogText);
+        }
+
+        static void ShowLog(TextBox box, string text, ref string shown) {
+            if (text == shown || text.Length == 0) {
+                return;
+            }
+
+            shown = text;
+            box.Text = string.Join('\n', text.Split('\n').TakeLast(ULTIMUS_LOG_LINES));
+            box.CaretIndex = box.Text.Length;
+        }
+    }
+
+    // Log colours, the same as the Quest Team's (Niduus, 2026-11-12), plus pink for something abnormal it noticed: white normal; yellow minor (does not hold the quest back); orange notable (could
+    // stop a quest finishing); red critical (stops or stopped the story, fix it now); cyan a command Ahziael ran for them,
+    // with the reason. The server tags each line with the word (UltimusLink.Note), so a copied log still says it.
+    private static readonly (string Tag, string Color, string Meaning)[] s_ultLogLevels = [
+        ("CRITICAL", "#FF5A5A", "Red: critical, stops or stopped the story, fix it now"),
+        ("NOTABLE", "#FFA040", "Orange: notable, could stop a quest from finishing"),
+        ("MINOR", "#FFE45C", "Yellow: minor, does not hold the quest back"),
+        ("COMMAND", "#5CE1FF", "Cyan: something Ahziael did for it, and why"),
+        ("ABNORMAL", "#FF6EC7", "Pink: something abnormal it noticed"),
+    ];
+
+    private static IBrush UltimusLogBrush(string line) {
+        foreach (var (tag, color, _) in s_ultLogLevels) {
+            if (line.Contains(": " + tag + ": ", StringComparison.Ordinal)) {
+                return new SolidColorBrush(Color.Parse(color));
+            }
+        }
+
+        return ManagerTheme.TEXT_BRUSH;
+    }
+
+    private static Control UltimusLogColors() {
+        var row = new WrapPanel();
+        row.Children.Add(new TextBlock { Text = "White: normal", Foreground = ManagerTheme.TEXT_BRUSH, Margin = new Thickness(0, 0, 16, 4), FontSize = ManagerTheme.FONT_SMALL });
+        foreach (var (_, color, meaning) in s_ultLogLevels) {
+            row.Children.Add(new TextBlock { Text = meaning, Foreground = new SolidColorBrush(Color.Parse(color)), Margin = new Thickness(0, 0, 16, 4), FontSize = ManagerTheme.FONT_SMALL });
+        }
+
+        return row;
+    }
+
+    private void ShowUltimusColoredLog(string text) {
+        if (_ultLogBox is null || text == _ultLogText || text.Length == 0) {
+            return;
+        }
+
+        _ultLogText = text;
+        var atEnd = _ultLogScroll is null || _ultLogScroll.Offset.Y >= _ultLogScroll.Extent.Height - _ultLogScroll.Viewport.Height - 20;
+        var inlines = new Avalonia.Controls.Documents.InlineCollection();
+        foreach (var line in text.Split('\n').TakeLast(ULTIMUS_LOG_LINES)) {
+            if (inlines.Count > 0) {
+                inlines.Add(new Avalonia.Controls.Documents.LineBreak());
+            }
+
+            inlines.Add(new Avalonia.Controls.Documents.Run(line.TrimEnd('\r')) { Foreground = UltimusLogBrush(line) });
+        }
+
+        _ultLogBox.Inlines = inlines;
+        if (atEnd) {
+            _ultLogScroll?.ScrollToEnd();
+        }
+    }
+
+    private void ReadUltimusIssues() {
+        try {
+            var path = Path.Combine(UltimusFolder, "issues.json");
+            if (!File.Exists(path)) {
+                _ultIssueList = [];
+
+                return;
+            }
+
+            var written = File.GetLastWriteTimeUtc(path);
+            if (written == _ultIssuesWritten) {
+                return;
+            }
+
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            _ultIssueList = JsonSerializer.Deserialize<List<UltimusIssue>>(stream) ?? [];
+            _ultIssuesWritten = written;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException) {
+            // Being written right now: read it on the next tick.
+        }
+    }
+
+    private void ShowUltimusStatus() {
+        JsonObject? status = null;
+        try {
+            var path = Path.Combine(UltimusFolder, "status.json");
+            if (File.Exists(path)) {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                status = JsonNode.Parse(stream) as JsonObject;
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException) {
+            return;
+        }
+
+        var at = DateTime.TryParse((string?) status?["at"], CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var written)
+            ? written.ToUniversalTime() : DateTime.MinValue;
+        var live = status is not null && DateTime.UtcNow - at < TimeSpan.FromSeconds(30);
+        var running = InstalledCommands.IsServerRunning(_manager.InstallFolder);
+        var on = _ultEnabled.IsChecked == true;
+
+        _ultState.Text = !running ? "The server is not running, so Ultimus is not either."
+            : !on ? "Off: Ultimus is not playing."
+            : live ? $"Playing. {Capital((string?) status!["why"] ?? "")}".TrimEnd()
+            : "Starting: the server starts Ultimus within a few seconds, then it logs in.";
+        _ultState.Foreground = running && on && live ? ManagerTheme.Accent("good") : MUTED;
+
+        _ultDoing.IsVisible = _ultToday.IsVisible = _ultQuest.IsVisible = _ultMembers.IsVisible = running && on && live;
+        if (!_ultDoing.IsVisible) {
+            _ultSheet.Show(null);
+            return;
+        }
+
+        _ultDoing.Text = "Doing now: " + ((string?) status!["doing"] ?? "-");
+        _ultToday.Text = "Today so far: " + ((string?) status["today"] ?? "nothing yet.");
+        var quest = (string?) status["quest"] ?? "";
+        var questFor = (int?) status["questFor"] ?? 0;
+        var expected = (int?) status["questExpected"] ?? 0;
+        _ultQuest.Text = quest.Length == 0 ? "Quest: none right now."
+            : $"Quest: {quest}, for {Minutes(questFor)} so far" + (expected > 0 ? $" (expected about {Minutes(expected)})." : ".");
+        _ultQuest.Foreground = expected > 0 && questFor > expected * (double) (_ultSlow.Value ?? 2) ? ManagerTheme.Accent("Create") : ManagerTheme.TEXT_BRUSH;
+
+        foreach (var node in status["members"] as JsonArray ?? []) {
+            if (node is not JsonObject member) {
+                continue;
+            }
+
+            var role = (string?) member["role"] ?? "";
+            var card = UltimusMemberCard(role);
+            card.Line.Text = $"{role}  ·  {(string?) member["name"]}  ·  level {(int?) member["level"] ?? 0}  ·  {(string?) member["zone"]}  ·  " +
+                             $"health {(string?) member["health"]}  ·  {(int?) member["gold"] ?? 0} gold  ·  {(int?) member["training"] ?? 0} training points" +
+                             ((bool?) member["battle"] == true ? "  ·  in a battle" : "") +
+                             ((string?) member["state"] is { } state && state != "playing" ? $"  ·  {state}" : "");
+        }
+
+        _ultSheet.Show(status["members"] as JsonArray);
+
+        static string Capital(string text) => text.Length == 0 ? "" : char.ToUpperInvariant(text[0]) + text[1..];
+        static string Minutes(int seconds) => seconds < 90 ? $"{seconds} seconds" : $"{seconds / 60} minutes";
+    }
+
+    private sealed record UltimusCard(TextBlock Line);
+
+    private readonly Dictionary<string, UltimusCard> _ultCards = [];
+
+    // One line per Ultimus wizard (one for now) with its TP button; the sheet under it has the details.
+    private UltimusCard UltimusMemberCard(string role) {
+        if (_ultCards.TryGetValue(role, out var known)) {
+            return known;
+        }
+
+        TextBlock Text(bool strong = false) => new() { TextWrapping = TextWrapping.Wrap, FontWeight = strong ? FontWeight.SemiBold : FontWeight.Normal };
+        var card = new UltimusCard(Text(true));
+        var tp = Action(Plain("TP to Ultimus"), () => {
+            if (!InstalledCommands.IsServerRunning(_manager.InstallFolder)) {
+                throw new PanelException("Start the server and log in to your wizard first.");
+            }
+
+            _manager.SendCommand(".ultimus tp");
+            Say("Sent: your wizard goes to Ultimus, wherever it is.");
+
+            return Task.CompletedTask;
+        });
+        ToolTip.SetTip(tp, "Your wizard (logged in on this PC) goes right next to Ultimus, even inside its dungeon. In the game: .ultimus tp");
+        _ultMembers.Children.Add(new Border {
+            Background = ManagerTheme.SURFACE_HIGH_BRUSH, CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(12, 8),
+            Child = new StackPanel {
+                Spacing = 6,
+                Children = { new DockPanel { Children = { WithDock(tp, Dock.Right), WithCenter(card.Line) } } },
+            },
+        });
+        _ultCards[role] = card;
+
+        return card;
+    }
+
+    // Niduus, 2026-11-13: "Shout out to discord user gese11 for sharing to me the bot concept".
+    private static Control UltimusThanks() => new TextBlock {
+        Text = "Shout out to Discord user gese11 for sharing the bot concept with Niduus.",
+        TextWrapping = TextWrapping.Wrap, FontStyle = FontStyle.Italic, Foreground = MUTED, FontSize = ManagerTheme.FONT_SMALL,
+    };
+
+    private string ReadUltimusNewest(string pattern, string fallback) {
+        try {
+            var file = Directory.Exists(UltimusFolder)
+                ? new DirectoryInfo(UltimusFolder).EnumerateFiles(pattern).OrderByDescending(f => f.LastWriteTimeUtc).FirstOrDefault()
+                : null;
+            if (file is null) {
+                return "";
+            }
+
+            using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            stream.Seek(Math.Max(0, stream.Length - 128 * 1024), SeekOrigin.Begin);
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+
+            return reader.ReadToEnd().ReplaceLineEndings("\n").TrimEnd();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return fallback;
+        }
+    }
+
+}

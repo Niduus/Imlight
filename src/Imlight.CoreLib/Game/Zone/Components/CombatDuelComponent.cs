@@ -768,6 +768,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // The Quest Team's picks are made here too (CombatDuelComponent.QuestTeam.cs).
         QuestTeamPlanningBegins();
 
+        // Ultimus's picks too (CombatDuelComponent.Ultimus.cs).
+        UltimusPlanningBegins();
+
         // Tutorial duels flush queued card grants and re-script the golems before planning.
         _tutorialDirector.OnPlanningPhaseBegin();
 
@@ -945,6 +948,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // A real player picked or changed their pick: the bots on their side think again.
         BotsNoticeMove(caster);
         QuestTeamNoticeMove(caster);
+        UltimusNoticeMove(caster);
 
         // If by this point all participants have inputted their moves, we can start the next phase.
         var participantCount = AlivePlayerCount + AliveCreatureCount;
@@ -2144,6 +2148,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // The Quest Team never joins a battle with someone else's wizard in it (Niduus, 2026-11-12: "never join battles
         // that have players in them"); walking past one, they keep walking.
         if (isPlayer && QuestTeamRefusesBattle(participantObject)) {
+            return;
+        }
+
+        // Ultimus and the Quest Team never share a battle (CombatDuelComponent.Ultimus.cs).
+        if (isPlayer && UltimusRefusesBattle(participantObject)) {
             return;
         }
 

@@ -136,6 +136,17 @@ internal static class Program {
             return;
         }
 
+        // Ultimus's mini server (the Solo Quester, a fork of the Quest Team's) is this program started again with --ultimus
+        // by the game server (see UltimusLink) while [Ultimus] Enabled is on: it keeps Ultimus's logs, issues and reports.
+        if (Array.IndexOf(args, "--ultimus") >= 0) {
+            ConfigurationManager.Initialize(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Imlight.ini"));
+            AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+                Logger.Fatal("Ultimus's mini server stopped because of an error: {Exception}", Logger.Args(e.ExceptionObject));
+            Imlight.CoreLib.Game.Ultimus.UltimusBrain.Run(args);
+
+            return;
+        }
+
         // =============================================================
         // THREAD POOL
         // =============================================================
@@ -264,6 +275,9 @@ internal static class Program {
 
         // The Quest Team: its mini server and its four wizards run only while [QuestTeam] Enabled is on.
         Imlight.CoreLib.Game.QuestTeam.QuestTeamLink.StartWatching();
+
+        // Ultimus, the Solo Quester: its mini server and its wizard run only while [Ultimus] Enabled is on.
+        Imlight.CoreLib.Game.Ultimus.UltimusLink.StartWatching();
 
         // Keep program busy with a while loop.
         Logger.Information("Imlight may now be connected to.");
