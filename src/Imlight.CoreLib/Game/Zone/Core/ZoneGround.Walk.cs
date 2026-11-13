@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using Imlight.Common;
 using Imlight.CoreLib.Shared.Resources;
@@ -102,6 +103,8 @@ internal static partial class ZoneGround {
             }
         }
 
+        FillHoles(kinds, heights, lows, width, height, cell);
+
         foreach (var t in triangles) {
             if (t.Kind == WALL) {
                 FillWalk(kinds, heights, lows, width, height, left, top, cell, t);
@@ -127,6 +130,83 @@ internal static partial class ZoneGround {
         }
 
         return new WalkGround(left, top, cell, width, height, kinds, heights, lows);
+    }
+
+    // The biggest hole in the ground (game units across, about) that is floor all the same.
+    private const float HOLE_SPAN = 260f;
+    // How much the floor round a hole may rise and fall for the hole to count as floor.
+    private const float HOLE_RISE = 60f;
+
+    /// <summary>
+    /// Small holes in the ground (a gap between two ground pieces, a missing tile under a doorstep) closed up: a patch of
+    /// no ground, wholly ringed by floor of about one height and no wider than <see cref="HOLE_SPAN"/>, is floor at that
+    /// height. Such a hole drew black on the Minimap and was a wall to the walk (Niduus, 2026-11-13: black areas
+    /// "accidentally impeding or blocking quest projection for QT and Ultimus"); the game's own walk map (zone.nav)
+    /// walks over them. A gap that is open to the edge, or ringed by ground at different heights (a pit, a drop), stays.
+    /// </summary>
+    private static void FillHoles(byte[] kinds, float[] heights, float[] lows, int width, int height, float cell) {
+        bool Void(int i) => kinds[i] == NONE && float.IsNaN(heights[i]);
+        var most = Math.Max(1, (int) Math.Ceiling(HOLE_SPAN / cell));
+        var limit = most * most;
+        var seen = new bool[kinds.Length];
+        var patch = new List<int>();
+        var queue = new Queue<int>();
+        for (var start = 0; start < kinds.Length; start++) {
+            if (seen[start] || !Void(start)) {
+                continue;
+            }
+
+            patch.Clear();
+            queue.Enqueue(start);
+            seen[start] = true;
+            var (open, minX, maxX, minY, maxY) = (false, int.MaxValue, 0, int.MaxValue, 0);
+            float low = float.MaxValue, high = float.MinValue, sum = 0;
+            var ring = 0;
+            var ringKinds = new int[8];
+            while (queue.Count > 0) {
+                var i = queue.Dequeue();
+                patch.Add(i);
+                var (x, y) = (i % width, i / width);
+                (minX, maxX, minY, maxY) = (Math.Min(minX, x), Math.Max(maxX, x), Math.Min(minY, y), Math.Max(maxY, y));
+                foreach (var (nx, ny) in new[] { (x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1) }) {
+                    if (nx < 0 || ny < 0 || nx >= width || ny >= height) {
+                        open = true;
+                        continue;
+                    }
+
+                    var n = (ny * width) + nx;
+                    if (Void(n)) {
+                        if (!seen[n]) {
+                            seen[n] = true;
+                            queue.Enqueue(n);
+                        }
+
+                        continue;
+                    }
+
+                    if (!float.IsNaN(heights[n])) {
+                        (low, high) = (Math.Min(low, heights[n]), Math.Max(high, heights[n]));
+                        sum += heights[n];
+                        ring++;
+                        ringKinds[Math.Min(kinds[n], (byte) 7)]++;
+                    }
+                }
+            }
+
+            if (open || ring == 0 || patch.Count > limit || maxX - minX + 1 > most || maxY - minY + 1 > most || high - low > HOLE_RISE) {
+                continue;
+            }
+
+            // The kind most of its rim is (path, grass or water).
+            var kind = (byte) (ringKinds[GRASS] > ringKinds[PATH] && ringKinds[GRASS] >= ringKinds[WATER] ? GRASS
+                : ringKinds[WATER] > ringKinds[PATH] ? WATER : PATH);
+            var level = sum / ring;
+            foreach (var i in patch) {
+                kinds[i] = kind;
+                heights[i] = level;
+                lows[i] = level;
+            }
+        }
     }
 
     // A wizard is about this tall; a wall whose bottom is higher than that over every floor of the cell is walked under.

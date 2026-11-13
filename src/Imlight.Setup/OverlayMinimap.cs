@@ -87,8 +87,16 @@ internal static class OverlayMinimapData {
 
     }
 
+    /// <summary>
+    /// A street's mob area (Niduus, 2026-11-13: "highlights of where mob spawns are on the street and where they end"):
+    /// its outline (loops of x, y pairs filled even-odd: the edge a mob can pull a wizard from), its creatures' walks (each How and x, y pairs),
+    /// who spawns there, their levels, how many at once, and whether one is a boss.
+    /// </summary>
+    internal sealed record Spawn(string Id, double[][] Outline, IReadOnlyList<(string How, double[] Points)> Walks, string Names, string Levels,
+                                 int Count, bool Boss);
+
     internal sealed record Snapshot(string Place, double X, double Y, double Yaw, IReadOnlyList<Mark> Marks, string Note,
-                                    DateTime At, Ground? Ground = null, string Zone = "") {
+                                    DateTime At, Ground? Ground = null, string Zone = "", IReadOnlyList<Spawn>? Spawns = null) {
 
         internal bool Stale => DateTime.UtcNow - At > s_staleAfter;
 
@@ -459,8 +467,34 @@ internal static class OverlayMinimapData {
             }
         }
 
+        var spawns = new List<Spawn>();
+        if (map["spawns"] is JsonArray areas) {
+            foreach (var item in areas.OfType<JsonObject>().Take(80)) {
+                var outline = (item["o"] as JsonArray ?? []).Take(12).Select(loop => Numbers(loop, 1200)).Where(loop => loop.Length >= 6).ToArray();
+                if (outline.Length == 0) {
+                    continue;
+                }
+
+                var walks = (item["w"] as JsonArray ?? []).OfType<JsonObject>().Take(40)
+                    .Select(w => (Short((string?) w["w"], 12), Numbers(w["p"], 160))).Where(w => w.Item2.Length >= 2).ToList();
+                spawns.Add(new Spawn(Short((string?) item["i"], 80), outline, walks, Short((string?) item["n"], 160), Short((string?) item["l"], 12),
+                    (int) Number(item["c"]), item["b"] is JsonValue boss && boss.TryGetValue<bool>(out var isBoss) && isBoss));
+            }
+        }
+
         return new Snapshot(Short((string?) map["place"], 80), Number(map["x"]), Number(map["y"]), Number(map["yaw"]), marks, "", DateTime.UtcNow,
-            Zone: Short((string?) map["zone"], 200));
+            Zone: Short((string?) map["zone"], 200), Spawns: spawns);
+    }
+
+    // A list of numbers (x, y pairs), at most max of them, whole pairs only.
+    private static double[] Numbers(JsonNode? node, int max) {
+        if (node is not JsonArray list) {
+            return [];
+        }
+
+        var numbers = list.Take(max).Select(Number).ToArray();
+
+        return numbers.Length % 2 == 0 ? numbers : numbers[..^1];
     }
 
     private static double Number(JsonNode? node) {
@@ -493,7 +527,14 @@ internal static class OverlayMinimapData {
         new Mark("chest", 700, 900, "Chest", 0),
         new Mark("team", -250, -250, "Friend", 0),
         new Mark("wizard", 400, 100, "Wizard", 0),
-    ], "", DateTime.MaxValue, SampleGround());
+    ], "", DateTime.MaxValue, SampleGround(), Spawns: [
+        new Spawn("sample-1", [Ring(-1000, -500, 520, 380)], [("chain", [-1200, -300, -900, -500, -800, -800])], "Lost Soul", "2", 3, false),
+        new Spawn("sample-2", [Ring(1250, -1100, 420, 420)], [("still", [1200, -1100])], "Rattlebones", "10", 1, true),
+    ]);
+
+    // A made-up mob area's outline for the designers: an oval round (x, y).
+    private static double[] Ring(double x, double y, double rx, double ry)
+        => [.. Enumerable.Range(0, 24).SelectMany(i => new[] { x + rx * Math.Cos(i * Math.PI / 12), y + ry * Math.Sin(i * Math.PI / 12) })];
 
     // A made-up street for the designers: a crossroads with a plaza, grass around, a pond and a few walls.
     private static Ground SampleGround() {
@@ -847,6 +888,10 @@ internal sealed class MinimapView : Control {
         var project = Projector(data, center, radiusX, radiusY, out var turn);
         var size = _map.IconSize;
         var unit = Math.Min(radiusX, radiusY) / Zoom;
+        if (_map.SpawnAreas && data.Spawns is { Count: > 0 }) {
+            DrawSpawnAreas(context, data, center, radiusX, radiusY);
+        }
+
         if (_map.MobAreas) {
             DrawMobAreas(context, data, project, center, radiusX, radiusY, unit);
         }
@@ -964,6 +1009,123 @@ internal sealed class MinimapView : Control {
             context.DrawLine(pen, project(data.X - reach, y), project(data.X + reach, y));
         }
     }
+
+    // Each street's mob areas from the game's spawn data (Niduus, 2026-11-13: "highlights of where mob spawns are on the
+    // street and where they end", and his drawing of one line round the street's whole group): the area filled softly,
+    // its edge (where a mob can pull a wizard in) as a line, a boss's area in its own colour, the mobs' walks if wanted,
+    // and who spawns there over it. Drawn in the world's own units, turned and sized like the streets.
+    private void DrawSpawnAreas(DrawingContext context, OverlayMinimapData.Snapshot data, Point center, double radiusX, double radiusY) {
+        Projector(data, center, radiusX, radiusY, out var turn);
+        var scale = Math.Min(radiusX, radiusY) / Zoom;
+        var mirror = _map.Mirror ? -1 : 1;
+        var matrix = Matrix.CreateTranslation(-data.X, data.Y) * Matrix.CreateScale(scale * mirror, scale) * Matrix.CreateRotation(turn)
+                     * Matrix.CreateTranslation(center.X, center.Y);
+        var fill = Brush(_map.SpawnAreaColor);
+        var labels = new List<(string Words, double X, double Y, IBrush Brush)>();
+        using (context.PushTransform(matrix)) {
+            foreach (var spawn in data.Spawns!) {
+                var outline = SpawnOutline(spawn);
+                var edge = Brush(spawn.Boss ? _map.SpawnBossColor : _map.SpawnEdgeColor);
+                context.DrawGeometry(fill, _map.SpawnEdge ? new Pen(edge, 2 / Math.Max(1e-6, scale)) { LineJoin = PenLineJoin.Round } : null, outline);
+                if (_map.SpawnWalks) {
+                    var walk = new Pen(Brush(_map.SpawnWalkColor), 1.5 / Math.Max(1e-6, scale)) {
+                        DashStyle = new DashStyle([2, 3], 0), LineCap = PenLineCap.Round, LineJoin = PenLineJoin.Round,
+                    };
+                    foreach (var (how, points) in spawn.Walks) {
+                        if (points.Length == 2) {
+                            context.DrawEllipse(null, walk, new Point(points[0], -points[1]), 40, 40);
+                            continue;
+                        }
+
+                        var line = new StreamGeometry();
+                        using (var g = line.Open()) {
+                            g.BeginFigure(new Point(points[0], -points[1]), false);
+                            for (var i = 2; i + 1 < points.Length; i += 2) {
+                                g.LineTo(new Point(points[i], -points[i + 1]));
+                            }
+
+                            g.EndFigure(how is "loop");
+                        }
+
+                        context.DrawGeometry(null, walk, line);
+                    }
+                }
+
+                if (_map.SpawnNames && spawn.Names.Length > 0) {
+                    // Over the top of its biggest loop.
+                    var loop = spawn.Outline.MaxBy(l => l.Length)!;
+                    var (top, sx, n) = (double.MinValue, 0.0, 0);
+                    for (var i = 0; i + 1 < loop.Length; i += 2) {
+                        sx += loop[i];
+                        n++;
+                        top = Math.Max(top, loop[i + 1]);
+                    }
+
+                    var words = spawn.Names + (spawn.Levels.Length > 0 ? $" (L{spawn.Levels})" : "") + (spawn.Count > 1 ? $" x{spawn.Count}" : "");
+                    labels.Add((words, sx / n, top, edge));
+                }
+            }
+        }
+
+        // Names upright over each area's top, in its edge colour; one that would cover another is left out.
+        var project = Projector(data, center, radiusX, radiusY, out _);
+        var taken = new List<Rect>();
+        foreach (var (words, x, y, brush) in labels) {
+            var at = project(x, y);
+            if (Math.Abs(at.X - center.X) > radiusX || Math.Abs(at.Y - center.Y) > radiusY) {
+                continue;
+            }
+
+            var room = new Rect(at.X - (words.Length * _map.NameSize * 0.25), at.Y - (_map.NameSize * 1.2), words.Length * _map.NameSize * 0.5, _map.NameSize * 1.2);
+            if (_map.TidyNames && taken.Any(r => r.Intersects(room))) {
+                continue;
+            }
+
+            taken.Add(room);
+
+            Label(context, words.Length > 70 ? words[..70] + "..." : words, new Point(at.X, at.Y - _map.NameSize * 0.2), _map.NameSize * 0.9, brush,
+                centered: true, bold: true);
+        }
+    }
+
+    // Each area's outline as one shape (east right, north up: y turned over), kept while the server sends the same one.
+    private static StreamGeometry SpawnOutline(OverlayMinimapData.Spawn spawn) {
+        lock (s_spawnShapes) {
+            if (s_spawnShapes.TryGetValue(spawn.Id, out var known) && ReferenceEquals(known.Points, spawn.Outline)) {
+                return known.Shape;
+            }
+
+            if (s_spawnShapes.TryGetValue(spawn.Id, out known) && known.Points.Length == spawn.Outline.Length
+                && known.Points.Zip(spawn.Outline).All(p => p.First.AsSpan().SequenceEqual(p.Second))) {
+                s_spawnShapes[spawn.Id] = (spawn.Outline, known.Shape);
+
+                return known.Shape;
+            }
+
+            var shape = new StreamGeometry();
+            using (var g = shape.Open()) {
+                g.SetFillRule(FillRule.EvenOdd);
+                foreach (var loop in spawn.Outline) {
+                    g.BeginFigure(new Point(loop[0], -loop[1]), true);
+                    for (var i = 2; i + 1 < loop.Length; i += 2) {
+                        g.LineTo(new Point(loop[i], -loop[i + 1]));
+                    }
+
+                    g.EndFigure(true);
+                }
+            }
+
+            if (s_spawnShapes.Count > 400) {
+                s_spawnShapes.Clear();
+            }
+
+            s_spawnShapes[spawn.Id] = (spawn.Outline, shape);
+
+            return shape;
+        }
+    }
+
+    private static readonly Dictionary<string, (double[][] Points, StreamGeometry Shape)> s_spawnShapes = [];
 
     // Where mobs are: a soft patch round every creature, patches that touch joined into one area, and how many are in
     // each area (Niduus, 2026-11-12: "highlight areas of mobs").
