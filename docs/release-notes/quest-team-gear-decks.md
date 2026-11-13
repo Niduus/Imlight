@@ -202,3 +202,8 @@ Changed: The Quest Team leaves Ultimus's creatures alone
 When the team looks for a creature to fight, it skips any creature Ultimus is fighting or walking to, so the two never chase the same one.
 Where: in the game
 Test: With both on, on the same street, the team and Ultimus should fight different creatures.
+
+New: The Quest Team talks in Menu Chat
+The four now speak, but only in Menu Chat (the game's own phrase menu, no typed text), and only now and then: at most one line every 40 seconds, and most moments pass in silence. They say things like "Let's go" when they head for the next step, "Ready" before a fight, "Good job" after a win, and "Wait for me" when someone has to rest. When a player near them uses Menu Chat, they may answer: a hello back, "you're welcome", or a goodbye. They turn down anything a player asks ("No thanks") and never let it change what they do; they take orders only from each other. Every line they say, and every player line they hear, is in Team Logs.
+Where: in the game, over their heads and in chat; Quest Team > Team Logs ("says in Menu Chat")
+Test: Watch the team for a few minutes; a line should show now and then. Stand next to them and use Menu Chat to say Hello, then ask them to follow you. They should answer hello, then say no and carry on.

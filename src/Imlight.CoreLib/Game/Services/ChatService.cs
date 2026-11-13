@@ -146,6 +146,22 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
             Filter = 0,
         };
         SendFilteredZoneMessage(msg, character.CharId, character.Zone);
+        TellQuestTeam(character, message.MessageID, null);
+    }
+
+    // The Quest Team hears Menu Chat said near it and may answer (it never takes a player's orders).
+    private void TellQuestTeam(Wizard character, uint phraseId, string text) {
+        if (QuestTeam.QuestTeamDirector.ActorOf("Ice") is null || GetActiveGameObject() is not { } me) {
+            return;
+        }
+
+        text ??= BotShared.MenuChatBook.ById(phraseId)?.Text;
+        if (string.IsNullOrEmpty(text)) {
+            return;
+        }
+
+        QuestTeam.QuestTeamVoice.PlayerSaid(SessionActor.GetZoneActor(), me.m_location.X, me.m_location.Y, character.CharId,
+            character.PlayerNameBehavior?.GetWizardName(), phraseId, text);
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_REQUESTRADIALQUICKCHATEXT))]
@@ -156,6 +172,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
         var character = GetActiveWizard();
         LogQuickChat(character, message.Message.ToString());
+        TellQuestTeam(character, 0, message.Message.ToString());
 
         var msg = new GAME_5_PROTOCOL.MSG_RADIALQUICKCHATEXT {
             Message = message.Message,
