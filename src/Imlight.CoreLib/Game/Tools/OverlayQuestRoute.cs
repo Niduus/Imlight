@@ -206,24 +206,30 @@ internal static class OverlayQuestRoute {
         var toArrival = arrivals.FirstOrDefault(a => string.Equals(a.Split('/')[0], toWorld, StringComparison.OrdinalIgnoreCase));
         var homeDoors = DoorZones().Where(a => string.Equals(a.Split('/')[0], fromWorld, StringComparison.OrdinalIgnoreCase)).ToList();
 
-        // The whole way; else to the step's world's arrival area, then the step; else to this world's Spiral Door, then
-        // through it to the step's world, then the step.
-        if (Walk(from, to, spiralDoorHere, extra) is { } whole) {
-            return whole;
-        }
+        // First never through an instance (a dungeon, a tower, a gauntlet's rooms) on the way; only when there is no
+        // other way (the step is deep in a dungeon, past its first rooms) through instances too. Never through an event
+        // or a gauntlet (Niduus, 2026-11-13: from the Commons the way went "Sinbad & the Iron Sultan Gauntlet > Spiral
+        // Door to Grizzleheim" through the Portal of Peril, not the Spiral Chamber).
+        foreach (var instances in new[] { false, true }) {
+            // The whole way; else to the step's world's arrival area, then the step; else to this world's Spiral Door,
+            // then through it to the step's world, then the step.
+            if (Walk(from, to, spiralDoorHere, extra, instances) is { } whole) {
+                return whole;
+            }
 
-        if (otherWorld && toArrival is not null && Walk(from, toArrival, spiralDoorHere, extra) is { } toWorldFirst) {
-            toWorldFirst.Add((to, false));
+            if (otherWorld && toArrival is not null && Walk(from, toArrival, spiralDoorHere, extra, instances) is { } toWorldFirst) {
+                toWorldFirst.Add((to, false));
 
-            return toWorldFirst;
-        }
+                return toWorldFirst;
+            }
 
-        if (otherWorld && toArrival is not null && !spiralDoorHere
-            && homeDoors.Select(door => Walk(from, door, false, extra)).Where(w => w is { Count: > 0 }).MinBy(w => w.Count) is { } toDoor) {
-            toDoor.Add((toArrival, true));
-            toDoor.Add((to, false));
+            if (otherWorld && toArrival is not null && !spiralDoorHere
+                && homeDoors.Select(door => Walk(from, door, false, extra, instances)).Where(w => w is { Count: > 0 }).MinBy(w => w.Count) is { } toDoor) {
+                toDoor.Add((toArrival, true));
+                toDoor.Add((to, false));
 
-            return toDoor;
+                return toDoor;
+            }
         }
 
         // Nothing on record: through the Spiral Door to the step's world first, when it is another world, then the step.
@@ -241,12 +247,12 @@ internal static class OverlayQuestRoute {
 
     // The areas from `from` to `goal` (excluded `from`), one step at a time toward the fewest areas left; null when no
     // way is on record.
-    private static List<(string Zone, bool World)> Walk(string from, string goal, bool spiralDoorHere, List<string> extra) {
+    private static List<(string Zone, bool World)> Walk(string from, string goal, bool spiralDoorHere, List<string> extra, bool instances) {
         if (OverlayQuestTracker.SameZone(goal, from)) {
             return [];
         }
 
-        var left = AreasLeft(goal);
+        var left = AreasLeft(goal, instances);
         var arrivals = s_arrivals ?? [];
         var hops = new List<(string, bool)>();
         var at = from;
@@ -262,6 +268,11 @@ internal static class OverlayQuestRoute {
                 // A house is never on the way (its door opens only for its owner, who has Home anyway), unless it is the
                 // step's own area or an exit here the wizard may use (one into a house it owns).
                 if (IsHouse(next) && !OverlayQuestTracker.SameZone(goal, next) && !(first && extra.Contains(next, StringComparer.OrdinalIgnoreCase))) {
+                    return;
+                }
+
+                // No short cut through an event, a gauntlet or (first) an instance: only when it is the step's own area.
+                if (!OverlayQuestTracker.SameZone(goal, next) && SideTrip(next, instances)) {
                     return;
                 }
 
@@ -324,9 +335,47 @@ internal static class OverlayQuestRoute {
         }
     }
 
+    // Areas that are a place of their own, never a way through: events (the Portal of Peril's gauntlets, holidays),
+    // gauntlets, the Pet Derby, heroic dungeons, the Deckathalon.
+    private static readonly string[] s_sideTripStarts = ["MonthlyEvents/", "Holiday", "PetDerby", "Heroic_Dungeons", "Housing_Gauntlet", "Deckathalon"];
+
+    /// <summary>
+    /// Whether an area is a side trip, never a way to somewhere else: an event, a gauntlet, and (unless
+    /// <paramref name="instances"/>) any instance (a dungeon, a tower; "D" in the zone list). The arrival areas and the
+    /// Spiral Chamber never are.
+    /// </summary>
+    internal static bool SideTrip(string zone, bool instances) {
+        if (string.IsNullOrWhiteSpace(zone) || (s_arrivals ?? []).Contains(zone) || s_knownDoorZones.Contains(zone, StringComparer.OrdinalIgnoreCase)) {
+            return false;
+        }
+
+        if (s_sideTripStarts.Any(start => zone.StartsWith(start, StringComparison.OrdinalIgnoreCase))
+            || zone.Contains("Gauntlet", StringComparison.OrdinalIgnoreCase)) {
+            return true;
+        }
+
+        return !instances && InstanceZones().Contains(zone);
+    }
+
+    private static HashSet<string> s_instanceZones;
+    private static int s_instanceZonesFrom = -1;
+
+    // The zones the zone list marks as instances (read again when it changes).
+    private static HashSet<string> InstanceZones() {
+        var all = ZoneNames.All;
+        lock (s_lock) {
+            if (s_instanceZones is null || s_instanceZonesFrom != all.Count) {
+                s_instanceZones = new HashSet<string>(all.Where(z => z.Type == "D").Select(z => z.Code), StringComparer.OrdinalIgnoreCase);
+                s_instanceZonesFrom = all.Count;
+            }
+
+            return s_instanceZones;
+        }
+    }
+
     // A house's world gate is its owner's own (never counted as a Spiral Door anyone may use).
     private static bool IsDoorZone(string zone)
-        => !IsHouse(zone) && s_doorSeen.TryGetValue(zone, out var seen) ? seen
+        => !IsHouse(zone) && !SideTrip(zone, true) && s_doorSeen.TryGetValue(zone, out var seen) ? seen
             : s_knownDoorZones.Contains(zone, StringComparer.OrdinalIgnoreCase)
               || ((s_arrivals ?? []).Contains(zone) && !s_knownNoDoorZones.Contains(zone, StringComparer.OrdinalIgnoreCase));
 
@@ -334,11 +383,12 @@ internal static class OverlayQuestRoute {
         => (s_arrivals ?? []).Concat(s_knownDoorZones).Concat(s_doorSeen.Where(p => p.Value).Select(p => p.Key))
             .Distinct(StringComparer.OrdinalIgnoreCase).Where(IsDoorZone);
 
-    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Dictionary<string, int>> s_left = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<(string Goal, bool Instances), Dictionary<string, int>> s_left = new();
 
     // How many areas are left from each area to `goal` (searched backwards from it over the exits on record and the
     // Spiral Door between arrival areas).
-    private static Dictionary<string, int> AreasLeft(string goal) => s_left.GetOrAdd(goal, g => {
+    private static Dictionary<string, int> AreasLeft(string goal, bool instances) => s_left.GetOrAdd((goal.ToLowerInvariant(), instances), key => {
+        var g = goal;
         var back = Backward();
         var arrivals = s_arrivals ?? [];
         var left = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
@@ -353,7 +403,7 @@ internal static class OverlayQuestRoute {
             var zone = waiting.Dequeue();
             var count = left[zone] + 1;
             // No way through a house (the step's own area aside): only its owner can go in.
-            if (IsHouse(zone) && left[zone] > 0) {
+            if ((IsHouse(zone) || SideTrip(zone, instances)) && left[zone] > 0) {
                 continue;
             }
 
