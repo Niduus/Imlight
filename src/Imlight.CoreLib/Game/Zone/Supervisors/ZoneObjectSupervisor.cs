@@ -71,6 +71,9 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
                 continue;
             }
 
+            // Its state set, so a quest that changes it plays the animation on the way (States/StateTransitions).
+            Imlight.CoreLib.Game.States.StateTransitions.Note(Zone.ZonePath, objectInfo.m_zoneTag, template);
+
             var coreObject = CoreObjectFactory.FinalizeCoreObject(objectInfo, template);
             if (coreObject is null) {
                 Logger.Warning("Could not finalize CoreObject {0} with template ID {1}.",

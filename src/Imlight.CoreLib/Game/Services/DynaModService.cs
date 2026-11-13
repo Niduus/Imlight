@@ -60,6 +60,13 @@ internal sealed class RestoreQuestObjectLooks : IServerMessage {
     public List<(string Tag, string State)> Looks { get; init; } = [];
 }
 
+/// <summary>Timer message: an object's animation on the way to a quest's state has played (States/StateTransitions).</summary>
+internal sealed class DynaModPassDone {
+    public string ZoneName { get; init; }
+    public string ClientTag { get; init; }
+    public string StateName { get; init; }
+}
+
 internal class DynaModService(SessionActor sessionActor) : MessageService(sessionActor) {
 
     // Only the transmitted properties are on the wire (verified byte for byte against a live capture).
@@ -132,6 +139,12 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
             dynaModState = SHOW_STATE_NAME;
         }
 
+        // The look the object had for this wizard before (null: the one it starts in), for the animation on the way.
+        var previousState = wizard.DynamodSet?.Dynamods?.LastOrDefault(d => d is not null
+            && string.Equals(d.ClientTag, dynaModClientTag, StringComparison.OrdinalIgnoreCase)
+            && (string.IsNullOrEmpty(zoneName) || string.IsNullOrEmpty(d.ZoneName)
+                || string.Equals(d.ZoneName, zoneName, StringComparison.OrdinalIgnoreCase)))?.ModState;
+
         wizard.AddDynamod(zoneName, dynaModClientTag, dynaModState);
 
         // A used quest object's used look is remembered with its object, so the quest safety guards can bring the
@@ -140,12 +153,35 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
             Imlight.CoreLib.Game.Quests.QuestSafety.NoteUsedLook(wizard, zoneName, dynaModClientTag, message.UsedLookTemplateId, dynaModState);
         }
 
-        // A mod added by a quest result (not echoed from the client) must reach the client as well: mods on
-        // client-only objects such as the arena gates are otherwise never applied. Live sends it to the owner.
-        if (message.ContextActor is not null) {
+        // A quest that opens a door or pops a bubble names only the state the object ends in. The object's state set says
+        // what it plays on the way (Bubble_On_IDLE to Bubble_Off_END through Bubble_Xplod_PASS, Bartleby's mouth IdleUp to
+        // IdleOpen through Opening): that goes first, and the end state once it has played (States/StateTransitions).
+        // Sending the end state alone made the object jump there with no animation (Niduus 2026-11-13).
+        var firstState = dynaModState;
+        if (message.ContextActor is not null && !string.IsNullOrEmpty(dynaModState)
+            && Imlight.CoreLib.Game.States.StateTransitions.TryFind(zoneName, dynaModClientTag, previousState, dynaModState,
+                out var passState, out var wait)) {
+            Logger.Debug("Wizard {0}: {1} plays {2} on its way to {3} ({4:0.#} s).",
+                Logger.Args(wizard.CharId, dynaModClientTag, passState, dynaModState, wait.TotalSeconds));
+            firstState = passState;
+            Timers.StartSingleTimer($"dynamod-pass-{dynaModClientTag}",
+                new DynaModPassDone { ZoneName = zoneName, ClientTag = dynaModClientTag, StateName = dynaModState }, wait);
+        }
+        else if (!string.IsNullOrEmpty(dynaModClientTag)) {
+            Timers.Cancel($"dynamod-pass-{dynaModClientTag}");
+        }
+
+        SendObjectLook(zoneName, dynaModClientTag, firstState, toClient: message.ContextActor is not null);
+    }
+
+    // A mod added by a quest result (not echoed from the client) must reach the client as well: mods on client-only
+    // objects such as the arena gates are otherwise never applied. Live sends it to the owner. The zone's objects that
+    // carry the tag take the state for this player too.
+    private void SendObjectLook(string zoneName, string clientTag, string state, bool toClient) {
+        if (toClient) {
             var addMsg = BuildAdd(
                 GetActiveGameObject().m_globalID.Full,
-                new Dynamod { ZoneName = zoneName, ClientTag = dynaModClientTag, ModState = dynaModState },
+                new Dynamod { ZoneName = zoneName, ClientTag = clientTag, ModState = state },
                 ++_addIndex);
             if (addMsg is not null) {
                 SendToSocket(addMsg);
@@ -155,12 +191,39 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
         // Broadcast the state change to the zone.
         // Objects that match the client tag will apply the state change.
         var stateChangeMsg = new ZONE_102_PROTOCOL.MSG_ENTERSTATE {
-            ObjectName = dynaModClientTag,
-            StateName = dynaModState,
+            ObjectName = clientTag,
+            StateName = state,
             ExclusiveToSender = true,
             Sender = SessionActor.ActorRef
         };
         ZoneBroadcastNoPlayers(stateChangeMsg);
+    }
+
+    // The animation on the way has played: the object settles in the state the quest gave it, unless the wizard's mod
+    // for it changed since or the wizard left the zone.
+    [InternalMessageHandler(typeof(DynaModPassDone))]
+    private void ReceiveDynaModPassDone(DynaModPassDone message) {
+        try {
+            var wizard = GetActiveWizard();
+            var mod = wizard?.DynamodSet?.Dynamods?.LastOrDefault(d => d is not null
+                && string.Equals(d.ClientTag, message.ClientTag, StringComparison.OrdinalIgnoreCase));
+            if (mod is null || !string.Equals(mod.ModState, message.StateName, StringComparison.OrdinalIgnoreCase)) {
+                return;
+            }
+
+            // Gone to another zone meanwhile: the mod is saved and comes with the next visit. Dynamods sometimes name only
+            // the start of the zone's path ("WizardCity/Interiors"), so that still counts as the same place.
+            if (!string.IsNullOrEmpty(message.ZoneName) && !string.IsNullOrEmpty(wizard.Zone)
+                && !wizard.Zone.StartsWith(message.ZoneName, StringComparison.OrdinalIgnoreCase)
+                && !message.ZoneName.StartsWith(wizard.Zone, StringComparison.OrdinalIgnoreCase)) {
+                return;
+            }
+
+            SendObjectLook(message.ZoneName, message.ClientTag, message.StateName, toClient: true);
+        }
+        catch (Exception ex) {
+            Logger.Error("Could not finish the animation of {0}: {1}", Logger.Args(message.ClientTag, ex.Message));
+        }
     }
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_SENDDYNAMODSTATE))]
