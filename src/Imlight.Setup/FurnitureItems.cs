@@ -57,6 +57,9 @@ internal sealed class FurnitureItem {
 
     internal required int CrownsCost { get; init; }
 
+    /// <summary>Its price in Arena tickets and PvP coins together, or 0 (bought with neither).</summary>
+    internal int OtherCurrencyCost { get; init; }
+
     /// <summary>How many one house may hold, or 0 for no limit.</summary>
     internal required int HouseLimit { get; init; }
 
@@ -159,6 +162,8 @@ internal sealed class FurnitureBook {
             Behaviors = behaviors,
             GoldCost = (int) Math.Max(0, template.m_baseCost),
             CrownsCost = (int) Math.Max(0, template.m_creditsCost),
+            OtherCurrencyCost = (int) Math.Min(int.MaxValue, Math.Max(0L, (long) template.m_arenaPointCost) + Math.Max(0L, (long) template.m_pvpCurrencyCost)
+                + Math.Max(0L, (long) template.m_pvpTourneyCurrencyCost)),
             HouseLimit = (int) Math.Max(0, (long) template.m_itemLimit),
         };
         item.Haystack = SearchText.Normalize($"{item.Name} {item.Code} {item.Id} {item.Category} {item.From} {string.Join(' ', tags)} {string.Join(' ', item.Flags)}");

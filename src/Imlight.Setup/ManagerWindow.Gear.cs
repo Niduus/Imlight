@@ -57,7 +57,7 @@ internal sealed partial class ManagerWindow {
     private const uint TIP_ORANGE = 0xFFFFA126;
     private const uint TIP_WHITE = 0xFFFFFFFF;
 
-    private static readonly string[] s_gearSorts = ["Name", "Level (high first)", "Level (low first)", "Template ID", "Picked stat (high first)"];
+    private static readonly string[] s_gearSorts = ["Name", "Level (high first)", "Level (low first)", "Template ID", "Picked stat (high first)", "School"];
 
     // The game's names for a pet's ages, 1 to 7, when its text files don't say.
     private static readonly string[] s_petAges = ["Baby", "Teen", "Adult", "Ancient", "Epic", "Mega", "Ultra"];
@@ -81,6 +81,9 @@ internal sealed partial class ManagerWindow {
     private readonly CheckBox _gearHasCards = new() { Content = "Gives item cards" };
     private readonly CheckBox _gearInSet = new() { Content = "Part of a gear set" };
     private readonly CheckBox _gearRental = new() { Content = "Rentals only" };
+    private readonly ComboBox _gearAuction = AuctionFilter();
+    private readonly CheckBox _gearGoldOnly = new() { Content = "Costs gold only" };
+    private readonly CheckBox _gearSold = new() { Content = "Sold by a vendor" };
     private readonly CheckBox _gearFavoritesOnly = FavoritesOnlyTick();
     private readonly TextBlock _gearCount = new() { TextWrapping = TextWrapping.Wrap };
     private readonly ListBox _gearList = new() { Background = Brushes.Transparent, Classes = { "compact" } };
@@ -128,7 +131,7 @@ internal sealed partial class ManagerWindow {
         _gearCrowns.IsCheckedChanged += (_, _) => RenderGearTab();
         _gearUnnamed.IsCheckedChanged += (_, _) => RenderGearTab();
         WhenFiltersChange(RenderGearTab, _gearRarity, _gearMark, _gearCardSchool, _gearSocketsMin, _gearSocketsMax, _gearGoldMin, _gearGoldMax,
-            _gearHasCards, _gearInSet, _gearRental, _gearFavoritesOnly);
+            _gearHasCards, _gearInSet, _gearRental, _gearAuction, _gearGoldOnly, _gearSold, _gearFavoritesOnly);
         WhenFavoritesChange(FAV_GEAR, RenderGearTab);
         _gearList.ItemTemplate = new FuncDataTemplate<GearItem>((item, _) => item is null ? new Panel() : GearRow(item));
         _gearList.SelectionChanged += (_, e) => {
@@ -157,6 +160,9 @@ internal sealed partial class ManagerWindow {
                 Labelled("Sockets to", _gearSocketsMax),
                 Labelled("Gold cost from", _gearGoldMin),
                 Labelled("Gold cost to", _gearGoldMax),
+                Labelled("Bazaar (Auction House)", _gearAuction),
+                WithTip(SearchTick(_gearGoldOnly), "Only items with a gold price and nothing else: no Crowns, Arena tickets or PvP coins. Many dropped items have a gold price too, so tick \"Sold by a vendor\" as well to see only what shops sell for gold."),
+                SearchTick(_gearSold),
                 SearchTick(_gearHasCards),
                 SearchTick(_gearInSet),
                 SearchTick(_gearRental),
@@ -205,6 +211,7 @@ internal sealed partial class ManagerWindow {
 
     private Task LoadGearTabAsync() {
         if (_gearBook is not null || _gearProblem is not null) {
+            _ = Guard(LoadGearSellersAsync);
             RenderGearTab();
 
             return Task.CompletedTask;
@@ -236,6 +243,7 @@ internal sealed partial class ManagerWindow {
             }
 
             RenderGearTab();
+            await LoadGearSellersAsync();
         }
     }
 
@@ -259,14 +267,11 @@ internal sealed partial class ManagerWindow {
         }
 
         _gearFiltersFilled = true;
-        string[] mainSchools = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance", "Star", "Sun", "Moon", "Shadow"];
-        var schools = gear.Items.Select(i => i.SchoolNeeded).Where(s => s.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(s => Array.IndexOf(mainSchools, s) is var i and >= 0 ? i : 100).ThenBy(s => s, StringComparer.OrdinalIgnoreCase);
-        _gearSchool.ItemsSource = new[] { ALL_SCHOOLS }.Concat(schools).Append(NO_SCHOOL).ToList();
+        _gearSchool.ItemsSource = new[] { ALL_SCHOOLS }.Concat(SchoolChoices(gear.Items.Select(GearSchool))).Append(NO_SCHOOL).ToList();
         _gearSchool.SelectedIndex = 0;
         FillFilterCombo(_gearRarity, gear.Items.Select(i => i.Rarity).OrderBy(r => r, StringComparer.OrdinalIgnoreCase));
         FillFilterCombo(_gearMark, gear.Items.SelectMany(i => i.Flags).OrderBy(f => f, StringComparer.OrdinalIgnoreCase));
-        FillFilterCombo(_gearCardSchool, gear.Items.SelectMany(i => i.Spells).Select(c => gear.Spell(c.Code)?.School ?? "").OrderBy(c => c, StringComparer.OrdinalIgnoreCase));
+        FillFilterCombo(_gearCardSchool, SchoolChoices(gear.Items.SelectMany(i => i.Spells).Select(c => gear.Spell(c.Code)?.School ?? "")));
         FillGearStatFilters(gear);
     }
 
@@ -295,6 +300,9 @@ internal sealed partial class ManagerWindow {
         var hasCards = _gearHasCards.IsChecked == true;
         var inSet = _gearInSet.IsChecked == true;
         var rental = _gearRental.IsChecked == true;
+        var goldOnly = _gearGoldOnly.IsChecked == true;
+        var sold = _gearSold.IsChecked == true;
+        var sellers = _furnitureSellers;
         var favorites = Favorites(FAV_GEAR);
         var favoritesOnly = _gearFavoritesOnly.IsChecked == true;
 
@@ -303,7 +311,7 @@ internal sealed partial class ManagerWindow {
             // An item with no name of its own is a test or unused copy; it shows when asked for by its ID.
             && (unnamed || i.Name != i.Code || i.Id == id)
             && (slot == ALL_GEAR || i.Slot == slot)
-            && (school == ALL_SCHOOLS || (school == NO_SCHOOL ? i.SchoolNeeded.Length == 0 : i.SchoolNeeded.Equals(school, StringComparison.OrdinalIgnoreCase)))
+            && (school == ALL_SCHOOLS || (school == NO_SCHOOL ? i.SchoolNeeded.Length == 0 : GearSchool(i).Equals(school, StringComparison.OrdinalIgnoreCase)))
             && (min is null || i.Level >= min)
             && (max is null || i.Level <= max)
             && (!crowns || i.CrownsOnly)
@@ -316,6 +324,9 @@ internal sealed partial class ManagerWindow {
             && (!hasCards || i.Spells.Count > 0)
             && (!inSet || i.SetId != 0)
             && (!rental || i.Rental.Length > 0)
+            && AuctionMatches(_gearAuction, i.Flags)
+            && (!goldOnly || CostsGoldOnly(i.GoldCost, i.CrownsCost, i.CrownsOnly, i.OtherCurrencyCost))
+            && (!sold || sellers.ContainsKey(i.Id))
             && (!favoritesOnly || favorites.Contains(GearKey(i))));
 
         List<GearItem> shown = _gearSort.SelectedIndex switch {
@@ -324,6 +335,7 @@ internal sealed partial class ManagerWindow {
             3 => [.. found.OrderBy(i => i.Id)],
             4 => [.. found.Select(i => (Item: i, Key: GearStatSortKey(i))).OrderByDescending(p => p.Key)
                 .ThenBy(p => p.Item.Name, StringComparer.OrdinalIgnoreCase).Select(p => p.Item)],
+            5 => [.. found.OrderBy(i => SchoolRank(GearSchool(i))).ThenBy(i => i.Name, StringComparer.OrdinalIgnoreCase).ThenBy(i => i.Id)],
             // The exact name (or ID) first, then names that start with what was typed.
             _ => [.. found.OrderBy(i => !(i.Name.Equals(query, StringComparison.OrdinalIgnoreCase) || i.Id == id))
                 .ThenBy(i => query.Length > 0 && !i.Name.StartsWith(query, StringComparison.OrdinalIgnoreCase))
@@ -342,7 +354,17 @@ internal sealed partial class ManagerWindow {
         // Typing only narrows the list: nothing is picked (and no details pop open) until an item is clicked.
     }
 
+    /// <summary>Which vendors sell what (the same list as the Items and Furniture tabs), for "Sold by a vendor".</summary>
+    private async Task LoadGearSellersAsync() {
+        await LoadFurnitureSellersAsync();
+        RenderGearTab();
+    }
+
     private static string GearKey(GearItem item) => item.Id.ToString(CultureInfo.InvariantCulture);
+
+    /// <summary>The school a piece of gear belongs to: the school needed to wear it, or else its own school, or "".</summary>
+    private static string GearSchool(GearItem item)
+        => item.SchoolNeeded.Length > 0 ? item.SchoolNeeded : IsAnySchool(item.School) ? "" : item.School;
 
     /// <summary>One item in the list: its school, its name, and its slot, level and ID underneath.</summary>
     private Control GearRow(GearItem item) {

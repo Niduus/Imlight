@@ -54,6 +54,8 @@ internal sealed partial class ManagerWindow {
     private readonly CheckBox _furnitureCrowns = new() { Content = "Crowns only" };
     private readonly CheckBox _furnitureCrafted = new() { Content = "Crafted" };
     private readonly CheckBox _furnitureSold = new() { Content = "Sold by a vendor" };
+    private readonly ComboBox _furnitureAuction = AuctionFilter();
+    private readonly CheckBox _furnitureGoldOnly = new() { Content = "Costs gold only" };
     private readonly CheckBox _furnitureInteractive = new() { Content = "Does something when you press X" };
     private readonly CheckBox _furnitureSound = new() { Content = "Makes sound or music" };
     private readonly CheckBox _furnitureAnimated = new() { Content = "Moves (animated)" };
@@ -86,7 +88,7 @@ internal sealed partial class ManagerWindow {
             _furnitureDelay.Start();
         };
         WhenFiltersChange(RenderFurnitureTab, _furnitureCategory, _furnitureFrom, _furnitureRarity, _furnitureMark, _furnitureGoldMin,
-            _furnitureGoldMax, _furnitureSort, _furnitureCrowns, _furnitureCrafted, _furnitureSold, _furnitureInteractive, _furnitureSound,
+            _furnitureGoldMax, _furnitureSort, _furnitureCrowns, _furnitureCrafted, _furnitureSold, _furnitureAuction, _furnitureGoldOnly, _furnitureInteractive, _furnitureSound,
             _furnitureAnimated, _furnitureLimit, _furnitureTest, _furnitureFavoritesOnly);
         WhenFavoritesChange(FAV_FURNITURE, RenderFurnitureTab);
         _furnitureList.ItemTemplate = new FuncDataTemplate<FurnitureItem>((item, _) => item is null ? new Panel() : FurnitureRow(item));
@@ -104,9 +106,11 @@ internal sealed partial class ManagerWindow {
             SearchFilter("Gold cost from", _furnitureGoldMin),
             SearchFilter("Gold cost to", _furnitureGoldMax),
             SearchFilter("Sort by", _furnitureSort),
+            SearchFilter("Bazaar (Auction House)", _furnitureAuction),
             SearchTick(_furnitureCrowns),
             SearchTick(_furnitureCrafted),
             SearchTick(_furnitureSold),
+            WithTip(SearchTick(_furnitureGoldOnly), "Only house items with a gold price and nothing else: no Crowns, Arena tickets or PvP coins. Many dropped items have a gold price too, so tick \"Sold by a vendor\" as well to see only what shops sell for gold."),
             SearchTick(_furnitureInteractive),
             SearchTick(_furnitureSound),
             SearchTick(_furnitureAnimated),
@@ -243,6 +247,7 @@ internal sealed partial class ManagerWindow {
         var crowns = _furnitureCrowns.IsChecked == true;
         var crafted = _furnitureCrafted.IsChecked == true;
         var sold = _furnitureSold.IsChecked == true;
+        var goldOnly = _furnitureGoldOnly.IsChecked == true;
         var interactive = _furnitureInteractive.IsChecked == true;
         var sound = _furnitureSound.IsChecked == true;
         var animated = _furnitureAnimated.IsChecked == true;
@@ -264,6 +269,8 @@ internal sealed partial class ManagerWindow {
             && (!crowns || i.CrownsOnly)
             && (!crafted || i.Crafted)
             && (!sold || sellers.ContainsKey(i.Id))
+            && AuctionMatches(_furnitureAuction, i.Flags)
+            && (!goldOnly || CostsGoldOnly(i.GoldCost, i.CrownsCost, i.CrownsOnly, i.OtherCurrencyCost))
             && (!interactive || i.Interactive)
             && (!sound || i.Sound)
             && (!animated || i.Animated)

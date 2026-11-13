@@ -40,7 +40,7 @@ internal sealed partial class ManagerWindow {
     private DetailsPopup? _itemsPopup;
 
     private static readonly string[] s_itemSorts = [
-        "Best match", "Name", "Kind", "Level (low first)", "Level (high first)", "Gold cost (high first)", "Template ID",
+        "Best match", "Name", "Kind", "Level (low first)", "Level (high first)", "Gold cost (high first)", "Template ID", "School",
     ];
 
     private readonly TextBox _itemsSearch = new() { Watermark = "Search an item by name or ID, such as Mist Wood, Health Opal or Dragon's Hoard Pack" };
@@ -55,6 +55,8 @@ internal sealed partial class ManagerWindow {
     private readonly CheckBox _itemsStats = new() { Content = "Gives stats or a card" };
     private readonly CheckBox _itemsCrowns = new() { Content = "Crowns only" };
     private readonly CheckBox _itemsSold = new() { Content = "Sold by a vendor" };
+    private readonly ComboBox _itemsAuction = AuctionFilter();
+    private readonly CheckBox _itemsGoldOnly = new() { Content = "Costs gold only" };
     private readonly CheckBox _itemsTest = new() { Content = "Unnamed and test items" };
     private readonly CheckBox _itemsFavoritesOnly = FavoritesOnlyTick();
     private readonly NumericUpDown _itemsAmount = new() { Minimum = 1, Maximum = 99, Value = 1, Increment = 1, FormatString = "0", Width = 120 };
@@ -86,7 +88,7 @@ internal sealed partial class ManagerWindow {
             }
         };
         WhenFiltersChange(RenderItemsTab, _itemsCategory, _itemsType, _itemsSchool, _itemsRarity, _itemsMark, _itemsLevelMin,
-            _itemsLevelMax, _itemsSort, _itemsStats, _itemsCrowns, _itemsSold, _itemsTest, _itemsFavoritesOnly);
+            _itemsLevelMax, _itemsSort, _itemsStats, _itemsCrowns, _itemsSold, _itemsAuction, _itemsGoldOnly, _itemsTest, _itemsFavoritesOnly);
         WhenFavoritesChange(FAV_ITEMS, RenderItemsTab);
         _itemsList.ItemTemplate = new FuncDataTemplate<OtherItem>((item, _) => item is null ? new Panel() : ItemRow(item));
         _itemsList.SelectionChanged += (_, e) => {
@@ -104,9 +106,11 @@ internal sealed partial class ManagerWindow {
             SearchFilter("Level from", _itemsLevelMin),
             SearchFilter("Level to", _itemsLevelMax),
             SearchFilter("Sort by", _itemsSort),
+            SearchFilter("Bazaar (Auction House)", _itemsAuction),
             SearchTick(_itemsStats),
             SearchTick(_itemsCrowns),
             SearchTick(_itemsSold),
+            WithTip(SearchTick(_itemsGoldOnly), "Only items with a gold price and nothing else: no Crowns, Arena tickets or PvP coins. Many dropped items have a gold price too, so tick \"Sold by a vendor\" as well to see only what shops sell for gold."),
             SearchTick(_itemsTest),
             SearchTick(_itemsFavoritesOnly));
         var details = new ScrollViewer {
@@ -191,7 +195,7 @@ internal sealed partial class ManagerWindow {
 
         _itemsFiltersFilled = true;
         FillItemTypes(book);
-        FillFilterCombo(_itemsSchool, book.Items.Select(i => i.School).OrderBy(s => s, StringComparer.OrdinalIgnoreCase));
+        FillFilterCombo(_itemsSchool, SchoolChoices(book.Items.Select(i => i.School)));
         FillFilterCombo(_itemsRarity, book.Items.Select(i => i.Rarity).OrderBy(r => r, StringComparer.OrdinalIgnoreCase));
         FillFilterCombo(_itemsMark, book.Items.SelectMany(i => i.Flags).OrderBy(f => f, StringComparer.OrdinalIgnoreCase));
     }
@@ -222,6 +226,7 @@ internal sealed partial class ManagerWindow {
         var stats = _itemsStats.IsChecked == true;
         var crowns = _itemsCrowns.IsChecked == true;
         var sold = _itemsSold.IsChecked == true;
+        var goldOnly = _itemsGoldOnly.IsChecked == true;
         var test = _itemsTest.IsChecked == true;
         var favorites = Favorites(FAV_ITEMS);
         var favoritesOnly = _itemsFavoritesOnly.IsChecked == true;
@@ -240,6 +245,8 @@ internal sealed partial class ManagerWindow {
             && (!stats || i.Stats.Count > 0 || i.Spells.Count > 0)
             && (!crowns || i.CrownsOnly)
             && (!sold || sellers.ContainsKey(i.Id))
+            && AuctionMatches(_itemsAuction, i.Flags)
+            && (!goldOnly || CostsGoldOnly(i.GoldCost, i.CrownsCost, i.CrownsOnly, i.OtherCurrencyCost))
             && (!favoritesOnly || favorites.Contains(ItemKey(i))));
 
         List<OtherItem> shown = _itemsSort.SelectedIndex switch {
@@ -249,6 +256,8 @@ internal sealed partial class ManagerWindow {
             4 => [.. found.OrderByDescending(i => i.Level).ThenBy(i => i.Name, StringComparer.OrdinalIgnoreCase)],
             5 => [.. found.OrderByDescending(i => i.GoldCost).ThenBy(i => i.Name, StringComparer.OrdinalIgnoreCase)],
             6 => [.. found.OrderBy(i => i.Id)],
+            7 => [.. found.OrderBy(i => SchoolRank(IsAnySchool(i.School) ? "" : i.School))
+                .ThenBy(i => i.Name, StringComparer.OrdinalIgnoreCase).ThenBy(i => i.Id)],
             // The exact name (or ID) first, then names that start with what was typed.
             _ => [.. found.OrderBy(i => !(i.Name.Equals(query, StringComparison.OrdinalIgnoreCase) || i.Id == id))
                 .ThenBy(i => query.Length > 0 && !i.Name.StartsWith(query, StringComparison.OrdinalIgnoreCase))
