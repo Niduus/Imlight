@@ -449,7 +449,8 @@ internal static class RewrittenAI {
 
         var school = card.DamageSchool;
         double damage = Math.Max(0, card.BaseDamage);
-        damage *= 1 + BoostOf(caster, school);
+        // A Balance spell is boosted by the caster's Balance damage, whatever it lands as (CombatEffectApplicator.BoostSchoolOf).
+        damage *= 1 + BoostOf(caster, string.Equals(card.School, "Balance", StringComparison.OrdinalIgnoreCase) ? card.School : school);
         if (caster?._hangingEffects is { } own) {
             List<SpellEffect> charms;
             lock (own) {
