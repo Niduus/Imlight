@@ -65,7 +65,7 @@ internal sealed partial class UltimusDirectorActor {
 
     // Kept tame: one line every 40 seconds at most, and most moments pass without one.
     private static readonly TimeSpan s_lineGap = TimeSpan.FromSeconds(40);
-    private static readonly TimeSpan s_answerGap = TimeSpan.FromSeconds(30);
+    private static readonly TimeSpan s_answerGap = TimeSpan.FromSeconds(12);
     private DateTime _nextLine = DateTime.MinValue;
     private readonly Dictionary<ulong, DateTime> _answeredAt = [];
     private readonly Random _voiceRandom = new();
@@ -82,8 +82,12 @@ internal sealed partial class UltimusDirectorActor {
         ["bye"] = ["Goodbye", "Bye", "See you", "Later"],
         // A whisper it has no answer for: it is busy questing.
         ["busy"] = ["I'm busy", "Busy", "Sorry", "Not now", "Maybe later"],
-        ["questing"] = ["Questing", "I'm questing", "On a quest", "Busy"],
+        ["questing"] = ["I'm questing", "Questing", "On a quest", "quest", "I'm busy", "Busy"],
     };
+
+    // Busy with something it is not doing is never said (it answered "One minute, I'm busy fighting" and "Sorry I'm busy
+    // training my pet" while it walked to a quest): phrases with these words are left out unless they are true.
+    private static readonly string[] s_notDoing = ["fighting", "battle", "pet", "pets", "fishing", "garden", "gardening", "crafting", "shopping", "farming", "dueling", "PvP", "house", "brb", "afk"];
 
     // A player's phrase that asks to fight with it: yes while it is in a battle.
     private static readonly string[] s_fightAsks = ["help", "join", "battle", "fight", "need help", "can i"];
@@ -100,7 +104,10 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
-        if (MenuChatBook.Find(_voiceRandom, s_moments.GetValueOrDefault(moment) ?? []) is not { } phrase) {
+        var me = _team.Count > 0 ? _team[0] : null;
+        var fighting = me?.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId);
+        var leaveOut = s_notDoing.Where(w => !(fighting && w is "fighting" or "battle")).ToArray();
+        if (MenuChatBook.Find(_voiceRandom, leaveOut, s_moments.GetValueOrDefault(moment) ?? []) is not { } phrase) {
             return;
         }
 

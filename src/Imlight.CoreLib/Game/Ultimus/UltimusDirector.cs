@@ -588,7 +588,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 }
 
                 _stonesUsed[target.GlobalId] = DateTime.UtcNow;
-                _nextClick = DateTime.UtcNow.AddSeconds(4);
+                _nextClick = DateTime.UtcNow.AddSeconds(2.5);
                 break;
             case UltimusPlanner.SHOP:
                 ShopHere(group, target);
@@ -793,11 +793,16 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return false;
         }
 
-        return !_clicks.TryGetValue(key, out var done) || DateTime.UtcNow - done.Last > TimeSpan.FromSeconds(20);
+        return !_clicks.TryGetValue(key, out var done) || DateTime.UtcNow - done.Last > CLICK_AGAIN;
     }
 
+    // Quick hands (Niduus, 2026-11-13: "Have Ultimus be more responsive"): a click a second at most, the same thing clicked
+    // again after 12 seconds when it did nothing.
+    private static readonly TimeSpan CLICK_AGAIN = TimeSpan.FromSeconds(12);
+    private static readonly TimeSpan s_resendWalk = TimeSpan.FromSeconds(8);
+
     private void Clicked(string key) {
-        _nextClick = DateTime.UtcNow.AddSeconds(2);
+        _nextClick = DateTime.UtcNow.AddSeconds(1);
         _clicks[key] = (_clicks.TryGetValue(key, out var done) ? done.Times + 1 : 1, DateTime.UtcNow);
     }
 
@@ -1023,7 +1028,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         if (!replanSoon && _sent.TryGetValue(index, out var last) && last.Target is not null && last.Target.Same(target) && member.Walking
-            && DateTime.UtcNow - last.At < TimeSpan.FromSeconds(15)) {
+            && DateTime.UtcNow - last.At < s_resendWalk) {
             return;
         }
 

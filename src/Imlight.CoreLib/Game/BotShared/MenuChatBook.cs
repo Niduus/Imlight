@@ -49,9 +49,12 @@ internal static class MenuChatBook {
     internal static Phrase ById(uint id) => Phrases.FirstOrDefault(p => p.Id == id);
 
     /// <summary>A phrase whose text says one of the words (the first word that has any wins), picked at random; or null.</summary>
-    internal static Phrase Find(Random random, params string[] words) {
+    internal static Phrase Find(Random random, params string[] words) => Find(random, [], words);
+
+    /// <summary>The same, leaving out phrases that say any of <paramref name="leaveOut"/> (whole words, any case).</summary>
+    internal static Phrase Find(Random random, string[] leaveOut, string[] words) {
         foreach (var word in words) {
-            var matches = Phrases.Where(p => Says(p.Text, word)).ToList();
+            var matches = Phrases.Where(p => Says(p.Text, word) && !leaveOut.Any(l => Says(p.Text, l))).ToList();
             if (matches.Count > 0) {
                 return matches[random.Next(matches.Count)];
             }
