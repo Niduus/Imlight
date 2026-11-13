@@ -30,7 +30,7 @@ internal sealed partial class ManagerWindow {
     private const string QUEST_TEAM_LOGS_TAB = "Team Logs";
     private const string QUEST_TEAM_WIZARDS_TAB = "Team Wizards";
     private const string BOT_CONCEPT_SHOUT_OUT = "Shout out to Discord user gese11 for sharing the bot concept.";
-    private readonly WizardSheet _teamSheet = new("Turn the Quest Team on and start the server; once the four wizards are playing, pick one here to see its stats, gear, deck and quest.");
+    private readonly WizardSheet _teamSheet = new("Turn the Quest Team on and start the server; once the four wizards are playing, pick one here to see its stats, gear, deck and quest.") { Compact = true };
     private const int QUEST_TEAM_LOG_LINES = 300;
 
     private readonly TextBlock _teamState = new() { TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold };

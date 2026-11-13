@@ -62,6 +62,15 @@ internal sealed class WizardSheet {
         set => _book.Portrait = value;
     }
 
+    /// <summary>
+    /// The quest book starts closed (the Quest Team page: Niduus, 2026-11-13, "Both XP and Quest are to be shared in a more
+    /// compact manor for QT as that's based on 4 characters and that would clutter the page. Maybe a drop down section").
+    /// </summary>
+    internal bool Compact {
+        get => !_bookBox.IsExpanded;
+        set => _bookBox.IsExpanded = !value;
+    }
+
     private string _statsKey = "";
     private string _gearKey = "";
 
