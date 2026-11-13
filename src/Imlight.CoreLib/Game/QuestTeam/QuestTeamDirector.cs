@@ -1121,7 +1121,9 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
 
         // Collecting quest objects: round the creatures, not into a battle (Niduus, 2026-11-13: "avoid battles as much as
         // possible when collecting interactable quest items that are in the way of mobs").
-        var avoid = target.Kind == QuestTeamPlanner.USE ? Creatures(member) : null;
+        // And round every street creature area the step does not need, walked or not right now (MobSpawnAreas).
+        var avoid = RouteMobs.Avoid(member.ZoneActor, target.X, target.Y, target.Template == 0 ? null : [target.Template],
+            target.Kind == QuestTeamPlanner.USE ? Creatures(member) : null);
         // The legal way (Niduus, 2026-11-13): a step cut off by walls, water or a ledge is reached through the area's teleporter.
         var points = OverlayQuestPath.WalkLegal(member.CharId, member.Zone, member.X, member.Y, target.X, target.Y, avoid);
         _sent[index] = (target, DateTime.UtcNow, member.X, member.Y);

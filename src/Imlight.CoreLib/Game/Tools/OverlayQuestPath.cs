@@ -158,7 +158,9 @@ internal static class OverlayQuestPath {
     /// the area's own files and the ones the bots found), at most four. The Minimap's quest line, the Quest Team and
     /// Ultimus all take their way from here.
     /// </summary>
-    internal static List<Spot> Route(ulong charId, string zonePath, float fromX, float fromY, float toX, float toY) {
+    /// <param name="avoid">Spots to keep away from (the street's creature walks, <see cref="RouteMobs.Avoid"/>).</param>
+    internal static List<Spot> Route(ulong charId, string zonePath, float fromX, float fromY, float toX, float toY,
+        IReadOnlyList<(float X, float Y)> avoid = null) {
         var key = (Zone: zonePath ?? string.Empty, From: Rough(fromX, fromY), To: Rough(toX, toY));
         if (s_routes.TryGetValue(charId, out var last) && last.Zone == key.Zone && last.From == key.From && last.To == key.To
             && DateTime.UtcNow - last.At < TimeSpan.FromSeconds(10)) {
@@ -175,7 +177,7 @@ internal static class OverlayQuestPath {
                 }
 
                 taken.Add(pad);
-                foreach (var (px, py) in WalkCore(charId, zonePath, x, y, pad.X, pad.Y, false, null, remember: false)) {
+                foreach (var (px, py) in WalkCore(charId, zonePath, x, y, pad.X, pad.Y, false, avoid, remember: false)) {
                     spots.Add(new Spot(px, py));
                 }
 
@@ -184,7 +186,7 @@ internal static class OverlayQuestPath {
                 spots.Add(new Spot(x, y));
             }
 
-            foreach (var (px, py) in WalkCore(charId, zonePath, x, y, toX, toY, false, null, remember: false)) {
+            foreach (var (px, py) in WalkCore(charId, zonePath, x, y, toX, toY, false, avoid, remember: false)) {
                 spots.Add(new Spot(px, py));
             }
         }

@@ -355,6 +355,14 @@ internal static class UltimusPlanner {
                     return new Target(WAIT, leader.X, leader.Y, $"{step} (waits: the Quest Team is fighting these creatures)", questName, goalName, Key: key + "|wait");
                 }
 
+                // None up right now: into the street area where they spawn, to meet the next one (MobSpawnAreas).
+                if (wanted.Count == 0 && Tools.RouteMobs.SeekFor(leader.ZoneActor, leader.X, leader.Y, adjectives) is { } area) {
+                    var (ax, ay) = Tools.RouteMobs.Nearest(area, leader.X, leader.Y);
+                    if (Far(leader.X, leader.Y, ax, ay) > 300) {
+                        return new Target(SPOT, ax, ay, $"{step} (where they spawn)", questName, goalName, Key: key + "|spawns");
+                    }
+                }
+
                 break;
             }
 
