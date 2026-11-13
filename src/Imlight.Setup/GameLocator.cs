@@ -64,10 +64,46 @@ internal static partial class GameLocator {
         return null;
     }
 
+    /// <summary>
+    /// True when this Root.wad is in a downloaded copy of the game files that the game can't run from, such as one of
+    /// Aurorium's revision folders (data\V_r…, with Bin and Data inside, so it looks like an install). Its Bin has the
+    /// game program but no PatchConfig.xml, and the game started from there stops at once with the
+    /// "LoadMessageModule ... Base Messages" error (a player's report, 2026-11-13).
+    /// </summary>
+    internal static bool IsDownloadCopy(string? rootWad) {
+        if (string.IsNullOrWhiteSpace(rootWad)) {
+            return false;
+        }
+
+        try {
+            var gameData = Path.GetDirectoryName(Path.GetFullPath(rootWad));
+            var game = gameData is null ? null : Directory.GetParent(gameData)?.Parent?.FullName;
+            if (game is null) {
+                return false;
+            }
+
+            // Aurorium keeps the patch server's file list beside Bin and Data; an installed game has none there.
+            if (File.Exists(Path.Combine(game, "LatestFileList.bin")) || File.Exists(Path.Combine(game, "LatestFileList.xml"))) {
+                return true;
+            }
+
+            var bin = Path.Combine(game, "Bin");
+
+            return File.Exists(Path.Combine(bin, "WizardGraphicalClient.exe")) && !File.Exists(Path.Combine(bin, "PatchConfig.xml"));
+        }
+        catch (Exception ex) when (ex is ArgumentException or IOException or UnauthorizedAccessException or NotSupportedException) {
+            return false;
+        }
+    }
+
+    /// <summary>What to tell the player when the folder they gave is a download copy, not their Wizard101.</summary>
+    internal const string DOWNLOAD_COPY_MESSAGE = "That folder is a download of the game files (Aurorium's), not your Wizard101. " +
+        "Wizard101 can't start from it. Pick the folder Wizard101 is installed in instead, often C:\\ProgramData\\KingsIsle Entertainment\\Wizard101.";
+
     /// <summary>The saved Root.wad when it is still there, otherwise the first one found; saves a new find.</summary>
     internal static string? FindAndRemember(string installFolder) {
         var info = InstallInfo.Load(installFolder);
-        if (info.RootWad is { } saved && File.Exists(saved)) {
+        if (info.RootWad is { } saved && File.Exists(saved) && !IsDownloadCopy(saved)) {
             return saved;
         }
 
@@ -90,7 +126,7 @@ internal static partial class GameLocator {
     /// <summary>Looks everywhere Wizard101 is usually installed. <paramref name="lastKnown"/> is the saved place that is gone.</summary>
     internal static string? Search(string? lastKnown = null) {
         foreach (var folder in Places(lastKnown)) {
-            if (ResolveRootWad(folder) is { } found) {
+            if (ResolveRootWad(folder) is { } found && !IsDownloadCopy(found)) {
                 return found;
             }
         }

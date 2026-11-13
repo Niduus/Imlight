@@ -231,9 +231,10 @@ internal static class InstalledCommands {
     /// Starts the player's Wizard101 connected to the Imlight server on this computer.
     /// </summary>
     internal static int Play(string installFolder) {
-        var info = InstallInfo.Load(installFolder);
-        var client = info.GameFolder is { } game ? Path.Combine(game, "Bin", "WizardGraphicalClient.exe") : null;
-        if (client is null || !File.Exists(client)) {
+        // Saved somewhere the game can't run from (a downloaded copy such as Aurorium's) or moved: look for the real one.
+        var client = GameClient.ClientExe(installFolder)
+            ?? (GameLocator.FindAndRemember(installFolder) is not null ? GameClient.ClientExe(installFolder) : null);
+        if (client is null) {
             return Fail("Wizard101 could not be found. Click \"Update Ahziael\" at the top of the app once, then try again.");
         }
 

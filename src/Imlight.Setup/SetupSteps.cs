@@ -72,7 +72,7 @@ internal sealed class SetupSteps : IDisposable {
     /// </summary>
     internal string FindRootWad() {
         var info = InstallInfo.Load(_options.InstallFolder);
-        if (_options.GameFolder is null && info.RootWad is { } saved && File.Exists(saved)) {
+        if (_options.GameFolder is null && info.RootWad is { } saved && File.Exists(saved) && !GameLocator.IsDownloadCopy(saved)) {
             SetupLog.Info($"Using Wizard101 at {info.GameFolder ?? info.GameDataFolder}.");
 
             return saved;
@@ -107,6 +107,10 @@ internal sealed class SetupSteps : IDisposable {
     private string LocateRootWad() {
         if (_options.GameFolder is { } given) {
             var rootWad = ResolveRootWad(given) ?? throw new SetupException($"Root.wad was not found in {given}.");
+            if (GameLocator.IsDownloadCopy(rootWad)) {
+                throw new SetupException(GameLocator.DOWNLOAD_COPY_MESSAGE);
+            }
+
             SetupLog.Info($"Using Wizard101 at {given}.");
 
             return rootWad;
@@ -121,7 +125,12 @@ internal sealed class SetupSteps : IDisposable {
         while (true) {
             var answer = Prompt.Ask("Wizard101 was not found. Paste the folder it is installed in (the one with Data inside)");
             if (ResolveRootWad(answer.Trim('"', ' ')) is { } typed) {
-                return typed;
+                if (!GameLocator.IsDownloadCopy(typed)) {
+                    return typed;
+                }
+
+                SetupLog.Info(GameLocator.DOWNLOAD_COPY_MESSAGE);
+                continue;
             }
 
             SetupLog.Info("Root.wad is not in that folder. It should be at <folder>\\Data\\GameData\\Root.wad.");

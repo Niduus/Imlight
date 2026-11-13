@@ -2295,7 +2295,14 @@ internal sealed partial class ManagerWindow : Window {
         var picked = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions {
             Title = "Pick your Wizard101 folder (the one with Bin and Data inside)", AllowMultiple = false,
         });
-        if (picked.FirstOrDefault()?.TryGetLocalPath() is { } path && GameLocator.ResolveRootWad(path) is { } rootWad) {
+        var pickedPath = picked.FirstOrDefault()?.TryGetLocalPath();
+        if (pickedPath is not null && GameLocator.ResolveRootWad(pickedPath) is { } copyWad && GameLocator.IsDownloadCopy(copyWad)) {
+            // Good enough to build the server from, but never saved as the game's place: Play needs the real one.
+            Say(GameLocator.DOWNLOAD_COPY_MESSAGE + " Then click \"Update Ahziael\" again.", true);
+
+            return GameLocator.BuildOnlyCopy(folder) is not null;
+        }
+        else if (pickedPath is { } path && GameLocator.ResolveRootWad(path) is { } rootWad) {
             GameLocator.Remember(folder, rootWad);
             Say($"Wizard101 is at {path}. The update carries on.");
 
