@@ -1011,7 +1011,17 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                 return;
             }
 
-            var usable = member.Options.Where(o => o.Value.Any(s => s.Service == "Interact")).Select(o => o.Key).ToList();
+            // Only what this wizard hasn't used for the step yet; a spot with nothing left is done for it, and the team
+            // goes on to the next (Niduus, 2026-11-13: "Not revisiting collected ones they have collected independently").
+            var everything = member.Options.Where(o => o.Value.Any(s => s.Service == "Interact")).Select(o => o.Key).ToList();
+            var usable = everything.Where(id => !BotCollect.HasUsed(member.CharId, target.Quest, target.Goal, id)).ToList();
+            if (usable.Count == 0 && everything.Count > 0) {
+                BotCollect.SpotDone(member.CharId, target.Quest, target.Goal, target.X, target.Y);
+                Note(member.Role, $"{member.Name} already used what is here for {target.What}: on to the next one.");
+
+                return;
+            }
+
             if (usable.Count == 0) {
                 if (DateTime.UtcNow - _targetSince > TimeSpan.FromSeconds(45)) {
                     Issue("quest", target.Quest, $"{target.What}: at the quest arrow's spot there is nothing {member.Name} can use.",
@@ -1029,6 +1039,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
 
                 var option = member.Options[id].First(s => s.Service == "Interact");
                 Clicked(key);
+                BotCollect.Used(member.CharId, target.Quest, target.Goal, id, target.X, target.Y);
                 Note(member.Role, $"{member.Name} uses something for {target.What}.");
                 _actors[index].Tell(new QuestTeamMember.Interact(id, option.Service, option.Index, target.What));
 
@@ -1108,13 +1119,21 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             return;
         }
 
-        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, target.X, target.Y, body: true);
+        // Collecting quest objects: round the creatures, not into a battle (Niduus, 2026-11-13: "avoid battles as much as
+        // possible when collecting interactable quest items that are in the way of mobs").
+        var avoid = target.Kind == QuestTeamPlanner.USE ? Creatures(member) : null;
+        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, target.X, target.Y, body: true, avoid: avoid);
         _sent[index] = (target, DateTime.UtcNow, member.X, member.Y);
         _actors[index].Tell(new QuestTeamMember.WalkTo(points, target.What));
         if (index == 0) {
             _leaderLastTarget = target;
         }
     }
+
+    // The creatures out on this wizard's street (not the ones already in a battle).
+    private static List<(float X, float Y)> Creatures(QuestTeamMember.Status member)
+        => MinimapIndex.In(member.ZoneActor).Where(m => m.Kind is MinimapIndex.MOB or MinimapIndex.BOSS && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full))
+            .Select(m => (m.Object.m_location.X, m.Object.m_location.Y)).ToList();
 
     private void StopWalking(int index) {
         if (_team[index].Walking && !Unsticking(index)) {

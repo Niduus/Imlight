@@ -76,7 +76,10 @@ internal static class OverlayQuestPath {
     /// (Niduus, 2026-11-13: "bots visually to players go through walls"): with no way all the way, it walks as far as
     /// the walls let it, and a step inside a wall ends on the nearest floor instead.
     /// </remarks>
-    internal static List<(float X, float Y)> Walk(ulong charId, string zonePath, float fromX, float fromY, float toX, float toY, bool body = false) {
+    /// <param name="avoid">Creatures to keep away from (a wizard collecting quest objects goes around them, Niduus,
+    /// 2026-11-13: "avoid battles as much as possible"): ground near them costs as much as water, so the way bends round.</param>
+    internal static List<(float X, float Y)> Walk(ulong charId, string zonePath, float fromX, float fromY, float toX, float toY, bool body = false,
+        IReadOnlyList<(float X, float Y)> avoid = null) {
         var straight = new List<(float X, float Y)> { (toX, toY) };
         try {
             if (GridOf(zonePath) is not { } grid) {
@@ -89,7 +92,10 @@ internal static class OverlayQuestPath {
                 return straight;
             }
 
-            if (s_walks.TryGetValue(charId, out var last) && last.Zone == zonePath && last.Goal == goal && last.Start == start
+            if (avoid is { Count: > 0 }) {
+                grid = Avoiding(grid, avoid);
+            }
+            else if (s_walks.TryGetValue(charId, out var last) && last.Zone == zonePath && last.Goal == goal && last.Start == start
                 && DateTime.UtcNow - last.At < TimeSpan.FromSeconds(20)) {
                 return last.Points;
             }
@@ -202,6 +208,34 @@ internal static class OverlayQuestPath {
     private static readonly (int Dx, int Dy, float Len)[] s_moves = [
         (1, 0, 1), (-1, 0, 1), (0, 1, 1), (0, -1, 1), (1, 1, 1.4142f), (1, -1, 1.4142f), (-1, 1, 1.4142f), (-1, -1, 1.4142f),
     ];
+
+    /// <summary>How far round a creature a collecting wizard keeps, in game units.</summary>
+    private const float AVOID_RADIUS = 320f;
+
+    // A copy of the grid where the ground near each creature costs as much as water (walls stay walls).
+    private static Grid Avoiding(Grid grid, IReadOnlyList<(float X, float Y)> creatures) {
+        var cost = (byte[]) grid.Cost.Clone();
+        var reach = (int) MathF.Ceiling(AVOID_RADIUS / grid.Cell);
+        foreach (var (x, y) in creatures) {
+            var cx = (int) MathF.Floor((x - grid.Left) / grid.Cell);
+            var cy = (int) MathF.Floor((grid.Top - y) / grid.Cell);
+            for (var dy = -reach; dy <= reach; dy++) {
+                for (var dx = -reach; dx <= reach; dx++) {
+                    var (nx, ny) = (cx + dx, cy + dy);
+                    if (nx < 0 || ny < 0 || nx >= grid.Width || ny >= grid.Height || (dx * dx) + (dy * dy) > reach * reach) {
+                        continue;
+                    }
+
+                    var at = (ny * grid.Width) + nx;
+                    if (cost[at] != BLOCKED && cost[at] < 30) {
+                        cost[at] = 30;
+                    }
+                }
+            }
+        }
+
+        return grid with { Cost = cost };
+    }
 
     private static (float X, float Y) Center(Grid grid, int cell)
         => (grid.Left + ((cell % grid.Width) + 0.5f) * grid.Cell, grid.Top - ((cell / grid.Width) + 0.5f) * grid.Cell);

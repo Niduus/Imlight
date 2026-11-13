@@ -272,7 +272,7 @@ internal static class UltimusPlanner {
             .ToList();
         Target unresolved = null;
         foreach (var goal in ordered) {
-            var target = ForGoal(group[0], quest, goal);
+            var target = ForGoal(group, quest, goal);
             if (target is not null && target.Problem.Length == 0) {
                 return target;
             }
@@ -283,7 +283,8 @@ internal static class UltimusPlanner {
         return unresolved;
     }
 
-    private static Target ForGoal(UltimusMember.Status leader, QuestTemplate quest, GoalTemplate goal) {
+    private static Target ForGoal(IReadOnlyList<UltimusMember.Status> group, QuestTemplate quest, GoalTemplate goal) {
+        var leader = group[0];
         var zone = leader.Zone ?? "";
         var live = MinimapIndex.In(leader.ZoneActor);
         var step = OverlayQuestTracker.StepTitle(goal);
@@ -342,13 +343,24 @@ internal static class UltimusPlanner {
                 break;
             }
 
-            case WaypointGoalTemplate when nearest is { } spot:
+            // A "use" step written as a waypoint (Finding Out Why: open the fairy cages) is clicked, not walked onto (found
+            // by the Quest Team, Niduus, 2026-11-13).
+            case WaypointGoalTemplate when nearest is { } spot && goal.m_goalType != GOAL_TYPE.GOAL_TYPE_USAGE:
                 return new Target(SPOT, spot.Item1, spot.Item2, step, questName, goalName, Key: key);
         }
 
-        // A thing to use or pick up where the quest arrow points.
-        if (goal is not (PersonaGoalTemplate or BountyGoalTemplate or WaypointGoalTemplate) && nearest is { } useSpot) {
-            return new Target(USE, useSpot.Item1, useSpot.Item2, step, questName, goalName, Key: key);
+        // A thing to use or pick up where the quest arrow points: the next one not used yet, the free ones before the ones
+        // creatures stand by (Niduus, 2026-11-13: "redeem one and then seek out other's ... Not revisiting collected ones").
+        var usage = goal.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE;
+        if ((usage || goal is not (PersonaGoalTemplate or BountyGoalTemplate or WaypointGoalTemplate)) && nearest is not null) {
+            var holders = group.Where(m => m.Wizard?.QuestBehavior?.CurrentQuestInstances?.Any(q => q is not null
+                    && string.Equals(q.QuestName, questName, StringComparison.OrdinalIgnoreCase) && q.IsGoalActive(goalName)) == true)
+                .Select(m => m.CharId).ToList();
+            var creatures = MinimapIndex.In(leader.ZoneActor).Where(m => m.Kind is MinimapIndex.MOB or MinimapIndex.BOSS
+                                                                          && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full))
+                .Select(m => (m.Object.m_location.X, m.Object.m_location.Y)).ToList();
+            var next = BotShared.BotCollect.Order(spots.Select(p => (p.X, p.Y)).ToList(), holders, questName, goalName, leader.X, leader.Y, creatures)[0];
+            return new Target(USE, next.X, next.Y, step, questName, goalName, Key: key);
         }
 
         // The step is somewhere else: the way there.

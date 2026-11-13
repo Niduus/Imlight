@@ -267,7 +267,7 @@ internal static class QuestTeamPlanner {
             .ToList();
         Target unresolved = null;
         foreach (var goal in ordered) {
-            var target = ForGoal(group[0], quest, goal);
+            var target = ForGoal(group, quest, goal);
             if (target is not null && target.Problem.Length == 0) {
                 return target;
             }
@@ -278,7 +278,8 @@ internal static class QuestTeamPlanner {
         return unresolved;
     }
 
-    private static Target ForGoal(QuestTeamMember.Status leader, QuestTemplate quest, GoalTemplate goal) {
+    private static Target ForGoal(IReadOnlyList<QuestTeamMember.Status> group, QuestTemplate quest, GoalTemplate goal) {
+        var leader = group[0];
         var zone = leader.Zone ?? "";
         var live = MinimapIndex.In(leader.ZoneActor);
         var step = OverlayQuestTracker.StepTitle(goal);
@@ -327,8 +328,16 @@ internal static class QuestTeamPlanner {
 
         // A thing to use or pick up where the quest arrow points.
         var usage = goal.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE;
-        if ((usage || goal is not (PersonaGoalTemplate or BountyGoalTemplate or WaypointGoalTemplate)) && nearest is { } useSpot) {
-            return new Target(USE, useSpot.Item1, useSpot.Item2, step, questName, goalName, Key: key);
+        if ((usage || goal is not (PersonaGoalTemplate or BountyGoalTemplate or WaypointGoalTemplate)) && nearest is not null) {
+            // One after another (Niduus, 2026-11-13: "redeem one and then seek out other's ... Not revisiting collected
+            // ones"): the next spot someone still has to do, the free ones before the ones creatures stand by.
+            var holders = group.Where(m => m.Wizard?.QuestBehavior?.CurrentQuestInstances?.Any(q => q is not null
+                    && string.Equals(q.QuestName, questName, StringComparison.OrdinalIgnoreCase) && q.IsGoalActive(goalName)) == true)
+                .Select(m => m.CharId).ToList();
+            var creatures = live.Where(m => m.Kind is MinimapIndex.MOB or MinimapIndex.BOSS && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full))
+                .Select(m => (m.Object.m_location.X, m.Object.m_location.Y)).ToList();
+            var next = BotShared.BotCollect.Order(spots.Select(p => (p.X, p.Y)).ToList(), holders, questName, goalName, leader.X, leader.Y, creatures)[0];
+            return new Target(USE, next.X, next.Y, step, questName, goalName, Key: key);
         }
 
         // The step is somewhere else: the way there.
