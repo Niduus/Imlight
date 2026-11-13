@@ -908,7 +908,10 @@ internal sealed partial class ManagerWindow {
         Control icon;
         // Health, mana and energy use the game's globes first (Niduus, 2026-11-13: "these are the proper health and
         // mana icons with a green version in the files for energy"), shortest file name holding the words.
-        var picture = _spellBook is { } globeBook && s_gearIconGlobes.TryGetValue(key, out var globeWords)
+        // Niduus's picks (2026-11-13: "1 + 4 for HP, 2 + 4 for Mana and 3 + 5 for Energy"): the HUD's liquid ball inside its
+        // glass globe, put together from the game files as the game's own HUD shows them.
+        var picture = GlobePicture(key);
+        picture ??= _spellBook is { } globeBook && s_gearIconGlobes.TryGetValue(key, out var globeWords)
             ? globeWords.SelectMany(words => globeBook.FindImages(words).Where(n => n.EndsWith(".dds", StringComparison.OrdinalIgnoreCase)).Take(1))
                 .Select(GearPicture).FirstOrDefault(p => p is not null)
             : null;
@@ -928,6 +931,96 @@ internal sealed partial class ManagerWindow {
         ToolTip.SetTip(icon, tip);
 
         return icon;
+    }
+
+    // The globe and the liquid in it for each, from the HUD pictures in Root.wad.
+    private static readonly Dictionary<string, (string Glass, string Liquid)> s_globeParts = new(StringComparer.OrdinalIgnoreCase) {
+        ["health"] = ("Health_Back.dds", "Health_Liquid.dds"),
+        ["mana"] = ("Health_Back.dds", "Mana_Liquid.dds"),
+        ["energy"] = ("Energy_Back.dds", "Energy_Liquid.dds"),
+    };
+
+    // Where the liquid sits in the glass (out of 128) and how see-through it is, as on Niduus's picked pictures.
+    private const double GLOBE_LIQUID_SIZE = 82 / 128.0;
+    private const double GLOBE_LIQUID_LEFT = 23 / 128.0;
+    private const double GLOBE_LIQUID_TOP = 4 / 128.0;
+    private const double GLOBE_LIQUID_ALPHA = 0.7;
+
+    /// <summary>A health, mana or energy globe: the liquid ball (the full frame of its animation) inside the glass; null without the game files.</summary>
+    private Bitmap? GlobePicture(string key) {
+        if (!s_globeParts.TryGetValue(key, out var parts) || _spellBook is not { } book) {
+            return null;
+        }
+
+        var cacheKey = "globe:" + key;
+        if (_gearPictures.TryGetValue(cacheKey, out var cached)) {
+            return cached;
+        }
+
+        Bitmap? bitmap = null;
+        try {
+            if (book.Image(parts.Glass) is { } glass && book.Image(parts.Liquid) is { } liquid) {
+                bitmap = ToBitmap(Globe(glass, liquid));
+            }
+        }
+        catch (Exception) {
+            // The other pictures, or the drawn stand-in, show.
+        }
+
+        _gearPictures[cacheKey] = bitmap;
+
+        return bitmap;
+    }
+
+    private static GameImage Globe(GameImage glass, GameImage liquid) {
+        var (w, h) = (glass.Width, glass.Height);
+        var pixels = (byte[]) glass.Pixels.Clone();
+        // The liquid picture is a 3 by 3 sheet of its sloshing; the first frame is the full ball.
+        var (fw, fh) = (liquid.Width / 3, liquid.Height / 3);
+        var size = (int) Math.Round(GLOBE_LIQUID_SIZE * w);
+        var (left, top) = ((int) Math.Round(GLOBE_LIQUID_LEFT * w), (int) Math.Round(GLOBE_LIQUID_TOP * h));
+        for (var y = 0; y < size; y++) {
+            for (var x = 0; x < size; x++) {
+                var (tx, ty) = (left + x, top + y);
+                if (tx < 0 || ty < 0 || tx >= w || ty >= h) {
+                    continue;
+                }
+
+                // Bilinear sample of the frame.
+                var sx = ((x + 0.5) * fw / size) - 0.5;
+                var sy = ((y + 0.5) * fh / size) - 0.5;
+                var (x0, y0) = ((int) Math.Floor(sx), (int) Math.Floor(sy));
+                var (dx, dy) = (sx - x0, sy - y0);
+                Span<double> c = stackalloc double[4];
+                for (var k = 0; k < 4; k++) {
+                    double At(int px, int py) {
+                        px = Math.Clamp(px, 0, fw - 1);
+                        py = Math.Clamp(py, 0, fh - 1);
+
+                        return liquid.Pixels[((py * liquid.Width) + px) * 4 + k];
+                    }
+
+                    c[k] = (At(x0, y0) * (1 - dx) * (1 - dy)) + (At(x0 + 1, y0) * dx * (1 - dy))
+                           + (At(x0, y0 + 1) * (1 - dx) * dy) + (At(x0 + 1, y0 + 1) * dx * dy);
+                }
+
+                var o = ((ty * w) + tx) * 4;
+                var sa = c[3] / 255.0 * GLOBE_LIQUID_ALPHA;
+                var da = pixels[o + 3] / 255.0;
+                var oa = sa + (da * (1 - sa));
+                if (oa <= 0) {
+                    continue;
+                }
+
+                for (var k = 0; k < 3; k++) {
+                    pixels[o + k] = (byte) Math.Clamp(Math.Round(((c[k] * sa) + (pixels[o + k] * da * (1 - sa))) / oa), 0, 255);
+                }
+
+                pixels[o + 3] = (byte) Math.Clamp(Math.Round(oa * 255), 0, 255);
+            }
+        }
+
+        return new GameImage(w, h, pixels);
     }
 
     /// <summary>A picture from the game files by file name (or "token:" and a text icon's name), shown small; null when not there.</summary>
