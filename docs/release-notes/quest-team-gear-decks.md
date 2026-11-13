@@ -252,3 +252,8 @@ Changed: Collecting quest objects one after another, and around creatures
 When a step asks the Quest Team or Ultimus to use or collect several things (like the Bone Cages), each wizard now remembers what it has already used for that step. After using one, it goes on to the next one it hasn't done, and it never goes back to one it already used. Spots with no creatures nearby come first. On the way, its path bends around creatures, so it stays out of battles as much as it can. Ultimus also now clicks "use" steps that the quest writes as a "go to" (like the fairy cages), the same way the Quest Team does since 0.10.828.
 Where: in the game, on steps that ask to use or collect several things; Team Logs ("already used what is here ... on to the next one")
 Test: Let them reach a collect step like the Bone Cages. Each should use one, walk on to the next (around the creatures), and not come back to the ones they did.
+
+Fixed: A Quest Team issue on a door or exit could not skip the broken step
+Some issues come from walking a way out of an area, which has no quest of its own. Those issues could not skip the step, so the team could loop. They now use the quest the team is on, and the step gets skipped as with any other quest issue.
+Where: Quest Team > Team Issues
+Test: Nothing to do by hand. If the team loops at a door, the issue should say "Ahziael finished the step for them".
