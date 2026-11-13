@@ -112,7 +112,7 @@ internal static class OverlayQuestData {
 
     /// <summary>A picked quest's way on the minimap: the step spots (nearest first) and the walk to the nearest.</summary>
     internal sealed record Route(string Quest, string Title, string Kind, IReadOnlyList<(double X, double Y, string Name)> Points,
-                                 IReadOnlyList<(double X, double Y)> Path, string To, string Via);
+                                 IReadOnlyList<(double X, double Y)> Path, string To, string Via, IReadOnlySet<int>? Pads = null);
 
     private static readonly object s_lock = new();
     private static readonly Dictionary<long, Snapshot> s_lists = [];
@@ -324,15 +324,21 @@ internal static class OverlayQuestData {
                 points.Add((Number(item["x"]), Number(item["y"]), Short((string?) item["n"], 60)));
             }
 
+            // A spot with a third number 1 is a teleporter: the line jumps from it to the next spot.
             var path = new List<(double, double)>();
-            foreach (var item in (sent["path"] as JsonArray ?? []).OfType<JsonArray>().Take(80)) {
+            var pads = new HashSet<int>();
+            foreach (var item in (sent["path"] as JsonArray ?? []).OfType<JsonArray>().Take(120)) {
                 if (item.Count >= 2) {
+                    if (item.Count >= 3 && Number(item[2]) == 1) {
+                        pads.Add(path.Count);
+                    }
+
                     path.Add((Number(item[0]), Number(item[1])));
                 }
             }
 
             s_routes[window] = new Route(Short((string?) sent["quest"], 120), Short((string?) sent["t"], 120), Short((string?) sent["k"], 10),
-                points, path, Short((string?) sent["to"], 80), Short((string?) sent["via"], 80));
+                points, path, Short((string?) sent["to"], 80), Short((string?) sent["via"], 80), pads);
         }
     }
 
@@ -732,11 +738,23 @@ internal static class OverlayQuestRouteDrawing {
         var color = OverlayRenderer.Parse(look.ColorOf(route.Kind)) ?? Colors.Gold;
         var width = look.RouteWidth;
         if (route.Points.Count > 0) {
+            // The walk, broken at each teleporter: the line stops on the pad and goes on from where it lands (the
+            // teleporter itself drawn as a small ring at both ends).
             var line = new StreamGeometry();
+            var jumps = new List<(Point Pad, Point Lands)>();
             using (var g = line.Open()) {
                 g.BeginFigure(wizard, false);
-                foreach (var (x, y) in route.Path.Count > 0 ? route.Path : [(route.Points[0].X, route.Points[0].Y)]) {
-                    g.LineTo(project(x, y));
+                var path = route.Path.Count > 0 ? route.Path : [(route.Points[0].X, route.Points[0].Y)];
+                for (var i = 0; i < path.Count; i++) {
+                    var at = project(path[i].X, path[i].Y);
+                    if (i > 0 && route.Pads?.Contains(i - 1) == true) {
+                        g.EndFigure(false);
+                        jumps.Add((project(path[i - 1].X, path[i - 1].Y), at));
+                        g.BeginFigure(at, false);
+                        continue;
+                    }
+
+                    g.LineTo(at);
                 }
 
                 g.EndFigure(false);
@@ -745,6 +763,13 @@ internal static class OverlayQuestRouteDrawing {
             // A dark edge under the line, so it reads on streets and grass alike.
             context.DrawGeometry(null, new Pen(new SolidColorBrush(Color.FromArgb(0xB0, 0, 0, 0)), width + 2.5, lineCap: PenLineCap.Round, lineJoin: PenLineJoin.Round), line);
             context.DrawGeometry(null, new Pen(new SolidColorBrush(color), width, new DashStyle([2.2, 1.6], 0), PenLineCap.Round, PenLineJoin.Round), line);
+            foreach (var (pad, lands) in jumps) {
+                foreach (var spot in new[] { pad, lands }) {
+                    context.DrawEllipse(null, new Pen(new SolidColorBrush(Color.FromArgb(0xB0, 0, 0, 0)), 3.5), spot, iconSize * 0.55, iconSize * 0.55);
+                    context.DrawEllipse(null, new Pen(new SolidColorBrush(color), 1.8, new DashStyle([1.2, 1.0], 0)), spot, iconSize * 0.55, iconSize * 0.55);
+                }
+            }
+
             foreach (var (x, y, _) in route.Points) {
                 var at = project(x, y);
                 context.DrawEllipse(null, new Pen(new SolidColorBrush(Color.FromArgb(0xB0, 0, 0, 0)), 4), at, iconSize, iconSize);

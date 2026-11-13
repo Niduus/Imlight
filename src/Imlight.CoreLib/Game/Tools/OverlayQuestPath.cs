@@ -79,7 +79,11 @@ internal static class OverlayQuestPath {
     /// <param name="avoid">Creatures to keep away from (a wizard collecting quest objects goes around them, Niduus,
     /// 2026-11-13: "avoid battles as much as possible"): ground near them costs as much as water, so the way bends round.</param>
     internal static List<(float X, float Y)> Walk(ulong charId, string zonePath, float fromX, float fromY, float toX, float toY, bool body = false,
-        IReadOnlyList<(float X, float Y)> avoid = null) {
+        IReadOnlyList<(float X, float Y)> avoid = null)
+        => WalkCore(charId, zonePath, fromX, fromY, toX, toY, body, avoid, remember: true);
+
+    private static List<(float X, float Y)> WalkCore(ulong charId, string zonePath, float fromX, float fromY, float toX, float toY, bool body,
+        IReadOnlyList<(float X, float Y)> avoid, bool remember) {
         var straight = new List<(float X, float Y)> { (toX, toY) };
         try {
             if (GridOf(zonePath) is not { } grid) {
@@ -95,12 +99,16 @@ internal static class OverlayQuestPath {
             if (avoid is { Count: > 0 }) {
                 grid = Avoiding(grid, avoid);
             }
-            else if (s_walks.TryGetValue(charId, out var last) && last.Zone == zonePath && last.Goal == goal && last.Start == start
+            else if (remember && s_walks.TryGetValue(charId, out var last) && last.Zone == zonePath && last.Goal == goal && last.Start == start
                 && DateTime.UtcNow - last.At < TimeSpan.FromSeconds(20)) {
                 return last.Points;
             }
 
-            var (from, to) = (Open(grid, start), Open(grid, goal));
+            // A step standing in a wall cell (an NPC in an alcove, a door in its wall) opens onto the floor on the wizard's
+            // side, not the first floor cell found (that could be behind the wall, and the way then went all round it;
+            // Niduus, 2026-11-13: "This needs better intel, logic and behavior").
+            var from = Open(grid, start);
+            var to = Open(grid, goal, IslandLabel(zonePath, grid, from));
             var cells = Search(grid, from, to);
             // No way without a ledge (a ramp the file doesn't show as one): the way past walls only.
             if (cells is null) {
@@ -124,7 +132,9 @@ internal static class OverlayQuestPath {
             }
 
             var points = cells is null ? straight : Smooth(grid, cells, endX, endY);
-            s_walks[charId] = (zonePath, goal, start, DateTime.UtcNow, points);
+            if (remember) {
+                s_walks[charId] = (zonePath, goal, start, DateTime.UtcNow, points);
+            }
 
             return points;
         }
@@ -132,6 +142,87 @@ internal static class OverlayQuestPath {
             return straight;
         }
     }
+
+    /// <summary>One spot of a <see cref="Route"/>: walk to it; Pad means it is a teleporter, and the next spot is where it lands.</summary>
+    internal readonly record struct Spot(float X, float Y, bool Pad = false);
+
+    // The last route found for each wizard (found again when they moved, the step changed, or it is a few seconds old).
+    private static readonly ConcurrentDictionary<ulong, (string Zone, int From, int To, DateTime At, List<Spot> Spots)> s_routes = new();
+
+    /// <summary>
+    /// The legal way from (<paramref name="fromX"/>, <paramref name="fromY"/>) to the step, the one a player can follow
+    /// exactly (Niduus, 2026-11-13: "I want the draws on the mini map to be of legal routes, that way not only can the
+    /// player follow it completely but the bots (QT and Ultimus) can learn off the data"): on floor only (never over the
+    /// Minimap's black, through a wall or off a ledge), and, when the step is on ground walls, water or a ledge cut off
+    /// (Triton Avenue's Kraken isle, its raised lawn), through the area's teleporters (<see cref="Ultimus.UltimusPads"/>:
+    /// the area's own files and the ones the bots found), at most four. The Minimap's quest line, the Quest Team and
+    /// Ultimus all take their way from here.
+    /// </summary>
+    internal static List<Spot> Route(ulong charId, string zonePath, float fromX, float fromY, float toX, float toY) {
+        var key = (Zone: zonePath ?? string.Empty, From: Rough(fromX, fromY), To: Rough(toX, toY));
+        if (s_routes.TryGetValue(charId, out var last) && last.Zone == key.Zone && last.From == key.From && last.To == key.To
+            && DateTime.UtcNow - last.At < TimeSpan.FromSeconds(10)) {
+            return last.Spots;
+        }
+
+        var spots = new List<Spot>();
+        try {
+            var (x, y) = (fromX, fromY);
+            var taken = new List<Ultimus.UltimusPads.Pad>();
+            for (var hop = 0; hop < 4 && Apart(zonePath, x, y, toX, toY); hop++) {
+                if (Ultimus.UltimusPads.Toward(zonePath, x, y, toX, toY, taken) is not { } pad) {
+                    break;
+                }
+
+                taken.Add(pad);
+                foreach (var (px, py) in WalkCore(charId, zonePath, x, y, pad.X, pad.Y, false, null, remember: false)) {
+                    spots.Add(new Spot(px, py));
+                }
+
+                spots.Add(new Spot(pad.X, pad.Y, Pad: true));
+                (x, y) = (pad.ToX, pad.ToY);
+                spots.Add(new Spot(x, y));
+            }
+
+            foreach (var (px, py) in WalkCore(charId, zonePath, x, y, toX, toY, false, null, remember: false)) {
+                spots.Add(new Spot(px, py));
+            }
+        }
+        catch (Exception) {
+            spots = [new Spot(toX, toY)];
+        }
+
+        if (s_routes.Count > 200) {
+            s_routes.Clear();
+        }
+
+        s_routes[charId] = (key.Zone, key.From, key.To, DateTime.UtcNow, spots);
+
+        return spots;
+    }
+
+    /// <summary>
+    /// A server-played wizard's walk toward the step the legal way (the Quest Team): the same as <see cref="Walk"/>, except
+    /// that when the step is on ground cut off from where it stands, it walks onto the first teleporter of the
+    /// <see cref="Route"/> instead (after it lands, the next walk goes on from there).
+    /// </summary>
+    internal static List<(float X, float Y)> WalkLegal(ulong charId, string zonePath, float fromX, float fromY, float toX, float toY,
+        IReadOnlyList<(float X, float Y)> avoid = null) {
+        try {
+            if (Apart(zonePath, fromX, fromY, toX, toY)
+                && Ultimus.UltimusPads.Toward(zonePath, fromX, fromY, toX, toY) is { } pad) {
+                return Walk(charId, zonePath, fromX, fromY, pad.X, pad.Y, body: true, avoid: avoid);
+            }
+        }
+        catch (Exception) {
+            // The plain walk below.
+        }
+
+        return Walk(charId, zonePath, fromX, fromY, toX, toY, body: true, avoid: avoid);
+    }
+
+    // A spot rounded to 60 units, so a wizard standing still keeps the route it has.
+    private static int Rough(float x, float y) => HashCode.Combine((int) MathF.Floor(x / 60), (int) MathF.Floor(y / 60));
 
     private static readonly ConcurrentDictionary<string, int[]> s_islands = new(StringComparer.OrdinalIgnoreCase);
 
@@ -322,25 +413,61 @@ internal static class OverlayQuestPath {
         return (cy * grid.Width) + cx;
     }
 
-    // A wizard (or step) standing in a wall cell (the grid is coarse): the nearest cell that can be walked.
-    private static int Open(Grid grid, int cell) {
+    // A wizard (or step) standing in a wall cell (the grid is coarse): the nearest cell that can be walked, one on the
+    // island <paramref name="island"/> (the wizard's own floor) when there is one that near.
+    private static int Open(Grid grid, int cell, (int[] Labels, int Island) island = default) {
         if (grid.Cost[cell] != BLOCKED) {
             return cell;
         }
 
         var (x, y) = (cell % grid.Width, cell / grid.Width);
-        for (var r = 1; r < 6; r++) {
-            for (var dy = -r; dy <= r; dy++) {
-                for (var dx = -r; dx <= r; dx++) {
-                    var (nx, ny) = (x + dx, y + dy);
-                    if (nx >= 0 && ny >= 0 && nx < grid.Width && ny < grid.Height && grid.Cost[(ny * grid.Width) + nx] != BLOCKED) {
-                        return (ny * grid.Width) + nx;
-                    }
+        var (best, bestFar, mine, mineFar) = (-1, int.MaxValue, -1, int.MaxValue);
+        for (var dy = -OPEN_REACH; dy <= OPEN_REACH; dy++) {
+            for (var dx = -OPEN_REACH; dx <= OPEN_REACH; dx++) {
+                var (nx, ny) = (x + dx, y + dy);
+                if (nx < 0 || ny < 0 || nx >= grid.Width || ny >= grid.Height || grid.Cost[(ny * grid.Width) + nx] == BLOCKED) {
+                    continue;
+                }
+
+                var (at, far) = ((ny * grid.Width) + nx, (dx * dx) + (dy * dy));
+                if (far < bestFar) {
+                    (best, bestFar) = (at, far);
+                }
+
+                if (island.Labels is not null && island.Island >= 0 && island.Labels[at] == island.Island && far < mineFar) {
+                    (mine, mineFar) = (at, far);
                 }
             }
         }
 
+        if (mine >= 0) {
+            return mine;
+        }
+
+        if (best >= 0) {
+            return best;
+        }
+
         return cell;
+    }
+
+    // How far (in cells) a spot in a wall looks for floor.
+    private const int OPEN_REACH = 7;
+
+    // The island labels of the area and the island of the cell (-1 when not known).
+    private static (int[] Labels, int Island) IslandLabel(string zonePath, Grid grid, int cell) {
+        try {
+            if (s_islands.Count > 24) {
+                s_islands.Clear();
+            }
+
+            var labels = s_islands.GetOrAdd(zonePath, _ => Islands(grid));
+
+            return labels.Length == grid.Cost.Length ? (labels, labels[cell]) : default;
+        }
+        catch (Exception) {
+            return default;
+        }
     }
 
     private static readonly (int Dx, int Dy, float Len)[] s_moves = [
