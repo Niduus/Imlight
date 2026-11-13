@@ -105,6 +105,20 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         => System.Math.Clamp(ConfigurationManager.GetValue("World.EnemyShowCheckSeconds", 3.0), 0, 60);
     private static readonly System.TimeSpan DUEL_RESEND_DELAY = System.TimeSpan.FromSeconds(3);
 
+    // Models missing after teleports (Niduus, 2026-11-13). The game takes a little while to let go of an object it was
+    // told to remove (it fades out first). An object sent again inside that time is dropped ("MSG_NewObject() received
+    // object ... that already present" in WizardClient.log), and once the old copy is gone the object is missing until
+    // the player walks away and back. This happens when a wizard teleports away and straight back (a teleporter pad and
+    // its way back, a recall, a teleport to a friend nearby), or steps over the edge of an object's draw distance and back.
+    // An object sent to a player within this time of being taken from them waits out the rest of it first.
+    private static readonly System.TimeSpan SHOW_AFTER_REMOVE_DELAY = System.TimeSpan.FromMilliseconds(750);
+    private const string SHOW_AFTER_REMOVE_TIMER = "ShowAfterRemove_";
+    // When the object was last taken from each player's game, and from everyone's (OnDisabled).
+    private readonly Dictionary<IActorRef, System.DateTime> _removedAt = [];
+    private System.DateTime _removedFromAllAt = System.DateTime.MinValue;
+    // Players the object waits to be sent to (the timer above is running for them).
+    private readonly HashSet<IActorRef> _showPending = [];
+
     public static bool ShouldAttachToEntity(CoreTemplate template)
         => template is GameObjectTemplate gameObjectTemplate
         && gameObjectTemplate.m_behaviors.Any(x => x is RenderBehaviorTemplate)
@@ -172,6 +186,8 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         // Nobody has the object any more. The requirements record stays so a re-enable can send it again.
         _playersInRange.Clear();
         _sentTo.Clear();
+        _removedFromAllAt = System.DateTime.UtcNow;
+        CancelPendingShows();
     }
 
     public override void OnPlayerJoin(CoreObject player, IActorRef suspect, Wizard wizard) {
@@ -272,11 +288,14 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         _lastSeen.Remove(suspect);
         _sentTo.Remove(suspect);
 
-        if (_playerIgnoreBecauseDynamod.Remove(suspect) | _hiddenUntilQuest.Remove(suspect)) {
-            return;
+        var hidden = _playerIgnoreBecauseDynamod.Remove(suspect) | _hiddenUntilQuest.Remove(suspect);
+        if (!hidden) {
+            DespawnObjectForPlayer(suspect);
         }
 
-        DespawnObjectForPlayer(suspect);
+        // A game that leaves the zone loads the next one from scratch: nothing it is sent later has to wait.
+        _removedAt.Remove(suspect);
+        CancelPendingShow(suspect);
     }
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
@@ -388,6 +407,16 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         // already ignores the second.
         Timers.StartSingleTimer($"EnemyResend_{player.Path}", new ZONE_102_PROTOCOL.MSG_ENEMYRESEND { PlayerActor = player },
             DUEL_RESEND_DELAY);
+    }
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_SHOWAFTERREMOVE))]
+    private void ReceiveShowAfterRemove(ZONE_102_PROTOCOL.MSG_SHOWAFTERREMOVE message) {
+        var player = message.PlayerActor;
+        if (player is null || !_showPending.Remove(player) || !IsEnabled || Entity.ActiveGameObject is null) {
+            return;
+        }
+
+        SendObjectTo(player);
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ENEMYRESEND))]
@@ -779,6 +808,44 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     }
 
     private void CreateObjectForPlayer(IActorRef player) {
+        if (player is null) {
+            return;
+        }
+
+        // Taken from this game a moment ago: sent now, the game would drop it while it still lets the old copy go.
+        var removed = _removedAt.TryGetValue(player, out var at) ? at : System.DateTime.MinValue;
+        if (_removedFromAllAt > removed) {
+            removed = _removedFromAllAt;
+        }
+
+        var wait = SHOW_AFTER_REMOVE_DELAY - (System.DateTime.UtcNow - removed);
+        if (wait > System.TimeSpan.Zero) {
+            _showPending.Add(player);
+            // Counted as sent, so the enemy show check does not send it as well in the meantime.
+            _sentTo.Add(player);
+            Timers.StartSingleTimer($"{SHOW_AFTER_REMOVE_TIMER}{player.Path}",
+                new ZONE_102_PROTOCOL.MSG_SHOWAFTERREMOVE { PlayerActor = player }, wait);
+
+            return;
+        }
+
+        CancelPendingShow(player);
+        SendObjectTo(player);
+    }
+
+    private void CancelPendingShow(IActorRef player) {
+        if (player is not null && _showPending.Remove(player)) {
+            Timers.Cancel($"{SHOW_AFTER_REMOVE_TIMER}{player.Path}");
+        }
+    }
+
+    private void CancelPendingShows() {
+        foreach (var player in _showPending.ToList()) {
+            CancelPendingShow(player);
+        }
+    }
+
+    private void SendObjectTo(IActorRef player) {
         // Serialize the client object.
         var clientObj = Entity.GetClientObject();
         if (!_serializer.Serialize(clientObj, _propertyFlags, out var serializedData)) {
@@ -801,6 +868,15 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     }
 
     private void CreateObjectForAllPlayers() {
+        // Taken from everyone a moment ago (turned off and straight back on): each game gets it once it let the old go.
+        if (System.DateTime.UtcNow - _removedFromAllAt < SHOW_AFTER_REMOVE_DELAY) {
+            foreach (var player in _lastSeen.Keys.ToList()) {
+                CreateObjectForPlayer(player);
+            }
+
+            return;
+        }
+
         // Serialize the client object.
         var clientObj = Entity.GetClientObject();
         if (!_serializer.Serialize(clientObj, _propertyFlags, out var serializedData)) {
@@ -862,6 +938,8 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         };
         player.Tell(despawnObjectMsg);
         _sentTo.Remove(player);
+        _removedAt[player] = System.DateTime.UtcNow;
+        CancelPendingShow(player);
     }
 
 }

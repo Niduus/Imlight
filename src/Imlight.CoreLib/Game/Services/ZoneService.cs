@@ -350,6 +350,12 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             // Check if the destination zone is the same as the current zone. If so, just teleport the player.
             var wizard = GetActiveWizard();
             if (!message.ForceReload && message.DestinationZone == wizard.Zone && message.HouseLotGid == wizard.AttachedLotGid) {
+                // The zone set a place (mobile id) aside for a wizard arriving; one moving within it keeps their own, so the
+                // spare is given back. Every touch of a street teleporter used to keep one for good.
+                if (zoneDetails.MobileId != 0 && zoneDetails.MobileId != GetActiveGameObject()?.m_nMobileID) {
+                    zoneDetails.ZoneActorRef?.Tell(new ZONE_102_PROTOCOL.MSG_RELEASEMOBILEID { MobileId = zoneDetails.MobileId });
+                }
+
                 // A teleporter within the area (Triton Avenue's "To Lower Triton", the Kraken isle's way over) waits a moment
                 // with its sparkle before it sends the wizard, as in the game. It sent them the instant they touched it, so
                 // whoever landed beside the way back was sent straight back, over and over (Niduus, 2026-11-13: "there is no
@@ -1854,7 +1860,31 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             Selfless = false,
         };
         ReceiveZoneBroadcast(broadcastMsg);
+
+        // The teleport effect put the wizard in the game's "Teleport" state (it fades the wizard out and blocks talking
+        // and battles). A move to another zone loads the wizard anew, but one within the same area kept them in it, so
+        // after a street teleporter, a recall or a teleport to someone close by the wizard stayed faded out for everyone
+        // (Niduus, 2026-11-13: models missing after teleports). The wizard is brought back into the world here.
+        SendBackInWorld();
     }
+
+    private void SendBackInWorld() {
+        var wizard = GetActiveWizard();
+        if (wizard?.GameObject is null) {
+            return;
+        }
+
+        ReceiveZoneBroadcast(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+            Message = new GAME_5_PROTOCOL.MSG_ENTERSTATE {
+                GameObjectID = wizard.GameObject.m_globalID,
+                State = StringHash.Compute(IN_WORLD_STATE),
+            },
+            Selfless = false,
+        });
+    }
+
+    // The player's state set (PlayerMobileStates) has a Teleport category: InWorld, and Teleport while going.
+    internal const string IN_WORLD_STATE = "InWorld";
 
     private void SpawnMyself() {
         var wizard = GetActiveWizard();
