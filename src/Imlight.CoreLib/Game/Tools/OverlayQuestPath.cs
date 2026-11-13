@@ -40,6 +40,13 @@ internal static class OverlayQuestPath {
     private sealed record Grid(float Left, float Top, float Cell, int Width, int Height, byte[] Cost, float[] Heights, float[] Lows = null) {
 
         /// <summary>
+        /// The costs with the cells that show no floor counted as an unmarked floor (walls still walls): the last try of a
+        /// wizard's own walk when the floor the file shows leaves it no way at all (Niduus's log, 2026-11-13: Ultimus stood
+        /// on The Oasis's Spiral Door platform for over an hour; the stairs down show no floor in the file).
+        /// </summary>
+        internal byte[] Loose { get; init; }
+
+        /// <summary>
         /// Whether a step between two cells this far apart (in cells) climbs or drops more than a wizard can walk. A cell
         /// with ground at two heights (a hall under a balcony, a stream under a bridge) can be walked at either.
         /// </summary>
@@ -137,6 +144,18 @@ internal static class OverlayQuestPath {
             if (cells is null) {
                 grid = grid with { Heights = null };
                 cells = Search(grid, from, to, partial: body);
+            }
+
+            // A wizard's own walk that gets nowhere near the step on the floor the file shows (a stair or ramp the file
+            // shows no floor on cuts it off): over the unshown floor too, walls still walls. Only when that reaches the step.
+            if (body && grid.Loose is { } looseCost && (cells is null || cells.Count == 0 || cells[^1] != to)) {
+                var looseGrid = grid with { Cost = avoid is { Count: > 0 } ? Avoiding(grid with { Cost = looseCost }, avoid).Cost : looseCost, Heights = null };
+                var looseTo = Open(looseGrid, goal);
+                if (Search(looseGrid, Open(looseGrid, start), looseTo) is { Count: > 0 } looseCells) {
+                    grid = looseGrid;
+                    to = looseTo;
+                    cells = looseCells;
+                }
             }
 
             // A wizard's step inside a wall (the grid is coarse, a door sits in its wall): kept when it is just by the
@@ -416,17 +435,19 @@ internal static class OverlayQuestPath {
     // floor, so a way could cut across it, off the edge of a raised lawn or into the gap behind a fence.
     private static Grid Costs(ZoneGround.WalkGround ground) {
         var cost = new byte[ground.Kinds.Length];
+        var loose = new byte[ground.Kinds.Length];
         for (var i = 0; i < cost.Length; i++) {
             var noFloor = Void(ground, i) && !Between(ground, i);
-            cost[i] = noFloor ? BLOCKED : (byte) (ground.Kinds[i] switch {
+            loose[i] = (byte) (ground.Kinds[i] switch {
                 ZoneGround.PATH or ZoneGround.GRASS => 1,
                 ZoneGround.WALL => BLOCKED,
                 ZoneGround.WATER => 25,
                 _ => 20,
             });
+            cost[i] = noFloor ? BLOCKED : loose[i];
         }
 
-        return new Grid(ground.Left, ground.Top, ground.Cell, ground.Width, ground.Height, cost, ground.Heights, ground.Lows);
+        return new Grid(ground.Left, ground.Top, ground.Cell, ground.Width, ground.Height, cost, ground.Heights, ground.Lows) { Loose = loose };
     }
 
     private static bool Void(ZoneGround.WalkGround ground, int i)

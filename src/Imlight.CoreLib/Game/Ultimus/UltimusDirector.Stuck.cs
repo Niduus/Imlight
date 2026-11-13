@@ -74,10 +74,13 @@ internal sealed partial class UltimusDirectorActor {
         // it goes back to the area's start at once rather than after three tries.
         var boxedIn = tries < 3 && BoxedIn(member);
         if (boxedIn) {
+            if (StartIsHere(index, member, where, quest)) {
+                return;
+            }
+
             Note("Ultimus", $"{member.Name} is boxed in at {where} (a small patch cut off by a fence or a ledge, no teleporter on it): goes back to where {UltimusText.Zone(member.Zone)} starts.",
                 UltimusLink.ABNORMAL);
-            _actors[index].Tell(new UltimusMember.Recall());
-            _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
+            Recall(index, member);
 
             return;
         }
@@ -91,10 +94,13 @@ internal sealed partial class UltimusDirectorActor {
         // The self-check: stepping aside twice did not free it, so the server takes it back to where the area starts (a
         // place cut off from the way on, such as the Kraken isle, is left that way), and the way is found again from there.
         if (tries >= 3) {
+            if (StartIsHere(index, member, where, quest)) {
+                return;
+            }
+
             Note("Ultimus", $"{member.Name} is still stuck in {where}: goes back to where {UltimusText.Zone(member.Zone)} starts and finds the way from there.",
                 UltimusLink.ABNORMAL);
-            _actors[index].Tell(new UltimusMember.Recall());
-            _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
+            Recall(index, member);
 
             return;
         }
@@ -121,6 +127,51 @@ internal sealed partial class UltimusDirectorActor {
         _actors[index].Tell(new UltimusMember.WalkTo(aside, "steps aside to get unstuck"));
         _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
         OverlayQuestPath.Forget(member.CharId);
+    }
+
+    // Where going back to an area's start put each wizard (by area), and a go-back that has not landed yet.
+    private readonly Dictionary<string, (float X, float Y)> _startLanding = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<int, (string Zone, DateTime At)> _recalling = [];
+
+    private void Recall(int index, UltimusMember.Status member) {
+        _actors[index].Tell(new UltimusMember.Recall());
+        _recalling[index] = (member.Zone ?? "", DateTime.UtcNow);
+        _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
+    }
+
+    // A few seconds after going back to the start: where it landed is the area's start.
+    private void NoteStartLanding(int index, UltimusMember.Status member) {
+        if (_recalling.TryGetValue(index, out var going) && DateTime.UtcNow - going.At > TimeSpan.FromSeconds(4)) {
+            _recalling.Remove(index);
+            if (string.Equals(going.Zone, member.Zone, StringComparison.OrdinalIgnoreCase)) {
+                _startLanding[member.Zone] = (member.X, member.Y);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Stuck right where going back to the area's start puts it (Niduus's log, 2026-11-13: Ultimus went back to The Oasis's
+    /// start every minute and a half for over an hour, and stood still there each time): going back again is no use, so it
+    /// walks well away instead (over floor the file does not show, if that is the only way), and it is written up once.
+    /// True when that was done.
+    /// </summary>
+    private bool StartIsHere(int index, UltimusMember.Status member, string where, string quest) {
+        if (!_startLanding.TryGetValue(member.Zone ?? "", out var start) || UltimusPlanner.Far(start.X, start.Y, member.X, member.Y) > 400) {
+            return false;
+        }
+
+        Issue("team", quest, $"{member.Name} is stuck at {where}, where {UltimusText.Zone(member.Zone)} starts, while {_doing}: going back to the start would put it here again.",
+            key: $"start-stuck|{member.Zone}", skipStep: false, level: UltimusLink.ABNORMAL);
+        var spot = BotStuck.StepAside(member.Zone, member.X, member.Y, member.Z, 900f, 2500f)
+                   ?? (member.X + Random.Shared.Next(-900, 900), member.Y + Random.Shared.Next(-900, 900));
+        Note("Ultimus", $"{member.Name} is stuck where {UltimusText.Zone(member.Zone)} starts, so going back there is no use: walks well away and finds the way from there.",
+            UltimusLink.ABNORMAL);
+        var away = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, spot.X, spot.Y, body: true);
+        _actors[index].Tell(new UltimusMember.WalkTo(away, "walks away from the area's start to get unstuck"));
+        _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
+        OverlayQuestPath.Forget(member.CharId);
+
+        return true;
     }
 
     // A patch under a twentieth of the area's main ground with no teleporter on it.
