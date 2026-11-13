@@ -343,7 +343,18 @@ internal sealed partial class UltimusDirectorActor {
                     continue;
                 }
 
-                if (piece.Gold > gold && wizard.GameStats is { } stats) {
+                // A shopkeeper of it here first: one that really sells it now (Niduus's log, 2026-11-13: Wul'yahm in The
+                // Oasis was asked twice each for a Lifebringer's Athame and a Jewel of Instinct the vendor list gives him,
+                // and refused both, as he does not sell them).
+                var here = live.FirstOrDefault(m => vendors.Contains((uint) m.Template));
+                if (here is not null && !Sells(here, piece.Id)) {
+                    Note(member.Role, $"{member.Name}: {here.Name} does not sell {piece.Name} after all; it looks elsewhere.");
+                    _shopSkipped.Add(piece.Id);
+                    continue;
+                }
+
+                // Ahziael gives what it lacks only when it stands at a shop that sells it.
+                if (here is not null && piece.Gold > gold && wizard.GameStats is { } stats) {
                     var give = (int) Math.Ceiling(piece.Gold / (1 - GOLD_KEPT)) - stats.m_currentGold + 1;
                     if (give > 0) {
                         wizard.AddGold(give);
@@ -353,8 +364,6 @@ internal sealed partial class UltimusDirectorActor {
                     }
                 }
 
-                // A shopkeeper of it here first.
-                var here = live.FirstOrDefault(m => vendors.Contains((uint) m.Template));
                 if (here is not null) {
                     return new UltimusPlanner.Target(UltimusPlanner.SHOP, here.Object.m_location.X, here.Object.m_location.Y,
                         $"{member.Name} buys {piece.Name} from {here.Name}", Template: here.Template, GlobalId: here.Object.m_globalID.Full,
@@ -370,6 +379,17 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         return null;
+    }
+
+    // Whether the shopkeeper standing here sells the item now (its live shop list, with the Customs tab's changes).
+    private static bool Sells(MinimapIndex.Mark vendor, uint itemId) {
+        try {
+            return vendor.Entity?.GetComponentOfType<Zone.Components.InteractVendorComponent>() is not { } shop
+                   || shop.HasItem(new Imcodec.Types.GID((ulong) itemId));
+        }
+        catch (Exception) {
+            return true;
+        }
     }
 
     private static IEnumerable<string> VendorZones(IReadOnlyList<uint> vendors) {

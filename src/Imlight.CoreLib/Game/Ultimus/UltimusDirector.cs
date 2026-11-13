@@ -379,7 +379,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
     private DateTime _dialogSince = DateTime.MaxValue;
     private readonly Dictionary<ulong, DateTime> _stonesUsed = [];
-    private readonly List<DateTime> _zoneChanges = [];
+    private readonly List<(DateTime At, string Zone)> _zoneChanges = [];
 
     // Alone, it needs more in the tank than a team member before a fight.
     private const double READY_HEALTH = 0.75;
@@ -1047,6 +1047,15 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // The street's creature areas too, walked or not right now (MobSpawnAreas), except the step's own creatures.
         var walkAvoid = RouteMobs.Avoid(member.ZoneActor, toX, toY, target.Template == 0 ? null : [target.Template], avoid);
         var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, toX, toY, body: true, avoid: walkAvoid);
+        // A walk that goes nowhere while the step is far: said once per step, with the spots, so the log shows where the
+        // map gives no way (Niduus's log, 2026-11-13: it stood at The Oasis's start for an hour with nothing said).
+        if (UltimusPlanner.Far(member.X, member.Y, toX, toY) > 300
+            && (points.Count == 0 || UltimusPlanner.Far(member.X, member.Y, points[^1].X, points[^1].Y) < 60)
+            && _noWaySaid.Add($"{member.Zone}|{(int) (toX / 200)}|{(int) (toY / 200)}")) {
+            Note("Ultimus", $"{member.Name} finds no way on the map from ({member.X:0}, {member.Y:0}) to \"{what}\" at ({toX:0}, {toY:0}) in {UltimusText.Zone(member.Zone)}.",
+                UltimusLink.ABNORMAL);
+        }
+
         _sent[index] = (target, DateTime.UtcNow, member.X, member.Y);
         _actors[index].Tell(new UltimusMember.WalkTo(points, what));
         if (index == 0) {
@@ -1103,9 +1112,13 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             // Going in and out of areas again and again is a way that loops (Niduus's log, 2026-11-12: "to Savarstaad Pass"
             // while already in Savarstaad Pass, every few seconds): an issue, and the step is skipped, as a player would
             // be stuck there.
-            _zoneChanges.Add(DateTime.UtcNow);
-            _zoneChanges.RemoveAll(t => DateTime.UtcNow - t > TimeSpan.FromSeconds(90));
-            if (_zoneChanges.Count >= 8) {
+            // Only coming back into the same area again and again counts: a quick trip through many areas (The Commons,
+            // Ravenwood, the World Tree, the Spiral Door's landing and The Oasis) is no loop (Niduus's log, 2026-11-13: "A
+            // Whole New World" was skipped as a loop on its way to Krokotopia).
+            _zoneChanges.Add((DateTime.UtcNow, leader.Zone ?? ""));
+            _zoneChanges.RemoveAll(t => DateTime.UtcNow - t.At > TimeSpan.FromSeconds(90));
+            var again = _zoneChanges.Count(z => string.Equals(z.Zone, leader.Zone, StringComparison.OrdinalIgnoreCase));
+            if (_zoneChanges.Count >= 8 && again >= 4) {
                 _zoneChanges.Clear();
                 var what = _target?.What ?? "the next step";
                 Issue("quest", _target?.Quest ?? _currentQuest, $"The way to \"{what}\" goes round in a loop: {leader.Name} went in and out of " +
@@ -1328,6 +1341,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
     }
 
+    private readonly HashSet<string> _noWaySaid = [];
     private int _idleRestarts;
     private DateTime _idleRestartAt = DateTime.MinValue;
 
@@ -1359,9 +1373,15 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
 
+        if (StartIsHere(0, leader, $"{UltimusText.Zone(leader.Zone)} at ({leader.X:0}, {leader.Y:0})", _target?.Quest ?? _currentQuest)) {
+            _idleRestarts = 0;
+
+            return;
+        }
+
         Note("Ultimus", $"{leader.Name} made no progress for {minutes} minutes: goes back to where {UltimusText.Zone(leader.Zone)} starts and finds the way from there.",
             UltimusLink.ABNORMAL);
-        _actors[0].Tell(new UltimusMember.Recall());
+        Recall(0, leader);
         _idleRestarts = 0;
     }
 
