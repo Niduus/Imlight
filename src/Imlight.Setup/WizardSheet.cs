@@ -31,6 +31,11 @@ internal sealed class WizardSheet {
     private readonly StackPanel _deck = new() { Spacing = 2 };
     private readonly TextBlock _spells = Text();
     private readonly TextBlock _empty = Text();
+    private readonly XpBar _xp = new();
+    private readonly Control _xpRow;
+    private readonly QuestBookView _book = new();
+    private readonly Expander _bookBox;
+    private string _xpFor = "";
     private readonly Control _body;
     private string _picked = "";
     private JsonObject? _shown;
@@ -51,6 +56,12 @@ internal sealed class WizardSheet {
     /// <summary>A gear slot's icon ("Hat", "Robe", ... "Deck") at a size, as the game's backpack tabs show them.</summary>
     internal Func<string, double, Control>? SlotIcon { get; set; }
 
+    /// <summary>A portrait by name at a size for the quest book's cards (the window's drawn one); initials without it.</summary>
+    internal Func<string, double, Control>? Portrait {
+        get => _book.Portrait;
+        set => _book.Portrait = value;
+    }
+
     private string _statsKey = "";
     private string _gearKey = "";
 
@@ -65,7 +76,18 @@ internal sealed class WizardSheet {
         var deck = Section(null, _deck, 1, 0, _deckTitle);
         columns.Children.Add(deck);
         columns.Children.Add(Section("Trained spells", _spells, 1, 2));
-        _body = new StackPanel { Spacing = 10, Children = { _title, _where, _quest, columns } };
+        // The XP bar under the name, as the game shows it at the bottom of the screen (Niduus, 2026-11-13), and the quest
+        // book under the rest, a drop-down that opens as the game's "All Current Quests" page.
+        var xpLabel = Text("XP", strong: true);
+        xpLabel.VerticalAlignment = VerticalAlignment.Center;
+        _xp.MaxWidth = 560;
+        _xp.HorizontalAlignment = HorizontalAlignment.Left;
+        _xpRow = new DockPanel { Children = { WithDock(xpLabel, Dock.Left, new Thickness(0, 0, 10, 0)), _xp } };
+        _bookBox = new Expander {
+            Header = Text("Quests", strong: true), IsExpanded = true, HorizontalAlignment = HorizontalAlignment.Stretch,
+            HorizontalContentAlignment = HorizontalAlignment.Stretch, Content = _book,
+        };
+        _body = new StackPanel { Spacing = 10, Children = { _title, _where, _xpRow, _quest, columns, _bookBox } };
         View = new StackPanel { Spacing = 12, Children = { _picker, _empty, _body } };
         _body.IsVisible = false;
     }
@@ -122,6 +144,17 @@ internal sealed class WizardSheet {
         _where.Text = $"In {Or(S(m, "zone"), "?")}  ·  health {Or(S(m, "health"), "?")}" +
                       (S(m, "mana") is { Length: > 0 } mana ? $"  ·  mana {mana}" : "") +
                       ((bool?) m["battle"] == true ? "  ·  in a battle" : "");
+        // The XP bar, live: the numbers slide along as the game's bar fills (a new wizard shown starts it where it is).
+        _xpRow.IsVisible = m["xpMax"] is not null;
+        if (Key(m) != _xpFor) {
+            _xpFor = Key(m);
+            _xp.Reset();
+        }
+
+        _xp.Set((int?) m["xp"] ?? 0, (int?) m["xpMax"] ?? 0, (int?) m["level"] ?? 0);
+        _bookBox.IsVisible = m["questBook"] is JsonArray;
+        _book.Show(m["questBook"]);
+
         var quest = S(m, "questNow");
         var step = S(m, "stepNow");
         var others = List(m["questList"]).Where(q => q != quest).ToList();
@@ -351,6 +384,13 @@ internal sealed class WizardSheet {
     }
 
     private static string Key(JsonObject m) => Or(S(m, "role"), S(m, "name"));
+
+    private static T WithDock<T>(T control, Dock dock, Thickness margin) where T : Control {
+        DockPanel.SetDock(control, dock);
+        control.Margin = margin;
+
+        return control;
+    }
 
     private static void Group(StackPanel panel, string title, int count, List<string> lines, string none) {
         var header = Text(title + (count > 0 ? $" ({count} cards)" : ""), strong: true);

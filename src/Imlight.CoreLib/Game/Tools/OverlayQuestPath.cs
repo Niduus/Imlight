@@ -133,6 +133,96 @@ internal static class OverlayQuestPath {
         }
     }
 
+    private static readonly ConcurrentDictionary<string, int[]> s_islands = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Which island of dry floor the spot is on: floor that walls and water cut off from the rest of the area (the Kraken
+    /// isle in Triton Avenue, left only by its teleporter) is an island of its own. -1 when the area's ground is unknown.
+    /// </summary>
+    internal static int IslandOf(string zonePath, float x, float y) {
+        try {
+            if (GridOf(zonePath) is not { } grid) {
+                return -1;
+            }
+
+            var cell = Cell(grid, x, y);
+            if (cell < 0) {
+                return -1;
+            }
+
+            if (s_islands.Count > 24) {
+                s_islands.Clear();
+            }
+
+            var labels = s_islands.GetOrAdd(zonePath, _ => Islands(grid));
+            if (labels[cell] >= 0) {
+                return labels[cell];
+            }
+
+            // Standing in a wall or water cell (the grid is coarse): the island of the nearest dry floor.
+            var (cx, cy) = (cell % grid.Width, cell / grid.Width);
+            for (var r = 1; r < 6; r++) {
+                for (var dy = -r; dy <= r; dy++) {
+                    for (var dx = -r; dx <= r; dx++) {
+                        var (nx, ny) = (cx + dx, cy + dy);
+                        if (nx >= 0 && ny >= 0 && nx < grid.Width && ny < grid.Height && labels[(ny * grid.Width) + nx] >= 0) {
+                            return labels[(ny * grid.Width) + nx];
+                        }
+                    }
+                }
+            }
+
+            return -1;
+        }
+        catch (Exception) {
+            return -1;
+        }
+    }
+
+    /// <summary>Whether two spots of an area are on different islands (false when unknown, so the walk is tried as before).</summary>
+    internal static bool Apart(string zonePath, float ax, float ay, float bx, float by) {
+        var (a, b) = (IslandOf(zonePath, ax, ay), IslandOf(zonePath, bx, by));
+
+        return a >= 0 && b >= 0 && a != b;
+    }
+
+    private const byte WATER_COST = 25;
+
+    // Each dry floor cell's island number (walls and water are -1), found by flooding out from every unnumbered cell.
+    private static int[] Islands(Grid grid) {
+        var labels = new int[grid.Cost.Length];
+        Array.Fill(labels, -1);
+        var next = 0;
+        var queue = new Queue<int>();
+        for (var i = 0; i < labels.Length; i++) {
+            if (labels[i] >= 0 || grid.Cost[i] is BLOCKED or WATER_COST) {
+                continue;
+            }
+
+            labels[i] = next;
+            queue.Enqueue(i);
+            while (queue.TryDequeue(out var cell)) {
+                var (x, y) = (cell % grid.Width, cell / grid.Width);
+                foreach (var (dx, dy, _) in s_moves) {
+                    var (nx, ny) = (x + dx, y + dy);
+                    if (nx < 0 || ny < 0 || nx >= grid.Width || ny >= grid.Height) {
+                        continue;
+                    }
+
+                    var n = (ny * grid.Width) + nx;
+                    if (labels[n] < 0 && grid.Cost[n] is not (BLOCKED or WATER_COST)) {
+                        labels[n] = next;
+                        queue.Enqueue(n);
+                    }
+                }
+            }
+
+            next++;
+        }
+
+        return labels;
+    }
+
     /// <summary>Reads an area's walk grid ahead of the first walk there (a server-played wizard that just arrived).</summary>
     internal static void Warm(string zonePath) => GridOf(zonePath);
 

@@ -80,6 +80,14 @@ internal sealed partial class UltimusDirectorActor {
 
         if (tries >= 2) {
             _clicks.Clear();
+
+            // Another way first, as a player who can't get through tries the teleporter (UltimusDirector.Routes.cs).
+            if (TryAnotherWay(index)) {
+                _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
+                OverlayQuestPath.Forget(member.CharId);
+
+                return;
+            }
         }
 
         var (near, far) = tries >= 2 ? (600f, 1600f) : (150f, 600f);
