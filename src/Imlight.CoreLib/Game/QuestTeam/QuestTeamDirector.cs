@@ -1268,7 +1268,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         // More of what they came for near the battle, not in it yet (on the battle's circles a creature stands close).
         var near = MinimapIndex.In(fighting[0].ZoneActor).Count(m => m.Kind == MinimapIndex.MOB
             && (_target is not { Kind: QuestTeamPlanner.FIGHT } || _target.Template == 0 || m.Template == _target.Template)
-            && QuestTeamPlanner.Far(fighting[0].X, fighting[0].Y, m.Object.m_location.X, m.Object.m_location.Y) is > 320 and < 1400);
+            && QuestTeamPlanner.Far(fighting[0].X, fighting[0].Y, m.Object.m_location.X, m.Object.m_location.Y) is > 320 and < 800);
         QuestTeamDirector.SetMobsComing(near > 0);
         _lastProgress = DateTime.UtcNow;
 

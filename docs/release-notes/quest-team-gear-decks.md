@@ -167,3 +167,8 @@ New: Pink lines for abnormal things the team notices
 Team Logs has a sixth color. Pink means the team noticed something abnormal, not always a broken quest: a step that took far too many battles to drop what it needs, or a battle that has gone on for over 10 minutes.
 Where: Quest Team > Team Logs (the color key lists Pink)
 Test: Look at the color key in Team Logs. Pink lines show "ABNORMAL:".
+
+Fixed: A Quest Team wizard passed round after round with lots of pips
+To get more of the creatures it needs into a fight, the team held its hits for up to four rounds whenever such a creature was anywhere close, even one only walking by. So a wizard hit once and then passed again and again while its pips piled up. Now it holds for two rounds at most, only while a creature is really close, and while it waits it plays a blade or a trap instead of passing.
+Where: in battle; Team Logs ("... while more creatures walk in")
+Test: Watch Ice fight Lost Souls on Unicorn Way. It should hit every round from round 3 on, and play blades or traps (not passes) in the first rounds.

@@ -122,7 +122,8 @@ internal sealed partial class CombatDuelComponent {
 
     // The first rounds, while their side's creatures' circles are not full and more of what they came for is near.
     private bool QuestTeamHoldsForMobs() {
-        if (Duel.m_roundNum > 4 || !QuestTeamDirector.MobsComing) {
+        // Two rounds at most (Niduus, 2026-11-13: it passed again and again while creatures only walked by, piling up pips).
+        if (Duel.m_roundNum > 2 || !QuestTeamDirector.MobsComing) {
             return false;
         }
 
@@ -206,7 +207,9 @@ internal sealed partial class CombatDuelComponent {
             // (Niduus, 2026-11-12: "QT will wait for mobs to join the battle as much as possible to get all the mobs they desire").
             if (choice.Move == QuestTeamTactics.Move.Cast && QuestTeamHoldsForMobs()
                 && member.GetSpellFromLastHand((byte) choice.Card) is { } card && RewrittenAI.Read(card) is { Hit: true }) {
-                choice = new(QuestTeamTactics.Move.Pass, 0, -1, "waits for more creatures to join before hitting");
+                // Not idle while it waits: a blade or a trap for the hit to come, else a pass.
+                choice = QuestTeamTactics.WhileWaiting(role, member, circles)
+                         ?? new(QuestTeamTactics.Move.Pass, 0, -1, "waits for more creatures to join before hitting");
             }
 
             var pick = $"{choice.Move}:{choice.Card}:{choice.Target}";
