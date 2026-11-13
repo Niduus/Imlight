@@ -1286,9 +1286,43 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "skipped", Quest = quest, Title = UltimusText.Title(quest), Text = "a broken step, finished by Ahziael" });
         }
 
+        // What most likely breaks it (Niduus, 2026-11-13: "detail character and quest detection to determine when/if a quest
+        // can/cannot be completed ... to assume what is breaking it has its accuracy go up way higher"): checked against the
+        // quest data, the wizard and the live server, and put first in the issue and its debug report.
+        var diagnosis = Diagnose(quest);
+        var facts = DebugFacts(quest, template);
+        if (diagnosis is not null) {
+            text += " " + diagnosis.Summary;
+            facts.Insert(0, $"Likely cause ({diagnosis.Confidence} confidence, {diagnosis.Category}): {diagnosis.LikelyCause}");
+            facts.Insert(1, $"Can the step be done: {diagnosis.Completable}");
+            facts.AddRange(diagnosis.Checks.Select(c => "Check " + c));
+            Note("Ultimus", $"DIAGNOSIS: {diagnosis.LikelyCause} ({diagnosis.Confidence} confidence)",
+                diagnosis.Confidence == "High" ? UltimusLink.ABNORMAL : UltimusLink.NOTABLE);
+        }
+
         UltimusLink.Issue(kind, quest ?? "", string.IsNullOrEmpty(quest) ? "" : UltimusText.Title(quest),
             template is null ? "" : QuestStory.WorldOf(template), text, Expected(kind, _target), Seen(quest),
-            _target?.Goal ?? "", DebugFacts(quest, template));
+            _target?.Goal ?? "", facts);
+    }
+
+    /// <summary>Runs the shared quest diagnosis (BotShared.BotQuestDiagnosis) for Ultimus on <paramref name="quest"/>; null when it can't.</summary>
+    private BotShared.BotQuestDiagnosis.Result Diagnose(string quest) {
+        try {
+            var me = _team.Count > 0 ? _team[0] : null;
+            if (me is null) {
+                return null;
+            }
+
+            var goal = _target is not null && string.Equals(_target.Quest, quest, StringComparison.OrdinalIgnoreCase) ? _target.Goal : null;
+
+            return BotShared.BotQuestDiagnosis.Run(me.Wizard, me.Zone, me.ZoneActor, me.X, me.Y, quest, goal, me.Options, me.LastServerText,
+                me.Wizard is null ? 0 : me.GlobalId);
+        }
+        catch (Exception e) {
+            Logger.Debug("Ultimus: the diagnosis could not run: {0}", Logger.Args(e.Message));
+
+            return null;
+        }
     }
 
     /// <summary>
