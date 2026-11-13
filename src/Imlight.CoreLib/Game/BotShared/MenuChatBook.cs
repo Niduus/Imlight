@@ -141,6 +141,14 @@ internal static class MenuChatBook {
         }
 
         var english = Locale.GetEnglishName(text);
+        // A phrase names its text by a bare key ("chatEntryKey73"): it was taken for the text itself, so Ultimus heard
+        // "chatEntryKey73" for every phrase and never answered a hello (Niduus, 2026-11-13: "bots do not respond to Menu chats").
+        if (english.Length == 0 && !text.Contains(' ')) {
+            english = Locale.FindInAnyTable(text);
+            if (english.Length == 0 && text.StartsWith("chatEntryKey", StringComparison.OrdinalIgnoreCase)) {
+                return null;
+            }
+        }
 
         return english.Length > 0 ? english : text.Contains('_') && !text.Contains(' ') ? null : text;
     }

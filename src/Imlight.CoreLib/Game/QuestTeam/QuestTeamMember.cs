@@ -229,10 +229,19 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
         Receive<Invite>(m => Send(new GAME_5_PROTOCOL.MSG_PARTYREQUESTINVITE {
             SourceCharacterID = _member.CharId, SourceGlobalID = View.GlobalId, TargetCharacterID = m.CharId, TargetGlobalID = m.GlobalId,
         }));
-        // A teammate's invitation is taken; anyone else's is left alone.
+        // A teammate's invitation is taken; anyone else's is turned down, so the inviter's game shows the no at once.
         Receive<GAME_5_PROTOCOL.MSG_PARTYREQUESTJOIN>(m => {
             if (QuestTeamRoster.IsMember(m.CharacterID)) {
                 Send(new GAME_5_PROTOCOL.MSG_PARTYREQUESTACCEPT { SourceCharacterID = _member.CharId, PartyID = m.PartyID });
+                return;
+            }
+
+            Send(new GAME_5_PROTOCOL.MSG_PARTYREQUESTDECLINE { SourceCharacterID = _member.CharId, PartyID = m.PartyID });
+        });
+        // Only Ultimus can be befriended (Niduus, 2026-11-13): a friend request sent to the Quest Team is turned down.
+        Receive<GAME_5_PROTOCOL.MSG_BUDDYREQUESTADD>(m => {
+            if (m.Remove == 0 && m.ListOwnerGID != _member.CharId) {
+                Send(new GAME_5_PROTOCOL.MSG_BUDDYREQUESTDENY { ListOwnerGID = m.ListOwnerGID, EntryGID = _member.CharId });
             }
         });
         Receive<Equip>(m => {

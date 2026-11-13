@@ -89,7 +89,7 @@ internal static class UltimusPlanner {
     /// </summary>
     internal static bool FinishedLastWorld(Wizard leader, out string world) {
         world = "";
-        var mains = QuestService.QuestFinderGivers().Where(g => QuestStory.IsMain(g.Quest) && IsMainStoryWorld(g.Quest))
+        var mains = QuestService.QuestFinderGivers().Where(g => QuestStory.IsStory(g.Quest) && IsMainStoryWorld(g.Quest))
             .Select(g => (Quest: g.Quest, World: QuestGuide.GiverZone(g.Quest).Split('/')[0])).ToList();
         world = s_ladder.LastOrDefault(w => mains.Any(m => string.Equals(m.World, w, StringComparison.OrdinalIgnoreCase))) ?? "";
         var last = world;
@@ -105,7 +105,7 @@ internal static class UltimusPlanner {
     /// </summary>
     internal static Target Shortcut(UltimusMember.Status leader, Target goal, ICollection<ulong> avoid) {
         if (goal is null || goal.Problem.Length > 0 || goal.Kind is STONE or SPIRAL or NONE || string.IsNullOrEmpty(goal.Quest)
-            || QuestTemplateCollection.GetQuestByName(goal.Quest) is not { } quest || !QuestStory.IsMain(quest)) {
+            || QuestTemplateCollection.GetQuestByName(goal.Quest) is not { } quest || !QuestStory.IsStory(quest)) {
             return null;
         }
 
@@ -180,7 +180,9 @@ internal static class UltimusPlanner {
                 }
 
                 var kind = QuestStory.KindOf(template);
-                var rank = kind switch { QuestStory.STORY => 3, QuestStory.INSTANCE => 2, QuestStory.MAIN => 1, _ => 0 };
+                // Only the Main Story (Niduus, 2026-11-13: "functional as if a human doing MAIN STORY QUESTS"): a main quest off the story
+                // chain ("Secret Strife of Pets", "A Good Day to Cyclops") is left alone, as side quests are.
+                var rank = kind switch { QuestStory.STORY => 3, QuestStory.INSTANCE => 2, _ => 0 };
                 if (rank == 0) {
                     continue;
                 }
@@ -199,7 +201,7 @@ internal static class UltimusPlanner {
     internal static (QuestTemplate Quest, ulong Giver)? NextQuest(Wizard leader) {
         var world = (leader.Zone ?? "").Split('/')[0];
         return QuestService.QuestFinderGivers()
-            .Where(g => QuestStory.IsMain(g.Quest) && IsMainStoryWorld(g.Quest) && MapService.IsOfferedTo(g.Quest, leader))
+            .Where(g => QuestStory.IsStory(g.Quest) && IsMainStoryWorld(g.Quest) && MapService.IsOfferedTo(g.Quest, leader))
             .OrderByDescending(g => QuestStory.KindOf(g.Quest) == QuestStory.STORY)
             .ThenByDescending(g => string.Equals(QuestGuide.GiverZone(g.Quest).Split('/')[0], world, StringComparison.OrdinalIgnoreCase))
             .Select(g => ((QuestTemplate, ulong)?) (g.Quest, g.Giver))
@@ -216,7 +218,7 @@ internal static class UltimusPlanner {
         var max = Imlight.CoreLib.Shared.Character.MagicLevelsConfig.MaxLevel;
         var world = (leader.Zone ?? "").Split('/')[0];
         foreach (var g in QuestService.QuestFinderGivers()
-                     .Where(g => QuestStory.IsMain(g.Quest) && IsMainStoryWorld(g.Quest))
+                     .Where(g => QuestStory.IsStory(g.Quest) && IsMainStoryWorld(g.Quest))
                      .OrderByDescending(g => QuestStory.KindOf(g.Quest) == QuestStory.STORY)
                      .ThenByDescending(g => string.Equals(QuestGuide.GiverZone(g.Quest).Split('/')[0], world, StringComparison.OrdinalIgnoreCase))) {
             var quest = g.Quest;

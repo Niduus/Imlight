@@ -232,11 +232,21 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         Receive<Invite>(m => Send(new GAME_5_PROTOCOL.MSG_PARTYREQUESTINVITE {
             SourceCharacterID = _member.CharId, SourceGlobalID = View.GlobalId, TargetCharacterID = m.CharId, TargetGlobalID = m.GlobalId,
         }));
-        // A teammate's invitation is taken; anyone else's is left alone.
+        // Ultimus quests alone: every group invitation is turned down, from players, friends and bots alike (Niduus,
+        // 2026-11-13), so the inviter's game shows the no at once instead of waiting.
         Receive<GAME_5_PROTOCOL.MSG_PARTYREQUESTJOIN>(m => {
-            if (UltimusRoster.IsMember(m.CharacterID)) {
-                Send(new GAME_5_PROTOCOL.MSG_PARTYREQUESTACCEPT { SourceCharacterID = _member.CharId, PartyID = m.PartyID });
+            Note($"turns down a group invitation from {m.PlayerNameBlob}.");
+            Send(new GAME_5_PROTOCOL.MSG_PARTYREQUESTDECLINE { SourceCharacterID = _member.CharId, PartyID = m.PartyID });
+        });
+        // Ultimus is the one bot a player can befriend: a friend request sent to him is accepted (he never sends one
+        // himself). Being friends lets the player see him on the friends list and teleport to him.
+        Receive<GAME_5_PROTOCOL.MSG_BUDDYREQUESTADD>(m => {
+            if (m.Remove != 0 || m.ListOwnerGID == _member.CharId || QuestTeam.QuestTeamRoster.IsMember(m.ListOwnerGID)) {
+                return;
             }
+
+            Note($"accepts a friend request from {m.OwnerName}.");
+            Send(new GAME_5_PROTOCOL.MSG_BUDDYREQUESTACCEPT { ListOwnerGID = m.ListOwnerGID, EntryGID = _member.CharId });
         });
         Receive<Equip>(m => {
             Note($"puts on {m.What}.");
