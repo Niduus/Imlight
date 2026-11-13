@@ -141,10 +141,21 @@ internal static class BotGear {
             Logger.Debug("Bot gear: item {0} could not be read: {1}", Logger.Args(templateId, e.Message));
         }
 
-        s_pieces[templateId] = piece;
+        // A piece whose stats could not all be read yet (the stat tables still loading when it was first asked about) is
+        // read again next time, not kept as a piece worth nothing (Niduus, 2026-11-13: "Why does Ultimus not use the Adept
+        // robe": it read as nothing, so a dropped Cloak of the Watchful took its place).
+        if (piece is null || !s_partial.Contains(templateId)) {
+            s_pieces[templateId] = piece;
+        }
 
         return piece;
     }
+
+    private static readonly ConcurrentDictionary<uint, byte> s_partialSet = new();
+    private static readonly ICollection<uint> s_partial = s_partialSet.Keys;
+
+    /// <summary>Whether a piece has stats that could not be read (so its score is not to be trusted).</summary>
+    internal static bool PartlyRead(uint templateId) => s_partialSet.ContainsKey(templateId);
 
     private static Piece Parse(uint id, WizItemTemplate template) {
         EquipmentSlot slot;
@@ -166,15 +177,26 @@ internal static class BotGear {
 
         var (level, schoolNeeded) = Requirements(template.m_equipRequirements);
         var stats = new List<Stat>();
+        var unread = 0;
         foreach (var effect in template.m_equipEffects ?? []) {
             switch (effect) {
                 case StatisticEffectInfo info when ReadStat(info) is { } stat:
                     stats.Add(stat);
                     break;
+                case StatisticEffectInfo:
+                    unread++;
+                    break;
                 case StartingPipEffectInfo pips:
                     stats.Add(new Stat("StartingPips", "", pips.m_pipsGiven + (pips.m_powerPipsGiven * 2)));
                     break;
             }
+        }
+
+        if (unread > 0) {
+            s_partialSet[id] = 0;
+        }
+        else {
+            s_partialSet.TryRemove(id, out _);
         }
 
         var deck = (template.m_behaviors ?? []).OfType<DeckBehaviorTemplate>().FirstOrDefault();
@@ -473,9 +495,14 @@ internal static class BotGear {
         var school = SchoolOf(wizard);
         var level = LevelOf(wizard);
         foreach (var slot in Slots) {
-            var (_, wearing) = Wearing(wizard, slot, style);
+            var (worn, wearing) = Wearing(wizard, slot, style);
+            // A worn piece whose stats can't all be read stays on: unknown is not worthless.
+            if (worn is not null && PartlyRead(worn.Id)) {
+                continue;
+            }
+
             var best = items.Select(i => (Item: i, Piece: Read((uint) Math.Min((ulong) i.m_templateID, uint.MaxValue))))
-                .Where(x => x.Piece is not null && x.Piece.Slot == slot.ToString() && CanWear(x.Piece, school, level))
+                .Where(x => x.Piece is not null && x.Piece.Slot == slot.ToString() && CanWear(x.Piece, school, level) && !PartlyRead(x.Piece.Id))
                 .Select(x => (x.Item, x.Piece, Score: Score(x.Piece, school, style)))
                 .OrderByDescending(x => x.Score).FirstOrDefault();
             if (best.Item is not null && best.Score > wearing + 0.5) {

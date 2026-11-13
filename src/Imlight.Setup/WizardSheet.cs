@@ -354,7 +354,7 @@ internal sealed class WizardSheet {
     private void ShowSpells(JsonObject m) {
         var grid = m["spellGrid"] as JsonArray;
         var others = List(m["spellsOther"]);
-        var key = Key(m) + "|" + grid?.ToJsonString() + "|" + string.Join(",", others) + "|" + (CardThumb is null);
+        var key = Key(m) + "|" + grid?.ToJsonString() + "|" + string.Join(",", others) + "|" + m["otherGrid"]?.ToJsonString() + "|" + (CardThumb is null);
         if (key == _spellsKey) {
             return;
         }
@@ -373,7 +373,8 @@ internal sealed class WizardSheet {
         }
 
         var inDeck = cards.Count(c => c.N > 0);
-        _spellsTitle.Text = $"Trained spells ({cards.Count} cards, {inDeck} in the deck)";
+        var copies = cards.Sum(c => c.N);
+        _spellsTitle.Text = $"Trained spells ({cards.Count} deck card{(cards.Count == 1 ? "" : "s")} known, {inDeck} used, {copies} copies in the deck)";
         if (cards.Count == 0) {
             _spells.Children.Add(Text("None yet."));
         }
@@ -398,8 +399,10 @@ internal sealed class WizardSheet {
             foreach (var card in school) {
                 var thumb = Card(card.Id, card.School, card.N, false);
                 thumb.Opacity = card.N > 0 ? 1 : 0.5;
-                ToolTip.SetTip(thumb, card.N > 0 ? $"{card.Name}: {card.N} in the deck" : $"{card.Name}: not in the deck");
-                slots.Children.Add(Slot(thumb, s_slot));
+                var slot = Slot(thumb, s_slot);
+                BigCardTip(slot, card.Id, card.School, card.N,
+                    card.N > 0 ? $"{card.Name}: {card.N} {(card.N == 1 ? "copy" : "copies")} in the deck" : $"{card.Name}: trained, not in the deck");
+                slots.Children.Add(slot);
             }
 
             _spells.Children.Add(Frame(slots));
@@ -409,13 +412,45 @@ internal sealed class WizardSheet {
             var header = Text($"Other spells ({others.Count})", strong: true);
             header.Margin = new Thickness(0, 6, 0, 0);
             _spells.Children.Add(header);
-            _spells.Children.Add(new TextBlock { Text = string.Join(", ", others), TextWrapping = TextWrapping.Wrap, Foreground = ManagerTheme.MUTED_BRUSH });
+            // Each name its own word, so pointing at it shows the spell's card (Niduus, 2026-11-13: "hover overs do not work here").
+            var ids = (m["otherGrid"] as JsonArray ?? []).OfType<JsonObject>()
+                .Select(c => (Name: (string?) c["name"] ?? "", Id: (uint?) c["id"] ?? 0, School: (string?) c["school"] ?? ""))
+                .Where(c => c.Name.Length > 0).GroupBy(c => c.Name).ToDictionary(g => g.Key, g => g.First());
+            var words = new WrapPanel();
+            for (var i = 0; i < others.Count; i++) {
+                var word = new TextBlock {
+                    Text = others[i] + (i < others.Count - 1 ? ", " : ""), Foreground = ManagerTheme.MUTED_BRUSH, Background = Brushes.Transparent,
+                };
+                if (ids.TryGetValue(others[i], out var spell) && spell.Id != 0) {
+                    BigCardTip(word, spell.Id, spell.School, 0, others[i]);
+                }
+                else {
+                    ToolTip.SetTip(word, others[i]);
+                }
+
+                words.Children.Add(word);
+            }
+
+            _spells.Children.Add(words);
         }
 
         _spells.Children.Add(new TextBlock {
-            Text = "The number on a card is how many copies are in the deck. Faded cards are trained but left out.",
+            Text = "Point at a card or a name to see it big, with how many copies are in the deck. Faded cards are trained but left out.",
             Foreground = ManagerTheme.MUTED_BRUSH, FontSize = 11, TextWrapping = TextWrapping.Wrap,
         });
+    }
+
+    // Pointing at a card or a spell's name shows its card big with a line under it, made when first pointed at.
+    private void BigCardTip(Control target, uint id, string school, int count, string line) {
+        ToolTip.SetShowDelay(target, 150);
+        ToolTip.SetTip(target, line);
+        target.PointerEntered += (_, _) => {
+            if (ToolTip.GetTip(target) is Control || CardThumb is null) {
+                return;
+            }
+
+            ToolTip.SetTip(target, new StackPanel { Spacing = 4, Children = { CardThumb(id, school, 200, count), Text(line, strong: true) } });
+        };
     }
 
     private static Border Frame(Control content) => new() {
