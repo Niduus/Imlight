@@ -287,3 +287,8 @@ Changed: Wizard pages show only the stats a wizard has
 The Stats panel on the Quest Team and Ultimus pages now leaves out stats at 0 (like 0 critical rating or 0% Fire resist). Health and mana always show.
 Where: Ahziael > Quest Team > The team's wizards, and the Ultimus page
 Test: Open a wizard. Every stat line should be 1 or more, apart from health and mana.
+
+Fixed: Gear slot icons showed four small icons instead of one
+The game keeps each backpack tab's four looks (normal, pointed at, pressed, greyed) in one picture, and the wizard pages showed all four. Now only the top-left one shows, for every slot.
+Where: Ahziael > Quest Team > The team's wizards, and the Ultimus page (Gear)
+Test: Each gear line should have one round slot icon, then the item's name.

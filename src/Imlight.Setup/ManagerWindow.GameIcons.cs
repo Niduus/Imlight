@@ -174,8 +174,13 @@ internal sealed partial class ManagerWindow {
     /// </summary>
     private Control SlotIcon(string slot, double size) {
         var picture = GearPicture(SlotPictureName(slot));
+        // The tab pictures hold the button's four looks in a 2 by 2 sheet (normal, pointed at, pressed, greyed); only the
+        // top-left one shows (Niduus, 2026-11-13: "too many icons. Use the one in the top left across the board").
         Control icon = picture is not null
-            ? new Image { Source = picture, Width = size, Height = size, Stretch = Stretch.Uniform }
+            ? new Image {
+                Source = new CroppedBitmap(picture, new PixelRect(0, 0, Math.Max(1, picture.PixelSize.Width / 2), Math.Max(1, picture.PixelSize.Height / 2))),
+                Width = size, Height = size, Stretch = Stretch.Uniform,
+            }
             : new Border {
                 Width = size, Height = size, CornerRadius = new CornerRadius(size / 2),
                 Background = new SolidColorBrush(Color.FromRgb(0x2E, 0x6B, 0x3A)), BorderBrush = new SolidColorBrush(Color.FromRgb(0xC8, 0x9A, 0x3A)),
