@@ -371,7 +371,7 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
                 ? $"is offered {UltimusText.Title(quest)}; accepts it"
                 : $"is offered {UltimusText.Title(quest)}; accepts it but ignores it (a main quest, not the story; done only if the story needs it)");
             // A moment to "read" the offer, as a player does.
-            Timers.StartSingleTimer("offer-" + quest, new AcceptOffer(m.MobileID, quest), TimeSpan.FromSeconds(1.2));
+            Timers.StartSingleTimer("offer-" + quest, new AcceptOffer(m.MobileID, quest), TimeSpan.FromSeconds(0.7));
         });
         Receive<WIZARD_12_PROTOCOL.MSG_ACTORDIALOG>(OnDialog);
         Receive<WIZARD_12_PROTOCOL.MSG_SPELLTRAINCOMPLETE>(m => {
@@ -680,7 +680,7 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         _openDialogs[number] = events;
         View.Talking = true;
         View.LastDialog = DateTime.UtcNow;
-        Timers.StartSingleTimer("dialog-" + number, new CloseDialog(number), TimeSpan.FromSeconds(Math.Min(6, 0.8 + (lines * 0.4))));
+        Timers.StartSingleTimer("dialog-" + number, new CloseDialog(number), TimeSpan.FromSeconds(Math.Min(4, 0.6 + (lines * 0.3))));
     }
 
     private void FinishDialog(int number) {
