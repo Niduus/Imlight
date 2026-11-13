@@ -150,13 +150,26 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
     }
 
     // The Quest Team hears Menu Chat said near it and may answer (it never takes a player's orders).
+    // Ultimus hears it too (it welcomes players into its battle, never takes their orders). Ultimus and the Quest Team
+    // never hear each other: they keep apart.
     private void TellQuestTeam(Wizard character, uint phraseId, string text) {
-        if (QuestTeam.QuestTeamDirector.ActorOf("Ice") is null || GetActiveGameObject() is not { } me) {
+        var team = QuestTeam.QuestTeamDirector.ActorOf("Ice") is not null;
+        var ultimus = Ultimus.UltimusDirector.ActorOf("Balance") is not null;
+        if ((!team && !ultimus) || GetActiveGameObject() is not { } me) {
             return;
         }
 
         text ??= BotShared.MenuChatBook.ById(phraseId)?.Text;
         if (string.IsNullOrEmpty(text)) {
+            return;
+        }
+
+        if (ultimus) {
+            Ultimus.UltimusVoice.PlayerSaid(SessionActor.GetZoneActor(), me.m_location.X, me.m_location.Y, character.CharId,
+                character.PlayerNameBehavior?.GetWizardName(), text);
+        }
+
+        if (!team || Ultimus.UltimusRoster.IsMember(character.CharId)) {
             return;
         }
 

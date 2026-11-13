@@ -313,6 +313,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         UsePotions();
         NoticeOddities();
+        AnswerPlayers();
 
         // Paused in Ahziael: they stand where they are, logged in (a battle still plays out by itself).
         if (DateTime.UtcNow >= _nextPauseLook) {
@@ -1058,6 +1059,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
     private DateTime _battleSince = DateTime.MaxValue;
     private int _battlesWithPlayers;
+    private bool _battleCompany;
+    private int _companyCount;
 
     private bool HandleBattle() {
         var me = _team[0];
@@ -1069,9 +1072,13 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         if (!_wasInBattle[0] && now) {
             _battleSince = DateTime.UtcNow;
             var others = CombatDuelComponent.UltimusBattleCompany(me.GlobalId);
+            _battleCompany = others.Count > 0;
+            _companyCount = others.Count;
             if (others.Count > 0) {
                 _battlesWithPlayers++;
                 Note("Ultimus", $"is in a battle with {string.Join(", ", others)}; it welcomes them and plays with them.");
+                // It says hello in Menu Chat: "I'll help" when it walked into theirs, a welcome when they walked into its.
+                Speak(_target?.Key?.EndsWith("|join", StringComparison.Ordinal) == true ? "join" : "welcome", 0.6);
             }
         }
 
@@ -1082,6 +1089,15 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return false;
         }
 
+        // A player walked into its battle after it began: a welcome in Menu Chat.
+        var company = CombatDuelComponent.UltimusBattleCompany(me.GlobalId).Count;
+        if (company > _companyCount && _companyCount >= 0 && _battleSince < DateTime.UtcNow.AddSeconds(-3)) {
+            _battleCompany = true;
+            Note("Ultimus", "a player joined its battle; it welcomes them.");
+            Speak("welcome", 0.7);
+        }
+
+        _companyCount = company;
         _doing = "in a battle";
         _lastProgress = DateTime.UtcNow;
         UltimusDirector.SetBusy(me.ZoneActor, me.X, me.Y);
@@ -1112,6 +1128,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         if (!lost || index != 0) {
             if (index == 0) {
                 Note("Ultimus", "won the battle.");
+                if (_battleCompany) {
+                    Speak("won", 0.5);
+                }
+
                 Count("battles won");
                 // Fights won for each step, to see how many kills a drop or a count takes (Niduus: "flag abnormal drops").
                 if (_target is { Kind: UltimusPlanner.FIGHT } fought) {
