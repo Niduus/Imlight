@@ -41,30 +41,56 @@ internal sealed partial class ManagerWindow {
     private Task? _gameIconsLoading;
 
     /// <summary>Reads the game's spells in the background once, then runs <paramref name="ready"/> on the window.</summary>
+    private DateTime _gameIconsTried = DateTime.MinValue;
+
+    // Asks for the game's pictures; <paramref name="ready"/> runs once they are there (at once when they already are, read by
+    // any page). Not found or not readable: tried again a minute later, not never (Niduus, 2026-11-13: "broken views", every
+    // card of Ultimus's deck a blank tile, as the pictures were never read again after a first miss).
     private void EnsureGameIcons(Action ready) {
-        if (_spellBook is not null || _spellBookProblem is not null) {
+        if (_spellBook is not null) {
+            ready();
+
             return;
         }
 
-        _gameIconsLoading ??= LoadAsync();
+        if (_gameIconsLoading is not null || DateTime.UtcNow - _gameIconsTried < TimeSpan.FromMinutes(1)) {
+            _gameIconsWaiting.Add(ready);
+
+            return;
+        }
+
+        _gameIconsTried = DateTime.UtcNow;
+        _gameIconsWaiting.Add(ready);
+        _gameIconsLoading = LoadAsync();
 
         async Task LoadAsync() {
             try {
-                var folder = new[] { _gameFiles.GameDataFolder, _gameFiles.CopyFolder }
-                    .FirstOrDefault(f => f is not null && File.Exists(Path.Combine(f, "Root.wad")));
-                if (folder is null) {
-                    return;
+                var folder = await Task.Run(_gameFiles.FindGameData);
+                if (folder is not null) {
+                    var book = await Task.Run(() => SpellBook.Load(folder));
+                    _spellBook ??= book;
+                    // An earlier miss no longer stands.
+                    _spellBookProblem = null;
                 }
-
-                var book = await Task.Run(() => SpellBook.Load(folder));
-                _spellBook ??= book;
-                ready();
             }
             catch (Exception) {
-                // The drawn stand-ins stay.
+                // The drawn stand-ins stay until the next try.
+            }
+            finally {
+                _gameIconsLoading = null;
+            }
+
+            if (_spellBook is not null) {
+                var waiting = _gameIconsWaiting.ToList();
+                _gameIconsWaiting.Clear();
+                foreach (var done in waiting) {
+                    done();
+                }
             }
         }
     }
+
+    private readonly HashSet<Action> _gameIconsWaiting = [];
 
     private SpellCard? CardOf(uint spellId) {
         if (_spellBook is null || spellId == 0) {
@@ -236,6 +262,7 @@ internal sealed partial class ManagerWindow {
         sheet.StatIcon ??= (key, tip, size) => GearIcon(key, tip, size);
         sheet.SchoolIcon ??= (school, size) => SchoolBadge(school, size);
         sheet.SlotIcon ??= SlotIcon;
+        sheet.PicturesReady ??= () => _spellBook is not null;
         EnsureGameIcons(() => Avalonia.Threading.Dispatcher.UIThread.Post(sheet.Redraw));
     }
 

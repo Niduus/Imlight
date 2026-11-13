@@ -231,8 +231,7 @@ internal sealed partial class ManagerWindow {
         async Task LoadAsync() {
             _spellsCount.Text = "Reading the spells and their cards from your game files…";
             try {
-                var folder = new[] { _gameFiles.GameDataFolder, _gameFiles.CopyFolder }
-                    .FirstOrDefault(f => f is not null && File.Exists(Path.Combine(f, "Root.wad")));
+                var folder = await Task.Run(_gameFiles.FindGameData);
                 if (folder is null) {
                     throw new PanelException("Wizard101's game files could not be found, so the spell cards can't be shown. " +
                         "Click \"Update Ahziael\" at the top of the app once so the app can find Wizard101, or read them on the Game Files tab.");

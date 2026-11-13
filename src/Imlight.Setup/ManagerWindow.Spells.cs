@@ -128,8 +128,7 @@ internal sealed partial class ManagerWindow {
 
         async Task LoadAsync() {
             // The game's own folder first; the Game Files tab's copy when the game has moved.
-            var folder = new[] { _gameFiles.GameDataFolder, _gameFiles.CopyFolder }
-                .FirstOrDefault(f => f is not null && File.Exists(Path.Combine(f, "Root.wad")));
+            var folder = await Task.Run(_gameFiles.FindGameData);
             _lookupCount.Text = "Reading the spells and their cards from your game files…";
             try {
                 if (folder is null) {
