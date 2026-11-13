@@ -529,9 +529,11 @@ internal static class OverlayHost {
         }
 
         var designTime = FileTime(OverlayDesign.PathIn(s_installFolder));
-        if (designTime != s_designFileTime) {
+        // Changed by the other copy of Ahziael: read again. A file that can't be read just now (being written, or held by
+        // an update's backup) is tried again next time, and the design shown stays as it was, never an empty one.
+        if (designTime != s_designFileTime && OverlayDesign.TryLoadFile(OverlayDesign.PathIn(s_installFolder)) is { } changed) {
             s_designFileTime = designTime;
-            s_design = OverlayDesign.Load(s_installFolder);
+            s_design = changed;
             s_designVersion++;
             DesignStamp++;
         }

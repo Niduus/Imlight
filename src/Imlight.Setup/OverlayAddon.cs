@@ -156,6 +156,36 @@ internal sealed class OverlayAddon {
         return copies.Select(c => c.New).ToList();
     }
 
+    /// <summary>What a piece put on from this widget remembers (<see cref="OverlayElement.From"/>).</summary>
+    internal static string FromKey(OverlayAddon addon, OverlayWidget widget) => addon.Name + "/" + widget.Name;
+
+    /// <summary>
+    /// The pieces of <paramref name="elements"/> that this widget put on, with their children: the ones marked with it,
+    /// and (for pieces put on before Ahziael marked them) unmarked ones of the same kind and name as one of its pieces.
+    /// </summary>
+    internal static List<OverlayElement> OnOverlay(OverlayAddon addon, OverlayWidget widget, List<OverlayElement> elements) {
+        var key = FromKey(addon, widget);
+        var looks = widget.Elements.Where(w => w.Name.Length > 0).Select(w => (w.Kind, w.Name)).ToHashSet();
+        var found = elements.Where(e => e.From.Length > 0
+            ? e.From.Equals(key, StringComparison.OrdinalIgnoreCase)
+            : looks.Contains((e.Kind, e.Name))).ToList();
+
+        // Their children come along (a widget's family, or pieces someone pinned to it).
+        var ids = found.Select(e => e.Id).Where(id => id.Length > 0).ToHashSet();
+        for (var grew = true; grew;) {
+            grew = false;
+            foreach (var e in elements) {
+                if (e.Parent.Length > 0 && ids.Contains(e.Parent) && !found.Contains(e)) {
+                    found.Add(e);
+                    ids.Add(e.Id);
+                    grew = true;
+                }
+            }
+        }
+
+        return found;
+    }
+
     /// <summary>A copy of a text or box (the widget's own stays as it was).</summary>
     internal static OverlayElement Copy(OverlayElement element) {
         var copy = OverlayDesign.FromJson(new OverlayDesign { Elements = [element] }.ToJson())!.Elements[0];
@@ -173,6 +203,7 @@ internal sealed class OverlayAddon {
         nameof(OverlayElement.Spacing), nameof(OverlayElement.Width), nameof(OverlayElement.Height), nameof(OverlayElement.Locked),
         nameof(OverlayElement.Picture), nameof(OverlayElement.PictureFit), nameof(OverlayElement.Id), nameof(OverlayElement.Parent),
         nameof(OverlayElement.Action), nameof(OverlayElement.Command), nameof(OverlayElement.CheatHow), nameof(OverlayElement.Map), nameof(OverlayElement.Quests),
+        nameof(OverlayElement.From),
     ];
 
     /// <summary>Puts a style's look (fonts, colours, edges, shadow...) on a text or box.</summary>
