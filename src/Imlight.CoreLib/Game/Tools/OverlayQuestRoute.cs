@@ -114,7 +114,7 @@ internal static class OverlayQuestRoute {
         // Nothing to do here: the way out toward the step's area, exit by exit (the tracker lists the areas; the minimap
         // draws the line to the exit here that starts it: a door, a walk-through zone exit, or the Spiral Door).
         if (targets.Count == 0 && elsewhere.Count > 0) {
-            var exits = ExitsHere(zonePath, live);
+            var exits = ExitsHere(zonePath, live, wizard);
             var spiralDoors = live.Where(m => m.Template == SPIRAL_DOOR).ToList();
             NoteDoor(zonePath, live);
             var hops = Way(zonePath, elsewhere[0], spiralDoors.Count > 0, exits.Select(e => e.To));
@@ -151,11 +151,12 @@ internal static class OverlayQuestRoute {
 
         route["points"] = points;
 
-        // The line along the streets to the nearest one.
+        // The line along the streets to the nearest one, the legal way (floor only, through the area's teleporters when the
+        // step is cut off): a spot with a third number 1 is a teleporter, the line jumps from it to the next spot.
         if (points.Count > 0 && points[0] is JsonObject nearest) {
             var walk = new JsonArray();
-            foreach (var (x, y) in OverlayQuestPath.Walk(wizard.CharId, zonePath, here.X, here.Y, (int) nearest["x"], (int) nearest["y"])) {
-                walk.Add(new JsonArray(Round(x), Round(y)));
+            foreach (var spot in OverlayQuestPath.Route(wizard.CharId, zonePath, here.X, here.Y, (int) nearest["x"], (int) nearest["y"])) {
+                walk.Add(spot.Pad ? new JsonArray(Round(spot.X), Round(spot.Y), 1) : new JsonArray(Round(spot.X), Round(spot.Y)));
             }
 
             route["path"] = walk;
@@ -247,6 +248,12 @@ internal static class OverlayQuestRoute {
                     return;
                 }
 
+                // A house is never on the way (its door opens only for its owner, who has Home anyway), unless it is the
+                // step's own area or an exit here the wizard may use (one into a house it owns).
+                if (IsHouse(next) && !OverlayQuestTracker.SameZone(goal, next) && !(first && extra.Contains(next, StringComparer.OrdinalIgnoreCase))) {
+                    return;
+                }
+
                 var count = OverlayQuestTracker.SameZone(goal, next) ? 0 : left.GetValueOrDefault(next, int.MaxValue);
                 if (count < best.Left) {
                     best = (next, world, count);
@@ -306,8 +313,9 @@ internal static class OverlayQuestRoute {
         }
     }
 
+    // A house's world gate is its owner's own (never counted as a Spiral Door anyone may use).
     private static bool IsDoorZone(string zone)
-        => s_doorSeen.TryGetValue(zone, out var seen) ? seen
+        => !IsHouse(zone) && s_doorSeen.TryGetValue(zone, out var seen) ? seen
             : s_knownDoorZones.Contains(zone, StringComparer.OrdinalIgnoreCase)
               || ((s_arrivals ?? []).Contains(zone) && !s_knownNoDoorZones.Contains(zone, StringComparer.OrdinalIgnoreCase));
 
@@ -333,6 +341,11 @@ internal static class OverlayQuestRoute {
         while (waiting.Count > 0 && left.Count < 20000) {
             var zone = waiting.Dequeue();
             var count = left[zone] + 1;
+            // No way through a house (the step's own area aside): only its owner can go in.
+            if (IsHouse(zone) && left[zone] > 0) {
+                continue;
+            }
+
             foreach (var before in back.GetValueOrDefault(zone) ?? []) {
                 if (left.TryAdd(before, count)) {
                     waiting.Enqueue(before);
@@ -385,7 +398,12 @@ internal static class OverlayQuestRoute {
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, List<Exit>> s_walkExits = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>The exits in this area and where they go: the doors standing here and the walk-through exits.</summary>
-    internal static List<Exit> ExitsHere(string zonePath, List<MinimapIndex.Mark> live) {
+    /// <remarks>
+    /// A door into a house (an Olde Town apartment, a house with its own world gate) counts only for the wizard who owns that
+    /// house (Niduus, 2026-11-13: "why is it taking me to this house for a world gate? I do not own the house"): with no
+    /// <paramref name="wizard"/> (the bots), never.
+    /// </remarks>
+    internal static List<Exit> ExitsHere(string zonePath, List<MinimapIndex.Mark> live, Wizard wizard = null) {
         var exits = new List<Exit>();
         foreach (var door in live.Where(m => m.Kind is MinimapIndex.DOOR or MinimapIndex.SIGIL && !string.IsNullOrEmpty(m.To))) {
             exits.Add(new Exit(door.Object.m_location.X, door.Object.m_location.Y, door.To.Trim()));
@@ -395,7 +413,24 @@ internal static class OverlayQuestRoute {
             exits.AddRange(s_walkExits.GetOrAdd(zonePath, WalkExits));
         }
 
-        return [.. exits.Where(e => !string.Equals(e.To, zonePath, StringComparison.OrdinalIgnoreCase))];
+        return [.. exits.Where(e => !string.Equals(e.To, zonePath, StringComparison.OrdinalIgnoreCase)
+                                    && (!IsHouse(e.To) || OwnsHouse(wizard, e.To)))];
+    }
+
+    /// <summary>Whether the area is in a house (a player's own place: an apartment, a castle, guild grounds).</summary>
+    internal static bool IsHouse(string zonePath) => zonePath?.TrimStart().StartsWith("Housing_", StringComparison.OrdinalIgnoreCase) == true;
+
+    /// <summary>Whether the wizard owns the house the area is in (its house folder is the one of a house it holds).</summary>
+    internal static bool OwnsHouse(Wizard wizard, string zonePath) {
+        try {
+            var folder = zonePath.Trim().Split('/')[0];
+
+            return wizard?.HouseLots?.Any(h => h.Value != 0 && Housing.HouseTemplates.TryGet(h.Key, out var house)
+                && string.Equals((house.LotZone ?? "").Split('/')[0], folder, StringComparison.OrdinalIgnoreCase)) == true;
+        }
+        catch (Exception) {
+            return false;
+        }
     }
 
     private static List<Exit> WalkExits(string zonePath) {
