@@ -54,6 +54,11 @@ internal sealed class BotStuck {
 
     private readonly Dictionary<int, Seen> _seen = [];
 
+    /// <summary>How long this team's wizards may stand still before they are stuck (<see cref="STILL"/> unless set).</summary>
+    internal TimeSpan Still { get; }
+
+    internal BotStuck(TimeSpan? still = null) => Still = still ?? STILL;
+
     // Places a wizard was stuck at lately, with how many tries it made there.
     private readonly List<(int Index, string Zone, float X, float Y, int Tries, DateTime When)> _deadEnds = [];
     private static readonly TimeSpan DEAD_END_MEMORY = TimeSpan.FromMinutes(20);
@@ -95,7 +100,7 @@ internal sealed class BotStuck {
             return 0;
         }
 
-        if (now - seen.Since < STILL || now - seen.LastTry < STILL) {
+        if (now - seen.Since < Still || now - seen.LastTry < Still) {
             return 0;
         }
 

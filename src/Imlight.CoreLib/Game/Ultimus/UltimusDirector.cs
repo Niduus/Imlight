@@ -510,6 +510,13 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
 
+        // There: the walk that got it here is written down as a proven way (RouteMemory).
+        if (RouteMemory.Arrived(leader.CharId, leader.Zone, leader.X, leader.Y)) {
+            var (legs, stuck) = RouteMemory.Count();
+            Note("Ultimus", $"{leader.Name} remembers the walk to \"{target.What}\" in {UltimusText.Zone(leader.Zone)} as a way that works " +
+                            $"({legs} known ways, {stuck} stuck spots to walk round).");
+        }
+
         // There: what is done here, one wizard at a time in the team's order.
         switch (target.Kind) {
             case UltimusPlanner.TALK:
@@ -1299,13 +1306,58 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             _lastProgress = DateTime.UtcNow;
         }
 
-        // Nothing has changed for a long while: stuck.
-        if (DateTime.UtcNow - _lastProgress > TimeSpan.FromMinutes(UltimusWire.StuckMinutes)) {
+        // Nothing has changed for a long while: stuck. A quarter sooner than the setting says (Niduus, 2026-11-13: "engage
+        // with its restart timer 25% sooner if idle for too long"), and it does something about it: a fresh look at the way
+        // (another way when there is one), and the second time running, back to where the area starts.
+        var idle = TimeSpan.FromMinutes(UltimusWire.StuckMinutes * UltimusDirectorActor.SOONER);
+        if (DateTime.UtcNow - _lastProgress > idle) {
             _lastProgress = DateTime.UtcNow;
+            var minutes = Math.Round(idle.TotalMinutes, 1);
             var kind = _target?.Problem.Length > 0 || _target?.Kind is UltimusPlanner.TALK or UltimusPlanner.USE ? "quest" : "team";
-            Issue(kind, _target?.Quest ?? _currentQuest, $"No progress for {UltimusWire.StuckMinutes} minutes. The team is {_doing}.",
+            Issue(kind, _target?.Quest ?? _currentQuest, $"No progress for {minutes} minutes. The team is {_doing}.",
                 key: "stuck|" + (_target?.Key ?? _doing));
+            RestartIdle(minutes);
         }
+        else if (_idleRestarts > 0 && DateTime.UtcNow - _lastProgress < TimeSpan.FromSeconds(30) && _lastProgress > _idleRestartAt) {
+            _idleRestarts = 0;
+        }
+    }
+
+    private int _idleRestarts;
+    private DateTime _idleRestartAt = DateTime.MinValue;
+
+    // No progress for a long while: the way is looked at fresh (the old walks forgotten, another way tried), and when that
+    // did not help last time either, the leader goes back to where the area starts and finds the way from there.
+    private void RestartIdle(double minutes) {
+        if (_team.Count == 0) {
+            return;
+        }
+
+        var leader = _team[0];
+        _idleRestarts++;
+        _idleRestartAt = DateTime.UtcNow;
+        _sent.Clear();
+        _clicks.Clear();
+        _target = null;
+        foreach (var member in _team) {
+            OverlayQuestPath.Forget(member.CharId);
+        }
+
+        if (leader.Wizard is null || CombatDuelComponent.IsInBattle(leader.GlobalId)) {
+            return;
+        }
+
+        RouteMemory.Stuck(leader.CharId, leader.Zone, leader.X, leader.Y);
+        if (_idleRestarts == 1 && TryAnotherWay(0)) {
+            Note("Ultimus", $"{leader.Name} made no progress for {minutes} minutes: looks at the way fresh and tries another way.", UltimusLink.ABNORMAL);
+
+            return;
+        }
+
+        Note("Ultimus", $"{leader.Name} made no progress for {minutes} minutes: goes back to where {UltimusText.Zone(leader.Zone)} starts and finds the way from there.",
+            UltimusLink.ABNORMAL);
+        _actors[0].Tell(new UltimusMember.Recall());
+        _idleRestarts = 0;
     }
 
     private void StartRun(string questName) {
