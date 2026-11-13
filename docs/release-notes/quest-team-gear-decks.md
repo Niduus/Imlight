@@ -197,3 +197,8 @@ Fixed: The team stood still on "Go to Wizard City, Unicorn Way" in "Finding Out 
 Those four steps mean opening the four fairy cages on Unicorn Way, but the team only walked to each cage and waited. Steps like this are now clicked, as a player clicks the cage.
 Where: Wizard City, Unicorn Way, "Finding Out Why"
 Test: Let the team reach "Finding Out Why". Team Logs should show "uses something for ..." at each cage, and the quest should move on.
+
+Changed: The Quest Team leaves Ultimus's creatures alone
+When the team looks for a creature to fight, it skips any creature Ultimus is fighting or walking to, so the two never chase the same one.
+Where: in the game
+Test: With both on, on the same street, the team and Ultimus should fight different creatures.
