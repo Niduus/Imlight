@@ -203,14 +203,16 @@ internal static class OverlayQuestPath {
             queue.Enqueue(i);
             while (queue.TryDequeue(out var cell)) {
                 var (x, y) = (cell % grid.Width, cell / grid.Width);
-                foreach (var (dx, dy, _) in s_moves) {
+                foreach (var (dx, dy, len) in s_moves) {
                     var (nx, ny) = (x + dx, y + dy);
                     if (nx < 0 || ny < 0 || nx >= grid.Width || ny >= grid.Height) {
                         continue;
                     }
 
+                    // A ledge too high to climb or drop parts islands too (Niduus, 2026-11-13: Ultimus stood at the edge
+                    // of the raised lawn by "To Lower Triton", the way down being that teleporter, not the cliff).
                     var n = (ny * grid.Width) + nx;
-                    if (labels[n] < 0 && grid.Cost[n] is not (BLOCKED or WATER_COST)) {
+                    if (labels[n] < 0 && grid.Cost[n] is not (BLOCKED or WATER_COST) && !grid.TooSteep(cell, n, len)) {
                         labels[n] = next;
                         queue.Enqueue(n);
                     }
