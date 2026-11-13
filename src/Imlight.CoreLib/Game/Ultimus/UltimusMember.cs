@@ -82,6 +82,8 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
 
     /// <summary>Ahziael finishes the step it is on in a quest (.quest completegoalfor), for a step that is broken.</summary>
     internal sealed record SkipStep(string Quest);
+    // Stuck past stepping aside: the server takes it back to where its area starts.
+    internal sealed record Recall;
     internal sealed record GainXp(int Xp);
     internal sealed record SelectBadge(uint Id);
     internal sealed record GoToTeammate(ulong CharId);
@@ -246,6 +248,7 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
             }
         });
         Receive<SkipStep>(m => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "completegoal", QuestName = m.Quest }));
+        Receive<Recall>(_ => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "botrecall" }));
         Receive<GoToTeammate>(m => Send(new WIZARD_12_PROTOCOL.MSG_GOTOFRIENDLYPLAYER { TargetCharacterID = m.CharId }));
         Receive<SelectBadge>(m => Send(new GAME_5_PROTOCOL.MSG_SELECT_BADGE { BadgeNameID = m.Id }));
         Receive<GainXp>(m => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_GAINXP { XP = m.Xp }));
