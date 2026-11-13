@@ -1317,9 +1317,9 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
     }
 
     // A spell that brings a defeated participant back: it has an afterlife (kAfterlife), at the top or in a list.
+    // Inner effects of a random roll, an X-pip tier or a conditional count too (Hits).
     internal static bool IsRevive(SpellTemplate template)
-        => template?.m_effects?.Any(e => e is not null && (e.m_effectType == kSpellEffects.kAfterlife
-            || e is EffectListSpellEffect list && (list.m_effectList ?? []).Any(x => x?.m_effectType == kSpellEffects.kAfterlife))) == true;
+        => Hits(template?.m_effects).Any(e => e.m_effectType == kSpellEffects.kAfterlife);
 
     private static readonly HashSet<kSpellEffects> s_heals = [
         kSpellEffects.kHeal, kSpellEffects.kHealPercent, kSpellEffects.kMaxHealthHeal,
@@ -1327,9 +1327,11 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
 
     // A spell that may go on a defeated teammate: a revive, or a heal aimed at one teammate, which brings them back as
     // in the real game (Niduus, 2026-10-26: "Healing spells revive a downed wizard in Vanilla"). It was skipped as
-    // "target is dead".
+    // "target is dead". The heal may sit inside a wrapper: Dryad and the other X-pip heals keep theirs in a
+    // VariableSpellEffect, which the old check never opened, so they were still lost on a downed teammate (Niduus,
+    // 2026-11-13: "can't heal dead team mates, thus reviving them").
     internal static bool CanGoOnFallen(SpellTemplate template)
-        => IsRevive(template) || AllEffects(template).Any(e => s_heals.Contains(e.m_effectType)
+        => IsRevive(template) || Hits(template?.m_effects).Any(e => s_heals.Contains(e.m_effectType)
             && e.m_effectTarget is kEffectTarget.kFriendlySingle or kEffectTarget.kFriendlySingleNotMe);
 
     private float ProcessQueuedAction(QueuedCombatAction action, CombatActionListObj combatActionList, float cinematicTimeSoFar) {
