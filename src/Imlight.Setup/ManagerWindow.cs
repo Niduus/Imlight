@@ -439,6 +439,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab(QUEST_TEAM_TAB, QuestTeamTab),
             Tab(QUEST_TEAM_ISSUES_TAB, QuestTeamIssuesTab),
             Tab(QUEST_TEAM_LOGS_TAB, QuestTeamLogsTab),
+            Tab(QUEST_TEAM_WIZARDS_TAB, QuestTeamWizardsTab),
         }.ToDictionary(t => (string) t.Tag!);
         // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
         var nav = Navigation(tabs);
@@ -3051,6 +3052,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Remote"] = ("link", "Manage an Imlight server on another PC with your Administrator account there, or let admins manage this one."),
         ["Account Transfer"] = ("download", "Download your account from a server you play on, and bring accounts from other servers into this one."),
         [QUEST_TEAM_TAB] = ("users", "Four wizards the server plays through the story by itself, like players: turn them on, see what they are doing, and when to tell you about an issue."),
+        [QUEST_TEAM_WIZARDS_TAB] = ("users", "Pick a Quest Team wizard to see its stats, gear, deck and the quest it is on."),
         [QUEST_TEAM_ISSUES_TAB] = ("flag", "Every quest the Quest Team could not finish, when it got stuck, and quests that took too long, with what happened."),
         [QUEST_TEAM_LOGS_TAB] = ("log", "The Quest Team's quest log (each quest, its steps and how long it took) and what each wizard did."),
     };

@@ -28,6 +28,9 @@ internal sealed partial class ManagerWindow {
     private const string QUEST_TEAM_TAB = "Quest Team";
     private const string QUEST_TEAM_ISSUES_TAB = "Team Issues";
     private const string QUEST_TEAM_LOGS_TAB = "Team Logs";
+    private const string QUEST_TEAM_WIZARDS_TAB = "Team Wizards";
+    private const string BOT_CONCEPT_SHOUT_OUT = "Shout out to Discord user gese11 for sharing the bot concept.";
+    private readonly WizardSheet _teamSheet = new("Turn the Quest Team on and start the server; once the four wizards are playing, pick one here to see its stats, gear, deck and quest.");
     private const int QUEST_TEAM_LOG_LINES = 300;
 
     private readonly TextBlock _teamState = new() { TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold };
@@ -111,7 +114,7 @@ internal sealed partial class ManagerWindow {
                 "quest givers, fight as a team, and walk to the Ravenwood trainers to learn spells with their own training points " +
                 "(each also learns the spells its team role needs plus a heal and a shield of its own, so it can fight alone). When a quest does not work, when they are stuck, or when a " +
                 "quest takes much longer than it should, a banner at the top of Ahziael says so and Team Issues shows what happened. " +
-                "They run in a little program of their own next to the server; they never touch your own wizards.",
+                "They run in a little program of their own next to the server; they never touch your own wizards. " + BOT_CONCEPT_SHOUT_OUT,
                 _teamState,
                 SwitchRow("Quest Team", _teamEnabled, "On: the four wizards log in a few seconds later and start questing. Off: they log out."),
                 _teamDoing,
@@ -316,6 +319,17 @@ internal sealed partial class ManagerWindow {
     // Team Logs tab
     // ---------------------------------------------------------------------
 
+    // Pick a wizard of the team and see its stats, gear, deck and quest (Niduus, 2026-11-13). The view is shared with Ultimus.
+    private Control QuestTeamWizardsTab() {
+        StartQuestTeamTimer();
+
+        return Page(
+            Fold("users", QUEST_TEAM_TAB, "The team's wizards",
+                "Pick Ice, Life, Death or Storm to see that wizard's stats, the gear it wears, its deck right now, and the quest and " +
+                "step it is on. Updated every 3 seconds.",
+                _teamSheet.View));
+    }
+
     private Control QuestTeamLogsTab() {
         StartQuestTeamTimer();
         _teamQuestLogBox = new TextBox {
@@ -434,6 +448,12 @@ internal sealed partial class ManagerWindow {
             ShowQuestTeamStatus();
         }
 
+        if (_teamSheet.View.IsEffectivelyVisible) {
+            _teamSheet.Show(ReadQuestTeamStatus() is { } status && DateTime.TryParse((string?) status["at"], CultureInfo.InvariantCulture,
+                DateTimeStyles.RoundtripKind, out var written) && DateTime.UtcNow - written.ToUniversalTime() < TimeSpan.FromSeconds(30)
+                ? status["members"] as JsonArray : null);
+        }
+
         if (_teamLogBox?.IsEffectivelyVisible == true) {
             ShowColoredLog(ReadNewest("quest-team*.txt", _teamLogText));
             ShowLog(_teamQuestLogBox!, ReadNewest("quest-log.txt", _teamQuestLogText), ref _teamQuestLogText);
@@ -523,6 +543,22 @@ internal sealed partial class ManagerWindow {
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException) {
             // Being written right now: read it on the next tick.
+        }
+    }
+
+    private JsonObject? ReadQuestTeamStatus() {
+        try {
+            var path = Path.Combine(QuestTeamFolder, "status.json");
+            if (!File.Exists(path)) {
+                return null;
+            }
+
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+
+            return JsonNode.Parse(stream) as JsonObject;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException) {
+            return null;
         }
     }
 

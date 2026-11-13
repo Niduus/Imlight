@@ -436,6 +436,10 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
 
         _attached = true;
         View.Wizard = attached.Wizard;
+        // A game asks for its friends list once it is in, and only then does the server count it as present for groups and
+        // friend teleports. Without this the team was never grouped ("Your friend is busy right now. They are not in your
+        // group anymore.") and could not go to each other.
+        Send(new GAME_5_PROTOCOL.MSG_BUDDYREQUESTLIST { ListOwnerGID = attached.Wizard.GameObjectID });
         View.SessionObject = attached.SessionObject;
         View.Name = attached.Wizard.PlayerNameBehavior?.GetWizardName() ?? View.Name;
         _mobileId = (ushort) (attached.Wizard.GameObject?.m_nMobileID ?? 0);

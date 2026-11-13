@@ -172,3 +172,18 @@ Fixed: A Quest Team wizard passed round after round with lots of pips
 To get more of the creatures it needs into a fight, the team held its hits for up to four rounds whenever such a creature was anywhere close, even one only walking by. So a wizard hit once and then passed again and again while its pips piled up. Now it holds for two rounds at most, only while a creature is really close, and while it waits it plays a blade or a trap instead of passing.
 Where: in battle; Team Logs ("... while more creatures walk in")
 Test: Watch Ice fight Lost Souls on Unicorn Way. It should hit every round from round 3 on, and play blades or traps (not passes) in the first rounds.
+
+Fixed: The Quest Team was never in a group
+A game asks for its friends list right after it logs in, and only then does the server count that wizard for groups. The team's wizards never asked, so their group invites went nowhere, and going to a teammate always failed with "Your friend is busy right now. They are not in your group anymore." Now each wizard asks like a game does, so the four group up and can go to each other.
+Where: in the game (the four show as a group); Team Logs
+Test: Press Restart. After they log in, the four should be in one group, and "not in your group anymore" should no longer show in Team Logs.
+
+New: Team Wizards page
+Pick Ice, Life, Death or Storm to see that wizard's stats (health, mana, damage, accuracy, pierce, critical, block, power pip chance, healing, resists and more), the gear it wears, the cards in its deck right now, its trained spells, and the quest and step it is on. Updated every 3 seconds. Ultimus uses the same view.
+Where: Quest Team > Team Wizards
+Test: With the Quest Team playing, open Team Wizards and click each of the four buttons.
+
+New: A shout-out for the bot idea
+"Shout out to Discord user gese11 for sharing the bot concept" is now on the Quest Team page and in Credits.
+Where: Quest Team > Quest Team; Credits
+Test: Look at the Quest Team page text and the Credits page.

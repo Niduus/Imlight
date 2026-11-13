@@ -79,7 +79,7 @@ internal sealed partial class ManagerWindow {
         // say which quests do not work (ManagerWindow.QuestTeam.cs).
         ("Quest Team", "users", "Bots that test the story",
             "Four wizards (Ice, Life, Death and Storm) the server plays by itself through the story, like players, and what they ran into.",
-            [QUEST_TEAM_TAB, QUEST_TEAM_ISSUES_TAB, QUEST_TEAM_LOGS_TAB]),
+            [QUEST_TEAM_TAB, QUEST_TEAM_WIZARDS_TAB, QUEST_TEAM_ISSUES_TAB, QUEST_TEAM_LOGS_TAB]),
         ("Server", "server", "Start, settings, accounts, logs",
             "Run the server and set it up: start and stop, every setting, who can log in, logs, game files, and Ahziael itself.",
             // Niduus, 2026-10-30: Ahziael on a server hosted on another PC, for its admins.
