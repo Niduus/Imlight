@@ -458,6 +458,7 @@ internal sealed partial class ManagerWindow {
         ("NOTABLE", "#FFA040", "Orange: notable, could stop a quest from finishing"),
         ("MINOR", "#FFE45C", "Yellow: minor, does not hold the quest back"),
         ("COMMAND", "#5CE1FF", "Cyan: something Ahziael did for them, and why"),
+        ("ABNORMAL", "#FF6EC7", "Pink: something abnormal they noticed"),
     ];
 
     private static IBrush TeamLogBrush(string line) {

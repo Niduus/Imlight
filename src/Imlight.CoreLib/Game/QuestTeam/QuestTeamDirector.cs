@@ -1234,6 +1234,10 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
     // Battles
     // ---------------------------------------------------------------------
 
+    private DateTime _battleSince = DateTime.MaxValue;
+    private const int BATTLE_ODD_MINUTES = 10;
+    private bool _battleOddSaid;
+
     private bool HandleBattle() {
         var fighting = _team.Where(m => CombatDuelComponent.IsInBattle(m.GlobalId)).ToList();
         for (var i = 0; i < _team.Count; i++) {
@@ -1246,7 +1250,18 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         if (fighting.Count == 0) {
+            _battleSince = DateTime.MaxValue;
+            _battleOddSaid = false;
+
             return false;
+        }
+
+        if (_battleSince == DateTime.MaxValue) {
+            _battleSince = DateTime.UtcNow;
+        } else if (DateTime.UtcNow - _battleSince > TimeSpan.FromMinutes(BATTLE_ODD_MINUTES) && !_battleOddSaid) {
+            _battleOddSaid = true;
+            Note("Team", $"this battle has gone on for over {BATTLE_ODD_MINUTES} minutes{(_target is { Kind: QuestTeamPlanner.FIGHT } t ? $" (fighting for \"{t.What}\")" : "")}; " +
+                         "far longer than a fight here should take.", QuestTeamLink.ABNORMAL);
         }
 
         _doing = $"in a battle ({fighting.Count} of 4 in it)";
@@ -1425,7 +1440,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                             Text = $"\"{done.GoalName}\" took {fights} battle(s) won" });
                         if (fights > DROP_FIGHTS_ODD) {
                             Issue("quest", quest.QuestName, $"The step \"{done.GoalName}\" took {fights} battles won to finish, far more than a player expects. " +
-                                                            "The drop chance or the creatures that count for it may be wrong.", key: "drops|" + quest.QuestName + "|" + done.GoalName, skipStep: false, level: QuestTeamLink.MINOR);
+                                                            "The drop chance or the creatures that count for it may be wrong.", key: "drops|" + quest.QuestName + "|" + done.GoalName, skipStep: false, level: QuestTeamLink.ABNORMAL);
                         }
                     }
 

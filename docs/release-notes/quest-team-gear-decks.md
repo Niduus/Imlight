@@ -162,3 +162,8 @@ Changed: The Quest Team no longer stands in the road between fights
 When the team rests after a battle, or has nothing to walk to for a moment, the leader now walks to the closest path spot well away from the creatures, and the others follow. When the next creature it needs is ready, it goes straight for it.
 Where: in the game; Team Logs
 Test: Watch the team after a battle on Unicorn Way. They should step off to the side, away from the creatures, and not stand among them.
+
+New: Pink lines for abnormal things the team notices
+Team Logs has a sixth color. Pink means the team noticed something abnormal, not always a broken quest: a step that took far too many battles to drop what it needs, or a battle that has gone on for over 10 minutes.
+Where: Quest Team > Team Logs (the color key lists Pink)
+Test: Look at the color key in Team Logs. Pink lines show "ABNORMAL:".
