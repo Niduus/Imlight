@@ -64,6 +64,8 @@ namespace Imlight.CoreLib.Game.Services;
 internal class BadgeService(SessionActor sessionActor) : MessageService(sessionActor) {
 
     private const int MAX_LISTED_BADGES = 25;
+
+    private static bool AnyBadgeAsTitle => ConfigurationManager.GetValue("Badges.AnyBadgeAsTitle", true);
     // The badge window reads a reward's loot list with the Transmit and AuthorityTransmit flags.
     private const uint LOOT_SERIALIZATION_FLAGS = (uint) (PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit);
 
@@ -570,7 +572,10 @@ internal class BadgeService(SessionActor sessionActor) : MessageService(sessionA
             return s_badgeNotComplete;
         }
 
-        return definition.ShowTitle ? 0 : s_selectBadgeError;
+        // The game marks most badges as no title (1,618 of 2,308: Spellwrights, bosses, quest badges), but its badge window
+        // still offers Equip on every earned badge. [Badges] AnyBadgeAsTitle (live, on by default) lets them all be
+        // worn (Niduus, 2026-11-13: some badges "aren't in roster to select"); off is the game's rule.
+        return definition.ShowTitle || AnyBadgeAsTitle ? 0 : s_selectBadgeError;
     }
 
     private static void Persist(Wizard wizard) {
