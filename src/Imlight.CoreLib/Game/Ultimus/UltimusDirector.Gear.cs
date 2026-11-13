@@ -70,9 +70,13 @@ internal sealed partial class UltimusDirectorActor {
             var hits = Combat.CombatEnchantments.Leaves(spell.m_effects ?? [])
                 .Where(e => e is not null && Combat.CombatCharms.DamageEffects.Contains(e.m_effectType) && !string.IsNullOrEmpty((string) e.m_sDamageType))
                 .ToList();
+            // A Balance spell's hits are boosted by Balance damage and pierce whatever they land as (Niduus picked "Balance
+            // boost, like the game"); any other spell's by its damage type.
+            var balance = string.Equals((string) spell.m_sMagicSchoolName, "Balance", StringComparison.OrdinalIgnoreCase);
             foreach (var hit in hits) {
                 // Each way a hit may land shares the card (a random head is one of several).
-                mix[(string) hit.m_sDamageType] = mix.GetValueOrDefault((string) hit.m_sDamageType) + (Math.Max(1, hit.m_effectParam) * copies / (double) hits.Count);
+                var key = balance ? "Balance" : (string) hit.m_sDamageType;
+                mix[key] = mix.GetValueOrDefault(key) + (Math.Max(1, hit.m_effectParam) * copies / (double) hits.Count);
             }
         }
 

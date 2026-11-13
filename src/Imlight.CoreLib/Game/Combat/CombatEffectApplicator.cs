@@ -106,9 +106,39 @@ internal static class CombatEffectApplicator {
                                       CombatDuelSubCircle[] targets,
                                       float critMultiplier = 1,
                                       uint spellTemplateId = 0) {
-        var cinematicTime = 0.0f;
         charms ??= [];
         targets ??= [];
+        // An effect applied from inside another (no spell of its own) keeps the outer spell's school.
+        var outer = s_boostSchool;
+        s_boostSchool = spellTemplateId == 0 ? outer : BoostSchoolOf(spellTemplateId);
+        try {
+            return ApplyEffectBody(effect, charms, caster, targets, critMultiplier, spellTemplateId);
+        }
+        finally {
+            s_boostSchool = outer;
+        }
+    }
+
+    // The school whose damage and pierce the caster's stats add to the hit being applied now: a Balance spell's, whatever
+    // damage type it lands as (Niduus, 2026-11-13, picked "Balance boost, like the game": Hydra, Spectral Blast, Nested
+    // Fury and Chimera are boosted by the caster's Balance damage and pierce; the target's resist and shields still go by
+    // the damage type). Null for every other spell: its damage type.
+    [ThreadStatic]
+    private static string s_boostSchool;
+
+    /// <summary>The school a spell's hits are boosted by when it is not their damage type (a Balance spell), else null.</summary>
+    internal static string BoostSchoolOf(uint spellTemplateId)
+        => spellTemplateId != 0 && Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(spellTemplateId) is SpellTemplate spell
+           && string.Equals((string) spell.m_sMagicSchoolName, "Balance", StringComparison.OrdinalIgnoreCase)
+            ? "Balance" : null;
+
+    private static float ApplyEffectBody(SpellEffect effect,
+                                         SpellEffect[] charms,
+                                         CombatDuelSubCircle caster,
+                                         CombatDuelSubCircle[] targets,
+                                         float critMultiplier,
+                                         uint spellTemplateId) {
+        var cinematicTime = 0.0f;
 
         if (effect.m_effectTarget == kEffectTarget.kGlobal) {
             ApplyGlobalEffect(effect, caster._duelActor.Duel, spellTemplateId);
@@ -382,8 +412,9 @@ internal static class CombatEffectApplicator {
         int damageFromCaster = effect.m_effectParam;
 
         // Calculate damage increase from caster stats.
-        var damageFlatIncrease = GetFlatDamageIncrease(caster, effect.m_sDamageType);
-        var damagePercentIncrease = 1 + GetPercentDamageIncrease(caster, effect.m_sDamageType);
+        var boostSchool = s_boostSchool ?? effect.m_sDamageType;
+        var damageFlatIncrease = GetFlatDamageIncrease(caster, boostSchool);
+        var damagePercentIncrease = 1 + GetPercentDamageIncrease(caster, boostSchool);
         damageFromCaster = (int) Math.Floor((damageFromCaster * damagePercentIncrease) + damageFlatIncrease);
 
         // Calculate damage changes from hanging effects.
@@ -400,7 +431,7 @@ internal static class CombatEffectApplicator {
     /// card's own pierce (Extraordinary) and a pierce bubble (Age of Reckoning). Only gear counted before.
     /// </summary>
     private static float OutgoingPierce(SpellEffect effect, SpellEffect[] charms, CombatDuelSubCircle caster) {
-        var pierce = GetPierce(caster, effect.m_sDamageType);
+        var pierce = GetPierce(caster, s_boostSchool ?? effect.m_sDamageType);
         pierce += charms.Where(c => c.m_effectType == kSpellEffects.kModifyOutgoingArmorPiercing).Sum(c => c.m_effectParam) / 100f;
         pierce += effect.m_armorPiercingParam / 100f;
         pierce += GetGlobalEffect(caster._duelActor.Duel, kSpellEffects.kModifyOutgoingArmorPiercing, effect.m_sDamageType, caster) / 100f;
