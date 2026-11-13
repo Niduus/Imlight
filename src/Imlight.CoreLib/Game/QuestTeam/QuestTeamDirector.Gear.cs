@@ -106,6 +106,7 @@ internal sealed partial class QuestTeamDirectorActor {
     }
 
     private readonly Dictionary<string, uint> _badgeAsked = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, DateTime> _badgeAskedAt = new(StringComparer.Ordinal);
 
     private static readonly string[] s_storyBadgeWords = [
         "Quest", "Story", "Wizard City", "Krokotopia", "Marleybone", "MooShu", "Dragonspyre", "DragonSpire", "Celestia", "Zafaria",
@@ -203,12 +204,14 @@ internal sealed partial class QuestTeamDirectorActor {
                 continue;
             }
 
-            // The newest story badge as their title (Niduus, 2026-11-12: "latest story badge"), picked as a player picks it.
-            if (NewestStoryBadge(wizard) is { } badge && badge.Id != wizard.BadgeBehavior.SelectedBadgeId
-                && _badgeAsked.GetValueOrDefault(member.Role) != badge.Id) {
-                _badgeAsked[member.Role] = badge.Id;
-                Note(member.Role, $"{member.Name} wears its newest story badge: {badge.Title}.");
-                _actors[i].Tell(new QuestTeamMember.SelectBadge(badge.Id));
+            // Always the Essential badge as their title, picked as a player picks it, and picked again if anything changes
+            // it (Niduus, 2026-11-13: "locked to the Essential badge for display"; it was the newest story badge).
+            if (BotBadge.ToPick(wizard) is var essential and not 0
+                && (_badgeAsked.GetValueOrDefault(member.Role) != essential || DateTime.UtcNow >= _badgeAskedAt.GetValueOrDefault(member.Role))) {
+                _badgeAsked[member.Role] = essential;
+                _badgeAskedAt[member.Role] = DateTime.UtcNow.AddMinutes(1);
+                Note(member.Role, $"{member.Name} wears the {BotBadge.ESSENTIAL_NAME} badge.");
+                _actors[i].Tell(new QuestTeamMember.SelectBadge(essential));
             }
 
             // New spells learned (or a new deck worn) since the deck was made: the deck again, for the fight it was made for.

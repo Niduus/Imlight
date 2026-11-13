@@ -292,3 +292,8 @@ Fixed: Gear slot icons showed four small icons instead of one
 The game keeps each backpack tab's four looks (normal, pointed at, pressed, greyed) in one picture, and the wizard pages showed all four. Now only the top-left one shows, for every slot.
 Where: Ahziael > Quest Team > The team's wizards, and the Ultimus page (Gear)
 Test: Each gear line should have one round slot icon, then the item's name.
+
+Changed: The Quest Team and Ultimus always show the Essential badge
+Their title under their names is now always the Essential badge, instead of their newest story badge. They're given the badge if they don't have it, and they pick it the way a player does. If anything changes their title, they pick Essential again within about a minute.
+Where: in the game, under their names
+Test: Look at a Quest Team wizard or Ultimus in the game. Their title should be the Essential badge's.
