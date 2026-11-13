@@ -54,6 +54,9 @@ internal sealed partial class ManagerWindow {
     private sealed class TeleportRoomRules {
         public string Default { get; set; } = TR_GAME;
         public Dictionary<string, string> Rooms { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+        // Teleporting to a friend from the friends list asks "Do you want to go to your friend?" first (Niduus,
+        // 2026-11-13: one click on a friend sometimes teleported). The server reads it from the same file.
+        public bool AskBeforeFriendTeleport { get; set; } = true;
     }
 
     /// <summary>A dungeon, tower or other instance: rooms whose code names differ only by a number or a letter at the end.</summary>
@@ -74,6 +77,7 @@ internal sealed partial class ManagerWindow {
     private readonly ComboBox _trShow = FilterCombo(s_trShow, 190);
     private readonly CheckBox _trEverywhere = new() { Content = "Every place, not only instances" };
     private readonly ComboBox _trDefault = new() { MinWidth = 260 };
+    private readonly CheckBox _trAskFriend = new() { Content = "Ask before teleporting to a friend (the game's \"Do you want to go to your friend?\")" };
     private readonly TextBlock _trCount = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _trSummary = new() { TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold };
     private readonly ListBox _trList = new() { Background = Brushes.Transparent, Classes = { "compact" } };
@@ -107,6 +111,13 @@ internal sealed partial class ManagerWindow {
             }
         };
         ToolTip.SetTip(_trDefault, string.Join("\n\n", s_trRules.Select(RuleHelp)));
+        ToolTip.SetTip(_trAskFriend, "On: picking a friend to teleport to shows the game's question first, and you only go after Yes, " +
+            "so one stray click on the friends list never teleports you. Off: you go at once, as before. Counts at once.");
+        _trAskFriend.IsCheckedChanged += (_, _) => {
+            if (!_trFilling) {
+                SetAskBeforeFriendTeleport(_trAskFriend.IsChecked == true);
+            }
+        };
 
         var reset = Plain("Put every room back to the game's way");
         ToolTip.SetTip(reset, "Every dungeon and instance room goes back to Like the game, and every room's own choice is removed.");
@@ -135,7 +146,8 @@ internal sealed partial class ManagerWindow {
                             Spaced(_trDefault),
                         },
                     },
-                    new WrapPanel { Children = { Spaced(WithCenter(_trSummary)), Spaced(Action(reset, ResetTeleportRoomsAsync)) } }), Dock.Top),
+                    new WrapPanel { Children = { Spaced(WithCenter(_trSummary)), Spaced(Action(reset, ResetTeleportRoomsAsync)) } },
+                    new WrapPanel { Children = { Spaced(_trAskFriend) } }), Dock.Top),
                 WithMargin(_trList, new Thickness(0, 14, 0, 0)),
             },
         };
@@ -244,6 +256,7 @@ internal sealed partial class ManagerWindow {
     private void RenderTeleportRooms() {
         _trFilling = true;
         _trDefault.SelectedIndex = Array.IndexOf(s_trRules, _trRules.Default);
+        _trAskFriend.IsChecked = _trRules.AskBeforeFriendTeleport;
         _trFilling = false;
 
         var closed = _trRules.Rooms.Count(r => r.Value == TR_CLOSED);
@@ -408,6 +421,24 @@ internal sealed partial class ManagerWindow {
         RenderTeleportRooms();
     }
 
+    private void SetAskBeforeFriendTeleport(bool ask) {
+        try {
+            _trRules = ReadTeleportRooms();
+            if (_trRules.AskBeforeFriendTeleport == ask) {
+                return;
+            }
+
+            _trRules.AskBeforeFriendTeleport = ask;
+            WriteTeleportRooms(_trRules);
+            Say(ask
+                ? "Teleporting to a friend asks first now. It counts at once if the server is running."
+                : "Teleporting to a friend goes at once now, with no question. It counts at once if the server is running.");
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException) {
+            Say($"Could not save {TELEPORT_ROOMS_FILE}: {ex.Message}", isError: true);
+        }
+    }
+
     private async Task ResetTeleportRoomsAsync() {
         _trRules = ReadTeleportRooms();
         if (_trRules.Default == TR_GAME && _trRules.Rooms.Count == 0) {
@@ -420,7 +451,7 @@ internal sealed partial class ManagerWindow {
             return;
         }
 
-        _trRules = new TeleportRoomRules();
+        _trRules = new TeleportRoomRules { AskBeforeFriendTeleport = _trRules.AskBeforeFriendTeleport };
         WriteTeleportRooms(_trRules);
         RenderTeleportRooms();
         Say("Every room is like the game again.");
