@@ -355,6 +355,20 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
                 // whoever landed beside the way back was sent straight back, over and over (Niduus, 2026-11-13: "there is no
                 // delays to this teleporter"). While one is on its way, touching another does nothing.
                 var delay = TeleporterDelaySeconds;
+                // Just sent by a teleporter: the one they land on (often the way back) does nothing for a few seconds, and
+                // as they are already standing in it, it only works again once they walk off and back on (Niduus,
+                // 2026-11-13: "THE TELEPORTERS DO NOT PUT ME ON A COOL DOWN ... I AM STUCK").
+                if (message.ByZoneDoor && DateTime.UtcNow < _doorCooldownUntil) {
+                    Logger.Debug("Session {0}: a teleporter was touched {1:0.0} s before the cool down after the last one ended; ignored.",
+                        Logger.Args(SessionActor.SessionID, (_doorCooldownUntil - DateTime.UtcNow).TotalSeconds));
+
+                    return zoneDetails;
+                }
+
+                if (message.ByZoneDoor) {
+                    _doorCooldownUntil = DateTime.UtcNow + TimeSpan.FromSeconds(Math.Max(0, delay) + TeleporterCooldownSeconds);
+                }
+
                 if (message.ByZoneDoor && delay > 0) {
                     if (Timers.IsTimerActive(IN_AREA_TELEPORT)) {
                         return zoneDetails;
@@ -1758,6 +1772,12 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     }
 
     private const string IN_AREA_TELEPORT = "in-area-teleport";
+
+    // Until when a teleporter within the area does nothing for this wizard: the delay plus the cool down after one sent them.
+    private DateTime _doorCooldownUntil = DateTime.MinValue;
+
+    /// <summary>How long after a teleporter within an area sends a wizard no teleporter works for them ([World] TeleporterCooldownSeconds, live).</summary>
+    private static double TeleporterCooldownSeconds => Math.Clamp(ConfigurationManager.GetValue("World.TeleporterCooldownSeconds", 5.0), 0, 60);
 
     /// <summary>How long a teleporter within an area waits before sending the wizard ([World] TeleporterDelaySeconds, live).</summary>
     private static double TeleporterDelaySeconds => Math.Clamp(ConfigurationManager.GetValue("World.TeleporterDelaySeconds", 1.5), 0, 10);
