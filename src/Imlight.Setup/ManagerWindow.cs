@@ -440,6 +440,9 @@ internal sealed partial class ManagerWindow : Window {
             Tab(QUEST_TEAM_ISSUES_TAB, QuestTeamIssuesTab),
             Tab(QUEST_TEAM_LOGS_TAB, QuestTeamLogsTab),
             Tab(QUEST_TEAM_WIZARDS_TAB, QuestTeamWizardsTab),
+            Tab(ULTIMUS_TAB, UltimusTab),
+            Tab(ULTIMUS_ISSUES_TAB, UltimusIssuesTab),
+            Tab(ULTIMUS_LOGS_TAB, UltimusLogsTab),
         }.ToDictionary(t => (string) t.Tag!);
         // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
         var nav = Navigation(tabs);
@@ -478,6 +481,7 @@ internal sealed partial class ManagerWindow : Window {
                         WithDock(RemoteBanner() ?? new Panel(), Dock.Top),
                         // "If a issue occures, it will announce it in Ahziael" (Niduus, 2026-11-12): the Quest Team's banner.
                         WithDock(QuestTeamBanner(), Dock.Top),
+                        WithDock(UltimusBanner(), Dock.Top),
                         WithDock(_messageBar, Dock.Bottom),
                         WithDock(_saveBar, Dock.Bottom),
                         body,
@@ -3055,6 +3059,9 @@ internal sealed partial class ManagerWindow : Window {
         [QUEST_TEAM_WIZARDS_TAB] = ("users", "Pick a Quest Team wizard to see its stats, gear, deck and the quest it is on."),
         [QUEST_TEAM_ISSUES_TAB] = ("flag", "Every quest the Quest Team could not finish, when it got stuck, and quests that took too long, with what happened."),
         [QUEST_TEAM_LOGS_TAB] = ("log", "The Quest Team's quest log (each quest, its steps and how long it took) and what each wizard did."),
+        [ULTIMUS_TAB] = ("user", "Ultimus, the Solo Quester: one Balance wizard the server plays through the Main Story alone. Its quest, stats, gear and deck."),
+        [ULTIMUS_ISSUES_TAB] = ("flag", "Every quest Ultimus could not finish, with a debug report to fix it from."),
+        [ULTIMUS_LOGS_TAB] = ("log", "Ultimus's quest log and what it did, with odd things it noticed in pink."),
     };
 
     /// <summary>What a tab that could not be built shows instead: the reason, and where it was written down.</summary>

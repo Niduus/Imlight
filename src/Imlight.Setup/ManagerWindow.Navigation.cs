@@ -80,6 +80,10 @@ internal sealed partial class ManagerWindow {
         ("Quest Team", "users", "Bots that test the story",
             "Four wizards (Ice, Life, Death and Storm) the server plays by itself through the story, like players, and what they ran into.",
             [QUEST_TEAM_TAB, QUEST_TEAM_WIZARDS_TAB, QUEST_TEAM_ISSUES_TAB, QUEST_TEAM_LOGS_TAB]),
+        // Niduus, 2026-11-12: "Can we create a Solo Quester called Ultimus?" (ManagerWindow.Ultimus.cs).
+        ("Ultimus", "user", "The Solo Quester",
+            "One Balance wizard named Ultimus the server plays alone through the Main Story, and what it ran into.",
+            [ULTIMUS_TAB, ULTIMUS_ISSUES_TAB, ULTIMUS_LOGS_TAB]),
         ("Server", "server", "Start, settings, accounts, logs",
             "Run the server and set it up: start and stop, every setting, who can log in, logs, game files, and Ahziael itself.",
             // Niduus, 2026-10-30: Ahziael on a server hosted on another PC, for its admins.
