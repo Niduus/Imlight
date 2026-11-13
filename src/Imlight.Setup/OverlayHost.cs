@@ -340,21 +340,38 @@ internal static class OverlayHost {
     // Once a second: the design and server files the other copy may have changed, whose turn it is, the game windows,
     // and the clock.
     // A note shown on one game window for a while (an overlay button's ".link" code), by game window.
-    private static readonly Dictionary<IntPtr, (string Text, DateTime Until)> s_notices = [];
+    private static readonly Dictionary<IntPtr, (string Text, DateTime Until, bool Bot)> s_notices = [];
 
     /// <summary>Shows <paramref name="text"/> on that game window for two minutes (empty: takes it away).</summary>
-    internal static void ShowNotice(IntPtr game, string text) {
+    internal static void ShowNotice(IntPtr game, string text, bool botAlert = false) {
         if (game == IntPtr.Zero) {
             return;
         }
 
         if (text.Length == 0 ? s_notices.Remove(game) : true) {
             if (text.Length > 0) {
-                s_notices[game] = (text, DateTime.UtcNow + TimeSpan.FromMinutes(2));
+                // A Quest Team or Ultimus alert stays until its Acknowledge button is clicked (Niduus, 2026-11-13); other
+                // notes go by themselves after two minutes.
+                s_notices[game] = (text, botAlert ? DateTime.MaxValue : DateTime.UtcNow + TimeSpan.FromMinutes(2), botAlert);
             }
 
             s_designVersion++;
         }
+    }
+
+    // The default look of a note, when no Bot Alerts add-on gives one.
+    private static OverlayElement DefaultNoteLook() => new() {
+        Kind = OverlayElement.BOT_ALERTS, Y = 60, Width = 900, Size = 18, Bold = true, Padding = 12, CornerRadius = 10, Shadow = true,
+        BorderColor = "#C0FFD24A", BorderWidth = 1.5,
+        Fill = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#FFFFFFFF" },
+        Background = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#E0140F28" },
+    };
+
+    // The Bot Alerts add-on in the design (or from the server), when one is placed and showing.
+    private static OverlayElement? BotAlertsLook() {
+        var mine = ShowsMine(s_design) ? s_design.Elements.FirstOrDefault(e => e.IsBotAlerts && e.Visible) : null;
+
+        return mine ?? ServerElements.FirstOrDefault(e => e.IsBotAlerts && e.Visible);
     }
 
     // The server's pieces, and this window's note on top in the middle when it has one.
@@ -363,17 +380,46 @@ internal static class OverlayHost {
             return ServerElements;
         }
 
+        // Quest Team and Ultimus alerts show on a game only with the Bot Alerts add-on (Niduus, 2026-11-13: "Should be a
+        // Addon for QT and Ultimus"); Ahziael's own pop-up and Issues pages keep them either way.
+        var look = BotAlertsLook();
+        if (notice.Bot && look is null) {
+            return ServerElements;
+        }
+
+        look ??= DefaultNoteLook();
+
+        // Always inside the window, the words wrapped to fit (Niduus, 2026-11-13: "should respect the window border so the
+        // message is kept readable"), in the middle at the top.
+        var area = 1280.0;
+        if (GameClient(game) is { } client) {
+            var (w, h) = (client.Width / client.Scale, client.Height / client.Scale);
+            area = w / OverlayDesign.Fit(w, h);
+        }
+
+        var width = Math.Max(240, Math.Min(look.Width > 0 ? look.Width : 900, area - 48));
+        var size = look.Size > 0 ? look.Size : 18;
         var note = new OverlayElement {
-            Kind = OverlayElement.TEXT, Name = "Ahziael note", Text = notice.Text, Anchor = OverlayAnchor.Top, Y = 60, Size = 20, Bold = true,
-            Padding = 12, CornerRadius = 10, Layer = 99, Shadow = true, BorderColor = "#C0FFD24A", BorderWidth = 1.5,
-            Fill = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#FFFFFFFF" },
-            Background = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#E0140F28" },
+            Kind = OverlayElement.TEXT, Name = "Ahziael note", Text = notice.Text, Anchor = OverlayAnchor.Top, X = 0, Y = look.Y, Width = width,
+            Size = size, Bold = look.Bold, Italic = look.Italic, Font = look.Font, Align = "Center", Padding = look.Padding,
+            CornerRadius = look.CornerRadius, Layer = 99, Shadow = look.Shadow, ShadowColor = look.ShadowColor, ShadowBlur = look.ShadowBlur,
+            BorderColor = look.BorderColor, BorderWidth = look.BorderWidth, Fill = look.Fill, Background = look.Background, Opacity = look.Opacity,
         };
 
-        // An OK button under it takes it away (Niduus, 2026-11-12: "give okay button to remove this notification").
+        // The note's height, as its wrapped words will take, so the button sits just under it.
+        var inner = Math.Max(20, width - (2 * look.Padding) - (2 * look.BorderWidth));
+        var measured = new Avalonia.Media.FormattedText(notice.Text, System.Globalization.CultureInfo.CurrentCulture, Avalonia.Media.FlowDirection.LeftToRight,
+            new Avalonia.Media.Typeface(string.IsNullOrWhiteSpace(look.Font) ? Avalonia.Media.FontFamily.Default : new Avalonia.Media.FontFamily(look.Font),
+                look.Italic ? Avalonia.Media.FontStyle.Italic : Avalonia.Media.FontStyle.Normal,
+                look.Bold ? Avalonia.Media.FontWeight.Bold : Avalonia.Media.FontWeight.Normal),
+            size, Avalonia.Media.Brushes.White) { MaxTextWidth = inner };
+        var height = measured.Height + (2 * look.Padding) + (2 * look.BorderWidth);
+
+        // An Acknowledge button under it takes it away (Niduus, 2026-11-13: "with a acknowledge button that remove it").
         var ok = new OverlayElement {
-            Kind = OverlayElement.BUTTON, Name = "Ahziael note OK", Text = "OK", Action = OverlayAction.DISMISS_NOTE, Anchor = OverlayAnchor.Top,
-            Y = 128, Size = 16, Bold = true, Padding = 8, CornerRadius = 8, Layer = 99, Shadow = true, BorderColor = "#C0FFD24A", BorderWidth = 1.5,
+            Kind = OverlayElement.BUTTON, Name = "Ahziael note Acknowledge", Text = notice.Bot ? "Acknowledge" : "OK", Action = OverlayAction.DISMISS_NOTE,
+            Anchor = OverlayAnchor.Top, X = 0, Y = look.Y + height + 8, Size = Math.Max(12, size - 3), Bold = true, Padding = 8, CornerRadius = 8,
+            Layer = 99, Shadow = true, BorderColor = look.BorderColor, BorderWidth = Math.Max(1, look.BorderWidth),
             Fill = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#FFFFFFFF" },
             Background = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#E0352A6B" },
         };
@@ -413,13 +459,13 @@ internal static class OverlayHost {
 
             s_teamIssueSeen = id;
             var text = ((string?) newest!["Text"] ?? "").Trim();
-            if (text.Length > 160) {
-                text = text[..157] + "...";
+            if (text.Length > 280) {
+                text = text[..277] + "...";
             }
 
             var title = (string?) newest["Title"] ?? "";
             foreach (var game in s_games) {
-                ShowNotice(game, $"Quest Team alert{(title.Length > 0 ? $" in {title}" : "")}: {text} (see Ahziael > Quest Team > Team Issues)");
+                ShowNotice(game, $"Quest Team alert{(title.Length > 0 ? $" in {title}" : "")}: {text} (see Ahziael > Quest Team > Team Issues)", botAlert: true);
             }
         }
         catch (Exception) {
@@ -458,13 +504,13 @@ internal static class OverlayHost {
 
             s_ultimusIssueSeen = id;
             var text = ((string?) newest!["Text"] ?? "").Trim();
-            if (text.Length > 160) {
-                text = text[..157] + "...";
+            if (text.Length > 280) {
+                text = text[..277] + "...";
             }
 
             var title = (string?) newest["Title"] ?? "";
             foreach (var game in s_games) {
-                ShowNotice(game, $"Ultimus alert{(title.Length > 0 ? $" in {title}" : "")}: {text} (see Ahziael > Ultimus > Ultimus Issues)");
+                ShowNotice(game, $"Ultimus alert{(title.Length > 0 ? $" in {title}" : "")}: {text} (see Ahziael > Ultimus > Ultimus Issues)", botAlert: true);
             }
         }
         catch (Exception) {

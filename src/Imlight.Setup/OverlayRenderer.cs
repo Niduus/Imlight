@@ -429,6 +429,21 @@ internal static class OverlayRenderer {
             border.Height = map.Height;
         }
 
+        if (e.IsBotAlerts) {
+            // Over a game the alert itself is drawn by OverlayHost.WithNotice, at the top in the middle; in the designer a
+            // sample shows where and how.
+            if (window != 0) {
+                border.IsVisible = false;
+
+                return border;
+            }
+
+            fixedText ??= "Quest Team and Ultimus alerts show here, at the top in the middle, with an Acknowledge button.";
+            if (e.Width <= 0) {
+                border.Width = 600;
+            }
+        }
+
         if (e.IsQuestTracker) {
             // The tracker draws its quests inside the box's own background, edge and padding; with no height it grows to fit.
             border.Child = new QuestTrackerView(e, window, s_buildHasMap);

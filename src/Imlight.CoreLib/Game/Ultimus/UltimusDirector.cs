@@ -291,6 +291,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             _runs.Clear();
             _seenGoals.Clear();
             _losses.Clear();
+            _stuck.Clear();
             _target = null;
             _currentQuest = null;
             StartTeam(restart: true);
@@ -358,6 +359,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         _dialogSince = DateTime.MaxValue;
+
+        // Never stands in one place for ever (UltimusDirector.Stuck.cs).
+        LookForStuck();
 
         // Better gear on, and decks that miss new spells redone (UltimusDirector.Gear.cs).
         KeepGearAndDecks();
@@ -998,6 +1002,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     // ---------------------------------------------------------------------
 
     private void WalkTo(int index, UltimusPlanner.Target target) {
+        if (Unsticking(index)) {
+            return;
+        }
+
         var member = _team[index];
         if (_sent.TryGetValue(index, out var last) && last.Target is not null && last.Target.Same(target) && member.Walking
             && DateTime.UtcNow - last.At < TimeSpan.FromSeconds(15)) {
@@ -1013,7 +1021,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     }
 
     private void StopWalking(int index) {
-        if (_team[index].Walking) {
+        if (_team[index].Walking && !Unsticking(index)) {
             _actors[index].Tell(new UltimusMember.StopWalking());
             _sent.Remove(index);
         }

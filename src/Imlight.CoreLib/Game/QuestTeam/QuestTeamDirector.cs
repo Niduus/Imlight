@@ -155,6 +155,10 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
 
     // The leader's target and the clicks already made for it.
     private QuestTeamPlanner.Target _target;
+
+    // A street teleporter the team gathers at, and until when (kept up while the leader waits there).
+    private QuestTeamPlanner.Target _gather;
+    private DateTime _gatherUntil = DateTime.MinValue;
     private DateTime _targetSince = DateTime.UtcNow;
     private readonly Dictionary<string, (int Times, DateTime Last)> _clicks = [];
     private DateTime _nextClick = DateTime.MinValue;
@@ -294,6 +298,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             _seenGoals.Clear();
             _losses.Clear();
             _trail.Clear();
+            _stuck.Clear();
             _target = null;
             _currentQuest = null;
             StartTeam(restart: true);
@@ -367,6 +372,9 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         _dialogSince = DateTime.MaxValue;
+
+        // Nobody stands in one place for ever (QuestTeamDirector.Stuck.cs).
+        LookForStuck();
 
         // Better gear on, and decks that miss new spells redone (QuestTeamDirector.Gear.cs).
         KeepGearAndDecks();
@@ -609,7 +617,11 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             case QuestTeamPlanner.STONE:
                 // All four at the stone, then each presses it, so they arrive together.
                 if (group.Count < _team.Count || group.Any(m => QuestTeamPlanner.Far(m.X, m.Y, target.X, target.Y) > 260)) {
+                    // The ones in the line walk up to the stone; behind the one ahead, the last stood too far and the
+                    // team waited for ever by the Teleporter Hub sign (Niduus, 2026-11-13: "He is stuck").
                     _doing = "waiting at the street teleporter for the team";
+                    _gather = target;
+                    _gatherUntil = DateTime.UtcNow.AddSeconds(3);
                     StopWalking(0);
                     break;
                 }
@@ -1086,6 +1098,10 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
     // ---------------------------------------------------------------------
 
     private void WalkTo(int index, QuestTeamPlanner.Target target) {
+        if (Unsticking(index)) {
+            return;
+        }
+
         var member = _team[index];
         if (_sent.TryGetValue(index, out var last) && last.Target is not null && last.Target.Same(target) && member.Walking
             && DateTime.UtcNow - last.At < TimeSpan.FromSeconds(15)) {
@@ -1101,7 +1117,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
     }
 
     private void StopWalking(int index) {
-        if (_team[index].Walking) {
+        if (_team[index].Walking && !Unsticking(index)) {
             _actors[index].Tell(new QuestTeamMember.StopWalking());
             _sent.Remove(index);
         }
@@ -1109,7 +1125,24 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
 
     // Each follows the one before it, a short gap behind.
     private void Follow(int index, List<QuestTeamMember.Status> together) {
+        if (Unsticking(index)) {
+            return;
+        }
+
         var member = _team[index];
+
+        // Gathering at a street teleporter: each walks up to it, not just behind the one ahead.
+        if (_gather is not null && DateTime.UtcNow < _gatherUntil) {
+            if (QuestTeamPlanner.Far(member.X, member.Y, _gather.X, _gather.Y) > 200) {
+                WalkTo(index, _gather with { X = _gather.X - (30 * index) });
+            }
+            else {
+                StopWalking(index);
+            }
+
+            return;
+        }
+
         var ahead = _team[index - 1];
         if (!together.Contains(ahead)) {
             ahead = together[0];

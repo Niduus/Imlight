@@ -1,0 +1,33 @@
+{
+  "Format": "Ahziael overlay add-on",
+  "Name": "Bot Alerts",
+  "Author": "Niduus",
+  "Description": "Shows the Quest Team's and Ultimus's alerts on your game: at the top in the middle, always inside the window with the words wrapped so they stay readable, and an Acknowledge button that takes the alert away. Change its colours, size and how far down it sits like any text. Without it, alerts show in Ahziael only.",
+  "Version": "1",
+  "Widgets": [
+    {
+      "Name": "Bot Alerts",
+      "Elements": [
+        {
+          "Kind": "BotAlerts",
+          "Name": "Bot Alerts",
+          "Anchor": "Top",
+          "X": 0,
+          "Y": 60,
+          "Width": 900,
+          "Height": 0,
+          "Size": 18,
+          "Bold": true,
+          "Align": "Center",
+          "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#E0140F28" },
+          "BorderColor": "#C0FFD24A",
+          "BorderWidth": 1.5,
+          "CornerRadius": 10,
+          "Padding": 12,
+          "Shadow": true
+        }
+      ]
+    }
+  ]
+}

@@ -207,3 +207,23 @@ New: The Quest Team talks in Menu Chat
 The four now speak, but only in Menu Chat (the game's own phrase menu, no typed text), and only now and then: at most one line every 40 seconds, and most moments pass in silence. They say things like "Let's go" when they head for the next step, "Ready" before a fight, "Good job" after a win, and "Wait for me" when someone has to rest. When a player near them uses Menu Chat, they may answer: a hello back, "you're welcome", or a goodbye. They turn down anything a player asks ("No thanks") and never let it change what they do; they take orders only from each other. Every line they say, and every player line they hear, is in Team Logs.
 Where: in the game, over their heads and in chat; Quest Team > Team Logs ("says in Menu Chat")
 Test: Watch the team for a few minutes; a line should show now and then. Stand next to them and use Menu Chat to say Hello, then ask them to follow you. They should answer hello, then say no and carry on.
+
+Fixed: The team stood still for ever by the Teleporter Hub sign
+At a street teleporter the leader waited for all four to be close to the stone, but the others stood in a line behind it, and the last one was always too far away, so nobody moved again. Now all four walk up to the stone before they use it.
+Where: any street teleporter (for example Wizard City, by the "To Teleporter Hub" sign)
+Test: Let the team reach a street teleporter. All four should walk up to it and use it together.
+
+New: The Quest Team and Ultimus free themselves when they get stuck
+When a wizard should be getting somewhere but has stood in one place for over a minute (not in a battle, a dialog, a rest or a pause), it steps aside and finds its way again. The second time, a teammate goes straight to the leader, and the leader goes further off and tries every click again. The third time, it is written up as a pink (ABNORMAL) issue with where it was and what it was doing. Every try is in the log in pink.
+Where: in the game; Quest Team > Team Logs and Ultimus's log (pink lines "has stood still ... steps aside")
+Test: Watch the team for a while. If anyone stands still for over a minute for no reason, a pink line should show and they should start moving again.
+
+Changed: A short pause after every area change
+After a door, a teleporter or a Spiral Door, the Quest Team and Ultimus now stand for about 2.5 seconds while the server reads the new area's walls, ground and paths, before taking a step, as a player waits out the loading screen. A walk planned in the old area is no longer walked in the new one.
+Where: in the game, after every area change
+Test: Follow the team through a door. They should stand a moment after they arrive, then walk on the paths.
+
+Changed: Quest Team and Ultimus alerts on the game are now the "Bot Alerts" add-on
+The alert on the game now stays inside the window, with its words wrapped so you can read all of it, at the top in the middle, with an Acknowledge button that takes it away. It stays until you click Acknowledge. It is now an add-on for both the Quest Team and Ultimus, so it only shows on a game if you add it. Without it, alerts still show in Ahziael (the pop-up and the Issues pages). You can change its colours, size and how far down it sits, like any text.
+Where: Play > Overlay > Add-ons > Niduus's add-ons > Bot Alerts > Download, then add it to your overlay
+Test: Add Bot Alerts to your overlay. When the next Quest Team or Ultimus alert comes, it should show at the top in the middle, fully inside the window, and go away when you click Acknowledge.
