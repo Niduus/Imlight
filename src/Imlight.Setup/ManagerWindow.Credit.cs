@@ -93,6 +93,8 @@ internal sealed partial class ManagerWindow {
         "Credit to Atmoplex for Wizard404 for Wiki Data",
         // Niduus, 2026-11-12 (after a tester's Ahziael on 0.10.793 would not open at all).
         "Shout out to Mitsu for being the first confirmed case of breaking Ahziael so badly that it had to be uninstalled and reinstalled to fix it. Top-tier QA member!",
+        // Niduus, 2026-11-13.
+        "Shout out to Discord user gese11 for sharing the bot concept",
         "Created by Niduus (of course)",
     ];
 

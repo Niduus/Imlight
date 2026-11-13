@@ -1617,7 +1617,12 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                     ["deckFor"] = _deckFor.GetValueOrDefault(member.Role) ?? "",
                     ["spells"] = new JsonArray([.. (wizard?.SpellbookBehavior?.LearnedSpellTemplateIds?.ToList() ?? [])
                         .Select(id => QuestTeamText.SpellName(id)).Where(n => !string.IsNullOrEmpty(n)).Distinct().Order().Select(n => (JsonNode) n)]),
+                    // The quest the team plays now, when this wizard holds it, and the step it is on.
+                    ["questNow"] = _currentQuest is not null && wizard?.QuestBehavior?.CurrentQuestInstances?.Any(q => q?.QuestName == _currentQuest) == true
+                        ? QuestTeamText.Title(_currentQuest) : "",
+                    ["stepNow"] = _target?.What ?? "",
                 });
+                BotShared.BotSheet.Fill((JsonObject) members[^1], wizard, member.Role);
             }
 
             var run = _currentQuest is null ? null : _runs.GetValueOrDefault(_currentQuest);
