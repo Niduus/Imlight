@@ -69,6 +69,10 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     internal sealed record SayMenuChat(uint PhraseId);
     internal sealed record WhisperMenuChat(uint PhraseId, ulong CharId);
 
+    /// <summary>A Menu Chat line with its own words, as the game's "My Quests" and "Locations" lines are (a quest's name).</summary>
+    internal sealed record SayMenuChatText(string Text);
+    internal sealed record WhisperMenuChatText(string Text, ulong CharId);
+
     internal sealed record WorldTeleport(ulong DoorGlobalId, string World);
 
     /// <summary>Put on an item from the backpack, as the game's backpack does.</summary>
@@ -230,6 +234,8 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         Receive<Train>(m => Send(new WIZARD_12_PROTOCOL.MSG_TRAIN { MobileID = m.TrainerGlobalId, TrainingIndex = m.Index }));
         Receive<SayMenuChat>(m => Send(new GAME_5_PROTOCOL.MSG_REQUESTRADIALQUICKCHAT { MessageID = m.PhraseId }));
         Receive<WhisperMenuChat>(m => Send(new GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDQUICKCHAT { TargetID = m.CharId, MessageID = m.PhraseId }));
+        Receive<SayMenuChatText>(m => Send(new GAME_5_PROTOCOL.MSG_REQUESTRADIALQUICKCHATEXT { Message = m.Text }));
+        Receive<WhisperMenuChatText>(m => Send(new GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDQUICKCHATEXT { TargetID = m.CharId, Message = m.Text }));
         Receive<UsePotion>(_ => Send(new WIZARD_12_PROTOCOL.MSG_USEPOTION()));
         // "Fill All" at a potion shop, as a player presses it in the shop's window.
         Receive<BuyPotions>(_ => Send(new WIZARD_12_PROTOCOL.MSG_POTIONBUYREQUEST { AmountEnum = 1 }));
