@@ -1580,8 +1580,44 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             QuestTeamLink.Send(new TeamRequest { Op = "quest", Event = "skipped", Quest = quest, Title = QuestTeamText.Title(quest), Text = "a broken step, finished by Ahziael" });
         }
 
+        // Why the step can't be done, checked against the quest data, the wizard and the live server (the shared diagnosis
+        // Ultimus uses too): its verdict goes in the issue's words, its checks with what each wizard saw.
+        var seen = Seen(quest);
+        if (Diagnose(quest) is { } diagnosis) {
+            text += " " + diagnosis.Summary;
+            seen.Insert(0, $"Likely cause ({diagnosis.Confidence} confidence, {diagnosis.Category}): {diagnosis.LikelyCause}");
+            seen.Insert(1, $"Can the step be done: {diagnosis.Completable}");
+            seen.AddRange(diagnosis.Checks.Select(c => "Check " + c));
+            Note("Team", $"DIAGNOSIS: {diagnosis.LikelyCause} ({diagnosis.Confidence} confidence)",
+                diagnosis.Confidence == "High" ? QuestTeamLink.ABNORMAL : QuestTeamLink.NOTABLE);
+        }
+
         QuestTeamLink.Issue(kind, quest ?? "", string.IsNullOrEmpty(quest) ? "" : QuestTeamText.Title(quest),
-            template is null ? "" : QuestStory.WorldOf(template), text, Expected(kind, _target), Seen(quest), skipping ? QuestTeamLink.CRITICAL : level);
+            template is null ? "" : QuestStory.WorldOf(template), text, Expected(kind, _target), seen, skipping ? QuestTeamLink.CRITICAL : level);
+    }
+
+    /// <summary>The shared quest diagnosis (BotShared.BotQuestDiagnosis) for the one leading, on <paramref name="quest"/>; null when it can't.</summary>
+    private BotQuestDiagnosis.Result Diagnose(string quest) {
+        if (string.IsNullOrEmpty(quest)) {
+            return null;
+        }
+
+        try {
+            // The leader, or the first one who holds the quest when the leader doesn't.
+            var me = _team.FirstOrDefault(m => m.Wizard?.HasQuest(quest) == true) ?? (_team.Count > 0 ? _team[0] : null);
+            if (me?.Wizard is null) {
+                return null;
+            }
+
+            var goal = _target is not null && string.Equals(_target.Quest, quest, StringComparison.OrdinalIgnoreCase) ? _target.Goal : null;
+
+            return BotQuestDiagnosis.Run(me.Wizard, me.Zone, me.ZoneActor, me.X, me.Y, quest, goal, me.Options, me.LastServerText, me.GlobalId);
+        }
+        catch (Exception e) {
+            Logger.Debug("Quest Team: the diagnosis could not run: {0}", Logger.Args(e.Message));
+
+            return null;
+        }
     }
 
     /// <summary>What a player would do and see at the step the team is on, in plain words, for an issue.</summary>
