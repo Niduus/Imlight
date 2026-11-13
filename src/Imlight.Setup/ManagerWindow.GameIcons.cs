@@ -152,12 +152,85 @@ internal sealed partial class ManagerWindow {
         return host;
     }
 
+    // Each gear slot's word in the game's picture names and the app's own icon when no picture is found.
+    private static readonly Dictionary<string, (string[] Words, string StandIn)> s_slotIcons = new(StringComparer.OrdinalIgnoreCase) {
+        ["Hat"] = (["Hat", "Hats"], "user"),
+        ["Robe"] = (["Robe", "Robes"], "layers"),
+        ["Boots"] = (["Boots", "Boot", "Shoes"], "up"),
+        ["Wand"] = (["Wand", "Wands", "Weapon"], "sparkle"),
+        ["Athame"] = (["Athame", "Athames"], "sword"),
+        ["Amulet"] = (["Amulet", "Amulets"], "star"),
+        ["Ring"] = (["Ring", "Rings"], "ring"),
+        ["Pet"] = (["Pet", "Pets"], "paw"),
+        ["Mount"] = (["Mount", "Mounts"], "wing"),
+        ["Deck"] = (["Deck", "Decks"], "deck"),
+    };
+
+    private readonly Dictionary<string, string?> _slotPictureNames = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// A gear slot's round icon as the game's backpack tabs show it (Niduus, 2026-11-13: "use the actual icons for gear"),
+    /// read from the game's picture files; the app's own icon in a round frame until they are read or when none is found.
+    /// </summary>
+    private Control SlotIcon(string slot, double size) {
+        var picture = GearPicture(SlotPictureName(slot));
+        Control icon = picture is not null
+            ? new Image { Source = picture, Width = size, Height = size, Stretch = Stretch.Uniform }
+            : new Border {
+                Width = size, Height = size, CornerRadius = new CornerRadius(size / 2),
+                Background = new SolidColorBrush(Color.FromRgb(0x2E, 0x6B, 0x3A)), BorderBrush = new SolidColorBrush(Color.FromRgb(0xC8, 0x9A, 0x3A)),
+                BorderThickness = new Thickness(2),
+                Child = ManagerTheme.Icon(s_slotIcons.TryGetValue(slot, out var s) ? s.StandIn : "square", size * 0.55, Brushes.White),
+            };
+        ToolTip.SetTip(icon, slot);
+
+        return icon;
+    }
+
+    /// <summary>
+    /// The game's picture for a slot's backpack tab: the shortest picture name that has the slot's word as a whole word
+    /// together with a tab or button word, or null.
+    /// </summary>
+    private string? SlotPictureName(string slot) {
+        if (_spellBook is not { } book || !s_slotIcons.TryGetValue(slot, out var known)) {
+            return null;
+        }
+
+        if (_slotPictureNames.TryGetValue(slot, out var cached)) {
+            return cached;
+        }
+
+        static string[] Parts(string name)
+            => System.Text.RegularExpressions.Regex.Split(Path.GetFileNameWithoutExtension(name), "[^A-Za-z]+|(?<=[a-z])(?=[A-Z])")
+                .Where(p => p.Length > 0).ToArray();
+
+        string[] places = ["Backpack", "Inventory", "Equip", "Equipment", "Tab", "Btn", "Button", "Filter", "Category", "Icon"];
+        string? found = null;
+        foreach (var place in places) {
+            found = known.Words.SelectMany(word => book.FindImages(word, place))
+                .Where(n => n.EndsWith(".dds", StringComparison.OrdinalIgnoreCase))
+                .Where(n => Parts(n) is var parts && parts.Any(p => known.Words.Contains(p, StringComparer.OrdinalIgnoreCase))
+                            && parts.Any(p => p.Equals(place, StringComparison.OrdinalIgnoreCase)))
+                .OrderBy(n => n.Length).FirstOrDefault();
+            if (found is not null) {
+                break;
+            }
+        }
+
+        _slotPictureNames[slot] = found;
+
+        return found;
+    }
+
     /// <summary>
     /// Lets a Quest Team or Ultimus wizard sheet draw its deck with the game's card pictures, like the game's deck window,
     /// and reads the game's spells if that has not happened yet (the sheet draws again once they are read).
     /// </summary>
     private void ShowCardsOn(WizardSheet sheet) {
         sheet.CardThumb ??= (id, school, width, count) => SpellThumb(id, school, width, count > 0 ? count : 0);
+        sheet.StatIcon ??= (key, tip, size) => GearIcon(key, tip, size);
+        sheet.SchoolIcon ??= (school, size) => SchoolBadge(school, size);
+        sheet.SlotIcon ??= SlotIcon;
         EnsureGameIcons(() => Avalonia.Threading.Dispatcher.UIThread.Post(sheet.Redraw));
     }
 
