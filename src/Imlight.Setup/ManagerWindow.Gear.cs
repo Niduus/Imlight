@@ -850,6 +850,13 @@ internal sealed partial class ManagerWindow {
         ["lock"] = ["Icon_Lock.dds", "Icon_Locked.dds", "Icon_Socket_Locked.dds"],
     };
 
+    // The game's globe pictures for health (red), mana (blue) and energy (green), tried before the pictures above.
+    private static readonly Dictionary<string, string[][]> s_gearIconGlobes = new(StringComparer.OrdinalIgnoreCase) {
+        ["health"] = [["HealthGlobe"], ["Health_Globe"], ["Globe", "Health"]],
+        ["mana"] = [["ManaGlobe"], ["Mana_Globe"], ["Globe", "Mana"]],
+        ["energy"] = [["EnergyGlobe"], ["Energy_Globe"], ["Globe", "Energy"]],
+    };
+
     // When none of a stat's pictures above is in the game files, the first picture whose name holds all of one of
     // these word sets is used (Niduus, 2026-10-22: the pet icons weren't the game's), before the drawn stand-in.
     private static readonly Dictionary<string, string[][]> s_gearIconSearch = new(StringComparer.OrdinalIgnoreCase) {
@@ -899,7 +906,13 @@ internal sealed partial class ManagerWindow {
     /// <summary>A stat icon, the game's own picture when it is in the game files, pointing at it says what it is.</summary>
     private Control GearIcon(string key, string tip, double size = 20) {
         Control icon;
-        var picture = s_gearIconPictures.TryGetValue(key, out var names) ? names.Select(GearPicture).FirstOrDefault(p => p is not null) : null;
+        // Health, mana and energy use the game's globes first (Niduus, 2026-11-13: "these are the proper health and
+        // mana icons with a green version in the files for energy"), shortest file name holding the words.
+        var picture = _spellBook is { } globeBook && s_gearIconGlobes.TryGetValue(key, out var globeWords)
+            ? globeWords.SelectMany(words => globeBook.FindImages(words).Where(n => n.EndsWith(".dds", StringComparison.OrdinalIgnoreCase)).Take(1))
+                .Select(GearPicture).FirstOrDefault(p => p is not null)
+            : null;
+        picture ??= s_gearIconPictures.TryGetValue(key, out var names) ? names.Select(GearPicture).FirstOrDefault(p => p is not null) : null;
         if (picture is null && _spellBook is { } book && s_gearIconSearch.TryGetValue(key, out var searches)) {
             picture = searches.SelectMany(words => book.FindImages(words).Where(n => n.EndsWith(".dds", StringComparison.OrdinalIgnoreCase)).Take(1))
                 .Select(GearPicture).FirstOrDefault(p => p is not null);

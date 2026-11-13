@@ -161,7 +161,7 @@ internal static class QuestTeamPlanner {
         return true;
     }
 
-    /// <summary>The quest the team works on: a story quest first, then a main quest, the one most of them hold.</summary>
+    /// <summary>The quest the team works on: a story quest first, then a quest the story needs, the one most of them hold.</summary>
     internal static string PickQuest(IReadOnlyList<QuestTeamMember.Status> team) {
         var held = new Dictionary<string, (int Count, int Rank, int Order)>(StringComparer.OrdinalIgnoreCase);
         for (var i = 0; i < team.Count; i++) {
@@ -174,9 +174,9 @@ internal static class QuestTeamPlanner {
                     continue;
                 }
 
-                var kind = QuestStory.KindOf(template);
-                var rank = kind switch { QuestStory.STORY => 3, QuestStory.INSTANCE => 2, QuestStory.MAIN => 1, _ => 0 };
-                if (rank == 0) {
+                // Story first, then dungeon quests, then what the story needs first; other quests held are ignored.
+                var rank = BotShared.BotStory.Rank(template);
+                if (rank <= 0) {
                     continue;
                 }
 
@@ -190,12 +190,12 @@ internal static class QuestTeamPlanner {
             .Select(h => h.Key).FirstOrDefault();
     }
 
-    /// <summary>The next main quest the team can get, and the NPC who gives it (a story quest of this world first).</summary>
+    /// <summary>The next story quest (or quest the story needs) the team can get, and its giver (a story quest of this world first).</summary>
     internal static (QuestTemplate Quest, ulong Giver)? NextQuest(Wizard leader) {
         var world = (leader.Zone ?? "").Split('/')[0];
         return QuestService.QuestFinderGivers()
-            .Where(g => QuestStory.IsMain(g.Quest) && IsMainStoryWorld(g.Quest) && MapService.IsOfferedTo(g.Quest, leader))
-            .OrderByDescending(g => QuestStory.KindOf(g.Quest) == QuestStory.STORY)
+            .Where(g => IsMainStoryWorld(g.Quest) && BotShared.BotStory.Plays(g.Quest) && MapService.IsOfferedTo(g.Quest, leader))
+            .OrderByDescending(g => BotShared.BotStory.Rank(g.Quest))
             .ThenByDescending(g => string.Equals(QuestGuide.GiverZone(g.Quest).Split('/')[0], world, StringComparison.OrdinalIgnoreCase))
             .Select(g => ((QuestTemplate, ulong)?) (g.Quest, g.Giver))
             .FirstOrDefault();

@@ -197,6 +197,9 @@ internal static class BotSheet {
         var own = string.IsNullOrEmpty(school) ? "Fire" : school;
         Row($"{stats.m_currentHitpoints}/{stats.m_baseHitpoints + stats.m_bonusHitpoints}", "", "Health: now and most", "", "health");
         Row($"{stats.m_currentMana}/{stats.m_baseMana + stats.m_bonusMana}", "", "Mana: now and most", "", "mana");
+        if (stats.m_energyMax > 0) {
+            Row($"{wizard.PetOwnerBehavior?.Energy ?? 0}/{stats.m_energyMax}", "", "Energy: now and most", "", "energy");
+        }
         Row(Pct(stats.m_powerPipBase + stats.m_powerPipBonusPercentAll), "CHANCE", "Power pip chance", "", "powerpip");
         Row(Pct(At(stats.m_dmgBonusPercent, own) + stats.m_dmgBonusPercentAll), "", $"{own} damage", own, "damage");
         if (At(stats.m_dmgBonusFlat, own) + stats.m_dmgBonusFlatAll is var flat and > 0) {

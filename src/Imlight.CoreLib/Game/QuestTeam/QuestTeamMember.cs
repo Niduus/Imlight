@@ -328,14 +328,18 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
             string quest = m.QuestName;
             // Only the story the whole team follows; a side quest or another world's quest is left (so nobody gets ahead).
             var template = QuestTemplateCollection.GetQuestByName(quest);
-            if (template is null || !Tools.QuestStory.IsMain(template) || !QuestTeamPlanner.IsMainStoryWorld(template)) {
+            // Niduus, 2026-11-13: a main quest is taken even when it is not the story (the game may not let it be left),
+            // then ignored unless the story needs it.
+            if (template is null || !BotStory.Takes(template) || !QuestTeamPlanner.IsMainStoryWorld(template)) {
                 Note($"is offered {QuestTeamText.Title(quest)}; leaves it (not the team's story)");
                 Send(new QUEST_MESSAGES_52_PROTOCOL.MSG_DECLINEQUEST { QuestName = quest });
 
                 return;
             }
 
-            Note($"is offered {QuestTeamText.Title(quest)}; accepts it");
+            Note(BotStory.Plays(template)
+                ? $"is offered {QuestTeamText.Title(quest)}; accepts it"
+                : $"is offered {QuestTeamText.Title(quest)}; accepts it but ignores it (a main quest, not the story; done only if the story needs it)");
             // A moment to "read" the offer, as a player does.
             Timers.StartSingleTimer("offer-" + quest, new AcceptOffer(m.MobileID, quest), TimeSpan.FromSeconds(1.2));
         });

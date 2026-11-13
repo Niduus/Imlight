@@ -297,3 +297,13 @@ Changed: The Quest Team and Ultimus always show the Essential badge
 Their title under their names is now always the Essential badge, instead of their newest story badge. They're given the badge if they don't have it, and they pick it the way a player does. If anything changes their title, they pick Essential again within about a minute.
 Where: in the game, under their names
 Test: Look at a Quest Team wizard or Ultimus in the game. Their title should be the Essential badge's.
+
+Changed: Health, mana and energy use the game's globes
+The Stats panel (and other stat icons in Ahziael) now shows health as the game's red globe and mana as the blue globe. Energy has its own line with the green globe.
+Where: Ahziael > Quest Team > The team's wizards, and the Ultimus page (Stats)
+Test: Open a wizard. Health should show a red globe, mana a blue globe, and a new Energy line a green globe.
+
+Changed: The Quest Team and Ultimus only play the Story Main line
+Some main quests can't be turned down. The bots now take those, but ignore them unless a Story Main quest needs them done first. They still turn down side quests, unless the story needs one.
+Where: in the game, and the Quest Team and Ultimus logs
+Test: When a bot is offered a main quest that isn't part of the story, the log should say "accepts it but ignores it". The team should keep following the Story Main line.
