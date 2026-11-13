@@ -54,6 +54,10 @@ internal sealed class BotStuck {
 
     private readonly Dictionary<int, Seen> _seen = [];
 
+    // Places a wizard was stuck at lately, with how many tries it made there.
+    private readonly List<(int Index, string Zone, float X, float Y, int Tries, DateTime When)> _deadEnds = [];
+    private static readonly TimeSpan DEAD_END_MEMORY = TimeSpan.FromMinutes(20);
+
     /// <summary>
     /// Looks at wizard <paramref name="index"/>. Returns 0 while it is fine, or the try (1, 2, 3, ...) it should make now
     /// to free itself. <paramref name="excused"/>: it stands still for a reason this moment.
@@ -68,6 +72,13 @@ internal sealed class BotStuck {
 
         var newZone = !string.Equals(seen.Zone, zone ?? "", StringComparison.OrdinalIgnoreCase);
         if (newZone || Far(seen.SpotX, seen.SpotY, x, y) > FREED) {
+            // Remembered: a wizard that steps aside and walks straight back to the same dead end (Ultimus on the Kraken
+            // isle, stepping aside 600 away and back, 1, 2, 1, 2 for hours) carries on counting there.
+            if (seen.Tries > 0) {
+                _deadEnds.RemoveAll(d => now - d.When > DEAD_END_MEMORY);
+                _deadEnds.Add((index, seen.Zone, seen.SpotX, seen.SpotY, seen.Tries, now));
+            }
+
             seen.Tries = 0;
             seen.SpotX = x;
             seen.SpotY = y;
@@ -91,6 +102,11 @@ internal sealed class BotStuck {
         if (seen.Tries == 0) {
             seen.SpotX = x;
             seen.SpotY = y;
+            var known = _deadEnds.Where(d => d.Index == index && now - d.When <= DEAD_END_MEMORY
+                                             && string.Equals(d.Zone, zone ?? "", StringComparison.OrdinalIgnoreCase)
+                                             && Far(d.X, d.Y, x, y) <= FREED)
+                .Select(d => d.Tries).DefaultIfEmpty(0).Max();
+            seen.Tries = known;
         }
 
         seen.Tries++;
@@ -104,7 +120,10 @@ internal sealed class BotStuck {
     internal TimeSpan StillFor(int index) => _seen.TryGetValue(index, out var seen) ? DateTime.UtcNow - seen.Since : TimeSpan.Zero;
 
     /// <summary>Starts every wizard's count again (a restart, the quest moved on).</summary>
-    internal void Clear() => _seen.Clear();
+    internal void Clear() {
+        _seen.Clear();
+        _deadEnds.Clear();
+    }
 
     /// <summary>
     /// A walk point to step to, between <paramref name="near"/> and <paramref name="far"/> away on about the same floor,
