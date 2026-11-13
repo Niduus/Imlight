@@ -1114,6 +1114,17 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         var member = _team[index];
+        // By a door or street teleporter stone of the legal way: pressed, as a player presses X (Niduus, 2026-11-13: "bot
+        // can't use"; standing by it does nothing).
+        if (target.Kind is not (QuestTeamPlanner.DOOR or QuestTeamPlanner.STONE or QuestTeamPlanner.SPIRAL)
+            && Ultimus.UltimusPads.PressHere(member.Zone, member.X, member.Y, target.X, target.Y) is { } press
+            && member.Options.ContainsKey(press.Click)) {
+            ClickOnce(index, new QuestTeamPlanner.Target(QuestTeamPlanner.STONE, press.X, press.Y, press.Name, GlobalId: press.Click, Key: "pad|" + press.Click),
+                ["Interact"], $"presses {press.Name}, the teleporter toward \"{target.What}\"");
+
+            return;
+        }
+
         if (_sent.TryGetValue(index, out var last) && last.Target is not null && last.Target.Same(target) && member.Walking
             && DateTime.UtcNow - last.At < TimeSpan.FromSeconds(15)) {
             return;

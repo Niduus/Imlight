@@ -40,6 +40,23 @@ internal sealed partial class UltimusDirectorActor {
 
     private readonly Dictionary<UltimusPads.Pad, DateTime> _padsLeft = [];
     private UltimusPads.Pad _viaPad;
+    // The door or stone "another way" walked it to, pressed once it is there.
+    private (UltimusPads.Pad Pad, string Zone, DateTime At)? _otherWayPad;
+
+    /// <summary>The door or stone to press on the way now: the way's own, else the one "another way" walked it to.</summary>
+    private UltimusPads.Pad PadToPress(UltimusMember.Status member) {
+        if (_viaPad is { Click: not 0 }) {
+            return _viaPad;
+        }
+
+        if (_otherWayPad is { } other && other.Zone == member.Zone && DateTime.UtcNow - other.At < s_padGiveUp) {
+            return other.Pad;
+        }
+
+        _otherWayPad = null;
+
+        return null;
+    }
     private DateTime _viaPadSince;
 
     private HashSet<UltimusPads.Pad> PadsLeft() {
@@ -99,6 +116,9 @@ internal sealed partial class UltimusDirectorActor {
         return list.Count > 0 ? list : null;
     }
 
+    // How near a door or stone of the way it presses it (a door's own reach is 140).
+    private const float PRESS_REACH = 160f;
+
     // How far the nearest teleporter may be when it can't move at all.
     private const float PAD_LAST_RESORT = 3000f;
 
@@ -125,6 +145,10 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         _padsLeft[pad] = DateTime.UtcNow;
+        if (pad.Click != 0) {
+            _otherWayPad = (pad, member.Zone, DateTime.UtcNow);
+        }
+
         Note("Ultimus", $"{member.Name} is stuck on the way to \"{goal.What}\": tries another way, the teleporter at ({pad.X:0}, {pad.Y:0}) " +
                         $"that lands nearer, at ({pad.ToX:0}, {pad.ToY:0}).", UltimusLink.ABNORMAL);
         var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, pad.X, pad.Y, body: true);
