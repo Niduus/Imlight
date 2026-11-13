@@ -112,6 +112,12 @@ internal class CrownShopService(SessionActor sessionActor) : MessageService(sess
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_PCS_SEGDATA_REQUEST))]
     private void ReceiveCrownShopSegDataRequest(WIZARD_12_PROTOCOL.MSG_PCS_SEGDATA_REQUEST message) {
         var wizard = GetActiveWizard();
+        // An item window left open asks again while the game is still reconnecting, before a wizard is in
+        // (Niduus's log, 2026-11-13); it asks again once the wizard is back.
+        if (wizard?.MagicSchoolBehavior is null || wizard.Account is null) {
+            return;
+        }
+
         var schoolStr = wizard.MagicSchoolBehavior.MagicSchool.ToString();
         var schoolCode = schoolStr.Length >= 2 ? schoolStr[..2] : schoolStr;
 

@@ -88,6 +88,10 @@ internal sealed class SocketListener : ReceiveActor, IDisposable {
     private static readonly TimeSpan SustainedFloodTime = TimeSpan.FromSeconds(10);
     private DateTime? _floodSince;
     private readonly Dictionary<string, int> _droppedByType = [];
+    // Copies of one "where can I get this item" question in a burst (RepeatRequestFilter).
+    private readonly RepeatRequestFilter _itemInfoRepeats = new();
+    private DateTime _itemInfoRepeatsLoggedUtc = DateTime.MinValue;
+    private static readonly TimeSpan RepeatLogEvery = TimeSpan.FromSeconds(5);
 
     private string DescribeDropped()
         => string.Join(", ", _droppedByType.OrderByDescending(pair => pair.Value).Take(6).Select(pair => $"{pair.Key} x{pair.Value}"));
@@ -194,7 +198,7 @@ internal sealed class SocketListener : ReceiveActor, IDisposable {
                 return;
             }
 
-            var packets = GetPacketsFromBuffer(buffer, bytesReceived);
+            var packets = WithoutRepeats(GetPacketsFromBuffer(buffer, bytesReceived));
             if (packets.Count > MaxFramesPerRead || _decoder.PendingBytes > MaxPendingBytes) {
                 Logger.Warning("SessionActor {SessionId} exceeded the receive limits: {FrameCount} frames, {PendingBytes} pending bytes.",
                     Logger.Args(_sessionid, packets.Count, _decoder.PendingBytes));
@@ -257,6 +261,35 @@ internal sealed class SocketListener : ReceiveActor, IDisposable {
         finally {
             StartReceive();
         }
+    }
+
+    /// <summary>
+    /// Lets go the copies of a "where can I get this item" question that the game sends in a burst when its button is
+    /// clicked fast (Niduus, 2026-11-13: each click sent one copy more than the last, hundreds a second, and the flood
+    /// guard closed his session). They are not counted against the rate limit; the first of each burst is answered.
+    /// </summary>
+    private IReadOnlyList<IMessage> WithoutRepeats(IReadOnlyList<IMessage> packets) {
+        if (!packets.Any(packet => packet is WIZARD2_53_PROTOCOL.MSG_GETITEMINFO)) {
+            return packets;
+        }
+
+        var now = DateTime.UtcNow;
+        var kept = new List<IMessage>(packets.Count);
+        foreach (var packet in packets) {
+            if (packet is WIZARD2_53_PROTOCOL.MSG_GETITEMINFO info && _itemInfoRepeats.IsRepeat(info.ItemID, now)) {
+                continue;
+            }
+
+            kept.Add(packet);
+        }
+
+        if (_itemInfoRepeats.Swallowed > 0 && now - _itemInfoRepeatsLoggedUtc >= RepeatLogEvery) {
+            _itemInfoRepeatsLoggedUtc = now;
+            Logger.Information("SessionActor {SessionId}: the game repeated \"where can I get this item\" {Count} times in a burst (button clicked fast); answered once.",
+                Logger.Args(_sessionid, _itemInfoRepeats.TakeSwallowed()));
+        }
+
+        return kept;
     }
 
     private IReadOnlyList<IMessage> GetPacketsFromBuffer(byte[] buffer, int bytesReceived) {
