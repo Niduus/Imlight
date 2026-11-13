@@ -384,6 +384,15 @@ internal static class RewrittenAI {
             }
         }
 
+        // A card that deals damage is an attack, even when the damage's own target is not one of the enemy targets above
+        // (a pet copy such as "Pet - Frost Beetle Storm" also carries a charm on the caster): read as a blade, the Kraken
+        // cast its Storm Beetle on itself (Niduus, 2026-11-12).
+        if (!card.Hit && leaves.Any(e => CombatCharms.DamageEffects.Contains(e.m_effectType) && !IsFriendly(e.m_effectTarget))) {
+            card.Hit = true;
+            card.DamageSchool = (string) leaves.First(e => CombatCharms.DamageEffects.Contains(e.m_effectType)
+                                                          && !IsFriendly(e.m_effectTarget)).m_sDamageType ?? "";
+        }
+
         if (card.HealTakesFromEnemy) {
             card.Heal = card.Heal || card.Hit;
         }

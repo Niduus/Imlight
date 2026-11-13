@@ -392,6 +392,8 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             }
         }
 
+        target = KeepCreatureAttackOnEnemies(caster, target, spellTemplate);
+
         var queuedAction = new QueuedCombatAction {
             SpellCaster = caster,
             Spell = type == CombatMoveType.Attack ? spell : null,
@@ -1611,6 +1613,47 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
         }
 
         return cinematicTime;
+    }
+
+    /// <summary>
+    /// A creature's (or a minion's) card aimed at an enemy never goes on its own side: an attack, trap, weakness or stun
+    /// it picked for itself or a teammate goes on an enemy instead (Niduus, 2026-11-12: "Kraken just hit himself with a
+    /// storm beetle"). A card that can also go on a friend is left alone, and so is a wizard's pick (a beguiled or
+    /// confused creature is aimed later, when the spells are cast).
+    /// </summary>
+    private CombatDuelSubCircle KeepCreatureAttackOnEnemies(CombatDuelSubCircle caster, CombatDuelSubCircle target, SpellTemplate spell) {
+        if (caster is null || caster.IsHumanPlayer || spell is null || target is null || target.OccupiedTeam != caster.OccupiedTeam
+            || !IsAimedAtEnemyOnly(spell)) {
+            return target;
+        }
+
+        var enemies = ActiveSubCircles.Where(c => c.IsAlive && c.AddedToDuel && c.OccupiedTeam != caster.OccupiedTeam).ToList();
+        if (enemies.Count == 0) {
+            return target;
+        }
+
+        var enemy = enemies[Random.Shared.Next(enemies.Count)];
+        Logger.Information("Duel {0} | Slot {1} | {2} was aimed at {3}, on its own side; it goes on slot {4} instead.",
+            Logger.Args(_duel.m_duelID.Full, caster.SlotIndex, (string) spell.m_name,
+                target == caster ? "itself" : $"slot {target.SlotIndex}", enemy.SlotIndex));
+
+        return enemy;
+    }
+
+    private static bool IsAimedAtEnemyOnly(SpellTemplate spell) {
+        var leaves = CombatEnchantments.Leaves(spell.m_effects ?? []).Where(e => e is not null).ToList();
+        var atEnemy = leaves.Any(e => e.m_effectTarget is kEffectTarget.kEnemySingle or kEffectTarget.kAtLeastOneEnemy
+                                         or kEffectTarget.kPreselectedEnemySingle or kEffectTarget.kMultiTargetEnemy)
+                      || leaves.Any(e => CombatCharms.DamageEffects.Contains(e.m_effectType)
+                                         && e.m_effectTarget is not (kEffectTarget.kSelf or kEffectTarget.kFriendlySingle
+                                             or kEffectTarget.kFriendlySingleNotMe or kEffectTarget.kFriendlyTeam
+                                             or kEffectTarget.kFriendlyTeamAllAtOnce or kEffectTarget.kMultiTargetFriendly
+                                             or kEffectTarget.kFriendlyMinion or kEffectTarget.kMinion));
+        var atFriend = leaves.Any(e => e.m_effectTarget is kEffectTarget.kFriendlySingle or kEffectTarget.kFriendlySingleNotMe
+                                          or kEffectTarget.kMinion or kEffectTarget.kFriendlyMinion
+                                          or kEffectTarget.kMultiTargetFriendly);
+
+        return atEnemy && !atFriend;
     }
 
     private void LogQueuedCombatAction(CombatMoveType type, CombatDuelSubCircle caster, CombatDuelSubCircle target, Spell spell,
