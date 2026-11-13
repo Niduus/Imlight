@@ -45,6 +45,29 @@ internal static class SelfUpdate {
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion) ?? new Version(0, 0, 0);
 
     /// <summary>
+    /// The exact commit this release was built from (the part after '+' in its informational version), or null for a
+    /// local build or an older release. The update builds the server from this commit, never from whatever the branch
+    /// has by then: with releases coming out minutes apart, the branch often already held the next release's changes,
+    /// so one update put two versions together (Niduus, 2026-11-13).
+    /// </summary>
+    internal static string? SourceCommit { get; } = CommitOf(typeof(SelfUpdate).Assembly
+        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
+
+    internal static string? CommitOf(string? informational) {
+        var plus = informational?.IndexOf('+') ?? -1;
+        if (plus < 0) {
+            return null;
+        }
+
+        var commit = informational![(plus + 1)..].Trim();
+        if (commit.Length > 40) {
+            commit = commit[..40];
+        }
+
+        return commit.Length == 40 && commit.All(Uri.IsHexDigit) ? commit.ToLowerInvariant() : null;
+    }
+
+    /// <summary>
     /// Returns true when a newer setup was started and this one should exit.
     /// </summary>
     internal static async Task<bool> TryRunNewerAsync(string[] args) {
@@ -70,15 +93,15 @@ internal static class SelfUpdate {
             Console.WriteLine($"Getting the newer Imlight Setup {version}..");
             var path = Path.Combine(Path.GetTempPath(), $"{Path.GetFileNameWithoutExtension(ASSET)}-{version}.exe");
             var bytes = await http.GetByteArrayAsync(asset.GetProperty("browser_download_url").GetString());
-            if (asset.TryGetProperty("digest", out var digest) && digest.GetString() is { } sha
-                && sha.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase)
-                && !Convert.ToHexString(SHA256.HashData(bytes)).Equals(sha["sha256:".Length..], StringComparison.OrdinalIgnoreCase)) {
-                Console.WriteLine("The download did not match its checksum, so this version carries on.");
+            if (!IsWholeDownload(bytes, asset.TryGetProperty("size", out var size) && size.TryGetInt64(out var s) ? s : 0, null,
+                    asset.TryGetProperty("digest", out var digest) ? digest.GetString() : null)) {
+                Console.WriteLine("The download was not whole or did not match its checksum, so this version carries on.");
 
                 return false;
             }
 
-            await File.WriteAllBytesAsync(path, bytes);
+            await File.WriteAllBytesAsync(path + ".part", bytes);
+            File.Move(path + ".part", path, overwrite: true);
             var startInfo = new ProcessStartInfo(path) { UseShellExecute = false };
             foreach (var arg in args) {
                 startInfo.ArgumentList.Add(arg);
@@ -125,10 +148,18 @@ internal static class SelfUpdate {
                 return null;
             }
 
+            // A release whose file is still uploading is skipped until it is whole (GitHub lists it while it uploads).
+            if (asset.TryGetProperty("state", out var state) && state.GetString() is { } uploadState
+                && !uploadState.Equals("uploaded", StringComparison.OrdinalIgnoreCase)) {
+                return null;
+            }
+
+            var expectedSize = asset.TryGetProperty("size", out var size) && size.TryGetInt64(out var bytesSize) ? bytesSize : 0;
+
             // Read in pieces so the app can show how far along the download is.
             using var response = await http.GetAsync(asset.GetProperty("browser_download_url").GetString(), HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
-            var total = response.Content.Headers.ContentLength ?? 0;
+            var total = response.Content.Headers.ContentLength ?? expectedSize;
             using var buffer = new MemoryStream();
             await using (var stream = await response.Content.ReadAsStreamAsync()) {
                 var chunk = new byte[81920];
@@ -136,7 +167,7 @@ internal static class SelfUpdate {
                 var lastShown = -1;
                 while ((read = await stream.ReadAsync(chunk)) > 0) {
                     buffer.Write(chunk, 0, read);
-                    var shown = total > 0 ? (int) (buffer.Length * 100 / total) : -1;
+                    var shown = total > 0 ? (int) Math.Min(100, buffer.Length * 100 / total) : -1;
                     if (shown != lastShown) {
                         lastShown = shown;
                         percent?.Report(shown);
@@ -145,14 +176,18 @@ internal static class SelfUpdate {
             }
 
             var bytes = buffer.ToArray();
-            if (asset.TryGetProperty("digest", out var digest) && digest.GetString() is { } sha
-                && sha.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase)
-                && !Convert.ToHexString(SHA256.HashData(bytes)).Equals(sha["sha256:".Length..], StringComparison.OrdinalIgnoreCase)) {
+            if (!IsWholeDownload(bytes, expectedSize, response.Content.Headers.ContentLength,
+                    asset.TryGetProperty("digest", out var digest) ? digest.GetString() : null)) {
                 return null;
             }
 
             Directory.CreateDirectory(folder);
+            var path = Path.Combine(folder, $"{Path.GetFileNameWithoutExtension(ASSET)}-{version}.exe");
             foreach (var old in Directory.EnumerateFiles(folder, "*.exe")) {
+                if (Path.GetFullPath(old).Equals(Path.GetFullPath(path), StringComparison.OrdinalIgnoreCase)) {
+                    continue;
+                }
+
                 try {
                     File.Delete(old);
                 }
@@ -161,8 +196,10 @@ internal static class SelfUpdate {
                 }
             }
 
-            var path = Path.Combine(folder, $"{Path.GetFileNameWithoutExtension(ASSET)}-{version}.exe");
-            await File.WriteAllBytesAsync(path, bytes);
+            // Written beside it first and then renamed, so a half-written program is never there to be run.
+            var partial = path + ".part";
+            await File.WriteAllBytesAsync(partial, bytes);
+            File.Move(partial, path, overwrite: true);
 
             return (version, path);
         }
@@ -198,6 +235,19 @@ internal static class SelfUpdate {
                                        or KeyNotFoundException or InvalidOperationException) {
             return null;
         }
+    }
+
+    /// <summary>
+    /// Whether a download is the whole file: as long as GitHub and the server said, and matching its checksum when
+    /// GitHub gives one. A download cut short (a release still uploading, a dropped connection) is never installed.
+    /// </summary>
+    internal static bool IsWholeDownload(byte[] bytes, long expectedSize, long? contentLength, string? digest) {
+        if (bytes.Length == 0 || (expectedSize > 0 && bytes.Length != expectedSize) || (contentLength is > 0 && bytes.Length != contentLength)) {
+            return false;
+        }
+
+        return digest is null || !digest.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase)
+            || Convert.ToHexString(SHA256.HashData(bytes)).Equals(digest["sha256:".Length..], StringComparison.OrdinalIgnoreCase);
     }
 
     internal static Version? ParseVersion(string? text) {

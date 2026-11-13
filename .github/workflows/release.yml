@@ -26,6 +26,8 @@ on:
 
 permissions:
   contents: write
+  # To see whether an earlier release is still being published (Wait for earlier releases).
+  actions: read
 
 jobs:
   release:
@@ -99,7 +101,8 @@ jobs:
           Write-Host "Type dump: $($dump.Name)"
           Copy-Item $dump.FullName $typeInput/
           dotnet publish src/Imlight.Setup/Imlight.Setup.csproj -c Release -r win-x64 --self-contained true `
-            -p:PublishSingleFile=true -p:Version=${{ steps.version.outputs.version }} -p:ImlightEdition=Manager -o out/manager
+            -p:PublishSingleFile=true -p:Version=${{ steps.version.outputs.version }} -p:ImlightEdition=Manager `
+            -p:SourceRevisionId=${{ github.sha }} -o out/manager
           Copy-Item out/manager/ImlightManager.exe release/
 
       - name: Add the generator inputs
@@ -131,6 +134,24 @@ jobs:
           choco install innosetup --no-progress -y
           & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=${{ steps.version.outputs.version }}" installer/Imlight.iss
           Copy-Item installer/output/ImlightLauncherSetup.exe release/
+
+      - name: Wait for earlier releases
+        # Releases come out minutes apart. Each builds at once, but publishes only after every release started before it
+        # is out, so they never publish at the same time or out of order (Niduus, 2026-11-13: two updates landing at
+        # once broke Ahziael). Nothing is cancelled: every version still gets its release.
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $me = [long]"${{ github.run_id }}"
+          for ($i = 0; $i -lt 120; $i++) {
+            $open = @(gh api "repos/${{ github.repository }}/actions/workflows/release.yml/runs?per_page=50" `
+              --jq '.workflow_runs[] | select(.status != "completed") | .id' 2>$null)
+            $earlier = @($open | Where-Object { $_ -and [long]$_ -lt $me })
+            if ($earlier.Count -eq 0) { break }
+            Write-Host "Waiting for $($earlier.Count) earlier release(s) to finish publishing..."
+            Start-Sleep -Seconds 20
+          }
 
       - name: Publish the release
         shell: pwsh
