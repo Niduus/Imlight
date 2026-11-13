@@ -455,6 +455,22 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         // ReqHasQuest also passes for a completed quest: prefer the trigger naming a currently active quest, else the last passing one.
         var teleports = passing.Where(x => HasTeleportResult(x.Trigger)).Select(x => x.Trigger).ToList();
 
+        // A door the game ties to the very step the wizard is on wins over its everyday twin. The Commons' tunnel pairs
+        // "Trigger-ToRavenwoodLite" (to the quest's Ravenwood, where Mr. Lincoln waits, while "To Ravenwood!" Goal 1 is
+        // under way) with "TeleportToRavenwoodTrigger", whose "not on Goal 1 of any school's version" list also passes for a
+        // wizard on it (the other schools' versions it doesn't hold). The everyday door won, so the step's NPC was never
+        // reached and Ultimus went back and forth through the tunnel without end (Niduus, 2026-11-13: "I legit just don't see
+        // Ultimus anymore").
+        if (teleports.Count > 1 && ZoneTrigger.QueryWizard(message.PlayerActor) is { } onWizard) {
+            var onStep = teleports.Where(t => NamesOpenStep(t.m_requirements, onWizard)).ToList();
+            if (onStep.Count > 0 && onStep.Count < teleports.Count) {
+                Logger.Information("Zone {0}: {1} doors passed; {2} is tied to the step the wizard is on, so it takes them.",
+                    Logger.Args(Zone.ZonePath, teleports.Count, onStep[^1].m_triggerName));
+                teleports = onStep;
+                doorsWithNeedsMet = null;
+            }
+        }
+
         // With OpenAllDoors every door on the event passes, also the ones the game pairs by quest: Regent's Square's museum
         // door has "Trigger" (to the quest's Royal Museum, while A Mystery in Marleybone is on) and "Trigger 0" (to the
         // everyday museum, once a later quest is done). The last one always won, so the first Marleybone quest sent the
@@ -513,6 +529,37 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             .ToList();
 
         return qualifying.Count == 1 ? qualifying[0] : teleports[^1];
+    }
+
+    /// <summary>Whether a door's needs ask (not negated) for a step the wizard has open right now.</summary>
+    private static bool NamesOpenStep(RequirementList list, WizardData.Models.Player.Wizard wizard) {
+        if (list?.m_requirements is null) {
+            return false;
+        }
+
+        foreach (var requirement in list.m_requirements) {
+            if (requirement is RequirementList nested && !nested.m_applyNOT && NamesOpenStep(nested, wizard)) {
+                return true;
+            }
+
+            if (requirement is not ReqHasGoal { m_applyNOT: false } goal || goal.m_requiredStatus == GoalStatusRequirement.Complete) {
+                continue;
+            }
+
+            var questName = WizardData.QuestCodeAliases.Resolve(goal.m_questName);
+            var held = wizard.QuestBehavior?.CurrentQuestInstances?.FirstOrDefault(q => q is not null && q.QuestName == questName);
+            if (held is null || string.IsNullOrEmpty(goal.m_goalName)) {
+                continue;
+            }
+
+            string goalName = goal.m_goalName;
+            if (held.IsGoalActive(goalName)
+                || (Quests.VanillaGoalNames.OurName(questName, goalName) is { } ours && held.IsGoalActive(ours))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static IEnumerable<string> CollectRequiredQuests(RequirementList list) {

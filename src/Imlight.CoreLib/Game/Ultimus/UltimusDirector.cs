@@ -1295,6 +1295,12 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     }
 
     private void Issue(string kind, string quest, string text, string key = null, bool skipStep = true, string level = null) {
+        // A way or exit target carries no quest of its own: the issue is the quest Ultimus is on, so its step can be skipped
+        // and the debug report names it (a loop in and out of an area named no quest and never ended, 2026-11-13).
+        if (kind == "quest" && string.IsNullOrEmpty(quest)) {
+            quest = _currentQuest;
+        }
+
         key ??= kind + "|" + quest + "|" + text;
         if (_reported.ContainsKey(key)) {
             return;
@@ -1349,7 +1355,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 return null;
             }
 
-            var goal = _target is not null && string.Equals(_target.Quest, quest, StringComparison.OrdinalIgnoreCase) ? _target.Goal : null;
+            var goal = _target is not null && (string.Equals(_target.Quest, quest, StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty(_target.Quest))
+                ? _target.Goal : null;
 
             return BotShared.BotQuestDiagnosis.Run(me.Wizard, me.Zone, me.ZoneActor, me.X, me.Y, quest, goal, me.Options, me.LastServerText,
                 me.Wizard is null ? 0 : me.GlobalId);
