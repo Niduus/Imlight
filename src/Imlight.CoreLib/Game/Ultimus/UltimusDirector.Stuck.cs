@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Akka.Actor;
 using Imlight.CoreLib.Game.BotShared;
@@ -35,9 +36,11 @@ internal sealed partial class UltimusDirectorActor {
     private static readonly TimeSpan UNSTICK_FOR = TimeSpan.FromSeconds(6);
 
     // Ultimus acts on standing still a quarter sooner than the Quest Team (Niduus, 2026-11-13: "Ultimus needs to engage
-    // with its restart timer 25% sooner if idle for too long"): about 56 seconds, not 75.
+    // with its restart timer 25% sooner if idle for too long"), and on standing still at all after 30 seconds, not 75
+    // ("I need him more responsive and more active to correct mistakes").
     internal const double SOONER = 0.75;
-    private readonly BotStuck _stuck = new(BotStuck.STILL * SOONER);
+    private static readonly TimeSpan STILL_FOR = TimeSpan.FromSeconds(30);
+    private readonly BotStuck _stuck = new(STILL_FOR);
     private readonly Dictionary<int, DateTime> _unstickUntil = [];
 
     // Stepping aside: the other orders wait a few seconds.
@@ -48,6 +51,8 @@ internal sealed partial class UltimusDirectorActor {
         for (var i = 0; i < _team.Count; i++) {
             var member = _team[i];
             RouteMemory.Track("Ultimus", member.CharId, member.Zone, member.X, member.Y);
+            NoteStartLanding(i, member);
+            NoteFreed(i, member);
             if (_stuck.Look(i, member.Zone, member.X, member.Y, resting) is var tries and > 0) {
                 Unstick(i, tries);
             }
@@ -59,6 +64,7 @@ internal sealed partial class UltimusDirectorActor {
         var where = $"{UltimusText.Zone(member.Zone)} at ({member.X:0}, {member.Y:0})";
         var seconds = (int) _stuck.Still.TotalSeconds;
         var quest = _target?.Quest ?? _currentQuest;
+        var step = (_target ?? _leaderLastTarget) is { } goal ? $"{goal.Quest}|{goal.Goal}|{goal.What}" : _doing;
 
         // Written down (RouteMemory): the way finder bends round this spot from now on, for every bot, and a proven walk
         // through it no longer counts (Niduus, 2026-11-13: "adapt to new paths to get to his quest goal").
@@ -68,63 +74,92 @@ internal sealed partial class UltimusDirectorActor {
         _sent.Remove(index);
         OverlayQuestPath.Forget(member.CharId);
         _target = null;
+        _clicks.Clear();
 
-        // Boxed in (Niduus, 2026-11-13: "stuck", pressed on a house wall behind the low stone fence in Triton Avenue): a small
-        // patch cut off by a fence or a ledge with no teleporter on it can't be walked off, so stepping aside is no use and
-        // it goes back to the area's start at once rather than after three tries.
-        var boxedIn = tries < 3 && BoxedIn(member);
-        if (boxedIn) {
-            if (StartIsHere(index, member, where, quest)) {
+        // Every flag is written down with what was done about it, and the same or a nearby flag for the same step never
+        // gets the same fix twice (Niduus, 2026-11-13: "It should never allow itself to make the same or adjacent abnormal
+        // flags more than once. I want Ultimus to strictly improve"): what worked there before first, else a fix not
+        // tried there yet (UltimusFixes). Boxed in (a small patch cut off by a fence or a ledge with no teleporter on it):
+        // stepping aside is no use. Stuck where the area starts: going back there is no use.
+        var skip = new List<string>();
+        if (BoxedIn(member)) {
+            skip.Add(UltimusFixes.ASIDE);
+        }
+
+        if (_startLanding.TryGetValue(member.Zone ?? "", out var start) && UltimusPlanner.Far(start.X, start.Y, member.X, member.Y) <= 400) {
+            skip.Add(UltimusFixes.START);
+        }
+
+        if (string.IsNullOrEmpty(quest)) {
+            skip.Add(UltimusFixes.SKIP);
+        }
+
+        var (fix, flag) = UltimusFixes.Next(member.Zone, member.X, member.Y, step, skip);
+        _openFlag[index] = (flag, member.Zone ?? "", member.X, member.Y);
+        var seen = flag.Times > 1 ? $" (flagged here {flag.Times} times; tried before: {string.Join(", ", flag.Tried.SkipLast(1).Distinct())})" : "";
+        Note("Ultimus", $"{member.Name} has stood still over {seconds} seconds in {where} while {_doing}{seen}: {fix}.", UltimusLink.ABNORMAL);
+        if (flag.Times > 1) {
+            Issue("team", quest, $"{member.Name} is stuck again in {where} while {_doing}: flagged here {flag.Times} times; now tries: {fix}.",
+                key: $"unstick|{member.Zone}|{(int) (flag.X / 600)}|{(int) (flag.Y / 600)}|{flag.Times}", skipStep: false, level: UltimusLink.ABNORMAL);
+        }
+
+        switch (fix) {
+            case UltimusFixes.OTHER_WAY:
+                if (TryAnotherWay(index)) {
+                    _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
+                    OverlayQuestPath.Forget(member.CharId);
+
+                    return;
+                }
+
+                // No teleporter: the stuck spot is now walked round (RouteMemory), so the way is found fresh.
+                Aside(index, member, 600f, 1600f, "takes a new route round the spot where it got stuck");
                 return;
-            }
-
-            Note("Ultimus", $"{member.Name} is boxed in at {where} (a small patch cut off by a fence or a ledge, no teleporter on it): goes back to where {UltimusText.Zone(member.Zone)} starts.",
-                UltimusLink.ABNORMAL);
-            Recall(index, member);
-
-            return;
-        }
-
-        if (tries >= 3) {
-            Issue("team", quest,
-                $"{member.Name} is stuck in {where} while {_doing}: it stood still over {seconds} seconds {tries} times and stepping aside did not free it.",
-                key: $"unstick|{member.Zone}|{index}", skipStep: false, level: UltimusLink.ABNORMAL);
-        }
-
-        // The self-check: stepping aside twice did not free it, so the server takes it back to where the area starts (a
-        // place cut off from the way on, such as the Kraken isle, is left that way), and the way is found again from there.
-        if (tries >= 3) {
-            if (StartIsHere(index, member, where, quest)) {
+            case UltimusFixes.AWAY:
+                Aside(index, member, 900f, 2500f, "walks well away and comes back another way");
                 return;
-            }
+            case UltimusFixes.START:
+                Recall(index, member);
+                return;
+            case UltimusFixes.SKIP:
+                Issue("quest", quest, $"{member.Name} tried every fix at {where} while {_doing} and is still stuck there: Ahziael finishes the step.",
+                    key: $"unstick-skip|{member.Zone}|{(int) (flag.X / 600)}|{(int) (flag.Y / 600)}", skipStep: false, level: UltimusLink.ABNORMAL);
+                if (!string.IsNullOrEmpty(quest)) {
+                    _actors[index].Tell(new UltimusMember.SkipStep(quest));
+                }
 
-            Note("Ultimus", $"{member.Name} is still stuck in {where}: goes back to where {UltimusText.Zone(member.Zone)} starts and finds the way from there.",
-                UltimusLink.ABNORMAL);
-            Recall(index, member);
-
-            return;
-        }
-
-        if (tries >= 2) {
-            _clicks.Clear();
-
-            // Another way first, as a player who can't get through tries the teleporter (UltimusDirector.Routes.cs).
-            if (TryAnotherWay(index)) {
                 _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
-                OverlayQuestPath.Forget(member.CharId);
-
                 return;
-            }
+            default:
+                Aside(index, member, 150f, 600f, "steps aside to get unstuck");
+                return;
+        }
+    }
+
+    // The flag each wizard is working off now, and where it was; free once it is far from there or in another area.
+    private readonly Dictionary<int, (UltimusFixes.Flag Flag, string Zone, float X, float Y)> _openFlag = [];
+
+    private void NoteFreed(int index, UltimusMember.Status member) {
+        if (!_openFlag.TryGetValue(index, out var open)) {
+            return;
         }
 
-        var (near, far) = tries >= 2 ? (600f, 1600f) : (150f, 600f);
-        var spot = BotStuck.StepAside(member.Zone, member.X, member.Y, member.Z, near, far)
-                   ?? (member.X + Random.Shared.Next(-200, 200), member.Y + Random.Shared.Next(-200, 200));
+        var otherZone = !string.Equals(open.Zone, member.Zone ?? "", StringComparison.OrdinalIgnoreCase);
+        if (!otherZone && UltimusPlanner.Far(open.X, open.Y, member.X, member.Y) < 800) {
+            return;
+        }
 
-        Note("Ultimus", $"{member.Name} has stood still over {seconds} seconds in {where} while {_doing}: steps aside and finds the way again.",
-            UltimusLink.ABNORMAL);
+        _openFlag.Remove(index);
+        UltimusFixes.Worked(open.Flag);
+        var (flags, worked) = UltimusFixes.Count();
+        Note("Ultimus", $"{member.Name} got free with \"{open.Flag.Worked}\" and remembers it for that spot ({flags} stuck spots known, {worked} with a fix that works).");
+    }
+
+    private void Aside(int index, UltimusMember.Status member, float near, float far, string why) {
+        var spot = BotStuck.StepAside(member.Zone, member.X, member.Y, member.Z, near, far)
+                   ?? (member.X + Random.Shared.Next((int) -far, (int) far), member.Y + Random.Shared.Next((int) -far, (int) far));
         var aside = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, spot.X, spot.Y, body: true);
-        _actors[index].Tell(new UltimusMember.WalkTo(aside, "steps aside to get unstuck"));
+        _actors[index].Tell(new UltimusMember.WalkTo(aside, why));
         _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
         OverlayQuestPath.Forget(member.CharId);
     }
