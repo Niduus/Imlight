@@ -940,11 +940,15 @@ internal sealed partial class ManagerWindow {
         ["energy"] = ("Energy_Back.dds", "Energy_Liquid.dds"),
     };
 
-    // Where the liquid sits in the glass (out of 128) and how see-through it is, as on Niduus's picked pictures.
-    private const double GLOBE_LIQUID_SIZE = 82 / 128.0;
-    private const double GLOBE_LIQUID_LEFT = 23 / 128.0;
-    private const double GLOBE_LIQUID_TOP = 4 / 128.0;
-    private const double GLOBE_LIQUID_ALPHA = 0.7;
+    // Where the liquid sits behind the glass (out of 128), wide enough to fill the ball's sides and trimmed off the top
+    // (Niduus, 2026-11-13: "need a bit of filling on the sides, little trim of the top and have the globes in front of the
+    // liquids in terms of layers"), and how much the glass's milky body thins over it (its dark outline stays).
+    private const double GLOBE_LIQUID_WIDTH = 92 / 128.0;
+    private const double GLOBE_LIQUID_HEIGHT = 72 / 128.0;
+    private const double GLOBE_LIQUID_LEFT = 18 / 128.0;
+    private const double GLOBE_LIQUID_TOP = 8 / 128.0;
+    private const double GLOBE_GLASS_THIN = 0.75;
+    private const int GLOBE_OUTLINE_DARK = 70;
 
     /// <summary>A health, mana or energy globe: the liquid ball (the full frame of its animation) inside the glass; null without the game files.</summary>
     private Bitmap? GlobePicture(string key) {
@@ -974,48 +978,51 @@ internal sealed partial class ManagerWindow {
 
     private static GameImage Globe(GameImage glass, GameImage liquid) {
         var (w, h) = (glass.Width, glass.Height);
-        var pixels = (byte[]) glass.Pixels.Clone();
+        var pixels = new byte[w * h * 4];
         // The liquid picture is a 3 by 3 sheet of its sloshing; the first frame is the full ball.
         var (fw, fh) = (liquid.Width / 3, liquid.Height / 3);
-        var size = (int) Math.Round(GLOBE_LIQUID_SIZE * w);
+        var (sw, sh) = ((int) Math.Round(GLOBE_LIQUID_WIDTH * w), (int) Math.Round(GLOBE_LIQUID_HEIGHT * h));
         var (left, top) = ((int) Math.Round(GLOBE_LIQUID_LEFT * w), (int) Math.Round(GLOBE_LIQUID_TOP * h));
-        for (var y = 0; y < size; y++) {
-            for (var x = 0; x < size; x++) {
-                var (tx, ty) = (left + x, top + y);
-                if (tx < 0 || ty < 0 || tx >= w || ty >= h) {
-                    continue;
-                }
-
-                // Bilinear sample of the frame.
-                var sx = ((x + 0.5) * fw / size) - 0.5;
-                var sy = ((y + 0.5) * fh / size) - 0.5;
-                var (x0, y0) = ((int) Math.Floor(sx), (int) Math.Floor(sy));
-                var (dx, dy) = (sx - x0, sy - y0);
-                Span<double> c = stackalloc double[4];
-                for (var k = 0; k < 4; k++) {
-                    double At(int px, int py) {
+        for (var y = 0; y < h; y++) {
+            for (var x = 0; x < w; x++) {
+                var o = ((y * w) + x) * 4;
+                // The liquid first, only inside the glass's shape.
+                double lr = 0, lg = 0, lb = 0, la = 0;
+                var (lx, ly) = (x - left, y - top);
+                if (lx >= 0 && ly >= 0 && lx < sw && ly < sh) {
+                    var sx = ((lx + 0.5) * fw / sw) - 0.5;
+                    var sy = ((ly + 0.5) * fh / sh) - 0.5;
+                    var (x0, y0) = ((int) Math.Floor(sx), (int) Math.Floor(sy));
+                    var (dx, dy) = (sx - x0, sy - y0);
+                    double At(int px, int py, int k) {
                         px = Math.Clamp(px, 0, fw - 1);
                         py = Math.Clamp(py, 0, fh - 1);
 
                         return liquid.Pixels[((py * liquid.Width) + px) * 4 + k];
                     }
 
-                    c[k] = (At(x0, y0) * (1 - dx) * (1 - dy)) + (At(x0 + 1, y0) * dx * (1 - dy))
-                           + (At(x0, y0 + 1) * (1 - dx) * dy) + (At(x0 + 1, y0 + 1) * dx * dy);
+                    double Sample(int k) => (At(x0, y0, k) * (1 - dx) * (1 - dy)) + (At(x0 + 1, y0, k) * dx * (1 - dy))
+                                            + (At(x0, y0 + 1, k) * (1 - dx) * dy) + (At(x0 + 1, y0 + 1, k) * dx * dy);
+
+                    (lr, lg, lb) = (Sample(0), Sample(1), Sample(2));
+                    la = Sample(3) / 255.0 * (glass.Pixels[o + 3] / 255.0);
                 }
 
-                var o = ((ty * w) + tx) * 4;
-                var sa = c[3] / 255.0 * GLOBE_LIQUID_ALPHA;
-                var da = pixels[o + 3] / 255.0;
-                var oa = sa + (da * (1 - sa));
+                // Then the glass in front: its dark outline as it is, its milky body thinner over the liquid.
+                var (gr, gg, gb) = (glass.Pixels[o], (double) glass.Pixels[o + 1], (double) glass.Pixels[o + 2]);
+                var ga = glass.Pixels[o + 3] / 255.0;
+                if ((gr + gg + gb) / 3 >= GLOBE_OUTLINE_DARK) {
+                    ga *= 1 - (GLOBE_GLASS_THIN * la);
+                }
+
+                var oa = ga + (la * (1 - ga));
                 if (oa <= 0) {
                     continue;
                 }
 
-                for (var k = 0; k < 3; k++) {
-                    pixels[o + k] = (byte) Math.Clamp(Math.Round(((c[k] * sa) + (pixels[o + k] * da * (1 - sa))) / oa), 0, 255);
-                }
-
+                pixels[o] = (byte) Math.Clamp(Math.Round(((gr * ga) + (lr * la * (1 - ga))) / oa), 0, 255);
+                pixels[o + 1] = (byte) Math.Clamp(Math.Round(((gg * ga) + (lg * la * (1 - ga))) / oa), 0, 255);
+                pixels[o + 2] = (byte) Math.Clamp(Math.Round(((gb * ga) + (lb * la * (1 - ga))) / oa), 0, 255);
                 pixels[o + 3] = (byte) Math.Clamp(Math.Round(oa * 255), 0, 255);
             }
         }
