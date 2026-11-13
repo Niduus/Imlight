@@ -139,8 +139,76 @@ internal static class OverlayMinimap {
         }
 
         map["marks"] = new JsonArray([.. marks.OrderBy(m => m.Rank > 2 ? 1 : 0).ThenBy(m => m.Far).Take(MAX_MARKS).Select(m => (JsonNode) m.Mark)]);
+        if (creatures && MobSpawnAreas.OnMinimap) {
+            map["spawns"] = Spawns(zone, live, here.X, here.Y, range);
+        }
 
         return map;
+    }
+
+    private const int MAX_SPAWNS = 60;
+
+    /// <summary>
+    /// Each street's mob areas near the wizard (Niduus, 2026-11-13: "highlights of where mob spawns are on the street and
+    /// where they end"; his drawing: one line round a street's whole group of mobs): for each group its outline (o, loops
+    /// of x, y pairs, filled even-odd: the edge a mob can pull a wizard from), the walks of its creatures (w: each p, x, y pairs, and how it is
+    /// walked), who spawns there (the names of the creatures walking it now first, so a custom or a randomized creature
+    /// shows its own name), their levels, how many at once, and whether one is a boss.
+    /// </summary>
+    private static JsonArray Spawns(IActorRef zone, List<MinimapIndex.Mark> live, float x, float y, float range) {
+        var spawns = new JsonArray();
+        var creatures = live.Where(m => m.Kind is MinimapIndex.MOB or MinimapIndex.BOSS && !string.IsNullOrEmpty(m.Name)).ToList();
+        foreach (var group in MobSpawnAreas.Groups(zone).Select(g => (Group: g, Far: g.DistanceTo(x, y)))
+                     .Where(g => g.Far <= range).OrderBy(g => g.Far).Take(MAX_SPAWNS).Select(g => g.Group)) {
+            var walking = creatures.Where(m => group.Contains(m.Object.m_location.X, m.Object.m_location.Y))
+                .Select(m => m.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            var names = walking.Concat(group.Names.Where(n => !walking.Contains(n, StringComparer.OrdinalIgnoreCase))).Take(4).ToList();
+            var outline = new JsonArray();
+            foreach (var loop in group.Outline.Take(12)) {
+                var points = new JsonArray();
+                for (var i = 0; i + 1 < loop.Length && i < 600; i += 2) {
+                    points.Add(Round(loop[i]));
+                    points.Add(Round(loop[i + 1]));
+                }
+
+                outline.Add(points);
+            }
+
+            var walks = new JsonArray();
+            foreach (var area in group.Areas.Take(40)) {
+                var points = new JsonArray();
+                foreach (var (px, py) in area.Points.Take(80)) {
+                    points.Add(Round(px));
+                    points.Add(Round(py));
+                }
+
+                walks.Add(new JsonObject { ["w"] = area.How.ToString().ToLowerInvariant(), ["p"] = points });
+            }
+
+            var spawn = new JsonObject {
+                ["i"] = string.Join("-", group.Areas.Select(a => a.Id).Order().Take(3)),
+                ["o"] = outline,
+                ["w"] = walks,
+                ["c"] = group.Count,
+            };
+
+            if (names.Count > 0) {
+                spawn["n"] = string.Join(", ", names);
+            }
+
+            var (min, max) = (group.Areas.Where(a => a.MaxLevel > 0).Select(a => a.MinLevel).DefaultIfEmpty(0).Min(), group.Areas.Max(a => a.MaxLevel));
+            if (max > 0) {
+                spawn["l"] = min == max ? $"{max}" : $"{min}-{max}";
+            }
+
+            if (group.Boss) {
+                spawn["b"] = true;
+            }
+
+            spawns.Add(spawn);
+        }
+
+        return spawns;
     }
 
     /// <summary>Other wizards in the same zone as the map's own, added once their sessions answered.</summary>

@@ -706,6 +706,30 @@ internal sealed class OverlayMap {
     /// <summary>How many creatures are in each area, over it.</summary>
     public bool MobAreaCount { get; set; } = true;
 
+    /// <summary>
+    /// Each street's mob areas from the game's spawn data (Niduus, 2026-11-13: "highlights of where mob spawns are on the
+    /// street and where they end"): one outlined area round each group of mobs, there even while they wait to respawn.
+    /// </summary>
+    public bool SpawnAreas { get; set; } = true;
+
+    public string SpawnAreaColor { get; set; } = "#40FF4A3A";
+
+    /// <summary>The line round each mob area: where a mob can pull a wizard into a battle.</summary>
+    public bool SpawnEdge { get; set; } = true;
+
+    public string SpawnEdgeColor { get; set; } = "#E0FF3A2E";
+
+    /// <summary>A boss's area in its own colour.</summary>
+    public string SpawnBossColor { get; set; } = "#E0C060FF";
+
+    /// <summary>The walk each mob takes inside its area, as a thin dotted line.</summary>
+    public bool SpawnWalks { get; set; }
+
+    public string SpawnWalkColor { get; set; } = "#A0FF8A5A";
+
+    /// <summary>Who spawns in each area, their levels and how many at once, over it.</summary>
+    public bool SpawnNames { get; set; } = true;
+
     /// <summary>A ring round each boss.</summary>
     public bool BossGlow { get; set; } = true;
 
@@ -771,6 +795,9 @@ internal sealed class OverlayMap {
         Npcs = Mobs = Bosses = Sigils = Doors = Chests = Wizards = true;
         Names = Place = Walls = Trees = Streets = true;
         MobAreas = level >= 1;
+        SpawnAreas = SpawnEdge = level >= 1;
+        SpawnNames = level >= 2;
+        SpawnWalks = level >= 3;
         MobAreaCount = BossGlow = level >= 1;
         MobNames = Levels = ChestNames = level >= 2;
         NpcNames = level >= 3;
@@ -809,6 +836,10 @@ internal sealed class OverlayMap {
         TreeColor = OverlayPaint.CleanColor(TreeColor == "#D91C1C26" ? "#B0213A26" : TreeColor, "#B0213A26");
         FullBackground = OverlayPaint.CleanColor(FullBackground, "#F00C101C");
         MobAreaColor = OverlayPaint.CleanColor(MobAreaColor, "#33FF5050");
+        SpawnAreaColor = OverlayPaint.CleanColor(SpawnAreaColor, "#40FF4A3A");
+        SpawnEdgeColor = OverlayPaint.CleanColor(SpawnEdgeColor, "#E0FF3A2E");
+        SpawnBossColor = OverlayPaint.CleanColor(SpawnBossColor, "#E0C060FF");
+        SpawnWalkColor = OverlayPaint.CleanColor(SpawnWalkColor, "#A0FF8A5A");
         ViewConeColor = OverlayPaint.CleanColor(ViewConeColor, "#40FFFFFF");
         GridColor = OverlayPaint.CleanColor(GridColor, "#26FFFFFF");
         GroundEdgeColor = OverlayPaint.CleanColor(GroundEdgeColor, "#80000000");

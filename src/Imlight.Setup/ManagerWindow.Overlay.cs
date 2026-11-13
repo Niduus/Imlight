@@ -1969,6 +1969,17 @@ internal sealed partial class ManagerWindow {
                 OvColor(map.MobAreaColor, v => Set(() => map.MobAreaColor = v)),
                 OvCheck("How many", map.MobAreaCount, v => Set(() => map.MobAreaCount = v)))));
             look.Children.Add(OvField("Mob area reach", OvNumber(map.MobAreaSize, 100, 3000, 50, v => Set(() => map.MobAreaSize = v))));
+            look.Children.Add(OvField("Mob spawn areas", Row(
+                OvCheck("Show", map.SpawnAreas, v => Set(() => map.SpawnAreas = v)),
+                OvColor(map.SpawnAreaColor, v => Set(() => map.SpawnAreaColor = v)),
+                OvCheck("Who spawns", map.SpawnNames, v => Set(() => map.SpawnNames = v)))));
+            look.Children.Add(OvField("Spawn area edge", Row(
+                OvCheck("Show where they pull", map.SpawnEdge, v => Set(() => map.SpawnEdge = v)),
+                OvColor(map.SpawnEdgeColor, v => Set(() => map.SpawnEdgeColor = v)),
+                OvColor(map.SpawnBossColor, v => Set(() => map.SpawnBossColor = v)))));
+            look.Children.Add(OvField("Mob walks", Row(
+                OvCheck("Show the walk each mob takes", map.SpawnWalks, v => Set(() => map.SpawnWalks = v)),
+                OvColor(map.SpawnWalkColor, v => Set(() => map.SpawnWalkColor = v)))));
             look.Children.Add(OvField("Bosses", OvCheck("Ring round each boss", map.BossGlow, v => Set(() => map.BossGlow = v))));
             look.Children.Add(OvField("Chests", OvCheck("Say wooden or silver", map.ChestNames, v => Set(() => map.ChestNames = v))));
             look.Children.Add(OvField("Crowded names", OvCheck("Move or hide names that would cover others", map.TidyNames, v => Set(() => map.TidyNames = v))));

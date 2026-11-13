@@ -119,6 +119,8 @@ public sealed class ZonePath : ZoneEntity {
         this._creatures = creatures;
         base.ZoneRef = zoneRef;
         base.Zone = zone;
+        // Where its creatures spawn and walk, for the overlay's minimap and the route finder (Tools.MobSpawnAreas).
+        Imlight.CoreLib.Game.Tools.MobSpawnAreas.Placed(zoneRef, template, nodes, creatures);
 
         // Begin the creature spawn interval.
         for (var i = 0; i < creatures.Count; i++) {
@@ -672,6 +674,11 @@ public sealed class ZonePath : ZoneEntity {
                     spawnInfo.m_kStartNodeType,
                     "Invalid StartNodeType value");
         }
+    }
+
+    protected override void PostStop() {
+        Imlight.CoreLib.Game.Tools.MobSpawnAreas.Gone(ZoneRef, _template);
+        base.PostStop();
     }
 
     private static string CreateEntityActorName(CoreObject coreObject) {
