@@ -49,6 +49,11 @@ internal sealed class WizardSheet {
     /// </summary>
     internal Func<uint, string, double, int, Control>? CardThumb { get; set; }
 
+    /// <summary>Whether the game's pictures are read: the deck and spells are drawn again when they come.</summary>
+    internal Func<bool>? PicturesReady { get; set; }
+
+    private bool Pictures => PicturesReady?.Invoke() == true;
+
     /// <summary>A stat icon by its key ("health", "critical", ...) with its tip and size: the game's own picture when found.</summary>
     internal Func<string, string, double, Control>? StatIcon { get; set; }
 
@@ -175,7 +180,7 @@ internal sealed class WizardSheet {
         // With the game's icons when the window gives them and the server sends the rows (Niduus, 2026-11-13); built again
         // only when they change.
         if (StatIcon is not null && m["statRows"] is JsonArray statRows && statRows.Count > 0) {
-            var key = Key(m) + statRows.ToJsonString();
+            var key = Key(m) + Pictures + statRows.ToJsonString();
             if (key != _statsKey) {
                 _statsKey = key;
                 _stats.Children.Clear();
@@ -188,7 +193,7 @@ internal sealed class WizardSheet {
         }
 
         if (SlotIcon is not null && m["gearRows"] is JsonArray gearRows && gearRows.Count > 0) {
-            var key = Key(m) + gearRows.ToJsonString();
+            var key = Key(m) + Pictures + gearRows.ToJsonString();
             if (key != _gearKey) {
                 _gearKey = key;
                 _gear.Children.Clear();
@@ -207,7 +212,7 @@ internal sealed class WizardSheet {
         if (CardThumb is not null && m["deckGrid"] is JsonArray) {
             // As pictures, like the game's deck window (Niduus, 2026-11-13); built again only when the deck changes, so
             // the 3-second refresh does not repaint the cards.
-            var gridKey = Key(m) + "|" + m["deckGrid"]?.ToJsonString() + m["itemGrid"]?.ToJsonString() + m["treasureGrid"]?.ToJsonString() + m["deckMax"];
+            var gridKey = Key(m) + "|" + Pictures + "|" + m["deckGrid"]?.ToJsonString() + m["itemGrid"]?.ToJsonString() + m["treasureGrid"]?.ToJsonString() + m["deckMax"];
             if (gridKey != _gridKey) {
                 _gridKey = gridKey;
                 _deck.Children.Clear();
@@ -354,7 +359,7 @@ internal sealed class WizardSheet {
     private void ShowSpells(JsonObject m) {
         var grid = m["spellGrid"] as JsonArray;
         var others = List(m["spellsOther"]);
-        var key = Key(m) + "|" + grid?.ToJsonString() + "|" + string.Join(",", others) + "|" + m["otherGrid"]?.ToJsonString() + "|" + (CardThumb is null);
+        var key = Key(m) + "|" + grid?.ToJsonString() + "|" + string.Join(",", others) + "|" + m["otherGrid"]?.ToJsonString() + "|" + (CardThumb is null) + "|" + Pictures;
         if (key == _spellsKey) {
             return;
         }

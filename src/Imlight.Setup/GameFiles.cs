@@ -69,6 +69,31 @@ internal sealed class GameFiles(string installFolder) {
     /// <summary>The game's Data\GameData folder, as setup found it.</summary>
     internal string? GameDataFolder => InstallInfo.Load(installFolder).GameDataFolder;
 
+    /// <summary>
+    /// A folder with the game's Root.wad to read pictures and spells from: the game's own, the Game Files tab's copy, or,
+    /// when neither is there (the saved place moved, or was a download copy setup no longer keeps), Wizard101 found again.
+    /// Slow the first time when it has to look: call it off the window's thread.
+    /// </summary>
+    internal string? FindGameData() {
+        static bool Has(string? f) => f is not null && File.Exists(Path.Combine(f, "Root.wad"));
+        if (GameDataFolder is var own && Has(own)) {
+            return own;
+        }
+
+        if (Has(CopyFolder)) {
+            return CopyFolder;
+        }
+
+        try {
+            var found = Path.GetDirectoryName(GameLocator.FindAndRemember(installFolder) ?? "");
+
+            return Has(found) ? found : null;
+        }
+        catch (Exception) {
+            return null;
+        }
+    }
+
     internal bool HasCopy => Directory.Exists(CopyFolder) && Directory.EnumerateFiles(CopyFolder, "*.wad").Any();
 
     internal bool HasReadable => File.Exists(Path.Combine(KeyDetailsFolder, "Overview.txt"));
