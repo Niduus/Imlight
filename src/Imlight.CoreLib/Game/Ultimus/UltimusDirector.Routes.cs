@@ -99,12 +99,13 @@ internal sealed partial class UltimusDirectorActor {
         return list.Count > 0 ? list : null;
     }
 
+    // How far the nearest teleporter may be when it can't move at all.
+    private const float PAD_LAST_RESORT = 3000f;
+
     /// <summary>
     /// Stuck a second time: another way, as a player would try, before going back to the area's start. True when there is
     /// one (a teleporter here whose landing is nearer the step).
     /// </summary>
-    private const float PAD_LAST_RESORT = 3000f;
-
     private bool TryAnotherWay(int index) {
         var member = _team[index];
         if (_leaderLastTarget is not { } goal) {
