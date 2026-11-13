@@ -307,3 +307,8 @@ Changed: The Quest Team and Ultimus only play the Story Main line
 Some main quests can't be turned down. The bots now take those, but ignore them unless a Story Main quest needs them done first. They still turn down side quests, unless the story needs one.
 Where: in the game, and the Quest Team and Ultimus logs
 Test: When a bot is offered a main quest that isn't part of the story, the log should say "accepts it but ignores it". The team should keep following the Story Main line.
+
+Changed: The Quest Team page keeps XP and Quests compact
+Each Quest Team wizard shows the same live XP bar and quest book as Ultimus. The XP bar is one line under the name. On the Quest Team page the Quests section starts closed as a drop-down, so four wizards don't clutter the page. Click "Quests" to open it. It stays open or closed as you switch between wizards.
+Where: Ahziael > Quest Team > The team's wizards
+Test: Pick a wizard. The XP bar should show under the name, and "Quests" should be closed. Open it, pick another wizard, and it should stay open.
