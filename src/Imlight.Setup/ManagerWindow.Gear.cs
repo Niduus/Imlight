@@ -967,7 +967,9 @@ internal sealed partial class ManagerWindow {
         Bitmap? bitmap = null;
         try {
             if (book.Image(parts.Glass) is { } glass && book.Image(parts.Liquid) is { } liquid) {
-                bitmap = ToBitmap(Globe(glass, liquid));
+                // Health full red, as the game shows it (Niduus, 2026-11-13: "the red is slightly green when it should be
+                // full red"): the file's liquid fades to olive at the bottom, which the game tints red.
+                bitmap = ToBitmap(Globe(glass, key.Equals("health", StringComparison.OrdinalIgnoreCase) ? AllRed(liquid) : liquid));
             }
         }
         catch (Exception) {
@@ -977,6 +979,40 @@ internal sealed partial class ManagerWindow {
         _gearPictures[cacheKey] = bitmap;
 
         return bitmap;
+    }
+
+    // Every orange, yellow or green pixel (hue about 11 to 141 degrees) turned red (356), its strength and brightness kept.
+    private static GameImage AllRed(GameImage image) {
+        var pixels = (byte[]) image.Pixels.Clone();
+        for (var o = 0; o < pixels.Length; o += 4) {
+            var (r, g, b) = (pixels[o] / 255.0, pixels[o + 1] / 255.0, pixels[o + 2] / 255.0);
+            var max = Math.Max(r, Math.Max(g, b));
+            var min = Math.Min(r, Math.Min(g, b));
+            var chroma = max - min;
+            if (chroma <= 0) {
+                continue;
+            }
+
+            var hue = max == r ? 60 * (((g - b) / chroma) % 6) : max == g ? 60 * (((b - r) / chroma) + 2) : 60 * (((r - g) / chroma) + 4);
+            if (hue < 0) {
+                hue += 360;
+            }
+
+            if (hue is < 11 or > 141) {
+                continue;
+            }
+
+            // Hue 356 at the same value and chroma: red full, blue a little, green at the bottom.
+            const double RED_HUE = 356;
+            var x = chroma * (1 - Math.Abs(((RED_HUE / 60) % 2) - 1));
+            var (nr, ng, nb) = (chroma, 0.0, x);
+            var m = max - chroma;
+            pixels[o] = (byte) Math.Round((nr + m) * 255);
+            pixels[o + 1] = (byte) Math.Round((ng + m) * 255);
+            pixels[o + 2] = (byte) Math.Round((nb + m) * 255);
+        }
+
+        return new GameImage(image.Width, image.Height, pixels);
     }
 
     private static GameImage Globe(GameImage glass, GameImage liquid) {
