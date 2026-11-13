@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Tools;
 using Imlight.CoreLib.Game.Zone.Core;
 using NVector3 = System.Numerics.Vector3;
 
@@ -75,7 +76,10 @@ internal static class BotPopulation {
                 var point = points[Random.Shared.Next(points.Length)];
                 var distance = NVector3.Distance(point, me);
                 if (distance > near && distance < far && MathF.Abs(point.Z - me.Z) < 600
-                    && BotGround.GoodSpot(zonePath, point) && ZoneCollision.Clearance(zonePath, point) >= 40) {
+                    && BotGround.GoodSpot(zonePath, point) && ZoneCollision.Clearance(zonePath, point) >= 40
+                    // Floor the player can walk to (not an island past a wall, water or black), and not a boxed-in patch.
+                    && !OverlayQuestPath.Apart(zonePath, me.X, me.Y, point.X, point.Y)
+                    && OverlayQuestPath.IslandShare(zonePath, point.X, point.Y) is < 0 or >= 0.05) {
                     best.Add((point, BotGround.Openness(zonePath, point)));
                 }
             }
