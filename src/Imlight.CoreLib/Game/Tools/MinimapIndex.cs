@@ -43,6 +43,9 @@ internal static class MinimapIndex {
     internal const string SIGIL = "sigil";
     internal const string DOOR = "door";
     internal const string CHEST = "chest";
+    // Health and mana wisps, for a server-played wizard that needs to heal (not drawn on the overlay's map).
+    internal const string WISP_HEALTH = "wisp-health";
+    internal const string WISP_MANA = "wisp-mana";
 
     /// <summary>One thing on the map: what kind it is, its name, and the live object whose spot it shows.</summary>
     internal sealed record Mark(string Kind, string Name, ulong Template, string[] Adjectives, CoreObject Object, int Level) {
@@ -119,6 +122,14 @@ internal static class MinimapIndex {
             var name = NameOf(template);
 
             return new Mark(DOOR, name.Length == 0 ? "Teleporter" : name, id, adjectives, entity.ActiveGameObject, 0);
+        }
+
+        if (entity.GetComponentOfType<WispHealthComponent>() is not null) {
+            return new Mark(WISP_HEALTH, "Health wisp", id, adjectives, entity.ActiveGameObject, 0);
+        }
+
+        if (entity.GetComponentOfType<WispManaComponent>() is not null) {
+            return new Mark(WISP_MANA, "Mana wisp", id, adjectives, entity.ActiveGameObject, 0);
         }
 
         if (entity.GetComponentOfType<SilverChestComponent>() is not null) {

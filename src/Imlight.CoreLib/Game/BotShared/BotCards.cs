@@ -67,7 +67,7 @@ internal static class BotCards {
     private static Dictionary<Kind, double> Shares(BotStyle style, Situation situation) {
         var shares = style switch {
             BotStyle.Hitter => new Dictionary<Kind, double> { [Kind.Hit] = 0.65, [Kind.Blade] = 0.2, [Kind.Trap] = 0.1, [Kind.Heal] = 0.05, [Kind.Shield] = 0, [Kind.Other] = 0 },
-            BotStyle.Backup => new Dictionary<Kind, double> { [Kind.Hit] = 0.45, [Kind.Trap] = 0.2, [Kind.Blade] = 0.15, [Kind.Heal] = 0.1, [Kind.Shield] = 0.1, [Kind.Other] = 0 },
+            BotStyle.Backup or BotStyle.Solo => new Dictionary<Kind, double> { [Kind.Hit] = 0.45, [Kind.Trap] = 0.2, [Kind.Blade] = 0.15, [Kind.Heal] = 0.1, [Kind.Shield] = 0.1, [Kind.Other] = 0 },
             BotStyle.Tank => new Dictionary<Kind, double> { [Kind.Shield] = 0.3, [Kind.Hit] = 0.25, [Kind.Trap] = 0.15, [Kind.Blade] = 0.15, [Kind.Heal] = 0.15, [Kind.Other] = 0 },
             _ => new Dictionary<Kind, double> { [Kind.Heal] = 0.45, [Kind.Shield] = 0.15, [Kind.Blade] = 0.15, [Kind.Hit] = 0.2, [Kind.Trap] = 0.05, [Kind.Other] = 0 },
         };

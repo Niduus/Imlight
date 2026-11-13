@@ -57,6 +57,9 @@ internal sealed class WispManaComponent : ZoneEntityComponent, IComponentFactory
 
     private readonly WispPickup _pickup = new();
     private bool _collected;
+
+    /// <summary>Taken already (it is going away).</summary>
+    internal bool Collected => _collected;
     private const float STARTING_WORLD_WISP_MANA = 0.25f;
     private const float WISP_MANA_PERCENT_INCREASE = 0.10f;
     private const int MIN_WISP_MANA = 5;

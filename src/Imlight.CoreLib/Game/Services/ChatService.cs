@@ -219,7 +219,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
                 MessageID = message.MessageID,
                 Filter = 0,
                 Flags = TeamChatFlags
-            });
+            }, phraseId: message.MessageID);
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDQUICKCHATEXT))]
@@ -245,7 +245,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
                 Message = message.Message,
                 Filter = 0,
                 Flags = TeamChatFlags
-            });
+            }, text: message.Message.ToString());
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_REQUESTRADIALFRIENDQUICKCHAT))]
@@ -410,6 +410,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
         var targetActorPath = targetPlayer.ActorPath;
         Context.ActorSelection(targetActorPath).Tell(msg);
+        TellUltimusWhisper(targetID, myWizard, 0, (string) message.Message);
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_BUDDYSTATS))]
@@ -467,7 +468,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
     /// The client aims friend-list whispers at a character and team lines at the group (by
     /// channel or group ID). The target may come as a character ID or a game object ID.
     /// </summary>
-    private void SendDirectedQuickChat(ulong targetId, Wizard sender, IMessage whisper, IMessage teamLine) {
+    private void SendDirectedQuickChat(ulong targetId, Wizard sender, IMessage whisper, IMessage teamLine, uint phraseId = 0, string text = null) {
         if (GroupRegistry.TryGetGroup(sender.CharId, out var group)
             && (group.ChannelId == targetId || group.GroupId == targetId)) {
             SendToTeam(group, sender.CharId, teamLine);
@@ -487,6 +488,21 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         Context.ActorSelection(targetPlayer.ActorPath).Tell(whisper);
+        TellUltimusWhisper(targetPlayer.CharacterId, sender, phraseId, text);
+    }
+
+    // A player whispered to Ultimus: it may answer in Menu Chat, whispered back (Niduus, 2026-11-13: "Able to reply to
+    // Whispers via Menu Chat (in context)").
+    private static void TellUltimusWhisper(ulong targetCharId, Wizard sender, uint phraseId, string text) {
+        if (sender is null || !Ultimus.UltimusRoster.IsMember(targetCharId) || Ultimus.UltimusRoster.IsMember(sender.CharId)
+            || QuestTeam.QuestTeamRoster.IsMember(sender.CharId)) {
+            return;
+        }
+
+        text ??= phraseId == 0 ? null : BotShared.MenuChatBook.ById(phraseId)?.Text;
+        if (!string.IsNullOrWhiteSpace(text)) {
+            Ultimus.UltimusVoice.PlayerWhispered(sender.CharId, sender.PlayerNameBehavior?.GetWizardName(), text);
+        }
     }
 
     private void SendToTeam(GroupSnapshot group, ulong senderCharId, IMessage msg) {

@@ -174,7 +174,7 @@ internal class PotionService(SessionActor sessionActor) : MessageService(session
             Logger.Args(wizard.CharId, potionsToFill, cost, level, perPotion, charge, newCharge, max));
     }
 
-    private static int PotionCostPerBottle(int level)
+    internal static int PotionCostPerBottle(int level)
         => level < 11 ? 100
          : level < 21 ? level * 10
          : level < 31 ? level * 15

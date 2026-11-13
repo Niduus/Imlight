@@ -56,6 +56,9 @@ internal sealed class WispHealthComponent : ZoneEntityComponent, IComponentFacto
 
     private readonly WispPickup _pickup = new();
     private bool _collected;
+
+    /// <summary>Taken already (it is going away).</summary>
+    internal bool Collected => _collected;
     private const float STARTING_WORLD_WISP_HEALTH = 0.40f;
     private const float WISP_HEALTH_PERCENT_INCREASE = 0.25f;
 
