@@ -39,6 +39,7 @@
 using System;
 using System.Threading.Tasks;
 using Akka.Actor;
+using Imcodec.Cryptography;
 using Imcodec.Math;
 using Imcodec.MessageLayer;
 using Imcodec.MessageLayer.Generated;
@@ -256,6 +257,16 @@ internal class MoveService : MessageService {
                 Selfless = false,
             };
             TellOtherServices(broadcastMsg);
+
+            // Out of the "Teleport" state the effects put the wizard in, or they stay faded out (ZoneService.DoTeleport).
+            TellOtherServices(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST() {
+                Sender = SessionActor.ActorRef,
+                Message = new GAME_5_PROTOCOL.MSG_ENTERSTATE {
+                    GameObjectID = wizard.GameObject.m_globalID,
+                    State = StringHash.Compute(ZoneService.IN_WORLD_STATE),
+                },
+                Selfless = false,
+            });
 
             SendToSocket(recallRsp);
 

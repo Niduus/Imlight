@@ -1306,6 +1306,19 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Timer-fired message: an object that was just taken from a wizard's game is sent to it again, now that the game has
+    /// let the old copy go (RenderComponent). Sent at once, the game still had the old copy and dropped the new one, and
+    /// the object then vanished with the old copy.
+    /// </summary>
+    public sealed class MSG_SHOWAFTERREMOVE : IServerMessage {
+
+        public byte MessageOrder { get; } = 111;
+        public byte ServiceID { get; } = 102;
+        public IActorRef PlayerActor;
+
+    }
+
+    /// <summary>
     /// Timer-fired message: a dungeon sigil pad sends its look again, to one player (Player set) or to every player in
     /// the zone (Player null, after the Customs tab changed the pad while the zone runs). LastOnly sends only the look's
     /// final state, a second time, for a game that was still busy with the first.
