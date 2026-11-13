@@ -62,6 +62,8 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
     internal sealed record Train(ulong TrainerGlobalId, int Index, string What);
 
     internal sealed record UsePotion;
+    // A Menu Chat phrase said aloud, by its chat ID, as a menu-chat player says it.
+    internal sealed record SayMenuChat(uint PhraseId);
 
     internal sealed record WorldTeleport(ulong DoorGlobalId, string World);
 
@@ -207,6 +209,7 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
         });
         Receive<Train>(m => Send(new WIZARD_12_PROTOCOL.MSG_TRAIN { MobileID = m.TrainerGlobalId, TrainingIndex = m.Index }));
         Receive<UsePotion>(_ => Send(new WIZARD_12_PROTOCOL.MSG_USEPOTION()));
+        Receive<SayMenuChat>(m => Send(new GAME_5_PROTOCOL.MSG_REQUESTRADIALQUICKCHAT { MessageID = m.PhraseId }));
         Receive<WorldTeleport>(m => Send(new WIZARD_12_PROTOCOL.MSG_WORLDTELEPORTREQUEST { TeleportID = m.DoorGlobalId, World = m.World }));
         Receive<CloseDialog>(m => FinishDialog(m.Number));
         Receive<Invite>(m => Send(new GAME_5_PROTOCOL.MSG_PARTYREQUESTINVITE {

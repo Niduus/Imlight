@@ -315,6 +315,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
 
         KeepGrouped();
         UsePotions();
+        AnswerPlayers();
 
         // Paused in Ahziael: they stand where they are, logged in (a battle still plays out by itself).
         if (DateTime.UtcNow >= _nextPauseLook) {
@@ -450,6 +451,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         if (_restingSince == DateTime.MaxValue) {
             _restingSince = DateTime.UtcNow;
             Note("Team", $"rests before the fight ({string.Join(", ", weak.Select(m => m.Role))} low on health or mana).");
+            Speak(_team.IndexOf(weak[0]), "wait", 0.5);
         }
 
         if (DateTime.UtcNow - _restingSince > TimeSpan.FromMinutes(1)) {
@@ -528,6 +530,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             if (!sameStep) {
                 _targetSince = DateTime.UtcNow;
                 Note("Team", $"next: {Describe(target)}.");
+                Speak(0, target.Kind == QuestTeamPlanner.FIGHT ? "fight" : "go", 0.3);
                 // A fight is next: each deck made ready for it.
                 if (target.Kind == QuestTeamPlanner.FIGHT) {
                     PrepareDecks(BotCards.SituationOf(target.Template));
@@ -1361,6 +1364,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         if (!lost || index != 0) {
             if (index == 0) {
                 Note("Team", "won the battle.");
+                Speak(_voiceRandom.Next(_team.Count), "won", 0.35);
                 Count("battles won");
                 // Fights won for each step, to see how many kills a drop or a count takes (Niduus: "flag abnormal drops").
                 if (_target is { Kind: QuestTeamPlanner.FIGHT } fought) {
