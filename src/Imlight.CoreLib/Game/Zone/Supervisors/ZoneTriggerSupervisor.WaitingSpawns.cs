@@ -60,7 +60,8 @@ internal sealed partial class ZoneTriggerSupervisor {
     [InternalMessageHandler(typeof(WaitingSpawnCheck))]
     private void ReceiveWaitingSpawnCheck(WaitingSpawnCheck message) {
         _waitingSpawnChecks.Remove(message.PlayerActor);
-        if (message.PlayerActor is IInternalActorRef { IsTerminated: true } || WaitingSpawnTriggers().Count == 0) {
+        if (message.PlayerActor is IInternalActorRef { IsTerminated: true }
+            || (WaitingSpawnTriggers().Count == 0 && !HoldsQuestChangedObjects())) {
             return;
         }
 
@@ -77,7 +78,14 @@ internal sealed partial class ZoneTriggerSupervisor {
             return;
         }
 
+        // A dungeon room newer than the quest step that changed one of its objects gets that change back.
+        RestoreQuestObjectStates(message);
+
         try {
+            if (WaitingSpawnTriggers().Count == 0) {
+                return;
+            }
+
             var wanted = OpenDefeatSteps(message.Wizard);
             if (wanted.Count == 0) {
                 return;

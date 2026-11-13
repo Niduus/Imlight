@@ -127,6 +127,15 @@ internal sealed class InstanceContainer(ulong instanceOwnerId, bool removeWhenEm
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_DROPINSTANCEZONE))]
     public void ReceiveDropInstanceZone(ZONE_102_PROTOCOL.MSG_DROPINSTANCEZONE message) {
+        // A fresh run: the other rooms of the last run that nobody is in go as well (each checks it is empty).
+        if (message.FreshRun) {
+            foreach (var (name, room) in _zones) {
+                if (!string.Equals(name, message.ZoneName, StringComparison.OrdinalIgnoreCase)) {
+                    room.Tell(new ZONE_102_PROTOCOL.MSG_INSTANCEIDLEEXPIRE { Force = true }, Self);
+                }
+            }
+        }
+
         if (!_zones.Remove(message.ZoneName, out var zoneActor)) {
             return;
         }

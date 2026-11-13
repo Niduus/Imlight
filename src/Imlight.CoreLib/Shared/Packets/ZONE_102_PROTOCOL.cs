@@ -1535,6 +1535,10 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
 
         public string ZoneName;
 
+        /// <summary>A fresh run of a dungeon starts here (a sigil): the owner's other rooms that stand empty go too, so
+        /// none of the last run's rooms (kept while someone was inside, Zone) is walked back into.</summary>
+        public bool FreshRun;
+
     }
 
     /// <summary>
@@ -1585,6 +1589,9 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
 
         public byte MessageOrder { get; } = 72;
         public byte ServiceID { get; } = 102;
+
+        /// <summary>Drop the empty room now, even if someone is in another room of the dungeon (a fresh run started).</summary>
+        public bool Force;
 
     }
 
