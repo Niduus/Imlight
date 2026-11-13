@@ -136,6 +136,18 @@ internal sealed partial class UltimusDirectorActor {
             }
 
             var text = heard.Text;
+
+            // Asked about its quest or where it is going: the real answer, as a player picks it from "My Quests" (its quest's
+            // name) or "Locations" (Niduus, 2026-11-13: "My Quest section in the chat doesn't work", it said "This quest is
+            // fun" to "What quest are you working on?").
+            if (QuestAnswer(text) is { } answer) {
+                Note("Ultimus", $"{heard.SpeakerName} {(heard.Whisper ? "whispered" : "said in Menu Chat")}: \"{text}\"; Ultimus answers from My Quests: \"{answer}\".");
+                _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
+                _nextLine = DateTime.UtcNow + s_lineGap;
+                _actors[0].Tell(heard.Whisper ? new UltimusMember.WhisperMenuChatText(answer, heard.SpeakerCharId) : new UltimusMember.SayMenuChatText(answer));
+                continue;
+            }
+
             var fighting = CombatDuelComponent.IsInBattle(me.GlobalId);
             var moment = fighting && s_fightAsks.Any(a => MenuChatBook.Says(text, a)) ? "yes"
                 : s_planAsks.Any(a => MenuChatBook.Says(text, a)) || s_fightAsks.Any(a => MenuChatBook.Says(text, a)) ? "no"
@@ -159,6 +171,23 @@ internal sealed partial class UltimusDirectorActor {
             _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
             Speak(moment, 1, force: true, whisperTo: heard.Whisper ? heard.SpeakerCharId : 0);
         }
+    }
+
+    // "What quest are you working on?": the quest's name. "Where are you going?": the area its step is in.
+    private string QuestAnswer(string text) {
+        var quest = _currentQuest ?? _target?.Quest ?? _leaderLastTarget?.Quest;
+        bool Asks(params string[] words) => words.Any(w => MenuChatBook.Says(text, w));
+        if (Asks("what quest", "which quest", "quest are you", "working on", "your quest", "what are you doing", "doing")) {
+            return string.IsNullOrEmpty(quest) ? null : UltimusText.Title(quest).Trim().Trim('"').Trim();
+        }
+
+        if (Asks("where are you going", "where are you", "where to", "going")) {
+            var zone = (_target ?? _leaderLastTarget)?.To is { Length: > 0 } to ? to : (_team.Count > 0 ? _team[0].Zone : null);
+
+            return string.IsNullOrEmpty(zone) ? null : UltimusText.Zone(zone);
+        }
+
+        return null;
     }
 
 }
