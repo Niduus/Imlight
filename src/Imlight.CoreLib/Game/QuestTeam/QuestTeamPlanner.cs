@@ -307,7 +307,9 @@ internal static class QuestTeamPlanner {
                 var foe = live.Where(m => m.Kind is MinimapIndex.MOB or MinimapIndex.BOSS
                                          && (m.Adjectives.Any(a => adjectives.Contains(a, StringComparer.Ordinal))
                                              || Quests.BountyStandIns.Counts(adjectives, m.Template))
-                                         && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full))
+                                         && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full)
+                                         // Not a creature Ultimus is fighting or heading for: the two stay out of each other's way.
+                                         && !Ultimus.UltimusDirector.IsBusyNear(leader.ZoneActor, m.Object.m_location.X, m.Object.m_location.Y))
                     .OrderBy(m => Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault();
                 if (foe is not null) {
                     return new Target(FIGHT, foe.Object.m_location.X, foe.Object.m_location.Y, step, questName, goalName, foe.Template,
