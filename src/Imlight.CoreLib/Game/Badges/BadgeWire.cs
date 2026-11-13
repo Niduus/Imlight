@@ -55,7 +55,12 @@ internal static class BadgeWire {
 
     internal const int MaxChunkBytes = 30000;
     internal const int MaxChunks = 255;
-    private const uint SerializationFlags = 4;
+    // The game reads the badge list with the Transmit mask. Since the Ahmarra update (r813697, 2026-11-12) only the id,
+    // progress, complete and original progress of a BadgeInfo carry that flag; the game has the rest itself. The old mask
+    // (Public) also wrote the title and the other texts, so the game read a text as the next badge and threw the whole
+    // list away (WizardClient.log: "Failed to find type by name hash 808464432 ... class BadgeInfoList"), and the Badges
+    // page showed one empty group (Niduus, 2026-11-13). On older games every field has the flag, so all of them go out.
+    private const uint SerializationFlags = (uint) PropertyFlags.Prop_Transmit;
 
     internal static List<IMessage> Build(Wizard wizard, BadgeCatalog catalog, IReadOnlyCollection<BadgeDefinition> entries, bool full) {
         var ordered = full ? entries.OrderBy(d => d.Id).ToList() : entries.OrderBy(d => d.Index).ThenBy(d => d.Id).ToList();
