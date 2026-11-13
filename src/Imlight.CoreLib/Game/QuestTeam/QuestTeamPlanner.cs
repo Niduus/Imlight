@@ -282,6 +282,7 @@ internal static class QuestTeamPlanner {
         var leader = group[0];
         var zone = leader.Zone ?? "";
         var live = MinimapIndex.In(leader.ZoneActor);
+        Ultimus.UltimusPads.NoteDoors(zone, live);
         var step = OverlayQuestTracker.StepTitle(goal);
         string questName = quest.m_questName;
         string goalName = goal.m_goalName;

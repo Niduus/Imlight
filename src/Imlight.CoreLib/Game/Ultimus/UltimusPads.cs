@@ -46,6 +46,10 @@ internal static class UltimusPads {
 
     private static readonly ConcurrentDictionary<string, List<Pad>> s_files = new(StringComparer.OrdinalIgnoreCase);
     private static readonly object s_lock = new();
+
+    // Same-area doors seen standing in each area (clickable "To Triton Avenue" pads): a door has no trigger volume, so
+    // the files alone don't show it.
+    private static readonly ConcurrentDictionary<string, List<Pad>> s_doors = new(StringComparer.OrdinalIgnoreCase);
     private static Dictionary<string, List<Pad>> s_learned;
 
     /// <summary>Every teleporter of the area that lands in the same area: the area's own and the ones Ultimus learned.</summary>
@@ -55,6 +59,10 @@ internal static class UltimusPads {
         }
 
         var pads = new List<Pad>(s_files.GetOrAdd(zonePath, FromFiles));
+        if (s_doors.TryGetValue(zonePath, out var doors)) {
+            pads.AddRange(doors);
+        }
+
         lock (s_lock) {
             if (Learned().TryGetValue(zonePath, out var learned)) {
                 pads.AddRange(learned);
@@ -167,6 +175,68 @@ internal static class UltimusPads {
 
     private static bool Near(float ax, float ay, float bx, float by, float most) => UltimusPlanner.Far(ax, ay, bx, by) <= most;
 
+    /// <summary>
+    /// The doors standing in a loaded area that lead to another spot of the same area (Niduus, 2026-11-13: the quest line
+    /// "doesn't see or respect teleporters such as in Triton Avenue"): kept as its teleporters.
+    /// </summary>
+    internal static void NoteDoors(string zonePath, IEnumerable<MinimapIndex.Mark> live) {
+        if (string.IsNullOrEmpty(zonePath) || live is null) {
+            return;
+        }
+
+        try {
+            var pads = new List<Pad>();
+            foreach (var door in live.Where(m => m.Kind == MinimapIndex.DOOR && string.Equals(m.To?.Trim(), zonePath, StringComparison.OrdinalIgnoreCase))) {
+                if (Landing(zonePath, door.ToLoc) is { } to
+                    && !Near(door.Object.m_location.X, door.Object.m_location.Y, to.X, to.Y, 200)) {
+                    pads.Add(new Pad(door.Object.m_location.X, door.Object.m_location.Y, to.X, to.Y, door.Name));
+                }
+            }
+
+            if (pads.Count > 0 || s_doors.ContainsKey(zonePath)) {
+                s_doors[zonePath] = pads;
+            }
+        }
+        catch (Exception ex) {
+            Logger.Debug("Ultimus: the doors of {0} could not be read: {1}", Logger.Args(zonePath, ex.Message));
+        }
+    }
+
+    // A teleport's landing: "x,y,z,yaw" as SpiralDB records most of them, else a named spot of the area.
+    private static (float X, float Y)? Landing(string zonePath, string loc) {
+        if (Coordinates(loc) is { } xy) {
+            return xy;
+        }
+
+        return string.IsNullOrWhiteSpace(loc) || !Spots(zonePath).TryGetValue(loc.Trim(), out var spot) ? null : spot;
+    }
+
+    private static (float X, float Y)? Coordinates(string loc) {
+        var parts = (loc ?? "").Split(',');
+        return parts.Length >= 3
+               && float.TryParse(parts[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var x)
+               && float.TryParse(parts[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var y)
+            ? (x, y) : null;
+    }
+
+    private static readonly ConcurrentDictionary<string, Dictionary<string, (float X, float Y)>> s_spots = new(StringComparer.OrdinalIgnoreCase);
+
+    private static Dictionary<string, (float X, float Y)> Spots(string zonePath) => s_spots.GetOrAdd(zonePath, zone => {
+        try {
+            if (!ResourceManager.TryLoadArchive(zone, out var wad)) {
+                return [];
+            }
+
+            return (Read<WizZoneData>(ResourceManager.OpenZoneData(wad)?.ToArray())?.m_locationList ?? [])
+                .Where(l => l is not null && !l.m_locName.IsEmpty)
+                .GroupBy(l => l.m_locName.ToString(), StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => (g.First().m_location.X, g.First().m_location.Y), StringComparer.OrdinalIgnoreCase);
+        }
+        catch (Exception) {
+            return [];
+        }
+    });
+
     // ---- The area's files: a trigger that teleports within the area, its volume, and the named spot it lands on. ----
 
     private static List<Pad> FromFiles(string zonePath) {
@@ -197,15 +267,24 @@ internal static class UltimusPads {
                     continue;
                 }
 
-                if (!spots.TryGetValue(loc.Trim(), out var landing)) {
+                // The landing: a named spot of the area, or "x,y,z,yaw" (how SpiralDB records Triton Avenue's pads; Niduus,
+                // 2026-11-13: these were all missed, so no teleporter was ever known there).
+                (float X, float Y) landing;
+                if (spots.TryGetValue(loc.Trim(), out var named)) {
+                    landing = (named.m_location.X, named.m_location.Y);
+                }
+                else if (Coordinates(loc) is { } xy) {
+                    landing = xy;
+                }
+                else {
                     continue;
                 }
 
                 foreach (var fire in trigger.m_fireEvents.Select(e => e.ToString()).Where(e => !string.IsNullOrEmpty(e))) {
                     foreach (var volume in volumes.Where(v => v.m_enterEvents?.Any(e => (string) e == fire) == true
                                                               || "Enter_" + (string) v.m_volumeName == fire)) {
-                        if (!Near(volume.m_locationX, volume.m_locationY, landing.m_location.X, landing.m_location.Y, 200)) {
-                            pads.Add(new Pad(volume.m_locationX, volume.m_locationY, landing.m_location.X, landing.m_location.Y, name));
+                        if (!Near(volume.m_locationX, volume.m_locationY, landing.X, landing.Y, 200)) {
+                            pads.Add(new Pad(volume.m_locationX, volume.m_locationY, landing.X, landing.Y, name));
                         }
                     }
                 }

@@ -131,6 +131,16 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
         }
     }
 
+    /// <summary>Where this door lands (a named spot or "x,y,z,yaw"), or empty when it can't be told (for the way finders).</summary>
+    internal string DestinationLoc() {
+        try {
+            return TryResolveTeleport(out var teleport) ? teleport.m_destinationLoc ?? "" : "";
+        }
+        catch (Exception) {
+            return "";
+        }
+    }
+
     private bool TryResolveTeleport(out ResTeleport teleport) {
         teleport = null;
         var zonePath = Entity.Zone?.ZonePath;
