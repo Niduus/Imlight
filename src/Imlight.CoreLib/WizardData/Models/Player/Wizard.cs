@@ -2157,8 +2157,14 @@ public class Wizard {
     public bool RemoveQuest(string questName) {
         var removeSuccess = QuestBehavior.RemoveQuest(questName);
         if (!removeSuccess) {
-            Logger.Warning("Could not remove quest {0} for player {1}.",
-                Logger.Args(questName, PlayerNameBehavior.GetWizardName()));
+            // Skipping the tutorial removes tutorial quests the wizard never had (6 lines per new wizard, Niduus's log
+            // 2026-11-14): only a quest the wizard holds and that still won't go is worth a warning.
+            if (HasQuest(questName)) {
+                Logger.Warning("Could not remove quest {0} for player {1}.", Logger.Args(questName, PlayerNameBehavior.GetWizardName()));
+            }
+            else {
+                Logger.Debug("Quest {0} to remove is not held by {1}; nothing to do.", Logger.Args(questName, PlayerNameBehavior.GetWizardName()));
+            }
 
             return false;
         }
