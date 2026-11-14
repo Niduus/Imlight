@@ -651,6 +651,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         };
 
         var distance = UltimusPlanner.Far(leader.X, leader.Y, target.X, target.Y);
+        // A thing to click with creatures walking about by it: he waits out of reach for an opening (UltimusDirector.Grab.cs).
+        if (distance > reach && WaitForOpening(leader, target, distance)) {
+            return;
+        }
+
         if (distance > reach) {
             WalkTo(0, target);
 
