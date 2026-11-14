@@ -34,6 +34,74 @@ internal sealed partial class ManagerWindow {
     private const int ULTIMUS_LOG_LINES = 300;
 
     private readonly TextBlock _ultState = new() { TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold };
+    // A red note when a door did not take Ultimus (or the Quest Team) since you last looked: its tries are written down, ready
+    // to send (Niduus, 2026-11-14).
+    private readonly TextBlock _ultDoorText = new() {
+        TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold, Foreground = new SolidColorBrush(Color.Parse("#E5484D")),
+    };
+    private StackPanel? _ultDoorNote;
+    private const string DOOR_SEEN_FILE = "exit-tries-seen.txt";
+
+    // The door tries files written since the last "Got it": Ultimus's and the Quest Team's, newest write time of each.
+    private List<(string Who, string Path, DateTime At)> NewDoorTries() {
+        var found = new List<(string Who, string Path, DateTime At)>();
+        DateTime seen = DateTime.MinValue;
+        try {
+            var seenFile = Path.Combine(UltimusFolder, DOOR_SEEN_FILE);
+            if (File.Exists(seenFile) && long.TryParse(File.ReadAllText(seenFile).Trim(), out var ticks)) {
+                seen = new DateTime(ticks, DateTimeKind.Utc);
+            }
+
+            foreach (var (who, folder) in new[] { ("Ultimus", UltimusFolder), ("Quest Team", QuestTeamFolder) }) {
+                var file = Path.Combine(folder, "exit-tries.txt");
+                if (File.Exists(file) && File.GetLastWriteTimeUtc(file) is var at && at > seen) {
+                    found.Add((who, file, at));
+                }
+            }
+        }
+        catch (Exception) {
+            // Only a note: nothing shows when the files can't be read.
+        }
+
+        return found;
+    }
+
+    private Control UltimusDoorNote() {
+        _ultDoorNote = new StackPanel { Spacing = 6, IsVisible = false, Margin = new Thickness(0, 4, 0, 4) };
+        _ultDoorNote.Children.Add(_ultDoorText);
+        _ultDoorNote.Children.Add(Row(
+            Action(Plain("Copy the door tries"), () => CopyAsync(string.Join("\n\n", NewDoorTries().Select(d =>
+                $"[{d.Who}] {d.Path}\n" + ReadAllOf(d.Path, 32 * 1024))), "The door tries were copied. Paste them in the chat.")),
+            Action(Plain("Got it"), () => {
+                try {
+                    Directory.CreateDirectory(UltimusFolder);
+                    File.WriteAllText(Path.Combine(UltimusFolder, DOOR_SEEN_FILE), DateTime.UtcNow.Ticks.ToString());
+                }
+                catch (Exception) {
+                    // Shown again next time; nothing lost.
+                }
+
+                ShowUltimusDoorNote();
+
+                return Task.CompletedTask;
+            })));
+
+        return _ultDoorNote;
+    }
+
+    private void ShowUltimusDoorNote() {
+        if (_ultDoorNote is null) {
+            return;
+        }
+
+        var doors = NewDoorTries();
+        _ultDoorNote.IsVisible = doors.Count > 0;
+        if (doors.Count > 0) {
+            _ultDoorText.Text = $"A door did not take {string.Join(" or ", doors.Select(d => d.Who))} " +
+                                $"(last at {doors.Max(d => d.At).ToLocalTime():HH:mm}). Each try is written down: press Copy the door tries " +
+                                "and paste it in the chat so the door can be fixed. Got it hides this until the next one.";
+        }
+    }
     private readonly TextBlock _ultDoing = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _ultToday = new() { TextWrapping = TextWrapping.Wrap };
 
@@ -171,6 +239,7 @@ internal sealed partial class ManagerWindow {
                 "Something odd it notices shows in pink in its log. It runs in a little program of its own next to the server; " +
                 "it never touches your own wizards.",
                 _ultState,
+                UltimusDoorNote(),
                 SwitchRow("Ultimus", _ultEnabled, "On: Ultimus logs in a few seconds later and starts questing. Off: it logs out."),
                 _ultDoing,
                 _ultToday,
@@ -986,6 +1055,7 @@ internal sealed partial class ManagerWindow {
 
         if (_ultState.IsEffectivelyVisible) {
             ShowUltimusStatus();
+            ShowUltimusDoorNote();
         }
 
         if (_ultLogBox?.IsEffectivelyVisible == true) {
