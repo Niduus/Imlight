@@ -223,7 +223,9 @@ internal static class RouteMemory {
             var leg = street.Legs
                 .Where(l => l.Worked > l.Failed * 2 && Far(l.FromX, l.FromY, fromX, fromY) <= FROM_NEAR && Far(l.ToX, l.ToY, toX, toY) <= TO_NEAR)
                 .Where(l => avoid is null || !l.Points.Any(p => avoid.Any(a => Far(a.X, a.Y, p[0], p[1]) < 200)))
-                .OrderByDescending(l => l.Worked - l.Failed)
+                // The shortest of the walks that work (a shortcut one bot found is every bot's), then the most proven.
+                .OrderBy(l => Length(l.Points.Select(p => (p[0], p[1])).ToList()))
+                .ThenByDescending(l => l.Worked - l.Failed)
                 .FirstOrDefault();
             if (leg is null) {
                 return null;

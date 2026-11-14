@@ -293,14 +293,14 @@ internal static class UltimusPlanner {
 
         // Kept on the one picked before unless another is clearly nearer, so he does not turn back and forth between two.
         var best = open.MinBy(o => o.Cost);
-        var before = open.FirstOrDefault(o => o.Target.Key == s_lastPick);
+        var before = open.FirstOrDefault(o => o.Target.Key == s_lastPick.GetValueOrDefault(questName));
         var pick = before.Target is not null && before.Cost <= (best.Cost * 1.3f) + 200 ? before : best;
-        s_lastPick = pick.Target.Key;
+        s_lastPick[questName] = pick.Target.Key;
 
         return pick.Target;
     }
 
-    private static string s_lastPick = "";
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_lastPick = new(StringComparer.OrdinalIgnoreCase);
 
     // How far a target is by the real way: the walk on the floor in this area, plus a large share for each area between.
     private const float AREA_COST = 4000f;
@@ -372,8 +372,23 @@ internal static class UltimusPlanner {
                 // they will always attempt to avoid colliding"): a creature near a Quest Team wizard is not Ultimus's.
                 var notTheTeams = free.Where(m => !NearQuestTeam(leader, m.Object.m_location.X, m.Object.m_location.Y)).ToList();
                 // The nearest by the real way (of the few nearest in a line), not one behind a wall (Niduus, 2026-11-14).
-                notTheTeams = [.. notTheTeams.Take(5).OrderBy(m => WalkLength(leader, m.Object.m_location.X, m.Object.m_location.Y))
-                    .Concat(notTheTeams.Skip(5))];
+                // The best group (approved by Niduus, 2026-11-14): alone he picks one standing apart, as other creatures by it
+                // join the battle; strong for the step with more to beat, a few wanted ones together are taken at once.
+                var others = MinimapIndex.In(leader.ZoneActor).Where(m => m.Kind is MinimapIndex.MOB or MinimapIndex.BOSS
+                                                                          && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full)).ToList();
+                var level = leader.Wizard?.MagicSchoolBehavior?.Level ?? 1;
+                var strong = level >= quest.m_questLevel + 2 && bounty.m_bountyTotal > 1
+                             && (leader.Wizard?.GameStats is { } st && st.m_currentHitpoints >= (st.m_baseHitpoints + st.m_bonusHitpoints) * 0.8);
+                float GroupCost(MinimapIndex.Mark m) {
+                    var (mx, my) = (m.Object.m_location.X, m.Object.m_location.Y);
+                    var near = others.Where(o => o != m && Far(mx, my, o.Object.m_location.X, o.Object.m_location.Y) < 350).ToList();
+                    var wantedNear = near.Count(o => notTheTeams.Contains(o));
+                    var otherNear = near.Count - wantedNear;
+
+                    return WalkLength(leader, mx, my) + (otherNear * 600) + (strong ? -300 * wantedNear : 500 * wantedNear);
+                }
+
+                notTheTeams = [.. notTheTeams.Take(5).OrderBy(GroupCost).Concat(notTheTeams.Skip(5))];
                 if (notTheTeams.FirstOrDefault() is { } foe) {
                     return new Target(FIGHT, foe.Object.m_location.X, foe.Object.m_location.Y, step, questName, goalName, foe.Template,
                         foe.Object.m_globalID.Full, Key: key);

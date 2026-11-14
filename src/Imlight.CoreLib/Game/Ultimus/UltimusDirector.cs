@@ -650,6 +650,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return backOut;
         }
 
+        // The wisps a won fight left, picked up (UltimusDirector.Smart.cs).
+        if (WispAfterFight(leader) is { } wisp) {
+            return wisp;
+        }
+
         // Training: when someone has spells waiting and the team is in Wizard City (or two spells wait), a trip to Ravenwood.
         // He marks his spot first, and recalls back after (UltimusDirector.Push.cs).
         if (TrainingTarget(group) is { } training) {
@@ -688,6 +693,15 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 // Far under the quest's level for its fight, or a fight lost here: XP first, the human way.
                 if (LevelFirst(leader, target) is { } xp) {
                     return xp;
+                }
+
+                // Another quest's step right by him first, and a wisp before a fight (UltimusDirector.Smart.cs).
+                if (WhileHere(group, target) is { } here) {
+                    return TopUpBeforeFight(leader, here) ?? here;
+                }
+
+                if (TopUpBeforeFight(leader, target) is { } topUp) {
+                    return topUp;
                 }
 
                 return UltimusPlanner.Shortcut(leader, target, _stonesUsed.Keys) ?? target;
@@ -1066,7 +1080,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // Creatures it is not here to fight, watched all the way, as a player watches them walk about (Niduus,
         // 2026-11-13: "I just saw him willingly put himself in battle. Have detections for mobs"): one walking up close
         // has it step back out of its reach, and one near the way has the way planned again round it.
-        var avoid = CreaturesToAvoid(member, target);
+        // Short of the level his story needs: creatures on the way are XP, not walked round (UltimusDirector.Smart.cs).
+        var seek = index == 0 && target.Kind != UltimusPlanner.FIGHT && SeekFights(member);
+        var avoid = seek ? null : CreaturesToAvoid(member, target);
         var near = avoid?.Select(c => (c.X, c.Y, Far: UltimusPlanner.Far(member.X, member.Y, c.X, c.Y))).OrderBy(c => c.Far).FirstOrDefault();
         var replanSoon = near is { Far: < MOB_WATCH } && DateTime.UtcNow - _sent.GetValueOrDefault(index).At > TimeSpan.FromSeconds(2);
         if (near is { Far: < MOB_TOO_CLOSE and > 1 } close && DateTime.UtcNow - _sent.GetValueOrDefault(index).At > TimeSpan.FromSeconds(1.5)) {
@@ -1100,7 +1116,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         // The street's creature areas too, walked or not right now (MobSpawnAreas), except the step's own creatures.
-        var walkAvoid = RouteMobs.Avoid(member.ZoneActor, toX, toY, target.Template == 0 ? null : [target.Template], avoid);
+        var walkAvoid = seek ? null : RouteMobs.Avoid(member.ZoneActor, toX, toY, target.Template == 0 ? null : [target.Template], avoid);
         var points = SightWalk(member, toX, toY, what, target.Kind == UltimusPlanner.FIGHT ? null : avoid) ?? OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, toX, toY, body: true, avoid: walkAvoid);
         // A walk that goes nowhere while the step is far: said once per step, with the spots, so the log shows where the
         // map gives no way (Niduus's log, 2026-11-13: it stood at The Oasis's start for an hour with nothing said).
@@ -1271,6 +1287,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         if (!lost || index != 0) {
             if (index == 0) {
                 Note("Ultimus", "won the battle.");
+                NoteFightSpot(member);
                 if (_battleCompany) {
                     Speak("won", 0.5);
                 }
