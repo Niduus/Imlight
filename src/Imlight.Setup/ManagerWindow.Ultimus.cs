@@ -30,6 +30,7 @@ internal sealed partial class ManagerWindow {
     private const string ULTIMUS_TAB = "Ultimus";
     private const string ULTIMUS_ISSUES_TAB = "Ultimus Issues";
     private const string ULTIMUS_LOGS_TAB = "Ultimus Logs";
+    private const string ULTIMUS_AI_TAB = "Ultimus AI Chat";
     private const int ULTIMUS_LOG_LINES = 300;
 
     private readonly TextBlock _ultState = new() { TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold };

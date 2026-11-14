@@ -218,6 +218,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(2), Self, PoisonPill.Instance, Self);
         });
         Receive<Loaded>(OnLoaded);
+        Receive<AiWorded>(OnAiWorded);
         Receive<Tick>(_ => {
             try {
                 OnTick();
