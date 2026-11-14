@@ -32,3 +32,8 @@ New: Line of sight circle
 Ultimus sees about 40 feet around him. You can change this with SightRadius in the [Ultimus] section of the server settings, and it takes effect without a restart. If his goal is inside that circle and nothing is in the way, he walks straight to it, even when the route map disagrees. If something blocks the straight line, he looks for a short way around inside the circle. As a last resort, when he is stuck right by his goal, he hops to a clear spot next to it, never through a wall. That hop is written in the mistakes book so the route can be fixed later.
 Where: Ultimus > Logs
 Test: Watch Ultimus Thoughts near a quest person: it should say "I can see ... with nothing in the way: I walk straight to it."
+
+Changed: Ultimus never counts on Balance Prism, and he reasons against Balance-resistant creatures
+Balance Prism is in the game's files, but no player can get it by vanilla means, so Ultimus never puts it in his deck or plays it. Against creatures that resist Balance, he compares two options using their resist, his pierce and the cards in his hand. If his pierce covers most of their resist, he goes full pierce with Balance spells. Otherwise he hits off-school, with a split hit like Hydra or a spell he trained from another school. Each hit now counts his pierce, and his log says which option he chose and why.
+Where: Ultimus > Logs
+Test: Watch a fight against Balance creatures (for example in Krokotopia). His hit lines should say "They resist Balance ..." and name the option he chose.

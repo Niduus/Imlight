@@ -106,8 +106,14 @@ internal static class BotCards {
 
         var card = RewrittenAI.Read(SpellFactory.GetSpell(template, spellId));
 
-        return card is null || card.Natural ? null : card;
+        return card is null || card.Natural || NotVanilla(card) ? null : card;
     }
+
+    /// <summary>
+    /// A card that is in the game's files but that no player can get by vanilla means (Niduus, 2026-11-14: "while Balance
+    /// Prism is a thing in the files, it's not accessible via Vanilla means"): the bots never plan around it.
+    /// </summary>
+    internal static bool NotVanilla(Card card) => card?.Shown?.Contains("Balance Prism", StringComparison.OrdinalIgnoreCase) == true;
 
     /// <summary>
     /// A spell the developers made for testing (the Dev trainer's list: a Test folder, or named Dev, Debug, GM or Admin).

@@ -98,7 +98,7 @@ internal static class UltimusTactics {
 
         // Its best hit on the target now, to know whether building up is worth a round.
         var bestHit = hand.Where(h => h.Card.Hit && !h.Card.Natural)
-            .Select(h => h.Card.HitsAll ? enemies.Sum(e => Math.Min(RewrittenAI.Health(e), RewrittenAI.Estimate(h.Card, me, e))) : RewrittenAI.Estimate(h.Card, me, focus))
+            .Select(h => h.Card.HitsAll ? enemies.Sum(e => Math.Min(RewrittenAI.Health(e), Estimate(h.Card, me, e))) : Estimate(h.Card, me, focus))
             .DefaultIfEmpty(0).Max();
         var finishesFocus = bestHit >= RewrittenAI.Health(focus);
 
@@ -159,7 +159,7 @@ internal static class UltimusTactics {
 
     private static Choice Finish(CombatDuelSubCircle me, List<InHand> hand, List<CombatDuelSubCircle> enemies) {
         foreach (var enemy in enemies.OrderBy(RewrittenAI.Health)) {
-            var finisher = hand.Where(h => h.Card.Hit && !h.Card.Natural && !h.Card.HitsAll && RewrittenAI.Estimate(h.Card, me, enemy) >= RewrittenAI.Health(enemy))
+            var finisher = hand.Where(h => h.Card.Hit && !h.Card.Natural && !h.Card.HitsAll && Estimate(h.Card, me, enemy) >= RewrittenAI.Health(enemy))
                 .OrderBy(h => h.Card.Rank).FirstOrDefault();
             if (finisher is not null) {
                 return new(Move.Cast, finisher.Index, enemy.SlotIndex, $"finishes off {Name(enemy)} with {finisher.Card.Shown}");
@@ -168,7 +168,7 @@ internal static class UltimusTactics {
 
         // A hit on everyone that finishes two or more.
         var all = hand.Where(h => h.Card.Hit && h.Card.HitsAll && !h.Card.Natural)
-            .FirstOrDefault(h => enemies.Count(e => RewrittenAI.Estimate(h.Card, me, e) >= RewrittenAI.Health(e)) >= 2);
+            .FirstOrDefault(h => enemies.Count(e => Estimate(h.Card, me, e) >= RewrittenAI.Health(e)) >= 2);
 
         return all is null ? null : new(Move.Cast, all.Index, -1, $"finishes off several with {all.Card.Shown}");
     }
@@ -176,16 +176,65 @@ internal static class UltimusTactics {
     private static Choice Hit(CombatDuelSubCircle me, List<InHand> hand, CombatDuelSubCircle focus, List<CombatDuelSubCircle> enemies, string why) {
         var best = hand.Where(h => h.Card.Hit && !h.Card.Natural)
             .Select(h => (Hand: h, Damage: h.Card.HitsAll
-                ? enemies.Sum(e => Math.Min(RewrittenAI.Health(e), RewrittenAI.Estimate(h.Card, me, e)))
-                : RewrittenAI.Estimate(h.Card, me, focus)))
+                ? enemies.Sum(e => Math.Min(RewrittenAI.Health(e), Estimate(h.Card, me, e)))
+                : Estimate(h.Card, me, focus)))
             .OrderByDescending(x => x.Damage).FirstOrDefault();
         if (best.Hand is null) {
             return null;
         }
 
+        var reason = BalanceResistReason(me, best.Hand.Card, best.Hand.Card.HitsAll ? enemies : [focus]);
+
         return best.Hand.Card.HitsAll
-            ? new(Move.Cast, best.Hand.Index, -1, $"{why}: every enemy with {best.Hand.Card.Shown} (about {best.Damage})")
-            : new(Move.Cast, best.Hand.Index, focus.SlotIndex, $"{why}: {Name(focus)} with {best.Hand.Card.Shown} (about {best.Damage})");
+            ? new(Move.Cast, best.Hand.Index, -1, $"{why}: every enemy with {best.Hand.Card.Shown} (about {best.Damage}){reason}")
+            : new(Move.Cast, best.Hand.Index, focus.SlotIndex, $"{why}: {Name(focus)} with {best.Hand.Card.Shown} (about {best.Damage}){reason}");
+    }
+
+    /// <summary>
+    /// A hit as the game lands it on this target: its resist taken down by the caster's pierce for that school (resist
+    /// can't go under nothing).
+    /// </summary>
+    private static int Estimate(Card card, CombatDuelSubCircle me, CombatDuelSubCircle target) {
+        var raw = RewrittenAI.Estimate(card, me, target);
+        var resist = RewrittenAI.ResistOf(target, card.DamageSchool);
+        if (resist <= 0 || resist >= 0.95f) {
+            return raw;
+        }
+
+        var through = Math.Min(resist, PierceOf(me, card.DamageSchool));
+
+        return (int) (raw * (1 - (resist - through)) / (1 - resist));
+    }
+
+    private static float PierceOf(CombatDuelSubCircle circle, string school) {
+        try {
+            var stats = circle?.ParticipantGameStats;
+
+            return stats is null ? 0 : Math.Clamp(circle.GetStatBySchool(stats.m_apBonusPercent, school) + stats.m_apBonusPercentAll, 0f, 1f);
+        }
+        catch (Exception) {
+            return 0;
+        }
+    }
+
+    /// <summary>
+    /// Against creatures that resist Balance (Niduus, 2026-11-14: Balance Prism is not to be had, so "Ultimus would have to
+    /// choose to either go full pierce in a battle or to rely on offbrand damage (IE Hydra for the Ice, Fire, Storm as a
+    /// Balance Spell or offbrand Trained spells)"): the reason for the choice, by their resist, its pierce and its hand.
+    /// </summary>
+    private static string BalanceResistReason(CombatDuelSubCircle me, Card card, List<CombatDuelSubCircle> targets) {
+        var resist = targets.Select(t => RewrittenAI.ResistOf(t, "Balance")).DefaultIfEmpty(0).Max();
+        if (resist < UltimusPlaybook.Value("Battle.BalanceResistNotice")) {
+            return "";
+        }
+
+        var pierce = PierceOf(me, "Balance");
+        var balanceHit = RewrittenAI.Same(card.DamageSchool, "Balance");
+        var left = Math.Max(0, resist - pierce);
+
+        return balanceHit
+            ? $". They resist Balance {RewrittenAI.Percent(resist)}%, but my {RewrittenAI.Percent(pierce)}% pierce leaves only {RewrittenAI.Percent(left)}%, so I go full pierce with Balance (no Balance Prism: no player can get one)"
+            : $". They resist Balance {RewrittenAI.Percent(resist)}% and my {RewrittenAI.Percent(pierce)}% pierce only takes it to {RewrittenAI.Percent(left)}%, so I hit as {card.DamageSchool} instead (a split hit like Hydra, or a spell I trained), which they resist less";
     }
 
     // A trap on the enemy the hitters are on (for Storm's hit first), when it fits the hit's school.
@@ -213,6 +262,11 @@ internal static class UltimusTactics {
             if (me.GetSpellFromLastHand(i) is not { } spell || RewrittenAI.Read(spell) is not { } card
                 || CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is not SpellTemplate template
                 || CombatEnchantments.IsEnchantment(template) || DivideCards.IsPickCard(template)) {
+                continue;
+            }
+
+            // Never a card no player can get by vanilla means (Balance Prism).
+            if (BotShared.BotCards.NotVanilla(card)) {
                 continue;
             }
 

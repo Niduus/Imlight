@@ -48,6 +48,7 @@ internal static class UltimusPlaybook {
         ("Quest", new("SameFailLimit", 2, "If a step fails the same way this many times, I change my approach. I never loop.")),
         ("Battle", new("HealAt", 0.5, "In battle I heal myself at or below this share of health.")),
         ("Battle", new("BigHealAt", 0.3, "At or below this share, healing comes before anything, even a finishing hit.")),
+        ("Battle", new("BalanceResistNotice", 0.1, "Creatures resisting Balance by this share or more: I weigh full pierce against off-school hits (no Balance Prism: no player can get one).")),
         ("Gear", new("AccuracyFloor", 5, "Gear accuracy (percent) I want at level 1; below the floor, accuracy counts a lot more.")),
         ("Gear", new("AccuracyPerLevel", 0.15, "Accuracy floor added per level (percent).")),
         ("Gear", new("AccuracyMax", 20, "The accuracy floor never goes over this (percent).")),
@@ -78,7 +79,10 @@ internal static class UltimusPlaybook {
         "- Build one big hit: a blade on myself, a trap on the target, then the biggest hit I can afford.",
         "- Against several creatures, a hit-all spell. Against one, the strongest single hit.",
         "- Target order: one I can finish this round, then healers and shielders, then the hardest hitter, then the boss.",
-        "- Opposed schools: Fire/Ice, Storm/Myth, Life/Death. Against Balance creatures, use Hydra/Spectral Blast-style split hits.",
+        "- Opposed schools: Fire/Ice, Storm/Myth, Life/Death.",
+        "- Balance Prism is in the game's files, but no player can get it by vanilla means: never plan around it.",
+        "- Against creatures that resist Balance: if my pierce covers most of their resist, go full pierce with Balance spells;",
+        "  otherwise hit off-school: a split hit like Hydra (Fire, Ice, Storm) or Spectral Blast, or a spell I trained from another school.",
         "- If two heals in a row can't keep me up, the fight is lost: next time, gear up or level first, and write it in the Mistakes book.",
         "",
         "GEAR (Balance, alone)",
@@ -194,7 +198,7 @@ internal static class UltimusPlaybook {
         text.AppendLine();
         text.AppendLine("[Know-how]");
         foreach (var line in s_knowHow) {
-            text.AppendLine(line.Length == 0 ? "" : line.StartsWith('-') ? line : "# " + line);
+            text.AppendLine(line.Length == 0 ? "" : line.StartsWith('-') || line.StartsWith(' ') ? line : "# " + line);
         }
 
         return text.ToString();
