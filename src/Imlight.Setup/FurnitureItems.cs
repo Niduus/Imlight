@@ -100,7 +100,7 @@ internal sealed class FurnitureBook {
         ["WC"] = "Wizard City", ["KT"] = "Krokotopia", ["MB"] = "Marleybone", ["MS"] = "Mooshu", ["DS"] = "Dragonspyre",
         ["GH"] = "Grizzleheim", ["CL"] = "Celestia", ["WL"] = "Wintertusk", ["ZF"] = "Zafaria", ["AV"] = "Avalon",
         ["AZ"] = "Azteca", ["AQ"] = "Aquila", ["KR"] = "Khrysalis", ["PL"] = "Polaris", ["MR"] = "Mirage", ["EM"] = "Empyrea",
-        ["KM"] = "Karamelle", ["LM"] = "Lemuria", ["NV"] = "Novus", ["DM"] = "Darkmoor", ["SP"] = "Spiral (any world)", ["PA"] = "Wysteria",
+        ["KM"] = "Karamelle", ["LM"] = "Lemuria", ["NV"] = "Novus", ["DM"] = "Darkmoor", ["AH"] = "Ahmarra", ["SP"] = "Spiral (any world)", ["PA"] = "Wysteria",
         ["School Sets"] = "School sets", ["HouseGuests"] = "House guests", ["HouseGuestsCCG"] = "House guests",
         ["MusicalScrolls"] = "Music scrolls", ["BuildACastleBlocks"] = "Castle blocks", ["BobbleHeads"] = "Bobbleheads",
         ["RaidKeys"] = "Raid keys", ["SkeletonKeys"] = "Skeleton keys", ["CastleMagic"] = "Castle Magic",
