@@ -29,7 +29,8 @@ namespace Imlight.CoreLib.Game.Ultimus;
 /// Which creatures really count for a fight or collect step (Niduus, 2026-11-14, "learn which creatures/spots actually drop
 /// the item"): after each battle won for a step, whether the step's count went up is written down for that creature. The
 /// planner then goes for the ones that gave first, and when the step's own creature tags match nothing in the area, it
-/// still knows which creatures worked before. Kept in logs/ultimus/drop-memory.json, across restarts.
+/// still knows which creatures worked before. Kept in logs/ultimus/drop-memory.json, across restarts. The Quest Team
+/// reads and adds to the same memory (Niduus, 2026-11-14: "all"), so every bot learns from the others' fights.
 /// </summary>
 internal static class UltimusDrops {
 
@@ -69,6 +70,21 @@ internal static class UltimusDrops {
     }
 
     private static string Key(string quest, string goal) => $"{quest}|{goal}";
+
+    /// <summary>
+    /// How far a step is for <paramref name="wizard"/>: its count now, a large number once it is done (or the quest is gone:
+    /// it was finished). Read before and after a battle won for the step, by Ultimus and the Quest Team alike.
+    /// </summary>
+    internal static int StepCount(WizardData.Models.Player.Wizard wizard, string quest, string goal) {
+        var held = wizard?.QuestBehavior?.CurrentQuestInstances?.FirstOrDefault(q => q is not null
+            && string.Equals(q.QuestName, quest, StringComparison.OrdinalIgnoreCase));
+        if (held is null) {
+            return int.MaxValue;
+        }
+
+        var progress = held.GoalProgress?.FirstOrDefault(g => g is not null && string.Equals(g.GoalName, goal, StringComparison.Ordinal));
+        return progress is null || progress.IsGoalCompleted() ? int.MaxValue : progress.CurrentProgress;
+    }
 
     /// <summary>A battle won against <paramref name="template"/> for this step; <paramref name="counted"/>: the step's count went up.</summary>
     internal static void Fought(string quest, string goal, ulong template, string name, string zone, bool counted) {

@@ -101,7 +101,8 @@ internal sealed partial class UltimusDirectorActor {
             var (quest, what, where) = _parkedWhy.GetValueOrDefault(key);
             var minutes = Math.Max(1, (int) Math.Ceiling(30 - (DateTime.UtcNow - at).TotalMinutes));
             parked.Add($"{(string.IsNullOrEmpty(quest) ? "" : UltimusText.Title(quest) + ": ")}\"{what ?? key}\"" +
-                       $"{(string.IsNullOrEmpty(where) ? "" : " in " + where)}: every fix tried twice; back to it in {minutes} min");
+                       $"{(string.IsNullOrEmpty(where) ? "" : " in " + where)}: every fix tried twice; back to it in {minutes} min" +
+                       (_parkedFix.TryGetValue(key, out var fix) && fix.Length > 0 ? $". Suggested fix: {fix}" : ""));
         }
 
         detail["parked"] = parked;

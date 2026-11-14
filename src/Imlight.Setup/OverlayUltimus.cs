@@ -158,7 +158,7 @@ internal static class OverlayUltimusData {
 
             tracker = new Tracker(Short((string?) detail["questWorld"], 40) is { Length: > 0 } w ? w : Short((string?) detail["world"], 40),
                 Short((string?) detail["why"], 160), Short((string?) detail["target"], 120), Short((string?) detail["next"], 120),
-                Texts(detail["parked"], 4, 160), Short((string?) detail["readAhead"], 160));
+                Texts(detail["parked"], 4, 320), Short((string?) detail["readAhead"], 160));
         }
 
         var way = Texts(sent["way"], 12, 80);

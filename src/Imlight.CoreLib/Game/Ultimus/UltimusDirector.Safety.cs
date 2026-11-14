@@ -128,22 +128,48 @@ internal sealed partial class UltimusDirectorActor {
 
         _parkedAt[key] = DateTime.UtcNow;
         _parkedWhy[key] = (quest, what, where);
+        // The fix he would suggest (Niduus, 2026-11-14, "suggest the likely fix"): from the shared quest diagnosis.
+        var fix = SuggestFix(quest);
+        _parkedFix[key] = fix;
         Announce(SAY_STUCK, $"I'm stuck on \"{UltimusText.Short(what, 60)}\". Anyone know how to do it?");
         _dayParked++;
         if (!string.IsNullOrEmpty(stepKey)) {
             UltimusPlanner.SetAside(stepKey, TimeSpan.FromMinutes(30));
         }
 
-        var folder = SaveNeedsHelp($"Ultimus needs help: \"{what}\" for {UltimusText.Title(quest)} in {where}. He tried every way he knows, twice over.");
+        var folder = SaveNeedsHelp($"Ultimus needs help: \"{what}\" for {UltimusText.Title(quest)} in {where}. He tried every way he knows, twice over." +
+                                   $"\nSuggested fix: {fix}");
         Note("Ultimus", $"NEEDS HELP: tried every fix at {where} twice over for \"{what}\": sets the step aside for 30 minutes and does other story work if he has any. " +
                         (folder is null ? "" : $"His logs are saved in {Path.GetFileName(folder)} (needs-help folder)."), UltimusLink.CRITICAL);
         Think($"I tried every way I know at {where}, twice over, and \"{what}\" still does not work. I set it aside for half an hour, do " +
-              "other story work if there is any, then try again. I wrote a \"needs help\" report so Niduus can look.", "park|" + key);
+              "other story work if there is any, then try again. I wrote a \"needs help\" report so Niduus can look. " +
+              $"My best guess at the fix: {fix}", "park|" + key);
         Issue("quest", quest, $"NEEDS HELP: Ultimus tried every fix he has at {where} twice over for \"{what}\". He set the step aside for 30 minutes " +
-                              "and comes back to it after. His logs are in the needs-help folder.",
+                              "and comes back to it after. His logs are in the needs-help folder. Suggested fix: " + fix,
             key: "needs-help|" + key, level: UltimusLink.CRITICAL);
         UltimusJournal.Write(UltimusJournal.STUCK, $"Set \"{UltimusText.Short(what, 60)}\" aside and asked for help: nothing I tried worked.",
             WorldOf(member.Zone), UltimusText.Zone(member.Zone), quest, -1);
+    }
+
+    private readonly Dictionary<string, string> _parkedFix = [];
+
+    // The likely fix for a step that beat every unstick move, by what the diagnosis found most likely wrong. Words only:
+    // he never applies a fix himself (he plays like a player).
+    private string SuggestFix(string quest) {
+        var d = Diagnose(quest);
+        if (d is null || string.IsNullOrWhiteSpace(d.LikelyCause)) {
+            return "no clear cause found; send the needs-help folder to Claude to look at the quest and his log together.";
+        }
+
+        var cause = d.LikelyCause.TrimEnd('.');
+        return d.Category switch {
+            "data" => $"fix the quest's data ({cause}): the quest file named in the report, or Create > Quest Editor.",
+            "server" => $"a server fix ({cause}): a creature, object or person the step needs is missing or not answering; send the report to Claude.",
+            "character" => $"something about Ultimus himself ({cause}): a level, item or earlier quest he still needs.",
+            "route" => $"a way problem ({cause}): a door, teleporter or exit to the step's area does not take him there.",
+            "setting" => $"a setting blocks it ({cause}): check that setting in Ahziael.",
+            _ => $"most likely his own play ({cause}): his path, clicks or timing; send the report to Claude.",
+        } + $" ({d.Confidence} confidence)";
     }
 
     // All his logs, saved for whoever helps (the newest 10 reports are kept).
