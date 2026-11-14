@@ -68,6 +68,16 @@ internal sealed partial class UltimusDirectorActor {
             _xpZone = leader.Zone;
         }
 
+        // A new level: his training plan again (UltimusDirector.Life.cs).
+        var level = leader.Wizard?.MagicSchoolBehavior?.Level ?? 0;
+        if (level != _planLevel) {
+            if (_planLevel > 0) {
+                WriteTrainingPlan(leader, _storyWorld ?? (leader.Zone ?? "").Split('/')[0]);
+            }
+
+            _planLevel = level;
+        }
+
         Watchdog(leader);
         WriteProgress(leader);
     }
@@ -77,6 +87,7 @@ internal sealed partial class UltimusDirectorActor {
     // ---------------------------------------------------------------------
 
     private string _xpZone;
+    private int _planLevel;
 
     /// <summary>A creature to fight for XP toward <paramref name="level"/>: here, or back where creatures were.</summary>
     private UltimusPlanner.Target XpTarget(UltimusMember.Status leader, int level, string why) {

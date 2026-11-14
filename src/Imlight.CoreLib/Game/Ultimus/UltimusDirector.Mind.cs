@@ -125,6 +125,8 @@ internal sealed partial class UltimusDirectorActor {
             "Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.", foe: foe.Name);
         Think($"I lost to {foe.Name}. I went in at {fight.Health:P0} health. Next time I heal up to full first and make my deck for it.",
             "lost|" + fight.Template);
+        // Why, and a different plan for the next try (UltimusDirector.Life.cs).
+        LearnFromLoss(me, fight.Template, foe.Name, fight.Health, seconds);
     }
 
     private static string FoeName(UltimusPlanner.Target target) {

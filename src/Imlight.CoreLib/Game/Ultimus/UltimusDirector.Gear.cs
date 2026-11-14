@@ -144,31 +144,18 @@ internal sealed partial class UltimusDirectorActor {
                 continue;
             }
 
-            // Short of gold: Ahziael gives it, so shopping and potions never hold the quests up (Niduus, 2026-11-12:
-            // "Give them gold to prevent slow downs"), and the log says so.
+            // Short of gold: Ahziael gave it (Niduus, 2026-11-12: "Give them gold to prevent slow downs"). Since he quests as
+            // a human (Niduus, 2026-11-14), only when the playbook's Gold.Gifts is 1; by default he earns and plans his gold.
             var level = wizard.MagicSchoolBehavior?.Level ?? 1;
             var floor = 500 + (level * 200);
-            if (wizard.GameStats is { } stats && stats.m_currentGold < floor / 4) {
+            if (GoldGifts && wizard.GameStats is { } stats && stats.m_currentGold < floor / 4) {
                 var give = floor - stats.m_currentGold;
                 wizard.AddGold(give);
                 Count("gold given", give);
                 Note(member.Role, $"{member.Name} was short of gold; Ahziael gives it {give} gold (now {stats.m_currentGold}).", UltimusLink.COMMAND);
             }
 
-            // A full backpack: the gear it will never wear is sold, as a player quick-sells (Niduus, 2026-11-12: "sell junk
-            // when the backpack is full"), logged with what went and the gold it brought.
-            if (wizard.BackpackFreeSlots < 3 && BotGear.Junk(wizard, StyleOf(member)) is { Count: > 0 } junk) {
-                var sold = wizard.RemoveItemsFromInventory(junk.Select(j => j.Item.m_globalID.Full), "sold by the Ultimus (backpack full)").ToHashSet();
-                var gold = junk.Where(j => sold.Contains(j.Item.m_globalID.Full))
-                    .Sum(j => (int) Math.Ceiling(((Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(j.Item.m_templateID)
-                        as Imcodec.ObjectProperty.TypeCache.WizItemTemplate)?.m_baseCost ?? 0) * 0.05f));
-                if (sold.Count > 0) {
-                    wizard.AddGold(gold);
-                    Count("things sold", sold.Count);
-                    Note(member.Role, $"backpack full: sells {sold.Count} things it will not wear for {gold} gold " +
-                                      $"({string.Join(", ", junk.Where(j => sold.Contains(j.Item.m_globalID.Full)).Select(j => j.Piece.Name).Take(8))}).");
-                }
-            }
+            // A full backpack: he sells the gear he will never wear at a shop himself (UltimusDirector.Life.cs SellTarget).
 
             // Their school's Ghulture, ridden between quests for its speed and stats (Niduus, 2026-11-12: "they are given
             // the class ghulture mounts for speed and stats").
@@ -334,14 +321,15 @@ internal sealed partial class UltimusDirectorActor {
                 continue;
             }
 
-            var gold = (int) ((wizard.GameStats?.m_currentGold ?? 0) * (1 - GOLD_KEPT));
+            // What he may spend: past his reserve for the next world's gear (Gold.ReservePerLevel), and a share kept.
+            var gold = (int) (Math.Max(0, (wizard.GameStats?.m_currentGold ?? 0) - GoldReserve(member)) * (1 - GOLD_KEPT));
             var owned = (wizard.InventoryBehavior?.Items ?? []).Select(i => (uint) Math.Min((ulong) i.m_templateID, uint.MaxValue)).ToHashSet();
             // What it can pay for; and, when nothing is, a clearly better piece it can't pay for yet (Niduus, 2026-11-13:
             // "why is Ultimus wearing this instead of Adept robe?": the Adept Sorcerer's Robe costs 21,880 gold, more than
             // he had, so he kept a dropped Cloak of the Watchful). Ahziael gives the difference, as it gives gold so
             // shopping never holds the quests up.
             var affordable = BotGear.ShopUpgrades(wizard, StyleOf(member), gold);
-            var upgrades = affordable.Count > 0 ? affordable
+            var upgrades = affordable.Count > 0 || !GoldGifts ? affordable
                 : BotGear.ShopUpgrades(wizard, StyleOf(member), MAX_GEAR_TOP_UP).Where(u => u.Gain >= BIG_GAIN).ToList();
             foreach (var (piece, vendors, _) in upgrades) {
                 if (owned.Contains(piece.Id) || _shopSkipped.Contains(piece.Id)) {
@@ -359,7 +347,7 @@ internal sealed partial class UltimusDirectorActor {
                 }
 
                 // Ahziael gives what it lacks only when it stands at a shop that sells it.
-                if (here is not null && piece.Gold > gold && wizard.GameStats is { } stats) {
+                if (GoldGifts && here is not null && piece.Gold > gold && wizard.GameStats is { } stats) {
                     var give = (int) Math.Ceiling(piece.Gold / (1 - GOLD_KEPT)) - stats.m_currentGold + 1;
                     if (give > 0) {
                         wizard.AddGold(give);
@@ -409,7 +397,20 @@ internal sealed partial class UltimusDirectorActor {
         }
     }
 
+    // Gold from Ahziael only when Niduus turns it on (playbook Gold.Gifts = 1); otherwise he earns and plans it as a player.
+    private static bool GoldGifts => UltimusPlaybook.Value("Gold.Gifts") >= 0.5;
+
     private void ShopHere(List<UltimusMember.Status> group, UltimusPlanner.Target target) {
+        if (target.Key.StartsWith("sell|", StringComparison.Ordinal)) {
+            SellHere(target);
+            return;
+        }
+
+        if (target.Key.StartsWith("bazaar|", StringComparison.Ordinal)) {
+            BazaarHere(target);
+            return;
+        }
+
         var parts = target.Key.Split('|');
         var member = _team.FirstOrDefault(m => m.Role == parts[1]);
         if (member is null || !uint.TryParse(parts[2], out var itemId)) {

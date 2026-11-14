@@ -136,6 +136,11 @@ internal sealed partial class UltimusDirectorActor {
             }
 
             var text = heard.Text;
+            // Players he met before are remembered, and greeted again (UltimusDirector.Life.cs).
+            if (Remember(heard.SpeakerCharId, heard.SpeakerName, heard.Whisper) && new[] { "hello", "hi", "hey", "greetings" }.Any(w => MenuChatBook.Says(text, w))) {
+                _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
+                continue;
+            }
 
             // Asked about its quest or where it is going: the real answer, as a player picks it from "My Quests" (its quest's
             // name) or "Locations" (Niduus, 2026-11-13: "My Quest section in the chat doesn't work", it said "This quest is
