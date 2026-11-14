@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
@@ -84,6 +85,40 @@ internal static class QuestStepSpots {
         => Util.GetCompactStringFromVector(new Imcodec.Math.Vector3(spot.X + 60, spot.Y, spot.Z + 10), new Imcodec.Math.Vector3(0, 0, 0));
 
     private static (ulong Template, Imcodec.Math.Vector3 Spot)[] ObjectsOf(string zone) => Zone(zone).Objects;
+
+    // Each zone's spots of the things a "use" step clicks, by zone, quest and step.
+    private static readonly ConcurrentDictionary<string, List<Imcodec.Math.Vector3>> s_usageSpots = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Where the things this "use" step clicks stand in the zone (the four gems of "Get Some Bling" in the Hall of Champions),
+    /// from the zone's placed objects the step names. The quest arrow points at one spot only, or none, for such a step.
+    /// </summary>
+    internal static List<Imcodec.Math.Vector3> UsageObjects(string zone, string questName, string goalName) {
+        if (string.IsNullOrEmpty(zone) || string.IsNullOrEmpty(questName) || string.IsNullOrEmpty(goalName)) {
+            return [];
+        }
+
+        return s_usageSpots.GetOrAdd($"{zone}|{questName}|{goalName}", _ => {
+            try {
+                var spots = new List<Imcodec.Math.Vector3>();
+                foreach (var group in ObjectsOf(zone).GroupBy(o => o.Template)) {
+                    if (CoreObjectFactory.GetCoreTemplate(group.Key) is not GameObjectTemplate template
+                        || !Imlight.CoreLib.Game.Zone.Components.InteractQuestSelectComponent.UsageGoalsOf(template).Any(g =>
+                            string.Equals(g.Quest, questName, StringComparison.OrdinalIgnoreCase)
+                            && string.Equals((string) g.Goal?.m_goalName, goalName, StringComparison.Ordinal))) {
+                        continue;
+                    }
+
+                    spots.AddRange(group.Select(o => o.Spot));
+                }
+
+                return spots;
+            }
+            catch (Exception) {
+                return [];
+            }
+        });
+    }
 
     /// <summary>Whether this zone's objects were read already (reading one is a file read the first time).</summary>
     internal static bool IsRead(string zone) => !string.IsNullOrEmpty(zone) && s_zones.ContainsKey(zone);

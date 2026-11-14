@@ -55,6 +55,7 @@ internal sealed partial class UltimusDirectorActor {
     private readonly Dictionary<string, DateTime> _wispsTaken = new(StringComparer.OrdinalIgnoreCase);
 
     private DateTime _hurtSince = DateTime.MaxValue;
+    private string _hurtTold = "";
     private bool _toldNoHeal;
 
     // Standing still on purpose until it can heal: not "stuck".
@@ -106,8 +107,16 @@ internal sealed partial class UltimusDirectorActor {
         var onlyPrep = !Hurt(leader, out _, out _);
         var stats = leader.Wizard.GameStats;
         var maxHealth = Math.Max(1, stats.m_baseHitpoints + stats.m_bonusHitpoints);
+        // Said once for the same health and mana: going on hurt starts this over every half second, and the same line
+        // filled his log (1,379 times on 2026-11-14).
+        var hurtNow = $"{stats.m_currentHitpoints}|{stats.m_currentMana}|{onlyPrep}";
+        if (_hurtSince == DateTime.MaxValue && hurtNow == _hurtTold) {
+            _hurtSince = DateTime.UtcNow;
+        }
+
         if (_hurtSince == DateTime.MaxValue) {
             _hurtSince = DateTime.UtcNow;
+            _hurtTold = hurtNow;
             Note("Ultimus", $"{leader.Name} {(onlyPrep ? "wants more before a hard fight" : "is hurt")} ({stats.m_currentHitpoints} of {maxHealth} health, " +
                             $"{stats.m_currentMana} of {stats.m_baseMana + stats.m_bonusMana} mana): heals before going on.");
         }
