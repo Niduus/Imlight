@@ -83,7 +83,7 @@ internal sealed partial class ManagerWindow {
         // Niduus, 2026-11-12: "Can we create a Solo Quester called Ultimus?" (ManagerWindow.Ultimus.cs).
         ("Ultimus", "user", "The Solo Quester",
             "One Balance wizard named Ultimus the server plays alone through the Main Story, and what it ran into.",
-            [ULTIMUS_TAB, ULTIMUS_ISSUES_TAB, ULTIMUS_LOGS_TAB]),
+            [ULTIMUS_TAB, ULTIMUS_ISSUES_TAB, ULTIMUS_LOGS_TAB, ULTIMUS_AI_TAB]),
         ("Server", "server", "Start, settings, accounts, logs",
             "Run the server and set it up: start and stop, every setting, who can log in, logs, game files, and Ahziael itself.",
             // Niduus, 2026-10-30: Ahziael on a server hosted on another PC, for its admins.

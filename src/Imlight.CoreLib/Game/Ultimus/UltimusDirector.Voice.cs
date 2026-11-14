@@ -183,24 +183,101 @@ internal sealed partial class UltimusDirectorActor {
                 continue;
             }
 
-            Note("Ultimus", $"{heard.SpeakerName} {how}: \"{heard.Text}\"; Ultimus {(heard.Whisper ? "whispers back" : "says")}: \"{reply.Text}\"");
-            // A long answer goes in a few messages, each within the chat's length, a moment apart (Niduus, 2026-11-14: "allow for him
-            // to send in multiple messages. Aware of the chat limits"). The whole answer still counts as one line for his
-            // spam and repeat guards (BotSocial), and the next line waits until the last part is out.
-            var parts = ChatParts(reply.Text);
-            for (var i = 0; i < parts.Count; i++) {
-                IActorRef actor = _actors[0];
-                object message = heard.Whisper ? new UltimusMember.WhisperText(parts[i], whisperTo) : new UltimusMember.SayText(parts[i]);
-                if (i == 0) {
-                    actor.Tell(message);
-                }
-                else {
-                    Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(PART_GAP_SECONDS * i), actor, message, Self);
-                }
+            // The optional local AI words it (UltimusLocalAI): typed talk only, never for what makes him do something; the
+            // keyword answer is the fallback and its facts are given to the model.
+            if (heard.Typed && UltimusLocalAI.Ready && reply.Intent is not (BotSocial.ORDER or BotSocial.PERMISSION or BotSocial.GROUP
+                    or BotSocial.HELP or BotSocial.TRADE or BotSocial.PRIVATE or BotSocial.RUDE or "spam")) {
+                var facts = AiFacts(me);
+                var history = TalkWith(heard.SpeakerCharId).ToList();
+                var keyword = reply.Text;
+                _nextLine = DateTime.UtcNow + TimeSpan.FromSeconds(15);
+                UltimusLocalAI.Ask(facts, history, heard.Text, keyword)
+                    .ContinueWith(t => new AiWorded(heard, keyword, t.IsCompletedSuccessfully ? t.Result : null))
+                    .PipeTo(Self);
+                continue;
             }
 
-            _nextLine = DateTime.UtcNow + s_lineGap + TimeSpan.FromSeconds(PART_GAP_SECONDS * (parts.Count - 1));
+            SendReply(heard, reply.Text, "keyword chat");
         }
+    }
+
+    // The local AI's wording came back (or didn't): what passes the private-details block is said, else the keyword answer.
+    private sealed record AiWorded(UltimusVoice.Heard Heard, string Keyword, string Worded);
+
+    private void OnAiWorded(AiWorded m) {
+        var worded = m.Worded;
+        if (worded is not null && !ReferenceEquals(BotSocial.Scrub(worded), worded)) {
+            Note("Ultimus", "the local AI's answer had a private detail in it; he says the keyword answer instead.");
+            worded = null;
+        }
+
+        SendReply(m.Heard, worded ?? m.Keyword, worded is null ? "keyword chat" : "local AI");
+    }
+
+    // The talk with each player (theirs and his), for the local AI to follow the conversation.
+    private readonly Dictionary<ulong, List<(string Who, string Text, DateTime At)>> _talks = [];
+
+    private IEnumerable<(string Who, string Text)> TalkWith(ulong charId) {
+        if (!_talks.TryGetValue(charId, out var talk)) {
+            return [];
+        }
+
+        // A talk older than 10 minutes is over: a new one starts fresh.
+        talk.RemoveAll(l => DateTime.UtcNow - l.At > TimeSpan.FromMinutes(10));
+        return talk.Select(l => (l.Who, l.Text));
+    }
+
+    private void NoteTalk(ulong charId, string who, string text) {
+        if (!_talks.TryGetValue(charId, out var talk)) {
+            _talks[charId] = talk = [];
+        }
+
+        talk.Add((who, text, DateTime.UtcNow));
+        if (talk.Count > 12) {
+            talk.RemoveRange(0, talk.Count - 12);
+        }
+    }
+
+    // His real facts for the local AI: who and where he is, what he does, and his latest memories.
+    private string AiFacts(UltimusMember.Status me) {
+        var self = SocialSelf(me);
+        var lines = new List<string> {
+            $"Name: {self.Name}. School: {self.School}. Level: {self.Level}.",
+            $"Where: {self.Area}, {self.World}.",
+            $"Quest: {(string.IsNullOrWhiteSpace(self.Quest) ? "none right now" : self.Quest)}. Step: {BotSocial.Tidy(self.Step) ?? "none"}.",
+            $"Doing now: {BotSocial.Tidy(self.Doing) ?? "questing"}. In a battle: {(self.InBattle ? "yes" : "no")}. Health: {(self.Health >= 0 ? self.Health + "%" : "unknown")}. Mood: {self.Mood}.",
+            $"Worlds been to: {string.Join(", ", self.Worlds ?? [])}.",
+        };
+        var memories = UltimusJournal.Recent(6);
+        if (memories.Count > 0) {
+            lines.Add("Latest memories: " + string.Join(" | ", memories.Select(e => $"{e.Text} ({UltimusJournal.Ago(e.At)})")));
+        }
+
+        return string.Join("\n", lines);
+    }
+
+    private void SendReply(UltimusVoice.Heard heard, string text, string by) {
+        var whisperTo = heard.Whisper ? heard.SpeakerCharId : 0;
+        var how = (heard.Whisper ? "whispered" : "said") + (heard.Typed ? "" : " in Menu Chat");
+        Note("Ultimus", $"{heard.SpeakerName} {how}: \"{heard.Text}\"; Ultimus {(heard.Whisper ? "whispers back" : "says")} ({by}): \"{text}\"");
+        NoteTalk(heard.SpeakerCharId, "player", heard.Text);
+        NoteTalk(heard.SpeakerCharId, "me", text);
+        // A long answer goes in a few messages, each within the chat's length, a moment apart (Niduus, 2026-11-14: "allow for him
+        // to send in multiple messages. Aware of the chat limits"). The whole answer still counts as one line for his
+        // spam and repeat guards (BotSocial), and the next line waits until the last part is out.
+        var parts = ChatParts(text);
+        for (var i = 0; i < parts.Count; i++) {
+            IActorRef actor = _actors[0];
+            object message = heard.Whisper ? new UltimusMember.WhisperText(parts[i], whisperTo) : new UltimusMember.SayText(parts[i]);
+            if (i == 0) {
+                actor.Tell(message);
+            }
+            else {
+                Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(PART_GAP_SECONDS * i), actor, message, Self);
+            }
+        }
+
+        _nextLine = DateTime.UtcNow + s_lineGap + TimeSpan.FromSeconds(PART_GAP_SECONDS * (parts.Count - 1));
     }
 
     // One chat message's most characters, the most messages for one answer, and the gap between them.
