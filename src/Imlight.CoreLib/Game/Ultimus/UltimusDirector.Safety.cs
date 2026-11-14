@@ -127,6 +127,8 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         _parkedAt[key] = DateTime.UtcNow;
+        _parkedWhy[key] = (quest, what, where);
+        Announce(SAY_STUCK, $"I'm stuck on \"{UltimusText.Short(what, 60)}\". Anyone know how to do it?");
         _dayParked++;
         if (!string.IsNullOrEmpty(stepKey)) {
             UltimusPlanner.SetAside(stepKey, TimeSpan.FromMinutes(30));

@@ -321,6 +321,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             _target = null;
             _currentQuest = null;
             ForgetWorlds();
+            ForgetResume();
+            _resumeRead = false;
             StartTeam(restart: true);
 
             return;
@@ -338,6 +340,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
 
+        // What he was in the middle of before a restart, then saved as he goes (UltimusDirector.Resume.cs).
+        ReadResume();
+        SaveResume();
+        ReadAheadTick();
         UsePotions();
         NoticeOddities();
         AnswerPlayers();
@@ -887,6 +893,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             UltimusJournal.Write(UltimusJournal.WORLD, $"Finished the story of {WorldName(_storyWorld)} at level {_team[0].Wizard?.MagicSchoolBehavior?.Level ?? 0}.",
                 WorldName(_storyWorld), "", WorldName(_storyWorld), 1);
             Count("worlds completed");
+            Announce(SAY_MOMENT, $"I just finished the story of {WorldName(_storyWorld)}! On to {WorldName(world)}!", urgent: true);
             UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "world done", Quest = _storyWorld, Title = $"World {_storyWorld}",
                 Text = $"story finished on {at}; the team goes on to {world} (levels {string.Join(", ", _team.Select(m => $"{m.Role} {m.Wizard?.MagicSchoolBehavior?.Level ?? 0}"))})" });
         }
@@ -896,6 +903,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         Snapshot(world);
         WorldStarted(world, _team[0].Wizard?.MagicSchoolBehavior?.Level ?? 0);
         NewWorldGearCheck(_team[0], world);
+        ReadAhead(world);
         _storyWorld = world;
     }
 
@@ -1090,15 +1098,31 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     private void UseHere(List<UltimusMember.Status> group, UltimusPlanner.Target target) {
         foreach (var member in group.Where(m => HoldsGoal(m, target.Quest, target.Goal))) {
             var index = _team.IndexOf(member);
-            if (UltimusPlanner.Far(member.X, member.Y, target.X, target.Y) > 120) {
+            // Only what it hasn't used for the step yet; a spot with nothing left is done, and it goes on to the next.
+            var everything = member.Options.Where(o => o.Value.Any(s => s.Service == "Interact")).Select(o => o.Key).ToList();
+            var usable = everything.Where(id => !BotCollect.HasUsed(member.CharId, target.Quest, target.Goal, id)).ToList();
+            // Searching the area for more to pick up (his PC log, 2026-11-14, "Get Some Bling": he picked up the one at the
+            // quest arrow's spot and then stood there for 12 minutes, caught by Hall Servants again and again): what he
+            // passes on the way that he hasn't used for the step is used, as a player picks up what they find.
+            var searching = _collectSearch.TryGetValue(target.Key, out var searchSince);
+            if (searching && usable.Count == 0) {
+                if (DateTime.UtcNow - searchSince > TimeSpan.FromMinutes(5)) {
+                    Issue("quest", target.Quest, $"{target.What}: {member.Name} used what was at the quest arrow's spot and looked around the area " +
+                                                 "for 5 minutes without finding more to use.", key: target.Key + "|nothingtouse");
+                }
+
+                _doing = $"looking around the area for more: {target.What}";
+                LookAround(member, target);
+
+                return;
+            }
+
+            if (!searching && UltimusPlanner.Far(member.X, member.Y, target.X, target.Y) > 120) {
                 WalkTo(index, target);
 
                 return;
             }
 
-            // Only what it hasn't used for the step yet; a spot with nothing left is done, and it goes on to the next.
-            var everything = member.Options.Where(o => o.Value.Any(s => s.Service == "Interact")).Select(o => o.Key).ToList();
-            var usable = everything.Where(id => !BotCollect.HasUsed(member.CharId, target.Quest, target.Goal, id)).ToList();
             if (usable.Count == 0 && everything.Count > 0) {
                 BotCollect.SpotDone(member.CharId, target.Quest, target.Goal, target.X, target.Y);
                 Note(member.Role, $"{member.Name} already used what is here for {target.What}: on to the next one.");
@@ -1107,6 +1131,18 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             }
 
             if (usable.Count == 0) {
+                // Nothing left at this spot: when he already picked something up for the step, he looks around for more;
+                // otherwise, after a while, the spot is written up (flagged, never skipped).
+                if (BotCollect.HasDone(member.CharId, target.Quest, target.Goal, target.X, target.Y)
+                    && DateTime.UtcNow - _targetSince > TimeSpan.FromSeconds(15)) {
+                    _collectSearch[target.Key] = DateTime.UtcNow;
+                    Note(member.Role, $"{member.Name} picked up what was at the quest arrow's spot for {target.What}: looks around the area for more.");
+                    Think("I used what was here, but the step wants more. I look around the area for more to pick up, as a player would.",
+                        "search|" + target.Key);
+
+                    return;
+                }
+
                 if (DateTime.UtcNow - _targetSince > TimeSpan.FromSeconds(45)) {
                     Issue("quest", target.Quest, $"{target.What}: at the quest arrow's spot there is nothing {member.Name} can use.",
                         key: target.Key + "|nothingtouse");
@@ -1137,6 +1173,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
     }
+
+    // Steps he is searching the area for more to pick up, and since when (UseHere).
+    private readonly Dictionary<string, DateTime> _collectSearch = [];
 
     private void TrainHere(List<UltimusMember.Status> group, UltimusPlanner.Target target) {
         var parts = target.Key.Split('|');
@@ -1826,6 +1865,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                       "me through: I walk well away, come back at it from another way and search again. It's written in the mistakes book " +
                       "and reported so the exit can be looked at.";
         Think(thought, "through|" + target.Key);
+        Announce(SAY_STUCK, $"I can't get through this way to {UltimusText.Zone(target.To)}. Anyone know the way?");
         if (StubbornExits().Contains(ExitId(leader.Zone, target.To)) is false) {
             BotMistakes.Record("Ultimus", BotMistakes.STUCK, leader.Zone, target.X, target.Y, target.Quest,
                 $"The walk-through exit {target.What} never took it on, though it walked through every part of it.", thought,
@@ -2145,6 +2185,12 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 // Stats, deck cards and school, the same sheet as the Quest Team's (Niduus, 2026-11-13: "view their gear,
                 // stats and their current deck and quest").
                 BotShared.BotSheet.Fill((JsonObject) members[^1], wizard, member.Role);
+                // His quest tracker in detail: world, area, steps with counts, why, next, parked and needs help (Tracker.cs).
+                if (member == _team[0]) {
+                    var detail = TrackerDetail(member);
+                    ((JsonObject) members[^1])["tracker"] = detail;
+                    UltimusSpectate.NoteDetail(detail);
+                }
             }
 
             var run = _currentQuest is null ? null : _runs.GetValueOrDefault(_currentQuest);

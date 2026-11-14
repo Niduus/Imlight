@@ -184,6 +184,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         if (Because(leader, target) is { } because) {
+            _whyNow = because;
             Think($"Next: {Describe(target)}, because {because}. (My mission: {UltimusMission.STATEMENT})", "because|" + target.Key);
 
             return target;

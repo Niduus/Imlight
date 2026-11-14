@@ -234,6 +234,7 @@ internal sealed partial class UltimusDirectorActor {
         _markedAt = DateTime.UtcNow;
         _actors[0].Tell(new UltimusMember.MarkSpot());
         Note("Ultimus", $"marks his spot in {UltimusText.Zone(leader.Zone)} before the trip ({trip.What}), to recall back after.");
+        Announce(SAY_TRIP, $"Off {UltimusText.Short(trip.What, 70)} for a bit, back soon!");
         Think("I mark my spot before I go: when I am done, Recall brings me back here, like any player does.", "mark");
     }
 
