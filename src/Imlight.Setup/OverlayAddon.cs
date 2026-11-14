@@ -115,6 +115,28 @@ internal sealed class OverlayAddon {
 
     internal static string FolderIn(string installFolder) => System.IO.Path.Combine(installFolder, FOLDER);
 
+    private static readonly object s_haveLock = new();
+    private static (string Folder, DateTime At, HashSet<string> Names) s_have = ("", DateTime.MinValue, []);
+
+    /// <summary>
+    /// Whether an add-on by this name is downloaded on this PC (read again every few seconds). Used for what an add-on
+    /// needs installed to work (Niduus, 2026-11-14: Minimap is required "for install, for Spectate to work"), whether or
+    /// not its pieces are on the overlay. True when Ahziael's folder isn't known.
+    /// </summary>
+    internal static bool IsInstalled(string? installFolder, string name) {
+        if (string.IsNullOrEmpty(installFolder)) {
+            return true;
+        }
+
+        lock (s_haveLock) {
+            if (s_have.Folder != installFolder || DateTime.UtcNow - s_have.At > TimeSpan.FromSeconds(5)) {
+                s_have = (installFolder, DateTime.UtcNow, All(installFolder).Select(a => a.Name).ToHashSet(StringComparer.OrdinalIgnoreCase));
+            }
+
+            return s_have.Names.Contains(name);
+        }
+    }
+
     /// <summary>Every add-on added so far (files that aren't add-ons are left out).</summary>
     internal static List<OverlayAddon> All(string installFolder) {
         var list = new List<OverlayAddon>();

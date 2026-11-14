@@ -2,7 +2,7 @@
   "Format": "Ahziael overlay add-on",
   "Name": "Ultimus Spectator",
   "Author": "Niduus",
-  "Description": "Watch Ultimus. His own minimap follows him wherever he is and always draws HIS quest's way (never yours), a quest box shows his quest and step, and in battle a spells box shows his hand, pips and what he casts. Needs the Minimap add-on; your own Minimap stays as it is.",
+  "Description": "Watch Ultimus. His own minimap follows him wherever he is and always draws HIS quest's way (never yours), a quest box shows his quest and step, and in battle a spells box shows his hand, pips and what he casts. Needs the Minimap add-on downloaded (your own Minimap does not have to be on, and stays as it is).",
   "Version": "1",
   "Requires": [ "Minimap" ],
   "Widgets": [

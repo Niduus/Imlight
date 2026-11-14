@@ -210,10 +210,10 @@ internal static class OverlayUltimusData {
 internal static class UltimusViews {
 
     /// <summary>
-    /// The Ultimus Spectator needs the Minimap add-on (Niduus: "Ultimus Spectator requires Minimap"). Without a Minimap on
-    /// the overlay, each of its pieces says so instead of showing Ultimus.
+    /// The Ultimus Spectator needs the Minimap add-on downloaded (Niduus, 2026-11-14: required "for install, for Spectate
+    /// to work"); the player's own Minimap does not have to be on the overlay. Without the add-on, each piece says so.
     /// </summary>
-    internal const string NEEDS_MINIMAP = "Ultimus Spectator needs the Minimap add-on on your overlay too. Put it on in Ahziael: Play > Overlay > Add-ons.";
+    internal const string NEEDS_MINIMAP = "Ultimus Spectator needs the Minimap add-on downloaded. Get it in Ahziael: Play > Overlay > Add-ons > Niduus's add-ons.";
 
     /// <summary>Ultimus's quest box: who he is, where, and his quest now with its step and way (never the player's quests).</summary>
     internal static Control Quest(OverlayElement e, long window, bool hasMap) {

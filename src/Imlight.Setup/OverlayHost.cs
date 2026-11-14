@@ -210,7 +210,7 @@ internal static class OverlayHost {
         s_glideTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
         s_glideTimer.Tick += (_, _) => {
             try {
-                if (OverlayMinimapData.Wanted.Length > 0) {
+                if (OverlayMinimapData.Wanted.Length > 0 || OverlayUltimusData.Wanted) {
                     FollowAll();
                 }
             }
@@ -631,7 +631,8 @@ internal static class OverlayHost {
         OverlayQuestData.Wanted = wantsQuests ? [.. s_windows.Keys.Select(w => w.ToInt64())] : [];
         // And whether any shows the Ultimus Spectator (it needs the Minimap too): the link asks the server for Ultimus.
         var wantsUltimus = (ShowsMine(s_design) && OverlayRenderer.HasUltimus(s_design.Elements)) || OverlayRenderer.HasUltimus(ServerElements);
-        OverlayUltimusData.Wanted = wantsUltimus && wantsMap && s_windows.Count > 0;
+        // It needs the Minimap add-on downloaded, not the player's Minimap on the overlay (Niduus, 2026-11-14).
+        OverlayUltimusData.Wanted = wantsUltimus && s_windows.Count > 0 && OverlayAddon.IsInstalled(s_installFolder, "Minimap");
     }
 
     // The game's own moves, resizes, shows and hides reach the overlay as they happen, not only on the next tick.
