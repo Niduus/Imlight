@@ -1,11 +1,9 @@
-# Trained Spells hover, and Ultimus back in his Adept robe
+Fixed: Pointing at a trained spell shows its card
+On the Ultimus and Quest Team pages, pointing at a card in Trained Spells showed nothing. Now the card shows big, with how many copies are in the deck. Names under "Other spells" show their card too.
+Where: Ahziael > Ultimus
+Test: Point at a trained card and at a name under Other spells. The card should show big.
 
-Fixed: pointing at a card in the Trained Spells section showed nothing. Now it shows the card big, with how many copies are in the deck. Pointing at a name under "Other spells" shows that spell's card too. The heading now says how many deck cards he knows, how many he uses, and how many copies are in the deck.
-
-Fixed: Ultimus wore Cloak of the Watchful instead of his Adept Sorcerer's Robe. The robe was still in his backpack, but his gear check had read it as worth nothing (its stats were looked up before the game's stat tables were ready, and that empty reading was kept). Now a piece whose stats can't all be read is read again later, and gear he can't fully read is never swapped out. When he changes a piece, the Ultimus log shows the two scores he weighed ("weighs ... against ..."). If a piece still can't be read, the log says so once in orange.
-
-Where: Ahziael > Ultimus and Quest Team pages (Trained spells); Ultimus log.
-
-Test:
-1. On the Ultimus page, point at a trained card and at a name under Other spells: the card shows big.
-2. Restart the server with Ultimus on: within a minute or two he should put the Adept Sorcerer's Robe back on, and the log says "weighs Adept Sorcerer's Robe (...) against Cloak of the Watchful (...)".
+Fixed: Ultimus puts his Adept robe back on
+Ultimus wore Cloak of the Watchful because his gear check read his Adept Sorcerer's Robe as worth nothing. It read the robe's stats too early. Now he reads gear again when it wasn't ready, and his log shows the two pieces he compared.
+Where: Ahziael > Ultimus
+Test: Restart the server with Ultimus on. Within a minute or two he should wear the Adept Sorcerer's Robe again.
