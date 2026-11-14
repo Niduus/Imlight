@@ -167,4 +167,7 @@ jobs:
           $changes = if ($previous) { @(& ./tools/release-notes.ps1 -From $previous -To HEAD | Where-Object { $_ } | ForEach-Object { "- $_" }) } else { @() }
           if (-not $changes) { $changes = @("- Small fixes and improvements.") }
           $notes = "## What's new`n" + ($changes -join "`n") + "`n`n## Downloads`n" + $notes
-          gh release create $tag (Get-ChildItem release/*).FullName --title $tag --notes $notes --target "${{ github.sha }}"
+          # From a file: a long list of notes passed on the command line is too long for Windows (v0.10.858 failed so).
+          $notesFile = Join-Path $env:RUNNER_TEMP 'release-notes.md'
+          Set-Content -Path $notesFile -Value $notes -Encoding utf8NoBOM
+          gh release create $tag (Get-ChildItem release/*).FullName --title $tag --notes-file $notesFile --target "${{ github.sha }}"
