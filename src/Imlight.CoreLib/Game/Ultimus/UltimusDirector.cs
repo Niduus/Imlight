@@ -1695,6 +1695,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     private string _exitKey = "";
     private int _exitTries;
     private DateTime _exitFirst = DateTime.MinValue;
+    private bool _exitStartedInside;
 
     // Where each try goes in, round the exit's middle: (how far out, which way round), from all sides.
     private static readonly (float Out, float Angle)[] s_exitSweep = [
@@ -1717,12 +1718,19 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         try {
+            // Written for one version of the server only: an update may have fixed the exit (Niduus, 2026-11-14: the Grand
+            // Arena exit was on the list until its fix), so after an update the list starts over and he tries each again.
             var path = Path.Combine(UltimusWire.Folder, STUBBORN_EXITS_FILE);
-            if (File.Exists(path)) {
-                foreach (var line in File.ReadAllLines(path)) {
-                    if (line.Split(' ')[0] is { Length: > 0 } id) {
-                        set.Add(id);
-                    }
+            var lines = File.Exists(path) ? File.ReadAllLines(path) : [];
+            var version = "version " + ServerStamp();
+            if (lines.Length == 0 || lines[0] != version) {
+                File.WriteAllLines(path, [version]);
+                lines = [];
+            }
+
+            foreach (var line in lines.Skip(1)) {
+                if (line.Split(' ')[0] is { Length: > 0 } id) {
+                    set.Add(id);
                 }
             }
         }
@@ -1731,6 +1739,18 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         return s_stubbornExits = set;
+    }
+
+    // This server build: its version and when its file was written.
+    private static string ServerStamp() {
+        try {
+            var dll = typeof(UltimusDirectorActor).Assembly.Location;
+
+            return $"{typeof(UltimusDirectorActor).Assembly.GetName().Version} {File.GetLastWriteTimeUtc(dll):o}";
+        }
+        catch (Exception) {
+            return "unknown";
+        }
     }
 
     private static void RememberStubbornExit(string zone, string to, float x, float y) {
@@ -1758,6 +1778,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             _exitKey = target.Key;
             _exitTries = 0;
             _exitFirst = DateTime.UtcNow;
+            _exitStartedInside = UltimusPlanner.Far(leader.X, leader.Y, target.X, target.Y)
+                                 < OverlayQuestRoute.ExitReach(leader.Zone, target.X, target.Y) - 40f;
         }
 
         if (UltimusPlanner.Far(leader.X, leader.Y, target.X, target.Y) > 260) {
@@ -1771,7 +1793,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             _exitWait = wait = (target.Key, DateTime.UtcNow);
         }
 
-        if (_exitTries == 0 && DateTime.UtcNow - wait.Since < TimeSpan.FromSeconds(6)) {
+        // Already standing inside the exit's area (a wide one, or where he landed): waiting there never takes him on, so he
+        // walks out and in at once instead of first standing in its middle.
+        if (!_exitStartedInside && _exitTries == 0 && DateTime.UtcNow - wait.Since < TimeSpan.FromSeconds(6)) {
             WalkTo(0, target with { X = target.X + 5, Y = target.Y + 5 });
 
             return;

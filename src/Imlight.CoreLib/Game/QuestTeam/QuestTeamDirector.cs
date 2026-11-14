@@ -610,8 +610,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                 WalkTo(0, target with { X = target.X + 1 });
                 break;
             case QuestTeamPlanner.EXIT:
-                // On into the exit: a step past its middle.
-                WalkTo(0, target with { X = target.X + 5, Y = target.Y + 5 });
+                IntoExit(leader, target);
                 break;
             case QuestTeamPlanner.DOOR:
                 ClickOnce(0, target, ["Interact"], "opens the door " + target.What);
@@ -1218,6 +1217,50 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, x, y, body: true);
         _sent[index] = (follow, DateTime.UtcNow, member.X, member.Y);
         _actors[index].Tell(new QuestTeamMember.WalkTo(points, follow.What));
+    }
+
+    // A walk-through exit only takes a wizard who walks in from outside it. Standing inside one (landed there, or a wide
+    // one like Entrance Hall's to the Grand Arena, which reaches 382 from its middle), the leader walks out past its edge on
+    // floor it can stand on and back in, from another side each time, as Ultimus does (Niduus, 2026-11-14).
+    private string _exitKey = "";
+    private DateTime _exitSince = DateTime.MinValue;
+    private int _exitTries;
+
+    private void IntoExit(QuestTeamMember.Status leader, QuestTeamPlanner.Target target) {
+        if (_exitKey != target.Key) {
+            (_exitKey, _exitSince, _exitTries) = (target.Key, DateTime.UtcNow, 0);
+        }
+
+        var reach = OverlayQuestRoute.ExitReach(leader.Zone, target.X, target.Y);
+        var near = QuestTeamPlanner.Far(leader.X, leader.Y, target.X, target.Y);
+        // Not there yet, or there only a moment: on into the exit, a step past its middle.
+        if (near > Math.Max(260f, reach) || DateTime.UtcNow - _exitSince < TimeSpan.FromSeconds(_exitTries == 0 ? 6 : 12)) {
+            if (_exitTries == 0) {
+                WalkTo(0, target with { X = target.X + 5, Y = target.Y + 5 });
+            }
+
+            return;
+        }
+
+        _exitSince = DateTime.UtcNow;
+        _exitTries++;
+        var turn = (_exitTries * 1.7f) + (Random.Shared.NextSingle() * 0.4f);
+        var back = Math.Max(300f, reach + 150f);
+        var outside = (X: target.X + (MathF.Cos(turn) * back), Y: target.Y + (MathF.Sin(turn) * back));
+        for (var side = 1; side < 8 && !OverlayQuestPath.OnFloor(leader.Zone, outside.X, outside.Y); side++) {
+            var other = turn + (side * MathF.PI / 4f);
+            outside = (target.X + (MathF.Cos(other) * back), target.Y + (MathF.Sin(other) * back));
+        }
+
+        var points = OverlayQuestPath.Walk(leader.CharId, leader.Zone, leader.X, leader.Y, outside.X, outside.Y, body: true);
+        if (points.Count == 0) {
+            points.Add(outside);
+        }
+
+        points.Add((target.X + 5, target.Y + 5));
+        Note(leader.Role, $"{leader.Name} is at the exit {target.What} and it does not take it on: walks out past its edge and in again (try {_exitTries}).");
+        _sent[0] = (target, DateTime.UtcNow, leader.X, leader.Y);
+        _actors[0].Tell(new QuestTeamMember.WalkTo(points, "walks out of the exit and in again"));
     }
 
     // The leader changed areas: where it left from and how, for the ones behind.
