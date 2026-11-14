@@ -72,6 +72,7 @@ internal static class UltimusPlaybook {
         ("Mood", new("BoldHealShift", 0.05, "Bold, I heal this much later in battle and rest less.")),
         ("Confidence", new("Careful", 45, "A plan I trust less than this (out of 100) is done the careful way: full health first, the map's way, not a shortcut.")),
         ("Push", new("On", 1, "1 = push mode: the main story first; no shop trips except in a new world's first minutes or after a lost fight. 0 = off. Nothing is ever skipped or finished for me.")),
+        ("Quest", new("HuntHealBelow", 0.25, "Under this share of health (with no potion or wisp right here) I go looking for wisps or potions, or wait for wisps. Above it I go on.")),
         ("Push", new("SeekFights", 0, "0 = I walk round creatures my step doesn't need. I never farm creatures for XP (Niduus's rule); XP comes from quest fights and rewards.")),
         ("Pace", new("CutsceneSeconds", 12, "A cutscene: I stand and watch this long (each new part of it adds more), as a player does, before I go on.")),
         ("Dungeon", new("PrepHealth", 0.95, "Before I walk into a dungeon: at least this share of health (I finish a dungeon in one go).")),

@@ -47,7 +47,7 @@ internal static class UltimusMission {
     // Playbook rules his daily review may never change, whatever self-tuning.txt says: the hard limits' numbers.
     private static readonly HashSet<string> s_untunable = new(StringComparer.OrdinalIgnoreCase) {
         "Push.On", "Gold.Gifts", "Guard.StepMinutes", "Guard.QuestFactor", "Guard.SideTripMinutes", "Guard.NoStoryMinutes",
-        "Guard.CheckMinutes", "Guard.MinWinChance", "Push.SeekFights",
+        "Guard.CheckMinutes", "Guard.MinWinChance", "Push.SeekFights", "Quest.HuntHealBelow",
     };
 
     /// <summary>Whether a playbook rule is one only Niduus changes.</summary>

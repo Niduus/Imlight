@@ -347,12 +347,40 @@ internal sealed partial class UltimusDirectorActor {
 
         _nextShopping = DateTime.UtcNow.AddSeconds(10);
         _shopTrip = group.Any(m => m.Wizard?.ZoneIsInstance == true) ? null : FindShopTrip(group);
+        if (_shopTrip?.Kind is not (UltimusPlanner.EXIT or UltimusPlanner.DOOR or UltimusPlanner.SPIRAL)) {
+            _tripPiece = 0;
+        }
+
         if (_shopTrip is null) {
             _nextShopping = DateTime.UtcNow.AddMinutes(5);
         }
 
         return _shopTrip;
     }
+
+    /// <summary>
+    /// A shopping trip to another area waits while his story step is right here (Niduus, 2026-11-14: he ran off to The Oasis
+    /// for a Jewel of Instinct while the Payback quest giver stood in front of him): a player turns in or finishes what is
+    /// in front of them first, and shops when the story takes them away from here anyway. A shop in this area stays fine.
+    /// </summary>
+    private UltimusPlanner.Target NotMidStep(UltimusPlanner.Target trip) {
+        if (trip is null || trip.Kind is not (UltimusPlanner.EXIT or UltimusPlanner.DOOR or UltimusPlanner.SPIRAL)
+            || _leaderLastTarget is not { } story || string.IsNullOrEmpty(story.Quest)
+            || story.Kind is UltimusPlanner.EXIT or UltimusPlanner.DOOR or UltimusPlanner.SPIRAL or UltimusPlanner.NONE or UltimusPlanner.WAIT
+            || story.Key?.StartsWith("shop", StringComparison.Ordinal) == true || story.Key?.StartsWith("bazaar", StringComparison.Ordinal) == true) {
+            return trip;
+        }
+
+        Think($"I could go {trip.What}, but my story step ({story.What}) is right here: I finish it first and shop when the story " +
+              "takes me out of this area.", "shop-wait|" + story.Key);
+
+        return null;
+    }
+
+    // Trips started to another area for one piece; after two with no sale, that piece is not looked for again (audit A3:
+    // the Jewel of Instinct trip again on v0.10.855).
+    private readonly Dictionary<uint, int> _tripsFor = [];
+    private uint _tripPiece;
 
     private UltimusPlanner.Target FindShopTrip(List<UltimusMember.Status> group) {
         var leader = group[0];
@@ -409,6 +437,18 @@ internal sealed partial class UltimusDirectorActor {
                 // Else one in another area of this world.
                 var zone = VendorZones(vendors).FirstOrDefault(z => string.Equals(z.Split('/')[0], world, StringComparison.OrdinalIgnoreCase));
                 if (zone is not null && UltimusPlanner.Travel(leader, zone, $"shopping for {member.Name}'s {piece.Name}") is { Problem.Length: 0 } way) {
+                    if (_tripsFor.GetValueOrDefault(piece.Id) >= 2) {
+                        Note(member.Role, $"{member.Name}: two trips for {piece.Name} and no sale; it stops looking for it.");
+                        _shopSkipped.Add(piece.Id);
+                        NotSoldHere(piece.Id, $"{piece.Name} (two trips, no sale)");
+                        continue;
+                    }
+
+                    if (_tripPiece != piece.Id) {
+                        _tripPiece = piece.Id;
+                        _tripsFor[piece.Id] = _tripsFor.GetValueOrDefault(piece.Id) + 1;
+                    }
+
                     return way;
                 }
             }

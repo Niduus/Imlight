@@ -228,6 +228,16 @@ internal static class OverlayQuestTracker {
             }
 
             var shown = value.Contains(' ') ? value : Locale.GetEnglishName(value);
+            // A name format the game's tables here lack ("NPCFormats_Goal_First_Last", Niduus's Spectator on v0.10.855 showed
+            // "Talk To NPCFormats_Goal_First_Last"): the person's first and last names, as the format puts them.
+            if (value.StartsWith("NPCFormats_", StringComparison.Ordinal) && (string.IsNullOrWhiteSpace(shown) || shown == value)) {
+                shown = string.Join(' ', new[] { "TITLE", "FIRSTNAME", "LASTNAME" }
+                    .Select(t => args.GetValueOrDefault(t, ""))
+                    .Where(v => !string.IsNullOrWhiteSpace(v))
+                    .Select(v => v.Contains(' ') ? v : Locale.GetEnglishName(v) is { Length: > 0 } n && n != v ? n : s_key.IsMatch(v) ? "" : v)
+                    .Where(v => v.Length > 0));
+            }
+
             // A text key the game's tables lack ("WizQst173685_00000030") shows nothing, never the key itself.
             shown = !string.IsNullOrWhiteSpace(shown) ? shown : s_key.IsMatch(value) ? "" : value;
             return depth < 2 && shown.Contains("$GOAL_", StringComparison.Ordinal) ? Fill(shown, args, depth + 1) : shown;

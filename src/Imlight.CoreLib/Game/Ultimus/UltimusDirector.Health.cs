@@ -80,9 +80,15 @@ internal sealed partial class UltimusDirectorActor {
     /// True when healing comes first this moment (the leader walks to a wisp or a potion shop, drinks, or waits instead of
     /// starting a fight); false when it may go on with <paramref name="target"/>.
     /// </summary>
+    // A player asked him to get potions (and he said yes): he goes to fill them until this time (UltimusDirector.Voice.cs).
+    private DateTime _potionRunUntil = DateTime.MinValue;
+
     private bool HealFirst(List<UltimusMember.Status> group, UltimusPlanner.Target target) {
         var leader = group[0];
         _healWaiting = false;
+        if (PotionRun(leader)) {
+            return true;
+        }
         // Before walking into a dungeon he wants more (UltimusDirector.Sense.cs: a dungeon is done in one go).
         var hurt = Hurt(leader, out var lowHealth, out var lowMana, ToughFoeNow(target));
         if (!hurt && DungeonPrep(leader, target, out var dungeonHealth, out var dungeonMana)) {
@@ -129,9 +135,22 @@ internal sealed partial class UltimusDirectorActor {
             return true;
         }
 
+        // Niduus, 2026-11-14: "Ultimus should only wait for wisps if he's below 25% HP." Above it, with no potion and no wisp
+        // right here, he goes on: no trips for wisps or potions and no waiting. The exception is a fight he lost from going
+        // in hurt (his "full" remedy, UltimusDirector.Losses.cs).
+        var share = stats.m_currentHitpoints / (double) maxHealth;
+        var huntBelow = UltimusPlaybook.Value("Quest.HuntHealBelow");
+        if (!onlyPrep && !HuntsAt(share) && RemedyFor(target?.Key) != "full") {
+            Think($"I'm at {share:P0} health with no potion or wisp right here. I only go looking for wisps or potions under {huntBelow:P0} " +
+                  $"({UltimusPlaybook.Cite("Quest.HuntHealBelow")}), so I go on and heal as I go.", "hunt-no|" + (int) (share * 10));
+            _hurtSince = DateTime.MaxValue;
+
+            return false;
+        }
+
         // Niduus, 2026-11-14 ("he's not low??" at 875 of 1099): with nothing right here, the extra care is not worth a
         // trip or a wait. He is over his normal ready health, so he goes on.
-        if (onlyPrep) {
+        if (onlyPrep && RemedyFor(target?.Key) != "full") {
             Think($"I'd like full health for this, but I have {stats.m_currentHitpoints * 100 / maxHealth}% and nothing to heal from right here, " +
                   "which is enough by my normal rule. I go on instead of travelling or waiting.", "prepgo|" + leader.Zone);
             _hurtSince = DateTime.MaxValue;
@@ -239,7 +258,7 @@ internal sealed partial class UltimusDirectorActor {
     }
 
     // The nearest health (or mana) wisp in the area that no creature stands by.
-    private static UltimusPlanner.Target Wisp(UltimusMember.Status leader, bool health, bool mana) {
+    private static UltimusPlanner.Target Wisp(UltimusMember.Status leader, bool health, bool mana, float safeFromMobs = WISP_SAFE_FROM_MOBS) {
         if (leader.ZoneActor is not { } zone) {
             return null;
         }
@@ -248,10 +267,12 @@ internal sealed partial class UltimusDirectorActor {
         var mobs = all.Where(m => m.Kind is MinimapIndex.MOB or MinimapIndex.BOSS && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full))
             .Select(m => (m.Object.m_location.X, m.Object.m_location.Y)).ToList();
         var best = all.Where(m => (health && m.Kind == MinimapIndex.WISP_HEALTH) || (mana && m.Kind == MinimapIndex.WISP_MANA))
+            // A battle's wisp that is another player's (BattleWispsPerPlayer) is not his to take.
+            .Where(m => Combat.BattleDrops.OwnerOf(m.Object.m_globalID.Full) is var owner && (owner == 0 || owner == leader.GlobalId))
             .Where(m => m.Entity?.GetComponentOfType<WispHealthComponent>() is not { Collected: true }
                         && m.Entity?.GetComponentOfType<WispManaComponent>() is not { Collected: true })
             .Select(m => (Mark: m, Far: UltimusPlanner.Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)))
-            .Where(m => m.Far < WISP_REACH && mobs.All(c => UltimusPlanner.Far(c.X, c.Y, m.Mark.Object.m_location.X, m.Mark.Object.m_location.Y) > WISP_SAFE_FROM_MOBS))
+            .Where(m => m.Far < WISP_REACH && mobs.All(c => UltimusPlanner.Far(c.X, c.Y, m.Mark.Object.m_location.X, m.Mark.Object.m_location.Y) > safeFromMobs))
             .OrderBy(m => m.Far)
             .Select(m => m.Mark)
             .FirstOrDefault();
@@ -289,6 +310,75 @@ internal sealed partial class UltimusDirectorActor {
 
         return best.ViaHub ? HubButton(leader, best.Zone, "to fill potions at the potion shop")
             : UltimusPlanner.Travel(leader, best.Zone, "to fill potions at the potion shop", "potionshop|" + best.Zone);
+    }
+
+    /// <summary>Whether at this share of health he goes looking for wisps or potions (Quest.HuntHealBelow, 25%).</summary>
+    internal static bool HuntsAt(double share) => share < UltimusPlaybook.Value("Quest.HuntHealBelow");
+
+    /// <summary>A player's "go get potions" he agreed to: off to the nearest potion shop until his potions are full.</summary>
+    private bool PotionRun(UltimusMember.Status leader) {
+        if (DateTime.UtcNow >= _potionRunUntil || leader.Wizard?.GameStats is not { } stats || CombatDuelComponent.IsInBattle(leader.GlobalId)) {
+            return false;
+        }
+
+        if (stats.m_potionCharge >= stats.m_potionMax) {
+            _potionRunUntil = DateTime.MinValue;
+            Note("Ultimus", $"{leader.Name} has full potions again, as asked.");
+            return false;
+        }
+
+        if (PotionShopTarget(leader, out _) is not { } shop) {
+            return false;
+        }
+
+        _doing = "getting potions, as a player asked";
+        if (shop.Key?.StartsWith(HUB_KEY, StringComparison.Ordinal) == true) {
+            PressHubButton(leader, shop.What);
+        }
+        else if (shop.Kind == UltimusPlanner.SHOP && UltimusPlanner.Far(leader.X, leader.Y, shop.X, shop.Y) < SHOP_REACH) {
+            StopWalking(0);
+            if (CanClick("potion|buy")) {
+                Clicked("potion|buy");
+                _actors[0].Tell(new UltimusMember.Interact(shop.GlobalId, "PotionShopService", 0, "the potion shop"));
+                _actors[0].Tell(new UltimusMember.BuyPotions());
+                HoldRecall(6);
+            }
+        }
+        else {
+            WalkTo(0, shop);
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// A player asked him to get potions: what he says back, and whether he goes (true) — only when he can really do it.
+    /// </summary>
+    private (string Line, bool Doing) AskedForPotions(UltimusMember.Status me) {
+        if (me.Wizard?.GameStats is not { } stats) {
+            return ("Can't right now, sorry!", false);
+        }
+
+        if (stats.m_potionMax < 1) {
+            return ("I don't have any potion bottles yet, so I can't.", false);
+        }
+
+        if (stats.m_potionCharge >= stats.m_potionMax) {
+            return ($"My potions are already full ({stats.m_potionCharge} of {stats.m_potionMax})!", false);
+        }
+
+        if (stats.m_currentGold < PotionService.PotionCostPerBottle(Math.Max(1, stats.Level))) {
+            return ("I don't have the gold for potions right now.", false);
+        }
+
+        if (PotionShopTarget(me, out var hops) is null) {
+            return ("I don't know a potion shop I can reach from here yet, sorry.", false);
+        }
+
+        _potionRunUntil = DateTime.UtcNow.AddMinutes(10);
+        Think("A player asked me to get potions. I can, so I go now: the nearest potion shop" + (hops > 0 ? $", {hops} area(s) away." : ", right here."), "potionrun");
+
+        return (hops > 0 ? $"Good idea, heading to the potion shop now ({hops} area{(hops == 1 ? "" : "s")} away)!" : "Good idea, getting potions right here!", true);
     }
 
     private const string HUB_KEY = "hubbutton|";

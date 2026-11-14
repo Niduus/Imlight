@@ -69,6 +69,13 @@ internal static class UltimusFoes {
         }
     }
 
+    /// <summary>Every creature he fought (copies), for his opinions.</summary>
+    internal static List<Foe> All() {
+        lock (s_lock) {
+            return [.. Foes().Values];
+        }
+    }
+
     /// <summary>A fight with this creature ended: written down.</summary>
     internal static Foe Fought(uint template, string name, bool won, double healthLostShare, double seconds) {
         if (template == 0) {

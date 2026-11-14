@@ -190,6 +190,7 @@ internal sealed partial class UltimusDirectorActor {
 
     // Who spoke near him lately (not to him), to tell a talk between players from a line for him.
     private readonly List<(ulong CharId, DateTime At)> _talkNear = [];
+    private readonly Dictionary<ulong, DateTime> _namedBy = [];
 
     /// <summary>
     /// Whether a line is for him: whispered; his name in it; a talk he is already in with them (answered in the last 90
@@ -211,6 +212,12 @@ internal sealed partial class UltimusDirectorActor {
 
         var name = me.Wizard?.PlayerNameBehavior?.GetWizardName() ?? UltimusRoster.NAME;
         if (MenuChatBook.Says(heard.Text, UltimusRoster.NAME) || MenuChatBook.Says(heard.Text, name.Split(' ')[0])) {
+            _namedBy[heard.SpeakerCharId] = now;
+            return true;
+        }
+
+        // They called him by name a moment ago: what follows is for him too ("hey Ultimus" then "You stuck again?").
+        if (_namedBy.TryGetValue(heard.SpeakerCharId, out var named) && now - named < TimeSpan.FromMinutes(2)) {
             return true;
         }
 
@@ -272,7 +279,12 @@ internal sealed partial class UltimusDirectorActor {
         return new BotSocial.Self(UltimusRoster.NAME, me.Wizard?.PlayerNameBehavior?.GetWizardName() ?? UltimusRoster.NAME, "Balance",
             me.Wizard?.MagicSchoolBehavior?.Level ?? 1, UltimusText.Zone(me.Zone), WorldOf(me.Zone), title, step,
             me.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId), mood, NpcTip, FoeTip, _doing,
-            me.Wizard?.GameStats is { } hp ? (int) (hp.m_currentHitpoints * 100L / Math.Max(1, hp.m_baseHitpoints + hp.m_bonusHitpoints)) : -1);
+            me.Wizard?.GameStats is { } hp ? (int) (hp.m_currentHitpoints * 100L / Math.Max(1, hp.m_baseHitpoints + hp.m_bonusHitpoints)) : -1,
+            what => what switch {
+                "potions" => AskedForPotions(me).Line,
+                "potions-status" => DateTime.UtcNow < _potionRunUntil ? "Yes, I'm on my way to the potion shop now!" : AskedForPotions(me).Line,
+                _ => null,
+            }, Worlds().Select(w => w.World).ToList(), Opinion);
     }
 
     private static int StepTotal(GoalTemplate goal) => goal switch {

@@ -38,9 +38,10 @@ internal sealed partial class UltimusDirectorActor {
 
     private (string Zone, float X, float Y, DateTime Until)? _wispSweep;
     private const float WISP_SWEEP_REACH = 900f;
+    private const float WISP_AFTER_FIGHT_BERTH = 120f;
 
     /// <summary>A battle he won ended here: the wisps it left are picked up (Niduus, 2026-11-14: "have him nab up the wisps").</summary>
-    private void NoteFightSpot(UltimusMember.Status leader) => _wispSweep = (leader.Zone ?? "", leader.X, leader.Y, DateTime.UtcNow.AddSeconds(40));
+    private void NoteFightSpot(UltimusMember.Status leader) => _wispSweep = (leader.Zone ?? "", leader.X, leader.Y, DateTime.UtcNow.AddSeconds(75));
 
     private UltimusPlanner.Target WispAfterFight(UltimusMember.Status leader) {
         if (_wispSweep is not { } sweep || DateTime.UtcNow > sweep.Until || !string.Equals(sweep.Zone, leader.Zone, StringComparison.OrdinalIgnoreCase)
@@ -51,7 +52,10 @@ internal sealed partial class UltimusDirectorActor {
 
         var health = stats.m_currentHitpoints < stats.m_baseHitpoints + stats.m_bonusHitpoints;
         var mana = stats.m_currentMana < stats.m_baseMana + stats.m_bonusMana;
-        if ((!health && !mana) || Wisp(leader, health, mana) is not { } wisp
+        // The creatures just beaten still stand where the fight was for a moment, and more walk by: a fight's own wisps lie
+        // right among them, so only one standing right on a wisp keeps him off it (Niduus, 2026-11-14, v0.10.855: "He did
+        // not collect the after battle wisps"; the 500-unit berth for the area's wisps ruled every one of them out).
+        if ((!health && !mana) || Wisp(leader, health, mana, WISP_AFTER_FIGHT_BERTH) is not { } wisp
             || UltimusPlanner.Far(sweep.X, sweep.Y, wisp.X, wisp.Y) > WISP_SWEEP_REACH) {
             return null;
         }
@@ -71,7 +75,10 @@ internal sealed partial class UltimusDirectorActor {
 
         var health = stats.m_currentHitpoints < (stats.m_baseHitpoints + stats.m_bonusHitpoints) * 0.9;
         var mana = stats.m_currentMana < (stats.m_baseMana + stats.m_bonusMana) * 0.6;
-        if ((!health && !mana) || Wisp(leader, health, mana) is not { } wisp
+        // The creatures just beaten still stand where the fight was for a moment, and more walk by: a fight's own wisps lie
+        // right among them, so only one standing right on a wisp keeps him off it (Niduus, 2026-11-14, v0.10.855: "He did
+        // not collect the after battle wisps"; the 500-unit berth for the area's wisps ruled every one of them out).
+        if ((!health && !mana) || Wisp(leader, health, mana, WISP_AFTER_FIGHT_BERTH) is not { } wisp
             || UltimusPlanner.Far(leader.X, leader.Y, wisp.X, wisp.Y) > 900) {
             return null;
         }

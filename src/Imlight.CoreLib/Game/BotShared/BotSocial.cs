@@ -46,7 +46,8 @@ internal static class BotSocial {
 
     /// <summary>What the bot knows of itself right now, to answer with.</summary>
     internal sealed record Self(string Bot, string Name, string School, int Level, string Area, string World, string Quest, string Step,
-        bool InBattle, string Mood, Func<string, string> FindNpc = null, Func<string, string> FoeTip = null, string Doing = null, int Health = -1);
+        bool InBattle, string Mood, Func<string, string> FindNpc = null, Func<string, string> FoeTip = null, string Doing = null, int Health = -1,
+        Func<string, string> Act = null, IReadOnlyList<string> Worlds = null, Func<string, bool, string> Opinion = null);
 
     /// <summary>An answer: the line, the intent it answers, why (for Thoughts), and whether it fits a Menu Chat moment.</summary>
     internal sealed record Reply(string Text, string Intent, string Why, string MenuMoment = null);
@@ -88,7 +89,7 @@ internal static class BotSocial {
         SCHOOL = "his school", TIP = "a tip", HELP = "help", GROUP = "group or follow", TRADE = "trade or gold", TELEPORT = "teleport",
         COMPLIMENT = "compliment", JOKE = "joke", THANKS = "thanks", BYE = "goodbye", BOT = "are you a bot", PRIVATE = "private info",
         RUDE = "rude", ANSWER = "answer to his question", CHAT = "small talk", NAME = "his name", STEP = "his quest step",
-        PERMISSION = "may I", STATUS = "how he is doing right now", ACK = "ok or brb", RULES = "a rule for him", ACTIVITY = "what he is doing", AGAIN = "say that again", QUESTION = "a question he can't place";
+        PERMISSION = "may I", MAKER = "who made him", ABILITY = "can he do something", LIKE = "does he like something", ORDER = "asks him to do something", CALLED = "said his name", STATUS = "how he is doing right now", ACK = "ok or brb", RULES = "a rule for him", ACTIVITY = "what he is doing", AGAIN = "say that again", QUESTION = "a question he can't place";
 
     // Things he never does (hard limits): a player's word about them gets the truth.
     private static readonly string[] s_neverDoes = ["hatch", "hatching", "train pets", "pet training", "training pets", "train your pet", "craft", "crafting",
@@ -127,11 +128,17 @@ internal static class BotSocial {
             return BOT;
         }
 
-        if (Has(t, "password", "ip", "server ip", "admin", "address", "where do you live", "phone", "email", "who owns", "your owner", "who made you", "who runs")) {
+        if (Has(t, "password", "ip", "server ip", "admin", "address", "where do you live", "phone", "email", "who owns", "who runs")) {
             return PRIVATE;
         }
 
-        // An answer to the question he asked (a school or a world), within two minutes.
+        // "Who made you?": Niduus (2026-11-14: "The honest answer is again, me, Niduus").
+        if (Has(t, "who made you", "who created you", "who built you", "who coded you", "who programmed you", "your creator", "your maker", "your owner",
+                "who owns you", "who's your owner", "whos your owner")) {
+            return MAKER;
+        }
+
+                // An answer to the question he asked (a school or a world), within two minutes.
         if (friend is { Pending.Length: > 0 } && DateTime.UtcNow - friend.PendingAt < TimeSpan.FromMinutes(2)
             && (friend.Pending == SCHOOL && t.Split(' ').Length <= 4 && s_schools.Any(s => Has(t, s))
                 || friend.Pending == WHERE && !t.Contains('?') && s_worlds.Any(w => Has(t, w)))) {
@@ -146,7 +153,24 @@ internal static class BotSocial {
             return ACK;
         }
 
-        // How he is right now: health, waiting, standing, lost, what he is fighting, why.
+        // "like right now", "hurry": a push on what they just asked him to do.
+        if (recent && friend.Topic == ORDER && Has(t, "now", "right now", "hurry", "asap", "quick", "go", "please", "pls", "plz")) {
+            return AGAIN;
+        }
+
+        // Asked to do something: done when his rules allow, else he says why not (2026-11-14: "go get potions" got "Got it!"
+        // and nothing happened).
+        if (Has(t, "get potions", "go get potions", "buy potions", "get some potions", "refill", "fill your potions", "go heal", "heal up", "get healed",
+                "go back to your quest", "back to your quest", "keep questing", "go quest", "do your quest", "stop", "wait here", "stay here", "stay there",
+                "wait for me", "go away", "leave", "go do", "can you go", "could you go", "you should go")
+            || t.StartsWith("go ", StringComparison.OrdinalIgnoreCase)) {
+            // A rule about what he never does reads as a rule, not an order ("stop hatching").
+            if (!s_neverDoes.Any(w => Has(t, w))) {
+                return ORDER;
+            }
+        }
+
+                // How he is right now: health, waiting, standing, lost, what he is fighting, why.
         if (Has(t, "are you hurt", "are you ok", "are you okay", "your health", "need a heal", "need heal", "low health", "why are you standing",
                 "why are you waiting", "what are you waiting", "are you lost", "are you stuck", "why are you just", "what are you fighting", "why are you fighting",
                 "why are you here", "why are you going", "standing still", "you stuck", "you lost")) {
@@ -164,6 +188,13 @@ internal static class BotSocial {
         if (recent && (Has(t, "what do you mean", "what does that mean", "huh", "i don't get it", "i dont get it", "come again", "say again")
                        || t.Trim('?', '!', '.', ' ').Equals("what", StringComparison.OrdinalIgnoreCase))) {
             return AGAIN;
+        }
+
+        // "What's your (least) favorite school?", "Do you like Krokotopia?": his opinion. Before the plain "school" or "quest"
+        // questions, which hold the same words.
+        if (Has(t, "do you like", "do you love", "do you enjoy", "do u like", "do you hate", "favorite", "favourite", "fav", "what do you think of",
+                "least favorite", "worst", "you hate")) {
+            return LIKE;
         }
 
         if (Has(t, "what quest", "which quest", "quest are you", "working on", "your quest", "what are you doing", "what you doing", "whatcha doing",
@@ -218,7 +249,12 @@ internal static class BotSocial {
             return TELEPORT;
         }
 
-        // "Can I fish next to you?": a polite yes.
+                // "Can you fish?": an honest yes or no about what he can do (2026-11-14: "honest answer would be no").
+        if (Has(t, "can you", "do you", "are you able to", "can u", "do u", "could you", "will you", "would you", "you know how to")) {
+            return ABILITY;
+        }
+
+                // "Can I fish next to you?": a polite yes.
         if (Has(t, "can i", "may i", "mind if", "is it ok if", "is it okay if", "do you mind", "can we", "could i", "ok if i", "okay if i")) {
             return PERMISSION;
         }
@@ -306,7 +342,9 @@ internal static class BotSocial {
                 return new Reply("", "spam", $"{friend.Name} sent the same thing again and again, so I mute them for 10 minutes and say nothing.");
             }
 
-            var intent = Classify(text, friend);
+            // His name alone ("ULTIMUS??") or with a hello ("hey Ultimus"): read without it (2026-11-14, "Not sure what you mean").
+            var heard = WithoutName(text, self);
+            var intent = heard.Length == 0 && text.Trim().Length > 0 ? CALLED : Classify(heard, friend);
             if (intent is null or ACK) {
                 Save(self.Bot);
                 return null;
@@ -317,14 +355,14 @@ internal static class BotSocial {
             }
 
             // Too soon after the last answer to them (one answer per message, a moment between): a question still gets one.
-            var question = intent is QUEST or STEP or AGAIN or WHERE or LEVEL or SCHOOL or TIP or BOT or NAME or QUESTION or ACTIVITY;
+            var question = intent is CALLED or ORDER or QUEST or STEP or AGAIN or WHERE or LEVEL or SCHOOL or TIP or BOT or NAME or QUESTION or ACTIVITY;
             if (!NoSave && (now - friend.RepliedAt < s_perPlayerGap && !question || !RoomToSpeak(self.Bot))) {
                 Save(self.Bot);
                 return null;
             }
 
             friend.Talks++;
-            var reply = Compose(self, friend, intent, text, typed, whisper, known && away > TimeSpan.FromHours(1));
+            var reply = Compose(self, friend, intent, heard.Length > 0 ? heard : text, typed, whisper, known && away > TimeSpan.FromHours(1));
             if (reply is not null && reply.Text.Length > 0) {
                 friend.RepliedAt = now;
                 NoteSaid(self.Bot);
@@ -334,6 +372,51 @@ internal static class BotSocial {
 
             return reply;
         }
+    }
+
+    /// <summary>
+    /// His favorites: the same answer every time (a personality, 2026-11-14), true to a Balance wizard and to the worlds he
+    /// has really been to.
+    /// </summary>
+    private static string Favorite(Self self, string text) {
+        // "least favorite", "worst", "hate": the other way round (2026-11-14: "least favorite school" got "I'm a Balance wizard").
+        var least = Has(text, "least", "worst", "hate", "dislike", "don't like", "dont like", "most annoying", "hardest", "scariest");
+        var topic = Has(text, "world") ? "world" : Has(text, "school") ? "school" : Has(text, "spell", "card") ? "spell" : Has(text, "quest") ? "quest"
+            : Has(text, "boss", "creature", "monster", "enemy", "mob", "mobs", "foe") ? "creature" : Has(text, "area", "zone", "place", "spot") ? "area"
+            : Has(text, "player", "friend", "wizard", "person") ? "player" : "";
+        // From what really happened to him (UltimusDirector.Opinions.cs), when he has an opinion yet.
+        if (topic.Length > 0 && self.Opinion?.Invoke(topic, least) is { Length: > 0 } felt) {
+            return felt;
+        }
+
+        // Nothing made up (Niduus, 2026-11-14: "Don't program that in"): no experience yet, he says so.
+        var what = topic.Length > 0 ? topic : "thing";
+        return least
+            ? $"I haven't seen enough yet to have a least favorite {what}. Ask me again later!"
+            : $"I haven't seen enough yet to pick a favorite {what}. Ask me again later!";
+    }
+
+    // "fishing" -> "fish", for "No, I don't fish."
+    private static string Verb(string word) => word switch {
+        "fishing" => "fish", "hatching" => "hatch pets", "hatch" => "hatch pets", "crafting" => "craft", "gardening" => "garden", "garden" => "garden",
+        "farming" => "farm", "dueling" => "duel players", "duel" => "duel players", "pvp" => "do PvP", "train pets" or "pet training" or "training pets"
+            or "train your pet" => "train pets",
+        _ => word,
+    };
+
+    private static string WithoutName(string text, Self self) {
+        var t = text ?? "";
+        foreach (var name in new[] { self.Name, self.Name?.Split(' ')[0], self.Bot }.Where(n => !string.IsNullOrWhiteSpace(n)).Distinct()) {
+            var at = t.IndexOf(name, StringComparison.OrdinalIgnoreCase);
+            while (at >= 0) {
+                t = t.Remove(at, name.Length);
+                at = t.IndexOf(name, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        var trimmed = t.Trim(' ', ',', '.', '!', '?', ':', '-');
+
+        return trimmed.Length == 0 ? "" : t.Trim(' ', ',', ':', '-');
     }
 
     /// <summary>A battle shared with this player (counted for the memory).</summary>
@@ -421,12 +504,72 @@ internal static class BotSocial {
                 line = Pick(self.Bot, "name", $"I'm {self.Name}!", $"{self.Name}, nice to meet you!", $"Call me {self.Name}.");
                 why = $"{friend.Name} asked my name.";
                 break;
+            case MAKER:
+                line = Pick(self.Bot, "maker", $"Niduus made me! I'm {self.Name}, his solo questing bot.", "Niduus did! He built me to quest the main story like a player.");
+                why = $"{friend.Name} asked who made me. The honest answer: Niduus.";
+                break;
+            case LIKE: {
+                var subject = (text ?? "").Trim().TrimEnd('?', '!', '.');
+                foreach (var lead in new[] { "what do you think of", "do you like", "do you love", "do you enjoy", "do u like", "you like" }) {
+                    var cut = subject.IndexOf(lead, StringComparison.OrdinalIgnoreCase);
+                    if (cut >= 0) {
+                        subject = subject[(cut + lead.Length)..].Trim();
+                        break;
+                    }
+                }
+
+                line = Has(text ?? "", "favorite", "favourite", "fav", "worst", "hate", "least") ? Favorite(self, text ?? "")
+                    : subject.Length is > 0 and < 40
+                        ? self.Opinion?.Invoke("like:" + subject, false) ?? $"I haven't seen enough of {subject} yet to say."
+                        : "I haven't seen enough yet to say.";
+                why = $"{friend.Name} asked what I like. My opinions come only from what happened to me; without enough of it I say so.";
+                break;
+            }
+            case ABILITY: {
+                var t = (text ?? "").ToLowerInvariant();
+                (string Line, string What)? answer = s_neverDoes.FirstOrDefault(w => Has(t, w)) is { } never
+                    ? ($"No, I don't {Verb(never)}. I only quest the main story.", never)
+                    : Has(t, "quest", "fight", "battle", "duel monsters") ? ("Yes! Questing the main story and fighting its battles is what I do.", "quest")
+                    : Has(t, "heal", "potion", "potions") ? ("Yes, I drink potions, pick up wisps and buy potions at potion shops.", "heal")
+                    : Has(t, "shop", "buy", "gear", "bazaar") ? ("Yes, I buy gear at shops and the Bazaar when it's a real upgrade.", "shop")
+                    : Has(t, "teleport", "port", "tp") ? ("No teleporting to players, sorry. I walk my own way, and use Mark, Recall and the Commons button.", "teleport")
+                    : Has(t, "mount", "ride") ? ("Yes, I have my mount!", "mount")
+                    : Has(t, "talk", "chat", "type", "speak") ? ("Yes, I can chat! Ask me about my quest, step, level or where I am.", "chat")
+                    : Has(t, "group", "team", "follow", "join") ? ("No, I quest solo. Players can jump into my battles though!", "group")
+                    : Has(t, "dance", "emote", "sing", "jump", "swim", "fly") ? ("I don't think so! I mostly just quest.", "other")
+                    : null;
+                line = answer?.Line ?? "I don't think I can. I quest the main story, fight its battles, shop for gear and potions, and chat.";
+                why = $"{friend.Name} asked if I can do something ({answer?.What ?? "something I don't do"}), so I answer honestly from what I really do.";
+                break;
+            }
+            case CALLED:
+                line = self.InBattle ? "Yes? I'm in a battle, one sec!" : $"Yes? I'm here! Working on {doing}" + (step is null ? "." : $": {step}.");
+                why = $"{friend.Name} called my name, so I answer and say what I'm doing.";
+                break;
+            case ORDER: {
+                var t = text ?? "";
+                var kind = Has(t, "potion", "potions", "refill", "heal", "healed") ? "potions"
+                    : Has(t, "quest", "questing") ? "quest"
+                    : Has(t, "stop", "wait", "stay") ? "stop"
+                    : Has(t, "go away", "leave") ? "leave"
+                    : "other";
+                line = kind switch {
+                    "potions" => self.Act?.Invoke("potions") ?? "I can't get potions right now, sorry.",
+                    "quest" => quest is null ? "On it, looking for my next quest!" : $"That's the plan! Back to {doing}.",
+                    "stop" => $"Sorry, I can't stop here, I keep going with {doing}. I'll be around though!",
+                    "leave" => "Okay, I'll get on with my quest.",
+                    _ => $"Sorry, I can't do that one. I only quest my story ({doing}).",
+                };
+                why = $"{friend.Name} asked me to do something ({kind}). I say yes only when I really do it and my rules allow it, otherwise I say why not.";
+                break;
+            }
             case STEP:
                 line = stepLine;
                 why = $"{friend.Name} asked the step of my quest, so I tell them the step itself" + (step is null ? " (I am between steps this moment)." : $": {step}.");
                 break;
             case AGAIN:
                 line = friend.Topic switch {
+                    ORDER => self.Act?.Invoke("potions-status") ?? "I'm on it!",
                     WHERE => $"I mean I'm in {at}.",
                     LEVEL => $"I'm level {self.Level}.",
                     _ => stepLine,
@@ -543,7 +686,7 @@ internal static class BotSocial {
                     return null;
                 }
 
-                line = Pick(self.Bot, "chat", "I hear you!", "Okay!", "Got it!");
+                line = Pick(self.Bot, "chat", "I hear you!", "Ha!", "Fair point.");
                 why = $"{friend.Name} chatted, so I answer in a friendly word.";
                 break;
         }
@@ -655,6 +798,13 @@ internal static class BotSocial {
         lock (s_lock) {
             s_friends.Remove(bot);
             s_said.Remove(bot);
+        }
+    }
+
+    /// <summary>Everyone the bot remembers (copies of the list).</summary>
+    internal static List<Friend> Friends(string bot) {
+        lock (s_lock) {
+            return [.. FriendsOf(bot).Values];
         }
     }
 

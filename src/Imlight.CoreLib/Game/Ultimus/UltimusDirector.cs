@@ -395,6 +395,19 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         _dialogSince = DateTime.MaxValue;
 
+        // On a dungeon or tower sigil, counting down: he stands still on it until it takes him in, with whoever stepped on
+        // with him (Niduus, 2026-11-14: "I hopped on his Sigil for a dungeon/tower and he got off"). Nothing else is planned,
+        // walked or unstuck meanwhile, as a player waits on the pad.
+        if (Services.ZoneService.IsCountingDown(_team[0].GlobalId)) {
+            if (_doing != "on the sigil, waiting for the countdown") {
+                Think("I am on the sigil and its countdown runs: I stay on it, with anyone who joined me, until it takes us in.", "sigil-wait");
+            }
+
+            _doing = "on the sigil, waiting for the countdown";
+            _lastProgress = DateTime.UtcNow;
+            return;
+        }
+
         // Never stands in one place for ever (UltimusDirector.Stuck.cs).
         LookForStuck();
 
@@ -504,6 +517,17 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // Healing first, above all before a fight (UltimusDirector.Health.cs).
         if (HealFirst(group, target)) {
             _healingAt = DateTime.UtcNow;
+            return;
+        }
+
+        // A fight lost again and again, the "patience" remedy: a few minutes by it first (UltimusDirector.Losses.cs).
+        if (WaitingForHelp(leader, target)) {
+            if (SafeSpot(leader) is { } calm) {
+                WalkTo(0, calm);
+            } else {
+                StopWalking(0);
+            }
+
             return;
         }
 
@@ -719,7 +743,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         // Shopping: better gear one of them can pay for, at a shop in this world (in push mode, only when it is worth it).
-        if (SideTripsOpen && ShopAllowed(leader) && SideTrip(ShoppingTarget(group), "shopping") is { } shopping) {
+        if (SideTripsOpen && ShopAllowed(leader) && SideTrip(NotMidStep(ShoppingTarget(group)), "shopping") is { } shopping) {
             MarkBeforeTrip(leader, shopping);
             return shopping;
         }
@@ -730,7 +754,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         // A clear upgrade at the Bazaar he can pay for past his reserve (in push mode, only when shopping is allowed).
-        if (SideTripsOpen && ShopAllowed(leader) && SideTrip(BazaarTarget(group), "bazaar") is { } bazaar) {
+        if (SideTripsOpen && ShopAllowed(leader) && SideTrip(NotMidStep(BazaarTarget(group)), "bazaar") is { } bazaar) {
             MarkBeforeTrip(leader, bazaar);
             return bazaar;
         }
@@ -1292,6 +1316,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         if (!_wasInBattle[0] && now) {
             _battleSince = DateTime.UtcNow;
+            NoteFightKit(me);
             FightStarted(me);
             var others = CombatDuelComponent.UltimusBattleCompany(me.GlobalId);
             _battleCompany = others.Count > 0;
@@ -1395,6 +1420,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 ? "Goes in at full health and mana with a deck made for these creatures, and fights fewer at once."
                 : "Waits for a player to join or asks for help through an issue; the step may need a group.");
         Count("battles lost");
+        // Two or more: he reasons out the best remedy himself (UltimusDirector.Losses.cs).
+        PlanAfterLoss(member, key, _losses[key]);
         if (_losses[key] >= UltimusWire.LossesBeforeIssue) {
             // A fight he keeps losing is too hard for him now, not broken: he flags it and keeps going at it as a player would
             // (rested, careful), never skipping it (Niduus, 2026-11-14).
