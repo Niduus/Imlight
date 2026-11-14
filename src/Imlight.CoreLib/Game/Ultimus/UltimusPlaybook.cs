@@ -219,6 +219,55 @@ internal static class UltimusPlaybook {
 
     internal static double Value(string name) => Get(name).Value;
 
+    /// <summary>A rule's starting value, or null for an unknown rule.</summary>
+    internal static double? Default(string name) {
+        foreach (var (section, rule) in s_defaults) {
+            if (section + "." + rule.Name == name) {
+                return rule.Value;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>The rules he changed himself (the "[I set this yyyy-MM-dd" note in playbook.txt), with the day of the change.</summary>
+    internal static List<(string Name, DateTime On)> Tuned() {
+        var tuned = new List<(string, DateTime)>();
+        lock (s_lock) {
+            try {
+                var path = Path.Combine(UltimusWire.Folder, FILE);
+                if (!File.Exists(path)) {
+                    return tuned;
+                }
+
+                var section = "";
+                foreach (var raw in File.ReadAllLines(path)) {
+                    var line = raw.Trim();
+                    if (line.StartsWith('[') && line.EndsWith(']')) {
+                        section = line[1..^1].Trim();
+                        continue;
+                    }
+
+                    var mark = line.IndexOf("[I set this ", StringComparison.Ordinal);
+                    var eq = line.IndexOf('=');
+                    if (mark < 0 || eq <= 0 || line.StartsWith('#')) {
+                        continue;
+                    }
+
+                    var date = line.Substring(mark + 12, Math.Min(10, line.Length - mark - 12));
+                    if (DateTime.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var on)) {
+                        tuned.Add((section + "." + line[..eq].Trim(), on));
+                    }
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                Logger.Debug("Ultimus: {0} could not be read: {1}", Logger.Args(FILE, ex.Message));
+            }
+        }
+
+        return tuned;
+    }
+
     /// <summary>How a thought names a rule: "playbook Battle.HealAt = 0.5".</summary>
     internal static string Cite(string name) => $"playbook {name} = {Get(name).Value.ToString("0.##", CultureInfo.InvariantCulture)}";
 

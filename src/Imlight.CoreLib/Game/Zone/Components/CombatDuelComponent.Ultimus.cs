@@ -165,7 +165,10 @@ internal sealed partial class CombatDuelComponent {
         _ultimusPicks.Clear();
         if (Duel.m_roundNum <= 1) {
             _ultimusScouted.Clear();
+            _ultimusDownSince.Clear();
         }
+
+        UltimusDownedRound();
         if (IsPvPDuel || !_awaitingCombatMoves || !UltimusCircles.Any()) {
             return;
         }
@@ -174,6 +177,52 @@ internal sealed partial class CombatDuelComponent {
         Timers.StartSingleTimer(ULTIMUS_THINK_KEY, new UltimusThink(Duel.m_roundNum, false), TimeSpan.FromSeconds(2.5 + (Random.Shared.NextDouble() * 2.5)));
         Timers.StartSingleTimer(ULTIMUS_DEADLINE_KEY, new UltimusThink(Duel.m_roundNum, true),
             TimeSpan.FromSeconds(Math.Max(3, PlanningSeconds - BOT_DEADLINE_BEFORE_END)));
+    }
+
+    // The round each downed Ultimus circle was first seen down in, by slot.
+    private readonly Dictionary<int, int> _ultimusDownSince = [];
+    private const int ULTIMUS_DOWN_ROUNDS = 4;
+
+    /// <summary>
+    /// Niduus, 2026-11-14: "if dead in battle, Ultimus will stay for 4 rounds. At the start of the 5th, he will leave. Also
+    /// noting this in chat". Downed, he says so and waits 4 rounds for a revive; at the start of the 5th he presses Flee
+    /// himself, through his own game (nobody takes him out). Revived, he thanks them.
+    /// </summary>
+    private void UltimusDownedRound() {
+        if (IsPvPDuel) {
+            return;
+        }
+
+        foreach (var circle in SubCircles.Where(c => c is { Occupied: true, AddedToDuel: true } && UltimusRole(c) is not null).ToList()) {
+            var wizard = UltimusDirector.ActorOf(UltimusRole(circle));
+            if (wizard is null) {
+                continue;
+            }
+
+            if (circle.IsAlive) {
+                if (_ultimusDownSince.Remove(circle.SlotIndex)) {
+                    wizard.Tell(new UltimusMember.SayText("Thanks for the revive! Back in it."), Akka.Actor.ActorRefs.NoSender);
+                    UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: was revived; fights on.");
+                }
+
+                continue;
+            }
+
+            if (!_ultimusDownSince.TryGetValue(circle.SlotIndex, out var since)) {
+                _ultimusDownSince[circle.SlotIndex] = Duel.m_roundNum;
+                wizard.Tell(new UltimusMember.SayText($"Sorry, I'm down! If nobody can revive me, I'll leave the battle in {ULTIMUS_DOWN_ROUNDS} rounds."),
+                    Akka.Actor.ActorRefs.NoSender);
+                UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: is down; waits {ULTIMUS_DOWN_ROUNDS} rounds for a revive, then leaves.");
+                continue;
+            }
+
+            if (Duel.m_roundNum - since >= ULTIMUS_DOWN_ROUNDS) {
+                _ultimusDownSince.Remove(circle.SlotIndex);
+                wizard.Tell(new UltimusMember.SayText("Nobody could revive me, so I'm leaving the battle. Good luck!"), Akka.Actor.ActorRefs.NoSender);
+                UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: down for {ULTIMUS_DOWN_ROUNDS} rounds with no revive: presses Flee.");
+                wizard.Tell(new UltimusMember.Flee(), Akka.Actor.ActorRefs.NoSender);
+            }
+        }
     }
 
     // Ultimus came into the battle mid-planning: its look and its last call, by the time left.

@@ -358,6 +358,10 @@ internal sealed partial class UltimusDirectorActor {
             lines.Add("Self-tuning is off (self-tuning.txt), so I leave my numbers as they are.");
         }
 
+        // Old self-made rules fade back toward their start, and the day's health check (UltimusDirector.Safety.cs).
+        FadeOldTunes(limits, lines);
+        HealthCheck(won, lost, lines);
+
         var text = new StringBuilder();
         text.AppendLine($"=== {DateTime.Now:yyyy-MM-dd HH:mm}: today I learned ===");
         foreach (var line in lines) {
@@ -397,6 +401,11 @@ internal sealed partial class UltimusDirectorActor {
         if (Math.Abs(next - now) < 0.0001) {
             lines.Add($"I would change {name}, but it is at its limit ({range.Low:0.##} to {range.High:0.##}).");
 
+            return;
+        }
+
+        // A lesson must show up on two reviews in a row before it becomes a rule (UltimusDirector.Safety.cs).
+        if (!ConfirmedTune(name, Math.Sign(by), because, lines)) {
             return;
         }
 
