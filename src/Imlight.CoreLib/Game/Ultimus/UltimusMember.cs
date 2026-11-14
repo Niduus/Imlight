@@ -94,7 +94,9 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     internal sealed record Hop(float X, float Y, float Z, string Why);
     // Stuck past stepping aside: the server takes it back to where its area starts.
     internal sealed record Recall;
-    internal sealed record GainXp(int Xp);
+    /// <summary>Mark Location and Recall Location, the buttons a player has (they cost mana, as for a player).</summary>
+    internal sealed record MarkSpot;
+    internal sealed record RecallSpot;
     internal sealed record SelectBadge(uint Id);
     internal sealed record GoToTeammate(ulong CharId);
 
@@ -300,7 +302,8 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         });
         Receive<GoToTeammate>(m => Send(new WIZARD_12_PROTOCOL.MSG_GOTOFRIENDLYPLAYER { TargetCharacterID = m.CharId }));
         Receive<SelectBadge>(m => Send(new GAME_5_PROTOCOL.MSG_SELECT_BADGE { BadgeNameID = m.Id }));
-        Receive<GainXp>(m => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_GAINXP { XP = m.Xp }));
+        Receive<MarkSpot>(_ => Send(new GAME_5_PROTOCOL.MSG_MARK_LOCATION()));
+        Receive<RecallSpot>(_ => Send(new GAME_5_PROTOCOL.MSG_RECALL_LOCATION()));
         Receive<ClickNow>(m => Send(BotShared.BotBattle.ToGameMessage(m.Move)));
         Receive<Flee>(_ => Send(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATMOVE {
             MoveType = (byte) Combat.CombatMoveType.Flee, SpellSelection = 0, SpellTarget = 0, TimeLeft = 0,

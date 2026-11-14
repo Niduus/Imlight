@@ -52,6 +52,8 @@ internal sealed partial class ManagerWindow {
     private SelectableTextBlock? _ultLogBox;
     private ScrollViewer? _ultLogScroll;
     private TextBox? _ultQuestLogBox;
+    private TextBox? _ultProgressBox;
+    private string _ultProgressText = "";
     private string _ultLogText = "";
     // Ultimus Thoughts (Niduus, 2026-11-13): only its THOUGHT lines, in brown; and the bots' mistakes book.
     private SelectableTextBlock? _ultThoughtsBox;
@@ -384,7 +386,18 @@ internal sealed partial class ManagerWindow {
             Height = 300, Text = "No mistakes written down yet.",
         };
 
+        _ultProgressBox = new TextBox {
+            IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12.5,
+            Height = 220, Text = "Turn Ultimus on and start the server; how far he got is written here.",
+        };
+
         return Page(
+            Fold("clock", ULTIMUS_TAB, "Progress",
+                "How far Ultimus got: his level and area, the story world he is on, how long each world took, how long since " +
+                "he last finished a step or gained XP (his watchdog raises the alarm when that is too long), his mood and " +
+                "today's counts. Updated every 30 seconds (progress.txt in his folder).",
+                LogWell(_ultProgressBox),
+                Row(Action(Plain("Copy all"), () => CopyAsync(_ultProgressText)))),
             Fold("copy", ULTIMUS_TAB, "All of Ultimus's logs in one copy",
                 "Copies every Ultimus log at once, ready to paste in one go: his log, his thoughts, the mistakes book, the " +
                 "quest log, his abnormal fixes, the creatures he fought, his status, what he learned and his playbook. " +
@@ -538,6 +551,11 @@ internal sealed partial class ManagerWindow {
             ShowUltimusThoughts(_ultLogText);
             ShowUltimusMistakes();
             ShowLog(_ultQuestLogBox!, ReadUltimusNewest("quest-log.txt", _ultQuestLogText), ref _ultQuestLogText);
+            var progress = ReadAllOf(Path.Combine(UltimusFolder, "progress.txt"), 32 * 1024);
+            if (progress.Length > 0 && progress != _ultProgressText) {
+                _ultProgressText = progress;
+                _ultProgressBox!.Text = progress;
+            }
         }
 
         static void ShowLog(TextBox box, string text, ref string shown) {
@@ -882,7 +900,9 @@ internal sealed partial class ManagerWindow {
         var thoughts = NewestFirst(main.Split('\n').Where(l => l.Contains(": THOUGHT: ", StringComparison.Ordinal)), 150);
         var quests = NewestFirst(ReadAllOf(Path.Combine(UltimusFolder, "quest-log.txt"), 256 * 1024).Split('\n'), 150);
         (string Tag, string Name, string Text)[] logs = [
+            ("Progress", "His progress: level, world times, today (progress.txt)", ReadAllOf(Path.Combine(UltimusFolder, "progress.txt"), 32 * 1024)),
             ("Status", "His status now (status.txt)", ReadAllOf(Path.Combine(UltimusFolder, "status.txt"), 32 * 1024)),
+            ("Steps", "What went wrong at each step before (step-memory.json)", ReadAllOf(Path.Combine(UltimusFolder, "step-memory.json"), 64 * 1024)),
             ("Thoughts", "Ultimus Thoughts, newest first (his reasons, also in the main log)", thoughts),
             ("Mistakes", "Mistakes book, newest first (logs\\bots\\mistakes.txt)", ReadAllOf(Path.Combine(bots, "mistakes.txt"), 64 * 1024)),
             ("Fixes", "Abnormal fixes, each stuck spot and what was tried (abnormal-fixes.json)", ReadAllOf(Path.Combine(UltimusFolder, "abnormal-fixes.json"), 64 * 1024)),

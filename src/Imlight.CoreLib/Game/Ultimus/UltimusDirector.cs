@@ -303,6 +303,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             _stuck.Clear();
             _target = null;
             _currentQuest = null;
+            ForgetWorlds();
             StartTeam(restart: true);
 
             return;
@@ -382,6 +383,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         var leader = _team[0];
         NoteLeaderZone(leader);
+        // Solo tag, the watchdog and his progress file (UltimusDirector.Push.cs).
+        PushTick(leader);
         RollDay();
         Lead([leader]);
     }
@@ -462,6 +465,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 ThinkGoals(leader, target, confidence);
                 ThinkConfidence(leader, target, confidence, reasons);
                 Predict(leader, target);
+                // His level and what went wrong here before (UltimusDirector.Push.cs).
+                PreCheck(leader, target);
                 // A fight is next: each deck made ready for it.
                 if (target.Kind == UltimusPlanner.FIGHT) {
                     // Its deck read first, as a player who knows the creature (UltimusScout): shields for what it hits with.
@@ -623,14 +628,19 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         var leader = group[0];
 
         // Training: when someone has spells waiting and the team is in Wizard City (or two spells wait), a trip to Ravenwood.
+        // He marks his spot first, and recalls back after (UltimusDirector.Push.cs).
         if (TrainingTarget(group) is { } training) {
+            MarkBeforeTrip(leader, training);
             return training;
         }
 
-        // Shopping: better gear one of them can pay for, at a shop in this world.
-        if (ShoppingTarget(group) is { } shopping) {
+        // Shopping: better gear one of them can pay for, at a shop in this world (in push mode, only when it is worth it).
+        if (ShopAllowed(leader) && ShoppingTarget(group) is { } shopping) {
+            MarkBeforeTrip(leader, shopping);
             return shopping;
         }
+
+        RecallAfterTrip(leader);
 
         _currentQuest = UltimusPlanner.PickQuest(_team);
         NoteWorld(_currentQuest);
@@ -639,6 +649,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             if (target is not null) {
                 foreach (var old in _stonesUsed.Where(s => DateTime.UtcNow - s.Value > TimeSpan.FromSeconds(90)).Select(s => s.Key).ToList()) {
                     _stonesUsed.Remove(old);
+                }
+
+                // Far under the quest's level for its fight, or a fight lost here: XP first, the human way.
+                if (LevelFirst(leader, target) is { } xp) {
+                    return xp;
                 }
 
                 return UltimusPlanner.Shortcut(leader, target, _stonesUsed.Keys) ?? target;
@@ -650,11 +665,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return UltimusPlanner.ForGiver(leader, quest, giver);
         }
 
-        // Under-leveled for the next story quest: XP up to the level it needs, logged (no farming).
+        // Under-leveled for the next story quest: he fights creatures for the XP, as a player does (Niduus, 2026-11-14: no XP
+        // command; he quests as a human). UltimusDirector.Push.cs.
         if (_currentQuest is null && UltimusPlanner.LevelBlocked(leader.Wizard) is var (blocked, level)) {
-            CatchUpXp(blocked, level);
-
-            return null;
+            return XpTarget(leader, level, $"'{UltimusText.Title((string) blocked.m_questName)}' needs level {level}");
         }
 
         // The whole story played, to the last world the data has: they stop (paused, so Ahziael's Resume or Restart decides).
@@ -684,29 +698,6 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         return null;
     }
 
-    // Niduus, 2026-11-12: "If under-leveled ... Have them execute a command to gain XP to get to the level required.
-    // Logging this as well of how much xp and the goal level". Every member below the goal gets just the XP to reach it.
-    private void CatchUpXp(Imcodec.ObjectProperty.TypeCache.QuestTemplate quest, int level) {
-        var need = Imlight.CoreLib.Shared.Character.MagicLevelsConfig.GetExperiencePointsAtLevel(level);
-        var title = UltimusText.Title((string) quest.m_questName);
-        for (var i = 0; i < _team.Count && i < _actors.Count; i++) {
-            var wizard = _team[i].Wizard;
-            if (wizard?.MagicSchoolBehavior is not { } school || school.Level >= level) {
-                continue;
-            }
-
-            var xp = Math.Max(1, need - school.ExperiencePoints);
-            _xpGiven = true;
-            _actors[i].Tell(new UltimusMember.GainXp(xp));
-            Count("XP given to catch up", xp);
-            Note(_team[i].Role, $"is level {school.Level}, under the level {level} that '{title}' needs: gains {xp:N0} XP to reach level {level}.", UltimusLink.COMMAND);
-            UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "xp", Quest = quest.m_questName, Title = title,
-                Text = $"{_team[i].Role} was level {school.Level}; given {xp:N0} XP to reach level {level} for this quest" });
-        }
-
-        _doing = $"catching up to level {level} for '{title}'";
-    }
-
     private string _storyWorld;
 
     // A new world's story begun: the last one is done, bookmarked in the quest log with the date and time (Niduus,
@@ -730,6 +721,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         Snapshot(world);
+        WorldStarted(world, _team[0].Wizard?.MagicSchoolBehavior?.Level ?? 0);
         _storyWorld = world;
     }
 
@@ -1624,6 +1616,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // What most likely breaks it (Niduus, 2026-11-13: "detail character and quest detection to determine when/if a quest
         // can/cannot be completed ... to assume what is breaking it has its accuracy go up way higher"): checked against the
         // quest data, the wizard and the live server, and put first in the issue and its debug report.
+        // Kept for good at this step, even when it happened once: read first the next time (UltimusDirector.Push.cs).
+        if (kind == "quest") {
+            RememberStep(quest, _target?.Quest == quest ? _target.Goal : "", text);
+        }
+
         var diagnosis = Diagnose(quest);
         var facts = DebugFacts(quest, template);
         if (diagnosis is not null) {
@@ -1863,12 +1860,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         var me = _team[0];
         var level = me.Wizard?.MagicSchoolBehavior?.Level ?? 0;
 
-        // More than one level at once, with no XP catch-up from Ahziael.
-        if (_lastLevel > 0 && level > _lastLevel + 1 && !_xpGiven) {
+        // More than one level at once: one battle or quest gives a player one level at most.
+        if (_lastLevel > 0 && level > _lastLevel + 1) {
             Odd($"level|{level}", $"went from level {_lastLevel} to {level} at once; one battle or quest gives a player one level at most.");
         }
 
-        _xpGiven = false;
         _lastLevel = level;
 
         // Standing on the creature it walked into for a while and no battle started.
@@ -1892,8 +1888,6 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             Odd($"hp|{level}", $"has {stats.m_currentHitpoints} health, more than its most ({stats.m_baseHitpoints + stats.m_bonusHitpoints}).");
         }
     }
-
-    private bool _xpGiven;
 
     private void Odd(string key, string text) {
         if (_oddTold.Add(key)) {
