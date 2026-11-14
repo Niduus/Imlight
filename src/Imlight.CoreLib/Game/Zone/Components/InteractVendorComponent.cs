@@ -62,6 +62,7 @@ using Imlight.CoreLib.WizardData.Models.World;
 namespace Imlight.CoreLib.Game.Zone.Components;
 
 internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityComponent(entity), IServiceComponent, IComponentFactory {
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, byte> s_noShopTold = new();
 
     public string ServiceName     => "WizShoppingService";
     public string NpcIcon         => null;
@@ -287,8 +288,12 @@ internal sealed class InteractVendorComponent(ZoneEntity entity) : ZoneEntityCom
         }
         else {
             // A shop keeper with nothing known to sell shows no shop, rather than an empty one.
-            Logger.Warning("Vendor {0} ({1}) has no shop list in the game files or SpiralDB; no shop shown.",
-                Logger.Args(templateId, Entity.ActiveGameObject.m_debugName));
+            // Once per vendor until a restart: the Ravenwood school trees have no shop and said so on every visit
+            // (Niduus's log, 2026-11-14).
+            if (s_noShopTold.TryAdd(templateId, 0)) {
+                Logger.Warning("Vendor {0} ({1}) has no shop list in the game files or SpiralDB; no shop shown. (Told once per vendor.)",
+                    Logger.Args(templateId, Entity.ActiveGameObject.m_debugName));
+            }
             _inventory = [];
 
             return;
