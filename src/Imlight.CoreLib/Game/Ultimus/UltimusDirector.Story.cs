@@ -245,6 +245,47 @@ internal sealed partial class UltimusDirectorActor {
     /// Once after the server's files change (an update): he checks each of his parts and writes self-test.txt, so a part
     /// an update broke shows at once, not hours later in a stuck log.
     /// </summary>
+    /// <summary>
+    /// Every main story step that asks to click things (the four gems of "Get Some Bling"), written to use-steps.txt: how
+    /// many of the things the area's files place, and the steps where none are placed (they come from a trigger or creature
+    /// there, so he searches the area for them, which is slower and worth a look).
+    /// </summary>
+    internal static void AuditUseSteps() {
+        try {
+            var found = new List<string>();
+            var missing = new List<string>();
+            foreach (var quest in Imlight.CoreLib.WizardData.SpiralDB.QuestTemplates.Where(q => q is not null && !q.m_outdated && UltimusPlanner.IsMainStoryWorld(q))) {
+                foreach (var goal in (quest.m_goals ?? []).Where(g => g is not null && g.m_goalType == Imcodec.ObjectProperty.TypeCache.GOAL_TYPE.GOAL_TYPE_USAGE)) {
+                    string zone = goal.m_destinationZone;
+                    if (string.IsNullOrWhiteSpace(zone)) {
+                        zone = QuestArrowGoals.GetSpots(quest, goal).Select(s => s.Zone).FirstOrDefault() ?? "";
+                    }
+
+                    var title = $"\"{QuestGuide.QuestTitle(quest)}\" ({quest.m_questName}), {OverlayQuestTracker.StepTitle(goal)}";
+                    if (zone.Length == 0) {
+                        missing.Add($"{title}: the step names no area");
+                        continue;
+                    }
+
+                    var things = QuestStepSpots.UsageObjects(zone, quest.m_questName, goal.m_goalName).Count;
+                    var wanted = goal.m_tallyCounter?.m_count ?? 1;
+                    var line = $"{title} in {UltimusText.Zone(zone)}: {things} placed, {wanted} needed";
+                    (things >= Math.Max(1, wanted) ? found : missing).Add(line);
+                }
+            }
+
+            File.WriteAllLines(Path.Combine(UltimusWire.Folder, "use-steps.txt"), [
+                $"CLICK-THESE-THINGS STEPS OF THE MAIN STORY ({DateTime.Now:yyyy-MM-dd HH:mm})",
+                $"{found.Count} steps: Ultimus and the Quest Team walk to each placed thing and click it.",
+                $"{missing.Count} steps: fewer placed than needed; they appear from something in the area, so he searches for them.",
+                "", "SEARCHED FOR (worth a look if he gets stuck there)", .. missing.Order(), "", "PLACED", .. found.Order(),
+            ]);
+        }
+        catch (Exception e) {
+            Logger.Debug("Ultimus: the use-step check did not finish: {0}", Logger.Args(e.Message));
+        }
+    }
+
     private void MaybeSelfTest(UltimusMember.Status leader) {
         if (_selfTested) {
             return;
@@ -269,6 +310,9 @@ internal sealed partial class UltimusDirectorActor {
         catch (IOException) {
             return;
         }
+
+        // Every "click these things" step of the main story, checked once after an update (Niduus, 2026-11-14).
+        System.Threading.Tasks.Task.Run(AuditUseSteps);
 
         var results = new List<(string Part, bool Ok, string What)>();
         void Check(string part, Func<string> test) {
