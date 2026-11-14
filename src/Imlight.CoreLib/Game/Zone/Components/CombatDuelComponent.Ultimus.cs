@@ -82,6 +82,18 @@ internal sealed partial class CombatDuelComponent {
     /// Whether Ultimus may walk into the battle a creature (by object id) is in: a real player is in it (not the Quest
     /// Team), it is not PvP, and a players' circle is free. <paramref name="who"/> is a player in it, for the log.
     /// </summary>
+    /// <summary>Whether Ultimus is in a battle with a real player beside him (his lessons then say "with players", not "solo").</summary>
+    internal static bool UltimusWithPlayers(ulong ultimusGlobalId) {
+        try {
+            return s_playerBattles.TryGetValue(ultimusGlobalId, out var claim) && claim.Battle.HoldsPlayer(ultimusGlobalId)
+                   && claim.Battle.SubCircles is { } circles
+                   && circles.Any(c => c is { Occupied: true, IsHumanPlayer: true, IsSummonedMinion: false } && UltimusRole(c) is null && !IsBot(c));
+        }
+        catch (InvalidOperationException) {
+            return false;
+        }
+    }
+
     internal static bool UltimusMayJoin(ulong creatureGlobalId, out string who) {
         who = "";
         foreach (var battle in s_playerBattles.Values.Select(v => v.Battle).Distinct().ToList()) {

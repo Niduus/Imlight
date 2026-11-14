@@ -72,6 +72,9 @@ internal static class UltimusMood {
         }
     }
 
+    /// <summary>A fight lost in the last hour.</summary>
+    internal static bool LostRecently => Count(LOST) > 0;
+
     internal static Level Now {
         get {
             if (Count(LOST) > 0 || Count(STUCK) >= UltimusPlaybook.Value("Mood.CarefulAfterStuck") || Count(SURPRISE) >= 3) {

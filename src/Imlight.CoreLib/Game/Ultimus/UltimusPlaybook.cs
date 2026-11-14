@@ -71,6 +71,10 @@ internal static class UltimusPlaybook {
         ("Mood", new("CarefulHealShift", 0.1, "Careful, I heal this much sooner in battle (share of health) and rest to full before every fight.")),
         ("Mood", new("BoldHealShift", 0.05, "Bold, I heal this much later in battle and rest less.")),
         ("Confidence", new("Careful", 45, "A plan I trust less than this (out of 100) is done the careful way: full health first, the map's way, not a shortcut.")),
+        ("Push", new("On", 1, "1 = push mode: the main story first; no shop trips except in a new world's first minutes or after a lost fight. 0 = off. Nothing is ever skipped or finished for me.")),
+        ("Push", new("LevelGap", 3, "Before a fight step, if the quest's level is more than this over mine, I fight other creatures for XP first.")),
+        ("Push", new("ShopMinutes", 30, "In push mode, shop trips only in my first this-many minutes in a new world (its shops have the next gear).")),
+        ("Watchdog", new("Minutes", 45, "No step done and no XP gained for this long: I raise the alarm and use a player's unstuck moves (area start, then .stuck go).")),
         ("Confidence", new("Sure", 80, "A plan I trust this much or more is done at once.")),
     ];
 
@@ -126,6 +130,21 @@ internal static class UltimusPlaybook {
         "LEARNING",
         "- Remember each creature: how the fight went and what it took. Plan the next fight from that.",
         "- Write each mistake, with my reasoning, in the Mistakes book, and read it before a similar step.",
+    ];
+
+    // Know-how added in version 3 (Niduus, 2026-11-14): written in new playbooks, and added once at the end of older ones.
+    private static readonly string[] s_knowHow3 = [
+        "HUMAN RULES (Niduus)",
+        "- I quest as a human does. No command ever skips, jumps or finishes a step for me; my only commands get me unstuck.",
+        "- Under-leveled, I fight creatures for XP. No XP is given to me.",
+        "- A step that looks broken is flagged for Niduus; I keep trying it the way a player would.",
+        "- No pet training and no crafting. Gear from shops and the Bazaar is fine.",
+        "- Fast travel a player has: Mark Location before a trip to a trainer or shop, Recall Location after; Spiral Doors and teleporters.",
+        "",
+        "PUSH MODE",
+        "- Main story first. Before each step I check my level against the quest's (Push.LevelGap) and what went wrong here before",
+        "  (step-memory.json). A failure that happened even once at a step is remembered for good.",
+        ""
     ];
 
     private static readonly object s_lock = new();
@@ -216,6 +235,7 @@ internal static class UltimusPlaybook {
     // Rules and know-how added after his playbook was first written: added at its end, his own changes kept (the file is
     // never written over).
     private const string KNOW_HOW_MARK = "# Know-how version 2";
+    private const string KNOW_HOW_MARK_3 = "# Know-how version 3";
 
     private static void Upgrade(string path) {
         var text = File.ReadAllText(path);
@@ -245,6 +265,14 @@ internal static class UltimusPlaybook {
             add.AppendLine(KNOW_HOW_MARK + " (added by Ahziael; the rules above are kept as you set them)");
             add.AppendLine("[Know-how]");
             foreach (var line in s_knowHow) {
+                add.AppendLine(line.Length == 0 ? "" : line.StartsWith('-') || line.StartsWith(' ') ? line : "# " + line);
+            }
+        }
+
+        if (!text.Contains(KNOW_HOW_MARK_3, StringComparison.Ordinal)) {
+            add.AppendLine();
+            add.AppendLine(KNOW_HOW_MARK_3 + " (added by Ahziael)");
+            foreach (var line in s_knowHow3) {
                 add.AppendLine(line.Length == 0 ? "" : line.StartsWith('-') || line.StartsWith(' ') ? line : "# " + line);
             }
         }
@@ -329,6 +357,12 @@ internal static class UltimusPlaybook {
         text.AppendLine(KNOW_HOW_MARK);
         text.AppendLine("[Know-how]");
         foreach (var line in s_knowHow) {
+            text.AppendLine(line.Length == 0 ? "" : line.StartsWith('-') || line.StartsWith(' ') ? line : "# " + line);
+        }
+
+        text.AppendLine();
+        text.AppendLine(KNOW_HOW_MARK_3);
+        foreach (var line in s_knowHow3) {
             text.AppendLine(line.Length == 0 ? "" : line.StartsWith('-') || line.StartsWith(' ') ? line : "# " + line);
         }
 

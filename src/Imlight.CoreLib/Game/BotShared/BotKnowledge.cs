@@ -123,6 +123,8 @@ internal static class BotKnowledge {
 
     internal sealed class Lesson {
         public string Bot { get; set; } = "";
+        /// <summary>Who it was learned with: "solo", or "team of N" (Niduus, 2026-11-14: solo data first, team data later; the two must never mix).</summary>
+        public string Party { get; set; } = "";
         public string Topic { get; set; } = "";
         public string Text { get; set; } = "";
         public int Times { get; set; }
@@ -261,11 +263,12 @@ internal static class BotKnowledge {
             return;
         }
 
+        var party = PartyOf(bot);
         lock (s_lock) {
             var book = Load();
-            var lesson = book.Lessons.FirstOrDefault(l => l.Topic == (topic ?? "") && l.Text == text);
+            var lesson = book.Lessons.FirstOrDefault(l => l.Topic == (topic ?? "") && l.Text == text && (l.Party ?? "") == party);
             if (lesson is null) {
-                book.Lessons.Add(lesson = new Lesson { Bot = bot ?? "", Topic = topic ?? "", Text = text, First = DateTime.UtcNow });
+                book.Lessons.Add(lesson = new Lesson { Bot = bot ?? "", Party = party, Topic = topic ?? "", Text = text, First = DateTime.UtcNow });
                 if (book.Lessons.Count > MOST_LESSONS) {
                     book.Lessons.Remove(book.Lessons.OrderBy(l => l.Last).First());
                 }
@@ -277,6 +280,16 @@ internal static class BotKnowledge {
             Save();
         }
     }
+
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_parties = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Who a bot plays with right now: "solo" or "team of N". Every lesson and mistake it writes carries it, so solo data and
+    /// team data are never mixed (Niduus, 2026-11-14: Ultimus collects solo data, the Quest Team set-team data).
+    /// </summary>
+    internal static void SetParty(string bot, string party) => s_parties[bot ?? ""] = party ?? "";
+
+    internal static string PartyOf(string bot) => s_parties.TryGetValue(bot ?? "", out var party) && party.Length > 0 ? party : "solo";
 
     /// <summary>The newest lessons on a topic (any topic when null).</summary>
     internal static List<Lesson> Lessons(string topic = null, int most = 10) {
@@ -357,7 +370,7 @@ internal static class BotKnowledge {
         text.AppendLine();
         text.AppendLine("LESSONS, newest first");
         foreach (var lesson in s_book.Lessons.OrderByDescending(l => l.Last)) {
-            text.AppendLine($"  [{lesson.Last.ToLocalTime():yyyy-MM-dd HH:mm}] {lesson.Topic} x{lesson.Times} ({lesson.Bot}): {lesson.Text}");
+            text.AppendLine($"  [{lesson.Last.ToLocalTime():yyyy-MM-dd HH:mm}] {lesson.Topic} x{lesson.Times} ({lesson.Bot}, {(string.IsNullOrEmpty(lesson.Party) ? "solo" : lesson.Party)}): {lesson.Text}");
         }
 
         text.AppendLine();

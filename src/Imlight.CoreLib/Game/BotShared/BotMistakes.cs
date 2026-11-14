@@ -52,6 +52,8 @@ internal static class BotMistakes {
     internal sealed class Mistake {
         public string Kind { get; set; } = "";
         public string Bot { get; set; } = "";
+        /// <summary>"solo" or "team of N" when it happened (BotKnowledge.PartyOf).</summary>
+        public string Party { get; set; } = "";
         public string Zone { get; set; } = "";
         public float X { get; set; }
         public float Y { get; set; }
@@ -87,6 +89,7 @@ internal static class BotMistakes {
             }
 
             mistake.Bot = bot ?? "";
+            mistake.Party = BotKnowledge.PartyOf(bot);
             mistake.Step = step ?? "";
             mistake.What = what ?? "";
             mistake.Reasoning = reasoning ?? "";
@@ -192,7 +195,7 @@ internal static class BotMistakes {
         text.AppendLine("The bots' mistakes, newest first. Written by Ultimus; the Quest Team reads them. (logs/bots/mistakes.json holds the same.)");
         text.AppendLine();
         foreach (var m in All().OrderByDescending(m => m.Last)) {
-            text.AppendLine($"[{m.Last.ToLocalTime():yyyy-MM-dd HH:mm}] {m.Kind.ToUpperInvariant()} x{m.Times} ({m.Bot})" +
+            text.AppendLine($"[{m.Last.ToLocalTime():yyyy-MM-dd HH:mm}] {m.Kind.ToUpperInvariant()} x{m.Times} ({m.Bot}, {(string.IsNullOrEmpty(m.Party) ? "solo" : m.Party)})" +
                             (m.Foe.Length > 0 ? $" against {m.Foe}" : $" in {m.Zone} at ({m.X:0}, {m.Y:0})"));
             if (m.Step.Length > 0) {
                 text.AppendLine($"  Step: {m.Step}");

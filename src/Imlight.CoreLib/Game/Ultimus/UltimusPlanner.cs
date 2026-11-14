@@ -542,6 +542,29 @@ internal static class UltimusPlanner {
         return new Target(NONE, leader.X, leader.Y, what, questName, Problem: "the NPC who gives it is not in the area", Key: "offer|" + questName);
     }
 
+    /// <summary>
+    /// A creature to fight for XP, as a player who is under-leveled does (Niduus, 2026-11-14: he quests as a human; no XP
+    /// command): the nearest free creature in this area that is not a boss and not the Quest Team's. Null when there is none.
+    /// </summary>
+    internal static Target ForXp(UltimusMember.Status leader, int level, string why) {
+        if (leader.Wizard?.ZoneIsInstance == true) {
+            return null;
+        }
+
+        var foe = MinimapIndex.In(leader.ZoneActor)
+            .Where(m => m.Kind == MinimapIndex.MOB && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full)
+                        && !NearQuestTeam(leader, m.Object.m_location.X, m.Object.m_location.Y))
+            .OrderBy(m => Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y))
+            .FirstOrDefault();
+
+        return foe is null ? null : new Target(FIGHT, foe.Object.m_location.X, foe.Object.m_location.Y, $"a fight for XP toward level {level} ({why})",
+            Template: foe.Template, GlobalId: foe.Object.m_globalID.Full, Key: "xp|" + level);
+    }
+
+    /// <summary>Whether this area has creatures to fight (for remembering where XP can be had).</summary>
+    internal static bool HasCreatures(UltimusMember.Status leader)
+        => leader.Wizard?.ZoneIsInstance != true && MinimapIndex.In(leader.ZoneActor).Any(m => m.Kind == MinimapIndex.MOB);
+
     // A Quest Team wizard stands within 900 of the spot, in the same area.
     private static bool NearQuestTeam(UltimusMember.Status leader, float x, float y) {
         if (leader.ZoneActor is not { } zone) {

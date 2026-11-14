@@ -295,8 +295,10 @@ public static class UltimusLink {
 
     /// <summary>A mistake Ultimus made and the lesson it takes from it, kept in learned.jsonl.</summary>
     internal static void Learned(string kind, string quest, string step, string world, string mistake, string lesson) {
-        Note("Ultimus", $"LEARNED: {mistake} Next time: {lesson}", MINOR);
-        Send(new UltimusRequest { Op = "learned", Kind = kind, Quest = quest, Step = step, World = world, Text = mistake, Expected = lesson });
+        // Tagged with who he played with, so solo data and team data never mix (Niduus, 2026-11-14).
+        var party = BotShared.BotKnowledge.PartyOf("Ultimus");
+        Note("Ultimus", $"LEARNED ({party}): {mistake} Next time: {lesson}", MINOR);
+        Send(new UltimusRequest { Op = "learned", Kind = kind, Quest = quest, Step = step, World = world, Text = $"[{party}] {mistake}", Expected = lesson });
     }
 
     /// <summary>Tells the brain without waiting for its answer.</summary>
