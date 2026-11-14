@@ -67,7 +67,7 @@ internal sealed class ProcessSupervisor : ReceiveProtocolDispatcher {
         var chestGame = message.ChestGame;
 
         // Create Akka props for the new process.
-        var props = Akka.Actor.Props.Create(() => new MinigameProcess(minigameName, processId, minigameIndex, chestGame));
+        var props = Akka.Actor.Props.Create(() => new MinigameProcess(minigameName, processId, minigameIndex, chestGame, message.Owner));
         var processName = $"{minigameName}_{processId}";
         var processActorRef = Context.ActorOf(props, processName);
 

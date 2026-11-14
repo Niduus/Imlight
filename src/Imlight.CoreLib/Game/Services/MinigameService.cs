@@ -57,9 +57,23 @@ internal class MinigameService(SessionActor sessionActor) : MessageService(sessi
     private const int FrameLengthOverhead = 5;
     private const int MaxProcessPayloadLength = ushort.MaxValue - FrameLengthOverhead;
 
+    private const string START_CHECK = "minigame-start-check";
+    private static readonly TimeSpan s_firstStartCheck = TimeSpan.FromSeconds(15);
+    private static readonly TimeSpan s_lastStartCheck = TimeSpan.FromSeconds(20);
+
     private IActorRef _minigameJob;
     private uint _minigameProcessId;
     private ChestGameContext _activeChest;
+    private GAME_5_PROTOCOL.MSG_START_CLIENT_PROCESS _minigameStart;
+    private bool _processAnswered;
+
+    /// <summary>
+    /// A look, a while after the game was told to start the mini game's script, whether the script ever spoke.
+    /// </summary>
+    private sealed class StartCheck {
+        public uint ProcessId;
+        public int Try;
+    }
 
     // Akka.net props
     protected static Props Props(SessionActor parentActor) 
@@ -111,7 +125,54 @@ internal class MinigameService(SessionActor sessionActor) : MessageService(sessi
             JobID = reply.ProcessId,
             ScriptName = minigameScript
         };
+
+        // The session holds the start until the game says it has loaded the zone (SessionActor.HeldUntilZoned): sent
+        // during the loading screen, it was lost and the player stood frozen in the mini game's empty room.
         SendToSocket(minigameStartProcess);
+        _minigameStart = minigameStartProcess;
+        _processAnswered = false;
+        Timers.StartSingleTimer(START_CHECK, new StartCheck { ProcessId = reply.ProcessId, Try = 1 }, s_firstStartCheck);
+
+        Logger.Information("{Wizard} is in the mini game room {Zone}: process {ProcessId} runs {Script}{Chest}; the game starts it once the room has loaded.",
+            Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), wizardZone, reply.ProcessId, minigameScript,
+                _activeChest is null ? "" : " (a chest game)"));
+    }
+
+    [MessageHandler(typeof(StartCheck))]
+    private void ReceiveStartCheck(StartCheck check) {
+        if (_minigameJob is null || check.ProcessId != _minigameProcessId || _processAnswered || _minigameStart is null) {
+            return;
+        }
+
+        var wizardName = GetActiveWizard()?.PlayerNameBehavior.GetWizardName();
+        if (check.Try == 1) {
+            // Every mini game script speaks right away (its start window asks for the high scores), so silence means
+            // the game never got the start. Ask once more.
+            Logger.Warning("{Wizard}: the game has not started {Script} (process {ProcessId}) after {Seconds} s; asking again.",
+                Logger.Args(wizardName, _minigameStart.ScriptName, check.ProcessId, s_firstStartCheck.TotalSeconds));
+            SendToSocket(_minigameStart);
+            Timers.StartSingleTimer(START_CHECK, new StartCheck { ProcessId = check.ProcessId, Try = 2 }, s_lastStartCheck);
+
+            return;
+        }
+
+        // Still nothing: the player would stand frozen in an empty room. Send them back so they can try again.
+        Logger.Warning("{Wizard}: the game never started {Script} (process {ProcessId}); sending the player back.",
+            Logger.Args(wizardName, _minigameStart.ScriptName, check.ProcessId));
+        InformGameClient("The mini game did not start. You were sent back, so you can try again.", true);
+        _minigameJob.Tell(PoisonPill.Instance);
+        LeaveMinigame();
+    }
+
+    private void NoteProcessAnswered() {
+        if (_processAnswered) {
+            return;
+        }
+
+        _processAnswered = true;
+        Timers.Cancel(START_CHECK);
+        Logger.Information("{Wizard}: the game started {Script} (process {ProcessId}).",
+            Logger.Args(GetActiveWizard()?.PlayerNameBehavior.GetWizardName(), _minigameStart?.ScriptName, _minigameProcessId));
     }
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_MINIGAMESELECT))]
@@ -212,6 +273,8 @@ internal class MinigameService(SessionActor sessionActor) : MessageService(sessi
             return;
         }
 
+        NoteProcessAnswered();
+
         byte[] messageRawBytes = message.Message;
         if (messageRawBytes is null || messageRawBytes.Length == 0 || messageRawBytes.Length > MaxProcessPayloadLength) {
             Logger.Warning("Dropped a minigame message of {Length} bytes for process {ProcessId}",
@@ -273,40 +336,56 @@ internal class MinigameService(SessionActor sessionActor) : MessageService(sessi
     private void ReceiveClientKilledProcess(GAME_5_PROTOCOL.MSG_CLIENT_PROCESS_TERMINATED message) {
         // The client has terminated the minigame process.
         if (_minigameJob is not null && message.JobID == _minigameProcessId) {
+            NoteProcessAnswered();
             _minigameJob.Tell(message, SessionActor.ActorRef);
         }
     }
 
     [MessageHandler(typeof(PROCESS_107_PROTOCOL.MSG_PROCESS_KILLED))]
     private void ReceiveProcessKilled(PROCESS_107_PROTOCOL.MSG_PROCESS_KILLED message) {
-        if (message.ProcessId == _minigameProcessId) {
+        if (_minigameJob is not null && message.ProcessId == _minigameProcessId) {
             // Our minigame job has been killed.
-            // Inform the client the process has been terminated.
-            var terminateMsg = new GAME_5_PROTOCOL.MSG_KILL_CLIENT_PROCESS { JobID = _minigameProcessId };
-            SendToSocket(terminateMsg);
-
-            var leaveMinigameMsg = new WIZARD_12_PROTOCOL.MSG_LEAVEMINIGAME();
-            SendToSocket(leaveMinigameMsg);
-
-            if (_activeChest is not null) {
-                var chest = _activeChest;
-                _activeChest = null;
-                Teleport(
-                    destinationZone: chest.ReturnZone,
-                    destinationLocation: chest.ReturnLocation,
-                    makePrivate: chest.ReturnPrivate
-                );
-
-                return;
-            }
-
-            var wizard = GetActiveWizard();
-            Teleport(
-                destinationZone: wizard.PreviousZone,
-                destinationLocation: "Start",
-                makePrivate: true
-            );
+            LeaveMinigame();
         }
+    }
+
+    /// <summary>
+    /// Ends the mini game on the game's side and sends the player back where they came from.
+    /// </summary>
+    private void LeaveMinigame() {
+        var processId = _minigameProcessId;
+
+        // Forgotten, so a later chest game in this session is not refused as "a minigame is already running".
+        _minigameJob = null;
+        _minigameProcessId = 0;
+        _minigameStart = null;
+        Timers.Cancel(START_CHECK);
+
+        // Inform the client the process has been terminated.
+        var terminateMsg = new GAME_5_PROTOCOL.MSG_KILL_CLIENT_PROCESS { JobID = processId };
+        SendToSocket(terminateMsg);
+
+        var leaveMinigameMsg = new WIZARD_12_PROTOCOL.MSG_LEAVEMINIGAME();
+        SendToSocket(leaveMinigameMsg);
+
+        if (_activeChest is not null) {
+            var chest = _activeChest;
+            _activeChest = null;
+            Teleport(
+                destinationZone: chest.ReturnZone,
+                destinationLocation: chest.ReturnLocation,
+                makePrivate: chest.ReturnPrivate
+            );
+
+            return;
+        }
+
+        var wizard = GetActiveWizard();
+        Teleport(
+            destinationZone: wizard.PreviousZone,
+            destinationLocation: "Start",
+            makePrivate: true
+        );
     }
 
 }
