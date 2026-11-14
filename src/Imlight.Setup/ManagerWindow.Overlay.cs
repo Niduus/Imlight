@@ -790,7 +790,7 @@ internal sealed partial class ManagerWindow {
                                 },
                             },
                             Sub(addon.Description.Length > 0 ? addon.Description : $"{addon.Widgets.Count} widget(s), {addon.Styles.Count} style(s)."),
-                            Sub("Has: " + what),
+                            Sub("Has: " + what + (addon.Requires.Count > 0 ? "\nNeeds: " + string.Join(", ", addon.Requires) + " (downloaded with it)" : "")),
                         },
                     },
                 });
@@ -799,9 +799,25 @@ internal sealed partial class ManagerWindow {
 
         private async Task DownloadShelfAsync(OverlayAddonShelf.Item item) {
             InstallFromShelf(item.Addon);
+            // The add-ons it needs come with it (Ultimus Spectator needs the Minimap).
+            var items = await OverlayAddonShelf.ListAsync();
+            var installed = OverlayAddon.All(OverlayHost.InstallFolder);
+            var also = new List<string>();
+            foreach (var needed in item.Addon.Requires) {
+                if (installed.Any(a => a.Name.Equals(needed, StringComparison.OrdinalIgnoreCase))) {
+                    continue;
+                }
+
+                if (items.FirstOrDefault(i => i.Addon.Name.Equals(needed, StringComparison.OrdinalIgnoreCase)) is { } found) {
+                    InstallFromShelf(found.Addon);
+                    also.Add(found.Addon.Name);
+                }
+            }
+
             FillAddons();
-            ShowShelf(await OverlayAddonShelf.ListAsync());
-            Say($"Downloaded \"{item.Addon.Name}\". Its pieces are under Your add-ons: click one to put it on your overlay.");
+            ShowShelf(items);
+            Say($"Downloaded \"{item.Addon.Name}\"" + (also.Count > 0 ? $" and the {string.Join(", ", also)} add-on it needs" : "") +
+                ". Its pieces are under Your add-ons: click one to put it on your overlay.");
         }
 
         private async Task DownloadAllShelfAsync() {
@@ -906,6 +922,26 @@ internal sealed partial class ManagerWindow {
                 throw new PanelException($"The overlay holds up to {OverlayDesign.MAX_ELEMENTS} texts, boxes and pictures; that widget doesn't fit.");
             }
 
+            // An add-on that needs another (Ultimus Spectator needs the Minimap): that one goes on too, when none of it is on yet.
+            var alsoOn = new List<string>();
+            foreach (var needed in addon.Requires) {
+                if (_ovAddonList.FirstOrDefault(a => a.Name.Equals(needed, StringComparison.OrdinalIgnoreCase)) is not { } other) {
+                    throw new PanelException($"\"{addon.Name}\" needs the {needed} add-on too. Download it first under Niduus's add-ons, then tick this again.");
+                }
+
+                var onAlready = other.Widgets.Any(w => OverlayAddon.OnOverlay(other, w, _ovDesign.Elements).Count > 0)
+                                || (needed.Equals("Minimap", StringComparison.OrdinalIgnoreCase) && _ovDesign.Elements.Any(e => e.IsMinimap));
+                if (!onAlready && other.Widgets.FirstOrDefault() is { } first && _ovDesign.Elements.Count + first.Elements.Count + widget.Elements.Count <= OverlayDesign.MAX_ELEMENTS) {
+                    var needs = OverlayAddon.CopyFamily(first.Elements);
+                    foreach (var copy in needs) {
+                        copy.From = OverlayAddon.FromKey(other, first);
+                    }
+
+                    _ovDesign.Elements.AddRange(needs);
+                    alsoOn.Add(first.Name.Length > 0 ? first.Name : other.Name);
+                }
+            }
+
             var copies = OverlayAddon.CopyFamily(widget.Elements);
             foreach (var copy in copies) {
                 copy.From = OverlayAddon.FromKey(addon, widget);
@@ -915,7 +951,8 @@ internal sealed partial class ManagerWindow {
             _ovSelected = copies.FirstOrDefault(c => c.Parent.Length == 0) ?? copies.LastOrDefault() ?? _ovSelected;
             OverlayChanged();
             RenderOverlayEditor();
-            Say($"Put \"{(widget.Name.Length > 0 ? widget.Name : "the widget")}\" on the overlay.");
+            Say($"Put \"{(widget.Name.Length > 0 ? widget.Name : "the widget")}\" on the overlay" +
+                (alsoOn.Count > 0 ? $", with \"{string.Join("\", \"", alsoOn)}\" that it needs." : "."));
         }
 
         private async Task TakeOffWidgetAsync(OverlayAddon addon, OverlayWidget widget) {
@@ -1103,7 +1140,7 @@ internal sealed partial class ManagerWindow {
                     var name = ListName(e);
                     var depth = Depth(e);
 
-                    return (depth > 0 ? new string(' ', depth * 3) + "↳ " : "") + (e.IsMinimap ? "◎ " : e.IsQuestTracker ? "☰ " : e.IsPicture ? "▣ " : e.IsBox ? "▭ " : e.IsButton ? "◉ " : "T  ") + name + (e.Locked ? " (locked)" : "") + (e.Visible ? "" : " (hidden)");
+                    return (depth > 0 ? new string(' ', depth * 3) + "↳ " : "") + (e.IsMinimap || e.IsUltimusMap ? "◎ " : e.IsQuestTracker ? "☰ " : e.IsPicture ? "▣ " : e.IsBox ? "▭ " : e.IsButton ? "◉ " : "T  ") + name + (e.Locked ? " (locked)" : "") + (e.Visible ? "" : " (hidden)");
                 }));
                 _ovList.ItemsSource = names;
                 _ovList.SelectedIndex = _ovSelected == _ovDesign.Credit || _ovSelected is null ? 0 : _ovDesign.Elements.IndexOf(_ovSelected) + 1;
@@ -1496,7 +1533,7 @@ internal sealed partial class ManagerWindow {
 
         private string ListName(OverlayElement e) {
             var i = _ovDesign.Elements.IndexOf(e);
-            var name = e.Name.Length > 0 ? e.Name : e.IsMinimap ? $"Minimap {i + 1}" : e.IsQuestTracker ? $"Quest Tracker {i + 1}" : e.IsPicture ? $"Picture {i + 1}" : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : e.IsButton ? $"Button {i + 1}" : $"Text {i + 1}";
+            var name = e.Name.Length > 0 ? e.Name : e.IsMinimap ? $"Minimap {i + 1}" : e.IsUltimus ? $"Ultimus {i + 1}" : e.IsQuestTracker ? $"Quest Tracker {i + 1}" : e.IsPicture ? $"Picture {i + 1}" : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : e.IsButton ? $"Button {i + 1}" : $"Text {i + 1}";
 
             return name.Length > 34 ? name[..34] + "…" : name;
         }
@@ -2231,8 +2268,27 @@ internal sealed partial class ManagerWindow {
                     },
                 }));
 
-                if (e.IsMinimap) {
+                if (e.IsMinimap || e.IsUltimusMap) {
                     MinimapEditor(e, Changed);
+                }
+
+                if (e.IsUltimus) {
+                    // The Ultimus Spectator's pieces: their words' size and colour (Ultimus's map uses the Minimap's choices above).
+                    var help = Sub(e.IsUltimusMap
+                        ? "Ultimus's own minimap: it follows Ultimus wherever he is and always draws HIS quest's way, never yours. It never " +
+                          "replaces your Minimap, and needs your Minimap on the overlay too."
+                        : e.Kind == OverlayElement.ULTIMUS_SPELLS
+                            ? "Ultimus's spells in battle: his hand (the card he picks lit up), pips, what he casts and why. Over the game it shows only while Ultimus is in a battle."
+                            : "Ultimus's quest now, with its step and way, his health and where he is. Never your own quests.");
+                    var looks = new WrapPanel();
+                    if (!e.IsUltimusMap) {
+                        looks.Children.Add(OvField("Words size", OvNumber(e.Size, 8, 40, 1, v => { e.Size = v; Changed(); })));
+                    }
+
+                    _ovEditor.Children.Add(OvGroup("Ultimus Spectator", new StackPanel { Spacing = 6, Children = { help, looks } }));
+                    if (!e.IsUltimusMap) {
+                        _ovEditor.Children.Add(OvGroup("Letter colour", OvPaint(e.Fill, Changed, allowNone: false)));
+                    }
                 }
 
                 if (e.IsQuestTracker) {

@@ -390,6 +390,23 @@ internal sealed class OverlayElement {
     /// </summary>
     internal const string BOT_ALERTS = "BotAlerts";
 
+    /// <summary>
+    /// The Ultimus Spectator add-on (Niduus, 2026-11-13: "Spectate Ultimus ... It allows it's own Ultimus Minimap and will
+    /// always show the Quest Tracking of Ultimus' Quests and NOT the players"): a second minimap, centred on Ultimus where he
+    /// is, with his quest's way on it. It never replaces the player's Minimap, and needs one on the overlay too. Its look is
+    /// in <see cref="Map"/>, like a minimap's.
+    /// </summary>
+    internal const string ULTIMUS_MAP = "UltimusMap";
+
+    /// <summary>The Ultimus Spectator's quest box: Ultimus's health, area, quest now with its step and way (never the player's).</summary>
+    internal const string ULTIMUS_QUEST = "UltimusQuest";
+
+    /// <summary>
+    /// The Ultimus Spectator's battle box (Niduus: "when in battle, able to see his spells in a new UI module"): his hand, pips,
+    /// what he casts and why, and the enemies. Over a game it shows only while Ultimus is in a battle.
+    /// </summary>
+    internal const string ULTIMUS_SPELLS = "UltimusSpells";
+
     internal const int MAX_TEXT = 300;
     internal const int MAX_COMMAND = 200;
 
@@ -505,7 +522,7 @@ internal sealed class OverlayElement {
     public string From { get; set; } = "";
 
     /// <summary>A box, a picture or a minimap: no words (a button has words).</summary>
-    internal bool IsBox => Kind is BOX or PICTURE or MINIMAP or QUEST_TRACKER;
+    internal bool IsBox => Kind is BOX or PICTURE or MINIMAP or QUEST_TRACKER or ULTIMUS_MAP or ULTIMUS_QUEST or ULTIMUS_SPELLS;
 
     internal bool IsMinimap => Kind == MINIMAP;
 
@@ -513,13 +530,18 @@ internal sealed class OverlayElement {
 
     internal bool IsBotAlerts => Kind == BOT_ALERTS;
 
+    internal bool IsUltimusMap => Kind == ULTIMUS_MAP;
+
+    /// <summary>Any of the Ultimus Spectator's pieces (they need the Minimap on the overlay too).</summary>
+    internal bool IsUltimus => Kind is ULTIMUS_MAP or ULTIMUS_QUEST or ULTIMUS_SPELLS;
+
     internal bool IsPicture => Kind == PICTURE;
 
     internal bool IsButton => Kind == BUTTON;
 
     internal OverlayElement Clean() {
-        Kind = Kind is BOX or PICTURE or BUTTON or MINIMAP or QUEST_TRACKER or BOT_ALERTS ? Kind : TEXT;
-        Map = Kind == MINIMAP ? (Map ?? new OverlayMap()).Clean() : null;
+        Kind = Kind is BOX or PICTURE or BUTTON or MINIMAP or QUEST_TRACKER or BOT_ALERTS or ULTIMUS_MAP or ULTIMUS_QUEST or ULTIMUS_SPELLS ? Kind : TEXT;
+        Map = Kind is MINIMAP or ULTIMUS_MAP ? (Map ?? new OverlayMap()).Clean() : null;
         Quests = Kind == QUEST_TRACKER ? (Quests ?? new OverlayQuestList()).Clean() : null;
         Picture = Kind == PICTURE ? CleanPicture(Picture) : "";
         PictureFit = PICTURE_FITS.Contains(PictureFit) ? PictureFit : "Fit";

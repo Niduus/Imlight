@@ -328,6 +328,40 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
         }
     }
 
+    [InternalMessageHandler(typeof(OverlaySpectateAsk))]
+    private void ReceiveOverlaySpectateAsk(OverlaySpectateAsk message) {
+        var wizard = GetActiveWizard();
+        if (wizard is null || GetActiveGameObject() is null) {
+            return;
+        }
+
+        var zone = SessionActor.GetZoneActor();
+        if (wizard.CharId != message.CharId) {
+            // Players near Ultimus show on his map.
+            if (zone is not null) {
+                var spot = wizard.Location;
+                message.Others.Enqueue((wizard.CharId, zone, wizard.PlayerNameBehavior?.GetWizardName() ?? "", spot.X, spot.Y));
+            }
+
+            return;
+        }
+
+        // Ultimus's own game (on the server): his map, his quest's way on it, and his quests. Read only.
+        try {
+            var map = Tools.OverlayMinimap.Build(wizard, zone, message.Reach);
+            if (message.Quest.Length > 0 && Tools.OverlayQuestRoute.Build(wizard, zone, message.Quest) is { } route) {
+                map["route"] = route;
+            }
+
+            var quests = Tools.OverlayQuestTracker.Build(wizard, zone, message.Quest);
+            message.Reply.TrySetResult((map, quests, zone, ""));
+        }
+        catch (Exception ex) {
+            Logger.Error("Ultimus spectator: the map of Ultimus could not be made: {0}", Logger.Args(ex));
+            message.Reply.TrySetResult((null, null, null, "The server could not make Ultimus's map just now."));
+        }
+    }
+
     [InternalMessageHandler(typeof(OverlayWizardsAt))]
     private void ReceiveOverlayWizardsAt(OverlayWizardsAt message) {
         var wizard = GetActiveWizard();

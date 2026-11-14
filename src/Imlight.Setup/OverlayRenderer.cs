@@ -381,6 +381,9 @@ internal static class OverlayRenderer {
     /// <summary>Whether a minimap shows in this design (the overlay then asks the server for the map).</summary>
     internal static bool HasMinimap(IEnumerable<OverlayElement> elements) => elements.Any(e => e.IsMinimap && e.Visible);
 
+    /// <summary>Whether an Ultimus Spectator piece shows in this design (the overlay then asks the server for Ultimus, if it has a Minimap too).</summary>
+    internal static bool HasUltimus(IEnumerable<OverlayElement> elements) => elements.Any(e => e.IsUltimus && e.Visible);
+
     /// <summary>Whether a Quest Tracker shows in this design (the overlay then asks the server for the quests).</summary>
     internal static bool HasQuestTracker(IEnumerable<OverlayElement> elements) => elements.Any(e => e.IsQuestTracker && e.Visible);
 
@@ -427,6 +430,52 @@ internal static class OverlayRenderer {
             border.Child = map;
             border.Width = map.Width;
             border.Height = map.Height;
+        }
+
+        if (e.IsUltimusMap) {
+            // Ultimus's own minimap: the Minimap's drawing, centred on Ultimus, with his quest's way (never the player's).
+            // It needs the player's Minimap on the overlay too (Niduus: "Ultimus Spectator requires Minimap").
+            var key = window == 0 ? 0 : OverlayUltimusData.KEY;
+            border.Background = null;
+            border.BorderThickness = default;
+            border.Padding = default;
+            border.CornerRadius = default;
+            if (s_buildHasMap) {
+                var map = new MinimapView(e, OverlayMinimapData.For(key), key);
+                border.Child = map;
+                border.Width = map.Width;
+                border.Height = map.Height;
+            }
+            else {
+                border.Background = Brush(e.Background) ?? new SolidColorBrush(Color.FromArgb(0xB4, 0x10, 0x14, 0x24));
+                border.Padding = new Thickness(10);
+                border.CornerRadius = new CornerRadius(10);
+                border.Width = e.Width > 0 ? e.Width : 200;
+                border.Child = new TextBlock { Text = UltimusViews.NEEDS_MINIMAP, TextWrapping = TextWrapping.Wrap, FontSize = 12, Foreground = Brushes.White };
+            }
+        }
+
+        if (e.Kind == OverlayElement.ULTIMUS_QUEST) {
+            border.Child = UltimusViews.Quest(e, window, s_buildHasMap);
+            border.ClipToBounds = true;
+            if (e.Width <= 0) {
+                border.Width = 240;
+            }
+        }
+
+        if (e.Kind == OverlayElement.ULTIMUS_SPELLS) {
+            // Over a game it shows only while Ultimus is in a battle; the designers always show a made-up battle.
+            if (UltimusViews.Spells(e, window, s_buildHasMap) is not { } spells) {
+                border.IsVisible = false;
+
+                return border;
+            }
+
+            border.Child = spells;
+            border.ClipToBounds = true;
+            if (e.Width <= 0) {
+                border.Width = 300;
+            }
         }
 
         if (e.IsBotAlerts) {

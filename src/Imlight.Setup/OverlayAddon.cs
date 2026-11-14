@@ -49,6 +49,12 @@ internal sealed class OverlayAddon {
     public List<OverlayWidget> Widgets { get; set; } = [];
     public List<OverlayStyle> Styles { get; set; } = [];
 
+    /// <summary>
+    /// Other add-ons (by name) this one needs on the overlay too (Niduus, 2026-11-13: "Ultimus Spectator requires
+    /// Minimap"): downloaded with it, and put on with it when none of their pieces are on yet.
+    /// </summary>
+    public List<string> Requires { get; set; } = [];
+
     /// <summary>The file it was read from (not saved in it).</summary>
     [JsonIgnore]
     internal string Path { get; set; } = "";
@@ -66,6 +72,8 @@ internal sealed class OverlayAddon {
         Author = Short(Author, 60);
         Description = Short(Description, 400);
         Version = Short(Version, 20);
+        Requires = (Requires ?? []).Select(r => Short(r, 60)).Where(r => r.Length > 0 && !r.Equals(Name, StringComparison.OrdinalIgnoreCase))
+            .Distinct(StringComparer.OrdinalIgnoreCase).Take(5).ToList();
         Widgets = (Widgets ?? []).Where(w => w is not null).Take(MAX_WIDGETS).Select(w => {
             w.Name = Short(w.Name, 60);
             w.Elements = (w.Elements ?? []).Where(e => e is not null).Take(OverlayDesign.MAX_ELEMENTS).Select(e => e.Clean()).ToList();

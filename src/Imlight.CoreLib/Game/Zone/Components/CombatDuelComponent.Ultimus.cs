@@ -226,6 +226,9 @@ internal sealed partial class CombatDuelComponent {
 
             _ultimusPicks[member.SlotIndex] = pick;
             UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: {choice.Why}");
+            // What the overlay's Ultimus Spectator shows of this round (read only).
+            UltimusSpectate.NoteRound(Duel.m_duelID.Full, Duel.m_roundNum, member, circles, choice,
+                [.. moves.Where(m => m.Type == CombatMoveType.Discard).Select(m => m.Why)]);
             moves.Add(choice.Move == UltimusTactics.Move.Cast ? BotBattle.Move.Cast(choice.Card, choice.Target, choice.Why) : BotBattle.Move.Pass(choice.Why));
 
             // The clicks go through its own game, as a person's do, after a person's moment to read the hand.

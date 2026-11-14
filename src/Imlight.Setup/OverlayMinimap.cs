@@ -310,14 +310,16 @@ internal static class OverlayMinimapData {
     /// <summary>Once a second: a map that stopped coming is drawn again once, with a note.</summary>
     internal static void Tick() {
         lock (s_lock) {
-            foreach (var window in Wanted) {
+            // Ultimus's own map (the Ultimus Spectator add-on) is kept while it shows, beside the game windows' maps.
+            var wanted = OverlayUltimusData.Wanted ? [.. Wanted, OverlayUltimusData.KEY] : Wanted;
+            foreach (var window in wanted) {
                 var stale = !s_maps.TryGetValue(window, out var map) || map.Stale;
                 if (stale && s_staleShown.Add(window)) {
                     s_versions[window] = s_versions.GetValueOrDefault(window) + 1;
                 }
             }
 
-            foreach (var gone in s_maps.Keys.Where(w => !Wanted.Contains(w)).ToList()) {
+            foreach (var gone in s_maps.Keys.Where(w => !wanted.Contains(w)).ToList()) {
                 s_maps.Remove(gone);
                 s_previous.Remove(gone);
                 s_grounds.Remove(gone);
@@ -583,8 +585,12 @@ internal sealed class MinimapView : Control {
     private readonly double _fixedW;
     private readonly double _fixedH;
 
+    // Ultimus's own map (the Ultimus Spectator add-on): over a game it is kept under OverlayUltimusData.KEY.
+    private readonly bool _ultimus;
+
     internal MinimapView(OverlayElement element, OverlayMinimapData.Snapshot? data, long window = 0, bool full = false) {
         _element = element;
+        _ultimus = element.IsUltimusMap;
         _map = element.Map ?? new OverlayMap();
         _data = data;
         _window = window;
@@ -682,6 +688,12 @@ internal sealed class MinimapView : Control {
             if (data is { Note.Length: 0 }) {
                 DrawMarks(context, data, center, radiusX, radiusY);
             }
+
+            // Ultimus's own map says whose it is, so it is never taken for the player's.
+            if (_ultimus) {
+                var top = _map.PlaceAt == "Top" ? _mapH - _map.NameSize - 12 : (_map.ShowNorth && !_map.Round ? _map.NameSize * 2.2 + 6 : 8);
+                Label(context, "Ultimus", new Point(center.X, top), _map.NameSize + 1, new SolidColorBrush(Color.FromRgb(0xFF, 0xD2, 0x4A)), centered: true, bold: true, pill: true);
+            }
         }
 
         if (edge is not null) {
@@ -689,8 +701,9 @@ internal sealed class MinimapView : Control {
         }
 
 
+        var sends = _window == OverlayUltimusData.KEY ? OverlayHost.Link.SendsUltimus : OverlayHost.Link.SendsMap;
         var note = stale
-            ? data is { Note.Length: > 0 } ? data.Note : OverlayHost.Link.Connected ? OverlayHost.Link.SendsMap
+            ? data is { Note.Length: > 0 } ? data.Note : OverlayHost.Link.Connected ? sends
                 ? "Waiting for the map..." : "This server's Imlight is too old for the minimap. The host needs to update it."
                 : "Not linked to a server yet. Start the game with Play in Ahziael."
             : data!.Note;

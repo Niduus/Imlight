@@ -76,6 +76,14 @@ internal sealed record OverlayMapAsk(ulong CharId, string Address, TaskCompletio
 internal sealed record OverlayQuestsAsk(ulong CharId, string Address, TaskCompletionSource<(System.Text.Json.Nodes.JsonObject Quests, string Error)> Reply,
                                        string Pick = "");
 
+/// <summary>
+/// The overlay's Ultimus Spectator (OverlayLinks.SpectateAsync): the service whose wizard is Ultimus (CharId) answers Reply
+/// with his map (his quest's way on it) and his quests; every other service in the game puts its wizard in Others, so
+/// players near him show on his map. Read only: nothing in Ultimus's game changes.
+/// </summary>
+internal sealed record OverlaySpectateAsk(ulong CharId, TaskCompletionSource<(System.Text.Json.Nodes.JsonObject Map, System.Text.Json.Nodes.JsonObject Quests, Akka.Actor.IActorRef Zone, string Error)> Reply,
+                                          ConcurrentQueue<(ulong CharId, Akka.Actor.IActorRef Zone, string Name, float X, float Y)> Others, float Reach, string Quest);
+
 /// <summary>Every service whose wizard is in the game from Address puts its wizard in Found (for linking an overlay).</summary>
 internal sealed record OverlayWizardsAt(string Address, ConcurrentQueue<ulong> Found);
 

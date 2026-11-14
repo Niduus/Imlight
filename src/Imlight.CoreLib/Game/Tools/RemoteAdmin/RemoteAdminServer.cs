@@ -363,7 +363,7 @@ public static class RemoteAdminServer {
                 reply["required"] = OverlayGate.Required;
                 reply["every"] = OverlayGate.BEAT_SECONDS;
                 // What this server can do for the overlay beyond the beat (an older one hangs up on anything else).
-                reply["features"] = new JsonArray("cmd", "map", "quests");
+                reply["features"] = new JsonArray("cmd", "map", "quests", "ultimus");
                 reply["id"] = header["id"]?.DeepClone();
                 // The server's own texts and boxes, sent again only when they changed since the overlay last got them.
                 var (stamp, design) = OverlayGate.ServerDesign();
@@ -407,6 +407,19 @@ public static class RemoteAdminServer {
                     catch (Exception ex) when (ex is not OperationCanceledException) {
                         Logger.Error("Overlay quest tracker: the quests could not be read: {0}", Logger.Args(ex));
                         reply = RemoteAdminWire.Error("The server could not read the quests just now: " + ex.Message);
+                    }
+
+                    continue;
+                }
+
+                if (op == "ultimus") {
+                    // The Ultimus Spectator add-on: Ultimus's own map, quests and battle, for watching (read only).
+                    try {
+                        reply = await OverlayLinks.SpectateAsync(id, header);
+                    }
+                    catch (Exception ex) when (ex is not OperationCanceledException) {
+                        Logger.Error("Ultimus spectator: Ultimus could not be shown: {0}", Logger.Args(ex));
+                        reply = RemoteAdminWire.Error("The server could not show Ultimus just now: " + ex.Message);
                     }
 
                     continue;
