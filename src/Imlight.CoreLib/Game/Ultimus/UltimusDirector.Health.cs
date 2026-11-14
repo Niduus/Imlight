@@ -55,6 +55,7 @@ internal sealed partial class UltimusDirectorActor {
     private readonly Dictionary<string, DateTime> _wispsTaken = new(StringComparer.OrdinalIgnoreCase);
 
     private DateTime _hurtSince = DateTime.MaxValue;
+    private DateTime _hurtNoted = DateTime.MinValue;
     private bool _toldNoHeal;
 
     // Standing still on purpose until it can heal: not "stuck".
@@ -108,8 +109,12 @@ internal sealed partial class UltimusDirectorActor {
         var maxHealth = Math.Max(1, stats.m_baseHitpoints + stats.m_bonusHitpoints);
         if (_hurtSince == DateTime.MaxValue) {
             _hurtSince = DateTime.UtcNow;
-            Note("Ultimus", $"{leader.Name} {(onlyPrep ? "wants more before a hard fight" : "is hurt")} ({stats.m_currentHitpoints} of {maxHealth} health, " +
-                            $"{stats.m_currentMana} of {stats.m_baseMana + stats.m_bonusMana} mana): heals before going on.");
+            // Once a minute at most (his PC log, 2026-11-14: the same line twice a second for minutes while he walked on hurt).
+            if (DateTime.UtcNow - _hurtNoted > TimeSpan.FromMinutes(1)) {
+                _hurtNoted = DateTime.UtcNow;
+                Note("Ultimus", $"{leader.Name} {(onlyPrep ? "wants more before a hard fight" : "is hurt")} ({stats.m_currentHitpoints} of {maxHealth} health, " +
+                                $"{stats.m_currentMana} of {stats.m_baseMana + stats.m_bonusMana} mana): heals before going on.");
+            }
         }
 
         _lastProgress = DateTime.UtcNow;
@@ -143,6 +148,10 @@ internal sealed partial class UltimusDirectorActor {
         // A boss is never started at low health (Niduus, 2026-11-14: at 34% right after a battle he set off for Krokenkahmen):
         // under half health, he heals first before a boss, whatever the 25% hunt rule says for ordinary steps.
         var bossNext = BossNext(leader, target) && share < 0.5;
+        if (bossNext || onlyPrep) {
+            Announce(SAY_TOUGH, "This one's tough, healing up first.");
+        }
+
         if (bossNext) {
             Think($"I'm at {share:P0} health and my next fight is a boss. I don't start a boss under half health, so I heal first.",
                 "boss-heal|" + (target?.Key ?? ""));
@@ -439,6 +448,7 @@ internal sealed partial class UltimusDirectorActor {
             _markedAt = DateTime.UtcNow;
             _actors[0].Tell(new UltimusMember.MarkSpot());
             Note("Ultimus", $"{leader.Name} found no wisps and no potion shop in this world: marks his spot and goes to Wizard City's potion shop.");
+            Announce(SAY_TRIP, "Heading to Wizard City for potions, back soon!");
             Think("I'm too hurt to fight, there are no wisps I can get safely and this world has no potion shop I can reach. So I mark " +
                   "my spot, go to the potion shop in Wizard City, fill my potions and Recall back. Waiting gets me nowhere.", "farpotion|" + leader.Zone);
         }
@@ -478,6 +488,7 @@ internal sealed partial class UltimusDirectorActor {
         _hubPressedAt = DateTime.UtcNow;
         _buttonFromZone = leader.Zone;
         Note("Ultimus", $"{leader.Name} presses the Commons button ({why}); his spot is marked to Recall back after.");
+        Announce(SAY_TRIP, $"Popping out {UltimusText.Short(why, 70)}, back soon!");
         Think($"The Commons button is quicker than walking: I mark my spot, press it, go {why}, then Recall back.", "hub|" + leader.Zone);
         Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(1.5), _actors[0], new UltimusMember.PressCommons(), Self);
 

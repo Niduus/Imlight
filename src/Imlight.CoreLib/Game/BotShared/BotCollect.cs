@@ -102,6 +102,35 @@ internal static class BotCollect {
         return [.. pool.OrderBy(s => Far(fromX, fromY, s.X, s.Y) + (Guarded(s) ? 3000 : 0))];
     }
 
+    /// <summary>The spots a wizard is done with, per "quest|goal" (objects get new ids after a restart, spots do not).</summary>
+    internal static Dictionary<string, List<float[]>> Spots(ulong charId) {
+        var prefix = charId + "|";
+        var result = new Dictionary<string, List<float[]>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var (key, step) in s_steps.Where(s => s.Key.StartsWith(prefix, StringComparison.Ordinal))) {
+            lock (step) {
+                if (step.Spots.Count > 0) {
+                    result[key[prefix.Length..]] = [.. step.Spots.Select(s => new[] { s.X, s.Y })];
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>Puts back the spots saved with <see cref="Spots"/>.</summary>
+    internal static void RestoreSpots(ulong charId, IReadOnlyDictionary<string, List<float[]>> spots) {
+        foreach (var (questGoal, list) in spots ?? new Dictionary<string, List<float[]>>()) {
+            var cut = questGoal.IndexOf('|');
+            if (cut <= 0) {
+                continue;
+            }
+
+            foreach (var spot in list.Where(s => s is { Length: 2 })) {
+                SpotDone(charId, questGoal[..cut], questGoal[(cut + 1)..], spot[0], spot[1]);
+            }
+        }
+    }
+
     /// <summary>Forgets a wizard's steps (a restart makes new wizards).</summary>
     internal static void Forget(ulong charId) {
         foreach (var key in s_steps.Keys.Where(k => k.StartsWith(charId + "|", StringComparison.Ordinal)).ToList()) {

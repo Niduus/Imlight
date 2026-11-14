@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Imlight.CoreLib.Game.BotShared;
 using Imlight.CoreLib.Game.Zone.Components;
 
@@ -89,10 +90,28 @@ internal sealed partial class UltimusDirectorActor {
             : $"I remember {foe.Describe()}. I can take it as I am.", "foe|" + foe.Template);
     }
 
+    private (string Quest, string Goal, int Count)? _dropBefore;
+
+    // How far a step is: its count now, a large number once it is done (or the quest is gone: it was finished).
+    private static int StepCount(UltimusMember.Status me, string quest, string goal) {
+        var held = me.Wizard?.QuestBehavior?.CurrentQuestInstances?.FirstOrDefault(q => q is not null
+            && string.Equals(q.QuestName, quest, StringComparison.OrdinalIgnoreCase));
+        if (held is null) {
+            return int.MaxValue;
+        }
+
+        var progress = held.GoalProgress?.FirstOrDefault(g => g is not null && string.Equals(g.GoalName, goal, StringComparison.Ordinal));
+        return progress is null || progress.IsGoalCompleted() ? int.MaxValue : progress.CurrentProgress;
+    }
+
     private void FightStarted(UltimusMember.Status me) {
         _fight = _target is { Kind: UltimusPlanner.FIGHT } fight
             ? ((uint) Math.Min(fight.Template, uint.MaxValue), FoeName(fight), HealthShare(me), DateTime.UtcNow)
             : (0, "", HealthShare(me), DateTime.UtcNow);
+        // The step's count before the fight, to learn whether this creature counts for it (UltimusDrops).
+        _dropBefore = _target is { Kind: UltimusPlanner.FIGHT } t && !string.IsNullOrEmpty(t.Quest)
+            ? (t.Quest, t.Goal, StepCount(me, t.Quest, t.Goal))
+            : null;
         if (_fight.Value.Template == 0) {
             Think("A battle started that was not my step. I walk round creatures I don't need to fight; this one still caught me.",
                 "ambush|" + me.Zone);
@@ -113,6 +132,17 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         CheckFight(me, won, lostShare, fight.Name);
+        if (won && _dropBefore is { } before) {
+            var after = StepCount(me, before.Quest, before.Goal);
+            var counted = after > before.Count;
+            UltimusDrops.Fought(before.Quest, before.Goal, fight.Template, fight.Name, me.Zone, counted);
+            if (!counted && UltimusDrops.Score(before.Quest, before.Goal, fight.Template) < 0) {
+                Think($"I have beaten {fight.Name} 3 times for \"{before.Goal}\" and it never counted. I try other creatures for it first.",
+                    "nodrop|" + before.Quest + "|" + fight.Template);
+            }
+        }
+
+        _dropBefore = null;
         if (BotKnowledge.Of(fight.Template) is { Casts: >= 3 } habit) {
             Think($"What the bots know of its habits now: {habit.Describe()}.", "habit|" + fight.Template);
         }
@@ -128,6 +158,7 @@ internal sealed partial class UltimusDirectorActor {
                 WorldOf(me.Zone), UltimusText.Zone(me.Zone), foe.Name, won ? 1 : -1);
             if (won) {
                 CheerWin(foe.Name);
+                Announce(SAY_MOMENT, lostBefore > 0 ? $"Finally beat {foe.Name}!" : $"Phew, beat {foe.Name}. That was close!");
             }
         }
 

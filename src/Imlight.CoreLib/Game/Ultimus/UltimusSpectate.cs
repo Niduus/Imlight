@@ -55,6 +55,14 @@ internal static class UltimusSpectate {
 
     internal static string Quest => s_now.Quest;
 
+    private static volatile JsonObject s_detail;
+
+    /// <summary>His quest tracker's details (UltimusDirector.Tracker.cs), for the Spectator's quest box.</summary>
+    internal static void NoteDetail(JsonObject detail) => s_detail = (JsonObject) detail?.DeepClone();
+
+    /// <summary>A copy of his quest tracker's details, or null before the first status.</summary>
+    internal static JsonObject Detail => (JsonObject) s_detail?.DeepClone();
+
     internal static string Step => s_now.Step;
 
     internal static string Doing => s_now.Doing;
