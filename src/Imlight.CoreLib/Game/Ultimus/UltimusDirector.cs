@@ -190,6 +190,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         /// <summary>Time spent fighting for XP to catch up with the quest's level (coach review 2026-11-14: "Payback" was flagged
         /// slow while he levelled from 12 toward 14 for it): not counted against the quest.</summary>
         public double GrindSeconds;
+        public bool BudgetTold;
 
         internal double Seconds => Math.Max(0, (DateTime.UtcNow - Started).TotalSeconds - GrindSeconds);
     }
@@ -334,6 +335,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         AnswerPlayers();
         // Ahziael's "Pause and explain", answered even while paused (UltimusDirector.Story.cs).
         MaybeExplain(_team[0]);
+        // Ahziael's "Back to story", and the guardrails' watch (UltimusDirector.Guard.cs).
+        MaybeBackToStory();
+        GuardTick(_team[0]);
 
         // Paused in Ahziael: they stand where they are, logged in (a battle still plays out by itself).
         if (DateTime.UtcNow >= _nextPauseLook) {
@@ -457,7 +461,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
 
-        var target = PickTarget(group);
+        // Every new move checked against his mission, with its "because" (UltimusDirector.Guard.cs).
+        var target = MissionCheck(leader, PickTarget(group));
         // Healing first, above all before a fight (UltimusDirector.Health.cs).
         if (HealFirst(group, target)) {
             return;
@@ -485,6 +490,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 var (confidence, reasons) = Confidence(leader, target);
                 ThinkGoals(leader, target, confidence);
                 ThinkConfidence(leader, target, confidence, reasons);
+                RiskBudget(target, confidence);
                 Predict(leader, target);
                 // His level and what went wrong here before (UltimusDirector.Push.cs).
                 PreCheck(leader, target);
@@ -665,27 +671,31 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         // Training: when someone has spells waiting and the team is in Wizard City (or two spells wait), a trip to Ravenwood.
         // He marks his spot first, and recalls back after (UltimusDirector.Push.cs).
-        if (TrainingTarget(group) is { } training) {
+        // Side trips each have a time budget, and close for a while after one runs over it or an off-track alarm
+        // (UltimusDirector.Guard.cs).
+        if (SideTripsOpen && SideTrip(TrainingTarget(group), "training") is { } training) {
             MarkBeforeTrip(leader, training);
             return training;
         }
 
         // Shopping: better gear one of them can pay for, at a shop in this world (in push mode, only when it is worth it).
-        if (ShopAllowed(leader) && ShoppingTarget(group) is { } shopping) {
+        if (SideTripsOpen && ShopAllowed(leader) && SideTrip(ShoppingTarget(group), "shopping") is { } shopping) {
             MarkBeforeTrip(leader, shopping);
             return shopping;
         }
 
         // Little room in the backpack: he sells what he won't wear at a shop here (UltimusDirector.Life.cs).
-        if (SellTarget(group) is { } selling) {
+        if (SideTripsOpen && SideTrip(SellTarget(group), "selling") is { } selling) {
             return selling;
         }
 
         // A clear upgrade at the Bazaar he can pay for past his reserve (in push mode, only when shopping is allowed).
-        if (ShopAllowed(leader) && BazaarTarget(group) is { } bazaar) {
+        if (SideTripsOpen && ShopAllowed(leader) && SideTrip(BazaarTarget(group), "bazaar") is { } bazaar) {
             MarkBeforeTrip(leader, bazaar);
             return bazaar;
         }
+
+        NoSideTrip();
 
         RecallAfterTrip(leader);
 
@@ -1312,6 +1322,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 }
 
                 Count("battles won");
+                // A won fight for a step or while levelling for the story is story progress (the guardrails' off-track alarm).
+                if (_target?.Kind == UltimusPlanner.FIGHT) {
+                    StoryProgress();
+                }
+
                 // Fights won for each step, to see how many kills a drop or a count takes (Niduus: "flag abnormal drops").
                 if (_target is { Kind: UltimusPlanner.FIGHT } fought) {
                     _fightsFor[fought.Key] = _fightsFor.GetValueOrDefault(fought.Key) + 1;
@@ -1390,6 +1405,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                     }
 
                     if (_seenGoals.Add(quest.QuestName + "|" + done.GoalName)) {
+                        StoryProgress();
                         PauseAfterStep();
                         UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "step", Quest = quest.QuestName, Title = UltimusText.Title(quest.QuestName),
                             Text = $"{member.Name} finished a step" });
@@ -1414,6 +1430,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             if (!holder && finished) {
                 var seconds = (DateTime.UtcNow - run.Started).TotalSeconds;
                 Note("Ultimus", $"FINISHED {run.Title} in {Minutes(seconds)}.");
+                StoryProgress();
                 Count("quests finished");
                 UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "done", Quest = run.Quest, Title = run.Title, World = run.World, Seconds = seconds });
                 _runs.Remove(run.Quest);
@@ -1422,6 +1439,16 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 run.LimitTold = true;
                 Issue("slow", run.Quest, $"{run.Title} went past the time limit of {UltimusWire.QuestMinutes} minutes ([Ultimus] QuestMinutes): " +
                                          $"{Minutes(run.Seconds)} so far (not counting levelling up for it).", key: run.Quest + "|limit");
+            }
+            else if (!run.BudgetTold && run.Seconds > Math.Max(30 * 60, run.Expected * UltimusPlaybook.Value("Guard.QuestFactor"))) {
+                // The quest's time budget (the guardrails): plan again, another way.
+                run.BudgetTold = true;
+                Note("Ultimus", $"TIME BUDGET: {run.Title} went over its budget ({Minutes(run.Seconds)}, about {Minutes(run.Expected)} expected); plans again.",
+                    UltimusLink.ABNORMAL);
+                Think($"{run.Title} ran over its time budget ({UltimusPlaybook.Cite("Guard.QuestFactor")} its expected time, at least 30 minutes). " +
+                      "I plan it again from where I stand, and try its steps another way.", "budget-quest|" + run.Quest);
+                Ban((_target ?? _leaderLastTarget)?.Key, TimeSpan.FromMinutes(10));
+                Replan();
             }
             else if (!run.SlowTold && run.Expected > 0 && run.Seconds > run.Expected * UltimusWire.SlowFactor) {
                 run.SlowTold = true;

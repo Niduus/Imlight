@@ -42,6 +42,15 @@ internal sealed partial class ManagerWindow {
     private readonly ToggleSwitch _ultEnabled = new() { OnContent = "On", OffContent = "Off" };
     // The nightly auto-coach (Niduus, 2026-11-14: a toggle, off by default): [Ultimus] AutoCoach.
     private readonly ToggleSwitch _ultAutoCoach = new() { OnContent = "On", OffContent = "Off" };
+
+    // The guardrails' per-rule locks (Niduus, 2026-11-14): a locked rule is left alone by his daily review (self-tuning.txt).
+    private static readonly (string Rule, string Name, string Help)[] s_ultTunable = [
+        ("Quest.ReadyHealth", "Health he wants before a step", "How full his health must be before he starts a step (he heals first below it)."),
+        ("Battle.HealAt", "When he heals in battle", "At or below this share of health he heals himself in a battle."),
+        ("Confidence.Careful", "When he plays it careful", "A plan he trusts less than this is done the careful way: full health first, the map's way."),
+    ];
+    private readonly ToggleSwitch _ultTuneAuto = new() { OnContent = "On", OffContent = "Off" };
+    private readonly Dictionary<string, ToggleSwitch> _ultLocks = [];
     private readonly NumericUpDown _ultSlow = new() { Minimum = 1.2m, Maximum = 20, Increment = 0.5m, FormatString = "0.0", Width = 140 };
     private readonly NumericUpDown _ultLosses = new() { Minimum = 1, Maximum = 20, Increment = 1, FormatString = "0", Width = 140 };
     private readonly NumericUpDown _ultQuestMinutes = new() { Minimum = 0, Maximum = 600, Increment = 5, FormatString = "0", Width = 140 };
@@ -145,7 +154,7 @@ internal sealed partial class ManagerWindow {
                 _ultMembers,
                 _ultSheet.View,
                 UltimusThanks(),
-                Row(Action(Plain("Pause or resume"), PauseUltimusAsync), Action(Plain("Pause and explain"), ExplainUltimusAsync), Action(Plain("Stop and save"), StopUltimus), Action(Plain("Restart with a new Ultimus"), RestartUltimusAsync), Action(Plain("Open its folder"), () => {
+                Row(Action(Plain("Pause or resume"), PauseUltimusAsync), Action(Plain("Pause and explain"), ExplainUltimusAsync), Action(Plain("Back to story"), BackToStoryAsync), Action(Plain("Stop and save"), StopUltimus), Action(Plain("Restart with a new Ultimus"), RestartUltimusAsync), Action(Plain("Open its folder"), () => {
                     Directory.CreateDirectory(UltimusFolder);
 
                     return Open(UltimusFolder);
@@ -161,7 +170,8 @@ internal sealed partial class ManagerWindow {
                 SwitchRow("Time limit for one quest (minutes)", _ultQuestMinutes,
                     "A quest that takes longer than this is reported, however long it was expected to take. 0 means no limit."),
                 SwitchRow("Nightly auto-coach", _ultAutoCoach,
-                    "On: each night (after 4 AM) Ultimus puts all his logs in a dated folder, logs\\ultimus\\coach, each file on its own plus one joint file, ready to hand to the coach. The last 14 nights are kept. Off by default.")));
+                    "On: each night (after 4 AM) Ultimus puts all his logs in a dated folder, logs\\ultimus\\coach, each file on its own plus one joint file, ready to hand to the coach. The last 14 nights are kept. Off by default.")),
+            UltimusLocksFold());
     }
 
     private void LoadUltimusSettings() {
@@ -263,6 +273,95 @@ internal sealed partial class ManagerWindow {
         }
 
         Say("Ultimus did not answer. Is the server running with Ultimus on and in the game?");
+    }
+
+    // Back to story (the guardrails, Niduus 2026-11-14): he drops any side trip, a pause is lifted, and he plans again toward
+    // his story quest.
+    private async Task BackToStoryAsync() {
+        Directory.CreateDirectory(UltimusFolder);
+        await File.WriteAllTextAsync(Path.Combine(UltimusFolder, "back-to-story-request.txt"), DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+        Say("Sent. Ultimus drops any side trip (no shops or trainers for 30 minutes) and heads back to his story quest within a second or two.");
+    }
+
+    // ---------------------------------------------------------------------
+    // His own numbers: self-tuning on or off, and a lock per rule (self-tuning.txt)
+    // ---------------------------------------------------------------------
+
+    private Control UltimusLocksFold() {
+        var rows = new List<Control> {
+            SwitchRow("He may tune his own numbers", _ultTuneAuto,
+                "On: at his daily review he changes a few numbers by a little, only inside the ranges in self-tuning.txt, and writes why in learned-today.txt. Off: he leaves them all alone."),
+        };
+        foreach (var (rule, name, help) in s_ultTunable) {
+            var toggle = new ToggleSwitch { OnContent = "Locked", OffContent = "He may tune it" };
+            _ultLocks[rule] = toggle;
+            rows.Add(SwitchRow($"{name} ({rule})", toggle, help + " Locked: he keeps it as it is."));
+            toggle.IsCheckedChanged += (_, _) => {
+                if (!_showingUlt) {
+                    _ = Guard(SaveUltimusTuningAsync);
+                }
+            };
+        }
+
+        _ultTuneAuto.IsCheckedChanged += (_, _) => {
+            if (!_showingUlt) {
+                _ = Guard(SaveUltimusTuningAsync);
+            }
+        };
+        LoadUltimusTuning();
+
+        return Fold("lock", ULTIMUS_TAB, "His own numbers",
+            "Ultimus changes a few of his own numbers at his daily review, by a little and only inside the limits you set. " +
+            "His hard limits (no skipping, no free XP, gold or items, no crafting or pet training, staying in bounds, side areas " +
+            "only when a quest names them) and his time and risk budgets are yours alone: he can never change them. Changes count right away.",
+            [.. rows]);
+    }
+
+    private string UltimusTuningFile => Path.Combine(UltimusFolder, "self-tuning.txt");
+
+    private void LoadUltimusTuning() {
+        _showingUlt = true;
+        try {
+            var lines = File.Exists(UltimusTuningFile) ? File.ReadAllLines(UltimusTuningFile) : [];
+            string Value(string key) => lines.Select(l => l.Trim()).Where(l => !l.StartsWith('#') && l.Contains('='))
+                .Where(l => l[..l.IndexOf('=')].Trim().Equals(key, StringComparison.OrdinalIgnoreCase))
+                .Select(l => l[(l.IndexOf('=') + 1)..].Trim()).LastOrDefault() ?? "";
+            var auto = Value("Auto");
+            _ultTuneAuto.IsChecked = !(auto.StartsWith("off", StringComparison.OrdinalIgnoreCase) || auto.StartsWith("no", StringComparison.OrdinalIgnoreCase) || auto == "0");
+            var locked = Value("Locked").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            foreach (var (rule, toggle) in _ultLocks) {
+                toggle.IsChecked = locked.Contains(rule, StringComparer.OrdinalIgnoreCase);
+            }
+        }
+        catch (IOException) {
+            // Shown as it was; the next change writes it again.
+        }
+        finally {
+            _showingUlt = false;
+        }
+    }
+
+    // Writes the Auto and Locked lines of self-tuning.txt, keeping everything else (his ranges) as it is.
+    private async Task SaveUltimusTuningAsync() {
+        Directory.CreateDirectory(UltimusFolder);
+        var lines = File.Exists(UltimusTuningFile) ? (await File.ReadAllLinesAsync(UltimusTuningFile)).ToList() : [
+            "# What Ultimus may change in his own playbook at his daily review, and how far.",
+            "Quest.ReadyHealth = 0.6 to 0.95",
+            "Battle.HealAt = 0.35 to 0.7",
+            "Confidence.Careful = 30 to 70",
+        ];
+        static bool Is(string line, string key) => !line.TrimStart().StartsWith('#') && line.Contains('=')
+                                                   && line[..line.IndexOf('=')].Trim().Equals(key, StringComparison.OrdinalIgnoreCase);
+        lines.RemoveAll(l => Is(l, "Auto") || Is(l, "Locked"));
+        var at = lines.FindIndex(l => !l.TrimStart().StartsWith('#'));
+        at = at < 0 ? lines.Count : at;
+        var locked = _ultLocks.Where(l => l.Value.IsChecked == true).Select(l => l.Key).ToList();
+        lines.Insert(at, "Locked = " + string.Join(", ", locked));
+        lines.Insert(at, "Auto = " + (_ultTuneAuto.IsChecked == true ? "on" : "off"));
+        await File.WriteAllLinesAsync(UltimusTuningFile, lines);
+        Say(_ultTuneAuto.IsChecked != true ? "Saved. Ultimus leaves all his numbers alone."
+            : locked.Count == 0 ? "Saved. Ultimus may tune his numbers inside your limits."
+            : $"Saved. Ultimus may tune his numbers inside your limits, except {string.Join(", ", locked)}.");
     }
 
     // Stop and save: Ultimus logs out cleanly where it is (its progress is its own, saved as it goes); turning it on again

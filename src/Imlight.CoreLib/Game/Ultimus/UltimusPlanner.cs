@@ -291,6 +291,12 @@ internal static class UltimusPlanner {
             return unresolved;
         }
 
+        // A step set aside for a while (its time budget ran out, or two progress checks said no): another open one first.
+        var allowed = open.Where(o => !SetAsideNow(o.Target.Key)).ToList();
+        if (allowed.Count > 0) {
+            open = allowed;
+        }
+
         // Kept on the one picked before unless another is clearly nearer, so he does not turn back and forth between two.
         var best = open.MinBy(o => o.Cost);
         var before = open.FirstOrDefault(o => o.Target.Key == s_lastPick.GetValueOrDefault(questName));
@@ -301,6 +307,12 @@ internal static class UltimusPlanner {
     }
 
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_lastPick = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, DateTime> s_setAside = new(StringComparer.Ordinal);
+
+    /// <summary>A step set aside for a while: when the quest has another open step, that one goes first (the guardrails).</summary>
+    internal static void SetAside(string key, TimeSpan forHow) => s_setAside[key] = DateTime.UtcNow + forHow;
+
+    private static bool SetAsideNow(string key) => key is not null && s_setAside.TryGetValue(key, out var until) && DateTime.UtcNow < until;
 
     // How far a target is by the real way: the walk on the floor in this area, plus a large share for each area between.
     private const float AREA_COST = 4000f;
