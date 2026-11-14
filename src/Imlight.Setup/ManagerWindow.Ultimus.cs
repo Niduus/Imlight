@@ -62,6 +62,7 @@ internal sealed partial class ManagerWindow {
     private readonly NumericUpDown _ultLosses = new() { Minimum = 1, Maximum = 20, Increment = 1, FormatString = "0", Width = 140 };
     private readonly NumericUpDown _ultQuestMinutes = new() { Minimum = 0, Maximum = 600, Increment = 5, FormatString = "0", Width = 140 };
     private readonly NumericUpDown _ultStuck = new() { Minimum = 2, Maximum = 120, Increment = 1, FormatString = "0", Width = 140 };
+    private readonly NumericUpDown _ultMaxHours = new() { Minimum = 0, Maximum = 24, Increment = 1, FormatString = "0", Width = 140 };
     private readonly StackPanel _ultIssues = new() { Spacing = 10 };
     private readonly TextBlock _ultIssuesEmpty = new() { TextWrapping = TextWrapping.Wrap, Foreground = MUTED, Text = "No issues yet." };
     private readonly DispatcherTimer _ultTimer = new() { Interval = TimeSpan.FromSeconds(3) };
@@ -126,7 +127,7 @@ internal sealed partial class ManagerWindow {
                 await Guard(() => SetUltimusEnabledAsync(_ultEnabled.IsChecked == true));
             }
         };
-        foreach (var (box, key) in new[] { (_ultSlow, "SlowFactor"), (_ultLosses, "LossesBeforeIssue"), (_ultStuck, "StuckMinutes"), (_ultQuestMinutes, "QuestMinutes") }) {
+        foreach (var (box, key) in new[] { (_ultSlow, "SlowFactor"), (_ultLosses, "LossesBeforeIssue"), (_ultStuck, "StuckMinutes"), (_ultQuestMinutes, "QuestMinutes"), (_ultMaxHours, "MaxHoursPerDay") }) {
             box.ValueChanged += (_, _) => {
                 if (!_showingUlt && box.Value is { } value) {
                     _ = Guard(() => SaveUltimusNumberAsync(key, value));
@@ -190,6 +191,8 @@ internal sealed partial class ManagerWindow {
                     "When nothing moves forward for this long, Ultimus reports that it is stuck."),
                 SwitchRow("Time limit for one quest (minutes)", _ultQuestMinutes,
                     "A quest that takes longer than this is reported, however long it was expected to take. 0 means no limit."),
+                SwitchRow("Most hours he plays a day", _ultMaxHours,
+                    "When he has played this many hours today he rests somewhere safe until tomorrow. 0 means no limit."),
                 SwitchRow("Party mode", _ultParty,
                     "On: when a player invites Ultimus to a group, he joins and goes along with them: he teleports to them from the group, " +
                     "joins their battles and does the quest steps they both have, until the group ends or they go away for 15 minutes. " +
@@ -218,6 +221,7 @@ internal sealed partial class ManagerWindow {
             _ultLosses.Value = (decimal) Number("LossesBeforeIssue", 3);
             _ultStuck.Value = (decimal) Number("StuckMinutes", 8);
             _ultQuestMinutes.Value = (decimal) Number("QuestMinutes", 45);
+            _ultMaxHours.Value = (decimal) Number("MaxHoursPerDay", 0);
         }
         finally {
             _showingUlt = false;
@@ -686,6 +690,11 @@ internal sealed partial class ManagerWindow {
                     var playbook = Path.Combine(UltimusFolder, "playbook.txt");
 
                     return Open(File.Exists(playbook) ? playbook : UltimusFolder);
+                }), Action(Plain("Undo his self-tuning"), async () => {
+                    // Every number he changed himself goes back to its start (a lesson that turned out bad).
+                    Directory.CreateDirectory(UltimusFolder);
+                    await File.WriteAllTextAsync(Path.Combine(UltimusFolder, "undo-tuning-request.txt"), DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+                    Say("Sent. Every number Ultimus changed himself goes back to where it started within a few seconds.");
                 }), Action(Plain("Open his self-tuning limits"), () => {
                     // How far he may change his own numbers at his daily review (self-tuning.txt; Auto = off stops it).
                     var limits = Path.Combine(UltimusFolder, "self-tuning.txt");

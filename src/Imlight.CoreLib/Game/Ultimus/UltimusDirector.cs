@@ -420,6 +420,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // His mood, and once a day what he learned (UltimusDirector.Plans.cs).
         ThinkMood();
         MaybeReview();
+        MaybeUndoTuning();
 
         // Better gear on, and decks that miss new spells redone (UltimusDirector.Gear.cs).
         KeepGearAndDecks();
@@ -511,6 +512,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
 
+        // The daily play limit (UltimusDirector.Safety.cs).
+        if (RestingForTheDay(leader)) {
+            return;
+        }
+
         // One intention at a time (approved 2026-11-14): a Recall or a Commons button press just sent is let finish (the
         // loading and the landing) before anything new is planned or walked; it was cancelled by new walks before.
         if (ButtonMovePending(leader)) {
@@ -548,6 +554,13 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 StopWalking(0);
             }
 
+            return;
+        }
+
+        // The loop guard: the same area or move again and again with no story progress (UltimusDirector.Safety.cs).
+        var newMove = !target.Same(_target) && !(_target is not null && _target.Kind == target.Kind && _target.Key == target.Key);
+        if (LoopWatch(leader, target, newMove)) {
+            StopWalking(0);
             return;
         }
 

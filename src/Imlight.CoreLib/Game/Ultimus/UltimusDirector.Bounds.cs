@@ -346,6 +346,41 @@ internal sealed partial class UltimusDirectorActor {
     private const int COACH_HOUR = 4;
     private const int COACH_KEEP = 14;
 
+    // Every Ultimus log in <paramref name="folder"/>, each on its own plus one joint file and a README (the nightly coach and
+    // the needs-help report). The files written.
+    private List<string> WriteCoachBundle(string folder, string readme) {
+        WriteWaste();
+        var files = new List<string>();
+        files.AddRange(new DirectoryInfo(UltimusWire.Folder).EnumerateFiles()
+            .Where(f => f.Extension is ".txt" or ".json" or ".jsonl").OrderByDescending(f => f.LastWriteTimeUtc).Select(f => f.FullName));
+        var bots = Path.GetFullPath(BotMistakes.FOLDER);
+        if (Directory.Exists(bots)) {
+            files.AddRange(new DirectoryInfo(bots).EnumerateFiles().Where(f => f.Extension is ".txt" or ".json").Select(f => f.FullName));
+        }
+
+        var joint = new StringBuilder();
+        joint.AppendLine($"All of Ultimus's logs, saved {DateTime.Now:yyyy-MM-dd HH:mm}. Each line starts with its file.");
+        foreach (var path in files) {
+            var name = (Path.GetDirectoryName(path) ?? "").EndsWith("bots", StringComparison.OrdinalIgnoreCase) ? "bots-" + Path.GetFileName(path) : Path.GetFileName(path);
+            string body;
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+            using (var reader = new StreamReader(stream)) {
+                body = reader.ReadToEnd();
+            }
+
+            File.WriteAllText(Path.Combine(folder, name), body);
+            joint.AppendLine().AppendLine($"===== [{name}] =====");
+            foreach (var line in body.Split('\n')) {
+                joint.Append("    [").Append(name).Append("] ").AppendLine(line.TrimEnd('\r'));
+            }
+        }
+
+        File.WriteAllText(Path.Combine(folder, "ALL LOGS (joint file).txt"), joint.ToString());
+        File.WriteAllText(Path.Combine(folder, "README.txt"), readme + "\n");
+
+        return files;
+    }
+
     private void MaybeAutoCoach() {
         if (DateTime.UtcNow - _coachCheck < TimeSpan.FromMinutes(5)) {
             return;
@@ -364,35 +399,7 @@ internal sealed partial class UltimusDirectorActor {
             }
 
             Directory.CreateDirectory(folder);
-            WriteWaste();
-            var files = new List<string>();
-            files.AddRange(new DirectoryInfo(UltimusWire.Folder).EnumerateFiles()
-                .Where(f => f.Extension is ".txt" or ".json" or ".jsonl").OrderByDescending(f => f.LastWriteTimeUtc).Select(f => f.FullName));
-            var bots = Path.GetFullPath(BotMistakes.FOLDER);
-            if (Directory.Exists(bots)) {
-                files.AddRange(new DirectoryInfo(bots).EnumerateFiles().Where(f => f.Extension is ".txt" or ".json").Select(f => f.FullName));
-            }
-
-            var joint = new StringBuilder();
-            joint.AppendLine($"All of Ultimus's logs, saved by the nightly auto-coach {DateTime.Now:yyyy-MM-dd HH:mm}. Each line starts with its file.");
-            foreach (var path in files) {
-                var name = (Path.GetDirectoryName(path) ?? "").EndsWith("bots", StringComparison.OrdinalIgnoreCase) ? "bots-" + Path.GetFileName(path) : Path.GetFileName(path);
-                string body;
-                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
-                using (var reader = new StreamReader(stream)) {
-                    body = reader.ReadToEnd();
-                }
-
-                File.WriteAllText(Path.Combine(folder, name), body);
-                joint.AppendLine().AppendLine($"===== [{name}] =====");
-                foreach (var line in body.Split('\n')) {
-                    joint.Append("    [").Append(name).Append("] ").AppendLine(line.TrimEnd('\r'));
-                }
-            }
-
-            File.WriteAllText(Path.Combine(folder, "ALL LOGS (joint file).txt"), joint.ToString());
-            File.WriteAllText(Path.Combine(folder, "README.txt"),
-                "Ultimus's logs, saved each night by the auto-coach ([Ultimus] AutoCoach). Attach this folder (or the joint file) in the chat.\n");
+            var files = WriteCoachBundle(folder, "Ultimus's logs, saved each night by the auto-coach ([Ultimus] AutoCoach). Attach this folder (or the joint file) in the chat.");
             foreach (var old in new DirectoryInfo(root).EnumerateDirectories().OrderByDescending(d => d.Name).Skip(COACH_KEEP)) {
                 old.Delete(true);
             }

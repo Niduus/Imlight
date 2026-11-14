@@ -157,6 +157,11 @@ internal sealed partial class UltimusDirectorActor {
                 // away and comes back another way instead.
                 Aside(index, member, 900f, 2500f, "walks well away and comes back another way (he finds his own way)");
                 return;
+            case UltimusFixes.FLAG when flag.Tried.Count(t => t == UltimusFixes.FLAG) >= 2:
+                // Every fix tried here twice over: set aside, other story work first, and a "needs help" report (UltimusDirector.Safety.cs).
+                ParkStep(member, quest, goal?.Key, goal?.What ?? _doing ?? "his step", where);
+                Aside(index, member, 150f, 600f, "steps aside while the step waits");
+                return;
             case UltimusFixes.FLAG:
                 // He quests as a human does (Niduus, 2026-11-14): no step is finished for him. Every move fix was tried here,
                 // so the spot goes to Niduus as a broken one, and he starts the round of fixes again.
