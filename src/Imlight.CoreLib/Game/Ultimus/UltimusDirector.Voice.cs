@@ -171,6 +171,11 @@ internal sealed partial class UltimusDirectorActor {
             }
 
             Think($"{heard.SpeakerName} {how} \"{UltimusText.Short(heard.Text, 80)}\" ({reply.Intent}). {reply.Why}", "social|" + heard.SpeakerCharId + "|" + heard.Text);
+            // A hello from a player near him: a wave back from the emote wheel (UltimusDirector.Emotes.cs).
+            if (reply.Intent == BotSocial.GREETING && !heard.Whisper) {
+                WaveAt(heard.SpeakerCharId, heard.SpeakerName);
+            }
+
             if (reply.Text.Length == 0) {
                 continue;
             }
@@ -417,7 +422,7 @@ internal sealed partial class UltimusDirectorActor {
                 _ when what.StartsWith("fact:", StringComparison.Ordinal) => Fact(me, what[5..]),
                 _ when what.StartsWith("asker:", StringComparison.Ordinal) => Asker(what[6..]),
                 _ => null,
-            }, Worlds().Select(w => w.World).ToList(), Opinion);
+            }, Worlds().Select(w => w.World).ToList(), Opinion, Groups: UltimusWire.PartyMode, PartyWith: PartyMateName);
     }
 
     private static int StepTotal(GoalTemplate goal) => goal switch {

@@ -179,7 +179,12 @@ internal sealed partial class UltimusDirectorActor {
             "shop" => shop,
             _ => null,
         };
+        // Nothing in this world: the potion shop of Wizard City, however far (Niduus, 2026-11-14: "he should hunt for them
+        // and if he can't find any safely then he just goes to a potion vendor"). He marks his spot and Recalls back after.
+        pick ??= FarPotionShop(leader);
         if (pick is not null) {
+            // The trip is not cut short by the Recall back to his marked spot until he is healed.
+            HoldRecall(20);
             _doing = pick.What;
             if (pick.Key?.StartsWith(HUB_KEY, StringComparison.Ordinal) == true) {
                 if (!PressHubButton(leader, pick.What)) {
@@ -213,7 +218,7 @@ internal sealed partial class UltimusDirectorActor {
             return true;
         }
 
-        // 4. Nothing to heal from: talking and travelling go on, a fight waits.
+        // 4. Nothing to heal from (no potion bottles, or no gold for potions, and no wisps): talking and travelling go on, a fight waits.
         if (target?.Kind != UltimusPlanner.FIGHT && !IntoDungeon(leader, target)) {
             return false;
         }
@@ -402,6 +407,43 @@ internal sealed partial class UltimusDirectorActor {
         Think("A player asked me to get potions. I can, so I go now: the nearest potion shop" + (hops > 0 ? $", {hops} area(s) away." : ", right here."), "potionrun");
 
         return (hops > 0 ? $"Good idea, heading to the potion shop now ({hops} area{(hops == 1 ? "" : "s")} away)!" : "Good idea, getting potions right here!", true);
+    }
+
+    private static string s_farPotionZone;
+    private static bool s_farPotionLooked;
+
+    /// <summary>
+    /// The potion shop in Wizard City, for when the world he is in has none he can reach and no wisps can be found: he
+    /// marks his spot, goes there (the Commons button to this world's hub, then the Spiral Door), fills his potions and
+    /// Recalls back. Null when he has no bottles or gold for potions, or no way is known.
+    /// </summary>
+    private UltimusPlanner.Target FarPotionShop(UltimusMember.Status leader) {
+        var stats = leader.Wizard?.GameStats;
+        if (stats is null || stats.m_potionMax < 1 || stats.m_currentGold < PotionService.PotionCostPerBottle(Math.Max(1, stats.Level))) {
+            return null;
+        }
+
+        if (!s_farPotionLooked) {
+            s_farPotionLooked = true;
+            Task.Run(() => s_farPotionZone = NearestZonesWith("WizardCity/WC_Hub", n => n.Contains("PotionShopkeeper", StringComparison.Ordinal))
+                .Select(z => z.Zone).FirstOrDefault());
+        }
+
+        if (s_farPotionZone is not { } zone || leader.Zone?.StartsWith("WizardCity/", StringComparison.OrdinalIgnoreCase) == true) {
+            return null;
+        }
+
+        var why = "to fill potions at the potion shop in Wizard City";
+        if (_markedZone is null && leader.Wizard?.ZoneIsInstance != true && (stats.m_currentMana >= 10)) {
+            _markedZone = leader.Zone;
+            _markedAt = DateTime.UtcNow;
+            _actors[0].Tell(new UltimusMember.MarkSpot());
+            Note("Ultimus", $"{leader.Name} found no wisps and no potion shop in this world: marks his spot and goes to Wizard City's potion shop.");
+            Think("I'm too hurt to fight, there are no wisps I can get safely and this world has no potion shop I can reach. So I mark " +
+                  "my spot, go to the potion shop in Wizard City, fill my potions and Recall back. Waiting gets me nowhere.", "farpotion|" + leader.Zone);
+        }
+
+        return UltimusPlanner.Travel(leader, zone, why, "potionshop|" + zone) ?? HubButton(leader, zone, why);
     }
 
     private const string HUB_KEY = "hubbutton|";

@@ -139,6 +139,10 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         var key = target.Key ?? "";
+        if (key.StartsWith(PARTY_KEY, StringComparison.Ordinal)) {
+            return $"I'm in a group with {(PartyMateName.Length > 0 ? PartyMateName : "a player")} and go along with them until the group ends (party mode)";
+        }
+
         if (key.StartsWith("wisp", StringComparison.Ordinal)) {
             return "health and mana keep my story's fights winnable";
         }

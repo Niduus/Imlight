@@ -225,6 +225,9 @@ internal sealed partial class UltimusDirectorActor {
             if (BotGear.BestSwap(wizard, GearGoals(wizard)) is { Item: not null } swap) {
                 ThinkAboutSwap(member, swap, GearGoals(wizard));
                 _gearChangedAt = DateTime.UtcNow;
+                // His daily diary shows the gear he put on (Niduus, 2026-11-14).
+                UltimusJournal.Write(UltimusJournal.GEAR, $"Put on {swap.Piece.Name} ({swap.Slot.ToLowerInvariant()}).",
+                    WorldOf(member.Zone), UltimusText.Zone(member.Zone), swap.Piece.Name);
                 _actors[i].Tell(new UltimusMember.Equip(swap.Item.m_globalID, swap.Slot, swap.Piece.Name));
                 continue;
             }

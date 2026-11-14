@@ -107,6 +107,16 @@ internal static class UltimusWire {
     /// <summary>Whether Ultimus joins a real player's battle when the creature it needs is in it (Niduus: "Ultimus will join players if it's convenient for quests").</summary>
     internal static bool JoinPlayers => ConfigurationManager.GetValue("Ultimus.JoinPlayers", true);
 
+    /// <summary>
+    /// Party mode (Niduus, 2026-11-14, approved): Ultimus takes a real player's group invitation and goes along with them
+    /// (teleports to them as a group mate does, joins their battles, does the quest steps they both have) until the group
+    /// ends; then back to his story. Off: every invitation is turned down, as before.
+    /// </summary>
+    internal static bool PartyMode => ConfigurationManager.GetValue("Ultimus.PartyMode", true);
+
+    /// <summary>Emotes (Niduus, 2026-11-14, approved): he waves at players who greet him, cheers after a tough win, sits when idle.</summary>
+    internal static bool Emotes => ConfigurationManager.GetValue("Ultimus.Emotes", true);
+
     internal static int StuckMinutes => System.Math.Clamp(ConfigurationManager.GetValue("Ultimus.StuckMinutes", 8), 2, 120);
 
     private static readonly JsonSerializerOptions s_json = new(JsonSerializerDefaults.General);

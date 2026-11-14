@@ -37,7 +37,8 @@ internal static class UltimusJournal {
     private const string FILE = "journal.json";
     private const int MAX_ENTRIES = 1000;
 
-    internal const string QUEST = "quest", WORLD = "world", LEVEL = "level", WON = "won", LOST = "lost", MET = "met", STUCK = "stuck";
+    internal const string QUEST = "quest", WORLD = "world", LEVEL = "level", WON = "won", LOST = "lost", MET = "met", STUCK = "stuck",
+        GEAR = "gear", PARTY = "party";
 
     internal sealed class Entry {
         public DateTime At { get; set; }

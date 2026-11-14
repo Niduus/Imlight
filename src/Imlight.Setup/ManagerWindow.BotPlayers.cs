@@ -79,6 +79,7 @@ internal sealed partial class ManagerWindow {
             "the arena) and walk around there. In the game, .bot test brings one out next to you. In a battle, .bot join brings it onto your side (it fights: it picks after you, heals and blades you, and finishes enemies), and " +
             ".bot kick takes the bots out of your battle; no bot joins that battle again. .bot remove sends the bots here " +
             "away, .bot list shows them. Changes count right away.",
+            SpaceNotice("Bot Players"),
             _botState,
             SwitchRow("Bot Players", _botEnabled, "On starts the Bot Players program within a few seconds. Off stops it and every bot leaves."),
             SwitchRow("Fill the streets", _botPopulate, "On: every street with real players in it gets bots, walking in one by one."),

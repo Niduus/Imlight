@@ -103,6 +103,12 @@ internal static class PlayerCheats {
         s_own.TryRemove(wizard.CharId, out _);
     }
 
+    /// <summary>The wizard (by character id) that came into the game, live, or null (Ultimus's party mode follows it).</summary>
+    internal static Wizard LiveWizard(ulong charId) => s_wizards.GetValueOrDefault(charId);
+
+    /// <summary>A wizard's shown name (by character id), or "".</summary>
+    internal static string LiveName(ulong charId) => s_wizards.TryGetValue(charId, out var wizard) ? NameOf(charId, wizard) ?? "" : "";
+
     /// <summary>Whether a wizard (by character id) is played on the server's own PC.</summary>
     internal static bool IsLocalChar(ulong charId) => s_thisPc.TryGetValue(charId, out var local) && local;
 
