@@ -109,7 +109,7 @@ internal static class OverlayQuestRoute {
                 continue;
             }
 
-            var step = OverlayQuestTracker.StepTitle(goal);
+            var step = OverlayQuestTracker.GameStepText(goal, progress);
             var found = false;
             foreach (var (spotZone, spot) in QuestArrowGoals.GetSpots(quest, goal)) {
                 if (OverlayQuestTracker.SameZone(spotZone, zonePath)) {

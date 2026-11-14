@@ -78,7 +78,7 @@ internal static class OverlayQuestTracker {
                     }
 
                     steps.Add(new JsonObject {
-                        ["s"] = StepTitle(goal), ["where"] = StepWhere(goal, stepZone), ["here"] = stepHere,
+                        ["s"] = GameStepText(goal, progress), ["where"] = StepWhere(goal, stepZone), ["here"] = stepHere,
                     });
                 }
 
@@ -153,6 +153,89 @@ internal static class OverlayQuestTracker {
         var text = QuestGuide.StepText(goal);
 
         return string.IsNullOrWhiteSpace(text) ? English(goal.m_goalTitle, (string) goal.m_goalName ?? "") : English(text, text);
+    }
+
+    // How the game words each kind of step in its quest helper (Locale Quest.lang), with the madlib tokens the server
+    // sends the game for that step (QuestMadlibs.GetAppropriateMadlibBlockForGoal). The fallbacks are the same lines,
+    // for when the game's text tables aren't loaded.
+    private static readonly Dictionary<GOAL_TYPE, (string Key, string Fallback)> s_goalLines = new() {
+        [GOAL_TYPE.GOAL_TYPE_BOUNTY] = ("Quest_BountyChatLabel", "#1:$GOAL_NAME$ #2:$GOAL_TALLYTEXT2$"),
+        [GOAL_TYPE.GOAL_TYPE_BOUNTYCOLLECT] = ("Quest_BountyCollectChatLabel", "Collect #2:$GOAL_TALLYTEXT$"),
+        [GOAL_TYPE.GOAL_TYPE_USAGE] = ("Quest_UsageChatLabel", "#1:$GOAL_NAME$ #2:$GOAL_TALLYTEXT$"),
+        [GOAL_TYPE.GOAL_TYPE_SCAVENGE] = ("", "#1:$GOAL_NAME$ #2:$GOAL_TALLYTEXT$"),
+        [GOAL_TYPE.GOAL_TYPE_WAYPOINT] = ("", "#1:$GOAL_NAME$ #2:$GOAL_TALLYTEXT$"),
+        [GOAL_TYPE.GOAL_TYPE_PERSONA] = ("", "#1:$GOAL_NAME$ #2:$GOAL_FULLNAME$"),
+    };
+
+    private static readonly System.Text.RegularExpressions.Regex s_place = new(@"#\d+:");
+    private static readonly System.Text.RegularExpressions.Regex s_key = new(@"^[A-Za-z][A-Za-z0-9]*_[A-Za-z0-9]+$");
+    private static readonly System.Text.RegularExpressions.Regex s_token = new(@"\$GOAL_([A-Z0-9_]+)\$");
+
+    /// <summary>
+    /// A step as the game itself words it in its quest helper and quest book (Niduus, 2026-11-14: "Make sure quest tracker
+    /// is accurate to real game quests description"): the game's own line for the step's kind, filled with the same
+    /// words the server sends the game for it (the step's title, the person's name in the game's name format, what to
+    /// defeat, collect or use), and the game's "N of M" count when the step needs more than one. Our own wording
+    /// (<see cref="StepTitle"/>) only when the game's has nothing to show.
+    /// </summary>
+    internal static string GameStepText(GoalTemplate goal, GoalInstance progress = null) {
+        try {
+            var block = Madlibs.QuestMadlibs.GetAppropriateMadlibBlockForGoal(goal, progress);
+            var args = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var arg in block?.m_madlibs ?? []) {
+                switch (arg) {
+                    case MadlibArgT_ByteString text when !string.IsNullOrEmpty(text.m_madlibToken):
+                        args[text.m_madlibToken] = text.m_madlibArgument.ToString() ?? "";
+                        break;
+                    case MadlibArgT_int number when !string.IsNullOrEmpty(number.m_madlibToken):
+                        args[number.m_madlibToken] = number.m_madlibArgument.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        break;
+                }
+            }
+
+            if (args.Count > 0 && s_goalLines.TryGetValue(goal.m_goalType, out var line)) {
+                var format = line.Key.Length > 0 ? Locale.GetEnglishName(line.Key) : "";
+                var text = Fill(string.IsNullOrWhiteSpace(format) ? line.Fallback : format, args, 0);
+                if (text.Length > 0) {
+                    var total = Madlibs.QuestMadlibs.GetGoalTotal(goal);
+                    if (total > 1 && goal.m_goalType is GOAL_TYPE.GOAL_TYPE_BOUNTY or GOAL_TYPE.GOAL_TYPE_BOUNTYCOLLECT
+                            or GOAL_TYPE.GOAL_TYPE_USAGE or GOAL_TYPE.GOAL_TYPE_SCAVENGE) {
+                        var counter = Locale.GetEnglishName("Quest_GoalCounter");
+                        args["COUNT"] = Math.Max(progress?.CurrentProgress ?? 0, 0).ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        args["TOTAL"] = total.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        text += $" ({Fill(string.IsNullOrWhiteSpace(counter) ? "#1:$GOAL_COUNT$ of #2:$GOAL_TOTAL$" : counter, args, 0)})";
+                    }
+
+                    return text.Length > 120 ? text[..120] : text;
+                }
+            }
+        }
+        catch (Exception) {
+            // Our own wording below.
+        }
+
+        return StepTitle(goal);
+    }
+
+    // A game line with its tokens filled: each value is the game's text for it when it is a text key ("WizardQuestGoals_7"
+    // is "Talk to"), a name format filled in turn ("NPCFormats_Goal_First_Last"), else as written.
+    private static string Fill(string format, Dictionary<string, string> args, int depth) {
+        var text = s_place.Replace(format ?? "", "");
+        text = s_token.Replace(text, match => {
+            var value = args.GetValueOrDefault(match.Groups[1].Value, "");
+            if (string.IsNullOrWhiteSpace(value)) {
+                return "";
+            }
+
+            var shown = value.Contains(' ') ? value : Locale.GetEnglishName(value);
+            // A text key the game's tables lack ("WizQst173685_00000030") shows nothing, never the key itself.
+            shown = !string.IsNullOrWhiteSpace(shown) ? shown : s_key.IsMatch(value) ? "" : value;
+            return depth < 2 && shown.Contains("$GOAL_", StringComparison.Ordinal) ? Fill(shown, args, depth + 1) : shown;
+        });
+        // Quotes left round an empty nickname go.
+        text = text.Replace("\"\"", "").Replace('\n', ' ').Replace('\r', ' ');
+
+        return System.Text.RegularExpressions.Regex.Replace(text, @"\s{2,}", " ").Trim();
     }
 
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_adjectiveNames = new(StringComparer.Ordinal);
