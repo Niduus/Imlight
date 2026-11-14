@@ -98,8 +98,9 @@ internal static class OverlayUltimusData {
         if (answer["ok"]?.GetValue<bool>() == true && answer["ultimus"] is JsonObject sent) {
             info = Read(sent);
             said = sent.ToJsonString();
-            // His quest is always the one drawn on his map (never a quest the player picked).
-            OverlayQuestData.Follow(KEY, info.Quest);
+            // His quest is always the one drawn on his map (never a quest the player picked): the way the server sent with his map.
+            var drawn = answer["map"] is JsonObject map && map["route"] is JsonObject route ? (string?) route["quest"] : null;
+            OverlayQuestData.Follow(KEY, string.IsNullOrEmpty(drawn) ? info.Quest : drawn);
         }
         else {
             var error = ((string?) answer["error"] ?? "").Trim();

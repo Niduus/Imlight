@@ -23,6 +23,9 @@ using System.Text.Json.Nodes;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Combat;
 using Imlight.CoreLib.Game.Zone.Components;
+using Imlight.CoreLib.WizardData.Collections;
+using Imlight.CoreLib.WizardData.Models.Player;
+using Akka.Actor;
 
 namespace Imlight.CoreLib.Game.Ultimus;
 
@@ -39,18 +42,61 @@ internal static class UltimusSpectate {
 
     private const int MAX_CASTS = 8;
 
-    private sealed record Now(string Quest, string Step, string Doing);
+    private sealed record Now(string Quest, string Step, string Doing, string Zone, float X, float Y, bool HasSpot);
 
-    private static volatile Now s_now = new("", "", "");
+    private static volatile Now s_now = new("", "", "", "", 0, 0, false);
 
-    /// <summary>The quest Ultimus plays now (its code), the step he is on and what he is doing (from the Director's status).</summary>
-    internal static void NoteStatus(string quest, string step, string doing) => s_now = new(quest ?? "", step ?? "", doing ?? "");
+    /// <summary>
+    /// The quest Ultimus plays now (its code), the step he is on and what he is doing (from the Director's status), and
+    /// the spot in his area he is heading to for it (when he has one).
+    /// </summary>
+    internal static void NoteStatus(string quest, string step, string doing, string zone = "", float? x = null, float? y = null)
+        => s_now = new(quest ?? "", step ?? "", doing ?? "", zone ?? "", x ?? 0, y ?? 0, x is not null && y is not null);
 
     internal static string Quest => s_now.Quest;
 
     internal static string Step => s_now.Step;
 
     internal static string Doing => s_now.Doing;
+
+    /// <summary>
+    /// The way drawn on Ultimus's own minimap (Niduus, 2026-11-14: "have it draw to the quest like how it does for the
+    /// player in the normal UI"): the Quest Tracker's own route of his quest (the shared route finder: legal walk,
+    /// teleporters, doors and exits toward the step's area), from where he stands. When that finds no spot for the step
+    /// here, the spot Ultimus himself is heading to for it, along the same legal walk.
+    /// </summary>
+    internal static JsonObject Route(Wizard wizard, IActorRef zone) {
+        var now = s_now;
+        var held = wizard.QuestBehavior?.CurrentQuestInstances?.FirstOrDefault(q => q is not null
+            && string.Equals(q.QuestName, now.Quest, StringComparison.OrdinalIgnoreCase));
+        var quest = held?.QuestName ?? now.Quest;
+        if (held is not null && Tools.OverlayQuestRoute.Build(wizard, zone, quest) is { } route
+            && route["points"] is JsonArray { Count: > 0 }) {
+            return route;
+        }
+
+        string zonePath = wizard.Zone ?? "";
+        if (!now.HasSpot || !Tools.OverlayQuestTracker.SameZone(now.Zone, zonePath)) {
+            return null;
+        }
+
+        var here = wizard.Location;
+        var walk = new JsonArray();
+        foreach (var spot in Tools.OverlayQuestPath.Route(wizard.CharId, zonePath, here.X, here.Y, now.X, now.Y, Tools.RouteMobs.Avoid(zone, now.X, now.Y))) {
+            walk.Add(spot.Pad ? new JsonArray(Round(spot.X), Round(spot.Y), 1) : new JsonArray(Round(spot.X), Round(spot.Y)));
+        }
+
+        var template = held is null ? null : QuestTemplateCollection.GetQuestByName(held.QuestName);
+        return new JsonObject {
+            ["quest"] = quest.Length > 0 ? quest : "ultimus-spot",
+            ["t"] = template is null ? Short(now.Step, 120) : Tools.OverlayQuestTracker.English(template.m_questTitle, quest),
+            ["k"] = template is null ? "main" : Tools.QuestStory.KindOf(template),
+            ["points"] = new JsonArray(new JsonObject { ["x"] = Round(now.X), ["y"] = Round(now.Y), ["n"] = Short(now.Step, 60) }),
+            ["path"] = walk,
+        };
+    }
+
+    private static int Round(float value) => float.IsFinite(value) ? (int) MathF.Round(value) : 0;
 
     private static readonly object s_lock = new();
     private static JsonObject s_round;
