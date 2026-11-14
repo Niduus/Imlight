@@ -735,7 +735,8 @@ internal sealed partial class ManagerWindow {
             Fold("clock", ULTIMUS_TAB, "Progress",
                 "How far Ultimus got: his level and area, the story world he is on, how long each world took, how long since " +
                 "he last finished a step or gained XP (his watchdog raises the alarm when that is too long), his mood and " +
-                "today's counts. Updated every 30 seconds (progress.txt in his folder).",
+                "today's counts. Under it, after an update, the story steps that ask to click things which he may have to search for " +
+                "(use-steps.txt). Updated every 30 seconds (progress.txt in his folder).",
                 LogWell(_ultProgressBox),
                 Row(Action(Plain("Copy all"), () => CopyAsync(_ultProgressText)))),
             UltimusDiaryFold(),
@@ -949,12 +950,33 @@ internal sealed partial class ManagerWindow {
             ShowUltimusMistakes();
             ShowLog(_ultQuestLogBox!, ReadUltimusNewest("quest-log.txt", _ultQuestLogText), ref _ultQuestLogText);
             var progress = ReadAllOf(Path.Combine(UltimusFolder, "progress.txt"), 32 * 1024);
+            if (progress.Length > 0 && UseStepsTop() is { Length: > 0 } useSteps) {
+                progress = progress.TrimEnd() + "\n\n" + useSteps;
+            }
+
             if (progress.Length > 0 && progress != _ultProgressText) {
                 _ultProgressText = progress;
                 _ultProgressBox!.Text = progress;
             }
 
             ShowUltimusDiary();
+        }
+
+        // The top of his check of the story's "click these things" steps (written after an update): the steps worth a look,
+        // shown under his progress so it is seen without opening files (Niduus, 2026-11-14).
+        string UseStepsTop() {
+            var text = ReadAllOf(Path.Combine(UltimusFolder, "use-steps.txt"), 64 * 1024);
+            if (text.Length == 0) {
+                return "";
+            }
+
+            var lines = text.Replace("\r", "").Split('\n').TakeWhile(l => l.Trim() != "PLACED").ToList();
+            var shown = lines.Take(23).ToList();
+            if (lines.Count > shown.Count) {
+                shown.Add($"... and {lines.Count - shown.Count} more (use-steps.txt in his folder)");
+            }
+
+            return string.Join('\n', shown).TrimEnd();
         }
 
         static void ShowLog(TextBox box, string text, ref string shown) {
@@ -1303,6 +1325,8 @@ internal sealed partial class ManagerWindow {
             ("Status", "His status now (status.txt)", ReadAllOf(Path.Combine(UltimusFolder, "status.txt"), 32 * 1024)),
             ("Steps", "What went wrong at each step before (step-memory.json)", ReadAllOf(Path.Combine(UltimusFolder, "step-memory.json"), 64 * 1024)),
             ("Explain", "His last Pause and explain (explain.txt)", ReadAllOf(Path.Combine(UltimusFolder, "explain.txt"), 32 * 1024)),
+            ("UseSteps", "Story steps that ask to click things, checked after an update (use-steps.txt)", ReadAllOf(Path.Combine(UltimusFolder, "use-steps.txt"), 64 * 1024)),
+            ("ExitTries", "Doors that did not take him: where he stood on each try (exit-tries.txt)", ReadAllOf(Path.Combine(UltimusFolder, "exit-tries.txt"), 32 * 1024)),
             ("SelfTest", "His last self-test after an update (self-test.txt)", ReadAllOf(Path.Combine(UltimusFolder, "self-test.txt"), 16 * 1024)),
             ("Training", "His training plan (training-plan.txt)", ReadAllOf(Path.Combine(UltimusFolder, "training-plan.txt"), 16 * 1024)),
             ("Pace", "His weekly pace report (pace-report.txt)", ReadAllOf(Path.Combine(UltimusFolder, "pace-report.txt"), 16 * 1024)),
