@@ -383,7 +383,9 @@ internal static class QuestTeamPlanner {
         var live = MinimapIndex.In(leader.ZoneActor);
         var exits = OverlayQuestRoute.ExitsHere(zone, live);
         var spiralDoors = live.Where(m => m.Template == OverlayQuestRoute.SPIRAL_DOOR).ToList();
-        var hops = OverlayQuestRoute.Way(zone, toZone, spiralDoors.Count > 0, exits.Select(e => e.To));
+        // The Quest Team quests the main story only: never through an event, a gauntlet or a side world (as Ultimus).
+        exits = [.. exits.Where(e => OverlayQuestRoute.OnStory(e.To) || OverlayQuestTracker.SameZone(toZone, e.To) || OverlayQuestTracker.SameZone(e.To, toZone))];
+        var hops = OverlayQuestRoute.Way(zone, toZone, spiralDoors.Count > 0, exits.Select(e => e.To), storyOnly: OverlayQuestRoute.OnStory(toZone));
         if (hops.Count == 0) {
             return null;
         }

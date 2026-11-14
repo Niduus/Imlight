@@ -59,6 +59,10 @@ internal sealed partial class UltimusDirectorActor {
     // ---------------------------------------------------------------------
 
     private void PushTick(UltimusMember.Status leader) {
+        // The zone transfer book and the NPC location book (UltimusTransfers, UltimusNpcBook), read or built once, in the background.
+        UltimusTransfers.BuildInBackground();
+        UltimusNpcBook.BuildInBackground();
+
         // Who he plays with right now, on every lesson (solo data and team data never mix).
         var withPlayers = _target?.Key?.EndsWith("|join", StringComparison.Ordinal) == true
                           || CombatDuelComponent.UltimusWithPlayers(leader.GlobalId);
@@ -204,6 +208,7 @@ internal sealed partial class UltimusDirectorActor {
 
         if (OverlayQuestTracker.SameZone(_markedZone, leader.Zone) || DateTime.UtcNow - _markedAt > TimeSpan.FromHours(1)) {
             _markedZone = null;
+            _recallTries = 0;
             return;
         }
 
@@ -211,10 +216,49 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
-        Note("Ultimus", $"recalls to the spot he marked in {UltimusText.Zone(_markedZone)}.");
-        Count("recalls to a marked spot");
+        // Not while the trip's last buy or sale is still going on (Niduus's log, 2026-11-13: the recall went 1 second before
+        // the Bazaar buy, was lost, and he walked back across the Spiral into the Sinbad gauntlet), nor in a talk.
+        if (DateTime.UtcNow < _recallHoldUntil || leader.Talking || DateTime.UtcNow - leader.LastDialog < TimeSpan.FromSeconds(2)) {
+            return;
+        }
+
+        // A recall sent a moment ago: wait for it to take him there (the zone change), then try once more.
+        if (DateTime.UtcNow - _recallSentAt < TimeSpan.FromSeconds(15)) {
+            return;
+        }
+
+        if (_recallTries >= 2) {
+            Note("Ultimus", $"ABNORMAL: Recall did not bring him back to {UltimusText.Zone(_markedZone)} after {_recallTries} tries: he walks back instead.",
+                UltimusLink.ABNORMAL);
+            BotMistakes.Record("Ultimus", BotMistakes.STUCK, leader.Zone, leader.X, leader.Y, "recall to " + _markedZone,
+                $"Recall to the spot marked in {UltimusText.Zone(_markedZone)} did not take him there ({_recallTries} tries).",
+                "Mark before a trip, recall after it.", "Recall only after the trip's buy or sale is done; walk back if it fails.");
+            _markedZone = null;
+            _recallTries = 0;
+            return;
+        }
+
+        _recallTries++;
+        _recallSentAt = DateTime.UtcNow;
+        Note("Ultimus", $"recalls to the spot he marked in {UltimusText.Zone(_markedZone)}" + (_recallTries > 1 ? $" (try {_recallTries})." : "."));
+        if (_recallTries == 1) {
+            Count("recalls to a marked spot");
+        }
+
         _actors[0].Tell(new UltimusMember.RecallSpot());
-        _markedZone = null;
+    }
+
+    // The trip's last buy or sale: no recall before it is done.
+    private DateTime _recallHoldUntil = DateTime.MinValue;
+    private DateTime _recallSentAt = DateTime.MinValue;
+    private int _recallTries;
+
+    /// <summary>A buy or sale on a trip was just sent: Recall waits this long for it to be done.</summary>
+    private void HoldRecall(double seconds) {
+        var until = DateTime.UtcNow.AddSeconds(seconds);
+        if (until > _recallHoldUntil) {
+            _recallHoldUntil = until;
+        }
     }
 
     // ---------------------------------------------------------------------

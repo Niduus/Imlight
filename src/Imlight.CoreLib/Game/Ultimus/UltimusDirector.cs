@@ -387,6 +387,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         NoteLeaderZone(leader);
         // Solo tag, the watchdog and his progress file (UltimusDirector.Push.cs).
         PushTick(leader);
+        // On the walkable ground, where he loses time, the nightly coach folder (UltimusDirector.Bounds.cs).
+        BoundsTick(leader);
+        WasteTick(leader);
+        MaybeAutoCoach();
         RollDay();
         MaybeWeeklyReport();
         Lead([leader]);
@@ -635,6 +639,16 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
     private UltimusPlanner.Target PickTarget(List<UltimusMember.Status> group) {
         var leader = group[0];
+
+        // Off the main story (an event, a gauntlet, a house, a side world his step does not name): leaving it comes first
+        // (Niduus, 2026-11-14). Then a wrong area the way went to: back out the same way (UltimusDirector.Bounds.cs).
+        if (LeaveOffStory(leader) is { } leave) {
+            return leave;
+        }
+
+        if (BackOut(leader) is { } backOut) {
+            return backOut;
+        }
 
         // Training: when someone has spells waiting and the team is in Wizard City (or two spells wait), a trip to Ravenwood.
         // He marks his spot first, and recalls back after (UltimusDirector.Push.cs).
@@ -1022,6 +1036,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         Clicked(key);
         if (member.Options.TryGetValue(target.GlobalId, out var options) && options.FirstOrDefault(o => o.Service == "WizTrainingService") is { Service: not null } open) {
             _actors[index].Tell(new UltimusMember.Interact(target.GlobalId, open.Service, open.Index, "training"));
+            HoldRecall(6);
         }
 
         Note(member.Role, $"{member.Name} trains {UltimusText.SpellName(spellId)}.");
@@ -1148,7 +1163,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     private void NoteLeaderZone(UltimusMember.Status leader) {
         if (_leaderZone.Length > 0 && !string.Equals(_leaderZone, leader.Zone, StringComparison.OrdinalIgnoreCase)) {
             Note("Ultimus", $"{leader.Name} is now in {UltimusText.Zone(leader.Zone)}.");
+            var meant = _prediction is { Kind: "travel" } travel ? travel.Zone : null;
             CheckArrival(leader);
+            // The landing the zone transfer book says, and backing out of a wrong area (UltimusDirector.Bounds.cs).
+            CheckLanding(_leaderZone, _leaderLastX, _leaderLastY, leader, meant);
 
             // Going in and out of areas again and again is a way that loops (Niduus's log, 2026-11-12: "to Savarstaad Pass"
             // while already in Savarstaad Pass, every few seconds): an issue (flagged for Niduus, never skipped).

@@ -40,6 +40,8 @@ internal sealed partial class ManagerWindow {
     // Its stats, gear, deck and quest, the same sheet as the Quest Team's (Niduus, 2026-11-13); with one Ultimus the picker hides.
     private readonly WizardSheet _ultSheet = new("Turn Ultimus on and start the server; once it is playing, its stats, gear, deck and quest show here.");
     private readonly ToggleSwitch _ultEnabled = new() { OnContent = "On", OffContent = "Off" };
+    // The nightly auto-coach (Niduus, 2026-11-14: a toggle, off by default): [Ultimus] AutoCoach.
+    private readonly ToggleSwitch _ultAutoCoach = new() { OnContent = "On", OffContent = "Off" };
     private readonly NumericUpDown _ultSlow = new() { Minimum = 1.2m, Maximum = 20, Increment = 0.5m, FormatString = "0.0", Width = 140 };
     private readonly NumericUpDown _ultLosses = new() { Minimum = 1, Maximum = 20, Increment = 1, FormatString = "0", Width = 140 };
     private readonly NumericUpDown _ultQuestMinutes = new() { Minimum = 0, Maximum = 600, Increment = 5, FormatString = "0", Width = 140 };
@@ -115,6 +117,11 @@ internal sealed partial class ManagerWindow {
                 }
             };
         }
+        _ultAutoCoach.IsCheckedChanged += async (_, _) => {
+            if (!_showingUlt) {
+                await Guard(() => SetUltimusAutoCoachAsync(_ultAutoCoach.IsChecked == true));
+            }
+        };
 
         LoadUltimusSettings();
         StartUltimusTimer();
@@ -152,13 +159,16 @@ internal sealed partial class ManagerWindow {
                 SwitchRow("Minutes with no progress before it is stuck", _ultStuck,
                     "When nothing moves forward for this long, Ultimus reports that it is stuck."),
                 SwitchRow("Time limit for one quest (minutes)", _ultQuestMinutes,
-                    "A quest that takes longer than this is reported, however long it was expected to take. 0 means no limit.")));
+                    "A quest that takes longer than this is reported, however long it was expected to take. 0 means no limit."),
+                SwitchRow("Nightly auto-coach", _ultAutoCoach,
+                    "On: each night (after 4 AM) Ultimus puts all his logs in a dated folder, logs\\ultimus\\coach, each file on its own plus one joint file, ready to hand to the coach. The last 14 nights are kept. Off by default.")));
     }
 
     private void LoadUltimusSettings() {
         _showingUlt = true;
         try {
             _ultEnabled.IsChecked = _manager.GetSwitch("Ultimus", "Enabled");
+            _ultAutoCoach.IsChecked = _manager.GetSwitch("Ultimus", "AutoCoach");
             _ultSlow.Value = (decimal) Number("SlowFactor", 2);
             _ultLosses.Value = (decimal) Number("LossesBeforeIssue", 3);
             _ultStuck.Value = (decimal) Number("StuckMinutes", 8);
@@ -183,6 +193,20 @@ internal sealed partial class ManagerWindow {
         Say(on ? "Ultimus is on. With the server running, it logs in within a few seconds and starts questing."
             : "Ultimus is off. It logs out within a few seconds.");
         RefreshUltimus();
+
+        return Task.CompletedTask;
+    }
+
+    private Task SetUltimusAutoCoachAsync(bool on) {
+        if (!_manager.HasSetting("Ultimus", "AutoCoach")) {
+            LoadUltimusSettings();
+            throw new PanelException("This server's Imlight.ini has no [Ultimus] AutoCoach yet. Click \"Update Ahziael\" once, then try again.");
+        }
+
+        _manager.SaveSettings([new Setting("Ultimus", "AutoCoach", on ? "true" : "false", "")]);
+        _settings = [];
+        Say(on ? "The nightly auto-coach is on: each night Ultimus's logs go in a dated folder in logs\\ultimus\\coach."
+            : "The nightly auto-coach is off.");
 
         return Task.CompletedTask;
     }

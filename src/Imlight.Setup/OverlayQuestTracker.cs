@@ -112,7 +112,11 @@ internal static class OverlayQuestData {
 
     /// <summary>A picked quest's way on the minimap: the step spots (nearest first) and the walk to the nearest.</summary>
     internal sealed record Route(string Quest, string Title, string Kind, IReadOnlyList<(double X, double Y, string Name)> Points,
-                                 IReadOnlyList<(double X, double Y)> Path, string To, string Via, IReadOnlySet<int>? Pads = null);
+                                 IReadOnlyList<(double X, double Y)> Path, string To, string Via, IReadOnlySet<int>? Pads = null) {
+
+        /// <summary>The walks to the other step spots (not the nearest), drawn faded.</summary>
+        public IReadOnlyList<IReadOnlyList<(double X, double Y)>> Trails { get; init; } = [];
+    }
 
     private static readonly object s_lock = new();
     private static readonly Dictionary<long, Snapshot> s_lists = [];
@@ -360,8 +364,14 @@ internal static class OverlayQuestData {
                 }
             }
 
+            // The other steps' walks, drawn faded (teleporter jumps are left out of a trail).
+            var trails = new List<IReadOnlyList<(double X, double Y)>>();
+            foreach (var trail in (sent["trails"] as JsonArray ?? []).OfType<JsonArray>().Take(3)) {
+                trails.Add([.. trail.OfType<JsonArray>().Take(120).Where(item => item.Count >= 2).Select(item => (Number(item[0]), Number(item[1])))]);
+            }
+
             s_routes[window] = new Route(Short((string?) sent["quest"], 120), Short((string?) sent["t"], 120), Short((string?) sent["k"], 10),
-                points, path, Short((string?) sent["to"], 80), Short((string?) sent["via"], 80), pads);
+                points, path, Short((string?) sent["to"], 80), Short((string?) sent["via"], 80), pads) { Trails = trails };
         }
     }
 
@@ -761,6 +771,26 @@ internal static class OverlayQuestRouteDrawing {
         var look = OverlayQuestData.LookOf(window) ?? (window == OverlayUltimusData.KEY ? OverlayQuestData.AnyLook() : null) ?? new OverlayQuestList();
         var color = OverlayRenderer.Parse(look.ColorOf(route.Kind)) ?? Colors.Gold;
         var width = look.RouteWidth;
+        // The other steps' walks first, faded and thinner, so the nearest one's line reads on top (Niduus, 2026-11-14).
+        var faded = Color.FromArgb(0x60, color.R, color.G, color.B);
+        foreach (var trail in route.Trails) {
+            if (trail.Count == 0) {
+                continue;
+            }
+
+            var dim = new StreamGeometry();
+            using (var g = dim.Open()) {
+                g.BeginFigure(wizard, false);
+                foreach (var (x, y) in trail) {
+                    g.LineTo(project(x, y));
+                }
+
+                g.EndFigure(false);
+            }
+
+            context.DrawGeometry(null, new Pen(new SolidColorBrush(faded), Math.Max(1, width * 0.75), new DashStyle([2.2, 1.6], 0), PenLineCap.Round, PenLineJoin.Round), dim);
+        }
+
         if (route.Points.Count > 0) {
             // The walk, broken at each teleporter: the line stops on the pad and goes on from where it lands (the
             // teleporter itself drawn as a small ring at both ends).
@@ -794,10 +824,12 @@ internal static class OverlayQuestRouteDrawing {
                 }
             }
 
-            foreach (var (x, y, _) in route.Points) {
-                var at = project(x, y);
-                context.DrawEllipse(null, new Pen(new SolidColorBrush(Color.FromArgb(0xB0, 0, 0, 0)), 4), at, iconSize, iconSize);
-                context.DrawEllipse(null, new Pen(new SolidColorBrush(color), 2.2), at, iconSize, iconSize);
+            // The nearest step's ring full, the others faded.
+            for (var i = 0; i < route.Points.Count; i++) {
+                var at = project(route.Points[i].X, route.Points[i].Y);
+                var near = i == 0;
+                context.DrawEllipse(null, new Pen(new SolidColorBrush(Color.FromArgb(near ? (byte) 0xB0 : (byte) 0x40, 0, 0, 0)), 4), at, iconSize, iconSize);
+                context.DrawEllipse(null, new Pen(new SolidColorBrush(near ? color : faded), 2.2), at, iconSize, iconSize);
             }
         }
     }
