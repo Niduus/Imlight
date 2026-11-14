@@ -39,7 +39,11 @@ internal static class QuestStepSpots {
     internal sealed record Spot(string Zone, string Location, string How);
 
     /// <summary>A zone's placed objects (template ID and spot) and the text key of its name.</summary>
-    internal sealed record ZoneInfo((ulong Template, Imcodec.Math.Vector3 Spot)[] Objects, string DisplayKey);
+    internal sealed record ZoneInfo((ulong Template, Imcodec.Math.Vector3 Spot)[] Objects, string DisplayKey) {
+        /// <summary>Templates the zone's spawners put on its paths (wisps in Krokotopia and later worlds come this way, not as
+        /// placed objects). No spots: they move along the path.</summary>
+        public ulong[] Spawned { get; init; } = [];
+    }
 
     // Each zone's placed objects and name, read once.
     private static readonly ConcurrentDictionary<string, ZoneInfo> s_zones = new(StringComparer.OrdinalIgnoreCase);
@@ -92,9 +96,20 @@ internal static class QuestStepSpots {
                 return new ZoneInfo([], "");
             }
 
+            ulong[] spawned = [];
+            try {
+                if (wad.OpenFile("spawnData.xml")?.ToArray() is { } spawnBytes && new BindSerializer().Deserialize<SpawnManager>(spawnBytes, 1, out var spawnData)) {
+                    spawned = [.. (spawnData?.m_spawners ?? []).Where(sp => sp is not null).SelectMany(sp => sp.m_spawnList ?? [])
+                        .Where(i => i?.m_objectInfo is not null).Select(i => (ulong) i.m_objectInfo.m_templateID).Distinct()];
+                }
+            }
+            catch (Exception ex) {
+                Logger.Debug("Quest step spots: zone {0} spawn data could not be read: {1}", Logger.Args(name, ex.Message));
+            }
+
             return new ZoneInfo(
                 [.. (zoneData?.m_objectList ?? []).Where(o => o is not null).Select(o => ((ulong) o.m_templateID, o.m_location))],
-                zoneData?.m_zoneDisplayName.ToString() ?? "");
+                zoneData?.m_zoneDisplayName.ToString() ?? "") { Spawned = spawned };
         }
         catch (Exception ex) {
             Logger.Debug("Quest step spots: zone {0} could not be read: {1}", Logger.Args(name, ex.Message));
