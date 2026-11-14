@@ -324,6 +324,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         UsePotions();
         NoticeOddities();
         AnswerPlayers();
+        // Ahziael's "Pause and explain", answered even while paused (UltimusDirector.Story.cs).
+        MaybeExplain(_team[0]);
 
         // Paused in Ahziael: they stand where they are, logged in (a battle still plays out by itself).
         if (DateTime.UtcNow >= _nextPauseLook) {
@@ -386,6 +388,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // Solo tag, the watchdog and his progress file (UltimusDirector.Push.cs).
         PushTick(leader);
         RollDay();
+        MaybeWeeklyReport();
         Lead([leader]);
     }
 
@@ -702,6 +705,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
             _paused = true;
             _doing = "finished the Main Story; stopped";
+            Milestone("story", $"Ultimus finished the whole Main Story, to {lastWorld}.");
 
             return null;
         }
@@ -732,6 +736,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         if (_storyWorld is not null) {
             var at = DateTime.Now.ToString("dddd d MMMM yyyy, HH:mm", System.Globalization.CultureInfo.InvariantCulture);
             Note("Ultimus", $"WORLD COMPLETE: {_storyWorld} on {at}; on to {world}.");
+            Milestone("world", $"Ultimus finished {_storyWorld}'s story on {at} at level {_team[0].Wizard?.MagicSchoolBehavior?.Level ?? 0}; on to {world}.");
             Count("worlds completed");
             UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "world done", Quest = _storyWorld, Title = $"World {_storyWorld}",
                 Text = $"story finished on {at}; the team goes on to {world} (levels {string.Join(", ", _team.Select(m => $"{m.Role} {m.Wizard?.MagicSchoolBehavior?.Level ?? 0}"))})" });

@@ -85,6 +85,9 @@ internal static class UltimusPlanner {
         "Polaris", "Mirage", "Empyrea", "Karamelle", "Lemuria", "Novus", "Wallaru", "Selenopolis", "Ahmarra",
     ];
 
+    /// <summary>The story's worlds in the order they are played, by zone folder.</summary>
+    internal static IReadOnlyList<string> Ladder => s_ladder;
+
     /// <summary>
     /// Whether the leader has played the last world of the story this server's data has (Niduus, 2026-11-12: "Stop. But
     /// that's assuming they finish ... the Ladder depends on the data at the time"): a story quest given there is done.
