@@ -1928,8 +1928,20 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     }
 
     private void Report(string kind, string quest, string text, Imcodec.ObjectProperty.TypeCache.QuestTemplate template) {
-        var diagnosis = Diagnose(quest);
+        // A quest that is only slow, while he is in a battle or busy with another quest, is not blocked: the quest checks
+        // then guessed "the wizard lacks something the quest requires" with High confidence for a quest he simply had not
+        // got to yet (Niduus's log, 2026-11-14, "Serpent Staff"). Say plainly what he is doing instead of guessing a cause.
+        var me = _team.Count > 0 ? _team[0] : null;
+        var fighting = me is not null && CombatDuelComponent.IsInBattle(me.GlobalId);
+        var elsewhere = !string.IsNullOrEmpty(_target?.Quest) && !string.Equals(_target.Quest, quest, StringComparison.OrdinalIgnoreCase);
+        var busy = kind == "slow" && (fighting || elsewhere);
+        var diagnosis = busy ? null : Diagnose(quest);
         var facts = DebugFacts(quest, template) ?? [];
+        if (busy) {
+            var why = fighting ? "He is in a battle right now" : $"He is working on another quest right now ({UltimusText.Title(_target.Quest)})";
+            text += $" {why}, so this quest is only slow, not blocked.";
+            facts.Insert(0, $"Likely cause: none found; {why.ToLowerInvariant()}, so the quest is waiting, not broken.");
+        }
         if (diagnosis is not null) {
             text += " " + diagnosis.Summary;
             facts.Insert(0, $"Likely cause ({diagnosis.Confidence} confidence, {diagnosis.Category}): {diagnosis.LikelyCause}");
