@@ -276,6 +276,7 @@ internal static class RewrittenAI {
         internal bool Trap;
         internal bool TrapAll;
         internal string TrapSchool = "";
+        internal int TrapPercent;
 
         internal bool Shield;
         internal bool ShieldForTeammate;
@@ -314,7 +315,7 @@ internal static class RewrittenAI {
             School = known.School, Hit = known.Hit, HitsAll = known.HitsAll, BaseDamage = known.BaseDamage, DamageSchool = known.DamageSchool,
             Blade = known.Blade, BladeForTeammate = known.BladeForTeammate, BladeOnlyTeammate = known.BladeOnlyTeammate,
             BladeWholeTeam = known.BladeWholeTeam, BladeSchool = known.BladeSchool, BladePercent = known.BladePercent,
-            Trap = known.Trap, TrapAll = known.TrapAll, TrapSchool = known.TrapSchool,
+            Trap = known.Trap, TrapAll = known.TrapAll, TrapSchool = known.TrapSchool, TrapPercent = known.TrapPercent,
             Shield = known.Shield, ShieldForTeammate = known.ShieldForTeammate, ShieldWholeTeam = known.ShieldWholeTeam, ShieldSchool = known.ShieldSchool,
             ShieldSchools = known.ShieldSchools,
             Weakness = known.Weakness, RemovesCharms = known.RemovesCharms, Stun = known.Stun,
@@ -367,6 +368,7 @@ internal static class RewrittenAI {
                 case kSpellEffects.kModifyIncomingDamage when e.m_effectParam > 0 && enemy:
                     card.Trap = true;
                     card.TrapSchool = (string) e.m_sDamageType ?? "";
+                    card.TrapPercent = Math.Max(card.TrapPercent, e.m_effectParam);
                     card.TrapAll |= e.m_effectTarget is kEffectTarget.kEnemyTeam or kEffectTarget.kEnemyTeamAllAtOnce;
                     break;
                 case kSpellEffects.kModifyIncomingDamage when e.m_effectParam < 0 && friendly:

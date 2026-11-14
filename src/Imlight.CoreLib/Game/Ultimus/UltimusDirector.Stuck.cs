@@ -69,6 +69,7 @@ internal sealed partial class UltimusDirectorActor {
         var member = _team[index];
         var where = $"{UltimusText.Zone(member.Zone)} at ({member.X:0}, {member.Y:0})";
         why ??= $"has stood still over {(int) _stuck.Still.TotalSeconds} seconds";
+        NoteDayStuck();
         var quest = _target?.Quest ?? _currentQuest;
         var goal = _target ?? _leaderLastTarget;
         var step = goal is not null ? $"{goal.Quest}|{goal.Goal}|{goal.What}" : _doing;

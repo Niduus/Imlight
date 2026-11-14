@@ -210,7 +210,7 @@ internal sealed partial class CombatDuelComponent {
 
             UltimusTactics.Choice choice;
             try {
-                choice = UltimusTactics.Decide(member, circles, CombatResolver);
+                choice = UltimusTactics.Decide(member, circles, CombatResolver, Duel.m_roundNum);
             }
             catch (Exception e) {
                 Logger.Warning("Duel {0} | Slot {1} | Ultimus could not decide: {2}", Logger.Args(Duel.m_duelID.Full, member.SlotIndex, e.Message));

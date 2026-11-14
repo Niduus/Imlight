@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using Imlight.Common;
 
 namespace Imlight.CoreLib.Game.Ultimus;
@@ -61,6 +62,16 @@ internal static class UltimusPlaybook {
         ("Gear", new("PierceWeight", 3, "...together with pierce, which goes through the creatures' resist.")),
         ("Gear", new("FloorWeight", 4, "How much a point under a floor (resist, accuracy) counts: survival comes first.")),
         ("Gear", new("OverFloorShare", 0.25, "A point above a floor counts this share of a point under it.")),
+        ("Battle", new("LookAheadDelay", 0.9, "Planning two rounds: damage next round counts this share of damage now (a round later is a round more they hit me).")),
+        ("Battle", new("LookAheadRisky", 0.75, "...and only this share when the creatures' habits say they could take me under my heal line before then.")),
+        ("Battle", new("TrapGuess", 30, "A trap whose size I can't read counts as this many percent.")),
+        ("Battle", new("HealerFirst", 0.3, "A creature that heals this share of its casts or more is hit first: a fight drags on while it heals.")),
+        ("Mood", new("CarefulAfterStuck", 4, "Stuck this many times in an hour makes me careful.")),
+        ("Mood", new("BoldAfterWins", 5, "This many fights won in a row (none lost) makes me bold.")),
+        ("Mood", new("CarefulHealShift", 0.1, "Careful, I heal this much sooner in battle (share of health) and rest to full before every fight.")),
+        ("Mood", new("BoldHealShift", 0.05, "Bold, I heal this much later in battle and rest less.")),
+        ("Confidence", new("Careful", 45, "A plan I trust less than this (out of 100) is done the careful way: full health first, the map's way, not a shortcut.")),
+        ("Confidence", new("Sure", 80, "A plan I trust this much or more is done at once.")),
     ];
 
     // The know-how written in the file for reading (not numbers he reads).
@@ -91,6 +102,27 @@ internal static class UltimusPlaybook {
         "- Compare the whole outfit, not one piece: a piece is worth what it adds to the outfit's weakest need.",
         "- Look again after every new world, drop, shop and quest reward. Never developers' or testers' gear.",
         "",
+        "THINKING (each step)",
+        "- I keep four goals in mind and say them: the world's story I am finishing, the quest, its step, and my next move.",
+        "- Each plan gets a confidence out of 100: what I know of the place, the creature and the way there. Under Confidence.Careful",
+        "  I do it the careful way; at Confidence.Sure or more I do it at once.",
+        "- Before I act I say what I expect (\"this exit takes me to Altar of Kings\", \"I win and lose about 20% health\").",
+        "  When something else happens, that surprise is a lesson: it goes in the Mistakes book and the shared brain.",
+        "- My mood: careful after a lost fight, many stuck spots or many surprises in the last hour; bold after many wins in a row.",
+        "",
+        "BATTLE PLANNING (two rounds ahead)",
+        "- Before each round I look at my whole hand over two rounds: hit now and hit again, blade now and hit bigger next round,",
+        "  trap now and hit bigger next round, or save my pips now for a bigger spell next round. I play the line that deals the",
+        "  most over both rounds, counting a round later as worth a bit less (Battle.LookAheadDelay), and much less when the",
+        "  creatures could take me under my heal line before then (Battle.LookAheadRisky).",
+        "- Damage past a creature's health is wasted: a big hit on a nearly dead creature counts only what it takes.",
+        "- I play round the creatures' habits from the shared brain: one that heals often is hit first; one that tends to hit",
+        "  hard on this round makes me heal or shield first; one that shields on this round makes building up worth more.",
+        "",
+        "DAILY REVIEW",
+        "- Once a day I read my day: fights won and lost, where I got stuck, what surprised me. I write \"today I learned\"",
+        "  (learned-today.txt) and change a few playbook numbers myself, only inside the limits in self-tuning.txt.",
+        "",
         "LEARNING",
         "- Remember each creature: how the fight went and what it took. Plan the next fight from that.",
         "- Write each mistake, with my reasoning, in the Mistakes book, and read it before a similar step.",
@@ -100,6 +132,7 @@ internal static class UltimusPlaybook {
     private static Dictionary<string, Rule> s_rules;
     private static DateTime s_read = DateTime.MinValue;
     private static DateTime s_written = DateTime.MinValue;
+    private static bool s_upgraded;
 
     /// <summary>A rule by "Section.Name": the number in the file, or its starting value.</summary>
     internal static Rule Get(string name) {
@@ -135,6 +168,11 @@ internal static class UltimusPlaybook {
             if (!File.Exists(path)) {
                 Directory.CreateDirectory(UltimusWire.Folder);
                 File.WriteAllText(path, DefaultText());
+            }
+
+            if (!s_upgraded) {
+                s_upgraded = true;
+                Upgrade(path);
             }
 
             var written = File.GetLastWriteTimeUtc(path);
@@ -175,6 +213,98 @@ internal static class UltimusPlaybook {
         }
     }
 
+    // Rules and know-how added after his playbook was first written: added at its end, his own changes kept (the file is
+    // never written over).
+    private const string KNOW_HOW_MARK = "# Know-how version 2";
+
+    private static void Upgrade(string path) {
+        var text = File.ReadAllText(path);
+        var add = new System.Text.StringBuilder();
+        var known = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var section = "";
+        foreach (var raw in text.Split('\n')) {
+            var line = raw.Trim();
+            if (line.StartsWith('[') && line.EndsWith(']')) {
+                section = line[1..^1].Trim();
+            }
+            else if (line.IndexOf('=') is var eq and > 0 && !line.StartsWith('#') && !line.StartsWith('-')) {
+                known.Add(section + "." + line[..eq].Trim());
+            }
+        }
+
+        foreach (var group in s_defaults.Where(d => !known.Contains(d.Section + "." + d.Rule.Name)).GroupBy(d => d.Section)) {
+            add.AppendLine();
+            add.AppendLine($"[{group.Key}]");
+            foreach (var (_, rule) in group) {
+                add.AppendLine($"{rule.Name} = {rule.Value.ToString(CultureInfo.InvariantCulture)} ; {rule.Why}");
+            }
+        }
+
+        if (!text.Contains(KNOW_HOW_MARK, StringComparison.Ordinal)) {
+            add.AppendLine();
+            add.AppendLine(KNOW_HOW_MARK + " (added by Ahziael; the rules above are kept as you set them)");
+            add.AppendLine("[Know-how]");
+            foreach (var line in s_knowHow) {
+                add.AppendLine(line.Length == 0 ? "" : line.StartsWith('-') || line.StartsWith(' ') ? line : "# " + line);
+            }
+        }
+
+        if (add.Length > 0) {
+            File.AppendAllText(path, add.ToString());
+        }
+    }
+
+    /// <summary>
+    /// He changes one of his own numbers (the daily review, inside the limits in self-tuning.txt): the line in the file is
+    /// changed in place, its reason kept, and a note of why goes after it.
+    /// </summary>
+    internal static bool Set(string name, double value, string because) {
+        lock (s_lock) {
+            try {
+                var path = Path.Combine(UltimusWire.Folder, FILE);
+                if (!File.Exists(path)) {
+                    Load();
+                }
+
+                var dot = name.IndexOf('.');
+                var (wantSection, wantName) = (name[..dot], name[(dot + 1)..]);
+                var lines = File.ReadAllLines(path).ToList();
+                var section = "";
+                for (var i = 0; i < lines.Count; i++) {
+                    var line = lines[i].Trim();
+                    if (line.StartsWith('[') && line.EndsWith(']')) {
+                        section = line[1..^1].Trim();
+                        continue;
+                    }
+
+                    var eq = line.IndexOf('=');
+                    if (eq <= 0 || line.StartsWith('#') || !section.Equals(wantSection, StringComparison.OrdinalIgnoreCase)
+                        || !line[..eq].Trim().Equals(wantName, StringComparison.OrdinalIgnoreCase)) {
+                        continue;
+                    }
+
+                    var rest = line[(eq + 1)..];
+                    var why = rest.IndexOf(';') is var semi and >= 0 ? rest[(semi + 1)..].Trim() : "";
+                    var cut = why.IndexOf(" [I set this", StringComparison.Ordinal);
+                    if (cut >= 0) {
+                        why = why[..cut];
+                    }
+
+                    lines[i] = $"{wantName} = {value.ToString("0.###", CultureInfo.InvariantCulture)} ; {why} [I set this {DateTime.Now:yyyy-MM-dd}: {because}]";
+                    File.WriteAllLines(path, lines);
+                    s_rules = null;
+
+                    return true;
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentOutOfRangeException) {
+                Logger.Debug("Ultimus: {0} could not be changed: {1}", Logger.Args(FILE, ex.Message));
+            }
+
+            return false;
+        }
+    }
+
     private static string DefaultText() {
         var text = new System.Text.StringBuilder();
         text.AppendLine("# Ultimus's playbook: the Wizard101 know-how he plays by.");
@@ -196,6 +326,7 @@ internal static class UltimusPlaybook {
         }
 
         text.AppendLine();
+        text.AppendLine(KNOW_HOW_MARK);
         text.AppendLine("[Know-how]");
         foreach (var line in s_knowHow) {
             text.AppendLine(line.Length == 0 ? "" : line.StartsWith('-') || line.StartsWith(' ') ? line : "# " + line);

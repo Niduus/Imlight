@@ -526,8 +526,11 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
             // What everyone has on before the move, for cheats that answer an effect being taken off.
             NoteEffectsBeforeMove();
             var before = combatActionList.m_actionList.Count;
+            // A creature's move in a battle a server-run wizard is in: learned for the bots' shared brain (BotKnowledge).
+            var watched = BotShared.BotKnowledge.Before(action, ActiveSubCircles);
             cinematicTime += WithPetMayCasts(() => ProcessQueuedAction(action, combatActionList, cinematicTime),
                 combatActionList, cinematicTime);
+            BotShared.BotKnowledge.After(action, watched, _duel.m_duelID.Full, _duel.m_roundNum);
             // An Extract spell on that move takes Animus (CombatResolver.Monstrology.cs), before any afterlife brings a monster back.
             NoteExtractions(action, before, combatActionList);
             // A participant defeated by that move comes back if an afterlife waits on them (CombatResolver.Afterlife.cs).

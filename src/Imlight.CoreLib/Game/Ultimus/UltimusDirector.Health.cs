@@ -62,7 +62,10 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         // A creature that beat it before, or that takes most of its health, is met at full health (UltimusFoes).
-        lowHealth = stats.m_currentHitpoints < Math.Max(1, stats.m_baseHitpoints + stats.m_bonusHitpoints) * UltimusPlaybook.Value(tough ? "Quest.ToughFoeHealth" : "Quest.ReadyHealth");
+        // Bold (a winning streak), he rests a little less before a step (UltimusMood).
+        var ready = tough ? UltimusPlaybook.Value("Quest.ToughFoeHealth")
+            : UltimusPlaybook.Value("Quest.ReadyHealth") - (UltimusMood.Now == UltimusMood.Level.Bold ? UltimusPlaybook.Value("Mood.BoldHealShift") * 2 : 0);
+        lowHealth = stats.m_currentHitpoints < Math.Max(1, stats.m_baseHitpoints + stats.m_bonusHitpoints) * ready;
         lowMana = stats.m_currentMana < Math.Max(1, stats.m_baseMana + stats.m_bonusMana) * UltimusPlaybook.Value(tough ? "Quest.ToughFoeMana" : "Quest.ReadyMana");
 
         return lowHealth || lowMana;

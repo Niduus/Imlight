@@ -195,6 +195,13 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 actor.Tell(new UltimusMember.Disconnect(m.Why));
             }
 
+            try {
+                MaybeReview(stopping: true);
+            }
+            catch (Exception e) {
+                Logger.Debug("Ultimus: the review at stopping failed: {0}", Logger.Args(e.Message));
+            }
+
             UltimusDirector.Forget();
             WriteStatus("off", m.Why);
             Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(2), Self, PoisonPill.Instance, Self);
@@ -211,6 +218,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     }
 
     protected override void PreStart() {
+        // His self-tuning limits written once, so they can be opened and set before his first daily review.
+        _ = Limits();
         StartTeam(restart: false);
         base.PreStart();
     }
@@ -364,6 +373,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // Never stands in one place for ever (UltimusDirector.Stuck.cs).
         LookForStuck();
 
+        // His mood, and once a day what he learned (UltimusDirector.Plans.cs).
+        ThinkMood();
+        MaybeReview();
+
         // Better gear on, and decks that miss new spells redone (UltimusDirector.Gear.cs).
         KeepGearAndDecks();
 
@@ -444,6 +457,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             if (!sameStep) {
                 _targetSince = DateTime.UtcNow;
                 Note("Ultimus", $"next: {Describe(target)}.");
+                // His goals, how much he trusts this plan and what he expects (UltimusDirector.Plans.cs).
+                var (confidence, reasons) = Confidence(leader, target);
+                ThinkGoals(leader, target, confidence);
+                ThinkConfidence(leader, target, confidence, reasons);
+                Predict(leader, target);
                 // A fight is next: each deck made ready for it.
                 if (target.Kind == UltimusPlanner.FIGHT) {
                     // Its deck read first, as a player who knows the creature (UltimusScout): shields for what it hits with.
@@ -1115,6 +1133,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     private void NoteLeaderZone(UltimusMember.Status leader) {
         if (_leaderZone.Length > 0 && !string.Equals(_leaderZone, leader.Zone, StringComparison.OrdinalIgnoreCase)) {
             Note("Ultimus", $"{leader.Name} is now in {UltimusText.Zone(leader.Zone)}.");
+            CheckArrival(leader);
 
             // Going in and out of areas again and again is a way that loops (Niduus's log, 2026-11-12: "to Savarstaad Pass"
             // while already in Savarstaad Pass, every few seconds): an issue, and the step is skipped, as a player would
