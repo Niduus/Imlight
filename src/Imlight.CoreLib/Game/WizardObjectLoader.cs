@@ -40,6 +40,8 @@ public static class WizardObjectLoader {
             Imlight.CoreLib.Game.Combat.CombatDuelSubCircle.EarnedShadowMagic(character, character.GameStats);
         }
         var clientObject = CoreObjectFactory.InitializeCoreObjectBehaviors(new WizClientObject(), 1);
+        // In a Beastmoon arena the wizard also carries the battleground player behavior (Game/Battlegrounds).
+        Battlegrounds.Battlegrounds.AddPlayerBehavior(clientObject, character);
 
         // Set the stats on the new object.
         clientObject.m_templateID = WIZARD_OBJECT_TEMPLATE_ID;

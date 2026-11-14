@@ -47,6 +47,12 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
                 return RaidResult.MoveTo(context, padTarget);
             }
 
+            // So does a Beastmoon arena's (Game/Battlegrounds/BattlegroundTeleports.cs).
+            if (context is GenericResultContext { TriggerName: { } bgTrigger }
+                && Battlegrounds.BattlegroundTeleports.Target(context.GetZonePath(), bgTrigger) is { } bgTarget) {
+                return RaidResult.MoveTo(context, bgTarget);
+            }
+
             // The Deckathalon's tower floors name none either: their portals go up a floor or back to the arena.
             if (Events.Deckathalon.FloorTeleport(context.GetPlayerRef(), playerObj.m_characterId, context.GetZonePath(),
                     (context as GenericResultContext)?.TriggerName)) {

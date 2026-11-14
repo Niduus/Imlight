@@ -143,6 +143,17 @@ internal sealed class CombatCreatureDeckComponent : ZoneEntityComponent, ICompon
                 Add(spellId);
             }
 
+            // A deck SpiralDB lacks may ship with the game itself (the Beastmoon arenas' creatures:
+            // Decks/Battlegrounds/MDeck-D-BG-Polymorph-WolfWarrior-A-01.xml); those are their real cards.
+            if (spellbook is null && Imlight.CoreLib.Game.Combat.ClientDecks.SpellNames(deckBehavior.m_defaultDeck) is { Count: > 0 } clientDeck) {
+                foreach (var spellName in clientDeck) {
+                    if (SpellFactory.GetSpell(spellName) is { } spell) {
+                        realCards = true;
+                        Add(spell.m_templateID);
+                    }
+                }
+            }
+
             // From Azteca on most decks (and from Mirage on every deck) live only on the real game's servers: not in
             // the game files, SpiralDB or Wizard404. [Battle] StandInDecks (live, for creatures that appear after the
             // change): such a creature plays the school deck of its rank instead of the six starter spells.

@@ -132,6 +132,16 @@ public partial class CombatDuelSubCircle {
     // Deckathalon.StatsFor). The battle changes only the copy's health and mana; a Deckathalon battle still uses up the
     // treasure cards it casts.
     internal bool FightsWithCopy { get; private set; }
+
+    // The character whose Beastmoon beast fights in this circle (Game/Battlegrounds/BeastCombat.cs), or 0: its health
+    // is kept between battles.
+    private ulong _beastCharId;
+
+    private void NoteBeastHealth() {
+        if (_beastCharId != 0 && ParticipantGameStats is { } stats) {
+            Imlight.CoreLib.Game.Battlegrounds.BeastCombat.NoteHealth(_beastCharId, stats.m_currentHitpoints);
+        }
+    }
     internal List<SpellEffect> _hangingEffects { get {
         if (CombatParticipant is null) {
             return null;
@@ -1475,6 +1485,8 @@ public partial class CombatDuelSubCircle {
                 ParticipantGameStats.m_currentHitpoints -= damage;
             }
         }
+
+        NoteBeastHealth();
     }
 
     /// <summary>
@@ -1494,6 +1506,7 @@ public partial class CombatDuelSubCircle {
             ParticipantGameStats.m_currentHitpoints = health;
         }
 
+        NoteBeastHealth();
         SyncParticipantHealth();
     }
 
@@ -1543,6 +1556,8 @@ public partial class CombatDuelSubCircle {
                 ParticipantGameStats.m_currentHitpoints += heal;
             }
         }
+
+        NoteBeastHealth();
     }
 
     // [Battle] UnlimitedMana: spells cost no mana, and mana refills in the Commons.
@@ -1780,10 +1795,21 @@ public partial class CombatDuelSubCircle {
         var deckathalon = !IsSandboxed && Imlight.CoreLib.Game.Events.Deckathalon.FightsHere(_wizard);
         // A Level Scaling Elixir from the Scales of Knowledge (Game/LevelScaling/LevelScales.cs): against creatures the
         // wizard fights with a copy of their stats scaled to its level.
-        var levelScaling = IsSandboxed || deckathalon ? null : Imlight.CoreLib.Game.LevelScaling.LevelScales.ActiveEffect(_wizard);
-        FightsWithCopy = IsSandboxed || deckathalon || levelScaling is not null;
+        // A wizard in a Beastmoon form fights as the beast (Game/Battlegrounds/BeastCombat.cs): its deck, hand, health and
+        // starting pips, on a copy of the wizard's stats.
+        var beast = IsSandboxed || deckathalon ? null : Imlight.CoreLib.Game.Battlegrounds.BeastCombat.For(_wizard);
+        var levelScaling = IsSandboxed || deckathalon || beast is not null ? null : Imlight.CoreLib.Game.LevelScaling.LevelScales.ActiveEffect(_wizard);
+        FightsWithCopy = IsSandboxed || deckathalon || levelScaling is not null || beast is not null;
         ParticipantGameStats = deckathalon ? Imlight.CoreLib.Game.Events.Deckathalon.StatsFor(_wizard)
             : FightsWithCopy ? _wizard.GameStats.CopyForDuel() : _wizard.GameStats;
+        if (beast is not null) {
+            _beastCharId = _wizard.CharId;
+            ParticipantGameStats.m_baseHitpoints = beast.Health;
+            ParticipantGameStats.m_bonusHitpoints = 0;
+            ParticipantGameStats.m_currentHitpoints = Imlight.CoreLib.Game.Battlegrounds.BeastCombat.CurrentHealth(_wizard.CharId, beast);
+            ParticipantGameStats.m_startingPips = (byte) Math.Min(beast.StartingPips, MAX_PIP_COUNT);
+            ParticipantGameStats.m_startingPowerPips = (byte) Math.Min(beast.StartingPowerPips, MAX_PIP_COUNT);
+        }
         // The astral school's perks again, so a change to [AstralSchools] applies from this battle on. The Deckathalon
         // fights with level and deck stats only.
         if (!deckathalon) {
@@ -1889,7 +1915,16 @@ public partial class CombatDuelSubCircle {
             Logger.Args(_wizard.CharId, equippedDeckId, _wizard.SpellbookBehavior.TemporarySpells.Count, skipped.Values.Sum(),
                 string.Join(", ", skipped.Select(pair => $"{pair.Key} x{pair.Value}")),
                 string.Join("; ", _wizard.SpellbookBehavior.ExcludedItemSpellIds.Select(pair => $"deck {pair.Key}: {string.Join(", ", pair.Value)}"))));
-        _combatDeck = new CombatDeck(allSpells, vaultSpells, PLAYER_HAND_SIZE);
+        var handSize = PLAYER_HAND_SIZE;
+        if (beast is not null) {
+            allSpells = [.. beast.Deck.Select(d => new CombatDeckSpellData { TemplateId = d.TemplateId, Quantity = d.Quantity })];
+            vaultSpells.Clear();
+            handSize = beast.HandSize;
+            Logger.Information("Beastmoon | {0} fights as {1}: deck {2}, a hand of {3}, {4} health.",
+                Logger.Args(_wizard.CharId, beast.FormName, beast.DeckName, handSize, beast.Health));
+        }
+
+        _combatDeck = new CombatDeck(allSpells, vaultSpells, handSize);
 
         CombatParticipant = new CombatParticipant {
             m_ownerID = ParticipantObject.m_globalID,
@@ -1902,7 +1937,7 @@ public partial class CombatDuelSubCircle {
             m_pipCount = DetermineStartingPips(),
             m_pipRoundRates = new(),
             m_originalTeam = (int) OccupiedTeam,
-            m_maxHandSize = PLAYER_HAND_SIZE,
+            m_maxHandSize = handSize,
             m_playerHealth = ParticipantGameStats.m_currentHitpoints,
             m_maxPlayerHealth = ParticipantGameStats.m_baseHitpoints,
             // The client's crit sim reads the participant level from m_mobLevel (it zeroes its

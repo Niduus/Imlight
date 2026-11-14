@@ -865,6 +865,12 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         if (!HouseExits.TryResolve(wizard.Zone, out var destinationZone, out var destinationLocation)) {
             ResolveWorldHub(wizard.Zone, out destinationZone, out destinationLocation);
         }
+        // A Beastmoon arena's exit button (the match window's BattlegroundExitButton sends this) leads back to the
+        // Beastmoon pavilion, where the event's match ends (Game/Battlegrounds).
+        if (Game.Battlegrounds.Battlegrounds.LogsInAtPavilion(wizard)) {
+            destinationZone = Game.Battlegrounds.Battlegrounds.RETURN_ZONE;
+            destinationLocation = Game.Battlegrounds.Battlegrounds.RETURN_LOCATION;
+        }
 
         Logger.Information("{0} goes to {1} {2}.", Logger.Args(wizard.CharId, destinationZone, destinationLocation));
 
@@ -1985,6 +1991,11 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
         // A wizard playing as their pet looks like it to players who arrive later too.
         if (Commands.Protocols.CommandPetFormProtocol.LookMessage(wizard) is { } petLook) {
             actorRef.Tell(petLook);
+        }
+
+        // A wizard in a Beastmoon form looks like their beast to them too.
+        foreach (var beastLook in Battlegrounds.BeastForm.LookMessages(wizard)) {
+            actorRef.Tell(beastLook);
         }
     }
 

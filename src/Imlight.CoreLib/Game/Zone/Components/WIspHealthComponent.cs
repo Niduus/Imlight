@@ -82,6 +82,17 @@ internal sealed class WispHealthComponent : ZoneEntityComponent, IComponentFacto
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         if (!_collected && playerWizard is not null && _pickup.Reached(playerObj, playerWizard, Entity.ActiveGameObject)) {
+            // In a Beastmoon arena the wisp heals the wizard's beast (Game/Battlegrounds/BeastCombat.cs).
+            if (Battlegrounds.BeastCombat.HealFromWisp(playerWizard, playerActor, out var healedBeast)) {
+                if (healedBeast) {
+                    SendPlayerStateChange(playerWizard);
+                    _collected = true;
+                    SendDestroy(playerWizard.GameObjectID);
+                }
+
+                return;
+            }
+
             // Values with gear and effects.
             var baseHealth = playerWizard.GameStats.m_baseHitpoints;
             var currentHealth = playerWizard.GameStats.m_currentHitpoints;

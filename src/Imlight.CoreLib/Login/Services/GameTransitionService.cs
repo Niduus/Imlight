@@ -93,6 +93,8 @@ internal class GameTransitionService(SessionActor sessionActor) : MessageService
             Game.Commands.Protocols.CommandArrowLogProtocol.Forget(character.CharId);
             // A new login starts in the wizard's own look (Play as Pet off).
             Game.Commands.Protocols.CommandPetFormProtocol.Forget(character.CharId);
+            // And outside any Beastmoon match (no team, no form).
+            Game.Battlegrounds.Battlegrounds.Forget(character.CharId);
         }
 
         if (character is null) {
@@ -192,6 +194,11 @@ internal class GameTransitionService(SessionActor sessionActor) : MessageService
            && !string.IsNullOrEmpty(wizard.SafeLocation);
 
     private string DetermineZone(Wizard wizard) {
+        // A Beastmoon match does not wait for a wizard who left it: they log in at the Beastmoon pavilion.
+        if (Game.Battlegrounds.Battlegrounds.LogsInAtPavilion(wizard)) {
+            return Game.Battlegrounds.Battlegrounds.RETURN_ZONE;
+        }
+
         if (StartsAtSafeSpot(wizard)) {
             Logger.Information("Character {CharId} logged out inside instance {Zone}; logging in at {SafeZone} instead.",
                 Logger.Args(wizard.CharId, wizard.Zone, wizard.SafeZone));
@@ -219,6 +226,10 @@ internal class GameTransitionService(SessionActor sessionActor) : MessageService
     }
 
     private string DetermineLocation(Wizard wizard) {
+        if (Game.Battlegrounds.Battlegrounds.LogsInAtPavilion(wizard)) {
+            return Game.Battlegrounds.Battlegrounds.RETURN_LOCATION;
+        }
+
         if (StartsAtSafeSpot(wizard)) {
             return wizard.SafeLocation;
         }

@@ -25,6 +25,20 @@ internal static class RaidResult {
     private static readonly ConcurrentDictionary<string, byte> s_logged = new();
     private const float QUERY_TIMEOUT_SECONDS = 5.0f;
 
+    /// <summary>
+    /// Whether the results run in a Beastmoon arena, whose match these steps belong to (Game/Battlegrounds,
+    /// Zone.Battleground.cs) rather than to a raid.
+    /// </summary>
+    public static bool InArena(IResultContext context)
+        => Battlegrounds.Battlegrounds.IsBattlegroundZone(context.GetZonePath());
+
+    public static bool TellArena(IResultContext context, ZONE_102_PROTOCOL.MSG_BATTLEGROUNDCONTROL message) {
+        var zoneActor = context.GetZoneActor();
+        zoneActor?.Tell(message, ActorRefs.NoSender);
+
+        return zoneActor is not null;
+    }
+
     public static bool TellZone(IResultContext context, ZONE_102_PROTOCOL.MSG_RAIDCONTROL message) {
         var zoneActor = context.GetZoneActor();
         if (zoneActor is null) {
@@ -80,9 +94,14 @@ internal static class RaidResult {
     /// <summary>
     /// Moves the player to a named location of the zone they are in (a raid's teleport pad, its jail).
     /// </summary>
-    public static bool MoveTo(IResultContext context, string locationName) {
-        var playerRef = context.GetPlayerRef();
-        var zoneActor = context.GetZoneActor();
+    public static bool MoveTo(IResultContext context, string locationName)
+        => MoveTo(context.GetPlayerRef(), context.GetZoneActor(), context.GetZonePath(), locationName);
+
+    /// <summary>
+    /// Moves a player to a named location of the zone they are in, given their actor and the zone's (a Beastmoon beast
+    /// that fled or fell goes back to its base: Game/Battlegrounds/BeastCombat.cs).
+    /// </summary>
+    public static bool MoveTo(IActorRef playerRef, IActorRef zoneActor, string zonePath, string locationName) {
         if (playerRef is null || zoneActor is null || string.IsNullOrEmpty(locationName)) {
             return false;
         }
@@ -101,7 +120,7 @@ internal static class RaidResult {
         var location = zoneData?.m_locationList?.FirstOrDefault(l => string.Equals(l?.m_locName, locationName, StringComparison.OrdinalIgnoreCase));
         if (location is null) {
             Logger.Warning("Raids | {0} has no location {1}; the player stays where they are.",
-                Logger.Args(context.GetZonePath(), locationName));
+                Logger.Args(zonePath, locationName));
 
             return false;
         }
@@ -139,8 +158,16 @@ internal static class RaidResult {
 /// </summary>
 internal sealed class ResBGAdjustTimeHandler : BaseResultHandler<ResBGAdjustTime> {
 
+    // In a Beastmoon arena the step changes the match's clock: m_action Add (a PvE wave's boss, "12m"; a time clam,
+    // "2m"), Remove or Set. The raids only set it.
     public override bool Execute(IResultContext context)
-        => RaidResult.TellZone(context, new ZONE_102_PROTOCOL.MSG_RAIDCONTROL {
+        => RaidResult.InArena(context)
+            ? RaidResult.TellArena(context, new ZONE_102_PROTOCOL.MSG_BATTLEGROUNDCONTROL {
+                Kind = BattlegroundControlKind.AdjustTime,
+                Action = Result.m_action,
+                Seconds = RaidResult.Seconds(Result.m_duration),
+            })
+            : RaidResult.TellZone(context, new ZONE_102_PROTOCOL.MSG_RAIDCONTROL {
             Kind = RaidControlKind.Timer,
             Seconds = RaidResult.Seconds(Result.m_duration),
         });
@@ -152,8 +179,11 @@ internal sealed class ResBGAdjustTimeHandler : BaseResultHandler<ResBGAdjustTime
 /// </summary>
 internal sealed class ResUnknown117B3E95Handler : BaseResultHandler<ResUnknown117B3E95> {
 
+    // In a Beastmoon arena it ends the match (a PvE arena's Trigger_EndofMatch).
     public override bool Execute(IResultContext context)
-        => RaidResult.TellZone(context, new ZONE_102_PROTOCOL.MSG_RAIDCONTROL { Kind = RaidControlKind.End });
+        => RaidResult.InArena(context)
+            ? RaidResult.TellArena(context, new ZONE_102_PROTOCOL.MSG_BATTLEGROUNDCONTROL { Kind = BattlegroundControlKind.End })
+            : RaidResult.TellZone(context, new ZONE_102_PROTOCOL.MSG_RAIDCONTROL { Kind = RaidControlKind.End });
 
 }
 
@@ -162,8 +192,16 @@ internal sealed class ResUnknown117B3E95Handler : BaseResultHandler<ResUnknown11
 /// </summary>
 internal sealed class ResUnknown5ABB361DHandler : BaseResultHandler<ResUnknown5ABB361D> {
 
+    // In a Beastmoon PvE arena it ends a wave, with its fields: everyone goes to m_teleportTo (Red_Start) and
+    // m_zoneEvent (Wave_End_Reset) is posted for the next wave (Trigger_CombatEnd_Wave1).
     public override bool Execute(IResultContext context)
-        => RaidResult.TellZone(context, new ZONE_102_PROTOCOL.MSG_RAIDCONTROL { Kind = RaidControlKind.Win });
+        => RaidResult.InArena(context)
+            ? RaidResult.TellArena(context, new ZONE_102_PROTOCOL.MSG_BATTLEGROUNDCONTROL {
+                Kind = BattlegroundControlKind.WaveEnd,
+                Location = Result.m_teleportTo,
+                EventName = Result.m_zoneEvent,
+            })
+            : RaidResult.TellZone(context, new ZONE_102_PROTOCOL.MSG_RAIDCONTROL { Kind = RaidControlKind.Win });
 
 }
 
@@ -314,11 +352,19 @@ internal sealed class ResUnknown598D00C0Handler : BaseResultHandler<ResUnknown59
 }
 
 /// <summary>
-/// ResUnknown4591AF80 (m_points): battleground points for the team; not acted on.
+/// ResUnknown4591AF80 (m_points): battleground points for the team; acted on in a Beastmoon arena, known in a raid.
 /// </summary>
 internal sealed class ResUnknown4591AF80Handler : BaseResultHandler<ResUnknown4591AF80> {
 
-    public override bool Execute(IResultContext context) => RaidResult.Skip(nameof(ResUnknown4591AF80));
+    // In a Beastmoon arena the points go to the team of the wizard the step runs for (a PvE arena's last boss: 100).
+    public override bool Execute(IResultContext context)
+        => RaidResult.InArena(context)
+            ? RaidResult.TellArena(context, new ZONE_102_PROTOCOL.MSG_BATTLEGROUNDCONTROL {
+                Kind = BattlegroundControlKind.Points,
+                Points = Result.m_points,
+                Player = (context.GetPlayerObj() as WizClientObject)?.m_characterId ?? 0,
+            })
+            : RaidResult.Skip(nameof(ResUnknown4591AF80));
 
 }
 

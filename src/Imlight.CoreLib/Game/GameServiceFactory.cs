@@ -110,6 +110,7 @@ public class GameServiceFactory : ServiceFactory {
         typeof(MapService),
         typeof(SecondChanceChestService),
         typeof(MountRideService),
+        typeof(BattlegroundService),
     ];
 
     public static Props Props() 

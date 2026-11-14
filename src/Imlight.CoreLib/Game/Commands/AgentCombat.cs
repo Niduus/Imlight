@@ -112,7 +112,14 @@ public static class AgentCombat {
             return await AgentBridge.Actors.ActorSelection(path).ResolveOne(TimeSpan.FromSeconds(3));
         }
         catch (ActorNotFoundException) {
-            throw new InvalidOperationException($"The zone actor {path} is not running (the player is in {player.Wizard.Zone}).");
+            // A private copy (a dungeon, a raid, a Beastmoon arena) runs inside its owner's InstanceContainer_<id>.
+            try {
+                return await AgentBridge.Actors.ActorSelection($"{server.ToStringWithoutAddress()}/{world}/InstanceContainer_*/{zoneName}")
+                    .ResolveOne(TimeSpan.FromSeconds(3));
+            }
+            catch (ActorNotFoundException) {
+                throw new InvalidOperationException($"The zone actor {path} is not running (the player is in {player.Wizard.Zone}).");
+            }
         }
     }
 

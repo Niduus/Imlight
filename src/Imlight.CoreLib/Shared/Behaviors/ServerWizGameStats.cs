@@ -348,6 +348,8 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
             m_currentGold = m_currentGold,
             m_currentEventCurrency1 = m_currentEventCurrency1,
             m_currentEventCurrency2 = m_currentEventCurrency2,
+            // Event currency 2 is Beastmoon's Battle Coins; the match window shows "current/pouch".
+            m_baseEventCurrency2Pouch = Game.Battlegrounds.BeastmoonProgress.BattleCoinCap,
             m_currentPvPCurrency = m_currentPvPCurrency,
             m_currentMana = m_currentMana,
             m_currentArenaPoints = m_currentArenaPoints,

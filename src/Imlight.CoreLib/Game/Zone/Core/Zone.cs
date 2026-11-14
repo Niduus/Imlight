@@ -154,6 +154,10 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
     private const string IDLE_EXPIRE_TIMER = "instance-idle-expire";
     private const int DEFAULT_INSTANCE_IDLE_MINUTES = 10;
     private const int RESET_WHEN_EMPTY_SECONDS = 5;
+    // A fresh copy waits this long for its first wizard: one sent in while the server is busy can take more than
+    // RESET_WHEN_EMPTY_SECONDS to arrive, and the copy was dropped just before (a Beastmoon arena, 2026-11-14).
+    private const int FIRST_ARRIVAL_SECONDS = 60;
+    private bool _everHadPlayer;
 
     // How often an empty room kept for the rest of its dungeon (KeepRoomsWhileInside) looks again.
     private const int HELD_ROOM_RECHECK_SECONDS = 10;
@@ -264,8 +268,10 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
         }
 
         _players.Add(message.PlayerActor);
+        _everHadPlayer = true;
         ScriptState.PlayerCount = _players.Count;
         NoteInstancedPlayer(message.PlayerActor, message.Wizard);
+        NoteBattlegroundPlayerJoined(message.PlayerActor, message.Wizard);
         Timers.Cancel(IDLE_EXPIRE_TIMER);
         _heldForOtherRooms = false;
         InformZoneSupervisors(message.PlayerActor, message);
@@ -323,6 +329,7 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
 
         // The leaver is counted until the supervisors are told: the Players target is gated on a non-empty set.
         InformZoneSupervisors(message.PlayerActor, message);
+        NoteBattlegroundPlayerLeft(message.PlayerActor);
         _players.Remove(message.PlayerActor);
         ScriptState.PlayerCount = _players.Count;
         if (_instancedCharIds.Remove(message.PlayerActor, out var charId)) {
@@ -346,6 +353,7 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
         }
 
         _pendingPlayerMoves.Add(message);
+        NoteBattlegroundPlayerMoved(message);
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_CREATUREMOVE))]
@@ -408,6 +416,7 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
         ZoneData = message.ZoneData;
         HasBattles = ZoneData?.m_objectList?.Any(o => o is CombatSigilObjectInfo) == true;
         SetUpRaid(message.TriggerData);
+        SetUpBattleground(message);
 
         // Inform each supervisor of the loaded zone data. They are expected to give a reply
         // to inform the zone that they have loaded their data.
@@ -494,6 +503,9 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
         foreach (var supervisor in _supervisors) {
             supervisor.Tell(message);
         }
+
+        // A Beastmoon arena's control points follow who walks in and out of them.
+        NoteBattlegroundEvent(message);
 
         // Goals that list the event complete for every player in this zone instance.
         DispatchBroadcast(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
@@ -726,8 +738,10 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
             }
             else if (pendingEvent is ZONE_102_PROTOCOL.MSG_ADDPLAYER addPlayer) {
                 _players.Add(playerActor);
+                _everHadPlayer = true;
                 ScriptState.PlayerCount = _players.Count;
                 NoteInstancedPlayer(playerActor, addPlayer.Wizard);
+                NoteBattlegroundPlayerJoined(playerActor, addPlayer.Wizard);
                 Timers.Cancel(IDLE_EXPIRE_TIMER);
                 _heldForOtherRooms = false;
                 InformZoneSupervisors(playerActor, addPlayer);
@@ -766,10 +780,10 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
         }
 
         // [Instance] ResetWhenEmpty: a dungeon starts fresh once everyone has left, after a few seconds so a
-        // player still loading back in is not caught by it.
+        // player still loading back in is not caught by it. A copy no one has entered yet waits for its first wizard.
         if (ConfigurationManager.GetValue("Instance.ResetWhenEmpty", true)) {
             Timers.StartSingleTimer(IDLE_EXPIRE_TIMER, new ZONE_102_PROTOCOL.MSG_INSTANCEIDLEEXPIRE(),
-                TimeSpan.FromSeconds(RESET_WHEN_EMPTY_SECONDS));
+                TimeSpan.FromSeconds(_everHadPlayer ? RESET_WHEN_EMPTY_SECONDS : FIRST_ARRIVAL_SECONDS));
 
             return;
         }

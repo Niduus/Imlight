@@ -149,6 +149,12 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         EquipMountSubtle();
         Imlight.CoreLib.Game.Events.Deckathalon.OnDefeat(SessionActor.ActorRef, wizard);
 
+        // In a Beastmoon arena the beast goes back to its team's base instead (Game/Battlegrounds/BeastCombat.cs).
+        if (Imlight.CoreLib.Game.Battlegrounds.BeastCombat.HandleDefeat(wizard, SessionActor.ActorRef, SessionActor.GetZoneActor(),
+                message.DiedInDuel)) {
+            return;
+        }
+
         // We've fled or have been defeated in this duel. Send us back to the world hub.
         var hubMsg = new ZONE_102_PROTOCOL.MSG_SENDTOHUB {
             DestinationZone = message.ExitZone,
@@ -176,6 +182,8 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
         GetActiveWizard().IsInDuel = false;
         _currentDuelActor = null;
         EquipMount();
+        // A Beastmoon beast's health globe shows what the beast has left (Game/Battlegrounds/BeastCombat.cs).
+        Imlight.CoreLib.Game.Battlegrounds.BeastCombat.ShowHealth(GetActiveWizard(), SessionActor.ActorRef);
         // Creatures leave a wizard alone for [Battle] NoAggroSeconds (default 12) after a won battle; one touched then
         // starts the next battle the moment it ends (Niduus, 2026-10-25 / 2026-11-02).
         var noAggroSeconds = NoAggroSeconds;
@@ -210,6 +218,9 @@ internal class CombatService(SessionActor sessionActor) : MessageService(session
             message.CountedRounds);
         // The Scroll of Fortune and the other events count each creature beaten (ClassProjects.cs).
         Imlight.CoreLib.Game.Events.ClassProjects.CreaturesBeaten(SessionActor.ActorRef, GetActiveWizard(), message.MobTemplateIds);
+        // Monsters beaten in a Beastmoon arena give Battle Coins, Lunari and Hunter's Moonstones (Game/Battlegrounds).
+        Imlight.CoreLib.Game.Battlegrounds.BeastRewards.BattleWon(SessionActor.ActorRef, GetActiveWizard(), message.MobTemplateIds,
+            SessionActor.GetZoneActor(), Math.Max(1, message.AllyCharIds?.Length ?? 1));
         MarkDungeonCompleted(message.MobTemplateIds);
     }
 

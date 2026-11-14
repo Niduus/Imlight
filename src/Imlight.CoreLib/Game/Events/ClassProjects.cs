@@ -229,6 +229,11 @@ internal static class ClassProjects {
             }
         }
 
+        // Beastmoon Hunt's PvE event, on while Beastmoon is (Game/Battlegrounds/Battlegrounds.cs PvEEvent).
+        if (Battlegrounds.Battlegrounds.PvEEvent(now) is var (beastmoon, beastmoonStart, beastmoonEnd) && beastmoon is not null) {
+            active.Add(new Running(beastmoon, beastmoonStart, beastmoonEnd, "Beastmoon Hunt"));
+        }
+
         foreach (var current in GameEvents.Running.Where(e => !e.IsDeckathalon)) {
             if (TemplateOf(TemplateNameOf(current.Kind, current.School)) is { } template) {
                 active.Add(new Running(template, current.Start, current.End, current.Name));

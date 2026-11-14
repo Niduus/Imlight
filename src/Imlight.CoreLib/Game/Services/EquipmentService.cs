@@ -123,6 +123,8 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
             // The other players get this wizard's speed with their spawn (ZoneService), right after the wizard's object.
             SendAddEffects([.. effects], shareSpeed: false);
             ShowPetFormToZone(playerCharacter);
+            ShowBeastFormToZone(playerCharacter);
+            Battlegrounds.BeastCombat.ShowHealth(playerCharacter, SessionActor.ActorRef);
             Commands.Protocols.CommandPetFormProtocol.TellGameAfterZoneChange(playerCharacter, SessionActor.ActorRef);
 
             // Spawn the equipped pet as a zone entity if one is equipped. A wizard in their pet's look has none beside
@@ -694,6 +696,18 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
             Sender = SessionActor.ActorRef,
             Targets = ZoneBroadcastTarget.Players,
         }, Self);
+    }
+
+    // A wizard in a Beastmoon form keeps it in the new zone, for the players there too (Game/Battlegrounds/BeastForm.cs).
+    private void ShowBeastFormToZone(Wizard wizard) {
+        foreach (var message in Battlegrounds.BeastForm.LookMessages(wizard)) {
+            SessionActor.GetZoneActor()?.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+                Message = message,
+                Selfless = true,
+                Sender = SessionActor.ActorRef,
+                Targets = ZoneBroadcastTarget.Players,
+            }, Self);
+        }
     }
 
     private void DismissPetEntity() {

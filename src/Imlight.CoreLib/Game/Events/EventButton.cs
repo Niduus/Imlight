@@ -185,6 +185,11 @@ internal static class EventButton {
             SetByName(player, "m_usesExtraData", true);
         }
 
+        // A Beastmoon event keeps the wizard's beast form levels there (Game/Battlegrounds/BeastTable.cs).
+        if (running.Template.m_projectType == ClassProjectType.CPT_Battleground) {
+            player.m_extendedData = Battlegrounds.BeastTable.LevelBytes(wizard.CharId);
+        }
+
         return player;
     }
 

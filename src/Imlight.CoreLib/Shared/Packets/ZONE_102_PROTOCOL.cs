@@ -53,6 +53,31 @@ public enum RaidControlKind : byte {
     SigilSpell,
 }
 
+/// <summary>
+/// What a <see cref="ZONE_102_PROTOCOL.MSG_BATTLEGROUNDCONTROL"/> asks of a Beastmoon arena (Game/Battlegrounds).
+/// </summary>
+public enum BattlegroundControlKind : byte {
+    Tick,
+    Status,
+    Reset,
+    // The match (Zone.Battleground.cs): the countdown ends, the time is up, the script changes the time, gives points,
+    // ends a PvE wave or the match, `.bg start` skips the countdown, and everyone goes back after the match.
+    CountdownEnd,
+    TimeUp,
+    AdjustTime,
+    Points,
+    WaveEnd,
+    End,
+    Start,
+    SendHome,
+    // Sent by the arena to each wizard's session when the match is over: their rewards (Points 1 won, 0 not).
+    Reward,
+    // Sent by a Coin Clam (BG_Chest-003, ResLoot) to the session of the wizard who opened it: their Battle Coins.
+    CoinClam,
+    // Sent by an arena to the session of each wizard who took a control point: the event's capture activity.
+    CapturedArea,
+}
+
 public enum InstanceQuestClaimKind : byte {
     QuestStart,
     GoalStart,
@@ -1788,6 +1813,38 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
 
         // Shows the duel circle again after a duel here.
         public bool Show;
+
+    }
+
+    /// <summary>
+    /// Sent to a Beastmoon arena zone (Zone.Battleground.cs): its own capture timer ticks with Tick, `.bg points` asks
+    /// with Status (the answer comes back in Text), and `.bg reset` puts every control point back to nobody's with Reset.
+    /// The arena script's battleground steps (ResRaidHandlers.cs, in an arena) and the match's own timers send the rest.
+    /// </summary>
+    public sealed class MSG_BATTLEGROUNDCONTROL : IServerMessage {
+
+        public byte MessageOrder { get; } = 113;
+        public byte ServiceID { get; } = 102;
+
+        public BattlegroundControlKind Kind;
+
+        // Status: the answer.
+        public string Text;
+
+        // AdjustTime: "Add", "Set" or "Remove", and the seconds.
+        public string Action;
+        public int Seconds;
+
+        // Points: the points and the team they go to (Battlegrounds.Team; None for the team of Player).
+        public int Points;
+        public byte Team;
+        public ulong Player;
+        // Points: the game's score event shown with them (Game/Battlegrounds/BattlegroundScore.cs).
+        public int PointEvent;
+
+        // WaveEnd: where everyone goes and the event posted after.
+        public string Location;
+        public string EventName;
 
     }
 

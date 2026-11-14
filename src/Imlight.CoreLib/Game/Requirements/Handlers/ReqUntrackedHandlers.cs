@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using Imcodec.Cryptography;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 
@@ -6,8 +7,8 @@ namespace Imlight.CoreLib.Game.Requirements.Handlers;
 
 /// <summary>
 /// Requirement classes the server does not track (effects, transformations, the tutorial, placeholders whose
-/// purpose is unknown). They passed while their class decoded as null, so they keep passing, except polymorph
-/// and transformation checks: the server applies neither outside combat, so those answer false. Each class logs
+/// purpose is unknown). They passed while their class decoded as null, so they keep passing, except transformation
+/// checks, which answer false. ReqHasEffect and ReqHasPolymorphEffect answer for real where the server knows the answer. Each class logs
 /// once so a trigger that depends on one can be found.
 /// </summary>
 internal static class UntrackedRequirement {
@@ -44,15 +45,38 @@ internal sealed class ReqTutorialStageHandler : BaseRequirementHandler<ReqTutori
 
 }
 
+/// <summary>
+/// ReqHasEffect (m_effectName): the wizard has the named effect. An effect the wizard holds (Wizard.GameEffects, by its
+/// name's hash) answers true; the Beastmoon arenas' effects, which the server gives (team, DeathEffect, BG-PlanningPhase:
+/// Game/Battlegrounds/Battlegrounds.cs), answer for real. Any other name keeps passing, as it did while untracked, so
+/// content that relied on that is unchanged.
+/// </summary>
 internal sealed class ReqHasEffectHandler : BaseRequirementHandler<ReqHasEffect> {
 
-    public override bool Evaluate(IRequirementContext context) => UntrackedRequirement.Pass(nameof(ReqHasEffect));
+    public override bool Evaluate(IRequirementContext context) {
+        var name = Requirement?.m_effectName;
+        var wizard = context.GetWizard();
+        if (!string.IsNullOrEmpty(name) && wizard is not null) {
+            var nameId = StringHash.Compute(name);
+            if (wizard.GameEffects?.Exists(e => e?.m_effectNameID == nameId) == true) {
+                return true;
+            }
+
+            if (Battlegrounds.Battlegrounds.IsTracked(name)) {
+                return Battlegrounds.Battlegrounds.HasEffect(wizard.CharId, name);
+            }
+        }
+
+        return UntrackedRequirement.Pass(nameof(ReqHasEffect));
+    }
 
 }
 
 internal sealed class ReqHasPolymorphEffectHandler : BaseRequirementHandler<ReqHasPolymorphEffect> {
 
-    public override bool Evaluate(IRequirementContext context) => UntrackedRequirement.Answer(nameof(ReqHasPolymorphEffect), false);
+    // A polymorph outside battle is a Beastmoon form (Game/Battlegrounds/BeastForm.cs); the arenas' base teleporters
+    // let only a wizard in one out. Nothing else gives one, so everyone else still answers false.
+    public override bool Evaluate(IRequirementContext context) => Battlegrounds.BeastForm.HasPolymorph(context.GetWizard());
 
 }
 

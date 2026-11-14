@@ -258,6 +258,8 @@ internal class AttachService(SessionActor sessionActor) : MessageService(session
         CharacterHelper.RecalculateGameStats(_wizard);
         // That dropped every effect the gear doesn't give, the pet's look (Play as Pet) among them.
         Commands.Protocols.CommandPetFormProtocol.RestoreAfterZoneChange(_wizard);
+        // A Beastmoon form too, while the wizard is still in a battleground (Game/Battlegrounds).
+        Battlegrounds.Battlegrounds.AfterZoneChange(_wizard);
 
         // Get the best game server for this user.
         var gameServer = GetGameServer();
