@@ -81,7 +81,10 @@ internal sealed partial class UltimusDirectorActor {
     private DateTime _sideTripSince = DateTime.MaxValue;
 
     /// <summary>Whether side trips (shops, the Bazaar, trainers, selling) are open: closed for a while after one ran over its budget.</summary>
-    private bool SideTripsOpen => DateTime.UtcNow >= _sideTripsClosedUntil && !(_team.Count > 0 && _team[0].Wizard?.ZoneIsInstance == true);
+    // One intention at a time (approved 2026-11-14): no side trip starts while he is healing (it marked, travelled and sold
+    // on top of a heal trip before).
+    private bool SideTripsOpen => DateTime.UtcNow >= _sideTripsClosedUntil && !(_team.Count > 0 && _team[0].Wizard?.ZoneIsInstance == true)
+                                  && DateTime.UtcNow - _healingAt > TimeSpan.FromSeconds(5);
 
     /// <summary>A side trip picked: its time budget runs from the first pick. Past it, it is dropped and side trips close for a while.</summary>
     private UltimusPlanner.Target SideTrip(UltimusPlanner.Target trip, string kind) {

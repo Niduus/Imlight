@@ -147,7 +147,11 @@ internal sealed partial class UltimusDirectorActor {
 
         var shop = PotionShopTarget(leader, out var shopHops);
         var wispArea = WispAreaTarget(leader, lowHealth, lowMana, out var wispHops);
-        var pick = wispArea is not null && (shop is null || wispHops <= shopHops) ? wispArea : shop;
+        var pick = HealChoice(false, false, false, shop is null ? -1 : shopHops, wispArea is null ? -1 : wispHops) switch {
+            "wisp-area" => wispArea,
+            "shop" => shop,
+            _ => null,
+        };
         if (pick is not null) {
             _doing = pick.What;
             if (pick.Key?.StartsWith(HUB_KEY, StringComparison.Ordinal) == true) {
@@ -207,6 +211,31 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// What healing comes to, from what there is (-1 = none of it): "potion", "wisp-here", "go-on" (only the extra care
+    /// before a hard fight wants more, and nothing is right here), "wisp-area" or "shop" (fewer areas away wins; wisps win
+    /// a tie, being free) or "wait". Kept apart so the replay checks can test it.
+    /// </summary>
+    internal static string HealChoice(bool onlyPrep, bool potion, bool wispHere, int shopHops, int wispHops) {
+        if (potion) {
+            return "potion";
+        }
+
+        if (wispHere) {
+            return "wisp-here";
+        }
+
+        if (onlyPrep) {
+            return "go-on";
+        }
+
+        if (wispHops >= 0 && (shopHops < 0 || wispHops <= shopHops)) {
+            return "wisp-area";
+        }
+
+        return shopHops >= 0 ? "shop" : "wait";
     }
 
     // The nearest health (or mana) wisp in the area that no creature stands by.
@@ -292,6 +321,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         _hubPressedAt = DateTime.UtcNow;
+        _buttonFromZone = leader.Zone;
         Note("Ultimus", $"{leader.Name} presses the Commons button ({why}); his spot is marked to Recall back after.");
         Think($"The Commons button is quicker than walking: I mark my spot, press it, go {why}, then Recall back.", "hub|" + leader.Zone);
         Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(1.5), _actors[0], new UltimusMember.PressCommons(), Self);

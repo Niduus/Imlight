@@ -278,6 +278,7 @@ internal sealed partial class UltimusDirectorActor {
 
         _recallTries++;
         _recallSentAt = DateTime.UtcNow;
+        _buttonFromZone = leader.Zone;
         Note("Ultimus", $"recalls to the spot he marked in {UltimusText.Zone(_markedZone)}" + (_recallTries > 1 ? $" (try {_recallTries})." : "."));
         if (_recallTries == 1) {
             Count("recalls to a marked spot");

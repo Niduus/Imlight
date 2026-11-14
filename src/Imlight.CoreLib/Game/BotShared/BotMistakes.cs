@@ -128,6 +128,13 @@ internal static class BotMistakes {
         }
     }
 
+    /// <summary>One bot's mistakes seen since <paramref name="since"/> (copies, for a report).</summary>
+    internal static List<Mistake> Since(string bot, DateTime since) {
+        lock (s_lock) {
+            return [.. All().Where(m => string.Equals(m.Bot, bot, StringComparison.OrdinalIgnoreCase) && m.Last >= since)];
+        }
+    }
+
     /// <summary>How many mistakes are written down and how many have a fix that worked (for the log).</summary>
     internal static (int Mistakes, int Fixed) Count() {
         lock (s_lock) {
