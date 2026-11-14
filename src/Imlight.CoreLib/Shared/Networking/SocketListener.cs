@@ -337,11 +337,16 @@ internal sealed class SocketListener : ReceiveActor, IDisposable {
             or LOGIN_7_PROTOCOL.MSG_USER_VALIDATE
             or LOGIN_7_PROTOCOL.MSG_USER_AUTHEN_V3;
 
-    // Counted but never dropped: a lost move made the wizard skip ahead on the other players' screens.
+    // Counted but never dropped: a lost move made the wizard skip ahead on the other players' screens, and a lost deck card
+    // or tutorial step changes the wizard for good.
     private static bool IsMovePacket(IMessage packet)
         => packet is GAME_5_PROTOCOL.MSG_CLIENTMOVE
             or GAME_5_PROTOCOL.MSG_CLIENTMOVESTATE
-            or GAME_5_PROTOCOL.MSG_JUMP;
+            or GAME_5_PROTOCOL.MSG_JUMP
+            // A new wizard who skips the tutorial gets a burst of these from the game (Niduus's log, 2026-11-14: 164 cards
+            // added to the deck and 2 tutorial steps were dropped, so the new wizard's deck and tutorial came out wrong).
+            or WIZARD_12_PROTOCOL.MSG_ADDSPELLTODECK
+            or GAME_5_PROTOCOL.MSG_SERVERTUTORIALCOMMAND;
 
     private static string GetScopedMessageName(IMessage packet)
         => packet
