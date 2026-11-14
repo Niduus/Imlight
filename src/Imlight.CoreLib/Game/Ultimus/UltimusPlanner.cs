@@ -391,6 +391,12 @@ internal static class UltimusPlanner {
         var key = questName + "|" + goalName;
         var stepZone = OverlayQuestTracker.StepZone(goal);
         var spots = QuestArrowGoals.GetSpots(quest, goal).Where(s => OverlayQuestTracker.SameZone(s.Zone, zone)).Select(s => s.Spot).ToList();
+        // A "use" step clicks the things the step names where they stand, not only the arrow's one spot (Niduus's log,
+        // 2026-11-14: "Get Some Bling" sent Ultimus round the Hall of Champions for 15 minutes; its four gems were never at the arrow).
+        if (goal.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE && QuestStepSpots.UsageObjects(zone, questName, goalName) is { Count: > 0 } things) {
+            spots = things;
+        }
+
         var nearest = spots.OrderBy(s => Far(leader.X, leader.Y, s.X, s.Y)).Select(s => ((float, float)?) (s.X, s.Y)).FirstOrDefault();
 
         switch (goal) {

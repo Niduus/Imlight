@@ -1804,7 +1804,23 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         var turn = angle * MathF.PI / 180f;
         var spot = (X: target.X + (MathF.Cos(turn) * far), Y: target.Y + (MathF.Sin(turn) * far));
         var from = turn + MathF.PI + ((Random.Shared.NextSingle() - 0.5f) * 0.8f);
-        var outside = (X: spot.X + (MathF.Cos(from) * 300), Y: spot.Y + (MathF.Sin(from) * 300));
+
+        // Out far enough to really leave the exit: the game only takes him on when he walks in from outside. A big exit
+        // (Entrance Hall's to Grand Arena reaches 382 from its middle) held him inside on every try when he only stepped
+        // 300 back (Niduus's log, 2026-11-14: 8 tries at (7393, 50), never taken on), so the step back now clears its
+        // whole reach, on floor he can stand on (another side when that one is wall).
+        var reach = OverlayQuestRoute.ExitReach(leader.Zone, target.X, target.Y);
+        var back = MathF.Max(300f, far + reach + 120f);
+        var outside = (X: spot.X + (MathF.Cos(from) * back), Y: spot.Y + (MathF.Sin(from) * back));
+        for (var side = 1; side < 8 && reach > 0 && !OverlayQuestPath.OnFloor(leader.Zone, outside.X, outside.Y); side++) {
+            var other = from + (side * MathF.PI / 4f);
+            var tryOut = (X: spot.X + (MathF.Cos(other) * back), Y: spot.Y + (MathF.Sin(other) * back));
+            if (OverlayQuestPath.OnFloor(leader.Zone, tryOut.X, tryOut.Y)
+                && UltimusPlanner.Far(tryOut.X, tryOut.Y, target.X, target.Y) > reach + 40f) {
+                (from, outside) = (other, tryOut);
+            }
+        }
+
         _exitTries++;
 
         var points = OverlayQuestPath.Walk(leader.CharId, leader.Zone, leader.X, leader.Y, outside.X, outside.Y, body: true);
