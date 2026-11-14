@@ -35,8 +35,6 @@ internal static class UltimusFoes {
 
     private const string FILE = "foes.json";
 
-    // A fight that takes this share of its health on average is a tough one.
-    private const double TOUGH_SHARE = 0.55;
 
     internal sealed class Foe {
         public uint Template { get; set; }
@@ -50,7 +48,7 @@ internal static class UltimusFoes {
 
         public double AverageHealthLost => Fought == 0 ? 0 : HealthLost / Fought;
 
-        public bool Tough => Lost > 0 && Lost >= Won || (Fought > 0 && AverageHealthLost >= TOUGH_SHARE);
+        public bool Tough => Lost > 0 && Lost >= Won || (Fought > 0 && AverageHealthLost >= UltimusPlaybook.Value("Quest.ToughShare"));
 
         public string Describe() =>
             $"{Name}: fought {Fought} time(s), won {Won}, lost {Lost}; a fight takes about {AverageHealthLost:P0} of its health " +

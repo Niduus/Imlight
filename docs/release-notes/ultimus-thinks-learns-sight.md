@@ -3,10 +3,15 @@ Every way of getting unstuck now goes through one list of fixes, and a spot neve
 Where: Ultimus > Logs
 Test: Send Ultimus to Krokotopia for "Digging in the Dirt". If he gets stuck at The Oasis, each stuck line should name a different fix, and he should be in Altar of Kings within a few minutes.
 
-Fixed: Ultimus wears his Adept robe again
-His school's Adept robe was held back until level 30 once it came off, so it never went back on. Now he puts it back on at any level. If it has gone missing, Ahziael gives it back once.
-Where: Ultimus
-Test: Look at Ultimus's wizard sheet: the robe slot should show his school's Adept robe.
+Changed: Ultimus picks gear by reasoning, like a Balance player questing alone
+He no longer judges one piece at a time. He looks at what each piece does for his whole outfit. First he wants enough resist, enough accuracy and enough health, and he works his power pip chance toward 100%. Above those, damage comes first, with pierce. Each swap is explained in his thoughts, for example: "resist 8% to 14% and now meets what I want, damage 10% to 9%". Once a level, he looks over his outfit and says what he is short of. He is never handed gear by Ahziael. (He still owns his Adept robe. A Cloak replaced it because of an early bug, now fixed, that read the robe as having no stats. He will now put the robe back on if it is better for his whole outfit.)
+Where: Ultimus > Logs
+Test: Watch the Ultimus Thoughts section after he gets new gear. Each swap should say what it raises and why.
+
+New: Ultimus's playbook
+Ultimus now plays by a written playbook of Wizard101 know-how for questing, battle, gear and learning. Each rule has a number and a reason, for example "heal at 50% health". His thoughts name the rule behind a choice. To change a rule, open the playbook from the Ultimus Thoughts section, change a number and save. He uses the new number within a few seconds, without a restart.
+Where: Ultimus > Logs
+Test: Press Open his playbook, change HealAt under [Battle] to 0.7, save, and watch him heal earlier in his next fight.
 
 New: Ultimus Thoughts
 Ultimus thinks out loud: why he picks what he picks, what he remembers about a creature or a spot where he got stuck, and what he will do differently. The thoughts appear in brown in his log and in a new Ultimus Thoughts section.

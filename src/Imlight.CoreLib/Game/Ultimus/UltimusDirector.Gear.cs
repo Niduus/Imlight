@@ -51,7 +51,6 @@ internal sealed partial class UltimusDirectorActor {
     private UltimusPlanner.Target _shopTrip;
     private readonly HashSet<uint> _shopSkipped = [];
     private readonly HashSet<string> _mountGiven = [];
-    private readonly HashSet<string> _robeGiven = [];
 
     // Ultimus fights alone: a balanced deck of hits, heals and shields, and gear for living alone and for the schools its
     // hits land as (BotGear.SoloDamageMix).
@@ -182,34 +181,21 @@ internal sealed partial class UltimusDirectorActor {
                 }
             }
 
-            // Its school's Adept robe, as every new wizard starts in (Niduus, 2026-11-13: "still curious as to why it doesn't
-            // wear the robe"): once off, it was held to level 30 and never went back on, and a robe that went missing is
-            // given again, once. BetterInBackpack weighs it against the robe it wears.
-            if (Imlight.CoreLib.Shared.Character.AdeptStarterGear.Enabled && _robeGiven.Add(member.Role)) {
-                var robeId = Imlight.CoreLib.Shared.Character.AdeptStarterGear.RobeFor(wizard.MagicSchoolBehavior?.MagicSchool ?? Imlight.CoreLib.Shared.Behaviors.MagicSchool.Balance);
-                var wornRobe = wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Robe);
-                var hasRobe = (ulong) (wornRobe?.m_templateID ?? 0) == robeId
-                              || (wizard.InventoryBehavior?.Items ?? []).Any(it => it is not null && (ulong) it.m_templateID == robeId);
-                if (!hasRobe && wizard.AddItemToInventory(robeId, out _)) {
-                    Note(member.Role, $"{member.Name} has lost its Adept robe: Ahziael gives it back.", UltimusLink.COMMAND);
-                }
-            }
-
             // Developers' and testers' gear never stays on (a Deckathalon deck stays until a fair deck replaces it).
             if (BotGear.ForbiddenWorn(wizard).FirstOrDefault() is { Item: not null } banned) {
                 _actors[i].Tell(new UltimusMember.Unequip(banned.Item.m_globalID, banned.Slot, banned.Name));
                 continue;
             }
 
-            // One piece at a time, the best gain first.
-            if (BotGear.BetterInBackpack(wizard, StyleOf(member)).OrderByDescending(b => b.Gain).FirstOrDefault() is { Item: not null } better) {
-                // What it weighed, so a swap can be checked (Niduus, 2026-11-13: "Why does Ultimus not use the Adept robe").
-                var slotType = Enum.TryParse<Imlight.CoreLib.WizardData.Models.Player.EquipmentSlotType>(better.Slot, out var parsed) ? parsed : default;
-                var (worn, wornScore) = BotGear.Wearing(wizard, slotType, StyleOf(member));
-                Note(member.Role, $"{member.Name} weighs {better.Piece.Name} ({wornScore + better.Gain:0.#}) against {worn?.Name ?? "nothing"} ({wornScore:0.#}).");
-                _actors[i].Tell(new UltimusMember.Equip(better.Item.m_globalID, better.Slot, better.Piece.Name));
+            // One piece at a time: the swap that best brings the whole outfit toward a Balance solo wizard's goals (enough
+            // resist, accuracy and health, power pips toward 100%, then damage and pierce), with its reason in his thoughts.
+            if (BotGear.BestSwap(wizard, GearGoals(wizard)) is { Item: not null } swap) {
+                ThinkAboutSwap(member, swap, GearGoals(wizard));
+                _actors[i].Tell(new UltimusMember.Equip(swap.Item.m_globalID, swap.Slot, swap.Piece.Name));
                 continue;
             }
+
+            ReviewOutfit(member, wizard);
 
             // Gear whose stats it can't all read is left as it is, and said once, so it can be looked into.
             foreach (var item in wizard.InventoryBehavior?.Items ?? []) {

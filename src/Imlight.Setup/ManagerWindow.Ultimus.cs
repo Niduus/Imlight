@@ -386,9 +386,17 @@ internal sealed partial class ManagerWindow {
         return Page(
             Fold("sparkle", ULTIMUS_TAB, "Ultimus Thoughts",
                 "Ultimus thinking out loud: why it picks what it picks, what it remembers of a creature or a spot where it got " +
-                "stuck, and what it will do differently next time. Also in its log, in brown. Updated every 3 seconds.",
+                "stuck, and what it will do differently next time, naming the playbook rule behind a choice. Also in its log, " +
+                "in brown. Updated every 3 seconds. His playbook (the rules and numbers he plays by) can be changed: open it, " +
+                "change a number, save.",
                 LogWell(_ultThoughtsScroll),
-                Row(Action(Plain("Copy all"), () => CopyAsync(_ultThoughtsText)))),
+                Row(Action(Plain("Copy all"), () => CopyAsync(_ultThoughtsText)), Action(Plain("Open his playbook"), () => {
+                    // His rules and the reasons he gives (playbook.txt, written by the server the first time he plays):
+                    // change a number and save, and he uses it within a few seconds.
+                    var playbook = Path.Combine(UltimusFolder, "playbook.txt");
+
+                    return Open(File.Exists(playbook) ? playbook : UltimusFolder);
+                }))),
             Fold("book", ULTIMUS_TAB, "Mistakes book",
                 "Every mistake Ultimus made, newest first: what went wrong and where, its reasoning at the time, what it tried, " +
                 "what worked and what prevents it. The Quest Team reads it when it gets stuck at the same spot. " +
