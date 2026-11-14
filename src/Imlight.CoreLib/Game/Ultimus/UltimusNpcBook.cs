@@ -69,6 +69,23 @@ internal static class UltimusNpcBook {
         => npc == 0 || !s_book.TryGetValue(npc, out var entry) ? null
             : entry.Places.FirstOrDefault(p => OverlayQuestTracker.SameZone(p.Zone, zone) || OverlayQuestTracker.SameZone(zone, p.Zone));
 
+    /// <summary>The NPC a player named ("Headmaster Ambrose", "ambrose"): an exact name first, then a name that holds it.</summary>
+    internal static Entry Find(string name) {
+        var wanted = (name ?? "").Trim().TrimEnd('?', '!', '.').Trim();
+        if (wanted.StartsWith("the ", StringComparison.OrdinalIgnoreCase)) {
+            wanted = wanted[4..];
+        }
+
+        if (wanted.Length < 3) {
+            return null;
+        }
+
+        var entries = s_book.Values.Where(e => !string.IsNullOrWhiteSpace(e.Name) && e.Places.Count > 0).ToList();
+
+        return entries.FirstOrDefault(e => string.Equals(e.Name, wanted, StringComparison.OrdinalIgnoreCase))
+            ?? entries.Where(e => e.Name.Contains(wanted, StringComparison.OrdinalIgnoreCase)).OrderBy(e => e.Name.Length).FirstOrDefault();
+    }
+
     internal static int Count => s_book.Count;
 
     /// <summary>Builds the book on a background thread (or reads it from its file), one area at a time.</summary>

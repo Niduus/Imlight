@@ -119,6 +119,12 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
                 Filter = 2,
             };
         var sentTo = SendFilteredZoneMessage(msg, wizard.CharId, wizard.Zone);
+        // Ultimus hears typed chat near him too (Niduus, 2026-11-14: he is free to use text chat, and answers it).
+        if (Ultimus.UltimusDirector.ActorOf("Balance") is not null && GetActiveGameObject() is { } speaker) {
+            Ultimus.UltimusVoice.PlayerSaid(SessionActor.GetZoneActor(), speaker.m_location.X, speaker.m_location.Y, wizard.CharId,
+                wizard.PlayerNameBehavior?.GetWizardName(), typed, typed: true);
+        }
+
         if (asTyped) {
             Logger.Information("Chat: sent {0}'s line as typed to {1} other player(s) in {2}.",
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), sentTo, wizard.Zone));
@@ -410,7 +416,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
         var targetActorPath = targetPlayer.ActorPath;
         Context.ActorSelection(targetActorPath).Tell(msg);
-        TellUltimusWhisper(targetID, myWizard, 0, (string) message.Message);
+        TellUltimusWhisper(targetID, myWizard, 0, (string) message.Message, typed: true);
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_BUDDYSTATS))]
@@ -493,7 +499,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
     // A player whispered to Ultimus: it may answer in Menu Chat, whispered back (Niduus, 2026-11-13: "Able to reply to
     // Whispers via Menu Chat (in context)").
-    private static void TellUltimusWhisper(ulong targetCharId, Wizard sender, uint phraseId, string text) {
+    private static void TellUltimusWhisper(ulong targetCharId, Wizard sender, uint phraseId, string text, bool typed = false) {
         if (sender is null || !Ultimus.UltimusRoster.IsMember(targetCharId) || Ultimus.UltimusRoster.IsMember(sender.CharId)
             || QuestTeam.QuestTeamRoster.IsMember(sender.CharId)) {
             return;
@@ -501,7 +507,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
         text ??= phraseId == 0 ? null : BotShared.MenuChatBook.ById(phraseId)?.Text;
         if (!string.IsNullOrWhiteSpace(text)) {
-            Ultimus.UltimusVoice.PlayerWhispered(sender.CharId, sender.PlayerNameBehavior?.GetWizardName(), text);
+            Ultimus.UltimusVoice.PlayerWhispered(sender.CharId, sender.PlayerNameBehavior?.GetWizardName(), text, typed);
         }
     }
 

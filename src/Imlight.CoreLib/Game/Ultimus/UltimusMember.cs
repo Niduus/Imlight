@@ -74,6 +74,14 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     internal sealed record SayMenuChatText(string Text);
     internal sealed record WhisperMenuChatText(string Text, ulong CharId);
 
+    /// <summary>
+    /// A typed line, said nearby or whispered (Niduus, 2026-11-14: "He is free to use text chat this time"). It goes through
+    /// the game's own chat rules for his account: when typed chat would hide it (menu chat only, or a word the filter turns
+    /// red) it is said as a Menu Chat line with its own words instead, so it is never lost or shown as "...".
+    /// </summary>
+    internal sealed record SayText(string Text);
+    internal sealed record WhisperText(string Text, ulong CharId);
+
     internal sealed record WorldTeleport(ulong DoorGlobalId, string World);
 
     /// <summary>Put on an item from the backpack, as the game's backpack does.</summary>
@@ -258,6 +266,22 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         Receive<WhisperMenuChat>(m => Send(new GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDQUICKCHAT { TargetID = m.CharId, MessageID = m.PhraseId }));
         Receive<SayMenuChatText>(m => Send(new GAME_5_PROTOCOL.MSG_REQUESTRADIALQUICKCHATEXT { Message = m.Text }));
         Receive<WhisperMenuChatText>(m => Send(new GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDQUICKCHATEXT { TargetID = m.CharId, Message = m.Text }));
+        Receive<SayText>(m => {
+            if (TypedShows(m.Text)) {
+                Send(new GAME_5_PROTOCOL.MSG_REQUESTRADIALCHAT { Message = Social.RadialChatText.Like(new byte[] { 0, 0 }, m.Text) });
+            }
+            else {
+                Send(new GAME_5_PROTOCOL.MSG_REQUESTRADIALQUICKCHATEXT { Message = m.Text });
+            }
+        });
+        Receive<WhisperText>(m => {
+            if (TypedShows(m.Text)) {
+                Send(new GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDCHAT { TargetID = m.CharId, Message = m.Text });
+            }
+            else {
+                Send(new GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDQUICKCHATEXT { TargetID = m.CharId, Message = m.Text });
+            }
+        });
         Receive<UsePotion>(_ => Send(new WIZARD_12_PROTOCOL.MSG_USEPOTION()));
         // "Fill All" at a potion shop, as a player presses it in the shop's window.
         Receive<BuyPotions>(_ => Send(new WIZARD_12_PROTOCOL.MSG_POTIONBUYREQUEST { AmountEnum = 1 }));
@@ -790,6 +814,17 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         }
 
         _session.Tell(new SERVER_100_PROTOCOL.MSG_RECEIVEDPACKET { Packet = message });
+    }
+
+    // Whether his account's chat level lets this typed line show as it is (not menu chat only, no word the filter hides).
+    private bool TypedShows(string text) {
+        var mode = Social.ChatFilter.CurrentChatMode(AccountCollection.GetAccountForCharacterList(_member.AccountId));
+
+        return mode switch {
+            ChatMode.Closed => false,
+            ChatMode.Filtered => Social.ChatFilter.FirstRedWord(text, textChat: true) is null,
+            _ => true,
+        };
     }
 
     private void SendControl(IMessage message) => _session?.Tell(new SERVER_100_PROTOCOL.MSG_RECEIVEDPACKET { Packet = message });

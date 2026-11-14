@@ -156,6 +156,25 @@ internal static class BotKnowledge {
         }
     }
 
+    /// <summary>What the bots know of a creature a player named (exact name first, then a name that holds it), or null.</summary>
+    internal static Habit ByName(string name) {
+        var wanted = (name ?? "").Trim().TrimEnd('?', '!', '.').Trim();
+        if (wanted.StartsWith("the ", StringComparison.OrdinalIgnoreCase)) {
+            wanted = wanted[4..];
+        }
+
+        if (wanted.Length < 3) {
+            return null;
+        }
+
+        lock (s_lock) {
+            var habits = Load().Habits.Where(h => !string.IsNullOrWhiteSpace(h.Name)).ToList();
+
+            return habits.FirstOrDefault(h => string.Equals(h.Name, wanted, StringComparison.OrdinalIgnoreCase))
+                ?? habits.Where(h => h.Name.Contains(wanted, StringComparison.OrdinalIgnoreCase)).OrderByDescending(h => h.Fights).FirstOrDefault();
+        }
+    }
+
     /// <summary>Whether a battle circle is a server-run wizard (Ultimus, a Quest Team wizard or a Bot Player).</summary>
     internal static bool IsServerBot(CombatDuelSubCircle circle) {
         if (circle is null || !circle.IsHumanPlayer || circle.ParticipantObject is not { } who) {

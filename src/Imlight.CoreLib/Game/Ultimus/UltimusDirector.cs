@@ -1215,6 +1215,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     private int _battlesWithPlayers;
     private bool _battleCompany;
     private int _companyCount;
+    private List<(ulong CharId, string Name)> _battlePlayers = [];
 
     private bool HandleBattle() {
         var me = _team[0];
@@ -1228,6 +1229,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             FightStarted(me);
             var others = CombatDuelComponent.UltimusBattleCompany(me.GlobalId);
             _battleCompany = others.Count > 0;
+            _battlePlayers = CombatDuelComponent.UltimusBattlePlayers(me.GlobalId);
             _companyCount = others.Count;
             if (others.Count > 0) {
                 _battlesWithPlayers++;
@@ -1253,6 +1255,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         _companyCount = company;
+        if (company > 0) {
+            _battlePlayers = CombatDuelComponent.UltimusBattlePlayers(me.GlobalId);
+        }
+
         _doing = "in a battle";
         _lastProgress = DateTime.UtcNow;
         UltimusDirector.SetBusy(me.ZoneActor, me.X, me.Y);
@@ -1290,6 +1296,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 NoteFightSpot(member);
                 if (_battleCompany) {
                     Speak("won", 0.5);
+                }
+
+                // Who he fought with is remembered ("We've fought 3 battles together now").
+                foreach (var (charId, name) in _battlePlayers) {
+                    BotSocial.FoughtWith(UltimusRoster.NAME, charId, name);
                 }
 
                 Count("battles won");
