@@ -61,7 +61,7 @@ internal sealed partial class ZoneTriggerSupervisor {
     private void ReceiveWaitingSpawnCheck(WaitingSpawnCheck message) {
         _waitingSpawnChecks.Remove(message.PlayerActor);
         if (message.PlayerActor is IInternalActorRef { IsTerminated: true }
-            || (WaitingSpawnTriggers().Count == 0 && !HoldsQuestChangedObjects())) {
+            || (WaitingSpawnTriggers().Count == 0 && !HoldsQuestChangedObjects() && !HoldsSleepingSpawners())) {
             return;
         }
 
@@ -80,6 +80,9 @@ internal sealed partial class ZoneTriggerSupervisor {
 
         // A dungeon room newer than the quest step that changed one of its objects gets that change back.
         RestoreQuestObjectStates(message);
+
+        // A boss whose spawner starts switched off, for a step that needs him (ZoneTriggerSupervisor.SleepingSpawns).
+        WakeSleepingStepSpawners(message);
 
         try {
             if (WaitingSpawnTriggers().Count == 0) {

@@ -715,6 +715,11 @@ internal sealed partial class UltimusDirectorActor {
             Logger.Debug("Ultimus: could not write {0}: {1}", Logger.Args(PLAYERS_FILE, e.Message));
         }
 
+        if (!known) {
+            var zone = _team.Count > 0 ? _team[0].Zone : "";
+            UltimusJournal.Write(UltimusJournal.MET, $"Met {player.Name} in {UltimusText.Zone(zone)}.", WorldOf(zone), UltimusText.Zone(zone), player.Name, 1);
+        }
+
         if (!known || away < TimeSpan.FromHours(1)) {
             return false;
         }

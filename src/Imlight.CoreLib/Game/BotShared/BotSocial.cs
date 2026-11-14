@@ -89,7 +89,27 @@ internal static class BotSocial {
         SCHOOL = "his school", TIP = "a tip", HELP = "help", GROUP = "group or follow", TRADE = "trade or gold", TELEPORT = "teleport",
         COMPLIMENT = "compliment", JOKE = "joke", THANKS = "thanks", BYE = "goodbye", BOT = "are you a bot", PRIVATE = "private info",
         RUDE = "rude", ANSWER = "answer to his question", CHAT = "small talk", NAME = "his name", STEP = "his quest step",
-        PERMISSION = "may I", MAKER = "who made him", ABILITY = "can he do something", LIKE = "does he like something", ORDER = "asks him to do something", CALLED = "said his name", STATUS = "how he is doing right now", ACK = "ok or brb", RULES = "a rule for him", ACTIVITY = "what he is doing", AGAIN = "say that again", QUESTION = "a question he can't place";
+        PERMISSION = "may I", MAKER = "who made him", ABILITY = "can he do something", LIKE = "does he like something", ORDER = "asks him to do something", CALLED = "said his name", STATUS = "how he is doing right now", ACK = "ok or brb", RULES = "a rule for him", ACTIVITY = "what he is doing", AGAIN = "say that again", QUESTION = "a question he can't place",
+        RECALL = "what he remembers", FACT = "a fact about himself", JOKE_ASK = "asks for a joke";
+
+    // His own jokes, about life as a wizard (never two the same in a row: Pick, and a shuffled turn through them all).
+    private static readonly string[] s_jokes = [
+        "Why did the Balance wizard cross the road? To even things out!",
+        "I tried a Krokotopia joke once. It was a bit dry.",
+        "Why don't skeletons ever win at cards? They have no guts to bet with!",
+        "My deck and I have a lot in common. We both get shuffled around and hope for the best.",
+        "What do you call a Fire wizard who tells bad jokes? A real burner.",
+        "I asked a Storm wizard to hold my pips. Now they only work 70% of the time.",
+        "Why was the Ice wizard so calm? Nothing ever gets under their shields.",
+        "What's a Death wizard's favorite drink? Anything, as long as they drain it.",
+        "I'm not lost. I'm just taking the scenic route to my quest arrow.",
+        "Why did the wizard bring a ladder to the Commons? To reach the next level!",
+        "Life wizards are the best friends. They always heal you, even when you're being a pain.",
+        "What did the Myth wizard say to their minion? \"You're grounded!\"",
+        "I don't always fizzle. But when I do, it's in front of everyone.",
+        "How do you know a Balance wizard is around? Everything's suddenly fair.",
+        "Why don't mummies take vacations? They're afraid they'll unwind!",
+    ];
 
     // Things he never does (hard limits): a player's word about them gets the truth.
     private static readonly string[] s_neverDoes = ["hatch", "hatching", "train pets", "pet training", "training pets", "train your pet", "craft", "crafting",
@@ -165,6 +185,66 @@ internal static class BotSocial {
         return doing;
     }
 
+    // ---- Sensitive details: never said, whatever was asked (Niduus, 2026-11-14) ----
+
+    private const string CANT_SHARE = "Sorry, I can't share that.";
+    private static readonly System.Text.RegularExpressions.Regex s_sensitive = new(
+        @"\b\d{1,3}(\.\d{1,3}){3}\b"                         // an IP address
+        + @"|\blocalhost\b|\b127\.0\.0\.1\b"
+        + @"|:\d{4,5}\b"                                     // a port
+        + @"|\b[a-z]:\\|\\users\\|/home/|/users/|appdata|\.ini\b|\.json\b|\.db\b"  // files and folders
+        + @"|\bpass(word|wd|code)?\s*[:=]|\buser(name)?\s*[:=]|\blogin\s*[:=]"
+        + @"|\b(api|secret)[ _-]?key\b|\btoken\s*[:=]"
+        + @"|[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}",            // an email address
+        System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.Compiled);
+
+    /// <summary>
+    /// A line he is about to say with any sensitive detail in it becomes a plain "can't share that": the server's address or
+    /// ports, file paths, account names or passwords, keys, email addresses, and the names of the computer and its user (the
+    /// owner's real name is never written into the code; it is read from the machine here). Not a setting: always on.
+    /// Returns the same string when it is safe.
+    /// </summary>
+    internal static string Scrub(string line) {
+        if (string.IsNullOrEmpty(line)) {
+            return line;
+        }
+
+        if (s_sensitive.IsMatch(line)) {
+            return CANT_SHARE;
+        }
+
+        foreach (var secret in MachineSecrets()) {
+            if (System.Text.RegularExpressions.Regex.IsMatch(line, $@"\b{System.Text.RegularExpressions.Regex.Escape(secret)}\b",
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase)) {
+                return CANT_SHARE;
+            }
+        }
+
+        return line;
+    }
+
+    private static string[] s_machineSecrets;
+
+    private static string[] MachineSecrets() {
+        if (s_machineSecrets is not null) {
+            return s_machineSecrets;
+        }
+
+        var found = new List<string>();
+        try {
+            foreach (var value in new[] { Environment.UserName, Environment.MachineName, Environment.UserDomainName }) {
+                if (!string.IsNullOrWhiteSpace(value) && value.Length >= 3) {
+                    found.Add(value.Trim());
+                }
+            }
+        }
+        catch (Exception) {
+            // Nothing more to hold back.
+        }
+
+        return s_machineSecrets = [.. found.Distinct(StringComparer.OrdinalIgnoreCase)];
+    }
+
     internal static string Classify(string text, Friend friend) {
         var t = (text ?? "").Trim();
         if (t.Length == 0) {
@@ -180,7 +260,13 @@ internal static class BotSocial {
             return BOT;
         }
 
-        if (Has(t, "password", "ip", "server ip", "admin", "address", "where do you live", "phone", "email", "who owns", "who runs")) {
+        // Never shared, whatever the words (Niduus, 2026-11-14: "Permanently block out the sensitive details"): the server's
+        // address, any account's name or password, keys, files, real names, other players' details. Scrub() also holds every
+        // answer to this, whatever was asked.
+        if (Has(t, "password", "passwords", "pass word", "passcode", "user and pass", "username", "user name", "login", "log in info", "login info",
+                "credentials", "account name", "account info", "your account", "ip", "server ip", "ip address", "port", "server address", "host name",
+                "hostname", "admin", "address", "where do you live", "phone", "email", "who owns", "who runs", "real name", "secret key", "api key",
+                "token", "file path", "folder", "where is the server", "server files", "database", "home address", "credit card", "personal info")) {
             return PRIVATE;
         }
 
@@ -245,9 +331,25 @@ internal static class BotSocial {
 
         // "What's your (least) favorite school?", "Do you like Krokotopia?": his opinion. Before the plain "school" or "quest"
         // questions, which hold the same words.
+        // "Do you remember...?", "what happened today?": his memory journal (Niduus, 2026-11-14: "allow him to have memories").
+        if (Has(t, "do you remember", "remember when", "you remember", "what do you remember", "your memories", "a memory", "your best moment",
+                "your worst moment", "what happened today", "what did you do today", "what have you done", "your day", "how was your day",
+                "how's your day", "hows your day", "tell me about your adventures", "your adventures", "your story so far")) {
+            return RECALL;
+        }
+
         if (Has(t, "do you like", "do you love", "do you enjoy", "do u like", "do you hate", "favorite", "favourite", "fav", "what do you think of",
-                "least favorite", "worst", "you hate")) {
+                "least favorite", "worst", "you hate", "opinion on", "opinion of", "your opinion", "thoughts on", "your thoughts", "what did you think of",
+                "how did you like", "how do you feel about", "how'd you like", "hows krokotopia", "how's krokotopia", "how is wizard city", "how was wizard city")) {
             return LIKE;
+        }
+
+        // About himself, from his real data (Niduus, 2026-11-14: "Make him able to give more responses to stuff").
+        if (Has(t, "what are you wearing", "your gear", "your robe", "your hat", "your boots", "your wand", "your outfit", "your stats", "your deck",
+                "what spells", "which spells", "your spells", "best spell", "how many quests", "how many battles", "how many fights", "how long have you",
+                "how long you been", "how long have u", "how much xp", "your xp", "next world", "which world next", "your pet", "your mount",
+                "how much health", "your health", "how many potions", "your potions", "your mana", "how strong", "your damage", "your resist")) {
+            return FACT;
         }
 
         if (Has(t, "what quest", "which quest", "quest are you", "working on", "your quest", "what are you doing", "what you doing", "whatcha doing",
@@ -333,6 +435,12 @@ internal static class BotSocial {
             return COMPLIMENT;
         }
 
+        // "Tell me a joke": a request for one, not a laugh (Niduus, 2026-11-14: it got "Haha!").
+        if (Has(t, "tell me a joke", "tell a joke", "know any jokes", "know a joke", "got any jokes", "got a joke", "say something funny",
+                "make me laugh", "another joke", "one more joke", "joke please", "a joke?", "tell me something funny")) {
+            return JOKE_ASK;
+        }
+
         if (Has(t, "lol", "haha", "lmao", "joke", "funny", "xd", "rofl")) {
             return JOKE;
         }
@@ -408,7 +516,7 @@ internal static class BotSocial {
             }
 
             // Too soon after the last answer to them (one answer per message, a moment between): a question still gets one.
-            var question = intent is CALLED or ORDER or QUEST or STEP or AGAIN or WHERE or LEVEL or SCHOOL or TIP or BOT or NAME or QUESTION or ACTIVITY;
+            var question = intent is CALLED or ORDER or QUEST or STEP or AGAIN or WHERE or LEVEL or SCHOOL or TIP or BOT or NAME or QUESTION or ACTIVITY or JOKE_ASK or RECALL or FACT or LIKE or STATUS or MAKER or ABILITY or PRIVATE;
             if (!NoSave && (now - friend.RepliedAt < s_perPlayerGap && !question || !RoomToSpeak(self.Bot))) {
                 Save(self.Bot);
                 return null;
@@ -416,6 +524,9 @@ internal static class BotSocial {
 
             friend.Talks++;
             var reply = Compose(self, friend, intent, heard.Length > 0 ? heard : text, typed, whisper, known && away > TimeSpan.FromHours(1));
+            if (reply is { Text.Length: > 0 } && Scrub(reply.Text) is var safe && !ReferenceEquals(safe, reply.Text)) {
+                reply = reply with { Text = safe, Why = reply.Why + " (A sensitive detail was in it, so I said I can't share that instead.)" };
+            }
             if (reply is not null && reply.Text.Length > 0) {
                 friend.RepliedAt = now;
                 NoteSaid(self.Bot);
@@ -564,11 +675,20 @@ internal static class BotSocial {
                 break;
             case LIKE: {
                 var subject = (text ?? "").Trim().TrimEnd('?', '!', '.');
-                foreach (var lead in new[] { "what do you think of", "do you like", "do you love", "do you enjoy", "do u like", "you like" }) {
+                foreach (var lead in new[] { "what do you think of", "what did you think of", "your opinion on", "your opinion of", "opinion on", "opinion of",
+                             "your thoughts on", "thoughts on", "how did you like", "how do you feel about", "how'd you like", "how is", "how was", "how's",
+                             "do you like", "do you love", "do you enjoy", "do u like", "you like" }) {
                     var cut = subject.IndexOf(lead, StringComparison.OrdinalIgnoreCase);
                     if (cut >= 0) {
                         subject = subject[(cut + lead.Length)..].Trim();
                         break;
+                    }
+                }
+
+                // "Wizard City questing" is Wizard City.
+                foreach (var tail in new[] { " questing", " quests", " quest line", " so far", " in general", " overall" }) {
+                    if (subject.EndsWith(tail, StringComparison.OrdinalIgnoreCase)) {
+                        subject = subject[..^tail.Length].Trim();
                     }
                 }
 
@@ -594,6 +714,38 @@ internal static class BotSocial {
                     : null;
                 line = answer?.Line ?? "I don't think I can. I quest the main story, fight its battles, shop for gear and potions, and chat.";
                 why = $"{friend.Name} asked if I can do something ({answer?.What ?? "something I don't do"}), so I answer honestly from what I really do.";
+                break;
+            }
+            case RECALL: {
+                var subject = (text ?? "").Trim().TrimEnd('?', '!', '.');
+                foreach (var lead in new[] { "do you remember", "you remember", "remember when", "what do you remember about", "what do you remember of" }) {
+                    var cut = subject.IndexOf(lead, StringComparison.OrdinalIgnoreCase);
+                    if (cut >= 0) {
+                        subject = subject[(cut + lead.Length)..].Trim();
+                        break;
+                    }
+                }
+
+                subject = Has(subject, "today", "your day", "anything", "what happened", "your memories", "your adventures", "your story", "best moment", "worst moment",
+                    "what have you done", "a memory") || subject.Length < 3 ? "" : subject;
+                var mood = Has(text ?? "", "best moment") ? "best" : Has(text ?? "", "worst moment") ? "worst" : Has(text ?? "", "today", "your day") ? "today" : "";
+                line = self.Act?.Invoke($"recall:{mood}:{subject}") ?? "I don't have any memories of that yet.";
+                why = $"{friend.Name} asked what I remember, so I answer from my journal: only what really happened to me.";
+                break;
+            }
+            case FACT: {
+                var t = (text ?? "").ToLowerInvariant();
+                var key = Has(t, "wearing", "gear", "robe", "hat", "boots", "wand", "outfit") ? "gear"
+                    : Has(t, "deck", "spells", "spell") ? "deck"
+                    : Has(t, "how many quests", "how many battles", "how many fights", "how long") ? "stats"
+                    : Has(t, "xp") ? "xp"
+                    : Has(t, "next world", "world next") ? "next"
+                    : Has(t, "pet") ? "pet"
+                    : Has(t, "mount") ? "mount"
+                    : Has(t, "potions") ? "potions"
+                    : "stats-body";
+                line = self.Act?.Invoke("fact:" + key) ?? "Not sure, sorry!";
+                why = $"{friend.Name} asked about me ({key}), so I answer from my real data.";
                 break;
             }
             case CALLED:
@@ -715,6 +867,10 @@ internal static class BotSocial {
             case COMPLIMENT:
                 line = Pick(self.Bot, "compliment", "Thanks, that means a lot!", "Aw, thank you!", "Thanks! You too!");
                 why = $"{friend.Name} was kind, so I thank them.";
+                break;
+            case JOKE_ASK:
+                line = Pick(self.Bot, "joke-told", s_jokes);
+                why = $"{friend.Name} asked for a joke, so I tell one of mine.";
                 break;
             case JOKE:
                 line = Pick(self.Bot, "joke", "Haha!", "Ha, good one!", "Why did the Balance wizard cross the road? To even things out!",

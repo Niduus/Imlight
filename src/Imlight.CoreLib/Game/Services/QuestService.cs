@@ -2004,6 +2004,14 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             skipWorldEffects: !ClaimInstanceStep(InstanceQuestClaimKind.GoalStart, questInstance.QuestName, goalTemplate.m_goalName)
         );
 
+        // A "defeat" step: the room looks again for its boss's spawner if that starts switched off (Krokenkahmen).
+        if (goalTemplate is BountyGoalTemplate) {
+            SessionActor.GetZoneActor()?.Tell(new ZONE_102_PROTOCOL.MSG_CHECKSTEPSPAWNS {
+                PlayerActor = SessionActor.ActorRef,
+                PlayerGameObject = GetActiveGameObject(),
+            });
+        }
+
         // Play goal start dialogue if it exists.
         var goalId = questInstance.GoalProgress.First(g => g.GoalName == goalTemplate.m_goalName).ID;
         ShowGoalStartDialogue(goalTemplate, questInstance.ID, goalId);

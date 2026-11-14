@@ -845,7 +845,9 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
 
     // Whether this typed line shows as it is. His own chat level does not apply (ChatService: he is free to use text chat);
     // the whitelist, when it is on, still does.
-    private static bool TypedShows(string text) => ReferenceEquals(Social.ChatFilter.ForOthers(text, ChatMode.Open, out _), text);
+    // A line with a sensitive detail in it never goes out (BotSocial.Scrub, always on).
+    private static bool TypedShows(string text) => ReferenceEquals(BotShared.BotSocial.Scrub(text), text)
+                                                  && ReferenceEquals(Social.ChatFilter.ForOthers(text, ChatMode.Open, out _), text);
 
     private void SendControl(IMessage message) => _session?.Tell(new SERVER_100_PROTOCOL.MSG_RECEIVEDPACKET { Packet = message });
 

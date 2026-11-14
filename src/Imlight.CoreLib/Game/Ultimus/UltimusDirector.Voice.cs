@@ -184,8 +184,61 @@ internal sealed partial class UltimusDirectorActor {
             }
 
             Note("Ultimus", $"{heard.SpeakerName} {how}: \"{heard.Text}\"; Ultimus {(heard.Whisper ? "whispers back" : "says")}: \"{reply.Text}\"");
-            _actors[0].Tell(heard.Whisper ? new UltimusMember.WhisperText(reply.Text, whisperTo) : new UltimusMember.SayText(reply.Text));
+            // A long answer goes in a few messages, each within the chat's length, a moment apart (Niduus, 2026-11-14: "allow for him
+            // to send in multiple messages. Aware of the chat limits"). The whole answer still counts as one line for his
+            // spam and repeat guards (BotSocial), and the next line waits until the last part is out.
+            var parts = ChatParts(reply.Text);
+            for (var i = 0; i < parts.Count; i++) {
+                IActorRef actor = _actors[0];
+                object message = heard.Whisper ? new UltimusMember.WhisperText(parts[i], whisperTo) : new UltimusMember.SayText(parts[i]);
+                if (i == 0) {
+                    actor.Tell(message);
+                }
+                else {
+                    Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(PART_GAP_SECONDS * i), actor, message, Self);
+                }
+            }
+
+            _nextLine = DateTime.UtcNow + s_lineGap + TimeSpan.FromSeconds(PART_GAP_SECONDS * (parts.Count - 1));
         }
+    }
+
+    // One chat message's most characters, the most messages for one answer, and the gap between them.
+    private const int PART_LENGTH = 120;
+    private const int MOST_PARTS = 3;
+    private const double PART_GAP_SECONDS = 1.6;
+
+    /// <summary>
+    /// An answer cut into chat messages: at sentence ends where it can, else between words; never more than three. Every
+    /// part is checked for sensitive details again (BotSocial.Scrub), whatever made it.
+    /// </summary>
+    internal static List<string> ChatParts(string text) {
+        var parts = new List<string>();
+        var rest = (text ?? "").Trim();
+        while (rest.Length > 0 && parts.Count < MOST_PARTS) {
+            if (rest.Length <= PART_LENGTH) {
+                parts.Add(rest);
+                break;
+            }
+
+            // The last sentence end, else the last space, within the length; a word longer than that is cut.
+            var window = rest[..PART_LENGTH];
+            var cut = new[] { window.LastIndexOf(". ", StringComparison.Ordinal), window.LastIndexOf("! ", StringComparison.Ordinal),
+                window.LastIndexOf("? ", StringComparison.Ordinal) }.Max();
+            cut = cut >= PART_LENGTH / 3 ? cut + 1 : window.LastIndexOf(' ');
+            cut = cut <= 0 ? PART_LENGTH : cut;
+            var part = rest[..cut].Trim();
+            rest = rest[cut..].Trim();
+            // The last allowed part ends the answer cleanly rather than mid-thought.
+            if (parts.Count == MOST_PARTS - 1 && rest.Length > 0) {
+                part = part.TrimEnd(',', ';', ':') + (part.EndsWith('.') || part.EndsWith('!') || part.EndsWith('?') ? "" : "...");
+                rest = "";
+            }
+
+            parts.Add(part);
+        }
+
+        return [.. parts.Select(BotSocial.Scrub).Where(p => p.Length > 0).Distinct()];
     }
 
     // Who spoke near him lately (not to him), to tell a talk between players from a line for him.
@@ -283,6 +336,8 @@ internal sealed partial class UltimusDirectorActor {
             what => what switch {
                 "potions" => AskedForPotions(me).Line,
                 "potions-status" => DateTime.UtcNow < _potionRunUntil ? "Yes, I'm on my way to the potion shop now!" : AskedForPotions(me).Line,
+                _ when what.StartsWith("recall:", StringComparison.Ordinal) => Recall(what[7..]),
+                _ when what.StartsWith("fact:", StringComparison.Ordinal) => Fact(me, what[5..]),
                 _ => null,
             }, Worlds().Select(w => w.World).ToList(), Opinion);
     }
