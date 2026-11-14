@@ -220,11 +220,15 @@ internal sealed partial class UltimusDirectorActor {
     private readonly HashSet<uint> _bazaarSkipped = [];
     private DateTime _nextBazaarLook = DateTime.MinValue;
     private UltimusPlanner.Target _bazaarTrip;
+    // He may wake a sleeping Bazaar bot once per world (it reads the game files for a minute when it wakes); later looks
+    // in the same world only ask while it is awake anyway.
+    private bool _bazaarWakeAllowed = true;
 
     /// <summary>Each new world: he looks his gear over (shops of the world at once, the Bazaar when it is worth the trip).</summary>
     private void NewWorldGearCheck(UltimusMember.Status leader, string world) {
         _nextShopping = DateTime.UtcNow;
         _nextBazaarLook = DateTime.UtcNow;
+        _bazaarWakeAllowed = true;
         _shopSkipped.Clear();
         _bazaarSkipped.Clear();
         PlanGold(leader, world);
@@ -253,6 +257,10 @@ internal sealed partial class UltimusDirectorActor {
 
         // The Bazaar can be turned off, sleeps while nobody is there, and in Actual mode has only what players sold
         // (Niduus, 2026-11-14). Asking wakes it; he looks again once it is up, and skips it while it is off.
+        if (!_bazaarWakeAllowed && BazaarLink.StateNow == BazaarState.Opening) {
+            return null;
+        }
+
         switch (BazaarLink.Visit()) {
             case BazaarState.Disabled:
                 Think("The Bazaar is turned off on this server, so I keep to the shops.", "bazaar|off");
@@ -264,6 +272,7 @@ internal sealed partial class UltimusDirectorActor {
                 return null;
         }
 
+        _bazaarWakeAllowed = false;
         var actual = BazaarBook.Mode == BazaarMode.Actual;
         var style = StyleOf(leader);
         var school = BotGear.SchoolOf(wizard);
