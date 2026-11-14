@@ -353,6 +353,10 @@ internal static class FriendAccess {
             while (DateTime.UtcNow < until) {
                 var receive = udp.ReceiveAsync();
                 if (await Task.WhenAny(receive, Task.Delay(until - DateTime.UtcNow)) != receive) {
+                    // The wait is over: closing the socket below cancels this receive, which then fails with "I/O operation
+                    // aborted". Nobody looked at that failure, so it surfaced later as "An error in the background" in
+                    // Ahziael's crash list (Niduus's log, 2026-11-14). Look at it here so it stays quiet.
+                    _ = receive.ContinueWith(t => _ = t.Exception, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
                     break;
                 }
 

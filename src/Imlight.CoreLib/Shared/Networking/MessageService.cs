@@ -286,7 +286,8 @@ internal abstract class MessageService(SessionActor sessionActor) : ReceiveProto
         var response = AskOtherService<CHARACTER_103_PROTOCOL.MSG_CHARACTER>(msg);
 
         if (response?.Wizard is null) {
-            Logger.Warning("{0} found no active wizard; skipping the cache.", Logger.Args(GetType().Name));
+            // Normal while a wizard is logging in or out (hundreds a day in Niduus's log, 2026-11-13): not worth a warning.
+            Logger.Debug("{0} found no active wizard; skipping the cache.", Logger.Args(GetType().Name));
 
             return;
         }

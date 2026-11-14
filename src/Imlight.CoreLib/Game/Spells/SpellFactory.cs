@@ -121,6 +121,7 @@ internal class SpellFactory : RootDirectoryResourceSingleton<SpellFactory>, IMem
     }
 
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, uint> s_idsByName = new(StringComparer.Ordinal);
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, byte> s_missingNamesTold = new(StringComparer.Ordinal);
 
     /// <summary>
     /// The template ID of a spell template, found by its name (0 if none), kept once found: a cheat's spell typed as its
@@ -154,7 +155,12 @@ internal class SpellFactory : RootDirectoryResourceSingleton<SpellFactory>, IMem
     internal static Spell GetSpell(string spellName) {
         var stringHash = StringHash.Compute(spellName);
         if (!s_spellTemplates.TryGetValue(stringHash, out var spellTemplate)) {
-            Logger.Warning("Could not find spell template with name {0}.", Logger.Args(spellName));
+            // Some creatures' game data name a card that does not exist (a typo like "Natural Fire Ellf"); every spawn asked
+            // again and filled the server log with the same line hundreds of times a day (Niduus's log, 2026-11-14). Once is enough.
+            if (s_missingNamesTold.TryAdd(spellName ?? "", 0)) {
+                Logger.Warning("Could not find spell template with name {0}. (Told once per name until the server restarts.)", Logger.Args(spellName));
+            }
+
             return null;
         }
 
