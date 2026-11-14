@@ -245,6 +245,7 @@ internal sealed partial class UltimusDirectorActor {
         public double Seconds { get; set; }
         public Dictionary<string, double> Why { get; set; } = [];
         public string LastStep { get; set; } = "";
+        public string LastQuest { get; set; } = "";
     }
 
     private void WasteTick(UltimusMember.Status leader) {
@@ -285,7 +286,7 @@ internal sealed partial class UltimusDirectorActor {
         spot.Seconds += dt;
         spot.Why[why] = spot.Why.GetValueOrDefault(why) + dt;
         spot.LastStep = _target?.What ?? _doing ?? "";
-        StuckToday(key, leader.Zone, spot.X, spot.Y, why, dt, spot.LastStep);
+        StuckToday(key, leader.Zone, spot.X, spot.Y, why, dt, spot.LastStep, _target?.Quest ?? _currentQuest ?? "");
         if (now - _wasteWritten > TimeSpan.FromMinutes(5)) {
             _wasteWritten = now;
             WriteWaste();
@@ -304,11 +305,14 @@ internal sealed partial class UltimusDirectorActor {
         public string Date { get; set; } = "";
         public Dictionary<string, WasteSpot> Today { get; set; } = [];
         public Dictionary<string, List<string>> Days { get; set; } = [];
+
+        // The spots (area|cell) of each day's top 3, to see one that is "most stuck" 3 days running.
+        public Dictionary<string, List<string>> DayKeys { get; set; } = [];
     }
 
     private StuckDays _stuckDays;
 
-    private void StuckToday(string key, string zone, float x, float y, string why, double seconds, string step) {
+    private void StuckToday(string key, string zone, float x, float y, string why, double seconds, string step, string quest) {
         _stuckDays ??= ReadStuckDays();
         var today = DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
         if (_stuckDays.Date != today) {
@@ -323,6 +327,40 @@ internal sealed partial class UltimusDirectorActor {
         spot.Seconds += seconds;
         spot.Why[why] = spot.Why.GetValueOrDefault(why) + seconds;
         spot.LastStep = step;
+        if (!string.IsNullOrEmpty(quest)) {
+            spot.LastQuest = quest;
+        }
+    }
+
+    // A spot in the day's top 3 that was also in the top 3 on each of the 2 days before: filed as a broken quest by
+    // itself (Niduus, 2026-11-14), once a day, with the quest he was on there.
+    private void StuckThreeDays(List<KeyValuePair<string, WasteSpot>> today) {
+        if (!DateTime.TryParseExact(_stuckDays.Date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None, out var date)) {
+            return;
+        }
+
+        string Day(int back) => date.AddDays(-back).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+        foreach (var (key, spot) in today) {
+            if (!Enumerable.Range(1, 2).All(back => _stuckDays.DayKeys.TryGetValue(Day(back), out var keys) && keys.Contains(key))) {
+                continue;
+            }
+
+            if (!_reported.TryAdd($"stuck3|{key}|{_stuckDays.Date}", DateTime.UtcNow)) {
+                continue;
+            }
+
+            var quest = spot.LastQuest ?? "";
+            var text = $"MOST STUCK 3 DAYS RUNNING: {UltimusText.Zone(spot.Zone)} near ({spot.X:0}, {spot.Y:0}) was one of the 3 places he lost " +
+                       $"the most time on each of the last 3 days ({spot.Seconds / 60:0} min today), last on \"{UltimusText.Short(spot.LastStep, 70)}\". " +
+                       "Something there keeps holding him back.";
+            Count("issues raised");
+            Note("Ultimus", text, UltimusLink.NOTABLE);
+            UltimusLink.Issue("quest", quest, quest.Length == 0 ? "" : UltimusText.Title(quest), WorldOf(spot.Zone), text,
+                "A player gets past this spot in a few minutes.", null, spot.LastStep,
+                [$"Area: {spot.Zone}", $"Spot: ({spot.X:0}, {spot.Y:0}), a 500 by 500 square",
+                 .. spot.Why.OrderByDescending(w => w.Value).Select(w => $"Today: {w.Key} {w.Value / 60:0.0} min")]);
+        }
     }
 
     private static StuckDays ReadStuckDays() {
@@ -344,7 +382,10 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
-        var top = _stuckDays.Today.Values.Where(s => s.Seconds >= 60).OrderByDescending(s => s.Seconds).Take(3).Select(s => {
+        var topSpots = _stuckDays.Today.Where(s => s.Value.Seconds >= 60).OrderByDescending(s => s.Value.Seconds).Take(3).ToList();
+        _stuckDays.DayKeys[_stuckDays.Date] = [.. topSpots.Select(s => s.Key)];
+        StuckThreeDays(topSpots);
+        var top = topSpots.Select(t => t.Value).Select(s => {
             var why = s.Why.OrderByDescending(w => w.Value).First().Key;
             var fix = why switch {
                 "getting unstuck" => "a wall, ledge or narrow spot there: look at the walkable map at that spot",
@@ -356,6 +397,7 @@ internal sealed partial class UltimusDirectorActor {
         _stuckDays.Days[_stuckDays.Date] = top;
         foreach (var old in _stuckDays.Days.Keys.OrderByDescending(d => d, StringComparer.Ordinal).Skip(14).ToList()) {
             _stuckDays.Days.Remove(old);
+            _stuckDays.DayKeys.Remove(old);
         }
 
         try {

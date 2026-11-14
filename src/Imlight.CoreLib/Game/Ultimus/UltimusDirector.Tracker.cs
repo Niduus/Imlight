@@ -97,15 +97,20 @@ internal sealed partial class UltimusDirectorActor {
         detail["next"] = next;
 
         var parked = new JsonArray();
+        // The same lines with their step key, for Ahziael's "Retry now" button by each (UltimusDirector.Break.cs).
+        var parkedRows = new JsonArray();
         foreach (var (key, at) in _parkedAt.Where(p => DateTime.UtcNow - p.Value < ParkedFor(p.Key)).OrderByDescending(p => p.Value)) {
             var (quest, what, where) = _parkedWhy.GetValueOrDefault(key);
             var minutes = Math.Max(1, (int) Math.Ceiling((ParkedFor(key) - (DateTime.UtcNow - at)).TotalMinutes));
+            parkedRows.Add(new JsonObject { ["key"] = key, ["quest"] = quest ?? "", ["what"] = what ?? key, ["where"] = where ?? "", ["minutes"] = minutes,
+                ["fix"] = _parkedFix.GetValueOrDefault(key) ?? "", ["tips"] = new JsonArray([.. TipsFor(key).Select(t => (JsonNode) t)]) });
             parked.Add($"{(string.IsNullOrEmpty(quest) ? "" : UltimusText.Title(quest) + ": ")}\"{what ?? key}\"" +
                        $"{(string.IsNullOrEmpty(where) ? "" : " in " + where)}: every fix tried twice; back to it in {minutes} min" +
                        (_parkedFix.TryGetValue(key, out var fix) && fix.Length > 0 ? $". Suggested fix: {fix}" : ""));
         }
 
         detail["parked"] = parked;
+        detail["parkedRows"] = parkedRows;
         detail["needsHelp"] = parked.Count > 0;
 
         return detail;

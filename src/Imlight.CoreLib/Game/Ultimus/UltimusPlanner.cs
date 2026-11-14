@@ -356,6 +356,9 @@ internal static class UltimusPlanner {
         }
     }
 
+    /// <summary>Ahziael's "Retry now": this one step set aside is open again.</summary>
+    internal static void ClearAsideKey(string key) => s_setAside.TryRemove(key, out _);
+
     /// <summary>Ahziael's "Fixed it": every step of <paramref name="quest"/> set aside is open again.</summary>
     internal static void ClearAside(string quest) {
         foreach (var key in s_setAside.Keys.Where(k => k.StartsWith(quest + "|", StringComparison.OrdinalIgnoreCase)).ToList()) {
