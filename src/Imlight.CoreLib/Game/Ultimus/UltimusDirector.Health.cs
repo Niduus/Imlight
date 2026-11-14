@@ -46,8 +46,13 @@ internal sealed partial class UltimusDirectorActor {
     private const float WISP_SAFE_FROM_MOBS = 500f;
     private const float SHOP_REACH = 220f;
 
-    // Each world's nearest area with a potion shop, found in the background from the areas' files ("" = none).
-    private static readonly ConcurrentDictionary<string, string> s_potionShopZones = new(StringComparer.OrdinalIgnoreCase);
+    // From each area: the areas of its world with a potion shop, or with health or mana wisps, nearest first, found in the
+    // background from the areas' files (null while still being read, empty when there are none).
+    private static readonly ConcurrentDictionary<string, List<(string Zone, int Hops)>> s_healZones = new(StringComparer.OrdinalIgnoreCase);
+
+    // Areas whose wisps were all taken when he got there: not tried again for a while (wisps come back).
+    private static readonly TimeSpan s_wispsBackIn = TimeSpan.FromMinutes(5);
+    private readonly Dictionary<string, DateTime> _wispsTaken = new(StringComparer.OrdinalIgnoreCase);
 
     private DateTime _hurtSince = DateTime.MaxValue;
     private bool _toldNoHeal;
@@ -91,17 +96,20 @@ internal sealed partial class UltimusDirectorActor {
             return false;
         }
 
+        // Only the extra care before a tough fight or a dungeon asks for more; by his normal rule he is ready.
+        var onlyPrep = !Hurt(leader, out _, out _);
+        var stats = leader.Wizard.GameStats;
+        var maxHealth = Math.Max(1, stats.m_baseHitpoints + stats.m_bonusHitpoints);
         if (_hurtSince == DateTime.MaxValue) {
             _hurtSince = DateTime.UtcNow;
-            var stats = leader.Wizard.GameStats;
-            Note("Ultimus", $"{leader.Name} is hurt ({stats.m_currentHitpoints} of {stats.m_baseHitpoints + stats.m_bonusHitpoints} health, " +
+            Note("Ultimus", $"{leader.Name} {(onlyPrep ? "wants more before a hard fight" : "is hurt")} ({stats.m_currentHitpoints} of {maxHealth} health, " +
                             $"{stats.m_currentMana} of {stats.m_baseMana + stats.m_bonusMana} mana): heals before going on.");
         }
 
         _lastProgress = DateTime.UtcNow;
 
         // 1. A potion.
-        if (leader.Wizard.GameStats.m_potionCharge >= 1) {
+        if (stats.m_potionCharge >= 1) {
             if (CanClick("potion|heal")) {
                 Clicked("potion|heal");
                 Note("Ultimus", $"{leader.Name} drinks a potion to heal.");
@@ -121,20 +129,47 @@ internal sealed partial class UltimusDirectorActor {
             return true;
         }
 
-        // 3. Potions from a potion shop, here or in the nearest area of the world that has one.
-        if (PotionShopTarget(leader) is { } shop) {
-            _doing = shop.What;
-            if (shop.Kind == UltimusPlanner.SHOP && UltimusPlanner.Far(leader.X, leader.Y, shop.X, shop.Y) < SHOP_REACH) {
+        // Niduus, 2026-11-14 ("he's not low??" at 875 of 1099): with nothing right here, the extra care is not worth a
+        // trip or a wait. He is over his normal ready health, so he goes on.
+        if (onlyPrep) {
+            Think($"I'd like full health for this, but I have {stats.m_currentHitpoints * 100 / maxHealth}% and nothing to heal from right here, " +
+                  "which is enough by my normal rule. I go on instead of travelling or waiting.", "prepgo|" + leader.Zone);
+            _hurtSince = DateTime.MaxValue;
+
+            return false;
+        }
+
+        // 3. Wisps in a nearby area or potions from a potion shop, whichever is fewer areas away (wisps win a tie: free).
+        // No wisp left here: this area is not a wisp area to come back to for a while (no going back and forth).
+        if (!string.IsNullOrEmpty(leader.Zone)) {
+            _wispsTaken[leader.Zone] = DateTime.UtcNow + s_wispsBackIn;
+        }
+
+        var shop = PotionShopTarget(leader, out var shopHops);
+        var wispArea = WispAreaTarget(leader, lowHealth, lowMana, out var wispHops);
+        var pick = wispArea is not null && (shop is null || wispHops <= shopHops) ? wispArea : shop;
+        if (pick is not null) {
+            _doing = pick.What;
+            if (pick.Kind == UltimusPlanner.SHOP && UltimusPlanner.Far(leader.X, leader.Y, pick.X, pick.Y) < SHOP_REACH) {
                 StopWalking(0);
                 if (CanClick("potion|buy")) {
                     Clicked("potion|buy");
                     Note("Ultimus", $"{leader.Name} fills its potions at the potion shop.");
-                    _actors[0].Tell(new UltimusMember.Interact(shop.GlobalId, "PotionShopService", 0, "the potion shop"));
+                    _actors[0].Tell(new UltimusMember.Interact(pick.GlobalId, "PotionShopService", 0, "the potion shop"));
                     _actors[0].Tell(new UltimusMember.BuyPotions());
                 }
             }
             else {
-                WalkTo(0, shop);
+                if (pick == wispArea && shop is not null) {
+                    Think($"I need to heal: wisps in {UltimusText.Zone(pick.Key.Split('|')[1])} are {wispHops} area(s) away and the potion shop is " +
+                          $"{shopHops}, so I go for the wisps (they're free).", "healpick|" + pick.Key);
+                }
+                else if (pick == shop && wispArea is not null) {
+                    Think($"I need to heal: the potion shop is {shopHops} area(s) away and the nearest wisps are {wispHops}, so I buy potions.",
+                        "healpick|" + pick.Key);
+                }
+
+                WalkTo(0, pick);
             }
 
             return true;
@@ -149,14 +184,14 @@ internal sealed partial class UltimusDirectorActor {
             if (!_toldNoHeal) {
                 _toldNoHeal = true;
                 Issue("team", target.Quest, $"{leader.Name} could not heal for {(int) s_noHealGiveUp.TotalMinutes} minutes: no potions, no wisps in " +
-                                            $"{UltimusText.Zone(leader.Zone)} and no potion shop it can reach or afford. It fights on hurt.",
+                                            $"{UltimusText.Zone(leader.Zone)} or nearby areas and no potion shop it can reach or afford. It fights on hurt.",
                     key: "noheal|" + leader.Zone, broken: false, level: UltimusLink.ABNORMAL);
             }
 
             return false;
         }
 
-        _doing = "waiting to heal before the fight (no potions, wisps or potion shop)";
+        _doing = "waiting for wisps to come back before the fight (no potions, wisps or potion shop near)";
         _healWaiting = true;
         if (SafeSpot(leader) is { } safe) {
             WalkTo(0, safe);
@@ -192,8 +227,9 @@ internal sealed partial class UltimusDirectorActor {
     }
 
     // The potion shop: the shopkeeper here, or the way to the nearest area of this world with one. Null when its potions
-    // can't be filled (no bottles, or not the gold for one).
-    private UltimusPlanner.Target PotionShopTarget(UltimusMember.Status leader) {
+    // can't be filled (no bottles, or not the gold for one). Hops: areas away (0 here).
+    private UltimusPlanner.Target PotionShopTarget(UltimusMember.Status leader, out int hops) {
+        hops = int.MaxValue;
         var stats = leader.Wizard.GameStats;
         if (stats.m_potionMax < 1 || stats.m_currentGold < PotionService.PotionCostPerBottle(Math.Max(1, stats.Level))) {
             return null;
@@ -202,52 +238,96 @@ internal sealed partial class UltimusDirectorActor {
         var keeper = MinimapIndex.In(leader.ZoneActor).Where(m => m.Entity?.GetComponentOfType<InteractPotionShopComponent>() is not null)
             .OrderBy(m => UltimusPlanner.Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault();
         if (keeper is not null) {
+            hops = 0;
+
             return new UltimusPlanner.Target(UltimusPlanner.SHOP, keeper.Object.m_location.X, keeper.Object.m_location.Y,
                 "filling potions at the potion shop", GlobalId: keeper.Object.m_globalID.Full, Key: "potionshop|" + keeper.Object.m_globalID.Full);
         }
 
-        var world = (leader.Zone ?? "").Split('/')[0];
-        if (!s_potionShopZones.TryGetValue(world, out var shopZone)) {
-            s_potionShopZones.TryAdd(world, null);
-            var from = leader.Zone;
-            Task.Run(() => s_potionShopZones[world] = NearestPotionShopZone(from));
-
+        var areas = HealZones("shop|" + leader.Zone, leader.Zone, name => name.Contains("PotionShopkeeper", StringComparison.Ordinal));
+        if (areas?.FirstOrDefault(a => a.Hops > 0) is not { Zone: not null } best) {
             return null;
         }
 
-        if (string.IsNullOrEmpty(shopZone) || OverlayQuestTracker.SameZone(shopZone, leader.Zone)) {
-            return null;
-        }
+        hops = best.Hops;
 
-        return UltimusPlanner.Travel(leader, shopZone, "to fill potions at the potion shop", "potionshop|" + shopZone);
+        return UltimusPlanner.Travel(leader, best.Zone, "to fill potions at the potion shop", "potionshop|" + best.Zone);
     }
 
-    // The area of the world with a potion shopkeeper fewest areas away (read from the areas' files once).
-    private static string NearestPotionShopZone(string from) {
+    private static string WispKey(string zone, bool health, bool mana) => $"wisp|{(health ? "h" : "")}{(mana ? "m" : "")}|{zone}";
+
+    // The nearest other area of this world (on the story's ways) whose file places the wisps it needs, skipping areas
+    // whose wisps were all taken a little while ago. Hops: areas away.
+    private UltimusPlanner.Target WispAreaTarget(UltimusMember.Status leader, bool health, bool mana, out int hops) {
+        hops = int.MaxValue;
+        var areas = HealZones(WispKey(leader.Zone, health, mana), leader.Zone, name => name.Contains("Wisp", StringComparison.OrdinalIgnoreCase)
+            && (health && name.Contains("Health", StringComparison.OrdinalIgnoreCase) || mana && name.Contains("Mana", StringComparison.OrdinalIgnoreCase)));
+        if (areas is null) {
+            return null;
+        }
+
+        foreach (var (zone, away) in areas) {
+            if (away == 0 || _wispsTaken.TryGetValue(zone, out var until) && DateTime.UtcNow < until) {
+                continue;
+            }
+
+            hops = away;
+
+            return UltimusPlanner.Travel(leader, zone, $"to pick up {(health ? "health" : "mana")} wisps", "wispzone|" + zone);
+        }
+
+        return null;
+    }
+
+    // The areas of this world that hold an object named like <paramref name="has"/>, fewest areas away first (0 = this
+    // area). Read once per area in the background; null until then.
+    private static List<(string Zone, int Hops)> HealZones(string key, string from, Func<string, bool> has) {
+        if (string.IsNullOrEmpty(from)) {
+            return null;
+        }
+
+        if (s_healZones.TryGetValue(key, out var found)) {
+            return found;
+        }
+
+        if (s_healZones.TryAdd(key, null)) {
+            Task.Run(() => s_healZones[key] = NearestZonesWith(from, has));
+        }
+
+        return null;
+    }
+
+    private static List<(string Zone, int Hops)> NearestZonesWith(string from, Func<string, bool> has) {
+        var list = new List<(string Zone, int Hops)>();
         try {
             var world = from.Split('/')[0];
             var candidates = SpiralDB.GetAllZoneData().Select(z => z?.ZoneName)
                 .Where(z => !string.IsNullOrEmpty(z) && z.StartsWith(world + "/", StringComparison.OrdinalIgnoreCase))
                 .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-            var best = (Zone: "", Hops: int.MaxValue);
             foreach (var zone in candidates) {
                 var objects = QuestStepSpots.Zone(zone).Objects;
                 if (!objects.Any(o => CoreObjectFactory.GetCoreTemplate(o.Template) is GameObjectTemplate t && !t.m_objectName.IsEmpty
-                                      && t.m_objectName.ToString().Contains("PotionShopkeeper", StringComparison.Ordinal))) {
+                                      && has(t.m_objectName.ToString()))) {
                     continue;
                 }
 
-                var hops = OverlayQuestRoute.Way(from, zone, false).Count;
-                if (hops > 0 && hops < best.Hops) {
-                    best = (zone, hops);
+                if (OverlayQuestTracker.SameZone(zone, from)) {
+                    list.Add((zone, 0));
+                    continue;
+                }
+
+                // The story's own ways only (stays in bounds: no side areas just for a heal).
+                var hops = OverlayQuestRoute.Way(from, zone, false, storyOnly: true).Count;
+                if (hops > 0) {
+                    list.Add((zone, hops));
                 }
             }
-
-            return best.Zone;
         }
         catch (Exception) {
-            return "";
+            // Nothing found is fine: he falls back to waiting.
         }
+
+        return list.OrderBy(a => a.Hops).ToList();
     }
 
 }
