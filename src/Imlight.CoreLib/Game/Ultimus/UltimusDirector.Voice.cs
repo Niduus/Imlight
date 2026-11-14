@@ -23,38 +23,40 @@ using System.Linq;
 using Akka.Actor;
 using Imlight.CoreLib.Game.BotShared;
 using Imlight.CoreLib.Game.Zone.Components;
+using Imlight.CoreLib.WizardData.Collections;
+using Imlight.CoreLib.Game.Tools;
 
 namespace Imlight.CoreLib.Game.Ultimus;
 
 /// <summary>
-/// Ultimus's voice, forked from the Quest Team's (QuestTeamDirector.Voice.cs): Menu Chat only, kept tame. Where the Quest
-/// Team turns every ask down, Ultimus is friendly to players: it welcomes a player into its battle, says so when it walks
-/// into theirs, and says yes to "help" or "join" while it is fighting. Nothing a player says changes its plan, though: the
-/// Main Story comes first (Niduus, 2026-11-12), so it turns down following, trading, grouping and teleporting. It never
-/// talks with the Quest Team, and the Quest Team never hears it.
+/// Ultimus's voice. He hears players near him and whispers to him, typed or Menu Chat, and answers through the bots' shared
+/// social core (BotSocial): the real answer to what they asked (his quest and its step, where he is, his level, where an
+/// NPC stands, how a creature fights), friendly small talk, and a polite no to anything that would change his plan
+/// (grouping, following, trading, teleporting): the Main Story comes first (Niduus, 2026-11-12). He talks typed or in Menu
+/// Chat (Niduus, 2026-11-14). He never talks with the Quest Team, and the Quest Team never hears him.
 /// </summary>
 internal static class UltimusVoice {
 
-    internal sealed record Heard(IActorRef Zone, float X, float Y, ulong SpeakerCharId, string SpeakerName, string Text, bool Whisper = false);
+    internal sealed record Heard(IActorRef Zone, float X, float Y, ulong SpeakerCharId, string SpeakerName, string Text, bool Whisper = false, bool Typed = false);
 
     private static readonly ConcurrentQueue<Heard> s_heard = new();
 
     /// <summary>A player (not Ultimus, not the Quest Team) used Menu Chat (ChatService); Ultimus may answer.</summary>
-    internal static void PlayerSaid(IActorRef zone, float x, float y, ulong charId, string name, string text) {
+    internal static void PlayerSaid(IActorRef zone, float x, float y, ulong charId, string name, string text, bool typed = false) {
         if (zone is null || UltimusRoster.IsMember(charId) || QuestTeam.QuestTeamRoster.IsMember(charId) || s_heard.Count > 20) {
             return;
         }
 
-        s_heard.Enqueue(new Heard(zone, x, y, charId, name ?? "a player", text ?? ""));
+        s_heard.Enqueue(new Heard(zone, x, y, charId, name ?? "a player", text ?? "", Typed: typed));
     }
 
     /// <summary>A player whispered to Ultimus (Menu Chat or typed): it answers in Menu Chat, whispered back, wherever they are.</summary>
-    internal static void PlayerWhispered(ulong charId, string name, string text) {
+    internal static void PlayerWhispered(ulong charId, string name, string text, bool typed = false) {
         if (s_heard.Count > 20) {
             return;
         }
 
-        s_heard.Enqueue(new Heard(null, 0, 0, charId, name ?? "a player", text ?? "", Whisper: true));
+        s_heard.Enqueue(new Heard(null, 0, 0, charId, name ?? "a player", text ?? "", Whisper: true, Typed: typed));
     }
 
     internal static bool TryTake(out Heard heard) => s_heard.TryDequeue(out heard);
@@ -65,7 +67,6 @@ internal sealed partial class UltimusDirectorActor {
 
     // Kept tame: one line every 40 seconds at most, and most moments pass without one.
     private static readonly TimeSpan s_lineGap = TimeSpan.FromSeconds(40);
-    private static readonly TimeSpan s_answerGap = TimeSpan.FromSeconds(12);
     private DateTime _nextLine = DateTime.MinValue;
     private readonly Dictionary<ulong, DateTime> _answeredAt = [];
     private readonly Random _voiceRandom = new();
@@ -80,23 +81,12 @@ internal sealed partial class UltimusDirectorActor {
         ["no"] = ["No thanks", "No, thank you", "Sorry", "Not now", "No"],
         ["thanks"] = ["You're welcome", "No problem", "Thanks", "Thank you"],
         ["bye"] = ["Goodbye", "Bye", "See you", "Later"],
-        // A whisper it has no answer for: it is busy questing.
-        ["busy"] = ["I'm busy", "Busy", "Sorry", "Not now", "Maybe later"],
-        ["questing"] = ["I'm questing", "Questing", "On a quest", "quest", "I'm busy", "Busy"],
     };
 
     // Busy with something it is not doing is never said (it answered "One minute, I'm busy fighting" and "Sorry I'm busy
     // training my pet" while it walked to a quest): phrases with these words are left out unless they are true.
     private static readonly string[] s_notDoing = ["fighting", "battle", "pet", "pets", "fishing", "garden", "gardening", "crafting", "shopping", "farming", "dueling", "PvP", "house", "brb", "afk"];
 
-    // A player's phrase that asks to fight with it: yes while it is in a battle.
-    private static readonly string[] s_fightAsks = ["help", "join", "battle", "fight", "need help", "can i"];
-
-    // A player's phrase that asks it to change its plan: turned down, the story comes first.
-    private static readonly string[] s_planAsks = [
-        "follow", "come", "can you", "could you", "trade", "friend", "group", "teleport", "go to", "let's", "want to",
-        "please", "will you", "duel", "carry", "port", "wait",
-    ];
 
     /// <summary>Says a moment's line through Ultimus's Menu Chat, if it has not spoken lately and the dice allow.</summary>
     private void Speak(string moment, double chance, bool force = false, ulong whisperTo = 0) {
@@ -123,7 +113,13 @@ internal sealed partial class UltimusDirectorActor {
         _actors[0].Tell(new UltimusMember.SayMenuChat(phrase.Id));
     }
 
-    /// <summary>Players' Menu Chat near Ultimus: a greeting back, a yes to fighting together, a no to anything else asked.</summary>
+    /// <summary>
+    /// Players talking near Ultimus or whispering to him, typed or Menu Chat (Niduus, 2026-11-14: "Improve the bots ability to
+    /// socialize", "He is free to use text chat", "to ask what quest he's doing, he will respond with it"). The shared social
+    /// core (BotSocial) works out what they mean and answers with his real data; he answers in their way of talking: Menu
+    /// Chat when they used it and a Menu Chat line fits, typed otherwise. "What quest" always gets his quest and its step,
+    /// never "busy".
+    /// </summary>
     private void AnswerPlayers() {
         while (UltimusVoice.TryTake(out var heard)) {
             var me = _team.Count > 0 ? _team[0] : null;
@@ -131,68 +127,92 @@ internal sealed partial class UltimusDirectorActor {
                 continue;
             }
 
-            if (_answeredAt.TryGetValue(heard.SpeakerCharId, out var last) && DateTime.UtcNow - last < s_answerGap) {
+            // Players he met are kept in players.json too (UltimusDirector.Life.cs).
+            Remember(heard.SpeakerCharId, heard.SpeakerName, heard.Whisper);
+            var how = (heard.Whisper ? "whispered" : "said") + (heard.Typed ? "" : " in Menu Chat");
+            var reply = BotSocial.Answer(SocialSelf(me), heard.SpeakerCharId, heard.SpeakerName, heard.Text, heard.Typed, heard.Whisper);
+            if (reply is null) {
+                Note("Ultimus", $"{heard.SpeakerName} {how}: \"{heard.Text}\"; Ultimus lets it pass (just answered them, or they are muted).");
                 continue;
             }
 
-            var text = heard.Text;
-            // Players he met before are remembered, and greeted again (UltimusDirector.Life.cs).
-            if (Remember(heard.SpeakerCharId, heard.SpeakerName, heard.Whisper) && new[] { "hello", "hi", "hey", "greetings" }.Any(w => MenuChatBook.Says(text, w))) {
-                _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
+            Think($"{heard.SpeakerName} {how} \"{UltimusText.Short(heard.Text, 80)}\" ({reply.Intent}). {reply.Why}", "social|" + heard.SpeakerCharId + "|" + heard.Text);
+            if (reply.Text.Length == 0) {
                 continue;
             }
 
-            // Asked about its quest or where it is going: the real answer, as a player picks it from "My Quests" (its quest's
-            // name) or "Locations" (Niduus, 2026-11-13: "My Quest section in the chat doesn't work", it said "This quest is
-            // fun" to "What quest are you working on?").
-            if (QuestAnswer(text) is { } answer) {
-                Note("Ultimus", $"{heard.SpeakerName} {(heard.Whisper ? "whispered" : "said in Menu Chat")}: \"{text}\"; Ultimus answers from My Quests: \"{answer}\".");
-                _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
-                _nextLine = DateTime.UtcNow + s_lineGap;
-                _actors[0].Tell(heard.Whisper ? new UltimusMember.WhisperMenuChatText(answer, heard.SpeakerCharId) : new UltimusMember.SayMenuChatText(answer));
-                continue;
-            }
-
-            var fighting = CombatDuelComponent.IsInBattle(me.GlobalId);
-            var moment = fighting && s_fightAsks.Any(a => MenuChatBook.Says(text, a)) ? "yes"
-                : s_planAsks.Any(a => MenuChatBook.Says(text, a)) || s_fightAsks.Any(a => MenuChatBook.Says(text, a)) ? "no"
-                : MenuChatBook.Says(text, "thank") || MenuChatBook.Says(text, "thanks") ? "thanks"
-                : new[] { "bye", "goodbye", "see you", "later" }.Any(w => MenuChatBook.Says(text, w)) ? "bye"
-                : new[] { "hello", "hi", "hey", "greetings" }.Any(w => MenuChatBook.Says(text, w)) ? "hello"
-                // Whispered: asked what it is doing, it is questing; anything else gets a polite "busy".
-                : heard.Whisper && new[] { "what", "doing", "where", "how" }.Any(w => MenuChatBook.Says(text, w)) ? "questing"
-                : heard.Whisper ? "busy"
-                : null;
-            Note("Ultimus", $"{heard.SpeakerName} {(heard.Whisper ? "whispered" : "said in Menu Chat")}: \"{text}\"" + moment switch {
-                "yes" => "; Ultimus is fighting, so it welcomes them in.",
-                "no" => "; Ultimus turns it down (its quest comes first).",
-                null => "; Ultimus carries on.",
-                _ => ".",
-            });
-            if (moment is null) {
-                continue;
-            }
-
+            _nextLine = DateTime.UtcNow + s_lineGap;
             _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
-            Speak(moment, 1, force: true, whisperTo: heard.Whisper ? heard.SpeakerCharId : 0);
+            var whisperTo = heard.Whisper ? heard.SpeakerCharId : 0;
+            if (!heard.Typed && reply.MenuMoment is { } moment && s_moments.ContainsKey(moment)) {
+                Speak(moment, 1, force: true, whisperTo: whisperTo);
+                continue;
+            }
+
+            Note("Ultimus", $"{heard.SpeakerName} {how}: \"{heard.Text}\"; Ultimus {(heard.Whisper ? "whispers back" : "says")}: \"{reply.Text}\"");
+            _actors[0].Tell(heard.Whisper ? new UltimusMember.WhisperText(reply.Text, whisperTo) : new UltimusMember.SayText(reply.Text));
         }
     }
 
-    // "What quest are you working on?": the quest's name. "Where are you going?": the area its step is in.
-    private string QuestAnswer(string text) {
-        var quest = _currentQuest ?? _target?.Quest ?? _leaderLastTarget?.Quest;
-        bool Asks(params string[] words) => words.Any(w => MenuChatBook.Says(text, w));
-        if (Asks("what quest", "which quest", "quest are you", "working on", "your quest", "what are you doing", "doing")) {
-            return string.IsNullOrEmpty(quest) ? null : UltimusText.Title(quest).Trim().Trim('"').Trim();
+    /// <summary>What Ultimus knows of himself right now, for the social core: his real quest and step, area, level, mood.</summary>
+    private BotSocial.Self SocialSelf(UltimusMember.Status me) {
+        var target = _target ?? _leaderLastTarget;
+        var questName = _currentQuest ?? target?.Quest;
+        if (string.IsNullOrEmpty(questName)) {
+            questName = me.Wizard?.QuestBehavior?.CurrentQuestInstances?.Select(q => q?.QuestName)
+                .FirstOrDefault(n => n is not null && QuestTemplateCollection.GetQuestByName(n) is { } t && UltimusPlanner.IsMainStoryWorld(t));
         }
 
-        if (Asks("where are you going", "where are you", "where to", "going")) {
-            var zone = (_target ?? _leaderLastTarget)?.To is { Length: > 0 } to ? to : (_team.Count > 0 ? _team[0].Zone : null);
-
-            return string.IsNullOrEmpty(zone) ? null : UltimusText.Zone(zone);
+        var quest = string.IsNullOrEmpty(questName) ? null : QuestTemplateCollection.GetQuestByName(questName);
+        var goal = quest?.m_goals?.FirstOrDefault(g => g is not null && target is not null && string.Equals(target.Quest, questName, StringComparison.OrdinalIgnoreCase)
+            && g.m_goalName == target.Goal);
+        var step = goal is null ? "" : QuestGuide.StepText(goal);
+        if (string.IsNullOrWhiteSpace(step) && target is not null && string.Equals(target.Quest, questName, StringComparison.OrdinalIgnoreCase)) {
+            step = target.What ?? "";
         }
 
-        return null;
+        var title = string.IsNullOrEmpty(questName) ? null : UltimusText.Title(questName).Trim().Trim('"').Trim();
+        var mood = UltimusMood.Now switch {
+            UltimusMood.Level.Bold => "proud",
+            UltimusMood.Level.Careful => "frustrated",
+            _ => "steady",
+        };
+
+        return new BotSocial.Self(UltimusRoster.NAME, me.Wizard?.PlayerNameBehavior?.GetWizardName() ?? UltimusRoster.NAME, "Balance",
+            me.Wizard?.MagicSchoolBehavior?.Level ?? 1, UltimusText.Zone(me.Zone), WorldOf(me.Zone), title, step.Trim().TrimEnd('.'),
+            me.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId), mood, NpcTip, FoeTip);
+    }
+
+    // "Where is Headmaster Ambrose?": from his NPC book.
+    private static string NpcTip(string who) {
+        if (UltimusNpcBook.Find(who) is not { } entry || entry.Places.Count == 0) {
+            return null;
+        }
+
+        var place = entry.Places[0];
+
+        return $"{entry.Name} stands in {UltimusText.Zone(place.Zone)}, {WorldOf(place.Zone)}" + (entry.Places.Count > 1 ? " (and a few other spots)." : ".");
+    }
+
+    // "How do I beat Rattlebones?": from what the bots have seen that creature do.
+    private static string FoeTip(string who) {
+        if (BotKnowledge.ByName(who) is not { Casts: > 0 } habit) {
+            return null;
+        }
+
+        var kinds = new[] { BotKnowledge.HIT, BotKnowledge.HEAL, BotKnowledge.SHIELD, BotKnowledge.BLADE, BotKnowledge.TRAP }
+            .Where(k => habit.Times(k) > 0).OrderByDescending(habit.Times).Take(2).ToList();
+        var tip = $"From {habit.Fights} fight(s) with {habit.Name}: it mostly casts {string.Join(" and ", kinds.Select(k => k + "s"))}";
+        if (habit.Schools.Count > 0) {
+            var school = habit.Schools.OrderByDescending(p => p.Value).First().Key;
+            tip += $", hits with {school}, so bring a {school} shield";
+        }
+
+        if (habit.Chance(BotKnowledge.HEAL) > 0.2) {
+            tip += "; it heals a lot, so hit hard all at once";
+        }
+
+        return tip + ".";
     }
 
 }

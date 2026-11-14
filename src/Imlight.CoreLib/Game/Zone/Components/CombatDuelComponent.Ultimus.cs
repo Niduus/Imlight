@@ -145,6 +145,22 @@ internal sealed partial class CombatDuelComponent {
         }
     }
 
+    /// <summary>The players in Ultimus's battle, by character ID and name (for his memory of who he fought with).</summary>
+    internal static List<(ulong CharId, string Name)> UltimusBattlePlayers(ulong ultimusGlobalId) {
+        if (!s_playerBattles.TryGetValue(ultimusGlobalId, out var claim)) {
+            return [];
+        }
+
+        try {
+            return [.. claim.Battle.SubCircles.Where(c => c is { Occupied: true, IsSummonedMinion: false } && !c.IsAiCreature && c._wizard is not null
+                                                          && c.ParticipantObject?.m_globalID.Full != ultimusGlobalId)
+                .Select(c => (c._wizard.CharId, c._wizard.PlayerNameBehavior?.GetWizardName() ?? c.ParticipantObject?.m_debugName ?? "someone"))];
+        }
+        catch (InvalidOperationException) {
+            return [];
+        }
+    }
+
     private void UltimusPlanningBegins() {
         _ultimusPicks.Clear();
         if (Duel.m_roundNum <= 1) {
