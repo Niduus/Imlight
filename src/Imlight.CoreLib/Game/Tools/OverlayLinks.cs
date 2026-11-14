@@ -570,6 +570,9 @@ public static class OverlayLinks {
             ["steps"] = row?["steps"]?.DeepClone(),
             ["way"] = row?["way"]?.DeepClone(),
             ["kind"] = (string) row?["k"] ?? "",
+            // Detail for his quest box (Niduus, 2026-11-14: "make sure his quest tracker is in detail"): its level and world.
+            ["questLevel"] = row?["l"]?.DeepClone(),
+            ["world"] = Ultimus.UltimusDirectorActor.WorldName((string) row?["w"] ?? ""),
             ["quests"] = new JsonArray([.. ((quests?["quests"] as JsonArray)?.OfType<JsonObject>() ?? [])
                 .Take(40).Select(q => (JsonNode) new JsonObject { ["id"] = q["id"]?.DeepClone(), ["t"] = q["t"]?.DeepClone(), ["k"] = q["k"]?.DeepClone() })]),
         };
