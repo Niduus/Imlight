@@ -1,0 +1,3 @@
+New: Friends list shows where each friend is, with (Dungeon) or (Instance)
+Your friends list now gets the place each online friend is in, such as "Black Sun Pyramid Lower Chamber (Dungeon)". "(Dungeon)" means they are in their own copy of a place with battles, and "(Instance)" means their own copy of a place without battles. Before, the place was always sent empty. The game's own "Do you want to go to your friend?" box can't be changed without changing the game's files, so the place is shown on the friends list instead.
+Test: Have a friend (Ultimus works) go into a dungeon, then open your friends list and look at that friend's location. It should say the place with "(Dungeon)" after it. When they walk out it should change to the street's name.
