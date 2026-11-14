@@ -66,6 +66,16 @@ internal static class InstancedPlayers {
         => s_zones.ContainsKey(charId);
 
     /// <summary>
+    /// What kind of place the character is in, for the friends list (Niduus, 2026-11-14: "include the zone they are in
+    /// and mark if Dungeon or Instance"): "Dungeon" for an instance with battles, "Instance" for one without, null when
+    /// they are in no instance.
+    /// </summary>
+    internal static string KindOf(ulong charId)
+        => s_zones.TryGetValue(charId, out var zone) && zone is global::Imlight.CoreLib.Game.Zone.Core.Zone copy
+            ? copy.HasBattles ? "Dungeon" : "Instance"
+            : null;
+
+    /// <summary>
     /// The instanced zone the character is in and the owner of that copy, so a friend may join them there when
     /// Teleport Rooms has the room Open; null when they are in none.
     /// </summary>

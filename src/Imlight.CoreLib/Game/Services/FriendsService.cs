@@ -887,7 +887,7 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
             FriendInfo = BuildFriendInfo(buddy, relationship.GetFriendSymbol(owner.CharId)),
             PasswordChat = 0,                                         // TODO: What is this?
             Permissions = (uint) buddy.Account.GetAccountFlags(),
-            ZoneName = onlinePlayer?.CurrentZoneDisplayName ?? string.Empty,
+            ZoneName = FriendZoneText(buddy.CharId, onlinePlayer),
             RealmName = onlinePlayer?.CurrentRealm ?? string.Empty,
             Locale = 0,
             FriendDate = relationship.RelationshipEpochInSeconds,
@@ -926,7 +926,7 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
                     EntryGID = charID,
                     Status = isOnline ? ONLINE_STATUS_CODE : OFFLINE_STATUS_CODE,
                     Permissions = (uint) ownerWizard.Account.GetAccountFlags(),
-                    ZoneName = isOnline ? ownerOnline?.CurrentZoneDisplayName ?? string.Empty : string.Empty,
+                    ZoneName = isOnline ? FriendZoneText(charID, ownerOnline) : string.Empty,
                     RealmName = isOnline ? ownerOnline?.CurrentRealm ?? string.Empty : string.Empty,
                     FriendInfo = BuildFriendInfo(ownerWizard, relationship?.GetFriendSymbol(buddy.CharId) ?? 0),
                     FriendDate = relationship?.RelationshipEpochInSeconds ?? 0,
@@ -937,6 +937,26 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
                 Context.ActorSelection(buddyActorPath).Tell(buddyStatusMsg);
             }
         }
+    }
+
+    /// <summary>
+    /// Where a friend is, as the friends list shows it (Niduus, 2026-11-14: "include the zone they are in and mark if
+    /// Dungeon or Instance", "in () though"): the zone's name, then "(Dungeon)" when they are in an instance with battles
+    /// or "(Instance)" in one without, such as "Black Sun Pyramid Lower Chamber (Dungeon)". The game's own "Do you want to
+    /// go to your friend?" box is in the game files and stays as it is. Before this the location was always left empty.
+    /// </summary>
+    private static string FriendZoneText(ulong charId, Imlight.CoreLib.WizardData.Models.Misc.OnlinePlayer player) {
+        var zone = player?.CurrentZone;
+        if (string.IsNullOrEmpty(zone)) {
+            return string.Empty;
+        }
+
+        var name = World.ZoneNames.Shown(zone);
+        if (string.Equals(name, zone, StringComparison.OrdinalIgnoreCase)) {
+            name = zone[(zone.LastIndexOf('/') + 1)..].Replace('_', ' ');
+        }
+
+        return World.InstancedPlayers.KindOf(charId) is { } kind ? $"{name} ({kind})" : name;
     }
 
     private static uint BuildFriendInfo(Wizard buddy, byte friendSymbol) {
