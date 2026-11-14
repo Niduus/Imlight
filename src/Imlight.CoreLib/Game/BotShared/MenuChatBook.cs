@@ -55,6 +55,14 @@ internal static class MenuChatBook {
     internal static Phrase Find(Random random, string[] leaveOut, string[] words) {
         foreach (var word in words) {
             var matches = Phrases.Where(p => Says(p.Text, word) && !leaveOut.Any(l => Says(p.Text, l))).ToList();
+            // A phrase that starts with the words wins over one that only holds them (coach review 2026-11-14: "Nice" picked
+            // "That quest has a nice reward" after a battle, "Welcome" picked "Welcome to my home!" in the wild).
+            var leading = matches.Where(p => p.Text.TrimStart() is var t && t.StartsWith(word, StringComparison.OrdinalIgnoreCase)
+                                              && (t.Length == word.Length || !char.IsLetter(t[word.Length]))).ToList();
+            if (leading.Count > 0) {
+                matches = leading;
+            }
+
             if (matches.Count > 0) {
                 return matches[random.Next(matches.Count)];
             }

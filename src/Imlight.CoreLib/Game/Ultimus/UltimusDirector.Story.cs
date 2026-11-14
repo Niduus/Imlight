@@ -295,7 +295,9 @@ internal sealed partial class UltimusDirectorActor {
         });
         Check("Creatures and NPCs", () => $"{MinimapIndex.In(leader.ZoneActor).Count()} things seen here");
         Check("Trainers", () => $"{UltimusTraining.Learnable(leader).Count} spells he can learn now");
-        Check("Gear list", () => BotGear.Catalog.Count > 0 ? $"{BotGear.Catalog.Count} pieces known" : "FAIL: no gear known");
+        // Read in the background on the first ask: still reading just after a start is not a failure (coach review 2026-11-14).
+        Check("Gear list", () => BotGear.Catalog.Count > 0 ? $"{BotGear.Catalog.Count} pieces known"
+            : BotGear.Reading ? "still being read in the background (normal right after a start)" : "FAIL: no gear known");
         Check("Bazaar", () => {
             Imlight.CoreLib.Game.Bazaar.BazaarLink.Find(0);
             return "answers";

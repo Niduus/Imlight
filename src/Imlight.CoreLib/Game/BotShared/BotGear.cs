@@ -121,6 +121,9 @@ internal static class BotGear {
         }
     }
 
+    /// <summary>Whether the catalog is being read right now (the first ask starts it; it takes a little while).</summary>
+    internal static bool Reading => s_catalog is null && Volatile.Read(ref s_building) == 1;
+
     /// <summary>A piece of gear by template, or null when it is not one.</summary>
     internal static Piece Read(uint templateId) {
         if (templateId == 0) {

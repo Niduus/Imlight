@@ -85,6 +85,15 @@ internal sealed partial class UltimusDirectorActor {
 
     // Busy with something it is not doing is never said (it answered "One minute, I'm busy fighting" and "Sorry I'm busy
     // training my pet" while it walked to a quest): phrases with these words are left out unless they are true.
+    // Phrases that hold a moment's words but mean something else there (coach review 2026-11-14: "You're welcome" and
+    // "Welcome to my home! Have a nice Stay!" said when a player joined his battle, "That quest has a nice reward" after a win).
+    private static readonly Dictionary<string, string[]> s_wrongFor = new(StringComparer.Ordinal) {
+        ["welcome"] = ["you're welcome", "you are welcome", "home", "stay", "house"],
+        ["won"] = ["quest", "reward", "home", "house", "pet", "outfit", "hat", "robe"],
+        ["join"] = ["guild", "group", "home", "house"],
+        ["hello"] = ["home", "house"],
+    };
+
     private static readonly string[] s_notDoing = ["fighting", "battle", "pet", "pets", "fishing", "garden", "gardening", "crafting", "shopping", "farming", "dueling", "PvP", "house", "brb", "afk"];
 
 
@@ -96,7 +105,7 @@ internal sealed partial class UltimusDirectorActor {
 
         var me = _team.Count > 0 ? _team[0] : null;
         var fighting = me?.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId);
-        var leaveOut = s_notDoing.Where(w => !(fighting && w is "fighting" or "battle")).ToArray();
+        var leaveOut = s_notDoing.Where(w => !(fighting && w is "fighting" or "battle")).Concat(s_wrongFor.GetValueOrDefault(moment) ?? []).ToArray();
         if (MenuChatBook.Find(_voiceRandom, leaveOut, s_moments.GetValueOrDefault(moment) ?? []) is not { } phrase) {
             return;
         }

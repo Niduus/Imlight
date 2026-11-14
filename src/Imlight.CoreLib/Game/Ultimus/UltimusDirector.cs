@@ -186,7 +186,15 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         public double Expected;
         public bool SlowTold;
         public bool LimitTold;
+
+        /// <summary>Time spent fighting for XP to catch up with the quest's level (coach review 2026-11-14: "Payback" was flagged
+        /// slow while he levelled from 12 toward 14 for it): not counted against the quest.</summary>
+        public double GrindSeconds;
+
+        internal double Seconds => Math.Max(0, (DateTime.UtcNow - Started).TotalSeconds - GrindSeconds);
     }
+
+    private DateTime _runsCheckedAt = DateTime.UtcNow;
 
     public UltimusDirectorActor() {
         Receive<Halt>(m => {
@@ -1390,8 +1398,17 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             }
         }
 
+        // Levelling up for a quest (XP fights, and healing between them) is not the quest being slow.
+        var sinceCheck = Math.Min(30, (DateTime.UtcNow - _runsCheckedAt).TotalSeconds);
+        _runsCheckedAt = DateTime.UtcNow;
+        var grinding = (_target ?? _leaderLastTarget)?.What?.StartsWith("a fight for XP", StringComparison.Ordinal) == true;
+
         // A quest none of them holds any more, that one of them finished: done.
         foreach (var run in _runs.Values.ToList()) {
+            if (grinding) {
+                run.GrindSeconds += sinceCheck;
+            }
+
             var holder = _team.Any(m => m.Wizard?.HasQuest(run.Quest) == true);
             var finished = _team.Any(m => m.Wizard?.HasCompletedQuest(run.Quest) == true);
             if (!holder && finished) {
@@ -1401,14 +1418,14 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "done", Quest = run.Quest, Title = run.Title, World = run.World, Seconds = seconds });
                 _runs.Remove(run.Quest);
             }
-            else if (!run.LimitTold && UltimusWire.QuestMinutes > 0 && (DateTime.UtcNow - run.Started).TotalMinutes > UltimusWire.QuestMinutes) {
+            else if (!run.LimitTold && UltimusWire.QuestMinutes > 0 && run.Seconds / 60 > UltimusWire.QuestMinutes) {
                 run.LimitTold = true;
                 Issue("slow", run.Quest, $"{run.Title} went past the time limit of {UltimusWire.QuestMinutes} minutes ([Ultimus] QuestMinutes): " +
-                                         $"{Minutes((DateTime.UtcNow - run.Started).TotalSeconds)} so far.", key: run.Quest + "|limit");
+                                         $"{Minutes(run.Seconds)} so far (not counting levelling up for it).", key: run.Quest + "|limit");
             }
-            else if (!run.SlowTold && run.Expected > 0 && (DateTime.UtcNow - run.Started).TotalSeconds > run.Expected * UltimusWire.SlowFactor) {
+            else if (!run.SlowTold && run.Expected > 0 && run.Seconds > run.Expected * UltimusWire.SlowFactor) {
                 run.SlowTold = true;
-                Issue("slow", run.Quest, $"{run.Title} is taking much longer than expected: {Minutes((DateTime.UtcNow - run.Started).TotalSeconds)} so far, " +
+                Issue("slow", run.Quest, $"{run.Title} is taking much longer than expected: {Minutes(run.Seconds)} so far (not counting levelling up for it), " +
                                           $"about {Minutes(run.Expected)} expected. Now: {_doing}.", key: "slow|" + run.Quest);
             }
         }
