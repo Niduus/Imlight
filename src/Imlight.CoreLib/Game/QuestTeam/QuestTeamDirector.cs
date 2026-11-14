@@ -946,7 +946,8 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                 return;
             }
 
-            var option = services.SelectMany(s => options.Where(o => string.Equals(o.Service, s, StringComparison.OrdinalIgnoreCase))).FirstOrDefault();
+            var option = BotOptions.Pick([.. services.SelectMany(s => options.Where(o => string.Equals(o.Service, s, StringComparison.OrdinalIgnoreCase)))],
+                target.Quest, TimesClicked(key));
             if (option.Service is null) {
                 if (DateTime.UtcNow - _targetSince > TimeSpan.FromSeconds(40)) {
                     Issue("quest", target.Quest, $"{target.What}: the NPC only offers {string.Join(", ", options.Select(o => o.Service))} to {member.Name}, " +
@@ -991,7 +992,8 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             return;
         }
 
-        var option = services.SelectMany(s => options.Where(o => string.Equals(o.Service, s, StringComparison.OrdinalIgnoreCase))).FirstOrDefault();
+        var option = BotOptions.Pick([.. services.SelectMany(s => options.Where(o => string.Equals(o.Service, s, StringComparison.OrdinalIgnoreCase)))],
+            target.Quest, TimesClicked(key));
         if (option.Service is null) {
             option = options.FirstOrDefault();
         }

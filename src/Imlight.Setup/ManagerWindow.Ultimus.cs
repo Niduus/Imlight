@@ -386,9 +386,9 @@ internal sealed partial class ManagerWindow {
         return Page(
             Fold("copy", ULTIMUS_TAB, "All of Ultimus's logs in one copy",
                 "Copies every Ultimus log at once, ready to paste in one go: his log, his thoughts, the mistakes book, the " +
-                "quest log, his abnormal fixes, the creatures he fought, the issues he found, his status, what he learned and " +
-                "his playbook. Each line starts with a tag naming the log it came from, such as [Main], [Thoughts] or " +
-                "[Mistakes], so the logs can be told apart.",
+                "quest log, his abnormal fixes, the creatures he fought, his status, what he learned and his playbook. " +
+                "Newest first, and his main log only the last 3 hours, so the part that matters fits in one paste. Each line " +
+                "starts with a tag naming the log it came from, such as [Main], [Thoughts] or [Mistakes].",
                 Row(Action(Plain("Copy all logs"), () => CopyAsync(UltimusAllLogs(), "All of Ultimus's logs were copied.")))),
             Fold("sparkle", ULTIMUS_TAB, "Ultimus Thoughts",
                 "Ultimus thinking out loud: why it picks what it picks, what it remembers of a creature or a spot where it got " +
@@ -762,23 +762,27 @@ internal sealed partial class ManagerWindow {
     // tagged with the log's short name.
     private string UltimusAllLogs() {
         var bots = Path.Combine(_manager.LogFolder, "bots");
-        var main = ReadAllOf(UltimusNewestFile("ultimus*.txt"), 512 * 1024);
-        var thoughts = string.Join('\n', main.Split('\n').Where(l => l.Contains(": THOUGHT: ", StringComparison.Ordinal)));
+        var main = ReadAllOf(UltimusNewestFile("ultimus*.txt"), 1024 * 1024);
+        // Newest first, so the part that matters fits in a chat paste even when the paste gets cut (Niduus's paste of
+        // v0.10.852 stopped in the morning's lines): the logs that change every second also keep only the last hours.
+        var since = DateTime.Now.AddHours(-UltimusCopyHours);
+        var recent = NewestFirst(main.Split('\n').Where(l => !LineTime(l, out var at) || at >= since), 2000);
+        var thoughts = NewestFirst(main.Split('\n').Where(l => l.Contains(": THOUGHT: ", StringComparison.Ordinal)), 150);
+        var quests = NewestFirst(ReadAllOf(Path.Combine(UltimusFolder, "quest-log.txt"), 256 * 1024).Split('\n'), 150);
         (string Tag, string Name, string Text)[] logs = [
-            ("Main", "Ultimus log (what he does)", main),
-            ("Thoughts", "Ultimus Thoughts (his reasons, also in the main log)", thoughts),
-            ("Mistakes", "Mistakes book (logs\\bots\\mistakes.txt)", ReadAllOf(Path.Combine(bots, "mistakes.txt"), 256 * 1024)),
-            ("Quests", "Quest log (quest-log.txt)", ReadAllOf(Path.Combine(UltimusFolder, "quest-log.txt"), 256 * 1024)),
-            ("Fixes", "Abnormal fixes, each stuck spot and what was tried (abnormal-fixes.json)", ReadAllOf(Path.Combine(UltimusFolder, "abnormal-fixes.json"), 256 * 1024)),
-            ("Foes", "Creatures he fought (foes.json)", ReadAllOf(Path.Combine(UltimusFolder, "foes.json"), 128 * 1024)),
-            ("Issues", "Issues he found (issues.json)", ReadAllOf(Path.Combine(UltimusFolder, "issues.json"), 256 * 1024)),
             ("Status", "His status now (status.txt)", ReadAllOf(Path.Combine(UltimusFolder, "status.txt"), 32 * 1024)),
-            ("Learned", "What he learned, newest (learned.jsonl)", ReadAllOf(Path.Combine(UltimusFolder, "learned.jsonl"), 64 * 1024)),
+            ("Thoughts", "Ultimus Thoughts, newest first (his reasons, also in the main log)", thoughts),
+            ("Mistakes", "Mistakes book, newest first (logs\\bots\\mistakes.txt)", ReadAllOf(Path.Combine(bots, "mistakes.txt"), 64 * 1024)),
+            ("Fixes", "Abnormal fixes, each stuck spot and what was tried (abnormal-fixes.json)", ReadAllOf(Path.Combine(UltimusFolder, "abnormal-fixes.json"), 64 * 1024)),
+            ("Foes", "Creatures he fought (foes.json)", ReadAllOf(Path.Combine(UltimusFolder, "foes.json"), 64 * 1024)),
+            ("Quests", "Quest log, newest first (quest-log.txt)", quests),
+            ("Main", $"Ultimus log, newest first, the last {UltimusCopyHours} hours (what he does; issues are in it too)", recent),
+            ("Learned", "What he learned (learned.jsonl)", ReadAllOf(Path.Combine(UltimusFolder, "learned.jsonl"), 32 * 1024)),
             ("Playbook", "His playbook (playbook.txt)", ReadAllOf(Path.Combine(UltimusFolder, "playbook.txt"), 64 * 1024)),
         ];
 
         var text = new StringBuilder();
-        text.AppendLine($"All of Ultimus's logs, copied {DateTime.Now:yyyy-MM-dd HH:mm:ss}. Each line starts with the log it came from:");
+        text.AppendLine($"All of Ultimus's logs, copied {DateTime.Now:yyyy-MM-dd HH:mm:ss}, newest first. Each line starts with the log it came from:");
         foreach (var (tag, name, _) in logs) {
             text.AppendLine($"    [{tag}] {name}");
         }
@@ -797,6 +801,20 @@ internal sealed partial class ManagerWindow {
         }
 
         return text.ToString();
+    }
+
+    // How many hours of his main log "Copy all logs" takes.
+    private const int UltimusCopyHours = 3;
+
+    private static string NewestFirst(IEnumerable<string> lines, int most)
+        => string.Join('\n', lines.Select(l => l.TrimEnd('\r')).Where(l => l.Length > 0).Reverse().Take(most));
+
+    // A log line's time ("2026-11-13 20:05:51.968 -06:00 [INF] ..."); false for a line without one.
+    private static bool LineTime(string line, out DateTime at) {
+        at = default;
+
+        return line.Length >= 19 && DateTime.TryParseExact(line[..19], "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture,
+            System.Globalization.DateTimeStyles.None, out at);
     }
 
     private string? UltimusNewestFile(string pattern) {
