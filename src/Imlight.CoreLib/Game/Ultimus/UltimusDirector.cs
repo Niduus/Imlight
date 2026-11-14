@@ -190,9 +190,14 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         /// <summary>Time spent fighting for XP to catch up with the quest's level (coach review 2026-11-14: "Payback" was flagged
         /// slow while he levelled from 12 toward 14 for it): not counted against the quest.</summary>
         public double GrindSeconds;
+
+        /// <summary>Time he spent on another quest while holding this one (Niduus's log, 2026-11-14: "Serpent Staff", an instance
+        /// quest he held since the start, was flagged slow and over its 30-minute budget while he finished ten story quests): not
+        /// counted against this quest either.</summary>
+        public double ParkedSeconds;
         public bool BudgetTold;
 
-        internal double Seconds => Math.Max(0, (DateTime.UtcNow - Started).TotalSeconds - GrindSeconds);
+        internal double Seconds => Math.Max(0, (DateTime.UtcNow - Started).TotalSeconds - GrindSeconds - ParkedSeconds);
     }
 
     private DateTime _runsCheckedAt = DateTime.UtcNow;
@@ -1503,17 +1508,22 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         var sinceCheck = Math.Min(30, (DateTime.UtcNow - _runsCheckedAt).TotalSeconds);
         _runsCheckedAt = DateTime.UtcNow;
         var grinding = (_target ?? _leaderLastTarget)?.What?.StartsWith("a fight for XP", StringComparison.Ordinal) == true;
+        // The quest he is working on right now (empty while selling, healing and the like: that time counts for every quest).
+        var workingOn = (_target ?? _leaderLastTarget)?.Quest;
 
         // A quest none of them holds any more, that one of them finished: done.
         foreach (var run in _runs.Values.ToList()) {
             if (grinding) {
                 run.GrindSeconds += sinceCheck;
             }
+            else if (!string.IsNullOrEmpty(workingOn) && !string.Equals(workingOn, run.Quest, StringComparison.Ordinal)) {
+                run.ParkedSeconds += sinceCheck;
+            }
 
             var holder = _team.Any(m => m.Wizard?.HasQuest(run.Quest) == true);
             var finished = _team.Any(m => m.Wizard?.HasCompletedQuest(run.Quest) == true);
             if (!holder && finished) {
-                var seconds = (DateTime.UtcNow - run.Started).TotalSeconds;
+                var seconds = Math.Max(0, (DateTime.UtcNow - run.Started).TotalSeconds - run.ParkedSeconds);
                 Note("Ultimus", $"FINISHED {run.Title} in {Minutes(seconds)}.");
                 UltimusJournal.Write(UltimusJournal.QUEST, seconds > 30 * 60 ? $"Finished {run.Title}, but it took me {Minutes(seconds)}." : $"Finished {run.Title} in {Minutes(seconds)}.",
                     WorldOf(_team[0].Zone), UltimusText.Zone(_team[0].Zone), run.Title, seconds > 30 * 60 ? -1 : 1);
