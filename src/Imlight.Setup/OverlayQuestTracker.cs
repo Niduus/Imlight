@@ -198,6 +198,22 @@ internal static class OverlayQuestData {
         OverlayMinimapData.Redraw();
     }
 
+    /// <summary>
+    /// Sets the quest whose way is drawn for this key, with no click (the Ultimus Spectator's map always draws Ultimus's own
+    /// quest, OverlayUltimusData.KEY); empty for none.
+    /// </summary>
+    internal static void Follow(long window, string quest) {
+        lock (s_lock) {
+            if (string.IsNullOrEmpty(quest)) {
+                s_picks.Remove(window);
+                s_routes.Remove(window);
+            }
+            else {
+                s_picks[window] = quest;
+            }
+        }
+    }
+
     internal static bool Folded(long window, string kind) {
         lock (s_lock) {
             return s_folded.TryGetValue(window, out var folded) && folded.Contains(kind);

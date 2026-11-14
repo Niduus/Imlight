@@ -542,6 +542,7 @@ internal static class OverlayHost {
         LoadFromServer();
         OverlayMinimapData.Tick();
         OverlayQuestData.Tick();
+        OverlayUltimusData.Tick();
         if (!TryTakeTurn()) {
             return;
         }
@@ -628,6 +629,9 @@ internal static class OverlayHost {
         // And the ones that show a Quest Tracker: the link asks the server for their quests.
         var wantsQuests = (ShowsMine(s_design) && OverlayRenderer.HasQuestTracker(s_design.Elements)) || OverlayRenderer.HasQuestTracker(ServerElements);
         OverlayQuestData.Wanted = wantsQuests ? [.. s_windows.Keys.Select(w => w.ToInt64())] : [];
+        // And whether any shows the Ultimus Spectator (it needs the Minimap too): the link asks the server for Ultimus.
+        var wantsUltimus = (ShowsMine(s_design) && OverlayRenderer.HasUltimus(s_design.Elements)) || OverlayRenderer.HasUltimus(ServerElements);
+        OverlayUltimusData.Wanted = wantsUltimus && wantsMap && s_windows.Count > 0;
     }
 
     // The game's own moves, resizes, shows and hides reach the overlay as they happen, not only on the next tick.
@@ -888,6 +892,7 @@ internal static class OverlayHost {
         private (int W, int H, double Scale) _drawnSize;
         private (bool Full, bool Note) _drawnLayout;
         private int _drawnQuests = -1;
+        private int _drawnUltimus = -1;
         private Control? _picture;
         private byte[]? _pixels;
         private double _pixelsPerUnit = 1;
@@ -1235,13 +1240,18 @@ internal static class OverlayHost {
 
             // A minimap's new map from the server, and its glide between maps, draw only the minimap's corner again;
             // the whole overlay is laid out again only when the design, the window or the minimap's size changes.
-            var map = OverlayMinimapData.VersionOf(game.ToInt64());
+            // Ultimus's own minimap (Ultimus Spectator) is drawn again with the player's when either changes.
+            var map = OverlayMinimapData.VersionOf(game.ToInt64()) + OverlayMinimapData.VersionOf(OverlayUltimusData.KEY);
+            var moving = OverlayMinimapData.Moving(game.ToInt64()) || OverlayMinimapData.Moving(OverlayUltimusData.KEY);
+            // Ultimus's quest box and battle box changed: laid out again.
+            var ultimus = OverlayUltimusData.Wanted ? OverlayUltimusData.Version : _drawnUltimus;
             var layout = OverlayMinimapData.LayoutOf(game.ToInt64());
             // A Quest Tracker's quests, pick or folding changed: laid out again too.
             var quests = OverlayQuestData.Wanted.Length > 0 ? OverlayQuestData.Version : _drawnQuests;
-            if (version != _drawnVersion || layout != _drawnLayout || quests != _drawnQuests || _drawnSize != (width, height, scale)
+            if (version != _drawnVersion || layout != _drawnLayout || quests != _drawnQuests || ultimus != _drawnUltimus || _drawnSize != (width, height, scale)
                 || (_mapParts.Count == 0 && map != _drawnMap)) {
                 _drawnQuests = quests;
+                _drawnUltimus = ultimus;
                 _drawnMap = map;
                 _drawnLayout = layout;
                 var picture = OverlayRenderer.Build(design, new OverlayRenderer.Words(Version, Link.ServerLabel), showMine: ShowsMine(design), server: WithNotice(game),
@@ -1261,10 +1271,10 @@ internal static class OverlayHost {
                 _mapParts = MapParts(picture, scale * fit, width, height);
             }
             else if (_mapParts.Count > 0 && _picture is not null && _pixels is not null
-                     && (map != _drawnMap || OverlayMinimapData.Moving(game.ToInt64()) || _gliding)
+                     && (map != _drawnMap || moving || _gliding)
                      && DateTime.UtcNow - _patchedAt >= _patchEvery) {
                 // One more draw after the glide ends, so it stops right on the newest map.
-                _gliding = OverlayMinimapData.Moving(game.ToInt64());
+                _gliding = moving;
                 _drawnMap = map;
                 var took = System.Diagnostics.Stopwatch.StartNew();
                 foreach (var part in _mapParts) {
@@ -1438,6 +1448,14 @@ internal static class OverlayHost {
 
         /// <summary>Whether the linked server sends Quest Tracker data (an older Imlight hangs up on op "quests").</summary>
         internal static bool SendsQuests { get; private set; }
+
+        /// <summary>Whether the linked server lets the Ultimus Spectator watch Ultimus (an older Imlight hangs up on op "ultimus").</summary>
+        internal static bool SendsUltimus { get; private set; }
+
+        private static DateTime s_nextUltimus = DateTime.MinValue;
+
+        // How often Ultimus is asked for (one ask serves every game window); the map glides between answers.
+        private static readonly TimeSpan s_ultimusEvery = TimeSpan.FromMilliseconds(250);
 
         private static DateTime s_nextQuests = DateTime.MinValue;
 
@@ -1658,8 +1676,10 @@ internal static class OverlayHost {
                         var mapAt = SendsMap && OverlayMinimapData.Wanted.Length > 0 ? s_nextMap : DateTime.MaxValue;
                         // A new pick is asked about at once (its way to another area comes with the quests).
                         var questsAt = SendsQuests && OverlayQuestData.Wanted.Length > 0 ? OverlayQuestData.TakeAskSoon() ? DateTime.MinValue : s_nextQuests : DateTime.MaxValue;
+                        var ultimusAt = SendsUltimus && OverlayUltimusData.Wanted ? s_nextUltimus : DateTime.MaxValue;
                         var wakeAt = mapAt < beatAt ? mapAt : beatAt;
                         wakeAt = questsAt < wakeAt ? questsAt : wakeAt;
+                        wakeAt = ultimusAt < wakeAt ? ultimusAt : wakeAt;
                         Pending? press = null;
                         var napFor = wakeAt - DateTime.UtcNow;
                         if (napFor > TimeSpan.Zero) {
@@ -1679,6 +1699,10 @@ internal static class OverlayHost {
 
                             if (DateTime.UtcNow >= questsAt) {
                                 await AskQuestsAsync(tls, stop);
+                            }
+
+                            if (DateTime.UtcNow >= ultimusAt) {
+                                await AskUltimusAsync(tls, stop);
                             }
 
                             continue;
@@ -1708,6 +1732,7 @@ internal static class OverlayHost {
                 Connected = false;
                 SendsMap = false;
                 SendsQuests = false;
+                SendsUltimus = false;
                 // A server from before overlay buttons hangs up on them.
                 s_current?.Answer.TrySetResult(new OverlayCommands.Result(false,
                     "The server hung up. Its Imlight may be too old for command and cheat buttons: ask the host to update it.", []));
@@ -1731,6 +1756,19 @@ internal static class OverlayHost {
             s_nextMap = DateTime.UtcNow + s_mapEvery;
         }
 
+        // Ultimus for the Ultimus Spectator: his own map (streets once per area), quest and battle, once for every window.
+        private static async Task AskUltimusAsync(SslStream tls, CancellationToken stop) {
+            s_nextUltimus = DateTime.UtcNow + s_ultimusEvery;
+            await RemoteAdminWire.WriteAsync(tls, new JsonObject {
+                ["op"] = "ultimus", ["have"] = s_have, ["groundKey"] = OverlayMinimapData.GroundKey(OverlayUltimusData.KEY), ["shapes"] = true,
+            }, null, stop);
+            using var answerWait = CancellationTokenSource.CreateLinkedTokenSource(stop);
+            answerWait.CancelAfter(TimeSpan.FromSeconds(10));
+            var (answer, _) = await RemoteAdminWire.ReadAsync(tls, 1 << 20, 0, answerWait.Token);
+            OverlayUltimusData.Heard(answer);
+            s_nextUltimus = DateTime.UtcNow + s_ultimusEvery;
+        }
+
         // Each game window's Quest Tracker, one after the other on this connection.
         private static async Task AskQuestsAsync(SslStream tls, CancellationToken stop) {
             s_nextQuests = DateTime.UtcNow + s_questsEvery;
@@ -1749,6 +1787,7 @@ internal static class OverlayHost {
         private static void Listen(JsonObject reply) {
             SendsMap = reply["features"] is JsonArray features && features.Any(f => f?.GetValueKind() == System.Text.Json.JsonValueKind.String && (string?) f == "map");
             SendsQuests = reply["features"] is JsonArray offered && offered.Any(f => f?.GetValueKind() == System.Text.Json.JsonValueKind.String && (string?) f == "quests");
+            SendsUltimus = reply["features"] is JsonArray more && more.Any(f => f?.GetValueKind() == System.Text.Json.JsonValueKind.String && (string?) f == "ultimus");
             Required = reply["required"]?.GetValue<bool>();
             // The server's own texts and boxes; a server without any (or from before they existed) says "none".
             var stamp = (string?) reply["designStamp"] ?? "none";

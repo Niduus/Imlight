@@ -71,6 +71,7 @@ public static class OverlayLinks {
         s_recent.TryRemove(link, out _);
         s_mapAsks.TryRemove(link, out _);
         s_questAsks.TryRemove(link, out _);
+        s_spectateAsks.TryRemove(link, out _);
         foreach (var key in s_mapNotes.Keys.Where(k => k.Link == link).ToList()) {
             s_mapNotes.TryRemove(key, out _);
         }
@@ -477,6 +478,111 @@ public static class OverlayLinks {
 
         var answer = RemoteAdminWire.Ok();
         answer["quests"] = quests;
+
+        return answer;
+    }
+
+
+    // ---- The Ultimus Spectator (op "ultimus", Game/Ultimus/UltimusSpectate) ----
+
+    private static readonly ConcurrentDictionary<long, ConcurrentQueue<DateTime>> s_spectateAsks = new();
+
+    /// <summary>
+    /// Ultimus as the overlay's Ultimus Spectator shows him (Niduus, 2026-11-13: "Spectate Ultimus, able to view his
+    /// location and quests via Minimap ... and when in battle, able to see his spells"): his own map with his quest's way on
+    /// it, his quests, and his battle. The same for every game window, and for any overlay linked to this server; it only
+    /// reads, so no ".link" is needed. Never the player's own map or quests.
+    /// </summary>
+    public static async Task<JsonObject> SpectateAsync(long link, JsonObject header) {
+        if (!Ultimus.UltimusSpectate.On) {
+            return RemoteAdminWire.Error("The host has turned off watching Ultimus on this server.");
+        }
+
+        var times = s_spectateAsks.GetOrAdd(link, _ => new ConcurrentQueue<DateTime>());
+        while (times.TryPeek(out var oldest) && DateTime.UtcNow - oldest > TimeSpan.FromSeconds(1)) {
+            times.TryDequeue(out _);
+        }
+
+        if (times.Count >= 12) {
+            return RemoteAdminWire.Error("busy");
+        }
+
+        times.Enqueue(DateTime.UtcNow);
+
+        if (!Ultimus.UltimusWire.Enabled) {
+            return RemoteAdminWire.Error("Ultimus is off on this server. Turn him on in Ahziael (Ultimus page) to watch him.");
+        }
+
+        var member = Ultimus.UltimusDirector.Members.FirstOrDefault();
+        if (member is null || member.State is "offline" or "logging in") {
+            return RemoteAdminWire.Error("Ultimus isn't in the game yet. He shows here once he has logged in.");
+        }
+
+        var quest = Ultimus.UltimusSpectate.Quest;
+        var reply = new TaskCompletionSource<(JsonObject Map, JsonObject Quests, IActorRef Zone, string Error)>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var others = new ConcurrentQueue<(ulong CharId, IActorRef Zone, string Name, float X, float Y)>();
+        var reach = header["reach"] is JsonValue far && far.TryGetValue<double>(out var wanted) && double.IsFinite(wanted) ? (float) wanted : 0f;
+        var ask = new OverlaySpectateAsk(member.CharId, reply, others, reach, quest);
+        foreach (var service in AgentBridge.CommandServices) {
+            service.Tell(ask);
+        }
+
+        if (await Task.WhenAny(reply.Task, Task.Delay(2000)) != reply.Task) {
+            // Going to another area: his last map stays until he arrives.
+            return RemoteAdminWire.Error(member.State is "zoning" or "arriving" ? "busy" : "Ultimus isn't in the game right now.");
+        }
+
+        var (map, quests, zone, error) = reply.Task.Result;
+        if (map is null) {
+            return RemoteAdminWire.Error(error);
+        }
+
+        await Task.Delay(60);
+        OverlayMinimap.AddWizards(map, member.CharId, zone, others);
+        // His area's streets, sent once per area like the player's minimap (the overlay says which it has).
+        var zonePath = (string) map["zone"] ?? "";
+        var smoothing = OverlayMinimap.Smoothing;
+        var groundKey = zonePath + "#" + smoothing.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        if (OverlayMinimap.Streets && zonePath.Length > 0 && !string.Equals((string) header["groundKey"] ?? "", groundKey, StringComparison.OrdinalIgnoreCase)) {
+            var shapes = Zone.Core.ZoneGround.ShapesOf(zonePath, smoothing);
+            map["ground"] = shapes is null || shapes.IsEmpty
+                ? new JsonObject { ["zone"] = zonePath, ["key"] = groundKey }
+                : new JsonObject {
+                    ["zone"] = zonePath, ["key"] = groundKey, ["left"] = shapes.Left, ["bottom"] = shapes.Bottom, ["unit"] = shapes.Unit,
+                    ["shapes"] = shapes.Data,
+                };
+        }
+
+        var wizard = member.Wizard;
+        var stats = wizard?.GameStats;
+        var row = (quests?["quests"] as JsonArray)?.OfType<JsonObject>()
+            .FirstOrDefault(q => string.Equals((string) q["id"], quest, StringComparison.OrdinalIgnoreCase));
+        var info = new JsonObject {
+            ["name"] = member.Name,
+            ["level"] = wizard?.MagicSchoolBehavior?.Level ?? 0,
+            ["hp"] = stats?.m_currentHitpoints ?? 0,
+            ["max"] = stats is null ? 0 : stats.m_baseHitpoints + stats.m_bonusHitpoints,
+            ["place"] = (string) map["place"] ?? "",
+            ["doing"] = Ultimus.UltimusSpectate.Doing,
+            ["quest"] = quest,
+            ["questTitle"] = quest.Length == 0 ? "" : (string) row?["t"] ?? Ultimus.UltimusText.Title(quest),
+            ["step"] = Ultimus.UltimusSpectate.Step,
+            ["steps"] = row?["steps"]?.DeepClone(),
+            ["way"] = row?["way"]?.DeepClone(),
+            ["kind"] = (string) row?["k"] ?? "",
+            ["quests"] = new JsonArray([.. ((quests?["quests"] as JsonArray)?.OfType<JsonObject>() ?? [])
+                .Take(40).Select(q => (JsonNode) new JsonObject { ["id"] = q["id"]?.DeepClone(), ["t"] = q["t"]?.DeepClone(), ["k"] = q["k"]?.DeepClone() })]),
+        };
+        if (Ultimus.UltimusSpectate.Battle(member.GlobalId) is { } battle) {
+            battle["deck"] = wizard?.SpellbookBehavior?.SpellList is { } deck
+                ? BotShared.BotCards.Describe(deck.Where(d => d is not null).Select(d => ((uint) d.m_templateID, (int) d.m_quantity)))
+                : "";
+            info["battle"] = battle;
+        }
+
+        var answer = RemoteAdminWire.Ok();
+        answer["map"] = map;
+        answer["ultimus"] = info;
 
         return answer;
     }

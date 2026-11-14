@@ -1,0 +1,65 @@
+{
+  "Format": "Ahziael overlay add-on",
+  "Name": "Ultimus Spectator",
+  "Author": "Niduus",
+  "Description": "Watch Ultimus. His own minimap follows him wherever he is and always draws HIS quest's way (never yours), a quest box shows his quest and step, and in battle a spells box shows his hand, pips and what he casts. Needs the Minimap add-on; your own Minimap stays as it is.",
+  "Version": "1",
+  "Requires": [ "Minimap" ],
+  "Widgets": [
+    {
+      "Name": "Ultimus Spectator (map, quest and spells)",
+      "Elements": [
+        {
+          "Kind": "UltimusMap", "Name": "Ultimus Minimap", "Anchor": "TopLeft", "X": 12, "Y": 70, "Width": 180, "Height": 180,
+          "Background": { "Kind": "Radial", "Color1": "#C8302040", "Color2": "#C8100A1C" },
+          "BorderColor": "#D0E07CFF", "BorderWidth": 2, "CornerRadius": 16, "Shadow": true, "ShadowBlur": 8,
+          "Map": { "Zoom": 2500 }
+        },
+        {
+          "Kind": "UltimusQuest", "Name": "Ultimus Quest", "Anchor": "TopLeft", "X": 12, "Y": 262, "Width": 220, "Height": 0, "Size": 13,
+          "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#B4120C22" }, "Padding": 10,
+          "BorderColor": "#A0E07CFF", "BorderWidth": 1, "CornerRadius": 12, "Shadow": true, "ShadowBlur": 8
+        },
+        {
+          "Kind": "UltimusSpells", "Name": "Ultimus Spells", "Anchor": "TopLeft", "X": 244, "Y": 70, "Width": 300, "Height": 0, "Size": 13,
+          "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#C8120C22" }, "Padding": 10,
+          "BorderColor": "#D0FFD24A", "BorderWidth": 1, "CornerRadius": 12, "Shadow": true, "ShadowBlur": 8
+        }
+      ]
+    },
+    {
+      "Name": "Ultimus Minimap only",
+      "Elements": [
+        {
+          "Kind": "UltimusMap", "Name": "Ultimus Minimap", "Anchor": "TopLeft", "X": 12, "Y": 70, "Width": 180, "Height": 180,
+          "Background": { "Kind": "Radial", "Color1": "#C8302040", "Color2": "#C8100A1C" },
+          "BorderColor": "#D0E07CFF", "BorderWidth": 2, "CornerRadius": 16, "Shadow": true, "ShadowBlur": 8,
+          "Map": { "Zoom": 2500 }
+        }
+      ]
+    },
+    {
+      "Name": "Ultimus Spells in battle only",
+      "Elements": [
+        {
+          "Kind": "UltimusSpells", "Name": "Ultimus Spells", "Anchor": "TopLeft", "X": 244, "Y": 70, "Width": 300, "Height": 0, "Size": 13,
+          "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#C8120C22" }, "Padding": 10,
+          "BorderColor": "#D0FFD24A", "BorderWidth": 1, "CornerRadius": 12, "Shadow": true, "ShadowBlur": 8
+        }
+      ]
+    }
+  ],
+  "Styles": [
+    {
+      "Name": "Ultimus purple panel",
+      "Look": {
+        "Kind": "Box",
+        "Background": { "Kind": "Solid", "Color1": "#B4120C22" }, "Padding": 10,
+        "BorderColor": "#A0E07CFF", "BorderWidth": 1, "CornerRadius": 12, "Shadow": true, "ShadowBlur": 8
+      }
+    }
+  ]
+}
