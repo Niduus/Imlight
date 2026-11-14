@@ -557,7 +557,23 @@ internal static class OverlayQuestRoute {
     // ---- This area's exits: its doors (live) and its walk-through exits (the zone's own volumes and triggers, with
     // the destinations SpiralDB recorded for them, as the server's zones use them) ----
 
-    internal sealed record Exit(float X, float Y, string To);
+    /// <summary>An exit: where it is, where it goes, and for a walk-through exit how far its trigger reaches (0 for a door).</summary>
+    internal sealed record Exit(float X, float Y, string To, float Reach = 0);
+
+    /// <summary>
+    /// How far the walk-through exit at (x, y) reaches from its middle (its trigger's radius, or half its longest side), or 0
+    /// when none is there. A wizard must be farther out than this to walk into it again: the game only takes a wizard on
+    /// when it walks in from outside.
+    /// </summary>
+    internal static float ExitReach(string zonePath, float x, float y) {
+        if (string.IsNullOrEmpty(zonePath)) {
+            return 0;
+        }
+
+        return s_walkExits.GetOrAdd(zonePath, WalkExits)
+            .Where(e => MathF.Abs(e.X - x) < 80 && MathF.Abs(e.Y - y) < 80)
+            .Select(e => e.Reach).DefaultIfEmpty(0).Max();
+    }
 
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, List<Exit>> s_walkExits = new(StringComparer.OrdinalIgnoreCase);
 
@@ -621,7 +637,8 @@ internal static class OverlayQuestRoute {
                 foreach (var fire in trigger.m_fireEvents.Select(e => e.ToString()).Where(e => !string.IsNullOrEmpty(e))) {
                     foreach (var volume in volumes.Where(v => v.m_enterEvents?.Any(e => (string) e == fire) == true
                                                               || "Enter_" + (string) v.m_volumeName == fire)) {
-                        exits.Add(new Exit(volume.m_locationX, volume.m_locationY, to.Trim()));
+                        var reach = volume.m_radius > 0 ? volume.m_radius : MathF.Max(volume.m_length, volume.m_width) / 2;
+                        exits.Add(new Exit(volume.m_locationX, volume.m_locationY, to.Trim(), reach));
                     }
                 }
             }
