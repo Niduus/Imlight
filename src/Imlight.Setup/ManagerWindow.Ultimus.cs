@@ -11,6 +11,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 
 namespace Imlight.Setup;
@@ -388,8 +389,12 @@ internal sealed partial class ManagerWindow {
                 "Copies every Ultimus log at once, ready to paste in one go: his log, his thoughts, the mistakes book, the " +
                 "quest log, his abnormal fixes, the creatures he fought, his status, what he learned and his playbook. " +
                 "Newest first, and his main log only the last 3 hours, so the part that matters fits in one paste. Each line " +
-                "starts with a tag naming the log it came from, such as [Main], [Thoughts] or [Mistakes].",
-                Row(Action(Plain("Copy all logs"), () => CopyAsync(UltimusAllLogs(), "All of Ultimus's logs were copied.")))),
+                "starts with a tag naming the log it came from, such as [Main], [Thoughts] or [Mistakes]. To share everything " +
+                "in full, Save for coach puts every log in a folder you pick, each as its own file plus one joint file, ready to " +
+                "attach in the chat; Save joint file saves just the one file with all of them.",
+                Row(Action(Plain("Copy all logs"), () => CopyAsync(UltimusAllLogs(), "All of Ultimus's logs were copied.")),
+                    Action(Plain("Save for coach (separate files)"), SaveUltimusForCoachAsync),
+                    Action(Plain("Save joint file"), SaveUltimusJointFileAsync))),
             Fold("sparkle", ULTIMUS_TAB, "Ultimus Thoughts",
                 "Ultimus thinking out loud: why it picks what it picks, what it remembers of a creature or a spot where it got " +
                 "stuck, and what it will do differently next time, naming the playbook rule behind a choice. Also in its log, " +
@@ -402,6 +407,15 @@ internal sealed partial class ManagerWindow {
                     var playbook = Path.Combine(UltimusFolder, "playbook.txt");
 
                     return Open(File.Exists(playbook) ? playbook : UltimusFolder);
+                }), Action(Plain("Open his self-tuning limits"), () => {
+                    // How far he may change his own numbers at his daily review (self-tuning.txt; Auto = off stops it).
+                    var limits = Path.Combine(UltimusFolder, "self-tuning.txt");
+
+                    return Open(File.Exists(limits) ? limits : UltimusFolder);
+                }), Action(Plain("Open today I learned"), () => {
+                    var today = Path.Combine(UltimusFolder, "learned-today.txt");
+
+                    return Open(File.Exists(today) ? today : UltimusFolder);
                 }))),
             Fold("book", ULTIMUS_TAB, "Mistakes book",
                 "Every mistake Ultimus made, newest first: what went wrong and where, its reasoning at the time, what it tried, " +
@@ -760,6 +774,104 @@ internal sealed partial class ManagerWindow {
     // Every Ultimus log in one text (Niduus, 2026-11-14: "get me a universal copy for all of Ultimus' logs with proper
     // indents in them to identify which logs are from which"): a heading per log, then each of its lines indented and
     // tagged with the log's short name.
+    // Every log in full, oldest line first, for a coach to read from a saved file (no chat paste limit).
+    private string UltimusJointText() {
+        var bots = Path.Combine(_manager.LogFolder, "bots");
+        var text = new StringBuilder();
+        text.AppendLine($"All of Ultimus's logs in full, saved {DateTime.Now:yyyy-MM-dd HH:mm:ss}. Each line starts with the file it came from.");
+        foreach (var path in UltimusCoachFiles()) {
+            var tag = Path.GetFileName(path);
+            text.AppendLine();
+            text.AppendLine($"===== [{tag}] {path} =====");
+            var body = ReadAllOf(path, 8 * 1024 * 1024);
+            foreach (var line in (body.Length == 0 ? "(empty)" : body).Split('\n')) {
+                text.AppendLine($"    [{tag}] {line.TrimEnd('\r')}");
+            }
+        }
+
+        return text.ToString();
+    }
+
+    // The files a coach reads: his own folder's files (newest log first) and the bots' shared files.
+    private List<string> UltimusCoachFiles() {
+        var files = new List<string>();
+        try {
+            if (Directory.Exists(UltimusFolder)) {
+                files.AddRange(new DirectoryInfo(UltimusFolder).EnumerateFiles()
+                    .Where(f => f.Extension is ".txt" or ".json" or ".jsonl" && !f.Name.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase))
+                    .OrderBy(f => f.Name.StartsWith("ultimus", StringComparison.OrdinalIgnoreCase) ? 1 : 0).ThenByDescending(f => f.LastWriteTimeUtc)
+                    .Select(f => f.FullName));
+            }
+
+            var bots = Path.Combine(_manager.LogFolder, "bots");
+            if (Directory.Exists(bots)) {
+                files.AddRange(new DirectoryInfo(bots).EnumerateFiles().Where(f => f.Extension is ".txt" or ".json")
+                    .OrderBy(f => f.Name).Select(f => f.FullName));
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // What could be listed.
+        }
+
+        return files;
+    }
+
+    // "Save for coach" (Niduus, 2026-11-14: "Have all the logs be able to be saved as independent files or as a joint
+    // file"): a folder he picks gets a dated folder with every log as its own file, his thoughts on their own, and one
+    // joint file, ready to attach in the chat.
+    private async Task SaveUltimusForCoachAsync() {
+        var picked = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions {
+            Title = "Pick where to save Ultimus's logs", AllowMultiple = false,
+            SuggestedStartLocation = await StorageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Desktop),
+        });
+        if (picked.FirstOrDefault()?.TryGetLocalPath() is not { } where) {
+            return;
+        }
+
+        var folder = Path.Combine(where, $"Ultimus logs {DateTime.Now:yyyy-MM-dd HH-mm}");
+        Directory.CreateDirectory(folder);
+        var saved = 0;
+        foreach (var path in UltimusCoachFiles()) {
+            var into = Path.Combine(folder, Path.GetFileName(path).Equals("mistakes.txt", StringComparison.OrdinalIgnoreCase)
+                || Path.GetDirectoryName(path)?.EndsWith("bots", StringComparison.OrdinalIgnoreCase) == true ? "bots-" + Path.GetFileName(path) : Path.GetFileName(path));
+            var body = ReadAllOf(path, 64 * 1024 * 1024);
+            await File.WriteAllTextAsync(into, body);
+            saved++;
+        }
+
+        var main = ReadAllOf(UltimusNewestFile("ultimus*.txt"), 64 * 1024 * 1024);
+        await File.WriteAllTextAsync(Path.Combine(folder, "thoughts.txt"),
+            string.Join('\n', main.Split('\n').Where(l => l.Contains(": THOUGHT: ", StringComparison.Ordinal))));
+        await File.WriteAllTextAsync(Path.Combine(folder, "ALL LOGS (joint file).txt"), UltimusJointText());
+        await File.WriteAllTextAsync(Path.Combine(folder, "README.txt"),
+            "Ultimus's logs, saved by Ahziael for the coach. Attach this whole folder (or the joint file) in the chat.\n" +
+            "ultimus*.txt: what he does, day by day. thoughts.txt: his reasons. bots-mistakes.txt: the mistakes book. " +
+            "bots-knowledge.txt: the bots' shared brain (creature habits, lessons). learned-today.txt: his daily reviews. " +
+            "playbook.txt and self-tuning.txt: his rules and the limits he may change them within.\n");
+        Say($"Saved {saved + 3} files in {folder}.");
+        await Open(folder);
+    }
+
+    private async Task SaveUltimusJointFileAsync() {
+        var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions {
+            Title = "Save all of Ultimus's logs in one file", SuggestedFileName = $"Ultimus logs {DateTime.Now:yyyy-MM-dd HH-mm}.txt",
+            DefaultExtension = "txt", ShowOverwritePrompt = true,
+            FileTypeChoices = [new FilePickerFileType("Text") { Patterns = ["*.txt"] }],
+            SuggestedStartLocation = await StorageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Desktop),
+        });
+        if (file is null) {
+            return;
+        }
+
+        var bytes = Encoding.UTF8.GetBytes(UltimusJointText());
+        await using (var stream = await file.OpenWriteAsync()) {
+            stream.SetLength(0);
+            await stream.WriteAsync(bytes);
+        }
+
+        Say($"Saved all of Ultimus's logs in {file.Name}.");
+    }
+
     private string UltimusAllLogs() {
         var bots = Path.Combine(_manager.LogFolder, "bots");
         var main = ReadAllOf(UltimusNewestFile("ultimus*.txt"), 1024 * 1024);
@@ -777,6 +889,8 @@ internal sealed partial class ManagerWindow {
             ("Foes", "Creatures he fought (foes.json)", ReadAllOf(Path.Combine(UltimusFolder, "foes.json"), 64 * 1024)),
             ("Quests", "Quest log, newest first (quest-log.txt)", quests),
             ("Main", $"Ultimus log, newest first, the last {UltimusCopyHours} hours (what he does; issues are in it too)", recent),
+            ("Today", "Today I learned, his daily reviews (learned-today.txt)", ReadAllOf(Path.Combine(UltimusFolder, "learned-today.txt"), 32 * 1024)),
+            ("Brain", "The bots' shared brain: lessons and creature habits (logs\\bots\\knowledge.txt)", ReadAllOf(Path.Combine(bots, "knowledge.txt"), 64 * 1024)),
             ("Learned", "What he learned (learned.jsonl)", ReadAllOf(Path.Combine(UltimusFolder, "learned.jsonl"), 32 * 1024)),
             ("Playbook", "His playbook (playbook.txt)", ReadAllOf(Path.Combine(UltimusFolder, "playbook.txt"), 64 * 1024)),
         ];

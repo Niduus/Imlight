@@ -99,8 +99,14 @@ internal sealed partial class UltimusDirectorActor {
         _fight = null;
         var lostShare = Math.Max(0, fight.Health - (won ? HealthShare(me) : 0));
         var seconds = (DateTime.UtcNow - fight.Since).TotalSeconds;
+        NoteDayFight(fight.Name.Length > 0 ? fight.Name : "a creature", won, lostShare);
         if (fight.Template == 0) {
             return;
+        }
+
+        CheckFight(me, won, lostShare, fight.Name);
+        if (BotKnowledge.Of(fight.Template) is { Casts: >= 3 } habit) {
+            Think($"What the bots know of its habits now: {habit.Describe()}.", "habit|" + fight.Template);
         }
 
         var foe = UltimusFoes.Fought(fight.Template, fight.Name, won, lostShare, seconds);
@@ -163,7 +169,8 @@ internal sealed partial class UltimusDirectorActor {
     /// </summary>
     private List<(float X, float Y)> SightWalk(UltimusMember.Status member, float toX, float toY, string what, List<(float X, float Y)> creatures) {
         var far = UltimusPlanner.Far(member.X, member.Y, toX, toY);
-        if (far < 40 || !UltimusSight.InSight(member.X, member.Y, toX, toY)) {
+        // A plan he trusts little goes the map's way, no shortcut by sight (Confidence).
+        if (far < 40 || _carefulPlan || !UltimusSight.InSight(member.X, member.Y, toX, toY)) {
             return null;
         }
 
@@ -255,6 +262,9 @@ internal sealed partial class UltimusDirectorActor {
         }
     }
 
-    private bool ToughFoeNow(UltimusPlanner.Target target) => _toughFoeNext && target?.Kind == UltimusPlanner.FIGHT && !CombatDuelComponent.IsInBattle(_team[0].GlobalId);
+    // Full health first: a tough creature, a plan he trusts little (Confidence), or a fight while he is careful (UltimusMood).
+    private bool ToughFoeNow(UltimusPlanner.Target target) =>
+        !CombatDuelComponent.IsInBattle(_team[0].GlobalId)
+        && (_carefulPlan || target?.Kind == UltimusPlanner.FIGHT && (_toughFoeNext || UltimusMood.Now == UltimusMood.Level.Careful));
 
 }

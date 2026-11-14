@@ -47,6 +47,7 @@ internal static class BotMistakes {
     internal const string STUCK = "stuck";
     internal const string LOST_FIGHT = "lost fight";
     internal const string NO_WAY = "no way on the map";
+    internal const string SURPRISE = "surprise";
 
     internal sealed class Mistake {
         public string Kind { get; set; } = "";

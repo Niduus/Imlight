@@ -25,6 +25,8 @@ using Imlight.CoreLib.Shared.Resources;
 using Card = Imlight.CoreLib.Game.Combat.RewrittenAI.Card;
 using CombatResolver = Imlight.CoreLib.Game.Combat.CombatResolver;
 
+using Imlight.CoreLib.Game.BotShared;
+
 namespace Imlight.CoreLib.Game.Ultimus;
 
 /// <summary>
@@ -43,17 +45,19 @@ internal static class UltimusTactics {
     private sealed record InHand(int Index, Card Card, bool Castable);
 
     // When it heals (its playbook, Battle.HealAt and Battle.BigHealAt; Niduus can change them, live).
-    private static float HURT => (float) UltimusPlaybook.Value("Battle.HealAt");
-    private static float DANGER => (float) UltimusPlaybook.Value("Battle.BigHealAt");
+    // His mood moves them: careful he heals sooner, bold a little later (UltimusMood).
+    private static float HURT => (float) UltimusPlaybook.Value("Battle.HealAt") + UltimusMood.HealShift;
+    private static float DANGER => (float) UltimusPlaybook.Value("Battle.BigHealAt") + (UltimusMood.HealShift / 2);
 
-    internal static Choice Decide(CombatDuelSubCircle me, IReadOnlyList<CombatDuelSubCircle> circles, CombatResolver resolver) {
+    internal static Choice Decide(CombatDuelSubCircle me, IReadOnlyList<CombatDuelSubCircle> circles, CombatResolver resolver, int round = 1) {
         var allies = circles.Where(c => c.OccupiedTeam == me.OccupiedTeam && c.IsAlive).ToList();
         var enemies = circles.Where(c => c.OccupiedTeam != me.OccupiedTeam && c.IsAlive).ToList();
         if (enemies.Count == 0) {
             return new(Move.Pass, 0, -1, "no enemy is left");
         }
 
-        var castable = Hand(me).Where(h => h.Castable).ToList();
+        var whole = Hand(me);
+        var castable = whole.Where(h => h.Castable).ToList();
         if (castable.Count == 0) {
             return new(Move.Pass, 0, -1, "nothing it can cast yet (saves its pips)");
         }
@@ -68,16 +72,27 @@ internal static class UltimusTactics {
         var teamHealed = healed.Contains(null);
         var hits = picks.Where(p => p.Card.Hit && p.On is not null && p.On.OccupiedTeam != me.OccupiedTeam).ToList();
 
-        // The team's target: the one a teammate is already hitting, else the weakest.
-        var focus = hits.Select(h => h.On).FirstOrDefault(e => e.IsAlive) ?? enemies.OrderBy(RewrittenAI.Health).First();
+        // The team's target: the one a teammate is already hitting, else one that heals often (the shared brain's habits:
+        // a fight drags on while it heals), else the weakest.
+        var healer = enemies.Select(e => (Who: e, Habit: HabitOf(e)))
+            .Where(x => x.Habit is not null && x.Habit.Casts >= 4 && x.Habit.Chance(BotKnowledge.HEAL) >= UltimusPlaybook.Value("Battle.HealerFirst"))
+            .OrderByDescending(x => x.Habit.Chance(BotKnowledge.HEAL)).Select(x => x.Who).FirstOrDefault();
+        var focus = hits.Select(h => h.On).FirstOrDefault(e => e.IsAlive) ?? healer ?? enemies.OrderBy(RewrittenAI.Health).First();
+        var focusWhy = healer is not null && focus == healer
+            ? $" ({Name(healer)} heals {HabitOf(healer).Chance(BotKnowledge.HEAL):P0} of its casts, so it goes first)"
+            : "";
         var hurt = allies.Where(a => !teamHealed && !healed.Contains(a) && RewrittenAI.HealthShare(a) < HURT)
             .OrderBy(RewrittenAI.HealthShare).ToList();
 
         // What the enemies can hit with, read from their decks (UltimusScout).
         var threat = UltimusScout.InBattle(enemies);
 
-        return Solo(me, castable, enemies, focus, hurt, threat);
+        return Solo(me, castable, whole, enemies, focus, hurt, threat, Math.Max(1, round), focusWhy);
     }
+
+    // What the bots' shared brain knows of a creature's habits.
+    private static BotKnowledge.Habit HabitOf(CombatDuelSubCircle enemy)
+        => enemy?.ParticipantObject is { } who ? BotKnowledge.Of((uint) Math.Min((ulong) who.m_templateID, uint.MaxValue)) : null;
 
     /// <summary>
     /// A shield that guards against none of what the enemies here can hit with (an Elemental Shield against a Myth
@@ -90,26 +105,143 @@ internal static class UltimusTactics {
 
     // ---- alone (with any players who joined) ----
 
-    private static Choice Solo(CombatDuelSubCircle me, List<InHand> hand, List<CombatDuelSubCircle> enemies, CombatDuelSubCircle focus,
-                               List<CombatDuelSubCircle> hurt, UltimusScout.Threat threat) {
+    private static Choice Solo(CombatDuelSubCircle me, List<InHand> hand, List<InHand> whole, List<CombatDuelSubCircle> enemies,
+                               CombatDuelSubCircle focus, List<CombatDuelSubCircle> hurt, UltimusScout.Threat threat, int round, string focusWhy) {
         var mine = RewrittenAI.HealthShare(me);
         var myHurt = mine < HURT ? new List<CombatDuelSubCircle> { me } : [];
         var playersInDanger = hurt.Where(h => h != me && RewrittenAI.HealthShare(h) < DANGER).ToList();
 
-        // Its best hit on the target now, to know whether building up is worth a round.
-        var bestHit = hand.Where(h => h.Card.Hit && !h.Card.Natural)
-            .Select(h => h.Card.HitsAll ? enemies.Sum(e => Math.Min(RewrittenAI.Health(e), Estimate(h.Card, me, e))) : Estimate(h.Card, me, focus))
-            .DefaultIfEmpty(0).Max();
-        var finishesFocus = bestHit >= RewrittenAI.Health(focus);
+        // What the creatures' habits say they take from me this round (the shared brain): a heal or a shield first when
+        // that would take me under my heal line.
+        var (incoming, hardest) = Incoming(enemies, round);
+        var foreseen = mine >= HURT && mine - incoming < DANGER
+            ? Heal(me, hand, [me]) ?? Shield(me, hand, [me], threat)
+            : null;
+        if (foreseen is not null) {
+            foreseen = foreseen with {
+                Why = $"{foreseen.Why}: {hardest} tends to hit on round {round} for about {incoming:P0} of my health together, which would take me " +
+                      $"from {mine:P0} under {DANGER:P0}, so I play round it first",
+            };
+        }
 
         return (mine < DANGER ? Heal(me, hand, myHurt) : null)
                ?? Finish(me, hand, enemies)
                ?? Heal(me, hand, playersInDanger)
+               ?? foreseen
                ?? (mine < HURT ? Heal(me, hand, myHurt) ?? Shield(me, hand, myHurt, threat) : null)
-               ?? (finishesFocus ? null : SelfBlade(me, hand))
-               ?? (finishesFocus ? null : TrapFor(me, hand, [], focus, RewrittenAI.SchoolOf(me)))
-               ?? Hit(me, hand, focus, enemies, enemies.Count >= 2 ? "hits" : "hits its target")
+               ?? TwoRounds(me, hand, whole, focus, enemies, round, mine - incoming < HURT, focusWhy)
                ?? Pass("saves its pips for a bigger hit");
+    }
+
+    // The share of my health the enemies' habits say they take this round, and who hits hardest.
+    private static (double Share, string Hardest) Incoming(List<CombatDuelSubCircle> enemies, int round) {
+        double total = 0;
+        var hardest = ("", 0.0);
+        foreach (var enemy in enemies) {
+            if (HabitOf(enemy) is not { Casts: >= 3 } habit) {
+                continue;
+            }
+
+            var expect = habit.ExpectedHitOn(round);
+            total += expect;
+            if (expect > hardest.Item2) {
+                hardest = (Name(enemy), expect);
+            }
+        }
+
+        return (total, hardest.Item1.Length > 0 ? hardest.Item1 : "they");
+    }
+
+    /// <summary>
+    /// Two rounds ahead (Niduus, 2026-11-14, "All" to: "before each round, he scores his whole hand over two rounds ahead
+    /// and plays the best line, not just the best single card"): hit now and hit again; a blade now and a bigger hit next
+    /// round; a trap now and a bigger hit next round; or his pips saved now for a bigger spell next round. Each line is worth
+    /// the damage it deals over both rounds (no more than the creatures have), a round later counting a bit less, and much
+    /// less when they could take him under his heal line first. The best line's first move is played, its reason said.
+    /// </summary>
+    private static Choice TwoRounds(CombatDuelSubCircle me, List<InHand> hand, List<InHand> whole, CombatDuelSubCircle focus,
+                                    List<CombatDuelSubCircle> enemies, int round, bool risky, string focusWhy) {
+        var hits = whole.Where(h => h.Card.Hit && !h.Card.Natural).ToList();
+        if (hits.Count == 0) {
+            return null;
+        }
+
+        var pips = RewrittenAI.PipsOf(me);
+        var later = UltimusPlaybook.Value("Battle.LookAheadDelay") * (risky ? UltimusPlaybook.Value("Battle.LookAheadRisky") : 1);
+        // A creature that tends to shield or ward on this round soaks a hit now; building up is worth more.
+        var focusHabit = HabitOf(focus);
+        var shieldsNow = focusHabit is not null && focusHabit.HabitRound(BotKnowledge.SHIELD) == Math.Clamp(round, 1, 5);
+        var lines = new List<(double Value, InHand First, int Target, string Text)>();
+
+        double Deal(InHand h, float blade, float trap, int healthLeft) => h.Card.HitsAll
+            ? enemies.Sum(e => Math.Min(RewrittenAI.Health(e), Estimate(h.Card, me, e, blade, trap)))
+            : Math.Min(healthLeft, Estimate(h.Card, me, focus, blade, trap));
+
+        bool CanNext(InHand h, int spent, InHand used) => h != used && h.Card.Rank <= pips - spent + 1;
+
+        var focusHealth = RewrittenAI.Health(focus);
+
+        // Hit now, then hit again.
+        foreach (var now in hits.Where(h => h.Castable)) {
+            var first = Deal(now, 0, 0, focusHealth) * (shieldsNow && !now.Card.HitsAll ? 0.6 : 1);
+            var left = now.Card.HitsAll ? focusHealth : Math.Max(0, focusHealth - (int) first);
+            // When the first hit finishes the target, the next one goes on the toughest one left.
+            var other = enemies.Where(e => e != focus).OrderByDescending(RewrittenAI.Health).FirstOrDefault();
+            var next = hits.Where(h => CanNext(h, now.Card.Rank, now)).Select(h => (Hand: h, Damage: left > 0 || h.Card.HitsAll
+                ? Deal(h, 0, 0, left)
+                : other is null ? 0 : Math.Min(RewrittenAI.Health(other), Estimate(h.Card, me, other)))).OrderByDescending(x => x.Damage).FirstOrDefault();
+            var value = first + (next.Damage * later);
+            lines.Add((value, now, now.Card.HitsAll ? -1 : focus.SlotIndex,
+                $"{now.Card.Shown} now (about {first:0}){(next.Hand is null ? "" : $", then {next.Hand.Card.Shown} (about {next.Damage:0})")}"));
+        }
+
+        // A blade on myself now, then a bigger hit.
+        foreach (var blade in hand.Where(h => h.Card.Blade && !h.Card.BladeOnlyTeammate && Fits(h.Card.BladeSchool, RewrittenAI.SchoolOf(me))
+                                              && !RewrittenAI.HasEffectOfSpell(me, h.Card.Id))) {
+            var next = hits.Where(h => CanNext(h, blade.Card.Rank, blade) && Fits(blade.Card.BladeSchool, h.Card.DamageSchool))
+                .Select(h => (Hand: h, Damage: Deal(h, blade.Card.BladePercent, 0, focusHealth))).OrderByDescending(x => x.Damage).FirstOrDefault();
+            if (next.Hand is not null) {
+                lines.Add((next.Damage * later, blade, blade.Card.BladeWholeTeam ? -1 : me.SlotIndex,
+                    $"{blade.Card.Shown} on myself now (+{blade.Card.BladePercent}%), then {next.Hand.Card.Shown} (about {next.Damage:0})"));
+            }
+        }
+
+        // A trap on the target now, then a bigger hit.
+        foreach (var trap in hand.Where(h => h.Card.Trap && !RewrittenAI.HasEffectOfSpell(focus, h.Card.Id))) {
+            var percent = trap.Card.TrapPercent > 0 ? trap.Card.TrapPercent : (float) UltimusPlaybook.Value("Battle.TrapGuess");
+            var next = hits.Where(h => CanNext(h, trap.Card.Rank, trap) && Fits(trap.Card.TrapSchool, h.Card.DamageSchool))
+                .Select(h => (Hand: h, Damage: Deal(h, 0, percent, focusHealth))).OrderByDescending(x => x.Damage).FirstOrDefault();
+            if (next.Hand is not null) {
+                lines.Add((next.Damage * later, trap, trap.Card.TrapAll ? -1 : focus.SlotIndex,
+                    $"{trap.Card.Shown} on {Name(focus)} now (+{percent:0}%), then {next.Hand.Card.Shown} (about {next.Damage:0})"));
+            }
+        }
+
+        // Pips saved now for a bigger spell next round.
+        var saved = hits.Where(h => !h.Castable && h.Card.Rank <= pips + 1)
+            .Select(h => (Hand: h, Damage: Deal(h, 0, 0, focusHealth))).OrderByDescending(x => x.Damage).FirstOrDefault();
+        if (saved.Hand is not null) {
+            lines.Add((saved.Damage * later, null, -1, $"saving my pips now, then {saved.Hand.Card.Shown} (about {saved.Damage:0})"));
+        }
+
+        if (lines.Count == 0) {
+            return null;
+        }
+
+        var ordered = lines.OrderByDescending(l => l.Value).ThenBy(l => l.First is null ? 1 : 0).ToList();
+        var best = ordered[0];
+        var runnerUp = ordered.Skip(1).FirstOrDefault(l => l.Text != best.Text);
+        var compare = runnerUp.Text is null ? "" : $"; better than {runnerUp.Text}, worth {runnerUp.Value:0}";
+        var habitNote = shieldsNow ? $"; {Name(focus)} tends to shield on round {Math.Clamp(round, 1, 5)}, so building up is worth more now" : "";
+        var riskNote = risky ? "; they could hurt me before then, so a later hit counts for less" : "";
+        var why = $"plans two rounds: {best.Text}, worth about {best.Value:0}{compare}{habitNote}{riskNote}{focusWhy}";
+        if (best.First is null) {
+            return Pass(why);
+        }
+
+        var reason = best.First.Card.Hit ? BalanceResistReason(me, best.First.Card, best.First.Card.HitsAll ? enemies : [focus]) : "";
+
+        return new(Move.Cast, best.First.Index, best.Target, why + reason);
     }
 
     // ---- the moves ----
@@ -194,8 +326,8 @@ internal static class UltimusTactics {
     /// A hit as the game lands it on this target: its resist taken down by the caster's pierce for that school (resist
     /// can't go under nothing).
     /// </summary>
-    private static int Estimate(Card card, CombatDuelSubCircle me, CombatDuelSubCircle target) {
-        var raw = RewrittenAI.Estimate(card, me, target);
+    private static int Estimate(Card card, CombatDuelSubCircle me, CombatDuelSubCircle target, float blades = 0, float traps = 0) {
+        var raw = RewrittenAI.Estimate(card, me, target, blades, traps);
         var resist = RewrittenAI.ResistOf(target, card.DamageSchool);
         if (resist <= 0 || resist >= 0.95f) {
             return raw;
