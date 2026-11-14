@@ -198,7 +198,7 @@ internal sealed partial class CombatDuelComponent {
 
             QuestTeamTactics.Choice choice;
             try {
-                choice = QuestTeamTactics.Decide(role, member, circles, CombatResolver);
+                choice = QuestTeamTactics.Decide(role, member, circles, CombatResolver, Duel.m_roundNum);
             }
             catch (Exception e) {
                 Logger.Warning("Duel {0} | Slot {1} | Quest Team {2} could not decide: {3}", Logger.Args(Duel.m_duelID.Full, member.SlotIndex, role, e.Message));

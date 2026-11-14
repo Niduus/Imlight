@@ -23,6 +23,8 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.Combat;
 using Imlight.CoreLib.Shared.Resources;
 using Card = Imlight.CoreLib.Game.Combat.RewrittenAI.Card;
+using InHand = Imlight.CoreLib.Game.BotShared.BotCore.InHand;
+using Imlight.CoreLib.Game.BotShared;
 using CombatResolver = Imlight.CoreLib.Game.Combat.CombatResolver;
 
 namespace Imlight.CoreLib.Game.QuestTeam;
@@ -42,19 +44,26 @@ internal static class QuestTeamTactics {
 
     internal sealed record Choice(Move Move, int Card, int Target, string Why);
 
-    private sealed record InHand(int Index, Card Card, bool Castable);
+    // Ultimus Core (Niduus, 2026-11-14): the team thinks with Ultimus's battle brain (BotShared.BotCore) and has its own
+    // mood (BotShared.BotMood), but keeps its own jobs: heal, shield, trap and blade for each other as a set team.
+    internal const string MOOD = "Quest Team";
 
-    private const float HURT = 0.6f;
-    private const float DANGER = 0.4f;
+    // Careful (a lost fight in the last hour) the team heals sooner; bold a little later.
+    private static float HURT => 0.6f + BotMood.Of(MOOD).HealShift;
+    private static float DANGER => 0.4f + (BotMood.Of(MOOD).HealShift / 2);
 
-    internal static Choice Decide(string role, CombatDuelSubCircle me, IReadOnlyList<CombatDuelSubCircle> circles, CombatResolver resolver) {
+    // A creature that heals this share of its casts or more is hit first (the shared brain's habits).
+    private const double HEALER_FIRST = 0.3;
+
+    internal static Choice Decide(string role, CombatDuelSubCircle me, IReadOnlyList<CombatDuelSubCircle> circles, CombatResolver resolver, int round = 1) {
         var allies = circles.Where(c => c.OccupiedTeam == me.OccupiedTeam && c.IsAlive).ToList();
         var enemies = circles.Where(c => c.OccupiedTeam != me.OccupiedTeam && c.IsAlive).ToList();
         if (enemies.Count == 0) {
             return new(Move.Pass, 0, -1, "no enemy is left");
         }
 
-        var castable = Hand(me).Where(h => h.Castable).ToList();
+        var whole = Hand(me);
+        var castable = whole.Where(h => h.Castable).ToList();
         if (castable.Count == 0) {
             return new(Move.Pass, 0, -1, "nothing it can cast yet (saves its pips)");
         }
@@ -69,8 +78,8 @@ internal static class QuestTeamTactics {
         var teamHealed = healed.Contains(null);
         var hits = picks.Where(p => p.Card.Hit && p.On is not null && p.On.OccupiedTeam != me.OccupiedTeam).ToList();
 
-        // The team's target: the one a teammate is already hitting, else the weakest.
-        var focus = hits.Select(h => h.On).FirstOrDefault(e => e.IsAlive) ?? enemies.OrderBy(RewrittenAI.Health).First();
+        // The team's target: the one a teammate is already hitting, else one that heals often (the shared brain), else the weakest.
+        var focus = hits.Select(h => h.On).FirstOrDefault(e => e.IsAlive) ?? BotCore.Healer(enemies, HEALER_FIRST) ?? enemies.OrderBy(RewrittenAI.Health).First();
         var hurt = allies.Where(a => !teamHealed && !healed.Contains(a) && RewrittenAI.HealthShare(a) < HURT)
             .OrderBy(RewrittenAI.HealthShare).ToList();
 
@@ -78,7 +87,7 @@ internal static class QuestTeamTactics {
             "Ice" => Ice(me, castable, allies, enemies, focus, hurt, hits),
             "Life" => Life(me, castable, allies, enemies, focus, hurt, hits),
             "Death" => Death(me, castable, allies, enemies, focus, hurt, hits),
-            _ => Storm(me, castable, enemies, focus),
+            _ => Storm(me, castable, whole, enemies, focus, Math.Max(1, round)),
         };
     }
 
@@ -116,11 +125,25 @@ internal static class QuestTeamTactics {
                ?? Pass("saves its pips");
     }
 
-    private static Choice Storm(CombatDuelSubCircle me, List<InHand> hand, List<CombatDuelSubCircle> enemies, CombatDuelSubCircle focus) {
+    private static Choice Storm(CombatDuelSubCircle me, List<InHand> hand, List<InHand> whole, List<CombatDuelSubCircle> enemies, CombatDuelSubCircle focus, int round) {
         return Finish(me, hand, enemies)
+               ?? TwoRounds(me, hand, whole, focus, enemies, round)
                ?? Hit(me, hand, focus, enemies, "hits")
                ?? SelfBlade(me, hand)
                ?? Pass("saves its pips for a bigger hit");
+    }
+
+    // The team's hitter plans two rounds ahead with the shared engine (Ultimus Core), the risk read from the creatures' habits.
+    private static Choice TwoRounds(CombatDuelSubCircle me, List<InHand> hand, List<InHand> whole, CombatDuelSubCircle focus,
+                                    List<CombatDuelSubCircle> enemies, int round) {
+        var (incoming, _) = BotCore.Incoming(enemies, round, Name);
+        var plan = BotCore.TwoRounds(me, hand, whole, focus, enemies, round, RewrittenAI.HealthShare(me) - incoming < HURT, Name,
+            new BotCore.Lookahead(0.9, 0.75, 30));
+        if (plan is null) {
+            return null;
+        }
+
+        return plan.First is null ? Pass(plan.Why) : new(Move.Cast, plan.First.Index, plan.Target, plan.Why);
     }
 
     // ---- the moves ----
@@ -161,7 +184,7 @@ internal static class QuestTeamTactics {
 
     private static Choice Finish(CombatDuelSubCircle me, List<InHand> hand, List<CombatDuelSubCircle> enemies) {
         foreach (var enemy in enemies.OrderBy(RewrittenAI.Health)) {
-            var finisher = hand.Where(h => h.Card.Hit && !h.Card.Natural && !h.Card.HitsAll && RewrittenAI.Estimate(h.Card, me, enemy) >= RewrittenAI.Health(enemy))
+            var finisher = hand.Where(h => h.Card.Hit && !h.Card.Natural && !h.Card.HitsAll && BotCore.Estimate(h.Card, me, enemy) >= RewrittenAI.Health(enemy))
                 .OrderBy(h => h.Card.Rank).FirstOrDefault();
             if (finisher is not null) {
                 return new(Move.Cast, finisher.Index, enemy.SlotIndex, $"finishes off {Name(enemy)} with {finisher.Card.Shown}");
@@ -170,7 +193,7 @@ internal static class QuestTeamTactics {
 
         // A hit on everyone that finishes two or more.
         var all = hand.Where(h => h.Card.Hit && h.Card.HitsAll && !h.Card.Natural)
-            .FirstOrDefault(h => enemies.Count(e => RewrittenAI.Estimate(h.Card, me, e) >= RewrittenAI.Health(e)) >= 2);
+            .FirstOrDefault(h => enemies.Count(e => BotCore.Estimate(h.Card, me, e) >= RewrittenAI.Health(e)) >= 2);
 
         return all is null ? null : new(Move.Cast, all.Index, -1, $"finishes off several with {all.Card.Shown}");
     }
@@ -178,8 +201,8 @@ internal static class QuestTeamTactics {
     private static Choice Hit(CombatDuelSubCircle me, List<InHand> hand, CombatDuelSubCircle focus, List<CombatDuelSubCircle> enemies, string why) {
         var best = hand.Where(h => h.Card.Hit && !h.Card.Natural)
             .Select(h => (Hand: h, Damage: h.Card.HitsAll
-                ? enemies.Sum(e => Math.Min(RewrittenAI.Health(e), RewrittenAI.Estimate(h.Card, me, e)))
-                : RewrittenAI.Estimate(h.Card, me, focus)))
+                ? enemies.Sum(e => Math.Min(RewrittenAI.Health(e), BotCore.Estimate(h.Card, me, e)))
+                : BotCore.Estimate(h.Card, me, focus)))
             .OrderByDescending(x => x.Damage).FirstOrDefault();
         if (best.Hand is null) {
             return null;

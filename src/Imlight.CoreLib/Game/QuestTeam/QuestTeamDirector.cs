@@ -277,6 +277,9 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             return;
         }
 
+        // Everything the team writes in the shared brain is team data, never solo (Niduus, 2026-11-14).
+        BotKnowledge.SetParty("Quest Team", $"team of {_team.Count}");
+
         // Ahziael's Restart: everyone logs out, four new wizards, in again.
         var restartFile = Path.Combine(QuestTeamWire.Folder, QuestTeamWire.RESTART_FILE);
         if (File.Exists(restartFile)) {
@@ -1435,6 +1438,8 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         if (!lost || index != 0) {
             if (index == 0) {
                 Note("Team", "won the battle.");
+                // Ultimus Core: the team's own mood (BotShared.BotMood), and its lessons tagged as team data.
+                BotMood.Of(QuestTeamTactics.MOOD).Saw(BotMood.WON);
                 Speak(_voiceRandom.Next(_team.Count), "won", 0.35);
                 Count("battles won");
                 // Fights won for each step, to see how many kills a drop or a count takes (Niduus: "flag abnormal drops").
@@ -1449,6 +1454,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         var key = _target?.Key ?? member.Zone;
         _losses[key] = _losses.GetValueOrDefault(key) + 1;
         Note("Team", $"lost the battle ({_losses[key]} time(s) at this step).", QuestTeamLink.MINOR);
+        BotMood.Of(QuestTeamTactics.MOOD).Saw(BotMood.LOST);
         Count("battles lost");
         if (_losses[key] >= QuestTeamWire.LossesBeforeIssue) {
             Issue("quest", _target?.Quest, $"The team lost the fight for \"{_target?.What ?? "this step"}\" {_losses[key]} times.", key: key + "|losses" + (_losses[key] > QuestTeamWire.LossesBeforeIssue ? "|skip" : ""),
