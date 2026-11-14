@@ -463,6 +463,27 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             : null;
     }
 
+    private DateTime _healingAt = DateTime.MinValue;
+    private string _buttonFromZone;
+
+    // A Recall or Commons press sent in the last 12 seconds that has not moved him yet.
+    private bool ButtonMovePending(UltimusMember.Status leader) {
+        var sent = _recallSentAt > _hubPressedAt ? _recallSentAt : _hubPressedAt;
+        if (DateTime.UtcNow - sent > TimeSpan.FromSeconds(12)) {
+            _buttonFromZone = null;
+            return false;
+        }
+
+        _buttonFromZone ??= leader.Zone;
+        if (!string.Equals(_buttonFromZone, leader.Zone, StringComparison.OrdinalIgnoreCase)) {
+            return false;
+        }
+
+        _doing = sent == _recallSentAt ? "recalling to his marked spot" : "using the Commons button";
+
+        return true;
+    }
+
     private void Lead(List<UltimusMember.Status> group) {
         var leader = group[0];
         // A step just done: a moment, as a player takes (UltimusDirector.Life.cs).
@@ -471,10 +492,18 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
 
+        // One intention at a time (approved 2026-11-14): a Recall or a Commons button press just sent is let finish (the
+        // loading and the landing) before anything new is planned or walked; it was cancelled by new walks before.
+        if (ButtonMovePending(leader)) {
+            StopWalking(0);
+            return;
+        }
+
         // Every new move checked against his mission, with its "because" (UltimusDirector.Guard.cs).
         var target = MissionCheck(leader, PickTarget(group));
         // Healing first, above all before a fight (UltimusDirector.Health.cs).
         if (HealFirst(group, target)) {
+            _healingAt = DateTime.UtcNow;
             return;
         }
 
@@ -1162,7 +1191,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         _sent[index] = (target, DateTime.UtcNow, member.X, member.Y);
-        _actors[index].Tell(new UltimusMember.WalkTo(Wobble(points), what));
+        _actors[index].Tell(new UltimusMember.WalkTo(Wobble(Smooth(member.Zone, StopShort(points, target))), what));
         if (index == 0) {
             _leaderLastTarget = target;
         }
@@ -1564,6 +1593,50 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         (200, 90), (200, 270),
     ];
 
+    // Exits whose trigger never took him on after the whole sweep, kept in a file (approved 2026-11-14, "remember known
+    // failures across restarts": the Oasis exit to Altar of Kings refused him 44 times over several runs). The next time
+    // he tries it once the normal way and is then taken through at once, instead of the whole sweep again.
+    private const string STUBBORN_EXITS_FILE = "stubborn-exits.txt";
+    private static HashSet<string> s_stubbornExits;
+
+    private static string ExitId(string zone, string to) => $"{zone}>{to}";
+
+    private static HashSet<string> StubbornExits() {
+        if (s_stubbornExits is not null) {
+            return s_stubbornExits;
+        }
+
+        var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        try {
+            var path = Path.Combine(UltimusWire.Folder, STUBBORN_EXITS_FILE);
+            if (File.Exists(path)) {
+                foreach (var line in File.ReadAllLines(path)) {
+                    if (line.Split(' ')[0] is { Length: > 0 } id) {
+                        set.Add(id);
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            Logger.Debug("Ultimus: could not read {0}: {1}", Logger.Args(STUBBORN_EXITS_FILE, e.Message));
+        }
+
+        return s_stubbornExits = set;
+    }
+
+    private static void RememberStubbornExit(string zone, string to, float x, float y) {
+        if (string.IsNullOrEmpty(zone) || string.IsNullOrEmpty(to) || !StubbornExits().Add(ExitId(zone, to))) {
+            return;
+        }
+
+        try {
+            File.AppendAllLines(Path.Combine(UltimusWire.Folder, STUBBORN_EXITS_FILE), [$"{ExitId(zone, to)} at ({x:0}, {y:0}) {DateTime.Now:yyyy-MM-dd HH:mm}"]);
+        }
+        catch (Exception e) {
+            Logger.Debug("Ultimus: could not write {0}: {1}", Logger.Args(STUBBORN_EXITS_FILE, e.Message));
+        }
+    }
+
     // Tries before Ahziael takes it through, and the longest it works an exit on its own.
     private const int EXIT_TRIES = 8;
     private static readonly TimeSpan EXIT_MOST = TimeSpan.FromSeconds(100);
@@ -1604,7 +1677,12 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         _sent[0] = (target, DateTime.UtcNow, leader.X, leader.Y);
         _leaderLastTarget = target;
 
-        if (_exitTries >= EXIT_TRIES || DateTime.UtcNow - _exitFirst > EXIT_MOST) {
+        var known = !string.IsNullOrEmpty(target.To) && StubbornExits().Contains(ExitId(leader.Zone, target.To));
+        if (_exitTries >= EXIT_TRIES || DateTime.UtcNow - _exitFirst > EXIT_MOST || known) {
+            if (known) {
+                Think($"This exit {target.What} never takes me on (I wrote it down before), so I don't walk the whole sweep again.", "known-exit|" + target.Key);
+            }
+
             ThroughExit(leader, target);
 
             return;
@@ -1659,6 +1737,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             "Ahziael takes a bot through when the exit's trigger does not fire; the exit's trigger in the zone file needs a look.",
             "walked through every part of the exit");
         BotMistakes.Fixed(BotMistakes.STUCK, leader.Zone, target.X, target.Y, "Ahziael takes it through the exit");
+        RememberStubbornExit(leader.Zone, target.To, target.X, target.Y);
         _actors[0].Tell(new UltimusMember.ThroughExit(target.To));
         _unstickUntil[0] = DateTime.UtcNow + UNSTICK_FOR;
         OverlayQuestPath.Forget(leader.CharId);
@@ -1949,7 +2028,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             var status = new JsonObject {
                 ["state"] = state,
                 ["why"] = why ?? "",
-                ["doing"] = _doing,
+                ["doing"] = _team.Count > 0 && _team[0].Wizard is not null && CombatDuelComponent.IsInBattle(_team[0].GlobalId) ? "in a battle" : _doing,
                 ["quest"] = _currentQuest is null ? "" : UltimusText.Title(_currentQuest),
                 ["questCode"] = _currentQuest ?? "",
                 ["questFor"] = run is null ? 0 : (int) (DateTime.UtcNow - run.Started).TotalSeconds,
@@ -1961,7 +2040,13 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             };
             UltimusLink.Send(new UltimusRequest { Op = "status", Json = status.ToJsonString() });
             // The overlay's Ultimus Spectator draws this quest's way on Ultimus's own minimap (read only).
-            UltimusSpectate.NoteStatus(_currentQuest ?? _target?.Quest, _target is null ? "" : Describe(_target), _doing, _leaderZone, _target?.X, _target?.Y);
+            // Always what is true this moment (approved 2026-11-14, "an always-accurate Spectator status line"): the quest's
+            // real step from his quest book, and what he is doing now (a battle, a heal, a Recall), not the last plan.
+            var leaderNow = _team.Count > 0 ? _team[0] : null;
+            var stepNow = leaderNow?.Wizard is null ? "" : SocialSelf(leaderNow).Step ?? "";
+            var doingNow = leaderNow?.Wizard is not null && CombatDuelComponent.IsInBattle(leaderNow.GlobalId) ? "in a battle" : _doing;
+            UltimusSpectate.NoteStatus(_currentQuest ?? _target?.Quest, stepNow.Length > 0 ? stepNow : _target is null ? "" : Describe(_target), doingNow,
+                _leaderZone, _target?.X, _target?.Y);
         }
         catch (Exception e) {
             Logger.Debug("Ultimus: could not write the status: {0}", Logger.Args(e.Message));

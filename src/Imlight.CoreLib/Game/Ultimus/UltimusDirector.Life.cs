@@ -77,6 +77,71 @@ internal sealed partial class UltimusDirectorActor {
         return true;
     }
 
+    // Corners are rounded off by at most this much (approved 2026-11-14, "smoother movement: curves").
+    private const float CURVE_MOST = 45f;
+
+    /// <summary>
+    /// Rounded corners: each turn of the walk is cut a little (a quarter of each side, at most CURVE_MOST), as a player
+    /// curves round a corner instead of stopping on it and turning. A cut that would leave the floor keeps the corner
+    /// (Niduus's routes rule: legal ground only).
+    /// </summary>
+    private static List<(float X, float Y)> Smooth(string zone, List<(float X, float Y)> points) {
+        if (points.Count < 3 || string.IsNullOrEmpty(zone)) {
+            return points;
+        }
+
+        var smooth = new List<(float X, float Y)>(points.Count * 2) { points[0] };
+        for (var i = 1; i < points.Count - 1; i++) {
+            var (a, b, c) = (points[i - 1], points[i], points[i + 1]);
+            var inLen = UltimusPlanner.Far(a.X, a.Y, b.X, b.Y);
+            var outLen = UltimusPlanner.Far(b.X, b.Y, c.X, c.Y);
+            var cutIn = Math.Min(CURVE_MOST, inLen * 0.25f);
+            var cutOut = Math.Min(CURVE_MOST, outLen * 0.25f);
+            if (inLen < 1 || outLen < 1) {
+                smooth.Add(b);
+                continue;
+            }
+
+            var p = (X: b.X + ((a.X - b.X) / inLen * cutIn), Y: b.Y + ((a.Y - b.Y) / inLen * cutIn));
+            var q = (X: b.X + ((c.X - b.X) / outLen * cutOut), Y: b.Y + ((c.Y - b.Y) / outLen * cutOut));
+            var mid = ((p.X + q.X) / 2, (p.Y + q.Y) / 2);
+            if (OverlayQuestPath.OnFloor(zone, p.X, p.Y) && OverlayQuestPath.OnFloor(zone, q.X, q.Y) && OverlayQuestPath.OnFloor(zone, mid.Item1, mid.Item2)) {
+                smooth.Add(p);
+                smooth.Add(q);
+            }
+            else {
+                smooth.Add(b);
+            }
+        }
+
+        smooth.Add(points[^1]);
+
+        return smooth;
+    }
+
+    /// <summary>
+    /// A clean stop at a person (a talk, a shop, a trainer): the walk ends a little before them, facing them, instead of
+    /// walking into them (approved 2026-11-14, "clean stops at NPCs").
+    /// </summary>
+    private static List<(float X, float Y)> StopShort(List<(float X, float Y)> points, UltimusPlanner.Target target) {
+        if (target?.Kind is not (UltimusPlanner.TALK or UltimusPlanner.OFFER or UltimusPlanner.SHOP or UltimusPlanner.TRAIN) || points.Count < 2) {
+            return points;
+        }
+
+        var end = points[^1];
+        var before = points[^2];
+        var len = UltimusPlanner.Far(before.X, before.Y, end.X, end.Y);
+        if (UltimusPlanner.Far(end.X, end.Y, target.X, target.Y) > 80 || len < 1) {
+            return points;
+        }
+
+        const float SHORT = 60f;
+        var trimmed = new List<(float X, float Y)>(points);
+        trimmed[^1] = len > SHORT + 10 ? (end.X + ((before.X - end.X) / len * SHORT), end.Y + ((before.Y - end.Y) / len * SHORT)) : before;
+
+        return trimmed;
+    }
+
     /// <summary>
     /// A small wobble in a walk's middle points (Pace.Wobble, at most a few steps; the ends stay), so he does not walk
     /// like a ruler. Kept small: the way stays on the legal walk (Niduus's routes rule).
@@ -87,10 +152,13 @@ internal sealed partial class UltimusDirectorActor {
             return points;
         }
 
+        var zone = _team.Count > 0 ? _team[0].Zone : null;
         var wobbled = new List<(float X, float Y)>(points.Count) { points[0] };
         for (var i = 1; i < points.Count - 1; i++) {
-            wobbled.Add((points[i].X + (float) ((_paceRandom.NextDouble() * 2) - 1) * size,
-                         points[i].Y + (float) ((_paceRandom.NextDouble() * 2) - 1) * size));
+            var moved = (X: points[i].X + (float) ((_paceRandom.NextDouble() * 2) - 1) * size,
+                         Y: points[i].Y + (float) ((_paceRandom.NextDouble() * 2) - 1) * size);
+            // Never off the floor for a wobble.
+            wobbled.Add(zone is null || OverlayQuestPath.OnFloor(zone, moved.X, moved.Y) ? moved : points[i]);
         }
 
         wobbled.Add(points[^1]);

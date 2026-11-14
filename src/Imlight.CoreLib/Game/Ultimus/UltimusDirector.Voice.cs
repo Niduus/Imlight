@@ -155,6 +155,12 @@ internal sealed partial class UltimusDirectorActor {
                 continue;
             }
 
+            // Only what is said to him (approved 2026-11-14: "don't reply to chat not aimed at him").
+            if (!AimedAtMe(heard, me, out var notMine)) {
+                Note("Ultimus", $"{heard.SpeakerName} said \"{UltimusText.Short(heard.Text, 60)}\" near him; he stays out of it ({notMine}).");
+                continue;
+            }
+
             // Players he met are kept in players.json too (UltimusDirector.Life.cs).
             Remember(heard.SpeakerCharId, heard.SpeakerName, heard.Whisper);
             var how = (heard.Whisper ? "whispered" : "said") + (heard.Typed ? "" : " in Menu Chat");
@@ -180,6 +186,49 @@ internal sealed partial class UltimusDirectorActor {
             Note("Ultimus", $"{heard.SpeakerName} {how}: \"{heard.Text}\"; Ultimus {(heard.Whisper ? "whispers back" : "says")}: \"{reply.Text}\"");
             _actors[0].Tell(heard.Whisper ? new UltimusMember.WhisperText(reply.Text, whisperTo) : new UltimusMember.SayText(reply.Text));
         }
+    }
+
+    // Who spoke near him lately (not to him), to tell a talk between players from a line for him.
+    private readonly List<(ulong CharId, DateTime At)> _talkNear = [];
+
+    /// <summary>
+    /// Whether a line is for him: whispered; his name in it; a talk he is already in with them (answered in the last 90
+    /// seconds); or said close to him (within 300) while no other player is talking nearby. Anything else is players
+    /// talking among themselves, and he stays out of it.
+    /// </summary>
+    private bool AimedAtMe(UltimusVoice.Heard heard, UltimusMember.Status me, out string why) {
+        why = "";
+        var now = DateTime.UtcNow;
+        _talkNear.RemoveAll(t => now - t.At > TimeSpan.FromSeconds(60));
+        var othersTalking = !heard.Whisper && _talkNear.Any(t => t.CharId != heard.SpeakerCharId);
+        if (!heard.Whisper) {
+            _talkNear.Add((heard.SpeakerCharId, now));
+        }
+
+        if (heard.Whisper) {
+            return true;
+        }
+
+        var name = me.Wizard?.PlayerNameBehavior?.GetWizardName() ?? UltimusRoster.NAME;
+        if (MenuChatBook.Says(heard.Text, UltimusRoster.NAME) || MenuChatBook.Says(heard.Text, name.Split(' ')[0])) {
+            return true;
+        }
+
+        if (BotSocial.Of(UltimusRoster.NAME, heard.SpeakerCharId) is { } friend && now - friend.RepliedAt < TimeSpan.FromSeconds(90)) {
+            return true;
+        }
+
+        if (othersTalking) {
+            why = "other players are talking here and it doesn't name him";
+            return false;
+        }
+
+        if (UltimusPlanner.Far(me.X, me.Y, heard.X, heard.Y) > 300) {
+            why = "said away from him and not to him";
+            return false;
+        }
+
+        return true;
     }
 
     /// <summary>What Ultimus knows of himself right now, for the social core: his real quest and step, area, level, mood.</summary>

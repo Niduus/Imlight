@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Imlight.Common;
 using Imlight.CoreLib.Game.BotShared;
 using Imlight.CoreLib.Game.Tools;
 using Imlight.CoreLib.Game.World;
@@ -237,6 +238,7 @@ internal sealed partial class UltimusDirectorActor {
 
     /// <summary>Every 10 minutes the report so far; at the end (log out, Stop) the final one.</summary>
     private void SessionTick(UltimusMember.Status leader) {
+        WeeklyHealth();
         if (_session is null) {
             SessionStart(leader);
             return;
@@ -316,6 +318,81 @@ internal sealed partial class UltimusDirectorActor {
             Think($"This session is over: I met {met} of my {goals.Count} goals ({quests} story quests, level {s.LevelIn} to {level}). " +
                   "How it went is in session-report.txt.", "session-end|" + s.Started.Ticks);
             _session = null;
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Weekly health check (approved 2026-11-14)
+    // ---------------------------------------------------------------------
+
+    private const string WEEKLY_FILE = "weekly-health.txt";
+    private DateTime _nextWeeklyLook = DateTime.MinValue;
+
+    /// <summary>
+    /// Once a week: his problems of the last 7 days ranked by what they cost him, biggest first, so the one to fix first is
+    /// on top (logs/ultimus/weekly-health.txt): where time was lost, mistakes (stuck spots, lost fights, no way), creatures
+    /// that beat him, exits that never took him on, and the replay pack of screenshot bugs.
+    /// </summary>
+    private void WeeklyHealth() {
+        if (DateTime.UtcNow < _nextWeeklyLook) {
+            return;
+        }
+
+        _nextWeeklyLook = DateTime.UtcNow.AddHours(1);
+        var path = Path.Combine(UltimusWire.Folder, WEEKLY_FILE);
+        try {
+            if (File.Exists(path) && DateTime.UtcNow - File.GetLastWriteTimeUtc(path) < TimeSpan.FromDays(7)) {
+                return;
+            }
+
+            var since = DateTime.UtcNow.AddDays(-7);
+            // (cost in minutes, what, what to do): one ranked list.
+            var items = new List<(double Cost, string What, string Do)>();
+            _waste ??= ReadWaste();
+            foreach (var spot in _waste.Values.OrderByDescending(w => w.Seconds).Take(8)) {
+                var why = spot.Why.OrderByDescending(w => w.Value).FirstOrDefault().Key ?? "standing";
+                items.Add((spot.Seconds / 60, $"{spot.Seconds / 60:0} min lost in {UltimusText.Zone(spot.Zone)} near ({spot.X:0}, {spot.Y:0}), mostly {why}" +
+                                              (spot.LastStep.Length > 0 ? $" (on: {UltimusText.Short(spot.LastStep, 60)})" : ""),
+                    "look at the map and the way there; time-waste.txt has the spot"));
+            }
+
+            foreach (var m in BotMistakes.Since(UltimusRoster.NAME, since).OrderByDescending(m => m.Times).Take(10)) {
+                items.Add((m.Times * 3, $"{m.Kind} x{m.Times} in {UltimusText.Zone(m.Zone)}: {UltimusText.Short(m.What, 90)}",
+                    m.Worked.Length > 0 ? $"fixed itself by: {m.Worked}" : (m.Prevention.Length > 0 ? m.Prevention : "needs a look")));
+            }
+
+            foreach (var foe in UltimusFoes.Rivals().Where(f => f.Last >= since).Take(5)) {
+                items.Add((foe.Lost * 8 + foe.AverageHealthLost * 10, $"{foe.Name} beat him {foe.Lost} of {foe.Fought} times (about {foe.AverageHealthLost:P0} health a fight)",
+                    "gear, deck or potions before it; rivals.txt"));
+            }
+
+            foreach (var exit in StubbornExits().Take(5)) {
+                items.Add((10, $"exit that never takes him on: {exit.Replace(">", " to ")}", "the exit's trigger in the zone file needs a look; stubborn-exits.txt"));
+            }
+
+            foreach (var bug in UltimusReplay.Run()) {
+                items.Add((60, "a screenshot bug is back: " + bug, "fix first: it was fixed before"));
+            }
+
+            var text = new StringBuilder();
+            text.AppendLine($"Ultimus weekly health check, {DateTime.Now:dddd d MMMM yyyy HH:mm} (last 7 days). Biggest first: fix the top one first.");
+            text.AppendLine();
+            var rank = 0;
+            foreach (var item in items.OrderByDescending(i => i.Cost).Take(15)) {
+                rank++;
+                text.AppendLine($"{rank}. {item.What}");
+                text.AppendLine($"   What to do: {item.Do}");
+            }
+
+            if (rank == 0) {
+                text.AppendLine("Nothing to fix this week. He ran clean.");
+            }
+
+            File.WriteAllText(path, text.ToString());
+            Note("Ultimus", $"wrote his weekly health check ({rank} things ranked, biggest first) to {WEEKLY_FILE}.");
+        }
+        catch (Exception e) {
+            Logger.Debug("Ultimus: could not write {0}: {1}", Logger.Args(WEEKLY_FILE, e.Message));
         }
     }
 
