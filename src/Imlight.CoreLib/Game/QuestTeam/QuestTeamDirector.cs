@@ -1225,10 +1225,38 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
     private string _exitKey = "";
     private DateTime _exitSince = DateTime.MinValue;
     private int _exitTries;
+    private DateTime _exitFirst = DateTime.MinValue;
+    private readonly List<string> _exitStood = [];
+
+    // The same file as Ultimus's (exit-tries.txt, in the Quest Team's folder): the newest round first, the last 40 kept.
+    private void WriteExitTries(QuestTeamMember.Status leader, QuestTeamPlanner.Target target, float reach) {
+        try {
+            var round = new List<string> {
+                $"{DateTime.Now:yyyy-MM-dd HH:mm} {QuestTeamText.Zone(leader.Zone)} exit {target.What} at ({target.X:0}, {target.Y:0}), reach {reach:0}, " +
+                $"to {target.To}: {_exitStood.Count} tries in {(DateTime.UtcNow - _exitFirst).TotalSeconds:0} s, never taken on",
+            };
+            round.AddRange(_exitStood.Select(l => "  " + l));
+            round.Add("");
+            var path = Path.Combine(QuestTeamWire.Folder, "exit-tries.txt");
+            var old = File.Exists(path) ? File.ReadAllLines(path).ToList() : [];
+            var rounds = 0;
+            var keep = old.TakeWhile(l => !(l.Length > 0 && !l.StartsWith(' ') && ++rounds > 39)).ToList();
+            File.WriteAllLines(path, [.. round, .. keep]);
+            Note(leader.Role, $"{leader.Name} walked through the exit {target.What} {_exitStood.Count} times and it never took them on: " +
+                              "each try is written in exit-tries.txt.");
+        }
+        catch (Exception e) {
+            Logger.Debug("Quest Team: could not write exit-tries.txt: {0}", Logger.Args(e.Message));
+        }
+
+        _exitStood.Clear();
+    }
 
     private void IntoExit(QuestTeamMember.Status leader, QuestTeamPlanner.Target target) {
         if (_exitKey != target.Key) {
             (_exitKey, _exitSince, _exitTries) = (target.Key, DateTime.UtcNow, 0);
+            _exitStood.Clear();
+            _exitFirst = DateTime.UtcNow;
         }
 
         var reach = OverlayQuestRoute.ExitReach(leader.Zone, target.X, target.Y);
@@ -1240,6 +1268,13 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             }
 
             return;
+        }
+
+        // A whole round (8 tries) and the exit never took them: each try written down for fixing the exit, then round again.
+        if (_exitTries >= 8) {
+            WriteExitTries(leader, target, reach);
+            _exitTries = 0;
+            _exitFirst = DateTime.UtcNow;
         }
 
         _exitSince = DateTime.UtcNow;
@@ -1258,6 +1293,8 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         points.Add((target.X + 5, target.Y + 5));
+        _exitStood.Add($"try {_exitTries}: stood at ({leader.X:0}, {leader.Y:0}, height {leader.Z:0}), {near:0} from the middle; walks out to " +
+                       $"({outside.X:0}, {outside.Y:0}) {(OverlayQuestPath.OnFloor(leader.Zone, outside.X, outside.Y) ? "on floor" : "off the floor")} and in at the middle");
         Note(leader.Role, $"{leader.Name} is at the exit {target.What} and it does not take it on: walks out past its edge and in again (try {_exitTries}).");
         _sent[0] = (target, DateTime.UtcNow, leader.X, leader.Y);
         _actors[0].Tell(new QuestTeamMember.WalkTo(points, "walks out of the exit and in again"));
