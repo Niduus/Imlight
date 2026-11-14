@@ -107,11 +107,35 @@ internal static class QuestStory {
             .Where(q => q is not null && !string.IsNullOrEmpty(q.m_questName) && IsMain(q) && !Quests.QuestOptions.IsOff(q.m_questName))
             .GroupBy(q => (string) q.m_questName, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+        // The main quests each one needs done first ("all of these" lists only).
         var needs = mains.ToDictionary(p => p.Key,
             p => QuestGuide.NeededQuests(p.Value.m_requirements).Where(mains.ContainsKey).Distinct(StringComparer.OrdinalIgnoreCase).ToList(),
             StringComparer.OrdinalIgnoreCase);
+        // The same, with every choice of an "any one of these" list too: Wizard City's school quests ("Balance", "Fire"...
+        // after Unicorn Way) are one choice each, and the chain before them is the world's story all the same.
+        var chain = mains.ToDictionary(p => p.Key,
+            p => ChainQuests(p.Value.m_requirements).Where(mains.ContainsKey).Distinct(StringComparer.OrdinalIgnoreCase).ToList(),
+            StringComparer.OrdinalIgnoreCase);
 
-        // How long the chain of main quests before each one is (a loop counts once).
+        var story = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        // Two ends for each world, both kept:
+        // - the end of its longest chain counting every world before it (as before: it keeps the quests that lead on to the
+        //   next world, "WC-PrePL-..." and the like);
+        // - the end of its longest chain inside the world itself, choices included (Niduus's tester log, 2026-11-13: a new
+        //   wizard had no story quest at all, because Wizard City's "end" was a later revisit quest that needs Dragonspyre,
+        //   and the school choice cut Unicorn Way and the rest of the world's start off the story).
+        AddWorldEnds(mains, needs, story, insideWorld: false);
+        AddWorldEnds(mains, chain, story, insideWorld: true);
+
+        Logger.Information("Quest tracker: {0} of {1} main quests are story quests.", Logger.Args(story.Count, mains.Count));
+
+        return story;
+    }
+
+    // Each world's last quest (the deepest; between equals, the latest code) and every quest of the same world it needs first,
+    // added to the story. insideWorld: the depth counts only the world's own quests.
+    private static void AddWorldEnds(Dictionary<string, QuestTemplate> mains, Dictionary<string, List<string>> needs,
+                                     HashSet<string> story, bool insideWorld) {
         var depth = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         var visiting = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         int Depth(string name) {
@@ -123,9 +147,12 @@ internal static class QuestStory {
                 return 0;
             }
 
+            var world = WorldOf(mains[name]);
             var deepest = 0;
             foreach (var need in needs.GetValueOrDefault(name) ?? []) {
-                deepest = Math.Max(deepest, Depth(need));
+                if (!insideWorld || string.Equals(WorldOf(mains[need]), world, StringComparison.OrdinalIgnoreCase)) {
+                    deepest = Math.Max(deepest, Depth(need));
+                }
             }
 
             visiting.Remove(name);
@@ -134,18 +161,18 @@ internal static class QuestStory {
             return deepest + 1;
         }
 
-        var story = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var world in mains.Values.GroupBy(WorldOf, StringComparer.OrdinalIgnoreCase)) {
-            // The world's last quest: the deepest; between equals, the latest code.
             var last = world.OrderByDescending(q => Depth(q.m_questName)).ThenByDescending(q => (string) q.m_questName, StringComparer.OrdinalIgnoreCase).First();
             var worldName = world.Key;
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var waiting = new Stack<string>([last.m_questName]);
             while (waiting.Count > 0) {
                 var name = waiting.Pop();
-                if (!story.Add(name)) {
+                if (!seen.Add(name)) {
                     continue;
                 }
 
+                story.Add(name);
                 foreach (var need in needs.GetValueOrDefault(name) ?? []) {
                     if (string.Equals(WorldOf(mains[need]), worldName, StringComparison.OrdinalIgnoreCase)) {
                         waiting.Push(need);
@@ -153,10 +180,22 @@ internal static class QuestStory {
                 }
             }
         }
+    }
 
-        Logger.Information("Quest tracker: {0} of {1} main quests are story quests.", Logger.Args(story.Count, mains.Count));
-
-        return story;
+    // The quests a requirement names as done first, the choices of "any one of these" lists included.
+    private static IEnumerable<string> ChainQuests(Requirement requirement) {
+        switch (requirement) {
+            case ReqHasEntry entry when !entry.m_applyNOT && entry.m_isQuestRegistry && !string.IsNullOrEmpty(entry.m_questName):
+                yield return entry.m_questName;
+                break;
+            case RequirementList list when !list.m_applyNOT:
+                foreach (var inner in list.m_requirements ?? []) {
+                    foreach (var found in ChainQuests(inner)) {
+                        yield return found;
+                    }
+                }
+                break;
+        }
     }
 
 }

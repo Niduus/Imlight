@@ -240,14 +240,7 @@ internal static partial class Aurorium {
     }
 
     internal static bool IsListening(int port) {
-        try {
-            using var client = new TcpClient();
-
-            return client.ConnectAsync("127.0.0.1", port).Wait(300) && client.Connected;
-        }
-        catch (Exception ex) when (ex is SocketException or AggregateException) {
-            return false;
-        }
+        return PortCheck.IsListening(port, TimeSpan.FromMilliseconds(300));
     }
 
     // ---------------------------------------------------------------------
