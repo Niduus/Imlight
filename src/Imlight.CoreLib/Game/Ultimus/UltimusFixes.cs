@@ -43,9 +43,11 @@ internal static class UltimusFixes {
     internal const string AWAY = "walk well away and come back another way";
     internal const string START = "go back to where the area starts";
     internal const string GO = "have Ahziael take it to the area of its step";
-    internal const string SKIP = "have Ahziael finish the step";
+    // Every move fix was tried: he flags the spot for Niduus and starts the round again. He never has a step finished for
+    // him (Niduus, 2026-11-14: "HIS ENTIRE PURPOSE IS TO QUEST AS IF HE IS A HUMAN. His only exceptions ... to unstuck").
+    internal const string FLAG = "flag it for Niduus and try every fix again";
 
-    internal static readonly string[] Order = [ASIDE, OTHER_WAY, HOP, AWAY, START, GO, SKIP];
+    internal static readonly string[] Order = [ASIDE, OTHER_WAY, HOP, AWAY, START, GO, FLAG];
 
     // A flag this near another one is the same flag, whatever step it was on (Niduus's log, 2026-11-13: at The Oasis's
     // start the same spot was flagged again and again; what failed there fails there for the next step too).
@@ -100,7 +102,7 @@ internal static class UltimusFixes {
             }
             else {
                 flag.Tried.Clear();
-                fix = allowed.FirstOrDefault(f => f != SKIP) ?? SKIP;
+                fix = allowed.FirstOrDefault(f => f != FLAG) ?? FLAG;
             }
 
             flag.Tried.Add(fix);
@@ -112,7 +114,8 @@ internal static class UltimusFixes {
 
     /// <summary>It got free after <paramref name="flag"/>'s last fix: that fix is what works there.</summary>
     internal static void Worked(Flag flag) {
-        if (flag is null || flag.Tried.Count == 0) {
+        // Flagging moves nothing, so it is never what freed him.
+        if (flag is null || flag.Tried.Count == 0 || flag.Tried[^1] == FLAG) {
             return;
         }
 

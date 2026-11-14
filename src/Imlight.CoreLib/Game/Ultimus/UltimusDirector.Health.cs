@@ -144,7 +144,7 @@ internal sealed partial class UltimusDirectorActor {
                 _toldNoHeal = true;
                 Issue("team", target.Quest, $"{leader.Name} could not heal for {(int) s_noHealGiveUp.TotalMinutes} minutes: no potions, no wisps in " +
                                             $"{UltimusText.Zone(leader.Zone)} and no potion shop it can reach or afford. It fights on hurt.",
-                    key: "noheal|" + leader.Zone, skipStep: false, level: UltimusLink.ABNORMAL);
+                    key: "noheal|" + leader.Zone, broken: false, level: UltimusLink.ABNORMAL);
             }
 
             return false;

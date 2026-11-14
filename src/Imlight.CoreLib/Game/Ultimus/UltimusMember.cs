@@ -86,8 +86,6 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
 
     private sealed record ClickNow(BotShared.BotBattle.Move Move);
 
-    /// <summary>Ahziael finishes the step it is on in a quest (.quest completegoalfor), for a step that is broken.</summary>
-    internal sealed record SkipStep(string Quest);
     /// <summary>Ahziael sends it to the area its quest step is in, as a player's .stuck go does.</summary>
     internal sealed record GoToStep;
     /// <summary>Ahziael takes it through a walk-through exit that never took it on, to the area the exit leads to.</summary>
@@ -296,7 +294,6 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
             _recalledAt = DateTime.UtcNow;
             _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "botzone", QuestName = m.To });
         });
-        Receive<SkipStep>(m => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "completegoal", QuestName = m.Quest }));
         Receive<Recall>(_ => {
             _recalledAt = DateTime.UtcNow;
             _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "botrecall" });
