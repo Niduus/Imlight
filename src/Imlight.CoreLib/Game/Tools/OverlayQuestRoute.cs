@@ -460,6 +460,9 @@ internal static class OverlayQuestRoute {
     private static HashSet<string> s_instanceZones;
     private static int s_instanceZonesFrom = -1;
 
+    /// <summary>Whether an area is a dungeon (the zone list marks it as an instance).</summary>
+    internal static bool IsDungeon(string zone) => !string.IsNullOrEmpty(zone) && InstanceZones().Contains(zone);
+
     // The zones the zone list marks as instances (read again when it changes).
     private static HashSet<string> InstanceZones() {
         var all = ZoneNames.All;

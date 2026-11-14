@@ -78,7 +78,13 @@ internal sealed partial class UltimusDirectorActor {
     private bool HealFirst(List<UltimusMember.Status> group, UltimusPlanner.Target target) {
         var leader = group[0];
         _healWaiting = false;
-        if (CombatDuelComponent.IsInBattle(leader.GlobalId) || !Hurt(leader, out var lowHealth, out var lowMana, ToughFoeNow(target))) {
+        // Before walking into a dungeon he wants more (UltimusDirector.Sense.cs: a dungeon is done in one go).
+        var hurt = Hurt(leader, out var lowHealth, out var lowMana, ToughFoeNow(target));
+        if (!hurt && DungeonPrep(leader, target, out var dungeonHealth, out var dungeonMana)) {
+            (hurt, lowHealth, lowMana) = (true, dungeonHealth, dungeonMana);
+        }
+
+        if (CombatDuelComponent.IsInBattle(leader.GlobalId) || !hurt) {
             _hurtSince = DateTime.MaxValue;
             _toldNoHeal = false;
 
@@ -135,7 +141,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         // 4. Nothing to heal from: talking and travelling go on, a fight waits.
-        if (target?.Kind != UltimusPlanner.FIGHT) {
+        if (target?.Kind != UltimusPlanner.FIGHT && !IntoDungeon(leader, target)) {
             return false;
         }
 

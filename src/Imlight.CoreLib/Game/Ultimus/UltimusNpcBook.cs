@@ -86,6 +86,16 @@ internal static class UltimusNpcBook {
             ?? entries.Where(e => e.Name.Contains(wanted, StringComparison.OrdinalIgnoreCase)).OrderBy(e => e.Name.Length).FirstOrDefault();
     }
 
+    /// <summary>The NPCs whose names a text says (whole words), longest name first: for hints from a quest's words.</summary>
+    internal static List<(ulong Id, Entry Entry)> Named(string text) {
+        if (string.IsNullOrWhiteSpace(text)) {
+            return [];
+        }
+
+        return [.. s_book.Where(p => p.Value.Name is { Length: >= 4 } name && p.Value.Places.Count > 0 && BotShared.MenuChatBook.Says(text, name))
+            .OrderByDescending(p => p.Value.Name.Length).Select(p => (p.Key, p.Value))];
+    }
+
     internal static int Count => s_book.Count;
 
     /// <summary>Builds the book on a background thread (or reads it from its file), one area at a time.</summary>

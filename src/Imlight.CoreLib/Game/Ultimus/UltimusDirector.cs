@@ -206,6 +206,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
             try {
                 MaybeReview(stopping: true);
+                // The session's end report (UltimusDirector.Sense.cs).
+                WriteSession(_team.Count > 0 ? _team[0] : null, final: true);
             }
             catch (Exception e) {
                 Logger.Debug("Ultimus: the review at stopping failed: {0}", Logger.Args(e.Message));
@@ -338,6 +340,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // Ahziael's "Back to story", and the guardrails' watch (UltimusDirector.Guard.cs).
         MaybeBackToStory();
         GuardTick(_team[0]);
+        // Dungeon sense and his session's goals (UltimusDirector.Sense.cs).
+        DungeonTick(_team[0]);
+        SessionTick(_team[0]);
 
         // Paused in Ahziael: they stand where they are, logged in (a battle still plays out by itself).
         if (DateTime.UtcNow >= _nextPauseLook) {
@@ -361,6 +366,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         // A battle: it plays it out (CombatDuelComponent.Ultimus.cs picks its cards).
         if (HandleBattle()) {
+            return;
+        }
+
+        // A cutscene: watched to the end (UltimusDirector.Sense.cs).
+        if (WatchingCutscene()) {
             return;
         }
 
@@ -500,6 +510,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                     UltimusScout.Expect(target.Template);
                     Note("Ultimus", $"knows what it is about to fight: {UltimusScout.OfCreature(target.Template).Describe()}.");
                     ThinkAboutFight(target);
+                    ThinkAboutRival(target);
                     PrepareDecks(UltimusScout.SituationOf(target.Template));
                 }
             }
@@ -703,6 +714,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         NoteWorld(_currentQuest);
         if (_currentQuest is not null) {
             var target = UltimusPlanner.ForQuest(group, _currentQuest);
+            // A step he can't place: the area or person the quest's own words name (UltimusDirector.Sense.cs).
+            if (HintFromText(leader, target) is { } hint) {
+                return hint;
+            }
+
             if (target is not null) {
                 foreach (var old in _stonesUsed.Where(s => DateTime.UtcNow - s.Value > TimeSpan.FromSeconds(90)).Select(s => s.Key).ToList()) {
                     _stonesUsed.Remove(old);
@@ -2015,7 +2031,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     private readonly Dictionary<string, long> _today = new(StringComparer.Ordinal);
     private DateTime _todayDate = DateTime.Now.Date;
 
-    private void Count(string what, long amount = 1) => _today[what] = _today.GetValueOrDefault(what) + amount;
+    private void Count(string what, long amount = 1) {
+        _today[what] = _today.GetValueOrDefault(what) + amount;
+        SessionCount(what, amount);
+    }
 
     private string Summary() {
         var levels = string.Join(", ", _team.Select(m => $"{m.Role} {m.Wizard?.MagicSchoolBehavior?.Level ?? 0}"));

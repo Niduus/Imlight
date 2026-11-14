@@ -35,6 +35,10 @@ internal sealed partial class ManagerWindow {
     private readonly TextBlock _ultState = new() { TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold };
     private readonly TextBlock _ultDoing = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _ultToday = new() { TextWrapping = TextWrapping.Wrap };
+
+    // The friends page (Niduus, 2026-11-14, approved): the players Ultimus has met and talked with.
+    private readonly SelectableTextBlock _ultFriends = new() { TextWrapping = TextWrapping.Wrap };
+    private DateTime _ultFriendsRead = DateTime.MinValue;
     private readonly TextBlock _ultQuest = new() { TextWrapping = TextWrapping.Wrap };
     private readonly StackPanel _ultMembers = new() { Spacing = 6 };
     // Its stats, gear, deck and quest, the same sheet as the Quest Team's (Niduus, 2026-11-13); with one Ultimus the picker hides.
@@ -171,7 +175,11 @@ internal sealed partial class ManagerWindow {
                     "A quest that takes longer than this is reported, however long it was expected to take. 0 means no limit."),
                 SwitchRow("Nightly auto-coach", _ultAutoCoach,
                     "On: each night (after 4 AM) Ultimus puts all his logs in a dated folder, logs\\ultimus\\coach, each file on its own plus one joint file, ready to hand to the coach. The last 14 nights are kept. Off by default.")),
-            UltimusLocksFold());
+            UltimusLocksFold(),
+            Fold("users", ULTIMUS_TAB, "Friends he made",
+                "The players Ultimus has met: how often you talked, battles fought together, your school and world if you told him, " +
+                "and when he last saw you. Muted means he is not answering that player for a while (rude or spamming). Updates by itself.",
+                _ultFriends));
     }
 
     private void LoadUltimusSettings() {
@@ -273,6 +281,83 @@ internal sealed partial class ManagerWindow {
         }
 
         Say("Ultimus did not answer. Is the server running with Ultimus on and in the game?");
+    }
+
+    // The friends page: logs\bots\social-ultimus.json (his memory of each player he talked with) and logs\ultimus\players.json
+    // (everyone he met), read again when either changes.
+    private void ShowUltimusFriends() {
+        var social = Path.Combine(_manager.LogFolder, "bots", "social-ultimus.json");
+        var met = Path.Combine(UltimusFolder, "players.json");
+        var changed = new[] { social, met }.Where(File.Exists).Select(File.GetLastWriteTimeUtc).DefaultIfEmpty(DateTime.MinValue).Max();
+        if (changed <= _ultFriendsRead && _ultFriends.Text?.Length > 0) {
+            return;
+        }
+
+        _ultFriendsRead = changed;
+        var rows = new Dictionary<string, (string Name, int Talks, int Battles, string School, string World, DateTime Last, DateTime Muted, int Met)>();
+        try {
+            if (File.Exists(social) && JsonNode.Parse(File.ReadAllText(social)) is JsonObject friends) {
+                foreach (var (id, node) in friends) {
+                    if (node is not JsonObject f) {
+                        continue;
+                    }
+
+                    rows[id] = ((string?) f["Name"] ?? "", (int?) f["Talks"] ?? 0, (int?) f["BattlesTogether"] ?? 0, (string?) f["School"] ?? "",
+                        (string?) f["World"] ?? "", (DateTime?) f["Last"] ?? DateTime.MinValue, (DateTime?) f["MutedUntil"] ?? DateTime.MinValue, 0);
+                }
+            }
+
+            if (File.Exists(met) && JsonNode.Parse(File.ReadAllText(met)) is JsonObject players) {
+                foreach (var (id, node) in players) {
+                    if (node is not JsonObject p) {
+                        continue;
+                    }
+
+                    var times = (int?) p["Times"] ?? 0;
+                    var last = (DateTime?) p["Last"] ?? DateTime.MinValue;
+                    rows[id] = rows.TryGetValue(id, out var row)
+                        ? row with { Met = times, Last = row.Last > last ? row.Last : last }
+                        : ((string?) p["Name"] ?? "", 0, 0, "", "", last, DateTime.MinValue, times);
+                }
+            }
+        }
+        catch (Exception e) when (e is IOException or JsonException or InvalidOperationException or FormatException) {
+            return;
+        }
+
+        if (rows.Count == 0) {
+            _ultFriends.Text = "Nobody yet. Walk up to Ultimus in the game and say hi (typed or Menu Chat), or whisper to him.";
+            return;
+        }
+
+        var text = new StringBuilder();
+        foreach (var row in rows.Values.OrderByDescending(r => r.Last)) {
+            var parts = new List<string> { $"talked {row.Talks} time(s)" };
+            if (row.Met > 0) {
+                parts.Add($"met {row.Met} time(s)");
+            }
+
+            if (row.Battles > 0) {
+                parts.Add($"{row.Battles} battle(s) together");
+            }
+
+            if (row.School.Length > 0) {
+                parts.Add(row.School);
+            }
+
+            if (row.World.Length > 0) {
+                parts.Add("questing in " + row.World);
+            }
+
+            if (row.Muted > DateTime.UtcNow) {
+                parts.Add($"muted until {row.Muted.ToLocalTime():HH:mm}");
+            }
+
+            var seen = row.Last == DateTime.MinValue ? "" : $" (last seen {row.Last.ToLocalTime():d MMM, HH:mm})";
+            text.AppendLine($"{(row.Name.Length > 0 ? row.Name : "a player")}: {string.Join(", ", parts)}{seen}");
+        }
+
+        _ultFriends.Text = text.ToString().TrimEnd();
     }
 
     // Back to story (the guardrails, Niduus 2026-11-14): he drops any side trip, a pause is lifted, and he plans again toward
@@ -732,6 +817,10 @@ internal sealed partial class ManagerWindow {
         }
 
         _ultBanner.IsVisible = fresh.Count > 0 || milestone is not null;
+
+        if (_ultFriends.IsEffectivelyVisible) {
+            ShowUltimusFriends();
+        }
 
         if (_ultState.IsEffectivelyVisible) {
             ShowUltimusStatus();
