@@ -598,9 +598,51 @@ internal sealed partial class ManagerWindow {
         return UltimusIssuesText([issue]);
     }
 
-    // One entry per quest with a "quest" issue: newest reason, how many times, found ahead or met while playing.
-    private List<(string Quest, string Title, string World, int Count, bool Ahead, UltimusIssue Latest)> UltimusBrokenList()
-        => [.. _ultIssueList.Where(i => i.Kind == "quest" && i.Quest.Length > 0)
+    // "Fixed it" (Niduus, 2026-11-14): tells Ultimus to try the quest again at once from a clean slate (fixed-request.txt),
+    // and hides it from the list until it is reported again (fixed-quests.txt keeps when it was marked).
+    private Control FixedItButton(string quest, string title) {
+        var row = Row(Action(Plain("Fixed it"), async () => {
+            Directory.CreateDirectory(UltimusFolder);
+            var at = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
+            await File.AppendAllTextAsync(Path.Combine(UltimusFolder, "fixed-request.txt"), quest + Environment.NewLine);
+            await File.AppendAllTextAsync(Path.Combine(UltimusFolder, "fixed-quests.txt"), $"{quest}\t{at}{Environment.NewLine}");
+            _ultIssuesShown = -1;
+            ShowUltimusIssues();
+            Say(InstalledCommands.IsServerRunning(_manager.InstallFolder) && _ultEnabled.IsChecked == true
+                ? $"Marked fixed: {title}. Ultimus tries it again within a few seconds, and it comes back here only if it still goes wrong."
+                : $"Marked fixed: {title}. Ultimus tries it again once the server is on and he is in the game.");
+        }));
+        ToolTip.SetTip(row, "You fixed this quest: Ultimus forgets what went wrong and tries it again right away.");
+
+        return row;
+    }
+
+    // When each quest was marked fixed (newest wins).
+    private Dictionary<string, DateTime> UltimusFixedQuests() {
+        var fixedAt = new Dictionary<string, DateTime>(StringComparer.OrdinalIgnoreCase);
+        try {
+            var path = Path.Combine(UltimusFolder, "fixed-quests.txt");
+            if (File.Exists(path)) {
+                foreach (var parts in File.ReadAllLines(path).Select(l => l.Split('\t')).Where(p => p.Length == 2)) {
+                    if (DateTime.TryParse(parts[1], CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var at)) {
+                        fixedAt[parts[0]] = at;
+                    }
+                }
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // Nothing marked.
+        }
+
+        return fixedAt;
+    }
+
+    // One entry per quest with a "quest" issue: newest reason, how many times, found ahead or met while playing. A quest
+    // marked fixed shows again only when it is reported after that.
+    private List<(string Quest, string Title, string World, int Count, bool Ahead, UltimusIssue Latest)> UltimusBrokenList() {
+        var fixedAt = UltimusFixedQuests();
+        return [.. _ultIssueList.Where(i => i.Kind == "quest" && i.Quest.Length > 0
+                                       && (!fixedAt.TryGetValue(i.Quest, out var at) || i.At.ToUniversalTime() > at.ToUniversalTime()))
             .GroupBy(i => i.Quest, StringComparer.OrdinalIgnoreCase)
             .Select(g => {
                 var latest = g.OrderByDescending(i => i.Id).First();
@@ -608,6 +650,7 @@ internal sealed partial class ManagerWindow {
                 return (g.Key, latest.Title.Length > 0 ? latest.Title : g.Key, latest.World, g.Count(), met is null, met ?? latest);
             })
             .OrderByDescending(b => b.Item6.Id)];
+    }
 
     private static string UltimusBrokenReason(string text) {
         var reason = text.StartsWith("READ-AHEAD", StringComparison.Ordinal) && text.IndexOf("): ", StringComparison.Ordinal) is var cut and > 0
@@ -645,6 +688,7 @@ internal sealed partial class ManagerWindow {
                             Foreground = MUTED, FontSize = ManagerTheme.FONT_SMALL, TextWrapping = TextWrapping.Wrap,
                         },
                         new TextBlock { Text = UltimusBrokenReason(b.Latest.Text), TextWrapping = TextWrapping.Wrap },
+                        FixedItButton(b.Quest, b.Title),
                     },
                 },
             });

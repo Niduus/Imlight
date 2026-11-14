@@ -267,7 +267,7 @@ internal sealed partial class UltimusDirectorActor {
         else if (_target?.Kind == UltimusPlanner.NONE) {
             why = "a step he can't work out";
         }
-        else if (now - _wasteStill.At > TimeSpan.FromSeconds(15) && !Pausing()) {
+        else if (now - _wasteStill.At > TimeSpan.FromSeconds(15) && !Pausing() && now >= _breakUntil) {
             why = "standing still";
         }
 
@@ -285,9 +285,85 @@ internal sealed partial class UltimusDirectorActor {
         spot.Seconds += dt;
         spot.Why[why] = spot.Why.GetValueOrDefault(why) + dt;
         spot.LastStep = _target?.What ?? _doing ?? "";
+        StuckToday(key, leader.Zone, spot.X, spot.Y, why, dt, spot.LastStep);
         if (now - _wasteWritten > TimeSpan.FromMinutes(5)) {
             _wasteWritten = now;
             WriteWaste();
+            WriteStuckDays();
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // The day's "most stuck" (Niduus, 2026-11-14): the 3 spots he lost the most time at today, with a suggested fix,
+    // for his Daily diary in Ahziael (stuck-days.json, the last 14 days).
+    // ---------------------------------------------------------------------
+
+    private const string STUCK_DAYS_FILE = "stuck-days.json";
+
+    internal sealed class StuckDays {
+        public string Date { get; set; } = "";
+        public Dictionary<string, WasteSpot> Today { get; set; } = [];
+        public Dictionary<string, List<string>> Days { get; set; } = [];
+    }
+
+    private StuckDays _stuckDays;
+
+    private void StuckToday(string key, string zone, float x, float y, string why, double seconds, string step) {
+        _stuckDays ??= ReadStuckDays();
+        var today = DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+        if (_stuckDays.Date != today) {
+            _stuckDays.Date = today;
+            _stuckDays.Today = [];
+        }
+
+        if (!_stuckDays.Today.TryGetValue(key, out var spot)) {
+            _stuckDays.Today[key] = spot = new WasteSpot { Zone = zone, X = x, Y = y };
+        }
+
+        spot.Seconds += seconds;
+        spot.Why[why] = spot.Why.GetValueOrDefault(why) + seconds;
+        spot.LastStep = step;
+    }
+
+    private static StuckDays ReadStuckDays() {
+        try {
+            var path = Path.Combine(UltimusWire.Folder, STUCK_DAYS_FILE);
+            if (File.Exists(path) && UltimusWire.Read<StuckDays>(File.ReadAllText(path)) is { } read) {
+                return read;
+            }
+        }
+        catch (Exception ex) {
+            Logger.Debug("Ultimus: {0} could not be read: {1}", Logger.Args(STUCK_DAYS_FILE, ex.Message));
+        }
+
+        return new StuckDays();
+    }
+
+    private void WriteStuckDays() {
+        if (_stuckDays is null || _stuckDays.Date.Length == 0) {
+            return;
+        }
+
+        var top = _stuckDays.Today.Values.Where(s => s.Seconds >= 60).OrderByDescending(s => s.Seconds).Take(3).Select(s => {
+            var why = s.Why.OrderByDescending(w => w.Value).First().Key;
+            var fix = why switch {
+                "getting unstuck" => "a wall, ledge or narrow spot there: look at the walkable map at that spot",
+                "a step he can't work out" => "the step itself (its data, or a creature or object missing): see the Broken quests list",
+                _ => "he was waiting there (to heal, for wisps, or with nothing to do for the step): see his log at that time",
+            };
+            return $"{s.Seconds / 60:0} min in {UltimusText.Zone(s.Zone)} near ({s.X:0}, {s.Y:0}), mostly {why}, on \"{UltimusText.Short(s.LastStep, 70)}\". Likely fix: {fix}.";
+        }).ToList();
+        _stuckDays.Days[_stuckDays.Date] = top;
+        foreach (var old in _stuckDays.Days.Keys.OrderByDescending(d => d, StringComparer.Ordinal).Skip(14).ToList()) {
+            _stuckDays.Days.Remove(old);
+        }
+
+        try {
+            Directory.CreateDirectory(UltimusWire.Folder);
+            File.WriteAllText(Path.Combine(UltimusWire.Folder, STUCK_DAYS_FILE), UltimusWire.Write(_stuckDays));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            Logger.Debug("Ultimus: {0} could not be written: {1}", Logger.Args(STUCK_DAYS_FILE, ex.Message));
         }
     }
 

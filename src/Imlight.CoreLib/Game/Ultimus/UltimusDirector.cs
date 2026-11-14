@@ -344,6 +344,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         ReadResume();
         SaveResume();
         ReadAheadTick();
+        FixedTick();
         UsePotions();
         NoticeOddities();
         AnswerPlayers();
@@ -511,6 +512,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     }
 
     private void Lead(List<UltimusMember.Status> group) {
+        // A short break on a stuck step: sitting down, nothing else for 2 minutes (UltimusDirector.Break.cs).
+        if (OnBreak(group[0])) {
+            return;
+        }
+
         var leader = group[0];
         // A step just done: a moment, as a player takes (UltimusDirector.Life.cs).
         if (Pausing()) {

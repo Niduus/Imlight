@@ -99,6 +99,7 @@ internal sealed partial class ManagerWindow {
             return "";
         }
 
+        var stuck = StuckDays(Path.Combine(Path.GetDirectoryName(journalPath) ?? "", "stuck-days.json"));
         var text = new StringBuilder();
         foreach (var day in days) {
             var moments = day.OrderBy(e => e.At).ToList();
@@ -106,6 +107,14 @@ internal sealed partial class ManagerWindow {
             var date = day.Key.ToString("dddd d MMMM yyyy", CultureInfo.InvariantCulture);
             text.AppendLine(label.Length > 0 ? $"{label}, {date}" : date);
             text.AppendLine(DiarySummary(moments));
+            // Where he lost the most time that day, with the fix he would suggest (Niduus, 2026-11-14).
+            if (stuck.TryGetValue(day.Key.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), out var most) && most.Count > 0) {
+                text.AppendLine("Most stuck:");
+                for (var i = 0; i < most.Count; i++) {
+                    text.AppendLine($"  {i + 1}. {most[i]}");
+                }
+            }
+
             foreach (var moment in moments) {
                 text.AppendLine($"    {moment.At.ToLocalTime():HH:mm}  {moment.Text}");
             }
@@ -114,6 +123,35 @@ internal sealed partial class ManagerWindow {
         }
 
         return text.ToString().TrimEnd();
+    }
+
+    // stuck-days.json (the server's "most stuck" top 3 per day): date -> lines; empty when missing.
+    private static Dictionary<string, List<string>> StuckDays(string path) {
+        try {
+            if (!File.Exists(path)) {
+                return [];
+            }
+
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            using var doc = JsonDocument.Parse(stream);
+            var result = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+            if (doc.RootElement.ValueKind == JsonValueKind.Object) {
+                foreach (var prop in doc.RootElement.EnumerateObject()) {
+                    if (!prop.Name.Equals("Days", StringComparison.OrdinalIgnoreCase) || prop.Value.ValueKind != JsonValueKind.Object) {
+                        continue;
+                    }
+
+                    foreach (var day in prop.Value.EnumerateObject().Where(d => d.Value.ValueKind == JsonValueKind.Array)) {
+                        result[day.Name] = [.. day.Value.EnumerateArray().Where(l => l.ValueKind == JsonValueKind.String).Select(l => l.GetString() ?? "")];
+                    }
+                }
+            }
+
+            return result;
+        }
+        catch (Exception) {
+            return [];
+        }
     }
 
     // "A good day. I finished 5 quests, reached level 12, won 2 tough fights and lost 1, met Ann, ..."
