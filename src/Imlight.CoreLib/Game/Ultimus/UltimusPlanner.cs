@@ -356,6 +356,13 @@ internal static class UltimusPlanner {
         }
     }
 
+    /// <summary>Ahziael's "Fixed it": every step of <paramref name="quest"/> set aside is open again.</summary>
+    internal static void ClearAside(string quest) {
+        foreach (var key in s_setAside.Keys.Where(k => k.StartsWith(quest + "|", StringComparison.OrdinalIgnoreCase)).ToList()) {
+            s_setAside.TryRemove(key, out _);
+        }
+    }
+
     /// <summary>A step set aside for a while: when the quest has another open step, that one goes first (the guardrails).</summary>
     internal static void SetAside(string key, TimeSpan forHow) => s_setAside[key] = DateTime.UtcNow + forHow;
 

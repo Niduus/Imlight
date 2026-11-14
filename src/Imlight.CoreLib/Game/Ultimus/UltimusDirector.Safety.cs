@@ -117,16 +117,21 @@ internal sealed partial class UltimusDirectorActor {
     private readonly Dictionary<string, DateTime> _parkedAt = [];
 
     /// <summary>
-    /// Every fix was tried at this spot, twice over: the step is set aside for 30 minutes (other story work first, if
-    /// any), a "needs help" report is made with all his logs, and he keeps trying after. Nothing is skipped.
+    /// Every fix was tried at this spot, twice over. He takes a short break (2 minutes, sitting down), then the step is set
+    /// aside for a while, other story work first if any: 5 minutes the first time, 15 the second, 30 after (Niduus,
+    /// 2026-11-14: "short break and retry" instead of half an hour at once). A "needs help" report is made with all his
+    /// logs, and he keeps trying after. Nothing is skipped.
     /// </summary>
     private void ParkStep(UltimusMember.Status member, string quest, string stepKey, string what, string where) {
         var key = stepKey ?? what ?? "";
-        if (_parkedAt.TryGetValue(key, out var at) && DateTime.UtcNow - at < TimeSpan.FromMinutes(30)) {
+        if (_parkedAt.TryGetValue(key, out var at) && DateTime.UtcNow - at < ParkedFor(key)) {
             return;
         }
 
+        var times = _parkCount[key] = _parkCount.GetValueOrDefault(key) + 1;
+        var minutes = times switch { 1 => 5, 2 => 15, _ => 30 };
         _parkedAt[key] = DateTime.UtcNow;
+        _parkedFor[key] = TimeSpan.FromMinutes(minutes);
         _parkedWhy[key] = (quest, what, where);
         // The fix he would suggest (Niduus, 2026-11-14, "suggest the likely fix"): from the shared quest diagnosis.
         var fix = SuggestFix(quest);
@@ -134,22 +139,32 @@ internal sealed partial class UltimusDirectorActor {
         Announce(SAY_STUCK, $"I'm stuck on \"{UltimusText.Short(what, 60)}\". Anyone know how to do it?");
         _dayParked++;
         if (!string.IsNullOrEmpty(stepKey)) {
-            UltimusPlanner.SetAside(stepKey, TimeSpan.FromMinutes(30));
+            UltimusPlanner.SetAside(stepKey, TimeSpan.FromMinutes(minutes));
         }
 
-        var folder = SaveNeedsHelp($"Ultimus needs help: \"{what}\" for {UltimusText.Title(quest)} in {where}. He tried every way he knows, twice over." +
-                                   $"\nSuggested fix: {fix}");
-        Note("Ultimus", $"NEEDS HELP: tried every fix at {where} twice over for \"{what}\": sets the step aside for 30 minutes and does other story work if he has any. " +
+        StartBreak(what);
+        var folder = times == 1 || times == 3
+            ? SaveNeedsHelp($"Ultimus needs help: \"{what}\" for {UltimusText.Title(quest)} in {where}. He tried every way he knows, twice over." +
+                            $"\nSuggested fix: {fix}")
+            : null;
+        Note("Ultimus", $"NEEDS HELP: tried every fix at {where} twice over for \"{what}\" ({times} time(s)): a 2-minute break, then the step waits " +
+                        $"{minutes} minutes while he does other story work if he has any. " +
                         (folder is null ? "" : $"His logs are saved in {Path.GetFileName(folder)} (needs-help folder)."), UltimusLink.CRITICAL);
-        Think($"I tried every way I know at {where}, twice over, and \"{what}\" still does not work. I set it aside for half an hour, do " +
-              "other story work if there is any, then try again. I wrote a \"needs help\" report so Niduus can look. " +
-              $"My best guess at the fix: {fix}", "park|" + key);
-        Issue("quest", quest, $"NEEDS HELP: Ultimus tried every fix he has at {where} twice over for \"{what}\". He set the step aside for 30 minutes " +
-                              "and comes back to it after. His logs are in the needs-help folder. Suggested fix: " + fix,
+        Think($"I tried every way I know at {where}, twice over, and \"{what}\" still does not work. I take a short break, then give it " +
+              $"{minutes} minutes (other story work first if there is any) and try again. I wrote a \"needs help\" report so Niduus can look. " +
+              $"My best guess at the fix: {fix}", "park|" + key + "|" + times);
+        Issue("quest", quest, $"NEEDS HELP: Ultimus tried every fix he has at {where} twice over for \"{what}\". He takes a short break and comes " +
+                              $"back to it (in {minutes} minutes this time; 5, then 15, then 30). His logs are in the needs-help folder. Suggested fix: " + fix,
             key: "needs-help|" + key, level: UltimusLink.CRITICAL);
         UltimusJournal.Write(UltimusJournal.STUCK, $"Set \"{UltimusText.Short(what, 60)}\" aside and asked for help: nothing I tried worked.",
             WorldOf(member.Zone), UltimusText.Zone(member.Zone), quest, -1);
     }
+
+    private readonly Dictionary<string, int> _parkCount = [];
+    private readonly Dictionary<string, TimeSpan> _parkedFor = [];
+
+    /// <summary>How long a parked step waits (30 minutes when not known, as before).</summary>
+    private TimeSpan ParkedFor(string key) => _parkedFor.TryGetValue(key, out var span) ? span : TimeSpan.FromMinutes(30);
 
     private readonly Dictionary<string, string> _parkedFix = [];
 

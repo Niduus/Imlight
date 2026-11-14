@@ -65,7 +65,7 @@ internal sealed partial class UltimusDirectorActor {
         var state = new ResumeState {
             Saved = DateTime.UtcNow, CharId = _team[0].CharId, Quest = _currentQuest ?? quest, Doing = _target?.What ?? "",
             Picks = picks, Asides = asides,
-            Parked = _parkedAt.Where(p => DateTime.UtcNow - p.Value < TimeSpan.FromMinutes(30)).ToDictionary(p => p.Key, p => p.Value),
+            Parked = _parkedAt.Where(p => DateTime.UtcNow - p.Value < ParkedFor(p.Key)).ToDictionary(p => p.Key, p => p.Value),
             MarkedZone = _markedZone, MarkedAt = _markedAt, CollectSpots = BotCollect.Spots(_team[0].CharId),
         };
         try {
