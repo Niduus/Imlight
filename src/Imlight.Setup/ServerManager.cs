@@ -222,14 +222,7 @@ internal sealed partial class ServerManager(string installFolder) {
     }
 
     private static bool IsListening(int port) {
-        try {
-            using var client = new TcpClient();
-
-            return client.ConnectAsync("127.0.0.1", port).Wait(TimeSpan.FromMilliseconds(500)) && client.Connected;
-        }
-        catch (AggregateException) {
-            return false;
-        }
+        return PortCheck.IsListening(port, TimeSpan.FromMilliseconds(500));
     }
 
     // ---------------------------------------------------------------------

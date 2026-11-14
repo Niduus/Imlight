@@ -259,14 +259,7 @@ internal static class InstalledCommands {
     }
 
     private static bool IsListening(int port) {
-        try {
-            using var client = new TcpClient();
-
-            return client.ConnectAsync("127.0.0.1", port).Wait(TimeSpan.FromSeconds(2)) && client.Connected;
-        }
-        catch (AggregateException) {
-            return false;
-        }
+        return PortCheck.IsListening(port, TimeSpan.FromSeconds(2));
     }
 
     // ---------------------------------------------------------------------

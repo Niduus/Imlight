@@ -1833,8 +1833,19 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             RememberStep(quest, _target?.Quest == quest ? _target.Goal : "", text);
         }
 
+        // The report is built in a guard: a fault in it never stops what he was doing (an unstick round broke off at the
+        // "flag it" step on a tester's log, 2026-11-13, and the next round started with an empty list of tries).
+        try {
+            Report(kind, quest, text, template);
+        }
+        catch (Exception e) {
+            Logger.Warning("Ultimus: the issue report could not be finished ({0}): {1}", Logger.Args(text, e));
+        }
+    }
+
+    private void Report(string kind, string quest, string text, Imcodec.ObjectProperty.TypeCache.QuestTemplate template) {
         var diagnosis = Diagnose(quest);
-        var facts = DebugFacts(quest, template);
+        var facts = DebugFacts(quest, template) ?? [];
         if (diagnosis is not null) {
             text += " " + diagnosis.Summary;
             facts.Insert(0, $"Likely cause ({diagnosis.Confidence} confidence, {diagnosis.Category}): {diagnosis.LikelyCause}");
