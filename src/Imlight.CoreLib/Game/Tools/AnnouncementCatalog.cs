@@ -163,6 +163,14 @@ internal static class AnnouncementCatalog {
         new("friend.busy.realm", "Teleport to a friend", "Reason: other realm", "Put in place of {reason} when a group mate is in another realm.",
             "They are in another realm.", []),
 
+        // The Bazaar (Niduus, 2026-11-14: "If Bazaar bot is off, interacting with Elik states the Bazaar is disabled")
+        new("bazaar.disabled", "Bazaar", "Bazaar is turned off", "A player who talks to Elik while the Bazaar bot is turned off in Ahziael (in a box).",
+            "The Bazaar is disabled.", []),
+        new("bazaar.opening", "Bazaar", "Bazaar is opening", "A player at Elik's while the Bazaar bot is still starting (about a minute after someone walks in).",
+            "Elik is still setting up the Bazaar. Try again in a minute.", []),
+        new("bazaar.closed", "Bazaar", "Bazaar is closed", "A player at Elik's while the Bazaar bot keeps failing and the Actual Bazaar cannot open.",
+            "The Bazaar is closed right now. Try again in a few minutes.", []),
+
         // Server notices
         new("server.kicked", "Server notices", "Kicked", "A player who is kicked from the server.", "You have been kicked from the server.", []),
         new("server.diedelete", "Server notices", "Die = Delete", "A player whose wizard died with Die = Delete on.",

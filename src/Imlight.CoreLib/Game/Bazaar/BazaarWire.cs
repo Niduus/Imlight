@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -53,6 +54,8 @@ internal static class BazaarWire {
     internal const string LOG_FILE = "bazaar-bot.txt";
     internal const string STATUS_FILE = "status.txt";
     internal const string STOCK_FILE = "bazaar-stock.json";
+    // What players sold in the Actual Bazaar ([Bazaar] Mode = Actual).
+    internal const string ACTUAL_STOCK_FILE = "bazaar-actual-stock.json";
 
     internal static string Folder => Path.GetFullPath(FOLDER);
 
@@ -63,5 +66,23 @@ internal static class BazaarWire {
     internal static string Write<T>(T value) => JsonSerializer.Serialize(value, s_json);
 
     internal static T Read<T>(string line) => JsonSerializer.Deserialize<T>(line, s_json);
+
+    /// <summary>
+    /// The status file Ahziael reads, one value a line: state (starting, ready, stopped, failed, asleep, off), process
+    /// id, how many things it sells, when it was written, port, the mode, and how many things players put up in the
+    /// Actual Bazaar. Written by the bot while it runs, and by the game server while it sleeps or is off.
+    /// </summary>
+    internal static void WriteStatus(string state, int pid, int count, int port, int actualCount) {
+        try {
+            var text = $"{state}\n{pid}\n{count}\n{DateTime.UtcNow:O}\n{port}\n{BazaarBook.Mode}\n{actualCount}\n";
+            Directory.CreateDirectory(Folder);
+            var path = Path.Combine(Folder, STATUS_FILE);
+            File.WriteAllText(path + ".tmp", text);
+            File.Move(path + ".tmp", path, overwrite: true);
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+            // Shown as unknown in Ahziael until the next try.
+        }
+    }
 
 }

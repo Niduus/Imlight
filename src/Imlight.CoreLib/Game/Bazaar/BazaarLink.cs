@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -28,19 +29,45 @@ using Imlight.Common;
 
 namespace Imlight.CoreLib.Game.Bazaar;
 
+/// <summary>Whether a player can use the Bazaar right now.</summary>
+public enum BazaarState : byte {
+    /// <summary>[Bazaar] Enabled is off: Elik says the Bazaar is disabled.</summary>
+    Disabled,
+    /// <summary>The Bazaar bot is starting (it reads the game files, about a minute): nothing to show yet.</summary>
+    Opening,
+    /// <summary>Open for buying and selling.</summary>
+    Open,
+    /// <summary>The bot keeps failing and the Actual Bazaar's stock lives in it, so there is no stand-in.</summary>
+    Closed,
+}
+
 /// <summary>
 /// The game server's side of the Bazaar bot: starts it, starts it again if it stops, and asks it everything the
-/// Bazaar window needs. When [Bazaar] OwnServer is off, or the bot is not running, the game server keeps a Bazaar of
-/// its own (the same <see cref="BazaarBook"/>), so the Bazaar always works. While the bot is still reading the game
-/// files (a minute or so after a start) there is no Bazaar yet: <see cref="Opening"/> is true.
+/// Bazaar window needs. The bot runs only while [Bazaar] Enabled is on and a player is in the Bazaar (or asked it
+/// something in the last [Bazaar] IdleMinutes), and sleeps otherwise (Niduus, 2026-11-14: "Bazaar bot only launches
+/// when a player is in that zone if the toggle is on"). When [Bazaar] OwnServer is off, or the bot keeps failing, the
+/// game server keeps a Bazaar of its own (the same <see cref="BazaarBook"/>) for the Unlimited Bazaar; the Actual
+/// Bazaar's stock lives in the bot, so it has no stand-in. While the bot is still reading the game files there is no
+/// Bazaar yet: <see cref="Opening"/> is true.
 /// </summary>
 public static class BazaarLink {
 
+    /// <summary>The Bazaar (Elik's shop in Olde Town).</summary>
+    public const string BAZAAR_ZONE = "WizardCity/WC_Streets/Interiors/WC_OldeTown_AuctionHouse";
+
+    /// <summary>[Bazaar] Enabled: the Bazaar bot's on/off toggle in Ahziael. Off closes the Bazaar.</summary>
+    public static bool Enabled => ConfigurationManager.GetValue("Bazaar.Enabled", true);
+
     private static bool OwnServer => ConfigurationManager.GetValue("Bazaar.OwnServer", true);
+
+    // Minutes the bot keeps running after the last player left the Bazaar (or the last question), before it sleeps.
+    private static TimeSpan IdleTime => TimeSpan.FromMinutes(Math.Clamp(ConfigurationManager.GetValue("Bazaar.IdleMinutes", 5), 1, 24 * 60));
 
     // How long the bot may take to answer one question, and to read the game files after it starts.
     private static readonly TimeSpan s_answerWait = TimeSpan.FromSeconds(5);
     private static readonly TimeSpan s_startWait = TimeSpan.FromMinutes(5);
+    // After this many starts in a row that never got ready, the Unlimited Bazaar uses the game server's stand-in.
+    private const int FAILED_STARTS_BEFORE_STAND_IN = 3;
 
     private static readonly Lock s_lock = new();
     private static Process s_bot;
@@ -48,7 +75,7 @@ public static class BazaarLink {
     private static int s_botPort;
     private static int s_failedStarts;
     private static volatile bool s_ready;
-    private static volatile bool s_firstStartDue;
+    private static long s_lastWantedTicks;
 
     // The game server's own Bazaar, built only when it is needed. It saves its stock only when it is the Bazaar for good
     // (OwnServer off); while it stands in for a stopped bot, the bot's saved stock is left alone.
@@ -62,40 +89,117 @@ public static class BazaarLink {
         return book;
     });
 
-    /// <summary>Whether the Bazaar bot is running but not ready yet, so the Bazaar has nothing to show.</summary>
+    private static DateTime LastWanted => new(Interlocked.Read(ref s_lastWantedTicks), DateTimeKind.Utc);
+
+    private static void MarkWanted() => Interlocked.Exchange(ref s_lastWantedTicks, DateTime.UtcNow.Ticks);
+
+    /// <summary>Whether a player (a real one, or a server-run wizard such as Ultimus) is in the Bazaar now.</summary>
+    private static bool PlayerInBazaar() {
+        try {
+            return Imlight.CoreLib.WizardData.Collections.OnlinePlayerCollection.GetCachedOnlinePlayers()
+                .Any(player => string.Equals(player.CurrentZone, BAZAAR_ZONE, StringComparison.OrdinalIgnoreCase));
+        }
+        catch (Exception e) {
+            Logger.Debug("Bazaar: could not look who is in the Bazaar: {0}", Logger.Args(e.Message));
+
+            return false;
+        }
+    }
+
+    // The bot should run: the toggle is on, and a player is in the Bazaar or asked something a short while ago.
+    private static bool Wanted() {
+        if (!Enabled || !OwnServer) {
+            return false;
+        }
+
+        if (PlayerInBazaar()) {
+            MarkWanted();
+
+            return true;
+        }
+
+        return DateTime.UtcNow - LastWanted < IdleTime;
+    }
+
+    // Too many starts that never got ready: the Unlimited Bazaar uses the game server's stand-in for now.
+    private static bool BotFailing => s_failedStarts >= FAILED_STARTS_BEFORE_STAND_IN;
+
+    /// <summary>Whether the Bazaar bot is starting, so the Bazaar has nothing to show yet.</summary>
     public static bool Opening {
         get {
             lock (s_lock) {
-                return OwnServer && !s_ready
-                    && (s_firstStartDue || (s_bot is { HasExited: false } && DateTime.UtcNow - s_botStarted < s_startWait));
+                return Enabled && OwnServer && !s_ready && !BotFailing
+                    && (s_bot is null || (!s_bot.HasExited && DateTime.UtcNow - s_botStarted < s_startWait));
             }
         }
     }
 
+    /// <summary>The Bazaar's state, without waking the bot (for reports).</summary>
+    public static BazaarState StateNow
+        => !Enabled ? BazaarState.Disabled
+        : !OwnServer || s_ready ? BazaarState.Open
+        : Opening ? BazaarState.Opening
+        : BazaarBook.Mode == BazaarMode.Actual ? BazaarState.Closed
+        : BazaarState.Open;
+
     /// <summary>
-    /// Starts the Bazaar bot after a short wait (so it does not read the game files while the server still does) and
-    /// keeps it running while [Bazaar] OwnServer is on; stops it when it is turned off.
+    /// A player (or Ultimus) wants the Bazaar now: wakes the bot when it sleeps, and says whether the Bazaar can be used.
+    /// </summary>
+    public static BazaarState Visit() {
+        if (!Enabled) {
+            return BazaarState.Disabled;
+        }
+
+        MarkWanted();
+        if (OwnServer && !s_ready && s_bot is null && Opening) {
+            // Start it now rather than at the next look, a few seconds later.
+            _ = Task.Run(WatchSafely);
+        }
+
+        return StateNow;
+    }
+
+    /// <summary>
+    /// Looks after the Bazaar bot every few seconds: starts it while it is wanted, lets it sleep when nobody is in the
+    /// Bazaar, and stops it when [Bazaar] Enabled or OwnServer is turned off.
     /// </summary>
     public static void StartWatching() {
-        s_firstStartDue = true;
         _ = Task.Run(async () => {
+            // Not while the server still reads the game files.
             await Task.Delay(TimeSpan.FromSeconds(20));
             while (true) {
-                try {
-                    Watch();
-                }
-                catch (Exception e) {
-                    Logger.Error("Bazaar: could not look after the Bazaar bot: {0}", Logger.Args(e));
-                }
-
+                WatchSafely();
                 await Task.Delay(TimeSpan.FromSeconds(5));
             }
         });
     }
 
+    private static void WatchSafely() {
+        try {
+            Watch();
+        }
+        catch (Exception e) {
+            Logger.Error("Bazaar: could not look after the Bazaar bot: {0}", Logger.Args(e));
+        }
+    }
+
     private static void Watch() {
+        if (!Enabled) {
+            StopBot("the Bazaar bot was turned off in Ahziael");
+            BazaarWire.WriteStatus("off", 0, 0, BazaarWire.Port, 0);
+
+            return;
+        }
+
         if (!OwnServer) {
             StopBot("[Bazaar] OwnServer was turned off");
+
+            return;
+        }
+
+        if (!Wanted()) {
+            StopBot($"nobody has been in the Bazaar for {IdleTime.TotalMinutes:0} minutes; it starts again when a player walks in");
+            BazaarWire.WriteStatus("asleep", 0, 0, BazaarWire.Port, 0);
 
             return;
         }
@@ -119,7 +223,7 @@ public static class BazaarLink {
 
         var answer = Ask(new BazaarRequest { Op = "ping" }, quiet: true);
         if (answer?.Ok == true && !s_ready) {
-            Logger.Information("Bazaar: the Bazaar bot is ready with {0} entries; the Bazaar is its own program now.", Logger.Args(answer.Stock));
+            Logger.Information("Bazaar: the Bazaar bot is ready with {0} entries; the Bazaar is open.", Logger.Args(answer.Stock));
             s_failedStarts = 0;
         }
 
@@ -128,6 +232,10 @@ public static class BazaarLink {
 
     private static void StartBot() {
         lock (s_lock) {
+            if (s_bot is { HasExited: false }) {
+                return;
+            }
+
             // A bot that keeps stopping is tried less often: 20 s, 40 s, ... up to 5 minutes.
             var wait = TimeSpan.FromSeconds(Math.Min(300, 20 * (1 << Math.Min(s_failedStarts, 4))));
             if (s_bot is not null && DateTime.UtcNow - s_botStarted < wait) {
@@ -142,7 +250,6 @@ public static class BazaarLink {
                 s_bot = null;
             }
 
-            s_firstStartDue = false;
             var self = Environment.ProcessPath;
             if (self is null) {
                 return;
@@ -169,11 +276,12 @@ public static class BazaarLink {
                 s_bot = Process.Start(start);
                 s_botStarted = DateTime.UtcNow;
                 s_botPort = BazaarWire.Port;
-                Logger.Information("Bazaar: started the Bazaar bot (process {0}, port {1}).", Logger.Args(s_bot?.Id, s_botPort));
+                Logger.Information("Bazaar: a player is at the Bazaar, so the Bazaar bot starts (process {0}, port {1}).", Logger.Args(s_bot?.Id, s_botPort));
             }
             catch (Exception e) when (e is System.ComponentModel.Win32Exception or InvalidOperationException) {
-                Logger.Error("Bazaar: could not start the Bazaar bot; the game server runs the Bazaar itself. {0}", Logger.Args(e.Message));
+                Logger.Error("Bazaar: could not start the Bazaar bot. {0}", Logger.Args(e.Message));
                 s_botStarted = DateTime.UtcNow;
+                s_failedStarts++;
             }
         }
     }
@@ -197,6 +305,8 @@ public static class BazaarLink {
             try {
                 if (!s_bot.HasExited) {
                     Logger.Information("Bazaar: stopping the Bazaar bot ({0}).", Logger.Args(why));
+                    // It saves every 10 seconds; ask it to save now so the last sale is not lost.
+                    Ask(new BazaarRequest { Op = "save" }, quiet: true);
                     s_bot.Kill();
                 }
             }
@@ -204,6 +314,7 @@ public static class BazaarLink {
                 // Already gone.
             }
 
+            CloseLineSafely();
             s_bot.Dispose();
             s_bot = null;
             s_failedStarts = 0;
@@ -261,6 +372,12 @@ public static class BazaarLink {
         }
     }
 
+    private static void CloseLineSafely() {
+        lock (s_lineLock) {
+            CloseLine();
+        }
+    }
+
     private static void CloseLine() {
         s_reader?.Dispose();
         s_writer?.Dispose();
@@ -270,10 +387,12 @@ public static class BazaarLink {
         s_line = null;
     }
 
-    /// <summary>The bot's answer, or the game server's own Bazaar's when the bot is not there.</summary>
+    /// <summary>
+    /// The bot's answer, or the game server's own Bazaar's when the bot is not there (Unlimited Bazaar only). Every
+    /// question counts as someone wanting the Bazaar, so a sleeping bot wakes up.
+    /// </summary>
     private static BazaarReply Answer(BazaarRequest request) {
-        // Still opening: nothing to show yet, and the game server does not read the game files for a bot about to answer.
-        if (Opening) {
+        if (Visit() is BazaarState.Disabled or BazaarState.Opening or BazaarState.Closed) {
             return new BazaarReply { Ok = false };
         }
 
@@ -284,6 +403,12 @@ public static class BazaarLink {
 
             // It stopped answering; the watchdog starts it again.
             s_ready = false;
+            if (BazaarBook.Mode == BazaarMode.Actual) {
+                Logger.Warning("Bazaar: the Bazaar bot stopped answering; the Actual Bazaar is closed until it is back.");
+
+                return new BazaarReply { Ok = false };
+            }
+
             Logger.Warning("Bazaar: the Bazaar bot stopped answering; the game server answers for it until it is back.");
         }
 
@@ -308,8 +433,17 @@ public static class BazaarLink {
     public static void PutBack(ulong id, int count = 1)
         => Answer(new BazaarRequest { Op = "putback", Id = id, Count = count });
 
-    /// <summary>Puts what a player sold into the stock.</summary>
-    public static void Give(ulong id, int count, string who, int gold)
-        => Answer(new BazaarRequest { Op = "give", Id = id, Count = count, Who = who, Gold = gold });
+    /// <summary>Puts what a player sold into the stock. False when the Bazaar could not take it.</summary>
+    public static bool Give(ulong id, int count, string who, int gold)
+        => Answer(new BazaarRequest { Op = "give", Id = id, Count = count, Who = who, Gold = gold }).Ok;
+
+    /// <summary>A short line on the Bazaar for reports: on or off, its mode, and whether the bot is running.</summary>
+    public static string Describe()
+        => StateNow switch {
+            BazaarState.Disabled => "turned off in Ahziael",
+            BazaarState.Opening => s_bot is null ? $"asleep (mode {BazaarBook.Mode}); it starts when someone visits" : $"starting (mode {BazaarBook.Mode})",
+            BazaarState.Closed => $"closed: the Bazaar bot keeps failing (mode {BazaarBook.Mode})",
+            _ => $"open (mode {BazaarBook.Mode})",
+        };
 
 }

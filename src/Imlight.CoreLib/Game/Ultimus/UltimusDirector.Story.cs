@@ -309,10 +309,8 @@ internal sealed partial class UltimusDirectorActor {
         // Read in the background on the first ask: still reading just after a start is not a failure (coach review 2026-11-14).
         Check("Gear list", () => BotGear.Catalog.Count > 0 ? $"{BotGear.Catalog.Count} pieces known"
             : BotGear.Reading ? "still being read in the background (normal right after a start)" : "FAIL: no gear known");
-        Check("Bazaar", () => {
-            Imlight.CoreLib.Game.Bazaar.BazaarLink.Find(0);
-            return "answers";
-        });
+        // Only how it stands: asking would wake a sleeping Bazaar bot for nothing.
+        Check("Bazaar", () => Imlight.CoreLib.Game.Bazaar.BazaarLink.Describe());
 
         var passed = results.Count(r => r.Ok);
         var text = new StringBuilder();

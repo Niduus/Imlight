@@ -31,6 +31,12 @@ using Imlight.CoreLib.Shared.Resources;
 
 namespace Imlight.CoreLib.Game.Bazaar;
 
+/// <summary>
+/// How the Bazaar keeps its stock ([Bazaar] Mode, Niduus 2026-11-14): Unlimited has everything always in stock; Actual
+/// works like the real game's Bazaar, where only what players sold is there, and each buy takes it away.
+/// </summary>
+public enum BazaarMode : byte { Unlimited, Actual }
+
 /// <summary>What a Bazaar entry is, which decides the bag it goes into when bought.</summary>
 public enum BazaarKind : byte { Item, Snack, Reagent, Card }
 
@@ -84,8 +90,19 @@ public sealed class BazaarBook {
 
     private static int StartStock => Math.Clamp(ConfigurationManager.GetValue("Bazaar.StartStock", 999), 1, MaxStock);
     private static int MaxStock => Math.Clamp(ConfigurationManager.GetValue("Bazaar.MaxStock", 999), 1, 1_000_000);
-    // Buying never lowers the stock: everything, treasure cards too, always shows the start stock (Niduus, 2026-10-28).
-    private static bool Unlimited => ConfigurationManager.GetValue("Bazaar.Unlimited", true);
+    /// <summary>
+    /// [Bazaar] Mode. Unlimited: buying never lowers the stock, everything always shows the start stock (Niduus,
+    /// 2026-10-28). Actual: the Bazaar starts empty, what players sell is put up, and buying takes it away (Niduus,
+    /// 2026-11-14: "Accumulative Bazaar, much like the real game where players have to sell items for them to be able
+    /// to be bought by other players").
+    /// </summary>
+    public static BazaarMode Mode
+        => ConfigurationManager.GetValue("Bazaar.Mode", "Unlimited").Trim().ToLowerInvariant() switch {
+            "actual" or "accumulative" or "real" => BazaarMode.Actual,
+            _ => BazaarMode.Unlimited,
+        };
+
+    private static bool Actual => Mode == BazaarMode.Actual;
     private static bool WithNoAuction => ConfigurationManager.GetValue("Bazaar.NoAuctionItems", false);
     private static int CardsPerSchool => Math.Clamp(ConfigurationManager.GetValue("Bazaar.TreasureCards", 500), 0, 100_000);
 
@@ -94,10 +111,14 @@ public sealed class BazaarBook {
     // Each card's place in its school, cheapest first: [Bazaar] TreasureCards shows the first that many.
     private readonly Dictionary<ulong, int> _cardRank = [];
 
-    // How many are left of the entries that are not at the start stock. Unlisted entries have the start stock.
+    // Unlimited mode: entries players sold past the start stock. Unlisted entries have the start stock.
     private readonly Dictionary<ulong, int> _stock = [];
+    // Actual mode: what players sold and nobody bought yet. Unlisted entries have none. Kept apart from the Unlimited
+    // stock, so switching modes back and forth loses nothing.
+    private readonly Dictionary<ulong, int> _actual = [];
     private readonly Lock _lock = new();
     private readonly string _stockFile;
+    private readonly string _actualFile;
     private bool _dirty;
 
     public int Count => _items.Count;
@@ -117,7 +138,9 @@ public sealed class BazaarBook {
         }
 
         _stockFile = stockFile;
-        LoadStock();
+        _actualFile = stockFile is null ? null : Path.Combine(Path.GetDirectoryName(stockFile) ?? "", BazaarWire.ACTUAL_STOCK_FILE);
+        LoadStock(_stockFile, _stock);
+        LoadStock(_actualFile, _actual);
     }
 
     /// <summary>
@@ -256,9 +279,20 @@ public sealed class BazaarBook {
     private int StockOf(ulong id) => StockOf(id, StartStock);
 
     private int StockOf(ulong id, int start) {
-        var left = _stock.TryGetValue(id, out var stored) ? stored : start;
+        if (Actual) {
+            return _actual.TryGetValue(id, out var sold) ? sold : 0;
+        }
 
-        return Unlimited ? Math.Max(left, start) : left;
+        return _stock.TryGetValue(id, out var stored) ? Math.Max(stored, start) : start;
+    }
+
+    /// <summary>How many different things players have put up in the Actual Bazaar.</summary>
+    public int ActualCount {
+        get {
+            lock (_lock) {
+                return _actual.Count;
+            }
+        }
     }
 
     /// <summary>A short line of what is in the Bazaar, for the log.</summary>
@@ -269,7 +303,9 @@ public sealed class BazaarBook {
         return $"{sold.Count:N0} things: {Count(item => item.Kind == BazaarKind.Item && !item.Tabs.Contains(s_jewelTab))} gear, " +
                $"housing and other items, {Count(item => item.Tabs.Contains(s_jewelTab))} jewels and pins, " +
                $"{Count(item => item.Kind == BazaarKind.Snack)} snacks, {Count(item => item.Kind == BazaarKind.Reagent)} reagents, " +
-               $"{Count(item => item.Kind == BazaarKind.Card)} treasure cards. Each starts with {StartStock} in stock.";
+               $"{Count(item => item.Kind == BazaarKind.Card)} treasure cards. " +
+               (Actual ? $"Mode Actual: only what players sold is for sale ({_actual.Count:N0} things right now)."
+                   : $"Mode Unlimited: each always has {StartStock} in stock.");
     }
 
     // ---------------------------------------------------------------------
@@ -284,7 +320,8 @@ public sealed class BazaarBook {
     public byte[] Records(uint category, bool everything) {
         lock (_lock) {
             var start = StartStock;
-            var cards = CardsPerSchool;
+            // The Actual Bazaar shows every card a player sold, not only the cheapest of each school.
+            var cards = Actual && CardsPerSchool > 0 ? int.MaxValue : CardsPerSchool;
             var withNoAuction = WithNoAuction;
             var shown = _items.Where(item => (!item.Restricted || withNoAuction) && StockOf(item.Id, start) > 0 && ShowsCard(item, cards)).ToList();
             var own = shown.Where(item => IsFor(item, category)).ToList();
@@ -362,18 +399,26 @@ public sealed class BazaarBook {
             }
 
             left = StockOf(item.Id);
-            if (Unlimited) {
+            if (!Actual) {
                 Logger.Information("Bazaar: {0} bought {1} {2} for {3} gold; the stock is unlimited.", Logger.Args(who ?? "someone", count, item.Name, gold));
 
                 return true;
             }
 
             if (left < count) {
+                Logger.Information("Bazaar: {0} wanted {1} {2}, but only {3} are for sale.", Logger.Args(who ?? "someone", count, item.Name, left));
+
                 return false;
             }
 
             left -= count;
-            _stock[item.Id] = left;
+            if (left > 0) {
+                _actual[item.Id] = left;
+            }
+            else {
+                _actual.Remove(item.Id);
+            }
+
             _dirty = true;
             Logger.Information("Bazaar: {0} bought {1} {2} for {3} gold; {4} left.", Logger.Args(who ?? "someone", count, item.Name, gold, left));
 
@@ -391,12 +436,29 @@ public sealed class BazaarBook {
                 return 0;
             }
 
-            var stock = (int) Math.Min(MaxStock, (long) StockOf(item.Id) + Math.Max(0, count));
-            if (stock == StartStock) {
-                _stock.Remove(item.Id);
+            int stock;
+            if (Actual) {
+                // What the real Bazaar never takes is not put up (No Auction, No Trade, Crowns only).
+                if (!Sold(item)) {
+                    Logger.Information("Bazaar: {0} sold {1} {2} for {3} gold; it is No Auction, No Trade or Crowns only, so it is not put up.",
+                        Logger.Args(who ?? "someone", count, item.Name, gold));
+
+                    return 0;
+                }
+
+                stock = (int) Math.Min(MaxStock, (long) StockOf(item.Id) + Math.Max(0, count));
+                if (stock > 0) {
+                    _actual[item.Id] = stock;
+                }
             }
             else {
-                _stock[item.Id] = stock;
+                stock = (int) Math.Min(MaxStock, (long) StockOf(item.Id) + Math.Max(0, count));
+                if (stock == StartStock) {
+                    _stock.Remove(item.Id);
+                }
+                else {
+                    _stock[item.Id] = stock;
+                }
             }
 
             _dirty = true;
@@ -411,81 +473,49 @@ public sealed class BazaarBook {
         }
     }
 
-    /// <summary>
-    /// Brings every entry below the start stock up by [Bazaar] RestockAmount (not past the start stock). Returns how
-    /// many entries got more.
-    /// </summary>
-    public int Restock() {
-        lock (_lock) {
-            var amount = Math.Max(0, ConfigurationManager.GetValue("Bazaar.RestockAmount", 10));
-            var start = StartStock;
-            var restocked = new List<string>();
-            foreach (var (id, left) in _stock.ToList()) {
-                if (left >= start || amount == 0) {
-                    continue;
-                }
-
-                var now = Math.Min(start, left + amount);
-                if (now == start) {
-                    _stock.Remove(id);
-                }
-                else {
-                    _stock[id] = now;
-                }
-
-                restocked.Add(_byId.TryGetValue(id, out var item) ? $"{item.Name} {now}" : $"{id} {now}");
-            }
-
-            if (restocked.Count > 0) {
-                _dirty = true;
-                Logger.Information("Bazaar: restocked {0} items: {1}{2}.", Logger.Args(restocked.Count,
-                    string.Join(", ", restocked.Take(15)), restocked.Count > 15 ? ", ..." : ""));
-            }
-
-            return restocked.Count;
-        }
-    }
-
     // ---------------------------------------------------------------------
     // Saved stock
     // ---------------------------------------------------------------------
 
-    private void LoadStock() {
-        if (_stockFile is null || !File.Exists(_stockFile)) {
+    private void LoadStock(string file, Dictionary<ulong, int> stock) {
+        if (file is null || !File.Exists(file)) {
             return;
         }
 
         try {
-            var saved = JsonSerializer.Deserialize<Dictionary<string, int>>(File.ReadAllText(_stockFile)) ?? [];
+            var saved = JsonSerializer.Deserialize<Dictionary<string, int>>(File.ReadAllText(file)) ?? [];
             foreach (var (key, left) in saved) {
-                if (ulong.TryParse(key, out var id) && _byId.ContainsKey(id)) {
-                    _stock[id] = Math.Max(0, left);
+                if (ulong.TryParse(key, out var id) && _byId.ContainsKey(id) && left > 0) {
+                    stock[id] = left;
                 }
             }
 
-            Logger.Information("Bazaar: {0} entries have their saved stock.", Logger.Args(_stock.Count));
+            Logger.Information("Bazaar: {0} entries have their saved stock in {1}.", Logger.Args(stock.Count, Path.GetFileName(file)));
         }
         catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) {
-            Logger.Warning("Bazaar: could not read the saved stock in {0}, everything starts full: {1}", Logger.Args(_stockFile, e.Message));
+            Logger.Warning("Bazaar: could not read the saved stock in {0}: {1}", Logger.Args(file, e.Message));
         }
     }
 
     /// <summary>Writes the stock to its file when it changed. A book without a file keeps it only in memory.</summary>
     public void SaveStock() {
-        string json;
+        string json, actualJson;
         lock (_lock) {
             if (_stockFile is null || !_dirty) {
                 return;
             }
 
             json = JsonSerializer.Serialize(_stock.ToDictionary(pair => pair.Key.ToString(), pair => pair.Value));
+            actualJson = JsonSerializer.Serialize(_actual.ToDictionary(pair => pair.Key.ToString(), pair => pair.Value));
             _dirty = false;
         }
 
         try {
-            var temp = $"{_stockFile}.tmp";
-            File.WriteAllText(temp, json);
-            File.Move(temp, _stockFile, overwrite: true);
+            foreach (var (file, text) in new[] { (_stockFile, json), (_actualFile, actualJson) }) {
+                var temp = $"{file}.tmp";
+                File.WriteAllText(temp, text);
+                File.Move(temp, file, overwrite: true);
+            }
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
             Logger.Warning("Bazaar: could not save the stock to {0}: {1}", Logger.Args(_stockFile, e.Message));
