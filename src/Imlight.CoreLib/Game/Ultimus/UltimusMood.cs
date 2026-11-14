@@ -17,8 +17,7 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using Imlight.CoreLib.Game.BotShared;
 
 namespace Imlight.CoreLib.Game.Ultimus;
 
@@ -33,57 +32,24 @@ internal static class UltimusMood {
 
     internal enum Level { Careful, Steady, Bold }
 
-    private static readonly object s_lock = new();
-    private static readonly List<(DateTime At, string What)> s_events = [];
+    internal const string LOST = BotMood.LOST;
+    internal const string WON = BotMood.WON;
+    internal const string STUCK = BotMood.STUCK;
+    internal const string SURPRISE = BotMood.SURPRISE;
 
-    internal const string LOST = "lost";
-    internal const string WON = "won";
-    internal const string STUCK = "stuck";
-    internal const string SURPRISE = "surprise";
+    // His mood is the shared engine's (Ultimus Core, BotShared.BotMood), with his playbook's Mood.* numbers.
+    private static BotMood Mood => BotMood.Of("Ultimus", name => UltimusPlaybook.Value("Mood." + name));
 
-    private static readonly TimeSpan s_memory = TimeSpan.FromHours(1);
+    internal static void Saw(string what) => Mood.Saw(what);
 
-    internal static void Saw(string what) {
-        lock (s_lock) {
-            s_events.Add((DateTime.UtcNow, what));
-            s_events.RemoveAll(e => DateTime.UtcNow - e.At > s_memory);
-        }
-    }
+    private static int Count(string what) => Mood.Count(what);
 
-    private static int Count(string what) {
-        lock (s_lock) {
-            return s_events.Count(e => e.What == what && DateTime.UtcNow - e.At <= s_memory);
-        }
-    }
-
-    // Fights won since the last lost fight.
-    private static int WinStreak() {
-        lock (s_lock) {
-            var streak = 0;
-            foreach (var e in s_events.Where(e => e.What is WON or LOST).OrderByDescending(e => e.At)) {
-                if (e.What == LOST) {
-                    break;
-                }
-
-                streak++;
-            }
-
-            return streak;
-        }
-    }
+    private static int WinStreak() => Mood.WinStreak();
 
     /// <summary>A fight lost in the last hour.</summary>
-    internal static bool LostRecently => Count(LOST) > 0;
+    internal static bool LostRecently => Mood.LostRecently;
 
-    internal static Level Now {
-        get {
-            if (Count(LOST) > 0 || Count(STUCK) >= UltimusPlaybook.Value("Mood.CarefulAfterStuck") || Count(SURPRISE) >= 3) {
-                return Level.Careful;
-            }
-
-            return WinStreak() >= UltimusPlaybook.Value("Mood.BoldAfterWins") ? Level.Bold : Level.Steady;
-        }
-    }
+    internal static Level Now => (Level) (int) Mood.Now;
 
     /// <summary>Why he feels the way he does, in his words.</summary>
     internal static string Why() {
@@ -101,10 +67,6 @@ internal static class UltimusMood {
     }
 
     /// <summary>How much sooner (plus) or later (minus) he heals in battle, as a share of his health.</summary>
-    internal static float HealShift => Now switch {
-        Level.Careful => (float) UltimusPlaybook.Value("Mood.CarefulHealShift"),
-        Level.Bold => -(float) UltimusPlaybook.Value("Mood.BoldHealShift"),
-        _ => 0f,
-    };
+    internal static float HealShift => Mood.HealShift;
 
 }

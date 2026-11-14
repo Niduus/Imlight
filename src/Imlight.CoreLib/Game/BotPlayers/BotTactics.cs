@@ -133,13 +133,15 @@ internal static class BotTactics {
 
         var target = enemies.FirstOrDefault(e => e.SlotIndex == kept)
                      ?? enemies.Where(e => playerTargets.Contains(e)).OrderBy(RewrittenAI.Health).FirstOrDefault()
+                     // Ultimus Core: one the shared brain knows heals often goes first (BotShared.BotCore).
+                     ?? Imlight.CoreLib.Game.BotShared.BotCore.Healer(enemies, 0.3)
                      ?? enemies.OrderBy(RewrittenAI.Health).First();
         var hits = attacks
             .Select(h => (Hand: h, On: h.Card.HitsAll ? null : PickTarget(h.Card, target, enemies, me, LeaveAlone)))
             .Where(x => x.Hand.Card.HitsAll ? !enemies.Any(e => LeaveAlone(e, x.Hand.Card)) : x.On is not null)
             .Select(x => (x.Hand, x.On, Damage: x.Hand.Card.HitsAll
-                ? enemies.Sum(e => Math.Min(RewrittenAI.Health(e), RewrittenAI.Estimate(x.Hand.Card, me, e)))
-                : RewrittenAI.Estimate(x.Hand.Card, me, x.On)))
+                ? enemies.Sum(e => Math.Min(RewrittenAI.Health(e), Imlight.CoreLib.Game.BotShared.BotCore.Estimate(x.Hand.Card, me, e)))
+                : Imlight.CoreLib.Game.BotShared.BotCore.Estimate(x.Hand.Card, me, x.On)))
             .OrderByDescending(x => x.Damage).ToList();
         if (hits.Count > 0) {
             var (best, on, damage) = hits[0];

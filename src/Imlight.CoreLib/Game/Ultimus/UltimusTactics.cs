@@ -26,6 +26,7 @@ using Card = Imlight.CoreLib.Game.Combat.RewrittenAI.Card;
 using CombatResolver = Imlight.CoreLib.Game.Combat.CombatResolver;
 
 using Imlight.CoreLib.Game.BotShared;
+using InHand = Imlight.CoreLib.Game.BotShared.BotCore.InHand;
 
 namespace Imlight.CoreLib.Game.Ultimus;
 
@@ -42,7 +43,6 @@ internal static class UltimusTactics {
 
     internal sealed record Choice(Move Move, int Card, int Target, string Why);
 
-    private sealed record InHand(int Index, Card Card, bool Castable);
 
     // When it heals (its playbook, Battle.HealAt and Battle.BigHealAt; Niduus can change them, live).
     // His mood moves them: careful he heals sooner, bold a little later (UltimusMood).
@@ -90,9 +90,8 @@ internal static class UltimusTactics {
         return Solo(me, castable, whole, enemies, focus, hurt, threat, Math.Max(1, round), focusWhy);
     }
 
-    // What the bots' shared brain knows of a creature's habits.
-    private static BotKnowledge.Habit HabitOf(CombatDuelSubCircle enemy)
-        => enemy?.ParticipantObject is { } who ? BotKnowledge.Of((uint) Math.Min((ulong) who.m_templateID, uint.MaxValue)) : null;
+    // What the bots' shared brain knows of a creature's habits (the shared engine, BotCore).
+    private static BotKnowledge.Habit HabitOf(CombatDuelSubCircle enemy) => BotCore.HabitOf(enemy);
 
     /// <summary>
     /// A shield that guards against none of what the enemies here can hit with (an Elemental Shield against a Myth
@@ -133,115 +132,26 @@ internal static class UltimusTactics {
                ?? Pass("saves its pips for a bigger hit");
     }
 
-    // The share of my health the enemies' habits say they take this round, and who hits hardest.
-    private static (double Share, string Hardest) Incoming(List<CombatDuelSubCircle> enemies, int round) {
-        double total = 0;
-        var hardest = ("", 0.0);
-        foreach (var enemy in enemies) {
-            if (HabitOf(enemy) is not { Casts: >= 3 } habit) {
-                continue;
-            }
+    // The share of my health the enemies' habits say they take this round, and who hits hardest (BotCore).
+    private static (double Share, string Hardest) Incoming(List<CombatDuelSubCircle> enemies, int round) => BotCore.Incoming(enemies, round, Name);
 
-            var expect = habit.ExpectedHitOn(round);
-            total += expect;
-            if (expect > hardest.Item2) {
-                hardest = (Name(enemy), expect);
-            }
-        }
-
-        return (total, hardest.Item1.Length > 0 ? hardest.Item1 : "they");
-    }
-
-    /// <summary>
-    /// Two rounds ahead (Niduus, 2026-11-14, "All" to: "before each round, he scores his whole hand over two rounds ahead
-    /// and plays the best line, not just the best single card"): hit now and hit again; a blade now and a bigger hit next
-    /// round; a trap now and a bigger hit next round; or his pips saved now for a bigger spell next round. Each line is worth
-    /// the damage it deals over both rounds (no more than the creatures have), a round later counting a bit less, and much
-    /// less when they could take him under his heal line first. The best line's first move is played, its reason said.
-    /// </summary>
+    // Two rounds ahead: the shared engine's planner (BotShared.BotCore.TwoRounds), with his playbook's numbers.
     private static Choice TwoRounds(CombatDuelSubCircle me, List<InHand> hand, List<InHand> whole, CombatDuelSubCircle focus,
                                     List<CombatDuelSubCircle> enemies, int round, bool risky, string focusWhy) {
-        var hits = whole.Where(h => h.Card.Hit && !h.Card.Natural).ToList();
-        if (hits.Count == 0) {
+        var plan = BotCore.TwoRounds(me, hand, whole, focus, enemies, round, risky, Name, new BotCore.Lookahead(
+            UltimusPlaybook.Value("Battle.LookAheadDelay"), UltimusPlaybook.Value("Battle.LookAheadRisky"), (float) UltimusPlaybook.Value("Battle.TrapGuess")));
+        if (plan is null) {
             return null;
         }
 
-        var pips = RewrittenAI.PipsOf(me);
-        var later = UltimusPlaybook.Value("Battle.LookAheadDelay") * (risky ? UltimusPlaybook.Value("Battle.LookAheadRisky") : 1);
-        // A creature that tends to shield or ward on this round soaks a hit now; building up is worth more.
-        var focusHabit = HabitOf(focus);
-        var shieldsNow = focusHabit is not null && focusHabit.HabitRound(BotKnowledge.SHIELD) == Math.Clamp(round, 1, 5);
-        var lines = new List<(double Value, InHand First, int Target, string Text)>();
-
-        double Deal(InHand h, float blade, float trap, int healthLeft) => h.Card.HitsAll
-            ? enemies.Sum(e => Math.Min(RewrittenAI.Health(e), Estimate(h.Card, me, e, blade, trap)))
-            : Math.Min(healthLeft, Estimate(h.Card, me, focus, blade, trap));
-
-        bool CanNext(InHand h, int spent, InHand used) => h != used && h.Card.Rank <= pips - spent + 1;
-
-        var focusHealth = RewrittenAI.Health(focus);
-
-        // Hit now, then hit again.
-        foreach (var now in hits.Where(h => h.Castable)) {
-            var first = Deal(now, 0, 0, focusHealth) * (shieldsNow && !now.Card.HitsAll ? 0.6 : 1);
-            var left = now.Card.HitsAll ? focusHealth : Math.Max(0, focusHealth - (int) first);
-            // When the first hit finishes the target, the next one goes on the toughest one left.
-            var other = enemies.Where(e => e != focus).OrderByDescending(RewrittenAI.Health).FirstOrDefault();
-            var next = hits.Where(h => CanNext(h, now.Card.Rank, now)).Select(h => (Hand: h, Damage: left > 0 || h.Card.HitsAll
-                ? Deal(h, 0, 0, left)
-                : other is null ? 0 : Math.Min(RewrittenAI.Health(other), Estimate(h.Card, me, other)))).OrderByDescending(x => x.Damage).FirstOrDefault();
-            var value = first + (next.Damage * later);
-            lines.Add((value, now, now.Card.HitsAll ? -1 : focus.SlotIndex,
-                $"{now.Card.Shown} now (about {first:0}){(next.Hand is null ? "" : $", then {next.Hand.Card.Shown} (about {next.Damage:0})")}"));
-        }
-
-        // A blade on myself now, then a bigger hit.
-        foreach (var blade in hand.Where(h => h.Card.Blade && !h.Card.BladeOnlyTeammate && Fits(h.Card.BladeSchool, RewrittenAI.SchoolOf(me))
-                                              && !RewrittenAI.HasEffectOfSpell(me, h.Card.Id))) {
-            var next = hits.Where(h => CanNext(h, blade.Card.Rank, blade) && Fits(blade.Card.BladeSchool, h.Card.DamageSchool))
-                .Select(h => (Hand: h, Damage: Deal(h, blade.Card.BladePercent, 0, focusHealth))).OrderByDescending(x => x.Damage).FirstOrDefault();
-            if (next.Hand is not null) {
-                lines.Add((next.Damage * later, blade, blade.Card.BladeWholeTeam ? -1 : me.SlotIndex,
-                    $"{blade.Card.Shown} on myself now (+{blade.Card.BladePercent}%), then {next.Hand.Card.Shown} (about {next.Damage:0})"));
-            }
-        }
-
-        // A trap on the target now, then a bigger hit.
-        foreach (var trap in hand.Where(h => h.Card.Trap && !RewrittenAI.HasEffectOfSpell(focus, h.Card.Id))) {
-            var percent = trap.Card.TrapPercent > 0 ? trap.Card.TrapPercent : (float) UltimusPlaybook.Value("Battle.TrapGuess");
-            var next = hits.Where(h => CanNext(h, trap.Card.Rank, trap) && Fits(trap.Card.TrapSchool, h.Card.DamageSchool))
-                .Select(h => (Hand: h, Damage: Deal(h, 0, percent, focusHealth))).OrderByDescending(x => x.Damage).FirstOrDefault();
-            if (next.Hand is not null) {
-                lines.Add((next.Damage * later, trap, trap.Card.TrapAll ? -1 : focus.SlotIndex,
-                    $"{trap.Card.Shown} on {Name(focus)} now (+{percent:0}%), then {next.Hand.Card.Shown} (about {next.Damage:0})"));
-            }
-        }
-
-        // Pips saved now for a bigger spell next round.
-        var saved = hits.Where(h => !h.Castable && h.Card.Rank <= pips + 1)
-            .Select(h => (Hand: h, Damage: Deal(h, 0, 0, focusHealth))).OrderByDescending(x => x.Damage).FirstOrDefault();
-        if (saved.Hand is not null) {
-            lines.Add((saved.Damage * later, null, -1, $"saving my pips now, then {saved.Hand.Card.Shown} (about {saved.Damage:0})"));
-        }
-
-        if (lines.Count == 0) {
-            return null;
-        }
-
-        var ordered = lines.OrderByDescending(l => l.Value).ThenBy(l => l.First is null ? 1 : 0).ToList();
-        var best = ordered[0];
-        var runnerUp = ordered.Skip(1).FirstOrDefault(l => l.Text != best.Text);
-        var compare = runnerUp.Text is null ? "" : $"; better than {runnerUp.Text}, worth {runnerUp.Value:0}";
-        var habitNote = shieldsNow ? $"; {Name(focus)} tends to shield on round {Math.Clamp(round, 1, 5)}, so building up is worth more now" : "";
-        var riskNote = risky ? "; they could hurt me before then, so a later hit counts for less" : "";
-        var why = $"plans two rounds: {best.Text}, worth about {best.Value:0}{compare}{habitNote}{riskNote}{focusWhy}";
-        if (best.First is null) {
+        var why = plan.Why + focusWhy;
+        if (plan.First is null) {
             return Pass(why);
         }
 
-        var reason = best.First.Card.Hit ? BalanceResistReason(me, best.First.Card, best.First.Card.HitsAll ? enemies : [focus]) : "";
+        var reason = plan.First.Card.Hit ? BalanceResistReason(me, plan.First.Card, plan.First.Card.HitsAll ? enemies : [focus]) : "";
 
-        return new(Move.Cast, best.First.Index, best.Target, why + reason);
+        return new(Move.Cast, plan.First.Index, plan.Target, why + reason);
     }
 
     // ---- the moves ----
@@ -322,32 +232,11 @@ internal static class UltimusTactics {
             : new(Move.Cast, best.Hand.Index, focus.SlotIndex, $"{why}: {Name(focus)} with {best.Hand.Card.Shown} (about {best.Damage}){reason}");
     }
 
-    /// <summary>
-    /// A hit as the game lands it on this target: its resist taken down by the caster's pierce for that school (resist
-    /// can't go under nothing).
-    /// </summary>
-    private static int Estimate(Card card, CombatDuelSubCircle me, CombatDuelSubCircle target, float blades = 0, float traps = 0) {
-        var raw = RewrittenAI.Estimate(card, me, target, blades, traps);
-        var resist = RewrittenAI.ResistOf(target, card.DamageSchool);
-        if (resist <= 0 || resist >= 0.95f) {
-            return raw;
-        }
+    // A hit as the game lands it, pierce counted (BotCore).
+    private static int Estimate(Card card, CombatDuelSubCircle me, CombatDuelSubCircle target, float blades = 0, float traps = 0)
+        => BotCore.Estimate(card, me, target, blades, traps);
 
-        var through = Math.Min(resist, PierceOf(me, card.DamageSchool));
-
-        return (int) (raw * (1 - (resist - through)) / (1 - resist));
-    }
-
-    private static float PierceOf(CombatDuelSubCircle circle, string school) {
-        try {
-            var stats = circle?.ParticipantGameStats;
-
-            return stats is null ? 0 : Math.Clamp(circle.GetStatBySchool(stats.m_apBonusPercent, school) + stats.m_apBonusPercentAll, 0f, 1f);
-        }
-        catch (Exception) {
-            return 0;
-        }
-    }
+    private static float PierceOf(CombatDuelSubCircle circle, string school) => BotCore.PierceOf(circle, school);
 
     /// <summary>
     /// Against creatures that resist Balance (Niduus, 2026-11-14: Balance Prism is not to be had, so "Ultimus would have to
