@@ -51,6 +51,8 @@ internal static class OverlayRenderer {
         var panel = new OverlayPanel { Background = Brushes.Transparent, ClipToBounds = true };
         // A Quest Tracker's picked quest shows its way on a minimap only, so it needs to know if one is drawn.
         s_buildHasMap = (showMine && HasMinimap(design.Elements)) || HasMinimap(server ?? []);
+        // The Ultimus Spectator needs the Minimap add-on downloaded, not on the overlay.
+        s_buildMinimapAddon = OverlayAddon.IsInstalled(OverlayHost.InstallFolder, "Minimap");
         if (window == 0) {
             OverlayQuestData.DesignHasTracker = (showMine && HasQuestTracker(design.Elements)) || HasQuestTracker(server ?? []);
         }
@@ -390,6 +392,9 @@ internal static class OverlayRenderer {
     // Whether the overlay being built has a minimap (for its Quest Trackers' hint).
     private static bool s_buildHasMap;
 
+    // Whether the Minimap add-on is downloaded (the Ultimus Spectator needs it installed to work).
+    private static bool s_buildMinimapAddon;
+
     private static Control Element(OverlayElement e, Words words, bool highlight, string? fixedText = null, long window = 0) {
         var border = new Border {
             Background = Brush(e.Background),
@@ -434,13 +439,14 @@ internal static class OverlayRenderer {
 
         if (e.IsUltimusMap) {
             // Ultimus's own minimap: the Minimap's drawing, centred on Ultimus, with his quest's way (never the player's).
-            // It needs the player's Minimap on the overlay too (Niduus: "Ultimus Spectator requires Minimap").
+            // It needs the Minimap add-on downloaded (Niduus, 2026-11-14: required "for install, for Spectate to work"),
+            // not the player's Minimap on the overlay.
             var key = window == 0 ? 0 : OverlayUltimusData.KEY;
             border.Background = null;
             border.BorderThickness = default;
             border.Padding = default;
             border.CornerRadius = default;
-            if (s_buildHasMap) {
+            if (s_buildMinimapAddon) {
                 var map = new MinimapView(e, OverlayMinimapData.For(key), key);
                 border.Child = map;
                 border.Width = map.Width;
@@ -456,7 +462,7 @@ internal static class OverlayRenderer {
         }
 
         if (e.Kind == OverlayElement.ULTIMUS_QUEST) {
-            border.Child = UltimusViews.Quest(e, window, s_buildHasMap);
+            border.Child = UltimusViews.Quest(e, window, s_buildMinimapAddon);
             border.ClipToBounds = true;
             if (e.Width <= 0) {
                 border.Width = 240;
@@ -465,7 +471,7 @@ internal static class OverlayRenderer {
 
         if (e.Kind == OverlayElement.ULTIMUS_SPELLS) {
             // Over a game it shows only while Ultimus is in a battle; the designers always show a made-up battle.
-            if (UltimusViews.Spells(e, window, s_buildHasMap) is not { } spells) {
+            if (UltimusViews.Spells(e, window, s_buildMinimapAddon) is not { } spells) {
                 border.IsVisible = false;
 
                 return border;

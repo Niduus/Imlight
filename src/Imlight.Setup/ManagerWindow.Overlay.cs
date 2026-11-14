@@ -922,23 +922,11 @@ internal sealed partial class ManagerWindow {
                 throw new PanelException($"The overlay holds up to {OverlayDesign.MAX_ELEMENTS} texts, boxes and pictures; that widget doesn't fit.");
             }
 
-            // An add-on that needs another (Ultimus Spectator needs the Minimap): that one goes on too, when none of it is on yet.
-            var alsoOn = new List<string>();
+            // An add-on that needs another (Ultimus Spectator needs the Minimap) needs it downloaded, not on the overlay
+            // (Niduus, 2026-11-14: "Minimap was required ... for install, for Spectate to work").
             foreach (var needed in addon.Requires) {
-                if (_ovAddonList.FirstOrDefault(a => a.Name.Equals(needed, StringComparison.OrdinalIgnoreCase)) is not { } other) {
-                    throw new PanelException($"\"{addon.Name}\" needs the {needed} add-on too. Download it first under Niduus's add-ons, then tick this again.");
-                }
-
-                var onAlready = other.Widgets.Any(w => OverlayAddon.OnOverlay(other, w, _ovDesign.Elements).Count > 0)
-                                || (needed.Equals("Minimap", StringComparison.OrdinalIgnoreCase) && _ovDesign.Elements.Any(e => e.IsMinimap));
-                if (!onAlready && other.Widgets.FirstOrDefault() is { } first && _ovDesign.Elements.Count + first.Elements.Count + widget.Elements.Count <= OverlayDesign.MAX_ELEMENTS) {
-                    var needs = OverlayAddon.CopyFamily(first.Elements);
-                    foreach (var copy in needs) {
-                        copy.From = OverlayAddon.FromKey(other, first);
-                    }
-
-                    _ovDesign.Elements.AddRange(needs);
-                    alsoOn.Add(first.Name.Length > 0 ? first.Name : other.Name);
+                if (!_ovAddonList.Any(a => a.Name.Equals(needed, StringComparison.OrdinalIgnoreCase))) {
+                    throw new PanelException($"\"{addon.Name}\" needs the {needed} add-on downloaded. Download it first under Niduus's add-ons, then tick this again.");
                 }
             }
 
@@ -951,8 +939,7 @@ internal sealed partial class ManagerWindow {
             _ovSelected = copies.FirstOrDefault(c => c.Parent.Length == 0) ?? copies.LastOrDefault() ?? _ovSelected;
             OverlayChanged();
             RenderOverlayEditor();
-            Say($"Put \"{(widget.Name.Length > 0 ? widget.Name : "the widget")}\" on the overlay" +
-                (alsoOn.Count > 0 ? $", with \"{string.Join("\", \"", alsoOn)}\" that it needs." : "."));
+            Say($"Put \"{(widget.Name.Length > 0 ? widget.Name : "the widget")}\" on the overlay.");
         }
 
         private async Task TakeOffWidgetAsync(OverlayAddon addon, OverlayWidget widget) {
@@ -2276,7 +2263,7 @@ internal sealed partial class ManagerWindow {
                     // The Ultimus Spectator's pieces: their words' size and colour (Ultimus's map uses the Minimap's choices above).
                     var help = Sub(e.IsUltimusMap
                         ? "Ultimus's own minimap: it follows Ultimus wherever he is and always draws HIS quest's way, never yours. It never " +
-                          "replaces your Minimap, and needs your Minimap on the overlay too."
+                          "replaces your Minimap, and needs the Minimap add-on downloaded (your Minimap doesn't have to be on)."
                         : e.Kind == OverlayElement.ULTIMUS_SPELLS
                             ? "Ultimus's spells in battle: his hand (the card he picks lit up), pips, what he casts and why. Over the game it shows only while Ultimus is in a battle."
                             : "Ultimus's quest now, with its step and way, his health and where he is. Never your own quests.");
