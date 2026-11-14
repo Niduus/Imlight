@@ -436,6 +436,12 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
     private void Lead(List<UltimusMember.Status> group) {
         var leader = group[0];
+        // A step just done: a moment, as a player takes (UltimusDirector.Life.cs).
+        if (Pausing()) {
+            StopWalking(0);
+            return;
+        }
+
         var target = PickTarget(group);
         // Healing first, above all before a fight (UltimusDirector.Health.cs).
         if (HealFirst(group, target)) {
@@ -640,6 +646,17 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return shopping;
         }
 
+        // Little room in the backpack: he sells what he won't wear at a shop here (UltimusDirector.Life.cs).
+        if (SellTarget(group) is { } selling) {
+            return selling;
+        }
+
+        // A clear upgrade at the Bazaar he can pay for past his reserve (in push mode, only when shopping is allowed).
+        if (ShopAllowed(leader) && BazaarTarget(group) is { } bazaar) {
+            MarkBeforeTrip(leader, bazaar);
+            return bazaar;
+        }
+
         RecallAfterTrip(leader);
 
         _currentQuest = UltimusPlanner.PickQuest(_team);
@@ -722,6 +739,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         Snapshot(world);
         WorldStarted(world, _team[0].Wizard?.MagicSchoolBehavior?.Level ?? 0);
+        NewWorldGearCheck(_team[0], world);
         _storyWorld = world;
     }
 
@@ -1074,7 +1092,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         _sent[index] = (target, DateTime.UtcNow, member.X, member.Y);
-        _actors[index].Tell(new UltimusMember.WalkTo(points, what));
+        _actors[index].Tell(new UltimusMember.WalkTo(Wobble(points), what));
         if (index == 0) {
             _leaderLastTarget = target;
         }
@@ -1313,6 +1331,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                     }
 
                     if (_seenGoals.Add(quest.QuestName + "|" + done.GoalName)) {
+                        PauseAfterStep();
                         UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "step", Quest = quest.QuestName, Title = UltimusText.Title(quest.QuestName),
                             Text = $"{member.Name} finished a step" });
                     }

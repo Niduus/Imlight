@@ -95,6 +95,10 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     // Stuck past stepping aside: the server takes it back to where its area starts.
     internal sealed record Recall;
     /// <summary>Mark Location and Recall Location, the buttons a player has (they cost mana, as for a player).</summary>
+    /// <summary>Sells these backpack items to the shopkeeper, one by one, as a player does at a shop.</summary>
+    internal sealed record Sell(ulong NpcGlobalId, List<ulong> Items, string What);
+    /// <summary>Buys an item at the Bazaar (its Bazaar id), as a player does.</summary>
+    internal sealed record BuyAtBazaar(ulong NpcGlobalId, ulong BazaarId, string What);
     internal sealed record MarkSpot;
     internal sealed record RecallSpot;
     internal sealed record SelectBadge(uint Id);
@@ -302,6 +306,19 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         });
         Receive<GoToTeammate>(m => Send(new WIZARD_12_PROTOCOL.MSG_GOTOFRIENDLYPLAYER { TargetCharacterID = m.CharId }));
         Receive<SelectBadge>(m => Send(new GAME_5_PROTOCOL.MSG_SELECT_BADGE { BadgeNameID = m.Id }));
+        Receive<Sell>(m => {
+            Note($"sells {m.Items.Count} things it will not wear ({m.What}).");
+            foreach (var id in m.Items) {
+                Send(new WIZARD_12_PROTOCOL.MSG_SHOPSELLREQUEST { npcGlobalID = m.NpcGlobalId, GlobalID = id, quantity = 1, IsQuickSell = 0 });
+            }
+
+            Send(new WIZARD_12_PROTOCOL.MSG_DONESHOPPING());
+        });
+        Receive<BuyAtBazaar>(m => {
+            Note($"buys {m.What} at the Bazaar.");
+            Send(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSEREQUEST { Command = 1, npcGlobalID = m.NpcGlobalId, itemTemplateID = m.BazaarId });
+            Send(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSEREQUEST { Command = 3, npcGlobalID = m.NpcGlobalId, itemTemplateID = m.BazaarId });
+        });
         Receive<MarkSpot>(_ => Send(new GAME_5_PROTOCOL.MSG_MARK_LOCATION()));
         Receive<RecallSpot>(_ => Send(new GAME_5_PROTOCOL.MSG_RECALL_LOCATION()));
         Receive<ClickNow>(m => Send(BotShared.BotBattle.ToGameMessage(m.Move)));
@@ -713,7 +730,7 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         _openDialogs[number] = events;
         View.Talking = true;
         View.LastDialog = DateTime.UtcNow;
-        Timers.StartSingleTimer("dialog-" + number, new CloseDialog(number), TimeSpan.FromSeconds(Math.Min(4, 0.6 + (lines * 0.3))));
+        Timers.StartSingleTimer("dialog-" + number, new CloseDialog(number), TimeSpan.FromSeconds(Math.Min(UltimusPlaybook.Value("Pace.DialogMost"), 1.0 + (lines * UltimusPlaybook.Value("Pace.DialogPerLine")))));
     }
 
     private void FinishDialog(int number) {
