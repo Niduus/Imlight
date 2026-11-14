@@ -90,6 +90,14 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSEREQUEST))]
     private void ReceiveAuctionHouseRequest(WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSEREQUEST message) {
+        // Turned off, still starting, or closed: tell the player and leave the stock alone (Niduus, 2026-11-14: "If
+        // Bazaar bot is off, interacting with Elik states the Bazaar is disabled").
+        if (BazaarLink.Visit() is var state and not BazaarState.Open) {
+            RefuseBazaar(state, message);
+
+            return;
+        }
+
         switch (message.Command) {
             case 0:
                 SendAuctionHouseContents(message.npcGlobalID, message.category, message.key);
@@ -138,16 +146,48 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
         }
     }
 
+    /// <summary>What a player hears when the Bazaar cannot be used right now. Its words are on the Announcements tab.</summary>
+    internal static string RefusalText(BazaarState state)
+        => Imlight.CoreLib.Game.Tools.Announcements.Text(state switch {
+            BazaarState.Disabled => "bazaar.disabled",
+            BazaarState.Opening => "bazaar.opening",
+            _ => "bazaar.closed",
+        })?.Trim();
+
+    private void RefuseBazaar(BazaarState state, WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSEREQUEST message) {
+        switch (message.Command) {
+            case 0:
+                // A tab was opened: an empty list, and why.
+                Logger.Information("Bazaar: category {0} requested, but the Bazaar is {1}.", Logger.Args(message.category, state));
+                if (RefusalText(state) is { Length: > 0 } text) {
+                    InformGameClient(text, isImportant: state == BazaarState.Disabled);
+                }
+
+                SendList(message.npcGlobalID, message.category, []);
+                break;
+            case 3:
+                SendBuyConfirm(failed: true);
+                if (RefusalText(state) is { Length: > 0 } buyText) {
+                    InformGameClient(buyText);
+                }
+
+                break;
+            case 1:
+            case 6:
+                // The price lock and the stock request: nothing to say twice.
+                break;
+            default:
+                // Selling or Buy More: nothing changes hands.
+                if (RefusalText(state) is { Length: > 0 } sellText) {
+                    InformGameClient(sellText);
+                }
+
+                break;
+        }
+    }
+
     private void SendAuctionHouseContents(ulong npcId, uint category, uint key) {
         Logger.Information("Bazaar: category {0} requested.", Logger.Args(category));
-        if (BazaarLink.Opening) {
-            // The Bazaar bot is still reading the game files (about a minute after a server start).
-            InformGameClient("Elik is still setting up the Bazaar. Try again in a minute.");
-            SendList(npcId, category, []);
-
-            return;
-        }
-
         var records = BazaarLink.Records(category, s_sendEverything);
         Logger.Debug("Bazaar: sending {0} entries.", Logger.Args(records.Length / BazaarBook.RECORD_BYTES));
         SendList(npcId, category, records);
@@ -190,9 +230,7 @@ internal class AuctionHouseService(SessionActor sessionActor) : MessageService(s
 
     // Sent right after a tab's list arrives: the tab's own entries again, as an update, give the game their stock.
     private void SendStock(uint category) {
-        if (!BazaarLink.Opening) {
-            SendUpdates(BazaarLink.Records(category, everything: false));
-        }
+        SendUpdates(BazaarLink.Records(category, everything: false));
     }
 
     private void SendUpdates(byte[] records) {

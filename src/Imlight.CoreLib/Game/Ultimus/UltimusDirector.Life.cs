@@ -288,11 +288,15 @@ internal sealed partial class UltimusDirectorActor {
     private readonly HashSet<uint> _bazaarSkipped = [];
     private DateTime _nextBazaarLook = DateTime.MinValue;
     private UltimusPlanner.Target _bazaarTrip;
+    // He may wake a sleeping Bazaar bot once per world (it reads the game files for a minute when it wakes); later looks
+    // in the same world only ask while it is awake anyway.
+    private bool _bazaarWakeAllowed = true;
 
     /// <summary>Each new world: he looks his gear over (shops of the world at once, the Bazaar when it is worth the trip).</summary>
     private void NewWorldGearCheck(UltimusMember.Status leader, string world) {
         _nextShopping = DateTime.UtcNow;
         _nextBazaarLook = DateTime.UtcNow;
+        _bazaarWakeAllowed = true;
         _shopSkipped.Clear();
         _bazaarSkipped.Clear();
         PlanGold(leader, world);
@@ -319,6 +323,25 @@ internal sealed partial class UltimusDirectorActor {
             return null;
         }
 
+        // The Bazaar can be turned off, sleeps while nobody is there, and in Actual mode has only what players sold
+        // (Niduus, 2026-11-14). Asking wakes it; he looks again once it is up, and skips it while it is off.
+        if (!_bazaarWakeAllowed && BazaarLink.StateNow == BazaarState.Opening) {
+            return null;
+        }
+
+        switch (BazaarLink.Visit()) {
+            case BazaarState.Disabled:
+                Think("The Bazaar is turned off on this server, so I keep to the shops.", "bazaar|off");
+                return null;
+            case BazaarState.Opening:
+                _nextBazaarLook = DateTime.UtcNow.AddSeconds(75);
+                return null;
+            case BazaarState.Closed:
+                return null;
+        }
+
+        _bazaarWakeAllowed = false;
+        var actual = BazaarBook.Mode == BazaarMode.Actual;
         var style = StyleOf(leader);
         var school = BotGear.SchoolOf(wizard);
         var gainNeeded = UltimusPlaybook.Value("Gear.BazaarGain");
@@ -343,6 +366,11 @@ internal sealed partial class UltimusDirectorActor {
             }
 
             if (quote is not { Stock: > 0 } || quote.BuyPrice > spend) {
+                // Not for sale (in the Actual Bazaar, nobody sold one yet): no asking about it again until the next world.
+                if (actual && quote is not { Stock: > 0 }) {
+                    _bazaarSkipped.Add(piece.Id);
+                }
+
                 continue;
             }
 
@@ -387,6 +415,20 @@ internal sealed partial class UltimusDirectorActor {
                 _bazaarTrip = null;
             }
 
+            return;
+        }
+
+        // At the counter: the Bazaar must be open, and in Actual mode still have one (another player may have bought it).
+        var state = BazaarLink.Visit();
+        if (state == BazaarState.Opening) {
+            // It woke up when he walked in; it is ready in about a minute. The side-trip budget still applies.
+            return;
+        }
+
+        if (state != BazaarState.Open || BazaarLink.Find(itemId) is not { Stock: > 0 }) {
+            Note("Ultimus", $"{BotGear.Read(itemId)?.Name ?? itemId.ToString()} is no longer for sale at the Bazaar ({BazaarLink.Describe()}).");
+            _bazaarSkipped.Add(itemId);
+            _bazaarTrip = null;
             return;
         }
 

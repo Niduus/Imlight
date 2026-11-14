@@ -51,7 +51,10 @@ internal sealed class InteractAuctionHouseComponent(ZoneEntity entity)
         && goTemplate.m_objectName.ToString().ToLowerInvariant() == s_auctionHouseName;
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard _)
-        => [
+        => !Bazaar.BazaarLink.Enabled
+            // Turned off: a plain talk option, so the Bazaar window does not open; talking says it is disabled.
+            ? [new InteractableOption { m_serviceName = ServiceName, m_displayKey = DisplayKey, m_iconKey = "Shopping" }]
+            : [
             new AuctionHouseOption {
                 m_displayKey = DisplayKey,
                 m_iconKey = "Shopping",
@@ -62,6 +65,16 @@ internal sealed class InteractAuctionHouseComponent(ZoneEntity entity)
         ];
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
+        // The Bazaar bot is turned off in Ahziael (Niduus, 2026-11-14: "If Bazaar bot is off, interacting with Elik states
+        // the Bazaar is disabled"). Otherwise a visit wakes the bot if it sleeps.
+        if (Bazaar.BazaarLink.Visit() == Bazaar.BazaarState.Disabled) {
+            if (Imlight.CoreLib.Game.Services.AuctionHouseService.RefusalText(Bazaar.BazaarState.Disabled) is { Length: > 0 } text) {
+                playerActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text, Modal = 1 });
+            }
+
+            return;
+        }
+
         SendPlayerIntoWizbang(playerObject.m_globalID);
         SendPlayerIntoState(playerObject.m_globalID);
     }

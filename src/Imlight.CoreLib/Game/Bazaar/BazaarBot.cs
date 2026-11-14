@@ -64,7 +64,7 @@ public static class BazaarBot {
             Environment.Exit(1);
         }
 
-        _ = Task.Run(RestockLoop);
+        _ = Task.Run(SaveLoop);
         Listen();
     }
 
@@ -114,21 +114,16 @@ public static class BazaarBot {
         Environment.Exit(code);
     }
 
-    private static async Task RestockLoop() {
-        var last = DateTime.UtcNow;
+    // Saves what changed every 10 seconds. There is no restocking: the Unlimited Bazaar never runs out, and the Actual
+    // Bazaar only has what players sold (Niduus, 2026-11-14).
+    private static async Task SaveLoop() {
         while (true) {
             await Task.Delay(TimeSpan.FromSeconds(10));
             try {
-                var minutes = Math.Max(0, ConfigurationManager.GetValue("Bazaar.RestockMinutes", 30));
-                if (minutes > 0 && DateTime.UtcNow - last >= TimeSpan.FromMinutes(minutes)) {
-                    last = DateTime.UtcNow;
-                    s_book.Restock();
-                }
-
                 s_book.SaveStock();
             }
             catch (Exception e) {
-                Logger.Error("Bazaar bot could not restock: {0}", Logger.Args(e));
+                Logger.Error("Bazaar bot could not save the stock: {0}", Logger.Args(e));
             }
         }
     }
@@ -183,6 +178,10 @@ public static class BazaarBot {
         switch (request?.Op) {
             case "ping":
                 return new BazaarReply { Ok = true, Stock = book.Count };
+            case "save":
+                book.SaveStock();
+
+                return new BazaarReply { Ok = true };
             case "list":
                 return new BazaarReply { Ok = true, Records = book.Records(request.Category, request.Everything) };
             case "records":
@@ -205,16 +204,7 @@ public static class BazaarBot {
     }
 
     // What Ahziael shows: the state, this program's id, how much it sells and when it last said so.
-    private static void WriteStatus(string state) {
-        try {
-            var text = $"{state}\n{Environment.ProcessId}\n{s_book?.Count ?? 0}\n{DateTime.UtcNow:O}\n{s_port}\n";
-            var path = Path.Combine(BazaarWire.Folder, BazaarWire.STATUS_FILE);
-            File.WriteAllText(path + ".tmp", text);
-            File.Move(path + ".tmp", path, overwrite: true);
-        }
-        catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
-            // Shown as unknown in Ahziael until the next try.
-        }
-    }
+    private static void WriteStatus(string state)
+        => BazaarWire.WriteStatus(state, Environment.ProcessId, s_book?.Count ?? 0, s_port, s_book?.ActualCount ?? 0);
 
 }

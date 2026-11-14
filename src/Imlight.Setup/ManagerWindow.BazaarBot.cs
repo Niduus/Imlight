@@ -24,11 +24,14 @@ internal sealed partial class ManagerWindow {
     private const int BAZAAR_LOG_SHOWN_LINES = 150;
 
     private readonly TextBlock _bazaarBotState = new() { TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold };
+    private readonly ToggleSwitch _bazaarEnabled = new() { OnContent = "On", OffContent = "Off" };
+    private readonly ComboBox _bazaarMode = new() {
+        Width = 360, ItemsSource = new[] { "Unlimited: everything always in stock", "Actual: only what players sold, like the real game" },
+    };
+    private readonly NumericUpDown _bazaarIdleMinutes = new() { Minimum = 1, Maximum = 1440, Increment = 1, FormatString = "0", Width = 140 };
     private readonly ToggleSwitch _bazaarOwnServer = new() { OnContent = "Own program", OffContent = "In the server" };
     private readonly ToggleSwitch _bazaarNoAuction = new() { OnContent = "Included", OffContent = "Left out" };
     private readonly NumericUpDown _bazaarStartStock = new() { Minimum = 1, Maximum = 1_000_000, Increment = 10, FormatString = "0", Width = 140 };
-    private readonly NumericUpDown _bazaarRestockMinutes = new() { Minimum = 0, Maximum = 100_000, Increment = 5, FormatString = "0", Width = 140 };
-    private readonly NumericUpDown _bazaarRestockAmount = new() { Minimum = 0, Maximum = 1_000_000, Increment = 5, FormatString = "0", Width = 140 };
     private readonly NumericUpDown _bazaarPricePercent = new() { Minimum = 0, Maximum = 100_000, Increment = 25, FormatString = "0", Width = 140 };
     private readonly DispatcherTimer _bazaarTimer = new() { Interval = TimeSpan.FromSeconds(3) };
     private TextBox? _bazaarLogBox;
@@ -38,6 +41,16 @@ internal sealed partial class ManagerWindow {
     private string BazaarBotFolder => Path.Combine(_manager.LogFolder, BAZAAR_BOT_FOLDER);
 
     private Control BazaarBotCard() {
+        _bazaarEnabled.IsCheckedChanged += async (_, _) => {
+            if (!_showingBazaar) {
+                await Guard(() => SetBazaarSwitchAsync("Enabled", "The Bazaar bot", _bazaarEnabled.IsChecked == true));
+            }
+        };
+        _bazaarMode.SelectionChanged += (_, _) => {
+            if (!_showingBazaar && _bazaarMode.SelectedIndex >= 0) {
+                _ = Guard(() => SaveBazaarModeAsync(_bazaarMode.SelectedIndex == 1 ? "Actual" : "Unlimited"));
+            }
+        };
         _bazaarOwnServer.IsCheckedChanged += async (_, _) => {
             if (!_showingBazaar) {
                 await Guard(() => SetSwitchAsync("Bazaar", "OwnServer", "The Bazaar as its own program", _bazaarOwnServer.IsChecked == true));
@@ -49,8 +62,7 @@ internal sealed partial class ManagerWindow {
             }
         };
         foreach (var (box, key) in new[] {
-                     (_bazaarStartStock, "StartStock"), (_bazaarRestockMinutes, "RestockMinutes"),
-                     (_bazaarRestockAmount, "RestockAmount"), (_bazaarPricePercent, "ItemPricePercent"),
+                     (_bazaarStartStock, "StartStock"), (_bazaarIdleMinutes, "IdleMinutes"), (_bazaarPricePercent, "ItemPricePercent"),
                  }) {
             box.ValueChanged += (_, _) => {
                 if (!_showingBazaar && box.Value is { } value) {
@@ -66,17 +78,22 @@ internal sealed partial class ManagerWindow {
 
         return Shut(Fold("bag", "Server", "Bazaar bot",
             "The Bazaar runs as a little program of its own next to the server, so its lists and stock never slow the server " +
-            "down. The server starts it by itself and starts it again if it stops; if it is down, the server runs the Bazaar " +
-            "itself. It sells every item, snack, reagent and treasure card the real Bazaar takes, and restocks over time. " +
-            "Changes count right away.",
+            "down. It only runs while a player is in the Bazaar, and sleeps when nobody is there. Turned off, the Bazaar is " +
+            "closed and Elik tells players it is disabled. Unlimited sells everything the real Bazaar takes; Actual works like " +
+            "the real game, where only what players sold is for sale. Changes count right away, no restart.",
             _bazaarBotState,
+            SwitchRow("Bazaar bot", _bazaarEnabled,
+                "Off closes the Bazaar: talking to Elik says the Bazaar is disabled. On starts the bot when a player walks into the Bazaar."),
+            SwitchRow("Bazaar mode", _bazaarMode,
+                "Unlimited: every item, snack, reagent and treasure card is always in stock. Actual: the Bazaar starts empty, " +
+                "what players sell to it is put up, and each buy takes it away. Switching keeps both stocks."),
+            SwitchRow("Sleep after (minutes)", _bazaarIdleMinutes,
+                "How long the bot keeps running after the last player left the Bazaar, before it goes to sleep."),
             SwitchRow("Run the Bazaar as its own program", _bazaarOwnServer,
                 "Off has the server run the Bazaar itself, as before."),
             SwitchRow("No Auction, No Trade and Crowns items", _bazaarNoAuction,
                 "Items the real Bazaar never takes (quest rewards, most pet jewels, crown-only gear). Left out unless you turn this on."),
-            SwitchRow("Stock at the start", _bazaarStartStock, "How many of each thing the Bazaar has before anyone buys (999 is the most, so Buy More can buy plenty)."),
-            SwitchRow("Restock every", _bazaarRestockMinutes, "Minutes between restocks. 0 = never restock."),
-            SwitchRow("Restock amount", _bazaarRestockAmount, "How many more of each thing below the start stock, per restock."),
+            SwitchRow("Stock shown (Unlimited)", _bazaarStartStock, "Unlimited mode: how many of each thing the Bazaar shows (999 is the most, so Buy More can buy plenty)."),
             SwitchRow("Gear and housing price (percent)", _bazaarPricePercent,
                 "Percent of what the game says an item is worth. 200 = twice. Snacks, reagents and jewels stay 1 gold."),
             Row(Action(Plain("Restart Bazaar bot"), RestartBazaarBotAsync), Action(Plain("Open its folder"), () => {
@@ -86,7 +103,7 @@ internal sealed partial class ManagerWindow {
             }))));
     }
 
-    /// <summary>The bot's log on the Logs tab: what it stocks and restocks, and what players buy and sell.</summary>
+    /// <summary>The bot's log on the Logs tab: what it stocks, and what players buy and sell.</summary>
     private Control BazaarBotLogCard() {
         _bazaarLogBox = new TextBox {
             IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12.5,
@@ -94,7 +111,7 @@ internal sealed partial class ManagerWindow {
         };
 
         return Shut(Fold("bag", "Logs", "Bazaar bot log",
-            "What the Bazaar bot does: what it stocked, restocks, and what players buy from it and sell to it. Updated every 3 seconds.",
+            "What the Bazaar bot does: what it stocked, when it sleeps and wakes, and what players buy from it and sell to it. Updated every 3 seconds.",
             LogWell(_bazaarLogBox),
             Row(Action(Plain("Copy all"), () => CopyAsync(_bazaarLogText)))));
     }
@@ -102,11 +119,12 @@ internal sealed partial class ManagerWindow {
     private void LoadBazaarSettings() {
         _showingBazaar = true;
         try {
+            _bazaarEnabled.IsChecked = !string.Equals(_manager.GetSetting("Bazaar", "Enabled"), "false", StringComparison.OrdinalIgnoreCase);
+            _bazaarMode.SelectedIndex = string.Equals(_manager.GetSetting("Bazaar", "Mode")?.Trim(), "Actual", StringComparison.OrdinalIgnoreCase) ? 1 : 0;
+            _bazaarIdleMinutes.Value = Number("IdleMinutes", 5);
             _bazaarOwnServer.IsChecked = !string.Equals(_manager.GetSetting("Bazaar", "OwnServer"), "false", StringComparison.OrdinalIgnoreCase);
             _bazaarNoAuction.IsChecked = _manager.GetSwitch("Bazaar", "NoAuctionItems");
             _bazaarStartStock.Value = Number("StartStock", 999);
-            _bazaarRestockMinutes.Value = Number("RestockMinutes", 30);
-            _bazaarRestockAmount.Value = Number("RestockAmount", 10);
             _bazaarPricePercent.Value = Number("ItemPricePercent", 200);
         }
         finally {
@@ -115,6 +133,32 @@ internal sealed partial class ManagerWindow {
 
         decimal Number(string key, int fallback)
             => int.TryParse(_manager.GetSetting("Bazaar", key), NumberStyles.Integer, CultureInfo.InvariantCulture, out var value) ? value : fallback;
+    }
+
+    private Task SetBazaarSwitchAsync(string key, string name, bool on) {
+        if (!_manager.HasSetting("Bazaar", key)) {
+            throw new PanelException("This server's Imlight.ini has no [Bazaar] " + key + " yet. Click \"Update Ahziael\" once, then try again.");
+        }
+
+        return SetSwitchAsync("Bazaar", key, name, on);
+    }
+
+    private Task SaveBazaarModeAsync(string mode) {
+        if (!_manager.HasSetting("Bazaar", "Mode")) {
+            throw new PanelException("This server's Imlight.ini has no [Bazaar] Mode yet. Click \"Update Ahziael\" once, then try again.");
+        }
+
+        if (string.Equals(_manager.GetSetting("Bazaar", "Mode")?.Trim(), mode, StringComparison.OrdinalIgnoreCase)) {
+            return Task.CompletedTask;
+        }
+
+        _manager.SaveSettings([new Setting("Bazaar", "Mode", mode, "")]);
+        _settings = [];
+        Say(mode == "Actual"
+            ? "The Bazaar is now Actual: only what players sell to it is for sale. It applies right away."
+            : "The Bazaar is now Unlimited: everything is always in stock. It applies right away.");
+
+        return Task.CompletedTask;
     }
 
     private Task SaveBazaarNumberAsync(string key, int value) {
@@ -133,8 +177,9 @@ internal sealed partial class ManagerWindow {
         return Task.CompletedTask;
     }
 
-    // The bot's status file: its state, process id, how many things it sells, when it wrote it, and its port.
-    private (string State, int Pid, int Count, DateTime Written)? ReadBazaarStatus() {
+    // The bot's status file: its state, process id, how many things it sells, when it wrote it, its port, the mode, and
+    // how many things players put up in the Actual Bazaar. The server writes "asleep" or "off" while the bot is not running.
+    private (string State, int Pid, int Count, DateTime Written, int Actual)? ReadBazaarStatus() {
         try {
             var path = Path.Combine(BazaarBotFolder, "status.txt");
             if (!File.Exists(path)) {
@@ -147,7 +192,8 @@ internal sealed partial class ManagerWindow {
             }
 
             return (lines[0], int.TryParse(lines[1], out var pid) ? pid : 0, int.TryParse(lines[2], out var count) ? count : 0,
-                DateTime.TryParse(lines[3], CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var written) ? written.ToUniversalTime() : DateTime.MinValue);
+                DateTime.TryParse(lines[3], CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var written) ? written.ToUniversalTime() : DateTime.MinValue,
+                lines.Length > 6 && int.TryParse(lines[6], out var actual) ? actual : 0);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
             return null;
@@ -165,10 +211,14 @@ internal sealed partial class ManagerWindow {
         var fresh = status is { } s && DateTime.UtcNow - s.Written < TimeSpan.FromSeconds(20);
         _bazaarBotState.Text = !cardShown ? _bazaarBotState.Text
             : !InstalledCommands.IsServerRunning(_manager.InstallFolder) ? "The server is not running, so the Bazaar bot is not either."
-            : _bazaarOwnServer.IsChecked != true ? "Off: the server runs the Bazaar itself."
-            : fresh && status!.Value.State == "ready" ? $"Running: the Bazaar sells {status.Value.Count:N0} things."
-            : fresh && status!.Value.State == "starting" ? "Starting: reading the game files (about a minute)."
-            : "Not running right now: the server runs the Bazaar itself, and starts the bot again within a minute.";
+            : _bazaarEnabled.IsChecked != true ? "Off: the Bazaar is closed, and Elik tells players it is disabled."
+            : _bazaarOwnServer.IsChecked != true ? "On, run by the server itself (not as its own program)."
+            : fresh && status!.Value.State == "ready" ? (_bazaarMode.SelectedIndex == 1
+                ? $"Running (Actual): {status.Value.Actual:N0} different things are for sale, from what players sold."
+                : $"Running (Unlimited): the Bazaar sells {status.Value.Count:N0} things.")
+            : fresh && status!.Value.State == "starting" ? "Starting: a player walked in; reading the game files (about a minute)."
+            : fresh && status!.Value.State == "asleep" ? "Asleep: nobody is in the Bazaar. It starts by itself when a player walks in."
+            : "Not running right now. It starts when a player walks into the Bazaar.";
         _bazaarBotState.Foreground = fresh && status!.Value.State == "ready" ? ManagerTheme.Accent("good") : MUTED;
 
         if (!logShown) {
@@ -209,7 +259,7 @@ internal sealed partial class ManagerWindow {
         }
 
         if (ReadBazaarStatus() is not { Pid: > 0 } status) {
-            throw new PanelException("The Bazaar bot is not running yet. The server starts it about 20 seconds after it is ready.");
+            throw new PanelException("The Bazaar bot is not running right now. It starts by itself when a player walks into the Bazaar.");
         }
 
         await Task.Run(() => {
@@ -223,7 +273,7 @@ internal sealed partial class ManagerWindow {
                 // Already stopped.
             }
         });
-        Say("The Bazaar bot was stopped. The server starts it again within half a minute; until then it runs the Bazaar itself.");
+        Say("The Bazaar bot was stopped. The server starts it again within half a minute while a player is in the Bazaar.");
     }
 
 }

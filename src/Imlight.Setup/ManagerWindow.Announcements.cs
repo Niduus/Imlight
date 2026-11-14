@@ -206,6 +206,7 @@ internal sealed partial class ManagerWindow {
         "Events" => "star",
         "Deckathalon" => "cards",
         "Loyalty Store" => "bag",
+        "Bazaar" => "bag",
         "Member benefits" => "gift",
         "Crowns Rewards" => "coin",
         "Guild raids" => "sword",
