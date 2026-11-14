@@ -84,6 +84,8 @@ internal static class UltimusPlaybook {
         ("Gold", new("LookAheadLevels", 5, "My gold plan looks this many levels ahead (about the next world).")),
         ("Gold", new("Gifts", 0, "1 = Ahziael tops up my gold when I am short (the old way). 0 = I earn and plan my gold as a player.")),
         ("Gear", new("BazaarGain", 8, "An upgrade at the Bazaar must be at least this much better to be worth the trip to Olde Town.")),
+        ("Side", new("On", 1, "1 = when I need XP, a side quest of about my level given in my area comes before fighting for it. 0 = only fights.")),
+        ("Side", new("LevelsBelow", 2, "A side quest for XP may be at most this many levels under mine (lower ones pay too little).")),
         ("Confidence", new("Sure", 80, "A plan I trust this much or more is done at once.")),
     ];
 

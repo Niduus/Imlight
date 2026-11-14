@@ -138,7 +138,7 @@ internal sealed partial class ManagerWindow {
                 _ultMembers,
                 _ultSheet.View,
                 UltimusThanks(),
-                Row(Action(Plain("Pause or resume"), PauseUltimusAsync), Action(Plain("Stop and save"), StopUltimus), Action(Plain("Restart with a new Ultimus"), RestartUltimusAsync), Action(Plain("Open its folder"), () => {
+                Row(Action(Plain("Pause or resume"), PauseUltimusAsync), Action(Plain("Pause and explain"), ExplainUltimusAsync), Action(Plain("Stop and save"), StopUltimus), Action(Plain("Restart with a new Ultimus"), RestartUltimusAsync), Action(Plain("Open its folder"), () => {
                     Directory.CreateDirectory(UltimusFolder);
 
                     return Open(UltimusFolder);
@@ -218,6 +218,27 @@ internal sealed partial class ManagerWindow {
 
         await File.WriteAllTextAsync(file, DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
         Say("Paused. Ultimus stands where it is and stays logged in (a battle it is in still finishes). Click again to resume.");
+    }
+
+    // Pause and explain (Niduus, 2026-11-14): the server pauses him and writes his whole plan (where he is, his goals, his
+    // next move and how much he trusts it, his mood, his last thoughts) to explain.txt, which opens here.
+    private async Task ExplainUltimusAsync() {
+        Directory.CreateDirectory(UltimusFolder);
+        var answer = Path.Combine(UltimusFolder, "explain.txt");
+        var before = File.Exists(answer) ? File.GetLastWriteTimeUtc(answer) : DateTime.MinValue;
+        await File.WriteAllTextAsync(Path.Combine(UltimusFolder, "explain-request.txt"), DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+        Say("Asking Ultimus to pause and explain himself...");
+        for (var i = 0; i < 20; i++) {
+            await Task.Delay(500);
+            if (File.Exists(answer) && File.GetLastWriteTimeUtc(answer) > before) {
+                Say("Ultimus is paused and explained his plan (explain.txt). Click Pause or resume to let him go on.");
+                await Open(answer);
+
+                return;
+            }
+        }
+
+        Say("Ultimus did not answer. Is the server running with Ultimus on and in the game?");
     }
 
     // Stop and save: Ultimus logs out cleanly where it is (its progress is its own, saved as it goes); turning it on again
@@ -468,7 +489,7 @@ internal sealed partial class ManagerWindow {
                     Orientation = Orientation.Horizontal, Spacing = 8,
                     Children = {
                         Action(Primary("Show what happened"), () => {
-                            SelectTab(ULTIMUS_ISSUES_TAB);
+                            SelectTab(_ultBannerMilestone ? ULTIMUS_LOGS_TAB : ULTIMUS_ISSUES_TAB);
                             MarkUltimusIssuesSeen();
 
                             return Task.CompletedTask;
@@ -503,10 +524,50 @@ internal sealed partial class ManagerWindow {
         }
     }
 
+    private bool _ultBannerMilestone;
+    private int _ultMilestoneNewest;
+
+    // The newest milestone not shown yet (milestones.jsonl, one JSON line each; milestones-seen.txt holds the last seen).
+    private string? NewUltimusMilestone() {
+        try {
+            var path = Path.Combine(UltimusFolder, "milestones.jsonl");
+            if (!File.Exists(path)) {
+                return null;
+            }
+
+            var seenPath = Path.Combine(UltimusFolder, "milestones-seen.txt");
+            var seen = File.Exists(seenPath) && int.TryParse(File.ReadAllText(seenPath).Trim(), out var s) ? s : 0;
+            string? text = null;
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            using var reader = new StreamReader(stream);
+            while (reader.ReadLine() is { } line) {
+                if (line.Trim().Length == 0) {
+                    continue;
+                }
+
+                using var json = JsonDocument.Parse(line);
+                var id = json.RootElement.GetProperty("id").GetInt32();
+                if (id > seen) {
+                    _ultMilestoneNewest = id;
+                    text = json.RootElement.GetProperty("text").GetString();
+                }
+            }
+
+            return text;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or KeyNotFoundException or InvalidOperationException) {
+            return null;
+        }
+    }
+
     private void MarkUltimusIssuesSeen() {
         var newest = _ultIssueList.Count == 0 ? 0 : _ultIssueList.Max(i => i.Id);
         try {
             Directory.CreateDirectory(UltimusFolder);
+            if (_ultMilestoneNewest > 0) {
+                File.WriteAllText(Path.Combine(UltimusFolder, "milestones-seen.txt"), _ultMilestoneNewest.ToString(CultureInfo.InvariantCulture));
+            }
+
             File.WriteAllText(Path.Combine(UltimusFolder, "issues-seen.txt"), newest.ToString(CultureInfo.InvariantCulture));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
@@ -540,7 +601,14 @@ internal sealed partial class ManagerWindow {
                                    $"{UltimusIssueKind(last.Kind).ToLowerInvariant()}, {(last.Title.Length > 0 ? last.Title : "the Ultimus")}. {last.Text}";
         }
 
-        _ultBanner.IsVisible = fresh.Count > 0;
+        // Milestones (a world finished, a level up, badly stuck, a self-test), shown when no issue is (Niduus, 2026-11-14).
+        var milestone = fresh.Count == 0 ? NewUltimusMilestone() : null;
+        _ultBannerMilestone = milestone is not null;
+        if (milestone is not null) {
+            _ultBannerText.Text = "Ultimus milestone: " + milestone;
+        }
+
+        _ultBanner.IsVisible = fresh.Count > 0 || milestone is not null;
 
         if (_ultState.IsEffectivelyVisible) {
             ShowUltimusStatus();
@@ -903,6 +971,10 @@ internal sealed partial class ManagerWindow {
             ("Progress", "His progress: level, world times, today (progress.txt)", ReadAllOf(Path.Combine(UltimusFolder, "progress.txt"), 32 * 1024)),
             ("Status", "His status now (status.txt)", ReadAllOf(Path.Combine(UltimusFolder, "status.txt"), 32 * 1024)),
             ("Steps", "What went wrong at each step before (step-memory.json)", ReadAllOf(Path.Combine(UltimusFolder, "step-memory.json"), 64 * 1024)),
+            ("Explain", "His last Pause and explain (explain.txt)", ReadAllOf(Path.Combine(UltimusFolder, "explain.txt"), 32 * 1024)),
+            ("SelfTest", "His last self-test after an update (self-test.txt)", ReadAllOf(Path.Combine(UltimusFolder, "self-test.txt"), 16 * 1024)),
+            ("Training", "His training plan (training-plan.txt)", ReadAllOf(Path.Combine(UltimusFolder, "training-plan.txt"), 16 * 1024)),
+            ("Pace", "His weekly pace report (pace-report.txt)", ReadAllOf(Path.Combine(UltimusFolder, "pace-report.txt"), 16 * 1024)),
             ("Thoughts", "Ultimus Thoughts, newest first (his reasons, also in the main log)", thoughts),
             ("Mistakes", "Mistakes book, newest first (logs\\bots\\mistakes.txt)", ReadAllOf(Path.Combine(bots, "mistakes.txt"), 64 * 1024)),
             ("Fixes", "Abnormal fixes, each stuck spot and what was tried (abnormal-fixes.json)", ReadAllOf(Path.Combine(UltimusFolder, "abnormal-fixes.json"), 64 * 1024)),

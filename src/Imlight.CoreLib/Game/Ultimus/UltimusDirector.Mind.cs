@@ -38,6 +38,9 @@ internal sealed partial class UltimusDirectorActor {
     // Its reasoning a moment ago, kept with a mistake when one is made.
     private string _lastReasoning = "";
 
+    // His last thoughts, for "Pause and explain".
+    private readonly List<string> _recentThoughts = [];
+
     private void Think(string thought, string key = null) {
         key ??= thought;
         if (_thoughts.TryGetValue(key, out var said) && DateTime.UtcNow - said < s_thoughtGap) {
@@ -50,6 +53,11 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         _lastReasoning = thought;
+        _recentThoughts.Add($"{DateTime.Now:HH:mm:ss} {thought}");
+        if (_recentThoughts.Count > 30) {
+            _recentThoughts.RemoveAt(0);
+        }
+
         Note("Ultimus", thought, UltimusLink.THOUGHT);
     }
 

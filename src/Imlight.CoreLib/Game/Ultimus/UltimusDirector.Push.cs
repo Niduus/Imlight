@@ -80,6 +80,10 @@ internal sealed partial class UltimusDirectorActor {
 
         Watchdog(leader);
         WriteProgress(leader);
+        // Story order, level milestones and the self-test after an update (UltimusDirector.Story.cs).
+        ThinkStory(leader);
+        LevelMilestone(leader);
+        MaybeSelfTest(leader);
     }
 
     // ---------------------------------------------------------------------
@@ -96,6 +100,11 @@ internal sealed partial class UltimusDirectorActor {
         _doing = $"fighting for XP toward level {level} ({why})";
         if (UltimusPlanner.HasCreatures(leader)) {
             _xpZone = leader.Zone;
+        }
+
+        // A side quest of about his level given right here beats fighting one creature at a time (UltimusDirector.Story.cs).
+        if (SideQuestForXp(leader) is { } side) {
+            return side;
         }
 
         if (UltimusPlanner.ForXp(leader, level, why) is { } fight) {
@@ -343,6 +352,10 @@ internal sealed partial class UltimusDirectorActor {
         Issue("team", _currentQuest, $"WATCHDOG: no step done and no XP gained for {idle.TotalMinutes:0} minutes ({where}).",
             key: $"watchdog|{_progressMark}|{stage}", level: UltimusLink.CRITICAL);
         Count("watchdog alarms");
+        if (stage >= 2) {
+            Milestone("stuck", $"Ultimus is badly stuck: no step done and no XP gained for {idle.TotalMinutes:0} minutes in {where}.");
+        }
+
         // Only the unstuck moves a player has: back to the area's start, then .stuck go; never a skip.
         switch (stage) {
             case 1:
@@ -434,6 +447,7 @@ internal sealed partial class UltimusDirectorActor {
         var text = new StringBuilder();
         text.AppendLine($"ULTIMUS PROGRESS ({DateTime.Now:dddd d MMMM yyyy, HH:mm})");
         text.AppendLine($"Level {school?.Level ?? 0}, in {UltimusText.Zone(leader.Zone)}; story world: {_storyWorld ?? "not started"}.");
+        text.AppendLine($"Story: {StoryPlace(leader)}.");
         text.AppendLine($"Quest: {(_currentQuest is null ? "none" : UltimusText.Title(_currentQuest))}. Now: {_doing}.");
         text.AppendLine($"Mood: {UltimusMood.Now} ({UltimusMood.Why()}). Plays: {BotKnowledge.PartyOf("Ultimus")}.");
         text.AppendLine($"Last step done or XP gained: {Minutes((DateTime.UtcNow - _progressAt).TotalSeconds)} ago.");
