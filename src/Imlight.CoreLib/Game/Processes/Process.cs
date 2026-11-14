@@ -107,10 +107,16 @@ internal abstract class Process : ReceiveProtocolDispatcher, IWithTimers {
         };
         supervisor.Tell(killedMsg);
 
-        // Inform the participants that the process has been killed.
-        Sender.Tell(killedMsg);
+        // Inform the participants that the process has been killed, each once (the sender is often one of them).
+        var told = new HashSet<IActorRef>();
+        if (!Sender.IsNobody() && !Sender.Equals(Self)) {
+            told.Add(Sender);
+            Sender.Tell(killedMsg);
+        }
         foreach (var participant in Participants) {
-            participant.Tell(killedMsg);
+            if (participant is not null && told.Add(participant)) {
+                participant.Tell(killedMsg);
+            }
         }
 
         Timers.Cancel(ACTIVITY_CHECK_LOCK);

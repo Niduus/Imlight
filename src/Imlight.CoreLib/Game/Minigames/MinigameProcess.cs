@@ -80,7 +80,9 @@ internal sealed class MinigameProcess : Process {
     );
 
     // ctor
-    public MinigameProcess(string processName, uint processId, byte minigameIndex, ChestGameContext chestGame) : base(processName, processId) {
+    // The owner (the player's session) is a participant, so a process ended by its idle check still sends them back.
+    public MinigameProcess(string processName, uint processId, byte minigameIndex, ChestGameContext chestGame, IActorRef owner = null)
+        : base(processName, processId, owner is null ? [] : [owner]) {
         this._minigameIndex = minigameIndex;
         this._chestGame = chestGame;
         this._minigameInfo = Imlight.CoreLib.Game.Minigames.MinigameConfig.GetMinigameInfo(minigameIndex);
