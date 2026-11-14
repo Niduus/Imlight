@@ -92,8 +92,36 @@ internal static class UltimusFoes {
             foe.Seconds += Math.Max(0, seconds);
             foe.Last = DateTime.UtcNow;
             Save();
+            WriteRivals();
 
             return foe;
+        }
+    }
+
+    /// <summary>
+    /// His rivals (Niduus, 2026-11-14, approved): the creatures that beat him, or that take most of his health, worst first.
+    /// </summary>
+    internal static List<Foe> Rivals() {
+        lock (s_lock) {
+            return [.. Foes().Values.Where(f => f.Lost > 0 || f.Tough).OrderByDescending(f => f.Lost).ThenByDescending(f => f.AverageHealthLost)];
+        }
+    }
+
+    // logs/ultimus/rivals.txt: his rivals in plain words, for Niduus.
+    private static void WriteRivals() {
+        try {
+            var rivals = Rivals();
+            var lines = new List<string> {
+                $"ULTIMUS'S RIVALS ({DateTime.Now:yyyy-MM-dd HH:mm}): the creatures that beat him or take most of his health, worst first.",
+                "Against a rival he goes in at full health and mana, and after it beat him twice he levels up once more first.",
+                "",
+            };
+            lines.AddRange(rivals.Count == 0 ? ["- None yet."] : rivals.Select(r => "- " + r.Describe()));
+            Directory.CreateDirectory(UltimusWire.Folder);
+            File.WriteAllLines(Path.Combine(UltimusWire.Folder, "rivals.txt"), lines);
+        }
+        catch (IOException) {
+            // Written again after the next fight.
         }
     }
 

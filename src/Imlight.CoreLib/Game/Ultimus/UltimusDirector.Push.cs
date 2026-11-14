@@ -130,6 +130,9 @@ internal sealed partial class UltimusDirectorActor {
     /// Before a fight step he is far under the quest's level for (Push.LevelGap), or a fight he lost here while under it:
     /// XP first. Null when he is ready.
     /// </summary>
+    // The level he wants before facing a rival again, by creature (set once, after its second win over him).
+    private readonly Dictionary<uint, int> _rivalLevel = [];
+
     private UltimusPlanner.Target LevelFirst(UltimusMember.Status leader, UltimusPlanner.Target step) {
         // Never out of a dungeon for it.
         if (step is null || step.Kind != UltimusPlanner.FIGHT || string.IsNullOrEmpty(step.Quest) || leader.Wizard?.ZoneIsInstance == true
@@ -141,6 +144,22 @@ internal sealed partial class UltimusDirectorActor {
         var gap = (int) UltimusPlaybook.Value("Push.LevelGap");
         var lostHere = _losses.GetValueOrDefault(step.Key) > 0;
         var want = lostHere ? quest.m_questLevel : quest.m_questLevel - gap;
+
+        // A rival that beat him twice or more (UltimusFoes.Rivals): one level more than he had when he first met it like that.
+        var rival = UltimusFoes.Of((uint) Math.Min(step.Template, uint.MaxValue));
+        if (rival is { Lost: >= 2 }) {
+            if (!_rivalLevel.TryGetValue(rival.Template, out var rivalWant)) {
+                _rivalLevel[rival.Template] = rivalWant = have + 1;
+            }
+
+            if (rivalWant > want) {
+                want = rivalWant;
+                if (have < want) {
+                    return XpTarget(leader, want, $"{rival.Name} is one of my rivals: it beat me {rival.Lost} times, so I come back a level stronger");
+                }
+            }
+        }
+
         if (have >= want) {
             return null;
         }

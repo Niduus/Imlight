@@ -168,6 +168,9 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         public volatile bool Walking;
         public volatile bool Talking;
         public DateTime LastDialog = DateTime.MinValue;
+
+        /// <summary>A cutscene is playing for him until then (he watches it, as a player does).</summary>
+        public DateTime CutsceneUntil = DateTime.MinValue;
         public DateTime AttachedAt = DateTime.MinValue;
         public volatile string LastServerText = "";
         public volatile string LastTrained = "";
@@ -467,6 +470,9 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
             Timers.StartSingleTimer("offer-" + quest, new AcceptOffer(m.MobileID, quest), TimeSpan.FromSeconds(0.7));
         });
         Receive<WIZARD_12_PROTOCOL.MSG_ACTORDIALOG>(OnDialog);
+        // A cutscene: he watches it to the end instead of walking off (Niduus, 2026-11-14, approved: patience with cutscenes).
+        Receive<GAME_5_PROTOCOL.MSG_PLAYCINEMATIC>(_ => Cutscene());
+        Receive<CHARACTER_103_PROTOCOL.MSG_PLAYCINEMATICACTOR>(_ => Cutscene());
         Receive<WIZARD_12_PROTOCOL.MSG_SPELLTRAINCOMPLETE>(m => {
             var name = UltimusText.SpellName((uint) m.SpellID);
             View.LastTrained = m.Success == 1 ? name : "";
@@ -774,6 +780,13 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         View.Talking = true;
         View.LastDialog = DateTime.UtcNow;
         Timers.StartSingleTimer("dialog-" + number, new CloseDialog(number), TimeSpan.FromSeconds(Math.Min(UltimusPlaybook.Value("Pace.DialogMost"), 1.0 + (lines * UltimusPlaybook.Value("Pace.DialogPerLine")))));
+    }
+
+    private void Cutscene() {
+        var until = DateTime.UtcNow + TimeSpan.FromSeconds(UltimusPlaybook.Value("Pace.CutsceneSeconds"));
+        if (until > View.CutsceneUntil) {
+            View.CutsceneUntil = until;
+        }
     }
 
     private void FinishDialog(int number) {
