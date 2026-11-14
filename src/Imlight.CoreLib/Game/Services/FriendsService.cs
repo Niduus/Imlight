@@ -123,8 +123,6 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
     private const byte OFFLINE_STATUS_CODE = 1;
     private const byte ONLINE_STATUS_CODE = 4;
     private const float QUERY_TELEPORT_WIZARD_TIMEOUT_IN_SECONDS = 2;
-    // The game's own question, Locale GUI.lang: "Do you want to go to your friend?"
-    private const string GOTO_FRIEND_PROMPT_KEY = "GUI_GotoFriendQuestion";
     private readonly uint _englishLocaleHash = StringHash.Compute("English");
 
     protected static Props Props(SessionActor parentActor)
@@ -597,20 +595,10 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
     private void ReceiveGoToPlayer(GAME_5_PROTOCOL.MSG_GOTOPLAYER message) {
         Logger.Debug("Go to friend asked: target {0}, originator {1}, must be friend {2}, group \"{3}\".",
             Logger.Args(message.TargetCharacterID, message.OriginatorID, message.MustBeFriend, message.GroupID));
-        GoToFriend(message.TargetCharacterID, confirmed: false);
+        GoToFriend(message.TargetCharacterID);
     }
 
-    [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_GotoPlayerConfirm))]
-    private void ReceiveGotoPlayerConfirm(WIZARD2_53_PROTOCOL.MSG_GotoPlayerConfirm message) {
-        // The game only answers "Do you want to go to your friend?" when the player says yes. A sigil asks group mates
-        // with the same box; GroupService answers those, and only the ones asked here are friend teleports.
-        var wizard = GetActiveWizard();
-        if (wizard is not null && FriendGoToPrompts.TryTake(wizard.CharId, message.TargetCharacterID)) {
-            GoToFriend(message.TargetCharacterID, confirmed: true);
-        }
-    }
-
-    private void GoToFriend(ulong targetID, bool confirmed) {
+    private void GoToFriend(ulong targetID) {
         var wizard = GetActiveWizard();
         if (wizard is null) {
             return;
@@ -703,24 +691,9 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
                 return;
             }
 
-            // One click on a friend must not teleport (Niduus, 2026-11-13: "sometimes when single clicking a friend you tp
-            // to them instead of double click"). The game decides what a click sends, so the server asks first with the
-            // game's own "Do you want to go to your friend?" box; Yes sends MSG_GotoPlayerConfirm back. Game Rules >
-            // Teleport Rooms can turn the question off. Every check above runs again after Yes.
-            if (!confirmed && World.TeleportRooms.AskBeforeFriendTeleport) {
-                FriendGoToPrompts.Asked(wizard.CharId, targetID);
-                SendToSocket(new WIZARD2_53_PROTOCOL.MSG_GotoPlayerConfirm {
-                    PromptKey = GOTO_FRIEND_PROMPT_KEY,
-                    TargetCharacterID = targetID,
-                    DisableCrossPlay = 0,
-                    ClientPlatform = 0
-                });
-                Logger.Information("Player {0} is asked before going to character ID {1}.",
-                    Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), targetID));
-
-                return;
-            }
-
+            // No question of the server's own here (Niduus, 2026-11-13: "Clicking TP to friend asks twice. Should ask
+            // once. If I double click on a friends name in the friends list, it should TP me to them"): the game asks
+            // by itself when the teleport button is used, and a double-click on the name goes at once.
             if (copy is { } open) {
                 Logger.Information("Player {0} joins character ID {1} in {2} (copy of {3}): Teleport Rooms has it open.",
                     Logger.Args(wizard.CharId, targetID, open.ZonePath, open.OwnerCharId));
