@@ -1,11 +1,9 @@
-# Ultimus acts sooner when idle and learns the ways that work
+Changed: Ultimus notices he is stuck sooner
+Ultimus now counts as stuck after about 56 seconds of standing still instead of 75. When he stops making progress, he first tries another way (such as a teleporter), and if that doesn't help, he goes back to the start of the area and tries from there.
+Where: Ahziael > Ultimus
+Test: If Ultimus stands still, he should move off after about a minute.
 
-Changed: Ultimus now acts 25% sooner when it stands still or stops making progress. It counts as stuck after about 56 seconds of standing still instead of 75. The "no progress" timer runs at three quarters of the Stuck Minutes setting, so 6 minutes when the setting is 8.
-
-New: when Ultimus makes no progress for that long, it now does something about it. The first time, it looks at the way fresh and tries another way, such as a teleporter. If that didn't help, the next time it goes back to the start of the area and finds the way from there.
-
-New: Ultimus and the Quest Team write down every walk that got them to their quest step: which street, where from, where to, and the spots they walked. They also write down every spot where they got stuck. The next time a bot (Ultimus, the Quest Team or Bot Players) walks from about there to about there, it takes the proven walk. Other walks steer around the stuck spots. A proven walk that later gets a bot stuck stops counting. Everything is kept in logs/routes/learned-routes.json, so it survives restarts and updates.
-
-Where: Ultimus, the Quest Team and Bot Players. Nothing to set up.
-
-Test: Let Ultimus play for a while. Its log should show lines like "remembers the walk to ... as a way that works (N known ways, M stuck spots to walk round)". If it stands still, it should step aside after about a minute, not a minute and a quarter. After a server restart, logs/routes/learned-routes.json should still be there and keep growing.
+New: Bots remember walks that worked
+Ultimus and the Quest Team write down every walk that got them to their quest step, and every spot where they got stuck. Next time, any bot walking the same way takes the walk that worked and goes around the stuck spots. It is saved in logs\routes\learned-routes.json, so it survives restarts and updates.
+Where: Ahziael > Ultimus
+Test: Let Ultimus play for a while. His log should say "remembers the walk to ...". After a restart, learned-routes.json should still be there.

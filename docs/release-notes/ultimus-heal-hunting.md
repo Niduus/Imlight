@@ -1,15 +1,9 @@
-# Ultimus heals smarter (no more standing around)
+Changed: Ultimus goes to heal instead of standing around
+When he needs to heal and has no potion or wisp nearby, he goes to the closest area with wisps or the closest potion shop, whichever is nearer. He no longer stops to heal when he is above his normal ready health. This fixes him standing still at 875 of 1,099 health.
+Where: Ahziael > Ultimus
+Test: Let Ultimus get hurt with no potions. He should walk to wisps or a potion shop instead of standing still.
 
-Changed: When Ultimus needs to heal and has no potion or wisp right where he is, he now looks for the nearest area of the world that has health (or mana) wisps and the nearest potion shop, and goes to whichever is fewer areas away. If it's a tie he picks the wisps, because they're free. He only uses the story's normal ways to get there.
-Changed: If an area's wisps are all taken when he arrives, he won't come back to that area for 5 minutes, so he doesn't walk back and forth.
-Fixed: He no longer stops to heal when he isn't really low. The "full health before a hard fight" care (a tough creature, a risky plan, a careful mood, or a dungeon) now only uses a potion or a wisp that's right there. If there's none, he goes on, because his health is already above his normal ready level. This was why he stood waiting at 875 of 1,099 health.
-Changed: He only waits as a last resort (no potions, no wisps nearby, no potion shop he can reach or afford), and his status now says he's waiting for wisps to come back.
-
-Where: Ultimus (Play > Ultimus). His "Pause and explain" thoughts say which he picked and why.
-
-Test: Let Ultimus run until he's hurt with no potions. Watch him walk to a nearby area for wisps or to a potion shop instead of standing still. Also check he no longer stops to heal when he's above about three quarters health.
-
-New: Ultimus may use the game's Commons button when it saves him at least two areas of walking to wisps or a potion shop. He marks his spot first, presses the button (to this world's hub), heals or buys potions, then Recalls back to where he was, like a player.
-Fixed: After a Recall or a Commons button press he no longer thinks he landed in the wrong area and walks back out.
-
-Test: Get Ultimus hurt with no potions far from a shop. Watch him mark, press the Commons button, buy potions or grab wisps, and Recall back.
+New: Ultimus uses the Commons button to heal
+When it saves a long walk, he marks his spot, presses the Commons button, heals or buys potions, and Recalls back, like a player. After a Recall or Commons trip he no longer thinks he landed in the wrong place.
+Where: Ahziael > Ultimus
+Test: Get Ultimus hurt with no potions far from a shop. He should mark, use the Commons button, heal up and Recall back.
