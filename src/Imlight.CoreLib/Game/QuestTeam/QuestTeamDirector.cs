@@ -192,7 +192,15 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         public double Expected;
         public bool SlowTold;
         public bool LimitTold;
+
+        /// <summary>Time the team spent on another quest while holding this one: not counted against it (the same false
+        /// "too slow" alarms Ultimus raised for a quest he had set aside, Niduus's log 2026-11-14).</summary>
+        public double ParkedSeconds;
+
+        internal double Seconds => Math.Max(0, (DateTime.UtcNow - Started).TotalSeconds - ParkedSeconds);
     }
+
+    private DateTime _runsCheckedAt = DateTime.UtcNow;
 
     public QuestTeamDirectorActor() {
         Receive<Halt>(m => {
@@ -1533,25 +1541,34 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             }
         }
 
+        // Time on another quest is not counted against a quest the team holds but has set aside.
+        var sinceCheck = Math.Min(30, (DateTime.UtcNow - _runsCheckedAt).TotalSeconds);
+        _runsCheckedAt = DateTime.UtcNow;
+        var workingOn = (_target ?? _leaderLastTarget)?.Quest;
+
         // A quest none of them holds any more, that one of them finished: done.
         foreach (var run in _runs.Values.ToList()) {
+            if (!string.IsNullOrEmpty(workingOn) && !string.Equals(workingOn, run.Quest, StringComparison.Ordinal)) {
+                run.ParkedSeconds += sinceCheck;
+            }
+
             var holder = _team.Any(m => m.Wizard?.HasQuest(run.Quest) == true);
             var finished = _team.Any(m => m.Wizard?.HasCompletedQuest(run.Quest) == true);
             if (!holder && finished) {
-                var seconds = (DateTime.UtcNow - run.Started).TotalSeconds;
+                var seconds = run.Seconds;
                 Note("Team", $"FINISHED {run.Title} in {Minutes(seconds)}.");
                 Count("quests finished");
                 QuestTeamLink.Send(new TeamRequest { Op = "quest", Event = "done", Quest = run.Quest, Title = run.Title, World = run.World, Seconds = seconds });
                 _runs.Remove(run.Quest);
             }
-            else if (!run.LimitTold && QuestTeamWire.QuestMinutes > 0 && (DateTime.UtcNow - run.Started).TotalMinutes > QuestTeamWire.QuestMinutes) {
+            else if (!run.LimitTold && QuestTeamWire.QuestMinutes > 0 && run.Seconds / 60 > QuestTeamWire.QuestMinutes) {
                 run.LimitTold = true;
                 Issue("slow", run.Quest, $"{run.Title} went past the time limit of {QuestTeamWire.QuestMinutes} minutes ([QuestTeam] QuestMinutes): " +
-                                         $"{Minutes((DateTime.UtcNow - run.Started).TotalSeconds)} so far.", key: run.Quest + "|limit");
+                                         $"{Minutes(run.Seconds)} so far.", key: run.Quest + "|limit");
             }
-            else if (!run.SlowTold && run.Expected > 0 && (DateTime.UtcNow - run.Started).TotalSeconds > run.Expected * QuestTeamWire.SlowFactor) {
+            else if (!run.SlowTold && run.Expected > 0 && run.Seconds > run.Expected * QuestTeamWire.SlowFactor) {
                 run.SlowTold = true;
-                Issue("slow", run.Quest, $"{run.Title} is taking much longer than expected: {Minutes((DateTime.UtcNow - run.Started).TotalSeconds)} so far, " +
+                Issue("slow", run.Quest, $"{run.Title} is taking much longer than expected: {Minutes(run.Seconds)} so far, " +
                                           $"about {Minutes(run.Expected)} expected. Now: {_doing}.", key: "slow|" + run.Quest);
             }
         }
