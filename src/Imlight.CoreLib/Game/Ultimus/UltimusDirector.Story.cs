@@ -280,6 +280,10 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         Check("Playbook", () => UltimusPlaybook.Value("Quest.ReadyHealth") > 0 ? "rules read" : "FAIL: no rules");
+        // Real lines players said to him (2026-11-14) and what his answer must and must never say (BotSocialChecks).
+        Check("Chat answers", () => BotShared.BotSocialChecks.Run() is { Count: > 0 } failed
+            ? $"FAIL: {failed.Count} of {BotShared.BotSocialChecks.All.Length}: {string.Join("; ", failed.Take(3))}"
+            : $"all {BotShared.BotSocialChecks.All.Length} answered right");
         Check("Quest data", () => {
             var quest = _currentQuest ?? UltimusPlanner.PickQuest(_team);
             if (quest is null) {

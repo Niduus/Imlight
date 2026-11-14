@@ -71,6 +71,26 @@ internal static class MenuChatBook {
         return null;
     }
 
+    /// <summary>
+    /// A phrase that is exactly one of the words (any case, a closing "." or "!" allowed; never a question unless the word
+    /// is one), picked at random among the first word that has any; or null. For answers, where a phrase that only holds
+    /// the words can claim things that are not true ("Follow me" answered "Sorry, I am hatching with someone else", "Hi"
+    /// answered "Hello?", 2026-11-14).
+    /// </summary>
+    internal static Phrase Exact(Random random, params string[] words) {
+        foreach (var word in words) {
+            var want = Bare(word);
+            var matches = Phrases.Where(p => Bare(p.Text) == want && (word.EndsWith('?') || !p.Text.TrimEnd().EndsWith('?'))).ToList();
+            if (matches.Count > 0) {
+                return matches[random.Next(matches.Count)];
+            }
+        }
+
+        return null;
+    }
+
+    private static string Bare(string text) => (text ?? "").Trim().TrimEnd('.', '!', ' ').ToLowerInvariant();
+
     /// <summary>Whether the phrase says the words (whole words, any case).</summary>
     internal static bool Says(string text, string words) {
         var at = (text ?? "").IndexOf(words, StringComparison.OrdinalIgnoreCase);

@@ -103,6 +103,11 @@ internal sealed partial class UltimusDirectorActor {
     // ---------------------------------------------------------------------
 
     private DateTime _nextSellLook = DateTime.MinValue;
+    private int _freeBeforeSell = -1;
+
+    // A shop further than this is not worth a detour: he sells at the next shop he passes (Niduus, 2026-11-14 "HUH???": he
+    // walked off to sell to Charley at half health in the middle of "Payback").
+    private const float SELL_DETOUR = 2500f;
 
     /// <summary>
     /// Little room left in the backpack and gear he will never wear: the nearest shopkeeper in this area, to sell it. Null
@@ -117,6 +122,20 @@ internal sealed partial class UltimusDirectorActor {
         var leader = group[0];
         if (leader.Wizard is not { } wizard || wizard.ZoneIsInstance || wizard.BackpackFreeSlots >= UltimusPlaybook.Value("Backpack.Room")
             || BotGear.Junk(wizard, StyleOf(leader)).Count == 0) {
+            _freeBeforeSell = -1;
+            return null;
+        }
+
+        // He sold here and the backpack got no roomier: selling did not work, so not again for a while (no loop).
+        if (_freeBeforeSell >= 0 && wizard.BackpackFreeSlots <= _freeBeforeSell) {
+            _freeBeforeSell = -1;
+            _nextSellLook = DateTime.UtcNow.AddMinutes(15);
+            Note("Ultimus", $"{leader.Name} tried to sell but the backpack still has only {wizard.BackpackFreeSlots} free spaces: no selling for 15 minutes.");
+            return null;
+        }
+
+        // Hurt: healing comes first, selling waits.
+        if (Hurt(leader, out _, out _)) {
             return null;
         }
 
@@ -124,7 +143,7 @@ internal sealed partial class UltimusDirectorActor {
             .Where(m => m.Kind == MinimapIndex.NPC && m.Entity?.GetComponentOfType<InteractVendorComponent>() is not null)
             .OrderBy(m => UltimusPlanner.Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y))
             .FirstOrDefault();
-        if (shop is null) {
+        if (shop is null || UltimusPlanner.Far(leader.X, leader.Y, shop.Object.m_location.X, shop.Object.m_location.Y) > SELL_DETOUR) {
             Think($"My backpack has only {wizard.BackpackFreeSlots} free spaces. I sell what I will never wear at the next shop I pass " +
                   $"({UltimusPlaybook.Cite("Backpack.Room")}).", "sell-later");
             return null;
@@ -149,6 +168,7 @@ internal sealed partial class UltimusDirectorActor {
 
         Clicked(target.Key);
         var junk = member.Wizard is { } wizard ? BotGear.Junk(wizard, StyleOf(member)) : [];
+        _freeBeforeSell = member.Wizard?.BackpackFreeSlots ?? -1;
         if (member.Options.TryGetValue(target.GlobalId, out var options) && options.FirstOrDefault(o => o.Service == "WizShoppingService") is { Service: not null } open) {
             _actors[0].Tell(new UltimusMember.Interact(target.GlobalId, open.Service, open.Index, "selling"));
             HoldRecall(6);
@@ -480,8 +500,9 @@ internal sealed partial class UltimusDirectorActor {
             return false;
         }
 
-        Note("Ultimus", $"remembers {player.Name}: first met {player.First.ToLocalTime():d MMMM}, talked {player.Times} times. He greets them again.");
-        Speak("hello", 1, force: true, whisperTo: whisper ? charId : 0);
+        // The welcome back is part of his one answer (BotSocial), never a second line before it (audit C1: "Hello?" then
+        // "Ha, true!" to "Can I fish next to you?").
+        Note("Ultimus", $"remembers {player.Name}: first met {player.First.ToLocalTime():d MMMM}, talked {player.Times} times.");
 
         return true;
     }

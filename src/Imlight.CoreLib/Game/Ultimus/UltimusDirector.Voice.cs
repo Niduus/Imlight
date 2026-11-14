@@ -21,6 +21,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
+using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.BotShared;
 using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.WizardData.Collections;
@@ -94,20 +95,36 @@ internal sealed partial class UltimusDirectorActor {
         ["hello"] = ["home", "house"],
     };
 
-    private static readonly string[] s_notDoing = ["fighting", "battle", "pet", "pets", "fishing", "garden", "gardening", "crafting", "shopping", "farming", "dueling", "PvP", "house", "brb", "afk"];
+    private static readonly string[] s_notDoing = ["fighting", "battle", "pet", "pets", "fishing", "garden", "gardening", "crafting", "shopping", "farming", "dueling", "PvP", "house", "brb", "afk",
+        "hatch", "hatching", "train", "training", "busy", "someone else", "sleep", "sleeping", "eat", "eating", "dinner", "homework", "mom", "dad", "work", "school work"];
 
 
     /// <summary>Says a moment's line through Ultimus's Menu Chat, if it has not spoken lately and the dice allow.</summary>
-    private void Speak(string moment, double chance, bool force = false, ulong whisperTo = 0) {
+    /// <remarks>
+    /// A phrase that is exactly one of the moment's words comes first; only when <paramref name="exactOnly"/> is false
+    /// does a phrase that merely holds them do, never a question and never one that claims something he isn't doing.
+    /// An answer to a player is always exact (a looser phrase answered "Follow me" with "Sorry, I am hatching with someone
+    /// else"). False when nothing was said.
+    /// </remarks>
+    private bool Speak(string moment, double chance, bool force = false, ulong whisperTo = 0, bool exactOnly = false) {
         if (_actors.Count == 0 || (!force && (DateTime.UtcNow < _nextLine || _voiceRandom.NextDouble() > chance))) {
-            return;
+            return false;
         }
 
         var me = _team.Count > 0 ? _team[0] : null;
         var fighting = me?.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId);
-        var leaveOut = s_notDoing.Where(w => !(fighting && w is "fighting" or "battle")).Concat(s_wrongFor.GetValueOrDefault(moment) ?? []).ToArray();
-        if (MenuChatBook.Find(_voiceRandom, leaveOut, s_moments.GetValueOrDefault(moment) ?? []) is not { } phrase) {
-            return;
+        var words = s_moments.GetValueOrDefault(moment) ?? [];
+        var phrase = MenuChatBook.Exact(_voiceRandom, words);
+        if (phrase is null && !exactOnly) {
+            var leaveOut = s_notDoing.Where(w => !(fighting && w is "fighting" or "battle")).Concat(s_wrongFor.GetValueOrDefault(moment) ?? []).ToArray();
+            phrase = MenuChatBook.Find(_voiceRandom, leaveOut, words);
+            if (phrase is not null && phrase.Text.TrimEnd().EndsWith('?')) {
+                phrase = null;
+            }
+        }
+
+        if (phrase is null) {
+            return false;
         }
 
         _nextLine = DateTime.UtcNow + s_lineGap;
@@ -115,11 +132,13 @@ internal sealed partial class UltimusDirectorActor {
             Note("Ultimus", $"whispers back in Menu Chat: \"{phrase.Text}\"");
             _actors[0].Tell(new UltimusMember.WhisperMenuChat(phrase.Id, whisperTo));
 
-            return;
+            return true;
         }
 
         Note("Ultimus", $"says in Menu Chat: \"{phrase.Text}\"");
         _actors[0].Tell(new UltimusMember.SayMenuChat(phrase.Id));
+
+        return true;
     }
 
     /// <summary>
@@ -153,8 +172,8 @@ internal sealed partial class UltimusDirectorActor {
             _nextLine = DateTime.UtcNow + s_lineGap;
             _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
             var whisperTo = heard.Whisper ? heard.SpeakerCharId : 0;
-            if (!heard.Typed && reply.MenuMoment is { } moment && s_moments.ContainsKey(moment)) {
-                Speak(moment, 1, force: true, whisperTo: whisperTo);
+            // A Menu Chat line gets a Menu Chat answer only when a phrase says exactly that; otherwise he types.
+            if (!heard.Typed && reply.MenuMoment is { } moment && s_moments.ContainsKey(moment) && Speak(moment, 1, force: true, whisperTo: whisperTo, exactOnly: true)) {
                 continue;
             }
 
@@ -173,12 +192,26 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         var quest = string.IsNullOrEmpty(questName) ? null : QuestTemplateCollection.GetQuestByName(questName);
+        var progress = "";
         var goal = quest?.m_goals?.FirstOrDefault(g => g is not null && target is not null && string.Equals(target.Quest, questName, StringComparison.OrdinalIgnoreCase)
             && g.m_goalName == target.Goal);
+        // The step he is on: the one he is heading for, else the active step his quest book holds (2026-11-14: "what step"
+        // got only the quest name while he was off healing).
+        if (goal is null && quest is not null && me.Wizard?.QuestBehavior?.CurrentQuestInstances?
+                .FirstOrDefault(q => q is not null && string.Equals(q.QuestName, questName, StringComparison.OrdinalIgnoreCase)) is { } held) {
+            var active = held.GoalProgress?.FirstOrDefault(g => g is not null && held.IsGoalActive(g.GoalName));
+            goal = active is null ? null : quest.m_goals?.FirstOrDefault(g => g is not null && g.m_goalName == active.GoalName);
+            if (goal is not null && active.CurrentProgress is > 0 and < int.MaxValue && StepTotal(goal) is > 1 and var total) {
+                progress = $" ({Math.Min(active.CurrentProgress, total)} of {total})";
+            }
+        }
+
         var step = goal is null ? "" : QuestGuide.StepText(goal);
         if (string.IsNullOrWhiteSpace(step) && target is not null && string.Equals(target.Quest, questName, StringComparison.OrdinalIgnoreCase)) {
             step = target.What ?? "";
         }
+
+        step = step.Trim().TrimEnd('.') + progress;
 
         var title = string.IsNullOrEmpty(questName) ? null : UltimusText.Title(questName).Trim().Trim('"').Trim();
         var mood = UltimusMood.Now switch {
@@ -188,9 +221,16 @@ internal sealed partial class UltimusDirectorActor {
         };
 
         return new BotSocial.Self(UltimusRoster.NAME, me.Wizard?.PlayerNameBehavior?.GetWizardName() ?? UltimusRoster.NAME, "Balance",
-            me.Wizard?.MagicSchoolBehavior?.Level ?? 1, UltimusText.Zone(me.Zone), WorldOf(me.Zone), title, step.Trim().TrimEnd('.'),
-            me.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId), mood, NpcTip, FoeTip);
+            me.Wizard?.MagicSchoolBehavior?.Level ?? 1, UltimusText.Zone(me.Zone), WorldOf(me.Zone), title, step,
+            me.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId), mood, NpcTip, FoeTip, _doing,
+            me.Wizard?.GameStats is { } hp ? (int) (hp.m_currentHitpoints * 100L / Math.Max(1, hp.m_baseHitpoints + hp.m_bonusHitpoints)) : -1);
     }
+
+    private static int StepTotal(GoalTemplate goal) => goal switch {
+        BountyGoalTemplate { m_bountyTotal: > 0 } bounty => bounty.m_bountyTotal,
+        ScavengeGoalTemplate { m_itemTotal: > 0 } scavenge => scavenge.m_itemTotal,
+        _ => goal.m_tallyCounter?.m_count ?? 0,
+    };
 
     // "Where is Headmaster Ambrose?": from his NPC book.
     private static string NpcTip(string who) {

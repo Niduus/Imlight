@@ -97,38 +97,34 @@ internal sealed partial class UltimusDirectorActor {
     private string _xpZone;
     private int _planLevel;
 
-    /// <summary>A creature to fight for XP toward <paramref name="level"/>: here, or back where creatures were.</summary>
-    private UltimusPlanner.Target XpTarget(UltimusMember.Status leader, int level, string why) {
+    /// <summary>
+    /// What he does when he truly needs more level (a story quest's level gate, or the same quest fight lost again and
+    /// again). Never farming creatures for XP (Niduus, 2026-11-14: "He shouldn't farm mobs for XP farming. He needs to
+    /// prioritize Main Story Questing"): a side quest of about his level given right here, as a player would, else nothing
+    /// (he goes on with his story, preparing with gear and potions as usual) and, for a level gate, a pink note for Niduus.
+    /// </summary>
+    private UltimusPlanner.Target XpTarget(UltimusMember.Status leader, int level, string why, bool gate = false) {
         var have = leader.Wizard?.MagicSchoolBehavior?.Level ?? 1;
-        Think($"I am level {have} and {why}. I don't take shortcuts: I fight creatures for the XP, as any player would.", "xp|" + level);
-        _doing = $"fighting for XP toward level {level} ({why})";
-        if (UltimusPlanner.HasCreatures(leader)) {
-            _xpZone = leader.Zone;
-        }
-
-        // A side quest of about his level given right here beats fighting one creature at a time (UltimusDirector.Story.cs).
         if (SideQuestForXp(leader) is { } side) {
+            Think($"I am level {have} and {why}. I never farm creatures for XP, so I take a side quest given right here instead.", "xp-side|" + level);
+            _doing = $"a side quest for XP toward level {level} ({why})";
+
             return side;
         }
 
-        if (UltimusPlanner.ForXp(leader, level, why) is { } fight) {
-            return fight;
+        if (gate) {
+            Issue("team", null, $"{leader.Name} needs level {level} ({why}) and finds no side quest of his level here. He does not farm creatures for XP.",
+                key: "xp-gate|" + leader.Zone, level: UltimusLink.ABNORMAL);
         }
-
-        if (!string.IsNullOrEmpty(_xpZone) && !OverlayQuestTracker.SameZone(_xpZone, leader.Zone)
-            && UltimusPlanner.Travel(leader, _xpZone, "back to the creatures, for XP", "xp") is { } way) {
-            return way;
+        else {
+            Think($"I am level {have} and {why}. I don't farm creatures for XP: I go on with my story and prepare with gear and potions.", "xp-no|" + level);
         }
-
-        Issue("team", null, $"{leader.Name} needs level {level} ({why}) and sees no creature to fight for it here, and knows no area with some.",
-            key: "xp-nowhere|" + leader.Zone, level: UltimusLink.ABNORMAL);
 
         return null;
     }
 
     /// <summary>
-    /// Before a fight step he is far under the quest's level for (Push.LevelGap), or a fight he lost here while under it:
-    /// XP first. Null when he is ready.
+    /// A quest fight he lost more than once, or a rival: a side quest of his level first (never farming). Null otherwise.
     /// </summary>
     // The level he wants before facing a rival again, by creature (set once, after its second win over him).
     private readonly Dictionary<uint, int> _rivalLevel = [];
@@ -141,9 +137,13 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         var have = leader.Wizard?.MagicSchoolBehavior?.Level ?? 1;
-        var gap = (int) UltimusPlaybook.Value("Push.LevelGap");
-        var lostHere = _losses.GetValueOrDefault(step.Key) > 0;
-        var want = lostHere ? quest.m_questLevel : quest.m_questLevel - gap;
+        // Only a fight of his quest lost again and again (never "far under the quest's level": no grinding first).
+        var lostHere = _losses.GetValueOrDefault(step.Key) >= 2;
+        if (!lostHere && UltimusFoes.Of((uint) Math.Min(step.Template, uint.MaxValue)) is not { Lost: >= 2 }) {
+            return null;
+        }
+
+        var want = quest.m_questLevel;
 
         // A rival that beat him twice or more (UltimusFoes.Rivals): one level more than he had when he first met it like that.
         var rival = UltimusFoes.Of((uint) Math.Min(step.Template, uint.MaxValue));
@@ -164,9 +164,7 @@ internal sealed partial class UltimusDirectorActor {
             return null;
         }
 
-        var why = lostHere
-            ? $"I lost this fight before and the quest is level {quest.m_questLevel}"
-            : $"the quest is level {quest.m_questLevel}, more than {gap} over me ({UltimusPlaybook.Cite("Push.LevelGap")})";
+        var why = $"I lost this fight more than once and the quest is level {quest.m_questLevel}";
 
         return XpTarget(leader, want, why);
     }
@@ -178,6 +176,27 @@ internal sealed partial class UltimusDirectorActor {
     private string _shopWorld = "";
     private DateTime _shopWorldSince = DateTime.MinValue;
 
+    private const string SHOP_WORLD_FILE = "shop-world.txt";
+
+    // When he first came to this world, kept in a file: a restart is not a new world (audit A4: every restart opened
+    // shopping time again, and he went shopping mid-quest).
+    private static DateTime ShopWorldSince(string world) {
+        var path = Path.Combine(UltimusWire.Folder, SHOP_WORLD_FILE);
+        try {
+            if (File.Exists(path) && File.ReadAllText(path).Split('|') is [var was, var ticks] && string.Equals(was.Trim(), world, StringComparison.OrdinalIgnoreCase)
+                && long.TryParse(ticks.Trim(), out var at)) {
+                return new DateTime(at, DateTimeKind.Utc);
+            }
+
+            File.WriteAllText(path, $"{world}|{DateTime.UtcNow.Ticks}");
+        }
+        catch (Exception e) {
+            Logger.Debug("Ultimus: could not use {0}: {1}", Logger.Args(SHOP_WORLD_FILE, e.Message));
+        }
+
+        return DateTime.UtcNow;
+    }
+
     /// <summary>Whether a shopping trip is allowed now (always, with push mode off).</summary>
     private bool ShopAllowed(UltimusMember.Status leader) {
         if (UltimusPlaybook.Value("Push.On") < 0.5) {
@@ -187,7 +206,7 @@ internal sealed partial class UltimusDirectorActor {
         var world = (leader.Zone ?? "").Split('/')[0];
         if (!string.Equals(world, _shopWorld, StringComparison.OrdinalIgnoreCase)) {
             _shopWorld = world;
-            _shopWorldSince = DateTime.UtcNow;
+            _shopWorldSince = ShopWorldSince(world);
         }
 
         // New in this world (its shops have the next gear), or a lost fight in the last hour (he needs to be stronger).

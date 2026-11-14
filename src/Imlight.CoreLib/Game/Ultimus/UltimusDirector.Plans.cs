@@ -52,13 +52,14 @@ internal sealed partial class UltimusDirectorActor {
     // ---------------------------------------------------------------------
 
     private void ThinkGoals(UltimusMember.Status leader, UltimusPlanner.Target target, int confidence) {
-        var quest = string.IsNullOrEmpty(target.Quest) ? null : QuestTemplateCollection.GetQuestByName(target.Quest);
-        var goal = quest?.m_goals?.FirstOrDefault(g => g is not null && g.m_goalName == target.Goal);
-        var step = goal is null ? "" : QuestGuide.StepText(goal);
+        // His quest even while the move itself is not a quest step (a heal, a shop, a way there; audit A8).
+        var questName = string.IsNullOrEmpty(target.Quest) ? _currentQuest : target.Quest;
+        var quest = string.IsNullOrEmpty(questName) ? null : QuestTemplateCollection.GetQuestByName(questName);
+        var step = leader is null ? "" : SocialSelf(leader).Step ?? "";
         var world = WorldOf(leader.Zone);
         var text = new StringBuilder($"My goals: (1) finish {world}'s story; ");
-        text.Append(quest is null ? "(2) no quest this moment; " : $"(2) the quest {UltimusText.Title(target.Quest)}; ");
-        text.Append(step.Length > 0 ? $"(3) its step: {step}; " : "");
+        text.Append(quest is null ? "(2) no quest this moment; " : $"(2) the quest {UltimusText.Title(questName)}; ");
+        text.Append(step.Length > 0 ? $"(3) its step: {step}; " : "(3) its next step: being worked out; ");
         text.Append($"(4) my next move: {Describe(target)}. I trust this plan {confidence}/100.");
         Think(text.ToString(), "goals|" + target.Key);
     }

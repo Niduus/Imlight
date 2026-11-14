@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
+using Imlight.Common;
 using Imlight.CoreLib.Game.BotShared;
 using Imlight.CoreLib.Game.Tools;
 using Imlight.CoreLib.Game.Zone.Components;
@@ -54,6 +55,47 @@ internal sealed partial class UltimusDirectorActor {
     private static (List<string[]> Names, Dictionary<uint, int[]> Of)? s_vendorZones;
     private UltimusPlanner.Target _shopTrip;
     private readonly HashSet<uint> _shopSkipped = [];
+
+    // Pieces a shop here was found not to sell after all, kept in a file (audit A3: the same Jewel of Instinct trip five
+    // times in one day, as each restart forgot it).
+    private const string NOT_SOLD_FILE = "not-sold-here.txt";
+    private HashSet<uint> _notSold;
+
+    private HashSet<uint> NotSold() {
+        if (_notSold is not null) {
+            return _notSold;
+        }
+
+        _notSold = [];
+        try {
+            var path = System.IO.Path.Combine(UltimusWire.Folder, NOT_SOLD_FILE);
+            if (System.IO.File.Exists(path)) {
+                foreach (var line in System.IO.File.ReadAllLines(path)) {
+                    if (uint.TryParse(line.Split(' ')[0], out var id)) {
+                        _notSold.Add(id);
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            Logger.Debug("Ultimus: could not read {0}: {1}", Logger.Args(NOT_SOLD_FILE, e.Message));
+        }
+
+        return _notSold;
+    }
+
+    private void NotSoldHere(uint id, string what) {
+        if (!NotSold().Add(id)) {
+            return;
+        }
+
+        try {
+            System.IO.File.AppendAllLines(System.IO.Path.Combine(UltimusWire.Folder, NOT_SOLD_FILE), [$"{id} {what}"]);
+        }
+        catch (Exception e) {
+            Logger.Debug("Ultimus: could not write {0}: {1}", Logger.Args(NOT_SOLD_FILE, e.Message));
+        }
+    }
     private readonly HashSet<string> _mountGiven = [];
 
     // Ultimus fights alone: a balanced deck of hits, heals and shields, and gear for living alone and for the schools its
@@ -332,7 +374,7 @@ internal sealed partial class UltimusDirectorActor {
             var upgrades = affordable.Count > 0 || !GoldGifts ? affordable
                 : BotGear.ShopUpgrades(wizard, StyleOf(member), MAX_GEAR_TOP_UP).Where(u => u.Gain >= BIG_GAIN).ToList();
             foreach (var (piece, vendors, _) in upgrades) {
-                if (owned.Contains(piece.Id) || _shopSkipped.Contains(piece.Id)) {
+                if (owned.Contains(piece.Id) || _shopSkipped.Contains(piece.Id) || NotSold().Contains(piece.Id)) {
                     continue;
                 }
 
@@ -343,6 +385,7 @@ internal sealed partial class UltimusDirectorActor {
                 if (here is not null && !Sells(here, piece.Id)) {
                     Note(member.Role, $"{member.Name}: {here.Name} does not sell {piece.Name} after all; it looks elsewhere.");
                     _shopSkipped.Add(piece.Id);
+                    NotSoldHere(piece.Id, $"{piece.Name} (not sold by {here.Name})");
                     continue;
                 }
 
