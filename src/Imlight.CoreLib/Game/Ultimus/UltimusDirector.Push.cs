@@ -137,9 +137,8 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         var have = leader.Wizard?.MagicSchoolBehavior?.Level ?? 1;
-        // Only a fight of his quest lost again and again (never "far under the quest's level": no grinding first).
-        var lostHere = _losses.GetValueOrDefault(step.Key) >= 2;
-        if (!lostHere && UltimusFoes.Of((uint) Math.Min(step.Template, uint.MaxValue)) is not { Lost: >= 2 }) {
+        // Only when his own reasoning after repeated losses picked it (UltimusDirector.Losses.cs; never farming).
+        if (RemedyFor(step.Key) != "level") {
             return null;
         }
 
@@ -211,7 +210,7 @@ internal sealed partial class UltimusDirectorActor {
 
         // New in this world (its shops have the next gear), or a lost fight in the last hour (he needs to be stronger).
         return DateTime.UtcNow - _shopWorldSince < TimeSpan.FromMinutes(UltimusPlaybook.Value("Push.ShopMinutes"))
-               || UltimusMood.LostRecently;
+               || UltimusMood.LostRecently || DateTime.UtcNow < _gearPushUntil;
     }
 
     // ---------------------------------------------------------------------

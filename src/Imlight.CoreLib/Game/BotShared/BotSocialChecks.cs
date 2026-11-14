@@ -32,7 +32,7 @@ internal static class BotSocialChecks {
     internal sealed record Check(string Line, bool Typed, bool InBattle, string Intent, string[] Has, string[] Never, string Before = null);
 
     // Fillers that must never answer a question or a rule (audit C4).
-    private static readonly string[] s_fillers = ["Ha, true!", "Interesting!", "Fair enough!", "I hear you!", "Okay!", "Got it!"];
+    private static readonly string[] s_fillers = ["Ha, true!", "Interesting!", "Fair enough!", "I hear you!", "Okay!", "Got it!", "Ha!", "Fair point."];
 
     internal static readonly Check[] All = [
         new("Hi", false, false, BotSocial.GREETING, [], ["Hello?"]),
@@ -61,10 +61,26 @@ internal static class BotSocialChecks {
         new("how much gold do you have?", true, false, BotSocial.TRADE, ["Enough"], ["don't give"]),
         new("are you an NPC?", true, false, BotSocial.BOT, ["bot"], s_fillers),
         new("who owns this server", true, false, BotSocial.PRIVATE, [], s_fillers),
-        new("do you like Krokotopia?", true, false, BotSocial.QUESTION, ["Not sure", "Payback"], s_fillers),
+        new("Who made you?", true, false, BotSocial.MAKER, ["Niduus"], ["can't", "Not sure"]),
+        new("What's your favorite world?", true, false, BotSocial.LIKE, ["Wizard City"], ["Not sure", "sand"]),
+        new("What's your least favorite school?", true, false, BotSocial.LIKE, ["Myth"], ["I'm a Balance wizard", "Storm"]),
+        new("whats your favorite spell", true, false, BotSocial.LIKE, ["haven't seen enough"], ["Not sure", "Scarab", "Hydra"]),
+        new("do you like Krokotopia?", true, false, BotSocial.LIKE, ["lost about"], s_fillers),
+        new("do you like Celestia?", true, false, BotSocial.LIKE, ["haven't seen enough"], ["I do", "fun"]),
         new("ok", true, false, null, [], []),
         new("brb", true, false, null, [], []),
         new("what level are you?", true, false, BotSocial.LEVEL, ["12"], s_fillers),
+        // 2026-11-14 "oh boy" screenshot.
+        new("hey Ultimus", true, false, BotSocial.GREETING, [], ["Not sure"]),
+        new("ULTIMUS??", true, false, BotSocial.CALLED, ["here"], ["Not sure"]),
+        new("You stuck again?", true, false, BotSocial.STATUS, ["waiting for wisps"], s_fillers),
+        new("go get potions", true, false, BotSocial.ORDER, ["potion shop"], ["Got it!"]),
+        new("like right now", true, false, BotSocial.AGAIN, ["on my way", "potion"], s_fillers, Before: "go get potions"),
+        new("Can you fish?", true, false, BotSocial.ABILITY, ["No, I don't fish"], ["Not sure"]),
+        new("can you hatch pets?", true, false, BotSocial.ABILITY, ["No"], ["Not sure"]),
+        new("can you buy potions?", true, false, BotSocial.ORDER, ["potion"], ["Not sure"]),
+        new("can you juggle?", true, false, BotSocial.ABILITY, ["don't think"], ["Not sure", "Yes"]),
+        new("stop", true, false, BotSocial.ORDER, ["can't stop"], ["Got it!", "Okay"]),
         new("where are you?", true, false, BotSocial.WHERE, ["The Oasis"], s_fillers),
     ];
 
@@ -75,7 +91,16 @@ internal static class BotSocialChecks {
         BotSocial.NoSave = true;
         try {
             var self = new BotSocial.Self("selftest", "Ultimus", "Balance", 12, "The Oasis", "Krokotopia", "Payback", "Defeat 3 Nirini Warrior (1 of 3)",
-                false, "steady", Doing: "waiting for wisps to come back before the fight", Health: 52);
+                false, "steady", Doing: "waiting for wisps to come back before the fight", Health: 52,
+                Worlds: ["Wizard City", "Krokotopia"],
+                // Stands in for his records: Myth creatures beat him; Wizard City went smoothly; he's been to Krokotopia.
+                Opinion: (topic, least) => topic switch {
+                    "school" when least => "Myth. Myth creatures beat me 3 times so far!",
+                    "world" when !least => "Wizard City! Things went smoothly there.",
+                    "like:Krokotopia" => "It's okay! I lost about 40 minutes there being stuck, though.",
+                    _ => null,
+                },
+                Act: what => what == "potions" ? "Good idea, heading to the potion shop now (2 areas away)!" : "Yes, I'm on my way to the potion shop now!");
             ulong id = 900_000;
             foreach (var check in All) {
                 id++;

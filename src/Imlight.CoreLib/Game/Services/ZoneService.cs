@@ -103,7 +103,34 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
     private const string SIGIL_ENTER_TIMER_KEY = "sigilenter";
     private const float SIGIL_COUNTDOWN_SECONDS = 10.0f;
     private const float SIGIL_YAW_ERROR_COMPENSATION = 1.58f; // Gamebryo yaw compensation
-    private ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY _activeSigilEntry;
+    private ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY _activeSigilEntryValue;
+    private ulong _countingId;
+
+    // The sigil countdown this player is in, if any. Kept in s_countingDown by the player's game object too, so the
+    // server's own wizards (Ultimus) hold still on the pad while it runs (Niduus, 2026-11-14: he stepped off his sigil
+    // when Niduus joined him on it).
+    private ZONE_102_PROTOCOL.MSG_STARTSIGILENTRY _activeSigilEntry {
+        get => _activeSigilEntryValue;
+        set {
+            _activeSigilEntryValue = value;
+            if (value is null) {
+                if (_countingId != 0) {
+                    s_countingDown.TryRemove(_countingId, out _);
+                    _countingId = 0;
+                }
+            }
+            else if (GetActiveGameObject()?.m_globalID.Full is { } id and not 0) {
+                _countingId = id;
+                s_countingDown[id] = DateTime.UtcNow;
+            }
+        }
+    }
+
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, DateTime> s_countingDown = new();
+
+    /// <summary>Whether the player with this game object is counting down on a sigil now (at most two minutes).</summary>
+    internal static bool IsCountingDown(ulong globalId)
+        => s_countingDown.TryGetValue(globalId, out var since) && DateTime.UtcNow - since < TimeSpan.FromMinutes(2);
     private DateTime _sigilEntryStarted;
     // After the countdown starts the player is moved onto the pad; their position may lag behind for a moment.
     // Moves while the player is being put on their circle are not theirs; after that any move stops the countdown

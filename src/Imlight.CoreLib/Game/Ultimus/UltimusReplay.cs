@@ -42,6 +42,8 @@ internal static class UltimusReplay {
             UltimusDirectorActor.HealChoice(false, false, false, shopHops: 1, wispHops: 3) == "shop" ? null : "he would not go to the closer shop"),
         new("Wisps and shop the same distance: free wisps first (2026-11-14)", () =>
             UltimusDirectorActor.HealChoice(false, false, false, shopHops: 2, wispHops: 2) == "wisp-area" ? null : "he would pay instead of free wisps"),
+        new("Waited for wisps at 63% health (2026-11-14 \"oh boy\")", () =>
+            !UltimusDirectorActor.HuntsAt(0.63) && UltimusDirectorActor.HuntsAt(0.2) ? null : "he would still hunt or wait above 25%"),
         new("Farmed Desert Golems for XP instead of questing (2026-11-14)", () =>
             UltimusPlaybook.Value("Push.SeekFights") < 0.5 && UltimusMission.HardLimit("Push.SeekFights") ? null : "seeking fights for XP is on or tunable"),
         new("Menu Chat \"Hi\" answered \"Hello?\" (2026-11-14)", () =>
