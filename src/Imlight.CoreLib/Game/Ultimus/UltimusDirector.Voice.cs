@@ -163,6 +163,13 @@ internal sealed partial class UltimusDirectorActor {
 
             // Players he met are kept in players.json too (UltimusDirector.Life.cs).
             Remember(heard.SpeakerCharId, heard.SpeakerName, heard.Whisper);
+            // Advice while he is stuck is kept on the step's issue, and he thanks them (UltimusDirector.Break.cs).
+            if (heard.Typed && MaybeTip(heard.SpeakerName, heard.SpeakerCharId, heard.Text, heard.Whisper)) {
+                _nextLine = DateTime.UtcNow + s_lineGap;
+                _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
+                continue;
+            }
+
             var how = (heard.Whisper ? "whispered" : "said") + (heard.Typed ? "" : " in Menu Chat");
             var reply = BotSocial.Answer(SocialSelf(me), heard.SpeakerCharId, heard.SpeakerName, heard.Text, heard.Typed, heard.Whisper);
             if (reply is null) {

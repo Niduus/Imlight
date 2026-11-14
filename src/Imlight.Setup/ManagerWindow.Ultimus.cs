@@ -109,6 +109,9 @@ internal sealed partial class ManagerWindow {
     private readonly SelectableTextBlock _ultFriends = new() { TextWrapping = TextWrapping.Wrap };
     private DateTime _ultFriendsRead = DateTime.MinValue;
     private readonly TextBlock _ultQuest = new() { TextWrapping = TextWrapping.Wrap };
+    // Steps he set aside and asked help for, each with a "Retry now" button (Niduus, 2026-11-14).
+    private readonly StackPanel _ultHelp = new() { Spacing = 6, IsVisible = false };
+    private string _ultHelpKey = "";
     private readonly StackPanel _ultMembers = new() { Spacing = 6 };
     // Its stats, gear, deck and quest, the same sheet as the Quest Team's (Niduus, 2026-11-13); with one Ultimus the picker hides.
     private readonly WizardSheet _ultSheet = new("Turn Ultimus on and start the server; once it is playing, its stats, gear, deck and quest show here.");
@@ -244,6 +247,7 @@ internal sealed partial class ManagerWindow {
                 _ultDoing,
                 _ultToday,
                 _ultQuest,
+                _ultHelp,
                 _ultMembers,
                 _ultSheet.View,
                 UltimusThanks(),
@@ -623,6 +627,7 @@ internal sealed partial class ManagerWindow {
         "quest" => "Quest problem",
         "team" => "Ultimus stuck",
         "slow" => "Taking too long",
+        "tip" => "Tip from a player",
         _ => "Issue",
     };
 
@@ -686,6 +691,13 @@ internal sealed partial class ManagerWindow {
         return row;
     }
 
+    // What players told Ultimus while he was stuck on this quest (newest 3, since it was last marked fixed).
+    private List<string> UltimusTips(string quest) {
+        var fixedAt = UltimusFixedQuests().GetValueOrDefault(quest, DateTime.MinValue).ToUniversalTime();
+        return [.. _ultIssueList.Where(i => i.Kind == "tip" && string.Equals(i.Quest, quest, StringComparison.OrdinalIgnoreCase) && i.At.ToUniversalTime() > fixedAt)
+            .OrderByDescending(i => i.Id).Take(3).Select(i => i.Text.StartsWith("TIP from ", StringComparison.Ordinal) ? i.Text[9..] : i.Text)];
+    }
+
     // When each quest was marked fixed (newest wins).
     private Dictionary<string, DateTime> UltimusFixedQuests() {
         var fixedAt = new Dictionary<string, DateTime>(StringComparer.OrdinalIgnoreCase);
@@ -733,6 +745,9 @@ internal sealed partial class ManagerWindow {
         var text = new StringBuilder("QUESTS ULTIMUS FOUND A PROBLEM WITH\n");
         foreach (var b in UltimusBrokenList()) {
             text.AppendLine($"{b.Title} ({b.Quest}{(b.World.Length > 0 ? ", " + b.World : "")}): {b.Count} time(s){(b.Ahead ? ", found ahead" : "")}. {UltimusBrokenReason(b.Latest.Text)}");
+            foreach (var tip in UltimusTips(b.Quest)) {
+                text.AppendLine("    Tip: " + tip);
+            }
         }
 
         return text.ToString();
@@ -757,6 +772,10 @@ internal sealed partial class ManagerWindow {
                             Foreground = MUTED, FontSize = ManagerTheme.FONT_SMALL, TextWrapping = TextWrapping.Wrap,
                         },
                         new TextBlock { Text = UltimusBrokenReason(b.Latest.Text), TextWrapping = TextWrapping.Wrap },
+                        new TextBlock {
+                            Text = "Tips from players: " + string.Join("  |  ", UltimusTips(b.Quest)), TextWrapping = TextWrapping.Wrap,
+                            FontStyle = FontStyle.Italic, IsVisible = UltimusTips(b.Quest).Count > 0,
+                        },
                         FixedItButton(b.Quest, b.Title),
                     },
                 },
@@ -1224,6 +1243,53 @@ internal sealed partial class ManagerWindow {
         }
     }
 
+    // The steps he set aside for help, each with what he would suggest, players' tips and a "Retry now" button. Built
+    // again only when the list changes (so a button is not swapped out under the mouse).
+    private void ShowUltimusHelp(JsonArray? rows) {
+        var list = rows?.OfType<JsonObject>().ToList() ?? [];
+        var key = string.Join("|", list.Select(r => (string?) r["key"] + "#" + (r["tips"] as JsonArray)?.Count));
+        _ultHelp.IsVisible = list.Count > 0;
+        if (key == _ultHelpKey) {
+            return;
+        }
+
+        _ultHelpKey = key;
+        _ultHelp.Children.Clear();
+        if (list.Count == 0) {
+            return;
+        }
+
+        _ultHelp.Children.Add(new TextBlock { Text = "Needs help", FontWeight = FontWeight.SemiBold, Foreground = ManagerTheme.Accent("Create") });
+        foreach (var row in list) {
+            var stepKey = (string?) row["key"] ?? "";
+            var what = (string?) row["what"] ?? stepKey;
+            var lines = new StackPanel { Spacing = 2 };
+            lines.Children.Add(new TextBlock {
+                Text = $"\"{what}\"" + (((string?) row["where"])?.Length > 0 ? $" in {row["where"]}" : "") + $"  ·  back to it in {(int?) row["minutes"] ?? 0} min",
+                TextWrapping = TextWrapping.Wrap,
+            });
+            if (((string?) row["fix"])?.Length > 0) {
+                lines.Children.Add(new TextBlock { Text = "Suggested fix: " + row["fix"], TextWrapping = TextWrapping.Wrap, Foreground = MUTED, FontSize = ManagerTheme.FONT_SMALL });
+            }
+
+            foreach (var tip in (row["tips"] as JsonArray ?? []).Select(t => (string?) t).Where(t => t?.Length > 0)) {
+                lines.Children.Add(new TextBlock { Text = "Tip: " + tip, TextWrapping = TextWrapping.Wrap, FontStyle = FontStyle.Italic, FontSize = ManagerTheme.FONT_SMALL });
+            }
+
+            var retry = Row(Action(Plain("Retry now"), async () => {
+                Directory.CreateDirectory(UltimusFolder);
+                await File.AppendAllTextAsync(Path.Combine(UltimusFolder, "retry-request.txt"), stepKey + Environment.NewLine);
+                Say($"Asked. Ultimus tries \"{what}\" again within a few seconds.");
+            }));
+            ToolTip.SetTip(retry, "Ultimus stops waiting and tries this step again now. Use Fixed it on the Issues page when you changed something.");
+            lines.Children.Add(retry);
+            _ultHelp.Children.Add(new Border {
+                Background = ManagerTheme.SURFACE_HIGH_BRUSH, CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(12, 8),
+                Child = lines,
+            });
+        }
+    }
+
     private void ShowUltimusStatus() {
         JsonObject? status = null;
         try {
@@ -1252,6 +1318,7 @@ internal sealed partial class ManagerWindow {
         _ultDoing.IsVisible = _ultToday.IsVisible = _ultQuest.IsVisible = _ultMembers.IsVisible = running && on && live;
         if (!_ultDoing.IsVisible) {
             _ultSheet.Show(null);
+            _ultHelp.IsVisible = false;
             return;
         }
 
@@ -1278,6 +1345,7 @@ internal sealed partial class ManagerWindow {
         }
 
         _ultSheet.Show(status["members"] as JsonArray);
+        ShowUltimusHelp((status["members"] as JsonArray)?.OfType<JsonObject>().FirstOrDefault()?["tracker"]?["parkedRows"] as JsonArray);
 
         static string Capital(string text) => text.Length == 0 ? "" : char.ToUpperInvariant(text[0]) + text[1..];
         static string Minutes(int seconds) => seconds < 90 ? $"{seconds} seconds" : $"{seconds / 60} minutes";
