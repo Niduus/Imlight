@@ -1,0 +1,3 @@
+Changed: Teleporting to a friend asks only once, and a double-click goes at once
+Using the teleport button in the friends list asked "Do you want to go to your friend?" twice, because the game asks by itself and the server asked again. Now only the game's own question shows. Double-clicking a friend's name teleports you to them straight away. The "Ask before teleporting to a friend" tick on the Teleport Rooms page is gone. A friend who turned off Allow Friend Teleports still can't be teleported to.
+Test: Open your friends list, pick an online friend (Ultimus works) and click the teleport button: the question shows once. Then double-click the friend's name: you go at once.
