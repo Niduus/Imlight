@@ -72,7 +72,7 @@ internal static class UltimusPlaybook {
         ("Mood", new("BoldHealShift", 0.05, "Bold, I heal this much later in battle and rest less.")),
         ("Confidence", new("Careful", 45, "A plan I trust less than this (out of 100) is done the careful way: full health first, the map's way, not a shortcut.")),
         ("Push", new("On", 1, "1 = push mode: the main story first; no shop trips except in a new world's first minutes or after a lost fight. 0 = off. Nothing is ever skipped or finished for me.")),
-        ("Push", new("LevelGap", 3, "Before a fight step, if the quest's level is more than this over mine, I fight other creatures for XP first.")),
+        ("Push", new("SeekFights", 0, "0 = I walk round creatures my step doesn't need. I never farm creatures for XP (Niduus's rule); XP comes from quest fights and rewards.")),
         ("Pace", new("CutsceneSeconds", 12, "A cutscene: I stand and watch this long (each new part of it adds more), as a player does, before I go on.")),
         ("Dungeon", new("PrepHealth", 0.95, "Before I walk into a dungeon: at least this share of health (I finish a dungeon in one go).")),
         ("Dungeon", new("PrepMana", 0.6, "...and at least this share of mana.")),
@@ -185,7 +185,8 @@ internal static class UltimusPlaybook {
         "- Ahziael can pause me, send me back to the story, and lock any number so my daily review leaves it alone.",
         "",
         "PUSH MODE",
-        "- Main story first. Before each step I check my level against the quest's (Push.LevelGap) and what went wrong here before",
+        "- Main story first, never farming creatures for XP. Only a quest fight lost again and again, or a level gate, sends me to a side quest",
+        "  of my level given nearby. Before each step I check what went wrong here before",
         "  (step-memory.json). A failure that happened even once at a step is remembered for good.",
         ""
     ];

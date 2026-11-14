@@ -158,7 +158,8 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
     // The Quest Team hears Menu Chat said near it and may answer (it never takes a player's orders).
     // Ultimus hears it too (it welcomes players into its battle, never takes their orders). Ultimus and the Quest Team
     // never hear each other: they keep apart.
-    private void TellQuestTeam(Wizard character, uint phraseId, string text) {
+    // typed: the player wrote the words (the game's word-list chat sends typed words this way), not a Menu Chat phrase.
+    private void TellQuestTeam(Wizard character, uint phraseId, string text, bool typed = false) {
         var team = QuestTeam.QuestTeamDirector.ActorOf("Ice") is not null;
         var ultimus = Ultimus.UltimusDirector.ActorOf("Balance") is not null;
         if ((!team && !ultimus) || GetActiveGameObject() is not { } me) {
@@ -172,7 +173,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
         if (ultimus) {
             Ultimus.UltimusVoice.PlayerSaid(SessionActor.GetZoneActor(), me.m_location.X, me.m_location.Y, character.CharId,
-                character.PlayerNameBehavior?.GetWizardName(), text);
+                character.PlayerNameBehavior?.GetWizardName(), text, typed: typed);
         }
 
         if (!team || Ultimus.UltimusRoster.IsMember(character.CharId)) {
@@ -191,7 +192,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
         var character = GetActiveWizard();
         LogQuickChat(character, message.Message.ToString());
-        TellQuestTeam(character, 0, message.Message.ToString());
+        TellQuestTeam(character, 0, message.Message.ToString(), typed: true);
 
         var msg = new GAME_5_PROTOCOL.MSG_RADIALQUICKCHATEXT {
             Message = message.Message,
@@ -494,7 +495,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         Context.ActorSelection(targetPlayer.ActorPath).Tell(whisper);
-        TellUltimusWhisper(targetPlayer.CharacterId, sender, phraseId, text);
+        TellUltimusWhisper(targetPlayer.CharacterId, sender, phraseId, text, typed: phraseId == 0 && !string.IsNullOrEmpty(text));
     }
 
     // A player whispered to Ultimus: it may answer in Menu Chat, whispered back (Niduus, 2026-11-13: "Able to reply to
@@ -602,7 +603,9 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         shown = null;
         asTyped = false;
         typed ??= string.Empty;
-        var mode = ChatFilter.CurrentChatMode(GetActiveAccount());
+        // Ultimus is free to use text chat (Niduus, 2026-11-14); his lines are the server's own words, not a player's, so his
+        // account's chat level does not turn them into Menu Chat. The whitelist still applies.
+        var mode = Ultimus.UltimusRoster.IsMember(wizard.CharId) ? ChatMode.Open : ChatFilter.CurrentChatMode(GetActiveAccount());
         var forOthers = ChatFilter.ForOthers(typed, mode, out var why);
         if (forOthers is null) {
             Logger.Information("Chat: {0} cannot type in chat ({1}): {2}", Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), why, typed));

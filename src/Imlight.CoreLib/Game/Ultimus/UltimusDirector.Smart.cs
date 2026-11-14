@@ -142,6 +142,12 @@ internal sealed partial class UltimusDirectorActor {
     /// short of the level his quest needs and healthy, a creature on the way is XP, not something to walk round.
     /// </summary>
     private bool SeekFights(UltimusMember.Status member) {
+        // Niduus, 2026-11-14: no farming creatures for XP; the main story comes first. Creatures his step doesn't need are
+        // walked round; XP comes from quest fights and rewards.
+        if (UltimusPlaybook.Value("Push.SeekFights") < 0.5) {
+            return false;
+        }
+
         if (member.Wizard is not { } wizard || wizard.GameStats is not { } stats || wizard.ZoneIsInstance) {
             return false;
         }

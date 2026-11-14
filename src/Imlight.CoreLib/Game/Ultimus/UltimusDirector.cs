@@ -724,7 +724,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                     _stonesUsed.Remove(old);
                 }
 
-                // Far under the quest's level for its fight, or a fight lost here: XP first, the human way.
+                // A quest fight lost again and again: a side quest of his level first (never farming creatures for XP).
                 if (LevelFirst(leader, target) is { } xp) {
                     return xp;
                 }
@@ -750,7 +750,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // Under-leveled for the next story quest: he fights creatures for the XP, as a player does (Niduus, 2026-11-14: no XP
         // command; he quests as a human). UltimusDirector.Push.cs.
         if (_currentQuest is null && UltimusPlanner.LevelBlocked(leader.Wizard) is var (blocked, level)) {
-            return XpTarget(leader, level, $"'{UltimusText.Title((string) blocked.m_questName)}' needs level {level}");
+            return XpTarget(leader, level, $"'{UltimusText.Title((string) blocked.m_questName)}' needs level {level}", gate: true);
         }
 
         // The whole story played, to the last world the data has: they stop (paused, so Ahziael's Resume or Restart decides).

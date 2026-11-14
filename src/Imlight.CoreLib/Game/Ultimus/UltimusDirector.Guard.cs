@@ -38,6 +38,7 @@ internal static class UltimusMission {
     internal static readonly string[] HardLimits = [
         "no step is skipped or finished for me",
         "no free XP, gold or items",
+        "no farming creatures for XP: the main story comes first",
         "no crafting or pet training",
         "I stay in bounds: on the floor, in the main story's worlds",
         "side areas (dungeons, events, other worlds) only when a quest names them",
@@ -46,7 +47,7 @@ internal static class UltimusMission {
     // Playbook rules his daily review may never change, whatever self-tuning.txt says: the hard limits' numbers.
     private static readonly HashSet<string> s_untunable = new(StringComparer.OrdinalIgnoreCase) {
         "Push.On", "Gold.Gifts", "Guard.StepMinutes", "Guard.QuestFactor", "Guard.SideTripMinutes", "Guard.NoStoryMinutes",
-        "Guard.CheckMinutes", "Guard.MinWinChance",
+        "Guard.CheckMinutes", "Guard.MinWinChance", "Push.SeekFights",
     };
 
     /// <summary>Whether a playbook rule is one only Niduus changes.</summary>
@@ -285,6 +286,15 @@ internal sealed partial class UltimusDirectorActor {
         _nextCheck = now.AddMinutes(Math.Max(1, UltimusPlaybook.Value("Guard.CheckMinutes")));
         var target = _target ?? _leaderLastTarget;
         var distance = target is null ? float.MaxValue : UltimusPlanner.WayCost(leader, target);
+        // The first check after a start only sets where he stands (audit A7: it always said "yes" after a restart).
+        if (_checkProgress == DateTime.MinValue) {
+            _checkKey = target?.Key;
+            _checkDistance = distance;
+            _checkProgress = _storyProgressAt;
+
+            return;
+        }
+
         var closer = _storyProgressAt > _checkProgress
                      || (target?.Key == _checkKey && distance < _checkDistance * 0.9f)
                      || (target is not null && target.Key != _checkKey);

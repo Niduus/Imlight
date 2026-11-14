@@ -269,12 +269,14 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         Receive<WhisperMenuChat>(m => Send(new GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDQUICKCHAT { TargetID = m.CharId, MessageID = m.PhraseId }));
         Receive<SayMenuChatText>(m => Send(new GAME_5_PROTOCOL.MSG_REQUESTRADIALQUICKCHATEXT { Message = m.Text }));
         Receive<WhisperMenuChatText>(m => Send(new GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDQUICKCHATEXT { TargetID = m.CharId, Message = m.Text }));
+        // Typed lines go out typed (he is free to use text chat). One the whitelist would hide is not sent at all: Menu Chat's
+        // free-text form shows only the game's own words and turned "Right now: \"Payback\"" into "Right now: ..." (2026-11-14).
         Receive<SayText>(m => {
             if (TypedShows(m.Text)) {
                 Send(new GAME_5_PROTOCOL.MSG_REQUESTRADIALCHAT { Message = Social.RadialChatText.Like(new byte[] { 0, 0 }, m.Text) });
             }
             else {
-                Send(new GAME_5_PROTOCOL.MSG_REQUESTRADIALQUICKCHATEXT { Message = m.Text });
+                Note($"left unsaid (the chat whitelist would hide it): \"{m.Text}\"");
             }
         });
         Receive<WhisperText>(m => {
@@ -282,7 +284,7 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
                 Send(new GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDCHAT { TargetID = m.CharId, Message = m.Text });
             }
             else {
-                Send(new GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDQUICKCHATEXT { TargetID = m.CharId, Message = m.Text });
+                Note($"left unwhispered (the chat whitelist would hide it): \"{m.Text}\"");
             }
         });
         Receive<UsePotion>(_ => Send(new WIZARD_12_PROTOCOL.MSG_USEPOTION()));
@@ -829,16 +831,9 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         _session.Tell(new SERVER_100_PROTOCOL.MSG_RECEIVEDPACKET { Packet = message });
     }
 
-    // Whether his account's chat level lets this typed line show as it is (not menu chat only, no word the filter hides).
-    private bool TypedShows(string text) {
-        var mode = Social.ChatFilter.CurrentChatMode(AccountCollection.GetAccountForCharacterList(_member.AccountId));
-
-        return mode switch {
-            ChatMode.Closed => false,
-            ChatMode.Filtered => Social.ChatFilter.FirstRedWord(text, textChat: true) is null,
-            _ => true,
-        };
-    }
+    // Whether this typed line shows as it is. His own chat level does not apply (ChatService: he is free to use text chat);
+    // the whitelist, when it is on, still does.
+    private static bool TypedShows(string text) => ReferenceEquals(Social.ChatFilter.ForOthers(text, ChatMode.Open, out _), text);
 
     private void SendControl(IMessage message) => _session?.Tell(new SERVER_100_PROTOCOL.MSG_RECEIVEDPACKET { Packet = message });
 
