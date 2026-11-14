@@ -113,6 +113,58 @@ internal static class BotSocial {
     private static bool Has(string text, params string[] words) => words.Any(w => MenuChatBook.Says(text, w));
 
     /// <summary>What a line means (the first intent that fits, most specific first).</summary>
+    // "Are you in combat?", "are you walking?", "are you questing?" (Niduus, 2026-11-14: "ARe you in combat?" got "Not sure what
+    // you mean"; he needs to know his own state): the state asked about, or null.
+    private static readonly (string State, string[] Words)[] s_states = [
+        ("battle", ["in combat", "in a battle", "in battle", "in a fight", "fighting", "battling", "in a duel"]),
+        ("walking", ["walking", "moving", "running", "going somewhere", "on your way"]),
+        ("questing", ["questing", "on a quest", "doing a quest", "doing quests", "doing your quest"]),
+        ("waiting", ["waiting", "standing", "idle", "doing nothing", "frozen", "afk", "away"]),
+        ("stuck", ["stuck", "lost"]),
+    ];
+
+    private static string StateWord(string text) {
+        var t = (text ?? "").ToLowerInvariant();
+        if (!(t.Contains("are you") || t.Contains("r u ") || t.StartsWith("you ", StringComparison.Ordinal) || t.Contains("u in "))) {
+            return null;
+        }
+
+        return s_states.FirstOrDefault(s => s.Words.Any(w => Has(t, w))).State;
+    }
+
+    // A yes or no from his real state now. Doing is what he is doing this moment ("walking to ...", "stuck: ...").
+    private static string StateAnswer(Self self, string text, string doing) {
+        var now = string.IsNullOrWhiteSpace(self.Doing) ? "" : self.Doing.Trim().TrimEnd('.');
+        var low = now.ToLowerInvariant();
+        var stuck = low.Contains("stuck") || low.Contains("can't") || low.Contains("looking around");
+        var waiting = low.Contains("wait") || low.Contains("paused") || low.Contains("reading") || low.Contains("standing");
+        var health = self.Health >= 0 ? $" I'm at {self.Health}% health." : "";
+        return StateWord(text) switch {
+            "battle" => self.InBattle ? $"Yes, I'm in a battle right now!{health}"
+                : $"No, I'm not in a battle right now.{health}" + (now.Length > 0 ? $" I'm {Gerund(now)}." : $" Working on {doing}."),
+            "walking" => self.InBattle ? "No, I'm in a battle right now!"
+                : stuck || waiting ? $"Not right now: {now}."
+                : now.Length > 0 ? $"Yes! I'm {Gerund(now)}." : $"Yes, working on {doing}.",
+            "questing" => self.Quest is null ? $"Not right now, I'm {(now.Length > 0 ? Gerund(now) : "looking for my next quest")}."
+                : $"Yes! I'm on {doing}" + (self.Step is null ? "." : $", the step is: {self.Step}."),
+            "waiting" => self.InBattle ? "No, I'm in a battle!" : waiting || stuck ? $"Yes: {now}." : now.Length > 0 ? $"No, I'm {Gerund(now)}." : $"No, I'm working on {doing}.",
+            "stuck" => stuck ? $"Yes, I'm stuck: {now}. I keep trying the way a player would." : $"No, I'm fine! {(now.Length > 0 ? "I'm " + Gerund(now) + "." : "Working on " + doing + ".")}",
+            _ => null,
+        };
+    }
+
+    // "walks to the door" reads "walking to the door"; anything else as it is.
+    private static string Gerund(string doing) {
+        var words = doing.Split(' ', 2);
+        if (words[0].Length > 2 && words[0].EndsWith('s') && !words[0].EndsWith("ss", StringComparison.Ordinal)) {
+            var verb = words[0][..^1];
+            verb = verb.EndsWith('e') && !verb.EndsWith("ee", StringComparison.Ordinal) ? verb[..^1] : verb;
+            return verb + "ing" + (words.Length > 1 ? " " + words[1] : "");
+        }
+
+        return doing;
+    }
+
     internal static string Classify(string text, Friend friend) {
         var t = (text ?? "").Trim();
         if (t.Length == 0) {
@@ -173,7 +225,8 @@ internal static class BotSocial {
                 // How he is right now: health, waiting, standing, lost, what he is fighting, why.
         if (Has(t, "are you hurt", "are you ok", "are you okay", "your health", "need a heal", "need heal", "low health", "why are you standing",
                 "why are you waiting", "what are you waiting", "are you lost", "are you stuck", "why are you just", "what are you fighting", "why are you fighting",
-                "why are you here", "why are you going", "standing still", "you stuck", "you lost")) {
+                "why are you here", "why are you going", "standing still", "you stuck", "you lost")
+            || StateWord(t) is not null) {
             return STATUS;
         }
 
@@ -439,10 +492,11 @@ internal static class BotSocial {
         var area = string.IsNullOrWhiteSpace(self.Area) ? "this area" : self.Area;
         var at = area + (string.IsNullOrWhiteSpace(self.World) || string.Equals(self.World, self.Area, StringComparison.OrdinalIgnoreCase) ? "" : $", {self.World}");
         var step = string.IsNullOrWhiteSpace(self.Step) ? null : self.Step.Trim();
-        var doing = quest is null ? $"exploring {area}" : $"\"{quest}\"";
+        // No quote marks round the quest: the game's chat hid the quoted words as "..." (Niduus, 2026-11-14).
+        var doing = quest is null ? $"exploring {area}" : $"the quest {quest}";
         var stepLine = quest is null ? $"I'm between quests, looking for the next one in {area}."
-            : step is null ? $"I'm on \"{quest}\" and heading to its next step now."
-            : $"My step in \"{quest}\" is: {step}.";
+            : step is null ? $"I'm on {quest} and heading to its next step now."
+            : $"My step in {quest} is: {step}.";
         var moodWord = self.Mood switch {
             "proud" => Pick(self.Bot, "mood-proud", "Feeling great, the story is going well!", "Pretty proud of my progress today!", "On a roll lately!"),
             "frustrated" => Pick(self.Bot, "mood-frust", "A bit stuck lately, but I'll get there!", "Some tricky spots today, but I'm not giving up.", "Had a rough patch, still smiling though."),
@@ -592,12 +646,17 @@ internal static class BotSocial {
                 why = $"{friend.Name} asked if they may do something near me. It doesn't stop my quest, so yes.";
                 moment = "yes";
                 break;
+            case STATUS when StateAnswer(self, text, doing) is { } state: {
+                line = state;
+                why = $"{friend.Name} asked about my state right now ({StateWord(text ?? "")}), so I answer yes or no from what I am really doing.";
+                break;
+            }
             case STATUS: {
                 var health = self.Health >= 0 ? $" I'm at {self.Health}% health." : "";
                 var now = string.IsNullOrWhiteSpace(self.Doing) ? null : self.Doing.Trim().TrimEnd('.');
                 line = self.InBattle ? $"I'm in a battle right now!{health}"
                     : now is null ? $"I'm fine, thanks!{health} Working on {doing}."
-                    : $"What I'm doing: {now}.{health}" + (quest is null ? "" : $" My quest is \"{quest}\".");
+                    : $"What I'm doing: {now}.{health}" + (quest is null ? "" : $" My quest is {quest}.");
                 why = $"{friend.Name} asked how I am or what I'm doing, so I tell them truthfully: {now ?? "questing"}.";
                 break;
             }

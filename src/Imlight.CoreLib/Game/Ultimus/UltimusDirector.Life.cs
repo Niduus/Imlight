@@ -222,6 +222,115 @@ internal sealed partial class UltimusDirectorActor {
             Key: $"sell|{leader.Role}");
     }
 
+    // ---------------------------------------------------------------------
+    // Selling at the Bazaar
+    // ---------------------------------------------------------------------
+
+    private DateTime _nextBazaarSellLook = DateTime.MinValue;
+
+    /// <summary>
+    /// What the Bazaar pays for his junk, past what a shop pays (Niduus, 2026-11-14: "Allow for Ultimus to not only quick
+    /// sell but to also use the Bazaar to sell (If disabled, he will not attempt to go to the Bazaar)"). The Bazaar pays half
+    /// an item's value, a shop a twentieth. Pieces the Bazaar won't take (No Auction) are left for the shop.
+    /// </summary>
+    private static (List<ulong> Items, int Bazaar, int Shop) BazaarJunk(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard, BotStyle style) {
+        var items = new List<ulong>();
+        var bazaar = 0;
+        var shop = 0;
+        foreach (var (item, _) in BotGear.Junk(wizard, style)) {
+            if (Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(item.m_templateID) is not Imcodec.ObjectProperty.TypeCache.WizItemTemplate template
+                || template.m_adjectiveList.Any(a => a == "FLAG_NoAuction")) {
+                continue;
+            }
+
+            items.Add(item.m_globalID.Full);
+            bazaar += (int) Math.Ceiling(template.m_baseCost * 0.5f);
+            shop += (int) Math.Ceiling(template.m_baseCost * 0.05f);
+        }
+
+        return (items, bazaar, shop);
+    }
+
+    /// <summary>
+    /// Little room in the backpack, and the Bazaar pays clearly more than a shop for what he won't wear: the way to the Bazaar
+    /// (only while he is in Wizard City anyway, where it is; never when it is turned off), or the sale at its counter.
+    /// </summary>
+    private UltimusPlanner.Target BazaarSellTarget(List<UltimusMember.Status> group) {
+        var leader = group[0];
+        var atBazaar = OverlayQuestTracker.SameZone(leader.Zone ?? "", BAZAAR_ZONE);
+        if (DateTime.UtcNow < _nextBazaarSellLook || leader.Wizard is not { } wizard || wizard.ZoneIsInstance) {
+            return _target?.Key.StartsWith("bazaarsell|", StringComparison.Ordinal) == true ? _target : null;
+        }
+
+        _nextBazaarSellLook = DateTime.UtcNow.AddSeconds(30);
+        if (!BazaarLink.Enabled || BazaarLink.StateNow == BazaarState.Disabled) {
+            return null;
+        }
+
+        // At the Bazaar for a buy: what he won't wear goes too, whatever room is left. Elsewhere only when the backpack is
+        // nearly full, he is not hurt, and he is in Wizard City (no trip across worlds to sell).
+        var nearlyFull = wizard.BackpackFreeSlots < UltimusPlaybook.Value("Backpack.Room");
+        if (!atBazaar && (!nearlyFull || Hurt(leader, out _, out _)
+            || !string.Equals((leader.Zone ?? "").Split('/')[0], BAZAAR_ZONE.Split('/')[0], StringComparison.OrdinalIgnoreCase))) {
+            return null;
+        }
+
+        var (items, pays, shopPays) = BazaarJunk(wizard, StyleOf(leader));
+        if (items.Count == 0 || pays - shopPays < UltimusPlaybook.Value("Gold.BazaarSellGain")) {
+            return null;
+        }
+
+        if (atBazaar) {
+            var keeper = MinimapIndex.In(leader.ZoneActor).FirstOrDefault(m => m.Entity?.GetComponentOfType<InteractAuctionHouseComponent>() is not null);
+            return keeper is null ? null
+                : new UltimusPlanner.Target(UltimusPlanner.SHOP, keeper.Object.m_location.X, keeper.Object.m_location.Y,
+                    $"{leader.Name} sells {items.Count} pieces he won't wear at the Bazaar (about {pays:N0} gold)", Template: keeper.Template,
+                    GlobalId: keeper.Object.m_globalID.Full, Key: "bazaarsell|" + leader.Role);
+        }
+
+        Think($"My backpack has only {wizard.BackpackFreeSlots} free spaces. The Bazaar pays about {pays:N0} gold for the {items.Count} pieces I " +
+              $"won't wear, a shop only {shopPays:N0}, and I am in Wizard City anyway: I sell them at the Bazaar ({UltimusPlaybook.Cite("Gold.BazaarSellGain")}).",
+            "bazaar-sell");
+
+        return UltimusPlanner.Travel(leader, BAZAAR_ZONE, "to the Bazaar, to sell what I won't wear", "bazaarsell-way") is { Problem.Length: 0 } way ? way : null;
+    }
+
+    private void BazaarSellHere(UltimusPlanner.Target target) {
+        var member = _team[0];
+        if (UltimusPlanner.Far(member.X, member.Y, target.X, target.Y) > 200) {
+            WalkTo(0, target);
+            return;
+        }
+
+        if (!CanClick(target.Key)) {
+            return;
+        }
+
+        Clicked(target.Key);
+        if (BazaarLink.Visit() != BazaarState.Open || member.Wizard is not { } wizard) {
+            // Waking up, or turned off meanwhile: the shop's quick sell is still there.
+            _nextBazaarSellLook = DateTime.UtcNow.AddMinutes(BazaarLink.StateNow == BazaarState.Opening ? 0.5 : 30);
+            return;
+        }
+
+        var (items, pays, _) = BazaarJunk(wizard, StyleOf(member));
+        if (items.Count == 0) {
+            return;
+        }
+
+        if (member.Options.TryGetValue(target.GlobalId, out var options) && options.FirstOrDefault(o => o.Service == "AuctionHouseService") is { Service: not null } open) {
+            _actors[0].Tell(new UltimusMember.Interact(target.GlobalId, open.Service, open.Index, "the Bazaar"));
+        }
+
+        HoldRecall(8);
+        Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(1.5), _actors[0],
+            new UltimusMember.SellAtBazaar(target.GlobalId, items, $"{items.Count} pieces, about {pays:N0} gold"), Self);
+        Count("things sold at the Bazaar", items.Count);
+        Think($"At the Bazaar I sell {items.Count} pieces I will never wear, for about {pays:N0} gold. Quest items and what I wear stay.", "bazaar-sold");
+        _nextBazaarSellLook = DateTime.UtcNow.AddMinutes(10);
+        _target = null;
+    }
+
     private void SellHere(UltimusPlanner.Target target) {
         var member = _team[0];
         if (UltimusPlanner.Far(member.X, member.Y, target.X, target.Y) > 200) {

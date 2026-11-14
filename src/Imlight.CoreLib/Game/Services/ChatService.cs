@@ -619,6 +619,11 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), forOthers, why, typed));
             shown = forOthers;
         }
+        else if (Ultimus.UltimusRoster.IsMember(wizard.CharId)) {
+            // His lines are the server's own words: sent so the game shows them in full, never with words swapped for "..."
+            // by the game's own filter (Niduus, 2026-11-14: "Working on ... the Map ..." for "Off the Map").
+            asTyped = true;
+        }
         else if (ChatFilter.ShowsRedWords(typed, mode)) {
             asTyped = true;
             Logger.Information("Chat: {0}'s message has red words and goes to others as typed (open chat, whitelist not enforced): {1}",

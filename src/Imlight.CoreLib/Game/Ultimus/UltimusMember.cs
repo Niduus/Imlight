@@ -110,6 +110,8 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     internal sealed record Sell(ulong NpcGlobalId, List<ulong> Items, string What);
     /// <summary>Buys an item at the Bazaar (its Bazaar id), as a player does.</summary>
     internal sealed record BuyAtBazaar(ulong NpcGlobalId, ulong BazaarId, string What);
+    /// <summary>Sells backpack items at the Bazaar, as a player does: each one's price asked, then Yes.</summary>
+    internal sealed record SellAtBazaar(ulong NpcGlobalId, List<ulong> Items, string What);
     internal sealed record MarkSpot;
     internal sealed record RecallSpot;
     internal sealed record SelectBadge(uint Id);
@@ -368,6 +370,13 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
             Note($"buys {m.What} at the Bazaar.");
             Send(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSEREQUEST { Command = 1, npcGlobalID = m.NpcGlobalId, itemTemplateID = m.BazaarId });
             Send(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSEREQUEST { Command = 3, npcGlobalID = m.NpcGlobalId, itemTemplateID = m.BazaarId });
+        });
+        Receive<SellAtBazaar>(m => {
+            Note($"sells {m.What} at the Bazaar.");
+            foreach (var id in m.Items) {
+                Send(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSEREQUEST { Command = 2, npcGlobalID = m.NpcGlobalId, itemGlobalID = id });
+                Send(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSEREQUEST { Command = 4, npcGlobalID = m.NpcGlobalId, itemGlobalID = id });
+            }
         });
         Receive<MarkSpot>(_ => Send(new GAME_5_PROTOCOL.MSG_MARK_LOCATION()));
         Receive<PressCommons>(_ => Send(new WIZARD_12_PROTOCOL.MSG_GOHOME()));
