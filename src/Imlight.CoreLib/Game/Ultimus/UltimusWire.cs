@@ -81,6 +81,9 @@ internal static class UltimusWire {
     internal const string PAUSE_FILE = "paused.txt";
     // Ahziael's "Pause and explain": the server pauses Ultimus and writes his whole plan to explain.txt.
     internal const string EXPLAIN_FILE = "explain-request.txt";
+
+    /// <summary>Ahziael's "Back to story" (the guardrails, Niduus 2026-11-14): side trips dropped, a fresh plan toward the story.</summary>
+    internal const string BACK_TO_STORY_FILE = "back-to-story-request.txt";
     // One plain-text debug report per issue (debug/issue-0001.txt), made to be read by a person or handed to Claude.
     internal const string DEBUG_FOLDER = "debug";
     // What Ultimus learned from its own mistakes, one JSON line each (learned.jsonl), for future bots.

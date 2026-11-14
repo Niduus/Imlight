@@ -275,6 +275,6 @@ internal sealed partial class UltimusDirectorActor {
     // Full health first: a tough creature, a plan he trusts little (Confidence), or a fight while he is careful (UltimusMood).
     private bool ToughFoeNow(UltimusPlanner.Target target) =>
         !CombatDuelComponent.IsInBattle(_team[0].GlobalId)
-        && (_carefulPlan || target?.Kind == UltimusPlanner.FIGHT && (_toughFoeNext || UltimusMood.Now == UltimusMood.Level.Careful && UltimusMood.LostRecently));
+        && (_carefulPlan || _riskPrepare && target?.Kind == UltimusPlanner.FIGHT || target?.Kind == UltimusPlanner.FIGHT && (_toughFoeNext || UltimusMood.Now == UltimusMood.Level.Careful && UltimusMood.LostRecently));
 
 }

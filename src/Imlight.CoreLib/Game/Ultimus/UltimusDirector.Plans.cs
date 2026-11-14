@@ -204,6 +204,8 @@ internal sealed partial class UltimusDirectorActor {
         _prediction = null;
         if (OverlayQuestTracker.SameZone(expected.Zone, leader.Zone) || OverlayQuestTracker.SameZone(leader.Zone, expected.Zone)) {
             Think($"As I expected, {expected.Expect}.", "expected|" + expected.Key);
+            // An area reached on the way to the story is progress (the guardrails' off-track alarm).
+            StoryProgress();
 
             return;
         }
@@ -382,6 +384,13 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
+        // The guardrails (Niduus, 2026-11-14): a hard limit is his alone to change, and a rule locked in Ahziael is left as it is.
+        if (UltimusMission.HardLimit(name) || s_locked.Contains(name)) {
+            lines.Add($"I would change {name} ({because}), but it is " + (UltimusMission.HardLimit(name) ? "a hard limit only Niduus changes." : "locked in Ahziael."));
+
+            return;
+        }
+
         var now = UltimusPlaybook.Value(name);
         var next = Math.Clamp(Math.Round(now + by, 3), range.Low, range.High);
         if (Math.Abs(next - now) < 0.0001) {
@@ -396,6 +405,9 @@ internal sealed partial class UltimusDirectorActor {
         }
     }
 
+    // Rules locked in Ahziael ("Locked = a, b" in self-tuning.txt): his daily review leaves them alone.
+    private static HashSet<string> s_locked = new(StringComparer.OrdinalIgnoreCase);
+
     // The limits Niduus sets for the numbers Ultimus may change himself: written with safe ones the first time.
     private static (bool Auto, Dictionary<string, (double Low, double High)> Ranges) Limits() {
         var ranges = new Dictionary<string, (double, double)>(StringComparer.OrdinalIgnoreCase);
@@ -408,6 +420,7 @@ internal sealed partial class UltimusDirectorActor {
                     "# What Ultimus may change in his own playbook at his daily review, and how far.",
                     "# Each line: the rule = the lowest to the highest he may set it. Delete a line to keep him off that rule.",
                     "# Auto = off stops him changing anything (he still writes \"today I learned\").",
+                    "# Locked = rules he must leave alone, by name, split by commas (Ahziael's locks write this line).",
                     "Auto = on",
                     "Quest.ReadyHealth = 0.6 to 0.95",
                     "Battle.HealAt = 0.35 to 0.7",
@@ -416,6 +429,7 @@ internal sealed partial class UltimusDirectorActor {
                 ]));
             }
 
+            s_locked = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var raw in File.ReadAllLines(path)) {
                 var line = raw.Trim();
                 var eq = line.IndexOf('=');
@@ -425,6 +439,11 @@ internal sealed partial class UltimusDirectorActor {
 
                 var name = line[..eq].Trim();
                 var value = line[(eq + 1)..].Trim();
+                if (name.Equals("Locked", StringComparison.OrdinalIgnoreCase)) {
+                    s_locked = new HashSet<string>(value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), StringComparer.OrdinalIgnoreCase);
+                    continue;
+                }
+
                 if (name.Equals("Auto", StringComparison.OrdinalIgnoreCase)) {
                     auto = !value.StartsWith("off", StringComparison.OrdinalIgnoreCase) && !value.StartsWith("no", StringComparison.OrdinalIgnoreCase)
                            && value != "0";

@@ -136,6 +136,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         if (_milestoneLevel > 0 && level > _milestoneLevel) {
+            StoryProgress();
             Milestone("level", $"Ultimus reached level {level} in {UltimusText.Zone(leader.Zone)} ({StoryPlace(leader)}).");
         }
 
@@ -171,6 +172,12 @@ internal sealed partial class UltimusDirectorActor {
         var wizard = leader.Wizard;
         var stats = wizard?.GameStats;
         text.AppendLine($"ULTIMUS EXPLAINS HIMSELF ({DateTime.Now:dddd d MMMM yyyy, HH:mm:ss}). He is paused; press Pause or resume to let him go on.");
+        text.AppendLine();
+        text.AppendLine("MY MISSION");
+        text.AppendLine($"  {UltimusMission.STATEMENT}");
+        text.AppendLine("  Hard limits (only Niduus changes them): " + string.Join("; ", UltimusMission.HardLimits) + ".");
+        text.AppendLine($"  Side trips: {(SideTripsOpen ? "open" : $"closed until {_sideTripsClosedUntil.ToLocalTime():HH:mm}")}. Last story progress: " +
+                        $"{(DateTime.UtcNow - _storyProgressAt).TotalMinutes:0} minute(s) ago. Progress checks in a row with no: {_checkNoes}.");
         text.AppendLine();
         text.AppendLine("WHERE I AM");
         text.AppendLine($"- Level {wizard?.MagicSchoolBehavior?.Level ?? 0}, in {UltimusText.Zone(leader.Zone)} at ({leader.X:0}, {leader.Y:0}).");
