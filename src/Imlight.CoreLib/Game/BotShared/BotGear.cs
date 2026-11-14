@@ -579,7 +579,7 @@ internal static class BotGear {
         "Damage", "ArmorPiercing", "Accuracy", "ReduceDamage", "PowerPips",
     };
 
-    private static double Percent(Stat stat) =>
+    internal static double Percent(Stat stat) =>
         s_percentKinds.Contains(stat.Kind) && Math.Abs(stat.Value) > 0 && Math.Abs(stat.Value) < 1.5 ? stat.Value * 100 : stat.Value;
 
     /// <summary>How good an outfit is for the goals: under a floor counts most, damage and pierce lead above them.</summary>
