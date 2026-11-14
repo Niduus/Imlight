@@ -68,7 +68,12 @@ internal static class OverlayRenderer {
         credit.Classes.Add(OverlayPanel.CREDIT);
         panel.Children.Add(credit);
         if (window != 0) {
-            AddMapButtons(panel, window);
+            AddMapButtons(panel, window, e => e.IsMinimap, window, "");
+            // Ultimus's own minimap gets the same full screen and zoom buttons (Niduus, 2026-11-14: "Allow for fullscreen and
+            // Zoom to Ultimus Minimap"), unless the player's map is full screen over it.
+            if (OverlayMinimapData.FullZoom(window) is null) {
+                AddMapButtons(panel, window, e => e.IsUltimusMap, OverlayUltimusData.KEY, MapButton.ULTIMUS);
+            }
         }
 
         return panel;
@@ -79,22 +84,30 @@ internal static class OverlayRenderer {
     /// and while it is full screen, the big map with X (back to the corner), + (closer) and - (farther). They go under the
     /// Ahziael line, over everything else, and never push anything aside.
     /// </summary>
-    private static void AddMapButtons(Panel panel, long window) {
-        if (panel.Children.FirstOrDefault(c => c.Tag is OverlayElement { IsMinimap: true }) is not { Tag: OverlayElement minimap } corner) {
+    // key: where that map's data and full screen zoom are kept (the game window, or OverlayUltimusData.KEY for Ultimus's map);
+    // which: what the buttons' clicks act on ("" the player's minimap, MapButton.ULTIMUS Ultimus's).
+    private static void AddMapButtons(Panel panel, long window, Func<OverlayElement, bool> isMap, long key, string which) {
+        if (panel.Children.FirstOrDefault(c => c.Tag is OverlayElement tagged && isMap(tagged) && c.IsVisible) is not { Tag: OverlayElement minimap } corner
+            || (corner as Border)?.Child is not MinimapView) {
             return;
         }
 
         var at = panel.Children.Count - 1;
-        if (OverlayMinimapData.FullZoom(window) is null) {
+        if (OverlayMinimapData.FullZoom(key) is null) {
+            // Ultimus's full screen map covers the game: no buttons of the player's corner map under it.
+            if (which.Length == 0 && OverlayMinimapData.FullZoom(OverlayUltimusData.KEY) is not null) {
+                return;
+            }
+
             var slot = 0;
             if (minimap.Map?.FullButton != false) {
-                panel.Children.Insert(at++, new MapButton(corner, slot++, OverlayAction.MAP_FULL, minimap));
+                panel.Children.Insert(at++, new MapButton(corner, slot++, OverlayAction.MAP_FULL, minimap, which));
             }
 
             // + and - on the corner minimap too (Niduus, 2026-11-12: "custom zoom options").
             if (minimap.Map?.ZoomButtons != false) {
-                panel.Children.Insert(at++, new MapButton(corner, slot++, OverlayAction.MAP_IN, minimap));
-                panel.Children.Insert(at, new MapButton(corner, slot, OverlayAction.MAP_OUT, minimap));
+                panel.Children.Insert(at++, new MapButton(corner, slot++, OverlayAction.MAP_IN, minimap, which));
+                panel.Children.Insert(at, new MapButton(corner, slot, OverlayAction.MAP_OUT, minimap, which));
             }
 
 
@@ -103,12 +116,12 @@ internal static class OverlayRenderer {
 
         // The minimap in the corner stays where it is (so nothing else moves) but isn't seen under the big one.
         corner.Opacity = 0;
-        var full = new FullMap { Child = new MinimapView(minimap, OverlayMinimapData.For(window), window, full: true), Space = minimap.Map?.FullMargin ?? FullMap.MARGIN };
+        var full = new FullMap { Child = new MinimapView(minimap, OverlayMinimapData.For(key), key, full: true), Space = minimap.Map?.FullMargin ?? FullMap.MARGIN };
         full.Classes.Add(OverlayPanel.FULL);
         panel.Children.Insert(at, full);
-        panel.Children.Insert(at + 1, new MapButton(full, 0, OverlayAction.MAP_FULL, minimap));
-        panel.Children.Insert(at + 2, new MapButton(full, 1, OverlayAction.MAP_IN, minimap));
-        panel.Children.Insert(at + 3, new MapButton(full, 2, OverlayAction.MAP_OUT, minimap));
+        panel.Children.Insert(at + 1, new MapButton(full, 0, OverlayAction.MAP_FULL, minimap, which));
+        panel.Children.Insert(at + 2, new MapButton(full, 1, OverlayAction.MAP_IN, minimap, which));
+        panel.Children.Insert(at + 3, new MapButton(full, 2, OverlayAction.MAP_OUT, minimap, which));
     }
 
     /// <summary>The full screen map: it fills the game window, less a margin, whatever its design.</summary>
@@ -133,7 +146,10 @@ internal static class OverlayRenderer {
 
         internal int Slot { get; }
 
-        internal MapButton(Control over, int slot, string action, OverlayElement minimap) {
+        /// <summary>What a button on Ultimus's own minimap carries (its tag's Command), so its click acts on his map.</summary>
+        internal const string ULTIMUS = "ultimus";
+
+        internal MapButton(Control over, int slot, string action, OverlayElement minimap, string which = "") {
             Over = over;
             Slot = slot;
             Width = Height = SIZE;
@@ -141,7 +157,7 @@ internal static class OverlayRenderer {
             Background = new SolidColorBrush(Color.FromArgb(0xD8, 0x10, 0x14, 0x24));
             BorderBrush = new SolidColorBrush(Color.FromArgb(0xC0, 0xFF, 0xFF, 0xFF));
             BorderThickness = new Thickness(1);
-            Tag = new OverlayElement { Kind = OverlayElement.BUTTON, Action = action, Map = minimap.Map, Visible = true };
+            Tag = new OverlayElement { Kind = OverlayElement.BUTTON, Action = action, Map = minimap.Map, Visible = true, Command = which };
             Child = new MapIcon(action == OverlayAction.MAP_FULL && over is FullMap ? "close" : action);
             Classes.Add(OverlayPanel.FULL);
         }

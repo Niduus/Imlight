@@ -60,6 +60,10 @@ internal static class OverlayButtons {
             s_last.Clear();
         }
 
+        // A minimap button acts on the map it sits on: the player's (by game window) or Ultimus's own.
+        var ultimusMap = button.Command == OverlayRenderer.MapButton.ULTIMUS;
+        var mapKey = ultimusMap ? OverlayUltimusData.KEY : game.ToInt64();
+        var otherKey = ultimusMap ? game.ToInt64() : OverlayUltimusData.KEY;
         switch (button.Action) {
             case OverlayAction.DISMISS_NOTE:
                 OverlayHost.ShowNotice(game, "");
@@ -92,11 +96,16 @@ internal static class OverlayButtons {
 
                 return;
             case OverlayAction.MAP_FULL:
-                OverlayMinimapData.ToggleFull(game.ToInt64(), button.Map is { FullZoom: > 0 } kept ? kept.FullZoom : (button.Map?.Zoom ?? 2200) * 2.5);
+                // One full screen map at a time: the player's, or Ultimus's (a button on Ultimus's map acts on his).
+                if (OverlayMinimapData.FullZoom(mapKey) is null && OverlayMinimapData.FullZoom(otherKey) is not null) {
+                    OverlayMinimapData.ToggleFull(otherKey, 0);
+                }
+
+                OverlayMinimapData.ToggleFull(mapKey, button.Map is { FullZoom: > 0 } kept ? kept.FullZoom : (button.Map?.Zoom ?? 2200) * 2.5);
                 done(true);
 
                 return;
-            case OverlayAction.MAP_IN or OverlayAction.MAP_OUT when OverlayMinimapData.FullZoom(game.ToInt64()) is null:
+            case OverlayAction.MAP_IN or OverlayAction.MAP_OUT when OverlayMinimapData.FullZoom(mapKey) is null:
                 // The corner minimap: its own zoom, by the minimap's step and limits, kept on this PC.
                 if (button.Map is { } small) {
                     var closer = button.Action == OverlayAction.MAP_IN;
@@ -108,10 +117,10 @@ internal static class OverlayButtons {
 
                 return;
             case OverlayAction.MAP_IN or OverlayAction.MAP_OUT:
-                OverlayMinimapData.ZoomFull(game.ToInt64(), button.Action == OverlayAction.MAP_IN, button.Map?.ZoomStep ?? 1.5,
+                OverlayMinimapData.ZoomFull(mapKey, button.Action == OverlayAction.MAP_IN, button.Map?.ZoomStep ?? 1.5,
                     button.Map?.ZoomMin ?? OverlayMinimapData.MIN_ZOOM, button.Map?.ZoomMax ?? OverlayMinimapData.MAX_ZOOM);
                 // Kept in the design on this PC, so the full screen map opens this close next time.
-                if (button.Map is { } map && OverlayMinimapData.FullZoom(game.ToInt64()) is { } zoom) {
+                if (button.Map is { } map && OverlayMinimapData.FullZoom(mapKey) is { } zoom) {
                     map.FullZoom = Math.Round(zoom);
                     OverlayHost.SaveQuietly();
                 }
