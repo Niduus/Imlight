@@ -55,7 +55,7 @@ internal sealed partial class UltimusDirectorActor {
             NoteFreed(i, member);
             // Standing still while it works a walk-through exit is the exit work, not being stuck (it flagged itself stuck
             // over and over at The Oasis's exit, v0.10.851).
-            if (_stuck.Look(i, member.Zone, member.X, member.Y, resting || (i == 0 && WorkingExit)) is var tries and > 0) {
+            if (_stuck.Look(i, member.Zone, member.X, member.Y, resting || (i == 0 && (WorkingExit || _grabWaiting))) is var tries and > 0) {
                 Unstick(i);
             }
         }

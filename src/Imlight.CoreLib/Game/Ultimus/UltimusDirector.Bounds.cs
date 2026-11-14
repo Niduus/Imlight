@@ -268,7 +268,7 @@ internal sealed partial class UltimusDirectorActor {
         else if (_target?.Kind == UltimusPlanner.NONE) {
             why = "a step he can't work out";
         }
-        else if (now - _wasteStill.At > TimeSpan.FromSeconds(15) && !Pausing() && now >= _breakUntil) {
+        else if (now - _wasteStill.At > TimeSpan.FromSeconds(15) && !Pausing() && now >= _breakUntil && !_grabWaiting) {
             why = "standing still";
         }
 
