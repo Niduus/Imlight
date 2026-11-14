@@ -100,19 +100,20 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         var back = _lastStoryZone ?? "WizardCity/WC_Hub";
-        // On foot first, as a player walks back out; after 2 minutes (or with no way out on record) Ahziael takes him back.
-        if (DateTime.UtcNow - off.Since < TimeSpan.FromMinutes(2)
-            && UltimusPlanner.Travel(leader, back, $"leaving {UltimusText.Zone(zone)}: not on the main story", "offstory") is { } walk) {
+        // On foot, as a player walks back out. Niduus, 2026-11-14: "I don't want Ahziael to move Ultimus. I want Ultimus to
+        // search and find his way": with no way out on foot he uses the buttons a player has (the Commons button, his
+        // marked spot), and is never carried.
+        if (UltimusPlanner.Travel(leader, back, $"leaving {UltimusText.Zone(zone)}: not on the main story", "offstory") is { } walk) {
             return walk;
         }
 
         if (DateTime.UtcNow - _offStoryCarried > TimeSpan.FromSeconds(60) && !Unsticking(0)) {
             _offStoryCarried = DateTime.UtcNow;
-            Note("Ultimus", $"ABNORMAL: found no way out of {UltimusText.Zone(zone)} on foot: Ahziael takes him back to {UltimusText.Zone(back)} (unstuck).",
+            Note("Ultimus", $"ABNORMAL: found no way out of {UltimusText.Zone(zone)} on foot: presses the Commons button to get back to the story, as a player does.",
                 UltimusLink.ABNORMAL);
-            _actors[0].Tell(new UltimusMember.ThroughExit(back));
-            _unstickUntil[0] = DateTime.UtcNow + UNSTICK_FOR;
-            OverlayQuestPath.Forget(leader.CharId);
+            if (!PressHubButton(leader, $"to get out of {UltimusText.Zone(zone)}")) {
+                Aside(0, leader, 600f, 1600f, "looks around the area for a way out");
+            }
         }
 
         return new UltimusPlanner.Target(UltimusPlanner.WAIT, leader.X, leader.Y, $"leaving {UltimusText.Zone(zone)}", Key: "offstory|wait");
@@ -213,16 +214,16 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
-        Note("Ultimus", $"ABNORMAL: OUT OF BOUNDS in {where} (off the walkable ground): snaps back to ({spot.X:0}, {spot.Y:0}), the last spot on the floor he stood on.",
+        Note("Ultimus", $"ABNORMAL: OUT OF BOUNDS in {where} (off the walkable ground): walks back to ({spot.X:0}, {spot.Y:0}), the last spot on the floor he stood on.",
             UltimusLink.ABNORMAL);
         Think("I am off the walkable ground, where no player can stand. I go back to the last spot on the floor I stood on and write it down.",
             "bounds|" + leader.Zone);
         BotMistakes.Record("Ultimus", BotMistakes.OUT_OF_BOUNDS, leader.Zone, leader.X, leader.Y, _target?.What ?? _doing ?? "",
-            $"Walked off the walkable ground in {where}; snapped back to ({spot.X:0}, {spot.Y:0}).", _lastReasoning,
-            "Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.", "snap back");
-        StopWalking(0);
-        _actors[0].Tell(new UltimusMember.Hop(spot.X, spot.Y, spot.Z, "back on the walkable ground"));
+            $"Walked off the walkable ground in {where}; walked back to ({spot.X:0}, {spot.Y:0}).", _lastReasoning,
+            "Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.", "walk back");
+        // He walks back himself (Niduus, 2026-11-14: Ahziael never moves him).
         OverlayQuestPath.Forget(leader.CharId);
+        _actors[0].Tell(new UltimusMember.WalkTo([(spot.X, spot.Y)], "walks back onto the walkable ground"));
     }
 
     // ---------------------------------------------------------------------

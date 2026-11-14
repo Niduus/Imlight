@@ -537,6 +537,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
 
+        // Nothing to do for a minute: he sits down (UltimusDirector.Emotes.cs).
+        Idle(target is null || target.Kind == UltimusPlanner.WAIT || target.Key?.StartsWith(PARTY_KEY + "with|", StringComparison.Ordinal) == true);
+
         if (target is null) {
             // Nothing to do this moment: off the road, not standing among the creatures.
             if (SafeSpot(leader) is { } safe) {
@@ -723,6 +726,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
     private UltimusPlanner.Target PickTarget(List<UltimusMember.Status> group) {
         var leader = group[0];
+
+        // In a group with a real player (party mode): he goes along with them first (UltimusDirector.Party.cs).
+        if (PartyTarget(leader) is { } party) {
+            return party;
+        }
 
         // Off the main story (an event, a gauntlet, a house, a side world his step does not name): leaving it comes first
         // (Niduus, 2026-11-14). Then a wrong area the way went to: back out the same way (UltimusDirector.Bounds.cs).
@@ -1727,18 +1735,20 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         _leaderLastTarget = target;
 
         var known = !string.IsNullOrEmpty(target.To) && StubbornExits().Contains(ExitId(leader.Zone, target.To));
-        if (_exitTries >= EXIT_TRIES || DateTime.UtcNow - _exitFirst > EXIT_MOST || known) {
-            if (known) {
-                Think($"This exit {target.What} never takes me on (I wrote it down before), so I don't walk the whole sweep again.", "known-exit|" + target.Key);
-            }
+        if (known && _exitTries == 0) {
+            Think($"This exit {target.What} did not take me on before (I wrote it down). I still find my own way through: I try every part " +
+                  "of it again, from other sides.", "known-exit|" + target.Key);
+        }
 
-            ThroughExit(leader, target);
+        if (_exitTries >= EXIT_TRIES || DateTime.UtcNow - _exitFirst > EXIT_MOST) {
+            ExitNotTaking(leader, target);
 
             return;
         }
 
         // The part of the exit this try walks in through, entered from the far side of the middle.
-        var (far, angle) = s_exitSweep[_exitTries % s_exitSweep.Length];
+        // Each new round starts on other parts of the exit than the last (he adapts instead of repeating the same walk).
+        var (far, angle) = s_exitSweep[(_exitTries + (_exitRounds * 3)) % s_exitSweep.Length];
         var turn = angle * MathF.PI / 180f;
         var spot = (X: target.X + (MathF.Cos(turn) * far), Y: target.Y + (MathF.Sin(turn) * far));
         var from = turn + MathF.PI + ((Random.Shared.NextSingle() - 0.5f) * 0.8f);
@@ -1757,15 +1767,20 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                         $"walks out and in again through another part of it ({far:0} from its middle).", UltimusLink.NOTABLE);
         if (_exitTries == 1) {
             Think($"I stand at the exit {target.What}, but the game does not take me on. I walk out and in again through every part " +
-                  $"of it, the middle first and then further out, from all sides; after {EXIT_TRIES} tries Ahziael takes me through.",
+                  "of it, the middle first and then further out, from all sides. Nobody carries me through: I keep searching for my own way.",
                 "exit|" + target.Key);
         }
 
         _actors[0].Tell(new UltimusMember.WalkTo(points, "walks out of the exit and in again through another part of it"));
     }
 
-    // Every part of the exit was walked: Ahziael takes it through to the area the exit leads to.
-    private void ThroughExit(UltimusMember.Status leader, UltimusPlanner.Target target) {
+    // Every part of the exit was walked and the game never took him on. Niduus, 2026-11-14: "I don't want Ahziael to move
+    // Ultimus. I want Ultimus to search and find his way": he is never carried through. The exit is reported (once) and
+    // written in the mistakes book, and he walks well away and comes back at it another way, then sweeps it again.
+    private int _exitRounds;
+
+    private void ExitNotTaking(UltimusMember.Status leader, UltimusPlanner.Target target) {
+        _exitRounds++;
         var tries = _exitTries;
         var seconds = (DateTime.UtcNow - _exitFirst).TotalSeconds;
         _exitTries = 0;
@@ -1777,19 +1792,24 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         var where = $"{UltimusText.Zone(leader.Zone)} at ({target.X:0}, {target.Y:0})";
         Note("Ultimus", $"{leader.Name} walked through every part of the exit {target.What} in {where} ({tries} tries, {seconds:0} seconds) " +
-                        $"and the game never took it on: Ahziael takes it through to {UltimusText.Zone(target.To)}.", UltimusLink.ABNORMAL);
-        var thought = $"I walked through every part of the exit {target.What} ({tries} tries) and the game never took me on. " +
-                      $"Ahziael takes me through to {UltimusText.Zone(target.To)}; this exit is written in the mistakes book so it can be looked at.";
+                        "and the game never took it on: it walks away, comes back another way and searches again (nobody moves it).", UltimusLink.ABNORMAL);
+        var thought = $"I walked through every part of the exit {target.What} ({tries} tries) and the game never took me on. Nobody carries " +
+                      "me through: I walk well away, come back at it from another way and search again. It's written in the mistakes book " +
+                      "and reported so the exit can be looked at.";
         Think(thought, "through|" + target.Key);
-        BotMistakes.Record("Ultimus", BotMistakes.STUCK, leader.Zone, target.X, target.Y, target.Quest,
-            $"The walk-through exit {target.What} never took it on, though it walked through every part of it.", thought,
-            "Ahziael takes a bot through when the exit's trigger does not fire; the exit's trigger in the zone file needs a look.",
-            "walked through every part of the exit");
-        BotMistakes.Fixed(BotMistakes.STUCK, leader.Zone, target.X, target.Y, "Ahziael takes it through the exit");
+        if (StubbornExits().Contains(ExitId(leader.Zone, target.To)) is false) {
+            BotMistakes.Record("Ultimus", BotMistakes.STUCK, leader.Zone, target.X, target.Y, target.Quest,
+                $"The walk-through exit {target.What} never took it on, though it walked through every part of it.", thought,
+                "The exit's trigger in the zone file needs a look; Ultimus keeps searching on his own meanwhile.",
+                "walked through every part of the exit");
+            Issue("quest", target.Quest, $"The exit {target.What} in {where} never takes Ultimus on, though he walked through every part of it " +
+                                         $"({tries} tries). He keeps searching for his own way; nobody moves him.",
+                key: "exit-stubborn|" + ExitId(leader.Zone, target.To), level: UltimusLink.NOTABLE);
+        }
+
         RememberStubbornExit(leader.Zone, target.To, target.X, target.Y);
-        _actors[0].Tell(new UltimusMember.ThroughExit(target.To));
-        _unstickUntil[0] = DateTime.UtcNow + UNSTICK_FOR;
         OverlayQuestPath.Forget(leader.CharId);
+        Aside(0, leader, 600f, 1600f, "walks well away from the exit and comes back at it another way");
     }
 
     private int _idleRestarts;

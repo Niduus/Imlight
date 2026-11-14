@@ -166,6 +166,7 @@ internal sealed partial class ManagerWindow {
         StartQuestTeamTimer();
 
         return Page(
+            SpaceNotice("The Quest Team"),
             Fold("users", QUEST_TEAM_TAB, "Quest Team",
                 "Four wizards the server plays by itself, always together and always in this order: Ice (tanks and supports), " +
                 "Life (heals and supports), Death (backup hitter and support) and Storm (hits and blades itself). They start at " +

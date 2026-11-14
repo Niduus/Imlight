@@ -1,0 +1,4 @@
+Changed: Ultimus always finds his own way
+Ahziael no longer moves Ultimus. Before, when an exit did not take him on after many tries, or he could not walk out of an area, the server carried him through, hopped him to a spot, or sent him to his step's area. Now he searches by himself. He tries every part of an exit, walks away and comes back another way, and starts each new round on different parts of it. He uses only the buttons a player has, like the Commons button. An exit that never works is reported on the Ultimus page so it can be looked at. In battle he already chooses and clicks every card himself.
+Where: Ultimus, no setting.
+Test: Watch Ultimus at a door or exit that gives him trouble, such as the Grand Arena in Krokotopia. His log should never say Ahziael takes him through. He should keep trying other ways.

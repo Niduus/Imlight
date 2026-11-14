@@ -438,15 +438,17 @@ internal sealed partial class UltimusDirectorActor {
             Milestone("stuck", $"Ultimus is badly stuck: no step done and no XP gained for {idle.TotalMinutes:0} minutes in {where}.");
         }
 
-        // Only the unstuck moves a player has: back to the area's start, then .stuck go; never a skip.
+        // Only the unstuck moves a player has (the Commons button, walking a new way); never a skip and never being moved.
         switch (stage) {
             case 1:
-                Think("I have not moved my quest forward in a long time. I go back to where this area starts and try again from there.", "watchdog");
+                Think("I have not moved my quest forward in a long time. I press the Commons button and find my way again from there.", "watchdog");
                 _actors[0].Tell(new UltimusMember.Recall());
                 break;
-            case 2 when !string.IsNullOrEmpty(_currentQuest):
-                Think("Still nothing. I use .stuck go, as a player would, to get to the area of my step.", "watchdog");
-                _actors[0].Tell(new UltimusMember.GoToStep());
+            case 2 when _team.Count > 0:
+                // Niduus, 2026-11-14: "I don't want Ahziael to move Ultimus. I want Ultimus to search and find his way".
+                Think("Still nothing. I forget the ways I tried, walk well away and search for a new way to my step.", "watchdog");
+                OverlayQuestPath.Forget(_team[0].CharId);
+                Aside(0, _team[0], 900f, 2500f, "searches for a new way to his step");
                 break;
             default:
                 Think("Still nothing, and every unstuck move is used. I keep trying and wait for Niduus to look.", "watchdog");

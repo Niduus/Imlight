@@ -151,20 +151,11 @@ internal sealed partial class UltimusDirectorActor {
             case UltimusFixes.START:
                 Recall(index, member);
                 return;
-            case UltimusFixes.HOP when hop is { } spot:
-                Think($"\"{goal!.What}\" is right there, {UltimusPlanner.Far(member.X, member.Y, goal.X, goal.Y):0} away in my circle of sight, but I can't walk to it. " +
-                      "I hop to a clear spot next to it; the route there needs fixing, so I write it down.");
-                BotMistakes.Record("Ultimus", BotMistakes.NO_WAY, member.Zone, member.X, member.Y, step,
-                    $"Could not walk to \"{goal.What}\" {UltimusPlanner.Far(member.X, member.Y, goal.X, goal.Y):0} away; hopped to ({spot.X:0}, {spot.Y:0}).",
-                    _lastReasoning, "The walk data between these two spots needs fixing.", fix);
-                _actors[index].Tell(new UltimusMember.Hop(spot.X, spot.Y, spot.Z, "next to " + goal.What));
-                _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
-                return;
+            case UltimusFixes.HOP:
             case UltimusFixes.GO:
-                // As a player types .stuck go: the server sends it to the area its step is in (nothing happens when the step
-                // is in this area, and the next flag here goes on to the next fix).
-                _actors[index].Tell(new UltimusMember.GoToStep());
-                _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
+                // Fixes from before Niduus's rule (2026-11-14: Ahziael never moves him), still named in old notes: he walks well
+                // away and comes back another way instead.
+                Aside(index, member, 900f, 2500f, "walks well away and comes back another way (he finds his own way)");
                 return;
             case UltimusFixes.FLAG:
                 // He quests as a human does (Niduus, 2026-11-14): no step is finished for him. Every move fix was tried here,

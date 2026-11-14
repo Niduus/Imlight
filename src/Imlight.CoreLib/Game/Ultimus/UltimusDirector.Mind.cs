@@ -126,6 +126,9 @@ internal sealed partial class UltimusDirectorActor {
                 : lostBefore > 0 ? $"Finally beat {foe.Name} in {UltimusText.Zone(me.Zone)}, after it beat me {lostBefore} time{(lostBefore == 1 ? "" : "s")}."
                 : $"Beat {foe.Name} in {UltimusText.Zone(me.Zone)}, but it was close: it took {lostShare:P0} of my health.",
                 WorldOf(me.Zone), UltimusText.Zone(me.Zone), foe.Name, won ? 1 : -1);
+            if (won) {
+                CheerWin(foe.Name);
+            }
         }
 
         if (won) {

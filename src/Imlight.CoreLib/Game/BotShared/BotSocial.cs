@@ -47,7 +47,8 @@ internal static class BotSocial {
     /// <summary>What the bot knows of itself right now, to answer with.</summary>
     internal sealed record Self(string Bot, string Name, string School, int Level, string Area, string World, string Quest, string Step,
         bool InBattle, string Mood, Func<string, string> FindNpc = null, Func<string, string> FoeTip = null, string Doing = null, int Health = -1,
-        Func<string, string> Act = null, IReadOnlyList<string> Worlds = null, Func<string, bool, string> Opinion = null);
+        Func<string, string> Act = null, IReadOnlyList<string> Worlds = null, Func<string, bool, string> Opinion = null,
+        bool Groups = false, string PartyWith = null);
 
     /// <summary>An answer: the line, the intent it answers, why (for Thoughts), and whether it fits a Menu Chat moment.</summary>
     internal sealed record Reply(string Text, string Intent, string Why, string MenuMoment = null);
@@ -989,6 +990,18 @@ internal static class BotSocial {
                 line = Pick(self.Bot, "help", "I quest solo, but I can share tips! Ask me where an NPC is or how a creature fights.",
                     "I can't group up, but ask me where someone is and I'll tell you what I know!", "Solo questing for me, but happy to give tips!");
                 why = $"{friend.Name} asked for help. I quest alone, but I offer what I can: tips from my books.";
+                break;
+            // Ultimus's party mode (Niduus, 2026-11-14): he takes a player's group invitation and goes along with them.
+            case GROUP when self.Groups && !Has(text ?? "", "duel", "pvp"):
+                line = !string.IsNullOrEmpty(self.PartyWith)
+                    ? (string.Equals(self.PartyWith, friend.Name, StringComparison.OrdinalIgnoreCase)
+                        ? Pick(self.Bot, "group-already", "We're already grouped! I'm coming along with you.", "Already with you! Lead the way.")
+                        : $"I'm in a group with {self.PartyWith} right now. Ask me again after!")
+                    : Pick(self.Bot, "group-yes", "Sure! Send me a group invite and I'll come along on your quests.",
+                        "Happy to! Invite me to your group and I'll go where you go.");
+                why = !string.IsNullOrEmpty(self.PartyWith)
+                    ? $"{friend.Name} asked me along; I'm already in a group with {self.PartyWith}."
+                    : $"{friend.Name} asked me along. Party mode is on, so I say yes: a group invite and I go with them.";
                 break;
             case GROUP:
                 line = Has(text ?? "", "dungeon", "raid")

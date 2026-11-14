@@ -133,6 +133,12 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     /// <summary>Ice asks a teammate into its group.</summary>
     internal sealed record Invite(ulong CharId, ulong GlobalId);
 
+    /// <summary>An emote from the emote wheel (a wave, a cheer, a sit), as a player plays one.</summary>
+    internal sealed record Emote(string Animation, string What);
+
+    /// <summary>Leaves the group he is in, as a player presses Leave.</summary>
+    internal sealed record LeaveGroup;
+
     // ---- the actor's own messages ----
 
     private sealed record Opened(IActorRef Session, ushort Id, ByteString? Key, string Zone, ulong ZoneId, string Location);
@@ -299,11 +305,28 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         Receive<Invite>(m => Send(new GAME_5_PROTOCOL.MSG_PARTYREQUESTINVITE {
             SourceCharacterID = _member.CharId, SourceGlobalID = View.GlobalId, TargetCharacterID = m.CharId, TargetGlobalID = m.GlobalId,
         }));
-        // Ultimus quests alone: every group invitation is turned down, from players, friends and bots alike (Niduus,
-        // 2026-11-13), so the inviter's game shows the no at once instead of waiting.
+        // Party mode (Niduus, 2026-11-14, approved; before, he turned every invitation down): a real player's invitation is
+        // taken when he is in no group yet, and he goes along with them (UltimusDirector.Party.cs). The Quest Team's and
+        // the bots' are turned down, and every one when party mode is off, so the inviter's game shows the no at once.
         Receive<GAME_5_PROTOCOL.MSG_PARTYREQUESTJOIN>(m => {
-            Note($"turns down a group invitation from {m.PlayerNameBlob}.");
+            var inviter = (ulong) m.CharacterID;
+            var real = inviter != 0 && !UltimusRoster.IsMember(inviter) && !QuestTeam.QuestTeamRoster.IsMember(inviter);
+            if (UltimusWire.PartyMode && real && !Groups.GroupRegistry.TryGetGroup(_member.CharId, out _)) {
+                Note($"accepts a group invitation from {m.PlayerNameBlob} (party mode): he goes along with them.");
+                Send(new GAME_5_PROTOCOL.MSG_PARTYREQUESTACCEPT { SourceCharacterID = _member.CharId, PartyID = m.PartyID });
+                return;
+            }
+
+            Note($"turns down a group invitation from {m.PlayerNameBlob}{(UltimusWire.PartyMode ? "" : " (party mode is off)")}.");
             Send(new GAME_5_PROTOCOL.MSG_PARTYREQUESTDECLINE { SourceCharacterID = _member.CharId, PartyID = m.PartyID });
+        });
+        Receive<Emote>(m => {
+            Note($"{m.What} (emote \"{m.Animation}\").");
+            Send(new WIZARD3_56_PROTOCOL.MSG_REQUESTPIIRADIALMENUPLAYEMOTE { EmoteAnimationName = m.Animation, EmoteText = string.Empty });
+        });
+        Receive<LeaveGroup>(_ => {
+            Note("leaves the group.");
+            Send(new GAME_5_PROTOCOL.MSG_PARTYLEAVE());
         });
         // Ultimus is the one bot a player can befriend: a friend request sent to him is accepted (he never sends one
         // himself). Being friends lets the player see him on the friends list and teleport to him.
@@ -324,37 +347,17 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
                 Timers.StartSingleTimer($"click-{_clicks++}", new ClickNow(m.Each[i].Move), TimeSpan.FromSeconds(Math.Max(0.05, m.Each[i].AfterSeconds)));
             }
         });
-        Receive<Hop>(m => {
-            if (!_attached) {
-                return;
-            }
-
-            // Never to a spot a player could not stand on (off the walkable map, in a wall).
-            if (!OverlayQuestPath.OnFloor(View.Zone, m.X, m.Y)) {
-                Note($"does not hop to ({m.X:0}, {m.Y:0}) ({m.Why}): that spot is off the walkable ground.");
-
-                return;
-            }
-
-            _route.Clear();
-            View.Walking = false;
-            Note($"hops to ({m.X:0}, {m.Y:0}): {m.Why}.");
-            Place(m.X, m.Y, m.Z);
-            Send(new GAME_5_PROTOCOL.MSG_CLIENTMOVE {
-                LocationX = Compress(m.X), LocationY = Compress(m.Y), LocationZ = Compress(m.Z), Direction = 0, ZoneCounter = _zoneCounter,
-            });
-        });
-        Receive<GoToStep>(_ => {
-            _recalledAt = DateTime.UtcNow;
-            _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "botgo" });
-        });
-        Receive<ThroughExit>(m => {
-            _recalledAt = DateTime.UtcNow;
-            _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "botzone", QuestName = m.To });
-        });
+        // Never hopped by the server (Niduus, 2026-11-14: "I don't want Ahziael to move Ultimus"): he walks.
+        Receive<Hop>(m => Note($"does not hop to ({m.X:0}, {m.Y:0}) ({m.Why}): he walks."));
+        // Niduus, 2026-11-14: "I don't want Ahziael to move Ultimus. I want Ultimus to search and find his way". The server
+        // never moves him: being sent to his step's area or carried through an exit is refused here, and "Recall" is the
+        // Commons button a player presses (he walks on from the hub).
+        Receive<GoToStep>(_ => Note("is not sent to his step's area: he finds his own way."));
+        Receive<ThroughExit>(m => Note($"is not carried to {m.To}: he finds his own way."));
         Receive<Recall>(_ => {
             _recalledAt = DateTime.UtcNow;
-            _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "botrecall" });
+            Note("presses the Commons button.");
+            Send(new WIZARD_12_PROTOCOL.MSG_GOHOME());
         });
         Receive<GoToTeammate>(m => Send(new WIZARD_12_PROTOCOL.MSG_GOTOFRIENDLYPLAYER { TargetCharacterID = m.CharId }));
         Receive<SelectBadge>(m => Send(new GAME_5_PROTOCOL.MSG_SELECT_BADGE { BadgeNameID = m.Id }));

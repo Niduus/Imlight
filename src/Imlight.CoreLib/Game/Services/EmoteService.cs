@@ -74,6 +74,8 @@ internal class EmoteService(SessionActor sessionActor) : MessageService(sessionA
         _lastEmoteAnimation = message.EmoteAnimationName;
 
         var wizard = GetActiveWizard();
+        // Ultimus learns the wheel's animation names from real players (Ultimus/UltimusEmotes.cs).
+        Imlight.CoreLib.Game.Ultimus.UltimusEmotes.Seen(wizard.CharId, message.EmoteAnimationName);
         var broadcastMsg = new WIZARD3_56_PROTOCOL.MSG_PIIRADIALMENUPLAYEMOTE {
             SourceID = wizard.GameObjectID,
             EmoteAnimationName = message.EmoteAnimationName,

@@ -47,6 +47,8 @@ internal sealed partial class ManagerWindow {
     private readonly ToggleSwitch _ultEnabled = new() { OnContent = "On", OffContent = "Off" };
     // The nightly auto-coach (Niduus, 2026-11-14: a toggle, off by default): [Ultimus] AutoCoach.
     private readonly ToggleSwitch _ultAutoCoach = new() { OnContent = "On", OffContent = "Off" };
+    private readonly ToggleSwitch _ultParty = new() { OnContent = "On", OffContent = "Off" };
+    private readonly ToggleSwitch _ultEmotes = new() { OnContent = "On", OffContent = "Off" };
 
     // The guardrails' per-rule locks (Niduus, 2026-11-14): a locked rule is left alone by his daily review (self-tuning.txt).
     private static readonly (string Rule, string Name, string Help)[] s_ultTunable = [
@@ -136,12 +138,26 @@ internal sealed partial class ManagerWindow {
                 await Guard(() => SetUltimusAutoCoachAsync(_ultAutoCoach.IsChecked == true));
             }
         };
+        _ultParty.IsCheckedChanged += async (_, _) => {
+            if (!_showingUlt) {
+                await Guard(() => SetUltimusOnByDefaultAsync("PartyMode", _ultParty.IsChecked == true,
+                    "Party mode is on: Ultimus takes a player's group invite and goes along with them.",
+                    "Party mode is off: Ultimus turns group invites down and quests alone."));
+            }
+        };
+        _ultEmotes.IsCheckedChanged += async (_, _) => {
+            if (!_showingUlt) {
+                await Guard(() => SetUltimusOnByDefaultAsync("Emotes", _ultEmotes.IsChecked == true,
+                    "Ultimus's emotes are on: he waves, cheers and sits.", "Ultimus's emotes are off."));
+            }
+        };
 
         LoadUltimusSettings();
         StartUltimusTimer();
         ShowCardsOn(_ultSheet);
 
         return Page(
+            SpaceNotice("Ultimus"),
             Fold("users", ULTIMUS_TAB, "Ultimus",
                 "Ultimus is the Solo Quester: one Balance wizard the server plays by itself, alone, through the Main Story, from " +
                 "level 1 in Wizard City to the last world. Its goal is the Main Story above all. It plays like a player: it walks " +
@@ -174,6 +190,14 @@ internal sealed partial class ManagerWindow {
                     "When nothing moves forward for this long, Ultimus reports that it is stuck."),
                 SwitchRow("Time limit for one quest (minutes)", _ultQuestMinutes,
                     "A quest that takes longer than this is reported, however long it was expected to take. 0 means no limit."),
+                SwitchRow("Party mode", _ultParty,
+                    "On: when a player invites Ultimus to a group, he joins and goes along with them: he teleports to them from the group, " +
+                    "joins their battles and does the quest steps they both have, until the group ends or they go away for 15 minutes. " +
+                    "Then he goes back to his own story. Off: he turns every group invite down. On by default."),
+                SwitchRow("Emotes", _ultEmotes,
+                    "On: Ultimus waves at a player who says hello near him, cheers after a tough win and sits down when he has nothing " +
+                    "to do for a minute. He learns the emote names from players' own emote wheels, so if you don't see one, play that emote " +
+                    "once near anyone. On by default."),
                 SwitchRow("Nightly auto-coach", _ultAutoCoach,
                     "On: each night (after 4 AM) Ultimus puts all his logs in a dated folder, logs\\ultimus\\coach, each file on its own plus one joint file, ready to hand to the coach. The last 14 nights are kept. Off by default.")),
             UltimusLocksFold(),
@@ -188,6 +212,8 @@ internal sealed partial class ManagerWindow {
         try {
             _ultEnabled.IsChecked = _manager.GetSwitch("Ultimus", "Enabled");
             _ultAutoCoach.IsChecked = _manager.GetSwitch("Ultimus", "AutoCoach");
+            _ultParty.IsChecked = !string.Equals(_manager.GetSetting("Ultimus", "PartyMode")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
+            _ultEmotes.IsChecked = !string.Equals(_manager.GetSetting("Ultimus", "Emotes")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
             _ultSlow.Value = (decimal) Number("SlowFactor", 2);
             _ultLosses.Value = (decimal) Number("LossesBeforeIssue", 3);
             _ultStuck.Value = (decimal) Number("StuckMinutes", 8);
@@ -212,6 +238,15 @@ internal sealed partial class ManagerWindow {
         Say(on ? "Ultimus is on. With the server running, it logs in within a few seconds and starts questing."
             : "Ultimus is off. It logs out within a few seconds.");
         RefreshUltimus();
+
+        return Task.CompletedTask;
+    }
+
+    // A switch that is on when the ini does not have it yet (the server's default): saved as the key, added if missing.
+    private Task SetUltimusOnByDefaultAsync(string key, bool on, string saidOn, string saidOff) {
+        _manager.SaveSettings([new Setting("Ultimus", key, on ? "true" : "false", "")]);
+        _settings = [];
+        Say(on ? saidOn : saidOff);
 
         return Task.CompletedTask;
     }
@@ -628,6 +663,7 @@ internal sealed partial class ManagerWindow {
                 "today's counts. Updated every 30 seconds (progress.txt in his folder).",
                 LogWell(_ultProgressBox),
                 Row(Action(Plain("Copy all"), () => CopyAsync(_ultProgressText)))),
+            UltimusDiaryFold(),
             Fold("copy", ULTIMUS_TAB, "All of Ultimus's logs in one copy",
                 "Copies every Ultimus log at once, ready to paste in one go: his log, his thoughts, the mistakes book, the " +
                 "quest log, his abnormal fixes, the creatures he fought, his status, what he learned and his playbook. " +
@@ -837,6 +873,8 @@ internal sealed partial class ManagerWindow {
                 _ultProgressText = progress;
                 _ultProgressBox!.Text = progress;
             }
+
+            ShowUltimusDiary();
         }
 
         static void ShowLog(TextBox box, string text, ref string shown) {

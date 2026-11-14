@@ -41,13 +41,15 @@ internal static class UltimusFixes {
     internal const string OTHER_WAY = "another way (a teleporter or a new route)";
     internal const string HOP = "hop to a clear spot by its goal (line of sight)";
     internal const string AWAY = "walk well away and come back another way";
-    internal const string START = "go back to where the area starts";
+    internal const string START = "press the Commons button and walk back from there";
     internal const string GO = "have Ahziael take it to the area of its step";
     // Every move fix was tried: he flags the spot for Niduus and starts the round again. He never has a step finished for
     // him (Niduus, 2026-11-14: "HIS ENTIRE PURPOSE IS TO QUEST AS IF HE IS A HUMAN. His only exceptions ... to unstuck").
     internal const string FLAG = "flag it for Niduus and try every fix again";
 
-    internal static readonly string[] Order = [ASIDE, OTHER_WAY, HOP, AWAY, START, GO, FLAG];
+    // Niduus, 2026-11-14: "I don't want Ahziael to move Ultimus. I want Ultimus to search and find his way": no hop and no
+    // being sent to his step's area; START is the Commons button a player presses.
+    internal static readonly string[] Order = [ASIDE, OTHER_WAY, AWAY, START, FLAG];
 
     // A flag this near another one is the same flag, whatever step it was on (Niduus's log, 2026-11-13: at The Oasis's
     // start the same spot was flagged again and again; what failed there fails there for the next step too).
