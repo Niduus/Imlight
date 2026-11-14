@@ -44,6 +44,44 @@ internal static class OverlayQuestRoute {
 
     private const int MAX_TARGETS = 8;
 
+    // The faded lines drawn to the other steps (besides the nearest), and the cache key the way finder keeps them under.
+    private const int TRAILS = 3;
+    private const ulong TRAIL_ID = 0x7E00000000000000UL;
+
+    // The walk's length on the floor (straight distance when no walk is known), kept a few seconds.
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, (float Length, DateTime At)> s_walkLengths = new();
+
+    internal static float WalkLength(string zonePath, float fromX, float fromY, float toX, float toY) {
+        var key = $"{zonePath}|{(int) (fromX / 150)}|{(int) (fromY / 150)}|{(int) (toX / 50)}|{(int) (toY / 50)}";
+        if (s_walkLengths.TryGetValue(key, out var known) && DateTime.UtcNow - known.At < TimeSpan.FromSeconds(15)) {
+            return known.Length;
+        }
+
+        if (s_walkLengths.Count > 600) {
+            s_walkLengths.Clear();
+        }
+
+        float length;
+        try {
+            var (ax, ay) = (fromX, fromY);
+            length = 0;
+            foreach (var (px, py) in OverlayQuestPath.Walk(0, zonePath, fromX, fromY, toX, toY, body: true)) {
+                length += Far(ax, ay, px, py);
+                (ax, ay) = (px, py);
+            }
+
+            // A walk that stops short (walls in the way) counts the rest at three times its straight distance.
+            length += Far(ax, ay, toX, toY) * 3;
+        }
+        catch (Exception) {
+            length = Far(fromX, fromY, toX, toY);
+        }
+
+        s_walkLengths[key] = (length, DateTime.UtcNow);
+
+        return length;
+    }
+
     /// <summary>The route of <paramref name="questName"/> for this wizard in zone actor <paramref name="zone"/>, or null when it isn't held.</summary>
     internal static JsonObject Build(Wizard wizard, IActorRef zone, string questName) {
         if (string.IsNullOrWhiteSpace(questName)) {
@@ -152,9 +190,12 @@ internal static class OverlayQuestRoute {
             }
         }
 
+        // The nearest first by the real walk, not as the crow flies (Niduus, 2026-11-14: "prioritize the closest target"): of
+        // the nearest few in a line, the one with the shortest walk on the floor.
+        var distinct = targets.DistinctBy(t => ((int) (t.X / 50), (int) (t.Y / 50))).OrderBy(t => Far(here.X, here.Y, t.X, t.Y)).Take(MAX_TARGETS).ToList();
+        var byWalk = distinct.Take(TRAILS + 2).OrderBy(t => WalkLength(zonePath, here.X, here.Y, t.X, t.Y)).Concat(distinct.Skip(TRAILS + 2)).ToList();
         var points = new JsonArray();
-        foreach (var (x, y, name) in targets.DistinctBy(t => ((int) (t.X / 50), (int) (t.Y / 50)))
-                     .OrderBy(t => Far(here.X, here.Y, t.X, t.Y)).Take(MAX_TARGETS)) {
+        foreach (var (x, y, name) in byWalk) {
             points.Add(new JsonObject { ["x"] = Round(x), ["y"] = Round(y), ["n"] = name.Length > 60 ? name[..60] : name });
         }
 
@@ -171,6 +212,27 @@ internal static class OverlayQuestRoute {
             }
 
             route["path"] = walk;
+
+            // The other steps' lines, drawn faded (Niduus, 2026-11-14: "draw faded trails for the other targets that are not
+            // the closest, with the closest not being faded at all").
+            var trails = new JsonArray();
+            for (var i = 1; i < points.Count && i <= TRAILS; i++) {
+                if (points[i] is not JsonObject other) {
+                    continue;
+                }
+
+                var trail = new JsonArray();
+                var (ox, oy) = ((int) other["x"], (int) other["y"]);
+                foreach (var spot in OverlayQuestPath.Route(wizard.CharId ^ (TRAIL_ID + (ulong) i), zonePath, here.X, here.Y, ox, oy)) {
+                    trail.Add(spot.Pad ? new JsonArray(Round(spot.X), Round(spot.Y), 1) : new JsonArray(Round(spot.X), Round(spot.Y)));
+                }
+
+                trails.Add(trail);
+            }
+
+            if (trails.Count > 0) {
+                route["trails"] = trails;
+            }
         }
 
         return route;
@@ -192,7 +254,8 @@ internal static class OverlayQuestRoute {
     /// (doors and walk-through exits, read from the zone itself). When the whole way isn't on record it still starts the
     /// right way: toward the step's world's arrival area, else toward this world's Spiral Door, then on from there.
     /// </summary>
-    internal static List<(string Zone, bool World)> Way(string from, string to, bool spiralDoorHere, IEnumerable<string> exitsHere = null) {
+    internal static List<(string Zone, bool World)> Way(string from, string to, bool spiralDoorHere, IEnumerable<string> exitsHere = null,
+        bool storyOnly = false) {
         if (string.IsNullOrEmpty(from) || string.IsNullOrEmpty(to)) {
             return [];
         }
@@ -205,6 +268,9 @@ internal static class OverlayQuestRoute {
         var otherWorld = !string.Equals(fromWorld, toWorld, StringComparison.OrdinalIgnoreCase);
         var toArrival = arrivals.FirstOrDefault(a => string.Equals(a.Split('/')[0], toWorld, StringComparison.OrdinalIgnoreCase));
         var homeDoors = DoorZones().Where(a => string.Equals(a.Split('/')[0], fromWorld, StringComparison.OrdinalIgnoreCase)).ToList();
+        // A server-played wizard on the story (Ultimus, the Quest Team) goes only through the story's worlds: never through
+        // a side world (Aquila's Garden of Hesperides on the way to the Bazaar, Niduus's log 2026-11-13) or an event.
+        var mode = storyOnly ? STORY : 0;
 
         // First never through an instance (a dungeon, a tower, a gauntlet's rooms) on the way; only when there is no
         // other way (the step is deep in a dungeon, past its first rooms) through instances too. Never through an event
@@ -213,18 +279,18 @@ internal static class OverlayQuestRoute {
         foreach (var instances in new[] { false, true }) {
             // The whole way; else to the step's world's arrival area, then the step; else to this world's Spiral Door,
             // then through it to the step's world, then the step.
-            if (Walk(from, to, spiralDoorHere, extra, instances) is { } whole) {
+            if (Walk(from, to, spiralDoorHere, extra, instances, mode) is { } whole) {
                 return whole;
             }
 
-            if (otherWorld && toArrival is not null && Walk(from, toArrival, spiralDoorHere, extra, instances) is { } toWorldFirst) {
+            if (otherWorld && toArrival is not null && Walk(from, toArrival, spiralDoorHere, extra, instances, mode) is { } toWorldFirst) {
                 toWorldFirst.Add((to, false));
 
                 return toWorldFirst;
             }
 
             if (otherWorld && toArrival is not null && !spiralDoorHere
-                && homeDoors.Select(door => Walk(from, door, false, extra, instances)).Where(w => w is { Count: > 0 }).MinBy(w => w.Count) is { } toDoor) {
+                && homeDoors.Select(door => Walk(from, door, false, extra, instances, mode)).Where(w => w is { Count: > 0 }).MinBy(w => w.Count) is { } toDoor) {
                 toDoor.Add((toArrival, true));
                 toDoor.Add((to, false));
 
@@ -247,12 +313,14 @@ internal static class OverlayQuestRoute {
 
     // The areas from `from` to `goal` (excluded `from`), one step at a time toward the fewest areas left; null when no
     // way is on record.
-    private static List<(string Zone, bool World)> Walk(string from, string goal, bool spiralDoorHere, List<string> extra, bool instances) {
+    private const int STORY = 1;
+
+    private static List<(string Zone, bool World)> Walk(string from, string goal, bool spiralDoorHere, List<string> extra, bool instances, int mode = 0) {
         if (OverlayQuestTracker.SameZone(goal, from)) {
             return [];
         }
 
-        var left = AreasLeft(goal, instances);
+        var left = AreasLeft(goal, instances, mode);
         var arrivals = s_arrivals ?? [];
         var hops = new List<(string, bool)>();
         var at = from;
@@ -272,7 +340,7 @@ internal static class OverlayQuestRoute {
                 }
 
                 // No short cut through an event, a gauntlet or (first) an instance: only when it is the step's own area.
-                if (!OverlayQuestTracker.SameZone(goal, next) && SideTrip(next, instances)) {
+                if (!OverlayQuestTracker.SameZone(goal, next) && (SideTrip(next, instances) || (mode == STORY && !OnStory(next)))) {
                     return;
                 }
 
@@ -337,7 +405,35 @@ internal static class OverlayQuestRoute {
 
     // Areas that are a place of their own, never a way through: events (the Portal of Peril's gauntlets, holidays),
     // gauntlets, the Pet Derby, heroic dungeons, the Deckathalon.
-    private static readonly string[] s_sideTripStarts = ["MonthlyEvents/", "Holiday", "PetDerby", "Heroic_Dungeons", "Housing_Gauntlet", "Deckathalon"];
+    // The game's world list (WorldHubZones.xml) names some of them as a world's arrival area (MonthlyEvents/ME_Sinbad's
+    // gauntlet, Raids, Heroic_Dungeons, Battlegrounds, the housing gauntlets): they are still never a way through and
+    // never a Spiral Door's area (Niduus, 2026-11-14: Ultimus went The Commons > Sinbad & the Iron Sultan Gauntlet >
+    // "Spiral Door" to Krokotopia).
+    private static readonly string[] s_sideTripStarts = ["MonthlyEvents/", "Holiday", "PetDerby", "Heroic_Dungeons", "Housing_Gauntlet", "Deckathalon",
+        "Raids/", "Battlegrounds/"];
+
+    /// <summary>
+    /// The worlds of the main story (and Arcanum, its hub): a server-played wizard on the story goes through these only.
+    /// </summary>
+    internal static readonly HashSet<string> StoryWorlds = new(StringComparer.OrdinalIgnoreCase) {
+        "WizardCity", "Krokotopia", "Marleybone", "MooShu", "DragonSpire", "Celestia", "Zafaria", "Avalon", "Azteca", "Khrysalis",
+        "Arcanum", "Polaris", "Mirage", "Empyrea", "Karamelle", "Lemuria", "Novus", "Wallaru", "Selenopolis", "Ahmarra",
+    };
+
+    /// <summary>Whether an area is in a main-story world and not an event, a gauntlet or a house.</summary>
+    internal static bool OnStory(string zone) {
+        if (string.IsNullOrWhiteSpace(zone)) {
+            return false;
+        }
+
+        var z = zone.Trim();
+
+        return StoryWorlds.Contains(z.Split('/')[0]) && !IsHouse(z) && !EventArea(z);
+    }
+
+    /// <summary>An event, a gauntlet, a raid, the Pet Derby: an area of its own, never on the way.</summary>
+    internal static bool EventArea(string zone)
+        => !string.IsNullOrWhiteSpace(zone) && s_sideTripStarts.Any(start => zone.TrimStart().StartsWith(start, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>
     /// Whether an area is a side trip, never a way to somewhere else: an event, a gauntlet, and (unless
@@ -345,6 +441,10 @@ internal static class OverlayQuestRoute {
     /// Spiral Chamber never are.
     /// </summary>
     internal static bool SideTrip(string zone, bool instances) {
+        if (EventArea(zone)) {
+            return true;
+        }
+
         if (string.IsNullOrWhiteSpace(zone) || (s_arrivals ?? []).Contains(zone) || s_knownDoorZones.Contains(zone, StringComparer.OrdinalIgnoreCase)) {
             return false;
         }
@@ -383,11 +483,11 @@ internal static class OverlayQuestRoute {
         => (s_arrivals ?? []).Concat(s_knownDoorZones).Concat(s_doorSeen.Where(p => p.Value).Select(p => p.Key))
             .Distinct(StringComparer.OrdinalIgnoreCase).Where(IsDoorZone);
 
-    private static readonly System.Collections.Concurrent.ConcurrentDictionary<(string Goal, bool Instances), Dictionary<string, int>> s_left = new();
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<(string Goal, bool Instances, int Mode), Dictionary<string, int>> s_left = new();
 
     // How many areas are left from each area to `goal` (searched backwards from it over the exits on record and the
     // Spiral Door between arrival areas).
-    private static Dictionary<string, int> AreasLeft(string goal, bool instances) => s_left.GetOrAdd((goal.ToLowerInvariant(), instances), key => {
+    private static Dictionary<string, int> AreasLeft(string goal, bool instances, int mode = 0) => s_left.GetOrAdd((goal.ToLowerInvariant(), instances, mode), key => {
         var g = goal;
         var back = Backward();
         var arrivals = s_arrivals ?? [];
@@ -403,7 +503,7 @@ internal static class OverlayQuestRoute {
             var zone = waiting.Dequeue();
             var count = left[zone] + 1;
             // No way through a house (the step's own area aside): only its owner can go in.
-            if ((IsHouse(zone) || SideTrip(zone, instances)) && left[zone] > 0) {
+            if ((IsHouse(zone) || SideTrip(zone, instances) || (mode == STORY && !OnStory(zone))) && left[zone] > 0) {
                 continue;
             }
 
@@ -586,8 +686,10 @@ internal static class OverlayQuestRoute {
         var arrivals = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         try {
             foreach (var hub in WorldHubZones.All()) {
-                if (!string.IsNullOrWhiteSpace(hub?.m_universeTPZone)) {
-                    arrivals.Add(((string) hub.m_universeTPZone).Trim());
+                // A house's or an event's "arrival" (the world list names them) has no Spiral Door anyone may use.
+                string arrival = hub?.m_universeTPZone;
+                if (!string.IsNullOrWhiteSpace(arrival) && !IsHouse(arrival) && !EventArea(arrival)) {
+                    arrivals.Add(arrival.Trim());
                 }
             }
         }

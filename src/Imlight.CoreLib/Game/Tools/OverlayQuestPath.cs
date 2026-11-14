@@ -438,7 +438,10 @@ internal static class OverlayQuestPath {
         var loose = new byte[ground.Kinds.Length];
         for (var i = 0; i < cost.Length; i++) {
             var noFloor = Void(ground, i) && !Between(ground, i);
-            loose[i] = (byte) (ground.Kinds[i] switch {
+            // The loose way (a stair or ramp the file shows no floor on) crosses only a narrow gap of the black, floor on both
+            // sides within a few cells, never open void (Niduus, 2026-11-14: "MAke sure he respects the world/games
+            // boundaries": he walked out of bounds in the Bazaar).
+            loose[i] = noFloor && !NarrowGap(ground, i) ? BLOCKED : (byte) (ground.Kinds[i] switch {
                 ZoneGround.PATH or ZoneGround.GRASS => 1,
                 ZoneGround.WALL => BLOCKED,
                 ZoneGround.WATER => 25,
@@ -448,6 +451,136 @@ internal static class OverlayQuestPath {
         }
 
         return new Grid(ground.Left, ground.Top, ground.Cell, ground.Width, ground.Height, cost, ground.Heights, ground.Lows) { Loose = loose };
+    }
+
+    // How many cells of black a stair or ramp may span on the loose way.
+    private const int GAP_MOST = 3;
+
+    // A void cell with floor within GAP_MOST cells on both sides (left and right, or up and down).
+    private static bool NarrowGap(ZoneGround.WalkGround ground, int i) {
+        var (x, y, w, h) = (i % ground.Width, i / ground.Width, ground.Width, ground.Height);
+        bool Floor(int nx, int ny) => nx >= 0 && ny >= 0 && nx < w && ny < h && ground.Kinds[(ny * w) + nx] != ZoneGround.WALL
+                                      && !Void(ground, (ny * w) + nx);
+        bool Side(int dx, int dy) {
+            for (var k = 1; k <= GAP_MOST; k++) {
+                if (Floor(x + (dx * k), y + (dy * k))) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return (Side(-1, 0) && Side(1, 0)) || (Side(0, -1) && Side(0, 1));
+    }
+
+    /// <summary>
+    /// Whether (x, y) is on ground a wizard may stand on in this area: floor, grass, water or a narrow gap a stair spans, not
+    /// a wall and not the Minimap's black. True when the area's ground is not known (nothing to check against).
+    /// </summary>
+    internal static bool OnFloor(string zonePath, float x, float y) {
+        try {
+            if (GridOf(zonePath) is not { } grid) {
+                return true;
+            }
+
+            var cell = Cell(grid, x, y);
+
+            return cell >= 0 && (grid.Loose ?? grid.Cost)[cell] != BLOCKED;
+        }
+        catch (Exception) {
+            return true;
+        }
+    }
+
+    /// <summary>The nearest spot on the floor to (x, y) within a few cells, or null.</summary>
+    internal static (float X, float Y)? NearestFloor(string zonePath, float x, float y) {
+        try {
+            if (GridOf(zonePath) is not { } grid) {
+                return null;
+            }
+
+            var cell = Cell(grid, x, y);
+            if (cell < 0) {
+                return null;
+            }
+
+            var open = Open(grid, cell);
+
+            return grid.Cost[open] == BLOCKED ? null : Center(grid, open);
+        }
+        catch (Exception) {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// A walk kept on the legal ground (Niduus, 2026-11-14: bounds rule): each leg is checked along its length, and the walk
+    /// stops at the last spot on the floor before a leg goes over a wall or the black. The first few steps may start in a
+    /// wall cell (a wizard in a doorway, the grid is coarse) and the last spot may sit just inside a wall (a door, an NPC
+    /// behind a counter's edge). <paramref name="cut"/> is true when it was cut short.
+    /// </summary>
+    internal static List<(float X, float Y)> Legal(string zonePath, float fromX, float fromY, List<(float X, float Y)> points, out bool cut) {
+        cut = false;
+        if (points is null || points.Count == 0) {
+            return points ?? [];
+        }
+
+        try {
+            if (GridOf(zonePath) is not { } grid) {
+                return points;
+            }
+
+            var cost = grid.Loose ?? grid.Cost;
+            var kept = new List<(float X, float Y)>(points.Count);
+            var (ax, ay) = (fromX, fromY);
+            var lastGood = (X: fromX, Y: fromY);
+            var started = false;
+            for (var p = 0; p < points.Count; p++) {
+                var (bx, by) = points[p];
+                var length = MathF.Sqrt(((bx - ax) * (bx - ax)) + ((by - ay) * (by - ay)));
+                var step = MathF.Max(4f, grid.Cell / 2);
+                var count = Math.Max(1, (int) MathF.Ceiling(length / step));
+                for (var i = 1; i <= count; i++) {
+                    var t = i / (float) count;
+                    var (x, y) = (ax + ((bx - ax) * t), ay + ((by - ay) * t));
+                    var cell = Cell(grid, x, y);
+                    var ok = cell >= 0 && cost[cell] != BLOCKED;
+                    if (ok) {
+                        started = true;
+                        lastGood = (x, y);
+                        continue;
+                    }
+
+                    // Leaving a doorway or a wall cell it stands in: fine while it has not reached floor yet and is near.
+                    var nearStart = !started && MathF.Sqrt(((x - fromX) * (x - fromX)) + ((y - fromY) * (y - fromY))) <= grid.Cell * 2;
+                    // The end, just inside a wall (a door, an exit's trigger at the edge of the map, a counter's edge): fine
+                    // when it is by the floor (the last two legs, within a few cells of the last floor).
+                    var gone = MathF.Sqrt(((x - lastGood.X) * (x - lastGood.X)) + ((y - lastGood.Y) * (y - lastGood.Y)));
+                    var nearEnd = p >= points.Count - 2 && gone <= grid.Cell * 3;
+                    // A corner the walk's smoothing cuts (less than a cell of wall between floor): fine.
+                    var corner = gone <= grid.Cell;
+                    if (nearStart || nearEnd || corner) {
+                        continue;
+                    }
+
+                    cut = true;
+                    if (MathF.Sqrt(((lastGood.X - ax) * (lastGood.X - ax)) + ((lastGood.Y - ay) * (lastGood.Y - ay))) > 1f) {
+                        kept.Add(lastGood);
+                    }
+
+                    return kept;
+                }
+
+                kept.Add((bx, by));
+                (ax, ay) = (bx, by);
+            }
+
+            return kept;
+        }
+        catch (Exception) {
+            return points;
+        }
     }
 
     private static bool Void(ZoneGround.WalkGround ground, int i)

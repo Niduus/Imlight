@@ -48,6 +48,8 @@ internal static class BotMistakes {
     internal const string LOST_FIGHT = "lost fight";
     internal const string NO_WAY = "no way on the map";
     internal const string SURPRISE = "surprise";
+    internal const string OFF_STORY = "off the main story";
+    internal const string OUT_OF_BOUNDS = "out of bounds";
 
     internal sealed class Mistake {
         public string Kind { get; set; } = "";

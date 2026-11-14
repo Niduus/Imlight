@@ -28,6 +28,7 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.BotShared;
+using Imlight.CoreLib.Game.Tools;
 using Imlight.Common;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
@@ -223,7 +224,18 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
                 return;
             }
 
-            foreach (var point in m.Points) {
+            // Every walk stays on the legal ground (Niduus, 2026-11-14: "MAke sure he respects the world/games boundaries"):
+            // a leg over a wall or the Minimap's black is cut where the floor ends, whatever planned it.
+            var legal = OverlayQuestPath.Legal(View.Zone, View.X, View.Y, m.Points, out var cut);
+            if (cut && DateTime.UtcNow - _cutSaid > TimeSpan.FromSeconds(30)) {
+                _cutSaid = DateTime.UtcNow;
+                Note($"keeps to the walkable ground: a walk ({m.Why}) went over a wall or out of bounds in {UltimusText.Zone(View.Zone)}, so it stops where the floor ends.");
+                BotMistakes.Record("Ultimus", BotMistakes.NO_WAY, View.Zone, View.X, View.Y, m.Why,
+                    "A planned walk went over a wall or off the walkable map; it was cut where the floor ends.",
+                    "Every walk is checked against the area's floor before it is walked.", "The way finder or the step's spot needs a look here.");
+            }
+
+            foreach (var point in legal) {
                 _route.Enqueue(point);
             }
 
@@ -281,6 +293,13 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         });
         Receive<Hop>(m => {
             if (!_attached) {
+                return;
+            }
+
+            // Never to a spot a player could not stand on (off the walkable map, in a wall).
+            if (!OverlayQuestPath.OnFloor(View.Zone, m.X, m.Y)) {
+                Note($"does not hop to ({m.X:0}, {m.Y:0}) ({m.Why}): that spot is off the walkable ground.");
+
                 return;
             }
 
@@ -776,5 +795,7 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     private void SendControl(IMessage message) => _session?.Tell(new SERVER_100_PROTOCOL.MSG_RECEIVEDPACKET { Packet = message });
 
     private void Note(string text) => UltimusLink.Note(UltimusRoster.NAME, text);
+
+    private DateTime _cutSaid = DateTime.MinValue;
 
 }

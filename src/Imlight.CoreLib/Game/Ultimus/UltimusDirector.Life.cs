@@ -138,7 +138,8 @@ internal sealed partial class UltimusDirectorActor {
     private void SellHere(UltimusPlanner.Target target) {
         var member = _team[0];
         if (UltimusPlanner.Far(member.X, member.Y, target.X, target.Y) > 200) {
-            WalkTo(0, target with { X = target.X - 40 });
+            // To the auctioneer himself: the way finder stops on the floor in front of his counter, never behind it.
+            WalkTo(0, target);
             return;
         }
 
@@ -150,6 +151,7 @@ internal sealed partial class UltimusDirectorActor {
         var junk = member.Wizard is { } wizard ? BotGear.Junk(wizard, StyleOf(member)) : [];
         if (member.Options.TryGetValue(target.GlobalId, out var options) && options.FirstOrDefault(o => o.Service == "WizShoppingService") is { Service: not null } open) {
             _actors[0].Tell(new UltimusMember.Interact(target.GlobalId, open.Service, open.Index, "selling"));
+            HoldRecall(6);
         }
 
         if (junk.Count > 0) {
@@ -285,7 +287,8 @@ internal sealed partial class UltimusDirectorActor {
 
         var member = _team[0];
         if (UltimusPlanner.Far(member.X, member.Y, target.X, target.Y) > 200) {
-            WalkTo(0, target with { X = target.X - 40 });
+            // To the auctioneer himself: the way finder stops on the floor in front of his counter, never behind it.
+            WalkTo(0, target);
             return;
         }
 
@@ -304,6 +307,8 @@ internal sealed partial class UltimusDirectorActor {
             _actors[0].Tell(new UltimusMember.Interact(target.GlobalId, open.Service, open.Index, "the Bazaar"));
         }
 
+        // The buy goes 1.5 seconds from now: no recall before it is done.
+        HoldRecall(6);
         Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(1.5), _actors[0],
             new UltimusMember.BuyAtBazaar(target.GlobalId, itemId | BAZAAR_ITEM, BotGear.Read(itemId)?.Name ?? itemId.ToString()), Self);
         Count("bought at the Bazaar");

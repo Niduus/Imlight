@@ -440,6 +440,7 @@ internal sealed partial class UltimusDirectorActor {
         Clicked(key);
         if (member.Options.TryGetValue(target.GlobalId, out var options) && options.FirstOrDefault(o => o.Service == "WizShoppingService") is { Service: not null } open) {
             _actors[index].Tell(new UltimusMember.Interact(target.GlobalId, open.Service, open.Index, "shopping"));
+            HoldRecall(6);
         }
 
         Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(1.5), _actors[index],

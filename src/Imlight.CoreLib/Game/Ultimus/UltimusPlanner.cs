@@ -71,10 +71,7 @@ internal static class UltimusPlanner {
 
     // The main story's worlds (Niduus, 2026-11-12: "I want them in Main Story worlds. Not Grizzle, Wintertusk or the Academy
     // world", "Wizard City, Krok, Marlybone, Mooshu, Dragonspyre, these types of worlds"), by their zone folder.
-    private static readonly HashSet<string> s_storyWorlds = new(StringComparer.OrdinalIgnoreCase) {
-        "WizardCity", "Krokotopia", "Marleybone", "MooShu", "DragonSpire", "Celestia", "Zafaria", "Avalon", "Azteca", "Khrysalis",
-        "Arcanum", "Polaris", "Mirage", "Empyrea", "Karamelle", "Lemuria", "Novus", "Wallaru", "Selenopolis", "Ahmarra",
-    };
+    private static readonly HashSet<string> s_storyWorlds = OverlayQuestRoute.StoryWorlds;
 
     // Quest codes of the side worlds (Grizzleheim, Wintertusk, Wysteria's academy, Aquila, Darkmoor).
     private static readonly HashSet<string> s_sideWorldCodes = new(StringComparer.OrdinalIgnoreCase) { "GH", "WT", "PA", "WY", "AQ", "DM" };
@@ -275,18 +272,54 @@ internal static class UltimusPlanner {
             .Where(g => g is not null)
             .OrderBy(g => g.m_hideGoal ? 1 : 0)
             .ToList();
+        // Several steps open at once ("Gather the Troops": talk to Private Farnsworth and Private Primwell, in any order):
+        // the nearest one by the real way there first (Niduus, 2026-11-14: "prioritize the closest target"), then the next.
+        // A step that must come first (the rest are behind it) keeps its place: only steps open together are compared.
         Target unresolved = null;
+        var open = new List<(Target Target, float Cost)>();
         foreach (var goal in ordered) {
             var target = ForGoal(group, quest, goal);
             if (target is not null && target.Problem.Length == 0) {
-                return target;
+                open.Add((target, WayCost(group[0], target, OverlayQuestTracker.StepZone(goal))));
+                continue;
             }
 
             unresolved ??= target;
         }
 
-        return unresolved;
+        if (open.Count == 0) {
+            return unresolved;
+        }
+
+        // Kept on the one picked before unless another is clearly nearer, so he does not turn back and forth between two.
+        var best = open.MinBy(o => o.Cost);
+        var before = open.FirstOrDefault(o => o.Target.Key == s_lastPick);
+        var pick = before.Target is not null && before.Cost <= (best.Cost * 1.3f) + 200 ? before : best;
+        s_lastPick = pick.Target.Key;
+
+        return pick.Target;
     }
+
+    private static string s_lastPick = "";
+
+    // How far a target is by the real way: the walk on the floor in this area, plus a large share for each area between.
+    private const float AREA_COST = 4000f;
+
+    internal static float WayCost(UltimusMember.Status leader, Target target, string stepZone = "") {
+        var zone = leader.Zone ?? "";
+        var walk = WalkLength(leader, target.X, target.Y);
+        if (target.Kind is not (EXIT or DOOR or SPIRAL) || string.IsNullOrEmpty(stepZone)) {
+            return walk;
+        }
+
+        var hops = OverlayQuestTracker.SameZone(stepZone, zone) ? 0 : Math.Max(1, OverlayQuestRoute.Way(zone, stepZone, false, storyOnly: true).Count);
+
+        return walk + (hops * AREA_COST);
+    }
+
+    /// <summary>The length of the walk on the floor from the leader to (x, y), the straight distance when no walk is known.</summary>
+    internal static float WalkLength(UltimusMember.Status leader, float x, float y)
+        => OverlayQuestRoute.WalkLength(leader.Zone ?? "", leader.X, leader.Y, x, y);
 
     private static Target ForGoal(IReadOnlyList<UltimusMember.Status> group, QuestTemplate quest, GoalTemplate goal) {
         var leader = group[0];
@@ -338,6 +371,9 @@ internal static class UltimusPlanner {
                 // The Quest Team's creatures are left to it (Niduus, 2026-11-12: Ultimus "will never attempt to join QT and
                 // they will always attempt to avoid colliding"): a creature near a Quest Team wizard is not Ultimus's.
                 var notTheTeams = free.Where(m => !NearQuestTeam(leader, m.Object.m_location.X, m.Object.m_location.Y)).ToList();
+                // The nearest by the real way (of the few nearest in a line), not one behind a wall (Niduus, 2026-11-14).
+                notTheTeams = [.. notTheTeams.Take(5).OrderBy(m => WalkLength(leader, m.Object.m_location.X, m.Object.m_location.Y))
+                    .Concat(notTheTeams.Skip(5))];
                 if (notTheTeams.FirstOrDefault() is { } foe) {
                     return new Target(FIGHT, foe.Object.m_location.X, foe.Object.m_location.Y, step, questName, goalName, foe.Template,
                         foe.Object.m_globalID.Full, Key: key);
@@ -396,6 +432,13 @@ internal static class UltimusPlanner {
                 Problem: $"no way from {UltimusText.Zone(zone)} to {UltimusText.Zone(stepZone)} could be found", Key: key);
         }
 
+        // A person to talk to who is not standing in sight yet, but the NPC location book knows their spot in this area:
+        // walk there, as a player who knows the story walks to them.
+        if (goal is PersonaGoalTemplate talkTo && UltimusNpcBook.In(QuestMadlibs.SpeakerTemplateOf(talkTo.m_personaName, 0), zone) is { } booked
+            && Far(leader.X, leader.Y, booked.X, booked.Y) > 150) {
+            return new Target(SPOT, booked.X, booked.Y, step, questName, goalName, Key: key + "|book");
+        }
+
         // In the right area, but nothing to go to yet: the arrow's spot (the NPC or creatures may show up there).
         if (nearest is { } arrow) {
             var kind = goal is BountyGoalTemplate ? FIGHT : goal is PersonaGoalTemplate ? TALK : SPOT;
@@ -435,6 +478,13 @@ internal static class UltimusPlanner {
 
         if (named.Length > 0 || npc == 0) {
             return named;
+        }
+
+        // The NPC location book (the story's NPCs, from the zone files) first: its own world's spot, else the nearest.
+        if (UltimusNpcBook.Of(npc, from) is { Count: > 0 } booked) {
+            return booked.OrderByDescending(p => OverlayQuestRoute.OnStory(p.Zone))
+                .ThenBy(p => OverlayQuestTracker.SameZone(p.Zone, from) ? 0 : OverlayQuestRoute.Way(from, p.Zone, false, storyOnly: true).Count)
+                .First().Zone;
         }
 
         var key = npc + "|" + (from ?? "").Split('/')[0];
@@ -484,7 +534,10 @@ internal static class UltimusPlanner {
         var live = MinimapIndex.In(leader.ZoneActor);
         var exits = OverlayQuestRoute.ExitsHere(zone, live);
         var spiralDoors = live.Where(m => m.Template == OverlayQuestRoute.SPIRAL_DOOR).ToList();
-        var hops = OverlayQuestRoute.Way(zone, toZone, spiralDoors.Count > 0, exits.Select(e => e.To));
+        // Only the story's own areas (Niduus, 2026-11-14, "THAT'S NOT A MAIN QUEST!!"): an exit into an event, a gauntlet,
+        // a house or a side world is never taken unless it is the step's own area.
+        exits = [.. exits.Where(e => OverlayQuestRoute.OnStory(e.To) || OverlayQuestTracker.SameZone(toZone, e.To) || OverlayQuestTracker.SameZone(e.To, toZone))];
+        var hops = OverlayQuestRoute.Way(zone, toZone, spiralDoors.Count > 0, exits.Select(e => e.To), storyOnly: OverlayQuestRoute.OnStory(toZone));
         if (hops.Count == 0) {
             return null;
         }
