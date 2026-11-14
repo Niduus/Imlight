@@ -45,10 +45,19 @@ internal static class BotSocialChecks {
         new("how far along are you?", true, false, BotSocial.STEP, ["Defeat 3 Nirini Warrior"], s_fillers),
         new("Wanna do a dungeon?", true, false, BotSocial.GROUP, ["solo", "good luck", "Good luck"], s_fillers),
         new("Follow me", false, false, BotSocial.GROUP, ["can't follow", "own quest path"], ["hatch", "Sure"]),
-        new("follow me", true, true, BotSocial.GROUP, ["battle", "fight", "One sec", "brb"], ["Sure", "jump in"]),
+        new("follow me", true, true, BotSocial.GROUP, ["can't follow", "own story", "own way", "own quest"], ["Sure", "jump in"]),
         new("You're not allowed to hatch!", true, false, BotSocial.RULES, ["never hatch", "don't do that"], s_fillers),
         new("wanna hatch pets?", true, false, BotSocial.GROUP, ["solo", "Kind of you", "sorry", "Sorry"], s_fillers),
         new("can I join your battle?", true, true, BotSocial.GROUP, ["jump in", "come help", "Join in"], s_fillers),
+        // Niduus, 2026-11-14: conversations. Short follow-ups take the last topic; a full new question starts a new one.
+        new("What about ice?", true, false, BotSocial.LIKE, ["ice", "Ice"], ["Not sure"], Before: "What's your favorite school?"),
+        new("why?", true, false, BotSocial.LIKE, ["really happened"], ["Not sure"], Before: "What's your least favorite school?"),
+        new("What's your favorite school?", true, false, BotSocial.LIKE, ["Balance", "haven't seen enough"], ["gold"], Before: "How much gold do you have?"),
+        new("How much gold do you have?", true, false, BotSocial.FACT, [], ["Not sure"]),
+        new("what is my name", true, false, BotSocial.ASKER, ["Tester"], ["Not sure"]),
+        new("do you remember me?", true, false, BotSocial.ASKER, ["Tester"], ["Not sure"]),
+        new("what is your name", true, true, BotSocial.NAME, ["Ultimus"], ["brb", "One sec", "back soon"]),
+        new("what quest are you on?", true, true, BotSocial.QUEST, ["Payback"], ["brb"]),
         new("want to duel?", true, false, BotSocial.GROUP, ["duel"], s_fillers),
         new("are you hurt?", true, false, BotSocial.STATUS, ["52%"], s_fillers),
         new("why are you standing still?", true, false, BotSocial.STATUS, ["waiting for wisps"], s_fillers),
@@ -58,7 +67,6 @@ internal static class BotSocialChecks {
         new("nice weather today", true, false, BotSocial.CHAT, [], ["thank you", "Thanks"]),
         new("thanks for the help", true, false, BotSocial.THANKS, [], ["quest solo"]),
         new("pet owner here", true, false, BotSocial.CHAT, [], ["can't share"]),
-        new("how much gold do you have?", true, false, BotSocial.TRADE, ["Enough"], ["don't give"]),
         new("are you an NPC?", true, false, BotSocial.BOT, ["bot"], s_fillers),
         new("who owns this server", true, false, BotSocial.PRIVATE, [], s_fillers),
         new("Who made you?", true, false, BotSocial.MAKER, ["Niduus"], ["can't", "Not sure"]),
@@ -139,6 +147,19 @@ internal static class BotSocialChecks {
                         failed.Add($"\"{check.Line}\" ({(check.Typed ? "typed" : "Menu Chat")}{(check.InBattle ? ", in battle" : "")}): {problem}");
                         break;
                     }
+                }
+            }
+
+            // Step words read as a sentence after "I'm" (Niduus, 2026-11-14: "I'm Go to Krokotopia,Throne Room of Fire").
+            foreach (var (raw, want) in new[] {
+                         ("Go to Krokotopia,Throne Room of Fire (\"Into the Map Room\")", "heading to Throne Room of Fire in Krokotopia"),
+                         ("Defeat 1 creatures", "defeating a creature"),
+                         ("walks to the door", "walking to the door"),
+                         ("Talk to Professor Winthrop", "talking to Professor Winthrop"),
+                     }) {
+                var got = BotSocial.Gerund(raw);
+                if (!got.StartsWith(want, StringComparison.Ordinal)) {
+                    failed.Add($"step words \"{raw}\" read \"{got}\", should start \"{want}\"");
                 }
             }
         }

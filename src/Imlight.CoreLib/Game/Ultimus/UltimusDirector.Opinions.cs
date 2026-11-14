@@ -93,9 +93,11 @@ internal sealed partial class UltimusDirectorActor {
                 : $"{Cap(worst.School)}. Its creatures hit me the hardest, about {worst.Hurt:P0} of my health a fight.";
         }
 
+        // His favorite is his own school, every time (Niduus, 2026-11-14: it said Balance once and "To fight? Fire" the next).
+        // Which school is easiest to fight is a different question, answered from his fights after it.
         var best = bySchool.Where(s => !s.School.Equals("Balance", StringComparison.OrdinalIgnoreCase)).OrderByDescending(s => s.Won - (s.Lost * 3)).FirstOrDefault();
-        return best.School is null ? null
-            : $"To fight? {Cap(best.School)}: I've beaten {best.Won} of its creatures" + (best.Lost == 0 ? " without a loss." : ".");
+        return "Balance, my own school!" + (best.School is null ? ""
+            : $" The easiest to fight so far is {Cap(best.School)}: I've beaten {best.Won} of its creatures" + (best.Lost == 0 ? " without a loss." : "."));
     }
 
     private string WorldOpinion(bool least) {
@@ -179,9 +181,43 @@ internal sealed partial class UltimusDirectorActor {
         return null;
     }
 
+    private static readonly string[] s_schoolNames = ["fire", "ice", "storm", "myth", "life", "death", "balance", "sun", "moon", "star", "shadow"];
+
+    // "Do you like Ice?", "what about ice?" after a school question: his fights against that school, or his own school.
+    private static string SchoolLike(string subject) {
+        var words = subject.ToLowerInvariant().Replace(" school", "").Replace(" wizards", "").Replace(" magic", "").Trim();
+        var school = s_schoolNames.FirstOrDefault(n => words == n || words == n + "s");
+        if (school is null) {
+            return null;
+        }
+
+        if (school == "balance") {
+            return "Of course, Balance is my own school! A bit of every school in one.";
+        }
+
+        var foes = UltimusFoes.All().Where(f => f.Fought > 0
+            && string.Equals(UltimusScout.SituationOf(f.Template).EnemySchool, school, StringComparison.OrdinalIgnoreCase)).ToList();
+        if (foes.Count == 0) {
+            return $"I haven't fought many {Cap(school)} creatures yet, so I can't say much about {Cap(school)}!";
+        }
+
+        var won = foes.Sum(f => f.Won);
+        var lost = foes.Sum(f => f.Lost);
+        var hurt = foes.Average(f => f.AverageHealthLost);
+        return lost > 0
+            ? $"{Cap(school)} is tough for me: its creatures beat me {lost} time{(lost == 1 ? "" : "s")}, though I've won {won} fights against them."
+            : hurt > 0.4
+                ? $"{Cap(school)} hits hard, about {hurt:P0} of my health a fight, but I've beaten all {won} I fought."
+                : $"{Cap(school)} is fine by me: I've beaten {won} of its creatures without a loss.";
+    }
+
     private string LikeOpinion(string subject) {
         if (subject.Length < 2) {
             return null;
+        }
+
+        if (SchoolLike(subject) is { } school) {
+            return school;
         }
 
         var worldName = WorldMeant(subject);
@@ -267,6 +303,25 @@ internal sealed partial class UltimusDirectorActor {
     }
 
     /// <summary>A fact about himself, from his real data ("what are you wearing?", "how many quests have you done?").</summary>
+    // A player's own wizard, as anyone could see it in game ("asker:<charId>:level|where|school"). Never the account.
+    private static string Asker(string key) {
+        var parts = key.Split(':');
+        if (parts.Length < 2 || !ulong.TryParse(parts[0], out var charId) || charId == 0) {
+            return null;
+        }
+
+        var wizard = Imlight.CoreLib.WizardData.Collections.WizardCollection.GetCharacterUnloaded(charId);
+        if (wizard is null) {
+            return null;
+        }
+
+        return parts[1] switch {
+            "level" => wizard.MagicSchoolBehavior is { } school ? $"You're level {school.Level}!" : null,
+            "where" => string.IsNullOrWhiteSpace(wizard.Zone) ? null : $"You're in {UltimusText.Zone(wizard.Zone)}, {WorldName(WorldOf(wizard.Zone)) ?? WorldOf(wizard.Zone)}.",
+            _ => null,
+        };
+    }
+
     private string Fact(UltimusMember.Status me, string key) {
         var wizard = me.Wizard;
         if (wizard is null) {
@@ -310,6 +365,10 @@ internal sealed partial class UltimusDirectorActor {
                 return "I have a pet with me, but I never train pets. I just quest!";
             case "mount":
                 return "Yes, I ride my Ghulture! It was a gift from the school.";
+            case "gold": {
+                var stats = wizard.GameStats;
+                return stats is null ? null : $"I have {stats.m_currentGold:N0} gold. I spend it on potions and real gear upgrades.";
+            }
             case "potions": {
                 var stats = wizard.GameStats;
                 return stats is null ? null : $"I have {stats.m_potionCharge:0} of {stats.m_potionMax:0} potions.";

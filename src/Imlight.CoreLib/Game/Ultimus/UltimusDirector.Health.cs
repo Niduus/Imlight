@@ -140,7 +140,15 @@ internal sealed partial class UltimusDirectorActor {
         // in hurt (his "full" remedy, UltimusDirector.Losses.cs).
         var share = stats.m_currentHitpoints / (double) maxHealth;
         var huntBelow = UltimusPlaybook.Value("Quest.HuntHealBelow");
-        if (!onlyPrep && !HuntsAt(share) && RemedyFor(target?.Key) != "full") {
+        // A boss is never started at low health (Niduus, 2026-11-14: at 34% right after a battle he set off for Krokenkahmen):
+        // under half health, he heals first before a boss, whatever the 25% hunt rule says for ordinary steps.
+        var bossNext = BossNext(leader, target) && share < 0.5;
+        if (bossNext) {
+            Think($"I'm at {share:P0} health and my next fight is a boss. I don't start a boss under half health, so I heal first.",
+                "boss-heal|" + (target?.Key ?? ""));
+        }
+
+        if (!bossNext && !onlyPrep && !HuntsAt(share) && RemedyFor(target?.Key) != "full") {
             Think($"I'm at {share:P0} health with no potion or wisp right here. I only go looking for wisps or potions under {huntBelow:P0} " +
                   $"({UltimusPlaybook.Cite("Quest.HuntHealBelow")}), so I go on and heal as I go.", "hunt-no|" + (int) (share * 10));
             _hurtSince = DateTime.MaxValue;
@@ -313,6 +321,21 @@ internal sealed partial class UltimusDirectorActor {
     }
 
     /// <summary>Whether at this share of health he goes looking for wisps or potions (Quest.HuntHealBelow, 25%).</summary>
+    // The step's fight is against a boss (its creature is marked a boss on the area's map).
+    private static bool BossNext(UltimusMember.Status leader, UltimusPlanner.Target target) {
+        if (target?.Kind != UltimusPlanner.FIGHT || leader.ZoneActor is not { } zone) {
+            return false;
+        }
+
+        try {
+            return MinimapIndex.In(zone).Any(m => m.Kind == MinimapIndex.BOSS
+                && (target.GlobalId != 0 ? m.Object.m_globalID.Full == target.GlobalId : target.Template != 0 && m.Template == target.Template));
+        }
+        catch {
+            return false;
+        }
+    }
+
     internal static bool HuntsAt(double share) => share < UltimusPlaybook.Value("Quest.HuntHealBelow");
 
     /// <summary>A player's "go get potions" he agreed to: off to the nearest potion shop until his potions are full.</summary>
