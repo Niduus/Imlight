@@ -92,25 +92,13 @@ internal sealed partial class UltimusDirectorActor {
 
     private (string Quest, string Goal, int Count)? _dropBefore;
 
-    // How far a step is: its count now, a large number once it is done (or the quest is gone: it was finished).
-    private static int StepCount(UltimusMember.Status me, string quest, string goal) {
-        var held = me.Wizard?.QuestBehavior?.CurrentQuestInstances?.FirstOrDefault(q => q is not null
-            && string.Equals(q.QuestName, quest, StringComparison.OrdinalIgnoreCase));
-        if (held is null) {
-            return int.MaxValue;
-        }
-
-        var progress = held.GoalProgress?.FirstOrDefault(g => g is not null && string.Equals(g.GoalName, goal, StringComparison.Ordinal));
-        return progress is null || progress.IsGoalCompleted() ? int.MaxValue : progress.CurrentProgress;
-    }
-
     private void FightStarted(UltimusMember.Status me) {
         _fight = _target is { Kind: UltimusPlanner.FIGHT } fight
             ? ((uint) Math.Min(fight.Template, uint.MaxValue), FoeName(fight), HealthShare(me), DateTime.UtcNow)
             : (0, "", HealthShare(me), DateTime.UtcNow);
         // The step's count before the fight, to learn whether this creature counts for it (UltimusDrops).
         _dropBefore = _target is { Kind: UltimusPlanner.FIGHT } t && !string.IsNullOrEmpty(t.Quest)
-            ? (t.Quest, t.Goal, StepCount(me, t.Quest, t.Goal))
+            ? (t.Quest, t.Goal, UltimusDrops.StepCount(me.Wizard, t.Quest, t.Goal))
             : null;
         if (_fight.Value.Template == 0) {
             Think("A battle started that was not my step. I walk round creatures I don't need to fight; this one still caught me.",
@@ -133,7 +121,7 @@ internal sealed partial class UltimusDirectorActor {
 
         CheckFight(me, won, lostShare, fight.Name);
         if (won && _dropBefore is { } before) {
-            var after = StepCount(me, before.Quest, before.Goal);
+            var after = UltimusDrops.StepCount(me.Wizard, before.Quest, before.Goal);
             var counted = after > before.Count;
             UltimusDrops.Fought(before.Quest, before.Goal, fight.Template, fight.Name, me.Zone, counted);
             if (!counted && UltimusDrops.Score(before.Quest, before.Goal, fight.Template) < 0) {

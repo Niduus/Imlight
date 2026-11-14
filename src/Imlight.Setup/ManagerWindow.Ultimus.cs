@@ -523,9 +523,17 @@ internal sealed partial class ManagerWindow {
 
         return Page(Fold("list", ULTIMUS_TAB, "Broken quests",
             "One line for each quest Ultimus found a problem with, with the latest reason and how many times it came up. " +
-            "\"Found ahead\" means the quest check spotted it before he got there (he reads ahead at the start of each world). " +
+            "\"Found ahead\" means the quest check spotted it before he got there (he reads ahead at the start of each world; " +
+            "Run read-ahead now checks every story world at once). " +
             "He never skips a step: he keeps trying it as a player would until it is fixed. The full reports are below.",
-            Row(Action(Plain("Copy the list"), () => CopyAsync(UltimusBrokenText()))),
+            Row(Action(Plain("Copy the list"), () => CopyAsync(UltimusBrokenText())), Action(Plain("Run read-ahead now"), async () => {
+                // Every story world at once (Niduus, 2026-11-14): the server runs its quest check fresh, then files what it finds.
+                Directory.CreateDirectory(UltimusFolder);
+                await File.WriteAllTextAsync(Path.Combine(UltimusFolder, "read-ahead-request.txt"), DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+                Say(InstalledCommands.IsServerRunning(_manager.InstallFolder) && _ultEnabled.IsChecked == true
+                    ? "Asked. The quest check runs fresh (a few minutes), then every story world's problems show in this list and in read-ahead.txt."
+                    : "Asked. It runs once the server is started and Ultimus is in the game.");
+            })),
             _ultBrokenEmpty,
             _ultBroken),
             Fold("flag", ULTIMUS_TAB, "Ultimus Issues",

@@ -1386,6 +1386,10 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
 
         if (_battleSince == DateTime.MaxValue) {
             _battleSince = DateTime.UtcNow;
+            // The step's count before the fight, for the shared drop memory (Ultimus.UltimusDrops).
+            _dropBefore = _target is { Kind: QuestTeamPlanner.FIGHT, Template: > 0 } t && !string.IsNullOrEmpty(t.Quest) && _team.Count > 0
+                ? (t.Quest, t.Goal, t.Template, t.What, Ultimus.UltimusDrops.StepCount(_team[0].Wizard, t.Quest, t.Goal))
+                : null;
         } else if (DateTime.UtcNow - _battleSince > TimeSpan.FromMinutes(BATTLE_ODD_MINUTES) && !_battleOddSaid) {
             _battleOddSaid = true;
             Note("Team", $"this battle has gone on for over {BATTLE_ODD_MINUTES} minutes{(_target is { Kind: QuestTeamPlanner.FIGHT } t ? $" (fighting for \"{t.What}\")" : "")}; " +
@@ -1478,6 +1482,9 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         return true;
     }
 
+    // The step and its count when the battle started, for the shared drop memory.
+    private (string Quest, string Goal, ulong Template, string Name, int Count)? _dropBefore;
+
     private void BattleOver(int index) {
         var member = _team[index];
         var stats = member.Wizard?.GameStats;
@@ -1496,6 +1503,12 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                 // Fights won for each step, to see how many kills a drop or a count takes (Niduus: "flag abnormal drops").
                 if (_target is { Kind: QuestTeamPlanner.FIGHT } fought) {
                     _fightsFor[fought.Key] = _fightsFor.GetValueOrDefault(fought.Key) + 1;
+                }
+
+                if (_dropBefore is { } before) {
+                    _dropBefore = null;
+                    var counted = Ultimus.UltimusDrops.StepCount(member.Wizard, before.Quest, before.Goal) > before.Count;
+                    Ultimus.UltimusDrops.Fought(before.Quest, before.Goal, before.Template, before.Name, member.Zone, counted);
                 }
             }
 

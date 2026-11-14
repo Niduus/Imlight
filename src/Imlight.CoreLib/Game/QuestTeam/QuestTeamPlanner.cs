@@ -312,13 +312,17 @@ internal static class QuestTeamPlanner {
 
             case BountyGoalTemplate bounty: {
                 var adjectives = (bounty.m_npcAdjectives ?? []).Select(a => (string) a).Where(a => !string.IsNullOrEmpty(a)).ToArray();
+                // The creatures every bot learned count for this step come too, and the ones that never counted go last
+                // (the shared drop memory, Ultimus.UltimusDrops, Niduus, 2026-11-14).
                 var foe = live.Where(m => m.Kind is MinimapIndex.MOB or MinimapIndex.BOSS
                                          && (m.Adjectives.Any(a => adjectives.Contains(a, StringComparer.Ordinal))
-                                             || Quests.BountyStandIns.Counts(adjectives, m.Template))
+                                             || Quests.BountyStandIns.Counts(adjectives, m.Template)
+                                             || Ultimus.UltimusDrops.Score(questName, goalName, m.Template) > 0)
                                          && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full)
                                          // Not a creature Ultimus is fighting or heading for: the two stay out of each other's way.
                                          && !Ultimus.UltimusDirector.IsBusyNear(leader.ZoneActor, m.Object.m_location.X, m.Object.m_location.Y))
-                    .OrderBy(m => Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault();
+                    .OrderBy(m => Ultimus.UltimusDrops.Score(questName, goalName, m.Template) < 0 ? 1 : 0)
+                    .ThenBy(m => Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault();
                 if (foe is not null) {
                     return new Target(FIGHT, foe.Object.m_location.X, foe.Object.m_location.Y, step, questName, goalName, foe.Template,
                         foe.Object.m_globalID.Full, Key: key);

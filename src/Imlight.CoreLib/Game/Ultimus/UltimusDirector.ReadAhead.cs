@@ -56,24 +56,64 @@ internal sealed partial class UltimusDirectorActor {
         ReadAheadTick();
     }
 
+    // Ahziael's "Run read-ahead now" (Niduus, 2026-11-14): every story world at once, from a quest check run fresh for it.
+    internal const string READ_AHEAD_REQUEST = "read-ahead-request.txt";
+    private const string ALL_WORLDS = "*";
+    private DateTime _readAheadFreshAfter = DateTime.MinValue;
+    private DateTime _readAheadRequestLook = DateTime.MinValue;
+
+    private void ReadAheadRequestTick() {
+        if (DateTime.UtcNow < _readAheadRequestLook) {
+            return;
+        }
+
+        _readAheadRequestLook = DateTime.UtcNow.AddSeconds(5);
+        var request = Path.Combine(UltimusWire.Folder, READ_AHEAD_REQUEST);
+        if (!File.Exists(request)) {
+            return;
+        }
+
+        try {
+            File.Delete(request);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return;
+        }
+
+        _readAheadWaiting = ALL_WORLDS;
+        _readAheadFreshAfter = DateTime.UtcNow;
+        _readAheadAskedAt = DateTime.MinValue;
+        _readAheadNextLook = DateTime.MinValue;
+        // Each quest is filed again (a fix since may have changed what the check says).
+        foreach (var key in _reported.Keys.Where(k => k.StartsWith("readahead|", StringComparison.Ordinal)).ToList()) {
+            _reported.Remove(key);
+        }
+
+        Note("Ultimus", "READ-AHEAD for every story world, asked in Ahziael: the quest check runs fresh first (a few minutes).");
+    }
+
     /// <summary>Each tick while a read-ahead waits for the quest check to be written.</summary>
     private void ReadAheadTick() {
+        ReadAheadRequestTick();
         if (_readAheadWaiting is not { } world || DateTime.UtcNow < _readAheadNextLook) {
             return;
         }
 
         _readAheadNextLook = DateTime.UtcNow.AddMinutes(1);
-        var fresh = File.Exists(QuestCheckPath) && DateTime.UtcNow - File.GetLastWriteTimeUtc(QuestCheckPath) < TimeSpan.FromDays(1);
+        var all = world == ALL_WORLDS;
+        var fresh = File.Exists(QuestCheckPath) && (all
+            ? File.GetLastWriteTimeUtc(QuestCheckPath) > _readAheadFreshAfter
+            : DateTime.UtcNow - File.GetLastWriteTimeUtc(QuestCheckPath) < TimeSpan.FromDays(1));
         if (!fresh) {
             // Asked once; given up after two hours (the check takes minutes, but a server with no zone files never writes it).
             if (_readAheadAskedAt == DateTime.MinValue) {
                 _readAheadAskedAt = DateTime.UtcNow;
                 if (QuestChecker.Start(IdCatalog.OutputPath)) {
-                    Note("Ultimus", $"reads ahead in {WorldName(world)}: the quest check is being run in the background first.");
+                    Note("Ultimus", $"reads ahead in {(all ? "every story world" : WorldName(world))}: the quest check is being run in the background first.");
                 }
             }
             else if (DateTime.UtcNow - _readAheadAskedAt > TimeSpan.FromHours(2)) {
-                Note("Ultimus", $"could not read ahead in {WorldName(world)}: the quest check was not written. He plays on as usual.");
+                Note("Ultimus", $"could not read ahead in {(all ? "every story world" : WorldName(world))}: the quest check was not written. He plays on as usual.");
                 _readAheadDone.Add(world);
                 _readAheadWaiting = null;
                 _readAheadAskedAt = DateTime.MinValue;
@@ -84,6 +124,11 @@ internal sealed partial class UltimusDirectorActor {
 
         _readAheadWaiting = null;
         _readAheadAskedAt = DateTime.MinValue;
+        if (all) {
+            ReadAheadAll();
+            return;
+        }
+
         _readAheadDone.Add(world);
         var found = ReadAheadProblems(world);
         if (found is null) {
@@ -102,8 +147,54 @@ internal sealed partial class UltimusDirectorActor {
             UltimusLink.NOTABLE);
         Think($"Before {WorldName(world)} I read ahead: {open.Count} story quest(s) there have a step the quest check says may not work. " +
               "I wrote them down for Niduus now, and I still try each one as a player would when I get there.", "readahead|" + world);
-        // Filed straight to the Issues page: no live diagnosis (he is not at that quest yet, so it would read his current spot).
-        foreach (var (quest, problems) in open.Take(40)) {
+        FileReadAhead(world, open.Take(40));
+    }
+
+    // Every story world at once (Ahziael's button): the story quests he has not done yet, filed by world, and a summary in
+    // read-ahead.txt in his folder.
+    private void ReadAheadAll() {
+        var found = ReadAheadProblems(null);
+        if (found is null) {
+            Note("Ultimus", "READ-AHEAD: the quest check could not be read.");
+            return;
+        }
+
+        var leader = _team.FirstOrDefault()?.Wizard;
+        var byWorld = found.Where(f => leader is null || !leader.HasCompletedQuest(f.Quest))
+            .GroupBy(f => QuestTemplateCollection.GetQuestByName(f.Quest) is { } t ? QuestStory.WorldOf(t) : "")
+            .Where(g => g.Key.Length > 0).ToList();
+        var summary = new System.Text.StringBuilder($"ULTIMUS READ-AHEAD, every story world ({DateTime.Now:yyyy-MM-dd HH:mm})\n");
+        foreach (var group in byWorld) {
+            _readAheadDone.Add(group.Key);
+            FileReadAhead(group.Key, group);
+            summary.AppendLine();
+            summary.AppendLine($"{WorldName(group.Key)}: {group.Count()} story quest(s) with a step that may not work");
+            foreach (var (quest, problems) in group) {
+                summary.AppendLine($"  {UltimusText.Title(quest)} ({quest}): {string.Join(" ", problems.Take(2))}");
+            }
+        }
+
+        var total = byWorld.Sum(g => g.Count());
+        if (total == 0) {
+            summary.AppendLine("Nothing found: every story step he has left looks doable.");
+        }
+
+        try {
+            File.WriteAllText(Path.Combine(UltimusWire.Folder, "read-ahead.txt"), summary.ToString());
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            Logger.Debug("Ultimus: read-ahead.txt could not be written: {0}", Logger.Args(ex.Message));
+        }
+
+        Note("Ultimus", total == 0
+            ? "READ-AHEAD, every story world: nothing found; every story step he has left looks doable."
+            : $"READ-AHEAD, every story world: {total} story quest(s) in {byWorld.Count} world(s) may not work yet; filed on the Issues page (summary in read-ahead.txt).",
+            total == 0 ? null : UltimusLink.NOTABLE);
+    }
+
+    // Filed straight to the Issues page: no live diagnosis (he is not at that quest yet, so it would read his current spot).
+    private void FileReadAhead(string world, IEnumerable<(string Quest, List<string> Problems)> open) {
+        foreach (var (quest, problems) in open) {
             if (!_reported.TryAdd("readahead|" + quest, DateTime.UtcNow)) {
                 continue;
             }
@@ -133,7 +224,7 @@ internal sealed partial class UltimusDirectorActor {
 
                 var code = q.TryGetProperty("Code", out var c) ? c.GetString() : null;
                 if (string.IsNullOrEmpty(code) || QuestTemplateCollection.GetQuestByName(code) is not { } template
-                    || !string.Equals(QuestStory.WorldOf(template), world, StringComparison.OrdinalIgnoreCase)
+                    || (world is not null && !string.Equals(QuestStory.WorldOf(template), world, StringComparison.OrdinalIgnoreCase))
                     || BotShared.BotStory.Rank(template) <= 0 || !UltimusPlanner.IsMainStoryWorld(template)) {
                     continue;
                 }
