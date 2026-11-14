@@ -1,0 +1,4 @@
+Fixed: Background error after a start and a log full of repeat lines
+Ahziael's crash list showed "An error in the background" after every start. It came from the quick home router check for friend connections, which stopped waiting but never closed its last look properly. That is now closed quietly, so the list stays clean. The server log also repeated a few harmless lines hundreds of times a day, like a missing card named "Natural Fire Ellf" (a typo in the game's own data). Each missing card name is now written only once, and the "no active wizard" line at log in and log out is gone from the normal log.
+Where: Server > Logs > Ahziael's crashes and refusals, and the server's daily log.
+Test: Start Ahziael and let the server run for a while. The crashes list should not get a new "error in the background", and the daily log should show "Natural Fire Ellf" only once.
