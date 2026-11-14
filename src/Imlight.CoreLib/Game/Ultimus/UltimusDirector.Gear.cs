@@ -489,6 +489,11 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
+        if (target.Key.StartsWith("bazaarsell|", StringComparison.Ordinal)) {
+            BazaarSellHere(target);
+            return;
+        }
+
         if (target.Key.StartsWith("bazaar|", StringComparison.Ordinal)) {
             BazaarHere(target);
             return;

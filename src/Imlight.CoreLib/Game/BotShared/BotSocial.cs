@@ -439,10 +439,11 @@ internal static class BotSocial {
         var area = string.IsNullOrWhiteSpace(self.Area) ? "this area" : self.Area;
         var at = area + (string.IsNullOrWhiteSpace(self.World) || string.Equals(self.World, self.Area, StringComparison.OrdinalIgnoreCase) ? "" : $", {self.World}");
         var step = string.IsNullOrWhiteSpace(self.Step) ? null : self.Step.Trim();
-        var doing = quest is null ? $"exploring {area}" : $"\"{quest}\"";
+        // No quote marks round the quest: the game's chat hid the quoted words as "..." (Niduus, 2026-11-14).
+        var doing = quest is null ? $"exploring {area}" : $"the quest {quest}";
         var stepLine = quest is null ? $"I'm between quests, looking for the next one in {area}."
-            : step is null ? $"I'm on \"{quest}\" and heading to its next step now."
-            : $"My step in \"{quest}\" is: {step}.";
+            : step is null ? $"I'm on {quest} and heading to its next step now."
+            : $"My step in {quest} is: {step}.";
         var moodWord = self.Mood switch {
             "proud" => Pick(self.Bot, "mood-proud", "Feeling great, the story is going well!", "Pretty proud of my progress today!", "On a roll lately!"),
             "frustrated" => Pick(self.Bot, "mood-frust", "A bit stuck lately, but I'll get there!", "Some tricky spots today, but I'm not giving up.", "Had a rough patch, still smiling though."),
@@ -597,7 +598,7 @@ internal static class BotSocial {
                 var now = string.IsNullOrWhiteSpace(self.Doing) ? null : self.Doing.Trim().TrimEnd('.');
                 line = self.InBattle ? $"I'm in a battle right now!{health}"
                     : now is null ? $"I'm fine, thanks!{health} Working on {doing}."
-                    : $"What I'm doing: {now}.{health}" + (quest is null ? "" : $" My quest is \"{quest}\".");
+                    : $"What I'm doing: {now}.{health}" + (quest is null ? "" : $" My quest is {quest}.");
                 why = $"{friend.Name} asked how I am or what I'm doing, so I tell them truthfully: {now ?? "questing"}.";
                 break;
             }

@@ -749,6 +749,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         // Little room in the backpack: he sells what he won't wear at a shop here (UltimusDirector.Life.cs).
+        // The Bazaar pays far more than a shop: there first when it is on and he is in Wizard City anyway (UltimusDirector.Life.cs).
+        if (SideTripsOpen && SideTrip(NotMidStep(BazaarSellTarget(group)), "selling") is { } bazaarSelling) {
+            return bazaarSelling;
+        }
+
         if (SideTripsOpen && SideTrip(SellTarget(group), "selling") is { } selling) {
             return selling;
         }
