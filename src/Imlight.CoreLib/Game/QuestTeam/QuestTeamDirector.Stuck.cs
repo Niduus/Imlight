@@ -39,6 +39,7 @@ internal sealed partial class QuestTeamDirectorActor {
     private static readonly TimeSpan UNSTICK_FOR = TimeSpan.FromSeconds(6);
 
     private readonly BotStuck _stuck = new();
+    private readonly HashSet<string> _tipsNoted = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<int, DateTime> _unstickUntil = [];
 
     // Stepping aside: the other orders wait a few seconds.
@@ -111,6 +112,13 @@ internal sealed partial class QuestTeamDirectorActor {
 
         if (tries >= 2) {
             _clicks.Clear();
+        }
+
+        // What players told Ultimus about this quest while he was stuck on it, shared with the team (Niduus, 2026-11-14):
+        // written in the team's log once per quest, so Niduus sees it next to where the team got stuck.
+        if (index == 0 && Ultimus.UltimusTips.For(quest) is { Count: > 0 } tips && _tipsNoted.Add(quest)) {
+            Note(member.Role, $"{member.Name}: players told Ultimus about {QuestTeamText.Title(quest)}: " +
+                              string.Join(" | ", tips.Select(t => $"\"{t}\"")), QuestTeamLink.NOTABLE);
         }
 
         // What Ultimus learned at this spot (the bots' mistakes book, Niduus, 2026-11-13: "other bots know what mistakes were

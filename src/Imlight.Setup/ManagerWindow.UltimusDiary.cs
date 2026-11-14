@@ -58,7 +58,7 @@ internal sealed partial class ManagerWindow {
         };
 
         return Fold("book", ULTIMUS_TAB, "Daily diary",
-            "Ultimus's day in plain words, newest day first: how many quests he finished, the worlds he started or finished, " +
+            "At the top, the places he got stuck most this week. Then Ultimus's day in plain words, newest day first: how many quests he finished, the worlds he started or finished, " +
             "the levels he reached, the tough fights he won and lost, the players he met, the gear he put on and where he got " +
             $"stuck, then each moment with its time. The last {DIARY_DAYS} days. Made from his memory journal, so nothing in it " +
             "is made up. Updated every 30 seconds.",
@@ -99,8 +99,19 @@ internal sealed partial class ManagerWindow {
             return "";
         }
 
-        var stuck = StuckDays(Path.Combine(Path.GetDirectoryName(journalPath) ?? "", "stuck-days.json"));
+        var stuckPath = Path.Combine(Path.GetDirectoryName(journalPath) ?? "", "stuck-days.json");
+        var stuck = StuckDays(stuckPath);
         var text = new StringBuilder();
+        // The weekly stuck report (Niduus, 2026-11-14): the 5 places he lost the most time over the last 7 days.
+        if (StuckWeek(stuckPath) is { Count: > 0 } week) {
+            text.AppendLine("This week, most stuck (the last 7 days):");
+            for (var i = 0; i < week.Count; i++) {
+                text.AppendLine($"  {i + 1}. {week[i]}");
+            }
+
+            text.AppendLine();
+        }
+
         foreach (var day in days) {
             var moments = day.OrderBy(e => e.At).ToList();
             var label = day.Key == DateTime.Today ? "Today" : day.Key == DateTime.Today.AddDays(-1) ? "Yesterday" : "";
@@ -123,6 +134,32 @@ internal sealed partial class ManagerWindow {
         }
 
         return text.ToString().TrimEnd();
+    }
+
+    // stuck-days.json's "Week": the last 7 days' worst spots as lines; empty when missing.
+    private static List<string> StuckWeek(string path) {
+        try {
+            if (!File.Exists(path)) {
+                return [];
+            }
+
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            using var doc = JsonDocument.Parse(stream);
+            if (doc.RootElement.ValueKind != JsonValueKind.Object) {
+                return [];
+            }
+
+            foreach (var prop in doc.RootElement.EnumerateObject()) {
+                if (prop.Name.Equals("Week", StringComparison.OrdinalIgnoreCase) && prop.Value.ValueKind == JsonValueKind.Array) {
+                    return [.. prop.Value.EnumerateArray().Where(l => l.ValueKind == JsonValueKind.String).Select(l => l.GetString() ?? "")];
+                }
+            }
+
+            return [];
+        }
+        catch (Exception) {
+            return [];
+        }
     }
 
     // stuck-days.json (the server's "most stuck" top 3 per day): date -> lines; empty when missing.
