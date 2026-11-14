@@ -1399,11 +1399,38 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
     // At a walk-through exit that does not take it on: standing inside it already (arrived there, so the game never saw
     // it walk in), it steps back out and walks in again, as a player does (Niduus's log, 2026-11-13: stuck at The Oasis's
-    // start, where it lands, on the way to Altar of Kings).
+    // start, where it lands, on the way to Altar of Kings). Walking in at the one point never took it on in v0.10.851, so
+    // now it wanders the exit's whole area as a player feeling for the trigger does (Niduus, 2026-11-14: "Built in a zone
+    // transfer wandering feature around the areas like this for the zone transfer. Make it smarter"): each try walks out
+    // and in again through another part of the exit (the middle, then rings further out, from all sides). When every part
+    // was walked and the game still never took it on, Ahziael takes it through to the area the exit leads to, written up
+    // pink (ABNORMAL), in his thoughts and in the mistakes book.
     private (string Key, DateTime Since)? _exitWait;
+    private string _exitKey = "";
+    private int _exitTries;
+    private DateTime _exitFirst = DateTime.MinValue;
+
+    // Where each try goes in, round the exit's middle: (how far out, which way round), from all sides.
+    private static readonly (float Out, float Angle)[] s_exitSweep = [
+        (0, 0), (60, 0), (60, 180), (60, 90), (60, 270), (120, 45), (120, 225), (120, 135), (120, 315), (200, 0), (200, 180),
+        (200, 90), (200, 270),
+    ];
+
+    // Tries before Ahziael takes it through, and the longest it works an exit on its own.
+    private const int EXIT_TRIES = 8;
+    private static readonly TimeSpan EXIT_MOST = TimeSpan.FromSeconds(100);
+
+    /// <summary>Whether it is working a walk-through exit now (standing still there is part of it, not being stuck).</summary>
+    private bool WorkingExit => _exitWait is { } wait && DateTime.UtcNow - wait.Since < TimeSpan.FromSeconds(30);
 
     private void IntoExit(UltimusMember.Status leader, UltimusPlanner.Target target) {
-        if (UltimusPlanner.Far(leader.X, leader.Y, target.X, target.Y) > 150) {
+        if (_exitKey != target.Key) {
+            _exitKey = target.Key;
+            _exitTries = 0;
+            _exitFirst = DateTime.UtcNow;
+        }
+
+        if (UltimusPlanner.Far(leader.X, leader.Y, target.X, target.Y) > 260) {
             _exitWait = null;
             WalkTo(0, target with { X = target.X + 5, Y = target.Y + 5 });
 
@@ -1414,31 +1441,79 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             _exitWait = wait = (target.Key, DateTime.UtcNow);
         }
 
-        if (DateTime.UtcNow - wait.Since < TimeSpan.FromSeconds(6)) {
+        if (_exitTries == 0 && DateTime.UtcNow - wait.Since < TimeSpan.FromSeconds(6)) {
             WalkTo(0, target with { X = target.X + 5, Y = target.Y + 5 });
 
             return;
         }
 
-        if (!CanClick(target.Key + "|out-and-in")) {
+        if (!CanClick(target.Key + "|sweep")) {
             return;
         }
 
-        Clicked(target.Key + "|out-and-in");
+        Clicked(target.Key + "|sweep");
         _exitWait = (target.Key, DateTime.UtcNow);
-        var angle = Random.Shared.NextSingle() * MathF.Tau;
-        var outside = (X: target.X + (MathF.Cos(angle) * 450), Y: target.Y + (MathF.Sin(angle) * 450));
+        _sent[0] = (target, DateTime.UtcNow, leader.X, leader.Y);
+        _leaderLastTarget = target;
+
+        if (_exitTries >= EXIT_TRIES || DateTime.UtcNow - _exitFirst > EXIT_MOST) {
+            ThroughExit(leader, target);
+
+            return;
+        }
+
+        // The part of the exit this try walks in through, entered from the far side of the middle.
+        var (far, angle) = s_exitSweep[_exitTries % s_exitSweep.Length];
+        var turn = angle * MathF.PI / 180f;
+        var spot = (X: target.X + (MathF.Cos(turn) * far), Y: target.Y + (MathF.Sin(turn) * far));
+        var from = turn + MathF.PI + ((Random.Shared.NextSingle() - 0.5f) * 0.8f);
+        var outside = (X: spot.X + (MathF.Cos(from) * 300), Y: spot.Y + (MathF.Sin(from) * 300));
+        _exitTries++;
+
         var points = OverlayQuestPath.Walk(leader.CharId, leader.Zone, leader.X, leader.Y, outside.X, outside.Y, body: true);
         if (points.Count == 0) {
             points.Add(outside);
         }
 
-        points.Add((target.X, target.Y));
-        points.Add((target.X + 5, target.Y + 5));
-        Note("Ultimus", $"{leader.Name} stands in the exit {target.What} and it does not take it on: steps back out and walks in again.", UltimusLink.ABNORMAL);
-        _actors[0].Tell(new UltimusMember.WalkTo(points, "steps out of the exit and walks in again"));
-        _sent[0] = (target, DateTime.UtcNow, leader.X, leader.Y);
-        _leaderLastTarget = target;
+        // Through the spot and a little past it, so the game sees it cross the trigger, not stop on its edge.
+        points.Add(spot);
+        points.Add((spot.X - (MathF.Cos(from) * 60), spot.Y - (MathF.Sin(from) * 60)));
+        Note("Ultimus", $"{leader.Name} is at the exit {target.What} and it does not take it on: try {_exitTries} of {EXIT_TRIES}, " +
+                        $"walks out and in again through another part of it ({far:0} from its middle).", UltimusLink.NOTABLE);
+        if (_exitTries == 1) {
+            Think($"I stand at the exit {target.What}, but the game does not take me on. I walk out and in again through every part " +
+                  $"of it, the middle first and then further out, from all sides; after {EXIT_TRIES} tries Ahziael takes me through.",
+                "exit|" + target.Key);
+        }
+
+        _actors[0].Tell(new UltimusMember.WalkTo(points, "walks out of the exit and in again through another part of it"));
+    }
+
+    // Every part of the exit was walked: Ahziael takes it through to the area the exit leads to.
+    private void ThroughExit(UltimusMember.Status leader, UltimusPlanner.Target target) {
+        var tries = _exitTries;
+        var seconds = (DateTime.UtcNow - _exitFirst).TotalSeconds;
+        _exitTries = 0;
+        _exitFirst = DateTime.UtcNow;
+        _exitWait = null;
+        if (string.IsNullOrEmpty(target.To)) {
+            return;
+        }
+
+        var where = $"{UltimusText.Zone(leader.Zone)} at ({target.X:0}, {target.Y:0})";
+        Note("Ultimus", $"{leader.Name} walked through every part of the exit {target.What} in {where} ({tries} tries, {seconds:0} seconds) " +
+                        $"and the game never took it on: Ahziael takes it through to {UltimusText.Zone(target.To)}.", UltimusLink.ABNORMAL);
+        var thought = $"I walked through every part of the exit {target.What} ({tries} tries) and the game never took me on. " +
+                      $"Ahziael takes me through to {UltimusText.Zone(target.To)}; this exit is written in the mistakes book so it can be looked at.";
+        Think(thought, "through|" + target.Key);
+        BotMistakes.Record("Ultimus", BotMistakes.STUCK, leader.Zone, target.X, target.Y, target.Quest,
+            $"The walk-through exit {target.What} never took it on, though it walked through every part of it.", thought,
+            "Ahziael takes a bot through when the exit's trigger does not fire; the exit's trigger in the zone file needs a look.",
+            "walked through every part of the exit");
+        BotMistakes.Fixed(BotMistakes.STUCK, leader.Zone, target.X, target.Y, "Ahziael takes it through the exit");
+        _actors[0].Tell(new UltimusMember.ThroughExit(target.To));
+        _unstickUntil[0] = DateTime.UtcNow + UNSTICK_FOR;
+        OverlayQuestPath.Forget(leader.CharId);
     }
 
     private int _idleRestarts;

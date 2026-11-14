@@ -53,7 +53,9 @@ internal sealed partial class UltimusDirectorActor {
             RouteMemory.Track("Ultimus", member.CharId, member.Zone, member.X, member.Y);
             NoteStartLanding(i, member);
             NoteFreed(i, member);
-            if (_stuck.Look(i, member.Zone, member.X, member.Y, resting) is var tries and > 0) {
+            // Standing still while it works a walk-through exit is the exit work, not being stuck (it flagged itself stuck
+            // over and over at The Oasis's exit, v0.10.851).
+            if (_stuck.Look(i, member.Zone, member.X, member.Y, resting || (i == 0 && WorkingExit)) is var tries and > 0) {
                 Unstick(i);
             }
         }
@@ -109,6 +111,7 @@ internal sealed partial class UltimusDirectorActor {
 
         var (fix, flag) = UltimusFixes.Next(member.Zone, member.X, member.Y, step, skip);
         _openFlag[index] = (flag, member.Zone ?? "", member.X, member.Y);
+        _freeSince.Remove(index);
         var seen = flag.Times > 1 ? $" (flagged here {flag.Times} times; tried before: {string.Join(", ", flag.Tried.SkipLast(1).Distinct())})" : "";
         Note("Ultimus", $"{member.Name} {why} in {where} while {_doing}{seen}: {fix}.", UltimusLink.ABNORMAL);
         ThinkAboutStuck(member, why, fix, flag, step);
@@ -167,17 +170,36 @@ internal sealed partial class UltimusDirectorActor {
 
     // The flag each wizard is working off now, and where it was; free once it is far from there or in another area.
     private readonly Dictionary<int, (UltimusFixes.Flag Flag, string Zone, float X, float Y)> _openFlag = [];
+    private readonly Dictionary<int, DateTime> _freeSince = [];
 
     private void NoteFreed(int index, UltimusMember.Status member) {
         if (!_openFlag.TryGetValue(index, out var open)) {
             return;
         }
 
-        var otherZone = !string.Equals(open.Zone, member.Zone ?? "", StringComparison.OrdinalIgnoreCase);
-        if (!otherZone && UltimusPlanner.Far(open.X, open.Y, member.X, member.Y) < 800) {
+        // While zoning (no area yet, or not in the world) nothing is known about the new spot.
+        if (string.IsNullOrEmpty(member.Zone) || member.State != "playing") {
             return;
         }
 
+        var otherZone = !string.Equals(open.Zone, member.Zone, StringComparison.OrdinalIgnoreCase);
+        if (!otherZone && UltimusPlanner.Far(open.X, open.Y, member.X, member.Y) < 800) {
+            _freeSince.Remove(index);
+            return;
+        }
+
+        // Free only once it stays free: a go-back to the area's start moved it far, and it was stuck again at once, yet
+        // that counted as "got free" (v0.10.851 log). Now it has to keep going for 45 seconds without getting stuck.
+        if (!_freeSince.TryGetValue(index, out var since)) {
+            _freeSince[index] = DateTime.UtcNow;
+            return;
+        }
+
+        if (DateTime.UtcNow - since < TimeSpan.FromSeconds(45)) {
+            return;
+        }
+
+        _freeSince.Remove(index);
         _openFlag.Remove(index);
         UltimusFixes.Worked(open.Flag);
         ThinkFreed(member, open.Flag);
