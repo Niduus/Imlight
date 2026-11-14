@@ -267,7 +267,9 @@ internal sealed class WizardSheet {
                 Text = words, Foreground = Brushes.White, Opacity = 0.75, FontSize = 12, Margin = new Thickness(6, 0, 0, 0),
                 VerticalAlignment = VerticalAlignment.Center,
             });
-            ToolTip.SetTip(line, words);
+            // Where it comes from: each worn piece that gives to it, then the rest (Niduus, 2026-11-14).
+            var from = List(row["from"]);
+            ToolTip.SetTip(line, from.Count == 0 ? words : words + "\n\nFrom:\n" + string.Join("\n", from));
             list.Children.Add(line);
         }
 

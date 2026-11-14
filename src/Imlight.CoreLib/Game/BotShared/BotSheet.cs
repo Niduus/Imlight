@@ -220,6 +220,38 @@ internal static class BotSheet {
         return rows;
     }
 
+    // The worn pieces that give to one stat, as "Hat name: +5%", and what the rest comes from. Only the wizard's own stats:
+    // a school stat counts from pieces for that school or for every school.
+    private static JsonArray Sources(List<BotGear.Piece> worn, string kind, string school, string shownValue) {
+        var lines = new JsonArray();
+        double fromGear = 0;
+        var percent = shownValue.EndsWith('%');
+        foreach (var piece in worn) {
+            var sum = piece.Stats.Where(st => (st.Kind == kind || kind == "PipConversion" && st.Kind.Contains("PipConversion", StringComparison.Ordinal)
+                                                || kind == "ShadowPip" && st.Kind.Contains("ShadowPip", StringComparison.Ordinal)
+                                                || kind == "Archmastery" && st.Kind.Contains("Archmastery", StringComparison.Ordinal)
+                                                || kind == "StunResist" && st.Kind.Contains("Stun", StringComparison.Ordinal))
+                                               && (st.School.Length == 0 || school.Length == 0 || st.School.Equals(school, StringComparison.OrdinalIgnoreCase)))
+                .Sum(st => BotGear.Percent(st));
+            if (Math.Abs(sum) < 0.5) {
+                continue;
+            }
+
+            fromGear += sum;
+            lines.Add((JsonNode) $"{piece.Name}: {(sum > 0 ? "+" : "")}{Math.Round(sum)}{(percent ? "%" : "")}");
+        }
+
+        // The rest: the wizard's level and school, pet talents, jewels, set bonuses and other effects.
+        var total = double.TryParse(shownValue.Split('/').Last().TrimEnd('%'), System.Globalization.NumberStyles.Float,
+            System.Globalization.CultureInfo.InvariantCulture, out var t) ? t : 0;
+        var rest = Math.Round(total - fromGear);
+        if (rest >= 1) {
+            lines.Add((JsonNode) $"Level, pet, jewels and other: +{rest}{(percent ? "%" : "")}");
+        }
+
+        return lines;
+    }
+
     /// <summary>
     /// The wizard's stats as rows of the game's stat tooltip: the icon keys (Ahziael's GearIcon names, such as "health" or
     /// "critical"), a school's icon in front for school stats, the number, the words after the icons, and what it means.
@@ -238,40 +270,73 @@ internal static class BotSheet {
         static bool Shown(string value)
             => value.Contains('/') || (double.TryParse(value.TrimEnd('%'), System.Globalization.NumberStyles.Float,
                 System.Globalization.CultureInfo.InvariantCulture, out var number) && number >= 1);
+        // Each worn piece's stats, read once, for "where does this stat come from" (Niduus, 2026-11-14: "when hovering over a
+        // stat, it will show what items are giving to that stat").
+        var worn = s_slots.Select(x => wizard.EquipmentBehavior?.GetItemInSlot(x.Slot))
+            .Where(i => i is not null)
+            .Select(i => BotGear.Read((uint) Math.Min((ulong) i.m_templateID, uint.MaxValue)))
+            .Where(p => p is not null).ToList();
+        string kindNow = null;
         void Row(string value, string after, string words, string rowSchool, params string[] icons) {
+            var kind = kindNow;
+            kindNow = null;
             if (!Shown(value)) {
                 return;
             }
 
-            rows.Add(new JsonObject {
+            var row = new JsonObject {
                 ["value"] = value, ["after"] = after, ["words"] = words, ["school"] = rowSchool,
                 ["icons"] = new JsonArray([.. icons.Select(i => (JsonNode) i)]),
-            });
+            };
+            if (kind is not null) {
+                row["from"] = Sources(worn, kind, rowSchool, value);
+            }
+
+            rows.Add(row);
         }
 
+        // The next Row is this kind of stat (BotGear's names: "Damage", "ReduceDamage", "MaxHealth"...).
+        void Kind(string kind) => kindNow = kind;
+
         var own = string.IsNullOrEmpty(school) ? "Fire" : school;
+        Kind("MaxHealth");
         Row($"{stats.m_currentHitpoints}/{stats.m_baseHitpoints + stats.m_bonusHitpoints}", "", "Health: now and most", "", "health");
+        Kind("MaxMana");
         Row($"{stats.m_currentMana}/{stats.m_baseMana + stats.m_bonusMana}", "", "Mana: now and most", "", "mana");
         if (stats.m_energyMax > 0) {
             Row($"{wizard.PetOwnerBehavior?.Energy ?? 0}/{stats.m_energyMax}", "", "Energy: now and most", "", "energy");
         }
+        Kind("PowerPips");
         Row(Pct(stats.m_powerPipBase + stats.m_powerPipBonusPercentAll), "CHANCE", "Power pip chance", "", "powerpip");
+        Kind("Damage");
         Row(Pct(At(stats.m_dmgBonusPercent, own) + stats.m_dmgBonusPercentAll), "", $"{own} damage", own, "damage");
         if (At(stats.m_dmgBonusFlat, own) + stats.m_dmgBonusFlatAll is var flat and > 0) {
+            Kind("FlatDamage");
             Row($"{flat:0}", "", $"{own} flat damage", own, "damageflat");
         }
 
+        Kind("Accuracy");
         Row(Pct(At(stats.m_accBonusPercent, own) + stats.m_accBonusPercentAll), "", $"{own} accuracy", own, "accuracy");
+        Kind("ArmorPiercing");
         Row(Pct(At(stats.m_apBonusPercent, own) + stats.m_apBonusPercentAll), "", $"{own} pierce", own, "pierce");
+        Kind("CriticalHit");
         Row($"{At(stats.m_criticalHitRatingBySchool, own) + stats.m_criticalHitRatingAll:0}", "RATING", $"{own} critical rating", own, "critical");
+        Kind("Block");
         Row($"{stats.m_blockRatingAll:0}", "RATING", "Block rating", "", "block");
+        Kind("Healing");
         Row(Pct(stats.m_healBonusPercentAll), "", "Outgoing healing", "", "outgoing", "heal");
+        Kind("IncHealing");
         Row(Pct(stats.m_healIncBonusPercentAll), "", "Incoming healing", "", "incoming", "heal");
+        Kind("PipConversion");
         Row($"{At(stats.m_pipConversionRatingPerSchool, own) + stats.m_pipConversionRatingAll:0}", "RATING", $"{own} pip conversion rating", own, "pipconversion");
+        Kind("ShadowPip");
         Row($"{stats.m_shadowPipRating + stats.m_bonusShadowPipRating:0}", "RATING", "Shadow pip rating", "", "shadowpip");
+        Kind("Archmastery");
         Row($"{stats.m_archmasteryBase:0}", "RATING", "Archmastery rating", "", "archmastery");
+        Kind("StunResist");
         Row(Pct(stats.m_stunResistancePercent), "", "Stun resistance", "", "stunresist");
         foreach (var s in s_schools.Where(s => s != "Shadow")) {
+            Kind("ReduceDamage");
             Row(Pct(At(stats.m_dmgReducePercent, s) + stats.m_dmgReducePercentAll), "", $"{s} resist", s, "resist");
         }
 
