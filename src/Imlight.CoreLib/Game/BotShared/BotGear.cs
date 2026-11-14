@@ -548,7 +548,7 @@ internal static class BotGear {
                     continue;
                 }
 
-                var value = share * stat.Value;
+                var value = share * Percent(stat);
                 switch (stat.Kind) {
                     case "Damage": damage += value; break;
                     case "ArmorPiercing": pierce += value; break;
@@ -567,6 +567,17 @@ internal static class BotGear {
 
         return new Totals(damage, pierce, accuracy, resist, health, power, other);
     }
+
+    // The game's stat tables keep most percent stats as shares (0.12 for 12%), and only a few come out of the tables
+    // already times 100. The goals are in percent, so a share is turned into percent here. Before, the totals read 12%
+    // damage as 0.12%, no outfit ever met a floor and no swap was ever worth making, so Ultimus never put on the Adept
+    // robe (Niduus, 2026-11-14: "He still isn't using the adept robe").
+    private static readonly HashSet<string> s_percentKinds = new(StringComparer.Ordinal) {
+        "Damage", "ArmorPiercing", "Accuracy", "ReduceDamage", "PowerPips",
+    };
+
+    private static double Percent(Stat stat) =>
+        s_percentKinds.Contains(stat.Kind) && Math.Abs(stat.Value) > 0 && Math.Abs(stat.Value) < 1.5 ? stat.Value * 100 : stat.Value;
 
     /// <summary>How good an outfit is for the goals: under a floor counts most, damage and pierce lead above them.</summary>
     internal static double Value(Totals t, Goals g) {
@@ -595,7 +606,7 @@ internal static class BotGear {
     /// The one swap from the backpack that best brings the whole outfit toward the goals, with the reason; null when the
     /// outfit is as good as the backpack allows.
     /// </summary>
-    internal static Swap BestSwap(Wizard wizard, Goals goals) {
+    internal static Swap BestSwap(Wizard wizard, Goals goals, double least = 0.5) {
         if (wizard?.InventoryBehavior?.Items is not { } items) {
             return null;
         }
@@ -622,7 +633,7 @@ internal static class BotGear {
                 var trial = new Dictionary<EquipmentSlotType, Piece>(outfit) { [slot] = piece };
                 var after = TotalsOf(trial.Values, school);
                 var gain = Value(after, goals) - now;
-                if (gain > 0.5 && (best is null || gain > best.Gain)) {
+                if (gain > least && (best is null || gain > best.Gain)) {
                     best = new Swap(item, slot.ToString(), piece, worn, gain, before, after, Reason(before, after, goals));
                 }
             }

@@ -90,6 +90,8 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     internal sealed record SkipStep(string Quest);
     /// <summary>Ahziael sends it to the area its quest step is in, as a player's .stuck go does.</summary>
     internal sealed record GoToStep;
+    /// <summary>Ahziael takes it through a walk-through exit that never took it on, to the area the exit leads to.</summary>
+    internal sealed record ThroughExit(string To);
     /// <summary>A small hop to a clear spot by its goal (the line of sight circle's last resort).</summary>
     internal sealed record Hop(float X, float Y, float Z, string Why);
     // Stuck past stepping aside: the server takes it back to where its area starts.
@@ -289,6 +291,10 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         Receive<GoToStep>(_ => {
             _recalledAt = DateTime.UtcNow;
             _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "botgo" });
+        });
+        Receive<ThroughExit>(m => {
+            _recalledAt = DateTime.UtcNow;
+            _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "botzone", QuestName = m.To });
         });
         Receive<SkipStep>(m => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "completegoal", QuestName = m.Quest }));
         Receive<Recall>(_ => {

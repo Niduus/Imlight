@@ -137,9 +137,11 @@ internal sealed partial class UltimusDirectorActor {
     // ---------------------------------------------------------------------
 
     private void ThinkAboutStuck(UltimusMember.Status member, string why, string fix, UltimusFixes.Flag flag, string step) {
+        // "has stood still" is said of him in the log; in his own words it is "I have stood still".
+        var mine = why.StartsWith("has ", StringComparison.Ordinal) ? "have " + why[4..] : why;
         var tried = flag.Tried.Count > 1 ? string.Join(", ", flag.Tried.GetRange(0, flag.Tried.Count - 1)) : "";
         var thought = flag.Times <= 1
-            ? $"I {why} here. Nothing is written down for this spot, so I try the cheapest fix first: {fix}."
+            ? $"I {mine} here. Nothing is written down for this spot, so I try the cheapest fix first: {fix}."
             : flag.Worked.Length > 0 && flag.Worked == fix
                 ? $"I have been stuck here {flag.Times} times. Last time \"{flag.Worked}\" got me free, so I do that again."
                 : $"I have been stuck here {flag.Times} times. I tried {tried} and none got me free, so this time I try something new: {fix}.";
@@ -245,6 +247,12 @@ internal sealed partial class UltimusDirectorActor {
                   ? "Every floor is met, so I look for damage and pierce next."
                   : $"I am short of {string.Join(" and ", short_)}, so pieces with those come first in shops and drops."),
             "outfit|" + level);
+
+        // The best piece left in the backpack and why it stays there, so a piece he keeps off (a robe) is never a mystery.
+        if (BotGear.BestSwap(wizard, goals, double.NegativeInfinity) is { Item: not null } kept) {
+            Think($"I keep {kept.Piece.Name} in my backpack (instead of {kept.Worn?.Name ?? "nothing"}): wearing it would change my outfit by {kept.Gain:0.#} ({kept.Why}), and a swap " +
+                  "has to gain more than 0.5 to be worth it.", "kept|" + level + "|" + kept.Piece.Id);
+        }
     }
 
     private bool ToughFoeNow(UltimusPlanner.Target target) => _toughFoeNext && target?.Kind == UltimusPlanner.FIGHT && !CombatDuelComponent.IsInBattle(_team[0].GlobalId);

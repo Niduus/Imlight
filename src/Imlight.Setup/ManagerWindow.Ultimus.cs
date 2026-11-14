@@ -384,6 +384,12 @@ internal sealed partial class ManagerWindow {
         };
 
         return Page(
+            Fold("copy", ULTIMUS_TAB, "All of Ultimus's logs in one copy",
+                "Copies every Ultimus log at once, ready to paste in one go: his log, his thoughts, the mistakes book, the " +
+                "quest log, his abnormal fixes, the creatures he fought, the issues he found, his status, what he learned and " +
+                "his playbook. Each line starts with a tag naming the log it came from, such as [Main], [Thoughts] or " +
+                "[Mistakes], so the logs can be told apart.",
+                Row(Action(Plain("Copy all logs"), () => CopyAsync(UltimusAllLogs(), "All of Ultimus's logs were copied.")))),
             Fold("sparkle", ULTIMUS_TAB, "Ultimus Thoughts",
                 "Ultimus thinking out loud: why it picks what it picks, what it remembers of a creature or a spot where it got " +
                 "stuck, and what it will do differently next time, naming the playbook rule behind a choice. Also in its log, " +
@@ -750,6 +756,77 @@ internal sealed partial class ManagerWindow {
         Text = "Shout out to Discord user gese11 for sharing the bot concept with Niduus.",
         TextWrapping = TextWrapping.Wrap, FontStyle = FontStyle.Italic, Foreground = MUTED, FontSize = ManagerTheme.FONT_SMALL,
     };
+
+    // Every Ultimus log in one text (Niduus, 2026-11-14: "get me a universal copy for all of Ultimus' logs with proper
+    // indents in them to identify which logs are from which"): a heading per log, then each of its lines indented and
+    // tagged with the log's short name.
+    private string UltimusAllLogs() {
+        var bots = Path.Combine(_manager.LogFolder, "bots");
+        var main = ReadAllOf(UltimusNewestFile("ultimus*.txt"), 512 * 1024);
+        var thoughts = string.Join('\n', main.Split('\n').Where(l => l.Contains(": THOUGHT: ", StringComparison.Ordinal)));
+        (string Tag, string Name, string Text)[] logs = [
+            ("Main", "Ultimus log (what he does)", main),
+            ("Thoughts", "Ultimus Thoughts (his reasons, also in the main log)", thoughts),
+            ("Mistakes", "Mistakes book (logs\\bots\\mistakes.txt)", ReadAllOf(Path.Combine(bots, "mistakes.txt"), 256 * 1024)),
+            ("Quests", "Quest log (quest-log.txt)", ReadAllOf(Path.Combine(UltimusFolder, "quest-log.txt"), 256 * 1024)),
+            ("Fixes", "Abnormal fixes, each stuck spot and what was tried (abnormal-fixes.json)", ReadAllOf(Path.Combine(UltimusFolder, "abnormal-fixes.json"), 256 * 1024)),
+            ("Foes", "Creatures he fought (foes.json)", ReadAllOf(Path.Combine(UltimusFolder, "foes.json"), 128 * 1024)),
+            ("Issues", "Issues he found (issues.json)", ReadAllOf(Path.Combine(UltimusFolder, "issues.json"), 256 * 1024)),
+            ("Status", "His status now (status.txt)", ReadAllOf(Path.Combine(UltimusFolder, "status.txt"), 32 * 1024)),
+            ("Learned", "What he learned, newest (learned.jsonl)", ReadAllOf(Path.Combine(UltimusFolder, "learned.jsonl"), 64 * 1024)),
+            ("Playbook", "His playbook (playbook.txt)", ReadAllOf(Path.Combine(UltimusFolder, "playbook.txt"), 64 * 1024)),
+        ];
+
+        var text = new StringBuilder();
+        text.AppendLine($"All of Ultimus's logs, copied {DateTime.Now:yyyy-MM-dd HH:mm:ss}. Each line starts with the log it came from:");
+        foreach (var (tag, name, _) in logs) {
+            text.AppendLine($"    [{tag}] {name}");
+        }
+
+        foreach (var (tag, name, body) in logs) {
+            text.AppendLine();
+            text.AppendLine($"===== [{tag}] {name} =====");
+            if (body.Length == 0) {
+                text.AppendLine($"    [{tag}] (empty)");
+                continue;
+            }
+
+            foreach (var line in body.Split('\n')) {
+                text.AppendLine($"    [{tag}] {line.TrimEnd('\r')}");
+            }
+        }
+
+        return text.ToString();
+    }
+
+    private string? UltimusNewestFile(string pattern) {
+        try {
+            return Directory.Exists(UltimusFolder)
+                ? new DirectoryInfo(UltimusFolder).EnumerateFiles(pattern).OrderByDescending(f => f.LastWriteTimeUtc).FirstOrDefault()?.FullName
+                : null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return null;
+        }
+    }
+
+    // A file's text (its last part when it is big), read while the server may be writing it; "" when it can't be read.
+    private static string ReadAllOf(string? path, int most) {
+        try {
+            if (path is null || !File.Exists(path)) {
+                return "";
+            }
+
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            stream.Seek(Math.Max(0, stream.Length - most), SeekOrigin.Begin);
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+
+            return reader.ReadToEnd().ReplaceLineEndings("\n").TrimEnd();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return "";
+        }
+    }
 
     private string ReadUltimusNewest(string pattern, string fallback) {
         try {

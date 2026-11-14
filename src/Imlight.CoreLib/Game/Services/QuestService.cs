@@ -1039,6 +1039,23 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
                 return;
             // A server-run wizard (Ultimus) stuck where nothing else freed it: sent to the area of its step, as .stuck go does,
             // without .stuck's resets (Niduus, 2026-11-13: it stood at The Oasis's start for hours).
+            // A server-run wizard (Ultimus) that stands in a walk-through exit and walked every part of it, and the game never
+            // took it on: Ahziael takes it through to the area the exit leads to (Niduus, 2026-11-14: "He is on point, though
+            // not zone transfering").
+            case "botzone":
+                if (questName.Length == 0) {
+                    return;
+                }
+
+                Logger.Information("Bot zone: {0} is taken from {1} through the exit to {2}.", Logger.Args(wizard.CharId, wizard.Zone, questName));
+                SessionActor.ActorRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                    DestinationZone = questName,
+                    DestinationLocation = "Start",
+                    SendToClient = true,
+                    ForceReload = true,
+                    OwnerCharId = wizard.CharId,
+                });
+                return;
             case "botgo":
                 Logger.Information("Bot go: {0} is sent to the area of its quest step from {1}.", Logger.Args(wizard.CharId, wizard.Zone));
                 GoToStuckStep(wizard);
