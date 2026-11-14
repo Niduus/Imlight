@@ -72,7 +72,10 @@ internal sealed partial class UltimusDirectorActor {
     /// water cut it off. The words say which.
     /// </summary>
     private (float X, float Y, string What) WayTo(UltimusMember.Status member, UltimusPlanner.Target target) {
-        var pad = UltimusPads.Toward(member.Zone, member.X, member.Y, target.X, target.Y, PadsLeft());
+        // Cut off by walls or water: the teleporter that leads there. Else a teleporter that is much faster than the walk.
+        var left = PadsLeft();
+        var pad = UltimusPads.Toward(member.Zone, member.X, member.Y, target.X, target.Y, left)
+                  ?? UltimusPads.Faster(member.Zone, member.X, member.Y, target.X, target.Y, left);
         if (pad is null) {
             _viaPad = null;
 
@@ -82,8 +85,10 @@ internal sealed partial class UltimusDirectorActor {
         if (!Equals(pad, _viaPad)) {
             _viaPad = pad;
             _viaPadSince = DateTime.UtcNow;
-            Note("Ultimus", $"{member.Name} can't walk to \"{target.What}\" from here: walls or water are in the way. Takes the teleporter at " +
-                            $"({pad.X:0}, {pad.Y:0}), which lands at ({pad.ToX:0}, {pad.ToY:0}).");
+            var cutOff = OverlayQuestPath.Apart(member.Zone, member.X, member.Y, target.X, target.Y);
+            Note("Ultimus", $"{member.Name} " + (cutOff ? $"can't walk to \"{target.What}\" from here: walls or water are in the way. "
+                                                         : $"finds a faster way to \"{target.What}\" than walking. ") +
+                            $"Takes the teleporter at ({pad.X:0}, {pad.Y:0}), which lands at ({pad.ToX:0}, {pad.ToY:0}).");
         }
         else if (DateTime.UtcNow - _viaPadSince > s_padGiveUp) {
             // Walked there and nothing happened (a pad that needs a quest, or one that is not there any more).

@@ -270,6 +270,11 @@ internal static class OverlayQuestPath {
                 && Ultimus.UltimusPads.Toward(zonePath, fromX, fromY, toX, toY) is { } pad) {
                 return Walk(charId, zonePath, fromX, fromY, pad.X, pad.Y, body: true, avoid: avoid);
             }
+
+            // A teleporter that gets there much faster than walking (one any bot found counts for all).
+            if (Ultimus.UltimusPads.Faster(zonePath, fromX, fromY, toX, toY) is { } faster) {
+                return Walk(charId, zonePath, fromX, fromY, faster.X, faster.Y, body: true, avoid: avoid);
+            }
         }
         catch (Exception) {
             // The plain walk below.

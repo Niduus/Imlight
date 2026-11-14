@@ -160,6 +160,37 @@ internal static class UltimusPads {
     }
 
     /// <summary>
+    /// A faster way by teleporter (approved by Niduus, 2026-11-14: "check for faster teleport paths"): the step can be walked
+    /// to, but a pad on this ground lands so much nearer it that the walk to the pad plus the walk from its landing is well
+    /// under the walk there (under 60%, and the walk is long). Null when walking is as good. Learned pads count too, so a
+    /// shortcut one bot found is every bot's.
+    /// </summary>
+    internal static Pad Faster(string zonePath, float x, float y, float toX, float toY, ICollection<Pad> skip = null) {
+        try {
+            var here = OverlayQuestPath.IslandOf(zonePath, x, y);
+            var pads = In(zonePath).Where(p => (skip is null || !skip.Contains(p)) && (here < 0 || OverlayQuestPath.IslandOf(zonePath, p.X, p.Y) == here)
+                                               && UltimusPlanner.Far(p.ToX, p.ToY, toX, toY) < UltimusPlanner.Far(x, y, toX, toY) * 0.6f).ToList();
+            if (pads.Count == 0) {
+                return null;
+            }
+
+            var walk = OverlayQuestRoute.WalkLength(zonePath, x, y, toX, toY);
+            if (walk < 1500) {
+                return null;
+            }
+
+            var best = pads.Select(p => (Pad: p, Cost: OverlayQuestRoute.WalkLength(zonePath, x, y, p.X, p.Y) + 300
+                                                    + OverlayQuestRoute.WalkLength(zonePath, p.ToX, p.ToY, toX, toY)))
+                .MinBy(p => p.Cost);
+
+            return best.Cost < walk * 0.6f ? best.Pad : null;
+        }
+        catch (Exception) {
+            return null;
+        }
+    }
+
+    /// <summary>
     /// Another way when stuck (a player who can't get through tries the teleporter instead): a pad on this island whose
     /// landing is nearer the step than where it stands, the nearest first. Null when there is none.
     /// </summary>
@@ -190,7 +221,7 @@ internal static class UltimusPads {
     /// be pressed (null when the way has no such pad here). The same for Ultimus and the Quest Team.
     /// </summary>
     internal static Pad PressHere(string zonePath, float x, float y, float toX, float toY, ICollection<Pad> skip = null, float reach = 160f)
-        => Toward(zonePath, x, y, toX, toY, skip) is { Click: not 0 } pad && Near(x, y, pad.X, pad.Y, reach) ? pad : null;
+        => (Toward(zonePath, x, y, toX, toY, skip) ?? Faster(zonePath, x, y, toX, toY, skip)) is { Click: not 0 } pad && Near(x, y, pad.X, pad.Y, reach) ? pad : null;
 
     private static bool Near(float ax, float ay, float bx, float by, float most) => UltimusPlanner.Far(ax, ay, bx, by) <= most;
 
