@@ -51,7 +51,7 @@ internal static class OverlayUltimusData {
 
     internal sealed record Info(string Name, int Level, int Health, int Most, string Place, string Doing, string Quest, string QuestTitle, string Kind,
                                 string NextStep, IReadOnlyList<Step> Steps, IReadOnlyList<string> Way, IReadOnlyList<string> Others, Battle? Fight,
-                                string Note, DateTime At) {
+                                string Note, DateTime At, int QuestLevel = 0, string World = "") {
 
         internal bool Stale => DateTime.UtcNow - At > TimeSpan.FromSeconds(8);
 
@@ -162,7 +162,7 @@ internal static class OverlayUltimusData {
         return new Info(Short((string?) sent["name"], 40) is { Length: > 0 } name ? name : "Ultimus", (int) Number(sent["level"]), (int) Number(sent["hp"]),
             (int) Number(sent["max"]), Short((string?) sent["place"], 80), Short((string?) sent["doing"], 120), Short((string?) sent["quest"], 120),
             Short((string?) sent["questTitle"], 120), Short((string?) sent["kind"], 10), Short((string?) sent["step"], 160), steps, way, others, battle, "",
-            DateTime.UtcNow);
+            DateTime.UtcNow, (int) Number(sent["questLevel"]), Short((string?) sent["world"], 40));
     }
 
     private static List<Fighter> Fighters(JsonNode? node) => (node as JsonArray ?? []).OfType<JsonObject>().Take(8)
@@ -199,7 +199,7 @@ internal static class OverlayUltimusData {
         ], "Scorpion on Lost Soul", "the weakest enemy: Lost Soul with Scorpion (about 145)", ["Elemental Shield"],
             ["Round 3: casts Scorpion on Lost Soul", "Round 2: casts Spirit Blade on himself", "Round 1: passes"],
             [new Fighter("Lost Soul", 120, 300, true), new Fighter("Lost Soul", 300, 300, true)], [], "Scarab x4, Scorpion x3, Sandstorm x2"),
-        "", DateTime.MaxValue);
+        "", DateTime.MaxValue, 5, "Wizard City");
 
 }
 
@@ -253,7 +253,15 @@ internal static class UltimusViews {
         else {
             var color = OverlayRenderer.Parse(new OverlayQuestList().ColorOf(info.Kind)) is { } kind ? new SolidColorBrush(kind) : look.Gold;
             panel.Children.Add(Line(info.QuestTitle.Length > 0 ? info.QuestTitle : info.Quest, look.Size + 1, color, bold: true, wrap: true));
-            foreach (var step in info.Steps.Take(3)) {
+            // In detail (Niduus, 2026-11-14): what kind of quest, its level and world, then every open step with its count.
+            var about = string.Join("  ·  ", new[] {
+                KindWord(info.Kind), info.QuestLevel > 0 ? $"level {info.QuestLevel}" : "", info.World,
+            }.Where(t => t.Length > 0));
+            if (about.Length > 0) {
+                panel.Children.Add(Line(about, look.Size - 2, look.Faint));
+            }
+
+            foreach (var step in info.Steps.Take(6)) {
                 panel.Children.Add(Line("• " + step.Text + (step.Where.Length > 0 && !step.Here ? "  (" + step.Where + ")" : ""), look.Size - 1, look.Text, wrap: true));
             }
 
@@ -267,11 +275,21 @@ internal static class UltimusViews {
         }
 
         if (info.Others.Count > 0) {
-            panel.Children.Add(Line($"Also holds {info.Others.Count} other quest{(info.Others.Count == 1 ? "" : "s")}.", look.Size - 3, look.Faint));
+            var named = string.Join(", ", info.Others.Take(3));
+            var more = info.Others.Count > 3 ? $" and {info.Others.Count - 3} more" : "";
+            panel.Children.Add(Line($"Also holds: {named}{more}.", look.Size - 3, look.Faint, wrap: true));
         }
 
         return panel;
     }
+
+    private static string KindWord(string kind) => kind switch {
+        "story" => "Story quest",
+        "main" => "Main quest",
+        "instance" => "Dungeon quest",
+        "side" => "Side quest",
+        _ => "",
+    };
 
     /// <summary>
     /// Ultimus's spells in battle: his hand (the card he picks lit up, the ones he can't cast yet faded), his pips and health,
