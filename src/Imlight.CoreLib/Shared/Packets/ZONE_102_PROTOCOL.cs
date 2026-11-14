@@ -1613,6 +1613,20 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
     }
 
     /// <summary>
+    /// Sent to a <see cref="Zone"/> by a session whose "defeat" step just started there: the room looks again for a
+    /// boss spawner that starts switched off and that step needs (ZoneTriggerSupervisor.SleepingSpawns).
+    /// </summary>
+    public sealed class MSG_CHECKSTEPSPAWNS : IServerMessage {
+
+        public byte MessageOrder { get; } = 112;
+        public byte ServiceID { get; } = 102;
+
+        public IActorRef PlayerActor;
+        public CoreObject PlayerGameObject;
+
+    }
+
+    /// <summary>
     /// The zone's answer to <see cref="MSG_CLAIMINSTANCEQUEST"/>: whether the claim was the first for this
     /// instance, so the world effects of the quest step run only for it. Always true outside an instance.
     /// </summary>

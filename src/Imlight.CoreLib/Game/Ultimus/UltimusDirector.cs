@@ -857,11 +857,15 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             var at = DateTime.Now.ToString("dddd d MMMM yyyy, HH:mm", System.Globalization.CultureInfo.InvariantCulture);
             Note("Ultimus", $"WORLD COMPLETE: {_storyWorld} on {at}; on to {world}.");
             Milestone("world", $"Ultimus finished {_storyWorld}'s story on {at} at level {_team[0].Wizard?.MagicSchoolBehavior?.Level ?? 0}; on to {world}.");
+            UltimusJournal.Write(UltimusJournal.WORLD, $"Finished the story of {WorldName(_storyWorld)} at level {_team[0].Wizard?.MagicSchoolBehavior?.Level ?? 0}.",
+                WorldName(_storyWorld), "", WorldName(_storyWorld), 1);
             Count("worlds completed");
             UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "world done", Quest = _storyWorld, Title = $"World {_storyWorld}",
                 Text = $"story finished on {at}; the team goes on to {world} (levels {string.Join(", ", _team.Select(m => $"{m.Role} {m.Wizard?.MagicSchoolBehavior?.Level ?? 0}"))})" });
         }
 
+        UltimusJournal.Write(UltimusJournal.WORLD, $"Started {WorldName(world)}'s story at level {_team[0].Wizard?.MagicSchoolBehavior?.Level ?? 0}.",
+            WorldName(world), "", WorldName(world));
         Snapshot(world);
         WorldStarted(world, _team[0].Wizard?.MagicSchoolBehavior?.Level ?? 0);
         NewWorldGearCheck(_team[0], world);
@@ -1510,6 +1514,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             if (!holder && finished) {
                 var seconds = (DateTime.UtcNow - run.Started).TotalSeconds;
                 Note("Ultimus", $"FINISHED {run.Title} in {Minutes(seconds)}.");
+                UltimusJournal.Write(UltimusJournal.QUEST, seconds > 30 * 60 ? $"Finished {run.Title}, but it took me {Minutes(seconds)}." : $"Finished {run.Title} in {Minutes(seconds)}.",
+                    WorldOf(_team[0].Zone), UltimusText.Zone(_team[0].Zone), run.Title, seconds > 30 * 60 ? -1 : 1);
                 StoryProgress();
                 Count("quests finished");
                 UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "done", Quest = run.Quest, Title = run.Title, World = run.World, Seconds = seconds });
@@ -1853,6 +1859,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         if (flagged) {
             text += " The step looks broken: he keeps trying it as a player would and skips nothing, so it needs a fix.";
             Note("Ultimus", $"BROKEN STEP in {UltimusText.Title(quest)}: flagged for Niduus. I keep trying it the way a player would; I never skip it.", UltimusLink.CRITICAL);
+            UltimusJournal.Write(UltimusJournal.STUCK, $"Got stuck on a step of {UltimusText.Title(quest)} that would not work: {UltimusText.Short(text, 90)}",
+                _team.Count > 0 ? WorldOf(_team[0].Zone) : "", _team.Count > 0 ? UltimusText.Zone(_team[0].Zone) : "", UltimusText.Title(quest), -1);
             Count("broken steps flagged");
             UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "broken", Quest = quest, Title = UltimusText.Title(quest), Text = "a broken step, flagged; not skipped" });
         }

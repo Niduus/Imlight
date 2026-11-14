@@ -109,6 +109,19 @@ internal sealed partial class UltimusDirectorActor {
             skip.Add(UltimusFixes.GO);
         }
 
+        // The creature (often a boss) for his step never showed up in this area: walking about can't make it come. Leaving
+        // and coming back in can (the room is entered again, as a player does when a boss doesn't show), so going back to
+        // where the area starts comes first, and the spot is reported (Niduus, 2026-11-14: Krokenkahmen never spawned
+        // in the Throne Room of Fire and he waited at his spot for 15 minutes). Nothing is skipped: he still has to win the fight.
+        var absent = (_doing ?? "").Contains("no creature for this step is in", StringComparison.OrdinalIgnoreCase);
+        if (absent) {
+            skip.AddRange([UltimusFixes.ASIDE, UltimusFixes.OTHER_WAY, UltimusFixes.HOP, UltimusFixes.AWAY]);
+            skip.Remove(UltimusFixes.START);
+            Issue("quest", quest, $"The creature for \"{goal?.What ?? _doing}\" never showed up in {UltimusText.Zone(member.Zone)}: "
+                                  + "he leaves the area and comes back in, as a player would, and keeps checking. Nothing is skipped.",
+                key: $"absent|{member.Zone}|{step}", level: UltimusLink.ABNORMAL);
+        }
+
         var (fix, flag) = UltimusFixes.Next(member.Zone, member.X, member.Y, step, skip);
         _openFlag[index] = (flag, member.Zone ?? "", member.X, member.Y);
         _freeSince.Remove(index);

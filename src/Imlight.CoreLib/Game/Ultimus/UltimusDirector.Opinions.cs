@@ -17,7 +17,9 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Imlight.Common;
 using Imlight.CoreLib.Game.BotShared;
 
 namespace Imlight.CoreLib.Game.Ultimus;
@@ -153,17 +155,56 @@ internal sealed partial class UltimusDirectorActor {
     }
 
     // "Do you like X?": X a world he was in, or a creature he fought; null when he doesn't know it.
+    // The story worlds' codes (worlds.json, quest codes) and the names players use.
+    private static readonly (string Code, string Name)[] s_worldNames = [
+        ("WC", "Wizard City"), ("KT", "Krokotopia"), ("MB", "Marleybone"), ("MS", "MooShu"), ("DS", "Dragonspyre"), ("CL", "Celestia"),
+        ("ZF", "Zafaria"), ("AV", "Avalon"), ("AZ", "Azteca"), ("KR", "Khrysalis"), ("KH", "Khrysalis"), ("PL", "Polaris"), ("MR", "Mirage"),
+        ("EM", "Empyrea"), ("KM", "Karamelle"), ("LM", "Lemuria"), ("GH", "Grizzleheim"), ("WT", "Wintertusk"), ("WY", "Wysteria"),
+    ];
+
+    /// <summary>A world's name for its code ("KT" is Krokotopia), or the code itself.</summary>
+    internal static string WorldName(string code)
+        => s_worldNames.FirstOrDefault(w => string.Equals(w.Code, code, StringComparison.OrdinalIgnoreCase)).Name ?? code ?? "";
+
+    // The world a player means: by name ("wizard city", "krok", "mb") or code.
+    private static string WorldMeant(string subject) {
+        var s = subject.Trim();
+        foreach (var (code, name) in s_worldNames) {
+            if (s.Contains(name, StringComparison.OrdinalIgnoreCase) || string.Equals(s, code, StringComparison.OrdinalIgnoreCase)
+                || (name.Length > 4 && s.Length >= 4 && name.StartsWith(s, StringComparison.OrdinalIgnoreCase))) {
+                return name;
+            }
+        }
+
+        return null;
+    }
+
     private string LikeOpinion(string subject) {
-        if (subject.Length < 3) {
+        if (subject.Length < 2) {
             return null;
         }
 
-        if (Worlds().FirstOrDefault(w => w.World.Contains(subject, StringComparison.OrdinalIgnoreCase) || subject.Contains(w.World, StringComparison.OrdinalIgnoreCase)) is { } world) {
+        var worldName = WorldMeant(subject);
+        if (worldName is not null && Worlds().FirstOrDefault(w => WorldName(w.World) == worldName) is { } world) {
             _waste ??= ReadWaste();
-            var lost = _waste.Values.Where(w => WorldOf(w.Zone).Equals(world.World, StringComparison.OrdinalIgnoreCase)).Sum(w => w.Seconds) / 60;
+            var lost = _waste.Values.Where(w => WorldOf(w.Zone).Equals(worldName, StringComparison.OrdinalIgnoreCase)).Sum(w => w.Seconds) / 60;
             var hours = ((world.Finished ?? DateTime.UtcNow) - world.Started).TotalHours;
-            return lost >= 20 ? $"It's okay! I lost about {lost:0} minutes in {world.World} being stuck or waiting, though."
-                : $"Yes! {world.World} has gone well for me" + (hours >= 1 ? $" in my {hours:0} hours there." : ".");
+            var memories = UltimusJournal.About(worldName);
+            var good = memories.Count(m => m.Feeling > 0);
+            var bad = memories.Count(m => m.Feeling < 0);
+            var moment = memories.Where(m => m.Feeling != 0).OrderByDescending(m => m.At).FirstOrDefault();
+            var feel = lost >= 20 || bad > good + 2
+                ? $"It's okay! I lost about {lost:0} minutes in {worldName} being stuck or waiting, though."
+                : $"I liked it! {worldName} has gone well for me" + (hours >= 1 ? $" in my {hours:0} hours there." : ".");
+            if (world.Finished is not null) {
+                feel += $" I finished its story at level {world.LevelOut}.";
+            }
+
+            return moment is null ? feel : $"{feel} I remember: {Lower(moment.Text)}";
+        }
+
+        if (worldName is not null) {
+            return $"I haven't been to {worldName} yet, so I can't say!";
         }
 
         var foe = UltimusFoes.All().FirstOrDefault(f => !string.IsNullOrWhiteSpace(f.Name) && f.Name.Contains(subject, StringComparison.OrdinalIgnoreCase));
@@ -173,7 +214,112 @@ internal sealed partial class UltimusDirectorActor {
                 : $"Sure, I've beaten {foe.Name} {foe.Won} times!";
         }
 
+        // Anything else he has memories of: a quest, an area, a player.
+        var about = UltimusJournal.About(subject);
+        if (about.Count > 0) {
+            var good = about.Count(m => m.Feeling > 0);
+            var bad = about.Count(m => m.Feeling < 0);
+            var latest = about.OrderByDescending(m => m.At).First();
+            return (bad > good ? "Not my favorite. " : good > 0 ? "I liked it! " : "") + $"I remember: {Lower(latest.Text)} ({UltimusJournal.Ago(latest.At)})";
+        }
+
         return null;
+    }
+
+    private static string Lower(string text) => text.Length > 1 && char.IsUpper(text[0]) && !char.IsUpper(text[1]) ? char.ToLowerInvariant(text[0]) + text[1..] : text;
+
+    /// <summary>
+    /// "Do you remember...?" from his journal: about one thing, his best or worst moment, today, or his latest moments.
+    /// <paramref name="key"/> is "mood:subject" (mood: best, worst, today or empty).
+    /// </summary>
+    private static string Recall(string key) {
+        var cut = key.IndexOf(':');
+        var mood = cut < 0 ? "" : key[..cut];
+        var subject = cut < 0 ? key : key[(cut + 1)..].Trim();
+        if (UltimusJournal.Count == 0) {
+            return "My journal is still empty. Ask me again once I've done a few quests!";
+        }
+
+        List<UltimusJournal.Entry> picked;
+        if (subject.Length > 0) {
+            picked = UltimusJournal.About(WorldMeant(subject) ?? subject).OrderByDescending(e => e.At).Take(2).ToList();
+            if (picked.Count == 0) {
+                return $"I don't remember anything about {subject}, sorry.";
+            }
+        }
+        else if (mood == "best" || mood == "worst") {
+            var all = UltimusJournal.Recent(1000);
+            var pick = mood == "best"
+                ? all.FirstOrDefault(e => e.Kind == UltimusJournal.WON && e.Text.StartsWith("Finally", StringComparison.Ordinal))
+                  ?? all.FirstOrDefault(e => e.Kind == UltimusJournal.WORLD && e.Feeling > 0) ?? all.FirstOrDefault(e => e.Feeling > 0)
+                : all.FirstOrDefault(e => e.Kind == UltimusJournal.LOST) ?? all.FirstOrDefault(e => e.Feeling < 0);
+            return pick is null ? "I haven't had one yet!" : $"{(mood == "best" ? "My best moment" : "My worst moment")}: {Lower(pick.Text)} ({UltimusJournal.Ago(pick.At)})";
+        }
+        else {
+            var since = mood == "today" ? DateTime.UtcNow.AddHours(-24) : DateTime.MinValue;
+            picked = UltimusJournal.Recent(40).Where(e => e.At >= since && e.Kind != UltimusJournal.MET).Take(3).ToList();
+            if (picked.Count == 0) {
+                return mood == "today" ? "Quiet day so far, nothing worth writing down yet!" : "Nothing much worth remembering yet!";
+            }
+        }
+
+        return "I remember: " + string.Join(" ", picked.Select(e => $"{e.Text.TrimEnd('.')} ({UltimusJournal.Ago(e.At)})."));
+    }
+
+    /// <summary>A fact about himself, from his real data ("what are you wearing?", "how many quests have you done?").</summary>
+    private string Fact(UltimusMember.Status me, string key) {
+        var wizard = me.Wizard;
+        if (wizard is null) {
+            return null;
+        }
+
+        switch (key) {
+            case "gear": {
+                var worn = new[] { Imlight.CoreLib.WizardData.Models.Player.EquipmentSlotType.Hat, Imlight.CoreLib.WizardData.Models.Player.EquipmentSlotType.Robe, Imlight.CoreLib.WizardData.Models.Player.EquipmentSlotType.Shoes,
+                        Imlight.CoreLib.WizardData.Models.Player.EquipmentSlotType.Weapon }
+                    .Select(slot => wizard.EquipmentBehavior?.GetItemInSlot(slot))
+                    .Where(i => i is not null)
+                    .Select(i => BotGear.Read((uint) Math.Min((ulong) i.m_templateID, uint.MaxValue))?.Name)
+                    .Where(n => !string.IsNullOrWhiteSpace(n)).ToList();
+                return worn.Count == 0 ? "Just my starting clothes for now!" : $"I'm wearing {string.Join(", ", worn)}. I buy better gear when it's a real upgrade.";
+            }
+            case "deck": {
+                var spells = wizard.SpellbookBehavior?.LearnedSpellTemplateIds?.Select(id => Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate((uint) id))
+                    .OfType<Imcodec.ObjectProperty.TypeCache.SpellTemplate>().Select(t => (string) t.m_displayName)
+                    .Where(n => !string.IsNullOrWhiteSpace(n)).Select(n => n.Contains(' ') || !n.Contains('_') ? n : Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(n))
+                    .Where(n => !string.IsNullOrWhiteSpace(n)).Distinct().Take(8).ToList() ?? [];
+                return spells.Count == 0 ? "Not many spells yet!" : $"My spells include {string.Join(", ", spells)}.";
+            }
+            case "stats": {
+                var hours = Worlds().Sum(w => ((w.Finished ?? DateTime.UtcNow) - w.Started).TotalHours);
+                var foes = UltimusFoes.All();
+                return $"I've played the story for about {hours:0} hours, fought {foes.Sum(f => f.Fought)} battles (won {foes.Sum(f => f.Won)})" +
+                       $", and finished {_today.GetValueOrDefault("quests finished")} quests today.";
+            }
+            case "xp": {
+                var school = wizard.MagicSchoolBehavior;
+                return school is null ? null : $"I'm level {school.Level} with {school.ExperiencePoints:N0} XP. All of it from quests and their fights!";
+            }
+            case "next": {
+                var at = s_worldNames.Select(w => w.Name).ToList();
+                var now = WorldOf(me.Zone);
+                var i = at.IndexOf(now);
+                return i >= 0 && i + 1 < at.Count && i < 15 ? $"After {now}, it's on to {at[i + 1]}!" : "Wherever the story takes me next!";
+            }
+            case "pet":
+                return "I have a pet with me, but I never train pets. I just quest!";
+            case "mount":
+                return "Yes, I ride my Ghulture! It was a gift from the school.";
+            case "potions": {
+                var stats = wizard.GameStats;
+                return stats is null ? null : $"I have {stats.m_potionCharge:0} of {stats.m_potionMax:0} potions.";
+            }
+            default: {
+                var stats = wizard.GameStats;
+                return stats is null ? null
+                    : $"I have {stats.m_currentHitpoints:N0} of {stats.m_baseHitpoints + stats.m_bonusHitpoints:N0} health and {stats.m_currentMana} of {stats.m_baseMana + stats.m_bonusMana} mana.";
+            }
+        }
     }
 
     private static string Cap(string s) => string.IsNullOrEmpty(s) ? s : char.ToUpperInvariant(s[0]) + s[1..].ToLowerInvariant();

@@ -117,7 +117,17 @@ internal sealed partial class UltimusDirectorActor {
             Think($"What the bots know of its habits now: {habit.Describe()}.", "habit|" + fight.Template);
         }
 
+        var lostBefore = UltimusFoes.Of(fight.Template)?.Lost ?? 0;
         var foe = UltimusFoes.Fought(fight.Template, fight.Name, won, lostShare, seconds);
+        // The fights worth remembering: a loss, a win over a creature that beat him, a close call (the journal).
+        if (!won || lostBefore > 0 || lostShare >= 0.6) {
+            UltimusJournal.Write(won ? UltimusJournal.WON : UltimusJournal.LOST,
+                !won ? $"Lost to {foe.Name} in {UltimusText.Zone(me.Zone)}."
+                : lostBefore > 0 ? $"Finally beat {foe.Name} in {UltimusText.Zone(me.Zone)}, after it beat me {lostBefore} time{(lostBefore == 1 ? "" : "s")}."
+                : $"Beat {foe.Name} in {UltimusText.Zone(me.Zone)}, but it was close: it took {lostShare:P0} of my health.",
+                WorldOf(me.Zone), UltimusText.Zone(me.Zone), foe.Name, won ? 1 : -1);
+        }
+
         if (won) {
             Think(foe.Tough
                 ? $"I beat {foe.Name}, but it took {lostShare:P0} of my health. Next time I go in at full health."

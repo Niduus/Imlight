@@ -138,6 +138,7 @@ internal sealed partial class UltimusDirectorActor {
         if (_milestoneLevel > 0 && level > _milestoneLevel) {
             StoryProgress();
             Milestone("level", $"Ultimus reached level {level} in {UltimusText.Zone(leader.Zone)} ({StoryPlace(leader)}).");
+            UltimusJournal.Write(UltimusJournal.LEVEL, $"Reached level {level} in {UltimusText.Zone(leader.Zone)}.", WorldOf(leader.Zone), UltimusText.Zone(leader.Zone), "", 1);
         }
 
         _milestoneLevel = level;
