@@ -498,9 +498,12 @@ internal sealed partial class UltimusDirectorActor {
                 .Where(z => !string.IsNullOrEmpty(z) && z.StartsWith(world + "/", StringComparison.OrdinalIgnoreCase))
                 .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
             foreach (var zone in candidates) {
-                var objects = QuestStepSpots.Zone(zone).Objects;
-                if (!objects.Any(o => CoreObjectFactory.GetCoreTemplate(o.Template) is GameObjectTemplate t && !t.m_objectName.IsEmpty
-                                      && has(t.m_objectName.ToString()))) {
+                // Placed objects, and what the area's spawners put on its paths: Krokotopia's wisps all come on paths, so
+                // without these he found no wisps in the whole world and stood waiting at 18% health (Niduus's log, 2026-11-14).
+                var info = QuestStepSpots.Zone(zone);
+                bool Has(ulong template) => CoreObjectFactory.GetCoreTemplate(template) is GameObjectTemplate t && !t.m_objectName.IsEmpty
+                                            && has(t.m_objectName.ToString());
+                if (!info.Objects.Any(o => Has(o.Template)) && !info.Spawned.Any(Has)) {
                     continue;
                 }
 
