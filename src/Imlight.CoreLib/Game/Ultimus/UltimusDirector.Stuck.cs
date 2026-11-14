@@ -107,7 +107,6 @@ internal sealed partial class UltimusDirectorActor {
 
         if (string.IsNullOrEmpty(quest)) {
             skip.Add(UltimusFixes.GO);
-            skip.Add(UltimusFixes.SKIP);
         }
 
         var (fix, flag) = UltimusFixes.Next(member.Zone, member.X, member.Y, step, skip);
@@ -118,7 +117,7 @@ internal sealed partial class UltimusDirectorActor {
         ThinkAboutStuck(member, why, fix, flag, step);
         if (flag.Times > 1) {
             Issue("team", quest, $"{member.Name} is stuck again in {where} while {_doing}: flagged here {flag.Times} times; now tries: {fix}.",
-                key: $"unstick|{member.Zone}|{(int) (flag.X / 600)}|{(int) (flag.Y / 600)}|{flag.Times}", skipStep: false, level: UltimusLink.ABNORMAL);
+                key: $"unstick|{member.Zone}|{(int) (flag.X / 600)}|{(int) (flag.Y / 600)}|{flag.Times}", broken: false, level: UltimusLink.ABNORMAL);
         }
 
         switch (fix) {
@@ -154,14 +153,13 @@ internal sealed partial class UltimusDirectorActor {
                 _actors[index].Tell(new UltimusMember.GoToStep());
                 _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
                 return;
-            case UltimusFixes.SKIP:
-                Issue("quest", quest, $"{member.Name} tried every fix at {where} while {_doing} and is still stuck there: Ahziael finishes the step.",
-                    key: $"unstick-skip|{member.Zone}|{(int) (flag.X / 600)}|{(int) (flag.Y / 600)}", skipStep: false, level: UltimusLink.ABNORMAL);
-                if (!string.IsNullOrEmpty(quest)) {
-                    _actors[index].Tell(new UltimusMember.SkipStep(quest));
-                }
-
-                _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
+            case UltimusFixes.FLAG:
+                // He quests as a human does (Niduus, 2026-11-14): no step is finished for him. Every move fix was tried here,
+                // so the spot goes to Niduus as a broken one, and he starts the round of fixes again.
+                Issue("quest", quest, $"{member.Name} tried every way to get free at {where} while {_doing} and is still stuck there. " +
+                                      "He waits for a fix and keeps trying; nothing is skipped.",
+                    key: $"unstick-flag|{member.Zone}|{(int) (flag.X / 600)}|{(int) (flag.Y / 600)}", level: UltimusLink.CRITICAL);
+                Aside(index, member, 150f, 600f, "steps aside and starts the round of fixes again");
                 return;
             default:
                 Aside(index, member, 150f, 600f, "steps aside to get unstuck");

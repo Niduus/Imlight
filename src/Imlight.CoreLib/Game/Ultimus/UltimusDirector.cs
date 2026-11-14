@@ -362,7 +362,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 var stuck = _team.Where(m => m.Talking || DateTime.UtcNow - m.LastDialog < TimeSpan.FromSeconds(1)).Select(m => m.Role).ToList();
                 var quest = _currentQuest ?? _target?.Quest;
                 Issue("quest", quest, $"A dialog never finishes for {string.Join(", ", stuck)}: it has gone on for over a minute, one dialog after another" +
-                                      (_target is null ? "." : $", at \"{_target.What}\"."), key: "dialog|" + quest + "|" + _target?.Key, skipStep: false, level: UltimusLink.NOTABLE);
+                                      (_target is null ? "." : $", at \"{_target.What}\"."), key: "dialog|" + quest + "|" + _target?.Key, broken: false, level: UltimusLink.NOTABLE);
             }
 
             return;
@@ -475,7 +475,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         if (target.Problem.Length > 0) {
             // A person does not give up on a step at once (Niduus, 2026-11-13: steps were skipped within seconds): it
-            // looks about the area first, and only a step that stays unworkable for a while is written up and skipped.
+            // looks about the area first, and only a step that stays unworkable for a while is written up (flagged, never skipped).
             if (!_problemSince.TryGetValue(target.Key, out var since)) {
                 _problemSince[target.Key] = since = DateTime.UtcNow;
                 Note("Ultimus", $"can't see how to do \"{target.What}\" yet ({target.Problem}): looks around the area before giving up.");
@@ -1090,7 +1090,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
     // A creature this near the way has the way planned again; this near Ultimus, it steps back (a creature starts a
     // battle within about 175).
-    // How long a step that can't be worked out is looked into before it is written up and skipped.
+    // How long a step that can't be worked out is looked into before it is written up (flagged, never skipped).
     private static readonly TimeSpan s_problemPatience = TimeSpan.FromMinutes(2);
     private readonly Dictionary<string, DateTime> _problemSince = new(StringComparer.Ordinal);
     private (float X, float Y, DateTime At)? _lookingAt;
@@ -1136,8 +1136,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             CheckArrival(leader);
 
             // Going in and out of areas again and again is a way that loops (Niduus's log, 2026-11-12: "to Savarstaad Pass"
-            // while already in Savarstaad Pass, every few seconds): an issue, and the step is skipped, as a player would
-            // be stuck there.
+            // while already in Savarstaad Pass, every few seconds): an issue (flagged for Niduus, never skipped).
             // Only coming back into the same area again and again counts: a quick trip through many areas (The Commons,
             // Ravenwood, the World Tree, the Spiral Door's landing and The Oasis) is no loop (Niduus's log, 2026-11-13: "A
             // Whole New World" was skipped as a loop on its way to Krokotopia).
@@ -1265,8 +1264,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 : "Waits for a player to join or asks for help through an issue; the step may need a group.");
         Count("battles lost");
         if (_losses[key] >= UltimusWire.LossesBeforeIssue) {
-            Issue("quest", _target?.Quest, $"The team lost the fight for \"{_target?.What ?? "this step"}\" {_losses[key]} times.", key: key + "|losses" + (_losses[key] > UltimusWire.LossesBeforeIssue ? "|skip" : ""),
-                skipStep: _losses[key] > UltimusWire.LossesBeforeIssue);
+            // A fight he keeps losing is too hard for him now, not broken: he flags it and keeps going at it as a player would
+            // (rested, careful), never skipping it (Niduus, 2026-11-14).
+            Issue("quest", _target?.Quest, $"The team lost the fight for \"{_target?.What ?? "this step"}\" {_losses[key]} times. He rests and tries again; nothing is skipped.",
+                key: key + "|losses" + (_losses[key] > UltimusWire.LossesBeforeIssue ? "|again" : ""), broken: false,
+                level: _losses[key] > UltimusWire.LossesBeforeIssue ? UltimusLink.CRITICAL : null);
         }
     }
 
@@ -1314,7 +1316,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                             Text = $"\"{done.GoalName}\" took {fights} battle(s) won" });
                         if (fights > DROP_FIGHTS_ODD) {
                             Issue("quest", quest.QuestName, $"The step \"{done.GoalName}\" took {fights} battles won to finish, far more than a player expects. " +
-                                                            "The drop chance or the creatures that count for it may be wrong.", key: "drops|" + quest.QuestName + "|" + done.GoalName, skipStep: false, level: UltimusLink.MINOR);
+                                                            "The drop chance or the creatures that count for it may be wrong.", key: "drops|" + quest.QuestName + "|" + done.GoalName, broken: false, level: UltimusLink.MINOR);
                         }
                     }
 
@@ -1414,7 +1416,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         if (waited > TimeSpan.FromSeconds(45)) {
             Issue("quest", target.Quest, $"{target.What}: {leader.Name} stands at the door, walked through the doorway and pressed it, and it does not take it anywhere.",
-                key: target.Key + "|door-dead", skipStep: false, level: UltimusLink.ABNORMAL);
+                key: target.Key + "|door-dead", broken: false, level: UltimusLink.ABNORMAL);
         }
     }
 
@@ -1591,9 +1593,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         });
     }
 
-    private void Issue(string kind, string quest, string text, string key = null, bool skipStep = true, string level = null) {
-        // A way or exit target carries no quest of its own: the issue is the quest Ultimus is on, so its step can be skipped
-        // and the debug report names it (a loop in and out of an area named no quest and never ended, 2026-11-13).
+    private void Issue(string kind, string quest, string text, string key = null, bool broken = true, string level = null) {
+        // A way or exit target carries no quest of its own: the issue is the quest Ultimus is on, so the debug report names it (a loop in and out of an area named no quest and never ended, 2026-11-13).
         if (kind == "quest" && string.IsNullOrEmpty(quest)) {
             quest = _currentQuest;
         }
@@ -1607,22 +1608,17 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         Count("issues raised");
         var template = string.IsNullOrEmpty(quest) ? null : QuestTemplateCollection.GetQuestByName(quest);
 
-        // A broken step is not a dead end (Niduus, 2026-11-12: "Never stuck forever ... skip it with Ahziael's help, and move
-        // on"): after the tries that raised this issue, Ahziael finishes the step for each of them and the run goes on.
+        // A broken step is flagged, never skipped (Niduus, 2026-11-14: "He is not allowed to use commands to JUMP to the next
+        // main quest. HIS ENTIRE PURPOSE IS TO QUEST AS IF HE IS A HUMAN. His only exceptions ... to unstuck"). He keeps
+        // trying it as a player would, with unstuck moves only, until Niduus fixes it; the debug report says what to fix.
         level ??= kind switch { "slow" => UltimusLink.MINOR, "team" => UltimusLink.CRITICAL, _ => UltimusLink.NOTABLE };
-        var skipping = kind == "quest" && skipStep && !string.IsNullOrEmpty(quest);
-        Note("Ultimus", $"ISSUE{(string.IsNullOrEmpty(quest) ? "" : $" in {UltimusText.Title(quest)}")}: {text}", skipping ? UltimusLink.CRITICAL : level);
-        if (skipping) {
-            for (var i = 0; i < _team.Count; i++) {
-                if (_team[i].Wizard?.HasQuest(quest) == true) {
-                    _actors[i].Tell(new UltimusMember.SkipStep(quest));
-                }
-            }
-
-            text += " Ahziael finished the step for them so the run goes on (the step is marked broken).";
-            Note("Ultimus", $"STEP SKIPPED (broken) in {UltimusText.Title(quest)}: Ahziael finishes the step for it so the story goes on.", UltimusLink.COMMAND);
-            Count("broken steps skipped");
-            UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "skipped", Quest = quest, Title = UltimusText.Title(quest), Text = "a broken step, finished by Ahziael" });
+        var flagged = kind == "quest" && broken && !string.IsNullOrEmpty(quest);
+        Note("Ultimus", $"ISSUE{(string.IsNullOrEmpty(quest) ? "" : $" in {UltimusText.Title(quest)}")}: {text}", flagged ? UltimusLink.CRITICAL : level);
+        if (flagged) {
+            text += " The step looks broken: he keeps trying it as a player would and skips nothing, so it needs a fix.";
+            Note("Ultimus", $"BROKEN STEP in {UltimusText.Title(quest)}: flagged for Niduus. I keep trying it the way a player would; I never skip it.", UltimusLink.CRITICAL);
+            Count("broken steps flagged");
+            UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "broken", Quest = quest, Title = UltimusText.Title(quest), Text = "a broken step, flagged; not skipped" });
         }
 
         // What most likely breaks it (Niduus, 2026-11-13: "detail character and quest detection to determine when/if a quest
