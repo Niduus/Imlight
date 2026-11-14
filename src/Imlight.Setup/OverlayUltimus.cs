@@ -41,6 +41,9 @@ internal static class OverlayUltimusData {
 
     internal sealed record Step(string Text, string Where, bool Here);
 
+    /// <summary>His quest tracker's details (Niduus, 2026-11-14: "in detail"): world, why, what now, the step after, parked steps.</summary>
+    internal sealed record Tracker(string World, string Why, string Target, string Next, IReadOnlyList<string> Parked, string ReadAhead);
+
     internal sealed record Card(string Name, string School, int Rank, bool Castable, bool Picked);
 
     internal sealed record Fighter(string Name, int Health, int Most, bool Alive);
@@ -51,7 +54,7 @@ internal static class OverlayUltimusData {
 
     internal sealed record Info(string Name, int Level, int Health, int Most, string Place, string Doing, string Quest, string QuestTitle, string Kind,
                                 string NextStep, IReadOnlyList<Step> Steps, IReadOnlyList<string> Way, IReadOnlyList<string> Others, Battle? Fight,
-                                string Note, DateTime At, int QuestLevel = 0, string World = "") {
+                                string Note, DateTime At, int QuestLevel = 0, string World = "", Tracker? Detail = null) {
 
         internal bool Stale => DateTime.UtcNow - At > TimeSpan.FromSeconds(8);
 
@@ -144,6 +147,20 @@ internal static class OverlayUltimusData {
     private static Info Read(JsonObject sent) {
         var steps = (sent["steps"] as JsonArray ?? []).OfType<JsonObject>().Take(6)
             .Select(s => new Step(Short((string?) s["s"], 120), Short((string?) s["where"], 80), s["here"]?.GetValueKind() == System.Text.Json.JsonValueKind.True)).ToList();
+        Tracker? tracker = null;
+        if (sent["detail"] is JsonObject detail) {
+            // The tracker's own steps: the game's words with counts, and the one he is on now marked (shown with "here").
+            if (detail["steps"] is JsonArray { Count: > 0 } open) {
+                steps = [.. open.OfType<JsonObject>().Take(6).Select(s => new Step(
+                    Short((string?) s["s"], 120) + (Short((string?) s["drops"], 100) is { Length: > 0 } drops ? $" [{drops}]" : ""),
+                    Short((string?) s["where"], 80), s["now"]?.GetValueKind() == System.Text.Json.JsonValueKind.True))];
+            }
+
+            tracker = new Tracker(Short((string?) detail["questWorld"], 40) is { Length: > 0 } w ? w : Short((string?) detail["world"], 40),
+                Short((string?) detail["why"], 160), Short((string?) detail["target"], 120), Short((string?) detail["next"], 120),
+                Texts(detail["parked"], 4, 160), Short((string?) detail["readAhead"], 160));
+        }
+
         var way = Texts(sent["way"], 12, 80);
         var others = (sent["quests"] as JsonArray ?? []).OfType<JsonObject>().Take(40)
             .Where(q => !string.Equals((string?) q["id"], (string?) sent["quest"], StringComparison.OrdinalIgnoreCase))
@@ -162,7 +179,7 @@ internal static class OverlayUltimusData {
         return new Info(Short((string?) sent["name"], 40) is { Length: > 0 } name ? name : "Ultimus", (int) Number(sent["level"]), (int) Number(sent["hp"]),
             (int) Number(sent["max"]), Short((string?) sent["place"], 80), Short((string?) sent["doing"], 120), Short((string?) sent["quest"], 120),
             Short((string?) sent["questTitle"], 120), Short((string?) sent["kind"], 10), Short((string?) sent["step"], 160), steps, way, others, battle, "",
-            DateTime.UtcNow, (int) Number(sent["questLevel"]), Short((string?) sent["world"], 40));
+            DateTime.UtcNow, (int) Number(sent["questLevel"]), Short((string?) sent["world"], 40), tracker);
     }
 
     private static List<Fighter> Fighters(JsonNode? node) => (node as JsonArray ?? []).OfType<JsonObject>().Take(8)
@@ -262,7 +279,10 @@ internal static class UltimusViews {
             }
 
             foreach (var step in info.Steps.Take(6)) {
-                panel.Children.Add(Line("• " + step.Text + (step.Where.Length > 0 && !step.Here ? "  (" + step.Where + ")" : ""), look.Size - 1, look.Text, wrap: true));
+                // With the tracker's details, "Here" marks the step he works on now; without them, a step in this area.
+                var mark = info.Detail is not null && step.Here ? "> " : "• ";
+                var where = step.Where.Length > 0 && (info.Detail is not null || !step.Here) ? "  (" + step.Where + ")" : "";
+                panel.Children.Add(Line(mark + step.Text + where, look.Size - 1, info.Detail is not null && step.Here ? look.Gold : look.Text, wrap: true));
             }
 
             if (info.Steps.Count == 0 && info.NextStep.Length > 0) {
@@ -271,6 +291,31 @@ internal static class UltimusViews {
 
             if (info.Way.Count > 0) {
                 panel.Children.Add(Line("Way: " + string.Join(" > ", info.Way), look.Size - 2, look.Faint, wrap: true));
+            }
+
+            if (info.Detail is { } d) {
+                if (d.Target.Length > 0) {
+                    panel.Children.Add(Line("Now: " + d.Target, look.Size - 2, look.Text, wrap: true));
+                }
+
+                if (d.Why.Length > 0) {
+                    panel.Children.Add(Line("Why: " + d.Why, look.Size - 3, look.Faint, wrap: true));
+                }
+
+                if (d.Next.Length > 0) {
+                    panel.Children.Add(Line("After that: " + d.Next, look.Size - 3, look.Faint, wrap: true));
+                }
+
+                if (d.ReadAhead.Length > 0) {
+                    panel.Children.Add(Line("Read-ahead warned: " + d.ReadAhead, look.Size - 3, look.Faint, wrap: true));
+                }
+            }
+        }
+
+        if (info.Detail is { Parked.Count: > 0 } help) {
+            panel.Children.Add(Line("Needs help", look.Size - 1, look.Gold, bold: true));
+            foreach (var parked in help.Parked) {
+                panel.Children.Add(Line("• " + parked, look.Size - 3, look.Faint, wrap: true));
             }
         }
 

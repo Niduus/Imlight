@@ -81,6 +81,7 @@ internal sealed partial class UltimusDirectorActor {
             UltimusJournal.Write(UltimusJournal.PARTY, $"Grouped up with {name} in {UltimusText.Zone(leader.Zone)}.", WorldOf(leader.Zone),
                 UltimusText.Zone(leader.Zone), name, 1);
             Count("groups joined");
+            _actors[0].Tell(new UltimusMember.WhisperText(BotShared.BotSocial.Scrub($"Thanks for the invite, {name}! I'll come along with you."), mate.CharId));
         }
 
         // Going along with a player is what he is doing: no off-track or no-progress alarm for it.
@@ -164,6 +165,9 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         Note("Ultimus", $"PARTY: no longer with {_partyMateName} ({why}): back to his own story.");
+        if (why == "the group ended") {
+            Announce(SAY_PARTY, $"Thanks for the group, {_partyMateName}! Back to my story.", urgent: true);
+        }
         Think($"I'm done going along with {_partyMateName} ({why}). Back to my own story.", "party-end|" + _partyMate);
         _partyMate = 0;
         _partyMateName = "";

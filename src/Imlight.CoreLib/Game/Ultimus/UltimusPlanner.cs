@@ -193,9 +193,37 @@ internal static class UltimusPlanner {
             }
         }
 
-        return held.OrderByDescending(h => h.Value.Rank).ThenByDescending(h => h.Value.Count).ThenBy(h => h.Value.Order)
-            .Select(h => h.Key).FirstOrDefault();
+        var ordered = held.OrderByDescending(h => h.Value.Rank).ThenByDescending(h => h.Value.Count).ThenBy(h => h.Value.Order).ToList();
+        if (ordered.Count == 0) {
+            return null;
+        }
+
+        // Several story quests open at the same rank (Niduus, 2026-11-14: "do the nearest first" instead of crisscrossing):
+        // the one whose next step is nearest by the real way. He stays on the one he was doing unless another is clearly
+        // nearer, so he does not turn back and forth between two.
+        var tied = ordered.Where(h => h.Value.Rank == ordered[0].Value.Rank && h.Value.Count == ordered[0].Value.Count).Select(h => h.Key).ToList();
+        var pick = ordered[0].Key;
+        if (tied.Count > 1 && team.Count > 0) {
+            var costs = new List<(string Quest, float Cost)>();
+            foreach (var quest in tied) {
+                if (ForQuest(team, quest) is { Problem.Length: 0 } target) {
+                    costs.Add((quest, WayCost(team[0], target, target.To ?? "")));
+                }
+            }
+
+            if (costs.Count > 0) {
+                var best = costs.MinBy(c => c.Cost);
+                var before = costs.FirstOrDefault(c => string.Equals(c.Quest, s_lastQuest, StringComparison.OrdinalIgnoreCase));
+                pick = before.Quest is not null && before.Cost <= (best.Cost * 1.3f) + 200 ? before.Quest : best.Quest;
+            }
+        }
+
+        s_lastQuest = pick;
+
+        return pick;
     }
+
+    private static string s_lastQuest;
 
     /// <summary>The next story quest (or quest the story needs) the team can get, and its giver (a story quest of this world first).</summary>
     internal static (QuestTemplate Quest, ulong Giver)? NextQuest(Wizard leader) {
@@ -309,6 +337,25 @@ internal static class UltimusPlanner {
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_lastPick = new(StringComparer.OrdinalIgnoreCase);
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, DateTime> s_setAside = new(StringComparer.Ordinal);
 
+    /// <summary>What the planner had picked, for picking up exactly there after a restart (UltimusDirector.Resume.cs).</summary>
+    internal static (string Quest, Dictionary<string, string> Picks, Dictionary<string, DateTime> Asides) Saved()
+        => (s_lastQuest, s_lastPick.ToDictionary(p => p.Key, p => p.Value, StringComparer.OrdinalIgnoreCase),
+            s_setAside.Where(a => a.Value > DateTime.UtcNow).ToDictionary(a => a.Key, a => a.Value, StringComparer.Ordinal));
+
+    /// <summary>Picks up the planner's picks saved before a restart.</summary>
+    internal static void Restore(string quest, IReadOnlyDictionary<string, string> picks, IReadOnlyDictionary<string, DateTime> asides) {
+        s_lastQuest ??= quest;
+        foreach (var (k, v) in picks ?? new Dictionary<string, string>()) {
+            s_lastPick.TryAdd(k, v);
+        }
+
+        foreach (var (k, v) in asides ?? new Dictionary<string, DateTime>()) {
+            if (v > DateTime.UtcNow) {
+                s_setAside.TryAdd(k, v);
+            }
+        }
+    }
+
     /// <summary>A step set aside for a while: when the quest has another open step, that one goes first (the guardrails).</summary>
     internal static void SetAside(string key, TimeSpan forHow) => s_setAside[key] = DateTime.UtcNow + forHow;
 
@@ -374,10 +421,14 @@ internal static class UltimusPlanner {
 
             case BountyGoalTemplate bounty: {
                 var adjectives = (bounty.m_npcAdjectives ?? []).Select(a => (string) a).Where(a => !string.IsNullOrEmpty(a)).ToArray();
+                // Creatures that counted for this step before count too, even when the step's tags match nothing here, and the
+                // ones beaten 3 times for nothing go last (UltimusDrops: learned from his own fights).
                 var wanted = live.Where(m => m.Kind is MinimapIndex.MOB or MinimapIndex.BOSS
                                             && (m.Adjectives.Any(a => adjectives.Contains(a, StringComparer.Ordinal))
-                                                || Quests.BountyStandIns.Counts(adjectives, m.Template)))
-                    .OrderBy(m => Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)).ToList();
+                                                || Quests.BountyStandIns.Counts(adjectives, m.Template)
+                                                || UltimusDrops.Score(questName, goalName, m.Template) > 0))
+                    .OrderBy(m => UltimusDrops.Score(questName, goalName, m.Template) < 0 ? 1 : 0)
+                    .ThenBy(m => Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)).ToList();
                 var free = wanted.Where(m => !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full)).ToList();
 
                 // The Quest Team's creatures are left to it (Niduus, 2026-11-12: Ultimus "will never attempt to join QT and
@@ -397,7 +448,8 @@ internal static class UltimusPlanner {
                     var wantedNear = near.Count(o => notTheTeams.Contains(o));
                     var otherNear = near.Count - wantedNear;
 
-                    return WalkLength(leader, mx, my) + (otherNear * 600) + (strong ? -300 * wantedNear : 500 * wantedNear);
+                    return WalkLength(leader, mx, my) + (otherNear * 600) + (strong ? -300 * wantedNear : 500 * wantedNear)
+                           + (UltimusDrops.Score(questName, goalName, m.Template) < 0 ? 3000 : 0);
                 }
 
                 notTheTeams = [.. notTheTeams.Take(5).OrderBy(GroupCost).Concat(notTheTeams.Skip(5))];

@@ -65,6 +65,8 @@ internal sealed partial class ManagerWindow {
     private readonly NumericUpDown _ultMaxHours = new() { Minimum = 0, Maximum = 24, Increment = 1, FormatString = "0", Width = 140 };
     private readonly StackPanel _ultIssues = new() { Spacing = 10 };
     private readonly TextBlock _ultIssuesEmpty = new() { TextWrapping = TextWrapping.Wrap, Foreground = MUTED, Text = "No issues yet." };
+    private readonly StackPanel _ultBroken = new() { Spacing = 6 };
+    private readonly TextBlock _ultBrokenEmpty = new() { TextWrapping = TextWrapping.Wrap, Foreground = MUTED, Text = "No quest problems yet." };
     private readonly DispatcherTimer _ultTimer = new() { Interval = TimeSpan.FromSeconds(3) };
     private readonly Border _ultBanner = new() { IsVisible = false };
     private readonly TextBlock _ultBannerText = new() { TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center };
@@ -519,7 +521,14 @@ internal sealed partial class ManagerWindow {
     private Control UltimusIssuesTab() {
         StartUltimusTimer();
 
-        return Page(Fold("flag", ULTIMUS_TAB, "Ultimus Issues",
+        return Page(Fold("list", ULTIMUS_TAB, "Broken quests",
+            "One line for each quest Ultimus found a problem with, with the latest reason and how many times it came up. " +
+            "\"Found ahead\" means the quest check spotted it before he got there (he reads ahead at the start of each world). " +
+            "He never skips a step: he keeps trying it as a player would until it is fixed. The full reports are below.",
+            Row(Action(Plain("Copy the list"), () => CopyAsync(UltimusBrokenText()))),
+            _ultBrokenEmpty,
+            _ultBroken),
+            Fold("flag", ULTIMUS_TAB, "Ultimus Issues",
             "Everything Ultimus ran into, newest first: a quest that does not work, Ultimus being stuck, a fight lost again " +
             "and again, or a quest that took much longer than expected. Each one has a debug report: what went wrong, what a " +
             "player would expect, where Ultimus was, the quest's and step's codes and data file, and the log that led up to " +
@@ -581,6 +590,59 @@ internal sealed partial class ManagerWindow {
         return UltimusIssuesText([issue]);
     }
 
+    // One entry per quest with a "quest" issue: newest reason, how many times, found ahead or met while playing.
+    private List<(string Quest, string Title, string World, int Count, bool Ahead, UltimusIssue Latest)> UltimusBrokenList()
+        => [.. _ultIssueList.Where(i => i.Kind == "quest" && i.Quest.Length > 0)
+            .GroupBy(i => i.Quest, StringComparer.OrdinalIgnoreCase)
+            .Select(g => {
+                var latest = g.OrderByDescending(i => i.Id).First();
+                var met = g.Where(i => !i.Text.StartsWith("READ-AHEAD", StringComparison.Ordinal)).OrderByDescending(i => i.Id).FirstOrDefault();
+                return (g.Key, latest.Title.Length > 0 ? latest.Title : g.Key, latest.World, g.Count(), met is null, met ?? latest);
+            })
+            .OrderByDescending(b => b.Item6.Id)];
+
+    private static string UltimusBrokenReason(string text) {
+        var reason = text.StartsWith("READ-AHEAD", StringComparison.Ordinal) && text.IndexOf("): ", StringComparison.Ordinal) is var cut and > 0
+            ? text[(cut + 3)..] : text;
+        var end = reason.IndexOf(" Diagnosis", StringComparison.Ordinal);
+        reason = end > 0 ? reason[..end] : reason;
+        return reason.Length > 260 ? reason[..257] + "..." : reason;
+    }
+
+    private string UltimusBrokenText() {
+        var text = new StringBuilder("QUESTS ULTIMUS FOUND A PROBLEM WITH\n");
+        foreach (var b in UltimusBrokenList()) {
+            text.AppendLine($"{b.Title} ({b.Quest}{(b.World.Length > 0 ? ", " + b.World : "")}): {b.Count} time(s){(b.Ahead ? ", found ahead" : "")}. {UltimusBrokenReason(b.Latest.Text)}");
+        }
+
+        return text.ToString();
+    }
+
+    private void ShowUltimusBroken() {
+        _ultBroken.Children.Clear();
+        var list = UltimusBrokenList();
+        _ultBrokenEmpty.IsVisible = list.Count == 0;
+        foreach (var b in list.Take(60)) {
+            _ultBroken.Children.Add(new Border {
+                Background = ManagerTheme.SURFACE_HIGH_BRUSH, CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(12, 8),
+                Child = new StackPanel {
+                    Spacing = 2,
+                    Children = {
+                        new TextBlock {
+                            Text = $"{b.Title}{(b.World.Length > 0 ? $" ({b.World})" : "")}", FontWeight = FontWeight.SemiBold, TextWrapping = TextWrapping.Wrap,
+                            Foreground = b.Ahead ? ManagerTheme.Accent("Progress") : ManagerTheme.Accent("Create"),
+                        },
+                        new TextBlock {
+                            Text = $"{(b.Ahead ? "Found ahead" : "Met while playing")}  ·  {b.Count} time(s)  ·  last {b.Latest.At.ToLocalTime():ddd d MMM, HH:mm}  ·  {b.Quest}",
+                            Foreground = MUTED, FontSize = ManagerTheme.FONT_SMALL, TextWrapping = TextWrapping.Wrap,
+                        },
+                        new TextBlock { Text = UltimusBrokenReason(b.Latest.Text), TextWrapping = TextWrapping.Wrap },
+                    },
+                },
+            });
+        }
+    }
+
     private void ShowUltimusIssues() {
         if (_ultIssuesShown == (_ultIssueList.Count == 0 ? 0 : _ultIssueList.Max(i => i.Id))) {
             return;
@@ -589,6 +651,7 @@ internal sealed partial class ManagerWindow {
         _ultIssuesShown = _ultIssueList.Count == 0 ? 0 : _ultIssueList.Max(i => i.Id);
         _ultIssues.Children.Clear();
         _ultIssuesEmpty.IsVisible = _ultIssueList.Count == 0;
+        ShowUltimusBroken();
         foreach (var issue in _ultIssueList.OrderByDescending(i => i.Id).Take(100)) {
             var head = new TextBlock {
                 Text = $"{UltimusIssueKind(issue.Kind)}: {(issue.Title.Length > 0 ? issue.Title : "Ultimus")}{(issue.World.Length > 0 ? $" ({issue.World})" : "")}",

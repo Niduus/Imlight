@@ -175,8 +175,10 @@ internal sealed class WizardSheet {
         var quest = S(m, "questNow");
         var step = S(m, "stepNow");
         var others = List(m["questList"]).Where(q => q != quest).ToList();
-        _quest.Text = (quest.Length > 0 ? $"Quest now: {quest}" + (step.Length > 0 ? $"\nStep: {step}" : "") : "Quest now: none") +
-                      (others.Count > 0 ? $"\nAlso holds: {string.Join(", ", others)}" : "");
+        _quest.Text = m["tracker"] is JsonObject tracker
+            ? TrackerText(quest, tracker, others)
+            : (quest.Length > 0 ? $"Quest now: {quest}" + (step.Length > 0 ? $"\nStep: {step}" : "") : "Quest now: none") +
+              (others.Count > 0 ? $"\nAlso holds: {string.Join(", ", others)}" : "");
         // With the game's icons when the window gives them and the server sends the rows (Niduus, 2026-11-13); built again
         // only when they change.
         if (StatIcon is not null && m["statRows"] is JsonArray statRows && statRows.Count > 0) {
@@ -234,6 +236,64 @@ internal sealed class WizardSheet {
         }
 
         ShowSpells(m);
+    }
+
+    // Ultimus's quest tracker in detail (Niduus, 2026-11-14): the quest, its world and level, each open step in the game's
+    // words with counts and where, what he does now and why, the step after, parked steps and the needs-help flag.
+    private static string TrackerText(string quest, JsonObject t, List<string> others) {
+        var text = new System.Text.StringBuilder();
+        if (quest.Length == 0) {
+            text.Append("Quest now: none");
+        }
+        else {
+            text.Append($"Quest now: {quest}");
+            var about = new List<string>();
+            if (S(t, "questWorld") is { Length: > 0 } world) {
+                about.Add(world);
+            }
+
+            if ((int?) t["questLevel"] is > 0 and var level) {
+                about.Add($"level {level}");
+            }
+
+            if (about.Count > 0) {
+                text.Append($" ({string.Join(", ", about)})");
+            }
+
+            foreach (var row in (t["steps"] as JsonArray ?? []).OfType<JsonObject>()) {
+                text.Append($"\n{((bool?) row["now"] == true ? "> " : "- ")}{S(row, "s")}{(S(row, "where") is { Length: > 0 } where ? $"  ({where})" : "")}");
+                if (S(row, "drops") is { Length: > 0 } drops) {
+                    text.Append($"\n    Learned: {drops}");
+                }
+            }
+
+            if (S(t, "next") is { Length: > 0 } next) {
+                text.Append($"\nAfter that: {next}");
+            }
+
+            if (S(t, "readAhead") is { Length: > 0 } ahead) {
+                text.Append($"\nRead-ahead warned: {ahead}");
+            }
+        }
+
+        if (S(t, "target") is { Length: > 0 } target) {
+            text.Append($"\nDoing now: {target}" + (S(t, "area") is { Length: > 0 } area ? $" (in {area})" : ""));
+        }
+
+        if (S(t, "why") is { Length: > 0 } why) {
+            text.Append($"\nWhy: {why}");
+        }
+
+        var parked = List(t["parked"]);
+        if (parked.Count > 0) {
+            text.Append("\nNEEDS HELP, set aside: " + string.Join("; ", parked));
+        }
+
+        if (others.Count > 0) {
+            text.Append($"\nAlso holds: {string.Join(", ", others)}");
+        }
+
+        return text.ToString();
     }
 
     // The game's stat tooltip: yellow words on a dark blue panel, the icons beside the numbers.
