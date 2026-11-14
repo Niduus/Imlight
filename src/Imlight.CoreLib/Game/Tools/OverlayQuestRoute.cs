@@ -43,6 +43,8 @@ namespace Imlight.CoreLib.Game.Tools;
 internal static class OverlayQuestRoute {
 
     private const int MAX_TARGETS = 8;
+    // The spots whose legal way is walked to find the nearest (and drawn as trails); the rest go by straight distance.
+    private const int WALKED_TARGETS = 4;
 
     /// <summary>The route of <paramref name="questName"/> for this wizard in zone actor <paramref name="zone"/>, or null when it isn't held.</summary>
     internal static JsonObject Build(Wizard wizard, IActorRef zone, string questName) {
@@ -152,25 +154,55 @@ internal static class OverlayQuestRoute {
             }
         }
 
+        // Every spot of the step, nearest first by the real walk, not as the crow flies (Niduus, 2026-11-14: "Ultimus and
+        // Quest Marker will prioritize the closest target ... draw faded trails for the other targets that are not the
+        // closes, with the closes not being faded at all"). The legal way to each of the nearest few is walked (floor
+        // only, through the area's teleporters when cut off, round the creature areas the step doesn't need); a spot
+        // with no legal way goes last.
+        var spots = targets.DistinctBy(t => ((int) (t.X / 50), (int) (t.Y / 50)))
+            .OrderBy(t => Far(here.X, here.Y, t.X, t.Y)).Take(MAX_TARGETS).ToList();
+        var walks = new List<(float X, float Y, string Name, List<OverlayQuestPath.Spot> Walk, float Length)>();
+        foreach (var (x, y, name) in spots) {
+            if (walks.Count >= WALKED_TARGETS) {
+                walks.Add((x, y, name, null, float.MaxValue));
+                continue;
+            }
+
+            var walk = OverlayQuestPath.Route(wizard.CharId, zonePath, here.X, here.Y, x, y, RouteMobs.Avoid(zone, x, y));
+            var length = OverlayQuestPath.Length(walk, here.X, here.Y, x, y);
+            // No legal way on record: after every spot that has one, as far as the crow flies.
+            walks.Add((x, y, name, walk, float.IsFinite(length) ? length : 1e7f + Far(here.X, here.Y, x, y)));
+        }
+
+        walks = [.. walks.OrderBy(w => w.Length)];
         var points = new JsonArray();
-        foreach (var (x, y, name) in targets.DistinctBy(t => ((int) (t.X / 50), (int) (t.Y / 50)))
-                     .OrderBy(t => Far(here.X, here.Y, t.X, t.Y)).Take(MAX_TARGETS)) {
+        foreach (var (x, y, name, _, _) in walks) {
             points.Add(new JsonObject { ["x"] = Round(x), ["y"] = Round(y), ["n"] = name.Length > 60 ? name[..60] : name });
         }
 
         route["points"] = points;
 
-        // The line along the streets to the nearest one, the legal way (floor only, through the area's teleporters when the
-        // step is cut off): a spot with a third number 1 is a teleporter, the line jumps from it to the next spot.
-        if (points.Count > 0 && points[0] is JsonObject nearest) {
-            var walk = new JsonArray();
-            // Round the street's creature areas the step does not need (their walks by the step are left in).
-            var (gx, gy) = ((int) nearest["x"], (int) nearest["y"]);
-            foreach (var spot in OverlayQuestPath.Route(wizard.CharId, zonePath, here.X, here.Y, gx, gy, RouteMobs.Avoid(zone, gx, gy))) {
-                walk.Add(spot.Pad ? new JsonArray(Round(spot.X), Round(spot.Y), 1) : new JsonArray(Round(spot.X), Round(spot.Y)));
+        // The line to the nearest (a spot with a third number 1 is a teleporter, the line jumps from it to the next spot),
+        // and fainter trails to the others: each in "trails", in the order of "points" after the first.
+        static JsonArray Line(List<OverlayQuestPath.Spot> walk) {
+            var line = new JsonArray();
+            foreach (var spot in walk ?? []) {
+                line.Add(spot.Pad ? new JsonArray(Round(spot.X), Round(spot.Y), 1) : new JsonArray(Round(spot.X), Round(spot.Y)));
             }
 
-            route["path"] = walk;
+            return line;
+        }
+
+        if (walks.Count > 0) {
+            route["path"] = Line(walks[0].Walk);
+            var trails = new JsonArray();
+            foreach (var other in walks.Skip(1).Where(w => w.Walk is not null)) {
+                trails.Add(new JsonObject { ["x"] = Round(other.X), ["y"] = Round(other.Y), ["path"] = Line(other.Walk) });
+            }
+
+            if (trails.Count > 0) {
+                route["trails"] = trails;
+            }
         }
 
         return route;

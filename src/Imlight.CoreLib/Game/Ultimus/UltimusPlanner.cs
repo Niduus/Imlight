@@ -271,21 +271,54 @@ internal static class UltimusPlanner {
         }
 
         var ordered = goals.OrderByDescending(g => g.Value)
-            .Select(g => quest.m_goals?.FirstOrDefault(t => t is not null && (string) t.m_goalName == g.Key))
-            .Where(g => g is not null)
-            .OrderBy(g => g.m_hideGoal ? 1 : 0)
+            .Select(g => (Goal: quest.m_goals?.FirstOrDefault(t => t is not null && (string) t.m_goalName == g.Key), Count: g.Value))
+            .Where(g => g.Goal is not null)
+            .OrderBy(g => g.Goal.m_hideGoal ? 1 : 0)
             .ToList();
         Target unresolved = null;
-        foreach (var goal in ordered) {
+        Target first = null;
+        var here = new List<(Target Target, int Count, bool Hidden)>();
+        foreach (var (goal, count) in ordered) {
             var target = ForGoal(group, quest, goal);
             if (target is not null && target.Problem.Length == 0) {
-                return target;
+                first ??= target;
+                if (target.Kind is TALK or SPOT or FIGHT or USE) {
+                    here.Add((target, count, goal.m_hideGoal));
+                }
+
+                continue;
             }
 
             unresolved ??= target;
         }
 
-        return unresolved;
+        // Several steps to do in this area (two people to talk to, Niduus, 2026-11-14: "Ultimus and Quest Marker will
+        // prioritize the closest target"): the nearest by the real walk (the shared route finder's legal way, the one
+        // the Quest Tracker draws), among the steps most of the group is on. A step here comes before leaving the area.
+        if (here.Count > 1) {
+            var leader = group[0];
+            var top = here.Max(h => h.Count);
+            return here.Where(h => h.Count == top)
+                .OrderBy(h => h.Hidden ? 1 : 0)
+                .ThenBy(h => WalkLength(leader, h.Target))
+                .First().Target;
+        }
+
+        if (here.Count == 1) {
+            return here[0].Target;
+        }
+
+        return first ?? unresolved;
+    }
+
+    // How far the leader walks to a target, the legal way; a target with no legal way on record goes by straight distance
+    // after every one that has one.
+    private static float WalkLength(UltimusMember.Status leader, Target target) {
+        var zone = leader.Zone ?? "";
+        var walk = OverlayQuestPath.Route(leader.CharId, zone, leader.X, leader.Y, target.X, target.Y, RouteMobs.Avoid(leader.ZoneActor, target.X, target.Y));
+        var length = OverlayQuestPath.Length(walk, leader.X, leader.Y, target.X, target.Y);
+
+        return float.IsFinite(length) ? length : 1e7f + Far(leader.X, leader.Y, target.X, target.Y);
     }
 
     private static Target ForGoal(IReadOnlyList<UltimusMember.Status> group, QuestTemplate quest, GoalTemplate goal) {

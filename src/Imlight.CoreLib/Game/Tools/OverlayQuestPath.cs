@@ -189,8 +189,9 @@ internal static class OverlayQuestPath {
     /// <summary>One spot of a <see cref="Route"/>: walk to it; Pad means it is a teleporter, and the next spot is where it lands.</summary>
     internal readonly record struct Spot(float X, float Y, bool Pad = false);
 
-    // The last route found for each wizard (found again when they moved, the step changed, or it is a few seconds old).
-    private static readonly ConcurrentDictionary<ulong, (string Zone, int From, int To, DateTime At, List<Spot> Spots)> s_routes = new();
+    // The last route found for each wizard and step spot (found again when they moved or it is a few seconds old); one per
+    // spot, so a step with several spots (two NPCs to talk to) keeps each spot's route.
+    private static readonly ConcurrentDictionary<(ulong CharId, int To), (string Zone, int From, DateTime At, List<Spot> Spots)> s_routes = new();
 
     /// <summary>
     /// The legal way from (<paramref name="fromX"/>, <paramref name="fromY"/>) to the step, the one a player can follow
@@ -205,7 +206,7 @@ internal static class OverlayQuestPath {
     internal static List<Spot> Route(ulong charId, string zonePath, float fromX, float fromY, float toX, float toY,
         IReadOnlyList<(float X, float Y)> avoid = null) {
         var key = (Zone: zonePath ?? string.Empty, From: Rough(fromX, fromY), To: Rough(toX, toY));
-        if (s_routes.TryGetValue(charId, out var last) && last.Zone == key.Zone && last.From == key.From && last.To == key.To
+        if (s_routes.TryGetValue((charId, key.To), out var last) && last.Zone == key.Zone && last.From == key.From
             && DateTime.UtcNow - last.At < TimeSpan.FromSeconds(10)) {
             return last.Spots;
         }
@@ -253,10 +254,37 @@ internal static class OverlayQuestPath {
             s_routes.Clear();
         }
 
-        s_routes[charId] = (key.Zone, key.From, key.To, DateTime.UtcNow, spots);
+        s_routes[(charId, key.To)] = (key.Zone, key.From, DateTime.UtcNow, spots);
 
         return spots;
     }
+
+    /// <summary>
+    /// How far a <see cref="Route"/> walks (a teleporter's jump counts nothing), or +infinity when it stops short of
+    /// (<paramref name="toX"/>, <paramref name="toY"/>): no legal way there.
+    /// </summary>
+    internal static float Length(List<Spot> spots, float fromX, float fromY, float toX, float toY) {
+        if (spots is not { Count: > 0 }) {
+            return float.PositiveInfinity;
+        }
+
+        var (x, y, total) = (fromX, fromY, 0f);
+        var jump = false;
+        foreach (var spot in spots) {
+            if (!jump) {
+                total += MathF.Sqrt(((spot.X - x) * (spot.X - x)) + ((spot.Y - y) * (spot.Y - y)));
+            }
+
+            (x, y, jump) = (spot.X, spot.Y, spot.Pad);
+        }
+
+        var gap = MathF.Sqrt(((toX - x) * (toX - x)) + ((toY - y) * (toY - y)));
+
+        return gap > REACHED ? float.PositiveInfinity : total + gap;
+    }
+
+    // How near the step a route must end to count as getting there.
+    private const float REACHED = 250f;
 
     /// <summary>
     /// A server-played wizard's walk toward the step the legal way (the Quest Team): the same as <see cref="Walk"/>, except

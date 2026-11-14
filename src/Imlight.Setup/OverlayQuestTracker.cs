@@ -112,7 +112,15 @@ internal static class OverlayQuestData {
 
     /// <summary>A picked quest's way on the minimap: the step spots (nearest first) and the walk to the nearest.</summary>
     internal sealed record Route(string Quest, string Title, string Kind, IReadOnlyList<(double X, double Y, string Name)> Points,
-                                 IReadOnlyList<(double X, double Y)> Path, string To, string Via, IReadOnlySet<int>? Pads = null);
+                                 IReadOnlyList<(double X, double Y)> Path, string To, string Via, IReadOnlySet<int>? Pads = null) {
+
+        /// <summary>Faded trails to the step's other spots (the nearest by the walk gets <see cref="Path"/>).</summary>
+        internal IReadOnlyList<Trail> Trails { get; init; } = [];
+
+    }
+
+    /// <summary>The walk to one of the step's other spots; Pads are the indexes of teleporter spots, as in Route.</summary>
+    internal sealed record Trail(IReadOnlyList<(double X, double Y)> Path, IReadOnlySet<int> Pads);
 
     private static readonly object s_lock = new();
     private static readonly Dictionary<long, Snapshot> s_lists = [];
@@ -348,20 +356,33 @@ internal static class OverlayQuestData {
             }
 
             // A spot with a third number 1 is a teleporter: the line jumps from it to the next spot.
-            var path = new List<(double, double)>();
-            var pads = new HashSet<int>();
-            foreach (var item in (sent["path"] as JsonArray ?? []).OfType<JsonArray>().Take(120)) {
-                if (item.Count >= 2) {
-                    if (item.Count >= 3 && Number(item[2]) == 1) {
-                        pads.Add(path.Count);
-                    }
+            static (List<(double, double)> Path, HashSet<int> Pads) Walk(JsonArray? sentPath) {
+                var path = new List<(double, double)>();
+                var pads = new HashSet<int>();
+                foreach (var item in (sentPath ?? []).OfType<JsonArray>().Take(120)) {
+                    if (item.Count >= 2) {
+                        if (item.Count >= 3 && Number(item[2]) == 1) {
+                            pads.Add(path.Count);
+                        }
 
-                    path.Add((Number(item[0]), Number(item[1])));
+                        path.Add((Number(item[0]), Number(item[1])));
+                    }
+                }
+
+                return (path, pads);
+            }
+
+            var (path, pads) = Walk(sent["path"] as JsonArray);
+            var trails = new List<Trail>();
+            foreach (var item in (sent["trails"] as JsonArray ?? []).OfType<JsonObject>().Take(8)) {
+                var (trail, trailPads) = Walk(item["path"] as JsonArray);
+                if (trail.Count > 0) {
+                    trails.Add(new Trail(trail, trailPads));
                 }
             }
 
             s_routes[window] = new Route(Short((string?) sent["quest"], 120), Short((string?) sent["t"], 120), Short((string?) sent["k"], 10),
-                points, path, Short((string?) sent["to"], 80), Short((string?) sent["via"], 80), pads);
+                points, path, Short((string?) sent["to"], 80), Short((string?) sent["via"], 80), pads) { Trails = trails };
         }
     }
 
@@ -762,6 +783,31 @@ internal static class OverlayQuestRouteDrawing {
         var color = OverlayRenderer.Parse(look.ColorOf(route.Kind)) ?? Colors.Gold;
         var width = look.RouteWidth;
         if (route.Points.Count > 0) {
+            // First, under the line: faded trails to the step's other spots (Niduus, 2026-11-14: "draw faded trails for
+            // the other targets that are not the closes, with the closes not being faded at all").
+            var faded = Color.FromArgb((byte) (color.A * 0.38), color.R, color.G, color.B);
+            foreach (var trail in route.Trails) {
+                var trailLine = new StreamGeometry();
+                using (var g = trailLine.Open()) {
+                    g.BeginFigure(wizard, false);
+                    for (var i = 0; i < trail.Path.Count; i++) {
+                        var at = project(trail.Path[i].X, trail.Path[i].Y);
+                        if (i > 0 && trail.Pads.Contains(i - 1)) {
+                            g.EndFigure(false);
+                            g.BeginFigure(at, false);
+                            continue;
+                        }
+
+                        g.LineTo(at);
+                    }
+
+                    g.EndFigure(false);
+                }
+
+                context.DrawGeometry(null, new Pen(new SolidColorBrush(Color.FromArgb(0x40, 0, 0, 0)), width * 0.8 + 1.5, lineCap: PenLineCap.Round, lineJoin: PenLineJoin.Round), trailLine);
+                context.DrawGeometry(null, new Pen(new SolidColorBrush(faded), width * 0.8, new DashStyle([1.4, 2.2], 0), PenLineCap.Round, PenLineJoin.Round), trailLine);
+            }
+
             // The walk, broken at each teleporter: the line stops on the pad and goes on from where it lands (the
             // teleporter itself drawn as a small ring at both ends).
             var line = new StreamGeometry();
@@ -794,10 +840,12 @@ internal static class OverlayQuestRouteDrawing {
                 }
             }
 
-            foreach (var (x, y, _) in route.Points) {
-                var at = project(x, y);
-                context.DrawEllipse(null, new Pen(new SolidColorBrush(Color.FromArgb(0xB0, 0, 0, 0)), 4), at, iconSize, iconSize);
-                context.DrawEllipse(null, new Pen(new SolidColorBrush(color), 2.2), at, iconSize, iconSize);
+            // The nearest spot's ring full colour, the others faded like their trails.
+            for (var i = route.Points.Count - 1; i >= 0; i--) {
+                var at = project(route.Points[i].X, route.Points[i].Y);
+                var nearest = i == 0;
+                context.DrawEllipse(null, new Pen(new SolidColorBrush(Color.FromArgb(nearest ? (byte) 0xB0 : (byte) 0x40, 0, 0, 0)), 4), at, iconSize, iconSize);
+                context.DrawEllipse(null, new Pen(new SolidColorBrush(nearest ? color : faded), 2.2), at, iconSize, iconSize);
             }
         }
     }
