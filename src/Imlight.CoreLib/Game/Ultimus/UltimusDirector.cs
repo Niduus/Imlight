@@ -1696,6 +1696,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     private int _exitTries;
     private DateTime _exitFirst = DateTime.MinValue;
     private bool _exitStartedInside;
+    // Where he stood on each try at the exit now, written down when a whole round fails (exit-tries.txt).
+    private readonly List<string> _exitStood = [];
 
     // Where each try goes in, round the exit's middle: (how far out, which way round), from all sides.
     private static readonly (float Out, float Angle)[] s_exitSweep = [
@@ -1741,6 +1743,30 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         return s_stubbornExits = set;
     }
 
+    // A whole round at an exit failed: where he stood on each try, the exit's reach, and where it should take him, so the exit
+    // can be fixed from this one file (Niduus, 2026-11-14). The newest round first; the file keeps the last 40 rounds.
+    private void WriteExitTries(UltimusMember.Status leader, UltimusPlanner.Target target, int tries, double seconds) {
+        try {
+            var reach = OverlayQuestRoute.ExitReach(leader.Zone, target.X, target.Y);
+            var round = new List<string> {
+                $"{DateTime.Now:yyyy-MM-dd HH:mm} {UltimusText.Zone(leader.Zone)} exit {target.What} at ({target.X:0}, {target.Y:0}), reach {reach:0}, " +
+                $"to {target.To}: {tries} tries in {seconds:0} s, never taken on",
+            };
+            round.AddRange(_exitStood.Select(l => "  " + l));
+            round.Add("");
+            var path = Path.Combine(UltimusWire.Folder, "exit-tries.txt");
+            var old = File.Exists(path) ? File.ReadAllLines(path).ToList() : [];
+            var rounds = 0;
+            var keep = old.TakeWhile(l => !(l.Length > 0 && !l.StartsWith(' ') && ++rounds > 39)).ToList();
+            File.WriteAllLines(path, [.. round, .. keep]);
+        }
+        catch (Exception e) {
+            Logger.Debug("Ultimus: could not write exit-tries.txt: {0}", Logger.Args(e.Message));
+        }
+
+        _exitStood.Clear();
+    }
+
     // This server build: its version and when its file was written.
     private static string ServerStamp() {
         try {
@@ -1778,6 +1804,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             _exitKey = target.Key;
             _exitTries = 0;
             _exitFirst = DateTime.UtcNow;
+            _exitStood.Clear();
             _exitStartedInside = UltimusPlanner.Far(leader.X, leader.Y, target.X, target.Y)
                                  < OverlayQuestRoute.ExitReach(leader.Zone, target.X, target.Y) - 40f;
         }
@@ -1846,6 +1873,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         _exitTries++;
+        _exitStood.Add($"try {_exitTries}: stood at ({leader.X:0}, {leader.Y:0}, height {leader.Z:0}), " +
+                       $"{UltimusPlanner.Far(leader.X, leader.Y, target.X, target.Y):0} from the middle; walks out to ({outside.X:0}, {outside.Y:0}) " +
+                       $"{(OverlayQuestPath.OnFloor(leader.Zone, outside.X, outside.Y) ? "on floor" : "off the floor")} and in at ({spot.X:0}, {spot.Y:0})");
 
         var points = OverlayQuestPath.Walk(leader.CharId, leader.Zone, leader.X, leader.Y, outside.X, outside.Y, body: true);
         if (points.Count == 0) {
@@ -1900,6 +1930,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 key: "exit-stubborn|" + ExitId(leader.Zone, target.To), level: UltimusLink.NOTABLE);
         }
 
+        WriteExitTries(leader, target, tries, seconds);
         RememberStubbornExit(leader.Zone, target.To, target.X, target.Y);
         OverlayQuestPath.Forget(leader.CharId);
         Aside(0, leader, 600f, 1600f, "walks well away from the exit and comes back at it another way");
