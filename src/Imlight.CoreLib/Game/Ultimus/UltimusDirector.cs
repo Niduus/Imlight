@@ -1213,7 +1213,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     private void NoteLeaderZone(UltimusMember.Status leader) {
         if (_leaderZone.Length > 0 && !string.Equals(_leaderZone, leader.Zone, StringComparison.OrdinalIgnoreCase)) {
             Note("Ultimus", $"{leader.Name} is now in {UltimusText.Zone(leader.Zone)}.");
-            var meant = _prediction is { Kind: "travel" } travel ? travel.Zone : null;
+            // A Recall or a Commons button press of his own is a player move, never a wrong landing (audit A6: a Recall back to
+            // his mark was taken as a wrong area and he walked out again).
+            var buttonMove = DateTime.UtcNow - _recallSentAt < TimeSpan.FromSeconds(30) || DateTime.UtcNow - _hubPressedAt < TimeSpan.FromSeconds(30);
+            var meant = !buttonMove && _prediction is { Kind: "travel" } travel ? travel.Zone : null;
             CheckArrival(leader);
             // The landing the zone transfer book says, and backing out of a wrong area (UltimusDirector.Bounds.cs).
             CheckLanding(_leaderZone, _leaderLastX, _leaderLastY, leader, meant);

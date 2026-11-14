@@ -80,6 +80,8 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     /// red) it is said as a Menu Chat line with its own words instead, so it is never lost or shown as "...".
     /// </summary>
     internal sealed record SayText(string Text);
+    // The game's Commons button (to this world's hub), as a player presses it.
+    internal sealed record PressCommons;
     internal sealed record WhisperText(string Text, ulong CharId);
 
     internal sealed record WorldTeleport(ulong DoorGlobalId, string World);
@@ -368,6 +370,7 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
             Send(new WIZARD_12_PROTOCOL.MSG_AUCTIONHOUSEREQUEST { Command = 3, npcGlobalID = m.NpcGlobalId, itemTemplateID = m.BazaarId });
         });
         Receive<MarkSpot>(_ => Send(new GAME_5_PROTOCOL.MSG_MARK_LOCATION()));
+        Receive<PressCommons>(_ => Send(new WIZARD_12_PROTOCOL.MSG_GOHOME()));
         Receive<RecallSpot>(_ => Send(new GAME_5_PROTOCOL.MSG_RECALL_LOCATION()));
         Receive<ClickNow>(m => Send(BotShared.BotBattle.ToGameMessage(m.Move)));
         Receive<Flee>(_ => Send(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATMOVE {
