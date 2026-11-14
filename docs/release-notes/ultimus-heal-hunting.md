@@ -8,3 +8,8 @@ Changed: He only waits as a last resort (no potions, no wisps nearby, no potion 
 Where: Ultimus (Play > Ultimus). His "Pause and explain" thoughts say which he picked and why.
 
 Test: Let Ultimus run until he's hurt with no potions. Watch him walk to a nearby area for wisps or to a potion shop instead of standing still. Also check he no longer stops to heal when he's above about three quarters health.
+
+New: Ultimus may use the game's Commons button when it saves him at least two areas of walking to wisps or a potion shop. He marks his spot first, presses the button (to this world's hub), heals or buys potions, then Recalls back to where he was, like a player.
+Fixed: After a Recall or a Commons button press he no longer thinks he landed in the wrong area and walks back out.
+
+Test: Get Ultimus hurt with no potions far from a shop. Watch him mark, press the Commons button, buy potions or grab wisps, and Recall back.

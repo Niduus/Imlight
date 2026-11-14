@@ -48,7 +48,7 @@ internal sealed partial class UltimusDirectorActor {
 
     // From each area: the areas of its world with a potion shop, or with health or mana wisps, nearest first, found in the
     // background from the areas' files (null while still being read, empty when there are none).
-    private static readonly ConcurrentDictionary<string, List<(string Zone, int Hops)>> s_healZones = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly ConcurrentDictionary<string, List<(string Zone, int Hops, bool ViaHub)>> s_healZones = new(StringComparer.OrdinalIgnoreCase);
 
     // Areas whose wisps were all taken when he got there: not tried again for a while (wisps come back).
     private static readonly TimeSpan s_wispsBackIn = TimeSpan.FromMinutes(5);
@@ -150,13 +150,20 @@ internal sealed partial class UltimusDirectorActor {
         var pick = wispArea is not null && (shop is null || wispHops <= shopHops) ? wispArea : shop;
         if (pick is not null) {
             _doing = pick.What;
-            if (pick.Kind == UltimusPlanner.SHOP && UltimusPlanner.Far(leader.X, leader.Y, pick.X, pick.Y) < SHOP_REACH) {
+            if (pick.Key?.StartsWith(HUB_KEY, StringComparison.Ordinal) == true) {
+                if (!PressHubButton(leader, pick.What)) {
+                    // The button can't be pressed here: walk the normal way.
+                    WalkTo(0, UltimusPlanner.Travel(leader, pick.Key[HUB_KEY.Length..], pick.What, "heal|" + pick.Key) ?? pick);
+                }
+            }
+            else if (pick.Kind == UltimusPlanner.SHOP && UltimusPlanner.Far(leader.X, leader.Y, pick.X, pick.Y) < SHOP_REACH) {
                 StopWalking(0);
                 if (CanClick("potion|buy")) {
                     Clicked("potion|buy");
                     Note("Ultimus", $"{leader.Name} fills its potions at the potion shop.");
                     _actors[0].Tell(new UltimusMember.Interact(pick.GlobalId, "PotionShopService", 0, "the potion shop"));
                     _actors[0].Tell(new UltimusMember.BuyPotions());
+                    HoldRecall(6);
                 }
             }
             else {
@@ -251,7 +258,45 @@ internal sealed partial class UltimusDirectorActor {
 
         hops = best.Hops;
 
-        return UltimusPlanner.Travel(leader, best.Zone, "to fill potions at the potion shop", "potionshop|" + best.Zone);
+        return best.ViaHub ? HubButton(leader, best.Zone, "to fill potions at the potion shop")
+            : UltimusPlanner.Travel(leader, best.Zone, "to fill potions at the potion shop", "potionshop|" + best.Zone);
+    }
+
+    private const string HUB_KEY = "hubbutton|";
+    private DateTime _hubPressedAt = DateTime.MinValue;
+
+    // The Commons button press toward <paramref name="zone"/> (its hub first): a target at his own feet, pressed in HealFirst.
+    private static UltimusPlanner.Target HubButton(UltimusMember.Status leader, string zone, string why) =>
+        new(UltimusPlanner.SPOT, leader.X, leader.Y, $"pressing the Commons button, then on {why} in {UltimusText.Zone(zone)}", Key: HUB_KEY + zone);
+
+    /// <summary>
+    /// Presses the game's Commons button (to this world's hub) after marking his spot, so Recall brings him back after
+    /// the trip, as a player does. Only out of instances, out of battle, and from level 2 (the game locks it before).
+    /// False when he can't press it now.
+    /// </summary>
+    private bool PressHubButton(UltimusMember.Status leader, string why) {
+        if (leader.Wizard is not { } wizard || wizard.ZoneIsInstance || CombatDuelComponent.IsInBattle(leader.GlobalId)
+            || (wizard.MagicSchoolBehavior?.Level ?? 1) < 2) {
+            return false;
+        }
+
+        if (DateTime.UtcNow - _hubPressedAt < TimeSpan.FromSeconds(20)) {
+            return true;
+        }
+
+        StopWalking(0);
+        if (_markedZone is null && (wizard.GameStats?.m_currentMana ?? 0) >= 10) {
+            _markedZone = leader.Zone;
+            _markedAt = DateTime.UtcNow;
+            _actors[0].Tell(new UltimusMember.MarkSpot());
+        }
+
+        _hubPressedAt = DateTime.UtcNow;
+        Note("Ultimus", $"{leader.Name} presses the Commons button ({why}); his spot is marked to Recall back after.");
+        Think($"The Commons button is quicker than walking: I mark my spot, press it, go {why}, then Recall back.", "hub|" + leader.Zone);
+        Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(1.5), _actors[0], new UltimusMember.PressCommons(), Self);
+
+        return true;
     }
 
     private static string WispKey(string zone, bool health, bool mana) => $"wisp|{(health ? "h" : "")}{(mana ? "m" : "")}|{zone}";
@@ -266,14 +311,15 @@ internal sealed partial class UltimusDirectorActor {
             return null;
         }
 
-        foreach (var (zone, away) in areas) {
+        foreach (var (zone, away, viaHub) in areas) {
             if (away == 0 || _wispsTaken.TryGetValue(zone, out var until) && DateTime.UtcNow < until) {
                 continue;
             }
 
             hops = away;
+            var why = $"to pick up {(health ? "health" : "mana")} wisps";
 
-            return UltimusPlanner.Travel(leader, zone, $"to pick up {(health ? "health" : "mana")} wisps", "wispzone|" + zone);
+            return viaHub ? HubButton(leader, zone, why) : UltimusPlanner.Travel(leader, zone, why, "wispzone|" + zone);
         }
 
         return null;
@@ -281,7 +327,7 @@ internal sealed partial class UltimusDirectorActor {
 
     // The areas of this world that hold an object named like <paramref name="has"/>, fewest areas away first (0 = this
     // area). Read once per area in the background; null until then.
-    private static List<(string Zone, int Hops)> HealZones(string key, string from, Func<string, bool> has) {
+    private static List<(string Zone, int Hops, bool ViaHub)> HealZones(string key, string from, Func<string, bool> has) {
         if (string.IsNullOrEmpty(from)) {
             return null;
         }
@@ -297,10 +343,14 @@ internal sealed partial class UltimusDirectorActor {
         return null;
     }
 
-    private static List<(string Zone, int Hops)> NearestZonesWith(string from, Func<string, bool> has) {
-        var list = new List<(string Zone, int Hops)>();
+    private static List<(string Zone, int Hops, bool ViaHub)> NearestZonesWith(string from, Func<string, bool> has) {
+        var list = new List<(string Zone, int Hops, bool ViaHub)>();
         try {
             var world = from.Split('/')[0];
+            // The Commons button (allowed, Niduus 2026-11-14: "he is allowed to use the Commons, Home and mark buttons if
+            // convenient in timing and travel"): one press to this world's hub, then on from there.
+            ZoneService.ResolveWorldHub(from, out var hub, out _);
+            var hubHere = string.IsNullOrEmpty(hub) || OverlayQuestTracker.SameZone(hub, from);
             var candidates = SpiralDB.GetAllZoneData().Select(z => z?.ZoneName)
                 .Where(z => !string.IsNullOrEmpty(z) && z.StartsWith(world + "/", StringComparison.OrdinalIgnoreCase))
                 .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
@@ -312,14 +362,21 @@ internal sealed partial class UltimusDirectorActor {
                 }
 
                 if (OverlayQuestTracker.SameZone(zone, from)) {
-                    list.Add((zone, 0));
+                    list.Add((zone, 0, false));
                     continue;
                 }
 
                 // The story's own ways only (stays in bounds: no side areas just for a heal).
                 var hops = OverlayQuestRoute.Way(from, zone, false, storyOnly: true).Count;
-                if (hops > 0) {
-                    list.Add((zone, hops));
+                var viaHub = hubHere ? 0
+                    : OverlayQuestTracker.SameZone(hub, zone) ? 1
+                    : OverlayQuestRoute.Way(hub, zone, false, storyOnly: true).Count is > 0 and var fromHub ? 1 + fromHub : 0;
+                // The button only when it saves at least two areas of walking.
+                if (viaHub > 0 && (hops <= 0 || viaHub + 2 <= hops)) {
+                    list.Add((zone, viaHub, true));
+                }
+                else if (hops > 0) {
+                    list.Add((zone, hops, false));
                 }
             }
         }
