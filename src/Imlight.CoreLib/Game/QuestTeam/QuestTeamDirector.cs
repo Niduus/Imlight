@@ -1752,6 +1752,11 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                 diagnosis.Confidence == "High" ? QuestTeamLink.ABNORMAL : QuestTeamLink.NOTABLE);
         }
 
+        // What players told Ultimus about this quest while he was stuck on it (Niduus, 2026-11-14: tips shared with the team).
+        foreach (var tip in Ultimus.UltimusTips.For(quest)) {
+            seen.Add("Player tip (told to Ultimus): " + tip);
+        }
+
         QuestTeamLink.Issue(kind, quest ?? "", string.IsNullOrEmpty(quest) ? "" : QuestTeamText.Title(quest),
             template is null ? "" : QuestStory.WorldOf(template), text, Expected(kind, _target), seen, skipping ? QuestTeamLink.CRITICAL : level);
     }

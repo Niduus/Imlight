@@ -181,6 +181,8 @@ internal sealed partial class UltimusDirectorActor {
 
         var quest = _parkedWhy.TryGetValue(stuckKey, out var why) && !string.IsNullOrEmpty(why.Quest) ? why.Quest : _target?.Quest ?? _currentQuest;
         var step = why.What ?? _target?.What ?? "";
+        // Kept by quest for the Quest Team too (UltimusTips), so a team stuck on the same quest sees it.
+        UltimusTips.Add(quest, step, speaker, UltimusText.Short(tip, 160));
         Note("Ultimus", $"TIP from {speaker} for \"{step}\": \"{UltimusText.Short(tip, 120)}\" (written on the issue).", UltimusLink.NOTABLE);
         Think($"{speaker} told me \"{UltimusText.Short(tip, 80)}\" while I'm stuck on \"{step}\". I wrote it down for Niduus and keep it in mind.",
             "tip|" + stuckKey + "|" + list.Count);
@@ -205,6 +207,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         UltimusPlanner.ClearAside(quest);
+        UltimusTips.Forget(quest);
         foreach (var key in _reported.Keys.Where(About).ToList()) {
             _reported.Remove(key);
         }

@@ -308,6 +308,15 @@ internal sealed partial class UltimusDirectorActor {
 
         // The spots (area|cell) of each day's top 3, to see one that is "most stuck" 3 days running.
         public Dictionary<string, List<string>> DayKeys { get; set; } = [];
+
+        // Each day's 10 worst spots with their minutes, summed into the weekly report (Niduus, 2026-11-14).
+        public Dictionary<string, Dictionary<string, WasteSpot>> DaySpots { get; set; } = [];
+
+        // The last 7 days' 5 worst spots, for the top of his Daily diary in Ahziael.
+        public List<string> Week { get; set; } = [];
+
+        // The Monday of the week the weekly report was last written to his log.
+        public string WeekNoted { get; set; } = "";
     }
 
     private StuckDays _stuckDays;
@@ -363,6 +372,100 @@ internal sealed partial class UltimusDirectorActor {
         }
     }
 
+    // What held him back most at a spot, and the fix he would suggest for it.
+    private static (string Why, string Fix) StuckFix(WasteSpot s) {
+        var why = s.Why.Count == 0 ? "standing still" : s.Why.OrderByDescending(w => w.Value).First().Key;
+        var fix = why switch {
+            "getting unstuck" => "a wall, ledge or narrow spot there: look at the walkable map at that spot",
+            "a step he can't work out" => "the step itself (its data, or a creature or object missing): see the Broken quests list",
+            _ => "he was waiting there (to heal, for wisps, or with nothing to do for the step): see his log at that time",
+        };
+        return (why, fix);
+    }
+
+    // ---------------------------------------------------------------------
+    // The weekly stuck report (Niduus, 2026-11-14): the 5 spots he lost the most time at over 7 days, summed from each
+    // day's worst spots, on top of his Daily diary in Ahziael; once a week it is also written to his log and to
+    // weekly-stuck.txt in his folder.
+    // ---------------------------------------------------------------------
+
+    /// <summary>The 5 worst spots over the 7 days ending <paramref name="back"/> days before today, as plain lines.</summary>
+    private List<string> StuckWeek(int back) {
+        if (!DateTime.TryParseExact(_stuckDays.Date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None, out var date)) {
+            return [];
+        }
+
+        var days = Enumerable.Range(back, 7).Select(b => date.AddDays(-b).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)).ToList();
+        var summed = new Dictionary<string, (WasteSpot Spot, int Days)>(StringComparer.OrdinalIgnoreCase);
+        // Oldest first, so the newest day's step and quest are the ones kept.
+        foreach (var day in Enumerable.Reverse(days)) {
+            if (!_stuckDays.DaySpots.TryGetValue(day, out var spots)) {
+                continue;
+            }
+
+            foreach (var (key, spot) in spots) {
+                var (sum, count) = summed.TryGetValue(key, out var known)
+                    ? known
+                    : (new WasteSpot { Zone = spot.Zone, X = spot.X, Y = spot.Y }, 0);
+                sum.Seconds += spot.Seconds;
+                foreach (var (why, seconds) in spot.Why) {
+                    sum.Why[why] = sum.Why.GetValueOrDefault(why) + seconds;
+                }
+
+                sum.LastStep = spot.LastStep;
+                sum.LastQuest = string.IsNullOrEmpty(spot.LastQuest) ? sum.LastQuest : spot.LastQuest;
+                summed[key] = (sum, count + 1);
+            }
+        }
+
+        return [.. summed.Values.OrderByDescending(v => v.Spot.Seconds).Take(5).Select(v => {
+            var (why, fix) = StuckFix(v.Spot);
+            var quest = string.IsNullOrEmpty(v.Spot.LastQuest) ? "" : $" ({UltimusText.Title(v.Spot.LastQuest)})";
+            return $"{v.Spot.Seconds / 60:0} min over {(v.Days == 1 ? "1 day" : $"{v.Days} days")} in {UltimusText.Zone(v.Spot.Zone)} near " +
+                   $"({v.Spot.X:0}, {v.Spot.Y:0}), mostly {why}, last on \"{UltimusText.Short(v.Spot.LastStep, 70)}\"{quest}. Likely fix: {fix}.";
+        })];
+    }
+
+    // Once a week (the first time he plays in a new week): last week's report goes in his log and weekly-stuck.txt.
+    private void StuckWeekNote() {
+        if (!DateTime.TryParseExact(_stuckDays.Date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None, out var date)) {
+            return;
+        }
+
+        var monday = date.AddDays(-(((int) date.DayOfWeek + 6) % 7)).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+        if (_stuckDays.WeekNoted == monday) {
+            return;
+        }
+
+        // The very first week only starts the clock (there is no full week behind it yet).
+        var first = _stuckDays.WeekNoted.Length == 0;
+        _stuckDays.WeekNoted = monday;
+        var lastWeek = StuckWeek(1);
+        if (first || lastWeek.Count == 0) {
+            return;
+        }
+
+        var text = new System.Text.StringBuilder($"ULTIMUS WEEKLY STUCK REPORT, the 7 days before {date:dddd d MMMM yyyy}\n");
+        text.AppendLine("The places he lost the most time, with the fix he would suggest:");
+        for (var i = 0; i < lastWeek.Count; i++) {
+            text.AppendLine($"  {i + 1}. {lastWeek[i]}");
+        }
+
+        try {
+            Directory.CreateDirectory(UltimusWire.Folder);
+            File.WriteAllText(Path.Combine(UltimusWire.Folder, "weekly-stuck.txt"), text.ToString());
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            Logger.Debug("Ultimus: weekly-stuck.txt could not be written: {0}", Logger.Args(ex.Message));
+        }
+
+        Note("Ultimus", "WEEKLY STUCK REPORT: the places he lost the most time last week: " +
+                        string.Join(" ", lastWeek.Take(3).Select((l, i) => $"{i + 1}. {l}")) + " (all 5 in weekly-stuck.txt and his Daily diary).",
+            UltimusLink.NOTABLE);
+    }
+
     private static StuckDays ReadStuckDays() {
         try {
             var path = Path.Combine(UltimusWire.Folder, STUCK_DAYS_FILE);
@@ -386,18 +489,18 @@ internal sealed partial class UltimusDirectorActor {
         _stuckDays.DayKeys[_stuckDays.Date] = [.. topSpots.Select(s => s.Key)];
         StuckThreeDays(topSpots);
         var top = topSpots.Select(t => t.Value).Select(s => {
-            var why = s.Why.OrderByDescending(w => w.Value).First().Key;
-            var fix = why switch {
-                "getting unstuck" => "a wall, ledge or narrow spot there: look at the walkable map at that spot",
-                "a step he can't work out" => "the step itself (its data, or a creature or object missing): see the Broken quests list",
-                _ => "he was waiting there (to heal, for wisps, or with nothing to do for the step): see his log at that time",
-            };
+            var (why, fix) = StuckFix(s);
             return $"{s.Seconds / 60:0} min in {UltimusText.Zone(s.Zone)} near ({s.X:0}, {s.Y:0}), mostly {why}, on \"{UltimusText.Short(s.LastStep, 70)}\". Likely fix: {fix}.";
         }).ToList();
         _stuckDays.Days[_stuckDays.Date] = top;
-        foreach (var old in _stuckDays.Days.Keys.OrderByDescending(d => d, StringComparer.Ordinal).Skip(14).ToList()) {
+        _stuckDays.DaySpots[_stuckDays.Date] = _stuckDays.Today.Where(s => s.Value.Seconds >= 60).OrderByDescending(s => s.Value.Seconds).Take(10)
+            .ToDictionary(s => s.Key, s => s.Value);
+        _stuckDays.Week = StuckWeek(0);
+        StuckWeekNote();
+        foreach (var old in _stuckDays.Days.Keys.Concat(_stuckDays.DaySpots.Keys).Distinct().OrderByDescending(d => d, StringComparer.Ordinal).Skip(14).ToList()) {
             _stuckDays.Days.Remove(old);
             _stuckDays.DayKeys.Remove(old);
+            _stuckDays.DaySpots.Remove(old);
         }
 
         try {
