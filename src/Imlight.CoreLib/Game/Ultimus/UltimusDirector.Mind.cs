@@ -123,7 +123,7 @@ internal sealed partial class UltimusDirectorActor {
 
     private static string FoeName(UltimusPlanner.Target target) {
         var what = target.What ?? "";
-        foreach (var lead in new[] { "Defeat ", "defeat ", "fight ", "Fight " }) {
+        foreach (var lead in new[] { "Defeat and Collect ", "defeat and collect ", "Defeat ", "defeat ", "fight ", "Fight " }) {
             if (what.StartsWith(lead, StringComparison.Ordinal)) {
                 return what[lead.Length..];
             }

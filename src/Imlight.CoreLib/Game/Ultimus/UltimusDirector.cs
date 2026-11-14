@@ -842,7 +842,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 return;
             }
 
-            var option = services.SelectMany(s => options.Where(o => string.Equals(o.Service, s, StringComparison.OrdinalIgnoreCase))).FirstOrDefault();
+            var matching = services.SelectMany(s => options.Where(o => string.Equals(o.Service, s, StringComparison.OrdinalIgnoreCase))).ToList();
+            var option = BotOptions.Pick(matching, target.Quest, TimesClicked(key));
             if (option.Service is null) {
                 if (DateTime.UtcNow - _targetSince > TimeSpan.FromSeconds(40)) {
                     Issue("quest", target.Quest, $"{target.What}: the NPC only offers {string.Join(", ", options.Select(o => o.Service))} to {member.Name}, " +
@@ -887,7 +888,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
 
-        var option = services.SelectMany(s => options.Where(o => string.Equals(o.Service, s, StringComparison.OrdinalIgnoreCase))).FirstOrDefault();
+        var option = BotOptions.Pick([.. services.SelectMany(s => options.Where(o => string.Equals(o.Service, s, StringComparison.OrdinalIgnoreCase)))],
+            target.Quest, TimesClicked(key));
         if (option.Service is null) {
             option = options.FirstOrDefault();
         }
@@ -1869,8 +1871,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             _fightWalkKey = "";
         }
 
-        // Health or mana over its most.
-        if (me.Wizard?.GameStats is { } stats && stats.m_currentHitpoints > (stats.m_baseHitpoints + stats.m_bonusHitpoints) * 1.05 + 1) {
+        // Health or mana over its most. Not just after a swap: taking off a piece with health lowers the most before the
+        // game trims the health (v0.10.852: flagged pink right after he put on the Adept ring).
+        if (DateTime.UtcNow - _gearChangedAt > TimeSpan.FromMinutes(1) && me.Wizard?.GameStats is { } stats && stats.m_currentHitpoints > (stats.m_baseHitpoints + stats.m_bonusHitpoints) * 1.05 + 1) {
             Odd($"hp|{level}", $"has {stats.m_currentHitpoints} health, more than its most ({stats.m_baseHitpoints + stats.m_bonusHitpoints}).");
         }
     }

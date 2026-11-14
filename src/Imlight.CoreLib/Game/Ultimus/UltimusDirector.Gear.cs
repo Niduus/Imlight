@@ -35,6 +35,10 @@ namespace Imlight.CoreLib.Game.Ultimus;
 /// </summary>
 internal sealed partial class UltimusDirectorActor {
 
+    // When it last changed a piece (its most health moves with it).
+    private DateTime _gearChangedAt = DateTime.MinValue;
+
+
     // The gold a wizard keeps for potions and the next trainer.
     private const double GOLD_KEPT = 0.25;
 
@@ -191,6 +195,7 @@ internal sealed partial class UltimusDirectorActor {
             // resist, accuracy and health, power pips toward 100%, then damage and pierce), with its reason in his thoughts.
             if (BotGear.BestSwap(wizard, GearGoals(wizard)) is { Item: not null } swap) {
                 ThinkAboutSwap(member, swap, GearGoals(wizard));
+                _gearChangedAt = DateTime.UtcNow;
                 _actors[i].Tell(new UltimusMember.Equip(swap.Item.m_globalID, swap.Slot, swap.Piece.Name));
                 continue;
             }
