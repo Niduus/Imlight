@@ -274,6 +274,13 @@ internal static class OverlayQuestData {
         }
     }
 
+    /// <summary>A Quest Tracker's look on this overlay, if any shows.</summary>
+    internal static OverlayQuestList? AnyLook() {
+        lock (s_lock) {
+            return s_looks.Values.FirstOrDefault();
+        }
+    }
+
     internal static OverlayQuestList? LookOf(long window) {
         lock (s_lock) {
             return s_looks.GetValueOrDefault(window);
@@ -750,7 +757,8 @@ internal static class OverlayQuestRouteDrawing {
             return;
         }
 
-        var look = OverlayQuestData.LookOf(window) ?? new OverlayQuestList();
+        // Ultimus's own map draws his line in the same colours and width as the player's Quest Tracker line.
+        var look = OverlayQuestData.LookOf(window) ?? (window == OverlayUltimusData.KEY ? OverlayQuestData.AnyLook() : null) ?? new OverlayQuestList();
         var color = OverlayRenderer.Parse(look.ColorOf(route.Kind)) ?? Colors.Gold;
         var width = look.RouteWidth;
         if (route.Points.Count > 0) {

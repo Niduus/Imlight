@@ -1816,7 +1816,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             };
             UltimusLink.Send(new UltimusRequest { Op = "status", Json = status.ToJsonString() });
             // The overlay's Ultimus Spectator draws this quest's way on Ultimus's own minimap (read only).
-            UltimusSpectate.NoteStatus(_currentQuest, _target is null ? "" : Describe(_target), _doing);
+            UltimusSpectate.NoteStatus(_currentQuest ?? _target?.Quest, _target is null ? "" : Describe(_target), _doing, _leaderZone, _target?.X, _target?.Y);
         }
         catch (Exception e) {
             Logger.Debug("Ultimus: could not write the status: {0}", Logger.Args(e.Message));

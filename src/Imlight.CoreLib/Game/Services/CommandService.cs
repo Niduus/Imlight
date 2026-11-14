@@ -349,7 +349,8 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
         // Ultimus's own game (on the server): his map, his quest's way on it, and his quests. Read only.
         try {
             var map = Tools.OverlayMinimap.Build(wizard, zone, message.Reach);
-            if (message.Quest.Length > 0 && Tools.OverlayQuestRoute.Build(wizard, zone, message.Quest) is { } route) {
+            // His quest's way, drawn like the player's Quest Tracker line (the shared route finder).
+            if (Ultimus.UltimusSpectate.Route(wizard, zone) is { } route) {
                 map["route"] = route;
             }
 
