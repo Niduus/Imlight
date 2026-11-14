@@ -338,6 +338,7 @@ internal sealed partial class UltimusDirectorActor {
                 "potions-status" => DateTime.UtcNow < _potionRunUntil ? "Yes, I'm on my way to the potion shop now!" : AskedForPotions(me).Line,
                 _ when what.StartsWith("recall:", StringComparison.Ordinal) => Recall(what[7..]),
                 _ when what.StartsWith("fact:", StringComparison.Ordinal) => Fact(me, what[5..]),
+                _ when what.StartsWith("asker:", StringComparison.Ordinal) => Asker(what[6..]),
                 _ => null,
             }, Worlds().Select(w => w.World).ToList(), Opinion);
     }

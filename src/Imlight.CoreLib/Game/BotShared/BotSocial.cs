@@ -68,8 +68,17 @@ internal static class BotSocial {
         public List<DateTime> Lines { get; set; } = [];
         // What the talk was last about, for follow-ups ("no, the step of the quest").
         public string Topic { get; set; } = "";
+        // What a "favorite/like" question was about ("school", "world"...), for "what about ice?" after it.
+        public string TopicKind { get; set; } = "";
         public DateTime TopicAt { get; set; }
+        // His last answer to them: what they said and how he read it, to learn from how they took it.
+        public string LastHeard { get; set; } = "";
+        public string LastIntent { get; set; } = "";
+        public DateTime LastAnsweredAt { get; set; }
     }
+
+    // The one being answered, for questions about themselves (set in Answer).
+    [ThreadStatic] private static ulong s_askerId;
 
     private const string FOLDER = "logs/bots";
     private static readonly object s_lock = new();
@@ -85,7 +94,7 @@ internal static class BotSocial {
     // Intents
     // ---------------------------------------------------------------------
 
-    internal const string GREETING = "greeting", HOW_ARE_YOU = "how are you", QUEST = "his quest", WHERE = "where he is", LEVEL = "his level",
+    internal const string ASKER = "about the asker", GREETING = "greeting", HOW_ARE_YOU = "how are you", QUEST = "his quest", WHERE = "where he is", LEVEL = "his level",
         SCHOOL = "his school", TIP = "a tip", HELP = "help", GROUP = "group or follow", TRADE = "trade or gold", TELEPORT = "teleport",
         COMPLIMENT = "compliment", JOKE = "joke", THANKS = "thanks", BYE = "goodbye", BOT = "are you a bot", PRIVATE = "private info",
         RUDE = "rude", ANSWER = "answer to his question", CHAT = "small talk", NAME = "his name", STEP = "his quest step",
@@ -173,16 +182,63 @@ internal static class BotSocial {
         };
     }
 
-    // "walks to the door" reads "walking to the door"; anything else as it is.
-    private static string Gerund(string doing) {
-        var words = doing.Split(' ', 2);
-        if (words[0].Length > 2 && words[0].EndsWith('s') && !words[0].EndsWith("ss", StringComparison.Ordinal)) {
-            var verb = words[0][..^1];
-            verb = verb.EndsWith('e') && !verb.EndsWith("ee", StringComparison.Ordinal) ? verb[..^1] : verb;
-            return verb + "ing" + (words.Length > 1 ? " " + words[1] : "");
+    // "walks to the door" reads "walking to the door", "Go to Krokotopia,Throne Room of Fire" reads "heading to Throne Room of
+    // Fire in Krokotopia", "Defeat 1 creatures" reads "defeating a creature" (Niduus, 2026-11-14: "I'm Go to Krokotopia,Throne
+    // Room of Fire" in his chat). Quest step words are commands; after "I'm" they need the -ing form, lower case.
+    private static readonly Dictionary<string, string> s_ing = new(StringComparer.OrdinalIgnoreCase) {
+        ["go"] = "heading", ["head"] = "heading", ["talk"] = "talking", ["speak"] = "speaking", ["defeat"] = "defeating",
+        ["collect"] = "collecting", ["find"] = "finding", ["use"] = "using", ["explore"] = "exploring", ["visit"] = "visiting",
+        ["buy"] = "buying", ["learn"] = "learning", ["win"] = "winning", ["get"] = "getting", ["return"] = "returning",
+        ["meet"] = "meeting", ["deliver"] = "delivering", ["earn"] = "earning", ["equip"] = "equipping", ["craft"] = "crafting",
+        ["kill"] = "defeating", ["give"] = "giving", ["bring"] = "bringing", ["open"] = "opening", ["read"] = "reading",
+        ["walk"] = "walking", ["look"] = "looking", ["take"] = "taking", ["check"] = "checking", ["search"] = "searching",
+        ["enter"] = "entering", ["leave"] = "leaving", ["wait"] = "waiting", ["fight"] = "fighting", ["reach"] = "reaching",
+        ["interact"] = "interacting", ["destroy"] = "destroying", ["protect"] = "protecting", ["escort"] = "escorting",
+        ["investigate"] = "investigating", ["recover"] = "recovering", ["retrieve"] = "retrieving", ["obtain"] = "getting",
+        ["purchase"] = "buying", ["complete"] = "finishing", ["finish"] = "finishing", ["drink"] = "drinking", ["pick"] = "picking",
+    };
+
+    internal static string Gerund(string doing) {
+        doing = Tidy(doing) ?? "";
+        if (doing.Length == 0) {
+            return doing;
         }
 
-        return doing;
+        var words = doing.Split(' ', 2);
+        var rest = words.Length > 1 ? " " + words[1] : "";
+        if (s_ing.TryGetValue(words[0], out var ing)) {
+            return ing + rest;
+        }
+
+        if (words[0].Length > 2 && words[0].EndsWith('s') && !words[0].EndsWith("ss", StringComparison.Ordinal)
+            && char.IsLower(words[0][0])) {
+            var verb = words[0][..^1];
+            verb = verb.EndsWith('e') && !verb.EndsWith("ee", StringComparison.Ordinal) ? verb[..^1] : verb;
+            return verb + "ing" + rest;
+        }
+
+        // Anything else that starts with a capital is a step title: "working on" it.
+        return char.IsUpper(words[0][0]) && !words[0].All(char.IsUpper) ? "working on: " + doing : doing;
+    }
+
+    private static readonly System.Text.RegularExpressions.Regex s_goToWorldArea =
+        new(@"\b(Go|go|Head|head) to ([A-Z][\w' ]*?),\s*([^,(]+?)(?=\s*\(|$|\.)", System.Text.RegularExpressions.RegexOptions.Compiled);
+
+    /// <summary>Step or action words made readable: "World,Area" becomes "Area in World", commas get a space, "1 creatures"
+    /// becomes "a creature", runs of spaces become one.</summary>
+    internal static string Tidy(string text) {
+        if (string.IsNullOrWhiteSpace(text)) {
+            return text;
+        }
+
+        var t = text.Trim();
+        t = s_goToWorldArea.Replace(t, m => $"{m.Groups[1].Value} to {m.Groups[3].Value.Trim()} in {m.Groups[2].Value.Trim()}");
+        t = System.Text.RegularExpressions.Regex.Replace(t, @",(?=[^\s\d])", ", ");
+        t = System.Text.RegularExpressions.Regex.Replace(t, @"\b1 creatures\b", "a creature");
+        t = System.Text.RegularExpressions.Regex.Replace(t, @"\b1 (\w+?)s\b(?! of)", m => m.Groups[1].Value.EndsWith('s') ? m.Value : "1 " + m.Groups[1].Value);
+        t = System.Text.RegularExpressions.Regex.Replace(t, @"\s{2,}", " ");
+
+        return t;
     }
 
     // ---- Sensitive details: never said, whatever was asked (Niduus, 2026-11-14) ----
@@ -334,7 +390,8 @@ internal static class BotSocial {
         // "Do you remember...?", "what happened today?": his memory journal (Niduus, 2026-11-14: "allow him to have memories").
         if (Has(t, "do you remember", "remember when", "you remember", "what do you remember", "your memories", "a memory", "your best moment",
                 "your worst moment", "what happened today", "what did you do today", "what have you done", "your day", "how was your day",
-                "how's your day", "hows your day", "tell me about your adventures", "your adventures", "your story so far")) {
+                "how's your day", "hows your day", "tell me about your adventures", "your adventures", "your story so far")
+            && !Has(t, "remember me", "remember my")) {
             return RECALL;
         }
 
@@ -348,7 +405,9 @@ internal static class BotSocial {
         if (Has(t, "what are you wearing", "your gear", "your robe", "your hat", "your boots", "your wand", "your outfit", "your stats", "your deck",
                 "what spells", "which spells", "your spells", "best spell", "how many quests", "how many battles", "how many fights", "how long have you",
                 "how long you been", "how long have u", "how much xp", "your xp", "next world", "which world next", "your pet", "your mount",
-                "how much health", "your health", "how many potions", "your potions", "your mana", "how strong", "your damage", "your resist")) {
+                "how much health", "your health", "how many potions", "your potions", "your mana", "how strong", "your damage", "your resist",
+                "how much gold", "your gold", "how rich", "how much money")
+            && !Has(t, "known me", "have we", "we've", "we been")) {
             return FACT;
         }
 
@@ -383,6 +442,13 @@ internal static class BotSocial {
 
         if (Has(t, "what school", "your school", "which school", "school?")) {
             return SCHOOL;
+        }
+
+        // About the one asking (Niduus, 2026-11-14: "what is my name" got "Not sure what you mean"): what he can see in game.
+        if (Has(t, "my name", "who am i", "my level", "what level am i", "my school", "what school am i", "where am i", "do you know me",
+                "remember me", "how long have we", "how long we've", "how long have you known", "how did we meet", "when did we meet",
+                "are we friends", "my wizard", "what world am i", "how many battles have we", "what am i")) {
+            return ASKER;
         }
 
         if (Has(t, "your name", "who are you", "whats your name", "what's your name")) {
@@ -504,8 +570,31 @@ internal static class BotSocial {
             }
 
             // His name alone ("ULTIMUS??") or with a hello ("hey Ultimus"): read without it (2026-11-14, "Not sure what you mean").
+            // Step and action words read as plain English in every answer ("Krokotopia,Throne Room" -> "Throne Room in Krokotopia").
+            self = self with { Step = Tidy(self.Step), Doing = Tidy(self.Doing), Quest = self.Quest?.Trim() };
             var heard = WithoutName(text, self);
+            heard = FollowUp(heard, friend);
+            s_askerId = charId;
+            // "why?" right after an opinion: where his opinions come from.
+            if (friend.Topic == LIKE && DateTime.UtcNow - friend.TopicAt < TimeSpan.FromMinutes(3)
+                && Norm(heard) is "why" or "how come" or "why not" or "why is that" or "how so") {
+                friend.TopicAt = now;
+                Save(self.Bot);
+                return new Reply("It's all from what really happened to me: the fights I won or lost, and the time I spent there.", LIKE,
+                    $"{friend.Name} asked why, so I say where my opinions come from.");
+            }
+
+            // How they took his last answer (Niduus, 2026-11-14: "mark down successful actions for better detection").
+            Feedback(self.Bot, friend, text);
             var intent = heard.Length == 0 && text.Trim().Length > 0 ? CALLED : Classify(heard, friend);
+            // A line he couldn't place: what worked for the same words before, else written down for the coach.
+            if (intent is QUESTION or CHAT && Learned(self.Bot, heard) is { } learned) {
+                intent = learned;
+            }
+            else if (intent is QUESTION) {
+                NoteMiss(self.Bot, heard);
+            }
+
             if (intent is null or ACK) {
                 Save(self.Bot);
                 return null;
@@ -516,7 +605,7 @@ internal static class BotSocial {
             }
 
             // Too soon after the last answer to them (one answer per message, a moment between): a question still gets one.
-            var question = intent is CALLED or ORDER or QUEST or STEP or AGAIN or WHERE or LEVEL or SCHOOL or TIP or BOT or NAME or QUESTION or ACTIVITY or JOKE_ASK or RECALL or FACT or LIKE or STATUS or MAKER or ABILITY or PRIVATE;
+            var question = intent is ASKER or CALLED or ORDER or QUEST or STEP or AGAIN or WHERE or LEVEL or SCHOOL or TIP or BOT or NAME or QUESTION or ACTIVITY or JOKE_ASK or RECALL or FACT or LIKE or STATUS or MAKER or ABILITY or PRIVATE;
             if (!NoSave && (now - friend.RepliedAt < s_perPlayerGap && !question || !RoomToSpeak(self.Bot))) {
                 Save(self.Bot);
                 return null;
@@ -529,6 +618,9 @@ internal static class BotSocial {
             }
             if (reply is not null && reply.Text.Length > 0) {
                 friend.RepliedAt = now;
+                friend.LastHeard = Norm(heard);
+                friend.LastIntent = intent;
+                friend.LastAnsweredAt = now;
                 NoteSaid(self.Bot);
             }
 
@@ -537,6 +629,38 @@ internal static class BotSocial {
             return reply;
         }
     }
+
+    // "what about ice?", "how about Krokotopia?", "and Fire?" right after a like/favorite question is the same question about
+    // that (Niduus, 2026-11-14: "What about ice?" after "What's your favorite school?" got "Not sure what you mean").
+    private static readonly System.Text.RegularExpressions.Regex s_followUp = new(
+        @"^\s*(?:what about|how about|and|what of|wbu,?|how bout)\s+(?<x>[a-z][a-z' ]{1,30}?)\s*\??\s*$",
+        System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.Compiled);
+
+    private static string FollowUp(string heard, Friend friend) {
+        if (friend is null || string.IsNullOrWhiteSpace(heard) || DateTime.UtcNow - friend.TopicAt > TimeSpan.FromMinutes(3)
+            || friend.Topic != LIKE) {
+            return heard;
+        }
+
+        var m = s_followUp.Match(heard);
+        if (!m.Success) {
+            return heard;
+        }
+
+        var x = m.Groups["x"].Value.Trim();
+        if (x.Equals("you", StringComparison.OrdinalIgnoreCase) || x.Equals("u", StringComparison.OrdinalIgnoreCase)) {
+            return heard;
+        }
+
+        var kind = friend.TopicKind == "school" && !Has(x, "school") ? " school" : "";
+        return $"do you like {x}{kind}?";
+    }
+
+    private static string Cap(string s) => string.IsNullOrEmpty(s) ? s : char.ToUpperInvariant(s[0]) + s[1..];
+
+    private static string TopicKindOf(string text)
+        => Has(text, "school") ? "school" : Has(text, "world") ? "world" : Has(text, "spell", "card") ? "spell"
+         : Has(text, "boss", "creature", "monster", "enemy") ? "creature" : Has(text, "area", "zone", "place") ? "area" : "";
 
     /// <summary>
     /// His favorites: the same answer every time (a personality, 2026-11-14), true to a Balance wizard and to the worlds he
@@ -597,6 +721,22 @@ internal static class BotSocial {
         }
     }
 
+    // Bots that already said "brb, fighting" in the battle they are in now (cleared when they are seen out of battle).
+    private static readonly Dictionary<string, DateTime> s_battleNoted = new(StringComparer.OrdinalIgnoreCase);
+
+    // True the first time in a battle (and again after 5 minutes, should the end of a battle be missed).
+    private static bool FirstBattleNote(string bot) {
+        lock (s_battleNoted) {
+            var key = bot ?? "";
+            if (s_battleNoted.TryGetValue(key, out var at) && DateTime.UtcNow - at < TimeSpan.FromMinutes(5)) {
+                return false;
+            }
+
+            s_battleNoted[key] = DateTime.UtcNow;
+            return true;
+        }
+    }
+
     private static Reply Compose(Self self, Friend friend, string intent, string text, bool typed, bool whisper, bool welcomeBack) {
         var who = string.IsNullOrWhiteSpace(friend.Name) ? "friend" : friend.Name.Split(' ')[0];
         var quest = string.IsNullOrWhiteSpace(self.Quest) ? null : self.Quest;
@@ -621,12 +761,18 @@ internal static class BotSocial {
                 $"{friend.Name} asked to help while I am in a battle, so I welcome them in.", "yes");
         }
 
-        if (self.InBattle && intent is not (QUEST or STEP or AGAIN or BOT or RUDE or ACTIVITY)) {
-            return intent is BYE or THANKS
-                ? new Reply(Pick(self.Bot, "battle-short", "brb, fighting!", "One sec, mid-battle!", "In a fight, back soon!"), intent,
-                    $"{friend.Name} said something while I am in a battle, so I keep it short.", intent == BYE ? "bye" : "thanks")
-                : new Reply(Pick(self.Bot, "battle-short", "brb, fighting!", "One sec, mid-battle!", "In a fight, back soon!"), intent,
-                    $"{friend.Name} talked to me mid-battle, so I say I'm fighting and answer after.");
+        // In a battle he still answers (Niduus, 2026-11-14: every line got "brb, fighting!", even "what is your name").
+        // He says he is fighting once a battle, on a goodbye or a thanks, and answers everything else as usual.
+        if (self.InBattle && intent is BYE or THANKS) {
+            if (FirstBattleNote(self.Bot)) {
+                return new Reply(Pick(self.Bot, "battle-short", "brb, fighting!", "One sec, mid-battle!", "In a fight, back soon!"), intent,
+                    $"{friend.Name} said something while I am in a battle, so I keep it short.", intent == BYE ? "bye" : "thanks");
+            }
+        }
+        else if (!self.InBattle) {
+            lock (s_battleNoted) {
+                s_battleNoted.Remove(self.Bot ?? "");
+            }
         }
 
         string line;
@@ -665,6 +811,20 @@ internal static class BotSocial {
                 line = Pick(self.Bot, "school", $"{self.School}! Balance of all things.", $"I'm a {self.School} wizard.", $"{self.School}, the best of every school, if you ask me.");
                 why = $"{friend.Name} asked my school.";
                 break;
+            case ASKER: {
+                var low = (text ?? "").ToLowerInvariant();
+                var known = DateTime.UtcNow - friend.First;
+                var since = known.TotalDays >= 2 ? $"{known.TotalDays:0} days" : known.TotalHours >= 2 ? $"{known.TotalHours:0} hours" : "a little while";
+                var together = friend.BattlesTogether > 0 ? $" We've fought {friend.BattlesTogether} battle{(friend.BattlesTogether == 1 ? "" : "s")} together." : "";
+                line = Has(low, "level") ? self.Act?.Invoke($"asker:{s_askerId}:level") ?? "I can't see your level from here, sorry!"
+                    : Has(low, "where am i", "what world am i") ? self.Act?.Invoke($"asker:{s_askerId}:where") ?? "I can't see where you are from here."
+                    : Has(low, "school") ? friend.School.Length > 0 ? $"You told me you're {Cap(friend.School)}!" : self.Act?.Invoke($"asker:{s_askerId}:school") ?? "You haven't told me yet. What school are you?"
+                    : Has(low, "how long", "when did we meet", "how did we meet", "are we friends") ? $"We met {since} ago and we've talked {friend.Talks} times.{together}"
+                    : Has(low, "know me", "remember me") ? $"Of course, {friend.Name}! We met {since} ago.{together}"
+                    : string.IsNullOrWhiteSpace(friend.Name) ? "I can't see your name from here, sorry!" : $"You're {friend.Name}!";
+                why = $"{friend.Name} asked about themselves, so I answer from what I can see in the game (their wizard, never their account).";
+                break;
+            }
             case NAME:
                 line = Pick(self.Bot, "name", $"I'm {self.Name}!", $"{self.Name}, nice to meet you!", $"Call me {self.Name}.");
                 why = $"{friend.Name} asked my name.";
@@ -697,6 +857,7 @@ internal static class BotSocial {
                         ? self.Opinion?.Invoke("like:" + subject, false) ?? $"I haven't seen enough of {subject} yet to say."
                         : "I haven't seen enough yet to say.";
                 why = $"{friend.Name} asked what I like. My opinions come only from what happened to me; without enough of it I say so.";
+                friend.TopicKind = TopicKindOf(text ?? "") is { Length: > 0 } kind ? kind : friend.TopicKind;
                 break;
             }
             case ABILITY: {
@@ -743,6 +904,7 @@ internal static class BotSocial {
                     : Has(t, "pet") ? "pet"
                     : Has(t, "mount") ? "mount"
                     : Has(t, "potions") ? "potions"
+                    : Has(t, "gold", "money", "coins", "rich") ? "gold"
                     : "stats-body";
                 line = self.Act?.Invoke("fact:" + key) ?? "Not sure, sorry!";
                 why = $"{friend.Name} asked about me ({key}), so I answer from my real data.";
@@ -907,7 +1069,7 @@ internal static class BotSocial {
         }
 
         // Sometimes a short question back (never twice in a row, never when they're leaving or rude).
-        if (intent is GREETING or HOW_ARE_YOU or QUEST or COMPLIMENT && s_random.NextDouble() < 0.35 && friend.Pending.Length == 0) {
+        if (!self.InBattle && intent is GREETING or HOW_ARE_YOU or QUEST or COMPLIMENT && s_random.NextDouble() < 0.35 && friend.Pending.Length == 0) {
             if (friend.School.Length == 0) {
                 line += " " + Pick(self.Bot, "ask-school", "What school are you?", "What school are you, by the way?");
                 friend.Pending = SCHOOL;
@@ -1059,6 +1221,104 @@ internal static class BotSocial {
 
     // The chat checks (BotSocialChecks) run without touching the real memory file.
     internal static bool NoSave;
+
+    // ---------------------------------------------------------------------
+    // Learning what lands: words he read one way, and whether the player took the answer well
+    // ---------------------------------------------------------------------
+
+    private static readonly Dictionary<string, Dictionary<string, Dictionary<string, int>>> s_learned = new(StringComparer.OrdinalIgnoreCase);
+
+    private static string Norm(string text)
+        => System.Text.RegularExpressions.Regex.Replace((text ?? "").ToLowerInvariant(), @"[^a-z0-9' ]", " ").Trim() is var t
+            ? System.Text.RegularExpressions.Regex.Replace(t, @"\s+", " ") : "";
+
+    private static void Feedback(string bot, Friend friend, string text) {
+        if (friend.LastHeard.Length == 0 || friend.LastIntent.Length == 0 || DateTime.UtcNow - friend.LastAnsweredAt > TimeSpan.FromSeconds(90)) {
+            return;
+        }
+
+        var t = Norm(text);
+        var raw = (text ?? "").Trim();
+        var bad = raw is "?" or "??" or "???" || Has(t, "what do you mean", "huh", "that's not what i", "thats not what i", "no i meant", "not what i asked",
+            "wrong", "that makes no sense", "makes no sense", "what are you talking about", "i didn't ask", "i didnt ask") || t is "what" or "wut" or "wat";
+        var good = !bad && (t is "ok" or "okay" or "k" or "cool" or "nice" or "thanks" or "ty" or "thx" or "lol" or "haha" or "true" or "good" or "awesome" or "great"
+                            or "neat" or "oh nice" or "gotcha" or "got it" or "makes sense" or "fair" or "ah ok" or "oh ok" or "i see");
+        if (!bad && !good) {
+            return;
+        }
+
+        lock (s_learned) {
+            var phrases = LearnedOf(bot);
+            if (!phrases.TryGetValue(friend.LastHeard, out var intents)) {
+                phrases[friend.LastHeard] = intents = new Dictionary<string, int>(StringComparer.Ordinal);
+            }
+
+            intents[friend.LastIntent] = intents.GetValueOrDefault(friend.LastIntent) + (good ? 1 : -1);
+            SaveLearned(bot);
+        }
+
+        friend.LastHeard = "";
+    }
+
+    // The way these exact words were read before that players took well (score above 0), if any.
+    private static string Learned(string bot, string heard) {
+        var key = Norm(heard);
+        lock (s_learned) {
+            return LearnedOf(bot).TryGetValue(key, out var intents)
+                ? intents.Where(p => p.Value > 0 && p.Key is not (QUESTION or CHAT)).OrderByDescending(p => p.Value).Select(p => p.Key).FirstOrDefault()
+                : null;
+        }
+    }
+
+    private static void NoteMiss(string bot, string heard) {
+        if (NoSave || string.IsNullOrWhiteSpace(heard)) {
+            return;
+        }
+
+        try {
+            Directory.CreateDirectory(Path.GetFullPath(FOLDER));
+            File.AppendAllText(Path.Combine(FOLDER, $"chat-misses-{bot}.txt"), $"{DateTime.Now:yyyy-MM-dd HH:mm} {heard.Trim()}{Environment.NewLine}");
+        }
+        catch (Exception ex) {
+            Logger.Debug("Bots: a chat miss of {0} could not be written: {1}", Logger.Args(bot, ex.Message));
+        }
+    }
+
+    private static Dictionary<string, Dictionary<string, int>> LearnedOf(string bot) {
+        if (s_learned.TryGetValue(bot ?? "", out var known)) {
+            return known;
+        }
+
+        var loaded = new Dictionary<string, Dictionary<string, int>>(StringComparer.Ordinal);
+        if (!NoSave) {
+            try {
+                var path = Path.Combine(FOLDER, $"chat-learned-{bot}.json");
+                if (File.Exists(path) && JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, int>>>(File.ReadAllText(path)) is { } read) {
+                    loaded = new Dictionary<string, Dictionary<string, int>>(read, StringComparer.Ordinal);
+                }
+            }
+            catch (Exception ex) {
+                Logger.Debug("Bots: the chat lessons of {0} could not be read: {1}", Logger.Args(bot, ex.Message));
+            }
+        }
+
+        s_learned[bot ?? ""] = loaded;
+        return loaded;
+    }
+
+    private static void SaveLearned(string bot) {
+        if (NoSave) {
+            return;
+        }
+
+        try {
+            Directory.CreateDirectory(Path.GetFullPath(FOLDER));
+            File.WriteAllText(Path.Combine(FOLDER, $"chat-learned-{bot}.json"), JsonSerializer.Serialize(LearnedOf(bot), new JsonSerializerOptions { WriteIndented = true }));
+        }
+        catch (Exception ex) {
+            Logger.Debug("Bots: the chat lessons of {0} could not be written: {1}", Logger.Args(bot, ex.Message));
+        }
+    }
 
     private static void Save(string bot) {
         if (NoSave) {
