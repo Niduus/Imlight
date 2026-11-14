@@ -891,7 +891,7 @@ internal static class OverlayHost {
         private int _drawnVersion = -1;
         private int _drawnMap = -1;
         private (int W, int H, double Scale) _drawnSize;
-        private (bool Full, bool Note) _drawnLayout;
+        private ((bool Full, bool Note) Mine, (bool Full, bool Note) Ultimus) _drawnLayout;
         private int _drawnQuests = -1;
         private int _drawnUltimus = -1;
         private Control? _picture;
@@ -1129,7 +1129,7 @@ internal static class OverlayHost {
 
             // Each Quest Tracker line (a quest picks it, a list's name folds it), under the full screen map's buttons
             // and not while the full screen map covers the game.
-            if (OverlayMinimapData.FullZoom(game.ToInt64()) is null) {
+            if (OverlayMinimapData.FullZoom(game.ToInt64()) is null && OverlayMinimapData.FullZoom(OverlayUltimusData.KEY) is null) {
                 foreach (var tracker in Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(picture).OfType<QuestTrackerView>()) {
                     foreach (var (area, line) in tracker.Lines(picture)) {
                         found.Add((new OverlayElement { Kind = OverlayElement.BUTTON, Action = line.Action, Command = line.Value, Visible = true }, false, Pixels(area)));
@@ -1246,7 +1246,7 @@ internal static class OverlayHost {
             var moving = OverlayMinimapData.Moving(game.ToInt64()) || OverlayMinimapData.Moving(OverlayUltimusData.KEY);
             // Ultimus's quest box and battle box changed: laid out again.
             var ultimus = OverlayUltimusData.Wanted ? OverlayUltimusData.Version : _drawnUltimus;
-            var layout = OverlayMinimapData.LayoutOf(game.ToInt64());
+            var layout = (OverlayMinimapData.LayoutOf(game.ToInt64()), OverlayMinimapData.LayoutOf(OverlayUltimusData.KEY));
             // A Quest Tracker's quests, pick or folding changed: laid out again too.
             var quests = OverlayQuestData.Wanted.Length > 0 ? OverlayQuestData.Version : _drawnQuests;
             if (version != _drawnVersion || layout != _drawnLayout || quests != _drawnQuests || ultimus != _drawnUltimus || _drawnSize != (width, height, scale)
@@ -1762,6 +1762,8 @@ internal static class OverlayHost {
             s_nextUltimus = DateTime.UtcNow + s_ultimusEvery;
             await RemoteAdminWire.WriteAsync(tls, new JsonObject {
                 ["op"] = "ultimus", ["have"] = s_have, ["groundKey"] = OverlayMinimapData.GroundKey(OverlayUltimusData.KEY), ["shapes"] = true,
+                // His full screen map reaches farther, like the player's.
+                ["reach"] = (OverlayMinimapData.FullZoom(OverlayUltimusData.KEY) ?? 0) * 2,
             }, null, stop);
             using var answerWait = CancellationTokenSource.CreateLinkedTokenSource(stop);
             answerWait.CancelAfter(TimeSpan.FromSeconds(10));
