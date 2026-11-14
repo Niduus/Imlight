@@ -62,8 +62,6 @@ internal sealed partial class UltimusDirectorActor {
 
     // Going in at full health against a creature that beat it or takes most of its health.
     private bool _toughFoeNext;
-    private const double TOUGH_READY_HEALTH = 0.95;
-    private const double TOUGH_READY_MANA = 0.6;
 
     private static double HealthShare(UltimusMember.Status member) =>
         member.Wizard?.GameStats is { } stats ? stats.m_currentHitpoints / (double) Math.Max(1, stats.m_baseHitpoints + stats.m_bonusHitpoints) : 1;
@@ -79,7 +77,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         Think(foe.Tough
-            ? $"I remember {foe.Describe()}. It is a tough one for me, so I heal up to full health and mana before I go in."
+            ? $"I remember {foe.Describe()}. It is a tough one for me, so I heal up before I go in ({UltimusPlaybook.Cite("Quest.ToughFoeHealth")})."
             : $"I remember {foe.Describe()}. I can take it as I am.", "foe|" + foe.Template);
     }
 
@@ -192,6 +190,61 @@ internal sealed partial class UltimusDirectorActor {
         var t = Math.Clamp((((px - ax) * dx) + ((py - ay) * dy)) / MathF.Max(1, (dx * dx) + (dy * dy)), 0, 1);
 
         return UltimusPlanner.Far(px, py, ax + (dx * t), ay + (dy * t));
+    }
+
+    // ---------------------------------------------------------------------
+    // Gear, by a Balance solo wizard's goals (UltimusPlaybook [Gear])
+    // ---------------------------------------------------------------------
+
+    private static BotGear.Goals GearGoals(Imlight.CoreLib.WizardData.Models.Player.Wizard wizard) {
+        var level = wizard?.MagicSchoolBehavior?.Level ?? 1;
+        double P(string name) => UltimusPlaybook.Value("Gear." + name);
+
+        return new BotGear.Goals(
+            Math.Min(P("AccuracyMax"), P("AccuracyFloor") + (P("AccuracyPerLevel") * level)),
+            Math.Min(P("ResistMax"), P("ResistFloor") + (P("ResistPerLevel") * level)),
+            P("HealthPerLevel") * level,
+            P("PowerPipGoal"), P("DamageWeight"), P("PierceWeight"), P("FloorWeight"), P("OverFloorShare"));
+    }
+
+    private void ThinkAboutSwap(UltimusMember.Status member, BotGear.Swap swap, BotGear.Goals goals) {
+        var worn = swap.Worn?.Name ?? "nothing";
+        Note(member.Role, $"{member.Name} weighs {swap.Piece.Name} against {worn} for its whole outfit (gain {swap.Gain:0.#}).");
+        Think($"I put on {swap.Piece.Name} instead of {worn}: {swap.Why}. As a Balance wizard alone I want enough resist, accuracy " +
+              $"and health first, power pips toward {goals.PowerPips:0}%, then damage and pierce ({UltimusPlaybook.Cite("Gear.FloorWeight")}).",
+            "swap|" + swap.Piece.Id);
+    }
+
+    // Once per level: what its outfit gives against what it wants, and what it is short of.
+    private int _outfitReviewedAt = -1;
+
+    private void ReviewOutfit(UltimusMember.Status member, Imlight.CoreLib.WizardData.Models.Player.Wizard wizard) {
+        var level = wizard.MagicSchoolBehavior?.Level ?? 1;
+        if (_outfitReviewedAt == level) {
+            return;
+        }
+
+        _outfitReviewedAt = level;
+        var goals = GearGoals(wizard);
+        var totals = BotGear.TotalsOf(BotGear.Outfit(wizard).Values, BotGear.SchoolOf(wizard));
+        var short_ = new List<string>();
+        if (totals.Resist < goals.Resist) {
+            short_.Add("resist");
+        }
+
+        if (totals.Accuracy < goals.Accuracy) {
+            short_.Add("accuracy");
+        }
+
+        if (totals.Health < goals.Health) {
+            short_.Add("health");
+        }
+
+        Think($"My outfit at level {level}: {totals.Describe(goals)}. " +
+              (short_.Count == 0
+                  ? "Every floor is met, so I look for damage and pierce next."
+                  : $"I am short of {string.Join(" and ", short_)}, so pieces with those come first in shops and drops."),
+            "outfit|" + level);
     }
 
     private bool ToughFoeNow(UltimusPlanner.Target target) => _toughFoeNext && target?.Kind == UltimusPlanner.FIGHT && !CombatDuelComponent.IsInBattle(_team[0].GlobalId);

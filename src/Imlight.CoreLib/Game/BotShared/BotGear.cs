@@ -367,15 +367,6 @@ internal static class BotGear {
     // ---------------------------------------------------------------------
 
     /// <summary>Whether a wizard of this school and level may wear it.</summary>
-    /// <summary>
-    /// The wizard's own school's Adept set, which a new wizard starts out wearing: it is worn whatever the wizard's level
-    /// ("L30" is only in its file names), so a piece taken off is put back on (Niduus, 2026-11-13: "still curious as to why
-    /// it doesn't wear the robe": the robe, once off, was held to level 30 and never went back on).
-    /// </summary>
-    internal static bool IsStarterAdept(Piece piece, string school)
-        => piece is not null && Imlight.CoreLib.Shared.Character.AdeptStarterGear.IsAdept(piece.Id)
-           && (piece.SchoolNeeded.Length == 0 || piece.SchoolNeeded.Equals(school, StringComparison.OrdinalIgnoreCase));
-
     internal static bool CanWear(Piece piece, string school, int level)
         => piece is not null && piece.Level <= level
            && (piece.SchoolNeeded.Length == 0 || piece.SchoolNeeded.Equals(school, StringComparison.OrdinalIgnoreCase));
@@ -405,23 +396,7 @@ internal static class BotGear {
 
         var score = 0.0;
         foreach (var stat in piece.Stats) {
-            var own = stat.School.Length > 0 && stat.School.Equals(school, StringComparison.OrdinalIgnoreCase);
-            var all = stat.School.Length == 0;
-            // Its own school's stats count fully; every school's a little less (class over universal); other schools' a
-            // resist still helps a bit, the rest not at all.
-            var share = own ? 1.0 : all ? 0.8 : stat.Kind.Contains("ReduceDamage", StringComparison.Ordinal) ? (style == BotStyle.Solo ? 0.3 : 0.15) : 0;
-            // Alone, its hits land as the damage types of its spells: those schools' damage and pierce count by how much
-            // of its damage they carry (its own school's by that too, but never under half).
-            if (style == BotStyle.Solo && !own && stat.School.Length > 0 && stat.Kind.Contains("ReduceDamage", StringComparison.Ordinal)
-                && SoloResistMix.TryGetValue(stat.School, out var hitBy)) {
-                share = Math.Max(share, Math.Min(0.8, hitBy));
-            }
-
-            if (style == BotStyle.Solo && stat.School.Length > 0 && s_hitKinds.Contains(stat.Kind)) {
-                var mix = SoloDamageMix.TryGetValue(stat.School, out var part) ? part : 0;
-                share = own ? Math.Max(0.5, mix) : Math.Max(share, mix);
-            }
-
+            var share = Share(stat, school, style);
             if (share > 0) {
                 score += share * stat.Value * Weight(stat.Kind, style);
             }
@@ -438,6 +413,27 @@ internal static class BotGear {
         }
 
         return score;
+    }
+
+    private static double Share(Stat stat, string school, BotStyle style) {
+        var own = stat.School.Length > 0 && stat.School.Equals(school, StringComparison.OrdinalIgnoreCase);
+        var all = stat.School.Length == 0;
+        // Its own school's stats count fully; every school's a little less (class over universal); other schools' a
+        // resist still helps a bit, the rest not at all.
+        var share = own ? 1.0 : all ? 0.8 : stat.Kind.Contains("ReduceDamage", StringComparison.Ordinal) ? (style == BotStyle.Solo ? 0.3 : 0.15) : 0;
+        // Alone, its hits land as the damage types of its spells: those schools' damage and pierce count by how much
+        // of its damage they carry (its own school's by that too, but never under half).
+        if (style == BotStyle.Solo && !own && stat.School.Length > 0 && stat.Kind.Contains("ReduceDamage", StringComparison.Ordinal)
+            && SoloResistMix.TryGetValue(stat.School, out var hitBy)) {
+            share = Math.Max(share, Math.Min(0.8, hitBy));
+        }
+
+        if (style == BotStyle.Solo && stat.School.Length > 0 && s_hitKinds.Contains(stat.Kind)) {
+            var mix = SoloDamageMix.TryGetValue(stat.School, out var part) ? part : 0;
+            share = own ? Math.Max(0.5, mix) : Math.Max(share, mix);
+        }
+
+        return share;
     }
 
     private static double Weight(string kind, BotStyle style) => kind switch {
@@ -511,8 +507,7 @@ internal static class BotGear {
             }
 
             var best = items.Select(i => (Item: i, Piece: Read((uint) Math.Min((ulong) i.m_templateID, uint.MaxValue))))
-                .Where(x => x.Piece is not null && x.Piece.Slot == slot.ToString() && !PartlyRead(x.Piece.Id)
-                            && (CanWear(x.Piece, school, level) || IsStarterAdept(x.Piece, school)))
+                .Where(x => x.Piece is not null && x.Piece.Slot == slot.ToString() && CanWear(x.Piece, school, level) && !PartlyRead(x.Piece.Id))
                 .Select(x => (x.Item, x.Piece, Score: Score(x.Piece, school, style)))
                 .OrderByDescending(x => x.Score).FirstOrDefault();
             if (best.Item is not null && best.Score > wearing + 0.5) {
@@ -521,6 +516,146 @@ internal static class BotGear {
         }
 
         return found;
+    }
+
+    // ---------------------------------------------------------------------
+    // Alone, by goals (Niduus, 2026-11-14: "As a balance player, he would want gear that fits him better overall ... Enough
+    // accuracy. Enough resist, Enough HP, attempt to gain 100% power pip chance with Damage being the top priority along
+    // side pierce. Granted that he is a solo quester, his priority is to survive while also being able to do damage")
+    // ---------------------------------------------------------------------
+
+    /// <summary>What a solo wizard wants from its whole outfit (Ultimus's playbook gives the numbers).</summary>
+    internal sealed record Goals(double Accuracy, double Resist, double Health, double PowerPips, double DamageWeight, double PierceWeight,
+                                 double FloorWeight, double OverFloorShare);
+
+    /// <summary>The outfit's totals that the goals look at (percent, health points), each school's stat by its share.</summary>
+    internal sealed record Totals(double Damage, double Pierce, double Accuracy, double Resist, double Health, double PowerPips, double Other) {
+        internal string Describe(Goals goals) =>
+            $"damage {Damage:0.#}%, pierce {Pierce:0.#}%, accuracy {Accuracy:0.#}% (want {goals.Accuracy:0.#}), resist {Resist:0.#}% (want {goals.Resist:0.#}), " +
+            $"health +{Health:0} (want +{goals.Health:0}), power pip {PowerPips:0.#}% (toward {goals.PowerPips:0})";
+    }
+
+    /// <summary>A change of one piece and why, in words.</summary>
+    internal sealed record Swap(WizClientObjectItem Item, string Slot, Piece Piece, Piece Worn, double Gain, Totals Before, Totals After, string Why);
+
+    internal static Totals TotalsOf(IEnumerable<Piece> pieces, string school) {
+        double damage = 0, pierce = 0, accuracy = 0, resist = 0, health = 0, power = 0, other = 0;
+        foreach (var piece in pieces.Where(p => p is not null)) {
+            foreach (var stat in piece.Stats) {
+                // Every-school stats count fully in the totals (they are the wizard's own as much as its school's).
+                var share = stat.School.Length == 0 ? 1.0 : Share(stat, school, BotStyle.Solo);
+                if (share <= 0) {
+                    continue;
+                }
+
+                var value = share * stat.Value;
+                switch (stat.Kind) {
+                    case "Damage": damage += value; break;
+                    case "ArmorPiercing": pierce += value; break;
+                    case "Accuracy": accuracy += value; break;
+                    case "ReduceDamage": resist += value; break;
+                    case "MaxHealth": health += value; break;
+                    case "PowerPips": power += value; break;
+                    default: other += value * Weight(stat.Kind, BotStyle.Solo); break;
+                }
+            }
+
+            if (piece.Slot == nameof(EquipmentSlotType.Deck)) {
+                other += (piece.DeckSpells * 0.6) + (piece.DeckSchool.Equals(school, StringComparison.OrdinalIgnoreCase) ? piece.DeckSchoolCopies * 3 : 0);
+            }
+        }
+
+        return new Totals(damage, pierce, accuracy, resist, health, power, other);
+    }
+
+    /// <summary>How good an outfit is for the goals: under a floor counts most, damage and pierce lead above them.</summary>
+    internal static double Value(Totals t, Goals g) {
+        double Floor(double have, double want, double weight) => (weight * Math.Min(have, want)) + (weight * g.OverFloorShare * Math.Max(0, have - want));
+
+        return Floor(t.Resist, g.Resist, g.FloorWeight)
+               + Floor(t.Accuracy, g.Accuracy, g.FloorWeight * 0.75)
+               // Health: points, not percent; 25 health under the floor is about one point of resist.
+               + Floor(t.Health, g.Health, g.FloorWeight / 25)
+               + (Math.Min(t.PowerPips, g.PowerPips) * 2.5)
+               + (t.Damage * g.DamageWeight) + (t.Pierce * g.PierceWeight) + t.Other;
+    }
+
+    /// <summary>The worn outfit, a piece per slot (two rings count as the one ring slot the game has).</summary>
+    internal static Dictionary<EquipmentSlotType, Piece> Outfit(Wizard wizard) {
+        var outfit = new Dictionary<EquipmentSlotType, Piece>();
+        foreach (var slot in Slots) {
+            var item = wizard?.EquipmentBehavior?.GetItemInSlot(slot);
+            outfit[slot] = item is null ? null : Read((uint) Math.Min((ulong) item.m_templateID, uint.MaxValue));
+        }
+
+        return outfit;
+    }
+
+    /// <summary>
+    /// The one swap from the backpack that best brings the whole outfit toward the goals, with the reason; null when the
+    /// outfit is as good as the backpack allows.
+    /// </summary>
+    internal static Swap BestSwap(Wizard wizard, Goals goals) {
+        if (wizard?.InventoryBehavior?.Items is not { } items) {
+            return null;
+        }
+
+        var school = SchoolOf(wizard);
+        var level = LevelOf(wizard);
+        var outfit = Outfit(wizard);
+        var before = TotalsOf(outfit.Values, school);
+        var now = Value(before, goals);
+        Swap best = null;
+        foreach (var slot in Slots) {
+            var worn = outfit[slot];
+            if (worn is not null && PartlyRead(worn.Id)) {
+                continue;
+            }
+
+            foreach (var item in items) {
+                var piece = item is null ? null : Read((uint) Math.Min((ulong) item.m_templateID, uint.MaxValue));
+                if (piece is null || piece.Slot != slot.ToString() || !CanWear(piece, school, level) || PartlyRead(piece.Id)
+                    || worn is not null && worn.Id == piece.Id) {
+                    continue;
+                }
+
+                var trial = new Dictionary<EquipmentSlotType, Piece>(outfit) { [slot] = piece };
+                var after = TotalsOf(trial.Values, school);
+                var gain = Value(after, goals) - now;
+                if (gain > 0.5 && (best is null || gain > best.Gain)) {
+                    best = new Swap(item, slot.ToString(), piece, worn, gain, before, after, Reason(before, after, goals));
+                }
+            }
+        }
+
+        return best;
+    }
+
+    // What a swap changes, in words: the needs it meets first, then damage and pierce.
+    private static string Reason(Totals a, Totals b, Goals g) {
+        var parts = new List<string>();
+        void Need(string what, double from, double to, double want, string unit) {
+            if (Math.Abs(to - from) < 0.05) {
+                return;
+            }
+
+            var under = from < want ? (to >= want ? " and now meets what I want" : $", still short of {want:0.#}{unit}") : "";
+            parts.Add($"{what} {from:0.#}{unit} to {to:0.#}{unit}{under}");
+        }
+
+        Need("resist", a.Resist, b.Resist, g.Resist, "%");
+        Need("accuracy", a.Accuracy, b.Accuracy, g.Accuracy, "%");
+        Need("health", a.Health, b.Health, g.Health, "");
+        Need("power pip", a.PowerPips, b.PowerPips, g.PowerPips, "%");
+        if (Math.Abs(b.Damage - a.Damage) >= 0.05) {
+            parts.Add($"damage {a.Damage:0.#}% to {b.Damage:0.#}%");
+        }
+
+        if (Math.Abs(b.Pierce - a.Pierce) >= 0.05) {
+            parts.Add($"pierce {a.Pierce:0.#}% to {b.Pierce:0.#}%");
+        }
+
+        return parts.Count == 0 ? "a better deck or small extras" : string.Join(", ", parts);
     }
 
     /// <summary>

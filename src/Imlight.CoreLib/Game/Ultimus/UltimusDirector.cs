@@ -381,9 +381,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     private readonly Dictionary<ulong, DateTime> _stonesUsed = [];
     private readonly List<(DateTime At, string Zone)> _zoneChanges = [];
 
-    // Alone, it needs more in the tank than a team member before a fight.
-    private const double READY_HEALTH = 0.75;
-    private const double READY_MANA = 0.25;
+    // Alone, it needs more in the tank than a team member before a fight: its playbook's Quest.ReadyHealth and ReadyMana.
 
     private const float SAFE_FROM_MOBS = 900f;
 

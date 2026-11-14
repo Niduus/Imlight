@@ -42,8 +42,9 @@ internal static class UltimusTactics {
 
     private sealed record InHand(int Index, Card Card, bool Castable);
 
-    private const float HURT = 0.6f;
-    private const float DANGER = 0.4f;
+    // When it heals (its playbook, Battle.HealAt and Battle.BigHealAt; Niduus can change them, live).
+    private static float HURT => (float) UltimusPlaybook.Value("Battle.HealAt");
+    private static float DANGER => (float) UltimusPlaybook.Value("Battle.BigHealAt");
 
     internal static Choice Decide(CombatDuelSubCircle me, IReadOnlyList<CombatDuelSubCircle> circles, CombatResolver resolver) {
         var allies = circles.Where(c => c.OccupiedTeam == me.OccupiedTeam && c.IsAlive).ToList();
