@@ -1079,6 +1079,13 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                 return;
             }
 
+            // A same-name copy offering only its own quest chat, never the step's talk, is someone else of that name (as Ultimus).
+            if (t.Kind == QuestTeamPlanner.TALK && !options.Any(o => string.Equals(o.Service, "QuestPersonaGoalService", StringComparison.OrdinalIgnoreCase))
+                && BotShared.BotPeople.OfferedNothing(member.ZoneActor, t.Key, t.Template, t.GlobalId, index)) {
+                Note(member.Role, $"{t.What}: the person here has the same name but has nothing for this step: looks for the right one.");
+                return;
+            }
+
             var option = BotOptions.Pick([.. services.SelectMany(s => options.Where(o => string.Equals(o.Service, s, StringComparison.OrdinalIgnoreCase)))],
                 t.Quest, TimesClicked(key), t.Goal, member.CharId);
             if (option.Service is null) {

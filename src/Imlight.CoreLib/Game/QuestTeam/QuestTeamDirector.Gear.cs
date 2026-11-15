@@ -45,6 +45,11 @@ internal sealed partial class QuestTeamDirectorActor {
     private static (List<string[]> Names, Dictionary<uint, int[]> Of)? s_vendorZones;
     private QuestTeamPlanner.Target _shopTrip;
     private readonly HashSet<uint> _shopSkipped = [];
+    // When the team first set off to buy a piece in another area, and pieces let go for a while after too long a try.
+    private readonly Dictionary<uint, DateTime> _shopTripSince = [];
+    private readonly Dictionary<uint, DateTime> _shopGaveUp = [];
+    private static readonly TimeSpan SHOP_TRIP_BUDGET = TimeSpan.FromMinutes(15);
+    private static readonly TimeSpan SHOP_GIVE_UP_FOR = TimeSpan.FromHours(3);
     private readonly HashSet<string> _mountGiven = [];
 
     // A member alone in a solo instance fights on its own: a balanced deck of hits, heals and shields, whatever its role.
@@ -338,7 +343,8 @@ internal sealed partial class QuestTeamDirectorActor {
             var gold = (int) ((wizard.GameStats?.m_currentGold ?? 0) * (1 - GOLD_KEPT));
             var owned = (wizard.InventoryBehavior?.Items ?? []).Select(i => (uint) Math.Min((ulong) i.m_templateID, uint.MaxValue)).ToHashSet();
             foreach (var (piece, vendors, _) in BotGear.ShopUpgrades(wizard, StyleOf(member), gold)) {
-                if (owned.Contains(piece.Id) || _shopSkipped.Contains(piece.Id)) {
+                if (owned.Contains(piece.Id) || _shopSkipped.Contains(piece.Id)
+                    || (_shopGaveUp.TryGetValue(piece.Id, out var until) && DateTime.UtcNow < until)) {
                     continue;
                 }
 
@@ -353,6 +359,22 @@ internal sealed partial class QuestTeamDirectorActor {
                 // Else one in another area of this world.
                 var zone = VendorZones(vendors).FirstOrDefault(z => string.Equals(z.Split('/')[0], world, StringComparison.OrdinalIgnoreCase));
                 if (zone is not null && QuestTeamPlanner.Travel(leader, zone, $"shopping for {member.Name}'s {piece.Name}") is { Problem.Length: 0 } way) {
+                    // A shopping trip has a time budget, as Ultimus's side trips do: one that has not bought the piece in
+                    // SHOP_TRIP_BUDGET is let go for a few hours, not started again and again (his log, 2026-11-15: 29 trips
+                    // for Freya's Simple Sapphire Ring from 6 to 9:30 AM, never bought, while "Ghost Hunters" and
+                    // "Skeleton Crew" waited over an hour each).
+                    if (!_shopTripSince.TryGetValue(piece.Id, out var since)) {
+                        _shopTripSince[piece.Id] = since = DateTime.UtcNow;
+                    }
+
+                    if (DateTime.UtcNow - since > SHOP_TRIP_BUDGET) {
+                        _shopTripSince.Remove(piece.Id);
+                        _shopGaveUp[piece.Id] = DateTime.UtcNow + SHOP_GIVE_UP_FOR;
+                        Note(member.Role, $"{member.Name} has tried for {(int) SHOP_TRIP_BUDGET.TotalMinutes} minutes to buy {piece.Name} in " +
+                                          $"{QuestTeamText.Zone(zone)} without getting it: lets it go for {(int) SHOP_GIVE_UP_FOR.TotalHours} hours and goes on with the quests.");
+                        continue;
+                    }
+
                     return way;
                 }
             }

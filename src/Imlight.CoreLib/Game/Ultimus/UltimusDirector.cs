@@ -1164,6 +1164,14 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             }
 
             var matching = services.SelectMany(s => options.Where(o => string.Equals(o.Service, s, StringComparison.OrdinalIgnoreCase))).ToList();
+            // A same-name copy that offers only its own quest chat (offer or underway), never the step's talk, is someone else
+            // of that name too (his log, 2026-11-15: the roof's Watson offered "underway" talk 9 times while "Weird Science"
+            // wanted the Watson of Katzenstein's Lab). BotPeople.OfferedNothing only ever marks a copy, never the step's own person.
+            if (target.Kind == UltimusPlanner.TALK && !matching.Any(o => string.Equals(o.Service, "QuestPersonaGoalService", StringComparison.OrdinalIgnoreCase))
+                && WrongPerson(member, target)) {
+                return;
+            }
+
             var option = BotOptions.Pick(matching, target.Quest, TimesClicked(key), target.Goal, member.CharId);
             if (option.Service is null) {
                 if (WrongPerson(member, target)) {
