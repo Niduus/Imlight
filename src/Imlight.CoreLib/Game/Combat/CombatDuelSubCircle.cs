@@ -1740,6 +1740,9 @@ public partial class CombatDuelSubCircle {
     /// </summary>
     internal int VaultRemainingCount => _combatDeck.VaultRemainingCount;
 
+    /// <summary>How many cards are in the hand now (a treasure card can be drawn while there is room).</summary>
+    internal int HandCount => _combatDeck.LastGivenHand?.Count ?? 0;
+
     /// <summary>
     /// Gets the number of treasure cards currently in the hand.
     /// </summary>

@@ -44,6 +44,7 @@ internal sealed partial class CombatDuelComponent {
     private const string ULTIMUS_DEADLINE_KEY = "UltimusDeadline";
     private readonly Dictionary<int, string> _ultimusPicks = [];
     private readonly HashSet<(int Round, int Slot)> _ultimusDiscarded = [];
+    private readonly HashSet<(int Round, int Slot)> _ultimusDrew = [];
     // The Ultimus circles that have read this battle's enemy decks (said once a battle).
     private readonly HashSet<int> _ultimusScouted = [];
     private int _ultimusDeadlineRound = -1;
@@ -161,10 +162,22 @@ internal sealed partial class CombatDuelComponent {
         }
     }
 
+    // A tough fight: a boss, three or more enemies, his health under half, or the enemies' habits say they take 40% of it this round.
+    private bool UltimusToughFight(CombatDuelSubCircle me, IReadOnlyList<CombatDuelSubCircle> circles) {
+        var enemies = circles.Where(c => c.OccupiedTeam != me.OccupiedTeam && c.IsAlive).ToList();
+        if (enemies.Count == 0) {
+            return false;
+        }
+
+        return enemies.Any(RewrittenAI.IsBoss) || enemies.Count >= 3 || RewrittenAI.HealthShare(me) < 0.5
+               || BotCore.Incoming(enemies, Duel.m_roundNum, c => "").Share >= 0.4;
+    }
+
     private void UltimusPlanningBegins() {
         _ultimusPicks.Clear();
         if (Duel.m_roundNum <= 1) {
             _ultimusScouted.Clear();
+            _ultimusDrew.Clear();
             _ultimusDownSince.Clear();
         }
 
@@ -266,7 +279,27 @@ internal sealed partial class CombatDuelComponent {
             var waiting = circles.Any(c => c.OccupiedTeam == member.OccupiedTeam && c.SlotIndex < member.SlotIndex && c.IsHumanPlayer
                                            && c.IsAlive && c.AddedToDuel && UltimusRole(c) is null && !IsBot(c)
                                            && CombatResolver.GetQueuedAction(c) is null);
+            // His group leader's orders (CombatDuelComponent.UltimusOrders.cs): "you go first" picks without waiting; "let me go
+            // first" waits for the leader's pick, until the last call.
+            waiting = (waiting && !UltimusOrders.GoFirst) || UltimusLeaderStillPicking(member, circles);
             if (waiting && _ultimusDeadlineRound != message.Round) {
+                continue;
+            }
+
+            // An ordered flee or treasure card draw comes before anything else.
+            if (UltimusOrderedFleeOrDraw(member, message.Deadline)) {
+                continue;
+            }
+
+            // Niduus, 2026-11-15: "Let him buy a few treasure cards and play them in tough fights". In a tough fight, with
+            // treasure cards in his deck, none in hand and room for one, he presses Draw (his own game's button, once a
+            // round) and looks at the hand again a moment later, when the card is in it.
+            if (!message.Deadline && UltimusToughFight(member, circles) && member.VaultRemainingCount > 0 && member.TreasureCardsInHand == 0
+                && member.HandCount < 7 && _ultimusDrew.Add((Duel.m_roundNum, member.SlotIndex))
+                && UltimusDirector.ActorOf(UltimusRole(member)) is { } drawer) {
+                UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: a tough fight: draws a treasure card.");
+                drawer.Tell(new UltimusMember.DrawTreasure(), Akka.Actor.ActorRefs.NoSender);
+                Timers.StartSingleTimer(ULTIMUS_THINK_KEY, new UltimusThink(Duel.m_roundNum, false), TimeSpan.FromSeconds(1.5));
                 continue;
             }
 
@@ -296,6 +329,7 @@ internal sealed partial class CombatDuelComponent {
                 choice = new(UltimusTactics.Move.Pass, 0, -1, "could not decide");
             }
 
+            choice = UltimusOrdered(member, circles, choice, moves);
             var pick = $"{choice.Move}:{choice.Card}:{choice.Target}";
             // The same pick is not clicked again, unless at the last call its click never landed.
             if (_ultimusPicks.TryGetValue(member.SlotIndex, out var before) && before == pick

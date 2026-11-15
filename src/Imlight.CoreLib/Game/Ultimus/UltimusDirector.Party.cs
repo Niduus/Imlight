@@ -104,6 +104,12 @@ internal sealed partial class UltimusDirectorActor {
             return null;
         }
 
+        // Told to stay (his group leader, UltimusDirector.Orders.cs): he waits on that spot until told to follow.
+        if (UltimusOrders.Stay is { } stay && OverlayQuestTracker.SameZone(stay.Zone, leader.Zone ?? "")) {
+            return new UltimusPlanner.Target(UltimusPlanner.WAIT, stay.X, stay.Y, $"staying here, as {name} (my group leader) asked",
+                Key: PARTY_KEY + "stay|" + mate.CharId);
+        }
+
         // In another area: he goes to them from the group, as a player clicks their name and "go to".
         if (!OverlayQuestTracker.SameZone(mate.ZonePath ?? "", leader.Zone ?? "")) {
             if (!fighting && DateTime.UtcNow - _partyGotoAt > TimeSpan.FromSeconds(30) && !CombatDuelComponent.IsInBattle(leader.GlobalId)) {
@@ -167,6 +173,7 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
+        UltimusOrders.Clear();
         Note("Ultimus", $"PARTY: no longer with {_partyMateName} ({why}): back to his own story.");
         if (why == "the group ended") {
             Announce(SAY_PARTY, $"Thanks for the group, {_partyMateName}! Back to my story.", urgent: true);

@@ -277,7 +277,7 @@ internal static class UltimusTactics {
 
     private static Choice Pass(string why) => new(Move.Pass, 0, -1, why);
 
-    private static List<InHand> Hand(CombatDuelSubCircle me) {
+    internal static List<InHand> Hand(CombatDuelSubCircle me) {
         var hand = new List<InHand>();
         for (byte i = 0; i < 24; i++) {
             if (me.GetSpellFromLastHand(i) is not { } spell || RewrittenAI.Read(spell) is not { } card
@@ -302,7 +302,7 @@ internal static class UltimusTactics {
 
     // The name as the game shows it ("Cyclops Legionnaire", not its object's short debug name "0" or "95DD"); a wizard
     // by its name, itself as "itself".
-    private static string Name(CombatDuelSubCircle circle) {
+    internal static string Name(CombatDuelSubCircle circle) {
         if (circle.IsHumanPlayer) {
             return UltimusDirector.RoleOf(circle.ParticipantObject?.m_globalID.Full ?? 0) is not null ? "itself"
                 : circle.ParticipantObject?.m_debugName is { Length: > 0 } wizard ? wizard : $"slot {circle.SlotIndex + 1}";

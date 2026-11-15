@@ -97,6 +97,9 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     /// <summary>Clicks in the battle window, each after its delay, as a person makes them (Game/BotShared/BotBattle).</summary>
     internal sealed record Clicks(List<BotShared.BotBattle.Click> Each);
 
+    /// <summary>The battle window's Draw button: a treasure card from his deck's treasure cards into his hand.</summary>
+    internal sealed record DrawTreasure;
+
     private sealed record ClickNow(BotShared.BotBattle.Move Move);
 
     /// <summary>Ahziael sends it to the area its quest step is in, as a player's .stuck go does.</summary>
@@ -110,6 +113,9 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     /// <summary>Mark Location and Recall Location, the buttons a player has (they cost mana, as for a player).</summary>
     /// <summary>Sells these backpack items to the shopkeeper, one by one, as a player does at a shop.</summary>
     internal sealed record Sell(ulong NpcGlobalId, List<ulong> Items, string What);
+
+    // The backpack's Quick Sell, anywhere (Niduus, 2026-11-15: "Let him quicksell when his bag is full and no shop is nearby. - Yes").
+    internal sealed record QuickSell(List<ulong> Items, string What);
     /// <summary>Buys an item at the Bazaar (its Bazaar id), as a player does.</summary>
     internal sealed record BuyAtBazaar(ulong NpcGlobalId, ulong BazaarId, string What);
     /// <summary>Sells backpack items at the Bazaar, as a player does: each one's price asked, then Yes.</summary>
@@ -131,6 +137,12 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     /// <summary>Change the deck, as the deck window does: these out (one per copy), then these in.</summary>
     internal sealed record EditDeck(ulong DeckId, List<uint> Out, List<uint> In, string Why);
     internal sealed record ItemCards(ulong DeckId, List<(uint Id, bool Off)> Clicks);
+
+    /// <summary>Treasure cards from his book into his deck (by the card's name hash, as the deck window sends them).</summary>
+    internal sealed record TreasureIntoDeck(ulong DeckId, List<uint> Hashes);
+
+    /// <summary>Buys treasure cards at a treasure card vendor's shop (one of each), then closes it.</summary>
+    internal sealed record BuyTreasureCards(ulong NpcGlobalId, List<uint> Hashes, string What);
 
     /// <summary>Ice asks a teammate into its group.</summary>
     internal sealed record Invite(ulong CharId, ulong GlobalId);
@@ -347,6 +359,7 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
             Note($"puts on {m.What}.");
             Send(new GAME_5_PROTOCOL.MSG_EQUIPITEM { IsEquip = 1, ItemID = m.ItemId, SlotName = m.Slot });
         });
+        Receive<DrawTreasure>(_ => Send(new DOODLEDOUG_MESSAGES_51_PROTOCOL.MSG_COMBATDRAW()));
         Receive<Clicks>(m => {
             for (var i = 0; i < m.Each.Count; i++) {
                 Timers.StartSingleTimer($"click-{_clicks++}", new ClickNow(m.Each[i].Move), TimeSpan.FromSeconds(Math.Max(0.05, m.Each[i].AfterSeconds)));
@@ -373,6 +386,18 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
             }
 
             Send(new WIZARD_12_PROTOCOL.MSG_DONESHOPPING());
+        });
+        Receive<QuickSell>(m => {
+            var list = new Imcodec.ObjectProperty.TypeCache.QuickSellItemList {
+                m_quickSellItemList = [.. m.Items.Select(id => new Imcodec.ObjectProperty.TypeCache.QuickSellItem { m_sellItemGID = id, m_quantity = 1 })],
+            };
+            if (!new Imcodec.ObjectProperty.ObjectSerializer(Versionable: false, Behaviors: Imcodec.ObjectProperty.SerializerFlags.None).Serialize(list, 4, out var data)) {
+                Note("could not open the Quick Sell window (its list could not be written).");
+                return;
+            }
+
+            Note($"quick sells {m.Items.Count} things it will not wear from its backpack ({m.What}).");
+            Send(new WIZARD2_53_PROTOCOL.MSG_QUICKSELLREQUEST { Data = data });
         });
         Receive<BuyAtBazaar>(m => {
             Note($"buys {m.What} at the Bazaar.");
@@ -419,6 +444,19 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
 
             foreach (var id in m.In) {
                 Send(new WIZARD_12_PROTOCOL.MSG_ADDSPELLTODECK { SpellID = (int) id, DeckID = m.DeckId });
+            }
+        });
+        Receive<BuyTreasureCards>(m => {
+            Note($"buys treasure cards from the vendor: {m.What}.");
+            foreach (var hash in m.Hashes) {
+                Send(new WIZARD_12_PROTOCOL.MSG_TREASUREBUY { TreasureCardID = hash, npcGlobalID = m.NpcGlobalId, Quantity = 1 });
+            }
+
+            Send(new WIZARD_12_PROTOCOL.MSG_DONESHOPPING());
+        });
+        Receive<TreasureIntoDeck>(m => {
+            foreach (var hash in m.Hashes) {
+                Send(new WIZARD_12_PROTOCOL.MSG_ADDTREASURESPELLTODECK { SpellID = unchecked((int) hash), DeckID = m.DeckId });
             }
         });
         Receive<AcceptOffer>(m => Send(new QUEST_MESSAGES_52_PROTOCOL.MSG_ACCEPTQUEST { MobileID = m.MobileId, QuestName = m.Quest }));

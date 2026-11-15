@@ -177,6 +177,9 @@ internal sealed partial class UltimusDirectorActor {
     // walked off to sell to Charley at half health in the middle of "Payback").
     private const float SELL_DETOUR = 2500f;
 
+    // Free backpack spaces at or under which he quick sells when no shop is near.
+    private const int QUICK_SELL_AT = 2;
+
     /// <summary>
     /// Little room left in the backpack and gear he will never wear: the nearest shopkeeper in this area, to sell it. Null
     /// when there is room, nothing to sell or no shop here (he sells at the next town).
@@ -188,7 +191,7 @@ internal sealed partial class UltimusDirectorActor {
 
         _nextSellLook = DateTime.UtcNow.AddSeconds(20);
         var leader = group[0];
-        if (leader.Wizard is not { } wizard || wizard.ZoneIsInstance || wizard.BackpackFreeSlots >= UltimusPlaybook.Value("Backpack.Room")
+        if (leader.Wizard is not { } wizard || wizard.BackpackFreeSlots >= UltimusPlaybook.Value("Backpack.Room")
             || BotGear.Junk(wizard, StyleOf(leader)).Count == 0) {
             _freeBeforeSell = -1;
             return null;
@@ -207,11 +210,26 @@ internal sealed partial class UltimusDirectorActor {
             return null;
         }
 
-        var shop = MinimapIndex.In(leader.ZoneActor)
+        var shop = wizard.ZoneIsInstance ? null : MinimapIndex.In(leader.ZoneActor)
             .Where(m => m.Kind == MinimapIndex.NPC && m.Entity?.GetComponentOfType<InteractVendorComponent>() is not null)
             .OrderBy(m => UltimusPlanner.Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y))
             .FirstOrDefault();
         if (shop is null || UltimusPlanner.Far(leader.X, leader.Y, shop.Object.m_location.X, shop.Object.m_location.Y) > SELL_DETOUR) {
+            // Full (or nearly) and no shop near: the backpack's Quick Sell, as a player does (Niduus, 2026-11-15). Only what he
+            // will never wear (BotGear.Junk keeps quest items, what he wears and better pieces); a shop pays the same.
+            if (wizard.BackpackFreeSlots <= QUICK_SELL_AT && !CombatDuelComponent.IsInBattle(leader.GlobalId)) {
+                var junk = BotGear.Junk(wizard, StyleOf(leader)).Select(j => (ulong) j.Item.m_globalID.Full).Distinct().ToList();
+                if (junk.Count > 0) {
+                    _freeBeforeSell = wizard.BackpackFreeSlots;
+                    _nextSellLook = DateTime.UtcNow.AddSeconds(30);
+                    _actors[0].Tell(new UltimusMember.QuickSell(junk, $"{junk.Count} pieces"));
+                    Count("things quick sold", junk.Count);
+                    Think($"My backpack is full ({wizard.BackpackFreeSlots} free spaces) and no shop is near, so I quick sell the {junk.Count} " +
+                          "pieces I will never wear from my backpack, as a player does. Quest items and what I wear stay.", "quick-sell");
+                    return null;
+                }
+            }
+
             Think($"My backpack has only {wizard.BackpackFreeSlots} free spaces. I sell what I will never wear at the next shop I pass " +
                   $"({UltimusPlaybook.Cite("Backpack.Room")}).", "sell-later");
             return null;
@@ -506,6 +524,7 @@ internal sealed partial class UltimusDirectorActor {
 
     private void BazaarHere(UltimusPlanner.Target target) {
         var parts = target.Key.Split('|');
+
         if (parts.Length < 3 || !uint.TryParse(parts[2], out var itemId)) {
             return;
         }

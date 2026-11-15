@@ -38,7 +38,8 @@ namespace Imlight.CoreLib.Game.Ultimus;
 /// </summary>
 internal static class UltimusVoice {
 
-    internal sealed record Heard(IActorRef Zone, float X, float Y, ulong SpeakerCharId, string SpeakerName, string Text, bool Whisper = false, bool Typed = false);
+    internal sealed record Heard(IActorRef Zone, float X, float Y, ulong SpeakerCharId, string SpeakerName, string Text, bool Whisper = false, bool Typed = false,
+        bool OrdersChecked = false);
 
     private static readonly ConcurrentQueue<Heard> s_heard = new();
 
@@ -61,6 +62,9 @@ internal static class UltimusVoice {
     }
 
     internal static bool TryTake(out Heard heard) => s_heard.TryDequeue(out heard);
+
+    /// <summary>A line looked at as a leader's order and found none (the AI said so): it is answered as talk.</summary>
+    internal static void Again(Heard heard) => s_heard.Enqueue(heard with { OrdersChecked = true });
 
 }
 
@@ -163,6 +167,12 @@ internal sealed partial class UltimusDirectorActor {
 
             // Players he met are kept in players.json too (UltimusDirector.Life.cs).
             Remember(heard.SpeakerCharId, heard.SpeakerName, heard.Whisper);
+            // His group leader's orders ("stay here", "let me go first", "cast Dragonblade on Mitsu"): UltimusDirector.Orders.cs.
+            if (!heard.OrdersChecked && LeaderOrders(heard, me)) {
+                _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
+                continue;
+            }
+
             // Advice while he is stuck is kept on the step's issue, and he thanks them (UltimusDirector.Break.cs).
             if (heard.Typed && MaybeTip(heard.SpeakerName, heard.SpeakerCharId, heard.Text, heard.Whisper)) {
                 _nextLine = DateTime.UtcNow + s_lineGap;

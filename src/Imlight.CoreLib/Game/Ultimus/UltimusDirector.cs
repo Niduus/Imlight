@@ -226,6 +226,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         });
         Receive<Loaded>(OnLoaded);
         Receive<AiWorded>(OnAiWorded);
+        Receive<OrderUnderstood>(OnOrderUnderstood);
         Receive<StuckIdea>(OnStuckIdea);
         Receive<Tick>(_ => {
             try {
@@ -800,7 +801,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // He marks his spot first, and recalls back after (UltimusDirector.Push.cs).
         // Side trips each have a time budget, and close for a while after one runs over it or an off-track alarm
         // (UltimusDirector.Guard.cs).
-        if (SideTripsOpen && SideTrip(TrainingTarget(group), "training") is { } training) {
+        // His planned spell just opened up (pinned in Ahziael or not): he goes now, even while side trips wait (once for it).
+        if ((SideTripsOpen || PlannedTrainingReady(group)) && SideTrip(TrainingTarget(group), "training") is { } training) {
             MarkBeforeTrip(leader, training);
             return training;
         }
@@ -825,6 +827,12 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         if (SideTripsOpen && ShopAllowed(leader) && SideTrip(NotMidStep(BazaarTarget(group)), "bazaar") is { } bazaar) {
             MarkBeforeTrip(leader, bazaar);
             return bazaar;
+        }
+
+        // A few treasure cards for tough fights from a treasure card vendor in this area, never the Bazaar (UltimusDirector.Cards.cs).
+        if (SideTripsOpen && ShopAllowed(leader) && SideTrip(NotMidStep(TreasureCardTarget(group)), "treasure cards") is { } cards) {
+            MarkBeforeTrip(leader, cards);
+            return cards;
         }
 
         NoSideTrip();
@@ -975,6 +983,53 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 Note("Ultimus", $"could not save the snapshot before {world}: {ex.Message}", UltimusLink.NOTABLE);
             }
         });
+    }
+
+    private uint _plannedReadyId;
+    private DateTime _plannedCheckAt = DateTime.MinValue;
+    private DateTime _plannedBypassUntil = DateTime.MinValue;
+    private readonly HashSet<uint> _plannedBypassUsed = [];
+
+    /// <summary>
+    /// Niduus, 2026-11-15: "Send him to train as soon as his planned spell opens up. - Yes, even while one is not picked in the
+    /// EXE". The next spell of his training plan (pinned in Ahziael, or the one his fights chose) can be learned now: he says
+    /// so and goes. Side trips closed after one ran long don't hold it back, once for each spell (never out of a dungeon or
+    /// while healing).
+    /// </summary>
+    private bool PlannedTrainingReady(List<UltimusMember.Status> group) {
+        var me = group.Count > 0 ? group[0] : null;
+        if (me?.Wizard is null || me.Wizard.ZoneIsInstance || DateTime.UtcNow - _healingAt < TimeSpan.FromSeconds(5)) {
+            return false;
+        }
+
+        if (DateTime.UtcNow >= _plannedCheckAt) {
+            _plannedCheckAt = DateTime.UtcNow.AddSeconds(30);
+            var next = BotTrainingPlan.NextId(me.Wizard, me.CharId);
+            var lesson = next == 0 ? null : UltimusTraining.Learnable(me).FirstOrDefault(x => x.SpellId == next);
+            var ready = lesson?.SpellId ?? 0u;
+            if (ready != 0 && ready != _plannedReadyId) {
+                _nextTraining = DateTime.MinValue;
+                Note("Ultimus", $"TRAINING: his planned spell {lesson.Spell} can be learned now: goes to train it right away.", UltimusLink.NOTABLE);
+                Think($"The spell I've been working toward, {lesson.Spell}, just opened up for me. I'm going to train it right away.", "planned-open|" + ready);
+            }
+
+            _plannedReadyId = ready;
+        }
+
+        if (_plannedReadyId == 0) {
+            return false;
+        }
+
+        if (SideTripsOpen) {
+            return true;
+        }
+
+        if (_plannedBypassUsed.Add(_plannedReadyId)) {
+            _plannedBypassUntil = DateTime.UtcNow.AddMinutes(10);
+            Note("Ultimus", "TRAINING: side trips are on hold, but his planned spell goes first (once).");
+        }
+
+        return DateTime.UtcNow < _plannedBypassUntil;
     }
 
     private UltimusPlanner.Target TrainingTarget(List<UltimusMember.Status> group) {
