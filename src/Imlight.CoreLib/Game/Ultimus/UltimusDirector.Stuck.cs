@@ -311,6 +311,12 @@ internal sealed partial class UltimusDirectorActor {
 
         _actors[index].Tell(new UltimusMember.Recall());
         _recalling[index] = (member.Zone ?? "", DateTime.UtcNow);
+        // His own Commons press: where it lands is his choice, never a wrong door to learn from or back out of (his log,
+        // 2026-11-15 05:48: the unstuck press took him to Regent's Square, which he took for a wrong way and walked back out of).
+        if (index == 0) {
+            _hubPressedAt = DateTime.UtcNow;
+            _prediction = null;
+        }
         _unstickUntil[index] = DateTime.UtcNow + UNSTICK_FOR;
     }
 
