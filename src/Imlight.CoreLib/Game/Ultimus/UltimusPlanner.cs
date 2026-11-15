@@ -444,6 +444,18 @@ internal static class UltimusPlanner {
                         standing.Object.m_globalID.Full, Key: key);
                 }
 
+                // The Quest Atlas (UltimusAtlas): the zone files place this person in one other story area only, so the step is
+                // done there, known before he gets stuck looking for them where the quest says.
+                if (UltimusAtlas.Of(questName, goalName) is { RealZone.Length: > 0 } atlas && !OverlayQuestTracker.SameZone(atlas.RealZone, zone)
+                    && !OverlayQuestTracker.SameZone(atlas.RealZone, stepZone)) {
+                    if (UltimusRules.On(UltimusAtlas.RULE)) {
+                        stepZone = atlas.RealZone;
+                    }
+                    else if (UltimusRules.Watching(UltimusAtlas.RULE)) {
+                        UltimusRules.WouldHave(UltimusAtlas.RULE, $"gone to {UltimusText.Zone(atlas.RealZone)} for \"{step}\": {atlas.Why}.", key);
+                    }
+                }
+
                 // Not here and the step names no area: where this person stands, as a player knows (Niduus, 2026-11-13:
                 // "Run and Done" had its Cyrus Drake, Victor Darkwood and Merle Ambrose steps skipped in seconds).
                 // The same name here offered nothing for the step (another person of that name): where the right one

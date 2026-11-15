@@ -73,6 +73,9 @@ internal static class UltimusTransfers {
         => In(fromZone).Where(t => OverlayQuestTracker.SameZone(t.To, toZone) || OverlayQuestTracker.SameZone(toZone, t.To))
             .OrderBy(t => UltimusPlanner.Far(x, y, t.X, t.Y)).FirstOrDefault();
 
+    /// <summary>Every area's transfers the book holds now (for the Quest Atlas).</summary>
+    internal static IEnumerable<KeyValuePair<string, List<Transfer>>> All() => s_book.ToArray();
+
     /// <summary>How many areas and transfers the book holds now.</summary>
     internal static (int Areas, int Transfers, int Landings) Count()
         => (s_book.Count, s_book.Values.Sum(l => l.Count), s_book.Values.Sum(l => l.Count(t => t.Landing)));

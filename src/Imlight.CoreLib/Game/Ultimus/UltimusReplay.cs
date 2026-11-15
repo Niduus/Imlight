@@ -92,6 +92,14 @@ internal static class UltimusReplay {
             return said.Take(6).All(s => s.Count == 1 && s[0] == line) && said[6].Count == 1 && said[6][0].Contains("REPEAT", StringComparison.Ordinal)
                    && said.Skip(7).All(s => s.Count == 0) ? null : "a repeated line would still flood the log";
         }),
+        new("\"Out of Control\" named The Ironworks; Ms. Marphely stands only in Chelsea Court: half an hour lost (2026-11-15)", () => {
+            var (zone, _) = UltimusAtlas.RealZone("Marleybone/MB_Station/MB_Ironworks", "Ms. Marphely", ["Marleybone/MB_ChelseaCourt"]);
+            var (same, _) = UltimusAtlas.RealZone("Marleybone/MB_Station/MB_Ironworks", "Baxter", ["Marleybone/MB_Station/MB_Ironworks", "Marleybone/MB_Hub"]);
+            var (several, _) = UltimusAtlas.RealZone("Marleybone/MB_Station/MB_Ironworks", "Baxter", ["Marleybone/MB_A", "Marleybone/MB_B"]);
+            var (unread, _) = UltimusAtlas.RealZone("Marleybone/MB_Interiors/MB_Shop", "Ms. Marphely", ["Marleybone/MB_ChelseaCourt"], stepZoneRead: false);
+            return zone == "Marleybone/MB_ChelseaCourt" && same.Length == 0 && several.Length == 0 && unread.Length == 0
+                ? null : "the Atlas would not send him where the person really stands, or would move a step on a guess";
+        }),
         new("Hand-set battle rules needed tuning each update (2026-11-15): he plays the style his own results say wins", () => {
             UltimusFightStyles.Score S(int fights, int wins, int rounds, double lost) => new() { Fights = fights, Wins = wins, Rounds = rounds, HealthLost = lost };
             var hitWins = new Dictionary<string, UltimusFightStyles.Score> { [UltimusFightStyles.BUILD_UP] = S(10, 6, 50, 4), [UltimusFightStyles.HIT_NOW] = S(8, 8, 24, 1.6) };

@@ -62,6 +62,8 @@ internal sealed partial class UltimusDirectorActor {
         // The zone transfer book and the NPC location book (UltimusTransfers, UltimusNpcBook), read or built once, in the background.
         UltimusTransfers.BuildInBackground();
         UltimusNpcBook.BuildInBackground();
+        // The Quest Atlas, made from both books once they are ready (UltimusAtlas).
+        UltimusAtlas.BuildInBackground();
 
         // Who he plays with right now, on every lesson (solo data and team data never mix).
         var withPlayers = _target?.Key?.EndsWith("|join", StringComparison.Ordinal) == true

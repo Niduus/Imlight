@@ -86,6 +86,7 @@ internal static class UltimusPlaybook {
         ("Rules", new("SideTripDrop", 2, "2 = on, 1 = watch only, 0 = off: a side trip I get stuck on is dropped at once, not fixed or parked.")),
         ("Rules", new("OfferedDoor", 2, "2 = on, 1 = watch only, 0 = off: at a way in I can't walk onto, I open the door the game offers me right by it.")),
         ("Rules", new("RepeatGuard", 2, "2 = on, 1 = watch only, 0 = off: a line I say more than 6 times in a minute is held back, with one REPEAT alarm.")),
+        ("Rules", new("Atlas", 2, "2 = on, 1 = watch only, 0 = off: a \"talk to\" step whose person the game's zone files place in one other story area only is done there at once (the Quest Atlas).")),
         ("Rules", new("FightStyles", 2, "2 = on, 1 = watch only, 0 = off: I play each kind of fight in the style (build up, or hit at once) that my own results say wins it most.")),
         ("Guard", new("TripOutOfReachHours", 3, "A side trip (shop, trainer, selling, Bazaar) that got me stuck on the way is dropped at once, and its place is left alone this many hours.")),
         ("Guard", new("FlipFlopSwitches", 4, "How many turns between the same two goals, with no real progress, make a flip-flop (3 or more).")),

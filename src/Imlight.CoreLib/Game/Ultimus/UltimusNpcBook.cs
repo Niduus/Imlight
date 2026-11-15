@@ -96,6 +96,10 @@ internal static class UltimusNpcBook {
             .OrderByDescending(p => p.Value.Name.Length).Select(p => (p.Key, p.Value))];
     }
 
+    /// <summary>Whether the book read this area's people (any NPC placed in it): only then does "not placed here" mean it.</summary>
+    internal static bool Knows(string zone)
+        => !string.IsNullOrWhiteSpace(zone) && s_book.Values.Any(e => e.Places.Any(p => OverlayQuestTracker.SameZone(p.Zone, zone) || OverlayQuestTracker.SameZone(zone, p.Zone)));
+
     internal static int Count => s_book.Count;
 
     /// <summary>Builds the book on a background thread (or reads it from its file), one area at a time.</summary>
