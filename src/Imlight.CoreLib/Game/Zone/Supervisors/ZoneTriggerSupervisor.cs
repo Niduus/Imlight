@@ -671,6 +671,7 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
 
         var previousState = Zone.ScriptState.GetObjectState(objectName);
         Zone.ScriptState.SetObjectState(objectName, stateName);
+        NoteLift(objectName, stateName);
 
         // A gate that opens plays its opening on the way (Closed to Open through Opening): the in-between state goes out
         // first and the end state once it has played (StateTransitions).
@@ -692,6 +693,26 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             PlayerGameObject = playerObject,
             PlayerSpawned = playerSpawned,
         });
+    }
+
+    // A lift or moving floor that moves (Big Ben's counterweight plays Raise2 on its way to IdleLevel2): the bots' way finder
+    // walks onto it where the map shows no fixed floor (OverlayQuestPath.NoteLift).
+    private void NoteLift(string objectName, string stateName) {
+        try {
+            if (!Imlight.CoreLib.Game.Tools.OverlayQuestPath.IsLiftState(stateName)) {
+                return;
+            }
+
+            var held = _triggerObjects.Values.FirstOrDefault(x => string.Equals(x.Tag, objectName, StringComparison.OrdinalIgnoreCase)).Object;
+            var spot = held?.m_location
+                       ?? Zone.ZoneData.m_objectList.FirstOrDefault(x => string.Equals(x.m_zoneTag, objectName, StringComparison.OrdinalIgnoreCase))?.m_location;
+            if (spot is { } at) {
+                Imlight.CoreLib.Game.Tools.OverlayQuestPath.NoteLift(Zone.ZonePath, objectName, at.X, at.Y);
+            }
+        }
+        catch (Exception) {
+            // Only a help for the bots' way finder.
+        }
     }
 
     private sealed record ObjectStatePassDone(string ObjectName, string StateName);

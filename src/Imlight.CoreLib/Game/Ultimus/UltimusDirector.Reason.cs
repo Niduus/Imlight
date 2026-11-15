@@ -133,6 +133,8 @@ internal sealed partial class UltimusDirectorActor {
         "Do not pick a move listed as already failed unless nothing else is left. If creatures stand by the step and the step or the game's message " +
         "hints at a fight or a guard, prefer fight_nearby. If the game offers something to click next to him, prefer click_offered. " +
         "If he is walled in or the way finder fails, prefer other_route or walk_away_and_back. If nothing fits, pick set_step_aside. " +
+        "Facts of the game: a full backpack never stops a battle, a talk, a door, a lever or a quest step (quest items need no backpack room), " +
+        "so never give the backpack as the cause; in a dungeon, setting the step aside wastes the run, so pick it last. " +
         "Answer with JSON only, no other text: {\"cause\": \"...\", \"move\": \"<one move id>\", \"why\": \"...\"}. Keep cause and why under 160 characters each, plain words.";
 
     private string StuckQuestion(UltimusMember.Status member, UltimusPlanner.Target goal, string quest, string where, string why, List<string> allowed) {

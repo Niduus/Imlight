@@ -46,6 +46,9 @@ internal static class OverlayQuestPath {
         /// </summary>
         internal byte[] Loose { get; init; }
 
+        /// <summary>The cells that show no floor at all (the Minimap's black), not walls: where a lift or moving floor may stand.</summary>
+        internal bool[] Black { get; init; }
+
         /// <summary>
         /// Whether a step between two cells this far apart (in cells) climbs or drops more than a wizard can walk. A cell
         /// with ground at two heights (a hall under a balcony, a stream under a bridge) can be walked at either.
@@ -182,6 +185,18 @@ internal static class OverlayQuestPath {
                     grid = looseGrid;
                     to = looseTo;
                     cells = looseCells;
+                }
+            }
+
+            // Still no way, and a lift or moving floor of this area has moved (Big Ben's Counterweight East: four levers raise
+            // the counterweight to the top, and Sprockets stands on it in the middle, past the black the map shows round it;
+            // Niduus's log, 2026-11-15 v0.10.886): the black round the lift is walked as the floor it now is, walls still walls.
+            if (body && (cells is null || cells.Count == 0 || cells[^1] != to) && Lifted(zonePath, grid) is { } liftGrid) {
+                var liftTo = Open(liftGrid, goal);
+                if (Search(liftGrid, Open(liftGrid, start), liftTo) is { Count: > 0 } liftCells && liftCells[^1] == liftTo) {
+                    grid = liftGrid;
+                    to = liftTo;
+                    cells = liftCells;
                 }
             }
 
@@ -442,6 +457,69 @@ internal static class OverlayQuestPath {
     /// <summary>Forgets the last walk found for this wizard, so the next is found again from where it stands.</summary>
     internal static void Forget(ulong charId) => s_walks.TryRemove(charId, out _);
 
+    // Lifts and moving floors (a counterweight, an elevator, a platform that rises): the collision file has only the fixed
+    // ground, so the black round a lift shows no floor even when the lift stands there. A lift the area has moved (one of
+    // its objects played a raise or lower) counts as floor within LIFT_REACH of where it stands, walls still walls.
+    private const float LIFT_REACH = 2500f;
+    private static readonly TimeSpan s_liftKept = TimeSpan.FromHours(3);
+    private static readonly ConcurrentDictionary<string, (float X, float Y, DateTime At)> s_lifts = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>Whether an object's state or animation name is a lift's (raise, lower, a level, an elevator), not a gate's.</summary>
+    internal static bool IsLiftState(string state)
+        => !string.IsNullOrEmpty(state)
+           && (state.Contains("Raise", StringComparison.OrdinalIgnoreCase) || state.Contains("Lower", StringComparison.OrdinalIgnoreCase)
+               || state.Contains("Level", StringComparison.OrdinalIgnoreCase) || state.Contains("Lift", StringComparison.OrdinalIgnoreCase)
+               || state.Contains("Elevat", StringComparison.OrdinalIgnoreCase) || state.Contains("Ascend", StringComparison.OrdinalIgnoreCase)
+               || state.Contains("Descend", StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>A lift or moving floor of the area at (x, y) moved (the zone played its raise or lower).</summary>
+    internal static void NoteLift(string zonePath, string objectName, float x, float y) {
+        if (string.IsNullOrEmpty(zonePath) || string.IsNullOrEmpty(objectName)) {
+            return;
+        }
+
+        s_lifts[zonePath + "|" + objectName] = (x, y, DateTime.UtcNow);
+    }
+
+    /// <summary>The lifts of an area that moved in the last few hours.</summary>
+    internal static List<(float X, float Y)> LiftsIn(string zonePath) {
+        if (string.IsNullOrEmpty(zonePath) || s_lifts.IsEmpty) {
+            return [];
+        }
+
+        var prefix = zonePath + "|";
+        var now = DateTime.UtcNow;
+
+        return s_lifts.Where(l => l.Key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && now - l.Value.At < s_liftKept)
+            .Select(l => (l.Value.X, l.Value.Y)).ToList();
+    }
+
+    // The fixed grid with the black round the area's moved lifts walkable (only tried when no other way is found).
+    private static Grid Lifted(string zonePath, Grid grid) {
+        if (grid?.Black is not { } black || LiftsIn(zonePath) is not { Count: > 0 } lifts) {
+            return null;
+        }
+
+        var cost = (byte[]) grid.Cost.Clone();
+        var changed = 0;
+        for (var i = 0; i < cost.Length; i++) {
+            if (cost[i] == BLOCKED && black[i] && NearLift(lifts, Center(grid, i))) {
+                cost[i] = 20;
+                changed++;
+            }
+        }
+
+        return changed == 0 ? null : grid with { Cost = cost, Heights = null };
+    }
+
+    private static bool NearLift(List<(float X, float Y)> lifts, (float X, float Y) at)
+        => lifts.Any(l => ((l.X - at.X) * (l.X - at.X)) + ((l.Y - at.Y) * (l.Y - at.Y)) <= LIFT_REACH * LIFT_REACH);
+
+    // A black cell a moved lift stands over: floor for the bounds checks.
+    private static bool LiftCell(string zonePath, Grid grid, int cell)
+        => grid.Black is { } black && cell >= 0 && cell < black.Length && black[cell] && !s_lifts.IsEmpty
+           && LiftsIn(zonePath) is { Count: > 0 } lifts && NearLift(lifts, Center(grid, cell));
+
     private static Grid GridOf(string zonePath) {
         if (string.IsNullOrEmpty(zonePath)) {
             return null;
@@ -469,8 +547,10 @@ internal static class OverlayQuestPath {
     private static Grid Costs(ZoneGround.WalkGround ground) {
         var cost = new byte[ground.Kinds.Length];
         var loose = new byte[ground.Kinds.Length];
+        var black = new bool[ground.Kinds.Length];
         for (var i = 0; i < cost.Length; i++) {
             var noFloor = Void(ground, i) && !Between(ground, i);
+            black[i] = noFloor;
             // The loose way (a stair or ramp the file shows no floor on) crosses only a narrow gap of the black, floor on both
             // sides within a few cells, never open void (Niduus, 2026-11-14: "MAke sure he respects the world/games
             // boundaries": he walked out of bounds in the Bazaar).
@@ -483,7 +563,7 @@ internal static class OverlayQuestPath {
             cost[i] = noFloor ? BLOCKED : loose[i];
         }
 
-        return new Grid(ground.Left, ground.Top, ground.Cell, ground.Width, ground.Height, cost, ground.Heights, ground.Lows) { Loose = loose };
+        return new Grid(ground.Left, ground.Top, ground.Cell, ground.Width, ground.Height, cost, ground.Heights, ground.Lows) { Loose = loose, Black = black };
     }
 
     // How many cells of black a stair or ramp may span on the loose way.
@@ -519,7 +599,7 @@ internal static class OverlayQuestPath {
 
             var cell = Cell(grid, x, y);
 
-            return cell >= 0 && (grid.Loose ?? grid.Cost)[cell] != BLOCKED;
+            return cell >= 0 && ((grid.Loose ?? grid.Cost)[cell] != BLOCKED || LiftCell(zonePath, grid, cell));
         }
         catch (Exception) {
             return true;
@@ -578,7 +658,7 @@ internal static class OverlayQuestPath {
                     var t = i / (float) count;
                     var (x, y) = (ax + ((bx - ax) * t), ay + ((by - ay) * t));
                     var cell = Cell(grid, x, y);
-                    var ok = cell >= 0 && cost[cell] != BLOCKED;
+                    var ok = cell >= 0 && (cost[cell] != BLOCKED || LiftCell(zonePath, grid, cell));
                     if (ok) {
                         started = true;
                         lastGood = (x, y);
