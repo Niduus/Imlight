@@ -2324,6 +2324,13 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             return GetAvailableSubCircleTeamPlayer();
         }
 
+        // A Quest Team wizard takes its own circle of the team's order when it is free (CombatDuelComponent.QuestTeam.cs).
+        if (QuestTeamOwnCircle(playerObject) is { } own) {
+            _groupReservations.Release(charId);
+
+            return own;
+        }
+
         // A passive circle (player cheats), unless a group already holds a circle for this wizard; circles held for
         // someone else are left to them.
         var subCircle = _groupReservations.IsReservedFor(charId) ? null

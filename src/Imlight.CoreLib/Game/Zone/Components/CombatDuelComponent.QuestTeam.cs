@@ -100,6 +100,23 @@ internal sealed partial class CombatDuelComponent {
         return null;
     }
 
+    /// <summary>
+    /// The circle of a Quest Team wizard's place in the team's order (Ice 1st, Life 2nd, Death 3rd, Storm 4th) on the players'
+    /// side, when it is free; null otherwise (then the usual circle). They were put on the first free or group-held circle,
+    /// so the formation broke and they fled, again and again (his log, 2026-11-15: 6 flees in 15 minutes on Unicorn Way, and
+    /// those who fled missed the kill, so they ended up on different steps of "Ghost Hunters" and "Skeleton Crew").
+    /// </summary>
+    private CombatDuelSubCircle QuestTeamOwnCircle(Imcodec.ObjectProperty.TypeCache.CoreObject joiner) {
+        var wanted = IsPvPDuel ? -1 : Array.IndexOf(s_questTeamOrder, QuestTeamDirector.RoleOf(joiner.m_globalID.Full) ?? "");
+        if (wanted < 0) {
+            return null;
+        }
+
+        var side = SubCircles.Where(c => c is not null && c.SlotType == CombatSlotType.Player).OrderBy(c => c.SlotIndex).ToList();
+
+        return wanted < side.Count && side[wanted].Free ? side[wanted] : null;
+    }
+
     // The formation broke: every team wizard in this battle flees, as a player would, and the team regroups outside.
     private bool QuestTeamKeepFormation() {
         if (IsPvPDuel || !_isActive || QuestTeamFormationBroken() is not { } why) {
