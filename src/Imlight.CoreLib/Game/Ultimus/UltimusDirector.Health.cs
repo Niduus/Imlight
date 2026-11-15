@@ -214,6 +214,9 @@ internal sealed partial class UltimusDirectorActor {
             // The trip is not cut short by the Recall back to his marked spot until he is healed.
             HoldRecall(20);
             _doing = pick.What;
+            // Off on a heal trip, not the way his last guess was about: that guess is dropped, so the trip's first area is not
+            // taken for a wrong door and backed out of (his log, 2026-11-15, Wolfminster Abbey on the way to Wizard City).
+            _prediction = null;
             if (pick.Key?.StartsWith(HUB_KEY, StringComparison.Ordinal) == true) {
                 if (!PressHubButton(leader, pick.What)) {
                     // The button can't be pressed here: walk the normal way.

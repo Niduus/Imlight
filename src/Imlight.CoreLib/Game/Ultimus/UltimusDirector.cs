@@ -1556,6 +1556,13 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             // A Recall or a Commons button press of his own is a player move, never a wrong landing (audit A6: a Recall back to
             // his mark was taken as a wrong area and he walked out again).
             var buttonMove = DateTime.UtcNow - _recallSentAt < TimeSpan.FromSeconds(30) || DateTime.UtcNow - _hubPressedAt < TimeSpan.FromSeconds(30);
+            // A guess made for an earlier goal is stale once he changed goal (his log, 2026-11-15: guessed "to Scotland Yard",
+            // then set off on a potion trip through Wolfminster Abbey, took that as a wrong door and backed out of his own
+            // trip). A stale guess is dropped: no lesson, no backing out.
+            if (_prediction is { Kind: "travel" } guess && _target is { } now && now.Key != guess.Key) {
+                _prediction = null;
+            }
+
             var meant = !buttonMove && _prediction is { Kind: "travel" } travel ? travel.Zone : null;
             CheckArrival(leader);
             // The landing the zone transfer book says, and backing out of a wrong area (UltimusDirector.Bounds.cs).

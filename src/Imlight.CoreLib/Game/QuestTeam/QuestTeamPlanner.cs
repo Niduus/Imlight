@@ -184,7 +184,12 @@ internal static class QuestTeamPlanner {
             }
         }
 
-        return held.OrderByDescending(h => h.Value.Rank).ThenByDescending(h => h.Value.Count).ThenBy(h => h.Value.Order)
+        // When they hold different quests, the one the others have already finished goes first: its holder is behind, and the
+        // team brings it level before anyone goes further (its log, 2026-11-15: Freya went on to "Grim Tales" while the other
+        // three were left on "Skeleton Crew", "Ghost Hunters" and "Unicorn Way", each picked after hers and never done).
+        int Behind(string quest) => team.Count(m => m.Wizard?.HasCompletedQuest(quest) == true);
+
+        return held.OrderByDescending(h => h.Value.Rank).ThenByDescending(h => h.Value.Count).ThenByDescending(h => Behind(h.Key)).ThenBy(h => h.Value.Order)
             .Select(h => h.Key).FirstOrDefault();
     }
 
