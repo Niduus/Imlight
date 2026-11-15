@@ -69,8 +69,9 @@ internal static class UltimusReplay {
         }
 
         failed.AddRange(BotSocialChecks.Run().Select(f => "Chat: " + f));
+        failed.AddRange(BotAiGuardChecks.Run());
         try {
-            var total = s_cases.Length + BotSocialChecks.All.Length;
+            var total = Count;
             File.WriteAllLines(Path.Combine(UltimusWire.Folder, "replay-pack.txt"),
                 [$"Replay pack {DateTime.Now:yyyy-MM-dd HH:mm}: {total - failed.Count} of {total} screenshot bugs stay fixed.", .. failed.Select(f => "FAILED " + f)]);
         }
@@ -81,6 +82,6 @@ internal static class UltimusReplay {
         return failed;
     }
 
-    internal static int Count => s_cases.Length + BotSocialChecks.All.Length;
+    internal static int Count => s_cases.Length + BotSocialChecks.All.Length + BotAiGuardChecks.Count;
 
 }

@@ -68,6 +68,13 @@ public static class ConfigurationManager {
     public static int Version { get; private set; }
 
     /// <summary>
+    /// The folder Imlight.ini is in (Server\Config), or "" before <see cref="Initialize"/>. Files kept beside it, such as
+    /// Ultimus's AI keys, are read from here.
+    /// </summary>
+    public static string ConfigFolder
+        => string.IsNullOrEmpty(s_configFilePath) ? "" : Path.GetDirectoryName(Path.GetFullPath(s_configFilePath)) ?? "";
+
+    /// <summary>
     /// Raised after the file was read again because it changed (<see cref="WatchForChanges"/>).
     /// </summary>
     public static event Action? Reloaded;

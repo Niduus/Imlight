@@ -112,7 +112,7 @@ internal sealed partial class UltimusDirectorActor {
         _askedFor[alarmKey] = DateTime.UtcNow;
         _asking = true;
         var question = StuckQuestion(member, goal, quest, where, why, allowed);
-        Note("Ultimus", $"{member.Name} is stuck on the same step again at {where}: he thinks it through with his local AI while he tries his usual fix.",
+        Note("Ultimus", $"{member.Name} is stuck on the same step again at {where}: he thinks it through with his {UltimusLocalAI.Who} while he tries his usual fix.",
             UltimusLink.NOTABLE);
         Think("I am stuck here again. While I try my usual fix, I think it through: what the step asks, what the game told me, what is around me and what I already tried.",
             "reason-ask|" + alarmKey);
@@ -199,7 +199,7 @@ internal sealed partial class UltimusDirectorActor {
     private void OnStuckIdea(StuckIdea m) {
         _asking = false;
         if (m.Answer is null) {
-            Note("Ultimus", "his local AI did not answer in time" + (UltimusLocalAI.LastProblem.Length > 0 ? $" ({UltimusLocalAI.LastProblem})" : "") +
+            Note("Ultimus", $"his {UltimusLocalAI.Who} did not answer in time" + (UltimusLocalAI.LastProblem.Length > 0 ? $" ({UltimusLocalAI.LastProblem})" : "") +
                             "; he carries on with his own fixes.");
             return;
         }
@@ -222,7 +222,7 @@ internal sealed partial class UltimusDirectorActor {
         if (move is null || !allowed.Contains(move)) {
             Think($"I thought it through{(cause.Length > 0 ? $" ({cause})" : "")}, but the move I came up with can't be made here, so I keep to my usual fixes.",
                 "reason-bad|" + m.Zone + "|" + (int) m.X / 500);
-            Note("Ultimus", $"his local AI's idea could not be used (it answered: \"{UltimusText.Short(m.Answer.Replace('\n', ' '), 160)}\").");
+            Note("Ultimus", $"his {UltimusLocalAI.Who}'s idea could not be used (it answered: \"{UltimusText.Short(m.Answer.Replace('\n', ' '), 160)}\").");
             return;
         }
 

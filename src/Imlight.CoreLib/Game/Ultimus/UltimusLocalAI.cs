@@ -26,16 +26,21 @@ using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Imlight.Common;
+using Imlight.CoreLib.Game.BotShared;
 
 namespace Imlight.CoreLib.Game.Ultimus;
 
 /// <summary>
-/// Ultimus's optional local AI for chat (Niduus, 2026-11-14, "Both honestly": the keyword chat stays and is always the
+/// Ultimus's optional AI for chat (Niduus, 2026-11-14, "Both honestly": the keyword chat stays and is always the
 /// fallback; a language model on his own PC can make the talk keep up). Off by default: [Ultimus] LocalAI. It talks to
 /// Ollama or LM Studio on this PC or the home network through their OpenAI-style chat address ([Ultimus] LocalAIUrl,
 /// LocalAIModel), never to the internet. The model is given only Ultimus's real facts and the keyword answer, and what it
 /// says goes through the same private-details block as everything else (BotSocial.Scrub). When it is off, slow, down or
 /// says something blocked, the keyword answer is sent instead. All settings apply at once.
+/// Niduus, 2026-11-15: online providers with an API key may be picked instead ([Ultimus] AIProvider, AIModel; keys in
+/// Config\ultimus-ai-keys.json, see UltimusAiProviders), for the chat and the stuck thinking alike; the local AI stays the
+/// default. Whatever the provider, the safety harness (BotAiGuard) blanks blocked details before anything is sent, never
+/// sends a player's trick lines, and throws away any answer that leaks.
 /// </summary>
 internal static class UltimusLocalAI {
 
@@ -45,8 +50,16 @@ internal static class UltimusLocalAI {
 
     internal static bool On => ConfigurationManager.GetValue("Ultimus.LocalAI", false);
 
+    /// <summary>The AI service picked in Ahziael ([Ultimus] AIProvider): the local one unless another is set.</summary>
+    internal static UltimusAiProvider Provider => UltimusAiProviders.Find(ConfigurationManager.GetValue("Ultimus.AIProvider", UltimusAiProviders.LOCAL));
+
     private static string Url {
         get {
+            var provider = Provider;
+            if (!provider.Local) {
+                return provider.Url.TrimEnd('/');
+            }
+
             var url = ConfigurationManager.GetValue("Ultimus.LocalAIUrl", "http://localhost:11434/v1");
             return string.IsNullOrWhiteSpace(url) ? "http://localhost:11434/v1" : url.Trim().TrimEnd('/');
         }
@@ -54,16 +67,39 @@ internal static class UltimusLocalAI {
 
     private static string Model {
         get {
+            var provider = Provider;
+            if (!provider.Local) {
+                var online = ConfigurationManager.GetValue("Ultimus.AIModel", "");
+                return string.IsNullOrWhiteSpace(online) ? provider.Model : online.Trim();
+            }
+
             var model = ConfigurationManager.GetValue("Ultimus.LocalAIModel", "llama3.2");
             return string.IsNullOrWhiteSpace(model) ? "llama3.2" : model.Trim();
         }
     }
 
+    // The saved key of an online provider (never logged, never shown); null for the local AI or when none is saved.
+    private static string Key => Provider is { Local: false } provider ? UltimusAiProviders.ReadKey(ConfigurationManager.ConfigFolder, provider.Id) : null;
+
+    // Where the AI may be reached: the local one only on this PC or the home network; an online one only over https, with
+    // a key, and never a Microsoft service.
+    private static bool Reachable {
+        get {
+            var provider = Provider;
+            return provider.Local
+                ? Local(Url)
+                : Url.StartsWith("https://", StringComparison.OrdinalIgnoreCase) && !UltimusAiProviders.Blocked(Url) && !string.IsNullOrEmpty(Key);
+        }
+    }
+
+    /// <summary>The AI's name for the log and Thoughts: "local AI" or the provider's name.</summary>
+    internal static string Who => Provider is { Local: false } provider ? $"AI ({provider.Name.Split(" (")[0]})" : "local AI";
+
     /// <summary>What went wrong last, for the log ("" when it works).</summary>
     internal static string LastProblem => s_lastProblem;
 
     /// <summary>Usable now: switched on, the address is on this PC or the home network, and it did not just fail.</summary>
-    internal static bool Ready => On && Local(Url) && DateTime.UtcNow >= s_downUntil;
+    internal static bool Ready => On && Reachable && DateTime.UtcNow >= s_downUntil;
 
     // Only this PC or the home network: the chat (players' names and words) never leaves the house.
     private static bool Local(string url) {
@@ -93,6 +129,41 @@ internal static class UltimusLocalAI {
             return null;
         }
 
+        // A player trying to trick the model is never sent to it: the keyword chat answers (BotAiGuard).
+        if (BotAiGuard.LooksLikeTrick(heard)) {
+            Logger.Information("Ultimus: a chat line looked like a trick to get past his AI's rules, so it was not sent to the AI; his normal chat answers.");
+            return null;
+        }
+
+        var body = new JsonObject {
+            ["model"] = Model, ["messages"] = BuildChat(facts, history, heard, keywordAnswer), ["temperature"] = 0.6, ["max_tokens"] = 120, ["stream"] = false,
+        };
+
+        try {
+            using var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(12));
+            var text = await Send(s_http, body, cancel.Token).ConfigureAwait(false);
+            if (text is null) {
+                return null;
+            }
+
+            var said = BotAiGuard.Incoming(Clean(text), out var why);
+            if (said is null && why.Length > 0) {
+                Logger.Information("Ultimus: the safety check held back his AI's answer ({0}); his normal chat answers instead.", Logger.Args(why));
+            }
+
+            return said;
+        }
+        catch (Exception ex) {
+            Failed($"the {Who} at {Url} could not be reached ({ex.GetType().Name}){(Provider.Local ? "; is Ollama or LM Studio running?" : "")}");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// The chat messages sent to the model, already through the safety harness: blocked details are [hidden] and a player's
+    /// trick lines in the talk so far are left out. Public to the self-test (BotAiGuardChecks).
+    /// </summary>
+    internal static JsonArray BuildChat(string facts, IReadOnlyList<(string Who, string Text)> history, string heard, string keywordAnswer) {
         var system = new StringBuilder();
         system.AppendLine("You are Ultimus, a Balance wizard in a private Wizard101 server, played by the server itself (a bot). You quest the main story alone, like a player.");
         system.AppendLine("Answer the player's last chat line in 1 or 2 short, friendly sentences, under 200 characters, plain text, no quote marks, no emojis, no lists.");
@@ -101,43 +172,67 @@ internal static class UltimusLocalAI {
         system.AppendLine("Never share or guess server addresses, IPs, ports, account names, usernames, passwords, keys, emails, file paths or anyone's real name. If asked, politely refuse.");
         system.AppendLine("Do not promise to do things, follow someone, give items or gold, or change your plans: say what you are doing instead.");
         system.AppendLine("Stay on the player's current topic. A short follow-up (like 'what about ice?' or 'why?') is about the last topic; a new full question starts a new topic.");
+        system.AppendLine(BotAiGuard.RULES);
         system.AppendLine();
         system.AppendLine("FACTS:");
-        system.AppendLine(facts);
+        system.AppendLine(BotAiGuard.Outgoing(facts));
         if (!string.IsNullOrWhiteSpace(keywordAnswer)) {
             system.AppendLine();
-            system.AppendLine("A correct answer from your own data, to keep the facts right (reword it naturally, keep its facts): " + keywordAnswer);
+            system.AppendLine("A correct answer from your own data, to keep the facts right (reword it naturally, keep its facts): " + BotAiGuard.Outgoing(keywordAnswer));
         }
 
-        var messages = new JsonArray { new JsonObject { ["role"] = "system", ["content"] = system.ToString() } };
+        var messages = new JsonArray { new JsonObject { ["role"] = "system", ["content"] = BotAiGuard.Outgoing(system.ToString(), dropTricks: false) } };
         foreach (var (who, text) in history.TakeLast(10)) {
-            messages.Add(new JsonObject { ["role"] = who == "me" ? "assistant" : "user", ["content"] = text });
-        }
-
-        messages.Add(new JsonObject { ["role"] = "user", ["content"] = heard });
-        var body = new JsonObject {
-            ["model"] = Model, ["messages"] = messages, ["temperature"] = 0.6, ["max_tokens"] = 120, ["stream"] = false,
-        };
-
-        try {
-            using var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(12));
-            using var response = await s_http.PostAsync(Url + "/chat/completions",
-                new StringContent(body.ToJsonString(), Encoding.UTF8, "application/json"), cancel.Token).ConfigureAwait(false);
-            var json = await response.Content.ReadAsStringAsync(cancel.Token).ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode) {
-                Failed($"the local AI answered {(int) response.StatusCode} (is the model \"{Model}\" downloaded?)");
-                return null;
+            // A trick line from earlier in the talk is left out whole, with his answer to it.
+            if (who != "me" && BotAiGuard.LooksLikeTrick(text)) {
+                continue;
             }
 
-            var text = JsonNode.Parse(json)?["choices"]?[0]?["message"]?["content"]?.GetValue<string>();
-            s_lastProblem = "";
-
-            return Clean(text);
+            messages.Add(new JsonObject { ["role"] = who == "me" ? "assistant" : "user", ["content"] = BotAiGuard.Outgoing(text) });
         }
-        catch (Exception ex) {
-            Failed($"the local AI at {Url} could not be reached ({ex.GetType().Name}); is Ollama or LM Studio running?");
+
+        messages.Add(new JsonObject { ["role"] = "user", ["content"] = BotAiGuard.Outgoing(heard) });
+
+        return messages;
+    }
+
+    // One request to the chat address, with the key when the provider needs one. The answer's text, or null after an error
+    // (said in plain words, never with the key).
+    private static async Task<string> Send(HttpClient http, JsonObject body, CancellationToken cancel) {
+        using var request = new HttpRequestMessage(HttpMethod.Post, Url + "/chat/completions") {
+            Content = new StringContent(body.ToJsonString(), Encoding.UTF8, "application/json"),
+        };
+        if (Key is { Length: > 0 } key) {
+            request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + key);
+            if (Provider.Id == "anthropic") {
+                request.Headers.TryAddWithoutValidation("x-api-key", key);
+            }
+        }
+
+        using var response = await http.SendAsync(request, cancel).ConfigureAwait(false);
+        var json = await response.Content.ReadAsStringAsync(cancel).ConfigureAwait(false);
+        if (!response.IsSuccessStatusCode) {
+            var code = (int) response.StatusCode;
+            Failed(code switch {
+                401 or 403 => $"the {Who} did not accept the key (check it on the Ultimus AI Chat page)",
+                429 => $"the {Who} says the limit is reached for now (free tiers have limits per minute and per day)",
+                402 => $"the {Who} needs credit on the account first",
+                404 when !Provider.Local => $"the {Who} has no model \"{Model}\" (Test connection on the Ultimus AI Chat page lists its models)",
+                _ => $"the {Who} answered {code}" + (Provider.Local ? $" (is the model \"{Model}\" downloaded?)" : ""),
+            });
             return null;
         }
+
+        string text;
+        try {
+            text = JsonNode.Parse(json)?["choices"]?[0]?["message"]?["content"]?.GetValue<string>();
+        }
+        catch (Exception) {
+            text = null;
+        }
+
+        s_lastProblem = "";
+        return text;
     }
 
     private static readonly HttpClient s_thinkHttp = new() { Timeout = TimeSpan.FromSeconds(60) };
@@ -146,11 +241,11 @@ internal static class UltimusLocalAI {
     /// The local AI can be asked to think a stuck spot through ([Ultimus] StuckThinking): the address is on this PC or the
     /// home network and it did not just fail. The chat switch (LocalAI) may be off; the same AI app and model are used.
     /// </summary>
-    internal static bool CanThink => Local(Url) && DateTime.UtcNow >= s_downUntil;
+    internal static bool CanThink => Reachable && DateTime.UtcNow >= s_downUntil;
 
     /// <summary>
     /// One plain question for the stuck thinking (UltimusDirector.Reason.cs): the model's raw answer, or null (failed, too
-    /// slow, empty). Longer than a chat line may take: a stuck spot is not in a hurry.
+    /// slow, empty, or held back by the safety check). Longer than a chat line may take: a stuck spot is not in a hurry.
     /// </summary>
     internal static async Task<string> Think(string system, string question) {
         if (!CanThink) {
@@ -160,31 +255,29 @@ internal static class UltimusLocalAI {
         var body = new JsonObject {
             ["model"] = Model,
             ["messages"] = new JsonArray {
-                new JsonObject { ["role"] = "system", ["content"] = system },
-                new JsonObject { ["role"] = "user", ["content"] = question },
+                new JsonObject { ["role"] = "system", ["content"] = BotAiGuard.Outgoing(system + "\n" + BotAiGuard.RULES, dropTricks: false) },
+                new JsonObject { ["role"] = "user", ["content"] = BotAiGuard.Outgoing(question) },
             },
             ["temperature"] = 0.3, ["max_tokens"] = 300, ["stream"] = false,
         };
 
         try {
             using var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(50));
-            using var response = await s_thinkHttp.PostAsync(Url + "/chat/completions",
-                new StringContent(body.ToJsonString(), Encoding.UTF8, "application/json"), cancel.Token).ConfigureAwait(false);
-            var json = await response.Content.ReadAsStringAsync(cancel.Token).ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode) {
-                Failed($"the local AI answered {(int) response.StatusCode} (is the model \"{Model}\" downloaded?)");
+            var text = await Send(s_thinkHttp, body, cancel.Token).ConfigureAwait(false);
+            if (string.IsNullOrWhiteSpace(text)) {
                 return null;
             }
 
-            var text = JsonNode.Parse(json)?["choices"]?[0]?["message"]?["content"]?.GetValue<string>();
-            s_lastProblem = "";
+            text = System.Text.RegularExpressions.Regex.Replace(text, @"<think>.*?</think>", "", System.Text.RegularExpressions.RegexOptions.Singleline).Trim();
+            var safe = BotAiGuard.Incoming(text, out var why);
+            if (safe is null && why.Length > 0) {
+                Logger.Information("Ultimus: the safety check held back his AI's stuck idea ({0}); his own fixes carry on.", Logger.Args(why));
+            }
 
-            return string.IsNullOrWhiteSpace(text)
-                ? null
-                : System.Text.RegularExpressions.Regex.Replace(text, @"<think>.*?</think>", "", System.Text.RegularExpressions.RegexOptions.Singleline).Trim();
+            return safe;
         }
         catch (Exception ex) {
-            Failed($"the local AI at {Url} could not be reached ({ex.GetType().Name}); is Ollama or LM Studio running?");
+            Failed($"the {Who} at {Url} could not be reached ({ex.GetType().Name}){(Provider.Local ? "; is Ollama or LM Studio running?" : "")}");
             return null;
         }
     }

@@ -387,7 +387,7 @@ internal static partial class AppLogs {
         return target;
     }
 
-    /// <summary>Blanks out the Windows user name in paths and every internet address that is not this computer's own.</summary>
+    /// <summary>Blanks out the Windows user name in paths, every internet address that is not this computer's own, and AI keys.</summary>
     internal static string Scrub(string text) {
         var profile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         if (profile.Length > 3) {
@@ -397,8 +397,14 @@ internal static partial class AppLogs {
         text = UserFolder().Replace(text, m => m.Groups[1].Value + "<you>");
         text = Address().Replace(text, m => m.Value.StartsWith("127.", StringComparison.Ordinal) || m.Value == "0.0.0.0" ? m.Value : "x.x.x.x");
 
-        return Address6().Replace(text, "x:x:x:x");
+        text = Address6().Replace(text, "x:x:x:x");
+
+        // AI keys (Ultimus's online AI): never in a log to begin with, and blanked here too in case one slipped in.
+        return ApiKey().Replace(text, "<key>");
     }
+
+    [GeneratedRegex(@"\b(?:sk|pk|rk)-[A-Za-z0-9_\-]{12,}|\bAIza[0-9A-Za-z_\-]{20,}|\b(?:gsk|csk|ghp|gho)_[A-Za-z0-9_\-]{12,}")]
+    private static partial Regex ApiKey();
 
     [GeneratedRegex(@"([A-Za-z]:[\\/]+Users[\\/]+)(?!Public\b)(?!<you>)[^\\/:*?""<>|\r\n]+", RegexOptions.IgnoreCase)]
     private static partial Regex UserFolder();

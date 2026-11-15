@@ -230,7 +230,7 @@ internal sealed partial class QuestTeamDirectorActor {
             q.AppendLine($"{move}: {(move == UltimusReasonMoves.PARK ? "take a short break and try again fresh" : UltimusReasonMoves.Words(move))}");
         }
 
-        Note(leader.Role, $"{leader.Name} is stuck on the same step again at {where}: the team thinks it through with the local AI while it tries its usual fix.",
+        Note(leader.Role, $"{leader.Name} is stuck on the same step again at {where}: the team thinks it through with the {UltimusLocalAI.Who} while it tries its usual fix.",
             QuestTeamLink.NOTABLE);
         var (iQuest, iStep, iZone, iX, iY) = (quest ?? "", step ?? "", leader.Zone ?? "", leader.X, leader.Y);
         UltimusLocalAI.Think(ThinkRules, q.ToString())
@@ -242,7 +242,7 @@ internal sealed partial class QuestTeamDirectorActor {
         _asking = false;
         if (m.Answer is null || _team.Count == 0 || _team[0] is not { State: "playing" } leader) {
             if (m.Answer is null) {
-                Note("Team", "the local AI did not answer in time; the team carries on with its own fixes.");
+                Note("Team", $"the {UltimusLocalAI.Who} did not answer in time; the team carries on with its own fixes.");
             }
 
             return;
@@ -255,7 +255,7 @@ internal sealed partial class QuestTeamDirectorActor {
         }
 
         if (move is null || !TeamMoves(leader).Contains(move)) {
-            Note(leader.Role, $"the local AI's idea could not be used (it answered: \"{QuestTeamText.Short(m.Answer.Replace('\n', ' '), 160)}\").");
+            Note(leader.Role, $"the {UltimusLocalAI.Who}'s idea could not be used (it answered: \"{QuestTeamText.Short(m.Answer.Replace('\n', ' '), 160)}\").");
 
             return;
         }

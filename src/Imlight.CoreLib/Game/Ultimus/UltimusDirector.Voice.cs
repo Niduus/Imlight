@@ -219,11 +219,11 @@ internal sealed partial class UltimusDirectorActor {
     private void OnAiWorded(AiWorded m) {
         var worded = m.Worded;
         if (worded is not null && !ReferenceEquals(BotSocial.Scrub(worded), worded)) {
-            Note("Ultimus", "the local AI's answer had a private detail in it; he says the keyword answer instead.");
+            Note("Ultimus", $"the {UltimusLocalAI.Who}'s answer had a private detail in it; he says the keyword answer instead.");
             worded = null;
         }
 
-        SendReply(m.Heard, worded ?? m.Keyword, worded is null ? "keyword chat" : "local AI");
+        SendReply(m.Heard, worded ?? m.Keyword, worded is null ? "keyword chat" : UltimusLocalAI.Who);
     }
 
     // The talk with each player (theirs and his), for the local AI to follow the conversation.
