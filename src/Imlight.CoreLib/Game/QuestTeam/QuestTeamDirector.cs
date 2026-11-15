@@ -2188,13 +2188,23 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
 
 
     // The dungeon's own quest (granted on the way in) that the team holds, when its step can be done here; null otherwise.
+    // The dungeon's own quest being done first, kept while in the dungeon (any of its rooms).
+    private string _dungeonFirstQuest;
+
     private QuestTeamPlanner.Target DungeonQuestFirst(List<QuestTeamMember.Status> group, QuestTeamPlanner.Target main) {
         var leader = group[0];
         if (leader.Wizard is not { ZoneIsInstance: true } wizard || string.IsNullOrEmpty(leader.Zone)) {
+            _dungeonFirstQuest = null;
             return null;
         }
 
         var own = DungeonQuestIndex.GetQuestsForZones([leader.Zone]).Select(q => (string) q.m_questName).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        // The dungeon quest already being done goes on in the dungeon's next rooms too: its next step may be in a room
+        // whose own quests don't list it (his log, 2026-11-15: "Gate Crashers" sent him from The Ironworks into Nail's
+        // Hideout, where the story step pulled him back to The Ironworks, 47 times back and forth).
+        if (_dungeonFirstQuest is { Length: > 0 } going) {
+            own.Add(going);
+        }
         var held = wizard.QuestBehavior?.CurrentQuestInstances?.Where(q => q is not null && own.Contains(q.QuestName)
             && !string.Equals(q.QuestName, main?.Quest ?? _currentQuest, StringComparison.OrdinalIgnoreCase)).Select(q => q.QuestName).ToList() ?? [];
         foreach (var name in held) {
@@ -2207,6 +2217,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                 Note("Team", $"is in a dungeon: does its own quest \"{name}\" first ({step.What}), as it opens the way to {main?.What ?? "the story step"}.");
             }
 
+            _dungeonFirstQuest = name;
             return step;
         }
 

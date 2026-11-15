@@ -48,7 +48,7 @@ internal static class BotSocial {
     internal sealed record Self(string Bot, string Name, string School, int Level, string Area, string World, string Quest, string Step,
         bool InBattle, string Mood, Func<string, string> FindNpc = null, Func<string, string> FoeTip = null, string Doing = null, int Health = -1,
         Func<string, string> Act = null, IReadOnlyList<string> Worlds = null, Func<string, bool, string> Opinion = null,
-        bool Groups = false, string PartyWith = null);
+        bool Groups = false, string PartyWith = null, string StuckNow = null, string Progress = null);
 
     /// <summary>An answer: the line, the intent it answers, why (for Thoughts), and whether it fits a Menu Chat moment.</summary>
     internal sealed record Reply(string Text, string Intent, string Why, string MenuMoment = null);
@@ -155,7 +155,11 @@ internal static class BotSocial {
 
     private static string StateWord(string text) {
         var t = (text ?? "").ToLowerInvariant();
-        if (!(t.Contains("are you") || t.Contains("r u ") || t.StartsWith("you ", StringComparison.Ordinal) || t.Contains("u in "))) {
+        // A short question on its own ("stuck?", "lost?", "fighting?") asks the same (Niduus, 2026-11-15: "stuck?" got the
+        // help line, not his real state). Not a player saying it of themselves ("i'm stuck?").
+        var words = t.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var shortAsk = words.Length is > 0 and <= 2 && t.Contains('?') && !Has(t, "i", "im", "i'm", "me", "my");
+        if (!(shortAsk || t.Contains("are you") || t.Contains("r u ") || t.StartsWith("you ", StringComparison.Ordinal) || t.Contains("u in "))) {
             return null;
         }
 
@@ -178,7 +182,9 @@ internal static class BotSocial {
             "questing" => self.Quest is null ? $"Not right now, I'm {(now.Length > 0 ? Gerund(now) : "looking for my next quest")}."
                 : $"Yes! I'm on {doing}" + (self.Step is null ? "." : $", the step is: {self.Step}."),
             "waiting" => self.InBattle ? "No, I'm in a battle!" : waiting || stuck ? $"Yes: {now}." : now.Length > 0 ? $"No, I'm {Gerund(now)}." : $"No, I'm working on {doing}.",
-            "stuck" => stuck ? $"Yes, I'm stuck: {now}. I keep trying the way a player would." : $"No, I'm fine! {(now.Length > 0 ? "I'm " + Gerund(now) + "." : "Working on " + doing + ".")}",
+            "stuck" => self.StuckNow is { Length: > 0 } honest ? honest
+                : stuck ? $"Yes, I'm stuck: {now}" + (self.Area is { Length: > 0 } ? $", in {self.Area}" : "") + (self.Progress is { Length: > 0 } ? $". {self.Progress}" : "") + ". I keep trying the way a player would."
+                : $"No, I'm fine! {(now.Length > 0 ? "I'm " + Gerund(now) + "." : "Working on " + doing + ".")}" + (self.Progress is { Length: > 0 } ? $" {self.Progress}." : ""),
             _ => null,
         };
     }
@@ -981,7 +987,7 @@ internal static class BotSocial {
                 break;
             case TIP: {
                 var tip = TipFor(self, text);
-                line = tip ?? Pick(self.Bot, "tip-none", "Not sure about that one, sorry!", "I haven't been there yet, so I don't know.", "No idea yet, I'm still learning!");
+                line = tip ?? Pick(self.Bot, "tip-none", "Not sure about that one, sorry!", "I don't know where that is yet, sorry!", "No idea yet, I'm still learning!");
                 why = tip is null ? $"{friend.Name} asked for a tip I have no data for, so I say I don't know rather than guess."
                     : $"{friend.Name} asked for a tip, so I answer from what I know: {tip}";
                 break;

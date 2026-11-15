@@ -51,17 +51,24 @@ internal static class BotTrainingPlan {
         ["Life"] = "Life Shield", ["Death"] = "Death Shield", ["Myth"] = "Myth Shield",
     };
 
-    // The spell from another school that answers each need, first wanted first.
+    // The spell from another school that answers each need, first wanted first (Niduus, 2026-11-15: "what he lacks most in
+    // combat. Feint if he wants more damage, Tower Shield for more defence, Satyr if he's not surviving"). Sprite stays as
+    // the heal to fall back on when Satyr can't be trained.
     private static readonly Dictionary<string, string[]> s_answers = new() {
-        [HEAL] = ["Sprite", "Satyr"],
+        [HEAL] = ["Satyr", "Sprite"],
         [SHIELD] = ["Tower Shield"],
         [DAMAGE] = ["Feint"],
     };
 
     private static readonly Dictionary<string, string> s_needWords = new() {
-        [HEAL] = "a heal of my own",
-        [SHIELD] = "a strong shield",
-        [DAMAGE] = "a way to hit harder",
+        [HEAL] = "a way to survive (a big heal of my own)",
+        [SHIELD] = "more defence (a strong shield)",
+        [DAMAGE] = "more damage",
+    };
+
+    // What each need is called when the three are weighed against each other.
+    private static readonly Dictionary<string, string> s_lackWords = new() {
+        [HEAL] = "surviving", [SHIELD] = "defence", [DAMAGE] = "damage", [SCHOOL_SHIELD] = "a school shield",
     };
 
     private static string[] Answers(string need, string school)
@@ -197,12 +204,18 @@ internal static class BotTrainingPlan {
         var school = hitBy is not null && s_schoolShields.ContainsKey(hitBy.Key) && hitBy.Count() >= 2 && hitBy.Count() * 5 >= rough.Count * 3
             ? hitBy.Key : null;
         var bySchool = school is null ? 0 : hitBy.Count();
+        // What it lacks most in combat: not surviving (fights lost, or left under 40% health) weighs most, then defence
+        // (single rounds that take a big share of its health), then damage (fights that drag on, won or not).
+        var survivedBarely = recent.Count(f => f.Won && f.Lowest < LOW);
         var scores = new Dictionary<string, int> {
-            [HEAL] = (low * 2) + (lost * 2),
+            [HEAL] = (lost * 3) + (survivedBarely * 2),
             [SHIELD] = (big * 2) + lost,
-            [DAMAGE] = slow * 2,
+            [DAMAGE] = (slow * 2) + recent.Count(f => !f.Won && f.Minutes >= LONG_MINUTES),
             [SCHOOL_SHIELD] = school is null ? 0 : (bySchool * 2) + 1,
         };
+        var weighed = scores.Where(s => s.Value > 0).OrderByDescending(s => s.Value).ToList();
+        var lacking = weighed.Count < 2 ? ""
+            : $" Weighing what I lack most in combat: {string.Join(", ", weighed.Select(s => $"{s_lackWords[s.Key]} {s.Value}"))}.";
         var own = wizard.MagicSchoolBehavior.MagicSchool.ToString();
 
         // A chain already started is kept until done, unless another need now weighs far more (no flip-flopping).
@@ -238,6 +251,7 @@ internal static class BotTrainingPlan {
                 var points = chain.Sum(c => Find(c.Name)?.Cost ?? 1);
                 var why = Reason(need, scores[need], recent.Count, low, big, slow, lost, goalSpell, chain, points, wizard.MagicSchoolBehavior.TrainingPoints,
                     school, bySchool, rough.Count);
+                why += lacking;
                 if (skipped.Count > 0) {
                     why += $" A teammate already brings {string.Join(" and ", skipped)}, so I don't spend points on it twice.";
                 }
@@ -380,10 +394,12 @@ internal static class BotTrainingPlan {
         }
         else {
             seen = need switch {
-                HEAL => $"{low} of my last {fights} fights left me under {LOW:P0} health" + (lost > 0 ? $" and I lost {lost}" : ""),
+                HEAL => (lost > 0 ? $"I lost {lost} of my last {fights} fights" : $"{low} of my last {fights} fights left me under {LOW:P0} health") +
+                        (lost > 0 && low > 0 ? $", and {low} left me under {LOW:P0} health" : "") + ", so surviving is what I lack most",
                 SCHOOL_SHIELD => $"{bySchool} of my last {rough} hard fights were against creatures that hit mostly with {school}" + (lost > 0 ? $", and I lost {lost}" : ""),
-                SHIELD => $"in {big} of my last {fights} fights one round took over {BIG_HIT:P0} of my health" + (lost > 0 ? $" and I lost {lost}" : ""),
-                _ => $"{slow} of my last {fights} fights went on for {LONG_MINUTES:0} minutes or more",
+                SHIELD => $"in {big} of my last {fights} fights one round took over {BIG_HIT:P0} of my health" + (lost > 0 ? $" and I lost {lost}" : "") +
+                          ", so defence is what I lack most",
+                _ => $"{slow} of my last {fights} fights went on for {LONG_MINUTES:0} minutes or more, so damage is what I lack most",
             };
         }
 

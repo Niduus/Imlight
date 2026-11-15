@@ -105,13 +105,23 @@ internal sealed partial class UltimusDirectorActor {
     /// Temple of Storms he went straight for Krokopatra, and the teleporter there stays shut until "Test of Strength" and the
     /// other tests are done). Null when there is none to do here.
     /// </summary>
+    // The dungeon's own quest being done first, kept while in the dungeon (any of its rooms).
+    private string _dungeonFirstQuest;
+
     private UltimusPlanner.Target DungeonQuestFirst(List<UltimusMember.Status> group, UltimusPlanner.Target main) {
         var leader = group[0];
         if (leader.Wizard is not { ZoneIsInstance: true } wizard || string.IsNullOrEmpty(leader.Zone)) {
+            _dungeonFirstQuest = null;
             return null;
         }
 
         var own = DungeonQuestIndex.GetQuestsForZones([leader.Zone]).Select(q => (string) q.m_questName).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        // The dungeon quest already being done goes on in the dungeon's next rooms too: its next step may be in a room
+        // whose own quests don't list it (his log, 2026-11-15: "Gate Crashers" sent him from The Ironworks into Nail's
+        // Hideout, where the story step pulled him back to The Ironworks, 47 times back and forth).
+        if (_dungeonFirstQuest is { Length: > 0 } going) {
+            own.Add(going);
+        }
         var held = wizard.QuestBehavior?.CurrentQuestInstances?.Where(q => q is not null && own.Contains(q.QuestName)
             && !string.Equals(q.QuestName, main?.Quest ?? _currentQuest, StringComparison.OrdinalIgnoreCase)).Select(q => q.QuestName).ToList() ?? [];
         foreach (var name in held) {
@@ -123,6 +133,7 @@ internal sealed partial class UltimusDirectorActor {
             Think($"I am in a dungeon, and its own quest \"{UltimusText.Title(name)}\" opens the way through it: I do \"{step.What}\" " +
                   $"first, then go on to {main?.What ?? "my story step"}, as a player does.", "dungeonfirst|" + step.Key);
 
+            _dungeonFirstQuest = name;
             return step;
         }
 

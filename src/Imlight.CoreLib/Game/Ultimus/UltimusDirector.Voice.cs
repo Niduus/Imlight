@@ -423,7 +423,7 @@ internal sealed partial class UltimusDirectorActor {
 
         return new BotSocial.Self(UltimusRoster.NAME, me.Wizard?.PlayerNameBehavior?.GetWizardName() ?? UltimusRoster.NAME, "Balance",
             me.Wizard?.MagicSchoolBehavior?.Level ?? 1, UltimusText.Zone(me.Zone), WorldOf(me.Zone), title, step,
-            me.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId), mood, NpcTip, FoeTip, _doing,
+            me.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId), mood, who => NpcTip(me, who), FoeTip, _doing,
             me.Wizard?.GameStats is { } hp ? (int) (hp.m_currentHitpoints * 100L / Math.Max(1, hp.m_baseHitpoints + hp.m_bonusHitpoints)) : -1,
             what => what switch {
                 "potions" => AskedForPotions(me).Line,
@@ -432,7 +432,26 @@ internal sealed partial class UltimusDirectorActor {
                 _ when what.StartsWith("fact:", StringComparison.Ordinal) => Fact(me, what[5..]),
                 _ when what.StartsWith("asker:", StringComparison.Ordinal) => Asker(what[6..]),
                 _ => null,
-            }, Worlds().Select(w => w.World).ToList(), Opinion, Groups: UltimusWire.PartyMode, PartyWith: PartyMateName);
+            }, Worlds().Select(w => w.World).ToList(), Opinion, Groups: UltimusWire.PartyMode, PartyWith: PartyMateName,
+            StuckNow: StuckReport(me, title, step), Progress: $"My last step done or XP gained was {Minutes((DateTime.UtcNow - _progressAt).TotalSeconds)} ago");
+    }
+
+    // "Stuck?" answered from his real state (Niduus, 2026-11-15): where he is, what he is trying, for how long, and what he
+    // does about it. Null when nothing says he is stuck (then the usual "No, I'm fine" answer).
+    private string StuckReport(UltimusMember.Status me, string quest, string step) {
+        var idle = DateTime.UtcNow - _progressAt;
+        var trips = _zoneTrail.Count >= 3 && _zoneTrail.Select(z => z.Zone).Distinct(StringComparer.OrdinalIgnoreCase).Count() <= 3;
+        var stuckWord = _doing?.StartsWith("stuck", StringComparison.Ordinal) == true || _doing?.StartsWith("looking around", StringComparison.Ordinal) == true;
+        if (!stuckWord && !trips && idle < TimeSpan.FromMinutes(10)) {
+            return null;
+        }
+
+        var what = string.IsNullOrWhiteSpace(step) ? _doing ?? "my next step" : step;
+        var areas = trips ? string.Join(" and ", _zoneTrail.Select(z => UltimusText.Zone(z.Zone)).Distinct(StringComparer.OrdinalIgnoreCase)) : "";
+
+        return $"Yes, I think so. I'm in {UltimusText.Zone(me.Zone)}" + (quest is { Length: > 0 } ? $" on {quest}" : "") + $", trying to: {what}. " +
+               $"My last step done or XP gained was {Minutes(idle.TotalSeconds)} ago" +
+               (trips ? $", and I keep going back and forth between {areas}" : "") + ". I'm trying another way, the way a player would.";
     }
 
     private static int StepTotal(GoalTemplate goal) => goal switch {
@@ -441,8 +460,14 @@ internal sealed partial class UltimusDirectorActor {
         _ => goal.m_tallyCounter?.m_count ?? 0,
     };
 
-    // "Where is Headmaster Ambrose?": from his NPC book.
-    private static string NpcTip(string who) {
+    // "Where is Headmaster Ambrose?": from his NPC book (every person the story worlds' quests name, from the game's own
+    // area files, so also in places he hasn't been). "Where is <a friend>?": the way a player knows it, from the friends
+    // list (Niduus, 2026-11-15: "If he's friends with someone, he should be able to say where they are at from natural means").
+    private static string NpcTip(UltimusMember.Status me, string who) {
+        if (FriendWhere(me, who) is { } friendAt) {
+            return friendAt;
+        }
+
         if (UltimusNpcBook.Find(who) is not { } entry || entry.Places.Count == 0) {
             return null;
         }
@@ -450,6 +475,38 @@ internal sealed partial class UltimusDirectorActor {
         var place = entry.Places[0];
 
         return $"{entry.Name} stands in {UltimusText.Zone(place.Zone)}, {WorldOf(place.Zone)}" + (entry.Places.Count > 1 ? " (and a few other spots)." : ".");
+    }
+
+    // A player or bot by wizard name: where they are when they are his friend and online (as his friends list shows it);
+    // otherwise null, or a plain "not on my friends list" when they are online but not his friend.
+    private static string FriendWhere(UltimusMember.Status me, string who) {
+        var name = (who ?? "").Trim().TrimEnd('?', '!', '.').Trim();
+        if (name.Length < 3 || me?.Wizard is not { } mine) {
+            return null;
+        }
+
+        foreach (var online in WizardData.Collections.OnlinePlayerCollection.GetOnlinePlayers()) {
+            var wizard = WizardData.Collections.WizardCollection.GetCharacterUnloaded(online.CharacterId);
+            var shown = wizard?.PlayerNameBehavior?.GetWizardName();
+            if (string.IsNullOrEmpty(shown) || !string.Equals(shown, name, StringComparison.OrdinalIgnoreCase)) {
+                continue;
+            }
+
+            if (online.CharacterId == mine.CharId) {
+                return $"That's me! I'm in {UltimusText.Zone(me.Zone)}.";
+            }
+
+            if (!WizardData.Collections.BuddyRelationshipCollection.AreFriends(mine.CharId, online.CharacterId)) {
+                return $"{shown} isn't on my friends list, so I can't see where they are.";
+            }
+
+            var zone = string.IsNullOrEmpty(online.CurrentZone) ? "" : online.CurrentZone;
+
+            return zone.Length == 0 ? $"{shown} is online, but my friends list doesn't say where."
+                : $"My friends list says {shown} is in {UltimusText.Zone(zone)}, {WorldOf(zone)}.";
+        }
+
+        return null;
     }
 
     // "How do I beat Rattlebones?": from what the bots have seen that creature do.
