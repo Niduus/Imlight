@@ -42,7 +42,7 @@ internal sealed partial class QuestTeamDirectorActor {
     private const string LEARNED = "learned from the AI";
 
     /// <summary>Each wizard's way of talking (the names and who they are are locked, Niduus 2026-11-14).</summary>
-    private static readonly Dictionary<string, (string Pronoun, string Way)> s_personality = new(StringComparer.OrdinalIgnoreCase) {
+    internal static readonly Dictionary<string, (string Pronoun, string Way)> s_personality = new(StringComparer.OrdinalIgnoreCase) {
         ["Ice"] = ("she", "calm, cool and precise: few words, a dry wit, and you like a plan done right"),
         ["Death"] = ("he", "dry, deadpan and darkly funny: you joke about ghosts, gloom and the afterlife, but you are kind underneath"),
         ["Life"] = ("she", "warm, cheerful and encouraging: you care about everyone's health and cheer players on"),
@@ -137,7 +137,7 @@ internal sealed partial class QuestTeamDirectorActor {
 
         var member = _team[speaker];
         var target = TeamTarget(member.Role);
-        if (!UltimusLocalAI.ReadyFor(target) || !UltimusLocalAI.PlayerUnder(heard.SpeakerCharId)) {
+        if (!UltimusLocalAI.ReadyFor(target) || !UltimusLocalAI.PlayerUnder(heard.SpeakerCharId, team: true)) {
             return false;
         }
 
@@ -147,7 +147,7 @@ internal sealed partial class QuestTeamDirectorActor {
         _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
         _talkingWith[heard.SpeakerCharId] = (speaker, DateTime.UtcNow);
         Note(member.Role, $"{heard.SpeakerName} {how}: \"{QuestTeamText.Short(heard.Text, 80)}\"; {member.Name} answers with the {who}.");
-        UltimusLocalAI.AskWith(target, TeamPrompt(speaker, learned), history, heard.Text, heard.SpeakerCharId, "Quest Team chat")
+        UltimusLocalAI.AskWith(target, TeamPrompt(speaker, learned), history, heard.Text, heard.SpeakerCharId, "Quest Team chat", team: true)
             .ContinueWith(t => new TeamAiWorded(speaker, heard, moment, learned, t.IsCompletedSuccessfully ? t.Result : null, who))
             .PipeTo(Self);
 

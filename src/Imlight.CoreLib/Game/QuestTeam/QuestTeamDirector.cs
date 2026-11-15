@@ -231,6 +231,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         Receive<TeamStuckIdea>(OnTeamStuckIdea);
         Receive<TeamAiPick>(OnTeamAiPick);
         Receive<TeamAiWorded>(OnTeamAiWorded);
+        Receive<TeamTalkLine>(OnTeamTalkLine);
         Receive<Tick>(_ => {
             try {
                 OnTick();
@@ -358,6 +359,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         KeepGrouped();
         UsePotions();
         AnswerPlayers();
+        TeamTalk();
 
         // Paused in Ahziael: they stand where they are, logged in (a battle still plays out by itself).
         if (DateTime.UtcNow >= _nextPauseLook) {

@@ -1269,6 +1269,10 @@ internal sealed partial class ManagerWindow {
             ShowUltimusAiLearned();
         }
 
+        if (_qtAiCompareResult.IsEffectivelyVisible) {
+            ShowQuestTeamAiCompare();
+        }
+
         if (_ultState.IsEffectivelyVisible) {
             ShowUltimusStatus();
             ShowUltimusWatchdogNote();

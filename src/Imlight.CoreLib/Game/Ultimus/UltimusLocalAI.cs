@@ -215,8 +215,8 @@ internal static class UltimusLocalAI {
     /// and mute, trick lines never sent, blocked details blanked, and an answer that leaks thrown away. Null when not used.
     /// </summary>
     internal static async Task<string> AskWith(AiTarget target, string system, IReadOnlyList<(string Who, string Text)> history, string heard, ulong player,
-        string where) {
-        if (target is null || !ReadyFor(target) || !PlayerUnder(player)) {
+        string where, bool team = false) {
+        if (target is null || !ReadyFor(target) || !PlayerUnder(player, team)) {
             return null;
         }
 
@@ -226,7 +226,7 @@ internal static class UltimusLocalAI {
             return null;
         }
 
-        SpendFor(player);
+        SpendFor(player, team);
         var messages = new JsonArray {
             new JsonObject { ["role"] = "system", ["content"] = BotAiGuard.Outgoing(system + "\n" + BotAiGuard.RULES, dropTricks: false) },
         };
@@ -524,32 +524,50 @@ internal static class UltimusLocalAI {
 
     // ---- Per player (Niduus, 2026-11-15, "all"): one chatty player can't use up the day's AI answers ----
 
-    private static readonly Dictionary<ulong, int> s_perPlayer = [];
-    private static readonly HashSet<ulong> s_perPlayerSaid = [];
-    private static string s_perPlayerDay = "";
+    // Ultimus's count, and the Quest Team's own (Niduus, 2026-11-15, "all": a separate per-player limit for the team).
+    private sealed class PerPlayerBook(string limitKey, string file, string who, string fallback) {
+        internal readonly Dictionary<ulong, int> Counts = [];
+        internal readonly HashSet<ulong> Said = [];
+        internal string Day = "";
+        internal string LimitKey => limitKey;
+        internal string File => file;
+        internal string Who => who;
+        internal string Fallback => fallback;
+        internal int Limit => Math.Max(0, ConfigurationManager.GetValue(limitKey, 40));
+    }
+
+    private static readonly PerPlayerBook s_ultimusBook = new("Ultimus.AIPerPlayer", PER_PLAYER_FILE, "Ultimus", "his normal chat answers them");
+    private static readonly PerPlayerBook s_teamBook = new("QuestTeam.AIPerPlayer", TEAM_PER_PLAYER_FILE, "Quest Team", "the team gives its usual answers");
 
     /// <summary>[Ultimus] AIPerPlayer: the most AI chat answers one player gets a day (0 = no limit). Past it, his normal chat answers them.</summary>
-    internal static int PerPlayerLimit => Math.Max(0, ConfigurationManager.GetValue("Ultimus.AIPerPlayer", 40));
+    internal static int PerPlayerLimit => s_ultimusBook.Limit;
 
-    /// <summary>Whether this player may still get an AI answer today (always for 0, the stuck thinking).</summary>
-    internal static bool PlayerUnder(ulong player) {
+    /// <summary>[QuestTeam] AIPerPlayer: the most Quest Team AI answers one player gets a day, counted apart from Ultimus's (0 = no limit).</summary>
+    internal static int TeamPerPlayerLimit => s_teamBook.Limit;
+
+    /// <summary>
+    /// Whether this player may still get an AI answer today (always for 0, the stuck thinking). <paramref name="team"/>: the
+    /// Quest Team's own count and limit instead of Ultimus's.
+    /// </summary>
+    internal static bool PlayerUnder(ulong player, bool team = false) {
         if (player != 0 && Muted(player)) {
             return false;
         }
 
-        if (player == 0 || PerPlayerLimit == 0) {
+        var book = team ? s_teamBook : s_ultimusBook;
+        if (player == 0 || book.Limit == 0) {
             return true;
         }
 
-        lock (s_perPlayer) {
-            NewPlayerDay();
-            if (s_perPlayer.GetValueOrDefault(player) < PerPlayerLimit) {
+        lock (book) {
+            NewPlayerDay(book);
+            if (book.Counts.GetValueOrDefault(player) < book.Limit) {
                 return true;
             }
 
-            if (s_perPlayerSaid.Add(player)) {
-                Logger.Information("Ultimus: a player reached today's {0} AI chat answers ([Ultimus] AIPerPlayer); his normal chat answers them until midnight.",
-                    Logger.Args(PerPlayerLimit));
+            if (book.Said.Add(player)) {
+                Logger.Information("{0}: a player reached today's {1} AI chat answers ([{2}); {3} until midnight.",
+                    Logger.Args(book.Who, book.Limit, book.LimitKey.Replace(".", "] "), book.Fallback));
             }
 
             return false;
@@ -564,24 +582,25 @@ internal static class UltimusLocalAI {
         => ConfigurationManager.GetValue("Ultimus.AIMutedPlayers", "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Any(id => ulong.TryParse(id, out var muted) && muted == player);
 
-    private static void SpendFor(ulong player) {
+    private static void SpendFor(ulong player, bool team = false) {
         if (player == 0) {
             return;
         }
 
-        lock (s_perPlayer) {
-            NewPlayerDay();
-            s_perPlayer[player] = s_perPlayer.GetValueOrDefault(player) + 1;
+        var book = team ? s_teamBook : s_ultimusBook;
+        lock (book) {
+            NewPlayerDay(book);
+            book.Counts[player] = book.Counts.GetValueOrDefault(player) + 1;
             // Kept for Ahziael's Friends list ("AI answers today") and so a restart doesn't reset it.
             try {
                 var players = new JsonObject();
-                foreach (var (id, count) in s_perPlayer) {
+                foreach (var (id, count) in book.Counts) {
                     players[id.ToString(System.Globalization.CultureInfo.InvariantCulture)] = count;
                 }
 
                 System.IO.Directory.CreateDirectory(UltimusWire.Folder);
-                System.IO.File.WriteAllText(System.IO.Path.Combine(UltimusWire.Folder, PER_PLAYER_FILE),
-                    new JsonObject { ["Day"] = s_perPlayerDay, ["Players"] = players }.ToJsonString());
+                System.IO.File.WriteAllText(System.IO.Path.Combine(UltimusWire.Folder, book.File),
+                    new JsonObject { ["Day"] = book.Day, ["Players"] = players }.ToJsonString());
             }
             catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) {
                 // Counted in memory still.
@@ -590,20 +609,21 @@ internal static class UltimusLocalAI {
     }
 
     internal const string PER_PLAYER_FILE = "ai-per-player.json";
+    internal const string TEAM_PER_PLAYER_FILE = "qt-ai-per-player.json";
 
-    private static void NewPlayerDay() {
+    private static void NewPlayerDay(PerPlayerBook book) {
         var today = DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-        if (s_perPlayerDay != today) {
-            s_perPlayerDay = today;
-            s_perPlayer.Clear();
-            s_perPlayerSaid.Clear();
+        if (book.Day != today) {
+            book.Day = today;
+            book.Counts.Clear();
+            book.Said.Clear();
             try {
-                var file = System.IO.Path.Combine(UltimusWire.Folder, PER_PLAYER_FILE);
+                var file = System.IO.Path.Combine(UltimusWire.Folder, book.File);
                 if (System.IO.File.Exists(file) && JsonNode.Parse(System.IO.File.ReadAllText(file)) is JsonObject saved && (string) saved["Day"] == today
                     && saved["Players"] is JsonObject players) {
                     foreach (var (id, count) in players) {
                         if (ulong.TryParse(id, out var charId) && count is not null) {
-                            s_perPlayer[charId] = (int) count;
+                            book.Counts[charId] = (int) count;
                         }
                     }
                 }

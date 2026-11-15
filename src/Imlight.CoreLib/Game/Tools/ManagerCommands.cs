@@ -64,6 +64,7 @@ internal static class ManagerCommands {
         GameDataReload.Poll();
         ItemSafety.ItemHistory.PollRestoreRequests();
         Ultimus.UltimusAiTrickTest.Poll();
+        QuestTeam.QuestTeamAiCompare.Poll();
         try {
             if (!File.Exists(COMMANDS_FILE)) {
                 return;
