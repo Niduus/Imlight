@@ -575,22 +575,60 @@ internal sealed partial class ServerManager(string installFolder) {
     }
 
     /// <summary>
-    /// Whether the app updates Imlight by itself when it opens. On unless the marker file says off.
+    /// Whether the app updates Imlight by itself when it opens. Off on a fresh install (Niduus, 2026-11-15: "Turn off
+    /// Auto Update features in base Ahziael"); turning it on is saved on this PC in the install folder, so it is loaded
+    /// on every launch and kept by updates (an update never deletes files it did not ship).
     /// </summary>
     internal bool AutoUpdate {
-        get => !File.Exists(Path.Combine(InstallFolder, AUTO_UPDATE_OFF_FILE));
+        get => File.Exists(Path.Combine(InstallFolder, AUTO_UPDATE_ON_FILE));
         set {
-            var path = Path.Combine(InstallFolder, AUTO_UPDATE_OFF_FILE);
-            if (value) {
-                File.Delete(path);
-            }
-            else {
-                File.WriteAllText(path, "Imlight does not update by itself while this file exists. The Ahziael tab in the app changes it.");
-            }
+            // The old "off" marker from when updating by itself was on by default means nothing now.
+            DeleteQuietly(Path.Combine(InstallFolder, OLD_AUTO_UPDATE_OFF_FILE));
+            Remember(AUTO_UPDATE_ON_FILE, value,
+                "Imlight updates by itself when the app opens while this file exists. The Ahziael tab in the app changes it.");
         }
     }
 
-    private const string AUTO_UPDATE_OFF_FILE = "auto-update-off.txt";
+    private const string AUTO_UPDATE_ON_FILE = "auto-update-on.txt";
+    private const string OLD_AUTO_UPDATE_OFF_FILE = "auto-update-off.txt";
+
+    /// <summary>
+    /// Whether the app looks for a new Imlight every 5 minutes while it is open and installs one straight away, without
+    /// asking (Niduus, 2026-11-15). Off unless turned on; saved on this PC like <see cref="AutoUpdate"/>.
+    /// </summary>
+    internal bool InstantUpdate {
+        get => File.Exists(Path.Combine(InstallFolder, INSTANT_UPDATE_ON_FILE));
+        set => Remember(INSTANT_UPDATE_ON_FILE, value,
+            "Imlight looks for a new version every 5 minutes and installs it without asking while this file exists. " +
+            "The Ahziael tab in the app changes it.");
+    }
+
+    private const string INSTANT_UPDATE_ON_FILE = "instant-update-on.txt";
+
+    /// <summary>Saves an on/off choice as a marker file in the install folder: there means on.</summary>
+    private void Remember(string file, bool on, string text) {
+        var path = Path.Combine(InstallFolder, file);
+        try {
+            if (on) {
+                File.WriteAllText(path, text);
+            }
+            else {
+                File.Delete(path);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            throw new PanelException($"That choice could not be saved ({ex.Message}). It goes back to how it was the next time Ahziael opens.");
+        }
+    }
+
+    private static void DeleteQuietly(string path) {
+        try {
+            File.Delete(path);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // Only a leftover; it is ignored either way.
+        }
+    }
 
     /// <summary>
     /// Whether the Spells and Lookup tabs leave out the cards the server can't do ("Hide broken cards"). On unless the
@@ -623,15 +661,8 @@ internal sealed partial class ServerManager(string installFolder) {
     /// </summary>
     internal bool AutoInstallUpdates {
         get => File.Exists(Path.Combine(InstallFolder, AUTO_INSTALL_ON_FILE));
-        set {
-            var path = Path.Combine(InstallFolder, AUTO_INSTALL_ON_FILE);
-            if (value) {
-                File.WriteAllText(path, "Imlight installs a new version as soon as it is ready, without asking, while this file exists. The Ahziael tab in the app changes it.");
-            }
-            else {
-                File.Delete(path);
-            }
-        }
+        set => Remember(AUTO_INSTALL_ON_FILE, value,
+            "Imlight installs a new version as soon as it is ready, without asking, while this file exists. The Ahziael tab in the app changes it.");
     }
 
     private const string AUTO_INSTALL_ON_FILE = "auto-install-updates-on.txt";

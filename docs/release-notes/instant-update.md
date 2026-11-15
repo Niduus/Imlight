@@ -1,0 +1,4 @@
+Fixed: Instant Update gets new versions within 5 minutes
+A new Instant Update switch makes Ahziael look for a new version every 5 minutes while it is open, and when one is out it downloads, builds and installs it right away without asking. It is off by default and your choice is saved on your PC. The server keeps running; if an update changes the server's program, it restarts after a 2-minute warning in the game once nobody is in a battle, so anyone playing is disconnected for a moment. Ahziael waits while you have unsaved changes or a question box open, and a version that fails to download is tried again after 30 minutes.
+Where: Ahziael > Ahziael tab > Updates > Instant Update
+Test: Turn on Instant Update and leave Ahziael open. After the next release comes out, within about 5 minutes Ahziael should say a new Imlight is downloading, then restart into it by itself.

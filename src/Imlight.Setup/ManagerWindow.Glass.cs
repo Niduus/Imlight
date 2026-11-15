@@ -251,7 +251,7 @@ internal sealed partial class ManagerWindow {
         }
         else if (busy || _preparingUpdate) {
             title = "Updating in the background";
-            line = "Keep playing. It asks to restart when it is ready.";
+            line = InstallsWithoutAsking ? "Keep playing. It restarts into it by itself when it is ready." : "Keep playing. It asks to restart when it is ready.";
         }
         else if (_newerRelease is { } newer) {
             title = $"Version {newer} is out";

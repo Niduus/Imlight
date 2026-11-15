@@ -57,7 +57,7 @@ internal sealed partial class ManagerWindow {
         }
 
         _restartOffered = true;
-        if (_manager.AutoInstallUpdates) {
+        if (InstallsWithoutAsking) {
             PlanServerRestart(ServerRestartPlan.AfterCountdown);
 
             return;

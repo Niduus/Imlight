@@ -514,6 +514,8 @@ internal sealed partial class ManagerWindow : Window {
             await LoadPlayAsync();
             _timer.Start();
             _shownPage = ShownPage();
+            // Instant Update looks every 5 minutes (ManagerWindow.InstantUpdate.cs); it skips while on another PC's server.
+            StartInstantUpdate();
             // On another PC's server, this PC's own server and its updates wait until "Back to my PC".
             if (IsRemote) {
                 _ = Guard(CheckForUpdateAsync);
@@ -545,6 +547,7 @@ internal sealed partial class ManagerWindow : Window {
         };
         Closed += (_, _) => {
             _timer.Stop();
+            _instantUpdateTimer.Stop();
             _positionTimer.Stop();
             _clientLogTimer.Stop();
             OverlayHost.Stop();
@@ -1023,20 +1026,30 @@ internal sealed partial class ManagerWindow : Window {
             Content = "Update by itself when a new version is out",
             IsChecked = _manager.AutoUpdate,
         };
-        ToolTip.SetTip(box, "Checked each time this app opens.");
-        box.IsCheckedChanged += (_, _) => _manager.AutoUpdate = box.IsChecked == true;
+        ToolTip.SetTip(box, "Checked each time this app opens. Off until you turn it on; your choice is saved on this PC and kept through updates.");
+        box.IsCheckedChanged += (_, _) => SaveUpdateChoice(() => _manager.AutoUpdate = box.IsChecked == true, box.IsChecked == true
+            ? "Ahziael now looks for a new version each time it opens and gets it ready by itself. This is saved on this PC."
+            : "Ahziael no longer updates by itself when it opens. Update Ahziael at the top still works any time.");
 
         return box;
     }
 
+    /// <summary>Saves an update choice on this PC; a choice that could not be saved says so instead of failing.</summary>
+    private void SaveUpdateChoice(Action save, string done) {
+        try {
+            save();
+            Say(done);
+        }
+        catch (PanelException ex) {
+            Say(ex.Message, isError: true);
+        }
+    }
+
     private Control AutoInstallSwitch() {
         var toggle = new ToggleSwitch { OnContent = "On", OffContent = "Off", IsChecked = _manager.AutoInstallUpdates };
-        toggle.IsCheckedChanged += (_, _) => {
-            _manager.AutoInstallUpdates = toggle.IsChecked == true;
-            Say(toggle.IsChecked == true
-                ? "New versions now install by themselves when they are ready, without asking. If the server is running, it restarts with the update."
-                : "The app asks before it restarts into a new version again.");
-        };
+        toggle.IsCheckedChanged += (_, _) => SaveUpdateChoice(() => _manager.AutoInstallUpdates = toggle.IsChecked == true, toggle.IsChecked == true
+            ? "New versions now install by themselves when they are ready, without asking. If the server is running, it restarts with the update."
+            : "The app asks before it restarts into a new version again.");
 
         var row = SwitchRow("Install updates automatically", toggle, "Restarts Ahziael into a new version without asking first. The server keeps running; when an update changes its program, it restarts after a 2-minute warning in the game, once nobody is in a battle.");
         ToolTip.SetTip(row, "When a new version has downloaded and built, the app restarts into it without asking \"Yes\" first. " +
@@ -1451,7 +1464,8 @@ internal sealed partial class ManagerWindow : Window {
             Fold("download", "Settings", "Updates",
                 $"{Edition.NAME} {SelfUpdate.CurrentVersion}. Update Ahziael and What's new are at the top of the window, on every page.",
                 AutoUpdateBox(),
-                AutoInstallSwitch()),
+                AutoInstallSwitch(),
+                InstantUpdateSwitch()),
             Fold("sparkle", "What's New", "Look",
                 "How Ahziael looks.",
                 SwitchRow("Moving background", _movingBackground,
@@ -2120,7 +2134,7 @@ internal sealed partial class ManagerWindow : Window {
     /// updates when its branch has a newer commit; a folder on this PC never does by itself.
     /// </summary>
     private async Task AutoUpdateAsync() {
-        if (!_manager.AutoUpdate) {
+        if (!_manager.AutoUpdate && !_manager.InstantUpdate) {
             return;
         }
 
@@ -2222,7 +2236,7 @@ internal sealed partial class ManagerWindow : Window {
     private async Task PrepareUpdateAsync() {
         _preparingUpdate = true;
         try {
-            var whenReady = _manager.AutoInstallUpdates ? "the app restarts into it by itself when it is ready" : "the app asks to restart when it is ready";
+            var whenReady = InstallsWithoutAsking ? "the app restarts into it by itself when it is ready" : "the app asks to restart when it is ready";
             Say("A new Imlight is out. It is downloading and building in the background, so keep playing. " +
                 $"This can take a few minutes; {whenReady}. The update panel at the top of the window shows how far along it is.");
             _updateButton.Content = "Downloading...";
@@ -2276,7 +2290,7 @@ internal sealed partial class ManagerWindow : Window {
         _preparingUpdate = true;
         try {
             var name = $"The server from {_manager.Source.Describe()}";
-            var whenReady = _manager.AutoInstallUpdates ? "the app restarts into it by itself when it is ready" : "the app asks to restart when it is ready";
+            var whenReady = InstallsWithoutAsking ? "the app restarts into it by itself when it is ready" : "the app asks to restart when it is ready";
             Say($"{name} is building in the background, so keep playing. This can take a few minutes; {whenReady}.");
             await BuildPendingAsync(exe, name);
         }
@@ -2390,7 +2404,7 @@ internal sealed partial class ManagerWindow : Window {
         }
 
         _readyUpdate = (name, program);
-        await OfferRestartAsync(_manager.AutoInstallUpdates);
+        await OfferRestartAsync(InstallsWithoutAsking);
     }
 
     /// <summary>
@@ -2407,6 +2421,15 @@ internal sealed partial class ManagerWindow : Window {
             _readyUpdate = null;
             _updateButton.Content = "Update Ahziael";
             Say("The update that was ready was replaced by another one. Click Update Ahziael to get the newest.", true);
+
+            return;
+        }
+
+        // Restarting by itself never throws away work that isn't saved yet: it waits, and Instant Update tries again later.
+        if (withoutAsking && WhyRestartWaits() is { } why) {
+            Say($"{update.Name} is ready, but Ahziael waits to restart into it because {why}. " + (_manager.InstantUpdate
+                ? "It tries again every 5 minutes, or click Restart to update at the top when you're done."
+                : "Click Restart to update at the top when you're done."));
 
             return;
         }

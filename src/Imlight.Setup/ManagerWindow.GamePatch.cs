@@ -62,7 +62,7 @@ internal sealed partial class ManagerWindow {
 
         // Once per time the app is open: a build that fails says why, and Update Ahziael builds it again.
         _gamePatchAsked = true;
-        if (!_manager.AutoUpdate && !await ConfirmAsync("Wizard101 was updated, and the server has to be built again to understand " +
+        if (!_manager.AutoUpdate && !_manager.InstantUpdate && !await ConfirmAsync("Wizard101 was updated, and the server has to be built again to understand " +
                 "the new game version. Build it now? It builds in the background while the server keeps running, then Ahziael " +
                 "restarts into it. Until then the updated game may not connect.")) {
             Say("The server still needs building for the updated Wizard101. Click Update Ahziael at the top of the window when you're ready.", true);
@@ -78,7 +78,7 @@ internal sealed partial class ManagerWindow {
         _preparingUpdate = true;
         try {
             const string NAME = "The server for the updated Wizard101";
-            var whenReady = _manager.AutoInstallUpdates ? "Ahziael restarts into it by itself when it is ready" : "Ahziael asks to restart when it is ready";
+            var whenReady = InstallsWithoutAsking ? "Ahziael restarts into it by itself when it is ready" : "Ahziael asks to restart when it is ready";
             Say("Wizard101 was updated, so the server is being built again for the new game version. This takes a few minutes; " +
                 $"{whenReady}. Wait for it before playing, or the game may not connect.");
             await BuildPendingAsync(exe, NAME);

@@ -1,0 +1,4 @@
+Fixed: Auto updates start off and remember when you turn them on
+A fresh Ahziael no longer updates by itself. Updating by itself when the app opens and installing updates without asking both start off, and when you turn either one on, that choice is saved on your PC and loaded every time Ahziael opens, through restarts and updates. If you had updating by itself on before only because it was the old default, it is now off until you turn it on. Ahziael also no longer restarts by itself into an update while you have unsaved changes or a question box open; it waits until you are done.
+Where: Ahziael > Ahziael tab > Updates
+Test: Open Ahziael and check that both update switches are off. Turn on "Update by itself when a new version is out", close Ahziael, open it again, and it should still be on.
