@@ -235,6 +235,21 @@ internal sealed partial class UltimusDirectorActor {
 
     private const string LEARNED = "learned from the AI";
 
+    // "Niduus made me" tacked onto an answer that wasn't about him (his PC log, 2026-11-15: "where are you?" got "...working on
+    // my quest Internal Investigation. Niduus made me."): that sentence is left out unless the player asked who made him.
+    private static string WithoutMaker(string heard, string answer) {
+        if (BotSocialWords.AsksAboutMe(heard)) {
+            return answer;
+        }
+
+        var sentences = System.Text.RegularExpressions.Regex.Split(answer.Trim(), @"(?<=[.!?])\s+").Where(s => s.Trim().Length > 0).ToList();
+        var kept = sentences.Where(s => !System.Text.RegularExpressions.Regex.IsMatch(s,
+            @"\b(niduus|(made|created|built|coded) (me|by)|i am a bot|i'm a bot|i am just a bot|i'm just a bot)\b",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase)).ToList();
+
+        return kept.Count == 0 || kept.Count == sentences.Count ? answer : string.Join(" ", kept);
+    }
+
     // Whether the keyword answer is only "I don't know" (a question he can't place, a tip he has no data for).
     private static bool KeywordKnowsNothing(BotSocial.Reply reply)
         => reply.Intent == BotSocial.QUESTION
@@ -252,6 +267,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         if (worded is not null) {
+            worded = WithoutMaker(m.Heard.Text, worded);
             var self = _team.Count > 0 ? SocialSelf(_team[0]) : null;
             UltimusAiLearned.Learn(m.Heard.Text, worded, UltimusLocalAI.Who, m.Heard.SpeakerName, [self?.Quest, self?.Area, self?.World, self?.Step, self?.Doing]);
             SendReply(m.Heard, worded, UltimusLocalAI.Who);

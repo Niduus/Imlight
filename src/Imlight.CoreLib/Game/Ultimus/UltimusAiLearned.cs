@@ -85,7 +85,7 @@ internal static class UltimusAiLearned {
     private static readonly string[] s_moment = [
         "currently", "right now", "at the moment", "i am working", "i'm working", "i am questing", "i'm questing", "my quest", "i am on",
         "i'm on", "i am in", "i'm in", "i am at", "i'm at", "my mood", "my health", "i feel", "i am feeling", "i'm feeling", "today",
-        "just now", "my group", "your group", "with you", "i will", "i'll", "let me", "follow", "my level", "i am level", "i'm level",
+        "just now", "niduus", "made me", "created me", "built me", "my group", "your group", "with you", "i will", "i'll", "let me", "follow", "my level", "i am level", "i'm level",
     ];
 
     private static readonly string[] s_me = ["i", "i'm", "im", "me", "my", "mine", "myself"];
@@ -339,6 +339,12 @@ internal static class UltimusAiLearned {
 
 /// <summary>Small word helpers for chat lines.</summary>
 internal static class BotSocialWords {
+
+    /// <summary>Whether a player asks about him: who made him, what he is, his name (then who made him may be said).</summary>
+    internal static bool AsksAboutMe(string text)
+        => new[] { "who made", "who created", "who built", "who coded", "who owns", "your creator", "your maker", "made you", "created you", "built you",
+                "who are you", "what are you", "your name", "called", "are you a bot", "are you real", "are you human", "are you a person", "niduus" }
+            .Any(w => (text ?? "").Contains(w, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>Whether the line starts with the word (case ignored).</summary>
     internal static bool Starts(string text, string word) {
