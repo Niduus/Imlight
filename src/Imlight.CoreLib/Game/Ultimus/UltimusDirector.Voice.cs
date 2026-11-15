@@ -257,6 +257,9 @@ internal sealed partial class UltimusDirectorActor {
             $"Name: {self.Name}. School: {self.School}. Level: {self.Level}.",
             $"Where: {self.Area}, {self.World}.",
             $"Quest: {(string.IsNullOrWhiteSpace(self.Quest) ? "none right now" : self.Quest)}. Step: {BotSocial.Tidy(self.Step) ?? "none"}.",
+            // Where the quest itself is, which is not always where he stands (Niduus's chat, 2026-11-15: grouped up and taken
+            // to Aquila, the AI said his Marleybone quest "Internal Investigation" was "right here in Aquila").
+            QuestWhereFact(me),
             $"Doing now: {BotSocial.Tidy(self.Doing) ?? "questing"}. In a battle: {(self.InBattle ? "yes" : "no")}. Health: {(self.Health >= 0 ? self.Health + "%" : "unknown")}. Mood: {self.Mood}.",
             $"Worlds been to: {string.Join(", ", self.Worlds ?? [])}.",
         };
@@ -265,7 +268,32 @@ internal sealed partial class UltimusDirectorActor {
             lines.Add("Latest memories: " + string.Join(" | ", memories.Select(e => $"{e.Text} ({UltimusJournal.Ago(e.At)})")));
         }
 
-        return string.Join("\n", lines);
+        return string.Join("\n", lines.Where(l => l.Length > 0));
+    }
+
+    // "Quest is in: The Ironworks, Marleybone." plus, away from it, why he is where he is; "" when the quest names no area.
+    private string QuestWhereFact(UltimusMember.Status me) {
+        var questName = _currentQuest ?? (_target ?? _leaderLastTarget)?.Quest;
+        if (string.IsNullOrEmpty(questName) || QuestTemplateCollection.GetQuestByName(questName) is not { } quest) {
+            return "";
+        }
+
+        var zone = (quest.m_goals ?? []).Where(g => g is not null).Select(OverlayQuestTracker.StepZone)
+            .Concat((quest.m_goals ?? []).Where(g => g is not null).Select(g => (string) g.m_destinationZone))
+            .FirstOrDefault(z => !string.IsNullOrWhiteSpace(z));
+        if (string.IsNullOrWhiteSpace(zone)) {
+            return "";
+        }
+
+        var questWorld = WorldOf(zone);
+        var fact = $"Quest is in: {UltimusText.Zone(zone)}, {questWorld}.";
+        if (!string.Equals(questWorld, WorldOf(me.Zone), StringComparison.OrdinalIgnoreCase)) {
+            fact += PartyMateName.Length > 0
+                ? $" I am in {WorldOf(me.Zone)} only because I am in a group with {PartyMateName}; my quest waits in {questWorld}."
+                : $" I am not in {questWorld} right now; my quest is there, not here.";
+        }
+
+        return fact;
     }
 
     private void SendReply(UltimusVoice.Heard heard, string text, string by) {

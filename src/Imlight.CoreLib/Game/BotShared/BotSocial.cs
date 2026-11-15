@@ -458,7 +458,9 @@ internal static class BotSocial {
             return ASKER;
         }
 
-        if (Has(t, "your name", "who are you", "whats your name", "what's your name")) {
+        // Also why he has his name (Niduus, 2026-11-15: "Why are you called Ultimus?" got "Not sure what you mean").
+        if (Has(t, "your name", "who are you", "whats your name", "what's your name", "why are you called", "why is your name", "why your name",
+                "why the name", "what does your name mean", "what does ultimus mean", "where does your name come from", "who named you", "who gave you your name")) {
             return NAME;
         }
 
@@ -832,6 +834,13 @@ internal static class BotSocial {
                 why = $"{friend.Name} asked about themselves, so I answer from what I can see in the game (their wizard, never their account).";
                 break;
             }
+            case NAME when Has(text ?? "", "why", "mean", "come from", "named you", "gave you"):
+                line = self.Name.Equals("Ultimus", StringComparison.OrdinalIgnoreCase)
+                    ? Pick(self.Bot, "name-why", "Niduus named me! Ultimus is Latin for the last or the furthest, and I go as far as the story goes.",
+                        "Niduus picked it. In Latin, Ultimus means the furthest, so I plan to quest all the way to the end.")
+                    : $"Niduus named me {self.Name}!";
+                why = $"{friend.Name} asked why I have my name, so I say who named me.";
+                break;
             case NAME:
                 line = Pick(self.Bot, "name", $"I'm {self.Name}!", $"{self.Name}, nice to meet you!", $"Call me {self.Name}.");
                 why = $"{friend.Name} asked my name.";
