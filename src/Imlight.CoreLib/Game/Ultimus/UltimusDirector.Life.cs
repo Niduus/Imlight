@@ -265,7 +265,15 @@ internal sealed partial class UltimusDirectorActor {
         var leader = group[0];
         var atBazaar = OverlayQuestTracker.SameZone(leader.Zone ?? "", BAZAAR_ZONE);
         if (DateTime.UtcNow < _nextBazaarSellLook || leader.Wizard is not { } wizard || wizard.ZoneIsInstance) {
-            return _target?.Key.StartsWith("bazaarsell|", StringComparison.Ordinal) == true ? _target : null;
+            if (_target?.Key.StartsWith("bazaarsell|", StringComparison.Ordinal) == true) {
+                return _target;
+            }
+
+            // On the way there: the next leg, every tick, not only on the 30-second look (his log, 2026-11-15 09:25: the way to
+            // the Bazaar and Watson's step took turns every half second for an hour, and he got to neither).
+            return !atBazaar && DateTime.UtcNow < _bazaarSellTripUntil && leader.Wizard is { ZoneIsInstance: false }
+                ? UltimusPlanner.Travel(leader, BAZAAR_ZONE, "to the Bazaar, to sell what I won't wear", "bazaarsell-way") is { Problem.Length: 0 } leg ? leg : null
+                : null;
         }
 
         _nextBazaarSellLook = DateTime.UtcNow.AddSeconds(30);
