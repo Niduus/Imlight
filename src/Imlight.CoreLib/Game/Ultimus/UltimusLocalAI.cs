@@ -99,7 +99,7 @@ internal static class UltimusLocalAI {
     internal static string LastProblem => s_lastProblem;
 
     /// <summary>Usable now: switched on, the address is on this PC or the home network, and it did not just fail.</summary>
-    internal static bool Ready => On && Reachable && DateTime.UtcNow >= s_downUntil && UnderLimit;
+    internal static bool Ready => On && Reachable && DateTime.UtcNow >= s_downUntil && UnderLimit && InHours;
 
     // Only this PC or the home network: the chat (players' names and words) never leaves the house.
     private static bool Local(string url) {
@@ -203,6 +203,7 @@ internal static class UltimusLocalAI {
     // (said in plain words, never with the key).
     private static async Task<string> Send(HttpClient http, JsonObject body, CancellationToken cancel) {
         Spend();
+        WriteLastSent(body);
         using var request = new HttpRequestMessage(HttpMethod.Post, Url + "/chat/completions") {
             Content = new StringContent(body.ToJsonString(), Encoding.UTF8, "application/json"),
         };
@@ -245,7 +246,7 @@ internal static class UltimusLocalAI {
     /// The local AI can be asked to think a stuck spot through ([Ultimus] StuckThinking): the address is on this PC or the
     /// home network and it did not just fail. The chat switch (LocalAI) may be off; the same AI app and model are used.
     /// </summary>
-    internal static bool CanThink => Reachable && DateTime.UtcNow >= s_downUntil && UnderLimit;
+    internal static bool CanThink => Reachable && DateTime.UtcNow >= s_downUntil && UnderLimit && InHours;
 
     /// <summary>
     /// One plain question for the stuck thinking (UltimusDirector.Reason.cs): the model's raw answer, or null (failed, too
@@ -338,6 +339,65 @@ internal static class UltimusLocalAI {
         }
     }
 
+    // ---- AI hours (Niduus, 2026-11-15, "all" to the ideas): the AI only at the times he picks ----
+
+    /// <summary>
+    /// [Ultimus] AIHours: when the AI may be used, as hours of the day on this PC's clock, like 18-23 (6 PM until 11:59 PM)
+    /// or 22-2 (over midnight); several spans with commas, like 7-9, 18-23. Empty = any time. Outside them the normal chat
+    /// and own fixes carry on. Applies at once.
+    /// </summary>
+    internal static bool InHours => HoursAllow(ConfigurationManager.GetValue("Ultimus.AIHours", ""), DateTime.Now.Hour);
+
+    /// <summary>Whether the hour (0-23) is inside the spans; empty or unreadable spans allow every hour.</summary>
+    internal static bool HoursAllow(string spans, int hour) {
+        if (string.IsNullOrWhiteSpace(spans)) {
+            return true;
+        }
+
+        var any = false;
+        foreach (var span in spans.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) {
+            var parts = span.Split('-', StringSplitOptions.TrimEntries);
+            if (parts.Length != 2 || !int.TryParse(parts[0], out var from) || !int.TryParse(parts[1], out var to) || from is < 0 or > 24 || to is < 0 or > 24) {
+                continue;
+            }
+
+            any = true;
+            from %= 24;
+            to %= 24;
+            // "18-23" is 18:00 up to 23:59; "22-2" runs over midnight up to 2:59; "0-24" or "5-5" is all day.
+            if (from == to || (from < to ? hour >= from && hour <= to : hour >= from || hour <= to)) {
+                return true;
+            }
+        }
+
+        return !any;
+    }
+
+    // ---- "Show me what the AI got" (Niduus, 2026-11-15): the last request as it went out, already through the harness ----
+
+    internal const string LAST_SENT_FILE = "ai-last-sent.txt";
+
+    // Everything in the messages already went through BotAiGuard.Outgoing; the key is a header and is never written.
+    private static void WriteLastSent(JsonObject body) {
+        try {
+            var text = new StringBuilder();
+            text.AppendLine($"Sent to {Who} at {DateTime.Now:yyyy-MM-dd HH:mm:ss}, model {(string) body["model"]}.");
+            text.AppendLine("This is exactly what the AI got, after the safety check blanked out private details ([hidden]).");
+            foreach (var message in body["messages"] as JsonArray ?? new JsonArray()) {
+                var role = (string) message?["role"] switch { "system" => "Rules and facts", "assistant" => "Ultimus said", _ => "Player or question" };
+                text.AppendLine();
+                text.AppendLine($"--- {role} ---");
+                text.AppendLine(BotAiGuard.Outgoing((string) message?["content"] ?? "", dropTricks: false));
+            }
+
+            System.IO.Directory.CreateDirectory(UltimusWire.Folder);
+            System.IO.File.WriteAllText(System.IO.Path.Combine(UltimusWire.Folder, LAST_SENT_FILE), text.ToString());
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or InvalidOperationException) {
+            // Only the copy for Ahziael is missing.
+        }
+    }
+
     // ---- Daily limit (Niduus, 2026-11-15): online AI answers per day, so a paid key can't run up a bill ----
 
     private const string USAGE_FILE = "ai-usage.json";
@@ -345,6 +405,7 @@ internal static class UltimusLocalAI {
     private static string s_usageDay = "";
     private static int s_usageCount;
     private static bool s_limitSaid;
+    private static bool s_nearSaid;
 
     /// <summary>[Ultimus] AIDailyLimit: online AI requests per day (chat, stuck thinking, Quest Team); 0 = no limit. The AI on this PC is free and never counted.</summary>
     internal static int DailyLimit => Math.Max(0, ConfigurationManager.GetValue("Ultimus.AIDailyLimit", 300));
@@ -380,6 +441,13 @@ internal static class UltimusLocalAI {
                 // Counted in memory still.
             }
 
+            // Nearly used up: said once a day at 90%, and Ahziael shows it too.
+            if (DailyLimit > 0 && s_usageCount >= DailyLimit * 9 / 10 && s_usageCount < DailyLimit && !s_nearSaid) {
+                s_nearSaid = true;
+                Logger.Information("Ultimus: {0} of today's {1} online AI answers are used ([Ultimus] AIDailyLimit); the rest of the day may run on his normal chat.",
+                    Logger.Args(s_usageCount, DailyLimit));
+            }
+
             if (DailyLimit > 0 && s_usageCount >= DailyLimit && !s_limitSaid) {
                 s_limitSaid = true;
                 Logger.Information("Ultimus: today's limit of {0} online AI answers is reached ([Ultimus] AIDailyLimit); his normal chat and own fixes carry on until midnight.",
@@ -397,6 +465,7 @@ internal static class UltimusLocalAI {
         s_usageDay = today;
         s_usageCount = 0;
         s_limitSaid = false;
+        s_nearSaid = false;
         try {
             var file = System.IO.Path.Combine(UltimusWire.Folder, USAGE_FILE);
             if (System.IO.File.Exists(file) && JsonNode.Parse(System.IO.File.ReadAllText(file)) is JsonObject saved
