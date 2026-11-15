@@ -1129,6 +1129,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 if (UltimusPlanner.Far(member.X, member.Y, target.X, target.Y) > 80) {
                     WalkTo(index, target with { X = target.X - 30 });
                 }
+                else if (WrongPerson(member, target)) {
+                    return;
+                }
                 else if (TimesClicked(key) == 0 && DateTime.UtcNow - _targetSince > TimeSpan.FromSeconds(90)) {
                     Issue("quest", target.Quest, $"{target.What}: {member.Name} stands next to the NPC, but it offers nothing to click.",
                         key: key + "|nooptions");
@@ -1140,6 +1143,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             var matching = services.SelectMany(s => options.Where(o => string.Equals(o.Service, s, StringComparison.OrdinalIgnoreCase))).ToList();
             var option = BotOptions.Pick(matching, target.Quest, TimesClicked(key), target.Goal, member.CharId);
             if (option.Service is null) {
+                if (WrongPerson(member, target)) {
+                    return;
+                }
+
                 if (DateTime.UtcNow - _targetSince > TimeSpan.FromSeconds(40)) {
                     Issue("quest", target.Quest, $"{target.What}: the NPC only offers {string.Join(", ", options.Select(o => o.Service))} to {member.Name}, " +
                                                  "not the quest.", key: key + "|wrongoptions");
@@ -1168,6 +1175,21 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
             return;
         }
+    }
+
+    // A same-name person who offers nothing for the step is not the one it means (BotPeople.OfferedNothing): he says so and
+    // looks for the right one (his log, 2026-11-15: two Baxters in The Ironworks, and he waited by the wrong one).
+    private bool WrongPerson(UltimusMember.Status member, UltimusPlanner.Target target) {
+        if (target.Kind != UltimusPlanner.TALK || !BotShared.BotPeople.OfferedNothing(member.ZoneActor, target.Key, target.Template, target.GlobalId, _team.IndexOf(member))) {
+            return false;
+        }
+
+        Note("Ultimus", $"{target.What}: the person here has the same name but offers nothing for this step: not the one it means; looks for the right one.",
+            UltimusLink.NOTABLE);
+        Think($"The one I'm standing next to has the right name but has nothing for \"{target.What}\", so it must be someone else of that name. " +
+              "I look for where the right one stands.", "wrongperson|" + target.Key);
+        _target = null;
+        return true;
     }
 
     private void ClickOnce(int index, UltimusPlanner.Target target, string[] services, string what) {

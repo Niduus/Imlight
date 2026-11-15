@@ -34,15 +34,67 @@ namespace Imlight.CoreLib.Game.BotShared;
 internal static class BotPeople {
 
     /// <summary>The nearest NPC here with the same name as the quest's person (template <paramref name="npc"/>), or null.</summary>
-    internal static MinimapIndex.Mark ByName(IEnumerable<MinimapIndex.Mark> live, ulong npc, float x, float y) {
+    internal static MinimapIndex.Mark ByName(IEnumerable<MinimapIndex.Mark> live, ulong npc, float x, float y, string stepKey = null) {
         if (npc == 0 || live is null || CoreObjectFactory.GetCoreTemplate(npc) is not GameObjectTemplate template
             || MinimapIndex.NameOf(template) is not { Length: > 2 } name) {
             return null;
         }
 
-        return live.Where(m => m.Kind == MinimapIndex.NPC && m.Template != npc && string.Equals(m.Name, name, StringComparison.OrdinalIgnoreCase))
+        return live.Where(m => m.Kind == MinimapIndex.NPC && m.Template != npc && string.Equals(m.Name, name, StringComparison.OrdinalIgnoreCase)
+                               && !IsNotThisOne(stepKey, m.Object.m_globalID.Full))
             .OrderBy(m => MathF.Abs(m.Object.m_location.X - x) + MathF.Abs(m.Object.m_location.Y - y)).FirstOrDefault();
     }
+
+    // Same-name people who offered nothing for a step when stood next to ("step key|object" -> when). A person of the same
+    // name is not always the one a step means (his log, 2026-11-15: "Purloin the Plans" asks for another Baxter than the one
+    // at the Ironworks gate, and he stood by the gate's Baxter for minutes). Kept 20 minutes.
+    private static readonly ConcurrentDictionary<string, DateTime> s_notThisOne = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly TimeSpan s_notThisOneFor = TimeSpan.FromMinutes(20);
+
+    /// <summary>This same-name person offered nothing for the step: not the one it means (for a while).</summary>
+    internal static void NotThisOne(string stepKey, ulong globalId) {
+        if (!string.IsNullOrEmpty(stepKey) && globalId != 0) {
+            s_notThisOne[$"{stepKey}#{globalId}"] = DateTime.UtcNow;
+        }
+    }
+
+    private static readonly ConcurrentDictionary<string, DateTime> s_noOfferSince = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Stood next to a "talk to" person who offers nothing for the step: when it is a same-name copy (not the step's own
+    /// person) and it has offered nothing for 6 seconds, it is written down as not the one (true once, when written).
+    /// The step is then looked for where the right person stands (the planners), as a player who reads the name tag does.
+    /// </summary>
+    internal static bool OfferedNothing(Akka.Actor.IActorRef zone, string stepKey, ulong template, ulong globalId, int who) {
+        if (zone is null || string.IsNullOrEmpty(stepKey) || template == 0 || globalId == 0
+            || MinimapIndex.In(zone).FirstOrDefault(m => m.Object.m_globalID.Full == globalId) is not { } mark || mark.Template == template) {
+            return false;
+        }
+
+        var seen = $"{stepKey}#{globalId}#{who}";
+        var first = s_noOfferSince.GetOrAdd(seen, DateTime.UtcNow);
+        if (DateTime.UtcNow - first < TimeSpan.FromSeconds(6)) {
+            return false;
+        }
+
+        if (DateTime.UtcNow - first > TimeSpan.FromMinutes(2)) {
+            // An old look (he walked off and came back): it starts again.
+            s_noOfferSince[seen] = DateTime.UtcNow;
+            return false;
+        }
+
+        s_noOfferSince.TryRemove(seen, out _);
+        NotThisOne(stepKey, globalId);
+        return true;
+    }
+
+    internal static bool IsNotThisOne(string stepKey, ulong globalId)
+        => !string.IsNullOrEmpty(stepKey) && s_notThisOne.TryGetValue($"{stepKey}#{globalId}", out var at) && DateTime.UtcNow - at < s_notThisOneFor;
+
+    /// <summary>A same-name person here was found not to be this step's person lately: the right one is looked for elsewhere.</summary>
+    internal static bool HadWrongCopy(string stepKey)
+        => !string.IsNullOrEmpty(stepKey) && s_notThisOne.Any(e => e.Key.StartsWith(stepKey + "#", StringComparison.OrdinalIgnoreCase)
+                                                                  && DateTime.UtcNow - e.Value < s_notThisOneFor);
 
     internal sealed record Missing(string Who, string Quest, string Step, string Zone, string UsuallyIn, DateTime At);
 

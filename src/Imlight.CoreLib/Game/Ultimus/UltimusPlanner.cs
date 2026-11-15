@@ -438,7 +438,7 @@ internal static class UltimusPlanner {
                     .OrderBy(m => Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault()
                     // The same person under another of the game's objects (an area's own copy of them): matched by name, as a
                     // player knows them by name (his log, 2026-11-14: Ms. Marphely of "Out of Control" never found in The Ironworks).
-                    ?? BotShared.BotPeople.ByName(live, npc, leader.X, leader.Y);
+                    ?? BotShared.BotPeople.ByName(live, npc, leader.X, leader.Y, key);
                 if (standing is not null) {
                     return new Target(TALK, standing.Object.m_location.X, standing.Object.m_location.Y, step, questName, goalName, npc,
                         standing.Object.m_globalID.Full, Key: key);
@@ -446,7 +446,10 @@ internal static class UltimusPlanner {
 
                 // Not here and the step names no area: where this person stands, as a player knows (Niduus, 2026-11-13:
                 // "Run and Done" had its Cyrus Drake, Victor Darkwood and Merle Ambrose steps skipped in seconds).
-                if (stepZone.Length == 0 && spots.Count == 0) {
+                // The same name here offered nothing for the step (another person of that name): where the right one
+                // stands is looked up too, even with the quest's arrow in this area (his log, 2026-11-15: two Baxters).
+                var wrongCopy = BotShared.BotPeople.HadWrongCopy(key) && (stepZone.Length == 0 || OverlayQuestTracker.SameZone(stepZone, zone));
+                if ((stepZone.Length == 0 && spots.Count == 0) || wrongCopy) {
                     var where = NpcZone(persona.m_personaName, npc, zone, out var looking);
                     if (looking) {
                         return new Target(WAIT, leader.X, leader.Y, $"{step} (works out where they stand)", questName, goalName, Key: key + "|lookup");

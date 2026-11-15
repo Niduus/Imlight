@@ -1041,6 +1041,10 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                 if (QuestTeamPlanner.Far(member.X, member.Y, t.X, t.Y) > 80) {
                     WalkTo(index, t with { X = t.X - 30 });
                 }
+                else if (t.Kind == QuestTeamPlanner.TALK && BotShared.BotPeople.OfferedNothing(member.ZoneActor, t.Key, t.Template, t.GlobalId, index)) {
+                    Note(member.Role, $"{t.What}: the person here has the same name but offers nothing for this step: looks for the right one.");
+                    return;
+                }
                 else if (TimesClicked(key) == 0 && DateTime.UtcNow - _targetSince > TimeSpan.FromSeconds(30)) {
                     Issue("quest", t.Quest, $"{t.What}: {member.Name} stands next to the NPC, but it offers nothing to click.",
                         key: key + "|nooptions", about: member);
@@ -1052,6 +1056,11 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             var option = BotOptions.Pick([.. services.SelectMany(s => options.Where(o => string.Equals(o.Service, s, StringComparison.OrdinalIgnoreCase)))],
                 t.Quest, TimesClicked(key), t.Goal, member.CharId);
             if (option.Service is null) {
+                if (t.Kind == QuestTeamPlanner.TALK && BotShared.BotPeople.OfferedNothing(member.ZoneActor, t.Key, t.Template, t.GlobalId, index)) {
+                    Note(member.Role, $"{t.What}: the person here has the same name but offers nothing for this step: looks for the right one.");
+                    return;
+                }
+
                 if (DateTime.UtcNow - _targetSince > TimeSpan.FromSeconds(40)) {
                     Issue("quest", t.Quest, $"{t.What}: the NPC only offers {string.Join(", ", options.Select(o => o.Service))} to {member.Name}, " +
                                                  "not the quest.", key: key + "|wrongoptions", about: member);
