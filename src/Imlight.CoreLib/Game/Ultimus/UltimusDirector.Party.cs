@@ -91,7 +91,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         // Going along with a player is what he is doing: no off-track or no-progress alarm for it.
-        StoryProgress();
+        StoryProgress(real: false);
         _lastProgress = DateTime.UtcNow;
 
         var mateGid = Wizard.GetGameObjectId(mate.CharId);

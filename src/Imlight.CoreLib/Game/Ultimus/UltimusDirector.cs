@@ -774,27 +774,31 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
     }
 
-    private UltimusPlanner.Target PickTarget(List<UltimusMember.Status> group) {
+    private UltimusPlanner.Target PickTarget(List<UltimusMember.Status> group) => Steady(group, PickLadder(group));
+
+    // The ladder of rules, in order; the rule that won is kept in _pickSource for the flip-flop breaker (UltimusDirector.Commit.cs).
+    private UltimusPlanner.Target PickLadder(List<UltimusMember.Status> group) {
+        _pickSource = "";
         var leader = group[0];
 
         // In a group with a real player (party mode): he goes along with them first (UltimusDirector.Party.cs).
         if (PartyTarget(leader) is { } party) {
-            return party;
+            return Source("party", party);
         }
 
         // Off the main story (an event, a gauntlet, a house, a side world his step does not name): leaving it comes first
         // (Niduus, 2026-11-14). Then a wrong area the way went to: back out the same way (UltimusDirector.Bounds.cs).
         if (LeaveOffStory(leader) is { } leave) {
-            return leave;
+            return Source("leave-off-story", leave);
         }
 
         if (BackOut(leader) is { } backOut) {
-            return backOut;
+            return Source("back-out", backOut);
         }
 
         // The wisps a won fight left, picked up (UltimusDirector.Smart.cs).
         if (WispAfterFight(leader) is { } wisp) {
-            return wisp;
+            return Source("wisp-after-fight", wisp);
         }
 
         // Training: when someone has spells waiting and the team is in Wizard City (or two spells wait), a trip to Ravenwood.
@@ -804,35 +808,35 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // His planned spell just opened up (pinned in Ahziael or not): he goes now, even while side trips wait (once for it).
         if ((SideTripsOpen || PlannedTrainingReady(group)) && SideTrip(TrainingTarget(group), "training") is { } training) {
             MarkBeforeTrip(leader, training);
-            return training;
+            return Source("training", training);
         }
 
         // Shopping: better gear one of them can pay for, at a shop in this world (in push mode, only when it is worth it).
         if (SideTripsOpen && ShopAllowed(leader) && SideTrip(NotMidStep(ShoppingTarget(group)), "shopping") is { } shopping) {
             MarkBeforeTrip(leader, shopping);
-            return shopping;
+            return Source("shopping", shopping);
         }
 
         // Little room in the backpack: he sells what he won't wear at a shop here (UltimusDirector.Life.cs).
         // The Bazaar pays far more than a shop: there first when it is on and he is in Wizard City anyway (UltimusDirector.Life.cs).
         if (SideTripsOpen && SideTrip(NotMidStep(BazaarSellTarget(group)), "selling") is { } bazaarSelling) {
-            return bazaarSelling;
+            return Source("bazaar-selling", bazaarSelling);
         }
 
         if (SideTripsOpen && SideTrip(SellTarget(group), "selling") is { } selling) {
-            return selling;
+            return Source("selling", selling);
         }
 
         // A clear upgrade at the Bazaar he can pay for past his reserve (in push mode, only when shopping is allowed).
         if (SideTripsOpen && ShopAllowed(leader) && SideTrip(NotMidStep(BazaarTarget(group)), "bazaar") is { } bazaar) {
             MarkBeforeTrip(leader, bazaar);
-            return bazaar;
+            return Source("bazaar", bazaar);
         }
 
         // A few treasure cards for tough fights from a treasure card vendor in this area, never the Bazaar (UltimusDirector.Cards.cs).
         if (SideTripsOpen && ShopAllowed(leader) && SideTrip(NotMidStep(TreasureCardTarget(group)), "treasure cards") is { } cards) {
             MarkBeforeTrip(leader, cards);
-            return cards;
+            return Source("treasure-cards", cards);
         }
 
         NoSideTrip();
@@ -846,11 +850,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             // A step he can't place: the area or person the quest's own words name, followed until he gets there
             // (UltimusDirector.Sense.cs).
             if (FollowHint(leader, target) is { } following) {
-                return following;
+                return Source("hint-follow", following);
             }
 
             if (HintFromText(leader, target) is { } hint) {
-                return hint;
+                return Source("hint-from-text", hint);
             }
 
             if (target is not null) {
@@ -860,41 +864,41 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
                 // In a dungeon, the dungeon's own quest first: it opens the way to the story's step (UltimusDirector.Smart.cs).
                 if (DungeonQuestFirst(group, target) is { } dungeonStep) {
-                    return TopUpBeforeFight(leader, dungeonStep) ?? dungeonStep;
+                    return Source("dungeon-first", TopUpBeforeFight(leader, dungeonStep) ?? dungeonStep);
                 }
 
                 // Anywhere: a way that opens with a quest he holds, that quest first (BotGates, Niduus, 2026-11-15).
                 if (GateQuestFirst(group, target) is { } gateStep) {
-                    return TopUpBeforeFight(leader, gateStep) ?? gateStep;
+                    return Source("gate-first", TopUpBeforeFight(leader, gateStep) ?? gateStep);
                 }
 
                 // A quest fight lost again and again: a side quest of his level first (never farming creatures for XP).
                 if (LevelFirst(leader, target) is { } xp) {
-                    return xp;
+                    return Source("level-first", xp);
                 }
 
                 // Another quest's step right by him first, and a wisp before a fight (UltimusDirector.Smart.cs).
                 if (WhileHere(group, target) is { } here) {
-                    return TopUpBeforeFight(leader, here) ?? here;
+                    return Source("while-here", TopUpBeforeFight(leader, here) ?? here);
                 }
 
                 if (TopUpBeforeFight(leader, target) is { } topUp) {
-                    return topUp;
+                    return Source("top-up", topUp);
                 }
 
-                return UltimusPlanner.Shortcut(leader, target, _stonesUsed.Keys) ?? target;
+                return Source("story", UltimusPlanner.Shortcut(leader, target, _stonesUsed.Keys) ?? target);
             }
         }
 
         // Nobody here has a story quest: the next one, from whoever gives it.
         if (UltimusPlanner.NextQuest(leader.Wizard) is var (quest, giver)) {
-            return UltimusPlanner.ForGiver(leader, quest, giver);
+            return Source("next-quest", UltimusPlanner.ForGiver(leader, quest, giver));
         }
 
         // Under-leveled for the next story quest: he fights creatures for the XP, as a player does (Niduus, 2026-11-14: no XP
         // command; he quests as a human). UltimusDirector.Push.cs.
         if (_currentQuest is null && UltimusPlanner.LevelBlocked(leader.Wizard) is var (blocked, level)) {
-            return XpTarget(leader, level, $"'{UltimusText.Title((string) blocked.m_questName)}' needs level {level}", gate: true);
+            return Source("level-gate", XpTarget(leader, level, $"'{UltimusText.Title((string) blocked.m_questName)}' needs level {level}", gate: true));
         }
 
         // The whole story played, to the last world the data has: they stop (paused, so Ahziael's Resume or Restart decides).
@@ -1529,7 +1533,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     private void NoteLeaderZone(UltimusMember.Status leader) {
         if (_leaderZone.Length > 0 && !string.Equals(_leaderZone, leader.Zone, StringComparison.OrdinalIgnoreCase)) {
             Note("Ultimus", $"{leader.Name} is now in {UltimusText.Zone(leader.Zone)}.");
-            CountBackAndForth(leader.Zone);
+            CountBackAndForth(leader);
             // A Recall or a Commons button press of his own is a player move, never a wrong landing (audit A6: a Recall back to
             // his mark was taken as a wrong area and he walked out again).
             var buttonMove = DateTime.UtcNow - _recallSentAt < TimeSpan.FromSeconds(30) || DateTime.UtcNow - _hubPressedAt < TimeSpan.FromSeconds(30);
@@ -2274,6 +2278,12 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             text += $" {why}, so this quest is only slow, not blocked.";
             facts.Insert(0, $"Likely cause: none found; {why.ToLowerInvariant()}, so the quest is waiting, not broken.");
         }
+        // "Every check passed" says only that his own play is the problem: he checks his own play too, names what he finds,
+        // and breaks a flip-flop it shows (it said "every check passed" 75 times on 2026-11-15 while he looped).
+        if (diagnosis is { Category: "bot" } && me is not null && OwnPlayCheck(me) is { Length: > 0 } own) {
+            diagnosis.LikelyCause += " My own play check: " + own;
+        }
+
         if (diagnosis is not null) {
             text += " " + diagnosis.Summary;
             facts.Insert(0, $"Likely cause ({diagnosis.Confidence} confidence, {diagnosis.Category}): {diagnosis.LikelyCause}");

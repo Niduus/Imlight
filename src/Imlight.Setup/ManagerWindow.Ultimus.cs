@@ -1720,6 +1720,7 @@ internal sealed partial class ManagerWindow {
             ("Explain", "His last Pause and explain (explain.txt)", ReadAllOf(Path.Combine(UltimusFolder, "explain.txt"), 32 * 1024)),
             ("UseSteps", "Story steps that ask to click things, checked after an update (use-steps.txt)", ReadAllOf(Path.Combine(UltimusFolder, "use-steps.txt"), 64 * 1024)),
             ("ExitTries", "Doors that did not take him: where he stood on each try (exit-tries.txt)", ReadAllOf(Path.Combine(UltimusFolder, "exit-tries.txt"), 32 * 1024)),
+            ("FlipFlops", "Two of his rules taking turns, and which goal he held to (flip-flops.jsonl)", ReadAllOf(Path.Combine(UltimusFolder, "flip-flops.jsonl"), 64 * 1024)),
             ("SelfTest", "His last self-test after an update (self-test.txt)", ReadAllOf(Path.Combine(UltimusFolder, "self-test.txt"), 16 * 1024)),
             ("Training", "His training plan (training-plan.txt)", ReadAllOf(Path.Combine(UltimusFolder, "training-plan.txt"), 16 * 1024)),
             ("Pace", "His weekly pace report (pace-report.txt)", ReadAllOf(Path.Combine(UltimusFolder, "pace-report.txt"), 16 * 1024)),

@@ -210,7 +210,14 @@ internal sealed partial class UltimusDirectorActor {
     private DateTime _offTrackAt = DateTime.MinValue;
 
     /// <summary>Story progress: a step, a quest, a level, or a won fight while levelling for the story.</summary>
-    private void StoryProgress() => _storyProgressAt = DateTime.UtcNow;
+    // Progress toward the story. A real one (a step, a quest, a level, XP, a won quest fight) also ends a flip-flop hold;
+    // an area reached on the way only counts the first time on this quest (UltimusDirector.Commit.cs).
+    private void StoryProgress(bool real = true) {
+        _storyProgressAt = DateTime.UtcNow;
+        if (real) {
+            _realProgressAt = _storyProgressAt;
+        }
+    }
 
     /// <summary>The off-track alarm: he stops, says why, and plans again back to the story.</summary>
     private void OffTrack(string why) {
@@ -237,7 +244,7 @@ internal sealed partial class UltimusDirectorActor {
             OverlayQuestPath.Forget(_team[0].CharId);
         }
 
-        StoryProgress();
+        StoryProgress(real: false);
     }
 
     // A move he set aside for a while (another open step goes first; the planner comes back to it after).
@@ -303,11 +310,16 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
+        // A "new move" counts only when it was not one of his moves in the last 15 minutes: in a loop the move changes at
+        // every check (A, B, A, B) and each one said "yes" (his log, 2026-11-15). Story progress is the same: a room
+        // reached again is not progress (UltimusDirector.Commit.cs).
+        var newMove = target is not null && target.Key != _checkKey && NewMoveForCheck(target.Key);
         var closer = _storyProgressAt > _checkProgress
                      || (target?.Key == _checkKey && distance < _checkDistance * 0.9f)
-                     || (target is not null && target.Key != _checkKey);
+                     || newMove;
         var said = _storyProgressAt > _checkProgress ? "yes: I made story progress"
-            : target?.Key != _checkKey ? "yes: I am on a new move"
+            : newMove ? "yes: I am on a new move"
+            : target?.Key != _checkKey ? $"no: \"{target?.What}\" is a move I already tried in the last few minutes"
             : closer ? $"yes: {_checkDistance:0} to {distance:0} from my goal" : $"no: still {distance:0} from my goal ({_checkDistance:0} last time)";
         _checkKey = target?.Key;
         _checkDistance = distance;

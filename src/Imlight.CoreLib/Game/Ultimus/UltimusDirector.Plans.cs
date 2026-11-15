@@ -205,8 +205,12 @@ internal sealed partial class UltimusDirectorActor {
         _prediction = null;
         if (OverlayQuestTracker.SameZone(expected.Zone, leader.Zone) || OverlayQuestTracker.SameZone(leader.Zone, expected.Zone)) {
             Think($"As I expected, {expected.Expect}.", "expected|" + expected.Key);
-            // An area reached on the way to the story is progress (the guardrails' off-track alarm).
-            StoryProgress();
+            // An area reached on the way to the story is progress (the guardrails' off-track alarm), but only a new one: the
+            // same area again and again is a loop, not progress (his log, 2026-11-15: 221 trips Ironworks <-> Nail's Hideout,
+            // each one "progress").
+            if (NewArrival(leader.Zone)) {
+                StoryProgress(real: false);
+            }
 
             return;
         }

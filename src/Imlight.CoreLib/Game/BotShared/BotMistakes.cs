@@ -49,6 +49,8 @@ internal static class BotMistakes {
     internal const string NO_WAY = "no way on the map";
     internal const string SURPRISE = "surprise";
     internal const string OFF_STORY = "off the main story";
+    // Two of a bot's own rules taking turns between two goals with no progress (UltimusDirector.Commit.cs).
+    internal const string FLIP_FLOP = "flip-flop";
     internal const string OUT_OF_BOUNDS = "out of bounds";
 
     internal sealed class Mistake {

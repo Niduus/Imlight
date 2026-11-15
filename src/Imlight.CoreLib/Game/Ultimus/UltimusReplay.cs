@@ -52,6 +52,40 @@ internal static class UltimusReplay {
         new("\"Follow me\" answered \"Sorry, I am hatching with someone else\" (2026-11-14)", () =>
             Enumerable.Range(0, 20).Select(i => MenuChatBook.Exact(new Random(i), "No thanks", "No, thank you", "Sorry", "Not now", "No"))
                 .Any(p => p is not null && (MenuChatBook.Says(p.Text, "hatching") || MenuChatBook.Says(p.Text, "busy"))) ? "an untrue Menu Chat line can still be picked" : null),
+        new("Ironworks <-> Nail's Hideout 221 times in an hour: two rules took turns (2026-11-15)", () => {
+            var t = DateTime.UtcNow.AddMinutes(-2);
+            UltimusDirectorActor.GoalPick P(int s, string id, string src) => new(t.AddSeconds(s * 11), id, src, "", "", "", id);
+            var loop = new[] { P(0, "q|Gate Crashers|g1", "dungeon-first"), P(1, "q|Internal Investigation|g2", "story"), P(2, "q|Gate Crashers|g1", "dungeon-first"),
+                               P(3, "q|Internal Investigation|g2", "story"), P(4, "q|Gate Crashers|g1", "dungeon-first") };
+            if (UltimusDirectorActor.FlipFlopIn(loop, DateTime.UtcNow, DateTime.MinValue, TimeSpan.FromMinutes(10), 4) is not var (a, b, _)) {
+                return "the flip-flop would not be seen";
+            }
+
+            return UltimusDirectorActor.Winner(a, b).Win.Source == "dungeon-first" ? null : "he would hold to the story step, not the dungeon's quest that opens the way";
+        }),
+        new("Real progress between turns is not a flip-flop (2026-11-15)", () => {
+            var t = DateTime.UtcNow.AddMinutes(-2);
+            UltimusDirectorActor.GoalPick P(int s, string id) => new(t.AddSeconds(s * 11), id, "story", "", "", "", id);
+            var picks = new[] { P(0, "a"), P(1, "b"), P(2, "a"), P(3, "b"), P(4, "a") };
+            return UltimusDirectorActor.FlipFlopIn(picks, DateTime.UtcNow, t.AddSeconds(25), TimeSpan.FromMinutes(10), 4) is null
+                ? null : "turns before his last step done would still count";
+        }),
+        new("Three different goals in a row are not a flip-flop (2026-11-15)", () => {
+            var t = DateTime.UtcNow.AddMinutes(-2);
+            UltimusDirectorActor.GoalPick P(int s, string id) => new(t.AddSeconds(s * 11), id, "story", "", "", "", id);
+            var picks = new[] { P(0, "a"), P(1, "b"), P(2, "c"), P(3, "a"), P(4, "b") };
+            return UltimusDirectorActor.FlipFlopIn(picks, DateTime.UtcNow, DateTime.MinValue, TimeSpan.FromMinutes(10), 4) is null
+                ? null : "an ordinary run of steps would be taken for a flip-flop";
+        }),
+        new("A side trip never wins over a quest step in a flip-flop (2026-11-15)", () => {
+            var t = DateTime.UtcNow;
+            var side = new UltimusDirectorActor.GoalPick(t, "k|shop", "shopping", "", "", "", "shop");
+            var step = new UltimusDirectorActor.GoalPick(t.AddSeconds(5), "q|Q|g", "story", "", "Q", "g", "step");
+            return UltimusDirectorActor.Winner(side, step).Win.Source == "story" ? null : "he would hold to the shopping trip";
+        }),
+        new("A door leg and its step are one goal (2026-11-15)", () =>
+            UltimusDirectorActor.GoalId(new UltimusPlanner.Target(UltimusPlanner.DOOR, 0, 0, "", Key: "Q|g|door|MB/x"))
+            == UltimusDirectorActor.GoalId(new UltimusPlanner.Target(UltimusPlanner.EXIT, 0, 0, "", Key: "Q|g|exit|MB/y")) ? null : "each door on the way would look like a new goal"),
     ];
 
     /// <summary>The failed checks (plain words), chat answers included; written to replay-pack.txt.</summary>

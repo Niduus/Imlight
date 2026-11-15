@@ -71,7 +71,8 @@ internal sealed partial class UltimusDirectorActor {
 
         _loopTrail.RemoveAll(t => DateTime.UtcNow - t.At > s_loopWindow);
         // Moving the story on is not a loop (a quest that sends him back and forth is fine while steps get done).
-        if (DateTime.UtcNow - _storyProgressAt < TimeSpan.FromMinutes(10) || DateTime.UtcNow - _loopBrokeAt < TimeSpan.FromMinutes(5)) {
+        // Real progress only: an area reached again does not count (UltimusDirector.Commit.cs).
+        if (DateTime.UtcNow - _realProgressAt < TimeSpan.FromMinutes(10) || DateTime.UtcNow - _loopBrokeAt < TimeSpan.FromMinutes(5)) {
             return false;
         }
 
@@ -362,7 +363,7 @@ internal sealed partial class UltimusDirectorActor {
 
         _doing = $"resting: he played his {most:0.#} hours for today (daily limit)";
         _lastProgress = DateTime.UtcNow;
-        StoryProgress();
+        StoryProgress(real: false);
         if (SafeSpot(leader) is { } safe) {
             WalkTo(0, safe);
         }
