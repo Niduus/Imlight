@@ -49,6 +49,7 @@ using System.Linq;
 using Akka.Actor;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Quests;
 using Imlight.CoreLib.Game.Requirements;
 using Imlight.CoreLib.Game.Requirements.Contexts;
 using Imlight.CoreLib.Game.WizBang;
@@ -93,6 +94,10 @@ internal sealed class InteractObjectStateComponent(ZoneEntity entity)
         var chosen = ChooseOption(GetOfferedOptions(playerCharacter).ToList(), CurrentState());
         if (chosen is not null) {
             Apply(chosen, playerActor, playerObject);
+            // A storm obelisk of the Tomb of Storms: lit for this wizard, for the way into the Well of Spirits (StormObelisks).
+            if (StormObelisks.IsObelisk(TemplateId)) {
+                StormObelisks.Lit(playerCharacter, TemplateId);
+            }
 
             return;
         }
@@ -191,8 +196,16 @@ internal sealed class InteractObjectStateComponent(ZoneEntity entity)
         }
     }
 
+    private ulong TemplateId => Entity.Info is { } info ? (ulong) info.m_templateID : 0;
+
     private IEnumerable<InteractOptionTemplate> GetOfferedOptions(Wizard wizard) {
         var current = CurrentState();
+        // A storm obelisk another wizard in this copy of the tomb already lit is still there for this one to light: each
+        // wizard lights the three for themselves, as in their own game (StormObelisks).
+        var obelisk = StormObelisks.IsObelisk(TemplateId);
+        if (obelisk && wizard is not null && !StormObelisks.HasLit(wizard, TemplateId)) {
+            current = null;
+        }
 
         foreach (var option in GetStateOptions(Entity.Template as GameObjectTemplate)) {
             if (IsGoalOption(option) || !ChangesWorld(option)) {
@@ -207,7 +220,10 @@ internal sealed class InteractObjectStateComponent(ZoneEntity entity)
             }
 
             var requirements = Requirements(option);
+            // An obelisk's own need (Back to Balance done) is also met by the quest itself, for a wizard who finished it
+            // before the server wrote that entry.
             if (requirements?.m_requirements is { Count: > 0 }
+                && !(obelisk && StormObelisks.MayLight(wizard))
                 && !RequirementDispatcher.EvaluateRequirements(
                     requirements,
                     new ZoneRequirementContext(requirements, null, null, wizard, ZoneActor, ObjectName) {

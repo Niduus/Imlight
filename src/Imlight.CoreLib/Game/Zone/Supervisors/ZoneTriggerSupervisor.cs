@@ -24,6 +24,7 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Housing;
+using Imlight.CoreLib.Game.Quests;
 using Imlight.CoreLib.Game.Requirements;
 using Imlight.CoreLib.Game.Requirements.Contexts;
 using Imlight.CoreLib.Game.Zone.Components;
@@ -134,6 +135,10 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         // A boss that only a live cutscene would bring out is brought out for a wizard who comes to fight it.
         if (message.EventName == START_ZONE_ENTER_EVENT && message.PlayerActor is not null) {
             ScheduleWaitingSpawnCheck(message.PlayerActor, message.PlayerGameObject);
+            // In the Well of Spirits or one of its tombs: past the storm obelisks for good (StormObelisks).
+            if (StormObelisks.IsInside(Zone.ZonePath)) {
+                StormObelisks.BeenInside(ZoneTrigger.QueryWizard(message.PlayerActor), Zone.ZonePath);
+            }
         }
 
         var passing = new List<(Trigger Trigger, IActorRef Actor)>();
@@ -150,6 +155,11 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             }
 
             if (retry is not null && !retry.Contains(trigger.m_triggerName)) {
+                continue;
+            }
+
+            // The Tomb of Storms' way into the Well of Spirits stays shut until the wizard lit the three storm obelisks.
+            if (StormSealed(trigger, message)) {
                 continue;
             }
 
@@ -711,6 +721,37 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             }],
             Targets = ZoneBroadcastTarget.Players,
         });
+    }
+
+    private readonly Dictionary<IActorRef, DateTime> _stormToldAt = [];
+
+    // True when this is the Tomb of Storms' way into the Well of Spirits and the wizard still has storm obelisks to light.
+    private bool StormSealed(Trigger trigger, ZONE_102_PROTOCOL.MSG_POSTEVENT message) {
+        // OpenAllDoors opens this way too, as it does every door.
+        if (s_openAllDoors || message.PlayerActor is null || !StormObelisks.IsCrypt(Zone.ZonePath)
+            || !string.Equals(trigger.m_triggerName, StormObelisks.ENTRANCE_TRIGGER, StringComparison.OrdinalIgnoreCase)) {
+            return false;
+        }
+
+        var wizard = ZoneTrigger.QueryWizard(message.PlayerActor);
+        if (!StormObelisks.Shut(wizard)) {
+            return false;
+        }
+
+        var left = StormObelisks.Unlit(wizard).Count();
+        if (!_stormToldAt.TryGetValue(message.PlayerActor, out var told) || DateTime.UtcNow - told > TimeSpan.FromSeconds(15)) {
+            _stormToldAt[message.PlayerActor] = DateTime.UtcNow;
+            Logger.Information("Zone {0}: the way into the Well of Spirits stays shut for wizard {1}: {2} of the 3 storm obelisks still to light.",
+                Logger.Args(Zone.ZonePath, wizard?.CharId, left));
+            message.PlayerActor.Tell(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE {
+                Message = left == 1
+                    ? "The way is sealed by storm magic. Light the last storm obelisk in the Tomb of Storms to open it."
+                    : $"The way is sealed by storm magic. Light the {left} storm obelisks in the Tomb of Storms to open it.",
+                Modal = 0,
+            });
+        }
+
+        return true;
     }
 
     private bool EvaluateRequirements(Trigger trigger, ZONE_102_PROTOCOL.MSG_POSTEVENT message) {

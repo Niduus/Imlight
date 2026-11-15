@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.Madlibs;
+using Imlight.CoreLib.Game.Quests;
 using Imlight.CoreLib.Game.Services;
 using Imlight.CoreLib.Game.Tools;
 using Imlight.CoreLib.Game.World;
@@ -707,6 +708,12 @@ internal static class UltimusPlanner {
             return null;
         }
 
+        // The Tomb of Storms' way into the Well of Spirits opens once the three storm obelisks are lit: lit first, one by
+        // one, as a player does (StormObelisks).
+        if (StormObelisks.IsCrypt(zone) && StormObelisks.IsInside(exit.To) && StormObelisks.Shut(leader.Wizard)) {
+            return ObeliskFirst(leader, live, why, key);
+        }
+
         // A door (or sigil) is clicked; anything else is walked into.
         var door2 = live.Where(m => m.Kind is MinimapIndex.DOOR or MinimapIndex.SIGIL && string.Equals(m.To?.Trim(), exit.To, StringComparison.OrdinalIgnoreCase))
             .OrderBy(m => Far(exit.X, exit.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault();
@@ -719,6 +726,26 @@ internal static class UltimusPlanner {
     }
 
     /// <summary>The giver of a quest: here, or the way to its area.</summary>
+    // The nearest storm obelisk the leader has not lit yet, to press on the way into the Well of Spirits.
+    private static Target ObeliskFirst(UltimusMember.Status leader, IReadOnlyList<MinimapIndex.Mark> live, string why, string key) {
+        if (!StormObelisks.MayLight(leader.Wizard)) {
+            return new Target(NONE, leader.X, leader.Y, $"the storm obelisks of the Tomb of Storms ({why})",
+                Problem: "the way into the Well of Spirits is sealed until the 3 storm obelisks are lit, and they only light after \"Back to Balance\"",
+                Key: key + "|obelisks");
+        }
+
+        var obelisk = StormObelisks.Unlit(leader.Wizard).OrderBy(o => Far(leader.X, leader.Y, o.X, o.Y)).First();
+        var mark = live.Where(m => m.Template == obelisk.Template)
+            .OrderBy(m => Far(obelisk.X, obelisk.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault();
+        var left = StormObelisks.Unlit(leader.Wizard).Count();
+        var what = $"storm obelisk {obelisk.Number} of the Tomb of Storms ({left} of 3 still to light before the way into the Well of Spirits opens; {why})";
+
+        return mark is null
+            ? new Target(SPOT, obelisk.X, obelisk.Y, what, Key: key + "|obelisk|" + obelisk.Number)
+            : new Target(STONE, mark.Object.m_location.X, mark.Object.m_location.Y, what, GlobalId: mark.Object.m_globalID.Full,
+                Key: key + "|obelisk|" + obelisk.Number);
+    }
+
     internal static Target ForGiver(UltimusMember.Status leader, QuestTemplate quest, ulong giver) {
         var live = MinimapIndex.In(leader.ZoneActor);
         string questName = quest.m_questName;

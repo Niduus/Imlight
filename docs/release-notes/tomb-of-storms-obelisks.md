@@ -1,0 +1,4 @@
+New: The 3 storm obelisks open the way into the Well of Spirits
+In the Tomb of Storms, the way on into the Well of Spirits now stays sealed until you have lit all 3 storm obelisks, as in the original game, and walking in early shows a message saying how many are left. Each wizard lights the obelisks for themselves, even if someone else in the same tomb already lit them, and the server remembers it. Anyone who has already been in the Well of Spirits or its tombs, or finished "De-Cipher the Ahnics", is never locked out. Ultimus and the Quest Team light the obelisks one by one before they go in, like a player.
+Where: Krokotopia, Tomb of Storms, the entrance to the Well of Spirits.
+Test: With a new wizard who finished "Back to Balance", walk into the Well of Spirits entrance and see it refuse with the message, then light the 3 obelisks and walk in.
