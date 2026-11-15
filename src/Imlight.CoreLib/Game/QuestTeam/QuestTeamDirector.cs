@@ -364,6 +364,11 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         // Paused in Ahziael: they stand where they are, logged in (a battle still plays out by itself).
         if (DateTime.UtcNow >= _nextPauseLook) {
             _nextPauseLook = DateTime.UtcNow.AddSeconds(2);
+            // The watchdog's pause from before an update is lifted: the update may be the fix (BotShared.WatchdogPause).
+            if (BotShared.WatchdogPause.ClearIfUpdated(QuestTeamWire.Folder, QuestTeamWire.PAUSE_FILE, WATCHDOG_STOP_FILE)) {
+                Note("Team", "a new update is installed since the watchdog stopped the team, so the watchdog's pause is lifted and the team carries on.", QuestTeamLink.NOTABLE);
+            }
+
             var paused = File.Exists(Path.Combine(QuestTeamWire.Folder, QuestTeamWire.PAUSE_FILE));
             if (paused != _paused) {
                 _paused = paused;

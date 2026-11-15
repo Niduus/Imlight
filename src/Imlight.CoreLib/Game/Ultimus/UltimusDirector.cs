@@ -364,6 +364,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // Paused in Ahziael: they stand where they are, logged in (a battle still plays out by itself).
         if (DateTime.UtcNow >= _nextPauseLook) {
             _nextPauseLook = DateTime.UtcNow.AddSeconds(2);
+            // The watchdog's pause from before an update is lifted: the update may be the fix (BotShared.WatchdogPause).
+            if (BotShared.WatchdogPause.ClearIfUpdated(UltimusWire.Folder, UltimusWire.PAUSE_FILE, WATCHDOG_STOP_FILE)) {
+                Note("Ultimus", "a new update is installed since the watchdog stopped him, so the watchdog's pause is lifted and he carries on.", UltimusLink.NOTABLE);
+            }
+
             var paused = File.Exists(Path.Combine(UltimusWire.Folder, UltimusWire.PAUSE_FILE));
             if (paused != _paused) {
                 _paused = paused;

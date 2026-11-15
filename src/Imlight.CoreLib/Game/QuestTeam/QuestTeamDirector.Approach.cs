@@ -365,7 +365,7 @@ internal sealed partial class QuestTeamDirectorActor {
         try {
             Directory.CreateDirectory(QuestTeamWire.Folder);
             File.WriteAllText(Path.Combine(QuestTeamWire.Folder, WATCHDOG_STOP_FILE), text.ToString());
-            File.WriteAllText(Path.Combine(QuestTeamWire.Folder, QuestTeamWire.PAUSE_FILE), "Watchdog: " + text.ToString().Split('\n')[0]);
+            File.WriteAllText(Path.Combine(QuestTeamWire.Folder, QuestTeamWire.PAUSE_FILE), BotShared.WatchdogPause.Text(text.ToString().Split('\n')[0]));
         }
         catch (IOException e) {
             Logger.Warning("Quest Team: could not write the watchdog stop: {0}", Logger.Args(e.Message));

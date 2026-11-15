@@ -149,6 +149,12 @@ internal static class UltimusReplay {
             return DudCreatures.IsDud(ghost) && !DudCreatures.Fightable(ghost) && DudCreatures.Fightable(other) && !DudCreatures.IsDud(0)
                 ? null : "a creature that starts no battle would still be picked, or others would be skipped too";
         }),
+        new("Paused by the watchdog at 9:26 and still paused after the 1:16 PM update that fixed it (2026-11-15)", () =>
+            WatchdogPause.FromOtherBuild("Watchdog: Stopped at 2026-11-15 09:26: no step done.", "1.0 now")
+            && WatchdogPause.FromOtherBuild("Watchdog: Stopped.\nBuild: 1.0 then", "1.0 now")
+            && !WatchdogPause.FromOtherBuild("Watchdog: Stopped.\nBuild: 1.0 now", "1.0 now")
+            && !WatchdogPause.FromOtherBuild("Pause and explain", "1.0 now")
+                ? null : "an old watchdog pause would not lift after an update, or a pause by hand would"),
     ];
 
     /// <summary>The failed checks (plain words), chat answers included; written to replay-pack.txt.</summary>

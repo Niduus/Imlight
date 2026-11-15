@@ -518,7 +518,7 @@ internal sealed partial class UltimusDirectorActor {
         try {
             Directory.CreateDirectory(UltimusWire.Folder);
             File.WriteAllText(Path.Combine(UltimusWire.Folder, WATCHDOG_STOP_FILE), text.ToString());
-            File.WriteAllText(Path.Combine(UltimusWire.Folder, UltimusWire.PAUSE_FILE), "Watchdog: " + text.ToString().Split('\n')[0]);
+            File.WriteAllText(Path.Combine(UltimusWire.Folder, UltimusWire.PAUSE_FILE), BotShared.WatchdogPause.Text(text.ToString().Split('\n')[0]));
         }
         catch (IOException e) {
             Logger.Warning("Ultimus: could not write the watchdog stop: {0}", Logger.Args(e.Message));
