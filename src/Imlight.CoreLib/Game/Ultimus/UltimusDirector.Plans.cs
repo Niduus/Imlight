@@ -203,6 +203,15 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         _prediction = null;
+        // He pressed Recall or the Commons button around the guess (just before it, while the teleport was on its way, or
+        // after it): he went where he chose to, not where the way goes, so no lesson is written (his log, 2026-11-15: a
+        // Recall sent a quarter second before the guess was saved as "this way goes to Newgate Prison, not The World Tree",
+        // a false fact in the shared brain).
+        var button = expected.At - TimeSpan.FromSeconds(20);
+        if (_recallSentAt > button || _hubPressedAt > button) {
+            return;
+        }
+
         if (OverlayQuestTracker.SameZone(expected.Zone, leader.Zone) || OverlayQuestTracker.SameZone(leader.Zone, expected.Zone)) {
             Think($"As I expected, {expected.Expect}.", "expected|" + expected.Key);
             // An area reached on the way to the story is progress (the guardrails' off-track alarm), but only a new one: the

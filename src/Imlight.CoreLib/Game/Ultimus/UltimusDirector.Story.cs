@@ -88,14 +88,24 @@ internal sealed partial class UltimusDirectorActor {
             var zone = (quest.m_goals ?? []).Where(g => g is not null).Select(g => (string) g.m_destinationZone).FirstOrDefault(z => !string.IsNullOrWhiteSpace(z));
             var folder = (zone ?? "").Split('/')[0];
             if (UltimusPlanner.Ladder.Contains(folder, StringComparer.OrdinalIgnoreCase)) {
+                _storyFolderLast = folder;
                 return folder;
             }
         }
 
         var here = (leader.Zone ?? "").Split('/')[0];
+        var standing = UltimusPlanner.Ladder.FirstOrDefault(w => string.Equals(w, here, StringComparison.OrdinalIgnoreCase)) ?? "";
+        // Between quests (a trainer in Ravenwood, a shop in an older world) his story is still the world he had reached, not
+        // the one he stands in (his log, 2026-11-15: "finish Wizard City's story" while training at level 22 in Marleybone).
+        if (_storyFolderLast.Length > 0 && BotShared.MainWorlds.Number(standing) < BotShared.MainWorlds.Number(_storyFolderLast)) {
+            return _storyFolderLast;
+        }
 
-        return UltimusPlanner.Ladder.FirstOrDefault(w => string.Equals(w, here, StringComparison.OrdinalIgnoreCase)) ?? "";
+        return standing;
     }
+
+    // The story world of his last main quest (kept for the moments between quests).
+    private string _storyFolderLast = "";
 
     /// <summary>Where he stands in the story, in words: "world 2 of 19, Krokotopia (levels 10 to 20); next Marleybone".</summary>
     private string StoryPlace(UltimusMember.Status leader) {
@@ -109,7 +119,8 @@ internal sealed partial class UltimusDirectorActor {
         var levels = s_worldLevels.GetValueOrDefault(folder);
         var next = index + 1 < ladder.Count ? WorldOf(ladder[index + 1] + "/") : "the end of the story";
 
-        return $"world {index + 1} of {ladder.Count}, {WorldOf(folder + "/")} (played at about levels {levels.From} to {levels.To}); next: {next}";
+        // Counted on Niduus's main worlds list (19, as the Spectator pages show it), not only the worlds with questing data.
+        return $"world {BotShared.MainWorlds.Number(folder)} of {BotShared.MainWorlds.Folders.Length}, {WorldOf(folder + "/")} (played at about levels {levels.From} to {levels.To}); next: {next}";
     }
 
     private string _storySaid = "";
