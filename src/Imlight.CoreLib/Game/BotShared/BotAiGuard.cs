@@ -237,6 +237,60 @@ internal static class BotAiGuard {
         return new string(chars);
     }
 
+    // ---- The safety check log (Niduus, 2026-11-15: "all" to "a Safety check log list ... with the private part hidden") ----
+
+    /// <summary>Every time the check stepped in, one line in logs\ultimus (shown on Ahziael's Ultimus AI Chat page).</summary>
+    internal const string SAFETY_LOG = "ai-safety-log.jsonl";
+
+    private static readonly object s_logLock = new();
+
+    /// <summary>
+    /// Writes one line to the safety check log: when, where (chat, stuck thinking...), why, which AI, and the line itself
+    /// with every blocked detail hidden (<see cref="Shown"/>). Never the private details themselves.
+    /// </summary>
+    internal static void Record(string where, string why, string text, string ai) {
+        try {
+            var line = new System.Text.Json.Nodes.JsonObject {
+                ["At"] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture),
+                ["Where"] = where, ["Why"] = why, ["AI"] = ai, ["Shown"] = Shown(text),
+            }.ToJsonString();
+            lock (s_logLock) {
+                System.IO.Directory.CreateDirectory(UltimusWire.Folder);
+                var file = System.IO.Path.Combine(UltimusWire.Folder, SAFETY_LOG);
+                System.IO.File.AppendAllText(file, line + Environment.NewLine);
+                // Kept short: the newest 500 lines.
+                if (new System.IO.FileInfo(file).Length > 400_000) {
+                    var lines = System.IO.File.ReadAllLines(file);
+                    System.IO.File.WriteAllLines(file, lines.Skip(Math.Max(0, lines.Length - 500)));
+                }
+            }
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) {
+            // The check itself still held; only its log line is missing.
+        }
+    }
+
+    /// <summary>
+    /// A line made safe to show: blocked details and their disguises become [hidden]; when a blocked name or value is
+    /// spelled out in pieces, the whole line is hidden. At most 200 characters.
+    /// </summary>
+    internal static string Shown(string text) {
+        if (string.IsNullOrWhiteSpace(text)) {
+            return "";
+        }
+
+        var t = Blank(Fold(text).Replace("\r", " ").Replace("\n", " "));
+        foreach (var pattern in s_disguised) {
+            t = pattern.Replace(t, HIDDEN);
+        }
+
+        if (HidesASecret(t) || Secrets().Any(s => t.Contains(s, StringComparison.OrdinalIgnoreCase)) || !ReferenceEquals(BotSocial.Scrub(t), t)) {
+            return "(the whole line is hidden: it held a private detail)";
+        }
+
+        return t.Length > 200 ? t[..200] + "..." : t;
+    }
+
     // ---- The private values: read from the machine and the settings, never written into the code ----
 
     private static readonly List<string> s_testSecrets = [];

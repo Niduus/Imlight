@@ -21,7 +21,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
+using Imlight.Common;
 using Imlight.CoreLib.Game.BotShared;
+using Imlight.CoreLib.Game.Ultimus;
 
 namespace Imlight.CoreLib.Game.QuestTeam;
 
@@ -122,6 +124,20 @@ internal sealed partial class QuestTeamDirectorActor {
                 : new[] { "bye", "goodbye", "see you", "later" }.Any(w => MenuChatBook.Says(text, w)) ? "bye"
                 : new[] { "hello", "hi", "hey", "greetings" }.Any(w => MenuChatBook.Says(text, w)) ? "hello"
                 : null;
+            // With [QuestTeam] AIChat, the AI picks the Menu Chat answer from a safe list (never for an ask: that stays a no).
+            if (moment != "no" && AiChatOn && UltimusLocalAI.CanThink) {
+                var choices = AiChoices();
+                if (choices.Count > 0) {
+                    Note("Team", $"{heard.SpeakerName} said in Menu Chat: \"{text}\"; the team's {UltimusLocalAI.Who} picks the answer.");
+                    _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
+                    var (speaker, fallback) = (near[0].Index, moment);
+                    UltimusLocalAI.Pick(text, choices.Select(c => c.Text).ToList())
+                        .ContinueWith(t => new TeamAiPick(speaker, fallback, choices, t.IsCompletedSuccessfully ? t.Result : -1))
+                        .PipeTo(Self);
+                    continue;
+                }
+            }
+
             Note("Team", $"{heard.SpeakerName} said in Menu Chat: \"{text}\"" +
                          (moment == "no" ? "; the team turns it down (it takes orders only from each other)." : moment is null ? "; the team carries on." : "."));
             if (moment is null) {
@@ -131,6 +147,49 @@ internal sealed partial class QuestTeamDirectorActor {
             _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
             Speak(near[0].Index, moment, 1, force: true);
         }
+    }
+
+    // ---- Menu Chat through the AI (Niduus, 2026-11-15, "all" to the ideas) ----
+
+    /// <summary>[QuestTeam] AIChat: the AI picked for Ultimus chooses the team's Menu Chat answers. Off by default, live.</summary>
+    private static bool AiChatOn => ConfigurationManager.GetValue("QuestTeam.AIChat", false);
+
+    /// <summary>The AI's pick came back: that phrase is said, or the usual answer when it found none.</summary>
+    private sealed record TeamAiPick(int Speaker, string Fallback, List<MenuChatBook.Phrase> Choices, int Picked);
+
+    // Only these may be picked: greetings, thanks, goodbyes, praise and polite noes. No phrase that agrees to anything or
+    // names a place, so whatever the AI picks keeps the team's rules (and a Menu Chat phrase can't hold a private detail).
+    private List<MenuChatBook.Phrase> AiChoices() {
+        var list = new List<MenuChatBook.Phrase>();
+        foreach (var moment in new[] { "hello", "thanks", "bye", "won", "no" }) {
+            foreach (var words in s_moments[moment]) {
+                if (MenuChatBook.Exact(_voiceRandom, words) is { } phrase && list.All(p => p.Id != phrase.Id)) {
+                    list.Add(phrase);
+                }
+            }
+        }
+
+        return list;
+    }
+
+    private void OnTeamAiPick(TeamAiPick m) {
+        if (m.Speaker < 0 || m.Speaker >= _actors.Count || m.Speaker >= _team.Count) {
+            return;
+        }
+
+        if (m.Picked < 0 || m.Picked >= m.Choices.Count) {
+            Note("Team", $"the {UltimusLocalAI.Who} found no answer" + (m.Fallback is null ? "; the team carries on." : "; the team gives its usual one."));
+            if (m.Fallback is not null) {
+                Speak(m.Speaker, m.Fallback, 1, force: true);
+            }
+
+            return;
+        }
+
+        var phrase = m.Choices[m.Picked];
+        _nextTeamLine = DateTime.UtcNow + s_teamLineGap;
+        Note(_team[m.Speaker].Role, $"{_team[m.Speaker].Name} says in Menu Chat: \"{phrase.Text}\" (picked by the {UltimusLocalAI.Who})");
+        _actors[m.Speaker].Tell(new QuestTeamMember.SayMenuChat(phrase.Id));
     }
 
 }

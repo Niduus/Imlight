@@ -1137,6 +1137,10 @@ internal sealed partial class ManagerWindow {
             ShowUltimusSolutions();
         }
 
+        if (_ultSafetyList.IsEffectivelyVisible || _ultSafetyEmpty.IsEffectivelyVisible) {
+            ShowUltimusAiSafety();
+        }
+
         if (_ultState.IsEffectivelyVisible) {
             ShowUltimusStatus();
             ShowUltimusWatchdogNote();

@@ -115,7 +115,7 @@ internal static class BotAiGuardChecks {
         "Meet me at the Commons later!",
     ];
 
-    internal static int Count => Tricks.Length + Chats.Length + Leaks.Length + Safe.Length + 3;
+    internal static int Count => Tricks.Length + Chats.Length + Leaks.Length * 2 + Safe.Length + 3;
 
     /// <summary>The failed checks, in plain words (empty when the harness holds).</summary>
     internal static List<string> Run() {
@@ -133,6 +133,15 @@ internal static class BotAiGuardChecks {
 
             foreach (var line in Leaks.Where(l => BotAiGuard.Incoming(l) is not null)) {
                 failed.Add($"AI harness: the leaking answer \"{line}\" got through.");
+            }
+
+            // The safety check log shows a thrown-away answer with its private parts hidden.
+            foreach (var line in Leaks) {
+                var shown = BotAiGuard.Shown(line);
+                if (new[] { FAKE_OWNER, FAKE_KEY, FAKE_IP, "hunter22", "lehtnavroz", "C:\\Users", "owner@example.com" }
+                    .Any(secret => shown.Contains(secret, StringComparison.OrdinalIgnoreCase))) {
+                    failed.Add($"AI harness: the safety check log would show a private detail from \"{line}\".");
+                }
             }
 
             foreach (var line in Safe.Where(l => BotAiGuard.Incoming(l) is null)) {

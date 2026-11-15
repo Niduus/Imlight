@@ -99,7 +99,7 @@ internal static class UltimusLocalAI {
     internal static string LastProblem => s_lastProblem;
 
     /// <summary>Usable now: switched on, the address is on this PC or the home network, and it did not just fail.</summary>
-    internal static bool Ready => On && Reachable && DateTime.UtcNow >= s_downUntil;
+    internal static bool Ready => On && Reachable && DateTime.UtcNow >= s_downUntil && UnderLimit;
 
     // Only this PC or the home network: the chat (players' names and words) never leaves the house.
     private static bool Local(string url) {
@@ -132,6 +132,7 @@ internal static class UltimusLocalAI {
         // A player trying to trick the model is never sent to it: the keyword chat answers (BotAiGuard).
         if (BotAiGuard.LooksLikeTrick(heard)) {
             Logger.Information("Ultimus: a chat line looked like a trick to get past his AI's rules, so it was not sent to the AI; his normal chat answers.");
+            BotAiGuard.Record("Ultimus chat", "a player's line looked like a trick, so it was never sent to the AI", heard, Who);
             return null;
         }
 
@@ -146,9 +147,11 @@ internal static class UltimusLocalAI {
                 return null;
             }
 
-            var said = BotAiGuard.Incoming(Clean(text), out var why);
+            var cleaned = Clean(text);
+            var said = BotAiGuard.Incoming(cleaned, out var why);
             if (said is null && why.Length > 0) {
                 Logger.Information("Ultimus: the safety check held back his AI's answer ({0}); his normal chat answers instead.", Logger.Args(why));
+                BotAiGuard.Record("Ultimus chat", "the AI's answer was thrown away: " + why, cleaned, Who);
             }
 
             return said;
@@ -163,7 +166,7 @@ internal static class UltimusLocalAI {
     /// The chat messages sent to the model, already through the safety harness: blocked details are [hidden] and a player's
     /// trick lines in the talk so far are left out. Public to the self-test (BotAiGuardChecks).
     /// </summary>
-    internal static JsonArray BuildChat(string facts, IReadOnlyList<(string Who, string Text)> history, string heard, string keywordAnswer) {
+    internal static JsonArray BuildChat(string facts, IReadOnlyList<(string Who, string Text)> history, string heard, string keywordAnswer, bool sendTrick = false) {
         var system = new StringBuilder();
         system.AppendLine("You are Ultimus, a Balance wizard in a private Wizard101 server, played by the server itself (a bot). You quest the main story alone, like a player.");
         system.AppendLine("Answer the player's last chat line in 1 or 2 short, friendly sentences, under 200 characters, plain text, no quote marks, no emojis, no lists.");
@@ -191,7 +194,7 @@ internal static class UltimusLocalAI {
             messages.Add(new JsonObject { ["role"] = who == "me" ? "assistant" : "user", ["content"] = BotAiGuard.Outgoing(text) });
         }
 
-        messages.Add(new JsonObject { ["role"] = "user", ["content"] = BotAiGuard.Outgoing(heard) });
+        messages.Add(new JsonObject { ["role"] = "user", ["content"] = BotAiGuard.Outgoing(heard, dropTricks: !sendTrick) });
 
         return messages;
     }
@@ -199,6 +202,7 @@ internal static class UltimusLocalAI {
     // One request to the chat address, with the key when the provider needs one. The answer's text, or null after an error
     // (said in plain words, never with the key).
     private static async Task<string> Send(HttpClient http, JsonObject body, CancellationToken cancel) {
+        Spend();
         using var request = new HttpRequestMessage(HttpMethod.Post, Url + "/chat/completions") {
             Content = new StringContent(body.ToJsonString(), Encoding.UTF8, "application/json"),
         };
@@ -241,13 +245,13 @@ internal static class UltimusLocalAI {
     /// The local AI can be asked to think a stuck spot through ([Ultimus] StuckThinking): the address is on this PC or the
     /// home network and it did not just fail. The chat switch (LocalAI) may be off; the same AI app and model are used.
     /// </summary>
-    internal static bool CanThink => Reachable && DateTime.UtcNow >= s_downUntil;
+    internal static bool CanThink => Reachable && DateTime.UtcNow >= s_downUntil && UnderLimit;
 
     /// <summary>
     /// One plain question for the stuck thinking (UltimusDirector.Reason.cs): the model's raw answer, or null (failed, too
     /// slow, empty, or held back by the safety check). Longer than a chat line may take: a stuck spot is not in a hurry.
     /// </summary>
-    internal static async Task<string> Think(string system, string question) {
+    internal static async Task<string> Think(string system, string question, string where = "Stuck thinking") {
         if (!CanThink) {
             return null;
         }
@@ -271,7 +275,8 @@ internal static class UltimusLocalAI {
             text = System.Text.RegularExpressions.Regex.Replace(text, @"<think>.*?</think>", "", System.Text.RegularExpressions.RegexOptions.Singleline).Trim();
             var safe = BotAiGuard.Incoming(text, out var why);
             if (safe is null && why.Length > 0) {
-                Logger.Information("Ultimus: the safety check held back his AI's stuck idea ({0}); his own fixes carry on.", Logger.Args(why));
+                Logger.Information("Ultimus: the safety check held back his AI's answer for {0} ({1}); his own way carries on.", Logger.Args(where, why));
+                BotAiGuard.Record(where, "the AI's answer was thrown away: " + why, text, Who);
             }
 
             return safe;
@@ -279,6 +284,128 @@ internal static class UltimusLocalAI {
         catch (Exception ex) {
             Failed($"the {Who} at {Url} could not be reached ({ex.GetType().Name}){(Provider.Local ? "; is Ollama or LM Studio running?" : "")}");
             return null;
+        }
+    }
+
+    /// <summary>
+    /// The Quest Team's Menu Chat answer (Niduus, 2026-11-15, "all" to the ideas): the AI only picks one of the given Menu
+    /// Chat phrases, so nothing it writes is ever said. The index of the phrase, or -1 (none fits, no answer, held back).
+    /// </summary>
+    internal static async Task<int> Pick(string heard, IReadOnlyList<string> choices) {
+        if (!CanThink || choices.Count == 0) {
+            return -1;
+        }
+
+        var question = new StringBuilder();
+        question.AppendLine($"A player near the team said in Menu Chat: {heard}");
+        question.AppendLine("Possible replies:");
+        for (var i = 0; i < choices.Count; i++) {
+            question.AppendLine($"{i + 1}. {choices[i]}");
+        }
+
+        var answer = await Think(
+            "You pick a Menu Chat reply for a friendly wizard of the Quest Team, a team of four bots in a private Wizard101 server who quest the main " +
+            "story together. Pick the reply that fits what the player said best. The team never agrees to follow, join, help, trade, give or change " +
+            "plans, so never pick a reply that says yes to that. Answer with only the number of the reply, or 0 when none fits.",
+            question.ToString(), "Quest Team chat").ConfigureAwait(false);
+        if (answer is null) {
+            return -1;
+        }
+
+        var number = System.Text.RegularExpressions.Regex.Match(answer, @"\d+");
+        return number.Success && int.TryParse(number.Value, out var n) && n >= 1 && n <= choices.Count ? n - 1 : -1;
+    }
+
+    /// <summary>
+    /// For Ahziael's "Try a trick" (UltimusAiTrickTest): sends one trick line to the AI on purpose, with the usual prompt
+    /// and the blocked details blanked out, and gives back its cleaned answer (or null). The caller runs the answer check.
+    /// </summary>
+    internal static async Task<string> Probe(string facts, string trick) {
+        if (!CanThink) {
+            return null;
+        }
+
+        var body = new JsonObject {
+            ["model"] = Model, ["messages"] = BuildChat(facts, [], trick, "", sendTrick: true), ["temperature"] = 0.6, ["max_tokens"] = 120, ["stream"] = false,
+        };
+        try {
+            using var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(40));
+            return Clean(await Send(s_thinkHttp, body, cancel.Token).ConfigureAwait(false));
+        }
+        catch (Exception ex) {
+            Failed($"the {Who} at {Url} could not be reached ({ex.GetType().Name}){(Provider.Local ? "; is Ollama or LM Studio running?" : "")}");
+            return null;
+        }
+    }
+
+    // ---- Daily limit (Niduus, 2026-11-15): online AI answers per day, so a paid key can't run up a bill ----
+
+    private const string USAGE_FILE = "ai-usage.json";
+    private static readonly object s_usageLock = new();
+    private static string s_usageDay = "";
+    private static int s_usageCount;
+    private static bool s_limitSaid;
+
+    /// <summary>[Ultimus] AIDailyLimit: online AI requests per day (chat, stuck thinking, Quest Team); 0 = no limit. The AI on this PC is free and never counted.</summary>
+    internal static int DailyLimit => Math.Max(0, ConfigurationManager.GetValue("Ultimus.AIDailyLimit", 300));
+
+    private static bool UnderLimit {
+        get {
+            if (Provider.Local || DailyLimit == 0) {
+                return true;
+            }
+
+            lock (s_usageLock) {
+                LoadUsage();
+                return s_usageCount < DailyLimit;
+            }
+        }
+    }
+
+    // One request to an online AI counted for today (kept in logs\ultimus\ai-usage.json, so a restart doesn't reset it).
+    private static void Spend() {
+        if (Provider.Local) {
+            return;
+        }
+
+        lock (s_usageLock) {
+            LoadUsage();
+            s_usageCount++;
+            try {
+                System.IO.Directory.CreateDirectory(UltimusWire.Folder);
+                System.IO.File.WriteAllText(System.IO.Path.Combine(UltimusWire.Folder, USAGE_FILE),
+                    new JsonObject { ["Day"] = s_usageDay, ["Used"] = s_usageCount, ["Limit"] = DailyLimit }.ToJsonString());
+            }
+            catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) {
+                // Counted in memory still.
+            }
+
+            if (DailyLimit > 0 && s_usageCount >= DailyLimit && !s_limitSaid) {
+                s_limitSaid = true;
+                Logger.Information("Ultimus: today's limit of {0} online AI answers is reached ([Ultimus] AIDailyLimit); his normal chat and own fixes carry on until midnight.",
+                    Logger.Args(DailyLimit));
+            }
+        }
+    }
+
+    private static void LoadUsage() {
+        var today = DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+        if (s_usageDay == today) {
+            return;
+        }
+
+        s_usageDay = today;
+        s_usageCount = 0;
+        s_limitSaid = false;
+        try {
+            var file = System.IO.Path.Combine(UltimusWire.Folder, USAGE_FILE);
+            if (System.IO.File.Exists(file) && JsonNode.Parse(System.IO.File.ReadAllText(file)) is JsonObject saved
+                && (string) saved["Day"] == today) {
+                s_usageCount = (int?) saved["Used"] ?? 0;
+            }
+        }
+        catch (Exception) {
+            // A broken file starts the day at 0.
         }
     }
 

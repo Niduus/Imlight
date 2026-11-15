@@ -63,6 +63,7 @@ internal static class ManagerCommands {
         PollQuestCheck();
         GameDataReload.Poll();
         ItemSafety.ItemHistory.PollRestoreRequests();
+        Ultimus.UltimusAiTrickTest.Poll();
         try {
             if (!File.Exists(COMMANDS_FILE)) {
                 return;
