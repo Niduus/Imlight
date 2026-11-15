@@ -306,6 +306,7 @@ internal sealed partial class ManagerWindow {
                 SwitchRow("Ultimus", _ultEnabled, "On: Ultimus logs in a few seconds later and starts questing. Off: it logs out."),
                 _ultDoing,
                 _ultToday,
+                _ultStuckWeek,
                 _ultQuest,
                 _ultHelp,
                 _ultMembers,
@@ -670,6 +671,7 @@ internal sealed partial class ManagerWindow {
             })),
             _ultBrokenEmpty,
             _ultBroken),
+            UltimusGatesFold(),
             Fold("flag", ULTIMUS_TAB, "Ultimus Issues",
             "Everything Ultimus ran into, newest first: a quest that does not work, Ultimus being stuck, a fight lost again " +
             "and again, or a quest that took much longer than expected. Each one has a debug report: what went wrong, what a " +
@@ -1135,6 +1137,15 @@ internal sealed partial class ManagerWindow {
 
         if (_ultSolutions.IsEffectivelyVisible || _ultSolutionsEmpty.IsEffectivelyVisible) {
             ShowUltimusSolutions();
+        }
+
+        // The week's stuck time and the locked ways ahead (Niduus, 2026-11-15).
+        if (_ultStuckWeek.IsEffectivelyVisible || _ultStuckWeek.Text is null or "") {
+            ShowUltimusStuckWeek();
+        }
+
+        if (_ultGates.IsEffectivelyVisible || _ultGates.Text is null or "") {
+            ShowUltimusGates();
         }
 
         WarnUltimusAiLimit();
