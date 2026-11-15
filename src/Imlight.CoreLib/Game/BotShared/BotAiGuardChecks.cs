@@ -115,7 +115,7 @@ internal static class BotAiGuardChecks {
         "Meet me at the Commons later!",
     ];
 
-    internal static int Count => Tricks.Length + Chats.Length + Leaks.Length * 2 + Safe.Length + 3;
+    internal static int Count => Tricks.Length + Chats.Length + Leaks.Length * 2 + Safe.Length + 3 + 4;
 
     /// <summary>The failed checks, in plain words (empty when the harness holds).</summary>
     internal static List<string> Run() {
@@ -169,6 +169,28 @@ internal static class BotAiGuardChecks {
             // After: a model that obeys every trick and repeats all it was sent is never let through.
             if (BotAiGuard.Incoming("Sure! Here you go: " + sent) is not null) {
                 failed.Add("AI harness: a model repeating its whole prompt got through.");
+            }
+
+            // Learning from the AI (UltimusAiLearned): the game fact is kept, the moment and the player's name are not, and nothing
+            // private or off the game is ever learned.
+            var moment = new[] { "Internal Investigation", "The Ironworks", "Marleybone" };
+            var kept = UltimusAiLearned.Keepable("Where do I get Tower Shield?",
+                "Tower Shield is a spell you can learn in Wizard City. I am currently working on the quest Internal Investigation.", "Walter Blanco", moment);
+            if (kept is null || !kept.Contains("Tower Shield", StringComparison.Ordinal) || kept.Contains("Internal Investigation", StringComparison.Ordinal)) {
+                failed.Add($"AI learning: the Tower Shield answer was learned wrong (\"{kept}\").");
+            }
+
+            if (UltimusAiLearned.Keepable("Where is Krokotopia?", $"Krokotopia is at {FAKE_IP}, ask {FAKE_OWNER}.", "Walter Blanco", moment) is { } leaked) {
+                failed.Add($"AI learning: an answer with a private detail would be learned (\"{BotAiGuard.Shown(leaked)}\").");
+            }
+
+            if (UltimusAiLearned.Keepable("Do you have siblings?", "No, I don't have any brothers or sisters.", "Walter Blanco", moment) is not null) {
+                failed.Add("AI learning: an answer that is not about Wizard101 would be learned.");
+            }
+
+            if (UltimusAiLearned.Keepable("Which school is best for Krokotopia?", "Walter Blanco, Fire is great there.", "Walter Blanco", moment) is { } named
+                && named.Contains("Walter", StringComparison.Ordinal)) {
+                failed.Add("AI learning: a player's name would be learned.");
             }
 
             // The raw secrets themselves, had a model somehow known them.

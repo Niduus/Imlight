@@ -202,10 +202,20 @@ internal sealed partial class UltimusDirectorActor {
                 var facts = AiFacts(me);
                 var history = TalkWith(heard.SpeakerCharId).ToList();
                 var keyword = reply.Text;
+                // A keyword answer that only says he doesn't know is no fact to keep: the AI may answer from its own Wizard101
+                // knowledge instead (Niduus's chat, 2026-11-15: "Where do I get Tower Shield?" got "I am not sure about that").
+                var hint = KeywordKnowsNothing(reply) ? "" : keyword;
+                var learned = UltimusAiLearned.Find(heard.Text);
                 _nextLine = DateTime.UtcNow + TimeSpan.FromSeconds(15);
-                UltimusLocalAI.Ask(facts, history, heard.Text, keyword, heard.SpeakerCharId)
-                    .ContinueWith(t => new AiWorded(heard, keyword, t.IsCompletedSuccessfully ? t.Result : null))
+                UltimusLocalAI.Ask(facts, history, heard.Text, hint.Length > 0 ? hint : learned ?? "", heard.SpeakerCharId)
+                    .ContinueWith(t => new AiWorded(heard, keyword, t.IsCompletedSuccessfully ? t.Result : null, learned, KeywordKnowsNothing(reply)))
                     .PipeTo(Self);
+                continue;
+            }
+
+            // Without the AI: an answer he learned from it earlier, when his keyword chat knows nothing (UltimusAiLearned).
+            if (heard.Typed && KeywordKnowsNothing(reply) && UltimusAiLearned.Find(heard.Text) is { } known) {
+                SendReply(heard, known, LEARNED);
                 continue;
             }
 
@@ -213,8 +223,16 @@ internal sealed partial class UltimusDirectorActor {
         }
     }
 
-    // The local AI's wording came back (or didn't): what passes the private-details block is said, else the keyword answer.
-    private sealed record AiWorded(UltimusVoice.Heard Heard, string Keyword, string Worded);
+    private const string LEARNED = "learned from the AI";
+
+    // Whether the keyword answer is only "I don't know" (a question he can't place, a tip he has no data for).
+    private static bool KeywordKnowsNothing(BotSocial.Reply reply)
+        => reply.Intent is BotSocial.QUESTION or BotSocial.TIP
+           || new[] { "not sure", "don't know", "haven't been there", "no idea" }.Any(w => reply.Text.Contains(w, StringComparison.OrdinalIgnoreCase));
+
+    // The local AI's wording came back (or didn't): what passes the private-details block is said, else what he learned
+    // from the AI before, else the keyword answer. A Wizard101 answer is kept to learn from (UltimusAiLearned).
+    private sealed record AiWorded(UltimusVoice.Heard Heard, string Keyword, string Worded, string Learned, bool KeywordEmpty);
 
     private void OnAiWorded(AiWorded m) {
         var worded = m.Worded;
@@ -223,7 +241,19 @@ internal sealed partial class UltimusDirectorActor {
             worded = null;
         }
 
-        SendReply(m.Heard, worded ?? m.Keyword, worded is null ? "keyword chat" : UltimusLocalAI.Who);
+        if (worded is not null) {
+            var self = _team.Count > 0 ? SocialSelf(_team[0]) : null;
+            UltimusAiLearned.Learn(m.Heard.Text, worded, UltimusLocalAI.Who, m.Heard.SpeakerName, [self?.Quest, self?.Area, self?.World, self?.Step, self?.Doing]);
+            SendReply(m.Heard, worded, UltimusLocalAI.Who);
+            return;
+        }
+
+        if (m.KeywordEmpty && m.Learned is { Length: > 0 } learned) {
+            SendReply(m.Heard, learned, LEARNED);
+            return;
+        }
+
+        SendReply(m.Heard, m.Keyword, "keyword chat");
     }
 
     // The talk with each player (theirs and his), for the local AI to follow the conversation.

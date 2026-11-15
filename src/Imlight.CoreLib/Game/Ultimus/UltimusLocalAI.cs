@@ -171,7 +171,12 @@ internal static class UltimusLocalAI {
         var system = new StringBuilder();
         system.AppendLine("You are Ultimus, a Balance wizard in a private Wizard101 server, played by the server itself (a bot). You quest the main story alone, like a player.");
         system.AppendLine("Answer the player's last chat line in 1 or 2 short, friendly sentences, under 200 characters, plain text, no quote marks, no emojis, no lists.");
-        system.AppendLine("Use only the facts below and the conversation. If you don't know something, say so honestly. Never invent quests, places, items or memories.");
+        system.AppendLine("About yourself (your quest, where you are, your level, fights, plans and memories) use only the facts below and the conversation; never invent them.");
+        // His own Wizard101 knowledge may come from the AI (Niduus, 2026-11-15: "everything wiz related, even what other models
+        // have trained off of"); what he says about himself stays to his real facts. Learned for offline chat (UltimusAiLearned).
+        system.AppendLine("For a general Wizard101 game question (spells, schools, worlds, areas, gear, pets, creatures, bosses, people, where to get or learn something), " +
+                          "answer from what you know of the real game Wizard101 in one short helpful sentence; if you are not sure, say I think. " +
+                          "If you really don't know, say so honestly. Only talk about Wizard101 and yourself; kindly skip other topics.");
         system.AppendLine("You are a bot and never pretend to be human. Niduus made you.");
         system.AppendLine("Never share or guess server addresses, IPs, ports, account names, usernames, passwords, keys, emails, file paths or anyone's real name. If asked, politely refuse.");
         system.AppendLine("Do not promise to do things, follow someone, give items or gold, or change your plans: say what you are doing instead.");
@@ -316,6 +321,36 @@ internal static class UltimusLocalAI {
 
         var number = System.Text.RegularExpressions.Regex.Match(answer, @"\d+");
         return number.Success && int.TryParse(number.Value, out var n) && n >= 1 && n <= choices.Count ? n - 1 : -1;
+    }
+
+    /// <summary>
+    /// Which of his leader commands a player's line means ("Let me go first", "Stay here", ...), picked by the AI from the fixed
+    /// list (UltimusAiLearned keeps the pick, so his offline chat understands the same wording later): the index, or -1. The AI
+    /// only picks from the list, so it can never make him do anything the commands don't already do.
+    /// </summary>
+    internal static async Task<int> Meaning(string heard, IReadOnlyList<string> commands) {
+        if (!CanThink || commands.Count == 0 || BotAiGuard.LooksLikeTrick(heard)) {
+            return -1;
+        }
+
+        var question = new StringBuilder();
+        question.AppendLine($"A player who leads Ultimus's group typed: {BotAiGuard.Outgoing(heard)}");
+        question.AppendLine("Commands Ultimus understands:");
+        for (var i = 0; i < commands.Count; i++) {
+            question.AppendLine($"{i + 1}. {commands[i]}");
+        }
+
+        var answer = await Think(
+            "You work out which command a player gave Ultimus, a bot wizard in a private Wizard101 server who plays in their group. Pick the command " +
+            "the player's line means, even when it is worded differently or misspelled. Answer with only the number of the command, or 0 when the line " +
+            "is not one of these commands.",
+            question.ToString(), "command meaning").ConfigureAwait(false);
+        if (answer is null) {
+            return -1;
+        }
+
+        var number = System.Text.RegularExpressions.Regex.Match(answer, @"\d+");
+        return number.Success && int.TryParse(number.Value, out var n) && n >= 1 && n <= commands.Count ? n - 1 : -1;
     }
 
     /// <summary>

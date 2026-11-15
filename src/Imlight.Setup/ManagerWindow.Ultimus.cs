@@ -1265,6 +1265,10 @@ internal sealed partial class ManagerWindow {
             ShowUltimusAiSafety();
         }
 
+        if (_ultLearnedState.IsEffectivelyVisible) {
+            ShowUltimusAiLearned();
+        }
+
         if (_ultState.IsEffectivelyVisible) {
             ShowUltimusStatus();
             ShowUltimusWatchdogNote();
