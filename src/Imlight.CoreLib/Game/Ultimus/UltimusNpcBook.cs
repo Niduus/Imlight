@@ -86,6 +86,26 @@ internal static class UltimusNpcBook {
             ?? entries.Where(e => e.Name.Contains(wanted, StringComparison.OrdinalIgnoreCase)).OrderBy(e => e.Name.Length).FirstOrDefault();
     }
 
+    /// <summary>
+    /// Every place a person of that name stands, across every NPC who carries the name (two Watsons in Marleybone: on Scotland
+    /// Yard's roof and in Katz's lab), distinct areas only, the asker's world first. Empty when no one by that name is known.
+    /// </summary>
+    internal static (string Name, List<Place> Places) FindAll(string name, string fromZone = "") {
+        if (Find(name) is not { } first) {
+            return ("", []);
+        }
+
+        var world = (fromZone ?? "").Split('/')[0];
+        var places = s_book.Values.Where(e => string.Equals(e.Name, first.Name, StringComparison.OrdinalIgnoreCase))
+            .SelectMany(e => e.Places)
+            .GroupBy(p => p.Zone, StringComparer.OrdinalIgnoreCase).Select(g => g.First())
+            .OrderByDescending(p => string.Equals(p.Zone.Split('/')[0], world, StringComparison.OrdinalIgnoreCase))
+            .ThenByDescending(p => OverlayQuestTracker.SameZone(p.Zone, fromZone ?? ""))
+            .ToList();
+
+        return (first.Name, places);
+    }
+
     /// <summary>The NPCs whose names a text says (whole words), longest name first: for hints from a quest's words.</summary>
     internal static List<(ulong Id, Entry Entry)> Named(string text) {
         if (string.IsNullOrWhiteSpace(text)) {

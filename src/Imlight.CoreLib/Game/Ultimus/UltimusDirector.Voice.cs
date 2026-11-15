@@ -507,7 +507,7 @@ internal sealed partial class UltimusDirectorActor {
 
         return new BotSocial.Self(UltimusRoster.NAME, me.Wizard?.PlayerNameBehavior?.GetWizardName() ?? UltimusRoster.NAME, "Balance",
             me.Wizard?.MagicSchoolBehavior?.Level ?? 1, UltimusText.Zone(me.Zone), WorldOf(me.Zone), title, step,
-            me.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId), mood, who => NpcTip(me, who), FoeTip, _doing,
+            me.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId), mood, who => NpcTip(me, who, _currentQuest ?? _target?.Quest), FoeTip, _doing,
             me.Wizard?.GameStats is { } hp ? (int) (hp.m_currentHitpoints * 100L / Math.Max(1, hp.m_baseHitpoints + hp.m_bonusHitpoints)) : -1,
             what => what switch {
                 "potions" => AskedForPotions(me).Line,
@@ -547,18 +547,35 @@ internal sealed partial class UltimusDirectorActor {
     // "Where is Headmaster Ambrose?": from his NPC book (every person the story worlds' quests name, from the game's own
     // area files, so also in places he hasn't been). "Where is <a friend>?": the way a player knows it, from the friends
     // list (Niduus, 2026-11-15: "If he's friends with someone, he should be able to say where they are at from natural means").
-    private static string NpcTip(UltimusMember.Status me, string who) {
+    private static string NpcTip(UltimusMember.Status me, string who, string quest = null) {
         if (FriendWhere(me, who) is { } friendAt) {
             return friendAt;
         }
 
-        if (UltimusNpcBook.Find(who) is not { } entry || entry.Places.Count == 0) {
+        var (name, places) = UltimusNpcBook.FindAll(who, me?.Zone ?? "");
+        if (places.Count == 0) {
             return null;
         }
 
-        var place = entry.Places[0];
+        // Only what the game's files say (Niduus, 2026-11-15: "only accurate data"): every area someone by that name stands
+        // in, not just the first one found, and the one his own quest needs said first, from the Quest Atlas.
+        var forQuest = UltimusAtlas.OfQuest(quest)
+            .Where(s => string.Equals(s.Person, name, StringComparison.OrdinalIgnoreCase))
+            .Select(s => s.RealZone is { Length: > 0 } real ? real : s.StepZone)
+            .FirstOrDefault(z => !string.IsNullOrEmpty(z) && places.Any(p => OverlayQuestTracker.SameZone(p.Zone, z) || OverlayQuestTracker.SameZone(z, p.Zone)));
+        var text = forQuest is not null ? $"For my quest \"{UltimusText.Title(quest)}\", {name} is in {UltimusText.Zone(forQuest)}, {WorldOf(forQuest)}." : "";
+        var others = places.Where(p => forQuest is null || !(OverlayQuestTracker.SameZone(p.Zone, forQuest) || OverlayQuestTracker.SameZone(forQuest, p.Zone))).ToList();
+        if (others.Count == 0) {
+            return text;
+        }
 
-        return $"{entry.Name} stands in {UltimusText.Zone(place.Zone)}, {WorldOf(place.Zone)}" + (entry.Places.Count > 1 ? " (and a few other spots)." : ".");
+        var shown = others.Take(3).Select(p => $"{UltimusText.Zone(p.Zone)} ({WorldOf(p.Zone)})").ToList();
+        var list = shown.Count == 1 ? shown[0] : string.Join(", ", shown.Take(shown.Count - 1)) + " and " + shown[^1];
+        var more = others.Count > 3 ? $", and {others.Count - 3} more place(s)" : "";
+
+        return text.Length > 0
+            ? $"{text} There's also a {name} in {list}{more}."
+            : $"{name} stands in {list}{more}.";
     }
 
     // A player or bot by wizard name: where they are when they are his friend and online (as his friends list shows it);

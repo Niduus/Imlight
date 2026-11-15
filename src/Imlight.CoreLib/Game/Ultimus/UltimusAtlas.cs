@@ -61,6 +61,10 @@ internal static class UltimusAtlas {
     /// <summary>The Atlas's record of a step, or null (not built yet, or not a main story step).</summary>
     internal static Step Of(string quest, string goal) => s_steps.TryGetValue(quest + "|" + goal, out var step) ? step : null;
 
+    /// <summary>The Atlas's steps of one quest (empty when not built or not a main story quest).</summary>
+    internal static List<Step> OfQuest(string quest)
+        => string.IsNullOrEmpty(quest) ? [] : [.. s_steps.Values.Where(s => string.Equals(s.Quest, quest, StringComparison.OrdinalIgnoreCase))];
+
     /// <summary>
     /// Where the person of a "talk to" step really stands, when the zone files place them only in one other story area than
     /// the one the quest names, and the quest's own area was read and does not hold them; "" otherwise. Pure, so it can be checked.
