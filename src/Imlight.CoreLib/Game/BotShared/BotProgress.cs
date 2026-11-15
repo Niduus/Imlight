@@ -57,7 +57,7 @@ internal static class BotProgress {
     private static readonly Dictionary<string, string> s_codes = new(StringComparer.OrdinalIgnoreCase) {
         ["WC"] = "WizardCity", ["KT"] = "Krokotopia", ["MB"] = "Marleybone", ["MS"] = "MooShu", ["DS"] = "DragonSpire", ["CL"] = "Celestia",
         ["ZF"] = "Zafaria", ["AV"] = "Avalon", ["AZ"] = "Azteca", ["KR"] = "Khrysalis", ["KH"] = "Khrysalis", ["PL"] = "Polaris", ["MR"] = "Mirage",
-        ["EM"] = "Empyrea", ["KM"] = "Karamelle", ["LM"] = "Lemuria",
+        ["EM"] = "Empyrea", ["KM"] = "Karamelle", ["LM"] = "Lemuria", ["NV"] = "Novus", ["WL"] = "Wallaru", ["DM"] = "Darkmoor",
     };
 
     private static readonly Lock s_lock = new();
@@ -71,7 +71,7 @@ internal static class BotProgress {
             return "";
         }
 
-        var ladder = Ultimus.UltimusPlanner.Ladder;
+        var ladder = MainWorlds.Folders;
         string InLadder(string zone) {
             var folder = (zone ?? "").Split('/')[0].Trim();
             return ladder.FirstOrDefault(w => string.Equals(w, folder, StringComparison.OrdinalIgnoreCase)) ?? "";
@@ -89,7 +89,7 @@ internal static class BotProgress {
     }
 
     /// <summary>A world's name as players say it ("Wizard City").</summary>
-    internal static string Shown(string world) => OverlayQuestTracker.WorldName(world);
+    internal static string Shown(string world) => MainWorlds.Number(world) > 0 ? MainWorlds.Name(world) : OverlayQuestTracker.WorldName(world);
 
     /// <summary>
     /// Where <paramref name="wizard"/> is in its world's story: the world of the quest it plays (when a story quest), else
@@ -102,7 +102,7 @@ internal static class BotProgress {
 
         try {
             var (plans, worldOf) = Plans();
-            var ladder = Ultimus.UltimusPlanner.Ladder;
+            var ladder = MainWorlds.Folders;
             bool Has(string world) => plans.TryGetValue(world, out var groups) && groups.Count > 0;
             int DoneIn(string world) => plans[world].Count(g => g.Any(wizard.HasCompletedQuest));
 
@@ -162,6 +162,13 @@ internal static class BotProgress {
         }
 
         var line = left == 0 ? $"{name} story: {count.Done}/{count.Total} done" : $"Quest {count.Now}/{count.Total} in {name}";
+        // Its place in the main worlds (Niduus, 2026-11-15: "World X of 19").
+        var number = MainWorlds.Number(count.World);
+        var worlds = number > 0 ? $"World {number} of {MainWorlds.All.Length}" : "";
+        // The quest now taking much longer than their usual pace (twice a quest's time, 20 min at least): shown in red.
+        var since = SinceLast(book);
+        var slow = gap is { } usual && since is { } now && now > Math.Max(20, usual * 2);
+        var slowLine = slow ? $"this quest is taking longer than usual ({Duration(since!.Value)} so far, about {Duration(gap!.Value)} is usual)" : "";
 
         return new JsonObject {
             ["world"] = name,
@@ -173,6 +180,11 @@ internal static class BotProgress {
             ["minutesEach"] = gap is null ? 0 : Math.Round(gap.Value, 1),
             ["estimate"] = estimate,
             ["line"] = line,
+            ["worldNumber"] = number,
+            ["worlds"] = MainWorlds.All.Length,
+            ["worldLine"] = worlds,
+            ["slow"] = slow,
+            ["slowLine"] = slowLine,
         };
     }
 
@@ -203,7 +215,7 @@ internal static class BotProgress {
         }
 
         var plans = new Dictionary<string, List<HashSet<string>>>(StringComparer.OrdinalIgnoreCase);
-        var ladder = Ultimus.UltimusPlanner.Ladder;
+        var ladder = MainWorlds.Folders;
         var withStory = ladder.Where(w => worldOf.Values.Contains(w, StringComparer.OrdinalIgnoreCase)).ToList();
         for (var i = 0; i < withStory.Count; i++) {
             plans[withStory[i]] = PlanOf(withStory[i], i + 1 < withStory.Count ? withStory[i + 1] : "", worldOf);
@@ -354,6 +366,17 @@ internal static class BotProgress {
             catch (Exception ex) {
                 Logger.Debug("Bots: the pace book could not be written: {0}", Logger.Args(ex.Message));
             }
+        }
+    }
+
+    private static readonly DateTime s_started = DateTime.UtcNow;
+
+    /// <summary>Minutes since their last quest done, or null when none is in the book.</summary>
+    internal static double? SinceLast(string book) {
+        lock (s_lock) {
+            var times = TimesOf(book);
+            // Time the server was off does not count: from this start at the latest.
+            return times.Count == 0 ? null : (DateTime.UtcNow - (times[^1] > s_started ? times[^1] : s_started)).TotalMinutes;
         }
     }
 

@@ -1139,6 +1139,15 @@ internal static class OverlayHost {
                         found.Add((new OverlayElement { Kind = OverlayElement.BUTTON, Action = line.Action, Command = line.Value, Visible = true }, false, Pixels(area)));
                     }
                 }
+
+                // The Quest Team Spectator's names in its quest box: a click watches that member (Niduus, 2026-11-15).
+                foreach (var name in Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(picture).OfType<Control>()) {
+                    if (name.Tag is UltimusViews.MemberPick pick && name.Bounds.Width > 0 && name.IsEffectivelyVisible
+                        && name.TranslatePoint(new Point(0, 0), picture) is { } at) {
+                        found.Add((new OverlayElement { Kind = OverlayElement.BUTTON, Action = OverlayAction.TEAM_WATCH, Command = pick.Role, Visible = true },
+                            false, Pixels(new Rect(at, name.Bounds.Size))));
+                    }
+                }
             }
 
             foreach (var child in picture is Panel panel ? panel.Children : []) {

@@ -56,7 +56,7 @@ internal static class OverlayUltimusData {
     internal sealed record Info(string Name, int Level, int Health, int Most, string Place, string Doing, string Quest, string QuestTitle, string Kind,
                                 string NextStep, IReadOnlyList<Step> Steps, IReadOnlyList<string> Way, IReadOnlyList<string> Others, Battle? Fight,
                                 string Note, DateTime At, int QuestLevel = 0, string World = "", Tracker? Detail = null, string Progress = "",
-                                string Estimate = "") {
+                                string Estimate = "", string WorldLine = "", string SlowLine = "") {
 
         internal bool Stale => DateTime.UtcNow - At > TimeSpan.FromSeconds(8);
 
@@ -78,7 +78,32 @@ internal static class OverlayUltimusData {
     /// <summary>The Quest Team's roles, in the team's order (the Quest Team Spectator cycles through them only).</summary>
     internal static readonly string[] TeamRoles = ["Ice", "Life", "Death", "Storm"];
 
-    private static int s_teamIndex;
+    // The member watched, remembered across restarts of the overlay (Niduus, 2026-11-15).
+    private static int s_teamIndex = LoadWatched();
+
+    private static string WatchedFile => System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        Edition.INSTALL_FOLDER_NAME, "overlay-team-watch.txt");
+
+    private static int LoadWatched() {
+        try {
+            var role = System.IO.File.Exists(WatchedFile) ? System.IO.File.ReadAllText(WatchedFile).Trim() : "";
+            var at = Array.FindIndex(TeamRoles, r => string.Equals(r, role, StringComparison.OrdinalIgnoreCase));
+            return Math.Max(0, at);
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) {
+            return 0;
+        }
+    }
+
+    private static void SaveWatched(string role) {
+        try {
+            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(WatchedFile)!);
+            System.IO.File.WriteAllText(WatchedFile, role);
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) {
+            // Only a convenience: the next start watches Freya (Ice) again.
+        }
+    }
 
     // One feed per spectator: what was last heard, and whether the overlay shows it.
     private sealed class Feed {
@@ -174,6 +199,7 @@ internal static class OverlayUltimusData {
 
     private static string Switch(int next) {
         Volatile.Write(ref s_teamIndex, next);
+        SaveWatched(TeamRoles[next]);
         lock (s_lock) {
             var feed = FeedOf(TEAM_KEY);
             feed.Info = null;
@@ -308,7 +334,10 @@ internal static class OverlayUltimusData {
             DateTime.UtcNow, (int) Number(sent["questLevel"]), Short((string?) sent["world"], 40), tracker,
             // Quest CURR/END in the world's story and the time to the next world (Niduus, 2026-11-15).
             sent["progress"] is JsonObject progress ? Short((string?) progress["line"], 80) : "",
-            sent["progress"] is JsonObject paced ? Short((string?) paced["estimate"], 160) : "");
+            sent["progress"] is JsonObject paced ? Short((string?) paced["estimate"], 160) : "",
+            // "World 3 of 19" (Niduus's main worlds) and the red line when this quest runs long.
+            sent["progress"] is JsonObject numbered ? Short((string?) numbered["worldLine"], 40) : "",
+            sent["progress"] is JsonObject slow ? Short((string?) slow["slowLine"], 160) : "");
     }
 
     private static List<Fighter> Fighters(JsonNode? node) => (node as JsonArray ?? []).OfType<JsonObject>().Take(8)
@@ -345,7 +374,7 @@ internal static class OverlayUltimusData {
         ], "Scorpion on Lost Soul", "the weakest enemy: Lost Soul with Scorpion (about 145)", ["Elemental Shield"],
             ["Round 3: casts Scorpion on Lost Soul", "Round 2: casts Spirit Blade on himself", "Round 1: passes"],
             [new Fighter("Lost Soul", 120, 300, true), new Fighter("Lost Soul", 300, 300, true)], [], "Scarab x4, Scorpion x3, Sandstorm x2"),
-        "", DateTime.MaxValue, 5, "Wizard City", null, "Quest 14/52 in Wizard City", "about 3 h 20 min to Krokotopia at his pace (about 5 min a quest)");
+        "", DateTime.MaxValue, 5, "Wizard City", null, "Quest 14/52 in Wizard City", "about 3 h 20 min to Krokotopia at his pace (about 5 min a quest)", "World 1 of 19");
 
     // A made-up Quest Team wizard for the designers.
     private static readonly Info TeamSample = Sample with {
@@ -364,6 +393,30 @@ internal static class UltimusViews {
     /// The Ultimus Spectator needs the Minimap add-on downloaded (Niduus, 2026-11-14: required "for install, for Spectate
     /// to work"); the player's own Minimap does not have to be on the overlay. Without the add-on, each piece says so.
     /// </summary>
+    // The Quest Team's four names under its quest box; a click on one watches it (OverlayHost.PlaceHits).
+    private static void AddNames(Panel panel, long key, Looks look) {
+        if (key != OverlayUltimusData.TEAM_KEY) {
+            return;
+        }
+
+        var names = new WrapPanel { Orientation = Orientation.Horizontal };
+        names.Children.Add(Line("Watch: ", look.Size - 2, look.Faint));
+        foreach (var role in OverlayUltimusData.TeamRoles) {
+            var watched = string.Equals(role, OverlayUltimusData.Who(key), StringComparison.OrdinalIgnoreCase);
+            var name = Line(OverlayUltimusData.MemberName(role), look.Size - 2, watched ? look.Gold : look.Text, bold: watched);
+            name.Margin = new Thickness(0, 0, 8, 0);
+            name.Tag = new MemberPick(role);
+            names.Children.Add(name);
+        }
+
+        panel.Children.Add(names);
+    }
+
+    /// <summary>A Quest Team name in the quest box: a click on it watches that member (OverlayHost.PlaceHits).</summary>
+    internal sealed record MemberPick(string Role);
+
+    private static readonly IBrush s_slow = new SolidColorBrush(Color.FromRgb(0xFF, 0x6B, 0x6B));
+
     internal const string NEEDS_MINIMAP = "This spectator needs the Minimap add-on downloaded. Get it in Ahziael: Play > Overlay > Add-ons > Niduus's add-ons.";
 
     /// <summary>Ultimus's quest box: who he is, where, and his quest now with its step and way (never the player's quests).</summary>
@@ -381,6 +434,7 @@ internal static class UltimusViews {
         if (Waiting(info, key) is { } waiting) {
             panel.Children.Add(Line(OverlayUltimusData.Watched(key), look.Size + 2, look.Gold, bold: true));
             panel.Children.Add(Line(waiting, look.Size - 1, look.Faint, wrap: true));
+            AddNames(panel, key, look);
 
             return panel;
         }
@@ -400,11 +454,20 @@ internal static class UltimusViews {
 
         // Quest CURR/END in the world's story, and the time to the next world at their pace (Niduus, 2026-11-15).
         if (info.Progress.Length > 0) {
-            panel.Children.Add(Line(info.Progress, look.Size - 1, look.Gold, bold: true));
+            var numbered = info.WorldLine.Length > 0 ? $"{info.WorldLine}  ·  {info.Progress}" : info.Progress;
+            panel.Children.Add(Line(numbered, look.Size - 1, look.Gold, bold: true, wrap: true));
             if (info.Estimate.Length > 0) {
                 panel.Children.Add(Line(Capital(info.Estimate), look.Size - 3, look.Faint, wrap: true));
             }
+
+            // Red when the quest now takes much longer than their usual pace (Niduus, 2026-11-15).
+            if (info.SlowLine.Length > 0) {
+                panel.Children.Add(Line(Capital(info.SlowLine), look.Size - 3, s_slow, bold: true, wrap: true));
+            }
         }
+
+        // The Quest Team Spectator: click a name to watch that member (Niduus, 2026-11-15).
+        AddNames(panel, key, look);
 
         panel.Children.Add(new Border { Height = 4 });
         if (info.Quest.Length == 0) {

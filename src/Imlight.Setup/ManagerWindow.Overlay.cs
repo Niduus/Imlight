@@ -1964,6 +1964,21 @@ internal sealed partial class ManagerWindow {
                     panel.Children.Add(Sub("Quest Team Spectator: switches to the next Quest Team wizard (Ice, Life, Death, Storm, then Ice again). " +
                         "Works when the Quest Team Spectator's map or quest box is on the overlay."));
                     break;
+                case OverlayAction.SPECTATE_GOTO: {
+                    string[] whom = ["The Quest Team member watched now", "Ultimus"];
+                    var ultimus = string.Equals(e.Command.Trim(), "ultimus", StringComparison.OrdinalIgnoreCase);
+                    if (!ultimus && e.Command != "questteam") {
+                        e.Command = "questteam";
+                    }
+
+                    panel.Children.Add(OvField("Go to", OvCombo(whom, ultimus ? 1 : 0, i => {
+                        e.Command = i == 1 ? "ultimus" : "questteam";
+                        OverlayChanged(false);
+                    }, 280)));
+                    panel.Children.Add(Sub("Takes the wizard in this game window right next to that bot, inside its copy of a dungeon too, to watch it " +
+                        "play. It uses .ultimus tp or .questteam tp, so the wizard needs the rights for those commands."));
+                    break;
+                }
                 case OverlayAction.TEAM_WATCH: {
                     var members = OverlayUltimusData.TeamRoles.Select(r => $"{OverlayUltimusData.MemberName(r)} ({r})").ToArray();
                     var at = OverlayUltimusData.RoleOf(e.Command) is { } chosen ? Array.IndexOf(OverlayUltimusData.TeamRoles, chosen) : -1;

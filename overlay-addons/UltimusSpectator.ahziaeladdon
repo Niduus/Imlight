@@ -2,8 +2,8 @@
   "Format": "Ahziael overlay add-on",
   "Name": "Ultimus Spectator",
   "Author": "Niduus",
-  "Description": "Watch Ultimus. His own minimap follows him wherever he is and always draws HIS quest's way (never yours), a quest box shows his quest and step plus which story quest of the world he is on (like Quest 14/52 in Marleybone) and about how long until the next world at his own pace, and in battle a spells box shows his hand, pips and what he casts. Needs the Minimap add-on downloaded (your own Minimap does not have to be on, and stays as it is). A Pause AI button pauses his AI for an hour; click it again to turn it back on (only on the PC that runs the server).",
-  "Version": "3",
+  "Description": "Watch Ultimus. His own minimap follows him wherever he is and always draws HIS quest's way (never yours), a quest box shows his quest and step plus which main world he is in (World 3 of 19), which story quest of it he is on (like Quest 14/52 in Marleybone), about how long until the next world at his own pace and a red line when a quest takes much longer than usual, and in battle a spells box shows his hand, pips and what he casts. Needs the Minimap add-on downloaded (your own Minimap does not have to be on, and stays as it is). A Go to button takes you right next to him. A Pause AI button pauses his AI for an hour; click it again to turn it back on (only on the PC that runs the server).",
+  "Version": "4",
   "Requires": [ "Minimap" ],
   "Widgets": [
     {
@@ -17,6 +17,12 @@
         },
         {
           "Kind": "Button", "Action": "PauseAI", "Name": "Ultimus: pause or resume AI", "Text": "Pause AI (1 hour)", "Anchor": "TopLeft", "X": 12, "Y": 34, "Width": 180, "Height": 30,
+          "Size": 13, "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#D0120C22" },
+          "BorderColor": "#D0E07CFF", "BorderWidth": 1, "CornerRadius": 8
+        },
+        {
+          "Kind": "Button", "Action": "SpectateGoTo", "Command": "ultimus", "Name": "Ultimus: go to him", "Text": "Go to", "Anchor": "TopLeft", "X": 198, "Y": 34, "Width": 60, "Height": 30,
           "Size": 13, "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
           "Background": { "Kind": "Solid", "Color1": "#D0120C22" },
           "BorderColor": "#D0E07CFF", "BorderWidth": 1, "CornerRadius": 8

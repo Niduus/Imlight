@@ -58,7 +58,7 @@ internal sealed partial class UltimusDirectorActor {
         ["DragonSpire"] = (30, 40, 14), ["Celestia"] = (40, 50, 16), ["Zafaria"] = (50, 55, 14), ["Avalon"] = (55, 60, 16),
         ["Azteca"] = (60, 70, 18), ["Khrysalis"] = (70, 80, 24), ["Polaris"] = (80, 90, 14), ["Mirage"] = (90, 100, 16),
         ["Empyrea"] = (100, 110, 22), ["Karamelle"] = (110, 120, 16), ["Lemuria"] = (120, 130, 16), ["Novus"] = (130, 140, 18),
-        ["Wallaru"] = (140, 150, 18), ["Selenopolis"] = (150, 160, 18), ["Ahmarra"] = (160, 170, 18),
+        ["Wallaru"] = (140, 150, 18), ["Darkmoor"] = (150, 160, 8), ["Ahmarra"] = (160, 170, 18),
     };
 
     /// <summary>

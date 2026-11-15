@@ -755,9 +755,16 @@ internal sealed partial class ManagerWindow {
         _teamQuest.Text = quest.Length == 0 ? "Quest: none right now."
             : $"Quest: {quest}, for {Minutes(questFor)} so far" + (expected > 0 ? $" (expected about {Minutes(expected)})." : ".");
         _teamQuest.Foreground = expected > 0 && questFor > expected * (double) (_teamSlow.Value ?? 2) ? ManagerTheme.Accent("Create") : ManagerTheme.TEXT_BRUSH;
-        _teamStory.Text = status["progress"] is JsonObject progress && ((string?) progress["line"] ?? "") is { Length: > 0 } storyLine
-            ? $"Story: {storyLine}" + (((string?) progress["estimate"] ?? "") is { Length: > 0 } estimate ? $", {estimate}." : ".")
-            : "Story: where they are in the world's story shows once they are playing.";
+        var storyProgress = status["progress"] as JsonObject;
+        var storyWorld = (string?) storyProgress?["worldLine"] ?? "";
+        var storyLine = (string?) storyProgress?["line"] ?? "";
+        var storyEstimate = (string?) storyProgress?["estimate"] ?? "";
+        var storySlow = (string?) storyProgress?["slowLine"] ?? "";
+        _teamStory.Text = storyLine.Length == 0 ? "Story: where they are in the world's story shows once they are playing."
+            : "Story: " + string.Join(", ", new[] { storyWorld, storyLine, storyEstimate }.Where(t => t.Length > 0)) + "."
+              + (storySlow.Length > 0 ? $" Careful: {storySlow}." : "");
+        // Red when the quest now takes much longer than their usual pace (Niduus, 2026-11-15).
+        _teamStory.Foreground = storySlow.Length > 0 ? ManagerTheme.Accent("Create") : ManagerTheme.TEXT_BRUSH;
 
         foreach (var node in status["members"] as JsonArray ?? []) {
             if (node is not JsonObject member) {

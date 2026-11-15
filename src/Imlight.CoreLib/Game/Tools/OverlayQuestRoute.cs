@@ -416,10 +416,7 @@ internal static class OverlayQuestRoute {
     /// <summary>
     /// The worlds of the main story (and Arcanum, its hub): a server-played wizard on the story goes through these only.
     /// </summary>
-    internal static readonly HashSet<string> StoryWorlds = new(StringComparer.OrdinalIgnoreCase) {
-        "WizardCity", "Krokotopia", "Marleybone", "MooShu", "DragonSpire", "Celestia", "Zafaria", "Avalon", "Azteca", "Khrysalis",
-        "Arcanum", "Polaris", "Mirage", "Empyrea", "Karamelle", "Lemuria", "Novus", "Wallaru", "Selenopolis", "Ahmarra",
-    };
+    internal static readonly HashSet<string> StoryWorlds = BotShared.MainWorlds.WithHub();
 
     /// <summary>Whether an area is in a main-story world and not an event, a gauntlet or a house.</summary>
     internal static bool OnStory(string zone) {

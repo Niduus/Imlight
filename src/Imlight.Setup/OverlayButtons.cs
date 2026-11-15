@@ -128,6 +128,17 @@ internal static class OverlayButtons {
 
                 return;
             }
+            case OverlayAction.SPECTATE_GOTO: {
+                // Right next to the bot watched (Niduus, 2026-11-15), with the same command Ahziael's pages use.
+                var team = !string.Equals(button.Command.Trim(), "ultimus", StringComparison.OrdinalIgnoreCase);
+                var go = new OverlayElement {
+                    Kind = OverlayElement.BUTTON, Action = OverlayAction.COMMAND, Visible = true,
+                    Command = team ? $".questteam tp {OverlayUltimusData.Who(OverlayUltimusData.TEAM_KEY)}" : ".ultimus tp",
+                };
+                _ = RunOnServerAsync(go, game, done);
+
+                return;
+            }
             case OverlayAction.PAUSE_AI: {
                 // Ultimus's AI paused for an hour, or back on (Niduus, 2026-11-15): the host's own server settings only.
                 var (ok, said) = UltimusAiSwitches.TogglePause(InstalledCommands.ConfigFile(OverlayHost.InstallFolder));

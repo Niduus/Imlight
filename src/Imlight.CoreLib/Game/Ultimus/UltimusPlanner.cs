@@ -74,14 +74,13 @@ internal static class UltimusPlanner {
     // world", "Wizard City, Krok, Marlybone, Mooshu, Dragonspyre, these types of worlds"), by their zone folder.
     private static readonly HashSet<string> s_storyWorlds = OverlayQuestRoute.StoryWorlds;
 
-    // Quest codes of the side worlds (Grizzleheim, Wintertusk, Wysteria's academy, Aquila, Darkmoor).
-    private static readonly HashSet<string> s_sideWorldCodes = new(StringComparer.OrdinalIgnoreCase) { "GH", "WT", "PA", "WY", "AQ", "DM" };
+    // Quest codes of the side worlds (Grizzleheim, Wintertusk, Wysteria's academy, Aquila, Selenopolis). Darkmoor is a main
+    // world (Niduus, 2026-11-15).
+    private static readonly HashSet<string> s_sideWorldCodes = new(StringComparer.OrdinalIgnoreCase) { "GH", "WT", "PA", "WY", "AQ", "SL" };
 
     // The story's worlds in the order they are played (Arcanum is a hub, not a step of the ladder).
-    private static readonly string[] s_ladder = [
-        "WizardCity", "Krokotopia", "Marleybone", "MooShu", "DragonSpire", "Celestia", "Zafaria", "Avalon", "Azteca", "Khrysalis",
-        "Polaris", "Mirage", "Empyrea", "Karamelle", "Lemuria", "Novus", "Wallaru", "Selenopolis", "Ahmarra",
-    ];
+    // Niduus's main worlds list (BotShared.MainWorlds, 2026-11-15); Ahmarra has no questing data yet and is left out.
+    private static readonly string[] s_ladder = BotShared.MainWorlds.Questable;
 
     /// <summary>The story's worlds in the order they are played, by zone folder.</summary>
     internal static IReadOnlyList<string> Ladder => s_ladder;
@@ -135,7 +134,8 @@ internal static class UltimusPlanner {
         return best;
     }
 
-    /// <summary>Whether a quest belongs to a main story world (never Grizzleheim, Wintertusk, Wysteria, Aquila or Darkmoor).</summary>
+    /// <summary>Whether a quest belongs to a main story world (never Grizzleheim, Wintertusk, Wysteria, Aquila or Selenopolis, nor a
+    /// main world without questing data yet, such as Ahmarra).</summary>
     internal static bool IsMainStoryWorld(QuestTemplate quest) {
         if (quest is null) {
             return false;
@@ -161,7 +161,7 @@ internal static class UltimusPlanner {
             }
 
             var world = zone.Split('/')[0];
-            if (!s_storyWorlds.Contains(world)) {
+            if (!s_storyWorlds.Contains(world) || !BotShared.MainWorlds.QuestsIn(world)) {
                 return false;
             }
         }

@@ -668,7 +668,13 @@ internal static class OverlayAction {
     /// </summary>
     internal const string TEAM_WATCH = "TeamWatch";
 
-    internal static readonly string[] KINDS = [COMMAND, CHEAT, MOB_CHEAT, DESIGNER, TOGGLE_MINE, OPEN_AHZIAEL, TEAM_NEXT, PAUSE_AI, TEAM_WATCH];
+    /// <summary>
+    /// The spectators' Go to button (Niduus, 2026-11-15): takes the wizard in that game window right next to the bot watched
+    /// (.ultimus tp, or .questteam tp and the member watched now). Command: "ultimus" or "questteam".
+    /// </summary>
+    internal const string SPECTATE_GOTO = "SpectateGoTo";
+
+    internal static readonly string[] KINDS = [COMMAND, CHEAT, MOB_CHEAT, DESIGNER, TOGGLE_MINE, OPEN_AHZIAEL, TEAM_NEXT, PAUSE_AI, TEAM_WATCH, SPECTATE_GOTO];
 
     // The minimap's own buttons (not a choice in the designer): full screen or back, closer, farther.
     internal const string MAP_FULL = "MapFull";
@@ -687,6 +693,7 @@ internal static class OverlayAction {
     internal static readonly string[] LABELS = [
         "Run an Imlight or Ahziael command", "Use one of my player cheats", "Set off a mob (creature) cheat", "Open the overlay designer", "Show or hide my own pieces", "Open Ahziael",
         "Quest Team Spectator: next member", "Pause or resume Ultimus's AI (1 hour)", "Quest Team Spectator: watch one member",
+        "Spectator: go to the bot watched",
     ];
 
     internal const string USE = "Use";

@@ -141,7 +141,7 @@ internal sealed partial class UltimusDirectorActor {
 
     private static readonly string[] s_storyBadgeWords = [
         "Quest", "Story", "Wizard City", "Krokotopia", "Marleybone", "MooShu", "Dragonspyre", "DragonSpire", "Celestia", "Zafaria",
-        "Avalon", "Azteca", "Khrysalis", "Polaris", "Mirage", "Empyrea", "Karamelle", "Lemuria", "Novus", "Wallaru", "Selenopolis", "Ahmarra",
+        "Avalon", "Azteca", "Khrysalis", "Polaris", "Mirage", "Empyrea", "Karamelle", "Lemuria", "Novus", "Wallaru", "Darkmoor", "Ahmarra",
     ];
 
     private static Imlight.CoreLib.WizardData.Models.World.BadgeDefinition NewestStoryBadge(Wizard wizard) {
