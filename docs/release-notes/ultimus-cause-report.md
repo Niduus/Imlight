@@ -1,0 +1,4 @@
+Fixed: Ultimus now writes down what his time went on
+Every second Ultimus plays is now put under one cause, such as questing, fighting, talking, a side trip, or time lost to getting unstuck, a step he can't work out, waiting to heal, standing still, or walking around with no real progress. Each morning the report shows how much of the night was lost, the three biggest causes, and the five longest moments of each with the time, area and step, so the first thing to fix is easy to see. Before this, his self-test could say everything passed while he walked in circles for an hour.
+Where: logs\ultimus\cause-report.txt (the last 14 days are kept), and in Copy all logs on the Ultimus page in Ahziael.
+Test: let Ultimus quest for an hour, then open cause-report.txt and check that the minutes add up to the time he played and that any stuck time shows up as lost.

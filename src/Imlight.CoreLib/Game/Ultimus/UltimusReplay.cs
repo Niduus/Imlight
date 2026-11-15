@@ -92,6 +92,21 @@ internal static class UltimusReplay {
             return said.Take(6).All(s => s.Count == 1 && s[0] == line) && said[6].Count == 1 && said[6][0].Contains("REPEAT", StringComparison.Ordinal)
                    && said.Skip(7).All(s => s.Count == 0) ? null : "a repeated line would still flood the log";
         }),
+        new("Self-test said 8 of 8 passed while he looped for an hour (2026-11-15): lost time has a cause", () => {
+            UltimusDirectorActor.CauseFacts F(bool hold = false, bool unstuck = false, double still = 0, double noProgress = 0, bool battle = false) =>
+                new(battle, false, false, unstuck, hold, false, false, false, false, still, noProgress);
+            var walkingInCircles = UltimusDirectorActor.CauseOf(F(noProgress: 45));
+            var holding = UltimusDirectorActor.CauseOf(F(hold: true, noProgress: 45));
+            var questing = UltimusDirectorActor.CauseOf(F(noProgress: 2));
+            var fight = UltimusDirectorActor.CauseOf(F(battle: true, unstuck: true));
+            if (!UltimusDirectorActor.IsLost(walkingInCircles) || !UltimusDirectorActor.IsLost(holding) || UltimusDirectorActor.IsLost(questing) || UltimusDirectorActor.IsLost(fight)) {
+                return "an hour of looping would still count as questing";
+            }
+
+            var day = new UltimusDirectorActor.CauseDay { Seconds = { [walkingInCircles] = 3600, [questing] = 600 } };
+            var report = UltimusDirectorActor.CauseReport(new() { ["2026-11-15"] = day }, DateTime.Now);
+            return report.Contains("lost 1.0 h", StringComparison.Ordinal) && report.Contains(walkingInCircles, StringComparison.Ordinal) ? null : "the report does not name the lost hour";
+        }),
     ];
 
     /// <summary>The failed checks (plain words), chat answers included; written to replay-pack.txt.</summary>

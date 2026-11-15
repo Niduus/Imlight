@@ -443,6 +443,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // On the walkable ground, where he loses time, the nightly coach folder (UltimusDirector.Bounds.cs).
         BoundsTick(leader);
         WasteTick(leader);
+        // What his time went on, by cause (UltimusDirector.Causes.cs).
+        CauseTick(leader);
         MaybeAutoCoach();
         RollDay();
         MaybeWeeklyReport();
