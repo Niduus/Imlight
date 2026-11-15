@@ -11,7 +11,7 @@ using Avalonia.Media;
 namespace Imlight.Setup;
 
 // The AI safety check on Ahziael's Ultimus AI Chat page (Niduus, 2026-11-15, "all" to the four ideas): today's online AI
-// answers against [Ultimus] AIDailyLimit, [QuestTeam] AIChat (the team's Menu Chat answers picked by the AI), a "Try a
+// answers against [Ultimus] AIDailyLimit (the [QuestTeam] AIChat switch lives in ManagerWindow.QuestTeamAiChat.cs), a "Try a
 // trick" button (ultimus-ai-trick-request.txt beside the server, answered in logs\ultimus\ai-trick-test.txt) and the
 // safety check log (logs\ultimus\ai-safety-log.jsonl), whose lines the server already wrote with private parts hidden.
 internal sealed partial class ManagerWindow {
@@ -73,9 +73,9 @@ internal sealed partial class ManagerWindow {
         StartUltimusTimer();
         ShowUltimusAiSafety();
 
-        return Fold("info", ULTIMUS_TAB, "AI safety check, limits and Quest Team",
-            "The safety check stands around every AI Ultimus and the Quest Team use. Here you can set a daily limit for online AI, let the Quest Team " +
-            "answer through the AI, try tricks on your AI to see the check hold, and read every time the check stepped in. Updates by itself.",
+        return Fold("info", ULTIMUS_TAB, "AI safety check and limits",
+            "The safety check stands around every AI Ultimus and the Quest Team use. Here you can set a daily limit for online AI, try tricks on your " +
+            "AI to see the check hold, and read every time the check stepped in. The Quest Team's AI chat has its own part below. Updates by itself.",
             SwitchRow("Online AI answers per day", _ultAiLimit,
                 "Chat, stuck thinking and the Quest Team together, so a paid key can't run up a bill. 0 = no limit. Past it, Ultimus uses his normal chat " +
                 "until midnight. The AI on your PC is free and never counted."),
@@ -90,10 +90,6 @@ internal sealed partial class ManagerWindow {
             SwitchRow("AI hours", _ultAiHours,
                 "When the AI may be used, by this PC's clock. Empty = any time. 18-23 means 6 PM until midnight; 22-2 runs over midnight until 3 AM; " +
                 "several with commas, like 7-9, 18-23. Outside them Ultimus uses his normal chat and own fixes. Counts right away."),
-            SwitchRow("Quest Team answers through the AI", _ultQtAi,
-                "Off by default. When a player uses Menu Chat near the team, the AI picks the team's answer from a safe list (hello, thanks, goodbye, " +
-                "well done, polite noes). A player's ask is still always turned down, and the team never types, so nothing the AI writes is ever said. " +
-                "Uses the AI picked above; the AI chat switch can stay off."),
             Row(Action(Plain("Show me what the AI got"), ShowUltimusAiLastSentAsync)),
             Sub("Shows exactly what was sent to the AI the last time (his chat, stuck thinking or the Quest Team), after the safety check blanked out " +
                 "private details as [hidden]. Your key is never in it."),
@@ -217,7 +213,7 @@ internal sealed partial class ManagerWindow {
 
         _manager.SaveSettings([new Setting("QuestTeam", "AIChat", on ? "true" : "false", "")]);
         _settings = [];
-        Say(on ? "The Quest Team's Menu Chat answers are now picked by the AI (from a safe list)." : "The Quest Team gives its usual Menu Chat answers.");
+        Say(on ? "The Quest Team now answers players' chat with the AI, each in their own way." : "The Quest Team gives its usual Menu Chat answers.");
 
         return Task.CompletedTask;
     }

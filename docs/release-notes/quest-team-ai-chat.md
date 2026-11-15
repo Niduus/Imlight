@@ -1,0 +1,4 @@
+New: The Quest Team can chat with the AI, each with its own model
+With Quest Team AI chat on, Freya, Anubis, Terra and Chaac answer players' typed chat and whispers with the AI, each in their own way of talking. Freya stays calm and precise, Anubis is dry and darkly funny, Terra is warm and cheerful, and Chaac is loud and full of energy. You can give all four one AI, or pick a different service and model for each of them. They still turn down every ask and never change their plans, the same safety check, daily limit, AI hours, pause and per-player limits as Ultimus apply, and what they learn about the game is kept for offline chat.
+Where: Ahziael, Ultimus AI Chat page, Quest Team AI chat.
+Test: Turn Quest Team AI chat on, stand near the team and type "Freya, what school is best for healing?", then whisper Chaac "hi". Turn "One AI for the whole team" off, give Anubis a different service or model, and ask him something to see his answer change.

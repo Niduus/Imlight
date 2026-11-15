@@ -28,23 +28,38 @@ using Imlight.CoreLib.Game.Ultimus;
 namespace Imlight.CoreLib.Game.QuestTeam;
 
 /// <summary>
-/// The team's voices (Niduus, 2026-11-13): Menu Chat only, to plan with each other, kept tame (a line now and then, never
-/// a stream). They answer a player's Menu Chat, but a player's ask never changes what they do: they turn it down, take
+/// The team's voices (Niduus, 2026-11-13): Menu Chat to plan with each other, kept tame (a line now and then, never a
+/// stream). They answer a player's Menu Chat, but a player's ask never changes what they do: they turn it down, take
 /// orders only from each other and never help a player.
+/// Niduus, 2026-11-15 ("Allow for QT to have AI chats like Ultimus with each member able to be different models or an
+/// option to unify them into one model"): with [QuestTeam] AIChat on, players' typed chat near them and whispers to them get
+/// a typed answer worded by the AI, each wizard in its own way of talking and with its own model, or all with one.
 /// </summary>
 internal static class QuestTeamVoice {
 
-    internal sealed record Heard(IActorRef Zone, float X, float Y, ulong SpeakerCharId, string SpeakerName, uint PhraseId, string Text);
+    /// <param name="Typed">The player typed the words (not a Menu Chat phrase).</param>
+    /// <param name="ToCharId">A whisper to this team wizard; 0 when said aloud.</param>
+    internal sealed record Heard(IActorRef Zone, float X, float Y, ulong SpeakerCharId, string SpeakerName, uint PhraseId, string Text, bool Typed = false,
+        ulong ToCharId = 0);
 
     private static readonly ConcurrentQueue<Heard> s_heard = new();
 
-    /// <summary>A player (not one of the team) used Menu Chat (ChatService); the team may answer.</summary>
-    internal static void PlayerSaid(IActorRef zone, float x, float y, ulong charId, string name, uint phraseId, string text) {
-        if (zone is null || QuestTeamRoster.IsMember(charId) || s_heard.Count > 20) {
+    /// <summary>A player (not one of the team) used Menu Chat or typed near the team (ChatService); the team may answer.</summary>
+    internal static void PlayerSaid(IActorRef zone, float x, float y, ulong charId, string name, uint phraseId, string text, bool typed = false) {
+        if (zone is null || QuestTeamRoster.IsMember(charId) || s_heard.Count > 20 || string.IsNullOrWhiteSpace(text)) {
             return;
         }
 
-        s_heard.Enqueue(new Heard(zone, x, y, charId, name ?? "a player", phraseId, text ?? ""));
+        s_heard.Enqueue(new Heard(zone, x, y, charId, name ?? "a player", phraseId, text, typed));
+    }
+
+    /// <summary>A player whispered to one of the team (ChatService); that wizard may whisper back.</summary>
+    internal static void PlayerWhispered(ulong toCharId, ulong charId, string name, uint phraseId, string text, bool typed) {
+        if (toCharId == 0 || QuestTeamRoster.IsMember(charId) || s_heard.Count > 20 || string.IsNullOrWhiteSpace(text)) {
+            return;
+        }
+
+        s_heard.Enqueue(new Heard(null, 0, 0, charId, name ?? "a player", phraseId, text, typed, toCharId));
     }
 
     internal static bool TryTake(out Heard heard) => s_heard.TryDequeue(out heard);
@@ -86,7 +101,7 @@ internal sealed partial class QuestTeamDirectorActor {
     ];
 
     /// <summary>Says a moment's line through one wizard's Menu Chat, if the team has not spoken lately and the dice allow.</summary>
-    private void Speak(int index, string moment, double chance, bool force = false) {
+    private void Speak(int index, string moment, double chance, bool force = false, ulong whisperTo = 0) {
         if (index < 0 || index >= _actors.Count || (!force && (DateTime.UtcNow < _nextTeamLine || _voiceRandom.NextDouble() > chance))) {
             return;
         }
@@ -99,63 +114,104 @@ internal sealed partial class QuestTeamDirectorActor {
         }
 
         _nextTeamLine = DateTime.UtcNow + s_teamLineGap;
-        Note(_team[index].Role, $"{_team[index].Name} says in Menu Chat: \"{phrase.Text}\"");
-        _actors[index].Tell(new QuestTeamMember.SayMenuChat(phrase.Id));
+        SayPhrase(index, phrase, whisperTo, "");
     }
 
-    /// <summary>Players' Menu Chat near the team: a greeting back, a no to any ask. Nothing they say changes the team's plan.</summary>
+    // A Menu Chat phrase said aloud, or whispered back to the player who whispered.
+    private void SayPhrase(int index, MenuChatBook.Phrase phrase, ulong whisperTo, string by) {
+        Note(_team[index].Role, $"{_team[index].Name} {(whisperTo != 0 ? "whispers back" : "says")} in Menu Chat: \"{phrase.Text}\"{by}");
+        _actors[index].Tell(whisperTo != 0 ? (object) new QuestTeamMember.WhisperMenuChat(phrase.Id, whisperTo) : new QuestTeamMember.SayMenuChat(phrase.Id));
+    }
+
+    /// <summary>
+    /// Players' chat near the team or whispered to one of them: a greeting back, a no to any ask, and with [QuestTeam] AIChat
+    /// a typed answer worded by that wizard's AI. Nothing they say changes the team's plan.
+    /// </summary>
     private void AnswerPlayers() {
         while (QuestTeamVoice.TryTake(out var heard)) {
-            var near = _team.Select((m, i) => (Member: m, Index: i))
-                .Where(x => x.Member.ZoneActor is not null && x.Member.ZoneActor.Equals(heard.Zone)
-                            && QuestTeamPlanner.Far(x.Member.X, x.Member.Y, heard.X, heard.Y) < 700)
-                .OrderBy(x => QuestTeamPlanner.Far(x.Member.X, x.Member.Y, heard.X, heard.Y)).ToList();
+            var whisperTo = heard.ToCharId != 0 ? heard.SpeakerCharId : 0;
+            var near = (heard.ToCharId != 0
+                    ? _team.Select((m, i) => (Member: m, Index: i)).Where(x => x.Member.CharId == heard.ToCharId)
+                    : _team.Select((m, i) => (Member: m, Index: i))
+                        .Where(x => x.Member.ZoneActor is not null && x.Member.ZoneActor.Equals(heard.Zone)
+                                    && QuestTeamPlanner.Far(x.Member.X, x.Member.Y, heard.X, heard.Y) < 700)
+                        .OrderBy(x => QuestTeamPlanner.Far(x.Member.X, x.Member.Y, heard.X, heard.Y)))
+                .ToList();
             if (near.Count == 0) {
                 continue;
             }
 
-            if (_answeredAt.TryGetValue(heard.SpeakerCharId, out var last) && DateTime.UtcNow - last < s_answerGap) {
+            // Typed talk is a conversation, so it may be answered sooner than Menu Chat.
+            var talk = heard.Typed || whisperTo != 0;
+            if (_answeredAt.TryGetValue(heard.SpeakerCharId, out var last) && DateTime.UtcNow - last < (talk ? s_typedGap : s_answerGap)) {
                 continue;
             }
 
             var text = heard.Text;
+            var speaker = near[0].Index;
+            // Typed chat said aloud: only what is said to the team, like Ultimus (not players talking among themselves).
+            if (heard.Typed && whisperTo == 0 && !AimedAtTeam(heard, near, out speaker, out var notOurs)) {
+                Note("Team", $"{heard.SpeakerName} said \"{QuestTeamText.Short(text, 60)}\" near the team; it stays out of it ({notOurs}).");
+                continue;
+            }
+
             var moment = s_asks.Any(a => MenuChatBook.Says(text, a)) ? "no"
                 : MenuChatBook.Says(text, "thank") || MenuChatBook.Says(text, "thanks") ? "thanks"
                 : new[] { "bye", "goodbye", "see you", "later" }.Any(w => MenuChatBook.Says(text, w)) ? "bye"
                 : new[] { "hello", "hi", "hey", "greetings" }.Any(w => MenuChatBook.Says(text, w)) ? "hello"
                 : null;
+            var how = (whisperTo != 0 ? "whispered" : "said") + (heard.Typed ? "" : " in Menu Chat");
+
+            // Typed or whispered talk with [QuestTeam] AIChat: that wizard's own AI words a typed answer (an ask still gets a no,
+            // in the wizard's own words; nothing said changes the plan).
+            if (talk && heard.Typed && AiChatOn && AskTeamAi(speaker, heard, moment, how)) {
+                continue;
+            }
+
+            // Without the AI: an answer learned from it earlier (shared with Ultimus, UltimusAiLearned).
+            if (heard.Typed && moment is null && UltimusAiLearned.Find(text) is { } known) {
+                _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
+                Note("Team", $"{heard.SpeakerName} {how}: \"{QuestTeamText.Short(text, 80)}\"");
+                SayTyped(speaker, heard, known, LEARNED);
+                continue;
+            }
+
             // With [QuestTeam] AIChat, the AI picks the Menu Chat answer from a safe list (never for an ask: that stays a no).
-            if (moment != "no" && AiChatOn && UltimusLocalAI.CanThink) {
+            var target = TeamTarget(_team[speaker].Role);
+            if (!heard.Typed && moment != "no" && AiChatOn && UltimusLocalAI.ReadyFor(target)) {
                 var choices = AiChoices();
                 if (choices.Count > 0) {
-                    Note("Team", $"{heard.SpeakerName} said in Menu Chat: \"{text}\"; the team's {UltimusLocalAI.Who} picks the answer.");
+                    Note("Team", $"{heard.SpeakerName} {how}: \"{text}\"; {_team[speaker].Name}'s {UltimusLocalAI.WhoOf(target)} picks the answer.");
                     _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
-                    var (speaker, fallback) = (near[0].Index, moment);
-                    UltimusLocalAI.Pick(text, choices.Select(c => c.Text).ToList())
-                        .ContinueWith(t => new TeamAiPick(speaker, fallback, choices, t.IsCompletedSuccessfully ? t.Result : -1))
+                    var fallback = moment;
+                    UltimusLocalAI.Pick(text, choices.Select(c => c.Text).ToList(), target)
+                        .ContinueWith(t => new TeamAiPick(speaker, fallback, choices, t.IsCompletedSuccessfully ? t.Result : -1, whisperTo, UltimusLocalAI.WhoOf(target)))
                         .PipeTo(Self);
                     continue;
                 }
             }
 
-            Note("Team", $"{heard.SpeakerName} said in Menu Chat: \"{text}\"" +
+            Note("Team", $"{heard.SpeakerName} {how}: \"{text}\"" +
                          (moment == "no" ? "; the team turns it down (it takes orders only from each other)." : moment is null ? "; the team carries on." : "."));
             if (moment is null) {
                 continue;
             }
 
             _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
-            Speak(near[0].Index, moment, 1, force: true);
+            Speak(speaker, moment, 1, force: true, whisperTo: whisperTo);
         }
     }
 
     // ---- Menu Chat through the AI (Niduus, 2026-11-15, "all" to the ideas) ----
 
-    /// <summary>[QuestTeam] AIChat: the AI picked for Ultimus chooses the team's Menu Chat answers. Off by default, live.</summary>
+    /// <summary>
+    /// [QuestTeam] AIChat: the team's AI chat. Typed chat and whispers get typed answers worded by each wizard's AI, and
+    /// Menu Chat gets a Menu Chat answer the AI picks. Off by default, live.
+    /// </summary>
     private static bool AiChatOn => ConfigurationManager.GetValue("QuestTeam.AIChat", false);
 
     /// <summary>The AI's pick came back: that phrase is said, or the usual answer when it found none.</summary>
-    private sealed record TeamAiPick(int Speaker, string Fallback, List<MenuChatBook.Phrase> Choices, int Picked);
+    private sealed record TeamAiPick(int Speaker, string Fallback, List<MenuChatBook.Phrase> Choices, int Picked, ulong WhisperTo, string Who);
 
     // Only these may be picked: greetings, thanks, goodbyes, praise and polite noes. No phrase that agrees to anything or
     // names a place, so whatever the AI picks keeps the team's rules (and a Menu Chat phrase can't hold a private detail).
@@ -178,18 +234,16 @@ internal sealed partial class QuestTeamDirectorActor {
         }
 
         if (m.Picked < 0 || m.Picked >= m.Choices.Count) {
-            Note("Team", $"the {UltimusLocalAI.Who} found no answer" + (m.Fallback is null ? "; the team carries on." : "; the team gives its usual one."));
+            Note("Team", $"the {m.Who} found no answer" + (m.Fallback is null ? "; the team carries on." : "; the team gives its usual one."));
             if (m.Fallback is not null) {
-                Speak(m.Speaker, m.Fallback, 1, force: true);
+                Speak(m.Speaker, m.Fallback, 1, force: true, whisperTo: m.WhisperTo);
             }
 
             return;
         }
 
-        var phrase = m.Choices[m.Picked];
         _nextTeamLine = DateTime.UtcNow + s_teamLineGap;
-        Note(_team[m.Speaker].Role, $"{_team[m.Speaker].Name} says in Menu Chat: \"{phrase.Text}\" (picked by the {UltimusLocalAI.Who})");
-        _actors[m.Speaker].Tell(new QuestTeamMember.SayMenuChat(phrase.Id));
+        SayPhrase(m.Speaker, m.Choices[m.Picked], m.WhisperTo, $" (picked by the {m.Who})");
     }
 
 }

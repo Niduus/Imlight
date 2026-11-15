@@ -230,6 +230,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         Receive<Loaded>(OnLoaded);
         Receive<TeamStuckIdea>(OnTeamStuckIdea);
         Receive<TeamAiPick>(OnTeamAiPick);
+        Receive<TeamAiWorded>(OnTeamAiWorded);
         Receive<Tick>(_ => {
             try {
                 OnTick();

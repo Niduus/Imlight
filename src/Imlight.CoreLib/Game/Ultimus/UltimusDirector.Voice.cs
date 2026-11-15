@@ -237,7 +237,7 @@ internal sealed partial class UltimusDirectorActor {
 
     // "Niduus made me" tacked onto an answer that wasn't about him (his PC log, 2026-11-15: "where are you?" got "...working on
     // my quest Internal Investigation. Niduus made me."): that sentence is left out unless the player asked who made him.
-    private static string WithoutMaker(string heard, string answer) {
+    internal static string WithoutMaker(string heard, string answer) {
         if (BotSocialWords.AsksAboutMe(heard)) {
             return answer;
         }

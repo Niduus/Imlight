@@ -65,6 +65,14 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
     internal sealed record UsePotion;
     // A Menu Chat phrase said aloud, by its chat ID, as a menu-chat player says it.
     internal sealed record SayMenuChat(uint PhraseId);
+    internal sealed record WhisperMenuChat(uint PhraseId, ulong CharId);
+
+    /// <summary>
+    /// A typed line, said nearby or whispered back (Niduus, 2026-11-15: the Quest Team's AI chat, like Ultimus's). A line the
+    /// chat whitelist would hide, or one with a private detail in it, is not sent at all.
+    /// </summary>
+    internal sealed record SayText(string Text);
+    internal sealed record WhisperText(string Text, ulong CharId);
 
     internal sealed record WorldTeleport(ulong DoorGlobalId, string World);
 
@@ -226,6 +234,23 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
         Receive<Train>(m => Send(new WIZARD_12_PROTOCOL.MSG_TRAIN { MobileID = m.TrainerGlobalId, TrainingIndex = m.Index }));
         Receive<UsePotion>(_ => Send(new WIZARD_12_PROTOCOL.MSG_USEPOTION()));
         Receive<SayMenuChat>(m => Send(new GAME_5_PROTOCOL.MSG_REQUESTRADIALQUICKCHAT { MessageID = m.PhraseId }));
+        Receive<WhisperMenuChat>(m => Send(new GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDQUICKCHAT { TargetID = m.CharId, MessageID = m.PhraseId }));
+        Receive<SayText>(m => {
+            if (TypedShows(m.Text)) {
+                Send(new GAME_5_PROTOCOL.MSG_REQUESTRADIALCHAT { Message = Social.RadialChatText.Like(new byte[] { 0, 0 }, m.Text) });
+            }
+            else {
+                Note($"left unsaid (the chat whitelist or the private-details block would hide it): \"{m.Text}\"");
+            }
+        });
+        Receive<WhisperText>(m => {
+            if (TypedShows(m.Text)) {
+                Send(new GAME_5_PROTOCOL.MSG_REQUESTDIRECTEDCHAT { TargetID = m.CharId, Message = m.Text });
+            }
+            else {
+                Note($"left unwhispered (the chat whitelist or the private-details block would hide it): \"{m.Text}\"");
+            }
+        });
         Receive<WorldTeleport>(m => Send(new WIZARD_12_PROTOCOL.MSG_WORLDTELEPORTREQUEST { TeleportID = m.DoorGlobalId, World = m.World }));
         Receive<CloseDialog>(m => FinishDialog(m.Number));
         Receive<Invite>(m => Send(new GAME_5_PROTOCOL.MSG_PARTYREQUESTINVITE {
@@ -697,5 +722,10 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
     private void SendControl(IMessage message) => _session?.Tell(new SERVER_100_PROTOCOL.MSG_RECEIVEDPACKET { Packet = message });
 
     private void Note(string text) => QuestTeamLink.Note(_member.Role, $"{View.Name} {text}");
+
+    // Whether a typed line shows as it is: never with a private detail in it (BotSocial.Scrub), and only when the chat
+    // whitelist, if it is on, would show it whole. The team's own chat level does not apply (ChatService).
+    private static bool TypedShows(string text) => !string.IsNullOrWhiteSpace(text) && ReferenceEquals(BotSocial.Scrub(text), text)
+                                                  && ReferenceEquals(Social.ChatFilter.ForOthers(text, ChatMode.Open, out _), text);
 
 }

@@ -125,6 +125,14 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
                 wizard.PlayerNameBehavior?.GetWizardName(), typed, typed: true);
         }
 
+        // The Quest Team hears typed chat near it too (Niduus, 2026-11-15: "Allow for QT to have AI chats like Ultimus"). It
+        // still never takes a player's orders; Ultimus and the team never hear each other.
+        if (QuestTeam.QuestTeamDirector.ActorOf("Ice") is not null && !Ultimus.UltimusRoster.IsMember(wizard.CharId)
+            && !QuestTeam.QuestTeamRoster.IsMember(wizard.CharId) && GetActiveGameObject() is { } teamHearer) {
+            QuestTeam.QuestTeamVoice.PlayerSaid(SessionActor.GetZoneActor(), teamHearer.m_location.X, teamHearer.m_location.Y, wizard.CharId,
+                wizard.PlayerNameBehavior?.GetWizardName(), 0, typed, typed: true);
+        }
+
         if (asTyped) {
             Logger.Information("Chat: sent {0}'s line as typed to {1} other player(s) in {2}.",
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), sentTo, wizard.Zone));
@@ -181,7 +189,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         }
 
         QuestTeam.QuestTeamVoice.PlayerSaid(SessionActor.GetZoneActor(), me.m_location.X, me.m_location.Y, character.CharId,
-            character.PlayerNameBehavior?.GetWizardName(), phraseId, text);
+            character.PlayerNameBehavior?.GetWizardName(), phraseId, text, typed);
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_REQUESTRADIALQUICKCHATEXT))]
@@ -501,6 +509,17 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
     // A player whispered to Ultimus: it may answer in Menu Chat, whispered back (Niduus, 2026-11-13: "Able to reply to
     // Whispers via Menu Chat (in context)").
     private static void TellUltimusWhisper(ulong targetCharId, Wizard sender, uint phraseId, string text, bool typed = false) {
+        // A whisper to a Quest Team wizard: that wizard may answer, whispered back (Niduus, 2026-11-15, the team's AI chat).
+        if (sender is not null && QuestTeam.QuestTeamRoster.IsMember(targetCharId) && !QuestTeam.QuestTeamRoster.IsMember(sender.CharId)
+            && !Ultimus.UltimusRoster.IsMember(sender.CharId)) {
+            var heard = text ?? (phraseId == 0 ? null : BotShared.MenuChatBook.ById(phraseId)?.Text);
+            if (!string.IsNullOrWhiteSpace(heard)) {
+                QuestTeam.QuestTeamVoice.PlayerWhispered(targetCharId, sender.CharId, sender.PlayerNameBehavior?.GetWizardName(), phraseId, heard, typed);
+            }
+
+            return;
+        }
+
         if (sender is null || !Ultimus.UltimusRoster.IsMember(targetCharId) || Ultimus.UltimusRoster.IsMember(sender.CharId)
             || QuestTeam.QuestTeamRoster.IsMember(sender.CharId)) {
             return;
@@ -605,7 +624,9 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         typed ??= string.Empty;
         // Ultimus is free to use text chat (Niduus, 2026-11-14); his lines are the server's own words, not a player's, so his
         // account's chat level does not turn them into Menu Chat. The whitelist still applies.
-        var mode = Ultimus.UltimusRoster.IsMember(wizard.CharId) ? ChatMode.Open : ChatFilter.CurrentChatMode(GetActiveAccount());
+        // The Quest Team's typed AI answers are the server's own words too (Niduus, 2026-11-15).
+        var bot = Ultimus.UltimusRoster.IsMember(wizard.CharId) || QuestTeam.QuestTeamRoster.IsMember(wizard.CharId);
+        var mode = bot ? ChatMode.Open : ChatFilter.CurrentChatMode(GetActiveAccount());
         var forOthers = ChatFilter.ForOthers(typed, mode, out var why);
         if (forOthers is null) {
             Logger.Information("Chat: {0} cannot type in chat ({1}): {2}", Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), why, typed));
@@ -619,7 +640,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), forOthers, why, typed));
             shown = forOthers;
         }
-        else if (Ultimus.UltimusRoster.IsMember(wizard.CharId)) {
+        else if (bot) {
             // His lines are the server's own words: sent so the game shows them in full, never with words swapped for "..."
             // by the game's own filter (Niduus, 2026-11-14: "Working on ... the Map ..." for "Off the Map").
             asTyped = true;

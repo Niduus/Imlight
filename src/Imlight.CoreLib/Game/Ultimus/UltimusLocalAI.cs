@@ -45,7 +45,7 @@ namespace Imlight.CoreLib.Game.Ultimus;
 internal static class UltimusLocalAI {
 
     private static readonly HttpClient s_http = new() { Timeout = TimeSpan.FromSeconds(15) };
-    private static DateTime s_downUntil = DateTime.MinValue;
+    private static readonly Dictionary<string, DateTime> s_downUntil = [];
     private static string s_lastProblem = "";
 
     internal static bool On => ConfigurationManager.GetValue("Ultimus.LocalAI", false);
@@ -78,28 +78,74 @@ internal static class UltimusLocalAI {
         }
     }
 
-    // The saved key of an online provider (never logged, never shown); null for the local AI or when none is saved.
-    private static string Key => Provider is { Local: false } provider ? UltimusAiProviders.ReadKey(ConfigurationManager.ConfigFolder, provider.Id) : null;
+    /// <summary>
+    /// One AI to ask: a provider, its address, model and saved key (Niduus, 2026-11-15: each Quest Team wizard may use its own
+    /// model, or all of them one). The key is read when it is needed and never logged or shown.
+    /// </summary>
+    internal sealed record AiTarget(UltimusAiProvider Provider, string Url, string Model) {
+        internal string Key => Provider.Local ? null : UltimusAiProviders.ReadKey(ConfigurationManager.ConfigFolder, Provider.Id);
+
+        /// <summary>For the log, Thoughts and the down-time: provider and model.</summary>
+        internal string Id => Provider.Id + "|" + Model;
+    }
+
+    /// <summary>The AI picked for Ultimus on the Ultimus AI Chat page.</summary>
+    internal static AiTarget Default => new(Provider, Url, Model);
+
+    /// <summary>
+    /// An AI by provider id and model: an empty provider is Ultimus's own, an empty model the provider's usual one (the
+    /// local AI keeps Ultimus's address and, when empty, his local model).
+    /// </summary>
+    internal static AiTarget For(string providerId, string model) {
+        if (string.IsNullOrWhiteSpace(providerId)) {
+            return string.IsNullOrWhiteSpace(model) ? Default : Default with { Model = model.Trim() };
+        }
+
+        var provider = UltimusAiProviders.Find(providerId);
+        if (provider.Id == Provider.Id && string.IsNullOrWhiteSpace(model)) {
+            return Default;
+        }
+
+        if (provider.Local) {
+            var url = ConfigurationManager.GetValue("Ultimus.LocalAIUrl", "http://localhost:11434/v1");
+            var localModel = ConfigurationManager.GetValue("Ultimus.LocalAIModel", "qwen3.5:4b");
+            return new AiTarget(provider, string.IsNullOrWhiteSpace(url) ? "http://localhost:11434/v1" : url.Trim().TrimEnd('/'),
+                !string.IsNullOrWhiteSpace(model) ? model.Trim() : string.IsNullOrWhiteSpace(localModel) ? "qwen3.5:4b" : localModel.Trim());
+        }
+
+        return new AiTarget(provider, provider.Url.TrimEnd('/'), string.IsNullOrWhiteSpace(model) ? provider.Model : model.Trim());
+    }
 
     // Where the AI may be reached: the local one only on this PC or the home network; an online one only over https, with
     // a key, and never a Microsoft service.
-    private static bool Reachable {
-        get {
-            var provider = Provider;
-            return provider.Local
-                ? Local(Url)
-                : Url.StartsWith("https://", StringComparison.OrdinalIgnoreCase) && !UltimusAiProviders.Blocked(Url) && !string.IsNullOrEmpty(Key);
+    private static bool Reachable => ReachableFor(Default);
+
+    private static bool ReachableFor(AiTarget target)
+        => target.Provider.Local
+            ? Local(target.Url)
+            : target.Url.StartsWith("https://", StringComparison.OrdinalIgnoreCase) && !UltimusAiProviders.Blocked(target.Url) && !string.IsNullOrEmpty(target.Key);
+
+    /// <summary>The AI's name for the log and Thoughts: "local AI" or the provider's name.</summary>
+    internal static string Who => WhoOf(Default);
+
+    /// <summary>One AI's name for the log and Thoughts: "local AI" or the provider's name.</summary>
+    internal static string WhoOf(AiTarget target) => target.Provider is { Local: false } provider ? $"AI ({provider.Name.Split(" (")[0]})" : "local AI";
+
+    // Whether this AI failed in the last minute (each AI on its own, so one Quest Team wizard's broken model doesn't stop the rest).
+    private static bool Down(AiTarget target) {
+        lock (s_downUntil) {
+            return s_downUntil.TryGetValue(target.Id, out var until) && DateTime.UtcNow < until;
         }
     }
 
-    /// <summary>The AI's name for the log and Thoughts: "local AI" or the provider's name.</summary>
-    internal static string Who => Provider is { Local: false } provider ? $"AI ({provider.Name.Split(" (")[0]})" : "local AI";
+    /// <summary>This AI may be asked now: reachable, did not just fail, under the day's limit, in the AI hours and not paused.</summary>
+    internal static bool ReadyFor(AiTarget target) => ReachableFor(target) && !Down(target) && UnderLimitFor(target) && InHours && !Paused;
 
     /// <summary>What went wrong last, for the log ("" when it works).</summary>
     internal static string LastProblem => s_lastProblem;
 
     /// <summary>Usable now: switched on, the address is on this PC or the home network, and it did not just fail.</summary>
-    internal static bool Ready => On && Reachable && DateTime.UtcNow >= s_downUntil && UnderLimit && InHours && !Paused;
+    internal static bool Ready => On && ReadyFor(Default);
 
     // Only this PC or the home network: the chat (players' names and words) never leaves the house.
     private static bool Local(string url) {
@@ -164,6 +210,59 @@ internal static class UltimusLocalAI {
     }
 
     /// <summary>
+    /// A chat answer from one given AI with its own rules (the Quest Team's typed chat, Niduus 2026-11-15: each wizard may
+    /// use its own model). The same harness as Ultimus's chat: the day's limit, the hours, the pause, the per-player limit
+    /// and mute, trick lines never sent, blocked details blanked, and an answer that leaks thrown away. Null when not used.
+    /// </summary>
+    internal static async Task<string> AskWith(AiTarget target, string system, IReadOnlyList<(string Who, string Text)> history, string heard, ulong player,
+        string where) {
+        if (target is null || !ReadyFor(target) || !PlayerUnder(player)) {
+            return null;
+        }
+
+        if (BotAiGuard.LooksLikeTrick(heard)) {
+            Logger.Information("{0}: a chat line looked like a trick to get past the AI's rules, so it was not sent to the AI.", Logger.Args(where));
+            BotAiGuard.Record(where, "a player's line looked like a trick, so it was never sent to the AI", heard, WhoOf(target));
+            return null;
+        }
+
+        SpendFor(player);
+        var messages = new JsonArray {
+            new JsonObject { ["role"] = "system", ["content"] = BotAiGuard.Outgoing(system + "\n" + BotAiGuard.RULES, dropTricks: false) },
+        };
+        foreach (var (who, text) in history.TakeLast(10)) {
+            if (who != "me" && BotAiGuard.LooksLikeTrick(text)) {
+                continue;
+            }
+
+            messages.Add(new JsonObject { ["role"] = who == "me" ? "assistant" : "user", ["content"] = BotAiGuard.Outgoing(text) });
+        }
+
+        messages.Add(new JsonObject { ["role"] = "user", ["content"] = BotAiGuard.Outgoing(heard) });
+        var body = new JsonObject { ["model"] = target.Model, ["messages"] = messages, ["temperature"] = 0.7, ["max_tokens"] = 120, ["stream"] = false };
+        try {
+            using var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(12));
+            var cleaned = Clean(await Send(s_http, body, cancel.Token, target).ConfigureAwait(false));
+            if (cleaned is null) {
+                return null;
+            }
+
+            var said = BotAiGuard.Incoming(cleaned, out var why);
+            if (said is null && why.Length > 0) {
+                Logger.Information("{0}: the safety check held back the AI's answer ({1}); the usual answer is given instead.", Logger.Args(where, why));
+                BotAiGuard.Record(where, "the AI's answer was thrown away: " + why, cleaned, WhoOf(target));
+            }
+
+            return said;
+        }
+        catch (Exception ex) {
+            Failed($"the {WhoOf(target)} at {target.Url} could not be reached ({ex.GetType().Name}){(target.Provider.Local ? "; is Ollama or LM Studio running?" : "")}",
+                target);
+            return null;
+        }
+    }
+
+    /// <summary>
     /// The chat messages sent to the model, already through the safety harness: blocked details are [hidden] and a player's
     /// trick lines in the talk so far are left out. Public to the self-test (BotAiGuardChecks).
     /// </summary>
@@ -209,15 +308,17 @@ internal static class UltimusLocalAI {
 
     // One request to the chat address, with the key when the provider needs one. The answer's text, or null after an error
     // (said in plain words, never with the key).
-    private static async Task<string> Send(HttpClient http, JsonObject body, CancellationToken cancel) {
-        Spend();
-        WriteLastSent(body);
-        using var request = new HttpRequestMessage(HttpMethod.Post, Url + "/chat/completions") {
+    private static async Task<string> Send(HttpClient http, JsonObject body, CancellationToken cancel, AiTarget target = null) {
+        target ??= Default;
+        Spend(target);
+        WriteLastSent(body, target);
+        var who = WhoOf(target);
+        using var request = new HttpRequestMessage(HttpMethod.Post, target.Url + "/chat/completions") {
             Content = new StringContent(body.ToJsonString(), Encoding.UTF8, "application/json"),
         };
-        if (Key is { Length: > 0 } key) {
+        if (target.Key is { Length: > 0 } key) {
             request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + key);
-            if (Provider.Id == "anthropic") {
+            if (target.Provider.Id == "anthropic") {
                 request.Headers.TryAddWithoutValidation("x-api-key", key);
             }
         }
@@ -227,12 +328,12 @@ internal static class UltimusLocalAI {
         if (!response.IsSuccessStatusCode) {
             var code = (int) response.StatusCode;
             Failed(code switch {
-                401 or 403 => $"the {Who} did not accept the key (check it on the Ultimus AI Chat page)",
-                429 => $"the {Who} says the limit is reached for now (free tiers have limits per minute and per day)",
-                402 => $"the {Who} needs credit on the account first",
-                404 when !Provider.Local => $"the {Who} has no model \"{Model}\" (Test connection on the Ultimus AI Chat page lists its models)",
-                _ => $"the {Who} answered {code}" + (Provider.Local ? $" (is the model \"{Model}\" downloaded?)" : ""),
-            });
+                401 or 403 => $"the {who} did not accept the key (check it on the Ultimus AI Chat page)",
+                429 => $"the {who} says the limit is reached for now (free tiers have limits per minute and per day)",
+                402 => $"the {who} needs credit on the account first",
+                404 when !target.Provider.Local => $"the {who} has no model \"{target.Model}\" (Test connection on the Ultimus AI Chat page lists its models)",
+                _ => $"the {who} answered {code}" + (target.Provider.Local ? $" (is the model \"{target.Model}\" downloaded?)" : ""),
+            }, target);
             return null;
         }
 
@@ -254,19 +355,20 @@ internal static class UltimusLocalAI {
     /// The local AI can be asked to think a stuck spot through ([Ultimus] StuckThinking): the address is on this PC or the
     /// home network and it did not just fail. The chat switch (LocalAI) may be off; the same AI app and model are used.
     /// </summary>
-    internal static bool CanThink => Reachable && DateTime.UtcNow >= s_downUntil && UnderLimit && InHours && !Paused;
+    internal static bool CanThink => ReadyFor(Default);
 
     /// <summary>
     /// One plain question for the stuck thinking (UltimusDirector.Reason.cs): the model's raw answer, or null (failed, too
     /// slow, empty, or held back by the safety check). Longer than a chat line may take: a stuck spot is not in a hurry.
     /// </summary>
-    internal static async Task<string> Think(string system, string question, string where = "Stuck thinking") {
-        if (!CanThink) {
+    internal static async Task<string> Think(string system, string question, string where = "Stuck thinking", AiTarget target = null) {
+        target ??= Default;
+        if (!ReadyFor(target)) {
             return null;
         }
 
         var body = new JsonObject {
-            ["model"] = Model,
+            ["model"] = target.Model,
             ["messages"] = new JsonArray {
                 new JsonObject { ["role"] = "system", ["content"] = BotAiGuard.Outgoing(system + "\n" + BotAiGuard.RULES, dropTricks: false) },
                 new JsonObject { ["role"] = "user", ["content"] = BotAiGuard.Outgoing(question) },
@@ -276,7 +378,7 @@ internal static class UltimusLocalAI {
 
         try {
             using var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(50));
-            var text = await Send(s_thinkHttp, body, cancel.Token).ConfigureAwait(false);
+            var text = await Send(s_thinkHttp, body, cancel.Token, target).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(text)) {
                 return null;
             }
@@ -285,13 +387,14 @@ internal static class UltimusLocalAI {
             var safe = BotAiGuard.Incoming(text, out var why);
             if (safe is null && why.Length > 0) {
                 Logger.Information("Ultimus: the safety check held back his AI's answer for {0} ({1}); his own way carries on.", Logger.Args(where, why));
-                BotAiGuard.Record(where, "the AI's answer was thrown away: " + why, text, Who);
+                BotAiGuard.Record(where, "the AI's answer was thrown away: " + why, text, WhoOf(target));
             }
 
             return safe;
         }
         catch (Exception ex) {
-            Failed($"the {Who} at {Url} could not be reached ({ex.GetType().Name}){(Provider.Local ? "; is Ollama or LM Studio running?" : "")}");
+            Failed($"the {WhoOf(target)} at {target.Url} could not be reached ({ex.GetType().Name}){(target.Provider.Local ? "; is Ollama or LM Studio running?" : "")}",
+                target);
             return null;
         }
     }
@@ -300,8 +403,8 @@ internal static class UltimusLocalAI {
     /// The Quest Team's Menu Chat answer (Niduus, 2026-11-15, "all" to the ideas): the AI only picks one of the given Menu
     /// Chat phrases, so nothing it writes is ever said. The index of the phrase, or -1 (none fits, no answer, held back).
     /// </summary>
-    internal static async Task<int> Pick(string heard, IReadOnlyList<string> choices) {
-        if (!CanThink || choices.Count == 0) {
+    internal static async Task<int> Pick(string heard, IReadOnlyList<string> choices, AiTarget target = null) {
+        if (!ReadyFor(target ?? Default) || choices.Count == 0) {
             return -1;
         }
 
@@ -316,7 +419,7 @@ internal static class UltimusLocalAI {
             "You pick a Menu Chat reply for a friendly wizard of the Quest Team, a team of four bots in a private Wizard101 server who quest the main " +
             "story together. Pick the reply that fits what the player said best. The team never agrees to follow, join, help, trade, give or change " +
             "plans, so never pick a reply that says yes to that. Answer with only the number of the reply, or 0 when none fits.",
-            question.ToString(), "Quest Team chat").ConfigureAwait(false);
+            question.ToString(), "Quest Team chat", target).ConfigureAwait(false);
         if (answer is null) {
             return -1;
         }
@@ -516,13 +619,13 @@ internal static class UltimusLocalAI {
     internal const string LAST_SENT_FILE = "ai-last-sent.txt";
 
     // Everything in the messages already went through BotAiGuard.Outgoing; the key is a header and is never written.
-    private static void WriteLastSent(JsonObject body) {
+    private static void WriteLastSent(JsonObject body, AiTarget target) {
         try {
             var text = new StringBuilder();
-            text.AppendLine($"Sent to {Who} at {DateTime.Now:yyyy-MM-dd HH:mm:ss}, model {(string) body["model"]}.");
+            text.AppendLine($"Sent to {WhoOf(target)} at {DateTime.Now:yyyy-MM-dd HH:mm:ss}, model {(string) body["model"]}.");
             text.AppendLine("This is exactly what the AI got, after the safety check blanked out private details ([hidden]).");
             foreach (var message in body["messages"] as JsonArray ?? new JsonArray()) {
-                var role = (string) message?["role"] switch { "system" => "Rules and facts", "assistant" => "Ultimus said", _ => "Player or question" };
+                var role = (string) message?["role"] switch { "system" => "Rules and facts", "assistant" => "The bot said", _ => "Player or question" };
                 text.AppendLine();
                 text.AppendLine($"--- {role} ---");
                 text.AppendLine(BotAiGuard.Outgoing((string) message?["content"] ?? "", dropTricks: false));
@@ -548,22 +651,20 @@ internal static class UltimusLocalAI {
     /// <summary>[Ultimus] AIDailyLimit: online AI requests per day (chat, stuck thinking, Quest Team); 0 = no limit. The AI on this PC is free and never counted.</summary>
     internal static int DailyLimit => Math.Max(0, ConfigurationManager.GetValue("Ultimus.AIDailyLimit", 300));
 
-    private static bool UnderLimit {
-        get {
-            if (Provider.Local || DailyLimit == 0) {
-                return true;
-            }
+    private static bool UnderLimitFor(AiTarget target) {
+        if (target.Provider.Local || DailyLimit == 0) {
+            return true;
+        }
 
-            lock (s_usageLock) {
-                LoadUsage();
-                return s_usageCount < DailyLimit;
-            }
+        lock (s_usageLock) {
+            LoadUsage();
+            return s_usageCount < DailyLimit;
         }
     }
 
     // One request to an online AI counted for today (kept in logs\ultimus\ai-usage.json, so a restart doesn't reset it).
-    private static void Spend() {
-        if (Provider.Local) {
+    private static void Spend(AiTarget target) {
+        if (target.Provider.Local) {
             return;
         }
 
@@ -616,9 +717,12 @@ internal static class UltimusLocalAI {
         }
     }
 
-    private static void Failed(string why) {
+    private static void Failed(string why, AiTarget target = null) {
         // Down: the keyword chat answers alone for a minute before it is tried again.
-        s_downUntil = DateTime.UtcNow.AddMinutes(1);
+        lock (s_downUntil) {
+            s_downUntil[(target ?? Default).Id] = DateTime.UtcNow.AddMinutes(1);
+        }
+
         if (why != s_lastProblem) {
             Logger.Information("Ultimus: {0}. The keyword chat (and his own stuck fixes) carry on meanwhile.", Logger.Args(why));
         }
