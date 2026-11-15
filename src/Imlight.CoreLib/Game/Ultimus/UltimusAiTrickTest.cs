@@ -86,7 +86,7 @@ internal static class UltimusAiTrickTest {
         Write([.. lines, "Testing... (this takes up to a minute)"]);
         if (!UltimusLocalAI.CanThink) {
             lines.Add("The AI can't be reached right now" + (UltimusLocalAI.LastProblem.Length > 0 ? $" ({UltimusLocalAI.LastProblem})" : "") +
-                      ". Check it with Test connection first (for an online AI: a saved key, and today's limit not reached).");
+                      ". Check it with Test connection first, and that the AI is not paused or outside its AI hours (for an online AI: a saved key, and today's limit not reached).");
             Write(lines);
             return;
         }

@@ -26,6 +26,8 @@ internal sealed partial class ManagerWindow {
     private readonly ToggleSwitch _ultQtAi = new() { OnContent = "On", OffContent = "Off" };
     private readonly TextBlock _ultAiUsage = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBox _ultAiHours = new() { Width = 200, Watermark = "Any time" };
+    private readonly TextBox _ultAiPerPlayer = new() { Width = 120, Watermark = "40" };
+    private readonly TextBlock _ultAiPauseState = new() { TextWrapping = TextWrapping.Wrap };
     private readonly SelectableTextBlock _ultAiLastSent = new() { TextWrapping = TextWrapping.Wrap };
     private string _ultAiWarnedDay = "";
     private readonly SelectableTextBlock _ultTrickResult = new() { TextWrapping = TextWrapping.Wrap };
@@ -46,6 +48,11 @@ internal sealed partial class ManagerWindow {
                 _ = Guard(SaveUltimusAiHoursAsync);
             }
         };
+        _ultAiPerPlayer.LostFocus += (_, _) => {
+            if (!_showingUltSafety) {
+                _ = Guard(SaveUltimusAiPerPlayerAsync);
+            }
+        };
         _ultQtAi.IsCheckedChanged += (_, _) => {
             if (!_showingUltSafety) {
                 _ = Guard(() => SaveQuestTeamAiAsync(_ultQtAi.IsChecked == true));
@@ -57,6 +64,7 @@ internal sealed partial class ManagerWindow {
             _ultAiLimit.Text = _manager.GetSetting("Ultimus", "AIDailyLimit") is { Length: > 0 } limit ? limit : "300";
             _ultQtAi.IsChecked = _manager.GetSwitch("QuestTeam", "AIChat");
             _ultAiHours.Text = _manager.GetSetting("Ultimus", "AIHours") ?? "";
+            _ultAiPerPlayer.Text = _manager.GetSetting("Ultimus", "AIPerPlayer") is { Length: > 0 } perPlayer ? perPlayer : "40";
         }
         finally {
             _showingUltSafety = false;
@@ -72,6 +80,10 @@ internal sealed partial class ManagerWindow {
                 "Chat, stuck thinking and the Quest Team together, so a paid key can't run up a bill. 0 = no limit. Past it, Ultimus uses his normal chat " +
                 "until midnight. The AI on your PC is free and never counted."),
             _ultAiUsage,
+            Row(Action(Plain("Pause AI for 1 hour"), () => PauseUltimusAiAsync(true)), Action(Plain("Resume AI now"), () => PauseUltimusAiAsync(false))),
+            _ultAiPauseState,
+            SwitchRow("AI answers per player per day", _ultAiPerPlayer,
+                "So one chatty player can't use up the day's AI answers. 0 = no limit. Past it, Ultimus answers that player with his normal chat until midnight."),
             SwitchRow("AI hours", _ultAiHours,
                 "When the AI may be used, by this PC's clock. Empty = any time. 18-23 means 6 PM until midnight; 22-2 runs over midnight until 3 AM; " +
                 "several with commas, like 7-9, 18-23. Outside them Ultimus uses his normal chat and own fixes. Counts right away."),
@@ -114,6 +126,24 @@ internal sealed partial class ManagerWindow {
         }
 
         return SaveUltimusAiAsync("AIHours", text, text.Length == 0 ? "Ultimus may use the AI at any time." : $"Ultimus uses the AI only during {text}.", "AIHours");
+    }
+
+    // Pause: [Ultimus] AIPausedUntil one hour from now (UTC), or empty to resume. The server reads it at once.
+    private Task PauseUltimusAiAsync(bool pause) {
+        var until = pause ? DateTime.UtcNow.AddHours(1) : (DateTime?) null;
+        var value = until?.ToString("yyyy-MM-ddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture) ?? "";
+        var said = until is { } u ? $"The AI is paused until {u.ToLocalTime():HH:mm}. Ultimus and the Quest Team use their normal chat and own fixes meanwhile." : "The AI is back on.";
+        return SaveUltimusAiAsync("AIPausedUntil", value, said, "AIPausedUntil");
+    }
+
+    private Task SaveUltimusAiPerPlayerAsync() {
+        var text = (_ultAiPerPlayer.Text ?? "").Trim();
+        if (!int.TryParse(text, out var limit) || limit < 0) {
+            throw new PanelException("Type a whole number for the answers per player, like 40 (0 = no limit).");
+        }
+
+        return SaveUltimusAiAsync("AIPerPlayer", limit.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            limit == 0 ? "No limit per player." : $"Each player gets at most {limit} AI answers a day.", "AIPerPlayer");
     }
 
     private Task ShowUltimusAiLastSentAsync() {
@@ -209,6 +239,15 @@ internal sealed partial class ManagerWindow {
         catch (Exception e) when (e is IOException or JsonException or InvalidOperationException or FormatException) {
             // Shown next round.
         }
+
+        var paused = _manager.GetSetting("Ultimus", "AIPausedUntil") is { Length: > 0 } p
+                     && DateTime.TryParse(p, System.Globalization.CultureInfo.InvariantCulture,
+                         System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out var until)
+                     && until > DateTime.UtcNow
+            ? until
+            : (DateTime?) null;
+        _ultAiPauseState.Text = paused is { } pausedUntil ? $"Paused until {pausedUntil.ToLocalTime():HH:mm}." : "Not paused.";
+        _ultAiPauseState.Foreground = paused is null ? MUTED : WARN;
 
         try {
             var trick = Path.Combine(UltimusFolder, AI_TRICK_RESULT);

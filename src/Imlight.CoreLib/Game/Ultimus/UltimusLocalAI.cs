@@ -99,7 +99,7 @@ internal static class UltimusLocalAI {
     internal static string LastProblem => s_lastProblem;
 
     /// <summary>Usable now: switched on, the address is on this PC or the home network, and it did not just fail.</summary>
-    internal static bool Ready => On && Reachable && DateTime.UtcNow >= s_downUntil && UnderLimit && InHours;
+    internal static bool Ready => On && Reachable && DateTime.UtcNow >= s_downUntil && UnderLimit && InHours && !Paused;
 
     // Only this PC or the home network: the chat (players' names and words) never leaves the house.
     private static bool Local(string url) {
@@ -124,8 +124,8 @@ internal static class UltimusLocalAI {
     /// The model's answer, or null (off, failed, too slow, empty). <paramref name="facts"/>: Ultimus's real data;
     /// <paramref name="history"/>: the talk with this player so far (oldest first, "player" or "me").
     /// </summary>
-    internal static async Task<string> Ask(string facts, IReadOnlyList<(string Who, string Text)> history, string heard, string keywordAnswer) {
-        if (!Ready) {
+    internal static async Task<string> Ask(string facts, IReadOnlyList<(string Who, string Text)> history, string heard, string keywordAnswer, ulong player = 0) {
+        if (!Ready || !PlayerUnder(player)) {
             return null;
         }
 
@@ -136,6 +136,7 @@ internal static class UltimusLocalAI {
             return null;
         }
 
+        SpendFor(player);
         var body = new JsonObject {
             ["model"] = Model, ["messages"] = BuildChat(facts, history, heard, keywordAnswer), ["temperature"] = 0.6, ["max_tokens"] = 120, ["stream"] = false,
         };
@@ -246,7 +247,7 @@ internal static class UltimusLocalAI {
     /// The local AI can be asked to think a stuck spot through ([Ultimus] StuckThinking): the address is on this PC or the
     /// home network and it did not just fail. The chat switch (LocalAI) may be off; the same AI app and model are used.
     /// </summary>
-    internal static bool CanThink => Reachable && DateTime.UtcNow >= s_downUntil && UnderLimit && InHours;
+    internal static bool CanThink => Reachable && DateTime.UtcNow >= s_downUntil && UnderLimit && InHours && !Paused;
 
     /// <summary>
     /// One plain question for the stuck thinking (UltimusDirector.Reason.cs): the model's raw answer, or null (failed, too
@@ -371,6 +372,64 @@ internal static class UltimusLocalAI {
         }
 
         return !any;
+    }
+
+    // ---- Pause (Niduus, 2026-11-15, "all"): Ahziael's "Pause AI for 1 hour" sets [Ultimus] AIPausedUntil ----
+
+    /// <summary>[Ultimus] AIPausedUntil: a UTC time (Ahziael writes it); until then no AI is used. Empty = not paused.</summary>
+    internal static bool Paused
+        => DateTime.TryParse(ConfigurationManager.GetValue("Ultimus.AIPausedUntil", ""), System.Globalization.CultureInfo.InvariantCulture,
+               System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out var until)
+           && DateTime.UtcNow < until;
+
+    // ---- Per player (Niduus, 2026-11-15, "all"): one chatty player can't use up the day's AI answers ----
+
+    private static readonly Dictionary<ulong, int> s_perPlayer = [];
+    private static readonly HashSet<ulong> s_perPlayerSaid = [];
+    private static string s_perPlayerDay = "";
+
+    /// <summary>[Ultimus] AIPerPlayer: the most AI chat answers one player gets a day (0 = no limit). Past it, his normal chat answers them.</summary>
+    internal static int PerPlayerLimit => Math.Max(0, ConfigurationManager.GetValue("Ultimus.AIPerPlayer", 40));
+
+    /// <summary>Whether this player may still get an AI answer today (always for 0, the stuck thinking).</summary>
+    internal static bool PlayerUnder(ulong player) {
+        if (player == 0 || PerPlayerLimit == 0) {
+            return true;
+        }
+
+        lock (s_perPlayer) {
+            NewPlayerDay();
+            if (s_perPlayer.GetValueOrDefault(player) < PerPlayerLimit) {
+                return true;
+            }
+
+            if (s_perPlayerSaid.Add(player)) {
+                Logger.Information("Ultimus: a player reached today's {0} AI chat answers ([Ultimus] AIPerPlayer); his normal chat answers them until midnight.",
+                    Logger.Args(PerPlayerLimit));
+            }
+
+            return false;
+        }
+    }
+
+    private static void SpendFor(ulong player) {
+        if (player == 0) {
+            return;
+        }
+
+        lock (s_perPlayer) {
+            NewPlayerDay();
+            s_perPlayer[player] = s_perPlayer.GetValueOrDefault(player) + 1;
+        }
+    }
+
+    private static void NewPlayerDay() {
+        var today = DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+        if (s_perPlayerDay != today) {
+            s_perPlayerDay = today;
+            s_perPlayer.Clear();
+            s_perPlayerSaid.Clear();
+        }
     }
 
     // ---- "Show me what the AI got" (Niduus, 2026-11-15): the last request as it went out, already through the harness ----

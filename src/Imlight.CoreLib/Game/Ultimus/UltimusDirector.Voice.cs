@@ -197,13 +197,13 @@ internal sealed partial class UltimusDirectorActor {
 
             // The optional local AI words it (UltimusLocalAI): typed talk only, never for what makes him do something; the
             // keyword answer is the fallback and its facts are given to the model.
-            if (heard.Typed && UltimusLocalAI.Ready && reply.Intent is not (BotSocial.ORDER or BotSocial.PERMISSION or BotSocial.GROUP
+            if (heard.Typed && UltimusLocalAI.Ready && UltimusLocalAI.PlayerUnder(heard.SpeakerCharId) && reply.Intent is not (BotSocial.ORDER or BotSocial.PERMISSION or BotSocial.GROUP
                     or BotSocial.HELP or BotSocial.TRADE or BotSocial.PRIVATE or BotSocial.RUDE or "spam")) {
                 var facts = AiFacts(me);
                 var history = TalkWith(heard.SpeakerCharId).ToList();
                 var keyword = reply.Text;
                 _nextLine = DateTime.UtcNow + TimeSpan.FromSeconds(15);
-                UltimusLocalAI.Ask(facts, history, heard.Text, keyword)
+                UltimusLocalAI.Ask(facts, history, heard.Text, keyword, heard.SpeakerCharId)
                     .ContinueWith(t => new AiWorded(heard, keyword, t.IsCompletedSuccessfully ? t.Result : null))
                     .PipeTo(Self);
                 continue;
@@ -274,6 +274,9 @@ internal sealed partial class UltimusDirectorActor {
         Note("Ultimus", $"{heard.SpeakerName} {how}: \"{heard.Text}\"; Ultimus {(heard.Whisper ? "whispers back" : "says")} ({by}): \"{text}\"");
         NoteTalk(heard.SpeakerCharId, "player", heard.Text);
         NoteTalk(heard.SpeakerCharId, "me", text);
+        // Who answered, marked in his Thoughts (Niduus, 2026-11-15, "all"): the AI or his normal chat.
+        Think($"[{(by == "keyword chat" ? "normal chat" : by)}] I answered {heard.SpeakerName}: \"{UltimusText.Short(text, 120)}\"",
+            "answered|" + heard.SpeakerCharId + "|" + text);
         // A long answer goes in a few messages, each within the chat's length, a moment apart (Niduus, 2026-11-14: "allow for him
         // to send in multiple messages. Aware of the chat limits"). The whole answer still counts as one line for his
         // spam and repeat guards (BotSocial), and the next line waits until the last part is out.
