@@ -2,8 +2,8 @@
   "Format": "Ahziael overlay add-on",
   "Name": "Ultimus Spectator",
   "Author": "Niduus",
-  "Description": "Watch Ultimus. His own minimap follows him wherever he is and always draws HIS quest's way (never yours), a quest box shows his quest and step, and in battle a spells box shows his hand, pips and what he casts. Needs the Minimap add-on downloaded (your own Minimap does not have to be on, and stays as it is).",
-  "Version": "1",
+  "Description": "Watch Ultimus. His own minimap follows him wherever he is and always draws HIS quest's way (never yours), a quest box shows his quest and step, and in battle a spells box shows his hand, pips and what he casts. Needs the Minimap add-on downloaded (your own Minimap does not have to be on, and stays as it is). A Pause AI button pauses his AI for an hour; click it again to turn it back on (only on the PC that runs the server).",
+  "Version": "2",
   "Requires": [ "Minimap" ],
   "Widgets": [
     {
@@ -14,6 +14,12 @@
           "Background": { "Kind": "Radial", "Color1": "#C8302040", "Color2": "#C8100A1C" },
           "BorderColor": "#D0E07CFF", "BorderWidth": 2, "CornerRadius": 16, "Shadow": true, "ShadowBlur": 8,
           "Map": { "Zoom": 2500 }
+        },
+        {
+          "Kind": "Button", "Action": "PauseAI", "Name": "Ultimus: pause or resume AI", "Text": "Pause AI (1 hour)", "Anchor": "TopLeft", "X": 12, "Y": 34, "Width": 180, "Height": 30,
+          "Size": 13, "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#D0120C22" },
+          "BorderColor": "#D0E07CFF", "BorderWidth": 1, "CornerRadius": 8
         },
         {
           "Kind": "UltimusQuest", "Name": "Ultimus Quest", "Anchor": "TopLeft", "X": 12, "Y": 262, "Width": 220, "Height": 0, "Size": 13,

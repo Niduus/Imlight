@@ -393,6 +393,10 @@ internal static class UltimusLocalAI {
 
     /// <summary>Whether this player may still get an AI answer today (always for 0, the stuck thinking).</summary>
     internal static bool PlayerUnder(ulong player) {
+        if (player != 0 && Muted(player)) {
+            return false;
+        }
+
         if (player == 0 || PerPlayerLimit == 0) {
             return true;
         }
@@ -411,6 +415,14 @@ internal static class UltimusLocalAI {
             return false;
         }
     }
+
+    /// <summary>
+    /// [Ultimus] AIMutedPlayers: players (character ids, with commas) who always get his normal chat, never the AI
+    /// (Niduus, 2026-11-15, "Mute AI for this player" on Ahziael's Friends list). Applies at once.
+    /// </summary>
+    internal static bool Muted(ulong player)
+        => ConfigurationManager.GetValue("Ultimus.AIMutedPlayers", "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Any(id => ulong.TryParse(id, out var muted) && muted == player);
 
     private static void SpendFor(ulong player) {
         if (player == 0) {

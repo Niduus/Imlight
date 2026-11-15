@@ -13,6 +13,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using Imlight.CoreLib.Game.Ultimus;
 
 namespace Imlight.Setup;
 
@@ -166,6 +167,11 @@ internal sealed partial class ManagerWindow {
 
     // The friends page (Niduus, 2026-11-14, approved): the players Ultimus has met and talked with.
     private readonly SelectableTextBlock _ultFriends = new() { TextWrapping = TextWrapping.Wrap };
+    // "Mute AI for this player" (Niduus, 2026-11-15): the friends by id, in the picker's order.
+    private readonly ComboBox _ultMuteWho = new() { Width = 260, PlaceholderText = "Pick a player" };
+    private List<(string Id, string Name)> _ultMuteIds = [];
+    // The one-line AI summary at the top of the Ultimus page.
+    private readonly TextBlock _ultAiSummary = new() { TextWrapping = TextWrapping.Wrap };
     private DateTime _ultFriendsRead = DateTime.MinValue;
     private readonly TextBlock _ultQuest = new() { TextWrapping = TextWrapping.Wrap };
     // Steps he set aside and asked help for, each with a "Retry now" button (Niduus, 2026-11-14).
@@ -291,6 +297,7 @@ internal sealed partial class ManagerWindow {
 
         return Page(
             SpaceNotice("Ultimus"),
+            _ultAiSummary,
             Fold("users", ULTIMUS_TAB, "Ultimus",
                 "Ultimus is the Solo Quester: one Balance wizard the server plays by itself, alone, through the Main Story, from " +
                 "level 1 in Wizard City to the last world. Its goal is the Main Story above all. It plays like a player: it walks " +
@@ -343,8 +350,73 @@ internal sealed partial class ManagerWindow {
             UltimusSolutionsFold(),
             Fold("users", ULTIMUS_TAB, "Friends he made",
                 "The players Ultimus has met: how often you talked, battles fought together, your school and world if you told him, " +
-                "and when he last saw you. Muted means he is not answering that player for a while (rude or spamming). Updates by itself.",
+                "and when he last saw you. Muted means he is not answering that player for a while (rude or spamming). " +
+                "\"AI muted\" means that player always gets his normal chat, never the AI. Updates by itself.",
+                Row(_ultMuteWho, Action(Plain("Mute AI for this player"), () => MuteUltimusAiAsync(true)), Action(Plain("Unmute"), () => MuteUltimusAiAsync(false))),
                 _ultFriends));
+    }
+
+    // Adds or takes the picked player off [Ultimus] AIMutedPlayers (live).
+    private Task MuteUltimusAiAsync(bool mute) {
+        if (_ultMuteWho.SelectedIndex < 0 || _ultMuteWho.SelectedIndex >= _ultMuteIds.Count) {
+            throw new PanelException("Pick a player in the list first.");
+        }
+
+        if (!_manager.HasSetting("Ultimus", "AIMutedPlayers")) {
+            throw new PanelException("This server's Imlight.ini has no [Ultimus] AIMutedPlayers yet. Click \"Update Ahziael\" once, then try again.");
+        }
+
+        var (id, name) = _ultMuteIds[_ultMuteWho.SelectedIndex];
+        var muted = (_manager.GetSetting("Ultimus", "AIMutedPlayers") ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+        muted.RemoveAll(m => m == id);
+        if (mute) {
+            muted.Add(id);
+        }
+
+        _manager.SaveSettings([new Setting("Ultimus", "AIMutedPlayers", string.Join(",", muted), "")]);
+        _settings = [];
+        _ultFriendsRead = DateTime.MinValue;
+        ShowUltimusFriends();
+        Say(mute ? $"{name} always gets Ultimus's normal chat now, never the AI." : $"{name} can get AI answers from Ultimus again.");
+
+        return Task.CompletedTask;
+    }
+
+    // One line at the top of the Ultimus page: which AI, today's online answers, paused or not (Niduus, 2026-11-15).
+    private void ShowUltimusAiSummary() {
+        var provider = UltimusAiProviders.Find(_manager.GetSetting("Ultimus", "AIProvider"));
+        var chat = _manager.GetSwitch("Ultimus", "LocalAI");
+        var stuck = !_manager.HasSetting("Ultimus", "StuckThinking") || _manager.GetSwitch("Ultimus", "StuckThinking");
+        var team = _manager.GetSwitch("QuestTeam", "AIChat");
+        if (!chat && !stuck && !team) {
+            _ultAiSummary.Text = "AI: all off.";
+            _ultAiSummary.Foreground = MUTED;
+            return;
+        }
+
+        var parts = new List<string> { "AI: " + provider.Name.Split(" (")[0] };
+        if (!provider.Local) {
+            var used = 0;
+            try {
+                var usage = Path.Combine(UltimusFolder, "ai-usage.json");
+                var today = DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                if (File.Exists(usage) && JsonNode.Parse(File.ReadAllText(usage)) is JsonObject u && (string?) u["Day"] == today) {
+                    used = (int?) u["Used"] ?? 0;
+                }
+            }
+            catch (Exception e) when (e is IOException or JsonException or InvalidOperationException or FormatException) {
+                // Shown without today's count.
+            }
+
+            var limit = _manager.GetSetting("Ultimus", "AIDailyLimit") is { } l && int.TryParse(l, out var n) ? n : 300;
+            parts.Add(limit > 0 ? $"{used} of {limit} answers today" : $"{used} answers today");
+        }
+
+        parts.Add(string.Join(", ", new[] { chat ? "chat on" : "", stuck ? "stuck thinking on" : "", team ? "Quest Team on" : "" }.Where(x => x.Length > 0)));
+        var paused = UltimusAiSwitches.PausedUntil(_manager.ConfigFile);
+        parts.Add(paused is { } until ? $"paused until {until.ToLocalTime():HH:mm}" : "not paused");
+        _ultAiSummary.Text = string.Join("  ·  ", parts);
+        _ultAiSummary.Foreground = paused is null ? MUTED : WARN;
     }
 
     private void LoadUltimusSettings() {
@@ -518,6 +590,11 @@ internal sealed partial class ManagerWindow {
         }
 
         var perPlayer = _manager.GetSetting("Ultimus", "AIPerPlayer") is { } pp && int.TryParse(pp, out var ppn) ? ppn : 40;
+        var aiMuted = (_manager.GetSetting("Ultimus", "AIMutedPlayers") ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToHashSet();
+        var picked = _ultMuteWho.SelectedIndex >= 0 && _ultMuteWho.SelectedIndex < _ultMuteIds.Count ? _ultMuteIds[_ultMuteWho.SelectedIndex].Id : null;
+        _ultMuteIds = rows.OrderByDescending(r => r.Value.Last).Select(r => (r.Key, r.Value.Name.Length > 0 ? r.Value.Name : "a player")).ToList();
+        _ultMuteWho.ItemsSource = _ultMuteIds.Select(f => f.Name + (aiMuted.Contains(f.Id) ? " (AI muted)" : "")).ToList();
+        _ultMuteWho.SelectedIndex = picked is null ? -1 : _ultMuteIds.FindIndex(f => f.Id == picked);
 
         if (rows.Count == 0) {
             _ultFriends.Text = "Nobody yet. Walk up to Ultimus in the game and say hi (typed or Menu Chat), or whisper to him.";
@@ -527,6 +604,10 @@ internal sealed partial class ManagerWindow {
         var text = new StringBuilder();
         foreach (var (rowId, row) in rows.OrderByDescending(r => r.Value.Last)) {
             var parts = new List<string> { $"talked {row.Talks} time(s)" };
+            if (aiMuted.Contains(rowId)) {
+                parts.Add("AI muted");
+            }
+
             if (aiToday.TryGetValue(rowId, out var aiCount) && aiCount > 0) {
                 parts.Add(perPlayer > 0 ? $"{aiCount} of {perPlayer} AI answers today" : $"{aiCount} AI answers today");
             }
@@ -1170,6 +1251,9 @@ internal sealed partial class ManagerWindow {
         }
 
         WarnUltimusAiLimit();
+        if (_ultAiSummary.IsEffectivelyVisible) {
+            ShowUltimusAiSummary();
+        }
 
         if (_ultSafetyList.IsEffectivelyVisible || _ultSafetyEmpty.IsEffectivelyVisible) {
             ShowUltimusAiSafety();
