@@ -86,6 +86,12 @@ internal static class UltimusReplay {
         new("A door leg and its step are one goal (2026-11-15)", () =>
             UltimusDirectorActor.GoalId(new UltimusPlanner.Target(UltimusPlanner.DOOR, 0, 0, "", Key: "Q|g|door|MB/x"))
             == UltimusDirectorActor.GoalId(new UltimusPlanner.Target(UltimusPlanner.EXIT, 0, 0, "", Key: "Q|g|exit|MB/y")) ? null : "each door on the way would look like a new goal"),
+        new("The same line twice a second for minutes (2026-11-15, potion trip)", () => {
+            var line = "replay check " + Guid.NewGuid();
+            var said = Enumerable.Range(0, 9).Select(_ => UltimusLink.Repeats("check", line)).ToList();
+            return said.Take(6).All(s => s.Count == 1 && s[0] == line) && said[6].Count == 1 && said[6][0].Contains("REPEAT", StringComparison.Ordinal)
+                   && said.Skip(7).All(s => s.Count == 0) ? null : "a repeated line would still flood the log";
+        }),
     ];
 
     /// <summary>The failed checks (plain words), chat answers included; written to replay-pack.txt.</summary>

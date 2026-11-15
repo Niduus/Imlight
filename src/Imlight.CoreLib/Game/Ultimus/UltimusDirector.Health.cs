@@ -518,6 +518,7 @@ internal sealed partial class UltimusDirectorActor {
         var why = "to fill potions at the potion shop in Wizard City";
         if (_markedZone is null && leader.Wizard?.ZoneIsInstance != true && (stats.m_currentMana >= 10)) {
             _markedZone = leader.Zone;
+            _markLeft = false;
             _markedAt = DateTime.UtcNow;
             _actors[0].Tell(new UltimusMember.MarkSpot());
             Note("Ultimus", $"{leader.Name} found no wisps and no potion shop in this world: marks his spot and goes to Wizard City's potion shop.");
@@ -554,6 +555,7 @@ internal sealed partial class UltimusDirectorActor {
         StopWalking(0);
         if (_markedZone is null && (wizard.GameStats?.m_currentMana ?? 0) >= 10) {
             _markedZone = leader.Zone;
+            _markLeft = false;
             _markedAt = DateTime.UtcNow;
             _actors[0].Tell(new UltimusMember.MarkSpot());
         }

@@ -43,7 +43,7 @@ namespace Imlight.CoreLib.Game.Ultimus;
 /// </list>
 /// Real progress is a step, a quest, a level, XP or a won quest fight; arriving in an area again does not count
 /// (it did before, so his progress check said "yes" all through that loop).
-/// Off switch: playbook Guard.FlipFlopBreaker = 0.
+/// Off switch: playbook Rules.FlipFlop = 0 (1 = watch only).
 /// </summary>
 internal sealed partial class UltimusDirectorActor {
 
@@ -111,7 +111,8 @@ internal sealed partial class UltimusDirectorActor {
 
     /// <summary>The ladder's pick, held steady: a flip-flop between two goals is broken by holding to one of them.</summary>
     private UltimusPlanner.Target Steady(List<UltimusMember.Status> group, UltimusPlanner.Target picked) {
-        if (picked is null || UltimusPlaybook.Value("Guard.FlipFlopBreaker") < 0.5) {
+        var mode = UltimusRules.Mode(UltimusRules.FLIP_FLOP);
+        if (picked is null || mode == UltimusRules.OFF) {
             _hold = null;
             return picked;
         }
@@ -140,6 +141,12 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         if (_hold is null && FlipFlop(now) is var (a, b, switches)) {
+            if (mode == UltimusRules.WATCH) {
+                UltimusRules.WouldHave(UltimusRules.FLIP_FLOP, $"held to \"{Winner(a, b).Win.What}\": my rules {a.Source} and {b.Source} took turns {switches} times " +
+                    $"(\"{a.What}\" and \"{b.What}\") with no real progress.", a.Id + "|" + b.Id);
+                return picked;
+            }
+
             StartHold(leader, a, b, switches, round: 1);
             if (_hold is { } fresh && fresh.Win.Id != id) {
                 return Turn(group, fresh, picked) ?? picked;
@@ -359,7 +366,7 @@ internal sealed partial class UltimusDirectorActor {
         if (_hold is { } hold) {
             said.Add($"I am holding to \"{hold.Win.What}\" after my rules {hold.Win.Source} and {hold.Lose.Source} took turns (round {hold.Round}).");
         }
-        else if (UltimusPlaybook.Value("Guard.FlipFlopBreaker") >= 0.5 && FlipFlop(now, need: 3) is var (a, b, switches)) {
+        else if (UltimusRules.On(UltimusRules.FLIP_FLOP) && FlipFlop(now, need: 3) is var (a, b, switches)) {
             said.Add($"my rules {a.Source} and {b.Source} took turns {switches} times between \"{a.What}\" and \"{b.What}\": a flip-flop, which I break now.");
             StartHold(leader, a, b, switches, round: 1);
         }

@@ -360,7 +360,7 @@ internal sealed partial class UltimusDirectorActor {
         // The alarm acts (Niduus, 2026-11-15): it only counted before, and he went on 221 times. Two goals taking turns: the
         // flip-flop breaker holds to one; one goal whose way keeps bouncing: the loop guard breaks out with a new plan.
         if (now - _realProgressAt > TimeSpan.FromMinutes(5) && _hold is null) {
-            if (FlipFlop(now, need: 3) is var (a, b, switches)) {
+            if (UltimusRules.On(UltimusRules.FLIP_FLOP) && FlipFlop(now, need: 3) is var (a, b, switches)) {
                 StartHold(leader, a, b, switches, round: 1);
             }
             else if (now - _loopBrokeAt > TimeSpan.FromMinutes(5)) {

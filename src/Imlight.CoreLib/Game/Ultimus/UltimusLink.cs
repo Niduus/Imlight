@@ -19,6 +19,7 @@
 using System.Collections.Generic;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -275,8 +276,86 @@ public static class UltimusLink {
             text = $"{level}: {text}";
         }
 
-        Logger.Information("Ultimus | {0}: {1}", Logger.Args(who, text));
-        Send(new UltimusRequest { Op = "note", Who = who, Text = text });
+        // The repeat guard: the same line again and again is a decision made with nothing done (his log, 2026-11-15:
+        // "found no wisps and no potion shop ... goes to Wizard City's potion shop" twice a second). After REPEAT_LIMIT
+        // in a minute the line is held back, one pink REPEAT line says so, and the count is written when the minute ends.
+        var said = text.Contains("WATCH ONLY", StringComparison.Ordinal) ? [text] : RepeatGuard(who, text);
+
+        foreach (var line in said) {
+            Logger.Information("Ultimus | {0}: {1}", Logger.Args(who, line));
+            Send(new UltimusRequest { Op = "note", Who = who, Text = line });
+        }
+    }
+
+    private static List<string> RepeatGuard(string who, string text) {
+        var mode = UltimusRules.Mode(UltimusRules.REPEAT_GUARD);
+        if (mode == UltimusRules.OFF) {
+            return [text];
+        }
+
+        var said = Repeats(who, text);
+        if (mode == UltimusRules.WATCH) {
+            if (said.Any(s => s.Contains("REPEAT:", StringComparison.Ordinal))) {
+                UltimusRules.WouldHave(UltimusRules.REPEAT_GUARD, $"held back a line said {REPEAT_LIMIT + 1} times in a minute: \"{UltimusText.Short(text, 100)}\"", text);
+            }
+
+            return [text];
+        }
+
+        return said;
+    }
+
+    private const int REPEAT_LIMIT = 6;
+    private static readonly TimeSpan s_repeatWindow = TimeSpan.FromMinutes(1);
+    private static readonly object s_repeatLock = new();
+    private static readonly Dictionary<string, (DateTime Since, int Count)> s_repeats = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// What to write for this line: the line, plus a note on lines held back before it; empty to hold it back. Lines
+    /// repeated in the last minute are counted and saved to repeats.txt for the cause report.
+    /// </summary>
+    internal static List<string> Repeats(string who, string text) {
+        var now = DateTime.UtcNow;
+        var key = who + "|" + text;
+        var said = new List<string>();
+        lock (s_repeatLock) {
+            // Lines whose minute is over: how many were held back, said once.
+            foreach (var (old, seen) in s_repeats.Where(r => now - r.Value.Since > s_repeatWindow).ToList()) {
+                s_repeats.Remove(old);
+                if (seen.Count > REPEAT_LIMIT) {
+                    var shown = old[(old.IndexOf('|') + 1)..];
+                    said.Add($"(held back {seen.Count - REPEAT_LIMIT} more of: \"{UltimusText.Short(shown, 120)}\")");
+                    SaveRepeat(shown, seen.Count);
+                }
+            }
+
+            var (since, count) = s_repeats.TryGetValue(key, out var was) ? was : (now, 0);
+            s_repeats[key] = (since, ++count);
+            if (s_repeats.Count > 400) {
+                s_repeats.Clear();
+            }
+
+            if (count <= REPEAT_LIMIT) {
+                said.Add(text);
+            }
+            else if (count == REPEAT_LIMIT + 1) {
+                said.Add($"{ABNORMAL}: REPEAT: said the same thing {count} times in under a minute (a decision made again and again with " +
+                         $"nothing done): \"{UltimusText.Short(text, 120)}\". Held back until the minute is over.");
+            }
+        }
+
+        return said;
+    }
+
+    private static void SaveRepeat(string text, int count) {
+        try {
+            Directory.CreateDirectory(UltimusWire.Folder);
+            File.AppendAllText(Path.Combine(UltimusWire.Folder, "repeats.txt"), $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}\t{count}\t{text}{Environment.NewLine}");
+        }
+        catch (IOException) {
+        }
+        catch (UnauthorizedAccessException) {
+        }
     }
 
     /// <summary>Tells the brain of an issue, which Ahziael announces.</summary>

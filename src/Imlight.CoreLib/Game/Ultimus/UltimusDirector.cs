@@ -678,7 +678,14 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         // A walk-through exit he can't get onto (its point is in a wall) with a door the game offers him right by it: he
         // clicks the door, as a player presses X at a shop front (his log, 2026-11-15: Jack Russell Jewelers).
-        if (target.Kind == UltimusPlanner.EXIT && distance > reach && distance <= 300 && OfferedDoorNear(leader, target) is { } offered) {
+        if (target.Kind == UltimusPlanner.EXIT && distance > reach && distance <= 300 && UltimusRules.Mode(UltimusRules.OFFERED_DOOR) != UltimusRules.OFF
+            && OfferedDoorNear(leader, target) is { } offered) {
+            if (UltimusRules.Watching(UltimusRules.OFFERED_DOOR)) {
+                UltimusRules.WouldHave(UltimusRules.OFFERED_DOOR, $"opened the door the game offers by the way into {UltimusText.Zone(target.To)}.", target.Key);
+                WalkTo(0, target);
+                return;
+            }
+
             Think($"I can't walk onto the way into {UltimusText.Zone(target.To)}, but the game offers me the door right by it, so I open it.",
                 "offered-door|" + target.Key);
             ClickOnce(0, offered, ["Interact"], "opens the door " + target.What);

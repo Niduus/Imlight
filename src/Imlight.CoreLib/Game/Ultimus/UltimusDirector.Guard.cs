@@ -135,7 +135,12 @@ internal sealed partial class UltimusDirectorActor {
     /// quest), its place is skipped for Guard.TripOutOfReachHours, and he goes back to the story. True when it dropped one.
     /// </summary>
     private bool DropStuckSideTrip(UltimusMember.Status leader, UltimusPlanner.Target goal, string where) {
-        if (_sideTripKey is not { } kind || goal is null || !s_tripSources.Contains(_pickSource)) {
+        if (_sideTripKey is not { } kind || goal is null || !s_tripSources.Contains(_pickSource) || UltimusRules.Mode(UltimusRules.SIDE_TRIP_DROP) == UltimusRules.OFF) {
+            return false;
+        }
+
+        if (UltimusRules.Watching(UltimusRules.SIDE_TRIP_DROP)) {
+            UltimusRules.WouldHave(UltimusRules.SIDE_TRIP_DROP, $"dropped the {kind} trip \"{goal.What}\" (stuck in {where}) and gone back to the story.", GoalId(goal));
             return false;
         }
 

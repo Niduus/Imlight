@@ -231,6 +231,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         _markedZone = leader.Zone;
+        _markLeft = false;
         _markedAt = DateTime.UtcNow;
         _actors[0].Tell(new UltimusMember.MarkSpot());
         Note("Ultimus", $"marks his spot in {UltimusText.Zone(leader.Zone)} before the trip ({trip.What}), to recall back after.");
@@ -238,14 +239,32 @@ internal sealed partial class UltimusDirectorActor {
         Think("I mark my spot before I go: when I am done, Recall brings me back here, like any player does.", "mark");
     }
 
+    // He has been out of the marked area since marking it (the trip begun).
+    private bool _markLeft;
+
     /// <summary>The trip is over: back to the marked spot.</summary>
     private void RecallAfterTrip(UltimusMember.Status leader) {
         if (_markedZone is null) {
             return;
         }
 
-        if (OverlayQuestTracker.SameZone(_markedZone, leader.Zone) || DateTime.UtcNow - _markedAt > TimeSpan.FromHours(1)) {
+        // Still where he marked it, the trip not begun: nothing to recall to yet. Clearing the mark there made him mark it
+        // again the next second, and again (his log, 2026-11-15: "marks his spot and goes to Wizard City's potion shop"
+        // twice a second). Back there after leaving: the trip is over.
+        if (OverlayQuestTracker.SameZone(_markedZone, leader.Zone)) {
+            if (_markLeft || DateTime.UtcNow - _markedAt > TimeSpan.FromMinutes(10)) {
+                _markedZone = null;
+                _markLeft = false;
+                _recallTries = 0;
+            }
+
+            return;
+        }
+
+        _markLeft = true;
+        if (DateTime.UtcNow - _markedAt > TimeSpan.FromHours(1)) {
             _markedZone = null;
+            _markLeft = false;
             _recallTries = 0;
             return;
         }
