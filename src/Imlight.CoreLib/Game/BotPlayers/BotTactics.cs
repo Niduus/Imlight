@@ -212,8 +212,10 @@ internal static class BotTactics {
         => string.IsNullOrEmpty(charmSchool) || charmSchool.Equals("All", StringComparison.OrdinalIgnoreCase)
            || RewrittenAI.Same(charmSchool, hitSchool);
 
+    // A creature by the name the game shows ("Fairy Dust", not its object's short debug name "141BE"); a wizard by its name.
     private static string Name(CombatDuelSubCircle circle)
-        => circle.ParticipantObject?.m_debugName is { Length: > 0 } name ? name : $"slot {circle.SlotIndex}";
+        => !circle.IsHumanPlayer ? Combat.CombatEffectApplicator.TargetName(circle)
+            : circle.ParticipantObject?.m_debugName is { Length: > 0 } name ? name : $"slot {circle.SlotIndex}";
 
     private static string Who(CombatDuelSubCircle circle, Func<CombatDuelSubCircle, bool> isBot)
         => circle.IsHumanPlayer && !isBot(circle) ? "a player" : Name(circle);

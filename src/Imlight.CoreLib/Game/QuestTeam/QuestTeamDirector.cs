@@ -463,12 +463,30 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             }
         }
 
-        // The leader waits while someone in its area has fallen behind.
+        // The leader waits while someone in its area has fallen behind, but not for ever: after LINE_WAIT it goes on and the
+        // others follow it (its log, 2026-11-15: the whole team stood 13 minutes in The Commons while Death, sent to the
+        // leader again and again, never closed the gap). A player would walk on and let the slow one catch up.
         if (together.Skip(1).Any(m => Far(m, _team[_team.IndexOf(m) - 1]) > FOLLOW_FAR)) {
-            _doing = "waiting for the line to close up";
-            StopWalking(0);
+            if (_lineWaitSince == DateTime.MinValue) {
+                _lineWaitSince = DateTime.UtcNow;
+            }
 
-            return;
+            if (DateTime.UtcNow - _lineWaitSince < LINE_WAIT) {
+                _doing = "waiting for the line to close up";
+                StopWalking(0);
+
+                return;
+            }
+
+            if (!_lineWaitSaid) {
+                _lineWaitSaid = true;
+                Note(leader.Role, $"{leader.Name} waited {LINE_WAIT.TotalSeconds:0} seconds for the line to close up in {QuestTeamText.Zone(leader.Zone)}: goes on, the others follow.",
+                    QuestTeamLink.ABNORMAL);
+            }
+        }
+        else {
+            _lineWaitSince = DateTime.MinValue;
+            _lineWaitSaid = false;
         }
 
         Lead(together);
@@ -477,6 +495,11 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
     // ---------------------------------------------------------------------
     // The leader: what to do next
     // ---------------------------------------------------------------------
+
+    // Waiting for the line to close up: since when, and whether "goes on" was said.
+    private static readonly TimeSpan LINE_WAIT = TimeSpan.FromSeconds(90);
+    private DateTime _lineWaitSince = DateTime.MinValue;
+    private bool _lineWaitSaid;
 
     private DateTime _restingSince = DateTime.MaxValue;
     private DateTime _dialogSince = DateTime.MaxValue;
