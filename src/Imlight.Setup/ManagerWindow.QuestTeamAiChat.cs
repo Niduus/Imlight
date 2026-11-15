@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Imlight.CoreLib.Game.Ultimus;
 
 namespace Imlight.Setup;
 
