@@ -351,11 +351,13 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
             var map = Tools.OverlayMinimap.Build(wizard, zone, message.Reach);
             // His quest's way, drawn like the player's Quest Tracker line (the shared route finder).
             // A Quest Team wizard (the Quest Team Spectator): the team's quest, drawn the same way.
-            if ((message.Team ? Ultimus.UltimusSpectate.RouteFor(wizard, zone, message.Quest) : Ultimus.UltimusSpectate.Route(wizard, zone)) is { } route) {
+            // A quest picked on Ahziael's Ultimus or Quest Team page (Niduus, 2026-11-15): its way instead, when the wizard holds it.
+            var picked = string.IsNullOrEmpty(message.RouteQuest) ? null : Ultimus.UltimusSpectate.RouteFor(wizard, zone, message.RouteQuest);
+            if ((picked ?? (message.Team ? Ultimus.UltimusSpectate.RouteFor(wizard, zone, message.Quest) : Ultimus.UltimusSpectate.Route(wizard, zone))) is { } route) {
                 map["route"] = route;
             }
 
-            var quests = Tools.OverlayQuestTracker.Build(wizard, zone, message.Quest);
+            var quests = Tools.OverlayQuestTracker.Build(wizard, zone, picked is not null ? message.RouteQuest : message.Quest);
             message.Reply.TrySetResult((map, quests, zone, ""));
         }
         catch (Exception ex) {

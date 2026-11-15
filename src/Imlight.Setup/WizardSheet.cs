@@ -30,6 +30,12 @@ internal sealed class WizardSheet {
     // Tracker UI and Ultimus/QT quest sections in EXE to portray exactly how they do in game").
     private readonly ContentControl _gameQuest = new();
     private readonly ContentControl _gameTracker = new();
+    // The quest's way on a small map, like the spectator's on the game (Niduus, 2026-11-15); a click on a quest in the
+    // Quest Tracker here draws that one's way instead.
+    private readonly ContentControl _gameMap = new();
+    private readonly TextBlock _gameMapNote = new() { TextWrapping = TextWrapping.Wrap, FontSize = 12, MaxWidth = 240, Foreground = ManagerTheme.MUTED_BRUSH };
+    private string _pagePick = "";
+    private int _mapSeen = -1;
     private readonly Control _gameRow;
     private readonly Expander _questTextBox;
     private readonly long _trackerKey = Interlocked.Decrement(ref s_nextKey);
@@ -119,13 +125,17 @@ internal sealed class WizardSheet {
             Header = Text("Quests", strong: true), IsExpanded = true, HorizontalAlignment = HorizontalAlignment.Stretch,
             HorizontalContentAlignment = HorizontalAlignment.Stretch, Content = _book,
         };
-        var gameColumns = new WrapPanel { Orientation = Orientation.Horizontal, ItemSpacing = 16, LineSpacing = 12, Children = { _gameQuest, _gameTracker } };
+        var gameColumns = new WrapPanel {
+            Orientation = Orientation.Horizontal, ItemSpacing = 16, LineSpacing = 12,
+            Children = { _gameQuest, _gameTracker, new StackPanel { Spacing = 6, Children = { _gameMap, _gameMapNote } } },
+        };
         _gameRow = new StackPanel {
             Spacing = 6,
             Children = {
                 Text("Quests, as the game shows them", strong: true),
-                MutedText("The quest box and Quest Tracker look just like they do over the game, in your overlay's own colours: the one it " +
-                      "plays now is lit, with each step, its count and where; Story, Main and Side lists below it."),
+                MutedText("The quest box, Quest Tracker and map look just like they do over the game, in your overlay's own colours: the one it " +
+                      "plays now is lit, with each step, its count and where. Click a quest in the Quest Tracker to see its way on the map; " +
+                      "click it again to go back to the one it plays."),
                 gameColumns,
             },
         };
@@ -206,6 +216,7 @@ internal sealed class WizardSheet {
         var step = S(m, "stepNow");
         var others = List(m["questList"]).Where(q => q != quest).ToList();
         ShowAsInGame(m);
+        ShowMap(m);
         _quest.Text = m["tracker"] is JsonObject tracker
             ? TrackerText(quest, tracker, others)
             : (quest.Length > 0 ? $"Quest now: {quest}" + (step.Length > 0 ? $"\nStep: {step}" : "") : "Quest now: none") +
@@ -299,13 +310,104 @@ internal sealed class WizardSheet {
         // Every quest shows here: the page scrolls, not the tracker.
         trackerLook.Quests = (trackerLook.Quests ?? new OverlayQuestList()).Clean();
         trackerLook.Quests.MaxHeight = 1200;
-        OverlayQuestData.ShowFor(_trackerKey, m["questTracker"] as JsonObject, S(status, "questCode"));
+        var playing = S(status, "questCode");
+        var picked = OverlayQuestData.ShowFor(_trackerKey, m["questTracker"] as JsonObject, _pagePick.Length > 0 ? _pagePick : playing);
+        // A picked quest it no longer holds goes back to the one it plays.
+        if (_pagePick.Length > 0 && picked != _pagePick) {
+            _pagePick = "";
+            OverlayQuestData.ShowFor(_trackerKey, m["questTracker"] as JsonObject, playing);
+        }
+
         _gameTracker.Content = m["questTracker"] is JsonObject
-            ? OverlayRenderer.Framed(trackerLook, new QuestTrackerView(trackerLook, _trackerKey, hasMap: true))
+            ? OverlayRenderer.Framed(trackerLook, Clickable(new QuestTrackerView(trackerLook, _trackerKey, hasMap: true), m))
             : OverlayRenderer.Framed(trackerLook, new TextBlock {
                 Text = "The Quest Tracker list shows once the server is updated to this version.", TextWrapping = TextWrapping.Wrap,
                 Foreground = Brushes.White, FontSize = 12,
             });
+    }
+
+    // The page's Quest Tracker takes clicks: a quest picks it (its way shows on the map), a list's name folds it.
+    private Control Clickable(QuestTrackerView view, JsonObject m) {
+        var holder = new Panel { Background = Brushes.Transparent, Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand), Children = { view } };
+        holder.PointerPressed += (_, e) => {
+            var at = e.GetPosition(holder);
+            foreach (var (area, line) in view.Lines(holder)) {
+                if (!area.Contains(at)) {
+                    continue;
+                }
+
+                if (line.Action == "QuestFold") {
+                    OverlayQuestData.ToggleFold(_trackerKey, line.Value);
+                }
+                else {
+                    var playing = Status is { } status ? S(status, "questCode") : "";
+                    _pagePick = _pagePick == line.Value || string.Equals(line.Value, playing, StringComparison.OrdinalIgnoreCase) ? "" : line.Value;
+                    // Asked at once, so the map shows its way within a second or two.
+                    OverlayUltimusData.PageWants(FeedKey, _pagePick);
+                }
+
+                _gameKey = "";
+                _mapSeen = -1;
+                Fill(m);
+                e.Handled = true;
+
+                return;
+            }
+        };
+
+        return holder;
+    }
+
+    private long FeedKey => Team ? OverlayUltimusData.TEAM_KEY : OverlayUltimusData.KEY;
+
+    // The small map: the spectator's own map of the one shown (its quest's way, or the picked quest's), when the overlay is
+    // linked to the server. The Quest Team's is the member the spectator watches; another member offers to watch it.
+    private void ShowMap(JsonObject m) {
+        if (Status is null) {
+            return;
+        }
+
+        var key = FeedKey;
+        var role = S(m, "role");
+        var watched = !Team || string.Equals(OverlayUltimusData.Who(key), role, StringComparison.OrdinalIgnoreCase);
+        OverlayUltimusData.PageWants(key, watched ? _pagePick : "");
+        if (Team && !watched) {
+            _mapSeen = -1;
+            var watch = new Button { Content = $"Show {S(m, "name")} on the map", Padding = new Thickness(10, 4) };
+            watch.Click += (_, _) => {
+                OverlayUltimusData.WatchMember(role);
+                _mapSeen = -1;
+                Fill(m);
+            };
+            _gameMap.Content = watch;
+            _gameMapNote.Text = $"The map shows the member your Quest Team Spectator watches: {OverlayUltimusData.MemberName(OverlayUltimusData.Who(key))}. " +
+                                "Showing this one changes who it watches on the game too.";
+
+            return;
+        }
+
+        var version = OverlayUltimusData.Version ^ OverlayHost.DesignStamp;
+        if (version == _mapSeen && _gameMap.Content is not null) {
+            return;
+        }
+
+        _mapSeen = version;
+        var data = OverlayMinimapData.For(key);
+        var info = OverlayUltimusData.For(1, key);
+        if (data is null || info is null || info.Stale || info.Note.Length > 0) {
+            _gameMap.Content = null;
+            _gameMapNote.Text = info is { Note.Length: > 0 } ? info.Note
+                : OverlayHost.IsDrawing ? "The map shows here once the server answers (Ahziael's overlay asks it every second or so)."
+                : "The map shows here while Ahziael draws the overlay (Ahziael Overlay on its own is drawing it now, or the server isn't linked yet).";
+
+            return;
+        }
+
+        var look = InGameLook(OverlayElement.ULTIMUS_MAP, Team);
+        _gameMap.Content = new MinimapView(look, data, key);
+        _gameMapNote.Text = _pagePick.Length > 0
+            ? "Showing the way to the quest you clicked. Click it again to go back to the one it plays."
+            : "Showing the way to the quest it plays now.";
     }
 
     /// <summary>
@@ -316,10 +418,22 @@ internal sealed class WizardSheet {
         var on = OverlayHost.Design.Elements.FirstOrDefault(e => e.Kind == kind && (kind != OverlayElement.ULTIMUS_QUEST || e.WatchesTeam == team));
         if (on is not null && OverlayAddon.CopyFamily([on]).FirstOrDefault() is { } copy) {
             copy.Parent = "";
-            copy.Height = 0;
+            if (kind != OverlayElement.ULTIMUS_MAP) {
+                copy.Height = 0;
+            }
+
             copy.Opacity = 1;
 
             return copy;
+        }
+
+        if (kind == OverlayElement.ULTIMUS_MAP) {
+            // The spectator add-ons' map look.
+            return new OverlayElement {
+                Kind = kind, Width = 220, Height = 220, BorderColor = team ? "#D07CC8FF" : "#D0E07CFF", BorderWidth = 2, CornerRadius = 16,
+                Background = new OverlayPaint { Kind = OverlayPaint.RADIAL, Color1 = team ? "#C8203040" : "#C8302040", Color2 = team ? "#C80A141C" : "#C8100A1C" },
+                Watch = team ? OverlayElement.WATCH_TEAM : "", Map = new OverlayMap { Zoom = 2500 },
+            };
         }
 
         return kind == OverlayElement.QUEST_TRACKER

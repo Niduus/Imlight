@@ -527,7 +527,7 @@ public static class OverlayLinks {
         var reply = new TaskCompletionSource<(JsonObject Map, JsonObject Quests, IActorRef Zone, string Error)>(TaskCreationOptions.RunContinuationsAsynchronously);
         var others = new ConcurrentQueue<(ulong CharId, IActorRef Zone, string Name, float X, float Y)>();
         var reach = header["reach"] is JsonValue far && far.TryGetValue<double>(out var wanted) && double.IsFinite(wanted) ? (float) wanted : 0f;
-        var ask = new OverlaySpectateAsk(member.CharId, reply, others, reach, quest);
+        var ask = new OverlaySpectateAsk(member.CharId, reply, others, reach, quest, RouteQuest: ((string) header["routeQuest"] ?? "").Trim());
         foreach (var service in AgentBridge.CommandServices) {
             service.Tell(ask);
         }
@@ -618,7 +618,7 @@ public static class OverlayLinks {
         var reply = new TaskCompletionSource<(JsonObject Map, JsonObject Quests, IActorRef Zone, string Error)>(TaskCreationOptions.RunContinuationsAsynchronously);
         var others = new ConcurrentQueue<(ulong CharId, IActorRef Zone, string Name, float X, float Y)>();
         var reach = header["reach"] is JsonValue far && far.TryGetValue<double>(out var wanted) && double.IsFinite(wanted) ? (float) wanted : 0f;
-        var ask = new OverlaySpectateAsk(member.CharId, reply, others, reach, now.Quest, Team: true);
+        var ask = new OverlaySpectateAsk(member.CharId, reply, others, reach, now.Quest, Team: true, RouteQuest: ((string) header["routeQuest"] ?? "").Trim());
         foreach (var service in AgentBridge.CommandServices) {
             service.Tell(ask);
         }

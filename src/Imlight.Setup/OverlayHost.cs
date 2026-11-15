@@ -639,8 +639,9 @@ internal static class OverlayHost {
         // separate feeds (Niduus, 2026-11-15): both can be on at once without touching each other.
         var shown = (ShowsMine(s_design) ? s_design.Elements : []).Concat(ServerElements).Where(e => e.IsUltimus && e.Visible).ToList();
         var canSpectate = s_windows.Count > 0 && OverlayAddon.IsInstalled(s_installFolder, "Minimap");
-        OverlayUltimusData.SetWanted(OverlayUltimusData.KEY, canSpectate && shown.Any(e => !e.WatchesTeam));
-        OverlayUltimusData.SetWanted(OverlayUltimusData.TEAM_KEY, canSpectate && shown.Any(e => e.WatchesTeam));
+        // Ahziael's Ultimus and Quest Team pages ask too while they show (their small map), game or not.
+        OverlayUltimusData.SetWanted(OverlayUltimusData.KEY, (canSpectate && shown.Any(e => !e.WatchesTeam)) || OverlayUltimusData.PageWanted(OverlayUltimusData.KEY));
+        OverlayUltimusData.SetWanted(OverlayUltimusData.TEAM_KEY, (canSpectate && shown.Any(e => e.WatchesTeam)) || OverlayUltimusData.PageWanted(OverlayUltimusData.TEAM_KEY));
     }
 
     // The game's own moves, resizes, shows and hides reach the overlay as they happen, not only on the next tick.
@@ -1789,6 +1790,8 @@ internal static class OverlayHost {
                     ["reach"] = (OverlayMinimapData.FullZoom(key) ?? 0) * 2,
                     // "" is Ultimus; the Quest Team Spectator names the team member it watches now.
                     ["who"] = OverlayUltimusData.Who(key),
+                    // A quest picked on Ahziael's page: the server draws its way instead.
+                    ["routeQuest"] = OverlayUltimusData.PageRoute(key),
                 }, null, stop);
                 using var answerWait = CancellationTokenSource.CreateLinkedTokenSource(stop);
                 answerWait.CancelAfter(TimeSpan.FromSeconds(10));

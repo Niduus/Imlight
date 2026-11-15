@@ -2357,7 +2357,13 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         try {
-            return OverlayQuestTracker.Build(wizard, null, pick ?? "");
+            var list = OverlayQuestTracker.Build(wizard, null, pick ?? "");
+            // Each quest's world by its full name, for the quest boxes on Ahziael's pages (Niduus, 2026-11-15).
+            foreach (var row in (list["quests"] as JsonArray ?? []).OfType<JsonObject>()) {
+                row["wn"] = WorldName((string) row["w"] ?? "");
+            }
+
+            return list;
         }
         catch (Exception ex) {
             Logger.Debug("Ultimus: quest tracker for the status could not be read: {0}", Logger.Args(ex.Message));

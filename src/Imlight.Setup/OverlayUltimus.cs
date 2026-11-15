@@ -129,6 +129,32 @@ internal static class OverlayUltimusData {
 
     internal static bool Wanted => WantedKeys.Length > 0;
 
+    // Ahziael's Ultimus and Quest Team pages ask for the feed while they show (Niduus, 2026-11-15: their quest's way on a
+    // small map there), with the quest picked in the page's Quest Tracker, if any. Each ask lasts 15 seconds; the pages ask
+    // again on every refresh.
+    private static readonly Dictionary<long, (string Quest, DateTime At)> s_page = [];
+
+    /// <summary>The page showing this feed now, with the quest picked there ("" for the one played).</summary>
+    internal static void PageWants(long key, string routeQuest) {
+        lock (s_lock) {
+            s_page[key == TEAM_KEY ? TEAM_KEY : KEY] = (routeQuest ?? "", DateTime.UtcNow);
+        }
+    }
+
+    /// <summary>Whether a page shows this feed now.</summary>
+    internal static bool PageWanted(long key) {
+        lock (s_lock) {
+            return s_page.TryGetValue(key, out var asked) && DateTime.UtcNow - asked.At < TimeSpan.FromSeconds(15);
+        }
+    }
+
+    /// <summary>The quest picked on the page, whose way the server draws instead ("" for the one played).</summary>
+    internal static string PageRoute(long key) {
+        lock (s_lock) {
+            return s_page.TryGetValue(key, out var asked) && DateTime.UtcNow - asked.At < TimeSpan.FromSeconds(15) ? asked.Quest : "";
+        }
+    }
+
     internal static void SetWanted(long key, bool wanted) {
         lock (s_lock) {
             FeedOf(key).Wanted = wanted;
@@ -333,7 +359,8 @@ internal static class OverlayUltimusData {
             ["way"] = row?["way"]?.DeepClone(),
             ["kind"] = row?["k"]?.DeepClone(),
             ["questLevel"] = row?["l"]?.DeepClone(),
-            ["world"] = (string?) member["tracker"]?["questWorld"] ?? "",
+            // The quest's world by its full name (Niduus, 2026-11-15: the Quest Team's boxes too).
+            ["world"] = (string?) member["tracker"]?["questWorld"] is { Length: > 0 } named ? named : (string?) row?["wn"] ?? "",
             // The team's stuck line and read-ahead warning only when there is one, as the game's box gets them.
             ["detail"] = !team ? member["tracker"]?.DeepClone()
                 : ((string?) status["stuck"] ?? "").Length > 0 || ((string?) status["readAhead"] ?? "").Length > 0

@@ -190,14 +190,14 @@ internal static class OverlayQuestData {
     /// Shows a server-played wizard's quests (the "questTracker" its status.json carries) under a key of Ahziael's own
     /// page, with the quest it plays now picked, so a <see cref="QuestTrackerView"/> there draws them as the game's does.
     /// </summary>
-    internal static void ShowFor(long key, JsonObject? sent, string playing) {
+    internal static string ShowFor(long key, JsonObject? sent, string playing) {
         lock (s_lock) {
             s_pageKeys.Add(key);
             if (sent is null) {
                 s_lists.Remove(key);
                 s_picks.Remove(key);
 
-                return;
+                return "";
             }
 
             var list = Read(sent) with { At = DateTime.MaxValue };
@@ -209,6 +209,8 @@ internal static class OverlayQuestData {
             else {
                 s_picks[key] = pick;
             }
+
+            return pick ?? "";
         }
     }
 
@@ -243,6 +245,11 @@ internal static class OverlayQuestData {
             }
             else {
                 s_picks[window] = quest;
+            }
+
+            // Kept for the next time Ahziael opens (Niduus, 2026-11-15); a game window's pick only, not a page's.
+            if (window > 0) {
+                SavePick(s_picks.GetValueOrDefault(window, ""));
             }
 
             s_routes.Remove(window);
@@ -383,9 +390,50 @@ internal static class OverlayQuestData {
                 s_version++;
             }
 
+            // The quest picked before Ahziael last closed comes back once, when this window's quests first arrive.
+            if (window > 0 && snapshot.Note.Length == 0 && snapshot.Quests.Count > 0 && s_pickRestored.Add(window) && !s_picks.ContainsKey(window)
+                && SavedPick() is { Length: > 0 } saved && snapshot.Quests.Any(q => q.Id == saved)) {
+                s_picks[window] = saved;
+                s_askSoon = true;
+                s_version++;
+            }
+
             if (before is null || !Same(before, snapshot)) {
                 s_version++;
             }
+        }
+    }
+
+    // The quest picked last in a game's Quest Tracker, kept across restarts and updates (Niduus, 2026-11-15: "Remember which
+    // quest you picked"). A window with no pick yet gets it back once its quests come, if the wizard still holds it; letting a
+    // quest go forgets it.
+    private static string PickFile => System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        Edition.INSTALL_FOLDER_NAME, "overlay-quest-pick.txt");
+
+    private static string? s_savedPick;
+    private static readonly HashSet<long> s_pickRestored = [];
+
+    private static string SavedPick() {
+        if (s_savedPick is null) {
+            try {
+                s_savedPick = System.IO.File.Exists(PickFile) ? System.IO.File.ReadAllText(PickFile).Trim() : "";
+            }
+            catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) {
+                s_savedPick = "";
+            }
+        }
+
+        return s_savedPick;
+    }
+
+    private static void SavePick(string quest) {
+        s_savedPick = quest;
+        try {
+            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(PickFile)!);
+            System.IO.File.WriteAllText(PickFile, quest);
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) {
+            // Not kept this time; the pick itself still works.
         }
     }
 
