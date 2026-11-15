@@ -289,8 +289,8 @@ internal sealed partial class UltimusDirectorActor {
             return null;
         }
 
-        // A creature it does not need to fight by the line: the route map walks round it instead.
-        if (creatures?.Exists(c => NearLine(c.X, c.Y, member.X, member.Y, toX, toY) < 220) == true) {
+        // A creature it does not need to fight, or a creature path, by the line: the route map walks round it instead.
+        if (creatures?.Exists(c => NearLine(c.X, c.Y, member.X, member.Y, toX, toY) < SIGHT_CLEAR) == true) {
             return null;
         }
 
@@ -300,13 +300,111 @@ internal sealed partial class UltimusDirectorActor {
             return [(toX, toY)];
         }
 
-        if (UltimusSight.AroundTo(member.Zone, member.X, member.Y, toX, toY) is { } around) {
+        if (UltimusSight.AroundTo(member.Zone, member.X, member.Y, toX, toY) is { } around && !NearCreatures(member.X, member.Y, around, creatures)) {
             Think($"\"{what}\" is {far:0} away in my circle of sight, but something is in the way: I go round it.", "around|" + what);
 
             return around;
         }
 
         return null;
+    }
+
+    // How near a creature, or a creature path's spot, a shortcut by sight may pass (a creature starts a battle within
+    // about 175, and patrols walk a little off their path).
+    private const float SIGHT_CLEAR = 220f;
+
+    // Whether a walk passes near any of the creatures or creature path spots.
+    private static bool NearCreatures(float fromX, float fromY, List<(float X, float Y)> points, List<(float X, float Y)> creatures) {
+        if (creatures is not { Count: > 0 } || points is not { Count: > 0 }) {
+            return false;
+        }
+
+        var (ax, ay) = (fromX, fromY);
+        foreach (var (bx, by) in points) {
+            if (creatures.Exists(c => NearLine(c.X, c.Y, ax, ay, bx, by) < SIGHT_CLEAR)) {
+                return true;
+            }
+
+            (ax, ay) = (bx, by);
+        }
+
+        return false;
+    }
+
+    // ---- Timing a pass between patrols ----
+
+    // How far ahead on the walk a creature crossing it is waited for, how near the walk counts, and the longest wait.
+    private const float GAP_AHEAD = 700f;
+    private const float GAP_NEAR = 200f;
+    private static readonly TimeSpan s_gapMost = TimeSpan.FromSeconds(8);
+    private (string Key, DateTime Since, DateTime Done)? _gapWait;
+
+    /// <summary>
+    /// A creature he does not need is on the walk just ahead (the way finder found no way round it): true while he waits
+    /// for it to walk on, at most a few seconds per step, then he goes (Niduus, 2026-11-15: "be more aware of his
+    /// surroundings ... short cutting streets by walking through mob paths").
+    /// </summary>
+    private bool WaitForGap(UltimusMember.Status member, UltimusPlanner.Target target, List<(float X, float Y)> points,
+        List<(float X, float Y)> creatures) {
+        if (target.Kind == UltimusPlanner.FIGHT || creatures is not { Count: > 0 } || points is not { Count: > 0 }) {
+            _gapWait = null;
+            return false;
+        }
+
+        var key = target.Key + "|" + target.What;
+        if (_gapWait is { } done && done.Key == key && DateTime.UtcNow < done.Done) {
+            return false;
+        }
+
+        // The walk's first stretch only: what is far ahead will have walked on by the time he gets there.
+        var ahead = new List<(float X, float Y)>();
+        var (ax, ay) = (member.X, member.Y);
+        var gone = 0f;
+        foreach (var p in points) {
+            var leg = UltimusPlanner.Far(ax, ay, p.X, p.Y);
+            if (gone + leg > GAP_AHEAD && leg > 1) {
+                var t = (GAP_AHEAD - gone) / leg;
+                ahead.Add((ax + ((p.X - ax) * t), ay + ((p.Y - ay) * t)));
+                break;
+            }
+
+            ahead.Add(p);
+            gone += leg;
+            (ax, ay) = p;
+        }
+
+        // Creatures already right by him are handled by stepping back; the ones by the step itself are not waited for.
+        var crossing = creatures.Where(c => UltimusPlanner.Far(member.X, member.Y, c.X, c.Y) > MOB_TOO_CLOSE
+                                            && UltimusPlanner.Far(target.X, target.Y, c.X, c.Y) > 250).ToList();
+        if (!NearCreatures(member.X, member.Y, ahead, crossing)) {
+            if (_gapWait is { } was && was.Key == key && was.Done == DateTime.MaxValue) {
+                Think("The creature walked on: my way is clear, so I go.", "gap-clear|" + key);
+            }
+
+            _gapWait = null;
+            return false;
+        }
+
+        if (_gapWait is not { } wait || wait.Key != key) {
+            _gapWait = (key, DateTime.UtcNow, DateTime.MaxValue);
+            Think($"A creature I don't need is walking across my way to \"{target.What}\" just ahead, and there is no way round it: " +
+                  "I wait a few seconds for it to walk on instead of walking into its battle.", "gap|" + key);
+            StopWalking(0);
+
+            return true;
+        }
+
+        if (DateTime.UtcNow - wait.Since < s_gapMost) {
+            StopWalking(0);
+            return true;
+        }
+
+        // Waited long enough (it stands there, or walks back and forth on the way): he goes, and does not wait again for
+        // this step for a while.
+        _gapWait = (key, wait.Since, DateTime.UtcNow + TimeSpan.FromMinutes(2));
+        Think("It is still in my way after a few seconds: I go on and take the battle if it comes.", "gap-go|" + key);
+
+        return false;
     }
 
     private static float NearLine(float px, float py, float ax, float ay, float bx, float by) {

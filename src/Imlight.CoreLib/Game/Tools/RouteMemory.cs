@@ -276,7 +276,9 @@ internal static class RouteMemory {
 
             var leg = street.Legs
                 .Where(l => l.Worked > l.Failed * 2 && Far(l.ToX, l.ToY, toX, toY) <= TO_NEAR && OnLeg(l, fromX, fromY))
-                .Where(l => avoid is null || !l.Points.Any(p => avoid.Any(a => Far(a.X, a.Y, p[0], p[1]) < 200)))
+                // Not one that passes a creature or a creature path (Niduus, 2026-11-15: no shortcut through mob paths):
+                // the whole line between its spots is checked, not only the spots.
+                .Where(l => avoid is null || !Passes(l.Points, avoid, 200))
                 // The shortest of the walks that work (a shortcut one bot found is every bot's), then the most proven.
                 .OrderBy(l => Length(l.Points.Select(p => (p[0], p[1])).ToList()))
                 .ThenByDescending(l => l.Worked - l.Failed)
@@ -462,6 +464,24 @@ internal static class RouteMemory {
         }
 
         return total;
+    }
+
+    // Whether the walk through these spots passes within `near` of any of the avoid spots.
+    private static bool Passes(List<float[]> points, IReadOnlyList<(float X, float Y)> avoid, float near) {
+        for (var i = 0; i < points.Count; i++) {
+            var (ax, ay) = i == 0 ? (points[0][0], points[0][1]) : (points[i - 1][0], points[i - 1][1]);
+            var (bx, by) = (points[i][0], points[i][1]);
+            var (dx, dy) = (bx - ax, by - ay);
+            var len = MathF.Max(1, (dx * dx) + (dy * dy));
+            foreach (var (x, y) in avoid) {
+                var t = Math.Clamp((((x - ax) * dx) + ((y - ay) * dy)) / len, 0, 1);
+                if (Far(x, y, ax + (dx * t), ay + (dy * t)) < near) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private static float Far(float ax, float ay, float bx, float by) => MathF.Sqrt(((ax - bx) * (ax - bx)) + ((ay - by) * (ay - by)));

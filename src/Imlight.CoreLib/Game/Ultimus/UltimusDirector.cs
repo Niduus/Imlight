@@ -1506,7 +1506,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             Think($"I have walked to \"{what}\" from about here before and it worked: I take that same way again.", "proven|" + what);
         }
 
-        var points = (known || MathF.Abs(toZ - member.Z) > OTHER_FLOOR ? null : SightWalk(member, toX, toY, what, target.Kind == UltimusPlanner.FIGHT ? null : avoid))
+        // The shortcut by sight keeps off the street's creature paths as well as the creatures standing there now (Niduus,
+        // 2026-11-15: "short cutting streets by walking through mob paths"): a straight line across a patrol is no shortcut.
+        var sightAvoid = seek ? null : (walkAvoid ?? []).Concat(target.Kind == UltimusPlanner.FIGHT ? [] : avoid ?? []).ToList();
+        var points = (known || MathF.Abs(toZ - member.Z) > OTHER_FLOOR ? null : SightWalk(member, toX, toY, what, sightAvoid))
                      ?? OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, toX, toY, body: true, avoid: walkAvoid, fromZ: member.Z, toZ: toZ);
         // A walk that goes nowhere while the step is far: said once per step, with the spots, so the log shows where the
         // map gives no way (Niduus's log, 2026-11-13: it stood at The Oasis's start for an hour with nothing said).
@@ -1515,6 +1518,12 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             && _noWaySaid.Add($"{member.Zone}|{(int) (toX / 200)}|{(int) (toY / 200)}")) {
             Note("Ultimus", $"{member.Name} finds no way on the map from ({member.X:0}, {member.Y:0}) to \"{what}\" at ({toX:0}, {toY:0}) in {UltimusText.Zone(member.Zone)}.",
                 UltimusLink.ABNORMAL);
+        }
+
+        // A creature he does not need walking across the way just ahead, and no way round it: he waits a few seconds for
+        // it to walk on, as a player times a pass between patrols, instead of walking into its battle.
+        if (!seek && index == 0 && WaitForGap(member, target, points, avoid)) {
+            return;
         }
 
         _sent[index] = (target, DateTime.UtcNow, member.X, member.Y);
