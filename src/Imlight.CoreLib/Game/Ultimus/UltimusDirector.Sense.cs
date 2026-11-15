@@ -137,6 +137,42 @@ internal sealed partial class UltimusDirectorActor {
     // Hints from the quest's own words
     // ---------------------------------------------------------------------
 
+    // The person or area the quest's words named, once the step's own area turned out empty: he keeps going there until he
+    // arrives, the step changes or 20 minutes pass, so the step's area does not pull him back halfway (his PC log,
+    // 2026-11-15: "Out of Control" sent him back and forth between The Ironworks and Digmoore Station, while Ms. Marphely
+    // stands in Chelsea Court). A general rule for every world: a hint he chose is followed to its end.
+    private (string Step, string Zone, string Name, float X, float Y, DateTime Until)? _hintFollow;
+
+    /// <summary>
+    /// The hint he is following, when the planner would send him elsewhere: the way on to that area, or (there) the person's
+    /// spot. Null when there is no hint, it is done, or the planner's target is the step itself (a talk, a fight, a use).
+    /// </summary>
+    private UltimusPlanner.Target FollowHint(UltimusMember.Status leader, UltimusPlanner.Target target) {
+        if (_hintFollow is not { } hint) {
+            return null;
+        }
+
+        if (target is null || DateTime.UtcNow > hint.Until || !(target.Key ?? "").StartsWith(hint.Step, StringComparison.Ordinal)) {
+            _hintFollow = null;
+            return null;
+        }
+
+        // Only a way elsewhere is overridden: what the step itself asks, right here, always comes first.
+        if (target.Kind is not (UltimusPlanner.EXIT or UltimusPlanner.DOOR or UltimusPlanner.SPIRAL or UltimusPlanner.NONE)) {
+            return null;
+        }
+
+        if (OverlayQuestTracker.SameZone(hint.Zone, leader.Zone) || OverlayQuestTracker.SameZone(leader.Zone, hint.Zone)) {
+            // There: to the person's spot, as a player who read the quest walks up to them.
+            return hint.Name.Length > 0 && MathF.Sqrt(((leader.X - hint.X) * (leader.X - hint.X)) + ((leader.Y - hint.Y) * (leader.Y - hint.Y))) > 150
+                ? new UltimusPlanner.Target(UltimusPlanner.SPOT, hint.X, hint.Y, $"to {hint.Name}, whom the quest names", Key: "hint|" + target.Key + "|spot")
+                : null;
+        }
+
+        return UltimusPlanner.Travel(leader, hint.Zone, hint.Name.Length > 0 ? $"{hint.Name}, whom the quest names" : $"{UltimusText.Zone(hint.Zone)}, which the quest names",
+            "hint|" + target.Key);
+    }
+
     /// <summary>
     /// A step he can't place (no spot on the quest arrow, the person not here): the area or the person its words name, as a
     /// player reads the quest text ("Go to the Oasis", "Talk to Cyrus Drake"). Null when the words name nothing he can use.
@@ -160,6 +196,7 @@ internal sealed partial class UltimusDirectorActor {
                 && UltimusPlanner.Travel(leader, place.Zone, $"{entry.Name}, whom the quest names", "hint|" + target.Key) is { } toPerson) {
                 Think($"I can't place \"{target.What}\" ({target.Problem}), but its words name {entry.Name}, who stands in " +
                       $"{UltimusText.Zone(place.Zone)}: I go there, as a player reading the quest would.", "hint|" + target.Key);
+                _hintFollow = (StepOf(target), place.Zone, entry.Name, place.X, place.Y, DateTime.UtcNow.AddMinutes(20));
 
                 return toPerson;
             }
@@ -172,12 +209,16 @@ internal sealed partial class UltimusDirectorActor {
         if (area is not null && UltimusPlanner.Travel(leader, area.Code, $"{area.Name}, which the quest names", "hint|" + target.Key) is { } toArea) {
             Think($"I can't place \"{target.What}\" ({target.Problem}), but its words name {area.Name}: I go there and look, as a player " +
                   "reading the quest would.", "hint|" + target.Key);
+            _hintFollow = (StepOf(target), area.Code, "", 0, 0, DateTime.UtcNow.AddMinutes(20));
 
             return toArea;
         }
 
         return null;
     }
+
+    // The quest and step a target belongs to ("quest|goal"), the start of every key the planner gives for that step.
+    private static string StepOf(UltimusPlanner.Target target) => target.Quest + "|" + target.Goal;
 
     // ---------------------------------------------------------------------
     // Rivals

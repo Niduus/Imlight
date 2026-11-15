@@ -833,7 +833,12 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         NoteWorld(_currentQuest);
         if (_currentQuest is not null) {
             var target = UltimusPlanner.ForQuest(group, _currentQuest);
-            // A step he can't place: the area or person the quest's own words name (UltimusDirector.Sense.cs).
+            // A step he can't place: the area or person the quest's own words name, followed until he gets there
+            // (UltimusDirector.Sense.cs).
+            if (FollowHint(leader, target) is { } following) {
+                return following;
+            }
+
             if (HintFromText(leader, target) is { } hint) {
                 return hint;
             }
