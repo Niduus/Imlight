@@ -1,0 +1,4 @@
+Fixed: Ultimus stops riding between two areas when the quest's person is not where he looked
+When the person a quest step names is not in the step's own area, Ultimus goes to the area where that person usually stands. If they are not there either, he now gives that idea a rest for half an hour, goes back to the step's own area, looks around it properly and writes the step up as an issue, instead of riding between the same two areas over and over. This also fixes a mistake that stopped the server from being built after the last change to this.
+Where: Ultimus, any quest step whose person is not where the quest says (for example "Out of Control" in Marleybone).
+Test: Let Ultimus run "Out of Control" and watch that he either meets Ms. Marphely or comes back to The Ironworks, searches it and reports it, without going back and forth.

@@ -143,6 +143,10 @@ internal sealed partial class UltimusDirectorActor {
     // stands in Chelsea Court). A general rule for every world: a hint he chose is followed to its end.
     private (string Step, string Zone, string Name, float X, float Y, DateTime Until)? _hintFollow;
 
+    // Hints that led nowhere for a step: not followed again until then.
+    private readonly Dictionary<string, DateTime> _hintRests = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly TimeSpan HINT_RESTS = TimeSpan.FromMinutes(30);
+
     /// <summary>
     /// The hint he is following, when the planner would send him elsewhere: the way on to that area, or (there) the person's
     /// spot. Null when there is no hint, it is done, or the planner's target is the step itself (a talk, a fight, a use).
@@ -164,9 +168,19 @@ internal sealed partial class UltimusDirectorActor {
 
         if (OverlayQuestTracker.SameZone(hint.Zone, leader.Zone) || OverlayQuestTracker.SameZone(leader.Zone, hint.Zone)) {
             // There: to the person's spot, as a player who read the quest walks up to them.
-            return hint.Name.Length > 0 && MathF.Sqrt(((leader.X - hint.X) * (leader.X - hint.X)) + ((leader.Y - hint.Y) * (leader.Y - hint.Y))) > 150
-                ? new UltimusPlanner.Target(UltimusPlanner.SPOT, hint.X, hint.Y, $"to {hint.Name}, whom the quest names", Key: "hint|" + target.Key + "|spot")
-                : null;
+            if (hint.Name.Length > 0 && MathF.Sqrt(((leader.X - hint.X) * (leader.X - hint.X)) + ((leader.Y - hint.Y) * (leader.Y - hint.Y))) > 150) {
+                return new UltimusPlanner.Target(UltimusPlanner.SPOT, hint.X, hint.Y, $"to {hint.Name}, whom the quest names", Key: "hint|" + target.Key + "|spot");
+            }
+
+            // At the spot (or in the area) and the step still points elsewhere: the hint led nowhere. It rests for a while,
+            // so he goes back to the step's own area and looks around it properly, and it is written up from there, rather
+            // than riding the same two areas again and again.
+            _hintFollow = null;
+            _hintRests[hint.Step] = DateTime.UtcNow + HINT_RESTS;
+            Think($"{(hint.Name.Length > 0 ? hint.Name : "What the quest's words name")} was not to be found in {UltimusText.Zone(hint.Zone)} " +
+                  "for this step, so I go back to the step's own area and look around it properly.", "hint-rests|" + hint.Step);
+
+            return null;
         }
 
         return UltimusPlanner.Travel(leader, hint.Zone, hint.Name.Length > 0 ? $"{hint.Name}, whom the quest names" : $"{UltimusText.Zone(hint.Zone)}, which the quest names",
@@ -178,7 +192,8 @@ internal sealed partial class UltimusDirectorActor {
     /// player reads the quest text ("Go to the Oasis", "Talk to Cyrus Drake"). Null when the words name nothing he can use.
     /// </summary>
     private UltimusPlanner.Target HintFromText(UltimusMember.Status leader, UltimusPlanner.Target target) {
-        if (target is null || target.Problem.Length == 0 || string.IsNullOrEmpty(target.Quest)) {
+        if (target is null || target.Problem.Length == 0 || string.IsNullOrEmpty(target.Quest)
+            || _hintRests.TryGetValue(HintStep(target), out var rests) && DateTime.UtcNow < rests) {
             return null;
         }
 
@@ -196,7 +211,7 @@ internal sealed partial class UltimusDirectorActor {
                 && UltimusPlanner.Travel(leader, place.Zone, $"{entry.Name}, whom the quest names", "hint|" + target.Key) is { } toPerson) {
                 Think($"I can't place \"{target.What}\" ({target.Problem}), but its words name {entry.Name}, who stands in " +
                       $"{UltimusText.Zone(place.Zone)}: I go there, as a player reading the quest would.", "hint|" + target.Key);
-                _hintFollow = (StepOf(target), place.Zone, entry.Name, place.X, place.Y, DateTime.UtcNow.AddMinutes(20));
+                _hintFollow = (HintStep(target), place.Zone, entry.Name, place.X, place.Y, DateTime.UtcNow.AddMinutes(20));
 
                 return toPerson;
             }
@@ -209,7 +224,7 @@ internal sealed partial class UltimusDirectorActor {
         if (area is not null && UltimusPlanner.Travel(leader, area.Code, $"{area.Name}, which the quest names", "hint|" + target.Key) is { } toArea) {
             Think($"I can't place \"{target.What}\" ({target.Problem}), but its words name {area.Name}: I go there and look, as a player " +
                   "reading the quest would.", "hint|" + target.Key);
-            _hintFollow = (StepOf(target), area.Code, "", 0, 0, DateTime.UtcNow.AddMinutes(20));
+            _hintFollow = (HintStep(target), area.Code, "", 0, 0, DateTime.UtcNow.AddMinutes(20));
 
             return toArea;
         }
@@ -218,7 +233,7 @@ internal sealed partial class UltimusDirectorActor {
     }
 
     // The quest and step a target belongs to ("quest|goal"), the start of every key the planner gives for that step.
-    private static string StepOf(UltimusPlanner.Target target) => target.Quest + "|" + target.Goal;
+    private static string HintStep(UltimusPlanner.Target target) => target.Quest + "|" + target.Goal;
 
     // ---------------------------------------------------------------------
     // Rivals
