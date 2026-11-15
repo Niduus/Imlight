@@ -581,6 +581,28 @@ internal sealed partial class UltimusDirectorActor {
         ["Reshuffle"] = "my used cards back when a fight runs long",
     };
 
+    private string _planTold = "";
+    private DateTime _planLook = DateTime.MinValue;
+
+    /// <summary>
+    /// What his fights say he should spend training points on (BotTrainingPlan): said in his thoughts and written in his
+    /// diary when it changes (Niduus, 2026-11-15: "based around his experiences to what to train up to first and why").
+    /// </summary>
+    private void SayTrainingPlan(UltimusMember.Status leader) {
+        if (DateTime.UtcNow < _planLook || leader.Wizard is not { } wizard) {
+            return;
+        }
+
+        _planLook = DateTime.UtcNow.AddMinutes(1);
+        var plan = BotTrainingPlan.For(wizard, leader.CharId);
+        if (!BotTrainingPlan.Changed(leader.CharId, plan, ref _planTold)) {
+            return;
+        }
+
+        Think($"My training points: {plan.Why}", "pointplan|" + plan.Goal);
+        UltimusJournal.Write("training", $"Training points plan: {plan.Why}", about: plan.Goal);
+    }
+
     private void WriteTrainingPlan(UltimusMember.Status leader, string world) {
         var lessons = UltimusTraining.Learnable(leader);
         var points = leader.Wizard?.MagicSchoolBehavior?.TrainingPoints ?? 0;
@@ -595,6 +617,13 @@ internal sealed partial class UltimusDirectorActor {
 
         if (lessons.Count == 0) {
             text.AppendLine("- Nothing to learn right now: the next spells open at higher levels.");
+        }
+
+        if (leader.Wizard is { } planned && BotTrainingPlan.For(planned, leader.CharId) is { } plan) {
+            text.AppendLine();
+            text.AppendLine("TRAINING POINTS (from my own fights):");
+            text.AppendLine(plan.Why);
+            text.AppendLine($"Still to learn, in order: {string.Join(" > ", plan.Chain.Select(c => $"{c.Name} (level {Math.Max(1, c.Level)})"))}.");
         }
 
         try {

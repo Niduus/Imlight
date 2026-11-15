@@ -966,6 +966,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     }
 
     private UltimusPlanner.Target TrainingTarget(List<UltimusMember.Status> group) {
+        SayTrainingPlan(group[0]);
         if (DateTime.UtcNow < _nextTraining) {
             return _target?.Kind == UltimusPlanner.TRAIN ? _target : null;
         }
@@ -987,7 +988,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // A trainer right here: trained on the way. Otherwise a trip to Ravenwood when in Wizard City or when three wait.
         var here = lessons.SelectMany(l => l.Lessons.Where(x => OverlayQuestTracker.SameZone(x.Zone, leader.Zone)).Select(x => (l.Member, Lesson: x))).FirstOrDefault();
         var inWizardCity = (leader.Zone ?? "").StartsWith("WizardCity/", StringComparison.OrdinalIgnoreCase);
-        if (here.Lesson is null && !inWizardCity && lessons.Sum(l => l.Lessons.Count) < 3) {
+        // A spell of his training plan (what his fights showed he needs) is worth the trip on its own.
+        var planned = lessons.Any(l => l.Lessons.Any(x => x.SpellId == BotTrainingPlan.NextId(l.Member.Wizard, l.Member.CharId)));
+        if (here.Lesson is null && !inWizardCity && !planned && lessons.Sum(l => l.Lessons.Count) < 3) {
             _nextTraining = DateTime.UtcNow.AddSeconds(30);
 
             return null;
@@ -1523,6 +1526,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         _doing = "in a battle";
         _lastProgress = DateTime.UtcNow;
         UltimusDirector.SetBusy(me.ZoneActor, me.X, me.Y);
+        // How the fight goes for him, for what he trains next (BotTrainingPlan).
+        if (me.Wizard?.GameStats is { } watched) {
+            BotTrainingPlan.Watch(me.CharId, watched.m_currentHitpoints, Math.Max(1, watched.m_baseHitpoints + watched.m_bonusHitpoints));
+        }
 
         // A battle that goes on and on is odd for one wizard at its level (pink, once per battle).
         if (DateTime.UtcNow - _battleSince > TimeSpan.FromMinutes(10)) {
@@ -1549,6 +1556,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         var lost = CombatDuelComponent.TakeLostBattle(member.GlobalId) || stats.m_currentHitpoints <= 1;
         if (index == 0) {
             FightEnded(member, !lost);
+            BotTrainingPlan.Watch(member.CharId, stats.m_currentHitpoints, Math.Max(1, stats.m_baseHitpoints + stats.m_bonusHitpoints));
+            BotTrainingPlan.Ended(member.CharId, !lost, _battleSince < DateTime.UtcNow ? (DateTime.UtcNow - _battleSince).TotalMinutes : 0);
         }
 
         if (!lost || index != 0) {

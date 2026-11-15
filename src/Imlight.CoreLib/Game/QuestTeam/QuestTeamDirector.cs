@@ -943,6 +943,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             return _target?.Kind == QuestTeamPlanner.TRAIN ? _target : null;
         }
 
+        SayTrainingPlans(group);
         var lessons = group.Select(m => (Member: m, Lessons: QuestTeamTraining.Learnable(m))).Where(x => x.Lessons.Count > 0).ToList();
         if (lessons.Count == 0) {
             _nextTraining = DateTime.UtcNow.AddSeconds(30);
@@ -960,7 +961,9 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         // A trainer right here: trained on the way. Otherwise a trip to Ravenwood when in Wizard City or when three wait.
         var here = lessons.SelectMany(l => l.Lessons.Where(x => OverlayQuestTracker.SameZone(x.Zone, leader.Zone)).Select(x => (l.Member, Lesson: x))).FirstOrDefault();
         var inWizardCity = (leader.Zone ?? "").StartsWith("WizardCity/", StringComparison.OrdinalIgnoreCase);
-        if (here.Lesson is null && !inWizardCity && lessons.Sum(l => l.Lessons.Count) < 3) {
+        // A spell of someone's training plan (what their own fights showed they need) is worth the trip on its own.
+        var planned = lessons.Any(l => l.Lessons.Any(x => x.SpellId == QuestTeamTraining.PlannedId(l.Member)));
+        if (here.Lesson is null && !inWizardCity && !planned && lessons.Sum(l => l.Lessons.Count) < 3) {
             _nextTraining = DateTime.UtcNow.AddSeconds(30);
 
             return null;
@@ -1634,6 +1637,13 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         _doing = $"in a battle ({fighting.Count} of 4 in it)";
+        // How the fight goes for each of them, for what each trains next (BotTrainingPlan).
+        foreach (var inFight in fighting) {
+            if (inFight.Wizard?.GameStats is { } watched) {
+                BotTrainingPlan.Watch(inFight.CharId, watched.m_currentHitpoints, Math.Max(1, watched.m_baseHitpoints + watched.m_bonusHitpoints));
+            }
+        }
+
         // More of what they came for near the battle, not in it yet (on the battle's circles a creature stands close).
         var near = MinimapIndex.In(fighting[0].ZoneActor).Count(m => m.Kind == MinimapIndex.MOB
             && (_target is not { Kind: QuestTeamPlanner.FIGHT } || _target.Template == 0 || m.Template == _target.Template)
@@ -1730,6 +1740,8 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         }
 
         var lost = stats.m_currentHitpoints <= 1;
+        BotTrainingPlan.Watch(member.CharId, stats.m_currentHitpoints, Math.Max(1, stats.m_baseHitpoints + stats.m_bonusHitpoints));
+        BotTrainingPlan.Ended(member.CharId, !lost, _battleSince < DateTime.UtcNow ? (DateTime.UtcNow - _battleSince).TotalMinutes : 0);
         if (!lost || index != 0) {
             if (index == 0) {
                 Note("Team", "won the battle.");
@@ -2175,4 +2187,25 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
     }
 
     private readonly HashSet<string> _dungeonFirstSaid = [];
+
+    private readonly Dictionary<ulong, string> _planTold = [];
+    private DateTime _planLook = DateTime.MinValue;
+
+    // What each one's own fights say it should spend training points on (BotTrainingPlan), said once when it changes.
+    private void SayTrainingPlans(List<QuestTeamMember.Status> group) {
+        if (DateTime.UtcNow < _planLook) {
+            return;
+        }
+
+        _planLook = DateTime.UtcNow.AddMinutes(1);
+        foreach (var member in group.Where(m => m.Wizard is not null)) {
+            var plan = QuestTeamTraining.Plan(member);
+            var told = _planTold.GetValueOrDefault(member.CharId) ?? "";
+            if (BotTrainingPlan.Changed(member.CharId, plan, ref told)) {
+                Note(member.Role, $"{member.Name}'s training points: {plan.Why}");
+            }
+
+            _planTold[member.CharId] = told;
+        }
+    }
 }

@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.CoreLib.Game.BotShared;
 using Imlight.CoreLib.Game.Tools;
 using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Game.Zone.Components;
@@ -30,18 +31,12 @@ namespace Imlight.CoreLib.Game.Ultimus;
 
 /// <summary>
 /// Ultimus's trips to the trainers (forked from the Quest Team's): it learns Balance spells as its level allows them, and
-/// spends training points on what a solo wizard needs (a heal, a shield, a trap). Nothing is given: it walks there and
+/// spends training points on what its own fights showed it needs (BotTrainingPlan). Nothing is given: it walks there and
 /// trains like a player, by the game's own trainer rules.
 /// </summary>
 internal static class UltimusTraining {
 
     internal const string TRAINER_ZONE = "WizardCity/WC_Ravenwood";
-
-    // The spells Ultimus trains outside Balance, first wanted first: alone, it needs a heal and a shield of its own, and a
-    // trap to build up its hits.
-    private static readonly Dictionary<string, string[]> s_extra = new(StringComparer.OrdinalIgnoreCase) {
-        ["Balance"] = ["Fairy", "Sprite", "Tower Shield", "Feint", "Unicorn"],
-    };
 
     internal sealed record Lesson(uint TrainerTemplate, uint SpellId, string Spell, float X, float Y, string Zone = TRAINER_ZONE);
 
@@ -79,7 +74,8 @@ internal static class UltimusTraining {
 
         void Add(string zone) {
             var placed = QuestStepSpots.Zone(zone).Objects ?? [];
-            var extra = s_extra.GetValueOrDefault(member.Role) ?? [];
+            // Outside his school: only the next spell of the plan his own fights made (BotTrainingPlan).
+            var next = BotTrainingPlan.NextId(wizard, member.CharId);
             foreach (var trainer in VanillaTrainers.All) {
                 var spot = placed.FirstOrDefault(o => o.Template == trainer.TemplateId);
                 if (spot.Template != trainer.TemplateId) {
@@ -92,8 +88,7 @@ internal static class UltimusTraining {
                     }
 
                     var own = string.Equals(spell.School, member.Role, StringComparison.OrdinalIgnoreCase);
-                    var wanted = extra.Any(e => string.Equals(e, spell.Name, StringComparison.OrdinalIgnoreCase)
-                                                || string.Equals(e, UltimusText.SpellName(spell.Id), StringComparison.OrdinalIgnoreCase));
+                    var wanted = next != 0 && spell.Id == next;
                     if (!own && !wanted) {
                         continue;
                     }

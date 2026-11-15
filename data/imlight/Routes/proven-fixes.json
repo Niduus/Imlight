@@ -228,5 +228,25 @@
   "Tried": [],
   "Worked": "press the Commons button and walk back from there",
   "Last": "2026-11-15T03:49:59.3580334Z"
+ },
+ {
+  "Zone": "Krokotopia/KT_Tomb/KT_TempleOfStorms",
+  "X": 7106.8,
+  "Y": 10075.1,
+  "Step": "",
+  "Times": 0,
+  "Tried": [],
+  "Worked": "another way (a teleporter or a new route)",
+  "Last": "2026-11-15T05:02:28Z"
+ },
+ {
+  "Zone": "Krokotopia/KT_Tomb/KT_TempleOfStorms",
+  "X": 6765.6,
+  "Y": 8880.0,
+  "Step": "",
+  "Times": 0,
+  "Tried": [],
+  "Worked": "another way (a teleporter or a new route)",
+  "Last": "2026-11-15T05:02:28Z"
  }
 ]

@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Imcodec.ObjectProperty.TypeCache;
+using Imlight.CoreLib.Game.BotShared;
 using Imlight.CoreLib.Game.Tools;
 using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Game.Zone.Components;
@@ -39,7 +40,8 @@ internal static class QuestTeamTraining {
 
     internal const string TRAINER_ZONE = "WizardCity/WC_Ravenwood";
 
-    // The spells each job trains outside its school, by name, first wanted first. Training follows the team role, and every
+    // The spells each job leans toward outside its school: only a tie-breaker now; what each one trains comes from its own
+    // fights (BotTrainingPlan, Niduus, 2026-11-15). Training follows the team role, and every
     // one of them can also fight alone for the solo story instances (Niduus, 2026-11-12: "Life heals, Ice protects and
     // supplies, all must be able to solo later"): each has a heal and a shield of its own.
     private static readonly Dictionary<string, string[]> s_extra = new(StringComparer.OrdinalIgnoreCase) {
@@ -48,6 +50,13 @@ internal static class QuestTeamTraining {
         ["Death"] = ["Feint", "Sprite", "Tower Shield", "Fairy"],
         ["Storm"] = ["Sprite", "Tower Shield", "Fairy"],
     };
+
+    /// <summary>The plan this wizard's own fights made for its training points; its team job's spells break ties.</summary>
+    internal static BotTrainingPlan.Plan Plan(QuestTeamMember.Status member)
+        => BotTrainingPlan.For(member.Wizard, member.CharId, s_extra.GetValueOrDefault(member.Role));
+
+    /// <summary>The next spell of that plan, by id (0 when none).</summary>
+    internal static uint PlannedId(QuestTeamMember.Status member) => Plan(member)?.Chain.FirstOrDefault().Id ?? 0;
 
     internal sealed record Lesson(uint TrainerTemplate, uint SpellId, string Spell, float X, float Y, string Zone = TRAINER_ZONE);
 
@@ -85,7 +94,8 @@ internal static class QuestTeamTraining {
 
         void Add(string zone) {
             var placed = QuestStepSpots.Zone(zone).Objects ?? [];
-            var extra = s_extra.GetValueOrDefault(member.Role) ?? [];
+            // Outside its school: only the next spell of the plan its own fights made (BotTrainingPlan).
+            var next = PlannedId(member);
             foreach (var trainer in VanillaTrainers.All) {
                 var spot = placed.FirstOrDefault(o => o.Template == trainer.TemplateId);
                 if (spot.Template != trainer.TemplateId) {
@@ -98,8 +108,7 @@ internal static class QuestTeamTraining {
                     }
 
                     var own = string.Equals(spell.School, member.Role, StringComparison.OrdinalIgnoreCase);
-                    var wanted = extra.Any(e => string.Equals(e, spell.Name, StringComparison.OrdinalIgnoreCase)
-                                                || string.Equals(e, QuestTeamText.SpellName(spell.Id), StringComparison.OrdinalIgnoreCase));
+                    var wanted = next != 0 && spell.Id == next;
                     if (!own && !wanted) {
                         continue;
                     }
