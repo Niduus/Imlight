@@ -327,6 +327,14 @@ internal static class QuestTeamPlanner {
                         standing.Object.m_globalID.Full, Key: key);
                 }
 
+                // The Quest Atlas Ultimus builds from the game's files (Ultimus.UltimusAtlas, Niduus, 2026-11-15: his data feeds the
+                // Quest Team): the zone files place this person in one other story area only, so the team goes there at once.
+                // The same off switch as his (playbook Rules.Atlas).
+                if (Ultimus.UltimusAtlas.Of(questName, goalName) is { RealZone.Length: > 0 } atlas && !OverlayQuestTracker.SameZone(atlas.RealZone, zone)
+                    && !OverlayQuestTracker.SameZone(atlas.RealZone, stepZone) && Ultimus.UltimusRules.On(Ultimus.UltimusAtlas.RULE)) {
+                    stepZone = atlas.RealZone;
+                }
+
                 // Not here and the step names no area: where this person stands, as Ultimus knows it (the NPC location book and
                 // the other quests' steps; Niduus, 2026-11-15: the team caught up on everything Ultimus can do).
                 // The same name here offered nothing for the step (another person of that name): where the right one
