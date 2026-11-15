@@ -2135,6 +2135,8 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                 ["at"] = DateTime.UtcNow.ToString("o"),
                 ["today"] = Summary(),
                 ["members"] = members,
+                // Where the team is in its world's story, and a time to the next world at its pace (Niduus, 2026-11-15: "CURR/END").
+                ["progress"] = _team.Count > 0 ? BotShared.BotProgress.Json(BotShared.BotProgress.TEAM, _team[0].Wizard, _currentQuest ?? _target?.Quest, note: true) : null,
             };
             QuestTeamLink.Send(new TeamRequest { Op = "status", Json = status.ToJsonString() });
         }

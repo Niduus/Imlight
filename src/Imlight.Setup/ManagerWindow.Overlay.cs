@@ -1964,6 +1964,22 @@ internal sealed partial class ManagerWindow {
                     panel.Children.Add(Sub("Quest Team Spectator: switches to the next Quest Team wizard (Ice, Life, Death, Storm, then Ice again). " +
                         "Works when the Quest Team Spectator's map or quest box is on the overlay."));
                     break;
+                case OverlayAction.TEAM_WATCH: {
+                    var members = OverlayUltimusData.TeamRoles.Select(r => $"{OverlayUltimusData.MemberName(r)} ({r})").ToArray();
+                    var at = OverlayUltimusData.RoleOf(e.Command) is { } chosen ? Array.IndexOf(OverlayUltimusData.TeamRoles, chosen) : -1;
+                    if (at < 0) {
+                        at = 0;
+                        e.Command = OverlayUltimusData.MemberName(OverlayUltimusData.TeamRoles[0]);
+                    }
+
+                    panel.Children.Add(OvField("Watch", OvCombo(members, at, i => {
+                        e.Command = OverlayUltimusData.MemberName(OverlayUltimusData.TeamRoles[i]);
+                        OverlayChanged(false);
+                    }, 240)));
+                    panel.Children.Add(Sub("Quest Team Spectator: switches straight to this Quest Team wizard. Works when the Quest Team Spectator's " +
+                        "map or quest box is on the overlay."));
+                    break;
+                }
             }
 
             if (_ovServerPart) {

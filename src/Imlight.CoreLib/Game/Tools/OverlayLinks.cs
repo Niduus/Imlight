@@ -579,6 +579,8 @@ public static class OverlayLinks {
             ["questLevel"] = row?["l"]?.DeepClone(),
             ["world"] = Ultimus.UltimusDirectorActor.WorldName((string) row?["w"] ?? ""),
             ["detail"] = Ultimus.UltimusSpectate.Detail,
+            // Quest CURR/END in his world's story and a time to the next world (Niduus, 2026-11-15).
+            ["progress"] = BotShared.BotProgress.Json(BotShared.BotProgress.ULTIMUS, wizard, quest, note: false),
             ["quests"] = new JsonArray([.. ((quests?["quests"] as JsonArray)?.OfType<JsonObject>() ?? [])
                 .Take(40).Select(q => (JsonNode) new JsonObject { ["id"] = q["id"]?.DeepClone(), ["t"] = q["t"]?.DeepClone(), ["k"] = q["k"]?.DeepClone() })]),
         };
@@ -668,6 +670,8 @@ public static class OverlayLinks {
             ["team"] = new JsonArray([.. members.Select(m => (JsonNode) m.Role)]),
             // Its school, for the Quest Team map's border colour (Niduus, 2026-11-15).
             ["school"] = member.Role,
+            // Quest CURR/END in this wizard's world story and a time to the next world at the team's pace (Niduus, 2026-11-15).
+            ["progress"] = BotShared.BotProgress.Json(BotShared.BotProgress.TEAM, wizard, now.Quest, note: false),
             ["quests"] = new JsonArray([.. ((quests?["quests"] as JsonArray)?.OfType<JsonObject>() ?? [])
                 .Take(40).Select(q => (JsonNode) new JsonObject { ["id"] = q["id"]?.DeepClone(), ["t"] = q["t"]?.DeepClone(), ["k"] = q["k"]?.DeepClone() })]),
         };

@@ -183,7 +183,7 @@ internal static class QuestStory {
     }
 
     // The quests a requirement names as done first, the choices of "any one of these" lists included.
-    private static IEnumerable<string> ChainQuests(Requirement requirement) {
+    internal static IEnumerable<string> ChainQuests(Requirement requirement) {
         switch (requirement) {
             case ReqHasEntry entry when !entry.m_applyNOT && entry.m_isQuestRegistry && !string.IsNullOrEmpty(entry.m_questName):
                 yield return entry.m_questName;

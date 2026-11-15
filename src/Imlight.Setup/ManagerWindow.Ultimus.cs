@@ -174,6 +174,8 @@ internal sealed partial class ManagerWindow {
     private readonly TextBlock _ultAiSummary = new() { TextWrapping = TextWrapping.Wrap };
     private DateTime _ultFriendsRead = DateTime.MinValue;
     private readonly TextBlock _ultQuest = new() { TextWrapping = TextWrapping.Wrap };
+    // Quest CURR/END in the world's story and the time to the next world (Niduus, 2026-11-15).
+    private readonly TextBlock _ultStory = new() { TextWrapping = TextWrapping.Wrap };
     // Steps he set aside and asked help for, each with a "Retry now" button (Niduus, 2026-11-14).
     private readonly StackPanel _ultHelp = new() { Spacing = 6, IsVisible = false };
     private string _ultHelpKey = "";
@@ -316,6 +318,7 @@ internal sealed partial class ManagerWindow {
                 _ultStuckWeek,
                 _ultStuckChart,
                 _ultQuest,
+                _ultStory,
                 _ultHelp,
                 _ultMembers,
                 _ultSheet.View,
@@ -1506,7 +1509,7 @@ internal sealed partial class ManagerWindow {
             : "Starting: the server starts Ultimus within a few seconds, then it logs in.";
         _ultState.Foreground = running && on && live ? ManagerTheme.Accent("good") : MUTED;
 
-        _ultDoing.IsVisible = _ultToday.IsVisible = _ultQuest.IsVisible = _ultMembers.IsVisible = running && on && live;
+        _ultDoing.IsVisible = _ultToday.IsVisible = _ultQuest.IsVisible = _ultStory.IsVisible = _ultMembers.IsVisible = running && on && live;
         if (!_ultDoing.IsVisible) {
             _ultSheet.Show(null);
             _ultHelp.IsVisible = false;
@@ -1521,6 +1524,9 @@ internal sealed partial class ManagerWindow {
         _ultQuest.Text = quest.Length == 0 ? "Quest: none right now."
             : $"Quest: {quest}, for {Minutes(questFor)} so far" + (expected > 0 ? $" (expected about {Minutes(expected)})." : ".");
         _ultQuest.Foreground = expected > 0 && questFor > expected * (double) (_ultSlow.Value ?? 2) ? ManagerTheme.Accent("Create") : ManagerTheme.TEXT_BRUSH;
+        _ultStory.Text = status["progress"] is JsonObject progress && ((string?) progress["line"] ?? "") is { Length: > 0 } storyLine
+            ? $"Story: {storyLine}" + (((string?) progress["estimate"] ?? "") is { Length: > 0 } estimate ? $", {estimate}." : ".")
+            : "Story: where they are in the world's story shows once they are playing.";
 
         foreach (var node in status["members"] as JsonArray ?? []) {
             if (node is not JsonObject member) {

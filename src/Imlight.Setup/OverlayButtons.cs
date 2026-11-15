@@ -110,6 +110,24 @@ internal static class OverlayButtons {
 
                 return;
             }
+            case OverlayAction.TEAM_WATCH: {
+                // The Quest Team Spectator (Niduus, 2026-11-15: "spectate the desired"): straight to the member picked.
+                if (!OverlayUltimusData.IsWanted(OverlayUltimusData.TEAM_KEY)) {
+                    Report("Add the Quest Team Spectator's map or quest box to the overlay to watch the Quest Team.", false, done);
+
+                    return;
+                }
+
+                if (OverlayUltimusData.WatchMember(button.Command) is not { } role) {
+                    Report($"\"{button.Command}\" isn't a Quest Team member. Use Freya, Terra, Anubis or Chaac.", false, done);
+
+                    return;
+                }
+
+                Report($"Watching the Quest Team's {OverlayUltimusData.MemberName(role)} ({role}).", true, done);
+
+                return;
+            }
             case OverlayAction.PAUSE_AI: {
                 // Ultimus's AI paused for an hour, or back on (Niduus, 2026-11-15): the host's own server settings only.
                 var (ok, said) = UltimusAiSwitches.TogglePause(InstalledCommands.ConfigFile(OverlayHost.InstallFolder));

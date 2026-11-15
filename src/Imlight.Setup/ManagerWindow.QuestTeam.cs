@@ -37,6 +37,8 @@ internal sealed partial class ManagerWindow {
     private readonly TextBlock _teamDoing = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _teamToday = new() { TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _teamQuest = new() { TextWrapping = TextWrapping.Wrap };
+    // Quest CURR/END in the world's story and the time to the next world (Niduus, 2026-11-15).
+    private readonly TextBlock _teamStory = new() { TextWrapping = TextWrapping.Wrap };
     private readonly StackPanel _teamMembers = new() { Spacing = 6 };
     private readonly ToggleSwitch _teamEnabled = new() { OnContent = "On", OffContent = "Off" };
     private readonly NumericUpDown _teamSlow = new() { Minimum = 1.2m, Maximum = 20, Increment = 0.5m, FormatString = "0.0", Width = 140 };
@@ -240,6 +242,7 @@ internal sealed partial class ManagerWindow {
                 _teamDoing,
                 _teamToday,
                 _teamQuest,
+                _teamStory,
                 _teamMembers,
                 Row(Action(Plain("Pause or resume"), PauseQuestTeamAsync), Action(Plain("Stop and save"), StopQuestTeam), Action(Plain("Restart with four new wizards"), RestartQuestTeamAsync), Action(Plain("Open its folder"), () => {
                     Directory.CreateDirectory(QuestTeamFolder);
@@ -739,7 +742,7 @@ internal sealed partial class ManagerWindow {
             : "Starting: the server starts the Quest Team within a few seconds, then the four wizards log in one after the other.";
         _teamState.Foreground = running && on && live ? ManagerTheme.Accent("good") : MUTED;
 
-        _teamDoing.IsVisible = _teamToday.IsVisible = _teamQuest.IsVisible = _teamMembers.IsVisible = running && on && live;
+        _teamDoing.IsVisible = _teamToday.IsVisible = _teamQuest.IsVisible = _teamStory.IsVisible = _teamMembers.IsVisible = running && on && live;
         if (!_teamDoing.IsVisible) {
             return;
         }
@@ -752,6 +755,9 @@ internal sealed partial class ManagerWindow {
         _teamQuest.Text = quest.Length == 0 ? "Quest: none right now."
             : $"Quest: {quest}, for {Minutes(questFor)} so far" + (expected > 0 ? $" (expected about {Minutes(expected)})." : ".");
         _teamQuest.Foreground = expected > 0 && questFor > expected * (double) (_teamSlow.Value ?? 2) ? ManagerTheme.Accent("Create") : ManagerTheme.TEXT_BRUSH;
+        _teamStory.Text = status["progress"] is JsonObject progress && ((string?) progress["line"] ?? "") is { Length: > 0 } storyLine
+            ? $"Story: {storyLine}" + (((string?) progress["estimate"] ?? "") is { Length: > 0 } estimate ? $", {estimate}." : ".")
+            : "Story: where they are in the world's story shows once they are playing.";
 
         foreach (var node in status["members"] as JsonArray ?? []) {
             if (node is not JsonObject member) {

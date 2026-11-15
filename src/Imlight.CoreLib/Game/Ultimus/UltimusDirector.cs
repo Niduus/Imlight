@@ -2412,6 +2412,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 ["at"] = DateTime.UtcNow.ToString("o"),
                 ["today"] = Summary(),
                 ["members"] = members,
+                // Where he is in his world's story, and a time to the next world at his pace (Niduus, 2026-11-15: "CURR/END").
+                ["progress"] = _team.Count > 0 ? BotShared.BotProgress.Json(BotShared.BotProgress.ULTIMUS, _team[0].Wizard, _currentQuest ?? _target?.Quest, note: true) : null,
             };
             UltimusLink.Send(new UltimusRequest { Op = "status", Json = status.ToJsonString() });
             // The overlay's Ultimus Spectator draws this quest's way on Ultimus's own minimap (read only).

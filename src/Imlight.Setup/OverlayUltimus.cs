@@ -55,7 +55,8 @@ internal static class OverlayUltimusData {
 
     internal sealed record Info(string Name, int Level, int Health, int Most, string Place, string Doing, string Quest, string QuestTitle, string Kind,
                                 string NextStep, IReadOnlyList<Step> Steps, IReadOnlyList<string> Way, IReadOnlyList<string> Others, Battle? Fight,
-                                string Note, DateTime At, int QuestLevel = 0, string World = "", Tracker? Detail = null) {
+                                string Note, DateTime At, int QuestLevel = 0, string World = "", Tracker? Detail = null, string Progress = "",
+                                string Estimate = "") {
 
         internal bool Stale => DateTime.UtcNow - At > TimeSpan.FromSeconds(8);
 
@@ -128,11 +129,50 @@ internal static class OverlayUltimusData {
     };
 
     /// <summary>A plain name of whom a feed watches, for its boxes' headings and notes.</summary>
-    internal static string Watched(long key) => key == TEAM_KEY ? $"Quest Team: {Who(key)}" : "Ultimus";
+    internal static string Watched(long key) => key == TEAM_KEY ? $"Quest Team: {MemberName(Who(key))} ({Who(key)})" : "Ultimus";
+
+    // The Quest Team's locked names (2026-11-14), by role.
+    private static readonly string[] s_teamNames = ["Freya", "Terra", "Anubis", "Chaac"];
+
+    /// <summary>A Quest Team role's locked name ("Freya" for Ice).</summary>
+    internal static string MemberName(string role) {
+        var at = Array.FindIndex(TeamRoles, r => string.Equals(r, role, StringComparison.OrdinalIgnoreCase));
+        return at >= 0 ? s_teamNames[at] : role;
+    }
+
+    /// <summary>The role meant by a name or school ("Freya", "freya (ice)", "Ice"), or null.</summary>
+    internal static string? RoleOf(string? meant) {
+        var text = (meant ?? "").Trim();
+        for (var i = 0; i < TeamRoles.Length; i++) {
+            if (text.StartsWith(TeamRoles[i], StringComparison.OrdinalIgnoreCase) || text.StartsWith(s_teamNames[i], StringComparison.OrdinalIgnoreCase)) {
+                return TeamRoles[i];
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// The Quest Team Spectator's member buttons (Niduus, 2026-11-15: "spectate the desired"): watch the member named
+    /// straight away. Returns its role, or null when the name is not one of the four.
+    /// </summary>
+    internal static string? WatchMember(string? meant) {
+        if (RoleOf(meant) is not { } role) {
+            return null;
+        }
+
+        var at = Array.IndexOf(TeamRoles, role);
+        if (at != Volatile.Read(ref s_teamIndex) % TeamRoles.Length) {
+            Switch(at);
+        }
+
+        return role;
+    }
 
     /// <summary>The Quest Team Spectator's button: the next member (only the four, in the team's order). Ultimus's feed is untouched.</summary>
-    internal static string NextMember() {
-        var next = (Volatile.Read(ref s_teamIndex) + 1) % TeamRoles.Length;
+    internal static string NextMember() => Switch((Volatile.Read(ref s_teamIndex) + 1) % TeamRoles.Length);
+
+    private static string Switch(int next) {
         Volatile.Write(ref s_teamIndex, next);
         lock (s_lock) {
             var feed = FeedOf(TEAM_KEY);
@@ -265,7 +305,10 @@ internal static class OverlayUltimusData {
         return new Info(Short((string?) sent["name"], 40) is { Length: > 0 } name ? name : Watched(key), (int) Number(sent["level"]), (int) Number(sent["hp"]),
             (int) Number(sent["max"]), Short((string?) sent["place"], 80), Short((string?) sent["doing"], 120), Short((string?) sent["quest"], 120),
             Short((string?) sent["questTitle"], 120), Short((string?) sent["kind"], 10), Short((string?) sent["step"], 160), steps, way, others, battle, "",
-            DateTime.UtcNow, (int) Number(sent["questLevel"]), Short((string?) sent["world"], 40), tracker);
+            DateTime.UtcNow, (int) Number(sent["questLevel"]), Short((string?) sent["world"], 40), tracker,
+            // Quest CURR/END in the world's story and the time to the next world (Niduus, 2026-11-15).
+            sent["progress"] is JsonObject progress ? Short((string?) progress["line"], 80) : "",
+            sent["progress"] is JsonObject paced ? Short((string?) paced["estimate"], 160) : "");
     }
 
     private static List<Fighter> Fighters(JsonNode? node) => (node as JsonArray ?? []).OfType<JsonObject>().Take(8)
@@ -302,11 +345,11 @@ internal static class OverlayUltimusData {
         ], "Scorpion on Lost Soul", "the weakest enemy: Lost Soul with Scorpion (about 145)", ["Elemental Shield"],
             ["Round 3: casts Scorpion on Lost Soul", "Round 2: casts Spirit Blade on himself", "Round 1: passes"],
             [new Fighter("Lost Soul", 120, 300, true), new Fighter("Lost Soul", 300, 300, true)], [], "Scarab x4, Scorpion x3, Sandstorm x2"),
-        "", DateTime.MaxValue, 5, "Wizard City");
+        "", DateTime.MaxValue, 5, "Wizard City", null, "Quest 14/52 in Wizard City", "about 3 h 20 min to Krokotopia at his pace (about 5 min a quest)");
 
     // A made-up Quest Team wizard for the designers.
     private static readonly Info TeamSample = Sample with {
-        Name = "Freya (Ice)", Doing = "walking to Lost Souls with the team", Fight = null,
+        Name = "Freya (Ice)", Doing = "walking to Lost Souls with the team", Fight = null, Estimate = "about 4 h to Krokotopia at their pace (about 6 min a quest)",
     };
 
 }
@@ -353,6 +396,14 @@ internal static class UltimusViews {
 
         if (info.Doing.Length > 0) {
             panel.Children.Add(Line(Capital(info.Doing), look.Size - 2, look.Faint, wrap: true));
+        }
+
+        // Quest CURR/END in the world's story, and the time to the next world at their pace (Niduus, 2026-11-15).
+        if (info.Progress.Length > 0) {
+            panel.Children.Add(Line(info.Progress, look.Size - 1, look.Gold, bold: true));
+            if (info.Estimate.Length > 0) {
+                panel.Children.Add(Line(Capital(info.Estimate), look.Size - 3, look.Faint, wrap: true));
+            }
         }
 
         panel.Children.Add(new Border { Height = 4 });

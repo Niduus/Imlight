@@ -2,8 +2,8 @@
   "Format": "Ahziael overlay add-on",
   "Name": "Ultimus Spectator",
   "Author": "Niduus",
-  "Description": "Watch Ultimus. His own minimap follows him wherever he is and always draws HIS quest's way (never yours), a quest box shows his quest and step, and in battle a spells box shows his hand, pips and what he casts. Needs the Minimap add-on downloaded (your own Minimap does not have to be on, and stays as it is). A Pause AI button pauses his AI for an hour; click it again to turn it back on (only on the PC that runs the server).",
-  "Version": "2",
+  "Description": "Watch Ultimus. His own minimap follows him wherever he is and always draws HIS quest's way (never yours), a quest box shows his quest and step plus which story quest of the world he is on (like Quest 14/52 in Marleybone) and about how long until the next world at his own pace, and in battle a spells box shows his hand, pips and what he casts. Needs the Minimap add-on downloaded (your own Minimap does not have to be on, and stays as it is). A Pause AI button pauses his AI for an hour; click it again to turn it back on (only on the PC that runs the server).",
+  "Version": "3",
   "Requires": [ "Minimap" ],
   "Widgets": [
     {

@@ -2,8 +2,8 @@
   "Format": "Ahziael overlay add-on",
   "Name": "Quest Team Spectator",
   "Author": "Niduus",
-  "Description": "Watch the Quest Team, one wizard at a time: its own minimap follows that wizard and draws the team's quest way, a quest box shows the team's quest and step, in battle a spells box shows that wizard's hand, pips and what it casts, the map's border takes the watched wizard's school colour, and the Next member button switches between Freya (Ice), Terra (Life), Anubis (Death) and Chaac (Storm). Only the four team members can be watched. Needs the Minimap add-on downloaded and the Quest Team on.",
-  "Version": "2",
+  "Description": "Watch the Quest Team, one wizard at a time: its own minimap follows that wizard and draws the team's quest way, a quest box shows the team's quest and step, in battle a spells box shows that wizard's hand, pips and what it casts, the map's border takes the watched wizard's school colour, the Next member button switches between Freya (Ice), Terra (Life), Anubis (Death) and Chaac (Storm), and the four name buttons go straight to the wizard you want to watch. The quest box also shows which story quest of the world they are on (like Quest 14/52 in Marleybone) and about how long until the next world at their own pace. Only the four team members can be watched. Needs the Minimap add-on downloaded and the Quest Team on.",
+  "Version": "3",
   "Requires": [ "Minimap" ],
   "Widgets": [
     {
@@ -16,7 +16,7 @@
           "Map": { "Zoom": 2500 }
         },
         {
-          "Kind": "UltimusQuest", "Watch": "QuestTeam", "Name": "Quest Team Quest", "Anchor": "TopRight", "X": 12, "Y": 296, "Width": 220, "Height": 0, "Size": 13,
+          "Kind": "UltimusQuest", "Watch": "QuestTeam", "Name": "Quest Team Quest", "Anchor": "TopRight", "X": 12, "Y": 330, "Width": 220, "Height": 0, "Size": 13,
           "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
           "Background": { "Kind": "Solid", "Color1": "#B40C1622" }, "Padding": 10,
           "BorderColor": "#A07CC8FF", "BorderWidth": 1, "CornerRadius": 12, "Shadow": true, "ShadowBlur": 8
@@ -26,6 +26,30 @@
           "Size": 13, "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
           "Background": { "Kind": "Solid", "Color1": "#D00C1622" },
           "BorderColor": "#D07CC8FF", "BorderWidth": 1, "CornerRadius": 8
+        },
+        {
+          "Kind": "Button", "Action": "TeamWatch", "Command": "Freya", "Name": "Quest Team: watch Freya", "Text": "Freya", "Anchor": "TopRight", "X": 147, "Y": 294, "Width": 43, "Height": 28,
+          "Size": 11, "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#D00C1622" },
+          "BorderColor": "#D06EC8FF", "BorderWidth": 1, "CornerRadius": 8
+        },
+        {
+          "Kind": "Button", "Action": "TeamWatch", "Command": "Terra", "Name": "Quest Team: watch Terra", "Text": "Terra", "Anchor": "TopRight", "X": 102, "Y": 294, "Width": 43, "Height": 28,
+          "Size": 11, "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#D00C1622" },
+          "BorderColor": "#D05CD65C", "BorderWidth": 1, "CornerRadius": 8
+        },
+        {
+          "Kind": "Button", "Action": "TeamWatch", "Command": "Anubis", "Name": "Quest Team: watch Anubis", "Text": "Anubis", "Anchor": "TopRight", "X": 57, "Y": 294, "Width": 43, "Height": 28,
+          "Size": 11, "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#D00C1622" },
+          "BorderColor": "#D0A8AEB4", "BorderWidth": 1, "CornerRadius": 8
+        },
+        {
+          "Kind": "Button", "Action": "TeamWatch", "Command": "Chaac", "Name": "Quest Team: watch Chaac", "Text": "Chaac", "Anchor": "TopRight", "X": 12, "Y": 294, "Width": 43, "Height": 28,
+          "Size": 11, "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#D00C1622" },
+          "BorderColor": "#D0B46EFF", "BorderWidth": 1, "CornerRadius": 8
         },
         {
           "Kind": "UltimusSpells", "Watch": "QuestTeam", "Name": "Quest Team Spells", "Anchor": "TopRight", "X": 204, "Y": 70, "Width": 300, "Height": 0, "Size": 13,
