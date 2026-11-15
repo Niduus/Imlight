@@ -225,6 +225,14 @@ internal static class OverlayUltimusData {
     /// <summary>The feed's wizard as last heard, or (for the designers, window 0) a made-up one.</summary>
     internal static Info? For(long window, long key = KEY) {
         if (window == 0) {
+            // The designers show him as he is now in the game when the feed is coming, so the box looks exactly as it does
+            // over the game (Niduus, 2026-11-15); otherwise a made-up one.
+            lock (s_lock) {
+                if (FeedOf(key).Info is { Stale: false, Note.Length: 0 } live) {
+                    return live;
+                }
+            }
+
             return key == TEAM_KEY ? TeamSample : Sample;
         }
 
@@ -291,6 +299,55 @@ internal static class OverlayUltimusData {
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// One wizard of a status.json (Ultimus's, or a Quest Team member's) as the spectator's quest box reads it, so Ahziael's
+    /// pages draw it exactly as the game does (Niduus, 2026-11-15). The same words the overlay gets, put together from what
+    /// the status already carries: the member's "questTracker" and "tracker", and the status's quest, doing and progress.
+    /// </summary>
+    internal static Info FromStatus(JsonObject status, JsonObject member, bool team) {
+        var code = (string?) status["questCode"] ?? "";
+        var title = (string?) member["questNow"] ?? "";
+        // A Quest Team wizard that doesn't hold the team's quest shows none.
+        if (team && title.Length == 0) {
+            code = "";
+        }
+
+        var rows = (member["questTracker"]?["quests"] as JsonArray ?? []).OfType<JsonObject>().ToList();
+        var row = rows.FirstOrDefault(q => string.Equals((string?) q["id"], code, StringComparison.OrdinalIgnoreCase));
+        var health = ((string?) member["health"] ?? "").Split('/');
+        var role = (string?) member["role"] ?? "";
+        var name = (string?) member["name"] ?? "";
+        var sent = new JsonObject {
+            ["name"] = team && role.Length > 0 ? $"{name} ({role})" : name,
+            ["level"] = member["level"]?.DeepClone(),
+            ["hp"] = health.Length == 2 && int.TryParse(health[0], out var hp) ? hp : 0,
+            ["max"] = health.Length == 2 && int.TryParse(health[1], out var max) ? max : 0,
+            ["place"] = member["zone"]?.DeepClone(),
+            ["doing"] = (bool?) member["battle"] == true ? "in a battle" : (string?) status["doing"] ?? "",
+            ["quest"] = code,
+            ["questTitle"] = code.Length == 0 ? "" : (string?) row?["t"] ?? (title.Length > 0 ? title : (string?) status["quest"] ?? code),
+            ["step"] = member["stepNow"]?.DeepClone(),
+            ["steps"] = row?["steps"]?.DeepClone(),
+            ["way"] = row?["way"]?.DeepClone(),
+            ["kind"] = row?["k"]?.DeepClone(),
+            ["questLevel"] = row?["l"]?.DeepClone(),
+            ["world"] = (string?) member["tracker"]?["questWorld"] ?? "",
+            // The team's stuck line and read-ahead warning only when there is one, as the game's box gets them.
+            ["detail"] = !team ? member["tracker"]?.DeepClone()
+                : ((string?) status["stuck"] ?? "").Length > 0 || ((string?) status["readAhead"] ?? "").Length > 0
+                    ? new JsonObject { ["stuck"] = status["stuck"]?.DeepClone(), ["readAhead"] = status["readAhead"]?.DeepClone() }
+                    : null,
+            ["progress"] = status["progress"]?.DeepClone(),
+            ["quests"] = new JsonArray([.. rows.Take(40).Select(q => (JsonNode) new JsonObject { ["id"] = q["id"]?.DeepClone(), ["t"] = q["t"]?.DeepClone(), ["k"] = q["k"]?.DeepClone() })]),
+        };
+
+        // Read as the overlay reads it: from the words, the same way they come over the link (numbers made here in code
+        // would not read as numbers otherwise).
+        var asSent = JsonNode.Parse(sent.ToJsonString()) as JsonObject ?? sent;
+
+        return Read(asSent, team ? TEAM_KEY : KEY) with { At = DateTime.MaxValue };
     }
 
     private static Info Read(JsonObject sent, long key) {
@@ -364,6 +421,9 @@ internal static class OverlayUltimusData {
         return text.Length > max ? text[..max] : text;
     }
 
+    /// <summary>The made-up one the designers show for this feed.</summary>
+    internal static Info SampleOf(long key) => key == TEAM_KEY ? TeamSample : Sample;
+
     // A made-up Ultimus for the designers, so the pieces can be placed and styled before he is watched.
     private static readonly Info Sample = new("Ultimus", 9, 612, 780, "Unicorn Way", "walking to Lost Souls", "sample-main", "Unicorn Way Ghosts", "main",
         "defeat 3 Lost Souls", [new Step("Defeat 3 Lost Souls", "Wizard City / Triton Avenue", false)], ["Ravenwood", "Triton Avenue"],
@@ -430,11 +490,24 @@ internal static class UltimusViews {
         }
 
         var key = OverlayUltimusData.KeyOf(e);
-        var info = OverlayUltimusData.For(window, key);
+
+        return QuestBody(e, OverlayUltimusData.For(window, key), key, names: true);
+    }
+
+    /// <summary>
+    /// The quest box's insides for this one (Ultimus, or a Quest Team wizard), as the game shows it: also drawn on Ahziael's
+    /// Ultimus and Quest Team pages (Niduus, 2026-11-15: "portray exactly how they do in game"), where the names under it
+    /// are left out (<paramref name="names"/> false), since they are clicked on the game.
+    /// </summary>
+    internal static Control QuestBody(OverlayElement e, OverlayUltimusData.Info? info, long key, bool names) {
+        var panel = new StackPanel { Spacing = 2 };
+        var look = Look(e);
         if (Waiting(info, key) is { } waiting) {
             panel.Children.Add(Line(OverlayUltimusData.Watched(key), look.Size + 2, look.Gold, bold: true));
             panel.Children.Add(Line(waiting, look.Size - 1, look.Faint, wrap: true));
-            AddNames(panel, key, look);
+            if (names) {
+                AddNames(panel, key, look);
+            }
 
             return panel;
         }
@@ -467,7 +540,9 @@ internal static class UltimusViews {
         }
 
         // The Quest Team Spectator: click a name to watch that member (Niduus, 2026-11-15).
-        AddNames(panel, key, look);
+        if (names) {
+            AddNames(panel, key, look);
+        }
 
         panel.Children.Add(new Border { Height = 4 });
         if (info.Quest.Length == 0) {
@@ -561,6 +636,11 @@ internal static class UltimusViews {
         }
 
         var info = OverlayUltimusData.For(window, OverlayUltimusData.KeyOf(e));
+        // The designers keep their made-up battle while the one watched isn't fighting, so the box can still be placed.
+        if (window == 0 && info?.Fight is null) {
+            info = OverlayUltimusData.SampleOf(OverlayUltimusData.KeyOf(e));
+        }
+
         if (info is null || info.Stale || info.Note.Length > 0 || info.Fight is not { } fight) {
             return null;
         }

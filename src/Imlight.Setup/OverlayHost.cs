@@ -186,6 +186,9 @@ internal static class OverlayHost {
         s_installFolder = installFolder;
         s_design = OverlayDesign.Load(installFolder);
         s_designFileTime = FileTime(OverlayDesign.PathIn(installFolder));
+        // A designer made before the saved design was read picks it up instead of keeping an empty one.
+        DesignStamp++;
+        s_designVersion++;
     }
 
     internal static void Start(string installFolder, bool standalone = false) {
@@ -193,6 +196,8 @@ internal static class OverlayHost {
         Standalone = standalone;
         s_design = OverlayDesign.Load(installFolder);
         s_designFileTime = FileTime(OverlayDesign.PathIn(installFolder));
+        DesignStamp++;
+        s_designVersion++;
         LoadFromServer();
         if (!OperatingSystem.IsWindows() || s_timer is not null) {
             return;

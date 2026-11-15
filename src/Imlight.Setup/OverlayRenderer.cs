@@ -418,6 +418,36 @@ internal static class OverlayRenderer {
     // Whether the Minimap add-on is downloaded (the Ultimus Spectator needs it installed to work).
     private static bool s_buildMinimapAddon;
 
+    /// <summary>
+    /// A piece's own box (background, edge, corners, padding, see-through and shadow) around <paramref name="child"/>, as the
+    /// overlay draws it: for Ahziael's pages that show a piece exactly as it looks over the game (Niduus, 2026-11-15).
+    /// </summary>
+    internal static Border Framed(OverlayElement e, Control child) {
+        var border = new Border {
+            Background = Brush(e.Background),
+            BorderBrush = Brush(new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = e.BorderColor }),
+            BorderThickness = new Thickness(e.BorderWidth),
+            CornerRadius = new CornerRadius(e.CornerRadius),
+            Padding = new Thickness(e.Padding),
+            Opacity = e.Opacity,
+            ClipToBounds = true,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top,
+            Child = child,
+        };
+        if (e.Width > 0) {
+            border.Width = e.Width;
+        }
+
+        if (e.Shadow && Parse(e.ShadowColor) is { } shadow) {
+            border.Effect = new DropShadowEffect { Color = shadow, BlurRadius = e.ShadowBlur, OffsetX = e.ShadowX, OffsetY = e.ShadowY, Opacity = 1 };
+        }
+
+        RenderOptions.SetTextRenderingMode(border, TextRenderingMode.Antialias);
+
+        return border;
+    }
+
     private static Control Element(OverlayElement e, Words words, bool highlight, string? fixedText = null, long window = 0) {
         var border = new Border {
             Background = Brush(e.Background),

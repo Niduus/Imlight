@@ -30,7 +30,7 @@ internal sealed partial class ManagerWindow {
     private const string QUEST_TEAM_LOGS_TAB = "Team Logs";
     private const string QUEST_TEAM_WIZARDS_TAB = "Team Wizards";
     private const string BOT_CONCEPT_SHOUT_OUT = "Shout out to Discord user gese11 for sharing the bot concept.";
-    private readonly WizardSheet _teamSheet = new("Turn the Quest Team on and start the server; once the four wizards are playing, pick one here to see its stats, gear, deck and quest.") { Compact = true };
+    private readonly WizardSheet _teamSheet = new("Turn the Quest Team on and start the server; once the four wizards are playing, pick one here to see its stats, gear, deck and quest.") { Compact = true, Team = true };
     private const int QUEST_TEAM_LOG_LINES = 300;
 
     private readonly TextBlock _teamState = new() { TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold };
@@ -598,9 +598,12 @@ internal sealed partial class ManagerWindow {
         }
 
         if (_teamSheet.View.IsEffectivelyVisible) {
-            _teamSheet.Show(ReadQuestTeamStatus() is { } status && DateTime.TryParse((string?) status["at"], CultureInfo.InvariantCulture,
+            var freshStatus = ReadQuestTeamStatus() is { } status && DateTime.TryParse((string?) status["at"], CultureInfo.InvariantCulture,
                 DateTimeStyles.RoundtripKind, out var written) && DateTime.UtcNow - written.ToUniversalTime() < TimeSpan.FromSeconds(30)
-                ? status["members"] as JsonArray : null);
+                ? status : null;
+            // The team's quest, doing and story progress, for the quest box drawn as the game shows it.
+            _teamSheet.Status = freshStatus;
+            _teamSheet.Show(freshStatus?["members"] as JsonArray);
         }
 
         if (_teamLogBox?.IsEffectivelyVisible == true) {

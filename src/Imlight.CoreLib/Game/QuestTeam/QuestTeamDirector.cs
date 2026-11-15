@@ -2117,6 +2117,9 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                         wizard.MagicSchoolBehavior?.TrainingPoints ?? 0),
                 });
                 BotShared.BotSheet.Fill((JsonObject) members[^1], wizard, member.Role);
+                // Every quest it holds, as the overlay's Quest Tracker lists them, for the Quest Tracker box on Ahziael's
+                // Quest Team page (Niduus, 2026-11-15: "portray exactly how they do in game").
+                ((JsonObject) members[^1])["questTracker"] = Ultimus.UltimusDirectorActor.BotQuestTrackerFor(wizard, _currentQuest);
             }
 
             // For the Quest Team Spectator (OverlayLinks): the team's quest, step and what it does now.
@@ -2135,6 +2138,9 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                 ["at"] = DateTime.UtcNow.ToString("o"),
                 ["today"] = Summary(),
                 ["members"] = members,
+                // The team's stuck line and read-ahead warning, for the quest box on Ahziael's Quest Team page.
+                ["stuck"] = StuckLine() ?? "",
+                ["readAhead"] = ReadAheadLine() ?? "",
                 // Where the team is in its world's story, and a time to the next world at its pace (Niduus, 2026-11-15: "CURR/END").
                 ["progress"] = _team.Count > 0 ? BotShared.BotProgress.Json(BotShared.BotProgress.TEAM, _team[0].Wizard, _currentQuest ?? _target?.Quest, note: true) : null,
             };

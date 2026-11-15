@@ -311,6 +311,10 @@ internal sealed partial class ManagerWindow : Window {
     internal ManagerWindow(ServerManager manager) {
         _manager = manager;
         s_shown = this;
+        // The saved overlay (design, grid and add-ons) is read before any page is built (Niduus, 2026-11-15: "Overlay UI
+        // doesn't automatically draw from saves or turn on after an update"). The Overlay page used to be built first, with an
+        // empty design: it showed nothing on, and the first change made there saved that empty design over the real one.
+        OverlayHost.LoadOnly(manager.InstallFolder);
         _gameFiles = new GameFiles(manager.InstallFolder);
         Title = Edition.NAME;
         Width = 1240;

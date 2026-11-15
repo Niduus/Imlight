@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Nodes;
+using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -25,6 +26,21 @@ internal sealed class WizardSheet {
     private readonly TextBlock _title = Text(strong: true, size: 16);
     private readonly TextBlock _where = Text();
     private readonly TextBlock _quest = Text();
+    // The quest box and the Quest Tracker exactly as the game's overlay draws them (Niduus, 2026-11-15: "Detail all of Quest
+    // Tracker UI and Ultimus/QT quest sections in EXE to portray exactly how they do in game").
+    private readonly ContentControl _gameQuest = new();
+    private readonly ContentControl _gameTracker = new();
+    private readonly Control _gameRow;
+    private readonly Expander _questTextBox;
+    private readonly long _trackerKey = Interlocked.Decrement(ref s_nextKey);
+    private static long s_nextKey = long.MinValue + 400;
+    private string _gameKey = "";
+
+    /// <summary>The whole status.json the members came from (its quest, doing and story progress), for the in-game boxes.</summary>
+    internal JsonObject? Status { get; set; }
+
+    /// <summary>True on the Quest Team page (its quest box reads as the Quest Team Spectator's).</summary>
+    internal bool Team { get; set; }
     private readonly StackPanel _stats = new() { Spacing = 2 };
     private readonly StackPanel _gear = new() { Spacing = 2 };
     private readonly TextBlock _deckTitle = Text(strong: true);
@@ -103,7 +119,21 @@ internal sealed class WizardSheet {
             Header = Text("Quests", strong: true), IsExpanded = true, HorizontalAlignment = HorizontalAlignment.Stretch,
             HorizontalContentAlignment = HorizontalAlignment.Stretch, Content = _book,
         };
-        _body = new StackPanel { Spacing = 10, Children = { _title, _where, _xpRow, _quest, columns, _bookBox } };
+        var gameColumns = new WrapPanel { Orientation = Orientation.Horizontal, ItemSpacing = 16, LineSpacing = 12, Children = { _gameQuest, _gameTracker } };
+        _gameRow = new StackPanel {
+            Spacing = 6,
+            Children = {
+                Text("Quests, as the game shows them", strong: true),
+                MutedText("The quest box and Quest Tracker look just like they do over the game, in your overlay's own colours: the one it " +
+                      "plays now is lit, with each step, its count and where; Story, Main and Side lists below it."),
+                gameColumns,
+            },
+        };
+        _questTextBox = new Expander {
+            Header = Text("Quest details as text (to copy)", strong: true), IsExpanded = false, HorizontalAlignment = HorizontalAlignment.Stretch,
+            HorizontalContentAlignment = HorizontalAlignment.Stretch, Content = _quest,
+        };
+        _body = new StackPanel { Spacing = 10, Children = { _title, _where, _xpRow, _gameRow, _questTextBox, columns, _bookBox } };
         View = new StackPanel { Spacing = 12, Children = { _picker, _empty, _body } };
         _body.IsVisible = false;
     }
@@ -175,6 +205,7 @@ internal sealed class WizardSheet {
         var quest = S(m, "questNow");
         var step = S(m, "stepNow");
         var others = List(m["questList"]).Where(q => q != quest).ToList();
+        ShowAsInGame(m);
         _quest.Text = m["tracker"] is JsonObject tracker
             ? TrackerText(quest, tracker, others)
             : (quest.Length > 0 ? $"Quest now: {quest}" + (step.Length > 0 ? $"\nStep: {step}" : "") : "Quest now: none") +
@@ -240,6 +271,69 @@ internal sealed class WizardSheet {
 
     // Ultimus's quest tracker in detail (Niduus, 2026-11-14): the quest, its world and level, each open step in the game's
     // words with counts and where, what he does now and why, the step after, parked steps and the needs-help flag.
+    // The quest box and the Quest Tracker as the overlay draws them, in the look of the pieces on the player's overlay
+    // (or the add-ons' own look when they aren't on it). Built again only when what they show changes.
+    private void ShowAsInGame(JsonObject m) {
+        if (Status is not { } status) {
+            _gameRow.IsVisible = false;
+            _questTextBox.IsExpanded = true;
+
+            return;
+        }
+
+        _gameRow.IsVisible = true;
+        var key = string.Join("|", Key(m), status["questCode"]?.ToJsonString(), status["doing"]?.ToJsonString(), status["progress"]?.ToJsonString(),
+            status["stuck"]?.ToJsonString(), m["questTracker"]?.ToJsonString(), m["tracker"]?.ToJsonString(), m["health"]?.ToJsonString(),
+            m["zone"]?.ToJsonString(), m["level"]?.ToJsonString(), m["battle"]?.ToJsonString(), OverlayHost.DesignStamp);
+        if (key == _gameKey) {
+            return;
+        }
+
+        _gameKey = key;
+        var questLook = InGameLook(OverlayElement.ULTIMUS_QUEST, Team);
+        var info = OverlayUltimusData.FromStatus(status, m, Team);
+        _gameQuest.Content = OverlayRenderer.Framed(questLook,
+            UltimusViews.QuestBody(questLook, info, Team ? OverlayUltimusData.TEAM_KEY : OverlayUltimusData.KEY, names: false));
+
+        var trackerLook = InGameLook(OverlayElement.QUEST_TRACKER, Team);
+        // Every quest shows here: the page scrolls, not the tracker.
+        trackerLook.Quests = (trackerLook.Quests ?? new OverlayQuestList()).Clean();
+        trackerLook.Quests.MaxHeight = 1200;
+        OverlayQuestData.ShowFor(_trackerKey, m["questTracker"] as JsonObject, S(status, "questCode"));
+        _gameTracker.Content = m["questTracker"] is JsonObject
+            ? OverlayRenderer.Framed(trackerLook, new QuestTrackerView(trackerLook, _trackerKey, hasMap: true))
+            : OverlayRenderer.Framed(trackerLook, new TextBlock {
+                Text = "The Quest Tracker list shows once the server is updated to this version.", TextWrapping = TextWrapping.Wrap,
+                Foreground = Brushes.White, FontSize = 12,
+            });
+    }
+
+    /// <summary>
+    /// A piece's look for the in-game boxes: the first one of that kind on the player's overlay (for the Quest Team box,
+    /// the Quest Team Spectator's), else the look of Niduus's add-on for it.
+    /// </summary>
+    private static OverlayElement InGameLook(string kind, bool team) {
+        var on = OverlayHost.Design.Elements.FirstOrDefault(e => e.Kind == kind && (kind != OverlayElement.ULTIMUS_QUEST || e.WatchesTeam == team));
+        if (on is not null && OverlayAddon.CopyFamily([on]).FirstOrDefault() is { } copy) {
+            copy.Parent = "";
+            copy.Height = 0;
+            copy.Opacity = 1;
+
+            return copy;
+        }
+
+        return kind == OverlayElement.QUEST_TRACKER
+            ? new OverlayElement {
+                Kind = kind, Width = 260, Padding = 10, BorderColor = "#A0FFD24A", BorderWidth = 1, CornerRadius = 12, Shadow = true, ShadowBlur = 8,
+                Background = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = "#B40A0E1C" }, Quests = new OverlayQuestList(),
+            }
+            : new OverlayElement {
+                Kind = kind, Width = 220, Size = 13, Padding = 10, BorderColor = team ? "#A07CC8FF" : "#A0E07CFF", BorderWidth = 1, CornerRadius = 12,
+                Shadow = true, ShadowBlur = 8, Background = new OverlayPaint { Kind = OverlayPaint.SOLID, Color1 = team ? "#B40C1622" : "#B4120C22" },
+                Watch = team ? OverlayElement.WATCH_TEAM : "",
+            };
+    }
+
     private static string TrackerText(string quest, JsonObject t, List<string> others) {
         var text = new System.Text.StringBuilder();
         if (quest.Length == 0) {
@@ -613,6 +707,13 @@ internal sealed class WizardSheet {
         if (size > 0) {
             block.FontSize = size;
         }
+
+        return block;
+    }
+
+    private static TextBlock MutedText(string text) {
+        var block = Text(text);
+        block.Foreground = ManagerTheme.MUTED_BRUSH;
 
         return block;
     }

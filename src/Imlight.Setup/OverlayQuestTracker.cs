@@ -159,7 +159,9 @@ internal static class OverlayQuestData {
 
     internal static Snapshot? For(long window) {
         if (window == 0) {
-            return Sample;
+            // The designers show the quests of a game being played now, when there is one, so the tracker looks exactly as
+            // it does in the game (Niduus, 2026-11-15); otherwise made-up quests.
+            return Live() ?? Sample;
         }
 
         lock (s_lock) {
@@ -167,9 +169,58 @@ internal static class OverlayQuestData {
         }
     }
 
+    // The newest quests a game window's tracker got that are still fresh, and that window (0 for none).
+    private static (Snapshot? List, long Window) LiveWindow() {
+        lock (s_lock) {
+            foreach (var (window, list) in s_lists.Where(l => l.Key > 0 && !l.Value.Stale && l.Value.Note.Length == 0).OrderByDescending(l => l.Value.At)) {
+                return (list, window);
+            }
+        }
+
+        return (null, 0);
+    }
+
+    private static Snapshot? Live() => LiveWindow().List;
+
+    // Quests shown by Ahziael's own pages (the Ultimus and Quest Team pages' Quest Tracker boxes), kept apart from the
+    // game windows' so the overlay's tidy-up leaves them.
+    private static readonly HashSet<long> s_pageKeys = [];
+
+    /// <summary>
+    /// Shows a server-played wizard's quests (the "questTracker" its status.json carries) under a key of Ahziael's own
+    /// page, with the quest it plays now picked, so a <see cref="QuestTrackerView"/> there draws them as the game's does.
+    /// </summary>
+    internal static void ShowFor(long key, JsonObject? sent, string playing) {
+        lock (s_lock) {
+            s_pageKeys.Add(key);
+            if (sent is null) {
+                s_lists.Remove(key);
+                s_picks.Remove(key);
+
+                return;
+            }
+
+            var list = Read(sent) with { At = DateTime.MaxValue };
+            s_lists[key] = list;
+            var pick = list.Quests.FirstOrDefault(q => q.Id.Equals(playing, StringComparison.OrdinalIgnoreCase) || q.Title.Equals(playing, StringComparison.OrdinalIgnoreCase))?.Id;
+            if (pick is null) {
+                s_picks.Remove(key);
+            }
+            else {
+                s_picks[key] = pick;
+            }
+        }
+    }
+
     /// <summary>The quest picked in this window ("" for none).</summary>
     internal static string Pick(long window) {
         if (window == 0) {
+            if (LiveWindow() is { List: not null } live) {
+                lock (s_lock) {
+                    return s_picks.GetValueOrDefault(live.Window, "");
+                }
+            }
+
             return DesignHasTracker ? SamplePick : "";
         }
 
@@ -294,7 +345,8 @@ internal static class OverlayQuestData {
     /// <summary>The picked quest's way for this window's minimap, when the line is wanted; null otherwise.</summary>
     internal static Route? RouteFor(long window) {
         if (window == 0) {
-            return DesignHasTracker && (LookOf(0)?.Route ?? true) ? SampleRoute : null;
+            // The made-up way only goes with the made-up quests.
+            return Live() is null && DesignHasTracker && (LookOf(0)?.Route ?? true) ? SampleRoute : null;
         }
 
         lock (s_lock) {
@@ -379,7 +431,7 @@ internal static class OverlayQuestData {
     internal static void Tick() {
         lock (s_lock) {
             var wanted = Wanted;
-            foreach (var gone in s_lists.Keys.Where(w => !wanted.Contains(w)).ToList()) {
+            foreach (var gone in s_lists.Keys.Where(w => !wanted.Contains(w) && !s_pageKeys.Contains(w)).ToList()) {
                 s_lists.Remove(gone);
             }
         }

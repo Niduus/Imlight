@@ -119,24 +119,24 @@ internal sealed partial class ManagerWindow {
             }
         };
 
+        // One short card on top (Niduus, 2026-11-15: "Compress view the Overlay UI"): the switch, what it draws now, and the
+        // overlay on its own; the longer words sit behind the "?".
         return WidePage(
             Fold("sparkle", "Play", "Game overlay", "What Ahziael draws over the Wizard101 window.",
                 _ovEditorPage.EnabledRow(),
                 _ovStatus,
-                Sub("It sticks to the game window: it moves and resizes with it, stays through loading screens and when you click " +
+                WithHint(Row(Action(Plain("Start the overlay on its own"), StartStandaloneOverlayAsync)),
+                    "It sticks to the game window: it moves and resizes with it, stays through loading screens and when you click " +
                     "another window, and only goes away while the game is minimized. Click the small sparkle button in the game's " +
-                    "bottom-right corner to open the designer below. Wizard101 in true full screen hides every other window, so play in a " +
-                    "window (or the game's windowed full-screen mode) to see it. Nothing inside the game is changed.")),
-            Fold("play", "Play", "Overlay without Ahziael open",
-                "Run just the overlay, on its own, with Ahziael closed.",
-                WithHint(Row(Action(Primary("Start the overlay on its own"), StartStandaloneOverlayAsync)),
-                    "\"Ahziael Overlay\" is a small program that only draws the overlay, with the same design and the same sparkle button " +
-                    "(which opens a designer window). It shows a sparkle icon by the clock, where you can open the designer or stop it. " +
-                    "Only one of them draws at a time: with both open, whichever started first draws."),
-                Sub("Servers that don't require the overlay don't care whether you have it, with or without Ahziael.")),
+                    "bottom-right corner to open the designer. Wizard101 in true full screen hides every other window, so play in a " +
+                    "window (or the game's windowed full-screen mode) to see it. Nothing inside the game is changed.\n\n" +
+                    "\"Start the overlay on its own\" runs \"Ahziael Overlay\", a small program that only draws the overlay with Ahziael closed, " +
+                    "with the same design and the same sparkle button. It shows a sparkle icon by the clock, where you can open the designer or stop it. " +
+                    "Only one of them draws at a time: with both open, whichever started first draws. Servers that don't require the overlay " +
+                    "don't care whether you have it.")),
             Fold("sliders", "Customs", "Design it", "Fonts, colours, gradients, boxes, shadows, see-through and position. No code: everything is a box to fill in.",
                 _ovEditorPage.Build()),
-            Fold("shield", "Server", "Require the overlay on my server",
+            Shut(Fold("shield", "Server", "Require the overlay on my server",
                 "Turn away players whose Ahziael overlay isn't running.",
                 SwitchRow("Require the Ahziael overlay", _ovRequired,
                     "On: a player whose PC has no Ahziael overlay running (in Ahziael or on its own) is disconnected with the message below. " +
@@ -151,7 +151,7 @@ internal sealed partial class ManagerWindow {
                     "connections from that internet address are let in. It sends no account, password or files. " +
                     "Friends on the internet need that port open too: click \"Let friends connect\" on the Play tab once more after turning this on."),
                 Sub("It's a friendly check, not anti-cheat: someone who writes their own program could pretend to be the overlay."),
-                _ovRuleNote));
+                _ovRuleNote)));
     }
 
     internal static string OverlayStatus() {
@@ -447,13 +447,25 @@ internal sealed partial class ManagerWindow {
 
             // What the linked server sends changed: the picture shows it.
             var seen = OverlayHost.ServerElements.GetHashCode();
-            if (seen != _ovServerSeen) {
+            // The live quests and the watched Ultimus or Quest Team wizard changed: the picture shows them as the game does
+            // (Niduus, 2026-11-15), every few seconds at most, and never in the middle of a drag.
+            var live = HashCode.Combine(OverlayQuestData.Version, OverlayUltimusData.Version);
+            var liveDue = live != _ovLiveSeen && DateTime.UtcNow - _ovLiveDrawn > TimeSpan.FromSeconds(3);
+            if (seen != _ovServerSeen || liveDue) {
                 _ovServerSeen = seen;
-                if (_ovDrag is null) {
+                if (_ovDrag is null && !_inGame) {
+                    _ovLiveSeen = live;
+                    _ovLiveDrawn = DateTime.UtcNow;
+                    RenderOverlayPreview();
+                }
+                else if (_ovDrag is null) {
                     RenderOverlayPreview();
                 }
             }
         }
+
+        private int _ovLiveSeen;
+        private DateTime _ovLiveDrawn;
 
         // ---------------------------------------------------------------------
         // Server and Client
@@ -721,6 +733,134 @@ internal sealed partial class ManagerWindow {
             });
         }
 
+        // ---------------------------------------------------------------------
+        // Plugins: one drop-down of every piece the add-ons (UI plugins) have
+        // ---------------------------------------------------------------------
+
+        // Niduus, 2026-11-15: "allowing for a PLUGINS UI that will give a drop down listing of UI elements from plugins to put
+        // on the overlay". Every widget of the add-ons on this PC, then Niduus's not downloaded yet, each saying whether it is on.
+        private sealed record PluginPiece(string Label, OverlayAddon? Addon, OverlayWidget? Widget, OverlayAddonShelf.Item? Shelf, string WidgetName);
+
+        private readonly ComboBox _ovPlugins = new() { MinWidth = 340, PlaceholderText = "Pick a plugin piece" };
+        private readonly TextBlock _ovPluginNote = new() { TextWrapping = TextWrapping.Wrap, Foreground = MUTED, VerticalAlignment = VerticalAlignment.Center };
+        private List<PluginPiece> _ovPluginList = [];
+        private List<OverlayAddonShelf.Item> _ovShelfItems = [];
+        private bool _ovPluginsFilling;
+
+        private Control PluginsBar() {
+            _ovPlugins.SelectionChanged += (_, _) => {
+                if (!_ovPluginsFilling) {
+                    ShowPluginNote();
+                }
+            };
+            FillPlugins();
+
+            return OvGroup("Plugins", new StackPanel {
+                Spacing = 6,
+                Children = {
+                    WithHint(new WrapPanel {
+                            Children = {
+                                Spaced(_ovPlugins),
+                                Spaced(Action(Primary("Put on the overlay"), PutPluginOnAsync)),
+                                Spaced(Action(Plain("Take it off"), TakePluginOffAsync)),
+                            },
+                        },
+                        "Every piece from your add-ons (the overlay's plugins, like the Minimap, Quest Tracker and the Ultimus and Quest Team " +
+                        "Spectators) in one list. Pick one and click \"Put on the overlay\"; one marked \"on\" is on it now. Niduus's add-ons you " +
+                        "haven't downloaded yet are in the list too: putting one on downloads it first (with any add-on it needs). " +
+                        "Downloading, adding a file and making your own are under Add-ons, below."),
+                    _ovPluginNote,
+                },
+            });
+        }
+
+        // The drop-down's pieces, keeping the picked one picked.
+        private void FillPlugins() {
+            var picked = (_ovPlugins.SelectedIndex >= 0 && _ovPlugins.SelectedIndex < _ovPluginList.Count) ? _ovPluginList[_ovPlugins.SelectedIndex] : null;
+            var list = new List<PluginPiece>();
+            foreach (var addon in _ovAddonList) {
+                foreach (var widget in addon.Widgets) {
+                    var name = widget.Name.Length > 0 ? widget.Name : "Widget";
+                    var on = OverlayAddon.OnOverlay(addon, widget, _ovDesign.Elements).Count > 0;
+                    list.Add(new PluginPiece($"{addon.Name}  ›  {name}{(on ? "   (on)" : "")}", addon, widget, null, name));
+                }
+            }
+
+            foreach (var item in _ovShelfItems.Where(i => !_ovAddonList.Any(a => a.Name.Equals(i.Addon.Name, StringComparison.OrdinalIgnoreCase)))) {
+                foreach (var widget in item.Addon.Widgets) {
+                    var name = widget.Name.Length > 0 ? widget.Name : "Widget";
+                    list.Add(new PluginPiece($"{item.Addon.Name}  ›  {name}   (download)", null, null, item, name));
+                }
+            }
+
+            _ovPluginsFilling = true;
+            try {
+                _ovPluginList = list;
+                _ovPlugins.ItemsSource = list.Select(p => p.Label).ToList();
+                var again = picked is null ? -1
+                    : list.FindIndex(p => (p.Addon?.Name ?? p.Shelf?.Addon.Name) == (picked.Addon?.Name ?? picked.Shelf?.Addon.Name) && p.WidgetName == picked.WidgetName);
+                _ovPlugins.SelectedIndex = again;
+            }
+            finally {
+                _ovPluginsFilling = false;
+            }
+
+            ShowPluginNote();
+        }
+
+        private void ShowPluginNote() {
+            if (_ovPluginList.Count == 0) {
+                _ovPluginNote.Text = "No plugin pieces yet. Open Add-ons below to download Niduus's.";
+
+                return;
+            }
+
+            if (_ovPlugins.SelectedIndex < 0 || _ovPlugins.SelectedIndex >= _ovPluginList.Count) {
+                var on = _ovPluginList.Count(p => p.Label.EndsWith("(on)", StringComparison.Ordinal));
+                _ovPluginNote.Text = $"{_ovPluginList.Count} piece(s) to pick from, {on} on {(_ovServerPart ? "the server's overlay" : "your overlay")} now.";
+
+                return;
+            }
+
+            var piece = _ovPluginList[_ovPlugins.SelectedIndex];
+            var addon = piece.Addon ?? piece.Shelf!.Addon;
+            _ovPluginNote.Text = addon.Description.Length > 0 ? addon.Description : $"From the {addon.Name} add-on.";
+        }
+
+        private PluginPiece PickedPlugin() => _ovPlugins.SelectedIndex >= 0 && _ovPlugins.SelectedIndex < _ovPluginList.Count
+            ? _ovPluginList[_ovPlugins.SelectedIndex]
+            : throw new PanelException("Pick a piece in the Plugins list first.");
+
+        private async Task PutPluginOnAsync() {
+            var piece = PickedPlugin();
+            if (piece.Shelf is { } item) {
+                await DownloadShelfAsync(item);
+                var addon = _ovAddonList.FirstOrDefault(a => a.Name.Equals(item.Addon.Name, StringComparison.OrdinalIgnoreCase))
+                            ?? throw new PanelException($"\"{item.Addon.Name}\" didn't download. Try again in a minute.");
+                var widget = addon.Widgets.FirstOrDefault(w => (w.Name.Length > 0 ? w.Name : "Widget") == piece.WidgetName)
+                             ?? throw new PanelException("That piece isn't in the add-on any more.");
+                AddWidget(addon, widget);
+            }
+            else if (OverlayAddon.OnOverlay(piece.Addon!, piece.Widget!, _ovDesign.Elements).Count > 0) {
+                throw new PanelException($"\"{piece.WidgetName}\" is on the overlay already. Pick it in \"What it shows\" to change it.");
+            }
+            else {
+                AddWidget(piece.Addon!, piece.Widget!);
+            }
+
+            ShowAddons();
+        }
+
+        private async Task TakePluginOffAsync() {
+            var piece = PickedPlugin();
+            if (piece.Addon is null || OverlayAddon.OnOverlay(piece.Addon, piece.Widget!, _ovDesign.Elements).Count == 0) {
+                throw new PanelException($"\"{piece.WidgetName}\" isn't on the overlay.");
+            }
+
+            await TakeOffWidgetAsync(piece.Addon, piece.Widget!);
+            ShowAddons();
+        }
+
         // Niduus's own add-ons, from his GitHub repo (OverlayAddonShelf).
         private readonly StackPanel _ovShelf = new() { Spacing = 8 };
 
@@ -760,6 +900,8 @@ internal sealed partial class ManagerWindow {
         }
 
         private void ShowShelf(List<OverlayAddonShelf.Item> items) {
+            _ovShelfItems = items;
+            FillPlugins();
             _ovShelf.Children.Clear();
             if (items.Count == 0) {
                 _ovShelf.Children.Add(Sub("Niduus hasn't put any add-ons up yet."));
@@ -855,6 +997,7 @@ internal sealed partial class ManagerWindow {
         /// is not saying what I have active"). Ticking puts it on, unticking takes it off.
         /// </summary>
         private void ShowAddons() {
+            FillPlugins();
             _ovAddons.Children.Clear();
             if (_ovAddonList.Count == 0) {
                 _ovAddons.Children.Add(Sub("No add-ons yet."));
@@ -1083,10 +1226,15 @@ internal sealed partial class ManagerWindow {
                                     Spaced(Danger(Action(Plain("Remove"), RemoveOverlayElement))),
                                 },
                             },
-                            new TextBlock { Text = "Drag onto the picture", FontWeight = FontWeight.SemiBold, Margin = new Thickness(0, 6, 0, 0) },
-                            new WrapPanel { Children = { Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)), Spaced(Block(OverlayElement.BUTTON)) } },
-                            Sub("Drag a block onto the picture to put a new text, box or button right there (or just click it). A button can be clicked in the game to run a command, use a cheat, or open the designer or Ahziael; everything else lets clicks through to the game. Drag a line in the list above onto another to change the order."),
-                            Sub("A higher Layer is drawn on top; on the same layer, lower in the list is on top. With Spacing above 0, one that laps over another is moved off it, that far away. The Ahziael line is always on top, in full, in the bottom-left corner."),
+                            WithHint(new StackPanel {
+                                    Spacing = 4,
+                                    Children = {
+                                        new TextBlock { Text = "Drag onto the picture", FontWeight = FontWeight.SemiBold, Margin = new Thickness(0, 6, 0, 0) },
+                                        new WrapPanel { Children = { Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)), Spaced(Block(OverlayElement.BUTTON)) } },
+                                    },
+                                },
+                                "Drag a block onto the picture to put a new text, box or button right there (or just click it). A button can be clicked in the game to run a command, use a cheat, or open the designer or Ahziael; everything else lets clicks through to the game. Drag a line in the list above onto another to change the order.\n\n" +
+                                "A higher Layer is drawn on top; on the same layer, lower in the list is on top. With Spacing above 0, one that laps over another is moved off it, that far away. The Ahziael line is always on top, in full, in the bottom-left corner."),
                         },
                     },
                     WithColumn(_ovEditor, 1),
@@ -1098,15 +1246,24 @@ internal sealed partial class ManagerWindow {
                 Children = {
                     _ovParts,
                     _ovPartNote,
+                    PluginsBar(),
                     WithHint(Row(new TextBlock { Text = "Picture size", VerticalAlignment = VerticalAlignment.Center }, _ovSize),
                         "The picture takes the shape of your game window while Wizard101 is open (each open game window is in the list). " +
                         "Texts and boxes stay inside the window. On a bigger or smaller game window everything grows or shrinks with it and " +
-                        "keeps to its corner or side, so the design looks as you set it up on every game window, even several at once."),
+                        "keeps to its corner or side, so the design looks as you set it up on every game window, even several at once.\n\n" +
+                        "The picture is a stand-in for the game window. Click a text or box to pick it, drag it to move it, and drag its right or bottom edge (or the corner) to size it. " +
+                        "The Ahziael line always sits in the bottom-left corner and can't be moved or changed. The outlined one is the one you are changing. Changes show on the game at once. " +
+                        "While you play, the Quest Tracker and the Ultimus and Quest Team boxes show your real quests, just as they look in the game."),
                     WithMargin(new Viewbox { Stretch = Stretch.Uniform, MaxHeight = 400, Child = _ovPreview }, new Thickness(0, 0, 0, 6)),
-                    Sub("The picture is a stand-in for the game window. Click a text or box to pick it, drag it to move it, and drag its right or bottom edge (or the corner) to size it. The Ahziael line always sits in the bottom-left corner and can't be moved or changed. The outlined one is the one you are changing. Changes show on the game at once."),
-                    GridControls(),
                     editor,
-                    AddonsSection(),
+                    new Expander {
+                        Header = new TextBlock { Text = "Grid and snapping", FontWeight = FontWeight.SemiBold }, IsExpanded = false,
+                        HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Stretch, Content = GridControls(),
+                    },
+                    new Expander {
+                        Header = new TextBlock { Text = "Add-ons: download Niduus's, add a file, or make one", FontWeight = FontWeight.SemiBold }, IsExpanded = false,
+                        HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Stretch, Content = AddonsSection(),
+                    },
                     WithHint(Row(Action(Plain("Save design to a file"), ExportOverlayAsync), Action(Plain("Open a design file"), ImportOverlayAsync),
                             Danger(Action(Plain("Start over"), ResetOverlayAsync))),
                         "A design file (" + OverlayDesign.SHARE_EXTENSION + ") holds only words, colours and numbers, so it is safe to share: it can't run anything. " +

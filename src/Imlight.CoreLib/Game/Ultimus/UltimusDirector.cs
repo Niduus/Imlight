@@ -2350,6 +2350,22 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         return lines;
     }
 
+    // The overlay Quest Tracker's list for a wizard (read only); null when it can't be read just now.
+    internal static JsonObject BotQuestTrackerFor(WizardData.Models.Player.Wizard wizard, string pick) {
+        if (wizard is null) {
+            return null;
+        }
+
+        try {
+            return OverlayQuestTracker.Build(wizard, null, pick ?? "");
+        }
+        catch (Exception ex) {
+            Logger.Debug("Ultimus: quest tracker for the status could not be read: {0}", Logger.Args(ex.Message));
+
+            return null;
+        }
+    }
+
     private void WriteStatus(string state, string why) {
         try {
             var members = new JsonArray();
@@ -2391,6 +2407,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 // Stats, deck cards and school, the same sheet as the Quest Team's (Niduus, 2026-11-13: "view their gear,
                 // stats and their current deck and quest").
                 BotShared.BotSheet.Fill((JsonObject) members[^1], wizard, member.Role);
+                // Every quest he holds, as the overlay's Quest Tracker lists them (Niduus, 2026-11-15: "portray exactly how they
+                // do in game"), for the Quest Tracker box on Ahziael's Ultimus page.
+                ((JsonObject) members[^1])["questTracker"] = BotQuestTrackerFor(wizard, _currentQuest);
                 // His quest tracker in detail: world, area, steps with counts, why, next, parked and needs help (Tracker.cs).
                 if (member == _team[0]) {
                     var detail = TrackerDetail(member);

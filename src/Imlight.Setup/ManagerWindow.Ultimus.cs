@@ -1550,6 +1550,7 @@ internal sealed partial class ManagerWindow {
             ShowTrainingRow(card.Training, member);
         }
 
+        _ultSheet.Status = status;
         _ultSheet.Show(status["members"] as JsonArray);
         ShowUltimusHelp((status["members"] as JsonArray)?.OfType<JsonObject>().FirstOrDefault()?["tracker"]?["parkedRows"] as JsonArray);
 
