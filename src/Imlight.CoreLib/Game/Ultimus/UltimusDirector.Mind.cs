@@ -376,6 +376,9 @@ internal sealed partial class UltimusDirectorActor {
     // Full health first: a tough creature, a plan he trusts little (Confidence), or a fight while he is careful (UltimusMood).
     private bool ToughFoeNow(UltimusPlanner.Target target) =>
         !CombatDuelComponent.IsInBattle(_team[0].GlobalId)
-        && (_carefulPlan || _riskPrepare && target?.Kind == UltimusPlanner.FIGHT || target?.Kind == UltimusPlanner.FIGHT && (_toughFoeNext || UltimusMood.Now == UltimusMood.Level.Careful && UltimusMood.LostRecently));
+        // Only a fight asks for it: a shop, a door or a talk is no fight, so the careful way never sends him to heal for
+        // one (his log, 2026-11-15: "This one's tough, healing up first" at full health, on a trip to a jeweler).
+        && target?.Kind == UltimusPlanner.FIGHT
+        && (_carefulPlan || _riskPrepare || _toughFoeNext || UltimusMood.Now == UltimusMood.Level.Careful && UltimusMood.LostRecently);
 
 }

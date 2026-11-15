@@ -741,7 +741,16 @@ internal static class UltimusPlanner {
         // A door (or sigil) is clicked; anything else is walked into.
         var door2 = live.Where(m => m.Kind is MinimapIndex.DOOR or MinimapIndex.SIGIL && string.Equals(m.To?.Trim(), exit.To, StringComparison.OrdinalIgnoreCase))
             .OrderBy(m => Far(exit.X, exit.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault();
-        if (door2 is not null && Far(exit.X, exit.Y, door2.Object.m_location.X, door2.Object.m_location.Y) < 50) {
+        // A door that leads to the same area is that exit's door even when its model stands away from the exit's own point
+        // (a shop front: the trigger is behind the wall, the door on the street). It is clicked, as a player does, at the
+        // door itself (his log, 2026-11-15: 5 fix rounds 109 from Jack Russell Jewelers' point, walking into the wall).
+        var doorFar = door2 is null ? float.MaxValue : Far(exit.X, exit.Y, door2.Object.m_location.X, door2.Object.m_location.Y);
+        if (door2 is not null && doorFar >= 50 && doorFar <= 600) {
+            return new Target(DOOR, door2.Object.m_location.X, door2.Object.m_location.Y, $"to {UltimusText.Zone(exit.To)} ({why})",
+                GlobalId: door2.Object.m_globalID.Full, To: exit.To, Key: key + "|door|" + exit.To, Z: door2.Object.m_location.Z);
+        }
+
+        if (door2 is not null && doorFar < 50) {
             return new Target(DOOR, exit.X, exit.Y, $"to {UltimusText.Zone(exit.To)} ({why})", GlobalId: door2.Object.m_globalID.Full, To: exit.To,
                 Key: key + "|door|" + exit.To, Z: exit.Z);
         }

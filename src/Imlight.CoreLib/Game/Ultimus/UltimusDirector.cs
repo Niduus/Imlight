@@ -676,6 +676,16 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
 
+        // A walk-through exit he can't get onto (its point is in a wall) with a door the game offers him right by it: he
+        // clicks the door, as a player presses X at a shop front (his log, 2026-11-15: Jack Russell Jewelers).
+        if (target.Kind == UltimusPlanner.EXIT && distance > reach && distance <= 300 && OfferedDoorNear(leader, target) is { } offered) {
+            Think($"I can't walk onto the way into {UltimusText.Zone(target.To)}, but the game offers me the door right by it, so I open it.",
+                "offered-door|" + target.Key);
+            ClickOnce(0, offered, ["Interact"], "opens the door " + target.What);
+
+            return;
+        }
+
         if (distance > reach) {
             WalkTo(0, target);
 
@@ -1857,6 +1867,33 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     // "I need him more responsive and more active to correct mistakes"): a doorway is walked through, as a player walks in;
     // still nothing, the door is pressed straight away, as a player presses X; and it is written up when nothing works.
     private (string Key, DateTime Since, float FromX, float FromY)? _doorWait;
+
+    // A door the game offers him (an Interact option) within 250 of an exit's point, standing within 300 of it: that door.
+    private static UltimusPlanner.Target OfferedDoorNear(UltimusMember.Status leader, UltimusPlanner.Target exit) {
+        var live = MinimapIndex.In(leader.ZoneActor);
+        foreach (var (globalId, options) in leader.Options) {
+            if (options is null || !options.Any(o => o.Service == "Interact")) {
+                continue;
+            }
+
+            var mark = live.FirstOrDefault(m => m.Object.m_globalID.Full == globalId);
+            // Only a door or a sigil: never a person or a quest thing.
+            if (mark is null || mark.Kind is not (MinimapIndex.DOOR or MinimapIndex.SIGIL)) {
+                continue;
+            }
+
+            if (!string.IsNullOrEmpty(mark.To) && !string.IsNullOrEmpty(exit.To) && !string.Equals(mark.To.Trim(), exit.To, StringComparison.OrdinalIgnoreCase)) {
+                continue;
+            }
+
+            var (x, y) = (mark.Object.m_location.X, mark.Object.m_location.Y);
+            if (UltimusPlanner.Far(x, y, exit.X, exit.Y) <= 250) {
+                return new UltimusPlanner.Target(UltimusPlanner.DOOR, x, y, exit.What, GlobalId: globalId, To: exit.To, Key: exit.Key, Z: mark.Object.m_location.Z);
+            }
+        }
+
+        return null;
+    }
 
     private void DoorWithoutOptions(UltimusMember.Status leader, UltimusPlanner.Target target) {
         if (_doorWait is not { } wait || wait.Key != target.Key) {

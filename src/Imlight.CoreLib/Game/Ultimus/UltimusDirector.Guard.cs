@@ -88,7 +88,7 @@ internal sealed partial class UltimusDirectorActor {
 
     /// <summary>A side trip picked: its time budget runs from the first pick. Past it, it is dropped and side trips close for a while.</summary>
     private UltimusPlanner.Target SideTrip(UltimusPlanner.Target trip, string kind) {
-        if (trip is null) {
+        if (trip is null || TripOutOfReach(trip)) {
             return null;
         }
 
@@ -110,6 +110,48 @@ internal sealed partial class UltimusDirectorActor {
             "budget-side|" + kind);
 
         return null;
+    }
+
+    // The ladder rules that are trips away from the story (UltimusDirector.cs PickLadder).
+    private static readonly HashSet<string> s_tripSources = new(StringComparer.Ordinal) {
+        "training", "shopping", "bazaar-selling", "selling", "bazaar", "treasure-cards",
+    };
+
+    // Side trips that got him stuck on the way: their place (area or step key) is skipped for a while.
+    private readonly Dictionary<string, DateTime> _tripsOutOfReach = new(StringComparer.OrdinalIgnoreCase);
+
+    private static string TripPlace(UltimusPlanner.Target trip) => string.IsNullOrEmpty(trip?.To) ? GoalId(trip) : trip.To;
+
+    private bool TripOutOfReach(UltimusPlanner.Target trip) {
+        foreach (var gone in _tripsOutOfReach.Where(t => DateTime.UtcNow > t.Value).Select(t => t.Key).ToList()) {
+            _tripsOutOfReach.Remove(gone);
+        }
+
+        return trip is not null && (_tripsOutOfReach.ContainsKey(TripPlace(trip)) || _tripsOutOfReach.ContainsKey(GoalId(trip)));
+    }
+
+    /// <summary>
+    /// A stuck alarm while on a side trip: the trip is dropped at once (no fix rounds, no parking, no issue on the story
+    /// quest), its place is skipped for Guard.TripOutOfReachHours, and he goes back to the story. True when it dropped one.
+    /// </summary>
+    private bool DropStuckSideTrip(UltimusMember.Status leader, UltimusPlanner.Target goal, string where) {
+        if (_sideTripKey is not { } kind || goal is null || !s_tripSources.Contains(_pickSource)) {
+            return false;
+        }
+
+        var hours = Math.Max(0.5, UltimusPlaybook.Value("Guard.TripOutOfReachHours"));
+        _tripsOutOfReach[TripPlace(goal)] = DateTime.UtcNow.AddHours(hours);
+        _tripsOutOfReach[GoalId(goal)] = DateTime.UtcNow.AddHours(hours);
+        Note("Ultimus", $"SIDE TRIP DROPPED: got stuck in {where} on the {kind} trip \"{goal.What}\"; skips that place for {hours:0.#} hour(s) and goes back to the story.",
+            UltimusLink.ABNORMAL);
+        Think($"I got stuck on my way to \"{goal.What}\", and it is only a side trip ({kind}). It is not worth getting stuck for, so I drop it, " +
+              $"leave that place alone for {hours:0.#} hour(s) ({UltimusPlaybook.Cite("Guard.TripOutOfReachHours")}) and go back to my story.", "trip-drop|" + GoalId(goal));
+        BotShared.BotMistakes.Record("Ultimus", BotShared.BotMistakes.STUCK, leader.Zone ?? "", leader.X, leader.Y, $"{goal.Quest}|{goal.Goal}|{goal.What}",
+            $"Stuck on a side trip ({kind}) at {where}.", _lastReasoning, "Side trip dropped at once; the place is skipped for a while.", "drop side trip");
+        CloseSideTrips(TimeSpan.FromMinutes(10));
+        Replan();
+
+        return true;
     }
 
     private void CloseSideTrips(TimeSpan forHow) {

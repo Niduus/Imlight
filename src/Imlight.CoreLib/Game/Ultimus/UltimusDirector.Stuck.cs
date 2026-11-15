@@ -88,6 +88,13 @@ internal sealed partial class UltimusDirectorActor {
         // through it no longer counts (Niduus, 2026-11-13: "adapt to new paths to get to his quest goal").
         RouteMemory.Stuck(member.CharId, member.Zone, member.X, member.Y);
 
+        // Stuck on a side trip (a shop, a trainer, selling, the Bazaar): it is not worth a single fix round. He drops it at
+        // once, remembers that place as out of reach for a while, and goes back to the story (his log, 2026-11-15: stuck
+        // 5 rounds at the door of Jack Russell Jewelers for a ring, filed as a BROKEN STEP of his story quest).
+        if (index == 0 && DropStuckSideTrip(member, goal, where)) {
+            return;
+        }
+
         // Ten alarms at one spot on one step: the same moves again are no use (Niduus, 2026-11-14, approved: at the Frozen
         // Forge he tried the same four fixes 75 times). He changes his approach: the creatures around him are fought, or,
         // with none, the step is set aside for a while.

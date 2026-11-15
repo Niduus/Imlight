@@ -154,10 +154,6 @@ internal sealed partial class UltimusDirectorActor {
         // A boss is never started at low health (Niduus, 2026-11-14: at 34% right after a battle he set off for Krokenkahmen):
         // under half health, he heals first before a boss, whatever the 25% hunt rule says for ordinary steps.
         var bossNext = BossNext(leader, target) && share < 0.5;
-        if (bossNext || onlyPrep) {
-            Announce(SAY_TOUGH, "This one's tough, healing up first.");
-        }
-
         if (bossNext && !InDungeon(leader)) {
             Think($"I'm at {share:P0} health and my next fight is a boss. I don't start a boss under half health, so I heal first.",
                 "boss-heal|" + (target?.Key ?? ""));
@@ -190,6 +186,12 @@ internal sealed partial class UltimusDirectorActor {
             _hurtSince = DateTime.MaxValue;
 
             return false;
+        }
+
+        // Said only now that he really goes to heal, and in true words: health or mana, whichever is low (it was said at
+        // full health, then he went on without healing).
+        if (bossNext || onlyPrep) {
+            Announce(SAY_TOUGH, lowHealth ? "This one's tough, healing up first." : "This one's tough, getting my mana up first.");
         }
 
         // 3. Wisps in a nearby area or potions from a potion shop, whichever is fewer areas away (wisps win a tie: free).

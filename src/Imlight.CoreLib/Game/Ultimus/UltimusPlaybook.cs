@@ -82,6 +82,7 @@ internal static class UltimusPlaybook {
         ("Guard", new("SideTripMinutes", 8, "Time budget for a side trip (a shop, the Bazaar, a trainer, selling): past it I drop the trip and go back to the story.")),
         ("Guard", new("NoStoryMinutes", 12, "Off-track alarm: no story progress (a step, a quest, XP while levelling for one) for this long and I stop and plan again.")),
         ("Guard", new("CheckMinutes", 3, "Every this-many minutes I ask: am I closer to my goal than last time? Two noes in a row and I switch strategy.")),
+        ("Guard", new("TripOutOfReachHours", 3, "A side trip (shop, trainer, selling, Bazaar) that got me stuck on the way is dropped at once, and its place is left alone this many hours.")),
         ("Guard", new("FlipFlopBreaker", 1, "1 = on: when two of my rules take turns between two goals (A, B, A, B) with no real progress, I hold to one of them until it is done. 0 = off.")),
         ("Guard", new("FlipFlopSwitches", 4, "How many turns between the same two goals, with no real progress, make a flip-flop (3 or more).")),
         ("Guard", new("FlipFlopWindowMinutes", 10, "The turns must happen within this many minutes.")),
