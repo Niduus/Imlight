@@ -473,9 +473,12 @@ internal sealed partial class ManagerWindow {
 
         private void ShowParts() {
             _ovParts.Children.Clear();
-            var mine = ManagerTheme.MakeButton("Client: my own", primary: !_ovServerPart);
+            // Short on the game's bar, where room is tight; the tip says the rest.
+            var mine = ManagerTheme.MakeButton(_inGame ? "Mine" : "Client: my own", primary: !_ovServerPart);
+            ToolTip.SetTip(mine, "Your own pieces, only on your game.");
             mine.Click += (_, _) => UsePart(false);
-            var server = ManagerTheme.MakeButton("Server: everyone on my server", primary: _ovServerPart);
+            var server = ManagerTheme.MakeButton(_inGame ? "Server" : "Server: everyone on my server", primary: _ovServerPart);
+            ToolTip.SetTip(server, "What every player on your server sees.");
             server.Click += (_, _) => UsePart(true);
             _ovParts.Children.Add(mine);
             _ovParts.Children.Add(server);
@@ -595,32 +598,91 @@ internal sealed partial class ManagerWindow {
         /// and a small bar to add, remove, change words, or open the full designer.
         /// </summary>
         internal Control BuildInGame(Action fullDesigner, Action done) {
+            // Cleaner and shorter (Niduus, 2026-11-15: "Improve Overlay UI menu"): two rows of labelled groups. Top: whose
+            // overlay, what to add (the plain pieces, then everything from the plugins in one drop-down), and Done. Bottom:
+            // the picked piece (its words, its parent, Remove), the grid, and the full designer.
             var remove = Danger(Action(Plain("Remove"), RemoveOverlayElement));
+            ToolTip.SetTip(remove, "Take the picked piece off the overlay.");
             var full = Plain("Full designer");
+            ToolTip.SetTip(full, "Every setting for every piece: fonts, colours, sizes, add-ons.");
             full.Click += (_, _) => fullDesigner();
             var finish = ManagerTheme.MakeButton("Done", primary: true);
             finish.Click += (_, _) => done();
+
+            // More pieces, in a small menu so the bar stays short.
+            var more = Plain("More ▾");
+            ToolTip.SetTip(more, "A picture, a minimap or a Quest Tracker.");
+            more.Click += (_, _) => {
+                var menu = new StackPanel {
+                    Spacing = 4,
+                    Children = {
+                        Action(Plain("Picture"), AddPictureAsync),
+                        Action(Plain("Minimap"), () => AddOverlayElement(OverlayElement.MINIMAP)),
+                        Action(Plain("Quest Tracker"), () => AddOverlayElement(OverlayElement.QUEST_TRACKER)),
+                    },
+                };
+                foreach (var item in menu.Children.OfType<Button>()) {
+                    item.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    item.Click += (_, _) => more.Flyout?.Hide();
+                }
+
+                more.Flyout = new Flyout { Placement = PlacementMode.Bottom, Content = menu };
+                more.Flyout.ShowAt(more);
+            };
+
+            // The plugins' pieces (the same list as the full designer's Plugins), put on with one click.
+            FillAddons();
+            _ = FillShelfAsync(false);
+            _ovPlugins.MinWidth = 230;
+            _ovPlugins.MaxWidth = 300;
+            _ovPlugins.PlaceholderText = "Pick a plugin piece";
+            ToolTip.SetTip(_ovPlugins, "Every piece from your add-ons: Minimap, Quest Tracker, the Ultimus and Quest Team Spectators and more. " +
+                                       "\"(on)\" means it is on now; \"(download)\" gets it first.");
+            var put = Action(Primary("Put on"), PutPluginOnAsync);
+            var off = Action(Plain("Take off"), TakePluginOffAsync);
+
+            var snap = new CheckBox { Content = "Snap", IsChecked = _ovGrid.SnapToGrid || _ovGrid.SnapToPieces, VerticalAlignment = VerticalAlignment.Center };
+            ToolTip.SetTip(snap, "Pieces snap to the grid and to each other while you drag. Hold Alt to drag freely.");
+            snap.IsCheckedChanged += (_, _) => {
+                _ovGrid.SnapToGrid = _ovGrid.SnapToPieces = snap.IsChecked == true;
+                GridChanged();
+            };
+            var gridShow = OvCheck("Grid", _ovGrid.Show, v => { _ovGrid.Show = v; GridChanged(); });
+            var gridMore = GridSettingsButton();
+            gridMore.Content = "⚙";
+            ToolTip.SetTip(gridMore, "Grid settings: square size, colours, snapping.");
+            _ovQuickWords.Width = 200;
+
+            var help = new TextBlock {
+                Text = "Click a piece to pick it, drag to move, drag an edge to size it.", FontSize = ManagerTheme.FONT_SMALL, Foreground = MUTED,
+                VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap,
+            };
+
             var bar = new Border {
                 HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(0, 10, 0, 0),
-                Padding = new Thickness(10, 8), CornerRadius = new CornerRadius(10), BorderBrush = LINE, BorderThickness = new Thickness(1),
+                Padding = new Thickness(8, 6), CornerRadius = new CornerRadius(10), BorderBrush = LINE, BorderThickness = new Thickness(1),
                 Background = new SolidColorBrush(Color.FromArgb(0xEE, 0x14, 0x16, 0x22)),
                 Child = new StackPanel {
                     Spacing = 6,
                     Children = {
                         new WrapPanel {
+                            ItemSpacing = 8, LineSpacing = 6,
                             Children = {
-                                Spaced(_ovParts), Spaced(Block(OverlayElement.TEXT)), Spaced(Block(OverlayElement.BOX)), Spaced(Block(OverlayElement.BUTTON)),
-                                Spaced(Action(Plain("Picture"), AddPictureAsync)), Spaced(Action(Plain("Minimap"), () => AddOverlayElement(OverlayElement.MINIMAP))),
-                                Spaced(Action(Plain("Quest Tracker"), () => AddOverlayElement(OverlayElement.QUEST_TRACKER))),
-                                Spaced(_ovQuickWords), Spaced(_ovQuickParent),
-                                Spaced(OvCheck("Grid", _ovGrid.Show, v => { _ovGrid.Show = v; GridChanged(); })),
-                                Spaced(OvCheck("Snap to grid", _ovGrid.SnapToGrid, v => { _ovGrid.SnapToGrid = v; GridChanged(); })),
-                                Spaced(OvCheck("Snap to pieces", _ovGrid.SnapToPieces, v => { _ovGrid.SnapToPieces = v; GridChanged(); })),
-                                Spaced(GridSettingsButton()),
-                                Spaced(remove), Spaced(full), Spaced(finish),
+                                BarGroup("Overlay", _ovParts),
+                                BarGroup("Add", Block(OverlayElement.TEXT), Block(OverlayElement.BOX), Block(OverlayElement.BUTTON), more),
+                                BarGroup("Plugins", _ovPlugins, put, off),
+                                WithMargin(finish, new Thickness(4, 0, 0, 0)),
                             },
                         },
-                        Sub("Click a text or box to pick it, drag to move, drag its right or bottom edge to size it. Drag Text or Box onto the game to add one."),
+                        new WrapPanel {
+                            ItemSpacing = 8, LineSpacing = 6,
+                            Children = {
+                                BarGroup("Picked", _ovQuickWords, _ovQuickParent, remove),
+                                BarGroup("Grid", gridShow, snap, gridMore),
+                                BarGroup("More", full),
+                                help,
+                            },
+                        },
                     },
                 },
             };
@@ -628,6 +690,23 @@ internal sealed partial class ManagerWindow {
 
             return new Panel {
                 Children = { new Viewbox { Stretch = Stretch.Fill, Child = _ovPreview }, bar },
+            };
+        }
+
+        // One labelled group on the game's bar: a small name, then its controls in a row, in a faint box.
+        private static Control BarGroup(string name, params Control[] controls) {
+            var row = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, VerticalAlignment = VerticalAlignment.Center };
+            row.Children.Add(new TextBlock {
+                Text = name, FontSize = ManagerTheme.FONT_SMALL, Foreground = MUTED, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 2, 0),
+            });
+            foreach (var control in controls) {
+                control.VerticalAlignment = VerticalAlignment.Center;
+                row.Children.Add(control);
+            }
+
+            return new Border {
+                Background = new SolidColorBrush(Color.FromArgb(0x30, 0xFF, 0xFF, 0xFF)), CornerRadius = new CornerRadius(8), Padding = new Thickness(8, 4),
+                Child = row,
             };
         }
 
