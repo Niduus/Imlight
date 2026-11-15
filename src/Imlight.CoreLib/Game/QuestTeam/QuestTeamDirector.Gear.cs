@@ -59,7 +59,11 @@ internal sealed partial class QuestTeamDirectorActor {
     private void KeepSoloInstances() {
         for (var i = 0; i < _team.Count && i < _actors.Count; i++) {
             var member = _team[i];
-            var alone = member.Wizard?.ZoneIsInstance == true && member.ZoneActor is not null
+            // A shop is every player's own copy, and a shopping trip is done alone: no pulling each other out through the
+            // friends list (his log, 2026-11-15: the four went in and out of the Ring Shop 3 times, each friend teleport
+            // taking the others back to the street before they had bought anything).
+            var shopping = _shopTrip is not null || (member.Zone ?? "").Contains("Shop", StringComparison.OrdinalIgnoreCase);
+            var alone = !shopping && member.Wizard?.ZoneIsInstance == true && member.ZoneActor is not null
                         && !_team.Any(o => o != member && member.ZoneActor.Equals(o.ZoneActor));
             if (!alone) {
                 _friendTriedAt.Remove(member.Role);

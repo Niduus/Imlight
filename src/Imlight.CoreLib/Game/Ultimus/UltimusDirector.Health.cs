@@ -220,7 +220,7 @@ internal sealed partial class UltimusDirectorActor {
             if (pick.Key?.StartsWith(HUB_KEY, StringComparison.Ordinal) == true) {
                 if (!PressHubButton(leader, pick.What)) {
                     // The button can't be pressed here: walk the normal way.
-                    WalkTo(0, UltimusPlanner.Travel(leader, pick.Key[HUB_KEY.Length..], pick.What, "heal|" + pick.Key) ?? pick);
+                    GoBy(leader, UltimusPlanner.Travel(leader, pick.Key[HUB_KEY.Length..], pick.What, "heal|" + pick.Key) ?? pick);
                 }
             }
             else if (pick.Kind == UltimusPlanner.SHOP && UltimusPlanner.Far(leader.X, leader.Y, pick.X, pick.Y) < SHOP_REACH) {
@@ -243,7 +243,7 @@ internal sealed partial class UltimusDirectorActor {
                         "healpick|" + pick.Key);
                 }
 
-                WalkTo(0, pick);
+                GoBy(leader, pick);
             }
 
             return true;
@@ -427,6 +427,45 @@ internal sealed partial class UltimusDirectorActor {
 
     internal static bool HuntsAt(double share) => share < UltimusPlaybook.Value("Quest.HuntHealBelow");
 
+    /// <summary>
+    /// A heal or potion trip's way on: a door or the Spiral Door is clicked once he is by it, an exit walked into, as on the
+    /// story's own way; anything else is walked to. A trip only walked to its door before, so he stood by Wolfminster Abbey's
+    /// Spiral Door for 40 minutes and 7 stuck alarms on the way to Wizard City's potion shop, never pressing it (his log,
+    /// 2026-11-15, v0.10.873).
+    /// </summary>
+    private void GoBy(UltimusMember.Status leader, UltimusPlanner.Target target) {
+        var distance = UltimusPlanner.Far(leader.X, leader.Y, target.X, target.Y);
+        // In the game's range (it offers the click) counts as there, as on the story's way.
+        var there = distance <= 140 || (distance <= 300 && target.GlobalId != 0 && leader.Options.ContainsKey(target.GlobalId));
+        switch (target.Kind) {
+            case UltimusPlanner.SPIRAL when there:
+                if (CanClick(target.Key + "|0")) {
+                    Clicked(target.Key + "|0");
+                    Note(leader.Role, $"{leader.Name} uses the Spiral Door to {UltimusText.Zone(target.To)}.");
+                    _actors[0].Tell(new UltimusMember.WorldTeleport(target.GlobalId, target.To));
+                    _leaderLastTarget = target;
+                }
+
+                return;
+            case UltimusPlanner.DOOR when there:
+                if (leader.Options.ContainsKey(target.GlobalId)) {
+                    _doorWait = null;
+                    ClickOnce(0, target, ["Interact"], "opens the door " + target.What);
+                }
+                else {
+                    DoorWithoutOptions(leader, target);
+                }
+
+                return;
+            case UltimusPlanner.EXIT when distance <= 25:
+                IntoExit(leader, target);
+
+                return;
+        }
+
+        WalkTo(0, target);
+    }
+
     /// <summary>A player's "go get potions" he agreed to: off to the nearest potion shop until his potions are full.</summary>
     private bool PotionRun(UltimusMember.Status leader) {
         if (DateTime.UtcNow >= _potionRunUntil || leader.Wizard?.GameStats is not { } stats || CombatDuelComponent.IsInBattle(leader.GlobalId)) {
@@ -457,7 +496,7 @@ internal sealed partial class UltimusDirectorActor {
             }
         }
         else {
-            WalkTo(0, shop);
+            GoBy(leader, shop);
         }
 
         return true;
