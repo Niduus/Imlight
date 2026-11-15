@@ -123,14 +123,17 @@ internal sealed partial class UltimusDirectorActor {
                     return;
                 case UltimusOrders.Kind.OwnWay:
                     UltimusOrders.Clear();
+                    RememberBattleOrder(heard.SpeakerCharId, heard.SpeakerName, "");
                     said.Add("Okay, I'll play my own way again");
                     break;
                 case UltimusOrders.Kind.LeaderFirst:
                     UltimusOrders.SetLeaderFirst(heard.SpeakerCharId);
+                    RememberBattleOrder(heard.SpeakerCharId, heard.SpeakerName, "leader-first");
                     said.Add("Okay, you pick first in battle and I'll go after you");
                     break;
                 case UltimusOrders.Kind.GoFirst:
                     UltimusOrders.SetGoFirst();
+                    RememberBattleOrder(heard.SpeakerCharId, heard.SpeakerName, "go-first");
                     said.Add("Okay, I'll pick first");
                     break;
                 case UltimusOrders.Kind.Focus:
@@ -155,7 +158,13 @@ internal sealed partial class UltimusDirectorActor {
         Note("Ultimus", $"ORDER from {heard.SpeakerName} (group leader): \"{UltimusText.Short(heard.Text, 80)}\" ({how}): " +
                         string.Join("; ", orders.Select(o => $"{o.Kind}{(o.Card.Length > 0 ? " " + o.Card : "")}{(o.Target.Length > 0 ? " on " + o.Target : "")}")));
         Think($"{heard.SpeakerName}, my group leader, told me: \"{UltimusText.Short(heard.Text, 80)}\". {line}.", "order|" + heard.Text);
-        if (line.Length > 0) {
+        // In battle only a short "Okay!", once a round at most (the battle says the rest when it acts); out of battle, the whole line.
+        if (fighting) {
+            if (line.Length > 0 && UltimusOrders.MaySayThisRound()) {
+                SendReply(heard, "Okay!", "leader commands");
+            }
+        }
+        else if (line.Length > 0) {
             SendReply(heard, BotShared.BotSocial.Scrub(line + "!"), "leader commands");
         }
     }

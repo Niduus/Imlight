@@ -37,7 +37,17 @@ namespace Imlight.CoreLib.Game.Zone.Components;
 internal sealed partial class CombatDuelComponent {
 
     private void UltimusSays(CombatDuelSubCircle member, string text) {
-        if (UltimusDirector.ActorOf(UltimusRole(member)) is { } wizard && !string.IsNullOrWhiteSpace(text)) {
+        if (string.IsNullOrWhiteSpace(text)) {
+            return;
+        }
+
+        // One line a round at most in battle chat; the rest goes to his Thoughts only.
+        if (!UltimusOrders.MaySayThisRound()) {
+            UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: (would say \"{text}\", but already spoke this round)");
+            return;
+        }
+
+        if (UltimusDirector.ActorOf(UltimusRole(member)) is { } wizard) {
             wizard.Tell(new UltimusMember.SayText(BotSocial.Scrub(text)), Akka.Actor.ActorRefs.NoSender);
         }
     }
@@ -60,7 +70,7 @@ internal sealed partial class CombatDuelComponent {
                 case UltimusOrders.Kind.Flee:
                     UltimusOrders.Done(pending);
                     UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: {pending.ByName} (group leader) said to flee: presses Flee.");
-                    UltimusSays(member, "Fleeing, as you said!");
+                    UltimusSays(member, "Okay!");
                     UltimusDirector.ActorOf(UltimusRole(member))?.Tell(new UltimusMember.Flee(), Akka.Actor.ActorRefs.NoSender);
                     return true;
                 case UltimusOrders.Kind.Draw when !deadline:
@@ -76,6 +86,7 @@ internal sealed partial class CombatDuelComponent {
                     }
 
                     UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: {pending.ByName} (group leader) said to draw: draws a treasure card.");
+                    UltimusSays(member, "Okay!");
                     _ultimusDrew.Add((Duel.m_roundNum, member.SlotIndex));
                     UltimusDirector.ActorOf(UltimusRole(member))?.Tell(new UltimusMember.DrawTreasure(), Akka.Actor.ActorRefs.NoSender);
                     Timers.StartSingleTimer(ULTIMUS_THINK_KEY, new UltimusThink(Duel.m_roundNum, false), TimeSpan.FromSeconds(1.5));
@@ -120,6 +131,7 @@ internal sealed partial class CombatDuelComponent {
             if (order.Kind == UltimusOrders.Kind.Pass) {
                 UltimusOrders.Done(pending);
                 ordered = new(UltimusTactics.Move.Pass, 0, -1, $"passes, as {pending.ByName} (group leader) said");
+                UltimusSays(member, "Okay!");
                 continue;
             }
 
@@ -169,6 +181,7 @@ internal sealed partial class CombatDuelComponent {
             }
 
             UltimusOrders.Done(pending);
+            UltimusSays(member, "Okay!");
             var on = target < 0 ? "" : $" on {UltimusTactics.Name(circles.First(c => c.SlotIndex == target))}";
             ordered = new(UltimusTactics.Move.Cast, card.Index, target,
                 $"casts {card.Card.Shown}{on}, as {pending.ByName} (group leader) {(order.Kind == UltimusOrders.Kind.Suggest ? "suggested" : "said")}");

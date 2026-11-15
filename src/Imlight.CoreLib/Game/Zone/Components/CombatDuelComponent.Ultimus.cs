@@ -182,6 +182,10 @@ internal sealed partial class CombatDuelComponent {
         }
 
         UltimusDownedRound();
+        if (UltimusCircles.Any()) {
+            UltimusOrders.NewRound();
+        }
+
         if (IsPvPDuel || !_awaitingCombatMoves || !UltimusCircles.Any()) {
             return;
         }

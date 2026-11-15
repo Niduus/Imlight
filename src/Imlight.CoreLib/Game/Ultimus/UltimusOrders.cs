@@ -84,6 +84,25 @@ internal static class UltimusOrders {
     private static string s_focus = "";
     private static DateTime s_focusAt = DateTime.MinValue;
 
+    // Battle chat stays short (Niduus, 2026-11-15, "all"): one line a round at most from him, his "Okay!" or what he can't do.
+    private static long s_roundCount;
+    private static long s_saidRound = -1;
+
+    /// <summary>A new battle round began (any battle he is in): he may say one line in it.</summary>
+    internal static void NewRound() => System.Threading.Interlocked.Increment(ref s_roundCount);
+
+    /// <summary>True once a round: the one line he may say in battle chat this round.</summary>
+    internal static bool MaySayThisRound() {
+        lock (s_lock) {
+            if (s_saidRound == s_roundCount) {
+                return false;
+            }
+
+            s_saidRound = s_roundCount;
+            return true;
+        }
+    }
+
     internal static void SetStay(string zone, float x, float y) => Stay = (zone ?? "", x, y);
     internal static void EndStay() => Stay = null;
 

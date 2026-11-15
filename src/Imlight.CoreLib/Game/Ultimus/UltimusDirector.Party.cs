@@ -82,6 +82,12 @@ internal sealed partial class UltimusDirectorActor {
                 UltimusText.Zone(leader.Zone), name, 1);
             Count("groups joined");
             _actors[0].Tell(new UltimusMember.WhisperText(BotShared.BotSocial.Scrub($"Thanks for the invite, {name}! I'll come along with you."), mate.CharId));
+            // A leader's favorite battle order from an earlier group with them (UltimusDirector.Orders.cs).
+            if (mate.CharId == group.LeaderCharId && RecallBattleOrder(mate.CharId) is { } remembered) {
+                Note("Ultimus", $"PARTY: remembers how {name} likes battles run: {remembered}");
+                Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(2), _actors[0],
+                    new UltimusMember.WhisperText(BotShared.BotSocial.Scrub(remembered), mate.CharId), Self);
+            }
         }
 
         // Going along with a player is what he is doing: no off-track or no-progress alarm for it.

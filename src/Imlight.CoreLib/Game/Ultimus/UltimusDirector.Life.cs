@@ -721,6 +721,42 @@ internal sealed partial class UltimusDirectorActor {
         public int Times { get; set; }
         public DateTime First { get; set; }
         public DateTime Last { get; set; }
+        // Their lasting battle order as his group leader, kept between groups: "leader-first", "go-first" or "".
+        public string BattleOrder { get; set; } = "";
+    }
+
+    /// <summary>Keeps how a group leader likes battles run ("let me go first" / "you go first"), for the next group with them.</summary>
+    private void RememberBattleOrder(ulong charId, string name, string order) {
+        var met = MetPlayers();
+        if (!met.TryGetValue(charId, out var player)) {
+            met[charId] = player = new Met { Name = name ?? "", First = DateTime.UtcNow, Last = DateTime.UtcNow };
+        }
+
+        player.BattleOrder = order ?? "";
+        try {
+            File.WriteAllText(Path.Combine(UltimusWire.Folder, PLAYERS_FILE), JsonSerializer.Serialize(met, new JsonSerializerOptions { WriteIndented = true }));
+        }
+        catch (Exception e) {
+            Logger.Debug("Ultimus: could not write {0}: {1}", Logger.Args(PLAYERS_FILE, e.Message));
+        }
+    }
+
+    /// <summary>A leader's kept battle order, applied when a group with them starts; the line he says about it, or null.</summary>
+    private string RecallBattleOrder(ulong charId) {
+        if (!MetPlayers().TryGetValue(charId, out var player)) {
+            return null;
+        }
+
+        switch (player.BattleOrder) {
+            case "leader-first":
+                UltimusOrders.SetLeaderFirst(charId);
+                return "I remember you like to go first in battles, so I'll wait for your pick.";
+            case "go-first":
+                UltimusOrders.SetGoFirst();
+                return "I remember you like me to pick first in battles, so I will.";
+            default:
+                return null;
+        }
     }
 
     private Dictionary<ulong, Met> _met;
