@@ -307,6 +307,8 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
+        // How often its fights lately had two or more enemies: a hit on all of them goes in when that is often.
+        situation = BotCards.WithCrowd(situation, member.GlobalId);
         var key = situation.Describe();
         if (!force && _deckFor.GetValueOrDefault(member.Role) == key) {
             return;

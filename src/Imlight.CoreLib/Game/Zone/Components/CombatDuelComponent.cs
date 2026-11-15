@@ -772,6 +772,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // Re-telegraph minion AI moves now that the planning HUD exists.
         ResendMinionMoveSelections();
 
+        // How many enemies the server's own wizards face, for the crowd share their decks plan for (CombatDuelComponent.Bots.cs).
+        BotFightSizes();
+
         // Bot Players think once the real players have picked (CombatDuelComponent.Bots.cs).
         BotsPlanningBegins();
 

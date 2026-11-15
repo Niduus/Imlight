@@ -54,6 +54,21 @@ internal sealed partial class CombatDuelComponent {
     private static bool IsBot(CombatDuelSubCircle circle)
         => circle?.ParticipantObject is { } participant && BotIds.IsBotObject(participant.m_globalID.Full);
 
+    /// <summary>
+    /// Each round: how many enemies Ultimus, the Quest Team and Bot Players face in this fight (the most seen is kept), so
+    /// their decks pack a hit on all enemies when their fights are often crowds (BotCards.CrowdShare).
+    /// </summary>
+    private void BotFightSizes() {
+        if (IsPvPDuel) {
+            return;
+        }
+
+        var circles = SubCircles.Where(c => c is { Occupied: true }).ToList();
+        foreach (var me in circles.Where(c => c.ParticipantObject is not null && (IsBot(c) || UltimusRole(c) is not null || QuestTeamRole(c) is not null))) {
+            BotCards.FightSeen(me.ParticipantObject.m_globalID.Full, Duel.m_duelID.Full, circles.Count(c => c.OccupiedTeam != me.OccupiedTeam));
+        }
+    }
+
     [MessageHandler(typeof(BotJoinBattle))]
     private void ReceiveBotJoinBattle(BotJoinBattle message) {
         string refusal = null;

@@ -47,12 +47,28 @@ internal static class BotCards {
         /// <summary>The schools the enemies' decks can hit with, most first (Ultimus reads them: UltimusScout); empty when not known.</summary>
         internal IReadOnlyList<string> HitSchools { get; init; } = [];
 
-        internal string Describe()
-            => HitSchools.Count > 0 ? $"{DescribeFoe()}, hitting with {string.Join(", ", HitSchools.Take(3))}" : DescribeFoe();
+        /// <summary>
+        /// How often this wizard's fights lately had two or more enemies (0 to 1, BotCards.CrowdShare), for a deck made before
+        /// the enemies are counted: a crowd is likely, so a hit on all enemies goes in.
+        /// </summary>
+        internal double CrowdShare { get; init; }
+
+        /// <summary>Two or more enemies now, or (not counted yet) most of its recent fights had that many.</summary>
+        internal bool CrowdLikely => Enemies >= 2 || (Enemies == 0 && CrowdShare >= CROWD_MOSTLY);
+
+        /// <summary>A hit on all enemies earns a place: a crowd now, or often enough lately.</summary>
+        internal bool WantsAllHit => Enemies >= 2 || (Enemies == 0 && CrowdShare >= CROWD_SOMETIMES);
+
+        internal string Describe() {
+            var foe = HitSchools.Count > 0 ? $"{DescribeFoe()}, hitting with {string.Join(", ", HitSchools.Take(3))}" : DescribeFoe();
+
+            return Enemies == 0 && CrowdShare >= CROWD_SOMETIMES
+                ? $"{foe} ({(CrowdShare >= CROWD_MOSTLY ? "most" : "many")} of my fights lately had 2+ enemies)" : foe;
+        }
 
         private string DescribeFoe()
             => Boss ? $"a boss{(EnemySchool.Length > 0 ? $" ({EnemySchool})" : "")}"
-                : Enemies >= 3 ? $"{Enemies} enemies{(EnemySchool.Length > 0 ? $" ({EnemySchool})" : "")}"
+                : Enemies >= 2 ? $"{Enemies} enemies{(EnemySchool.Length > 0 ? $" ({EnemySchool})" : "")}"
                 : EnemySchool.Length > 0 ? $"{EnemySchool} enemies" : "any fight";
 
     }
@@ -68,6 +84,60 @@ internal static class BotCards {
     }
 
     private enum Kind { Hit, Heal, Shield, Blade, Trap, Other }
+
+    // ---------------------------------------------------------------------
+    // How big its fights are (Niduus, 2026-11-15: "he's fighting 2+ mobs and doesn't have sandstorm in deck. Improve AoE
+    // packing"): a player who keeps meeting two or three enemies at once packs a hit on all of them, before they see the
+    // next group. Each wizard's last fights are counted, and the deck follows what it actually meets in the areas it is in.
+    // ---------------------------------------------------------------------
+
+    private const int FIGHTS_REMEMBERED = 12;
+    private const int FIGHTS_TO_TRUST = 3;
+    // Not enough fights seen yet: most quest fights in the game send two or more enemies.
+    private const double CROWD_UNKNOWN = 0.5;
+    internal const double CROWD_SOMETIMES = 0.25;
+    internal const double CROWD_MOSTLY = 0.6;
+    private static readonly ConcurrentDictionary<ulong, List<(ulong Duel, int Enemies)>> s_fightSizes = new();
+
+    /// <summary>A fight it is in (by battle id) has this many enemies; the most seen in that fight is kept.</summary>
+    internal static void FightSeen(ulong wizard, ulong duel, int enemies) {
+        if (wizard == 0 || enemies <= 0) {
+            return;
+        }
+
+        var fights = s_fightSizes.GetOrAdd(wizard, _ => []);
+        lock (fights) {
+            var at = fights.FindIndex(f => f.Duel == duel);
+            if (at >= 0) {
+                fights[at] = (duel, Math.Max(fights[at].Enemies, enemies));
+                return;
+            }
+
+            fights.Add((duel, enemies));
+            if (fights.Count > FIGHTS_REMEMBERED) {
+                fights.RemoveAt(0);
+            }
+        }
+    }
+
+    /// <summary>The share of its recent fights with two or more enemies (a guess of one in two until it has seen a few).</summary>
+    internal static double CrowdShare(ulong wizard) {
+        if (!s_fightSizes.TryGetValue(wizard, out var fights)) {
+            return CROWD_UNKNOWN;
+        }
+
+        lock (fights) {
+            if (fights.Count < FIGHTS_TO_TRUST) {
+                return (CROWD_UNKNOWN * (FIGHTS_TO_TRUST - fights.Count) + fights.Count(f => f.Enemies >= 2)) / FIGHTS_TO_TRUST;
+            }
+
+            return fights.Count(f => f.Enemies >= 2) / (double) fights.Count;
+        }
+    }
+
+    /// <summary>The situation with how often this wizard meets a crowd, for a deck made before the enemies are counted.</summary>
+    internal static Situation WithCrowd(Situation situation, ulong wizard)
+        => (situation ?? Situation.Unknown) with { CrowdShare = CrowdShare(wizard) };
 
     // The share of the deck each kind of card gets, by job.
     private static Dictionary<Kind, double> Shares(BotStyle style, Situation situation) {
@@ -159,6 +229,13 @@ internal static class BotCards {
         var shares = Shares(style, situation);
         var byKind = cards.GroupBy(KindOf).ToDictionary(g => g.Key, g => Order(g.Key, g.ToList(), school, style, situation)
             .Take(MostOfKind(g.Key, style)).ToList());
+        // A crowd (now, or often lately): the best hit on all enemies it knows goes in, next to its single hits, never left
+        // out because newer single hits filled the few places (Sandstorm behind Scarab, Scorpion and Locust Swarm).
+        if (situation.WantsAllHit && byKind.TryGetValue(Kind.Hit, out var hitsTaken) && !hitsTaken.Any(c => c.HitsAll)
+            && cards.Where(c => KindOf(c) == Kind.Hit && c.HitsAll).OrderBy(c => RewrittenAI.Same(c.DamageSchool, situation.EnemySchool ?? "") ? 1 : 0)
+                .ThenByDescending(c => c.Rank).ThenByDescending(c => c.BaseDamage).FirstOrDefault() is { } allHit) {
+            hitsTaken.Insert(situation.CrowdLikely ? 0 : hitsTaken.Count, allHit);
+        }
         var left = size;
         foreach (var (kind, share) in shares.OrderByDescending(s => s.Value)) {
             if (!byKind.TryGetValue(kind, out var ofKind) || share <= 0) {
@@ -190,7 +267,7 @@ internal static class BotCards {
         if (situation.Boss) {
             size += 4;
         }
-        else if (situation.Enemies >= 3) {
+        else if (situation.CrowdLikely) {
             size += 2;
         }
 
@@ -249,9 +326,9 @@ internal static class BotCards {
     private static List<Card> Order(Kind kind, List<Card> cards, string school, BotStyle style, Situation situation) {
         var enemy = situation.EnemySchool ?? "";
         return kind switch {
-            // Hits: on everyone first against a crowd; the enemy's own school (which it resists) last; newest first, but
+            // Hits: on everyone first against a crowd (two or more, or most fights lately); the enemy's own school (which it resists) last; newest first, but
             // the cheapest one stays for the first rounds.
-            Kind.Hit => [.. cards.OrderByDescending(c => situation.Enemies >= 3 && c.HitsAll ? 1 : 0)
+            Kind.Hit => [.. cards.OrderByDescending(c => situation.CrowdLikely && c.HitsAll ? 1 : 0)
                 .ThenBy(c => enemy.Length > 0 && RewrittenAI.Same(c.DamageSchool, enemy) ? 1 : 0)
                 .ThenByDescending(c => c == cards.MinBy(x => x.Rank) ? 1 : 0)
                 .ThenByDescending(c => c.Rank).ThenByDescending(c => c.BaseDamage)],
