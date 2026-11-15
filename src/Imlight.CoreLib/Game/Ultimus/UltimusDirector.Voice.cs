@@ -227,8 +227,8 @@ internal sealed partial class UltimusDirectorActor {
 
     // Whether the keyword answer is only "I don't know" (a question he can't place, a tip he has no data for).
     private static bool KeywordKnowsNothing(BotSocial.Reply reply)
-        => reply.Intent is BotSocial.QUESTION or BotSocial.TIP
-           || new[] { "not sure", "don't know", "haven't been there", "no idea" }.Any(w => reply.Text.Contains(w, StringComparison.OrdinalIgnoreCase));
+        => reply.Intent == BotSocial.QUESTION
+           || reply.Intent == BotSocial.TIP && new[] { "not sure", "don't know", "haven't been there", "no idea", "no data" }.Any(w => reply.Text.Contains(w, StringComparison.OrdinalIgnoreCase));
 
     // The local AI's wording came back (or didn't): what passes the private-details block is said, else what he learned
     // from the AI before, else the keyword answer. A Wizard101 answer is kept to learn from (UltimusAiLearned).
