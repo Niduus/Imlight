@@ -464,7 +464,8 @@ internal sealed partial class ManagerWindow {
     private void ShowUltimusFriends() {
         var social = Path.Combine(_manager.LogFolder, "bots", "social-ultimus.json");
         var met = Path.Combine(UltimusFolder, "players.json");
-        var changed = new[] { social, met }.Where(File.Exists).Select(File.GetLastWriteTimeUtc).DefaultIfEmpty(DateTime.MinValue).Max();
+        var aiCounts = Path.Combine(UltimusFolder, "ai-per-player.json");
+        var changed = new[] { social, met, aiCounts }.Where(File.Exists).Select(File.GetLastWriteTimeUtc).DefaultIfEmpty(DateTime.MinValue).Max();
         if (changed <= _ultFriendsRead && _ultFriends.Text?.Length > 0) {
             return;
         }
@@ -501,14 +502,34 @@ internal sealed partial class ManagerWindow {
             return;
         }
 
+        // AI chat answers each player got today (Niduus, 2026-11-15, "all"), against [Ultimus] AIPerPlayer.
+        var aiToday = new Dictionary<string, int>();
+        try {
+            var today = DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            if (File.Exists(aiCounts) && JsonNode.Parse(File.ReadAllText(aiCounts)) is JsonObject ai && (string?) ai["Day"] == today && ai["Players"] is JsonObject counts) {
+                foreach (var (id, count) in counts) {
+                    aiToday[id] = (int?) count ?? 0;
+                }
+            }
+        }
+        catch (Exception e) when (e is IOException or JsonException or InvalidOperationException or FormatException) {
+            // The list shows without the AI counts.
+        }
+
+        var perPlayer = _manager.GetSetting("Ultimus", "AIPerPlayer") is { } pp && int.TryParse(pp, out var ppn) ? ppn : 40;
+
         if (rows.Count == 0) {
             _ultFriends.Text = "Nobody yet. Walk up to Ultimus in the game and say hi (typed or Menu Chat), or whisper to him.";
             return;
         }
 
         var text = new StringBuilder();
-        foreach (var row in rows.Values.OrderByDescending(r => r.Last)) {
+        foreach (var (rowId, row) in rows.OrderByDescending(r => r.Value.Last)) {
             var parts = new List<string> { $"talked {row.Talks} time(s)" };
+            if (aiToday.TryGetValue(rowId, out var aiCount) && aiCount > 0) {
+                parts.Add(perPlayer > 0 ? $"{aiCount} of {perPlayer} AI answers today" : $"{aiCount} AI answers today");
+            }
+
             if (row.Met > 0) {
                 parts.Add($"met {row.Met} time(s)");
             }

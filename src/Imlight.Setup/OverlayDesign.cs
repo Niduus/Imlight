@@ -659,7 +659,10 @@ internal static class OverlayAction {
     /// <summary>The Quest Team Spectator: watch the next Quest Team wizard (Ice, Life, Death, Storm, then Ice again).</summary>
     internal const string TEAM_NEXT = "TeamNext";
 
-    internal static readonly string[] KINDS = [COMMAND, CHEAT, MOB_CHEAT, DESIGNER, TOGGLE_MINE, OPEN_AHZIAEL, TEAM_NEXT];
+    /// <summary>Pauses Ultimus's AI for an hour, or resumes it (Niduus, 2026-11-15). Only on the PC that runs the server.</summary>
+    internal const string PAUSE_AI = "PauseAI";
+
+    internal static readonly string[] KINDS = [COMMAND, CHEAT, MOB_CHEAT, DESIGNER, TOGGLE_MINE, OPEN_AHZIAEL, TEAM_NEXT, PAUSE_AI];
 
     // The minimap's own buttons (not a choice in the designer): full screen or back, closer, farther.
     internal const string MAP_FULL = "MapFull";
@@ -677,7 +680,7 @@ internal static class OverlayAction {
     /// <summary>The words for each kind in the designer.</summary>
     internal static readonly string[] LABELS = [
         "Run an Imlight or Ahziael command", "Use one of my player cheats", "Set off a mob (creature) cheat", "Open the overlay designer", "Show or hide my own pieces", "Open Ahziael",
-        "Quest Team Spectator: next member",
+        "Quest Team Spectator: next member", "Pause or resume Ultimus's AI (1 hour)",
     ];
 
     internal const string USE = "Use";

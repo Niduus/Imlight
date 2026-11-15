@@ -420,8 +420,24 @@ internal static class UltimusLocalAI {
         lock (s_perPlayer) {
             NewPlayerDay();
             s_perPlayer[player] = s_perPlayer.GetValueOrDefault(player) + 1;
+            // Kept for Ahziael's Friends list ("AI answers today") and so a restart doesn't reset it.
+            try {
+                var players = new JsonObject();
+                foreach (var (id, count) in s_perPlayer) {
+                    players[id.ToString(System.Globalization.CultureInfo.InvariantCulture)] = count;
+                }
+
+                System.IO.Directory.CreateDirectory(UltimusWire.Folder);
+                System.IO.File.WriteAllText(System.IO.Path.Combine(UltimusWire.Folder, PER_PLAYER_FILE),
+                    new JsonObject { ["Day"] = s_perPlayerDay, ["Players"] = players }.ToJsonString());
+            }
+            catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) {
+                // Counted in memory still.
+            }
         }
     }
+
+    internal const string PER_PLAYER_FILE = "ai-per-player.json";
 
     private static void NewPlayerDay() {
         var today = DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
@@ -429,6 +445,20 @@ internal static class UltimusLocalAI {
             s_perPlayerDay = today;
             s_perPlayer.Clear();
             s_perPlayerSaid.Clear();
+            try {
+                var file = System.IO.Path.Combine(UltimusWire.Folder, PER_PLAYER_FILE);
+                if (System.IO.File.Exists(file) && JsonNode.Parse(System.IO.File.ReadAllText(file)) is JsonObject saved && (string) saved["Day"] == today
+                    && saved["Players"] is JsonObject players) {
+                    foreach (var (id, count) in players) {
+                        if (ulong.TryParse(id, out var charId) && count is not null) {
+                            s_perPlayer[charId] = (int) count;
+                        }
+                    }
+                }
+            }
+            catch (Exception) {
+                // A broken file starts the day at 0.
+            }
         }
     }
 

@@ -1956,6 +1956,10 @@ internal sealed partial class ManagerWindow {
                 case OverlayAction.OPEN_AHZIAEL:
                     panel.Children.Add(Sub("Brings Ahziael to the front (or starts it, when only the overlay is running)."));
                     break;
+                case OverlayAction.PAUSE_AI:
+                    panel.Children.Add(Sub("Pauses Ultimus's AI (his AI chat, stuck thinking and the Quest Team's AI answers) for one hour; clicking it " +
+                        "again while paused turns the AI back on. Works only on the PC that runs your server."));
+                    break;
                 case OverlayAction.TEAM_NEXT:
                     panel.Children.Add(Sub("Quest Team Spectator: switches to the next Quest Team wizard (Ice, Life, Death, Storm, then Ice again). " +
                         "Works when the Quest Team Spectator's map or quest box is on the overlay."));

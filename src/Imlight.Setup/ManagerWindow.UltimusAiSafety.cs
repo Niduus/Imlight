@@ -80,7 +80,10 @@ internal sealed partial class ManagerWindow {
                 "Chat, stuck thinking and the Quest Team together, so a paid key can't run up a bill. 0 = no limit. Past it, Ultimus uses his normal chat " +
                 "until midnight. The AI on your PC is free and never counted."),
             _ultAiUsage,
-            Row(Action(Plain("Pause AI for 1 hour"), () => PauseUltimusAiAsync(true)), Action(Plain("Resume AI now"), () => PauseUltimusAiAsync(false))),
+            Row(Action(Plain("Pause AI for 1 hour"), () => PauseUltimusAiAsync(true)), Action(Plain("Resume AI now"), () => PauseUltimusAiAsync(false)),
+                Action(Plain("Turn all AI off"), TurnAllUltimusAiOffAsync)),
+            Sub("Turn all AI off switches off Ultimus's AI chat, his stuck thinking and the Quest Team's AI answers in one go. Each switch turns its " +
+                "part on again. Tip: the overlay designer has a \"Pause or resume Ultimus's AI\" button you can put on the game."),
             _ultAiPauseState,
             SwitchRow("AI answers per player per day", _ultAiPerPlayer,
                 "So one chatty player can't use up the day's AI answers. 0 = no limit. Past it, Ultimus answers that player with his normal chat until midnight."),
@@ -134,6 +137,27 @@ internal sealed partial class ManagerWindow {
         var value = until?.ToString("yyyy-MM-ddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture) ?? "";
         var said = until is { } u ? $"The AI is paused until {u.ToLocalTime():HH:mm}. Ultimus and the Quest Team use their normal chat and own fixes meanwhile." : "The AI is back on.";
         return SaveUltimusAiAsync("AIPausedUntil", value, said, "AIPausedUntil");
+    }
+
+    private Task TurnAllUltimusAiOffAsync() {
+        var (ok, said) = UltimusAiSwitches.AllOff(_manager.ConfigFile);
+        if (!ok) {
+            throw new PanelException(said);
+        }
+
+        _settings = [];
+        LoadUltimusAi();
+        _showingUltSafety = true;
+        try {
+            _ultQtAi.IsChecked = false;
+        }
+        finally {
+            _showingUltSafety = false;
+        }
+
+        Say(said);
+
+        return Task.CompletedTask;
     }
 
     private Task SaveUltimusAiPerPlayerAsync() {

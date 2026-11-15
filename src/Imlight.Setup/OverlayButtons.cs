@@ -110,6 +110,13 @@ internal static class OverlayButtons {
 
                 return;
             }
+            case OverlayAction.PAUSE_AI: {
+                // Ultimus's AI paused for an hour, or back on (Niduus, 2026-11-15): the host's own server settings only.
+                var (ok, said) = UltimusAiSwitches.TogglePause(InstalledCommands.ConfigFile(OverlayHost.InstallFolder));
+                Report(said, ok, done);
+
+                return;
+            }
             case OverlayAction.MAP_FULL:
                 // One full screen map at a time: the player's, or Ultimus's (a button on Ultimus's map acts on his).
                 if (OverlayMinimapData.FullZoom(mapKey) is null) {
