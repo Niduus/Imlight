@@ -686,6 +686,10 @@ internal static class OverlayAction {
     internal const string QUEST_FOLD = "QuestFold";
     internal const string QUEST_SCROLL = "QuestScroll";
 
+    // A spectator quest box's Track line (not a choice in the designer): Command "ultimus|<choice>" or "team|<choice>", the
+    // choice "main" or a dungeon quest's id (Niduus, 2026-11-15).
+    internal const string SPECTATE_TRACK = "SpectateTrack";
+
     // The OK button under an Ahziael note on a game (a Quest Team alert): takes the note away (Niduus, 2026-11-12).
     internal const string DISMISS_NOTE = "DismissNote";
 

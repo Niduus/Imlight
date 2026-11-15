@@ -1153,6 +1153,15 @@ internal static class OverlayHost {
                         found.Add((new OverlayElement { Kind = OverlayElement.BUTTON, Action = OverlayAction.TEAM_WATCH, Command = pick.Role, Visible = true },
                             false, Pixels(new Rect(at, name.Bounds.Size))));
                     }
+
+                    // The spectators' Track line: Instance or Main (Niduus, 2026-11-15).
+                    if (name.Tag is UltimusViews.TrackPick track && name.Bounds.Width > 0 && name.IsEffectivelyVisible
+                        && name.TranslatePoint(new Point(0, 0), picture) is { } trackAt) {
+                        found.Add((new OverlayElement {
+                            Kind = OverlayElement.BUTTON, Action = OverlayAction.SPECTATE_TRACK, Visible = true,
+                            Command = (track.Key == OverlayUltimusData.TEAM_KEY ? "team|" : "ultimus|") + track.Choice,
+                        }, false, Pixels(new Rect(trackAt, name.Bounds.Size))));
+                    }
                 }
             }
 
@@ -1791,7 +1800,8 @@ internal static class OverlayHost {
                     // "" is Ultimus; the Quest Team Spectator names the team member it watches now.
                     ["who"] = OverlayUltimusData.Who(key),
                     // A quest picked on Ahziael's page: the server draws its way instead.
-                    ["routeQuest"] = OverlayUltimusData.PageRoute(key),
+                    // Or the dungeon quest the spectator tracks (Niduus, 2026-11-15).
+                    ["routeQuest"] = OverlayUltimusData.RouteQuest(key),
                 }, null, stop);
                 using var answerWait = CancellationTokenSource.CreateLinkedTokenSource(stop);
                 answerWait.CancelAfter(TimeSpan.FromSeconds(10));

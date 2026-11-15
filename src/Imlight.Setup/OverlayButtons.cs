@@ -180,6 +180,15 @@ internal static class OverlayButtons {
                 done(true);
 
                 return;
+            case OverlayAction.SPECTATE_TRACK: {
+                // A spectator's Track line: its dungeon quest or the quest it plays, on its box and map (Niduus, 2026-11-15).
+                var parts = button.Command.Split('|', 2);
+                OverlayUltimusData.Track(parts[0] == "team" ? OverlayUltimusData.TEAM_KEY : OverlayUltimusData.KEY, parts.Length > 1 ? parts[1] : "");
+                OverlayMinimapData.Redraw();
+                done(true);
+
+                return;
+            }
             case OverlayAction.QUEST_PICK:
                 OverlayQuestData.TogglePick(game.ToInt64(), button.Command);
                 done(true);

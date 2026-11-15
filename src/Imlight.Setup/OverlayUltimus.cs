@@ -45,6 +45,63 @@ internal static class OverlayUltimusData {
     /// <summary>His quest tracker's details (Niduus, 2026-11-14: "in detail"): world, why, what now, the step after, parked steps.</summary>
     internal sealed record Tracker(string World, string Why, string Target, string Next, IReadOnlyList<string> Parked, string ReadAhead, string Stuck = "");
 
+    internal sealed record HeldQuest(string Id, string Title, string Kind, int Level, string World, bool Here, IReadOnlyList<Step> Steps, IReadOnlyList<string> Way);
+
+    // ---------------------------------------------------------------------
+    // Tracking an Instance or the Main quest (Niduus, 2026-11-15: "show Instance and able to track it via click (Auto unless
+    // changed) while also keeping Main Quest as an option (Auto if no instance or ended)")
+    // ---------------------------------------------------------------------
+
+    // Per feed: "" = Auto (a dungeon quest when one is held, else the quest played), "main" = the quest played, or the id of
+    // one dungeon quest clicked. Back to Auto once no dungeon quest is held.
+    private static readonly Dictionary<long, string> s_track = [];
+
+    internal const string TRACK_MAIN = "main";
+
+    /// <summary>What the spectator tracks for this feed now: "" Auto, "main", or a dungeon quest's id.</summary>
+    internal static string TrackChoice(long key) {
+        lock (s_lock) {
+            return s_track.GetValueOrDefault(key == TEAM_KEY ? TEAM_KEY : KEY, "");
+        }
+    }
+
+    /// <summary>A click on the quest box's Instance or Main line: "main", a dungeon quest's id, or "" for Auto.</summary>
+    internal static void Track(long key, string choice) {
+        lock (s_lock) {
+            key = key == TEAM_KEY ? TEAM_KEY : KEY;
+            s_track[key] = choice ?? "";
+            FeedOf(key).Version++;
+        }
+    }
+
+    /// <summary>The dungeon quest tracked in this one's box and map, or null for the quest it plays.</summary>
+    internal static HeldQuest? Tracked(long key, Info? info) {
+        if (info is null) {
+            return null;
+        }
+
+        var choice = TrackChoice(key);
+        if (choice == TRACK_MAIN) {
+            return null;
+        }
+
+        return info.Instances.FirstOrDefault(q => q.Id == choice) ?? info.Instances.FirstOrDefault(q => !q.Id.Equals(info.Quest, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>The quest whose way the server draws on the spectator's map: the page's pick, else a tracked dungeon quest.</summary>
+    internal static string RouteQuest(long key) {
+        if (PageRoute(key) is { Length: > 0 } page) {
+            return page;
+        }
+
+        Info? info;
+        lock (s_lock) {
+            info = FeedOf(key).Info;
+        }
+
+        return Tracked(key, info)?.Id ?? "";
+    }
+
     internal sealed record Card(string Name, string School, int Rank, bool Castable, bool Picked);
 
     internal sealed record Fighter(string Name, int Health, int Most, bool Alive);
@@ -57,6 +114,12 @@ internal static class OverlayUltimusData {
                                 string NextStep, IReadOnlyList<Step> Steps, IReadOnlyList<string> Way, IReadOnlyList<string> Others, Battle? Fight,
                                 string Note, DateTime At, int QuestLevel = 0, string World = "", Tracker? Detail = null, string Progress = "",
                                 string Estimate = "", string WorldLine = "", string SlowLine = "") {
+
+        /// <summary>The quests held, with a dungeon quest's steps and way (the spectator can track one).</summary>
+        internal IReadOnlyList<HeldQuest> Held { get; init; } = [];
+
+        /// <summary>The dungeon (instance) quests held: here first.</summary>
+        internal IEnumerable<HeldQuest> Instances => Held.Where(q => q.Kind == "instance").OrderByDescending(q => q.Here);
 
         internal bool Stale => DateTime.UtcNow - At > TimeSpan.FromSeconds(8);
 
@@ -282,6 +345,14 @@ internal static class OverlayUltimusData {
 
             info = Read(sent, key);
             said = sent.ToJsonString();
+            // No dungeon quest any more (or the one clicked ended): back to Auto, so the next dungeon is tracked by itself.
+            lock (s_lock) {
+                if (s_track.TryGetValue(key, out var choice) && choice.Length > 0
+                    && (!info.Instances.Any() || (choice != TRACK_MAIN && info.Instances.All(q => q.Id != choice)))) {
+                    s_track.Remove(key);
+                }
+            }
+
             // Its quest is always the one drawn on its map (never a quest the player picked): the way the server sent with the map.
             var drawn = answer["map"] is JsonObject map && map["route"] is JsonObject route ? (string?) route["quest"] : null;
             OverlayQuestData.Follow(key, string.IsNullOrEmpty(drawn) ? info.Quest : drawn);
@@ -367,7 +438,10 @@ internal static class OverlayUltimusData {
                     ? new JsonObject { ["stuck"] = status["stuck"]?.DeepClone(), ["readAhead"] = status["readAhead"]?.DeepClone() }
                     : null,
             ["progress"] = status["progress"]?.DeepClone(),
-            ["quests"] = new JsonArray([.. rows.Take(40).Select(q => (JsonNode) new JsonObject { ["id"] = q["id"]?.DeepClone(), ["t"] = q["t"]?.DeepClone(), ["k"] = q["k"]?.DeepClone() })]),
+            ["quests"] = new JsonArray([.. rows.Take(40).Select(q => (JsonNode) new JsonObject {
+                ["id"] = q["id"]?.DeepClone(), ["t"] = q["t"]?.DeepClone(), ["k"] = q["k"]?.DeepClone(), ["l"] = q["l"]?.DeepClone(),
+                ["w"] = q["wn"]?.DeepClone(), ["steps"] = q["steps"]?.DeepClone(), ["way"] = q["way"]?.DeepClone(), ["here"] = q["here"]?.DeepClone(),
+            })]),
         };
 
         // Read as the overlay reads it: from the words, the same way they come over the link (numbers made here in code
@@ -398,6 +472,12 @@ internal static class OverlayUltimusData {
         }
 
         var way = Texts(sent["way"], 12, 80);
+        var held = (sent["quests"] as JsonArray ?? []).OfType<JsonObject>().Take(40).Select(q => new HeldQuest(
+            Short((string?) q["id"], 120), Short((string?) q["t"], 120), Short((string?) q["k"], 10), (int) Number(q["l"]), Short((string?) q["w"], 40),
+            q["here"]?.GetValueKind() == System.Text.Json.JsonValueKind.True,
+            [.. (q["steps"] as JsonArray ?? []).OfType<JsonObject>().Take(6).Select(st => new Step(Short((string?) st["s"], 120), Short((string?) st["where"], 80),
+                st["here"]?.GetValueKind() == System.Text.Json.JsonValueKind.True))],
+            Texts(q["way"], 12, 80))).Where(q => q.Id.Length > 0).ToList();
         var others = (sent["quests"] as JsonArray ?? []).OfType<JsonObject>().Take(40)
             .Where(q => !string.Equals((string?) q["id"], (string?) sent["quest"], StringComparison.OrdinalIgnoreCase))
             .Select(q => Short((string?) q["t"], 120)).Where(t => t.Length > 0).ToList();
@@ -421,7 +501,7 @@ internal static class OverlayUltimusData {
             sent["progress"] is JsonObject paced ? Short((string?) paced["estimate"], 160) : "",
             // "World 3 of 19" (Niduus's main worlds) and the red line when this quest runs long.
             sent["progress"] is JsonObject numbered ? Short((string?) numbered["worldLine"], 40) : "",
-            sent["progress"] is JsonObject slow ? Short((string?) slow["slowLine"], 160) : "");
+            sent["progress"] is JsonObject slow ? Short((string?) slow["slowLine"], 160) : "") { Held = held };
     }
 
     private static List<Fighter> Fighters(JsonNode? node) => (node as JsonArray ?? []).OfType<JsonObject>().Take(8)
@@ -461,7 +541,11 @@ internal static class OverlayUltimusData {
         ], "Scorpion on Lost Soul", "the weakest enemy: Lost Soul with Scorpion (about 145)", ["Elemental Shield"],
             ["Round 3: casts Scorpion on Lost Soul", "Round 2: casts Spirit Blade on himself", "Round 1: passes"],
             [new Fighter("Lost Soul", 120, 300, true), new Fighter("Lost Soul", 300, 300, true)], [], "Scarab x4, Scorpion x3, Sandstorm x2"),
-        "", DateTime.MaxValue, 5, "Wizard City", null, "Quest 14/52 in Wizard City", "about 3 h 20 min to Krokotopia at his pace (about 5 min a quest)", "World 1 of 19");
+        "", DateTime.MaxValue, 5, "Wizard City", null, "Quest 14/52 in Wizard City", "about 3 h 20 min to Krokotopia at his pace (about 5 min a quest)", "World 1 of 19") {
+        // A dungeon quest, so the designers show the Track line (Niduus, 2026-11-15).
+        Held = [new HeldQuest("sample-instance", "Cleanse the Tower", "instance", 5, "Wizard City", false,
+            [new Step("Defeat Rattlebones", "Wizard City / Rattlebones's Tower", false)], ["Ravenwood", "Rattlebones's Tower"])],
+    };
 
     // A made-up Quest Team wizard for the designers.
     private static readonly Info TeamSample = Sample with {
@@ -572,57 +656,69 @@ internal static class UltimusViews {
         }
 
         panel.Children.Add(new Border { Height = 4 });
-        if (info.Quest.Length == 0) {
-            panel.Children.Add(Line("No quest picked yet.", look.Size - 1, look.Faint));
+        // A dungeon quest held: a Track line to pick it or the quest played; Auto tracks the dungeon (Niduus, 2026-11-15).
+        var tracked = OverlayUltimusData.Tracked(key, info);
+        if (info.Instances.Any()) {
+            AddTrackLine(panel, key, info, tracked, look);
+        }
+
+        if (tracked is not null) {
+            AddInstance(panel, info, tracked, look);
         }
         else {
-            var color = OverlayRenderer.Parse(new OverlayQuestList().ColorOf(info.Kind)) is { } kind ? new SolidColorBrush(kind) : look.Gold;
-            panel.Children.Add(Line(info.QuestTitle.Length > 0 ? info.QuestTitle : info.Quest, look.Size + 1, color, bold: true, wrap: true));
-            // In detail (Niduus, 2026-11-14): what kind of quest, its level and world, then every open step with its count.
-            var about = string.Join("  ·  ", new[] {
-                KindWord(info.Kind), info.QuestLevel > 0 ? $"level {info.QuestLevel}" : "", info.World,
-            }.Where(t => t.Length > 0));
-            if (about.Length > 0) {
-                panel.Children.Add(Line(about, look.Size - 2, look.Faint));
+            if (info.Quest.Length == 0) {
+                panel.Children.Add(Line("No quest picked yet.", look.Size - 1, look.Faint));
             }
-
-            foreach (var step in info.Steps.Take(6)) {
-                // With the tracker's details, "Here" marks the step he works on now; without them, a step in this area.
-                var mark = info.Detail is not null && step.Here ? "> " : "• ";
-                var where = step.Where.Length > 0 && (info.Detail is not null || !step.Here) ? "  (" + step.Where + ")" : "";
-                panel.Children.Add(Line(mark + step.Text + where, look.Size - 1, info.Detail is not null && step.Here ? look.Gold : look.Text, wrap: true));
-            }
-
-            if (info.Steps.Count == 0 && info.NextStep.Length > 0) {
-                panel.Children.Add(Line("• " + Capital(info.NextStep), look.Size - 1, look.Text, wrap: true));
-            }
-
-            if (info.Way.Count > 0) {
-                panel.Children.Add(Line("Way: " + string.Join(" > ", info.Way), look.Size - 2, look.Faint, wrap: true));
-            }
-
-            if (info.Detail is { } d) {
-                // The Quest Team's stuck line (Niduus, 2026-11-15).
-                if (d.Stuck.Length > 0) {
-                    panel.Children.Add(Line("Team stuck: " + d.Stuck, look.Size - 2, look.Gold, bold: true, wrap: true));
+            else {
+                var color = OverlayRenderer.Parse(new OverlayQuestList().ColorOf(info.Kind)) is { } kind ? new SolidColorBrush(kind) : look.Gold;
+                panel.Children.Add(Line(info.QuestTitle.Length > 0 ? info.QuestTitle : info.Quest, look.Size + 1, color, bold: true, wrap: true));
+                // In detail (Niduus, 2026-11-14): what kind of quest, its level and world, then every open step with its count.
+                var about = string.Join("  ·  ", new[] {
+                    KindWord(info.Kind), info.QuestLevel > 0 ? $"level {info.QuestLevel}" : "", info.World,
+                }.Where(t => t.Length > 0));
+                if (about.Length > 0) {
+                    panel.Children.Add(Line(about, look.Size - 2, look.Faint));
                 }
 
-                if (d.Target.Length > 0) {
-                    panel.Children.Add(Line("Now: " + d.Target, look.Size - 2, look.Text, wrap: true));
+                foreach (var step in info.Steps.Take(6)) {
+                    // With the tracker's details, "Here" marks the step he works on now; without them, a step in this area.
+                    var mark = info.Detail is not null && step.Here ? "> " : "• ";
+                    var where = step.Where.Length > 0 && (info.Detail is not null || !step.Here) ? "  (" + step.Where + ")" : "";
+                    panel.Children.Add(Line(mark + step.Text + where, look.Size - 1, info.Detail is not null && step.Here ? look.Gold : look.Text, wrap: true));
                 }
 
-                if (d.Why.Length > 0) {
-                    panel.Children.Add(Line("Why: " + d.Why, look.Size - 3, look.Faint, wrap: true));
+                if (info.Steps.Count == 0 && info.NextStep.Length > 0) {
+                    panel.Children.Add(Line("• " + Capital(info.NextStep), look.Size - 1, look.Text, wrap: true));
                 }
 
-                if (d.Next.Length > 0) {
-                    panel.Children.Add(Line("After that: " + d.Next, look.Size - 3, look.Faint, wrap: true));
+                if (info.Way.Count > 0) {
+                    panel.Children.Add(Line("Way: " + string.Join(" > ", info.Way), look.Size - 2, look.Faint, wrap: true));
                 }
 
-                if (d.ReadAhead.Length > 0) {
-                    panel.Children.Add(Line("Read-ahead warned: " + d.ReadAhead, look.Size - 3, look.Faint, wrap: true));
+                if (info.Detail is { } d) {
+                    // The Quest Team's stuck line (Niduus, 2026-11-15).
+                    if (d.Stuck.Length > 0) {
+                        panel.Children.Add(Line("Team stuck: " + d.Stuck, look.Size - 2, look.Gold, bold: true, wrap: true));
+                    }
+
+                    if (d.Target.Length > 0) {
+                        panel.Children.Add(Line("Now: " + d.Target, look.Size - 2, look.Text, wrap: true));
+                    }
+
+                    if (d.Why.Length > 0) {
+                        panel.Children.Add(Line("Why: " + d.Why, look.Size - 3, look.Faint, wrap: true));
+                    }
+
+                    if (d.Next.Length > 0) {
+                        panel.Children.Add(Line("After that: " + d.Next, look.Size - 3, look.Faint, wrap: true));
+                    }
+
+                    if (d.ReadAhead.Length > 0) {
+                        panel.Children.Add(Line("Read-ahead warned: " + d.ReadAhead, look.Size - 3, look.Faint, wrap: true));
+                    }
                 }
             }
+
         }
 
         if (info.Detail is { Parked.Count: > 0 } help) {
@@ -639,6 +735,59 @@ internal static class UltimusViews {
         }
 
         return panel;
+    }
+
+    /// <summary>A click on the quest box's Track line: "main", a dungeon quest's id, or "" for Auto (OverlayHost.PlaceHits).</summary>
+    internal sealed record TrackPick(long Key, string Choice);
+
+    // "Track: Instance <name> · Main <name>": the one tracked lit; a click on the other tracks it.
+    private static void AddTrackLine(Panel panel, long key, OverlayUltimusData.Info info, OverlayUltimusData.HeldQuest? tracked, Looks look) {
+        var row = new WrapPanel { Orientation = Orientation.Horizontal };
+        var auto = OverlayUltimusData.TrackChoice(key).Length == 0;
+        row.Children.Add(Line(auto ? "Track (auto): " : "Track: ", look.Size - 2, look.Faint));
+        var instanceColor = OverlayRenderer.Parse(new OverlayQuestList().InstanceColor) is { } c ? new SolidColorBrush(c) : look.Gold;
+        foreach (var dungeon in info.Instances.Take(2)) {
+            var on = tracked?.Id == dungeon.Id;
+            var chip = Line((on ? "◉ " : "○ ") + "Instance: " + dungeon.Title, look.Size - 2, on ? instanceColor : look.Text, bold: on);
+            chip.Margin = new Thickness(0, 0, 10, 0);
+            chip.Tag = new TrackPick(key, dungeon.Id);
+            row.Children.Add(chip);
+        }
+
+        var main = tracked is null;
+        var mainChip = Line((main ? "◉ " : "○ ") + "Main: " + (info.QuestTitle.Length > 0 ? info.QuestTitle : info.Quest.Length > 0 ? info.Quest : "none"),
+            look.Size - 2, main ? look.Gold : look.Text, bold: main);
+        mainChip.Tag = new TrackPick(key, OverlayUltimusData.TRACK_MAIN);
+        row.Children.Add(mainChip);
+        panel.Children.Add(row);
+    }
+
+    // The tracked dungeon quest in full, then the quest played in one line.
+    private static void AddInstance(Panel panel, OverlayUltimusData.Info info, OverlayUltimusData.HeldQuest dungeon, Looks look) {
+        var color = OverlayRenderer.Parse(new OverlayQuestList().InstanceColor) is { } c ? new SolidColorBrush(c) : look.Gold;
+        panel.Children.Add(Line(dungeon.Title, look.Size + 1, color, bold: true, wrap: true));
+        var about = string.Join("  ·  ", new[] { "Dungeon quest", dungeon.Level > 0 ? $"level {dungeon.Level}" : "", dungeon.World }.Where(t => t.Length > 0));
+        panel.Children.Add(Line(about, look.Size - 2, look.Faint));
+        foreach (var step in dungeon.Steps.Take(6)) {
+            var where = step.Where.Length > 0 && !step.Here ? "  (" + step.Where + ")" : "";
+            panel.Children.Add(Line("• " + step.Text + where, look.Size - 1, look.Text, wrap: true));
+        }
+
+        if (dungeon.Steps.Count == 0) {
+            panel.Children.Add(Line("No step open here right now.", look.Size - 2, look.Faint));
+        }
+
+        if (dungeon.Way.Count > 0) {
+            panel.Children.Add(Line("Way: " + string.Join(" > ", dungeon.Way), look.Size - 2, look.Faint, wrap: true));
+        }
+
+        if (info.Quest.Length > 0) {
+            panel.Children.Add(new Border { Height = 3 });
+            panel.Children.Add(Line("Main: " + (info.QuestTitle.Length > 0 ? info.QuestTitle : info.Quest), look.Size - 2, look.Gold, wrap: true));
+            if (info.Steps.FirstOrDefault() is { } first) {
+                panel.Children.Add(Line("• " + first.Text, look.Size - 3, look.Faint, wrap: true));
+            }
+        }
     }
 
     private static string KindWord(string kind) => kind switch {

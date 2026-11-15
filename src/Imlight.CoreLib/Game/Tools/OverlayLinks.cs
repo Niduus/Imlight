@@ -582,7 +582,14 @@ public static class OverlayLinks {
             // Quest CURR/END in his world's story and a time to the next world (Niduus, 2026-11-15).
             ["progress"] = BotShared.BotProgress.Json(BotShared.BotProgress.ULTIMUS, wizard, quest, note: false),
             ["quests"] = new JsonArray([.. ((quests?["quests"] as JsonArray)?.OfType<JsonObject>() ?? [])
-                .Take(40).Select(q => (JsonNode) new JsonObject { ["id"] = q["id"]?.DeepClone(), ["t"] = q["t"]?.DeepClone(), ["k"] = q["k"]?.DeepClone() })]),
+                .Take(40).Select(q => (JsonNode) new JsonObject {
+                    ["id"] = q["id"]?.DeepClone(), ["t"] = q["t"]?.DeepClone(), ["k"] = q["k"]?.DeepClone(),
+                    // A dungeon quest's steps and way, so the spectator can track it (Niduus, 2026-11-15: "also show Instance").
+                    ["l"] = q["l"]?.DeepClone(), ["w"] = Ultimus.UltimusDirectorActor.WorldName((string) q["w"] ?? ""),
+                    ["steps"] = (string) q["k"] == "instance" ? q["steps"]?.DeepClone() : null,
+                    ["way"] = (string) q["k"] == "instance" ? q["way"]?.DeepClone() : null,
+                    ["here"] = q["here"]?.DeepClone(),
+                })]),
         };
         if (Ultimus.UltimusSpectate.Battle(member.GlobalId) is { } battle) {
             battle["deck"] = wizard?.SpellbookBehavior?.SpellList is { } deck
@@ -673,7 +680,14 @@ public static class OverlayLinks {
             // Quest CURR/END in this wizard's world story and a time to the next world at the team's pace (Niduus, 2026-11-15).
             ["progress"] = BotShared.BotProgress.Json(BotShared.BotProgress.TEAM, wizard, now.Quest, note: false),
             ["quests"] = new JsonArray([.. ((quests?["quests"] as JsonArray)?.OfType<JsonObject>() ?? [])
-                .Take(40).Select(q => (JsonNode) new JsonObject { ["id"] = q["id"]?.DeepClone(), ["t"] = q["t"]?.DeepClone(), ["k"] = q["k"]?.DeepClone() })]),
+                .Take(40).Select(q => (JsonNode) new JsonObject {
+                    ["id"] = q["id"]?.DeepClone(), ["t"] = q["t"]?.DeepClone(), ["k"] = q["k"]?.DeepClone(),
+                    // A dungeon quest's steps and way, so the spectator can track it (Niduus, 2026-11-15: "also show Instance").
+                    ["l"] = q["l"]?.DeepClone(), ["w"] = Ultimus.UltimusDirectorActor.WorldName((string) q["w"] ?? ""),
+                    ["steps"] = (string) q["k"] == "instance" ? q["steps"]?.DeepClone() : null,
+                    ["way"] = (string) q["k"] == "instance" ? q["way"]?.DeepClone() : null,
+                    ["here"] = q["here"]?.DeepClone(),
+                })]),
         };
 
         // The team's stuck line and read-ahead warning, as Ultimus's tracker shows his (Niduus, 2026-11-15).
