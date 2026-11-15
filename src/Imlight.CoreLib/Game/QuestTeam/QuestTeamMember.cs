@@ -79,6 +79,9 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
     /// <summary>Put on an item from the backpack, as the game's backpack does.</summary>
     internal sealed record Equip(ulong ItemId, string Slot, string What);
 
+    /// <summary>The backpack padlock on these items, one click each (lock or unlock), as a player clicks it.</summary>
+    internal sealed record LockItems(List<(ulong Id, bool Lock, string Name)> Clicks);
+
     /// <summary>Take an item off into the backpack, as the game's backpack does.</summary>
     internal sealed record Unequip(ulong ItemId, string Slot, string What);
 
@@ -282,6 +285,13 @@ internal sealed class QuestTeamMember : ReceiveActor, IWithTimers {
         });
         Receive<SkipStep>(m => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND { Action = "completegoal", QuestName = m.Quest }));
         Receive<GoToTeammate>(m => Send(new WIZARD_12_PROTOCOL.MSG_GOTOFRIENDLYPLAYER { TargetCharacterID = m.CharId }));
+        Receive<LockItems>(m => {
+            Note($"{(m.Clicks.All(c => c.Lock) ? "locks" : "locks and unlocks")} gear in its backpack: " +
+                 string.Join(", ", m.Clicks.Select(c => $"{(c.Lock ? "locks" : "unlocks")} {c.Name}")) + ".");
+            foreach (var (id, _, _) in m.Clicks) {
+                Send(new WIZARD_12_PROTOCOL.MSG_REQUESTTOGGLELOCKITEM { ItemGID = id });
+            }
+        });
         Receive<SelectBadge>(m => Send(new GAME_5_PROTOCOL.MSG_SELECT_BADGE { BadgeNameID = m.Id }));
         Receive<GainXp>(m => _session?.Tell(new CHARACTER_103_PROTOCOL.MSG_GAINXP { XP = m.Xp }));
         Receive<ClickNow>(m => Send(BotShared.BotBattle.ToGameMessage(m.Move)));

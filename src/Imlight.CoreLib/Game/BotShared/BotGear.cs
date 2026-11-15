@@ -685,8 +685,10 @@ internal static class BotGear {
         var worn = Slots.Append(EquipmentSlotType.Mount).Append(EquipmentSlotType.Pet)
             .Select(s => wizard.EquipmentBehavior?.GetItemInSlot(s)?.m_globalID.Full ?? 0).Where(id => id != 0).ToHashSet();
         var school = SchoolOf(wizard);
+        // Gear kept in one of its gear sets (BotGearSets) is never sold, locked yet or not.
+        var inSets = BotGearSets.InSets(wizard);
         foreach (var item in items.ToList()) {
-            if (item is null || worn.Contains(item.m_globalID.Full) || ItemHelper.IsLocked(item)) {
+            if (item is null || worn.Contains(item.m_globalID.Full) || ItemHelper.IsLocked(item) || inSets.Contains(item.m_globalID.Full)) {
                 continue;
             }
 

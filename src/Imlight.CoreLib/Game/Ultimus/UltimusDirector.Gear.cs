@@ -259,6 +259,7 @@ internal sealed partial class UltimusDirectorActor {
             }
 
             KeepItemCards(i);
+            KeepGearSets(i);
         }
     }
 

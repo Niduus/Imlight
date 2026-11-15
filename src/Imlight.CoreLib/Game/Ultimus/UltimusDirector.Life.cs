@@ -173,31 +173,36 @@ internal sealed partial class UltimusDirectorActor {
     private DateTime _nextSellLook = DateTime.MinValue;
     private int _freeBeforeSell = -1;
 
-    // A shop further than this is not worth a detour: he sells at the next shop he passes (Niduus, 2026-11-14 "HUH???": he
-    // walked off to sell to Charley at half health in the middle of "Payback").
-    private const float SELL_DETOUR = 2500f;
-
-    // Free backpack spaces at or under which he quick sells when no shop is near.
-    private const int QUICK_SELL_AT = 2;
+    // Until when a trip to the Bazaar to sell is on: the backpack's Quick Sell waits for it, so the pieces go for the
+    // Bazaar's better price.
+    private DateTime _bazaarSellTripUntil = DateTime.MinValue;
 
     /// <summary>
-    /// Little room left in the backpack and gear he will never wear: the nearest shopkeeper in this area, to sell it. Null
-    /// when there is room, nothing to sell or no shop here (he sells at the next town).
+    /// The backpack full (or nearly): what he will never wear goes, right where he is, with the backpack's Quick Sell
+    /// (Niduus, 2026-11-15: "when full have him Quick Sell or go to Bazaar to sell"). No hunt for a shop first, which pays
+    /// the same; the Bazaar, which pays far more, comes first when that trip makes sense (BazaarSellTarget). Quest items, what
+    /// he wears and the gear in his gear sets stay (BotGear.Junk). Never a target: the sale needs no walk.
     /// </summary>
     private UltimusPlanner.Target SellTarget(List<UltimusMember.Status> group) {
         if (DateTime.UtcNow < _nextSellLook) {
-            return _target?.Key.StartsWith("sell|", StringComparison.Ordinal) == true ? _target : null;
+            return null;
         }
 
         _nextSellLook = DateTime.UtcNow.AddSeconds(20);
         var leader = group[0];
         if (leader.Wizard is not { } wizard || wizard.BackpackFreeSlots >= UltimusPlaybook.Value("Backpack.Room")
-            || BotGear.Junk(wizard, StyleOf(leader)).Count == 0) {
+            || CombatDuelComponent.IsInBattle(leader.GlobalId)) {
             _freeBeforeSell = -1;
             return null;
         }
 
-        // He sold here and the backpack got no roomier: selling did not work, so not again for a while (no loop).
+        var junk = BotGear.Junk(wizard, StyleOf(leader)).Select(j => (ulong) j.Item.m_globalID.Full).Distinct().ToList();
+        if (junk.Count == 0) {
+            _freeBeforeSell = -1;
+            return null;
+        }
+
+        // He sold and the backpack got no roomier: selling did not work, so not again for a while (no loop).
         if (_freeBeforeSell >= 0 && wizard.BackpackFreeSlots <= _freeBeforeSell) {
             _freeBeforeSell = -1;
             _nextSellLook = DateTime.UtcNow.AddMinutes(15);
@@ -205,39 +210,19 @@ internal sealed partial class UltimusDirectorActor {
             return null;
         }
 
-        // Hurt: healing comes first, selling waits.
-        if (Hurt(leader, out _, out _)) {
+        // On his way to sell at the Bazaar: the pieces wait for its price.
+        if (DateTime.UtcNow < _bazaarSellTripUntil) {
             return null;
         }
 
-        var shop = wizard.ZoneIsInstance ? null : MinimapIndex.In(leader.ZoneActor)
-            .Where(m => m.Kind == MinimapIndex.NPC && m.Entity?.GetComponentOfType<InteractVendorComponent>() is not null)
-            .OrderBy(m => UltimusPlanner.Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y))
-            .FirstOrDefault();
-        if (shop is null || UltimusPlanner.Far(leader.X, leader.Y, shop.Object.m_location.X, shop.Object.m_location.Y) > SELL_DETOUR) {
-            // Full (or nearly) and no shop near: the backpack's Quick Sell, as a player does (Niduus, 2026-11-15). Only what he
-            // will never wear (BotGear.Junk keeps quest items, what he wears and better pieces); a shop pays the same.
-            if (wizard.BackpackFreeSlots <= QUICK_SELL_AT && !CombatDuelComponent.IsInBattle(leader.GlobalId)) {
-                var junk = BotGear.Junk(wizard, StyleOf(leader)).Select(j => (ulong) j.Item.m_globalID.Full).Distinct().ToList();
-                if (junk.Count > 0) {
-                    _freeBeforeSell = wizard.BackpackFreeSlots;
-                    _nextSellLook = DateTime.UtcNow.AddSeconds(30);
-                    _actors[0].Tell(new UltimusMember.QuickSell(junk, $"{junk.Count} pieces"));
-                    Count("things quick sold", junk.Count);
-                    Think($"My backpack is full ({wizard.BackpackFreeSlots} free spaces) and no shop is near, so I quick sell the {junk.Count} " +
-                          "pieces I will never wear from my backpack, as a player does. Quest items and what I wear stay.", "quick-sell");
-                    return null;
-                }
-            }
+        _freeBeforeSell = wizard.BackpackFreeSlots;
+        _nextSellLook = DateTime.UtcNow.AddSeconds(30);
+        _actors[0].Tell(new UltimusMember.QuickSell(junk, $"{junk.Count} pieces"));
+        Count("things quick sold", junk.Count);
+        Think($"My backpack is full ({wizard.BackpackFreeSlots} free spaces), so I quick sell the {junk.Count} pieces I will never wear right here, " +
+              "as a player does: a shop pays the same, so no walk to one. Quest items, what I wear and my gear sets stay.", "quick-sell");
 
-            Think($"My backpack has only {wizard.BackpackFreeSlots} free spaces. I sell what I will never wear at the next shop I pass " +
-                  $"({UltimusPlaybook.Cite("Backpack.Room")}).", "sell-later");
-            return null;
-        }
-
-        return new UltimusPlanner.Target(UltimusPlanner.SHOP, shop.Object.m_location.X, shop.Object.m_location.Y,
-            $"{leader.Name} sells gear he won't wear to {shop.Name}", Template: shop.Template, GlobalId: shop.Object.m_globalID.Full,
-            Key: $"sell|{leader.Role}");
+        return null;
     }
 
     // ---------------------------------------------------------------------
@@ -245,6 +230,9 @@ internal sealed partial class UltimusDirectorActor {
     // ---------------------------------------------------------------------
 
     private DateTime _nextBazaarSellLook = DateTime.MinValue;
+
+    // From another world, the Bazaar is worth the trip only when it pays this many times the usual gain over the Quick Sell.
+    private const int BAZAAR_FAR_FACTOR = 4;
 
     /// <summary>
     /// What the Bazaar pays for his junk, past what a shop pays (Niduus, 2026-11-14: "Allow for Ultimus to not only quick
@@ -288,13 +276,17 @@ internal sealed partial class UltimusDirectorActor {
         // At the Bazaar for a buy: what he won't wear goes too, whatever room is left. Elsewhere only when the backpack is
         // nearly full, he is not hurt, and he is in Wizard City (no trip across worlds to sell).
         var nearlyFull = wizard.BackpackFreeSlots < UltimusPlaybook.Value("Backpack.Room");
-        if (!atBazaar && (!nearlyFull || Hurt(leader, out _, out _)
-            || !string.Equals((leader.Zone ?? "").Split('/')[0], BAZAAR_ZONE.Split('/')[0], StringComparison.OrdinalIgnoreCase))) {
+        if (!atBazaar && (!nearlyFull || Hurt(leader, out _, out _))) {
             return null;
         }
 
+        // Which makes more sense (Niduus, 2026-11-15: "Quick Sell or go to Bazaar to sell"): in Wizard City, where the Bazaar
+        // is, it is worth the walk when it pays clearly more than the Quick Sell; from another world only when it pays
+        // several times that much more, as the trip there and back is long. Otherwise he quick sells where he is (SellTarget).
+        var inWizardCity = string.Equals((leader.Zone ?? "").Split('/')[0], BAZAAR_ZONE.Split('/')[0], StringComparison.OrdinalIgnoreCase);
         var (items, pays, shopPays) = BazaarJunk(wizard, StyleOf(leader));
-        if (items.Count == 0 || pays - shopPays < UltimusPlaybook.Value("Gold.BazaarSellGain")) {
+        var worth = UltimusPlaybook.Value("Gold.BazaarSellGain") * (atBazaar || inWizardCity ? 1 : BAZAAR_FAR_FACTOR);
+        if (items.Count == 0 || pays - shopPays < worth) {
             return null;
         }
 
@@ -307,10 +299,15 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         Think($"My backpack has only {wizard.BackpackFreeSlots} free spaces. The Bazaar pays about {pays:N0} gold for the {items.Count} pieces I " +
-              $"won't wear, a shop only {shopPays:N0}, and I am in Wizard City anyway: I sell them at the Bazaar ({UltimusPlaybook.Cite("Gold.BazaarSellGain")}).",
-            "bazaar-sell");
+              $"won't wear, the Quick Sell only {shopPays:N0}, " + (inWizardCity ? "and I am in Wizard City anyway" : "far more than the trip costs") +
+              $": I sell them at the Bazaar ({UltimusPlaybook.Cite("Gold.BazaarSellGain")}).", "bazaar-sell");
 
-        return UltimusPlanner.Travel(leader, BAZAAR_ZONE, "to the Bazaar, to sell what I won't wear", "bazaarsell-way") is { Problem.Length: 0 } way ? way : null;
+        if (UltimusPlanner.Travel(leader, BAZAAR_ZONE, "to the Bazaar, to sell what I won't wear", "bazaarsell-way") is { Problem.Length: 0 } way) {
+            _bazaarSellTripUntil = DateTime.UtcNow.AddMinutes(inWizardCity ? 5 : 15);
+            return way;
+        }
+
+        return null;
     }
 
     private void BazaarSellHere(UltimusPlanner.Target target) {
@@ -344,6 +341,7 @@ internal sealed partial class UltimusDirectorActor {
         Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(1.5), _actors[0],
             new UltimusMember.SellAtBazaar(target.GlobalId, items, $"{items.Count} pieces, about {pays:N0} gold"), Self);
         Count("things sold at the Bazaar", items.Count);
+        _bazaarSellTripUntil = DateTime.MinValue;
         Think($"At the Bazaar I sell {items.Count} pieces I will never wear, for about {pays:N0} gold. Quest items and what I wear stay.", "bazaar-sold");
         _nextBazaarSellLook = DateTime.UtcNow.AddMinutes(10);
         _target = null;

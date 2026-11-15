@@ -221,6 +221,7 @@ internal sealed partial class QuestTeamDirectorActor {
             }
 
             KeepItemCards(i);
+            KeepGearSets(i);
         }
     }
 
