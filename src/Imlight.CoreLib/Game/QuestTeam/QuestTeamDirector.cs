@@ -1444,8 +1444,11 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         (200, 90), (200, 270),
     ];
 
+    // When the leader last came into an area: an exit round begun before it is over (the same exit again is a new round).
+    private DateTime _zoneArrivedAt = DateTime.MinValue;
+
     private void IntoExit(QuestTeamMember.Status leader, QuestTeamPlanner.Target target) {
-        if (_exitKey != target.Key) {
+        if (_exitKey != target.Key || _exitFirst < _zoneArrivedAt) {
             (_exitKey, _exitSince, _exitTries) = (target.Key, DateTime.UtcNow, 0);
             _exitStood.Clear();
             _exitFirst = DateTime.UtcNow;
@@ -1520,6 +1523,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             }
 
             Note("Team", $"{leader.Name} is now in {QuestTeamText.Zone(leader.Zone)}; the others follow.");
+            _zoneArrivedAt = DateTime.UtcNow;
 
             // Going in and out of areas again and again is a way that loops (Niduus's log, 2026-11-12: "to Savarstaad Pass"
             // while already in Savarstaad Pass, every few seconds): an issue, and the step is skipped, as a player would

@@ -1574,6 +1574,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             // Ravenwood, the World Tree, the Spiral Door's landing and The Oasis) is no loop (Niduus's log, 2026-11-13: "A
             // Whole New World" was skipped as a loop on its way to Krokotopia).
             _zoneChanges.Add((DateTime.UtcNow, leader.Zone ?? ""));
+            _zoneArrivedAt = DateTime.UtcNow;
             _zoneChanges.RemoveAll(t => DateTime.UtcNow - t.At > TimeSpan.FromSeconds(90));
             var again = _zoneChanges.Count(z => string.Equals(z.Zone, leader.Zone, StringComparison.OrdinalIgnoreCase));
             if (_zoneChanges.Count >= 8 && again >= 4) {
@@ -2067,8 +2068,13 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     /// <summary>Whether it is working a walk-through exit now (standing still there is part of it, not being stuck).</summary>
     private bool WorkingExit => _exitWait is { } wait && DateTime.UtcNow - wait.Since < TimeSpan.FromSeconds(30);
 
+    // When he last came into an area: an exit round begun before it is over (he went through, or away, and came back).
+    private DateTime _zoneArrivedAt = DateTime.MinValue;
+
     private void IntoExit(UltimusMember.Status leader, UltimusPlanner.Target target) {
-        if (_exitKey != target.Key) {
+        // The same exit again after he went through it (or left the area) is a new round: the old round's clock made it
+        // "1 try in 404 s, never taken on" at once (his log, 2026-11-15: Regent's Square into Scotland Yard, which had just worked).
+        if (_exitKey != target.Key || _exitFirst < _zoneArrivedAt) {
             _exitKey = target.Key;
             _exitTries = 0;
             _exitFirst = DateTime.UtcNow;

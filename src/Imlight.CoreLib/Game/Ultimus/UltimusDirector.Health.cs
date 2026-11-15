@@ -180,6 +180,23 @@ internal sealed partial class UltimusDirectorActor {
         // In a dungeon he never walks out to heal: leaving closes it, and the boss he came for is gone with it (his PC log,
         // 2026-11-15: at 35% in The Vault of Ice he left for wisps before Keeper of the Fang, then searched the Entrance Hall
         // for the boss). With no potion or wisp in here, he goes on as a player does; Dungeon Recall brings him back if he falls.
+        // A boss next in a dungeon under half health with his healing radiance still running: he waits for it to finish
+        // first, out of the creatures' way, instead of going in hurt (his log, 2026-11-15: Jacques the Scratcher, lost at 47%
+        // and 52% health, then beaten at 82%).
+        if (InDungeon(leader) && bossNext && DateTime.UtcNow < _radianceUntil) {
+            Think($"I'm at {share:P0} health and the boss is next. My healing radiance is still healing me, so I let it finish " +
+                  "before I go in.", "dungeon-radiance|" + leader.Zone);
+            _doing = "letting his healing radiance finish before the boss";
+            if (SafeSpot(leader) is { } calm) {
+                WalkTo(0, calm);
+            }
+            else {
+                StopWalking(0);
+            }
+
+            return true;
+        }
+
         if (InDungeon(leader)) {
             Think($"I'm at {share:P0} health in a dungeon with no potion or wisp in here. Walking out would close the dungeon, so I go on " +
                   "and fight; if I fall, Dungeon Recall brings me back.", "dungeon-noheal|" + leader.Zone);

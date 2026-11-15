@@ -34,9 +34,17 @@ namespace Imlight.CoreLib.Game.BotShared;
 internal static class BotPeople {
 
     /// <summary>The nearest NPC here with the same name as the quest's person (template <paramref name="npc"/>), or null.</summary>
-    internal static MinimapIndex.Mark ByName(IEnumerable<MinimapIndex.Mark> live, ulong npc, float x, float y, string stepKey = null) {
+    internal static MinimapIndex.Mark ByName(IEnumerable<MinimapIndex.Mark> live, ulong npc, float x, float y, string stepKey = null, string zone = null) {
         if (npc == 0 || live is null || CoreObjectFactory.GetCoreTemplate(npc) is not GameObjectTemplate template
             || MinimapIndex.NameOf(template) is not { Length: > 2 } name) {
+            return null;
+        }
+
+        // The game's zone files place the step's own person in other areas, never this one: a same-name person here is
+        // someone else (his log, 2026-11-15: "Weird Science" asks for the Watson of Katzenstein's Lab, and he stood by the
+        // Watson on the Scotland Yard roof for 35 minutes, talking to him 9 times for nothing).
+        if (!string.IsNullOrEmpty(zone) && Ultimus.UltimusNpcBook.Knows(zone) && Ultimus.UltimusNpcBook.Of(npc) is { Count: > 0 } placed
+            && !placed.Any(p => OverlayQuestTracker.SameZone(p.Zone, zone) || OverlayQuestTracker.SameZone(zone, p.Zone))) {
             return null;
         }
 

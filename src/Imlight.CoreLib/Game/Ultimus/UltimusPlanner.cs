@@ -438,7 +438,7 @@ internal static class UltimusPlanner {
                     .OrderBy(m => Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault()
                     // The same person under another of the game's objects (an area's own copy of them): matched by name, as a
                     // player knows them by name (his log, 2026-11-14: Ms. Marphely of "Out of Control" never found in The Ironworks).
-                    ?? BotShared.BotPeople.ByName(live, npc, leader.X, leader.Y, key);
+                    ?? BotShared.BotPeople.ByName(live, npc, leader.X, leader.Y, key, leader.Zone);
                 if (standing is not null) {
                     return new Target(TALK, standing.Object.m_location.X, standing.Object.m_location.Y, step, questName, goalName, npc,
                         standing.Object.m_globalID.Full, Key: key);
