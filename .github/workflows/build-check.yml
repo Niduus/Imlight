@@ -1,0 +1,87 @@
+# Build check (Niduus, 2026-11-15: fewer fix-and-release rounds). Every pull request into quality-assurance, and every
+# push to it, is compiled before anyone ships it. Until now nothing was built until release day, so a break could sit
+# on quality-assurance unseen (#1153, and the Quest Team AI chat page fixed in #1176).
+#
+# Always: Ahziael (Imlight.Setup) and the launcher, with the type dump that ships in the Imcodec submodule.
+# The server (Imlight.Director, with CoreLib) and Ultimus's replay pack (tools/UltimusChecks) need the game's network
+# message files, which are not in the repository; they run here only when the IMCODEC_GENERATOR_INPUTS secret is set
+# (the same secret release.yml uses). Without it, the cloud threads build the server and run the replay pack before merging.
+name: Build check
+
+on:
+  pull_request:
+    branches: [quality-assurance]
+  push:
+    branches: [quality-assurance]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ahziael:
+    name: Ahziael and launcher build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Type dump for Imcodec
+        run: |
+          mkdir -p submodule/Imcodec/src/Imcodec.ObjectProperty/GeneratorInput
+          cp submodule/Imcodec/test/CodeGen/Inputs/*.json submodule/Imcodec/src/Imcodec.ObjectProperty/GeneratorInput/
+
+      - name: Build Ahziael
+        run: dotnet build src/Imlight.Setup/Imlight.Setup.csproj -c Release
+
+      - name: Build the launcher
+        run: dotnet build src/Imlight.Launcher/Imlight.Launcher.csproj -c Release
+
+  server:
+    name: Server build and Ultimus replay pack
+    runs-on: windows-latest
+    env:
+      GENERATOR_INPUTS: ${{ secrets.IMCODEC_GENERATOR_INPUTS }}
+    steps:
+      - name: Without the generator inputs secret
+        if: env.GENERATOR_INPUTS == ''
+        shell: pwsh
+        run: Write-Host "::notice::IMCODEC_GENERATOR_INPUTS is not set, so the server build and the replay pack are not run here."
+
+      - uses: actions/checkout@v5
+        if: env.GENERATOR_INPUTS != ''
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-dotnet@v5
+        if: env.GENERATOR_INPUTS != ''
+        with:
+          dotnet-version: '10.0.402'
+
+      - name: Generator inputs
+        if: env.GENERATOR_INPUTS != ''
+        shell: pwsh
+        run: |
+          [IO.File]::WriteAllBytes("$env:RUNNER_TEMP/inputs.zip", [Convert]::FromBase64String($env:GENERATOR_INPUTS))
+          Expand-Archive "$env:RUNNER_TEMP/inputs.zip" "$env:RUNNER_TEMP/inputs"
+          $codec = "submodule/Imcodec/src"
+          New-Item -ItemType Directory -Force "$codec/Imcodec.ObjectProperty/GeneratorInput", "$codec/Imcodec.MessageLayer/GeneratorInput" | Out-Null
+          Copy-Item "$env:RUNNER_TEMP/inputs/ObjectProperty/*" "$codec/Imcodec.ObjectProperty/GeneratorInput/" -Force
+          Copy-Item "$env:RUNNER_TEMP/inputs/MessageLayer/*" "$codec/Imcodec.MessageLayer/GeneratorInput/" -Force
+
+      - name: Build the server
+        if: env.GENERATOR_INPUTS != ''
+        run: dotnet build src/Imlight.Director/Imlight.Director.csproj -c Release
+
+      - name: Ultimus replay pack
+        if: env.GENERATOR_INPUTS != ''
+        run: dotnet run --project tools/UltimusChecks -c Release

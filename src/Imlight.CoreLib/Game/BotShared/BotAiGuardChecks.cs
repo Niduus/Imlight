@@ -199,7 +199,7 @@ internal static class BotAiGuardChecks {
             }
         }
         catch (Exception e) {
-            failed.Add($"AI harness: the check broke ({e.GetType().Name}).");
+            failed.Add($"AI harness: the check broke ({e.GetType().Name}: {(e.InnerException ?? e).Message}).");
         }
         finally {
             BotAiGuard.RemoveTestSecret(FAKE_OWNER);
