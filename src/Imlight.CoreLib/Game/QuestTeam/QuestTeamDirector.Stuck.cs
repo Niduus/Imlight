@@ -67,6 +67,12 @@ internal sealed partial class QuestTeamDirectorActor {
 
             if (i == 0) {
                 RouteMemory.Track("Quest Team", member.CharId, member.Zone, member.X, member.Y);
+                // Where the team is headed, so a walk that ends by going out through an exit is remembered too (RouteMemory).
+                if (_target is { Problem.Length: 0 } headed) {
+                    RouteMemory.Heading(member.CharId, member.Zone, headed.X, headed.Y,
+                        headed.Kind is QuestTeamPlanner.EXIT or QuestTeamPlanner.DOOR);
+                }
+
                 CheckTeamTry(member);
             }
 

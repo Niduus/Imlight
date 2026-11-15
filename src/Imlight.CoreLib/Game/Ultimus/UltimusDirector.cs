@@ -1361,7 +1361,14 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         var walkAvoid = seek ? null : RouteMobs.Avoid(member.ZoneActor, toX, toY, target.Template == 0 ? null : [target.Template], avoid);
         // From the floor he stands on to the step's own floor, by the stairs or ramps between (UltimusDirector.Floors.cs).
         var toZ = UltimusPlanner.Far(toX, toY, target.X, target.Y) < 60 ? TargetZ(member, target) : float.NaN;
-        var points = (MathF.Abs(toZ - member.Z) > OTHER_FLOOR ? null : SightWalk(member, toX, toY, what, target.Kind == UltimusPlanner.FIGHT ? null : avoid))
+        // A walk he already knows works from about here (RouteMemory) is taken first, before a way by sight or the map's
+        // (Niduus, 2026-11-15: "our boy doesn't seem to remember his successful path and assume it immediately").
+        var known = RouteMemory.Knows(member.Zone, member.X, member.Y, toX, toY);
+        if (known && index == 0) {
+            Think($"I have walked to \"{what}\" from about here before and it worked: I take that same way again.", "proven|" + what);
+        }
+
+        var points = (known || MathF.Abs(toZ - member.Z) > OTHER_FLOOR ? null : SightWalk(member, toX, toY, what, target.Kind == UltimusPlanner.FIGHT ? null : avoid))
                      ?? OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, toX, toY, body: true, avoid: walkAvoid, fromZ: member.Z, toZ: toZ);
         // A walk that goes nowhere while the step is far: said once per step, with the spots, so the log shows where the
         // map gives no way (Niduus's log, 2026-11-13: it stood at The Oasis's start for an hour with nothing said).

@@ -51,6 +51,12 @@ internal sealed partial class UltimusDirectorActor {
         for (var i = 0; i < _team.Count; i++) {
             var member = _team[i];
             RouteMemory.Track("Ultimus", member.CharId, member.Zone, member.X, member.Y);
+            // Where he is headed, so a walk that ends by going out through an exit is remembered too (RouteMemory).
+            if (_target is { Problem.Length: 0 } headed && member.Zone == _team[0].Zone) {
+                RouteMemory.Heading(member.CharId, member.Zone, headed.X, headed.Y,
+                    headed.Kind is UltimusPlanner.EXIT or UltimusPlanner.DOOR);
+            }
+
             NoteStartLanding(i, member);
             NoteFreed(i, member);
             if (i == 0) {

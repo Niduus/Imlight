@@ -89,7 +89,15 @@ internal static class RouteMemory {
         public string Zone = "";
         public List<(float X, float Y)> Points = [];
         public string Who = "";
+        // Where the wizard is headed in this area (its step), and whether that is a way out (an exit, a door).
+        public float ToX = float.NaN;
+        public float ToY = float.NaN;
+        public bool ToExit;
     }
+
+    // How near a way out the walk must end for leaving the area there to count as reaching it (the exit's area takes the
+    // wizard on before it gets to the middle, which can even stand in the wall past the floor map).
+    private const float EXIT_NEAR = 700f;
 
     private static readonly object s_lock = new();
     private static Dictionary<string, Street> s_streets;
@@ -111,6 +119,14 @@ internal static class RouteMemory {
             }
 
             if (!s_trails.TryGetValue(charId, out var trail) || !string.Equals(trail.Zone, zonePath, StringComparison.OrdinalIgnoreCase)) {
+                // Left the area by the way out it was walking to: that walk got there, so it is written down like any other
+                // (Niduus, 2026-11-15: "our boy doesn't seem to remember his successful path"; the walk into the Djeserit
+                // Family Tomb ended in the tomb, never "at" its exit, so it was never kept).
+                if (trail is { ToExit: true } && !float.IsNaN(trail.ToX) && trail.Points.Count > 0
+                    && Far(trail.Points[^1].X, trail.Points[^1].Y, trail.ToX, trail.ToY) <= EXIT_NEAR) {
+                    Keep(trail.Zone, trail.Points, trail.ToX, trail.ToY, trail.Who);
+                }
+
                 s_trails[charId] = new Trail { Zone = zonePath, Points = [(x, y)], Who = who };
 
                 return;
@@ -132,6 +148,24 @@ internal static class RouteMemory {
     }
 
     /// <summary>
+    /// Where the wizard is headed in its area now (its step), and whether that is a way out. A walk that ends by leaving
+    /// the area there is kept as reaching it, and a stuck spot only counts against the known walks to the same place.
+    /// </summary>
+    internal static void Heading(ulong charId, string zonePath, float toX, float toY, bool exit) {
+        if (string.IsNullOrEmpty(zonePath) || charId == 0) {
+            return;
+        }
+
+        lock (s_lock) {
+            if (s_trails.TryGetValue(charId, out var trail) && string.Equals(trail.Zone, zonePath, StringComparison.OrdinalIgnoreCase)) {
+                trail.ToX = toX;
+                trail.ToY = toY;
+                trail.ToExit = exit;
+            }
+        }
+    }
+
+    /// <summary>
     /// The wizard reached its step: the walk that got it here is written down (or counted again), and a new one starts.
     /// True when it is a walk not known before.
     /// </summary>
@@ -146,35 +180,41 @@ internal static class RouteMemory {
                 points.Add((x, y));
             }
 
-            s_trails[charId] = new Trail { Zone = zonePath, Points = [(x, y)], Who = trail.Who };
-            if (points.Count < 3 || Length(points) < MIN_LEG) {
-                return false;
-            }
+            s_trails[charId] = new Trail { Zone = zonePath, Points = [(x, y)], Who = trail.Who, ToX = trail.ToX, ToY = trail.ToY, ToExit = trail.ToExit };
 
-            var street = StreetOf(zonePath, create: true);
-            var (fx, fy) = points[0];
-            var same = street.Legs.FirstOrDefault(l => Far(l.FromX, l.FromY, fx, fy) <= FROM_NEAR && Far(l.ToX, l.ToY, x, y) <= TO_NEAR);
-            var walked = points.Select(p => new[] { MathF.Round(p.X), MathF.Round(p.Y) }).ToList();
-            if (same is null) {
-                street.Legs.Add(new Leg { FromX = fx, FromY = fy, ToX = x, ToY = y, Points = walked, Worked = 1, Last = DateTime.UtcNow, Who = trail.Who });
-                if (street.Legs.Count > MOST_LEGS) {
-                    street.Legs.Remove(street.Legs.OrderBy(l => l.Last).First());
-                }
-            }
-            else {
-                same.Worked++;
-                same.Last = DateTime.UtcNow;
-                // The shorter of the two walks is kept.
-                if (Length(walked.Select(p => (p[0], p[1])).ToList()) < Length(same.Points.Select(p => (p[0], p[1])).ToList())) {
-                    same.Points = walked;
-                }
-            }
-
-            s_dirty = true;
-            SaveSoon();
-
-            return same is null;
+            return Keep(zonePath, points, x, y, trail.Who);
         }
+    }
+
+    // Writes a walk down (or counts it again): true when it is one not known before. Under s_lock.
+    private static bool Keep(string zonePath, List<(float X, float Y)> points, float x, float y, string who) {
+        if (points.Count < 3 || Length(points) < MIN_LEG) {
+            return false;
+        }
+
+        var street = StreetOf(zonePath, create: true);
+        var (fx, fy) = points[0];
+        var same = street.Legs.FirstOrDefault(l => Far(l.FromX, l.FromY, fx, fy) <= FROM_NEAR && Far(l.ToX, l.ToY, x, y) <= TO_NEAR);
+        var walked = points.Select(p => new[] { MathF.Round(p.X), MathF.Round(p.Y) }).ToList();
+        if (same is null) {
+            street.Legs.Add(new Leg { FromX = fx, FromY = fy, ToX = x, ToY = y, Points = walked, Worked = 1, Last = DateTime.UtcNow, Who = who });
+            if (street.Legs.Count > MOST_LEGS) {
+                street.Legs.Remove(street.Legs.OrderBy(l => l.Last).First());
+            }
+        }
+        else {
+            same.Worked++;
+            same.Last = DateTime.UtcNow;
+            // The shorter of the two walks is kept.
+            if (Length(walked.Select(p => (p[0], p[1])).ToList()) < Length(same.Points.Select(p => (p[0], p[1])).ToList())) {
+                same.Points = walked;
+            }
+        }
+
+        s_dirty = true;
+        SaveSoon();
+
+        return same is null;
     }
 
     /// <summary>
@@ -187,6 +227,7 @@ internal static class RouteMemory {
         }
 
         lock (s_lock) {
+            s_trails.TryGetValue(charId, out var trail);
             s_trails.Remove(charId);
             var street = StreetOf(zonePath, create: true);
             var spot = street.Stuck.FirstOrDefault(s => Far(s.X, s.Y, x, y) <= STUCK_NEAR);
@@ -199,8 +240,18 @@ internal static class RouteMemory {
 
             spot.Times++;
             spot.Last = DateTime.UtcNow;
-            foreach (var leg in street.Legs.Where(l => l.Points.Any(p => Far(p[0], p[1], x, y) <= STUCK_NEAR))) {
+            // Only the known walks to where it was headed count as failed: a walk that worked to another place, which only
+            // passes by here, stays proven (Niduus, 2026-11-15: a stuck spot by the Djeserit corner must not wipe out the
+            // walk round it that worked).
+            var headed = trail is not null && !float.IsNaN(trail.ToX) && string.Equals(trail.Zone, zonePath, StringComparison.OrdinalIgnoreCase);
+            foreach (var leg in street.Legs.Where(l => headed && Far(l.ToX, l.ToY, trail.ToX, trail.ToY) <= TO_NEAR
+                                                       && l.Points.Any(p => Far(p[0], p[1], x, y) <= STUCK_NEAR))) {
                 leg.Failed++;
+            }
+
+            // Its heading stays: the next walk it is on is still to the same place.
+            if (trail is not null && string.Equals(trail.Zone, zonePath, StringComparison.OrdinalIgnoreCase)) {
+                s_trails[charId] = new Trail { Zone = zonePath, Points = [(x, y)], Who = trail.Who, ToX = trail.ToX, ToY = trail.ToY, ToExit = trail.ToExit };
             }
 
             s_dirty = true;
@@ -224,7 +275,7 @@ internal static class RouteMemory {
             }
 
             var leg = street.Legs
-                .Where(l => l.Worked > l.Failed * 2 && Far(l.FromX, l.FromY, fromX, fromY) <= FROM_NEAR && Far(l.ToX, l.ToY, toX, toY) <= TO_NEAR)
+                .Where(l => l.Worked > l.Failed * 2 && Far(l.ToX, l.ToY, toX, toY) <= TO_NEAR && OnLeg(l, fromX, fromY))
                 .Where(l => avoid is null || !l.Points.Any(p => avoid.Any(a => Far(a.X, a.Y, p[0], p[1]) < 200)))
                 // The shortest of the walks that work (a shortcut one bot found is every bot's), then the most proven.
                 .OrderBy(l => Length(l.Points.Select(p => (p[0], p[1])).ToList()))
@@ -249,6 +300,22 @@ internal static class RouteMemory {
             return points;
         }
     }
+
+    /// <summary>True when a walk that worked from about here to about there is known (taken before any other way).</summary>
+    internal static bool Knows(string zonePath, float fromX, float fromY, float toX, float toY) {
+        if (string.IsNullOrEmpty(zonePath)) {
+            return false;
+        }
+
+        lock (s_lock) {
+            return StreetOf(zonePath, create: false) is { } street
+                   && street.Legs.Any(l => l.Worked > l.Failed * 2 && Far(l.ToX, l.ToY, toX, toY) <= TO_NEAR && OnLeg(l, fromX, fromY));
+        }
+    }
+
+    // From its start, or from anywhere along it (a wizard that got stuck half way there picks the walk up where it stands).
+    private static bool OnLeg(Leg leg, float x, float y)
+        => Far(leg.FromX, leg.FromY, x, y) <= FROM_NEAR || leg.Points.Any(p => Far(p[0], p[1], x, y) <= FROM_NEAR);
 
     /// <summary>The spots where wizards got stuck on this street lately, added to the ones to keep away from (null when none).</summary>
     internal static IReadOnlyList<(float X, float Y)> WithStuckSpots(string zonePath, float toX, float toY, IReadOnlyList<(float X, float Y)> avoid) {

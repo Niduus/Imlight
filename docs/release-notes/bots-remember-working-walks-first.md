@@ -1,0 +1,4 @@
+Fixed: Ultimus and the Quest Team use a walk that worked before right away
+A walk that ended by going through an exit or a door into the next area was never remembered, because the wizard left the area before "arriving" at the exit, so Ultimus kept getting caught at the same corner on the way into the Djeserit Family Tomb. Those walks are now remembered like any other, a remembered walk is picked up from anywhere along it, not only from where it started, and Ultimus takes it before trying a straight line by sight. Getting stuck on the way to one place no longer spoils a walk that worked to a different place nearby.
+Where: Ultimus and the Quest Team, every area (the learned walks file in logs/routes).
+Test: Let Ultimus walk into a tomb or through an exit once, then send him back and watch him take the same walk at once, with "I take that same way again" in his thoughts.
