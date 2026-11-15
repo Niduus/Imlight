@@ -1,0 +1,4 @@
+Fixed: Ultimus hears chat from farther away and hears his group in battle
+Ultimus used to hear players only within a short distance, and he never heard group chat. Now he hears what players say about twice as far away. He hears his group's chat from anywhere and answers in group chat, so the whole group sees it. Players in the same battle as him are always heard and taken as talking to him, so a command from his group leader in a fight reaches him. Both distances are numbers in his playbook (Chat HearRadius and Chat NearRadius) and changes apply right away.
+Where: Ultimus's chat, in the world, in group chat and in battle.
+Test: Group with Ultimus, make yourself leader, start a battle with him and type a command in group chat (for example "wait"); he should answer in group chat and do it. Then say hello to him from across a street and he should answer.

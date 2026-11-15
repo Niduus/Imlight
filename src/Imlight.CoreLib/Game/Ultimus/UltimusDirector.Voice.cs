@@ -23,6 +23,7 @@ using System.Linq;
 using Akka.Actor;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.BotShared;
+using Imlight.CoreLib.Game.Groups;
 using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.Game.Tools;
@@ -39,7 +40,7 @@ namespace Imlight.CoreLib.Game.Ultimus;
 internal static class UltimusVoice {
 
     internal sealed record Heard(IActorRef Zone, float X, float Y, ulong SpeakerCharId, string SpeakerName, string Text, bool Whisper = false, bool Typed = false,
-        bool OrdersChecked = false);
+        bool OrdersChecked = false, bool Group = false);
 
     private static readonly ConcurrentQueue<Heard> s_heard = new();
 
@@ -59,6 +60,19 @@ internal static class UltimusVoice {
         }
 
         s_heard.Enqueue(new Heard(null, 0, 0, charId, name ?? "a player", text ?? "", Whisper: true, Typed: typed));
+    }
+
+    /// <summary>
+    /// A player wrote in group chat (the /party line): Ultimus hears it when he is in that group, wherever they are, so his
+    /// group's talk and his leader's orders reach him in battle too (Niduus, 2026-11-15: "acknowledge group members in
+    /// battle talking so he knows when a command is given").
+    /// </summary>
+    internal static void GroupSaid(ulong charId, string name, string text, bool typed = true) {
+        if (UltimusRoster.IsMember(charId) || QuestTeam.QuestTeamRoster.IsMember(charId) || s_heard.Count > 20) {
+            return;
+        }
+
+        s_heard.Enqueue(new Heard(null, 0, 0, charId, name ?? "a player", text ?? "", Typed: typed, Group: true));
     }
 
     internal static bool TryTake(out Heard heard) => s_heard.TryDequeue(out heard);
@@ -155,7 +169,15 @@ internal sealed partial class UltimusDirectorActor {
     private void AnswerPlayers() {
         while (UltimusVoice.TryTake(out var heard)) {
             var me = _team.Count > 0 ? _team[0] : null;
-            if (me is null || (!heard.Whisper && (me.ZoneActor is null || !me.ZoneActor.Equals(heard.Zone) || UltimusPlanner.Far(me.X, me.Y, heard.X, heard.Y) > 700))) {
+            // Said around him: heard out to his hearing radius (UltimusPlaybook Chat.HearRadius, live), and always from a
+            // player in his own battle. Group chat: heard when he is in that group.
+            if (me is null) {
+                continue;
+            }
+
+            if (heard.Group ? !GroupRegistry.AreGrouped(me.CharId, heard.SpeakerCharId)
+                : !heard.Whisper && (me.ZoneActor is null || !me.ZoneActor.Equals(heard.Zone)
+                                     || (UltimusPlanner.Far(me.X, me.Y, heard.X, heard.Y) > UltimusPlaybook.Value("Chat.HearRadius") && !InMyBattle(me, heard.SpeakerCharId)))) {
                 continue;
             }
 
@@ -354,8 +376,10 @@ internal sealed partial class UltimusDirectorActor {
 
     private void SendReply(UltimusVoice.Heard heard, string text, string by) {
         var whisperTo = heard.Whisper ? heard.SpeakerCharId : 0;
-        var how = (heard.Whisper ? "whispered" : "said") + (heard.Typed ? "" : " in Menu Chat");
-        Note("Ultimus", $"{heard.SpeakerName} {how}: \"{heard.Text}\"; Ultimus {(heard.Whisper ? "whispers back" : "says")} ({by}): \"{text}\"");
+        var how = (heard.Whisper ? "whispered" : heard.Group ? "said in group chat" : "said") + (heard.Typed ? "" : " in Menu Chat");
+        // Group chat is answered in group chat (the group's channel), so the whole group sees it, in battle too.
+        var channel = heard.Group && _team.Count > 0 && GroupRegistry.TryGetGroup(_team[0].CharId, out var group) ? group.ChannelId : 0;
+        Note("Ultimus", $"{heard.SpeakerName} {how}: \"{heard.Text}\"; Ultimus {(heard.Whisper ? "whispers back" : channel != 0 ? "answers in group chat" : "says")} ({by}): \"{text}\"");
         NoteTalk(heard.SpeakerCharId, "player", heard.Text);
         NoteTalk(heard.SpeakerCharId, "me", text);
         // Who answered, marked in his Thoughts (Niduus, 2026-11-15, "all"): the AI or his normal chat.
@@ -367,7 +391,9 @@ internal sealed partial class UltimusDirectorActor {
         var parts = ChatParts(text);
         for (var i = 0; i < parts.Count; i++) {
             IActorRef actor = _actors[0];
-            object message = heard.Whisper ? new UltimusMember.WhisperText(parts[i], whisperTo) : new UltimusMember.SayText(parts[i]);
+            object message = heard.Whisper ? new UltimusMember.WhisperText(parts[i], whisperTo)
+                : channel != 0 ? new UltimusMember.WhisperText(parts[i], channel)
+                : new UltimusMember.SayText(parts[i]);
             if (i == 0) {
                 actor.Tell(message);
             }
@@ -435,7 +461,13 @@ internal sealed partial class UltimusDirectorActor {
             _talkNear.Add((heard.SpeakerCharId, now));
         }
 
-        if (heard.Whisper) {
+        if (heard.Whisper || heard.Group) {
+            return true;
+        }
+
+        // A player in his own battle talking: his team in the fight, so it is for him (orders like "heal me" or "wait"
+        // come this way; Niduus, 2026-11-15).
+        if (InMyBattle(me, heard.SpeakerCharId)) {
             return true;
         }
 
@@ -459,12 +491,23 @@ internal sealed partial class UltimusDirectorActor {
             return false;
         }
 
-        if (UltimusPlanner.Far(me.X, me.Y, heard.X, heard.Y) > 300) {
+        if (UltimusPlanner.Far(me.X, me.Y, heard.X, heard.Y) > UltimusPlaybook.Value("Chat.NearRadius")) {
             why = "said away from him and not to him";
             return false;
         }
 
         return true;
+    }
+
+    // Whether this player is in Ultimus's battle right now.
+    private static bool InMyBattle(UltimusMember.Status me, ulong charId) {
+        try {
+            return me.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId)
+                   && CombatDuelComponent.UltimusBattlePlayers(me.GlobalId).Any(p => p.CharId == charId);
+        }
+        catch (Exception) {
+            return false;
+        }
     }
 
     /// <summary>What Ultimus knows of himself right now, for the social core: his real quest and step, area, level, mood.</summary>

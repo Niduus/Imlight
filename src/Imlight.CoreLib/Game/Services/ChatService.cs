@@ -610,6 +610,10 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
         Logger.Information("[Group {Channel}] {Name}: {Message}",
             Logger.Args(message.TargetID, wizard.PlayerNameBehavior.GetWizardName(), text));
+        // Ultimus hears his group's chat, in battle too (Niduus, 2026-11-15: "acknowledge group members in battle talking").
+        if (Ultimus.UltimusDirector.ActorOf("Balance") is not null) {
+            Ultimus.UltimusVoice.GroupSaid(wizard.CharId, wizard.PlayerNameBehavior?.GetWizardName(), text);
+        }
         SaveChatLog(text, GetActiveGameObject(), wizard);
     }
 

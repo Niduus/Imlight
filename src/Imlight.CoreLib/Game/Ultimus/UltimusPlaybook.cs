@@ -96,6 +96,8 @@ internal static class UltimusPlaybook {
         ("Push", new("ShopMinutes", 30, "In push mode, shop trips only in my first this-many minutes in a new world (its shops have the next gear).")),
         ("Watchdog", new("Minutes", 45, "No step done and no XP gained for this long: I raise the alarm and use a player's unstuck moves (area start, then .stuck go).")),
         ("Watchdog", new("PauseMinutes", 120, "No step done and no XP gained for this long: I stop (paused) and Ahziael shows a red note on the Ultimus page. 0 = never.")),
+        ("Chat", new("HearRadius", 1500, "I hear what players say around me out to this far (the game's own say range is about this). Group chat and my battle's players I always hear.")),
+        ("Chat", new("NearRadius", 600, "A line said this near me, naming nobody, while nobody else is talking here, I take as said to me.")),
         ("Pace", new("StepPause", 4, "After a step is done I take up to this many seconds, as a player reads the next step. 0 = no pause.")),
         ("Pace", new("DialogPerLine", 0.8, "Seconds I read each line of a dialog.")),
         ("Pace", new("DialogMost", 7, "...and at most this many seconds for one dialog.")),
