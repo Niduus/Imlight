@@ -105,14 +105,9 @@ internal sealed partial class ManagerWindow {
             return "a custom area has changes that aren't saved";
         }
 
-        // Only a box that asks something holds the restart. A notice (the Quest Team's "critical issue" box, which only says
-        // what is already on the Team Issues page) is closed instead: left open overnight it held Instant Update from
-        // 7:46 AM on, with 0.10.875 ready and never installed (his PC, 2026-11-15).
-        if (OwnedWindows.Any(w => w != _teamPopup)) {
+        if (OwnedWindows.Any()) {
             return "a question box is open";
         }
-
-        _teamPopup?.Close();
 
         return null;
     }
