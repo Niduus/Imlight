@@ -16,7 +16,13 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
+using Ellipse = Avalonia.Controls.Shapes.Ellipse;
+using Line = Avalonia.Controls.Shapes.Line;
+using Polyline = Avalonia.Controls.Shapes.Polyline;
+using Path = System.IO.Path;
+using Avalonia.Layout;
 using Avalonia.Media;
 
 namespace Imlight.Setup;
@@ -31,7 +37,13 @@ internal sealed partial class ManagerWindow {
     private readonly TextBlock _ultStuckWeek = new() { TextWrapping = TextWrapping.Wrap };
     private DateTime _ultStuckWeekRead = DateTime.MinValue;
 
-    private readonly TextBlock _ultGates = new() { TextWrapping = TextWrapping.Wrap, FontFamily = new FontFamily("Consolas, Menlo, monospace") };
+    private readonly TextBlock _ultGates = new() { TextWrapping = TextWrapping.Wrap, Foreground = MUTED };
+    private readonly StackPanel _ultGateRows = new() { Spacing = 4 };
+    private string _ultGatesAll = "";
+
+    // The last 14 days of stuck time as a line (Niduus, 2026-11-15, "all"): one point a day, minutes up the side.
+    private readonly Canvas _ultStuckChart = new() { Height = 110, MinWidth = 300, HorizontalAlignment = HorizontalAlignment.Left };
+    private const double CHART_WIDTH = 420, CHART_HEIGHT = 80, CHART_LEFT = 40;
     private DateTime _ultGatesRead = DateTime.MinValue;
 
     private string GatesAheadPath => Path.Combine(_manager.LogFolder, "bots", "gates-ahead.txt");
@@ -44,6 +56,7 @@ internal sealed partial class ManagerWindow {
 
         _ultStuckWeekRead = DateTime.UtcNow;
         var (week, before) = StuckMinutesByWeek(Path.Combine(UltimusFolder, "stuck-days.json"));
+        DrawStuckChart(StuckMinutesByDay(Path.Combine(UltimusFolder, "stuck-days.json")));
         if (week is null) {
             _ultStuckWeek.Text = "Stuck time this week: nothing written down yet.";
             _ultStuckWeek.Foreground = MUTED;
@@ -62,9 +75,21 @@ internal sealed partial class ManagerWindow {
 
     // stuck-days.json: each day's worst spots ("DaySpots") and today's ("Today"), summed by week. Null when there is no file.
     private static (double? Week, double? Before) StuckMinutesByWeek(string path) {
+        if (StuckMinutesByDay(path) is not { } seconds) {
+            return (null, null);
+        }
+
+        var now = DateTime.Today;
+        double Sum(int from, int to) => seconds.Where(d => d.Key > now.AddDays(-to) && d.Key <= now.AddDays(-from)).Sum(d => d.Value);
+
+        return (Sum(0, 7), seconds.Keys.Any(d => d <= now.AddDays(-7)) ? Sum(7, 14) : null);
+    }
+
+    // The minutes of each day written down (null when there is no file).
+    private static Dictionary<DateTime, double>? StuckMinutesByDay(string path) {
         try {
             if (!File.Exists(path)) {
-                return (null, null);
+                return null;
             }
 
             using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
@@ -92,13 +117,54 @@ internal sealed partial class ManagerWindow {
                 Add(today.GetString() ?? "", spots);
             }
 
-            var now = DateTime.Today;
-            double Sum(int from, int to) => seconds.Where(d => d.Key > now.AddDays(-to) && d.Key <= now.AddDays(-from)).Sum(d => d.Value) / 60;
-
-            return (Sum(0, 7), seconds.Keys.Any(d => d <= now.AddDays(-7)) ? Sum(7, 14) : null);
+            return seconds.ToDictionary(d => d.Key, d => d.Value / 60);
         }
         catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) {
-            return (null, null);
+            return null;
+        }
+    }
+
+    private void DrawStuckChart(Dictionary<DateTime, double>? days) {
+        _ultStuckChart.Children.Clear();
+        _ultStuckChart.IsVisible = days is { Count: > 0 };
+        if (days is not { Count: > 0 }) {
+            return;
+        }
+
+        var today = DateTime.Today;
+        var values = Enumerable.Range(0, 14).Select(i => today.AddDays(i - 13)).Select(d => (Day: d, Minutes: days.GetValueOrDefault(d))).ToList();
+        var most = Math.Max(10, values.Max(v => v.Minutes));
+        var step = CHART_WIDTH / (values.Count - 1);
+        Point At(int i) => new(CHART_LEFT + (i * step), 10 + CHART_HEIGHT - (values[i].Minutes / most * CHART_HEIGHT));
+
+        // The floor and the top, with the minutes they stand for.
+        _ultStuckChart.Children.Add(new Line { StartPoint = new Point(CHART_LEFT, 10 + CHART_HEIGHT), EndPoint = new Point(CHART_LEFT + CHART_WIDTH, 10 + CHART_HEIGHT), Stroke = ManagerTheme.LINE_BRUSH, StrokeThickness = 1 });
+        _ultStuckChart.Children.Add(new Line { StartPoint = new Point(CHART_LEFT, 10), EndPoint = new Point(CHART_LEFT + CHART_WIDTH, 10), Stroke = ManagerTheme.LINE_BRUSH, StrokeThickness = 1, StrokeDashArray = [2, 3] });
+        Label($"{most:0} min", 0, 2);
+        Label("0", 24, 2 + CHART_HEIGHT);
+
+        var line = new Polyline { Stroke = ManagerTheme.Accent("good"), StrokeThickness = 2 };
+        for (var i = 0; i < values.Count; i++) {
+            line.Points.Add(At(i));
+        }
+
+        _ultStuckChart.Children.Add(line);
+        for (var i = 0; i < values.Count; i++) {
+            var dot = new Ellipse { Width = 6, Height = 6, Fill = ManagerTheme.Accent("good") };
+            ToolTip.SetTip(dot, $"{values[i].Day:ddd d MMM}: {values[i].Minutes:0} minutes stuck");
+            Canvas.SetLeft(dot, At(i).X - 3);
+            Canvas.SetTop(dot, At(i).Y - 3);
+            _ultStuckChart.Children.Add(dot);
+            if (i % 2 == 1 || i == values.Count - 1) {
+                Label(i == values.Count - 1 ? "today" : values[i].Day.ToString("d MMM", CultureInfo.InvariantCulture), At(i).X - 14, 14 + CHART_HEIGHT);
+            }
+        }
+
+        void Label(string text, double x, double y) {
+            var block = new TextBlock { Text = text, FontSize = ManagerTheme.FONT_SMALL, Foreground = MUTED };
+            Canvas.SetLeft(block, x);
+            Canvas.SetTop(block, y);
+            _ultStuckChart.Children.Add(block);
         }
     }
 
@@ -106,13 +172,14 @@ internal sealed partial class ManagerWindow {
         "Doors and teleporters in every story world that open only once a quest step is done, read from the game's own files " +
         "when the server starts. When Ultimus or the Quest Team need one of these ways and hold its quest, they do that quest " +
         "first (like the Temple of Storms' tests before its boss). Updates by itself.",
-        Row(Action(Plain("Copy the list"), () => CopyAsync(_ultGates.Text ?? "")), Action(Plain("Open its folder"), () => {
+        Row(Action(Plain("Copy the list"), () => CopyAsync(_ultGatesAll)), Action(Plain("Open its folder"), () => {
             var folder = Path.GetDirectoryName(GatesAheadPath)!;
             Directory.CreateDirectory(folder);
 
             return Open(folder);
         })),
-        _ultGates);
+        _ultGates,
+        _ultGateRows);
 
     private void ShowUltimusGates() {
         var changed = File.Exists(GatesAheadPath) ? File.GetLastWriteTimeUtc(GatesAheadPath) : DateTime.MinValue;
@@ -129,11 +196,51 @@ internal sealed partial class ManagerWindow {
 
             using var stream = new FileStream(GatesAheadPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
             using var reader = new StreamReader(stream, Encoding.UTF8);
-            var text = reader.ReadToEnd().ReplaceLineEndings("\n").TrimEnd();
-            _ultGates.Text = text.Length > 64 * 1024 ? text[..(64 * 1024)] + "\n..." : text;
+            _ultGatesAll = reader.ReadToEnd().ReplaceLineEndings("\n").TrimEnd();
+            ShowGateRows(_ultGatesAll);
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
             _ultGates.Text = "The list could not be read right now.";
+        }
+    }
+
+    // One row per locked way: where it is, where it leads, the quest that opens it, and a button that sends your own
+    // wizard to that area (.tp, Niduus, 2026-11-15) to look at it.
+    private const int MOST_GATE_ROWS = 300;
+
+    private void ShowGateRows(string text) {
+        _ultGateRows.Children.Clear();
+        var rows = new List<(string Zone, string Line)>();
+        var zone = "";
+        foreach (var raw in text.Split('\n')) {
+            if (raw.StartsWith("    to ", StringComparison.Ordinal) && zone.Length > 0) {
+                rows.Add((zone, raw.Trim()));
+            }
+            else if (raw.Length > 0 && !raw.StartsWith(' ') && raw.Contains('/') && !raw.Contains(' ')) {
+                zone = raw.Trim();
+            }
+        }
+
+        _ultGates.Text = rows.Count == 0 ? "No locked ways found yet." : $"{rows.Count} locked way(s) in the story worlds" +
+            (rows.Count > MOST_GATE_ROWS ? $"; the first {MOST_GATE_ROWS} are shown (Copy the list has them all)." : ".");
+        foreach (var (where, line) in rows.Take(MOST_GATE_ROWS)) {
+            var go = Action(Plain("Go there"), () => {
+                if (!InstalledCommands.IsServerRunning(_manager.InstallFolder)) {
+                    throw new PanelException("Start the server and log in to your wizard first.");
+                }
+
+                _manager.SendCommand($".tp {where}");
+                Say($"Sent: your wizard goes to {where}, where this locked way is.");
+
+                return Task.CompletedTask;
+            });
+            ToolTip.SetTip(go, $"Your wizard (logged in on this PC) goes to this area to look at the way. In the game: .tp {where}");
+            _ultGateRows.Children.Add(new DockPanel {
+                Children = {
+                    WithDock(WithCenter(go), Dock.Right),
+                    WithCenter(new TextBlock { Text = $"{where}: {line}", TextWrapping = TextWrapping.Wrap }),
+                },
+            });
         }
     }
 

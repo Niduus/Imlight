@@ -307,6 +307,7 @@ internal sealed partial class ManagerWindow {
                 _ultDoing,
                 _ultToday,
                 _ultStuckWeek,
+                _ultStuckChart,
                 _ultQuest,
                 _ultHelp,
                 _ultMembers,
