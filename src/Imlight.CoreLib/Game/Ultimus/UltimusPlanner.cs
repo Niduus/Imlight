@@ -435,7 +435,10 @@ internal static class UltimusPlanner {
             case PersonaGoalTemplate persona: {
                 var npc = QuestMadlibs.SpeakerTemplateOf(persona.m_personaName, 0);
                 var standing = live.Where(m => m.Template == npc && npc != 0)
-                    .OrderBy(m => Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault();
+                    .OrderBy(m => Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault()
+                    // The same person under another of the game's objects (an area's own copy of them): matched by name, as a
+                    // player knows them by name (his log, 2026-11-14: Ms. Marphely of "Out of Control" never found in The Ironworks).
+                    ?? BotShared.BotPeople.ByName(live, npc, leader.X, leader.Y);
                 if (standing is not null) {
                     return new Target(TALK, standing.Object.m_location.X, standing.Object.m_location.Y, step, questName, goalName, npc,
                         standing.Object.m_globalID.Full, Key: key);
@@ -489,7 +492,7 @@ internal static class UltimusPlanner {
                 var others = MinimapIndex.In(leader.ZoneActor).Where(m => m.Kind is MinimapIndex.MOB or MinimapIndex.BOSS
                                                                           && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full)).ToList();
                 var level = leader.Wizard?.MagicSchoolBehavior?.Level ?? 1;
-                var strong = level >= quest.m_questLevel + 2 && bounty.m_bountyTotal > 1
+                var strong = level >= UltimusDirectorActor.QuestLevelOf(quest) + 2 && bounty.m_bountyTotal > 1
                              && (leader.Wizard?.GameStats is { } st && st.m_currentHitpoints >= (st.m_baseHitpoints + st.m_bonusHitpoints) * 0.8);
                 float GroupCost(MinimapIndex.Mark m) {
                     var (mx, my) = (m.Object.m_location.X, m.Object.m_location.Y);
@@ -585,6 +588,14 @@ internal static class UltimusPlanner {
         if (goal is PersonaGoalTemplate talkTo && UltimusNpcBook.In(QuestMadlibs.SpeakerTemplateOf(talkTo.m_personaName, 0), zone) is { } booked
             && Far(leader.X, leader.Y, booked.X, booked.Y) > 150) {
             return new Target(SPOT, booked.X, booked.Y, step, questName, goalName, Key: key + "|book");
+        }
+
+        // The step's person is not here, and there is nowhere left to walk to: written down for the Issues tab (BotPeople).
+        if (goal is PersonaGoalTemplate absent && (nearest is not { } near || Far(leader.X, leader.Y, near.Item1, near.Item2) <= 150)) {
+            var who = QuestMadlibs.SpeakerTemplateOf(absent.m_personaName, 0);
+            var name = Shared.Resources.CoreObjectFactory.GetCoreTemplate(who) is GameObjectTemplate person ? Tools.MinimapIndex.NameOf(person) : "";
+            BotShared.BotPeople.NotThere(name.Length > 0 ? name : step, questName, step, zone,
+                who == 0 ? "" : Ultimus.UltimusPlanner.NpcZone(absent.m_personaName, who, zone, out _));
         }
 
         // In the right area, but nothing to go to yet: the arrow's spot (the NPC or creatures may show up there).

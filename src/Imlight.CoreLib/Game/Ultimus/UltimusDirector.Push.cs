@@ -132,7 +132,7 @@ internal sealed partial class UltimusDirectorActor {
     private UltimusPlanner.Target LevelFirst(UltimusMember.Status leader, UltimusPlanner.Target step) {
         // Never out of a dungeon for it.
         if (step is null || step.Kind != UltimusPlanner.FIGHT || string.IsNullOrEmpty(step.Quest) || leader.Wizard?.ZoneIsInstance == true
-            || QuestTemplateCollection.GetQuestByName(step.Quest) is not { } quest || quest.m_questLevel <= 0) {
+            || QuestTemplateCollection.GetQuestByName(step.Quest) is not { } quest || QuestLevelOf(quest) <= 0) {
             return null;
         }
 
@@ -142,7 +142,7 @@ internal sealed partial class UltimusDirectorActor {
             return null;
         }
 
-        var want = quest.m_questLevel;
+        var want = QuestLevelOf(quest);
 
         // A rival that beat him twice or more (UltimusFoes.Rivals): one level more than he had when he first met it like that.
         var rival = UltimusFoes.Of((uint) Math.Min(step.Template, uint.MaxValue));
@@ -163,7 +163,7 @@ internal sealed partial class UltimusDirectorActor {
             return null;
         }
 
-        var why = $"I lost this fight more than once and the quest is level {quest.m_questLevel}";
+        var why = $"I lost this fight more than once and the quest is level {QuestLevelOf(quest)}";
 
         return XpTarget(leader, want, why);
     }
@@ -374,11 +374,11 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         var checks = new List<string>();
-        if (QuestTemplateCollection.GetQuestByName(target.Quest) is { } quest && quest.m_questLevel > 0) {
+        if (QuestTemplateCollection.GetQuestByName(target.Quest) is { } quest && QuestLevelOf(quest) is > 0 and var questLevel) {
             var have = leader.Wizard?.MagicSchoolBehavior?.Level ?? 1;
-            checks.Add(have >= quest.m_questLevel
-                ? $"my level {have} is fine for this level {quest.m_questLevel} quest"
-                : $"I am level {have}, the quest is level {quest.m_questLevel}" + (target.Kind == UltimusPlanner.FIGHT ? ", so I watch my health closely" : ""));
+            checks.Add(have >= questLevel
+                ? $"my level {have} is fine for this level {questLevel} quest"
+                : $"I am level {have}, the quest is level {questLevel}" + (target.Kind == UltimusPlanner.FIGHT ? ", so I watch my health closely" : ""));
         }
 
         var stats = leader.Wizard?.GameStats;

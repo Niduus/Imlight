@@ -202,6 +202,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
     private DateTime _runsCheckedAt = DateTime.UtcNow;
 
+    private string _lastQuestWorked;
+
     public UltimusDirectorActor() {
         Receive<Halt>(m => {
             Note("Ultimus", $"logs out: {m.Why}.");
@@ -1450,6 +1452,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     private void NoteLeaderZone(UltimusMember.Status leader) {
         if (_leaderZone.Length > 0 && !string.Equals(_leaderZone, leader.Zone, StringComparison.OrdinalIgnoreCase)) {
             Note("Ultimus", $"{leader.Name} is now in {UltimusText.Zone(leader.Zone)}.");
+            CountBackAndForth(leader.Zone);
             // A Recall or a Commons button press of his own is a player move, never a wrong landing (audit A6: a Recall back to
             // his mark was taken as a wrong area and he walked out again).
             var buttonMove = DateTime.UtcNow - _recallSentAt < TimeSpan.FromSeconds(30) || DateTime.UtcNow - _hubPressedAt < TimeSpan.FromSeconds(30);
@@ -1692,6 +1695,15 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         var grinding = (_target ?? _leaderLastTarget)?.What?.StartsWith("a fight for XP", StringComparison.Ordinal) == true;
         // The quest he is working on right now (empty while selling, healing and the like: that time counts for every quest).
         var workingOn = (_target ?? _leaderLastTarget)?.Quest;
+        // A move that names no quest (a way to another area, a hint trip, a door) belongs to the quest worked on last, not to
+        // every quest held: a dungeon quest left behind in an earlier world was written up as "much longer than expected"
+        // while he quested in the next world (his log, 2026-11-14: "Test of Strength" in Krokotopia, while in Marleybone).
+        if (!string.IsNullOrEmpty(workingOn)) {
+            _lastQuestWorked = workingOn;
+        }
+        else if (!string.IsNullOrEmpty(_currentQuest) || !string.IsNullOrEmpty(_lastQuestWorked)) {
+            workingOn = string.IsNullOrEmpty(_lastQuestWorked) ? _currentQuest : _lastQuestWorked;
+        }
 
         // A quest none of them holds any more, that one of them finished: done.
         foreach (var run in _runs.Values.ToList()) {

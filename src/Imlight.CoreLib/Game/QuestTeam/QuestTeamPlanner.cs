@@ -316,7 +316,10 @@ internal static class QuestTeamPlanner {
             case PersonaGoalTemplate persona: {
                 var npc = QuestMadlibs.SpeakerTemplateOf(persona.m_personaName, 0);
                 var standing = live.Where(m => m.Template == npc && npc != 0)
-                    .OrderBy(m => Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault();
+                    .OrderBy(m => Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault()
+                    // The same person under another of the game's objects (an area's own copy of them): matched by name, as a
+                    // player knows them by name (his log, 2026-11-14: Ms. Marphely of "Out of Control" never found in The Ironworks).
+                    ?? BotShared.BotPeople.ByName(live, npc, leader.X, leader.Y);
                 if (standing is not null) {
                     return new Target(TALK, standing.Object.m_location.X, standing.Object.m_location.Y, step, questName, goalName, npc,
                         standing.Object.m_globalID.Full, Key: key);
@@ -420,6 +423,14 @@ internal static class QuestTeamPlanner {
         if (stepZone.Length > 0 && !OverlayQuestTracker.SameZone(stepZone, zone)) {
             return Travel(leader, stepZone, step, key) ?? new Target(NONE, leader.X, leader.Y, step, questName, goalName,
                 Problem: $"no way from {QuestTeamText.Zone(zone)} to {QuestTeamText.Zone(stepZone)} could be found", Key: key);
+        }
+
+        // The step's person is not here, and there is nowhere left to walk to: written down for the Issues tab (BotPeople).
+        if (goal is PersonaGoalTemplate absent && (nearest is not { } near || Far(leader.X, leader.Y, near.Item1, near.Item2) <= 150)) {
+            var who = QuestMadlibs.SpeakerTemplateOf(absent.m_personaName, 0);
+            var name = Shared.Resources.CoreObjectFactory.GetCoreTemplate(who) is GameObjectTemplate person ? Tools.MinimapIndex.NameOf(person) : "";
+            BotShared.BotPeople.NotThere(name.Length > 0 ? name : step, questName, step, zone,
+                who == 0 ? "" : Ultimus.UltimusPlanner.NpcZone(absent.m_personaName, who, zone, out _));
         }
 
         // In the right area, but nothing to go to yet: the arrow's spot (the NPC or creatures may show up there).

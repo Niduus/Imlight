@@ -219,7 +219,7 @@ internal sealed partial class UltimusDirectorActor {
 
         var quest = _currentQuest is null ? null : QuestTemplateCollection.GetQuestByName(_currentQuest);
         var level = wizard.MagicSchoolBehavior?.Level ?? 1;
-        var needs = quest?.m_questLevel ?? 0;
+        var needs = QuestLevelOf(quest);
         if (UltimusPlanner.LevelBlocked(wizard) is var (_, blocked)) {
             needs = Math.Max(needs, blocked);
         }

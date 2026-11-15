@@ -42,7 +42,7 @@ internal sealed partial class ManagerWindow {
     private string _ultGatesAll = "";
 
     // The last 14 days of stuck time as a line (Niduus, 2026-11-15, "all"): one point a day, minutes up the side.
-    private readonly Canvas _ultStuckChart = new() { Height = 110, MinWidth = 300, HorizontalAlignment = HorizontalAlignment.Left };
+    private readonly Canvas _ultStuckChart = new() { Height = 128, MinWidth = 300, HorizontalAlignment = HorizontalAlignment.Left };
     private const double CHART_WIDTH = 420, CHART_HEIGHT = 80, CHART_LEFT = 40;
     private DateTime _ultGatesRead = DateTime.MinValue;
 
@@ -56,7 +56,7 @@ internal sealed partial class ManagerWindow {
 
         _ultStuckWeekRead = DateTime.UtcNow;
         var (week, before) = StuckMinutesByWeek(Path.Combine(UltimusFolder, "stuck-days.json"));
-        DrawStuckChart(StuckMinutesByDay(Path.Combine(UltimusFolder, "stuck-days.json")));
+        DrawStuckChart(StuckMinutesByDay(Path.Combine(UltimusFolder, "stuck-days.json")), BackAndForthByDay(Path.Combine(UltimusFolder, "stuck-days.json")));
         if (week is null) {
             _ultStuckWeek.Text = "Stuck time this week: nothing written down yet.";
             _ultStuckWeek.Foreground = MUTED;
@@ -67,7 +67,10 @@ internal sealed partial class ManagerWindow {
             : week < before ? $", down from {Words(before.Value)} the week before"
             : week > before ? $", up from {Words(before.Value)} the week before"
             : ", the same as the week before";
-        _ultStuckWeek.Text = $"Stuck time this week (the last 7 days): {Words(week.Value)}{trend}.";
+        var trips = BackAndForthByDay(Path.Combine(UltimusFolder, "stuck-days.json"));
+        var tripsWeek = trips.Where(d => d.Key > DateTime.Today.AddDays(-7)).Sum(d => d.Value);
+        _ultStuckWeek.Text = $"Stuck time this week (the last 7 days): {Words(week.Value)}{trend}." +
+                             (tripsWeek > 0 ? $" Trips back and forth between the same areas: {tripsWeek} (shown under the line)." : "");
         _ultStuckWeek.Foreground = before is > 0 && week > before ? ManagerTheme.Accent("Create") : ManagerTheme.TEXT_BRUSH;
 
         static string Words(double minutes) => minutes < 90 ? $"{minutes:0} minutes" : $"{minutes / 60:0.#} hours";
@@ -124,7 +127,33 @@ internal sealed partial class ManagerWindow {
         }
     }
 
-    private void DrawStuckChart(Dictionary<DateTime, double>? days) {
+    // stuck-days.json's "BackAndForth": the trips back and forth between the same areas, by day (empty when none).
+    private static Dictionary<DateTime, int> BackAndForthByDay(string path) {
+        var trips = new Dictionary<DateTime, int>();
+        try {
+            if (!File.Exists(path)) {
+                return trips;
+            }
+
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            using var doc = JsonDocument.Parse(stream);
+            if (doc.RootElement.TryGetProperty("BackAndForth", out var days) && days.ValueKind == JsonValueKind.Object) {
+                foreach (var day in days.EnumerateObject()) {
+                    if (DateTime.TryParseExact(day.Name, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
+                        && day.Value.TryGetInt32(out var count)) {
+                        trips[date] = count;
+                    }
+                }
+            }
+        }
+        catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) {
+            // Shown without the trips.
+        }
+
+        return trips;
+    }
+
+    private void DrawStuckChart(Dictionary<DateTime, double>? days, Dictionary<DateTime, int>? trips = null) {
         _ultStuckChart.Children.Clear();
         _ultStuckChart.IsVisible = days is { Count: > 0 };
         if (days is not { Count: > 0 }) {
@@ -151,7 +180,17 @@ internal sealed partial class ManagerWindow {
         _ultStuckChart.Children.Add(line);
         for (var i = 0; i < values.Count; i++) {
             var dot = new Ellipse { Width = 6, Height = 6, Fill = ManagerTheme.Accent("good") };
-            ToolTip.SetTip(dot, $"{values[i].Day:ddd d MMM}: {values[i].Minutes:0} minutes stuck");
+            var tripsThatDay = trips?.GetValueOrDefault(values[i].Day) ?? 0;
+            ToolTip.SetTip(dot, $"{values[i].Day:ddd d MMM}: {values[i].Minutes:0} minutes stuck" +
+                                (tripsThatDay > 0 ? $", {tripsThatDay} trip(s) back and forth" : ""));
+            if (tripsThatDay > 0) {
+                var mark = new TextBlock { Text = $"{tripsThatDay} back and forth", FontSize = ManagerTheme.FONT_SMALL, Foreground = ManagerTheme.Accent("Create") };
+                ToolTip.SetTip(mark, $"{values[i].Day:ddd d MMM}: he went back and forth between the same areas {tripsThatDay} time(s) on one quest.");
+                Canvas.SetLeft(mark, At(i).X - 20);
+                Canvas.SetTop(mark, 28 + CHART_HEIGHT);
+                _ultStuckChart.Children.Add(mark);
+            }
+
             Canvas.SetLeft(dot, At(i).X - 3);
             Canvas.SetTop(dot, At(i).Y - 3);
             _ultStuckChart.Children.Add(dot);
@@ -165,6 +204,51 @@ internal sealed partial class ManagerWindow {
             Canvas.SetLeft(block, x);
             Canvas.SetTop(block, y);
             _ultStuckChart.Children.Add(block);
+        }
+    }
+
+    // Quest people not where the quest says (Niduus, 2026-11-15, "all"): written by Ultimus and the Quest Team to
+    // logs\bots\people-missing.txt when a step's person is not in the area the step names.
+    private readonly TextBlock _ultPeople = new() { TextWrapping = TextWrapping.Wrap };
+    private string _ultPeopleAll = "";
+    private DateTime _ultPeopleRead = DateTime.MinValue;
+
+    private string PeopleMissingPath => Path.Combine(_manager.LogFolder, "bots", "people-missing.txt");
+
+    private Control UltimusPeopleFold() => Fold("users", ULTIMUS_TAB, "Quest people not where the quest says",
+        "People a quest step asks Ultimus or the Quest Team to talk to, who were not in the area the quest names, with where " +
+        "they usually stand. A person missing here often means the quest should bring them there, so it is worth a look. Updates by itself.",
+        Row(Action(Plain("Copy the list"), () => CopyAsync(_ultPeopleAll)), Action(Plain("Open its folder"), () => {
+            var folder = Path.GetDirectoryName(PeopleMissingPath)!;
+            Directory.CreateDirectory(folder);
+
+            return Open(folder);
+        })),
+        _ultPeople);
+
+    private void ShowUltimusPeople() {
+        var changed = File.Exists(PeopleMissingPath) ? File.GetLastWriteTimeUtc(PeopleMissingPath) : DateTime.MinValue;
+        if (changed == _ultPeopleRead && _ultPeople.Text?.Length > 0) {
+            return;
+        }
+
+        _ultPeopleRead = changed;
+        if (changed == DateTime.MinValue) {
+            _ultPeople.Text = "Nobody missing so far.";
+            _ultPeople.Foreground = MUTED;
+            return;
+        }
+
+        try {
+            using var stream = new FileStream(PeopleMissingPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+            _ultPeopleAll = reader.ReadToEnd().ReplaceLineEndings("\n").TrimEnd();
+            var lines = _ultPeopleAll.Split('\n').Skip(2).Where(l => l.Trim().Length > 0).ToList();
+            _ultPeople.Text = lines.Count == 0 ? "Nobody missing so far." : string.Join("\n", lines.Take(80));
+            _ultPeople.Foreground = lines.Count == 0 ? MUTED : ManagerTheme.TEXT_BRUSH;
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+            _ultPeople.Text = "The list could not be read right now.";
         }
     }
 

@@ -214,6 +214,8 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
 
     private DateTime _runsCheckedAt = DateTime.UtcNow;
 
+    private string _lastQuestWorked;
+
     public QuestTeamDirectorActor() {
         Receive<Halt>(m => {
             Note("Team", $"logs out: {m.Why}.");
@@ -1864,6 +1866,15 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         var sinceCheck = Math.Min(30, (DateTime.UtcNow - _runsCheckedAt).TotalSeconds);
         _runsCheckedAt = DateTime.UtcNow;
         var workingOn = (_target ?? _leaderLastTarget)?.Quest;
+        // A move that names no quest (a way to another area, a hint trip, a door) belongs to the quest worked on last, not to
+        // every quest held: a dungeon quest left behind in an earlier world was written up as "much longer than expected"
+        // while he quested in the next world (his log, 2026-11-14: "Test of Strength" in Krokotopia, while in Marleybone).
+        if (!string.IsNullOrEmpty(workingOn)) {
+            _lastQuestWorked = workingOn;
+        }
+        else if (!string.IsNullOrEmpty(_currentQuest) || !string.IsNullOrEmpty(_lastQuestWorked)) {
+            workingOn = string.IsNullOrEmpty(_lastQuestWorked) ? _currentQuest : _lastQuestWorked;
+        }
 
         // A quest none of them holds any more, that one of them finished: done.
         foreach (var run in _runs.Values.ToList()) {

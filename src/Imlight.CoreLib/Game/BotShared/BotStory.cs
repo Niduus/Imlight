@@ -60,7 +60,14 @@ internal static class BotStory {
     internal static bool Plays(QuestTemplate quest) => Rank(quest) > 0;
 
     /// <summary>Whether to take an offered quest: one they play, or any main quest (taken, then ignored when not needed).</summary>
-    internal static bool Takes(QuestTemplate quest) => quest is not null && (Plays(quest) || QuestStory.IsMain(quest));
+    internal static bool Takes(QuestTemplate quest) => quest is not null && (Plays(quest) || QuestStory.IsMain(quest) || KeepsSide(quest));
+
+    /// <summary>
+    /// Side quests offered as an optional pickup are declined (Niduus, 2026-11-15: "for side quests, it is an option to pick
+    /// them up, if so, auto decline. We will be changing this later for Spell quests"). The one place to let a kind of side
+    /// quest through: none for now. A side quest the story needs first is played (Plays) and is not declined.
+    /// </summary>
+    internal static bool KeepsSide(QuestTemplate quest) => false;
 
     /// <summary>Whether a story quest needs this quest done first (any depth, side quests too).</summary>
     internal static bool NeededByStory(string questName) {

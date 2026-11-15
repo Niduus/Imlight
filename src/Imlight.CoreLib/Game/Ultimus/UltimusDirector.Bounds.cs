@@ -321,6 +321,41 @@ internal sealed partial class UltimusDirectorActor {
 
         // The Monday of the week the weekly report was last written to his log.
         public string WeekNoted { get; set; } = "";
+
+        // Back-and-forth trips by day (yyyy-MM-dd -> count), for the stuck chart in Ahziael (Niduus, 2026-11-15).
+        public Dictionary<string, int> BackAndForth { get; set; } = [];
+    }
+
+    // ---------------------------------------------------------------------
+    // Back-and-forth trips (Niduus, 2026-11-15, "all"): the same area reached a third time within 15 minutes on the same
+    // quest is one trip there and back that led nowhere (his log, 2026-11-14: The Ironworks and Digmoore Station again and
+    // again on "Out of Control"). Counted per day for the stuck chart.
+    // ---------------------------------------------------------------------
+
+    private readonly List<(string Zone, string Quest, DateTime At)> _zoneTrail = [];
+
+    private void CountBackAndForth(string zone) {
+        if (string.IsNullOrEmpty(zone)) {
+            return;
+        }
+
+        var now = DateTime.UtcNow;
+        var quest = _currentQuest ?? "";
+        _zoneTrail.RemoveAll(z => now - z.At > TimeSpan.FromMinutes(15) || !string.Equals(z.Quest, quest, StringComparison.Ordinal));
+        _zoneTrail.Add((zone, quest, now));
+        if (quest.Length == 0 || _zoneTrail.Count(z => string.Equals(z.Zone, zone, StringComparison.OrdinalIgnoreCase)) < 3) {
+            return;
+        }
+
+        _zoneTrail.RemoveAll(z => string.Equals(z.Zone, zone, StringComparison.OrdinalIgnoreCase));
+        _zoneTrail.Add((zone, quest, now));
+        _stuckDays ??= ReadStuckDays();
+        var today = DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+        _stuckDays.BackAndForth ??= [];
+        _stuckDays.BackAndForth[today] = _stuckDays.BackAndForth.GetValueOrDefault(today) + 1;
+        Count("back-and-forth trips");
+        Think($"I am back in {UltimusText.Zone(zone)} for the third time in a few minutes on {UltimusText.Title(quest)}: going back and forth " +
+              "is not getting me anywhere, so I count it as time lost and think about what I missed.", "back-and-forth|" + zone + "|" + now.Ticks / TimeSpan.TicksPerMinute);
     }
 
     private StuckDays _stuckDays;
@@ -528,6 +563,11 @@ internal sealed partial class UltimusDirectorActor {
             _stuckDays.Days.Remove(old);
             _stuckDays.DayKeys.Remove(old);
             _stuckDays.DaySpots.Remove(old);
+        }
+
+        _stuckDays.BackAndForth ??= [];
+        foreach (var old in _stuckDays.BackAndForth.Keys.OrderByDescending(d => d, StringComparer.Ordinal).Skip(14).ToList()) {
+            _stuckDays.BackAndForth.Remove(old);
         }
 
         var keepFrom = DateTime.Now.AddDays(-14).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);

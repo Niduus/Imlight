@@ -1,0 +1,88 @@
+/*
+ * Imlight
+ * Copyright (C) 2025 Revive101
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ */
+
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using Imcodec.ObjectProperty.TypeCache;
+using Imlight.Common;
+using Imlight.CoreLib.Game.Tools;
+using Imlight.CoreLib.Game.World;
+using Imlight.CoreLib.Shared.Resources;
+
+namespace Imlight.CoreLib.Game.BotShared;
+
+/// <summary>
+/// Quest people, for Ultimus and the Quest Team (Niduus, 2026-11-15, "all" of the log check's ideas):
+/// <list type="bullet">
+/// <item>A person a step names may stand in an area under another of the game's objects than the one the quest names
+/// (an area's own copy of them). Matched by their name, as a player knows them.</item>
+/// <item>A person a step names who is not where the quest says is written to logs/bots/people-missing.txt (the area the
+/// quest says, where they were looked for, and where they usually stand), for the Ultimus Issues tab in Ahziael.</item>
+/// </list>
+/// </summary>
+internal static class BotPeople {
+
+    /// <summary>The nearest NPC here with the same name as the quest's person (template <paramref name="npc"/>), or null.</summary>
+    internal static MinimapIndex.Mark ByName(IEnumerable<MinimapIndex.Mark> live, ulong npc, float x, float y) {
+        if (npc == 0 || live is null || CoreObjectFactory.GetCoreTemplate(npc) is not GameObjectTemplate template
+            || MinimapIndex.NameOf(template) is not { Length: > 2 } name) {
+            return null;
+        }
+
+        return live.Where(m => m.Kind == MinimapIndex.NPC && m.Template != npc && string.Equals(m.Name, name, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(m => MathF.Abs(m.Object.m_location.X - x) + MathF.Abs(m.Object.m_location.Y - y)).FirstOrDefault();
+    }
+
+    internal sealed record Missing(string Who, string Quest, string Step, string Zone, string UsuallyIn, DateTime At);
+
+    private static readonly ConcurrentDictionary<string, Missing> s_missing = new(StringComparer.OrdinalIgnoreCase);
+    private static DateTime s_written = DateTime.MinValue;
+
+    /// <summary>A step's person was not in the area the step names: written down (once per quest step and area).</summary>
+    internal static void NotThere(string who, string quest, string step, string zone, string usuallyIn) {
+        if (string.IsNullOrEmpty(who) || string.IsNullOrEmpty(zone)) {
+            return;
+        }
+
+        var key = $"{quest}|{step}|{zone}";
+        var isNew = !s_missing.ContainsKey(key);
+        s_missing[key] = new Missing(who, quest ?? "", step ?? "", zone, usuallyIn ?? "", DateTime.Now);
+        if (isNew || DateTime.UtcNow - s_written > TimeSpan.FromMinutes(5)) {
+            Write();
+        }
+    }
+
+    private static void Write() {
+        s_written = DateTime.UtcNow;
+        try {
+            var text = new StringBuilder();
+            text.AppendLine($"QUEST PEOPLE NOT WHERE THE QUEST SAYS (written by Ultimus and the Quest Team, {DateTime.Now:yyyy-MM-dd HH:mm})");
+            text.AppendLine("Each line: who, the quest and its step, where the quest says they are, and where they usually stand.");
+            foreach (var m in s_missing.Values.OrderByDescending(m => m.At)) {
+                text.AppendLine();
+                text.AppendLine(m.Zone);
+                text.AppendLine($"    {m.Who}: \"{m.Step}\" of {m.Quest}, not found here" +
+                                (m.UsuallyIn.Length > 0 ? $"; usually stands in {ZoneNames.Shown(m.UsuallyIn)}" : "") + $" (last seen missing {m.At:d MMM HH:mm})");
+            }
+
+            var folder = Path.GetFullPath("logs/bots");
+            Directory.CreateDirectory(folder);
+            File.WriteAllText(Path.Combine(folder, "people-missing.txt"), text.ToString());
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+            Logger.Debug("Bots: people-missing.txt could not be written: {0}", Logger.Args(e.Message));
+        }
+    }
+
+}

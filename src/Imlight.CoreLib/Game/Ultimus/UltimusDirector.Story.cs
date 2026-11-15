@@ -61,6 +61,27 @@ internal sealed partial class UltimusDirectorActor {
         ["Wallaru"] = (140, 150, 18), ["Selenopolis"] = (150, 160, 18), ["Ahmarra"] = (160, 170, 18),
     };
 
+    /// <summary>
+    /// A quest's level as a player meets it: the game's own number, except that many quests past Wizard City carry level 1
+    /// (his checks said "this level 1 quest" 127 times in a day in Marleybone, 2026-11-14), so there the world's starting
+    /// level stands in. Used for his checks, his fights and his side quest picks.
+    /// </summary>
+    internal static int QuestLevelOf(Imcodec.ObjectProperty.TypeCache.QuestTemplate quest) {
+        if (quest is null) {
+            return 0;
+        }
+
+        var level = (int) quest.m_questLevel;
+        if (level > 1) {
+            return level;
+        }
+
+        var zone = (quest.m_goals ?? []).Where(g => g is not null).Select(g => (string) g.m_destinationZone).FirstOrDefault(z => !string.IsNullOrWhiteSpace(z)) ?? "";
+        var folder = zone.Split('/')[0];
+
+        return s_worldLevels.TryGetValue(folder, out var band) ? Math.Max(level, band.From) : level;
+    }
+
     /// <summary>The story world he is on: the zone folder of his main quest's step, else of where he stands.</summary>
     private string StoryFolder(UltimusMember.Status leader) {
         if (!string.IsNullOrEmpty(_currentQuest) && QuestTemplateCollection.GetQuestByName(_currentQuest) is { } quest) {
@@ -437,18 +458,18 @@ internal sealed partial class UltimusDirectorActor {
         var level = wizard.MagicSchoolBehavior?.Level ?? 1;
         var below = (int) UltimusPlaybook.Value("Side.LevelsBelow");
         var pick = QuestService.QuestFinderGivers()
-            .Where(g => UltimusPlanner.IsMainStoryWorld(g.Quest) && !BotStory.Plays(g.Quest) && g.Quest.m_questLevel >= level - below
-                        && g.Quest.m_questLevel <= level + 1 && OverlayQuestTracker.SameZone(QuestGuide.GiverZone(g.Quest), leader.Zone)
+            .Where(g => UltimusPlanner.IsMainStoryWorld(g.Quest) && !BotStory.Plays(g.Quest) && BotStory.KeepsSide(g.Quest) && QuestLevelOf(g.Quest) >= level - below
+                        && QuestLevelOf(g.Quest) <= level + 1 && OverlayQuestTracker.SameZone(QuestGuide.GiverZone(g.Quest), leader.Zone)
                         && !wizard.HasQuest(g.Quest.m_questName) && !wizard.HasCompletedQuest(g.Quest.m_questName)
                         && MapService.IsOfferedTo(g.Quest, wizard))
-            .OrderByDescending(g => g.Quest.m_questLevel)
+            .OrderByDescending(g => QuestLevelOf(g.Quest))
             .FirstOrDefault();
         if (pick.Quest is null) {
             return null;
         }
 
         _sideQuest = pick.Quest.m_questName;
-        Think($"I need XP. The side quest {UltimusText.Title(_sideQuest)} (level {pick.Quest.m_questLevel}) is given right here: its reward comes on top of the " +
+        Think($"I need XP. The side quest {UltimusText.Title(_sideQuest)} (level {QuestLevelOf(pick.Quest)}) is given right here: its reward comes on top of the " +
               "fights it needs, so it beats fighting one creature at a time.", "side|" + _sideQuest);
 
         return UltimusPlanner.ForGiver(leader, pick.Quest, pick.Giver);

@@ -775,6 +775,7 @@ internal sealed partial class ManagerWindow {
             _ultBrokenEmpty,
             _ultBroken),
             UltimusGatesFold(),
+            UltimusPeopleFold(),
             Fold("flag", ULTIMUS_TAB, "Ultimus Issues",
             "Everything Ultimus ran into, newest first: a quest that does not work, Ultimus being stuck, a fight lost again " +
             "and again, or a quest that took much longer than expected. Each one has a debug report: what went wrong, what a " +
@@ -1249,6 +1250,7 @@ internal sealed partial class ManagerWindow {
 
         if (_ultGates.IsEffectivelyVisible || _ultGates.Text is null or "") {
             ShowUltimusGates();
+            ShowUltimusPeople();
         }
 
         WarnUltimusAiLimit();
