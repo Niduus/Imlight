@@ -73,11 +73,13 @@ public static class ServerHealth {
                 s_lastQuietLog = s_sinceStart.Elapsed;
                 Logger.Information(
                     "Health: server CPU {0:0}% of {1} cores, server memory {2} MB (game data {3} MB), PC memory {4:0}% used of {5} MB, "
-                    + "clean-ups {6}/{7}/{8} (pause {9:0.0}%), pool threads busy {10}, waiting work {11}.",
+                    + "clean-ups {6}/{7}/{8} (pause {9:0.0}%), pool threads busy {10}, waiting work {11}; after the last clean-up "
+                    + "{12} MB in use, {13} MB of gaps, {14} MB set aside.",
                     Logger.Args(cpuPercent, Environment.ProcessorCount, process.WorkingSet64 / 1048576,
                         GC.GetTotalMemory(false) / 1048576, pcLoad, gc.TotalAvailableMemoryBytes / 1048576,
                         gen0 - s_lastGen0, gen1 - s_lastGen1, gen2 - s_lastGen2, gc.PauseTimePercentage,
-                        maxWorkers - freeWorkers, ThreadPool.PendingWorkItemCount));
+                        maxWorkers - freeWorkers, ThreadPool.PendingWorkItemCount,
+                        gc.HeapSizeBytes / 1048576, gc.FragmentedBytes / 1048576, gc.TotalCommittedBytes / 1048576));
             }
 
             s_lastGen0 = gen0;

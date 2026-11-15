@@ -159,6 +159,8 @@ public static class UltimusLink {
             }
 
             start.Environment[Logger.LOG_PATH_VARIABLE] = Path.Combine(UltimusWire.Folder, UltimusWire.LOG_FILE);
+
+            Imlight.CoreLib.Shared.Resources.HelperProcessMemory.UseSmallMemory(start);
             Directory.CreateDirectory(UltimusWire.Folder);
             try {
                 s_brain = Process.Start(start);

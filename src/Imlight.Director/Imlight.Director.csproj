@@ -11,6 +11,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Hand memory the server no longer uses back to the PC sooner: the clean-up packs the big-object area when
+         it has gaps instead of keeping them (Niduus, 2026-11-15: the server at 9.4 GB of a 32 GB PC). -->
+    <RuntimeHostConfigurationOption Include="System.GC.ConserveMemory" Value="5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="config\akka.conf" />
   </ItemGroup>
 

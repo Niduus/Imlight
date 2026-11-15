@@ -271,6 +271,8 @@ public static class BazaarLink {
             }
 
             start.Environment[Logger.LOG_PATH_VARIABLE] = Path.Combine(BazaarWire.Folder, BazaarWire.LOG_FILE);
+
+            Imlight.CoreLib.Shared.Resources.HelperProcessMemory.UseSmallMemory(start);
             Directory.CreateDirectory(BazaarWire.Folder);
             try {
                 s_bot = Process.Start(start);

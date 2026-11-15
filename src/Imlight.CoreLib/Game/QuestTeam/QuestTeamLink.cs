@@ -158,6 +158,8 @@ public static class QuestTeamLink {
             }
 
             start.Environment[Logger.LOG_PATH_VARIABLE] = Path.Combine(QuestTeamWire.Folder, QuestTeamWire.LOG_FILE);
+
+            Imlight.CoreLib.Shared.Resources.HelperProcessMemory.UseSmallMemory(start);
             Directory.CreateDirectory(QuestTeamWire.Folder);
             try {
                 s_brain = Process.Start(start);

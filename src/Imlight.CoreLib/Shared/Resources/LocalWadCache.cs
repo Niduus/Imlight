@@ -121,9 +121,11 @@ internal static class LocalWadCache {
     internal static Archive GetCachedWad(string wadName) {
         wadName = SanitizeWadName(wadName);
 
-        // The LiteDB stream is file IO and very slow.
-        // Instead, copy the stream to a memory stream.
-        var fileStream = new MemoryStream();
+        // The LiteDB stream is file IO and very slow, so the archive is read into memory, but only its list of files
+        // and its data files: the models, pictures and sounds only the game draws stay in the cache file and are read
+        // from there in the rare case they are asked for (SlimWadStream). Reading an area's archive whole kept 50 times
+        // what the server uses, and Root.wad sat in a 512 MB buffer (Niduus, 2026-11-15: the server at 9.4 GB).
+        SlimWadStream slim;
         lock (s_fileLock) {
             using var db = OpenDatabase();
             var fs = db.GetStorage<FileDefinition>();
@@ -139,11 +141,40 @@ internal static class LocalWadCache {
             }
 
             using var liteDbStream = fs.OpenRead(file.Id);
-            liteDbStream.CopyTo(fileStream);
+            var id = file.Id;
+            slim = SlimWadStream.Read(liteDbStream, liteDbStream.Length, (offset, count) => ReadPart(id, offset, count));
         }
-        fileStream.Seek(0, SeekOrigin.Begin);
 
-        return ArchiveParser.Parse(fileStream);
+        return ArchiveParser.Parse(slim);
+    }
+
+    /// <summary>Reads <paramref name="count"/> bytes at <paramref name="offset"/> of a cached file (a part of an
+    /// archive the server did not keep in memory).</summary>
+    private static byte[] ReadPart(FileDefinition fileId, long offset, int count) {
+        lock (s_fileLock) {
+            using var db = OpenDatabase();
+            var fs = db.GetStorage<FileDefinition>();
+            using var stream = fs.OpenRead(fileId);
+            if (stream.CanSeek) {
+                stream.Seek(offset, SeekOrigin.Begin);
+            }
+            else {
+                var skip = new byte[81920];
+                for (long at = 0; at < offset;) {
+                    var read = stream.Read(skip, 0, (int) Math.Min(skip.Length, offset - at));
+                    if (read <= 0) {
+                        return null;
+                    }
+
+                    at += read;
+                }
+            }
+
+            var data = new byte[count];
+            stream.ReadExactly(data);
+
+            return data;
+        }
     }
 
     internal static List<FileDefinition> GetAllCachedFiles() {

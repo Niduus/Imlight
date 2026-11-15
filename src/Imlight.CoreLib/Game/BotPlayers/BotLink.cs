@@ -156,6 +156,8 @@ public static class BotLink {
             }
 
             start.Environment[Logger.LOG_PATH_VARIABLE] = Path.Combine(BotWire.Folder, BotWire.LOG_FILE);
+
+            Imlight.CoreLib.Shared.Resources.HelperProcessMemory.UseSmallMemory(start);
             Directory.CreateDirectory(BotWire.Folder);
             try {
                 s_brain = Process.Start(start);
