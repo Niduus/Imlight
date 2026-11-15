@@ -103,6 +103,12 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         CloseSideTrips(TimeSpan.FromMinutes(30));
+        // The same trip (any leg of it) is left alone for Guard.TripOutOfReachHours, not just 30 minutes: the ring trip of
+        // 2026-11-15 ran over its budget, came back half an hour later and ran over again.
+        if (TripPurpose(trip.What) is { Length: > 0 } purpose) {
+            _tripsOutOfReach[purpose] = DateTime.UtcNow.AddHours(Math.Max(0.5, UltimusPlaybook.Value("Guard.TripOutOfReachHours")));
+        }
+
         Note("Ultimus", $"TIME BUDGET: the side trip ({kind}: {trip.What}) took over {budget.TotalMinutes:0} minutes; drops it and goes back to the story.",
             UltimusLink.ABNORMAL);
         Think($"My side trip ({trip.What}) ran over its time budget of {budget.TotalMinutes:0} minutes ({UltimusPlaybook.Cite("Guard.SideTripMinutes")}). " +
@@ -122,12 +128,26 @@ internal sealed partial class UltimusDirectorActor {
 
     private static string TripPlace(UltimusPlanner.Target trip) => string.IsNullOrEmpty(trip?.To) ? GoalId(trip) : trip.To;
 
+    /// <summary>
+    /// What the trip is for, the same on every leg of it ("shopping for Ultimus's Ring of the Black Mantle" from "to Scotland
+    /// Yard Roof (shopping for ...)"), so a dropped trip is not picked again by its next leg (his log, 2026-11-15: the ring
+    /// trip came back as "to Scotland Yard Roof", "to Scotland Yard", "to Jack Russell Jewelers" and "to Regent's Square").
+    /// </summary>
+    internal static string TripPurpose(string what) {
+        var text = (what ?? "").Trim();
+        var open = text.LastIndexOf('(');
+        var close = text.LastIndexOf(')');
+
+        return open >= 0 && close > open + 1 ? "purpose|" + text[(open + 1)..close].Trim() : "";
+    }
+
     private bool TripOutOfReach(UltimusPlanner.Target trip) {
         foreach (var gone in _tripsOutOfReach.Where(t => DateTime.UtcNow > t.Value).Select(t => t.Key).ToList()) {
             _tripsOutOfReach.Remove(gone);
         }
 
-        return trip is not null && (_tripsOutOfReach.ContainsKey(TripPlace(trip)) || _tripsOutOfReach.ContainsKey(GoalId(trip)));
+        return trip is not null && (_tripsOutOfReach.ContainsKey(TripPlace(trip)) || _tripsOutOfReach.ContainsKey(GoalId(trip))
+                                    || TripPurpose(trip.What) is { Length: > 0 } purpose && _tripsOutOfReach.ContainsKey(purpose));
     }
 
     /// <summary>
@@ -147,6 +167,9 @@ internal sealed partial class UltimusDirectorActor {
         var hours = Math.Max(0.5, UltimusPlaybook.Value("Guard.TripOutOfReachHours"));
         _tripsOutOfReach[TripPlace(goal)] = DateTime.UtcNow.AddHours(hours);
         _tripsOutOfReach[GoalId(goal)] = DateTime.UtcNow.AddHours(hours);
+        if (TripPurpose(goal.What) is { Length: > 0 } purpose) {
+            _tripsOutOfReach[purpose] = DateTime.UtcNow.AddHours(hours);
+        }
         Note("Ultimus", $"SIDE TRIP DROPPED: got stuck in {where} on the {kind} trip \"{goal.What}\"; skips that place for {hours:0.#} hour(s) and goes back to the story.",
             UltimusLink.ABNORMAL);
         Think($"I got stuck on my way to \"{goal.What}\", and it is only a side trip ({kind}). It is not worth getting stuck for, so I drop it, " +

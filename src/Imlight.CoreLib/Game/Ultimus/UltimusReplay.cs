@@ -92,6 +92,10 @@ internal static class UltimusReplay {
             return said.Take(6).All(s => s.Count == 1 && s[0] == line) && said[6].Count == 1 && said[6][0].Contains("REPEAT", StringComparison.Ordinal)
                    && said.Skip(7).All(s => s.Count == 0) ? null : "a repeated line would still flood the log";
         }),
+        new("A dropped ring trip came back by its next leg four times (2026-11-15)", () =>
+            UltimusDirectorActor.TripPurpose("to Scotland Yard Roof (shopping for Ultimus's Ring of the Black Mantle)")
+            == UltimusDirectorActor.TripPurpose("to Jack Russell Jewelers (shopping for Ultimus's Ring of the Black Mantle)")
+            && UltimusDirectorActor.TripPurpose("to Regent's Square").Length == 0 ? null : "each leg of a trip still looks like a new trip"),
         new("\"Out of Control\" named The Ironworks; Ms. Marphely stands only in Chelsea Court: half an hour lost (2026-11-15)", () => {
             var (zone, _) = UltimusAtlas.RealZone("Marleybone/MB_Station/MB_Ironworks", "Ms. Marphely", ["Marleybone/MB_ChelseaCourt"]);
             var (same, _) = UltimusAtlas.RealZone("Marleybone/MB_Station/MB_Ironworks", "Baxter", ["Marleybone/MB_Station/MB_Ironworks", "Marleybone/MB_Hub"]);
