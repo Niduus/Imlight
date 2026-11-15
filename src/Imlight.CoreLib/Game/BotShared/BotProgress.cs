@@ -35,7 +35,8 @@ namespace Imlight.CoreLib.Game.BotShared;
 /// How far Ultimus or the Quest Team is in the story of the world they are in (Niduus, 2026-11-15: "for Quests with
 /// QT/Ultimus, have them show (CURR/END) of the quests. This way, I can see what quest there are on out of whatever to go
 /// to the next world. Maybe a time estimation too"). END is the story quests of the world that lead to the next world's
-/// first story quest (an "any one of these" choice, such as Wizard City's school quests, counts once); CURR is the one
+/// first story quest, and the world's own story to its last quest (an "any one of these" choice, such as Wizard City's
+/// school quests, counts once); CURR is the one
 /// they are on (done + 1). The time is their own pace: the gaps between their last quests done, kept in pace.json in
 /// their logs folder (Ultimus's journal fills it the first time). Read only: nothing here changes what the bots do.
 /// </summary>
@@ -263,6 +264,14 @@ internal static class BotProgress {
             }
         }
 
+        // And the world's own story to its end: the deepest story quest of the world (counting only the world's own quests,
+        // as the quest tracker's story does) and every quest of the world it needs first. The next world can open before
+        // the world's story is over (Niduus, 2026-11-15: Ultimus showed "Quest 32/32 in Marleybone" in Katz's lab, "the
+        // game mistakenly marked that as the finale. The end quest is the Big Ben one").
+        if (next.Length > 0) {
+            inWorld.UnionWith(WorldEndChain(world, storyWorld, Is));
+        }
+
         // The last world (or one whose next world needs none of it): its whole story.
         if (inWorld.Count == 0) {
             inWorld.UnionWith(storyWorld.Where(p => string.Equals(p.Value, world, StringComparison.OrdinalIgnoreCase)).Select(p => p.Key));
@@ -293,6 +302,49 @@ internal static class BotProgress {
         }
 
         return [.. inWorld.GroupBy(Root, StringComparer.OrdinalIgnoreCase).Select(g => new HashSet<string>(g, StringComparer.OrdinalIgnoreCase))];
+    }
+
+    // The world's last story quest (deepest by its own world's quests; between equals, the latest code) and every quest of
+    // that world it needs first, at any depth.
+    private static HashSet<string> WorldEndChain(string world, Dictionary<string, string> storyWorld, Func<string, string, bool> isIn) {
+        var mine = storyWorld.Where(p => string.Equals(p.Value, world, StringComparison.OrdinalIgnoreCase)).Select(p => p.Key).ToList();
+        var chain = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (mine.Count == 0) {
+            return chain;
+        }
+
+        var depth = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        var visiting = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        int Depth(string name) {
+            if (depth.TryGetValue(name, out var known)) {
+                return known;
+            }
+
+            if (!visiting.Add(name) || QuestTemplateCollection.GetQuestByName(name) is not { } quest) {
+                return 0;
+            }
+
+            var deepest = QuestStory.ChainQuests(quest.m_requirements).Where(need => isIn(need, world)).Select(Depth).DefaultIfEmpty(0).Max();
+            visiting.Remove(name);
+            depth[name] = deepest + 1;
+
+            return deepest + 1;
+        }
+
+        var end = mine.OrderByDescending(Depth).ThenByDescending(n => n, StringComparer.OrdinalIgnoreCase).First();
+        var waiting = new Stack<string>([end]);
+        while (waiting.Count > 0) {
+            var name = waiting.Pop();
+            if (!isIn(name, world) || !chain.Add(name) || QuestTemplateCollection.GetQuestByName(name) is not { } quest) {
+                continue;
+            }
+
+            foreach (var need in QuestStory.ChainQuests(quest.m_requirements)) {
+                waiting.Push(need);
+            }
+        }
+
+        return chain;
     }
 
     // The quests of each "any one of these" list in a requirement (each option's quests, at any depth).
