@@ -99,6 +99,36 @@ internal sealed partial class UltimusDirectorActor {
     /// is a walk away or out of the area (approved by Niduus, 2026-11-14: "grab nearby next-quest targets", "finish nearby
     /// goals before turning in"): that one first, as a player does what is in front of them. Null when there is none.
     /// </summary>
+    /// <summary>
+    /// In a dungeon, the dungeon's own quest first (the one the game grants on the way in): it is what opens the dungeon's
+    /// doors and teleporters on the way to the story's boss (Niduus, 2026-11-15: "I think our boy is stuck again"; in the
+    /// Temple of Storms he went straight for Krokopatra, and the teleporter there stays shut until "Test of Strength" and the
+    /// other tests are done). Null when there is none to do here.
+    /// </summary>
+    private UltimusPlanner.Target DungeonQuestFirst(List<UltimusMember.Status> group, UltimusPlanner.Target main) {
+        var leader = group[0];
+        if (leader.Wizard is not { ZoneIsInstance: true } wizard || string.IsNullOrEmpty(leader.Zone)) {
+            return null;
+        }
+
+        var own = DungeonQuestIndex.GetQuestsForZones([leader.Zone]).Select(q => (string) q.m_questName).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var held = wizard.QuestBehavior?.CurrentQuestInstances?.Where(q => q is not null && own.Contains(q.QuestName)
+            && !string.Equals(q.QuestName, main?.Quest ?? _currentQuest, StringComparison.OrdinalIgnoreCase)).Select(q => q.QuestName).ToList() ?? [];
+        foreach (var name in held) {
+            var step = UltimusPlanner.ForQuest(group, name);
+            if (step is null || step.Problem.Length > 0 || step.Kind is UltimusPlanner.WAIT or UltimusPlanner.NONE) {
+                continue;
+            }
+
+            Think($"I am in a dungeon, and its own quest \"{UltimusText.Title(name)}\" opens the way through it: I do \"{step.What}\" " +
+                  $"first, then go on to {main?.What ?? "my story step"}, as a player does.", "dungeonfirst|" + step.Key);
+
+            return step;
+        }
+
+        return null;
+    }
+
     private UltimusPlanner.Target WhileHere(List<UltimusMember.Status> group, UltimusPlanner.Target main) {
         if (main is null || main.Kind is UltimusPlanner.FIGHT && main.Key.EndsWith("|join", StringComparison.Ordinal)) {
             return null;

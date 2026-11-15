@@ -744,6 +744,12 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                     _stonesUsed.Remove(old);
                 }
 
+                // In a dungeon, the dungeon's own quest first: it opens the dungeon's doors and teleporters on the way to the
+                // story's step (Niduus, 2026-11-15: Ultimus stuck in the Temple of Storms before its tests were done).
+                if (DungeonQuestFirst(group, target) is { } dungeonStep) {
+                    return dungeonStep;
+                }
+
                 return QuestTeamPlanner.Shortcut(leader, target, _stonesUsed.Keys) ?? target;
             }
         }
@@ -2141,4 +2147,32 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
 
     private static string Minutes(double seconds) => seconds < 90 ? $"{seconds:0} s" : $"{seconds / 60:0} min";
 
+
+    // The dungeon's own quest (granted on the way in) that the team holds, when its step can be done here; null otherwise.
+    private QuestTeamPlanner.Target DungeonQuestFirst(List<QuestTeamMember.Status> group, QuestTeamPlanner.Target main) {
+        var leader = group[0];
+        if (leader.Wizard is not { ZoneIsInstance: true } wizard || string.IsNullOrEmpty(leader.Zone)) {
+            return null;
+        }
+
+        var own = DungeonQuestIndex.GetQuestsForZones([leader.Zone]).Select(q => (string) q.m_questName).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var held = wizard.QuestBehavior?.CurrentQuestInstances?.Where(q => q is not null && own.Contains(q.QuestName)
+            && !string.Equals(q.QuestName, main?.Quest ?? _currentQuest, StringComparison.OrdinalIgnoreCase)).Select(q => q.QuestName).ToList() ?? [];
+        foreach (var name in held) {
+            var step = QuestTeamPlanner.ForQuest(group, name);
+            if (step is null || step.Problem.Length > 0 || step.Kind is QuestTeamPlanner.NONE) {
+                continue;
+            }
+
+            if (_dungeonFirstSaid.Add(step.Key)) {
+                Note("Team", $"is in a dungeon: does its own quest \"{name}\" first ({step.What}), as it opens the way to {main?.What ?? "the story step"}.");
+            }
+
+            return step;
+        }
+
+        return null;
+    }
+
+    private readonly HashSet<string> _dungeonFirstSaid = [];
 }

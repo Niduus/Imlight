@@ -843,6 +843,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                     _stonesUsed.Remove(old);
                 }
 
+                // In a dungeon, the dungeon's own quest first: it opens the way to the story's step (UltimusDirector.Smart.cs).
+                if (DungeonQuestFirst(group, target) is { } dungeonStep) {
+                    return TopUpBeforeFight(leader, dungeonStep) ?? dungeonStep;
+                }
+
                 // A quest fight lost again and again: a side quest of his level first (never farming creatures for XP).
                 if (LevelFirst(leader, target) is { } xp) {
                     return xp;
