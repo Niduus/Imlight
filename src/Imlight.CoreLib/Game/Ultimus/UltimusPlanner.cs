@@ -495,7 +495,7 @@ internal static class UltimusPlanner {
                                                 || UltimusDrops.Score(questName, goalName, m.Template) > 0))
                     .OrderBy(m => UltimusDrops.Score(questName, goalName, m.Template) < 0 ? 1 : 0)
                     .ThenBy(m => Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)).ToList();
-                var free = wanted.Where(m => !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full)).ToList();
+                var free = wanted.Where(m => BotShared.DudCreatures.Fightable(m.Object.m_globalID.Full)).ToList();
                 // Where he saw them, for when he is somewhere else and the step names no area (his PC log, 2026-11-15: out of The
                 // Vault of Ice he searched the Entrance Hall for Keeper of the Fang, "the quest names no other area").
                 if (wanted.Count > 0) {
@@ -515,7 +515,7 @@ internal static class UltimusPlanner {
                 // The best group (approved by Niduus, 2026-11-14): alone he picks one standing apart, as other creatures by it
                 // join the battle; strong for the step with more to beat, a few wanted ones together are taken at once.
                 var others = MinimapIndex.In(leader.ZoneActor).Where(m => m.Kind is MinimapIndex.MOB or MinimapIndex.BOSS
-                                                                          && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full)).ToList();
+                                                                          && BotShared.DudCreatures.Fightable(m.Object.m_globalID.Full)).ToList();
                 var level = leader.Wizard?.MagicSchoolBehavior?.Level ?? 1;
                 var strong = level >= UltimusDirectorActor.QuestLevelOf(quest) + 2 && bounty.m_bountyTotal > 1
                              && (leader.Wizard?.GameStats is { } st && st.m_currentHitpoints >= (st.m_baseHitpoints + st.m_bonusHitpoints) * 0.8);
@@ -590,7 +590,7 @@ internal static class UltimusPlanner {
                     && string.Equals(q.QuestName, questName, StringComparison.OrdinalIgnoreCase) && q.IsGoalActive(goalName)) == true)
                 .Select(m => m.CharId).ToList();
             var creatures = MinimapIndex.In(leader.ZoneActor).Where(m => m.Kind is MinimapIndex.MOB or MinimapIndex.BOSS
-                                                                          && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full))
+                                                                          && BotShared.DudCreatures.Fightable(m.Object.m_globalID.Full))
                 .Select(m => (m.Object.m_location.X, m.Object.m_location.Y)).ToList();
             // A puzzle (the quest's people speak of an order or a combination): the things in the order worked out for it,
             // the next order when nothing happened (BotPuzzle; Niduus, 2026-11-15).
@@ -827,7 +827,7 @@ internal static class UltimusPlanner {
         }
 
         var foe = MinimapIndex.In(leader.ZoneActor)
-            .Where(m => m.Kind == MinimapIndex.MOB && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full)
+            .Where(m => m.Kind == MinimapIndex.MOB && BotShared.DudCreatures.Fightable(m.Object.m_globalID.Full)
                         && !NearQuestTeam(leader, m.Object.m_location.X, m.Object.m_location.Y))
             .OrderBy(m => Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y))
             .FirstOrDefault();

@@ -50,7 +50,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         var foes = BotUseGuards.Near(member.ZoneActor, member.X, member.Y)
-            .Where(m => !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full)).ToList();
+            .Where(m => BotShared.DudCreatures.Fightable(m.Object.m_globalID.Full)).ToList();
         if (foes.Count > 0) {
             _clearAround = (member.Zone ?? "", member.X, member.Y, DateTime.UtcNow.AddMinutes(10));
             Note("Ultimus", $"NEW APPROACH: stuck {count} times in {where} on \"{goal?.What ?? _doing}\": the same moves are no use, so he fights " +
@@ -84,7 +84,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         var foe = BotUseGuards.Near(leader.ZoneActor, clear.X, clear.Y)
-            .Where(m => !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full))
+            .Where(m => BotShared.DudCreatures.Fightable(m.Object.m_globalID.Full))
             .OrderBy(m => UltimusPlanner.Far(leader.X, leader.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault();
         if (foe is null) {
             _clearAround = null;

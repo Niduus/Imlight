@@ -105,7 +105,7 @@ internal static class BotUseGuards {
         }
 
         var near = Near(zoneActor, round.X, round.Y);
-        var free = near.Where(m => !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full))
+        var free = near.Where(m => DudCreatures.Fightable(m.Object.m_globalID.Full))
             .OrderBy(m => Far(fromX, fromY, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault();
         if (near.Count == 0) {
             cleared = true;

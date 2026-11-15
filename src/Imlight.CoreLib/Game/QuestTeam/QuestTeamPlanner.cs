@@ -378,7 +378,7 @@ internal static class QuestTeamPlanner {
                                          && (m.Adjectives.Any(a => adjectives.Contains(a, StringComparer.Ordinal))
                                              || Quests.BountyStandIns.Counts(adjectives, m.Template)
                                              || Ultimus.UltimusDrops.Score(questName, goalName, m.Template) > 0)
-                                         && !CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full)
+                                         && BotShared.DudCreatures.Fightable(m.Object.m_globalID.Full)
                                          // Not a creature Ultimus is fighting or heading for: the two stay out of each other's way.
                                          && !Ultimus.UltimusDirector.IsBusyNear(leader.ZoneActor, m.Object.m_location.X, m.Object.m_location.Y))
                     .OrderBy(m => Ultimus.UltimusDrops.Score(questName, goalName, m.Template) < 0 ? 1 : 0)

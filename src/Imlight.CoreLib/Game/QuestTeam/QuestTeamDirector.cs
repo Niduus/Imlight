@@ -508,6 +508,34 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
 
     // Never into a fight weak (Niduus, 2026-11-12): before walking onto a creature, anyone low drinks a potion, and without
     // one they rest a while (up to a minute) as a player waits for health to come back.
+    private ulong _standOnFoe;
+    private DateTime _standOnFoeSince = DateTime.MaxValue;
+
+    // On the creature and no battle after a while: a player walking into it starts one, so it can't be fought now (a
+    // defeated one still shown where its battle was). Left alone for a while; the next look picks another
+    // (BotShared.DudCreatures; QT log, 2026-11-15: Freya stood on the Skeletal Pirate of her 8:38 battle for two hours).
+    private void NoBattleCheck(QuestTeamMember.Status leader, QuestTeamPlanner.Target target) {
+        if (target.GlobalId == 0 || CombatDuelComponent.IsInBattle(leader.GlobalId) || QuestTeamPlanner.Far(leader.X, leader.Y, target.X, target.Y) > 60) {
+            _standOnFoe = 0;
+            return;
+        }
+
+        if (_standOnFoe != target.GlobalId) {
+            _standOnFoe = target.GlobalId;
+            _standOnFoeSince = DateTime.UtcNow;
+            return;
+        }
+
+        if (DateTime.UtcNow - _standOnFoeSince < BotShared.DudCreatures.StandFor || BotShared.DudCreatures.IsDud(target.GlobalId)) {
+            return;
+        }
+
+        BotShared.DudCreatures.Mark(target.GlobalId);
+        _standOnFoe = 0;
+        Note(leader.Role, $"{leader.Name} stood on {target.What} for {BotShared.DudCreatures.StandFor.TotalSeconds:0} seconds and no battle started; " +
+                          $"leaves that creature alone for {BotShared.DudCreatures.LeaveFor.TotalMinutes:0} minutes and picks another.", QuestTeamLink.ABNORMAL);
+    }
+
     private bool ReadyToFight(List<QuestTeamMember.Status> group) {
         var weak = group.Where(m => m.Wizard?.GameStats is { } stats
                                     && (stats.m_currentHitpoints < Math.Max(1, stats.m_baseHitpoints + stats.m_bonusHitpoints) * 0.6
@@ -693,6 +721,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             case QuestTeamPlanner.FIGHT:
                 // Walking onto the creature starts the battle; nothing to click.
                 WalkTo(0, target with { X = target.X + 1 });
+                NoBattleCheck(leader, target);
                 break;
             case QuestTeamPlanner.EXIT:
                 IntoExit(leader, target);

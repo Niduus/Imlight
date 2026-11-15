@@ -2650,6 +2650,12 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             }
             else if (DateTime.UtcNow - _fightWalkSince > TimeSpan.FromSeconds(20)) {
                 Odd($"nobattle|{fight.Key}|{fight.GlobalId}", $"stood on the creature for \"{fight.What}\" ({TemplateName(fight.Template)}) for 20 seconds and no battle started; a player walking into it starts one.");
+                // Left alone for a while, so the next look picks another (BotShared.DudCreatures).
+                if (!BotShared.DudCreatures.IsDud(fight.GlobalId)) {
+                    BotShared.DudCreatures.Mark(fight.GlobalId);
+                    Think($"I stood on this {TemplateName(fight.Template)} for 20 seconds and no battle started, so it can't be fought right now. " +
+                          $"I leave it alone for {BotShared.DudCreatures.LeaveFor.TotalMinutes:0} minutes and pick another.", "dud|" + fight.GlobalId);
+                }
             }
         }
         else {
