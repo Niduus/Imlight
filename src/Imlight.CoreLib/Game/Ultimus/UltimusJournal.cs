@@ -92,6 +92,30 @@ internal static class UltimusJournal {
     }
 
     /// <summary>The latest moments, newest first (copies).</summary>
+    /// <summary>
+    /// Old foe names (the quest step's words) put right in his memories: one real creature behind the old name, its name;
+    /// several, "a creature" (which one it was can't be told any more, and a guess would not be a true memory).
+    /// </summary>
+    internal static void RenameFoes(IReadOnlyDictionary<string, HashSet<string>> renamed) {
+        lock (s_lock) {
+            var changed = 0;
+            foreach (var entry in Entries()) {
+                if (entry.Kind is not (WON or LOST) || !renamed.TryGetValue(entry.About ?? "", out var to) || to.Count == 0) {
+                    continue;
+                }
+
+                var name = to.Count == 1 ? to.First() : "a creature";
+                entry.Text = entry.Text.Replace(entry.About, name, StringComparison.Ordinal);
+                entry.About = name;
+                changed++;
+            }
+
+            if (changed > 0) {
+                Save();
+            }
+        }
+    }
+
     internal static List<Entry> Recent(int count) {
         lock (s_lock) {
             return [.. Entries().AsEnumerable().Reverse().Take(count)];

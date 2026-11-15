@@ -141,9 +141,32 @@ internal static class UltimusFoes {
         try {
             var path = Path.Combine(UltimusWire.Folder, FILE);
             if (File.Exists(path) && JsonSerializer.Deserialize<List<Foe>>(File.ReadAllText(path)) is { } read) {
+                // Clean names (Niduus, 2026-11-15: only accurate data): foes were named by the quest step's words ("1 creatures",
+                // "1 Golden Key", "a fight for XP toward level 14"). Each is renamed to its real name from the game data, and
+                // his journal's old names are put right with them (a name shared by several creatures becomes "a creature").
+                var renamed = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
                 foreach (var foe in read.Where(f => f is not null && f.Template != 0)) {
                     foe.Name ??= "";
+                    if (UltimusFights.RealName(foe.Template) is { Length: > 0 } real && real != foe.Name) {
+                        if (foe.Name.Length > 0) {
+                            if (!renamed.TryGetValue(foe.Name, out var to)) {
+                                renamed[foe.Name] = to = [];
+                            }
+
+                            to.Add(real);
+                        }
+
+                        foe.Name = real;
+                    }
+
                     s_foes[foe.Template] = foe;
+                }
+
+                if (renamed.Count > 0) {
+                    Logger.Information("Ultimus: put the real names on {0} creature name(s) in foes.json.", Logger.Args(renamed.Count));
+                    UltimusJournal.RenameFoes(renamed);
+                    Save();
+                    WriteRivals();
                 }
             }
         }

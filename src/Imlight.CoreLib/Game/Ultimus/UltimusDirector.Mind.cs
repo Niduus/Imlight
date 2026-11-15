@@ -69,8 +69,50 @@ internal sealed partial class UltimusDirectorActor {
     // The fight going on: the creature, its name, the health share it went in with, and when.
     private (uint Template, string Name, double Health, DateTime Since)? _fight;
 
+    // What he went in with and why, for the clean fight record (UltimusFights).
+    private (double Mana, int Level, string Quest, string Goal, string Step, string Source, string Zone, float X, float Y)? _fightStart;
+
     // Going in at full health against a creature that beat it or takes most of its health.
     private bool _toughFoeNext;
+
+    private static double ManaShare(UltimusMember.Status member) =>
+        member.Wizard?.GameStats is { } stats ? stats.m_currentMana / (double) Math.Max(1, stats.m_baseMana + stats.m_bonusMana) : 1;
+
+    // One full, accurate line per fight (UltimusFights, logs/ultimus/fights.jsonl).
+    private void SaveFight(UltimusMember.Status me, uint template, string name, bool won, double healthBefore, double lostShare, double seconds,
+                           UltimusFights.Battle battle, bool picked) {
+        var start = _fightStart;
+        _fightStart = null;
+        UltimusFights.Save(new Dictionary<string, object> {
+            ["at"] = DateTime.UtcNow.ToString("o"),
+            ["won"] = won,
+            ["seconds"] = Math.Round(seconds),
+            ["rounds"] = battle?.Round ?? 0,
+            ["zone"] = start?.Zone ?? me.Zone ?? "",
+            ["world"] = WorldOf(start?.Zone ?? me.Zone),
+            ["x"] = Math.Round(start?.X ?? me.X),
+            ["y"] = Math.Round(start?.Y ?? me.Y),
+            ["level"] = start?.Level ?? me.Wizard?.MagicSchoolBehavior?.Level ?? 0,
+            ["foeTemplate"] = template,
+            ["foe"] = name,
+            ["picked"] = picked,
+            ["quest"] = start?.Quest ?? "",
+            ["goal"] = start?.Goal ?? "",
+            ["step"] = start?.Step ?? "",
+            ["rule"] = start?.Source ?? "",
+            ["healthBefore"] = Math.Round(healthBefore, 3),
+            ["healthAfter"] = Math.Round(HealthShare(me), 3),
+            ["healthLost"] = Math.Round(lostShare, 3),
+            ["manaBefore"] = Math.Round(start?.Mana ?? 0, 3),
+            ["manaAfter"] = Math.Round(ManaShare(me), 3),
+            ["playersWithMe"] = battle?.Humans ?? 0,
+            ["botsWithMe"] = battle?.Bots ?? 0,
+            ["enemies"] = battle is null ? null : battle.Enemies.Select(e => new Dictionary<string, object> {
+                ["template"] = e.Template, ["name"] = e.Name, ["maxHealth"] = e.MaxHealth, ["healthLeft"] = e.Health, ["minion"] = e.Minion,
+            }).ToList(),
+            ["enemiesKnown"] = battle is not null,
+        });
+    }
 
     private static double HealthShare(UltimusMember.Status member) =>
         member.Wizard?.GameStats is { } stats ? stats.m_currentHitpoints / (double) Math.Max(1, stats.m_baseHitpoints + stats.m_bonusHitpoints) : 1;
@@ -96,6 +138,8 @@ internal sealed partial class UltimusDirectorActor {
         _fight = _target is { Kind: UltimusPlanner.FIGHT } fight
             ? ((uint) Math.Min(fight.Template, uint.MaxValue), FoeName(fight), HealthShare(me), DateTime.UtcNow)
             : (0, "", HealthShare(me), DateTime.UtcNow);
+        _fightStart = (ManaShare(me), me.Wizard?.MagicSchoolBehavior?.Level ?? 0, _target?.Quest ?? "", _target?.Goal ?? "",
+            _target?.What ?? "", _pickSource, me.Zone ?? "", me.X, me.Y);
         // The step's count before the fight, to learn whether this creature counts for it (UltimusDrops).
         _dropBefore = _target is { Kind: UltimusPlanner.FIGHT } t && !string.IsNullOrEmpty(t.Quest)
             ? (t.Quest, t.Goal, UltimusDrops.StepCount(me.Wizard, t.Quest, t.Goal))
@@ -114,8 +158,27 @@ internal sealed partial class UltimusDirectorActor {
         _fight = null;
         var lostShare = Math.Max(0, fight.Health - (won ? HealthShare(me) : 0));
         var seconds = (DateTime.UtcNow - fight.Since).TotalSeconds;
+        // What really stood there, read from the battle: a fight he did not pick gets its real foe (it was not written at
+        // all), and a picked one its real name (Niduus, 2026-11-15: only accurate data).
+        var battle = UltimusFights.Take(me.GlobalId);
+        var picked = fight.Template != 0;
+        if (fight.Template == 0 && UltimusFights.Main(battle) is { } main) {
+            fight = (main.Template, main.Name, fight.Health, fight.Since);
+        }
+        else if (fight.Template != 0 && UltimusFights.RealName(fight.Template) is { Length: > 0 } real) {
+            fight = (fight.Template, real, fight.Health, fight.Since);
+        }
+
+        SaveFight(me, fight.Template, fight.Name, won, fight.Health, lostShare, seconds, battle, picked);
         NoteDayFight(fight.Name.Length > 0 ? fight.Name : "a creature", won, lostShare);
         if (fight.Template == 0) {
+            return;
+        }
+
+        // A fight he did not pick (it caught him on the way): what the creature did is still written down, under its real
+        // name, but it is no step's fight, so no step lessons come from it.
+        if (!picked) {
+            UltimusFoes.Fought(fight.Template, fight.Name, won, lostShare, seconds);
             return;
         }
 
@@ -170,6 +233,12 @@ internal sealed partial class UltimusDirectorActor {
     }
 
     private static string FoeName(UltimusPlanner.Target target) {
+        // The creature's real name from the game data; the step's words ("1 creatures", "1 Golden Key", "a fight for XP
+        // toward level 14") only when the data has none.
+        if (target.Template != 0 && UltimusFights.RealName(target.Template) is { Length: > 0 } real) {
+            return real;
+        }
+
         var what = target.What ?? "";
         foreach (var lead in new[] { "Defeat and Collect ", "defeat and collect ", "Defeat ", "defeat ", "fight ", "Fight " }) {
             if (what.StartsWith(lead, StringComparison.Ordinal)) {

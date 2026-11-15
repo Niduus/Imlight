@@ -314,6 +314,9 @@ internal sealed partial class CombatDuelComponent {
                 var threat = UltimusScout.InBattle(circles.Where(c => c.OccupiedTeam != member.OccupiedTeam));
                 // The schools he is hit with go into his training plan (a school shield against the one he meets most).
                 BotTrainingPlan.Faced(member.ParticipantObject?.m_globalID.Full ?? 0, threat.Schools);
+                // Who really stands in this battle, by creature id and real name, for his clean fight records (UltimusFights).
+                UltimusFights.Seen(member.ParticipantObject?.m_globalID.Full ?? 0, Duel.m_roundNum,
+                    circles.Where(c => c.OccupiedTeam != member.OccupiedTeam), circles.Where(c => c.OccupiedTeam == member.OccupiedTeam));
                 if (_ultimusScouted.Add(member.SlotIndex)) {
                     UltimusLink.Note(UltimusRoster.NAME, $"reads the enemies' decks: {threat.Describe()}.");
                 }

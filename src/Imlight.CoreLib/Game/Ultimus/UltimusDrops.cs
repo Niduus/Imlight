@@ -59,6 +59,14 @@ internal static class UltimusDrops {
                 s_steps = File.Exists(Path_)
                     ? JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, Record>>>(File.ReadAllText(Path_)) ?? []
                     : [];
+                // Clean names (2026-11-15): each creature under its real name from the game data, never the step's words
+                // ("1 Leather Straps" was the drop, not the creature that dropped it).
+                foreach (var record in s_steps.Values.SelectMany(s => s))
+                {
+                    if (uint.TryParse(record.Key, out var template) && UltimusFights.RealName(template) is { Length: > 0 } real) {
+                        record.Value.Name = real;
+                    }
+                }
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException) {
                 Logger.Debug("Ultimus: drop memory could not be read: {0}", Logger.Args(ex.Message));
