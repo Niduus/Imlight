@@ -52,7 +52,7 @@ internal static class UltimusAiProviders {
     // Limits on free tiers change often, so the notes say where to see the current ones instead of numbers that go stale,
     // except OpenRouter's, which its own documentation states.
     internal static readonly UltimusAiProvider[] All = [
-        new(LOCAL, "On this PC: Ollama or LM Studio (free, default)", "", "llama3.2", Local: true, Free: true,
+        new(LOCAL, "On this PC: Ollama or LM Studio (free, default)", "", "qwen3.5:4b", Local: true, Free: true,
             "Free. Runs on your own computer, needs no key and nothing leaves your PC or home network. Uses your PC's memory and graphics card while it runs.",
             "https://ollama.com/download"),
         new("gemini", "Google Gemini (free tier)", "https://generativelanguage.googleapis.com/v1beta/openai", "gemini-2.5-flash-lite", Local: false, Free: true,

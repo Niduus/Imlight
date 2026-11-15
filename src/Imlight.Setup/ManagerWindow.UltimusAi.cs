@@ -24,7 +24,7 @@ internal sealed partial class ManagerWindow {
     private readonly ToggleSwitch _ultAi = new() { OnContent = "On", OffContent = "Off" };
     private readonly ToggleSwitch _ultAiStuck = new() { OnContent = "On", OffContent = "Off" };
     private readonly TextBox _ultAiUrl = new() { Width = 320, Watermark = "http://localhost:11434/v1" };
-    private readonly TextBox _ultAiModel = new() { Width = 220, Watermark = "llama3.2" };
+    private readonly TextBox _ultAiModel = new() { Width = 220, Watermark = "qwen3.5:4b" };
     private readonly TextBlock _ultAiTest = new() { TextWrapping = TextWrapping.Wrap };
     private readonly SelectableTextBlock _ultAiScan = new() { TextWrapping = TextWrapping.Wrap };
     private readonly ComboBox _ultAiProvider = new() { Width = 360, ItemsSource = UltimusAiProviders.All.Select(p => p.Name).ToList() };
@@ -83,7 +83,7 @@ internal sealed partial class ManagerWindow {
         };
 
         _ultAiLocalRows.Children.Add(SwitchRow("AI address", _ultAiUrl, "Ollama: http://localhost:11434/v1   LM Studio: http://localhost:1234/v1"));
-        _ultAiLocalRows.Children.Add(SwitchRow("Model name", _ultAiModel, "Exactly as the AI app names it, for example llama3.2 or qwen2.5:7b."));
+        _ultAiLocalRows.Children.Add(SwitchRow("Model name", _ultAiModel, "Exactly as the AI app names it, for example qwen3.5:4b or gemma4:e4b."));
         _ultAiOnlineRows.Children.Add(SwitchRow("API key", _ultAiKey,
             "Paste the key and click anywhere else: it is saved on this PC only (Server\\Config\\ultimus-ai-keys.json) and never shown again, " +
             "never written in Imlight.ini, the logs, a log zip or a backup. Each service keeps its own key."));
@@ -139,25 +139,26 @@ internal sealed partial class ManagerWindow {
                 "Both are free and work offline. You only need one."),
             AiGuideStep("Which model fits my PC? (without scanning)",
                 "Read this table and pick, or press \"Scan my PC for a recommendation\" above to have Ahziael pick for you. The scan only reads your memory and graphics card on this PC; nothing is sent anywhere.\n\n" +
-                "Weak PC or laptop (8 GB memory, no gaming graphics card): llama3.2:1b (about 1.3 GB). Answers can be simple.\n" +
-                "Normal PC (16 GB memory, or a graphics card with 4 to 6 GB): llama3.2 (the 3B model, about 2 GB). Recommended for most.\n" +
-                "Gaming PC (graphics card with 8 GB or more): qwen2.5:7b or llama3.1:8b (about 4.5 to 5 GB). The best talk.\n" +
-                "Very strong PC (16 GB or more on the graphics card): qwen2.5:14b (about 9 GB).\n" +
-                "Downloads take a few minutes on fast internet (a 2 GB model is about 3 minutes at 100 Mbps). A bigger model talks better but answers slower and uses more of your PC while you play. " +
+                "These are 2026 models (Qwen 3.5 from Alibaba, Gemma 4 from Google). Update Ollama first if it says it can't load them.\n" +
+                "Weak PC or laptop (8 GB memory, no gaming graphics card): qwen3.5:0.8b (about 1 GB). Answers can be simple.\n" +
+                "Normal PC (16 GB memory, or a graphics card with 4 to 6 GB): qwen3.5:4b (about 3.5 GB). Recommended for most.\n" +
+                "Gaming PC (graphics card with 8 GB or more): qwen3.5:9b (about 6.5 GB) or gemma4:e4b (about 7 GB). The best talk.\n" +
+                "Very strong PC (20 GB or more on the graphics card): gemma4:26b (a big download, well over 10 GB). Fast for its size.\n" +
+                "Downloads take a few minutes on fast internet (a 3.5 GB model is about 5 minutes at 100 Mbps). A bigger model talks better but answers slower and uses more of your PC while you play. " +
                 "If replies come late or the game stutters, pick a smaller one."),
             AiGuideStep("Set it up with Ollama (step by step)",
                 "1. In your web browser go to ollama.com and click Download, then Download for Windows.\n" +
                 "2. Open the file you downloaded (OllamaSetup.exe) and click Install. When it finishes, a small llama icon sits by your clock: it is running.\n" +
                 "3. Open the Start menu, type cmd and press Enter. A black window opens.\n" +
-                "4. Type: ollama pull llama3.2   and press Enter. Wait until it says success (this is the download).\n" +
+                "4. Type: ollama pull qwen3.5:4b   and press Enter. Wait until it says success (this is the download).\n" +
                 "5. Close the black window. Ollama keeps running by itself, also after a restart of the PC.\n" +
-                "6. Here: AI address http://localhost:11434/v1, Model name llama3.2. Click Test connection, then turn AI chat on."),
+                "6. Here: AI address http://localhost:11434/v1, Model name qwen3.5:4b. Click Test connection, then turn AI chat on."),
             AiGuideStep("Set it up with LM Studio (step by step)",
                 "1. In your web browser go to lmstudio.ai and click Download for Windows. Open the file and install it.\n" +
-                "2. Open LM Studio. Click the magnifying glass (Discover) on the left, search for Llama 3.2 3B Instruct and click Download.\n" +
+                "2. Open LM Studio. Click the magnifying glass (Discover) on the left, search for Qwen3.5 4B and click Download.\n" +
                 "3. Click the Developer tab (the green terminal icon) on the left. At the top, pick the model you downloaded so it loads.\n" +
                 "4. Turn on Start Server (the switch at the top left of that tab). It says it is running on port 1234.\n" +
-                "5. Copy the model's name shown there (for example llama-3.2-3b-instruct).\n" +
+                "5. Copy the model's name shown there (for example qwen3.5-4b).\n" +
                 "6. Here: AI address http://localhost:1234/v1, Model name: paste it. Click Test connection, then turn AI chat on.\n" +
                 "LM Studio must be open with the server started whenever you want the AI chat."),
             AiGuideStep("If the test fails",
@@ -171,10 +172,11 @@ internal sealed partial class ManagerWindow {
         var ramGb = GC.GetGCMemoryInfo().TotalAvailableMemoryBytes / 1024d / 1024 / 1024;
         var (gpu, vramGb) = GraphicsCard();
         var room = Math.Max(vramGb, 0);
-        var (model, size, why) = room >= 16 ? ("qwen2.5:14b", "about 9 GB", "your graphics card has plenty of memory")
-            : room >= 8 ? ("qwen2.5:7b", "about 4.7 GB", "your graphics card has 8 GB or more")
-            : room >= 4 || ramGb >= 15 ? ("llama3.2", "about 2 GB", room >= 4 ? "your graphics card has 4 GB or more" : "you have 16 GB of memory")
-            : ("llama3.2:1b", "about 1.3 GB", "this PC has little memory to spare while the game runs");
+        // 2026 models (Niduus, 2026-11-15: "recommend 2026 models not models from 2024"): Qwen 3.5 and Gemma 4, by room.
+        var (model, size, why) = room >= 20 ? ("gemma4:26b", "a big download, well over 10 GB", "your graphics card has plenty of memory")
+            : room >= 8 ? ("qwen3.5:9b", "about 6.5 GB", "your graphics card has 8 GB or more")
+            : room >= 4 || ramGb >= 15 ? ("qwen3.5:4b", "about 3.5 GB", room >= 4 ? "your graphics card has 4 GB or more" : "you have 16 GB of memory")
+            : ("qwen3.5:0.8b", "about 1 GB", "this PC has little memory to spare while the game runs");
         _ultAiScan.Text = $"Scan of this PC: {ramGb:0} GB memory, graphics card {(gpu.Length > 0 ? gpu : "not found")}{(vramGb > 0 ? $" with {vramGb:0} GB" : "")}.\n" +
                           $"Recommended: Ollama with the model {model} ({size}), because {why}. In the black window type: ollama pull {model}\n" +
                           "Then put that name in Model name above and click Test connection. Nothing from this scan was sent anywhere.";
@@ -229,7 +231,7 @@ internal sealed partial class ManagerWindow {
             _ultAi.IsChecked = _manager.GetSwitch("Ultimus", "LocalAI");
             _ultAiStuck.IsChecked = !_manager.HasSetting("Ultimus", "StuckThinking") || _manager.GetSwitch("Ultimus", "StuckThinking");
             _ultAiUrl.Text = _manager.GetSetting("Ultimus", "LocalAIUrl") is { Length: > 0 } url ? url : "http://localhost:11434/v1";
-            _ultAiModel.Text = _manager.GetSetting("Ultimus", "LocalAIModel") is { Length: > 0 } model ? model : "llama3.2";
+            _ultAiModel.Text = _manager.GetSetting("Ultimus", "LocalAIModel") is { Length: > 0 } model ? model : "qwen3.5:4b";
         }
         finally {
             _showingUltAi = false;
@@ -426,7 +428,7 @@ internal sealed partial class ManagerWindow {
         }
 
         var url = ((_ultAiUrl.Text ?? "").Trim().TrimEnd('/')) is { Length: > 0 } u ? u : "http://localhost:11434/v1";
-        var model = (_ultAiModel.Text ?? "").Trim() is { Length: > 0 } m ? m : "llama3.2";
+        var model = (_ultAiModel.Text ?? "").Trim() is { Length: > 0 } m ? m : "qwen3.5:4b";
         if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || !(uri.IsLoopback || uri.Host.StartsWith("192.168.", StringComparison.Ordinal)
                 || uri.Host.StartsWith("10.", StringComparison.Ordinal) || uri.Host.EndsWith(".local", StringComparison.OrdinalIgnoreCase))) {
             _ultAiTest.Text = "Not on this PC: the address must start with http://localhost (or a home network address like http://192.168...).";

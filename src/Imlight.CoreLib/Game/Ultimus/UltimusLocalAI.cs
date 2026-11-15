@@ -73,8 +73,8 @@ internal static class UltimusLocalAI {
                 return string.IsNullOrWhiteSpace(online) ? provider.Model : online.Trim();
             }
 
-            var model = ConfigurationManager.GetValue("Ultimus.LocalAIModel", "llama3.2");
-            return string.IsNullOrWhiteSpace(model) ? "llama3.2" : model.Trim();
+            var model = ConfigurationManager.GetValue("Ultimus.LocalAIModel", "qwen3.5:4b");
+            return string.IsNullOrWhiteSpace(model) ? "qwen3.5:4b" : model.Trim();
         }
     }
 
