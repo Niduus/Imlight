@@ -147,7 +147,7 @@ internal sealed partial class QuestTeamDirectorActor {
         _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
         _talkingWith[heard.SpeakerCharId] = (speaker, DateTime.UtcNow);
         Note(member.Role, $"{heard.SpeakerName} {how}: \"{QuestTeamText.Short(heard.Text, 80)}\"; {member.Name} answers with the {who}.");
-        UltimusLocalAI.AskWith(target, TeamPrompt(speaker, learned), history, heard.Text, heard.SpeakerCharId, "Quest Team chat", team: true)
+        UltimusLocalAI.AskWith(target, TeamPrompt(speaker, learned, heard.Text), history, heard.Text, heard.SpeakerCharId, "Quest Team chat", team: true)
             .ContinueWith(t => new TeamAiWorded(speaker, heard, moment, learned, t.IsCompletedSuccessfully ? t.Result : null, who))
             .PipeTo(Self);
 
@@ -260,7 +260,7 @@ internal sealed partial class QuestTeamDirectorActor {
     }
 
     /// <summary>The wizard's rules, way of talking and real facts for its AI, built fresh for each answer.</summary>
-    private string TeamPrompt(int index, string learned) {
+    private string TeamPrompt(int index, string learned, string heard = null) {
         var me = _team[index];
         var (pronoun, way) = s_personality.GetValueOrDefault(me.Role, ("they", "friendly"));
         var level = me.Wizard?.MagicSchoolBehavior?.Level ?? 0;
@@ -288,6 +288,10 @@ internal sealed partial class QuestTeamDirectorActor {
         system.AppendLine($"Teammates: {string.Join(", ", others)}.");
         system.AppendLine($"Where: {QuestTeamText.Zone(me.Zone)}{(WorldName(me.Zone) is { Length: > 0 } world ? ", " + world : "")}.");
         system.AppendLine($"Team quest: {quest}. Doing now: {(string.IsNullOrWhiteSpace(_doing) ? "questing" : _doing)}. In a battle: {(index < _wasInBattle.Length && _wasInBattle[index] ? "yes" : "no")}.");
+        // Where the people the player named stand, from the game's own files (not the model's memory).
+        if (Ultimus.UltimusNpcBook.PlaceFacts(heard, me.Zone ?? "") is { Length: > 0 } places) {
+            system.AppendLine(places);
+        }
         if (!string.IsNullOrWhiteSpace(learned)) {
             system.AppendLine();
             system.AppendLine("A correct answer from earlier, to keep the facts right (reword it in your own way, keep its facts): " + learned);

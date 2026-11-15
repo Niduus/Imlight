@@ -271,7 +271,7 @@ internal sealed partial class UltimusDirectorActor {
 
             // On the way there: the next leg, every tick, not only on the 30-second look (his log, 2026-11-15 09:25: the way to
             // the Bazaar and Watson's step took turns every half second for an hour, and he got to neither).
-            return !atBazaar && DateTime.UtcNow < _bazaarSellTripUntil && leader.Wizard is { ZoneIsInstance: false }
+            return KeepsBazaarTrip(atBazaar, leader.Wizard?.ZoneIsInstance != false, DateTime.UtcNow, _bazaarSellTripUntil)
                 ? UltimusPlanner.Travel(leader, BAZAAR_ZONE, "to the Bazaar, to sell what I won't wear", "bazaarsell-way") is { Problem.Length: 0 } leg ? leg : null
                 : null;
         }
@@ -317,6 +317,9 @@ internal sealed partial class UltimusDirectorActor {
 
         return null;
     }
+
+    /// <summary>Between looks, the way to the Bazaar is kept while the trip's time is not up and he is on his way (pure, for the replay pack).</summary>
+    internal static bool KeepsBazaarTrip(bool atBazaar, bool inInstance, DateTime now, DateTime tripUntil) => !atBazaar && !inInstance && now < tripUntil;
 
     private void BazaarSellHere(UltimusPlanner.Target target) {
         var member = _team[0];

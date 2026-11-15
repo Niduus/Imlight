@@ -135,6 +135,20 @@ internal static class UltimusReplay {
             var report = UltimusDirectorActor.CauseReport(new() { ["2026-11-15"] = day }, DateTime.Now);
             return report.Contains("lost 1.0 h", StringComparison.Ordinal) && report.Contains(walkingInCircles, StringComparison.Ordinal) ? null : "the report does not name the lost hour";
         }),
+        new("Bazaar trip and Watson's step took turns every half second for an hour (2026-11-15)", () => {
+            var now = DateTime.UtcNow;
+            return UltimusDirectorActor.KeepsBazaarTrip(atBazaar: false, inInstance: false, now, now.AddMinutes(10))
+                   && !UltimusDirectorActor.KeepsBazaarTrip(atBazaar: true, inInstance: false, now, now.AddMinutes(10))
+                   && !UltimusDirectorActor.KeepsBazaarTrip(atBazaar: false, inInstance: false, now, now.AddMinutes(-1))
+                ? null : "between looks he would drop the way to the Bazaar again, or keep it after arriving or after its time";
+        }),
+        new("Freya stood on a Skeletal Pirate for two hours and no battle started (2026-11-15)", () => {
+            var ghost = (ulong) Random.Shared.NextInt64(1L << 40, 1L << 50);
+            var other = ghost + 1;
+            DudCreatures.Mark(ghost);
+            return DudCreatures.IsDud(ghost) && !DudCreatures.Fightable(ghost) && DudCreatures.Fightable(other) && !DudCreatures.IsDud(0)
+                ? null : "a creature that starts no battle would still be picked, or others would be skipped too";
+        }),
     ];
 
     /// <summary>The failed checks (plain words), chat answers included; written to replay-pack.txt.</summary>

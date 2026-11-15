@@ -286,6 +286,10 @@ internal static class UltimusLocalAI {
         system.AppendLine();
         system.AppendLine("FACTS:");
         system.AppendLine(BotAiGuard.Outgoing(facts));
+        if (UltimusNpcBook.PlaceFacts(heard) is { Length: > 0 } places) {
+            system.AppendLine(BotAiGuard.Outgoing(places));
+        }
+
         if (!string.IsNullOrWhiteSpace(keywordAnswer)) {
             system.AppendLine();
             system.AppendLine("A correct answer from your own data, to keep the facts right (reword it naturally, keep its facts): " + BotAiGuard.Outgoing(keywordAnswer));

@@ -106,6 +106,30 @@ internal static class UltimusNpcBook {
         return (first.Name, places);
     }
 
+    /// <summary>
+    /// For an AI answer (Niduus, 2026-11-15: "only accurate data"): where the game's own zone files place the people a chat
+    /// line names, as plain fact lines, so "where is Watson?" is answered from the files and not from the model's memory.
+    /// Up to two people and four areas each; "" when the line names no one or the book is not read yet.
+    /// </summary>
+    internal static string PlaceFacts(string text, string fromZone = "") {
+        if (!Ready || string.IsNullOrWhiteSpace(text)) {
+            return "";
+        }
+
+        var lines = new List<string>();
+        foreach (var name in Named(text).Select(n => n.Entry.Name).Distinct(StringComparer.OrdinalIgnoreCase).Take(2)) {
+            var (shown, places) = FindAll(name, fromZone);
+            if (places.Count == 0) {
+                continue;
+            }
+
+            var zones = places.Take(4).Select(p => $"{UltimusText.Zone(p.Zone)} ({BotShared.MainWorlds.Name(p.Zone.Split('/')[0])})");
+            lines.Add($"The game's own files place {shown} in: {string.Join("; ", zones)}{(places.Count > 4 ? $"; and {places.Count - 4} more areas" : "")}.");
+        }
+
+        return string.Join("\n", lines);
+    }
+
     /// <summary>The NPCs whose names a text says (whole words), longest name first: for hints from a quest's words.</summary>
     internal static List<(ulong Id, Entry Entry)> Named(string text) {
         if (string.IsNullOrWhiteSpace(text)) {
