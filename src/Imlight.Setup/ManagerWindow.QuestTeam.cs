@@ -770,6 +770,9 @@ internal sealed partial class ManagerWindow {
             card.Deck.Text = "Deck" + (deckFor.Length > 0 ? $" (made ready for {deckFor})" : "") + ": " +
                              ((string?) member["deck"] is { Length: > 0 } deck ? deck : "empty");
             card.Spells.Text = "Trained spells: " + List(member["spells"], "none");
+            // Its training plan: what its own fights say to save training points for, and why (Niduus, 2026-11-15).
+            card.Plan.Text = (string?) member["trainingPlan"] ?? "";
+            card.Plan.IsVisible = card.Plan.Text.Length > 0;
         }
 
         static string List(JsonNode? node, string none)
@@ -779,7 +782,7 @@ internal sealed partial class ManagerWindow {
         static string Minutes(int seconds) => seconds < 90 ? $"{seconds} seconds" : $"{seconds / 60} minutes";
     }
 
-    private sealed record TeamCard(TextBlock Line, TextBlock Quests, TextBlock Gear, TextBlock Deck, TextBlock Spells);
+    private sealed record TeamCard(TextBlock Line, TextBlock Quests, TextBlock Gear, TextBlock Deck, TextBlock Spells, TextBlock Plan);
 
     private readonly Dictionary<string, TeamCard> _teamCards = [];
 
@@ -790,7 +793,8 @@ internal sealed partial class ManagerWindow {
         }
 
         TextBlock Text(bool strong = false) => new() { TextWrapping = TextWrapping.Wrap, FontWeight = strong ? FontWeight.SemiBold : FontWeight.Normal };
-        var card = new TeamCard(Text(true), Text(), Text(), Text(), Text());
+        var card = new TeamCard(Text(true), Text(), Text(), Text(), Text(), Text());
+        card.Plan.Foreground = MUTED;
         var tp = Action(Plain("TP to " + role), () => {
             if (!InstalledCommands.IsServerRunning(_manager.InstallFolder)) {
                 throw new PanelException("Start the server and log in to your wizard first.");
@@ -810,7 +814,7 @@ internal sealed partial class ManagerWindow {
             Background = ManagerTheme.SURFACE_HIGH_BRUSH, CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(12, 8),
             Child = new StackPanel {
                 Spacing = 6,
-                Children = { new DockPanel { Children = { WithDock(tp, Dock.Right), WithCenter(card.Line) } }, details },
+                Children = { new DockPanel { Children = { WithDock(tp, Dock.Right), WithCenter(card.Line) } }, card.Plan, details },
             },
         });
         _teamCards[role] = card;

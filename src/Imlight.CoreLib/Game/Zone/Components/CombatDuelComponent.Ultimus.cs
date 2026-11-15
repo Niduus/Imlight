@@ -275,6 +275,8 @@ internal sealed partial class CombatDuelComponent {
             // First, once a round, the cards a solo wizard won't play go, as a player discards.
             if (_ultimusDiscarded.Add((Duel.m_roundNum, member.SlotIndex))) {
                 var threat = UltimusScout.InBattle(circles.Where(c => c.OccupiedTeam != member.OccupiedTeam));
+                // The schools he is hit with go into his training plan (a school shield against the one he meets most).
+                BotTrainingPlan.Faced(member.ParticipantObject?.m_globalID.Full ?? 0, threat.Schools);
                 if (_ultimusScouted.Add(member.SlotIndex)) {
                     UltimusLink.Note(UltimusRoster.NAME, $"reads the enemies' decks: {threat.Describe()}.");
                 }

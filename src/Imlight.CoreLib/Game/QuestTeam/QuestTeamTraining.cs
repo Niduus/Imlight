@@ -51,9 +51,19 @@ internal static class QuestTeamTraining {
         ["Storm"] = ["Sprite", "Tower Shield", "Fairy"],
     };
 
-    /// <summary>The plan this wizard's own fights made for its training points; its team job's spells break ties.</summary>
+    // The team as last seen, so each one's plan skips what a teammate already brings (Niduus, 2026-11-15, "all").
+    private static volatile List<(Imlight.CoreLib.WizardData.Models.Player.Wizard Wizard, ulong CharId)> s_team = [];
+
+    /// <summary>The team now (its members' wizards), for the spells one of them already covers.</summary>
+    internal static void Team(IEnumerable<QuestTeamMember.Status> group)
+        => s_team = [.. (group ?? []).Where(m => m?.Wizard is not null).Select(m => (m.Wizard, m.CharId))];
+
+    /// <summary>
+    /// The plan this wizard's own fights made for its training points; its team job's spells break ties, and a spell a
+    /// teammate already brings is left to that teammate.
+    /// </summary>
     internal static BotTrainingPlan.Plan Plan(QuestTeamMember.Status member)
-        => BotTrainingPlan.For(member.Wizard, member.CharId, s_extra.GetValueOrDefault(member.Role));
+        => BotTrainingPlan.For(member.Wizard, member.CharId, s_extra.GetValueOrDefault(member.Role), BotTrainingPlan.CoveredBy(member.CharId, s_team));
 
     /// <summary>The next spell of that plan, by id (0 when none).</summary>
     internal static uint PlannedId(QuestTeamMember.Status member) => Plan(member)?.Chain.FirstOrDefault().Id ?? 0;

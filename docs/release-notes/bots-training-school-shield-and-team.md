@@ -1,0 +1,4 @@
+New: Training plans pick a school shield, share out spells, and show in Ahziael
+Ultimus and the Quest Team now notice which school the creatures in their hard fights hit with, and when one school keeps hurting them they save training points for the shield against it (Fire Shield, Snow Shield and so on). Quest Team wizards also skip a spell a teammate already has or is already training toward, so the team doesn't spend points twice on the same thing. Each bot's card in Ahziael now shows its training plan: the spell it is saving for, what it still has to learn on the way, and why.
+Where: Ahziael, the Ultimus page and the Quest Team page (the line under each wizard's name).
+Test: Let Ultimus or the Quest Team play a while, then open their page in Ahziael and read the training plan under each wizard; after a few rough fights against one school it should name that school's shield.

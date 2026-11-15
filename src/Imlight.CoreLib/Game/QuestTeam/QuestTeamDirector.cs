@@ -943,6 +943,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             return _target?.Kind == QuestTeamPlanner.TRAIN ? _target : null;
         }
 
+        QuestTeamTraining.Team(group);
         SayTrainingPlans(group);
         var lessons = group.Select(m => (Member: m, Lessons: QuestTeamTraining.Learnable(m))).Where(x => x.Lessons.Count > 0).ToList();
         if (lessons.Count == 0) {
@@ -2090,6 +2091,9 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                     ["questNow"] = _currentQuest is not null && wizard?.QuestBehavior?.CurrentQuestInstances?.Any(q => q?.QuestName == _currentQuest) == true
                         ? QuestTeamText.Title(_currentQuest) : "",
                     ["stepNow"] = _target?.What ?? "",
+                    // Its training plan from its own fights, for its Training plan card in Ahziael.
+                    ["trainingPlan"] = wizard is null ? "" : BotShared.BotTrainingPlan.Card(QuestTeamTraining.Plan(member),
+                        wizard.MagicSchoolBehavior?.TrainingPoints ?? 0),
                 });
                 BotShared.BotSheet.Fill((JsonObject) members[^1], wizard, member.Role);
             }

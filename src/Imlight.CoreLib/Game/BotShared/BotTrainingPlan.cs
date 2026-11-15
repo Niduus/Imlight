@@ -42,6 +42,14 @@ internal static class BotTrainingPlan {
     internal const string HEAL = "heal";
     internal const string SHIELD = "shield";
     internal const string DAMAGE = "damage";
+    // A shield against the one school the creatures it fights hit it with most (Niduus, 2026-11-15, "all").
+    internal const string SCHOOL_SHIELD = "school shield";
+
+    // The school shield that stops each school's hits (Balance has none).
+    private static readonly Dictionary<string, string> s_schoolShields = new(StringComparer.OrdinalIgnoreCase) {
+        ["Fire"] = "Fire Shield", ["Ice"] = "Snow Shield", ["Storm"] = "Storm Shield",
+        ["Life"] = "Life Shield", ["Death"] = "Death Shield", ["Myth"] = "Myth Shield",
+    };
 
     // The spell from another school that answers each need, first wanted first.
     private static readonly Dictionary<string, string[]> s_answers = new() {
@@ -56,12 +64,21 @@ internal static class BotTrainingPlan {
         [DAMAGE] = "a way to hit harder",
     };
 
+    private static string[] Answers(string need, string school)
+        => need == SCHOOL_SHIELD ? school is not null && s_schoolShields.TryGetValue(school, out var shield) ? [shield] : [] : s_answers[need];
+
+    private static string NeedOf(string goal)
+        => s_schoolShields.Values.Contains(goal, StringComparer.OrdinalIgnoreCase) ? SCHOOL_SHIELD
+            : s_answers.FirstOrDefault(a => a.Value.Contains(goal, StringComparer.OrdinalIgnoreCase)).Key;
+
     internal sealed class Fight {
         public DateTime At { get; set; }
         public bool Won { get; set; }
         public double Lowest { get; set; }
         public double BiggestHit { get; set; }
         public double Minutes { get; set; }
+        // The school the creatures in it hit with most (from their decks), when they were read.
+        public string HitBy { get; set; }
     }
 
     internal sealed record Plan(string Need, string Goal, string GoalSchool, List<(uint Id, string Name, int Level)> Chain, int Points, string Why);
@@ -71,6 +88,7 @@ internal static class BotTrainingPlan {
         public int Max = 1;
         public double Lowest = 1;
         public double Biggest;
+        public readonly Dictionary<string, double> Schools = new(StringComparer.OrdinalIgnoreCase);
     }
 
     private static readonly object s_lock = new();
@@ -100,6 +118,27 @@ internal static class BotTrainingPlan {
         }
     }
 
+    /// <summary>
+    /// The schools the creatures in a fight hit with, most first (read from their decks each round): the fight is written
+    /// down with the one seen most, for a school shield against it.
+    /// </summary>
+    internal static void Faced(ulong globalId, IReadOnlyList<string> schools) {
+        if (globalId <= 2 || schools is null || schools.Count == 0) {
+            return;
+        }
+
+        var charId = globalId - 2;
+        lock (s_lock) {
+            if (!s_watching.TryGetValue(charId, out var w)) {
+                s_watching[charId] = w = new Watching();
+            }
+
+            for (var i = 0; i < Math.Min(3, schools.Count); i++) {
+                w.Schools[schools[i]] = w.Schools.GetValueOrDefault(schools[i]) + (3 - i);
+            }
+        }
+    }
+
     /// <summary>The fight ended: written down with what was seen during it.</summary>
     internal static void Ended(ulong charId, bool won, double minutes) {
         if (charId == 0) {
@@ -117,7 +156,8 @@ internal static class BotTrainingPlan {
                 all[key] = list = [];
             }
 
-            list.Add(new Fight { At = DateTime.UtcNow, Won = won, Lowest = Math.Round(w.Lowest, 2), BiggestHit = Math.Round(w.Biggest, 2), Minutes = Math.Round(minutes, 1) });
+            list.Add(new Fight { At = DateTime.UtcNow, Won = won, Lowest = Math.Round(w.Lowest, 2), BiggestHit = Math.Round(w.Biggest, 2), Minutes = Math.Round(minutes, 1),
+                HitBy = w.Schools.Count == 0 ? null : w.Schools.MaxBy(s => s.Value).Key });
             if (list.Count > RECENT * 2) {
                 list.RemoveRange(0, list.Count - RECENT * 2);
             }
@@ -129,9 +169,10 @@ internal static class BotTrainingPlan {
     /// <summary>
     /// The plan for this wizard now: its need, the spell that answers it, and the spells still to learn on the way there
     /// (prerequisites first). Null when there is nothing to train toward. <paramref name="roleWants"/>: the spells its
-    /// team job asks for (the Quest Team), a tie-breaker only.
+    /// team job asks for (the Quest Team), a tie-breaker only. <paramref name="covered"/>: spells a teammate already
+    /// brings (knows, or is training toward), skipped so the team doesn't spend points twice on the same answer.
     /// </summary>
-    internal static Plan For(Wizard wizard, ulong charId, IReadOnlyCollection<string> roleWants = null) {
+    internal static Plan For(Wizard wizard, ulong charId, IReadOnlyCollection<string> roleWants = null, IReadOnlyCollection<string> covered = null) {
         if (wizard?.MagicSchoolBehavior is null || wizard.SpellbookBehavior is null) {
             return null;
         }
@@ -145,29 +186,42 @@ internal static class BotTrainingPlan {
         var low = recent.Count(f => f.Lowest < LOW);
         var big = recent.Count(f => f.BiggestHit >= BIG_HIT);
         var slow = recent.Count(f => f.Minutes >= LONG_MINUTES);
+        // The school that hit hardest in the rough fights (left low, a big hit, or lost), when one stands out.
+        var rough = recent.Where(f => !string.IsNullOrEmpty(f.HitBy) && (!f.Won || f.Lowest < LOW || f.BiggestHit >= BIG_HIT)).ToList();
+        var hitBy = rough.GroupBy(f => f.HitBy, StringComparer.OrdinalIgnoreCase).OrderByDescending(g => g.Count()).FirstOrDefault();
+        var school = hitBy is not null && s_schoolShields.ContainsKey(hitBy.Key) && hitBy.Count() >= 2 && hitBy.Count() * 5 >= rough.Count * 3
+            ? hitBy.Key : null;
+        var bySchool = school is null ? 0 : hitBy.Count();
         var scores = new Dictionary<string, int> {
             [HEAL] = (low * 2) + (lost * 2),
             [SHIELD] = (big * 2) + lost,
             [DAMAGE] = slow * 2,
+            [SCHOOL_SHIELD] = school is null ? 0 : (bySchool * 2) + 1,
         };
         var own = wizard.MagicSchoolBehavior.MagicSchool.ToString();
 
         // A chain already started is kept until done, unless another need now weighs far more (no flip-flopping).
         lock (s_lock) {
             if (s_lastGoal.TryGetValue(charId, out var goalBefore)
-                && s_answers.FirstOrDefault(a => a.Value.Contains(goalBefore)).Key is { } needBefore
+                && NeedOf(goalBefore) is { } needBefore && scores.ContainsKey(needBefore)
                 && scores.Values.Max() - scores[needBefore] < 6) {
                 scores[needBefore] += 6;
             }
         }
 
+        var skipped = new List<string>();
         foreach (var need in scores.OrderByDescending(s => s.Value)
-                     .ThenByDescending(s => roleWants?.Any(w => s_answers[s.Key].Contains(w, StringComparer.OrdinalIgnoreCase)) == true)
-                     .ThenBy(s => s.Key switch { HEAL => 0, SHIELD => 1, _ => 2 })
+                     .ThenByDescending(s => roleWants?.Any(w => Answers(s.Key, school).Contains(w, StringComparer.OrdinalIgnoreCase)) == true)
+                     .ThenBy(s => s.Key switch { HEAL => 0, SCHOOL_SHIELD => 1, SHIELD => 2, _ => 3 })
                      .Select(s => s.Key)) {
-            foreach (var goal in s_answers[need]) {
+            foreach (var goal in Answers(need, school)) {
                 if (Find(goal) is not { } goalSpell || string.Equals(goalSpell.School, own, StringComparison.OrdinalIgnoreCase)
                     || wizard.SpellbookBehavior.HasSpell(goalSpell.Id)) {
+                    continue;
+                }
+
+                if (covered?.Contains(goalSpell.Name, StringComparer.OrdinalIgnoreCase) == true) {
+                    skipped.Add(goalSpell.Name);
                     continue;
                 }
 
@@ -177,7 +231,12 @@ internal static class BotTrainingPlan {
                 }
 
                 var points = chain.Sum(c => Find(c.Name)?.Cost ?? 1);
-                var why = Reason(need, scores[need], recent.Count, low, big, slow, lost, goalSpell, chain, points, wizard.MagicSchoolBehavior.TrainingPoints);
+                var why = Reason(need, scores[need], recent.Count, low, big, slow, lost, goalSpell, chain, points, wizard.MagicSchoolBehavior.TrainingPoints,
+                    school, bySchool, rough.Count);
+                if (skipped.Count > 0) {
+                    why += $" A teammate already brings {string.Join(" and ", skipped)}, so I don't spend points on it twice.";
+                }
+
                 lock (s_lock) {
                     s_lastGoal[charId] = goalSpell.Name;
                 }
@@ -187,6 +246,49 @@ internal static class BotTrainingPlan {
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// What the teammates already bring of the spells a plan can aim for: ones they know, ones of their own school (their
+    /// trainer teaches them anyway), and the goal a teammate before this one is already training toward (the one with the
+    /// lower id keeps a shared goal, so two never swap it back and forth).
+    /// </summary>
+    internal static IReadOnlyCollection<string> CoveredBy(ulong me, IEnumerable<(Wizard Wizard, ulong CharId)> mates) {
+        var covered = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var names = s_answers.Values.SelectMany(a => a).Concat(s_schoolShields.Values).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        foreach (var (mate, charId) in mates ?? []) {
+            if (mate is null || charId == me) {
+                continue;
+            }
+
+            var school = mate.MagicSchoolBehavior?.MagicSchool.ToString();
+            foreach (var name in names) {
+                if (Find(name) is { } spell && (mate.SpellbookBehavior?.HasSpell(spell.Id) == true
+                                                || string.Equals(spell.School, school, StringComparison.OrdinalIgnoreCase))) {
+                    covered.Add(spell.Name);
+                }
+            }
+
+            lock (s_lock) {
+                if (charId < me && s_lastGoal.TryGetValue(charId, out var goal)) {
+                    covered.Add(goal);
+                }
+            }
+        }
+
+        return covered;
+    }
+
+    /// <summary>The plan in a few plain lines, for the Training plan card in Ahziael (each bot's own card).</summary>
+    internal static string Card(Plan plan, int have) {
+        if (plan is null) {
+            return "Training plan: nothing to save points for right now.";
+        }
+
+        var steps = plan.Chain.Count == 0 ? plan.Goal : string.Join(", then ", plan.Chain.Select(c => c.Name));
+
+        return $"Training plan: toward {plan.Goal} ({plan.GoalSchool}). Still to learn, in order: {steps}. " +
+               $"{plan.Points} training point(s) in all, has {have}.\nWhy: {plan.Why}";
     }
 
     /// <summary>True when the plan's goal changed since it was last told (so the wizard says the new one once).</summary>
@@ -206,7 +308,7 @@ internal static class BotTrainingPlan {
         => For(wizard, charId, roleWants)?.Chain.FirstOrDefault().Id ?? 0;
 
     private static string Reason(string need, int score, int fights, int low, int big, int slow, int lost, VanillaTrainers.Spell goal,
-        List<(uint Id, string Name, int Level)> chain, int points, int have) {
+        List<(uint Id, string Name, int Level)> chain, int points, int have, string school = null, int bySchool = 0, int rough = 0) {
         string seen;
         if (fights == 0 || score == 0) {
             seen = fights == 0
@@ -216,6 +318,7 @@ internal static class BotTrainingPlan {
         else {
             seen = need switch {
                 HEAL => $"{low} of my last {fights} fights left me under {LOW:P0} health" + (lost > 0 ? $" and I lost {lost}" : ""),
+                SCHOOL_SHIELD => $"{bySchool} of my last {rough} hard fights were against creatures that hit mostly with {school}" + (lost > 0 ? $", and I lost {lost}" : ""),
                 SHIELD => $"in {big} of my last {fights} fights one round took over {BIG_HIT:P0} of my health" + (lost > 0 ? $" and I lost {lost}" : ""),
                 _ => $"{slow} of my last {fights} fights went on for {LONG_MINUTES:0} minutes or more",
             };
@@ -224,7 +327,7 @@ internal static class BotTrainingPlan {
         var before = chain.Count > 1 ? $"; first {string.Join(", ", chain.Take(chain.Count - 1).Select(c => c.Name))}, which the trainer asks for before it" : "";
         var levels = chain.Where(c => c.Level > 0).Select(c => c.Level).DefaultIfEmpty(0).Max();
 
-        return $"{char.ToUpperInvariant(seen[0])}{seen[1..]}: I need {s_needWords[need]}. I train toward {goal.Name} ({goal.School}){before}. " +
+        return $"{char.ToUpperInvariant(seen[0])}{seen[1..]}: I need {(need == SCHOOL_SHIELD ? $"a shield against {school}" : s_needWords[need])}. I train toward {goal.Name} ({goal.School}){before}. " +
                $"That is {points} training point(s) in all and I have {have}" + (levels > 0 ? $"; the last one opens at level {levels}" : "") + ".";
     }
 

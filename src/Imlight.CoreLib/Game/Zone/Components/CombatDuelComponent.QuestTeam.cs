@@ -23,6 +23,7 @@ using Imlight.Common;
 using Imlight.CoreLib.Game.BotShared;
 using Imlight.CoreLib.Game.Combat;
 using Imlight.CoreLib.Game.QuestTeam;
+using Imlight.CoreLib.Game.Ultimus;
 using Imlight.CoreLib.Shared.Networking;
 using Imcodec.MessageLayer.Generated;
 using Imlight.CoreLib.Shared.Packets;
@@ -190,6 +191,15 @@ internal sealed partial class CombatDuelComponent {
 
             // First, once a round, the cards its job won't play go (Game/BotShared/BotCards), as a player discards.
             if (_questTeamDiscarded.Add((Duel.m_roundNum, member.SlotIndex))) {
+                // The schools the creatures hit with go into its training plan (a school shield against the one met most).
+                try {
+                    BotTrainingPlan.Faced(member.ParticipantObject?.m_globalID.Full ?? 0,
+                        UltimusScout.InBattle(circles.Where(c => c.OccupiedTeam != member.OccupiedTeam)).Schools);
+                }
+                catch (Exception e) {
+                    Logger.Debug("Duel {0} | Quest Team could not read the enemies' schools: {1}", Logger.Args(Duel.m_duelID.Full, e.Message));
+                }
+
                 foreach (var index in BotCards.Discards(member, circles, BotGear.StyleOfRole(role))) {
                     var thrown = member.GetSpellFromLastHand((byte) index);
                     moves.Add(BotBattle.Move.Discard(index, $"discards {(thrown is null ? "a card" : RewrittenAI.Read(thrown)?.Shown ?? "a card")}"));

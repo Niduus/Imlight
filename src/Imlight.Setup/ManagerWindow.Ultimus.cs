@@ -1408,6 +1408,9 @@ internal sealed partial class ManagerWindow {
                              $"health {(string?) member["health"]}  ·  {(int?) member["gold"] ?? 0} gold  ·  {(int?) member["training"] ?? 0} training points" +
                              ((bool?) member["battle"] == true ? "  ·  in a battle" : "") +
                              ((string?) member["state"] is { } state && state != "playing" ? $"  ·  {state}" : "");
+            // His training plan: what his own fights say to save training points for, and why (Niduus, 2026-11-15).
+            card.Plan.Text = (string?) member["trainingPlan"] ?? "";
+            card.Plan.IsVisible = card.Plan.Text.Length > 0;
         }
 
         _ultSheet.Show(status["members"] as JsonArray);
@@ -1417,7 +1420,7 @@ internal sealed partial class ManagerWindow {
         static string Minutes(int seconds) => seconds < 90 ? $"{seconds} seconds" : $"{seconds / 60} minutes";
     }
 
-    private sealed record UltimusCard(TextBlock Line);
+    private sealed record UltimusCard(TextBlock Line, TextBlock Plan);
 
     private readonly Dictionary<string, UltimusCard> _ultCards = [];
 
@@ -1428,7 +1431,8 @@ internal sealed partial class ManagerWindow {
         }
 
         TextBlock Text(bool strong = false) => new() { TextWrapping = TextWrapping.Wrap, FontWeight = strong ? FontWeight.SemiBold : FontWeight.Normal };
-        var card = new UltimusCard(Text(true));
+        var card = new UltimusCard(Text(true), Text());
+        card.Plan.Foreground = MUTED;
         var tp = Action(Plain("TP to Ultimus"), () => {
             if (!InstalledCommands.IsServerRunning(_manager.InstallFolder)) {
                 throw new PanelException("Start the server and log in to your wizard first.");
@@ -1444,7 +1448,7 @@ internal sealed partial class ManagerWindow {
             Background = ManagerTheme.SURFACE_HIGH_BRUSH, CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(12, 8),
             Child = new StackPanel {
                 Spacing = 6,
-                Children = { new DockPanel { Children = { WithDock(tp, Dock.Right), WithCenter(card.Line) } } },
+                Children = { new DockPanel { Children = { WithDock(tp, Dock.Right), WithCenter(card.Line) } }, card.Plan },
             },
         });
         _ultCards[role] = card;

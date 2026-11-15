@@ -2357,6 +2357,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                     ["stepNow"] = _target is null ? "" : Describe(_target),
                     ["spells"] = new JsonArray([.. (wizard?.SpellbookBehavior?.LearnedSpellTemplateIds?.ToList() ?? [])
                         .Select(id => UltimusText.SpellName(id)).Where(n => !string.IsNullOrEmpty(n)).Distinct().Order().Select(n => (JsonNode) n)]),
+                    // His training plan from his own fights, for his Training plan card in Ahziael.
+                    ["trainingPlan"] = wizard is null ? "" : BotShared.BotTrainingPlan.Card(BotShared.BotTrainingPlan.For(wizard, member.CharId),
+                        wizard.MagicSchoolBehavior?.TrainingPoints ?? 0),
                 });
                 // Stats, deck cards and school, the same sheet as the Quest Team's (Niduus, 2026-11-13: "view their gear,
                 // stats and their current deck and quest").
