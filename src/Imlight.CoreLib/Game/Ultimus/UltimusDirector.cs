@@ -848,6 +848,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                     return TopUpBeforeFight(leader, dungeonStep) ?? dungeonStep;
                 }
 
+                // Anywhere: a way that opens with a quest he holds, that quest first (BotGates, Niduus, 2026-11-15).
+                if (GateQuestFirst(group, target) is { } gateStep) {
+                    return TopUpBeforeFight(leader, gateStep) ?? gateStep;
+                }
+
                 // A quest fight lost again and again: a side quest of his level first (never farming creatures for XP).
                 if (LevelFirst(leader, target) is { } xp) {
                     return xp;
@@ -1143,19 +1148,20 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             var searching = _collectSearch.TryGetValue(target.Key, out var searchSince);
             // Searching ends after 10 minutes: the step is planned again from the start (the arrow, the step's area), not
             // searched for 10 hours (his PC log, 2026-11-14: the Entrance Hall, "Taking it to the Tuts").
-            if (searching && DateTime.UtcNow - searchSince > TimeSpan.FromMinutes(10)) {
+            // 6 minutes, not 10 (Niduus, 2026-11-15: get unstuck faster).
+            if (searching && DateTime.UtcNow - searchSince > TimeSpan.FromMinutes(6)) {
                 _collectSearch.Remove(target.Key);
                 UltimusPlanner.SetAside(target.Key, TimeSpan.FromMinutes(2));
-                Think($"I looked around for 10 minutes and found nothing more for {target.What}. I stop searching and work the step out " +
+                Think($"I looked around for 6 minutes and found nothing more for {target.What}. I stop searching and work the step out " +
                       "again from the start: where its arrow points and which area it is in.", "search-end|" + target.Key);
 
                 return;
             }
 
             if (searching && usable.Count == 0) {
-                if (DateTime.UtcNow - searchSince > TimeSpan.FromMinutes(5)) {
+                if (DateTime.UtcNow - searchSince > TimeSpan.FromMinutes(3)) {
                     Issue("quest", target.Quest, $"{target.What}: {member.Name} used what was at the quest arrow's spot and looked around the area " +
-                                                 "for 5 minutes without finding more to use.", key: target.Key + "|nothingtouse");
+                                                 "for 3 minutes without finding more to use.", key: target.Key + "|nothingtouse");
                 }
 
                 _doing = $"looking around the area for more: {target.What}";
@@ -2358,6 +2364,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                     ["spells"] = new JsonArray([.. (wizard?.SpellbookBehavior?.LearnedSpellTemplateIds?.ToList() ?? [])
                         .Select(id => UltimusText.SpellName(id)).Where(n => !string.IsNullOrEmpty(n)).Distinct().Order().Select(n => (JsonNode) n)]),
                     // His training plan from his own fights, for his Training plan card in Ahziael.
+                    // For the card's points bar and its Pin button (Niduus, 2026-11-15).
+                    ["charId"] = member.CharId.ToString(),
+                    ["trainingGoal"] = wizard is null ? "" : BotShared.BotTrainingPlan.For(wizard, member.CharId)?.Goal ?? "",
+                    ["trainingNeeds"] = wizard is null ? 0 : BotShared.BotTrainingPlan.For(wizard, member.CharId)?.Points ?? 0,
                     ["trainingPlan"] = wizard is null ? "" : BotShared.BotTrainingPlan.Card(BotShared.BotTrainingPlan.For(wizard, member.CharId),
                         wizard.MagicSchoolBehavior?.TrainingPoints ?? 0),
                 });

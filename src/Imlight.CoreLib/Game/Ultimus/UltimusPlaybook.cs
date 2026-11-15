@@ -77,11 +77,11 @@ internal static class UltimusPlaybook {
         ("Pace", new("CutsceneSeconds", 12, "A cutscene: I stand and watch this long (each new part of it adds more), as a player does, before I go on.")),
         ("Dungeon", new("PrepHealth", 0.95, "Before I walk into a dungeon: at least this share of health (I finish a dungeon in one go).")),
         ("Dungeon", new("PrepMana", 0.6, "...and at least this share of mana.")),
-        ("Guard", new("StepMinutes", 20, "Time budget for one step: past it I stop, say why, and plan again (another open step, another way).")),
+        ("Guard", new("StepMinutes", 15, "Time budget for one step: past it I stop, say why, and plan again (another open step, another way).")),
         ("Guard", new("QuestFactor", 4, "Time budget for one quest: this many times its expected time (at least 30 minutes), not counting levelling up for it.")),
         ("Guard", new("SideTripMinutes", 8, "Time budget for a side trip (a shop, the Bazaar, a trainer, selling): past it I drop the trip and go back to the story.")),
-        ("Guard", new("NoStoryMinutes", 15, "Off-track alarm: no story progress (a step, a quest, XP while levelling for one) for this long and I stop and plan again.")),
-        ("Guard", new("CheckMinutes", 5, "Every this-many minutes I ask: am I closer to my goal than last time? Two noes in a row and I switch strategy.")),
+        ("Guard", new("NoStoryMinutes", 12, "Off-track alarm: no story progress (a step, a quest, XP while levelling for one) for this long and I stop and plan again.")),
+        ("Guard", new("CheckMinutes", 3, "Every this-many minutes I ask: am I closer to my goal than last time? Two noes in a row and I switch strategy.")),
         ("Guard", new("MinWinChance", 70, "Risk budget: a fight I trust less than this (out of 100) is not started until I have prepared (full health and mana, a deck for it).")),
         ("Push", new("ShopMinutes", 30, "In push mode, shop trips only in my first this-many minutes in a new world (its shops have the next gear).")),
         ("Watchdog", new("Minutes", 45, "No step done and no XP gained for this long: I raise the alarm and use a player's unstuck moves (area start, then .stuck go).")),
@@ -333,7 +333,51 @@ internal static class UltimusPlaybook {
     private const string KNOW_HOW_MARK = "# Know-how version 2";
     private const string KNOW_HOW_MARK_3 = "# Know-how version 3";
 
+    // Faster escapes (Niduus, 2026-11-15: "speed up his ability to fix problems/being stuck to a reasonable amount according
+    // to log data"): in his logs of 2026-11-13/14 the long stucks (half an hour and more) were the ones a progress check
+    // every 5 minutes (two noes = 10) had to catch. The old numbers are moved to the new ones once, unless he set them himself.
+    private const string ESCAPE_MARK = "# Escape timing version 2";
+    private static readonly (string Section, string Name, string Old, string New)[] s_escapeTiming = [
+        ("Guard", "StepMinutes", "20", "15"), ("Guard", "CheckMinutes", "5", "3"), ("Guard", "NoStoryMinutes", "15", "12"),
+    ];
+
+    private static void UpgradeEscapeTiming(string path) {
+        var lines = File.ReadAllLines(path).ToList();
+        if (lines.Any(l => l.StartsWith(ESCAPE_MARK, StringComparison.Ordinal))) {
+            return;
+        }
+
+        var section = "";
+        for (var i = 0; i < lines.Count; i++) {
+            var line = lines[i].Trim();
+            if (line.StartsWith('[') && line.EndsWith(']')) {
+                section = line[1..^1].Trim();
+                continue;
+            }
+
+            var eq = line.IndexOf('=');
+            if (eq <= 0 || line.StartsWith('#') || line.Contains("[I set this", StringComparison.Ordinal)) {
+                continue;
+            }
+
+            var name = line[..eq].Trim();
+            var rest = line[(eq + 1)..];
+            var semi = rest.IndexOf(';');
+            var number = (semi >= 0 ? rest[..semi] : rest).Trim();
+            foreach (var (wantSection, wantName, old, now) in s_escapeTiming) {
+                if (section.Equals(wantSection, StringComparison.OrdinalIgnoreCase) && name.Equals(wantName, StringComparison.OrdinalIgnoreCase) && number == old) {
+                    lines[i] = $"{name} = {now} ;{(semi >= 0 ? rest[(semi + 1)..] : "")}";
+                }
+            }
+        }
+
+        lines.Add("");
+        lines.Add(ESCAPE_MARK + " (added by Ahziael: Guard.StepMinutes 15, Guard.CheckMinutes 3, Guard.NoStoryMinutes 12, from his own stuck times)");
+        File.WriteAllLines(path, lines);
+    }
+
     private static void Upgrade(string path) {
+        UpgradeEscapeTiming(path);
         var text = File.ReadAllText(path);
         var add = new System.Text.StringBuilder();
         var known = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

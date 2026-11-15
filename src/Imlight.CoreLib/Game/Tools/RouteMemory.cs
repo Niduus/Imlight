@@ -339,6 +339,21 @@ internal static class RouteMemory {
         }
     }
 
+    /// <summary>
+    /// True when Ultimus or the Quest Team got stuck within <paramref name="reach"/> of this spot lately (twice or more):
+    /// the Bot Players leave such spots out of their walks, so what one bot learned keeps the others out of it.
+    /// </summary>
+    internal static bool NearStuck(string zonePath, float x, float y, float reach = 250f) {
+        if (string.IsNullOrEmpty(zonePath)) {
+            return false;
+        }
+
+        lock (s_lock) {
+            return StreetOf(zonePath, create: false) is { } street
+                   && street.Stuck.Any(s => s.Times >= 2 && DateTime.UtcNow - s.Last < s_stuckFor && Far(s.X, s.Y, x, y) <= reach);
+        }
+    }
+
     /// <summary>How many walks and stuck spots are known (for the log).</summary>
     internal static (int Legs, int Stuck) Count() {
         lock (s_lock) {

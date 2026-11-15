@@ -31,7 +31,9 @@ namespace Imlight.CoreLib.Game.Ultimus;
 /// </summary>
 internal sealed partial class UltimusDirectorActor {
 
-    private const int ALARMS_TO_CHANGE = 10;
+    // Ten was too many: in his logs (2026-11-13/14, 143 escapes) 9 in 10 got free within 4 tries, so a fifth alarm at the same
+    // spot already means the usual moves don't work there (Niduus, 2026-11-15: get unstuck faster).
+    private const int ALARMS_TO_CHANGE = 5;
     private const float CLEAR_RANGE = 1500f;
 
     // Alarms per spot and step this session ("zone|cell|step").

@@ -177,6 +177,11 @@ internal static class BotTrainingPlan {
             return null;
         }
 
+        // Pinned by hand in Ahziael (Niduus, 2026-11-15): that spell is the goal, whatever the fights say, until it is learned.
+        if (Pinned(wizard, charId) is { } pinned) {
+            return pinned;
+        }
+
         List<Fight> recent;
         lock (s_lock) {
             recent = Fights().TryGetValue(charId.ToString(), out var list) ? [.. list.TakeLast(RECENT)] : [];
@@ -277,6 +282,64 @@ internal static class BotTrainingPlan {
         }
 
         return covered;
+    }
+
+    // ---- Pins from Ahziael: logs/bots/training-pins.json, { "<charId>": "<spell name>" }, read whenever it changes. ----
+
+    internal const string PINS_FILE = "training-pins.json";
+    internal const string PINNED = "pinned";
+    private static Dictionary<string, string> s_pins = [];
+    private static DateTime s_pinsWritten = DateTime.MinValue;
+    private static DateTime s_pinsLook = DateTime.MinValue;
+
+    private static string PinFor(ulong charId) {
+        lock (s_lock) {
+            if (DateTime.UtcNow >= s_pinsLook) {
+                s_pinsLook = DateTime.UtcNow.AddSeconds(5);
+                var path = Path.Combine(Path.GetFullPath(FOLDER), PINS_FILE);
+                try {
+                    var written = File.Exists(path) ? File.GetLastWriteTimeUtc(path) : DateTime.MinValue;
+                    if (written != s_pinsWritten) {
+                        s_pinsWritten = written;
+                        s_pins = written == DateTime.MinValue ? []
+                            : JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(path)) ?? [];
+                    }
+                }
+                catch (Exception e) when (e is IOException or UnauthorizedAccessException or JsonException) {
+                    Logger.Debug("Bot training: could not read {0}: {1}", Logger.Args(path, e.Message));
+                }
+            }
+
+            return s_pins.GetValueOrDefault(charId.ToString());
+        }
+    }
+
+    private static Plan Pinned(Wizard wizard, ulong charId) {
+        if (PinFor(charId) is not { Length: > 0 } name) {
+            return null;
+        }
+
+        var have = wizard.MagicSchoolBehavior.TrainingPoints;
+        if (Find(name) is not { } spell) {
+            return new Plan(PINNED, name, "?", [], 0, $"Ahziael pinned {name}, but no trainer teaches a spell by that name, so I can't train toward it.");
+        }
+
+        if (wizard.SpellbookBehavior.HasSpell(spell.Id)) {
+            return null;
+        }
+
+        if (Chain(wizard, spell) is not { Count: > 0 } chain) {
+            return new Plan(PINNED, spell.Name, spell.School, [], 0, $"Ahziael pinned {spell.Name}, but the trainers' needs for it can't be met from my spells.");
+        }
+
+        var points = chain.Sum(c => Find(c.Name)?.Cost ?? 1);
+        var before = chain.Count > 1 ? $"; first {string.Join(", ", chain.Take(chain.Count - 1).Select(c => c.Name))}, which the trainer asks for before it" : "";
+        lock (s_lock) {
+            s_lastGoal[charId] = spell.Name;
+        }
+
+        return new Plan(PINNED, spell.Name, spell.School, chain, points,
+            $"Niduus pinned this plan in Ahziael: I train toward {spell.Name} ({spell.School}){before}. That is {points} training point(s) in all and I have {have}.");
     }
 
     /// <summary>The plan in a few plain lines, for the Training plan card in Ahziael (each bot's own card).</summary>

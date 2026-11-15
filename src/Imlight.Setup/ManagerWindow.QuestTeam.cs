@@ -264,7 +264,7 @@ internal sealed partial class ManagerWindow {
             _teamEnabled.IsChecked = _manager.GetSwitch("QuestTeam", "Enabled");
             _teamSlow.Value = (decimal) Number("SlowFactor", 2);
             _teamLosses.Value = (decimal) Number("LossesBeforeIssue", 2);
-            _teamStuck.Value = (decimal) Number("StuckMinutes", 8);
+            _teamStuck.Value = (decimal) (Number("StuckMinutes", 5) is var stuckMinutes && stuckMinutes == 8 ? 5 : stuckMinutes); // 8 was the old default, now 5
             _teamQuestMinutes.Value = (decimal) Number("QuestMinutes", 45);
         }
         finally {
@@ -771,8 +771,7 @@ internal sealed partial class ManagerWindow {
                              ((string?) member["deck"] is { Length: > 0 } deck ? deck : "empty");
             card.Spells.Text = "Trained spells: " + List(member["spells"], "none");
             // Its training plan: what its own fights say to save training points for, and why (Niduus, 2026-11-15).
-            card.Plan.Text = (string?) member["trainingPlan"] ?? "";
-            card.Plan.IsVisible = card.Plan.Text.Length > 0;
+            ShowTrainingRow(card.Training, member);
         }
 
         static string List(JsonNode? node, string none)
@@ -782,7 +781,7 @@ internal sealed partial class ManagerWindow {
         static string Minutes(int seconds) => seconds < 90 ? $"{seconds} seconds" : $"{seconds / 60} minutes";
     }
 
-    private sealed record TeamCard(TextBlock Line, TextBlock Quests, TextBlock Gear, TextBlock Deck, TextBlock Spells, TextBlock Plan);
+    private sealed record TeamCard(TextBlock Line, TextBlock Quests, TextBlock Gear, TextBlock Deck, TextBlock Spells, TrainingRow Training);
 
     private readonly Dictionary<string, TeamCard> _teamCards = [];
 
@@ -793,8 +792,7 @@ internal sealed partial class ManagerWindow {
         }
 
         TextBlock Text(bool strong = false) => new() { TextWrapping = TextWrapping.Wrap, FontWeight = strong ? FontWeight.SemiBold : FontWeight.Normal };
-        var card = new TeamCard(Text(true), Text(), Text(), Text(), Text(), Text());
-        card.Plan.Foreground = MUTED;
+        var card = new TeamCard(Text(true), Text(), Text(), Text(), Text(), MakeTrainingRow(role));
         var tp = Action(Plain("TP to " + role), () => {
             if (!InstalledCommands.IsServerRunning(_manager.InstallFolder)) {
                 throw new PanelException("Start the server and log in to your wizard first.");
@@ -814,7 +812,7 @@ internal sealed partial class ManagerWindow {
             Background = ManagerTheme.SURFACE_HIGH_BRUSH, CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(12, 8),
             Child = new StackPanel {
                 Spacing = 6,
-                Children = { new DockPanel { Children = { WithDock(tp, Dock.Right), WithCenter(card.Line) } }, card.Plan, details },
+                Children = { new DockPanel { Children = { WithDock(tp, Dock.Right), WithCenter(card.Line) } }, card.Training.Root, details },
             },
         });
         _teamCards[role] = card;

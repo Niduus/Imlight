@@ -47,6 +47,7 @@ internal sealed partial class UltimusDirectorActor {
 
     /// <summary>A world's story starts: its story quests are read ahead (now, or once the check is written).</summary>
     private void ReadAhead(string world) {
+        GatesAhead(world);
         if (string.IsNullOrEmpty(world) || _readAheadDone.Contains(world)) {
             return;
         }
@@ -54,6 +55,27 @@ internal sealed partial class UltimusDirectorActor {
         _readAheadWaiting = world;
         _readAheadNextLook = DateTime.MinValue;
         ReadAheadTick();
+    }
+
+    private readonly HashSet<string> _gatesAheadSaid = new(StringComparer.OrdinalIgnoreCase);
+
+    // The ways in this world that open only with a quest step (the game's door needs, BotGates), said once per world, so he
+    // knows ahead which quest opens which way (Niduus, 2026-11-15: future-proof for later worlds).
+    private void GatesAhead(string world) {
+        if (string.IsNullOrEmpty(world) || _gatesAheadSaid.Contains(world)) {
+            return;
+        }
+
+        var (count, examples) = BotShared.BotGates.InWorld(WorldName(world).Replace(" ", ""));
+        if (BotShared.BotGates.Ahead() is null) {
+            return;
+        }
+
+        _gatesAheadSaid.Add(world);
+        if (count > 0) {
+            Think($"READ-AHEAD: in {WorldName(world)} {count} way(s) open only once a quest step is done (for example {string.Join("; ", examples)}). " +
+                  "When my way on is one of them and I hold that quest, I do it first.", "gatesahead|" + world);
+        }
     }
 
     // Ahziael's "Run read-ahead now" (Niduus, 2026-11-14): every story world at once, from a quest check run fresh for it.
@@ -95,6 +117,7 @@ internal sealed partial class UltimusDirectorActor {
     /// <summary>Each tick while a read-ahead waits for the quest check to be written.</summary>
     private void ReadAheadTick() {
         ReadAheadRequestTick();
+        GatesAhead(_storyWorld);
         if (_readAheadWaiting is not { } world || DateTime.UtcNow < _readAheadNextLook) {
             return;
         }

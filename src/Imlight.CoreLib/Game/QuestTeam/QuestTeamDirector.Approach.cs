@@ -40,7 +40,8 @@ namespace Imlight.CoreLib.Game.QuestTeam;
 /// </summary>
 internal sealed partial class QuestTeamDirectorActor {
 
-    private const int ALARMS_TO_CHANGE = 10;
+    // As Ultimus: five alarms at one spot, not ten (9 in 10 escapes in his logs took 4 tries or fewer).
+    private const int ALARMS_TO_CHANGE = 5;
     private const int THINK_FROM_ALARM = 2;
     private static readonly TimeSpan THINK_AGAIN = TimeSpan.FromMinutes(3);
     private static readonly TimeSpan BREAK_FOR = TimeSpan.FromMinutes(2);

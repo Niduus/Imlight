@@ -1,0 +1,4 @@
+New: Every escape is learned for places like it, in every world
+When Ultimus or the Quest Team gets free, the move that worked is now remembered twice: for that exact spot as before, and for the kind of situation it was, such as in a dungeon or on a street, the kind of step, and whether he stood still or walked without getting closer. When he gets stuck somewhere new, even in a world he has never been to, he tries first the move that worked most in situations like it, and says so in his thoughts. What he learned from his first worlds ships with Imlight, so a new Ultimus starts with it, and the Bot Players now keep their walks away from spots where Ultimus or the team got stuck.
+Where: Ultimus, the Quest Team and the Bot Players. The lessons are kept in logs/bots/stuck-patterns.json.
+Test: Let Ultimus play in a new area; when he gets stuck, his thoughts should say which move worked in situations like this one before.

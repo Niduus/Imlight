@@ -38,7 +38,9 @@ internal sealed partial class QuestTeamDirectorActor {
     /// <summary>How long a wizard that is stepping aside is left to it before orders come again.</summary>
     private static readonly TimeSpan UNSTICK_FOR = TimeSpan.FromSeconds(6);
 
-    private readonly BotStuck _stuck = new();
+    // 45 seconds of standing still, not 75 (Niduus, 2026-11-15: get unstuck faster): Ultimus acts after 30 and a short
+    // normal pause (a dialog, a battle, a rest) never counts, so the team can act sooner without fussing.
+    private readonly BotStuck _stuck = new(TimeSpan.FromSeconds(45));
     private readonly HashSet<string> _tipsNoted = new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> _solutionsNoted = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<int, DateTime> _unstickUntil = [];
@@ -91,6 +93,7 @@ internal sealed partial class QuestTeamDirectorActor {
     // The leader's last unstuck move, until it is known whether it got the team going (shared stuck memory, UltimusSolutions).
     private sealed class TeamTry {
         public Ultimus.UltimusSolutions.Solution Solution;
+        public BotLessons.Situation Situation;
         public string Zone;
         public float X, Y;
         public DateTime At;
@@ -116,6 +119,8 @@ internal sealed partial class QuestTeamDirectorActor {
         if (t.AwaySince is { } since && DateTime.UtcNow - since >= TimeSpan.FromSeconds(45) || DateTime.UtcNow - t.At >= TimeSpan.FromMinutes(5)) {
             _teamTry = null;
             Ultimus.UltimusSolutions.Result(t.Solution, true);
+            // Also for the kind of place it was, in every world (BotLessons, shared with Ultimus).
+            BotLessons.Learn(t.Situation, t.Solution.Move, true, QuestTeamText.Zone(t.Zone));
             Note(leader.Role, $"{leader.Name}: \"{Ultimus.UltimusReasonMoves.Words(t.Solution.Move)}\" got the team going; written down for Ultimus and the team.");
         }
     }
@@ -123,7 +128,7 @@ internal sealed partial class QuestTeamDirectorActor {
     private void Unstick(int index, int tries) {
         var member = _team[index];
         var where = $"{QuestTeamText.Zone(member.Zone)} at ({member.X:0}, {member.Y:0})";
-        var seconds = (int) BotStuck.STILL.TotalSeconds;
+        var seconds = (int) _stuck.Still.TotalSeconds;
         var quest = _target?.Quest ?? _currentQuest;
 
         // A fresh look at the way: the old walk and the old order are forgotten.
@@ -192,12 +197,24 @@ internal sealed partial class QuestTeamDirectorActor {
             goFar |= lesson.Worked.Length > 0 && lesson.Worked != "step aside" || lesson.Tried.Contains("step aside") && lesson.Worked.Length == 0;
         }
 
+        // Nothing known for this spot: what freed Ultimus or the team in situations like this one, in any world (BotLessons,
+        // Niduus, 2026-11-15: every success future-proof). The team only steps aside or walks well away, so any longer
+        // move that worked there (another route, the Commons button) means going well away.
+        var situation = BotLessons.Of(member.Wizard?.ZoneIsInstance == true || OverlayQuestRoute.IsDungeon(member.Zone),
+            (_target ?? _leaderLastTargetForStuck)?.Kind, "open ground", "stood still");
+        if (index == 0 && !goFar && lesson is null
+            && BotLessons.Best(situation, [BotLessons.ASIDE, BotLessons.AWAY, BotLessons.OTHER_WAY, BotLessons.COMMONS], null, out var learnedLine) is { } learned) {
+            goFar = learned != BotLessons.ASIDE;
+            Note(member.Role, $"{member.Name}: {learnedLine}");
+        }
+
         // The team writes its own results into the shared stuck memory too (Niduus, 2026-11-15: idea 1): stuck again by the
         // spot of its last move, that move failed; the move it makes now is written down and checked (CheckTeamTry).
         if (index == 0) {
             if (_teamTry is { } last && string.Equals(last.Zone, member.Zone ?? "", StringComparison.OrdinalIgnoreCase)
                                      && MathF.Sqrt(((last.X - member.X) * (last.X - member.X)) + ((last.Y - member.Y) * (last.Y - member.Y))) <= 800) {
                 Ultimus.UltimusSolutions.Result(last.Solution, false);
+                BotLessons.Learn(last.Situation, last.Solution.Move, false, null);
             }
 
             var goal = _target ?? _leaderLastTargetForStuck;
@@ -206,7 +223,7 @@ internal sealed partial class QuestTeamDirectorActor {
             _teamTry = new TeamTry {
                 Solution = Ultimus.UltimusSolutions.Tried(quest ?? "", step ?? "", member.Zone, member.X, member.Y, "", move,
                     goFar ? "stepping a little aside did not free the team here" : "", "Quest Team"),
-                Zone = member.Zone ?? "", X = member.X, Y = member.Y, At = DateTime.UtcNow,
+                Situation = situation, Zone = member.Zone ?? "", X = member.X, Y = member.Y, At = DateTime.UtcNow,
             };
         }
 

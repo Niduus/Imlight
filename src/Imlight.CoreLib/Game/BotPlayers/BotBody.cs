@@ -271,8 +271,10 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
     private DateTime _avoidUntil;
     private const float AVOID_RADIUS = 420f;
 
+    // Also the spots where Ultimus or the Quest Team got stuck (RouteMemory, Niduus, 2026-11-15: what one bot learns, all use).
     private bool NearAvoided(NVector3 point)
-        => _avoid is { } spot && DateTime.UtcNow < _avoidUntil && NVector3.Distance(spot, point) < AVOID_RADIUS;
+        => (_avoid is { } spot && DateTime.UtcNow < _avoidUntil && NVector3.Distance(spot, point) < AVOID_RADIUS)
+           || RouteMemory.NearStuck(_info.ZonePath, point.X, point.Y);
 
     // Walks like a person (Niduus, 2026-11-12: "make the movements more human"): it wanders between the places of its
     // area in no set order, along a slight curve, at a pace that changes a little from walk to walk; at the end of a walk it

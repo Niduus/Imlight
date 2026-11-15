@@ -59,6 +59,7 @@ internal sealed partial class UltimusDirectorActor {
     // The move he is trying now, from memory or from thinking, until it is known whether it worked.
     private sealed class ReasonedTry {
         public UltimusSolutions.Solution Solution;
+        public BotShared.BotLessons.Situation Situation;
         public string Zone;
         public float X, Y;
         public DateTime At;
@@ -78,6 +79,7 @@ internal sealed partial class UltimusDirectorActor {
         if (_reasonedTry is { } tried && string.Equals(tried.Zone, member.Zone ?? "", StringComparison.OrdinalIgnoreCase)
                                       && UltimusPlanner.Far(tried.X, tried.Y, member.X, member.Y) <= SAME_SPOT) {
             UltimusSolutions.Result(tried.Solution, false);
+            BotShared.BotLessons.Learn(tried.Situation, tried.Solution.Move, false, null);
             _lastFailedMove = tried.Solution.Move;
             _reasonedTry = null;
             Think($"\"{UltimusReasonMoves.Words(tried.Solution.Move)}\" did not get me going here. I write that down, so I don't count on it for this step.",
@@ -358,7 +360,7 @@ internal sealed partial class UltimusDirectorActor {
     }
 
     private void StartTry(UltimusSolutions.Solution solution, UltimusMember.Status member) {
-        _reasonedTry = new ReasonedTry { Solution = solution, Zone = member.Zone ?? "", X = member.X, Y = member.Y, At = DateTime.UtcNow };
+        _reasonedTry = new ReasonedTry { Solution = solution, Situation = _lastSituation, Zone = member.Zone ?? "", X = member.X, Y = member.Y, At = DateTime.UtcNow };
     }
 
     /// <summary>Each look (LookForStuck): the move he tried got him going (well away for a while, or no new alarm there).</summary>
@@ -383,6 +385,8 @@ internal sealed partial class UltimusDirectorActor {
         _reasonedTry = null;
         _lastFailedMove = "";
         UltimusSolutions.Result(t.Solution, true);
+        // Also for the kind of place it was, in every world (BotLessons).
+        BotShared.BotLessons.Learn(t.Situation, t.Solution.Move, true, UltimusText.Zone(t.Zone));
         var (known, working) = UltimusSolutions.Count();
         Think($"\"{UltimusReasonMoves.Words(t.Solution.Move)}\" got me going. I remember it for this step, and the Quest Team can read it too.",
             $"reason-worked|{t.Solution.Move}|{t.Zone}|{(int) t.X / 500}|{(int) t.Y / 500}");

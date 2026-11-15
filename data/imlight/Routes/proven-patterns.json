@@ -1,0 +1,81 @@
+{
+  "*|*|*|standing still": {
+    "step aside": {
+      "Worked": 13,
+      "Failed": 50,
+      "Last": "2026-11-14T23:59:00Z",
+      "Where": [
+        "Royal Hall",
+        "Chamber of Fire",
+        "The Oasis",
+        "Palace of Fire",
+        "Throne Room of Fire"
+      ]
+    },
+    "another way (a teleporter or a new route)": {
+      "Worked": 7,
+      "Failed": 65,
+      "Last": "2026-11-14T23:59:00Z",
+      "Where": [
+        "The Oasis",
+        "Chamber of Fire",
+        "Throne Room of Fire"
+      ]
+    },
+    "walk well away and come back another way": {
+      "Worked": 8,
+      "Failed": 48,
+      "Last": "2026-11-14T23:59:00Z",
+      "Where": [
+        "Chamber of Fire",
+        "Odji's Chamber"
+      ]
+    },
+    "press the Commons button and walk back from there": {
+      "Worked": 1,
+      "Failed": 4,
+      "Last": "2026-11-14T23:59:00Z",
+      "Where": [
+        "Hall of Champions"
+      ]
+    }
+  },
+  "*|*|*|walking without getting closer": {
+    "another way (a teleporter or a new route)": {
+      "Worked": 8,
+      "Failed": 19,
+      "Last": "2026-11-14T23:59:00Z",
+      "Where": [
+        "Entrance Hall"
+      ]
+    },
+    "walk well away and come back another way": {
+      "Worked": 5,
+      "Failed": 9,
+      "Last": "2026-11-14T23:59:00Z",
+      "Where": [
+        "Chamber of Fire",
+        "Entrance Hall"
+      ]
+    },
+    "step aside": {
+      "Worked": 7,
+      "Failed": 19,
+      "Last": "2026-11-14T23:59:00Z",
+      "Where": [
+        "Chamber of Fire",
+        "Palace of Fire",
+        "Throne Room of Fire",
+        "Entrance Hall"
+      ]
+    },
+    "press the Commons button and walk back from there": {
+      "Worked": 8,
+      "Failed": 3,
+      "Last": "2026-11-14T23:59:00Z",
+      "Where": [
+        "Entrance Hall"
+      ]
+    }
+  }
+}

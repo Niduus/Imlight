@@ -107,7 +107,17 @@ internal sealed partial class UltimusDirectorActor {
         // tried there yet (UltimusFixes). Boxed in (a small patch cut off by a fence or a ledge with no teleporter on it):
         // stepping aside is no use. Stuck where the area starts: going back there is no use.
         var skip = new List<string>();
-        if (BoxedIn(member)) {
+        var boxedIn = BoxedIn(member);
+        if (boxedIn) {
+            skip.Add(UltimusFixes.ASIDE);
+        }
+
+        // Walking but no closer (a progress check, no progress, a time budget): a small step aside freed him 7 times in 26
+        // tries in his logs of 2026-11-13/14 (1 in 13 after two progress checks), the Commons button 8 in 11, so it is
+        // skipped and the longer moves come first (Niduus, 2026-11-15: "speed up his ability to fix problems ... according
+        // to log data").
+        var notCloser = BotLessons.Of(false, "", "", why).Seen == BotLessons.NOT_CLOSER;
+        if (notCloser) {
             skip.Add(UltimusFixes.ASIDE);
         }
 
@@ -160,13 +170,23 @@ internal sealed partial class UltimusDirectorActor {
                 key: $"absent|{member.Zone}|{step}", level: UltimusLink.ABNORMAL);
         }
 
+        // The kind of situation, for the lessons from places like it in every world (BotLessons).
+        var shape = absent ? "creature not there" : boxedIn ? "boxed in" : otherFloor ? "goal on another floor"
+            : hop is not null ? "goal in sight" : "open ground";
+        var situation = BotLessons.Of(inDungeon, goal?.Kind, shape, why);
+        _lastSituation = situation;
+
         // Stuck on this step here before: what worked here first, else his local AI thinks it through while the usual fix runs
         // (UltimusDirector.Reason.cs, Niduus, 2026-11-14). Only unstuck moves; nothing is skipped.
         if (index == 0 && ReasonAboutStuck(member, goal, step, quest, where, why, skip)) {
             return;
         }
 
-        var (fix, flag) = UltimusFixes.Next(member.Zone, member.X, member.Y, step, skip);
+        var (fix, flag) = UltimusFixes.Next(member.Zone, member.X, member.Y, step, skip, situation);
+        if (flag.Lesson.Length > 0) {
+            Think(flag.Lesson, "lesson|" + situation.Key + "|" + fix);
+        }
+
         _openFlag[index] = (flag, member.Zone ?? "", member.X, member.Y);
         _freeSince.Remove(index);
         var seen = flag.Times > 1 ? $" (flagged here {flag.Times} times; tried before: {string.Join(", ", flag.Tried.SkipLast(1).Distinct())})" : "";
@@ -219,6 +239,9 @@ internal sealed partial class UltimusDirectorActor {
                 return;
         }
     }
+
+    // The situation of his last stuck alarm (BotLessons), which the stuck thinking's moves are learned under too.
+    private BotLessons.Situation _lastSituation;
 
     // The flag each wizard is working off now, and where it was; free once it is far from there or in another area.
     private readonly Dictionary<int, (UltimusFixes.Flag Flag, string Zone, float X, float Y)> _openFlag = [];

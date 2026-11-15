@@ -67,6 +67,11 @@ internal static class UltimusFixes {
         public List<string> Tried { get; set; } = [];
         public string Worked { get; set; } = "";
         public DateTime Last { get; set; }
+        // The kind of situation it was (BotLessons), and whether its last fix is still being tried.
+        public string Situation { get; set; } = "";
+        public bool Open { get; set; }
+        // Why the fix now was picked, when a lesson from situations like it picked it (not kept).
+        [System.Text.Json.Serialization.JsonIgnore] public string Lesson { get; set; } = "";
     }
 
     private static readonly object s_lock = new();
@@ -77,7 +82,8 @@ internal static class UltimusFixes {
     /// fixes that can't be made here (going back to the start while standing on it). The flag is returned to say how
     /// many times it came up.
     /// </summary>
-    internal static (string Fix, Flag Flag) Next(string zone, float x, float y, string step, ICollection<string> skip = null) {
+    internal static (string Fix, Flag Flag) Next(string zone, float x, float y, string step, ICollection<string> skip = null,
+        BotShared.BotLessons.Situation situation = null) {
         lock (s_lock) {
             var all = Flags();
             var flag = all.Where(f => string.Equals(f.Zone, zone, StringComparison.OrdinalIgnoreCase) && Far(f.X, f.Y, x, y) <= ADJACENT)
@@ -92,12 +98,28 @@ internal static class UltimusFixes {
             flag.Times++;
             flag.Last = DateTime.UtcNow;
             flag.Step = step ?? "";
+            flag.Lesson = "";
+
+            // Stuck again while its last fix was still being tried: that fix failed, here and for situations like it.
+            if (flag.Open && flag.Tried.Count > 0 && flag.Tried[^1] != FLAG) {
+                BotShared.BotLessons.Learn(BotShared.BotLessons.Situation.FromKey(flag.Situation) ?? situation, flag.Tried[^1], false, null);
+            }
+
+            flag.Open = true;
+            if (situation is not null) {
+                flag.Situation = situation.Key;
+            }
 
             // What worked here before, once; then what was not tried yet; then, all tried, round again from the start.
             var allowed = Order.Where(f => skip is null || !skip.Contains(f)).ToList();
             string fix;
             if (flag.Worked.Length > 0 && allowed.Contains(flag.Worked) && flag.Tried.LastOrDefault() != flag.Worked) {
                 fix = flag.Worked;
+            }
+            // Nothing known at this spot: what worked most in situations like it, anywhere (BotLessons, Niduus, 2026-11-15).
+            else if (flag.Worked.Length == 0 && BotShared.BotLessons.Best(situation, allowed.Where(f => f != FLAG).ToList(), flag.Tried, out var line) is { } learned) {
+                fix = learned;
+                flag.Lesson = line;
             }
             else if (allowed.FirstOrDefault(f => !flag.Tried.Contains(f)) is { } fresh) {
                 fix = fresh;
@@ -123,8 +145,13 @@ internal static class UltimusFixes {
 
         lock (s_lock) {
             flag.Worked = flag.Tried[^1];
+            flag.Open = false;
             Save();
         }
+
+        // And for the kind of situation it was, so it is tried first in places like it in every world.
+        BotShared.BotLessons.Learn(BotShared.BotLessons.Situation.FromKey(flag.Situation), flag.Worked, true,
+            Imlight.CoreLib.Game.World.ZoneNames.Shown(flag.Zone));
     }
 
     /// <summary>How many flags are known and how many have a fix that worked (for the log).</summary>
@@ -148,6 +175,7 @@ internal static class UltimusFixes {
                     f.Worked ??= "";
                     f.Step ??= "";
                     f.Zone ??= "";
+                    f.Situation ??= "";
                     return f;
                 })];
             }

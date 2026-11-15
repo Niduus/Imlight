@@ -129,6 +129,30 @@ internal sealed partial class UltimusDirectorActor {
         return null;
     }
 
+    /// <summary>
+    /// Anywhere (not only in a dungeon): a way here that won't take him, or that leads where his step is, opens with a quest
+    /// he holds, so that quest's step comes first (Niduus, 2026-11-15: "make sure all situations like this are also
+    /// future-proof for later worlds/quests/scenarios"). The general lesson of the Temple of Storms' tests and the Tomb of
+    /// Storms' obelisks, read from the game's own door needs (BotGates), so it works in every world. Null when there is none.
+    /// </summary>
+    private UltimusPlanner.Target GateQuestFirst(List<UltimusMember.Status> group, UltimusPlanner.Target main) {
+        var leader = group[0];
+        var mainTo = main?.Kind is UltimusPlanner.EXIT or UltimusPlanner.DOOR or UltimusPlanner.SPIRAL ? main.To : "";
+        if (BotShared.BotGates.OpensTheWay(leader.Wizard, leader.Zone, main?.Quest ?? _currentQuest, mainTo, out var why) is not { } opener) {
+            return null;
+        }
+
+        var step = UltimusPlanner.ForQuest(group, opener);
+        if (step is null || step.Problem.Length > 0 || step.Kind is UltimusPlanner.WAIT or UltimusPlanner.NONE) {
+            return null;
+        }
+
+        Think($"\"{UltimusText.Title(opener)}\" opens my way on: {why}. I do \"{step.What}\" first, then go on to " +
+              $"{main?.What ?? "my story step"}, as a player does.", "gatefirst|" + step.Key);
+
+        return step;
+    }
+
     private UltimusPlanner.Target WhileHere(List<UltimusMember.Status> group, UltimusPlanner.Target main) {
         if (main is null || main.Kind is UltimusPlanner.FIGHT && main.Key.EndsWith("|join", StringComparison.Ordinal)) {
             return null;

@@ -355,7 +355,7 @@ internal sealed partial class ManagerWindow {
             _ultEmotes.IsChecked = !string.Equals(_manager.GetSetting("Ultimus", "Emotes")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
             _ultSlow.Value = (decimal) Number("SlowFactor", 2);
             _ultLosses.Value = (decimal) Number("LossesBeforeIssue", 3);
-            _ultStuck.Value = (decimal) Number("StuckMinutes", 8);
+            _ultStuck.Value = (decimal) (Number("StuckMinutes", 5) is var stuckMinutes && stuckMinutes == 8 ? 5 : stuckMinutes); // 8 was the old default, now 5
             _ultQuestMinutes.Value = (decimal) Number("QuestMinutes", 45);
             _ultMaxHours.Value = (decimal) Number("MaxHoursPerDay", 0);
         }
@@ -1415,8 +1415,7 @@ internal sealed partial class ManagerWindow {
                              ((bool?) member["battle"] == true ? "  ·  in a battle" : "") +
                              ((string?) member["state"] is { } state && state != "playing" ? $"  ·  {state}" : "");
             // His training plan: what his own fights say to save training points for, and why (Niduus, 2026-11-15).
-            card.Plan.Text = (string?) member["trainingPlan"] ?? "";
-            card.Plan.IsVisible = card.Plan.Text.Length > 0;
+            ShowTrainingRow(card.Training, member);
         }
 
         _ultSheet.Show(status["members"] as JsonArray);
@@ -1426,7 +1425,7 @@ internal sealed partial class ManagerWindow {
         static string Minutes(int seconds) => seconds < 90 ? $"{seconds} seconds" : $"{seconds / 60} minutes";
     }
 
-    private sealed record UltimusCard(TextBlock Line, TextBlock Plan);
+    private sealed record UltimusCard(TextBlock Line, TrainingRow Training);
 
     private readonly Dictionary<string, UltimusCard> _ultCards = [];
 
@@ -1437,8 +1436,7 @@ internal sealed partial class ManagerWindow {
         }
 
         TextBlock Text(bool strong = false) => new() { TextWrapping = TextWrapping.Wrap, FontWeight = strong ? FontWeight.SemiBold : FontWeight.Normal };
-        var card = new UltimusCard(Text(true), Text());
-        card.Plan.Foreground = MUTED;
+        var card = new UltimusCard(Text(true), MakeTrainingRow("Ultimus"));
         var tp = Action(Plain("TP to Ultimus"), () => {
             if (!InstalledCommands.IsServerRunning(_manager.InstallFolder)) {
                 throw new PanelException("Start the server and log in to your wizard first.");
@@ -1454,7 +1452,7 @@ internal sealed partial class ManagerWindow {
             Background = ManagerTheme.SURFACE_HIGH_BRUSH, CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Padding = new Thickness(12, 8),
             Child = new StackPanel {
                 Spacing = 6,
-                Children = { new DockPanel { Children = { WithDock(tp, Dock.Right), WithCenter(card.Line) } }, card.Plan },
+                Children = { new DockPanel { Children = { WithDock(tp, Dock.Right), WithCenter(card.Line) } }, card.Training.Root },
             },
         });
         _ultCards[role] = card;

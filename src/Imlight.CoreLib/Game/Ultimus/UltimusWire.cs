@@ -117,7 +117,9 @@ internal static class UltimusWire {
     /// <summary>Emotes (Niduus, 2026-11-14, approved): he waves at players who greet him, cheers after a tough win, sits when idle.</summary>
     internal static bool Emotes => ConfigurationManager.GetValue("Ultimus.Emotes", true);
 
-    internal static int StuckMinutes => System.Math.Clamp(ConfigurationManager.GetValue("Ultimus.StuckMinutes", 8), 2, 120);
+    // 8 was the old default; his logs (2026-11-13/14) showed the long stucks were the ones that waited this long to act,
+    // so 8 (never changed by hand) now means the new default of 5 (Niduus, 2026-11-15: "speed up his ability to fix problems").
+    internal static int StuckMinutes => System.Math.Clamp(ConfigurationManager.GetValue("Ultimus.StuckMinutes", 5) is var m && m == 8 ? 5 : m, 2, 120);
 
     private static readonly JsonSerializerOptions s_json = new(JsonSerializerDefaults.General);
 

@@ -751,6 +751,11 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                     return dungeonStep;
                 }
 
+                // Anywhere: a way that opens with a quest the team holds, that quest first (BotGates, as Ultimus).
+                if (GateQuestFirst(group, target) is { } gateStep) {
+                    return gateStep;
+                }
+
                 return QuestTeamPlanner.Shortcut(leader, target, _stonesUsed.Keys) ?? target;
             }
         }
@@ -2093,6 +2098,10 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
                         ? QuestTeamText.Title(_currentQuest) : "",
                     ["stepNow"] = _target?.What ?? "",
                     // Its training plan from its own fights, for its Training plan card in Ahziael.
+                    // For the card's points bar and its Pin button (Niduus, 2026-11-15).
+                    ["charId"] = member.CharId.ToString(),
+                    ["trainingGoal"] = wizard is null ? "" : QuestTeamTraining.Plan(member)?.Goal ?? "",
+                    ["trainingNeeds"] = wizard is null ? 0 : QuestTeamTraining.Plan(member)?.Points ?? 0,
                     ["trainingPlan"] = wizard is null ? "" : BotShared.BotTrainingPlan.Card(QuestTeamTraining.Plan(member),
                         wizard.MagicSchoolBehavior?.TrainingPoints ?? 0),
                 });
@@ -2192,6 +2201,26 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
     }
 
     private readonly HashSet<string> _dungeonFirstSaid = [];
+
+    // A way that opens with a quest the team holds (the game's door needs, BotGates): that quest's step first. Null otherwise.
+    private QuestTeamPlanner.Target GateQuestFirst(List<QuestTeamMember.Status> group, QuestTeamPlanner.Target main) {
+        var leader = group[0];
+        var mainTo = main?.Kind is QuestTeamPlanner.EXIT or QuestTeamPlanner.DOOR or QuestTeamPlanner.SPIRAL ? main.To : "";
+        if (BotGates.OpensTheWay(leader.Wizard, leader.Zone, main?.Quest ?? _currentQuest, mainTo, out var why) is not { } opener) {
+            return null;
+        }
+
+        var step = QuestTeamPlanner.ForQuest(group, opener);
+        if (step is null || step.Problem.Length > 0 || step.Kind is QuestTeamPlanner.NONE) {
+            return null;
+        }
+
+        if (_dungeonFirstSaid.Add("gate|" + step.Key)) {
+            Note("Team", $"\"{QuestTeamText.Title(opener)}\" opens the way on ({why}): does \"{step.What}\" first, then {main?.What ?? "the story step"}.");
+        }
+
+        return step;
+    }
 
     private readonly Dictionary<ulong, string> _planTold = [];
     private DateTime _planLook = DateTime.MinValue;
