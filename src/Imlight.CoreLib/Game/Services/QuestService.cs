@@ -2898,6 +2898,23 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
                     continue;
                 }
 
+                // The player is ahead of the instance (a step done where the instance was not told, such as a room that had
+                // closed): the player's progress is kept and told to the instance, so everyone moves on to it, never thrown
+                // away (his log, 2026-11-15: Ultimus's Clanker win in Katzenstein's Lab was undone this way, and he could not
+                // go on).
+                // Only within this run: the instance started the quest and has steps of it done already (a copy saved from
+                // an earlier run of the dungeon still gives way to the fresh instance, whose doors are shut again).
+                if (Eligible(template) && startedQuests.Contains(template.m_questName) && instanceGoals.Length > 0
+                    && savedGoals.IsSupersetOf(instanceGoals)) {
+                    foreach (var goal in template.m_goals.Where(g => g is not null && savedGoals.Contains(g.m_goalName) && !instanceGoals.Contains(g.m_goalName))) {
+                        Logger.Information("Instance quest sync: {0} is ahead on quest '{1}': step '{2}' is told to the instance.",
+                            Logger.Args(wizard.CharId, template.m_questName, goal.m_goalName));
+                        ClaimInstanceStep(InstanceQuestClaimKind.GoalComplete, template.m_questName, goal.m_goalName);
+                    }
+
+                    continue;
+                }
+
                 DropSavedDungeonQuest(wizard, saved);
             }
 

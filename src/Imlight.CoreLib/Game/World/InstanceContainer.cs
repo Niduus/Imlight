@@ -140,7 +140,13 @@ internal sealed class InstanceContainer(ulong instanceOwnerId, bool removeWhenEm
             return;
         }
 
-        _questProgress.RemoveZone(message.ZoneName);
+        // A room nobody is in is closed to save memory, but it is still a room of this dungeon run: its quests stay the
+        // instance's quests, so a step done in another room is still told to the instance (his log, 2026-11-15: Katzenstein's
+        // Lab's first room closed while Ultimus beat Clanker in the next one; the win was never told to the instance, and
+        // walking back in replaced his quest with the instance's copy, Clanker undone). Only when the last room goes.
+        if (_zones.Count == 0) {
+            _questProgress.KeepOnly([]);
+        }
 
         Logger.Information("Dropping instance zone {ZoneName} (owner {OwnerId})",
             Logger.Args(message.ZoneName, _instanceOwnerId));

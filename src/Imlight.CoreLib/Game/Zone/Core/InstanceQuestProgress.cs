@@ -41,6 +41,13 @@ public sealed class InstanceQuestProgress {
     /// <summary>
     /// Records a quest step and returns whether it is the first time the instance saw it.
     /// </summary>
+    /// <summary>Only these rooms stay the dungeon's (the run is over when none is left).</summary>
+    public void KeepOnly(IReadOnlyCollection<string> zonePaths) {
+        lock (_lock) {
+            _zones.RemoveWhere(z => !zonePaths.Contains(z, StringComparer.OrdinalIgnoreCase));
+        }
+    }
+
     public bool TryClaimStep(InstanceQuestClaimKind kind, string questName, string goalName) {
         lock (_lock) {
             if (!_claims.Add($"{kind}|{questName}|{goalName}")) {
