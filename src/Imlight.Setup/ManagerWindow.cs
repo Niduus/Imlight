@@ -2427,6 +2427,7 @@ internal sealed partial class ManagerWindow : Window {
 
         // Restarting by itself never throws away work that isn't saved yet: it waits, and Instant Update tries again later.
         if (withoutAsking && WhyRestartWaits() is { } why) {
+            LogRestartWait(update.Name, why);
             Say($"{update.Name} is ready, but Ahziael waits to restart into it because {why}. " + (_manager.InstantUpdate
                 ? "It tries again every 5 minutes, or click Restart to update at the top when you're done."
                 : "Click Restart to update at the top when you're done."));

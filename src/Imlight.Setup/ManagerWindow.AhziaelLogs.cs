@@ -41,7 +41,7 @@ internal sealed partial class ManagerWindow {
     private const string ALL_KINDS = "Everything";
     private const int AHZIAEL_LOG_SHOWN = 300;
 
-    private readonly ComboBox _alKind = FilterCombo([ALL_KINDS, AppLogs.CRASH, AppLogs.ERROR, AppLogs.REFUSED, AppLogs.SERVER_STOPPED], 160);
+    private readonly ComboBox _alKind = FilterCombo([ALL_KINDS, AppLogs.CRASH, AppLogs.ERROR, AppLogs.REFUSED, AppLogs.SERVER_STOPPED, AppLogs.UPDATE_WAITS], 160);
     private readonly TextBox _alSearch = new() { Watermark = "Search the messages, such as Monstrology, save or could not" };
     private readonly TextBlock _alSummary = new() { TextWrapping = TextWrapping.Wrap, Foreground = MUTED };
     private readonly StackPanel _alRows = new() { Spacing = 6 };

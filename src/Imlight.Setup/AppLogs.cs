@@ -111,6 +111,8 @@ internal static partial class AppLogs {
     internal const string REFUSED = "Refused";
     /// <summary>The server stopped by itself.</summary>
     internal const string SERVER_STOPPED = "Server stopped";
+    /// <summary>An update was ready but Ahziael waited to restart into it (unsaved work or an open question box).</summary>
+    internal const string UPDATE_WAITS = "Update waits";
 
     /// <summary>One thing that went wrong, as the Logs list shows it.</summary>
     internal sealed record Event(DateTime Time, string Kind, string What, string Details, string Version, string? File = null);

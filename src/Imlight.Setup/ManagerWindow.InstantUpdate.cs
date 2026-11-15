@@ -105,11 +105,30 @@ internal sealed partial class ManagerWindow {
             return "a custom area has changes that aren't saved";
         }
 
-        if (OwnedWindows.Count > 0) {
+        // Only a box that asks something holds the restart. A notice (the Quest Team's "critical issue" box, which only says
+        // what is already on the Team Issues page) is closed instead: left open overnight it held Instant Update from
+        // 7:46 AM on, with 0.10.875 ready and never installed (his PC, 2026-11-15).
+        if (OwnedWindows.Any(w => w != _teamPopup)) {
             return "a question box is open";
         }
 
+        _teamPopup?.Close();
+
         return null;
+    }
+
+    private string? _waitLogged;
+
+    // Each new reason the restart waits is written once to the Ahziael log (Server > Logs), so a stuck update can be
+    // seen and explained later; it was only said on the window before, where nobody asleep reads it.
+    private void LogRestartWait(string update, string why) {
+        if (_waitLogged == update + "|" + why) {
+            return;
+        }
+
+        _waitLogged = update + "|" + why;
+        AppLogs.Error($"{update} is ready, but Instant Update waits to restart into it because {why}", null,
+            "It tries again every 5 minutes.", AppLogs.UPDATE_WAITS);
     }
 
     private Control InstantUpdateSwitch() {
