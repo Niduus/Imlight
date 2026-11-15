@@ -92,6 +92,22 @@ internal static class UltimusReplay {
             return said.Take(6).All(s => s.Count == 1 && s[0] == line) && said[6].Count == 1 && said[6][0].Contains("REPEAT", StringComparison.Ordinal)
                    && said.Skip(7).All(s => s.Count == 0) ? null : "a repeated line would still flood the log";
         }),
+        new("Hand-set battle rules needed tuning each update (2026-11-15): he plays the style his own results say wins", () => {
+            UltimusFightStyles.Score S(int fights, int wins, int rounds, double lost) => new() { Fights = fights, Wins = wins, Rounds = rounds, HealthLost = lost };
+            var hitWins = new Dictionary<string, UltimusFightStyles.Score> { [UltimusFightStyles.BUILD_UP] = S(10, 6, 50, 4), [UltimusFightStyles.HIT_NOW] = S(8, 8, 24, 1.6) };
+            var tooFew = new Dictionary<string, UltimusFightStyles.Score> { [UltimusFightStyles.BUILD_UP] = S(10, 6, 50, 4), [UltimusFightStyles.HIT_NOW] = S(3, 3, 6, 0.3) };
+            var even = new Dictionary<string, UltimusFightStyles.Score> { [UltimusFightStyles.BUILD_UP] = S(10, 10, 40, 2), [UltimusFightStyles.HIT_NOW] = S(10, 10, 40, 2) };
+            if (UltimusFightStyles.Best(hitWins) != UltimusFightStyles.HIT_NOW) {
+                return "a style that clearly wins more is not picked";
+            }
+
+            if (UltimusFightStyles.Best(tooFew) is not null || UltimusFightStyles.Best(even) is not null) {
+                return "a style is picked from too few fights or with no real difference";
+            }
+
+            return UltimusFightStyles.KindOf(1, 300, 1000) == "1 enemy, weaker" && UltimusFightStyles.KindOf(4, 5000, 1000) == "3+ enemies, stronger"
+                ? null : "fight kinds are sorted wrong";
+        }),
         new("Self-test said 8 of 8 passed while he looped for an hour (2026-11-15): lost time has a cause", () => {
             UltimusDirectorActor.CauseFacts F(bool hold = false, bool unstuck = false, double still = 0, double noProgress = 0, bool battle = false) =>
                 new(battle, false, false, unstuck, hold, false, false, false, false, still, noProgress);

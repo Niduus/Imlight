@@ -106,6 +106,8 @@ internal static class UltimusTactics {
 
     private static Choice Solo(CombatDuelSubCircle me, List<InHand> hand, List<InHand> whole, List<CombatDuelSubCircle> enemies,
                                CombatDuelSubCircle focus, List<CombatDuelSubCircle> hurt, UltimusScout.Threat threat, int round, string focusWhy) {
+        // The style of this fight, from his own results for its kind (UltimusFightStyles), picked on his first turn.
+        var style = UltimusFightStyles.StyleFor(me, enemies);
         var mine = RewrittenAI.HealthShare(me);
         var myHurt = mine < HURT ? new List<CombatDuelSubCircle> { me } : [];
         var playersInDanger = hurt.Where(h => h != me && RewrittenAI.HealthShare(h) < DANGER).ToList();
@@ -128,6 +130,9 @@ internal static class UltimusTactics {
                ?? Heal(me, hand, playersInDanger)
                ?? foreseen
                ?? (mine < HURT ? Heal(me, hand, myHurt) ?? Shield(me, hand, myHurt, threat) : null)
+               ?? (style == UltimusFightStyles.HIT_NOW
+                   ? Hit(me, hand, focus, enemies, $"hits at once (\"{UltimusFightStyles.HIT_NOW}\" wins this kind of fight for me){focusWhy}")
+                   : null)
                ?? TwoRounds(me, hand, whole, focus, enemies, round, mine - incoming < HURT, focusWhy)
                ?? Pass("saves its pips for a bigger hit");
     }

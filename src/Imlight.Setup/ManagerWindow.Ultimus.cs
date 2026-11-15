@@ -1733,6 +1733,7 @@ internal sealed partial class ManagerWindow {
             ("Mistakes", "Mistakes book, newest first (logs\\bots\\mistakes.txt)", ReadAllOf(Path.Combine(bots, "mistakes.txt"), 64 * 1024)),
             ("Fixes", "Abnormal fixes, each stuck spot and what was tried (abnormal-fixes.json)", ReadAllOf(Path.Combine(UltimusFolder, "abnormal-fixes.json"), 64 * 1024)),
             ("Fights", "Every battle in full: real enemies, health, who helped, the step (fights.jsonl)", ReadAllOf(Path.Combine(UltimusFolder, "fights.jsonl"), 128 * 1024)),
+            ("FightStyles", "How he fights each kind of fight, scored from his own results (fight-styles.txt)", ReadAllOf(Path.Combine(UltimusFolder, "fight-styles.txt"), 16 * 1024)),
             ("Foes", "Creatures he fought (foes.json)", ReadAllOf(Path.Combine(UltimusFolder, "foes.json"), 64 * 1024)),
             ("Quests", "Quest log, newest first (quest-log.txt)", quests),
             ("Main", $"Ultimus log, newest first, the last {UltimusCopyHours} hours (what he does; issues are in it too)", recent),

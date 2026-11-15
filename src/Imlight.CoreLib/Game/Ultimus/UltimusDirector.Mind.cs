@@ -80,7 +80,7 @@ internal sealed partial class UltimusDirectorActor {
 
     // One full, accurate line per fight (UltimusFights, logs/ultimus/fights.jsonl).
     private void SaveFight(UltimusMember.Status me, uint template, string name, bool won, double healthBefore, double lostShare, double seconds,
-                           UltimusFights.Battle battle, bool picked) {
+                           UltimusFights.Battle battle, bool picked, (string Kind, string Style) style = default) {
         var start = _fightStart;
         _fightStart = null;
         UltimusFights.Save(new Dictionary<string, object> {
@@ -111,6 +111,8 @@ internal sealed partial class UltimusDirectorActor {
                 ["template"] = e.Template, ["name"] = e.Name, ["maxHealth"] = e.MaxHealth, ["healthLeft"] = e.Health, ["minion"] = e.Minion,
             }).ToList(),
             ["enemiesKnown"] = battle is not null,
+            ["fightKind"] = style.Kind ?? "",
+            ["style"] = style.Style ?? "",
         });
     }
 
@@ -152,6 +154,7 @@ internal sealed partial class UltimusDirectorActor {
 
     private void FightEnded(UltimusMember.Status me, bool won) {
         if (_fight is not { } fight) {
+            UltimusFightStyles.End(me.GlobalId, won, 0, 0, count: false);
             return;
         }
 
@@ -161,6 +164,7 @@ internal sealed partial class UltimusDirectorActor {
         // What really stood there, read from the battle: a fight he did not pick gets its real foe (it was not written at
         // all), and a picked one its real name (Niduus, 2026-11-15: only accurate data).
         var battle = UltimusFights.Take(me.GlobalId);
+        var style = UltimusFightStyles.End(me.GlobalId, won, battle?.Round ?? 0, lostShare);
         var picked = fight.Template != 0;
         if (fight.Template == 0 && UltimusFights.Main(battle) is { } main) {
             fight = (main.Template, main.Name, fight.Health, fight.Since);
@@ -169,7 +173,7 @@ internal sealed partial class UltimusDirectorActor {
             fight = (fight.Template, real, fight.Health, fight.Since);
         }
 
-        SaveFight(me, fight.Template, fight.Name, won, fight.Health, lostShare, seconds, battle, picked);
+        SaveFight(me, fight.Template, fight.Name, won, fight.Health, lostShare, seconds, battle, picked, style);
         NoteDayFight(fight.Name.Length > 0 ? fight.Name : "a creature", won, lostShare);
         if (fight.Template == 0) {
             return;
