@@ -95,8 +95,15 @@ internal static class OverlayQuestPath {
             // A walk that already got a wizard from about here to about there (RouteMemory): taken as it is. Else the way
             // finder's own, bent round the spots where wizards got stuck on this street.
             try {
+                // Only when it is a legal walk from where he stands now: a walk proven from "about here" can start on the
+                // other side of a counter or a wall, and walking it would be cut at the wall and leave him standing (Niduus's
+                // log, 2026-11-15: "I take that same way again", then stood 30 seconds at Scotland Yard's front desk on
+                // the way to the Roof lift). Then the way finder plans a fresh one.
                 if (RouteMemory.Proven(zonePath, fromX, fromY, toX, toY, avoid) is { Count: > 0 } proven) {
-                    return proven;
+                    Legal(zonePath, fromX, fromY, proven, out var cut);
+                    if (!cut) {
+                        return proven;
+                    }
                 }
 
                 avoid = RouteMemory.WithStuckSpots(zonePath, toX, toY, avoid);

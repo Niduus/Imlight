@@ -1,0 +1,4 @@
+Fixed: Ultimus no longer backs out of The World Tree on the way to the Bazaar
+The Spiral Door to Wizard City sets you down in The World Tree, but Ultimus expected The Commons. He thought he had used the wrong door, went back to Marleybone, then kept trying the Spiral Door to his own world and gave up on selling at the Bazaar. Now the shared way finder knows where each world's Spiral Door really sets you down, never plans the door to the world you are already in, and walks on from The World Tree through Ravenwood and The Commons. If a world's door ever lands somewhere new, that spot is noted and used from then on.
+Where: Ultimus and the Quest Team, any trip through the Spiral Door (Wizard City first of all).
+Test: When Ultimus's backpack fills up in Marleybone, he should take the Spiral Door, land in The World Tree, and walk out through Ravenwood and The Commons to the Bazaar in Olde Town without turning back.

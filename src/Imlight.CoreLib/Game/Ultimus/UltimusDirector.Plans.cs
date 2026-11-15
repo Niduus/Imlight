@@ -224,6 +224,22 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
+        // Through the Spiral Door into the world he meant, set down somewhere else in it than the plan said (Wizard City's
+        // door stands in The World Tree, not The Commons): the right trip, not a wrong door. Where the door really lands is
+        // noted for every way planned from now on, and he goes on from here (Niduus's log, 2026-11-15: he took The World
+        // Tree for a wrong door, backed out, and the Bazaar trip was dropped).
+        if (expected.Key.EndsWith("|spiral", StringComparison.Ordinal) && OverlayQuestRoute.SameWorld(expected.Zone, leader.Zone)
+            && !OverlayQuestRoute.SameWorld(expected.AtZone, leader.Zone)) {
+            OverlayQuestRoute.NoteSpiralLanding(expected.AtZone, leader.Zone, expected.Zone);
+            Think($"The Spiral Door set me down in {UltimusText.Zone(leader.Zone)}, in the world I meant: that is where its door stands. " +
+                  "I note it and go on from here.", "landing-world|" + leader.Zone);
+            if (NewArrival(leader.Zone)) {
+                StoryProgress(real: false);
+            }
+
+            return;
+        }
+
         Surprise(leader, expected, $"I expected {expected.Expect}, but I am in {UltimusText.Zone(leader.Zone)}.",
             $"This way goes to {UltimusText.Zone(leader.Zone)}, not {UltimusText.Zone(expected.Zone)}: plan from where it really goes.");
     }

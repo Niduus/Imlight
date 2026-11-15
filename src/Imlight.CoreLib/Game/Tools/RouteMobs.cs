@@ -91,4 +91,40 @@ internal static class RouteMobs {
         return own?.Any(a => adjectives.Contains((string) a, StringComparer.Ordinal)) == true;
     }
 
+
+    // Other exits this near the walk's start or end are not kept away from (he stands in the doorway he came in by, or
+    // the exit he is going to stands by another).
+    private const float EXIT_CLEAR = 450f;
+
+    /// <summary>
+    /// The walk-through exits of this area that do NOT go to <paramref name="toZone"/>, as spots for a walk's avoid list
+    /// on the way to an exit: a walk to one exit bends round the others instead of stepping into one by mistake (Niduus's
+    /// log, 2026-11-15: "to Wolfminster Abbey" from Regent's Square walked through the Post Office's door on the way and
+    /// went in). Doors that need a click are not counted (walking by them takes nobody in). Null when there are none.
+    /// </summary>
+    internal static List<(float X, float Y)> OtherExits(IActorRef zone, string zonePath, string toZone, float fromX, float fromY, float toX, float toY,
+        IEnumerable<(float X, float Y)> more = null) {
+        var spots = new List<(float X, float Y)>(more ?? []);
+        if (!string.IsNullOrWhiteSpace(toZone) && !string.IsNullOrEmpty(zonePath)) {
+            try {
+                var live = MinimapIndex.In(zone);
+                foreach (var exit in OverlayQuestRoute.ExitsHere(zonePath, live)) {
+                    if (exit.Reach <= 0 || OverlayQuestTracker.SameZone(exit.To, toZone) || OverlayQuestTracker.SameZone(toZone, exit.To)) {
+                        continue;
+                    }
+
+                    var nearStart = MathF.Sqrt(((exit.X - fromX) * (exit.X - fromX)) + ((exit.Y - fromY) * (exit.Y - fromY))) < EXIT_CLEAR;
+                    var nearEnd = MathF.Sqrt(((exit.X - toX) * (exit.X - toX)) + ((exit.Y - toY) * (exit.Y - toY))) < EXIT_CLEAR;
+                    if (!nearStart && !nearEnd) {
+                        spots.Add((exit.X, exit.Y));
+                    }
+                }
+            }
+            catch (Exception) {
+                // The other spots only.
+            }
+        }
+
+        return spots.Count > 0 ? spots : null;
+    }
 }

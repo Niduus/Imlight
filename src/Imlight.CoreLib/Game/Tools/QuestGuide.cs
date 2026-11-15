@@ -429,6 +429,11 @@ internal static class QuestGuide {
         return spells;
     }
 
+    /// <summary>The English name of the person who gives this quest, or "" when the game names none.</summary>
+    internal static string GiverName(QuestTemplate quest)
+        => quest is not null && QuestMadlibs.GiverTemplateOf(quest) is var id and not 0 && CoreObjectFactory.GetCoreTemplate(id) is GameObjectTemplate npc
+            ? NameOf(npc) : "";
+
     private static string NameOf(GameObjectTemplate npc) {
         string displayKey = npc.m_displayName;
         var name = string.IsNullOrEmpty(displayKey) ? "" : Locale.GetEnglishName(displayKey);

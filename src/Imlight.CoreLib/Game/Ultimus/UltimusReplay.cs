@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Imlight.CoreLib.Game.BotShared;
+using Imlight.CoreLib.Game.Tools;
 
 namespace Imlight.CoreLib.Game.Ultimus;
 
@@ -155,6 +156,14 @@ internal static class UltimusReplay {
             && !WatchdogPause.FromOtherBuild("Watchdog: Stopped.\nBuild: 1.0 now", "1.0 now")
             && !WatchdogPause.FromOtherBuild("Pause and explain", "1.0 now")
                 ? null : "an old watchdog pause would not lift after an update, or a pause by hand would"),
+        new("Spiral Door to The Commons landed in The World Tree; he backed out, then tried the door to his own world 3 times (2026-11-15)", () =>
+            OverlayQuestRoute.Landing("WizardCity/WC_Hub") == "WizardCity/WC_Ravenwood_Teleporter"
+            && OverlayQuestRoute.SameWorld("WizardCity/WC_Ravenwood_Teleporter", "WizardCity/WC_Hub")
+            && !OverlayQuestRoute.SameWorld("Marleybone/MB_Z01_RegentsSquare", "WizardCity/WC_Hub")
+            && OverlayQuestRoute.NoteSpiralLanding("Marleybone/MB_Z01_RegentsSquare", "ReplayCheckWorld/Landing", "ReplayCheckWorld/Hub")
+            && OverlayQuestRoute.Landing("ReplayCheckWorld/Hub") == "ReplayCheckWorld/Landing"
+            && !OverlayQuestRoute.NoteSpiralLanding("ReplayCheckWorld/Landing", "ReplayCheckWorld/Other", "ReplayCheckWorld/Hub")
+                ? null : "the Spiral Door would still be planned to its own world, or to a world's main area instead of where its door stands"),
     ];
 
     /// <summary>The failed checks (plain words), chat answers included; written to replay-pack.txt.</summary>

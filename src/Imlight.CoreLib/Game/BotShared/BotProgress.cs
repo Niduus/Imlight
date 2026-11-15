@@ -269,7 +269,7 @@ internal static class BotProgress {
         // the world's story is over (Niduus, 2026-11-15: Ultimus showed "Quest 32/32 in Marleybone" in Katz's lab, "the
         // game mistakenly marked that as the finale. The end quest is the Big Ben one").
         if (next.Length > 0) {
-            inWorld.UnionWith(WorldEndChain(world, storyWorld, Is));
+            inWorld.UnionWith(WorldEndChain(world, storyWorld, Is).Chain);
         }
 
         // The last world (or one whose next world needs none of it): its whole story.
@@ -306,11 +306,11 @@ internal static class BotProgress {
 
     // The world's last story quest (deepest by its own world's quests; between equals, the latest code) and every quest of
     // that world it needs first, at any depth.
-    private static HashSet<string> WorldEndChain(string world, Dictionary<string, string> storyWorld, Func<string, string, bool> isIn) {
+    private static (string End, HashSet<string> Chain) WorldEndChain(string world, Dictionary<string, string> storyWorld, Func<string, string, bool> isIn) {
         var mine = storyWorld.Where(p => string.Equals(p.Value, world, StringComparison.OrdinalIgnoreCase)).Select(p => p.Key).ToList();
         var chain = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         if (mine.Count == 0) {
-            return chain;
+            return ("", chain);
         }
 
         var depth = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
@@ -344,7 +344,22 @@ internal static class BotProgress {
             }
         }
 
-        return chain;
+        return (end, chain);
+    }
+
+    /// <summary>
+    /// Each main world's story as the progress count uses it (the quests to the next world and to the world's own last
+    /// quest, a choice as one group), the world's last story quest, and every story quest's world. For the Quest Tree.
+    /// </summary>
+    internal static (IReadOnlyDictionary<string, List<HashSet<string>>> Plans, IReadOnlyDictionary<string, string> Ends, IReadOnlyDictionary<string, string> WorldOf) Tree() {
+        var (plans, worldOf) = Plans();
+        var ends = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        string WorldOfName(string name) => worldOf.TryGetValue(name, out var w) ? w : QuestTemplateCollection.GetQuestByName(name) is { } q ? WorldOf(q) : "";
+        foreach (var world in plans.Keys) {
+            ends[world] = WorldEndChain(world, worldOf, (n, w) => string.Equals(WorldOfName(n), w, StringComparison.OrdinalIgnoreCase)).End;
+        }
+
+        return (plans, ends, worldOf);
     }
 
     // The quests of each "any one of these" list in a requirement (each option's quests, at any depth).

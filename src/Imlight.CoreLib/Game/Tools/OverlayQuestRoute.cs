@@ -268,6 +268,8 @@ internal static class OverlayQuestRoute {
         var toWorld = to.Split('/')[0];
         var otherWorld = !string.Equals(fromWorld, toWorld, StringComparison.OrdinalIgnoreCase);
         var toArrival = arrivals.FirstOrDefault(a => string.Equals(a.Split('/')[0], toWorld, StringComparison.OrdinalIgnoreCase));
+        // Where the Spiral Door really sets a traveller down in that world (Wizard City's is The World Tree, not The Commons).
+        toArrival = toArrival is null ? null : Landing(toArrival);
         var homeDoors = DoorZones().Where(a => string.Equals(a.Split('/')[0], fromWorld, StringComparison.OrdinalIgnoreCase)).ToList();
         // A server-played wizard on the story (Ultimus, the Quest Team) goes only through the story's worlds: never through
         // a side world (Aquila's Garden of Hesperides on the way to the Bazaar, Niduus's log 2026-11-13) or an event.
@@ -361,8 +363,11 @@ internal static class OverlayQuestRoute {
                 }
             }
 
+            // The Spiral Door goes to the other worlds only (its own world is not on its list), and sets a traveller down
+            // where that world's door really stands (Niduus's log, 2026-11-15: in The World Tree the way said "Spiral Door
+            // to The Commons" three times, a trip the door does not offer, and the Bazaar trip was dropped).
             if (IsDoorZone(at) || (first && spiralDoorHere)) {
-                foreach (var next in arrivals) {
+                foreach (var next in arrivals.Where(a => !SameWorld(a, at)).Select(Landing).Distinct(StringComparer.OrdinalIgnoreCase)) {
                     Consider(next, true);
                 }
             }
@@ -388,6 +393,49 @@ internal static class OverlayQuestRoute {
     // but no door stands there, so no line was drawn) ----
 
     private static readonly string[] s_knownDoorZones = ["WizardCity/WC_Ravenwood_Teleporter"];
+
+    // ---- Where the Spiral Door sets a traveller down in each world: the world list's arrival area unless seen otherwise
+    // (Wizard City's is The World Tree, Niduus's log 2026-11-15: "Spiral Door to The Commons" landed in The World Tree, he
+    // took it for a wrong door and backed out). Each trip through the door that lands somewhere else in the right world
+    // is noted, so the way is planned from where it really goes ----
+
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_landings =
+        new(StringComparer.OrdinalIgnoreCase) { ["WizardCity"] = "WizardCity/WC_Ravenwood_Teleporter" };
+
+    /// <summary>Whether two areas are in the same world.</summary>
+    internal static bool SameWorld(string a, string b)
+        => !string.IsNullOrEmpty(a) && !string.IsNullOrEmpty(b)
+           && string.Equals(a.Trim().Split('/')[0], b.Trim().Split('/')[0], StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Where the Spiral Door to <paramref name="arrival"/>'s world really sets a traveller down.</summary>
+    internal static string Landing(string arrival)
+        => string.IsNullOrWhiteSpace(arrival) ? arrival
+            : s_landings.TryGetValue(arrival.Trim().Split('/')[0], out var landing) ? landing : arrival.Trim();
+
+    private static HashSet<string> Landings() {
+        Links();
+        return new HashSet<string>((s_arrivals ?? []).Select(Landing), StringComparer.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// A trip through the Spiral Door from <paramref name="fromZone"/> landed in <paramref name="landedIn"/>: when that is
+    /// another world, it is where that world's door sets travellers down (noted for every way planned from now on).
+    /// Returns true when it is the world that was meant (<paramref name="meant"/>): the trip went right.
+    /// </summary>
+    internal static bool NoteSpiralLanding(string fromZone, string landedIn, string meant) {
+        if (string.IsNullOrWhiteSpace(landedIn) || SameWorld(fromZone, landedIn) || IsHouse(landedIn) || EventArea(landedIn)) {
+            return false;
+        }
+
+        var world = landedIn.Trim().Split('/')[0];
+        var before = s_landings.TryGetValue(world, out var was) ? was : null;
+        if (!string.Equals(before, landedIn.Trim(), StringComparison.OrdinalIgnoreCase)) {
+            s_landings[world] = landedIn.Trim();
+            s_left.Clear();
+        }
+
+        return SameWorld(meant, landedIn);
+    }
     private static readonly string[] s_knownNoDoorZones = ["WizardCity/WC_Hub"];
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, bool> s_doorSeen = new(StringComparer.OrdinalIgnoreCase);
 
@@ -443,7 +491,8 @@ internal static class OverlayQuestRoute {
             return true;
         }
 
-        if (string.IsNullOrWhiteSpace(zone) || (s_arrivals ?? []).Contains(zone) || s_knownDoorZones.Contains(zone, StringComparer.OrdinalIgnoreCase)) {
+        if (string.IsNullOrWhiteSpace(zone) || (s_arrivals ?? []).Contains(zone) || s_knownDoorZones.Contains(zone, StringComparer.OrdinalIgnoreCase)
+            || s_landings.Values.Contains(zone, StringComparer.OrdinalIgnoreCase)) {
             return false;
         }
 
@@ -491,7 +540,7 @@ internal static class OverlayQuestRoute {
     private static Dictionary<string, int> AreasLeft(string goal, bool instances, int mode = 0) => s_left.GetOrAdd((goal.ToLowerInvariant(), instances, mode), key => {
         var g = goal;
         var back = Backward();
-        var arrivals = s_arrivals ?? [];
+        var landings = Landings();
         var left = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         var waiting = new Queue<string>();
         foreach (var start in new[] { g, AccessPassManager.GetContainedZoneName(g) }.Where(z => !string.IsNullOrEmpty(z))) {
@@ -514,9 +563,9 @@ internal static class OverlayQuestRoute {
                 }
             }
 
-            // The Spiral Door brings you here from any area it stands in.
-            if (arrivals.Contains(zone)) {
-                foreach (var before in DoorZones()) {
+            // The Spiral Door brings you here from any area it stands in, in another world.
+            if (landings.Contains(zone)) {
+                foreach (var before in DoorZones().Where(d => !SameWorld(d, zone))) {
                     if (left.TryAdd(before, count)) {
                         waiting.Enqueue(before);
                     }

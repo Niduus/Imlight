@@ -126,6 +126,8 @@ internal static class UltimusAtlas {
 
                 Ready = true;
                 Write();
+                // The whole quest tree, with these steps in it (UltimusQuestTree).
+                UltimusQuestTree.Build();
                 Logger.Information("Ultimus: the Quest Atlas has {0} story steps ({1}).", Logger.Args(s_steps.Count, DATA));
             }
             catch (Exception ex) {

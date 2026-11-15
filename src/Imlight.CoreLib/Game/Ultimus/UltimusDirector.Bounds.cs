@@ -150,6 +150,12 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
+        // Into another world, the one he meant (the Spiral Door sets travellers down where its door stands, not always
+        // the world's main area): the right world, so he plans on from here instead of backing out.
+        if (OverlayQuestRoute.SameWorld(meant, leader.Zone) && !OverlayQuestRoute.SameWorld(fromZone, leader.Zone)) {
+            return;
+        }
+
         var key = fromZone + ">" + leader.Zone;
         if (!_backedOut.Add(key)) {
             return;

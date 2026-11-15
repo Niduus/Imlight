@@ -1353,6 +1353,11 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         // And round every street creature area the step does not need, walked or not right now (MobSpawnAreas).
         var avoid = RouteMobs.Avoid(member.ZoneActor, target.X, target.Y, target.Template == 0 ? null : [target.Template],
             target.Kind == QuestTeamPlanner.USE ? Creatures(member) : null);
+        // On the way to an exit, round the area's other walk-in exits (never into the wrong one by mistake).
+        if (!string.IsNullOrEmpty(target.To)) {
+            avoid = RouteMobs.OtherExits(member.ZoneActor, member.Zone, target.To, member.X, member.Y, target.X, target.Y, avoid);
+        }
+
         // The legal way (Niduus, 2026-11-13): a step cut off by walls, water or a ledge is reached through the area's teleporter.
         // From the floor they stand on to the step's own floor, by the stairs or ramps between (Niduus, 2026-11-15: floors).
         var points = OverlayQuestPath.WalkLegal(member.CharId, member.Zone, member.X, member.Y, target.X, target.Y, avoid, member.Z, TargetZ(member, target));

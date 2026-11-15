@@ -1493,6 +1493,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         // The street's creature areas too, walked or not right now (MobSpawnAreas), except the step's own creatures.
         var walkAvoid = seek ? null : RouteMobs.Avoid(member.ZoneActor, toX, toY, target.Template == 0 ? null : [target.Template], avoid);
+        // On the way to an exit, round the area's other walk-in exits (never into the wrong one by mistake).
+        if (!string.IsNullOrEmpty(target.To) && target.Kind != UltimusPlanner.SPIRAL) {
+            walkAvoid = RouteMobs.OtherExits(member.ZoneActor, member.Zone, target.To, member.X, member.Y, toX, toY, walkAvoid);
+        }
         // From the floor he stands on to the step's own floor, by the stairs or ramps between (UltimusDirector.Floors.cs).
         var toZ = UltimusPlanner.Far(toX, toY, target.X, target.Y) < 60 ? TargetZ(member, target) : float.NaN;
         // A walk he already knows works from about here (RouteMemory) is taken first, before a way by sight or the map's
