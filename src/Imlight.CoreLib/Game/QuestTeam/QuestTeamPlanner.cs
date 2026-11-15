@@ -338,6 +338,16 @@ internal static class QuestTeamPlanner {
                     }
                 }
 
+                // Looked for in the step's own area and not there, and the game's zone files place them in one other story
+                // area only: that area is where the step is done, from wherever the wizard stands (his log, 2026-11-15:
+                // "Out of Control" names The Ironworks, while Ms. Marphely stands only in Chelsea Court, and he rode between
+                // The Ironworks and Digmoore Station for over half an hour). The tracker's area would pull him back otherwise.
+                if (stepZone.Length > 0 && npc != 0 && BotShared.BotPeople.Absent(key, stepZone)
+                    && Ultimus.UltimusNpcBook.Of(npc, zone) is { Count: > 0 } placed && !placed.Any(p => OverlayQuestTracker.SameZone(p.Zone, stepZone))
+                    && placed.Select(p => p.Zone).Where(OverlayQuestRoute.OnStory).Distinct(StringComparer.OrdinalIgnoreCase).ToList() is { Count: 1 } only) {
+                    stepZone = only[0];
+                }
+
                 // In this area by the book but not in sight yet: walk to their spot, as a player who knows the story does.
                 if (Ultimus.UltimusNpcBook.In(npc, zone) is { } booked && Far(leader.X, leader.Y, booked.X, booked.Y) > 150
                     && (stepZone.Length == 0 || OverlayQuestTracker.SameZone(stepZone, zone))) {
@@ -429,7 +439,7 @@ internal static class QuestTeamPlanner {
         if (goal is PersonaGoalTemplate absent && (nearest is not { } near || Far(leader.X, leader.Y, near.Item1, near.Item2) <= 150)) {
             var who = QuestMadlibs.SpeakerTemplateOf(absent.m_personaName, 0);
             var name = Shared.Resources.CoreObjectFactory.GetCoreTemplate(who) is GameObjectTemplate person ? Tools.MinimapIndex.NameOf(person) : "";
-            BotShared.BotPeople.NotThere(name.Length > 0 ? name : step, questName, step, zone,
+            BotShared.BotPeople.NotThere(name.Length > 0 ? name : step, questName, step, zone, key,
                 who == 0 ? "" : Ultimus.UltimusPlanner.NpcZone(absent.m_personaName, who, zone, out _));
         }
 

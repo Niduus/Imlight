@@ -49,10 +49,23 @@ internal static class BotPeople {
     private static readonly ConcurrentDictionary<string, Missing> s_missing = new(StringComparer.OrdinalIgnoreCase);
     private static DateTime s_written = DateTime.MinValue;
 
+    // Steps whose person was looked for in an area and not there: "quest|goal|area" -> the area, and when (an hour counts).
+    private static readonly ConcurrentDictionary<string, (string Zone, DateTime At)> s_absent = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>Whether this step's person was looked for in <paramref name="zone"/> within the last hour and was not there.</summary>
+    internal static bool Absent(string stepKey, string zone)
+        => !string.IsNullOrEmpty(stepKey) && s_absent.Any(a => a.Key.StartsWith(stepKey + "|", StringComparison.OrdinalIgnoreCase)
+                                                               && DateTime.UtcNow - a.Value.At < TimeSpan.FromHours(1)
+                                                               && (OverlayQuestTracker.SameZone(a.Value.Zone, zone) || OverlayQuestTracker.SameZone(zone, a.Value.Zone)));
+
     /// <summary>A step's person was not in the area the step names: written down (once per quest step and area).</summary>
-    internal static void NotThere(string who, string quest, string step, string zone, string usuallyIn) {
+    internal static void NotThere(string who, string quest, string step, string zone, string stepKey, string usuallyIn) {
         if (string.IsNullOrEmpty(who) || string.IsNullOrEmpty(zone)) {
             return;
+        }
+
+        if (!string.IsNullOrEmpty(stepKey)) {
+            s_absent[stepKey + "|" + zone] = (zone, DateTime.UtcNow);
         }
 
         var key = $"{quest}|{step}|{zone}";
