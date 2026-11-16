@@ -89,12 +89,12 @@ jobs:
 
       - name: Build ImlightManager.exe
         # Builds this fork on the player's own PC from their own game files, so it needs no secret.
-        # The Game Files tab decodes game data with the type dump Imcodec ships for its tests.
+        # The Game Files tab decodes game data with the newest type dump in data/typedump.
         shell: pwsh
         run: |
           $typeInput = "submodule/Imcodec/src/Imcodec.ObjectProperty/GeneratorInput"
           New-Item -ItemType Directory -Force $typeInput | Out-Null
-          # The newest game version's type dump: data/typedump (from each new Wizard101 program), else Imcodec's.
+          # The newest game version's type dump: data/typedump (from each new Wizard101 program); older Imcodecs shipped one too.
           $dump = Get-ChildItem data/typedump/*.json, submodule/Imcodec/test/CodeGen/Inputs/*.json -ErrorAction SilentlyContinue |
             Sort-Object @{ Expression = { if ($_.Name -match '^r(\d+)') { [long]$Matches[1] } else { -1 } } }, Name -Descending |
             Select-Object -First 1

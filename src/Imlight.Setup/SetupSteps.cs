@@ -441,7 +441,7 @@ internal sealed class SetupSteps : IDisposable {
         // The type dump: the person's own, else the newest game version's of the ones this repository ships
         // (data/typedump, read from each new Wizard101 program: the Ahmarra update of 2026-11-12 changed the layout
         // of players, creatures and battles, so a server built on an older dump can't talk to the patched game)
-        // and the one Imcodec ships for its tests.
+        // and, for an older Imcodec, the one it used to ship for its tests (gone since its 2026-10-27 update).
         var typeDump = _options.TypeDump
             ?? NewestTypeDump(Path.Combine(SourceFolder, "data", "typedump"), Path.Combine(ImcodecFolder, "test", "CodeGen", "Inputs"))
             ?? throw new SetupException("No type dump was found. Make one with wiztype and run setup again with --type-dump \"<file>\".");

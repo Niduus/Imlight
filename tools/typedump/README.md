@@ -16,7 +16,10 @@ Read-only copies from the player's PC: `Bin\WizardGraphicalClient.exe`, `Bin\vcr
 
 1. `apt-get install dotnet-sdk-10.0`
 2. Clone upstream Imcodec (github.com/Jooty/Imcodec, `main`; tested at d200e36) somewhere, then
-   `git apply tools/typedump/imcodec-typedump-fixes.patch` in it. The fixes:
+   `git apply tools/typedump/imcodec-typedump-fixes.patch` in it. (Upstream 58022ba, the commit the submodule is on
+   since 2026-11-16, fixes both problems its own way: it runs the C initializers first and finds the registry getter
+   by its guarded `new std::map`. The patch does not apply there and is not needed; that path is not yet tried on
+   r813697 here, so check its dump against `data/typedump` before trusting it.) The fixes:
    - `_Init_thread_notify` is found by its bytes and made a no-op (r813697 calls a CRT-encoded pointer there, which
      is garbage when the CRT startup never ran, so every getter faulted).
    - The type-name registry getter's byte anchor is gone in r813697. When it is not found, the walker scans the

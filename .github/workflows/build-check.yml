@@ -2,7 +2,8 @@
 # push to it, is compiled before anyone ships it. Until now nothing was built until release day, so a break could sit
 # on quality-assurance unseen (#1153, and the Quest Team AI chat page fixed in #1176).
 #
-# Always: Ahziael (Imlight.Setup) and the launcher, with the type dump that ships in the Imcodec submodule.
+# Always: Ahziael (Imlight.Setup) and the launcher, with the newest type dump in data/typedump (Imcodec no longer
+# ships one of its own since its 2026-10-27 update).
 # The server (Imlight.Director, with CoreLib) and Ultimus's replay pack (tools/UltimusChecks) need the game's network
 # message files, which are not in the repository; they run here only when the IMCODEC_GENERATOR_INPUTS secret is set
 # (the same secret release.yml uses). Without it, the cloud threads build the server and run the replay pack before merging.
@@ -38,7 +39,10 @@ jobs:
       - name: Type dump for Imcodec
         run: |
           mkdir -p submodule/Imcodec/src/Imcodec.ObjectProperty/GeneratorInput
-          cp submodule/Imcodec/test/CodeGen/Inputs/*.json submodule/Imcodec/src/Imcodec.ObjectProperty/GeneratorInput/
+          # Only the newest game version's dump (by the r<number> in its name): two dumps would both be built in.
+          dump=$(ls data/typedump/r*.json | sort -t r -k2 -n -r | head -n 1)
+          echo "Type dump: $dump"
+          cp "$dump" submodule/Imcodec/src/Imcodec.ObjectProperty/GeneratorInput/
 
       - name: Build Ahziael
         run: dotnet build src/Imlight.Setup/Imlight.Setup.csproj -c Release
