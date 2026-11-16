@@ -246,6 +246,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         public bool SlowTold;
         public bool LimitTold;
 
+        /// <summary>Picked up partway (steps already done when it was first seen: a restart or a resume). Its time is not
+        /// the whole quest's, so it is not written down as one (Ultimus's "Finding Out Why in 28 seconds" after a restart
+        /// was really about 36 minutes, and the TCO7 were measured against it, 2026-11-16).</summary>
+        public bool Partway;
+
         /// <summary>Time spent fighting for XP to catch up with the quest's level (coach review 2026-11-14: "Payback" was flagged
         /// slow while he levelled from 12 toward 14 for it): not counted against the quest.</summary>
         public double GrindSeconds;
@@ -2065,7 +2070,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
                 var active = (quest.GoalProgress ?? []).Where(g => g is not null && quest.IsGoalActive(g.GoalName)).Select(g => g.GoalName).ToList();
                 parts.Add($"{quest.QuestName}={string.Join(',', active)}");
-                StartRun(quest.QuestName);
+                StartRun(quest.QuestName, (quest.GoalProgress ?? []).Any(g => g is not null && quest.IsGoalCompleted(g.GoalName)));
                 foreach (var done in (quest.GoalProgress ?? []).Where(g => g is not null && quest.IsGoalCompleted(g.GoalName))) {
                     BotPuzzle.StepDone(member.CharId, quest.QuestName, done.GoalName);
                     if (_fightsFor.Remove(quest.QuestName + "|" + done.GoalName, out var fights) && _seenGoals.Add("fights|" + quest.QuestName + "|" + done.GoalName)) {
@@ -2126,7 +2131,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                     WorldOf(_team[0].Zone), UltimusText.Zone(_team[0].Zone), run.Title, seconds > 30 * 60 ? -1 : 1);
                 StoryProgress();
                 Count("quests finished");
-                UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "done", Quest = run.Quest, Title = run.Title, World = run.World, Seconds = seconds });
+                UltimusLink.Send(new UltimusRequest { Op = "quest", Event = "done", Quest = run.Quest, Title = run.Title, World = run.World, Seconds = seconds,
+                    Text = run.Partway ? PARTWAY : "" });
                 _runs.Remove(run.Quest);
             }
             else if (!run.LimitTold && UltimusWire.QuestMinutes > 0 && run.Seconds / 60 > UltimusWire.QuestMinutes) {
@@ -2544,7 +2550,10 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         Unstick(0, $"made no progress for {minutes} minutes");
     }
 
-    private void StartRun(string questName) {
+    // A finished quest's note when it was picked up partway: its time is kept out of the quest-time book.
+    internal const string PARTWAY = "picked up partway, so this time is not the whole quest's";
+
+    private void StartRun(string questName, bool partway = false) {
         if (_runs.ContainsKey(questName) || QuestTemplateCollection.GetQuestByName(questName) is not { } quest) {
             return;
         }
@@ -2554,7 +2563,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return;
         }
 
-        var run = new QuestRun { Quest = questName, Title = UltimusText.Title(questName), World = QuestStory.WorldOf(quest) };
+        var run = new QuestRun { Quest = questName, Title = UltimusText.Title(questName), World = QuestStory.WorldOf(quest), Partway = partway };
         _runs[questName] = run;
         var steps = quest.m_goals?.Count(g => g is not null) ?? 1;
         var fights = quest.m_goals?.Count(g => g is Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate) ?? 0;

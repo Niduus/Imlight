@@ -58,6 +58,19 @@ internal sealed partial class UltimusDirectorActor {
         return null;
     }
     private DateTime _viaPadSince;
+    // When the way to the teleporter was last walked: time away from it (a battle that caught it on the way, a heal, a
+    // talk) does not count toward giving up on the teleporter (TCO7 Ra, Triton Avenue 2026-11-16: a 3-minute battle on
+    // the way made it give up on the right teleporter to Suzie Gryphonbane and wander for 30 minutes).
+    private DateTime _viaPadSeen;
+    // Standing on a walked-onto teleporter that did not fire: when it got there, where it came from, and until when it
+    // steps back off to walk in again, as a player does when a pad does not take them (TCO7 Cyndr stood 30 seconds on
+    // Triton Avenue's pad to the Tempest Nexus, 2026-11-16, then went all the way round by the Commons ten times).
+    private DateTime _padStandSince;
+    private DateTime _padStepOffUntil;
+    private (float X, float Y) _padFrom;
+    private int _padReentries;
+    private const float PAD_ON = 90f;
+    private const float PAD_STEP_OFF = 260f;
 
     private HashSet<UltimusPads.Pad> PadsLeft() {
         foreach (var old in _padsLeft.Where(p => DateTime.UtcNow - p.Value > s_padForget).Select(p => p.Key).ToList()) {
@@ -82,9 +95,18 @@ internal sealed partial class UltimusDirectorActor {
             return (target.X, target.Y, target.What);
         }
 
+        var now = DateTime.UtcNow;
+        if (Equals(pad, _viaPad) && now - _viaPadSeen > TimeSpan.FromSeconds(20)) {
+            _viaPadSince += now - _viaPadSeen;
+        }
+
+        _viaPadSeen = now;
         if (!Equals(pad, _viaPad)) {
             _viaPad = pad;
-            _viaPadSince = DateTime.UtcNow;
+            _viaPadSince = now;
+            _padStandSince = DateTime.MinValue;
+            _padReentries = 0;
+            _padFrom = (member.X, member.Y);
             var cutOff = OverlayQuestPath.Apart(member.Zone, member.X, member.Y, target.X, target.Y);
             Note("Ultimus", $"{member.Name} " + (cutOff ? $"can't walk to \"{target.What}\" from here: walls or water are in the way. "
                                                          : $"finds a faster way to \"{target.What}\" than walking. ") +
@@ -99,7 +121,50 @@ internal sealed partial class UltimusDirectorActor {
             return WayTo(member, target);
         }
 
+        if (pad.Click == 0 && StepOffPad(member, pad) is { } off) {
+            return (off.X, off.Y, $"stepping off the teleporter to walk in again, toward {target.What}");
+        }
+
         return (pad.X, pad.Y, $"teleporter toward {target.What}");
+    }
+
+    /// <summary>
+    /// On a walked-onto teleporter that has not fired after a few seconds: the spot a few steps back the way it came, to walk
+    /// in again (a pad fires when a wizard walks into it, not while one stands on it). Null while it should just go on.
+    /// </summary>
+    private (float X, float Y)? StepOffPad(UltimusMember.Status member, UltimusPads.Pad pad) {
+        var now = DateTime.UtcNow;
+        var dx = _padFrom.X - pad.X;
+        var dy = _padFrom.Y - pad.Y;
+        var far = MathF.Sqrt((dx * dx) + (dy * dy));
+        var off = far < 1 ? (X: pad.X + PAD_STEP_OFF, Y: pad.Y) : (X: pad.X + (dx / far * PAD_STEP_OFF), Y: pad.Y + (dy / far * PAD_STEP_OFF));
+        if (now < _padStepOffUntil) {
+            return off;
+        }
+
+        if (UltimusPlanner.Far(member.X, member.Y, pad.X, pad.Y) > PAD_ON || member.Walking) {
+            _padStandSince = DateTime.MinValue;
+
+            return null;
+        }
+
+        if (_padStandSince == DateTime.MinValue) {
+            _padStandSince = now;
+
+            return null;
+        }
+
+        if (now - _padStandSince < TimeSpan.FromSeconds(5) || _padReentries >= 3) {
+            return null;
+        }
+
+        _padReentries++;
+        _padStandSince = DateTime.MinValue;
+        _padStepOffUntil = now.AddSeconds(4);
+        Note("Ultimus", $"{member.Name} stands on the teleporter at ({pad.X:0}, {pad.Y:0}) and it has not fired: steps back off and walks in again " +
+                        $"(try {_padReentries} of 3).", UltimusLink.MINOR);
+
+        return off;
     }
 
     /// <summary>

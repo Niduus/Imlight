@@ -281,6 +281,13 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
+        // Not while a potion run is still on its way to the shop: the Commons button took him toward the potion shop, and a
+        // recall the moment he landed sent him straight back without a potion, over and over (TCO7 Kurrent, 2026-11-16:
+        // Triton Avenue to The Commons and back 8 times in 90 seconds before Galvanost Tower).
+        if (DateTime.UtcNow < _potionRunUntil && leader.Wizard?.GameStats is { } potionStats && potionStats.m_potionCharge < potionStats.m_potionMax) {
+            return;
+        }
+
         // A recall sent a moment ago: wait for it to take him there (the zone change), then try once more.
         if (DateTime.UtcNow - _recallSentAt < TimeSpan.FromSeconds(15)) {
             return;

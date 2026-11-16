@@ -278,21 +278,25 @@ public static class UltimusBrain {
 
                 return new UltimusReply { Ok = true };
             case "done": {
+                // Picked up partway (after a restart): not a whole run, so it neither sets the quest's time nor is compared.
+                var partway = request.Text == UltimusDirectorActor.PARTWAY;
                 lock (s_lock) {
-                    if (!s_times.TryGetValue(code, out var known)) {
-                        s_times[code] = known = new QuestTime();
-                    }
+                    if (!partway) {
+                        if (!s_times.TryGetValue(code, out var known)) {
+                            s_times[code] = known = new QuestTime();
+                        }
 
-                    known.Title = title;
-                    known.Seconds = request.Seconds;
-                    known.Times++;
-                    known.Last = DateTime.UtcNow;
-                    s_timesDirty = true;
+                        known.Title = title;
+                        known.Seconds = request.Seconds;
+                        known.Times++;
+                        known.Last = DateTime.UtcNow;
+                        s_timesDirty = true;
+                    }
                 }
 
                 // A TCO7 member against Ultimus's time for the same quest.
                 var against = "";
-                if (UltimusSeat.Current.IsTco7 && UltimusSeconds(code) is var hisTime and > 0) {
+                if (!partway && UltimusSeat.Current.IsTco7 && UltimusSeconds(code) is var hisTime and > 0) {
                     against = request.Seconds <= hisTime
                         ? $" (beat Ultimus's {Minutes(hisTime)} by {Minutes(hisTime - request.Seconds)})"
                         : $" (Ultimus did it in {Minutes(hisTime)}, {Minutes(request.Seconds - hisTime)} faster)";
