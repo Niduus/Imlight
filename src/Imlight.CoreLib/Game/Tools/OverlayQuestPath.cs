@@ -642,7 +642,7 @@ internal static class OverlayQuestPath {
         }
 
         var ground = ZoneGround.WalkOf(zonePath);
-        var grid = ground is null ? null : Costs(ground);
+        var grid = ground is null ? null : Carve(zonePath, Costs(ground));
         if (s_grids.Count > 24) {
             s_grids.Clear();
         }
@@ -676,6 +676,75 @@ internal static class OverlayQuestPath {
         }
 
         return new Grid(ground.Left, ground.Top, ground.Cell, ground.Width, ground.Height, cost, ground.Heights, ground.Lows) { Loose = loose, Black = black };
+    }
+
+    // Areas whose map the game's own walk map put right: area -> (cells that were walls, cells that were black).
+    private static readonly ConcurrentDictionary<string, (int Walls, int Black)> s_carved = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>How many squares of this area's map the game's own walk map put right (walls, black), once its map was read.</summary>
+    internal static (int Walls, int Black)? Carved(string zonePath)
+        => GridOf(zonePath) is not null && s_carved.TryGetValue(zonePath, out var carved) ? carved : null;
+
+    // The game's own walk map (zone.nav: the points and links its creatures walk on) laid over ours: every square a link
+    // runs over is floor, at the link's height where ours knows none. Our map is coarse (a square is about 120 across),
+    // so a ledge, a bridge, a ring walk or a doorway narrower than a square with a rail or a wall beside it came out as a
+    // wall; Big Ben's Counterweight East lost the corner of its top ring that way, and the only way to Sprockets with it
+    // (Niduus, 2026-11-15: "look for cases where this could be similar in any capacity ... so he's better equipped").
+    // Links longer than a walk (a teleport's) are not walked (ZoneNav).
+    private static Grid Carve(string zonePath, Grid grid) {
+        try {
+            if (grid is null || Imlight.CoreLib.Game.Zone.Core.ZoneNav.Graph(zonePath) is not { } nav) {
+                return grid;
+            }
+
+            var loose = grid.Loose ?? grid.Cost;
+            int walls = 0, black = 0;
+            var step = MathF.Max(4f, grid.Cell / 3);
+            for (var a = 0; a < nav.Next.Length; a++) {
+                foreach (var b in nav.Next[a]) {
+                    if (b <= a) {
+                        continue;
+                    }
+
+                    var (pa, pb) = (nav.Nodes[a], nav.Nodes[b]);
+                    var length = MathF.Sqrt(((pb.X - pa.X) * (pb.X - pa.X)) + ((pb.Y - pa.Y) * (pb.Y - pa.Y)));
+                    var count = Math.Max(1, (int) MathF.Ceiling(length / step));
+                    for (var i = 0; i <= count; i++) {
+                        var t = i / (float) count;
+                        var cell = Cell(grid, pa.X + ((pb.X - pa.X) * t), pa.Y + ((pb.Y - pa.Y) * t));
+                        if (cell < 0 || grid.Cost[cell] != BLOCKED) {
+                            continue;
+                        }
+
+                        if (grid.Black is not null && grid.Black[cell]) {
+                            black++;
+                            grid.Black[cell] = false;
+                        }
+                        else {
+                            walls++;
+                        }
+
+                        grid.Cost[cell] = 20;
+                        loose[cell] = 20;
+                        var z = pa.Z + ((pb.Z - pa.Z) * t);
+                        if (grid.Heights is { } hs && float.IsNaN(hs[cell])) {
+                            hs[cell] = z;
+                        }
+
+                        if (grid.Lows is { } lows && float.IsNaN(lows[cell])) {
+                            lows[cell] = z;
+                        }
+                    }
+                }
+            }
+
+            s_carved[zonePath] = (walls, black);
+
+            return grid;
+        }
+        catch (Exception) {
+            return grid;
+        }
     }
 
     // How many cells of black a stair or ramp may span on the loose way.

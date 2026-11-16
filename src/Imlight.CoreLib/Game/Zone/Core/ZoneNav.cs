@@ -298,6 +298,27 @@ internal static class ZoneNav {
     /// </summary>
     public static string Layout(string zonePath) => Graph(zonePath) is { } graph ? Layout(zonePath, graph) : string.Empty;
 
+    /// <summary>How many floors the walk map stacks, and how many links climb between them.</summary>
+    internal static (int Floors, int Climbs) FloorsOf(NavGraph graph) {
+        var heights = Enumerable.Range(0, graph.Nodes.Length).Where(i => graph.Next[i].Length > 0).Select(i => graph.Nodes[i].Z).OrderBy(z => z).ToList();
+        var floors = 0;
+        var last = float.NegativeInfinity;
+        foreach (var z in heights) {
+            if (z - last > LAYOUT_FLOOR) {
+                floors++;
+            }
+
+            last = z;
+        }
+
+        var climbs = 0;
+        for (var a = 0; a < graph.Next.Length; a++) {
+            climbs += graph.Next[a].Count(b => b > a && MathF.Abs(graph.Nodes[b].Z - graph.Nodes[a].Z) > LAYOUT_CLIMB);
+        }
+
+        return (floors, climbs);
+    }
+
     internal static string Layout(string zonePath, NavGraph graph) {
         var text = new System.Text.StringBuilder();
         text.AppendLine($"Area: {zonePath}");

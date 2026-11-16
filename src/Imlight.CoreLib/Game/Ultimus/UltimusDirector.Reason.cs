@@ -135,6 +135,8 @@ internal sealed partial class UltimusDirectorActor {
         "If he is walled in or the way finder fails, prefer other_route or walk_away_and_back. If nothing fits, pick set_step_aside. " +
         "Facts of the game: a full backpack never stops a battle, a talk, a door, a lever or a quest step (quest items need no backpack room), " +
         "so never give the backpack as the cause; in a dungeon, setting the step aside wastes the run, so pick it last. " +
+        "Maps: his way finder lays the game's own walk map over its rough one, so narrow ledges, bridges, ring walks and lift tops count as floor; " +
+        "when a step is on a tower's top or a platform, the way is usually round the outer ring and over a bridge, not straight across, so prefer other_route. " +
         "Answer with JSON only, no other text: {\"cause\": \"...\", \"move\": \"<one move id>\", \"why\": \"...\"}. Keep cause and why under 160 characters each, plain words.";
 
     private string StuckQuestion(UltimusMember.Status member, UltimusPlanner.Target goal, string quest, string where, string why, List<string> allowed) {

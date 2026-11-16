@@ -1454,7 +1454,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     // The area he walks in, laid out ahead of time from the game's own walk map (Niduus, 2026-11-15: "have them all layed
     // out for him so he knows where"): its floors and the stairs and ramps between them. The way
     // finder walks by the same map; the file is for reading what he knows.
-    private static void SaveZoneLayout(string zone) {
+    internal static void SaveZoneLayout(string zone) {
+        UltimusMapCheck.Start();
         if (string.IsNullOrEmpty(zone) || !s_laidOut.TryAdd(zone, 0)) {
             return;
         }
@@ -1463,6 +1464,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             var layout = Imlight.CoreLib.Game.Zone.Core.ZoneNav.Layout(zone);
             if (layout.Length == 0) {
                 return;
+            }
+
+            if (OverlayQuestPath.Carved(zone) is { } carved && carved.Walls + carved.Black > 0) {
+                layout = $"Our rough map had {carved.Walls} wall and {carved.Black} black squares here where the game's walk map has a walk "
+                         + $"(narrow ledges, bridges, ring walks, doorways); they are walked as floor.{Environment.NewLine}{layout}";
             }
 
             var folder = System.IO.Path.Combine(UltimusWire.Folder, "maps");

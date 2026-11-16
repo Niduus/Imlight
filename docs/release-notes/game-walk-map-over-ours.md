@@ -1,0 +1,4 @@
+Fixed: Narrow ledges, bridges and ring walks are no longer seen as walls
+Our own floor map is rough, so a ledge, bridge, ring walk or doorway narrower than one of its squares, with a rail or wall beside it, came out as a wall. That is what hid the way to Sprockets at the top of Big Ben. Now the game's own walk map is laid over ours in every area, so those spots count as floor for Ultimus, the Quest Team, the Bot Players and the Minimap's quest line. A few minutes after the server starts, every main world is checked once and the areas that had such spots are listed, worst first, with a map file for each.
+Where: Every area; the list is in the server's logs, ultimus, maps folder, in the file named where our map was wrong.
+Test: Let Ultimus walk up the Counterweight East tower in Big Ben, then open the maps folder and look at the list of areas.
