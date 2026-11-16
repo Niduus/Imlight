@@ -102,7 +102,11 @@ internal static class OverlayQuestPath {
                 // other side of a counter or a wall, and walking it would be cut at the wall and leave him standing (Niduus's
                 // log, 2026-11-15: "I take that same way again", then stood 30 seconds at Scotland Yard's front desk on
                 // the way to the Roof lift). Then the way finder plans a fresh one.
-                if (RouteMemory.Proven(zonePath, fromX, fromY, toX, toY, avoid) is { Count: > 0 } proven) {
+                // A proven walk is flat (no heights): where the step is on another floor it may end right under or over
+                // it (Niduus, 2026-11-15: in Big Ben's Counterweight East he took a walk that ended in the middle of the
+                // tower two floors under Sprockets). The way finder plans that one floor by floor instead.
+                var otherFloor = !float.IsNaN(fromZ) && !float.IsNaN(toZ) && MathF.Abs(toZ - fromZ) > FLOOR_GAP;
+                if (!otherFloor && RouteMemory.Proven(zonePath, fromX, fromY, toX, toY, avoid) is { Count: > 0 } proven) {
                     Legal(zonePath, fromX, fromY, proven, out var cut);
                     if (!cut) {
                         return proven;
@@ -191,7 +195,11 @@ internal static class OverlayQuestPath {
             // Still no way, and a lift or moving floor of this area has moved (Big Ben's Counterweight East: four levers raise
             // the counterweight to the top, and Sprockets stands on it in the middle, past the black the map shows round it;
             // Niduus's log, 2026-11-15 v0.10.886): the black round the lift is walked as the floor it now is, walls still walls.
-            if (body && (cells is null || cells.Count == 0 || cells[^1] != to) && Lifted(zonePath, grid) is { } liftGrid) {
+            // Only from the lift's own floor: about as high as the step (the top ring of Counterweight East, 200 over the
+            // counterweight). From a floor under it the walk went straight into the middle of the tower, two floors under
+            // Sprockets (Niduus, 2026-11-15: "he's taking the wrong route to Sprockets"); from there he climbs first.
+            var liftFloor = !float.IsNaN(fromZ) && !float.IsNaN(toZ) && MathF.Abs(toZ - fromZ) <= LIFT_STEP;
+            if (body && liftFloor && (cells is null || cells.Count == 0 || cells[^1] != to) && Lifted(zonePath, grid) is { } liftGrid) {
                 var liftTo = Open(liftGrid, goal);
                 var liftCells = Search(liftGrid, Open(liftGrid, start), liftTo);
                 var found = liftCells is { Count: > 0 } && liftCells[^1] == liftTo;
@@ -468,6 +476,8 @@ internal static class OverlayQuestPath {
     // ground, so the black round a lift shows no floor even when the lift stands there. A lift the area has moved (one of
     // its objects played a raise or lower) counts as floor within LIFT_REACH of where it stands, walls still walls.
     private const float LIFT_REACH = 2500f;
+    // How much higher or lower than the wizard a step may be for a walk over a lift: one step down onto it or up off it.
+    private const float LIFT_STEP = 300f;
     private static readonly ConcurrentDictionary<string, byte> s_liftTold = new(StringComparer.OrdinalIgnoreCase);
     private static readonly TimeSpan s_liftKept = TimeSpan.FromHours(3);
     private static readonly ConcurrentDictionary<string, (float X, float Y, DateTime At)> s_lifts = new(StringComparer.OrdinalIgnoreCase);

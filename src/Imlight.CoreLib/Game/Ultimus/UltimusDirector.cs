@@ -1521,7 +1521,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         var toZ = UltimusPlanner.Far(toX, toY, target.X, target.Y) < 60 ? TargetZ(member, target) : float.NaN;
         // A walk he already knows works from about here (RouteMemory) is taken first, before a way by sight or the map's
         // (Niduus, 2026-11-15: "our boy doesn't seem to remember his successful path and assume it immediately").
-        var known = RouteMemory.Knows(member.Zone, member.X, member.Y, toX, toY);
+        // A known walk is flat: not for a step on another floor (it may end under or over it, not on its floor).
+        var known = !(MathF.Abs(toZ - member.Z) > OTHER_FLOOR) && RouteMemory.Knows(member.Zone, member.X, member.Y, toX, toY);
         if (known && index == 0) {
             Think($"I have walked to \"{what}\" from about here before and it worked: I take that same way again.", "proven|" + what);
         }
