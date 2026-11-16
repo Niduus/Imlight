@@ -276,7 +276,10 @@ internal sealed partial class ServerManager(string installFolder) {
     // Log
     // ---------------------------------------------------------------------
 
-    [GeneratedRegex(@"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d+)?\s+(?<level>[A-Z]{3})\s+")]
+    // The log file is written as "2026-11-15 00:00:00.572 -06:00 [INF] ..." (the file sink's own layout, with the time
+    // zone and the level in brackets); [Logging] LogFormat's "2026-11-15 00:00:00.572 INF ..." (the console's) still
+    // matches too. Before, only the second matched, so every file line folded into the first one.
+    [GeneratedRegex(@"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d+)?( [+-]\d{2}:\d{2})?\s+\[?(?<level>[A-Z]{3})\]?\s+")]
     private static partial Regex LogLinePrefix();
 
     /// <summary>
