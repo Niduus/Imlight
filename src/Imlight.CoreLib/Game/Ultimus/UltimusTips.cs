@@ -47,7 +47,7 @@ internal static class UltimusTips {
     private static Dictionary<string, List<Tip>> s_quests;
     private static readonly object s_lock = new();
 
-    private static string Path_ => Path.Combine(UltimusWire.Folder, FILE);
+    private static string Path_ => Path.Combine(UltimusWire.SharedFolder, FILE);
 
     private static Dictionary<string, List<Tip>> Quests {
         get {
@@ -110,7 +110,7 @@ internal static class UltimusTips {
 
     private static void Save() {
         try {
-            Directory.CreateDirectory(UltimusWire.Folder);
+            Directory.CreateDirectory(UltimusWire.SharedFolder);
             File.WriteAllText(Path_, JsonSerializer.Serialize(s_quests, new JsonSerializerOptions { WriteIndented = true }));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {

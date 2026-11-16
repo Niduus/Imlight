@@ -54,8 +54,12 @@ internal static class UltimusFightStyles {
     }
 
     private static readonly object s_lock = new();
-    private static Dictionary<string, Dictionary<string, Score>> s_scores;
-    private static readonly ConcurrentDictionary<ulong, (string Kind, string Style, bool Tried)> s_battles = new();
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<Dictionary<string, Dictionary<string, Score>>> s_scoresSeat = new();
+    private static Dictionary<string, Dictionary<string, Score>> s_scores { get => s_scoresSeat.Value; set => s_scoresSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<ConcurrentDictionary<ulong, (string Kind, string Style, bool Tried)>> s_battlesSeat = new(() => new ConcurrentDictionary<ulong, (string Kind, string Style, bool Tried)>());
+    private static ConcurrentDictionary<ulong, (string Kind, string Style, bool Tried)> s_battles { get => s_battlesSeat.Value; set => s_battlesSeat.Value = value; }
     private static readonly Random s_random = new();
 
     /// <summary>The kind of fight: enemies (1, 2, 3+) and how strong they are together next to his own health.</summary>

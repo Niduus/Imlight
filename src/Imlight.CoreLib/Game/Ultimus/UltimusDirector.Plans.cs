@@ -449,7 +449,9 @@ internal sealed partial class UltimusDirectorActor {
     }
 
     // Rules locked in Ahziael ("Locked = a, b" in self-tuning.txt): his daily review leaves them alone.
-    private static HashSet<string> s_locked = new(StringComparer.OrdinalIgnoreCase);
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<HashSet<string>> s_lockedSeat = new(() => new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+    private static HashSet<string> s_locked { get => s_lockedSeat.Value; set => s_lockedSeat.Value = value; }
 
     // The limits Niduus sets for the numbers Ultimus may change himself: written with safe ones the first time.
     private static (bool Auto, Dictionary<string, (double Low, double High)> Ranges) Limits() {

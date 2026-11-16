@@ -154,7 +154,7 @@ internal static class UltimusNpcBook {
 
         _ = Task.Run(async () => {
             try {
-                var path = Path.Combine(UltimusWire.Folder, BOOK_FILE);
+                var path = Path.Combine(UltimusWire.SharedFolder, BOOK_FILE);
                 if (File.Exists(path) && DateTime.UtcNow - File.GetLastWriteTimeUtc(path) < TimeSpan.FromDays(3)
                     && UltimusWire.Read<Dictionary<string, Entry>>(await File.ReadAllTextAsync(path)) is { Count: > 0 } saved) {
                     foreach (var (id, entry) in saved) {
@@ -204,7 +204,7 @@ internal static class UltimusNpcBook {
                 }
 
                 Ready = true;
-                Directory.CreateDirectory(UltimusWire.Folder);
+                Directory.CreateDirectory(UltimusWire.SharedFolder);
                 await File.WriteAllTextAsync(path, UltimusWire.Write(s_book.OrderBy(p => p.Value.Name).ToDictionary(p => p.Key.ToString(), p => p.Value)));
                 Logger.Information("Ultimus: the NPC location book has {0} of the story's {1} NPCs ({2}).", Logger.Args(s_book.Count, wanted.Count, BOOK_FILE));
             }

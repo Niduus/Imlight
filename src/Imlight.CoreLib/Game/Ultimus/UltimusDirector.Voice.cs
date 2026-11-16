@@ -42,7 +42,9 @@ internal static class UltimusVoice {
     internal sealed record Heard(IActorRef Zone, float X, float Y, ulong SpeakerCharId, string SpeakerName, string Text, bool Whisper = false, bool Typed = false,
         bool OrdersChecked = false, bool Group = false);
 
-    private static readonly ConcurrentQueue<Heard> s_heard = new();
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<ConcurrentQueue<Heard>> s_heardSeat = new(() => new ConcurrentQueue<Heard>());
+    private static ConcurrentQueue<Heard> s_heard { get => s_heardSeat.Value; set => s_heardSeat.Value = value; }
 
     /// <summary>A player (not Ultimus, not the Quest Team) used Menu Chat (ChatService); Ultimus may answer.</summary>
     internal static void PlayerSaid(IActorRef zone, float x, float y, ulong charId, string name, string text, bool typed = false) {

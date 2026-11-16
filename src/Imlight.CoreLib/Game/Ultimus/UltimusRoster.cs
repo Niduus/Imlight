@@ -56,15 +56,18 @@ internal static class UltimusRoster {
         public List<Member> Members { get; set; } = [];
     }
 
-    /// <summary>The seats, by school: one Balance wizard, the solo quester.</summary>
-    internal static readonly string[] Roles = ["Balance"];
+    /// <summary>
+    /// The seat's wizards, by school: one each (Ultimus: one Balance wizard, the solo quester; a TCO7 member: its own school).
+    /// </summary>
+    internal static string[] Roles => [UltimusSeat.Current.Role];
 
-    /// <summary>Every Ultimus wizard's name.</summary>
-    internal const string NAME = "Ultimus";
+    /// <summary>The name of the seat's wizard: "Ultimus", or a TCO7 member's own ("Tulkar", ...).</summary>
+    internal static string NAME => UltimusSeat.Current.Name;
 
-    internal static MagicSchool SchoolOf(string role) => MagicSchool.Balance;
+    internal static MagicSchool SchoolOf(string role) => Enum.TryParse<MagicSchool>(role, true, out var school) ? school : MagicSchool.Balance;
 
-    private const string USERNAME_PREFIX = "Ultimus-";
+    // The seat's account: Ultimus-Balance for Ultimus, TCO7-<Name> for a TCO7 member.
+    private static string UsernameOf(string role) => UltimusSeat.Current.Username;
 
     private static string FilePath => Path.Combine(UltimusWire.Folder, UltimusWire.TEAM_FILE);
 
@@ -163,13 +166,13 @@ internal static class UltimusRoster {
         // The old wizards were just logged out: a moment for their last saves before they are deleted.
         System.Threading.Thread.Sleep(3000);
         foreach (var role in Roles) {
-            DeleteAccount(USERNAME_PREFIX + role);
+            DeleteAccount(UsernameOf(role));
         }
 
         // The database finds accounts by name through an index that catches up a moment after a delete (the Quest Team's
         // Restart failed on it): wait until the old names are gone.
         foreach (var role in Roles) {
-            var username = USERNAME_PREFIX + role;
+            var username = UsernameOf(role);
             if (!WaitFor(() => AccountCollection.GetAccountForCharacterList(username) is null)) {
                 Logger.Warning("Ultimus: the old account {0} still shows after 20 seconds; making the new one anyway.", Logger.Args(username));
             }
@@ -191,12 +194,17 @@ internal static class UltimusRoster {
         return members;
     }
 
-    /// <summary>Whether a character is an Ultimus wizard.</summary>
-    internal static bool IsMember(ulong charId) => s_charIds.Contains(charId);
+    /// <summary>Whether a character is played by Ultimus's brain: Ultimus himself or a TCO7 member.</summary>
+    internal static bool IsMember(ulong charId) => UltimusSeat.OfCharacter(charId) is not null;
 
-    private static volatile HashSet<ulong> s_charIds = [];
+    /// <summary>Whether a character is the wizard of the seat the code works for now.</summary>
+    internal static bool IsMine(ulong charId) => UltimusSeat.OfCharacter(charId) == UltimusSeat.Current;
 
-    internal static void Remember(IEnumerable<Member> members) => s_charIds = [.. members.Select(m => m.CharId)];
+    internal static void Remember(IEnumerable<Member> members) {
+        foreach (var member in members) {
+            UltimusSeat.Current.RememberCharacter(member.CharId);
+        }
+    }
 
     private static void DeleteAccount(string username) {
         try {
@@ -210,7 +218,7 @@ internal static class UltimusRoster {
     }
 
     private static Member Make(string role) {
-        var username = USERNAME_PREFIX + role;
+        var username = UsernameOf(role);
         try {
             var account = AccountCollection.GetAccountForCharacterList(username);
             if (account is null) {

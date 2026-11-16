@@ -231,7 +231,7 @@ internal sealed partial class UltimusDirectorActor {
 
             // Known for the stuck line either way; filed on the Issues page only the first time, not again after a restart.
             _readAheadFound[quest] = string.Join(" ", problems.Take(2));
-            if (!BotShared.ReadAheadFiled.FirstTime(UltimusWire.Folder, quest)) {
+            if (!BotShared.ReadAheadFiled.FirstTime(UltimusWire.SharedFolder, quest)) {
                 continue;
             }
 

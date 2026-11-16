@@ -91,7 +91,7 @@ internal static class UltimusTransfers {
 
         _ = Task.Run(async () => {
             try {
-                var path = Path.Combine(UltimusWire.Folder, BOOK_FILE);
+                var path = Path.Combine(UltimusWire.SharedFolder, BOOK_FILE);
                 if (File.Exists(path) && DateTime.UtcNow - File.GetLastWriteTimeUtc(path) < TimeSpan.FromDays(3)
                     && UltimusWire.Read<Dictionary<string, List<Transfer>>>(await File.ReadAllTextAsync(path)) is { Count: > 0 } saved) {
                     foreach (var (zone, list) in saved) {
@@ -108,7 +108,7 @@ internal static class UltimusTransfers {
                     await Task.Delay(25);
                 }
 
-                Directory.CreateDirectory(UltimusWire.Folder);
+                Directory.CreateDirectory(UltimusWire.SharedFolder);
                 await File.WriteAllTextAsync(path, UltimusWire.Write(s_book.Where(p => p.Value.Count > 0).OrderBy(p => p.Key)
                     .ToDictionary(p => p.Key, p => p.Value)));
                 var (areas, transfers, landings) = Count();

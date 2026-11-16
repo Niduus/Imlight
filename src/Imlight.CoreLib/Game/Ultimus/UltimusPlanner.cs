@@ -224,7 +224,9 @@ internal static class UltimusPlanner {
         return pick;
     }
 
-    private static string s_lastQuest;
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<string> s_lastQuestSeat = new();
+    private static string s_lastQuest { get => s_lastQuestSeat.Value; set => s_lastQuestSeat.Value = value; }
 
     /// <summary>The next story quest (or quest the story needs) the team can get, and its giver (a story quest of this world first).</summary>
     internal static (QuestTemplate Quest, ulong Giver)? NextQuest(Wizard leader) {
@@ -335,10 +337,16 @@ internal static class UltimusPlanner {
         return pick.Target;
     }
 
-    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_lastPick = new(StringComparer.OrdinalIgnoreCase);
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<System.Collections.Concurrent.ConcurrentDictionary<string, string>> s_lastPickSeat = new(() => new System.Collections.Concurrent.ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase));
+    private static System.Collections.Concurrent.ConcurrentDictionary<string, string> s_lastPick { get => s_lastPickSeat.Value; set => s_lastPickSeat.Value = value; }
     // The area where the creatures of a "defeat" step were last seen ("quest|goal" to zone).
-    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_seenIn = new(StringComparer.OrdinalIgnoreCase);
-    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, DateTime> s_setAside = new(StringComparer.Ordinal);
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<System.Collections.Concurrent.ConcurrentDictionary<string, string>> s_seenInSeat = new(() => new System.Collections.Concurrent.ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase));
+    private static System.Collections.Concurrent.ConcurrentDictionary<string, string> s_seenIn { get => s_seenInSeat.Value; set => s_seenInSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<System.Collections.Concurrent.ConcurrentDictionary<string, DateTime>> s_setAsideSeat = new(() => new System.Collections.Concurrent.ConcurrentDictionary<string, DateTime>(StringComparer.Ordinal));
+    private static System.Collections.Concurrent.ConcurrentDictionary<string, DateTime> s_setAside { get => s_setAsideSeat.Value; set => s_setAsideSeat.Value = value; }
 
     /// <summary>What the planner had picked, for picking up exactly there after a restart (UltimusDirector.Resume.cs).</summary>
     internal static (string Quest, Dictionary<string, string> Picks, Dictionary<string, DateTime> Asides) Saved()

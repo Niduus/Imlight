@@ -225,8 +225,8 @@ internal static class QuestTeamAiCompare {
 
     private static void Write(IEnumerable<string> lines) {
         try {
-            Directory.CreateDirectory(UltimusWire.Folder);
-            File.WriteAllLines(Path.Combine(UltimusWire.Folder, RESULT_FILE), lines);
+            Directory.CreateDirectory(UltimusWire.SharedFolder);
+            File.WriteAllLines(Path.Combine(UltimusWire.SharedFolder, RESULT_FILE), lines);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
             Logger.Information("Quest Team: could not write the Ask all four result ({0}).", Logger.Args(ex.GetType().Name));

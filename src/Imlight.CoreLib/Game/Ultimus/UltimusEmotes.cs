@@ -35,8 +35,12 @@ internal static class UltimusEmotes {
     internal const string WAVE = "wave", CHEER = "cheer", SIT = "sit";
     private const string FILE = "emotes-seen.txt";
 
-    private static readonly ConcurrentDictionary<string, DateTime> s_seen = new(StringComparer.OrdinalIgnoreCase);
-    private static bool s_read;
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<ConcurrentDictionary<string, DateTime>> s_seenSeat = new(() => new ConcurrentDictionary<string, DateTime>(StringComparer.OrdinalIgnoreCase));
+    private static ConcurrentDictionary<string, DateTime> s_seen { get => s_seenSeat.Value; set => s_seenSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<bool> s_readSeat = new();
+    private static bool s_read { get => s_readSeat.Value; set => s_readSeat.Value = value; }
 
     /// <summary>A real player played an emote from their wheel: its animation name is remembered.</summary>
     internal static void Seen(ulong charId, string animation) {

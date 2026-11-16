@@ -37,7 +37,7 @@ namespace Imlight.CoreLib.Game.Ultimus;
 /// </summary>
 internal sealed partial class UltimusDirectorActor {
 
-    private static bool TeachingOn => ConfigurationManager.GetValue("Ultimus.Teaching", true);
+    private static bool TeachingOn => UltimusSeat.Current.Setting("Teaching", true);
 
     private static readonly TimeSpan s_teachIdle = TimeSpan.FromMinutes(20);
 

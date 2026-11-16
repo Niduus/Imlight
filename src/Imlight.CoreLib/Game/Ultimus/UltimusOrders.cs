@@ -66,18 +66,26 @@ internal static class UltimusOrders {
     internal static readonly TimeSpan Keep = TimeSpan.FromMinutes(3);
 
     private static readonly object s_lock = new();
-    private static readonly List<Pending> s_round = [];
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<List<Pending>> s_roundSeat = new(() => new List<Pending>());
+    private static List<Pending> s_round { get => s_roundSeat.Value; set => s_roundSeat.Value = value; }
 
     /// <summary>Whom he waits for in battle (the leader picks first), or 0. Off with "you go first".</summary>
-    internal static ulong LeaderFirst { get; private set; }
+    internal static ulong LeaderFirst { get => s_leaderFirstSeat.Value; private set => s_leaderFirstSeat.Value = value; }
+
+    private static readonly SeatLocal<ulong> s_leaderFirstSeat = new();
 
     /// <summary>He picks without waiting for the players before him (until told otherwise).</summary>
-    internal static bool GoFirst { get; private set; }
+    internal static bool GoFirst { get => s_goFirstSeat.Value; private set => s_goFirstSeat.Value = value; }
+
+    private static readonly SeatLocal<bool> s_goFirstSeat = new();
 
     /// <summary>Told to play defensive: heals and shields before hits (until told otherwise, 15 minutes at most).</summary>
     internal static bool Defensive => DateTime.UtcNow < s_defensiveUntil;
 
-    private static DateTime s_defensiveUntil = DateTime.MinValue;
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<DateTime> s_defensiveUntilSeat = new(() => DateTime.MinValue);
+    private static DateTime s_defensiveUntil { get => s_defensiveUntilSeat.Value; set => s_defensiveUntilSeat.Value = value; }
 
     internal static void SetDefensive(bool on) => s_defensiveUntil = on ? DateTime.UtcNow.AddMinutes(15) : DateTime.MinValue;
 
@@ -94,15 +102,27 @@ internal static class UltimusOrders {
         get { lock (s_lock) { return DateTime.UtcNow - s_focusAt < TimeSpan.FromMinutes(10) ? s_focus : ""; } }
     }
 
-    private static string s_focus = "";
-    private static DateTime s_focusAt = DateTime.MinValue;
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<string> s_focusSeat = new(() => "");
+    private static string s_focus { get => s_focusSeat.Value; set => s_focusSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<DateTime> s_focusAtSeat = new(() => DateTime.MinValue);
+    private static DateTime s_focusAt { get => s_focusAtSeat.Value; set => s_focusAtSeat.Value = value; }
 
     // Battle chat stays short (Niduus, 2026-11-15, "all"): one line a round at most from him, his "Okay!" or what he can't do.
-    private static long s_roundCount;
-    private static long s_saidRound = -1;
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<long> s_roundCountSeat = new();
+    private static long s_roundCount { get => s_roundCountSeat.Value; set => s_roundCountSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<long> s_saidRoundSeat = new(() => -1);
+    private static long s_saidRound { get => s_saidRoundSeat.Value; set => s_saidRoundSeat.Value = value; }
 
     /// <summary>A new battle round began (any battle he is in): he may say one line in it.</summary>
-    internal static void NewRound() => System.Threading.Interlocked.Increment(ref s_roundCount);
+    internal static void NewRound() {
+        lock (s_lock) {
+            s_roundCount++;
+        }
+    }
 
     /// <summary>True once a round: the one line he may say in battle chat this round.</summary>
     internal static bool MaySayThisRound() {

@@ -99,7 +99,7 @@ internal static class UltimusAiLearned {
     private static List<Entry> s_entries = [];
     private static DateTime s_readAt = DateTime.MinValue;
 
-    private static string Path_ => Path.Combine(UltimusWire.Folder, FILE);
+    private static string Path_ => Path.Combine(UltimusWire.SharedFolder, FILE);
 
     /// <summary>Every learned answer (read again when Ahziael changed the file).</summary>
     internal static List<Entry> All() {
@@ -307,7 +307,7 @@ internal static class UltimusAiLearned {
 
     private static void Save(List<Entry> entries) {
         try {
-            Directory.CreateDirectory(UltimusWire.Folder);
+            Directory.CreateDirectory(UltimusWire.SharedFolder);
             File.WriteAllText(Path_, JsonSerializer.Serialize(entries, new JsonSerializerOptions { WriteIndented = true }));
             s_entries = entries;
             s_readAt = File.GetLastWriteTimeUtc(Path_);

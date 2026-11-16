@@ -130,8 +130,8 @@ internal static class UltimusAiTrickTest {
 
     private static void Write(IEnumerable<string> lines) {
         try {
-            Directory.CreateDirectory(UltimusWire.Folder);
-            File.WriteAllLines(Path.Combine(UltimusWire.Folder, RESULT_FILE), lines);
+            Directory.CreateDirectory(UltimusWire.SharedFolder);
+            File.WriteAllLines(Path.Combine(UltimusWire.SharedFolder, RESULT_FILE), lines);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
             Logger.Information("Ultimus: could not write the Try a trick result ({0}).", Logger.Args(ex.GetType().Name));

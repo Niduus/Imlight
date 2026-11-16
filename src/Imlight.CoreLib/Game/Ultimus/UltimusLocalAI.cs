@@ -602,8 +602,8 @@ internal static class UltimusLocalAI {
                     players[id.ToString(System.Globalization.CultureInfo.InvariantCulture)] = count;
                 }
 
-                System.IO.Directory.CreateDirectory(UltimusWire.Folder);
-                System.IO.File.WriteAllText(System.IO.Path.Combine(UltimusWire.Folder, book.File),
+                System.IO.Directory.CreateDirectory(UltimusWire.SharedFolder);
+                System.IO.File.WriteAllText(System.IO.Path.Combine(UltimusWire.SharedFolder, book.File),
                     new JsonObject { ["Day"] = book.Day, ["Players"] = players }.ToJsonString());
             }
             catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) {
@@ -622,7 +622,7 @@ internal static class UltimusLocalAI {
             book.Counts.Clear();
             book.Said.Clear();
             try {
-                var file = System.IO.Path.Combine(UltimusWire.Folder, book.File);
+                var file = System.IO.Path.Combine(UltimusWire.SharedFolder, book.File);
                 if (System.IO.File.Exists(file) && JsonNode.Parse(System.IO.File.ReadAllText(file)) is JsonObject saved && (string) saved["Day"] == today
                     && saved["Players"] is JsonObject players) {
                     foreach (var (id, count) in players) {
@@ -655,8 +655,8 @@ internal static class UltimusLocalAI {
                 text.AppendLine(BotAiGuard.Outgoing((string) message?["content"] ?? "", dropTricks: false));
             }
 
-            System.IO.Directory.CreateDirectory(UltimusWire.Folder);
-            System.IO.File.WriteAllText(System.IO.Path.Combine(UltimusWire.Folder, LAST_SENT_FILE), text.ToString());
+            System.IO.Directory.CreateDirectory(UltimusWire.SharedFolder);
+            System.IO.File.WriteAllText(System.IO.Path.Combine(UltimusWire.SharedFolder, LAST_SENT_FILE), text.ToString());
         }
         catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or InvalidOperationException) {
             // Only the copy for Ahziael is missing.
@@ -696,8 +696,8 @@ internal static class UltimusLocalAI {
             LoadUsage();
             s_usageCount++;
             try {
-                System.IO.Directory.CreateDirectory(UltimusWire.Folder);
-                System.IO.File.WriteAllText(System.IO.Path.Combine(UltimusWire.Folder, USAGE_FILE),
+                System.IO.Directory.CreateDirectory(UltimusWire.SharedFolder);
+                System.IO.File.WriteAllText(System.IO.Path.Combine(UltimusWire.SharedFolder, USAGE_FILE),
                     new JsonObject { ["Day"] = s_usageDay, ["Used"] = s_usageCount, ["Limit"] = DailyLimit }.ToJsonString());
             }
             catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) {
@@ -730,7 +730,7 @@ internal static class UltimusLocalAI {
         s_limitSaid = false;
         s_nearSaid = false;
         try {
-            var file = System.IO.Path.Combine(UltimusWire.Folder, USAGE_FILE);
+            var file = System.IO.Path.Combine(UltimusWire.SharedFolder, USAGE_FILE);
             if (System.IO.File.Exists(file) && JsonNode.Parse(System.IO.File.ReadAllText(file)) is JsonObject saved
                 && (string) saved["Day"] == today) {
                 s_usageCount = (int?) saved["Used"] ?? 0;

@@ -33,7 +33,9 @@ internal static class UltimusHelp {
 
     internal sealed record Ask(ulong CharId, ulong GlobalId, string Name, BotAsks.HelpRole Role);
 
-    private static volatile Ask s_now;
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<Ask> s_nowSeat = new();
+    private static Ask s_now { get => s_nowSeat.Value; set => s_nowSeat.Value = value; }
 
     internal static Ask Now => s_now;
 
@@ -52,7 +54,7 @@ internal static class UltimusHelp {
 /// </summary>
 internal sealed partial class UltimusDirectorActor {
 
-    private static bool HelperOn => ConfigurationManager.GetValue("Ultimus.Helper", true);
+    private static bool HelperOn => UltimusSeat.Current.Setting("Helper", true);
 
     private static readonly TimeSpan s_helpWait = TimeSpan.FromMinutes(3);
 

@@ -46,10 +46,18 @@ internal static class UltimusEffort {
     }
 
     private static readonly object s_lock = new();
-    private static DateTime s_day = DateTime.Today;
-    private static readonly Dictionary<Kind, int> s_counts = [];
-    private static double s_wonSeconds;
-    private static double s_lostSeconds;
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<DateTime> s_daySeat = new(() => DateTime.Today);
+    private static DateTime s_day { get => s_daySeat.Value; set => s_daySeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<Dictionary<Kind, int>> s_countsSeat = new(() => new Dictionary<Kind, int>());
+    private static Dictionary<Kind, int> s_counts { get => s_countsSeat.Value; set => s_countsSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<double> s_wonSecondsSeat = new();
+    private static double s_wonSeconds { get => s_wonSecondsSeat.Value; set => s_wonSecondsSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<double> s_lostSecondsSeat = new();
+    private static double s_lostSeconds { get => s_lostSecondsSeat.Value; set => s_lostSecondsSeat.Value = value; }
 
     private static bool IsBad(Kind kind) => kind is Kind.FightLost or Kind.Fled or Kind.DungeonLost or Kind.StuckStep;
 

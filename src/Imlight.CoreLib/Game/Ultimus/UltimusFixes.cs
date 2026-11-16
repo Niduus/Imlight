@@ -75,7 +75,9 @@ internal static class UltimusFixes {
     }
 
     private static readonly object s_lock = new();
-    private static List<Flag> s_flags;
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<List<Flag>> s_flagsSeat = new();
+    private static List<Flag> s_flags { get => s_flagsSeat.Value; set => s_flagsSeat.Value = value; }
 
     /// <summary>
     /// A flag at this spot for this step: written down (or counted again), and the fix to make now. <paramref name="skip"/>:

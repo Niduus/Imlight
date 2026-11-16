@@ -358,7 +358,7 @@ internal sealed partial class UltimusDirectorActor {
             }
 
             try {
-                File.WriteAllText(Path.Combine(UltimusWire.Folder, STEP_MEMORY_FILE), JsonSerializer.Serialize(memory, new JsonSerializerOptions { WriteIndented = true }));
+                File.WriteAllText(Path.Combine(UltimusWire.SharedFolder, STEP_MEMORY_FILE), JsonSerializer.Serialize(memory, new JsonSerializerOptions { WriteIndented = true }));
             }
             catch (Exception e) {
                 Logger.Debug("Ultimus: could not write {0}: {1}", Logger.Args(STEP_MEMORY_FILE, e.Message));
@@ -378,7 +378,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         try {
-            var path = Path.Combine(UltimusWire.Folder, STEP_MEMORY_FILE);
+            var path = Path.Combine(UltimusWire.SharedFolder, STEP_MEMORY_FILE);
             s_stepMemory = File.Exists(path) ? JsonSerializer.Deserialize<Dictionary<string, List<string>>>(File.ReadAllText(path)) : null;
         }
         catch (Exception e) {

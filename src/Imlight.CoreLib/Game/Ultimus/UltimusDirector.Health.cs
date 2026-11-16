@@ -608,8 +608,12 @@ internal sealed partial class UltimusDirectorActor {
         return (hops > 0 ? $"Good idea, heading to the potion shop now ({hops} area{(hops == 1 ? "" : "s")} away)!" : "Good idea, getting potions right here!", true);
     }
 
-    private static string s_farPotionZone;
-    private static bool s_farPotionLooked;
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<string> s_farPotionZoneSeat = new();
+    private static string s_farPotionZone { get => s_farPotionZoneSeat.Value; set => s_farPotionZoneSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<bool> s_farPotionLookedSeat = new();
+    private static bool s_farPotionLooked { get => s_farPotionLookedSeat.Value; set => s_farPotionLookedSeat.Value = value; }
 
     /// <summary>
     /// The potion shop in Wizard City, for when the world he is in has none he can reach and no wisps can be found: he

@@ -108,7 +108,7 @@ internal static class UltimusMapCheck {
             text.AppendLine($"{f.Area}: {f.Walls} wall and {f.Black} black squares put right; {f.Floors} floors, {f.Climbs} stairs or ramps between them.");
         }
 
-        var folder = Path.Combine(UltimusWire.Folder, "maps");
+        var folder = Path.Combine(UltimusWire.SharedFolder, "maps");
         Directory.CreateDirectory(folder);
         File.WriteAllText(Path.Combine(folder, "_where-our-map-was-wrong.txt"), text.ToString());
         Logger.Information("Ultimus map check: {0} areas checked, {1} had spots our map had wrong.",

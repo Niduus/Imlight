@@ -649,7 +649,7 @@ internal sealed partial class UltimusDirectorActor {
     // Nightly auto-coach (off by default)
     // ---------------------------------------------------------------------
 
-    private static bool AutoCoachOn => ConfigurationManager.GetValue("Ultimus.AutoCoach", false);
+    private static bool AutoCoachOn => UltimusSeat.Current.Setting("AutoCoach", false);
     private DateTime _coachCheck = DateTime.MinValue;
     private const int COACH_HOUR = 4;
     private const int COACH_KEEP = 14;

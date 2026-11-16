@@ -563,8 +563,34 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
     // Words in a server message that mean something went wrong (pink in the log).
     private static readonly string[] s_oddWords = ["error", "failed", "could not", "couldn't", "cannot", "can't", "broken", "invalid", "missing"];
 
-    internal static Props Props(UltimusRoster.Member member, Status view)
-        => Akka.Actor.Props.Create(() => new UltimusMember(member, view));
+    internal static Props Props(UltimusRoster.Member member, Status view) {
+        var seat = UltimusSeat.Current;
+
+        return Akka.Actor.Props.Create(() => new UltimusMember(member, view, seat));
+    }
+
+    // The seat this wizard is (Ultimus or a TCO7 member): every message is handled as it (UltimusSeat.Current).
+    private readonly UltimusSeat _seat = UltimusSeat.Ultimus;
+
+    protected override bool AroundReceive(Receive receive, object message) {
+        using (UltimusSeat.Use(_seat)) {
+            return base.AroundReceive(receive, message);
+        }
+    }
+
+    public override void AroundPreStart() {
+        using (UltimusSeat.Use(_seat)) {
+            base.AroundPreStart();
+        }
+    }
+
+    public override void AroundPostStop() {
+        using (UltimusSeat.Use(_seat)) {
+            base.AroundPostStop();
+        }
+    }
+
+    public UltimusMember(UltimusRoster.Member member, Status view, UltimusSeat seat) : this(member, view) => _seat = seat ?? UltimusSeat.Ultimus;
 
     protected override void PostStop() {
         try {

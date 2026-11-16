@@ -42,7 +42,9 @@ internal static class UltimusFights {
 
     internal sealed record Battle(int Round, List<Enemy> Enemies, int Humans, int Bots, DateTime FirstSeen);
 
-    private static readonly ConcurrentDictionary<ulong, Battle> s_battles = new();
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<ConcurrentDictionary<ulong, Battle>> s_battlesSeat = new(() => new ConcurrentDictionary<ulong, Battle>());
+    private static ConcurrentDictionary<ulong, Battle> s_battles { get => s_battlesSeat.Value; set => s_battlesSeat.Value = value; }
 
     /// <summary>The creature's real name, from the game data; empty when the data has none.</summary>
     internal static string RealName(ulong template) {

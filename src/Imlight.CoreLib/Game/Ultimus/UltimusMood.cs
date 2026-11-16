@@ -38,7 +38,7 @@ internal static class UltimusMood {
     internal const string SURPRISE = BotMood.SURPRISE;
 
     // His mood is the shared engine's (Ultimus Core, BotShared.BotMood), with his playbook's Mood.* numbers.
-    private static BotMood Mood => BotMood.Of("Ultimus", name => UltimusPlaybook.Value("Mood." + name));
+    private static BotMood Mood => BotMood.Of(UltimusSeat.Current.Key, name => UltimusPlaybook.Value("Mood." + name));
 
     internal static void Saw(string what) => Mood.Saw(what);
 

@@ -45,21 +45,27 @@ namespace Imlight.CoreLib.Game.Ultimus;
 internal static class UltimusDirector {
 
     private static readonly System.Threading.Lock s_lock = new();
-    private static IActorRef s_actor;
-    private static DateTime s_retryAt = DateTime.MinValue;
 
-    /// <summary>The team plays (its mini server answers): started once.</summary>
+    // Each seat (Ultimus, and each TCO7 member) is its own Director: these are kept per seat (UltimusSeat).
+    private static readonly SeatLocal<IActorRef> s_actorOf = new();
+    private static readonly SeatLocal<DateTime> s_retryAtOf = new(() => DateTime.MinValue);
+
+    private static IActorRef s_actor { get => s_actorOf.Value; set => s_actorOf.Value = value; }
+    private static DateTime s_retryAt { get => s_retryAtOf.Value; set => s_retryAtOf.Value = value; }
+
+    /// <summary>The seat's team plays (its mini server answers): started once.</summary>
     internal static void EnsureRunning() {
+        var seat = UltimusSeat.Current;
         lock (s_lock) {
             if (s_actor is not null || DateTime.UtcNow < s_retryAt || QuestTeam.QuestTeamHost.System is not { } system || QuestTeam.QuestTeamHost.Server is null) {
                 return;
             }
 
-            s_actor = system.ActorOf(Props.Create(() => new UltimusDirectorActor()), $"ultimus-{Guid.NewGuid():N}");
+            s_actor = system.ActorOf(Props.Create(() => new UltimusDirectorActor(seat)), $"{seat.Key.ToLowerInvariant()}-{Guid.NewGuid():N}");
         }
     }
 
-    /// <summary>The team logs out (the switch is off or its mini server stopped).</summary>
+    /// <summary>The seat's team logs out (the switch is off or its mini server stopped).</summary>
     internal static void Stop(string why) {
         lock (s_lock) {
             if (s_actor is null) {
@@ -83,56 +89,109 @@ internal static class UltimusDirector {
         actor.Tell(PoisonPill.Instance);
     }
 
-    // ---- the team's wizards, for the battles (CombatDuelComponent.Ultimus.cs) ----
+    // ---- the seats' wizards, for the battles (CombatDuelComponent.Ultimus.cs) ----
 
-    private static volatile Dictionary<ulong, string> s_roles = [];
-    private static volatile List<UltimusMember.Status> s_members = [];
+    private static readonly SeatLocal<List<UltimusMember.Status>> s_membersOf = new(() => []);
+    private static readonly SeatLocal<Dictionary<string, IActorRef>> s_actorsOf = new(() => []);
 
     internal static void Remember(IEnumerable<UltimusMember.Status> members) {
-        s_members = [.. members];
-        s_roles = s_members.ToDictionary(m => m.GlobalId, m => m.Role);
+        var seat = UltimusSeat.Current;
+        s_membersOf.Value = [.. members];
+        foreach (var member in s_membersOf.Value) {
+            seat.RememberCharacter(member.CharId);
+            if (member.GlobalId != 0) {
+                seat.RememberGlobal(member.GlobalId);
+            }
+        }
     }
+
+    /// <summary>A seat's wizard is in the game under this object id (it changes at each login): battles find it by it.</summary>
+    internal static void RememberGlobal(ulong globalId) => UltimusSeat.Current.RememberGlobal(globalId);
 
     internal static void Forget() {
-        s_roles = [];
-        s_members = [];
+        UltimusSeat.Current.ForgetGlobal();
+        s_membersOf.Value = [];
     }
 
-    private static volatile Dictionary<string, IActorRef> s_actors = [];
+    /// <summary>
+    /// The actor (pretend game) of a seat's wizard: by seat key (what <see cref="RoleOf"/> gives, "Ultimus", "Tulkar", ...),
+    /// or by role within the seat the code works for now; null when it is not playing.
+    /// </summary>
+    internal static IActorRef ActorOf(string keyOrRole) {
+        if (keyOrRole is null) {
+            return null;
+        }
 
-    /// <summary>The actor (pretend game) of a Ultimus wizard by role, or null.</summary>
-    internal static IActorRef ActorOf(string role) => role is null ? null : s_actors.GetValueOrDefault(role);
+        if (UltimusSeat.ByKey(keyOrRole) is { } seat) {
+            return s_actorsOf.Of(seat).GetValueOrDefault(seat.Role);
+        }
 
-    internal static void RememberActors(Dictionary<string, IActorRef> actors) => s_actors = actors;
+        return s_actorsOf.Value.GetValueOrDefault(keyOrRole);
+    }
 
-    // Where Ultimus is busy: the creature it walks to or fights, in which area, until when.
-    private static volatile Busy s_busy;
+    internal static void RememberActors(Dictionary<string, IActorRef> actors) => s_actorsOf.Value = actors;
+
+    /// <summary>Whether any seat (Ultimus or a TCO7 member) is playing now.</summary>
+    internal static bool AnyPlaying => UltimusSeat.All.Any(s => s_actorsOf.Of(s).Count > 0);
+
+    // Where each seat is busy: the creature it walks to or fights, in which area, until when.
+    private static readonly SeatLocal<Busy> s_busyOf = new();
 
     private sealed record Busy(IActorRef Zone, float X, float Y, DateTime Until);
 
-    /// <summary>Ultimus is going for a creature at (x, y), or fighting there (the Director says so each half second).</summary>
-    internal static void SetBusy(IActorRef zone, float x, float y) => s_busy = zone is null ? null : new Busy(zone, x, y, DateTime.UtcNow.AddSeconds(5));
+    /// <summary>The seat is going for a creature at (x, y), or fighting there (the Director says so each half second).</summary>
+    internal static void SetBusy(IActorRef zone, float x, float y) => s_busyOf.Value = zone is null ? null : new Busy(zone, x, y, DateTime.UtcNow.AddSeconds(5));
 
     /// <summary>
-    /// Whether Ultimus is going for, or fighting, a creature near (x, y) in this area (Niduus, 2026-11-12: the Quest Team
-    /// "will always attempt to avoid colliding with Ultimus"): the Quest Team picks another creature.
+    /// Whether Ultimus (or a TCO7 member) is going for, or fighting, a creature near (x, y) in this area (Niduus, 2026-11-12:
+    /// the Quest Team "will always attempt to avoid colliding with Ultimus"): the Quest Team picks another creature.
     /// </summary>
     public static bool IsBusyNear(IActorRef zone, float x, float y, float range = 700) {
-        if (zone is null || s_busy is not { } busy || busy.Until < DateTime.UtcNow || !zone.Equals(busy.Zone)) {
+        if (zone is null) {
             return false;
         }
 
-        return UltimusPlanner.Far(x, y, busy.X, busy.Y) < range;
+        foreach (var seat in UltimusSeat.All) {
+            if (s_busyOf.Of(seat) is { } busy && busy.Until >= DateTime.UtcNow && zone.Equals(busy.Zone)
+                && UltimusPlanner.Far(x, y, busy.X, busy.Y) < range) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    /// <summary>Whether a wizard (by object id) is an Ultimus wizard.</summary>
-    public static bool IsUltimus(ulong globalId) => s_roles.ContainsKey(globalId);
+    /// <summary>Another seat (not the one working now) is going for, or fighting, a creature near (x, y) here.</summary>
+    internal static bool OtherSeatBusyNear(IActorRef zone, float x, float y, float range = 500) {
+        if (zone is null) {
+            return false;
+        }
 
-    /// <summary>Ultimus's wizards as they are now (for .ultimus tp), empty while it is not playing.</summary>
-    internal static IReadOnlyList<UltimusMember.Status> Members => s_members;
+        var me = UltimusSeat.Current;
+        foreach (var seat in UltimusSeat.All.Where(s => s != me)) {
+            if (s_busyOf.Of(seat) is { } busy && busy.Until >= DateTime.UtcNow && zone.Equals(busy.Zone)
+                && UltimusPlanner.Far(x, y, busy.X, busy.Y) < range) {
+                return true;
+            }
+        }
 
-    /// <summary>The seat (Balance) of an Ultimus wizard by its object id, or null for anyone else.</summary>
-    internal static string RoleOf(ulong globalId) => s_roles.GetValueOrDefault(globalId);
+        return false;
+    }
+
+    /// <summary>Whether a wizard (by object id) is played by Ultimus's brain (Ultimus or a TCO7 member).</summary>
+    public static bool IsUltimus(ulong globalId) => UltimusSeat.OfGlobal(globalId) is not null;
+
+    /// <summary>The seat's wizards as they are now (for .ultimus tp), empty while it is not playing.</summary>
+    internal static IReadOnlyList<UltimusMember.Status> Members => s_membersOf.Value;
+
+    /// <summary>The wizards of a given seat as they are now.</summary>
+    internal static IReadOnlyList<UltimusMember.Status> MembersOf(UltimusSeat seat) => s_membersOf.Of(seat);
+
+    /// <summary>
+    /// The seat key ("Ultimus", "Tulkar", ...) of a wizard played by Ultimus's brain, by its object id, or null for anyone
+    /// else. <see cref="ActorOf"/> takes it.
+    /// </summary>
+    internal static string RoleOf(ulong globalId) => UltimusSeat.OfGlobal(globalId)?.Key;
 
 }
 
@@ -204,7 +263,30 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
     private string _lastQuestWorked;
 
-    public UltimusDirectorActor() {
+    // The seat this Director plays (Ultimus or a TCO7 member): every message is handled as that seat (UltimusSeat.Current),
+    // so its files, settings and memories are its own.
+    private readonly UltimusSeat _seat;
+
+    protected override bool AroundReceive(Receive receive, object message) {
+        using (UltimusSeat.Use(_seat)) {
+            return base.AroundReceive(receive, message);
+        }
+    }
+
+    public override void AroundPreStart() {
+        using (UltimusSeat.Use(_seat)) {
+            base.AroundPreStart();
+        }
+    }
+
+    public override void AroundPostStop() {
+        using (UltimusSeat.Use(_seat)) {
+            base.AroundPostStop();
+        }
+    }
+
+    public UltimusDirectorActor(UltimusSeat seat = null) {
+        _seat = seat ?? UltimusSeat.Ultimus;
         Receive<Halt>(m => {
             Note("Ultimus", $"logs out: {m.Why}.");
             foreach (var actor in _actors) {
@@ -1508,7 +1590,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                          + $"(narrow ledges, bridges, ring walks, doorways); they are walked as floor.{Environment.NewLine}{layout}";
             }
 
-            var folder = System.IO.Path.Combine(UltimusWire.Folder, "maps");
+            var folder = System.IO.Path.Combine(UltimusWire.SharedFolder, "maps");
             System.IO.Directory.CreateDirectory(folder);
             var name = new string(zone.Select(c => char.IsLetterOrDigit(c) ? c : '-').ToArray());
             System.IO.File.WriteAllText(System.IO.Path.Combine(folder, $"{name}.txt"), layout);
@@ -1526,7 +1608,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 return;
             }
 
-            var folder = System.IO.Path.Combine(UltimusWire.Folder, "no-way-maps");
+            var folder = System.IO.Path.Combine(UltimusWire.SharedFolder, "no-way-maps");
             System.IO.Directory.CreateDirectory(folder);
             var name = new string((member.Zone ?? "area").Select(c => char.IsLetterOrDigit(c) ? c : '-').ToArray());
             System.IO.File.WriteAllText(System.IO.Path.Combine(folder, $"{name}_{(int) member.X}_{(int) member.Y}.txt"),
@@ -2177,7 +2259,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         try {
             // Written for one version of the server only: an update may have fixed the exit (Niduus, 2026-11-14: the Grand
             // Arena exit was on the list until its fix), so after an update the list starts over and he tries each again.
-            var path = Path.Combine(UltimusWire.Folder, STUBBORN_EXITS_FILE);
+            var path = Path.Combine(UltimusWire.SharedFolder, STUBBORN_EXITS_FILE);
             var lines = File.Exists(path) ? File.ReadAllLines(path) : [];
             var version = "version " + ServerStamp();
             if (lines.Length == 0 || lines[0] != version) {
@@ -2209,7 +2291,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             };
             round.AddRange(_exitStood.Select(l => "  " + l));
             round.Add("");
-            var path = Path.Combine(UltimusWire.Folder, "exit-tries.txt");
+            var path = Path.Combine(UltimusWire.SharedFolder, "exit-tries.txt");
             var old = File.Exists(path) ? File.ReadAllLines(path).ToList() : [];
             var rounds = 0;
             var keep = old.TakeWhile(l => !(l.Length > 0 && !l.StartsWith(' ') && ++rounds > 39)).ToList();
@@ -2240,7 +2322,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         try {
-            File.AppendAllLines(Path.Combine(UltimusWire.Folder, STUBBORN_EXITS_FILE), [$"{ExitId(zone, to)} at ({x:0}, {y:0}) {DateTime.Now:yyyy-MM-dd HH:mm}"]);
+            File.AppendAllLines(Path.Combine(UltimusWire.SharedFolder, STUBBORN_EXITS_FILE), [$"{ExitId(zone, to)} at ({x:0}, {y:0}) {DateTime.Now:yyyy-MM-dd HH:mm}"]);
         }
         catch (Exception e) {
             Logger.Debug("Ultimus: could not write {0}: {1}", Logger.Args(STUBBORN_EXITS_FILE, e.Message));

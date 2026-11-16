@@ -47,7 +47,7 @@ internal static class UltimusDrops {
     private static Dictionary<string, Dictionary<string, Record>> s_steps;
     private static readonly object s_lock = new();
 
-    private static string Path_ => Path.Combine(UltimusWire.Folder, FILE);
+    private static string Path_ => Path.Combine(UltimusWire.SharedFolder, FILE);
 
     private static Dictionary<string, Dictionary<string, Record>> Steps {
         get {
@@ -163,7 +163,7 @@ internal static class UltimusDrops {
 
     private static void Save() {
         try {
-            Directory.CreateDirectory(UltimusWire.Folder);
+            Directory.CreateDirectory(UltimusWire.SharedFolder);
             File.WriteAllText(Path_, JsonSerializer.Serialize(s_steps, new JsonSerializerOptions { WriteIndented = true }));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {

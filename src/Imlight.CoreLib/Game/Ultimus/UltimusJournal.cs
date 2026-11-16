@@ -52,7 +52,9 @@ internal static class UltimusJournal {
     }
 
     private static readonly object s_lock = new();
-    private static List<Entry> s_entries;
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<List<Entry>> s_entriesSeat = new();
+    private static List<Entry> s_entries { get => s_entriesSeat.Value; set => s_entriesSeat.Value = value; }
 
     /// <summary>Writes a moment down. <paramref name="about"/>: who or what it is about (a quest, a creature, a player).</summary>
     internal static void Write(string kind, string text, string world = "", string area = "", string about = "", int feeling = 0) {

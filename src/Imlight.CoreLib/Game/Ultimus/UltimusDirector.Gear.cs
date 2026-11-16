@@ -68,7 +68,7 @@ internal sealed partial class UltimusDirectorActor {
 
         _notSold = [];
         try {
-            var path = System.IO.Path.Combine(UltimusWire.Folder, NOT_SOLD_FILE);
+            var path = System.IO.Path.Combine(UltimusWire.SharedFolder, NOT_SOLD_FILE);
             if (System.IO.File.Exists(path)) {
                 foreach (var line in System.IO.File.ReadAllLines(path)) {
                     if (uint.TryParse(line.Split(' ')[0], out var id)) {
@@ -90,7 +90,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         try {
-            System.IO.File.AppendAllLines(System.IO.Path.Combine(UltimusWire.Folder, NOT_SOLD_FILE), [$"{id} {what}"]);
+            System.IO.File.AppendAllLines(System.IO.Path.Combine(UltimusWire.SharedFolder, NOT_SOLD_FILE), [$"{id} {what}"]);
         }
         catch (Exception e) {
             Logger.Debug("Ultimus: could not write {0}: {1}", Logger.Args(NOT_SOLD_FILE, e.Message));

@@ -170,7 +170,7 @@ internal static class UltimusSolutions {
         }
 
         s_forgetLook = DateTime.UtcNow.AddSeconds(5);
-        var request = Path.Combine(UltimusWire.Folder, FORGET_REQUEST);
+        var request = Path.Combine(UltimusWire.SharedFolder, FORGET_REQUEST);
         if (!File.Exists(request)) {
             return;
         }
@@ -202,7 +202,7 @@ internal static class UltimusSolutions {
 
         s_all = [];
         try {
-            var path = Path.Combine(UltimusWire.Folder, FILE);
+            var path = Path.Combine(UltimusWire.SharedFolder, FILE);
             if (File.Exists(path) && JsonSerializer.Deserialize<List<Solution>>(File.ReadAllText(path)) is { } read) {
                 s_all = [.. read.Where(s => s is not null && !string.IsNullOrEmpty(s.Move)).Select(s => {
                     s.Quest ??= "";
@@ -229,8 +229,8 @@ internal static class UltimusSolutions {
 
     private static void Save() {
         try {
-            Directory.CreateDirectory(UltimusWire.Folder);
-            var path = Path.Combine(UltimusWire.Folder, FILE);
+            Directory.CreateDirectory(UltimusWire.SharedFolder);
+            var path = Path.Combine(UltimusWire.SharedFolder, FILE);
             File.WriteAllText(path + ".tmp", JsonSerializer.Serialize(All(), new JsonSerializerOptions { WriteIndented = true }));
             File.Move(path + ".tmp", path, overwrite: true);
         }

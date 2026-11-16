@@ -143,9 +143,9 @@ internal static class UltimusQuestTree {
 
     private static void Write(List<Quest> quests) {
         try {
-            Directory.CreateDirectory(UltimusWire.Folder);
-            File.WriteAllText(Path.Combine(UltimusWire.Folder, DATA), UltimusWire.Write(quests));
-            File.WriteAllText(Path.Combine(UltimusWire.Folder, REPORT), Report(quests, DateTime.Now));
+            Directory.CreateDirectory(UltimusWire.SharedFolder);
+            File.WriteAllText(Path.Combine(UltimusWire.SharedFolder, DATA), UltimusWire.Write(quests));
+            File.WriteAllText(Path.Combine(UltimusWire.SharedFolder, REPORT), Report(quests, DateTime.Now));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
             Logger.Debug("Ultimus: {0} could not be written: {1}", Logger.Args(REPORT, ex.Message));

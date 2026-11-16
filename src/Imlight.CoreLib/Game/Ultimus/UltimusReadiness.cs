@@ -204,9 +204,9 @@ internal static class UltimusReadiness {
 
     internal static void Write(string report) {
         try {
-            Directory.CreateDirectory(UltimusWire.Folder);
-            File.WriteAllText(Path.Combine(UltimusWire.Folder, FILE + ".tmp"), report);
-            File.Move(Path.Combine(UltimusWire.Folder, FILE + ".tmp"), Path.Combine(UltimusWire.Folder, FILE), overwrite: true);
+            Directory.CreateDirectory(UltimusWire.SharedFolder);
+            File.WriteAllText(Path.Combine(UltimusWire.SharedFolder, FILE + ".tmp"), report);
+            File.Move(Path.Combine(UltimusWire.SharedFolder, FILE + ".tmp"), Path.Combine(UltimusWire.SharedFolder, FILE), overwrite: true);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
             Logger.Debug("Ultimus: {0} could not be written: {1}", Logger.Args(FILE, ex.Message));
@@ -222,12 +222,13 @@ internal sealed partial class UltimusDirectorActor {
 
     /// <summary>Each tick: the readiness check at the start (once the books are built), every 6 hours, and when Ahziael asks.</summary>
     private void ReadinessTick() {
-        if (DateTime.UtcNow < _readinessLook) {
+        // One spiral-wide check is enough: Ultimus makes it, the TCO7 read it.
+        if (!_seat.IsUltimus || DateTime.UtcNow < _readinessLook) {
             return;
         }
 
         _readinessLook = DateTime.UtcNow.AddSeconds(15);
-        var request = Path.Combine(UltimusWire.Folder, UltimusReadiness.REQUEST);
+        var request = Path.Combine(UltimusWire.SharedFolder, UltimusReadiness.REQUEST);
         var asked = File.Exists(request);
         if (!asked && DateTime.UtcNow - _readinessAt < TimeSpan.FromHours(6)) {
             return;

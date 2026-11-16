@@ -44,7 +44,9 @@ internal static class UltimusSpectate {
 
     private sealed record Now(string Quest, string Step, string Doing, string Zone, float X, float Y, bool HasSpot);
 
-    private static volatile Now s_now = new("", "", "", "", 0, 0, false);
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<Now> s_nowSeat = new(() => new Now("", "", "", "", 0, 0, false));
+    private static Now s_now { get => s_nowSeat.Value; set => s_nowSeat.Value = value; }
 
     /// <summary>
     /// The quest Ultimus plays now (its code), the step he is on and what he is doing (from the Director's status), and
@@ -55,7 +57,9 @@ internal static class UltimusSpectate {
 
     internal static string Quest => s_now.Quest;
 
-    private static volatile JsonObject s_detail;
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<JsonObject> s_detailSeat = new();
+    private static JsonObject s_detail { get => s_detailSeat.Value; set => s_detailSeat.Value = value; }
 
     /// <summary>His quest tracker's details (UltimusDirector.Tracker.cs), for the Spectator's quest box.</summary>
     internal static void NoteDetail(JsonObject detail) => s_detail = (JsonObject) detail?.DeepClone();
@@ -129,7 +133,9 @@ internal static class UltimusSpectate {
         public readonly LinkedList<string> Casts = new();
     }
 
-    private static readonly Dictionary<string, Book> s_books = new(StringComparer.OrdinalIgnoreCase);
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<Dictionary<string, Book>> s_booksSeat = new(() => new Dictionary<string, Book>(StringComparer.OrdinalIgnoreCase));
+    private static Dictionary<string, Book> s_books { get => s_booksSeat.Value; set => s_booksSeat.Value = value; }
 
     private static Book BookOf(string who) => s_books.TryGetValue(who ?? "", out var book) ? book : s_books[who ?? ""] = new Book();
 

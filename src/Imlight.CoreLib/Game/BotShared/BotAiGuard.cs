@@ -255,8 +255,8 @@ internal static class BotAiGuard {
                 ["Where"] = where, ["Why"] = why, ["AI"] = ai, ["Shown"] = Shown(text),
             }.ToJsonString();
             lock (s_logLock) {
-                System.IO.Directory.CreateDirectory(UltimusWire.Folder);
-                var file = System.IO.Path.Combine(UltimusWire.Folder, SAFETY_LOG);
+                System.IO.Directory.CreateDirectory(UltimusWire.SharedFolder);
+                var file = System.IO.Path.Combine(UltimusWire.SharedFolder, SAFETY_LOG);
                 System.IO.File.AppendAllText(file, line + Environment.NewLine);
                 // Kept short: the newest 500 lines.
                 if (new System.IO.FileInfo(file).Length > 400_000) {

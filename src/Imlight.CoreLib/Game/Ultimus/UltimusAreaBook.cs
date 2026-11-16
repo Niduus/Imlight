@@ -248,7 +248,7 @@ internal static class UltimusAreaBook {
         }
 
         try {
-            var folder = Path.Combine(UltimusWire.Folder, "maps");
+            var folder = Path.Combine(UltimusWire.SharedFolder, "maps");
             Directory.CreateDirectory(folder);
             var name = new string(zonePath.Select(c => char.IsLetterOrDigit(c) ? c : '-').ToArray());
             File.WriteAllText(Path.Combine(folder, $"{name}-book.txt"), Text(zonePath));

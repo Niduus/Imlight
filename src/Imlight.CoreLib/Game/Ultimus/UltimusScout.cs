@@ -157,7 +157,9 @@ internal static class UltimusScout {
     }
 
     // The last creatures fought (or about to be), for the gear's resist: an area's creatures hit with the same few schools.
-    private static readonly Queue<Threat> s_recent = new();
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<Queue<Threat>> s_recentSeat = new(() => new Queue<Threat>());
+    private static Queue<Threat> s_recent { get => s_recentSeat.Value; set => s_recentSeat.Value = value; }
     private const int RECENT = 6;
 
     /// <summary>A creature it is about to fight: its deck counts toward the resist its gear leans to (BotGear.SoloResistMix).</summary>

@@ -124,8 +124,8 @@ internal static class UltimusFoes {
                 "",
             };
             lines.AddRange(rivals.Count == 0 ? ["- None yet."] : rivals.Select(r => "- " + r.Describe()));
-            Directory.CreateDirectory(UltimusWire.Folder);
-            File.WriteAllLines(Path.Combine(UltimusWire.Folder, "rivals.txt"), lines);
+            Directory.CreateDirectory(UltimusWire.SharedFolder);
+            File.WriteAllLines(Path.Combine(UltimusWire.SharedFolder, "rivals.txt"), lines);
         }
         catch (IOException) {
             // Written again after the next fight.
@@ -139,7 +139,7 @@ internal static class UltimusFoes {
 
         s_foes = [];
         try {
-            var path = Path.Combine(UltimusWire.Folder, FILE);
+            var path = Path.Combine(UltimusWire.SharedFolder, FILE);
             if (File.Exists(path) && JsonSerializer.Deserialize<List<Foe>>(File.ReadAllText(path)) is { } read) {
                 // Clean names (Niduus, 2026-11-15: only accurate data): foes were named by the quest step's words ("1 creatures",
                 // "1 Golden Key", "a fight for XP toward level 14"). Each is renamed to its real name from the game data, and
@@ -179,8 +179,8 @@ internal static class UltimusFoes {
 
     private static void Save() {
         try {
-            Directory.CreateDirectory(UltimusWire.Folder);
-            var path = Path.Combine(UltimusWire.Folder, FILE);
+            Directory.CreateDirectory(UltimusWire.SharedFolder);
+            var path = Path.Combine(UltimusWire.SharedFolder, FILE);
             File.WriteAllText(path + ".tmp", JsonSerializer.Serialize(Foes().Values.OrderByDescending(f => f.Last).ToList(),
                 new JsonSerializerOptions { WriteIndented = true }));
             File.Move(path + ".tmp", path, overwrite: true);

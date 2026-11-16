@@ -163,10 +163,10 @@ internal static class UltimusAtlas {
 
     private static void Write() {
         try {
-            Directory.CreateDirectory(UltimusWire.Folder);
+            Directory.CreateDirectory(UltimusWire.SharedFolder);
             var steps = s_steps.Values.OrderBy(s => s.World, StringComparer.Ordinal).ThenBy(s => s.Quest, StringComparer.Ordinal).ThenBy(s => s.Goal, StringComparer.Ordinal).ToList();
-            File.WriteAllText(Path.Combine(UltimusWire.Folder, DATA), UltimusWire.Write(steps));
-            File.WriteAllText(Path.Combine(UltimusWire.Folder, REPORT), Report(steps, DateTime.Now));
+            File.WriteAllText(Path.Combine(UltimusWire.SharedFolder, DATA), UltimusWire.Write(steps));
+            File.WriteAllText(Path.Combine(UltimusWire.SharedFolder, REPORT), Report(steps, DateTime.Now));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
             Logger.Debug("Ultimus: {0} could not be written: {1}", Logger.Args(REPORT, ex.Message));

@@ -37,7 +37,9 @@ internal static class UltimusRules {
 
     private const string SHADOW_LOG = "shadow-log.txt";
 
-    private static readonly ConcurrentDictionary<string, DateTime> s_said = new(StringComparer.Ordinal);
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<ConcurrentDictionary<string, DateTime>> s_saidSeat = new(() => new ConcurrentDictionary<string, DateTime>(StringComparer.Ordinal));
+    private static ConcurrentDictionary<string, DateTime> s_said { get => s_saidSeat.Value; set => s_saidSeat.Value = value; }
 
     /// <summary>The rule's mode from the playbook (Rules.Name): 0 off, 1 watch only, 2 on.</summary>
     internal static int Mode(string rule) => (int) Math.Clamp(Math.Round(UltimusPlaybook.Value("Rules." + rule)), OFF, ON);

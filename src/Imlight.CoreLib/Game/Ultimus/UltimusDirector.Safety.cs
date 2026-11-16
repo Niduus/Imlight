@@ -322,7 +322,7 @@ internal sealed partial class UltimusDirectorActor {
     private DateTime _playSaved = DateTime.MinValue;
     private bool _restSaid;
 
-    private static double MaxHoursPerDay => Math.Clamp(ConfigurationManager.GetValue("Ultimus.MaxHoursPerDay", 0.0), 0, 24);
+    private static double MaxHoursPerDay => Math.Clamp(UltimusSeat.Current.Setting("MaxHoursPerDay", 0.0), 0, 24);
 
     /// <summary>Each plan: his play time today counted; past [Ultimus] MaxHoursPerDay he rests (true) until tomorrow.</summary>
     private bool RestingForTheDay(UltimusMember.Status leader) {

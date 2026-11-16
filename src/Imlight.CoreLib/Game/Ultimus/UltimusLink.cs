@@ -39,13 +39,27 @@ public static class UltimusLink {
     // How long the brain may take to answer one question.
     private static readonly TimeSpan s_answerWait = TimeSpan.FromSeconds(3);
 
-    private static readonly Lock s_lock = new();
-    private static Process s_brain;
-    private static DateTime s_brainStarted;
-    private static int s_brainPort;
-    private static int s_failedStarts;
-    private static volatile bool s_ready;
-    private static volatile bool s_wasEnabled;
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<Lock> s_lockSeat = new(() => new Lock());
+    private static Lock s_lock { get => s_lockSeat.Value; set => s_lockSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<Process> s_brainSeat = new();
+    private static Process s_brain { get => s_brainSeat.Value; set => s_brainSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<DateTime> s_brainStartedSeat = new();
+    private static DateTime s_brainStarted { get => s_brainStartedSeat.Value; set => s_brainStartedSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<int> s_brainPortSeat = new();
+    private static int s_brainPort { get => s_brainPortSeat.Value; set => s_brainPortSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<int> s_failedStartsSeat = new();
+    private static int s_failedStarts { get => s_failedStartsSeat.Value; set => s_failedStartsSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<bool> s_readySeat = new();
+    private static bool s_ready { get => s_readySeat.Value; set => s_readySeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<bool> s_wasEnabledSeat = new();
+    private static bool s_wasEnabled { get => s_wasEnabledSeat.Value; set => s_wasEnabledSeat.Value = value; }
 
     /// <summary>Whether the mini server is running and answering, so Ultimus can play.</summary>
     public static bool Ready => s_ready && UltimusWire.Enabled;
@@ -213,10 +227,18 @@ public static class UltimusLink {
     // Questions
     // ---------------------------------------------------------------------
 
-    private static readonly Lock s_lineLock = new();
-    private static TcpClient s_line;
-    private static StreamReader s_reader;
-    private static StreamWriter s_writer;
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<Lock> s_lineLockSeat = new(() => new Lock());
+    private static Lock s_lineLock { get => s_lineLockSeat.Value; set => s_lineLockSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<TcpClient> s_lineSeat = new();
+    private static TcpClient s_line { get => s_lineSeat.Value; set => s_lineSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<StreamReader> s_readerSeat = new();
+    private static StreamReader s_reader { get => s_readerSeat.Value; set => s_readerSeat.Value = value; }
+    // Kept per seat (Ultimus and each TCO7 member has its own; UltimusSeat).
+    private static readonly SeatLocal<StreamWriter> s_writerSeat = new();
+    private static StreamWriter s_writer { get => s_writerSeat.Value; set => s_writerSeat.Value = value; }
 
     /// <summary>Asks the brain; null when it is not there or did not answer in time.</summary>
     internal static UltimusReply Ask(UltimusRequest request, bool quiet = false) {

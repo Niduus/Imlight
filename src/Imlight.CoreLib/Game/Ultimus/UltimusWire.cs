@@ -89,37 +89,45 @@ internal static class UltimusWire {
     // What Ultimus learned from its own mistakes, one JSON line each (learned.jsonl), for future bots.
     internal const string LEARNED_FILE = "learned.jsonl";
 
-    internal static string Folder => Path.GetFullPath(FOLDER);
+    /// <summary>The folder of the seat the code works for now (Ultimus: logs/ultimus; a TCO7 member: logs/tco7/&lt;name&gt;).</summary>
+    internal static string Folder => UltimusSeat.Current.Folder;
 
-    internal static bool Enabled => ConfigurationManager.GetValue("Ultimus.Enabled", false);
+    /// <summary>
+    /// Ultimus's own folder, where the knowledge of the world every seat reads and adds to is kept (his maps, teleporters,
+    /// doors, stuck solutions, quest tree, creatures, step memory): one book for all, so the TCO7 learn from everything he did
+    /// and he from them (Niduus, 2026-11-16: "link to Ultimus, meaning read EVERYTHING he's done thus far").
+    /// </summary>
+    internal static string SharedFolder => UltimusSeat.Ultimus.Folder;
 
-    internal static int Port => ConfigurationManager.GetValue("Ultimus.Port", 12373);
+    internal static bool Enabled => UltimusSeat.Current.Enabled;
+
+    internal static int Port => UltimusSeat.Current.Port;
 
     /// <summary>How many times longer than expected a quest may take before Ahziael is told (2 = twice as long).</summary>
-    internal static double SlowFactor => System.Math.Clamp(ConfigurationManager.GetValue("Ultimus.SlowFactor", 2.0), 1.2, 20);
+    internal static double SlowFactor => System.Math.Clamp(UltimusSeat.Current.Setting("SlowFactor", 2.0), 1.2, 20);
 
     /// <summary>How many times Ultimus may lose the same fight before it is an issue.</summary>
-    internal static int QuestMinutes => System.Math.Clamp(ConfigurationManager.GetValue("Ultimus.QuestMinutes", 45), 0, 100000);
+    internal static int QuestMinutes => System.Math.Clamp(UltimusSeat.Current.Setting("QuestMinutes", 45), 0, 100000);
 
-    internal static int LossesBeforeIssue => System.Math.Clamp(ConfigurationManager.GetValue("Ultimus.LossesBeforeIssue", 3), 1, 20);
+    internal static int LossesBeforeIssue => System.Math.Clamp(UltimusSeat.Current.Setting("LossesBeforeIssue", 3), 1, 20);
 
     /// <summary>How many minutes without any progress before Ultimus counts as stuck.</summary>
     /// <summary>Whether Ultimus joins a real player's battle when the creature it needs is in it (Niduus: "Ultimus will join players if it's convenient for quests").</summary>
-    internal static bool JoinPlayers => ConfigurationManager.GetValue("Ultimus.JoinPlayers", true);
+    internal static bool JoinPlayers => UltimusSeat.Current.Setting("JoinPlayers", true);
 
     /// <summary>
     /// Party mode (Niduus, 2026-11-14, approved): Ultimus takes a real player's group invitation and goes along with them
     /// (teleports to them as a group mate does, joins their battles, does the quest steps they both have) until the group
     /// ends; then back to his story. Off: every invitation is turned down, as before.
     /// </summary>
-    internal static bool PartyMode => ConfigurationManager.GetValue("Ultimus.PartyMode", true);
+    internal static bool PartyMode => UltimusSeat.Current.Setting("PartyMode", true);
 
     /// <summary>Emotes (Niduus, 2026-11-14, approved): he waves at players who greet him, cheers after a tough win, sits when idle.</summary>
-    internal static bool Emotes => ConfigurationManager.GetValue("Ultimus.Emotes", true);
+    internal static bool Emotes => UltimusSeat.Current.Setting("Emotes", true);
 
     // 8 was the old default; his logs (2026-11-13/14) showed the long stucks were the ones that waited this long to act,
     // so 8 (never changed by hand) now means the new default of 5 (Niduus, 2026-11-15: "speed up his ability to fix problems").
-    internal static int StuckMinutes => System.Math.Clamp(ConfigurationManager.GetValue("Ultimus.StuckMinutes", 5) is var m && m == 8 ? 5 : m, 2, 120);
+    internal static int StuckMinutes => System.Math.Clamp(UltimusSeat.Current.Setting("StuckMinutes", 5) is var m && m == 8 ? 5 : m, 2, 120);
 
     private static readonly JsonSerializerOptions s_json = new(JsonSerializerDefaults.General);
 

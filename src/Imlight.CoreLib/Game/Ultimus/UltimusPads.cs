@@ -517,7 +517,7 @@ internal static class UltimusPads {
 
         s_learned = new Dictionary<string, List<Pad>>(StringComparer.OrdinalIgnoreCase);
         try {
-            var path = Path.Combine(UltimusWire.Folder, PADS_FILE);
+            var path = Path.Combine(UltimusWire.SharedFolder, PADS_FILE);
             if (File.Exists(path) && UltimusWire.Read<Dictionary<string, List<Pad>>>(File.ReadAllText(path)) is { } read) {
                 foreach (var (zone, pads) in read) {
                     s_learned[zone] = [.. pads.Where(p => p is not null).Select(p => p with { Learned = true })];
@@ -533,8 +533,8 @@ internal static class UltimusPads {
 
     private static void Save(Dictionary<string, List<Pad>> all) {
         try {
-            Directory.CreateDirectory(UltimusWire.Folder);
-            File.WriteAllText(Path.Combine(UltimusWire.Folder, PADS_FILE), UltimusWire.Write(all));
+            Directory.CreateDirectory(UltimusWire.SharedFolder);
+            File.WriteAllText(Path.Combine(UltimusWire.SharedFolder, PADS_FILE), UltimusWire.Write(all));
         }
         catch (Exception ex) {
             Logger.Debug("Ultimus: {0} could not be written: {1}", Logger.Args(PADS_FILE, ex.Message));

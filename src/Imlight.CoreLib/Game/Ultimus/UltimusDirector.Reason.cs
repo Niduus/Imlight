@@ -40,7 +40,7 @@ namespace Imlight.CoreLib.Game.Ultimus;
 /// </summary>
 internal sealed partial class UltimusDirectorActor {
 
-    private static bool StuckThinkingOn => ConfigurationManager.GetValue("Ultimus.StuckThinking", true);
+    private static bool StuckThinkingOn => UltimusSeat.Current.Setting("StuckThinking", true);
 
     // Thinking is asked from the second alarm at one spot on one step, and at most once every few minutes there.
     private const int THINK_FROM_ALARM = 2;
