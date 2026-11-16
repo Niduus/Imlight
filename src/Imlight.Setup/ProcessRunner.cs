@@ -31,9 +31,15 @@ internal static class ProcessRunner {
     /// <summary>
     /// Runs a program to the end and returns its exit code. Its output goes to the log; with
     /// <paramref name="showProgress"/>, a dot is printed now and then so it does not look stuck.
+    /// <paramref name="workingDirectory"/>, when given, is the folder it runs in.
     /// </summary>
-    internal static async Task<int> RunAsync(string fileName, IEnumerable<string> arguments, bool showProgress = false) {
+    internal static async Task<int> RunAsync(string fileName, IEnumerable<string> arguments, bool showProgress = false,
+        string? workingDirectory = null) {
         var startInfo = CreateStartInfo(fileName, arguments);
+        if (workingDirectory is not null) {
+            startInfo.WorkingDirectory = workingDirectory;
+        }
+
         SetupLog.Detail($"> {fileName} {string.Join(' ', startInfo.ArgumentList)}");
 
         using var process = new Process { StartInfo = startInfo };

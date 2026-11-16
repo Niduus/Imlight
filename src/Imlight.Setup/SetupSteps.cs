@@ -513,9 +513,11 @@ internal sealed class SetupSteps : IDisposable {
         }
 
         SetupLog.Info("Building the server. The first build downloads its packages and can take several minutes.");
+        // Run from the source folder so its global.json picks the .NET 10 SDK even when a newer one is installed:
+        // Imcodec builds an MSBuild task against the running SDK's own MSBuild, which only compiles on .NET 10.
         var exitCode = await ProcessRunner.RunAsync(dotnet,
             ["publish", project, "-c", "Release", "-r", RuntimeIdentifier(), "--self-contained", "true", "-o", staging, "-nologo"],
-            showProgress: true);
+            showProgress: true, workingDirectory: SourceFolder);
         if (exitCode != 0) {
             throw new SetupException("The server could not be built. The errors are in the setup log.");
         }
