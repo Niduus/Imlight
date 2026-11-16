@@ -1475,6 +1475,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             System.IO.Directory.CreateDirectory(folder);
             var name = new string(zone.Select(c => char.IsLetterOrDigit(c) ? c : '-').ToArray());
             System.IO.File.WriteAllText(System.IO.Path.Combine(folder, $"{name}.txt"), layout);
+            UltimusAreaBook.Save(zone);
         }
         catch (Exception) {
             // Only a help for reading what he knows.

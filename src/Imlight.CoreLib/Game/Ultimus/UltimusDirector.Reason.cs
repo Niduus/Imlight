@@ -137,6 +137,8 @@ internal sealed partial class UltimusDirectorActor {
         "so never give the backpack as the cause; in a dungeon, setting the step aside wastes the run, so pick it last. " +
         "Maps: his way finder lays the game's own walk map over its rough one, so narrow ledges, bridges, ring walks and lift tops count as floor; " +
         "when a step is on a tower's top or a platform, the way is usually round the outer ring and over a bridge, not straight across, so prefer other_route. " +
+        "Area book lines come from the area's own files: if one says a gate or door near him opens on beating a creature, prefer fight_nearby; " +
+        "if it says the step is on another ground and no known teleporter leads there, prefer other_route (he tries teleporters he has not used yet). " +
         "Answer with JSON only, no other text: {\"cause\": \"...\", \"move\": \"<one move id>\", \"why\": \"...\"}. Keep cause and why under 160 characters each, plain words.";
 
     private string StuckQuestion(UltimusMember.Status member, UltimusPlanner.Target goal, string quest, string where, string why, List<string> allowed) {
@@ -162,6 +164,12 @@ internal sealed partial class UltimusDirectorActor {
             q.AppendLine(d.Summary);
             foreach (var check in d.Checks.Take(4)) {
                 q.AppendLine("- check: " + UltimusText.Short(check, 160));
+            }
+        }
+
+        if (goal is not null) {
+            foreach (var fact in UltimusAreaBook.Facts(member.Zone, member.X, member.Y, goal.X, goal.Y)) {
+                q.AppendLine(fact);
             }
         }
 

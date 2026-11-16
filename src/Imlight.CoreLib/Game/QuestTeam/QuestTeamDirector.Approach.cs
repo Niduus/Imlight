@@ -160,7 +160,8 @@ internal sealed partial class QuestTeamDirectorActor {
         "from the list of allowed moves. Rules: they play like humans. They never skip or finish a step by command and only use the allowed moves. " +
         "If creatures stand by the step and the step or the game's message hints at a fight or a guard, prefer fight_nearby. If the game offers " +
         "something to click next to the leader, prefer click_offered. If they are walled in or the way finder fails, prefer other_route or " +
-        "walk_away_and_back. If nothing fits, pick set_step_aside (a short break). Answer with JSON only, no other text: " +
+        "walk_away_and_back. If an area book line says a gate or door near them opens on beating a creature, prefer fight_nearby. " +
+        "If nothing fits, pick set_step_aside (a short break). Answer with JSON only, no other text: " +
         "{\"cause\": \"...\", \"move\": \"<one move id>\", \"why\": \"...\"}. Keep cause and why under 160 characters each, plain words.";
 
     private static readonly string[] s_teamMoves = [
@@ -219,6 +220,12 @@ internal sealed partial class QuestTeamDirectorActor {
         q.AppendLine(foes.Count > 0 ? $"Creatures near: {string.Join(", ", foes)}." : "No creatures near.");
         foreach (var known in UltimusSolutions.Known(quest, step, leader.Zone, leader.X, leader.Y)) {
             q.AppendLine($"Tried for this step before: {known.Move} ({known.Worked} worked, {known.Failed} failed){(known.Cause.Length > 0 ? $", thought: {known.Cause}" : "")}.");
+        }
+
+        if (_target is not null) {
+            foreach (var fact in Ultimus.UltimusAreaBook.Facts(leader.Zone, leader.X, leader.Y, _target.X, _target.Y)) {
+                q.AppendLine(fact);
+            }
         }
 
         foreach (var tip in UltimusTips.For(quest)) {

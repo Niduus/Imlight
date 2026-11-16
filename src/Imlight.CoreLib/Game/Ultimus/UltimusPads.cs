@@ -112,6 +112,9 @@ internal static class UltimusPads {
             Save(all);
         }
 
+        // The area book shows it from now on (logs/ultimus/maps/<area>-book.txt).
+        UltimusAreaBook.Save(zonePath);
+
         return true;
     }
 
@@ -332,20 +335,7 @@ internal static class UltimusPads {
 
             // The grounds known pads reach from here, fewest pads first (Big Ben: the floor's own teleporter up was learned,
             // so its next untried one is on the floor above, one pad away), each with where he lands on it.
-            var hops = new Dictionary<int, (int Hops, float X, float Y)> { [here] = (0, x, y) };
-            var pads = known.Select(p => (Pad: p, On: OverlayQuestPath.IslandOf(zonePath, p.X, p.Y), Lands: OverlayQuestPath.IslandOf(zonePath, p.ToX, p.ToY)))
-                .Where(p => p.On >= 0 && p.Lands >= 0 && p.On != p.Lands).ToList();
-            var frontier = new List<int> { here };
-            for (var depth = 1; depth <= MOST_PADS && frontier.Count > 0; depth++) {
-                var next = new List<int>();
-                foreach (var pad in pads.Where(p => frontier.Contains(p.On) && !hops.ContainsKey(p.Lands))) {
-                    if (hops.TryAdd(pad.Lands, (depth, pad.Pad.ToX, pad.Pad.ToY))) {
-                        next.Add(pad.Lands);
-                    }
-                }
-
-                frontier = next;
-            }
+            var hops = Reach(zonePath, x, y);
 
             return untried.Where(u => hops.ContainsKey(u.On))
                 .OrderBy(u => BackWay(u.U.Name) ? 1 : 0)
@@ -356,6 +346,46 @@ internal static class UltimusPads {
         }
         catch (Exception) {
             return null;
+        }
+    }
+
+    /// <summary>
+    /// The grounds (islands) the known teleporters reach from (x, y), each with how many teleporters it takes and where he
+    /// lands on it (the ground he stands on: 0, at (x, y)). Empty when the area's ground is unknown.
+    /// </summary>
+    internal static Dictionary<int, (int Hops, float X, float Y)> Reach(string zonePath, float x, float y) {
+        var here = OverlayQuestPath.IslandOf(zonePath, x, y);
+        var hops = new Dictionary<int, (int Hops, float X, float Y)>();
+        if (here < 0) {
+            return hops;
+        }
+
+        hops[here] = (0, x, y);
+        var pads = In(zonePath).Select(p => (Pad: p, On: OverlayQuestPath.IslandOf(zonePath, p.X, p.Y), Lands: OverlayQuestPath.IslandOf(zonePath, p.ToX, p.ToY)))
+            .Where(p => p.On >= 0 && p.Lands >= 0 && p.On != p.Lands).ToList();
+        var frontier = new List<int> { here };
+        for (var depth = 1; depth <= MOST_PADS && frontier.Count > 0; depth++) {
+            var next = new List<int>();
+            foreach (var pad in pads.Where(p => frontier.Contains(p.On) && !hops.ContainsKey(p.Lands))) {
+                if (hops.TryAdd(pad.Lands, (depth, pad.Pad.ToX, pad.Pad.ToY))) {
+                    next.Add(pad.Lands);
+                }
+            }
+
+            frontier = next;
+        }
+
+        return hops;
+    }
+
+    /// <summary>The teleporters of the area whose landing is not known yet (from the area's files, less the known ones).</summary>
+    internal static List<Untried> UntriedIn(string zonePath) {
+        try {
+            var known = In(zonePath);
+            return [.. s_untried.GetOrAdd(zonePath, UntriedFromFiles).Where(u => !known.Any(p => Near(p.X, p.Y, u.X, u.Y, UNTRIED_KNOWN)))];
+        }
+        catch (Exception) {
+            return [];
         }
     }
 
@@ -470,7 +500,7 @@ internal static class UltimusPads {
         return [.. pads.DistinctBy(p => ((int) (p.X / 100), (int) (p.Y / 100), (int) (p.ToX / 100), (int) (p.ToY / 100)))];
     }
 
-    private static T Read<T>(byte[] data) where T : PropertyClass {
+    internal static T Read<T>(byte[] data) where T : PropertyClass {
         if (data is null) {
             return null;
         }

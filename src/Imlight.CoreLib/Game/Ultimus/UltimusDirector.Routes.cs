@@ -124,6 +124,11 @@ internal sealed partial class UltimusDirectorActor {
     // How near a door or stone of the way it presses it (a door's own reach is 140).
     private const float PRESS_REACH = 160f;
 
+    // How near a door that opens on a fight counts as his, and how long before that door is fought for again.
+    private const float GATE_NEAR = 900f;
+    private static readonly TimeSpan s_gateAgain = TimeSpan.FromMinutes(10);
+    private readonly Dictionary<string, DateTime> _gateFought = new(StringComparer.OrdinalIgnoreCase);
+
     // How far the nearest teleporter may be when it can't move at all.
     private const float PAD_LAST_RESORT = 3000f;
 
@@ -135,6 +140,22 @@ internal sealed partial class UltimusDirectorActor {
         var member = _team[index];
         if (_leaderLastTarget is not { } goal) {
             return false;
+        }
+
+        // A door by him that the area's files say opens on beating a creature, and creatures there: he beats them first, as
+        // a player clears the room to open its door (Big Ben: each floor's door by the teleporter up opens once the floor's
+        // elite is beaten).
+        if (UltimusAreaBook.OpensOnFight(member.Zone, member.X, member.Y, GATE_NEAR) is { } gate
+            && _gateFought.GetValueOrDefault(member.Zone + "|" + gate.Object) < DateTime.UtcNow - s_gateAgain
+            && BotShared.BotUseGuards.Near(member.ZoneActor, gate.X, gate.Y).Any(m => BotShared.DudCreatures.Fightable(m.Object.m_globalID.Full))) {
+            _gateFought[member.Zone + "|" + gate.Object] = DateTime.UtcNow;
+            _clearAround = (member.Zone ?? "", gate.X, gate.Y, DateTime.UtcNow.AddMinutes(10));
+            Note("Ultimus", $"{member.Name} is stuck on the way to \"{goal.What}\" by \"{gate.Object}\", which the area's files say opens on {gate.By}: " +
+                            "he beats the creatures there first.", UltimusLink.NOTABLE);
+            Think($"The door \"{gate.Object}\" here opens on {gate.By}. I beat the creatures by it first, as a player clears the room, then go on.",
+                "gate-fight|" + gate.Object);
+
+            return true;
         }
 
         // The step on ground no known teleporter reaches: a teleporter he has not used yet, before one that goes back.
