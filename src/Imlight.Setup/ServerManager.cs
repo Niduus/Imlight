@@ -241,14 +241,14 @@ internal sealed partial class ServerManager(string installFolder) {
         if (RemoteSession.Current is { } remote) {
             await GameClient.LaunchAsync(InstallFolder, remote.Server.Host, LoginPort);
 
-            return $"Starting Wizard101 for {remote.Label}. Log in with your account on that server.";
+            return WithDownloadWarning($"Starting Wizard101 for {remote.Label}. Log in with your account on that server.");
         }
 
         // Away from the window: trying a port nothing listens on waits up to half a second.
         if (await Task.Run(() => IsListening(LoginPort))) {
             await GameClient.LaunchAsync(InstallFolder, "127.0.0.1", LoginPort);
 
-            return "Starting Wizard101. Log in with your account on this server.";
+            return WithDownloadWarning("Starting Wizard101. Log in with your account on this server.");
         }
 
         StartServer();
@@ -263,8 +263,14 @@ internal sealed partial class ServerManager(string installFolder) {
             }
         });
 
-        return "Starting the server first. Wizard101 opens by itself when the server is ready.";
+        return WithDownloadWarning("Starting the server first. Wizard101 opens by itself when the server is ready.");
     }
+
+    /// <summary>
+    /// Adds why wizards may show as a floating head and hands (the game can't download clothing and creatures from KingsIsle).
+    /// </summary>
+    private string WithDownloadWarning(string said)
+        => GameDownloadCheck.PlayWarning(InstallFolder) is { } warning ? $"{said} {warning}" : said;
 
     // ---------------------------------------------------------------------
     // Log

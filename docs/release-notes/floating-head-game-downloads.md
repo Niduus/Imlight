@@ -1,0 +1,4 @@
+Fixed: Ahziael tells you why wizards show as a floating head and hands
+Wizard101 downloads clothing and creature art from KingsIsle by itself while you play, whichever server you are on. When that download is blocked or never finished, wizards show only a head and hands, and some characters like Rattlebones stay unseen. The server never sends these files, so changing the server or its game files did not help. Ahziael now checks for this when you press Play and says what is wrong and how to fix it, such as a hosts file line blocking KingsIsle or a game file that is not downloaded yet.
+Where: Play button, and the Check game downloads button under the Game log on the Logs tab.
+Test: Press Play and see no extra warning on a normal PC. On the Logs tab, open Game log and click Check game downloads: it should say the downloads look fine.

@@ -1343,6 +1343,7 @@ internal sealed partial class ManagerWindow : Window {
                 LogWell(_clientLogBox),
                 Row(Action(Plain("Copy all"), () => CopyAsync(_clientLogText.Length > 0 ? _clientLogText : _clientLogBox.Text ?? "")),
                     Action(Plain("Save game log to desktop"), SaveClientLogAsync),
+                    Action(Plain("Check game downloads"), CheckGameDownloadsAsync),
                     Action(Plain("Open game log folder"), () => _clientLogFolder is null
                         ? throw new PanelException("Wizard101 has not written a log yet. Play once, then look again.")
                         : Open(_clientLogFolder))))));
@@ -1864,7 +1865,9 @@ internal sealed partial class ManagerWindow : Window {
                         toggle,
                         Action(Primary("Play"), async () => {
                             await GameClient.LaunchAsync(_manager.InstallFolder, server.Host, server.Port);
-                            Say($"Starting Wizard101 on {hidden}.");
+                            var folder = _manager.InstallFolder;
+                            var warning = await Task.Run(() => GameDownloadCheck.PlayWarning(folder));
+                            Say(warning is null ? $"Starting Wizard101 on {hidden}." : $"Starting Wizard101 on {hidden}. {warning}");
                         }),
                         Danger(Action(Plain("Remove"), async () => {
                             if (await ConfirmAsync($"Remove {hidden}?")) {
@@ -2088,6 +2091,27 @@ internal sealed partial class ManagerWindow : Window {
         Say($"Saved the whole log to your desktop as \"{Path.GetFileName(path)}\". Drag it into the chat to send it.");
 
         return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Why wizards may show as a floating head and hands, or characters stay unseen: Wizard101 downloads clothing and
+    /// creatures from KingsIsle while it plays, and something stops it. See <see cref="GameDownloadCheck"/>.
+    /// </summary>
+    private async Task CheckGameDownloadsAsync() {
+        var folder = _manager.InstallFolder;
+        var problems = await Task.Run(() => GameDownloadCheck.Check(folder, true));
+        if (problems.Count == 0) {
+            Say("Wizard101's downloads look fine: its body and creature files are here, and its newest log shows every download finished.");
+
+            return;
+        }
+
+        await ShowGameDownloadProblemsAsync(problems);
+    }
+
+    private async Task ShowGameDownloadProblemsAsync(List<string> problems) {
+        Say(problems[0], isError: true);
+        await Dialog(string.Join("\n\n", problems), null, out _).ShowDialog<bool>(this);
     }
 
     private async Task SaveClientLogAsync() {
