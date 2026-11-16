@@ -124,11 +124,82 @@ internal static class BotProgress {
             var at = ladder.ToList().FindIndex(w => string.Equals(w, world, StringComparison.OrdinalIgnoreCase));
             var next = ladder.Skip(at + 1).FirstOrDefault(Has) ?? "";
 
-            return new Count(world, DoneIn(world), plans[world].Count, next, 0);
+            // The story goes on past the quests the game's data marks as the world's story: Marleybone's Big Ben
+            // ("Metal Madness", "Stolen Away" after Katz's lab) is not marked as the main story, so it showed "Marleybone
+            // story: 32/32 done, on to MooShu" while Ultimus was still in Big Ben (Niduus, 2026-11-15: "inaccurate").
+            // A quest of this world that the bot plays and the count lacks belongs to the world's story: it is learned
+            // (kept in story-extras.json) and counted from then on, done or not.
+            Learn(world, quest, wizard, plans[world]);
+            var extras = ExtrasOf(world);
+            var done = DoneIn(world) + extras.Count(wizard.HasCompletedQuest);
+
+            return new Count(world, done, plans[world].Count + extras.Count, next, 0);
         }
         catch (Exception ex) {
             Logger.Debug("Bots: story progress could not be worked out: {0}", Logger.Args(ex.Message));
             return null;
+        }
+    }
+
+    // Quests learned to be part of a world's story past the ones the game's data marks: world -> quest codes.
+    private static Dictionary<string, HashSet<string>> s_extras;
+
+    private static string ExtrasFile => Path.Combine(Ultimus.UltimusWire.Folder, "story-extras.json");
+
+    private static HashSet<string> ExtrasOf(string world) {
+        lock (s_lock) {
+            LoadExtras();
+            return s_extras.TryGetValue(world, out var set) ? [.. set] : [];
+        }
+    }
+
+    private static void LoadExtras() {
+        if (s_extras is not null) {
+            return;
+        }
+
+        s_extras = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+        try {
+            if (File.Exists(ExtrasFile)
+                && JsonSerializer.Deserialize<Dictionary<string, List<string>>>(File.ReadAllText(ExtrasFile)) is { } saved) {
+                foreach (var (w, codes) in saved) {
+                    s_extras[w] = new HashSet<string>(codes ?? [], StringComparer.OrdinalIgnoreCase);
+                }
+            }
+        }
+        catch (Exception ex) {
+            Logger.Debug("Bots: the learned story quests could not be read: {0}", Logger.Args(ex.Message));
+        }
+    }
+
+    // The bot is on a quest of this world, not done, that no counted group holds: it is the world's story too.
+    private static void Learn(string world, string quest, Wizard wizard, List<HashSet<string>> plan) {
+        if (string.IsNullOrEmpty(quest) || wizard.HasCompletedQuest(quest) || plan.Any(g => g.Contains(quest))
+            || QuestTemplateCollection.GetQuestByName(quest) is not { } template
+            || !string.Equals(WorldOf(template), world, StringComparison.OrdinalIgnoreCase)
+            || DungeonQuestIndex.IsDungeonQuest(quest)) {
+            return;
+        }
+
+        lock (s_lock) {
+            LoadExtras();
+            if (!s_extras.TryGetValue(world, out var set)) {
+                s_extras[world] = set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            }
+
+            if (!set.Add(quest)) {
+                return;
+            }
+
+            Logger.Information("Bots: {0} ({1}) is part of {2}'s story past the quests the game marks; it is counted from now on.",
+                Logger.Args(Tools.OverlayQuestTracker.English(template.m_questTitle, quest), quest, world));
+            try {
+                Directory.CreateDirectory(Path.GetDirectoryName(ExtrasFile)!);
+                File.WriteAllText(ExtrasFile, JsonSerializer.Serialize(s_extras.ToDictionary(p => p.Key, p => p.Value.Order().ToList())));
+            }
+            catch (Exception ex) {
+                Logger.Debug("Bots: the learned story quests could not be written: {0}", Logger.Args(ex.Message));
+            }
         }
     }
 
