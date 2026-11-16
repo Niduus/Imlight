@@ -674,7 +674,28 @@ internal sealed partial class UltimusDirectorActor {
                   "my spot, go to the potion shop in Wizard City, fill my potions and Recall back. Waiting gets me nowhere.", "farpotion|" + leader.Zone);
         }
 
+        // The trip is on until his potions are full: no Recall before that (his log, 2026-11-16: the first hop from
+        // Regent's Square to the Museum's Regent's Square read as "left the marked area", he recalled back at once and
+        // marked and recalled again 7 times a minute).
+        _farPotionTripUntil = DateTime.UtcNow.AddMinutes(15);
         return UltimusPlanner.Travel(leader, zone, why, "potionshop|" + zone) ?? HubButton(leader, zone, why);
+    }
+
+    private DateTime _farPotionTripUntil = DateTime.MinValue;
+
+    // On the far potion trip, his potions not yet full: the Recall back waits.
+    private bool OnFarPotionTrip(UltimusMember.Status leader) {
+        if (DateTime.UtcNow >= _farPotionTripUntil) {
+            return false;
+        }
+
+        var stats = leader.Wizard?.GameStats;
+        if (stats is null || stats.m_potionCharge >= stats.m_potionMax) {
+            _farPotionTripUntil = DateTime.MinValue;
+            return false;
+        }
+
+        return true;
     }
 
     private const string HUB_KEY = "hubbutton|";

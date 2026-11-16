@@ -271,7 +271,7 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
-        if (leader.Wizard?.ZoneIsInstance == true || CombatDuelComponent.IsInBattle(leader.GlobalId)) {
+        if (leader.Wizard?.ZoneIsInstance == true || CombatDuelComponent.IsInBattle(leader.GlobalId) || OnFarPotionTrip(leader)) {
             return;
         }
 
