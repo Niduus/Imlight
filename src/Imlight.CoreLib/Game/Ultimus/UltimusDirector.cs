@@ -441,6 +441,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         AnswerPlayers();
         // The TCO7's talk with each other, their team-ups and their link to Ultimus (UltimusDirector.Tco7.cs).
         Tco7Tick(_team[0]);
+        // What the TCO7 share and what got them stuck, documented for Ultimus every 10 minutes (UltimusCouncil.cs).
+        UltimusCouncil.Tick();
         // Ahziael's "Pause and explain", answered even while paused (UltimusDirector.Story.cs).
         MaybeExplain(_team[0]);
         // Ahziael's "Back to story", and the guardrails' watch (UltimusDirector.Guard.cs).
@@ -991,6 +993,11 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         _currentQuest = UltimusPlanner.PickQuest(_team);
         NoteWorld(_currentQuest);
+        // The TCO7 council's word on this quest, kept in mind from the start (UltimusCouncil.cs).
+        if (_currentQuest is not null && !_councilHeard.Contains(_currentQuest) && UltimusCouncil.FactsFor(_currentQuest) is { Count: > 0 } council) {
+            _councilHeard.Add(_currentQuest);
+            Think($"Heads-up on {UltimusText.Title(_currentQuest)}: {string.Join(" ", council.Take(3))}", "council|" + _currentQuest);
+        }
         if (_currentQuest is not null) {
             var target = UltimusPlanner.ForQuest(group, _currentQuest);
             // A step he can't place: the area or person the quest's own words name, followed until he gets there
@@ -2633,6 +2640,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             template is null ? "" : QuestStory.WorldOf(template), text, Expected(kind, _target), Seen(quest),
             _target?.Goal ?? "", facts);
     }
+
+    // The quests whose TCO7 council heads-up he has already taken in (once a quest per run).
+    private readonly HashSet<string> _councilHeard = new(StringComparer.OrdinalIgnoreCase);
 
     // The diagnosis last written per quest: its cause and when.
     private readonly Dictionary<string, (string Cause, DateTime At)> _diagnosisSaid = new(StringComparer.OrdinalIgnoreCase);

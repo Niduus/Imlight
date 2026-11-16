@@ -198,6 +198,11 @@ internal sealed partial class UltimusDirectorActor {
             q.AppendLine("Player tip: " + UltimusText.Short(tip, 200));
         }
 
+        // What the TCO7 found on this quest: problems most of them shared and how the others got past them (UltimusCouncil).
+        foreach (var fact in UltimusCouncil.FactsFor(quest)) {
+            q.AppendLine(fact);
+        }
+
         foreach (var thought in _recentThoughts.TakeLast(6)) {
             q.AppendLine("His recent thought: " + UltimusText.Short(thought, 200));
         }

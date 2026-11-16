@@ -60,6 +60,12 @@ internal sealed partial class ManagerWindow {
     private readonly TextBox _tco7Link = new() {
         IsReadOnly = true, TextWrapping = TextWrapping.Wrap, MaxHeight = 360, FontFamily = new FontFamily("Consolas, Menlo, monospace"),
     };
+    private readonly TextBox _tco7Council = new() {
+        IsReadOnly = true, TextWrapping = TextWrapping.Wrap, MaxHeight = 420, FontFamily = new FontFamily("Consolas, Menlo, monospace"),
+    };
+    private readonly TextBox _tco7Efficiency = new() {
+        IsReadOnly = true, TextWrapping = TextWrapping.Wrap, MaxHeight = 420, FontFamily = new FontFamily("Consolas, Menlo, monospace"),
+    };
     private readonly Avalonia.Threading.DispatcherTimer _tco7Timer = new() { Interval = TimeSpan.FromSeconds(3) };
     private bool _showingTco7;
 
@@ -299,7 +305,14 @@ internal sealed partial class ManagerWindow {
                 _tco7Rows),
             Fold("book", ULTIMUS_TAB, "What they read from Ultimus",
                 "What the TCO7 read from Ultimus every half hour: how far he is, his slowest quests to beat, his newest lessons and his stuck answers.",
-                _tco7Link));
+                _tco7Link),
+            Fold("flag", ULTIMUS_TAB, "TCO7 council",
+                "What got a member completely stuck, and every problem 4 or more of the 7 share, with who got past it and what worked for them. " +
+                "Ultimus and every member read this on that quest, so the whole model gets better from it. Written every 10 minutes while the TCO7 are on.",
+                _tco7Council),
+            Fold("clock", ULTIMUS_TAB, "TCO7 efficiency",
+                "Each member's pace, the quests where they are clearly faster than Ultimus (a quicker way exists), and quests where they are all slow.",
+                _tco7Efficiency));
     }
 
     private void ShowTco7() {
@@ -348,6 +361,18 @@ internal sealed partial class ManagerWindow {
             if (link.Length == 0) {
                 link = ReadAllOf(Path.Combine(folder, "ultimus-link.txt"), 32 * 1024);
             }
+        }
+
+        var council = ReadAllOf(Path.Combine(UltimusSharedFolder, "tco7-council.txt"), 64 * 1024).TrimEnd();
+        council = council.Length > 0 ? council : "Nothing yet: the council writes here once the TCO7 have played a while.";
+        if (_tco7Council.Text != council) {
+            _tco7Council.Text = council;
+        }
+
+        var efficiency = ReadAllOf(Path.Combine(UltimusSharedFolder, "tco7-efficiency.txt"), 64 * 1024).TrimEnd();
+        efficiency = efficiency.Length > 0 ? efficiency : "Nothing yet: it shows once the TCO7 have finished some quests.";
+        if (_tco7Efficiency.Text != efficiency) {
+            _tco7Efficiency.Text = efficiency;
         }
 
         var shown = link.Length > 0 ? link.TrimEnd() : "Nothing read yet: the TCO7 read Ultimus's records once they are playing.";
