@@ -1067,7 +1067,7 @@ internal static class UltimusViews {
             ? OverlayHost.Link.SendsUltimus ? key == OverlayUltimusData.TEAM_KEY ? $"Looking for the Quest Team's {OverlayUltimusData.Who(key)} wizard..."
                 : key == OverlayUltimusData.ANYONE_KEY ? "Looking for everyone in the game..." : "Looking for Ultimus..."
                 : "This server's Imlight is too old to watch Ultimus. The host needs to update it."
-            : "Not linked to a server yet. Start the game with Play in Ahziael."
+            : OverlayHost.Link.NotLinkedNote
         : info.Note.Length > 0 ? info.Note
         : info.Stale ? key == OverlayUltimusData.TEAM_KEY ? "The Quest Team stopped answering for now..."
             : key == OverlayUltimusData.ANYONE_KEY ? "The server stopped answering for now..." : "Ultimus stopped answering for now..." : null;

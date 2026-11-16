@@ -1,0 +1,4 @@
+Fixed: Minimap and Quest Tracker work for every player, not just the host
+Other players' Minimap and Quest Tracker could stay blank, because their overlay talked to the server on a separate port that the host's firewall usually kept shut. Now the overlay talks to the server on the same port the game already plays on, so if someone can play on the server, their own map, quests and path line show too, with nothing to open or forward. The overlay also finds the server by itself from the running game, so it works even when the game was not started with Ahziael's Play button. Nothing in the game is changed or read.
+Where: Play > Overlay, the Minimap and Quest Tracker add-ons, on each player's own PC.
+Test: Have a friend on another internet connection open Ahziael with the Minimap and Quest Tracker add-ons, log in to your server and pick a quest. Their minimap shows their own area and the path line for their quest.

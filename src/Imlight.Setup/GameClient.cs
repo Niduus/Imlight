@@ -86,8 +86,9 @@ internal static class GameClient {
         startInfo.ArgumentList.Add(host);
         startInfo.ArgumentList.Add(port.ToString());
         Process.Start(startInfo)?.Dispose();
-        // The overlay tells this server it runs (for servers with [Overlay] RequiredToPlay on).
-        OverlayHost.Link.Target(installFolder, host, OverlayPort(installFolder, host));
+        // The overlay links to this server on the port the game logs in on (the server tells the two apart), then follows
+        // the game to its game port (OverlayGameServer). A server too old for that is reached on its own overlay port.
+        OverlayHost.Link.Target(installFolder, host, port);
     }
 
     /// <summary>

@@ -708,7 +708,7 @@ internal sealed class MinimapView : Control {
         var note = stale
             ? data is { Note.Length: > 0 } ? data.Note : OverlayHost.Link.Connected ? sends
                 ? "Waiting for the map..." : "This server's Imlight is too old for the minimap. The host needs to update it."
-                : "Not linked to a server yet. Start the game with Play in Ahziael."
+                : OverlayHost.Link.NotLinkedNote
             : data!.Note;
         if (note.Length > 0) {
             Note(context, note, area);

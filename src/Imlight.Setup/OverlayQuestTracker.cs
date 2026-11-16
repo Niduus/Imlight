@@ -728,7 +728,7 @@ internal sealed class QuestTrackerView : Control {
         var data = OverlayQuestData.For(_window);
         var note = data is null || (data.Stale && data.Note.Length == 0)
             ? OverlayHost.Link.Connected ? OverlayHost.Link.SendsQuests ? "Waiting for your quests..." : "This server's Imlight is too old for the Quest Tracker. The host needs to update it."
-                : "Not linked to a server yet. Start the game with Play in Ahziael."
+                : OverlayHost.Link.NotLinkedNote
             : data.Note;
         if (note.Length > 0 || data is null) {
             var words = Text(note, _look.StepSize, stepBrush, false, width);

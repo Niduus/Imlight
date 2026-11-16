@@ -554,6 +554,8 @@ internal static class OverlayHost {
 
         // The Ahziael line always shows, so the game windows are followed whatever the design says.
         s_games = FindGameWindows();
+        // The server the game really plays on: linked to by itself, however the game was started.
+        Link.FollowGame(s_installFolder, s_gameIds);
         GameSizes = s_games.Where(g => !Native.IsIconic(g) && Native.GetClientRect(g, out _)).Select(g => {
             Native.GetClientRect(g, out var r);
             var dpi = Native.GetDpiForWindow(g);
@@ -705,6 +707,9 @@ internal static class OverlayHost {
     /// <summary>False once no WizardGraphicalClient.exe runs: then every overlay goes at once, no waiting.</summary>
     private static bool s_gameRunning;
 
+    // The running games' process ids (for the server they play on: OverlayGameServer).
+    private static HashSet<uint> s_gameIds = [];
+
     /// <summary>
     /// The Wizard101 game windows (Niduus, 2026-11-11: "Have the hook wait until the EXE is found"): only windows of a
     /// running WizardGraphicalClient.exe that are really on the screen (shown, not cloaked or on another desktop, with a
@@ -729,6 +734,7 @@ internal static class OverlayHost {
 
         var found = new List<IntPtr>();
         s_gameRunning = ids.Count > 0;
+        s_gameIds = ids;
         if (ids.Count == 0) {
             s_firstSeen.Clear();
             return found;
@@ -1510,10 +1516,18 @@ internal static class OverlayHost {
         internal static bool? Required { get; private set; }
 
         internal static string Status => s_target is not { } target
-            ? "Not linked to a server yet: start the game with Play in Ahziael and it links to that server."
+            ? "Not linked to a server yet: start the game and log in, and it links to that game's server by itself."
             : Connected
                 ? $"Linked to {target.Host}. " + (Required == true ? "That server needs the overlay, and it sees yours." : "That server doesn't need the overlay right now.")
                 : $"Trying to reach {target.Host} on port {target.Port}. A server that doesn't need the overlay may not answer, which is fine.";
+
+        /// <summary>
+        /// What a minimap or Quest Tracker says while the link is down: no server yet, or a server that doesn't answer.
+        /// No address in it, as it shows on the game.
+        /// </summary>
+        internal static string NotLinkedNote => s_target is null
+            ? "Not linked to a server yet. Log in to the game and it links by itself."
+            : "Can't reach the server right now. It links again by itself once the game is in.";
 
         internal static void Start() {
             lock (s_lock) {
@@ -1537,6 +1551,81 @@ internal static class OverlayHost {
 
         private const string FILE = "overlay-link.json";
         private static DateTime s_fileTime = DateTime.MinValue;
+
+        private static DateTime s_nextFollow = DateTime.MinValue;
+        private static (string Host, IPAddress[] Addresses) s_resolved = ("", []);
+
+        /// <summary>
+        /// Links to the server the running game is connected to when that isn't the one linked now (a game started without
+        /// Ahziael's Play button, from another launcher or shortcut). Looked at every few seconds while a game runs.
+        /// </summary>
+        internal static void FollowGame(string installFolder, IEnumerable<uint> gameIds) {
+            if (!gameIds.Any() || DateTime.UtcNow < s_nextFollow) {
+                return;
+            }
+
+            s_nextFollow = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+            if (Interlocked.Exchange(ref s_following, 1) == 1) {
+                return;
+            }
+
+            // Off the drawing thread: a host name may need looking up.
+            var ids = gameIds.ToList();
+            _ = Task.Run(() => {
+                try {
+                    Follow(installFolder, ids);
+                }
+                finally {
+                    Volatile.Write(ref s_following, 0);
+                }
+            });
+        }
+
+        private static int s_following;
+
+        private static void Follow(string installFolder, List<uint> gameIds) {
+            try {
+                var now = s_target;
+                var linked = now is { } t ? AddressesOf(t.Host) : [];
+                bool SameServer(IPAddress address) => linked.Any(a => OverlayGameServer.Same(a, address));
+                bool IsLinked(IPEndPoint end) => now is { } n && n.Port == end.Port && SameServer(end.Address);
+                var server = OverlayGameServer.ServerOf(gameIds, IsLinked, SameServer);
+                if (server is null || IsLinked(server)) {
+                    return;
+                }
+
+                // The same port the game plays on (the server tells the overlay and the game apart); this PC's own
+                // server by 127.0.0.1, as the server knows this PC by that.
+                var host = OverlayGameServer.IsThisPc(server.Address) ? "127.0.0.1" : server.Address.ToString();
+                Log($"Overlay link: the game plays on port {server.Port}, so the overlay links there.");
+                Target(installFolder, host, server.Port);
+            }
+            catch (Exception ex) when (ex is SocketException or InvalidOperationException or ArgumentException or ExternalException) {
+            }
+        }
+
+        // The addresses of the linked host (a name is looked up once, not every few seconds).
+        private static IPAddress[] AddressesOf(string host) {
+            if (IPAddress.TryParse(host, out var ip)) {
+                return [ip.IsIPv4MappedToIPv6 ? ip.MapToIPv4() : ip];
+            }
+
+            if (string.Equals(s_resolved.Host, host, StringComparison.OrdinalIgnoreCase)) {
+                return s_resolved.Addresses;
+            }
+
+            IPAddress[] found;
+            try {
+                found = Dns.GetHostAddresses(host, AddressFamily.InterNetwork);
+            }
+            catch (Exception ex) when (ex is SocketException or ArgumentException) {
+                found = [];
+            }
+
+            s_resolved = (host, found);
+
+            return found;
+        }
 
         /// <summary>
         /// Links to the server the game was just started on: its Remote Admin port at the same address. Written to a
@@ -1650,7 +1739,15 @@ internal static class OverlayHost {
 
                 try {
                     if (target is { } t) {
-                        await ConnectAsync(t.Host, t.Port, retarget.Token);
+                        s_answered = false;
+                        try {
+                            await ConnectAsync(t.Host, t.Port, retarget.Token);
+                        }
+                        catch (Exception ex) when (!s_answered && !retarget.IsCancellationRequested && t.Port != OldPort(t.Host)
+                                                   && ex is IOException or AuthenticationException or InvalidDataException or System.Text.Json.JsonException) {
+                            // The game's port of a server too old to take the overlay there: its own overlay port, as before.
+                            await ConnectAsync(t.Host, OldPort(t.Host), retarget.Token);
+                        }
                     }
                 }
                 catch (Exception ex) when (ex is IOException or SocketException or OperationCanceledException or AuthenticationException
@@ -1670,6 +1767,12 @@ internal static class OverlayHost {
                 }
             }
         }
+
+        // Whether the server answered on this try (then a failure isn't a server too old for the game's port).
+        private static bool s_answered;
+
+        // The overlay's own port, which servers before the overlay could share the game's port listened on.
+        private static int OldPort(string host) => Setup.GameClient.OverlayPort(s_folder, host);
 
         private static async Task ConnectAsync(string host, int port, CancellationToken stop) {
             using var tcp = new TcpClient(AddressFamily.InterNetwork);
@@ -1704,6 +1807,7 @@ internal static class OverlayHost {
                     }
 
                     Connected = true;
+                    s_answered = true;
                     Listen(reply);
 
                     // Until the next beat, overlay buttons' commands go over this same connection, each answered at once,
@@ -1868,8 +1972,8 @@ internal static class OverlayHost {
                 return new OverlayCommands.Result(false, !s_drawing
                     ? "The other Ahziael copy is drawing the overlay: use the buttons on the game."
                     : target is null
-                        ? "Not linked to a server yet: start the game with Play in Ahziael."
-                        : $"Can't reach {target.Value.Host} right now. The host needs Imlight running, with its Remote Admin port reachable.", []);
+                        ? "Not linked to a server yet: start the game and log in."
+                        : $"Can't reach {target.Value.Host} right now. The host needs Imlight running.", []);
             }
 
             var pending = new Pending(window, kind, value, new TaskCompletionSource<OverlayCommands.Result>(TaskCreationOptions.RunContinuationsAsynchronously));

@@ -215,6 +215,35 @@ public static class RemoteAdminServer {
         }
     }
 
+    private static readonly CancellationTokenSource s_gamePortStop = new();
+
+    /// <summary>
+    /// An Ahziael overlay that came in on the game's own port (TcpListenerActor saw TLS instead of the game): served
+    /// here as an overlay link only, so every player who can play on this server gets their minimap and Quest Tracker
+    /// with no other port to open (Niduus, 2026-11-16). Logins, admin work and account downloads stay on the Remote
+    /// Admin port.
+    /// </summary>
+    public static void ServeOverlayFromGamePort(Socket socket) {
+        TcpClient client;
+        try {
+            client = new TcpClient { Client = socket };
+        }
+        catch (Exception ex) when (ex is SocketException or ObjectDisposedException or InvalidOperationException) {
+            socket.Dispose();
+
+            return;
+        }
+
+        _ = Task.Run(() => ServeAsync(client, s_gamePortStop.Token, overlayOnly: true), CancellationToken.None);
+    }
+
+    /// <summary>The certificate, made now if the Remote Admin port never started (all of it turned off).</summary>
+    private static X509Certificate2 Certificate() {
+        lock (s_lock) {
+            return s_certificate ??= LoadOrMakeCertificate();
+        }
+    }
+
     private static string AddressOf(TcpClient client) {
         var address = (client.Client.RemoteEndPoint as IPEndPoint)?.Address;
         if (address?.IsIPv4MappedToIPv6 == true) {
@@ -236,7 +265,7 @@ public static class RemoteAdminServer {
 
     }
 
-    private static async Task ServeAsync(TcpClient client, CancellationToken stop) {
+    private static async Task ServeAsync(TcpClient client, CancellationToken stop, bool overlayOnly = false) {
         var address = AddressOf(client);
         var waiting = true;
         if (Interlocked.Increment(ref s_connections) > MAX_CONNECTIONS
@@ -257,7 +286,7 @@ public static class RemoteAdminServer {
             using (var handshake = CancellationTokenSource.CreateLinkedTokenSource(stop)) {
                 handshake.CancelAfter(TimeSpan.FromSeconds(10));
                 await tls.AuthenticateAsServerAsync(new SslServerAuthenticationOptions {
-                    ServerCertificate = s_certificate,
+                    ServerCertificate = Certificate(),
                     ClientCertificateRequired = false,
                     EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13,
                 }, handshake.Token);
@@ -273,6 +302,15 @@ public static class RemoteAdminServer {
                 var op = (string) header["op"] ?? "";
                 JsonObject reply;
                 byte[] replyBody = null;
+                if (overlayOnly && op != "overlay") {
+                    // The game's port carries the overlay link only.
+                    reply = RemoteAdminWire.Error("Only the overlay connects on this port.");
+                    reply["id"] = header["id"]?.DeepClone();
+                    await RemoteAdminWire.WriteAsync(tls, reply, null, stop);
+
+                    return;
+                }
+
                 if (session is null) {
                     if (op == "hello") {
                         reply = Hello();

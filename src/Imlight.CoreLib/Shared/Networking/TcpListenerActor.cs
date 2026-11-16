@@ -142,8 +142,42 @@ public class TcpListenerActor : ReceiveActor {
                 Logger.Args(Name, ex.Message));
         }
 
-        var msg = new SERVER_100_PROTOCOL.MSG_ALLOCATESOCKET() { Socket = socket };
-        _serverRef.Tell(msg);
+        // The game waits for the server to speak first; Ahziael's overlay speaks first (TLS). A short look tells them
+        // apart, off the accept loop, so the overlay links on the same port the game plays on (no other port to open).
+        _ = Task.Run(async () => {
+            if (await IsOverlayAsync(socket)) {
+                Logger.Debug("TcpListener for {Name}: an Ahziael overlay from {RemoteEndPoint}.", Logger.Args(Name, socket.RemoteEndPoint?.ToString()));
+                Game.Tools.RemoteAdmin.RemoteAdminServer.ServeOverlayFromGamePort(socket);
+
+                return;
+            }
+
+            _serverRef.Tell(new SERVER_100_PROTOCOL.MSG_ALLOCATESOCKET() { Socket = socket });
+        });
+    }
+
+    // How long a new connection may stay quiet before it is taken as the game (which never speaks first).
+    private static readonly TimeSpan s_overlayLook = TimeSpan.FromMilliseconds(150);
+
+    /// <summary>True when the connection opened with a TLS hello (0x16 0x03): Ahziael's overlay, never the game.</summary>
+    private static async Task<bool> IsOverlayAsync(Socket socket) {
+        try {
+            var until = DateTime.UtcNow + s_overlayLook;
+            while (DateTime.UtcNow < until) {
+                if (socket.Available >= 2) {
+                    var first = new byte[2];
+                    var read = socket.Receive(first, 0, 2, SocketFlags.Peek);
+
+                    return read == 2 && first[0] == 0x16 && first[1] == 0x03;
+                }
+
+                await Task.Delay(15);
+            }
+        }
+        catch (Exception ex) when (ex is SocketException or ObjectDisposedException) {
+        }
+
+        return false;
     }
 
 }
