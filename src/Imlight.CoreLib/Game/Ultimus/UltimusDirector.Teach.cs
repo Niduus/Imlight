@@ -88,7 +88,7 @@ internal sealed partial class UltimusDirectorActor {
         _teachSteps = 0;
         Note("Ultimus", $"TEACHING: walks {_teachName} through \"{quest.Title}\" ({quest.Id}), step by step.");
         Think($"{_teachName} asked me to walk them through \"{quest.Title}\". I tell them each step and wait for them; my own story waits.", "teach|" + quest.Id);
-        UltimusJournal.Write(UltimusJournal.PARTY, $"Walked {_teachName} through {quest.Title}.", quest.World, "", _teachName, 1);
+        UltimusJournal.Write("taught", $"Walked {_teachName} through {quest.Title}.", quest.World, "", _teachName, 1);
         NoteTogether(heard.SpeakerCharId, $"walked them through \"{quest.Title}\"");
         Count("quests taught");
         SendReply(heard, $"Sure! \"{quest.Title}\". {StepWords(quest)} Tell me when you're stuck, or say \"got it\" when you don't need me.", "teaching");

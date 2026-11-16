@@ -104,6 +104,7 @@ internal sealed partial class UltimusDirectorActor {
         Think($"{_helpName} asked me to help in a fight. I'll be {roleWords}. My own story waits until their fight is over.", "help|" + heard.SpeakerCharId);
         NoteTogether(heard.SpeakerCharId, $"helped them in a fight as their {(role == BotAsks.HelpRole.Healer ? "healer" : "hitter")}");
         Count("fights helped");
+        UltimusJournal.Write("helped", $"Helped {_helpName} in a fight as their {(role == BotAsks.HelpRole.Healer ? "healer" : "hitter")}.", "", UltimusText.Zone(me.Zone ?? ""), _helpName, 1);
         SendReply(heard, fighting ? $"On my way! I'll be {roleWords}." : $"Sure! Start the fight and I'll jump in. I'll be {roleWords}.", "group helper");
         return true;
     }

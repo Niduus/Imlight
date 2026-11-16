@@ -803,6 +803,7 @@ internal sealed partial class ManagerWindow {
             })),
             _ultBrokenEmpty,
             _ultBroken),
+            UltimusReadinessFold(),
             UltimusGatesFold(),
             UltimusPeopleFold(),
             Fold("flag", ULTIMUS_TAB, "Ultimus Issues",
@@ -1067,6 +1068,7 @@ internal sealed partial class ManagerWindow {
                 "(use-steps.txt). Updated every 30 seconds (progress.txt in his folder).",
                 LogWell(_ultProgressBox),
                 Row(Action(Plain("Copy all"), () => CopyAsync(_ultProgressText)))),
+            UltimusDailyReportFold(),
             UltimusDiaryFold(),
             Fold("copy", ULTIMUS_TAB, "All of Ultimus's logs in one copy",
                 "Copies every Ultimus log at once, ready to paste in one go: his log, his thoughts, the mistakes book, the " +
@@ -1282,6 +1284,8 @@ internal sealed partial class ManagerWindow {
             ShowUltimusPeople();
         }
 
+        ShowUltimusReadiness();
+
         WarnUltimusAiLimit();
         if (_ultAiSummary.IsEffectivelyVisible) {
             ShowUltimusAiSummary();
@@ -1321,6 +1325,7 @@ internal sealed partial class ManagerWindow {
             }
 
             ShowUltimusDiary();
+            ShowUltimusDailyReport();
         }
 
         // The top of his check of the story's "click these things" steps (written after an update): the steps worth a look,

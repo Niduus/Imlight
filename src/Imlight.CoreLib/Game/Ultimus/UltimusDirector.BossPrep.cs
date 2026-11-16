@@ -66,6 +66,7 @@ internal sealed partial class UltimusDirectorActor {
         var rules = plan.Describe();
         var advice = plan.Advice();
         Note("Ultimus", $"BOSS PLAYBOOK: {name}: {string.Join("; ", rules.Take(8))}.");
+        UltimusJournal.Write("boss", $"Read up on {name}'s cheats before fighting it.", "", "", name);
         Think($"Before fighting {name} I read up on its cheats (the game's own cheat file): {string.Join("; ", rules.Take(5))}." +
               (advice.Count > 0 ? $" My plan: {string.Join("; ", advice.Take(4))}." : "") +
               (_bossGearFor == target.Template ? " Its free moves hit hard, so I wear my Support gear set (resist and health) for it." : ""),

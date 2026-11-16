@@ -350,6 +350,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         ReadResume();
         SaveResume();
         ReadAheadTick();
+        // The whole-spiral readiness check (UltimusReadiness.cs).
+        ReadinessTick();
         FixedTick();
         UsePotions();
         NoticeOddities();
