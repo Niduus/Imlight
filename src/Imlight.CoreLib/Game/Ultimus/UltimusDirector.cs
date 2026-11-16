@@ -622,6 +622,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                     ThinkAboutFight(target);
                     ThinkAboutRival(target);
                     PrepareDecks(UltimusScout.SituationOf(target.Template));
+                    // A creature with cheats: its playbook read and his gear for it (UltimusDirector.BossPrep.cs).
+                    BossPrep(target);
                 }
             }
         }

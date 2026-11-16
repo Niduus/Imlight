@@ -53,6 +53,15 @@ internal static class BotCards {
         /// </summary>
         internal double CrowdShare { get; init; }
 
+        /// <summary>
+        /// The kinds of cards this creature's cheats punish (Blade, Heal, Trap...; BotBossPlaybook), read from its cheat file:
+        /// the deck brings fewer of them, as a player who has read up on the boss does. Empty for most creatures.
+        /// </summary>
+        internal IReadOnlyList<string> Punished { get; init; } = [];
+
+        /// <summary>Its name, when its cheats change the deck (for the words).</summary>
+        internal string CheaterName { get; init; } = "";
+
         /// <summary>Two or more enemies now, or (not counted yet) most of its recent fights had that many.</summary>
         internal bool CrowdLikely => Enemies >= 2 || (Enemies == 0 && CrowdShare >= CROWD_MOSTLY);
 
@@ -61,6 +70,9 @@ internal static class BotCards {
 
         internal string Describe() {
             var foe = HitSchools.Count > 0 ? $"{DescribeFoe()}, hitting with {string.Join(", ", HitSchools.Take(3))}" : DescribeFoe();
+            if (Punished.Count > 0) {
+                foe += $"; its cheats punish {string.Join(", ", Punished.Select(p => p.ToLowerInvariant() + "s"))}, so fewer of those";
+            }
 
             return Enemies == 0 && CrowdShare >= CROWD_SOMETIMES
                 ? $"{foe} ({(CrowdShare >= CROWD_MOSTLY ? "most" : "many")} of my fights lately had 2+ enemies)" : foe;
@@ -80,7 +92,11 @@ internal static class BotCards {
             return Situation.Unknown;
         }
 
-        return new Situation((string) npc.m_schoolOfFocus ?? "", npc.IsBoss(), 0);
+        var situation = new Situation((string) npc.m_schoolOfFocus ?? "", npc.IsBoss(), 0);
+        // Its boss playbook (its cheat file): the kinds of cards it punishes go in the deck less (Niduus, 2026-11-16: decks
+        // per boss from its known cheats).
+        var plan = BotBossPlaybook.For(creatureTemplate);
+        return plan.Punished.Count == 0 ? situation : situation with { Punished = plan.Punished, CheaterName = plan.Name };
     }
 
     private enum Kind { Hit, Heal, Shield, Blade, Trap, Other }
@@ -158,6 +174,24 @@ internal static class BotCards {
                 shares[Kind.Heal] += 0.05;
                 shares[Kind.Shield] += 0.05;
                 shares[Kind.Hit] = Math.Max(0.1, shares[Kind.Hit] - 0.1);
+            }
+        }
+
+        // Its cheats punish some kinds of cards: those get few places (never none for heals, which can save a life), and the
+        // places go to hits.
+        foreach (var punished in situation.Punished) {
+            var kinds = punished switch {
+                "Blade" or "Charm" => new[] { Kind.Blade },
+                "Trap" => [Kind.Trap],
+                "Ward" => [Kind.Trap, Kind.Shield],
+                "Shield" => [Kind.Shield],
+                "Heal" => [Kind.Heal],
+                _ => [],
+            };
+            foreach (var kind in kinds) {
+                var keep = kind == Kind.Heal ? Math.Min(shares[kind], 0.05) : 0;
+                shares[Kind.Hit] += shares[kind] - keep;
+                shares[kind] = keep;
             }
         }
 
@@ -252,6 +286,11 @@ internal static class BotCards {
         foreach (var kind in new[] { Kind.Hit, Kind.Blade, Kind.Trap }) {
             if (left <= 0) {
                 break;
+            }
+
+            // Never a kind its cheats punish, just to fill the deck.
+            if (kind != Kind.Hit && situation.Punished.Count > 0 && shares.GetValueOrDefault(kind) <= 0) {
+                continue;
             }
 
             if (byKind.TryGetValue(kind, out var ofKind)) {

@@ -1,0 +1,4 @@
+Fixed: Ultimus, the Quest Team and the street bots now read a boss's cheats and plan around them
+Before a fight with a creature that has cheats, Ultimus reads them from the same cheat file the server runs and says his plan in his Thoughts, such as not blading into a boss that traps whoever blades. In the fight, a card that would set off a punishing cheat is held back unless it saves a life or ends the boss, a timed free hit gets a heal or shield the round before, and a boss that punishes passing never sees him pass. The Quest Team and the street bots use the same playbook.
+Where: Ultimus's Thoughts ("Before fighting ... I read up on its cheats") and his battle lines, which say "held back" with the reason.
+Test: send Ultimus at a boss with a cheat on blades or traps and check his battle lines skip those cards and say why.

@@ -25,6 +25,8 @@ using Imlight.CoreLib.Shared.Resources;
 using CombatResolver = Imlight.CoreLib.Game.Combat.CombatResolver;
 using Card = Imlight.CoreLib.Game.Combat.RewrittenAI.Card;
 
+using Imlight.CoreLib.Game.BotShared;
+
 namespace Imlight.CoreLib.Game.BotPlayers;
 
 /// <summary>
@@ -57,6 +59,32 @@ internal static class BotTactics {
     /// </summary>
     internal static Choice Decide(CombatDuelSubCircle me, IReadOnlyList<CombatDuelSubCircle> circles, CombatResolver resolver,
                                   int kept, Func<CombatDuelSubCircle, bool> isBot) {
+        // The boss playbooks of the creatures here (BotBossPlaybook, shared with Ultimus and the Quest Team): a card one of
+        // them punishes is held back, unless it heals someone in danger or ends the one who would answer.
+        var watch = BotBossPlaybook.Watch(circles.Where(c => c.OccupiedTeam != me.OccupiedTeam && c.IsAlive));
+        var skip = new HashSet<int>();
+        var held = new List<string>();
+        var danger = circles.Any(c => c.OccupiedTeam == me.OccupiedTeam && c.IsAlive && RewrittenAI.HealthShare(c) < 0.35f);
+        for (var tries = 0; ; tries++) {
+            var choice = DecideWith(me, circles, resolver, kept, isBot, skip);
+            if (watch.Count == 0 || tries >= 8 || choice.Move != Move.Cast || me.GetSpellFromLastHand((byte) choice.Card) is not { } spell
+                || RewrittenAI.Read(spell) is not { } card) {
+                return held.Count == 0 ? choice : choice with { Why = $"{choice.Why} (held back: {string.Join("; ", held.Distinct().Take(2))})" };
+            }
+
+            var many = card.HitsAll || card.HealWholeTeam || card.ShieldWholeTeam || card.BladeWholeTeam || card.TrapAll;
+            var on = choice.Target >= 0 ? circles.FirstOrDefault(c => c.SlotIndex == choice.Target) : many ? null : me;
+            if (BotBossPlaybook.HoldBack(watch, card, me, on, 1, danger) is not { } reason) {
+                return held.Count == 0 ? choice : choice with { Why = $"{choice.Why} (held back: {string.Join("; ", held.Distinct().Take(2))})" };
+            }
+
+            held.Add(reason);
+            skip.Add(choice.Card);
+        }
+    }
+
+    private static Choice DecideWith(CombatDuelSubCircle me, IReadOnlyList<CombatDuelSubCircle> circles, CombatResolver resolver,
+                                     int kept, Func<CombatDuelSubCircle, bool> isBot, HashSet<int> skip) {
         var allies = circles.Where(c => c.OccupiedTeam == me.OccupiedTeam && c.IsAlive).ToList();
         var enemies = circles.Where(c => c.OccupiedTeam != me.OccupiedTeam && c.IsAlive).ToList();
         if (enemies.Count == 0) {
@@ -64,7 +92,7 @@ internal static class BotTactics {
         }
 
         var hand = Hand(me);
-        var castable = hand.Where(h => h.Castable).ToList();
+        var castable = hand.Where(h => h.Castable && !skip.Contains(h.Index)).ToList();
         if (castable.Count == 0) {
             var mana = me.ParticipantGameStats?.m_currentMana ?? 0;
             return mana < 2 && hand.Any(h => h.Card.Rank > 0)

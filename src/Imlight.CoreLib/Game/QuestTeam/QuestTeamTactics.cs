@@ -83,12 +83,63 @@ internal static class QuestTeamTactics {
         var hurt = allies.Where(a => !teamHealed && !healed.Contains(a) && RewrittenAI.HealthShare(a) < HURT)
             .OrderBy(RewrittenAI.HealthShare).ToList();
 
-        return role switch {
-            "Ice" => Ice(me, castable, allies, enemies, focus, hurt, hits),
-            "Life" => Life(me, castable, allies, enemies, focus, hurt, hits),
-            "Death" => Death(me, castable, allies, enemies, focus, hurt, hits),
-            _ => Storm(me, castable, whole, enemies, focus, Math.Max(1, round)),
+        Choice Job(List<InHand> hand, List<InHand> all) => role switch {
+            "Ice" => Ice(me, hand, allies, enemies, focus, hurt, hits),
+            "Life" => Life(me, hand, allies, enemies, focus, hurt, hits),
+            "Death" => Death(me, hand, allies, enemies, focus, hurt, hits),
+            _ => Storm(me, hand, all, enemies, focus, Math.Max(1, round)),
         };
+
+        // The boss playbooks of the creatures here (BotBossPlaybook, shared with Ultimus): a card one of them punishes is held
+        // back, unless it is a heal for someone in danger or a hit that ends it; a timed free hit gets a shield or heal first.
+        var watch = BotBossPlaybook.Watch(enemies);
+        if (watch.Count == 0) {
+            return Job(castable, whole);
+        }
+
+        var danger = allies.Any(a => RewrittenAI.HealthShare(a) < DANGER);
+        var held = new List<string>();
+        string Hold(Choice choice) {
+            if (choice.Move != Move.Cast || castable.FirstOrDefault(h => h.Index == choice.Card) is not { } picked) {
+                return null;
+            }
+
+            var many = picked.Card.HitsAll || picked.Card.HealWholeTeam || picked.Card.ShieldWholeTeam || picked.Card.BladeWholeTeam || picked.Card.TrapAll;
+            var on = choice.Target >= 0 ? circles.FirstOrDefault(c => c.SlotIndex == choice.Target) : many ? null : me;
+            return BotBossPlaybook.HoldBack(watch, picked.Card, me, on, Math.Max(1, round), danger);
+        }
+
+        Choice Said(Choice choice) => held.Count == 0 ? choice : choice with { Why = $"{choice.Why} (held back: {string.Join("; ", held.Distinct().Take(2))})" };
+
+        if (BotBossPlaybook.HitComing(watch, Math.Max(1, round)) is { } coming
+            && (Shield(me, castable, hurt.Count > 0 ? hurt : [me]) ?? Heal(me, castable, hurt)) is { } guard && Hold(guard) is null) {
+            return guard with { Why = $"{guard.Why}: {coming}, so the team gets ready for it" };
+        }
+
+        var hand = new List<InHand>(castable);
+        var whole2 = new List<InHand>(whole);
+        for (var tries = 0; tries < 8; tries++) {
+            var choice = Job(hand, whole2);
+            if (choice.Move != Move.Cast) {
+                if (BotBossPlaybook.PunishesPass(watch) is { } passing
+                    && (SelfBlade(me, hand) ?? Shield(me, hand, [me]) ?? Hit(me, hand, focus, enemies, "plays rather than pass")) is { } instead
+                    && Hold(instead) is null) {
+                    return Said(instead with { Why = $"{instead.Why} ({passing}, so it doesn't pass)" });
+                }
+
+                return Said(choice);
+            }
+
+            if (Hold(choice) is not { } reason) {
+                return Said(choice);
+            }
+
+            held.Add(reason);
+            hand.RemoveAll(h => h.Index == choice.Card);
+            whole2.RemoveAll(h => h.Index == choice.Card);
+        }
+
+        return Said(Pass("every card it holds sets off a cheat right now"));
     }
 
     // ---- the jobs ----

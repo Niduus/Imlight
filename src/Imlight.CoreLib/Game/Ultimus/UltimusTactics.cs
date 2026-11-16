@@ -87,7 +87,67 @@ internal static class UltimusTactics {
         // What the enemies can hit with, read from their decks (UltimusScout).
         var threat = UltimusScout.InBattle(enemies);
 
-        return Solo(me, castable, whole, enemies, focus, hurt, threat, Math.Max(1, round), focusWhy);
+        // The boss playbooks of the creatures here, read from their cheat files (BotBossPlaybook): a card one of them punishes
+        // is held back, a timed free hit gets a heal or shield first, and a pass it punishes becomes a move.
+        var watch = BotBossPlaybook.Watch(enemies);
+        return watch.Count == 0
+            ? Solo(me, castable, whole, enemies, focus, hurt, threat, Math.Max(1, round), focusWhy)
+            : Guarded(me, circles, castable, whole, enemies, focus, hurt, threat, Math.Max(1, round), focusWhy, watch);
+    }
+
+    // ---- against a creature with cheats (its playbook) ----
+
+    private static Choice Guarded(CombatDuelSubCircle me, IReadOnlyList<CombatDuelSubCircle> circles, List<InHand> castable, List<InHand> whole,
+                                  List<CombatDuelSubCircle> enemies, CombatDuelSubCircle focus, List<CombatDuelSubCircle> hurt, UltimusScout.Threat threat,
+                                  int round, string focusWhy, List<(CombatDuelSubCircle Who, BotBossPlaybook.Plan Plan)> watch) {
+        var mine = RewrittenAI.HealthShare(me);
+        var inDanger = mine < DANGER;
+        var hand = new List<InHand>(castable);
+        var all = new List<InHand>(whole);
+        var held = new List<string>();
+
+        string Hold(Choice choice) {
+            if (choice.Move != Move.Cast || hand.FirstOrDefault(h => h.Index == choice.Card) is not { } picked) {
+                return null;
+            }
+
+            var many = picked.Card.HitsAll || picked.Card.HealWholeTeam || picked.Card.ShieldWholeTeam || picked.Card.BladeWholeTeam || picked.Card.TrapAll;
+            var on = choice.Target >= 0 ? circles.FirstOrDefault(c => c.SlotIndex == choice.Target) : many ? null : me;
+            return BotBossPlaybook.HoldBack(watch, picked.Card, me, on, round, inDanger);
+        }
+
+        Choice Said(Choice choice) => held.Count == 0 ? choice
+            : choice with { Why = $"{choice.Why} (held back: {string.Join("; ", held.Distinct().Take(2))})" };
+
+        // A free hit due before his next move: a heal or shield first while he can't take it well.
+        if (BotBossPlaybook.HitComing(watch, round) is { } coming && mine < HURT + 0.2f
+            && (Heal(me, hand, [me]) ?? Shield(me, hand, [me], threat)) is { } guard && Hold(guard) is null) {
+            return guard with { Why = $"{guard.Why}: {coming}, so I get ready for it" };
+        }
+
+        for (var tries = 0; tries < 8; tries++) {
+            var choice = Solo(me, hand, all, enemies, focus, hurt, threat, round, focusWhy);
+            if (choice.Move != Move.Cast) {
+                // A pass it punishes: something harmless instead (a blade on himself, a shield, a hit).
+                if (BotBossPlaybook.PunishesPass(watch) is { } passing
+                    && (SelfBlade(me, hand) ?? Shield(me, hand, [me], threat) ?? Hit(me, hand, focus, enemies, "plays rather than pass")) is { } instead
+                    && Hold(instead) is null) {
+                    return Said(instead with { Why = $"{instead.Why} ({passing}, so I don't pass)" });
+                }
+
+                return Said(choice);
+            }
+
+            if (Hold(choice) is not { } reason) {
+                return Said(choice);
+            }
+
+            held.Add(reason);
+            hand.RemoveAll(h => h.Index == choice.Card);
+            all.RemoveAll(h => h.Index == choice.Card);
+        }
+
+        return Said(Pass("every card I hold sets off a cheat right now"));
     }
 
     // What the bots' shared brain knows of a creature's habits (the shared engine, BotCore).

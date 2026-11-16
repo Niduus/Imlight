@@ -222,7 +222,14 @@ internal sealed partial class UltimusDirectorActor {
 
             // One piece at a time: the swap that best brings the whole outfit toward a Balance solo wizard's goals (enough
             // resist, accuracy and health, power pips toward 100%, then damage and pierce), with its reason in his thoughts.
-            if (BotGear.BestSwap(wizard, GearGoals(wizard)) is { Item: not null } swap) {
+            // A hard-hitting boss next: its Support set goes on piece by piece, and stays until that fight is over
+            // (UltimusDirector.BossPrep.cs).
+            if (BossGearStep(i, member, wizard)) {
+                _gearChangedAt = DateTime.UtcNow;
+                continue;
+            }
+
+            if (!BossGearHeld() && BotGear.BestSwap(wizard, GearGoals(wizard)) is { Item: not null } swap) {
                 ThinkAboutSwap(member, swap, GearGoals(wizard));
                 _gearChangedAt = DateTime.UtcNow;
                 // His daily diary shows the gear he put on (Niduus, 2026-11-14).
