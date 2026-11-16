@@ -1635,13 +1635,15 @@ internal sealed partial class ManagerWindow : Window {
         _logReading = true;
         try {
             var (from, raw, rows) = await Task.Run(() => {
-                var file = manager.NewestLogFile();
-                var stamp = (file?.FullName, file?.Length ?? 0, file?.LastWriteTimeUtc ?? DateTime.MinValue, hideDebug, hideWarnings, filter);
+                // The true size and time, read from the open file: the folder listing's can be hours old while the
+                // server holds its log open, which left this page stuck on old lines.
+                var (file, length, written) = manager.NewestLogFileNow();
+                var stamp = (file?.FullName, length, written, hideDebug, hideWarnings, filter);
                 if (stamp == last) {
                     return (stamp, -1, (List<LogRow>?) null);
                 }
 
-                var lines = manager.ReadLog();
+                var lines = manager.ReadLog(file);
                 var shown = lines
                     // A level picked in the filter shows those lines even when the ticks above hide them.
                     .Where(line => (level > 0 || !((hideDebug && line.Level is "DBG" or "VRB") || (hideWarnings && line.Level == "WRN")))

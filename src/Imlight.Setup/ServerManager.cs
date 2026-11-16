@@ -276,8 +276,8 @@ internal sealed partial class ServerManager(string installFolder) {
     /// <summary>
     /// The end of the newest log file, with runs of the same message folded into one line and a count.
     /// </summary>
-    internal List<LogLine> ReadLog() {
-        var file = NewestLogFile();
+    internal List<LogLine> ReadLog(FileInfo? file = null) {
+        file ??= NewestLogFile();
         if (file is null) {
             return [];
         }
@@ -766,14 +766,43 @@ internal sealed partial class ServerManager(string installFolder) {
     /// <summary>
     /// The log file the server is writing now, or null before it has written one.
     /// </summary>
-    internal FileInfo? NewestLogFile() {
-        var logs = LogFolder;
+    internal FileInfo? NewestLogFile() => NewestLogFileNow().File;
 
-        return Directory.Exists(logs)
-            ? new DirectoryInfo(logs).EnumerateFiles()
-                .Where(f => f.Extension is ".txt" or ".log" && !f.Name.Equals(POSITIONS_FILE, StringComparison.OrdinalIgnoreCase))
-                .OrderByDescending(f => f.LastWriteTimeUtc).FirstOrDefault()
-            : null;
+    /// <summary>
+    /// The log file the server is writing now, with its true size and last write time. Windows does not update a
+    /// folder's list of sizes and times for a file another program still holds open (the running server holds its
+    /// log open all day), so what a folder listing says can be hours old: the server log on the Logs tab then never
+    /// saw a change and stopped updating. Each of the newest few files is opened to read what it really is.
+    /// </summary>
+    internal (FileInfo? File, long Length, DateTime Written) NewestLogFileNow() {
+        var logs = LogFolder;
+        if (!Directory.Exists(logs)) {
+            return (null, 0, DateTime.MinValue);
+        }
+
+        (FileInfo? File, long Length, DateTime Written) best = (null, 0, DateTime.MinValue);
+        foreach (var file in new DirectoryInfo(logs).EnumerateFiles()
+                     .Where(f => f.Extension is ".txt" or ".log" && !f.Name.Equals(POSITIONS_FILE, StringComparison.OrdinalIgnoreCase))
+                     // The daily log's name holds its date (log20261115.txt), so a newer day sorts first even when the
+                     // folder's times are old.
+                     .OrderByDescending(f => f.LastWriteTimeUtc).ThenByDescending(f => f.Name, StringComparer.OrdinalIgnoreCase)
+                     .Take(4)) {
+            var (length, written) = (file.Length, file.LastWriteTimeUtc);
+            try {
+                using var handle = File.OpenHandle(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                length = RandomAccess.GetLength(handle);
+                written = File.GetLastWriteTimeUtc(handle);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                // Being rolled over or deleted: the folder's own numbers will do until the next check.
+            }
+
+            if (best.File is null || written > best.Written) {
+                best = (file, length, written);
+            }
+        }
+
+        return best;
     }
 
     /// <summary>
