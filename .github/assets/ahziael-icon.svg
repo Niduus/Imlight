@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="Ahziael">
+  <title>Ahziael</title>
+  <defs>
+    <linearGradient id="halo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9B7BFF"/>
+      <stop offset="1" stop-color="#5B3FD9"/>
+    </linearGradient>
+    <linearGradient id="star" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFE7A3"/>
+      <stop offset="0.5" stop-color="#F4B73F"/>
+      <stop offset="1" stop-color="#D9862A"/>
+    </linearGradient>
+    <radialGradient id="core" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.35" stop-color="#FFE9B0"/>
+      <stop offset="1" stop-color="#EFA432"/>
+    </radialGradient>
+    <linearGradient id="rule" gradientUnits="userSpaceOnUse" x1="230" y1="0" x2="810" y2="0">
+      <stop offset="0" stop-color="#8A63FF"/>
+      <stop offset="0.55" stop-color="#B56CF2"/>
+      <stop offset="1" stop-color="#E39A4A"/>
+    </linearGradient>
+    <linearGradient id="word" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8A63FF"/>
+      <stop offset="0.55" stop-color="#B56CF2"/>
+      <stop offset="1" stop-color="#E39A4A"/>
+    </linearGradient>
+  </defs>
+  <path d="M183.30 83.32 A78.00 78.00 0 1 1 136.68 36.70" fill="none" stroke="url(#halo)" stroke-width="7.00" stroke-linecap="round"/><circle cx="110" cy="110" r="60.00" fill="none" stroke="url(#halo)" stroke-width="1.60" opacity="0.55"/><path d="M110.00 40.00 L114.21 99.84 L134.04 85.96 L120.16 105.79 L180.00 110.00 L120.16 114.21 L134.04 134.04 L114.21 120.16 L110.00 180.00 L105.79 120.16 L85.96 134.04 L99.84 114.21 L40.00 110.00 L99.84 105.79 L85.96 85.96 L105.79 99.84 Z" fill="url(#star)"/><circle cx="110" cy="110" r="9.00" fill="url(#core)"/><path d="M165.15 37.85 L166.38 51.89 L170.10 49.90 L168.11 53.62 L182.15 54.85 L168.11 56.07 L170.10 59.80 L166.38 57.80 L165.15 71.85 L163.93 57.80 L160.20 59.80 L162.20 56.07 L148.15 54.85 L162.20 53.62 L160.20 49.90 L163.93 51.89 Z" fill="url(#star)"/><circle cx="26.86" cy="158.00" r="3.20" fill="url(#star)" opacity="0.9"/><circle cx="19.37" cy="67.74" r="2.20" fill="url(#star)" opacity="0.7"/><circle cx="66.89" cy="202.44" r="1.80" fill="url(#star)" opacity="0.6"/>
+</svg>
