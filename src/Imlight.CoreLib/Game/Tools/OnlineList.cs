@@ -47,6 +47,14 @@ internal static class OnlineList {
     // When each account came online this time, and when its "last online" was last saved (and with what).
     private static readonly Dictionary<ulong, DateTime> s_since = [];
     private static readonly Dictionary<ulong, (DateTime At, string Wizard, string Zone)> s_saved = [];
+    // Accounts that play as Ultimus, the Quest Team or a Bot Player: they never count as people playing, so Ahziael's
+    // "restart when nobody is playing" is not held up by the bots (Niduus, 2026-11-16: hourly "Could not connect").
+    private static readonly HashSet<ulong> s_botAccounts = [];
+
+    /// <summary>Whether a wizard is one of the server's own bots (Ultimus, the Quest Team or a Bot Player).</summary>
+    internal static bool IsBotWizard(ulong characterId)
+        => characterId != 0 && (Ultimus.UltimusRoster.IsMember(characterId) || QuestTeam.QuestTeamRoster.IsMember(characterId)
+                                || BotPlayers.BotBodies.IsBot(characterId));
 
     private sealed record Row(string Account, string Wizard, string Zone, int Level, string School, bool InBattle, DateTime Since);
 
@@ -81,6 +89,9 @@ internal static class OnlineList {
             var saves = new List<(ulong Account, DateTime At, string Wizard, string Zone)>();
             foreach (var player in OnlinePlayerCollection.GetCachedOnlinePlayers()) {
                 var picking = player.CharacterId == 0;
+                if (IsBotWizard(player.CharacterId)) {
+                    s_botAccounts.Add(player.AccountId);
+                }
                 if (!s_since.TryGetValue(player.AccountId, out var since)) {
                     since = now;
                     s_since[player.AccountId] = since;
@@ -126,7 +137,9 @@ internal static class OnlineList {
                 .Select(r => new { r.Account, r.Wizard, r.Zone, r.Level, r.School, r.InBattle, Since = r.Since.ToString("o") });
             // How many are in a battle, so Ahziael can wait for the battles to end before it restarts the server for an update.
             var inBattle = Zone.Components.CombatDuelComponent.PlayersInBattle;
-            var json = JsonSerializer.Serialize(new { Players = players, InBattle = inBattle });
+            // People = players who are not the server's own bots; Ahziael waits for it to be 0 before an update restart.
+            var people = s_rows.Keys.Count(account => !s_botAccounts.Contains(account));
+            var json = JsonSerializer.Serialize(new { Players = players, People = people, InBattle = inBattle });
             if (json == s_written) {
                 return;
             }

@@ -55,6 +55,13 @@ public static class OnlinePlayerCollection {
     private static readonly ConcurrentDictionary<ulong, OnlinePlayer> s_onlinePlayerCache = new();
     // The login names of accounts seen this run: a zone change drops the player and adds them back without it.
     private static readonly ConcurrentDictionary<ulong, string> s_accountNames = new();
+    // Who played on each session, kept after the player is removed, so the line saying why they were disconnected
+    // (DisconnectLog) can still name them; taken when the session ends.
+    private static readonly ConcurrentDictionary<ushort, OnlinePlayer> s_lastBySession = new();
+
+    /// <summary>The player last added on this session, taken out (null when nobody logged in on it).</summary>
+    public static OnlinePlayer TakeLastOnSession(ushort sessionId)
+        => s_lastBySession.TryRemove(sessionId, out var player) ? player : null;
 
     static OnlinePlayerCollection() 
         => s_store = PlayerDatabase.Instance.Store;
@@ -77,6 +84,7 @@ public static class OnlinePlayerCollection {
             onlinePlayer.AccountName = accountName;
         }
 
+        s_lastBySession[onlinePlayer.SessionId] = onlinePlayer;
         s_onlinePlayerCache.AddOrUpdate(
             onlinePlayer.AccountId,
             onlinePlayer,

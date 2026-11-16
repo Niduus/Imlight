@@ -1805,6 +1805,8 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             FallbackZoneID = fallbackZoneId
         };
         SendToSocket(serverTransfer);
+        // The game closes this connection and opens a new one for the next zone: not a disconnect (DisconnectLog).
+        SessionActor.ExpectedEnd = "zone change";
         Logger.Information("Session {SessionId} SERVERTRANSFER sent -> {Zone} {Ip}:{Port}",
             Logger.Args(SessionActor.SessionID, character.QueuedZoneName, transferIp, character.GameServerPort));
 

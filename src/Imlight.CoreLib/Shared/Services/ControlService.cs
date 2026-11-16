@@ -187,6 +187,8 @@ internal class ControlService : MessageService, IHandshakeService {
         // visible in the log. It only fires outside the game server (_isInGameServer guards it above).
         Logger.Warning("SessionActor {SessionID} heartbeat response timed out after {Wait}s; closing session.",
             Logger.Args(SessionActor.SessionID, _keepAliveRspWaitTime));
+        SessionActor.NoteEndCause(DisconnectLog.PlayerSide($"the game stopped answering the server's \"are you still there?\" check " +
+            $"for {_keepAliveRspWaitTime} s (the player's internet dropped or stalled, or the game froze)"));
         CloseSession();
     }
 
@@ -200,6 +202,7 @@ internal class ControlService : MessageService, IHandshakeService {
             Logger.Information("SessionActor {SessionID} from {RemoteEndPoint} did not return a SessionAccept within " +
                 "{Wait}s; closing session (initial-handshake timeout).",
                 Logger.Args(SessionActor.SessionID, SessionActor.Ip, _keepAliveRspWaitTime));
+            SessionActor.ExpectedEnd = "the login screen's first connection, which the game drops and opens again";
             CloseSession();
 
             return;
@@ -210,6 +213,8 @@ internal class ControlService : MessageService, IHandshakeService {
         // concurrent zone loads.
         Logger.Warning("SessionActor {SessionID} did not return a SessionAccept within {Wait}s; closing session " +
                   "(initial-handshake timeout).", Logger.Args(SessionActor.SessionID, _keepAliveRspWaitTime));
+        SessionActor.NoteEndCause(DisconnectLog.PlayerSide($"the game opened a connection but never finished connecting within " +
+            $"{_keepAliveRspWaitTime} s (a slow or dropping connection, or the server was too busy loading to answer)"));
         CloseSession();
     }
 

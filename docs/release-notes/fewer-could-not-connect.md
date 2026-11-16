@@ -1,0 +1,4 @@
+Fixed: Players no longer get "Could not connect to Wizard101" about once an hour
+Every update that changed the server restarted it, and that dropped everyone playing. On November 15 that happened 18 times, so players saw "Could not connect to Wizard101. Please try again later." about once an hour. Now an update that installs by itself waits to restart the server until nobody is playing (Ultimus and the Quest Team don't count). If people keep playing for 12 hours, it restarts then, after the usual 2-minute warning.
+Where: Ahziael, Server page, Ahziael tab, with Instant Update or Install updates automatically switched on.
+Test: With a friend online, let an update that changes the server install. Ahziael says it waits for nobody to play, and the friend stays connected. Once you both log off, the server restarts by itself.

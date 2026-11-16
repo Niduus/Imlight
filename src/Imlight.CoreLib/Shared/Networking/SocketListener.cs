@@ -120,13 +120,16 @@ internal sealed class SocketListener : ReceiveActor, IDisposable {
         StartReceive();
     }
 
-    public void Dispose() {
+    public void Dispose() => Dispose(null);
+
+    /// <summary>Closes the session; <paramref name="cause"/> says why for the disconnect line (DisconnectLog).</summary>
+    private void Dispose(string cause) {
         if (_isDisposed) {
             return;
         }
 
         _isDisposed = true;
-        _sessionActorRef.Ask("Close");
+        _sessionActorRef.Ask(cause is null ? "Close" : new SessionActor.CloseBecause(cause));
 
         _socket?.Close();
         _socket?.Dispose();
@@ -182,7 +185,7 @@ internal sealed class SocketListener : ReceiveActor, IDisposable {
         if (_closeOnSocketException) {
             Logger.Error("SessionActor {Id} receive operation failed: {Message}",
                 Logger.Args(_sessionid, result.Error.Message));
-            Dispose();
+            Dispose(DisconnectLog.ForSocketError(result.Error));
             return;
         }
 
@@ -192,8 +195,9 @@ internal sealed class SocketListener : ReceiveActor, IDisposable {
     private void ProcessReceivedData(byte[] buffer, int bytesReceived) {
         try {
             if (bytesReceived <= 0) {
-                // If the bytes transferred is 0, the socket has disconnected.
-                this.Dispose();
+                // If the bytes transferred is 0, the game closed its end of the connection.
+                this.Dispose(DisconnectLog.PlayerSide("the game closed the connection (the player closed the game, or the game " +
+                    "gave up on the server)"));
                 
                 return;
             }
@@ -202,7 +206,7 @@ internal sealed class SocketListener : ReceiveActor, IDisposable {
             if (packets.Count > MaxFramesPerRead || _decoder.PendingBytes > MaxPendingBytes) {
                 Logger.Warning("SessionActor {SessionId} exceeded the receive limits: {FrameCount} frames, {PendingBytes} pending bytes.",
                     Logger.Args(_sessionid, packets.Count, _decoder.PendingBytes));
-                this.Dispose();
+                this.Dispose(DisconnectLog.ServerSide("the server closed it: the game sent more at once than the server takes"));
 
                 return;
             }
@@ -233,7 +237,8 @@ internal sealed class SocketListener : ReceiveActor, IDisposable {
                             Logger.Args(_sessionid, failedAcquisitionCount, (now - _floodSince.Value).TotalSeconds, DescribeDropped()));
 
                         // The session has exceeded the failed acquisition limit. We'll dispose of the session.
-                        this.Dispose();
+                        this.Dispose(DisconnectLog.ServerSide("the server closed it: the game kept sending faster than the rate limit " +
+                            "for 10 s ([Advanced] SessionTokenBucket settings)"));
 
                         return;
                     }

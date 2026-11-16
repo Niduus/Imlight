@@ -36,6 +36,12 @@ internal sealed partial class ManagerWindow {
     private enum ServerRestartPlan { None, AfterCountdown, WhenNobodyPlays }
 
     private static readonly TimeSpan s_restartCountdown = TimeSpan.FromMinutes(2);
+    // An update that installs by itself (Instant Update, Install updates automatically) restarts the server only when
+    // nobody is playing: every restart drops everyone, and on 2026-11-15 18 restarts showed players "Could not connect to
+    // Wizard101" about once an hour. If people play this long without a break, it restarts after the 2-minute warning.
+    private static readonly TimeSpan s_longestWaitForEmpty = TimeSpan.FromHours(12);
+    // When a server update started waiting for nobody to play. A file, so it survives Ahziael restarting into newer updates.
+    private const string WAITING_SINCE_FILE = "server-update-waiting-since.txt";
     // When the countdown tells everyone playing how long is left.
     private static readonly int[] s_countdownWarnings = [60, 30, 10];
 
@@ -58,7 +64,7 @@ internal sealed partial class ManagerWindow {
 
         _restartOffered = true;
         if (InstallsWithoutAsking) {
-            PlanServerRestart(ServerRestartPlan.AfterCountdown);
+            PlanServerRestart(WaitedLongEnough() ? ServerRestartPlan.AfterCountdown : ServerRestartPlan.WhenNobodyPlays);
 
             return;
         }
@@ -107,7 +113,10 @@ internal sealed partial class ManagerWindow {
                 "Everyone playing was told in the game. Click the button at the top to change this.");
         }
         else {
-            Say("The server restarts for the update as soon as nobody is playing. Click the button at the top to change this.");
+            var since = NoteWaitingSince();
+            Say("The server restarts for the update as soon as nobody is playing (Ultimus and the Quest Team don't count), " +
+                $"so nobody gets disconnected. If people are still playing at {since + s_longestWaitForEmpty:ddd h:mm tt}, it restarts " +
+                "then after a 2-minute warning. Click the button at the top to change this.");
         }
 
         ShowServerUpdateButton();
@@ -120,6 +129,7 @@ internal sealed partial class ManagerWindow {
         }
 
         if (!ServerUpdateWaits(running)) {
+            ForgetWaitingSince();
             if (_restartPlan != ServerRestartPlan.None || _updateButton.Content as string == SERVER_UPDATE_BUTTON) {
                 // The server was stopped or restarted some other way, which put the update in.
                 _restartPlan = ServerRestartPlan.None;
@@ -136,6 +146,9 @@ internal sealed partial class ManagerWindow {
                 _emptyChecks = players == 0 ? _emptyChecks + 1 : 0;
                 if (_emptyChecks >= 2) {
                     _ = Guard(RestartForUpdateAsync);
+                }
+                else if (WaitedLongEnough()) {
+                    PlanServerRestart(ServerRestartPlan.AfterCountdown);
                 }
 
                 break;
@@ -191,6 +204,51 @@ internal sealed partial class ManagerWindow {
 
     private const string SERVER_UPDATE_BUTTON = "Restart server to update";
 
+    private string WaitingSinceFile => Path.Combine(_manager.InstallFolder, WAITING_SINCE_FILE);
+
+    /// <summary>When the waiting server update started waiting for nobody to play; written the first time.</summary>
+    private DateTime NoteWaitingSince() {
+        if (ReadWaitingSince() is { } since) {
+            return since;
+        }
+
+        var now = DateTime.Now;
+        try {
+            File.WriteAllText(WaitingSinceFile, now.ToString("o", System.Globalization.CultureInfo.InvariantCulture));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // Not kept: the 12 hours count from now again after Ahziael restarts.
+        }
+
+        return now;
+    }
+
+    private DateTime? ReadWaitingSince() {
+        try {
+            return File.Exists(WaitingSinceFile)
+                   && DateTime.TryParse(File.ReadAllText(WaitingSinceFile).Trim(), System.Globalization.CultureInfo.InvariantCulture,
+                       System.Globalization.DateTimeStyles.RoundtripKind, out var since)
+                ? since
+                : null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return null;
+        }
+    }
+
+    /// <summary>Whether a server update has waited the longest it may for nobody to play.</summary>
+    private bool WaitedLongEnough() => ReadWaitingSince() is { } since && DateTime.Now - since >= s_longestWaitForEmpty;
+
+    private void ForgetWaitingSince() {
+        try {
+            if (File.Exists(WaitingSinceFile)) {
+                File.Delete(WaitingSinceFile);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+        }
+    }
+
     /// <summary>The update button says a server update waits, unless an Ahziael update is on its way.</summary>
     private void ShowServerUpdateButton() {
         if (_readyUpdate is not null || _preparingUpdate) {
@@ -212,7 +270,9 @@ internal sealed partial class ManagerWindow {
 
             using var document = JsonDocument.Parse(File.ReadAllText(file));
             var root = document.RootElement;
-            var players = root.TryGetProperty("Players", out var list) && list.ValueKind == JsonValueKind.Array ? list.GetArrayLength() : 1;
+            // People leaves out Ultimus, the Quest Team and Bot Players; an older server only has the whole list.
+            var players = root.TryGetProperty("People", out var people) && people.TryGetInt32(out var peopleCount) ? peopleCount
+                : root.TryGetProperty("Players", out var list) && list.ValueKind == JsonValueKind.Array ? list.GetArrayLength() : 1;
             var inBattle = root.TryGetProperty("InBattle", out var battles) && battles.TryGetInt32(out var count) ? count : 0;
 
             return (players, inBattle);

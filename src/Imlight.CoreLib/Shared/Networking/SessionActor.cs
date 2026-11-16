@@ -114,6 +114,22 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
     private bool _clientZoned;
     private bool _heldDialogFlushScheduled;
 
+    // Why the session ended, in plain words (DisconnectLog); the first cause noted wins.
+    private readonly DateTime _startedUtc = DateTime.UtcNow;
+    private string _endCause;
+
+    /// <summary>
+    /// Set when the server itself sends the game on (a zone change, the login screen handing it to the game server): the
+    /// game closing this connection next is normal and is not listed as a disconnect.
+    /// </summary>
+    public volatile string ExpectedEnd;
+
+    /// <summary>A close that says why (DisconnectLog), sent in place of "Close".</summary>
+    public sealed record CloseBecause(string Cause);
+
+    /// <summary>Notes why the session is ending, for the disconnect line. Only the first cause counts.</summary>
+    public void NoteEndCause(string cause) => Interlocked.CompareExchange(ref _endCause, cause, null);
+
     // ctor
     public SessionActor(Socket socket, ushort sessionId, IActorRef server, IActorRef actorFactoryRef = null) {
         this._socket = socket;
@@ -356,6 +372,8 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
 
         Logger.Debug("SessionActor {Id} disposing, reason={Reason}.", Logger.Args(SessionID, reason));
         _isDisposed = true;
+        // Before the services let go of the player, so the line can name them.
+        DisconnectLog.SessionEnded(this, _endCause, reason, _startedUtc);
 
         // Don't preemptively close the socket; the client disconnects itself
         // after receiving the final message (e.g. MSG_CHARACTERSELECTED).
@@ -457,7 +475,14 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
     private void ConfigureReceivers() {
         // Specific message handlers.
         Receive<string>(x => x == "Close", x => Dispose(GetCloseReason()));
-        Receive<string>(x => x == "CloseAfterClient", x => Dispose("client logout", waitForClientClose: true));
+        Receive<CloseBecause>(x => {
+            NoteEndCause(x.Cause);
+            Dispose(GetCloseReason());
+        });
+        Receive<string>(x => x == "CloseAfterClient", x => {
+            NoteEndCause(DisconnectLog.Normal("the player logged out or quit the game"));
+            Dispose("client logout", waitForClientClose: true);
+        });
         Receive<string>(x => x == "ClientCloseTimeout", x => StopWaitingForClientClose("client did not close"));
         Receive<string>(x => x == "Identify", x => Sender.Tell(this));
         Receive<string>(x => x == FLUSH_HELD_DIALOGS, _ => FlushHeldDialogs());
@@ -589,11 +614,13 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
     }
 
     private void ReceiveException(Exception ex) {
+        NoteEndCause(DisconnectLog.ServerSide($"the server closed it after an error ({ex.Message}); the error lines just above say more"));
         Dispose("exception");
     }
 
     private string GetCloseReason() {
         if (_stoppedByStrategy) {
+            NoteEndCause(DisconnectLog.ServerSide("the server closed it after a serious error in one of its services (the error lines just above say which)"));
             return "AllForOne";
         }
 

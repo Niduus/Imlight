@@ -144,6 +144,10 @@ internal class GameTransitionService(SessionActor sessionActor) : MessageService
             Location = location,
         };
 
+        // The game leaves the login screen for the game server once it has this: closing this connection then is normal
+        // (DisconnectLog). Set for a queued player too, who gets the same message when the queue lets them in.
+        SessionActor.ExpectedEnd = "sent on to the game server";
+
         // Cache the message if the player is queued.
         if (serverEnqueueResult.PrepPhase > 0) {
             SessionActor.CachedDequeueMessage = charSelectedMsg;

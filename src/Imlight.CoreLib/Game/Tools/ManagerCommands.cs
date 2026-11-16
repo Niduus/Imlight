@@ -55,6 +55,7 @@ internal static class ManagerCommands {
         TryDelete(COMMANDS_FILE);
         TryDelete(ANNOUNCEMENTS_FILE);
         GameDataReload.ForgetOldRequest();
+        Shared.Networking.DisconnectLog.ServerStarted();
         s_timer = new Timer(_ => Poll(), null, TimeSpan.FromSeconds(1), TimeSpan.FromMilliseconds(500));
     }
 
@@ -144,6 +145,11 @@ internal static class ManagerCommands {
                 // The app's Announcement card puts "box|", "chat|" or "both|" in front; a plain line is a box.
                 var (box, chat, text, fromCard) = Split(line);
                 Logger.Information("Imlight app announcement to everyone ({0}): {1}", Logger.Args(box && chat ? "box and chat" : box ? "box" : "chat", text));
+                if (!fromCard) {
+                    // A plain line is the notice the app sends right before it stops or restarts the server.
+                    Shared.Networking.DisconnectLog.ServerStopping(text);
+                }
+
                 Announce(box, chat, text, fromCard);
             }
         }

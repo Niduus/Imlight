@@ -1,0 +1,4 @@
+Fixed: Every disconnect is written down with whose side it came from
+When a player was disconnected, the log did not say why, so nobody could tell a dropped internet connection from a problem on the server. Now every disconnect gets one plain line that starts with PLAYER'S SIDE, SERVER SIDE, NORMAL or UNKNOWN and says who, from where, and why, like the game stopping answering for 15 seconds or the server restarting for an update. Zone changes are left out because they are normal. The lines are in their own file, one per day, and also in the server log starting with "Disconnect:".
+Where: The Server folder, then logs, then disconnects (for example disconnects-2026-11-16.txt). In Ahziael's server log, search for Disconnect.
+Test: Log in, then close Wizard101 with the X. The newest file in the disconnects folder gets a line saying the game closed the connection.
