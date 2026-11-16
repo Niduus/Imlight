@@ -1448,6 +1448,33 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
     // The map round a spot where the way finder found no way, drawn in characters (logs/ultimus/no-way-maps), so the cause
     // can be seen without the game's files (a wall, the black, a floor too high or low).
+    // Areas laid out this run (logs/ultimus/maps), once each.
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, byte> s_laidOut = new(StringComparer.OrdinalIgnoreCase);
+
+    // The area he walks in, laid out ahead of time from the game's own walk map (Niduus, 2026-11-15: "have them all layed
+    // out for him so he knows where"): its floors and the stairs and ramps between them. The way
+    // finder walks by the same map; the file is for reading what he knows.
+    private static void SaveZoneLayout(string zone) {
+        if (string.IsNullOrEmpty(zone) || !s_laidOut.TryAdd(zone, 0)) {
+            return;
+        }
+
+        try {
+            var layout = Imlight.CoreLib.Game.Zone.Core.ZoneNav.Layout(zone);
+            if (layout.Length == 0) {
+                return;
+            }
+
+            var folder = System.IO.Path.Combine(UltimusWire.Folder, "maps");
+            System.IO.Directory.CreateDirectory(folder);
+            var name = new string(zone.Select(c => char.IsLetterOrDigit(c) ? c : '-').ToArray());
+            System.IO.File.WriteAllText(System.IO.Path.Combine(folder, $"{name}.txt"), layout);
+        }
+        catch (Exception) {
+            // Only a help for reading what he knows.
+        }
+    }
+
     private static void SaveNoWayMap(UltimusMember.Status member, float toX, float toY, string what) {
         try {
             var map = OverlayQuestPath.MapAround(member.Zone, member.X, member.Y, member.Z, toX, toY);
@@ -1472,6 +1499,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         var member = _team[index];
+        SaveZoneLayout(member.Zone);
 
         // Creatures it is not here to fight, watched all the way, as a player watches them walk about (Niduus,
         // 2026-11-13: "I just saw him willingly put himself in battle. Have detections for mobs"): one walking up close

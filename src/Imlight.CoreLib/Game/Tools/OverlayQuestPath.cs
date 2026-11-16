@@ -192,6 +192,27 @@ internal static class OverlayQuestPath {
                 }
             }
 
+            // Still no way on our own floor map: the game's own walk map of the area (zone.nav, the points and links the
+            // game's creatures walk on) knows the way. Big Ben's Counterweight East: from the top ring at 4400 the way goes
+            // round the west side to a ledge our coarse map sees as off the ground, down onto the bridge at 4200 and over it
+            // to Sprockets in the middle; our map found no way there in three tries (Niduus, 2026-11-15: "he's still unable").
+            if (body && (cells is null || cells.Count == 0 || cells[^1] != to)
+                && Imlight.CoreLib.Game.Zone.Core.ZoneNav.Route(zonePath, new System.Numerics.Vector3(fromX, fromY, fromZ),
+                    new System.Numerics.Vector3(toX, toY, toZ)) is { Count: > 1 } nav) {
+                var navPoints = nav.Select(p => (p.X, p.Y)).ToList();
+                if (s_navTold.TryAdd($"{zonePath}|{goal}", 0)) {
+                    Imlight.Common.Logger.Debug("Way finder: in {0}, from ({1:0}, {2:0}) to ({3:0}, {4:0}) the game's own walk map has the way ({5} points).",
+                        Imlight.Common.Logger.Args(zonePath, fromX, fromY, toX, toY, navPoints.Count));
+                }
+
+                t_found = true;
+                if (remember) {
+                    s_walks[charId] = (zonePath, goal, start, FloorKey(fromZ, toZ), DateTime.UtcNow, navPoints);
+                }
+
+                return navPoints;
+            }
+
             // Still no way, and a lift or moving floor of this area has moved (Big Ben's Counterweight East: four levers raise
             // the counterweight to the top, and Sprockets stands on it in the middle, past the black the map shows round it;
             // Niduus's log, 2026-11-15 v0.10.886): the black round the lift is walked as the floor it now is, walls still walls.
@@ -479,6 +500,7 @@ internal static class OverlayQuestPath {
     // How much higher or lower than the wizard a step may be for a walk over a lift: one step down onto it or up off it.
     private const float LIFT_STEP = 300f;
     private static readonly ConcurrentDictionary<string, byte> s_liftTold = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly ConcurrentDictionary<string, byte> s_navTold = new(StringComparer.OrdinalIgnoreCase);
     private static readonly TimeSpan s_liftKept = TimeSpan.FromHours(3);
     private static readonly ConcurrentDictionary<string, (float X, float Y, DateTime At)> s_lifts = new(StringComparer.OrdinalIgnoreCase);
 
@@ -689,7 +711,8 @@ internal static class OverlayQuestPath {
 
             var cell = Cell(grid, x, y);
 
-            return cell >= 0 && ((grid.Loose ?? grid.Cost)[cell] != BLOCKED || LiftCell(zonePath, grid, cell));
+            return cell >= 0 && ((grid.Loose ?? grid.Cost)[cell] != BLOCKED || LiftCell(zonePath, grid, cell))
+                || Imlight.CoreLib.Game.Zone.Core.ZoneNav.OnLink(zonePath, x, y);
         }
         catch (Exception) {
             return true;
@@ -748,7 +771,8 @@ internal static class OverlayQuestPath {
                     var t = i / (float) count;
                     var (x, y) = (ax + ((bx - ax) * t), ay + ((by - ay) * t));
                     var cell = Cell(grid, x, y);
-                    var ok = cell >= 0 && (cost[cell] != BLOCKED || LiftCell(zonePath, grid, cell));
+                    var ok = cell >= 0 && (cost[cell] != BLOCKED || LiftCell(zonePath, grid, cell))
+                        || Imlight.CoreLib.Game.Zone.Core.ZoneNav.OnLink(zonePath, x, y);
                     if (ok) {
                         started = true;
                         lastGood = (x, y);

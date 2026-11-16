@@ -31,6 +31,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Imlight.Common;
 using Imlight.CoreLib.Shared.Resources;
@@ -89,6 +90,180 @@ internal static class ZoneNav {
         }
     }
 
+    // The game's own walk graph of the zone (zone.nav): its points and which point leads to which. The ground grid is
+    // flat and coarse; this graph knows the floors of a tower and the narrow ledges and bridges between them (Niduus,
+    // 2026-11-15, Big Ben's Counterweight East: the way to Sprockets goes round the top floor's west side, down onto a
+    // bridge at height 4200 and across to the middle; the grid showed that ledge as no floor and the bridge not at all).
+    internal sealed record NavGraph(Vector3[] Nodes, int[][] Next, (Vector2 A, Vector2 B)[] Links);
+
+    private static readonly ConcurrentDictionary<string, NavGraph> s_graphs = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>The zone's walk graph, or null when its .wad has no zone.nav (or it has no links).</summary>
+    public static NavGraph Graph(string zonePath) {
+        if (string.IsNullOrEmpty(zonePath)) {
+            return null;
+        }
+
+        if (s_graphs.Count > 48) {
+            s_graphs.Clear();
+        }
+
+        return s_graphs.GetOrAdd(zonePath, z => {
+            try {
+                return ResourceManager.TryLoadArchive(z, out var wad) && wad.OpenFile(NAV_FILE_NAME) is { } memory ? ParseGraph(memory.ToArray()) : null;
+            }
+            catch (Exception ex) {
+                Logger.Debug("Zone {0}: could not read its walk graph ({1}).", Logger.Args(z, ex.Message));
+
+                return null;
+            }
+        });
+    }
+
+    /// <summary>The walk graph of a zone.nav's bytes: points (x, y, z and a number), then a count and pairs of linked points.</summary>
+    internal static NavGraph ParseGraph(byte[] data) {
+        if (data is null || data.Length < 6) {
+            return null;
+        }
+
+        var count = BitConverter.ToUInt16(data, 2);
+        var offset = 6;
+        if (offset + (count * 14) + 4 > data.Length) {
+            return null;
+        }
+
+        var nodes = new Vector3[count];
+        for (var i = 0; i < count; i++, offset += 14) {
+            nodes[i] = new Vector3(BitConverter.ToSingle(data, offset), BitConverter.ToSingle(data, offset + 4), BitConverter.ToSingle(data, offset + 8));
+        }
+
+        var linkCount = BitConverter.ToUInt32(data, offset);
+        offset += 4;
+        var next = new HashSet<int>[count];
+        for (var i = 0; i < count; i++) {
+            next[i] = [];
+        }
+
+        var links = new List<(Vector2, Vector2)>();
+        for (var i = 0; i < linkCount && offset + 4 <= data.Length; i++, offset += 4) {
+            int a = BitConverter.ToUInt16(data, offset), b = BitConverter.ToUInt16(data, offset + 2);
+            if (a >= count || b >= count || a == b || !Finite(nodes[a]) || !Finite(nodes[b])) {
+                continue;
+            }
+
+            // A link across half the area (Counterweight East's long hall 20000 away, joined to the tower by its teleport)
+            // is a teleport's, not a walk.
+            if (Vector2.Distance(new Vector2(nodes[a].X, nodes[a].Y), new Vector2(nodes[b].X, nodes[b].Y)) > LONGEST_LINK) {
+                continue;
+            }
+
+            // Both ways: a player walks a link back as well as on.
+            if (next[a].Add(b) | next[b].Add(a)) {
+                links.Add((new Vector2(nodes[a].X, nodes[a].Y), new Vector2(nodes[b].X, nodes[b].Y)));
+            }
+        }
+
+        return links.Count == 0 ? null : new NavGraph(nodes, Array.ConvertAll(next, n => n.ToArray()), [.. links]);
+    }
+
+    // The longest link walked; Counterweight East's longest walk is about 1800.
+    private const float LONGEST_LINK = 3000f;
+
+    private static bool Finite(Vector3 v) => float.IsFinite(v.X) && float.IsFinite(v.Y) && float.IsFinite(v.Z);
+
+    // How far from a spot (on the ground, and in height) the walk graph's first and last point may be.
+    private const float SNAP = 500f;
+    private const float SNAP_HEIGHT = 300f;
+
+    /// <summary>
+    /// The game's own way from one spot to another over the zone's walk graph, floor by floor (heights known: the points
+    /// nearest each spot on its own floor): the points to walk, ending at the step. Null when the graph has no way.
+    /// </summary>
+    public static List<Vector3> Route(string zonePath, Vector3 from, Vector3 to) => Graph(zonePath) is { } graph ? Route(graph, from, to) : null;
+
+    internal static List<Vector3> Route(NavGraph graph, Vector3 from, Vector3 to) {
+        var starts = Near(graph, from);
+        var goals = Near(graph, to);
+        if (starts.Count == 0 || goals.Count == 0) {
+            return null;
+        }
+
+        var goalSet = new HashSet<int>(goals);
+        var best = new float[graph.Nodes.Length];
+        Array.Fill(best, float.MaxValue);
+        var came = new int[graph.Nodes.Length];
+        Array.Fill(came, -1);
+        var open = new PriorityQueue<int, float>();
+        foreach (var s in starts) {
+            best[s] = Flat(graph.Nodes[s], from);
+            open.Enqueue(s, best[s] + Vector3.Distance(graph.Nodes[s], to));
+        }
+
+        while (open.TryDequeue(out var at, out _)) {
+            if (goalSet.Contains(at)) {
+                var path = new List<Vector3> { to };
+                for (var n = at; n != -1; n = came[n]) {
+                    path.Add(graph.Nodes[n]);
+                }
+
+                path.Reverse();
+
+                return path;
+            }
+
+            foreach (var n in graph.Next[at]) {
+                var through = best[at] + Vector3.Distance(graph.Nodes[at], graph.Nodes[n]);
+                if (through < best[n]) {
+                    best[n] = through;
+                    came[n] = at;
+                    open.Enqueue(n, through + Vector3.Distance(graph.Nodes[n], to));
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static float Flat(Vector3 a, Vector3 b) => Vector2.Distance(new Vector2(a.X, a.Y), new Vector2(b.X, b.Y));
+
+    // The graph's points near a spot on its own floor (any floor when its height is not known), nearest first, at most four.
+    private static List<int> Near(NavGraph graph, Vector3 at) {
+        var found = new List<(int I, float Far)>();
+        for (var i = 0; i < graph.Nodes.Length; i++) {
+            var n = graph.Nodes[i];
+            if (graph.Next[i].Length == 0 || !Finite(n) || (float.IsFinite(at.Z) && MathF.Abs(n.Z - at.Z) > SNAP_HEIGHT)) {
+                continue;
+            }
+
+            var far = Flat(n, at);
+            if (far <= SNAP) {
+                found.Add((i, far));
+            }
+        }
+
+        found.Sort((a, b) => a.Far.CompareTo(b.Far));
+
+        return found.Take(4).Select(f => f.I).ToList();
+    }
+
+    /// <summary>Whether (x, y) is on or by one of the walk graph's links (the game's own walkable ways), within reach.</summary>
+    public static bool OnLink(string zonePath, float x, float y, float reach = 90f) {
+        if (Graph(zonePath) is not { } graph) {
+            return false;
+        }
+
+        var p = new Vector2(x, y);
+        foreach (var (a, b) in graph.Links) {
+            var ab = b - a;
+            var t = ab.LengthSquared() <= 0 ? 0 : Math.Clamp(Vector2.Dot(p - a, ab) / ab.LengthSquared(), 0f, 1f);
+            if (Vector2.DistanceSquared(p, a + (ab * t)) <= reach * reach) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     internal static Vector3[] Parse(byte[] data) {
         if (data is null || data.Length < 6) {
             return [];
@@ -110,4 +285,88 @@ internal static class ZoneNav {
         return [.. points];
     }
 
+
+    // Heights closer than this are one floor of the layout.
+    private const float LAYOUT_FLOOR = 150f;
+    // A link that climbs more than this is a stair, ramp or drop between floors.
+    private const float LAYOUT_CLIMB = 100f;
+
+    /// <summary>
+    /// The area laid out for the bots ahead of time (Niduus, 2026-11-15: "have them all layed out for him so he knows
+    /// where"): every floor of the game's own walk map by height with how far it spans, and every stair, ramp or drop
+    /// between floors with both ends. Plain text, one area per file.
+    /// </summary>
+    public static string Layout(string zonePath) => Graph(zonePath) is { } graph ? Layout(zonePath, graph) : string.Empty;
+
+    internal static string Layout(string zonePath, NavGraph graph) {
+        var text = new System.Text.StringBuilder();
+        text.AppendLine($"Area: {zonePath}");
+        var used = Enumerable.Range(0, graph.Nodes.Length).Where(i => graph.Next[i].Length > 0).ToList();
+        text.AppendLine($"Walk map: {used.Count} points, {graph.Links.Length} links.");
+        if (used.Count == 0) {
+            return text.ToString();
+        }
+
+        // Floors: the heights the points stand at, in bands.
+        var floors = new List<(float Z, List<int> Points)>();
+        foreach (var i in used.OrderBy(i => graph.Nodes[i].Z)) {
+            var z = graph.Nodes[i].Z;
+            if (floors.Count == 0 || z - floors[^1].Points.Max(p => graph.Nodes[p].Z) > LAYOUT_FLOOR) {
+                floors.Add((z, []));
+            }
+
+            floors[^1].Points.Add(i);
+        }
+
+        text.AppendLine();
+        text.AppendLine("Floors (lowest first):");
+        for (var f = 0; f < floors.Count; f++) {
+            var pts = floors[f].Points.Select(p => graph.Nodes[p]).ToList();
+            text.AppendLine($"  Floor {f + 1}: height {pts.Min(p => p.Z):0} to {pts.Max(p => p.Z):0}, {pts.Count} points, "
+                + $"x {pts.Min(p => p.X):0} to {pts.Max(p => p.X):0}, y {pts.Min(p => p.Y):0} to {pts.Max(p => p.Y):0}.");
+        }
+
+        var floorOf = new Dictionary<int, int>();
+        for (var f = 0; f < floors.Count; f++) {
+            foreach (var p in floors[f].Points) {
+                floorOf[p] = f + 1;
+            }
+        }
+
+        int FloorOf(int node) => floorOf.GetValueOrDefault(node);
+
+        text.AppendLine();
+        text.AppendLine("Ways between floors (stairs, ramps, drops):");
+        var any = false;
+        for (var a = 0; a < graph.Next.Length; a++) {
+            foreach (var b in graph.Next[a]) {
+                if (b <= a) {
+                    continue;
+                }
+
+                var (pa, pb) = (graph.Nodes[a], graph.Nodes[b]);
+                if (MathF.Abs(pb.Z - pa.Z) <= LAYOUT_CLIMB) {
+                    continue;
+                }
+
+                any = true;
+                var (lo, hi) = pa.Z <= pb.Z ? (a, b) : (b, a);
+                text.AppendLine($"  ({graph.Nodes[lo].X:0}, {graph.Nodes[lo].Y:0}, {graph.Nodes[lo].Z:0}) on floor {FloorOf(lo)} "
+                    + $"<-> ({graph.Nodes[hi].X:0}, {graph.Nodes[hi].Y:0}, {graph.Nodes[hi].Z:0}) on floor {FloorOf(hi)}");
+            }
+        }
+
+        if (!any) {
+            text.AppendLine("  none: the area is one floor.");
+        }
+
+        text.AppendLine();
+        text.AppendLine("Points (x, y, height: linked to):");
+        foreach (var i in used) {
+            var p = graph.Nodes[i];
+            text.AppendLine($"  {i}: ({p.X:0}, {p.Y:0}, {p.Z:0}) floor {FloorOf(i)}: {string.Join(" ", graph.Next[i])}");
+        }
+
+        return text.ToString();
+    }
 }

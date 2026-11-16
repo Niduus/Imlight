@@ -1,0 +1,4 @@
+Fixed: Ultimus finds the way up to Sprockets in Big Ben
+Ultimus kept walking round the top of the Counterweight East tower and never reached Sprockets in the middle. The real way goes round the west side of the top ring, down a short ledge onto the bridge and over it to the middle, and our own map saw that ledge as off the ground. Now, when our map finds no way, Ultimus, the Quest Team and the Bot Players use the game's own walk map of the area, the same one its creatures walk on. Each area he walks in is also laid out ahead of time in a map file with its floors and the stairs and ramps between them.
+Where: Ultimus, Quest Team and Bot Players walking, every area; map files in the server's logs, ultimus, maps folder.
+Test: Let Ultimus run Stolen Away in Big Ben's Counterweight East and watch him go round the west side, over the bridge and into battle with Sprockets.
