@@ -18,6 +18,9 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using Imlight.CoreLib.WizardData.Collections;
+using Imlight.CoreLib.WizardData.Models.Player;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text.Json.Nodes;
@@ -493,7 +496,13 @@ public static class OverlayLinks {
     /// it, his quests, and his battle. The same for every game window, and for any overlay linked to this server; it only
     /// reads, so no ".link" is needed. Never the player's own map or quests.
     /// </summary>
-    public static async Task<JsonObject> SpectateAsync(long link, JsonObject header) {
+    public static async Task<JsonObject> SpectateAsync(long link, JsonObject header, string address = "") {
+        // Spectate Anyone (Niduus, 2026-11-16): "who" is "anyone:" and the wizard picked (its character id, or empty for the
+        // first one). Only the host, on the server's own PC.
+        if (((string) header["who"] ?? "").StartsWith(ANYONE, StringComparison.OrdinalIgnoreCase)) {
+            return await SpectateAnyoneAsync(link, header, address);
+        }
+
         if (!Ultimus.UltimusSpectate.On) {
             return RemoteAdminWire.Error("The host has turned off watching Ultimus on this server.");
         }
@@ -514,13 +523,23 @@ public static class OverlayLinks {
             return await SpectateTeamAsync(who, header);
         }
 
+        return await SpectateSeatAsync(Ultimus.UltimusSeat.Ultimus, header);
+    }
+
+    /// <summary>
+    /// Ultimus, or a TCO7 member (each is played by Ultimus's brain, UltimusSeat), as the spectators show him: his own map with
+    /// his quest's way on it, his quests, and his battle.
+    /// </summary>
+    private static async Task<JsonObject> SpectateSeatAsync(Ultimus.UltimusSeat seat, JsonObject header) {
+        using var seatScope = Ultimus.UltimusSeat.Use(seat);
         if (!Ultimus.UltimusWire.Enabled) {
-            return RemoteAdminWire.Error("Ultimus is off on this server. Turn him on in Ahziael (Ultimus page) to watch him.");
+            return RemoteAdminWire.Error(seat.IsUltimus ? "Ultimus is off on this server. Turn him on in Ahziael (Ultimus page) to watch him."
+                : $"{seat.Name} is off on this server. Turn the TCO7 on in Ahziael (TCO7 page) to watch them.");
         }
 
         var member = Ultimus.UltimusDirector.Members.FirstOrDefault();
         if (member is null || member.State is "offline" or "logging in") {
-            return RemoteAdminWire.Error("Ultimus isn't in the game yet. He shows here once he has logged in.");
+            return RemoteAdminWire.Error($"{seat.Name} isn't in the game yet. {(seat.IsUltimus ? "He shows" : "They show")} here once logged in.");
         }
 
         var quest = Ultimus.UltimusSpectate.Quest;
@@ -534,7 +553,7 @@ public static class OverlayLinks {
 
         if (await Task.WhenAny(reply.Task, Task.Delay(2000)) != reply.Task) {
             // Going to another area: his last map stays until he arrives.
-            return RemoteAdminWire.Error(member.State is "zoning" or "arriving" ? "busy" : "Ultimus isn't in the game right now.");
+            return RemoteAdminWire.Error(member.State is "zoning" or "arriving" ? "busy" : $"{seat.Name} isn't in the game right now.");
         }
 
         var (map, quests, zone, error) = reply.Task.Result;
@@ -702,6 +721,157 @@ public static class OverlayLinks {
                 : "";
             info["battle"] = battle;
         }
+
+        var answer = RemoteAdminWire.Ok();
+        answer["map"] = map;
+        answer["ultimus"] = info;
+
+        return answer;
+    }
+
+    // ---- Spectate Anyone (op "ultimus" with who "anyone:<character id>") ----
+
+    internal const string ANYONE = "anyone:";
+
+    /// <summary>[Overlay] SpectateAnyone: the host may watch anyone on the server with the Spectate Anyone add-on. On; live.</summary>
+    internal static bool SpectateAnyoneOn => ConfigurationManager.GetValue("Overlay.SpectateAnyone", true);
+
+    /// <summary>
+    /// Spectate Anyone (Niduus, 2026-11-16: "While installed and you're the local host, you can spectate anyone on the server,
+    /// including Bots like Ultimus, TCO7 and QT members"): everyone in the game, players and the server's own wizards, to pick
+    /// from, and the one picked as the spectators show a wizard (its map, quests, and for Ultimus, the TCO7 and the Quest
+    /// Team their battle and plans too). Only for an overlay on the server's own PC.
+    /// </summary>
+    private static async Task<JsonObject> SpectateAnyoneAsync(long link, JsonObject header, string address) {
+        if (!string.Equals(address, "127.0.0.1", StringComparison.Ordinal)) {
+            return RemoteAdminWire.Error("Spectate Anyone is only for the host, on the PC that runs the server.");
+        }
+
+        if (!SpectateAnyoneOn) {
+            return RemoteAdminWire.Error("Spectate Anyone is turned off in Ahziael (Overlay settings).");
+        }
+
+        var everyone = Everyone();
+        var asked = ((string) header["who"] ?? "")[ANYONE.Length..].Trim();
+        var pick = everyone.FirstOrDefault(e => e.Id.ToString(System.Globalization.CultureInfo.InvariantCulture) == asked)
+                   ?? everyone.FirstOrDefault(e => string.Equals(e.Name, asked, StringComparison.OrdinalIgnoreCase))
+                   ?? everyone.FirstOrDefault();
+        JsonObject answer;
+        if (pick is null) {
+            answer = RemoteAdminWire.Error("Nobody is in the game right now.");
+        }
+        else if (Ultimus.UltimusSeat.OfCharacter(pick.Id) is { } seat) {
+            answer = await SpectateSeatAsync(seat, header);
+        }
+        else if (QuestTeam.QuestTeamDirector.Members.FirstOrDefault(m => m.CharId == pick.Id) is { } teamMember) {
+            answer = await SpectateTeamAsync(teamMember.Role, header);
+        }
+        else {
+            answer = await SpectatePlayerAsync(pick.Id, pick.Name, header);
+        }
+
+        // The list to pick from, and whom this answer shows (the overlay drops an answer for someone it no longer watches).
+        answer["everyone"] = new JsonArray([.. everyone.Select(e => (JsonNode) new JsonObject {
+            ["id"] = e.Id.ToString(System.Globalization.CultureInfo.InvariantCulture), ["name"] = e.Name, ["kind"] = e.Kind, ["school"] = e.School,
+        })]);
+        answer["watching"] = pick?.Id.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "";
+        if (answer["ultimus"] is JsonObject info && pick is not null) {
+            info["role"] = ANYONE + answer["watching"];
+            info["kind"] ??= "";
+            info["who"] = pick.Kind;
+            info["school"] ??= pick.School;
+        }
+
+        return answer;
+    }
+
+    private sealed record Someone(ulong Id, string Name, string Kind, string School);
+
+    // Everyone in the game: Ultimus and the TCO7 first, then the Quest Team, then players by name.
+    private static List<Someone> Everyone() {
+        var list = new List<Someone>();
+        try {
+            foreach (var p in OnlinePlayerCollection.GetCachedOnlinePlayers().Where(p => p.CharacterId != 0)) {
+                var seat = Ultimus.UltimusSeat.OfCharacter(p.CharacterId);
+                var kind = seat is { IsUltimus: true } ? "Ultimus" : seat is not null ? "TCO7"
+                    : QuestTeam.QuestTeamRoster.IsMember(p.CharacterId) ? "Quest Team" : "Player";
+                var name = PlayerCheats.LiveName(p.CharacterId) is { Length: > 0 } live ? live : p.WizardName ?? "?";
+                list.Add(new Someone(p.CharacterId, name, kind, seat?.Role ?? p.School ?? ""));
+            }
+        }
+        catch (InvalidOperationException) {
+            // The list changed while read: read again next time.
+        }
+
+        static int Order(Someone s) => s.Kind switch { "Ultimus" => 0, "TCO7" => 1, "Quest Team" => 2, _ => 3 };
+        return [.. list.DistinctBy(s => s.Id).OrderBy(Order).ThenBy(s => Ultimus.UltimusSeat.OfCharacter(s.Id)?.Index ?? 0).ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase)];
+    }
+
+    /// <summary>A player (or anyone without a bot's plans) as the spectators show a wizard: its map, its quests and its quest's way.</summary>
+    private static async Task<JsonObject> SpectatePlayerAsync(ulong charId, string name, JsonObject header) {
+        var wizard = PlayerCheats.LiveWizard(charId);
+        var quest = wizard?.QuestBehavior?.CurrentQuestInstances?.Select(q => q?.QuestName)
+            .FirstOrDefault(n => n is not null && QuestTemplateCollection.GetQuestByName(n) is { } t && Ultimus.UltimusPlanner.IsMainStoryWorld(t))
+            ?? wizard?.QuestBehavior?.CurrentQuestInstances?.Select(q => q?.QuestName).FirstOrDefault(n => n is not null) ?? "";
+        var reply = new TaskCompletionSource<(JsonObject Map, JsonObject Quests, IActorRef Zone, string Error)>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var others = new ConcurrentQueue<(ulong CharId, IActorRef Zone, string Name, float X, float Y)>();
+        var reach = header["reach"] is JsonValue far && far.TryGetValue<double>(out var wanted) && double.IsFinite(wanted) ? (float) wanted : 0f;
+        var ask = new OverlaySpectateAsk(charId, reply, others, reach, quest, Team: true, RouteQuest: ((string) header["routeQuest"] ?? "").Trim());
+        foreach (var service in AgentBridge.CommandServices) {
+            service.Tell(ask);
+        }
+
+        if (await Task.WhenAny(reply.Task, Task.Delay(2000)) != reply.Task) {
+            return RemoteAdminWire.Error("busy");
+        }
+
+        var (map, quests, zone, error) = reply.Task.Result;
+        if (map is null) {
+            return RemoteAdminWire.Error(error);
+        }
+
+        await Task.Delay(60);
+        OverlayMinimap.AddWizards(map, charId, zone, others);
+        var zonePath = (string) map["zone"] ?? "";
+        var smoothing = OverlayMinimap.Smoothing;
+        var groundKey = zonePath + "#" + smoothing.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        if (OverlayMinimap.Streets && zonePath.Length > 0 && !string.Equals((string) header["groundKey"] ?? "", groundKey, StringComparison.OrdinalIgnoreCase)) {
+            var shapes = Zone.Core.ZoneGround.ShapesOf(zonePath, smoothing);
+            map["ground"] = shapes is null || shapes.IsEmpty
+                ? new JsonObject { ["zone"] = zonePath, ["key"] = groundKey }
+                : new JsonObject {
+                    ["zone"] = zonePath, ["key"] = groundKey, ["left"] = shapes.Left, ["bottom"] = shapes.Bottom, ["unit"] = shapes.Unit,
+                    ["shapes"] = shapes.Data,
+                };
+        }
+
+        var stats = wizard?.GameStats;
+        var row = (quests?["quests"] as JsonArray)?.OfType<JsonObject>()
+            .FirstOrDefault(q => string.Equals((string) q["id"], quest, StringComparison.OrdinalIgnoreCase));
+        var info = new JsonObject {
+            ["name"] = name,
+            ["level"] = wizard?.MagicSchoolBehavior?.Level ?? 0,
+            ["hp"] = stats?.m_currentHitpoints ?? 0,
+            ["max"] = stats is null ? 0 : stats.m_baseHitpoints + stats.m_bonusHitpoints,
+            ["place"] = (string) map["place"] ?? "",
+            ["doing"] = Zone.Components.CombatDuelComponent.IsInBattle(Wizard.GetGameObjectId(charId)) ? "in a battle" : "",
+            ["quest"] = quest,
+            ["questTitle"] = quest.Length == 0 ? "" : (string) row?["t"] ?? Ultimus.UltimusText.Title(quest),
+            ["step"] = "",
+            ["steps"] = row?["steps"]?.DeepClone(),
+            ["way"] = row?["way"]?.DeepClone(),
+            ["kind"] = (string) row?["k"] ?? "",
+            ["questLevel"] = row?["l"]?.DeepClone(),
+            ["world"] = Ultimus.UltimusDirectorActor.WorldName((string) row?["w"] ?? ""),
+            ["quests"] = new JsonArray([.. ((quests?["quests"] as JsonArray)?.OfType<JsonObject>() ?? [])
+                .Take(40).Select(q => (JsonNode) new JsonObject {
+                    ["id"] = q["id"]?.DeepClone(), ["t"] = q["t"]?.DeepClone(), ["k"] = q["k"]?.DeepClone(),
+                    ["l"] = q["l"]?.DeepClone(), ["w"] = Ultimus.UltimusDirectorActor.WorldName((string) q["w"] ?? ""),
+                    ["steps"] = (string) q["k"] == "instance" ? q["steps"]?.DeepClone() : null,
+                    ["way"] = (string) q["k"] == "instance" ? q["way"]?.DeepClone() : null,
+                    ["here"] = q["here"]?.DeepClone(),
+                })]),
+        };
 
         var answer = RemoteAdminWire.Ok();
         answer["map"] = map;

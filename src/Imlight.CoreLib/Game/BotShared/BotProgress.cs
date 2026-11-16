@@ -144,7 +144,7 @@ internal static class BotProgress {
     // Quests learned to be part of a world's story past the ones the game's data marks: world -> quest codes.
     private static Dictionary<string, HashSet<string>> s_extras;
 
-    private static string ExtrasFile => Path.Combine(Ultimus.UltimusWire.Folder, "story-extras.json");
+    private static string ExtrasFile => Path.Combine(Ultimus.UltimusWire.SharedFolder, "story-extras.json");
 
     private static HashSet<string> ExtrasOf(string world) {
         lock (s_lock) {
@@ -455,10 +455,13 @@ internal static class BotProgress {
     private static readonly Dictionary<string, List<DateTime>> s_times = new(StringComparer.Ordinal);
     private static readonly Dictionary<string, (string World, int Done)> s_last = new(StringComparer.Ordinal);
 
+    // Ultimus's book is kept per seat: each TCO7 member has its own pace (UltimusSeat).
+    private static string BookKey(string book) => book == ULTIMUS ? ULTIMUS + "|" + Ultimus.UltimusSeat.Current.Key : book;
+
     private static string FileOf(string book) => Path.Combine(book == ULTIMUS ? Ultimus.UltimusWire.Folder : QuestTeam.QuestTeamWire.Folder, "pace.json");
 
     private static List<DateTime> TimesOf(string book) {
-        if (s_times.TryGetValue(book, out var times)) {
+        if (s_times.TryGetValue(BookKey(book), out var times)) {
             return times;
         }
 
@@ -477,14 +480,14 @@ internal static class BotProgress {
             Logger.Debug("Bots: the pace book could not be read: {0}", Logger.Args(ex.Message));
         }
 
-        return s_times[book] = times;
+        return s_times[BookKey(book)] = times;
     }
 
     // A quest done since the last look (the same world, more done): its time goes in the book.
     private static void Noted(string book, Count count) {
         lock (s_lock) {
-            var had = s_last.TryGetValue(book, out var last);
-            s_last[book] = (count.World, count.Done);
+            var had = s_last.TryGetValue(BookKey(book), out var last);
+            s_last[BookKey(book)] = (count.World, count.Done);
             if (!had || !string.Equals(last.World, count.World, StringComparison.OrdinalIgnoreCase) || count.Done <= last.Done) {
                 return;
             }

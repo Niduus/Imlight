@@ -415,7 +415,7 @@ public static class RemoteAdminServer {
                 if (op == "ultimus") {
                     // The Ultimus Spectator add-on: Ultimus's own map, quests and battle, for watching (read only).
                     try {
-                        reply = await OverlayLinks.SpectateAsync(id, header);
+                        reply = await OverlayLinks.SpectateAsync(id, header, address);
                     }
                     catch (Exception ex) when (ex is not OperationCanceledException) {
                         Logger.Error("Ultimus spectator: Ultimus could not be shown: {0}", Logger.Args(ex));
