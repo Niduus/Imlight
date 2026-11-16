@@ -186,6 +186,8 @@ internal sealed partial class ManagerWindow {
     // The nightly auto-coach (Niduus, 2026-11-14: a toggle, off by default): [Ultimus] AutoCoach.
     private readonly ToggleSwitch _ultAutoCoach = new() { OnContent = "On", OffContent = "Off" };
     private readonly ToggleSwitch _ultParty = new() { OnContent = "On", OffContent = "Off" };
+    private readonly ToggleSwitch _ultTeaching = new() { OnContent = "On", OffContent = "Off" };
+    private readonly ToggleSwitch _ultHelper = new() { OnContent = "On", OffContent = "Off" };
     private readonly ToggleSwitch _ultEmotes = new() { OnContent = "On", OffContent = "Off" };
 
     // The guardrails' per-rule locks (Niduus, 2026-11-14): a locked rule is left alone by his daily review (self-tuning.txt).
@@ -286,6 +288,20 @@ internal sealed partial class ManagerWindow {
                     "Party mode is off: Ultimus turns group invites down and quests alone."));
             }
         };
+        _ultTeaching.IsCheckedChanged += async (_, _) => {
+            if (!_showingUlt) {
+                await Guard(() => SetUltimusOnByDefaultAsync("Teaching", _ultTeaching.IsChecked == true,
+                    "Teaching is on: a player can ask Ultimus to walk them through a quest.",
+                    "Teaching is off: Ultimus says he can't walk anyone through quests right now."));
+            }
+        };
+        _ultHelper.IsCheckedChanged += async (_, _) => {
+            if (!_showingUlt) {
+                await Guard(() => SetUltimusOnByDefaultAsync("Helper", _ultHelper.IsChecked == true,
+                    "The group helper is on: a player near Ultimus can ask him to join their fight.",
+                    "The group helper is off: Ultimus doesn't join fights on request."));
+            }
+        };
         _ultEmotes.IsCheckedChanged += async (_, _) => {
             if (!_showingUlt) {
                 await Guard(() => SetUltimusOnByDefaultAsync("Emotes", _ultEmotes.IsChecked == true,
@@ -344,6 +360,14 @@ internal sealed partial class ManagerWindow {
                     "On: when a player invites Ultimus to a group, he joins and goes along with them: he teleports to them from the group, " +
                     "joins their battles and does the quest steps they both have, until the group ends or they go away for 15 minutes. " +
                     "Then he goes back to his own story. Off: he turns every group invite down. On by default."),
+                SwitchRow("Teaching", _ultTeaching,
+                    "On: a player near Ultimus can say \"walk me through this quest\" (or name the quest) and he tells them each step and " +
+                    "where it is, waits for them and tells them the next one, until the quest is done or they say \"got it\". His own " +
+                    "story waits meanwhile. On by default."),
+                SwitchRow("Group helper", _ultHelper,
+                    "On: a player near Ultimus can say \"help me fight\", \"heal me\" or \"be my hitter\" and he walks into their battle " +
+                    "and plays that role: healer keeps them up first, hitter hits what they hit. He goes back to his story when the " +
+                    "fight is over. On by default."),
                 SwitchRow("Emotes", _ultEmotes,
                     "On: Ultimus waves at a player who says hello near him, cheers after a tough win and sits down when he has nothing " +
                     "to do for a minute. He learns the emote names from players' own emote wheels, so if you don't see one, play that emote " +
@@ -430,6 +454,8 @@ internal sealed partial class ManagerWindow {
             _ultAutoCoach.IsChecked = _manager.GetSwitch("Ultimus", "AutoCoach");
             _ultParty.IsChecked = !string.Equals(_manager.GetSetting("Ultimus", "PartyMode")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
             _ultEmotes.IsChecked = !string.Equals(_manager.GetSetting("Ultimus", "Emotes")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
+            _ultTeaching.IsChecked = !string.Equals(_manager.GetSetting("Ultimus", "Teaching")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
+            _ultHelper.IsChecked = !string.Equals(_manager.GetSetting("Ultimus", "Helper")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
             _ultSlow.Value = (decimal) Number("SlowFactor", 2);
             _ultLosses.Value = (decimal) Number("LossesBeforeIssue", 3);
             _ultStuck.Value = (decimal) (Number("StuckMinutes", 5) is var stuckMinutes && stuckMinutes == 8 ? 5 : stuckMinutes); // 8 was the old default, now 5
