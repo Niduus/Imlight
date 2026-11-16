@@ -301,6 +301,92 @@ internal static class UltimusPads {
         }
     });
 
+    // ---- Teleporters whose landing nobody knows yet. ----
+
+    /// <summary>A teleporter volume of the area whose landing no file or bot knows: walking into it shows where it goes.</summary>
+    internal sealed record Untried(float X, float Y, string Name);
+
+    private static readonly ConcurrentDictionary<string, List<Untried>> s_untried = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// The nearest teleporter on the ground (x, y) stands on whose landing is not known yet, not one in <paramref name="skip"/>.
+    /// The game's own copy of an area often leaves a teleporter's landing out (Big Ben's twenty teleporting floors: only
+    /// the first five were known, so at the sixth floor Ultimus found no way on to Meowiarty and stood still; Niduus,
+    /// 2026-11-15: "I think he's stuck in Big Ben"). A player walks into it to see where it goes, and so does he; once
+    /// it has moved him it is learned (<see cref="Learn"/>) and the way finder uses it. Ones named as a way out of the
+    /// area or back (Exit, Hub, Out) come last, so he tries the way on first.
+    /// </summary>
+    internal static Untried NextUntried(string zonePath, float x, float y, ICollection<string> skip) {
+        try {
+            var here = OverlayQuestPath.IslandOf(zonePath, x, y);
+            var known = In(zonePath);
+
+            return s_untried.GetOrAdd(zonePath, UntriedFromFiles)
+                .Where(u => skip is null || !skip.Contains(u.Name))
+                .Where(u => !known.Any(p => Near(p.X, p.Y, u.X, u.Y, UNTRIED_KNOWN)))
+                .Where(u => here < 0 || OverlayQuestPath.IslandOf(zonePath, u.X, u.Y) == here)
+                .OrderBy(u => BackWay(u.Name) ? 1 : 0)
+                .ThenBy(u => UltimusPlanner.Far(x, y, u.X, u.Y))
+                .FirstOrDefault();
+        }
+        catch (Exception) {
+            return null;
+        }
+    }
+
+    /// <summary>True while the teleporter is still unknown and on the ground (x, y) stands on (not once it has moved him).</summary>
+    internal static bool StillUntried(string zonePath, Untried pad, float x, float y) {
+        try {
+            var here = OverlayQuestPath.IslandOf(zonePath, x, y);
+            return !In(zonePath).Any(p => Near(p.X, p.Y, pad.X, pad.Y, UNTRIED_KNOWN))
+                   && (here < 0 || OverlayQuestPath.IslandOf(zonePath, pad.X, pad.Y) == here);
+        }
+        catch (Exception) {
+            return false;
+        }
+    }
+
+    // A known pad this near a volume is that volume (a wizard is moved where it stands inside the volume, not its middle).
+    private const float UNTRIED_KNOWN = 700f;
+
+    private static bool BackWay(string name)
+        => name.Contains("Exit", StringComparison.OrdinalIgnoreCase) || name.Contains("Hub", StringComparison.OrdinalIgnoreCase)
+           || name.Contains("Out", StringComparison.OrdinalIgnoreCase) || name.Contains("Back", StringComparison.OrdinalIgnoreCase);
+
+    // Teleport triggers whose landing the files leave blank (no zone, no spot), and nothing recorded for them: their volumes.
+    private static List<Untried> UntriedFromFiles(string zonePath) {
+        var found = new List<Untried>();
+        try {
+            if (!ResourceManager.TryLoadArchive(zonePath, out var wad)) {
+                return found;
+            }
+
+            var volumes = Read<WizZoneVolumes>(wad.OpenFile("volumes.xml")?.ToArray())?.m_volumes?.Where(v => v is not null).ToList() ?? [];
+            var triggers = Read<WizZoneTriggers>(wad.OpenFile("triggers.xml")?.ToArray())?.m_triggers?.Where(t => t is not null).ToList() ?? [];
+            var recorded = ZoneDataCollection.GetZoneData(zonePath)?.Teleports ?? [];
+            foreach (var trigger in triggers) {
+                string name = trigger.m_triggerName;
+                if (trigger.m_fireEvents is null || recorded.Any(t => t?.TriggerName == name)
+                    || trigger.m_results?.m_results?.OfType<ResTeleport>().FirstOrDefault() is not { } teleport
+                    || !string.IsNullOrWhiteSpace(teleport.m_destinationZone) || !string.IsNullOrWhiteSpace(teleport.m_destinationLoc)) {
+                    continue;
+                }
+
+                foreach (var fire in trigger.m_fireEvents.Select(e => e.ToString()).Where(e => !string.IsNullOrEmpty(e))) {
+                    foreach (var volume in volumes.Where(v => v.m_enterEvents?.Any(e => (string) e == fire) == true
+                                                              || "Enter_" + (string) v.m_volumeName == fire)) {
+                        found.Add(new Untried(volume.m_locationX, volume.m_locationY, name ?? (string) volume.m_volumeName ?? "a teleporter"));
+                    }
+                }
+            }
+        }
+        catch (Exception ex) {
+            Logger.Debug("Ultimus: the untried teleporters of {0} could not be read: {1}", Logger.Args(zonePath, ex.Message));
+        }
+
+        return [.. found.DistinctBy(u => ((int) (u.X / 100), (int) (u.Y / 100)))];
+    }
+
     // ---- The area's files: a trigger that teleports within the area, its volume, and the named spot it lands on. ----
 
     private static List<Pad> FromFiles(string zonePath) {

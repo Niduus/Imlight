@@ -1568,8 +1568,16 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                      ?? OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, toX, toY, body: true, avoid: walkAvoid, fromZ: member.Z, toZ: toZ);
         // A walk that goes nowhere while the step is far: said once per step, with the spots, so the log shows where the
         // map gives no way (Niduus's log, 2026-11-13: it stood at The Oasis's start for an hour with nothing said).
-        if (UltimusPlanner.Far(member.X, member.Y, toX, toY) > 300
-            && (points.Count == 0 || UltimusPlanner.Far(member.X, member.Y, points[^1].X, points[^1].Y) < 60)
+        var noWay = UltimusPlanner.Far(member.X, member.Y, toX, toY) > 300
+                    && (points.Count == 0 || UltimusPlanner.Far(member.X, member.Y, points[^1].X, points[^1].Y) < 60);
+        // No way, but a teleporter on his ground whose landing nobody knows yet: he walks into it to see where it goes, as
+        // a player tries the next door (Big Ben's floors past the fifth; Niduus, 2026-11-15: "I think he's stuck in Big Ben").
+        // Once it has moved him it is learned, and the way finder chains it with the rest.
+        if (noWay && TryUntried(index, member, target, what)) {
+            return;
+        }
+
+        if (noWay
             && _noWaySaid.Add($"{member.Zone}|{(int) (toX / 200)}|{(int) (toY / 200)}")) {
             Note("Ultimus", $"{member.Name} finds no way on the map from ({member.X:0}, {member.Y:0}) to \"{what}\" at ({toX:0}, {toY:0}) in {UltimusText.Zone(member.Zone)}.",
                 UltimusLink.ABNORMAL);
@@ -1588,6 +1596,42 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             _leaderLastTarget = target;
         }
     }
+
+    // Teleporters with no known landing he has walked into (by area and name), tried again only after a while.
+    private readonly Dictionary<string, DateTime> _untriedTried = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly TimeSpan s_untriedAgain = TimeSpan.FromMinutes(10);
+
+    private (string Zone, UltimusPads.Untried Pad, DateTime At)? _untriedNow;
+
+    private bool TryUntried(int index, UltimusMember.Status member, UltimusPlanner.Target target, string what) {
+        // The one he is walking to stays his pick for a while (not a new one each look), then the next is tried.
+        var pad = _untriedNow is { } now && now.Zone == member.Zone && DateTime.UtcNow - now.At < s_untriedWalk
+                  && UltimusPads.StillUntried(member.Zone, now.Pad, member.X, member.Y) ? now.Pad : null;
+        if (pad is null) {
+            var skip = _untriedTried.Where(t => t.Key.StartsWith(member.Zone + "|", StringComparison.OrdinalIgnoreCase)
+                                                && DateTime.UtcNow - t.Value < s_untriedAgain)
+                .Select(t => t.Key[(member.Zone.Length + 1)..]).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            if (UltimusPads.NextUntried(member.Zone, member.X, member.Y, skip) is not { } next) {
+                return false;
+            }
+
+            pad = next;
+            _untriedNow = (member.Zone, pad, DateTime.UtcNow);
+            _untriedTried[member.Zone + "|" + pad.Name] = DateTime.UtcNow;
+            Note("Ultimus", $"{member.Name} finds no way on the map to \"{what}\" in {UltimusText.Zone(member.Zone)}: tries the teleporter " +
+                            $"\"{pad.Name}\" at ({pad.X:0}, {pad.Y:0}), whose landing is not known yet, to see where it goes.");
+            Think($"There is no way I know to \"{what}\", but there is a teleporter here I have not used yet. I walk into it to see where it takes me.",
+                "untried|" + pad.Name);
+        }
+
+        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, pad.X, pad.Y, body: true);
+        _sent[index] = (target, DateTime.UtcNow, member.X, member.Y);
+        _actors[index].Tell(new UltimusMember.WalkTo(points, $"tries an unknown teleporter toward {what}"));
+
+        return true;
+    }
+
+    private static readonly TimeSpan s_untriedWalk = TimeSpan.FromSeconds(90);
 
     // A creature this near the way has the way planned again; this near Ultimus, it steps back (a creature starts a
     // battle within about 175).

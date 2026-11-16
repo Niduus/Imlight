@@ -1,0 +1,4 @@
+Fixed: Ultimus stuck on the sixth floor of Big Ben
+The game's own copy of Big Ben leaves out where most of its teleporting floors lead, so after the fifth floor Ultimus could not see any way on to Meowiarty and stood still. Now, when he finds no way to his step and there is a teleporter on his floor he has never used, he walks into it to see where it goes, just like a player trying the next door. Once it moves him he remembers it, and the way finder uses it from then on. Teleporters that lead back or out are tried last, so he goes forward first.
+Where: Ultimus, in any area whose teleporters the game files do not fully describe, such as Big Ben in Marleybone.
+Test: Let Ultimus reach the sixth floor of Big Ben on "The Last Meow" and watch him walk into the floor's far teleporter and keep climbing to Meowiarty.
