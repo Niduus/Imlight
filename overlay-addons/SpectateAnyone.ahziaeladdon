@@ -1,0 +1,51 @@
+{
+  "Format": "Ahziael overlay add-on",
+  "Name": "Spectate Anyone",
+  "Author": "Niduus",
+  "Description": "For the host only, on the PC that runs the server: watch anyone in the game, one at a time. That means players and the server's own wizards: Ultimus, the seven TCO7 members (Tulkar, Cyndr, Kurrent, Mythis, Idunn, Garm and Ra) and the Quest Team. Its own minimap follows the one watched and draws their quest's way, and the map's border takes their school colour. A quest box shows their quest and step with everyone's names under it, and a click on a name watches that one. In battle, a spells box shows a bot's hand, pips and what it casts. Next and Back go through everyone in the game, and the one watched is remembered next time. Go to takes you right next to a bot, or to the place a player is in. Needs the Minimap add-on downloaded. Anyone who isn't the host on the server's own PC gets a note instead.",
+  "Version": "1",
+  "Requires": [ "Minimap" ],
+  "Widgets": [
+    {
+      "Name": "Spectate Anyone (map, quest, spells, Next, Back and Go to)",
+      "Elements": [
+        {
+          "Kind": "UltimusMap", "Watch": "Anyone", "Name": "Spectate Anyone Minimap", "Anchor": "TopLeft", "X": 12, "Y": 70, "Width": 180, "Height": 180,
+          "Background": { "Kind": "Radial", "Color1": "#C8302030", "Color2": "#C81C0A14" },
+          "BorderColor": "#D0FFD24A", "BorderWidth": 2, "CornerRadius": 16, "Shadow": true, "ShadowBlur": 8,
+          "Map": { "Zoom": 2500 }
+        },
+        {
+          "Kind": "UltimusQuest", "Watch": "Anyone", "Name": "Spectate Anyone Quest", "Anchor": "TopLeft", "X": 12, "Y": 296, "Width": 240, "Height": 0, "Size": 13,
+          "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#B4160C22" }, "Padding": 10,
+          "BorderColor": "#A0FFD24A", "BorderWidth": 1, "CornerRadius": 12, "Shadow": true, "ShadowBlur": 8
+        },
+        {
+          "Kind": "Button", "Action": "AnyoneNext", "Command": "back", "Name": "Spectate Anyone: back", "Text": "Back", "Anchor": "TopLeft", "X": 12, "Y": 258, "Width": 54, "Height": 30,
+          "Size": 13, "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#D0160C22" },
+          "BorderColor": "#D0FFD24A", "BorderWidth": 1, "CornerRadius": 8
+        },
+        {
+          "Kind": "Button", "Action": "AnyoneNext", "Name": "Spectate Anyone: next", "Text": "Next", "Anchor": "TopLeft", "X": 70, "Y": 258, "Width": 54, "Height": 30,
+          "Size": 13, "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#D0160C22" },
+          "BorderColor": "#D0FFD24A", "BorderWidth": 1, "CornerRadius": 8
+        },
+        {
+          "Kind": "Button", "Action": "SpectateGoTo", "Command": "anyone", "Name": "Spectate Anyone: go to the one watched", "Text": "Go to", "Anchor": "TopLeft", "X": 128, "Y": 258, "Width": 64, "Height": 30,
+          "Size": 13, "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#D0160C22" },
+          "BorderColor": "#D0FFD24A", "BorderWidth": 1, "CornerRadius": 8
+        },
+        {
+          "Kind": "UltimusSpells", "Watch": "Anyone", "Name": "Spectate Anyone Spells", "Anchor": "TopLeft", "X": 204, "Y": 70, "Width": 300, "Height": 0, "Size": 13,
+          "Fill": { "Kind": "Solid", "Color1": "#FFFFFFFF" },
+          "Background": { "Kind": "Solid", "Color1": "#C8160C22" }, "Padding": 10,
+          "BorderColor": "#D0FFD24A", "BorderWidth": 1, "CornerRadius": 12, "Shadow": true, "ShadowBlur": 8
+        }
+      ]
+    }
+  ]
+}

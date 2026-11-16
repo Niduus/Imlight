@@ -64,9 +64,10 @@ internal static class OverlayButtons {
         var mapKey = button.Command switch {
             OverlayRenderer.MapButton.ULTIMUS => OverlayUltimusData.KEY,
             OverlayRenderer.MapButton.TEAM => OverlayUltimusData.TEAM_KEY,
+            OverlayRenderer.MapButton.ANYONE => OverlayUltimusData.ANYONE_KEY,
             _ => game.ToInt64(),
         };
-        long[] otherKeys = [.. new[] { game.ToInt64(), OverlayUltimusData.KEY, OverlayUltimusData.TEAM_KEY }.Where(k => k != mapKey)];
+        long[] otherKeys = [.. new[] { game.ToInt64() }.Concat(OverlayUltimusData.Keys).Where(k => k != mapKey)];
         switch (button.Action) {
             case OverlayAction.DISMISS_NOTE:
                 OverlayHost.ShowNotice(game, "");
@@ -128,12 +129,57 @@ internal static class OverlayButtons {
 
                 return;
             }
+            case OverlayAction.ANYONE_NEXT:
+            case OverlayAction.ANYONE_WATCH: {
+                // Spectate Anyone (Niduus, 2026-11-16): anyone in the game, one at a time; the host only, on the server's PC.
+                if (!OverlayUltimusData.IsWanted(OverlayUltimusData.ANYONE_KEY)) {
+                    Report("Add the Spectate Anyone map or quest box to the overlay to watch someone.", false, done);
+
+                    return;
+                }
+
+                var name = button.Action == OverlayAction.ANYONE_WATCH ? OverlayUltimusData.WatchAnyone(button.Command)
+                    : OverlayUltimusData.NextAnyone(button.Command.Trim().Equals("back", StringComparison.OrdinalIgnoreCase) ? -1 : 1);
+                if (name is null) {
+                    Report(button.Action == OverlayAction.ANYONE_WATCH ? $"Nobody in the game is called \"{button.Command}\"." : "Nobody is in the game to watch yet.", false, done);
+
+                    return;
+                }
+
+                Report($"Watching {name}.", true, done);
+
+                return;
+            }
             case OverlayAction.SPECTATE_GOTO: {
-                // Right next to the bot watched (Niduus, 2026-11-15), with the same command Ahziael's pages use.
+                // Right next to the bot watched (Niduus, 2026-11-15), with the same command Ahziael's pages use. Spectate
+                // Anyone's (Command "anyone"): the bot's own command, or for a player the place they are in.
                 var team = !string.Equals(button.Command.Trim(), "ultimus", StringComparison.OrdinalIgnoreCase);
+                var command = team ? $".questteam tp {OverlayUltimusData.Who(OverlayUltimusData.TEAM_KEY)}" : ".ultimus tp";
+                if (string.Equals(button.Command.Trim(), "anyone", StringComparison.OrdinalIgnoreCase)) {
+                    if (OverlayUltimusData.AnyoneWatched is not { } one) {
+                        Report("Nobody is watched yet.", false, done);
+
+                        return;
+                    }
+
+                    var place = OverlayUltimusData.For(game.ToInt64(), OverlayUltimusData.ANYONE_KEY)?.Place ?? "";
+                    command = one.Kind switch {
+                        "Ultimus" => ".ultimus tp",
+                        "TCO7" => $".ultimus tp {one.Name}",
+                        "Quest Team" => $".questteam tp {one.School}",
+                        _ when place.Length > 0 => $".tp {place}",
+                        _ => "",
+                    };
+                    if (command.Length == 0) {
+                        Report($"Where {one.Name} is isn't known yet.", false, done);
+
+                        return;
+                    }
+                }
+
                 var go = new OverlayElement {
                     Kind = OverlayElement.BUTTON, Action = OverlayAction.COMMAND, Visible = true,
-                    Command = team ? $".questteam tp {OverlayUltimusData.Who(OverlayUltimusData.TEAM_KEY)}" : ".ultimus tp",
+                    Command = command,
                 };
                 _ = RunOnServerAsync(go, game, done);
 
@@ -183,7 +229,8 @@ internal static class OverlayButtons {
             case OverlayAction.SPECTATE_TRACK: {
                 // A spectator's Track line: its dungeon quest or the quest it plays, on its box and map (Niduus, 2026-11-15).
                 var parts = button.Command.Split('|', 2);
-                OverlayUltimusData.Track(parts[0] == "team" ? OverlayUltimusData.TEAM_KEY : OverlayUltimusData.KEY, parts.Length > 1 ? parts[1] : "");
+                OverlayUltimusData.Track(parts[0] switch { "team" => OverlayUltimusData.TEAM_KEY, "anyone" => OverlayUltimusData.ANYONE_KEY, _ => OverlayUltimusData.KEY },
+                    parts.Length > 1 ? parts[1] : "");
                 OverlayMinimapData.Redraw();
                 done(true);
 

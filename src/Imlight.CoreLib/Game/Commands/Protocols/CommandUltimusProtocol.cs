@@ -41,15 +41,21 @@ internal class CommandUltimus : CommandProtocol {
     [Alias("goto", "go")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void TeleportCommand([Remainder] string who = "") {
-        var members = UltimusDirector.Members;
+        who = (who ?? "").Trim();
+        // Ultimus, or a TCO7 member named (Niduus, 2026-11-16: the TCO7 are each their own Ultimus): ".ultimus tp Tulkar".
+        var seat = UltimusSeat.All.FirstOrDefault(s => s.IsTco7 && who.Length > 0
+                                                      && s.Name.Equals(who, StringComparison.OrdinalIgnoreCase))
+                   ?? UltimusSeat.Ultimus;
+        var members = UltimusDirector.MembersOf(seat);
         if (members.Count == 0) {
-            InformSenderClient("The Ultimus is not playing right now. Turn it on in Ahziael (Ultimus > Ultimus) with the server running.");
+            InformSenderClient(seat.IsUltimus
+                ? "The Ultimus is not playing right now. Turn it on in Ahziael (Ultimus > Ultimus) with the server running."
+                : $"{seat.Name} of the TCO7 is not playing right now. Turn the TCO7 on in Ahziael (Ultimus > TCO7) with the server running.");
 
             return;
         }
 
-        who = (who ?? "").Trim();
-        var member = who.Length == 0 ? members[0]
+        var member = who.Length == 0 || seat.IsTco7 ? members[0]
             : members.FirstOrDefault(m => m.Role.Equals(who, StringComparison.OrdinalIgnoreCase))
               ?? members.FirstOrDefault(m => (m.Name ?? "").Contains(who, StringComparison.OrdinalIgnoreCase));
         if (member is null) {
@@ -95,7 +101,7 @@ internal class CommandUltimus : CommandProtocol {
     [Command("where")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void WhereCommand() {
-        var members = UltimusDirector.Members;
+        var members = UltimusSeat.All.SelectMany(UltimusDirector.MembersOf).ToList();
         if (members.Count == 0) {
             InformSenderClient("The Ultimus is not playing right now.");
 
@@ -104,7 +110,7 @@ internal class CommandUltimus : CommandProtocol {
 
         foreach (var member in members) {
             InformSenderClient($"{member.Role}: {member.Name}, level {member.Wizard?.MagicSchoolBehavior?.Level ?? 0}, " +
-                               $"{(string.IsNullOrEmpty(member.Zone) ? member.State : ZoneNames.Shown(member.Zone))}. .ultimus tp goes there.");
+                               $"{(string.IsNullOrEmpty(member.Zone) ? member.State : ZoneNames.Shown(member.Zone))}. .ultimus tp {member.Name} goes there.");
         }
     }
 

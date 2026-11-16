@@ -632,7 +632,7 @@ internal sealed class MinimapView : Control {
             : OverlayRenderer.Brush(_element.Background) ?? new SolidColorBrush(Color.FromArgb(0xB4, 0x10, 0x14, 0x24));
         // The Quest Team Spectator's map wears the watched member's school colour (Niduus, 2026-11-15), so who is shown is
         // seen at a glance.
-        var edge = _element.BorderWidth > 0 && ((_window == OverlayUltimusData.TEAM_KEY ? OverlayUltimusData.SchoolColor(_window) : null)
+        var edge = _element.BorderWidth > 0 && ((_window is OverlayUltimusData.TEAM_KEY or OverlayUltimusData.ANYONE_KEY ? OverlayUltimusData.SchoolColor(_window) : null)
                                                 ?? OverlayRenderer.Parse(_element.BorderColor)) is { } edgeColor
             ? new Pen(new SolidColorBrush(edgeColor), _element.BorderWidth) : null;
         var corner = Math.Min(_element.CornerRadius, Math.Min(_mapW, _mapH) / 2);

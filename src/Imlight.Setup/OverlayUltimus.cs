@@ -61,14 +61,14 @@ internal static class OverlayUltimusData {
     /// <summary>What the spectator tracks for this feed now: "" Auto, "main", or a dungeon quest's id.</summary>
     internal static string TrackChoice(long key) {
         lock (s_lock) {
-            return s_track.GetValueOrDefault(key == TEAM_KEY ? TEAM_KEY : KEY, "");
+            return s_track.GetValueOrDefault(Norm(key), "");
         }
     }
 
     /// <summary>A click on the quest box's Instance or Main line: "main", a dungeon quest's id, or "" for Auto.</summary>
     internal static void Track(long key, string choice) {
         lock (s_lock) {
-            key = key == TEAM_KEY ? TEAM_KEY : KEY;
+            key = Norm(key);
             s_track[key] = choice ?? "";
             FeedOf(key).Version++;
         }
@@ -133,10 +133,141 @@ internal static class OverlayUltimusData {
     internal const long TEAM_KEY = long.MinValue + 78;
 
     /// <summary>Whether a map key is one of the spectators' (Ultimus's or the Quest Team's), not a game window.</summary>
-    internal static bool IsSpectator(long key) => key is KEY or TEAM_KEY;
+    internal static bool IsSpectator(long key) => key is KEY or TEAM_KEY or ANYONE_KEY;
 
-    /// <summary>The feed a spectator piece shows: the Quest Team Spectator's own, or Ultimus's.</summary>
-    internal static long KeyOf(OverlayElement e) => e.WatchesTeam ? TEAM_KEY : KEY;
+    /// <summary>The feed a spectator piece shows: the Spectate Anyone add-on's, the Quest Team Spectator's own, or Ultimus's.</summary>
+    internal static long KeyOf(OverlayElement e) => e.WatchesAnyone ? ANYONE_KEY : e.WatchesTeam ? TEAM_KEY : KEY;
+
+    /// <summary>Every spectator feed, Ultimus's first.</summary>
+    internal static readonly long[] Keys = [KEY, TEAM_KEY, ANYONE_KEY];
+
+    // A feed's own key (anything else is Ultimus's).
+    private static long Norm(long key) => key is TEAM_KEY or ANYONE_KEY ? key : KEY;
+
+    // ---------------------------------------------------------------------
+    // Spectate Anyone (Niduus, 2026-11-16: "While installed and you're the local host, you can spectate anyone on the server,
+    // including Bots like Ultimus, TCO7 and QT members")
+    // ---------------------------------------------------------------------
+
+    /// <summary>The Spectate Anyone add-on's feed: one wizard on the server at a time, anyone, picked from the server's list.</summary>
+    internal const long ANYONE_KEY = long.MinValue + 79;
+
+    /// <summary>How the server is asked for one wizard by Spectate Anyone ("anyone:" and its character id).</summary>
+    internal const string ANYONE = "anyone:";
+
+    /// <summary>Someone the host may watch: a player, Ultimus, a TCO7 member or a Quest Team member.</summary>
+    internal sealed record Someone(string Id, string Name, string Kind, string School);
+
+    private static IReadOnlyList<Someone> s_everyone = [];
+    private static string s_anyoneId = LoadAnyone();
+
+    private static string AnyoneFile => System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        Edition.INSTALL_FOLDER_NAME, "overlay-anyone-watch.txt");
+
+    private static string LoadAnyone() {
+        try {
+            return System.IO.File.Exists(AnyoneFile) ? System.IO.File.ReadAllText(AnyoneFile).Trim() : "";
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) {
+            return "";
+        }
+    }
+
+    /// <summary>Everyone in the game the server last listed (Ultimus and the TCO7 first, then the Quest Team, then players).</summary>
+    internal static IReadOnlyList<Someone> Everyone {
+        get {
+            lock (s_lock) {
+                return s_everyone;
+            }
+        }
+    }
+
+    /// <summary>The one Spectate Anyone watches now, or null before the server has answered.</summary>
+    internal static Someone? AnyoneWatched {
+        get {
+            lock (s_lock) {
+                return s_everyone.FirstOrDefault(p => p.Id == s_anyoneId);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Spectate Anyone's buttons: watch the one named (a name, part of a name, or a character id), the next one or the one
+    /// before. Returns the name watched, or null when nobody fits.
+    /// </summary>
+    internal static string? WatchAnyone(string? meant) {
+        var text = (meant ?? "").Trim();
+        if (text.StartsWith("anyone:", StringComparison.OrdinalIgnoreCase)) {
+            text = text["anyone:".Length..].Trim();
+        }
+
+        Someone? pick;
+        lock (s_lock) {
+            pick = s_everyone.FirstOrDefault(p => p.Id == text)
+                   ?? s_everyone.FirstOrDefault(p => string.Equals(p.Name, text, StringComparison.OrdinalIgnoreCase))
+                   ?? (text.Length > 0 ? s_everyone.FirstOrDefault(p => p.Name.StartsWith(text, StringComparison.OrdinalIgnoreCase)) : null);
+        }
+
+        if (pick is null) {
+            return null;
+        }
+
+        SwitchAnyone(pick);
+
+        return pick.Name;
+    }
+
+    /// <summary>Spectate Anyone's Next (or Back) button: the next one in the server's list, round again at the end.</summary>
+    internal static string? NextAnyone(int step = 1) {
+        Someone? pick;
+        lock (s_lock) {
+            if (s_everyone.Count == 0) {
+                return null;
+            }
+
+            var at = s_everyone.ToList().FindIndex(p => p.Id == s_anyoneId);
+            pick = s_everyone[((at < 0 ? 0 : at + step) % s_everyone.Count + s_everyone.Count) % s_everyone.Count];
+        }
+
+        SwitchAnyone(pick);
+
+        return pick.Name;
+    }
+
+    private static void SwitchAnyone(Someone pick) {
+        lock (s_lock) {
+            if (s_anyoneId == pick.Id) {
+                return;
+            }
+
+            s_anyoneId = pick.Id;
+            var feed = FeedOf(ANYONE_KEY);
+            feed.Info = null;
+            feed.Said = "";
+            feed.Version++;
+        }
+
+        try {
+            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(AnyoneFile)!);
+            System.IO.File.WriteAllText(AnyoneFile, pick.Id);
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) {
+            // Only a convenience: the next start watches the first one listed.
+        }
+
+        OverlayMinimapData.Heard(ANYONE_KEY, new JsonObject { ["ok"] = false, ["error"] = $"Switching to {pick.Name}..." });
+    }
+
+    private static Color? ColorOfSchool(string school) => school.Trim().ToLowerInvariant() switch {
+        "ice" => Color.FromArgb(0xF0, 0x6E, 0xC8, 0xFF),
+        "life" => Color.FromArgb(0xF0, 0x5C, 0xD6, 0x5C),
+        "death" => Color.FromArgb(0xF0, 0xA8, 0xAE, 0xB4),
+        "storm" => Color.FromArgb(0xF0, 0xB4, 0x6E, 0xFF),
+        "fire" => Color.FromArgb(0xF0, 0xFF, 0x7A, 0x3C),
+        "myth" => Color.FromArgb(0xF0, 0xF0, 0xD0, 0x40),
+        "balance" => Color.FromArgb(0xF0, 0xD8, 0xA0, 0x60),
+        _ => null,
+    };
 
     /// <summary>The Quest Team's roles, in the team's order (the Quest Team Spectator cycles through them only).</summary>
     internal static readonly string[] TeamRoles = ["Ice", "Life", "Death", "Storm"];
@@ -177,9 +308,9 @@ internal static class OverlayUltimusData {
     }
 
     private static readonly object s_lock = new();
-    private static readonly Dictionary<long, Feed> s_feeds = new() { [KEY] = new Feed(), [TEAM_KEY] = new Feed() };
+    private static readonly Dictionary<long, Feed> s_feeds = new() { [KEY] = new Feed(), [TEAM_KEY] = new Feed(), [ANYONE_KEY] = new Feed() };
 
-    private static Feed FeedOf(long key) => s_feeds[key == TEAM_KEY ? TEAM_KEY : KEY];
+    private static Feed FeedOf(long key) => s_feeds[Norm(key)];
 
     /// <summary>The spectator feeds the overlay shows (with the Minimap they need): the link asks the server for each.</summary>
     internal static long[] WantedKeys {
@@ -200,7 +331,7 @@ internal static class OverlayUltimusData {
     /// <summary>The page showing this feed now, with the quest picked there ("" for the one played).</summary>
     internal static void PageWants(long key, string routeQuest) {
         lock (s_lock) {
-            s_page[key == TEAM_KEY ? TEAM_KEY : KEY] = (routeQuest ?? "", DateTime.UtcNow);
+            s_page[Norm(key)] = (routeQuest ?? "", DateTime.UtcNow);
         }
     }
 
@@ -231,19 +362,17 @@ internal static class OverlayUltimusData {
     }
 
     /// <summary>Who the server is asked for: "" for Ultimus (KEY), else the Quest Team role watched now (TEAM_KEY).</summary>
-    internal static string Who(long key) => key == TEAM_KEY ? TeamRoles[Volatile.Read(ref s_teamIndex) % TeamRoles.Length] : "";
+    internal static string Who(long key) => key == TEAM_KEY ? TeamRoles[Volatile.Read(ref s_teamIndex) % TeamRoles.Length]
+        : key == ANYONE_KEY ? ANYONE + Volatile.Read(ref s_anyoneId) : "";
 
     /// <summary>The watched Quest Team member's school colour (for its map's border); null for Ultimus's feed.</summary>
-    internal static Color? SchoolColor(long key) => key != TEAM_KEY ? null : Who(key) switch {
-        "Ice" => Color.FromArgb(0xF0, 0x6E, 0xC8, 0xFF),
-        "Life" => Color.FromArgb(0xF0, 0x5C, 0xD6, 0x5C),
-        "Death" => Color.FromArgb(0xF0, 0xA8, 0xAE, 0xB4),
-        "Storm" => Color.FromArgb(0xF0, 0xB4, 0x6E, 0xFF),
-        _ => null,
-    };
+    internal static Color? SchoolColor(long key) => key == TEAM_KEY ? ColorOfSchool(Who(key))
+        : key == ANYONE_KEY ? ColorOfSchool(AnyoneWatched?.School ?? "") : null;
 
     /// <summary>A plain name of whom a feed watches, for its boxes' headings and notes.</summary>
-    internal static string Watched(long key) => key == TEAM_KEY ? $"Quest Team: {MemberName(Who(key))} ({Who(key)})" : "Ultimus";
+    internal static string Watched(long key) => key == TEAM_KEY ? $"Quest Team: {MemberName(Who(key))} ({Who(key)})"
+        : key == ANYONE_KEY ? AnyoneWatched is { } one ? $"Watching: {one.Name} ({(one.Kind == "Player" ? one.School : one.Kind)})" : "Spectate Anyone"
+        : "Ultimus";
 
     // The Quest Team's locked names (2026-11-14), by role.
     private static readonly string[] s_teamNames = ["Freya", "Terra", "Anubis", "Chaac"];
@@ -322,7 +451,7 @@ internal static class OverlayUltimusData {
                 }
             }
 
-            return key == TEAM_KEY ? TeamSample : Sample;
+            return SampleOf(key);
         }
 
         lock (s_lock) {
@@ -332,8 +461,30 @@ internal static class OverlayUltimusData {
 
     /// <summary>The server's answer to op "ultimus" for one feed.</summary>
     internal static void Heard(long key, JsonObject answer) {
-        key = key == TEAM_KEY ? TEAM_KEY : KEY;
+        key = Norm(key);
         // The map (with the quest's way) goes where the minimap keeps maps, under the feed's own key.
+        // Spectate Anyone: the server's list of everyone to pick from comes with every answer, and an answer for someone no
+        // longer watched (a pick was made meanwhile) is dropped.
+        if (key == ANYONE_KEY) {
+            if (answer["everyone"] is JsonArray listed) {
+                var everyone = listed.OfType<JsonObject>().Select(p => new Someone(Short((string?) p["id"], 30), Short((string?) p["name"], 40),
+                    Short((string?) p["kind"], 20), Short((string?) p["school"], 20))).Where(p => p.Id.Length > 0).Take(500).ToList();
+                lock (s_lock) {
+                    s_everyone = everyone;
+                }
+            }
+
+            var watching = (string?) answer["watching"] ?? "";
+            lock (s_lock) {
+                if (s_anyoneId.Length == 0 || s_everyone.All(p => p.Id != s_anyoneId)) {
+                    s_anyoneId = watching;
+                }
+                else if (watching.Length > 0 && watching != s_anyoneId) {
+                    return;
+                }
+            }
+        }
+
         OverlayMinimapData.Heard(key, answer);
         Info info;
         string said;
@@ -529,7 +680,7 @@ internal static class OverlayUltimusData {
     }
 
     /// <summary>The made-up one the designers show for this feed.</summary>
-    internal static Info SampleOf(long key) => key == TEAM_KEY ? TeamSample : Sample;
+    internal static Info SampleOf(long key) => key == TEAM_KEY ? TeamSample : key == ANYONE_KEY ? AnyoneSample : Sample;
 
     // A made-up Ultimus for the designers, so the pieces can be placed and styled before he is watched.
     private static readonly Info Sample = new("Ultimus", 9, 612, 780, "Unicorn Way", "walking to Lost Souls", "sample-main", "Unicorn Way Ghosts", "main",
@@ -552,6 +703,9 @@ internal static class OverlayUltimusData {
         Name = "Freya (Ice)", Doing = "walking to Lost Souls with the team", Fight = null, Estimate = "about 4 h to Krokotopia at their pace (about 6 min a quest)",
     };
 
+    // A made-up wizard for Spectate Anyone's designers.
+    private static readonly Info AnyoneSample = Sample with { Name = "Tulkar", Doing = "walking to Lost Souls", Fight = null };
+
 }
 
 /// <summary>
@@ -566,6 +720,33 @@ internal static class UltimusViews {
     /// </summary>
     // The Quest Team's four names under its quest box; a click on one watches it (OverlayHost.PlaceHits).
     private static void AddNames(Panel panel, long key, Looks look) {
+        if (key == OverlayUltimusData.ANYONE_KEY) {
+            // Spectate Anyone: everyone on the server, a click watches that one (bots first, then players).
+            var everyone = OverlayUltimusData.Everyone;
+            if (everyone.Count == 0) {
+                return;
+            }
+
+            var watchedId = OverlayUltimusData.AnyoneWatched?.Id;
+            var anyone = new WrapPanel { Orientation = Orientation.Horizontal };
+            anyone.Children.Add(Line("Watch: ", look.Size - 2, look.Faint));
+            foreach (var one in everyone.Take(30)) {
+                var watched = one.Id == watchedId;
+                var name = Line(one.Name, look.Size - 2, watched ? look.Gold : look.Text, bold: watched);
+                name.Margin = new Thickness(0, 0, 8, 0);
+                name.Tag = new MemberPick(OverlayUltimusData.ANYONE + one.Id);
+                anyone.Children.Add(name);
+            }
+
+            if (everyone.Count > 30) {
+                anyone.Children.Add(Line($"+{everyone.Count - 30} more (Next button)", look.Size - 2, look.Faint));
+            }
+
+            panel.Children.Add(anyone);
+
+            return;
+        }
+
         if (key != OverlayUltimusData.TEAM_KEY) {
             return;
         }
@@ -883,11 +1064,13 @@ internal static class UltimusViews {
 
     private static string? Waiting(OverlayUltimusData.Info? info, long key) => info is null
         ? OverlayHost.Link.Connected
-            ? OverlayHost.Link.SendsUltimus ? key == OverlayUltimusData.TEAM_KEY ? $"Looking for the Quest Team's {OverlayUltimusData.Who(key)} wizard..." : "Looking for Ultimus..."
+            ? OverlayHost.Link.SendsUltimus ? key == OverlayUltimusData.TEAM_KEY ? $"Looking for the Quest Team's {OverlayUltimusData.Who(key)} wizard..."
+                : key == OverlayUltimusData.ANYONE_KEY ? "Looking for everyone in the game..." : "Looking for Ultimus..."
                 : "This server's Imlight is too old to watch Ultimus. The host needs to update it."
             : "Not linked to a server yet. Start the game with Play in Ahziael."
         : info.Note.Length > 0 ? info.Note
-        : info.Stale ? key == OverlayUltimusData.TEAM_KEY ? "The Quest Team stopped answering for now..." : "Ultimus stopped answering for now..." : null;
+        : info.Stale ? key == OverlayUltimusData.TEAM_KEY ? "The Quest Team stopped answering for now..."
+            : key == OverlayUltimusData.ANYONE_KEY ? "The server stopped answering for now..." : "Ultimus stopped answering for now..." : null;
 
     private static string Pips(OverlayUltimusData.Battle fight) {
         var words = $"Pips: {fight.Pips}";

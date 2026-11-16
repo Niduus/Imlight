@@ -533,6 +533,14 @@ internal sealed class OverlayElement {
 
     internal bool WatchesTeam => IsUltimus && Watch == WATCH_TEAM;
 
+    /// <summary>
+    /// The Spectate Anyone add-on (Niduus, 2026-11-16): the host, on the server's own PC, watches anyone in the game (players,
+    /// Ultimus, the TCO7 and the Quest Team), one at a time, with its own feed, map and quest box.
+    /// </summary>
+    internal const string WATCH_ANYONE = "Anyone";
+
+    internal bool WatchesAnyone => IsUltimus && Watch == WATCH_ANYONE;
+
     /// <summary>A box, a picture or a minimap: no words (a button has words).</summary>
     internal bool IsBox => Kind is BOX or PICTURE or MINIMAP or QUEST_TRACKER or ULTIMUS_MAP or ULTIMUS_QUEST or ULTIMUS_SPELLS;
 
@@ -558,7 +566,7 @@ internal sealed class OverlayElement {
         Picture = Kind == PICTURE ? CleanPicture(Picture) : "";
         PictureFit = PICTURE_FITS.Contains(PictureFit) ? PictureFit : "Fit";
         Action = OverlayAction.KINDS.Contains(Action) ? Action : OverlayAction.COMMAND;
-        Watch = Kind is ULTIMUS_MAP or ULTIMUS_QUEST or ULTIMUS_SPELLS && Watch == WATCH_TEAM ? WATCH_TEAM : "";
+        Watch = Kind is ULTIMUS_MAP or ULTIMUS_QUEST or ULTIMUS_SPELLS && Watch is WATCH_TEAM or WATCH_ANYONE ? Watch : "";
         Command = Trim(Command, MAX_COMMAND).Replace("\n", " ").Trim();
         CheatHow = OverlayAction.HOWS.Contains(CheatHow) ? CheatHow : OverlayAction.USE;
         Name = Trim(Name, 40);
@@ -674,7 +682,14 @@ internal static class OverlayAction {
     /// </summary>
     internal const string SPECTATE_GOTO = "SpectateGoTo";
 
-    internal static readonly string[] KINDS = [COMMAND, CHEAT, MOB_CHEAT, DESIGNER, TOGGLE_MINE, OPEN_AHZIAEL, TEAM_NEXT, PAUSE_AI, TEAM_WATCH, SPECTATE_GOTO];
+    /// <summary>Spectate Anyone: watch the next one in the server's list (Command "back" for the one before).</summary>
+    internal const string ANYONE_NEXT = "AnyoneNext";
+
+    /// <summary>Spectate Anyone: watch the one named in the button's Command (a wizard's name, or the start of it).</summary>
+    internal const string ANYONE_WATCH = "AnyoneWatch";
+
+    internal static readonly string[] KINDS = [COMMAND, CHEAT, MOB_CHEAT, DESIGNER, TOGGLE_MINE, OPEN_AHZIAEL, TEAM_NEXT, PAUSE_AI, TEAM_WATCH, SPECTATE_GOTO,
+        ANYONE_NEXT, ANYONE_WATCH];
 
     // The minimap's own buttons (not a choice in the designer): full screen or back, closer, farther.
     internal const string MAP_FULL = "MapFull";
@@ -697,7 +712,7 @@ internal static class OverlayAction {
     internal static readonly string[] LABELS = [
         "Run an Imlight or Ahziael command", "Use one of my player cheats", "Set off a mob (creature) cheat", "Open the overlay designer", "Show or hide my own pieces", "Open Ahziael",
         "Quest Team Spectator: next member", "Pause or resume Ultimus's AI (1 hour)", "Quest Team Spectator: watch one member",
-        "Spectator: go to the bot watched",
+        "Spectator: go to the bot watched", "Spectate Anyone: next one (or \"back\")", "Spectate Anyone: watch someone by name",
     ];
 
     internal const string USE = "Use";

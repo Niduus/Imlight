@@ -1756,7 +1756,7 @@ internal sealed partial class ManagerWindow {
 
         private string ListName(OverlayElement e) {
             var i = _ovDesign.Elements.IndexOf(e);
-            var name = e.Name.Length > 0 ? e.Name : e.IsMinimap ? $"Minimap {i + 1}" : e.IsUltimus ? e.WatchesTeam ? $"Quest Team {i + 1}" : $"Ultimus {i + 1}" : e.IsQuestTracker ? $"Quest Tracker {i + 1}" : e.IsPicture ? $"Picture {i + 1}" : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : e.IsButton ? $"Button {i + 1}" : $"Text {i + 1}";
+            var name = e.Name.Length > 0 ? e.Name : e.IsMinimap ? $"Minimap {i + 1}" : e.IsUltimus ? e.WatchesAnyone ? $"Spectate Anyone {i + 1}" : e.WatchesTeam ? $"Quest Team {i + 1}" : $"Ultimus {i + 1}" : e.IsQuestTracker ? $"Quest Tracker {i + 1}" : e.IsPicture ? $"Picture {i + 1}" : e.IsBox ? $"Box {i + 1}" : e.Text.Length > 0 ? e.Text.Split('\n')[0] : e.IsButton ? $"Button {i + 1}" : $"Text {i + 1}";
 
             return name.Length > 34 ? name[..34] + "…" : name;
         }
@@ -2201,20 +2201,35 @@ internal sealed partial class ManagerWindow {
                         "Works when the Quest Team Spectator's map or quest box is on the overlay."));
                     break;
                 case OverlayAction.SPECTATE_GOTO: {
-                    string[] whom = ["The Quest Team member watched now", "Ultimus"];
-                    var ultimus = string.Equals(e.Command.Trim(), "ultimus", StringComparison.OrdinalIgnoreCase);
-                    if (!ultimus && e.Command != "questteam") {
+                    string[] whom = ["The Quest Team member watched now", "Ultimus", "The one Spectate Anyone watches now"];
+                    string[] commands = ["questteam", "ultimus", "anyone"];
+                    var at = Array.FindIndex(commands, c => string.Equals(c, e.Command.Trim(), StringComparison.OrdinalIgnoreCase));
+                    if (at < 0) {
+                        at = 0;
                         e.Command = "questteam";
                     }
 
-                    panel.Children.Add(OvField("Go to", OvCombo(whom, ultimus ? 1 : 0, i => {
-                        e.Command = i == 1 ? "ultimus" : "questteam";
+                    panel.Children.Add(OvField("Go to", OvCombo(whom, at, i => {
+                        e.Command = commands[i];
                         OverlayChanged(false);
                     }, 280)));
                     panel.Children.Add(Sub("Takes the wizard in this game window right next to that bot, inside its copy of a dungeon too, to watch it " +
                         "play. It uses .ultimus tp or .questteam tp, so the wizard needs the rights for those commands."));
                     break;
                 }
+                case OverlayAction.ANYONE_NEXT:
+                    panel.Children.Add(OvField("Goes", OvCombo(["Next", "Back"], e.Command.Trim().Equals("back", StringComparison.OrdinalIgnoreCase) ? 1 : 0, i => {
+                        e.Command = i == 1 ? "back" : "";
+                        OverlayChanged(false);
+                    }, 160)));
+                    panel.Children.Add(Sub("Spectate Anyone: switches to the next one in the game (or the one before), players and bots alike. " +
+                        "Works when the Spectate Anyone map or quest box is on the overlay, for the host on the PC that runs the server."));
+                    break;
+                case OverlayAction.ANYONE_WATCH:
+                    panel.Children.Add(OvField("Name", OvText(e.Command, v => { e.Command = v; OverlayChanged(false); }, 200)));
+                    panel.Children.Add(Sub("Spectate Anyone: switches straight to the wizard with this name (Ultimus, Tulkar, Freya, or a player). " +
+                        "The start of a name is enough."));
+                    break;
                 case OverlayAction.TEAM_WATCH: {
                     var members = OverlayUltimusData.TeamRoles.Select(r => $"{OverlayUltimusData.MemberName(r)} ({r})").ToArray();
                     var at = OverlayUltimusData.RoleOf(e.Command) is { } chosen ? Array.IndexOf(OverlayUltimusData.TeamRoles, chosen) : -1;
@@ -2536,7 +2551,13 @@ internal sealed partial class ManagerWindow {
 
                 if (e.IsUltimus) {
                     // The Ultimus Spectator's pieces: their words' size and colour (Ultimus's map uses the Minimap's choices above).
-                    var help = e.WatchesTeam ? Sub(e.IsUltimusMap
+                    var help = e.WatchesAnyone ? Sub(e.IsUltimusMap
+                        ? "Spectate Anyone's own minimap: it follows whoever you watch (a player, Ultimus, a TCO7 member or a Quest Team member) and " +
+                          "draws their quest's way. Only for the host on the PC that runs the server, and it needs the Minimap add-on downloaded."
+                        : e.Kind == OverlayElement.ULTIMUS_SPELLS
+                            ? "The spells in battle of the bot you watch: its hand, pips, what it casts and why."
+                            : "The quest now of the one you watch, with its step and way, their health and where they are, and everyone's names to click.")
+                        : e.WatchesTeam ? Sub(e.IsUltimusMap
                         ? "The Quest Team Spectator's own minimap: it follows the Quest Team wizard picked with Next member and draws the team's quest way. " +
                           "It is separate from the Ultimus Spectator and your Minimap, and needs the Minimap add-on downloaded."
                         : "The Quest Team's quest now, with its step and way, and the watched wizard's health and where it is.") : Sub(e.IsUltimusMap
@@ -2550,7 +2571,7 @@ internal sealed partial class ManagerWindow {
                         looks.Children.Add(OvField("Words size", OvNumber(e.Size, 8, 40, 1, v => { e.Size = v; Changed(); })));
                     }
 
-                    _ovEditor.Children.Add(OvGroup(e.WatchesTeam ? "Quest Team Spectator" : "Ultimus Spectator", new StackPanel { Spacing = 6, Children = { help, looks } }));
+                    _ovEditor.Children.Add(OvGroup(e.WatchesAnyone ? "Spectate Anyone" : e.WatchesTeam ? "Quest Team Spectator" : "Ultimus Spectator", new StackPanel { Spacing = 6, Children = { help, looks } }));
                     if (!e.IsUltimusMap) {
                         _ovEditor.Children.Add(OvGroup("Letter colour", OvPaint(e.Fill, Changed, allowNone: false)));
                     }

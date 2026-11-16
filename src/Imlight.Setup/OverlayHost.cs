@@ -640,7 +640,10 @@ internal static class OverlayHost {
         var shown = (ShowsMine(s_design) ? s_design.Elements : []).Concat(ServerElements).Where(e => e.IsUltimus && e.Visible).ToList();
         var canSpectate = s_windows.Count > 0 && OverlayAddon.IsInstalled(s_installFolder, "Minimap");
         // Ahziael's Ultimus and Quest Team pages ask too while they show (their small map), game or not.
-        OverlayUltimusData.SetWanted(OverlayUltimusData.KEY, (canSpectate && shown.Any(e => !e.WatchesTeam)) || OverlayUltimusData.PageWanted(OverlayUltimusData.KEY));
+        OverlayUltimusData.SetWanted(OverlayUltimusData.KEY, (canSpectate && shown.Any(e => !e.WatchesTeam && !e.WatchesAnyone)) || OverlayUltimusData.PageWanted(OverlayUltimusData.KEY));
+        // Spectate Anyone (Niduus, 2026-11-16): only while its add-on is installed; the server answers only the host's own PC.
+        OverlayUltimusData.SetWanted(OverlayUltimusData.ANYONE_KEY, canSpectate && OverlayAddon.IsInstalled(s_installFolder, "Spectate Anyone")
+                                                                    && shown.Any(e => e.WatchesAnyone));
         OverlayUltimusData.SetWanted(OverlayUltimusData.TEAM_KEY, (canSpectate && shown.Any(e => e.WatchesTeam)) || OverlayUltimusData.PageWanted(OverlayUltimusData.TEAM_KEY));
     }
 
@@ -900,7 +903,7 @@ internal static class OverlayHost {
         private int _drawnVersion = -1;
         private int _drawnMap = -1;
         private (int W, int H, double Scale) _drawnSize;
-        private ((bool Full, bool Note) Mine, (bool Full, bool Note) Ultimus, (bool Full, bool Note) Team) _drawnLayout;
+        private ((bool Full, bool Note) Mine, (bool Full, bool Note) Ultimus, (bool Full, bool Note) Team, (bool Full, bool Note) Anyone) _drawnLayout;
         private int _drawnQuests = -1;
         private int _drawnUltimus = -1;
         private Control? _picture;
@@ -1138,8 +1141,7 @@ internal static class OverlayHost {
 
             // Each Quest Tracker line (a quest picks it, a list's name folds it), under the full screen map's buttons
             // and not while the full screen map covers the game.
-            if (OverlayMinimapData.FullZoom(game.ToInt64()) is null && OverlayMinimapData.FullZoom(OverlayUltimusData.KEY) is null
-                && OverlayMinimapData.FullZoom(OverlayUltimusData.TEAM_KEY) is null) {
+            if (OverlayMinimapData.FullZoom(game.ToInt64()) is null && OverlayUltimusData.Keys.All(k => OverlayMinimapData.FullZoom(k) is null)) {
                 foreach (var tracker in Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(picture).OfType<QuestTrackerView>()) {
                     foreach (var (area, line) in tracker.Lines(picture)) {
                         found.Add((new OverlayElement { Kind = OverlayElement.BUTTON, Action = line.Action, Command = line.Value, Visible = true }, false, Pixels(area)));
@@ -1150,7 +1152,10 @@ internal static class OverlayHost {
                 foreach (var name in Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(picture).OfType<Control>()) {
                     if (name.Tag is UltimusViews.MemberPick pick && name.Bounds.Width > 0 && name.IsEffectivelyVisible
                         && name.TranslatePoint(new Point(0, 0), picture) is { } at) {
-                        found.Add((new OverlayElement { Kind = OverlayElement.BUTTON, Action = OverlayAction.TEAM_WATCH, Command = pick.Role, Visible = true },
+                        var anyone = pick.Role.StartsWith(OverlayUltimusData.ANYONE, StringComparison.Ordinal);
+                        found.Add((new OverlayElement {
+                                Kind = OverlayElement.BUTTON, Action = anyone ? OverlayAction.ANYONE_WATCH : OverlayAction.TEAM_WATCH, Command = pick.Role, Visible = true,
+                            },
                             false, Pixels(new Rect(at, name.Bounds.Size))));
                     }
 
@@ -1159,7 +1164,7 @@ internal static class OverlayHost {
                         && name.TranslatePoint(new Point(0, 0), picture) is { } trackAt) {
                         found.Add((new OverlayElement {
                             Kind = OverlayElement.BUTTON, Action = OverlayAction.SPECTATE_TRACK, Visible = true,
-                            Command = (track.Key == OverlayUltimusData.TEAM_KEY ? "team|" : "ultimus|") + track.Choice,
+                            Command = (track.Key == OverlayUltimusData.TEAM_KEY ? "team|" : track.Key == OverlayUltimusData.ANYONE_KEY ? "anyone|" : "ultimus|") + track.Choice,
                         }, false, Pixels(new Rect(trackAt, name.Bounds.Size))));
                     }
                 }
@@ -1271,13 +1276,13 @@ internal static class OverlayHost {
             // the whole overlay is laid out again only when the design, the window or the minimap's size changes.
             // Ultimus's own minimap (Ultimus Spectator) is drawn again with the player's when either changes.
             var map = OverlayMinimapData.VersionOf(game.ToInt64()) + OverlayMinimapData.VersionOf(OverlayUltimusData.KEY)
-                      + OverlayMinimapData.VersionOf(OverlayUltimusData.TEAM_KEY);
+                      + OverlayMinimapData.VersionOf(OverlayUltimusData.TEAM_KEY) + OverlayMinimapData.VersionOf(OverlayUltimusData.ANYONE_KEY);
             var moving = OverlayMinimapData.Moving(game.ToInt64()) || OverlayMinimapData.Moving(OverlayUltimusData.KEY)
-                         || OverlayMinimapData.Moving(OverlayUltimusData.TEAM_KEY);
+                         || OverlayMinimapData.Moving(OverlayUltimusData.TEAM_KEY) || OverlayMinimapData.Moving(OverlayUltimusData.ANYONE_KEY);
             // Ultimus's quest box and battle box changed: laid out again.
             var ultimus = OverlayUltimusData.Wanted ? OverlayUltimusData.Version : _drawnUltimus;
             var layout = (OverlayMinimapData.LayoutOf(game.ToInt64()), OverlayMinimapData.LayoutOf(OverlayUltimusData.KEY),
-                OverlayMinimapData.LayoutOf(OverlayUltimusData.TEAM_KEY));
+                OverlayMinimapData.LayoutOf(OverlayUltimusData.TEAM_KEY), OverlayMinimapData.LayoutOf(OverlayUltimusData.ANYONE_KEY));
             // A Quest Tracker's quests, pick or folding changed: laid out again too.
             var quests = OverlayQuestData.Wanted.Length > 0 ? OverlayQuestData.Version : _drawnQuests;
             if (version != _drawnVersion || layout != _drawnLayout || quests != _drawnQuests || ultimus != _drawnUltimus || _drawnSize != (width, height, scale)

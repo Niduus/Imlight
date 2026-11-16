@@ -72,7 +72,8 @@ internal static class OverlayRenderer {
             // Ultimus's own minimap gets the same full screen and zoom buttons (Niduus, 2026-11-14: "Allow for fullscreen and
             // Zoom to Ultimus Minimap"), unless another map is full screen over it. The Quest Team Spectator's map is its own,
             // with its own buttons (Niduus, 2026-11-15: separate add-ons).
-            AddMapButtons(panel, window, e => e.IsUltimusMap && !e.WatchesTeam, OverlayUltimusData.KEY, MapButton.ULTIMUS);
+            AddMapButtons(panel, window, e => e.IsUltimusMap && !e.WatchesTeam && !e.WatchesAnyone, OverlayUltimusData.KEY, MapButton.ULTIMUS);
+            AddMapButtons(panel, window, e => e.IsUltimusMap && e.WatchesAnyone, OverlayUltimusData.ANYONE_KEY, MapButton.ANYONE);
             AddMapButtons(panel, window, e => e.IsUltimusMap && e.WatchesTeam, OverlayUltimusData.TEAM_KEY, MapButton.TEAM);
         }
 
@@ -126,7 +127,7 @@ internal static class OverlayRenderer {
 
     // Another map (the player's, Ultimus's or the Quest Team's) is full screen over this one: no corner buttons under it.
     private static bool OtherFull(long key, long window)
-        => new[] { window, OverlayUltimusData.KEY, OverlayUltimusData.TEAM_KEY }.Any(k => k != key && OverlayMinimapData.FullZoom(k) is not null);
+        => new[] { window }.Concat(OverlayUltimusData.Keys).Any(k => k != key && OverlayMinimapData.FullZoom(k) is not null);
 
     /// <summary>The full screen map: it fills the game window, less a margin, whatever its design.</summary>
     internal sealed class FullMap : Border {
@@ -155,6 +156,9 @@ internal static class OverlayRenderer {
 
         /// <summary>What a button on the Quest Team Spectator's own minimap carries.</summary>
         internal const string TEAM = "questteam";
+
+        // Spectate Anyone's map.
+        internal const string ANYONE = "anyone";
 
         internal MapButton(Control over, int slot, string action, OverlayElement minimap, string which = "") {
             Over = over;
