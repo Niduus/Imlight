@@ -117,9 +117,14 @@ internal static class UltimusPads {
 
     /// <summary>
     /// The teleporter to walk to from (x, y) for a step at (toX, toY) that walls and water cut off: the first pad of the
-    /// shortest chain of pads (at most four) from this island to the step's island. Null when the step is on the same
+    /// shortest chain of pads (at most MOST_PADS) from this island to the step's island. Null when the step is on the same
     /// island, when the ground is unknown, or when no chain of known pads leads there.
     /// </summary>
+    // The longest chain of pads looked through. Four was too few: Big Ben's tower is twenty floors joined end to end by
+    // teleporting floors, then one more into Meowiarty's room, and with the boss more than four pads away Ultimus found
+    // no way and stood still (Niduus's log, 2026-11-15 20:28, "The Last Meow").
+    internal const int MOST_PADS = 40;
+
     internal static Pad Toward(string zonePath, float x, float y, float toX, float toY, ICollection<Pad> skip = null) {
         var from = OverlayQuestPath.IslandOf(zonePath, x, y);
         var goal = OverlayQuestPath.IslandOf(zonePath, toX, toY);
@@ -135,7 +140,7 @@ internal static class UltimusPads {
         // Island by island, the first pad taken to reach each.
         var firstPad = new Dictionary<int, Pad> { [from] = null };
         var frontier = new List<int> { from };
-        for (var depth = 0; depth < 4 && frontier.Count > 0; depth++) {
+        for (var depth = 0; depth < MOST_PADS && frontier.Count > 0; depth++) {
             var next = new List<int>();
             foreach (var island in frontier) {
                 foreach (var pad in pads.Where(p => p.On == island)

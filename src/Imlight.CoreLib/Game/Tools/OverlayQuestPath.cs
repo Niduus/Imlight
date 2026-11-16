@@ -276,7 +276,7 @@ internal static class OverlayQuestPath {
     /// player follow it completely but the bots (QT and Ultimus) can learn off the data"): on floor only (never over the
     /// Minimap's black, through a wall or off a ledge), and, when the step is on ground walls, water or a ledge cut off
     /// (Triton Avenue's Kraken isle, its raised lawn), through the area's teleporters (<see cref="Ultimus.UltimusPads"/>:
-    /// the area's own files and the ones the bots found), at most four. The Minimap's quest line, the Quest Team and
+    /// the area's own files and the ones the bots found), as many as the way needs (UltimusPads.MOST_PADS). The Minimap's quest line, the Quest Team and
     /// Ultimus all take their way from here.
     /// </summary>
     /// <param name="avoid">Spots to keep away from (the street's creature walks, <see cref="RouteMobs.Avoid"/>).</param>
@@ -293,7 +293,7 @@ internal static class OverlayQuestPath {
         try {
             var (x, y) = (fromX, fromY);
             var taken = new List<Ultimus.UltimusPads.Pad>();
-            for (var hop = 0; hop < 4 && Apart(zonePath, x, y, toX, toY); hop++) {
+            for (var hop = 0; hop < Ultimus.UltimusPads.MOST_PADS && Apart(zonePath, x, y, toX, toY); hop++) {
                 // The pads that chain to the step's ground; else, as a player would try, a pad here that lands nearer it.
                 if ((Ultimus.UltimusPads.Toward(zonePath, x, y, toX, toY, taken)
                      ?? Ultimus.UltimusPads.Another(zonePath, x, y, toX, toY, taken)) is not { } pad) {
