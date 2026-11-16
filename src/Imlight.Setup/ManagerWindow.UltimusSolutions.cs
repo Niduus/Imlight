@@ -33,7 +33,7 @@ internal sealed partial class ManagerWindow {
         _ultSolutions);
 
     private void ShowUltimusSolutions() {
-        var path = Path.Combine(UltimusFolder, SOLUTIONS_FILE);
+        var path = Path.Combine(UltimusSharedFolder, SOLUTIONS_FILE);
         var changed = File.Exists(path) ? File.GetLastWriteTimeUtc(path) : DateTime.MinValue;
         if (changed == _ultSolutionsRead && _ultSolutionsEmpty.Text?.Length > 0) {
             return;
@@ -93,16 +93,16 @@ internal sealed partial class ManagerWindow {
     private static string SolutionZone(string zone) => zone.Split('/', '\\').LastOrDefault(z => z.Length > 0) ?? zone;
 
     private async Task ForgetSolutionsAsync(string[] ids) {
-        Directory.CreateDirectory(UltimusFolder);
+        Directory.CreateDirectory(UltimusSharedFolder);
         if (InstalledCommands.IsServerRunning(_manager.InstallFolder)) {
-            await File.AppendAllLinesAsync(Path.Combine(UltimusFolder, SOLUTIONS_FORGET), ids);
+            await File.AppendAllLinesAsync(Path.Combine(UltimusSharedFolder, SOLUTIONS_FORGET), ids);
             Say(ids.Contains("all") ? "Asked: everything learned is forgotten within a few seconds." : "Asked: that line is forgotten within a few seconds.");
             _ultSolutionsRead = DateTime.MinValue;
             return;
         }
 
         // Server stopped: the file is changed here.
-        var path = Path.Combine(UltimusFolder, SOLUTIONS_FILE);
+        var path = Path.Combine(UltimusSharedFolder, SOLUTIONS_FILE);
         if (File.Exists(path) && JsonNode.Parse(await File.ReadAllTextAsync(path)) is JsonArray all) {
             var keep = new JsonArray();
             foreach (var node in all.ToList()) {

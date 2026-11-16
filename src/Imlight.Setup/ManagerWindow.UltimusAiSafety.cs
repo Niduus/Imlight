@@ -167,7 +167,7 @@ internal sealed partial class ManagerWindow {
     }
 
     private Task ShowUltimusAiLastSentAsync() {
-        var path = Path.Combine(UltimusFolder, AI_LAST_SENT);
+        var path = Path.Combine(UltimusSharedFolder, AI_LAST_SENT);
         _ultAiLastSent.Text = File.Exists(path)
             ? File.ReadAllText(path).TrimEnd()
             : "Nothing was sent to the AI yet. It shows here after Ultimus's AI chat answers someone, he thinks a stuck spot through, or the Quest Team picks an answer.";
@@ -178,7 +178,7 @@ internal sealed partial class ManagerWindow {
     // Warns once a day in Ahziael when today's online AI answers are nearly used up (90%) or used up.
     private void WarnUltimusAiLimit() {
         try {
-            var usage = Path.Combine(UltimusFolder, AI_USAGE_FILE);
+            var usage = Path.Combine(UltimusSharedFolder, AI_USAGE_FILE);
             var today = DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             if (_ultAiWarnedDay == today || !File.Exists(usage) || JsonNode.Parse(File.ReadAllText(usage)) is not JsonObject u || (string?) u["Day"] != today) {
                 return;
@@ -231,7 +231,7 @@ internal sealed partial class ManagerWindow {
     }
 
     private Task ClearUltimusSafetyLogAsync() {
-        var path = Path.Combine(UltimusFolder, AI_SAFETY_LOG);
+        var path = Path.Combine(UltimusSharedFolder, AI_SAFETY_LOG);
         if (File.Exists(path)) {
             File.Delete(path);
         }
@@ -246,7 +246,7 @@ internal sealed partial class ManagerWindow {
     // Today's count, the last trick test and the safety log, read again when they change.
     private void ShowUltimusAiSafety() {
         try {
-            var usage = Path.Combine(UltimusFolder, AI_USAGE_FILE);
+            var usage = Path.Combine(UltimusSharedFolder, AI_USAGE_FILE);
             var today = DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             var used = File.Exists(usage) && JsonNode.Parse(File.ReadAllText(usage)) is JsonObject u && (string?) u["Day"] == today ? (int?) u["Used"] ?? 0 : 0;
             var limit = _manager.GetSetting("Ultimus", "AIDailyLimit") is { } l && int.TryParse(l, out var n) ? n : 300;
@@ -270,7 +270,7 @@ internal sealed partial class ManagerWindow {
         _ultAiPauseState.Foreground = paused is null ? MUTED : WARN;
 
         try {
-            var trick = Path.Combine(UltimusFolder, AI_TRICK_RESULT);
+            var trick = Path.Combine(UltimusSharedFolder, AI_TRICK_RESULT);
             var changed = File.Exists(trick) ? File.GetLastWriteTimeUtc(trick) : DateTime.MinValue;
             if (changed != _ultTrickRead && changed != DateTime.MinValue) {
                 _ultTrickRead = changed;
@@ -281,7 +281,7 @@ internal sealed partial class ManagerWindow {
             // Shown next round.
         }
 
-        var path = Path.Combine(UltimusFolder, AI_SAFETY_LOG);
+        var path = Path.Combine(UltimusSharedFolder, AI_SAFETY_LOG);
         var logChanged = File.Exists(path) ? File.GetLastWriteTimeUtc(path) : DateTime.MinValue;
         if (logChanged == _ultSafetyRead && _ultSafetyEmpty.Text?.Length > 0) {
             return;

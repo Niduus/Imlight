@@ -36,7 +36,7 @@ internal sealed partial class ManagerWindow {
     private DateTime _ultReadinessChanged = DateTime.MinValue;
     private string _ultReadinessText = "";
 
-    private string UltimusReadinessPath => Path.Combine(UltimusFolder, "readiness.txt");
+    private string UltimusReadinessPath => Path.Combine(UltimusSharedFolder, "readiness.txt");
 
     private Control UltimusReadinessFold() {
         _ultReadinessBox = new TextBox {
@@ -50,8 +50,8 @@ internal sealed partial class ManagerWindow {
             "spot where he will probably need a look (no door in, a quest check problem, a puzzle he hasn't solved, a quest he got " +
             "stuck on before). He still plays every quest as a player would. Checked when he starts and every 6 hours.",
             Row(Action(Plain("Check now"), async () => {
-                    Directory.CreateDirectory(UltimusFolder);
-                    await File.WriteAllTextAsync(Path.Combine(UltimusFolder, "readiness-request.txt"), DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+                    Directory.CreateDirectory(UltimusSharedFolder);
+                    await File.WriteAllTextAsync(Path.Combine(UltimusSharedFolder, "readiness-request.txt"), DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
                     Say(InstalledCommands.IsServerRunning(_manager.InstallFolder) && _ultEnabled.IsChecked == true
                         ? "Asked. The new check shows here in a few seconds."
                         : "Asked. It runs once the server is started and Ultimus is in the game.");

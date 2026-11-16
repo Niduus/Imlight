@@ -642,8 +642,9 @@ internal static class OverlayHost {
         // Ahziael's Ultimus and Quest Team pages ask too while they show (their small map), game or not.
         OverlayUltimusData.SetWanted(OverlayUltimusData.KEY, (canSpectate && shown.Any(e => !e.WatchesTeam && !e.WatchesAnyone)) || OverlayUltimusData.PageWanted(OverlayUltimusData.KEY));
         // Spectate Anyone (Niduus, 2026-11-16): only while its add-on is installed; the server answers only the host's own PC.
-        OverlayUltimusData.SetWanted(OverlayUltimusData.ANYONE_KEY, canSpectate && OverlayAddon.IsInstalled(s_installFolder, "Spectate Anyone")
-                                                                    && shown.Any(e => e.WatchesAnyone));
+        // A TCO7 member's page in Ahziael asks for it too (its small map), game or not.
+        OverlayUltimusData.SetWanted(OverlayUltimusData.ANYONE_KEY, (canSpectate && OverlayAddon.IsInstalled(s_installFolder, "Spectate Anyone")
+                                                                     && shown.Any(e => e.WatchesAnyone)) || OverlayUltimusData.PageWanted(OverlayUltimusData.ANYONE_KEY));
         OverlayUltimusData.SetWanted(OverlayUltimusData.TEAM_KEY, (canSpectate && shown.Any(e => e.WatchesTeam)) || OverlayUltimusData.PageWanted(OverlayUltimusData.TEAM_KEY));
     }
 

@@ -388,7 +388,7 @@ internal sealed partial class ManagerWindow : Window {
             Content = new Border { Padding = new Thickness(12), Child = new StackPanel { Children = { _logEmpty, _logLines } } },
         };
 
-        var tabs = new[] {
+        var tabs = new List<TabItem> {
             Tab("Play", PlayTab),
             Tab("Commands", CommandsTab),
             Tab(OVERLAY, OverlayTab),
@@ -446,11 +446,12 @@ internal sealed partial class ManagerWindow : Window {
             Tab(QUEST_TEAM_ISSUES_TAB, QuestTeamIssuesTab),
             Tab(QUEST_TEAM_LOGS_TAB, QuestTeamLogsTab),
             Tab(QUEST_TEAM_WIZARDS_TAB, QuestTeamWizardsTab),
-            Tab(ULTIMUS_TAB, UltimusTab),
-            Tab(ULTIMUS_ISSUES_TAB, UltimusIssuesTab),
-            Tab(ULTIMUS_LOGS_TAB, UltimusLogsTab),
+            // Ultimus's pages are kept where a TCO7 member's page can show them too (ManagerWindow.Tco7.cs).
+            Tab(ULTIMUS_TAB, () => UltimusPart(0, UltimusTab)),
+            Tab(ULTIMUS_ISSUES_TAB, () => UltimusPart(1, UltimusIssuesTab)),
+            Tab(ULTIMUS_LOGS_TAB, () => UltimusPart(2, UltimusLogsTab)),
             Tab(ULTIMUS_AI_TAB, UltimusAiTab),
-        }.ToDictionary(t => (string) t.Tag!);
+        }.Concat(Tco7Tabs()).ToDictionary(t => (string) t.Tag!);
         // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
         var nav = Navigation(tabs);
         AddHandler(KeyDownEvent, OnShortcutKey, Avalonia.Interactivity.RoutingStrategies.Tunnel);
@@ -574,6 +575,8 @@ internal sealed partial class ManagerWindow : Window {
 
         _shownPage = shownTab;
         SideBarShown(shownTab);
+        // The Ultimus pages show Ultimus, or the TCO7 member whose page is open (ManagerWindow.Tco7.cs).
+        UltimusSeatFor(shownTab);
         RefreshMissingNotes();
         switch (shownTab) {
             case "Play": await LoadPlayAsync(); break;
@@ -3191,6 +3194,14 @@ internal sealed partial class ManagerWindow : Window {
         [ULTIMUS_ISSUES_TAB] = ("flag", "Every quest Ultimus could not finish, with a debug report to fix it from."),
         [ULTIMUS_AI_TAB] = ("user", "Optional AI chat for Ultimus on your own PC (Ollama or LM Studio): setup steps, model picks, PC scan and a test."),
         [ULTIMUS_LOGS_TAB] = ("log", "Ultimus's quest log and what it did, with odd things it noticed in pink."),
+        [TCO7_TAB] = ("users", "The Calling of 7: seven wizards, one of each school, each its own Ultimus. Turn them on, let them talk and team up, and see each one."),
+        ["Tulkar"] = ("user", "Tulkar, the TCO7's Ice wizard: the same page as Ultimus's, for Tulkar."),
+        ["Cyndr"] = ("user", "Cyndr, the TCO7's Fire wizard: the same page as Ultimus's, for Cyndr."),
+        ["Kurrent"] = ("user", "Kurrent, the TCO7's Storm wizard: the same page as Ultimus's, for Kurrent."),
+        ["Mythis"] = ("user", "Mythis, the TCO7's Myth wizard: the same page as Ultimus's, for Mythis."),
+        ["Idunn"] = ("user", "Idunn, the TCO7's Life wizard: the same page as Ultimus's, for Idunn."),
+        ["Garm"] = ("user", "Garm, the TCO7's Death wizard: the same page as Ultimus's, for Garm."),
+        ["Ra"] = ("user", "Ra, the TCO7's Balance wizard: the same page as Ultimus's, for Ra."),
     };
 
     /// <summary>What a tab that could not be built shows instead: the reason, and where it was written down.</summary>

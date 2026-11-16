@@ -83,7 +83,7 @@ internal sealed partial class ManagerWindow {
     }
 
     private Task ForgetAllUltimusLearnedAsync() {
-        var path = Path.Combine(UltimusFolder, AI_LEARNED_FILE);
+        var path = Path.Combine(UltimusSharedFolder, AI_LEARNED_FILE);
         if (File.Exists(path)) {
             File.Delete(path);
         }
@@ -96,7 +96,7 @@ internal sealed partial class ManagerWindow {
     }
 
     private Task ForgetUltimusLearnedAsync(string question) {
-        var path = Path.Combine(UltimusFolder, AI_LEARNED_FILE);
+        var path = Path.Combine(UltimusSharedFolder, AI_LEARNED_FILE);
         var rows = ReadUltimusLearned(path);
         var kept = new JsonArray();
         foreach (var row in rows.Where(r => !string.Equals((string?) r["Question"], question, StringComparison.Ordinal))) {
@@ -129,7 +129,7 @@ internal sealed partial class ManagerWindow {
 
     // The learned answers, newest first (read again when the file changes or the filter does).
     private void ShowUltimusAiLearned() {
-        var path = Path.Combine(UltimusFolder, AI_LEARNED_FILE);
+        var path = Path.Combine(UltimusSharedFolder, AI_LEARNED_FILE);
         var changed = File.Exists(path) ? File.GetLastWriteTimeUtc(path) : DateTime.MinValue;
         if (changed == _ultLearnedRead && _ultLearnedState.Text?.Length > 0) {
             return;

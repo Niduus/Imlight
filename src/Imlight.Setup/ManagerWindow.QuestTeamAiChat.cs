@@ -203,7 +203,7 @@ internal sealed partial class ManagerWindow {
     // The latest "Ask all four" answers, read again when the server writes them (Ultimus page timer).
     private void ShowQuestTeamAiCompare() {
         try {
-            var path = System.IO.Path.Combine(UltimusFolder, QT_AI_COMPARE_RESULT);
+            var path = System.IO.Path.Combine(UltimusSharedFolder, QT_AI_COMPARE_RESULT);
             var changed = System.IO.File.Exists(path) ? System.IO.File.GetLastWriteTimeUtc(path) : DateTime.MinValue;
             if (changed != _qtAiCompareRead && changed != DateTime.MinValue) {
                 _qtAiCompareRead = changed;

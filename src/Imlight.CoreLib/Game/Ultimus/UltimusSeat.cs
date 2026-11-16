@@ -110,7 +110,11 @@ internal sealed class UltimusSeat {
     /// </summary>
     internal bool Enabled => IsUltimus
         ? ConfigurationManager.GetValue("Ultimus.Enabled", false)
-        : ConfigurationManager.GetValue("TCO7.Enabled", false) && ConfigurationManager.GetValue("TCO7." + Name, true);
+        : ConfigurationManager.GetValue("TCO7.Enabled", false) && ConfigurationManager.GetValue("TCO7." + Name, true)
+          && ConfigurationManager.GetValue(Section + ".Enabled", true);
+
+    /// <summary>Its own section in Imlight.ini: [Ultimus], or [TCO7-Tulkar] and so on (Ahziael's member page writes it).</summary>
+    internal string Section => IsUltimus ? "Ultimus" : "TCO7-" + Name;
 
     /// <summary>The port of its mini server: Ultimus [Ultimus] Port (12373); the TCO7 [TCO7] Port (12381) and the next six.</summary>
     internal int Port => IsUltimus
@@ -118,13 +122,13 @@ internal sealed class UltimusSeat {
         : Math.Clamp(ConfigurationManager.GetValue("TCO7.Port", 12381), 1024, 65000) + Index - 1;
 
     /// <summary>
-    /// One of its settings: Ultimus's from [Ultimus]; a TCO7 member's from [TCO7], and where [TCO7] does not set it, Ultimus's
-    /// own (they do what he does unless Niduus sets them apart).
+    /// One of its settings: Ultimus's from [Ultimus]; a TCO7 member's from its own [TCO7-&lt;Name&gt;], else [TCO7], else
+    /// Ultimus's own (they do what he does unless Niduus sets them apart; an empty value means "the same as Ultimus").
     /// </summary>
     internal T Setting<T>(string key, T fallback) {
         var his = ConfigurationManager.GetValue("Ultimus." + key, fallback);
 
-        return IsUltimus ? his : ConfigurationManager.GetValue("TCO7." + key, his);
+        return IsUltimus ? his : ConfigurationManager.GetValue(Section + "." + key, ConfigurationManager.GetValue("TCO7." + key, his));
     }
 
     public override string ToString() => Key;

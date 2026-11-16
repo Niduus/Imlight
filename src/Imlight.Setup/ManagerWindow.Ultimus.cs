@@ -48,12 +48,12 @@ internal sealed partial class ManagerWindow {
         var found = new List<(string Who, string Path, DateTime At)>();
         DateTime seen = DateTime.MinValue;
         try {
-            var seenFile = Path.Combine(UltimusFolder, DOOR_SEEN_FILE);
+            var seenFile = Path.Combine(UltimusSharedFolder, DOOR_SEEN_FILE);
             if (File.Exists(seenFile) && long.TryParse(File.ReadAllText(seenFile).Trim(), out var ticks)) {
                 seen = new DateTime(ticks, DateTimeKind.Utc);
             }
 
-            foreach (var (who, folder) in new[] { ("Ultimus", UltimusFolder), ("Quest Team", QuestTeamFolder) }) {
+            foreach (var (who, folder) in new[] { ("Ultimus", UltimusSharedFolder), ("Quest Team", QuestTeamFolder) }) {
                 var file = Path.Combine(folder, "exit-tries.txt");
                 if (File.Exists(file) && File.GetLastWriteTimeUtc(file) is var at && at > seen) {
                     found.Add((who, file, at));
@@ -75,8 +75,8 @@ internal sealed partial class ManagerWindow {
                 $"[{d.Who}] {d.Path}\n" + ReadAllOf(d.Path, 32 * 1024))), "The door tries were copied. Paste them in the chat.")),
             Action(Plain("Got it"), () => {
                 try {
-                    Directory.CreateDirectory(UltimusFolder);
-                    File.WriteAllText(Path.Combine(UltimusFolder, DOOR_SEEN_FILE), DateTime.UtcNow.Ticks.ToString());
+                    Directory.CreateDirectory(UltimusSharedFolder);
+                    File.WriteAllText(Path.Combine(UltimusSharedFolder, DOOR_SEEN_FILE), DateTime.UtcNow.Ticks.ToString());
                 }
                 catch (Exception) {
                     // Shown again next time; nothing lost.
@@ -246,7 +246,42 @@ internal sealed partial class ManagerWindow {
         public List<string> Log { get; set; } = [];
     }
 
-    private string UltimusFolder => Path.Combine(_manager.LogFolder, ULTIMUS_FOLDER);
+    private string UltimusFolder => Path.Combine(_manager.LogFolder, _ultSeat.Folder);
+
+    /// <summary>Ultimus's own folder, where everything he and the TCO7 learn together is kept (maps, stuck answers, creatures).</summary>
+    private string UltimusSharedFolder => Path.Combine(_manager.LogFolder, ULTIMUS_FOLDER);
+
+    // ---------------------------------------------------------------------
+    // Whose page this is (Niduus, 2026-11-16: "Each Member gets their own sub-page in the TCO7 section. Each page is a
+    // complete mirror of Ultimus' page"): the Ultimus pages show Ultimus, or the TCO7 member whose page is open.
+    // ---------------------------------------------------------------------
+
+    /// <summary>One wizard Ultimus's brain plays: Ultimus or a TCO7 member, with its folder (under logs) and ini section.</summary>
+    private sealed record UltSeat(string Name, string School, string Folder, string Section) {
+        internal bool IsTco7 => Section != "Ultimus";
+    }
+
+    private static readonly UltSeat s_ultimusSeat = new("Ultimus", "Balance", ULTIMUS_FOLDER, "Ultimus");
+
+    /// <summary>The Calling of 7 (Niduus, 2026-11-16), one per school, in the server's order.</summary>
+    private static readonly UltSeat[] s_tco7Seats = [
+        new("Tulkar", "Ice", "tco7/tulkar", "TCO7-Tulkar"), new("Cyndr", "Fire", "tco7/cyndr", "TCO7-Cyndr"),
+        new("Kurrent", "Storm", "tco7/kurrent", "TCO7-Kurrent"), new("Mythis", "Myth", "tco7/mythis", "TCO7-Mythis"),
+        new("Idunn", "Life", "tco7/idunn", "TCO7-Idunn"), new("Garm", "Death", "tco7/garm", "TCO7-Garm"),
+        new("Ra", "Balance", "tco7/ra", "TCO7-Ra"),
+    ];
+
+    private UltSeat _ultSeat = s_ultimusSeat;
+
+    private string UltSection => _ultSeat.Section;
+
+    private string UltName => _ultSeat.Name;
+
+    private bool UltIsTco7 => _ultSeat.IsTco7;
+
+    // A setting of the wizard shown: its own, or (a TCO7 member's left empty) Ultimus's.
+    private string? UltSetting(string key)
+        => _manager.GetSetting(UltSection, key) is { Length: > 0 } own && own.Trim().Length > 0 ? own : _manager.GetSetting("Ultimus", key);
 
     private void StartUltimusTimer() {
         if (_ultTimerStarted) {
@@ -426,7 +461,7 @@ internal sealed partial class ManagerWindow {
         if (!provider.Local) {
             var used = 0;
             try {
-                var usage = Path.Combine(UltimusFolder, "ai-usage.json");
+                var usage = Path.Combine(UltimusSharedFolder, "ai-usage.json");
                 var today = DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 if (File.Exists(usage) && JsonNode.Parse(File.ReadAllText(usage)) is JsonObject u && (string?) u["Day"] == today) {
                     used = (int?) u["Used"] ?? 0;
@@ -450,12 +485,12 @@ internal sealed partial class ManagerWindow {
     private void LoadUltimusSettings() {
         _showingUlt = true;
         try {
-            _ultEnabled.IsChecked = _manager.GetSwitch("Ultimus", "Enabled");
-            _ultAutoCoach.IsChecked = _manager.GetSwitch("Ultimus", "AutoCoach");
-            _ultParty.IsChecked = !string.Equals(_manager.GetSetting("Ultimus", "PartyMode")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
-            _ultEmotes.IsChecked = !string.Equals(_manager.GetSetting("Ultimus", "Emotes")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
-            _ultTeaching.IsChecked = !string.Equals(_manager.GetSetting("Ultimus", "Teaching")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
-            _ultHelper.IsChecked = !string.Equals(_manager.GetSetting("Ultimus", "Helper")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
+            _ultEnabled.IsChecked = _manager.GetSwitch(UltSection, "Enabled");
+            _ultAutoCoach.IsChecked = string.Equals(UltSetting("AutoCoach"), "true", StringComparison.OrdinalIgnoreCase);
+            _ultParty.IsChecked = !string.Equals(UltSetting("PartyMode")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
+            _ultEmotes.IsChecked = !string.Equals(UltSetting("Emotes")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
+            _ultTeaching.IsChecked = !string.Equals(UltSetting("Teaching")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
+            _ultHelper.IsChecked = !string.Equals(UltSetting("Helper")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
             _ultSlow.Value = (decimal) Number("SlowFactor", 2);
             _ultLosses.Value = (decimal) Number("LossesBeforeIssue", 3);
             _ultStuck.Value = (decimal) (Number("StuckMinutes", 5) is var stuckMinutes && stuckMinutes == 8 ? 5 : stuckMinutes); // 8 was the old default, now 5
@@ -467,19 +502,19 @@ internal sealed partial class ManagerWindow {
         }
 
         double Number(string key, double fallback)
-            => double.TryParse(_manager.GetSetting("Ultimus", key), NumberStyles.Float, CultureInfo.InvariantCulture, out var value) ? value : fallback;
+            => double.TryParse(UltSetting(key), NumberStyles.Float, CultureInfo.InvariantCulture, out var value) ? value : fallback;
     }
 
     private Task SetUltimusEnabledAsync(bool on) {
-        if (!_manager.HasSetting("Ultimus", "Enabled")) {
+        if (!_manager.HasSetting(UltSection, "Enabled")) {
             LoadUltimusSettings();
-            throw new PanelException("This server's Imlight.ini has no [Ultimus] section yet. Click \"Update Ahziael\" once, then try again.");
+            throw new PanelException($"This server's Imlight.ini has no [{UltSection}] section yet. Click \"Update Ahziael\" once, then try again.");
         }
 
-        _manager.SaveSettings([new Setting("Ultimus", "Enabled", on ? "true" : "false", "")]);
+        _manager.SaveSettings([new Setting(UltSection, "Enabled", on ? "true" : "false", "")]);
         _settings = [];
-        Say(on ? "Ultimus is on. With the server running, it logs in within a few seconds and starts questing."
-            : "Ultimus is off. It logs out within a few seconds.");
+        Say(on ? $"{UltName} is on. With the server running{(UltIsTco7 && !_manager.GetSwitch("TCO7", "Enabled") ? " and the TCO7 turned on (TCO7 > TCO7)" : "")}, it logs in within a few seconds and starts questing."
+            : $"{UltName} is off. It logs out within a few seconds.");
         RefreshUltimus();
 
         return Task.CompletedTask;
@@ -487,7 +522,7 @@ internal sealed partial class ManagerWindow {
 
     // A switch that is on when the ini does not have it yet (the server's default): saved as the key, added if missing.
     private Task SetUltimusOnByDefaultAsync(string key, bool on, string saidOn, string saidOff) {
-        _manager.SaveSettings([new Setting("Ultimus", key, on ? "true" : "false", "")]);
+        _manager.SaveSettings([new Setting(UltSection, key, on ? "true" : "false", "")]);
         _settings = [];
         Say(on ? saidOn : saidOff);
 
@@ -495,12 +530,12 @@ internal sealed partial class ManagerWindow {
     }
 
     private Task SetUltimusAutoCoachAsync(bool on) {
-        if (!_manager.HasSetting("Ultimus", "AutoCoach")) {
+        if (!_manager.HasSetting(UltSection, "AutoCoach")) {
             LoadUltimusSettings();
-            throw new PanelException("This server's Imlight.ini has no [Ultimus] AutoCoach yet. Click \"Update Ahziael\" once, then try again.");
+            throw new PanelException($"This server's Imlight.ini has no [{UltSection}] AutoCoach yet. Click \"Update Ahziael\" once, then try again.");
         }
 
-        _manager.SaveSettings([new Setting("Ultimus", "AutoCoach", on ? "true" : "false", "")]);
+        _manager.SaveSettings([new Setting(UltSection, "AutoCoach", on ? "true" : "false", "")]);
         _settings = [];
         Say(on ? "The nightly auto-coach is on: each night Ultimus's logs go in a dated folder in logs\\ultimus\\coach."
             : "The nightly auto-coach is off.");
@@ -509,18 +544,18 @@ internal sealed partial class ManagerWindow {
     }
 
     private Task SaveUltimusNumberAsync(string key, decimal value) {
-        if (!_manager.HasSetting("Ultimus", key)) {
-            throw new PanelException("This server's Imlight.ini has no [Ultimus] " + key + " yet. Click \"Update Ahziael\" once, then try again.");
+        if (!_manager.HasSetting(UltSection, key)) {
+            throw new PanelException($"This server's Imlight.ini has no [{UltSection}] " + key + " yet. Click \"Update Ahziael\" once, then try again.");
         }
 
         var text = key == "SlowFactor" ? ((double) value).ToString("0.0", CultureInfo.InvariantCulture) : ((int) value).ToString(CultureInfo.InvariantCulture);
-        if (_manager.GetSetting("Ultimus", key) == text) {
+        if (_manager.GetSetting(UltSection, key) == text) {
             return Task.CompletedTask;
         }
 
-        _manager.SaveSettings([new Setting("Ultimus", key, text, "")]);
+        _manager.SaveSettings([new Setting(UltSection, key, text, "")]);
         _settings = [];
-        Say("Saved. Ultimus uses it right away.");
+        Say($"Saved. {UltName} uses it right away.");
 
         return Task.CompletedTask;
     }
@@ -567,7 +602,7 @@ internal sealed partial class ManagerWindow {
     private void ShowUltimusFriends() {
         var social = Path.Combine(_manager.LogFolder, "bots", "social-ultimus.json");
         var met = Path.Combine(UltimusFolder, "players.json");
-        var aiCounts = Path.Combine(UltimusFolder, "ai-per-player.json");
+        var aiCounts = Path.Combine(UltimusSharedFolder, "ai-per-player.json");
         var changed = new[] { social, met, aiCounts }.Where(File.Exists).Select(File.GetLastWriteTimeUtc).DefaultIfEmpty(DateTime.MinValue).Max();
         if (changed <= _ultFriendsRead && _ultFriends.Text?.Length > 0) {
             return;
@@ -1240,31 +1275,39 @@ internal sealed partial class ManagerWindow {
     private void RefreshUltimus() {
         ReadUltimusIssues();
 
-        // The banner: issues newer than the last one Ahziael showed.
-        var seen = UltimusIssuesSeen();
-        var fresh = _ultIssueList.Where(i => i.Id > seen).OrderBy(i => i.Id).ToList();
-        if (_ultIssues.IsEffectivelyVisible) {
-            ShowUltimusIssues();
-            if (fresh.Count > 0) {
-                MarkUltimusIssuesSeen();
-                fresh.Clear();
+        // The banner is Ultimus's alone; a TCO7 member's page shows its own issues in its own list (TCO7 > its page).
+        if (UltIsTco7) {
+            if (_ultIssues.IsEffectivelyVisible) {
+                ShowUltimusIssues();
             }
         }
+        else {
+            // The banner: issues newer than the last one Ahziael showed.
+            var seen = UltimusIssuesSeen();
+            var fresh = _ultIssueList.Where(i => i.Id > seen).OrderBy(i => i.Id).ToList();
+            if (_ultIssues.IsEffectivelyVisible) {
+                ShowUltimusIssues();
+                if (fresh.Count > 0) {
+                    MarkUltimusIssuesSeen();
+                    fresh.Clear();
+                }
+            }
 
-        if (fresh.Count > 0) {
-            var last = fresh[^1];
-            _ultBannerText.Text = (fresh.Count == 1 ? "Ultimus found an issue: " : $"Ultimus found {fresh.Count} issues. Newest: ") +
-                                   $"{UltimusIssueKind(last.Kind).ToLowerInvariant()}, {(last.Title.Length > 0 ? last.Title : "the Ultimus")}. {last.Text}";
+            if (fresh.Count > 0) {
+                var last = fresh[^1];
+                _ultBannerText.Text = (fresh.Count == 1 ? "Ultimus found an issue: " : $"Ultimus found {fresh.Count} issues. Newest: ") +
+                                       $"{UltimusIssueKind(last.Kind).ToLowerInvariant()}, {(last.Title.Length > 0 ? last.Title : "the Ultimus")}. {last.Text}";
+            }
+
+            // Milestones (a world finished, a level up, badly stuck, a self-test), shown when no issue is (Niduus, 2026-11-14).
+            var milestone = fresh.Count == 0 ? NewUltimusMilestone() : null;
+            _ultBannerMilestone = milestone is not null;
+            if (milestone is not null) {
+                _ultBannerText.Text = "Ultimus milestone: " + milestone;
+            }
+
+            _ultBanner.IsVisible = fresh.Count > 0 || milestone is not null;
         }
-
-        // Milestones (a world finished, a level up, badly stuck, a self-test), shown when no issue is (Niduus, 2026-11-14).
-        var milestone = fresh.Count == 0 ? NewUltimusMilestone() : null;
-        _ultBannerMilestone = milestone is not null;
-        if (milestone is not null) {
-            _ultBannerText.Text = "Ultimus milestone: " + milestone;
-        }
-
-        _ultBanner.IsVisible = fresh.Count > 0 || milestone is not null;
 
         if (_ultFriends.IsEffectivelyVisible) {
             ShowUltimusFriends();
@@ -1540,12 +1583,16 @@ internal sealed partial class ManagerWindow {
             ? written.ToUniversalTime() : DateTime.MinValue;
         var live = status is not null && DateTime.UtcNow - at < TimeSpan.FromSeconds(30);
         var running = InstalledCommands.IsServerRunning(_manager.InstallFolder);
-        var on = _ultEnabled.IsChecked == true;
+        // A TCO7 member plays only while the TCO7 and its own switch on the TCO7 page are on too.
+        var teamOff = UltIsTco7 && (!_manager.GetSwitch("TCO7", "Enabled")
+                                    || string.Equals(_manager.GetSetting("TCO7", UltName)?.Trim(), "false", StringComparison.OrdinalIgnoreCase));
+        var on = _ultEnabled.IsChecked == true && !teamOff;
 
-        _ultState.Text = !running ? "The server is not running, so Ultimus is not either."
-            : !on ? "Off: Ultimus is not playing."
+        _ultState.Text = !running ? $"The server is not running, so {UltName} is not either."
+            : teamOff ? $"Off: {UltName} is switched off on the TCO7 page."
+            : !on ? $"Off: {UltName} is not playing."
             : live ? $"Playing. {Capital((string?) status!["why"] ?? "")}".TrimEnd()
-            : "Starting: the server starts Ultimus within a few seconds, then it logs in.";
+            : $"Starting: the server starts {UltName} within a few seconds, then it logs in.";
         _ultState.Foreground = running && on && live ? ManagerTheme.Accent("good") : MUTED;
 
         _ultDoing.IsVisible = _ultToday.IsVisible = _ultQuest.IsVisible = _ultStory.IsVisible = _ultMembers.IsVisible = running && on && live;
@@ -1751,10 +1798,10 @@ internal sealed partial class ManagerWindow {
         (string Tag, string Name, string Text)[] logs = [
             ("Progress", "His progress: level, world times, today (progress.txt)", ReadAllOf(Path.Combine(UltimusFolder, "progress.txt"), 32 * 1024)),
             ("Status", "His status now (status.txt)", ReadAllOf(Path.Combine(UltimusFolder, "status.txt"), 32 * 1024)),
-            ("Steps", "What went wrong at each step before (step-memory.json)", ReadAllOf(Path.Combine(UltimusFolder, "step-memory.json"), 64 * 1024)),
+            ("Steps", "What went wrong at each step before (step-memory.json)", ReadAllOf(Path.Combine(UltimusSharedFolder, "step-memory.json"), 64 * 1024)),
             ("Explain", "His last Pause and explain (explain.txt)", ReadAllOf(Path.Combine(UltimusFolder, "explain.txt"), 32 * 1024)),
             ("UseSteps", "Story steps that ask to click things, checked after an update (use-steps.txt)", ReadAllOf(Path.Combine(UltimusFolder, "use-steps.txt"), 64 * 1024)),
-            ("ExitTries", "Doors that did not take him: where he stood on each try (exit-tries.txt)", ReadAllOf(Path.Combine(UltimusFolder, "exit-tries.txt"), 32 * 1024)),
+            ("ExitTries", "Doors that did not take him: where he stood on each try (exit-tries.txt)", ReadAllOf(Path.Combine(UltimusSharedFolder, "exit-tries.txt"), 32 * 1024)),
             ("Causes", "What his time went on, by cause, and the biggest causes of lost time (cause-report.txt)", ReadAllOf(Path.Combine(UltimusFolder, "cause-report.txt"), 32 * 1024)),
             ("FlipFlops", "Two of his rules taking turns, and which goal he held to (flip-flops.jsonl)", ReadAllOf(Path.Combine(UltimusFolder, "flip-flops.jsonl"), 64 * 1024)),
             ("SelfTest", "His last self-test after an update (self-test.txt)", ReadAllOf(Path.Combine(UltimusFolder, "self-test.txt"), 16 * 1024)),
@@ -1765,8 +1812,8 @@ internal sealed partial class ManagerWindow {
             ("Fixes", "Abnormal fixes, each stuck spot and what was tried (abnormal-fixes.json)", ReadAllOf(Path.Combine(UltimusFolder, "abnormal-fixes.json"), 64 * 1024)),
             ("Fights", "Every battle in full: real enemies, health, who helped, the step (fights.jsonl)", ReadAllOf(Path.Combine(UltimusFolder, "fights.jsonl"), 128 * 1024)),
             ("FightStyles", "How he fights each kind of fight, scored from his own results (fight-styles.txt)", ReadAllOf(Path.Combine(UltimusFolder, "fight-styles.txt"), 16 * 1024)),
-            ("Atlas", "Quest Atlas: story steps done in another area than the quest names, and steps it can't place (quest-atlas.txt)", ReadAllOf(Path.Combine(UltimusFolder, "quest-atlas.txt"), 64 * 1024)),
-            ("Foes", "Creatures he fought (foes.json)", ReadAllOf(Path.Combine(UltimusFolder, "foes.json"), 64 * 1024)),
+            ("Atlas", "Quest Atlas: story steps done in another area than the quest names, and steps it can't place (quest-atlas.txt)", ReadAllOf(Path.Combine(UltimusSharedFolder, "quest-atlas.txt"), 64 * 1024)),
+            ("Foes", "Creatures he fought (foes.json)", ReadAllOf(Path.Combine(UltimusSharedFolder, "foes.json"), 64 * 1024)),
             ("Quests", "Quest log, newest first (quest-log.txt)", quests),
             ("Main", $"Ultimus log, newest first, the last {UltimusCopyHours} hours (what he does; issues are in it too)", recent),
             ("Today", "Today I learned, his daily reviews (learned-today.txt)", ReadAllOf(Path.Combine(UltimusFolder, "learned-today.txt"), 32 * 1024)),

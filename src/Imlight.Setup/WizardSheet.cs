@@ -358,7 +358,10 @@ internal sealed class WizardSheet {
         return holder;
     }
 
-    private long FeedKey => Team ? OverlayUltimusData.TEAM_KEY : OverlayUltimusData.KEY;
+    private long FeedKey => Team ? OverlayUltimusData.TEAM_KEY : Seat.Length > 0 ? OverlayUltimusData.ANYONE_KEY : OverlayUltimusData.KEY;
+
+    /// <summary>On a TCO7 member's page (Niduus, 2026-11-16), its name: the map is Spectate Anyone's, watching that member.</summary>
+    internal string Seat { get; set; } = "";
 
     // The small map: the spectator's own map of the one shown (its quest's way, or the picked quest's), when the overlay is
     // linked to the server. The Quest Team's is the member the spectator watches; another member offers to watch it.
@@ -384,6 +387,12 @@ internal sealed class WizardSheet {
                                 "Showing this one changes who it watches on the game too.";
 
             return;
+        }
+
+        // A TCO7 member's page: the map watches that member (it's one of everyone the server lists).
+        if (!Team && Seat.Length > 0 && !string.Equals(OverlayUltimusData.AnyoneWatched?.Name, Seat, StringComparison.OrdinalIgnoreCase)
+            && OverlayUltimusData.WatchAnyone(Seat) is not null) {
+            _mapSeen = -1;
         }
 
         var version = OverlayUltimusData.Version ^ OverlayHost.DesignStamp;

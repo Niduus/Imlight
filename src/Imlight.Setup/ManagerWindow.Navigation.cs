@@ -84,6 +84,11 @@ internal sealed partial class ManagerWindow {
         ("Ultimus", "user", "The Solo Quester",
             "One Balance wizard named Ultimus the server plays alone through the Main Story, and what it ran into.",
             [ULTIMUS_TAB, ULTIMUS_ISSUES_TAB, ULTIMUS_LOGS_TAB, ULTIMUS_AI_TAB]),
+        // Niduus, 2026-11-16: "This will be called the TCO7 (The Calling of 7) ... Each Member gets their own sub-page in the
+        // TCO7 section. Each page is a complete mirror of Ultimus' page" (ManagerWindow.Tco7.cs).
+        ("TCO7", "users", "The Calling of 7",
+            "Seven wizards, one of each school, each its own Ultimus: they read all he has done, try to do better, talk and team up.",
+            Tco7TabNames),
         ("Server", "server", "Start, settings, accounts, logs",
             "Run the server and set it up: start and stop, every setting, who can log in, logs, game files, and Ahziael itself.",
             // Niduus, 2026-10-30: Ahziael on a server hosted on another PC, for its admins.
