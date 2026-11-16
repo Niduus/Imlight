@@ -69,6 +69,11 @@ internal sealed partial class UltimusDirectorActor {
             return false;
         }
 
+        // His group mate asking to fight is an order to go in (UltimusDirector.Orders.cs), not a call for help from afar.
+        if (_partyMate != 0 && heard.SpeakerCharId == _partyMate) {
+            return false;
+        }
+
         if (!HelperOn) {
             SendReply(heard, "Sorry, I can't join fights on request right now.", "group helper");
             return true;

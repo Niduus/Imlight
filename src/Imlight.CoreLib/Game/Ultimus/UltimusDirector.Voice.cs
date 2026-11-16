@@ -193,7 +193,8 @@ internal sealed partial class UltimusDirectorActor {
             NotePerson(heard, cameBack);
             // "Stop" / "got it", "help me fight", "walk me through this quest", "do you remember me?"
             // (UltimusDirector.Teach.cs, UltimusDirector.Helper.cs, UltimusDirector.People.cs).
-            if (!heard.OrdersChecked && (StopAsk(heard) || HelpAsk(heard, me) || TeachAsk(heard) || RememberMeAsk(heard))) {
+            if (!heard.OrdersChecked && (StopAsk(heard) || HelpAsk(heard, me) || TeachAsk(heard) || RememberMeAsk(heard)
+                                         || HandAsk(heard, me) || SpellAsk(heard, me))) {
                 _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
                 continue;
             }

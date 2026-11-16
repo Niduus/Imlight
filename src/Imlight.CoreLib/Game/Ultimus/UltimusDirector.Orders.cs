@@ -41,13 +41,27 @@ internal sealed partial class UltimusDirectorActor {
 
     /// <summary>True when the line was taken as orders (answered here); false: it is talk, answered as usual.</summary>
     private bool LeaderOrders(UltimusVoice.Heard heard, UltimusMember.Status me) {
-        var orders = UltimusOrders.Parse(heard.Text);
+        // "Use it" after "do you have Hex?": Hex (UltimusDirector.SpellTalk.cs). A card named back to him that way is meant: cast it.
+        var text = WithCardTalked(heard, out var namedBack);
+        text = System.Text.RegularExpressions.Regex.Replace(text, @"^\s*(?:ok(?:ay)?|alright|all right)?[,\s]*(?:get|be)\s+ready\s+to\s+", "",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        var orders = UltimusOrders.Parse(text);
+        if (namedBack) {
+            orders = [.. orders.Select(o => o.Kind == UltimusOrders.Kind.Suggest ? o with { Kind = UltimusOrders.Kind.Cast } : o)];
+        }
+
         var grouped = GroupRegistry.TryGetGroup(me.CharId, out var group);
         var leader = grouped && group.LeaderCharId == heard.SpeakerCharId && group.LeaderCharId != me.CharId;
 
         if (orders.Count == 0) {
             if (!leader || !heard.Typed || heard.Text.TrimEnd().EndsWith('?') || heard.Text.Length > 80) {
                 return false;
+            }
+
+            // "Use it" with no card talked about: he asks which, rather than guessing one (the AI once took it for a blade).
+            if (s_itCard.IsMatch(heard.Text)) {
+                SendReply(heard, "Which card do you mean? Say its name, like \"use Hex\".", "leader commands");
+                return true;
             }
 
             // Worded his own way: a wording learned before (offline), else the AI picks one order from the list (online).
@@ -134,7 +148,28 @@ internal sealed partial class UltimusDirectorActor {
                 case UltimusOrders.Kind.GoFirst:
                     UltimusOrders.SetGoFirst();
                     RememberBattleOrder(heard.SpeakerCharId, heard.SpeakerName, "go-first");
-                    said.Add("Okay, I'll pick first");
+                    // Out of battle with an enemy right by them, "go first" means in first: he walks in and picks first.
+                    said.Add(!fighting && EnterFightNow(me) ? "Okay, I'll go in first and pick first" : "Okay, I'll pick first");
+                    break;
+                case UltimusOrders.Kind.Defensive:
+                    UltimusOrders.SetDefensive(true);
+                    said.Add("Okay, I'll play defensive: heals and shields first");
+                    break;
+                case UltimusOrders.Kind.Offensive:
+                    UltimusOrders.SetDefensive(false);
+                    said.Add("Okay, I'll go on the attack");
+                    break;
+                case UltimusOrders.Kind.EnterFight:
+                    if (fighting) {
+                        said.Add("I'm already in the fight");
+                    }
+                    else if (EnterFightNow(me)) {
+                        said.Add("Going in");
+                    }
+                    else {
+                        said.Add(_partyMate == 0 ? "I can only go into a fight with you when we're in a group" : "I don't see an enemy near you to start a fight with");
+                    }
+
                     break;
                 case UltimusOrders.Kind.Focus:
                     UltimusOrders.SetFocus(order.Target);
@@ -149,7 +184,8 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         var battleOrder = orders.Any(o => o.Kind is not (UltimusOrders.Kind.Stay or UltimusOrders.Kind.Follow or UltimusOrders.Kind.ComeToMe
-            or UltimusOrders.Kind.OwnWay or UltimusOrders.Kind.LeaderFirst or UltimusOrders.Kind.GoFirst));
+            or UltimusOrders.Kind.OwnWay or UltimusOrders.Kind.LeaderFirst or UltimusOrders.Kind.GoFirst or UltimusOrders.Kind.EnterFight
+            or UltimusOrders.Kind.Defensive or UltimusOrders.Kind.Offensive));
         var line = string.Join(", then ", said.Where(s => s.Length > 0));
         if (battleOrder && !fighting) {
             line += $" in our next battle (within {(int) UltimusOrders.Keep.TotalMinutes} minutes)";
@@ -175,7 +211,7 @@ internal sealed partial class UltimusDirectorActor {
         UltimusOrders.Kind.Flee => "I'll flee",
         UltimusOrders.Kind.Draw => "I'll draw a treasure card",
         UltimusOrders.Kind.Discard => $"I'll discard {order.Card}",
-        UltimusOrders.Kind.Cast => $"{Cap(order.Card)} on {On(order.Target)}, if it's in my hand",
+        UltimusOrders.Kind.Cast => order.Target.Length > 0 ? $"{Cap(order.Card)} on {On(order.Target)}, if it's in my hand" : $"I'll cast {Cap(order.Card)} as soon as I can",
         UltimusOrders.Kind.Suggest => $"I'll think about {order.Card}",
         UltimusOrders.Kind.Heal => order.Target.Length > 0 ? $"I'll heal {On(order.Target)}" : "I'll heal",
         UltimusOrders.Kind.Shield => order.Target.Length > 0 ? $"I'll shield {On(order.Target)}" : "I'll shield",

@@ -145,9 +145,14 @@ internal sealed partial class UltimusDirectorActor {
     // Words a tip usually has: a way to go or a thing to do (a question to him or a hello is not a tip).
     private static readonly string[] s_tipWords = [
         "go ", "left", "right", "behind", "upstairs", "downstairs", "door", "talk to", "click", "use ", "kill", "defeat", "fight",
-        "jump", "north", "south", "east", "west", "back", "through", "teleport", "portal", "sigil", "you need", "you have to",
-        "try ", "first", "then", "after", "before", "near", "next to", "inside", "outside", "the ",
+        "jump", "north", "south", "east", "west", "go back", "through", "teleport", "portal", "sigil", "you need", "you have to",
+        "try ", "near", "next to", "inside", "outside",
     ];
+
+    // Hellos, thanks and battle talk are never tips (Niduus, 2026-11-16: "Welcome back" got "Thanks for the tip!").
+    private static readonly System.Text.RegularExpressions.Regex s_notTip = new(
+        @"^\s*(welcome|hi|hey|hello|yo|sup|thanks|thank\s+you|ty|thx|gg|good\s+(job|fight|game)|nice|lol|ok|okay|yes|no|yeah|nope)\b",
+        System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.Compiled);
 
     /// <summary>
     /// A player's line while he is stuck or has a parked step: when it reads like advice, it is written on that step's
@@ -158,7 +163,9 @@ internal sealed partial class UltimusDirectorActor {
         var stuckNow = _doing?.StartsWith("stuck", StringComparison.Ordinal) == true || _doing?.StartsWith("looking around", StringComparison.Ordinal) == true
                        || DateTime.UtcNow < _breakUntil;
         stuckKey ??= stuckNow ? _target?.Key : null;
-        if (stuckKey is null || string.IsNullOrWhiteSpace(text)) {
+        if (stuckKey is null || string.IsNullOrWhiteSpace(text) || s_notTip.IsMatch(text)
+            || (_team.Count > 0 && CombatDuelComponent.IsInBattle(_team[0].GlobalId))
+            || (_partyMate != 0 && speakerCharId == _partyMate)) {
             return false;
         }
 
@@ -188,7 +195,7 @@ internal sealed partial class UltimusDirectorActor {
             "tip|" + stuckKey + "|" + list.Count);
         UltimusLink.Issue("tip", quest ?? "", string.IsNullOrEmpty(quest) ? "" : UltimusText.Title(quest), "", $"TIP from {speaker} for \"{step}\": {tip}",
             "", null, step, [$"Step key: {stuckKey}", $"Said by: {speaker} ({(whisper ? "whisper" : "chat")})"]);
-        var thanks = "Thanks for the tip! I'll keep that in mind.";
+        var thanks = step.Length > 0 ? $"Thanks! I'll try that for \"{UltimusText.Short(step, 50)}\"." : "Thanks! I'll try that.";
         _actors[0].Tell(whisper ? new UltimusMember.WhisperText(thanks, speakerCharId) : new UltimusMember.SayText(thanks));
         return true;
     }

@@ -108,6 +108,8 @@ internal sealed partial class CombatDuelComponent {
         var enemies = circles.Where(c => c.OccupiedTeam != member.OccupiedTeam && c.IsAlive).ToList();
         var allies = circles.Where(c => c.OccupiedTeam == member.OccupiedTeam && c.IsAlive).ToList();
         UltimusTactics.Choice ordered = null;
+        // His real hand, for "what's in your hand?" in chat (UltimusDirector.SpellTalk.cs).
+        UltimusOrders.SetHand(hand.Select(h => (h.Card.Shown, h.Castable)));
 
         foreach (var pending in UltimusOrders.Waiting()) {
             var order = pending.Order;
@@ -145,9 +147,23 @@ internal sealed partial class CombatDuelComponent {
                 : BestOfKind(hand, order.Kind, true) ?? BestOfKind(hand, order.Kind, false);
             var what = order.Card.Length > 0 ? order.Card : order.Kind.ToString().ToLowerInvariant();
             if (card is null) {
+                // A named card still in his deck waits for him to draw it (three rounds at most), as a player's would; he says so
+                // once (Niduus, 2026-11-16: he said he'd use Hex and never cast it, with no word why).
+                if (order.Card.Length > 0 && InDeck(member, order.Card) is { } inDeck) {
+                    UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: {inDeck} ({pending.ByName}'s order) is in his deck but not in his hand yet: waits to draw it (round {pending.Rounds} of 3).");
+                    if (!pending.ToldNoPips) {
+                        pending.ToldNoPips = true;
+                        UltimusSays(member, $"{inDeck} isn't in my hand yet, I'll cast it as soon as I draw it.");
+                    }
+
+                    continue;
+                }
+
                 UltimusOrders.Done(pending);
+                UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: can't do {pending.ByName}'s order ({order.Kind} {what}): " +
+                                                     (order.Card.Length > 0 ? $"{order.Card} is not in his hand or his deck." : $"no {what} card in his hand."));
                 if (order.Kind != UltimusOrders.Kind.Focus) {
-                    UltimusSays(member, order.Card.Length > 0 ? $"I don't have {order.Card} in my hand." : $"I don't have a {what} card in my hand.");
+                    UltimusSays(member, order.Card.Length > 0 ? $"I don't have {order.Card} in my deck." : $"I don't have a {what} card in my hand.");
                 }
 
                 continue;
@@ -155,6 +171,7 @@ internal sealed partial class CombatDuelComponent {
 
             if (!card.Castable) {
                 // Not enough pips yet: it waits for a later round (three at most), and he says so once.
+                UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: {card.Card.Shown} ({pending.ByName}'s order) needs more pips: waits (round {pending.Rounds} of 3).");
                 if (!pending.ToldNoPips) {
                     pending.ToldNoPips = true;
                     UltimusSays(member, $"Not enough pips for {card.Card.Shown} yet, I'll cast it when I can.");
@@ -195,6 +212,12 @@ internal sealed partial class CombatDuelComponent {
             return ordered;
         }
 
+        // Told to play defensive: a heal when anyone of his side is low, else a shield on himself every other round, before
+        // his own hit (Niduus, 2026-11-16: "Play defensive" got an "Okay!" and nothing changed).
+        if (UltimusOrders.Defensive && Defend(member, hand, allies, own) is { } safe) {
+            return safe;
+        }
+
         // A focus ("attack the boss") turns his own single hit onto that enemy.
         if (UltimusOrders.Focus is { Length: > 0 } focus && own.Move == UltimusTactics.Move.Cast
             && member.GetSpellFromLastHand((byte) own.Card) is { } spell && RewrittenAI.Read(spell) is { Hit: true, HitsAll: false }
@@ -203,6 +226,49 @@ internal sealed partial class CombatDuelComponent {
         }
 
         return own;
+    }
+
+    private int _defendShieldRound = -10;
+
+    private UltimusTactics.Choice Defend(CombatDuelSubCircle member, List<InHand> hand, List<CombatDuelSubCircle> allies, UltimusTactics.Choice own) {
+        // His own pick already heals or shields: it stands.
+        if (own.Move == UltimusTactics.Move.Cast && member.GetSpellFromLastHand((byte) own.Card) is { } mine && RewrittenAI.Read(mine) is { } minePick
+            && (minePick.Heal || minePick.Shield)) {
+            return null;
+        }
+
+        var hurt = allies.OrderBy(RewrittenAI.HealthShare).FirstOrDefault();
+        if (hurt is not null && RewrittenAI.HealthShare(hurt) < 0.7f && BestOfKind(hand, UltimusOrders.Kind.Heal, true) is { } heal) {
+            var on = heal.Card.HealForTeammate ? hurt : member;
+            return new(UltimusTactics.Move.Cast, heal.Index, heal.Card.HealWholeTeam ? -1 : on.SlotIndex,
+                $"casts {heal.Card.Shown} on {UltimusTactics.Name(on)} (playing defensive, as the group leader said)");
+        }
+
+        if (Duel.m_roundNum - _defendShieldRound >= 2 && BestOfKind(hand, UltimusOrders.Kind.Shield, true) is { } shield) {
+            _defendShieldRound = Duel.m_roundNum;
+            var on = shield.Card.ShieldForTeammate && hurt is not null ? hurt : member;
+            return new(UltimusTactics.Move.Cast, shield.Index, shield.Card.ShieldWholeTeam ? -1 : on.SlotIndex,
+                $"casts {shield.Card.Shown} on {UltimusTactics.Name(on)} (playing defensive, as the group leader said)");
+        }
+
+        return null;
+    }
+
+    // The shown name of a card of his deck that matches the name said, or null (his deck, not only this round's hand).
+    private static string InDeck(CombatDuelSubCircle member, string name) {
+        var want = Flat(Regex.Replace(name ?? "", @"^(the|a|an|my|your|tc|treasure card) ", "", RegexOptions.IgnoreCase));
+        if (want.Length < 3 || member?._wizard?.SpellbookBehavior?.SpellList is not { } deck) {
+            return null;
+        }
+
+        foreach (var spell in deck.Where(s => s is not null)) {
+            var shown = BotShared.BotCards.CardOf((uint) spell.m_templateID)?.Shown ?? "";
+            if (shown.Length > 0 && Flat(shown) == want) {
+                return shown;
+            }
+        }
+
+        return null;
     }
 
     private static string Flat(string text) => Regex.Replace((text ?? "").ToLowerInvariant(), "[^a-z0-9]", "");

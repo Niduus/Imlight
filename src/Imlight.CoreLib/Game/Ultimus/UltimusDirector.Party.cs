@@ -39,6 +39,14 @@ internal sealed partial class UltimusDirectorActor {
     private const string PARTY_KEY = "party|";
     private static readonly TimeSpan s_partyAway = TimeSpan.FromMinutes(15);
 
+    // A group mate changing areas (a door, a sigil, a teleport) is offline to the group for a moment while their next area
+    // loads. He waits this long for them before he counts them gone (Niduus, 2026-11-16: "he seems to lose the group after
+    // a zone transfer": he left the group the moment his mate went through a door).
+    private static readonly TimeSpan s_partyLoading = TimeSpan.FromMinutes(3);
+
+    private DateTime _partyOfflineSince = DateTime.MaxValue;
+    private DateTime _partyEnterFightUntil = DateTime.MinValue;
+
     private ulong _partyMate;
     private string _partyMateName = "";
     private DateTime _partyGotoAt = DateTime.MinValue;
@@ -50,7 +58,13 @@ internal sealed partial class UltimusDirectorActor {
 
     /// <summary>His move in party mode, or null when he is in no group with a real player (then his own story goes on).</summary>
     private UltimusPlanner.Target PartyTarget(UltimusMember.Status leader) {
-        if (leader.Wizard is null || !GroupRegistry.TryGetGroup(leader.CharId, out var group)) {
+        // His own area loading: nothing is known of the group for that moment, and nothing ended.
+        if (leader.Wizard is null) {
+            return _partyMate == 0 ? null : new UltimusPlanner.Target(UltimusPlanner.WAIT, leader.X, leader.Y, $"changing areas with {_partyMateName} (my group)",
+                Key: PARTY_KEY + "loading|" + _partyMate);
+        }
+
+        if (!GroupRegistry.TryGetGroup(leader.CharId, out var group)) {
             EndParty("the group ended");
             return null;
         }
@@ -61,13 +75,35 @@ internal sealed partial class UltimusDirectorActor {
             return null;
         }
 
-        var mate = group.Members.Where(m => m.CharId != leader.CharId && m.IsOnline && !UltimusRoster.IsMember(m.CharId)
-                                              && !QuestTeam.QuestTeamRoster.IsMember(m.CharId))
-            .OrderByDescending(m => m.CharId == group.LeaderCharId).FirstOrDefault();
+        var players = group.Members.Where(m => m.CharId != leader.CharId && !UltimusRoster.IsMember(m.CharId)
+                                               && !QuestTeam.QuestTeamRoster.IsMember(m.CharId)).ToList();
+        var mate = players.Where(m => m.IsOnline).OrderByDescending(m => m.CharId == group.LeaderCharId).FirstOrDefault();
         if (mate is null) {
-            LeaveParty("no player of the group is online", null);
-            return null;
+            // Offline to the group is also a player loading their next area: he waits for them a while, still grouped.
+            var loading = players.OrderByDescending(m => m.CharId == _partyMate).ThenByDescending(m => m.CharId == group.LeaderCharId).FirstOrDefault();
+            if (loading is null) {
+                LeaveParty("no player is in the group", null);
+                return null;
+            }
+
+            if (_partyOfflineSince == DateTime.MaxValue) {
+                _partyOfflineSince = DateTime.UtcNow;
+                Note("Ultimus", $"PARTY: {(_partyMate != 0 ? _partyMateName : "my group mate")} is changing areas (offline to the group for now): he stays in the group and waits for them.");
+            }
+
+            if (DateTime.UtcNow - _partyOfflineSince > s_partyLoading) {
+                _partyOfflineSince = DateTime.MaxValue;
+                LeaveParty($"no player of the group came back online in {(int) s_partyLoading.TotalMinutes} minutes", null);
+                return null;
+            }
+
+            StoryProgress(real: false);
+            _lastProgress = DateTime.UtcNow;
+            return new UltimusPlanner.Target(UltimusPlanner.WAIT, leader.X, leader.Y,
+                $"waiting for {(_partyMate != 0 ? _partyMateName : "my group mate")} (my group), who is changing areas", Key: PARTY_KEY + "away|" + loading.CharId);
         }
+
+        _partyOfflineSince = DateTime.MaxValue;
 
         var wizard = PlayerCheats.LiveWizard(mate.CharId);
         var name = PlayerCheats.LiveName(mate.CharId) is { Length: > 0 } n ? n : "my group mate";
@@ -133,6 +169,26 @@ internal sealed partial class UltimusDirectorActor {
             return new UltimusPlanner.Target(UltimusPlanner.SPOT, leader.X, leader.Y, $"with {name} (my group)", Key: PARTY_KEY + "with|" + mate.CharId);
         }
 
+        // On a sigil, counting down: he steps on it with them and presses it, as a player joins a friend's dungeon pad
+        // (Niduus, 2026-11-16: "he doesn't get on sigil with me"). He stands still on it once his own countdown runs.
+        if (Services.ZoneService.IsCountingDown(mateGid) && !Services.ZoneService.IsCountingDown(leader.GlobalId) && SigilTarget(leader, at, name) is { } sigil) {
+            return sigil;
+        }
+
+        // Told to go in ("enter the fight", "go in first"): he walks onto the nearest enemy by them and starts the battle.
+        if (!fighting && DateTime.UtcNow < _partyEnterFightUntil && !CombatDuelComponent.IsInBattle(leader.GlobalId)) {
+            if (EnterFightTarget(leader, at, name) is { } foe) {
+                return foe;
+            }
+
+            _partyEnterFightUntil = DateTime.MinValue;
+            SayLater(mate.CharId, true, "I don't see an enemy near you to start a fight with.", 0.5);
+        }
+
+        if (fighting) {
+            _partyEnterFightUntil = DateTime.MinValue;
+        }
+
         // Their battle: he walks in, as a player joins a group mate's fight (when there is room).
         if (fighting) {
             return CombatDuelComponent.UltimusMayJoin(mateGid, out _)
@@ -160,6 +216,56 @@ internal sealed partial class UltimusDirectorActor {
             : new UltimusPlanner.Target(UltimusPlanner.SPOT, leader.X, leader.Y, $"with {name} (my group)", Key: PARTY_KEY + "with|" + mate.CharId);
     }
 
+    // The sigil his mate is counting down on: walked to, then pressed once he is on it ("Interact", as the X a player presses).
+    private UltimusPlanner.Target SigilTarget(UltimusMember.Status leader, (float X, float Y) mateAt, string name) {
+        var pad = Tools.MinimapIndex.In(leader.ZoneActor).Where(m => m.Kind == Tools.MinimapIndex.SIGIL && m.Object is not null)
+            .Select(m => (Mark: m, Far: UltimusPlanner.Far(mateAt.X, mateAt.Y, m.Object.m_location.X, m.Object.m_location.Y)))
+            .Where(m => m.Far < 400).OrderBy(m => m.Far).Select(m => m.Mark).FirstOrDefault();
+        if (pad is null) {
+            return null;
+        }
+
+        var (x, y) = (pad.Object.m_location.X, pad.Object.m_location.Y);
+        var target = new UltimusPlanner.Target(UltimusPlanner.SPOT, x, y, $"stepping on the sigil with {name} (my group), to go in together",
+            GlobalId: pad.Object.m_globalID.Full, Key: PARTY_KEY + "sigil|" + pad.Object.m_globalID.Full, Z: pad.Object.m_location.Z);
+        if (UltimusPlanner.Far(leader.X, leader.Y, x, y) < 120 && leader.Options.ContainsKey(target.GlobalId)) {
+            if (_doing != target.What) {
+                Think($"{name} is on the sigil and its countdown runs: I hop on with them so we go in together.", "party-sigil|" + target.GlobalId);
+            }
+
+            ClickOnce(0, target, ["Interact"], $"steps on the sigil {pad.Name} with {name}");
+        }
+
+        return target;
+    }
+
+    // The enemy to start a fight with, when told to go in: the nearest creature by his mate (a boss counts), free to fight.
+    private UltimusPlanner.Target EnterFightTarget(UltimusMember.Status leader, (float X, float Y) mateAt, string name) {
+        var foe = Tools.MinimapIndex.In(leader.ZoneActor)
+            .Where(m => m.Kind is Tools.MinimapIndex.MOB or Tools.MinimapIndex.BOSS && m.Object is not null
+                        && BotShared.DudCreatures.Fightable(m.Object.m_globalID.Full)
+                        && UltimusPlanner.Far(mateAt.X, mateAt.Y, m.Object.m_location.X, m.Object.m_location.Y) < 900)
+            .OrderBy(m => UltimusPlanner.Far(mateAt.X, mateAt.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault();
+        return foe is null ? null : new UltimusPlanner.Target(UltimusPlanner.FIGHT, foe.Object.m_location.X, foe.Object.m_location.Y,
+            $"going into the fight with {foe.Name}, as {name} (my group leader) asked", Template: foe.Template, GlobalId: foe.Object.m_globalID.Full,
+            Key: PARTY_KEY + "enter|" + foe.Object.m_globalID.Full);
+    }
+
+    /// <summary>"Enter the fight", "go in first": he walks into the nearest enemy by his mate (for 2 minutes, or until a battle starts).</summary>
+    private bool EnterFightNow(UltimusMember.Status me) {
+        if (_partyMate == 0 || me.Wizard is null || !OverlayQuestTracker.SameZone(PlayerCheats.LiveWizard(_partyMate)?.Zone ?? "", me.Zone ?? "")) {
+            return false;
+        }
+
+        var mate = PlayerCheats.LiveWizard(_partyMate);
+        if (EnterFightTarget(me, (mate.Location.X, mate.Location.Y), _partyMateName) is null) {
+            return false;
+        }
+
+        _partyEnterFightUntil = DateTime.UtcNow.AddMinutes(2);
+        return true;
+    }
+
     // He leaves the group himself (a whisper first when there is something to say) and goes back to his story.
     private void LeaveParty(string why, string goodbye) {
         if (_partyMate != 0 && goodbye is not null) {
@@ -180,6 +286,8 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         UltimusOrders.Clear();
+        _partyEnterFightUntil = DateTime.MinValue;
+        _partyOfflineSince = DateTime.MaxValue;
         Note("Ultimus", $"PARTY: no longer with {_partyMateName} ({why}): back to his own story.");
         if (why == "the group ended") {
             Announce(SAY_PARTY, $"Thanks for the group, {_partyMateName}! Back to my story.", urgent: true);

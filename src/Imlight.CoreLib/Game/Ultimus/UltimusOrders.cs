@@ -34,7 +34,7 @@ internal static class UltimusOrders {
 
     internal enum Kind {
         Stay, Follow, ComeToMe, LeaveGroup, OwnWay, LeaderFirst, GoFirst,
-        Pass, Flee, Draw, Discard, Cast, Suggest, Heal, Shield, Blade, Trap, Attack, Focus,
+        Pass, Flee, Draw, Discard, Cast, Suggest, Heal, Shield, Blade, Trap, Attack, Focus, EnterFight, Defensive, Offensive,
     }
 
     /// <summary>One order: what, which card (by name, may be empty) and on whom (as said: "me", "Mitsu", "the boss"; may be empty).</summary>
@@ -56,7 +56,8 @@ internal static class UltimusOrders {
         ("stay here", Kind.Stay), ("follow me", Kind.Follow), ("come to me", Kind.ComeToMe), ("leave the group", Kind.LeaveGroup),
         ("play your own way again", Kind.OwnWay), ("let me go first in battle", Kind.LeaderFirst), ("you go first in battle", Kind.GoFirst),
         ("pass this round", Kind.Pass), ("flee the battle", Kind.Flee), ("draw a treasure card", Kind.Draw), ("heal", Kind.Heal),
-        ("shield", Kind.Shield), ("blade", Kind.Blade), ("attack", Kind.Attack),
+        ("shield", Kind.Shield), ("blade", Kind.Blade), ("attack", Kind.Attack), ("go into the fight now", Kind.EnterFight), ("play defensive", Kind.Defensive), ("play offensive", Kind.Offensive),
+        ("step on the sigil with me", Kind.Follow),
     ];
 
     internal static IReadOnlyList<string> PlainNames { get; } = [.. Plain.Select(p => p.Name)];
@@ -72,6 +73,18 @@ internal static class UltimusOrders {
 
     /// <summary>He picks without waiting for the players before him (until told otherwise).</summary>
     internal static bool GoFirst { get; private set; }
+
+    /// <summary>Told to play defensive: heals and shields before hits (until told otherwise, 15 minutes at most).</summary>
+    internal static bool Defensive => DateTime.UtcNow < s_defensiveUntil;
+
+    private static DateTime s_defensiveUntil = DateTime.MinValue;
+
+    internal static void SetDefensive(bool on) => s_defensiveUntil = on ? DateTime.UtcNow.AddMinutes(15) : DateTime.MinValue;
+
+    /// <summary>His hand at his last pick in battle (shown names, with whether he had the pips), for "what's in your hand?".</summary>
+    internal static (List<(string Card, bool Castable)> Cards, DateTime At) Hand { get; private set; } = ([], DateTime.MinValue);
+
+    internal static void SetHand(IEnumerable<(string Card, bool Castable)> cards) => Hand = ([.. cards], DateTime.UtcNow);
 
     /// <summary>Where he was told to stay (party mode stays there until told to follow), or null.</summary>
     internal static (string Zone, float X, float Y)? Stay { get; private set; }
@@ -133,6 +146,7 @@ internal static class UltimusOrders {
         LeaderFirst = 0;
         GoFirst = false;
         Stay = null;
+        s_defensiveUntil = DateTime.MinValue;
     }
 
     internal static void AddRound(Order order, ulong by, string byName) {
@@ -238,6 +252,32 @@ internal static class UltimusOrders {
         if (Has(t, "do your own thing", "your own thing", "play your own way", "your own way", "as you like", "never mind", "nevermind", "forget it",
                 "cancel", "at ease", "free will", "fight how you want", "play how you want", "do what you want", "stop taking orders")) {
             return new Order(Kind.OwnWay);
+        }
+
+        // Into a battle now (Niduus, 2026-11-16: "enter the fight", "Go in the fight Ultimus" in front of Malistaire got "Okay, I'll
+        // pick first!" and a tip, and he never walked in).
+        if (Has(t, "enter the fight", "enter the battle", "enter fight", "go in the fight", "go into the fight", "go in the battle", "go into the battle",
+                "get in the fight", "get into the fight", "get in the battle", "join the fight", "join the battle", "start the fight", "start a fight",
+                "start the battle", "start a battle", "go in first", "you go in", "jump in", "pull them", "pull him", "pull it", "engage",
+                "help me fight", "lets fight", "fight him", "fight her", "fight them", "fight it", "go fight", "into the fight")) {
+            return new Order(Kind.EnterFight);
+        }
+
+        // How to play the rest of the battle (Niduus, 2026-11-16: "Play defensive" was not acted on).
+        if (Has(t, "play defensive", "play defensively", "be defensive", "go defensive", "defensive", "play safe", "play it safe", "be careful",
+                "stay alive", "keep us alive", "keep me alive", "focus on healing", "heal and shield", "shields and heals", "protect us")) {
+            return new Order(Kind.Defensive);
+        }
+
+        if (Has(t, "play offensive", "play offensively", "be offensive", "go offensive", "offensive", "play aggressive", "be aggressive", "go aggressive",
+                "go all in", "all out", "full damage", "just hit", "just attack", "focus on damage")) {
+            return new Order(Kind.Offensive);
+        }
+
+        // Onto a sigil with the leader (Niduus, 2026-11-16: "get on" got "Right behind you!" and he stayed off): following them
+        // onto a counting-down sigil is what party mode does, so it is a follow.
+        if (Has(t, "get on", "hop on", "jump on", "step on", "get on the sigil", "on the sigil", "get on it")) {
+            return new Order(Kind.Follow);
         }
 
         if (Has(t, "dont wait", "do not wait", "you go first", "you first", "you start", "you pick first", "dont wait for me")) {
