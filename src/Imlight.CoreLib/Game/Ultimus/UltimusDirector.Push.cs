@@ -611,7 +611,7 @@ internal sealed partial class UltimusDirectorActor {
         _nextProgress = DateTime.UtcNow.AddSeconds(30);
         var school = leader.Wizard?.MagicSchoolBehavior;
         var text = new StringBuilder();
-        text.AppendLine($"ULTIMUS PROGRESS ({DateTime.Now:dddd d MMMM yyyy, HH:mm})");
+        text.AppendLine($"{_seat.Name.ToUpperInvariant()} PROGRESS ({DateTime.Now:dddd d MMMM yyyy, HH:mm})");
         text.AppendLine($"Level {school?.Level ?? 0}, in {UltimusText.Zone(leader.Zone)}; story world: {_storyWorld ?? "not started"}.");
         text.AppendLine($"Story: {StoryPlace(leader)}.");
         text.AppendLine($"Quest: {(_currentQuest is null ? "none" : UltimusText.Title(_currentQuest))}. Now: {_doing}.");

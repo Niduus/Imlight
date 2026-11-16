@@ -327,7 +327,7 @@ internal sealed partial class UltimusDirectorActor {
         };
         var met = goals.Count(g => g.Met);
         var text = new StringBuilder();
-        text.AppendLine($"ULTIMUS SESSION REPORT{(final ? "" : " (so far)")}: {s.Started.ToLocalTime():yyyy-MM-dd HH:mm} to {DateTime.Now:HH:mm} " +
+        text.AppendLine($"{_seat.Name.ToUpperInvariant()} SESSION REPORT{(final ? "" : " (so far)")}: {s.Started.ToLocalTime():yyyy-MM-dd HH:mm} to {DateTime.Now:HH:mm} " +
                         $"({(DateTime.UtcNow - s.Started).TotalHours:0.0} h). Goals met: {met} of {goals.Count}.");
         text.AppendLine($"Mission: {UltimusMission.STATEMENT}");
         text.AppendLine();
@@ -346,7 +346,8 @@ internal sealed partial class UltimusDirectorActor {
         var rivals = UltimusFoes.Rivals().Take(3).ToList();
         if (rivals.Count > 0) {
             text.AppendLine();
-            text.AppendLine("RIVALS");
+            // The creature book is shared by Ultimus and the TCO7, so a member's list is the whole team's (2026-11-16).
+            text.AppendLine(_seat.IsUltimus ? "RIVALS" : "RIVALS (the creature book Ultimus and the TCO7 share)");
             foreach (var rival in rivals) {
                 text.AppendLine("  " + rival.Describe());
             }

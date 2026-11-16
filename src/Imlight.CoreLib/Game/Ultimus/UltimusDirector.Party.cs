@@ -176,7 +176,9 @@ internal sealed partial class UltimusDirectorActor {
 
             return new UltimusPlanner.Target(UltimusPlanner.SPOT, leader.X, leader.Y,
                 fighting ? $"waiting for {name} (my group) to finish their battle, then going to them" : $"going to {name} (my group)",
-                Key: PARTY_KEY + "goto|" + mate.CharId);
+                // Waiting out the mate's battle is standing still on purpose, like watching it: the "watch" key keeps the stuck
+                // guard off (TCO7 Mythis was "stuck" in The Commons waiting for Kurrent's battle, 2026-11-16).
+                Key: PARTY_KEY + (fighting ? "watch|" : "goto|") + mate.CharId);
         }
 
         if (float.IsNaN(at.X)) {

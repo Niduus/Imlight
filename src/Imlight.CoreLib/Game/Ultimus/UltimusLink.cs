@@ -397,6 +397,8 @@ public static class UltimusLink {
     /// <summary>Tells the brain of an issue, which Ahziael announces.</summary>
     internal static void Issue(string kind, string quest, string title, string world, string text, string expected = "",
                                List<string> seen = null, string step = "", List<string> debug = null) {
+        text = UltimusSeat.Current.Own(text);
+        expected = UltimusSeat.Current.Own(expected);
         Logger.Warning("{0} | ISSUE ({1}) {2}: {3} Expected: {4}", Logger.Args(UltimusSeat.Current.LogName, kind, string.IsNullOrEmpty(title) ? quest : title, text, expected));
         Send(new UltimusRequest { Op = "issue", Kind = kind, Quest = quest, Title = title, World = world, Text = text, Expected = expected, Seen = seen ?? [],
             Step = step ?? "", Debug = debug ?? [] });

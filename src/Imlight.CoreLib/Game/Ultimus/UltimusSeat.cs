@@ -104,6 +104,15 @@ internal sealed class UltimusSeat {
     /// <summary>"Ultimus" or "TCO7 member Tulkar", for the server log.</summary>
     internal string LogName => IsUltimus ? "Ultimus" : $"TCO7 {Name}";
 
+    // "Ultimus" as a word of its own, not "[Ultimus]" (a settings section) and not part of a longer word.
+    private static readonly System.Text.RegularExpressions.Regex s_ultimusWord = new(@"(?<![\[\w])Ultimus(?![\]\w])");
+
+    /// <summary>
+    /// A text written about the wizard himself, with his own name in it: a TCO7 member's issues say "Tulkar went in a loop",
+    /// not "Ultimus went in a loop" (they all run Ultimus's brain, whose texts name him). Ultimus's own texts stay as they are.
+    /// </summary>
+    internal string Own(string text) => IsUltimus || string.IsNullOrEmpty(text) ? text : s_ultimusWord.Replace(text, Name);
+
     /// <summary>
     /// Whether this seat plays: Ultimus by [Ultimus] Enabled; a TCO7 member by [TCO7] Enabled (the whole team, off by default)
     /// and its own [TCO7] &lt;Name&gt; switch (on unless turned off). Live.
