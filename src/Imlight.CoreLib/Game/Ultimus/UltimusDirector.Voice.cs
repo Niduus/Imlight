@@ -188,7 +188,16 @@ internal sealed partial class UltimusDirectorActor {
             }
 
             // Players he met are kept in players.json too (UltimusDirector.Life.cs).
-            Remember(heard.SpeakerCharId, heard.SpeakerName, heard.Whisper);
+            var cameBack = Remember(heard.SpeakerCharId, heard.SpeakerName, heard.Whisper);
+            // What they are working on, and where they left off when they come back (UltimusDirector.People.cs).
+            NotePerson(heard, cameBack);
+            // "Stop" / "got it", "help me fight", "walk me through this quest", "do you remember me?"
+            // (UltimusDirector.Teach.cs, UltimusDirector.Helper.cs, UltimusDirector.People.cs).
+            if (!heard.OrdersChecked && (StopAsk(heard) || HelpAsk(heard, me) || TeachAsk(heard) || RememberMeAsk(heard))) {
+                _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
+                continue;
+            }
+
             // His group leader's orders ("stay here", "let me go first", "cast Dragonblade on Mitsu"): UltimusDirector.Orders.cs.
             if (!heard.OrdersChecked && LeaderOrders(heard, me)) {
                 _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;

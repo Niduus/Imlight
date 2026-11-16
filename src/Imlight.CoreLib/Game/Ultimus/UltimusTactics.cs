@@ -87,12 +87,38 @@ internal static class UltimusTactics {
         // What the enemies can hit with, read from their decks (UltimusScout).
         var threat = UltimusScout.InBattle(enemies);
 
+        // A player asked him to help in their fight (group helper, UltimusDirector.Helper.cs): their role first, while he is
+        // not in danger himself.
+        if (UltimusHelp.Now is { } help && RewrittenAI.HealthShare(me) >= DANGER
+            && allies.FirstOrDefault(a => a.IsHumanPlayer && a.ParticipantObject?.m_globalID.Full == help.GlobalId) is { } friend
+            && Helping(me, castable, enemies, friend, help, threat, picks.FirstOrDefault(p => p.Who == friend && p.Card.Hit).On ?? focus) is { } helped
+            && BotBossPlaybook.HoldBack(BotBossPlaybook.Watch(enemies), castable.First(h => h.Index == helped.Card).Card, me,
+                helped.Target >= 0 ? circles.FirstOrDefault(c => c.SlotIndex == helped.Target) : null, Math.Max(1, round), false) is null) {
+            return helped;
+        }
+
         // The boss playbooks of the creatures here, read from their cheat files (BotBossPlaybook): a card one of them punishes
         // is held back, a timed free hit gets a heal or shield first, and a pass it punishes becomes a move.
         var watch = BotBossPlaybook.Watch(enemies);
         return watch.Count == 0
             ? Solo(me, castable, whole, enemies, focus, hurt, threat, Math.Max(1, round), focusWhy)
             : Guarded(me, circles, castable, whole, enemies, focus, hurt, threat, Math.Max(1, round), focusWhy, watch);
+    }
+
+    // ---- helping a player who asked (healer or hitter) ----
+
+    private static Choice Helping(CombatDuelSubCircle me, List<InHand> hand, List<CombatDuelSubCircle> enemies, CombatDuelSubCircle friend,
+                                  UltimusHelp.Ask help, UltimusScout.Threat threat, CombatDuelSubCircle theirTarget) {
+        var name = Name(friend);
+        if (help.Role == BotShared.BotAsks.HelpRole.Healer) {
+            var share = RewrittenAI.HealthShare(friend);
+            var pick = (share < 0.75f ? Heal(me, hand, [friend]) : null) ?? (share < 0.9f ? Shield(me, hand, [friend], threat) : null);
+            return pick is null ? null : pick with { Why = $"{pick.Why} ({name} asked me to be their healer)" };
+        }
+
+        var target = theirTarget is { IsAlive: true } && theirTarget.OccupiedTeam != me.OccupiedTeam ? theirTarget : null;
+        var hit = Finish(me, hand, enemies) ?? (target is null ? null : Hit(me, hand, target, enemies, $"hits what {name} hits"));
+        return hit is null || hit.Move != Move.Cast ? null : hit with { Why = $"{hit.Why} ({name} asked me to be their hitter)" };
     }
 
     // ---- against a creature with cheats (its playbook) ----

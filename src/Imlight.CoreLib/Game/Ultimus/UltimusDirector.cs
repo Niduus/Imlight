@@ -818,6 +818,16 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             return Source("party", party);
         }
 
+        // A player near him asked for help in a fight, or to be walked through a quest: that first, his story waits
+        // (UltimusDirector.Helper.cs, UltimusDirector.Teach.cs).
+        if (HelperTarget(leader) is { } helping) {
+            return Source("helper", helping);
+        }
+
+        if (TeachTarget(leader) is { } teaching) {
+            return Source("teach", teaching);
+        }
+
         // Off the main story (an event, a gauntlet, a house, a side world his step does not name): leaving it comes first
         // (Niduus, 2026-11-14). Then a wrong area the way went to: back out the same way (UltimusDirector.Bounds.cs).
         if (LeaveOffStory(leader) is { } leave) {

@@ -732,6 +732,15 @@ internal sealed partial class UltimusDirectorActor {
         public DateTime Last { get; set; }
         // Their lasting battle order as his group leader, kept between groups: "leader-first", "go-first" or "".
         public string BattleOrder { get; set; } = "";
+        // What they were working on when he last talked with them (UltimusDirector.People.cs): their quest, where, their level.
+        public string QuestId { get; set; } = "";
+        public string Quest { get; set; } = "";
+        public string QuestWorld { get; set; } = "";
+        public string Area { get; set; } = "";
+        public int Level { get; set; }
+        // The last few things they asked him, and what he did with them (taught a quest, helped in a fight).
+        public List<string> Asked { get; set; } = [];
+        public List<string> Together { get; set; } = [];
     }
 
     /// <summary>Keeps how a group leader likes battles run ("let me go first" / "you go first"), for the next group with them.</summary>
