@@ -1,0 +1,34 @@
+[
+  {
+    "ZoneName": "Krokotopia/KT_Krokosphinx/KT_Retreat",
+    "Teleports": [
+      {
+        "TriggerName": "Trigger",
+        "Teleport": {
+          "m_destinationLoc": "Target location (Sphinx05 Tower04 Entrance)",
+          "m_destinationZone": "Krokotopia/KT_Krokosphinx/Interiors/KT_Retreat_T4",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Krokotopia/KT_Krokosphinx/Interiors/KT_Retreat_T4",
+    "Teleports": [
+      {
+        "TriggerName": "Tower04 Sphinx05 Entrance",
+        "Teleport": {
+          "m_destinationLoc": "Target location (Sphinx05 Tower04 Exit)",
+          "m_destinationZone": "Krokotopia/KT_Krokosphinx/KT_Retreat",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      }
+    ]
+  }
+]
