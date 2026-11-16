@@ -65,12 +65,23 @@ internal sealed partial class UltimusDirectorActor {
     // Standing on a walked-onto teleporter that did not fire: when it got there, where it came from, and until when it
     // steps back off to walk in again, as a player does when a pad does not take them (TCO7 Cyndr stood 30 seconds on
     // Triton Avenue's pad to the Tempest Nexus, 2026-11-16, then went all the way round by the Commons ten times).
+    // Stepping only 260 back kept them inside the pad's trigger (or beside a pad they were never on), so walking in again
+    // did nothing (Niduus, 2026-11-16 on 0.10.901: "they don't know how to get off a teleporter and go far enough away from
+    // it to then retry it again"): now they walk clear of the whole trigger, wait out the teleporter cool down there, and
+    // only then walk back in.
     private DateTime _padStandSince;
     private DateTime _padStepOffUntil;
+    private DateTime _padStepOffGiveUp;
+    private (float X, float Y)? _padStepOff;
     private (float X, float Y) _padFrom;
     private int _padReentries;
     private const float PAD_ON = 90f;
-    private const float PAD_STEP_OFF = 260f;
+    // How far past the trigger's edge it steps, and how far at least when the files don't give the trigger's size.
+    private const float PAD_CLEAR = 200f;
+    private const float PAD_STEP_OFF = 450f;
+    // The server's teleporter delay and cool down (1.5 + 5 s) and a little more, waited out off the pad.
+    private static readonly TimeSpan s_padCoolDown = TimeSpan.FromSeconds(8);
+    private static readonly TimeSpan s_padStepOffMost = TimeSpan.FromSeconds(25);
 
     private HashSet<UltimusPads.Pad> PadsLeft() {
         foreach (var old in _padsLeft.Where(p => DateTime.UtcNow - p.Value > s_padForget).Select(p => p.Key).ToList()) {
@@ -106,6 +117,7 @@ internal sealed partial class UltimusDirectorActor {
             _viaPadSince = now;
             _padStandSince = DateTime.MinValue;
             _padReentries = 0;
+            _padStepOff = null;
             _padFrom = (member.X, member.Y);
             var cutOff = OverlayQuestPath.Apart(member.Zone, member.X, member.Y, target.X, target.Y);
             Note("Ultimus", $"{member.Name} " + (cutOff ? $"can't walk to \"{target.What}\" from here: walls or water are in the way. "
@@ -129,17 +141,25 @@ internal sealed partial class UltimusDirectorActor {
     }
 
     /// <summary>
-    /// On a walked-onto teleporter that has not fired after a few seconds: the spot a few steps back the way it came, to walk
-    /// in again (a pad fires when a wizard walks into it, not while one stands on it). Null while it should just go on.
+    /// On a walked-onto teleporter that has not fired after a few seconds: a spot clear of the pad's whole trigger, the way it
+    /// came, to wait out the teleporter cool down at and then walk in again (a pad fires when a wizard walks into it, not
+    /// while one stands on it). Null while it should just go on.
     /// </summary>
     private (float X, float Y)? StepOffPad(UltimusMember.Status member, UltimusPads.Pad pad) {
         var now = DateTime.UtcNow;
-        var dx = _padFrom.X - pad.X;
-        var dy = _padFrom.Y - pad.Y;
-        var far = MathF.Sqrt((dx * dx) + (dy * dy));
-        var off = far < 1 ? (X: pad.X + PAD_STEP_OFF, Y: pad.Y) : (X: pad.X + (dx / far * PAD_STEP_OFF), Y: pad.Y + (dy / far * PAD_STEP_OFF));
-        if (now < _padStepOffUntil) {
-            return off;
+        var clear = PadClear(pad);
+        if (_padStepOff is { } spot) {
+            var off = UltimusPlanner.Far(member.X, member.Y, pad.X, pad.Y) >= clear - 40;
+            if (now < _padStepOffGiveUp && (now < _padStepOffUntil || !off)) {
+                return spot;
+            }
+
+            _padStepOff = null;
+            _padStandSince = DateTime.MinValue;
+            Note("Ultimus", $"{member.Name} is {UltimusPlanner.Far(member.X, member.Y, pad.X, pad.Y):0} from the teleporter at ({pad.X:0}, {pad.Y:0}), " +
+                            (off ? "clear of it, and its cool down is over: walks in again." : "as far off as it gets: walks in again."));
+
+            return null;
         }
 
         if (UltimusPlanner.Far(member.X, member.Y, pad.X, pad.Y) > PAD_ON || member.Walking) {
@@ -160,11 +180,52 @@ internal sealed partial class UltimusDirectorActor {
 
         _padReentries++;
         _padStandSince = DateTime.MinValue;
-        _padStepOffUntil = now.AddSeconds(4);
-        Note("Ultimus", $"{member.Name} stands on the teleporter at ({pad.X:0}, {pad.Y:0}) and it has not fired: steps back off and walks in again " +
-                        $"(try {_padReentries} of 3).", UltimusLink.MINOR);
+        _padStepOff = StepOffSpot(member.Zone, pad, clear);
+        _padStepOffUntil = now + s_padCoolDown;
+        _padStepOffGiveUp = now + s_padStepOffMost;
+        Note("Ultimus", $"{member.Name} stands on the teleporter at ({pad.X:0}, {pad.Y:0}) and it has not fired: walks {clear:0} away from it, " +
+                        $"clear of its trigger, waits out its cool down there, then walks in again (try {_padReentries} of 3).", UltimusLink.MINOR);
 
-        return off;
+        return _padStepOff;
+    }
+
+    /// <summary>How far from a pad's middle is clear of its trigger.</summary>
+    private static float PadClear(UltimusPads.Pad pad) => MathF.Max(PAD_STEP_OFF, pad.Reach + PAD_CLEAR);
+
+    /// <summary>
+    /// The spot <paramref name="clear"/> from the pad to step off to: the way it came first, else round the pad, a spot it can
+    /// walk to from the pad and not on another walked-onto pad.
+    /// </summary>
+    private (float X, float Y) StepOffSpot(string zone, UltimusPads.Pad pad, float clear) {
+        var dx = _padFrom.X - pad.X;
+        var dy = _padFrom.Y - pad.Y;
+        var first = MathF.Atan2(dy, dx);
+        if (dx * dx + dy * dy < 1) {
+            first = 0;
+        }
+
+        var others = UltimusPads.In(zone).Where(p => p.Click == 0 && !Equals(p, pad)).ToList();
+        (float X, float Y)? fallback = null;
+        for (var turn = 0; turn < 8; turn++) {
+            // The way it came, then a little to each side, then further round.
+            var angle = first + ((turn + 1) / 2 * (MathF.PI / 4) * (turn % 2 == 1 ? 1 : -1));
+            var spot = (X: pad.X + (MathF.Cos(angle) * clear), Y: pad.Y + (MathF.Sin(angle) * clear));
+            fallback ??= spot;
+            var free = !others.Any(p => UltimusPlanner.Far(spot.X, spot.Y, p.X, p.Y) < MathF.Max(PAD_STEP_OFF, p.Reach + 100));
+            bool walkable;
+            try {
+                walkable = !OverlayQuestPath.Apart(zone, pad.X, pad.Y, spot.X, spot.Y);
+            }
+            catch (Exception) {
+                walkable = true;
+            }
+
+            if (free && walkable) {
+                return spot;
+            }
+        }
+
+        return fallback ?? (pad.X + clear, pad.Y);
     }
 
     /// <summary>

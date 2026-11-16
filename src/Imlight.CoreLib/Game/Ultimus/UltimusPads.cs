@@ -46,7 +46,21 @@ internal static class UltimusPads {
     /// Hub" stone or a "To Triton Avenue" door does nothing to a wizard who only stands by it (Niduus, 2026-11-13: "bot
     /// can't use"): it has to be pressed, as a player presses X.
     /// </param>
-    internal sealed record Pad(float X, float Y, float ToX, float ToY, string Name, bool Learned = false, ulong Click = 0);
+    /// <param name="Reach">
+    /// How far from (X, Y) the pad's trigger reaches, from the area's files (0 when not known): a wizard has to be further
+    /// than this from it before walking in again fires it.
+    /// </param>
+    internal sealed record Pad(float X, float Y, float ToX, float ToY, string Name, bool Learned = false, ulong Click = 0, float Reach = 0);
+
+    // A learned pad this near a pad of the area's files, landing this near the same spot, is that pad: where a bot stood
+    // when it was moved, not where the pad is (TCO7, Triton Avenue 2026-11-16: a spot 500 beside the Tempest Nexus pad was
+    // learned, and every bot walked to it and stood there, outside the pad's trigger, and never went to the Tempest Nexus).
+    private const float SAME_PAD = 900f;
+    private const float SAME_LANDING = 400f;
+
+    private static bool SameAsFiles(string zonePath, List<Pad> files, float x, float y, float toX, float toY)
+        => files.Any(p => p.Click == 0 && Near(p.X, p.Y, x, y, Math.Max(SAME_PAD, p.Reach + 300)) && Near(p.ToX, p.ToY, toX, toY, SAME_LANDING)
+                          && OverlayQuestPath.IslandOf(zonePath, p.X, p.Y) == OverlayQuestPath.IslandOf(zonePath, x, y));
 
     private const string PADS_FILE = "pads.json";
 
@@ -72,7 +86,10 @@ internal static class UltimusPads {
         lock (s_lock) {
             if (Learned().TryGetValue(zonePath, out var learned)) {
                 // One it learned by being moved by a door or stone it knows now is that door or stone (which is pressed).
-                pads.AddRange(learned.Where(l => doors is null || !doors.Any(d => Near(d.X, d.Y, l.X, l.Y, 300) && Near(d.ToX, d.ToY, l.ToX, l.ToY, 800))));
+                // One beside a pad of the files that lands at the same spot is that pad, at its real place and reach.
+                var files = s_files.GetOrAdd(zonePath, FromFiles);
+                pads.AddRange(learned.Where(l => (doors is null || !doors.Any(d => Near(d.X, d.Y, l.X, l.Y, 300) && Near(d.ToX, d.ToY, l.ToX, l.ToY, 800)))
+                                                 && !SameAsFiles(zonePath, files, l.X, l.Y, l.ToX, l.ToY)));
             }
         }
 
@@ -89,7 +106,7 @@ internal static class UltimusPads {
         }
 
         // A teleporter the files already know (its pad near where it stood, its landing near where it came out).
-        if (s_files.GetOrAdd(zonePath, FromFiles).Any(p => Near(p.X, p.Y, fromX, fromY, 300) && Near(p.ToX, p.ToY, toX, toY, 400))) {
+        if (SameAsFiles(zonePath, s_files.GetOrAdd(zonePath, FromFiles), fromX, fromY, toX, toY)) {
             return false;
         }
 
@@ -487,7 +504,10 @@ internal static class UltimusPads {
                     foreach (var volume in volumes.Where(v => v.m_enterEvents?.Any(e => (string) e == fire) == true
                                                               || "Enter_" + (string) v.m_volumeName == fire)) {
                         if (!Near(volume.m_locationX, volume.m_locationY, landing.X, landing.Y, 200)) {
-                            pads.Add(new Pad(volume.m_locationX, volume.m_locationY, landing.X, landing.Y, name));
+                            // A round trigger reaches its radius; a box one, to its corners.
+                            var reach = volume.m_radius > 0 ? volume.m_radius
+                                : MathF.Sqrt((volume.m_length * volume.m_length) + (volume.m_width * volume.m_width)) / 2;
+                            pads.Add(new Pad(volume.m_locationX, volume.m_locationY, landing.X, landing.Y, name, Reach: reach));
                         }
                     }
                 }
