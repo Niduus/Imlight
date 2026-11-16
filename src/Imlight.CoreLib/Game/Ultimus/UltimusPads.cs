@@ -58,6 +58,15 @@ internal static class UltimusPads {
     private const float SAME_PAD = 900f;
     private const float SAME_LANDING = 400f;
 
+    // A learned "walk-on" pad near a door or stone and landing where that door lands is the door, pressed from a few steps
+    // away (TCO7, Triton Avenue 2026-11-16: a spot 550 from the "To Triton Avenue" stone was learned as a pad onto the
+    // stone's landing, and the TCO7 stood on it, stepping off and back, for an hour on the way to the Haunted Cave).
+    private const float SAME_DOOR = 900f;
+
+    private static bool SameAsDoor(string zonePath, Pad door, float x, float y, float toX, float toY)
+        => Near(door.X, door.Y, x, y, SAME_DOOR) && Near(door.ToX, door.ToY, toX, toY, 800)
+           && OverlayQuestPath.IslandOf(zonePath, door.X, door.Y) == OverlayQuestPath.IslandOf(zonePath, x, y);
+
     private static bool SameAsFiles(string zonePath, List<Pad> files, float x, float y, float toX, float toY)
         => files.Any(p => p.Click == 0 && Near(p.X, p.Y, x, y, Math.Max(SAME_PAD, p.Reach + 300)) && Near(p.ToX, p.ToY, toX, toY, SAME_LANDING)
                           && OverlayQuestPath.IslandOf(zonePath, p.X, p.Y) == OverlayQuestPath.IslandOf(zonePath, x, y));
@@ -88,7 +97,7 @@ internal static class UltimusPads {
                 // One it learned by being moved by a door or stone it knows now is that door or stone (which is pressed).
                 // One beside a pad of the files that lands at the same spot is that pad, at its real place and reach.
                 var files = s_files.GetOrAdd(zonePath, FromFiles);
-                pads.AddRange(learned.Where(l => (doors is null || !doors.Any(d => Near(d.X, d.Y, l.X, l.Y, 300) && Near(d.ToX, d.ToY, l.ToX, l.ToY, 800)))
+                pads.AddRange(learned.Where(l => (doors is null || !doors.Any(d => SameAsDoor(zonePath, d, l.X, l.Y, l.ToX, l.ToY)))
                                                  && !SameAsFiles(zonePath, files, l.X, l.Y, l.ToX, l.ToY)));
             }
         }
@@ -111,7 +120,7 @@ internal static class UltimusPads {
         }
 
         // A door or street teleporter stone it pressed.
-        if (s_doors.TryGetValue(zonePath, out var doors) && doors.Any(p => Near(p.X, p.Y, fromX, fromY, 300) && Near(p.ToX, p.ToY, toX, toY, 800))) {
+        if (s_doors.TryGetValue(zonePath, out var doors) && doors.Any(p => SameAsDoor(zonePath, p, fromX, fromY, toX, toY))) {
             return false;
         }
 
