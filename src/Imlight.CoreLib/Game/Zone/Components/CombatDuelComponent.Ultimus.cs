@@ -54,6 +54,13 @@ internal sealed partial class CombatDuelComponent {
     private static string UltimusRole(CombatDuelSubCircle circle)
         => circle?.ParticipantObject is { } participant ? UltimusDirector.RoleOf(participant.m_globalID.Full) : null;
 
+    /// <summary>
+    /// Works as the seat (Ultimus or a TCO7 member) of this circle's wizard until disposed, so its picks, records and memories
+    /// are its own (UltimusSeat).
+    /// </summary>
+    private static UltimusSeat.Scope UltimusSeatOf(CombatDuelSubCircle circle)
+        => UltimusSeat.Use(UltimusSeat.OfGlobal(circle?.ParticipantObject?.m_globalID.Full ?? 0) ?? UltimusSeat.Current);
+
     private IEnumerable<CombatDuelSubCircle> UltimusCircles
         => SubCircles.Where(c => c is { Occupied: true, AddedToDuel: true, IsAlive: true } && UltimusRole(c) is not null);
 
@@ -140,8 +147,12 @@ internal sealed partial class CombatDuelComponent {
                     return false;
                 }
 
+                // A TCO7 member counts another TCO7 member as a player here: they join each other's fights as two players do
+                // (Niduus, 2026-11-16: "I want them to quest either alone or with someone").
+                var me = UltimusSeat.Current;
                 var player = circles.FirstOrDefault(c => c is { Occupied: true, IsHumanPlayer: true, IsSummonedMinion: false }
-                                                         && UltimusRole(c) is null && !IsBot(c));
+                                                         && ((UltimusRole(c) is null && !IsBot(c))
+                                                             || (me.IsTco7 && UltimusSeat.OfGlobal(c.ParticipantObject?.m_globalID.Full ?? 0) is { IsTco7: true } other && other != me)));
                 var room = circles.Any(c => c is not null && !c.Occupied && c.SlotType == player?.SlotType);
                 if (player is null || !room) {
                     return false;
@@ -232,7 +243,8 @@ internal sealed partial class CombatDuelComponent {
         }
 
         UltimusDownedRound();
-        if (UltimusCircles.Any()) {
+        foreach (var circle in UltimusCircles.ToList()) {
+            using var seat = UltimusSeatOf(circle);
             UltimusOrders.NewRound();
         }
 
@@ -261,6 +273,7 @@ internal sealed partial class CombatDuelComponent {
         }
 
         foreach (var circle in SubCircles.Where(c => c is { Occupied: true, AddedToDuel: true } && UltimusRole(c) is not null).ToList()) {
+            using var seat = UltimusSeatOf(circle);
             var wizard = UltimusDirector.ActorOf(UltimusRole(circle));
             if (wizard is null) {
                 continue;
@@ -342,6 +355,7 @@ internal sealed partial class CombatDuelComponent {
 
         var circles = ActiveSubCircles.ToList();
         foreach (var member in UltimusCircles.ToList()) {
+            using var seat = UltimusSeatOf(member);
             // A real player before it on its side (a lower circle) picks first, until the last call.
             var waiting = circles.Any(c => c.OccupiedTeam == member.OccupiedTeam && c.SlotIndex < member.SlotIndex && c.IsHumanPlayer
                                            && c.IsAlive && c.AddedToDuel && UltimusRole(c) is null && !IsBot(c)
@@ -410,7 +424,7 @@ internal sealed partial class CombatDuelComponent {
                 choice = UltimusTactics.Decide(member, circles, CombatResolver, Duel.m_roundNum);
             }
             catch (Exception e) {
-                Logger.Warning("Duel {0} | Slot {1} | Ultimus could not decide: {2}", Logger.Args(Duel.m_duelID.Full, member.SlotIndex, e.Message));
+                Logger.Warning("Duel {0} | Slot {1} | " + UltimusSeat.Current.Name + " could not decide: {2}", Logger.Args(Duel.m_duelID.Full, member.SlotIndex, e.Message));
                 choice = new(UltimusTactics.Move.Pass, 0, -1, "could not decide");
             }
 

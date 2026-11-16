@@ -657,7 +657,7 @@ internal sealed partial class UltimusDirectorActor {
         text.AppendLine("He trains at trainers he can reach, as the game's trainer rules allow. Own school first, then what a wizard alone needs.");
         text.AppendLine();
         foreach (var lesson in lessons) {
-            var why = s_spellWhy.GetValueOrDefault(lesson.Spell) ?? "a Balance spell my level opens";
+            var why = (UltimusSeat.Current.Role == "Balance" ? s_spellWhy.GetValueOrDefault(lesson.Spell) : null) ?? $"a {UltimusSeat.Current.Role} spell my level opens";
             text.AppendLine($"- {lesson.Spell} in {UltimusText.Zone(lesson.Zone)}: {why}.");
         }
 
@@ -733,7 +733,7 @@ internal sealed partial class UltimusDirectorActor {
 
         var text = $"Lost to {foe} ({times} time(s)): {string.Join(", ", why)}. Next time: {change}.";
         Think($"Why I lost to {foe}: {string.Join(", ", why)}. What I change: {change}.", "loss|" + template + "|" + times);
-        BotKnowledge.Learn("Ultimus", "lost fight", text);
+        BotKnowledge.Learn(UltimusSeat.Current.Key, "lost fight", text);
         RememberStep(_target?.Quest, _target?.Goal, text);
     }
 

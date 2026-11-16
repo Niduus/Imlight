@@ -52,8 +52,8 @@ internal static class UltimusEmotes {
         Read();
         if (s_seen.TryAdd(animation.Trim(), DateTime.UtcNow)) {
             try {
-                Directory.CreateDirectory(UltimusWire.Folder);
-                File.AppendAllLines(Path.Combine(UltimusWire.Folder, FILE), [animation.Trim()]);
+                Directory.CreateDirectory(UltimusWire.SharedFolder);
+                File.AppendAllLines(Path.Combine(UltimusWire.SharedFolder, FILE), [animation.Trim()]);
             }
             catch (Exception e) {
                 Logger.Debug("Ultimus: could not write {0}: {1}", Logger.Args(FILE, e.Message));
@@ -92,7 +92,7 @@ internal static class UltimusEmotes {
 
         s_read = true;
         try {
-            var path = Path.Combine(UltimusWire.Folder, FILE);
+            var path = Path.Combine(UltimusWire.SharedFolder, FILE);
             if (File.Exists(path)) {
                 foreach (var line in File.ReadAllLines(path).Where(l => !string.IsNullOrWhiteSpace(l))) {
                     s_seen.TryAdd(line.Trim(), DateTime.MinValue);

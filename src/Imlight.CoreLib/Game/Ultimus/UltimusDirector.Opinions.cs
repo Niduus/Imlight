@@ -95,8 +95,9 @@ internal sealed partial class UltimusDirectorActor {
 
         // His favorite is his own school, every time (Niduus, 2026-11-14: it said Balance once and "To fight? Fire" the next).
         // Which school is easiest to fight is a different question, answered from his fights after it.
-        var best = bySchool.Where(s => !s.School.Equals("Balance", StringComparison.OrdinalIgnoreCase)).OrderByDescending(s => s.Won - (s.Lost * 3)).FirstOrDefault();
-        return "Balance, my own school!" + (best.School is null ? ""
+        var own = UltimusSeat.Current.Role;
+        var best = bySchool.Where(s => !s.School.Equals(own, StringComparison.OrdinalIgnoreCase)).OrderByDescending(s => s.Won - (s.Lost * 3)).FirstOrDefault();
+        return $"{own}, my own school!" + (best.School is null ? ""
             : $" The easiest to fight so far is {Cap(best.School)}: I've beaten {best.Won} of its creatures" + (best.Lost == 0 ? " without a loss." : "."));
     }
 
@@ -191,8 +192,8 @@ internal sealed partial class UltimusDirectorActor {
             return null;
         }
 
-        if (school == "balance") {
-            return "Of course, Balance is my own school! A bit of every school in one.";
+        if (school == UltimusSeat.Current.Role.ToLowerInvariant()) {
+            return school == "balance" ? "Of course, Balance is my own school! A bit of every school in one." : $"Of course, {UltimusSeat.Current.Role} is my own school!";
         }
 
         var foes = UltimusFoes.All().Where(f => f.Fought > 0

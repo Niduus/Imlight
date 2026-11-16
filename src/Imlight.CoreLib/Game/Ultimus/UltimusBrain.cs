@@ -85,9 +85,15 @@ public static class UltimusBrain {
     private const int RECENT_LINES = 40;
 
     public static void Run(string[] args) {
+        // A TCO7 member's mini server is this one started with --seat <name>: it keeps that member's books in its own folder.
+        var seatAt = Array.IndexOf(args, "--seat");
+        if (seatAt >= 0 && seatAt + 1 < args.Length && UltimusSeat.ByKey(args[seatAt + 1]) is { } seat) {
+            UltimusSeat.SetProcessSeat(seat);
+        }
+
         var parent = ParentOf(args);
         Directory.CreateDirectory(UltimusWire.Folder);
-        Logger.Information("Ultimus mini server starting (game server process {0}).", Logger.Args(parent?.Id.ToString() ?? "none"));
+        Logger.Information("{0} mini server starting (game server process {1}).", Logger.Args(UltimusSeat.Current.LogName, parent?.Id.ToString() ?? "none"));
         LiveSettings.Start();
         LoadFiles();
         WriteStatus("starting");
@@ -123,7 +129,7 @@ public static class UltimusBrain {
                 }
 
                 if (!UltimusWire.Enabled) {
-                    Logger.Information("Ultimus: [Ultimus] Enabled was turned off, so the mini server stops.");
+                    Logger.Information("{0} was turned off, so the mini server stops.", Logger.Args(UltimusSeat.Current.LogName));
                     Stop(0);
                 }
 
@@ -254,9 +260,16 @@ public static class UltimusBrain {
                     expected = learned ? known.Seconds : Guess(request);
                 }
 
+                // A TCO7 member's first time at a quest: Ultimus's own time is the one to beat (Niduus, 2026-11-16: "read
+                // EVERYTHING he's done thus far and try to preform better").
+                var his = !learned && UltimusSeat.Current.IsTco7 ? UltimusSeconds(code) : 0;
+                if (his > 0) {
+                    expected = his;
+                }
+
                 QuestLog($"STARTED  {title} ({code}), {request.World}: {request.Steps} steps, {request.Fights} fights. " +
-                         $"Expected about {Minutes(expected)}{(learned ? " (how long it took last time)" : " (a first guess)")}.");
-                Note("Ultimus", $"starts {title} ({code}); expected about {Minutes(expected)}.");
+                         $"Expected about {Minutes(expected)}{(learned ? " (how long it took last time)" : his > 0 ? " (Ultimus's time, the one to beat)" : " (a first guess)")}.");
+                Note(UltimusSeat.Current.Name, $"starts {title} ({code}); expected about {Minutes(expected)}{(his > 0 ? " (Ultimus's time: the one to beat)" : "")}.");
 
                 return new UltimusReply { Ok = true, Expected = expected, Learned = learned };
             }
@@ -277,8 +290,16 @@ public static class UltimusBrain {
                     s_timesDirty = true;
                 }
 
-                QuestLog($"FINISHED {title} ({code}) in {Minutes(request.Seconds)}{(string.IsNullOrEmpty(request.Text) ? "" : ": " + request.Text)}.");
-                Note("Ultimus", $"finished {title} in {Minutes(request.Seconds)}.");
+                // A TCO7 member against Ultimus's time for the same quest.
+                var against = "";
+                if (UltimusSeat.Current.IsTco7 && UltimusSeconds(code) is var hisTime and > 0) {
+                    against = request.Seconds <= hisTime
+                        ? $" (beat Ultimus's {Minutes(hisTime)} by {Minutes(hisTime - request.Seconds)})"
+                        : $" (Ultimus did it in {Minutes(hisTime)}, {Minutes(request.Seconds - hisTime)} faster)";
+                }
+
+                QuestLog($"FINISHED {title} ({code}) in {Minutes(request.Seconds)}{against}{(string.IsNullOrEmpty(request.Text) ? "" : ": " + request.Text)}.");
+                Note(UltimusSeat.Current.Name, $"finished {title} in {Minutes(request.Seconds)}{against}.");
 
                 return new UltimusReply { Ok = true };
             }
@@ -286,6 +307,31 @@ public static class UltimusBrain {
                 QuestLog($"{request.Event?.ToUpperInvariant()} {title} ({code}): {request.Text}");
 
                 return new UltimusReply { Ok = true };
+        }
+    }
+
+    // Ultimus's quest times, read again at most once a minute (the TCO7 measure themselves against him).
+    private static Dictionary<string, QuestTime> s_his = new(StringComparer.OrdinalIgnoreCase);
+    private static DateTime s_hisRead = DateTime.MinValue;
+
+    /// <summary>How long Ultimus took for a quest (his last time), or 0 when he has not done it.</summary>
+    private static double UltimusSeconds(string code) {
+        lock (s_lock) {
+            if (DateTime.UtcNow - s_hisRead > TimeSpan.FromMinutes(1)) {
+                s_hisRead = DateTime.UtcNow;
+                try {
+                    var file = Path.Combine(UltimusWire.SharedFolder, UltimusWire.QUEST_TIMES_FILE);
+                    if (File.Exists(file)) {
+                        s_his = new Dictionary<string, QuestTime>(JsonSerializer.Deserialize<Dictionary<string, QuestTime>>(File.ReadAllText(file)) ?? [],
+                            StringComparer.OrdinalIgnoreCase);
+                    }
+                }
+                catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) {
+                    Logger.Debug("Could not read Ultimus's quest times: {0}", Logger.Args(e.Message));
+                }
+            }
+
+            return s_his.TryGetValue(code ?? "", out var his) ? his.Seconds : 0;
         }
     }
 

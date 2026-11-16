@@ -268,7 +268,9 @@ internal static class UltimusLocalAI {
     /// </summary>
     internal static JsonArray BuildChat(string facts, IReadOnlyList<(string Who, string Text)> history, string heard, string keywordAnswer, bool sendTrick = false) {
         var system = new StringBuilder();
-        system.AppendLine("You are Ultimus, a Balance wizard in a private Wizard101 server, played by the server itself (a bot). You quest the main story alone, like a player.");
+        system.AppendLine(UltimusSeat.Current.IsUltimus
+            ? "You are Ultimus, a Balance wizard in a private Wizard101 server, played by the server itself (a bot). You quest the main story alone, like a player."
+            : $"You are {UltimusSeat.Current.Name}, a {UltimusSeat.Current.Role} wizard in a private Wizard101 server, played by the server itself (a bot), one of The Calling of 7 (TCO7). Ultimus leads you all. You quest the main story alone or with a friend, like a player.");
         system.AppendLine("Answer the player's last chat line in 1 or 2 short, friendly sentences, under 200 characters, plain text, no quote marks, no emojis, no lists.");
         system.AppendLine("About yourself (your quest, where you are, your level, fights, plans and memories) use only the facts below and the conversation; never invent them.");
         // His own Wizard101 knowledge may come from the AI (Niduus, 2026-11-15: "everything wiz related, even what other models

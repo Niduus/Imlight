@@ -174,7 +174,7 @@ internal sealed partial class UltimusDirectorActor {
             UltimusLink.ABNORMAL);
         Think($"I got stuck on my way to \"{goal.What}\", and it is only a side trip ({kind}). It is not worth getting stuck for, so I drop it, " +
               $"leave that place alone for {hours:0.#} hour(s) ({UltimusPlaybook.Cite("Guard.TripOutOfReachHours")}) and go back to my story.", "trip-drop|" + GoalId(goal));
-        BotShared.BotMistakes.Record("Ultimus", BotShared.BotMistakes.STUCK, leader.Zone ?? "", leader.X, leader.Y, $"{goal.Quest}|{goal.Goal}|{goal.What}",
+        BotShared.BotMistakes.Record(UltimusSeat.Current.Key, BotShared.BotMistakes.STUCK, leader.Zone ?? "", leader.X, leader.Y, $"{goal.Quest}|{goal.Goal}|{goal.What}",
             $"Stuck on a side trip ({kind}) at {where}.", _lastReasoning, "Side trip dropped at once; the place is skipped for a while.", "drop side trip");
         CloseSideTrips(TimeSpan.FromMinutes(10));
         Replan();
@@ -299,7 +299,7 @@ internal sealed partial class UltimusDirectorActor {
         Count("off-track alarms");
         Note("Ultimus", $"OFF-TRACK ALARM: {why}. Stops and plans again, back to the story.", UltimusLink.ABNORMAL);
         Think($"Off-track alarm: {why}. I stop, drop any side trip, and plan again from where I stand toward my story.", "offtrack|" + why);
-        BotShared.BotMistakes.Record("Ultimus", BotShared.BotMistakes.OFF_STORY, _team.Count > 0 ? _team[0].Zone : "", _team.Count > 0 ? _team[0].X : 0,
+        BotShared.BotMistakes.Record(UltimusSeat.Current.Key, BotShared.BotMistakes.OFF_STORY, _team.Count > 0 ? _team[0].Zone : "", _team.Count > 0 ? _team[0].X : 0,
             _team.Count > 0 ? _team[0].Y : 0, _target is null ? _doing : $"{_target.Quest}|{_target.Goal}|{_target.What}",
             $"Off-track alarm: {why}.", _lastReasoning, "Plan again toward the story; side trips closed for a while.", "plan again");
         CloseSideTrips(TimeSpan.FromMinutes(15));

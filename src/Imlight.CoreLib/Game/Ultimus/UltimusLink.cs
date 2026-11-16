@@ -61,19 +61,26 @@ public static class UltimusLink {
     private static readonly SeatLocal<bool> s_wasEnabledSeat = new();
     private static bool s_wasEnabled { get => s_wasEnabledSeat.Value; set => s_wasEnabledSeat.Value = value; }
 
-    /// <summary>Whether the mini server is running and answering, so Ultimus can play.</summary>
+    /// <summary>Whether the seat's mini server is running and answering, so the seat (Ultimus or a TCO7 member) can play.</summary>
     public static bool Ready => s_ready && UltimusWire.Enabled;
 
-    /// <summary>Starts looking after the mini server: on while the switch is on, off (killed) while it is off.</summary>
+    /// <summary>
+    /// Starts looking after the mini servers, one per seat (Ultimus, and each TCO7 member): on while its switch is on, off
+    /// (killed) while it is off.
+    /// </summary>
     public static void StartWatching() {
         _ = Task.Run(async () => {
             await Task.Delay(TimeSpan.FromSeconds(10));
             while (true) {
-                try {
-                    Watch();
-                }
-                catch (Exception e) {
-                    Logger.Error("Ultimus: could not look after the mini server: {0}", Logger.Args(e));
+                foreach (var seat in UltimusSeat.All) {
+                    using (UltimusSeat.Use(seat)) {
+                        try {
+                            Watch();
+                        }
+                        catch (Exception e) {
+                            Logger.Error("{0}: could not look after the mini server: {1}", Logger.Args(seat.LogName, e));
+                        }
+                    }
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(3));
@@ -85,8 +92,8 @@ public static class UltimusLink {
         if (!UltimusWire.Enabled) {
             if (s_wasEnabled) {
                 s_wasEnabled = false;
-                Logger.Information("Ultimus was turned off: Ultimus logs out and the mini server stops.");
-                UltimusDirector.Stop("Ultimus was turned off");
+                Logger.Information("{0} was turned off: logs out and the mini server stops.", Logger.Args(UltimusSeat.Current.LogName));
+                UltimusDirector.Stop($"{UltimusSeat.Current.Name} was turned off");
             }
 
             StopBrain("[Ultimus] Enabled is off");
@@ -168,7 +175,7 @@ public static class UltimusLink {
                 start.ArgumentList.Add(Environment.GetCommandLineArgs()[0]);
             }
 
-            foreach (var arg in new[] { "--ultimus", "--parent", Environment.ProcessId.ToString() }) {
+            foreach (var arg in new[] { "--ultimus", "--seat", UltimusSeat.Current.Key, "--parent", Environment.ProcessId.ToString() }) {
                 start.ArgumentList.Add(arg);
             }
 
@@ -296,6 +303,11 @@ public static class UltimusLink {
 
     /// <summary>Tells the brain what Ultimus did, for its log, without waiting.</summary>
     internal static void Note(string who, string text, string level = null) {
+        // A TCO7 member's own log says its own name where Ultimus's says his.
+        if (UltimusSeat.Current is { IsTco7: true } seat && (who is null || who == "Ultimus" || who == seat.Role)) {
+            who = seat.Name;
+        }
+
         if (!string.IsNullOrEmpty(level)) {
             text = $"{level}: {text}";
         }
@@ -306,7 +318,7 @@ public static class UltimusLink {
         var said = text.Contains("WATCH ONLY", StringComparison.Ordinal) ? [text] : RepeatGuard(who, text);
 
         foreach (var line in said) {
-            Logger.Information("Ultimus | {0}: {1}", Logger.Args(who, line));
+            Logger.Information("{0} | {1}: {2}", Logger.Args(UltimusSeat.Current.LogName, who, line));
             Send(new UltimusRequest { Op = "note", Who = who, Text = line });
         }
     }
@@ -340,14 +352,14 @@ public static class UltimusLink {
     /// </summary>
     internal static List<string> Repeats(string who, string text) {
         var now = DateTime.UtcNow;
-        var key = who + "|" + text;
+        var key = UltimusSeat.Current.Key + "|" + who + "|" + text;
         var said = new List<string>();
         lock (s_repeatLock) {
             // Lines whose minute is over: how many were held back, said once.
             foreach (var (old, seen) in s_repeats.Where(r => now - r.Value.Since > s_repeatWindow).ToList()) {
                 s_repeats.Remove(old);
                 if (seen.Count > REPEAT_LIMIT) {
-                    var shown = old[(old.IndexOf('|') + 1)..];
+                    var shown = old[(old.IndexOf('|', old.IndexOf('|') + 1) + 1)..];
                     said.Add($"(held back {seen.Count - REPEAT_LIMIT} more of: \"{UltimusText.Short(shown, 120)}\")");
                     SaveRepeat(shown, seen.Count);
                 }
@@ -385,7 +397,7 @@ public static class UltimusLink {
     /// <summary>Tells the brain of an issue, which Ahziael announces.</summary>
     internal static void Issue(string kind, string quest, string title, string world, string text, string expected = "",
                                List<string> seen = null, string step = "", List<string> debug = null) {
-        Logger.Warning("Ultimus | ISSUE ({0}) {1}: {2} Expected: {3}", Logger.Args(kind, string.IsNullOrEmpty(title) ? quest : title, text, expected));
+        Logger.Warning("{0} | ISSUE ({1}) {2}: {3} Expected: {4}", Logger.Args(UltimusSeat.Current.LogName, kind, string.IsNullOrEmpty(title) ? quest : title, text, expected));
         Send(new UltimusRequest { Op = "issue", Kind = kind, Quest = quest, Title = title, World = world, Text = text, Expected = expected, Seen = seen ?? [],
             Step = step ?? "", Debug = debug ?? [] });
     }
@@ -394,13 +406,13 @@ public static class UltimusLink {
     /// Something abnormal Ultimus noticed (pink in Ahziael): not a broken step, but not what a player would expect either
     /// (an odd server message, being moved without asking, a battle with nothing in it...).
     /// </summary>
-    internal static void Abnormal(string text) => Note("Ultimus", text, ABNORMAL);
+    internal static void Abnormal(string text) => Note(UltimusRoster.NAME, text, ABNORMAL);
 
     /// <summary>A mistake Ultimus made and the lesson it takes from it, kept in learned.jsonl.</summary>
     internal static void Learned(string kind, string quest, string step, string world, string mistake, string lesson) {
         // Tagged with who he played with, so solo data and team data never mix (Niduus, 2026-11-14).
-        var party = BotShared.BotKnowledge.PartyOf("Ultimus");
-        Note("Ultimus", $"LEARNED ({party}): {mistake} Next time: {lesson}", MINOR);
+        var party = BotShared.BotKnowledge.PartyOf(UltimusSeat.Current.Key);
+        Note(UltimusRoster.NAME, $"LEARNED ({party}): {mistake} Next time: {lesson}", MINOR);
         Send(new UltimusRequest { Op = "learned", Kind = kind, Quest = quest, Step = step, World = world, Text = $"[{party}] {mistake}", Expected = lesson });
     }
 

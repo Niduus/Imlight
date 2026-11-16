@@ -310,6 +310,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         Receive<AiWorded>(OnAiWorded);
         Receive<OrderUnderstood>(OnOrderUnderstood);
         Receive<StuckIdea>(OnStuckIdea);
+        Receive<Tco7Later>(OnTco7Later);
         Receive<Tick>(_ => {
             try {
                 OnTick();
@@ -438,6 +439,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         UsePotions();
         NoticeOddities();
         AnswerPlayers();
+        // The TCO7's talk with each other, their team-ups and their link to Ultimus (UltimusDirector.Tco7.cs).
+        Tco7Tick(_team[0]);
         // Ahziael's "Pause and explain", answered even while paused (UltimusDirector.Story.cs).
         MaybeExplain(_team[0]);
         // Ahziael's "Back to story", and the guardrails' watch (UltimusDirector.Guard.cs).
@@ -2473,7 +2476,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         Think(thought, "through|" + target.Key);
         Announce(SAY_STUCK, $"I can't get through this way to {UltimusText.Zone(target.To)}. Anyone know the way?");
         if (StubbornExits().Contains(ExitId(leader.Zone, target.To)) is false) {
-            BotMistakes.Record("Ultimus", BotMistakes.STUCK, leader.Zone, target.X, target.Y, target.Quest,
+            BotMistakes.Record(UltimusSeat.Current.Key, BotMistakes.STUCK, leader.Zone, target.X, target.Y, target.Quest,
                 $"The walk-through exit {target.What} never took it on, though it walked through every part of it.", thought,
                 "The exit's trigger in the zone file needs a look; Ultimus keeps searching on his own meanwhile.",
                 "walked through every part of the exit");

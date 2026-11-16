@@ -270,7 +270,7 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
             if (cut && DateTime.UtcNow - _cutSaid > TimeSpan.FromSeconds(30)) {
                 _cutSaid = DateTime.UtcNow;
                 Note($"keeps to the walkable ground: a walk ({m.Why}) went over a wall or out of bounds in {UltimusText.Zone(View.Zone)}, so it stops where the floor ends.");
-                BotMistakes.Record("Ultimus", BotMistakes.NO_WAY, View.Zone, View.X, View.Y, m.Why,
+                BotMistakes.Record(UltimusSeat.Current.Key, BotMistakes.NO_WAY, View.Zone, View.X, View.Y, m.Why,
                     "A planned walk went over a wall or off the walkable map; it was cut where the floor ends.",
                     "Every walk is checked against the area's floor before it is walked.", "The way finder or the step's spot needs a look here.");
             }
@@ -331,7 +331,9 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
         Receive<GAME_5_PROTOCOL.MSG_PARTYREQUESTJOIN>(m => {
             var inviter = (ulong) m.CharacterID;
             var real = inviter != 0 && !UltimusRoster.IsMember(inviter) && !QuestTeam.QuestTeamRoster.IsMember(inviter);
-            if (UltimusWire.PartyMode && real && !Groups.GroupRegistry.TryGetGroup(_member.CharId, out _)) {
+            // A TCO7 member's invitation is taken when this TCO7 member just said yes to teaming up with them (UltimusTco7).
+            var friend = inviter != 0 && UltimusTco7.MayAcceptInvite(inviter);
+            if (((UltimusWire.PartyMode && real) || friend) && !Groups.GroupRegistry.TryGetGroup(_member.CharId, out _)) {
                 Note($"accepts a group invitation from {m.PlayerNameBlob} (party mode): he goes along with them.");
                 Send(new GAME_5_PROTOCOL.MSG_PARTYREQUESTACCEPT { SourceCharacterID = _member.CharId, PartyID = m.PartyID });
                 return;

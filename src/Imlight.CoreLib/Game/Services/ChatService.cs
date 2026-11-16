@@ -120,7 +120,8 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
             };
         var sentTo = SendFilteredZoneMessage(msg, wizard.CharId, wizard.Zone);
         // Ultimus hears typed chat near him too (Niduus, 2026-11-14: he is free to use text chat, and answers it).
-        if (Ultimus.UltimusDirector.ActorOf("Balance") is not null && GetActiveGameObject() is { } speaker) {
+        // The TCO7 hear players the same way (their talk with each other is UltimusTco7's).
+        if (Ultimus.UltimusDirector.AnyPlaying && GetActiveGameObject() is { } speaker) {
             Ultimus.UltimusVoice.PlayerSaid(SessionActor.GetZoneActor(), speaker.m_location.X, speaker.m_location.Y, wizard.CharId,
                 wizard.PlayerNameBehavior?.GetWizardName(), typed, typed: true);
         }
@@ -169,7 +170,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
     // typed: the player wrote the words (the game's word-list chat sends typed words this way), not a Menu Chat phrase.
     private void TellQuestTeam(Wizard character, uint phraseId, string text, bool typed = false) {
         var team = QuestTeam.QuestTeamDirector.ActorOf("Ice") is not null;
-        var ultimus = Ultimus.UltimusDirector.ActorOf("Balance") is not null;
+        var ultimus = Ultimus.UltimusDirector.AnyPlaying;
         if ((!team && !ultimus) || GetActiveGameObject() is not { } me) {
             return;
         }
@@ -527,7 +528,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
         text ??= phraseId == 0 ? null : BotShared.MenuChatBook.ById(phraseId)?.Text;
         if (!string.IsNullOrWhiteSpace(text)) {
-            Ultimus.UltimusVoice.PlayerWhispered(sender.CharId, sender.PlayerNameBehavior?.GetWizardName(), text, typed);
+            Ultimus.UltimusVoice.PlayerWhispered(sender.CharId, sender.PlayerNameBehavior?.GetWizardName(), text, typed, targetCharId);
         }
     }
 
@@ -611,7 +612,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         Logger.Information("[Group {Channel}] {Name}: {Message}",
             Logger.Args(message.TargetID, wizard.PlayerNameBehavior.GetWizardName(), text));
         // Ultimus hears his group's chat, in battle too (Niduus, 2026-11-15: "acknowledge group members in battle talking").
-        if (Ultimus.UltimusDirector.ActorOf("Balance") is not null) {
+        if (Ultimus.UltimusDirector.AnyPlaying) {
             Ultimus.UltimusVoice.GroupSaid(wizard.CharId, wizard.PlayerNameBehavior?.GetWizardName(), text);
         }
         SaveChatLog(text, GetActiveGameObject(), wizard);

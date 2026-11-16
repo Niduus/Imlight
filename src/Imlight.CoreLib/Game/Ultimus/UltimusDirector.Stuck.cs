@@ -343,7 +343,7 @@ internal sealed partial class UltimusDirectorActor {
 
         Note("Ultimus", $"{member.Name}: the map gives no way from ({member.X:0}, {member.Y:0}) in {UltimusText.Zone(member.Zone)}, so it walks straight toward ({toX:0}, {toY:0}).",
             UltimusLink.ABNORMAL);
-        BotMistakes.Record("Ultimus", BotMistakes.NO_WAY, member.Zone, member.X, member.Y, _doing,
+        BotMistakes.Record(UltimusSeat.Current.Key, BotMistakes.NO_WAY, member.Zone, member.X, member.Y, _doing,
             $"The map gave no way from ({member.X:0}, {member.Y:0}) to ({toX:0}, {toY:0}).",
             "The way finder found nothing, so I walked straight instead of standing still.", "The area's walk data needs a look at this spot.");
 

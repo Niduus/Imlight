@@ -54,6 +54,14 @@ internal sealed partial class UltimusDirectorActor {
     private DateTime _partyMateMovedAt = DateTime.UtcNow;
     private (float X, float Y, string Zone) _partyMateLast;
 
+    /// <summary>
+    /// Who counts as a group mate: a real player (not a bot); for a TCO7 member, also another TCO7 member. Ultimus himself
+    /// never groups with the TCO7: his data stays his own.
+    /// </summary>
+    private bool IsPartyMate(ulong charId)
+        => charId != 0 && !QuestTeam.QuestTeamRoster.IsMember(charId)
+           && (!UltimusRoster.IsMember(charId) || (_seat.IsTco7 && UltimusSeat.OfCharacter(charId) is { IsTco7: true }));
+
     /// <summary>Whom he goes along with now (party mode), or "".</summary>
     private string PartyMateName => _partyMate == 0 ? "" : _partyMateName;
 
@@ -76,8 +84,13 @@ internal sealed partial class UltimusDirectorActor {
             return null;
         }
 
-        var players = group.Members.Where(m => m.CharId != leader.CharId && !UltimusRoster.IsMember(m.CharId)
-                                               && !QuestTeam.QuestTeamRoster.IsMember(m.CharId)).ToList();
+        // A TCO7 member's group mates may be other TCO7 members too (they team up, UltimusDirector.Tco7.cs). The one who
+        // asked leads and plays his own story; the others go along with him as with a player.
+        var players = group.Members.Where(m => m.CharId != leader.CharId && IsPartyMate(m.CharId)).ToList();
+        if (_seat.IsTco7 && group.LeaderCharId == leader.CharId && players.Count > 0 && players.All(m => UltimusRoster.IsMember(m.CharId))) {
+            return Tco7Leading(leader, players);
+        }
+
         var mate = players.Where(m => m.IsOnline).OrderByDescending(m => m.CharId == group.LeaderCharId).FirstOrDefault();
         if (mate is null) {
             // Offline to the group is also a player loading their next area: he waits for them a while, still grouped.

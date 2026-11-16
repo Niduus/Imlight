@@ -209,7 +209,7 @@ internal sealed partial class UltimusDirectorActor {
         Think($"I keep turning between \"{a.What}\" ({a.Source}) and \"{b.What}\" ({b.Source}): that is a flip-flop, not progress. " +
               $"I hold to \"{win.What}\" because {why}, and do it to the end before the other one.", "flipflop|" + win.Id + "|" + round);
         Count("flip-flops broken");
-        BotShared.BotMistakes.Record("Ultimus", BotShared.BotMistakes.FLIP_FLOP, leader.Zone ?? "", leader.X, leader.Y,
+        BotShared.BotMistakes.Record(UltimusSeat.Current.Key, BotShared.BotMistakes.FLIP_FLOP, leader.Zone ?? "", leader.X, leader.Y,
             $"{win.Quest}|{win.Goal}|{win.What}", $"Rules {a.Source} and {b.Source} took turns {switches} times with no progress.", _lastReasoning,
             $"Held to {win.What} ({win.Source}) for {minutes:0} minutes, round {round}.", "hold one goal");
         SaveFlipFlop("start", leader, _hold, why);

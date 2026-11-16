@@ -68,7 +68,7 @@ internal sealed partial class UltimusDirectorActor {
         // Who he plays with right now, on every lesson (solo data and team data never mix).
         var withPlayers = _target?.Key?.EndsWith("|join", StringComparison.Ordinal) == true
                           || CombatDuelComponent.UltimusWithPlayers(leader.GlobalId);
-        BotKnowledge.SetParty("Ultimus", withPlayers ? "with players" : "solo");
+        BotKnowledge.SetParty(UltimusSeat.Current.Key, withPlayers ? "with players" : "solo");
 
         if (UltimusPlanner.HasCreatures(leader)) {
             _xpZone = leader.Zone;
@@ -289,7 +289,7 @@ internal sealed partial class UltimusDirectorActor {
         if (_recallTries >= 2) {
             Note("Ultimus", $"ABNORMAL: Recall did not bring him back to {UltimusText.Zone(_markedZone)} after {_recallTries} tries: he walks back instead.",
                 UltimusLink.ABNORMAL);
-            BotMistakes.Record("Ultimus", BotMistakes.STUCK, leader.Zone, leader.X, leader.Y, "recall to " + _markedZone,
+            BotMistakes.Record(UltimusSeat.Current.Key, BotMistakes.STUCK, leader.Zone, leader.X, leader.Y, "recall to " + _markedZone,
                 $"Recall to the spot marked in {UltimusText.Zone(_markedZone)} did not take him there ({_recallTries} tries).",
                 "Mark before a trip, recall after it.", "Recall only after the trip's buy or sale is done; walk back if it fails.");
             _markedZone = null;
@@ -347,7 +347,7 @@ internal sealed partial class UltimusDirectorActor {
                 memory[key] = notes = [];
             }
 
-            var line = $"{DateTime.Now:yyyy-MM-dd} ({BotKnowledge.PartyOf("Ultimus")}): {text}";
+            var line = $"{DateTime.Now:yyyy-MM-dd} ({BotKnowledge.PartyOf(UltimusSeat.Current.Key)}): {text}";
             if (notes.Any(n => n.EndsWith(text, StringComparison.Ordinal))) {
                 return;
             }
@@ -615,7 +615,7 @@ internal sealed partial class UltimusDirectorActor {
         text.AppendLine($"Level {school?.Level ?? 0}, in {UltimusText.Zone(leader.Zone)}; story world: {_storyWorld ?? "not started"}.");
         text.AppendLine($"Story: {StoryPlace(leader)}.");
         text.AppendLine($"Quest: {(_currentQuest is null ? "none" : UltimusText.Title(_currentQuest))}. Now: {_doing}.");
-        text.AppendLine($"Mood: {UltimusMood.Now} ({UltimusMood.Why()}). Plays: {BotKnowledge.PartyOf("Ultimus")}.");
+        text.AppendLine($"Mood: {UltimusMood.Now} ({UltimusMood.Why()}). Plays: {BotKnowledge.PartyOf(UltimusSeat.Current.Key)}.");
         text.AppendLine($"Last step done or XP gained: {Minutes((DateTime.UtcNow - _progressAt).TotalSeconds)} ago.");
         text.AppendLine($"Push mode: {(UltimusPlaybook.Value("Push.On") >= 0.5 ? "on (main story first, no side trips)" : "off")}.");
         text.AppendLine();

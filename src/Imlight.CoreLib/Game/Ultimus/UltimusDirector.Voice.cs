@@ -46,35 +46,53 @@ internal static class UltimusVoice {
     private static readonly SeatLocal<ConcurrentQueue<Heard>> s_heardSeat = new(() => new ConcurrentQueue<Heard>());
     private static ConcurrentQueue<Heard> s_heard { get => s_heardSeat.Value; set => s_heardSeat.Value = value; }
 
-    /// <summary>A player (not Ultimus, not the Quest Team) used Menu Chat (ChatService); Ultimus may answer.</summary>
+    // Every seat that is playing hears the players near it (Ultimus and each TCO7 member, each by its own ears).
+    private static IEnumerable<UltimusSeat> Listening => UltimusSeat.All.Where(seat => UltimusDirector.MembersOf(seat).Count > 0);
+
+    /// <summary>A player (not Ultimus, a TCO7 member or the Quest Team) used Menu Chat (ChatService); each seat near may answer.</summary>
     internal static void PlayerSaid(IActorRef zone, float x, float y, ulong charId, string name, string text, bool typed = false) {
-        if (zone is null || UltimusRoster.IsMember(charId) || QuestTeam.QuestTeamRoster.IsMember(charId) || s_heard.Count > 20) {
+        if (zone is null || UltimusRoster.IsMember(charId) || QuestTeam.QuestTeamRoster.IsMember(charId)) {
             return;
         }
 
-        s_heard.Enqueue(new Heard(zone, x, y, charId, name ?? "a player", text ?? "", Typed: typed));
-    }
-
-    /// <summary>A player whispered to Ultimus (Menu Chat or typed): it answers in Menu Chat, whispered back, wherever they are.</summary>
-    internal static void PlayerWhispered(ulong charId, string name, string text, bool typed = false) {
-        if (s_heard.Count > 20) {
-            return;
+        foreach (var seat in Listening) {
+            var heard = s_heardSeat.Of(seat);
+            if (heard.Count <= 20) {
+                heard.Enqueue(new Heard(zone, x, y, charId, name ?? "a player", text ?? "", Typed: typed));
+            }
         }
-
-        s_heard.Enqueue(new Heard(null, 0, 0, charId, name ?? "a player", text ?? "", Whisper: true, Typed: typed));
     }
 
     /// <summary>
-    /// A player wrote in group chat (the /party line): Ultimus hears it when he is in that group, wherever they are, so his
-    /// group's talk and his leader's orders reach him in battle too (Niduus, 2026-11-15: "acknowledge group members in
-    /// battle talking so he knows when a command is given").
+    /// A player whispered to Ultimus or a TCO7 member (Menu Chat or typed): it answers in Menu Chat, whispered back, wherever
+    /// they are.
     /// </summary>
-    internal static void GroupSaid(ulong charId, string name, string text, bool typed = true) {
-        if (UltimusRoster.IsMember(charId) || QuestTeam.QuestTeamRoster.IsMember(charId) || s_heard.Count > 20) {
+    internal static void PlayerWhispered(ulong charId, string name, string text, bool typed = false, ulong toCharId = 0) {
+        var seat = UltimusSeat.OfCharacter(toCharId) ?? UltimusSeat.Ultimus;
+        var heard = s_heardSeat.Of(seat);
+        if (heard.Count > 20) {
             return;
         }
 
-        s_heard.Enqueue(new Heard(null, 0, 0, charId, name ?? "a player", text ?? "", Typed: typed, Group: true));
+        heard.Enqueue(new Heard(null, 0, 0, charId, name ?? "a player", text ?? "", Whisper: true, Typed: typed));
+    }
+
+    /// <summary>
+    /// A player wrote in group chat (the /party line): Ultimus (and each TCO7 member) hears it when he is in that group,
+    /// wherever they are, so his group's talk and his leader's orders reach him in battle too (Niduus, 2026-11-15:
+    /// "acknowledge group members in battle talking so he knows when a command is given").
+    /// </summary>
+    internal static void GroupSaid(ulong charId, string name, string text, bool typed = true) {
+        if (UltimusRoster.IsMember(charId) || QuestTeam.QuestTeamRoster.IsMember(charId)) {
+            return;
+        }
+
+        foreach (var seat in Listening) {
+            var heard = s_heardSeat.Of(seat);
+            if (heard.Count <= 20 && UltimusDirector.MembersOf(seat).Any(m => Groups.GroupRegistry.AreGrouped(m.CharId, charId))) {
+                heard.Enqueue(new Heard(null, 0, 0, charId, name ?? "a player", text ?? "", Typed: typed, Group: true));
+            }
+        }
     }
 
     internal static bool TryTake(out Heard heard) => s_heard.TryDequeue(out heard);
@@ -570,7 +588,7 @@ internal sealed partial class UltimusDirectorActor {
             _ => "steady",
         };
 
-        return new BotSocial.Self(UltimusRoster.NAME, me.Wizard?.PlayerNameBehavior?.GetWizardName() ?? UltimusRoster.NAME, "Balance",
+        return new BotSocial.Self(UltimusRoster.NAME, me.Wizard?.PlayerNameBehavior?.GetWizardName() ?? UltimusRoster.NAME, UltimusSeat.Current.Role,
             me.Wizard?.MagicSchoolBehavior?.Level ?? 1, UltimusText.Zone(me.Zone), WorldOf(me.Zone), title, step,
             me.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId), mood, who => NpcTip(me, who, _currentQuest ?? _target?.Quest), FoeTip, _doing,
             me.Wizard?.GameStats is { } hp ? (int) (hp.m_currentHitpoints * 100L / Math.Max(1, hp.m_baseHitpoints + hp.m_bonusHitpoints)) : -1,

@@ -126,8 +126,8 @@ internal sealed partial class UltimusDirectorActor {
         return false;
     }
 
-    private const string ThinkRules =
-        "You help Ultimus, a Balance wizard bot in a private Wizard101 server, who quests the main story like a human player. He is stuck on a quest step. " +
+    private static string ThinkRules =>
+        $"You help {UltimusSeat.Current.Name}, a {UltimusSeat.Current.Role} wizard bot in a private Wizard101 server, who quests the main story like a human player. He is stuck on a quest step. " +
         "Read the facts, guess the most likely cause in one short plain sentence, and pick exactly ONE move from the list of allowed moves. " +
         "Rules: he plays like a human. He never skips or finishes a step by command, never trains or crafts pets, and only uses the allowed moves. " +
         "Do not pick a move listed as already failed unless nothing else is left. If creatures stand by the step and the step or the game's message " +

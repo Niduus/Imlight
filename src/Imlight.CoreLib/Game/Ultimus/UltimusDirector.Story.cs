@@ -238,7 +238,7 @@ internal sealed partial class UltimusDirectorActor {
         text.AppendLine();
         text.AppendLine("HOW I FEEL AND PLAY");
         text.AppendLine($"- Mood: {UltimusMood.Now}. {UltimusMood.Why()}.");
-        text.AppendLine($"- Push mode: {(UltimusPlaybook.Value("Push.On") >= 0.5 ? "on" : "off")}. Plays: {BotKnowledge.PartyOf("Ultimus")}.");
+        text.AppendLine($"- Push mode: {(UltimusPlaybook.Value("Push.On") >= 0.5 ? "on" : "off")}. Plays: {BotKnowledge.PartyOf(UltimusSeat.Current.Key)}.");
         text.AppendLine($"- Last step done or XP gained: {Minutes((DateTime.UtcNow - _progressAt).TotalSeconds)} ago.");
         if (_markedZone is not null) {
             text.AppendLine($"- I marked my spot in {UltimusText.Zone(_markedZone)} and will recall there after this trip.");

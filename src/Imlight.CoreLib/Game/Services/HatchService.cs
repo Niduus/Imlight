@@ -573,8 +573,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             : HatchStatus.Success;
 
         if (refusal != HatchStatus.Success) {
-            if (wizard is not null && Ultimus.UltimusRoster.IsMember(wizard.CharId)) {
-                Ultimus.UltimusLink.Note(Ultimus.UltimusRoster.NAME, "turns down a pet hatching request (it does not hatch pets).");
+            if (wizard is not null && Ultimus.UltimusSeat.OfCharacter(wizard.CharId) is { } seat) {
+                using (Ultimus.UltimusSeat.Use(seat)) {
+                    Ultimus.UltimusLink.Note(Ultimus.UltimusRoster.NAME, "turns down a pet hatching request (it does not hatch pets).");
+                }
             }
 
             Logger.Information("Hatching: {0} refused the hatch request of {1}: {2}.", Logger.Args(wizard?.CharId, message.FromCharId, refusal));

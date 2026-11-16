@@ -94,7 +94,7 @@ internal sealed partial class UltimusDirectorActor {
             Note("Ultimus", $"ABNORMAL: is in {UltimusText.Zone(zone)}, off the main story: {why}. Leaving it comes first.", UltimusLink.ABNORMAL);
             Think($"I am in {UltimusText.Zone(zone)}. That is not a main story area and my quest does not send me here, so I leave it before " +
                   "anything else and write it down so the way that brought me here is never taken again.", "offstory|" + zone);
-            BotMistakes.Record("Ultimus", BotMistakes.OFF_STORY, zone, leader.X, leader.Y, _currentQuest ?? "",
+            BotMistakes.Record(UltimusSeat.Current.Key, BotMistakes.OFF_STORY, zone, leader.X, leader.Y, _currentQuest ?? "",
                 $"Ended up in {UltimusText.Zone(zone)}, an area off the main story (from {UltimusText.Zone(_lastStoryZone ?? "")}).",
                 _lastReasoning, "The route finder never goes through an event, a gauntlet, a house or a side world.", "leave it first");
         }
@@ -140,7 +140,7 @@ internal sealed partial class UltimusDirectorActor {
             if (off > 600) {
                 Think($"The zone transfer book says this way lands at ({expected.LandX:0}, {expected.LandY:0}, {expected.LandZ:0}) in " +
                       $"{UltimusText.Zone(leader.Zone)}, but I am at ({leader.X:0}, {leader.Y:0}), {off:0} away. I note it.", "landing|" + leader.Zone);
-                BotMistakes.Record("Ultimus", BotMistakes.SURPRISE, leader.Zone, leader.X, leader.Y, meant ?? "",
+                BotMistakes.Record(UltimusSeat.Current.Key, BotMistakes.SURPRISE, leader.Zone, leader.X, leader.Y, meant ?? "",
                     $"Landed {off:0} away from where the zone transfer book says ({expected.Loc}) coming from {UltimusText.Zone(fromZone)}.",
                     "Each zone change is checked against the book.", "The book's landing spot or the game's needs a look.");
             }
@@ -224,7 +224,7 @@ internal sealed partial class UltimusDirectorActor {
             UltimusLink.ABNORMAL);
         Think("I am off the walkable ground, where no player can stand. I go back to the last spot on the floor I stood on and write it down.",
             "bounds|" + leader.Zone);
-        BotMistakes.Record("Ultimus", BotMistakes.OUT_OF_BOUNDS, leader.Zone, leader.X, leader.Y, _target?.What ?? _doing ?? "",
+        BotMistakes.Record(UltimusSeat.Current.Key, BotMistakes.OUT_OF_BOUNDS, leader.Zone, leader.X, leader.Y, _target?.What ?? _doing ?? "",
             $"Walked off the walkable ground in {where}; walked back to ({spot.X:0}, {spot.Y:0}).", _lastReasoning,
             "Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.", "walk back");
         // He walks back himself (Niduus, 2026-11-14: Ahziael never moves him).

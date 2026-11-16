@@ -230,7 +230,7 @@ internal sealed partial class UltimusDirectorActor {
 
         var level = me.Wizard?.MagicSchoolBehavior?.Level ?? 0;
         var reasoning = _lastReasoning.Length > 0 ? _lastReasoning : $"I went in at {fight.Health:P0} health.";
-        BotMistakes.Record("Ultimus", BotMistakes.LOST_FIGHT, me.Zone, me.X, me.Y, _target?.What ?? "",
+        BotMistakes.Record(UltimusSeat.Current.Key, BotMistakes.LOST_FIGHT, me.Zone, me.X, me.Y, _target?.What ?? "",
             $"Lost to {foe.Name} alone at level {level} after {seconds / 60:0.#} minutes (went in at {fight.Health:P0} health).", reasoning,
             "Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.", foe: foe.Name);
         Think($"I lost to {foe.Name}. I went in at {fight.Health:P0} health. Next time I heal up to full first and make my deck for it.",
@@ -270,7 +270,7 @@ internal sealed partial class UltimusDirectorActor {
                 ? $"I have been stuck here {flag.Times} times. Last time \"{flag.Worked}\" got me free, so I do that again."
                 : $"I have been stuck here {flag.Times} times. I tried {tried} and none got me free, so this time I try something new: {fix}.";
         Think(thought, $"stuck|{flag.Zone}|{(int) flag.X}|{(int) flag.Y}|{flag.Times}");
-        BotMistakes.Record("Ultimus", BotMistakes.STUCK, member.Zone, member.X, member.Y, step,
+        BotMistakes.Record(UltimusSeat.Current.Key, BotMistakes.STUCK, member.Zone, member.X, member.Y, step,
             $"Stuck ({why}) while {_doing}.", thought,
             flag.Worked.Length > 0 ? $"Here, \"{flag.Worked}\" works." : "Walk round this spot; the way finder bends round it now.", fix);
     }
