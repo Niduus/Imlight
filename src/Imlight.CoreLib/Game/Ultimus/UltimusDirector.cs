@@ -1446,6 +1446,26 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
     // Walking in a line
     // ---------------------------------------------------------------------
 
+    // The map round a spot where the way finder found no way, drawn in characters (logs/ultimus/no-way-maps), so the cause
+    // can be seen without the game's files (a wall, the black, a floor too high or low).
+    private static void SaveNoWayMap(UltimusMember.Status member, float toX, float toY, string what) {
+        try {
+            var map = OverlayQuestPath.MapAround(member.Zone, member.X, member.Y, member.Z, toX, toY);
+            if (map.Length == 0) {
+                return;
+            }
+
+            var folder = System.IO.Path.Combine(UltimusWire.Folder, "no-way-maps");
+            System.IO.Directory.CreateDirectory(folder);
+            var name = new string((member.Zone ?? "area").Select(c => char.IsLetterOrDigit(c) ? c : '-').ToArray());
+            System.IO.File.WriteAllText(System.IO.Path.Combine(folder, $"{name}_{(int) member.X}_{(int) member.Y}.txt"),
+                $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} no way to \"{what}\"{Environment.NewLine}{map}");
+        }
+        catch (Exception) {
+            // Only a help for reading the log.
+        }
+    }
+
     private void WalkTo(int index, UltimusPlanner.Target target) {
         if (Unsticking(index)) {
             return;
@@ -1518,6 +1538,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             && _noWaySaid.Add($"{member.Zone}|{(int) (toX / 200)}|{(int) (toY / 200)}")) {
             Note("Ultimus", $"{member.Name} finds no way on the map from ({member.X:0}, {member.Y:0}) to \"{what}\" at ({toX:0}, {toY:0}) in {UltimusText.Zone(member.Zone)}.",
                 UltimusLink.ABNORMAL);
+            SaveNoWayMap(member, toX, toY, what);
         }
 
         // A creature he does not need walking across the way just ahead, and no way round it: he waits a few seconds for

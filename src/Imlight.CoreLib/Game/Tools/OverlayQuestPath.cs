@@ -193,10 +193,17 @@ internal static class OverlayQuestPath {
             // Niduus's log, 2026-11-15 v0.10.886): the black round the lift is walked as the floor it now is, walls still walls.
             if (body && (cells is null || cells.Count == 0 || cells[^1] != to) && Lifted(zonePath, grid) is { } liftGrid) {
                 var liftTo = Open(liftGrid, goal);
-                if (Search(liftGrid, Open(liftGrid, start), liftTo) is { Count: > 0 } liftCells && liftCells[^1] == liftTo) {
+                var liftCells = Search(liftGrid, Open(liftGrid, start), liftTo);
+                var found = liftCells is { Count: > 0 } && liftCells[^1] == liftTo;
+                if (found) {
                     grid = liftGrid;
                     to = liftTo;
                     cells = liftCells;
+                }
+
+                if (s_liftTold.TryAdd($"{zonePath}|{goal}|{found}", 0)) {
+                    Imlight.Common.Logger.Debug("Way finder: in {0}, from ({1:0}, {2:0}) to ({3:0}, {4:0}) {5} over the moved lift.",
+                        Imlight.Common.Logger.Args(zonePath, fromX, fromY, toX, toY, found ? "a way was found" : "still no way"));
                 }
             }
 
@@ -461,6 +468,7 @@ internal static class OverlayQuestPath {
     // ground, so the black round a lift shows no floor even when the lift stands there. A lift the area has moved (one of
     // its objects played a raise or lower) counts as floor within LIFT_REACH of where it stands, walls still walls.
     private const float LIFT_REACH = 2500f;
+    private static readonly ConcurrentDictionary<string, byte> s_liftTold = new(StringComparer.OrdinalIgnoreCase);
     private static readonly TimeSpan s_liftKept = TimeSpan.FromHours(3);
     private static readonly ConcurrentDictionary<string, (float X, float Y, DateTime At)> s_lifts = new(StringComparer.OrdinalIgnoreCase);
 
@@ -479,6 +487,8 @@ internal static class OverlayQuestPath {
         }
 
         s_lifts[zonePath + "|" + objectName] = (x, y, DateTime.UtcNow);
+        Imlight.Common.Logger.Debug("Way finder: {0} in {1} moved like a lift at ({2:0}, {3:0}); the bots may walk onto it where the map shows no floor.",
+            Imlight.Common.Logger.Args(objectName, zonePath, x, y));
     }
 
     /// <summary>The lifts of an area that moved in the last few hours.</summary>
@@ -503,8 +513,14 @@ internal static class OverlayQuestPath {
         var cost = (byte[]) grid.Cost.Clone();
         var changed = 0;
         for (var i = 0; i < cost.Length; i++) {
-            if (cost[i] == BLOCKED && black[i] && NearLift(lifts, Center(grid, i))) {
-                cost[i] = 20;
+            if (cost[i] != BLOCKED) {
+                continue;
+            }
+
+            // The black round the lift: the floor it now is. Walls in the lift's own middle: its sides where the file has it
+            // standing at the bottom (the collision file has it only there), walked at a high cost.
+            if (black[i] ? NearLift(lifts, Center(grid, i)) : NearLift(lifts, Center(grid, i), LIFT_SHAFT)) {
+                cost[i] = black[i] ? (byte) 20 : (byte) 40;
                 changed++;
             }
         }
@@ -512,13 +528,77 @@ internal static class OverlayQuestPath {
         return changed == 0 ? null : grid with { Cost = cost, Heights = null };
     }
 
-    private static bool NearLift(List<(float X, float Y)> lifts, (float X, float Y) at)
-        => lifts.Any(l => ((l.X - at.X) * (l.X - at.X)) + ((l.Y - at.Y) * (l.Y - at.Y)) <= LIFT_REACH * LIFT_REACH);
+    private static bool NearLift(List<(float X, float Y)> lifts, (float X, float Y) at, float reach = LIFT_REACH)
+        => lifts.Any(l => ((l.X - at.X) * (l.X - at.X)) + ((l.Y - at.Y) * (l.Y - at.Y)) <= reach * reach);
 
-    // A black cell a moved lift stands over: floor for the bounds checks.
+    // How far from a lift's middle its own sides may stand (Big Ben's counterweight: the top floor's edge is 1550 out).
+    private const float LIFT_SHAFT = 1400f;
+
+    // A cell a moved lift stands over (the black round it, or its own sides in its middle): floor for the bounds checks.
     private static bool LiftCell(string zonePath, Grid grid, int cell)
-        => grid.Black is { } black && cell >= 0 && cell < black.Length && black[cell] && !s_lifts.IsEmpty
-           && LiftsIn(zonePath) is { Count: > 0 } lifts && NearLift(lifts, Center(grid, cell));
+        => grid.Black is { } black && cell >= 0 && cell < black.Length && !s_lifts.IsEmpty
+           && LiftsIn(zonePath) is { Count: > 0 } lifts && NearLift(lifts, Center(grid, cell), black[cell] ? LIFT_REACH : LIFT_SHAFT);
+
+    /// <summary>
+    /// The map round two spots in plain characters, for a spot where no way was found (Niduus, 2026-11-15: Ultimus stood at
+    /// the top of Big Ben's Counterweight East and the map file is not in the cloud): '#' wall, ' ' no floor (the Minimap's
+    /// black), '=' floor about his height, 'v' floor lower, '^' floor higher, '~' water, 'L' black a moved lift makes walkable,
+    /// 'H' a wall in a moved lift's middle (walked as its side), 'U' him, 'X' the step. Each character is one cell. Empty when the area's ground is not known.
+    /// </summary>
+    internal static string MapAround(string zonePath, float fromX, float fromY, float fromZ, float toX, float toY) {
+        try {
+            if (GridOf(zonePath) is not { } grid) {
+                return "";
+            }
+
+            var lifts = LiftsIn(zonePath);
+            var (minX, maxX) = (MathF.Min(fromX, toX) - 600, MathF.Max(fromX, toX) + 600);
+            var (minY, maxY) = (MathF.Min(fromY, toY) - 600, MathF.Max(fromY, toY) + 600);
+            var step = MathF.Max(grid.Cell, MathF.Max(maxX - minX, maxY - minY) / 160f);
+            var (me, goal) = (Cell(grid, fromX, fromY), Cell(grid, toX, toY));
+            var text = new System.Text.StringBuilder();
+            text.AppendLine($"Area {zonePath}: him at ({fromX:0}, {fromY:0}, height {fromZ:0}), step at ({toX:0}, {toY:0}); one character = {step:0} wide, " +
+                            $"cell {grid.Cell:0}. Lifts moved here: {(lifts.Count == 0 ? "none" : string.Join(", ", lifts.Select(l => $"({l.X:0}, {l.Y:0})")))}.");
+            text.AppendLine("# wall, blank no floor, = floor at his height, v lower, ^ higher, ~ water, L black a moved lift makes walkable, H wall in a moved lift's middle, U him, X step.");
+            for (var y = maxY; y >= minY; y -= step) {
+                for (var x = minX; x <= maxX; x += step) {
+                    var cell = Cell(grid, x, y);
+                    char c;
+                    if (cell < 0) {
+                        c = ' ';
+                    }
+                    else if (cell == me || (MathF.Abs(x - fromX) < step / 2 && MathF.Abs(y - fromY) < step / 2)) {
+                        c = 'U';
+                    }
+                    else if (cell == goal || (MathF.Abs(x - toX) < step / 2 && MathF.Abs(y - toY) < step / 2)) {
+                        c = 'X';
+                    }
+                    else if (grid.Black is { } black && black[cell]) {
+                        c = lifts.Count > 0 && NearLift(lifts, Center(grid, cell)) ? 'L' : ' ';
+                    }
+                    else if (grid.Cost[cell] == BLOCKED) {
+                        c = lifts.Count > 0 && NearLift(lifts, Center(grid, cell), LIFT_SHAFT) ? 'H' : '#';
+                    }
+                    else if (grid.Cost[cell] == 25) {
+                        c = '~';
+                    }
+                    else {
+                        var z = FloorOf(grid, cell, FloorNearest(grid, cell, fromZ));
+                        c = float.IsNaN(z) || float.IsNaN(fromZ) || MathF.Abs(z - fromZ) <= FLOOR_GAP ? '=' : z < fromZ ? 'v' : '^';
+                    }
+
+                    text.Append(c);
+                }
+
+                text.AppendLine();
+            }
+
+            return text.ToString();
+        }
+        catch (Exception ex) {
+            return "Map could not be drawn: " + ex.Message;
+        }
+    }
 
     private static Grid GridOf(string zonePath) {
         if (string.IsNullOrEmpty(zonePath)) {

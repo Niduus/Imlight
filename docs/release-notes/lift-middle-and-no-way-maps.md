@@ -1,0 +1,4 @@
+Fixed: Ultimus can cross the middle of the raised counterweight in Big Ben
+Even after 0.10.887, Ultimus still stood at the top of Counterweight East, because the map file still shows the counterweight's sides where it stands at the bottom of the tower. Now, once the counterweight has risen, he and the other bots may also walk over its own sides in the middle of the tower. When the way finder finds no way somewhere, Ultimus also saves a small drawing of the map around him, so the cause can be seen.
+Where: Ultimus, the Quest Team and Bot Players, any area with a lift that rises or lowers; the drawings go to the Ultimus logs folder, in no-way-maps.
+Test: Take Ultimus through "Stolen Away" in Counterweight East; after the fourth lever he should walk to Sprockets and start the battle. If he still can't, the no-way-maps folder has a new drawing of that spot.
