@@ -1,0 +1,4 @@
+Fixed: Ultimus still stuck on the sixth floor of Big Ben
+The last fix only looked for unused teleporters on the floor Ultimus stood on, and only when his walk went nowhere at all. On the sixth floor he had already used the floor's teleporter up, so he walked to the wall nearest Meowiarty and stood there, then took the teleporters back down. Now he also looks on the floors his known teleporters reach, so he takes the known one up and walks into the next floor's unused teleporter, and he does this both when the walk only reaches a wall and when he is flagged as stuck.
+Where: Ultimus, in areas like Big Ben in Marleybone where the game files leave out where teleporters lead.
+Test: Let Ultimus carry on with "The Last Meow" from the sixth floor of Big Ben and watch him go up floor by floor instead of going back down.

@@ -309,7 +309,8 @@ internal static class UltimusPads {
     private static readonly ConcurrentDictionary<string, List<Untried>> s_untried = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
-    /// The nearest teleporter on the ground (x, y) stands on whose landing is not known yet, not one in <paramref name="skip"/>.
+    /// The nearest teleporter whose landing is not known yet, not one in <paramref name="skip"/>: on the ground (x, y) stands on,
+    /// else on a ground the known teleporters reach from there (fewest teleporters first).
     /// The game's own copy of an area often leaves a teleporter's landing out (Big Ben's twenty teleporting floors: only
     /// the first five were known, so at the sixth floor Ultimus found no way on to Meowiarty and stood still; Niduus,
     /// 2026-11-15: "I think he's stuck in Big Ben"). A player walks into it to see where it goes, and so does he; once
@@ -320,13 +321,37 @@ internal static class UltimusPads {
         try {
             var here = OverlayQuestPath.IslandOf(zonePath, x, y);
             var known = In(zonePath);
-
-            return s_untried.GetOrAdd(zonePath, UntriedFromFiles)
+            var untried = s_untried.GetOrAdd(zonePath, UntriedFromFiles)
                 .Where(u => skip is null || !skip.Contains(u.Name))
                 .Where(u => !known.Any(p => Near(p.X, p.Y, u.X, u.Y, UNTRIED_KNOWN)))
-                .Where(u => here < 0 || OverlayQuestPath.IslandOf(zonePath, u.X, u.Y) == here)
-                .OrderBy(u => BackWay(u.Name) ? 1 : 0)
-                .ThenBy(u => UltimusPlanner.Far(x, y, u.X, u.Y))
+                .Select(u => (U: u, On: OverlayQuestPath.IslandOf(zonePath, u.X, u.Y)))
+                .ToList();
+            if (here < 0) {
+                return untried.Select(u => u.U).OrderBy(u => BackWay(u.Name) ? 1 : 0).ThenBy(u => UltimusPlanner.Far(x, y, u.X, u.Y)).FirstOrDefault();
+            }
+
+            // The grounds known pads reach from here, fewest pads first (Big Ben: the floor's own teleporter up was learned,
+            // so its next untried one is on the floor above, one pad away), each with where he lands on it.
+            var hops = new Dictionary<int, (int Hops, float X, float Y)> { [here] = (0, x, y) };
+            var pads = known.Select(p => (Pad: p, On: OverlayQuestPath.IslandOf(zonePath, p.X, p.Y), Lands: OverlayQuestPath.IslandOf(zonePath, p.ToX, p.ToY)))
+                .Where(p => p.On >= 0 && p.Lands >= 0 && p.On != p.Lands).ToList();
+            var frontier = new List<int> { here };
+            for (var depth = 1; depth <= MOST_PADS && frontier.Count > 0; depth++) {
+                var next = new List<int>();
+                foreach (var pad in pads.Where(p => frontier.Contains(p.On) && !hops.ContainsKey(p.Lands))) {
+                    if (hops.TryAdd(pad.Lands, (depth, pad.Pad.ToX, pad.Pad.ToY))) {
+                        next.Add(pad.Lands);
+                    }
+                }
+
+                frontier = next;
+            }
+
+            return untried.Where(u => hops.ContainsKey(u.On))
+                .OrderBy(u => BackWay(u.U.Name) ? 1 : 0)
+                .ThenBy(u => hops[u.On].Hops)
+                .ThenBy(u => UltimusPlanner.Far(hops[u.On].X, hops[u.On].Y, u.U.X, u.U.Y))
+                .Select(u => u.U)
                 .FirstOrDefault();
         }
         catch (Exception) {
@@ -334,12 +359,10 @@ internal static class UltimusPads {
         }
     }
 
-    /// <summary>True while the teleporter is still unknown and on the ground (x, y) stands on (not once it has moved him).</summary>
+    /// <summary>True while the teleporter is still unknown (not once it has moved him).</summary>
     internal static bool StillUntried(string zonePath, Untried pad, float x, float y) {
         try {
-            var here = OverlayQuestPath.IslandOf(zonePath, x, y);
-            return !In(zonePath).Any(p => Near(p.X, p.Y, pad.X, pad.Y, UNTRIED_KNOWN))
-                   && (here < 0 || OverlayQuestPath.IslandOf(zonePath, pad.X, pad.Y) == here);
+            return !In(zonePath).Any(p => Near(p.X, p.Y, pad.X, pad.Y, UNTRIED_KNOWN));
         }
         catch (Exception) {
             return false;

@@ -1568,8 +1568,12 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                      ?? OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, toX, toY, body: true, avoid: walkAvoid, fromZ: member.Z, toZ: toZ);
         // A walk that goes nowhere while the step is far: said once per step, with the spots, so the log shows where the
         // map gives no way (Niduus's log, 2026-11-13: it stood at The Oasis's start for an hour with nothing said).
+        // No way: the walk goes nowhere, or the step is on ground walls or water cut off and no known teleporter leads
+        // there (the walk then only reaches the edge nearest it: Big Ben's sixth floor, where he stood at the floor's
+        // south wall under Meowiarty for an hour; Niduus's log, 2026-11-15 23:29).
         var noWay = UltimusPlanner.Far(member.X, member.Y, toX, toY) > 300
-                    && (points.Count == 0 || UltimusPlanner.Far(member.X, member.Y, points[^1].X, points[^1].Y) < 60);
+                    && (points.Count == 0 || UltimusPlanner.Far(member.X, member.Y, points[^1].X, points[^1].Y) < 60
+                        || (_viaPad is null && OverlayQuestPath.Apart(member.Zone, member.X, member.Y, toX, toY)));
         // No way, but a teleporter on his ground whose landing nobody knows yet: he walks into it to see where it goes, as
         // a player tries the next door (Big Ben's floors past the fifth; Niduus, 2026-11-15: "I think he's stuck in Big Ben").
         // Once it has moved him it is learned, and the way finder chains it with the rest.
@@ -1624,7 +1628,16 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 "untried|" + pad.Name);
         }
 
-        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, pad.X, pad.Y, body: true);
+        // On another floor: by the known teleporters that lead there first.
+        var (wx, wy) = (pad.X, pad.Y);
+        if (UltimusPads.Toward(member.Zone, member.X, member.Y, pad.X, pad.Y, PadsLeft()) is { } via) {
+            (wx, wy) = (via.X, via.Y);
+            if (via.Click != 0) {
+                _otherWayPad = (via, member.Zone, DateTime.UtcNow);
+            }
+        }
+
+        var points = OverlayQuestPath.Walk(member.CharId, member.Zone, member.X, member.Y, wx, wy, body: true);
         _sent[index] = (target, DateTime.UtcNow, member.X, member.Y);
         _actors[index].Tell(new UltimusMember.WalkTo(points, $"tries an unknown teleporter toward {what}"));
 

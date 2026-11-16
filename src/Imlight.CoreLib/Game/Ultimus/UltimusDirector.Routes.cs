@@ -137,6 +137,13 @@ internal sealed partial class UltimusDirectorActor {
             return false;
         }
 
+        // The step on ground no known teleporter reaches: a teleporter he has not used yet, before one that goes back.
+        if (OverlayQuestPath.Apart(member.Zone, member.X, member.Y, goal.X, goal.Y)
+            && UltimusPads.Toward(member.Zone, member.X, member.Y, goal.X, goal.Y, PadsLeft()) is null
+            && TryUntried(index, member, goal, goal.What)) {
+            return true;
+        }
+
         var left = PadsLeft();
         if (_viaPad is not null) {
             left.Add(_viaPad);
