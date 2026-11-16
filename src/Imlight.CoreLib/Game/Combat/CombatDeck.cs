@@ -372,6 +372,27 @@ internal class CombatDeck {
     }
 
     /// <summary>
+    /// Puts one more copy of a spell in the cards left to draw (a spell's kAddSpellToDeck). It is not part of the deck the
+    /// battle began with, so a reshuffle does not bring it back.
+    /// </summary>
+    internal void AddCardToDeck(uint templateId) {
+        var spellData = _usedUpSpellData.FirstOrDefault(s => s.TemplateId == templateId);
+        if (spellData is not null) {
+            spellData.Quantity++;
+
+            return;
+        }
+
+        _usedUpSpellData.Add(new CombatDeckSpellData() {
+            TemplateId = templateId,
+            Quantity = 1,
+            IsBattleCard = false,
+            IsItemCard = false,
+            IsTreasureCard = false,
+        });
+    }
+
+    /// <summary>
     /// How many more cards fit in the current hand.
     /// </summary>
     internal int HandRoom => Math.Max(0, _handSize - LastGivenHand.Count);

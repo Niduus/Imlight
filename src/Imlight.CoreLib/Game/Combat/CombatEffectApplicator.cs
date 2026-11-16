@@ -332,6 +332,30 @@ internal static class CombatEffectApplicator {
                 cinematicTime += Swap(caster, targets, effect, CombatWards.All);
                 cinematicTime += Swap(caster, targets, effect, OverTimes);
                 break;
+            // A card given to the target (a boss's "So here's a card!": Failed Ritual Oni's Locust Swarm, Thrym's Ice
+            // Wyvern and some 320 more "GiveSpell" and "ASTH" spells). The card is m_effectParam. The server never did
+            // these, so the card never reached the hand (Niduus, 2026-11-16). It goes into the target's next hand, as a
+            // cheat's AddCard puts it: a wizard sees it at the next planning phase, a creature's AI can pick it.
+            case kSpellEffects.kAddSpellToHand:
+            case kSpellEffects.kAddSpellToDeck: {
+                var card = GivenCard(effect);
+                if (card == 0) {
+                    Logger.Debug("Spell {0}: {1} names no card.", Logger.Args(spellTemplateId, effect.m_effectType));
+
+                    break;
+                }
+
+                foreach (var target in targets.Where(t => t is not null && t.IsAlive)) {
+                    if (effect.m_effectType == kSpellEffects.kAddSpellToHand) {
+                        target.GiveCardToHand(card);
+                    }
+                    else {
+                        target.GiveCardToDeck(card);
+                    }
+                }
+
+                break;
+            }
             // More (or fewer) rounds on the target's damage or heal over time effects.
             case kSpellEffects.kModifyOverTimeDuration:
                 foreach (var target in targets.Where(t => t?._hangingEffects is not null)) {
@@ -357,6 +381,18 @@ internal static class CombatEffectApplicator {
         }
 
         return cinematicTime;
+    }
+
+    // The card a kAddSpellToHand / kAddSpellToDeck effect gives: the game files keep it in m_effectParam (all 345 of them),
+    // m_spellTemplateID as a fallback. 0: none, or no such spell.
+    private static uint GivenCard(SpellEffect effect) {
+        foreach (var id in new[] { (uint) effect.m_effectParam, effect.m_spellTemplateID }) {
+            if (id != 0 && id != uint.MaxValue && Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(id) is SpellTemplate) {
+                return id;
+            }
+        }
+
+        return 0;
     }
 
     /// <summary>

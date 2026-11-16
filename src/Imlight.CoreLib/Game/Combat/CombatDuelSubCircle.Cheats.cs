@@ -145,6 +145,25 @@ public partial class CombatDuelSubCircle {
         }
     }
 
+    /// <summary>
+    /// A card a spell gives (kAddSpellToHand: a boss's "So here's a card!"): it goes into the next hand, as a cheat's AddCard
+    /// puts it, in place of a random card when the hand is full. Players and creatures alike.
+    /// </summary>
+    internal void GiveCardToHand(uint card) {
+        CheatHandRules.Add(new CheatHandRule("Add", 1, "", "", card, false));
+        Logger.Information("Slot {0} | A spell gives it card {1} for its next hand.", Logger.Args(SlotIndex, card));
+    }
+
+    /// <summary>A card a spell puts in the deck (kAddSpellToDeck): one more copy to draw from.</summary>
+    internal void GiveCardToDeck(uint card) {
+        if (_combatDeck is null) {
+            return;
+        }
+
+        _combatDeck.AddCardToDeck(card);
+        Logger.Information("Slot {0} | A spell puts card {1} in its deck.", Logger.Args(SlotIndex, card));
+    }
+
     // Discard and Lock, once the hand is drawn.
     private void CheatHandAfterDraw() {
         if (CheatHandRules.Count == 0 || _combatDeck is null) {
