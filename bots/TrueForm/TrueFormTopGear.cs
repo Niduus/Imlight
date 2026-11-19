@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.BotShared;
@@ -53,7 +52,10 @@ internal static class TrueFormTopGear {
             }
 
             if (Interlocked.Exchange(ref s_started, 1) == 0) {
-                _ = Task.Run(Read);
+                // On a low priority thread, so the first read (every item in the game's files) does not slow the server's
+                // launch (Niduus, 2026-11-19: the first start after v0.10.926 "took longer than usual"). Later starts read the
+                // kept list in logs/trueform/top-gear.txt and are quick.
+                new Thread(Read) { IsBackground = true, Priority = ThreadPriority.Lowest, Name = "True Form top gear" }.Start();
             }
 
             return null;
