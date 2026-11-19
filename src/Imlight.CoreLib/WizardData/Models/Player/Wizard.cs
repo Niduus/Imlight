@@ -447,7 +447,63 @@ public class Wizard {
         return true;
     }
 
+    /// <summary>
+    /// The game's own Level Lock is on: the level and the XP bar stay where they were when it was locked, and XP earned
+    /// is banked (OverflowXp) until the wizard unlocks (Niduus, 2026-11-19).
+    /// </summary>
+    public bool LevelLocked => MagicSchoolBehavior.LevelIsLocked != 0;
+
+    /// <summary>
+    /// The XP banked while the level is locked.
+    /// </summary>
+    public int BankedExperience => Math.Max(MagicSchoolBehavior.OverflowXp, 0);
+
+    /// <summary>
+    /// Locks the level: the level and XP stay as they are; XP earned from now on is banked.
+    /// </summary>
+    /// <returns>False when it was locked already.</returns>
+    public bool LockLevel() {
+        if (LevelLocked) {
+            return false;
+        }
+
+        MagicSchoolBehavior.LevelIsLocked = 1;
+        WizardCollection.UpdateCharacterLevel(this);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Unlocks the level and gives all the XP banked while it was locked, levelling the wizard up as far as it reaches.
+    /// </summary>
+    /// <returns>The XP that was banked and is now given (0 when it wasn't locked or nothing was banked).</returns>
+    public int UnlockLevel() {
+        if (!LevelLocked) {
+            return 0;
+        }
+
+        var banked = BankedExperience;
+        MagicSchoolBehavior.LevelIsLocked = 0;
+        MagicSchoolBehavior.OverflowXp = 0;
+        if (banked > 0) {
+            AddExperiencePoints(banked);
+        }
+        else {
+            WizardCollection.UpdateCharacterLevel(this);
+        }
+
+        return banked;
+    }
+
     public void AddExperiencePoints(int xp) {
+        if (LevelLocked && xp > 0) {
+            // Banked, not given: the level and the bar stay as they were when locked.
+            MagicSchoolBehavior.OverflowXp = (int) Math.Min((long) BankedExperience + xp, int.MaxValue);
+            WizardCollection.UpdateCharacterLevel(this);
+
+            return;
+        }
+
         MagicSchoolBehavior.ExperiencePoints += xp;
 
         // If the level at XP is greater than the current level, we need to level up (never past the max level).

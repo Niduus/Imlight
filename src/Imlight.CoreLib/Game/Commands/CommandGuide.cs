@@ -57,6 +57,7 @@ internal static class CommandGuide {
                 + ".help battles lists a topic's commands, .help joinme says how one command works, and any other words search every command. "
                 + "Only the commands your account may use are shown. Also .commands."),
             Imlight("Level up", ".mod levelup", QA, "Raises your character by one level. Also .mod lvlup."),
+            Command("Level Lock", ".levellock on   or   .levellock off   or   .levellock", ANYONE_AT_ALL, "Locks your level like the game's own Level Lock: your level and XP bar stay as they are, and the XP you earn is saved up. .levellock off unlocks and gives you all the saved-up XP at once, levelling you up as far as it reaches. With nothing after it, it says if you are locked and how much XP is saved up. Also .locklevel and .xplock."),
             Command("Set level", ".level MAX or .level <level>", QA, "Sets your character to the max level, or to the level you type, such as .level 50. Also .mod level."),
             Imlight("Add experience", ".mod addxp <amount>", QA, "Gives your character experience points."),
             Imlight("Run speed", ".mod speed <multiplier>", QA, "Changes how fast you run, such as .mod speed 3. Use .mod speed 1 for normal."),
