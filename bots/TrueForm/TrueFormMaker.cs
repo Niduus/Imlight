@@ -22,7 +22,10 @@ using System.Linq;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.BotShared;
+using Imlight.CoreLib.Game.ItemSafety;
 using Imlight.CoreLib.Game.Pet;
+using Imlight.CoreLib.Game.Seamstress;
+using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Shared.Behaviors;
@@ -83,6 +86,7 @@ internal static class TrueFormMaker {
 
             MakeMale(wizard);
             Dress(wizard, top);
+            Stitch(wizard);
             GivePet(wizard);
             TrueFormJewels.Fill(wizard);
         }
@@ -194,6 +198,83 @@ internal static class TrueFormMaker {
             .OrderByDescending(p => p.Got).ThenByDescending(p => p.Stats).ThenBy(p => p.Id)
             .ToList();
         return myth.Count > 0 ? myth[0].Id : null;
+    }
+
+    // Niduus, 2026-11-19: "Character on my account (1234) has a character called "Myth Stitch" that characters Hat, Robe,
+    // Boots and Wand for gear stitch". His worn hat, robe, boots and wand take the look (and dyes) of what that character
+    // wears, by the Seamstress's own rules, and keep their 190 stats and jewels. That character is only read, never changed.
+    // [TrueForm] StitchAccount / StitchCharacter name it (live). Done again whenever he is dressed in a new piece or the
+    // look changes.
+    private static readonly EquipmentSlotType[] s_stitchSlots = [
+        EquipmentSlotType.Hat, EquipmentSlotType.Robe, EquipmentSlotType.Shoes, EquipmentSlotType.Weapon,
+    ];
+
+    private static void Stitch(Wizard wizard) {
+        try {
+            var accountName = ConfigurationManager.GetValue("TrueForm.StitchAccount", "1234");
+            var characterName = ConfigurationManager.GetValue("TrueForm.StitchCharacter", "Myth Stitch");
+            if (string.IsNullOrWhiteSpace(accountName) || string.IsNullOrWhiteSpace(characterName)) {
+                return;
+            }
+
+            var account = AccountCollection.GetAccount(accountName);
+            var model = account?.CharacterIds.Select(WizardCollection.GetCharacter)
+                .FirstOrDefault(c => c is not null && string.Equals(c.PlayerNameBehavior?.GetWizardName()?.Trim(), characterName.Trim(), StringComparison.OrdinalIgnoreCase));
+            if (model is null) {
+                Logger.Warning("True Form: the stitch character \"{0}\" was not found on account {1}; he keeps his own look.", Logger.Args(characterName, accountName));
+                return;
+            }
+
+            var done = 0;
+            foreach (var slot in s_stitchSlots) {
+                var look = model.EquipmentBehavior?.GetItemInSlot(slot);
+                var mine = wizard.EquipmentBehavior?.GetItemInSlot(slot);
+                if (look is null || mine is null) {
+                    continue;
+                }
+
+                var lookId = ItemHelper.GetDisplayTemplateId(look);
+                if (ItemHelper.GetDisplayTemplateId(mine) == lookId && mine.m_primaryColor == look.m_primaryColor && mine.m_secondaryColor == look.m_secondaryColor) {
+                    continue;
+                }
+
+                if (!StitchRules.TryPlanStitch(look, mine, out var plan, out var reason)) {
+                    Logger.Warning("True Form: his {0} could not take the look of {1}'s: {2}.", Logger.Args(slot, characterName, reason));
+                    continue;
+                }
+
+                if (!StitchedItemFactory.TryCreateStitched(wizard, plan, out var stitched)) {
+                    Logger.Warning("True Form: his stitched {0} could not be made.", Logger.Args(slot));
+                    continue;
+                }
+
+                StitchedItemFactory.CopySockets(mine, stitched);
+                if (!wizard.AddInitializedItemToInventory(stitched, ignoreLimit: true)) {
+                    Logger.Warning("True Form: his stitched {0} could not go in his backpack.", Logger.Args(slot));
+                    continue;
+                }
+
+                var old = mine.m_globalID.Full;
+                if (!wizard.InventoryToEquipmentTransfer(stitched.m_globalID.Full, out _, out _)) {
+                    wizard.RemoveItemFromInventory(stitched.m_globalID.Full, ItemRecordKind.Removed, "True Form stitch not worn");
+                    Logger.Warning("True Form: his stitched {0} could not be put on.", Logger.Args(slot));
+                    continue;
+                }
+
+                // The plain piece the stitch used up.
+                wizard.RemoveItemFromInventory(old, ItemRecordKind.Removed, "used up by True Form's stitch");
+                done++;
+                Logger.Information("True Form: his {0} now looks like {1}'s ({2}).", Logger.Args(slot, characterName,
+                    BotJewels.NameOf(CoreObjectFactory.GetCoreTemplate(lookId) as WizItemTemplate)));
+            }
+
+            if (done > 0) {
+                Logger.Information("True Form: {0} pieces stitched to {1}'s look.", Logger.Args(done, characterName));
+            }
+        }
+        catch (Exception e) {
+            Logger.Warning("True Form: could not stitch his look: {0}", Logger.Args(e.Message));
+        }
     }
 
     // The best gear per slot for a Myth wizard of his level; put on when what he wears differs.
