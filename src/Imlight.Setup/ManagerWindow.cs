@@ -546,6 +546,7 @@ internal sealed partial class ManagerWindow : Window {
             // Wizard101 patched its messages since the server was built: build it again (ManagerWindow.GamePatch.cs).
             StartGamePatchCheck();
             await Guard(CheckGamePatchAsync);
+            await Guard(CheckTypeDumpAsync);
         };
         Closed += (_, _) => {
             _timer.Stop();
