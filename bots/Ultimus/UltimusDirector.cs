@@ -3006,7 +3006,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 var home = TrueForm.Home;
                 status["trueForm"] = new JsonObject {
                     ["with"] = TrueForm.With ?? "",
-                    ["mode"] = $"{TrueForm.Words(TrueForm.Now)}, as a {TrueForm.School} wizard",
+                    ["mode"] = $"{TrueForm.Words(TrueForm.Now)}, as a {TrueForm.School} wizard{(TrueForm.Universal ? " in his universal damage setup" : "")}",
                     ["school"] = TrueForm.School.ToString(),
                     ["asked"] = TrueForm.Asked,
                     ["spellLevel"] = TrueForm.SpellLevel(),

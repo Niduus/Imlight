@@ -89,10 +89,12 @@ internal static class TrueFormMaker {
             }
 
             MakeMale(wizard);
-            Dress(wizard, top, school.ToString(), style);
+            // His universal setup scores every piece, jewel and pet on what helps every school ("" = every school only).
+            var statSchool = TrueForm.Universal ? "" : school.ToString();
+            Dress(wizard, top, school.ToString(), style, statSchool);
             Stitch(wizard);
-            GivePet(wizard, school.ToString(), style);
-            TrueFormJewels.Fill(wizard, school.ToString(), style);
+            GivePet(wizard, statSchool, style);
+            TrueFormJewels.Fill(wizard, statSchool, style);
             TrueFormSpells.Give(wizard, top, school.ToString(), style);
         }
         catch (Exception e) {
@@ -169,7 +171,7 @@ internal static class TrueFormMaker {
                 return;
             }
 
-            if ((pick?.Pet ?? BestPet(school)) is not { } template) {
+            if ((pick?.Pet ?? BestPet(school.Length == 0 ? TrueForm.School.ToString() : school)) is not { } template) {
                 Logger.Warning("True Form: no {0} pet was found to give him.", Logger.Args(school));
                 return;
             }
@@ -476,7 +478,7 @@ internal static class TrueFormMaker {
     }
 
     // The best gear per slot for a Myth wizard of his level; put on when what he wears differs.
-    private static void Dress(Wizard wizard, int level, string school, BotStyle style) {
+    private static void Dress(Wizard wizard, int level, string school, BotStyle style, string statSchool) {
         // The gear list is read on the first ask, in the background: up to a minute for it.
         for (var i = 0; i < 120 && BotGear.Catalog.Count == 0; i++) {
             System.Threading.Thread.Sleep(500);
@@ -500,13 +502,13 @@ internal static class TrueFormMaker {
         }
 
         var pool = BotGear.Catalog.Concat(top ?? []).DistinctBy(p => p.Id).ToList();
-        var topOf = pool.Where(p => Allowed(p) && BotGear.CanWear(p, school, level) && BotGear.Score(p, school, style) > 0)
+        var topOf = pool.Where(p => Allowed(p) && BotGear.CanWear(p, school, level) && BotGear.Score(p, statSchool, style) > 0)
             .GroupBy(p => p.Slot).ToDictionary(g => g.Key, g => g.Max(p => p.Level));
         var best = BotGear.BestFor(school, level, style, p => Allowed(p) && (!topOf.TryGetValue(p.Slot, out var least) || p.Level >= least),
-            extra: top);
+            extra: top, scoreSchool: statSchool);
         var outfit = string.Join(",", best.OrderBy(b => b.Key).Select(b => b.Value.Id));
         var marker = Path.Combine(UltimusSeat.TrueForm.Folder, DRESSED_FILE);
-        outfit = $"{school} {style}: {outfit}";
+        outfit = $"{school}{(statSchool.Length == 0 ? " universal" : "")} {style}: {outfit}";
         var worn = BotGear.Slots.Select(s => (Slot: s, Item: wizard.EquipmentBehavior?.GetItemInSlot(s))).ToList();
         var wearsIt = best.All(b => worn.FirstOrDefault(w => w.Slot == b.Key).Item is { } item && (uint) Math.Min((ulong) item.m_templateID, uint.MaxValue) == b.Value.Id);
         if (wearsIt && File.Exists(marker) && File.ReadAllText(marker).Trim() == outfit) {

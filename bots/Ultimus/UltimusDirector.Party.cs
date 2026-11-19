@@ -384,7 +384,7 @@ internal sealed partial class UltimusDirectorActor {
             TrueForm.ResetMode();
             TrueForm.ClearRequested();
             TrueForm.With = "";
-            if (TrueForm.School != Shared.Behaviors.MagicSchool.Myth) {
+            if (TrueForm.School != Shared.Behaviors.MagicSchool.Myth || TrueForm.Universal) {
                 TrueForm.AskSwap(Shared.Behaviors.MagicSchool.Myth, null, 0, "");
             }
         }

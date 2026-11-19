@@ -515,13 +515,13 @@ internal static class BotGear {
 
     /// <summary>The best pieces for a school, level and style, one per slot (two rings are one ring slot in the game).</summary>
     internal static Dictionary<EquipmentSlotType, Piece> BestFor(string school, int level, BotStyle style, Func<Piece, bool> allowed = null,
-                                                                Random pickNear = null, IEnumerable<Piece> extra = null) {
+                                                                Random pickNear = null, IEnumerable<Piece> extra = null, string scoreSchool = null) {
         var best = new Dictionary<EquipmentSlotType, Piece>();
         var catalog = extra is null ? Catalog : Catalog.Concat(extra.Where(p => p is not null)).DistinctBy(p => p.Id).ToList();
         foreach (var slot in Slots) {
             var name = slot.ToString();
             var ranked = catalog.Where(p => p.Slot == name && CanWear(p, school, level) && (allowed?.Invoke(p) ?? true))
-                .Select(p => (Piece: p, Score: Score(p, school, style))).Where(x => x.Score > 0)
+                .Select(p => (Piece: p, Score: Score(p, scoreSchool ?? school, style))).Where(x => x.Score > 0)
                 .OrderByDescending(x => x.Score).ThenByDescending(x => x.Piece.Level).Take(3).ToList();
             if (ranked.Count == 0) {
                 continue;

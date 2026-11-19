@@ -138,6 +138,8 @@ internal static class TrueFormJewels {
     // How good a jewel is for him: its stats as his gear is scored; a pet jewel by his pet talents (first ones best), only
     // a talent his pet does not have yet.
     private static double Score(BotJewels.Jewel jewel, JewelSocketType shape, ClientPetItemBehavior pet, BotJewelPicker need, string[] petTalents, string school) {
+        // His universal setup: only the every-school talents count.
+        school = string.IsNullOrEmpty(school) ? "All" : school;
         if (jewel is null) {
             return 0;
         }

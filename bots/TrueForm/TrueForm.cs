@@ -173,20 +173,39 @@ internal static class TrueForm {
     internal static Mode? Role => s_role is { } asked && Enum.TryParse<Mode>(asked, true, out var mode) ? mode : null;
 
     /// <summary>A school switch asked for, waiting to be done: he logs out, changes, and logs back in to the group.</summary>
-    internal sealed record SwapAsk(MagicSchool School, Mode? Role, ulong HeadId, string HeadName);
+    internal sealed record SwapAsk(MagicSchool School, Mode? Role, ulong HeadId, string HeadName, bool Universal = false);
 
     private static volatile SwapAsk s_swap;
 
     /// <summary>Asks for a switch (Myth with no head: back home after the group).</summary>
-    internal static void AskSwap(MagicSchool school, Mode? role, ulong headId, string headName) => s_swap = new SwapAsk(school, role, headId, headName ?? "");
+    internal static void AskSwap(MagicSchool school, Mode? role, ulong headId, string headName, bool universal = false)
+        => s_swap = new SwapAsk(school, role, headId, headName ?? "", universal);
 
     internal static SwapAsk TakeSwap() => System.Threading.Interlocked.Exchange(ref s_swap, null);
 
     /// <summary>Puts the asked school and role in place, for the next time he is made ready.</summary>
-    internal static void Become(MagicSchool school, Mode? role, ulong headId = 0, string headName = "") {
+    internal static void Become(MagicSchool school, Mode? role, ulong headId = 0, string headName = "", bool universal = false) {
         s_school = school == MagicSchool.Myth ? null : school.ToString();
         s_role = role?.ToString();
-        Keep(school, role, headId, headName);
+        s_universal = universal;
+        Keep(school, role, headId, headName, universal);
+    }
+
+    private static volatile bool s_universal = Kept()?.Universal == true;
+
+    /// <summary>
+    /// His universal setup: gear, jewels, pet and set bonuses min-maxed on damage (and pierce) to every school, so he hits
+    /// hard with any school's spell (Niduus, 2026-11-19: "a universal setup where he's min-maxed to the brim on Universal
+    /// damage"). "Go universal for me"; back to his own setup after the group.
+    /// </summary>
+    internal static bool Universal => s_universal;
+
+    /// <summary>"Go universal", "switch to universal", "universal damage setup": the universal setup asked for.</summary>
+    internal static bool UniversalFrom(string words) {
+        var w = (words ?? "").Trim().ToLowerInvariant();
+        return System.Text.RegularExpressions.Regex.IsMatch(w,
+                   @"(^|\s)(go|switch( over)?( to)?|change( to)?|swap( to)?|be|become|turn( into)?|play( as)?|set up( as)?|use( your)?)\s+(full\s+|max(ed)?\s+|a\s+)?(uni|universal)\b")
+               || System.Text.RegularExpressions.Regex.IsMatch(w, @"\b(uni|universal)\s+(damage|dmg|setup|set up|build|loadout|gear|mode)\b");
     }
 
     // His switched school, role and group's head kept on disk (logs/trueform/school.txt), so a bot update or server restart
@@ -212,8 +231,9 @@ internal static class TrueForm {
                 if (parts.Length >= 4 && Enum.TryParse<MagicSchool>(parts[0], true, out var school)
                     && ulong.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out var head)) {
                     Mode? role = Enum.TryParse<Mode>(parts[1], true, out var m) ? m : null;
-                    s_kept = new SwapAsk(school, role, head, parts[3]);
-                    if (school != MagicSchool.Myth && head != 0) {
+                    var universal = parts.Length >= 5 && parts[4] == "universal";
+                    s_kept = new SwapAsk(school, role, head, parts[3], universal);
+                    if ((school != MagicSchool.Myth || universal) && head != 0) {
                         // Back after an update or restart: go back to the group's head (TrueFormSwitch re-calls them).
                         Rejoining = s_kept;
                         // Three more minutes, for his log in and getting ready.
@@ -229,13 +249,13 @@ internal static class TrueForm {
         return s_kept;
     }
 
-    private static void Keep(MagicSchool school, Mode? role, ulong headId, string headName) {
-        s_kept = new SwapAsk(school, role, headId, headName ?? "");
+    private static void Keep(MagicSchool school, Mode? role, ulong headId, string headName, bool universal = false) {
+        s_kept = new SwapAsk(school, role, headId, headName ?? "", universal);
         s_keptRead = true;
         try {
             Directory.CreateDirectory(Seat.Folder);
             File.WriteAllText(SchoolPath, string.Create(CultureInfo.InvariantCulture,
-                $"{school}|{role?.ToString() ?? ""}|{(school == MagicSchool.Myth ? 0 : headId)}|{(headName ?? "").Replace('|', ' ')}"));
+                $"{school}|{role?.ToString() ?? ""}|{(school == MagicSchool.Myth && !universal ? 0 : headId)}|{(headName ?? "").Replace('|', ' ')}|{(universal ? "universal" : "")}"));
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
             Logger.Warning("True Form: could not keep his school: {0}", Logger.Args(e.Message));

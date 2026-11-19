@@ -46,6 +46,11 @@ internal static class BotPetTalents {
     /// Sharp-Shot, Keen Eyes) take the school ones' and Pip Boost's places (Niduus, 2026-11-19).
     /// </remarks>
     internal static string[] For(string school, BotStyle style = BotStyle.Hitter, bool accuracyFull = false, bool pipsFull = false) {
+        // The universal setup (school ""): damage and pierce to every school first, then resist and accuracy to every school.
+        if (string.IsNullOrEmpty(school)) {
+            return ["Pain-Giver", "Pain-Bringer", "Armor Breaker", "Armor Piercer", "Spell-Proof", "Spell-Defying", "Sniper", "Sharp-Eye", "Sharp-Shot"];
+        }
+
         var talents = Base(school, style);
         if (!accuracyFull && !pipsFull) {
             return talents;
