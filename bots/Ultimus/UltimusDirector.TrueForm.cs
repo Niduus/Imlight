@@ -247,52 +247,82 @@ internal sealed partial class UltimusDirectorActor {
 
     // "True Form, join me", "leave", "attack", "use Dragonblade": his own asks, said to him. True when it was one.
     private bool TrueFormAsk(UltimusVoice.Heard heard, UltimusMember.Status me) {
-        var text = (heard.Text ?? "").Trim();
-        var lower = text.ToLowerInvariant();
+        // His name, "hey", "please", "can you" are taken off first, so "True Form, can you please heal us?" reads "heal us"
+        // (Niduus, 2026-11-19: "Bots need better obedience to commands and to better identify them and their meaning").
+        var order = TrueForm.Order(heard.Text);
         var grouped = GroupRegistry.AreGrouped(me.CharId, heard.SpeakerCharId);
-        bool Has(params string[] words) => words.Any(w => MenuChatBook.Says(lower, w));
-
-        if (!grouped && Has("join me", "come with me", "group with me", "help me", "party with me", "come here", "i need you")) {
-            TrueForm.Call(heard.SpeakerCharId, heard.SpeakerName);
-            return true;
-        }
-
-        if (!grouped) {
+        bool Has(params string[] words) => words.Any(w => MenuChatBook.Says(order, w));
+        bool Starts(params string[] words) => words.Any(w => order == w || order.StartsWith(w + " ", StringComparison.Ordinal));
+        if (order.Length == 0) {
             return false;
         }
 
-        if (Has("leave", "go home", "you can go", "dismissed", "go back")) {
+        if (!grouped) {
+            if (Has("join me", "join us", "join", "come with me", "group with me", "group up", "help me", "help us", "party with me",
+                    "come here", "i need you", "invite me", "team up", "follow me", "come help")) {
+                TrueForm.Call(heard.SpeakerCharId, heard.SpeakerName);
+                Note("Ultimus", $"True Form: {heard.SpeakerName} calls him (\"{UltimusText.Short(heard.Text, 60)}\").");
+                return true;
+            }
+
+            return false;
+        }
+
+        // Questions about him: what he plays, which spells he keeps, where his spot is.
+        if (Has("what mode", "which mode", "your mode", "how are you playing", "what are you playing", "what do you play", "what's your role",
+                "whats your role", "your role", "status")) {
+            var kept = TrueForm.Requested.Count == 0 ? "" : " I keep " + string.Join(", ", TrueForm.Requested.Select(id => TrueFormPool.Of(id)?.Shown ?? id.ToString())) + " in my hand.";
+            SendReply(heard, $"I play {TrueForm.Words(TrueForm.Now)}, with spells of level {TrueForm.SpellLevel()}.{kept}", "true form");
+            return true;
+        }
+
+        // Said alone ("leave", "bye") or as a whole send-off ("go home", "you can leave"); "go back to the door" is not one.
+        if (order is "leave" or "go back" or "bye" or "goodbye" or "dismissed" or "done" or "leave us"
+            || Starts("go home", "you can go", "leave the group", "leave group", "go away", "you can leave", "thats all", "that's all", "we're done", "were done")) {
             TrueForm.AskLeave();
+            Note("Ultimus", $"True Form: {heard.SpeakerName} sends him home.");
             SendReply(heard, "Okay, heading back to my spot in The Commons. Call me any time!", "true form");
             return true;
         }
 
-        var use = lower.IndexOf("use ", StringComparison.Ordinal);
-        if (use >= 0 && (use == 0 || !char.IsLetter(lower[use - 1]))) {
-            var asked = text[(use + 4)..].Trim();
-            var dev = TrueForm.DevSpellsNow;
-            if (TrueFormPool.Find(asked, TrueForm.SpellLevel(), dev) is { } spell) {
-                TrueForm.Request(spell.Id);
-                SendReply(heard, $"Got it, I'll keep {spell.Shown} in my hand from the next round.", "true form");
-            }
-            else {
-                SendReply(heard, TrueFormPool.Ready ? $"I don't have a spell called \"{UltimusText.Short(asked, 40)}\" at this level."
-                    : "Still reading my spells, give me a moment and ask again.", "true form");
-            }
-
+        if (Has("stop using", "forget the spell", "forget spells", "clear spells", "your own cards", "pick your own", "use whatever", "any spell")) {
+            TrueForm.ClearRequested();
+            SendReply(heard, "Okay, I pick all my cards myself again.", "true form");
             return true;
         }
 
-        // A mode, said short or as "go attack", "play support", "evil mode".
-        var words = lower.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
-        if (TrueForm.ModeFrom(lower) is { } mode && (words <= 4 || Has("mode", "play", "go"))) {
-            TrueForm.SetMode(mode);
-            Note("Ultimus", $"True Form: {heard.SpeakerName} asks for {mode}.");
-            SendReply(heard, $"Okay, {TrueForm.Words(mode)}.", "true form");
-            return true;
+        // "use Dragonblade", "cast Tower Shield", "keep Feint in your hand", "bring Mythspear".
+        var spellAsk = System.Text.RegularExpressions.Regex.Match(order, @"(?:^|\s)(?:use|cast|keep|bring|play|hold|save)\s+(?<x>.+)$");
+        if (spellAsk.Success) {
+            var asked = System.Text.RegularExpressions.Regex.Replace(spellAsk.Groups["x"].Value,
+                @"\b(in (your|ur) hand|in hand|on (me|us|them|him|her|the boss|boss|it)|next( round)?|the spell|spell|card|a|an|the|more|again|first|always)\b", " ");
+            asked = System.Text.RegularExpressions.Regex.Replace(asked, @"\s+", " ").Trim();
+            // "play support" or "use your heals" is a mode, not a spell.
+            if (asked.Length > 0 && TrueFormPool.Find(asked, TrueForm.SpellLevel(), TrueForm.DevSpellsNow) is { } spell) {
+                TrueForm.Request(spell.Id);
+                Note("Ultimus", $"True Form: {heard.SpeakerName} asks for {spell.Shown}.");
+                SendReply(heard, $"Got it, I'll keep {spell.Shown} in my hand from the next round.", "true form");
+                return true;
+            }
+
+            if (TrueForm.ModeFrom(asked) is null && asked.Length > 0) {
+                SendReply(heard, TrueFormPool.Ready ? $"I don't have a spell called \"{UltimusText.Short(asked, 40)}\" at level {TrueForm.SpellLevel()}. Say it the way the card says it, like \"use Dragonblade\"."
+                    : "Still reading my spells, give me a moment and ask again.", "true form");
+                return true;
+            }
+        }
+
+        // A mode, however it is said: "defend", "go attack", "play support", "be evil", "heal us", "tank for us", "atack".
+        if (TrueForm.ModeFrom(order) is { } mode) {
+            var words = order.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
+            if (words <= 6 || Has("mode", "play", "go", "be", "switch", "focus", "role", "become", "turn")) {
+                TrueForm.SetMode(mode);
+                Note("Ultimus", $"True Form: {heard.SpeakerName} asks for {mode} (\"{UltimusText.Short(heard.Text, 60)}\").");
+                SendReply(heard, $"Okay, {TrueForm.Words(mode)}.", "true form");
+                return true;
+            }
         }
 
         return false;
     }
-
 }

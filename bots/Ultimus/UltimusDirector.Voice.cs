@@ -540,6 +540,12 @@ internal sealed partial class UltimusDirectorActor {
             return true;
         }
 
+        // True Form takes orders from his group in any chat, named or not (Niduus, 2026-11-19: "Bots need better obedience
+        // to commands"); "defend" said near him by his group's player is for him.
+        if (_seat.IsTrueForm && GroupRegistry.AreGrouped(me.CharId, heard.SpeakerCharId) && TrueForm.LooksLikeOrder(heard.Text)) {
+            return true;
+        }
+
         var name = me.Wizard?.PlayerNameBehavior?.GetWizardName() ?? UltimusRoster.NAME;
         // True Form's first word is "True": his short names count instead ("True Form", "Kitharas", "Ahziael").
         if (MenuChatBook.Says(heard.Text, UltimusRoster.NAME) || (!_seat.IsTrueForm && MenuChatBook.Says(heard.Text, name.Split(' ')[0]))

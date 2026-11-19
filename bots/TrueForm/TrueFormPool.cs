@@ -131,8 +131,12 @@ internal static class TrueFormPool {
         var all = At(level, dev);
         return all.FirstOrDefault(e => string.Equals(e.Shown, words, StringComparison.OrdinalIgnoreCase))
                ?? all.Where(e => e.Shown.StartsWith(words, StringComparison.OrdinalIgnoreCase)).OrderBy(e => e.Dev).ThenBy(e => e.Shown.Length).FirstOrDefault()
-               ?? all.Where(e => e.Shown.Contains(words, StringComparison.OrdinalIgnoreCase)).OrderBy(e => e.Dev).ThenBy(e => e.Shown.Length).FirstOrDefault();
+               ?? all.Where(e => e.Shown.Contains(words, StringComparison.OrdinalIgnoreCase)).OrderBy(e => e.Dev).ThenBy(e => e.Shown.Length).FirstOrDefault()
+               // Spaces, dashes and apostrophes left out ("dragon blade", "sun serpent" for Sun-Serpent).
+               ?? all.Where(e => Squash(e.Shown).StartsWith(Squash(words), StringComparison.Ordinal)).OrderBy(e => e.Dev).ThenBy(e => e.Shown.Length).FirstOrDefault();
     }
+
+    private static string Squash(string text) => new((text ?? "").ToLowerInvariant().Where(char.IsLetterOrDigit).ToArray());
 
     /// <summary>
     /// Every version of every spell he may have at this level (not only each family's head), with the dev spells when

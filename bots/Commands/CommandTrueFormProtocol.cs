@@ -127,6 +127,8 @@ internal class CommandTrueForm : CommandProtocol {
     }
 
     private void Use(string spell) {
+        // "please", "for me", "in your hand" are not part of a spell's name.
+        spell = System.Text.RegularExpressions.Regex.Replace(TrueForm.Order(spell), @"\b(in (your|ur) hand|in hand|the spell|spell|card)\b", " ").Trim();
         if (!WithHim(out _)) {
             InformSenderClient("True Form takes spell asks from his group. Call him first with .trueform");
             return;

@@ -56,7 +56,32 @@ internal static class TrueForm {
     internal const string TITLE_NAME = "True Form";
 
     /// <summary>The names players call him by in chat.</summary>
-    internal static readonly string[] CalledBy = [TITLE_NAME, "Kitharas", "Ahziael"];
+    internal static readonly string[] CalledBy = [TITLE_NAME, "Kitharas", "Ahziael", "TF", "Truform", "Trueform"];
+
+    /// <summary>Whether a line from his group reads as an order for him: a mode, a spell to use, leave, or what he plays.</summary>
+    internal static bool LooksLikeOrder(string text) {
+        var order = Order(text);
+        return order.Length > 0 && (ModeFrom(order) is not null && order.Split(' ').Length <= 6
+                                    || System.Text.RegularExpressions.Regex.IsMatch(order,
+                                        @"^(use|cast|keep|bring|hold|save|leave|go home|go back|bye|goodbye|dismissed|you can go|you can leave|go away|stop using|clear spells|pick your own|what mode|which mode|what are you playing|how are you playing)\b")
+                                    || System.Text.RegularExpressions.Regex.IsMatch(order, @"\b(what mode|which mode|your mode|your role)\b"));
+    }
+
+    /// <summary>
+    /// What is left of a player's line once his name, greetings and politeness are taken off ("True Form, can you please
+    /// heal us?" is "heal us"), lower case, so an order reads the same however it is said (Niduus, 2026-11-19: "Bots need
+    /// better obedience to commands and to better identify them and their meaning").
+    /// </summary>
+    internal static string Order(string text) {
+        var t = " " + System.Text.RegularExpressions.Regex.Replace((text ?? "").ToLowerInvariant(), @"[^a-z0-9' ]+", " ") + " ";
+        foreach (var name in CalledBy.Select(n => n.ToLowerInvariant()).OrderByDescending(n => n.Length)) {
+            t = t.Replace(" " + name + " ", " ");
+        }
+
+        t = System.Text.RegularExpressions.Regex.Replace(t,
+            @"\b(hey|hi|yo|ok|okay|please|pls|plz|now|thanks|thank you|ty|can you|could you|would you|will you|can u|could u|i want you to|i need you to|i'd like you to|go ahead and|just|kindly|for me|for us|bud|buddy|man|bro|dude)\b", " ");
+        return System.Text.RegularExpressions.Regex.Replace(t, @"\s+", " ").Trim();
+    }
 
     /// <summary>The seat he plays in (Ultimus's brain).</summary>
     internal static UltimusSeat Seat => UltimusSeat.TrueForm;
@@ -89,19 +114,57 @@ internal static class TrueForm {
     internal static Mode? ModeFrom(string words) {
         var w = (words ?? "").Trim().ToLowerInvariant();
         foreach (var (mode, names) in s_modeWords) {
-            if (names.Any(n => w == n || w.Contains(" " + n) || w.StartsWith(n + " ", StringComparison.Ordinal) || w.EndsWith(" " + n, StringComparison.Ordinal))) {
+            // Whole words only: "that boss hits hard" is no order to attack.
+            if (names.Any(n => System.Text.RegularExpressions.Regex.IsMatch(w, $@"(^|[^a-z]){System.Text.RegularExpressions.Regex.Escape(n)}($|[^a-z])"))) {
                 return mode;
+            }
+        }
+
+        // A typo in a mode word ("atack", "defned", "suport", "healler"): one letter off, for words of five letters or more.
+        foreach (var token in w.Split(' ', StringSplitOptions.RemoveEmptyEntries).Where(t => t.Length >= 5)) {
+            foreach (var (mode, names) in s_modeWords) {
+                if (names.Any(n => n.Length >= 5 && !n.Contains(' ') && OneOff(token, n))) {
+                    return mode;
+                }
             }
         }
 
         return null;
     }
 
+    // Whether two words differ by one letter: one changed, added, left out or two swapped.
+    private static bool OneOff(string a, string b) {
+        if (a == b || Math.Abs(a.Length - b.Length) > 1) {
+            return a == b;
+        }
+
+        var d = new int[a.Length + 1, b.Length + 1];
+        for (var i = 0; i <= a.Length; i++) {
+            d[i, 0] = i;
+        }
+
+        for (var j = 0; j <= b.Length; j++) {
+            d[0, j] = j;
+        }
+
+        for (var i = 1; i <= a.Length; i++) {
+            for (var j = 1; j <= b.Length; j++) {
+                var cost = a[i - 1] == b[j - 1] ? 0 : 1;
+                d[i, j] = Math.Min(Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1), d[i - 1, j - 1] + cost);
+                if (i > 1 && j > 1 && a[i - 1] == b[j - 2] && a[i - 2] == b[j - 1]) {
+                    d[i, j] = Math.Min(d[i, j], d[i - 2, j - 2] + 1);
+                }
+            }
+        }
+
+        return d[a.Length, b.Length] <= 1;
+    }
+
     private static readonly (Mode Mode, string[] Names)[] s_modeWords = [
         (Mode.Auto, ["auto", "normal", "smart", "your call", "whatever"]),
-        (Mode.Attack, ["attack", "attacker", "hit", "hitter", "dps", "damage", "offense"]),
-        (Mode.Defend, ["defend", "defense", "defence", "tank", "protect", "shield"]),
-        (Mode.Support, ["support", "heal", "healer", "heals", "buff", "buffer"]),
+        (Mode.Attack, ["attack", "attacker", "attacking", "hit", "hitter", "dps", "damage", "offense", "offence", "aggressive"]),
+        (Mode.Defend, ["defend", "defense", "defence", "defender", "defending", "tank", "protect", "shield", "shields", "guard"]),
+        (Mode.Support, ["support", "supporter", "supporting", "heal", "healer", "healing", "heals", "buff", "buffer", "medic"]),
         (Mode.Evil, ["evil", "troll", "chaos", "prank"]),
     ];
 
