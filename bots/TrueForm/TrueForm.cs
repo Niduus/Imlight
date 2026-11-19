@@ -173,32 +173,82 @@ internal static class TrueForm {
     internal static Mode? Role => s_role is { } asked && Enum.TryParse<Mode>(asked, true, out var mode) ? mode : null;
 
     /// <summary>A school switch asked for, waiting to be done: he logs out, changes, and logs back in to the group.</summary>
-    internal sealed record SwapAsk(MagicSchool School, Mode? Role, ulong HeadId, string HeadName, bool Universal = false);
+    internal sealed record SwapAsk(MagicSchool School, Mode? Role, ulong HeadId, string HeadName, Setup Kind = Setup.Own) {
+        internal bool Universal => Kind == Setup.Universal;
+    }
+
+    /// <summary>
+    /// His setups beside his school's own: universal damage, full outgoing healing, full resist (Niduus, 2026-11-19: "make a
+    /// full healing set where it's all outgoing and full tank set where it's full resist").
+    /// </summary>
+    internal enum Setup { Own, Universal, FullHeal, FullTank }
 
     private static volatile SwapAsk s_swap;
 
     /// <summary>Asks for a switch (Myth with no head: back home after the group).</summary>
-    internal static void AskSwap(MagicSchool school, Mode? role, ulong headId, string headName, bool universal = false)
-        => s_swap = new SwapAsk(school, role, headId, headName ?? "", universal);
+    internal static void AskSwap(MagicSchool school, Mode? role, ulong headId, string headName, Setup kind = Setup.Own)
+        => s_swap = new SwapAsk(school, role, headId, headName ?? "", kind);
 
     internal static SwapAsk TakeSwap() => System.Threading.Interlocked.Exchange(ref s_swap, null);
 
     /// <summary>Puts the asked school and role in place, for the next time he is made ready.</summary>
-    internal static void Become(MagicSchool school, Mode? role, ulong headId = 0, string headName = "", bool universal = false) {
+    internal static void Become(MagicSchool school, Mode? role, ulong headId = 0, string headName = "", Setup kind = Setup.Own) {
         s_school = school == MagicSchool.Myth ? null : school.ToString();
         s_role = role?.ToString();
-        s_universal = universal;
-        Keep(school, role, headId, headName, universal);
+        s_setup = kind;
+        Keep(school, role, headId, headName, kind);
     }
 
-    private static volatile bool s_universal = Kept()?.Universal == true;
+    private static Setup s_setup = Kept()?.Kind ?? Setup.Own;
+
+    /// <summary>The setup he wears now.</summary>
+    internal static Setup Kind => s_setup;
+
+    /// <summary>A setup other than his school's own (universal, full heal, full tank).</summary>
+    internal static bool Special => s_setup != Setup.Own;
+
+    /// <summary>A setup in words.</summary>
+    internal static string SetupWords(Setup kind) => kind switch {
+        Setup.Universal => "my universal damage setup",
+        Setup.FullHeal => "my full healing setup",
+        Setup.FullTank => "my full tank setup",
+        _ => "my own setup",
+    };
+
+    /// <summary>The gear style for his setup now (full heal and full tank put everything on healing or resist).</summary>
+    internal static BotShared.BotStyle StyleNow(MagicSchool school) => s_setup switch {
+        Setup.Universal => BotShared.BotStyle.Hitter,
+        Setup.FullHeal => BotShared.BotStyle.FullHealer,
+        Setup.FullTank => BotShared.BotStyle.FullTank,
+        _ => StyleFor(school, Role),
+    };
+
+    /// <summary>"Full heal(ing/er) set(up)", "go full healer": the full healing setup asked for.</summary>
+    internal static bool FullHealFrom(string words) => System.Text.RegularExpressions.Regex.IsMatch((words ?? "").ToLowerInvariant(),
+        @"\b(full|max(ed)?|all)\s+(out(going)?\s+)?(heal|heals|healing|healer)\b|\b(heal(ing|er)?)\s+(set|setup|set up|build|loadout|gear)\b");
+
+    /// <summary>"Full tank set(up)", "go full tank", "full resist": the full tank setup asked for.</summary>
+    internal static bool FullTankFrom(string words) => System.Text.RegularExpressions.Regex.IsMatch((words ?? "").ToLowerInvariant(),
+        @"\b(full|max(ed)?|all)\s+(tank|tanky|resist|resistance)\b|\b(tank|resist)\s+(set|setup|set up|build|loadout|gear)\b");
+
+    /// <summary>The schools for a setup, best first (healing: Life, Death...; tank: Ice, Balance...).</summary>
+    internal static MagicSchool[] BestSchoolsFor(Setup kind) => kind switch {
+        Setup.FullHeal => [MagicSchool.Life, MagicSchool.Death, MagicSchool.Balance, MagicSchool.Ice, MagicSchool.Myth, MagicSchool.Storm, MagicSchool.Fire],
+        Setup.FullTank => [MagicSchool.Ice, MagicSchool.Balance, MagicSchool.Death, MagicSchool.Life, MagicSchool.Myth, MagicSchool.Fire, MagicSchool.Storm],
+        _ => Schools,
+    };
+
+    /// <summary>A full setup asked for without a school: waiting for the asker to pick one (3 minutes).</summary>
+    internal static volatile SwapAsk PendingPick;
+
+    internal static DateTime PendingPickAt;
 
     /// <summary>
     /// His universal setup: gear, jewels, pet and set bonuses min-maxed on damage (and pierce) to every school, so he hits
     /// hard with any school's spell (Niduus, 2026-11-19: "a universal setup where he's min-maxed to the brim on Universal
     /// damage"). "Go universal for me"; back to his own setup after the group.
     /// </summary>
-    internal static bool Universal => s_universal;
+    internal static bool Universal => s_setup == Setup.Universal;
 
     /// <summary>"Go universal", "switch to universal", "universal damage setup": the universal setup asked for.</summary>
     internal static bool UniversalFrom(string words) {
@@ -231,9 +281,9 @@ internal static class TrueForm {
                 if (parts.Length >= 4 && Enum.TryParse<MagicSchool>(parts[0], true, out var school)
                     && ulong.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out var head)) {
                     Mode? role = Enum.TryParse<Mode>(parts[1], true, out var m) ? m : null;
-                    var universal = parts.Length >= 5 && parts[4] == "universal";
-                    s_kept = new SwapAsk(school, role, head, parts[3], universal);
-                    if ((school != MagicSchool.Myth || universal) && head != 0) {
+                    var kind = parts.Length >= 5 && Enum.TryParse<Setup>(parts[4], true, out var k) ? k : Setup.Own;
+                    s_kept = new SwapAsk(school, role, head, parts[3], kind);
+                    if ((school != MagicSchool.Myth || kind != Setup.Own) && head != 0) {
                         // Back after an update or restart: go back to the group's head (TrueFormSwitch re-calls them).
                         Rejoining = s_kept;
                         // Three more minutes, for his log in and getting ready.
@@ -249,13 +299,13 @@ internal static class TrueForm {
         return s_kept;
     }
 
-    private static void Keep(MagicSchool school, Mode? role, ulong headId, string headName, bool universal = false) {
-        s_kept = new SwapAsk(school, role, headId, headName ?? "", universal);
+    private static void Keep(MagicSchool school, Mode? role, ulong headId, string headName, Setup kind = Setup.Own) {
+        s_kept = new SwapAsk(school, role, headId, headName ?? "", kind);
         s_keptRead = true;
         try {
             Directory.CreateDirectory(Seat.Folder);
             File.WriteAllText(SchoolPath, string.Create(CultureInfo.InvariantCulture,
-                $"{school}|{role?.ToString() ?? ""}|{(school == MagicSchool.Myth && !universal ? 0 : headId)}|{(headName ?? "").Replace('|', ' ')}|{(universal ? "universal" : "")}"));
+                $"{school}|{role?.ToString() ?? ""}|{(school == MagicSchool.Myth && kind == Setup.Own ? 0 : headId)}|{(headName ?? "").Replace('|', ' ')}|{kind}"));
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
             Logger.Warning("True Form: could not keep his school: {0}", Logger.Args(e.Message));

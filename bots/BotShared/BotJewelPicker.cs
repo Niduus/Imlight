@@ -103,6 +103,11 @@ internal sealed class BotJewelPicker {
         }
 
         var stats = Wanted(jewel.Stats).ToList();
+        // A full healing or full tank setup puts every socket on its one stat (outgoing healing, resist).
+        if (_style is BotStyle.FullHealer or BotStyle.FullTank) {
+            return BotGear.ScoreStats(stats, _school, _style);
+        }
+
         switch (shape) {
             case JewelSocketType.SOCKETTYPE_CIRCLE: {
                 // How much more its hits do, in hundredths of a percent: a damage point adds to all its damage

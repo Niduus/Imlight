@@ -70,6 +70,10 @@ internal static class BotPetTalents {
     }
 
     private static string[] Base(string school, BotStyle style) => style switch {
+        // Full healing: outgoing healing first, then the healing may-casts, then resist (names the game lacks are skipped).
+        BotStyle.FullHealer => ["Healtastic", "Healer", "Healing Current", "Unicorn", "Fairy", "Sprite Swarm", "Spritely", "Spell-Proof", "Spell-Defying"],
+        // Full tank: resist first, then health, healing taken and the may-casts that keep him up.
+        BotStyle.FullTank => ["Spell-Proof", "Spell-Defying", $"{school}-Proof", "Health Boost", "Add Health", "Healthy", "Stun Block", "Fairy", "Unicorn"],
         // A tank: resist first, then the hits ("Spell-Proof", "Spell-Defying").
         BotStyle.Tank => ["Spell-Proof", "Spell-Defying", "Pain-Giver", $"{school}-Dealer", $"{school}-Giver", "Armor Breaker", "Unicorn", "Fairy"],
         // A healer: the healing may-casts, then resist and damage.

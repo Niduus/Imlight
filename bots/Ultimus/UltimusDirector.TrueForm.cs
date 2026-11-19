@@ -220,7 +220,7 @@ internal sealed partial class UltimusDirectorActor {
                 // Never let back in: the group is over, so back to Myth.
                 TrueForm.Rejoining = null;
                 Note("Ultimus", $"True Form: {back.HeadName} did not take him back after his switch to {back.School}; back to Myth.");
-                if (TrueForm.School != Shared.Behaviors.MagicSchool.Myth || TrueForm.Universal) {
+                if (TrueForm.School != Shared.Behaviors.MagicSchool.Myth || TrueForm.Special) {
                     TrueForm.ResetMode();
                     TrueForm.ClearRequested();
                     TrueForm.AskSwap(Shared.Behaviors.MagicSchool.Myth, null, 0, "");
@@ -237,7 +237,7 @@ internal sealed partial class UltimusDirectorActor {
             return false;
         }
 
-        TrueForm.Become(swap.School, swap.Role, swap.HeadId, swap.HeadName, swap.Universal);
+        TrueForm.Become(swap.School, swap.Role, swap.HeadId, swap.HeadName, swap.Kind);
         if (swap.HeadId != 0) {
             TrueForm.Rejoining = swap;
             TrueForm.RejoiningSince = DateTime.UtcNow;
@@ -337,12 +337,12 @@ internal sealed partial class UltimusDirectorActor {
         if (TrueForm.SwapAfterJoin is { } later) {
             if (group is not null && group.Members.Any(m => m.CharId == later.HeadId)) {
                 TrueForm.SwapAfterJoin = null;
-                TrueForm.AskSwap(later.School, later.Role, later.HeadId, later.HeadName, later.Universal);
+                TrueForm.AskSwap(later.School, later.Role, later.HeadId, later.HeadName, later.Kind);
                 if (later.Role is { } role) {
                     TrueForm.SetMode(role);
                 }
 
-                SayLater(later.HeadId, true, $"Switching to {(later.Universal ? "my universal damage setup" : later.School.ToString())} now. I'll pop out for a moment to change and be right back.", 0.5);
+                SayLater(later.HeadId, true, $"Switching to {(later.Kind != TrueForm.Setup.Own ? TrueForm.SetupWords(later.Kind) : later.School.ToString())} now. I'll pop out for a moment to change and be right back.", 0.5);
             }
             else if (DateTime.UtcNow - TrueForm.SwapAfterJoinAt > TimeSpan.FromMinutes(3)) {
                 TrueForm.SwapAfterJoin = null;
@@ -422,31 +422,38 @@ internal sealed partial class UltimusDirectorActor {
             return true;
         }
 
-        // His universal damage setup ("go universal for me"; Niduus, 2026-11-19): gear, jewels, pet and set bonuses on damage
-        // to every school, playing attack. His school stays.
-        if (TrueForm.UniversalFrom(order)) {
-            if (!grouped) {
-                TrueForm.SwapAfterJoin = new TrueForm.SwapAsk(TrueForm.School, TrueForm.Mode.Attack, heard.SpeakerCharId, heard.SpeakerName, true);
-                TrueForm.SwapAfterJoinAt = DateTime.UtcNow;
-                TrueForm.Call(heard.SpeakerCharId, heard.SpeakerName);
-                SendReply(heard, "Sure! Let's group first, then I'll switch to my universal damage setup.", "true form");
-                return true;
+        // His setups beside his school's own (Niduus, 2026-11-19): universal damage ("go universal for me"), full outgoing
+        // healing and full resist ("make a full healing set ... and full tank set ... giving the commander options of class to
+        // pick from, citing the more optimal of their desires first"). A full setup with no school named gets the schools
+        // offered, best first; the asker's pick ("life") then switches him.
+        var setup = TrueForm.UniversalFrom(order) ? TrueForm.Setup.Universal
+            : TrueForm.FullHealFrom(order) ? TrueForm.Setup.FullHeal
+            : TrueForm.FullTankFrom(order) ? TrueForm.Setup.FullTank
+            : (TrueForm.Setup?) null;
+        var pending = TrueForm.PendingPick is { } waiting && waiting.HeadId == heard.SpeakerCharId
+                      && DateTime.UtcNow - TrueForm.PendingPickAt < TimeSpan.FromMinutes(3) ? waiting : null;
+        var named = SchoolNamed(order);
+        if (setup is null && pending is not null && named is { } picked) {
+            setup = pending.Kind;
+            TrueForm.PendingPick = null;
+            return TrueFormSetup(heard, me, grouped, setup.Value, picked);
+        }
+
+        if (setup is { } kind) {
+            if (kind == TrueForm.Setup.Universal) {
+                return TrueFormSetup(heard, me, grouped, kind, named ?? TrueForm.School);
             }
 
-            if (TrueForm.Universal) {
-                SendReply(heard, "I'm already in my universal damage setup!", "true form");
-                return true;
+            if (named is { } namedSchool) {
+                return TrueFormSetup(heard, me, grouped, kind, namedSchool);
             }
 
-            if (me.Wizard?.IsInDuel == true) {
-                SendReply(heard, "I'll switch to my universal damage setup right after this battle.", "true form");
-            }
-
-            TrueForm.AskSwap(TrueForm.School, TrueForm.Mode.Attack, heard.SpeakerCharId, heard.SpeakerName, true);
-            TrueForm.SetMode(TrueForm.Mode.Attack);
-            Note("Ultimus", $"True Form: {heard.SpeakerName} asks for his universal damage setup (\"{UltimusText.Short(heard.Text, 60)}\").");
-            SendReply(heard, "Switching to my universal damage setup: every piece, jewel and pet talent on damage to all schools, and I'll play attack. " +
-                             "I'll pop out for a moment to change and be right back. If I'm not back in the group in a minute, send me an invite.", "true form");
+            var best = TrueForm.BestSchoolsFor(kind);
+            TrueForm.PendingPick = new TrueForm.SwapAsk(best[0], null, heard.SpeakerCharId, heard.SpeakerName, kind);
+            TrueForm.PendingPickAt = DateTime.UtcNow;
+            var what = kind == TrueForm.Setup.FullHeal ? "full healing" : "full tank";
+            SendReply(heard, $"Which school for my {what} setup? Best first: {string.Join(", ", best)}. " +
+                             $"Just say the school, like \"{best[0].ToString().ToLowerInvariant()}\".", "true form");
             return true;
         }
 
@@ -529,7 +536,7 @@ internal sealed partial class UltimusDirectorActor {
         if (TrueForm.SchoolFrom(order) is { } school) {
             var rest = System.Text.RegularExpressions.Regex.Replace(order, @"\b(fire|ice|storm|myth|life|death|balance)\b", " ");
             var role = TrueForm.ModeFrom(rest) is { } r && r is not (TrueForm.Mode.Auto or TrueForm.Mode.Evil) ? r : (TrueForm.Mode?) null;
-            if (school == TrueForm.School && role == TrueForm.Role && !TrueForm.Universal) {
+            if (school == TrueForm.School && role == TrueForm.Role && !TrueForm.Special) {
                 SendReply(heard, $"I'm already {school}{(role is { } same ? $", playing {TrueForm.Words(same).Split(':')[0]}" : "")}!", "true form");
                 return true;
             }
@@ -577,6 +584,57 @@ internal sealed partial class UltimusDirectorActor {
                                || (o.Kind is UltimusOrders.Kind.Heal or UltimusOrders.Kind.Shield or UltimusOrders.Kind.Blade or UltimusOrders.Kind.Trap
                                    or UltimusOrders.Kind.Attack && o.Target.Length > 0
                                    && o.Target is not ("us" or "team" or "the team" or "everyone" or "all of us" or "everybody")));
+    }
+
+    // A school named in an order ("life", "go death", "be an ice wizard"), or null.
+    private static Shared.Behaviors.MagicSchool? SchoolNamed(string order) {
+        if (TrueForm.SchoolFrom(order) is { } said) {
+            return said;
+        }
+
+        var m = System.Text.RegularExpressions.Regex.Match(order ?? "", @"\b(fire|ice|storm|myth|life|death|balance)\b");
+        return m.Success && Enum.TryParse<Shared.Behaviors.MagicSchool>(m.Value, true, out var school) ? school : null;
+    }
+
+    // Switches him to a setup (with the school for it), now or once grouped.
+    private bool TrueFormSetup(UltimusVoice.Heard heard, UltimusMember.Status me, bool grouped, TrueForm.Setup kind, Shared.Behaviors.MagicSchool school) {
+        var role = kind switch {
+            TrueForm.Setup.FullHeal => TrueForm.Mode.Support,
+            TrueForm.Setup.FullTank => TrueForm.Mode.Defend,
+            _ => TrueForm.Mode.Attack,
+        };
+        var words = TrueForm.SetupWords(kind) + (kind == TrueForm.Setup.Universal ? "" : $" as {school}");
+        if (!grouped) {
+            TrueForm.SwapAfterJoin = new TrueForm.SwapAsk(school, role, heard.SpeakerCharId, heard.SpeakerName, kind);
+            TrueForm.SwapAfterJoinAt = DateTime.UtcNow;
+            TrueForm.Call(heard.SpeakerCharId, heard.SpeakerName);
+            SendReply(heard, $"Sure! Let's group first, then I'll switch to {words}.", "true form");
+            return true;
+        }
+
+        if (TrueForm.Kind == kind && TrueForm.School == school) {
+            SendReply(heard, $"I'm already in {words}!", "true form");
+            return true;
+        }
+
+        if (me.Wizard?.IsInDuel == true) {
+            SendReply(heard, $"I'll switch to {words} right after this battle.", "true form");
+        }
+
+        TrueForm.AskSwap(school, role, heard.SpeakerCharId, heard.SpeakerName, kind);
+        TrueForm.SetMode(role);
+        Note("Ultimus", $"True Form: {heard.SpeakerName} asks for {words} (\"{UltimusText.Short(heard.Text, 60)}\").");
+        var what = kind switch {
+            TrueForm.Setup.FullHeal => "every piece, jewel and pet talent on outgoing healing, and I'll play support",
+            TrueForm.Setup.FullTank => "every piece, jewel and pet talent on resist, and I'll play defend",
+            _ => "every piece, jewel and pet talent on damage to all schools, and I'll play attack",
+        };
+        var warn = kind != TrueForm.Setup.Universal && TrueForm.BestSchoolsFor(kind).Take(2).All(b => b != school)
+            ? $" Heads up: {school} is not the best school for this; {string.Join(" or ", TrueForm.BestSchoolsFor(kind).Take(2))} would do it better."
+            : "";
+        SendReply(heard, $"Switching to {words}: {what}. I'll pop out for a moment to change and be right back. " +
+                         "If I'm not back in the group in a minute, send me an invite." + warn, "true form");
+        return true;
     }
 
 }

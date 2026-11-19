@@ -46,6 +46,10 @@ internal enum BotStyle {
     // Ultimus alone: hits, keeps itself alive, and its hits land as other schools' damage (Balance's Hydra, Spectral
     // Blast, Nested Fury as Fire, Ice or Storm; Chimera as Life, Death or Myth), so gear for those counts too.
     Solo,
+    // True Form's full healing setup: everything on outgoing healing.
+    FullHealer,
+    // True Form's full tank setup: everything on resist.
+    FullTank,
 }
 
 /// <summary>
@@ -482,7 +486,21 @@ internal static class BotGear {
         return share;
     }
 
-    private static double Weight(string kind, BotStyle style) => kind switch {
+    private static double Weight(string kind, BotStyle style) => style switch {
+        // Everything on outgoing healing (then power pips, resist and health to stay up).
+        BotStyle.FullHealer => kind switch {
+            "Healing" => 8, "PowerPips" => 2.5, "StartingPips" => 15, "ReduceDamage" => 1, "IncHealing" => 0.5,
+            "MaxHealth" => 0.04, "Accuracy" => 0.3, "Damage" => 0.2, "MaxMana" => 0.02, _ => 0,
+        },
+        // Everything on resist (then health, block and healing taken).
+        BotStyle.FullTank => kind switch {
+            "ReduceDamage" => 8, "FlatReduceDamage" => 3, "MaxHealth" => 0.12, "Block" => 0.4, "IncHealing" => 1.5,
+            "PowerPips" => 1.5, "StartingPips" => 10, "Damage" => 0.2, "Healing" => 0.2, "MaxMana" => 0.02, _ => 0,
+        },
+        _ => BaseWeight(kind, style),
+    };
+
+    private static double BaseWeight(string kind, BotStyle style) => kind switch {
         // Solo: as much hit as a backup hitter, and more health, resist, block and healing taken, as nobody else heals it.
         "Damage" => style switch { BotStyle.Hitter => 4, BotStyle.Backup or BotStyle.Solo => 3.5, BotStyle.Tank => 1.5, _ => 1 },
         "FlatDamage" => style is BotStyle.Hitter or BotStyle.Backup or BotStyle.Solo ? 1.2 : 0.4,

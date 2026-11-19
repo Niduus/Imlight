@@ -61,7 +61,7 @@ internal static class TrueFormMaker {
         try {
             // Myth, or the school his group asked for (TrueForm.School; back to Myth when the group ends).
             var school = TrueForm.School;
-            var style = TrueForm.StyleFor(school, TrueForm.Role);
+            var style = TrueForm.StyleNow(school);
             if (wizard.MagicSchoolBehavior.MagicSchool != school) {
                 wizard.SetSchool(school);
                 Logger.Information("True Form: now a {0} wizard ({1}).", Logger.Args(school, style));
