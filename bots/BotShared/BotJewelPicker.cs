@@ -48,6 +48,8 @@ internal sealed class BotJewelPicker {
 
     private readonly string _school;
     private readonly BotStyle _style;
+    // The wizard's own school, for the universal setup (which scores with no school).
+    private string _ownSchool = "";
     private double _damage;
     private double _pierce;
     private double _accuracy;
@@ -60,7 +62,7 @@ internal sealed class BotJewelPicker {
 
     /// <summary>A picker for a wizard, counting the stats of the gear it wears (not its jewels: add them as they go in).</summary>
     internal static BotJewelPicker For(Wizard wizard, string school, BotStyle style) {
-        var picker = new BotJewelPicker(school, style);
+        var picker = new BotJewelPicker(school, style) { _ownSchool = wizard?.MagicSchoolBehavior?.MagicSchool.ToString() ?? "" };
         foreach (var item in wizard?.EquipmentBehavior?.EquippedItems ?? []) {
             picker.Add(BotGear.StatsOf(ItemHelper.GetItemTemplate(item)));
         }
@@ -105,7 +107,17 @@ internal sealed class BotJewelPicker {
         var stats = Wanted(jewel.Stats).ToList();
         // A full healing or full tank setup puts every socket on its one stat (outgoing healing, resist).
         // Full glass and universal damage: every socket on damage, pierce or accuracy, none on resist or health.
-        if (_style is BotStyle.FullHealer or BotStyle.FullTank or BotStyle.GlassCannon or BotStyle.UniversalHitter) {
+        if (_style is BotStyle.UniversalHitter) {
+            // Universal: pierce first (Niduus, 2026-11-19: "jewels for Uni should be Pierce"). Nearly every pierce jewel
+            // is a school's (the one his school can socket); it counts as pierce here, a little under an every-school one.
+            // A school's critical or damage jewel does not count.
+            var uni = stats.Select(s => s.Kind == "ArmorPiercing" && s.School.Equals(_ownSchool, StringComparison.OrdinalIgnoreCase)
+                ? s with { School = "", Value = s.Value * 0.9f } : s).ToList();
+            var score = BotGear.ScoreStats(uni, _school, _style);
+            return shape == JewelSocketType.SOCKETTYPE_CIRCLE ? score + uni.Where(s => s.Kind == "ArmorPiercing" && s.School.Length == 0).Sum(s => s.Value * 10.0) : score;
+        }
+
+        if (_style is BotStyle.FullHealer or BotStyle.FullTank or BotStyle.GlassCannon) {
             return BotGear.ScoreStats(stats, _school, _style);
         }
 

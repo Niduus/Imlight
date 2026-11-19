@@ -322,7 +322,8 @@ internal static class TrueFormMaker {
             var pet = wizard.EquipmentBehavior.GetItemInSlot(EquipmentSlotType.Pet) is { } p ? ItemHelper.GetItemTemplate(p) : null;
             var setMount = template is not null && template.m_itemSetBonusTemplateID != 0;
             var pairs = setMount && pet is not null && pet.m_itemSetBonusTemplateID == template.m_itemSetBonusTemplateID;
-            if (template is not null && (IsRental(template) || (setMount && !pairs))
+            // A set mount with no set to make stays only if its own stats are the best he has (EnsureMount decides).
+            if (template is not null && (IsRental(template) || (setMount && !pairs && MountWorth(template, "", BotStyle.UniversalHitter) <= 0 && BotGear.StatsOf(template).Count == 0))
                 && wizard.EquipmentToInventoryTransfer(worn.m_globalID.Full, out _)) {
                 Logger.Information("True Form: took off the mount {0} (a rental or a set mount with no set to make).",
                     Logger.Args(Locale.GetEnglishName((string) template.m_displayName ?? "")));
@@ -333,9 +334,11 @@ internal static class TrueFormMaker {
         }
     }
 
-    // He always rides a mount (Niduus, 2026-11-19: "Now TF is missing a mount"): his pet's set mount when that set is worth
-    // it (BestPetBody), else the best permanent one for his setup: never a rental, a Book mount, a Crowns-only or retired
-    // one, or a set mount with no set to make. A mount that gives stats he wants comes first; the rest, one players can get.
+    // He always rides a mount that helps his build (Niduus, 2026-11-19: "Now TF is missing a mount", then "I want him
+    // wearing mounts that help his builds, not fashion!"): his pet's set mount when that set is worth it (BestPetBody),
+    // else the permanent mount whose own stats help his setup most. A mount with only speed never counts. Never a rental,
+    // a Book mount, a retired or dev one (Crowns-only mounts may be picked: most mounts with stats are). A worn mount
+    // is only kept when nothing helps more.
     private static void EnsureMount(Wizard wizard, string school, BotStyle style) {
         try {
             var worn = wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Mount);
@@ -343,7 +346,7 @@ internal static class TrueFormMaker {
             var pet = wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Pet) is { } p ? ItemHelper.GetItemTemplate(p) : null;
             if (wornTemplate is not null && wornTemplate.m_itemSetBonusTemplateID != 0 && pet is not null
                 && pet.m_itemSetBonusTemplateID == wornTemplate.m_itemSetBonusTemplateID) {
-                // His pet's set mount: kept.
+                // His pet's set mount: kept (BestPetBody found the set worth it).
                 return;
             }
 
@@ -355,31 +358,51 @@ internal static class TrueFormMaker {
                 return;
             }
 
-            var obtainable = ItemSources.ObtainableIds();
-            double Worth(WizItemTemplate t) => BotGear.ScoreStats(BotGear.StatsOf(t), school, style);
-            var best = ids.Distinct()
-                .Select(id => (Id: id, Item: CoreObjectFactory.GetCoreTemplate(id) as WizItemTemplate))
-                .Where(m => m.Item is not null && m.Item.m_itemSetBonusTemplateID == 0 && Allowed(m.Id, out var name)
-                            && !name.Contains("Book", StringComparison.OrdinalIgnoreCase))
-                .Select(m => (m.Id, m.Item, Worth: Worth(m.Item), Got: obtainable.Contains(m.Id)))
-                .OrderByDescending(m => Math.Round(m.Worth, 1)).ThenByDescending(m => m.Got).ThenBy(m => m.Id)
-                .FirstOrDefault();
-            if (best.Item is null) {
-                Logger.Warning("True Form: no permanent mount was found to give him.");
+            var ranked = RankMounts(ids, school, style);
+            if (ranked.Count == 0) {
+                Logger.Warning("True Form: no mount with stats for his {0} setup was found; he rides none rather than one for looks.", Logger.Args(style));
+                if (worn is not null && wizard.EquipmentToInventoryTransfer(worn.m_globalID.Full, out _)) {
+                    Logger.Information("True Form: took off the mount {0} (no stats for his setup).", Logger.Args(MountName((uint) worn.m_templateID)));
+                }
+
                 return;
             }
 
-            if (wornTemplate is not null && !IsRental(wornTemplate) && wornTemplate.m_itemSetBonusTemplateID == 0
-                && Math.Round(Worth(wornTemplate), 1) >= Math.Round(best.Worth, 1)) {
+            var best = ranked[0];
+            if (wornTemplate is not null && !IsRental(wornTemplate) && Math.Round(MountWorth(wornTemplate, school, style), 1) >= Math.Round(best.Worth, 1)) {
                 return;
             }
 
+            Logger.Information("True Form: best mounts for his {0} setup: {1}.", Logger.Args(style,
+                string.Join("; ", ranked.Take(3).Select(m => $"{MountName(m.Id)} ({MountWords(m.Item)}, worth {m.Worth:0.#})"))));
             GiveMount(wizard, best.Id);
         }
         catch (Exception e) {
             Logger.Warning("True Form: could not give him a mount: {0}", Logger.Args(e.Message));
         }
     }
+
+    private static double MountWorth(WizItemTemplate mount, string school, BotStyle style)
+        => BotGear.ScoreStats(BotGear.StatsOf(mount), school, style);
+
+    // The mounts with stats that help a setup, best first (speed alone is not a stat: it scores 0 and is left out).
+    private static System.Collections.Generic.List<(uint Id, WizItemTemplate Item, double Worth)> RankMounts(
+        System.Collections.Generic.IEnumerable<uint> ids, string school, BotStyle style) {
+        var obtainable = ItemSources.ObtainableIds();
+        return ids.Distinct()
+            .Select(id => (Id: id, Item: CoreObjectFactory.GetCoreTemplate(id) as WizItemTemplate))
+            .Where(m => m.Item is not null && Allowed(m.Id, out var name, crownsOnly: true) && !name.Contains("Book", StringComparison.OrdinalIgnoreCase))
+            .Select(m => (m.Id, m.Item, Worth: MountWorth(m.Item, school, style), Got: obtainable.Contains(m.Id)))
+            .Where(m => m.Worth > 0)
+            .OrderByDescending(m => Math.Round(m.Worth, 1)).ThenByDescending(m => m.Got).ThenBy(m => m.Id)
+            .Select(m => (m.Id, m.Item, m.Worth))
+            .ToList();
+    }
+
+    private static string MountName(uint id) => Locale.GetEnglishName((string) (CoreObjectFactory.GetCoreTemplate(id) as WizItemTemplate)?.m_displayName ?? "") ?? id.ToString();
+
+    private static string MountWords(WizItemTemplate mount)
+        => string.Join(", ", BotGear.StatsOf(mount).Select(st => $"+{st.Value:0.#} {(st.School.Length == 0 ? "all" : st.School)} {st.Kind}"));
 
     internal sealed record PetPick(uint Pet, uint? Mount, double Score, string Why);
 
@@ -448,12 +471,12 @@ internal static class TrueFormMaker {
     }
 
     // A pet or mount he may have: not retired, not a dev item, not Crowns-only, with a shown name.
-    private static bool Allowed(uint id, out string name) {
+    private static bool Allowed(uint id, out string name, bool crownsOnly = false) {
         var item = CoreObjectFactory.GetCoreTemplate(id) as WizItemTemplate;
         name = Locale.GetEnglishName((string) item?.m_displayName ?? "") ?? "";
         // Never a rental (Niduus, 2026-11-19: he rode "Tartarus Ferry (1 Day)" for its +1 damage: "not efficient").
         return item is not null && !string.IsNullOrWhiteSpace(name) && !IsRental(item)
-               && !(item.m_adjectiveList ?? []).Any(a => (string) a is "FLAG_CrownsOnly" or "FLAG_Retired" or "FLAG_DevItem");
+               && !(item.m_adjectiveList ?? []).Any(a => (string) a is "FLAG_Retired" or "FLAG_DevItem" || (!crownsOnly && (string) a == "FLAG_CrownsOnly"));
     }
 
     // The set mount for his pet: worn already, from his backpack, or made.

@@ -208,11 +208,10 @@ internal static class BuddyStatsBuilder {
             return;
         }
 
-        if (request.PetStatBlockCRC != 0 && BuddyStatsCrc.ForPet(source.Pet) == request.PetStatBlockCRC) {
-            reply.PetStatBlockCRC = BlockAttached;
-            return;
-        }
-
+        // The pet is always sent. The client's pet checksum only covers its level and stats (BuddyStatsCrc.ForPet), so a
+        // pet whose talents or kind changed at the same level and stats was left as the client's old copy (Niduus,
+        // 2026-11-19: True Form's Ultra pet at 260 stats kept showing its old talents after they were changed).
+        _ = request;
         if (TrySerializeBlock(source.Pet, TransmitMask, s_petWireHash, out var petBlock)) {
             reply.PetStatBlock = petBlock;
             reply.PetStatBlockCRC = source.PetTemplateId;

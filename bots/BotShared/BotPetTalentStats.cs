@@ -107,7 +107,10 @@ internal static class BotPetTalentStats {
             return 0;
         }
 
-        var stats = talent.Stats.Where(s => !(accuracyFull && s.Kind == "Accuracy" && s.School.Length > 0) && !(pipsFull && s.Kind == "PowerPips"));
+        // A pet's resist to one school only (Myth-Ward, Myth-Proof) is not taken: it only helps against that school's hits,
+        // and players never use their own school's (it chose Myth-Ward over Pain-Giver for a Myth hitter).
+        var stats = talent.Stats.Where(s => !(accuracyFull && s.Kind == "Accuracy" && s.School.Length > 0) && !(pipsFull && s.Kind == "PowerPips")
+                                            && !(s.Kind.Contains("ReduceDamage", StringComparison.Ordinal) && s.School.Length > 0));
         var score = BotGear.ScoreStats(stats, school, style);
         if (talent.MayCast is not null) {
             // Healing may-casts (Unicorn, Fairy...) for a healer; a little for a tank; nothing for damage-only setups.

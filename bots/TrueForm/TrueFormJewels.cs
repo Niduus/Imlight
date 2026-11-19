@@ -101,7 +101,8 @@ internal static class TrueFormJewels {
                                 Logger.Args(best.Jewel.Name, BotJewels.NameOf(template), JewelSockets.ShapeName(shape.Value)));
                         }
                     }
-                    else if (nowId != 0) {
+                    else if (nowId != 0 && nowScore > 0) {
+                        // Kept only while it still helps (a pet jewel that repeats a talent, or one for another setup, comes out).
                         JewelSockets.Socket(item, socket, (uint) nowId);
                     }
 
@@ -147,13 +148,19 @@ internal static class TrueFormJewels {
             return need.Score(jewel, shape);
         }
 
+        // Never a talent his pet has already, by name or by what it gives (Niduus, 2026-11-19: a Pain-Giver jewel on a
+        // pet with Pain-Giver: "2 Pain-Givers don't work like that").
+        var has = (pet?.m_expressedTalents ?? []).Select(id => PetData.GetTalent(id)?.m_talentName).Where(k => k is not null)
+            .Select(k => BotPetTalentStats.Of(k)).Where(i => i is not null).ToList();
         var best = 0.0;
         foreach (var key in jewel.TalentKeys) {
-            if (pet is not null && pet.m_expressedTalents.Contains(PetData.TalentId(key))) {
+            var info = BotPetTalentStats.Of(key);
+            if (info is null || (pet is not null && pet.m_expressedTalents.Contains(PetData.TalentId(key)))
+                || has.Any(h => h.Shown == info.Shown || (h.Stats.Count > 0 && h.Stats.SequenceEqual(info.Stats)))) {
                 continue;
             }
 
-            best = Math.Max(best, BotPetTalentStats.Score(BotPetTalentStats.Of(key), school, style, need.AccuracyFull, need.PipsFull));
+            best = Math.Max(best, BotPetTalentStats.Score(info, school, style, need.AccuracyFull, need.PipsFull));
         }
 
         return best;
