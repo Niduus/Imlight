@@ -60,23 +60,41 @@ internal class CommandPunishmentProtocol : CommandProtocol {
 
     [Command("unmute")]
     [AuthRequired(AuthLevel.HallMonitor)]
-    public void UnmuteCommand() {
-        if (Context.SelectedAccount is null) {
-            InformSenderClient("You must select a user to use this command.", true);
+    public void UnmuteCommand([Remainder] string who = "") {
+        // `.unmute me` (or your own wizard or account name) always lifts your own mute. A plain `.unmute` lifts your
+        // own mute when you are muted yourself, and otherwise the selected player's, as before (Niduus, 2026-11-19).
+        // Only staff allowed to use .unmute can do this: a muted player without that level still cannot chat it away.
+        var self = Context.Account;
+        var named = who?.Trim() ?? "";
+        var ownWizard = Context.Character?.PlayerNameBehavior?.GetWizardName() ?? "";
+        var meant = named.Length == 0
+            ? (self.InfractionHistory.IsCurrentlyMuted || Context.SelectedAccount is null ? self : Context.SelectedAccount)
+            : IsSelf(named, ownWizard, self.Username) ? self : null;
+
+        if (meant is null) {
+            InformSenderClient("Type .unmute me to lift your own mute, or select a player and type .unmute.", true);
 
             return;
         }
-        if (!Context.SelectedAccount.InfractionHistory.IsCurrentlyMuted) {
-            InformSenderClient("This account is not muted.", true);
+        if (!meant.InfractionHistory.IsCurrentlyMuted) {
+            InformSenderClient(ReferenceEquals(meant, self) ? "You are not muted." : "This account is not muted.", true);
 
             return;
         }
 
-        var sourceName = Context.Account.Username;
-        Context.SelectedAccount.WaiveCurrentMute(sourceName);
+        // Lift every mute still running, so a second one placed earlier does not keep the account quiet.
+        var sourceName = self.Username;
+        while (meant.InfractionHistory.IsCurrentlyMuted && meant.WaiveCurrentMute(sourceName)) {
+        }
 
-        InformSenderClient($"Unmuted {Context.SelectedAccount.Username}.", true);
+        InformSenderClient(ReferenceEquals(meant, self) ? "You are no longer muted." : $"Unmuted {meant.Username}.", true);
     }
+
+    private static bool IsSelf(string named, string ownWizard, string ownAccount)
+        => named.Equals("me", StringComparison.OrdinalIgnoreCase)
+           || named.Equals("myself", StringComparison.OrdinalIgnoreCase)
+           || named.Equals(ownWizard, StringComparison.OrdinalIgnoreCase)
+           || named.Equals(ownAccount, StringComparison.OrdinalIgnoreCase);
 
     [Command("kick")]
     [AuthRequired(AuthLevel.HallMonitor)]

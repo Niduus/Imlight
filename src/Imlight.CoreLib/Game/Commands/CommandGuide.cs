@@ -344,7 +344,8 @@ internal static class CommandGuide {
         ]),
         .. In("Moderation", [
             Imlight("Mute player", ".mute <time> <reason>", HM, "Stops the selected player from chatting." + TIME + SELECTED),
-            Imlight("Unmute player", ".unmute", HM, "Lets the selected player chat again." + SELECTED),
+            Imlight("Unmute player", ".unmute   or   .unmute me", HM, "Lets the selected player chat again." + SELECTED
+                + " .unmute me (or your own name) lifts your own mute, and works even while you are muted. A plain .unmute does the same when you are the one muted."),
             Imlight("Kick player", ".kick <reason>", HM, "Disconnects the selected player." + SELECTED),
             Imlight("Warn player", ".warn <reason>", HM, "Adds a warning to the selected player's account." + SELECTED),
             Imlight("Player info", ".info", HM, "Shows the selected player's account details." + SELECTED),

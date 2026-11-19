@@ -86,7 +86,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
             return;
         }
 
-        if (account.InfractionHistory.IsCurrentlyMuted) {
+        if (account.InfractionHistory.IsCurrentlyMuted && !IsOwnUnmute(CleanMessageTrash(message.Message), account)) {
             InformGameClient("You are currently muted.");
 
             return;
@@ -278,13 +278,12 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_REQUESTRADIALFRIENDCHAT))]
     private void ReceiveFriendChat(GAME_5_PROTOCOL.MSG_REQUESTRADIALFRIENDCHAT message) {
-        if (IsMutedAndTold()) {
-            return;
-        }
-
         var charObj = GetActiveGameObject();
         var wizard = GetActiveWizard();
         var cleanedMessage = CleanMessageTrash(message.Message);
+        if (!IsOwnUnmute(cleanedMessage, GetActiveAccount()) && IsMutedAndTold()) {
+            return;
+        }
 
         if (IsChatCommand(cleanedMessage, GetActiveAccount())) {
             SendChatCommand(cleanedMessage, charObj, wizard);
@@ -670,6 +669,20 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
     // A dot command, never shown to anyone else. Every player may use them (Niduus, 2026-10-28: players' own cheats by
     // "phantom commands"); a player's line must have a letter after the dot, so "..." or ". lol" still is chat.
+    /// <summary>
+    /// A muted staff member typing <c>.unmute</c> gets through the mute so they can lift their own (Niduus,
+    /// 2026-11-19). Players below the level that may use .unmute stay muted.
+    /// </summary>
+    private static bool IsOwnUnmute(string text, Account account) {
+        if (account is null || account.AuthLevel < AuthLevel.HallMonitor || !text.StartsWith(CommandPrefix)) {
+            return false;
+        }
+
+        var word = text[CommandPrefix.Length..].TrimStart().Split(' ', 2)[0];
+
+        return word.Equals("unmute", StringComparison.OrdinalIgnoreCase);
+    }
+
     private static bool IsChatCommand(string text, Account account)
         => text.StartsWith(CommandPrefix)
            && (account.AuthLevel > AuthLevel.None || text.Length > 1 && char.IsLetter(text[1]));
