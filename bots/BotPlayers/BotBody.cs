@@ -449,7 +449,7 @@ internal sealed class BotBody : ReceiveActor, IWithTimers {
         }
 
         _battleSince = DateTime.UtcNow;
-        battle.Tell(new BotJoinBattle(_object, Self, _info.Name));
+        battle.Tell(new BotDoorMessage(new BotJoinBattle(_object, Self, _info.Name), BotDoor.Generation));
     }
 
     private void Seated(BotSeated message) {

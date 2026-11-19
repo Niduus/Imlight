@@ -95,7 +95,7 @@ public class GameServer : Server {
         Quests.QuestRewardCatchUp.Start();
         Events.GameEvents.Start(Context.System);
         Loyalty.LoyaltyStore.Start(Context.System);
-        BotPlayers.BotBodies.Start(Context.System);
+        BotDoor.ServerStarted(Context.System);
         World.HouseTrainers.ForgetOldSpots();
 
         // Create actor children.
@@ -115,7 +115,7 @@ public class GameServer : Server {
             Logger.Args(Context.Self.Path, processSupervisorActorName));
 
         // The Quest Team (Game/QuestTeam) opens its sessions on this server.
-        QuestTeam.QuestTeamHost.GameServerReady(Self, Context.System, RealmName);
+        BotDoor.ServerReady(Self, Context.System, RealmName);
 
         // [Overlay] RequiredToPlay: wizards without the Ahziael overlay are kicked (Tools.OverlayGate).
         _overlayCheck = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(

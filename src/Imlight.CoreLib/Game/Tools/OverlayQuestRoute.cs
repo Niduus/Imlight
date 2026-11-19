@@ -96,7 +96,7 @@ internal static class OverlayQuestRoute {
         var here = wizard.Location;
         string zonePath = wizard.Zone ?? "";
         var live = MinimapIndex.In(zone);
-        Ultimus.UltimusPads.NoteDoors(zonePath, live);
+        BotDoor.Side?.NoteDoors(zonePath, live);
         var targets = new List<(float X, float Y, string Name)>();
         var elsewhere = new List<string>();
         foreach (var progress in held.GoalProgress ?? []) {

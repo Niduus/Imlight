@@ -53,8 +53,7 @@ internal static class OnlineList {
 
     /// <summary>Whether a wizard is one of the server's own bots (Ultimus, the Quest Team or a Bot Player).</summary>
     internal static bool IsBotWizard(ulong characterId)
-        => characterId != 0 && (Ultimus.UltimusRoster.IsMember(characterId) || QuestTeam.QuestTeamRoster.IsMember(characterId)
-                                || BotPlayers.BotIds.IsBot(characterId));
+        => characterId != 0 && (BotDoor.Side?.IsRosterWizard(characterId) == true || BotPlayers.BotIds.IsBot(characterId));
 
     private sealed record Row(string Account, string Wizard, string Zone, int Level, string School, bool InBattle, DateTime Since);
 

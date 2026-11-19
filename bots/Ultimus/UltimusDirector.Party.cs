@@ -212,8 +212,8 @@ internal sealed partial class UltimusDirectorActor {
         // he asks about first, and goes in only when told again (Niduus's log, 2026-11-16 02:16: he walked into Walter
         // Blanco's fight with Malistaire the Undying at level 25 and lost).
         if (fighting) {
-            if (CombatDuelComponent.UltimusMayJoin(mateGid, out _) && DateTime.UtcNow >= _partyStrongOkUntil
-                && TooStrong(leader, CombatDuelComponent.UltimusFoesOf(mateGid), out var strong)) {
+            if (DuelBots.UltimusMayJoin(mateGid, out _) && DateTime.UtcNow >= _partyStrongOkUntil
+                && TooStrong(leader, DuelBots.UltimusFoesOf(mateGid), out var strong)) {
                 if (_partyStrongWarned != mateGid) {
                     _partyStrongWarned = mateGid;
                     Note("Ultimus", $"PARTY: {name}'s battle looks far too strong for him ({strong}): he asks before going in.", UltimusLink.NOTABLE);
@@ -225,7 +225,7 @@ internal sealed partial class UltimusDirectorActor {
                     $"watching {name}'s battle (it looks far too strong for me; I go in if they say so)", Key: PARTY_KEY + "watch|" + mate.CharId);
             }
 
-            return CombatDuelComponent.UltimusMayJoin(mateGid, out _)
+            return DuelBots.UltimusMayJoin(mateGid, out _)
                 ? new UltimusPlanner.Target(UltimusPlanner.SPOT, at.X, at.Y, $"joining {name}'s battle (my group)", Key: PARTY_KEY + "fight|" + mate.CharId)
                 : new UltimusPlanner.Target(UltimusPlanner.SPOT, leader.X, leader.Y, $"watching {name}'s battle (my group; it is full)", Key: PARTY_KEY + "watch|" + mate.CharId);
         }

@@ -126,17 +126,9 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         var sentTo = SendFilteredZoneMessage(msg, wizard.CharId, wizard.Zone);
         // Ultimus hears typed chat near him too (Niduus, 2026-11-14: he is free to use text chat, and answers it).
         // The TCO7 hear players the same way (their talk with each other is UltimusTco7's).
-        if (Ultimus.UltimusDirector.AnyPlaying && GetActiveGameObject() is { } speaker) {
-            Ultimus.UltimusVoice.PlayerSaid(SessionActor.GetZoneActor(), speaker.m_location.X, speaker.m_location.Y, wizard.CharId,
-                wizard.PlayerNameBehavior?.GetWizardName(), typed, typed: true);
-        }
-
-        // The Quest Team hears typed chat near it too (Niduus, 2026-11-15: "Allow for QT to have AI chats like Ultimus"). It
-        // still never takes a player's orders; Ultimus and the team never hear each other.
-        if (QuestTeam.QuestTeamDirector.ActorOf("Ice") is not null && !Ultimus.UltimusRoster.IsMember(wizard.CharId)
-            && !QuestTeam.QuestTeamRoster.IsMember(wizard.CharId) && GetActiveGameObject() is { } teamHearer) {
-            QuestTeam.QuestTeamVoice.PlayerSaid(SessionActor.GetZoneActor(), teamHearer.m_location.X, teamHearer.m_location.Y, wizard.CharId,
-                wizard.PlayerNameBehavior?.GetWizardName(), 0, typed, typed: true);
+        // The Quest Team hears it too (Niduus, 2026-11-15); both live with the bots (BotDoor).
+        if (BotDoor.Side is { } bots && GetActiveGameObject() is { } speaker) {
+            bots.HeardTyped(SessionActor.GetZoneActor(), speaker.m_location.X, speaker.m_location.Y, wizard, typed);
         }
 
         if (asTyped) {
@@ -174,28 +166,9 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
     // never hear each other: they keep apart.
     // typed: the player wrote the words (the game's word-list chat sends typed words this way), not a Menu Chat phrase.
     private void TellQuestTeam(Wizard character, uint phraseId, string text, bool typed = false) {
-        var team = QuestTeam.QuestTeamDirector.ActorOf("Ice") is not null;
-        var ultimus = Ultimus.UltimusDirector.AnyPlaying;
-        if ((!team && !ultimus) || GetActiveGameObject() is not { } me) {
-            return;
+        if (BotDoor.Side is { } bots && GetActiveGameObject() is { } me) {
+            bots.HeardMenuChat(SessionActor.GetZoneActor(), me.m_location.X, me.m_location.Y, character, phraseId, text, typed);
         }
-
-        text ??= BotShared.MenuChatBook.ById(phraseId)?.Text;
-        if (string.IsNullOrEmpty(text)) {
-            return;
-        }
-
-        if (ultimus) {
-            Ultimus.UltimusVoice.PlayerSaid(SessionActor.GetZoneActor(), me.m_location.X, me.m_location.Y, character.CharId,
-                character.PlayerNameBehavior?.GetWizardName(), text, typed: typed);
-        }
-
-        if (!team || Ultimus.UltimusRoster.IsMember(character.CharId)) {
-            return;
-        }
-
-        QuestTeam.QuestTeamVoice.PlayerSaid(SessionActor.GetZoneActor(), me.m_location.X, me.m_location.Y, character.CharId,
-            character.PlayerNameBehavior?.GetWizardName(), phraseId, text, typed);
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_REQUESTRADIALQUICKCHATEXT))]
@@ -514,28 +487,8 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
 
     // A player whispered to Ultimus: it may answer in Menu Chat, whispered back (Niduus, 2026-11-13: "Able to reply to
     // Whispers via Menu Chat (in context)").
-    private static void TellUltimusWhisper(ulong targetCharId, Wizard sender, uint phraseId, string text, bool typed = false) {
-        // A whisper to a Quest Team wizard: that wizard may answer, whispered back (Niduus, 2026-11-15, the team's AI chat).
-        if (sender is not null && QuestTeam.QuestTeamRoster.IsMember(targetCharId) && !QuestTeam.QuestTeamRoster.IsMember(sender.CharId)
-            && !Ultimus.UltimusRoster.IsMember(sender.CharId)) {
-            var heard = text ?? (phraseId == 0 ? null : BotShared.MenuChatBook.ById(phraseId)?.Text);
-            if (!string.IsNullOrWhiteSpace(heard)) {
-                QuestTeam.QuestTeamVoice.PlayerWhispered(targetCharId, sender.CharId, sender.PlayerNameBehavior?.GetWizardName(), phraseId, heard, typed);
-            }
-
-            return;
-        }
-
-        if (sender is null || !Ultimus.UltimusRoster.IsMember(targetCharId) || Ultimus.UltimusRoster.IsMember(sender.CharId)
-            || QuestTeam.QuestTeamRoster.IsMember(sender.CharId)) {
-            return;
-        }
-
-        text ??= phraseId == 0 ? null : BotShared.MenuChatBook.ById(phraseId)?.Text;
-        if (!string.IsNullOrWhiteSpace(text)) {
-            Ultimus.UltimusVoice.PlayerWhispered(sender.CharId, sender.PlayerNameBehavior?.GetWizardName(), text, typed, targetCharId);
-        }
-    }
+    private static void TellUltimusWhisper(ulong targetCharId, Wizard sender, uint phraseId, string text, bool typed = false)
+        => BotDoor.Side?.HeardWhisper(targetCharId, sender, phraseId, text, typed);
 
     private void SendToTeam(GroupSnapshot group, ulong senderCharId, IMessage msg) {
         var blockedBy = BuddyRelationshipCollection.GetCharactersWhoBlocked(senderCharId);
@@ -617,9 +570,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         Logger.Information("[Group {Channel}] {Name}: {Message}",
             Logger.Args(message.TargetID, wizard.PlayerNameBehavior.GetWizardName(), text));
         // Ultimus hears his group's chat, in battle too (Niduus, 2026-11-15: "acknowledge group members in battle talking").
-        if (Ultimus.UltimusDirector.AnyPlaying) {
-            Ultimus.UltimusVoice.GroupSaid(wizard.CharId, wizard.PlayerNameBehavior?.GetWizardName(), text);
-        }
+        BotDoor.Side?.HeardGroup(wizard, text);
         SaveChatLog(text, GetActiveGameObject(), wizard);
     }
 
@@ -635,7 +586,7 @@ internal class ChatService(SessionActor sessionActor) : MessageService(sessionAc
         // Ultimus is free to use text chat (Niduus, 2026-11-14); his lines are the server's own words, not a player's, so his
         // account's chat level does not turn them into Menu Chat. The whitelist still applies.
         // The Quest Team's typed AI answers are the server's own words too (Niduus, 2026-11-15).
-        var bot = Ultimus.UltimusRoster.IsMember(wizard.CharId) || QuestTeam.QuestTeamRoster.IsMember(wizard.CharId);
+        var bot = BotDoor.Side?.IsRosterWizard(wizard.CharId) == true;
         var mode = bot ? ChatMode.Open : ChatFilter.CurrentChatMode(GetActiveAccount());
         var forOthers = ChatFilter.ForOthers(typed, mode, out var why);
         if (forOthers is null) {

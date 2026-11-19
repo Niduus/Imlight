@@ -67,7 +67,7 @@ internal sealed partial class UltimusDirectorActor {
 
         // Who he plays with right now, on every lesson (solo data and team data never mix).
         var withPlayers = _target?.Key?.EndsWith("|join", StringComparison.Ordinal) == true
-                          || CombatDuelComponent.UltimusWithPlayers(leader.GlobalId);
+                          || DuelBots.UltimusWithPlayers(leader.GlobalId);
         BotKnowledge.SetParty(UltimusSeat.Current.Key, withPlayers ? "with players" : "solo");
 
         if (UltimusPlanner.HasCreatures(leader)) {

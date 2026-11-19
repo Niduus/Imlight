@@ -70,7 +70,36 @@ internal class CommandDispatcher : ReceiveProtocolDispatcher {
 
     private static readonly Lazy<Dictionary<string, CommandProtocol>> s_protocolsLazy = new(BuildProtocolTable);
 
-    private static Dictionary<string, CommandProtocol> s_protocols => s_protocolsLazy.Value;
+    // The server's own commands and the bots' (.bot, .ultimus, .qt: they live in the bots folder, BotDoor), made again each
+    // time the bots are swapped.
+    private static (int Generation, Dictionary<string, CommandProtocol> Table) s_withBots = (-1, null);
+
+    private static Dictionary<string, CommandProtocol> s_protocols {
+        get {
+            var known = s_withBots;
+            if (known.Generation == BotDoor.Generation && known.Table is not null) {
+                return known.Table;
+            }
+
+            var table = new Dictionary<string, CommandProtocol>(s_protocolsLazy.Value);
+            var key = table.Count;
+            foreach (var protocol in BotDoor.Side?.Commands() ?? []) {
+                var groupName = protocol.Group?.ToLower();
+                if (groupName is "" or null) {
+                    groupName = $"{GrouplessCommandPrefix}bots{key++}";
+                }
+
+                table[groupName] = protocol;
+            }
+
+            s_withBots = (BotDoor.Generation, table);
+
+            return table;
+        }
+    }
+
+    /// <summary>Every command group, the bots' included (for the command guide and help).</summary>
+    internal static IReadOnlyCollection<CommandProtocol> AllProtocols => s_protocols.Values;
 
     public CommandDispatcher() {
         Instance = Self;

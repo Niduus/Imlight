@@ -15,6 +15,8 @@
         <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
         <PackageReference Include="Ionic.Zlib.Core" Version="1.0.0" />
         <PackageReference Include="Nito.HashAlgorithms.CRC" Version="1.0.1" />
+        <!-- Builds a published bot update on the running server (Game/BotDoor/BotBuilder.cs). -->
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
     </ItemGroup>
 
     <ItemGroup>

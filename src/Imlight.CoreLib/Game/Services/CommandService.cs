@@ -348,20 +348,18 @@ internal class CommandService(SessionActor sessionActor) : MessageService(sessio
 
         // Ultimus's own game (on the server): his map, his quest's way on it, and his quests. Read only. A TCO7 member's the
         // same, as that member (UltimusSeat); anyone else's (Spectate Anyone) without a bot's own heading.
-        var seat = Ultimus.UltimusSeat.OfCharacter(wizard.CharId);
-        using var seatScope = Ultimus.UltimusSeat.Use(seat ?? Ultimus.UltimusSeat.Current);
+        using var seatScope = BotDoor.Side?.UseSeatOf(wizard.CharId);
         try {
             var map = Tools.OverlayMinimap.Build(wizard, zone, message.Reach);
             // His quest's way, drawn like the player's Quest Tracker line (the shared route finder).
             // A Quest Team wizard (the Quest Team Spectator): the team's quest, drawn the same way.
             // A quest picked on Ahziael's Ultimus or Quest Team page (Niduus, 2026-11-15): its way instead, when the wizard holds it.
-            var picked = string.IsNullOrEmpty(message.RouteQuest) ? null : Ultimus.UltimusSpectate.RouteFor(wizard, zone, message.RouteQuest);
-            var own = message.Team || seat is null ? Ultimus.UltimusSpectate.RouteFor(wizard, zone, message.Quest) : Ultimus.UltimusSpectate.Route(wizard, zone);
-            if ((picked ?? own) is { } route) {
+            var picked = false;
+            if (BotDoor.Side?.SpectateRoute(wizard, zone, message.Quest, message.RouteQuest, message.Team, out picked) is { } route) {
                 map["route"] = route;
             }
 
-            var quests = Tools.OverlayQuestTracker.Build(wizard, zone, picked is not null ? message.RouteQuest : message.Quest);
+            var quests = Tools.OverlayQuestTracker.Build(wizard, zone, picked ? message.RouteQuest : message.Quest);
             message.Reply.TrySetResult((map, quests, zone, ""));
         }
         catch (Exception ex) {

@@ -340,11 +340,12 @@ internal static class OverlayQuestPath {
         var spots = new List<Spot>();
         try {
             var (x, y) = (fromX, fromY);
-            var taken = new List<Ultimus.UltimusPads.Pad>();
-            for (var hop = 0; hop < Ultimus.UltimusPads.MOST_PADS && Apart(zonePath, x, y, toX, toY); hop++) {
+            var taken = new List<BotPadHop>();
+            var bots = BotDoor.Side;
+            for (var hop = 0; bots is not null && hop < bots.MostPads && Apart(zonePath, x, y, toX, toY); hop++) {
                 // The pads that chain to the step's ground; else, as a player would try, a pad here that lands nearer it.
-                if ((Ultimus.UltimusPads.Toward(zonePath, x, y, toX, toY, taken)
-                     ?? Ultimus.UltimusPads.Another(zonePath, x, y, toX, toY, taken)) is not { } pad) {
+                if ((bots.PadToward(zonePath, x, y, toX, toY, taken)
+                     ?? bots.PadAnother(zonePath, x, y, toX, toY, taken)) is not { } pad) {
                     break;
                 }
 
@@ -394,12 +395,12 @@ internal static class OverlayQuestPath {
         IReadOnlyList<(float X, float Y)> avoid = null, float fromZ = float.NaN, float toZ = float.NaN) {
         try {
             if (Apart(zonePath, fromX, fromY, toX, toY)
-                && Ultimus.UltimusPads.Toward(zonePath, fromX, fromY, toX, toY) is { } pad) {
+                && BotDoor.Side?.PadToward(zonePath, fromX, fromY, toX, toY) is { } pad) {
                 return Walk(charId, zonePath, fromX, fromY, pad.X, pad.Y, body: true, avoid: avoid, fromZ: fromZ);
             }
 
             // A teleporter that gets there much faster than walking (one any bot found counts for all).
-            if (Ultimus.UltimusPads.Faster(zonePath, fromX, fromY, toX, toY) is { } faster) {
+            if (BotDoor.Side?.PadFaster(zonePath, fromX, fromY, toX, toY) is { } faster) {
                 return Walk(charId, zonePath, fromX, fromY, faster.X, faster.Y, body: true, avoid: avoid, fromZ: fromZ);
             }
         }

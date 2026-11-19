@@ -31,21 +31,6 @@ using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.BotPlayers;
 
-/// <summary>The character ids of Bot Players wizards: a range of their own, far above any real character's.</summary>
-public static class BotIds {
-
-    internal const ulong BASE = 0x7E00_0000_0000_0000UL;
-    private const ulong RANGE = 0x0000_0000_FFFF_FFFFUL;
-
-    public static ulong CharIdOf(int botId) => BASE + (ulong) botId;
-
-    public static bool IsBot(ulong charId) => charId >= BASE && charId <= BASE + RANGE;
-
-    /// <summary>For a wizard's object id (its character id + 2, Wizard.GetGameObjectId).</summary>
-    public static bool IsBotObject(ulong globalId) => Wizard.TryGetCharacterId(globalId, out var charId) && IsBot(charId);
-
-}
-
 // What the bots' bodies (BotBody) and the battles (CombatDuelComponent) tell each other.
 
 /// <summary>A bot's body asks a battle for a circle on the players' side.</summary>
@@ -89,8 +74,18 @@ internal static class BotBodies {
 
     internal static void Start(ActorSystem system) {
         s_system = system;
-        system.Scheduler.Advanced.ScheduleRepeatedly(TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(BotPopulation.TICK_SECONDS), Populate);
-        system.Scheduler.Advanced.ScheduleRepeatedly(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5), WriteSheets);
+        s_timers ??= new Cancelable(system.Scheduler);
+        system.Scheduler.Advanced.ScheduleRepeatedly(TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(BotPopulation.TICK_SECONDS), Populate, s_timers);
+        system.Scheduler.Advanced.ScheduleRepeatedly(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5), WriteSheets, s_timers);
+    }
+
+    // The two timers above, ended when the bots are swapped for a newer build (BotDoor).
+    private static Cancelable s_timers;
+
+    /// <summary>The bots are swapped for a newer build: the timers stop and every bot leaves.</summary>
+    internal static void StopForSwap(string why) {
+        s_timers?.Cancel();
+        RemoveAll(why);
     }
 
     internal const string SHEETS_FILE = "sheets.json";

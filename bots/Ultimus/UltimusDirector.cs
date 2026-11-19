@@ -1972,9 +1972,9 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             _battleSince = DateTime.UtcNow;
             NoteFightKit(me);
             FightStarted(me);
-            var others = CombatDuelComponent.UltimusBattleCompany(me.GlobalId);
+            var others = DuelBots.UltimusBattleCompany(me.GlobalId);
             _battleCompany = others.Count > 0;
-            _battlePlayers = CombatDuelComponent.UltimusBattlePlayers(me.GlobalId);
+            _battlePlayers = DuelBots.UltimusBattlePlayers(me.GlobalId);
             _companyCount = others.Count;
             if (others.Count > 0) {
                 _battlesWithPlayers++;
@@ -1992,7 +1992,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         // A player walked into its battle after it began: a welcome in Menu Chat.
-        var company = CombatDuelComponent.UltimusBattleCompany(me.GlobalId).Count;
+        var company = DuelBots.UltimusBattleCompany(me.GlobalId).Count;
         if (company > _companyCount && _companyCount >= 0 && _battleSince < DateTime.UtcNow.AddSeconds(-3)) {
             _battleCompany = true;
             Note("Ultimus", "a player joined its battle; it welcomes them.");
@@ -2001,7 +2001,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
 
         _companyCount = company;
         if (company > 0) {
-            _battlePlayers = CombatDuelComponent.UltimusBattlePlayers(me.GlobalId);
+            _battlePlayers = DuelBots.UltimusBattlePlayers(me.GlobalId);
         }
 
         _doing = "in a battle";

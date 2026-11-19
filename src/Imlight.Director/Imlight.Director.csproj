@@ -62,6 +62,21 @@
   <ItemGroup>
     <ProjectReference Include="..\Imlight.Common\Imlight.Common.csproj" />
     <ProjectReference Include="..\Imlight.CoreLib\Imlight.CoreLib.csproj" />
+    <!-- The bots (bots/): built with the server but never referenced by it. The server loads them on its own from its bots
+         folder (Game/BotDoor/BotLoader.cs), so a published bot update can replace them without a new Ahziael. -->
+    <ProjectReference Include="..\..\bots\Imlight.Bots.csproj" ReferenceOutputAssembly="false" Private="false" OutputItemType="BotsAssembly" />
   </ItemGroup>
+
+  <Target Name="CopyBotsToOutput" AfterTargets="Build">
+    <Copy SourceFiles="@(BotsAssembly)" DestinationFolder="$(OutDir)bots" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(BotsAssembly->'%(RootDir)%(Directory)%(Filename).pdb')" DestinationFolder="$(OutDir)bots" SkipUnchangedFiles="true"
+          Condition="Exists('@(BotsAssembly->'%(RootDir)%(Directory)%(Filename).pdb')')" />
+  </Target>
+
+  <Target Name="CopyBotsToPublish" AfterTargets="Publish">
+    <Copy SourceFiles="@(BotsAssembly)" DestinationFolder="$(PublishDir)bots" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(BotsAssembly->'%(RootDir)%(Directory)%(Filename).pdb')" DestinationFolder="$(PublishDir)bots" SkipUnchangedFiles="true"
+          Condition="Exists('@(BotsAssembly->'%(RootDir)%(Directory)%(Filename).pdb')')" />
+  </Target>
 
 </Project>

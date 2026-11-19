@@ -52,8 +52,11 @@ public static class QuestTeamLink {
     /// <summary>Starts looking after the mini server: on while the switch is on, off (killed) while it is off.</summary>
     public static void StartWatching() {
         _ = Task.Run(async () => {
-            await Task.Delay(TimeSpan.FromSeconds(10));
-            while (true) {
+            if (!await BotShared.BotLife.Wait(TimeSpan.FromSeconds(10))) {
+                return;
+            }
+
+            while (!BotShared.BotLife.Over) {
                 try {
                     Watch();
                 }
@@ -61,7 +64,7 @@ public static class QuestTeamLink {
                     Logger.Error("Quest Team: could not look after the mini server: {0}", Logger.Args(e));
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(3));
+                await BotShared.BotLife.Wait(TimeSpan.FromSeconds(3));
             }
         });
     }
@@ -311,4 +314,9 @@ public static class QuestTeamLink {
         s_line = null;
     }
 
+    /// <summary>The bots are swapped for a newer build (BotDoor): the team logs out and its mini server stops.</summary>
+    internal static void StopForSwap(string why) {
+        QuestTeamDirector.Stop(why);
+        StopBrain(why);
+    }
 }

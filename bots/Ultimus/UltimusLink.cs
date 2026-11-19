@@ -70,8 +70,11 @@ public static class UltimusLink {
     /// </summary>
     public static void StartWatching() {
         _ = Task.Run(async () => {
-            await Task.Delay(TimeSpan.FromSeconds(10));
-            while (true) {
+            if (!await BotShared.BotLife.Wait(TimeSpan.FromSeconds(10))) {
+                return;
+            }
+
+            while (!BotShared.BotLife.Over) {
                 foreach (var seat in UltimusSeat.All) {
                     using (UltimusSeat.Use(seat)) {
                         try {
@@ -83,7 +86,7 @@ public static class UltimusLink {
                     }
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(3));
+                await BotShared.BotLife.Wait(TimeSpan.FromSeconds(3));
             }
         });
     }
@@ -442,4 +445,21 @@ public static class UltimusLink {
         s_line = null;
     }
 
+    /// <summary>
+    /// The bots are swapped for a newer build (BotDoor): every seat (Ultimus and each TCO7 member) logs out and its mini
+    /// server stops. The watch loop has already ended (BotLife), so nothing starts them again in this copy.
+    /// </summary>
+    internal static void StopForSwap(string why) {
+        foreach (var seat in UltimusSeat.All) {
+            using (UltimusSeat.Use(seat)) {
+                try {
+                    UltimusDirector.Stop(why);
+                    StopBrain(why);
+                }
+                catch (Exception e) {
+                    Logger.Error("{0}: could not stop for the bot update: {1}", Logger.Args(seat.LogName, e));
+                }
+            }
+        }
+    }
 }

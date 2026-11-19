@@ -8,5 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Imlight.CoreLib\Imlight.CoreLib.csproj" />
+    <!-- The bots live in their own build (bots/, BotDoor); the replay pack checks them directly. -->
+    <ProjectReference Include="..\..\bots\Imlight.Bots.csproj" />
   </ItemGroup>
 </Project>

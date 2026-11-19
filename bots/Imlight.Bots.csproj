@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    The bots: Ultimus, the TCO7, the Quest Team, the Bot Players and their shared brain (Niduus, 2026-11-19: "make the
+    bots more update-able ... so we don't have to push an update out for Ahziael each time the bots need updating").
+    This assembly is never referenced by the server. The server loads it on its own (Imlight.Director/BotLoader.cs) into
+    a box it can throw away, and talks to it only through the doorway in Imlight.CoreLib/Game/BotDoor. A bot update
+    published from this folder (bots-release.yml) is built by the running server itself and swapped in without a restart.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Imlight.Bots</AssemblyName>
+    <RootNamespace>Imlight.CoreLib.Game</RootNamespace>
+    <!-- The server builds this folder by itself with the C# version its compiler knows (BotLoader): keep the two equal. -->
+    <LangVersion>13.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="bot-notes\**" />
+    <Compile Remove="bin\**;obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\Imlight.Common\Imlight.Common.csproj" />
+    <ProjectReference Include="..\src\Imlight.CoreLib\Imlight.CoreLib.csproj" />
+  </ItemGroup>
+</Project>

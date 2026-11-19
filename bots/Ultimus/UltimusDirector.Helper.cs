@@ -153,7 +153,7 @@ internal sealed partial class UltimusDirectorActor {
         _lastProgress = DateTime.UtcNow;
         var (x, y) = (wizard.Location.X, wizard.Location.Y);
         if (theyFight && !iFight) {
-            return CombatDuelComponent.UltimusMayJoin(gid, out _)
+            return DuelBots.UltimusMayJoin(gid, out _)
                 ? new UltimusPlanner.Target(UltimusPlanner.SPOT, x, y, $"joining {_helpName}'s battle (they asked for help)", Key: "help|fight|" + _helpCharId)
                 : new UltimusPlanner.Target(UltimusPlanner.WAIT, leader.X, leader.Y, $"watching {_helpName}'s battle (it is full)", Key: "help|watch|" + _helpCharId);
         }

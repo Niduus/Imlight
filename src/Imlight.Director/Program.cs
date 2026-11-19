@@ -114,35 +114,16 @@ internal static class Program {
             return;
         }
 
-        // The Bot Players mini server is this program started again with --bots by the game server (see BotLink) while
-        // [BotPlayers] Enabled is on: it keeps the bots' roster, decides what they do and writes their log.
-        if (Array.IndexOf(args, "--bots") >= 0) {
+        // The bots' mini servers (Bot Players --bots, the Quest Team --questteam, Ultimus and the TCO7 --ultimus) are this
+        // program started again by the game server (BotLink, QuestTeamLink, UltimusLink) while their switches are on. The
+        // bots live in their own build (the bots folder, BotLoader), so the mini server runs the same bots as the game server.
+        if (Array.Exists(args, a => a is "--bots" or "--questteam" or "--ultimus")) {
             ConfigurationManager.Initialize(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Imlight.ini"));
+            var which = Array.IndexOf(args, "--bots") >= 0 ? "The Bot Players mini server"
+                : Array.IndexOf(args, "--questteam") >= 0 ? "The Quest Team mini server" : "Ultimus's mini server";
             AppDomain.CurrentDomain.UnhandledException += (_, e) =>
-                Logger.Fatal("The Bot Players mini server stopped because of an error: {Exception}", Logger.Args(e.ExceptionObject));
-            Imlight.CoreLib.Game.BotPlayers.BotBrain.Run(args);
-
-            return;
-        }
-
-        // The Quest Team's mini server is this program started again with --questteam by the game server (see
-        // QuestTeamLink) while [QuestTeam] Enabled is on: it keeps the team's quest log, issues and quest times.
-        if (Array.IndexOf(args, "--questteam") >= 0) {
-            ConfigurationManager.Initialize(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Imlight.ini"));
-            AppDomain.CurrentDomain.UnhandledException += (_, e) =>
-                Logger.Fatal("The Quest Team mini server stopped because of an error: {Exception}", Logger.Args(e.ExceptionObject));
-            Imlight.CoreLib.Game.QuestTeam.QuestTeamBrain.Run(args);
-
-            return;
-        }
-
-        // Ultimus's mini server (the Solo Quester, a fork of the Quest Team's) is this program started again with --ultimus
-        // by the game server (see UltimusLink) while [Ultimus] Enabled is on: it keeps Ultimus's logs, issues and reports.
-        if (Array.IndexOf(args, "--ultimus") >= 0) {
-            ConfigurationManager.Initialize(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Imlight.ini"));
-            AppDomain.CurrentDomain.UnhandledException += (_, e) =>
-                Logger.Fatal("Ultimus's mini server stopped because of an error: {Exception}", Logger.Args(e.ExceptionObject));
-            Imlight.CoreLib.Game.Ultimus.UltimusBrain.Run(args);
+                Logger.Fatal(which + " stopped because of an error: {Exception}", Logger.Args(e.ExceptionObject));
+            Imlight.CoreLib.Game.BotLoader.RunMiniServer(args);
 
             return;
         }
@@ -193,6 +174,10 @@ internal static class Program {
         }
         Logger.Information("Akka.NET system created.");
         s_imlightSystem = system;
+
+        // The bots (Ultimus, the TCO7, the Quest Team, the Bot Players) are their own build, put in before the game servers
+        // start and swapped for a published bot update without a restart (Game/BotDoor).
+        Imlight.CoreLib.Game.BotLoader.LoadAtStart();
 
         Imlight.CoreLib.Game.Commands.AgentBridge.Actors = s_imlightSystem;
         AgentScripting.Map();
@@ -270,14 +255,9 @@ internal static class Program {
         // The Bazaar runs as a program of its own, so its lists and stock never slow the game server down.
         Imlight.CoreLib.Game.Bazaar.BazaarLink.StartWatching();
 
-        // Bot Players: their mini server runs only while [BotPlayers] Enabled is on, and is stopped when it is turned off.
-        Imlight.CoreLib.Game.BotPlayers.BotLink.StartWatching();
-
-        // The Quest Team: its mini server and its four wizards run only while [QuestTeam] Enabled is on.
-        Imlight.CoreLib.Game.QuestTeam.QuestTeamLink.StartWatching();
-
-        // Ultimus, the Solo Quester: its mini server and its wizard run only while [Ultimus] Enabled is on.
-        Imlight.CoreLib.Game.Ultimus.UltimusLink.StartWatching();
+        // The bots (Bot Players, the Quest Team, Ultimus and the TCO7): their mini servers and wizards run only while their
+        // switches are on ([BotPlayers], [QuestTeam], [Ultimus] Enabled), and are stopped when they are turned off.
+        Imlight.CoreLib.Game.BotLoader.StartWatching();
 
         // Keep program busy with a while loop.
         Logger.Information("Imlight may now be connected to.");

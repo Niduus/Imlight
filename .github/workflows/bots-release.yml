@@ -1,0 +1,118 @@
+# Publish bot update (Niduus, 2026-11-19): "Make the bots more update-able ... so we don't have to push an update out for
+# Ahziael for each time the bots needs to be updated." He picked "Only when I publish bots": merged bot fixes wait on
+# quality-assurance until this is run, the same as Ahziael's own releases wait for "go".
+#
+# It publishes the repository's bots folder as release bots-v<next number> with bots-update.zip attached. Every
+# running server looks for one every 10 minutes ([Bots] LiveUpdates), builds it itself and swaps its bots without a restart
+# (src/Imlight.CoreLib/Game/BotDoor). The release is never marked "latest", so Ahziael's and the launcher's own update
+# checks never take it for an app update, and its notes (bots/bot-notes) stay out of Ahziael's patch notes.
+#
+# Run it from GitHub: Actions > Publish bot update > Run workflow (branch quality-assurance).
+name: Publish bot update
+
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: 'One plain-words line about this bot update (optional; the notes from bots/bot-notes are added)'
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bots-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    env:
+      GENERATOR_INPUTS: ${{ secrets.IMCODEC_GENERATOR_INPUTS }}
+    steps:
+      - name: Only from Niduus/Imlight
+        if: github.repository != 'Niduus/Imlight'
+        shell: pwsh
+        run: |
+          Write-Error "Bot updates are published from Niduus/Imlight only."
+          exit 1
+
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.402'
+
+      - name: Generator inputs
+        if: env.GENERATOR_INPUTS != ''
+        shell: pwsh
+        run: |
+          [IO.File]::WriteAllBytes("$env:RUNNER_TEMP/inputs.zip", [Convert]::FromBase64String($env:GENERATOR_INPUTS))
+          Expand-Archive "$env:RUNNER_TEMP/inputs.zip" "$env:RUNNER_TEMP/inputs"
+          $codec = "submodule/Imcodec/src"
+          New-Item -ItemType Directory -Force "$codec/Imcodec.ObjectProperty/GeneratorInput", "$codec/Imcodec.MessageLayer/GeneratorInput" | Out-Null
+          Copy-Item "$env:RUNNER_TEMP/inputs/ObjectProperty/*" "$codec/Imcodec.ObjectProperty/GeneratorInput/" -Force
+          Copy-Item "$env:RUNNER_TEMP/inputs/MessageLayer/*" "$codec/Imcodec.MessageLayer/GeneratorInput/" -Force
+
+      - name: Build the bots and run Ultimus's replay pack
+        # Without the secret this cannot build here; every server still builds the update itself and keeps its bots as
+        # they are when it does not build.
+        if: env.GENERATOR_INPUTS != ''
+        shell: pwsh
+        run: |
+          dotnet build bots/Imlight.Bots.csproj -c Release
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          dotnet run --project tools/UltimusChecks -c Release
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
+      - name: Work out the number
+        id: number
+        shell: pwsh
+        run: |
+          $numbers = @(git tag --list 'bots-v*' | ForEach-Object { if ($_ -match '^bots-v(\d+)$') { [int]$Matches[1] } })
+          $last = if ($numbers.Count -gt 0) { ($numbers | Measure-Object -Maximum).Maximum } else { 0 }
+          $next = $last + 1
+          "number=$next" >> $env:GITHUB_OUTPUT
+          "tag=bots-v$next" >> $env:GITHUB_OUTPUT
+          "previous=$(if ($last -gt 0) { "bots-v$last" } else { '' })" >> $env:GITHUB_OUTPUT
+
+      - name: Pack the bots
+        shell: pwsh
+        run: |
+          $stage = Join-Path $env:RUNNER_TEMP 'bots-update'
+          New-Item -ItemType Directory -Force $stage | Out-Null
+          # The bots' code only (no build output).
+          Get-ChildItem bots -Recurse -File | Where-Object { $_.FullName -notmatch '[\\/](bin|obj)[\\/]' } | ForEach-Object {
+            $relative = [IO.Path]::GetRelativePath((Resolve-Path bots), $_.FullName)
+            $target = Join-Path $stage $relative
+            New-Item -ItemType Directory -Force (Split-Path $target) | Out-Null
+            Copy-Item $_.FullName $target
+          }
+          @{ number = [int]"${{ steps.number.outputs.number }}"; commit = "${{ github.sha }}"; made = (Get-Date).ToUniversalTime().ToString('o') } |
+            ConvertTo-Json | Set-Content (Join-Path $stage 'bot-update.json') -Encoding utf8NoBOM
+          New-Item -ItemType Directory -Force release | Out-Null
+          Compress-Archive -Path "$stage/*" -DestinationPath release/bots-update.zip
+
+      - name: Publish the bot update
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "${{ steps.number.outputs.tag }}"
+          # The bot changes since the last bot update (or the last app release, for the first one).
+          $from = "${{ steps.number.outputs.previous }}"
+          if (-not $from) { $from = git describe --tags --abbrev=0 --match 'v[0-9]*' HEAD 2>$null }
+          $changes = if ($from) { @(& ./tools/release-notes.ps1 -From $from -To HEAD -Bots | Where-Object { $_ } | ForEach-Object { "- $_" }) } else { @() }
+          $line = "${{ inputs.note }}".Trim()
+          if ($line) { $changes = @("- $line") + $changes }
+          if (-not $changes) { $changes = @("- Bot fixes and improvements.") }
+          $notes = "## Bot changes`n" + ($changes -join "`n") + "`n`nServers with live bot updates on take this within 10 minutes: the bots log out and come back, nothing else restarts."
+          $notesFile = Join-Path $env:RUNNER_TEMP 'bot-notes.md'
+          Set-Content -Path $notesFile -Value $notes -Encoding utf8NoBOM
+          gh release create $tag release/bots-update.zip --title "Bot update ${{ steps.number.outputs.number }}" `
+            --notes-file $notesFile --target "${{ github.sha }}" --latest=false

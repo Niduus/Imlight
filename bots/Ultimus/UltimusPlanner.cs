@@ -560,7 +560,7 @@ internal static class UltimusPlanner {
                 // if it's convenient for quests"), as a player walks into a battle.
                 if (UltimusWire.JoinPlayers) {
                     foreach (var busy in wanted.Where(m => CombatDuelComponent.IsInBattle(m.Object.m_globalID.Full))) {
-                        if (CombatDuelComponent.UltimusMayJoin(busy.Object.m_globalID.Full, out var who)) {
+                        if (DuelBots.UltimusMayJoin(busy.Object.m_globalID.Full, out var who)) {
                             return new Target(FIGHT, busy.Object.m_location.X, busy.Object.m_location.Y, $"{step} (joins {who}'s battle)", questName, goalName,
                                 busy.Template, busy.Object.m_globalID.Full, Key: key + "|join");
                         }

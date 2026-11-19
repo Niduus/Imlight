@@ -90,7 +90,7 @@ internal class CommandBotProtocol : CommandProtocol {
             which = bot.GlobalId;
         }
 
-        battle.Tell(new BotKickFromBattle(which, Context.Character.PlayerNameBehavior.GetWizardName()));
+        battle.Tell(new BotDoorMessage(new BotKickFromBattle(which, Context.Character.PlayerNameBehavior.GetWizardName()), BotDoor.Generation));
         InformSenderClient(which == 0
             ? "The bots in your battle were kicked out. No bot joins this battle again."
             : "That bot was kicked out of your battle. No bot joins this battle again.");

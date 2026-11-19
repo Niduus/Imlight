@@ -204,8 +204,8 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
                     Logger.Debug("Zone {0}: teleport trigger {1} on event {2} refused {3}: requirements not met.",
                         Logger.Args(Zone.ZonePath, trigger.m_triggerName, message.EventName, message.PlayerActor?.Path.Name));
                     // The bots learn it at once: this way opens with the quests its needs name (BotGates).
-                    if (message.PlayerActor is not null && BotShared.BotGates.QuestsNamed(trigger.m_requirements).Count > 0) {
-                        BotShared.BotGates.Refused(ZoneTrigger.QueryWizard(message.PlayerActor), Zone.ZonePath, trigger);
+                    if (message.PlayerActor is not null && BotDoor.Side is { } bots && bots.GateNamesQuests(trigger)) {
+                        bots.GateRefused(ZoneTrigger.QueryWizard(message.PlayerActor), Zone.ZonePath, trigger);
                     }
                 }
                 else if (retry is null && message.EventName == START_ZONE_ENTER_EVENT && message.PlayerActor is not null) {

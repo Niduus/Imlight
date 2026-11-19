@@ -38,7 +38,7 @@ namespace Imlight.CoreLib.Game.Zone.Components;
 /// with the Quest Team: neither joins the other's (Niduus, 2026-11-12: "He will never attempt to join QT and they will
 /// always attempt to avoid colliding with Ultimus").
 /// </summary>
-internal sealed partial class CombatDuelComponent {
+internal sealed partial class DuelBots {
 
     private sealed record UltimusThink(int Round, bool Deadline);
 
@@ -68,7 +68,7 @@ internal sealed partial class CombatDuelComponent {
         => UltimusSeat.Use(UltimusSeat.OfGlobal(circle?.ParticipantObject?.m_globalID.Full ?? 0) ?? UltimusSeat.Current);
 
     private IEnumerable<CombatDuelSubCircle> UltimusCircles
-        => SubCircles.Where(c => c is { Occupied: true, AddedToDuel: true, IsAlive: true } && UltimusRole(c) is not null);
+        => D.SubCircles.Where(c => c is { Occupied: true, AddedToDuel: true, IsAlive: true } && UltimusRole(c) is not null);
 
     /// <summary>
     /// Ultimus and the Quest Team never share a battle: an Ultimus wizard stays out of a battle a Quest Team wizard is in,
@@ -82,14 +82,14 @@ internal sealed partial class CombatDuelComponent {
             return false;
         }
 
-        var other = SubCircles.FirstOrDefault(c => c is { Occupied: true, IsSummonedMinion: false }
+        var other = D.SubCircles.FirstOrDefault(c => c is { Occupied: true, IsSummonedMinion: false }
                                                    && (joinerIsUltimus ? QuestTeamRole(c) is not null : UltimusRole(c) is not null));
         if (other is null) {
             return false;
         }
 
         Logger.Debug("Duel {0} | {1} stays out: {2} is already in this battle (Ultimus and the Quest Team keep apart).",
-            Logger.Args(Duel.m_duelID.Full, joiner.m_debugName, other.ParticipantObject?.m_debugName));
+            Logger.Args(D.Duel.m_duelID.Full, joiner.m_debugName, other.ParticipantObject?.m_debugName));
 
         return true;
     }
@@ -101,7 +101,7 @@ internal sealed partial class CombatDuelComponent {
     /// <summary>Whether Ultimus is in a battle with a real player beside him (his lessons then say "with players", not "solo").</summary>
     internal static bool UltimusWithPlayers(ulong ultimusGlobalId) {
         try {
-            return s_playerBattles.TryGetValue(ultimusGlobalId, out var claim) && claim.Battle.HoldsPlayer(ultimusGlobalId)
+            return CombatDuelComponent.s_playerBattles.TryGetValue(ultimusGlobalId, out var claim) && claim.Battle.HoldsPlayer(ultimusGlobalId)
                    && claim.Battle.SubCircles is { } circles
                    && circles.Any(c => c is { Occupied: true, IsHumanPlayer: true, IsSummonedMinion: false } && UltimusRole(c) is null && !IsBot(c));
         }
@@ -115,7 +115,7 @@ internal sealed partial class CombatDuelComponent {
     /// so a bot can see how strong a group mate's fight is before it walks in.
     /// </summary>
     internal static List<ulong> UltimusFoesOf(ulong globalId) {
-        foreach (var battle in s_playerBattles.Values.Select(v => v.Battle).Distinct().ToList()) {
+        foreach (var battle in CombatDuelComponent.s_playerBattles.Values.Select(v => v.Battle).Distinct().ToList()) {
             try {
                 if (!battle._isActive || battle.SubCircles is not { } circles) {
                     continue;
@@ -139,9 +139,9 @@ internal sealed partial class CombatDuelComponent {
 
     internal static bool UltimusMayJoin(ulong creatureGlobalId, out string who) {
         who = "";
-        foreach (var battle in s_playerBattles.Values.Select(v => v.Battle).Distinct().ToList()) {
+        foreach (var battle in CombatDuelComponent.s_playerBattles.Values.Select(v => v.Battle).Distinct().ToList()) {
             try {
-                if (!battle._isActive || battle.IsPvPDuel || battle._botsKicked || battle.SubCircles is not { } circles) {
+                if (!battle._isActive || battle.IsPvPDuel || (battle.BotState is DuelBots kicked && kicked._botsKicked) || battle.SubCircles is not { } circles) {
                     continue;
                 }
 
@@ -178,7 +178,7 @@ internal sealed partial class CombatDuelComponent {
 
     /// <summary>The names of the other wizards (players and street bots) in the battle an Ultimus wizard is in.</summary>
     internal static List<string> UltimusBattleCompany(ulong ultimusGlobalId) {
-        if (!s_playerBattles.TryGetValue(ultimusGlobalId, out var claim)) {
+        if (!CombatDuelComponent.s_playerBattles.TryGetValue(ultimusGlobalId, out var claim)) {
             return [];
         }
 
@@ -194,7 +194,7 @@ internal sealed partial class CombatDuelComponent {
 
     /// <summary>The players in Ultimus's battle, by character ID and name (for his memory of who he fought with).</summary>
     internal static List<(ulong CharId, string Name)> UltimusBattlePlayers(ulong ultimusGlobalId) {
-        if (!s_playerBattles.TryGetValue(ultimusGlobalId, out var claim)) {
+        if (!CombatDuelComponent.s_playerBattles.TryGetValue(ultimusGlobalId, out var claim)) {
             return [];
         }
 
@@ -222,7 +222,7 @@ internal sealed partial class CombatDuelComponent {
         }
 
         return enemies.Any(RewrittenAI.IsBoss) || enemies.Count >= 3 || RewrittenAI.HealthShare(me) < 0.5
-               || BotCore.Incoming(enemies, Duel.m_roundNum, c => "").Share >= 0.4;
+               || BotCore.Incoming(enemies, D.Duel.m_roundNum, c => "").Share >= 0.4;
     }
 
     /// <summary>
@@ -271,7 +271,7 @@ internal sealed partial class CombatDuelComponent {
 
     private void UltimusPlanningBegins() {
         _ultimusPicks.Clear();
-        if (Duel.m_roundNum <= 1) {
+        if (D.Duel.m_roundNum <= 1) {
             _ultimusScouted.Clear();
             _ultimusDrew.Clear();
             _ultimusRoomMade.Clear();
@@ -285,14 +285,14 @@ internal sealed partial class CombatDuelComponent {
             UltimusOrders.NewRound();
         }
 
-        if (IsPvPDuel || !_awaitingCombatMoves || !UltimusCircles.Any()) {
+        if (D.IsPvPDuel || !D._awaitingCombatMoves || !UltimusCircles.Any()) {
             return;
         }
 
         // A person's moment to look at the hand before reaching for a card (2.5 to 5 s; the clicks take a few more).
-        Timers.StartSingleTimer(ULTIMUS_THINK_KEY, new UltimusThink(Duel.m_roundNum, false), TimeSpan.FromSeconds(2.5 + (Random.Shared.NextDouble() * 2.5)));
-        Timers.StartSingleTimer(ULTIMUS_DEADLINE_KEY, new UltimusThink(Duel.m_roundNum, true),
-            TimeSpan.FromSeconds(Math.Max(3, PlanningSeconds - BOT_DEADLINE_BEFORE_END)));
+        D.BotTimer(ULTIMUS_THINK_KEY, new UltimusThink(D.Duel.m_roundNum, false), TimeSpan.FromSeconds(2.5 + (Random.Shared.NextDouble() * 2.5)));
+        D.BotTimer(ULTIMUS_DEADLINE_KEY, new UltimusThink(D.Duel.m_roundNum, true),
+            TimeSpan.FromSeconds(Math.Max(3, D.PlanningSeconds - BOT_DEADLINE_BEFORE_END)));
     }
 
     // The round each downed Ultimus circle was first seen down in, by slot.
@@ -305,11 +305,11 @@ internal sealed partial class CombatDuelComponent {
     /// himself, through his own game (nobody takes him out). Revived, he thanks them.
     /// </summary>
     private void UltimusDownedRound() {
-        if (IsPvPDuel) {
+        if (D.IsPvPDuel) {
             return;
         }
 
-        foreach (var circle in SubCircles.Where(c => c is { Occupied: true, AddedToDuel: true } && UltimusRole(c) is not null).ToList()) {
+        foreach (var circle in D.SubCircles.Where(c => c is { Occupied: true, AddedToDuel: true } && UltimusRole(c) is not null).ToList()) {
             using var seat = UltimusSeatOf(circle);
             var wizard = UltimusDirector.ActorOf(UltimusRole(circle));
             if (wizard is null) {
@@ -319,37 +319,37 @@ internal sealed partial class CombatDuelComponent {
             if (circle.IsAlive) {
                 if (_ultimusDownSince.Remove(circle.SlotIndex)) {
                     wizard.Tell(new UltimusMember.SayText("Thanks for the revive! Back in it."), Akka.Actor.ActorRefs.NoSender);
-                    UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: was revived; fights on.");
+                    UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: was revived; fights on.");
                 }
 
                 continue;
             }
 
             if (!_ultimusDownSince.TryGetValue(circle.SlotIndex, out var since)) {
-                _ultimusDownSince[circle.SlotIndex] = Duel.m_roundNum;
+                _ultimusDownSince[circle.SlotIndex] = D.Duel.m_roundNum;
                 wizard.Tell(new UltimusMember.SayText($"Sorry, I'm down! If nobody can revive me, I'll leave the battle in {ULTIMUS_DOWN_ROUNDS} rounds."),
                     Akka.Actor.ActorRefs.NoSender);
-                UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: is down; waits {ULTIMUS_DOWN_ROUNDS} rounds for a revive, then leaves.");
+                UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: is down; waits {ULTIMUS_DOWN_ROUNDS} rounds for a revive, then leaves.");
                 continue;
             }
 
             // In a dungeon or instance a flee loses the whole run, so he never presses it there: he stays down and waits for a
             // revive or the battle's end (Niduus, 2026-11-16: "see fleeing a Dungeon/Instance as a punishment").
-            if (Duel.m_roundNum - since >= ULTIMUS_DOWN_ROUNDS && circle._wizard is { } downed && Imlight.CoreLib.Game.World.DungeonRecall.IsInDungeon(downed.CharId)) {
-                if (Duel.m_roundNum - since == ULTIMUS_DOWN_ROUNDS) {
+            if (D.Duel.m_roundNum - since >= ULTIMUS_DOWN_ROUNDS && circle._wizard is { } downed && Imlight.CoreLib.Game.World.DungeonRecall.IsInDungeon(downed.CharId)) {
+                if (D.Duel.m_roundNum - since == ULTIMUS_DOWN_ROUNDS) {
                     wizard.Tell(new UltimusMember.SayText("I won't flee: in here that would lose the whole dungeon. I'll wait for a revive or the end of the fight."),
                         Akka.Actor.ActorRefs.NoSender);
-                    UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: down {ULTIMUS_DOWN_ROUNDS} rounds in a dungeon: does not flee (that loses the run); waits.");
+                    UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: down {ULTIMUS_DOWN_ROUNDS} rounds in a dungeon: does not flee (that loses the run); waits.");
                 }
 
                 continue;
             }
 
-            if (Duel.m_roundNum - since >= ULTIMUS_DOWN_ROUNDS) {
+            if (D.Duel.m_roundNum - since >= ULTIMUS_DOWN_ROUNDS) {
                 _ultimusDownSince.Remove(circle.SlotIndex);
                 UltimusEffort.Note(UltimusEffort.Kind.Fled, "down 4 rounds with no revive, so he fled the battle");
                 wizard.Tell(new UltimusMember.SayText("Nobody could revive me, so I'm leaving the battle. Good luck!"), Akka.Actor.ActorRefs.NoSender);
-                UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: down for {ULTIMUS_DOWN_ROUNDS} rounds with no revive: presses Flee.");
+                UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: down for {ULTIMUS_DOWN_ROUNDS} rounds with no revive: presses Flee.");
                 wizard.Tell(new UltimusMember.Flee(), Akka.Actor.ActorRefs.NoSender);
             }
         }
@@ -357,14 +357,14 @@ internal sealed partial class CombatDuelComponent {
 
     // Ultimus came into the battle mid-planning: its look and its last call, by the time left.
     private void UltimusJoinedPlanning(CombatDuelSubCircle circle, double secondsLeft) {
-        if (UltimusRole(circle) is null || IsPvPDuel || !PlanningMayEnd) {
+        if (UltimusRole(circle) is null || D.IsPvPDuel || !D.PlanningMayEnd) {
             return;
         }
 
         _ultimusPicks.Remove(circle.SlotIndex);
-        Timers.StartSingleTimer(ULTIMUS_THINK_KEY, new UltimusThink(Duel.m_roundNum, false),
+        D.BotTimer(ULTIMUS_THINK_KEY, new UltimusThink(D.Duel.m_roundNum, false),
             TimeSpan.FromSeconds(Math.Min(2.5 + (Random.Shared.NextDouble() * 2.5), Math.Max(1, secondsLeft / 3))));
-        Timers.StartSingleTimer(ULTIMUS_DEADLINE_KEY, new UltimusThink(Duel.m_roundNum, true),
+        D.BotTimer(ULTIMUS_DEADLINE_KEY, new UltimusThink(D.Duel.m_roundNum, true),
             TimeSpan.FromSeconds(Math.Max(3, secondsLeft - BOT_DEADLINE_BEFORE_END)));
     }
 
@@ -372,17 +372,17 @@ internal sealed partial class CombatDuelComponent {
     private void UltimusNoticeMove(CombatDuelSubCircle caster) {
         // Only a real player's pick, in planning: creatures pick as the round opens, and a look then had Ultimus pick
         // before planning began, which ended the round early (Niduus, 2026-11-13).
-        if (caster is null || !caster.IsHumanPlayer || IsBot(caster) || UltimusRole(caster) is not null || IsPvPDuel
-            || !PlanningMayEnd || !UltimusCircles.Any()) {
+        if (caster is null || !caster.IsHumanPlayer || IsBot(caster) || UltimusRole(caster) is not null || D.IsPvPDuel
+            || !D.PlanningMayEnd || !UltimusCircles.Any()) {
             return;
         }
 
-        Timers.StartSingleTimer(ULTIMUS_THINK_KEY, new UltimusThink(Duel.m_roundNum, false), TimeSpan.FromSeconds(0.8));
+        D.BotTimer(ULTIMUS_THINK_KEY, new UltimusThink(D.Duel.m_roundNum, false), TimeSpan.FromSeconds(0.8));
     }
 
-    [MessageHandler(typeof(UltimusThink))]
+    // Comes through BotDoor (DuelMessage).
     private void ReceiveUltimusThink(UltimusThink message) {
-        if (!_isActive || !_awaitingCombatMoves || IsPvPDuel || Duel.m_roundNum != message.Round || !PlanningMayEnd) {
+        if (!D._isActive || !D._awaitingCombatMoves || D.IsPvPDuel || D.Duel.m_roundNum != message.Round || !D.PlanningMayEnd) {
             return;
         }
 
@@ -390,13 +390,13 @@ internal sealed partial class CombatDuelComponent {
             _ultimusDeadlineRound = message.Round;
         }
 
-        var circles = ActiveSubCircles.ToList();
+        var circles = D.ActiveSubCircles.ToList();
         foreach (var member in UltimusCircles.ToList()) {
             using var seat = UltimusSeatOf(member);
             // A real player before it on its side (a lower circle) picks first, until the last call.
             var waiting = circles.Any(c => c.OccupiedTeam == member.OccupiedTeam && c.SlotIndex < member.SlotIndex && c.IsHumanPlayer
                                            && c.IsAlive && c.AddedToDuel && UltimusRole(c) is null && !IsBot(c)
-                                           && CombatResolver.GetQueuedAction(c) is null);
+                                           && D.CombatResolver.GetQueuedAction(c) is null);
             // His group leader's orders (CombatDuelComponent.UltimusOrders.cs): "you go first" picks without waiting; "let me go
             // first" waits for the leader's pick, until the last call.
             waiting = (waiting && !UltimusOrders.GoFirst) || UltimusLeaderStillPicking(member, circles);
@@ -412,9 +412,9 @@ internal sealed partial class CombatDuelComponent {
             // The card thrown away to make room for a treasure card is not out of his hand yet: he picks once it is, on the
             // hand as it really is (Niduus, 2026-11-16: "Ultimus just hit himself": he looked again before the discard
             // landed, and his pick's place in the hand then held another card, cast on himself).
-            if (!message.Deadline && _ultimusRoomMade.Contains((Duel.m_roundNum, member.SlotIndex)) && member.HandCount >= 7
-                && !_ultimusDrew.Contains((Duel.m_roundNum, member.SlotIndex))) {
-                Timers.StartSingleTimer(ULTIMUS_THINK_KEY, new UltimusThink(Duel.m_roundNum, false), TimeSpan.FromSeconds(1));
+            if (!message.Deadline && _ultimusRoomMade.Contains((D.Duel.m_roundNum, member.SlotIndex)) && member.HandCount >= 7
+                && !_ultimusDrew.Contains((D.Duel.m_roundNum, member.SlotIndex))) {
+                D.BotTimer(ULTIMUS_THINK_KEY, new UltimusThink(D.Duel.m_roundNum, false), TimeSpan.FromSeconds(1));
                 continue;
             }
 
@@ -423,16 +423,16 @@ internal sealed partial class CombatDuelComponent {
             // his logs: no draw in any fight). As a player does, he throws away his least useful card first, then draws.
             var digging = UltimusDigForEnchant(member, circles);
             if (!message.Deadline && ((UltimusToughFight(member, circles) && member.VaultRemainingCount > 0 && member.TreasureCardsInHand == 0) || digging)
-                && member.HandCount >= 7 && !_ultimusDrew.Contains((Duel.m_roundNum, member.SlotIndex))
-                && UltimusRoomForTreasure(member, circles) is { } room && _ultimusRoomMade.Add((Duel.m_roundNum, member.SlotIndex))
+                && member.HandCount >= 7 && !_ultimusDrew.Contains((D.Duel.m_roundNum, member.SlotIndex))
+                && UltimusRoomForTreasure(member, circles) is { } room && _ultimusRoomMade.Add((D.Duel.m_roundNum, member.SlotIndex))
                 && UltimusDirector.ActorOf(UltimusRole(member)) is { } maker) {
-                UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: " + (digging
+                UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: " + (digging
                     ? $"digging for an enchantment in my treasure cards with a full hand: {room.Why} to make room."
                     : $"a tough fight with a full hand: {room.Why} to make room for a treasure card."));
-                var roomLeft = PlanningSeconds - (DateTime.UtcNow - _planningStartedAt).TotalSeconds;
+                var roomLeft = D.PlanningSeconds - (DateTime.UtcNow - D._planningStartedAt).TotalSeconds;
                 maker.Tell(new UltimusMember.Clicks(BotBattle.Timed([BotBattle.Move.Discard(room.Index, room.Why)], 7, roomLeft)),
                     Akka.Actor.ActorRefs.NoSender);
-                Timers.StartSingleTimer(ULTIMUS_THINK_KEY, new UltimusThink(Duel.m_roundNum, false), TimeSpan.FromSeconds(4));
+                D.BotTimer(ULTIMUS_THINK_KEY, new UltimusThink(D.Duel.m_roundNum, false), TimeSpan.FromSeconds(4));
                 continue;
             }
 
@@ -440,29 +440,29 @@ internal sealed partial class CombatDuelComponent {
             // treasure cards in his deck, none in hand and room for one, he presses Draw (his own game's button, once a
             // round) and looks at the hand again a moment later, when the card is in it.
             if (!message.Deadline && ((UltimusToughFight(member, circles) && member.VaultRemainingCount > 0 && member.TreasureCardsInHand == 0) || digging)
-                && member.HandCount < 7 && _ultimusDrew.Add((Duel.m_roundNum, member.SlotIndex))
+                && member.HandCount < 7 && _ultimusDrew.Add((D.Duel.m_roundNum, member.SlotIndex))
                 && UltimusDirector.ActorOf(UltimusRole(member)) is { } drawer) {
                 if (digging) {
                     _ultimusDigs[member.SlotIndex] = _ultimusDigs.GetValueOrDefault(member.SlotIndex) + 1;
                 }
 
-                UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: " + (digging
+                UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: " + (digging
                     ? $"digs for an enchantment for my next big hit: draws a treasure card ({_ultimusDigs[member.SlotIndex]} of {ULTIMUS_DIGS} this fight)."
                     : "a tough fight: draws a treasure card."));
                 drawer.Tell(new UltimusMember.DrawTreasure(), Akka.Actor.ActorRefs.NoSender);
-                Timers.StartSingleTimer(ULTIMUS_THINK_KEY, new UltimusThink(Duel.m_roundNum, false), TimeSpan.FromSeconds(1.5));
+                D.BotTimer(ULTIMUS_THINK_KEY, new UltimusThink(D.Duel.m_roundNum, false), TimeSpan.FromSeconds(1.5));
                 continue;
             }
 
             var moves = new List<BotBattle.Move>();
 
             // First, once a round, the cards a solo wizard won't play go, as a player discards.
-            if (_ultimusDiscarded.Add((Duel.m_roundNum, member.SlotIndex))) {
+            if (_ultimusDiscarded.Add((D.Duel.m_roundNum, member.SlotIndex))) {
                 var threat = UltimusScout.InBattle(circles.Where(c => c.OccupiedTeam != member.OccupiedTeam));
                 // The schools he is hit with go into his training plan (a school shield against the one he meets most).
                 BotTrainingPlan.Faced(member.ParticipantObject?.m_globalID.Full ?? 0, threat.Schools);
                 // Who really stands in this battle, by creature id and real name, for his clean fight records (UltimusFights).
-                UltimusFights.Seen(member.ParticipantObject?.m_globalID.Full ?? 0, Duel.m_roundNum,
+                UltimusFights.Seen(member.ParticipantObject?.m_globalID.Full ?? 0, D.Duel.m_roundNum,
                     circles.Where(c => c.OccupiedTeam != member.OccupiedTeam), circles.Where(c => c.OccupiedTeam == member.OccupiedTeam));
                 if (_ultimusScouted.Add(member.SlotIndex)) {
                     UltimusLink.Note(UltimusRoster.NAME, $"reads the enemies' decks: {threat.Describe()}.");
@@ -476,10 +476,10 @@ internal sealed partial class CombatDuelComponent {
 
             UltimusTactics.Choice choice;
             try {
-                choice = UltimusTactics.Decide(member, circles, CombatResolver, Duel.m_roundNum);
+                choice = UltimusTactics.Decide(member, circles, D.CombatResolver, D.Duel.m_roundNum);
             }
             catch (Exception e) {
-                Logger.Warning("Duel {0} | Slot {1} | " + UltimusSeat.Current.Name + " could not decide: {2}", Logger.Args(Duel.m_duelID.Full, member.SlotIndex, e.Message));
+                Logger.Warning("Duel {0} | Slot {1} | " + UltimusSeat.Current.Name + " could not decide: {2}", Logger.Args(D.Duel.m_duelID.Full, member.SlotIndex, e.Message));
                 choice = new(UltimusTactics.Move.Pass, 0, -1, "could not decide");
             }
 
@@ -487,29 +487,29 @@ internal sealed partial class CombatDuelComponent {
             var pick = $"{choice.Move}:{choice.Card}:{choice.Target}";
             // The same pick is not clicked again, unless at the last call its click never landed.
             if (_ultimusPicks.TryGetValue(member.SlotIndex, out var before) && before == pick
-                && (!message.Deadline || CombatResolver.GetQueuedAction(member) is not null)) {
+                && (!message.Deadline || D.CombatResolver.GetQueuedAction(member) is not null)) {
                 continue;
             }
 
             _ultimusPicks[member.SlotIndex] = pick;
-            UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: {choice.Why}");
+            UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: {choice.Why}");
             // How likely he plays each card, learned from his own fights (UltimusCardUse; Niduus, 2026-11-18).
             UltimusCardUseRound(member, choice);
             // What the overlay's Ultimus Spectator shows of this round (read only).
-            UltimusSpectate.NoteRound(Duel.m_duelID.Full, Duel.m_roundNum, member, circles, choice,
+            UltimusSpectate.NoteRound(D.Duel.m_duelID.Full, D.Duel.m_roundNum, member, circles, choice,
                 [.. moves.Where(m => m.Type == CombatMoveType.Discard).Select(m => m.Why)]);
             // The best enchantment in his hand goes on the card first, as a player drags it on (the turn is not used up).
             if (choice.Move == UltimusTactics.Move.Cast && !moves.Any(m => m.Type == CombatMoveType.Discard && m.Card == choice.Card)
                 && UltimusTactics.EnchantFor(member, choice.Card, circles.Count(c => c.OccupiedTeam != member.OccupiedTeam && c.IsAlive)) is { } enchant
                 && !moves.Any(m => m.Type == CombatMoveType.Discard && m.Card == enchant.Index)) {
-                UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: {enchant.Why}.");
+                UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: {enchant.Why}.");
                 moves.Add(BotBattle.Move.Enchant(enchant.Index, choice.Card, enchant.Why));
             }
 
             moves.Add(choice.Move == UltimusTactics.Move.Cast ? BotBattle.Move.Cast(choice.Card, choice.Target, choice.Why) : BotBattle.Move.Pass(choice.Why));
 
             // The clicks go through its own game, as a person's do, after a person's moment to read the hand.
-            var left = PlanningSeconds - (DateTime.UtcNow - _planningStartedAt).TotalSeconds;
+            var left = D.PlanningSeconds - (DateTime.UtcNow - D._planningStartedAt).TotalSeconds;
             var clicks = message.Deadline ? BotBattle.Timed(moves, 0, Math.Min(left, 3)) : BotBattle.Timed(moves, 7, left);
             if (UltimusDirector.ActorOf(UltimusRole(member)) is { } wizard) {
                 wizard.Tell(new UltimusMember.Clicks(clicks), Akka.Actor.ActorRefs.NoSender);
@@ -529,7 +529,7 @@ internal sealed partial class CombatDuelComponent {
 
             var cast = choice.Move == UltimusTactics.Move.Cast && member.GetSpellFromLastHand((byte) choice.Card) is { } picked ? (uint) picked.m_templateID : 0u;
             var level = (int) (member.ParticipantGameStats?.Level ?? 0);
-            UltimusCardUse.Round(UltimusSeat.Current.Folder, Duel.m_duelID.Full, Duel.m_roundNum, level, hand, cast);
+            UltimusCardUse.Round(UltimusSeat.Current.Folder, D.Duel.m_duelID.Full, D.Duel.m_roundNum, level, hand, cast);
         }
         catch (Exception) {
             // Counts only: never in the way of the fight.

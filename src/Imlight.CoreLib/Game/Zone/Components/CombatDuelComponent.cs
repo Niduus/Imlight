@@ -138,7 +138,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     public ulong SigilId => Entity.ActiveGameObject.m_globalID;
     internal bool IsPvPDuel => _pvp is not null;
     internal uint PvPLeagueId => _pvp?.LeagueId ?? 0;
-    private byte PlanningSeconds => IsPvPDuel ? PvPSettings.PracticePlanningSeconds : PLANNING_TIME;
+    internal byte PlanningSeconds => IsPvPDuel ? PvPSettings.PracticePlanningSeconds : PLANNING_TIME;
 
     /// <summary>
     /// Counts the wizards of one side that fight on, whichever side that is.
@@ -164,15 +164,15 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     private RenderComponent _renderComponent;
     private CombatSigilTemplate _sigilTemplate;
     private PvPDuelState _pvp;
-    private bool _isActive;
-    private bool _awaitingCombatMoves;
+    internal bool _isActive;
+    internal bool _awaitingCombatMoves;
 
     // Tamed Drops (TamedDrops.cs): the rounds this battle counts, and how many rounds in a row everyone chose to pass.
     private int _countedRounds;
     private int _passStreak;
     private int _lastRoundCounted = -1;
     // When this round's planning began, so a wizard who joins during it can be given the time left.
-    private DateTime _planningStartedAt;
+    internal DateTime _planningStartedAt;
     // Enemy-side minions (.joinme creatures, a boss's second form) that were defeated. Their circle is freed when they
     // die, so the win would not see them; their drops come from this list.
     private readonly List<(ulong TemplateId, ulong GlobalId)> _defeatedEnemyMinions = [];
@@ -544,7 +544,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     // Which battle each wizard (by global id) is in, shared by every battle circle of every zone. A claim is the
     // battle's once the wizard stands on one of its circles; until then it holds for CLAIM_HOLD_SECONDS, so two
     // circles starting at the same moment cannot both take the wizard. A finished or left battle no longer holds.
-    private static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, (CombatDuelComponent Battle, DateTime At)> s_playerBattles = new();
+    internal static readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, (CombatDuelComponent Battle, DateTime At)> s_playerBattles = new();
     private const double CLAIM_HOLD_SECONDS = 5;
 
     /// <summary>
@@ -576,7 +576,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     }
 
     // Read from another battle's actor, so a circle list changing mid-read counts as "still holds".
-    private bool HoldsPlayer(ulong gid) {
+    internal bool HoldsPlayer(ulong gid) {
         try {
             return _isActive && SubCircles is { } circles
                 && circles.Any(c => c is not null && c.Occupied && c.OccupiedTeam == CombatTeam.Player && !c.IsSummonedMinion
@@ -772,17 +772,9 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // Re-telegraph minion AI moves now that the planning HUD exists.
         ResendMinionMoveSelections();
 
-        // How many enemies the server's own wizards face, for the crowd share their decks plan for (CombatDuelComponent.Bots.cs).
-        BotFightSizes();
-
-        // Bot Players think once the real players have picked (CombatDuelComponent.Bots.cs).
-        BotsPlanningBegins();
-
-        // The Quest Team's picks are made here too (CombatDuelComponent.QuestTeam.cs).
-        QuestTeamPlanningBegins();
-
-        // Ultimus's picks too (CombatDuelComponent.Ultimus.cs).
-        UltimusPlanningBegins();
+        // The bots (Bot Players, the Quest Team, Ultimus and the TCO7) plan their picks; they live in the bots folder and
+        // count the enemies they face for their decks too (bots/Battle, through BotDoor).
+        BotDoor.Side?.PlanningBegins(this);
 
         // Tutorial duels flush queued card grants and re-script the golems before planning.
         _tutorialDirector.OnPlanningPhaseBegin();
@@ -806,7 +798,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     /// that ended then played its spells while the planning phase that followed began over them, and the game rushed
     /// the animations through (Niduus, 2026-11-13). Only a round in planning ends.
     /// </summary>
-    private bool PlanningMayEnd => Duel?.m_duelPhase == kDuelPhase.kPhase_Planning;
+    internal bool PlanningMayEnd => Duel?.m_duelPhase == kDuelPhase.kPhase_Planning;
 
     /// <summary>
     /// Wizards under a kAutoPass (The Devourer's Devour) pass at once; when that leaves no one to wait for, the round
@@ -874,7 +866,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     }
 
     [MessageHandler(typeof(COMBAT_106_PROTOCOL.MSG_ACTORCOMBATMOVE))]
-    private void ReceiveCombatMove(COMBAT_106_PROTOCOL.MSG_ACTORCOMBATMOVE message) {
+    internal void ReceiveCombatMove(COMBAT_106_PROTOCOL.MSG_ACTORCOMBATMOVE message) {
         if (!_isActive) {
             return;
         }
@@ -970,9 +962,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         _tutorialDirector.OnCombatMoveQueued();
 
         // A real player picked or changed their pick: the bots on their side think again.
-        BotsNoticeMove(caster);
-        QuestTeamNoticeMove(caster);
-        UltimusNoticeMove(caster);
+        BotDoor.Side?.NoticeMove(this, caster);
 
         // If by this point all participants have inputted their moves, we can start the next phase.
         if (PlanningMayEnd && CombatResolver.HaveAllParticipantsEnqueuedActions()) {
@@ -1512,8 +1502,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         _defeatedEnemyMinions.Clear();
         _dismissLater.Clear();
         _enemyDefeated = false;
-        _botsKicked = false;
-        _botTargets.Clear();
+        BotState = null;
+        BotDoor.Side?.DuelStarts(this);
 
         // Determine which team goes up first. Tutorial duels override this with the golems first.
         Duel.m_firstTeamToAct = (int) DetermineFirstTeam();
@@ -2160,7 +2150,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
     }
 
     /// <param name="preferred">A free enemy circle for a creature to take, or null for the first free one.</param>
-    private void AddParticipant(CoreObject participantObject, IActorRef participantActor, CombatDuelSubCircle preferred = null) {
+    internal void AddParticipant(CoreObject participantObject, IActorRef participantActor, CombatDuelSubCircle preferred = null) {
         var isPlayer = participantObject.m_templateID == 1;
 
         var alreadyInDuel = SubCircles.Any(x => x?.ParticipantObject?.m_globalID == participantObject.m_globalID);
@@ -2178,12 +2168,8 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         // The Quest Team never joins a battle with someone else's wizard in it (Niduus, 2026-11-12: "never join battles
         // that have players in them"); walking past one, they keep walking.
-        if (isPlayer && QuestTeamRefusesBattle(participantObject)) {
-            return;
-        }
-
-        // Ultimus and the Quest Team never share a battle (CombatDuelComponent.Ultimus.cs).
-        if (isPlayer && UltimusRefusesBattle(participantObject)) {
+        // Ultimus and the Quest Team never share a battle either (the bots folder answers, through BotDoor).
+        if (isPlayer && BotDoor.Side?.RefusesJoiner(this, participantObject) == true) {
             return;
         }
 
@@ -2325,7 +2311,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
 
         // A Quest Team wizard takes its own circle of the team's order when it is free (CombatDuelComponent.QuestTeam.cs).
-        if (QuestTeamOwnCircle(playerObject) is { } own) {
+        if (BotDoor.Side?.OwnCircle(this, playerObject) is { } own) {
             _groupReservations.Release(charId);
 
             return own;
@@ -2385,7 +2371,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
     }
 
-    private static ushort CompressTeleportCoordinate(float coordinate)
+    internal static ushort CompressTeleportCoordinate(float coordinate)
         => unchecked((ushort) (short) MathF.Round(coordinate / 4));
 
     private void SendCombatPhase(byte phase) {
@@ -3303,7 +3289,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         }
     }
 
-    private void HandleFleeAction(CombatDuelSubCircle caster, bool drainMana = true) {
+    internal void HandleFleeAction(CombatDuelSubCircle caster, bool drainMana = true) {
         if (!_isActive) {
             return;
         }
@@ -3499,7 +3485,7 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
             Logger.Args(Duel.m_duelID.Full, circle.SlotIndex, left));
 
         // Ultimus stepping in mid-planning looks at its hand like anyone else, with the time that is left.
-        UltimusJoinedPlanning(circle, left);
+        BotDoor.Side?.JoinedPlanning(this, circle, left);
     }
 
     private bool IsAlternatingPvP => IsPvPDuel && _pvp.Rules.AlternateTurns;

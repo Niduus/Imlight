@@ -451,6 +451,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab(ULTIMUS_ISSUES_TAB, () => UltimusPart(1, UltimusIssuesTab)),
             Tab(ULTIMUS_LOGS_TAB, () => UltimusPart(2, UltimusLogsTab)),
             Tab(ULTIMUS_AI_TAB, UltimusAiTab),
+            Tab(BOT_UPDATES_TAB, BotUpdatesTab),
         }.Concat(Tco7Tabs()).ToDictionary(t => (string) t.Tag!);
         // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
         var nav = Navigation(tabs);
@@ -3192,6 +3193,7 @@ internal sealed partial class ManagerWindow : Window {
         [QUEST_TEAM_LOGS_TAB] = ("log", "The Quest Team's quest log (each quest, its steps and how long it took) and what each wizard did."),
         [ULTIMUS_TAB] = ("user", "Ultimus, the Solo Quester: one Balance wizard the server plays through the Main Story alone. Its quest, stats, gear and deck."),
         [ULTIMUS_ISSUES_TAB] = ("flag", "Every quest Ultimus could not finish, with a debug report to fix it from."),
+        [BOT_UPDATES_TAB] = ("download", "Which bots the server runs, every bot update with its notes, and live bot updates (the bots update without a new Ahziael)."),
         [ULTIMUS_AI_TAB] = ("user", "Optional AI chat for Ultimus on your own PC (Ollama or LM Studio): setup steps, model picks, PC scan and a test."),
         [ULTIMUS_LOGS_TAB] = ("log", "Ultimus's quest log and what it did, with odd things it noticed in pink."),
         [TCO7_TAB] = ("users", "The Calling of 7: seven wizards, one of each school, each its own Ultimus. Turn them on, let them talk and team up, and see each one."),

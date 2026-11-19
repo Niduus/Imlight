@@ -24,10 +24,17 @@ var root = FindRepoRoot();
 var source = Path.Combine(root, "src", "Imlight.CoreLib");
 var output = Path.Combine(source, "Game", "Tools", "ServerMessageCatalog.Generated.cs");
 
+// The bots (bots/, built apart from the server) send players messages too: theirs are listed as "bots/...".
+var bots = Path.Combine(root, "bots");
 var trees = Directory.EnumerateFiles(source, "*.cs", SearchOption.AllDirectories)
     .Where(f => !f.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}") && !f.EndsWith(".Generated.cs"))
     .OrderBy(f => f, StringComparer.Ordinal)
     .Select(f => CSharpSyntaxTree.ParseText(File.ReadAllText(f), path: Path.GetRelativePath(source, f)))
+    .Concat(Directory.EnumerateFiles(bots, "*.cs", SearchOption.AllDirectories)
+        .Where(f => !f.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}")
+                    && !f.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}"))
+        .OrderBy(f => f, StringComparer.Ordinal)
+        .Select(f => CSharpSyntaxTree.ParseText(File.ReadAllText(f), path: Path.GetRelativePath(root, f))))
     .ToList();
 
 var finder = new MessageFinder(trees);

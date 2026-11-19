@@ -31,7 +31,8 @@ File.WriteAllText(ini, "[Logging]\nLogLevel=WARNING\n");
 Environment.SetEnvironmentVariable("IMLIGHT_LOG_PATH", Path.Combine(temp, "log.txt"));
 Imlight.Common.ConfigurationManager.Initialize(ini);
 
-var replay = Assembly.Load("Imlight.CoreLib").GetType("Imlight.CoreLib.Game.Ultimus.UltimusReplay", throwOnError: true);
+// The bots live in their own build (bots/, BotDoor) since 2026-11-19.
+var replay = Assembly.Load("Imlight.Bots").GetType("Imlight.CoreLib.Game.Ultimus.UltimusReplay", throwOnError: true);
 var cases = (System.Collections.IEnumerable) replay.GetField("s_cases", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
 var count = 0;
 foreach (var c in cases) {

@@ -550,7 +550,7 @@ internal sealed partial class UltimusDirectorActor {
     private static bool InMyBattle(UltimusMember.Status me, ulong charId) {
         try {
             return me.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId)
-                   && CombatDuelComponent.UltimusBattlePlayers(me.GlobalId).Any(p => p.CharId == charId);
+                   && DuelBots.UltimusBattlePlayers(me.GlobalId).Any(p => p.CharId == charId);
         }
         catch (Exception) {
             return false;

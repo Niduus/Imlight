@@ -53,7 +53,7 @@
     <!-- Every in-game command with its help, the same list the server's .help shows. -->
     <Compile Include="..\Imlight.CoreLib\Game\Commands\CommandGuide.cs" Link="Shared\CommandGuide.cs" />
     <!-- Ultimus's AI services and their key file, the same list the server uses. -->
-    <Compile Include="..\Imlight.CoreLib\Game\Ultimus\UltimusAiProviders.cs" Link="Shared\UltimusAiProviders.cs" />
+    <Compile Include="..\..\bots\Ultimus\UltimusAiProviders.cs" Link="Shared\UltimusAiProviders.cs" />
   </ItemGroup>
 
   <ItemGroup>

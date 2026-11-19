@@ -34,7 +34,7 @@ namespace Imlight.CoreLib.Game.Zone.Components;
 /// first); "Cast Dragonblade on Mitsu" is an order he follows when the card is in his hand. A card he lacks the pips for
 /// waits up to three rounds; one he doesn't have, or a name not in the battle, he says so and plays his own way.
 /// </summary>
-internal sealed partial class CombatDuelComponent {
+internal sealed partial class DuelBots {
 
     private void UltimusSays(CombatDuelSubCircle member, string text) {
         if (string.IsNullOrWhiteSpace(text)) {
@@ -43,7 +43,7 @@ internal sealed partial class CombatDuelComponent {
 
         // One line a round at most in battle chat; the rest goes to his Thoughts only.
         if (!UltimusOrders.MaySayThisRound()) {
-            UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: (would say \"{text}\", but already spoke this round)");
+            UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: (would say \"{text}\", but already spoke this round)");
             return;
         }
 
@@ -60,7 +60,7 @@ internal sealed partial class CombatDuelComponent {
 
         var gid = Wizard.GetGameObjectId(UltimusOrders.LeaderFirst);
         return circles.Any(c => c.OccupiedTeam == member.OccupiedTeam && c.IsAlive && c.AddedToDuel && c.ParticipantObject?.m_globalID.Full == gid
-                                && CombatResolver.GetQueuedAction(c) is null);
+                                && D.CombatResolver.GetQueuedAction(c) is null);
     }
 
     /// <summary>A flee or a draw ordered: done here (true: his pick waits for a later look, or there is none this round).</summary>
@@ -69,7 +69,7 @@ internal sealed partial class CombatDuelComponent {
             switch (pending.Order.Kind) {
                 case UltimusOrders.Kind.Flee:
                     UltimusOrders.Done(pending);
-                    UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: {pending.ByName} (group leader) said to flee: presses Flee.");
+                    UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: {pending.ByName} (group leader) said to flee: presses Flee.");
                     UltimusSays(member, "Okay!");
                     // The leader's call, so he obeys; a flee in a dungeon still counts against the run (UltimusEffort).
                     var inDungeon = member._wizard is { } fleeing && Imlight.CoreLib.Game.World.DungeonRecall.IsInDungeon(fleeing.CharId);
@@ -89,11 +89,11 @@ internal sealed partial class CombatDuelComponent {
                         continue;
                     }
 
-                    UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: {pending.ByName} (group leader) said to draw: draws a treasure card.");
+                    UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: {pending.ByName} (group leader) said to draw: draws a treasure card.");
                     UltimusSays(member, "Okay!");
-                    _ultimusDrew.Add((Duel.m_roundNum, member.SlotIndex));
+                    _ultimusDrew.Add((D.Duel.m_roundNum, member.SlotIndex));
                     UltimusDirector.ActorOf(UltimusRole(member))?.Tell(new UltimusMember.DrawTreasure(), Akka.Actor.ActorRefs.NoSender);
-                    Timers.StartSingleTimer(ULTIMUS_THINK_KEY, new UltimusThink(Duel.m_roundNum, false), TimeSpan.FromSeconds(1.5));
+                    D.BotTimer(ULTIMUS_THINK_KEY, new UltimusThink(D.Duel.m_roundNum, false), TimeSpan.FromSeconds(1.5));
                     return true;
             }
         }
@@ -113,8 +113,8 @@ internal sealed partial class CombatDuelComponent {
 
         foreach (var pending in UltimusOrders.Waiting()) {
             var order = pending.Order;
-            if (pending.LastRound != Duel.m_roundNum) {
-                pending.LastRound = Duel.m_roundNum;
+            if (pending.LastRound != D.Duel.m_roundNum) {
+                pending.LastRound = D.Duel.m_roundNum;
                 pending.Rounds++;
             }
 
@@ -150,7 +150,7 @@ internal sealed partial class CombatDuelComponent {
                 // A named card still in his deck waits for him to draw it (three rounds at most), as a player's would; he says so
                 // once (Niduus, 2026-11-16: he said he'd use Hex and never cast it, with no word why).
                 if (order.Card.Length > 0 && InDeck(member, order.Card) is { } inDeck) {
-                    UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: {inDeck} ({pending.ByName}'s order) is in his deck but not in his hand yet: waits to draw it (round {pending.Rounds} of 3).");
+                    UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: {inDeck} ({pending.ByName}'s order) is in his deck but not in his hand yet: waits to draw it (round {pending.Rounds} of 3).");
                     if (!pending.ToldNoPips) {
                         pending.ToldNoPips = true;
                         UltimusSays(member, $"{inDeck} isn't in my hand yet, I'll cast it as soon as I draw it.");
@@ -160,7 +160,7 @@ internal sealed partial class CombatDuelComponent {
                 }
 
                 UltimusOrders.Done(pending);
-                UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: can't do {pending.ByName}'s order ({order.Kind} {what}): " +
+                UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: can't do {pending.ByName}'s order ({order.Kind} {what}): " +
                                                      (order.Card.Length > 0 ? $"{order.Card} is not in his hand or his deck." : $"no {what} card in his hand."));
                 if (order.Kind != UltimusOrders.Kind.Focus) {
                     UltimusSays(member, order.Card.Length > 0 ? $"I don't have {order.Card} in my deck." : $"I don't have a {what} card in my hand.");
@@ -171,7 +171,7 @@ internal sealed partial class CombatDuelComponent {
 
             if (!card.Castable) {
                 // Not enough pips yet: it waits for a later round (three at most), and he says so once.
-                UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: {card.Card.Shown} ({pending.ByName}'s order) needs more pips: waits (round {pending.Rounds} of 3).");
+                UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: {card.Card.Shown} ({pending.ByName}'s order) needs more pips: waits (round {pending.Rounds} of 3).");
                 if (!pending.ToldNoPips) {
                     pending.ToldNoPips = true;
                     UltimusSays(member, $"Not enough pips for {card.Card.Shown} yet, I'll cast it when I can.");
@@ -192,7 +192,7 @@ internal sealed partial class CombatDuelComponent {
             if (order.Kind == UltimusOrders.Kind.Suggest && own.Move == UltimusTactics.Move.Cast
                 && member.GetSpellFromLastHand((byte) own.Card) is { } mine && RewrittenAI.Read(mine) is { } minePick
                 && (minePick.Heal || minePick.Shield) && !minePick.Hit && minePick.Id != card.Card.Id) {
-                UltimusLink.Note(UltimusRoster.NAME, $"round {Duel.m_roundNum}: thinks about {card.Card.Shown} ({pending.ByName}'s idea), but {own.Why} comes first.");
+                UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: thinks about {card.Card.Shown} ({pending.ByName}'s idea), but {own.Why} comes first.");
                 if (!pending.ToldNoPips) {
                     pending.ToldNoPips = true;
                     UltimusSays(member, $"Good idea, but I need to {minePick.Kind} first. {card.Card.Shown} next!");
@@ -244,8 +244,8 @@ internal sealed partial class CombatDuelComponent {
                 $"casts {heal.Card.Shown} on {UltimusTactics.Name(on)} (playing defensive, as the group leader said)");
         }
 
-        if (Duel.m_roundNum - _defendShieldRound >= 2 && BestOfKind(hand, UltimusOrders.Kind.Shield, true) is { } shield) {
-            _defendShieldRound = Duel.m_roundNum;
+        if (D.Duel.m_roundNum - _defendShieldRound >= 2 && BestOfKind(hand, UltimusOrders.Kind.Shield, true) is { } shield) {
+            _defendShieldRound = D.Duel.m_roundNum;
             var on = shield.Card.ShieldForTeammate && hurt is not null ? hurt : member;
             return new(UltimusTactics.Move.Cast, shield.Index, shield.Card.ShieldWholeTeam ? -1 : on.SlotIndex,
                 $"casts {shield.Card.Shown} on {UltimusTactics.Name(on)} (playing defensive, as the group leader said)");

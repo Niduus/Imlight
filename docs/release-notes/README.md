@@ -36,3 +36,8 @@ Ahziael's What's New, so write it to read well as that one line:
 - No `#` headings, no `-` bullet lists, no numbered steps, no `**bold**`. Put each note's own `Where:` and `Test:`
   right under it, not in a block shared by several notes.
 - `Test:` is one or two sentences a player can follow.
+
+## Bot-only changes
+
+A change that only touches the bots (the `bots/` folder) puts its note in `bots/bot-notes/` instead. Those notes go
+out with a bot update ("Publish bot update" on GitHub), not in Ahziael's patch notes.

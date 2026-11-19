@@ -7,16 +7,24 @@
 #
 #   pwsh tools/release-notes.ps1 -From v0.10.741 -To HEAD
 
+#
+# Bot updates (Niduus, 2026-11-19: "complaints about the updates being solely for just the bots ... lowers the bloat in patch
+# notes"): a change that only touches the bots folder is left out of the app's notes; -Bots lists only changes that touch
+# it, from the notes in bots/bot-notes/, for the Publish bot update release.
+#
+#   pwsh tools/release-notes.ps1 -From bots-v3 -To HEAD -Bots
+
 param(
     [Parameter(Mandatory = $true)][string]$From,
-    [Parameter(Mandatory = $true)][string]$To
+    [Parameter(Mandatory = $true)][string]$To,
+    [switch]$Bots
 )
 
 $ErrorActionPreference = 'Stop'
 # git writes UTF-8; read it as that on Windows too (› and accented names).
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $OutputEncoding = [System.Text.Encoding]::UTF8
-$notesFolder = 'docs/release-notes'
+$notesFolder = if ($Bots) { 'bots/bot-notes' } else { 'docs/release-notes' }
 
 # One note file's notes: blocks split by empty lines; a block's first line is "New: Title", then lines of what it does,
 # a "Where:" line and a "Test:" (or "How to test:") line (see docs/release-notes/README.md).
@@ -109,6 +117,12 @@ foreach ($record in ($log -split [char]0x1e)) {
     $fields = $record.Trim("`n") -split [char]0x1f
     if ($fields.Count -lt 2 -or -not $fields[0]) { continue }
     $hash = $fields[0].Trim(); $subject = $fields[1].Trim(); $body = if ($fields.Count -gt 2) { $fields[2] } else { '' }
+
+    # Bot changes go in the bot update's notes, everything else in the app's.
+    $files = @(git diff-tree --no-commit-id --name-only -r -m --first-parent $hash | Where-Object { $_ })
+    $botFiles = @($files | Where-Object { $_.StartsWith('bots/') })
+    if ($Bots -and $botFiles.Count -eq 0) { continue }
+    if (-not $Bots -and $files.Count -gt 0 -and $botFiles.Count -eq $files.Count) { continue }
 
     if ($added.ContainsKey($hash)) {
         foreach ($file in $added[$hash]) {
