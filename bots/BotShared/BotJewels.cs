@@ -39,7 +39,11 @@ namespace Imlight.CoreLib.Game.BotShared;
 internal static class BotJewels {
 
     internal sealed record Jewel(uint Id, string Name, JewelSocketType Shape, WizItemTemplate Template, IReadOnlyList<BotGear.Stat> Stats,
-                                 IReadOnlyList<string> Talents, bool Sold, bool Dropped, bool Crafted);
+                                 IReadOnlyList<string> Talents, bool Sold, bool Dropped, bool Crafted) {
+
+        /// <summary>A pet jewel's talents by the game's own names ("Talent-Damage-Myth02").</summary>
+        internal IReadOnlyList<string> TalentKeys { get; init; } = [];
+    }
 
     private static volatile List<Jewel> s_all;
 
@@ -69,8 +73,9 @@ internal static class BotJewels {
                         continue;
                     }
 
-                    list.Add(new Jewel(id, NameOf(template), shape, template, BotGear.StatsOf(template), TalentsOf(template),
-                        sold.Contains(id), ItemSources.BossesDropping(id).Count > 0, made.Contains(id)));
+                    var keys = TalentKeysOf(template);
+                    list.Add(new Jewel(id, NameOf(template), shape, template, BotGear.StatsOf(template), ShownTalents(keys),
+                        sold.Contains(id), ItemSources.BossesDropping(id).Count > 0, made.Contains(id)) { TalentKeys = keys });
                 }
                 catch (Exception e) {
                     Logger.Debug("Bot jewels: jewel {0} could not be read: {1}", Logger.Args(id, e.Message));
@@ -93,8 +98,8 @@ internal static class BotJewels {
         return string.IsNullOrWhiteSpace(shown) ? (string) template.m_objectName ?? "?" : shown.Trim();
     }
 
-    // A pet jewel's talents by their shown names ("Pain-Giver"); some talent jewels name the talent only in their own name.
-    private static List<string> TalentsOf(WizItemTemplate jewel) {
+    // A pet jewel's talents by the game's names; some talent jewels name the talent only in their own name.
+    private static List<string> TalentKeysOf(WizItemTemplate jewel) {
         var names = (jewel.m_behaviors?.OfType<PetJewelBehaviorTemplate>() ?? [])
             .SelectMany(b => b.m_petTalentName ?? []).Select(n => (string) n).Where(n => !string.IsNullOrEmpty(n)).ToList();
         if (names.Count == 0) {
@@ -105,9 +110,13 @@ internal static class BotJewels {
             }
         }
 
-        return names.Select(n => PetData.GetTalent(n) is { } talent && Locale.GetEnglishName(talent.m_displayName) is { Length: > 0 } shown ? shown : null)
-            .Where(n => n is not null).ToList();
+        return names;
     }
+
+    // The talents by their shown names ("Pain-Giver").
+    private static List<string> ShownTalents(List<string> keys)
+        => keys.Select(n => PetData.GetTalent(n) is { } talent && Locale.GetEnglishName(talent.m_displayName) is { Length: > 0 } shown ? shown : null)
+            .Where(n => n is not null).ToList();
 
     // ---------------------------------------------------------------------
     // What a jewel shape gives, in plain words

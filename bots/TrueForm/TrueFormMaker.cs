@@ -137,6 +137,7 @@ internal static class TrueFormMaker {
         try {
             if (wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Pet) is { } worn && PetProgress.GetBehavior(worn) is { } had
                 && had.m_level >= PetProgress.MAX_LEVEL && IsMyth((uint) worn.m_templateID)) {
+                ShapeTalents(wizard, worn);
                 return;
             }
 
@@ -154,23 +155,7 @@ internal static class TrueFormMaker {
             PetProgress.SetLevel(pet, PetProgress.MAX_LEVEL);
             PetProgress.MaxStats(pet);
             PetProgress.SetStat(pet, "happiness", "max", out _);
-            var given = 0;
-            var names = new System.Collections.Generic.List<string>();
-            foreach (var name in PetTalents) {
-                if (given >= PET_TALENTS) {
-                    break;
-                }
-
-                var talent = PetData.AllTalents.FirstOrDefault(t => t is not PetDerbyTalentTemplate
-                                                                   && string.Equals(Locale.GetEnglishName(t.m_displayName), name, StringComparison.OrdinalIgnoreCase));
-                if (talent is not null && PetProgress.AddTalent(pet, talent)) {
-                    given++;
-                    names.Add(name);
-                }
-            }
-
-            PetProgress.MaxStats(pet);
-            PetCare.Finish(wizard, pet, null, _ => { });
+            var names = ShapeTalents(wizard, pet);
             var shown = Locale.GetEnglishName((string) (CoreObjectFactory.GetCoreTemplate(template) as WizItemTemplate)?.m_displayName ?? "");
             if (wizard.InventoryToEquipmentTransfer(pet.m_globalID.Full, out _, out _)) {
                 Logger.Information("True Form: wears his pet {0} (Ultra, talents: {1}).", Logger.Args(shown, names.Count > 0 ? string.Join(", ", names) : "none found"));
@@ -182,6 +167,54 @@ internal static class TrueFormMaker {
         catch (Exception e) {
             Logger.Warning("True Form: could not give him his pet: {0}", Logger.Args(e.Message));
         }
+    }
+
+    // A real pet has five talents, and its jewel is the sixth (Niduus, 2026-11-19: "pets naturally have 5 stats, + jewel as
+    // 6th"): the talents a pet is hatched with (his showed Maycast Disarm and Maycast Mythspear on top of his five) are taken
+    // off, so he has exactly his role's five, the first of PetTalents the game has. His jewel adds the sixth (TrueFormJewels).
+    private static System.Collections.Generic.List<string> ShapeTalents(Wizard wizard, WizClientObjectItem pet) {
+        var names = new System.Collections.Generic.List<string>();
+        var behavior = PetProgress.GetBehavior(pet);
+        if (behavior is null) {
+            return names;
+        }
+
+        var wanted = new System.Collections.Generic.List<PetTalentBaseTemplate>();
+        foreach (var name in PetTalents) {
+            if (wanted.Count >= PET_TALENTS) {
+                break;
+            }
+
+            if (PetData.AllTalents.FirstOrDefault(t => t is not PetDerbyTalentTemplate
+                                                       && string.Equals(Locale.GetEnglishName(t.m_displayName), name, StringComparison.OrdinalIgnoreCase)) is { } talent) {
+                wanted.Add(talent);
+                names.Add(name);
+            }
+        }
+
+        var wantedIds = wanted.Select(t => PetData.TalentId(t.m_talentName)).ToHashSet();
+        var had = behavior.m_expressedTalents.ToList();
+        if (had.Count == wantedIds.Count && had.All(wantedIds.Contains)) {
+            return names;
+        }
+
+        foreach (var id in had.Where(id => !wantedIds.Contains(id))) {
+            if (PetData.GetTalent(id) is { } extra && PetProgress.RemoveTalent(pet, extra)) {
+                Logger.Information("True Form: his pet's talent {0} is taken off (five talents, the jewel is the sixth).",
+                    Logger.Args(Locale.GetEnglishName(extra.m_displayName)));
+            }
+            else {
+                behavior.m_expressedTalents.Remove(id);
+            }
+        }
+
+        foreach (var talent in wanted) {
+            PetProgress.AddTalent(pet, talent);
+        }
+
+        PetProgress.MaxStats(pet);
+        PetCare.Finish(wizard, pet, null, _ => { });
+        return names;
     }
 
     private static bool IsMyth(uint template)
@@ -293,9 +326,19 @@ internal static class TrueFormMaker {
         // stats than a level 190 one used to win, as the 190 piece's sockets were empty. Now the 190 piece is worn and its
         // sockets are filled (TrueFormJewels). A slot with no piece at his level wears the highest level there is.
         static bool Allowed(BotGear.Piece p) => !p.CrownsOnly && !p.Retired && !BotGear.Forbidden(p.Id) && !BotGear.PartlyRead(p.Id);
-        var topOf = BotGear.Catalog.Where(p => Allowed(p) && BotGear.CanWear(p, "Myth", level) && BotGear.Score(p, "Myth", BotStyle.Backup) > 0)
+        // The server's drop and shop lists have no Ahmarra gear yet, so the level 190 pieces come from the game's own files
+        // (TrueFormTopGear; Niduus, 2026-11-19: "curious as to why not 190 gear"). Read once, up to a few minutes the first time.
+        var top = TrueFormTopGear.Pieces;
+        for (var i = 0; i < 480 && top is null; i++) {
+            System.Threading.Thread.Sleep(500);
+            top = TrueFormTopGear.Pieces;
+        }
+
+        var pool = BotGear.Catalog.Concat(top ?? []).DistinctBy(p => p.Id).ToList();
+        var topOf = pool.Where(p => Allowed(p) && BotGear.CanWear(p, "Myth", level) && BotGear.Score(p, "Myth", BotStyle.Backup) > 0)
             .GroupBy(p => p.Slot).ToDictionary(g => g.Key, g => g.Max(p => p.Level));
-        var best = BotGear.BestFor("Myth", level, BotStyle.Backup, p => Allowed(p) && (!topOf.TryGetValue(p.Slot, out var top) || p.Level >= top));
+        var best = BotGear.BestFor("Myth", level, BotStyle.Backup, p => Allowed(p) && (!topOf.TryGetValue(p.Slot, out var least) || p.Level >= least),
+            extra: top);
         var outfit = string.Join(",", best.OrderBy(b => b.Key).Select(b => b.Value.Id));
         var marker = Path.Combine(UltimusSeat.TrueForm.Folder, DRESSED_FILE);
         var worn = BotGear.Slots.Select(s => (Slot: s, Item: wizard.EquipmentBehavior?.GetItemInSlot(s))).ToList();

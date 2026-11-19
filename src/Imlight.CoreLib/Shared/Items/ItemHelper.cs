@@ -102,9 +102,36 @@ internal static class ItemHelper {
             m_baseColor = (Bui5) item.m_primaryColor,
             m_trimColor = (Bui5) item.m_secondaryColor,
             m_displayID = (uint) item.m_displayID,
+            m_pJewelInfo = PublicJewelInfo(item),
         };
 
         return publicItem;
+    }
+
+    /// <summary>
+    /// The sockets and jewels other players see on an item (its tooltip on another wizard, a gear vault): a copy of the
+    /// item's own socket state. Left out, the game shows the "Sockets" heading with nothing under it (Niduus, 2026-11-19:
+    /// "I can't see sockets, let alone socketed jewels" on True Form's amulet). An item with sockets and no state yet shows
+    /// them empty and unlocked, as they are here (sockets unlock for free). Null for an item with no sockets.
+    /// </summary>
+    internal static PublicEquippedJewelInfo PublicJewelInfo(WizClientObjectItem item) {
+        try {
+            var state = item?.m_inactiveBehaviors?.OfType<ClientJewelSocketBehavior>().FirstOrDefault()?.m_publicJewelInfo;
+            if (state is null && JewelSockets.GetSockets(GetItemTemplate(item)).Count == 0) {
+                return null;
+            }
+
+            return new PublicEquippedJewelInfo {
+                m_bSocketsLocked = state?.m_bSocketsLocked ?? false,
+                m_infoPairs = (state?.m_infoPairs ?? [])
+                    .Where(p => p is not null)
+                    .Select(p => new PublicSocketJewelPair { m_socketNumber = p.m_socketNumber, m_jewelTemplateID = p.m_jewelTemplateID })
+                    .ToList(),
+            };
+        }
+        catch (Exception) {
+            return null;
+        }
     }
 
     /// <summary>

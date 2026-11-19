@@ -451,6 +451,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab(ULTIMUS_AI_TAB, UltimusAiTab),
             Tab(BOT_UPDATES_TAB, BotUpdatesTab),
             Tab(STREET_BOTS_TAB, StreetBotsTab),
+            Tab(TRUE_FORM_TAB, TrueFormTab),
         }.Concat(Tco7Tabs()).ToDictionary(t => (string) t.Tag!);
         // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
         var nav = Navigation(tabs);
@@ -3166,6 +3167,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Server"] = ("server", "Start, restart and stop the server, and pick where the server comes from."),
         ["Game Modes"] = ("dice", "Whole-server modes such as Randomizer and Die = Delete, and what spell trainers ask for."),
         ["Battles and World"] = ("sword", "Switches for battles, pips, pets, jewels, houses and the world, Tamed Drops, and how fast plants grow."),
+        [TRUE_FORM_TAB] = ("user", "True Form, the helper bot anyone can call: where he is, who he helps, how he plays, his gear, jewels and look."),
         [STREET_BOTS_TAB] = ("users", "Bot Players: wizards the server plays in the streets so the game feels busy. Turn them on, how many, and the ones out now."),
         ["On and Off"] = ("power", "Turn any NPC, creature, zone or world of the game, or any of your customs, on or off, with no restart."),
         ["What NPCs Give"] = ("bag", "Pick an NPC and switch each quest it offers, and each item, treasure card or spell it sells or teaches, on or off."),

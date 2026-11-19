@@ -336,6 +336,9 @@ internal static class BotGear {
 
     private static readonly string[] s_schools = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance", "Shadow", "Sun", "Moon", "Star", "All"];
 
+    /// <summary>The wizard level an item needs to be worn (0 for none).</summary>
+    internal static int LevelNeeded(WizItemTemplate template) => template is null ? 0 : Requirements(template.m_equipRequirements).Level;
+
     private static (int Level, string School) Requirements(Requirement requirement) {
         var level = 0;
         var school = "";
@@ -509,9 +512,9 @@ internal static class BotGear {
 
     /// <summary>The best pieces for a school, level and style, one per slot (two rings are one ring slot in the game).</summary>
     internal static Dictionary<EquipmentSlotType, Piece> BestFor(string school, int level, BotStyle style, Func<Piece, bool> allowed = null,
-                                                                Random pickNear = null) {
+                                                                Random pickNear = null, IEnumerable<Piece> extra = null) {
         var best = new Dictionary<EquipmentSlotType, Piece>();
-        var catalog = Catalog;
+        var catalog = extra is null ? Catalog : Catalog.Concat(extra.Where(p => p is not null)).DistinctBy(p => p.Id).ToList();
         foreach (var slot in Slots) {
             var name = slot.ToString();
             var ranked = catalog.Where(p => p.Slot == name && CanWear(p, school, level) && (allowed?.Invoke(p) ?? true))

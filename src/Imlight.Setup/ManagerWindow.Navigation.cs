@@ -102,6 +102,7 @@ internal sealed partial class ManagerWindow {
         ("Ultimus", "user", [ULTIMUS_TAB, ULTIMUS_ISSUES_TAB, ULTIMUS_LOGS_TAB, ULTIMUS_AI_TAB]),
         ("TCO7", "users", Tco7TabNames),
         ("Quest Team", "users", [QUEST_TEAM_TAB, QUEST_TEAM_WIZARDS_TAB, QUEST_TEAM_ISSUES_TAB, QUEST_TEAM_LOGS_TAB]),
+        ("True Form", "user", [TRUE_FORM_TAB]),
         ("Street bots", "users", [STREET_BOTS_TAB]),
         // Niduus, 2026-11-19: the bots update on their own, without a new Ahziael (ManagerWindow.BotUpdates.cs).
         ("Bot updates", "download", [BOT_UPDATES_TAB]),

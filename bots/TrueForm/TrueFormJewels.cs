@@ -143,6 +143,24 @@ internal static class TrueFormJewels {
         }
 
         var best = 0.0;
+        // A talent his role uses that is not one of his five (his five come first: PetTalents); under 1, so one of his
+        // named talents always wins: myth or every-school damage, resist, pierce, critical, health, healing taken.
+        foreach (var key in jewel.TalentKeys) {
+            if (pet is not null && pet.m_expressedTalents.Contains(PetData.TalentId(key))) {
+                continue;
+            }
+
+            var tier = key.Length > 0 && char.IsDigit(key[^1]) ? key[^1] - '0' : 1;
+            var kind = key.StartsWith("Talent-Damage-Myth", StringComparison.OrdinalIgnoreCase) || key.StartsWith("Talent-Damage-All", StringComparison.OrdinalIgnoreCase) ? 0.9
+                : key.StartsWith("Talent-Resist-All", StringComparison.OrdinalIgnoreCase) ? 0.85
+                : key.StartsWith("Talent-ArmorPiercing", StringComparison.OrdinalIgnoreCase) ? 0.8
+                : key.StartsWith("Talent-CriticalHit-Myth", StringComparison.OrdinalIgnoreCase) || key.StartsWith("Talent-CriticalHit-All", StringComparison.OrdinalIgnoreCase) ? 0.7
+                : key.StartsWith("Talent-Health", StringComparison.OrdinalIgnoreCase) ? 0.6
+                : key.StartsWith("Talent-IncHealing", StringComparison.OrdinalIgnoreCase) ? 0.5
+                : 0;
+            best = Math.Max(best, kind * (0.9 + (0.025 * Math.Min(tier, 4))));
+        }
+
         foreach (var talent in jewel.Talents) {
             var index = Array.FindIndex(TrueFormMaker.PetTalents, n => n.Equals(talent, StringComparison.OrdinalIgnoreCase));
             if (index < 0) {

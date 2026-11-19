@@ -3000,6 +3000,20 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 // Where he is in his world's story, and a time to the next world at his pace (Niduus, 2026-11-15: "CURR/END").
                 ["progress"] = _team.Count > 0 ? BotShared.BotProgress.Json(BotShared.BotProgress.ULTIMUS, _team[0].Wizard, _currentQuest ?? _target?.Quest, note: true) : null,
             };
+            // True Form's own lines for his page in Ahziael (Niduus, 2026-11-19: "add TF page in Ahziael").
+            if (_seat.IsTrueForm) {
+                var home = TrueForm.Home;
+                status["trueForm"] = new JsonObject {
+                    ["with"] = TrueForm.With ?? "",
+                    ["mode"] = TrueForm.Words(TrueForm.Now),
+                    ["asked"] = TrueForm.Asked,
+                    ["spellLevel"] = TrueForm.SpellLevel(),
+                    ["devSpells"] = TrueForm.DevSpellsNow,
+                    ["home"] = $"{UltimusText.Zone(home.Zone)} ({home.X:0}, {home.Y:0})",
+                    ["requested"] = new JsonArray([.. TrueForm.Requested.Select(id => (JsonNode) (TrueFormPool.Of(id)?.Shown ?? id.ToString()))]),
+                };
+            }
+
             UltimusLink.Send(new UltimusRequest { Op = "status", Json = status.ToJsonString() });
             // The overlay's Ultimus Spectator draws this quest's way on Ultimus's own minimap (read only).
             // Always what is true this moment (approved 2026-11-14, "an always-accurate Spectator status line"): the quest's
