@@ -126,6 +126,22 @@ internal static class CombatEffectApplicator {
     [ThreadStatic]
     private static string s_boostSchool;
 
+    /// <summary>
+    /// The enchantment on the card being cast now (Sharpened Blade, Potent Trap...), 0 for none. Its charms and wards carry
+    /// it (m_enchantmentSpellTemplateID, as the game does), so a sharpened blade stacks with a plain one of the same kind
+    /// and a potent trap with a plain trap, as in the game (Niduus, 2026-11-19: "prism/sharpened/potent bug stacking").
+    /// </summary>
+    internal static uint CastEnchantment {
+        get => s_castEnchantment;
+        set => s_castEnchantment = value;
+    }
+
+    [ThreadStatic]
+    private static uint s_castEnchantment;
+
+    // The enchantment a hanging copy keeps: its own, else the card's being cast now.
+    private static uint EnchantmentOf(SpellEffect effect) => effect.m_enchantmentSpellTemplateID != 0 ? effect.m_enchantmentSpellTemplateID : s_castEnchantment;
+
     /// <summary>The school a spell's hits are boosted by when it is not their damage type (a Balance spell), else null.</summary>
     internal static string BoostSchoolOf(uint spellTemplateId)
         => spellTemplateId != 0 && Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(spellTemplateId) is SpellTemplate spell
@@ -909,6 +925,7 @@ internal static class CombatEffectApplicator {
 
             var copy = effect with {
                 m_spellTemplateID = id,
+                m_enchantmentSpellTemplateID = EnchantmentOf(effect),
                 m_paramPerRound = effect.m_effectType == kSpellEffects.kAbsorbDamage ? effect.m_effectParam : effect.m_paramPerRound,
             };
 

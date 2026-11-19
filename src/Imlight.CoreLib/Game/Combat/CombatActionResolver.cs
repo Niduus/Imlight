@@ -97,6 +97,8 @@ internal static class CombatActionResolver {
         s_picked = action.PickedTargets;
         s_picksChosen = action.PicksChosen;
         s_selfGoesOn = action.SelfOnTarget && action.SelectedTarget is { } onTarget && onTarget != action.SpellCaster ? onTarget : null;
+        var outerEnchantment = CombatEffectApplicator.CastEnchantment;
+        CombatEffectApplicator.CastEnchantment = action.Spell?.m_enchantment ?? 0;
         try {
             CombatEffectApplicator.FlushIntercepts();
             var worth = Process(action, ref combatAction, ref cinematicTime, out notes);
@@ -109,6 +111,7 @@ internal static class CombatActionResolver {
             s_picked = null;
             s_picksChosen = false;
             s_selfGoesOn = null;
+            CombatEffectApplicator.CastEnchantment = outerEnchantment;
         }
     }
 
@@ -564,6 +567,45 @@ internal static class CombatActionResolver {
 
         return (byte) Math.Min(totalPips, GetMaxXPipTier(spell));
     }
+
+    // [Combat] XPipMinPips: the fewest pips a creature (and the Rewritten AI) puts into an X pip spell when it has another
+    // attack it could cast instead, unless the spell's top tier is lower. An X pip spell cast with 1 or 2 pips is its
+    // weakest; creatures threw Tempest and Judgement away at 1 pip (Niduus, 2026-11-19: "lack of logic for X pip spells").
+    internal static int XPipMinPips => Math.Clamp(Imlight.Common.ConfigurationManager.GetValue("Combat.XPipMinPips", 4), 0, 14);
+
+    /// <summary>The lowest pip tier (m_pipNum above 0) an X-pip spell has; 1 when it lists none.</summary>
+    internal static int GetMinXPipTier(Spell spell) {
+        var template = CoreObjectFactory.GetCoreTemplate(spell.m_templateID) as SpellTemplate;
+        var variable = template?.m_effects?.OfType<VariableSpellEffect>().FirstOrDefault();
+        var tiers = variable?.m_effectList?.Where(e => e is not null && e.m_pipNum > 0).Select(e => (int) e.m_pipNum).ToList();
+
+        return tiers is { Count: > 0 } ? tiers.Min() : 1;
+    }
+
+    /// <summary>
+    /// An X pip spell does something with the pips the caster has now: they reach its lowest tier. Below it the cast is
+    /// thrown away (a spell whose tiers start at 2 pips, cast with 1).
+    /// </summary>
+    internal static bool XPipReachesATier(Spell spell, CombatDuelSubCircle caster)
+        => !IsXPipSpell(spell) || GetXPipCost(spell, caster) >= GetMinXPipTier(spell);
+
+    /// <summary>
+    /// An X pip spell is worth casting now: its top tier is reached, or at least [Combat] XPipMinPips pips go into it.
+    /// Any other spell is always worth it here.
+    /// </summary>
+    internal static bool XPipWorthCasting(Spell spell, CombatDuelSubCircle caster) {
+        if (!IsXPipSpell(spell)) {
+            return true;
+        }
+
+        var paid = GetXPipCost(spell, caster);
+
+        return paid >= GetMinXPipTier(spell) && (paid >= GetMaxXPipTier(spell) || paid >= XPipMinPips);
+    }
+
+    /// <summary>The pips a spell would cost the caster now: an X pip spell's are the pips it would take.</summary>
+    internal static int PipsSpentNow(Spell spell, CombatDuelSubCircle caster)
+        => IsXPipSpell(spell) ? GetXPipCost(spell, caster) : spell?.m_pipCost?.m_spellRank ?? 0;
 
     // Highest pip tier (m_pipNum) an X-pip spell offers; int.MaxValue when there is none.
     private static int GetMaxXPipTier(Spell spell) {

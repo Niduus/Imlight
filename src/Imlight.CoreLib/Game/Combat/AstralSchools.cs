@@ -86,6 +86,19 @@ internal static class AstralSchools {
             ? (uint) shown
             : (uint) school;
 
+    // [AstralSchools] PowerPipsDouble: a wizard who took Sun, Moon, Star or Shadow counts power pips as 2 for that school's
+    // spells, as for their own school's. Without it, a power pip counted as 1 for those spells, so wizards who took an astral
+    // school could not afford them with power pips (Niduus, 2026-11-19).
+    internal static bool PowerPipsDouble => ConfigurationManager.GetValue("AstralSchools.PowerPipsDouble", true);
+
+    /// <summary>
+    /// True when the wizard's astral school is <paramref name="magicSchoolID"/>: power pips count as 2 for its spells.
+    /// The game is shown a cost it can count (CombatDuelSubCircle.ForGame), so the cards aren't greyed out.
+    /// </summary>
+    internal static bool Masters(ServerWizGameStats stats, uint magicSchoolID)
+        => magicSchoolID != 0 && Enabled && PowerPipsDouble && Find(stats?.m_astralSchool) is { } name
+           && Enum.TryParse<MagicSchool>(name, out var astral) && (uint) astral == magicSchoolID;
+
     /// <summary>The astral school's name as it is written ("Sun"), or null for none or an unknown name.</summary>
     internal static string Find(string name)
         => NAMES.FirstOrDefault(n => n.Equals((name ?? "").Trim(), StringComparison.OrdinalIgnoreCase));
