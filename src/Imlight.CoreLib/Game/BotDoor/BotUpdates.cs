@@ -112,6 +112,37 @@ internal static class BotUpdates {
         });
     }
 
+    // Like the server's own restart for an update (Ahziael, 2 minutes with warnings at 1 minute and 30 seconds; Niduus,
+    // 2026-11-19: "have an announcement for when bots go down like when the server goes down (2 minutes)"). Nothing holds
+    // the bots back after it: no battle or player waits it out, they go down and come back right after.
+    private static readonly TimeSpan s_countdown = TimeSpan.FromMinutes(2);
+
+    private static async Task<bool> CountDownAsync() {
+        if (Tell($"The bots go down for an update in {(int) s_countdown.TotalMinutes} minutes. They log back in by themselves right after.") == 0) {
+            // Nobody online to warn: no wait.
+            return false;
+        }
+
+        Note($"bots go down in {(int) s_countdown.TotalMinutes} minutes (players told)");
+        await Task.Delay(s_countdown - TimeSpan.FromMinutes(1));
+        Tell("The bots go down for an update in 1 minute.");
+        await Task.Delay(TimeSpan.FromSeconds(30));
+        Tell("The bots go down for an update in 30 seconds.");
+        await Task.Delay(TimeSpan.FromSeconds(30));
+        Tell("The bots are going down for their update now. They will be back in a moment.");
+        return true;
+    }
+
+    private static int Tell(string text) {
+        try {
+            return Tools.ManagerCommands.Announce(box: false, chat: true, text);
+        }
+        catch (Exception e) {
+            Logger.Warning("Bots: could not tell players about the bot update: {0}", Logger.Args(e.Message));
+            return 0;
+        }
+    }
+
     private sealed record Published(int Number, string Tag, string ZipUrl, string Notes, DateTime When);
 
     /// <summary>Looks for a newer bot update, gets it and swaps the bots to it when it is newer than what runs.</summary>
@@ -139,8 +170,14 @@ internal static class BotUpdates {
         s_lastCheckResult = $"newest bot update: {newest.Tag}";
         var pick = await PickAsync(newest.Tag);
         if (pick != BotDoor.Version) {
-            if (await BotLoader.SwapAsync(pick, pick == BotLoader.BUILT_IN ? "the server's own bots are newer" : "a newer bot update was published") is { } why) {
+            var told = await CountDownAsync();
+            var why = await BotLoader.SwapAsync(pick, pick == BotLoader.BUILT_IN ? "the server's own bots are newer" : "a newer bot update was published");
+            if (why is not null) {
                 Note($"could not swap to {BotLoader.Label(pick)}: {why}");
+            }
+
+            if (told) {
+                Tell(why is null ? "The bots are back from their update." : "The bots could not take their update and are back as they were.");
             }
         }
 
