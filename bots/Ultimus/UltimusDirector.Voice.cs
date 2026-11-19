@@ -540,6 +540,11 @@ internal sealed partial class UltimusDirectorActor {
             return true;
         }
 
+        // He just asked them a question ("Blade who: you or Walter?"): their next line is the answer (UltimusDirector.OrderContext.cs).
+        if (_askedLeader.TryGetValue(heard.SpeakerCharId, out var asked) && now - asked.At < s_askKept) {
+            return true;
+        }
+
         // True Form takes orders from his group in any chat, named or not (Niduus, 2026-11-19: "Bots need better obedience
         // to commands"); "defend" said near him by his group's player is for him.
         if (_seat.IsTrueForm && GroupRegistry.AreGrouped(me.CharId, heard.SpeakerCharId) && TrueForm.LooksLikeOrder(heard.Text)) {

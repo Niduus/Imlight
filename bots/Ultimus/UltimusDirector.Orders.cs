@@ -60,6 +60,11 @@ internal sealed partial class UltimusDirectorActor {
         var grouped = GroupRegistry.TryGetGroup(me.CharId, out var group);
         var leader = grouped && group.LeaderCharId == heard.SpeakerCharId && group.LeaderCharId != me.CharId;
 
+        // A short line read by what came before: the answer to his question, "again", "Walter too" (UltimusDirector.OrderContext.cs).
+        if (leader && OrderInContext(heard, me, text, orders)) {
+            return true;
+        }
+
         if (orders.Count == 0) {
             if (!leader || !heard.Typed || BotShared.BotOrderWords.AskOf(heard.Text) is null || heard.Text.Length > 80) {
                 return false;
@@ -68,6 +73,11 @@ internal sealed partial class UltimusDirectorActor {
             // "Use it" with no card talked about: he asks which, rather than guessing one (the AI once took it for a blade).
             if (s_itCard.IsMatch(heard.Text)) {
                 SendReply(heard, "Which card do you mean? Say its name, like \"use Hex\".", "leader commands");
+                return true;
+            }
+
+            // A word two letters off an order ("shleid me"): he asks "Did you mean "shield me"?" instead of guessing.
+            if (AskWhatTheyMeant(heard, me, text)) {
                 return true;
             }
 
@@ -118,7 +128,15 @@ internal sealed partial class UltimusDirectorActor {
 
     private void ApplyOrders(UltimusVoice.Heard heard, UltimusMember.Status me, List<UltimusOrders.Order> orders, string how) {
         var fighting = me.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId);
+        // An order that could mean more than one person is asked about, not guessed ("Blade who: you, me or Walter?").
+        orders = WithoutUnclear(heard, me, orders, fighting);
+        if (orders.Count == 0) {
+            return;
+        }
+
+        RememberOrders(heard, orders);
         var said = new List<string>();
+        var wentIn = false;
         foreach (var order in orders) {
             switch (order.Kind) {
                 case UltimusOrders.Kind.Stay:
@@ -189,7 +207,14 @@ internal sealed partial class UltimusDirectorActor {
                 case UltimusOrders.Kind.Focus:
                     UltimusOrders.SetFocus(order.Target);
                     UltimusOrders.AddRound(order, heard.SpeakerCharId, heard.SpeakerName);
-                    said.Add($"Going after {order.Target}");
+                    // Out of battle with an enemy right by the leader, "kill the outlaw" means start the fight now.
+                    wentIn = !fighting && EnterFightNow(me);
+                    said.Add(wentIn ? $"Going in after {On(order.Target)}" : $"Going after {On(order.Target)}");
+                    break;
+                case UltimusOrders.Kind.Attack when !fighting && EnterFightNow(me):
+                    UltimusOrders.AddRound(order, heard.SpeakerCharId, heard.SpeakerName);
+                    wentIn = true;
+                    said.Add(order.Target == UltimusOrders.ALL_ENEMIES ? "Going in to hit them all" : "Going in");
                     break;
                 default:
                     UltimusOrders.AddRound(order, heard.SpeakerCharId, heard.SpeakerName);
@@ -202,7 +227,7 @@ internal sealed partial class UltimusDirectorActor {
             or UltimusOrders.Kind.OwnWay or UltimusOrders.Kind.LeaderFirst or UltimusOrders.Kind.GoFirst or UltimusOrders.Kind.EnterFight
             or UltimusOrders.Kind.Defensive or UltimusOrders.Kind.Offensive));
         var line = string.Join(", then ", said.Where(s => s.Length > 0));
-        if (battleOrder && !fighting) {
+        if (battleOrder && !fighting && !wentIn) {
             line += $" in our next battle (within {(int) UltimusOrders.Keep.TotalMinutes} minutes)";
         }
 
