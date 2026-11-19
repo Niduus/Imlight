@@ -123,11 +123,9 @@ internal static class TrueFormMaker {
         Logger.Information("True Form: made a male wizard with the base look.");
     }
 
-    // His pet's talents (Niduus: "Myth pet stats, all of appropriate stats he would need to complete his role"): he hits,
-    // blades and keeps the team up, so damage, Myth damage, resist twice and a team heal. The first five the game has.
-    internal static readonly string[] PetTalents = [
-        "Pain-Giver", "Myth-Dealer", "Spell-Proof", "Spell-Defying", "Unicorn", "Pain-Bringer", "Myth-Giver", "Spell-Ward", "Fairy",
-    ];
+    // His pet's talents as players pick them (BotPetTalents; Niduus, 2026-11-19: "People usually like to go Dealer"): Myth-Dealer,
+    // Pain-Giver, Spell-Proof, Spell-Defying and Myth-Giver; the rest, best first, are for his pet jewel (TrueFormJewels).
+    internal static readonly string[] PetTalents = BotPetTalents.For("Myth");
 
     private const int PET_TALENTS = 5;
 
@@ -195,6 +193,10 @@ internal static class TrueFormMaker {
         var wantedIds = wanted.Select(t => PetData.TalentId(t.m_talentName)).ToHashSet();
         var had = behavior.m_expressedTalents.ToList();
         if (had.Count == wantedIds.Count && had.All(wantedIds.Contains)) {
+            if (SetStats(pet)) {
+                PetCare.Finish(wizard, pet, null, _ => { });
+            }
+
             return names;
         }
 
@@ -213,8 +215,31 @@ internal static class TrueFormMaker {
         }
 
         PetProgress.MaxStats(pet);
+        SetStats(pet);
         PetCare.Finish(wizard, pet, null, _ => { });
         return names;
+    }
+
+    // Every stat at 260 (Niduus, 2026-11-19: "Have the pet stats for the pet be 260 across the board"); true when one changed.
+    private static bool SetStats(WizClientObjectItem pet) {
+        var behavior = PetProgress.GetBehavior(pet);
+        var changed = false;
+        foreach (var name in BotPetTalents.Stats) {
+            var now = behavior?.m_currentStats?.FirstOrDefault(s => string.Equals((string) s.m_name, name, StringComparison.OrdinalIgnoreCase))?.m_value;
+            if (now == BotPetTalents.PET_STAT) {
+                continue;
+            }
+
+            if (PetProgress.SetStat(pet, name, BotPetTalents.PET_STAT.ToString(), out var shown) is { } why) {
+                Logger.Debug("True Form: his pet's {0} could not be set: {1}", Logger.Args(name, why));
+                continue;
+            }
+
+            changed = true;
+            Logger.Information("True Form: his pet's {0}.", Logger.Args(shown));
+        }
+
+        return changed;
     }
 
     private static bool IsMyth(uint template)
