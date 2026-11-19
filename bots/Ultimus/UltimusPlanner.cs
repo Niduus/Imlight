@@ -540,17 +540,32 @@ internal static class UltimusPlanner {
                 var level = leader.Wizard?.MagicSchoolBehavior?.Level ?? 1;
                 var strong = level >= UltimusDirectorActor.QuestLevelOf(quest) + 2 && bounty.m_bountyTotal > 1
                              && (leader.Wizard?.GameStats is { } st && st.m_currentHitpoints >= (st.m_baseHitpoints + st.m_bonusHitpoints) * 0.8);
+                // Wary: alone, not strong for it, and these creatures beat him before (UltimusFoes.Tough). Then every creature
+                // within walking-in reach counts as one more in the fight, the wanted ones too, and he waits a little for one
+                // standing apart (his log, 2026-11-19: the Ronin Keyholders of "Key to Success" beat him 40+ times, the fight
+                // began with 1 or 2 and the others walked in during the first two rounds).
+                var wary = group.Count == 1 && !strong && notTheTeams.Any(m => UltimusFoes.Of((uint) m.Template) is { Tough: true });
+                var joinReach = wary ? GAP_REACH : 350f;
+                int Joiners(MinimapIndex.Mark m) => others.Count(o => o != m
+                    && Far(m.Object.m_location.X, m.Object.m_location.Y, o.Object.m_location.X, o.Object.m_location.Y) < joinReach);
                 float GroupCost(MinimapIndex.Mark m) {
                     var (mx, my) = (m.Object.m_location.X, m.Object.m_location.Y);
-                    var near = others.Where(o => o != m && Far(mx, my, o.Object.m_location.X, o.Object.m_location.Y) < 350).ToList();
+                    var near = others.Where(o => o != m && Far(mx, my, o.Object.m_location.X, o.Object.m_location.Y) < joinReach).ToList();
                     var wantedNear = near.Count(o => notTheTeams.Contains(o));
                     var otherNear = near.Count - wantedNear;
 
-                    return WalkLength(leader, mx, my) + (otherNear * OTHER_JOINS) + (strong ? -300 * wantedNear : 500 * wantedNear)
+                    return WalkLength(leader, mx, my) + (otherNear * OTHER_JOINS)
+                           + (strong ? -300 * wantedNear : wary ? OTHER_JOINS * wantedNear : 500 * wantedNear)
                            + (UltimusDrops.Score(questName, goalName, m.Template) < 0 ? 3000 : 0);
                 }
 
                 notTheTeams = [.. notTheTeams.Take(5).OrderBy(GroupCost).Concat(notTheTeams.Skip(5))];
+                if (wary && notTheTeams.FirstOrDefault() is { } crowded && Joiners(crowded) is var joiners and > 0 && WaitsForGap(key)) {
+                    return new Target(WAIT, leader.X, leader.Y,
+                        $"{step} (waits for a gap: {joiners} more stand near {crowded.Name} and would walk into the fight)",
+                        questName, goalName, Key: key + "|gap");
+                }
+
                 if (notTheTeams.FirstOrDefault() is { } foe) {
                     return new Target(FIGHT, foe.Object.m_location.X, foe.Object.m_location.Y, step, questName, goalName, foe.Template,
                         foe.Object.m_globalID.Full, Key: key);
@@ -869,6 +884,26 @@ internal static class UltimusPlanner {
     // What a creature his quests don't need, standing by the one he picks and so joining its battle, costs the pick (as
     // that much more walk): he picks the wanted one standing apart, even a good way further off.
     private const float OTHER_JOINS = 2500f;
+
+    // How far a creature can stand and still walk into a fight soon, for a wary pick, and how long he waits for a gap.
+    private const float GAP_REACH = 900f;
+    private static readonly TimeSpan s_gapWait = TimeSpan.FromMinutes(3), s_gapAgain = TimeSpan.FromMinutes(10);
+    private static readonly Dictionary<string, DateTime> s_gapSince = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Whether he still waits for a creature standing apart on this step: up to 3 minutes, then he goes in anyway, and he
+    /// waits again 10 minutes after the last wait began.
+    /// </summary>
+    internal static bool WaitsForGap(string key, DateTime? at = null) {
+        var now = at ?? DateTime.UtcNow;
+        lock (s_gapSince) {
+            if (!s_gapSince.TryGetValue(key ?? "", out var since) || now - since >= s_gapAgain) {
+                s_gapSince[key ?? ""] = since = now;
+            }
+
+            return now - since < s_gapWait;
+        }
+    }
 
     /// <summary>
     /// Whether this creature is one his quests send him to fight: an open "defeat" step of any quest he holds names it (by

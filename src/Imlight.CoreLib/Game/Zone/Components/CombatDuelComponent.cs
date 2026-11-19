@@ -337,7 +337,10 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         // monster that walks into a full battle vanishes ("They should despawn upon hitting the battle if it's full")
         // and its spawner brings it back later, instead of walking through the fight. A boss fight's own group (the
         // boss, and anyone standing in the circle with it before the first round) is not cut down by this rule.
-        var bossGroup = bossOfThisFight || (Duel.m_roundNum == 0 && HasBossInBattle());
+        // Only in a dungeon or other private copy: out on a shared street, boss-rank creatures that wander together (the
+        // Ronin Keyholders of Tatakai Outpost, MooShu) walked in one after another and filled all four circles against one
+        // wizard, past the battle's size rule (his log, 2026-11-19: Ultimus lost 40+ fights to four Keyholders).
+        var bossGroup = Entity.Zone?.IsInstance == true && (bossOfThisFight || (Duel.m_roundNum == 0 && HasBossInBattle()));
         if (bossGroup ? GetAvailableSubCircleTeamCreature() is null : !IsSlotAvailable(CombatTeam.Monster)) {
             Refused(bossGroup ? $"the enemy side is full ({CreatureCount} monsters); it vanishes"
                 : s_maxMonsters is >= 1 and <= 4 ? $"the battle is full ({CreatureCount} monsters, MaxMonsters is {s_maxMonsters}); it vanishes"
