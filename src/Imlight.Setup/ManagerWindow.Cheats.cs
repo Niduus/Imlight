@@ -287,11 +287,22 @@ internal sealed partial class ManagerWindow {
         board.EditView = new StackPanel {
             Spacing = 10, IsVisible = false,
             Children = {
-                Row([back, .. editButtons]),
+                Row([back, .. UndoButtons(board), .. editButtons]),
                 board.EditHead,
                 EditLegends(),
                 board.EditGrid,
             },
+        };
+
+        board.EditView.KeyDown += (_, e) => {
+            if (e.Handled || e.KeyModifiers != Avalonia.Input.KeyModifiers.Control || e.Source is TextBox) {
+                return;
+            }
+
+            if (e.Key is Avalonia.Input.Key.Z or Avalonia.Input.Key.Y) {
+                e.Handled = true;
+                Guarded(() => UndoCheat(board, redo: e.Key == Avalonia.Input.Key.Y));
+            }
         };
 
         return new StackPanel { Children = { board.ListView, board.EditView } };
@@ -406,6 +417,7 @@ internal sealed partial class ManagerWindow {
 
     // The edit page of one cheat: its head, and its blocks beside the palette, both as tall as the window allows.
     private void RenderEditPage(CheatBoard board, CheatRule rule, bool opened) {
+        RecordCheat(rule);
         board.EditHead.Content = CheatCard(board, rule, board.List!.Cheats.IndexOf(rule) + 1, editing: true);
         var notes = new TextBox { Text = rule.Notes, Watermark = "Your notes on this cheat (the server does not use them)", AcceptsReturn = false };
         notes.TextChanged += (_, _) => rule.Notes = notes.Text ?? "";
@@ -849,11 +861,12 @@ internal sealed partial class ManagerWindow {
         void Changed() {
             UpdateCheatHead(board, rule);
             refreshNote?.Invoke();
+            RecordCheat(rule);
         }
 
         if (block.Spec == "D.AddCharm") {
             refreshNote = () => {
-                view.Note(AddCharmWarning(block) ?? DisplayNote(block));
+                view.Note(CheatProblems.Of(rule, block) ?? AddCharmWarning(block) ?? DisplayNote(block));
                 if (_auraPickers.TryGetValue(block, out var aura)) {
                     aura.IsVisible = block.Text("Kind") == "Aura";
                 }
@@ -862,7 +875,11 @@ internal sealed partial class ManagerWindow {
         }
         else if (spec.Kind == BlockKind.Do) {
             // The automatic check: what the game is shown of this step (CheatDisplay, linked from the server).
-            refreshNote = () => view.Note(DisplayNote(block));
+            refreshNote = () => view.Note(CheatProblems.Of(rule, block) ?? DisplayNote(block));
+            refreshNote();
+        }
+        else {
+            refreshNote = () => view.Note(CheatProblems.Of(rule, block));
             refreshNote();
         }
 

@@ -209,3 +209,51 @@ internal static class CheatFlow {
     }
 
 }
+
+/// <summary>
+/// Warnings on blocks that can't work as they stand (Niduus, 2026-11-19: "Let the blocking be more interactive"): shown on
+/// the block itself while editing, so a cheat that would do nothing is seen before it is saved. They never stop a save.
+/// </summary>
+internal static class CheatProblems {
+
+    internal static string? Of(CheatRule rule, CheatBlock block) {
+        var spec = block.Kind;
+        // A box that picks a spell, left empty.
+        if (spec.Fields.Any(f => f.Type == CheatFieldType.Spell) && block.Text("Spell").Length == 0 && block.Id("SpellID") == 0
+            && spec.Id is "D.Cast" or "D.FreeCast" or "D.CastBy") {
+            return "No spell picked yet: this block casts nothing.";
+        }
+
+        if (spec.Fields.Any(f => f.Type == CheatFieldType.Wizard) && block.Text("Wizard").Length == 0 && block.Text("Name").Length == 0) {
+            return "No wizard picked yet: this block never holds.";
+        }
+
+        var at = rule.Dos.IndexOf(block);
+        if (at < 0) {
+            return null;
+        }
+
+        if (CheatFlow.IsHolder(block) && CheatFlow.Inside(rule.Dos, at) == 0) {
+            return "This holder holds no blocks yet: drag blocks above its end strip.";
+        }
+
+        if (block.Spec == "D.Otherwise") {
+            // Right after an "only if" holder's blocks.
+            var before = Enumerable.Range(0, at).LastOrDefault(h => CheatFlow.IsHolder(rule.Dos[h]) && h + CheatFlow.Inside(rule.Dos, h) == at - 1, -1);
+            if (before < 0 || rule.Dos[before].Spec is "D.Repeat" or "D.Otherwise") {
+                return "Otherwise works only right under an \"only if\" holder (only if a variable, only if something came off, only if converted). Here it never goes off.";
+            }
+        }
+
+        if (block.Spec == "D.Stop" && at == rule.Dos.Count - 1) {
+            return "Nothing comes after this Stop, so it does nothing.";
+        }
+
+        if (block.Spec == "D.Wait" && at == rule.Dos.Count - 1) {
+            return "Nothing comes after this wait, so there is nothing to wait for.";
+        }
+
+        return null;
+    }
+
+}
