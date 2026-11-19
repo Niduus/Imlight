@@ -333,9 +333,12 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
         //     PUBLIC zone, so two independent owners collapse into one copy;
         //   - its hard limit is small enough to be an instance (normal dungeons).
         //   - it is a ride (a flying ship) a player is boarding: each boarding is their own copy (RideZones).
+        // A ride is told apart even when its small player limit already makes it an instance (Marleybone's airship
+        // flights), so the end of its trip is known (RideZones.TryGetTripEnd): the flight's own teleport names none.
+        var isRide = ownerId != 0 && RideZones.IsRide(zonePath, message.TriggerData);
         var isInstancedZone = wasPrivateRequest
                            || message.ZoneData.m_nHardLimit <= HARD_LIMIT_INSTANCE_THRESHHOLD
-                           || ownerId != 0 && RideZones.IsRide(zonePath, message.TriggerData);
+                           || isRide;
 
         // A preloaded zone that turns out to be an instance has no owner yet; the player's own copy is made on entry.
         if (preloaded && isInstancedZone && !anyoneWaiting) {

@@ -135,6 +135,8 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         // A boss that only a live cutscene would bring out is brought out for a wizard who comes to fight it.
         if (message.EventName == START_ZONE_ENTER_EVENT && message.PlayerActor is not null) {
             ScheduleWaitingSpawnCheck(message.PlayerActor, message.PlayerGameObject);
+            // A door a quest's dialog opens for good (Bartleby's mouth), for a wizard who may go through but never heard it.
+            OpenStoryDoors(message);
             // In the Well of Spirits or one of its tombs: past the storm obelisks for good (StormObelisks).
             if (StormObelisks.IsInside(Zone.ZonePath)) {
                 StormObelisks.BeenInside(ZoneTrigger.QueryWizard(message.PlayerActor), Zone.ZonePath);
