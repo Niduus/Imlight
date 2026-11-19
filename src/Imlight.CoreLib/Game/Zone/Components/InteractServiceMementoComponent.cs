@@ -112,6 +112,8 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             return;
         }
 
+        _shape = QuestObjectShape();
+
         var updateInterval = TimeSpan.FromSeconds(WIZBANG_UPDATE_INTERVAL_SECONDS);
         var updateMsg = new ZONE_102_PROTOCOL.MSG_WIZBANGUPDATEINTERVAL();
         Timers.StartPeriodicTimer(WIZBANG_UPDATE_TIMER_KEY, updateMsg, updateInterval);
@@ -142,13 +144,15 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             ? _serviceComponents.Min(c => c.DEFAULT_INTERACTION_RADIUS)
             : _interactionRadius;
 
-        // Handle interaction range (for service options).
-        if (IsInHorizontalRadius(playerObj, interactionRadius)
+        // Handle interaction range (for service options). A large quest object (Zafaria's fallen Zebra Scout Tower)
+        // is reached at its edge too, not only near its center (ObjectReach).
+        var inRange = IsInHorizontalRadius(playerObj, interactionRadius) || ReachesShape(playerObj);
+        if (inRange
             && !_playersInInteractionRange.ContainsKey(playerId)) {
             _playersInInteractionRange.Add(playerId, playerActor);
             SendActorServiceOptions(playerActor, nextSection: true);
         }
-        else if (!IsInHorizontalRadius(playerObj, interactionRadius)
+        else if (!inRange
                  && _playersInInteractionRange.ContainsKey(playerId)) {
             _playersInInteractionRange.Remove(playerId);
             SendLeaveServiceRange(playerActor);
@@ -160,6 +164,36 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         // The newest session of a wizard replaces an old one (a relog or a trip back into the zone keeps the same
         // object id): the old session no longer answers, and asking it held up this NPC's symbol for everyone.
         _playersInRenderRange[playerId] = playerActor;
+    }
+
+    // The shape of a quest object that is not a character, when it is larger than the usual reach (ObjectReach).
+    private ObjectReach.Shape _shape;
+
+    private ObjectReach.Shape QuestObjectShape() {
+        try {
+            if (!_serviceComponents.Any(c => c is InteractQuestSelectComponent)
+                || Entity.Template is not GameObjectTemplate template
+                || template.m_behaviors?.Any(b => b is NPCBehaviorTemplate) == true) {
+                return null;
+            }
+
+            return ObjectReach.For(template);
+        }
+        catch (Exception e) {
+            Logger.Debug("Object reach: no shape for {0}: {1}", Logger.Args(Entity.Info?.m_zoneTag, e.Message));
+
+            return null;
+        }
+    }
+
+    private bool ReachesShape(CoreObject playerObj) {
+        if (_shape is null || playerObj is null) {
+            return false;
+        }
+
+        var self = Entity.ActiveGameObject;
+
+        return _shape.Reaches(self.m_location, self.m_orientation.Z, Entity.Info?.m_fScale ?? 1f, playerObj.m_location);
     }
 
     public override void OnPlayerJoin(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {

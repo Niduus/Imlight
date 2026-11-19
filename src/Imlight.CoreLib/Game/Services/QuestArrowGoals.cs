@@ -106,6 +106,27 @@ internal static class QuestArrowGoals {
             }
         }
 
+        // A made-up goal name: the game's name for the step at its place in the quest ("Goal", "Goal 1", ...), when
+        // poi.dat has that step in the goal's zone. Two or more steps in one zone (Zafaria's In The Cold Distance: the
+        // tower and Captain Blackhoof, both in the Savannah) found no arrow at all by the zone alone: the arrow came up
+        // and went away (2026-11-19).
+        foreach (var goal in goals.ToList()) {
+            string zone = goal.m_destinationZone;
+            foreach (var gameName in Quests.VanillaGoalNames.GameNames(quest, (string) goal.m_goalName)) {
+                var hash = StringHash.Compute(gameName);
+                if (used.Contains(hash) || !questPoi.TryGetValue(hash, out var gameZones)
+                    || (!string.IsNullOrEmpty(zone) && gameZones.Count > 0 && !gameZones.Contains(zone))) {
+                    continue;
+                }
+
+                result[goal.m_goalName] = hash;
+                used.Add(hash);
+                goals.Remove(goal);
+
+                break;
+            }
+        }
+
         // A made-up goal name: the only poi.dat goal of the quest left in the goal's zone.
         bool found;
         do {

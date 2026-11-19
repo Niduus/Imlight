@@ -134,6 +134,44 @@ internal static class RootArchiveLoader {
         }
     }
 
+    /// <summary>
+    /// The raw bytes of a game file, or null when it is missing. Names shaped <c>|&lt;Dir&gt;|WorldData|&lt;path&gt;</c>
+    /// live in the <c>&lt;Dir&gt;-WorldData</c> archive; everything else lives in Root.wad.
+    /// </summary>
+    internal static byte[] GetRawFile(string fileName) {
+        if (string.IsNullOrEmpty(fileName)) {
+            return null;
+        }
+
+        lock (s_lock) {
+            Archive wad;
+            var path = fileName;
+            var parts = fileName.StartsWith('|') ? fileName.Split('|', 4) : null;
+            if (parts is { Length: 4 } && parts[2] == "WorldData") {
+                var wadName = $"{parts[1]}-WorldData";
+                if (!s_namedWads.TryGetValue(wadName, out wad)) {
+                    wad = LoadNamedWad(wadName);
+                    s_namedWads[wadName] = wad;
+                }
+
+                path = parts[3];
+            }
+            else {
+                if (s_rootWad is null) {
+                    ReloadRootWad();
+                }
+
+                wad = s_rootWad;
+            }
+
+            if (wad is null || !wad.Files.ContainsKey(path)) {
+                return null;
+            }
+
+            return wad.OpenFile(path)?.ToArray();
+        }
+    }
+
     private static Archive LoadNamedWad(string wadName) {
         var cachedWad = LocalWadCache.GetCachedWad(wadName);
         if (cachedWad is not null) {
