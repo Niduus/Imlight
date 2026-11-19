@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.BotShared;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Resources;
@@ -48,7 +49,7 @@ internal static class TrueFormSpells {
 
     private static readonly string[] s_astral = ["Sun", "Moon", "Star", "Shadow"];
 
-    internal static void Give(Wizard wizard, int level, string school) {
+    internal static void Give(Wizard wizard, int level, string school, BotStyle style = BotStyle.Backup) {
         try {
             for (var i = 0; i < 240 && !TrueFormPool.Ready; i++) {
                 System.Threading.Thread.Sleep(500);
@@ -63,6 +64,19 @@ internal static class TrueFormSpells {
             var trained = pool.Where(e => !e.Treasure && SpellFactory.GetSpell(e.Id) is not null).ToList();
             var treasure = pool.Where(e => e.Treasure && SpellFactory.GetSpell(e.Id) is not null).ToList();
             var book = wizard.SpellbookBehavior;
+
+            // Monster and boss versions he got before are taken away (Niduus, 2026-11-19: "Cards like this are a nono").
+            var badLearned = (book.LearnedSpellTemplateIds ?? []).Where(TrueFormPool.NotForPlayers).ToHashSet();
+            var badCards = (book.TreasureCardTemplateIds ?? []).Where(TrueFormPool.NotForPlayers).ToHashSet();
+            if (badLearned.Count > 0 || badCards.Count > 0) {
+                book.LearnedSpellTemplateIds?.RemoveAll(badLearned.Contains);
+                book.TreasureCardTemplateIds?.RemoveAll(badCards.Contains);
+                WizardCollection.UpdateCharacter(wizard.CharId, saved => {
+                    saved.SpellbookBehavior.LearnedSpellTemplateIds?.RemoveAll(TrueFormPool.NotForPlayers);
+                    saved.SpellbookBehavior.TreasureCardTemplateIds?.RemoveAll(TrueFormPool.NotForPlayers);
+                });
+                Logger.Information("True Form: took away {0} monster or boss spells and {1} such treasure cards.", Logger.Args(badLearned.Count, badCards.Count));
+            }
 
             // Trained spells.
             var learned = (book.LearnedSpellTemplateIds ?? []).ToHashSet();
@@ -84,7 +98,7 @@ internal static class TrueFormSpells {
                 Logger.Information("True Form: learned {0} spells and got {1} treasure cards.", Logger.Args(newSpells.Count, newCards.Count));
             }
 
-            FillDeck(wizard, trained, treasure, school);
+            FillDeck(wizard, trained, treasure, school, style);
             WriteList(wizard, trained, treasure);
         }
         catch (Exception e) {
@@ -97,7 +111,7 @@ internal static class TrueFormSpells {
             ? behavior : null;
 
     // His deck: one of each, best first, as many as it holds; the treasure card slots from his book.
-    private static void FillDeck(Wizard wizard, List<TrueFormPool.Entry> trained, List<TrueFormPool.Entry> treasure, string school) {
+    private static void FillDeck(Wizard wizard, List<TrueFormPool.Entry> trained, List<TrueFormPool.Entry> treasure, string school, BotStyle style) {
         if (wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Deck) is not { } deckItem
             || !CoreObjectFactory.FindBehaviorInstance<DeckBehavior>(deckItem, out var deck)
             || ItemHelper.GetItemTemplate(deckItem)?.m_behaviors?.OfType<DeckBehaviorTemplate>().FirstOrDefault() is not { } rules) {
@@ -114,8 +128,8 @@ internal static class TrueFormSpells {
 
         int Order(TrueFormPool.Entry e) => e.School.Equals(school, StringComparison.OrdinalIgnoreCase) ? 0 : s_astral.Contains(e.School, StringComparer.OrdinalIgnoreCase) ? 1 : 2;
 
-        var spells = trained.Where(Fits).OrderBy(Order).ThenByDescending(e => Rank(e.Id)).ThenBy(e => e.Shown, StringComparer.OrdinalIgnoreCase)
-            .Select(e => e.Id).Distinct().Take(Math.Max(0, (int) rules.m_maxSpells)).ToList();
+        var spells = Mixed(trained.Where(Fits).OrderBy(Order).ThenByDescending(e => Rank(e.Id)).ThenBy(e => e.Shown, StringComparer.OrdinalIgnoreCase).ToList(),
+            Math.Max(0, (int) rules.m_maxSpells), style);
         var book = wizard.SpellbookBehavior;
         var cardRoom = Math.Max(0, (int) rules.m_maxTreasureCards);
         var oldCards = (deck.m_spellList ?? []).Where(s => IsTreasure(s.m_templateID)).ToList();
@@ -129,7 +143,7 @@ internal static class TrueFormSpells {
         }
 
         // Treasure cards taken out of the deck go back to his book; the ones put in leave it.
-        var leaving = oldCards.Where(s => !cards.Contains(s.m_templateID)).SelectMany(s => Enumerable.Repeat(s.m_templateID, (int) s.m_quantity)).ToList();
+        var leaving = oldCards.Where(s => !cards.Contains(s.m_templateID) && !TrueFormPool.NotForPlayers(s.m_templateID)).SelectMany(s => Enumerable.Repeat(s.m_templateID, (int) s.m_quantity)).ToList();
         var coming = cards.Where(id => !oldCards.Any(s => s.m_templateID == id)).ToList();
         book.TreasureCardTemplateIds ??= [];
         book.TreasureCardTemplateIds.AddRange(leaving);
@@ -152,6 +166,44 @@ internal static class TrueFormSpells {
 
         WizardItemCollection.SaveItemBehaviors(deckItem);
         Logger.Information("True Form: his deck holds {0} spells and {1} treasure cards.", Logger.Args(spells.Count, cards.Count));
+    }
+
+    // Hits and utility mixed by his role (Niduus, 2026-11-19: "TF's decks are more consistent with hits rather than utility.
+    // Adjust this to add some Utility"): hits take their share (half for a hitter, less for backup, tank and healer), the
+    // rest goes round the utility kinds in his role's order (blades, traps, shields, heals, weakness, charm removal, stun,
+    // the rest: prisms, globals, auras, pips), the best of each first. Room left over is filled in the old order.
+    private static List<uint> Mixed(List<TrueFormPool.Entry> ordered, int room, BotStyle style) {
+        double hitShare = style switch { BotStyle.Hitter => 0.5, BotStyle.Backup => 0.4, BotStyle.Tank => 0.3, _ => 0.25 };
+        string[] kinds = style switch {
+            BotStyle.Healer => ["heal", "shield", "charm removal", "blade", "other", "stun", "trap", "weakness"],
+            BotStyle.Tank => ["shield", "weakness", "stun", "heal", "trap", "other", "blade", "charm removal"],
+            _ => ["blade", "trap", "other", "shield", "heal", "weakness", "charm removal", "stun"],
+        };
+        string KindOf(TrueFormPool.Entry e) => e.Card?.Kind ?? "other";
+        var picked = new List<uint>();
+        var seen = new HashSet<uint>();
+        void Take(TrueFormPool.Entry e) {
+            if (picked.Count < room && seen.Add(e.Id)) {
+                picked.Add(e.Id);
+            }
+        }
+
+        foreach (var hit in ordered.Where(e => KindOf(e) == "attack").Take((int) Math.Round(room * hitShare))) {
+            Take(hit);
+        }
+
+        var queues = kinds.Select(k => new Queue<TrueFormPool.Entry>(ordered.Where(e => KindOf(e) == k))).ToList();
+        while (picked.Count < room && queues.Any(q => q.Count > 0)) {
+            foreach (var queue in queues.Where(q => q.Count > 0)) {
+                Take(queue.Dequeue());
+            }
+        }
+
+        foreach (var rest in ordered) {
+            Take(rest);
+        }
+
+        return picked;
     }
 
     private static bool IsTreasure(uint id) => CoreObjectFactory.GetCoreTemplate(id) is SpellTemplate t && t.m_Treasure;

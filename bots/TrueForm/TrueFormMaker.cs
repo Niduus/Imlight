@@ -93,7 +93,7 @@ internal static class TrueFormMaker {
             Stitch(wizard);
             GivePet(wizard, school.ToString(), style);
             TrueFormJewels.Fill(wizard, school.ToString(), style);
-            TrueFormSpells.Give(wizard, top, school.ToString());
+            TrueFormSpells.Give(wizard, top, school.ToString(), style);
         }
         catch (Exception e) {
             Logger.Warning("True Form: could not make him ready: {0}", Logger.Args(e));

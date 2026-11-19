@@ -289,15 +289,17 @@ internal static class TrueFormBattle {
 
         switch (mode) {
             case TrueForm.Mode.Attack:
+                // Two hits and the rest utility (Niduus, 2026-11-19: "more consistent with hits rather than utility").
                 Add(bestHit);
                 Add(bestAll);
-                Add(Best(k.Hits.Where(e => e.Card.Rank <= pips + 2 && e.Id != bestHit?.Id), e => BotCore.Estimate(e.Card, me, focus) * (e.Card.Rank > pips ? 0.9 : 0.5)));
                 Add(Best(k.Blades.Where(e => !e.Card.BladeOnlyTeammate && BotCore.Fits(e.Card.BladeSchool, hitSchool) && !RewrittenAI.HasEffectOfSpell(me, e.Id) && Now(e)),
                     e => e.Card.BladePercent + (e.Card.BladeWholeTeam ? 5 : 0)));
                 Add(Best(k.Traps.Where(e => BotCore.Fits(e.Card.TrapSchool, hitSchool) && !RewrittenAI.HasEffectOfSpell(focus, e.Id) && Now(e)),
                     e => e.Card.TrapPercent + (e.Card.TrapAll ? 5 : 0)));
                 Add(Best(k.Enchants, e => BotEnchants.Of(e.Id) is { } en ? en.Worth : 0));
                 Add(hurt ? teamHeal ?? oneHeal : teamShield ?? teamHeal);
+                Add(Best(k.Weak.Where(Now), _ => 1));
+                Add(Best(k.Hits.Where(e => e.Card.Rank <= pips + 2 && e.Id != bestHit?.Id), e => BotCore.Estimate(e.Card, me, focus) * (e.Card.Rank > pips ? 0.9 : 0.5)));
                 break;
 
             case TrueForm.Mode.Defend:
@@ -343,7 +345,9 @@ internal static class TrueFormBattle {
         }
 
         // Room left: the best of what else helps, in this order.
-        foreach (var more in new[] { bestHit, bestAll, teamHeal, teamShield, oneHeal }) {
+        // Utility before more hits (Niduus, 2026-11-19).
+        var teamBlade = Best(k.Blades.Where(e => (e.Card.BladeWholeTeam || e.Card.BladeForTeammate) && Now(e)), e => e.Card.BladePercent);
+        foreach (var more in new[] { teamShield, teamHeal, teamBlade, oneShield, oneHeal, bestHit, bestAll }) {
             Add(more);
         }
 

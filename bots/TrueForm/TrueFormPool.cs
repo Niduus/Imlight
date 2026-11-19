@@ -57,6 +57,10 @@ internal static class TrueFormPool {
     // Each family's versions, best first.
     private static volatile Dictionary<string, List<Entry>> s_families;
     private static volatile List<Entry> s_dev;
+    private static volatile HashSet<uint> s_rejected;
+
+    /// <summary>Spells that are no player's (monster, boss or out-of-line versions): never trained, owned or in his deck.</summary>
+    internal static bool NotForPlayers(uint id) => s_rejected?.Contains(id) == true;
     private static int s_building;
 
     /// <summary>The highest base damage of any real spell, for the dev one-shot check.</summary>
@@ -238,6 +242,7 @@ internal static class TrueFormPool {
 
         var real = new List<Entry>();
         var dev = new List<Entry>();
+        var rejected = new HashSet<uint>();
         foreach (var (path, template) in SpellFactory.AllSpellTemplates()) {
             if (template is null || template is CantripsSpellTemplate || template.m_spellSourceType == kSpellSourceType.kPet
                 || template.m_battlegroundsOnly || template.m_PvP || template.m_spellRank is null) {
@@ -272,8 +277,11 @@ internal static class TrueFormPool {
                 : quested.TryGetValue(id, out var questLevel) && questLevel > 0 ? questLevel
                 : template.m_levelRestriction > 0 ? template.m_levelRestriction
                 : -1;
-            // A real spell: one the trainers or quests teach, a treasure card, or a tier of an upgradable spell.
-            if (!isDev && level < 0 && !tc && tier.Group < 0 && !quested.ContainsKey(id)) {
+            // A real spell: one the trainers or quests teach, a treasure card, or a tier of an upgradable spell. A level
+            // restriction alone is no sign: monster and boss versions carry one too (Niduus, 2026-11-19: a Scald of
+            // 100000 Fire damage over 100 rounds was in his deck, "Cards like this are a nono").
+            if (!isDev && !tc && tier.Group < 0 && !trained.ContainsKey(id) && !quested.ContainsKey(id)) {
+                rejected.Add(id);
                 continue;
             }
 
@@ -294,6 +302,25 @@ internal static class TrueFormPool {
         // An upgraded tier is had from its tier one's level.
         var tierOneLevel = real.Where(e => e.Tier == 1).GroupBy(e => e.Family).ToDictionary(g => g.Key, g => g.Min(e => e.Level));
         real = [.. real.Select(e => e.Tier > 1 && tierOneLevel.TryGetValue(e.Family, out var first) ? e with { Level = first } : e)];
+
+        // No monster or boss version passes as a player's: the strongest hit a trainer, quest or upgrade gives sets the
+        // cap, and a version (a treasure card too) hitting far over the taught version of the same spell is left out.
+        var taught = real.Where(e => !e.Treasure && (trained.ContainsKey(e.Id) || quested.ContainsKey(e.Id) || e.Tier > 0)).ToList();
+        var taughtTop = Math.Max(1, taught.Where(e => e.Card.Hit).Select(e => Math.Max(e.Card.BaseDamage, e.Card.Tiers.Length > 0 ? e.Card.Tiers.Max(x => x.Damage) : 0))
+            .DefaultIfEmpty(1).Max());
+        var taughtByFamily = taught.GroupBy(e => e.Family, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.Max(e => Strength(e.Card)), StringComparer.OrdinalIgnoreCase);
+        bool Outlier(Entry e) {
+            var hit = Math.Max(e.Card.BaseDamage, e.Card.Tiers.Length > 0 ? e.Card.Tiers.Max(x => x.Damage) : 0);
+            return hit > taughtTop * 3 / 2 || e.Card.PerPip * 4 > taughtTop * 3 / 2
+                   || (taughtByFamily.TryGetValue(e.Family, out var own) && own > 0 && Strength(e.Card) > own * 2);
+        }
+
+        foreach (var e in real.Where(Outlier)) {
+            rejected.Add(e.Id);
+        }
+
+        real = [.. real.Where(e => !Outlier(e))];
 
         var families = real.GroupBy(e => e.Family, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(g => g.Key, g => g.OrderBy(e => e.Treasure ? 1 : 0)
@@ -324,6 +351,7 @@ internal static class TrueFormPool {
         }
 
         s_byId = byId;
+        s_rejected = rejected;
         s_dev = devKept;
         DevOneShots = oneShots;
         s_families = families;
