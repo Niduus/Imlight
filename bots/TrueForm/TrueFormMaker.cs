@@ -84,6 +84,7 @@ internal static class TrueFormMaker {
             MakeMale(wizard);
             Dress(wizard, top);
             GivePet(wizard);
+            TrueFormJewels.Fill(wizard);
         }
         catch (Exception e) {
             Logger.Warning("True Form: could not make him ready: {0}", Logger.Args(e));
@@ -120,7 +121,7 @@ internal static class TrueFormMaker {
 
     // His pet's talents (Niduus: "Myth pet stats, all of appropriate stats he would need to complete his role"): he hits,
     // blades and keeps the team up, so damage, Myth damage, resist twice and a team heal. The first five the game has.
-    private static readonly string[] s_petTalents = [
+    internal static readonly string[] PetTalents = [
         "Pain-Giver", "Myth-Dealer", "Spell-Proof", "Spell-Defying", "Unicorn", "Pain-Bringer", "Myth-Giver", "Spell-Ward", "Fairy",
     ];
 
@@ -151,7 +152,7 @@ internal static class TrueFormMaker {
             PetProgress.SetStat(pet, "happiness", "max", out _);
             var given = 0;
             var names = new System.Collections.Generic.List<string>();
-            foreach (var name in s_petTalents) {
+            foreach (var name in PetTalents) {
                 if (given >= PET_TALENTS) {
                     break;
                 }
@@ -207,7 +208,13 @@ internal static class TrueFormMaker {
             return;
         }
 
-        var best = BotGear.BestFor("Myth", level, BotStyle.Backup, p => !p.CrownsOnly && !p.Retired && !BotGear.Forbidden(p.Id) && !BotGear.PartlyRead(p.Id));
+        // Only the top level's gear in each slot (Niduus, 2026-11-19: "TF is using non-190 gear"): a lower piece with bigger
+        // stats than a level 190 one used to win, as the 190 piece's sockets were empty. Now the 190 piece is worn and its
+        // sockets are filled (TrueFormJewels). A slot with no piece at his level wears the highest level there is.
+        static bool Allowed(BotGear.Piece p) => !p.CrownsOnly && !p.Retired && !BotGear.Forbidden(p.Id) && !BotGear.PartlyRead(p.Id);
+        var topOf = BotGear.Catalog.Where(p => Allowed(p) && BotGear.CanWear(p, "Myth", level) && BotGear.Score(p, "Myth", BotStyle.Backup) > 0)
+            .GroupBy(p => p.Slot).ToDictionary(g => g.Key, g => g.Max(p => p.Level));
+        var best = BotGear.BestFor("Myth", level, BotStyle.Backup, p => Allowed(p) && (!topOf.TryGetValue(p.Slot, out var top) || p.Level >= top));
         var outfit = string.Join(",", best.OrderBy(b => b.Key).Select(b => b.Value.Id));
         var marker = Path.Combine(UltimusSeat.TrueForm.Folder, DRESSED_FILE);
         var worn = BotGear.Slots.Select(s => (Slot: s, Item: wizard.EquipmentBehavior?.GetItemInSlot(s))).ToList();

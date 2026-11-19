@@ -397,13 +397,7 @@ internal static class BotGear {
             return 0;
         }
 
-        var score = 0.0;
-        foreach (var stat in piece.Stats) {
-            var share = Share(stat, school, style);
-            if (share > 0) {
-                score += share * stat.Value * Weight(stat.Kind, style);
-            }
-        }
+        var score = ScoreStats(piece.Stats, school, style);
 
         if (piece.Slot == nameof(EquipmentSlotType.Deck)) {
             var ownDeck = piece.DeckSchool.Equals(school, StringComparison.OrdinalIgnoreCase);
@@ -416,6 +410,39 @@ internal static class BotGear {
         }
 
         return score;
+    }
+
+    /// <summary>How good a list of stats is for a wizard of this school and style (a piece's, or a jewel's).</summary>
+    internal static double ScoreStats(IEnumerable<Stat> stats, string school, BotStyle style) {
+        var score = 0.0;
+        foreach (var stat in stats ?? []) {
+            var share = Share(stat, school, style);
+            if (share > 0) {
+                score += share * stat.Value * Weight(stat.Kind, style);
+            }
+        }
+
+        return score;
+    }
+
+    /// <summary>
+    /// The stats an item gives while worn or socketed, read as pieces are (a jewel's or a pin's too); empty when it gives
+    /// none this can read.
+    /// </summary>
+    internal static List<Stat> StatsOf(WizItemTemplate template) {
+        var stats = new List<Stat>();
+        foreach (var effect in template?.m_equipEffects ?? []) {
+            switch (effect) {
+                case StatisticEffectInfo info when ReadStat(info) is { } stat:
+                    stats.Add(stat);
+                    break;
+                case StartingPipEffectInfo pips:
+                    stats.Add(new Stat("StartingPips", "", pips.m_pipsGiven + (pips.m_powerPipsGiven * 2)));
+                    break;
+            }
+        }
+
+        return stats;
     }
 
     private static double Share(Stat stat, string school, BotStyle style) {

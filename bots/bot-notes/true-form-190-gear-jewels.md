@@ -1,0 +1,4 @@
+Fixed: True Form wears level 190 gear, with jewels
+True Form wore some lower level pieces because their stats beat a level 190 piece with empty sockets. Now he wears only the top level gear in every slot, and every socket on his gear gets the best jewel or pin of its shape that a player can get, picked for how he plays (damage, pierce and resist first, then health and healing). His pet gets a jewel with one of his pet talents. Every bot can now also answer "how do I get jewels" and "how do I socket a jewel" from the real game's data: how many shops, drops and crafting recipes give them, who sells the most, what each shape gives, and how to put one in.
+Where: True Form's gear (his list is in logs/trueform/jewels.txt) and bot chat everywhere.
+Test: Restart the server, look at True Form's gear and jewels, then ask any bot "how do I get jewels" and "how do I socket a jewel".

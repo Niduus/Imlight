@@ -31,6 +31,7 @@ using Imlight.CoreLib.Game.Madlibs;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Game.Tools;
 using Imlight.CoreLib.Game.World;
+using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData;
 using Imlight.CoreLib.WizardData.Collections;
@@ -92,6 +93,12 @@ internal static class UltimusLookup {
 
     private static volatile Books s_books;
     private static int s_reading;
+
+    /// <summary>The items a sold recipe crafts (from the real game's data), or null while the books are still being read.</summary>
+    internal static IReadOnlySet<uint> MadeItems => s_books is { } books ? books.ItemRecipes.Keys.ToHashSet() : null;
+
+    /// <summary>The items a real game shop sells, or null while the books are still being read.</summary>
+    internal static IReadOnlySet<uint> SoldItems => s_books is { } books ? books.ItemVendors.Keys.ToHashSet() : null;
 
     /// <summary>Starts reading the books in the background, if nobody has yet.</summary>
     internal static void Warm() {
@@ -317,6 +324,11 @@ internal static class UltimusLookup {
             }
         }
 
+        // "How do I get jewels?", "how do I socket a jewel?": jewels in general (a jewel by its name is an item, below).
+        if (JewelAsk(t) is { } jewelAsk) {
+            return Ready(out var jewelBooks) ? Jewels(jewelBooks, jewelAsk.Get, jewelAsk.Use) : NotReady();
+        }
+
         string subject;
         bool wantsTrain;
         var find = false;
@@ -387,6 +399,95 @@ internal static class UltimusLookup {
         }
 
         return Item(known, askerId, subject);
+    }
+
+    // ---------------------------------------------------------------------
+    // Jewels in general (Niduus, 2026-11-19: "Give knowledge of how to access and obtain jewels, then how to use them")
+    // ---------------------------------------------------------------------
+
+    private static readonly Regex s_jewelWord = new(@"\b(jewels?|pins?|sockets?|socketing|socketed)\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private static readonly Regex s_question = new(@"^(how|where|what|who|can|could|do|does|is|are|any|tell|explain)\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    // Every word a general jewel question is made of; anything left over names a jewel (an item ask) or something else.
+    private static readonly Regex s_jewelFiller = new(
+        @"\b(how|where|what|who|why|when|which|can|could|would|should|do|does|did|i|me|you|we|one|someone|to|get|gets|getting|buy|buying|find|"
+        + @"obtain|farm|farming|craft|crafting|crafted|make|making|use|using|used|socket|sockets|socketing|socketed|put|putting|add|adding|"
+        + @"equip|equipping|unlock|unlocking|work|works|are|is|a|an|the|my|your|some|any|in|into|on|onto|of|for|from|with|jewels?|pins?|"
+        + @"gear|items?|pets?|and|or|them|it|they|there|out|take|taking|remove|removing|place|best|good|tell|about|explain|please|pls|"
+        + @"plz|again|more|new|its|their|where's|what's|how's|come|comes|drop|drops|sold|sell|sells|need|go|i'd|like|know)\b",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private static readonly Regex s_useWords = new(@"\b(use|using|socket|socketing|socketed|put|putting|add|adding|equip|equipping|unlock|"
+                                                    + @"unlocking|work|works|remove|removing|take|taking|place|out)\b",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private static readonly Regex s_getWords = new(@"\b(get|gets|getting|buy|buying|find|obtain|farm|farming|craft|crafting|crafted|make|"
+                                                    + @"making|where|where's|drop|drops|sold|sell|sells|come|comes|from)\b",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    /// <summary>A question about jewels in general: whether it asks how to get them, how to use them (both when neither).</summary>
+    private static (bool Get, bool Use)? JewelAsk(string text) {
+        if (!s_jewelWord.IsMatch(text) || !s_question.IsMatch(text)) {
+            return null;
+        }
+
+        var left = Regex.Replace(s_jewelFiller.Replace(text.ToLowerInvariant(), " "), @"[^a-z0-9]+", " ").Trim();
+        if (left.Length > 2) {
+            return null;
+        }
+
+        var use = s_useWords.IsMatch(text);
+        var get = s_getWords.IsMatch(text);
+        return use || get ? (get, use) : (true, true);
+    }
+
+    private static string Jewels(Books books, bool get, bool use) {
+        var jewels = BotJewels.All;
+        if (jewels.Count == 0) {
+            return NotReady();
+        }
+
+        var parts = new List<string>();
+        if (get) {
+            var sold = jewels.Where(j => j.Sold).ToList();
+            var dropped = jewels.Count(j => j.Dropped);
+            var crafted = jewels.Where(j => j.Crafted).ToList();
+            parts.Add($"There are {jewels.Count:N0} jewels and pins in the real game that you can get.");
+            if (sold.Count > 0) {
+                var shops = sold.SelectMany(j => books.ItemVendors.GetValueOrDefault(j.Id) ?? []).Where(p => p.Name.Length > 0)
+                    .GroupBy(p => p.Name).OrderByDescending(g => g.Count()).Take(MOST_PLACES).Select(g => g.First()).ToList();
+                parts.Add($"{sold.Count:N0} are sold in shops{(shops.Count > 0 ? $", most of them by {List(shops)}" : "")}.");
+            }
+
+            if (dropped > 0) {
+                parts.Add($"{dropped:N0} drop from bosses and creatures; ask me about one by name and I'll say who drops it.");
+            }
+
+            if (crafted.Count > 0) {
+                var sellers = crafted.SelectMany(j => books.ItemRecipes.GetValueOrDefault(j.Id) ?? []).SelectMany(r => r.SoldBy)
+                    .Where(p => p.Name.Length > 0).GroupBy(p => p.Name).OrderByDescending(g => g.Count()).Take(2).Select(g => g.First()).ToList();
+                parts.Add($"{crafted.Count:N0} are crafted at a {CraftingStation.TypeNames["CraftJewel"]} from recipes"
+                          + (sellers.Count > 0 ? $" sold by {List(sellers)}." : "."));
+            }
+
+            parts.Add(BAZAAR);
+        }
+
+        if (use) {
+            var shapes = BotJewels.Shapes.Select(s => (Shape: s, Gives: BotJewels.Gives(s))).Where(x => x.Gives.Length > 0)
+                .Select(x => $"{JewelSockets.ShapeName(x.Shape)} gives {x.Gives}").ToList();
+            parts.Add("Gear with sockets shows its empty sockets by shape on the item, and a pet has one pet socket."
+                      + (shapes.Count > 0 ? $" Mostly, {string.Join("; ", shapes)}." : ""));
+            parts.Add("To use one, open your backpack, drag the jewel onto the item, and drop it in an empty socket of the same shape. Some jewels need a level, and pet jewels a pet level.");
+            parts.Add("Locked sockets unlock for free on this server.");
+            var keep = ConfigurationManager.GetValue("Jewels.KeepShatteredJewels", false);
+            parts.Add(keep
+                ? "Taking a jewel out gives it back to your backpack here."
+                : "Taking a jewel out breaks it, except pins and jewels marked No Shatter, which come back to your backpack.");
+        }
+
+        return string.Join(" ", parts) + NOTE;
     }
 
     private static bool Ready(out Books books) {
