@@ -1430,10 +1430,13 @@ public partial class CombatDuelSubCircle {
             return spell;
         }
 
-        // What the game counts without mastery: every pip 1, power pips 1, spare school pips 1.
+        // What the game surely counts without mastery: every pip 1 and power pips 1. School pips are left out: the game
+        // does not count another school's pips toward a Shadow, Moon, Sun or Star spell, so a Death wizard who took Shadow
+        // with 6 power pips and a Death school pip was shown Efreet Shadow Xerxes (8 pips) at 7 and it stayed grey
+        // (Niduus, 2026-11-19: "am shadow and full pips, still can't cast"). Showing a lower cost is safe: the server has
+        // checked the real cost above (HasPipsForSpell) and charges it.
         var pips = CombatParticipant.m_pipCount;
-        var (own, other) = SpareSchoolPips(spell);
-        var gameCounts = pips.m_genericPips + pips.m_powerPips + own + other;
+        var gameCounts = pips.m_genericPips + pips.m_powerPips;
         if (gameCounts >= cost.m_spellRank) {
             return spell;
         }
