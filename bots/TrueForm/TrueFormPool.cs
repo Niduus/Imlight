@@ -134,6 +134,24 @@ internal static class TrueFormPool {
                ?? all.Where(e => e.Shown.Contains(words, StringComparison.OrdinalIgnoreCase)).OrderBy(e => e.Dev).ThenBy(e => e.Shown.Length).FirstOrDefault();
     }
 
+    /// <summary>
+    /// Every version of every spell he may have at this level (not only each family's head), with the dev spells when
+    /// <paramref name="dev"/>: for picking the strongest of a kind (enchantments: Epic over Monstrous) whatever family the
+    /// game's names put it in.
+    /// </summary>
+    internal static List<Entry> Versions(int level, bool dev) {
+        if (!Ready) {
+            return [];
+        }
+
+        var list = s_families.Values.SelectMany(v => v).Where(v => v.Level <= level).ToList();
+        if (dev) {
+            list.AddRange(s_dev);
+        }
+
+        return list;
+    }
+
     /// <summary>A spell of his by template, or null.</summary>
     internal static Entry Of(uint id) {
         if (!Ready) {

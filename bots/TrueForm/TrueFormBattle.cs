@@ -80,8 +80,14 @@ internal static class TrueFormBattle {
         bool Friendly(kEffectTarget t) => t is kEffectTarget.kSelf or kEffectTarget.kFriendlySingle or kEffectTarget.kFriendlySingleNotMe
             or kEffectTarget.kFriendlyTeam or kEffectTarget.kFriendlyTeamAllAtOnce or kEffectTarget.kMultiTargetFriendly;
 
-        var enchants = all.Where(e => CoreObjectFactory.GetCoreTemplate(e.Id) is SpellTemplate t && CombatEnchantments.IsEnchantment(t)).ToList();
-        var enchantIds = enchants.Select(e => e.Id).ToHashSet();
+        bool IsEnchant(TrueFormPool.Entry e) => CoreObjectFactory.GetCoreTemplate(e.Id) is SpellTemplate t && CombatEnchantments.IsEnchantment(t);
+        // Enchantments from every version he may have, so the strongest comes up (Niduus, 2026-11-19: he used Monstrous, +275,
+        // at top level, where Epic is +315; a family read by name can hide a stronger one behind its first version).
+        var enchants = TrueFormPool.Versions(key.Level, key.Dev).Where(IsEnchant)
+            // A dev enchantment far over the game's best (+315) would be a dev one-shot by the back door.
+            .Where(e => !e.Dev || (BotEnchants.Of(e.Id)?.Amount ?? 0) <= 400)
+            .GroupBy(e => e.Id).Select(g => g.First()).ToList();
+        var enchantIds = all.Where(IsEnchant).Select(e => e.Id).Concat(enchants.Select(e => e.Id)).ToHashSet();
         var plain = all.Where(e => !enchantIds.Contains(e.Id) && !BotCards.NotVanilla(e.Card)).ToList();
 
         return new Kinds(plain,
@@ -228,7 +234,7 @@ internal static class TrueFormBattle {
                     e => e.Card.BladePercent + (e.Card.BladeWholeTeam ? 5 : 0)));
                 Add(Best(k.Traps.Where(e => BotCore.Fits(e.Card.TrapSchool, hitSchool) && !RewrittenAI.HasEffectOfSpell(focus, e.Id) && Now(e)),
                     e => e.Card.TrapPercent + (e.Card.TrapAll ? 5 : 0)));
-                Add(Best(k.Enchants, e => BotEnchants.Of(e.Id) is { } en ? en.Amount + 1 : 0));
+                Add(Best(k.Enchants, e => BotEnchants.Of(e.Id) is { } en ? en.Worth : 0));
                 Add(hurt ? teamHeal ?? oneHeal : teamShield ?? teamHeal);
                 break;
 
