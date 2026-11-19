@@ -280,12 +280,13 @@ internal class MoveService : MessageService {
             SendToSocket(new GAME_5_PROTOCOL.MSG_MARK_LOCATION_RESPONSE { Result = 1, MarkType = "1" });
         }
         else {
-            var ml = wizard.MarkedLocation;
             // doTeleportEffects: false — effects already played during the 2s delay above.
+            // The fourth number is the way the wizard faces on landing: the facing saved with the mark. It was the
+            // mark's height, so a recall from another area or after a relog faced a random way (Niduus, 2026-11-19).
             Teleport(
                 doTeleportEffects: false,
                 destinationZone: wizard.MarkedZone,
-                destinationLocation: Util.GetCompactStringFromVector(new Vector4(ml.X, ml.Y, ml.Z, ml.Z))
+                destinationLocation: Util.GetCompactStringFromVector(wizard.MarkedLocation, wizard.MarkedOrientation)
             );
 
             var recallRsp = new GAME_5_PROTOCOL.MSG_MARK_LOCATION_RESPONSE {
