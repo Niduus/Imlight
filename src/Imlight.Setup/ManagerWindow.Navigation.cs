@@ -89,6 +89,11 @@ internal sealed partial class ManagerWindow {
         ("TCO7", "users", "The Calling of 7",
             "Seven wizards, one of each school, each its own Ultimus: they read all he has done, try to do better, talk and team up.",
             Tco7TabNames),
+        // Niduus, 2026-11-19: "Create a new tab in Ahziael called "Hive mind" ... tells the user how the bots complete each
+        // task" (ManagerWindow.HiveMind.cs).
+        ("Hive mind", "hive", "How the bots do it",
+            "How the bots get each quest done: pages from the Hive mind folder on GitHub, and what this server's bots did, collected when the server starts.",
+            [HIVE_MIND_TAB]),
         ("Server", "server", "Start, settings, accounts, logs",
             "Run the server and set it up: start and stop, every setting, who can log in, logs, game files, and Ahziael itself.",
             // Niduus, 2026-10-30: Ahziael on a server hosted on another PC, for its admins.

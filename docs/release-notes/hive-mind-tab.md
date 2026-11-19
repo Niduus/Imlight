@@ -1,0 +1,4 @@
+New: Hive mind tab in Ahziael
+A new Hive mind page shows how the bots get each quest done. One part comes from the Hive mind folder on GitHub, so when that folder changes the page shows it without an update of Ahziael, and the last copy stays on your computer for when there is no internet. The other part is collected from your own bots' logs each time the server starts: for every quest, which bot finished it by itself, its best time, its steps and fights, the moves that got a bot unstuck there, and which way of fighting wins. Only certain facts are kept, so a quest a bot did not finish fully by itself, a stuck fix that ever failed, and a fight style seen in fewer than 5 fights are left out and counted instead.
+Where: Ahziael, Hive mind in the menu.
+Test: open Hive mind, check that the GitHub pages show, start the server and check that "Collected" shows the time it started, then search for a quest such as Ghost Hunters.
