@@ -426,7 +426,9 @@ internal sealed partial class UltimusDirectorActor {
         // healing and full resist ("make a full healing set ... and full tank set ... giving the commander options of class to
         // pick from, citing the more optimal of their desires first"). A full setup with no school named gets the schools
         // offered, best first; the asker's pick ("life") then switches him.
-        var setup = TrueForm.UniversalFrom(order) ? TrueForm.Setup.Universal
+        // Full glass ("if he goes full glass, he is to go exactly that"): his school's damage, pierce and accuracy only.
+        var setup = TrueForm.FullGlassFrom(order) ? TrueForm.Setup.FullGlass
+            : TrueForm.UniversalFrom(order) ? TrueForm.Setup.Universal
             : TrueForm.FullHealFrom(order) ? TrueForm.Setup.FullHeal
             : TrueForm.FullTankFrom(order) ? TrueForm.Setup.FullTank
             : (TrueForm.Setup?) null;
@@ -440,7 +442,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         if (setup is { } kind) {
-            if (kind == TrueForm.Setup.Universal) {
+            if (kind is TrueForm.Setup.Universal or TrueForm.Setup.FullGlass) {
                 return TrueFormSetup(heard, me, grouped, kind, named ?? TrueForm.School);
             }
 
@@ -627,9 +629,10 @@ internal sealed partial class UltimusDirectorActor {
         var what = kind switch {
             TrueForm.Setup.FullHeal => "every piece, jewel and pet talent on outgoing healing, and I'll play support",
             TrueForm.Setup.FullTank => "every piece, jewel and pet talent on resist, and I'll play defend",
+            TrueForm.Setup.FullGlass => $"every piece, jewel and pet talent on {school} damage, pierce and accuracy, nothing on resist or health, and I'll play attack",
             _ => "every piece, jewel and pet talent on damage to all schools, and I'll play attack",
         };
-        var warn = kind != TrueForm.Setup.Universal && TrueForm.BestSchoolsFor(kind).Take(2).All(b => b != school)
+        var warn = kind is TrueForm.Setup.FullHeal or TrueForm.Setup.FullTank && TrueForm.BestSchoolsFor(kind).Take(2).All(b => b != school)
             ? $" Heads up: {school} is not the best school for this; {string.Join(" or ", TrueForm.BestSchoolsFor(kind).Take(2))} would do it better."
             : "";
         SendReply(heard, $"Switching to {words}: {what}. I'll pop out for a moment to change and be right back. " +

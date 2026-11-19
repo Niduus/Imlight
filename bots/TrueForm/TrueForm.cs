@@ -181,7 +181,7 @@ internal static class TrueForm {
     /// His setups beside his school's own: universal damage, full outgoing healing, full resist (Niduus, 2026-11-19: "make a
     /// full healing set where it's all outgoing and full tank set where it's full resist").
     /// </summary>
-    internal enum Setup { Own, Universal, FullHeal, FullTank }
+    internal enum Setup { Own, Universal, FullHeal, FullTank, FullGlass }
 
     private static volatile SwapAsk s_swap;
 
@@ -212,6 +212,7 @@ internal static class TrueForm {
         Setup.Universal => "my universal damage setup",
         Setup.FullHeal => "my full healing setup",
         Setup.FullTank => "my full tank setup",
+        Setup.FullGlass => "my full glass setup",
         _ => "my own setup",
     };
 
@@ -220,6 +221,7 @@ internal static class TrueForm {
         Setup.Universal => BotShared.BotStyle.UniversalHitter,
         Setup.FullHeal => BotShared.BotStyle.FullHealer,
         Setup.FullTank => BotShared.BotStyle.FullTank,
+        Setup.FullGlass => BotShared.BotStyle.GlassCannon,
         _ => StyleFor(school, Role),
     };
 
@@ -230,6 +232,10 @@ internal static class TrueForm {
     /// <summary>"Full tank set(up)", "go full tank", "full resist": the full tank setup asked for.</summary>
     internal static bool FullTankFrom(string words) => System.Text.RegularExpressions.Regex.IsMatch((words ?? "").ToLowerInvariant(),
         @"\b(full|max(ed)?|all)\s+(tank|tanky|resist|resistance)\b|\b(tank|resist)\s+(set|setup|set up|build|loadout|gear)\b");
+
+    /// <summary>"Full glass", "glass cannon", "go all out damage": the full glass setup asked for (damage only).</summary>
+    internal static bool FullGlassFrom(string words) => System.Text.RegularExpressions.Regex.IsMatch((words ?? "").ToLowerInvariant(),
+        @"\b(full|max(ed)?|all)\s+glass\b|\bglass\s*cannon\b|\bglass\s+(set|setup|set up|build|loadout|gear)\b|\ball\s+out\s+(damage|dmg)\b|\bfull\s+(damage|dmg)\b");
 
     /// <summary>The schools for a setup, best first (healing: Life, Death...; tank: Ice, Balance...).</summary>
     internal static MagicSchool[] BestSchoolsFor(Setup kind) => kind switch {

@@ -84,12 +84,12 @@ internal static class TrueFormJewels {
 
                     var nowId = JewelSockets.GetPairs(item).FirstOrDefault(p => p?.m_socketNumber == socket)?.m_jewelTemplateID ?? 0;
                     var now = jewels.FirstOrDefault(j => j.Id == nowId);
-                    var nowScore = nowId == 0 ? double.MinValue : Score(now, shape.Value, pet, need, petTalents, school);
+                    var nowScore = nowId == 0 ? double.MinValue : Score(now, shape.Value, pet, need, petTalents, school, style);
                     if (nowId != 0) {
                         JewelSockets.Unsocket(item, socket);
                     }
 
-                    var best = jewels.Where(j => j.Shape == shape.Value).Select(j => (Jewel: j, Score: Score(j, shape.Value, pet, need, petTalents, school)))
+                    var best = jewels.Where(j => j.Shape == shape.Value).Select(j => (Jewel: j, Score: Score(j, shape.Value, pet, need, petTalents, school, style)))
                         .Where(x => x.Score > 0).OrderByDescending(x => x.Score).ThenBy(x => x.Jewel.Id)
                         .FirstOrDefault(x => JewelSockets.CheckSocket(wizard, item, x.Jewel.Template, socket) is null);
                     if (best.Jewel is not null && best.Score > nowScore) {
@@ -135,11 +135,10 @@ internal static class TrueFormJewels {
         }
     }
 
-    // How good a jewel is for him: its stats as his gear is scored; a pet jewel by his pet talents (first ones best), only
-    // a talent his pet does not have yet.
-    private static double Score(BotJewels.Jewel jewel, JewelSocketType shape, ClientPetItemBehavior pet, BotJewelPicker need, string[] petTalents, string school) {
-        // His universal setup: only the every-school talents count.
-        school = string.IsNullOrEmpty(school) ? "All" : school;
+    // How good a jewel is for him: its stats as his gear is scored; a pet jewel by what its talent really gives him
+    // (BotPetTalentStats), only a talent his pet does not have yet, so the jewel is a real sixth.
+    private static double Score(BotJewels.Jewel jewel, JewelSocketType shape, ClientPetItemBehavior pet, BotJewelPicker need,
+        List<BotPetTalentStats.Info> petTalents, string school, BotStyle style) {
         if (jewel is null) {
             return 0;
         }
@@ -149,35 +148,12 @@ internal static class TrueFormJewels {
         }
 
         var best = 0.0;
-        // A talent his role uses that is not one of his five (his five come first: PetTalents); under 1, so one of his
-        // named talents always wins: myth or every-school damage, resist, pierce, critical, health, healing taken.
         foreach (var key in jewel.TalentKeys) {
             if (pet is not null && pet.m_expressedTalents.Contains(PetData.TalentId(key))) {
                 continue;
             }
 
-            var tier = key.Length > 0 && char.IsDigit(key[^1]) ? key[^1] - '0' : 1;
-            var kind = key.StartsWith("Talent-Damage-" + school, StringComparison.OrdinalIgnoreCase) || key.StartsWith("Talent-Damage-All", StringComparison.OrdinalIgnoreCase) ? 0.9
-                : key.StartsWith("Talent-Resist-All", StringComparison.OrdinalIgnoreCase) ? 0.85
-                : key.StartsWith("Talent-ArmorPiercing", StringComparison.OrdinalIgnoreCase) ? 0.8
-                : key.StartsWith("Talent-CriticalHit-" + school, StringComparison.OrdinalIgnoreCase) || key.StartsWith("Talent-CriticalHit-All", StringComparison.OrdinalIgnoreCase) ? 0.7
-                : key.StartsWith("Talent-Health", StringComparison.OrdinalIgnoreCase) ? 0.6
-                : key.StartsWith("Talent-IncHealing", StringComparison.OrdinalIgnoreCase) ? 0.5
-                : 0;
-            best = Math.Max(best, kind * (0.9 + (0.025 * Math.Min(tier, 4))));
-        }
-
-        foreach (var talent in jewel.Talents) {
-            var index = Array.FindIndex(petTalents, n => n.Equals(talent, StringComparison.OrdinalIgnoreCase));
-            if (index < 0) {
-                continue;
-            }
-
-            var has = pet is not null && PetData.AllTalents.FirstOrDefault(t => string.Equals(Locale.GetEnglishName(t.m_displayName), talent, StringComparison.OrdinalIgnoreCase)) is { } known
-                      && pet.m_expressedTalents.Contains(PetData.TalentId(known.m_talentName));
-            if (!has) {
-                best = Math.Max(best, petTalents.Length - index);
-            }
+            best = Math.Max(best, BotPetTalentStats.Score(BotPetTalentStats.Of(key), school, style, need.AccuracyFull, need.PipsFull));
         }
 
         return best;

@@ -131,12 +131,16 @@ internal static class TrueFormMaker {
         Logger.Information("True Form: made a male wizard with the base look.");
     }
 
-    // His pet's talents as players pick them (BotPetTalents; Niduus, 2026-11-19: "People usually like to go Dealer"): Myth-Dealer,
-    // Pain-Giver, Spell-Proof, Spell-Defying and Myth-Giver; the rest, best first, are for his pet jewel (TrueFormJewels).
-    internal static string[] PetTalents(Wizard wizard, string school, BotStyle style) {
-        // Accuracy or pips already too high from his gear: universal accuracy talents instead (BotPetTalents).
+    // His pet's talents, picked by what each really gives him (the game's talent effects at 260 pet stats: BotPetTalentStats),
+    // best first for his school and setup: Dealer, Giver, Pain-Giver, Spell-Proof... for a hitter, healing may-casts and
+    // resist for a healer, resist and health for a tank, only damage, pierce and accuracy for full glass. Picking by the
+    // shown name (the old way) missed talents whose names the game spells differently, and the pet's own hatched talents
+    // filled the gaps (Niduus, 2026-11-19: his Life healer's pet showed Myth damage talents; "still bugged not picking right
+    // talents"). The rest, best first, are for his pet jewel (TrueFormJewels).
+    internal static System.Collections.Generic.List<BotPetTalentStats.Info> PetTalents(Wizard wizard, string school, BotStyle style) {
+        // Accuracy or pips already too high from his gear: school accuracy and pip talents count for nothing.
         var need = BotJewelPicker.For(wizard, school, style);
-        return BotPetTalents.For(school, style, need.AccuracyFull, need.PipsFull);
+        return BotPetTalentStats.Best(school, style, 15, need.AccuracyFull, need.PipsFull);
     }
 
     private const int PET_TALENTS = 5;
@@ -156,7 +160,7 @@ internal static class TrueFormMaker {
             bool Fits(WizClientObjectItem i) => pick is not null ? (uint) i.m_templateID == pick.Pet : IsSchool((uint) i.m_templateID, school);
             if (wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Pet) is { } worn && PetProgress.GetBehavior(worn) is { } had
                 && had.m_level >= PetProgress.MAX_LEVEL && Fits(worn)) {
-                ShapeTalents(wizard, worn, talents);
+                ShapeTalents(wizard, worn, talents, school, style);
                 return;
             }
 
@@ -164,7 +168,7 @@ internal static class TrueFormMaker {
             var kept = wizard.InventoryBehavior?.Items?.FirstOrDefault(i => PetProgress.GetBehavior(i) is { } b && b.m_level >= PetProgress.MAX_LEVEL
                                                                              && Fits(i));
             if (kept is not null) {
-                ShapeTalents(wizard, kept, talents);
+                ShapeTalents(wizard, kept, talents, school, style);
                 if (wizard.InventoryToEquipmentTransfer(kept.m_globalID.Full, out _, out _)) {
                     Logger.Information("True Form: wears his {0} pet again.", Logger.Args(school));
                 }
@@ -186,7 +190,7 @@ internal static class TrueFormMaker {
             PetProgress.SetLevel(pet, PetProgress.MAX_LEVEL);
             PetProgress.MaxStats(pet);
             PetProgress.SetStat(pet, "happiness", "max", out _);
-            var names = ShapeTalents(wizard, pet, talents);
+            var names = ShapeTalents(wizard, pet, talents, school, style);
             var shown = Locale.GetEnglishName((string) (CoreObjectFactory.GetCoreTemplate(template) as WizItemTemplate)?.m_displayName ?? "");
             if (wizard.InventoryToEquipmentTransfer(pet.m_globalID.Full, out _, out _)) {
                 Logger.Information("True Form: wears his pet {0} (Ultra, talents: {1}).", Logger.Args(shown, names.Count > 0 ? string.Join(", ", names) : "none found"));
@@ -203,7 +207,8 @@ internal static class TrueFormMaker {
     // A real pet has five talents, and its jewel is the sixth (Niduus, 2026-11-19: "pets naturally have 5 stats, + jewel as
     // 6th"): the talents a pet is hatched with (his showed Maycast Disarm and Maycast Mythspear on top of his five) are taken
     // off, so he has exactly his role's five, the first of PetTalents the game has. His jewel adds the sixth (TrueFormJewels).
-    private static System.Collections.Generic.List<string> ShapeTalents(Wizard wizard, WizClientObjectItem pet, string[] petTalents) {
+    private static System.Collections.Generic.List<string> ShapeTalents(Wizard wizard, WizClientObjectItem pet,
+        System.Collections.Generic.List<BotPetTalentStats.Info> petTalents, string school, BotStyle style) {
         var names = new System.Collections.Generic.List<string>();
         var behavior = PetProgress.GetBehavior(pet);
         if (behavior is null) {
@@ -211,22 +216,37 @@ internal static class TrueFormMaker {
         }
 
         var wanted = new System.Collections.Generic.List<PetTalentBaseTemplate>();
-        foreach (var name in petTalents) {
+        foreach (var info in petTalents) {
             if (wanted.Count >= PET_TALENTS) {
                 break;
             }
 
-            if (TalentNamed(name) is { } talent) {
+            if (PetData.GetTalent(info.Key) is { } talent && wanted.All(w => w.m_talentName != talent.m_talentName)) {
                 wanted.Add(talent);
-                names.Add($"{name} [{(string) talent.m_talentName}]");
+                names.Add($"{info.Words} [{info.Key}]");
             }
         }
 
+        if (wanted.Count < PET_TALENTS) {
+            Logger.Warning("True Form: only {0} pet talents fit his {1} {2} setup.", Logger.Args(wanted.Count, school.Length == 0 ? "universal" : school, style));
+        }
+
         var wantedIds = wanted.Select(t => PetData.TalentId(t.m_talentName)).ToHashSet();
+        // His pet's genes are his five too: the game fills a pet up to five talents from its genes (its hatched talents,
+        // Myth ones on a Myth pet body), so with its old genes a missing talent came back as a Myth one.
+        var genesChanged = behavior.m_allTalents is null || behavior.m_allTalents.Count != wantedIds.Count || !behavior.m_allTalents.All(wantedIds.Contains);
+        if (genesChanged) {
+            behavior.m_allTalents = [.. wanted.Select(t => PetData.TalentId(t.m_talentName))];
+        }
+
         var had = behavior.m_expressedTalents.ToList();
         if (had.Count == wantedIds.Count && had.All(wantedIds.Contains)) {
-            if (SetStats(pet)) {
+            if (SetStats(pet) | genesChanged) {
                 PetCare.Finish(wizard, pet, null, _ => { });
+            }
+
+            if (genesChanged) {
+                Logger.Information("True Form: his pet's talents: {0}.", Logger.Args(string.Join(", ", names)));
             }
 
             return names;
@@ -249,6 +269,7 @@ internal static class TrueFormMaker {
         PetProgress.MaxStats(pet);
         SetStats(pet);
         PetCare.Finish(wizard, pet, null, _ => { });
+        Logger.Information("True Form: his pet's talents: {0}.", Logger.Args(string.Join(", ", names)));
         return names;
     }
 
@@ -272,27 +293,6 @@ internal static class TrueFormMaker {
         }
 
         return changed;
-    }
-
-    // A talent by the name the game shows. A school's talent ("Ice-Dealer") must be that school's own: one whose game name
-    // holds the school (Niduus, 2026-11-19: in Ice gear his pet still showed Myth damage talents), found by its shown name,
-    // else by the shown name's end ("-Dealer") among that school's talents.
-    private static PetTalentBaseTemplate TalentNamed(string name) {
-        var talents = PetData.AllTalents.Where(t => t is not PetDerbyTalentTemplate).ToList();
-        string Shown(PetTalentBaseTemplate t) => Locale.GetEnglishName(t.m_displayName) ?? "";
-        var dash = name.IndexOf('-');
-        var school = dash > 0 ? name[..dash] : "";
-        if (school.Length > 0 && Enum.TryParse<MagicSchool>(school, true, out _)) {
-            bool Own(PetTalentBaseTemplate t) => ((string) t.m_talentName ?? "").Contains(school, StringComparison.OrdinalIgnoreCase);
-            return talents.FirstOrDefault(t => Own(t) && string.Equals(Shown(t), name, StringComparison.OrdinalIgnoreCase))
-                   ?? talents.FirstOrDefault(t => Own(t) && Shown(t).EndsWith(name[dash..], StringComparison.OrdinalIgnoreCase)
-                                                   && !Shown(t).Contains(' '))
-                   ?? talents.FirstOrDefault(t => string.Equals(Shown(t), name, StringComparison.OrdinalIgnoreCase)
-                                                  && !Enum.GetNames<MagicSchool>().Any(o => !o.Equals(school, StringComparison.OrdinalIgnoreCase) && o != "None"
-                                                                                          && ((string) t.m_talentName ?? "").Contains(o, StringComparison.OrdinalIgnoreCase)));
-        }
-
-        return talents.FirstOrDefault(t => string.Equals(Shown(t), name, StringComparison.OrdinalIgnoreCase));
     }
 
     private static bool IsSchool(uint template, string school)

@@ -104,7 +104,8 @@ internal sealed class BotJewelPicker {
 
         var stats = Wanted(jewel.Stats).ToList();
         // A full healing or full tank setup puts every socket on its one stat (outgoing healing, resist).
-        if (_style is BotStyle.FullHealer or BotStyle.FullTank) {
+        // Full glass and universal damage: every socket on damage, pierce or accuracy, none on resist or health.
+        if (_style is BotStyle.FullHealer or BotStyle.FullTank or BotStyle.GlassCannon or BotStyle.UniversalHitter) {
             return BotGear.ScoreStats(stats, _school, _style);
         }
 

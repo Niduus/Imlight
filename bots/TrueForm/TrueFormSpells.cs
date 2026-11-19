@@ -173,7 +173,7 @@ internal static class TrueFormSpells {
     // rest goes round the utility kinds in his role's order (blades, traps, shields, heals, weakness, charm removal, stun,
     // the rest: prisms, globals, auras, pips), the best of each first. Room left over is filled in the old order.
     private static List<uint> Mixed(List<TrueFormPool.Entry> ordered, int room, BotStyle style) {
-        double hitShare = style switch { BotStyle.Hitter or BotStyle.UniversalHitter => 0.5, BotStyle.Backup => 0.4, BotStyle.Tank => 0.3, BotStyle.FullTank => 0.25, BotStyle.FullHealer => 0.15, _ => 0.25 };
+        double hitShare = style switch { BotStyle.GlassCannon => 0.6, BotStyle.Hitter or BotStyle.UniversalHitter => 0.5, BotStyle.Backup => 0.4, BotStyle.Tank => 0.3, BotStyle.FullTank => 0.25, BotStyle.FullHealer => 0.15, _ => 0.25 };
         string[] kinds = style switch {
             BotStyle.Healer or BotStyle.FullHealer => ["heal", "shield", "charm removal", "blade", "other", "stun", "trap", "weakness"],
             BotStyle.Tank or BotStyle.FullTank => ["shield", "weakness", "stun", "heal", "trap", "other", "blade", "charm removal"],

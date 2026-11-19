@@ -52,6 +52,9 @@ internal enum BotStyle {
     FullHealer,
     // True Form's full tank setup: everything on resist.
     FullTank,
+    // True Form's full glass setup: everything on damage, pierce and accuracy of his school, nothing on resist or health
+    // (Niduus, 2026-11-19: "if he goes full glass, he is to go exactly that").
+    GlassCannon,
 }
 
 /// <summary>
@@ -499,10 +502,11 @@ internal static class BotGear {
             "ReduceDamage" => 8, "FlatReduceDamage" => 3, "MaxHealth" => 0.12, "Block" => 0.4, "IncHealing" => 1.5,
             "PowerPips" => 1.5, "StartingPips" => 10, "Damage" => 0.2, "Healing" => 0.2, "MaxMana" => 0.02, _ => 0,
         },
-        // Everything on damage to every school (the stats are scored with no school, so only every-school ones count).
-        BotStyle.UniversalHitter => kind switch {
+        // Everything on damage to every school (the stats are scored with no school, so only every-school ones count);
+        // min-maxed, so nothing on resist or health.
+        BotStyle.UniversalHitter or BotStyle.GlassCannon => kind switch {
             "Damage" => 10, "ArmorPiercing" => 4, "Accuracy" => 2, "PowerPips" => 2.5, "StartingPips" => 15, "FlatDamage" => 1,
-            "CriticalHit" => 0.3, "ReduceDamage" => 0.8, "MaxHealth" => 0.03, "IncHealing" => 0.3, "MaxMana" => 0.01, _ => 0,
+            "CriticalHit" => 0.3, _ => 0,
         },
         _ => BaseWeight(kind, style),
     };
