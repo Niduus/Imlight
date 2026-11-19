@@ -232,7 +232,7 @@ internal sealed partial class UltimusDirectorActor {
             return false;
         }
 
-        TrueForm.Become(swap.School, swap.Role);
+        TrueForm.Become(swap.School, swap.Role, swap.HeadId, swap.HeadName);
         if (swap.HeadId != 0) {
             TrueForm.Rejoining = swap;
             TrueForm.RejoiningSince = DateTime.UtcNow;

@@ -61,7 +61,7 @@ internal static class TrueFormJewels {
             var put = 0;
             // What his gear gives, so each socket gets what he needs most (BotJewelPicker).
             var need = BotJewelPicker.For(wizard, school, style);
-            var petTalents = TrueFormMaker.PetTalents(school, style);
+            var petTalents = TrueFormMaker.PetTalents(wizard, school, style);
             foreach (var item in (wizard.EquipmentBehavior?.EquippedItems ?? []).ToList()) {
                 var template = ItemHelper.GetItemTemplate(item);
                 var sockets = JewelSockets.GetSockets(template);

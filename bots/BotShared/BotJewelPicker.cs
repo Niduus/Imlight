@@ -90,6 +90,12 @@ internal sealed class BotJewelPicker {
 
     private double AccuracyGoal => 100 - (s_baseAccuracy.TryGetValue(_school, out var at) ? at : 80);
 
+    /// <summary>His school's spells already hit 100% from his gear.</summary>
+    internal bool AccuracyFull => _accuracy >= AccuracyGoal;
+
+    /// <summary>His power pip chance is already 100%.</summary>
+    internal bool PipsFull => _powerPips >= 100;
+
     /// <summary>How good a (gear) jewel is in a socket of this shape; 0 or less for one not worth putting in.</summary>
     internal double Score(BotJewels.Jewel jewel, JewelSocketType shape) {
         if (jewel is null) {
@@ -124,6 +130,13 @@ internal sealed class BotJewelPicker {
                     else if (stat.Kind == "PowerPips") {
                         filled += Math.Min(stat.Value, Math.Max(0, 100 - _powerPips)) * 100;
                     }
+                }
+
+                // Accuracy or power pips already too high: universal accuracy next, so his other schools' spells (Sun,
+                // Shadow, treasure cards, a switched school) hit too (Niduus, 2026-11-19: "try to have the bot go for
+                // universal accuracy"). Ahead of school accuracy even before, a little, for the same points.
+                foreach (var stat in stats.Where(s => s.Kind == "Accuracy" && s.School.Length == 0)) {
+                    filled += stat.Value * (AccuracyFull || PipsFull ? 40 : 1);
                 }
 
                 return filled + (Rest(stats, "Accuracy", "PowerPips") * 0.01) + Rest(stats.Where(s => s.Kind is "Accuracy" or "PowerPips"), null) * 0.0001;

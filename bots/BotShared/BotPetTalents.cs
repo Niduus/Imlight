@@ -16,6 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System.Linq;
+
 namespace Imlight.CoreLib.Game.BotShared;
 
 /// <summary>
@@ -39,7 +41,30 @@ internal static class BotPetTalents {
     internal static readonly string[] Stats = ["Strength", "Intellect", "Agility", "Will", "Power"];
 
     /// <summary>The talents for a school's wizard of a style, best first.</summary>
-    internal static string[] For(string school, BotStyle style = BotStyle.Hitter) => style switch {
+    /// <remarks>
+    /// Accuracy or power pips already too high from his gear: the universal accuracy talents (Sniper, Sharp-Eye,
+    /// Sharp-Shot, Keen Eyes) take the school ones' and Pip Boost's places (Niduus, 2026-11-19).
+    /// </remarks>
+    internal static string[] For(string school, BotStyle style = BotStyle.Hitter, bool accuracyFull = false, bool pipsFull = false) {
+        var talents = Base(school, style);
+        if (!accuracyFull && !pipsFull) {
+            return talents;
+        }
+
+        var list = talents.Select(t => t == $"{school}-Sniper" ? "Sniper"
+            : t == $"{school}-Eye" ? "Sharp-Eye"
+            : t == $"{school}-Shot" ? "Sharp-Shot"
+            : t == "Pip Boost" && pipsFull ? "Keen Eyes"
+            : t).ToList();
+        if (!list.Contains("Sniper")) {
+            // A tank or healer: one universal accuracy talent after its own.
+            list.Add("Sniper");
+        }
+
+        return list.Distinct().ToArray();
+    }
+
+    private static string[] Base(string school, BotStyle style) => style switch {
         // A tank: resist first, then the hits ("Spell-Proof", "Spell-Defying").
         BotStyle.Tank => ["Spell-Proof", "Spell-Defying", "Pain-Giver", $"{school}-Dealer", $"{school}-Giver", "Armor Breaker", "Unicorn", "Fairy"],
         // A healer: the healing may-casts, then resist and damage.

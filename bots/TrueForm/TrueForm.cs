@@ -162,12 +162,12 @@ internal static class TrueForm {
     internal static readonly MagicSchool[] Schools = [MagicSchool.Fire, MagicSchool.Ice, MagicSchool.Storm, MagicSchool.Myth,
         MagicSchool.Life, MagicSchool.Death, MagicSchool.Balance];
 
-    private static volatile string s_school;
+    private static volatile string s_school = Kept()?.School is { } kept && kept != MagicSchool.Myth ? kept.ToString() : null;
 
     /// <summary>The school he plays now: Myth unless his group asked for another.</summary>
     internal static MagicSchool School => s_school is { } asked && Enum.TryParse<MagicSchool>(asked, true, out var school) ? school : MagicSchool.Myth;
 
-    private static volatile string s_role;
+    private static volatile string s_role = Kept() is { School: not MagicSchool.Myth } kept ? kept.Role?.ToString() : null;
 
     /// <summary>The role the group asked for with the school ("Go ice and tank"), or null for the school's own.</summary>
     internal static Mode? Role => s_role is { } asked && Enum.TryParse<Mode>(asked, true, out var mode) ? mode : null;
@@ -183,9 +183,63 @@ internal static class TrueForm {
     internal static SwapAsk TakeSwap() => System.Threading.Interlocked.Exchange(ref s_swap, null);
 
     /// <summary>Puts the asked school and role in place, for the next time he is made ready.</summary>
-    internal static void Become(MagicSchool school, Mode? role) {
+    internal static void Become(MagicSchool school, Mode? role, ulong headId = 0, string headName = "") {
         s_school = school == MagicSchool.Myth ? null : school.ToString();
         s_role = role?.ToString();
+        Keep(school, role, headId, headName);
+    }
+
+    // His switched school, role and group's head kept on disk (logs/trueform/school.txt), so a bot update or server restart
+    // (which logs every bot out and in) does not drop him back to Myth in the middle of a group: he comes back as that
+    // school and asks the head to group again, back to Myth after 3 minutes if they do not.
+    private const string SCHOOL_FILE = "school.txt";
+
+    private static SwapAsk s_kept;
+
+    private static bool s_keptRead;
+
+    private static string SchoolPath => Path.Combine(Seat.Folder, SCHOOL_FILE);
+
+    private static SwapAsk Kept() {
+        if (s_keptRead) {
+            return s_kept;
+        }
+
+        s_keptRead = true;
+        try {
+            if (File.Exists(SchoolPath)) {
+                var parts = File.ReadAllText(SchoolPath).Trim().Split('|');
+                if (parts.Length >= 4 && Enum.TryParse<MagicSchool>(parts[0], true, out var school)
+                    && ulong.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out var head)) {
+                    Mode? role = Enum.TryParse<Mode>(parts[1], true, out var m) ? m : null;
+                    s_kept = new SwapAsk(school, role, head, parts[3]);
+                    if (school != MagicSchool.Myth && head != 0) {
+                        // Back after an update or restart: go back to the group's head (TrueFormSwitch re-calls them).
+                        Rejoining = s_kept;
+                        // Three more minutes, for his log in and getting ready.
+                        RejoiningSince = DateTime.UtcNow.AddMinutes(3);
+                    }
+                }
+            }
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+            Logger.Debug("True Form: could not read his school: {0}", Logger.Args(e.Message));
+        }
+
+        return s_kept;
+    }
+
+    private static void Keep(MagicSchool school, Mode? role, ulong headId, string headName) {
+        s_kept = new SwapAsk(school, role, headId, headName ?? "");
+        s_keptRead = true;
+        try {
+            Directory.CreateDirectory(Seat.Folder);
+            File.WriteAllText(SchoolPath, string.Create(CultureInfo.InvariantCulture,
+                $"{school}|{role?.ToString() ?? ""}|{(school == MagicSchool.Myth ? 0 : headId)}|{(headName ?? "").Replace('|', ' ')}"));
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+            Logger.Warning("True Form: could not keep his school: {0}", Logger.Args(e.Message));
+        }
     }
 
     /// <summary>
@@ -194,7 +248,8 @@ internal static class TrueForm {
     /// </summary>
     internal static volatile SwapAsk Rejoining;
 
-    internal static DateTime RejoiningSince = DateTime.MinValue;
+    // No initializer: reading his kept school (above, first) may set it already.
+    internal static DateTime RejoiningSince;
 
     /// <summary>A school asked for before he was in the player's group: done once they group (3 minutes at most).</summary>
     internal static volatile SwapAsk SwapAfterJoin;
