@@ -16,9 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 using System;
 using System.Linq;
 using Imlight.Common;
+using Imlight.CoreLib.Auth;
 using Imlight.CoreLib.Game.Groups;
 using Imlight.CoreLib.Game.Ultimus;
 using Imlight.CoreLib.Game.World;
@@ -27,25 +29,80 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Commands.Protocols;
 
 /// <summary>
-/// True Form, the helper bot anyone can call (Niduus, 2026-11-19: "EVERYONE"). ".trueform" calls him to you; ".trueform
-/// attack" (defend, support, auto, evil) sets how he plays; ".trueform use Dragonblade" keeps a spell in his hand;
-/// ".trueform leave" sends him back to his spot; ".trueform where" says where he is and who he is with. ".trueform home"
-/// (QA) keeps the spot you stand on as his spot.
+/// True Form, the helper bot anyone can call (Niduus, 2026-11-19: "EVERYONE"). ".trueform" (or ".tf") calls him to you;
+/// ".trueform attack" (defend, support, auto, evil) sets how he plays; ".trueform use Dragonblade" keeps a spell in his
+/// hand; ".trueform leave" sends him back to his spot; ".trueform where" says where he is and who he is with;
+/// ".trueform home" (QA) keeps the spot you stand on as his spot.
+/// One command with no group that reads its own words: a "trueform" group answered ".trueform" alone with the command
+/// list instead of calling him (Niduus, 2026-11-19: "not responding well with commands").
 /// </summary>
-internal class CommandTrueForm : TrueFormCommandBase {
+internal class CommandTrueForm : CommandProtocol {
 
-    internal override string Group { get; set; } = "trueform";
+    internal override string Group { get; set; } = "";
 
-    [Command("call")]
-    [Alias("join", "come", "help")]
-    private void CallCommand() => CallHim();
+    private const string USAGE = ".trueform calls True Form. Then: .trueform attack, defend, support, auto or evil; " +
+                                 ".trueform use <spell> (.trueform use clear); .trueform leave; .trueform where.";
 
-    [Command("leave")]
-    [Alias("bye", "dismiss")]
-    private void LeaveCommand() {
-        var me = Context.Character.CharId;
-        var him = TrueForm.CharId;
-        if (him == 0 || !GroupRegistry.AreGrouped(me, him)) {
+    [Command("trueform")]
+    [Alias("tf", "truef")]
+    private void TrueFormCommand([Remainder] string words = "") {
+        var text = (words ?? "").Trim();
+        var space = text.IndexOf(' ');
+        var first = (space < 0 ? text : text[..space]).ToLowerInvariant();
+        var rest = space < 0 ? "" : text[(space + 1)..].Trim();
+        switch (first) {
+            case "" or "call" or "join" or "come" or "help" or "here" or "invite":
+                Call();
+                return;
+            case "leave" or "bye" or "dismiss":
+                Leave();
+                return;
+            case "home":
+                Home();
+                return;
+            case "use" or "spell" or "keep":
+                Use(rest);
+                return;
+            case "where" or "status" or "who" or "info":
+                Where();
+                return;
+            case "mode":
+                SetMode(rest);
+                return;
+            case "?" or "commands" or "usage":
+                InformSenderClient(USAGE);
+                return;
+            default:
+                SetMode(text);
+                return;
+        }
+    }
+
+    private bool WithHim(out ulong him) {
+        him = TrueForm.CharId;
+        return him != 0 && GroupRegistry.AreGrouped(Context.Character.CharId, him);
+    }
+
+    private void Call() {
+        var me = Context.Character;
+        if (TrueForm.CharId == 0) {
+            InformSenderClient("True Form is not in the game right now.");
+            return;
+        }
+
+        if (WithHim(out _)) {
+            InformSenderClient($"True Form is already with you. He plays {TrueForm.Words(TrueForm.Now)}. " + USAGE);
+            return;
+        }
+
+        TrueForm.Call(me.CharId, me.PlayerNameBehavior?.GetWizardName() ?? "");
+        InformSenderClient(TrueForm.With is { Length: > 0 } busy
+            ? $"True Form is helping {busy} right now; he'll whisper you."
+            : "You called True Form. Accept his group invite when it comes (in a battle, it comes when the battle ends).");
+    }
+
+    private void Leave() {
+        if (!WithHim(out _)) {
             InformSenderClient("True Form isn't in your group.");
             return;
         }
@@ -54,32 +111,35 @@ internal class CommandTrueForm : TrueFormCommandBase {
         InformSenderClient("True Form says goodbye and heads back to his spot in The Commons.");
     }
 
-    [Command("mode")]
-    private void ModeCommand([Remainder] string words = "") => SetMode(words);
+    private void SetMode(string words) {
+        if (TrueForm.ModeFrom(words) is not { } mode) {
+            InformSenderClient(USAGE);
+            return;
+        }
 
-    [Command("use")]
-    [Alias("spell")]
-    private void UseCommand([Remainder] string spell = "") {
-        var me = Context.Character.CharId;
-        var him = TrueForm.CharId;
-        if (him == 0 || !GroupRegistry.AreGrouped(me, him)) {
+        if (!WithHim(out _)) {
+            InformSenderClient("True Form takes orders from his group. Call him first with .trueform");
+            return;
+        }
+
+        TrueForm.SetMode(mode);
+        InformSenderClient($"True Form now plays {TrueForm.Words(mode)} (from his next hand).");
+    }
+
+    private void Use(string spell) {
+        if (!WithHim(out _)) {
             InformSenderClient("True Form takes spell asks from his group. Call him first with .trueform");
             return;
         }
 
         if (string.IsNullOrWhiteSpace(spell)) {
-            if (TrueForm.Requested.Count == 0) {
-                InformSenderClient("Say which spell, like .trueform use Dragonblade (.trueform use clear forgets them).");
-            }
-            else {
-                InformSenderClient("True Form keeps these in his hand: " +
-                                   string.Join(", ", TrueForm.Requested.Select(id => TrueFormPool.Of(id)?.Shown ?? id.ToString())) + ".");
-            }
-
+            InformSenderClient(TrueForm.Requested.Count == 0
+                ? "Say which spell, like .trueform use Dragonblade (.trueform use clear forgets them)."
+                : "True Form keeps these in his hand: " + string.Join(", ", TrueForm.Requested.Select(id => TrueFormPool.Of(id)?.Shown ?? id.ToString())) + ".");
             return;
         }
 
-        if (spell.Trim().Equals("clear", StringComparison.OrdinalIgnoreCase)) {
+        if (spell.Equals("clear", StringComparison.OrdinalIgnoreCase)) {
             TrueForm.ClearRequested();
             InformSenderClient("True Form picks all his cards himself again.");
             return;
@@ -91,17 +151,15 @@ internal class CommandTrueForm : TrueFormCommandBase {
         }
 
         if (TrueFormPool.Find(spell, TrueForm.SpellLevel(), TrueForm.DevSpellsNow) is not { } found) {
-            InformSenderClient($"True Form has no spell called \"{spell.Trim()}\" at level {TrueForm.SpellLevel()}.");
+            InformSenderClient($"True Form has no spell called \"{spell}\" at level {TrueForm.SpellLevel()}.");
             return;
         }
 
         TrueForm.Request(found.Id);
-        InformSenderClient($"True Form keeps {found.Shown} in his hand from the next round.");
+        InformSenderClient($"True Form keeps {found.Shown} in his hand from his next hand.");
     }
 
-    [Command("where")]
-    [Alias("status", "who")]
-    private void WhereCommand() {
+    private void Where() {
         var members = UltimusDirector.MembersOf(UltimusSeat.TrueForm);
         if (members.Count == 0 || members[0].State != "playing") {
             InformSenderClient("True Form is not in the game right now. He is turned on in Imlight.ini ([TrueForm] Enabled).");
@@ -113,71 +171,19 @@ internal class CommandTrueForm : TrueFormCommandBase {
                            $"his spells match level {TrueForm.SpellLevel()}" + (TrueForm.DevSpellsNow ? ", dev spells on" : "") + ".");
     }
 
-    [Command("home")]
-    [AuthRequired(AuthLevel.QualityAssurance)]
-    private void HomeCommand() {
+    private void Home() {
+        if (!AuthorityRequester.RequestAuthority(AuthLevel.QualityAssurance, Context.Account, "Command trueform home")) {
+            InformSenderClient("Only QA can set True Form's spot.");
+            return;
+        }
+
         var me = Context.Character;
         if (string.IsNullOrEmpty(me?.Zone)) {
             return;
         }
 
-        var spot = new TrueForm.Spot(me.Zone, me.Location.X, me.Location.Y, me.Location.Z, me.Orientation.Z);
-        TrueForm.SetHome(spot);
+        TrueForm.SetHome(new TrueForm.Spot(me.Zone, me.Location.X, me.Location.Y, me.Location.Z, me.Orientation.Z));
         InformSenderClient($"True Form's spot is now here, in {ZoneNames.Shown(me.Zone)}. He walks to it whenever nobody has him.");
-    }
-
-}
-
-/// <summary>".trueform" on its own, and ".trueform attack" (a mode word right after it): a command with no group.</summary>
-internal class CommandTrueFormCall : TrueFormCommandBase {
-
-    internal override string Group { get; set; } = "";
-
-    [Command("trueform")]
-    [Alias("tf")]
-    private void TrueFormCommand([Remainder] string words = "") {
-        if (string.IsNullOrWhiteSpace(words)) {
-            CallHim();
-            return;
-        }
-
-        SetMode(words);
-    }
-
-}
-
-/// <summary>What both True Form commands share (abstract: the bots side does not register it as a command).</summary>
-internal abstract class TrueFormCommandBase : CommandProtocol {
-
-    protected void CallHim() {
-        var me = Context.Character;
-        if (TrueForm.CharId == 0) {
-            InformSenderClient("True Form is not in the game right now.");
-            return;
-        }
-
-        if (GroupRegistry.AreGrouped(me.CharId, TrueForm.CharId)) {
-            InformSenderClient($"True Form is already with you. He plays {TrueForm.Words(TrueForm.Now)}.");
-            return;
-        }
-
-        TrueForm.Call(me.CharId, me.PlayerNameBehavior?.GetWizardName() ?? "");
-        InformSenderClient("You called True Form. Watch for his group invite (or his answer if he's busy).");
-    }
-
-    protected void SetMode(string words) {
-        if (TrueForm.ModeFrom(words) is not { } mode) {
-            InformSenderClient(".trueform calls him. Then: .trueform attack, defend, support, auto or evil; .trueform use <spell>; .trueform leave; .trueform where.");
-            return;
-        }
-
-        if (TrueForm.CharId == 0 || !GroupRegistry.AreGrouped(Context.Character.CharId, TrueForm.CharId)) {
-            InformSenderClient("True Form takes orders from his group. Call him first with .trueform");
-            return;
-        }
-
-        TrueForm.SetMode(mode);
-        InformSenderClient($"True Form now plays {TrueForm.Words(mode)}.");
     }
 
 }

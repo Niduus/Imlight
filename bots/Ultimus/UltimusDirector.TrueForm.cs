@@ -51,6 +51,8 @@ internal sealed partial class UltimusDirectorActor {
     private void TrueFormTick() {
         var me = _team[0];
         AnswerPlayers();
+        // Calls and "leave" are answered at once, in a battle too (a call waited for the battle's end and often ran out).
+        TrueFormCalls(me);
         UltimusNow.Note(_doing, _lastReasoning, null);
 
         var paused = File.Exists(Path.Combine(UltimusWire.Folder, UltimusWire.PAUSE_FILE));
@@ -89,8 +91,6 @@ internal sealed partial class UltimusDirectorActor {
             StopWalking(0);
             return;
         }
-
-        TrueFormCalls(me);
 
         var target = PartyTarget(me) ?? TrueFormHome(me);
         var with = _partyMate != 0 ? _partyMateName : "";
