@@ -277,6 +277,8 @@ internal sealed class CheatRule {
         foreach (var block in Dos) {
             if (block.Spec == "D.RandomOne") {
                 json["Random"] = block.On;
+                // Its place is kept with a step that does nothing, so a holder around it counts the blocks as shown.
+                actions.Add(new JsonObject { ["Do"] = "Skip" });
 
                 continue;
             }
@@ -541,8 +543,19 @@ internal sealed class CheatRule {
             Do("D.Defeat");
         }
 
+        var randomPlaced = false;
         foreach (var action in (Node("Actions") as JsonArray ?? []).OfType<JsonObject>()) {
             var what = BossChanges.FindIn(action, "Do") is JsonValue w ? w.ToString() : "";
+            // The place "one spell at random" was saved at (Canonical keeps it with a step that does nothing).
+            if (what.Equals("Skip", StringComparison.OrdinalIgnoreCase)) {
+                if (!randomPlaced) {
+                    Do("D.RandomOne", on: Flag("Random"));
+                    randomPlaced = true;
+                }
+
+                continue;
+            }
+
             var values = new JsonObject();
             foreach (var (key, value) in action) {
                 if (!key.Equals("Do", StringComparison.OrdinalIgnoreCase) && !key.Equals("Off", StringComparison.OrdinalIgnoreCase)) {
@@ -600,7 +613,7 @@ internal sealed class CheatRule {
             rule.Dos.Add(block);
         }
 
-        if (Flag("Random")) {
+        if (Flag("Random") && !randomPlaced) {
             Do("D.RandomOne");
         }
 
