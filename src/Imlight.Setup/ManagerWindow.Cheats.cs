@@ -95,9 +95,66 @@ internal sealed partial class ManagerWindow {
 
     private Control PlayerCheatsTab() => _playerCheatsPage;
 
+    // What the player cheats file held when this page last read or wrote it, and when it was written: a change made
+    // elsewhere (an import on the Share tab, Undo last import, a copy put in the folder) is read in when the page is shown
+    // again. Bug report 2026-11-19: "imported player cheats do not show up in player cheats until the manager is restarted".
+    private DateTime _playerCheatsWritten = DateTime.MinValue;
+    private string _playerCheatsText = "";
+    private bool _playerCheatsAsking;
+
     private void ShowPlayerCheats() {
         if (_playerCheatsPage.Content is null) {
             Guarded(() => _playerCheatsPage.Content = PlayerCheatsPanel());
+
+            return;
+        }
+
+        if (_playerCheatsAsking || PlayerCheatFile.WrittenAt(CheatExtraFolder) == _playerCheatsWritten) {
+            return;
+        }
+
+        // Nothing unsaved here: the new list simply shows. Unsaved changes here: ask first.
+        var unsaved = _playerBoard.List is { } list && PlayerCheatFile.Text(list, _playerCheatsOn) != _playerCheatsText;
+        if (!unsaved) {
+            Guarded(ReloadPlayerCheats);
+            Say("The player cheats were changed outside this page (an import?), so the new list is shown.");
+
+            return;
+        }
+
+        _playerCheatsAsking = true;
+        Dispatcher.UIThread.Post(async () => {
+            try {
+                if (await ConfirmAsync("Your player cheats file was changed outside this page (an import?), and this page has changes you have not saved. " +
+                                       "Show the new file? Your unsaved changes here would be lost. Press No to keep editing; saving then writes your version over it.")) {
+                    Guarded(ReloadPlayerCheats);
+                }
+                else {
+                    // Not asked again for the same change.
+                    _playerCheatsWritten = PlayerCheatFile.WrittenAt(CheatExtraFolder);
+                }
+            }
+            finally {
+                _playerCheatsAsking = false;
+            }
+        });
+    }
+
+    // The page's "Player cheats on" box, set again when the file is read in anew.
+    private CheckBox? _playerCheatsMaster;
+    private bool _playerCheatsReloading;
+
+    /// <summary>Reads the player cheats file in again (it was changed outside the page) and shows its list.</summary>
+    private void ReloadPlayerCheats() {
+        _playerCheatsReloading = true;
+        try {
+            LoadPlayerCheats();
+            if (_playerCheatsMaster is { } master) {
+                master.IsChecked = _playerCheatsOn;
+            }
+        }
+        finally {
+            _playerCheatsReloading = false;
         }
     }
 
@@ -105,8 +162,13 @@ internal sealed partial class ManagerWindow {
         _cheatLines ??= CheatLines.Load(_manager.IdLookupFolder);
         LoadPlayerCheats();
         var master = new CheckBox { Content = "Player cheats on", IsChecked = _playerCheatsOn, FontWeight = FontWeight.SemiBold };
+        _playerCheatsMaster = master;
         ToolTip.SetTip(master, "Turns every player cheat on or off at once. Saved at once; counts from the next round.");
         master.IsCheckedChanged += (_, _) => Guarded(() => {
+            if (_playerCheatsReloading) {
+                return;
+            }
+
             _playerCheatsOn = master.IsChecked == true;
             SavePlayerCheats();
             Say(_playerCheatsOn ? "Player cheats are on." : "Player cheats are off. Your cheats stay here.");
@@ -139,7 +201,9 @@ internal sealed partial class ManagerWindow {
 
     private void LoadPlayerCheats() {
         try {
+            _playerCheatsWritten = PlayerCheatFile.WrittenAt(CheatExtraFolder);
             (_playerBoard.List, _playerCheatsOn) = PlayerCheatFile.Load(CheatExtraFolder);
+            _playerCheatsText = PlayerCheatFile.Text(_playerBoard.List, _playerCheatsOn);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Text.Json.JsonException) {
             _playerBoard.List = new BossCheatList();
@@ -157,6 +221,8 @@ internal sealed partial class ManagerWindow {
 
         try {
             PlayerCheatFile.Save(CheatExtraFolder, _playerBoard.List, _playerCheatsOn);
+            _playerCheatsWritten = PlayerCheatFile.WrittenAt(CheatExtraFolder);
+            _playerCheatsText = PlayerCheatFile.Text(_playerBoard.List, _playerCheatsOn);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
             throw new PanelException($"The player cheats could not be saved: {ex.Message}");

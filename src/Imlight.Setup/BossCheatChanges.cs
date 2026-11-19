@@ -776,6 +776,21 @@ internal static class PlayerCheatFile {
     }
 
     internal static void Save(string extraFolder, BossCheatList list, bool enabled) {
+        Directory.CreateDirectory(extraFolder);
+        var file = FileOf(extraFolder);
+        File.WriteAllText(file + ".tmp", Text(list, enabled));
+        File.Move(file + ".tmp", file, overwrite: true);
+    }
+
+    /// <summary>When the file was last written (DateTime.MinValue when there is none), to see a change made elsewhere.</summary>
+    internal static DateTime WrittenAt(string extraFolder) {
+        var file = FileOf(extraFolder);
+
+        return File.Exists(file) ? File.GetLastWriteTimeUtc(file) : DateTime.MinValue;
+    }
+
+    /// <summary>The file's text for these cheats (what Save writes), also to tell whether the page has unsaved changes.</summary>
+    internal static string Text(BossCheatList list, bool enabled) {
         var cheats = new JsonArray();
         foreach (var rule in list.Cheats) {
             var json = rule.Canonical();
@@ -795,11 +810,7 @@ internal static class PlayerCheatFile {
             cheats.Add(json);
         }
 
-        Directory.CreateDirectory(extraFolder);
-        var text = new JsonObject { ["Enabled"] = enabled, ["Cheats"] = cheats }.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
-        var file = FileOf(extraFolder);
-        File.WriteAllText(file + ".tmp", text);
-        File.Move(file + ".tmp", file, overwrite: true);
+        return new JsonObject { ["Enabled"] = enabled, ["Cheats"] = cheats }.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
     }
 
 }
