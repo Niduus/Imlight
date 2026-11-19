@@ -451,12 +451,12 @@ public class Wizard {
     /// The game's own Level Lock is on: the level and the XP bar stay where they were when it was locked, and XP earned
     /// is banked (OverflowXp) until the wizard unlocks (Niduus, 2026-11-19).
     /// </summary>
-    public bool LevelLocked => MagicSchoolBehavior.LevelIsLocked != 0;
+    [JsonIgnore] public bool LevelLocked => MagicSchoolBehavior.LevelIsLocked != 0;
 
     /// <summary>
     /// The XP banked while the level is locked.
     /// </summary>
-    public int BankedExperience => Math.Max(MagicSchoolBehavior.OverflowXp, 0);
+    [JsonIgnore] public int BankedExperience => Math.Max(MagicSchoolBehavior.OverflowXp, 0);
 
     /// <summary>
     /// Locks the level: the level and XP stay as they are; XP earned from now on is banked.
