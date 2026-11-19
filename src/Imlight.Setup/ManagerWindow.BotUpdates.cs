@@ -39,6 +39,8 @@ internal sealed partial class ManagerWindow {
     private const string BOT_UPDATES_TAB = "Bot Updates";
 
     private readonly ToggleSwitch _botUpdLive = new() { OnContent = "On", OffContent = "Off" };
+    private readonly ToggleSwitch _botUpdWarn = new() { OnContent = "On", OffContent = "Off" };
+    private readonly NumericUpDown _botUpdWarnMinutes = new() { Minimum = 0.5m, Maximum = 30, Increment = 0.5m, FormatString = "0.#", Width = 110, Value = 2 };
     private readonly TextBlock _botUpdState = new() { TextWrapping = TextWrapping.Wrap };
     private readonly StackPanel _botUpdList = new() { Spacing = 8 };
     private readonly StackPanel _botUpdLog = new() { Spacing = 2 };
@@ -51,6 +53,17 @@ internal sealed partial class ManagerWindow {
         _botUpdLive.IsCheckedChanged += async (_, _) => {
             if (!_showingBotUpd) {
                 await Guard(() => SetLiveBotUpdatesAsync(_botUpdLive.IsChecked == true));
+            }
+        };
+
+        _botUpdWarn.IsCheckedChanged += (_, _) => {
+            if (!_showingBotUpd) {
+                SaveBotWarning();
+            }
+        };
+        _botUpdWarnMinutes.ValueChanged += (_, _) => {
+            if (!_showingBotUpd && _botUpdWarnMinutes.Value is not null) {
+                SaveBotWarning();
             }
         };
 
@@ -68,6 +81,10 @@ internal sealed partial class ManagerWindow {
                 _botUpdState,
                 SwitchRow("Live bot updates", _botUpdLive,
                     "On: new bot updates are taken by themselves within 10 minutes. Off: the bots stay as they are until you turn this on or update Ahziael."),
+                SwitchRow("Warn players first", _botUpdWarn,
+                    "On: everyone online is told in chat before the bots go down for an update (and again at 1 minute and 30 seconds), then when they are back. Nothing holds the bots back, and with nobody online they update at once. Off: no warning and no wait."),
+                SwitchRow("Warning time (minutes)", _botUpdWarnMinutes,
+                    "How long the warning runs before the bots go down, from half a minute to 30 minutes. Changes count at once."),
                 Row(Action(Plain("Check now"), CheckBotUpdatesNowAsync), Action(Plain("Open the bots folder"), () => {
                     Directory.CreateDirectory(BotsFolder);
 
@@ -85,6 +102,13 @@ internal sealed partial class ManagerWindow {
         _showingBotUpd = true;
         try {
             _botUpdLive.IsChecked = !(_manager.GetSetting("Bots", "LiveUpdates") is { } live && live.Trim().Equals("false", StringComparison.OrdinalIgnoreCase));
+            _botUpdWarn.IsChecked = !(_manager.GetSetting("Bots", "UpdateWarning") is { } warn && warn.Trim().Equals("false", StringComparison.OrdinalIgnoreCase));
+            if (!_botUpdWarnMinutes.IsKeyboardFocusWithin
+                && decimal.TryParse(_manager.GetSetting("Bots", "UpdateWarningMinutes") ?? "2", NumberStyles.Float, CultureInfo.InvariantCulture, out var minutes)) {
+                _botUpdWarnMinutes.Value = Math.Clamp(minutes, 0.5m, 30);
+            }
+
+            _botUpdWarnMinutes.IsEnabled = _botUpdWarn.IsChecked == true;
         }
         finally {
             _showingBotUpd = false;
@@ -151,6 +175,19 @@ internal sealed partial class ManagerWindow {
             : "Live bot updates are off. The bots stay as they are until you turn this back on or update Ahziael.");
 
         return Task.CompletedTask;
+    }
+
+    private void SaveBotWarning() {
+        var on = _botUpdWarn.IsChecked == true;
+        var minutes = Math.Clamp(_botUpdWarnMinutes.Value ?? 2, 0.5m, 30);
+        _manager.SaveSettings([
+            new Setting("Bots", "UpdateWarning", on ? "true" : "false", ""),
+            new Setting("Bots", "UpdateWarningMinutes", minutes.ToString("0.#", CultureInfo.InvariantCulture), ""),
+        ]);
+        _settings = [];
+        _botUpdWarnMinutes.IsEnabled = on;
+        Say(on ? $"Players are warned {minutes.ToString("0.#", CultureInfo.InvariantCulture)} minutes before the bots go down for an update."
+            : "No warning before bot updates: the bots go down for an update at once.");
     }
 
     private Task CheckBotUpdatesNowAsync() {

@@ -114,24 +114,52 @@ internal static class BotUpdates {
 
     // Like the server's own restart for an update (Ahziael, 2 minutes with warnings at 1 minute and 30 seconds; Niduus,
     // 2026-11-19: "have an announcement for when bots go down like when the server goes down (2 minutes)"). Nothing holds
-    // the bots back after it: no battle or player waits it out, they go down and come back right after.
-    private static readonly TimeSpan s_countdown = TimeSpan.FromMinutes(2);
+    // the bots back after it: no battle or player waits it out, they go down and come back right after. Its length and
+    // whether it is on are Ahziael settings, read live ([Bots] UpdateWarning, UpdateWarningMinutes; Niduus: "make the bot
+    // timer able to be edit and able to be toggled").
+
+    /// <summary>Whether players are warned before the bots go down for an update ([Bots] UpdateWarning). Read live.</summary>
+    internal static bool WarningOn => ConfigurationManager.GetValue("Bots.UpdateWarning", true);
+
+    /// <summary>How long the warning runs before the bots go down ([Bots] UpdateWarningMinutes, 0.5 to 30). Read live.</summary>
+    internal static TimeSpan WarningLength => TimeSpan.FromMinutes(Math.Clamp(ConfigurationManager.GetValue("Bots.UpdateWarningMinutes", 2.0), 0.5, 30));
 
     private static async Task<bool> CountDownAsync() {
-        if (Tell($"The bots go down for an update in {(int) s_countdown.TotalMinutes} minutes. They log back in by themselves right after.") == 0) {
+        if (!WarningOn) {
+            return false;
+        }
+
+        var length = WarningLength;
+        if (Tell($"The bots go down for an update in {Words(length)}. They log back in by themselves right after.") == 0) {
             // Nobody online to warn: no wait.
             return false;
         }
 
-        Note($"bots go down in {(int) s_countdown.TotalMinutes} minutes (players told)");
-        await Task.Delay(s_countdown - TimeSpan.FromMinutes(1));
-        Tell("The bots go down for an update in 1 minute.");
-        await Task.Delay(TimeSpan.FromSeconds(30));
-        Tell("The bots go down for an update in 30 seconds.");
-        await Task.Delay(TimeSpan.FromSeconds(30));
+        Note($"bots go down in {Words(length)} (players told)");
+        var end = DateTime.UtcNow + length;
+        foreach (var mark in new[] { TimeSpan.FromMinutes(1), TimeSpan.FromSeconds(30) }.Where(m => m < length)) {
+            var wait = end - mark - DateTime.UtcNow;
+            if (wait > TimeSpan.Zero) {
+                await Task.Delay(wait);
+            }
+
+            Tell($"The bots go down for an update in {Words(mark)}.");
+        }
+
+        var rest = end - DateTime.UtcNow;
+        if (rest > TimeSpan.Zero) {
+            await Task.Delay(rest);
+        }
+
         Tell("The bots are going down for their update now. They will be back in a moment.");
         return true;
     }
+
+    private static string Words(TimeSpan time) => time.TotalSeconds < 60
+        ? $"{(int) time.TotalSeconds} seconds"
+        : time.TotalMinutes == 1 ? "1 minute"
+        : time.TotalMinutes % 1 == 0 ? $"{(int) time.TotalMinutes} minutes"
+        : $"{(int) time.TotalMinutes} minutes {(int) time.Seconds} seconds";
 
     private static int Tell(string text) {
         try {
