@@ -1166,6 +1166,15 @@ internal static class OverlayHost {
                             false, Pixels(new Rect(at, name.Bounds.Size))));
                     }
 
+                    // A spectator box's top line: folds the box down to it (Niduus, 2026-11-19).
+                    if (name.Tag is UltimusViews.BoxFold fold && name.Bounds.Width > 0 && name.IsEffectivelyVisible
+                        && name.TranslatePoint(new Point(0, 0), picture) is { } foldAt) {
+                        found.Add((new OverlayElement {
+                            Kind = OverlayElement.BUTTON, Action = OverlayAction.BOX_FOLD, Visible = true,
+                            Command = (fold.Key == OverlayUltimusData.TEAM_KEY ? "team|" : fold.Key == OverlayUltimusData.ANYONE_KEY ? "anyone|" : "ultimus|") + fold.Box,
+                        }, false, Pixels(new Rect(foldAt, name.Bounds.Size))));
+                    }
+
                     // The spectators' Track line: Instance or Main (Niduus, 2026-11-15).
                     if (name.Tag is UltimusViews.TrackPick track && name.Bounds.Width > 0 && name.IsEffectivelyVisible
                         && name.TranslatePoint(new Point(0, 0), picture) is { } trackAt) {

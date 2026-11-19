@@ -74,6 +74,55 @@ internal static class OverlayUltimusData {
         }
     }
 
+    // Spectator boxes folded down to their top line (Niduus, 2026-11-19: the overlay "taking up a bit more space than
+    // last"): "<feed>|quest" or "<feed>|spells", kept on this PC.
+    private static readonly HashSet<string> s_folded = LoadFolded();
+
+    private static string FoldName(long key, string box) => (Norm(key) switch { TEAM_KEY => "team", ANYONE_KEY => "anyone", _ => "ultimus" }) + "|" + box;
+
+    /// <summary>Whether this spectator box ("quest" or "spells") is folded down to its top line.</summary>
+    internal static bool Folded(long key, string box) {
+        lock (s_lock) {
+            return s_folded.Contains(FoldName(key, box));
+        }
+    }
+
+    /// <summary>A click on a spectator box's top line: folds it down to that line, or opens it again.</summary>
+    internal static void ToggleFold(long key, string box) {
+        string[] kept;
+        lock (s_lock) {
+            var name = FoldName(key, box);
+            if (!s_folded.Remove(name)) {
+                s_folded.Add(name);
+            }
+
+            FeedOf(Norm(key)).Version++;
+            kept = [.. s_folded];
+        }
+
+        try {
+            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(FoldedFile)!);
+            System.IO.File.WriteAllLines(FoldedFile, kept);
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) {
+            // Only a convenience: the box opens again next time.
+        }
+    }
+
+    private static string FoldedFile => System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        Edition.INSTALL_FOLDER_NAME, "overlay-folded.txt");
+
+    private static HashSet<string> LoadFolded() {
+        try {
+            return System.IO.File.Exists(FoldedFile)
+                ? [.. System.IO.File.ReadAllLines(FoldedFile).Select(l => l.Trim()).Where(l => l.Length is > 0 and < 40)]
+                : [];
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException) {
+            return [];
+        }
+    }
+
     /// <summary>The dungeon quest tracked in this one's box and map, or null for the quest it plays.</summary>
     internal static HeldQuest? Tracked(long key, Info? info) {
         if (info is null) {
@@ -804,7 +853,28 @@ internal static class UltimusViews {
             return panel;
         }
 
-        panel.Children.Add(Line($"{info!.Name}" + (info.Level > 0 ? $"  ·  level {info.Level}" : ""), look.Size + 2, look.Gold, bold: true));
+        // On the game, a click on the top line folds the box down to two lines (Niduus, 2026-11-19: the overlay "taking up
+        // a bit more space than last").
+        var folded = names && OverlayUltimusData.Folded(key, BoxFold.QUEST);
+        var top = Line((names ? folded ? "▸ " : "▾ " : "") + $"{info!.Name}" + (info.Level > 0 ? $"  ·  level {info.Level}" : ""), look.Size + 2, look.Gold, bold: true);
+        if (names) {
+            top.Tag = new BoxFold(key, BoxFold.QUEST);
+        }
+
+        panel.Children.Add(top);
+        if (folded) {
+            // Folded: just the quest it plays now (or the dungeon quest tracked), on one line.
+            var held = OverlayUltimusData.Tracked(key, info);
+            var title = held is not null ? held.Title : info.QuestTitle.Length > 0 ? info.QuestTitle : info.Quest;
+            var now = info.Steps.FirstOrDefault(s => s.Here) ?? info.Steps.FirstOrDefault();
+            panel.Children.Add(Line(title.Length > 0 ? title : "No quest picked yet.", look.Size - 1, look.Text));
+            if (held is null && now is not null) {
+                panel.Children.Add(Line("• " + now.Text, look.Size - 2, look.Faint));
+            }
+
+            return panel;
+        }
+
         if (info.Most > 0) {
             panel.Children.Add(Bar(info.Health, info.Most, look));
         }
@@ -918,6 +988,14 @@ internal static class UltimusViews {
         return panel;
     }
 
+    /// <summary>A click on a spectator box's top line: folds the box (Box "quest" or "spells") down to it (OverlayHost.PlaceHits).</summary>
+    internal sealed record BoxFold(long Key, string Box) {
+
+        internal const string QUEST = "quest";
+        internal const string SPELLS = "spells";
+
+    }
+
     /// <summary>A click on the quest box's Track line: "main", a dungeon quest's id, or "" for Auto (OverlayHost.PlaceHits).</summary>
     internal sealed record TrackPick(long Key, string Choice);
 
@@ -1002,7 +1080,19 @@ internal static class UltimusViews {
             return null;
         }
 
-        panel.Children.Add(Line($"{info.Name} in battle" + (fight.Round > 0 ? $"  ·  round {fight.Round}" : ""), look.Size + 2, look.Gold, bold: true));
+        var key = OverlayUltimusData.KeyOf(e);
+        var folded = OverlayUltimusData.Folded(key, BoxFold.SPELLS);
+        var top = Line((folded ? "▸ " : "▾ ") + $"{info.Name} in battle" + (fight.Round > 0 ? $"  ·  round {fight.Round}" : ""), look.Size + 2, look.Gold, bold: true);
+        top.Tag = new BoxFold(key, BoxFold.SPELLS);
+        panel.Children.Add(top);
+        if (folded) {
+            // Folded: pips and what is cast, nothing more.
+            panel.Children.Add(Line(Pips(fight) + (fight.Pick.Length > 0 ? "  ·  " + (fight.Pick == "passes" ? "Passes" : "Casts " + fight.Pick) : ""),
+                look.Size - 1, look.Text));
+
+            return panel;
+        }
+
         if (fight.Most > 0) {
             panel.Children.Add(Bar(fight.Health, fight.Most, look));
         }

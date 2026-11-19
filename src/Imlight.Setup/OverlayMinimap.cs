@@ -35,7 +35,15 @@ namespace Imlight.Setup;
 internal static class OverlayMinimapData {
 
     /// <summary>One thing on the map; Id (when the server sends one) is which thing it is, so it glides from map to map.</summary>
-    internal sealed record Mark(string Kind, double X, double Y, string Name, int Level, string Id = "");
+    internal sealed record Mark(string Kind, double X, double Y, string Name, int Level, string Id = "") {
+
+        /// <summary>How far above (+) or below (-) the wizard it is, in game units (0 when on the wizard's own level).</summary>
+        internal double Height { get; init; }
+
+        /// <summary>What an NPC does for players: shop, trainer, potions, bank, bazaar, cards, reagents, crafting, tailor, fish, pets, respec.</summary>
+        internal string Job { get; init; } = "";
+
+    }
 
     /// <summary>
     /// An area's ground from above (Niduus, 2026-11-12: "I want the street actually mapped out in the minimap"). Either
@@ -465,7 +473,9 @@ internal static class OverlayMinimapData {
         if (map["marks"] is JsonArray list) {
             foreach (var item in list.OfType<JsonObject>().Take(500)) {
                 marks.Add(new Mark(Short((string?) item["k"], 12), Number(item["x"]), Number(item["y"]), Short((string?) item["n"], 60),
-                    (int) Number(item["l"]), Short((string?) item["i"], 40)));
+                    (int) Number(item["l"]), Short((string?) item["i"], 40)) {
+                    Height = Math.Clamp(Number(item["h"]), -100000, 100000), Job = Short((string?) item["r"], 12),
+                });
             }
         }
 
@@ -520,6 +530,12 @@ internal static class OverlayMinimapData {
     private static readonly Snapshot Sample = new("Unicorn Way", 0, 0, -3 * Math.PI / 4, [
         new Mark("npc", 300, -700, "Lady Oriel", 0),
         new Mark("npc", -400, 600, "Private Stillson", 0),
+        new Mark("npc", 900, 300, "Mrs. Thetis", 0) { Job = "potions" },
+        new Mark("npc", -700, 1000, "Diego", 0) { Job = "trainer" },
+        new Mark("wisp-health", -150, 450, "", 0),
+        new Mark("wisp-mana", 150, 650, "", 0),
+        new Mark("battle", -1000, -500, "", 0),
+        new Mark("mob", 200, -400, "Dark Fairy", 3) { Height = 600 },
         new Mark("boss", 1200, -1100, "Rattlebones", 10),
         new Mark("mob", -900, -300, "Lost Soul", 2),
         new Mark("mob", -1100, -700, "Lost Soul", 2),
@@ -937,13 +953,21 @@ internal sealed class MinimapView : Control {
             }
 
             var own = size * SizeOf(mark);
-            Icon(context, mark, at, own);
-            if (mark.Kind == "boss" && _map.BossGlow) {
-                context.DrawEllipse(null, new Pen(Brush(_map.BossColor), Math.Max(1.2, size / 6)), at, own * 1.25, own * 1.25);
+            // On another floor (above or below the wizard): faded, with a small up or down arrow beside it (Niduus,
+            // 2026-11-19: "minimap lacking detail"), so a mob one floor up isn't taken for one in the way.
+            var floor = _map.Floors && Math.Abs(mark.Height) >= _map.FloorGap ? Math.Sign(mark.Height) : 0;
+            using (floor != 0 ? context.PushOpacity(_map.FloorFade) : default(DrawingContext.PushedState?)) {
+                Icon(context, mark, at, own);
+                if (mark.Kind == "boss" && _map.BossGlow) {
+                    context.DrawEllipse(null, new Pen(Brush(_map.BossColor), Math.Max(1.2, size / 6)), at, own * 1.25, own * 1.25);
+                }
             }
 
-            if (mark.Name.Length > 0 && Named(mark)) {
-                var words = _map.Levels && mark.Level > 0 && mark.Kind is "mob" or "boss" ? $"{mark.Name} ({mark.Level})" : mark.Name;
+            if (floor != 0) {
+                FloorArrow(context, new Point(at.X + own * 0.75, at.Y - own * 0.55), floor > 0, Math.Max(4, size * 0.6));
+            }
+
+            if (NameOf(mark) is { Length: > 0 } words) {
                 names.Add((words, new Point(at.X, at.Y + own * 0.9), Order(mark), _map.NamesInKindColor ? Brush(ColorOf(mark)) : Brush(_map.TextColor)));
             }
         }
@@ -1188,6 +1212,51 @@ internal sealed class MinimapView : Control {
         }
     }
 
+    // The words under a mark, or empty: its name (with its level when asked), an NPC's job (Shop, Trainer, Potions...), or both.
+    private string NameOf(OverlayMinimapData.Mark mark) {
+        var job = mark.Kind == "npc" && _map.NpcJobs && _map.JobNames ? JobWord(mark.Job) : "";
+        var name = mark.Name.Length > 0 && Named(mark) ? mark.Name : "";
+        if (name.Length > 0 && _map.Levels && mark.Level > 0 && mark.Kind is "mob" or "boss") {
+            name = $"{name} ({mark.Level})";
+        }
+
+        return job.Length == 0 ? name : name.Length == 0 ? job : $"{name} ({job})";
+    }
+
+    /// <summary>The word for an NPC's job on the map (empty for an NPC without one).</summary>
+    internal static string JobWord(string job) => job switch {
+        "shop" => "Shop",
+        "trainer" => "Trainer",
+        "potions" => "Potions",
+        "bank" => "Bank",
+        "bazaar" => "Bazaar",
+        "cards" => "Treasure Cards",
+        "reagents" => "Reagents",
+        "crafting" => "Crafting",
+        "tailor" => "Tailor",
+        "fish" => "Fish Market",
+        "pets" => "Pet Games",
+        "respec" => "Untrain",
+        _ => "",
+    };
+
+    // The letter inside an NPC's job badge.
+    private static string JobLetter(string job) => job switch {
+        "shop" => "S",
+        "trainer" => "T",
+        "potions" => "P",
+        "bank" => "B",
+        "bazaar" => "$",
+        "cards" => "C",
+        "reagents" => "R",
+        "crafting" => "W",
+        "tailor" => "A",
+        "fish" => "F",
+        "pets" => "G",
+        "respec" => "U",
+        _ => "",
+    };
+
     // Which names show: bosses, sigils and doors with Names; creatures and NPCs each by their own choice; NPCs on the full screen map.
     private bool Named(OverlayMinimapData.Mark mark) => mark.Kind switch {
         "boss" or "sigil" or "door" => _map.Names,
@@ -1199,11 +1268,12 @@ internal sealed class MinimapView : Control {
 
     private double SizeOf(OverlayMinimapData.Mark mark) => mark.Kind switch {
         "mob" => _map.MobSize, "boss" => _map.BossSize, "npc" => _map.NpcSize, "sigil" => _map.SigilSize, "door" => _map.DoorSize,
-        "chest" => _map.ChestSize, "wizard" or "team" => _map.WizardSize, _ => 1,
+        "chest" => _map.ChestSize, "wizard" or "team" => _map.WizardSize, "wisp-health" or "wisp-mana" => 1, "battle" => 1.3, _ => 1,
     };
 
     private static int Order(OverlayMinimapData.Mark mark) => mark.Kind switch {
-        "npc" => 0, "chest" => 1, "door" => 2, "mob" => 3, "wizard" => 5, "team" => 6, "sigil" => 7, "boss" => 9, _ => 0,
+        "npc" when mark.Job.Length > 0 => 1, "npc" => 0, "wisp-health" or "wisp-mana" => 1, "chest" => 1, "door" => 2, "battle" => 2, "mob" => 3,
+        "wizard" => 5, "team" => 6, "sigil" => 7, "boss" => 9, _ => 0,
     };
 
     private bool Shows(OverlayMinimapData.Mark mark) => mark.Kind switch {
@@ -1214,11 +1284,15 @@ internal sealed class MinimapView : Control {
         "door" => _map.Doors,
         "chest" => _map.Chests,
         "wizard" or "team" => _map.Wizards,
+        "wisp-health" or "wisp-mana" => _map.Wisps,
+        "battle" => _map.Battles,
         _ => false,
     };
 
     private string ColorOf(OverlayMinimapData.Mark mark) => mark.Kind switch {
+        "npc" when _map.NpcJobs && mark.Job.Length > 0 => _map.JobColor,
         "npc" => _map.NpcColor, "mob" => _map.MobColor,
+        "wisp-health" => _map.WispHealthColor, "wisp-mana" => _map.WispManaColor, "battle" => _map.BattleColor,
         "boss" => _map.BossColor, "sigil" => _map.SigilColor, "door" => _map.DoorColor, "chest" => _map.ChestColor,
         "wizard" => _map.WizardColor, "team" => _map.TeamColor, _ => _map.TextColor,
     };
@@ -1237,9 +1311,42 @@ internal sealed class MinimapView : Control {
             case "mob":
                 context.DrawEllipse(brush, Outline, at, r * 0.75, r * 0.75);
                 break;
+            case "npc" when _map.NpcJobs && JobLetter(mark.Job) is { Length: > 0 } letter: {
+                // A shop, trainer, the bank...: a round badge with its letter, so each one is found at a glance.
+                context.DrawEllipse(brush, Outline, at, r * 0.95, r * 0.95);
+                var text = Text(letter, Math.Max(5, size * 0.85), Brushes.Black, true);
+                Words(context, text, new Point(at.X - text.Width / 2, at.Y - text.Height / 2), new SolidColorBrush(Color.FromArgb(0xF0, 0x14, 0x10, 0x08)));
+                break;
+            }
             case "npc":
                 context.DrawEllipse(brush, Outline, at, r * 0.55, r * 0.55);
                 break;
+            case "wisp-health" or "wisp-mana": {
+                // A small drop: round at the bottom, pointed at the top.
+                context.DrawGeometry(brush, Outline, new EllipseGeometry(new Rect(at.X - r * 0.62, at.Y - r * 0.5, r * 1.24, r * 1.24)));
+                var tip = new StreamGeometry();
+                using (var g = tip.Open()) {
+                    g.BeginFigure(new Point(at.X, at.Y - r * 1.15), true);
+                    g.LineTo(new Point(at.X + r * 0.5, at.Y - r * 0.15));
+                    g.LineTo(new Point(at.X - r * 0.5, at.Y - r * 0.15));
+                    g.EndFigure(true);
+                }
+
+                context.DrawGeometry(brush, null, tip);
+                break;
+            }
+            case "battle": {
+                // Two crossed swords over a faint ring: a battle going on here.
+                context.DrawEllipse(new SolidColorBrush(Color.FromArgb(0x60, 0, 0, 0)), new Pen(brush, 1), at, r * 1.05, r * 1.05);
+                var blade = new Pen(brush, Math.Max(1.4, size / 5), lineCap: PenLineCap.Round);
+                var dark = new Pen(Brush(_map.OutlineColor), Math.Max(2.6, size / 5 + 1.6), lineCap: PenLineCap.Round);
+                foreach (var pen in new[] { dark, blade }) {
+                    context.DrawLine(pen, new Point(at.X - r * 0.7, at.Y + r * 0.7), new Point(at.X + r * 0.7, at.Y - r * 0.7));
+                    context.DrawLine(pen, new Point(at.X + r * 0.7, at.Y + r * 0.7), new Point(at.X - r * 0.7, at.Y - r * 0.7));
+                }
+
+                break;
+            }
             case "sigil":
                 context.DrawEllipse(null, new Pen(brush, Math.Max(1.5, size / 5)), at, r * 1.1, r * 1.1);
                 context.DrawEllipse(brush, null, at, r * 0.4, r * 0.4);
@@ -1265,6 +1372,20 @@ internal sealed class MinimapView : Control {
         var dark = new SolidColorBrush(Color.FromArgb(0xF0, 0x10, 0x08, 0x10));
         context.DrawEllipse(dark, null, new Point(at.X - r * 0.33, at.Y - r * 0.08), r * 0.22, r * 0.26);
         context.DrawEllipse(dark, null, new Point(at.X + r * 0.33, at.Y - r * 0.08), r * 0.22, r * 0.26);
+    }
+
+    // A small up or down arrow beside a mark on another floor.
+    private void FloorArrow(DrawingContext context, Point at, bool up, double size) {
+        var tri = new StreamGeometry();
+        using (var g = tri.Open()) {
+            var (tipY, baseY) = up ? (at.Y - size * 0.6, at.Y + size * 0.4) : (at.Y + size * 0.6, at.Y - size * 0.4);
+            g.BeginFigure(new Point(at.X, tipY), true);
+            g.LineTo(new Point(at.X + size * 0.6, baseY));
+            g.LineTo(new Point(at.X - size * 0.6, baseY));
+            g.EndFigure(true);
+        }
+
+        context.DrawGeometry(Brush(_map.FloorColor), Outline, tri);
     }
 
     // A pointer at a spot, its tip towards angle (0: up), as for you in the middle or a teammate off the map.
