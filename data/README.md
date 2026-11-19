@@ -21,7 +21,7 @@ Same folder names, file names and JSON as SpiralDB, so the folder can be laid ov
 | `NpcDropTable` | 4,755 | Which drop tables each creature uses, by creature template id. |
 | `CreatureSpellbook` | 516 | Creature decks. |
 | `NpcInventory` | 10 | NPC shop lists (the garden vendors). |
-| `ZoneTransfer` | 6 | Zone exits SpiralDB lacks. |
+| `ZoneTransfer` | 7 | Zone exits SpiralDB lacks or has wrong (Mirage `MR_Z00_Hub`: the Top/Bottom Of Rock cave teleports had their landings swapped). |
 
 Quests by world:
 
