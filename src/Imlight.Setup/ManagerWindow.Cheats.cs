@@ -519,6 +519,10 @@ internal sealed partial class ManagerWindow {
             rule.Off = !rule.Off;
             RenderCheats(board);
         }));
+        if (board.Player) {
+            tools.Children.Add(SendCheatButton(board, rule));
+        }
+
         tools.Children.Add(Tool("copy", "Make a copy of this cheat, as a new one of yours", () => {
             var copy = rule.Copy();
             list.Add(copy);
@@ -713,7 +717,13 @@ internal sealed partial class ManagerWindow {
             list.Insert(Math.Clamp(to, 0, list.Count), block);
             RenderCheats(board);
         });
-        stack.Dropped += (payload, _, index) => Guarded(() => AddFromPalette(board, (CheatSpec) payload, rule, index));
+        // A palette block drags its whole palette entry; the block it makes is the entry's spec. (Niduus, 2026-11-19:
+        // dropping one threw "Specified cast is not valid", as the entry itself was taken for the spec.)
+        stack.Dropped += (payload, _, index) => Guarded(() => {
+            if ((payload is PaletteEntry entry ? entry.Payload : payload) is CheatSpec spec) {
+                AddFromPalette(board, spec, rule, index);
+            }
+        });
 
         return new Border { Padding = new Thickness(4, 6, 4, 2), Child = stack };
     }
