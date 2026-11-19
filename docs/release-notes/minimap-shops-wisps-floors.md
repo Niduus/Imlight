@@ -1,0 +1,4 @@
+Fixed: The minimap shows shops, trainers, wisps, battles and other floors
+The minimap now shows more of what is around you. Shops, trainers, the potion shop, the bank, the Bazaar and other helpful people get a gold badge with a letter, with what they are written under them. Health and mana wisps show as small red and blue drops, crossed swords mark a battle going on right now, and anything on the floor above or below you is faded with a small up or down arrow so it is not mistaken for something in your way. Each of these can be turned off or recoloured in the minimap's settings.
+Where: the Minimap add-on and the spectator minimaps over the game, and the Minimap settings in Ahziael's overlay designer.
+Test: walk around the Commons and Wizard City with the minimap on and check that the shops and trainers have badges, that wisps and a battle someone is in show up, and that in a tower or dungeon with several floors the things upstairs look faded with an arrow.

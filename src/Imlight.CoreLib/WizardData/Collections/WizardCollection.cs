@@ -420,6 +420,9 @@ public static class WizardCollection {
         UpdateCharacter(wizard.CharId, existingCharacter => {
             existingCharacter.MagicSchoolBehavior.Level = wizard.MagicSchoolBehavior.Level;
             existingCharacter.MagicSchoolBehavior.ExperiencePoints = wizard.MagicSchoolBehavior.ExperiencePoints;
+            // The game's Level Lock and the XP banked while locked.
+            existingCharacter.MagicSchoolBehavior.LevelIsLocked = wizard.MagicSchoolBehavior.LevelIsLocked;
+            existingCharacter.MagicSchoolBehavior.OverflowXp = wizard.MagicSchoolBehavior.OverflowXp;
         });
     }
 

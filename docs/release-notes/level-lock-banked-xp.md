@@ -1,0 +1,4 @@
+Fixed: Level Lock keeps your level and saves up your XP
+The game's own Level Lock did nothing, because the server never answered it, so players kept levelling up while locked. Now locking keeps your level and XP bar exactly where they were, and every bit of XP you earn from battles, quests and the rest is saved up in the background. When you unlock, all the saved-up XP is given at once and you level up as far as it reaches, with the training points for each level. If you can't find the button in the game, type .levellock on, .levellock off, or just .levellock to see how much XP is saved up.
+Where: In game, the Level Lock button or the .levellock command, for every player.
+Test: Type .levellock on, win a few battles, and check your level and XP bar did not move. Type .levellock to see the saved-up XP, then .levellock off: you get it all and level up if it is enough.

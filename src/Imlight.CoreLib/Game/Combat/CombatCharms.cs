@@ -106,13 +106,15 @@ internal static class CombatCharms {
            || string.Equals(modifierSchool, school, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
-    /// Keeps the first of each spell's modifiers. One with no spell id (from before ids were kept) counts as its own.
+    /// Keeps the first of each spell's modifiers. One with no spell id (from before ids were kept) counts as its own. An
+    /// enchanted card counts apart from the plain card (as in the game): a Sharpened Balanceblade and a Balanceblade both
+    /// count on one hit, two Balanceblades or two Sharpened ones do not.
     /// </summary>
     internal static List<SpellEffect> OnePerSpell(IEnumerable<SpellEffect> effects) {
-        var seen = new HashSet<uint>();
+        var seen = new HashSet<(uint Spell, uint Enchantment)>();
         var kept = new List<SpellEffect>();
         foreach (var effect in effects) {
-            if (effect.m_spellTemplateID == 0 || seen.Add(effect.m_spellTemplateID)) {
+            if (effect.m_spellTemplateID == 0 || seen.Add((effect.m_spellTemplateID, effect.m_enchantmentSpellTemplateID))) {
                 kept.Add(effect);
             }
         }

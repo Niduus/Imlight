@@ -100,7 +100,7 @@ internal sealed partial class ManagerWindow {
         _ = LoadPhrasesAsync();
 
         return new DockPanel {
-            Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH,
+            Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.TWO_COLUMN_MAX_WIDTH,
             Children = {
                 WithDock(WithMargin(MissingNote("it doesn't write the list of the game's lines this page shows.", () => !_manager.HasIdLookup),
                     new Thickness(0, 0, 0, 10)), Dock.Top),

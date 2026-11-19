@@ -105,7 +105,7 @@ internal static class OutsideCheats {
         var whose = creature is { } id ? BossCheats.NameOf(id) : "player cheat";
         Logger.Information("Cheat outside battle | {0} cheat {1} for {2} ({3}, {4}).",
             Logger.Args(whose, key, wizard.PlayerNameBehavior?.GetWizardName() ?? wizard.CharId.ToString(), loggedIn ? "log in" : "zone", zone));
-        foreach (var step in cheat.Steps().Where(s => s is not null && !s.Off)) {
+        foreach (var step in cheat.Steps().Where(s => s is not null && !s.Off && !s.Is("Skip"))) {
             RunStep(wizard, actor, step, creature, whose);
         }
     }

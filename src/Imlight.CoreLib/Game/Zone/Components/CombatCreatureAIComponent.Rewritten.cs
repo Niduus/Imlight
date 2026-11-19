@@ -184,7 +184,13 @@ internal sealed partial class CombatCreatureAIComponent {
                 continue;
             }
 
-            if (me.HasPipsForSpell(spell)) {
+            // [Combat] NaturalAttackCooldown: no natural attack the round after one.
+            if (_naturalAttackCooling && card.Natural) {
+                continue;
+            }
+
+            // An X pip spell below its lowest tier does nothing.
+            if (me.HasPipsForSpell(spell) && CombatActionResolver.XPipReachesATier(spell, me)) {
                 turn.Castable.Add(card);
             }
         }
@@ -723,6 +729,11 @@ internal sealed partial class CombatCreatureAIComponent {
         if (_determinedSmartThisTurn && !_heldBackLastRound && !turn.Tuning.Excludes(RewrittenAI.NO_HOLD_BACK) && best.Damage > 0) {
             var bigger = turn.Hand.Where(c => c.Hit && !turn.Castable.Contains(c) && c.Rank <= turn.Pips + 1)
                 .Select(c => (Card: c, Damage: RewrittenAI.Estimate(c, me, best.Target)))
+                // An X pip spell grows with the next round's pip: what it would hit for then (Niduus, 2026-11-19: "lack of
+                // logic for X pip spells").
+                .Concat(turn.Hand.Where(c => c.Hit && c.XPip && c.Spell is not null)
+                    .Select(c => (Card: c, Damage: RewrittenAI.Estimate(c, me, best.Target,
+                        xPips: CombatActionResolver.GetXPipCost(c.Spell, me) + 1))))
                 .OrderByDescending(x => x.Damage).FirstOrDefault();
             if (bigger.Card is not null && bigger.Damage >= best.Damage * 2.5f && RewrittenAI.Health(best.Target) > best.Damage) {
                 options.Add(new Choice(null, best.Target, "hold", $"saving its pips for {bigger.Card.Shown} next round (about {bigger.Damage} vs {best.Damage})"));

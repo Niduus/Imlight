@@ -115,6 +115,8 @@ internal static class ManagerTheme {
         ["Game Rules"] = Color.FromRgb(46, 170, 98),
         ["Help"] = Color.FromRgb(46, 160, 140),
         ["Quest Team"] = Color.FromRgb(120, 150, 235),
+        ["Bots"] = Color.FromRgb(150, 125, 240),
+        ["Street Bots"] = Color.FromRgb(120, 170, 220),
         // Tabs.
         ["Play"] = Color.FromRgb(46, 170, 98),
         ["Commands"] = BLOCK_WHEN,
@@ -216,6 +218,8 @@ internal static class ManagerTheme {
     internal const double CONTROL_HEIGHT = 34;
     internal const double PAGE_MAX_WIDTH = 1060;
     internal const double WIDE_PAGE_MAX_WIDTH = 1720;
+    // A page of cards in two columns on a wide window (CardColumns), and the lines over it.
+    internal const double TWO_COLUMN_MAX_WIDTH = PAGE_MAX_WIDTH * 2 + GAP;
 
     // ---------------------------------------------------------------------
     // Icons (drawn on a 24 by 24 grid, so they show before the game files are found)
@@ -452,7 +456,7 @@ internal static class ManagerTheme {
 
     /// <summary>A tab's header: its icon tile, its name and one line on what it is for.</summary>
     internal static Control PageHeader(string icon, IBrush accent, string title, string line) => new DockPanel {
-        Margin = new Thickness(24, 20, 24, 2), MaxWidth = PAGE_MAX_WIDTH,
+        Margin = new Thickness(24, 20, 24, 2), MaxWidth = TWO_COLUMN_MAX_WIDTH,
         Children = {
             Docked(new Border { Margin = new Thickness(0, 0, 14, 0), VerticalAlignment = VerticalAlignment.Center, Child = Tile(icon, accent, 46) }, Dock.Left),
             new StackPanel {

@@ -144,7 +144,7 @@ internal sealed partial class ManagerWindow {
         _questTimer.Tick += (_, _) => LoadQuests();
 
         return new DockPanel {
-            Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH,
+            Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.TWO_COLUMN_MAX_WIDTH,
             Children = {
                 WithDock(WithMargin(MissingNote("it doesn't write the quest list this page shows.", () => !_manager.HasQuestGuide),
                     new Thickness(0, 0, 0, 10)), Dock.Top),

@@ -35,7 +35,6 @@ namespace Imlight.CoreLib.Game.Commands.Protocols;
 /// <list type="bullet">
 /// <item>`.announce box|chat|both &lt;words&gt;`: the Announcements card's message to everyone online (hall monitors and up).</item>
 /// <item>`.benefit`, `.benefit on &lt;name|all&gt; [time]`, `.benefit off &lt;name|all&gt;`: the Member benefits card (administrators).</item>
-/// <item>`.questcheck`: Quest Testing's "Check all quests" button; the report shows on that tab (administrators).</item>
 /// </list>
 /// </summary>
 internal class CommandServerToolsProtocol : CommandProtocol {
@@ -133,15 +132,7 @@ internal class CommandServerToolsProtocol : CommandProtocol {
             : $"{shown} is off. Everyone online is told in a moment.");
     }
 
-    [Command("questcheck")]
-    [Alias("checkquests")]
-    [AuthRequired(AuthLevel.Administrator)]
-    private void QuestCheckCommand() {
-        var started = QuestChecker.Start(IdCatalog.OutputPath);
-        InformSenderClient(started
-            ? "Checking every main quest against the game's zone files. It takes a few minutes; the report shows on Ahziael's Quests > Quest Testing tab."
-            : "The quest check is running already. Its report shows on Ahziael's Quests > Quest Testing tab.");
-    }
+    // .questcheck was removed with Ahziael's Quest Testing tab (Niduus, 2026-11-19: "should be removed").
 
     private void ShowBenefits() {
         var text = new StringBuilder().AppendLine("<center>Member benefits</center>").AppendLine();

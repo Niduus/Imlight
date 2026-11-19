@@ -309,6 +309,79 @@ internal sealed partial class ManagerWindow {
         };
     }
 
+    // ---------------------------------------------------------------------
+    // One zone, everything for it in one place (Niduus, 2026-11-19: "Sometimes I wanna troll and lock zones, but instead
+    // leads me to tp to them. In such cases, merge them so everything is in 1 location")
+    // ---------------------------------------------------------------------
+
+    /// <summary>Whether a zone is locked (turned off on On and Off), by itself or with its whole world.</summary>
+    private bool ZoneLocked(string zone) {
+        var zones = ReadTurnedOff().Zones;
+        var world = zone.Split('/')[0];
+
+        return zones.Any(z => string.Equals(z, zone, StringComparison.OrdinalIgnoreCase) || string.Equals(z, world, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
+    /// The buttons for one zone, on the Locations tab and in the search window: Teleport, Lock or Unlock (the same switch as
+    /// On and Off), and Copy. Locking says what it did, so it is never mistaken for a teleport.
+    /// </summary>
+    private Control ZoneActions(string zone, string name, Action? after = null) {
+        var panel = new WrapPanel();
+        void Build() {
+            panel.Children.Clear();
+            var command = $".tp {zone}";
+            panel.Children.Add(Spaced(Action(Primary("Teleport my wizard here"), () => {
+                _manager.SendCommand(command);
+                Say($"Sent {command} ({name}). Your wizard goes there in a few seconds.");
+
+                return Task.CompletedTask;
+            })));
+
+            if (string.Equals(zone, ALWAYS_ON_ZONE, StringComparison.OrdinalIgnoreCase)) {
+                panel.Children.Add(Spaced(WithCenter(Sub("The Commons is never locked, so players always have somewhere to go."))));
+            }
+            else {
+                var locked = ZoneLocked(zone);
+                var worldLocked = locked && !ReadTurnedOff().Zones.Contains(zone, StringComparer.OrdinalIgnoreCase);
+                var lockButton = Plain(locked ? "Unlock this zone" : "Lock this zone");
+                lockButton.Content = new StackPanel {
+                    Orientation = Avalonia.Layout.Orientation.Horizontal, Spacing = 7,
+                    Children = {
+                        ManagerTheme.Icon("power", 14, locked ? GOOD : BAD),
+                        new TextBlock { Text = locked ? (worldLocked ? "Unlock its world" : "Unlock this zone") : "Lock this zone", VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center },
+                    },
+                };
+                ToolTip.SetTip(lockButton, locked
+                    ? "Lets players into it again, at once, with no restart (Game Rules > On and Off)."
+                    : "Nobody can go in: players who try are told it is closed, and anyone inside is sent out. At once, with no restart. " +
+                      "The same switch as on Game Rules > On and Off. It does not teleport you.");
+                lockButton.Click += (_, _) => {
+                    var key = worldLocked ? zone.Split('/')[0] : zone;
+                    SetRowOn(new OnOffRow(worldLocked ? OO_WORLD : OO_ZONE, worldLocked ? Lookup.ZoneWorld(zone) : name, key, key, Lookup.ZoneWorld(zone), ""), on: locked);
+                    Build();
+                    after?.Invoke();
+                };
+                panel.Children.Add(Spaced(lockButton));
+                if (locked) {
+                    panel.Children.Add(Spaced(WithCenter(new TextBlock { Text = worldLocked ? "Locked with its whole world" : "Locked", Foreground = BAD, FontWeight = FontWeight.SemiBold })));
+                }
+            }
+
+            var rooms = Plain("Who can teleport into its rooms");
+            ToolTip.SetTip(rooms, "Opens Game Rules > Teleport Rooms, for dungeons, towers and instances.");
+            rooms.Click += (_, _) => {
+                CloseSearchWindow();
+                SelectTab("Teleport Rooms");
+            };
+            panel.Children.Add(Spaced(rooms));
+        }
+
+        Build();
+
+        return panel;
+    }
+
     private void SetRowOn(OnOffRow row, bool on) {
         try {
             if (row.Kind == OO_AREA) {

@@ -27,7 +27,11 @@ using Avalonia.Media;
 namespace Imlight.Setup.Blocks;
 
 /// <summary>One block a palette offers: its kind, icon, short words and what it does in plain words.</summary>
-internal sealed record PaletteEntry(BlockKind Kind, string Icon, string Label, string Help, object Payload);
+internal sealed record PaletteEntry(BlockKind Kind, string Icon, string Label, string Help, object Payload, BlockGroup? Group = null) {
+
+    internal BlockGroup Shown => Group ?? BlockGroup.Of(Kind);
+
+}
 
 /// <summary>
 /// The side palette of an editor: its blocks grouped by kind (When, If, Do), each a small block to click or drag into
@@ -96,8 +100,9 @@ internal sealed class BlockPalette : Border {
         _groups.Children.Clear();
         // Words that mean the same count (a jinx is a trap, a curse a weakness), and so do a word's start and a slip.
         var query = _search.Text ?? "";
-        foreach (var kind in new[] { BlockKind.When, BlockKind.Passive, BlockKind.If, BlockKind.Do }) {
-            var found = _entries.Where(e => e.Kind == kind && CheatSearch.Matches(e.Label + " " + e.Help, query))
+        // By coloured group (BlockGroups.cs), in the groups' order.
+        foreach (var group in BlockGroup.ALL) {
+            var found = _entries.Where(e => e.Shown == group && CheatSearch.Matches(e.Label + " " + e.Help, query))
                 .OrderByDescending(e => CheatSearch.NameScore(e.Label, query) > 0).ToList();
             if (found.Count == 0) {
                 continue;
@@ -106,12 +111,9 @@ internal sealed class BlockPalette : Border {
             _groups.Children.Add(new StackPanel {
                 Orientation = Orientation.Horizontal, Spacing = 8, Margin = new Thickness(0, 8, 0, 4),
                 Children = {
-                    new Border { Width = 12, Height = 12, CornerRadius = new CornerRadius(6), Background = BlockColors.Fill(kind), VerticalAlignment = VerticalAlignment.Center },
+                    new Border { Width = 12, Height = 12, CornerRadius = new CornerRadius(6), Background = group.Fill, VerticalAlignment = VerticalAlignment.Center },
                     new TextBlock {
-                        Text = kind switch {
-                            BlockKind.When => "When… (what sets it off)", BlockKind.Passive => "Passive… (always, no When)",
-                            BlockKind.If => "If… (only when)", _ => "Do… (what it does)",
-                        },
+                        Text = group.Title,
                         FontWeight = FontWeight.SemiBold, FontSize = 13,
                     },
                 },
@@ -139,8 +141,8 @@ internal sealed class BlockPalette : Border {
     /// <summary>A small block of the palette.</summary>
     internal static BlockShape MiniBlock(PaletteEntry entry) => new() {
         Hat = BlockColors.IsHat(entry.Kind),
-        Fill = BlockColors.Fill(entry.Kind),
-        Edge = BlockColors.Edge(entry.Kind),
+        Fill = entry.Shown.Fill,
+        Edge = entry.Shown.Edge,
         Padding = new Thickness(8, (BlockColors.IsHat(entry.Kind) ? BlockShape.HAT_HEIGHT : BlockShape.NOTCH_DEPTH) + 3, 8, 5),
         MinWidth = 120,
         Child = new DockPanel {

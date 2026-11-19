@@ -55,6 +55,7 @@ internal sealed partial class ManagerWindow {
     private readonly ToggleSwitch _tco7Enabled = new() { OnContent = "On", OffContent = "Off" };
     private readonly ToggleSwitch _tco7Talk = new() { OnContent = "On", OffContent = "Off" };
     private readonly ToggleSwitch _tco7TeamUp = new() { OnContent = "On", OffContent = "Off" };
+    private readonly TextBox _tco7Squad = new() { Width = 320, Watermark = "Tulkar, Cyndr, Kurrent, Mythis" };
     private readonly Dictionary<string, ToggleSwitch> _tco7Members = [];
     private readonly StackPanel _tco7Rows = new() { Spacing = 6 };
     private readonly TextBox _tco7Link = new() {
@@ -275,6 +276,12 @@ internal sealed partial class ManagerWindow {
             };
         }
 
+        _tco7Squad.LostFocus += async (_, _) => {
+            if (!_showingTco7) {
+                await Guard(SaveTco7SquadAsync);
+            }
+        };
+
         _tco7Timer.Tick += (_, _) => {
             if (_shownPage == TCO7_TAB) {
                 ShowTco7Rows();
@@ -299,6 +306,8 @@ internal sealed partial class ManagerWindow {
                 SwitchRow("TCO7", _tco7Enabled, "On: the members switched on below log in a few seconds later and start questing. Off: they log out."),
                 SwitchRow("Talk to each other", _tco7Talk, "On: when two meet, they say hello and ask each other's quest, in game chat."),
                 SwitchRow("Team up", _tco7TeamUp, "On: two that meet on the same quest may group up and quest together, and part when their quests split."),
+                SwitchRow("Squad", _tco7Squad, "Up to four names with commas; empty = no squad. The squad groups up for good: the one furthest " +
+                    "behind leads and the others help it catch up, then they quest on together without splitting. The rest quest at their own pace."),
                 members),
             Fold("list", ULTIMUS_TAB, "What each one is doing",
                 "Each member's state, quest and level, every few seconds. Open a member's page for everything else.",
@@ -321,6 +330,7 @@ internal sealed partial class ManagerWindow {
             _tco7Enabled.IsChecked = _manager.GetSwitch("TCO7", "Enabled");
             _tco7Talk.IsChecked = !string.Equals(_manager.GetSetting("TCO7", "Talk")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
             _tco7TeamUp.IsChecked = !string.Equals(_manager.GetSetting("TCO7", "TeamUp")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
+            _tco7Squad.Text = _manager.GetSetting("TCO7", "Squad") ?? "";
             foreach (var (name, toggle) in _tco7Members) {
                 toggle.IsChecked = !string.Equals(_manager.GetSetting("TCO7", name)?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
             }
@@ -395,6 +405,24 @@ internal sealed partial class ManagerWindow {
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException) {
             return null;
         }
+    }
+
+    private Task SaveTco7SquadAsync() {
+        if (!_manager.HasSetting("TCO7", "Squad")) {
+            ShowTco7();
+            throw new PanelException("This server's Imlight.ini has no [TCO7] Squad yet. Click \"Update Ahziael\" once, then try again.");
+        }
+
+        var names = (_tco7Squad.Text ?? "").Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries)
+            .Select(n => s_tco7Seats.FirstOrDefault(seat => seat.Name.Equals(n.Trim(), StringComparison.OrdinalIgnoreCase))?.Name)
+            .Where(n => !string.IsNullOrEmpty(n)).Distinct().Take(4).ToList();
+        _manager.SaveSettings([new Setting("TCO7", "Squad", string.Join(", ", names), "")]);
+        _settings = [];
+        _tco7Squad.Text = string.Join(", ", names);
+        Say(names.Count >= 2 ? $"Squad saved: {string.Join(", ", names)}. They group up within a minute." : names.Count == 1
+            ? "A squad needs at least two names." : "No squad: each TCO7 member quests at its own pace.");
+
+        return Task.CompletedTask;
     }
 
     private Task SaveTco7Async(string key, bool on, string saidOn, string saidOff) {

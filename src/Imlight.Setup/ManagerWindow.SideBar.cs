@@ -52,7 +52,15 @@ internal sealed partial class ManagerWindow {
     private bool _historyMove;
     private string? _lastShown;
 
-    private readonly StackPanel _sideList = new() { Spacing = 1 };
+    // Niduus, 2026-11-19 ("the side bar in Ahziael not having spacing, thus having low menu options almost impossible to
+    // click"): a little room between rows, and room under the last one so it can scroll clear of the window's bottom edge.
+    private const double SIDE_ROW_GAP = 3;
+    private const double SIDE_BOTTOM_ROOM = 72;
+
+    private readonly StackPanel _sideList = new() { Spacing = SIDE_ROW_GAP };
+    private readonly ScrollViewer _sideScroll = new() { HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+    // The parts of a page (the Bots page's Ultimus, TCO7, Quest Team and Street bots) that are open in the side bar.
+    private readonly HashSet<string> _openParts = [];
     private readonly Button _backButton = Plain("‹");
     private readonly Button _forwardButton = Plain("›");
     private readonly Button _pinButton = Plain("Pin");
@@ -80,7 +88,7 @@ internal sealed partial class ManagerWindow {
             Children = { _crumbGroup, _crumbArrow, _crumbTab },
         };
         var bar = new DockPanel {
-            Margin = new Thickness(24, 10, 24, 0), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH + 2,
+            Margin = new Thickness(24, 10, 24, 0), MaxWidth = ManagerTheme.TWO_COLUMN_MAX_WIDTH + 2,
             Children = {
                 WithDock(new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, Children = { _backButton, _forwardButton } }, Dock.Left),
                 WithDock(crumbs, Dock.Left),
@@ -89,9 +97,14 @@ internal sealed partial class ManagerWindow {
             },
         };
 
-        var side = ManagerTheme.GlassPanel(new ScrollViewer {
-            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled, Padding = new Thickness(8, 8, 8, 10), Content = _sideList,
-        }, 16);
+        _sideScroll.Padding = new Thickness(8, 8, 8, SIDE_BOTTOM_ROOM);
+        // The scroll bar stays in sight whenever the list is longer than the window, so it is plain the list goes on below;
+        // the rows keep clear of it on the right.
+        _sideScroll.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+        _sideScroll.AllowAutoHide = false;
+        _sideList.Margin = new Thickness(0, 0, 10, 0);
+        _sideScroll.Content = _sideList;
+        var side = ManagerTheme.GlassPanel(_sideScroll, 16);
         side.Width = SIDE_WIDTH;
         side.Margin = new Thickness(12, 10, 0, 12);
 
@@ -144,8 +157,14 @@ internal sealed partial class ManagerWindow {
         // Only the page you are on stays open (a page opened by hand stays open until you go to another tab).
         var group = GroupOf(shown);
         _openGroups.Clear();
+        _openParts.Clear();
         if (group is not null) {
             _openGroups.Add(group);
+            foreach (var part in PartsOf(group) ?? []) {
+                if (part.Tabs.Contains(shown)) {
+                    _openParts.Add(part.Name);
+                }
+            }
         }
 
         _crumbGroup.Text = group ?? "";
@@ -247,10 +266,51 @@ internal sealed partial class ManagerWindow {
                 continue;
             }
 
+            if (PartsOf(name) is { } parts) {
+                // A page with parts (Bots): a heading for each part, which opens its tabs; the part you are on is open.
+                foreach (var part in parts) {
+                    var partName = part.Name;
+                    var partOpen = _openParts.Contains(partName);
+                    _sideList.Children.Add(SidePart(partName, part.Icon, part.Tabs.Contains(shown), partOpen, () => {
+                        if (!_openParts.Remove(partName)) {
+                            _openParts.Add(partName);
+                        }
+
+                        RenderSideBar();
+                    }));
+                    if (!partOpen) {
+                        continue;
+                    }
+
+                    foreach (var tab in part.Tabs) {
+                        _sideList.Children.Add(SideSubTab(tab, tab == shown, left: 52));
+                    }
+                }
+
+                continue;
+            }
+
             foreach (var tab in group.Tabs) {
                 _sideList.Children.Add(SideSubTab(tab, tab == shown));
             }
         }
+    }
+
+    /// <summary>A part of a page in the side bar (Bots: Ultimus, TCO7, Quest Team, Street bots); clicking it opens or folds its tabs.</summary>
+    private static Button SidePart(string name, string icon, bool holdsShown, bool open, Action click) {
+        var button = SideButton(new DockPanel {
+            Children = {
+                WithDock(new TextBlock { Text = open ? "⌄" : "›", Foreground = MUTED, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0, 2, 0) }, Dock.Right),
+                WithDock(new Border { Margin = new Thickness(0, 0, 8, 0), VerticalAlignment = VerticalAlignment.Center, Child = ManagerTheme.Icon(icon, 14, ManagerTheme.Accent(name)) }, Dock.Left),
+                new TextBlock {
+                    Text = name, FontSize = 13, FontWeight = holdsShown ? FontWeight.SemiBold : FontWeight.Normal,
+                    VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis,
+                },
+            },
+        }, lit: false, click, left: 30);
+        ToolTip.SetTip(button, open ? $"Fold {name}'s tabs" : $"Show {name}'s tabs");
+
+        return button;
     }
 
     private static TextBlock SideHeading(string text) => new() {
@@ -261,7 +321,7 @@ internal sealed partial class ManagerWindow {
     private static Button SideButton(Control content, bool lit, Action click, double left = 8) {
         var button = new Button {
             Classes = { "ui" }, Content = content, HorizontalAlignment = HorizontalAlignment.Stretch,
-            HorizontalContentAlignment = HorizontalAlignment.Stretch, Padding = new Thickness(left, 5, 8, 5),
+            HorizontalContentAlignment = HorizontalAlignment.Stretch, Padding = new Thickness(left, 7, 8, 7), MinHeight = 32,
             Background = lit ? ManagerTheme.Brush(ManagerTheme.ACCENT, 70) : Brushes.Transparent,
             BorderBrush = lit ? ManagerTheme.Brush(ManagerTheme.ACCENT_LIGHT, 150) : Brushes.Transparent,
             BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL),
@@ -291,14 +351,14 @@ internal sealed partial class ManagerWindow {
     }
 
     /// <summary>A tab under its page in the side bar.</summary>
-    private Button SideSubTab(string tab, bool lit) {
+    private Button SideSubTab(string tab, bool lit, double left = 36) {
         var (icon, line) = s_tabs[tab];
         var button = SideButton(new DockPanel {
             Children = {
                 WithDock(new Border { Margin = new Thickness(0, 0, 8, 0), VerticalAlignment = VerticalAlignment.Center, Child = ManagerTheme.Icon(icon, 13, ManagerTheme.Accent(tab)) }, Dock.Left),
                 new TextBlock { Text = tab, FontSize = 13, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis },
             },
-        }, lit, () => SelectTab(tab), left: 36);
+        }, lit, () => SelectTab(tab), left: left);
         ToolTip.SetTip(button, line);
 
         return button;
@@ -324,6 +384,36 @@ internal sealed partial class ManagerWindow {
         ToolTip.SetTip(button, line);
 
         return button;
+    }
+
+    /// <summary>
+    /// Makes the window no bigger than the screen it opened on (less the taskbar). It opens 1240 by 840; on a laptop screen,
+    /// or with Windows' text made bigger, that ran past the bottom of the screen, so the side bar's last rows were under the
+    /// taskbar and could not be clicked or scrolled to (Niduus, 2026-11-19).
+    /// </summary>
+    private void FitToScreen() {
+        try {
+            if ((Screens.ScreenFromWindow(this) ?? Screens.Primary) is not { } screen) {
+                return;
+            }
+
+            var area = screen.WorkingArea;
+            var scale = screen.Scaling > 0 ? screen.Scaling : 1;
+            var roomWide = area.Width / scale - 12;
+            var roomHigh = area.Height / scale - 12;
+            if (Width <= roomWide && Height <= roomHigh) {
+                return;
+            }
+
+            Width = Math.Max(MinWidth, Math.Min(Width, roomWide));
+            Height = Math.Max(MinHeight, Math.Min(Height, roomHigh));
+            Position = new PixelPoint(
+                area.X + Math.Max(0, (int) ((area.Width - Width * scale) / 2)),
+                area.Y + Math.Max(0, (int) ((area.Height - Height * scale) / 2)));
+        }
+        catch (InvalidOperationException) {
+            // Left as it opened.
+        }
     }
 
     private List<string> ReadPageList(string file) {

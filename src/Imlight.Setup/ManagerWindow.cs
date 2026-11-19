@@ -408,7 +408,6 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Pet Talents", PetTalentsTab),
             Tab("Pet Derby", PetDerbyTab),
             Tab("Quest Tree", QuestTreeTab),
-            Tab("Quest Testing", QuestTestingTab),
             Tab("Spell Quests", SpellQuestsTab),
             Tab("Fast Forward", FastForwardTab),
             Tab("Best Gear", BestGearTab),
@@ -417,7 +416,6 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Monstrology", MonstrologyTab),
             Tab("Bosses", BossesTab),
             Tab("Player Cheats", PlayerCheatsTab),
-            Tab("Boss Test", BossTestTab),
             Tab("Customs", CustomsTab),
             Tab("Share", ShareTab),
             Tab("Quest Editor", QuestEditorTab),
@@ -452,6 +450,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab(ULTIMUS_LOGS_TAB, () => UltimusPart(2, UltimusLogsTab)),
             Tab(ULTIMUS_AI_TAB, UltimusAiTab),
             Tab(BOT_UPDATES_TAB, BotUpdatesTab),
+            Tab(STREET_BOTS_TAB, StreetBotsTab),
         }.Concat(Tco7Tabs()).ToDictionary(t => (string) t.Tag!);
         // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
         var nav = Navigation(tabs);
@@ -504,6 +503,7 @@ internal sealed partial class ManagerWindow : Window {
         _timer.Tick += (_, _) => Refresh();
         Opened += async (_, _) => {
             ManagerApp.WindowShown = true;
+            FitToScreen();
             AppLogs.Opened(_manager.InstallFolder);
             if (ManagerApp.SafeStart) {
                 Say($"Safe start: last time {Edition.NAME} closed while it was opening. The game overlay is off until the next start. " +
@@ -593,7 +593,6 @@ internal sealed partial class ManagerWindow : Window {
             case "Pet Talents": await LoadPetTalentsAsync(_petTalentPage); break;
             case "Pet Derby": await LoadPetTalentsAsync(_petDerbyPage); break;
             case "Quest Tree": await LoadQuestTreeAsync(); break;
-            case "Quest Testing": await LoadQuestTestingAsync(); break;
             case "Spell Quests": LoadSpellQuests(); break;
             case "Fast Forward": LoadFastForward(); break;
             case "Best Gear": await LoadBestGearAsync(); break;
@@ -602,7 +601,6 @@ internal sealed partial class ManagerWindow : Window {
             case "Monstrology": await LoadMonstrologyAsync(); break;
             case "Bosses": await LoadBossesAsync(); break;
             case "Player Cheats": ShowPlayerCheats(); break;
-            case "Boss Test": await LoadBossTestAsync(); break;
             case "Customs": await LoadCustomsAsync(); break;
             case "Share": await LoadShareAsync(); break;
             case "Quest Editor": LoadQuestEditor(); break;
@@ -803,7 +801,7 @@ internal sealed partial class ManagerWindow : Window {
         Render();
 
         return new DockPanel {
-            Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH,
+            Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.TWO_COLUMN_MAX_WIDTH,
             Children = {
                 WithDock(WithMargin(MissingNote("the Custom commands here are made for " + ServerSource.DefaultName +
                     ", so many of them won't work on it.", () => !_manager.HasIdLookup), new Thickness(0, 0, 0, 10)), Dock.Top),
@@ -956,7 +954,7 @@ internal sealed partial class ManagerWindow : Window {
     // the game plays, which all sat on the Server tab, a tab for each kind.
     private Control GameModesTab() => Page(RulesWaitNote(), _modesCard, _trainersCard);
 
-    private Control BattlesTab() => Page(RulesWaitNote(), _battleCard, BotPlayersCard(), TamedDropsCard(), PlantGrowthCard());
+    private Control BattlesTab() => Page(RulesWaitNote(), _battleCard, TamedDropsCard(), PlantGrowthCard());
 
     private Control EventsTab() => Page(EventsCard());
 
@@ -1100,9 +1098,6 @@ internal sealed partial class ManagerWindow : Window {
                         WithCenter(_gameFilesProgress),
                     },
                 })),
-            Shut(Fold("bag", "Game Files", "Shop research",
-                "Zips the game's shop files to your desktop, to find why some shops open as a robe shop.",
-                Row(_shopResearch))),
             AuroriumCard());
     }
 
@@ -3138,7 +3133,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Commands"] = ("terminal", "Every chat command the server knows, ready to copy."),
         [OVERLAY] = ("sparkle", "What Ahziael draws over the Wizard101 window: design it with fonts, colours and gradients, no code. The server can require it."),
         ["Wiki"] = ("book", "Look up any creature, spell or item like a wiki: a creature's school, rank, health, places, spells, cheats and drops; who casts or teaches a spell; who drops or sells an item."),
-        ["Locations"] = ("map", "Every place of the game by the name players know (Unicorn Way) and its code name (WC_Unicorn), with a Teleport button. .tp takes either."),
+        ["Locations"] = ("map", "Every zone and place of the game by the name players know (Unicorn Way) and its code name (WC_Unicorn): teleport there, lock or unlock it, and who can teleport into its rooms, all in one place. .tp takes either name."),
         ["Lookup"] = ("search", "Find any command, item, spell, creature, zone or quest and its ID."),
         ["My Quests"] = ("flag", "Your quest book and the story as a path: the step you are on, what comes next, and buttons to go there, complete a step or finish a quest. Updates by itself while you play."),
         ["Quests"] = ("flag", "Which quests your wizard has done and which come next, with Start and Teleport buttons."),
@@ -3154,7 +3149,6 @@ internal sealed partial class ManagerWindow : Window {
         ["Pet Derby"] = ("bolt", "Every pet derby racing talent, which pets have them, and buttons for your pet."),
         ["Quest Tree"] = ("flag", "Every world's main story in order, with the side quests each quest opens and which ones this server has."),
         ["Spell Quests"] = ("star", "Every quest chain that ends in a spell, in order, with what each NPC says and where your wizard is."),
-        ["Quest Testing"] = ("check", "Every main story quest from start to finish: why it may not work here, what to do, what should happen, and a tick when it did."),
         ["Fast Forward"] = ("bolt", "Bring a wizard up to a level or a world: the server finishes the quests before it, in story order, with their real rewards and XP."),
         ["Unlearn Spells"] = ("undo", "Pick any spell your wizard knows and unlearn it: it leaves the spellbook and decks, and the training points it cost come back."),
         ["Collect Spells"] = ("sparkle", "Give a wizard every spell their finished quests, skipped side quests and trainers should have given them by now."),
@@ -3162,7 +3156,6 @@ internal sealed partial class ManagerWindow : Window {
         ["Best Gear"] = ("shield", "The best gear for your level and school by the stat you want, slot by slot, and where to get each piece."),
         ["Bosses"] = ("crown", "Change a boss's health, stats, spells and cheats."),
         ["Player Cheats"] = ("bolt", "Your own cheats in battle, made from the same blocks as a boss's."),
-        ["Boss Test"] = ("crown", "Every boss with cheats, by world: what each cheat should do, where it is, a button to bring it into your battle, and a tick when it worked."),
         ["Customs"] = ("puzzle", "Your own creatures and areas, built from the game's."),
         ["Share"] = ("link", "Export any of your customs to one file to share, or import a friend's file safely."),
         ["Quest Editor"] = ("flag", "Change any quest's rewards, steps, giver, level and what it needs, or make quests of your own."),
@@ -3173,6 +3166,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Server"] = ("server", "Start, restart and stop the server, and pick where the server comes from."),
         ["Game Modes"] = ("dice", "Whole-server modes such as Randomizer and Die = Delete, and what spell trainers ask for."),
         ["Battles and World"] = ("sword", "Switches for battles, pips, pets, jewels, houses and the world, Tamed Drops, and how fast plants grow."),
+        [STREET_BOTS_TAB] = ("users", "Bot Players: wizards the server plays in the streets so the game feels busy. Turn them on, how many, and the ones out now."),
         ["On and Off"] = ("power", "Turn any NPC, creature, zone or world of the game, or any of your customs, on or off, with no restart."),
         ["What NPCs Give"] = ("bag", "Pick an NPC and switch each quest it offers, and each item, treasure card or spell it sells or teaches, on or off."),
         ["Teleport Rooms"] = ("sigil", "Pick which rooms of dungeons, towers and instances can be teleported into: like the game, open to friends, or closed."),
@@ -3241,21 +3235,45 @@ internal sealed partial class ManagerWindow : Window {
         var (icon, line) = s_tabs.TryGetValue(header, out var look) ? look : ("sliders", "");
         var about = new TextBlock {
             Text = line, FontSize = ManagerTheme.FONT_SMALL, Foreground = MUTED, TextWrapping = TextWrapping.Wrap,
-            Margin = new Thickness(26, 2, 26, 0), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH - 4,
+            Margin = new Thickness(26, 2, 26, 0), MaxWidth = ManagerTheme.TWO_COLUMN_MAX_WIDTH - 4,
         };
+        var top = new StackPanel { Children = { about } };
+        if (s_testingTools.Contains(header)) {
+            top.Children.Add(TestingToolNote());
+        }
+
         var tab = new TabItem {
             Tag = header,
             Classes = { "sub" },
             Header = ManagerTheme.SubTabHeader(icon, ManagerTheme.Accent(header), header),
-            Content = new DockPanel { Children = { WithDock(about, Dock.Top), content } },
+            Content = new DockPanel { Children = { WithDock(top, Dock.Top), content } },
         };
         ToolTip.SetTip(tab, line);
 
         return tab;
     }
 
+    // Tabs made for testing Imlight itself while it is built (Niduus, 2026-11-19: "Reports of people using my tools built in,
+    // this is confusing people. Either add a disclaimer or remove tools we no longer use"). They say so at the top.
+    // Niduus, 2026-11-19: "Quest Testing, Boss Test, Shop research - remove them": those are out of the app.
+    private static readonly HashSet<string> s_testingTools = [QUEST_TEAM_ISSUES_TAB, ULTIMUS_ISSUES_TAB];
+
+    private static Control TestingToolNote() => new Border {
+        Margin = new Thickness(24, 6, 24, 0), MaxWidth = ManagerTheme.TWO_COLUMN_MAX_WIDTH - 2, Padding = new Thickness(10, 6),
+        CornerRadius = new CornerRadius(ManagerTheme.RADIUS_SMALL), Background = ManagerTheme.Brush(ManagerTheme.BLOCK_WHEN, 28),
+        BorderBrush = ManagerTheme.Brush(ManagerTheme.BLOCK_WHEN, 120), BorderThickness = new Thickness(1),
+        Child = new TextBlock {
+            Text = "Testing tool: made by Niduus for testing Imlight while it is built. You don't need it to play or to run your server, " +
+                "and what it shows is about Imlight's own testing, not your game.",
+            TextWrapping = TextWrapping.Wrap, FontSize = ManagerTheme.FONT_SMALL,
+        },
+    };
+
+    // Niduus, 2026-11-19: "lots of empty space": on a wide window the cards go in two columns (CardColumns), from the left.
     private static Control Page(params Control[] cards) {
-        var stack = new StackPanel { Margin = new Thickness(24, 12, 24, 24), Spacing = ManagerTheme.GAP, MaxWidth = ManagerTheme.PAGE_MAX_WIDTH };
+        var stack = new CardColumns {
+            Margin = new Thickness(24, 12, 24, 24), MaxWidth = ManagerTheme.TWO_COLUMN_MAX_WIDTH,
+        };
         stack.Children.AddRange(cards);
 
         return new ScrollViewer { Content = stack };

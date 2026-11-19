@@ -651,7 +651,7 @@ public partial class CombatDuelSubCircle {
 
         // The school picked for the gauge in the deck, else the participant's own. The deck's pick counts for the
         // [Battle] SchoolPips conversion too, when Archmastery is off.
-        foreach (var id in new[] { (uint) (CheatSchoolNow ?? MagicSchool.None), ArchmasterySchool, _deckArchmasterySchool, ParticipantGameStats.m_schoolID }) {
+        foreach (var id in new[] { (uint) (CheatSchoolNow ?? MagicSchool.None), ArchmasterySchool, _deckArchmasterySchool, ParticipantGameStats.m_schoolID, OwnOrbSchool }) {
             var school = (MagicSchool) id;
             if (id != 0 && SchoolPips(CombatParticipant.m_pipCount, school) is not null) {
                 return school;
@@ -854,7 +854,29 @@ public partial class CombatDuelSubCircle {
 
             return !(s_gainSchoolPips || ArchmasteryActive) ? 0
                 : CheatSchoolNow is { } cheatSchool && Archmastery.Schools.Contains(cheatSchool) ? (uint) cheatSchool
-                : _deckArchmasterySchool != 0 ? _deckArchmasterySchool : ParticipantGameStats.m_schoolID;
+                : IsOrbSchool(_deckArchmasterySchool) ? _deckArchmasterySchool : OwnOrbSchool;
+        }
+    }
+
+    // Only the seven schools have school pips and a Power Orb icon. Anything else (0, an old deck value, a school the game
+    // has no orb for) left the orb blank and no school pip ever came (Niduus, 2026-11-19: "school pips not working in this
+    // fight", the orb by Orion's name had no school icon).
+    private static bool IsOrbSchool(uint school) => school != 0 && Archmastery.Schools.Contains((MagicSchool) school);
+
+    // The wizard's own school for the orb: the battle stats', else the stats' school, else the wizard's.
+    private uint OwnOrbSchool {
+        get {
+            if (IsOrbSchool(ParticipantGameStats?.m_schoolID ?? 0)) {
+                return ParticipantGameStats.m_schoolID;
+            }
+
+            if (ParticipantGameStats is { } stats && IsOrbSchool((uint) stats.MagicSchool)) {
+                return (uint) stats.MagicSchool;
+            }
+
+            var own = _wizard?.MagicSchoolBehavior?.MagicSchool ?? MagicSchool.None;
+
+            return IsOrbSchool((uint) own) ? (uint) own : 0;
         }
     }
 
@@ -879,7 +901,8 @@ public partial class CombatDuelSubCircle {
         return deck;
     }
 
-    private uint DeckArchmasterySchool() => EquippedDeck(out _)?.m_archmasterySchool ?? 0;
+    // The deck's pick as one of the seven schools (Archmastery.ToSchoolId), or 0 for "my own school".
+    private uint DeckArchmasterySchool() => Archmastery.ToSchoolId(EquippedDeck(out _)?.m_archmasterySchool ?? 0) ?? 0;
 
     /// <summary>
     /// The school picked on the Power Orb mid-battle (or on the deck while in battle): new school pips come in it
@@ -890,7 +913,7 @@ public partial class CombatDuelSubCircle {
             return;
         }
 
-        _deckArchmasterySchool = school;
+        _deckArchmasterySchool = Archmastery.ToSchoolId(school) ?? 0;
         CombatParticipant.m_archmasterySchool = ArchmasterySchool;
         CombatParticipant.m_archmasteryFlags = ArchmasterySchool != 0 ? Archmastery.ALL_SCHOOL_FLAGS : 0;
         Logger.Information("Archmastery school for {0} is now {1}.", Logger.Args(_wizard.CharId, (MagicSchool) ArchmasterySchool));
@@ -927,7 +950,8 @@ public partial class CombatDuelSubCircle {
     private float ComputeArchmasteryRating() {
         try {
             var isPlayer = _wizard is not null;
-            var school = isPlayer ? (MagicSchool) ParticipantGameStats.m_schoolID : (MagicSchool) CombatParticipant.m_primaryMagicSchoolID;
+            var school = isPlayer ? (MagicSchool) (OwnOrbSchool is var own and not 0 ? own : ParticipantGameStats.m_schoolID)
+                : (MagicSchool) CombatParticipant.m_primaryMagicSchoolID;
             var level = isPlayer ? ParticipantGameStats.Level : CombatParticipant.m_mobLevel;
             var rating = Archmastery.RatingOf(ParticipantGameStats, school, level, isPlayer);
             if (rating > 0) {
@@ -1271,7 +1295,8 @@ public partial class CombatDuelSubCircle {
 
     internal bool HasSchoolMastery(uint magicSchoolID) {
         if (ParticipantGameStats.m_schoolID == magicSchoolID || _cheatMasteries.Contains(magicSchoolID) || IsAllKnowing
-            || (CheatSchoolNow is { } cheatSchool && (uint) cheatSchool == magicSchoolID)) {
+            || (CheatSchoolNow is { } cheatSchool && (uint) cheatSchool == magicSchoolID)
+            || AstralSchools.Masters(ParticipantGameStats, magicSchoolID)) {
             return true;
         }
 
@@ -1965,6 +1990,10 @@ public partial class CombatDuelSubCircle {
         };
         ApplyPlateSchoolTest();
         ApplyPipGauges(CombatParticipant.m_pGameStats);
+        // What the Power Orb by the wizard's name fills toward: ask for this line when school pips "never come".
+        Logger.Information("Power Orb for {0}: school {1}, Archmastery {2} (deck pick {3}, own school {4}).",
+            Logger.Args(_wizard?.CharId, (MagicSchool) ArchmasterySchool, ArchmasteryRating, (MagicSchool) _deckArchmasterySchool,
+                (MagicSchool) OwnOrbSchool));
     }
 
     private void InitializeCreatureSubCircle(bool asMinion = false, int minionOwnerSubCircle = 0) {

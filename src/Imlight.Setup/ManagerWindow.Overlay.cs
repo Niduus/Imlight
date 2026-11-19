@@ -648,6 +648,11 @@ internal sealed partial class ManagerWindow {
                 GridChanged();
             };
             var gridShow = OvCheck("Grid", _ovGrid.Show, v => { _ovGrid.Show = v; GridChanged(); });
+            var spread = Action(Plain("Spread out"), SpreadOutOverlay);
+            ToolTip.SetTip(spread, "Puts your pieces side by side in the corners they are nearest, close together and out of the middle of the game. " +
+                                   "Pieces of one add-on that sit together stay together.");
+            var putBack = Action(Plain("Put back"), PutBackSpread);
+            ToolTip.SetTip(putBack, "Puts everything back where it was before Spread out.");
             var gridMore = GridSettingsButton();
             gridMore.Content = "⚙";
             ToolTip.SetTip(gridMore, "Grid settings: square size, colours, snapping.");
@@ -679,6 +684,7 @@ internal sealed partial class ManagerWindow {
                             Children = {
                                 BarGroup("Picked", _ovQuickWords, _ovQuickParent, remove),
                                 BarGroup("Grid", gridShow, snap, gridMore),
+                                BarGroup("Layout", spread, putBack),
                                 BarGroup("More", full),
                                 help,
                             },
@@ -1302,6 +1308,8 @@ internal sealed partial class ManagerWindow {
                                     Spaced(Action(Plain("Copy"), DuplicateOverlayElement)),
                                     Spaced(Action(Plain("Up"), () => MoveOverlayElement(-1))),
                                     Spaced(Action(Plain("Down"), () => MoveOverlayElement(1))),
+                                    Spaced(Action(Plain("Spread out"), SpreadOutOverlay)),
+                                    Spaced(Action(Plain("Put back"), PutBackSpread)),
                                     Spaced(Danger(Action(Plain("Remove"), RemoveOverlayElement))),
                                 },
                             },
@@ -1987,6 +1995,65 @@ internal sealed partial class ManagerWindow {
             return Task.CompletedTask;
         }
 
+        // Where each piece was before the last "Spread out", for "Put back".
+        private List<(OverlayElement Element, OverlayAnchor Anchor, double X, double Y, double Spacing)>? _ovBeforeSpread;
+
+        /// <summary>
+        /// "Spread out" (Niduus, 2026-11-19: "Overlay UI not really being fanned out and thus taking up a bit more space"):
+        /// the pieces of the part being changed go side by side into their nearest corners (OverlaySpread).
+        /// </summary>
+        private Task SpreadOutOverlay() {
+            if (_ovCanvas is null) {
+                return Task.CompletedTask;
+            }
+
+            var part = _ovServerPart ? OverlayRenderer.OverlayPanel.SERVER : OverlayRenderer.OverlayPanel.CLIENT;
+            var pieces = new List<(OverlayElement Element, Rect Area)>();
+            var credit = default(Rect);
+            foreach (var child in _ovCanvas.Children) {
+                var of = OverlayRenderer.PartOf(child);
+                if (of == OverlayRenderer.OverlayPanel.CREDIT) {
+                    credit = child.Bounds;
+                }
+                else if (of == part && child.Tag is OverlayElement e && _ovDesign.Elements.Contains(e)) {
+                    pieces.Add((e, child.Bounds));
+                }
+            }
+
+            if (pieces.Count == 0) {
+                throw new PanelException("There is nothing of yours on the overlay to spread out yet.");
+            }
+
+            var before = _ovDesign.Elements.Select(e => (e, e.Anchor, e.X, e.Y, e.Spacing)).ToList();
+            var moved = OverlaySpread.Apply(pieces, PREVIEW_W, PREVIEW_H, credit);
+            if (moved == 0) {
+                Say("Everything is already spread out.");
+                return Task.CompletedTask;
+            }
+
+            _ovBeforeSpread = before;
+            OverlayChanged(false);
+            Say($"Spread out {moved} piece{(moved == 1 ? "" : "s")} into the corners, side by side. \"Put back\" undoes it.");
+
+            return Task.CompletedTask;
+        }
+
+        private Task PutBackSpread() {
+            if (_ovBeforeSpread is not { } before) {
+                throw new PanelException("Nothing to put back: \"Spread out\" hasn't moved anything yet.");
+            }
+
+            foreach (var (e, anchor, x, y, spacing) in before.Where(b => _ovDesign.Elements.Contains(b.Element))) {
+                (e.Anchor, e.X, e.Y, e.Spacing) = (anchor, x, y, spacing);
+            }
+
+            _ovBeforeSpread = null;
+            OverlayChanged(false);
+            Say("Put everything back where it was.");
+
+            return Task.CompletedTask;
+        }
+
         private Task MoveOverlayElement(int by) {
             if (_ovSelected is null || _ovSelected == _ovDesign.Credit) {
                 return Task.CompletedTask;
@@ -2316,6 +2383,10 @@ internal sealed partial class ManagerWindow {
             Kind("Doors and teleporters", map.Doors, v => map.Doors = v, map.DoorColor, v => map.DoorColor = v);
             Kind("Chests", map.Chests, v => map.Chests = v, map.ChestColor, v => map.ChestColor = v);
             Kind("Other wizards", map.Wizards, v => map.Wizards = v, map.WizardColor, v => map.WizardColor = v);
+            Kind("Shops, trainers, bank, Bazaar (lettered badge)", map.NpcJobs, v => map.NpcJobs = v, map.JobColor, v => map.JobColor = v);
+            Kind("Health wisps", map.Wisps, v => map.Wisps = v, map.WispHealthColor, v => map.WispHealthColor = v);
+            shows.Children.Add(OvField("Mana wisps", OvColor(map.WispManaColor, v => Set(() => map.WispManaColor = v))));
+            Kind("Battles going on (crossed swords)", map.Battles, v => map.Battles = v, map.BattleColor, v => map.BattleColor = v);
             shows.Children.Add(OvField("Teammates", OvColor(map.TeamColor, v => Set(() => map.TeamColor = v))));
             shows.Children.Add(OvField("You (arrow)", OvColor(map.YouColor, v => Set(() => map.YouColor = v))));
             shows.Children.Add(OvField("Words", OvColor(map.TextColor, v => Set(() => map.TextColor = v))));
@@ -2356,6 +2427,12 @@ internal sealed partial class ManagerWindow {
                 OvColor(map.SpawnWalkColor, v => Set(() => map.SpawnWalkColor = v)))));
             look.Children.Add(OvField("Bosses", OvCheck("Ring round each boss", map.BossGlow, v => Set(() => map.BossGlow = v))));
             look.Children.Add(OvField("Chests", OvCheck("Say wooden or silver", map.ChestNames, v => Set(() => map.ChestNames = v))));
+            look.Children.Add(OvField("Shops and trainers", OvCheck("Say what each one is (Shop, Trainer, Potions...)", map.JobNames, v => Set(() => map.JobNames = v))));
+            look.Children.Add(OvField("Other floors", Row(
+                OvCheck("Fade what is above or below me, with an arrow", map.Floors, v => Set(() => map.Floors = v)),
+                OvColor(map.FloorColor, v => Set(() => map.FloorColor = v)))));
+            look.Children.Add(OvField("A floor is (game units up or down)", OvNumber(map.FloorGap, 100, 3000, 50, v => Set(() => map.FloorGap = v))));
+            look.Children.Add(OvField("How faded other floors are", OvSlider(map.FloorFade, 0, 1, v => Set(() => map.FloorFade = v))));
             look.Children.Add(OvField("Crowded names", OvCheck("Move or hide names that would cover others", map.TidyNames, v => Set(() => map.TidyNames = v))));
             look.Children.Add(OvField("Icon outline", OvColor(map.OutlineColor, v => Set(() => map.OutlineColor = v))));
             look.Children.Add(OvField("Teammates off the map", OvCheck("Arrow on the edge", map.EdgeArrows, v => Set(() => map.EdgeArrows = v))));

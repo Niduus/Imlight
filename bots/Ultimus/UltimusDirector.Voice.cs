@@ -274,8 +274,24 @@ internal sealed partial class UltimusDirectorActor {
                 continue;
             }
 
+            // Server data first (BotDataFirst, Niduus 2026-11-19): his own answer from his real facts is said as it is, and
+            // what he learned from the AI before comes next; the AI is asked only when none of his own data knows anything.
+            if (heard.Typed && BotShared.BotDataFirst.On) {
+                if (!KeywordKnowsNothing(reply)) {
+                    Think($"I know this from my own records, so I answer from them, not the AI.", "data-first|" + heard.SpeakerCharId + "|" + heard.Text);
+                    SendReply(heard, reply.Text, "his own data");
+                    continue;
+                }
+
+                if (UltimusAiLearned.Find(heard.Text) is { } knownFirst) {
+                    SendReply(heard, knownFirst, LEARNED);
+                    continue;
+                }
+            }
+
             // The optional local AI words it (UltimusLocalAI): typed talk only, never for what makes him do something; the
-            // keyword answer is the fallback and its facts are given to the model.
+            // keyword answer is the fallback and its facts are given to the model. With server data first, only for what his
+            // own data can't answer (a roadblock).
             if (heard.Typed && UltimusLocalAI.Ready && UltimusLocalAI.PlayerUnder(heard.SpeakerCharId) && reply.Intent is not (BotSocial.ORDER or BotSocial.PERMISSION or BotSocial.GROUP
                     or BotSocial.HELP or BotSocial.TRADE or BotSocial.PRIVATE or BotSocial.RUDE or "spam")) {
                 var facts = AiFacts(me);

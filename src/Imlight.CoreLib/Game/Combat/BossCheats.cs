@@ -128,6 +128,9 @@
  *     { "Do": "IfConverted", "Count" (1), "Amount" (1), "Each" }   as IfCleared, for the effects the ConvertEffects steps
  *       before it turned into something else (Niduus, 2026-11-03: "add 'If converted' so it can do actions after
  *       conversion"). "Turn their shield into a trap, then if one was turned, say a line".
+ *     { "Do": "Otherwise", "Count" (1) }   the next Count steps go only when the IfCleared, IfConverted or IfVar step
+ *       before it did NOT let its own steps go (Niduus, 2026-11-19: more blocks). "If rage at least 5, enrage; otherwise say a taunt".
+ *     { "Do": "Stop" }   the steps after it (in the run it is part of) do nothing this time.
  *     { "Do": "Boost", "Kind": Damage/Resist/Heal/Accuracy, "Amount" (percent, below 0 lowers), "School", "Rounds"
  *       (0 = the rest of the battle), "Target" (Self) }   an aura-like effect that is never used up (enrage: Boost
  *       Damage 10 on a FromRound cheat; it stacks). A new aura cast on that target takes it off, as auras do, unless
@@ -496,6 +499,9 @@ internal static class BossCheats {
         /// Everything it does, in order: the old fields as actions (a second form, health, phase, line, spells, defeat),
         /// then Actions. Random keeps one of the spells.
         /// </summary>
+        // A step that does nothing (one turned off, or a cast "one at random" did not pick).
+        internal static readonly CheatAction OFF_STEP = new() { Do = "Skip" };
+
         internal List<CheatAction> Steps() {
             var steps = new List<CheatAction>();
             if (Spawn > 0) {
@@ -521,11 +527,17 @@ internal static class BossCheats {
                 steps.Add(new CheatAction { Do = "Defeat" });
             }
 
-            steps.AddRange((Actions ?? []).Where(a => a is not null && !a.Off).Select(a => Silent && a.IsCast ? a with { Silent = true } : a));
+            // A step turned off stays in the list as one that does nothing, so the "next N steps" of a Repeat, an "only if"
+            // or an Otherwise still count the blocks the editor shows inside them (Niduus, 2026-11-19: holder blocks).
+            steps.AddRange((Actions ?? []).Where(a => a is not null).Select(a => a.Off ? OFF_STEP : Silent && a.IsCast ? a with { Silent = true } : a));
             var casts = steps.Where(s => s.IsCast).ToList();
             if (Random && casts.Count > 1) {
                 var keep = casts[System.Random.Shared.Next(casts.Count)];
-                steps.RemoveAll(s => s.IsCast && s != keep);
+                for (var i = 0; i < steps.Count; i++) {
+                    if (steps[i].IsCast && steps[i] != keep) {
+                        steps[i] = OFF_STEP;
+                    }
+                }
             }
 
             return steps;

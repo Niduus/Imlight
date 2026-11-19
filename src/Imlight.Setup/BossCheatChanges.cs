@@ -277,6 +277,8 @@ internal sealed class CheatRule {
         foreach (var block in Dos) {
             if (block.Spec == "D.RandomOne") {
                 json["Random"] = block.On;
+                // Its place is kept with a step that does nothing, so a holder around it counts the blocks as shown.
+                actions.Add(new JsonObject { ["Do"] = "Skip" });
 
                 continue;
             }
@@ -541,8 +543,19 @@ internal sealed class CheatRule {
             Do("D.Defeat");
         }
 
+        var randomPlaced = false;
         foreach (var action in (Node("Actions") as JsonArray ?? []).OfType<JsonObject>()) {
             var what = BossChanges.FindIn(action, "Do") is JsonValue w ? w.ToString() : "";
+            // The place "one spell at random" was saved at (Canonical keeps it with a step that does nothing).
+            if (what.Equals("Skip", StringComparison.OrdinalIgnoreCase)) {
+                if (!randomPlaced) {
+                    Do("D.RandomOne", on: Flag("Random"));
+                    randomPlaced = true;
+                }
+
+                continue;
+            }
+
             var values = new JsonObject();
             foreach (var (key, value) in action) {
                 if (!key.Equals("Do", StringComparison.OrdinalIgnoreCase) && !key.Equals("Off", StringComparison.OrdinalIgnoreCase)) {
@@ -600,7 +613,7 @@ internal sealed class CheatRule {
             rule.Dos.Add(block);
         }
 
-        if (Flag("Random")) {
+        if (Flag("Random") && !randomPlaced) {
             Do("D.RandomOne");
         }
 
@@ -776,6 +789,21 @@ internal static class PlayerCheatFile {
     }
 
     internal static void Save(string extraFolder, BossCheatList list, bool enabled) {
+        Directory.CreateDirectory(extraFolder);
+        var file = FileOf(extraFolder);
+        File.WriteAllText(file + ".tmp", Text(list, enabled));
+        File.Move(file + ".tmp", file, overwrite: true);
+    }
+
+    /// <summary>When the file was last written (DateTime.MinValue when there is none), to see a change made elsewhere.</summary>
+    internal static DateTime WrittenAt(string extraFolder) {
+        var file = FileOf(extraFolder);
+
+        return File.Exists(file) ? File.GetLastWriteTimeUtc(file) : DateTime.MinValue;
+    }
+
+    /// <summary>The file's text for these cheats (what Save writes), also to tell whether the page has unsaved changes.</summary>
+    internal static string Text(BossCheatList list, bool enabled) {
         var cheats = new JsonArray();
         foreach (var rule in list.Cheats) {
             var json = rule.Canonical();
@@ -795,11 +823,7 @@ internal static class PlayerCheatFile {
             cheats.Add(json);
         }
 
-        Directory.CreateDirectory(extraFolder);
-        var text = new JsonObject { ["Enabled"] = enabled, ["Cheats"] = cheats }.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
-        var file = FileOf(extraFolder);
-        File.WriteAllText(file + ".tmp", text);
-        File.Move(file + ".tmp", file, overwrite: true);
+        return new JsonObject { ["Enabled"] = enabled, ["Cheats"] = cheats }.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
     }
 
 }

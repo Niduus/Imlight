@@ -62,4 +62,10 @@ public class ZoneRequirementContext(RequirementList requirements,
     /// </summary>
     public string TriggerZonePath { get; init; }
 
+    /// <summary>
+    /// In a dungeon copy, the copy judges whether its own dungeon quests are done (null elsewhere): see
+    /// <see cref="IZoneStateContext.InstanceQuestCompleted"/>.
+    /// </summary>
+    public System.Func<string, bool?> InstanceQuestCompleted { get; init; }
+
 }

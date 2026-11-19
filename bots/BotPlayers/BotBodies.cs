@@ -254,7 +254,7 @@ internal static class BotBodies {
 
     private static string Precheck(IActorRef zone) {
         if (!BotWire.Enabled) {
-            return "Bot Players is off. Turn it on in Ahziael (Game Rules > Battles and World > Bot Players), wait about 10 seconds, then try again.";
+            return "Bot Players is off. Turn it on in Ahziael (Bots > Street Bots), wait about 10 seconds, then try again.";
         }
 
         if (!BotLink.Ready) {

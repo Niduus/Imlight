@@ -59,6 +59,13 @@ internal static class BotSheet {
         member["deckGrid"] = Grid(spells);
         member["deckMax"] = wizard?.SpellbookBehavior?.MaxSpells ?? 0;
         member["treasureGrid"] = Grid(treasure);
+        // Every treasure card it owns, in its deck or not, with how many of each (Niduus, 2026-11-19: "not able to see Treasure
+        // Card stock of the bots along with the number of that treasure card"): the deck's treasure cards above are only the
+        // ones it put in its deck.
+        var stock = TreasureStock(wizard);
+        member["treasureStock"] = Cards(stock);
+        member["treasureStockCount"] = stock.Sum(c => c.Count);
+        member["treasureStockGrid"] = Grid(stock);
 
         // The XP bar and the quest book (BotQuestBook), live with every status.
         var (xpNow, xpMax) = BotQuestBook.Xp(wizard);
@@ -95,6 +102,25 @@ internal static class BotSheet {
         member["itemGrid"] = new JsonArray([.. ItemCopies(wizard).Select(c => (JsonNode) new JsonObject {
             ["id"] = c.Id, ["school"] = SchoolOf(c.Id), ["off"] = c.Off,
         })]);
+    }
+
+    /// <summary>Every treasure card the wizard owns: the treasure book's and the deck's together, most first.</summary>
+    private static List<(uint Id, int Count)> TreasureStock(Wizard wizard) {
+        var owned = new Dictionary<uint, int>();
+        var book = wizard?.SpellbookBehavior;
+        if (book is null) {
+            return [];
+        }
+
+        foreach (var id in book.TreasureCardTemplateIds ?? []) {
+            owned[id] = owned.GetValueOrDefault(id) + 1;
+        }
+
+        foreach (var (id, count) in DeckParts(wizard).Treasure) {
+            owned[id] = owned.GetValueOrDefault(id) + count;
+        }
+
+        return [.. owned.Where(o => o.Value > 0).OrderByDescending(o => o.Value).ThenBy(o => SpellName(o.Key)).Select(o => (o.Key, o.Value))];
     }
 
     private static int SchoolRank(string school) {

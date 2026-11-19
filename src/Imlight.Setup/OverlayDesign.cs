@@ -705,6 +705,10 @@ internal static class OverlayAction {
     // choice "main" or a dungeon quest's id (Niduus, 2026-11-15).
     internal const string SPECTATE_TRACK = "SpectateTrack";
 
+    // A spectator box's top line (not a choice in the designer): folds the quest or spells box down to it. Command
+    // "ultimus|quest", "team|spells" and so on (Niduus, 2026-11-19).
+    internal const string BOX_FOLD = "BoxFold";
+
     // The OK button under an Ahziael note on a game (a Quest Team alert): takes the note away (Niduus, 2026-11-12).
     internal const string DISMISS_NOTE = "DismissNote";
 
@@ -978,6 +982,38 @@ internal sealed class OverlayMap {
     /// <summary>How far the full screen map shows (game units); 0 = 2.5 times the minimap. Kept as you zoom it.</summary>
     public double FullZoom { get; set; }
 
+    // Even more detail (Niduus, 2026-11-19: "Reports of minimap lacking detail").
+
+    /// <summary>Shops, trainers, potions, the bank, the Bazaar and other NPCs with a job get a lettered badge in their own colour.</summary>
+    public bool NpcJobs { get; set; } = true;
+
+    public string JobColor { get; set; } = "#FFFFD24A";
+
+    /// <summary>The job's word (Shop, Trainer, Potions...) under each of those NPCs.</summary>
+    public bool JobNames { get; set; } = true;
+
+    /// <summary>Health and mana wisps on the ground.</summary>
+    public bool Wisps { get; set; } = true;
+
+    public string WispHealthColor { get; set; } = "#FFFF4A6A";
+    public string WispManaColor { get; set; } = "#FF4AA8FF";
+
+    /// <summary>Crossed swords where a battle is going on right now.</summary>
+    public bool Battles { get; set; } = true;
+
+    public string BattleColor { get; set; } = "#FFFFB020";
+
+    /// <summary>Anything on another floor (above or below you) is faded, with a small up or down arrow.</summary>
+    public bool Floors { get; set; } = true;
+
+    /// <summary>How far above or below you something has to be to count as another floor (game units).</summary>
+    public double FloorGap { get; set; } = 350;
+
+    /// <summary>How see-through things on another floor are (0 hidden, 1 not faded).</summary>
+    public double FloorFade { get; set; } = 0.45;
+
+    public string FloorColor { get; set; } = "#FFE6E6F0";
+
     internal OverlayMap Copy() => (OverlayMap) MemberwiseClone();
 
     /// <summary>
@@ -995,6 +1031,8 @@ internal sealed class OverlayMap {
         MobNames = Levels = ChestNames = level >= 2;
         NpcNames = level >= 3;
         FullNames = level >= 1;
+        NpcJobs = Wisps = Battles = Floors = true;
+        JobNames = level >= 1;
         TidyNames = level < 3;
         if (level == 0) {
             Npcs = false;
@@ -1052,6 +1090,13 @@ internal sealed class OverlayMap {
         FullMargin = OverlayElement.Range(FullMargin, 0, 250, 36);
         FullZoom = FullZoom <= 0 || !double.IsFinite(FullZoom) ? 0 : Math.Clamp(FullZoom, 300, 30000);
         PlaceAt = PlaceAt == "Top" ? "Top" : "Bottom";
+        JobColor = OverlayPaint.CleanColor(JobColor, "#FFFFD24A");
+        WispHealthColor = OverlayPaint.CleanColor(WispHealthColor, "#FFFF4A6A");
+        WispManaColor = OverlayPaint.CleanColor(WispManaColor, "#FF4AA8FF");
+        BattleColor = OverlayPaint.CleanColor(BattleColor, "#FFFFB020");
+        FloorColor = OverlayPaint.CleanColor(FloorColor, "#FFE6E6F0");
+        FloorGap = OverlayElement.Range(FloorGap, 100, 3000, 350);
+        FloorFade = OverlayElement.Range(FloorFade, 0, 1, 0.45);
 
         return this;
     }

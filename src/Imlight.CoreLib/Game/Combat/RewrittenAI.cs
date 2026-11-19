@@ -23,6 +23,7 @@ using System.Runtime.CompilerServices;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Pet;
+using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Resources;
@@ -341,7 +342,7 @@ internal static class RewrittenAI {
             Name = name,
             Shown = SafeShown(name, id),
             School = (string) template.m_sMagicSchoolName ?? "",
-            Natural = name.StartsWith("NA ", StringComparison.Ordinal) || name.EndsWith(" NA", StringComparison.Ordinal),
+            Natural = NaturalAttacks.Is(template),
         };
         var leaves = CombatEnchantments.Leaves(template.m_effects ?? []).Where(e => e is not null).ToList();
         foreach (var e in leaves) {
@@ -467,7 +468,7 @@ internal static class RewrittenAI {
     /// traps and shields (plus extra traps), absorbs and resist.
     /// </summary>
     internal static int Estimate(Card card, CombatDuelSubCircle caster, CombatDuelSubCircle target, float extraBlades = 0, float extraTraps = 0,
-                                 bool ignoreWards = false) {
+                                 bool ignoreWards = false, int? xPips = null) {
         if (card is null || !card.Hit || target is null) {
             return 0;
         }
@@ -478,7 +479,8 @@ internal static class RewrittenAI {
         // X pip spells do and damage per pip?"); a damage-per-pip spell for the target's own pips.
         try {
             if (card.XPip && card.Tiers.Length > 0 && card.Spell is not null && caster?.CombatParticipant is not null) {
-                var paid = CombatActionResolver.GetXPipCost(card.Spell, caster);
+                // xPips: what the spell would be worth with that many pips (next round's, for holding back).
+                var paid = xPips ?? CombatActionResolver.GetXPipCost(card.Spell, caster);
                 var tier = card.Tiers.Where(t => t.Pips > 0 && t.Pips <= paid).OrderByDescending(t => t.Pips).FirstOrDefault();
                 damage = tier.Pips > 0 ? Math.Max(0, tier.Damage) : 0;
             }

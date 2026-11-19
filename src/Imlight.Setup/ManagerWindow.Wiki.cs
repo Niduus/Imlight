@@ -616,10 +616,6 @@ internal sealed partial class ManagerWindow {
                 $"While you are in a fight, it joins the enemy side (.joinme {id}). Start any fight first.", primary: true),
             WikiTabButton("Change it on Bosses", "Bosses", _bossSearch, id, "Opens the Bosses tab on this creature, to change its health, stats, spells and cheats."),
         };
-        if (cheats is not null) {
-            buttons.Add(WikiTabButton("Test its cheats", "Boss Test", _btSearch, id, "Opens the Boss Test tab on this boss."));
-        }
-
         buttons.Add(Action(Plain("Copy ID"), () => CopyAsync(id)));
         WikiButtons([.. buttons]);
 

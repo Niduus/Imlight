@@ -74,7 +74,8 @@ internal sealed partial class ManagerWindow {
         ("Quests", "Quest", "flag"),
         ("Spells", "Spell", "cards"),
         ("Items", "Item", "bag"),
-        ("Places", Lookup.TELEPORT_AREA, "map"),
+        // "Zones": the word players use; each one has Teleport, Lock and its rooms together (Niduus, 2026-11-19).
+        ("Zones", Lookup.TELEPORT_AREA, "map"),
         ("Bundles", "Bundle", "gift"),
         ("Phrases", "Phrase", "quote"),
         (SW_NOTES, null, "sparkle"),
@@ -501,13 +502,11 @@ internal sealed partial class ManagerWindow {
 
         return new SearchHit(kind, icon, "Lookup", entry.Name, line, Open, () => {
             var buttons = new List<Button>();
-            if (entry.Kind == Lookup.TELEPORT_AREA && entry.Typed is { Length: > 0 } tp) {
-                buttons.Add(Action(Primary("Teleport my wizard here"), () => {
-                    _manager.SendCommand(tp);
-                    Say($"Sent {tp}. Your wizard goes there in a few seconds.");
-
-                    return Task.CompletedTask;
-                }));
+            var extra = new List<Control>();
+            // A place: Teleport, Lock or Unlock and its rooms together (Niduus, 2026-11-19: he meant to lock a zone and
+            // teleported to it instead). Everything else about it is under them.
+            if (entry.Kind == Lookup.TELEPORT_AREA && !string.IsNullOrEmpty(entry.Zone)) {
+                extra.Add(ZoneActions(entry.Zone, entry.Name));
             }
 
             var open = entry.Kind is "Creature" or "Spell" or "Item" && entry.Id.Length > 0 ? "Open its Wiki page" : "Open in Lookup";
@@ -523,7 +522,6 @@ internal sealed partial class ManagerWindow {
                 buttons.Add(Action(Plain("Copy the ID"), () => CopyAsync(entry.Id)));
             }
 
-            var extra = new List<Control>();
             if (entry.Typed is { Length: > 0 } command) {
                 extra.Add(PreviewLine(entry.Kind == "Command" ? "Type in chat" : "Command", command));
             }

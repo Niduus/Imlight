@@ -135,6 +135,8 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         // A boss that only a live cutscene would bring out is brought out for a wizard who comes to fight it.
         if (message.EventName == START_ZONE_ENTER_EVENT && message.PlayerActor is not null) {
             ScheduleWaitingSpawnCheck(message.PlayerActor, message.PlayerGameObject);
+            // A door a quest's dialog opens for good (Bartleby's mouth), for a wizard who may go through but never heard it.
+            OpenStoryDoors(message);
             // In the Well of Spirits or one of its tombs: past the storm obelisks for good (StormObelisks).
             if (StormObelisks.IsInside(Zone.ZonePath)) {
                 StormObelisks.BeenInside(ZoneTrigger.QueryWizard(message.PlayerActor), Zone.ZonePath);
@@ -145,8 +147,13 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         // With OpenAllDoors a door goes through without its quest; these are the passing doors whose quest needs are met too.
         HashSet<Trigger> doorsWithNeedsMet = null;
         HashSet<string> retry = null;
-        if (message.RetryRefused && (message.PlayerActor is null || !_refusedOnEntry.Remove(message.PlayerActor, out retry))) {
+        if (message.RetryRefused && (message.PlayerActor is null || !_refusedOnEntry.TryGetValue(message.PlayerActor, out retry))) {
             return;
+        }
+
+        // A fresh walk into the zone checks every entry trigger again, so what was refused on an earlier visit is dropped.
+        if (!message.RetryRefused && message.EventName == START_ZONE_ENTER_EVENT && message.PlayerActor is not null) {
+            _refusedOnEntry.Remove(message.PlayerActor);
         }
 
         foreach (var (trigger, triggerActor) in _orderedTriggers) {
@@ -160,6 +167,11 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
 
             // The Tomb of Storms' way into the Well of Spirits stays shut until the wizard lit the three storm obelisks.
             if (StormSealed(trigger, message)) {
+                continue;
+            }
+
+            // Haggerty Greycap's "secret path" greeting in Northguard is only for a wizard Grizzleheim does not know yet.
+            if (IsStaleSecretPathWarning(trigger, message)) {
                 continue;
             }
 
@@ -225,6 +237,13 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             foreach (var (trigger, _) in passing) {
                 Logger.Information("Zone {0}: trigger {1} fires after the quest updated on entry.",
                     Logger.Args(Zone.ZonePath, trigger.m_triggerName));
+                retry.Remove(trigger.m_triggerName);
+            }
+
+            // The ones still refused wait for the wizard's next quest step in this zone (Belloq's tent: his fight starts
+            // on entry only for a wizard on the "defeat Belloq" step, and that step starts after talking to him inside).
+            if (retry.Count == 0) {
+                _refusedOnEntry.Remove(message.PlayerActor);
             }
         }
 
@@ -796,7 +815,28 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
                 ScriptState = Zone.ScriptState,
                 EventAdjectives = message.Adjectives,
                 TriggerZonePath = Zone.ZonePath,
+                InstanceQuestCompleted = Zone.IsInstance ? CopyJudgesQuest : null,
             });
+    }
+
+    /*
+     * A dungeon copy runs its quests afresh each time (QuestService.TryGrantDungeonQuests), but the copy's doors asked the
+     * wizard's registry whether a quest was done, and that remembers every earlier run. The Temple of Storms' way down to
+     * the boss waits for the Test of Aptitude (KT-CRY5-C01-002): a wizard who passed it on an earlier run went down before
+     * passing either test this time, though the pad stayed dark (Niduus 2026-11-19). A quest this copy gave out is now
+     * judged by this copy; any other one still by the wizard's registry.
+     */
+    private bool? CopyJudgesQuest(string questName) {
+        if (string.IsNullOrEmpty(questName) || QuestOptions.IsOff(questName)) {
+            return null;
+        }
+
+        var progress = Zone.ScriptState.SnapshotQuestProgress();
+        if (progress?.StartedQuests is not { } started || !started.Contains(questName, StringComparer.OrdinalIgnoreCase)) {
+            return null;
+        }
+
+        return progress.CompletedQuests?.Contains(questName, StringComparer.OrdinalIgnoreCase) == true;
     }
 
     private void UpdateSpawnResultTriggers(ref List<Trigger> clientTriggers, List<SpawnObject> spawners, List<PathObjectTemplate> paths, List<NodeObject> nodes) {

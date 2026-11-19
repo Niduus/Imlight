@@ -1044,6 +1044,9 @@ public partial class CombatResolver {
         _lastStepTargets = [];
         _clearedCount = 0;
         _convertedCount = 0;
+        // For an Otherwise: whether the "only if" step (IfCleared, IfConverted, IfVar) whose blocks end at this place let
+        // them go (by the place of its last block, so an "only if" inside them does not count).
+        var gates = new Dictionary<int, bool>();
         for (var s = 0; s < steps.Count; s++) {
             var step = steps[s];
             if (!boss.IsAlive && !step.Is("Say")) {
@@ -1052,6 +1055,29 @@ public partial class CombatResolver {
 
             // The mark a step's "whoever has the mark" means: its own, else the cheat's.
             _stepMark = step.Mark.Length > 0 ? step.Mark : cheat.Mark;
+
+            // A block turned off: it does nothing, but keeps its place for the holders' counts.
+            if (step.Is("Skip")) {
+                continue;
+            }
+
+            // Stop (Niduus, 2026-11-19, more Flow blocks): the rest of the blocks it is among do nothing this time.
+            if (step.Is("Stop")) {
+                Logger.Information("Duel {0} | Slot {1} | {2}: a Stop block ends the cheat's blocks here.",
+                    Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName));
+
+                break;
+            }
+
+            // Otherwise: the next Count blocks (1 if 0) go only when the "only if" block before it did not let its own go.
+            if (step.Is("Otherwise")) {
+                var count = Math.Max(1, step.Count);
+                if (!gates.TryGetValue(s - 1, out var passed) || passed) {
+                    s += count;
+                }
+
+                continue;
+            }
 
             if (step.Is("Wait")) {
                 var later = steps.Skip(s + 1).ToList();
@@ -1071,6 +1097,7 @@ public partial class CombatResolver {
                 var next = steps.Skip(s + 1).Take(Math.Max(1, step.Count)).ToList();
                 var cleared = _clearedCount;
                 var times = step.Each ? cleared : cleared >= Math.Max(1, step.Amount) ? 1 : 0;
+                gates[s + next.Count] = times > 0;
                 Logger.Information("Duel {0} | Slot {1} | {2}: {3} effects were cleared, so the next {4} steps go {5} times.",
                     Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, cleared, next.Count, times));
                 if (times != 1) {
@@ -1093,6 +1120,7 @@ public partial class CombatResolver {
                 var converted = _convertedCount;
                 var cleared = _clearedCount;
                 var times = step.Each ? converted : converted >= Math.Max(1, step.Amount) ? 1 : 0;
+                gates[s + next.Count] = times > 0;
                 Logger.Information("Duel {0} | Slot {1} | {2}: {3} effects were converted, so the next {4} steps go {5} times.",
                     Logger.Args(_duel.m_duelID.Full, boss.SlotIndex, bossName, converted, next.Count, times));
                 if (times != 1) {
@@ -1113,6 +1141,9 @@ public partial class CombatResolver {
             if (step.Is("Repeat") || step.Is("IfVar")) {
                 var next = steps.Skip(s + 1).Take(Math.Max(1, step.Count)).ToList();
                 var times = step.Is("Repeat") ? Math.Clamp(step.Times, 0, 20) : VarHolds(boss, step) ? 1 : 0;
+                if (step.Is("IfVar")) {
+                    gates[s + next.Count] = times > 0;
+                }
                 if (times != 1) {
                     for (var t = 0; t < times && boss.IsAlive; t++) {
                         cinematicTime += RunCheatStepsInOrder(boss, cheat, next, trigger, receiver, bossName, custom, combatActionList,
@@ -1376,6 +1407,8 @@ public partial class CombatResolver {
                 : $"add a {step.Amount}{(step.Kind.Equals("Absorb", StringComparison.OrdinalIgnoreCase) ? "" : "%")} {SchoolText(step.School)}{step.Kind}{on}{(step.Look.Length > 0 && step.Spell.Length == 0 ? $" ({step.Look} cast)" : "")}",
             "ifcleared" => step.Each ? $"the next {Math.Max(1, step.Count)} steps once for each effect cleared"
                 : $"the next {Math.Max(1, step.Count)} steps only if {Math.Max(1, step.Amount)}+ effects were cleared",
+            "otherwise" => $"otherwise, the next {Math.Max(1, step.Count)} steps",
+            "stop" => "stop here",
             "ifconverted" => step.Each ? $"the next {Math.Max(1, step.Count)} steps once for each effect converted"
                 : $"the next {Math.Max(1, step.Count)} steps only if {Math.Max(1, step.Amount)}+ effects were converted",
             "boost" => $"{step.Kind} {(step.Amount >= 0 ? "+" : "")}{step.Amount}% {SchoolText(step.School)}for {RoundsText(step.Rounds)}{on}",
