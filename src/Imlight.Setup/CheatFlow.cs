@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Imlight.Setup.Blocks;
 
 namespace Imlight.Setup;
 
@@ -254,6 +255,156 @@ internal static class CheatProblems {
         }
 
         return null;
+    }
+
+}
+
+/// <summary>
+/// "Try it" (Niduus, 2026-11-19: "Let the blocking be more interactive"): the cheat walked through in plain words, as the
+/// server would run its blocks, with each If and "only if" pretended true or false as the owner ticks them. No battle is
+/// needed and nothing is cast; it shows what goes off, in which order, how many times, and what is skipped.
+/// </summary>
+internal static class CheatTry {
+
+    /// <summary>The blocks the owner can pretend true or false: the cheat's Ifs, and the "only if" holders.</summary>
+    internal static IEnumerable<CheatBlock> Pretendable(CheatRule rule)
+        => rule.Ifs.Where(b => b.On).Concat(rule.Dos.Where(b => b.On && b.Spec is "D.IfVar" or "D.IfCleared" or "D.IfConverted"));
+
+    /// <summary>A block's summary without the brackets a holder's has round it.</summary>
+    internal static string Bare(CheatBlock block) {
+        var text = block.Kind.Summary(block).Trim();
+
+        return text.StartsWith('(') && text.EndsWith(')') ? text[1..^1] : text;
+    }
+
+    internal static List<string> Walk(CheatRule rule, Func<CheatBlock, bool> holds) {
+        var lines = new List<string>();
+        var when = rule.When.Kind;
+        if (when.Kind == BlockKind.Passive) {
+            lines.Add($"A passive: {when.Summary(rule.When)}. It is always true, with no blocks to run.");
+
+            return lines;
+        }
+
+        if (rule.Off) {
+            lines.Add("This cheat is turned off, so nothing happens.");
+
+            return lines;
+        }
+
+        var whenWords = when.Summary(rule.When).TrimEnd('.');
+        lines.Add($"It goes off {(whenWords.Length > 0 ? char.ToLowerInvariant(whenWords[0]) + whenWords[1..] : whenWords)}.");
+        var ifs = rule.Ifs.Where(b => b.On).ToList();
+        var failed = ifs.Where(b => b.Number("Any") <= 0 && !holds(b)).ToList();
+        foreach (var group in ifs.Where(b => b.Number("Any") > 0).GroupBy(b => b.Number("Any"))) {
+            if (!group.Any(holds)) {
+                failed.AddRange(group);
+            }
+        }
+
+        if (failed.Count > 0) {
+            lines.Add($"It stops there: {string.Join("; ", failed.Select(b => b.Kind.Summary(b)))} does not hold, so no block goes off.");
+
+            return lines;
+        }
+
+        if (ifs.Count > 0) {
+            lines.Add("Every If holds, so its blocks go off:");
+        }
+
+        var dos = rule.Dos;
+        if (dos.Any(b => b.On && b.Spec == "D.RandomOne") && dos.Count(b => b.On && b.Spec is "D.Cast" or "D.FreeCast") > 1) {
+            lines.Add("Only one of its cast blocks goes off each time, picked at random.");
+        }
+
+        var number = 0;
+        Run(0, dos.Count, 1, "");
+        if (number == 0) {
+            lines.Add("No block goes off.");
+        }
+
+        return lines;
+
+        // Runs the blocks from start up to end; false when a Stop ended them.
+        bool Run(int start, int end, int depth, string later) {
+            var gates = new Dictionary<int, bool>();
+            var pad = new string(' ', depth * 4);
+            for (var s = start; s < end && s < dos.Count; s++) {
+                var block = dos[s];
+                var inside = CheatFlow.Inside(dos, s);
+                if (!block.On || block.Spec == "D.RandomOne") {
+                    if (!block.On) {
+                        lines.Add($"{pad}(skipped, turned off: {block.Kind.Summary(block)})");
+                    }
+
+                    continue;
+                }
+
+                switch (block.Spec) {
+                    case "D.Stop":
+                        lines.Add($"{pad}Stop: nothing after this goes off.");
+
+                        return false;
+                    case "D.Wait":
+                        lines.Add($"{pad}It waits {Math.Max(1, block.Number("Rounds"))} round(s); the rest goes off then, if it still stands:");
+                        Run(s + 1, end, depth + 1, " (later)");
+
+                        return false;
+                    case "D.Repeat": {
+                        var times = Math.Clamp(block.Number("Times"), 0, 20);
+                        lines.Add(times == 0 ? $"{pad}Repeat 0 times: its blocks are skipped." : $"{pad}Repeat {times} time(s):");
+                        var go = times == 0 || Run(s + 1, s + 1 + inside, depth + 1, times > 1 ? $" (x{times})" : later);
+                        s += inside;
+                        if (!go) {
+                            return false;
+                        }
+
+                        continue;
+                    }
+                    case "D.IfVar" or "D.IfCleared" or "D.IfConverted": {
+                        var yes = holds(block);
+                        gates[s + inside] = yes;
+                        lines.Add($"{pad}{Bare(block)}: {(yes ? "yes" : "no, so its blocks are skipped")}");
+                        if (yes && !Run(s + 1, s + 1 + inside, depth + 1, later)) {
+                            return false;
+                        }
+
+                        s += inside;
+                        continue;
+                    }
+                    case "D.Otherwise": {
+                        var go = gates.TryGetValue(s - 1, out var passed) && !passed;
+                        lines.Add($"{pad}Otherwise: {(go ? "yes, the \"only if\" above was no" : "skipped")}");
+                        if (go && !Run(s + 1, s + 1 + inside, depth + 1, later)) {
+                            return false;
+                        }
+
+                        s += inside;
+                        continue;
+                    }
+                    case "D.PickOne" or "D.InTurn": {
+                        var size = Math.Max(1, block.Number("Group"));
+                        var rest = dos.Count - s - 1;
+                        var choices = block.Number("Count") > 0 ? Math.Min(block.Number("Count"), (rest + size - 1) / size) : (rest + size - 1) / size;
+                        var taken = Math.Min(rest, choices * size);
+                        lines.Add($"{pad}{(block.Spec == "D.PickOne" ? "One of these goes off, picked at random" : "One of these goes off, in turn (the first the first time)")}:");
+                        for (var c = 0; c < choices; c++) {
+                            var picks = dos.Skip(s + 1 + c * size).Take(Math.Min(size, taken - c * size)).Select(b => b.Kind.Summary(b));
+                            lines.Add($"{pad}    choice {c + 1}: {string.Join(", then ", picks)}");
+                        }
+
+                        s += taken;
+                        number++;
+                        continue;
+                    }
+                }
+
+                number++;
+                lines.Add($"{pad}{number}. {block.Kind.Summary(block)}{later}");
+            }
+
+            return true;
+        }
     }
 
 }

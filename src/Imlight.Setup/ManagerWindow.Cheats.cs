@@ -287,7 +287,7 @@ internal sealed partial class ManagerWindow {
         board.EditView = new StackPanel {
             Spacing = 10, IsVisible = false,
             Children = {
-                Row([back, .. UndoButtons(board), .. editButtons]),
+                Row([back, .. UndoButtons(board), TryButton(board), .. editButtons]),
                 board.EditHead,
                 EditLegends(),
                 board.EditGrid,
@@ -424,6 +424,11 @@ internal sealed partial class ManagerWindow {
         var stack = new StackPanel { Spacing = 10, Margin = new Thickness(0, 0, 14, 0), Children = { CheatScript(board, rule), notes } };
         if (board.Player) {
             stack.Children.Insert(0, WhoGetsBox(board, rule));
+        }
+
+        if (TryPanel(board, rule) is { } tryPanel) {
+            // At the top, where it shows without scrolling past the blocks.
+            stack.Children.Insert(board.Player ? 1 : 0, tryPanel);
         }
 
         if (board.Player) {
@@ -726,6 +731,7 @@ internal sealed partial class ManagerWindow {
         };
         view.Padding = new Thickness(6, BlockShape.NOTCH_DEPTH + 1, 6, 3);
         view.Text(words);
+        view.Grip.IsVisible = false;
         view.Cursor = Avalonia.Input.Cursor.Default;
         ToolTip.SetTip(view, "Blocks above this strip are inside the holder; drag a block below it to take it out.");
 
@@ -862,6 +868,7 @@ internal sealed partial class ManagerWindow {
             UpdateCheatHead(board, rule);
             refreshNote?.Invoke();
             RecordCheat(rule);
+            _tryRefresh?.Invoke();
         }
 
         if (block.Spec == "D.AddCharm") {
