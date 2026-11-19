@@ -39,7 +39,9 @@ namespace Imlight.Setup;
 /// </summary>
 internal sealed partial class ManagerWindow {
 
-    private enum CheatWhoMode { ThisPc, Everyone, Wizards, Accounts, Custom }
+    // Mixed (Niduus, 2026-11-19: "move, link and/or copy cheats to an existing wizard/account"): a cheat linked to wizards,
+    // accounts and the wizard on this PC at once; its picks are "w:<wizard id>", "a:<account>" and "pc".
+    private enum CheatWhoMode { ThisPc, Everyone, Wizards, Accounts, Custom, Mixed }
 
     // The "who gets it" Ifs the box writes and reads. The others (friend, group, rank...) make it Custom.
     private static readonly HashSet<string> s_whoSpecs = ["C.Wizard", "C.WizardName", "C.Account", "C.ThisPc", "C.Friend", "C.Grouped", "C.Rank", "C.AnyWizard"];
@@ -67,10 +69,6 @@ internal sealed partial class ManagerWindow {
             return (CheatWhoMode.Custom, []);
         }
 
-        if (who.All(b => b.Spec == "C.ThisPc")) {
-            return (CheatWhoMode.ThisPc, []);
-        }
-
         if (who.All(b => b.Spec == "C.AnyWizard")) {
             return (CheatWhoMode.Everyone, []);
         }
@@ -81,6 +79,13 @@ internal sealed partial class ManagerWindow {
 
         if (who.All(b => b.Spec == "C.Account" && b.Text("Account").Length > 0 && !b.Text("Account").Contains(','))) {
             return (CheatWhoMode.Accounts, [.. who.Select(b => b.Text("Account"))]);
+        }
+
+        if (who.All(b => b.Spec == "C.ThisPc" || b.Spec == "C.Wizard" && b.Text("Wizard").Length > 0 && !b.Text("Wizard").Contains(',')
+                         || b.Spec == "C.Account" && b.Text("Account").Length > 0 && !b.Text("Account").Contains(','))) {
+            return (CheatWhoMode.Mixed, [.. who.Select(b => b.Spec switch {
+                "C.ThisPc" => "pc", "C.Wizard" => "w:" + b.Text("Wizard"), _ => "a:" + b.Text("Account"),
+            })]);
         }
 
         return (CheatWhoMode.Custom, []);
@@ -95,22 +100,15 @@ internal sealed partial class ManagerWindow {
                 blocks.Add(CheatBlock.New(CheatSpecs.Get("C.AnyWizard")));
                 break;
             case CheatWhoMode.Wizards:
-                var list = WizardListNow() ?? [];
-                foreach (var id in picked) {
-                    var (account, wizard) = list.SelectMany(a => a.Wizards.Select(w => (a.Account, w))).FirstOrDefault(x => x.w.Id == id);
-                    var block = CheatBlock.New(CheatSpecs.Get("C.Wizard"));
-                    block.Set("Wizard", id);
-                    block.Set("Name", wizard?.Name ?? "");
-                    block.Set("Account", account ?? "");
-                    blocks.Add(block);
-                }
-
+                blocks.AddRange(picked.Select(WizardBlock));
                 break;
             case CheatWhoMode.Accounts:
-                foreach (var account in picked) {
-                    var block = CheatBlock.New(CheatSpecs.Get("C.Account"));
-                    block.Set("Account", account);
-                    blocks.Add(block);
+                blocks.AddRange(picked.Select(AccountBlock));
+                break;
+            case CheatWhoMode.Mixed:
+                foreach (var item in picked.Distinct()) {
+                    blocks.Add(item == "pc" ? CheatBlock.New(CheatSpecs.Get("C.ThisPc"))
+                        : item.StartsWith("w:", StringComparison.Ordinal) ? WizardBlock(item[2..]) : AccountBlock(item[2..]));
                 }
 
                 break;
@@ -128,6 +126,36 @@ internal sealed partial class ManagerWindow {
         rule.Ifs.InsertRange(0, blocks);
     }
 
+    private CheatBlock WizardBlock(string id) {
+        var (account, wizard) = (WizardListNow() ?? []).SelectMany(a => a.Wizards.Select(w => (a.Account, w))).FirstOrDefault(x => x.w.Id == id);
+        var block = CheatBlock.New(CheatSpecs.Get("C.Wizard"));
+        block.Set("Wizard", id);
+        block.Set("Name", wizard?.Name ?? "");
+        block.Set("Account", account ?? "");
+
+        return block;
+    }
+
+    private static CheatBlock AccountBlock(string account) {
+        var block = CheatBlock.New(CheatSpecs.Get("C.Account"));
+        block.Set("Account", account);
+
+        return block;
+    }
+
+    // A pick ("w:id", "a:account", "pc") in words.
+    private string PickWords(string item) {
+        if (item == "pc") {
+            return "the wizard you play on this PC";
+        }
+
+        var value = item.Length > 2 ? item[2..] : item;
+
+        return item.StartsWith("w:", StringComparison.Ordinal)
+            ? (WizardListNow() ?? []).SelectMany(a => a.Wizards).FirstOrDefault(w => w.Id == value)?.Name ?? $"wizard {value}"
+            : $"the wizards of {value}";
+    }
+
     // The words for who gets a cheat (the list's "Show cheats for" and the cheat's head).
     private string WhoWords(CheatRule rule) {
         var (mode, picked) = WhoOf(rule);
@@ -138,6 +166,7 @@ internal sealed partial class ManagerWindow {
             CheatWhoMode.Everyone => "every wizard",
             CheatWhoMode.Wizards => string.Join(", ", picked.Select(id => list.SelectMany(a => a.Wizards).FirstOrDefault(w => w.Id == id)?.Name ?? $"wizard {id}")),
             CheatWhoMode.Accounts => "the wizards of " + string.Join(", ", picked),
+            CheatWhoMode.Mixed => string.Join(", ", picked.Select(PickWords)),
             _ => "the wizards its If blocks pick",
         };
     }
@@ -151,6 +180,7 @@ internal sealed partial class ManagerWindow {
             (nameof(CheatWhoMode.Wizards), "Only the wizards I tick"),
             (nameof(CheatWhoMode.Accounts), "Every wizard on the accounts I tick"),
         };
+        modes.Add((nameof(CheatWhoMode.Mixed), "Wizards, accounts and me, as I tick"));
         if (mode == CheatWhoMode.Custom) {
             modes.Add((nameof(CheatWhoMode.Custom), "Set by the If blocks below"));
         }
@@ -173,9 +203,10 @@ internal sealed partial class ManagerWindow {
                 CheatWhoMode.Everyone => "Every wizard gets it, on any PC, in any battle. Add If blocks (school, level...) below to narrow it.",
                 CheatWhoMode.Wizards => "Each ticked wizard gets it in their own battles, on any PC. You don't need to be in the fight.",
                 CheatWhoMode.Accounts => "Every wizard on each ticked account gets it in their own battles, on any PC.",
+                CheatWhoMode.Mixed => "Everyone ticked gets it: you on this PC, each ticked wizard, and every wizard of each ticked account. \"Link to\" on the cheat list adds to these.",
                 _ => "The If blocks below say who gets it (NOT, friend of, in a group with, rank...). Pick another choice above to replace them.",
             };
-            if (now is not (CheatWhoMode.Wizards or CheatWhoMode.Accounts)) {
+            if (now is not (CheatWhoMode.Wizards or CheatWhoMode.Accounts or CheatWhoMode.Mixed)) {
                 return;
             }
 
@@ -203,12 +234,24 @@ internal sealed partial class ManagerWindow {
                 ticks.Children.Add(box);
             }
 
-            if (now == CheatWhoMode.Accounts) {
-                foreach (var account in wizards) {
-                    Tick(account.Account, $"{account.Account} ({account.Wizards.Count} wizard{(account.Wizards.Count == 1 ? "" : "s")})", "");
+            // Mixed picks carry what they are in front ("w:", "a:"); the plain modes have none.
+            var mixed = now == CheatWhoMode.Mixed;
+            if (mixed) {
+                Tick("pc", "Me (the wizard I play on this PC)", "");
+            }
+
+            if (now == CheatWhoMode.Accounts || mixed) {
+                if (mixed) {
+                    ticks.Children.Add(new TextBlock { Text = "Accounts:", FontWeight = FontWeight.SemiBold, Foreground = MUTED, Margin = new Thickness(0, 4, 10, 2) });
                 }
 
-                return;
+                foreach (var account in wizards) {
+                    Tick((mixed ? "a:" : "") + account.Account, $"{account.Account} ({account.Wizards.Count} wizard{(account.Wizards.Count == 1 ? "" : "s")})", "");
+                }
+
+                if (!mixed) {
+                    return;
+                }
             }
 
             foreach (var account in wizards.Where(a => a.Wizards.Count > 0)) {
@@ -217,7 +260,7 @@ internal sealed partial class ManagerWindow {
                     VerticalAlignment = VerticalAlignment.Center,
                 });
                 foreach (var wizard in account.Wizards) {
-                    Tick(wizard.Id, $"{wizard.Name} (level {wizard.Level})", wizard.School);
+                    Tick((mixed ? "w:" : "") + wizard.Id, $"{wizard.Name} (level {wizard.Level})", wizard.School);
                 }
             }
         }
@@ -228,7 +271,8 @@ internal sealed partial class ManagerWindow {
                 return;
             }
 
-            SetWho(rule, now, []);
+            // Mixed starts from whoever has it now.
+            SetWho(rule, now, now == CheatWhoMode.Mixed ? WhoItems(rule) ?? ["pc"] : []);
             Changed();
         }));
         ShowTicks(mode, picked);
@@ -273,7 +317,7 @@ internal sealed partial class ManagerWindow {
 
         var (mode, picked) = WhoOf(rule);
         if (_playerCheatsFor == FOR_THIS_PC) {
-            return mode is CheatWhoMode.ThisPc or CheatWhoMode.Everyone or CheatWhoMode.Custom;
+            return mode is CheatWhoMode.ThisPc or CheatWhoMode.Everyone or CheatWhoMode.Custom || mode == CheatWhoMode.Mixed && picked.Contains("pc");
         }
 
         var account = (WizardListNow() ?? []).FirstOrDefault(a => a.Wizards.Any(w => w.Id == _playerCheatsFor))?.Account ?? "";
@@ -282,6 +326,7 @@ internal sealed partial class ManagerWindow {
             CheatWhoMode.Everyone or CheatWhoMode.Custom => true,
             CheatWhoMode.Wizards => picked.Contains(_playerCheatsFor),
             CheatWhoMode.Accounts => picked.Contains(account, StringComparer.OrdinalIgnoreCase),
+            CheatWhoMode.Mixed => picked.Contains("w:" + _playerCheatsFor) || picked.Contains("a:" + account, StringComparer.OrdinalIgnoreCase),
             _ => false,
         };
     }
