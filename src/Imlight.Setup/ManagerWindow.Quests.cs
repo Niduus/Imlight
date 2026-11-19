@@ -169,7 +169,9 @@ internal sealed partial class ManagerWindow {
                        "quests before it are not done. Teleport takes you to the zone of the NPC who gives it (.tp). Complete Goal " +
                        "finishes only the step you are on in a quest you have (.quest completegoalfor), and Finish " +
                        "completes the whole quest (.quest complete). The buttons run in the game on this PC, so start the server " +
-                       "and log in first."),
+                       "and log in first. Playing on someone else's server? The list only has the wizards of the server on " +
+                       "this PC, so type the command in the game's chat instead, with the quest's code, for example " +
+                       ".quest completegoalfor MB-YARDHub-C01-003 (the code shows in the quest's card here)."),
                     _questSearch,
                     SearchFilters(
                         SearchFilter("Level from", _questLevelMin),

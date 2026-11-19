@@ -1,0 +1,4 @@
+Fixed: Katzenstein's Lab plaque puzzle froze the game and the whole server
+In Katzenstein's Lab, a wrong plaque in the gate puzzle sent the four plaques into an endless reset, each one turning the others off again and again. The player's game dropped to 1 frame a second and lost connection, and the server kept getting slower and used more and more memory until it was restarted. Now a plaque that is already off stays put and sets nothing else off, and the server stops any room event that repeats itself hundreds of times a second.
+Where: Katzenstein's Lab in Marleybone, and any room with a puzzle like it. No setting.
+Test: In Katzenstein's Lab, press the plaques in the wrong order a few times, then in the right order (Sun, Bird, Tree, Bug). The game stays smooth, the gates open, and Ahziael's server memory stays normal.

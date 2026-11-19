@@ -89,6 +89,7 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
 
         SeedTriggerStates(replacedTriggers);
         NoteSleepingSpawners(spawners, replacedTriggers);
+        NoteWalkInSpawners(spawners, replacedTriggers, message.PathData.m_pathList, message.NodeData.m_nodeList);
 
         var byName = new Dictionary<string, Trigger>(StringComparer.Ordinal);
         foreach (var trigger in replacedTriggers) {
@@ -129,6 +130,16 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_POSTEVENT))]
     private void ReceivePostEvent(ZONE_102_PROTOCOL.MSG_POSTEVENT message) {
+        // An event that comes round far too often is a script loop; its extra posts are dropped (LoopGuard).
+        if (IsRunawayEvent(message.EventName)) {
+            return;
+        }
+
+        // A wizard walking into any spot of the room may be near a boss that only a walk-in spot brings out (WalkInBosses).
+        if (message.PlayerActor is not null && HoldsWalkInSpawners() && ((string) message.EventName)?.StartsWith("Enter_", StringComparison.Ordinal) == true) {
+            ScheduleWaitingSpawnCheck(message.PlayerActor, message.PlayerGameObject);
+        }
+
         // Client wads pair multiple triggers on the same event; every passing trigger fires
         // (their results are independent), but paired teleporter triggers must not both win:
         // only one ResTeleport trigger may execute (see PickTeleportTrigger).
@@ -689,6 +700,11 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         }
 
         var previousState = Zone.ScriptState.GetObjectState(objectName);
+        // Already in that state: nothing moves and nothing is raised (Katzenstein's Lab plaque resets fed on each other, LoopGuard).
+        if (IsSameStateEcho(objectName, previousState, stateName)) {
+            return;
+        }
+
         Zone.ScriptState.SetObjectState(objectName, stateName);
         NoteLift(objectName, stateName);
 

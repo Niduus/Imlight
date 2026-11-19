@@ -61,7 +61,7 @@ internal sealed partial class ZoneTriggerSupervisor {
     private void ReceiveWaitingSpawnCheck(WaitingSpawnCheck message) {
         _waitingSpawnChecks.Remove(message.PlayerActor);
         if (message.PlayerActor is IInternalActorRef { IsTerminated: true }
-            || (WaitingSpawnTriggers().Count == 0 && !HoldsQuestChangedObjects() && !HoldsSleepingSpawners())) {
+            || (WaitingSpawnTriggers().Count == 0 && !HoldsQuestChangedObjects() && !HoldsSleepingSpawners() && !HoldsWalkInSpawners())) {
             return;
         }
 
@@ -83,6 +83,9 @@ internal sealed partial class ZoneTriggerSupervisor {
 
         // A boss whose spawner starts switched off, for a step that needs him (ZoneTriggerSupervisor.SleepingSpawns).
         WakeSleepingStepSpawners(message);
+
+        // A boss that only a walk-in spot brings out, for a wizard close to him whose step needs him (WalkInBosses).
+        WakeWalkInStepSpawners(message);
 
         try {
             if (WaitingSpawnTriggers().Count == 0) {
