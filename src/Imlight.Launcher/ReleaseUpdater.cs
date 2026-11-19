@@ -84,7 +84,7 @@ internal sealed class ReleaseUpdater : IDisposable {
     /// </summary>
     internal async Task<GitHubRelease?> GetLatestReleaseAsync() {
         try {
-            var url = $"https://api.github.com/repos/{_settings.Repository}/releases?per_page=20";
+            var url = $"https://api.github.com/repos/{_settings.Repository}/releases?per_page=100"; // bot updates (bots-v...) are releases too, many of them (Niduus, 2026-11-19)
             using var response = await _http.GetAsync(url);
             if (!response.IsSuccessStatusCode) {
                 Console.WriteLine($"Could not check for updates: GitHub answered {(int) response.StatusCode} {response.ReasonPhrase}.");

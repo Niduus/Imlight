@@ -206,6 +206,7 @@ internal static class BotUpdates {
                 ["tag"] = update.Tag,
                 ["number"] = update.Number,
                 ["commit"] = (string) made?["commit"] ?? "",
+                ["needsServer"] = (string) made?["needsServer"] ?? "",
                 ["published"] = update.When.ToString("o"),
                 ["notes"] = update.Notes,
             }.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
@@ -234,16 +235,37 @@ internal static class BotUpdates {
         }
 
         try {
-            var json = await s_http.GetStringAsync($"https://api.github.com/repos/{Repository}/compare/{serverCommit}...{botsCommit}");
-            var status = (string) JsonNode.Parse(json)?["status"] ?? "";
+            var status = await CompareAsync(serverCommit, botsCommit);
 
             // "ahead": the bot update came after the server's own code. "identical" or "behind": the server's own bots are
             // as new or newer. "diverged" cannot happen on one branch; the update is taken then.
-            return status is "identical" or "behind" ? BotLoader.BUILT_IN : newest;
+            if (status is "identical" or "behind") {
+                return BotLoader.BUILT_IN;
+            }
+
+            // A bot fix made together with a change to the server's own code (one pull request touching both) waits for
+            // the full update that brings that server change; until then the bots that run stay (Niduus, 2026-11-19:
+            // every bot fix goes out on its own, so the ones that cannot run on this server yet must not break it).
+            var needs = Info(newest)?["needsServer"]?.GetValue<string>() ?? "";
+            if (needs.Length > 0 && await CompareAsync(serverCommit, needs) == "ahead") {
+                s_lastCheckResult = $"{newest} needs the next full update first (it goes with a server change)";
+                Note(s_lastCheckResult);
+
+                return BotDoor.Version is { Length: > 0 } running && running != newest ? running : BotLoader.BUILT_IN;
+            }
+
+            return newest;
         }
         catch (Exception) {
             return BotDoor.Version is { Length: > 0 } running ? running : BotLoader.Wanted;
         }
+    }
+
+    // How commit "to" stands against commit "from" on GitHub: "ahead" when it came after, "identical", "behind" or "diverged".
+    private static async Task<string> CompareAsync(string from, string to) {
+        var json = await s_http.GetStringAsync($"https://api.github.com/repos/{Repository}/compare/{from}...{to}");
+
+        return (string) JsonNode.Parse(json)?["status"] ?? "";
     }
 
     // The commit the server was built from (Ahziael writes it next to the server: "repo branch commit").

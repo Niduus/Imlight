@@ -61,10 +61,10 @@ internal sealed partial class ManagerWindow {
         return Page(
             Fold("download", ULTIMUS_TAB, "Bot updates",
                 "Ultimus, the TCO7, the Quest Team and the Bot Players are their own part of the server now, so they can be " +
-                "updated without a new Ahziael. A bot update goes out only when Niduus publishes one. With live bot updates on, " +
+                "updated without a new Ahziael. Every bot fix goes out as a bot update by itself as soon as it is merged. With live bot updates on, " +
                 "the server looks for a new one every 10 minutes, builds it on this PC and swaps the bots: they log out and come " +
                 "back a few seconds later (after any battle they are in ends). You and other players stay in the game and the " +
-                "server keeps running. A bot update that does not fit this server is skipped and the bots stay as they are.",
+                "server keeps running. A bot update that does not fit this server, or that needs a server change this server does not have yet, waits and the bots stay as they are until the next full update.",
                 _botUpdState,
                 SwitchRow("Live bot updates", _botUpdLive,
                     "On: new bot updates are taken by themselves within 10 minutes. Off: the bots stay as they are until you turn this on or update Ahziael."),
