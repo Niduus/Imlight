@@ -209,12 +209,7 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
 
         // The zone checked its EnterZone triggers before these goals moved on; triggers waiting on the next goal
         // (Old Judd in Caretaker's Tower needs "Goal 2" active) get another look now.
-        SessionActor.GetZoneActor()?.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
-            EventName = "EnterZone",
-            PlayerActor = SessionActor.ActorRef,
-            PlayerGameObject = GetActiveGameObject(),
-            RetryRefused = true,
-        });
+        RecheckEntryTriggers();
     }
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_SENDQUESTOFFERCACHEOPTION))]
@@ -1551,6 +1546,27 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         Imlight.CoreLib.Game.World.WorldAccess.Remember(wizard);
         RefreshTutorialTips(wizard);
         RefreshQuestFinder(wizard);
+        RecheckEntryTriggers();
+    }
+
+    /// <summary>
+    /// The zone's entry triggers that turned this wizard away when they walked in get another look now that their quests
+    /// moved on, as walking out and back in would give them. Belloq's Tent (Zafaria): talking to Belloq starts "defeat
+    /// Belloq", and his fight is brought out only by the entry trigger, so he never came until the player left the tent
+    /// and came back (a player's report, 2026-11-19).
+    /// </summary>
+    private void RecheckEntryTriggers() {
+        var zone = SessionActor.GetZoneActor();
+        if (zone is null) {
+            return;
+        }
+
+        zone.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
+            EventName = "EnterZone",
+            PlayerActor = SessionActor.ActorRef,
+            PlayerGameObject = GetActiveGameObject(),
+            RetryRefused = true,
+        });
     }
 
     // Tips waiting on a quest show once it is done; the rest stay held back (TutorialTipGate).

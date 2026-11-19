@@ -130,35 +130,55 @@ internal static class CombatWards {
     }
 
     /// <summary>
-    /// The wards that change a hit of <paramref name="school"/>, one of each spell. A prism for that school (or for all
-    /// schools) goes first and turns the hit into its school (<paramref name="finalSchool"/>); the shields and traps of
-    /// the new school then count.
+    /// The wards that change a hit of <paramref name="school"/>, one of each spell, in the order they were put on. A prism
+    /// for the hit's school (or for all schools) turns the hit into its school (<paramref name="finalSchool"/>) where it
+    /// stands: the shields and traps put on before it count with the old school, the ones after it with the new one.
     /// </summary>
     /// <remarks>
     /// A prism's m_sDamageType is the school it converts and m_effectParam the new school's name hash (Fire Prism:
     /// Fire to 72777, Ice). The prism was read as a school index (so it did nothing) and went off on any school.
+    /// Before 2026-11-19 the prism always went first, so a trap put on before it (Storm Trap, then Storm Prism) was skipped
+    /// by the server while the game used it up: the bubbles and the damage disagreed (Niduus: "prism/sharpened/potent bug
+    /// stacking").
     /// </remarks>
     internal static List<SpellEffect> GetWardsBySchool(SpellEffect[] wards, string school, out string finalSchool) {
         finalSchool = school;
-        var schoolWards = new List<SpellEffect>();
+        var used = new List<SpellEffect>();
+        var prismUsed = false;
 
-        var prism = wards.FirstOrDefault(w => w.m_effectType == kSpellEffects.kModifyIncomingDamageType
-                                              && CombatCharms.SchoolMatches(w.m_sDamageType, school));
-        if (prism is not null) {
-            var converted = MagicSchools.GetMagicSchool((uint) prism.m_effectParam)?.m_schoolName
-                            ?? MagicSchools.GetMagicSchool(prism.m_effectParam)?.m_schoolName;
-            if (!string.IsNullOrEmpty(converted)) {
-                finalSchool = converted;
+        foreach (var ward in wards ?? []) {
+            if (ward is null) {
+                continue;
             }
 
-            schoolWards.Add(prism);
+            if (ward.m_effectType == kSpellEffects.kModifyIncomingDamageType) {
+                // One prism a hit, the first one for the school the hit has at that point.
+                if (prismUsed || !CombatCharms.SchoolMatches(ward.m_sDamageType, finalSchool)) {
+                    continue;
+                }
+
+                var converted = MagicSchools.GetMagicSchool((uint) ward.m_effectParam)?.m_schoolName
+                                ?? MagicSchools.GetMagicSchool(ward.m_effectParam)?.m_schoolName;
+                if (!string.IsNullOrEmpty(converted)) {
+                    finalSchool = converted;
+                }
+
+                prismUsed = true;
+                used.Add(ward);
+
+                continue;
+            }
+
+            if (CombatCharms.SchoolMatches(ward.m_sDamageType, finalSchool)) {
+                used.Add(ward);
+            }
         }
 
-        var target = finalSchool;
-        schoolWards.AddRange(CombatCharms.OnePerSpell(wards.Where(w => w.m_effectType != kSpellEffects.kModifyIncomingDamageType
-                                                                       && CombatCharms.SchoolMatches(w.m_sDamageType, target))));
+        // One of each spell (an enchanted one counts apart from the plain one); the prism is kept as it is.
+        var kept = new HashSet<SpellEffect>(CombatCharms.OnePerSpell(used.Where(w => w.m_effectType != kSpellEffects.kModifyIncomingDamageType)),
+                                            ReferenceEqualityComparer.Instance);
 
-        return schoolWards;
+        return [.. used.Where(w => w.m_effectType == kSpellEffects.kModifyIncomingDamageType || kept.Contains(w))];
     }
 
     /// <summary>

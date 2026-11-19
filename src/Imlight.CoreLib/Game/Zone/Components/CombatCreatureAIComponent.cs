@@ -80,6 +80,10 @@ internal sealed partial class CombatCreatureAIComponent(ZoneEntity entity) : Zon
     // spell is left out even when nothing else can be cast, so a creature whose deck is one card (the Darkmoor
     // Draconians) passes that round instead of casting it a third time (Niduus, 2026-10-27).
     private static int s_maxSameSpellInARow => ConfigurationManager.GetValue("Combat.MaxSameSpellInARow", 2);
+    // [Combat] NaturalAttackCooldown: rounds an enemy creature must wait after its natural attack (a spell named "NA ..." or
+    // "Natural Attack") before it can swing again (0 = no cooldown). Natural attack spam came back with the Rewritten AI,
+    // which never used NaturalAttackChance (Niduus, 2026-11-19: "Have Enemies gain a 1 round cool down on Natural Attacks").
+    private static int s_naturalAttackCooldown => Math.Max(0, ConfigurationManager.GetValue("Combat.NaturalAttackCooldown", 1));
     private readonly int _damagedAggroIncrease   = ConfigurationManager.Settings["Combat.DamagedAggroIncrease"].AsInt();
     private readonly int _healingAggroIncrease   = ConfigurationManager.Settings["Combat.HealingAggroIncrease"].AsInt();
     private readonly int _provokeAggroIncrease   = ConfigurationManager.Settings["Combat.ProvokeAggroIncrease"].AsInt();
@@ -110,6 +114,9 @@ internal sealed partial class CombatCreatureAIComponent(ZoneEntity entity) : Zon
     private int _sameSpellStreak;
     private bool _avoidRepeatThisTurn;
     private bool _mustSkipRepeatThisTurn;
+    // Rounds left before the natural attack can be cast again, and whether it is cooling down this round.
+    private int _naturalAttackCooldownLeft;
+    private bool _naturalAttackCooling;
 
     private Hand _roundHand;
     private CombatDuelSubCircle[] _friendlySubcircles
@@ -232,9 +239,29 @@ internal sealed partial class CombatCreatureAIComponent(ZoneEntity entity) : Zon
         DetermineAttitude();
         // Rewritten AI ([RewrittenAI] Enabled, or the creature's own in the Bosses tab): null lets the old AI decide.
         var action = WithPicks(TryRewrittenTurn() ?? DetermineTurnAction());
+        // Both AIs leave the natural attack out while it cools down; this catches any other way it could still be picked.
+        if (_naturalAttackCooling && action.MoveType == (byte) CombatMoveType.Attack
+            && NaturalAttacks.Is(_currentSubCircle.GetSpellFromLastHand((byte) action.SpellSelection))) {
+            Logger.Debug("Duel {0} | Slot {1} | Natural attack is cooling down. Picking again without it.",
+                Logger.Args(_currentDuelComponent.SigilId, _currentSubCircle.SlotIndex));
+            action = WithPicks(DetermineTurnAction());
+            if (action.MoveType == (byte) CombatMoveType.Attack
+                && NaturalAttacks.Is(_currentSubCircle.GetSpellFromLastHand((byte) action.SpellSelection))) {
+                action = new COMBAT_106_PROTOCOL.MSG_ACTORCOMBATMOVE {
+                    Actor = Entity.SelfRef,
+                    MoveType = (byte) CombatMoveType.Pass,
+                    SpellSelection = 0,
+                    SpellTarget = 0,
+                };
+            }
+        }
+
         var castSpellId = action.MoveType == (byte) CombatMoveType.Attack
             ? _currentSubCircle.GetSpellFromLastHand((byte) action.SpellSelection)?.m_templateID ?? 0
             : 0;
+        if (castSpellId != 0 && NaturalAttacks.Is(_currentSubCircle.GetSpellFromLastHand((byte) action.SpellSelection))) {
+            _naturalAttackCooldownLeft = s_naturalAttackCooldown;
+        }
         _sameSpellStreak = castSpellId != 0 && castSpellId == _lastCastSpellId ? _sameSpellStreak + 1 : castSpellId != 0 ? 1 : 0;
         _lastCastSpellId = castSpellId;
 
@@ -362,6 +389,16 @@ internal sealed partial class CombatCreatureAIComponent(ZoneEntity entity) : Zon
         _determinedAggressiveThisTurn = _random.NextDouble() < aggression;
         _determinedSelfishThisTurn = _random.NextDouble() < selfishness;
         _avoidRepeatThisTurn = _lastCastSpellId != 0 && _random.NextDouble() < s_avoidRepeatChance;
+        // Only creatures fighting the players: a wizard's own minion swings as often as it likes.
+        _naturalAttackCooling = _naturalAttackCooldownLeft > 0 && s_naturalAttackCooldown > 0
+                                && _currentSubCircle.OccupiedTeam == CombatTeam.Monster;
+        if (_naturalAttackCooldownLeft > 0) {
+            _naturalAttackCooldownLeft--;
+        }
+        if (_naturalAttackCooling) {
+            Logger.Debug("Duel {0} | Slot {1} | Natural attack cooling down this round.",
+                Logger.Args(_currentDuelComponent.SigilId, _currentSubCircle.SlotIndex));
+        }
         var maxInARow = s_maxSameSpellInARow;
         _mustSkipRepeatThisTurn = _lastCastSpellId != 0 && maxInARow > 0 && _sameSpellStreak >= maxInARow;
         if (_mustSkipRepeatThisTurn) {
@@ -440,13 +477,29 @@ internal sealed partial class CombatCreatureAIComponent(ZoneEntity entity) : Zon
             return msg;
         }
 
+        // X pip spells (Tempest, Judgement, Heck Hound...): with few pips they are at their weakest. Another attack goes
+        // first; with nothing else, the creature may keep its pips for a round to cast it bigger (SaveUpChance).
+        var weakX = castableDamageSpells.Where(x => !CombatActionResolver.XPipWorthCasting(x, _currentSubCircle)).ToList();
+        if (weakX.Count > 0) {
+            if (weakX.Count < castableDamageSpells.Count) {
+                castableDamageSpells = [.. castableDamageSpells.Where(x => CombatActionResolver.XPipWorthCasting(x, _currentSubCircle))];
+            }
+            else if (_random.NextDouble() < s_saveUpChance) {
+                Logger.Debug("Duel {0} | Slot {1} | Only X pip spells with {2} pips. Saving pips to cast them bigger.",
+                    Logger.Args(_currentDuelComponent.SigilId, _currentSubCircle.SlotIndex, CombatActionResolver.PipsSpentNow(weakX[0], _currentSubCircle)));
+
+                msg.MoveType = (byte) CombatMoveType.Pass;
+                return msg;
+            }
+        }
+
         var targetIdx = GetMostHatedTarget();
         msg.SpellTarget = (byte) targetIdx;
 
-        // Are we smart enough to use our highest pip spell?
+        // Are we smart enough to use our highest pip spell? An X pip spell counts as the pips it would take now.
         if (_determinedSmartThisTurn) {
             var highestPipSpell = castableDamageSpells
-                .OrderByDescending(x => x.m_pipCost.m_spellRank)
+                .OrderByDescending(x => CombatActionResolver.PipsSpentNow(x, _currentSubCircle))
                 .FirstOrDefault();
             if (highestPipSpell is not null) {
                 msg.SpellSelection = (byte) _roundHand.m_spellList.IndexOf(highestPipSpell);
@@ -612,19 +665,23 @@ internal sealed partial class CombatCreatureAIComponent(ZoneEntity entity) : Zon
         return msg;
     }
 
-    // A creature's natural attack: the game names those cards "NA <creature>" (and a few "<name> NA").
-    private static bool IsNaturalAttack(Spell spell) {
-        var name = CoreObjectFactory.GetCoreTemplate(spell.m_templateID) is SpellTemplate template
-            ? (string) template.m_name ?? ""
-            : "";
-
-        return name.StartsWith("NA ", StringComparison.Ordinal) || name.EndsWith(" NA", StringComparison.Ordinal);
-    }
+    // A creature's natural attack: the game names those cards "NA <creature>" (and a few "<name> NA"); players see "Natural Attack".
+    private static bool IsNaturalAttack(Spell spell) => NaturalAttacks.Is(spell);
 
     private List<Spell> GetCastableSpells(List<Spell> spells) {
         var castableSpells = new List<Spell>();
         foreach (var spell in spells) {
             if (!_currentSubCircle.HasPipsForSpell(spell)) {
+                continue;
+            }
+
+            // [Combat] NaturalAttackCooldown: no natural attack the round after one.
+            if (_naturalAttackCooling && IsNaturalAttack(spell)) {
+                continue;
+            }
+
+            // An X pip spell cast below its lowest tier does nothing.
+            if (!CombatActionResolver.XPipReachesATier(spell, _currentSubCircle)) {
                 continue;
             }
 

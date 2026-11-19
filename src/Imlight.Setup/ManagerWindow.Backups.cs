@@ -68,13 +68,24 @@ internal sealed partial class ManagerWindow {
 
         var install = _manager.InstallFolder;
         _ = Task.Run(() => {
+            var changed = false;
             try {
-                if (ServerBackup.MakeIfDue(install) is not null) {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() => _ = ShowBackupsAsync());
-                }
+                changed = ServerBackup.MakeIfDue(install) is not null;
             }
             catch (Exception ex) {
                 AppLogs.Error("Today's backup could not be made", ex);
+            }
+
+            // Older backups held a whole copy of the server's code (Source); they are made small once, in the background.
+            try {
+                changed |= ServerBackup.SlimOldBackups(install).Slimmed > 0;
+            }
+            catch (Exception ex) {
+                AppLogs.Error("Older backups could not be made smaller", ex);
+            }
+
+            if (changed) {
+                Avalonia.Threading.Dispatcher.UIThread.Post(() => _ = ShowBackupsAsync());
             }
         });
     }

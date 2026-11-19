@@ -135,6 +135,8 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         // A boss that only a live cutscene would bring out is brought out for a wizard who comes to fight it.
         if (message.EventName == START_ZONE_ENTER_EVENT && message.PlayerActor is not null) {
             ScheduleWaitingSpawnCheck(message.PlayerActor, message.PlayerGameObject);
+            // A door a quest's dialog opens for good (Bartleby's mouth), for a wizard who may go through but never heard it.
+            OpenStoryDoors(message);
             // In the Well of Spirits or one of its tombs: past the storm obelisks for good (StormObelisks).
             if (StormObelisks.IsInside(Zone.ZonePath)) {
                 StormObelisks.BeenInside(ZoneTrigger.QueryWizard(message.PlayerActor), Zone.ZonePath);
@@ -145,8 +147,13 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         // With OpenAllDoors a door goes through without its quest; these are the passing doors whose quest needs are met too.
         HashSet<Trigger> doorsWithNeedsMet = null;
         HashSet<string> retry = null;
-        if (message.RetryRefused && (message.PlayerActor is null || !_refusedOnEntry.Remove(message.PlayerActor, out retry))) {
+        if (message.RetryRefused && (message.PlayerActor is null || !_refusedOnEntry.TryGetValue(message.PlayerActor, out retry))) {
             return;
+        }
+
+        // A fresh walk into the zone checks every entry trigger again, so what was refused on an earlier visit is dropped.
+        if (!message.RetryRefused && message.EventName == START_ZONE_ENTER_EVENT && message.PlayerActor is not null) {
+            _refusedOnEntry.Remove(message.PlayerActor);
         }
 
         foreach (var (trigger, triggerActor) in _orderedTriggers) {
@@ -160,6 +167,11 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
 
             // The Tomb of Storms' way into the Well of Spirits stays shut until the wizard lit the three storm obelisks.
             if (StormSealed(trigger, message)) {
+                continue;
+            }
+
+            // Haggerty Greycap's "secret path" greeting in Northguard is only for a wizard Grizzleheim does not know yet.
+            if (IsStaleSecretPathWarning(trigger, message)) {
                 continue;
             }
 
@@ -225,6 +237,13 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             foreach (var (trigger, _) in passing) {
                 Logger.Information("Zone {0}: trigger {1} fires after the quest updated on entry.",
                     Logger.Args(Zone.ZonePath, trigger.m_triggerName));
+                retry.Remove(trigger.m_triggerName);
+            }
+
+            // The ones still refused wait for the wizard's next quest step in this zone (Belloq's tent: his fight starts
+            // on entry only for a wizard on the "defeat Belloq" step, and that step starts after talking to him inside).
+            if (retry.Count == 0) {
+                _refusedOnEntry.Remove(message.PlayerActor);
             }
         }
 

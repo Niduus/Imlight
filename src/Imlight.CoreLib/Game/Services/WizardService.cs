@@ -184,11 +184,31 @@ internal class WizardService(SessionActor sessionActor) : MessageService(session
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_GAINXP))]
     private void ReceiveGainXP(CHARACTER_103_PROTOCOL.MSG_GAINXP message) {
+        if (_activeWizard is null) {
+            return;
+        }
+
         var beforeLevel = _activeWizard.MagicSchoolBehavior.Level;
         var beforeXP = _activeWizard.MagicSchoolBehavior.ExperiencePoints;
         var xpGained = message.XP;
 
+        if (_activeWizard.LevelLocked && xpGained > 0) {
+            // Level Lock: the XP is banked, the level and the bar stay as they are (given on unlock).
+            _activeWizard.AddExperiencePoints(xpGained);
+            SendBankedExperience();
+
+            return;
+        }
+
         _activeWizard.AddExperiencePoints(xpGained);
+        GaveExperience(beforeLevel, beforeXP);
+    }
+
+    /// <summary>
+    /// After XP was given: tells the game the XP change first, then the level it reached, with that level's training
+    /// points and stats.
+    /// </summary>
+    private void GaveExperience(int beforeLevel, int beforeXP) {
         var afterLevel = _activeWizard.MagicSchoolBehavior.Level;
 
         // Inform the client of the XP change first, then of the level it reached.
@@ -204,6 +224,92 @@ internal class WizardService(SessionActor sessionActor) : MessageService(session
             AnnounceLevelChange();
         }
     }
+
+    /// <summary>
+    /// The game's own Level Lock button (Niduus, 2026-11-19: "the level locking feature not working"). The game sent
+    /// this and nothing answered it, so the lock never held. Unlock 0 locks: the level and XP stay where they are and
+    /// XP earned is banked. Unlock 1 gives all the banked XP, levelling the wizard up as far as it reaches.
+    /// </summary>
+    [MessageHandler(typeof(WIZARD3_56_PROTOCOL.MSG_LOCKLEVEL))]
+    private void ReceiveLockLevel(WIZARD3_56_PROTOCOL.MSG_LOCKLEVEL message)
+        => SetLevelLock(message.Unlock == 0, fromGame: true);
+
+    /// <summary>
+    /// `.levellock on|off`: the same as the game's button, for a game whose button can't be found.
+    /// </summary>
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_SETLEVELLOCK))]
+    private void ReceiveSetLevelLock(CHARACTER_103_PROTOCOL.MSG_SETLEVELLOCK message) {
+        if (_activeWizard is null) {
+            return;
+        }
+
+        if (message.Lock is { } lockIt) {
+            SetLevelLock(lockIt, fromGame: false);
+
+            return;
+        }
+
+        SayToPlayer(_activeWizard.LevelLocked
+            ? $"Your level is locked at {_activeWizard.MagicSchoolBehavior.Level}. XP saved up: {_activeWizard.BankedExperience:N0}. Type .levellock off to get it."
+            : $"Your level is not locked. Type .levellock on to keep level {_activeWizard.MagicSchoolBehavior.Level}; XP you earn is saved up until you unlock.");
+    }
+
+    private void SetLevelLock(bool lockIt, bool fromGame) {
+        if (_activeWizard is null) {
+            return;
+        }
+
+        var name = _activeWizard.PlayerNameBehavior?.GetWizardName();
+        if (lockIt) {
+            if (!_activeWizard.LockLevel()) {
+                SayToPlayer($"Your level is already locked at {_activeWizard.MagicSchoolBehavior.Level}.");
+                SendBankedExperience();
+
+                return;
+            }
+
+            Logger.Information("Level Lock: {0} locked at level {1} with {2} XP ({3}).",
+                Logger.Args(name, _activeWizard.MagicSchoolBehavior.Level, _activeWizard.MagicSchoolBehavior.ExperiencePoints,
+                    fromGame ? "game button" : "command"));
+            SendBankedExperience();
+            SayToPlayer($"Level locked at {_activeWizard.MagicSchoolBehavior.Level}. XP you earn is saved up and given when you unlock.");
+
+            return;
+        }
+
+        if (!_activeWizard.LevelLocked) {
+            SayToPlayer("Your level is not locked.");
+            SendBankedExperience();
+
+            return;
+        }
+
+        var beforeLevel = _activeWizard.MagicSchoolBehavior.Level;
+        var beforeXP = _activeWizard.MagicSchoolBehavior.ExperiencePoints;
+        var banked = _activeWizard.UnlockLevel();
+        SendBankedExperience();
+        GaveExperience(beforeLevel, beforeXP);
+
+        var afterLevel = _activeWizard.MagicSchoolBehavior.Level;
+        Logger.Information("Level Lock: {0} unlocked, {1} saved XP given, level {2} -> {3} ({4}).",
+            Logger.Args(name, banked, beforeLevel, afterLevel, fromGame ? "game button" : "command"));
+        SayToPlayer(banked <= 0
+            ? "Level unlocked. No XP was saved up."
+            : afterLevel > beforeLevel
+                ? $"Level unlocked. You got the {banked:N0} XP saved up and are level {afterLevel} now."
+                : $"Level unlocked. You got the {banked:N0} XP saved up.");
+    }
+
+    /// <summary>
+    /// Tells the game how much XP is banked by the Level Lock.
+    /// </summary>
+    private void SendBankedExperience()
+        => SendToSocket(new WIZARD3_56_PROTOCOL.MSG_UPDATEOVERFLOWXP {
+            OverflowXP = (uint) _activeWizard.BankedExperience
+        });
+
+    private void SayToPlayer(string text)
+        => SendToSocket(new EXTENDEDBASE_2_PROTOCOL.MSG_SERVERMESSAGE { Message = text, Modal = 0 });
 
     /// <summary>
     /// Tells the game the wizard's XP changed from <paramref name="beforeXP"/> to what it is now.

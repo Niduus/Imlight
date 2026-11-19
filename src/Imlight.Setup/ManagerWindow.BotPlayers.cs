@@ -12,7 +12,7 @@ using Avalonia.Threading;
 namespace Imlight.Setup;
 
 /// <summary>
-/// The Bot Players card on Game Rules > Battles and World, and its log on the Logs tab (Niduus, 2026-11-12: bots get
+/// The Bot Players card on Bots > Street Bots (on Game Rules > Battles and World until 2026-11-19), and its log on the Logs tab (Niduus, 2026-11-12: bots get
 /// "their own mini server like how Bazaar has one", off by default, killed when turned off, with logs). The server starts
 /// the mini server (a second copy of Imlight.Director with --bots) only while [BotPlayers] Enabled is on. It writes its log,
 /// roster and a status file in Server\logs\bot-players; this card reads them. This is the test stage: bots come out with
@@ -21,6 +21,10 @@ namespace Imlight.Setup;
 internal sealed partial class ManagerWindow {
 
     private const string BOT_PLAYERS_FOLDER = "bot-players";
+    // Niduus, 2026-11-19: the bots are one page with sub pages; the street Bot Players have their own tab there.
+    private const string STREET_BOTS_TAB = "Street Bots";
+
+    private Control StreetBotsTab() => Page(BotPlayersCard());
     private const int BOT_LOG_SHOWN_LINES = 200;
 
     private readonly TextBlock _botState = new() { TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold };
@@ -72,7 +76,7 @@ internal sealed partial class ManagerWindow {
         _botTimer.Start();
         RefreshBotPlayers();
 
-        return Shut(Fold("users", "Battles", "Bot Players",
+        return Fold("users", STREET_BOTS_TAB, "Bot Players",
             "Wizards the server plays by itself, so the game feels like a busy live server. They run in a little program of " +
             "their own next to the server (like the Bazaar bot). Off: that program does not run at all, and turning it off " +
             "stops it and every bot leaves. Bots fill the streets real players are in (never dungeons, houses, guild areas or " +
@@ -99,14 +103,14 @@ internal sealed partial class ManagerWindow {
                 Directory.CreateDirectory(BotPlayersFolder);
 
                 return Open(BotPlayersFolder);
-            }))));
+            })));
     }
 
     /// <summary>The bots' log on the Logs tab: which bots came out, where they walk, the battles they join and why they left.</summary>
     private Control BotPlayersLogCard() {
         _botLogBox = new TextBox {
             IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontFamily = MONO, FontSize = 12.5,
-            Height = 360, Text = "Turn Bot Players on (Game Rules > Battles and World) and start the server; the Bot Players program writes here.",
+            Height = 360, Text = "Turn Bot Players on (Bots > Street Bots) and start the server; the Bot Players program writes here.",
         };
 
         return Shut(Fold("users", "Logs", "Bot Players log",

@@ -899,4 +899,17 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
 
     }
 
+    /// <summary>
+    /// `.levellock` (CommandLevelLockProtocol): locks or unlocks the wizard's level the way the game's own Level Lock
+    /// does (WizardService). Lock null only tells the wizard how it stands.
+    /// </summary>
+    public sealed class MSG_SETLEVELLOCK : IServerMessage {
+
+        public byte MessageOrder { get; } = 156;
+        public byte ServiceID { get; } = 103;
+
+        public bool? Lock;
+
+    }
+
 }

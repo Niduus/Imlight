@@ -64,9 +64,9 @@ internal sealed partial class ManagerWindow {
             },
         });
         head.Margin = new Thickness(24, 12, 24, 0);
-        head.MaxWidth = ManagerTheme.PAGE_MAX_WIDTH;
+        head.MaxWidth = ManagerTheme.TWO_COLUMN_MAX_WIDTH;
         _customsPageBody.Margin = new Thickness(24, 12, 24, 24);
-        _customsPageBody.MaxWidth = ManagerTheme.PAGE_MAX_WIDTH;
+        _customsPageBody.MaxWidth = ManagerTheme.TWO_COLUMN_MAX_WIDTH;
         _customsPageScroll.Content = _customsPageBody;
         _customsPage.Children.Add(WithDock(head, Dock.Top));
         _customsPage.Children.Add(_customsPageScroll);

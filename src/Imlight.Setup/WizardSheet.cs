@@ -256,7 +256,7 @@ internal sealed class WizardSheet {
         if (CardThumb is not null && m["deckGrid"] is JsonArray) {
             // As pictures, like the game's deck window (Niduus, 2026-11-13); built again only when the deck changes, so
             // the 3-second refresh does not repaint the cards.
-            var gridKey = Key(m) + "|" + Pictures + "|" + m["deckGrid"]?.ToJsonString() + m["itemGrid"]?.ToJsonString() + m["treasureGrid"]?.ToJsonString() + m["deckMax"];
+            var gridKey = Key(m) + "|" + Pictures + "|" + m["deckGrid"]?.ToJsonString() + m["itemGrid"]?.ToJsonString() + m["treasureGrid"]?.ToJsonString() + m["treasureStockGrid"]?.ToJsonString() + m["deckMax"];
             if (gridKey != _gridKey) {
                 _gridKey = gridKey;
                 _deck.Children.Clear();
@@ -275,6 +275,9 @@ internal sealed class WizardSheet {
             // Item cards and treasure cards under their own headings, as the game's deck window shows them.
             Group(_deck, "Item Cards", (int?) m["itemCount"] ?? 0, List(m["itemCards"]), "None from gear.");
             Group(_deck, "Treasure Cards", (int?) m["treasureCount"] ?? 0, List(m["treasureCards"]), "None.");
+            if (m["treasureStock"] is JsonArray) {
+                Group(_deck, "Treasure Card stock (all it owns)", (int?) m["treasureStockCount"] ?? 0, List(m["treasureStock"]), "None.");
+            }
         }
 
         ShowSpells(m);
@@ -626,6 +629,24 @@ internal sealed class WizardSheet {
         }
         else {
             window.Children.Add(Frame(Slots(treasure.Select(c => Card(c.Id, c.School, c.N, false)), treasure.Count, s_slot)));
+        }
+
+        // Every treasure card it owns, in the deck or not, the number on each how many (Niduus, 2026-11-19).
+        if (m["treasureStockGrid"] is JsonArray) {
+            var stock = Cards(m["treasureStockGrid"]);
+            window.Children.Add(Text($"Treasure Card stock: {stock.Sum(c => c.N)} cards, {stock.Count} kinds (every one it owns, in its deck or not)", strong: true));
+            if (stock.Count == 0) {
+                window.Children.Add(Text("None."));
+            }
+            else {
+                window.Children.Add(Frame(Slots(stock.Select(c => Card(c.Id, c.School, c.N, false)), stock.Count, s_slot)));
+            }
+
+            // Also as words, name and count, for reading or copying.
+            window.Children.Add(new SelectableTextBlock {
+                Text = string.Join(", ", List(m["treasureStock"])), FontSize = 12, TextWrapping = TextWrapping.Wrap,
+                Foreground = ManagerTheme.MUTED_BRUSH,
+            });
         }
 
         window.Children.Add(new TextBlock {

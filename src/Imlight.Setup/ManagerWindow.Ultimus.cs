@@ -513,7 +513,7 @@ internal sealed partial class ManagerWindow {
 
         _manager.SaveSettings([new Setting(UltSection, "Enabled", on ? "true" : "false", "")]);
         _settings = [];
-        Say(on ? $"{UltName} is on. With the server running{(UltIsTco7 && !_manager.GetSwitch("TCO7", "Enabled") ? " and the TCO7 turned on (TCO7 > TCO7)" : "")}, it logs in within a few seconds and starts questing."
+        Say(on ? $"{UltName} is on. With the server running{(UltIsTco7 && !_manager.GetSwitch("TCO7", "Enabled") ? " and the TCO7 turned on (Bots > TCO7)" : "")}, it logs in within a few seconds and starts questing."
             : $"{UltName} is off. It logs out within a few seconds.");
         RefreshUltimus();
 

@@ -446,6 +446,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         UsePotions();
         NoticeOddities();
         AnswerPlayers();
+        // What he is doing, for ".ultimus why" (UltimusNow).
+        UltimusNow.Note(_doing, _lastReasoning, _currentQuest);
         // The TCO7's talk with each other, their team-ups and their link to Ultimus (UltimusDirector.Tco7.cs).
         Tco7Tick(_team[0]);
         // What the TCO7 share and what got them stuck, documented for Ultimus every 10 minutes (UltimusCouncil.cs).

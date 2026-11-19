@@ -352,21 +352,47 @@ internal sealed partial class QuestTeamDirectorActor {
     // The same playbook rule as Ultimus's; 0 or less turns the pause off.
     private static double WatchdogPauseMinutes => UltimusPlaybook.Value("Watchdog.PauseMinutes");
 
+    // The watchdog's alarms before the stop, as Ultimus's (Niduus, 2026-11-19: expand the watchdog): each goes in the
+    // watchdog book all the bots read (BotWatchdogBook), and what got the team going again is written there too.
+    private int _teamWatchdogStage;
+
     private void TeamWatchdog(string signature) {
         if (signature != _progressSignature) {
             _progressSignature = signature;
             _progressAt = DateTime.UtcNow;
+            if (_teamWatchdogStage > 0) {
+                _teamWatchdogStage = 0;
+                Note("Team", "WATCHDOG: moving forward again.", QuestTeamLink.NOTABLE);
+                BotShared.BotWatchdogBook.Freed("Quest Team", _teamTry?.Solution?.Move is { Length: > 0 } move
+                    ? move == Ultimus.UltimusReasonMoves.AWAY ? Ultimus.UltimusFixes.AWAY : Ultimus.UltimusFixes.ASIDE
+                    : "");
+            }
 
             return;
         }
 
         var idle = DateTime.UtcNow - _progressAt;
+        var alarmEvery = Math.Max(5, UltimusPlaybook.Value("Watchdog.Minutes"));
+        if (!_paused && _team.Count > 0 && (int) (idle.TotalMinutes / alarmEvery) is var stage && stage > _teamWatchdogStage) {
+            _teamWatchdogStage = stage;
+            var lead = _team[0];
+            Note("Team", $"WATCHDOG: nothing done for {idle.TotalMinutes:0} minutes ({QuestTeamText.Zone(lead.Zone)}, while {_doing}).", QuestTeamLink.ABNORMAL);
+            BotShared.BotWatchdogBook.Note("Quest Team", lead.Zone, lead.X, lead.Y, _currentQuest, _target?.What ?? _doing,
+                BotShared.BotWatchdogBook.ALARM, idle.TotalMinutes);
+        }
+
         if (_paused || WatchdogPauseMinutes <= 0 || idle < TimeSpan.FromMinutes(Math.Max(30, WatchdogPauseMinutes))) {
             return;
         }
 
         _progressAt = DateTime.UtcNow;
+        _teamWatchdogStage = 0;
         var leader = _team.Count > 0 ? _team[0] : null;
+        if (leader is not null) {
+            BotShared.BotWatchdogBook.Note("Quest Team", leader.Zone, leader.X, leader.Y, _currentQuest, _target?.What ?? _doing,
+                BotShared.BotWatchdogBook.STOP, idle.TotalMinutes);
+        }
+
         var where = leader is null ? "" : $"{QuestTeamText.Zone(leader.Zone)} at ({leader.X:0}, {leader.Y:0}, height {leader.Z:0})";
         var text = new StringBuilder();
         text.AppendLine($"Stopped at {DateTime.Now:yyyy-MM-dd HH:mm}: no step done, no level and no new area for {idle.TotalMinutes:0} minutes.");

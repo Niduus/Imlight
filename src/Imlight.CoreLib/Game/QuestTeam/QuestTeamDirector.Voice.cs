@@ -170,9 +170,18 @@ internal sealed partial class QuestTeamDirectorActor {
                 continue;
             }
 
+            // Server data first (BotDataFirst, Niduus 2026-11-19): what the bots learned before is said before any AI is asked.
+            if (heard.Typed && moment is null && BotShared.BotDataFirst.On && UltimusAiLearned.Find(text) is { } knownFirst) {
+                _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
+                Note("Team", $"{heard.SpeakerName} {how}: \"{QuestTeamText.Short(text, 80)}\"; answered from what the bots already know.");
+                SayTyped(speaker, heard, knownFirst, LEARNED);
+                continue;
+            }
+
             // Typed or whispered talk with [QuestTeam] AIChat: that wizard's own AI words a typed answer (an ask still gets a no,
             // in the wizard's own words; nothing said changes the plan).
-            if (talk && heard.Typed && AiChatOn && AskTeamAi(speaker, heard, moment, how)) {
+            // With server data first, a hello, thanks, bye or an ask turned down gets the team's own answer, not the AI's.
+            if (talk && heard.Typed && AiChatOn && (moment is null || !BotShared.BotDataFirst.On) && AskTeamAi(speaker, heard, moment, how)) {
                 continue;
             }
 
@@ -186,7 +195,7 @@ internal sealed partial class QuestTeamDirectorActor {
 
             // With [QuestTeam] AIChat, the AI picks the Menu Chat answer from a safe list (never for an ask: that stays a no).
             var target = TeamTarget(_team[speaker].Role);
-            if (!heard.Typed && moment != "no" && AiChatOn && UltimusLocalAI.ReadyFor(target)) {
+            if (!heard.Typed && moment != "no" && (moment is null || !BotShared.BotDataFirst.On) && AiChatOn && UltimusLocalAI.ReadyFor(target)) {
                 var choices = AiChoices();
                 if (choices.Count > 0) {
                     Note("Team", $"{heard.SpeakerName} {how}: \"{text}\"; {_team[speaker].Name}'s {UltimusLocalAI.WhoOf(target)} picks the answer.");

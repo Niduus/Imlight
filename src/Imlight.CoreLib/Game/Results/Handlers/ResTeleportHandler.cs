@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Linq;
 using Akka.Actor;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
@@ -40,6 +41,23 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
 
         var destinationZone = Result.m_destinationZone;
         var destinationLocation = Result.m_destinationLoc;
+
+        // A clickable portal (Dragon's Roost's portal to the Academy) runs its own teleport, which names no destination:
+        // the teleport stored under the portal's name (SpiralDB or spiraldb-extra/DungeonTeleports) says where it goes.
+        if (string.IsNullOrEmpty(destinationZone) && StoredTeleport(context) is { } stored) {
+            destinationZone = stored.m_destinationZone;
+            destinationLocation = stored.m_destinationLoc;
+        }
+
+        // An airship flight (Marleybone's blimps to Chelsea Court and the Ironworks) teleports the player off at the end
+        // of the trip, and names no destination either: it goes where the ride's own sign goes (RideZones). The players
+        // sat on the blimp after it landed until they clicked the sign (Niduus 2026-11-19: zone transfers not working).
+        if (string.IsNullOrEmpty(destinationZone)
+            && Imlight.CoreLib.Game.World.RideZones.TryGetTripEnd(context.GetZonePath(), out var tripZone, out var tripLoc)) {
+            destinationZone = tripZone;
+            destinationLocation = tripLoc;
+        }
+
         if (string.IsNullOrEmpty(destinationZone)) {
             // A raid's teleport pad names no destination either: it goes to the location at the pad's other end.
             if (context is GenericResultContext { TriggerName: { } triggerName }
@@ -98,6 +116,18 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
         context.GetPlayerRef().Tell(msg);
 
         return true;
+    }
+
+    // The stored teleport of the trigger or object these results run for, when it names a destination.
+    private static ResTeleport StoredTeleport(IResultContext context) {
+        if (context is not GenericResultContext { TriggerName: { Length: > 0 } name } || context.GetZonePath() is not { Length: > 0 } zone) {
+            return null;
+        }
+
+        var stored = Imlight.CoreLib.WizardData.Collections.ZoneDataCollection.GetZoneData(zone)?.Teleports?
+            .FirstOrDefault(t => string.Equals(t?.TriggerName, name, StringComparison.Ordinal))?.Teleport;
+
+        return string.IsNullOrEmpty(stored?.m_destinationZone) ? null : stored;
     }
 
 }

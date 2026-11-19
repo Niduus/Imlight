@@ -17,6 +17,8 @@
  */
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -49,8 +51,8 @@ internal class CommandUltimus : CommandProtocol {
         var members = UltimusDirector.MembersOf(seat);
         if (members.Count == 0) {
             InformSenderClient(seat.IsUltimus
-                ? "The Ultimus is not playing right now. Turn it on in Ahziael (Ultimus > Ultimus) with the server running."
-                : $"{seat.Name} of the TCO7 is not playing right now. Turn the TCO7 on in Ahziael (Ultimus > TCO7) with the server running.");
+                ? "The Ultimus is not playing right now. Turn it on in Ahziael (Bots > Ultimus) with the server running."
+                : $"{seat.Name} of the TCO7 is not playing right now. Turn the TCO7 on in Ahziael (Bots > TCO7) with the server running.");
 
             return;
         }
@@ -96,6 +98,196 @@ internal class CommandUltimus : CommandProtocol {
             // Another copy of the same zone the player stands in loads anew; the same copy just moves them.
             ForceReload = inInstance && string.Equals(me.Zone, zone, StringComparison.OrdinalIgnoreCase),
         });
+    }
+
+    // ---------------------------------------------------------------------
+    // More commands for the bots (Niduus, 2026-11-19: "Expand on commands to give the bots (Ulti and TCO7 included)").
+    // A name picks the bot: none = Ultimus, a TCO7 name (Tulkar, Cyndr, ...), or "all". They use the same files as Ahziael's
+    // buttons, so nothing here moves a bot or does a step for it (the Ultimus human rule).
+    // ---------------------------------------------------------------------
+
+    private static List<UltimusSeat> Seats(string who) {
+        who = (who ?? "").Trim();
+        if (who.Equals("all", StringComparison.OrdinalIgnoreCase)) {
+            return [.. UltimusSeat.All];
+        }
+
+        if (who.Equals("tco7", StringComparison.OrdinalIgnoreCase)) {
+            return [.. UltimusSeat.Tco7];
+        }
+
+        var seat = who.Length == 0 || who.Equals("ultimus", StringComparison.OrdinalIgnoreCase) ? UltimusSeat.Ultimus
+            : UltimusSeat.All.FirstOrDefault(s => s.Name.Equals(who, StringComparison.OrdinalIgnoreCase));
+
+        return seat is null ? [] : [seat];
+    }
+
+    private bool PickSeats(string who, out List<UltimusSeat> seats) {
+        seats = Seats(who);
+        if (seats.Count == 0) {
+            InformSenderClient($"No bot is called {who}. Use Ultimus, a TCO7 name (Tulkar, Cyndr, Kurrent, Mythis, Idunn, Garm, Ra), tco7 or all.");
+            return false;
+        }
+
+        return true;
+    }
+
+    [Command("help")]
+    [Alias("commands")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void HelpCommand() {
+        InformSenderClient("Bot commands (a name = Ultimus, a TCO7 name, tco7 or all; none = Ultimus):");
+        InformSenderClient(".ultimus where | tp [name] | why [name] | pause [name] | resume [name]");
+        InformSenderClient(".ultimus explain [name] (pause and write his whole plan) | story [name] (back to the story)");
+        InformSenderClient(".ultimus squad Tulkar Cyndr Kurrent Mythis | squad off | squad (shows it) | watchdog [name]");
+        InformSenderClient("Quest Team: .questteam where | tp | why | pause | resume");
+    }
+
+    [Command("why")]
+    [Alias("doing", "status")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void WhyCommand([Remainder] string who = "") {
+        if (!PickSeats(who, out var seats)) {
+            return;
+        }
+
+        foreach (var seat in seats) {
+            var members = UltimusDirector.MembersOf(seat);
+            if (members.Count == 0) {
+                InformSenderClient($"{seat.Name}: not playing right now.");
+                continue;
+            }
+
+            var (doing, thought, quest) = UltimusNow.Of(seat);
+            var paused = File.Exists(Path.Combine(seat.Folder, UltimusWire.PAUSE_FILE));
+            InformSenderClient($"{seat.Name}{(paused ? " (paused)" : "")}: {(doing.Length > 0 ? doing : members[0].State)}" +
+                               (quest.Length > 0 ? $", on {UltimusText.Title(quest)}" : "") + ".");
+            if (thought.Length > 0) {
+                InformSenderClient($"  Last thought: {UltimusText.Short(thought, 200)}");
+            }
+        }
+    }
+
+    [Command("pause")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void PauseCommand([Remainder] string who = "") {
+        if (!PickSeats(who, out var seats)) {
+            return;
+        }
+
+        foreach (var seat in seats) {
+            try {
+                Directory.CreateDirectory(seat.Folder);
+                File.WriteAllText(Path.Combine(seat.Folder, UltimusWire.PAUSE_FILE), $"Paused in game with .ultimus pause at {DateTime.Now:yyyy-MM-dd HH:mm}.");
+                InformSenderClient($"{seat.Name} is paused: it stands where it is. .ultimus resume {seat.Name} lets it go on.");
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+                InformSenderClient($"Could not pause {seat.Name}: {e.Message}");
+            }
+        }
+    }
+
+    [Command("resume")]
+    [Alias("unpause")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void ResumeCommand([Remainder] string who = "") {
+        if (!PickSeats(who, out var seats)) {
+            return;
+        }
+
+        foreach (var seat in seats) {
+            try {
+                File.Delete(Path.Combine(seat.Folder, UltimusWire.PAUSE_FILE));
+                InformSenderClient($"{seat.Name} goes on with its quest.");
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+                InformSenderClient($"Could not resume {seat.Name}: {e.Message}");
+            }
+        }
+    }
+
+    [Command("explain")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void ExplainCommand([Remainder] string who = "") => Request(who, UltimusWire.EXPLAIN_FILE,
+        "pauses and writes its whole plan to explain.txt in its folder (Ahziael shows it on its page).");
+
+    [Command("story")]
+    [Alias("backtostory")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void StoryCommand([Remainder] string who = "") => Request(who, UltimusWire.BACK_TO_STORY_FILE,
+        "drops its side trip and goes back to its story quest.");
+
+    private void Request(string who, string file, string what) {
+        if (!PickSeats(who, out var seats)) {
+            return;
+        }
+
+        foreach (var seat in seats) {
+            try {
+                Directory.CreateDirectory(seat.Folder);
+                File.WriteAllText(Path.Combine(seat.Folder, file), DateTime.Now.ToString("o", CultureInfo.InvariantCulture));
+                InformSenderClient($"{seat.Name} {what}");
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+                InformSenderClient($"Could not ask {seat.Name}: {e.Message}");
+            }
+        }
+    }
+
+    [Command("squad")]
+    [Alias("team")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void SquadCommand([Remainder] string names = "") {
+        names = (names ?? "").Trim();
+        if (names.Length > 0) {
+            if (names.Equals("off", StringComparison.OrdinalIgnoreCase) || names.Equals("none", StringComparison.OrdinalIgnoreCase)) {
+                UltimusTco7.SetSquadOverride("off");
+            }
+            else if (names.Equals("ini", StringComparison.OrdinalIgnoreCase) || names.Equals("default", StringComparison.OrdinalIgnoreCase)) {
+                UltimusTco7.SetSquadOverride(null);
+            }
+            else {
+                var picked = names.Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries)
+                    .Where(n => UltimusSeat.Tco7.Any(s => s.Name.Equals(n.Trim(), StringComparison.OrdinalIgnoreCase))).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                if (picked.Count < 2) {
+                    InformSenderClient("A squad needs two to four TCO7 names: .ultimus squad Tulkar Cyndr Kurrent Mythis");
+                    return;
+                }
+
+                UltimusTco7.SetSquadOverride(string.Join(",", picked.Take(4)));
+            }
+        }
+
+        var squad = UltimusTco7.Squad;
+        if (squad.Count < 2) {
+            InformSenderClient("No TCO7 squad: each member quests at its own pace. .ultimus squad Tulkar Cyndr Kurrent Mythis makes one (until the server restarts; Ahziael's TCO7 page keeps it).");
+            return;
+        }
+
+        var captain = UltimusTco7.Captain();
+        InformSenderClient($"TCO7 squad: {string.Join(", ", squad.Select(s => s.Name))}." +
+                           (captain is null ? " Fewer than two are playing, so it waits." : $" {captain.Name} leads (furthest behind in the story); the others help it catch up."));
+    }
+
+    [Command("watchdog")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void WatchdogCommand([Remainder] string who = "") {
+        if (!PickSeats(who, out var seats)) {
+            return;
+        }
+
+        InformSenderClient($"Watchdog book: {BotShared.BotWatchdogBook.Summary()} (logs\\ultimus\\watchdog-book.txt).");
+        foreach (var seat in seats) {
+            if (UltimusDirector.MembersOf(seat) is not { Count: > 0 } members || members[0].Wizard is null) {
+                continue;
+            }
+
+            var lines = BotShared.BotWatchdogBook.Lines(members[0].Zone, members[0].X, members[0].Y).ToList();
+            InformSenderClient(lines.Count == 0 ? $"{seat.Name}: no watchdog trouble known where it stands." : $"{seat.Name}, where it stands now:");
+            foreach (var line in lines) {
+                InformSenderClient("  " + line);
+            }
+        }
     }
 
     [Command("where")]

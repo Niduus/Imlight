@@ -209,7 +209,7 @@ internal sealed partial class ManagerWindow {
         _notesCount.VerticalAlignment = VerticalAlignment.Center;
 
         return new DockPanel {
-            Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.PAGE_MAX_WIDTH,
+            Margin = new Thickness(24, 12, 24, 16), MaxWidth = ManagerTheme.TWO_COLUMN_MAX_WIDTH,
             Children = {
                 WithDock(new DockPanel {
                     Margin = new Thickness(0, 0, 0, 12),

@@ -96,7 +96,7 @@ internal sealed partial class ManagerWindow {
 
         return new ScrollViewer {
             Content = new StackPanel {
-                Margin = new Thickness(24, 12, 24, 24), Spacing = ManagerTheme.GAP, MaxWidth = ManagerTheme.PAGE_MAX_WIDTH,
+                Margin = new Thickness(24, 12, 24, 24), Spacing = ManagerTheme.GAP, MaxWidth = ManagerTheme.TWO_COLUMN_MAX_WIDTH,
                 Children = {
                     MissingNote("it doesn't write the quest list this page shows.", () => !_manager.HasQuestGuide),
                     WithHint(new WrapPanel {

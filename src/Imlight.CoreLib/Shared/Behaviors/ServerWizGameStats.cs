@@ -185,6 +185,9 @@ public class ServerWizGameStats : IClientTypeProvider<WizGameStats> {
     // ctor
     public ServerWizGameStats(MagicSchool magicSchool, int level) {
         MagicSchool = magicSchool;
+        // A new wizard's school straight away (it was only set when a saved wizard loaded, so a wizard made since the server
+        // started had none in battle until the next restart).
+        m_schoolID = (uint) magicSchool;
         Level = level;
 
         m_baseGoldPouch = ConfigurationManager.Settings["Character.BaseGoldPouch"].AsInt();

@@ -64,6 +64,9 @@ internal static class OverlayMinimap {
 
     private const int MAX_MARKS = 300;
 
+    // Below this height difference a mark is on the wizard's own level (steps, slopes and hills), so no "h" is sent.
+    private const float FLOOR_SEND = 150f;
+
     /// <summary>
     /// What one wizard's minimap shows, built on that wizard's own session. <paramref name="zone"/> is the zone actor the
     /// wizard is in; <paramref name="reach"/> is how far the overlay's full screen map shows (more than [Overlay]
@@ -84,13 +87,23 @@ internal static class OverlayMinimap {
 
         var live = MinimapIndex.In(zone);
         var marks = new List<(JsonObject Mark, float Far, int Rank)>();
-        void Add(string kind, float x, float y, string name, int level = 0, int rank = 5, ulong id = 0) {
+        void Add(string kind, float x, float y, string name, int level = 0, int rank = 5, ulong id = 0, float z = float.NaN, string job = "") {
             var far = Far(here.X, here.Y, x, y);
             if (far > range && rank > 1) {
                 return;
             }
 
             var mark = new JsonObject { ["k"] = kind, ["x"] = Round(x), ["y"] = Round(y) };
+            // How far above (or below) the wizard it is, so the overlay can show what is on another floor (Niduus,
+            // 2026-11-19: "minimap lacking detail"). Only sent when it is off the wizard's own level.
+            if (float.IsFinite(z) && MathF.Abs(z - here.Z) >= FLOOR_SEND) {
+                mark["h"] = Round(z - here.Z);
+            }
+
+            if (job.Length > 0) {
+                mark["r"] = job;
+            }
+
             if (!string.IsNullOrEmpty(name)) {
                 mark["n"] = name.Length > 60 ? name[..60] : name;
             }
@@ -125,17 +138,25 @@ internal static class OverlayMinimap {
                         continue;
                     }
 
-                    Add(mark.Kind, spot.X, spot.Y, mark.Name, mark.Level, mark.Kind == MinimapIndex.BOSS ? 1 : 6, id);
+                    Add(mark.Kind, spot.X, spot.Y, mark.Name, mark.Level, mark.Kind == MinimapIndex.BOSS ? 1 : 6, id, spot.Z);
                     break;
                 case MinimapIndex.WISP_HEALTH or MinimapIndex.WISP_MANA:
-                    continue;
+                    // Health and mana wisps the wizard can pick up (an old overlay leaves kinds it doesn't know out).
+                    Add(mark.Kind, spot.X, spot.Y, "", rank: 6, id: id, z: spot.Z);
+                    break;
                 case MinimapIndex.NPC:
-                    Add(MinimapIndex.NPC, spot.X, spot.Y, mark.Name, rank: 7, id: id);
+                    // NPCs with a job (shops, trainers, the bank, the Bazaar) before the rest when the map is full.
+                    Add(MinimapIndex.NPC, spot.X, spot.Y, mark.Name, rank: mark.Job.Length > 0 ? 5 : 7, id: id, z: spot.Z, job: mark.Job);
                     break;
                 default:
-                    Add(mark.Kind, spot.X, spot.Y, mark.Name, rank: mark.Kind == MinimapIndex.SIGIL ? 1 : 4, id: id);
+                    Add(mark.Kind, spot.X, spot.Y, mark.Name, rank: mark.Kind == MinimapIndex.SIGIL ? 1 : 4, id: id, z: spot.Z);
                     break;
             }
+        }
+
+        // Battles going on now: where a fight can be joined, or is in the way (an old overlay leaves the kind out).
+        foreach (var (_, circle) in MinimapIndex.Battles(zone)) {
+            Add(MinimapIndex.BATTLE, circle.m_location.X, circle.m_location.Y, "", rank: 3, id: (ulong) circle.m_globalID.Full, z: circle.m_location.Z);
         }
 
         map["marks"] = new JsonArray([.. marks.OrderBy(m => m.Rank > 2 ? 1 : 0).ThenBy(m => m.Far).Take(MAX_MARKS).Select(m => (JsonNode) m.Mark)]);

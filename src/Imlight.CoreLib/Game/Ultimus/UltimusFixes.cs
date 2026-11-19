@@ -85,7 +85,7 @@ internal static class UltimusFixes {
     /// many times it came up.
     /// </summary>
     internal static (string Fix, Flag Flag) Next(string zone, float x, float y, string step, ICollection<string> skip = null,
-        BotShared.BotLessons.Situation situation = null) {
+        BotShared.BotLessons.Situation situation = null, string prefer = null, string preferLine = null) {
         lock (s_lock) {
             var all = Flags();
             var flag = all.Where(f => string.Equals(f.Zone, zone, StringComparison.OrdinalIgnoreCase) && Far(f.X, f.Y, x, y) <= ADJACENT)
@@ -118,6 +118,11 @@ internal static class UltimusFixes {
             if (flag.Worked.Length > 0 && allowed.Contains(flag.Worked) && flag.Tried.LastOrDefault() != flag.Worked) {
                 fix = flag.Worked;
             }
+            // Nothing worked at this spot yet, but the watchdog book knows what got a bot going by it (BotWatchdogBook).
+            else if (flag.Worked.Length == 0 && prefer is { Length: > 0 } && prefer != FLAG && allowed.Contains(prefer) && !flag.Tried.Contains(prefer)) {
+                fix = prefer;
+                flag.Lesson = preferLine ?? "";
+            }
             // Nothing known at this spot: what worked most in situations like it, anywhere (BotLessons, Niduus, 2026-11-15).
             else if (flag.Worked.Length == 0 && BotShared.BotLessons.Best(situation, allowed.Where(f => f != FLAG).ToList(), flag.Tried, out var line) is { } learned) {
                 fix = learned;
@@ -135,6 +140,23 @@ internal static class UltimusFixes {
             Save();
 
             return (fix, flag);
+        }
+    }
+
+    /// <summary>
+    /// Whether every move fix he can make here was already tried at this spot and none is known to work there: his own moves
+    /// are used up, so it is a roadblock his AI may think about (BotDataFirst). Nothing is written.
+    /// </summary>
+    internal static bool UsedUp(string zone, float x, float y, ICollection<string> skip = null) {
+        lock (s_lock) {
+            var flag = Flags().Where(f => string.Equals(f.Zone, zone, StringComparison.OrdinalIgnoreCase) && Far(f.X, f.Y, x, y) <= ADJACENT)
+                .OrderBy(f => Far(f.X, f.Y, x, y)).FirstOrDefault();
+            if (flag is null || flag.Worked.Length > 0) {
+                return false;
+            }
+
+            var moves = Order.Where(f => f != FLAG && (skip is null || !skip.Contains(f))).ToList();
+            return flag.Tried.Contains(FLAG) || moves.All(flag.Tried.Contains);
         }
     }
 

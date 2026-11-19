@@ -431,6 +431,8 @@ internal sealed partial class UltimusDirectorActor {
     private string _progressMark = "";
     private DateTime _progressAt = DateTime.UtcNow;
     private int _watchdogStage;
+    // The watchdog's own last move (an UltimusFixes name), for the watchdog book when he gets going again.
+    private string _watchdogMove = "";
 
     private void Watchdog(UltimusMember.Status leader) {
         var school = leader.Wizard?.MagicSchoolBehavior;
@@ -440,9 +442,14 @@ internal sealed partial class UltimusDirectorActor {
             _progressAt = DateTime.UtcNow;
             if (_watchdogStage > 0) {
                 Note("Ultimus", "WATCHDOG: moving forward again.", UltimusLink.NOTABLE);
+                // What got him going goes in the watchdog book, for every bot stuck by that spot later (BotWatchdogBook).
+                var freedBy = _watchdogMove.Length > 0 ? _watchdogMove
+                    : _openFlag.TryGetValue(0, out var open) ? open.Flag.Tried.LastOrDefault() ?? "" : "";
+                BotShared.BotWatchdogBook.Freed(_seat.Name, freedBy);
             }
 
             _watchdogStage = 0;
+            _watchdogMove = "";
             return;
         }
 
@@ -470,6 +477,9 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         _watchdogStage = stage;
+        // Every alarm goes in the watchdog book all the bots read (BotWatchdogBook, Niduus 2026-11-19).
+        BotShared.BotWatchdogBook.Note(_seat.Name, leader.Zone, leader.X, leader.Y, _currentQuest, _target?.What ?? _doing,
+            BotShared.BotWatchdogBook.ALARM, idle.TotalMinutes);
         Issue("team", _currentQuest, $"WATCHDOG: no step done and no XP gained for {idle.TotalMinutes:0} minutes ({where}).",
             key: $"watchdog|{_progressMark}|{stage}", level: UltimusLink.CRITICAL);
         Count("watchdog alarms");
@@ -486,16 +496,19 @@ internal sealed partial class UltimusDirectorActor {
                       "I walk well away and search for a new way to my step in here.", "watchdog");
                 OverlayQuestPath.Forget(_team[0].CharId);
                 Aside(0, _team[0], 900f, 2500f, "searches the dungeon for a new way to his step");
+                _watchdogMove = UltimusFixes.AWAY;
                 break;
             case 1:
                 Think("I have not moved my quest forward in a long time. I press the Commons button and find my way again from there.", "watchdog");
                 _actors[0].Tell(new UltimusMember.Recall());
+                _watchdogMove = UltimusFixes.START;
                 break;
             case 2 when _team.Count > 0:
                 // Niduus, 2026-11-14: "I don't want Ahziael to move Ultimus. I want Ultimus to search and find his way".
                 Think("Still nothing. I forget the ways I tried, walk well away and search for a new way to my step.", "watchdog");
                 OverlayQuestPath.Forget(_team[0].CharId);
                 Aside(0, _team[0], 900f, 2500f, "searches for a new way to his step");
+                _watchdogMove = UltimusFixes.AWAY;
                 break;
             default:
                 Think("Still nothing, and every unstuck move is used. I keep trying and wait for Niduus to look.", "watchdog");
@@ -510,6 +523,8 @@ internal sealed partial class UltimusDirectorActor {
     /// watchdog-stop.txt says where and what he was doing, for Ahziael's red note.
     /// </summary>
     private void WatchdogStop(UltimusMember.Status leader, TimeSpan idle, string where) {
+        BotShared.BotWatchdogBook.Note(_seat.Name, leader.Zone, leader.X, leader.Y, _currentQuest, _target?.What ?? _doing,
+            BotShared.BotWatchdogBook.STOP, idle.TotalMinutes);
         var text = new StringBuilder();
         text.AppendLine(CultureInfo.InvariantCulture, $"Stopped at {DateTime.Now:yyyy-MM-dd HH:mm}: no step done and no XP gained for {idle.TotalMinutes:0} minutes.");
         text.AppendLine(CultureInfo.InvariantCulture, $"Where: {where} at ({leader.X:0}, {leader.Y:0}).");

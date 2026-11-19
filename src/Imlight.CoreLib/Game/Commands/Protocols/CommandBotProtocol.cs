@@ -121,7 +121,7 @@ internal class CommandBotProtocol : CommandProtocol {
     private void ListCommand() {
         var all = BotBodies.All;
         if (all.Count == 0) {
-            InformSenderClient(BotWire.Enabled ? "No bots are out." : "Bot Players is off. Turn it on in Ahziael (Game Rules > Battles and World).");
+            InformSenderClient(BotWire.Enabled ? "No bots are out." : "Bot Players is off. Turn it on in Ahziael (Bots > Street Bots).");
 
             return;
         }

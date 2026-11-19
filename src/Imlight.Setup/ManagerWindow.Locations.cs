@@ -335,15 +335,10 @@ internal sealed partial class ManagerWindow {
 
         var command = $".tp {row.Code}";
         var byName = row.Zone.Name.Length > 0 && row.ByName == row.Zone ? $".tp {row.Zone.Name}" : null;
+        // Teleport, Lock or Unlock and its rooms in one place (Niduus, 2026-11-19), then Copy.
+        _locationsDetails.Children.Add(WithMargin(ZoneActions(row.Code, row.Name), new Thickness(0, 6, 0, 0)));
         _locationsDetails.Children.Add(new WrapPanel {
-            Margin = new Thickness(0, 6, 0, 0),
             Children = {
-                Spaced(Action(Primary("Teleport my wizard here"), () => {
-                    _manager.SendCommand(command);
-                    Say($"Sent {command} ({row.Name}). Your wizard goes there in a few seconds.");
-
-                    return Task.CompletedTask;
-                })),
                 Spaced(Action(Plain("Copy .tp command"), () => CopyAsync(byName ?? command))),
             },
         });

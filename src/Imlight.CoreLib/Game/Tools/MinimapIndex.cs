@@ -43,9 +43,11 @@ internal static class MinimapIndex {
     internal const string SIGIL = "sigil";
     internal const string DOOR = "door";
     internal const string CHEST = "chest";
-    // Health and mana wisps, for a server-played wizard that needs to heal (not drawn on the overlay's map).
+    // Health and mana wisps: for a server-played wizard that needs to heal, and on the overlay's map.
     internal const string WISP_HEALTH = "wisp-health";
     internal const string WISP_MANA = "wisp-mana";
+    // A battle circle: on the map only while a battle runs on it (Niduus, 2026-11-19: "minimap lacking detail").
+    internal const string BATTLE = "battle";
 
     /// <summary>One thing on the map: what kind it is, its name, and the live object whose spot it shows.</summary>
     internal sealed record Mark(string Kind, string Name, ulong Template, string[] Adjectives, CoreObject Object, int Level) {
@@ -62,9 +64,25 @@ internal static class MinimapIndex {
         /// </summary>
         internal string ToLoc { get; init; } = "";
 
+        /// <summary>
+        /// What an NPC does for players (shop, trainer, potions, bank, Bazaar...), empty for anyone else: so the minimap
+        /// can show where each shop and trainer is (Niduus, 2026-11-19: "minimap lacking detail").
+        /// </summary>
+        internal string Job { get; init; } = "";
+
     }
 
     private static readonly ConcurrentDictionary<IActorRef, ConcurrentDictionary<ZoneEntity, Mark>> s_zones = new();
+
+    // Battle circles, kept apart from the marks above so the server's own wizards never mistake one for a thing to walk to:
+    // only the overlay's minimap reads them (Battles).
+    private static readonly ConcurrentDictionary<IActorRef, ConcurrentDictionary<ZoneEntity, CombatDuelComponent>> s_battles = new();
+
+    /// <summary>The battle circles in the zone run by <paramref name="zone"/> with a battle going on now, and where each is.</summary>
+    internal static List<(ZoneEntity Entity, CoreObject Object)> Battles(IActorRef zone)
+        => zone is not null && s_battles.TryGetValue(zone, out var circles)
+            ? [.. circles.Where(c => c.Value.IsDuelActive && c.Key.ActiveGameObject is not null).Select(c => (c.Key, c.Key.ActiveGameObject))]
+            : [];
 
     /// <summary>The marks in the zone run by <paramref name="zone"/> (a copy, safe to walk).</summary>
     internal static List<Mark> In(IActorRef zone)
@@ -73,7 +91,16 @@ internal static class MinimapIndex {
     /// <summary>An entity finished loading (on its own thread): noted when it is something a map shows.</summary>
     internal static void Loaded(ZoneEntity entity) {
         try {
-            if (entity?.ActiveGameObject is null || entity.ZoneRef is null || Describe(entity) is not { } described) {
+            if (entity?.ActiveGameObject is null || entity.ZoneRef is null) {
+                return;
+            }
+
+            if (entity.GetComponentOfType<CombatDuelComponent>() is { } duel) {
+                s_battles.GetOrAdd(entity.ZoneRef, _ => new ConcurrentDictionary<ZoneEntity, CombatDuelComponent>(ReferenceEqualityComparer.Instance))[entity] = duel;
+                return;
+            }
+
+            if (Describe(entity) is not { } described) {
                 return;
             }
 
@@ -86,6 +113,13 @@ internal static class MinimapIndex {
 
     /// <summary>An entity stopped: it leaves the map.</summary>
     internal static void Stopped(ZoneEntity entity) {
+        if (entity?.ZoneRef is { } at && s_battles.TryGetValue(at, out var circles)) {
+            circles.TryRemove(entity, out _);
+            if (circles.IsEmpty) {
+                s_battles.TryRemove(new KeyValuePair<IActorRef, ConcurrentDictionary<ZoneEntity, CombatDuelComponent>>(at, circles));
+            }
+        }
+
         if (entity?.ZoneRef is { } zone && s_zones.TryGetValue(zone, out var marks)) {
             marks.TryRemove(entity, out _);
             if (marks.IsEmpty) {
@@ -107,7 +141,7 @@ internal static class MinimapIndex {
                 return new Mark(npc.IsBossMonster ? BOSS : MOB, name, id, adjectives, entity.ActiveGameObject, npc.Level);
             }
 
-            return name.Length == 0 ? null : new Mark(NPC, name, id, adjectives, entity.ActiveGameObject, 0);
+            return name.Length == 0 ? null : new Mark(NPC, name, id, adjectives, entity.ActiveGameObject, 0) { Job = JobOf(entity) };
         }
 
         if (entity.GetComponentOfType<InteractDungeonSigilComponent>() is { } sigil) {
@@ -149,6 +183,25 @@ internal static class MinimapIndex {
         }
 
         return null;
+    }
+
+    /// <summary>What an NPC does for players, from the service it offers when talked to (empty when nothing).</summary>
+    private static string JobOf(ZoneEntity entity) {
+        bool Has<T>() where T : class => entity.GetComponentOfType<T>() is not null;
+
+        return Has<InteractTrainerComponent>() ? "trainer"
+            : Has<InteractPotionShopComponent>() ? "potions"
+            : Has<InteractAuctionHouseComponent>() ? "bazaar"
+            : Has<InteractBankComponent>() ? "bank"
+            : Has<BattleCardVendorComponent>() || Has<InteractTreasureVendorComponent>() ? "cards"
+            : Has<InteractReagentComponent>() ? "reagents"
+            : Has<InteractCraftingStationComponent>() ? "crafting"
+            : Has<InteractSeamstressComponent>() || Has<InteractDyeShopComponent>() ? "tailor"
+            : Has<InteractFishSellingComponent>() ? "fish"
+            : Has<InteractPetGameKioskComponent>() ? "pets"
+            : Has<InteractRespecComponent>() ? "respec"
+            : Has<InteractVendorComponent>() || Has<InteractLoyaltyStoreComponent>() ? "shop"
+            : "";
     }
 
     /// <summary>The name players see for a template, or empty.</summary>

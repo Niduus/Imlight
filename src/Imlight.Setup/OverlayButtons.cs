@@ -236,6 +236,15 @@ internal static class OverlayButtons {
 
                 return;
             }
+            case OverlayAction.BOX_FOLD: {
+                var parts = button.Command.Split('|', 2);
+                OverlayUltimusData.ToggleFold(parts[0] switch { "team" => OverlayUltimusData.TEAM_KEY, "anyone" => OverlayUltimusData.ANYONE_KEY, _ => OverlayUltimusData.KEY },
+                    parts.Length > 1 ? parts[1] : UltimusViews.BoxFold.QUEST);
+                OverlayMinimapData.Redraw();
+                done(true);
+
+                return;
+            }
             case OverlayAction.QUEST_PICK:
                 OverlayQuestData.TogglePick(game.ToInt64(), button.Command);
                 done(true);

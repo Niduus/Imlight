@@ -56,14 +56,21 @@ internal static class ServerBackup {
     // Daily and before-update backups pile up; the newest few of each are enough.
     private const int KEEP_AUTOMATIC = 7;
 
-    // Not Ahziael's own work: made again by setup, by the update or by the game, or only logs.
+    // Not Ahziael's own work: made again by setup, by the update or by the game, or only logs. Source (the server's
+    // code and its build files, downloaded fresh by every update) and Build were most of every backup: about 430 of
+    // its 437 MB on Niduus's PC (2026-11-19, "too much space being taken over for Backups"), and zipping them took
+    // nearly three minutes of each update. AppWindow is the old app window's browser data, no longer used.
     private static readonly HashSet<string> s_skippedAppFolders = new(StringComparer.OrdinalIgnoreCase) {
-        "Server", "Game files", "Pending", "Logs", "Aurorium", "Import backups",
+        "Server", "Game files", "Pending", "Logs", "Aurorium", "Import backups", "Source", "Build", "AppWindow",
     };
 
+    // Programs, archives, logs and the leftovers of a copy or save cut short (Imlight.exe.old is a whole old app).
     private static readonly HashSet<string> s_skippedExtensions = new(StringComparer.OrdinalIgnoreCase) {
-        ".exe", ".dll", ".pdb", ".zip", ".wad", ".log",
+        ".exe", ".dll", ".pdb", ".zip", ".wad", ".log", ".old", ".part", ".tmp", ".new", ".saving",
     };
+
+    // A backup cut short (Ahziael closed while it was being made) leaves its .part behind; one this old is not still going.
+    private static readonly TimeSpan s_staleUnfinished = TimeSpan.FromHours(1);
 
     /// <summary>One backup on this PC.</summary>
     internal sealed record Backup(string Path, DateTime Made, string Kind, bool HasDatabase, long Bytes);
@@ -95,9 +102,13 @@ internal static class ServerBackup {
             .ToList();
     }
 
-    /// <summary>Makes today's backup when there is none yet. Returns it, or null when one was already made today.</summary>
+    /// <summary>
+    /// Makes today's backup when there is none yet. Returns it, or null when one was already made today. A backup of any
+    /// kind made today counts: right after an update, the one made before it already holds everything (an update used to
+    /// make a second, same backup three minutes later when Ahziael opened again).
+    /// </summary>
     internal static string? MakeIfDue(string installFolder) {
-        var newest = List(installFolder).FirstOrDefault(b => b.Kind == DAILY);
+        var newest = List(installFolder).FirstOrDefault();
         if (newest is not null && newest.Made.Date == DateTime.Now.Date) {
             return null;
         }
@@ -313,6 +324,93 @@ internal static class ServerBackup {
             foreach (var old in List(installFolder).Where(b => b.Kind == kind).Skip(KEEP_AUTOMATIC)) {
                 TryDelete(old.Path);
             }
+        }
+
+        // Half-made backups from a closed Ahziael: never readable, and 130 to 330 MB each on Niduus's PC.
+        var folder = Folder(installFolder);
+        if (Directory.Exists(folder)) {
+            foreach (var part in new DirectoryInfo(folder).EnumerateFiles("Ahziael backup *.part")) {
+                if (DateTime.Now - part.LastWriteTime > s_staleUnfinished) {
+                    TryDelete(part.FullName);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Makes the backups made before 2026-11-19 small: each held a copy of the server's code and build files (Source),
+    /// which an update downloads again anyway. Every other file in them stays exactly as it is, still readable by Restore.
+    /// Returns how many were made smaller and how many bytes that freed.
+    /// </summary>
+    internal static (int Slimmed, long Freed) SlimOldBackups(string installFolder) {
+        var slimmed = 0;
+        var freed = 0L;
+        foreach (var backup in List(installFolder)) {
+            try {
+                var before = backup.Bytes;
+                if (Slim(backup.Path)) {
+                    slimmed++;
+                    freed += before - new FileInfo(backup.Path).Length;
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException) {
+                // Left as it is: a backup in use or damaged is never thrown away here.
+            }
+        }
+
+        Prune(installFolder);
+
+        return (slimmed, freed);
+    }
+
+    /// <summary>Whether a backup entry is a file today's backups leave out (the skipped Ahziael folders and files).</summary>
+    internal static bool IsLeftOut(string entry) {
+        if (!entry.StartsWith(APP_PART, StringComparison.Ordinal)) {
+            return false;
+        }
+
+        var relative = entry[APP_PART.Length..];
+        var slash = relative.IndexOf('/');
+        if (slash > 0 && s_skippedAppFolders.Contains(relative[..slash])) {
+            return true;
+        }
+
+        return !Keep(relative[(relative.LastIndexOf('/') + 1)..]);
+    }
+
+    /// <summary>Copies a backup without its left-out files and puts the copy in its place. False when nothing is left out.</summary>
+    private static bool Slim(string path) {
+        var temp = path + ".slimming.part";
+        try {
+            using (var old = ZipFile.OpenRead(path)) {
+                if (!old.Entries.Any(e => IsLeftOut(e.FullName))) {
+                    return false;
+                }
+
+                using var slim = ZipFile.Open(temp, ZipArchiveMode.Create);
+                foreach (var entry in old.Entries) {
+                    if (IsLeftOut(entry.FullName)) {
+                        continue;
+                    }
+
+                    var copy = slim.CreateEntry(entry.FullName, CompressionLevel.Optimal);
+                    copy.LastWriteTime = entry.LastWriteTime;
+                    using var from = entry.Open();
+                    using var to = copy.Open();
+                    from.CopyTo(to);
+                }
+            }
+
+            // The name carries when it was made, but the file's own time is kept too, for anyone sorting by it.
+            var made = File.GetLastWriteTime(path);
+            File.Move(temp, path, overwrite: true);
+            File.SetLastWriteTime(path, made);
+
+            return true;
+        }
+        catch {
+            TryDelete(temp);
+            throw;
         }
     }
 
