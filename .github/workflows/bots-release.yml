@@ -7,10 +7,19 @@
 # (src/Imlight.CoreLib/Game/BotDoor). The release is never marked "latest", so Ahziael's and the launcher's own update
 # checks never take it for an app update, and its notes (bots/bot-notes) stay out of Ahziael's patch notes.
 #
-# Run it from GitHub: Actions > Publish bot update > Run workflow (branch quality-assurance).
+# Niduus, 2026-11-19 (later): "I want [bot] updates to be dynamic and no longer require Ahziael to be updated for them".
+# So it also runs by itself whenever bot code is merged into quality-assurance: every merged bot fix goes out as a bot
+# update within minutes, with no Ahziael update. A bot fix made in the same pull request as a change to the server's own
+# code is marked needsServer: servers built before that change keep their bots until their next full update.
+#
+# It can still be run by hand from GitHub: Actions > Publish bot update > Run workflow (branch quality-assurance).
 name: Publish bot update
 
 on:
+  push:
+    branches: [quality-assurance]
+    paths:
+      - 'bots/**'
   workflow_dispatch:
     inputs:
       note:
@@ -48,8 +57,40 @@ jobs:
         with:
           dotnet-version: '10.0.402'
 
+      - name: Anything new for the bots?
+        id: changed
+        shell: pwsh
+        run: |
+          # The last bot update, or for the first one the last app release (its bots are built into the server already).
+          $numbers = @(git tag --list 'bots-v*' | ForEach-Object { if ($_ -match '^bots-v(\d+)$') { [int]$Matches[1] } })
+          $from = if ($numbers.Count -gt 0) { "bots-v$(($numbers | Measure-Object -Maximum).Maximum)" } else { git describe --tags --abbrev=0 --match 'v[0-9]*' HEAD 2>$null }
+          $app = git describe --tags --abbrev=0 --match 'v[0-9]*' HEAD 2>$null
+          # Nothing of the bots' code changed since then (or since the last app release, which carries the bots too).
+          $since = @($from, $app) | Where-Object { $_ }
+          $new = $true
+          foreach ($point in $since) {
+            git diff --quiet $point HEAD -- bots ':(exclude)bots/bot-notes'
+            if ($LASTEXITCODE -eq 0) { $new = $false }
+          }
+          if ("${{ github.event_name }}" -eq 'workflow_dispatch') { $new = $true }
+          "new=$($new.ToString().ToLower())" >> $env:GITHUB_OUTPUT
+          Write-Host "Bot code new since $($since -join ' / '): $new"
+
+          # needsServer: the newest change since then that touched the bots AND the server's own code at once.
+          $needs = ''
+          if ($from) {
+            foreach ($hash in @(git rev-list --first-parent "$from..HEAD")) {
+              $files = @(git diff-tree --no-commit-id --name-only -r -m --first-parent $hash | Where-Object { $_ })
+              $bots = @($files | Where-Object { $_.StartsWith('bots/') -and -not $_.StartsWith('bots/bot-notes/') })
+              $server = @($files | Where-Object { ($_.StartsWith('src/Imlight.CoreLib/') -or $_.StartsWith('src/Imlight.Common/') -or $_.StartsWith('submodule/')) -and -not $_.EndsWith('ServerMessageCatalog.Generated.cs') })
+              if ($bots.Count -gt 0 -and $server.Count -gt 0) { $needs = $hash; break }
+            }
+          }
+          "needs=$needs" >> $env:GITHUB_OUTPUT
+          Write-Host "Needs server commit: $needs"
+
       - name: Generator inputs
-        if: env.GENERATOR_INPUTS != ''
+        if: env.GENERATOR_INPUTS != '' && steps.changed.outputs.new == 'true'
         shell: pwsh
         run: |
           [IO.File]::WriteAllBytes("$env:RUNNER_TEMP/inputs.zip", [Convert]::FromBase64String($env:GENERATOR_INPUTS))
@@ -62,7 +103,7 @@ jobs:
       - name: Build the bots and run Ultimus's replay pack
         # Without the secret this cannot build here; every server still builds the update itself and keeps its bots as
         # they are when it does not build.
-        if: env.GENERATOR_INPUTS != ''
+        if: env.GENERATOR_INPUTS != '' && steps.changed.outputs.new == 'true'
         shell: pwsh
         run: |
           dotnet build bots/Imlight.Bots.csproj -c Release
@@ -71,6 +112,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit 1 }
 
       - name: Work out the number
+        if: steps.changed.outputs.new == 'true'
         id: number
         shell: pwsh
         run: |
@@ -82,6 +124,7 @@ jobs:
           "previous=$(if ($last -gt 0) { "bots-v$last" } else { '' })" >> $env:GITHUB_OUTPUT
 
       - name: Pack the bots
+        if: steps.changed.outputs.new == 'true'
         shell: pwsh
         run: |
           $stage = Join-Path $env:RUNNER_TEMP 'bots-update'
@@ -93,12 +136,13 @@ jobs:
             New-Item -ItemType Directory -Force (Split-Path $target) | Out-Null
             Copy-Item $_.FullName $target
           }
-          @{ number = [int]"${{ steps.number.outputs.number }}"; commit = "${{ github.sha }}"; made = (Get-Date).ToUniversalTime().ToString('o') } |
+          @{ number = [int]"${{ steps.number.outputs.number }}"; commit = "${{ github.sha }}"; needsServer = "${{ steps.changed.outputs.needs }}"; made = (Get-Date).ToUniversalTime().ToString('o') } |
             ConvertTo-Json | Set-Content (Join-Path $stage 'bot-update.json') -Encoding utf8NoBOM
           New-Item -ItemType Directory -Force release | Out-Null
           Compress-Archive -Path "$stage/*" -DestinationPath release/bots-update.zip
 
       - name: Publish the bot update
+        if: steps.changed.outputs.new == 'true'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}

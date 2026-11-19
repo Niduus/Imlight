@@ -24,7 +24,8 @@ $ErrorActionPreference = 'Stop'
 # git writes UTF-8; read it as that on Windows too (› and accented names).
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $OutputEncoding = [System.Text.Encoding]::UTF8
-$notesFolder = if ($Bots) { 'bots/bot-notes' } else { 'docs/release-notes' }
+# Notes are read from both folders: a bot fix that put its note in docs/release-notes still goes with the bot update.
+$notesFolders = @('docs/release-notes', 'bots/bot-notes')
 
 # One note file's notes: blocks split by empty lines; a block's first line is "New: Title", then lines of what it does,
 # a "Where:" line and a "Test:" (or "How to test:") line (see docs/release-notes/README.md).
@@ -103,7 +104,7 @@ function Read-NoteFile([string]$text) {
 # Which changes on the main line added note files, and which files.
 $added = @{}
 $current = $null
-foreach ($line in @(git log --first-parent --diff-merges=first-parent --diff-filter=A --name-only --pretty=format:'@%H' "$From..$To" -- $notesFolder)) {
+foreach ($line in @(git log --first-parent --diff-merges=first-parent --diff-filter=A --name-only --pretty=format:'@%H' "$From..$To" -- $notesFolders)) {
     if ($line.StartsWith('@')) { $current = $line.Substring(1); continue }
     if ($line -and $current -and $line -notmatch 'README\.md$' -and $line.EndsWith('.md')) {
         if (-not $added.ContainsKey($current)) { $added[$current] = @() }
@@ -119,10 +120,17 @@ foreach ($record in ($log -split [char]0x1e)) {
     $hash = $fields[0].Trim(); $subject = $fields[1].Trim(); $body = if ($fields.Count -gt 2) { $fields[2] } else { '' }
 
     # Bot changes go in the bot update's notes, everything else in the app's.
+    # Which code a change touched: note files, tools and the generated message list do not count (Niduus, 2026-11-19: every
+    # bot fix goes out as a bot update, so a bot fix whose note sat in docs/release-notes must not land in the app's notes).
     $files = @(git diff-tree --no-commit-id --name-only -r -m --first-parent $hash | Where-Object { $_ })
-    $botFiles = @($files | Where-Object { $_.StartsWith('bots/') })
-    if ($Bots -and $botFiles.Count -eq 0) { continue }
-    if (-not $Bots -and $files.Count -gt 0 -and $botFiles.Count -eq $files.Count) { continue }
+    $code = @($files | Where-Object {
+        -not $_.StartsWith('docs/release-notes/') -and -not $_.StartsWith('bots/bot-notes/') -and -not $_.StartsWith('tools/') -and
+        -not $_.EndsWith('ServerMessageCatalog.Generated.cs') })
+    $botFiles = @($code | Where-Object { $_.StartsWith('bots/') })
+    $botNotesOnly = $code.Count -eq 0 -and @($files | Where-Object { $_.StartsWith('bots/bot-notes/') }).Count -gt 0
+    $botOnly = ($code.Count -gt 0 -and $botFiles.Count -eq $code.Count) -or $botNotesOnly
+    if ($Bots -and $botFiles.Count -eq 0 -and -not $botNotesOnly) { continue }
+    if (-not $Bots -and $botOnly) { continue }
 
     if ($added.ContainsKey($hash)) {
         foreach ($file in $added[$hash]) {
