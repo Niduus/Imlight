@@ -67,9 +67,10 @@ internal sealed class UltimusSeat {
     /// <summary>
     /// True Form (Niduus, 2026-11-19): the helper bot whose real name is Ahziael, called "True Form" so he is never mixed up
     /// with the Ahziael app. A max level Myth wizard with every spell, who waits at his spot in The Commons and comes along
-    /// with any player who calls him (bots/TrueForm). His in-game name is Ahziael and his title is True Form.
+    /// with any player who calls him (bots/TrueForm). His in-game name is "True Form of Kitharas" (Niduus, 2026-11-19, after
+    /// his first test; it was Ahziael) and his title is True Form. The account keeps its first name.
     /// </summary>
-    internal static readonly UltimusSeat TrueForm = new("TrueForm", "Ahziael", "Myth", TRUE_FORM_FOLDER, "TrueForm-Ahziael", 8);
+    internal static readonly UltimusSeat TrueForm = new("TrueForm", "True Form of Kitharas", "Myth", TRUE_FORM_FOLDER, "TrueForm-Ahziael", 8);
 
     /// <summary>Every seat: Ultimus first, then the TCO7, then True Form.</summary>
     internal static readonly UltimusSeat[] All = [Ultimus, .. Tco7, TrueForm];

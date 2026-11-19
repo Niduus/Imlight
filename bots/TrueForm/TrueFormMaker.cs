@@ -19,8 +19,12 @@
 using System;
 using System.IO;
 using System.Linq;
+using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.BotShared;
+using Imlight.CoreLib.Game.Pet;
+using Imlight.CoreLib.Game.World;
+using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Shared.Character;
 using Imlight.CoreLib.WizardData.Collections;
@@ -77,11 +81,118 @@ internal static class TrueFormMaker {
                 wizard.SetBadgeOverride(TITLE);
             }
 
+            MakeMale(wizard);
             Dress(wizard, top);
+            GivePet(wizard);
         }
         catch (Exception e) {
             Logger.Warning("True Form: could not make him ready: {0}", Logger.Args(e));
         }
+    }
+
+    private const string LOOK_FILE = "look.txt";
+    private const string BASE_LOOK = "male base";
+
+    // Niduus, 2026-11-19 (after his first test): "Base MALE Character". The character maker's first choice of every part
+    // (index 0), no face paint or accessory; eyebrow and lip colors as they are. Done once (look.txt), so a look Niduus
+    // gives him later at the Magic Mirror stays.
+    private static void MakeMale(Wizard wizard) {
+        var marker = Path.Combine(UltimusSeat.TrueForm.Folder, LOOK_FILE);
+        if (wizard.WizardAvatar is not { } avatar || (File.Exists(marker) && File.ReadAllText(marker).Trim() == BASE_LOOK)) {
+            return;
+        }
+
+        avatar.m_eGender = eGender.Male;
+        MagicMirror.WriteToAvatar(avatar, [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1]);
+        wizard.MirrorLook = null;
+        wizard.MirrorStartLook = null;
+        WizardCollection.UpdateCharacterMirrorLook(wizard);
+        try {
+            Directory.CreateDirectory(UltimusSeat.TrueForm.Folder);
+            File.WriteAllText(marker, BASE_LOOK);
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+            Logger.Debug("True Form: could not note his look: {0}", Logger.Args(e.Message));
+        }
+
+        Logger.Information("True Form: made a male wizard with the base look.");
+    }
+
+    // His pet's talents (Niduus: "Myth pet stats, all of appropriate stats he would need to complete his role"): he hits,
+    // blades and keeps the team up, so damage, Myth damage, resist twice and a team heal. The first five the game has.
+    private static readonly string[] s_petTalents = [
+        "Pain-Giver", "Myth-Dealer", "Spell-Proof", "Spell-Defying", "Unicorn", "Pain-Bringer", "Myth-Giver", "Spell-Ward", "Fairy",
+    ];
+
+    private const int PET_TALENTS = 5;
+
+    // A Myth pet (the one with the highest stats a player can get, not Crowns-only or retired), Ultra, its stats and
+    // happiness at their maximum, with his role's talents. Put on when he has none, or when his is not at Ultra yet.
+    private static void GivePet(Wizard wizard) {
+        try {
+            if (wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Pet) is { } worn && PetProgress.GetBehavior(worn) is { } had
+                && had.m_level >= PetProgress.MAX_LEVEL && IsMyth((uint) worn.m_templateID)) {
+                return;
+            }
+
+            if (BestMythPet() is not { } template) {
+                Logger.Warning("True Form: no Myth pet was found to give him.");
+                return;
+            }
+
+            if (!wizard.TryCreateItem(template, out var pet) || !wizard.AddInitializedItemToInventory(pet, ignoreLimit: true)) {
+                Logger.Warning("True Form: could not make his pet ({0}).", Logger.Args(template));
+                return;
+            }
+
+            PetProgress.EnsureInitialized(pet);
+            PetProgress.SetLevel(pet, PetProgress.MAX_LEVEL);
+            PetProgress.MaxStats(pet);
+            PetProgress.SetStat(pet, "happiness", "max", out _);
+            var given = 0;
+            var names = new System.Collections.Generic.List<string>();
+            foreach (var name in s_petTalents) {
+                if (given >= PET_TALENTS) {
+                    break;
+                }
+
+                var talent = PetData.AllTalents.FirstOrDefault(t => t is not PetDerbyTalentTemplate
+                                                                   && string.Equals(Locale.GetEnglishName(t.m_displayName), name, StringComparison.OrdinalIgnoreCase));
+                if (talent is not null && PetProgress.AddTalent(pet, talent)) {
+                    given++;
+                    names.Add(name);
+                }
+            }
+
+            PetProgress.MaxStats(pet);
+            PetCare.Finish(wizard, pet, null, _ => { });
+            var shown = Locale.GetEnglishName((string) (CoreObjectFactory.GetCoreTemplate(template) as WizItemTemplate)?.m_displayName ?? "");
+            if (wizard.InventoryToEquipmentTransfer(pet.m_globalID.Full, out _, out _)) {
+                Logger.Information("True Form: wears his pet {0} (Ultra, talents: {1}).", Logger.Args(shown, names.Count > 0 ? string.Join(", ", names) : "none found"));
+            }
+            else {
+                Logger.Warning("True Form: his pet {0} is in his backpack but could not be put on.", Logger.Args(shown));
+            }
+        }
+        catch (Exception e) {
+            Logger.Warning("True Form: could not give him his pet: {0}", Logger.Args(e.Message));
+        }
+    }
+
+    private static bool IsMyth(uint template)
+        => string.Equals((string) (CoreObjectFactory.GetCoreTemplate(template) as WizItemTemplate)?.m_school, "Myth", StringComparison.OrdinalIgnoreCase);
+
+    private static uint? BestMythPet() {
+        var obtainable = ItemSources.ObtainableIds();
+        var myth = PetFactory.AllPetTemplates.Keys
+            .Select(id => (Id: id, Item: CoreObjectFactory.GetCoreTemplate(id) as WizItemTemplate, Pet: PetFactory.GetPetItemBehaviorTemplate(id)))
+            .Where(p => p.Item is not null && p.Pet is not null && IsMyth(p.Id)
+                        && !(p.Item.m_adjectiveList ?? []).Any(a => (string) a is "FLAG_CrownsOnly" or "FLAG_Retired" or "FLAG_DevItem")
+                        && !string.IsNullOrWhiteSpace(Locale.GetEnglishName((string) p.Item.m_displayName ?? "")))
+            .Select(p => (p.Id, Got: obtainable.Contains(p.Id), Stats: (p.Pet.m_maxStats ?? []).Sum(s => (long) s.m_value)))
+            .OrderByDescending(p => p.Got).ThenByDescending(p => p.Stats).ThenBy(p => p.Id)
+            .ToList();
+        return myth.Count > 0 ? myth[0].Id : null;
     }
 
     // The best gear per slot for a Myth wizard of his level; put on when what he wears differs.

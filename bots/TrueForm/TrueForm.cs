@@ -55,6 +55,9 @@ internal static class TrueForm {
     /// <summary>What players call him in chat.</summary>
     internal const string TITLE_NAME = "True Form";
 
+    /// <summary>The names players call him by in chat.</summary>
+    internal static readonly string[] CalledBy = [TITLE_NAME, "Kitharas", "Ahziael"];
+
     /// <summary>The seat he plays in (Ultimus's brain).</summary>
     internal static UltimusSeat Seat => UltimusSeat.TrueForm;
 

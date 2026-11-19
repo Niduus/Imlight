@@ -541,8 +541,9 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         var name = me.Wizard?.PlayerNameBehavior?.GetWizardName() ?? UltimusRoster.NAME;
-        if (MenuChatBook.Says(heard.Text, UltimusRoster.NAME) || MenuChatBook.Says(heard.Text, name.Split(' ')[0])
-            || (_seat.IsTrueForm && MenuChatBook.Says(heard.Text, TrueForm.TITLE_NAME))) {
+        // True Form's first word is "True": his short names count instead ("True Form", "Kitharas", "Ahziael").
+        if (MenuChatBook.Says(heard.Text, UltimusRoster.NAME) || (!_seat.IsTrueForm && MenuChatBook.Says(heard.Text, name.Split(' ')[0]))
+            || (_seat.IsTrueForm && TrueForm.CalledBy.Any(n => MenuChatBook.Says(heard.Text, n)))) {
             _namedBy[heard.SpeakerCharId] = now;
             return true;
         }
