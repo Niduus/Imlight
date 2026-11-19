@@ -43,7 +43,7 @@ internal static class TrueFormJewels {
 
     private const string JEWELS_FILE = "jewels.txt";
 
-    internal static void Fill(Wizard wizard) {
+    internal static void Fill(Wizard wizard, string school, BotStyle style) {
         try {
             // The game's books are read in the background: up to a minute for them.
             var jewels = BotJewels.All;
@@ -60,7 +60,8 @@ internal static class TrueFormJewels {
             var lines = new List<string>();
             var put = 0;
             // What his gear gives, so each socket gets what he needs most (BotJewelPicker).
-            var need = BotJewelPicker.For(wizard, "Myth", BotStyle.Backup);
+            var need = BotJewelPicker.For(wizard, school, style);
+            var petTalents = TrueFormMaker.PetTalents(school, style);
             foreach (var item in (wizard.EquipmentBehavior?.EquippedItems ?? []).ToList()) {
                 var template = ItemHelper.GetItemTemplate(item);
                 var sockets = JewelSockets.GetSockets(template);
@@ -83,12 +84,12 @@ internal static class TrueFormJewels {
 
                     var nowId = JewelSockets.GetPairs(item).FirstOrDefault(p => p?.m_socketNumber == socket)?.m_jewelTemplateID ?? 0;
                     var now = jewels.FirstOrDefault(j => j.Id == nowId);
-                    var nowScore = nowId == 0 ? double.MinValue : Score(now, shape.Value, pet, need);
+                    var nowScore = nowId == 0 ? double.MinValue : Score(now, shape.Value, pet, need, petTalents, school);
                     if (nowId != 0) {
                         JewelSockets.Unsocket(item, socket);
                     }
 
-                    var best = jewels.Where(j => j.Shape == shape.Value).Select(j => (Jewel: j, Score: Score(j, shape.Value, pet, need)))
+                    var best = jewels.Where(j => j.Shape == shape.Value).Select(j => (Jewel: j, Score: Score(j, shape.Value, pet, need, petTalents, school)))
                         .Where(x => x.Score > 0).OrderByDescending(x => x.Score).ThenBy(x => x.Jewel.Id)
                         .FirstOrDefault(x => JewelSockets.CheckSocket(wizard, item, x.Jewel.Template, socket) is null);
                     if (best.Jewel is not null && best.Score > nowScore) {
@@ -136,7 +137,7 @@ internal static class TrueFormJewels {
 
     // How good a jewel is for him: its stats as his gear is scored; a pet jewel by his pet talents (first ones best), only
     // a talent his pet does not have yet.
-    private static double Score(BotJewels.Jewel jewel, JewelSocketType shape, ClientPetItemBehavior pet, BotJewelPicker need) {
+    private static double Score(BotJewels.Jewel jewel, JewelSocketType shape, ClientPetItemBehavior pet, BotJewelPicker need, string[] petTalents, string school) {
         if (jewel is null) {
             return 0;
         }
@@ -154,10 +155,10 @@ internal static class TrueFormJewels {
             }
 
             var tier = key.Length > 0 && char.IsDigit(key[^1]) ? key[^1] - '0' : 1;
-            var kind = key.StartsWith("Talent-Damage-Myth", StringComparison.OrdinalIgnoreCase) || key.StartsWith("Talent-Damage-All", StringComparison.OrdinalIgnoreCase) ? 0.9
+            var kind = key.StartsWith("Talent-Damage-" + school, StringComparison.OrdinalIgnoreCase) || key.StartsWith("Talent-Damage-All", StringComparison.OrdinalIgnoreCase) ? 0.9
                 : key.StartsWith("Talent-Resist-All", StringComparison.OrdinalIgnoreCase) ? 0.85
                 : key.StartsWith("Talent-ArmorPiercing", StringComparison.OrdinalIgnoreCase) ? 0.8
-                : key.StartsWith("Talent-CriticalHit-Myth", StringComparison.OrdinalIgnoreCase) || key.StartsWith("Talent-CriticalHit-All", StringComparison.OrdinalIgnoreCase) ? 0.7
+                : key.StartsWith("Talent-CriticalHit-" + school, StringComparison.OrdinalIgnoreCase) || key.StartsWith("Talent-CriticalHit-All", StringComparison.OrdinalIgnoreCase) ? 0.7
                 : key.StartsWith("Talent-Health", StringComparison.OrdinalIgnoreCase) ? 0.6
                 : key.StartsWith("Talent-IncHealing", StringComparison.OrdinalIgnoreCase) ? 0.5
                 : 0;
@@ -165,7 +166,7 @@ internal static class TrueFormJewels {
         }
 
         foreach (var talent in jewel.Talents) {
-            var index = Array.FindIndex(TrueFormMaker.PetTalents, n => n.Equals(talent, StringComparison.OrdinalIgnoreCase));
+            var index = Array.FindIndex(petTalents, n => n.Equals(talent, StringComparison.OrdinalIgnoreCase));
             if (index < 0) {
                 continue;
             }
@@ -173,7 +174,7 @@ internal static class TrueFormJewels {
             var has = pet is not null && PetData.AllTalents.FirstOrDefault(t => string.Equals(Locale.GetEnglishName(t.m_displayName), talent, StringComparison.OrdinalIgnoreCase)) is { } known
                       && pet.m_expressedTalents.Contains(PetData.TalentId(known.m_talentName));
             if (!has) {
-                best = Math.Max(best, TrueFormMaker.PetTalents.Length - index);
+                best = Math.Max(best, petTalents.Length - index);
             }
         }
 

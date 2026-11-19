@@ -59,8 +59,12 @@ internal static class TrueFormMaker {
         }
 
         try {
-            if (wizard.MagicSchoolBehavior.MagicSchool != MagicSchool.Myth) {
-                wizard.SetSchool(MagicSchool.Myth);
+            // Myth, or the school his group asked for (TrueForm.School; back to Myth when the group ends).
+            var school = TrueForm.School;
+            var style = TrueForm.StyleFor(school, TrueForm.Role);
+            if (wizard.MagicSchoolBehavior.MagicSchool != school) {
+                wizard.SetSchool(school);
+                Logger.Information("True Form: now a {0} wizard ({1}).", Logger.Args(school, style));
             }
 
             var top = (byte) Math.Clamp(MagicLevelsConfig.MaxLevel, 1, 255);
@@ -85,11 +89,11 @@ internal static class TrueFormMaker {
             }
 
             MakeMale(wizard);
-            Dress(wizard, top);
+            Dress(wizard, top, school.ToString(), style);
             Stitch(wizard);
-            GivePet(wizard);
-            TrueFormJewels.Fill(wizard);
-            TrueFormSpells.Give(wizard, top);
+            GivePet(wizard, school.ToString(), style);
+            TrueFormJewels.Fill(wizard, school.ToString(), style);
+            TrueFormSpells.Give(wizard, top, school.ToString());
         }
         catch (Exception e) {
             Logger.Warning("True Form: could not make him ready: {0}", Logger.Args(e));
@@ -126,22 +130,35 @@ internal static class TrueFormMaker {
 
     // His pet's talents as players pick them (BotPetTalents; Niduus, 2026-11-19: "People usually like to go Dealer"): Myth-Dealer,
     // Pain-Giver, Spell-Proof, Spell-Defying and Myth-Giver; the rest, best first, are for his pet jewel (TrueFormJewels).
-    internal static readonly string[] PetTalents = BotPetTalents.For("Myth");
+    internal static string[] PetTalents(string school, BotStyle style) => BotPetTalents.For(school, style);
 
     private const int PET_TALENTS = 5;
 
     // A Myth pet (the one with the highest stats a player can get, not Crowns-only or retired), Ultra, its stats and
     // happiness at their maximum, with his role's talents. Put on when he has none, or when his is not at Ultra yet.
-    private static void GivePet(Wizard wizard) {
+    private static void GivePet(Wizard wizard, string school, BotStyle style) {
         try {
+            var talents = PetTalents(school, style);
             if (wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Pet) is { } worn && PetProgress.GetBehavior(worn) is { } had
-                && had.m_level >= PetProgress.MAX_LEVEL && IsMyth((uint) worn.m_templateID)) {
-                ShapeTalents(wizard, worn);
+                && had.m_level >= PetProgress.MAX_LEVEL && IsSchool((uint) worn.m_templateID, school)) {
+                ShapeTalents(wizard, worn, talents);
                 return;
             }
 
-            if (BestMythPet() is not { } template) {
-                Logger.Warning("True Form: no Myth pet was found to give him.");
+            // His pet of this school from his backpack (each school's loadout is kept there), else a new one.
+            var kept = wizard.InventoryBehavior?.Items?.FirstOrDefault(i => PetProgress.GetBehavior(i) is { } b && b.m_level >= PetProgress.MAX_LEVEL
+                                                                             && IsSchool((uint) i.m_templateID, school));
+            if (kept is not null) {
+                ShapeTalents(wizard, kept, talents);
+                if (wizard.InventoryToEquipmentTransfer(kept.m_globalID.Full, out _, out _)) {
+                    Logger.Information("True Form: wears his {0} pet again.", Logger.Args(school));
+                }
+
+                return;
+            }
+
+            if (BestPet(school) is not { } template) {
+                Logger.Warning("True Form: no {0} pet was found to give him.", Logger.Args(school));
                 return;
             }
 
@@ -154,7 +171,7 @@ internal static class TrueFormMaker {
             PetProgress.SetLevel(pet, PetProgress.MAX_LEVEL);
             PetProgress.MaxStats(pet);
             PetProgress.SetStat(pet, "happiness", "max", out _);
-            var names = ShapeTalents(wizard, pet);
+            var names = ShapeTalents(wizard, pet, talents);
             var shown = Locale.GetEnglishName((string) (CoreObjectFactory.GetCoreTemplate(template) as WizItemTemplate)?.m_displayName ?? "");
             if (wizard.InventoryToEquipmentTransfer(pet.m_globalID.Full, out _, out _)) {
                 Logger.Information("True Form: wears his pet {0} (Ultra, talents: {1}).", Logger.Args(shown, names.Count > 0 ? string.Join(", ", names) : "none found"));
@@ -171,7 +188,7 @@ internal static class TrueFormMaker {
     // A real pet has five talents, and its jewel is the sixth (Niduus, 2026-11-19: "pets naturally have 5 stats, + jewel as
     // 6th"): the talents a pet is hatched with (his showed Maycast Disarm and Maycast Mythspear on top of his five) are taken
     // off, so he has exactly his role's five, the first of PetTalents the game has. His jewel adds the sixth (TrueFormJewels).
-    private static System.Collections.Generic.List<string> ShapeTalents(Wizard wizard, WizClientObjectItem pet) {
+    private static System.Collections.Generic.List<string> ShapeTalents(Wizard wizard, WizClientObjectItem pet, string[] petTalents) {
         var names = new System.Collections.Generic.List<string>();
         var behavior = PetProgress.GetBehavior(pet);
         if (behavior is null) {
@@ -179,7 +196,7 @@ internal static class TrueFormMaker {
         }
 
         var wanted = new System.Collections.Generic.List<PetTalentBaseTemplate>();
-        foreach (var name in PetTalents) {
+        foreach (var name in petTalents) {
             if (wanted.Count >= PET_TALENTS) {
                 break;
             }
@@ -243,14 +260,14 @@ internal static class TrueFormMaker {
         return changed;
     }
 
-    private static bool IsMyth(uint template)
-        => string.Equals((string) (CoreObjectFactory.GetCoreTemplate(template) as WizItemTemplate)?.m_school, "Myth", StringComparison.OrdinalIgnoreCase);
+    private static bool IsSchool(uint template, string school)
+        => string.Equals((string) (CoreObjectFactory.GetCoreTemplate(template) as WizItemTemplate)?.m_school, school, StringComparison.OrdinalIgnoreCase);
 
-    private static uint? BestMythPet() {
+    private static uint? BestPet(string school) {
         var obtainable = ItemSources.ObtainableIds();
         var myth = PetFactory.AllPetTemplates.Keys
             .Select(id => (Id: id, Item: CoreObjectFactory.GetCoreTemplate(id) as WizItemTemplate, Pet: PetFactory.GetPetItemBehaviorTemplate(id)))
-            .Where(p => p.Item is not null && p.Pet is not null && IsMyth(p.Id)
+            .Where(p => p.Item is not null && p.Pet is not null && IsSchool(p.Id, school)
                         && !(p.Item.m_adjectiveList ?? []).Any(a => (string) a is "FLAG_CrownsOnly" or "FLAG_Retired" or "FLAG_DevItem")
                         && !string.IsNullOrWhiteSpace(Locale.GetEnglishName((string) p.Item.m_displayName ?? "")))
             .Select(p => (p.Id, Got: obtainable.Contains(p.Id), Stats: (p.Pet.m_maxStats ?? []).Sum(s => (long) s.m_value)))
@@ -337,7 +354,7 @@ internal static class TrueFormMaker {
     }
 
     // The best gear per slot for a Myth wizard of his level; put on when what he wears differs.
-    private static void Dress(Wizard wizard, int level) {
+    private static void Dress(Wizard wizard, int level, string school, BotStyle style) {
         // The gear list is read on the first ask, in the background: up to a minute for it.
         for (var i = 0; i < 120 && BotGear.Catalog.Count == 0; i++) {
             System.Threading.Thread.Sleep(500);
@@ -361,12 +378,13 @@ internal static class TrueFormMaker {
         }
 
         var pool = BotGear.Catalog.Concat(top ?? []).DistinctBy(p => p.Id).ToList();
-        var topOf = pool.Where(p => Allowed(p) && BotGear.CanWear(p, "Myth", level) && BotGear.Score(p, "Myth", BotStyle.Backup) > 0)
+        var topOf = pool.Where(p => Allowed(p) && BotGear.CanWear(p, school, level) && BotGear.Score(p, school, style) > 0)
             .GroupBy(p => p.Slot).ToDictionary(g => g.Key, g => g.Max(p => p.Level));
-        var best = BotGear.BestFor("Myth", level, BotStyle.Backup, p => Allowed(p) && (!topOf.TryGetValue(p.Slot, out var least) || p.Level >= least),
+        var best = BotGear.BestFor(school, level, style, p => Allowed(p) && (!topOf.TryGetValue(p.Slot, out var least) || p.Level >= least),
             extra: top);
         var outfit = string.Join(",", best.OrderBy(b => b.Key).Select(b => b.Value.Id));
         var marker = Path.Combine(UltimusSeat.TrueForm.Folder, DRESSED_FILE);
+        outfit = $"{school} {style}: {outfit}";
         var worn = BotGear.Slots.Select(s => (Slot: s, Item: wizard.EquipmentBehavior?.GetItemInSlot(s))).ToList();
         var wearsIt = best.All(b => worn.FirstOrDefault(w => w.Slot == b.Key).Item is { } item && (uint) Math.Min((ulong) item.m_templateID, uint.MaxValue) == b.Value.Id);
         if (wearsIt && File.Exists(marker) && File.ReadAllText(marker).Trim() == outfit) {
@@ -380,7 +398,10 @@ internal static class TrueFormMaker {
                     continue;
                 }
 
-                if (!wizard.TryCreateItem(piece.Id, out var item) || !wizard.AddInitializedItemToInventory(item, ignoreLimit: true)) {
+                // The piece from his backpack when he has it (another school's loadout, already stitched and jeweled), else a new one.
+                var item = wizard.InventoryBehavior?.Items?.Where(i => (uint) Math.Min((ulong) i.m_templateID, uint.MaxValue) == piece.Id)
+                    .OrderByDescending(i => i.m_displayID != 0).FirstOrDefault();
+                if (item is null && (!wizard.TryCreateItem(piece.Id, out item) || !wizard.AddInitializedItemToInventory(item, ignoreLimit: true))) {
                     Logger.Warning("True Form: could not get {0} ({1}).", Logger.Args(piece.Name, slot));
                     continue;
                 }
@@ -404,7 +425,7 @@ internal static class TrueFormMaker {
             Logger.Debug("True Form: could not write his gear list: {0}", Logger.Args(e.Message));
         }
 
-        Logger.Information("True Form: dressed in the best level {0} Myth gear ({1} pieces put on).", Logger.Args(level, put));
+        Logger.Information("True Form: dressed in the best level {0} {1} gear for a {2} ({3} pieces put on).", Logger.Args(level, school, style, put));
     }
 
 }

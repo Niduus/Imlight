@@ -373,15 +373,20 @@ internal sealed partial class UltimusDirectorActor {
         _partyStrongOkUntil = DateTime.MinValue;
         _partyOfflineSince = DateTime.MaxValue;
         Note("Ultimus", $"PARTY: no longer with {_partyMateName} ({why}): back to his own story.");
-        if (why == "the group ended") {
+        if (why == "the group ended" && !(_seat.IsTrueForm && TrueForm.Rejoining is not null)) {
             Announce(SAY_PARTY, $"Thanks for the group, {_partyMateName}! Back to my {(_seat.IsTrueForm ? "spot" : "story")}.", urgent: true);
         }
 
-        // True Form: the group's asks end with it (his mode, the spells asked for by name).
-        if (_seat.IsTrueForm) {
+        // True Form: the group's asks end with it (his mode, the spells asked for by name), and he goes back to Myth (Niduus,
+        // 2026-11-19: "TF stays natively Myth though, switching back when he leaves the group"). Not while he logs out and
+        // back in for a school switch: that ends the group for a moment only.
+        if (_seat.IsTrueForm && TrueForm.Rejoining is null) {
             TrueForm.ResetMode();
             TrueForm.ClearRequested();
             TrueForm.With = "";
+            if (TrueForm.School != Shared.Behaviors.MagicSchool.Myth) {
+                TrueForm.AskSwap(Shared.Behaviors.MagicSchool.Myth, null, 0, "");
+            }
         }
         Think($"I'm done going along with {_partyMateName} ({why}). Back to my own story.", "party-end|" + _partyMate);
         _partyMate = 0;

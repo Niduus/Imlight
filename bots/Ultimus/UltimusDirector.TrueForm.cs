@@ -50,6 +50,10 @@ internal sealed partial class UltimusDirectorActor {
     // His slim tick: talk, pause, battle, cutscene, sigil, then where he should be. None of the questing parts.
     private void TrueFormTick() {
         var me = _team[0];
+        if (TrueFormSwitch(me)) {
+            return;
+        }
+
         AnswerPlayers();
         // Calls and "leave" are answered at once, in a battle too (a call waited for the battle's end and often ran out).
         TrueFormCalls(me);
@@ -190,6 +194,69 @@ internal sealed partial class UltimusDirectorActor {
         _actors[0].Tell(new UltimusMember.PressCommons(), Self);
     }
 
+    // ---------------------------------------------------------------------
+    // Switching school (Niduus, 2026-11-19: "Go ice for me", "Go ice and tank for me")
+    // ---------------------------------------------------------------------
+
+    private DateTime _tfRejoinAskedAt = DateTime.MinValue;
+
+    /// <summary>
+    /// A school switch: out of battle, he logs out, is made ready as that school (its best gear, jewels, pet and deck, his
+    /// stitched look the same; each school's pieces kept in his backpack for next time), logs back in and goes back to the
+    /// group's head. True while he is logging out for it.
+    /// </summary>
+    private bool TrueFormSwitch(UltimusMember.Status me) {
+        if (TrueForm.Rejoining is { } back) {
+            GroupRegistry.TryGetGroup(me.CharId, out var group);
+            if (back.HeadId == 0 || (group is not null && group.Members.Any(m => m.CharId == back.HeadId))) {
+                TrueForm.Rejoining = null;
+            }
+            else if (DateTime.UtcNow - TrueForm.RejoiningSince > TimeSpan.FromMinutes(3)) {
+                // Never let back in: the group is over, so back to Myth.
+                TrueForm.Rejoining = null;
+                Note("Ultimus", $"True Form: {back.HeadName} did not take him back after his switch to {back.School}; back to Myth.");
+                if (TrueForm.School != Shared.Behaviors.MagicSchool.Myth) {
+                    TrueForm.ResetMode();
+                    TrueForm.ClearRequested();
+                    TrueForm.AskSwap(Shared.Behaviors.MagicSchool.Myth, null, 0, "");
+                }
+            }
+            else if (me.Wizard is not null && group is null && DateTime.UtcNow - _tfRejoinAskedAt > TimeSpan.FromSeconds(30)
+                     && PlayerCheats.LiveWizard(back.HeadId) is not null) {
+                _tfRejoinAskedAt = DateTime.UtcNow;
+                TrueForm.Call(back.HeadId, back.HeadName);
+            }
+        }
+
+        if (me.Wizard is null || me.Wizard.IsInDuel || TrueForm.TakeSwap() is not { } swap) {
+            return false;
+        }
+
+        TrueForm.Become(swap.School, swap.Role);
+        if (swap.HeadId != 0) {
+            TrueForm.Rejoining = swap;
+            TrueForm.RejoiningSince = DateTime.UtcNow;
+            _tfRejoinAskedAt = DateTime.MinValue;
+        }
+
+        Note("Ultimus", swap.HeadId != 0
+            ? $"True Form switches to {swap.School} for {swap.HeadName}: logs out to change, then back to the group."
+            : $"True Form goes back to {swap.School}: logs out to change.");
+        _doing = $"switching to {swap.School}";
+        foreach (var actor in _actors) {
+            actor.Tell(PoisonPill.Instance);
+        }
+
+        Timers.Cancel("tick");
+        // A moment for the logout to be saved before he is changed and logged in again (StartTeam makes him ready).
+        Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(5), Self, new TrueFormRelog(), Self);
+        return true;
+    }
+
+    private sealed record TrueFormRelog;
+
+    private void OnTrueFormRelog() => StartTeam(restart: false);
+
     // Who called him, his leaving when told, and the lead handed to whoever he joined.
     private void TrueFormCalls(UltimusMember.Status me) {
         if (TrueForm.TakeLeave() && _partyMate != 0) {
@@ -310,6 +377,36 @@ internal sealed partial class UltimusDirectorActor {
                     : "Still reading my spells, give me a moment and ask again.", "true form");
                 return true;
             }
+        }
+
+        // A school ("go ice for me"), with a role ("go ice and tank for me") or the school's own (Niduus, 2026-11-19). A role
+        // that does not suit the school is tried, with a warning.
+        if (TrueForm.SchoolFrom(order) is { } school) {
+            var rest = System.Text.RegularExpressions.Regex.Replace(order, @"\b(fire|ice|storm|myth|life|death|balance)\b", " ");
+            var role = TrueForm.ModeFrom(rest) is { } r && r is not (TrueForm.Mode.Auto or TrueForm.Mode.Evil) ? r : (TrueForm.Mode?) null;
+            if (school == TrueForm.School && role == TrueForm.Role) {
+                SendReply(heard, $"I'm already {school}{(role is { } same ? $", playing {TrueForm.Words(same).Split(':')[0]}" : "")}!", "true form");
+                return true;
+            }
+
+            if (me.Wizard?.IsInDuel == true) {
+                SendReply(heard, $"I'll switch to {school} right after this battle.", "true form");
+            }
+
+            TrueForm.AskSwap(school, role, heard.SpeakerCharId, heard.SpeakerName);
+            if (role is { } asked) {
+                TrueForm.SetMode(asked);
+            }
+            else {
+                TrueForm.ResetMode();
+            }
+
+            var plan = role is { } chosen ? $"and play {TrueForm.Words(chosen).Split(':')[0]}" : $"set up as {TrueForm.OwnRole(school)}";
+            var warn = TrueForm.Misfit(school, role) is { } misfit ? " Heads up: " + misfit : "";
+            Note("Ultimus", $"True Form: {heard.SpeakerName} asks for {school}{(role is null ? "" : " " + role)} (\"{UltimusText.Short(heard.Text, 60)}\").");
+            SendReply(heard, $"Switching to {school} {plan}. I'll pop out for a moment to change and be right back. " +
+                             "If I'm not back in the group in a minute, send me an invite." + warn, "true form");
+            return true;
         }
 
         // A mode, however it is said: "defend", "go attack", "play support", "be evil", "heal us", "tank for us", "atack".

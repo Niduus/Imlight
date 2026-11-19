@@ -23,6 +23,7 @@ using System.Linq;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Combat;
 using Imlight.CoreLib.Game.Groups;
+using Imlight.CoreLib.Shared.Behaviors;
 
 namespace Imlight.CoreLib.Game.Ultimus;
 
@@ -175,6 +176,104 @@ internal static class TrueForm {
         Mode.Support => "support: heals, cleanses and blades for the team",
         Mode.Evil => "evil: I'm on your team... technically",
         _ => "auto: I pick attack, defend or support each round",
+    };
+
+    // ---------------------------------------------------------------------
+    // His school (Niduus, 2026-11-19: "Go ice for me", "Go ice and tank for me"; "TF stays natively Myth though, switching
+    // back when he leaves the group"; "STITCH STAYS THE SAME ACROSS THE BOARD")
+    // ---------------------------------------------------------------------
+
+    /// <summary>The schools he can switch to.</summary>
+    internal static readonly MagicSchool[] Schools = [MagicSchool.Fire, MagicSchool.Ice, MagicSchool.Storm, MagicSchool.Myth,
+        MagicSchool.Life, MagicSchool.Death, MagicSchool.Balance];
+
+    private static volatile string s_school;
+
+    /// <summary>The school he plays now: Myth unless his group asked for another.</summary>
+    internal static MagicSchool School => s_school is { } asked && Enum.TryParse<MagicSchool>(asked, true, out var school) ? school : MagicSchool.Myth;
+
+    private static volatile string s_role;
+
+    /// <summary>The role the group asked for with the school ("Go ice and tank"), or null for the school's own.</summary>
+    internal static Mode? Role => s_role is { } asked && Enum.TryParse<Mode>(asked, true, out var mode) ? mode : null;
+
+    /// <summary>A school switch asked for, waiting to be done: he logs out, changes, and logs back in to the group.</summary>
+    internal sealed record SwapAsk(MagicSchool School, Mode? Role, ulong HeadId, string HeadName);
+
+    private static volatile SwapAsk s_swap;
+
+    /// <summary>Asks for a switch (Myth with no head: back home after the group).</summary>
+    internal static void AskSwap(MagicSchool school, Mode? role, ulong headId, string headName) => s_swap = new SwapAsk(school, role, headId, headName ?? "");
+
+    internal static SwapAsk TakeSwap() => System.Threading.Interlocked.Exchange(ref s_swap, null);
+
+    /// <summary>Puts the asked school and role in place, for the next time he is made ready.</summary>
+    internal static void Become(MagicSchool school, Mode? role) {
+        s_school = school == MagicSchool.Myth ? null : school.ToString();
+        s_role = role?.ToString();
+    }
+
+    /// <summary>
+    /// While he logs out and back in for a switch: the group's head he goes back to, and since when. His group ending then is
+    /// no goodbye: the mode, the asked spells and the school stay.
+    /// </summary>
+    internal static volatile SwapAsk Rejoining;
+
+    internal static DateTime RejoiningSince = DateTime.MinValue;
+
+    /// <summary>A school in a player's words ("go ice", "switch to storm", "be a fire wizard"), or null.</summary>
+    internal static MagicSchool? SchoolFrom(string words) {
+        var w = (words ?? "").Trim().ToLowerInvariant();
+        var m = System.Text.RegularExpressions.Regex.Match(w,
+            @"(^|\s)(go|switch( over)?( to)?|change( to)?|swap( to)?|be( an?)?|become( an?)?|turn( into)?|play( as)?( an?)?)\s+(?<s>fire|ice|storm|myth|life|death|balance|pyro|thaum|thermo|diviner|conjurer|theurgist|necromancer|sorcerer)\b");
+        if (!m.Success) {
+            return null;
+        }
+
+        return m.Groups["s"].Value switch {
+            "fire" or "pyro" => MagicSchool.Fire,
+            "ice" or "thaum" or "thermo" => MagicSchool.Ice,
+            "storm" or "diviner" => MagicSchool.Storm,
+            "myth" or "conjurer" => MagicSchool.Myth,
+            "life" or "theurgist" => MagicSchool.Life,
+            "death" or "necromancer" => MagicSchool.Death,
+            _ => MagicSchool.Balance,
+        };
+    }
+
+    /// <summary>The gear style for a school and role: the role's, or the school's own when none was asked.</summary>
+    internal static BotShared.BotStyle StyleFor(MagicSchool school, Mode? role) => role switch {
+        Mode.Attack => BotShared.BotStyle.Hitter,
+        Mode.Defend => BotShared.BotStyle.Tank,
+        Mode.Support => BotShared.BotStyle.Healer,
+        _ => school switch {
+            MagicSchool.Ice => BotShared.BotStyle.Tank,
+            MagicSchool.Life => BotShared.BotStyle.Healer,
+            MagicSchool.Fire or MagicSchool.Storm => BotShared.BotStyle.Hitter,
+            _ => BotShared.BotStyle.Backup,
+        },
+    };
+
+    /// <summary>The school's own role in words ("tank", "healer").</summary>
+    internal static string OwnRole(MagicSchool school) => StyleFor(school, null) switch {
+        BotShared.BotStyle.Tank => "a tank",
+        BotShared.BotStyle.Healer => "a healer",
+        BotShared.BotStyle.Hitter => "a hitter",
+        _ => "a hitter who blades and helps the team",
+    };
+
+    /// <summary>
+    /// A warning when the role does not suit the school (Niduus: "Go storm and tank for me" will let him try, but it may not
+    /// always succeed; "Go fire and heal me" wouldn't work too well), else null.
+    /// </summary>
+    internal static string Misfit(MagicSchool school, Mode? role) => (role, school) switch {
+        (Mode.Defend, MagicSchool.Storm or MagicSchool.Fire or MagicSchool.Myth) =>
+            $"{school} isn't built to tank: low health and resist, and few shields of its own. I'll try, but I may go down.",
+        (Mode.Support, MagicSchool.Fire or MagicSchool.Storm or MagicSchool.Myth) =>
+            $"{school} has hardly any heals of its own, so I'll heal with other schools' spells. I'll try, but it won't be as strong as Life.",
+        (Mode.Attack, MagicSchool.Life or MagicSchool.Ice) =>
+            $"{school} doesn't hit as hard as Storm, Fire or Myth. I'll try, but the damage will be lower.",
+        _ => null,
     };
 
     // ---------------------------------------------------------------------

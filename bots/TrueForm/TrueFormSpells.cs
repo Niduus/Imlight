@@ -37,7 +37,7 @@ namespace Imlight.CoreLib.Game.Ultimus;
 /// <list type="bullet">
 /// <item>Trained: every spell of his pool a trainer or quest teaches (TrueFormPool, one per family, every school).</item>
 /// <item>Treasure cards: one of each spell that only comes as a treasure card.</item>
-/// <item>Deck: one copy each, his Myth spells first, then the Sun, Moon, Star and Shadow ones, then the other schools',
+/// <item>Deck: one copy each, his own school's spells first (Myth, or the school his group asked for), then the Sun, Moon, Star and Shadow ones, then the other schools',
 /// strongest (most pips) first, as many as the deck holds and its rank rules allow; its treasure card slots filled too.</item>
 /// </list>
 /// Done when he is made ready, after he is dressed (the deck he wears sets how many cards it holds). Kept to his own top level.
@@ -48,7 +48,7 @@ internal static class TrueFormSpells {
 
     private static readonly string[] s_astral = ["Sun", "Moon", "Star", "Shadow"];
 
-    internal static void Give(Wizard wizard, int level) {
+    internal static void Give(Wizard wizard, int level, string school) {
         try {
             for (var i = 0; i < 240 && !TrueFormPool.Ready; i++) {
                 System.Threading.Thread.Sleep(500);
@@ -84,7 +84,7 @@ internal static class TrueFormSpells {
                 Logger.Information("True Form: learned {0} spells and got {1} treasure cards.", Logger.Args(newSpells.Count, newCards.Count));
             }
 
-            FillDeck(wizard, trained, treasure);
+            FillDeck(wizard, trained, treasure, school);
             WriteList(wizard, trained, treasure);
         }
         catch (Exception e) {
@@ -97,7 +97,7 @@ internal static class TrueFormSpells {
             ? behavior : null;
 
     // His deck: one of each, best first, as many as it holds; the treasure card slots from his book.
-    private static void FillDeck(Wizard wizard, List<TrueFormPool.Entry> trained, List<TrueFormPool.Entry> treasure) {
+    private static void FillDeck(Wizard wizard, List<TrueFormPool.Entry> trained, List<TrueFormPool.Entry> treasure, string school) {
         if (wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Deck) is not { } deckItem
             || !CoreObjectFactory.FindBehaviorInstance<DeckBehavior>(deckItem, out var deck)
             || ItemHelper.GetItemTemplate(deckItem)?.m_behaviors?.OfType<DeckBehaviorTemplate>().FirstOrDefault() is not { } rules) {
@@ -105,14 +105,14 @@ internal static class TrueFormSpells {
             return;
         }
 
-        var myth = string.Equals((string) rules.m_primarySchoolName, "Myth", StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty((string) rules.m_primarySchoolName);
+        var myth = string.Equals((string) rules.m_primarySchoolName, school, StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty((string) rules.m_primarySchoolName);
         bool Fits(TrueFormPool.Entry e) {
-            var own = e.School.Equals("Myth", StringComparison.OrdinalIgnoreCase);
+            var own = e.School.Equals(school, StringComparison.OrdinalIgnoreCase);
             var most = own && myth ? rules.m_schoolMaxRank : rules.m_genericMaxRank;
             return most <= 0 || Rank(e.Id) <= most;
         }
 
-        int Order(TrueFormPool.Entry e) => e.School.Equals("Myth", StringComparison.OrdinalIgnoreCase) ? 0 : s_astral.Contains(e.School, StringComparer.OrdinalIgnoreCase) ? 1 : 2;
+        int Order(TrueFormPool.Entry e) => e.School.Equals(school, StringComparison.OrdinalIgnoreCase) ? 0 : s_astral.Contains(e.School, StringComparer.OrdinalIgnoreCase) ? 1 : 2;
 
         var spells = trained.Where(Fits).OrderBy(Order).ThenByDescending(e => Rank(e.Id)).ThenBy(e => e.Shown, StringComparer.OrdinalIgnoreCase)
             .Select(e => e.Id).Distinct().Take(Math.Max(0, (int) rules.m_maxSpells)).ToList();

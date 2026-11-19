@@ -318,6 +318,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         Receive<OrderUnderstood>(OnOrderUnderstood);
         Receive<StuckIdea>(OnStuckIdea);
         Receive<Tco7Later>(OnTco7Later);
+        Receive<TrueFormRelog>(_ => OnTrueFormRelog());
         Receive<Tick>(_ => {
             try {
                 OnTick();
@@ -3005,7 +3006,8 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
                 var home = TrueForm.Home;
                 status["trueForm"] = new JsonObject {
                     ["with"] = TrueForm.With ?? "",
-                    ["mode"] = TrueForm.Words(TrueForm.Now),
+                    ["mode"] = $"{TrueForm.Words(TrueForm.Now)}, as a {TrueForm.School} wizard",
+                    ["school"] = TrueForm.School.ToString(),
                     ["asked"] = TrueForm.Asked,
                     ["spellLevel"] = TrueForm.SpellLevel(),
                     ["devSpells"] = TrueForm.DevSpellsNow,

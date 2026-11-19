@@ -38,8 +38,16 @@ internal static class BotPetTalents {
 
     internal static readonly string[] Stats = ["Strength", "Intellect", "Agility", "Will", "Power"];
 
-    /// <summary>The talents for a school's hitter, best first.</summary>
-    internal static string[] For(string school) => [
+    /// <summary>The talents for a school's wizard of a style, best first.</summary>
+    internal static string[] For(string school, BotStyle style = BotStyle.Hitter) => style switch {
+        // A tank: resist first, then the hits ("Spell-Proof", "Spell-Defying").
+        BotStyle.Tank => ["Spell-Proof", "Spell-Defying", "Pain-Giver", $"{school}-Dealer", $"{school}-Giver", "Armor Breaker", "Unicorn", "Fairy"],
+        // A healer: the healing may-casts, then resist and damage.
+        BotStyle.Healer => ["Unicorn", "Fairy", "Spell-Proof", "Spell-Defying", "Pain-Giver", $"{school}-Dealer", "Armor Breaker", "Sprite Swarm"],
+        _ => Hitter(school),
+    };
+
+    private static string[] Hitter(string school) => [
         $"{school}-Dealer", "Pain-Giver", "Spell-Proof", "Spell-Defying", $"{school}-Giver",
         "Armor Breaker", "Pain-Bringer", $"{school}-Sniper", "Armor Piercer", $"{school}-Boon",
         $"{school}-Eye", $"{school}-Shot", "Pip Boost", "Unicorn", "Fairy",
