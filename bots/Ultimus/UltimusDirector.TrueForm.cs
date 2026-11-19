@@ -257,6 +257,70 @@ internal sealed partial class UltimusDirectorActor {
 
     private void OnTrueFormRelog() => StartTeam(restart: false);
 
+    private static bool IsQuestion(string order)
+        => System.Text.RegularExpressions.Regex.IsMatch(order, @"^(do|does|did|are|is|am|was|were|should|shall|what|whats|what's|how|why|who|when|where|which)\b");
+
+    // His answers about himself, from what he really has. True when it was one.
+    private bool TrueFormQuestion(UltimusVoice.Heard heard, UltimusMember.Status me, string order) {
+        bool Has(params string[] words) => words.Any(w => System.Text.RegularExpressions.Regex.IsMatch(order, $@"(^|\s){System.Text.RegularExpressions.Regex.Escape(w)}($|\s)"));
+        var asking = IsQuestion(order) || Has("show", "tell me", "list", "look at", "check");
+        var wizard = me.Wizard;
+
+        // Treasure cards: "what's in your treasure card deck", "what tc's do you have", "look at your treasure cards".
+        if (asking && Has("treasure card", "treasure cards", "tc", "tcs", "tc's", "treasure")) {
+            var deck = wizard?.EquipmentBehavior?.GetItemInSlot(WizardData.Models.Player.EquipmentSlotType.Deck) is { } d
+                       && Shared.Resources.CoreObjectFactory.FindBehaviorInstance<Imcodec.ObjectProperty.TypeCache.DeckBehavior>(d, out var b) ? b.m_spellList ?? [] : [];
+            bool Tc(uint id) => Shared.Resources.CoreObjectFactory.GetCoreTemplate(id) is Imcodec.ObjectProperty.TypeCache.SpellTemplate t && t.m_Treasure;
+            var inDeck = deck.Where(s => s is not null && Tc(s.m_templateID)).Select(s => TrueFormPool.Of(s.m_templateID)?.Shown ?? UltimusText.SpellName(s.m_templateID)).ToList();
+            var book = wizard?.SpellbookBehavior?.TreasureCardTemplateIds?.Count ?? 0;
+            SendReply(heard, inDeck.Count == 0 ? $"I have {book} treasure cards in my book, one of each card that only comes as a treasure card. I pick the ones a fight needs each round."
+                : $"In my deck's treasure card slots: {string.Join(", ", inDeck.Take(8))}{(inDeck.Count > 8 ? $" and {inDeck.Count - 8} more" : "")}. " +
+                  $"{book} more in my book, and each round I pick the cards the fight needs.", "true form");
+            return true;
+        }
+
+        // His deck or spells: "what is in your deck", "what spells do you have in your combat deck".
+        if (asking && Has("deck", "spells", "spell", "cards", "combat deck") && !Has("hand")) {
+            var count = TrueFormPool.Ready ? TrueFormBattle.SpellCount() : 0;
+            var deck = wizard?.EquipmentBehavior?.GetItemInSlot(WizardData.Models.Player.EquipmentSlotType.Deck) is { } d
+                       && Shared.Resources.CoreObjectFactory.FindBehaviorInstance<Imcodec.ObjectProperty.TypeCache.DeckBehavior>(d, out var b) ? b.m_spellList ?? [] : [];
+            var names = deck.Where(s => s is not null).Select(s => TrueFormPool.Of(s.m_templateID)?.Shown ?? UltimusText.SpellName(s.m_templateID))
+                .Where(n => !string.IsNullOrWhiteSpace(n)).Take(8).ToList();
+            SendReply(heard, $"I have every spell in the game, one of each{(count > 0 ? $" ({count} at level {TrueForm.SpellLevel()})" : "")}, and each round I pick the seven the fight needs. " +
+                             (names.Count > 0 ? $"My {TrueForm.School} deck starts with {string.Join(", ", names)}. " : "") +
+                             "Ask \"what's in your hand\" in a battle, or tell me \"use Dragonblade\" to keep a card in my hand.", "true form");
+            return true;
+        }
+
+        // His school: "what is your school", "which school are you".
+        if (asking && Has("school", "class")) {
+            var now = TrueForm.School;
+            SendReply(heard, now == Shared.Behaviors.MagicSchool.Myth
+                ? "Myth is my own school. In a group you can switch me: \"go ice for me\", or \"go ice and tank for me\"."
+                : $"I'm {now} for this group. Myth is my own school, and I go back to it when the group ends.", "true form");
+            return true;
+        }
+
+        // What he can do: "what all options do you have", "what can you do", "commands".
+        if (Has("options", "commands", "what can you do", "what do you do", "how do i use you", "how does this work", "what are you for", "abilities")) {
+            SendReply(heard, "Group with me (\"join me\" or an invite) and I follow your lead at your level. Tell me \"attack\", \"defend\", \"support\" or \"auto\" for how I play, " +
+                             "\"go ice for me\" or \"go ice and tank for me\" to switch my school, \"use Dragonblade\" to keep a card in my hand, " +
+                             "\"blade me\" or \"shield us\" in a battle, and \"leave\" when you're done.", "true form");
+            return true;
+        }
+
+        // "Do you need healing?", "are you okay?": his health, no mode change.
+        if (IsQuestion(order) && Has("heal", "healing", "health", "hurt", "okay", "ok", "alright", "low")) {
+            var stats = wizard?.GameStats;
+            var max = stats is null ? 1 : Math.Max(1, stats.m_baseHitpoints + stats.m_bonusHitpoints);
+            var share = stats is null ? 1.0 : stats.m_currentHitpoints / (double) max;
+            SendReply(heard, share >= 0.6 ? $"I'm fine, at {share:P0} health. Thanks!" : $"I'm at {share:P0} health, a heal would help!", "true form");
+            return true;
+        }
+
+        return false;
+    }
+
     // Who called him, his leaving when told, and the lead handed to whoever he joined.
     private void TrueFormCalls(UltimusMember.Status me) {
         if (TrueForm.TakeLeave() && _partyMate != 0) {
@@ -264,6 +328,22 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         GroupRegistry.TryGetGroup(me.CharId, out var group);
+        // A school asked for before grouping: once that player is in his group, he switches.
+        if (TrueForm.SwapAfterJoin is { } later) {
+            if (group is not null && group.Members.Any(m => m.CharId == later.HeadId)) {
+                TrueForm.SwapAfterJoin = null;
+                TrueForm.AskSwap(later.School, later.Role, later.HeadId, later.HeadName);
+                if (later.Role is { } role) {
+                    TrueForm.SetMode(role);
+                }
+
+                SayLater(later.HeadId, true, $"Switching to {later.School} now. I'll pop out for a moment to change and be right back.", 0.5);
+            }
+            else if (DateTime.UtcNow - TrueForm.SwapAfterJoinAt > TimeSpan.FromMinutes(3)) {
+                TrueForm.SwapAfterJoin = null;
+            }
+        }
+
         // He made the group for whoever called him: the lead is theirs, so his spells match them.
         if (group is not null && !_tfLeaderGiven && _tfInvited.CharId != 0 && group.LeaderCharId == me.CharId
             && group.Members.Any(m => m.CharId == _tfInvited.CharId)) {
@@ -324,7 +404,33 @@ internal sealed partial class UltimusDirectorActor {
             return false;
         }
 
+        // Questions about him, grouped or not: his deck, treasure cards, school, what he can do, whether he needs a heal
+        // (Niduus, 2026-11-19: "TF interactions need to be looked at and fixed"; "What is in your deck?" got his fishing
+        // cantrips, "What all options do you have?" got Ultimus's questing answer, "Do you need healing?" set him to support).
+        if (TrueFormQuestion(heard, me, order)) {
+            return true;
+        }
+
+        // Astral schools are not a school a wizard is ("become moon").
+        if (System.Text.RegularExpressions.Regex.IsMatch(order, @"\b(go|become|be|switch to|change to|turn into)\s+(an?\s+)?(moon|sun|star|shadow|astral)\b")) {
+            SendReply(heard, "I can't be an astral school, but I can be Fire, Ice, Storm, Myth, Life, Death or Balance. Try \"go ice for me\".", "true form");
+            return true;
+        }
+
         if (!grouped) {
+            // "Become fire please" before grouping: he comes, and switches once the group is made.
+            if (TrueForm.SchoolFrom(order) is { } wanted) {
+                var rest = System.Text.RegularExpressions.Regex.Replace(order, @"\b(fire|ice|storm|myth|life|death|balance)\b", " ");
+                var role = TrueForm.ModeFrom(rest) is { } r && r is not (TrueForm.Mode.Auto or TrueForm.Mode.Evil) ? r : (TrueForm.Mode?) null;
+                TrueForm.SwapAfterJoin = new TrueForm.SwapAsk(wanted, role, heard.SpeakerCharId, heard.SpeakerName);
+                TrueForm.SwapAfterJoinAt = DateTime.UtcNow;
+                TrueForm.Call(heard.SpeakerCharId, heard.SpeakerName);
+                Note("Ultimus", $"True Form: {heard.SpeakerName} asks for {wanted} before grouping: he comes, then switches.");
+                SendReply(heard, $"Sure! Let's group first, then I'll switch to {wanted}." +
+                                 (TrueForm.Misfit(wanted, role) is { } misfit ? " Heads up: " + misfit : ""), "true form");
+                return true;
+            }
+
             if (Has("join me", "join us", "join", "come with me", "group with me", "group up", "help me", "help us", "party with me",
                     "come here", "i need you", "invite me", "team up", "follow me", "come help")) {
                 TrueForm.Call(heard.SpeakerCharId, heard.SpeakerName);
@@ -415,8 +521,9 @@ internal sealed partial class UltimusDirectorActor {
             return true;
         }
 
-        // A mode, however it is said: "defend", "go attack", "play support", "be evil", "tank for us", "atack".
-        if (TrueForm.ModeFrom(order) is { } mode) {
+        // A mode, however it is said: "defend", "go attack", "play support", "be evil", "tank for us", "atack". A question
+        // ("do you need healing", "are you attacking") is no order.
+        if (!IsQuestion(order) && TrueForm.ModeFrom(order) is { } mode) {
             var words = order.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
             if (words <= 6 || Has("mode", "play", "go", "be", "switch", "focus", "role", "become", "turn")) {
                 TrueForm.SetMode(mode);

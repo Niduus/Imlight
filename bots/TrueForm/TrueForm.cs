@@ -196,6 +196,11 @@ internal static class TrueForm {
 
     internal static DateTime RejoiningSince = DateTime.MinValue;
 
+    /// <summary>A school asked for before he was in the player's group: done once they group (3 minutes at most).</summary>
+    internal static volatile SwapAsk SwapAfterJoin;
+
+    internal static DateTime SwapAfterJoinAt = DateTime.MinValue;
+
     /// <summary>A school in a player's words ("go ice", "switch to storm", "be a fire wizard"), or null.</summary>
     internal static MagicSchool? SchoolFrom(string words) {
         var w = (words ?? "").Trim().ToLowerInvariant();
