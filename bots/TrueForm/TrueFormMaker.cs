@@ -94,6 +94,7 @@ internal static class TrueFormMaker {
             Dress(wizard, top, school.ToString(), style, statSchool);
             Stitch(wizard);
             GivePet(wizard, statSchool, style);
+            DropWeakMount(wizard, null);
             TrueFormJewels.Fill(wizard, statSchool, style);
             TrueFormSpells.Give(wizard, top, school.ToString(), style);
         }
@@ -297,6 +298,40 @@ internal static class TrueFormMaker {
     private static bool IsSchool(uint template, string school)
         => string.Equals((string) (CoreObjectFactory.GetCoreTemplate(template) as WizItemTemplate)?.m_school, school, StringComparison.OrdinalIgnoreCase);
 
+    // The least a pet and mount set must add (in BotGear score: about +3 damage for a hitter, +1.5 resist for a full tank).
+    private const double SET_WORTH = 12;
+
+    private static bool IsRental(WizItemTemplate item) {
+        try {
+            return ItemHelper.IsRental(item);
+        }
+        catch (Exception) {
+            return false;
+        }
+    }
+
+    // A mount he should not keep riding: a rental, or a set mount whose set his pet is not part of.
+    private static void DropWeakMount(Wizard wizard, uint? keep) {
+        try {
+            if (wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Mount) is not { } worn || (uint) worn.m_templateID == keep) {
+                return;
+            }
+
+            var template = ItemHelper.GetItemTemplate(worn);
+            var pet = wizard.EquipmentBehavior.GetItemInSlot(EquipmentSlotType.Pet) is { } p ? ItemHelper.GetItemTemplate(p) : null;
+            var setMount = template is not null && template.m_itemSetBonusTemplateID != 0;
+            var pairs = setMount && pet is not null && pet.m_itemSetBonusTemplateID == template.m_itemSetBonusTemplateID;
+            if (template is not null && (IsRental(template) || (setMount && !pairs))
+                && wizard.EquipmentToInventoryTransfer(worn.m_globalID.Full, out _)) {
+                Logger.Information("True Form: took off the mount {0} (a rental or a set mount with no set to make).",
+                    Logger.Args(Locale.GetEnglishName((string) template.m_displayName ?? "")));
+            }
+        }
+        catch (Exception e) {
+            Logger.Debug("True Form: could not check his mount: {0}", Logger.Args(e.Message));
+        }
+    }
+
     internal sealed record PetPick(uint Pet, uint? Mount, double Score, string Why);
 
     // Every pet body worth having, scored for his school and play style: the body's own stats, plus, when a
@@ -326,6 +361,13 @@ internal static class TrueFormMaker {
                                 set = together;
                                 mount = m;
                             }
+                        }
+
+                        // A set is only worth wearing for a real gain (Niduus, 2026-11-19: "not efficient. Tighten
+                        // efficiency"): at least about 3% of his main stat. A +1 damage set is not.
+                        if (set < SET_WORTH) {
+                            mount = null;
+                            set = 0;
                         }
 
                         if (mount is not null) {
@@ -360,7 +402,8 @@ internal static class TrueFormMaker {
     private static bool Allowed(uint id, out string name) {
         var item = CoreObjectFactory.GetCoreTemplate(id) as WizItemTemplate;
         name = Locale.GetEnglishName((string) item?.m_displayName ?? "") ?? "";
-        return item is not null && !string.IsNullOrWhiteSpace(name)
+        // Never a rental (Niduus, 2026-11-19: he rode "Tartarus Ferry (1 Day)" for its +1 damage: "not efficient").
+        return item is not null && !string.IsNullOrWhiteSpace(name) && !IsRental(item)
                && !(item.m_adjectiveList ?? []).Any(a => (string) a is "FLAG_CrownsOnly" or "FLAG_Retired" or "FLAG_DevItem");
     }
 
@@ -492,7 +535,8 @@ internal static class TrueFormMaker {
         // Only the top level's gear in each slot (Niduus, 2026-11-19: "TF is using non-190 gear"): a lower piece with bigger
         // stats than a level 190 one used to win, as the 190 piece's sockets were empty. Now the 190 piece is worn and its
         // sockets are filled (TrueFormJewels). A slot with no piece at his level wears the highest level there is.
-        static bool Allowed(BotGear.Piece p) => !p.CrownsOnly && !p.Retired && !BotGear.Forbidden(p.Id) && !BotGear.PartlyRead(p.Id);
+        static bool Allowed(BotGear.Piece p) => !p.CrownsOnly && !p.Retired && !BotGear.Forbidden(p.Id) && !BotGear.PartlyRead(p.Id)
+                                                && !IsRental(CoreObjectFactory.GetCoreTemplate(p.Id) as WizItemTemplate);
         // The server's drop and shop lists have no Ahmarra gear yet, so the level 190 pieces come from the game's own files
         // (TrueFormTopGear; Niduus, 2026-11-19: "curious as to why not 190 gear"). Read once, up to a few minutes the first time.
         var top = TrueFormTopGear.Pieces;
