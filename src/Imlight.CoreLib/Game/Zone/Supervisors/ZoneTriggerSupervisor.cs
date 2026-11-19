@@ -815,7 +815,28 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
                 ScriptState = Zone.ScriptState,
                 EventAdjectives = message.Adjectives,
                 TriggerZonePath = Zone.ZonePath,
+                InstanceQuestCompleted = Zone.IsInstance ? CopyJudgesQuest : null,
             });
+    }
+
+    /*
+     * A dungeon copy runs its quests afresh each time (QuestService.TryGrantDungeonQuests), but the copy's doors asked the
+     * wizard's registry whether a quest was done, and that remembers every earlier run. The Temple of Storms' way down to
+     * the boss waits for the Test of Aptitude (KT-CRY5-C01-002): a wizard who passed it on an earlier run went down before
+     * passing either test this time, though the pad stayed dark (Niduus 2026-11-19). A quest this copy gave out is now
+     * judged by this copy; any other one still by the wizard's registry.
+     */
+    private bool? CopyJudgesQuest(string questName) {
+        if (string.IsNullOrEmpty(questName) || QuestOptions.IsOff(questName)) {
+            return null;
+        }
+
+        var progress = Zone.ScriptState.SnapshotQuestProgress();
+        if (progress?.StartedQuests is not { } started || !started.Contains(questName, StringComparer.OrdinalIgnoreCase)) {
+            return null;
+        }
+
+        return progress.CompletedQuests?.Contains(questName, StringComparer.OrdinalIgnoreCase) == true;
     }
 
     private void UpdateSpawnResultTriggers(ref List<Trigger> clientTriggers, List<SpawnObject> spawners, List<PathObjectTemplate> paths, List<NodeObject> nodes) {
