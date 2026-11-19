@@ -37,6 +37,36 @@ namespace Imlight.Setup;
 /// </summary>
 internal static class CheatSpecs {
 
+    // The coloured group each block shows in (Niduus, 2026-11-19, "Split into ~12 colored kinds"). A block not named here
+    // goes in its kind's plain group (If… or Cast…).
+    private static readonly Dictionary<string, BlockGroup> s_groups = Groups(
+        (BlockGroup.WHO, "C.Wizard C.WizardName C.Account C.ThisPc C.Friend C.Grouped C.Rank C.AnyWizard C.Online"),
+        (BlockGroup.LIMIT, "I.Chance I.Once I.MaxTimes I.Cooldown I.Rounds I.Phase C.Round C.Time C.Roll"),
+        (BlockGroup.HIT, "D.Damage D.Drain D.Heal D.MyHeal D.HealthTo D.SwapHealth D.SetHealth D.MaxHealth D.Revive D.Defeat D.HitShare D.DamageCap D.Detonate"),
+        (BlockGroup.EFFECTS, "D.RemoveCharms D.RemoveWards D.RemoveEffects D.RemoveAuras D.AddEffects D.AddCharm D.Aura D.ConvertEffects D.CopyEffects " +
+                             "D.SwapEffects D.MirrorEffects D.ScaleEffects D.EffectsSchool D.ProtectEffects D.StealEffects D.Dispel D.RemoveGlobal D.Boost D.Immune D.Reflect"),
+        (BlockGroup.PIPS, "D.Pips D.MyPips D.StealPips D.SwapPips D.PipGain D.StealCard D.AddCard D.Discard D.ShuffleHand D.LockCards D.HandSize"),
+        (BlockGroup.BATTLE, "D.Stun D.FirstTurn D.ExtraTurn D.Silence D.LockCircle D.UnlockCircle D.Kick D.NoFlee D.SpellRule D.ChangeSchool D.SetPhase " +
+                            "D.Reward D.Interrupt D.InTurn D.OnlySchool D.Mark D.Unmark D.Minion D.Form D.Clone D.Polymorph"),
+        (BlockGroup.SHOW, "D.Say D.Chat D.Bubble D.Announce D.Banner D.MyChat D.Sound D.Countdown"),
+        (BlockGroup.MEMORY, "D.SetVar D.Remember C.Var"),
+        (BlockGroup.FLOW, "D.Wait D.PickOne D.RandomOne D.Repeat D.IfVar D.IfCleared D.IfConverted D.Otherwise D.Stop D.RunCheat D.GiveCheat D.CheatOnOff"));
+
+    private static Dictionary<string, BlockGroup> Groups(params (BlockGroup Group, string Ids)[] groups) {
+        var map = new Dictionary<string, BlockGroup>(StringComparer.OrdinalIgnoreCase);
+        foreach (var (group, ids) in groups) {
+            foreach (var id in ids.Split(' ', StringSplitOptions.RemoveEmptyEntries)) {
+                map[id] = group;
+            }
+        }
+
+        return map;
+    }
+
+    /// <summary>The coloured group a block shows in.</summary>
+    internal static BlockGroup GroupOf(CheatSpec spec)
+        => s_groups.TryGetValue(spec.Id, out var group) && group.Kind == spec.Kind ? group : BlockGroup.Of(spec.Kind);
+
     // Whom a block works on. Niduus, 2026-11-04: "Sharpen targeted. All Players, All Enemies and so on": every choice
     // says plainly whom it means, in groups (whole sides, wizards only, creatures only, minions only, one picked, random,
     // from the battle so far, circles). "Enemies" and "allies" are as seen by whoever's cheat it is: a boss's enemies are
@@ -1019,6 +1049,12 @@ internal static class CheatSpecs {
             "Only if {Scope} variable {Var} is {Op} {Amount}, do the next {Count} blocks",
             [F("Scope", CheatFieldType.Choice, "", s_scopes), F("Var", CheatFieldType.Words, "rage"), F("Op", CheatFieldType.Choice, ">=", s_ops), new("Amount", CheatFieldType.Number, 5, Max: 1_000_000, Min: -1_000_000), F("Count", CheatFieldType.Number, 1, max: 20)],
             b => $"(the next {Math.Max(1, b.Number("Count"))} only if {b.Text("Var")} is {Op(b)} {N(b.Number("Amount"))})"),
+        // Niduus, 2026-11-19 (more Flow blocks): what happens when an "only if" did not let its blocks go, and an end.
+        new("D.Otherwise", BlockKind.Do, "list", "otherwise", "Put it right after the blocks of an \"only if\" (only if a variable, only if something came off, only if something was converted): the blocks under it (how many) go off only when that \"only if\" did NOT let its blocks go. Example: only if rage is at least 5, enrage; otherwise say a taunt.",
+            "Otherwise, do the next {Count} blocks", [F("Count", CheatFieldType.Number, 1, max: 20)],
+            b => $"(otherwise the next {Math.Max(1, b.Number("Count"))})"),
+        new("D.Stop", BlockKind.Do, "stop", "stop here", "The blocks under this one do nothing this time. Inside a repeat or an \"only if\", only the rest of those blocks stop. Example: after a heal, stop if it was the last thing needed.",
+            "Stop here", [], _ => "stop"),
         new("D.Repeat", BlockKind.Do, "layers", "repeat", "The blocks under it (how many) go off this many times in a row.",
             "Do the next {Count} blocks {Times} times", [F("Count", CheatFieldType.Number, 1, max: 20), F("Times", CheatFieldType.Number, 3, max: 20)],
             b => $"(the next {Math.Max(1, b.Number("Count"))} blocks {b.Number("Times")} times)"),

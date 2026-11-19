@@ -234,7 +234,7 @@ internal sealed partial class ManagerWindow {
     private Control CheatEditor(CheatBoard board, Control[] listButtons, Control[] editButtons, Control top) {
         var palette = new BlockPalette(
             CheatSpecs.All.Where(s => s.Id is not ("W.Other" or "D.Other") && s.For(board.Player))
-                .Select(s => new PaletteEntry(s.Kind, s.Icon, s.Palette, s.Help, s)),
+                .Select(s => new PaletteEntry(s.Kind, s.Icon, s.Palette, s.Help, s, CheatSpecs.GroupOf(s))),
             entry => Guarded(() => AddFromPalette(board, (CheatSpec) entry.Payload, null, -1)),
             "Cheat blocks") {
             Width = 236, VerticalAlignment = VerticalAlignment.Stretch,
@@ -251,14 +251,19 @@ internal sealed partial class ManagerWindow {
             }
         };
 
-        Control Legends() => new WrapPanel {
-            Children = {
-                Legend(BlockKind.When, "When… starts a cheat: what sets it off"),
-                Legend(BlockKind.Passive, "Passive… always true, with no When (such as its circle)"),
-                Legend(BlockKind.If, "If… only when something is true"),
-                Legend(BlockKind.Do, board.Player ? "Do… what you get, top to bottom" : "Do… what the boss does, top to bottom"),
-            },
-        };
+        // One colour for each group of blocks (Niduus, 2026-11-19: more than 4 kinds). The Ifs (Who, Limits, If) all must
+        // hold; the Dos (Cast to Flow) go off top to bottom.
+        Control Legends() {
+            var legends = new WrapPanel();
+            foreach (var group in BlockGroup.ALL) {
+                legends.Children.Add(Legend(group.Fill, group.Legend));
+            }
+
+            ToolTip.SetTip(legends, "A cheat starts with a When (or a Passive). Every Who, Limits and If block under it must hold. " +
+                                    (board.Player ? "Then the other blocks happen to you, top to bottom." : "Then the other blocks are what the boss does, top to bottom."));
+
+            return legends;
+        }
 
         var buttons = Row([
             Action(Primary("New cheat"), () => {
@@ -299,10 +304,10 @@ internal sealed partial class ManagerWindow {
         }
     }
 
-    private static Control Legend(BlockKind kind, string text) => new StackPanel {
+    private static Control Legend(IBrush fill, string text) => new StackPanel {
         Orientation = Orientation.Horizontal, Spacing = 6, Margin = new Thickness(0, 0, 16, 4),
         Children = {
-            new Border { Width = 14, Height = 14, CornerRadius = new CornerRadius(4), Background = BlockColors.Fill(kind), VerticalAlignment = VerticalAlignment.Center },
+            new Border { Width = 14, Height = 14, CornerRadius = new CornerRadius(4), Background = fill, VerticalAlignment = VerticalAlignment.Center },
             new TextBlock { Text = text, FontSize = 12, Foreground = MUTED, VerticalAlignment = VerticalAlignment.Center },
         },
     };
@@ -653,9 +658,38 @@ internal sealed partial class ManagerWindow {
         var stack = new BlockStack("Drop If or Do blocks here, or click one in the palette");
         var blocks = new List<BlockView> { BlockFor(board, rule, rule.When) };
         blocks.AddRange(rule.Ifs.Select(b => BlockFor(board, rule, b)));
-        blocks.AddRange(rule.Dos.Select(b => BlockFor(board, rule, b)));
+        // The Dos as a tree: a holder's blocks indented under it, closed by an end strip (CheatFlow).
+        foreach (var line in CheatFlow.Layout(rule.Dos)) {
+            var view = line.End ? EndStrip(rule.Dos[line.Index]) : BlockFor(board, rule, rule.Dos[line.Index]);
+            view.Margin = new Thickness(line.Depth * 28, 0, 0, 0);
+            blocks.Add(view);
+        }
+
         stack.SetBlocks(blocks);
+        stack.MovedToGap += (view, gap) => Guarded(() => {
+            if (view.Kind != BlockKind.Do || view.Model is not CheatBlock block) {
+                return;
+            }
+
+            var from = rule.Dos.IndexOf(block);
+            if (from < 0) {
+                return;
+            }
+
+            if (!CheatFlow.Move(rule.Dos, from, gap, out var emptied)) {
+                Say("A block that holds others can't go inside itself.");
+
+                return;
+            }
+
+            SayEmptied(emptied);
+            RenderCheats(board);
+        });
         stack.Moved += (view, to) => Guarded(() => {
+            if (view.Kind == BlockKind.Do) {
+                return;
+            }
+
             var block = (CheatBlock) view.Model!;
             var list = view.Kind == BlockKind.If ? rule.Ifs : rule.Dos;
             list.Remove(block);
@@ -665,6 +699,32 @@ internal sealed partial class ManagerWindow {
         stack.Dropped += (payload, _, index) => Guarded(() => AddFromPalette(board, (CheatSpec) payload, rule, index));
 
         return new Border { Padding = new Thickness(4, 6, 4, 2), Child = stack };
+    }
+
+    // The strip that closes a holder's blocks, in the holder's colour. Blocks dropped above it go inside.
+    private static BlockView EndStrip(CheatBlock holder) {
+        var group = CheatSpecs.GroupOf(holder.Kind);
+        var words = holder.Spec switch {
+            "D.Repeat" => "end of repeat",
+            "D.Otherwise" => "end of otherwise",
+            _ => "end of only if",
+        };
+        var view = new BlockView(BlockKind.Do, "layers", "", canDelete: false, canDuplicate: false, canToggle: false) {
+            Fixed = true, Fill = group.Fill, Edge = group.Edge, MinHeight = 26,
+        };
+        view.Padding = new Thickness(6, BlockShape.NOTCH_DEPTH + 1, 6, 3);
+        view.Text(words);
+        view.Cursor = Avalonia.Input.Cursor.Default;
+        ToolTip.SetTip(view, "Blocks above this strip are inside the holder; drag a block below it to take it out.");
+
+        return view;
+    }
+
+    // A holder left with none of its blocks takes the block after it (the cheat file can't say "none").
+    private void SayEmptied(List<CheatBlock> emptied) {
+        if (emptied.Count > 0) {
+            Say("A holder can't be empty, so it now holds the block that was under it. Drag that one out too, or delete the holder.");
+        }
     }
 
     // A palette block: into the given cheat (or the one being edited), at index among its kind (-1: at the end). A
@@ -705,7 +765,15 @@ internal sealed partial class ManagerWindow {
                 rule.Ifs.Insert(index < 0 ? rule.Ifs.Count : Math.Min(index, rule.Ifs.Count), block);
                 break;
             default:
-                rule.Dos.Insert(index < 0 ? rule.Dos.Count : Math.Min(index, rule.Dos.Count), block);
+                // Dropped at a line of the editor: into the holders around that place (CheatFlow).
+                if (index < 0) {
+                    rule.Dos.Add(block);
+                }
+                else {
+                    var (at, holders) = CheatFlow.At(rule.Dos, index);
+                    CheatFlow.Insert(rule.Dos, at, [block], holders);
+                }
+
                 break;
         }
 
@@ -740,6 +808,9 @@ internal sealed partial class ManagerWindow {
         var hat = BlockColors.IsHat(spec.Kind);
         var view = new BlockView(spec.Kind, spec.Icon, spec.Help + (hat ? " Drag or click another When block in the palette to change it." : ""),
             canDelete: !hat, canDuplicate: !hat) { Model = block };
+        var group = CheatSpecs.GroupOf(spec);
+        view.Fill = group.Fill;
+        view.Edge = group.Edge;
         view.SetOn(hat ? !rule.Off : block.On);
         view.Toggled += on => Guarded(() => {
             if (hat) {
@@ -754,12 +825,22 @@ internal sealed partial class ManagerWindow {
         });
         view.Deleted += () => Guarded(() => {
             rule.Ifs.Remove(block);
-            rule.Dos.Remove(block);
+            if (rule.Dos.IndexOf(block) is var at and >= 0) {
+                // A holder's own blocks stay, one step out.
+                SayEmptied(CheatFlow.Remove(rule.Dos, at, whole: false));
+            }
+
             RenderCheats(board);
         });
         view.Duplicated += () => Guarded(() => {
-            var list = spec.Kind == BlockKind.If ? rule.Ifs : rule.Dos;
-            list.Insert(list.IndexOf(block) + 1, block.Copy());
+            if (spec.Kind == BlockKind.If) {
+                rule.Ifs.Insert(rule.Ifs.IndexOf(block) + 1, block.Copy());
+            }
+            else {
+                // A holder is copied with the blocks it holds.
+                CheatFlow.Duplicate(rule.Dos, rule.Dos.IndexOf(block));
+            }
+
             RenderCheats(board);
         });
         ToolTip.SetTip(view.Grip, hat ? "The block that starts this cheat" : "Drag to move it up or down");
@@ -785,7 +866,7 @@ internal sealed partial class ManagerWindow {
             refreshNote();
         }
 
-        var parts = s_sentence.Split(spec.Sentence);
+        var parts = s_sentence.Split(CheatFlow.Sentence(spec));
         // Split keeps the captured names at odd places: words, a box, words, a box...
         for (var i = 0; i < parts.Length; i++) {
             if (i % 2 == 0) {
@@ -805,7 +886,7 @@ internal sealed partial class ManagerWindow {
         // A field its sentence forgets still gets a box at the end (remove effects' "even protected ones" had none,
         // Niduus 2026-10-26).
         var shown = new HashSet<string>(parts.Where((_, i) => i % 2 == 1));
-        foreach (var field in spec.Fields.Where(f => !shown.Contains(f.Key))) {
+        foreach (var field in spec.Fields.Where(f => !shown.Contains(f.Key) && !CheatFlow.Hidden(spec, f.Key))) {
             view.Field(FieldFor(board, rule, block, field, Changed));
         }
 

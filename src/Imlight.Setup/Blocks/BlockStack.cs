@@ -48,6 +48,12 @@ internal sealed class BlockStack : Grid {
     /// <summary>A block was dragged to a new place in its group (its index among the blocks of its kind).</summary>
     internal event Action<BlockView, int>? Moved;
 
+    /// <summary>
+    /// A block was dragged and let go: the gap it was let go at among its group's lines, counted with the block itself
+    /// still in its place (0: above the first). For editors whose lines are not one block each (holders, CheatFlow).
+    /// </summary>
+    internal event Action<BlockView, int>? MovedToGap;
+
     /// <summary>A palette block was dropped in: what it is, its kind and its index among the blocks of its kind.</summary>
     internal event Action<object, BlockKind, int>? Dropped;
 
@@ -74,6 +80,10 @@ internal sealed class BlockStack : Grid {
     }
 
     private void Attach(BlockView block) {
+        if (block.Fixed) {
+            return;
+        }
+
         // The whole block is a handle, not only its grip (Niduus, 2026-11-11: "When I try to click and drag it just
         // doesn't let me"). Its boxes and buttons keep their own clicks: they handle the press before it gets here.
         block.AddHandler(PointerPressedEvent, (_, e) => {
@@ -123,6 +133,7 @@ internal sealed class BlockStack : Grid {
             var (lo, hi) = Range(block.Kind);
             var gap = Math.Clamp(GapAt(p.Y), lo, hi);
             var to = (gap > from ? gap - 1 : gap) - lo;
+            MovedToGap?.Invoke(block, gap - lo);
             if (from - lo != to) {
                 Moved?.Invoke(block, to);
             }

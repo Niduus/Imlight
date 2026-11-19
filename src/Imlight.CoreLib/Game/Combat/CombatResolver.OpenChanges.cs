@@ -39,7 +39,7 @@ public partial class CombatResolver {
     // Steps that never change effects or health, or show themselves (a real cast), are not watched.
     private static readonly HashSet<string> s_unwatchedSteps = new(StringComparer.OrdinalIgnoreCase) {
         "Cast", "Polymorph", "FreeCast", "Say", "Bubble", "Announce", "Countdown", "Sound", "Wait", "PickOne", "RandomOne",
-        "Repeat", "IfCleared", "IfConverted", "IfVar", "OnlySchool", "SetVar", "Remember", "Mark", "Unmark", "Interrupt",
+        "Repeat", "IfCleared", "IfConverted", "IfVar", "Otherwise", "Stop", "OnlySchool", "SetVar", "Remember", "Mark", "Unmark", "Interrupt",
         "SetPhase", "Minion", "Clone", "Form", "SetHealth", "Defeat", "Dispel", "RemoveGlobal", "ConvertEffects", "CopyEffects",
         "RunCheat", "GiveCheat", "CheatOnOff", "Kick", "FirstTurn", "InTurn",
         // Stat changes the game never draws (an aura-like effect with no spell): shown as a blade, the game would use it up.

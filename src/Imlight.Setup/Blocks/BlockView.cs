@@ -117,6 +117,9 @@ internal sealed class BlockView : BlockShape {
     /// <summary>Its group in a stack (blocks are dragged within their group): 0 for When, 1 for If, 2 for Do.</summary>
     internal int Group => (int) Kind;
 
+    /// <summary>A line that is not a block of its own (a holder's end strip): it cannot be dragged.</summary>
+    internal bool Fixed { get; init; }
+
     /// <summary>What the block stands for, for its owner.</summary>
     internal object? Model { get; init; }
 
