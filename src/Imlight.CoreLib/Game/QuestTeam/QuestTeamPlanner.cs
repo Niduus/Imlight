@@ -189,7 +189,11 @@ internal static class QuestTeamPlanner {
         // three were left on "Skeleton Crew", "Ghost Hunters" and "Unicorn Way", each picked after hers and never done).
         int Behind(string quest) => team.Count(m => m.Wizard?.HasCompletedQuest(quest) == true);
 
-        return held.OrderByDescending(h => h.Value.Rank).ThenByDescending(h => h.Value.Count).ThenByDescending(h => Behind(h.Key)).ThenBy(h => h.Value.Order)
+        // The one others finished comes before the one most of them hold: sorted after the count, a single wizard left on a quest
+        // the other three had already handed in was never brought level (a player's report, 2026-11-19: Chaac stayed on
+        // "Talk to Private Connelly" on Unicorn Way while the other three took the next quest; his log, 2026-11-15 07:07).
+        return held.OrderByDescending(h => h.Value.Rank).ThenByDescending(h => Behind(h.Key) > 0).ThenByDescending(h => h.Value.Count)
+            .ThenByDescending(h => Behind(h.Key)).ThenBy(h => h.Value.Order)
             .Select(h => h.Key).FirstOrDefault();
     }
 

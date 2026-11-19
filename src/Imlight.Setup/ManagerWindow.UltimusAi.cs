@@ -23,6 +23,7 @@ internal sealed partial class ManagerWindow {
 
     private readonly ToggleSwitch _ultAi = new() { OnContent = "On", OffContent = "Off" };
     private readonly ToggleSwitch _ultAiStuck = new() { OnContent = "On", OffContent = "Off" };
+    private readonly ToggleSwitch _ultAiDataFirst = new() { OnContent = "On", OffContent = "Off" };
     private readonly TextBox _ultAiUrl = new() { Width = 320, Watermark = "http://localhost:11434/v1" };
     private readonly TextBox _ultAiModel = new() { Width = 220, Watermark = "qwen3.5:4b" };
     private readonly TextBlock _ultAiTest = new() { TextWrapping = TextWrapping.Wrap };
@@ -52,6 +53,14 @@ internal sealed partial class ManagerWindow {
                     _ultAiStuck.IsChecked == true
                         ? "Ultimus thinks it through when he is stuck (with the AI app running), and always uses what worked before."
                         : "Stuck thinking is off: Ultimus uses only his usual fixes when he is stuck.", "StuckThinking"));
+            }
+        };
+        _ultAiDataFirst.IsCheckedChanged += (_, _) => {
+            if (!_showingUltAi) {
+                _ = Guard(() => SaveUltimusAiAsync("ServerDataFirst", _ultAiDataFirst.IsChecked == true ? "true" : "false",
+                    _ultAiDataFirst.IsChecked == true
+                        ? "Server data first: the bots answer from the game's data and their own records, and use the AI only when those don't know."
+                        : "The AI words the bots' answers again whenever it is on.", "ServerDataFirst"));
             }
         };
         _ultAiUrl.LostFocus += (_, _) => {
@@ -104,6 +113,10 @@ internal sealed partial class ManagerWindow {
             "before anything is sent, lines that try to trick the AI are never sent, and any answer that leaks something is thrown away. " +
             "In chat it is never used for things that make him act (follow, potions, gold), and when it is off, slow or not running he answers with his normal chat.",
             SwitchRow("AI chat", _ultAi, "Off by default. Changes count right away, no restart."),
+            SwitchRow("Server data first", _ultAiDataFirst,
+                "On by default. Every bot (Ultimus, the TCO7 and the Quest Team) answers from the server's own data first: the game's files, " +
+                "its own records and what it learned before. The AI is used only when none of that knows the answer. When stuck, its own records " +
+                "and moves come first and the AI thinks only at a real roadblock. Off lets the AI word every answer, as before."),
             SwitchRow("Think it through when stuck", _ultAiStuck,
                 "On by default. When Ultimus is stuck on the same step again, he first does what worked there before; if nothing has, the AI " +
                 "guesses why and picks one of his normal unstuck moves (step aside, walk away, another route, Commons, fight what's around, " +
@@ -230,6 +243,7 @@ internal sealed partial class ManagerWindow {
             ShowUltimusAiProvider(provider);
             _ultAi.IsChecked = _manager.GetSwitch("Ultimus", "LocalAI");
             _ultAiStuck.IsChecked = !_manager.HasSetting("Ultimus", "StuckThinking") || _manager.GetSwitch("Ultimus", "StuckThinking");
+            _ultAiDataFirst.IsChecked = !_manager.HasSetting("Ultimus", "ServerDataFirst") || _manager.GetSwitch("Ultimus", "ServerDataFirst");
             _ultAiUrl.Text = _manager.GetSetting("Ultimus", "LocalAIUrl") is { Length: > 0 } url ? url : "http://localhost:11434/v1";
             _ultAiModel.Text = _manager.GetSetting("Ultimus", "LocalAIModel") is { Length: > 0 } model ? model : "qwen3.5:4b";
         }

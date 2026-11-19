@@ -101,6 +101,8 @@ internal sealed partial class QuestTeamDirectorActor {
     }
 
     private TeamTry _teamTry;
+    // The step the leader is stuck on again, waiting for the server-data check before the AI may think about it.
+    private string _askStep;
     private QuestTeamPlanner.Target _leaderLastTargetForStuck;
 
     // Got going: well away for 45 seconds, or 5 minutes with no new alarm.
@@ -145,8 +147,9 @@ internal sealed partial class QuestTeamDirectorActor {
                 return;
             }
 
-            // Stuck again on the step: thought through with the local AI in the background.
-            AskAboutStuck(member, quest, stepNow, where);
+            // Stuck again on the step: thought through with the local AI in the background, but only once the team's own data
+            // has nothing for the spot (server data first, BotDataFirst; asked below).
+            _askStep = stepNow;
         }
 
         if (tries >= 3) {
@@ -179,6 +182,8 @@ internal sealed partial class QuestTeamDirectorActor {
         // made and what to do to prevent them"): when stepping a little aside did not free him here, the team goes further.
         var lesson = BotMistakes.Near(BotMistakes.STUCK, member.Zone, member.X, member.Y);
         var goFar = tries >= 2;
+        // Whether the bots' own records know a way out here (server data first, BotDataFirst).
+        var dataKnowsAFix = lesson is { Worked.Length: > 0 };
 
         // What Ultimus worked out when he was stuck on this quest, and what got him going (UltimusSolutions, shared like his
         // drop memory and tips; Niduus, 2026-11-14): written in the team's log once per quest, and when going well away is
@@ -189,6 +194,7 @@ internal sealed partial class QuestTeamDirectorActor {
             }
 
             goFar |= solved.GoFar;
+            dataKnowsAFix = true;
         }
         if (lesson is not null && index == 0) {
             Note(member.Role, $"{member.Name}: {lesson.Bot} was stuck here too ({lesson.Times} time(s)); " +
@@ -205,7 +211,30 @@ internal sealed partial class QuestTeamDirectorActor {
         if (index == 0 && !goFar && lesson is null
             && BotLessons.Best(situation, [BotLessons.ASIDE, BotLessons.AWAY, BotLessons.OTHER_WAY, BotLessons.COMMONS], null, out var learnedLine) is { } learned) {
             goFar = learned != BotLessons.ASIDE;
+            dataKnowsAFix = true;
             Note(member.Role, $"{member.Name}: {learnedLine}");
+        }
+
+        // What got a bot going by this spot after its watchdog went off (BotWatchdogBook, Niduus 2026-11-19).
+        var watchdogLine = "";
+        var watchdogFix = index == 0 ? BotWatchdogBook.Advice(member.Zone, member.X, member.Y,
+            [Ultimus.UltimusFixes.ASIDE, Ultimus.UltimusFixes.AWAY, Ultimus.UltimusFixes.OTHER_WAY, Ultimus.UltimusFixes.START], out watchdogLine) : null;
+        if (watchdogFix is not null) {
+            goFar |= watchdogFix != Ultimus.UltimusFixes.ASIDE;
+            Note(member.Role, $"{member.Name}: {watchdogLine}");
+        }
+
+        // Server data first (BotDataFirst): the AI thinks only at a roadblock, when nothing the bots wrote down (Ultimus's
+        // solutions, the mistakes book, lessons, the watchdog book) has a way out here, or the team keeps getting stuck here.
+        if (index == 0 && _askStep is { } askStep) {
+            _askStep = null;
+            var usedUp = tries >= 3 || BotWatchdogBook.Trap(member.Zone, member.X, member.Y);
+            if (BotDataFirst.Roadblock(dataKnowsAFix || watchdogFix is not null, usedUp, _alarms.GetValueOrDefault(AlarmKey(member, askStep)))) {
+                AskAboutStuck(member, quest, askStep, where);
+            }
+            else {
+                Note(member.Role, $"{member.Name}: the team's own records still have a way to try here, so it uses those before asking the AI.");
+            }
         }
 
         // The team writes its own results into the shared stuck memory too (Niduus, 2026-11-15: idea 1): stuck again by the

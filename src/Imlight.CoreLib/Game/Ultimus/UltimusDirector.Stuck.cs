@@ -195,7 +195,10 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
-        var (fix, flag) = UltimusFixes.Next(member.Zone, member.X, member.Y, step, skip, situation);
+        // What got a bot going by this spot after its watchdog went off (BotWatchdogBook): server data, tried before the usual order.
+        var watchdogFix = BotWatchdogBook.Advice(member.Zone, member.X, member.Y,
+            UltimusFixes.Order.Where(f => f != UltimusFixes.FLAG && !skip.Contains(f)).ToList(), out var watchdogLine);
+        var (fix, flag) = UltimusFixes.Next(member.Zone, member.X, member.Y, step, skip, situation, watchdogFix, watchdogLine);
         if (flag.Lesson.Length > 0) {
             Think(flag.Lesson, "lesson|" + situation.Key + "|" + fix);
         }

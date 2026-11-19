@@ -84,6 +84,65 @@ internal static class UltimusTco7 {
 
     internal static bool FreeOf(UltimusSeat seat) => s_free.Of(seat);
 
+    // ---- The squad (Niduus, 2026-11-19): up to four of them quest together for good ----
+
+    // Set by ".ultimus squad" for this server run; null = [TCO7] Squad from Imlight.ini.
+    private static string s_squadOverride;
+
+    internal static void SetSquadOverride(string names) => s_squadOverride = names;
+
+    /// <summary>
+    /// [TCO7] Squad: up to four member names, with commas ("Tulkar, Cyndr, Kurrent, Mythis"); empty = no squad. The squad
+    /// groups up and stays grouped: the one furthest behind in the story leads and the others come along and help, so they
+    /// catch up to the same quest, then quest on together without splitting (also at a quest that branches, like the Three
+    /// Streets). The rest quest at their own pace, and Ultimus always alone. Applies at once.
+    /// </summary>
+    internal static List<UltimusSeat> Squad {
+        get {
+            var names = s_squadOverride ?? ConfigurationManager.GetValue("TCO7.Squad", "");
+            if (string.IsNullOrWhiteSpace(names) || names.Trim().Equals("off", StringComparison.OrdinalIgnoreCase)) {
+                return [];
+            }
+
+            return [.. names.Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries)
+                .Select(n => UltimusSeat.Tco7.FirstOrDefault(s => s.Name.Equals(n.Trim(), StringComparison.OrdinalIgnoreCase)))
+                .Where(s => s is not null).Distinct().Take(4)];
+        }
+    }
+
+    internal static bool InSquad(UltimusSeat seat) => seat is { IsTco7: true } && Squad.Contains(seat);
+
+    // How far each member is in the story (world number x 1000 + story quests done there), -1 unknown.
+    private static readonly SeatLocal<int> s_score = new(() => -1);
+    private static readonly object s_captainLock = new();
+    private static UltimusSeat s_captain;
+
+    internal static void NoteScore(int score) => s_score.Value = score;
+
+    internal static int ScoreOf(UltimusSeat seat) => s_score.Of(seat);
+
+    /// <summary>
+    /// The squad's leader: the member furthest behind in the story among those playing, so the others help it catch up.
+    /// It changes only when another member is two or more story quests further behind, so the group doesn't keep re-forming.
+    /// Null when fewer than two squad members are playing.
+    /// </summary>
+    internal static UltimusSeat Captain() {
+        var playing = Squad.Where(s => UltimusDirector.MembersOf(s) is { Count: > 0 } m && m[0].Wizard is not null && ScoreOf(s) >= 0).ToList();
+        lock (s_captainLock) {
+            if (playing.Count < 2) {
+                s_captain = null;
+                return null;
+            }
+
+            var lowest = playing.OrderBy(ScoreOf).ThenBy(s => s.Index).First();
+            if (s_captain is null || !playing.Contains(s_captain) || ScoreOf(s_captain) - ScoreOf(lowest) >= 2) {
+                s_captain = lowest;
+            }
+
+            return s_captain;
+        }
+    }
+
     // A member that just said yes takes the asker's invitation for a minute (UltimusMember, MSG_PARTYREQUESTJOIN).
     private static readonly SeatLocal<(ulong CharId, DateTime Until)> s_accept = new();
 
@@ -91,6 +150,11 @@ internal static class UltimusTco7 {
 
     /// <summary>Whether the seat working now said yes to teaming up with this inviter a moment ago.</summary>
     internal static bool MayAcceptInvite(ulong inviterCharId) {
+        // The squad's leader's invitation is always taken by a squad member.
+        if (InSquad(UltimusSeat.Current) && UltimusSeat.OfCharacter(inviterCharId) is { IsTco7: true } from && InSquad(from) && Captain() == from) {
+            return true;
+        }
+
         var (charId, until) = s_accept.Value;
         return charId != 0 && charId == inviterCharId && DateTime.UtcNow < until && UltimusSeat.Current.IsTco7
                && UltimusSeat.OfCharacter(inviterCharId) is { IsTco7: true };
@@ -126,6 +190,9 @@ internal sealed partial class UltimusDirectorActor {
             Tco7Heard(me, line, inBattle, grouped);
         }
 
+        // The squad: grouped for good, the one furthest behind leading (UltimusDirector.Tco7.cs, SquadTick).
+        var squad = SquadTick(me, inBattle, grouped);
+
         if (DateTime.UtcNow < _tco7NextLook || inBattle || _paused || !UltimusTco7.Talk) {
             return;
         }
@@ -141,7 +208,7 @@ internal sealed partial class UltimusDirectorActor {
 
             var myQuest = _currentQuest ?? _target?.Quest ?? "";
             // Two on the same story quest: the first of the two (by the TCO7's order) asks the other to team up.
-            if (UltimusTco7.TeamUp && !grouped && _partyMate == 0 && _seat.Index < other.Index && myQuest.Length > 0
+            if (UltimusTco7.TeamUp && !squad && !UltimusTco7.InSquad(other) && !grouped && _partyMate == 0 && _seat.Index < other.Index && myQuest.Length > 0
                 && UltimusTco7.FreeOf(other) && mate.Wizard.QuestBehavior?.HasQuest(myQuest) == true
                 && (!_tco7AskedAt.TryGetValue(other.Key, out var asked) || DateTime.UtcNow - asked > s_tco7AskAgain)) {
                 _tco7AskedAt[other.Key] = DateTime.UtcNow;
@@ -196,7 +263,10 @@ internal sealed partial class UltimusDirectorActor {
 
             case UltimusTco7.TEAM_ASK: {
                 string no = null;
-                if (!UltimusTco7.TeamUp) {
+                if (UltimusTco7.InSquad(_seat)) {
+                    no = "I'm questing with my squad";
+                }
+                else if (!UltimusTco7.TeamUp) {
                     no = "teaming up is switched off for us right now";
                 }
                 else if (inBattle) {
@@ -268,8 +338,10 @@ internal sealed partial class UltimusDirectorActor {
             Think($"{name} and I are a team now. I lead: my story goes on and they come along with me.", "tco7-lead|" + mate.CharId);
         }
 
+        // A squad never splits: its mates come along on every quest, the leader's story is theirs too (they catch up on it).
+        var squadGroup = UltimusTco7.InSquad(_seat) && mates.All(m => UltimusSeat.OfCharacter(m.CharId) is { } s && UltimusTco7.InSquad(s));
         var shared = quest.Length > 0 && mates.Any(m => PlayerCheats.LiveWizard(m.CharId)?.QuestBehavior?.HasQuest(quest) == true);
-        if (shared || quest.Length == 0) {
+        if (shared || quest.Length == 0 || squadGroup) {
             _tco7SplitSince = DateTime.MaxValue;
             return null;
         }
@@ -290,6 +362,94 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         return null;
+    }
+
+    // ---------------------------------------------------------------------
+    // The squad (Niduus, 2026-11-19: "an option for TCO7 for them to group on and work together exclusively... they will help
+    // each other catch up to the point that they're all on the same furthest progressed quest and then work through quests
+    // together"; before, a team-up split when their quests split, as at the Three Streets)
+    // ---------------------------------------------------------------------
+
+    private DateTime _squadNextLook = DateTime.MinValue;
+    private readonly Dictionary<string, DateTime> _squadInvitedAt = [];
+    private string _squadSaid = "";
+
+    /// <summary>
+    /// The squad's half second for one member: true when this member is in the squad (then the usual two-member team-up is
+    /// not used). The leader (the one furthest behind) invites the others into its group; the others leave any other group
+    /// and take only the leader's invitation. Once grouped, party mode does the rest: the others go along, join its
+    /// battles and do the steps they share, and the leader never leaves them when quests differ.
+    /// </summary>
+    private bool SquadTick(UltimusMember.Status me, bool inBattle, bool grouped) {
+        if (!UltimusTco7.InSquad(_seat)) {
+            return false;
+        }
+
+        if (DateTime.UtcNow < _squadNextLook || inBattle || _paused || _actors.Count == 0) {
+            return true;
+        }
+
+        _squadNextLook = DateTime.UtcNow.AddSeconds(10);
+        try {
+            if (BotShared.BotProgress.Of(me.Wizard, _currentQuest ?? _target?.Quest) is { } count) {
+                UltimusTco7.NoteScore(BotShared.MainWorlds.Number(count.World) * 1000 + count.Done);
+            }
+        }
+        catch (Exception e) {
+            Logger.Debug("{0}: squad progress could not be read: {1}", Logger.Args(_seat.LogName, e.Message));
+        }
+
+        var captain = UltimusTco7.Captain();
+        if (captain is null || UltimusDirector.MembersOf(captain) is not { Count: > 0 } lead) {
+            return true;
+        }
+
+        GroupRegistry.TryGetGroup(me.CharId, out var group);
+        if (captain == _seat) {
+            if (_squadSaid != "lead") {
+                _squadSaid = "lead";
+                Note(_seat.Name, "SQUAD: leads the squad (furthest behind in the story): the others come along and help it catch up.");
+                Think("I'm the furthest behind of my squad, so I lead: they come along and help me catch up, then we quest on together.", "squad-lead");
+            }
+
+            // In someone else's group: it leaves, to lead its own.
+            if (grouped && group is not null && group.LeaderCharId != me.CharId) {
+                Note(_seat.Name, "SQUAD: leaves its group to lead the squad.");
+                _actors[0].Tell(new UltimusMember.LeaveGroup());
+                return true;
+            }
+
+            var size = group?.Members.Count ?? 1;
+            foreach (var mate in UltimusTco7.Squad.Where(s => s != _seat)) {
+                if (size >= 4 || UltimusDirector.MembersOf(mate) is not { Count: > 0 } them || them[0] is not { Wizard: not null } other
+                    || GroupRegistry.AreGrouped(me.CharId, other.CharId) || CombatDuelComponent.IsInBattle(other.GlobalId)
+                    || _squadInvitedAt.TryGetValue(mate.Key, out var at) && DateTime.UtcNow - at < TimeSpan.FromSeconds(30)) {
+                    continue;
+                }
+
+                _squadInvitedAt[mate.Key] = DateTime.UtcNow;
+                Note(_seat.Name, $"SQUAD: invites {mate.Name} into the squad's group.");
+                _actors[0].Tell(new UltimusMember.Invite(other.CharId, other.GlobalId));
+                size++;
+            }
+
+            return true;
+        }
+
+        if (_squadSaid != captain.Key) {
+            _squadSaid = captain.Key;
+            Note(_seat.Name, $"SQUAD: {captain.Name} leads the squad (furthest behind in the story); goes along with them.");
+            Think($"{captain.Name} is the furthest behind of my squad, so I go along and help them catch up. Then we quest on together.",
+                "squad-follow|" + captain.Key);
+        }
+
+        // In a group without the leader, or leading one the leader is in: it leaves, so the leader's invitation can come.
+        if (grouped && group is not null && (!GroupRegistry.AreGrouped(me.CharId, lead[0].CharId) || group.LeaderCharId == me.CharId)) {
+            Note(_seat.Name, $"SQUAD: leaves its group to join {captain.Name}'s.");
+            _actors[0].Tell(new UltimusMember.LeaveGroup());
+        }
+
+        return true;
     }
 
     // ---------------------------------------------------------------------
@@ -358,6 +518,8 @@ internal sealed partial class UltimusDirectorActor {
         text.AppendLine();
         text.AppendLine($"Shared with him as I go (one book for all of us): {solutions} stuck solutions, {exits} stubborn exits, {maps} area maps, " +
                         "his teleporters, doors, quest tree and what he knows of each creature.");
+        // The watchdog book (BotWatchdogBook): where any bot lost hours, and what got it going again.
+        text.AppendLine($"Watchdog book: {BotShared.BotWatchdogBook.Summary()}.");
         var effort = ReadLastLines(Path.Combine(his, "effort.txt"), 12);
         if (effort.Count > 0) {
             text.AppendLine();

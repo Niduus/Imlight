@@ -359,6 +359,8 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         KeepGrouped();
         UsePotions();
         AnswerPlayers();
+        // What the team is doing, for ".questteam why" (UltimusNow).
+        Ultimus.UltimusNow.Team = (_doing ?? "", _currentQuest ?? "");
         TeamTalk();
 
         // Paused in Ahziael: they stand where they are, logged in (a battle still plays out by itself).
@@ -1083,12 +1085,49 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
 
     private int TimesClicked(string key) => _clicks.TryGetValue(key, out var done) ? done.Times : 0;
 
+    // Where a teammate stood when the NPC offered it something (per step), and how many ways in each wizard has tried.
+    private readonly Dictionary<string, (float X, float Y)> _optionsSpot = [];
+    private readonly Dictionary<string, int> _approachTries = [];
+    private static readonly (float X, float Y)[] s_approachSides = [(0, -40), (40, 0), (0, 40), (0, 0)];
+
+    /// <summary>
+    /// Where a wizard walks to be offered the NPC's options: first the usual spot beside it; when its walk ended there and
+    /// the NPC still offered nothing (its way in stops short: a player's report, 2026-11-19, Chaac never got close enough to
+    /// Private Connelly while the other three did), the spot a teammate stood on when it was offered them, then each other
+    /// side of the NPC in turn, then the NPC's own spot.
+    /// </summary>
+    private QuestTeamPlanner.Target Approach(QuestTeamMember.Status member, int index, QuestTeamPlanner.Target t, float offset) {
+        var key = $"{t.Key}|{index}";
+        if (!member.Walking && _sent.TryGetValue(index, out var last) && last.Target?.Key == t.Key && DateTime.UtcNow - last.At > TimeSpan.FromSeconds(4)) {
+            _approachTries[key] = _approachTries.GetValueOrDefault(key) + 1;
+            if (_approachTries[key] is 1 or 3 or 5) {
+                Note(member.Role, $"{member.Name}'s walk to {t.What} ends short of being offered anything: tries another way in.");
+            }
+        }
+
+        var tries = _approachTries.GetValueOrDefault(key);
+        if (tries == 0) {
+            return t with { X = t.X - offset };
+        }
+
+        if (tries == 1 && _optionsSpot.TryGetValue(t.Key, out var spot)) {
+            return t with { X = spot.X, Y = spot.Y };
+        }
+
+        var (dx, dy) = s_approachSides[(tries - 1) % s_approachSides.Length];
+        return t with { X = t.X + dx, Y = t.Y + dy };
+    }
+
     // Each wizard who needs to, in the team's order, clicks the NPC's option once it is in range of it.
     private void ClickEach(List<QuestTeamMember.Status> group, QuestTeamPlanner.Target target, string[] services,
                            Func<QuestTeamMember.Status, bool> needs) {
         foreach (var member in group) {
             // Its own copy of the area (an instance): the same NPC there, with its own id (InOwnCopy).
             var t = InOwnCopy(member, target);
+            if (member.Options.ContainsKey(t.GlobalId)) {
+                _optionsSpot[t.Key] = (member.X, member.Y);
+            }
+
             if (!needs(member)) {
                 continue;
             }
@@ -1096,7 +1135,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             var index = _team.IndexOf(member);
             var key = $"{t.Key}|{index}";
             if (QuestTeamPlanner.Far(member.X, member.Y, t.X, t.Y) > 200 && !member.Options.ContainsKey(t.GlobalId)) {
-                WalkTo(index, t with { X = t.X - 40 });
+                WalkTo(index, Approach(member, index, t, 40));
 
                 return;
             }
@@ -1104,7 +1143,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
             if (!member.Options.TryGetValue(t.GlobalId, out var options)) {
                 // Not sent its options yet: a step closer.
                 if (QuestTeamPlanner.Far(member.X, member.Y, t.X, t.Y) > 80) {
-                    WalkTo(index, t with { X = t.X - 30 });
+                    WalkTo(index, Approach(member, index, t, 30));
                 }
                 else if (t.Kind == QuestTeamPlanner.TALK && BotShared.BotPeople.OfferedNothing(member.ZoneActor, t.Key, t.Template, t.GlobalId, index)) {
                     Note(member.Role, $"{t.What}: the person here has the same name but offers nothing for this step: looks for the right one.");

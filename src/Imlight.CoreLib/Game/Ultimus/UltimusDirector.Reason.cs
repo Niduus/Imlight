@@ -111,6 +111,20 @@ internal sealed partial class UltimusDirectorActor {
             return false;
         }
 
+        // Server data first (BotDataFirst, Niduus 2026-11-19): the AI is only for a roadblock. While the bots' own records
+        // (lessons from places like this, the watchdog book) still have a move to try, or his own round of moves isn't used
+        // up, his usual fix runs without the AI. A spot where a bot's watchdog stopped it with nothing known to free it is a
+        // roadblock at once.
+        var ownMoves = UltimusFixes.Order.Where(f => f != UltimusFixes.FLAG && !skip.Contains(f)).ToList();
+        var usedUp = UltimusFixes.UsedUp(member.Zone, member.X, member.Y, skip) || BotShared.BotWatchdogBook.Trap(member.Zone, member.X, member.Y);
+        var dataKnows = !usedUp && (BotShared.BotLessons.Best(_lastSituation, ownMoves, null, out _) is not null
+                                    || BotShared.BotWatchdogBook.Advice(member.Zone, member.X, member.Y, ownMoves, out _) is not null);
+        if (!BotShared.BotDataFirst.Roadblock(dataKnows, usedUp, _alarms.GetValueOrDefault(alarmKey))) {
+            Think("I'm stuck here again, but my own records still have moves to try here, so I use those before asking the AI.",
+                "data-first-stuck|" + alarmKey);
+            return false;
+        }
+
         _askedFor[alarmKey] = DateTime.UtcNow;
         _asking = true;
         var question = StuckQuestion(member, goal, quest, where, why, allowed);
@@ -160,6 +174,10 @@ internal sealed partial class UltimusDirectorActor {
         q.AppendLine(offered.Count > 0 ? $"Offered to click next to him: {string.Join(", ", offered)}." : "Nothing offered to click next to him.");
         var foes = BotUseGuards.Near(member.ZoneActor, member.X, member.Y).Select(f => f.Name).Distinct().Take(5).ToList();
         q.AppendLine(foes.Count > 0 ? $"Creatures near him: {string.Join(", ", foes)}." : "No creatures near him.");
+        // What the bots' watchdogs saw at this spot (BotWatchdogBook).
+        foreach (var line in BotShared.BotWatchdogBook.Lines(member.Zone, member.X, member.Y)) {
+            q.AppendLine("Watchdog book: " + line);
+        }
         foreach (var fact in UltimusGameData.Facts(goal?.Template ?? 0, BotUseGuards.Near(member.ZoneActor, member.X, member.Y).Select(f => (ulong) f.Template))) {
             q.AppendLine(fact);
         }

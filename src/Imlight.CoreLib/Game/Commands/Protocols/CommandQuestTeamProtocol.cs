@@ -18,6 +18,7 @@
 
 using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Akka.Actor;
@@ -91,6 +92,49 @@ internal class CommandQuestTeam : CommandProtocol {
             // Another copy of the same zone the player stands in loads anew; the same copy just moves them.
             ForceReload = inInstance && string.Equals(me.Zone, zone, StringComparison.OrdinalIgnoreCase),
         });
+    }
+
+    // More commands for the bots (Niduus, 2026-11-19): what the team is doing, and pausing it from the game (the same
+    // paused.txt as Ahziael's Pause button).
+    [Command("why")]
+    [Alias("doing", "status")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void WhyCommand() {
+        if (QuestTeamDirector.Members.Count == 0) {
+            InformSenderClient("The Quest Team is not playing right now.");
+            return;
+        }
+
+        var (doing, quest) = Ultimus.UltimusNow.Team;
+        var paused = File.Exists(Path.Combine(QuestTeamWire.Folder, QuestTeamWire.PAUSE_FILE));
+        InformSenderClient($"Quest Team{(paused ? " (paused)" : "")}: {(doing.Length > 0 ? doing : "playing")}" +
+                           (quest.Length > 0 ? $", on {QuestTeamText.Title(quest)}" : "") + ".");
+    }
+
+    [Command("pause")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void PauseCommand() {
+        try {
+            Directory.CreateDirectory(QuestTeamWire.Folder);
+            File.WriteAllText(Path.Combine(QuestTeamWire.Folder, QuestTeamWire.PAUSE_FILE), $"Paused in game with .questteam pause at {DateTime.Now:yyyy-MM-dd HH:mm}.");
+            InformSenderClient("The Quest Team is paused: it stands where it is. .questteam resume lets it go on.");
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+            InformSenderClient($"Could not pause the Quest Team: {e.Message}");
+        }
+    }
+
+    [Command("resume")]
+    [Alias("unpause")]
+    [AuthRequired(AuthLevel.QualityAssurance)]
+    private void ResumeCommand() {
+        try {
+            File.Delete(Path.Combine(QuestTeamWire.Folder, QuestTeamWire.PAUSE_FILE));
+            InformSenderClient("The Quest Team goes on with its quest.");
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+            InformSenderClient($"Could not resume the Quest Team: {e.Message}");
+        }
     }
 
     [Command("where")]
