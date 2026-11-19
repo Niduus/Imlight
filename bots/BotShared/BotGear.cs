@@ -46,6 +46,8 @@ internal enum BotStyle {
     // Ultimus alone: hits, keeps itself alive, and its hits land as other schools' damage (Balance's Hydra, Spectral
     // Blast, Nested Fury as Fire, Ice or Storm; Chimera as Life, Death or Myth), so gear for those counts too.
     Solo,
+    // True Form's universal setup: everything on damage to every school (then pierce, accuracy).
+    UniversalHitter,
     // True Form's full healing setup: everything on outgoing healing.
     FullHealer,
     // True Form's full tank setup: everything on resist.
@@ -496,6 +498,11 @@ internal static class BotGear {
         BotStyle.FullTank => kind switch {
             "ReduceDamage" => 8, "FlatReduceDamage" => 3, "MaxHealth" => 0.12, "Block" => 0.4, "IncHealing" => 1.5,
             "PowerPips" => 1.5, "StartingPips" => 10, "Damage" => 0.2, "Healing" => 0.2, "MaxMana" => 0.02, _ => 0,
+        },
+        // Everything on damage to every school (the stats are scored with no school, so only every-school ones count).
+        BotStyle.UniversalHitter => kind switch {
+            "Damage" => 10, "ArmorPiercing" => 4, "Accuracy" => 2, "PowerPips" => 2.5, "StartingPips" => 15, "FlatDamage" => 1,
+            "CriticalHit" => 0.3, "ReduceDamage" => 0.8, "MaxHealth" => 0.03, "IncHealing" => 0.3, "MaxMana" => 0.01, _ => 0,
         },
         _ => BaseWeight(kind, style),
     };

@@ -548,7 +548,10 @@ internal static class TrueFormMaker {
         var pool = BotGear.Catalog.Concat(top ?? []).DistinctBy(p => p.Id).ToList();
         var topOf = pool.Where(p => Allowed(p) && BotGear.CanWear(p, school, level) && BotGear.Score(p, statSchool, style) > 0)
             .GroupBy(p => p.Slot).ToDictionary(g => g.Key, g => g.Max(p => p.Level));
-        var best = BotGear.BestFor(school, level, style, p => Allowed(p) && (!topOf.TryGetValue(p.Slot, out var least) || p.Level >= least),
+        // The universal setup takes the piece with the most every-school damage at any level: the level 190 pieces are each
+        // school's own (Niduus, 2026-11-19, of the first universal setup: "This is Myth with uni pierce").
+        var anyLevel = statSchool.Length == 0;
+        var best = BotGear.BestFor(school, level, style, p => Allowed(p) && (anyLevel || !topOf.TryGetValue(p.Slot, out var least) || p.Level >= least),
             extra: top, scoreSchool: statSchool);
         var outfit = string.Join(",", best.OrderBy(b => b.Key).Select(b => b.Value.Id));
         var marker = Path.Combine(UltimusSeat.TrueForm.Folder, DRESSED_FILE);

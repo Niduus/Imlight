@@ -217,7 +217,7 @@ internal static class TrueForm {
 
     /// <summary>The gear style for his setup now (full heal and full tank put everything on healing or resist).</summary>
     internal static BotShared.BotStyle StyleNow(MagicSchool school) => s_setup switch {
-        Setup.Universal => BotShared.BotStyle.Hitter,
+        Setup.Universal => BotShared.BotStyle.UniversalHitter,
         Setup.FullHeal => BotShared.BotStyle.FullHealer,
         Setup.FullTank => BotShared.BotStyle.FullTank,
         _ => StyleFor(school, Role),
