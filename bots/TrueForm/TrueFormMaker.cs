@@ -95,6 +95,7 @@ internal static class TrueFormMaker {
             Stitch(wizard);
             GivePet(wizard, statSchool, style);
             DropWeakMount(wizard, null);
+            EnsureMount(wizard, statSchool, style);
             TrueFormJewels.Fill(wizard, statSchool, style);
             TrueFormSpells.Give(wizard, top, school.ToString(), style);
         }
@@ -332,6 +333,54 @@ internal static class TrueFormMaker {
         }
     }
 
+    // He always rides a mount (Niduus, 2026-11-19: "Now TF is missing a mount"): his pet's set mount when that set is worth
+    // it (BestPetBody), else the best permanent one for his setup: never a rental, a Book mount, a Crowns-only or retired
+    // one, or a set mount with no set to make. A mount that gives stats he wants comes first; the rest, one players can get.
+    private static void EnsureMount(Wizard wizard, string school, BotStyle style) {
+        try {
+            var worn = wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Mount);
+            var wornTemplate = worn is null ? null : ItemHelper.GetItemTemplate(worn);
+            var pet = wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Pet) is { } p ? ItemHelper.GetItemTemplate(p) : null;
+            if (wornTemplate is not null && wornTemplate.m_itemSetBonusTemplateID != 0 && pet is not null
+                && pet.m_itemSetBonusTemplateID == wornTemplate.m_itemSetBonusTemplateID) {
+                // His pet's set mount: kept.
+                return;
+            }
+
+            if (TrueFormTopGear.MountIds is not { Count: > 0 } ids) {
+                if (worn is null) {
+                    Logger.Information("True Form: the game's mounts are still being read; he gets his mount on his next change.");
+                }
+
+                return;
+            }
+
+            var obtainable = ItemSources.ObtainableIds();
+            double Worth(WizItemTemplate t) => BotGear.ScoreStats(BotGear.StatsOf(t), school, style);
+            var best = ids.Distinct()
+                .Select(id => (Id: id, Item: CoreObjectFactory.GetCoreTemplate(id) as WizItemTemplate))
+                .Where(m => m.Item is not null && m.Item.m_itemSetBonusTemplateID == 0 && Allowed(m.Id, out var name)
+                            && !name.Contains("Book", StringComparison.OrdinalIgnoreCase))
+                .Select(m => (m.Id, m.Item, Worth: Worth(m.Item), Got: obtainable.Contains(m.Id)))
+                .OrderByDescending(m => Math.Round(m.Worth, 1)).ThenByDescending(m => m.Got).ThenBy(m => m.Id)
+                .FirstOrDefault();
+            if (best.Item is null) {
+                Logger.Warning("True Form: no permanent mount was found to give him.");
+                return;
+            }
+
+            if (wornTemplate is not null && !IsRental(wornTemplate) && wornTemplate.m_itemSetBonusTemplateID == 0
+                && Math.Round(Worth(wornTemplate), 1) >= Math.Round(best.Worth, 1)) {
+                return;
+            }
+
+            GiveMount(wizard, best.Id);
+        }
+        catch (Exception e) {
+            Logger.Warning("True Form: could not give him a mount: {0}", Logger.Args(e.Message));
+        }
+    }
+
     internal sealed record PetPick(uint Pet, uint? Mount, double Score, string Why);
 
     // Every pet body worth having, scored for his school and play style: the body's own stats, plus, when a
@@ -416,17 +465,17 @@ internal static class TrueFormMaker {
 
             var kept = wizard.InventoryBehavior?.Items?.FirstOrDefault(i => (uint) i.m_templateID == mount);
             if (kept is null && (!wizard.TryCreateItem(mount, out kept) || !wizard.AddInitializedItemToInventory(kept, ignoreLimit: true))) {
-                Logger.Warning("True Form: could not make his set mount ({0}).", Logger.Args(mount));
+                Logger.Warning("True Form: could not make his mount ({0}).", Logger.Args(mount));
                 return;
             }
 
             if (wizard.InventoryToEquipmentTransfer(kept.m_globalID.Full, out _, out _)) {
-                Logger.Information("True Form: rides his set mount {0}.",
+                Logger.Information("True Form: rides his mount {0}.",
                     Logger.Args(Locale.GetEnglishName((string) (CoreObjectFactory.GetCoreTemplate(mount) as WizItemTemplate)?.m_displayName ?? "")));
             }
         }
         catch (Exception e) {
-            Logger.Warning("True Form: could not give him his set mount: {0}", Logger.Args(e.Message));
+            Logger.Warning("True Form: could not give him his mount: {0}", Logger.Args(e.Message));
         }
     }
 

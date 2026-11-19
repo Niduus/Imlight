@@ -45,6 +45,7 @@ internal static class TrueFormTopGear {
     private static volatile List<BotGear.Piece> s_pieces;
     private static volatile List<uint> s_jewels;
     private static volatile List<SetPiece> s_setPieces;
+    private static volatile List<uint> s_mounts;
 
     /// <summary>A pet or mount that is part of a set (its set bonus template), from the game's files.</summary>
     internal sealed record SetPiece(uint Id, uint Set, bool Mount);
@@ -90,6 +91,17 @@ internal static class TrueFormTopGear {
         }
     }
 
+    /// <summary>
+    /// Every mount in the game's files, set or not, or null while they are still being read (Niduus, 2026-11-19: "Now TF is
+    /// missing a mount": with rentals and weak set mounts off he had none left).
+    /// </summary>
+    internal static IReadOnlyList<uint> MountIds {
+        get {
+            _ = Pieces;
+            return s_mounts;
+        }
+    }
+
     private static string CachePath => Path.Combine(UltimusSeat.TrueForm.Folder, FILE);
 
     private static void Read() {
@@ -97,24 +109,28 @@ internal static class TrueFormTopGear {
             var templates = CoreObjectFactory.TemplateManifest?.m_serializedTemplates;
             if (templates is null) {
                 s_jewels = [];
+                s_mounts = [];
                 s_setPieces = [];
                 s_pieces = [];
                 return;
             }
 
-            var stamp = $"templates {templates.Count} with jewels and sets";
+            var stamp = $"templates {templates.Count} with jewels, sets and mounts";
             List<uint> ids = null;
             List<uint> jewels = [];
             List<SetPiece> sets = [];
+            List<uint> mounts = [];
             try {
                 if (File.Exists(CachePath) && File.ReadAllLines(CachePath) is { Length: > 0 } lines && lines[0] == stamp) {
-                    var kept = lines.Skip(1).Select(l => l.Split(' ')).Where(p => !(p.Length > 1 && p[1] == "set")).Select(p => (Id: uint.TryParse(p[0], out var id) ? id : 0, Jewel: p.Length > 1 && p[1] == "jewel"))
+                    var kept = lines.Skip(1).Select(l => l.Split(' ')).Where(p => !(p.Length > 1 && p[1] is "set" or "mount")).Select(p => (Id: uint.TryParse(p[0], out var id) ? id : 0, Jewel: p.Length > 1 && p[1] == "jewel"))
                         .Where(x => x.Id != 0).ToList();
                     ids = kept.Where(x => !x.Jewel).Select(x => x.Id).ToList();
                     jewels = kept.Where(x => x.Jewel).Select(x => x.Id).ToList();
                     sets = lines.Skip(1).Select(l => l.Split(' '))
                         .Where(p => p.Length >= 4 && p[1] == "set" && uint.TryParse(p[0], out _) && uint.TryParse(p[2], out _))
                         .Select(p => new SetPiece(uint.Parse(p[0]), uint.Parse(p[2]), p[3] == "mount")).ToList();
+                    mounts = lines.Skip(1).Select(l => l.Split(' ')).Where(p => p.Length == 2 && p[1] == "mount" && uint.TryParse(p[0], out _))
+                        .Select(p => uint.Parse(p[0])).ToList();
                 }
             }
             catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
@@ -132,8 +148,13 @@ internal static class TrueFormTopGear {
                     try {
                         // Read without keeping it: only the few top level pieces are kept (BotGear.Read below).
                         if (CoreObjectFactory.LoadTemplateFile(location.m_filename) is WizItemTemplate template) {
-                            if (template.m_itemSetBonusTemplateID != 0 && SetKind((uint) location.m_id, template) is { } mount) {
+                            var kind = SetKind((uint) location.m_id, template);
+                            if (template.m_itemSetBonusTemplateID != 0 && kind is { } mount) {
                                 sets.Add(new SetPiece((uint) location.m_id, (uint) template.m_itemSetBonusTemplateID, mount));
+                            }
+
+                            if (kind == true) {
+                                mounts.Add((uint) location.m_id);
                             }
 
                             if (JewelSockets.IsJewel(template)) {
@@ -152,7 +173,7 @@ internal static class TrueFormTopGear {
                 try {
                     Directory.CreateDirectory(UltimusSeat.TrueForm.Folder);
                     File.WriteAllLines(CachePath, [stamp, .. ids.Select(id => id.ToString()), .. jewels.Select(id => $"{id} jewel"),
-                        .. sets.Select(p => $"{p.Id} set {p.Set} {(p.Mount ? "mount" : "pet")}")]);
+                        .. sets.Select(p => $"{p.Id} set {p.Set} {(p.Mount ? "mount" : "pet")}"), .. mounts.Select(id => $"{id} mount")]);
                 }
                 catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
                     Logger.Debug("True Form: could not keep the top gear list: {0}", Logger.Args(e.Message));
@@ -162,6 +183,7 @@ internal static class TrueFormTopGear {
             var pieces = ids.Select(BotGear.Read).Where(p => p is not null && !p.CrownsOnly && !p.Retired).ToList();
             s_jewels = jewels;
             s_setPieces = sets;
+            s_mounts = mounts;
             s_pieces = pieces;
             Logger.Information("True Form: {0} pieces of level {1}+ gear in the game's files ({2}), read in {3:0.0} s.",
                 Logger.Args(pieces.Count, FROM_LEVEL, string.Join(", ", pieces.GroupBy(p => p.Level).OrderBy(g => g.Key).Select(g => $"level {g.Key}: {g.Count()}")),
@@ -171,6 +193,7 @@ internal static class TrueFormTopGear {
             Logger.Warning("True Form: the game's top gear could not be read: {0}", Logger.Args(e.Message));
             s_jewels ??= [];
             s_setPieces ??= [];
+            s_mounts ??= [];
             s_pieces = [];
         }
     }
