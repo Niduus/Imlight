@@ -197,6 +197,9 @@ internal sealed class SetupSteps : IDisposable {
     // The fingerprint of the game's message files the server is built with (GamePatch.STAMP_FILE).
     private string? _gameMessages;
 
+    // The type dump the server is built with (GamePatch.TYPE_DUMP_STAMP_FILE).
+    private string? _typeDumpName;
+
     /// <summary>
     /// Downloads the latest Imlight source and the exact Imcodec version it uses. Git is not needed. With a source
     /// folder on this PC (the Server source card), that folder is copied instead and left as it is.
@@ -458,6 +461,7 @@ internal sealed class SetupSteps : IDisposable {
 
         File.Copy(typeDump, Path.Combine(typeInput, Path.GetFileName(typeDump)), overwrite: true);
         SetupLog.Info($"Using type dump {Path.GetFileName(typeDump)}.");
+        _typeDumpName = Path.GetFileName(typeDump);
 
         // The message definitions, read straight out of the game's Root.wad.
         using var stream = File.OpenRead(rootWadPath);
@@ -528,6 +532,10 @@ internal sealed class SetupSteps : IDisposable {
 
         if (_gameMessages is not null) {
             File.WriteAllText(Path.Combine(staging, GamePatch.STAMP_FILE), _gameMessages);
+        }
+
+        if (_typeDumpName is not null) {
+            File.WriteAllText(Path.Combine(staging, GamePatch.TYPE_DUMP_STAMP_FILE), _typeDumpName);
         }
 
         // The app's own version, for the server's .ver command.

@@ -1,0 +1,4 @@
+Fixed: No warning when a Wizard101 update may need a new type list
+When Wizard101 updated its game program, Ahziael rebuilt the server for new game messages but said nothing about the game's list of data types, which only a new list can fix. Now Ahziael checks the game's version every few minutes and, when the game is newer than the type list the server was built with, says so once in plain words and what to watch for. Most game updates keep the same list, so this is a heads-up and nothing stops working because of it. The check starts working after the next time Ahziael builds the server.
+Where: Ahziael, the message line at the bottom of the window
+Test: Update Ahziael so the server is built again, then let the Wizard101 launcher update the game to its newest version and open Ahziael. Within a few minutes it says Wizard101 updated itself to a newer version and names both versions. With the game and the server on the same version it says nothing.

@@ -139,6 +139,11 @@ internal sealed partial class UltimusDirectorActor {
             // Walked there and nothing happened (a pad that needs a quest, or one that is not there any more).
             Note("Ultimus", $"{member.Name}: the teleporter at ({pad.X:0}, {pad.Y:0}) did not take it anywhere; tries another way.", UltimusLink.ABNORMAL);
             _padsLeft[pad] = DateTime.UtcNow;
+            // One he only learned (not in the area's files) and that never fired is no teleporter: forgotten for good.
+            if (UltimusPads.Unlearn(member.Zone, pad)) {
+                Think($"The teleporter I had learned at ({pad.X:0}, {pad.Y:0}) never took me anywhere, however I walked into it. " +
+                      "It was a spot I was moved from, not a teleporter, so I forget it.", "pad-forget|" + member.Zone + "|" + pad.X.ToString("0"));
+            }
             _viaPad = null;
 
             return WayTo(member, target);
@@ -185,7 +190,23 @@ internal sealed partial class UltimusDirectorActor {
             return null;
         }
 
-        if (now - _padStandSince < TimeSpan.FromSeconds(5) || _padReentries >= 3) {
+        if (now - _padStandSince < TimeSpan.FromSeconds(5)) {
+            return null;
+        }
+
+        // Walked in three times and it never fired: left alone for a while, and forgotten for good if he only learned it
+        // (Jade Palace, 2026-11-19: a learned "teleporter" at (8005, 240) that was only where a lost fight put him; he stood
+        // on it all day, three walk-ins at a time).
+        if (_padReentries >= 3) {
+            _padsLeft[pad] = now;
+            _viaPad = null;
+            if (UltimusPads.Unlearn(member.Zone, pad)) {
+                Note("Ultimus", $"{member.Name} forgets the teleporter it had learned at ({pad.X:0}, {pad.Y:0}): walked into three times, it never fired.",
+                    UltimusLink.ABNORMAL);
+                Think($"The teleporter I had learned at ({pad.X:0}, {pad.Y:0}) never took me anywhere, however I walked into it. " +
+                      "It was a spot I was moved from, not a teleporter, so I forget it.", "pad-forget|" + member.Zone + "|" + pad.X.ToString("0"));
+            }
+
             return null;
         }
 

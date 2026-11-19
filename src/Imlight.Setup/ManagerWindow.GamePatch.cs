@@ -32,9 +32,11 @@ internal sealed partial class ManagerWindow {
 
     private readonly DispatcherTimer _gamePatchTimer = new() { Interval = TimeSpan.FromMinutes(3) };
     private bool _gamePatchAsked;
+    private bool _typeDumpToldAbout;
 
     private void StartGamePatchCheck() {
         _gamePatchTimer.Tick += (_, _) => _ = Guard(CheckGamePatchAsync);
+        _gamePatchTimer.Tick += (_, _) => _ = Guard(CheckTypeDumpAsync);
         _gamePatchTimer.Start();
         Closed += (_, _) => _gamePatchTimer.Stop();
     }
@@ -87,6 +89,34 @@ internal sealed partial class ManagerWindow {
             _preparingUpdate = false;
             _updateButton.Content = _readyUpdate is not null ? "Restart to update" : "Update Ahziael";
         }
+    }
+
+    /// <summary>
+    /// Says once per time the app is open when Wizard101's program is a newer revision than the type dump the server was
+    /// built with (GamePatch.TypeDumpIsBehind). Building again does not help there: a new dump has to be made from the
+    /// new program first. Most patches keep the types, so this only says what to watch for.
+    /// </summary>
+    private async Task CheckTypeDumpAsync() {
+        if (_typeDumpToldAbout || RemoteSession.Current is not null || _manager.Source.BuiltFolder is not null) {
+            return;
+        }
+
+        var installFolder = _manager.InstallFolder;
+        var serverFolder = _manager.ServerFolder;
+        var behind = await Task.Run(() => GameLocator.FindAndRemember(installFolder) is { } rootWad
+            ? GamePatch.TypeDumpIsBehind(serverFolder, rootWad)
+            : null);
+        if (behind is not { } found) {
+            return;
+        }
+
+        _typeDumpToldAbout = true;
+        var game = found.Game.Split('.')[0];
+        var dump = found.TypeDump.Split('_')[0];
+        Say($"Wizard101 updated itself to a newer version ({game}). The server's list of the game's data types is from {dump}. " +
+            "Most game updates keep that list the same and everything keeps working. If something in the game stops loading " +
+            "(you can't log in, a page is empty, or someone can't be talked to), report it so a new type list can be " +
+            $"made for {game}.");
     }
 
 }

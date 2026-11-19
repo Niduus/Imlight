@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using Imcodec.Wad;
 
 namespace Imlight.Setup;
@@ -41,6 +42,12 @@ internal static class GamePatch {
 
     /// <summary>Written next to the server by the build: the fingerprint of the message files it was built with.</summary>
     internal const string STAMP_FILE = "game-messages.txt";
+
+    /// <summary>
+    /// Written next to the server by the build: the type dump (list of the game program's data types) it was built
+    /// with, such as r813697_Wizard_1_620.json.
+    /// </summary>
+    internal const string TYPE_DUMP_STAMP_FILE = "game-typedump.txt";
 
     /// <summary>Whether a Root.wad file name is one of the game's message files the server is built from.</summary>
     internal static bool IsMessageFile(string name) {
@@ -136,6 +143,65 @@ internal static class GamePatch {
         }
 
         return now is not null && !string.Equals(now, built, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>The revision number in a name such as r814353.Wizard_1_620_0_Live or r813697_Wizard_1_620.json, or -1.</summary>
+    internal static long RevisionNumber(string? name) {
+        var match = name is null ? null : Regex.Match(name.Trim(), @"^r(\d+)", RegexOptions.IgnoreCase);
+
+        return match is { Success: true } && long.TryParse(match.Groups[1].Value, out var number) ? number : -1;
+    }
+
+    /// <summary>
+    /// The game program's revision (Bin\revision.dat, such as r814353.Wizard_1_620_0_Live) of the game whose Root.wad
+    /// is <paramref name="rootWadPath"/>, or null when it can't be read. Only reads.
+    /// </summary>
+    internal static string? GameRevision(string rootWadPath) {
+        try {
+            var gameData = Path.GetDirectoryName(Path.GetFullPath(rootWadPath));
+            var game = gameData is null ? null : Directory.GetParent(gameData)?.Parent?.FullName;
+            var file = game is null ? null : Path.Combine(game, "Bin", "revision.dat");
+            if (file is null || !File.Exists(file)) {
+                return null;
+            }
+
+            using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            using var reader = new StreamReader(stream);
+            var text = reader.ReadToEnd().Trim('\0', ' ', '\r', '\n', '\t');
+
+            return RevisionNumber(text) > 0 ? text : null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException) {
+            return null;
+        }
+    }
+
+    /// <summary>The type dump the server in <paramref name="serverFolder"/> was built with, or null for a build from before this stamp.</summary>
+    internal static string? TypeDumpBuiltWith(string serverFolder) {
+        try {
+            var file = Path.Combine(serverFolder, TYPE_DUMP_STAMP_FILE);
+
+            return File.Exists(file) ? File.ReadAllText(file).Trim() : null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// When the game program is a newer revision than the type dump the server was built with: the two names, such as
+    /// (r814353.Wizard_1_620_0_Live, r813697_Wizard_1_620.json). Null when it isn't, or either can't be told. A newer
+    /// program does not always change its types (most patches don't), so this is a heads-up, not an error: the Ahmarra
+    /// update (r813697, 2026-11-12) changed players, creatures and battles, and only a new dump fixed that.
+    /// </summary>
+    internal static (string Game, string TypeDump)? TypeDumpIsBehind(string serverFolder, string rootWadPath) {
+        if (TypeDumpBuiltWith(serverFolder) is not { } dump || GameRevision(rootWadPath) is not { } game) {
+            return null;
+        }
+
+        var dumpNumber = RevisionNumber(dump);
+
+        return dumpNumber > 0 && RevisionNumber(game) > dumpNumber ? (game, dump) : null;
     }
 
 }

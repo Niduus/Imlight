@@ -114,6 +114,12 @@ internal static class UltimusPads {
             return false;
         }
 
+        // A move to the area's very middle (0, 0) is the server placing him, not a pad: Jade Palace, 2026-11-19, a spot he
+        // lands on after a lost fight was learned as "a teleporter to (0, 0)", and he stood on it again and again for a day.
+        if (MathF.Abs(toX) < 1 && MathF.Abs(toY) < 1) {
+            return false;
+        }
+
         // A teleporter the files already know (its pad near where it stood, its landing near where it came out).
         if (SameAsFiles(zonePath, s_files.GetOrAdd(zonePath, FromFiles), fromX, fromY, toX, toY)) {
             return false;
@@ -558,6 +564,30 @@ internal static class UltimusPads {
         }
 
         return s_learned;
+    }
+
+    /// <summary>
+    /// A learned teleporter that did not take him anywhere when walked into again and again: forgotten, so it is not
+    /// picked as the way again (it was a spot the server moved him from, not a pad). True when one was forgotten.
+    /// </summary>
+    internal static bool Unlearn(string zonePath, Pad pad) {
+        if (string.IsNullOrEmpty(zonePath) || pad is not { Learned: true }) {
+            return false;
+        }
+
+        lock (s_lock) {
+            var all = Learned();
+            if (!all.TryGetValue(zonePath, out var pads)
+                || pads.RemoveAll(p => Near(p.X, p.Y, pad.X, pad.Y, 250) && Near(p.ToX, p.ToY, pad.ToX, pad.ToY, 400)) == 0) {
+                return false;
+            }
+
+            Save(all);
+        }
+
+        UltimusAreaBook.Save(zonePath);
+
+        return true;
     }
 
     private static void Save(Dictionary<string, List<Pad>> all) {
