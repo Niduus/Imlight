@@ -181,7 +181,8 @@ internal sealed partial class ManagerWindow {
             return Task.CompletedTask;
         });
 
-        var grid = CheatEditor(_playerBoard, [SaveButton()], [SaveButton()], master);
+        var top = new WrapPanel { Children = { WithCenter(master), new Border { Width = 28 }, ShowCheatsForBox(_playerBoard) } };
+        var grid = CheatEditor(_playerBoard, [SaveButton()], [SaveButton()], top);
         EnsureGameIcons(() => RenderCheats(_playerBoard));
         if (_bossCatalog is null || _bossCatalog.Spells.Count == 0) {
             Dispatcher.UIThread.Post(async () => {
@@ -191,10 +192,10 @@ internal sealed partial class ManagerWindow {
         }
 
         return WidePage(Fold("bolt", "Player Cheats", "Your cheats",
-            "Cheats for you, like a boss's: When something happens, If it is true, Do these things. Every block of the boss cheats " +
-            "works here too, with you as \"it\" and the monsters as \"the players\". A cheat is for the wizard you play on this PC, " +
-            "unless it has a \"who gets it\" If (wizard is, wizard's name is, wizard's account, friend of, in a group with, account rank, " +
-            "played on this PC, every wizard): then it goes to every wizard those blocks pick, on any PC. Players type .cheats to see theirs, and " +
+            "Cheats for you and your players, like a boss's: When something happens, If it is true, Do these things. Every block of the boss cheats " +
+            "works here too, with the wizard as \"it\" and the monsters as \"the players\". Each cheat's \"Who gets this cheat\" box picks whose it is: " +
+            "you on this PC, every wizard, or the wizards or accounts you tick. Each of them gets it in their own battles on any PC, with you nowhere near. " +
+            "\"Show cheats for\" lists one wizard's cheats only. Players type .cheats to see theirs, and " +
             "can switch one off or on with .cheat off / .cheat on and its name when you tick \"Players can switch this\" on its edit page. Saved changes count from the next round, with no restart.",
             grid));
     }
@@ -376,7 +377,16 @@ internal sealed partial class ManagerWindow {
         board.EditHead.Content = null;
         board.EditScroll.Content = null;
         for (var i = 0; i < list.Cheats.Count; i++) {
+            // The numbers stay the server's (cheat 3 is cheat 3) when "Show cheats for" hides some.
+            if (board.Player && !ShownFor(list.Cheats[i])) {
+                continue;
+            }
+
             board.Rows.Children.Add(CheatCard(board, list.Cheats[i], i + 1));
+        }
+
+        if (board.Player && list.Cheats.Count > 0 && board.Rows.Children.Count == 0) {
+            board.Rows.Children.Add(Sub("That wizard gets none of these cheats yet. Press New cheat to make one for them."));
         }
 
         if (list.Cheats.Count == 0) {
@@ -395,6 +405,10 @@ internal sealed partial class ManagerWindow {
         var notes = new TextBox { Text = rule.Notes, Watermark = "Your notes on this cheat (the server does not use them)", AcceptsReturn = false };
         notes.TextChanged += (_, _) => rule.Notes = notes.Text ?? "";
         var stack = new StackPanel { Spacing = 10, Margin = new Thickness(0, 0, 14, 0), Children = { CheatScript(board, rule), notes } };
+        if (board.Player) {
+            stack.Children.Insert(0, WhoGetsBox(board, rule));
+        }
+
         if (board.Player) {
             stack.Children.Add(PlayerSwitchBox(board, rule));
         }
@@ -564,6 +578,8 @@ internal sealed partial class ManagerWindow {
                 marks.Add($"\"{rule.Name.Trim()}\"");
             }
 
+            marks.Add("For " + WhoWords(rule));
+
             if (rule.PlayersSwitch) {
                 marks.Add(rule.PlayersStartOff ? "Players switch it (starts off)" : "Players switch it");
             }
@@ -706,6 +722,10 @@ internal sealed partial class ManagerWindow {
         // A passive does its own thing (its circle...), with no Do blocks under it.
         if (when.Kind != BlockKind.Passive) {
             rule.Dos.Add(CheatBlock.New(CheatSpecs.Get(board.Player ? "D.FreeCast" : "D.Cast")));
+        }
+
+        if (board.Player) {
+            NewCheatFor(rule);
         }
 
         board.List.Cheats.Add(rule);
