@@ -79,7 +79,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         // Party mode switched off while in a group: he says so and leaves it (all settings apply at once).
-        if (!UltimusWire.PartyMode) {
+        if (!UltimusWire.PartyMode && !_seat.IsTrueForm) {
             LeaveParty("party mode was switched off in Ahziael", "I have to get back to my own story now. Thanks for the company!");
             return null;
         }
@@ -156,7 +156,8 @@ internal sealed partial class UltimusDirectorActor {
         // Away a long while: he says goodbye, leaves the group and goes back to his story.
         if (DateTime.UtcNow - _partyMateMovedAt > s_partyAway) {
             LeaveParty($"{name} has not moved for {(int) s_partyAway.TotalMinutes} minutes",
-                "Looks like you stepped away, so I'm heading back to my story. Invite me again any time!");
+                _seat.IsTrueForm ? "Looks like you stepped away, so I'm heading back to my spot in The Commons. Call me again any time!"
+                    : "Looks like you stepped away, so I'm heading back to my story. Invite me again any time!");
             return null;
         }
 
@@ -212,7 +213,7 @@ internal sealed partial class UltimusDirectorActor {
         // he asks about first, and goes in only when told again (Niduus's log, 2026-11-16 02:16: he walked into Walter
         // Blanco's fight with Malistaire the Undying at level 25 and lost).
         if (fighting) {
-            if (DuelBots.UltimusMayJoin(mateGid, out _) && DateTime.UtcNow >= _partyStrongOkUntil
+            if (!_seat.IsTrueForm && DuelBots.UltimusMayJoin(mateGid, out _) && DateTime.UtcNow >= _partyStrongOkUntil
                 && TooStrong(leader, DuelBots.UltimusFoesOf(mateGid), out var strong)) {
                 if (_partyStrongWarned != mateGid) {
                     _partyStrongWarned = mateGid;
@@ -231,7 +232,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         // A quest step they both have, done together next to them.
-        foreach (var quest in leader.Wizard.QuestBehavior?.CurrentQuestInstances?.Select(q => q?.QuestName).Where(q => !string.IsNullOrEmpty(q)).ToList() ?? []) {
+        foreach (var quest in _seat.IsTrueForm ? [] : leader.Wizard.QuestBehavior?.CurrentQuestInstances?.Select(q => q?.QuestName).Where(q => !string.IsNullOrEmpty(q)).ToList() ?? []) {
             if (wizard?.QuestBehavior?.HasQuest(quest) != true || UltimusPlanner.ForQuest([leader], quest) is not { } step
                 || step.Problem.Length > 0 || UltimusPlanner.Far(step.X, step.Y, at.X, at.Y) > 900
                 // A step that leaves the area (a door, an exit, the spiral) is not done "next to them": it takes him away
@@ -373,7 +374,14 @@ internal sealed partial class UltimusDirectorActor {
         _partyOfflineSince = DateTime.MaxValue;
         Note("Ultimus", $"PARTY: no longer with {_partyMateName} ({why}): back to his own story.");
         if (why == "the group ended") {
-            Announce(SAY_PARTY, $"Thanks for the group, {_partyMateName}! Back to my story.", urgent: true);
+            Announce(SAY_PARTY, $"Thanks for the group, {_partyMateName}! Back to my {(_seat.IsTrueForm ? "spot" : "story")}.", urgent: true);
+        }
+
+        // True Form: the group's asks end with it (his mode, the spells asked for by name).
+        if (_seat.IsTrueForm) {
+            TrueForm.ResetMode();
+            TrueForm.ClearRequested();
+            TrueForm.With = "";
         }
         Think($"I'm done going along with {_partyMateName} ({why}). Back to my own story.", "party-end|" + _partyMate);
         _partyMate = 0;

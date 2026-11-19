@@ -352,7 +352,7 @@ internal sealed class UltimusMember : ReceiveActor, IWithTimers {
             var real = inviter != 0 && !UltimusRoster.IsMember(inviter) && !QuestTeam.QuestTeamRoster.IsMember(inviter);
             // A TCO7 member's invitation is taken when this TCO7 member just said yes to teaming up with them (UltimusTco7).
             var friend = inviter != 0 && UltimusTco7.MayAcceptInvite(inviter);
-            if (((UltimusWire.PartyMode && real) || friend) && !Groups.GroupRegistry.TryGetGroup(_member.CharId, out _)) {
+            if ((((UltimusWire.PartyMode || UltimusSeat.Current.IsTrueForm) && real) || friend) && !Groups.GroupRegistry.TryGetGroup(_member.CharId, out _)) {
                 Note($"accepts a group invitation from {m.PlayerNameBlob} (party mode): he goes along with them.");
                 Send(new GAME_5_PROTOCOL.MSG_PARTYREQUESTACCEPT { SourceCharacterID = _member.CharId, PartyID = m.PartyID });
                 return;

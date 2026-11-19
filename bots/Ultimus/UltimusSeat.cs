@@ -61,8 +61,18 @@ internal sealed class UltimusSeat {
         new("Ra", "Ra", "Balance", TCO7_FOLDER + "/ra", "TCO7-Ra", 7),
     ];
 
-    /// <summary>Every seat: Ultimus first, then the TCO7.</summary>
-    internal static readonly UltimusSeat[] All = [Ultimus, .. Tco7];
+    /// <summary>Where True Form keeps his folder, inside the server's logs folder.</summary>
+    internal const string TRUE_FORM_FOLDER = "logs/trueform";
+
+    /// <summary>
+    /// True Form (Niduus, 2026-11-19): the helper bot whose real name is Ahziael, called "True Form" so he is never mixed up
+    /// with the Ahziael app. A max level Myth wizard with every spell, who waits at his spot in The Commons and comes along
+    /// with any player who calls him (bots/TrueForm). His in-game name is Ahziael and his title is True Form.
+    /// </summary>
+    internal static readonly UltimusSeat TrueForm = new("TrueForm", "Ahziael", "Myth", TRUE_FORM_FOLDER, "TrueForm-Ahziael", 8);
+
+    /// <summary>Every seat: Ultimus first, then the TCO7, then True Form.</summary>
+    internal static readonly UltimusSeat[] All = [Ultimus, .. Tco7, TrueForm];
 
     private UltimusSeat(string key, string name, string role, string folder, string username, int index) {
         Key = key;
@@ -93,7 +103,10 @@ internal sealed class UltimusSeat {
 
     internal bool IsUltimus => Index == 0;
 
-    internal bool IsTco7 => Index > 0;
+    internal bool IsTco7 => Index is > 0 and <= 7;
+
+    /// <summary>True Form, the helper bot (bots/TrueForm).</summary>
+    internal bool IsTrueForm => Index == 8;
 
     /// <summary>The seat's school.</summary>
     internal MagicSchool School => Enum.TryParse<MagicSchool>(Role, true, out var school) ? school : MagicSchool.Balance;
@@ -102,7 +115,7 @@ internal sealed class UltimusSeat {
     internal string Folder => Path.GetFullPath(FolderName);
 
     /// <summary>"Ultimus" or "TCO7 member Tulkar", for the server log.</summary>
-    internal string LogName => IsUltimus ? "Ultimus" : $"TCO7 {Name}";
+    internal string LogName => IsUltimus ? "Ultimus" : IsTrueForm ? "True Form" : $"TCO7 {Name}";
 
     // "Ultimus" as a word of its own, not "[Ultimus]" (a settings section) and not part of a longer word.
     private static readonly System.Text.RegularExpressions.Regex s_ultimusWord = new(@"(?<![\[\w])Ultimus(?![\]\w])");
@@ -119,15 +132,18 @@ internal sealed class UltimusSeat {
     /// </summary>
     internal bool Enabled => IsUltimus
         ? ConfigurationManager.GetValue("Ultimus.Enabled", false)
+        // True Form: [TrueForm] Enabled, on unless turned off (Niduus asked for him to stand at his spot; live).
+        : IsTrueForm ? ConfigurationManager.GetValue("TrueForm.Enabled", true)
         : ConfigurationManager.GetValue("TCO7.Enabled", false) && ConfigurationManager.GetValue("TCO7." + Name, true)
           && ConfigurationManager.GetValue(Section + ".Enabled", true);
 
     /// <summary>Its own section in Imlight.ini: [Ultimus], or [TCO7-Tulkar] and so on (Ahziael's member page writes it).</summary>
-    internal string Section => IsUltimus ? "Ultimus" : "TCO7-" + Name;
+    internal string Section => IsUltimus ? "Ultimus" : IsTrueForm ? "TrueForm" : "TCO7-" + Name;
 
     /// <summary>The port of its mini server: Ultimus [Ultimus] Port (12373); the TCO7 [TCO7] Port (12381) and the next six.</summary>
     internal int Port => IsUltimus
         ? ConfigurationManager.GetValue("Ultimus.Port", 12373)
+        : IsTrueForm ? Math.Clamp(ConfigurationManager.GetValue("TrueForm.Port", 12389), 1024, 65000)
         : Math.Clamp(ConfigurationManager.GetValue("TCO7.Port", 12381), 1024, 65000) + Index - 1;
 
     /// <summary>
@@ -137,7 +153,9 @@ internal sealed class UltimusSeat {
     internal T Setting<T>(string key, T fallback) {
         var his = ConfigurationManager.GetValue("Ultimus." + key, fallback);
 
-        return IsUltimus ? his : ConfigurationManager.GetValue(Section + "." + key, ConfigurationManager.GetValue("TCO7." + key, his));
+        return IsUltimus ? his
+            : IsTrueForm ? ConfigurationManager.GetValue(Section + "." + key, his)
+            : ConfigurationManager.GetValue(Section + "." + key, ConfigurationManager.GetValue("TCO7." + key, his));
     }
 
     public override string ToString() => Key;

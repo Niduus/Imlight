@@ -218,6 +218,12 @@ internal sealed partial class UltimusDirectorActor {
                 // Never the reason a player's words go unheard (his log, 2026-11-16: every line threw here).
                 Logger.Debug("Ultimus: could not note what {0} is working on: {1}", Logger.Args(heard.SpeakerName, ex.Message));
             }
+            // True Form's own asks: "join me", "leave", a mode, "use Dragonblade" (UltimusDirector.TrueForm.cs).
+            if (_seat.IsTrueForm && !heard.OrdersChecked && TrueFormAsk(heard, me)) {
+                _answeredAt[heard.SpeakerCharId] = DateTime.UtcNow;
+                continue;
+            }
+
             // "Stop" / "got it", "help me fight", "walk me through this quest", "do you remember me?"
             // (UltimusDirector.Teach.cs, UltimusDirector.Helper.cs, UltimusDirector.People.cs).
             if (!heard.OrdersChecked && (StopAsk(heard) || HelpAsk(heard, me) || TeachAsk(heard) || RememberMeAsk(heard)
@@ -535,7 +541,8 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         var name = me.Wizard?.PlayerNameBehavior?.GetWizardName() ?? UltimusRoster.NAME;
-        if (MenuChatBook.Says(heard.Text, UltimusRoster.NAME) || MenuChatBook.Says(heard.Text, name.Split(' ')[0])) {
+        if (MenuChatBook.Says(heard.Text, UltimusRoster.NAME) || MenuChatBook.Says(heard.Text, name.Split(' ')[0])
+            || (_seat.IsTrueForm && MenuChatBook.Says(heard.Text, TrueForm.TITLE_NAME))) {
             _namedBy[heard.SpeakerCharId] = now;
             return true;
         }

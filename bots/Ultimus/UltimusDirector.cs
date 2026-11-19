@@ -347,6 +347,15 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         var self = Self;
         _ = System.Threading.Tasks.Task.Run(() => {
             var members = restart ? UltimusRoster.Restart() : UltimusRoster.Load();
+            // True Form (TrueFormMaker): top level Myth, the best gear and his title, made ready before he logs in; his
+            // spells start being read now, for his first fight.
+            if (members is not null && UltimusSeat.Current.IsTrueForm) {
+                _ = TrueFormPool.Ready;
+                foreach (var member in members) {
+                    TrueFormMaker.Prepare(member.CharId);
+                }
+            }
+
             self.Tell(new Loaded(members));
         });
     }
@@ -433,6 +442,12 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         if (_team.Any(m => m.State != "playing" || m.Wizard is null)) {
             _doing = "waiting to be in the game";
 
+            return;
+        }
+
+        // True Form never quests: he waits at his spot and helps whoever calls him (UltimusDirector.TrueForm.cs).
+        if (_seat.IsTrueForm) {
+            TrueFormTick();
             return;
         }
 
