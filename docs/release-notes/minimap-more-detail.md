@@ -1,4 +1,24 @@
-Fixed: The minimap shows shops, trainers, wisps, battles and other floors
-The minimap now shows more of what is around you. Shops, trainers, the potion shop, the bank, the Bazaar and other helpful people get a gold badge with a letter, with what they are written under them. Health and mana wisps show as small red and blue drops, crossed swords mark a battle going on right now, and anything on the floor above or below you is faded with a small up or down arrow so it is not mistaken for something in your way. Each of these can be turned off or recoloured in the minimap's settings.
-Where: the Minimap add-on and the spectator minimaps over the game, and the Minimap settings in Ahziael's overlay designer.
-Test: walk around the Commons and Wizard City with the minimap on and check that the shops and trainers have badges, that wisps and a battle someone is in show up, and that in a tower or dungeon with several floors the things upstairs look faded with an arrow.
+Fixed: No more tan dashes along rivers on the minimap
+River and pond banks no longer poke through the water as pale dashes. Banks that slope into the water are now covered by it.
+Where: Play > Overlay
+Test: Open the full screen map on Unicorn Way. The river should be clean blue with no tan bits in it.
+
+New: Docks, decks and plank bridges drawn in wood
+Wooden docks, piers, decks and plank bridges show in their real shape and a wood colour, over the water, instead of pale blobs.
+Where: Play > Overlay
+Test: Open the full screen map in the Commons. The small fishing dock by Lucky Hookline should be a brown plank shape on the pond.
+
+New: Mob areas, mob counts and boss rings on the minimap
+A soft red patch shows where mobs are, patches that touch join into one area, and each area says how many mobs are in it. Bosses get a ring. Chests can say if they are wooden or silver. All of these can be switched off or recoloured.
+Where: Play > Overlay
+Test: Go near a group of mobs and open the minimap. You should see the red area and a count like "3 mobs" over it.
+
+New: How much the minimap shows, in one choice
+A new "How much it shows" choice sets the minimap to Just the map, Normal, Detailed or Everything. Every part can still be changed by itself after.
+Where: Play > Overlay
+Test: Pick the minimap in the designer, set "How much it shows" to Everything, and look at the map in the game.
+
+Fixed: Names on the minimap don't pile up
+A name that would cover another moves above its icon, or is left out, with the most important names (bosses, sigils) kept first. Turn off "Crowded names" to show every name.
+Where: Play > Overlay
+Test: Stand where many NPCs are close together. Their names should not draw on top of each other.
