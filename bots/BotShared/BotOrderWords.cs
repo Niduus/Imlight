@@ -32,15 +32,12 @@ namespace Imlight.CoreLib.Game.BotShared;
 internal static class BotOrderWords {
 
     /// <summary>Whether two words differ by one letter: one changed, added, left out, or two side by side swapped.</summary>
-    internal static bool OneOff(string a, string b) {
-        if (a == b) {
-            return true;
-        }
+    internal static bool OneOff(string a, string b) => a == b || (a is not null && b is not null && Math.Abs(a.Length - b.Length) <= 1 && Distance(a, b) <= 1);
 
-        if (a is null || b is null || Math.Abs(a.Length - b.Length) > 1) {
-            return false;
-        }
-
+    /// <summary>How many letters apart two words are (changed, added, left out, or two side by side swapped).</summary>
+    internal static int Distance(string a, string b) {
+        a ??= "";
+        b ??= "";
         var d = new int[a.Length + 1, b.Length + 1];
         for (var i = 0; i <= a.Length; i++) {
             d[i, 0] = i;
@@ -60,7 +57,31 @@ internal static class BotOrderWords {
             }
         }
 
-        return d[a.Length, b.Length] <= 1;
+        return d[a.Length, b.Length];
+    }
+
+    // The words an order starts with, for "did you mean ...?" (UltimusDirector.OrderContext.cs).
+    private static readonly string[] s_guessable = ["heal", "shield", "blade", "trap", "attack", "follow", "stay", "flee", "pass", "draw",
+        "discard", "defensive", "offensive", "teleport", "focus", "protect", "escape"];
+
+    /// <summary>
+    /// A line whose first word is two letters off an order word ("shleid me", "fllwo me"): the line as it was likely meant, to
+    /// ask "Did you mean ...?" instead of guessing; null when nothing is that near (one letter off is fixed without asking).
+    /// </summary>
+    internal static string LikelyMeant(string lower) {
+        var words = (lower ?? "").Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (words.Length == 0 || words.Length > 5 || words[0].Length < 4 || s_keep.Contains(words[0]) || Vocabulary.Contains(words[0])) {
+            return null;
+        }
+
+        var near = s_guessable.Where(v => v.Length >= 4 && Math.Abs(v.Length - words[0].Length) <= 2 && Distance(words[0], v) == 2
+                                          && words[0][0] == v[0]).ToList();
+        if (near.Count != 1) {
+            return null;
+        }
+
+        words[0] = near[0];
+        return string.Join(' ', words);
     }
 
     /// <summary>
