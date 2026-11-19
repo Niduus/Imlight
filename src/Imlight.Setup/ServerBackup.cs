@@ -130,12 +130,15 @@ internal static class ServerBackup {
         var target = Path.Combine(folder, name);
         var temp = target + ".part";
         var counts = new Dictionary<string, int>();
+        // The backup made while an update installs is packed the quick way, so the update waits less (Niduus, 2026-11-19:
+        // "make restarts and applications faster"); it is a little bigger. The daily one is packed tightest.
+        var level = kind == BEFORE_UPDATE ? CompressionLevel.Fastest : CompressionLevel.Optimal;
         try {
             using (var zip = ZipFile.Open(temp, ZipArchiveMode.Create)) {
                 void Add(string file, string entry, string part) {
                     try {
                         using var source = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
-                        using var to = zip.CreateEntry(entry, CompressionLevel.Optimal).Open();
+                        using var to = zip.CreateEntry(entry, level).Open();
                         source.CopyTo(to);
                         counts[part] = counts.GetValueOrDefault(part) + 1;
                     }

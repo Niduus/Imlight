@@ -230,10 +230,7 @@ internal sealed class SetupSteps : IDisposable {
         _sourceStamp = commit is not null ? ServerSource.Stamp(repo, branch, commit) : null;
         var (imcodecRepo, imcodecCommit) = await ImcodecVersionAsync(repo, pinned ?? branch);
 
-        if (Directory.Exists(SourceFolder)) {
-            Directory.Delete(SourceFolder, recursive: true);
-        }
-
+        KeepPreviousSource();
         await DownloadAndExtractAsync(pinned is not null
             ? $"https://codeload.github.com/{repo}/zip/{pinned}"
             : $"https://codeload.github.com/{repo}/zip/refs/heads/{branch}", SourceFolder);
@@ -274,10 +271,7 @@ internal sealed class SetupSteps : IDisposable {
 
         SetupLog.Info($"Copying Imlight from {from}. Your folder is not changed..");
         _sourceStamp = $"folder {from}";
-        if (Directory.Exists(SourceFolder)) {
-            Directory.Delete(SourceFolder, recursive: true);
-        }
-
+        KeepPreviousSource();
         CopySourceTree(from, SourceFolder);
         if (Directory.Exists(Path.Combine(ImcodecFolder, "src"))) {
             SetupLog.Detail("Using the Imcodec in the folder's submodule\\Imcodec.");
@@ -504,6 +498,174 @@ internal sealed class SetupSteps : IDisposable {
     // 5. Build
     // ---------------------------------------------------------------------
 
+    // ---------------------------------------------------------------------
+    // Quicker builds (Niduus, 2026-11-19: "make restarts and applications faster")
+    // ---------------------------------------------------------------------
+    // Every update used to download the source into an empty folder and build all of it, Imcodec's generated game types
+    // included (about 2 minutes on a fast PC, more on most). The last update's Source folder is now kept beside the new
+    // one, its build folders (obj, bin) are moved over, and every file that did not change gets its old time back, so
+    // the build only does the projects whose files changed (a server change: about 40% quicker; Imcodec and the game
+    // types are skipped when the game did not change). A quick build that fails is done again from nothing.
+
+    private string PreviousSourceFolder => SourceFolder + ".previous";
+
+    /// <summary>Moves the last update's Source folder aside (Source.previous) instead of deleting it.</summary>
+    private void KeepPreviousSource() {
+        try {
+            if (Directory.Exists(PreviousSourceFolder)) {
+                Directory.Delete(PreviousSourceFolder, recursive: true);
+            }
+
+            if (Directory.Exists(SourceFolder)) {
+                Directory.Move(SourceFolder, PreviousSourceFolder);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            SetupLog.Detail("The last build could not be kept for a quicker build: " + ex.Message);
+            if (Directory.Exists(SourceFolder)) {
+                Directory.Delete(SourceFolder, recursive: true);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Takes the last build's obj and bin folders into the new Source folder and gives unchanged files their old times.
+    /// True when there was a last build to reuse. Source.previous is removed either way.
+    /// </summary>
+    private bool ReusePreviousBuild() {
+        var previous = PreviousSourceFolder;
+        if (!Directory.Exists(previous)) {
+            return false;
+        }
+
+        var moved = 0;
+        var kept = 0;
+        var unchanged = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        try {
+            var pending = new Stack<string>();
+            pending.Push(previous);
+            while (pending.Count > 0) {
+                var folder = pending.Pop();
+                var relative = Path.GetRelativePath(previous, folder);
+                var newFolder = relative == "." ? SourceFolder : Path.Combine(SourceFolder, relative);
+                if (!Directory.Exists(newFolder)) {
+                    continue;
+                }
+
+                foreach (var sub in Directory.EnumerateDirectories(folder)) {
+                    var name = Path.GetFileName(sub);
+                    if (name.Equals("obj", StringComparison.OrdinalIgnoreCase) || name.Equals("bin", StringComparison.OrdinalIgnoreCase)) {
+                        var target = Path.Combine(newFolder, name);
+                        if (!Directory.Exists(target)) {
+                            Directory.Move(sub, target);
+                            moved++;
+                        }
+                    }
+                    else if (!name.StartsWith('.')) {
+                        pending.Push(sub);
+                    }
+                }
+
+                foreach (var file in Directory.EnumerateFiles(folder)) {
+                    var newFile = Path.Combine(newFolder, Path.GetFileName(file));
+                    if (File.Exists(newFile) && SameBytes(file, newFile)) {
+                        File.SetLastWriteTimeUtc(newFile, File.GetLastWriteTimeUtc(file));
+                        unchanged.Add(Path.GetFullPath(newFile));
+                        kept++;
+                    }
+                }
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            // Whatever was not carried over is simply built again.
+            SetupLog.Detail("Part of the last build could not be reused: " + ex.Message);
+        }
+
+        // Every new or changed file is newer than the last build, whatever time the download gave it (a file's time in
+        // GitHub's zip is its commit's, which can be older than the last build): it is built again for sure.
+        if (moved > 0) {
+            var now = DateTime.UtcNow;
+            foreach (var file in Directory.EnumerateFiles(SourceFolder, "*", SearchOption.AllDirectories)) {
+                var full = Path.GetFullPath(file);
+                if (unchanged.Contains(full) || IsBuildOutput(Path.GetRelativePath(SourceFolder, full))) {
+                    continue;
+                }
+
+                try {
+                    File.SetLastWriteTimeUtc(full, now);
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                    // A file that cannot be marked new means the build cannot be trusted to see it: build everything.
+                    SetupLog.Detail($"Could not mark {full} as new ({ex.Message}), so the whole server is built.");
+                    RemoveBuildOutput(SourceFolder);
+                    moved = 0;
+                    break;
+                }
+            }
+        }
+
+        try {
+            Directory.Delete(previous, recursive: true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            SetupLog.Detail("The last build's folder could not be removed yet: " + ex.Message);
+        }
+
+        SetupLog.Detail($"Quicker build: reused {moved} build folders and {kept} unchanged files from the last build.");
+
+        return moved > 0;
+    }
+
+    private static bool IsBuildOutput(string relative)
+        => relative.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+            .Any(part => part.Equals("obj", StringComparison.OrdinalIgnoreCase) || part.Equals("bin", StringComparison.OrdinalIgnoreCase));
+
+    private static bool SameBytes(string a, string b) {
+        var infoA = new FileInfo(a);
+        var infoB = new FileInfo(b);
+        if (infoA.Length != infoB.Length) {
+            return false;
+        }
+
+        using var streamA = infoA.OpenRead();
+        using var streamB = infoB.OpenRead();
+        var bufferA = new byte[81920];
+        var bufferB = new byte[81920];
+        int read;
+        while ((read = streamA.Read(bufferA, 0, bufferA.Length)) > 0) {
+            var readB = 0;
+            while (readB < read) {
+                var got = streamB.Read(bufferB, readB, read - readB);
+                if (got == 0) {
+                    return false;
+                }
+
+                readB += got;
+            }
+
+            if (!bufferA.AsSpan(0, read).SequenceEqual(bufferB.AsSpan(0, read))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>Removes every obj and bin folder in the Source folder, for a build from nothing.</summary>
+    private static void RemoveBuildOutput(string sourceFolder) {
+        foreach (var folder in Directory.EnumerateDirectories(sourceFolder, "*", SearchOption.AllDirectories)
+                     .Where(f => Path.GetFileName(f) is "obj" or "bin").OrderByDescending(f => f.Length).ToList()) {
+            try {
+                if (Directory.Exists(folder)) {
+                    Directory.Delete(folder, recursive: true);
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                SetupLog.Detail($"Could not remove {folder}: {ex.Message}");
+            }
+        }
+    }
+
     /// <summary>
     /// Builds the server into the server folder, keeping the configuration, logs and database already there.
     /// </summary>
@@ -516,12 +678,25 @@ internal sealed class SetupSteps : IDisposable {
             Directory.Delete(staging, recursive: true);
         }
 
-        SetupLog.Info("Building the server. The first build downloads its packages and can take several minutes.");
+        var reused = ReusePreviousBuild();
+        SetupLog.Info(reused
+            ? "Building the server. Only what changed since the last build is built again."
+            : "Building the server. The first build downloads its packages and can take several minutes.");
         // Run from the source folder so its global.json picks the .NET 10 SDK even when a newer one is installed:
         // Imcodec builds an MSBuild task against the running SDK's own MSBuild, which only compiles on .NET 10.
-        var exitCode = await ProcessRunner.RunAsync(dotnet,
-            ["publish", project, "-c", "Release", "-r", RuntimeIdentifier(), "--self-contained", "true", "-o", staging, "-nologo"],
-            showProgress: true, workingDirectory: SourceFolder);
+        string[] publish = ["publish", project, "-c", "Release", "-r", RuntimeIdentifier(), "--self-contained", "true", "-o", staging, "-nologo"];
+        var exitCode = await ProcessRunner.RunAsync(dotnet, publish, showProgress: true, workingDirectory: SourceFolder);
+        if (exitCode != 0 && reused) {
+            // The last build's leftovers are never a reason for an update to fail: the whole server is built again.
+            SetupLog.Info("The quick build did not work, so the whole server is built again (a few minutes).");
+            RemoveBuildOutput(SourceFolder);
+            if (Directory.Exists(staging)) {
+                Directory.Delete(staging, recursive: true);
+            }
+
+            exitCode = await ProcessRunner.RunAsync(dotnet, publish, showProgress: true, workingDirectory: SourceFolder);
+        }
+
         if (exitCode != 0) {
             throw new SetupException("The server could not be built. The errors are in the setup log.");
         }
