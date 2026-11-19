@@ -143,15 +143,23 @@ internal static class TrueFormMaker {
     private static void GivePet(Wizard wizard, string school, BotStyle style) {
         try {
             var talents = PetTalents(wizard, school, style);
+            // The pet body (and a mount of its set) that fits how he plays (Niduus, 2026-11-19: "Have the pets that TF
+            // uses be based on the style of play he will need in terms of body").
+            var pick = BestPetBody(school, style);
+            if (pick?.Mount is { } mount) {
+                GiveMount(wizard, mount);
+            }
+
+            bool Fits(WizClientObjectItem i) => pick is not null ? (uint) i.m_templateID == pick.Pet : IsSchool((uint) i.m_templateID, school);
             if (wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Pet) is { } worn && PetProgress.GetBehavior(worn) is { } had
-                && had.m_level >= PetProgress.MAX_LEVEL && IsSchool((uint) worn.m_templateID, school)) {
+                && had.m_level >= PetProgress.MAX_LEVEL && Fits(worn)) {
                 ShapeTalents(wizard, worn, talents);
                 return;
             }
 
-            // His pet of this school from his backpack (each school's loadout is kept there), else a new one.
+            // That pet from his backpack (each loadout's pet is kept there), else a new one.
             var kept = wizard.InventoryBehavior?.Items?.FirstOrDefault(i => PetProgress.GetBehavior(i) is { } b && b.m_level >= PetProgress.MAX_LEVEL
-                                                                             && IsSchool((uint) i.m_templateID, school));
+                                                                             && Fits(i));
             if (kept is not null) {
                 ShapeTalents(wizard, kept, talents);
                 if (wizard.InventoryToEquipmentTransfer(kept.m_globalID.Full, out _, out _)) {
@@ -161,7 +169,7 @@ internal static class TrueFormMaker {
                 return;
             }
 
-            if (BestPet(school) is not { } template) {
+            if ((pick?.Pet ?? BestPet(school)) is not { } template) {
                 Logger.Warning("True Form: no {0} pet was found to give him.", Logger.Args(school));
                 return;
             }
@@ -286,6 +294,96 @@ internal static class TrueFormMaker {
 
     private static bool IsSchool(uint template, string school)
         => string.Equals((string) (CoreObjectFactory.GetCoreTemplate(template) as WizItemTemplate)?.m_school, school, StringComparison.OrdinalIgnoreCase);
+
+    internal sealed record PetPick(uint Pet, uint? Mount, double Score, string Why);
+
+    // Every pet body worth having, scored for his school and play style: the body's own stats, plus, when a
+    // mount of the same set exists, the set bonus tiers that pet and mount reach together (the fossil pet and mount's
+    // damage; TrueFormSetBonus puts them on). Ties: his own school's pet, one players can get, the highest stats.
+    internal static PetPick BestPetBody(string school, BotStyle style) {
+        try {
+            var obtainable = ItemSources.ObtainableIds();
+            var mounts = (TrueFormTopGear.SetPieces ?? []).Where(p => p.Mount && Allowed(p.Id, out var name)
+                                                                       && !name.Contains("Book", StringComparison.OrdinalIgnoreCase))
+                .GroupBy(p => p.Set).ToDictionary(g => g.Key, g => g.Select(p => p.Id).ToList());
+            var best = PetFactory.AllPetTemplates.Keys
+                .Select(id => (Id: id, Item: CoreObjectFactory.GetCoreTemplate(id) as WizItemTemplate, Pet: PetFactory.GetPetItemBehaviorTemplate(id)))
+                .Where(p => p.Item is not null && p.Pet is not null && Allowed(p.Id, out _))
+                .Select(p => {
+                    // (A pet's cards do not count: his hand comes from his own spells, TrueFormPool.)
+                    var body = BotGear.ScoreStats(BotGear.StatsOf(p.Item), school, style);
+                    uint? mount = null;
+                    var set = 0.0;
+                    var why = "";
+                    if (p.Item.m_itemSetBonusTemplateID != 0 && mounts.TryGetValue((uint) p.Item.m_itemSetBonusTemplateID, out var ids)) {
+                        foreach (var m in ids) {
+                            var mountItem = CoreObjectFactory.GetCoreTemplate(m) as WizItemTemplate;
+                            var together = TrueFormSetBonus.Reached([p.Item, mountItem]).Sum(r => BotGear.ScoreStats(BotGear.StatsOfEffects(r.Tier.m_equipEffectsGranted), school, style))
+                                           + BotGear.ScoreStats(BotGear.StatsOf(mountItem), school, style);
+                            if (together > set) {
+                                set = together;
+                                mount = m;
+                            }
+                        }
+
+                        if (mount is not null) {
+                            why = $" with its set mount {Locale.GetEnglishName((string) (CoreObjectFactory.GetCoreTemplate(mount.Value) as WizItemTemplate)?.m_displayName ?? "")}";
+                        }
+                    }
+
+                    return new {
+                        p.Id, Mount = mount, Score = body + set, Why = why,
+                        Own = IsSchool(p.Id, school), Got = obtainable.Contains(p.Id),
+                        Stats = (p.Pet.m_maxStats ?? []).Sum(s => (long) s.m_value),
+                    };
+                })
+                .OrderByDescending(p => Math.Round(p.Score, 1)).ThenByDescending(p => p.Own).ThenByDescending(p => p.Got)
+                .ThenByDescending(p => p.Stats).ThenBy(p => p.Id)
+                .FirstOrDefault();
+            if (best is null) {
+                return null;
+            }
+
+            var shown = Locale.GetEnglishName((string) (CoreObjectFactory.GetCoreTemplate(best.Id) as WizItemTemplate)?.m_displayName ?? "");
+            Logger.Information("True Form: pet body for {0} {1}: {2}{3} (worth {4:0.#}).", Logger.Args(school, style, shown, best.Why, best.Score));
+            return new PetPick(best.Id, best.Mount, best.Score, best.Why);
+        }
+        catch (Exception e) {
+            Logger.Warning("True Form: could not pick his pet body: {0}", Logger.Args(e.Message));
+            return null;
+        }
+    }
+
+    // A pet or mount he may have: not retired, not a dev item, not Crowns-only, with a shown name.
+    private static bool Allowed(uint id, out string name) {
+        var item = CoreObjectFactory.GetCoreTemplate(id) as WizItemTemplate;
+        name = Locale.GetEnglishName((string) item?.m_displayName ?? "") ?? "";
+        return item is not null && !string.IsNullOrWhiteSpace(name)
+               && !(item.m_adjectiveList ?? []).Any(a => (string) a is "FLAG_CrownsOnly" or "FLAG_Retired" or "FLAG_DevItem");
+    }
+
+    // The set mount for his pet: worn already, from his backpack, or made.
+    private static void GiveMount(Wizard wizard, uint mount) {
+        try {
+            if (wizard.EquipmentBehavior?.GetItemInSlot(EquipmentSlotType.Mount) is { } worn && (uint) worn.m_templateID == mount) {
+                return;
+            }
+
+            var kept = wizard.InventoryBehavior?.Items?.FirstOrDefault(i => (uint) i.m_templateID == mount);
+            if (kept is null && (!wizard.TryCreateItem(mount, out kept) || !wizard.AddInitializedItemToInventory(kept, ignoreLimit: true))) {
+                Logger.Warning("True Form: could not make his set mount ({0}).", Logger.Args(mount));
+                return;
+            }
+
+            if (wizard.InventoryToEquipmentTransfer(kept.m_globalID.Full, out _, out _)) {
+                Logger.Information("True Form: rides his set mount {0}.",
+                    Logger.Args(Locale.GetEnglishName((string) (CoreObjectFactory.GetCoreTemplate(mount) as WizItemTemplate)?.m_displayName ?? "")));
+            }
+        }
+        catch (Exception e) {
+            Logger.Warning("True Form: could not give him his set mount: {0}", Logger.Args(e.Message));
+        }
+    }
 
     private static uint? BestPet(string school) {
         var obtainable = ItemSources.ObtainableIds();

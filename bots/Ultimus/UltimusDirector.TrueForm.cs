@@ -55,6 +55,11 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         AnswerPlayers();
+        // His set bonuses (True Form only), put on again whenever his stats were worked out anew.
+        if (me.Wizard is { } setWizard) {
+            TrueFormSetBonus.Ensure(setWizard);
+        }
+
         // Calls and "leave" are answered at once, in a battle too (a call waited for the battle's end and often ran out).
         TrueFormCalls(me);
         UltimusNow.Note(_doing, _lastReasoning, null);

@@ -432,9 +432,12 @@ internal static class BotGear {
     /// The stats an item gives while worn or socketed, read as pieces are (a jewel's or a pin's too); empty when it gives
     /// none this can read.
     /// </summary>
-    internal static List<Stat> StatsOf(WizItemTemplate template) {
+    internal static List<Stat> StatsOf(WizItemTemplate template) => StatsOfEffects(template?.m_equipEffects);
+
+    /// <summary>The stats in a list of equip effects (an item's, or a set bonus tier's).</summary>
+    internal static List<Stat> StatsOfEffects(IEnumerable<GameEffectInfo> effects) {
         var stats = new List<Stat>();
-        foreach (var effect in template?.m_equipEffects ?? []) {
+        foreach (var effect in effects ?? []) {
             switch (effect) {
                 case StatisticEffectInfo info when ReadStat(info) is { } stat:
                     stats.Add(stat);
