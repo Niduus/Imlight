@@ -1056,6 +1056,11 @@ public partial class CombatResolver {
             // The mark a step's "whoever has the mark" means: its own, else the cheat's.
             _stepMark = step.Mark.Length > 0 ? step.Mark : cheat.Mark;
 
+            // A block turned off: it does nothing, but keeps its place for the holders' counts.
+            if (step.Is("Skip")) {
+                continue;
+            }
+
             // Stop (Niduus, 2026-11-19, more Flow blocks): the rest of the blocks it is among do nothing this time.
             if (step.Is("Stop")) {
                 Logger.Information("Duel {0} | Slot {1} | {2}: a Stop block ends the cheat's blocks here.",
