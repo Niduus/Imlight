@@ -59,6 +59,8 @@ internal static class TrueFormJewels {
 
             var lines = new List<string>();
             var put = 0;
+            // His Myth damage and pierce from what he wears, to pick a circle socket's jewel by what he needs most.
+            var need = Need.Of(wizard);
             foreach (var item in (wizard.EquipmentBehavior?.EquippedItems ?? []).ToList()) {
                 var template = ItemHelper.GetItemTemplate(item);
                 var sockets = JewelSockets.GetSockets(template);
@@ -81,12 +83,13 @@ internal static class TrueFormJewels {
 
                     var nowId = JewelSockets.GetPairs(item).FirstOrDefault(p => p?.m_socketNumber == socket)?.m_jewelTemplateID ?? 0;
                     var now = jewels.FirstOrDefault(j => j.Id == nowId);
-                    var nowScore = nowId == 0 ? double.MinValue : Score(now, pet);
+                    var circle = shape.Value == JewelSocketType.SOCKETTYPE_CIRCLE;
+                    var nowScore = nowId == 0 ? double.MinValue : circle ? need.Score(now) : Score(now, pet);
                     if (nowId != 0) {
                         JewelSockets.Unsocket(item, socket);
                     }
 
-                    var best = jewels.Where(j => j.Shape == shape.Value).Select(j => (Jewel: j, Score: Score(j, pet)))
+                    var best = jewels.Where(j => j.Shape == shape.Value).Select(j => (Jewel: j, Score: circle ? need.Score(j) : Score(j, pet)))
                         .Where(x => x.Score > 0).OrderByDescending(x => x.Score).ThenBy(x => x.Jewel.Id)
                         .FirstOrDefault(x => JewelSockets.CheckSocket(wizard, item, x.Jewel.Template, socket) is null);
                     if (best.Jewel is not null && best.Score > nowScore) {
@@ -103,6 +106,7 @@ internal static class TrueFormJewels {
                     }
 
                     var inIt = JewelSockets.GetPairs(item).FirstOrDefault(p => p?.m_socketNumber == socket)?.m_jewelTemplateID ?? 0;
+                    need.Add(inIt == 0 ? null : jewels.FirstOrDefault(j => j.Id == inIt));
                     lines.Add($"{BotJewels.NameOf(template)}, {JewelSockets.ShapeName(shape.Value)} socket: "
                               + (inIt == 0 ? "empty (no jewel fits)" : BotJewels.NameOf(CoreObjectFactory.GetCoreTemplate((uint) inIt) as WizItemTemplate)));
                 }
@@ -131,6 +135,87 @@ internal static class TrueFormJewels {
         }
     }
 
+    // A circle socket takes a % damage or a pierce jewel (Niduus, 2026-11-19: "circle is a toss out because it can be % damage
+    // or pierce"): the one that raises his hits the most now. A damage point adds to all his damage (100 + damage);
+    // a pierce point takes a point off a top level enemy's resist (60%) until his pierce is past it.
+    private sealed class Need {
+
+        private const double ENEMY_RESIST = 60;
+
+        private double _damage;
+        private double _pierce;
+
+        internal static Need Of(Wizard wizard) {
+            var need = new Need();
+            foreach (var item in wizard.EquipmentBehavior?.EquippedItems ?? []) {
+                need.Add(BotGear.StatsOf(ItemHelper.GetItemTemplate(item)));
+            }
+
+            return need;
+        }
+
+        internal void Add(BotJewels.Jewel jewel) => Add(jewel?.Stats);
+
+        private void Add(IEnumerable<BotGear.Stat> stats) {
+            foreach (var stat in stats ?? []) {
+                if (!Counts(stat)) {
+                    continue;
+                }
+
+                if (stat.Kind == "Damage") {
+                    _damage += stat.Value;
+                }
+                else if (stat.Kind == "ArmorPiercing") {
+                    _pierce += stat.Value;
+                }
+            }
+        }
+
+        private static bool Counts(BotGear.Stat stat) => stat.School.Length == 0 || stat.School.Equals("Myth", StringComparison.OrdinalIgnoreCase);
+
+        // How much more his hits do with this jewel, in hundredths of a percent; other stats only break a tie.
+        internal double Score(BotJewels.Jewel jewel) {
+            if (jewel is null) {
+                return 0;
+            }
+
+            var gain = 0.0;
+            foreach (var stat in jewel.Stats.Where(Counts)) {
+                if (stat.Kind == "Damage") {
+                    gain += stat.Value / (100 + _damage);
+                }
+                else if (stat.Kind == "ArmorPiercing") {
+                    var left = Math.Max(0, ENEMY_RESIST - _pierce);
+                    gain += Math.Min(stat.Value, left) / (100 - left);
+                }
+            }
+
+            var rest = BotGear.ScoreStats(JewelStats(jewel.Stats).Where(s => s.Kind is not ("Damage" or "ArmorPiercing")), "Myth", BotStyle.Backup);
+            return (gain * 10000) + (rest * 0.01);
+        }
+    }
+
+    // The stats a jewel is picked by (Niduus, 2026-11-19: "flat damage and flat resist is not usually sought after. Look for
+    // the % damage jewel and maybe universal flat resist for squares"): flat damage does not count, flat resist only when it
+    // is to every school and then well under a % damage jewel, so a % damage jewel wins wherever one fits.
+    private static IEnumerable<BotGear.Stat> JewelStats(IEnumerable<BotGear.Stat> stats) {
+        foreach (var stat in stats ?? []) {
+            switch (stat.Kind) {
+                case "FlatDamage":
+                    continue;
+                case "FlatReduceDamage":
+                    if (stat.School.Length == 0) {
+                        yield return stat with { Value = stat.Value * 0.25f };
+                    }
+
+                    continue;
+                default:
+                    yield return stat;
+                    break;
+            }
+        }
+    }
+
     // How good a jewel is for him: its stats as his gear is scored; a pet jewel by his pet talents (first ones best), only
     // a talent his pet does not have yet.
     private static double Score(BotJewels.Jewel jewel, ClientPetItemBehavior pet) {
@@ -139,7 +224,7 @@ internal static class TrueFormJewels {
         }
 
         if (jewel.Shape != JewelSocketType.SOCKETTYPE_PET) {
-            return BotGear.ScoreStats(jewel.Stats, "Myth", BotStyle.Backup);
+            return BotGear.ScoreStats(JewelStats(jewel.Stats), "Myth", BotStyle.Backup);
         }
 
         var best = 0.0;
