@@ -77,6 +77,13 @@ internal static class BotFloors {
         /// fourth tower) is complete.
         /// </summary>
         internal string Encounter { get; init; } = "";
+
+        /// <summary>
+        /// A puzzle walked through in order: each set of piece states in turn, as each check enables the next one (The
+        /// Ironworks' Gate2: Symbol1 to Symbol4, the Bird, Moon, Tree and Bug plates stepped down one at a time). Empty for
+        /// any other gate.
+        /// </summary>
+        internal List<List<(string Object, string State)>> Sequence { get; init; } = [];
     }
 
     /// <summary>What the area's files say about its floors.</summary>
@@ -261,6 +268,27 @@ internal static class BotFloors {
             }
         }
 
+        // The checks before this one, each enabling the next, with the piece states each needs, first to last (empty when the
+        // trigger is enabled by nothing).
+        List<List<(string Object, string State)>> SequenceOf(Trigger last) {
+            var chain = new List<List<(string Object, string State)>>();
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            for (var t = last; t is not null && seen.Add((string) t.m_triggerName ?? "") && chain.Count < 12;) {
+                var needs = Needs(t).OfType<ReqTriggerObjectState>().Where(n => !n.m_applyNOT && !string.IsNullOrEmpty(n.m_triggerObjName))
+                    .Select(n => ((string) n.m_triggerObjName, (string) n.m_triggerObjState)).ToList();
+                if (needs.Count == 0) {
+                    break;
+                }
+
+                chain.Insert(0, needs);
+                var name = (string) t.m_triggerName ?? "";
+                t = triggers.FirstOrDefault(p => Results(p).OfType<ResPostEvent>()
+                    .Any(r => string.Equals((string) r.m_eventName, "Enable_" + name, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            return chain;
+        }
+
         // Start states: the trigger objects, then the area's object list.
         var starts = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var spots = new Dictionary<string, (float X, float Y, float Z)>(StringComparer.OrdinalIgnoreCase);
@@ -376,6 +404,17 @@ internal static class BotFloors {
                             break;
                         }
 
+                        // A chain of checks, each enabling the next ("Enable_Symbol2" from Symbol1, ...), each needing the plates in
+                        // its own states: the plates are set to each step's states in turn (The Ironworks' Gate2 and Gate3).
+                        if (SequenceOf(from) is { Count: >= 2 } sequence && sequence[^1].All(n => toggles.Any(g => string.Equals(g.Object, n.Object, StringComparison.OrdinalIgnoreCase)))) {
+                            var plates = toggles.Where(g => sequence.SelectMany(st => st).Any(n => string.Equals(n.Object, g.Object, StringComparison.OrdinalIgnoreCase))).ToList();
+                            gate = gate with {
+                                By = Opener.Other, LX = plates.Average(g => g.X), LY = plates.Average(g => g.Y), LZ = plates.Average(g => float.IsNaN(g.Z) ? 0 : g.Z),
+                                Needs = sequence[^1], Sequence = sequence,
+                            };
+                            break;
+                        }
+
                         var enabler = triggers.FirstOrDefault(p => Results(p).OfType<ResPostEvent>()
                             .Any(r => string.Equals((string) r.m_eventName, "Enable_" + (string) from.m_triggerName, StringComparison.OrdinalIgnoreCase)));
                         var needs = enabler is null
@@ -477,6 +516,37 @@ internal static class BotFloors {
             toggles.DistinctBy(g => g.Object + "|" + g.From + "|" + g.Volume).ToList(), starts) {
             Ahead = pads, Back = backs, EventPuzzles = eventPuzzles, SpawnPads = spawnPads.DistinctBy(p => p.Name).ToList(),
         };
+    }
+
+    /// <summary>
+    /// The next piece to set in a puzzle walked through in order, and the state it needs, or null when nothing is known to
+    /// set: the step after the last one the pieces now match (back to the first after the last, as the door is still shut),
+    /// one piece at a time (pure, for the checks).
+    /// </summary>
+    internal static (string Object, string State)? SequenceNext(List<List<(string Object, string State)>> sequence, Func<string, string> stateOf) {
+        if (sequence is not { Count: > 0 }) {
+            return null;
+        }
+
+        bool Matches(List<(string Object, string State)> step)
+            => step.All(n => string.Equals(stateOf(n.Object) ?? "", n.State, StringComparison.OrdinalIgnoreCase));
+
+        var at = -1;
+        for (var i = sequence.Count - 1; i >= 0; i--) {
+            if (Matches(sequence[i])) {
+                at = i;
+                break;
+            }
+        }
+
+        var next = at < 0 || at == sequence.Count - 1 ? 0 : at + 1;
+        foreach (var (obj, state) in sequence[next]) {
+            if (!string.Equals(stateOf(obj) ?? "", state, StringComparison.OrdinalIgnoreCase)) {
+                return (obj, state);
+            }
+        }
+
+        return null;
     }
 
     // Spawn pads per wizard and area copy: when he first headed for one, and when he stood on it.
@@ -816,6 +886,29 @@ internal static class BotFloors {
             if (Tried(key) < TRIES) {
                 return new Duty(STEP, gate.VX, gate.VY, $"\"{gate.Volume}\", which opens \"{gate.Object}\"", key,
                     $"stepping on it opens \"{gate.Object}\"");
+            }
+        }
+
+        // 4a. A puzzle walked through in order (The Ironworks' Gate2, 2026-11-19: four plates stepped down Bird, Moon, Tree,
+        // Bug; the TCO7 stood at the shut gate for an hour as only the last check was known): the plate to step on next.
+        foreach (var gate in book.Gates.Where(g => g.Sequence.Count > 0 && Closed(g) && !Off(g.Trigger) && !Locked(g)
+                                                   && Far(x, y, g.LX, g.LY) <= PUZZLE && Here(g.LZ) && !PastLocked(g.LX, g.LY))
+                     .OrderBy(g => Far(x, y, g.LX, g.LY))) {
+            if (SequenceNext(gate.Sequence, StateOf) is not { } want) {
+                continue;
+            }
+
+            var now = StateOf(want.Object);
+            var plate = book.Toggles.FirstOrDefault(t => string.Equals(t.Object, want.Object, StringComparison.OrdinalIgnoreCase)
+                                                         && string.Equals(t.From, now, StringComparison.OrdinalIgnoreCase));
+            if (plate is null) {
+                continue;
+            }
+
+            var key = $"seq|{want.Object}|{now}";
+            if (Tried(key) < TRIES + 2) {
+                return new Duty(STEP, plate.X, plate.Y, $"the puzzle plate \"{want.Object}\" (now {now}, next {want.State})", key,
+                    $"\"{gate.Object}\" opens once the plates go through their states in order");
             }
         }
 
