@@ -1,0 +1,4 @@
+Fixed: Jade Palace gate to Shoshun Village always started the first MooShu fight
+With all doors open in the server settings, the gate from Jade Palace to Shoshun Village kept sending players into the Water Dojo fight from the start of MooShu, even long after that quest was done, so Shoshun Village could not be reached on foot. A door the game only uses for one quest step now stays shut once that quest is finished, like in the real game, so the gate takes players to Shoshun Village again. Players who are still on that early quest step still get the fight.
+Where: MooShu, Jade Palace, the gate to Shoshun Village. Applies when OpenAllDoors is on.
+Test: With a wizard that finished the first MooShu quests, walk through the Shoshun Village gate in Jade Palace. You should load into Shoshun Village, not the dojo fight.
