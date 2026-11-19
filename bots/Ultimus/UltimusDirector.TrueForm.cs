@@ -358,6 +358,12 @@ internal sealed partial class UltimusDirectorActor {
             return true;
         }
 
+        // An order for this battle ("heal me", "blade Mitsu", "Legion Shield us", "kill them") is his group leader's order,
+        // read in LeaderOrders, not a new mode (Niduus, 2026-11-19: "Legion Shield us" set him to defend and nothing was cast).
+        if (IsBattleOrder(heard, me)) {
+            return false;
+        }
+
         // "use Dragonblade", "cast Tower Shield", "keep Feint in your hand", "bring Mythspear".
         var spellAsk = System.Text.RegularExpressions.Regex.Match(order, @"(?:^|\s)(?:use|cast|keep|bring|play|hold|save)\s+(?<x>.+)$");
         if (spellAsk.Success) {
@@ -409,7 +415,7 @@ internal sealed partial class UltimusDirectorActor {
             return true;
         }
 
-        // A mode, however it is said: "defend", "go attack", "play support", "be evil", "heal us", "tank for us", "atack".
+        // A mode, however it is said: "defend", "go attack", "play support", "be evil", "tank for us", "atack".
         if (TrueForm.ModeFrom(order) is { } mode) {
             var words = order.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
             if (words <= 6 || Has("mode", "play", "go", "be", "switch", "focus", "role", "become", "turn")) {
@@ -422,4 +428,15 @@ internal sealed partial class UltimusDirectorActor {
 
         return false;
     }
+
+    // A line that names a card he can be dealt, or an order with someone to do it on ("heal me", "shield Mitsu", "kill them").
+    private bool IsBattleOrder(UltimusVoice.Heard heard, UltimusMember.Status me) {
+        var orders = UltimusOrders.Parse(WithoutMyName(heard.Text ?? "", me), part => CardSaid(me, part));
+        return orders.Any(o => o.Kind is UltimusOrders.Kind.Cast or UltimusOrders.Kind.Focus or UltimusOrders.Kind.Discard or UltimusOrders.Kind.GoTo
+                               // "Heal us" / "shield the team" stays a mode (support, defend); "heal me", "blade Mitsu" is this battle.
+                               || (o.Kind is UltimusOrders.Kind.Heal or UltimusOrders.Kind.Shield or UltimusOrders.Kind.Blade or UltimusOrders.Kind.Trap
+                                   or UltimusOrders.Kind.Attack && o.Target.Length > 0
+                                   && o.Target is not ("us" or "team" or "the team" or "everyone" or "all of us" or "everybody")));
+    }
+
 }

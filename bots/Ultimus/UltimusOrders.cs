@@ -35,7 +35,12 @@ internal static class UltimusOrders {
     internal enum Kind {
         Stay, Follow, ComeToMe, LeaveGroup, OwnWay, LeaderFirst, GoFirst,
         Pass, Flee, Draw, Discard, Cast, Suggest, Heal, Shield, Blade, Trap, Attack, Focus, EnterFight, Defensive, Offensive,
+        // Go to someone else of the group by name ("go find Walter", "tp to Mindy"): Target is the name as said.
+        GoTo,
     }
+
+    /// <summary>The Target an attack order has when it is meant for every enemy ("kill them all", "hit the mobs").</summary>
+    internal const string ALL_ENEMIES = "all";
 
     /// <summary>One order: what, which card (by name, may be empty) and on whom (as said: "me", "Mitsu", "the boss"; may be empty).</summary>
     internal sealed record Order(Kind Kind, string Card = "", string Target = "");
@@ -124,14 +129,29 @@ internal static class UltimusOrders {
         }
     }
 
-    /// <summary>True once a round: the one line he may say in battle chat this round.</summary>
-    internal static bool MaySayThisRound() {
+    // Kept per seat: whether this round's one line was only a yes ("Okay, ..."), so a "can't" may still follow it.
+    private static readonly SeatLocal<bool> s_saidOnlyYesSeat = new();
+    private static bool s_saidOnlyYes { get => s_saidOnlyYesSeat.Value; set => s_saidOnlyYesSeat.Value = value; }
+
+    /// <summary>
+    /// True once a round: the one line he may say in battle chat this round. A line saying he can't do an order still gets
+    /// out after an "Okay!" in the same round (Niduus, 2026-11-19: True Form said "Okay!" to "blade Mitsu", and "I can't see
+    /// Mitsu in this battle" was kept back, so the leader never knew why nothing happened).
+    /// </summary>
+    internal static bool MaySayThisRound(string text = null) {
+        var yes = text is null || text.StartsWith("Okay", StringComparison.OrdinalIgnoreCase);
         lock (s_lock) {
             if (s_saidRound == s_roundCount) {
-                return false;
+                if (yes || !s_saidOnlyYes) {
+                    return false;
+                }
+
+                s_saidOnlyYes = false;
+                return true;
             }
 
             s_saidRound = s_roundCount;
+            s_saidOnlyYes = yes;
             return true;
         }
     }
@@ -203,15 +223,26 @@ internal static class UltimusOrders {
     private static readonly Regex s_split = new(@"\s*(?:,|;|&|\+|\.(?=\s|$)|!|\band then\b|\bthen\b|\band\b|\bafter that\b|\balso\b)\s*", RegexOptions.Compiled);
 
     private static readonly string[] s_fillers = ["ultimus", "ult", "please", "pls", "plz", "can you", "could you", "would you", "will you",
-        "hey", "ok", "okay", "now", "right now", "quick", "quickly", "asap", "for me", "go ahead and", "i want you to", "i need you to", "you should", "try to"];
+        "hey", "ok", "okay", "now", "right now", "quick", "quickly", "asap", "for me", "go ahead and", "i want you to", "i need you to", "you should", "try to",
+        // Niduus, 2026-11-19 ("Bots need better obedience to commands"): "you will blade me" went to the AI and lost the "me";
+        // "can you blade Mindy next round?" got "I don't think I can".
+        "you will", "youll", "you need to", "you have to", "you gotta", "you must", "make sure to", "make sure you", "remember to",
+        "dont forget to", "next round", "this round", "next turn", "this turn", "on your turn", "real quick", "lil bro", "bro", "dude", "buddy",
+        "mate", "kindly", "go and", "would you mind", "can u", "could u", "would u", "will u", "can ya", "u will", "u need to", "true form", "trueform", "kitharas", "ahziael"];
 
     /// <summary>
     /// The orders in a line, in the order said ("let me go first then heal me", "cast Dragonblade on Mitsu and attack the boss").
     /// Empty when the line holds none. A part that is only a name after a targeted order ("heal me and Mitsu") repeats it.
     /// </summary>
-    internal static List<Order> Parse(string text) {
+    /// <param name="cardOf">
+    /// A card he can cast at the start of a part, said without "cast" ("Legion Shield us", "Dragonblade me"): the card's
+    /// name and the rest of the part, or null. Null: no card names are looked for.
+    /// </param>
+    internal static List<Order> Parse(string text, Func<string, (string Card, string After)?> cardOf = null) {
         var orders = new List<Order>();
-        if (string.IsNullOrWhiteSpace(text) || text.TrimEnd().EndsWith('?') || text.Length > 160) {
+        // "Can you blade Mindy next round?" is an ask, not a question (BotOrderWords.AskOf); "what's in your hand?" stays a question.
+        text = BotShared.BotOrderWords.AskOf(text);
+        if (string.IsNullOrWhiteSpace(text) || text.Length > 160 || BotShared.BotOrderWords.NotAnOrder(text)) {
             return orders;
         }
 
@@ -220,8 +251,16 @@ internal static class UltimusOrders {
         low = Regex.Replace(low, @"\b(go ahead|try|be sure|make sure) and\b", " ");
         Order last = null;
         foreach (var raw in s_split.Split(low)) {
-            var part = Clean(raw);
+            var part = BotShared.BotOrderWords.FixTypos(Clean(raw));
             if (part.Length == 0) {
+                continue;
+            }
+
+            // A card named first, without "cast" ("Legion Shield us", "Tower Shield on Mitsu"): cast it, on whom was said.
+            if (cardOf is not null && !StartsWithVerb(part) && cardOf(part) is { } named) {
+                var cast = new Order(Kind.Cast, named.Card, Target(named.After));
+                orders.Add(cast);
+                last = cast;
                 continue;
             }
 
@@ -238,6 +277,14 @@ internal static class UltimusOrders {
 
         return orders;
     }
+
+    // The words an order starts with: a part starting with one of these is read as that order, not as a card's name.
+    private static readonly HashSet<string> s_verbs = ["heal", "shield", "blade", "trap", "attack", "hit", "kill", "focus", "cast", "use", "play",
+        "throw", "discard", "draw", "flee", "pass", "stay", "follow", "come", "go", "wait", "let", "leave", "get", "tp", "teleport", "port",
+        "enter", "join", "start", "be", "do", "dont", "you", "i", "me", "stop", "run", "skip", "help", "protect", "guard", "ward", "buff",
+        "boost", "target", "nuke", "damage", "save", "hold", "keep", "find", "lets", "step", "hop", "jump", "toss", "drop", "escape", "move"];
+
+    private static bool StartsWithVerb(string part) => s_verbs.Contains(part.Split(' ')[0]);
 
     private static string Clean(string part) {
         var t = " " + Regex.Replace(part, @"[^a-z0-9 ]", " ") + " ";
@@ -328,11 +375,19 @@ internal static class UltimusOrders {
         }
 
         if (Has(t, "leave the group", "leave group", "leave my group", "quit the group", "go back to your quest", "go do your quest", "do your quest",
-                "go quest", "back to your story", "go back to your story", "you can go now", "you can leave")) {
+                "go quest", "back to your story", "go back to your story", "you can go now", "you can leave", "go away", "get lost", "youre dismissed",
+                "you are dismissed", "dismissed", "thats all", "were done", "we are done", "kick yourself", "back to questing")) {
             return new Order(Kind.LeaveGroup);
         }
 
-        if (Has(t, "tp to me", "teleport to me", "port to me", "go to me", "come to me", "get over here", "over here")) {
+        // Someone else of the group, by name: "go find Walter", "tp to Mindy", "follow Mitsu", "go help Walter".
+        if (Starts(t, out var who, "go to", "go find", "find", "tp to", "teleport to", "port to", "go with", "follow", "go help", "help", "go over to",
+                "come to", "join") && who.Length > 0 && who is not ("me" or "us" or "here" or "my side" or "the group" or "the fight" or "the battle" or "the leader")
+            && !Regex.IsMatch(who, @"^(me|us) ")) {
+            return new Order(Kind.GoTo, "", who);
+        }
+
+        if (Has(t, "tp to me", "teleport to me", "port to me", "go to me", "come to me", "get over here", "over here", "tp me", "summon me", "teleport me")) {
             return new Order(Kind.ComeToMe);
         }
 
@@ -362,9 +417,16 @@ internal static class UltimusOrders {
             return new Order(Kind.Trap, "", Target(rest));
         }
 
-        if (Starts(t, out rest, "attack", "hit", "kill", "focus", "focus on", "target", "go for", "nuke", "hit on", "damage")) {
+        if (Starts(t, out rest, "attack", "hit", "kill", "focus", "focus on", "target", "go for", "nuke", "hit on", "damage", "beat", "take out", "destroy", "smack")) {
             rest = Target(rest);
-            return rest.Length == 0 ? new Order(Kind.Attack) : new Order(Kind.Focus, "", rest);
+            // "Kill them", "kill the mobs", "hit them all": every enemy, not one called "them" (Niduus, 2026-11-19: True Form
+            // said "I can't see the mobs in this battle"). "Kill him", "hit it": the one he would hit anyway.
+            if (Regex.IsMatch(rest, @"^(them|them all|all of them|all|everyone|everybody|everything|em|the mobs|mobs|the enemies|enemies|the enemy team|"
+                                    + @"those|these|those guys|the rest|the creatures|creatures|the minions|minions|the adds|adds)$")) {
+                return new Order(Kind.Attack, "", ALL_ENEMIES);
+            }
+
+            return rest is "" or "him" or "her" or "it" or "the enemy" or "enemy" or "that" or "that one" or "this" ? new Order(Kind.Attack) : new Order(Kind.Focus, "", rest);
         }
 
         if (Starts(t, out rest, "discard", "throw away", "get rid of", "toss", "drop")) {

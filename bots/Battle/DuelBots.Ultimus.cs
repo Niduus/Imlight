@@ -482,6 +482,11 @@ internal sealed partial class DuelBots {
                 }
             }
 
+            // True Form: an order came after his hand was dealt and its card is not in it: dealt again, with it.
+            if (trueForm && TrueFormOrderMissing(member, circles)) {
+                TrueFormDeal(member);
+            }
+
             UltimusTactics.Choice choice;
             string quip = null;
             try {
