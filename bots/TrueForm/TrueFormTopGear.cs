@@ -24,6 +24,7 @@ using System.Threading;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.BotShared;
+using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Resources;
 
 namespace Imlight.CoreLib.Game.Ultimus;
@@ -42,6 +43,7 @@ internal static class TrueFormTopGear {
     private const int FROM_LEVEL = 180;
 
     private static volatile List<BotGear.Piece> s_pieces;
+    private static volatile List<uint> s_jewels;
     private static int s_started;
 
     /// <summary>The top level gear, or null while it is still being read (the first ask starts it).</summary>
@@ -62,21 +64,37 @@ internal static class TrueFormTopGear {
         }
     }
 
+    /// <summary>
+    /// Every jewel and pin in the game's files (Niduus, 2026-11-19: "max HP for tear is 155"; the +155 tear is not in the
+    /// server's drop and shop lists), or null while they are still being read. BotJewels takes them in.
+    /// </summary>
+    internal static IReadOnlyList<uint> JewelIds {
+        get {
+            _ = Pieces;
+            return s_jewels;
+        }
+    }
+
     private static string CachePath => Path.Combine(UltimusSeat.TrueForm.Folder, FILE);
 
     private static void Read() {
         try {
             var templates = CoreObjectFactory.TemplateManifest?.m_serializedTemplates;
             if (templates is null) {
+                s_jewels = [];
                 s_pieces = [];
                 return;
             }
 
-            var stamp = $"templates {templates.Count}";
+            var stamp = $"templates {templates.Count} with jewels";
             List<uint> ids = null;
+            List<uint> jewels = [];
             try {
                 if (File.Exists(CachePath) && File.ReadAllLines(CachePath) is { Length: > 0 } lines && lines[0] == stamp) {
-                    ids = lines.Skip(1).Select(l => uint.TryParse(l.Split(' ')[0], out var id) ? id : 0).Where(id => id != 0).ToList();
+                    var kept = lines.Skip(1).Select(l => l.Split(' ')).Select(p => (Id: uint.TryParse(p[0], out var id) ? id : 0, Jewel: p.Length > 1 && p[1] == "jewel"))
+                        .Where(x => x.Id != 0).ToList();
+                    ids = kept.Where(x => !x.Jewel).Select(x => x.Id).ToList();
+                    jewels = kept.Where(x => x.Jewel).Select(x => x.Id).ToList();
                 }
             }
             catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
@@ -93,9 +111,13 @@ internal static class TrueFormTopGear {
 
                     try {
                         // Read without keeping it: only the few top level pieces are kept (BotGear.Read below).
-                        if (CoreObjectFactory.LoadTemplateFile(location.m_filename) is WizItemTemplate template
-                            && BotGear.LevelNeeded(template) >= FROM_LEVEL) {
-                            ids.Add((uint) location.m_id);
+                        if (CoreObjectFactory.LoadTemplateFile(location.m_filename) is WizItemTemplate template) {
+                            if (JewelSockets.IsJewel(template)) {
+                                jewels.Add((uint) location.m_id);
+                            }
+                            else if (BotGear.LevelNeeded(template) >= FROM_LEVEL) {
+                                ids.Add((uint) location.m_id);
+                            }
                         }
                     }
                     catch (Exception) {
@@ -105,7 +127,7 @@ internal static class TrueFormTopGear {
 
                 try {
                     Directory.CreateDirectory(UltimusSeat.TrueForm.Folder);
-                    File.WriteAllLines(CachePath, [stamp, .. ids.Select(id => id.ToString())]);
+                    File.WriteAllLines(CachePath, [stamp, .. ids.Select(id => id.ToString()), .. jewels.Select(id => $"{id} jewel")]);
                 }
                 catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
                     Logger.Debug("True Form: could not keep the top gear list: {0}", Logger.Args(e.Message));
@@ -113,6 +135,7 @@ internal static class TrueFormTopGear {
             }
 
             var pieces = ids.Select(BotGear.Read).Where(p => p is not null && !p.CrownsOnly && !p.Retired).ToList();
+            s_jewels = jewels;
             s_pieces = pieces;
             Logger.Information("True Form: {0} pieces of level {1}+ gear in the game's files ({2}), read in {3:0.0} s.",
                 Logger.Args(pieces.Count, FROM_LEVEL, string.Join(", ", pieces.GroupBy(p => p.Level).OrderBy(g => g.Key).Select(g => $"level {g.Key}: {g.Count()}")),
@@ -120,6 +143,7 @@ internal static class TrueFormTopGear {
         }
         catch (Exception e) {
             Logger.Warning("True Form: the game's top gear could not be read: {0}", Logger.Args(e.Message));
+            s_jewels ??= [];
             s_pieces = [];
         }
     }

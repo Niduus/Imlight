@@ -60,9 +60,13 @@ internal static class BotJewels {
                 return [];
             }
 
+            // The jewels in the game's files too (TrueFormTopGear): the server's drop and shop lists miss the newest ones,
+            // such as the +155 health tear. Kept only once they are read; until then this list is built again on each ask.
+            var files = TrueFormTopGear.JewelIds;
             var sold = UltimusLookup.SoldItems ?? new HashSet<uint>();
             var list = new List<Jewel>();
-            foreach (var id in ItemSources.ObtainableIds().Concat(made).Distinct()) {
+            var known = ItemSources.ObtainableIds().Concat(made).ToHashSet();
+            foreach (var id in known.Concat(files ?? []).Distinct()) {
                 try {
                     if (CoreObjectFactory.GetCoreTemplate(id) is not WizItemTemplate template || JewelSockets.GetShape(template) is not { } shape) {
                         continue;
@@ -73,6 +77,12 @@ internal static class BotJewels {
                         continue;
                     }
 
+                    // A jewel only in the game's files must have a name the game shows (not a test jewel).
+                    if (!known.Contains(id) && ((string) template.m_displayName is not { Length: > 0 } shownKey
+                                                || string.IsNullOrWhiteSpace(Locale.GetEnglishName(shownKey)))) {
+                        continue;
+                    }
+
                     var keys = TalentKeysOf(template);
                     list.Add(new Jewel(id, NameOf(template), shape, template, BotGear.StatsOf(template), ShownTalents(keys),
                         sold.Contains(id), ItemSources.BossesDropping(id).Count > 0, made.Contains(id)) { TalentKeys = keys });
@@ -80,6 +90,10 @@ internal static class BotJewels {
                 catch (Exception e) {
                     Logger.Debug("Bot jewels: jewel {0} could not be read: {1}", Logger.Args(id, e.Message));
                 }
+            }
+
+            if (files is null) {
+                return list;
             }
 
             Logger.Information("Bot jewels: {0} jewels and pins the server's wizards can get.", Logger.Args(list.Count));
