@@ -42,10 +42,17 @@ internal sealed partial class UltimusDirectorActor {
     /// <summary>True when the line was taken as orders (answered here); false: it is talk, answered as usual.</summary>
     private bool LeaderOrders(UltimusVoice.Heard heard, UltimusMember.Status me) {
         // "Use it" after "do you have Hex?": Hex (UltimusDirector.SpellTalk.cs). A card named back to him that way is meant: cast it.
+        // "Kill yourself" and the like are never taken as an order, by anyone (his log, 2026-11-19: read as "go after yourself").
+        if (BotShared.BotOrderWords.NotAnOrder(heard.Text)) {
+            return false;
+        }
+
         var text = WithCardTalked(heard, out var namedBack);
         text = System.Text.RegularExpressions.Regex.Replace(text, @"^\s*(?:ok(?:ay)?|alright|all right)?[,\s]*(?:get|be)\s+ready\s+to\s+", "",
             System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-        var orders = UltimusOrders.Parse(text);
+        // His own name in front ("Garm, heal me", "Ultimus: stay") is who it is for, not part of the order.
+        text = WithoutMyName(text, me);
+        var orders = UltimusOrders.Parse(text, part => CardSaid(me, part));
         if (namedBack) {
             orders = [.. orders.Select(o => o.Kind == UltimusOrders.Kind.Suggest ? o with { Kind = UltimusOrders.Kind.Cast } : o)];
         }
@@ -54,7 +61,7 @@ internal sealed partial class UltimusDirectorActor {
         var leader = grouped && group.LeaderCharId == heard.SpeakerCharId && group.LeaderCharId != me.CharId;
 
         if (orders.Count == 0) {
-            if (!leader || !heard.Typed || heard.Text.TrimEnd().EndsWith('?') || heard.Text.Length > 80) {
+            if (!leader || !heard.Typed || BotShared.BotOrderWords.AskOf(heard.Text) is null || heard.Text.Length > 80) {
                 return false;
             }
 
@@ -130,6 +137,9 @@ internal sealed partial class UltimusDirectorActor {
 
                     said.Add(order.Kind == UltimusOrders.Kind.Follow ? "Right behind you" : "On my way");
                     break;
+                case UltimusOrders.Kind.GoTo:
+                    said.Add(GoToNamed(heard, me, order.Target, fighting));
+                    break;
                 case UltimusOrders.Kind.LeaveGroup:
                     said.Clear();
                     LeaveParty($"{heard.SpeakerName} (the group leader) told him to", "Okay! Back to my own story. Thanks for the group!");
@@ -188,7 +198,7 @@ internal sealed partial class UltimusDirectorActor {
             }
         }
 
-        var battleOrder = orders.Any(o => o.Kind is not (UltimusOrders.Kind.Stay or UltimusOrders.Kind.Follow or UltimusOrders.Kind.ComeToMe
+        var battleOrder = orders.Any(o => o.Kind is not (UltimusOrders.Kind.Stay or UltimusOrders.Kind.Follow or UltimusOrders.Kind.ComeToMe or UltimusOrders.Kind.GoTo
             or UltimusOrders.Kind.OwnWay or UltimusOrders.Kind.LeaderFirst or UltimusOrders.Kind.GoFirst or UltimusOrders.Kind.EnterFight
             or UltimusOrders.Kind.Defensive or UltimusOrders.Kind.Offensive));
         var line = string.Join(", then ", said.Where(s => s.Length > 0));
@@ -200,9 +210,12 @@ internal sealed partial class UltimusDirectorActor {
                         string.Join("; ", orders.Select(o => $"{o.Kind}{(o.Card.Length > 0 ? " " + o.Card : "")}{(o.Target.Length > 0 ? " on " + o.Target : "")}")));
         Think($"{heard.SpeakerName}, my group leader, told me: \"{UltimusText.Short(heard.Text, 80)}\". {line}.", "order|" + heard.Text);
         // In battle only a short "Okay!", once a round at most (the battle says the rest when it acts); out of battle, the whole line.
+        // In battle a short yes that says what he understood ("Okay, I'll blade you!"), so a misread order shows at once
+        // (Niduus, 2026-11-19: bots should "better identify them and their meaning"); one line a round at most.
         if (fighting) {
-            if (line.Length > 0 && UltimusOrders.MaySayThisRound()) {
-                SendReply(heard, "Okay!", "leader commands");
+            var yes = line.Length == 0 ? "" : "Okay, " + UltimusText.Short(line.StartsWith("I ") || line.StartsWith("I'") ? line : char.ToLowerInvariant(line[0]) + line[1..], 70) + "!";
+            if (yes.Length > 0 && UltimusOrders.MaySayThisRound(yes)) {
+                SendReply(heard, BotShared.BotSocial.Scrub(yes), "leader commands");
             }
         }
         else if (line.Length > 0) {
@@ -222,14 +235,104 @@ internal sealed partial class UltimusDirectorActor {
         UltimusOrders.Kind.Shield => order.Target.Length > 0 ? $"I'll shield {On(order.Target)}" : "I'll shield",
         UltimusOrders.Kind.Blade => order.Target.Length > 0 ? $"I'll blade {On(order.Target)}" : "I'll blade up",
         UltimusOrders.Kind.Trap => order.Target.Length > 0 ? $"I'll trap {On(order.Target)}" : "I'll put a trap up",
-        UltimusOrders.Kind.Attack => "Attacking",
+        UltimusOrders.Kind.Attack => order.Target == UltimusOrders.ALL_ENEMIES ? "I'll hit them all" : "I'll attack",
         _ => "",
     };
 
     private static string On(string target) => target switch {
         "me" or "myself" => "you",
         "you" or "yourself" or "urself" or "self" => "myself",
-        _ => target,
+        "us" or "team" or "the team" or "everyone" or "all of us" or "everybody" => "the team",
+        _ => System.Text.RegularExpressions.Regex.Replace(target, @"\b[a-z]", m => m.Value.ToUpperInvariant()).Replace("The ", "the ").Replace("A ", "a "),
     };
+
+    // "Garm, heal me" / "Ultimus: stay" / "hey Idunn heal me": his own name in front taken off.
+    private static string WithoutMyName(string text, UltimusMember.Status me) {
+        var names = new List<string> { UltimusRoster.NAME };
+        if (me.Wizard?.PlayerNameBehavior?.GetWizardName() is { Length: > 0 } full) {
+            names.Add(full);
+            names.Add(full.Split(' ')[0]);
+        }
+
+        if (me.Name is { Length: > 0 } seatName) {
+            names.Add(seatName);
+        }
+
+        foreach (var name in names.Where(n => n.Length >= 2).Distinct().OrderByDescending(n => n.Length)) {
+            var cut = System.Text.RegularExpressions.Regex.Replace(text, $@"^\s*(?:hey|yo|ok|okay|hi)?[,\s]*{System.Text.RegularExpressions.Regex.Escape(name)}\b[\s,:!.-]*", "",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            if (cut.Length != text.Length) {
+                return cut;
+            }
+        }
+
+        return text;
+    }
+
+    /// <summary>
+    /// A card he can cast named at the start of a part, without "cast" ("Legion Shield us", "dragonblade me"): its name and
+    /// what follows (Niduus, 2026-11-19: "Legion Shield us" set True Form to defend instead of casting it). His deck, or
+    /// for True Form every spell he can be dealt.
+    /// </summary>
+    private (string Card, string After)? CardSaid(UltimusMember.Status me, string part) {
+        var words = (part ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (words.Length == 0) {
+            return null;
+        }
+
+        var known = new Dictionary<string, string>();
+        try {
+            if (_seat.IsTrueForm) {
+                if (TrueFormPool.Ready) {
+                    foreach (var e in TrueFormPool.At(TrueForm.SpellLevel(), TrueForm.DevSpellsNow)) {
+                        known.TryAdd(BotShared.BotOrderWords.Flat(e.Shown), e.Shown);
+                    }
+                }
+            }
+            else {
+                foreach (var spell in (me.Wizard?.SpellbookBehavior?.SpellList ?? []).Where(s => s is not null)) {
+                    if (BotShared.BotCards.CardOf((uint) spell.m_templateID)?.Shown is { Length: > 0 } shown) {
+                        known.TryAdd(BotShared.BotOrderWords.Flat(shown), shown);
+                    }
+                }
+            }
+        }
+        catch (Exception) {
+            return null;
+        }
+
+        for (var n = Math.Min(5, words.Length); n >= 1; n--) {
+            var flat = BotShared.BotOrderWords.Flat(string.Concat(words.Take(n)));
+            if (flat.Length >= 4 && known.TryGetValue(flat, out var card)) {
+                return (card, string.Join(' ', words.Skip(n)));
+            }
+        }
+
+        return null;
+    }
+
+    // "Go find Walter", "tp to Mindy": the group's "go to" button on that group mate, as a player clicks their name.
+    private string GoToNamed(UltimusVoice.Heard heard, UltimusMember.Status me, string said, bool fighting) {
+        if (!GroupRegistry.TryGetGroup(me.CharId, out var g)) {
+            return "I can only go to someone in our group";
+        }
+
+        var mate = g.Members.Where(m => m.CharId != me.CharId)
+            .Select(m => (m.CharId, m.ZonePath, Name: PlayerCheats.LiveName(m.CharId) ?? ""))
+            .FirstOrDefault(m => BotShared.BotOrderWords.NameMatches(said, m.Name));
+        if (mate.CharId == 0) {
+            return $"I don't see anyone called {On(said)} in our group, so I'll stay with you";
+        }
+
+        if (fighting) {
+            return $"I'll go to {mate.Name} once this battle is over";
+        }
+
+        UltimusOrders.EndStay();
+        _actors[0].Tell(new UltimusMember.GoToTeammate(mate.CharId));
+
+        Note("Ultimus", $"ORDER from {heard.SpeakerName}: go to {mate.Name}.");
+        return $"On my way to {mate.Name}";
+    }
 
 }

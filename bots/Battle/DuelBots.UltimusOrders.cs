@@ -42,7 +42,7 @@ internal sealed partial class DuelBots {
         }
 
         // One line a round at most in battle chat; the rest goes to his Thoughts only.
-        if (!UltimusOrders.MaySayThisRound()) {
+        if (!UltimusOrders.MaySayThisRound(text)) {
             UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: (would say \"{text}\", but already spoke this round)");
             return;
         }
@@ -144,8 +144,8 @@ internal sealed partial class DuelBots {
             // The card: named ("cast Dragonblade"), or the best of its kind ("heal me", "shield Mitsu", "attack").
             InHand card = order.Kind is UltimusOrders.Kind.Cast or UltimusOrders.Kind.Suggest
                 ? FindCard(hand, order.Card, true) ?? FindCard(hand, order.Card, false)
-                : BestOfKind(hand, order.Kind, true) ?? BestOfKind(hand, order.Kind, false);
-            var what = order.Card.Length > 0 ? order.Card : order.Kind.ToString().ToLowerInvariant();
+                : BestFor(hand, order, member, pending.By, allies);
+            var what = order.Card.Length > 0 ? order.Card : order.Kind is UltimusOrders.Kind.Attack or UltimusOrders.Kind.Focus ? "hit" : order.Kind.ToString().ToLowerInvariant();
             if (card is null) {
                 // A named card still in his deck waits for him to draw it (three rounds at most), as a player's would; he says so
                 // once (Niduus, 2026-11-16: he said he'd use Hex and never cast it, with no word why).
@@ -154,6 +154,17 @@ internal sealed partial class DuelBots {
                     if (!pending.ToldNoPips) {
                         pending.ToldNoPips = true;
                         UltimusSays(member, $"{inDeck} isn't in my hand yet, I'll cast it as soon as I draw it.");
+                    }
+
+                    continue;
+                }
+
+                // True Form's hand is dealt for the orders waiting (TrueFormBattle.Deal): the card comes with his next hand.
+                if (UltimusSeat.Current.IsTrueForm && pending.Rounds <= 2 && TrueFormBattle.CanDealFor(order)) {
+                    UltimusLink.Note(UltimusRoster.NAME, $"round {D.Duel.m_roundNum}: no {what} card in his hand for {pending.ByName}'s order yet: it comes with his next hand.");
+                    if (!pending.ToldNoPips) {
+                        pending.ToldNoPips = true;
+                        UltimusSays(member, $"I'll have a {what} card for that in my next hand.");
                     }
 
                     continue;
@@ -228,6 +239,36 @@ internal sealed partial class DuelBots {
         return own;
     }
 
+    /// <summary>
+    /// True Form only: an order waits whose card is not in the hand he was dealt (it came after the deal), so he is dealt again
+    /// before he picks, with that card in it (TrueFormBattle.Deal reads the orders). Once a round at most.
+    /// </summary>
+    private bool TrueFormOrderMissing(CombatDuelSubCircle member, IReadOnlyList<CombatDuelSubCircle> circles) {
+        if (!UltimusOrders.HasWaiting || D.CombatResolver.GetQueuedAction(member) is not null || !_trueFormRedealt.Add((D.Duel.m_roundNum, member.SlotIndex))) {
+            return false;
+        }
+
+        var hand = UltimusTactics.Hand(member);
+        var allies = circles.Where(c => c.OccupiedTeam == member.OccupiedTeam && c.IsAlive).ToList();
+        foreach (var pending in UltimusOrders.Waiting()) {
+            var order = pending.Order;
+            if (!TrueFormBattle.CanDealFor(order)) {
+                continue;
+            }
+
+            var card = order.Kind is UltimusOrders.Kind.Cast or UltimusOrders.Kind.Suggest
+                ? FindCard(hand, order.Card, true)
+                : BestFor(hand, order, member, pending.By, allies, true);
+            if (card is null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private readonly HashSet<(int Round, int Slot)> _trueFormRedealt = [];
+
     private int _defendShieldRound = -10;
 
     private UltimusTactics.Choice Defend(CombatDuelSubCircle member, List<InHand> hand, List<CombatDuelSubCircle> allies, UltimusTactics.Choice own) {
@@ -284,6 +325,36 @@ internal sealed partial class DuelBots {
                ?? hand.Where(h => !castable || h.Castable).FirstOrDefault(h => Flat(h.Card.Shown).Contains(want) || (want.Contains(Flat(h.Card.Shown)) && Flat(h.Card.Shown).Length >= 4));
     }
 
+    /// <summary>
+    /// The best card of the order's kind for whom it is meant: a blade, heal or shield that can go on a teammate when it is for
+    /// someone else (Niduus, 2026-11-19: "blade me" got Amplify, which only works on himself, and nothing was cast), one for
+    /// the whole team for "us", and a hit-all for "kill them all". Castable first; else any, so the battle can say why not.
+    /// </summary>
+    private static InHand BestFor(List<InHand> hand, UltimusOrders.Order order, CombatDuelSubCircle member, ulong by, List<CombatDuelSubCircle> allies,
+                                  bool strict = false) {
+        var said = (order.Target ?? "").Trim().ToLowerInvariant();
+        var team = said is "us" or "team" or "the team" or "everyone" or "all" or "all of us" or "everybody";
+        var other = !team && said.Length > 0 && said is not ("you" or "yourself" or "urself" or "self")
+                    && FindCircle(said, by, member, allies) is { } named && named != member;
+        bool Fits(InHand h) => order.Kind switch {
+            UltimusOrders.Kind.Heal => team ? h.Card.HealWholeTeam : !other || h.Card.HealForTeammate || h.Card.HealWholeTeam,
+            UltimusOrders.Kind.Shield => team ? h.Card.ShieldWholeTeam : !other || h.Card.ShieldForTeammate || h.Card.ShieldWholeTeam,
+            UltimusOrders.Kind.Blade => team ? h.Card.BladeWholeTeam
+                : other ? h.Card.BladeForTeammate || h.Card.BladeWholeTeam || h.Card.BladeOnlyTeammate : !h.Card.BladeOnlyTeammate,
+            UltimusOrders.Kind.Trap => order.Target != UltimusOrders.ALL_ENEMIES || h.Card.TrapAll,
+            UltimusOrders.Kind.Attack => order.Target != UltimusOrders.ALL_ENEMIES || h.Card.HitsAll,
+            _ => true,
+        };
+
+        var fitting = hand.Where(Fits).ToList();
+        if (strict) {
+            return BestOfKind(fitting, order.Kind, true);
+        }
+
+        return BestOfKind(fitting, order.Kind, true) ?? BestOfKind(hand, order.Kind, true) ?? BestOfKind(fitting, order.Kind, false)
+               ?? BestOfKind(hand, order.Kind, false);
+    }
+
     // The best card of a kind: the biggest heal, a shield, a blade, a trap, the hardest hit.
     private static InHand BestOfKind(List<InHand> hand, UltimusOrders.Kind kind, bool castable) {
         var cards = hand.Where(h => !castable || h.Castable);
@@ -322,7 +393,9 @@ internal sealed partial class DuelBots {
         return list.FirstOrDefault(c => Flat(UltimusTactics.Name(c)) == want || Flat(c.ParticipantObject?.m_debugName) == want)
                ?? list.FirstOrDefault(c => Flat(UltimusTactics.Name(c)).StartsWith(want, StringComparison.Ordinal)
                                            || Flat(c.ParticipantObject?.m_debugName).StartsWith(want, StringComparison.Ordinal))
-               ?? list.FirstOrDefault(c => want.Length >= 3 && (Flat(UltimusTactics.Name(c)).Contains(want) || Flat(c.ParticipantObject?.m_debugName).Contains(want)));
+               ?? list.FirstOrDefault(c => want.Length >= 3 && (Flat(UltimusTactics.Name(c)).Contains(want) || Flat(c.ParticipantObject?.m_debugName).Contains(want)))
+               // A name typed one letter off ("mitzu", "mnidy"): still that wizard (BotShared.BotOrderWords).
+               ?? list.FirstOrDefault(c => BotOrderWords.NameMatches(want, UltimusTactics.Name(c)));
     }
 
     // The circle a card goes on, as the game allows it: an enemy card on an enemy, a helping card on his side (one that

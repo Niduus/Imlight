@@ -132,33 +132,8 @@ internal static class TrueForm {
         return null;
     }
 
-    // Whether two words differ by one letter: one changed, added, left out or two swapped.
-    private static bool OneOff(string a, string b) {
-        if (a == b || Math.Abs(a.Length - b.Length) > 1) {
-            return a == b;
-        }
-
-        var d = new int[a.Length + 1, b.Length + 1];
-        for (var i = 0; i <= a.Length; i++) {
-            d[i, 0] = i;
-        }
-
-        for (var j = 0; j <= b.Length; j++) {
-            d[0, j] = j;
-        }
-
-        for (var i = 1; i <= a.Length; i++) {
-            for (var j = 1; j <= b.Length; j++) {
-                var cost = a[i - 1] == b[j - 1] ? 0 : 1;
-                d[i, j] = Math.Min(Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1), d[i - 1, j - 1] + cost);
-                if (i > 1 && j > 1 && a[i - 1] == b[j - 2] && a[i - 2] == b[j - 1]) {
-                    d[i, j] = Math.Min(d[i, j], d[i - 2, j - 2] + 1);
-                }
-            }
-        }
-
-        return d[a.Length, b.Length] <= 1;
-    }
+    // One letter off: the shared order reader's test (BotShared.BotOrderWords), the same for every bot.
+    private static bool OneOff(string a, string b) => BotShared.BotOrderWords.OneOff(a, b);
 
     private static readonly (Mode Mode, string[] Names)[] s_modeWords = [
         (Mode.Auto, ["auto", "normal", "smart", "your call", "whatever"]),

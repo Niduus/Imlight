@@ -164,6 +164,17 @@ internal static class TrueFormBattle {
         // over a 666% one with 66 rounds left).
         var weaker = ids.Where(id => WorseThanUp(me, id, out _)).ToList();
         ids.RemoveAll(weaker.Contains);
+        // The group leader's orders waiting (UltimusOrders): a card for each goes in first, so "blade me" or "Legion Shield
+        // us" is in his hand to cast (Niduus, 2026-11-19: "BLADE ME" got "no blade card in his hand").
+        foreach (var wanted in ForOrders(me, circles, kinds).AsEnumerable().Reverse()) {
+            ids.Remove(wanted);
+            ids.Insert(0, wanted);
+        }
+
+        while (ids.Count > HAND) {
+            ids.RemoveAt(ids.Count - 1);
+        }
+
         foreach (var asked in TrueForm.Requested) {
             if (ids.Count >= HAND) {
                 ids.RemoveAt(ids.Count - 1);
@@ -191,6 +202,57 @@ internal static class TrueFormBattle {
 
         return $"plays {mode.ToString().ToLowerInvariant()}{(why.Length > 0 ? $" ({why})" : "")} with spells of level {level}{(dev ? " and dev spells" : "")}: " +
                string.Join(", ", shown);
+    }
+
+    /// <summary>Whether his hand can be dealt for this order (a card of its kind, or the card named).</summary>
+    internal static bool CanDealFor(UltimusOrders.Order order) => order.Kind is UltimusOrders.Kind.Heal or UltimusOrders.Kind.Shield
+        or UltimusOrders.Kind.Blade or UltimusOrders.Kind.Trap or UltimusOrders.Kind.Attack or UltimusOrders.Kind.Focus
+        || (order.Kind is UltimusOrders.Kind.Cast or UltimusOrders.Kind.Suggest && TrueFormPool.Ready
+            && TrueFormPool.Find(order.Card, TrueForm.SpellLevel(), TrueForm.DevSpellsNow) is not null);
+
+    // One card for each order waiting, the best of its kind he can cast now (else the best of its kind), fit for whom it is
+    // meant: a teammate ("blade me": the leader), the whole team ("shield us"), every enemy ("kill them all").
+    private static List<uint> ForOrders(CombatDuelSubCircle me, IReadOnlyList<CombatDuelSubCircle> circles, Kinds k) {
+        var ids = new List<uint>();
+        var pending = UltimusOrders.Waiting();
+        if (pending.Count == 0) {
+            return ids;
+        }
+
+        var pips = RewrittenAI.PipsOf(me);
+        var enemies = circles.Where(c => c.OccupiedTeam != me.OccupiedTeam && c.IsAlive).ToList();
+        var focus = enemies.OrderBy(RewrittenAI.Health).FirstOrDefault();
+        TrueFormPool.Entry Best(IEnumerable<TrueFormPool.Entry> list, Func<TrueFormPool.Entry, double> score) {
+            var all = list.ToList();
+            var now = all.Where(e => e.Card.Rank <= pips).ToList();
+            return (now.Count > 0 ? now : all).OrderByDescending(e => score(e) * (e.Dev ? DEV_WEIGHT : 1)).FirstOrDefault();
+        }
+
+        foreach (var p in pending) {
+            var o = p.Order;
+            var said = (o.Target ?? "").Trim().ToLowerInvariant();
+            var team = said is "us" or "team" or "the team" or "everyone" or "all" or "all of us" or "everybody";
+            var self = said is "" or "you" or "yourself" or "urself" or "self";
+            TrueFormPool.Entry e = o.Kind switch {
+                UltimusOrders.Kind.Heal => Best(k.Heals.Where(x => team ? x.Card.HealWholeTeam : self || x.Card.HealForTeammate || x.Card.HealWholeTeam), x => x.Card.HealAmount + 1),
+                UltimusOrders.Kind.Shield => Best(k.Shields.Where(x => team ? x.Card.ShieldWholeTeam : self || x.Card.ShieldForTeammate || x.Card.ShieldWholeTeam),
+                    x => 1 + (x.Card.ShieldWholeTeam ? 0.1 : 0)),
+                UltimusOrders.Kind.Blade => Best(k.Blades.Where(x => team ? x.Card.BladeWholeTeam
+                    : self ? !x.Card.BladeOnlyTeammate : x.Card.BladeForTeammate || x.Card.BladeWholeTeam || x.Card.BladeOnlyTeammate), x => x.Card.BladePercent),
+                UltimusOrders.Kind.Trap => Best(k.Traps.Where(x => o.Target != UltimusOrders.ALL_ENEMIES || x.Card.TrapAll), x => x.Card.TrapPercent),
+                UltimusOrders.Kind.Attack when o.Target == UltimusOrders.ALL_ENEMIES && enemies.Count > 0
+                    => Best(k.AllHits, x => enemies.Sum(en => Math.Min(RewrittenAI.Health(en), BotCore.Estimate(x.Card, me, en)))),
+                UltimusOrders.Kind.Attack or UltimusOrders.Kind.Focus when focus is not null => Best(k.Hits, x => BotCore.Estimate(x.Card, me, focus)),
+                UltimusOrders.Kind.Cast or UltimusOrders.Kind.Suggest => TrueFormPool.Find(o.Card, TrueForm.SpellLevel(), TrueForm.DevSpellsNow),
+                _ => null,
+            };
+
+            if (e is not null && !ids.Contains(e.Id)) {
+                ids.Add(e.Id);
+            }
+        }
+
+        return ids;
     }
 
     private static List<uint> Pick(CombatDuelSubCircle me, IReadOnlyList<CombatDuelSubCircle> circles, Kinds k, TrueForm.Mode mode) {
