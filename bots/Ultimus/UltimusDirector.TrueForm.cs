@@ -55,6 +55,12 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         AnswerPlayers();
+        // A deck order: his deck built again, out of battle.
+        if (TrueForm.DeckRebuild && me.Wizard is { } deckWizard && !deckWizard.IsInDuel) {
+            TrueForm.DeckRebuild = false;
+            TrueFormSpells.Give(deckWizard, BotGear.LevelOf(deckWizard), TrueForm.School.ToString(), TrueForm.StyleNow(TrueForm.School));
+        }
+
         // His set bonuses (True Form only), put on again whenever his stats were worked out anew.
         if (me.Wizard is { } setWizard) {
             TrueFormSetBonus.Ensure(setWizard);
@@ -413,6 +419,34 @@ internal sealed partial class UltimusDirectorActor {
         // (Niduus, 2026-11-19: "TF interactions need to be looked at and fixed"; "What is in your deck?" got his fishing
         // cantrips, "What all options do you have?" got Ultimus's questing answer, "Do you need healing?" set him to support).
         if (TrueFormQuestion(heard, me, order)) {
+            return true;
+        }
+
+        // A deck order ("setup your deck to focus on healing. No damage spells", "heals only"): his deck is built again
+        // around it, and kept; he plays the matching mode too.
+        if (!IsQuestion(order) && TrueForm.DeckFocusFrom(order) is { } focus) {
+            TrueForm.SetFocus(focus);
+            var focusMode = focus switch {
+                TrueForm.DeckFocus.Heals => TrueForm.Mode.Support,
+                TrueForm.DeckFocus.Hits => TrueForm.Mode.Attack,
+                TrueForm.DeckFocus.Shields => TrueForm.Mode.Defend,
+                _ => (TrueForm.Mode?) null,
+            };
+            if (focusMode is { } m) {
+                TrueForm.SetMode(m);
+            }
+            else {
+                TrueForm.ResetMode();
+            }
+
+            var what = focus switch {
+                TrueForm.DeckFocus.Heals => "heals only: no damage spells, just heals, shields and cleanses",
+                TrueForm.DeckFocus.Hits => "damage: mostly hits",
+                TrueForm.DeckFocus.Shields => "shields: shields and heals first",
+                _ => "my normal mix",
+            };
+            Note("Ultimus", $"True Form: {heard.SpeakerName} asks for a {focus} deck (\"{UltimusText.Short(heard.Text, 60)}\").");
+            SendReply(heard, $"Rebuilding my deck for {what}{(me.Wizard?.IsInDuel == true ? ", right after this battle" : "")}. I'll keep it that way until you say otherwise.", "true form");
             return true;
         }
 

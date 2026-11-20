@@ -113,7 +113,7 @@ internal static class TrueForm {
 
     /// <summary>A mode from a player's words ("attack", "heal", "tank", "troll"), or null.</summary>
     internal static Mode? ModeFrom(string words) {
-        var w = (words ?? "").Trim().ToLowerInvariant();
+        var w = WithoutNegations(words);
         foreach (var (mode, names) in s_modeWords) {
             // Whole words only: "that boss hits hard" is no order to attack.
             if (names.Any(n => System.Text.RegularExpressions.Regex.IsMatch(w, $@"(^|[^a-z]){System.Text.RegularExpressions.Regex.Escape(n)}($|[^a-z])"))) {
@@ -131,6 +131,80 @@ internal static class TrueForm {
         }
 
         return null;
+    }
+
+    // "No damage spells", "don't attack", "without hits": what is said not to do is no order to do it (Niduus, 2026-11-20:
+    // "setup your deck to focus on healing. No damage spells" was read as attack).
+    private static string WithoutNegations(string words) => System.Text.RegularExpressions.Regex.Replace((words ?? "").Trim().ToLowerInvariant(),
+        @"\b(no|not|don'?t|do not|without|never|zero|stop|quit|avoid)\s+(any\s+|more\s+|using\s+|use\s+|casting\s+|cast\s+|the\s+)?[a-z']+(\s+(spells?|cards?|ones?))?", " ").Trim();
+
+    // ---------------------------------------------------------------------
+    // What his deck leans on (Niduus, 2026-11-20: "setup your deck to focus on healing. No damage spells", "NO! HEALS ONLY"):
+    // a deck order rebuilds his deck at once (after a battle) and is kept until another one, over bot updates too.
+    // ---------------------------------------------------------------------
+
+    internal enum DeckFocus { Mixed, Heals, Hits, Shields }
+
+    private const string FOCUS_FILE = "deck-focus.txt";
+
+    private static string FocusPath => Path.Combine(Seat.Folder, FOCUS_FILE);
+
+    private static volatile string s_focus = ReadFocus();
+
+    /// <summary>What his deck leans on now.</summary>
+    internal static DeckFocus Focus => Enum.TryParse<DeckFocus>(s_focus, true, out var f) ? f : DeckFocus.Mixed;
+
+    /// <summary>Set when his deck should be built again (a deck order), done when he is out of battle.</summary>
+    internal static volatile bool DeckRebuild;
+
+    internal static void SetFocus(DeckFocus focus) {
+        s_focus = focus.ToString();
+        DeckRebuild = true;
+        try {
+            Directory.CreateDirectory(Seat.Folder);
+            File.WriteAllText(FocusPath, focus.ToString());
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+            Logger.Debug("True Form: could not keep his deck focus: {0}", Logger.Args(e.Message));
+        }
+    }
+
+    private static string ReadFocus() {
+        try {
+            return File.Exists(FocusPath) ? File.ReadAllText(FocusPath).Trim() : null;
+        }
+        catch (Exception) {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// A deck order: "heals only", "no damage spells", "deck on healing" (heals); "deck on damage", "all hits" (hits);
+    /// "deck on shields" (shields); "normal deck", "mixed deck" (back to his role's mix). Null when it is none.
+    /// </summary>
+    internal static DeckFocus? DeckFocusFrom(string words) {
+        var w = (words ?? "").Trim().ToLowerInvariant();
+        bool Is(string pattern) => System.Text.RegularExpressions.Regex.IsMatch(w, pattern);
+        var deck = Is(@"\b(deck|decks|cards|spells|spell list|kit)\b");
+        var noHits = Is(@"\b(no|not|without|don'?t|zero)\s+(any\s+|use\s+|using\s+)?(damage|attack|attacks|hits?|hitting|dmg|offensive)\b");
+        if (Is(@"\b(heals?|healing)\s+only\b") || Is(@"\bonly\s+(heals?|healing)\b") || (noHits && (deck || Is(@"\bheal")))
+            || (deck && Is(@"\b(heals?|healing|healer)\b") && Is(@"\b(focus|focused|set ?up|setup|build|make|fill|full|all|only|on|around|for)\b"))) {
+            return DeckFocus.Heals;
+        }
+
+        if (!deck) {
+            return null;
+        }
+
+        if (Is(@"\b(normal|default|mixed|mix|balanced|regular|usual)\b")) {
+            return DeckFocus.Mixed;
+        }
+
+        if (!noHits && Is(@"\b(damage|attack|attacks|hits|hitting|dmg|offense|offence)\b")) {
+            return DeckFocus.Hits;
+        }
+
+        return Is(@"\b(shields?|defen[cs]e|tank|tanking|protect)\b") ? DeckFocus.Shields : null;
     }
 
     // One letter off: the shared order reader's test (BotShared.BotOrderWords), the same for every bot.

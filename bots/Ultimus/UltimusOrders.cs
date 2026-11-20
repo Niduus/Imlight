@@ -246,6 +246,19 @@ internal static class UltimusOrders {
             return orders;
         }
 
+        // "Blade me or prep for healing": either will do, so the first choice he can read is the order (it was read as one
+        // blade on "me or prep for healing"; Niduus, 2026-11-20).
+        var choices = Regex.Split(text, @"\s+(?:or|or else|either way)\s+", RegexOptions.IgnoreCase);
+        if (choices.Length > 1) {
+            foreach (var choice in choices) {
+                if (Parse(choice, cardOf) is { Count: > 0 } first) {
+                    return first;
+                }
+            }
+
+            return orders;
+        }
+
         var low = " " + text.ToLowerInvariant().Replace("’", "").Replace("'", "") + " ";
         // "go ahead and heal me", "try and draw": the "and" there is not a second order.
         low = Regex.Replace(low, @"\b(go ahead|try|be sure|make sure) and\b", " ");
@@ -451,6 +464,8 @@ internal static class UltimusOrders {
     // "on me" → "me"; "the boss" stays; "him"/"her" kept as said.
     private static string Target(string rest) {
         rest = Regex.Replace(rest ?? "", @"^(on|at|onto|to|for) ", "").Trim();
+        // "Heals only", "just heal": no one to heal named (he said "I'll heal Only").
+        rest = Regex.Replace(rest, @"(^| )(only|just|instead|too|as well|again|more)( |$)", " ").Trim();
         return rest is "up" ? "" : rest;
     }
 

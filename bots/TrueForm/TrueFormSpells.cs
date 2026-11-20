@@ -173,8 +173,13 @@ internal static class TrueFormSpells {
     // rest goes round the utility kinds in his role's order (blades, traps, shields, heals, weakness, charm removal, stun,
     // the rest: prisms, globals, auras, pips), the best of each first. Room left over is filled in the old order.
     private static List<uint> Mixed(List<TrueFormPool.Entry> ordered, int room, BotStyle style) {
-        double hitShare = style switch { BotStyle.GlassCannon => 0.6, BotStyle.Hitter or BotStyle.UniversalHitter => 0.5, BotStyle.Backup => 0.4, BotStyle.Tank => 0.3, BotStyle.FullTank => 0.25, BotStyle.FullHealer => 0.15, _ => 0.25 };
-        string[] kinds = style switch {
+        var focus = TrueForm.Focus;
+        double hitShare = focus == TrueForm.DeckFocus.Heals ? 0 : focus == TrueForm.DeckFocus.Hits ? 0.8 : focus == TrueForm.DeckFocus.Shields ? 0.15 : style switch { BotStyle.GlassCannon => 0.6, BotStyle.Hitter or BotStyle.UniversalHitter => 0.5, BotStyle.Backup => 0.4, BotStyle.Tank => 0.3, BotStyle.FullTank => 0.25, BotStyle.FullHealer => 0.15, _ => 0.25 };
+        // A heals-only deck (Niduus, 2026-11-20: "No damage spells"): heals first, then what keeps the team up, no hits and
+        // nothing that only helps hits.
+        string[] kinds = focus == TrueForm.DeckFocus.Heals ? ["heal", "shield", "charm removal", "other", "stun"]
+            : focus == TrueForm.DeckFocus.Shields ? ["shield", "heal", "weakness", "stun", "charm removal", "other", "trap", "blade"]
+            : style switch {
             BotStyle.Healer or BotStyle.FullHealer => ["heal", "shield", "charm removal", "blade", "other", "stun", "trap", "weakness"],
             BotStyle.Tank or BotStyle.FullTank => ["shield", "weakness", "stun", "heal", "trap", "other", "blade", "charm removal"],
             _ => ["blade", "trap", "other", "shield", "heal", "weakness", "charm removal", "stun"],
@@ -199,7 +204,7 @@ internal static class TrueFormSpells {
             }
         }
 
-        foreach (var rest in ordered) {
+        foreach (var rest in ordered.Where(e => focus != TrueForm.DeckFocus.Heals || kinds.Contains(KindOf(e)))) {
             Take(rest);
         }
 
