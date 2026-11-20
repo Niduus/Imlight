@@ -61,6 +61,11 @@ internal sealed partial class UltimusDirectorActor {
         if (TrueForm.DeckRebuild && me.Wizard is { } deckWizard && !deckWizard.IsInDuel) {
             TrueForm.DeckRebuild = false;
             TrueFormSpells.Give(deckWizard, BotGear.LevelOf(deckWizard), TrueForm.School.ToString(), TrueForm.StyleNow(TrueForm.School));
+            // Whoever gave the deck order hears what is in it now, by kind (Niduus, 2026-11-20).
+            if (_tfDeckAsker is { } asker && DateTime.UtcNow - asker.At < TimeSpan.FromMinutes(10)) {
+                _tfDeckAsker = null;
+                SendReply(asker.Heard, $"My deck now: {TrueFormDeckSummary(deckWizard)}.", "true form");
+            }
         }
 
         // His set bonuses (True Form only), put on again whenever his stats were worked out anew.
@@ -316,8 +321,11 @@ internal sealed partial class UltimusDirectorActor {
             var count = TrueFormPool.Ready ? TrueFormBattle.SpellCount() : 0;
             var deck = wizard?.EquipmentBehavior?.GetItemInSlot(WizardData.Models.Player.EquipmentSlotType.Deck) is { } d
                        && Shared.Resources.CoreObjectFactory.FindBehaviorInstance<Imcodec.ObjectProperty.TypeCache.DeckBehavior>(d, out var b) ? b.m_spellList ?? [] : [];
-            var names = deck.Where(s => s is not null).Select(s => TrueFormPool.Of(s.m_templateID)?.Shown ?? UltimusText.SpellName(s.m_templateID))
-                .Where(n => !string.IsNullOrWhiteSpace(n)).Take(8).ToList();
+            var shownCards = deck.Where(s => s is not null).Select(s => (Id: s.m_templateID, Shown: TrueFormPool.Of(s.m_templateID)?.Shown ?? UltimusText.SpellName(s.m_templateID)))
+                .Where(n => !string.IsNullOrWhiteSpace(n.Shown)).ToList();
+            var names = shownCards.Take(8).Select(n => n.Shown).ToList();
+            TrueFormDeckPlan.Mentioned(shownCards.Take(8));
+            SendReply(heard, $"My deck: {TrueFormDeckSummary(wizard)}." + (TrueFormDeckPlan.Any ? $" Your deck plan: {TrueFormDeckPlan.Words()}." : ""), "true form");
             SendReply(heard, $"I have every spell in the game, one of each{(count > 0 ? $" ({count} at level {TrueForm.SpellLevel()})" : "")}, and each round I pick the seven the fight needs. " +
                              (names.Count > 0 ? $"My {TrueForm.School} deck starts with {string.Join(", ", names)}. " : "") +
                              "Ask \"what's in your hand\" in a battle, or tell me \"use Dragonblade\" to keep a card in my hand.", "true form");
@@ -482,6 +490,7 @@ internal sealed partial class UltimusDirectorActor {
                 TrueForm.DeckRebuild = true;
             }
 
+            _tfDeckAsker = (heard, DateTime.UtcNow);
             Note("Ultimus", $"True Form: {heard.SpeakerName}'s deck order (\"{UltimusText.Short(heard.Text, 80)}\"): {TrueFormDeckPlan.Words()}");
             SendReply(heard, $"{planReply} Rebuilding my deck{(me.Wizard?.IsInDuel == true ? " right after this battle" : " now")}.", "true form");
             return true;
@@ -689,6 +698,41 @@ internal sealed partial class UltimusDirectorActor {
     // server last sent his card at 23:01:50, he changed to full healer at 23:02:31, and the game never asked again). So after
     // each change his whole card is sent to every player online, as the game does for a wishlist change.
     private DateTime _tfNextStrip;
+    private (UltimusVoice.Heard Heard, DateTime At)? _tfDeckAsker;
+
+    // His deck by kind, and the spells named: "18 heals, 6 blades, 4 shields; Deathblade x2".
+    private static string TrueFormDeckSummary(Wizard wizard) {
+        var deck = wizard?.EquipmentBehavior?.GetItemInSlot(WizardData.Models.Player.EquipmentSlotType.Deck) is { } d
+                   && Shared.Resources.CoreObjectFactory.FindBehaviorInstance<Imcodec.ObjectProperty.TypeCache.DeckBehavior>(d, out var b) ? b.m_spellList ?? [] : [];
+        var cards = deck.Where(s => s is not null).ToList();
+        if (cards.Count == 0) {
+            return "empty, waiting for the spells you name";
+        }
+
+        string Plural(string kind, int n) => kind switch {
+            "attack" => n == 1 ? "damage spell" : "damage spells",
+            "heal" => n == 1 ? "heal" : "heals",
+            "blade" => n == 1 ? "blade" : "blades",
+            "trap" => n == 1 ? "trap" : "traps",
+            "shield" => n == 1 ? "shield" : "shields",
+            "weakness" => n == 1 ? "weakness" : "weaknesses",
+            "stun" => n == 1 ? "stun" : "stuns",
+            "cleanse" => n == 1 ? "cleanse" : "cleanses",
+            "dispel" => n == 1 ? "dispel" : "dispels",
+            "minion" => n == 1 ? "minion" : "minions",
+            "global" => n == 1 ? "global" : "globals",
+            "aura" => n == 1 ? "aura" : "auras",
+            "prism" => n == 1 ? "prism" : "prisms",
+            "pip" => n == 1 ? "pip spell" : "pip spells",
+            "enchant" => n == 1 ? "enchantment" : "enchantments",
+            _ => n == 1 ? "other spell" : "other spells",
+        };
+        var byKind = cards.GroupBy(s => TrueFormDeckPlan.Main(s.m_templateID)).Select(g => (Kind: g.Key, N: g.Sum(s => (int) Math.Max(1, s.m_quantity))))
+            .OrderByDescending(x => x.N).Select(x => $"{x.N} {Plural(x.Kind, x.N)}");
+        var named = TrueFormDeckPlan.Added.Where(a => cards.Any(s => s.m_templateID == a.Id))
+            .Select(a => a.Count > 1 ? $"{a.Shown} x{a.Count}" : a.Shown).ToList();
+        return string.Join(", ", byKind) + (named.Count > 0 ? $"; with {string.Join(", ", named)}" : "");
+    }
 
     private void TrueFormCardPush(Wizard wizard) {
         try {

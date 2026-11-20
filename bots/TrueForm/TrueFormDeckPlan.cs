@@ -55,6 +55,19 @@ internal static class TrueFormDeckPlan {
 
     private const string FILE = "deck-plan.txt";
 
+    // The spells last named, by the commander or in his own answer, for "them" and "those".
+    private static List<(uint Id, string Shown)> s_recent = [];
+
+    /// <summary>Spells he just named in an answer: "remove them" means these.</summary>
+    internal static void Mentioned(IEnumerable<(uint Id, string Shown)> spells) {
+        var list = spells.ToList();
+        if (list.Count > 0) {
+            lock (s_lock) {
+                s_recent = list;
+            }
+        }
+    }
+
     private static readonly object s_lock = new();
     private static Plan s_plan = Load();
 
@@ -304,6 +317,40 @@ internal static class TrueFormDeckPlan {
             return true;
         }
 
+        // An empty deck to fill himself (Niduus, 2026-11-20: "remove all spells in your deck and only put ones that I say to"):
+        // nothing goes in but the spells named from now on.
+        var emptied = new[] {
+            Regex.Match(whole, @"\b(remove|clear|empty|wipe|take out|delete|get rid of|throw out)\s+(all|every|everything|each)\b(\s+(of\s+)?(the\s+)?(spells?|cards?|in|from|out))*(\s+(your|ur|the|his)\s+deck)?(\s|$)(?!.*\b(that|which|but|except|other)\b)"),
+            Regex.Match(whole, @"\b(empty|clear|wipe|blank)\s+(out\s+)?(your|ur|the|his)?\s*deck\b|\bdeck\s+(empty|blank|clear)\b"),
+            Regex.Match(whole, @"(\b(remove|clear|empty|wipe|take out|delete)\s+(all|every|everything)\s+(the\s+)?(spells?|cards?)(\s+(in|from|out of)\s+(your|ur|the|his)\s+deck)?\s+(and\s+)?)?\bonly\s+(put|add|use|pack|have|include|keep)\s+(in\s+)?(the\s+)?(ones?|spells?|cards?|what|whatever)\s+(that\s+)?(i|we)\s+(say|said|name|named|tell|told|pick|picked|choose|chose|list|listed|want|ask)(\s+to)?"),
+        }.Where(m => m.Success).ToList();
+        if (emptied.Count > 0) {
+            foreach (var m in emptied) {
+                whole = whole.Replace(m.Value, " ");
+                clauses = [.. clauses.Select(cl => cl.Replace(m.Value.Trim(), " ").Trim()).Where(cl => cl.Length > 0)];
+            }
+
+            plan = new Plan { Only = [] };
+            changes.Add("my deck emptied: only the spells you name go in");
+            any = true;
+            // The rest of the message ("... and add Deathblade") still counts.
+        }
+
+        // "Remove all other types of cards that do not heal", "anything that isn't a blade", "everything but heals":
+        // only that kind stays.
+        foreach (Match keep in Regex.Matches(whole, @"\b(?:all|every|everything|anything|any|other|else)\b[a-z' ]*?\b(?:that|which)?\s*(?:do not|don'?t|does not|doesn'?t|are not|aren'?t|is not|isn'?t|can'?t|cannot|won'?t)\s+(?:a\s+|an\s+)?([a-z]+)")
+                     .Concat(Regex.Matches(whole, @"\b(?:all|every|everything|anything|any|cards?|spells?)\b[a-z ]*?\b(?:but|except|besides|other than|apart from)\s+(?:the\s+|my\s+)?([a-z]+)")).ToList()) {
+            if (KindOf(keep.Groups[1].Value) is { } kept) {
+                plan.Only = [kept];
+                plan.Never.Remove(kept);
+                changes.Add($"only {s_words[kept]}");
+                any = true;
+                // The whole part it was said in is done ("remove all other types of cards that do not heal").
+                clauses = [.. clauses.Where(cl => !cl.Contains(keep.Value.Trim(), StringComparison.Ordinal))];
+            }
+        }
+
+        var mentioned = new List<(uint Id, string Shown)>();
         List<string> saidOnly = null;
         var addedKinds = new List<string>();
         foreach (var clause in clauses) {
@@ -348,6 +395,33 @@ internal static class TrueFormDeckPlan {
                     item = own[(ownAdd.Index + ownAdd.Length)..].Trim();
                 }
 
+                // "them", "those", "these": the spells he or you just named (Niduus, 2026-11-20: "remove them from your deck").
+                if (Regex.IsMatch(" " + item + " ", @"^\s*(them|those|these|those ones|these ones|those spells|these spells|those cards|these cards|that one|it|all of them|all of those)\b")) {
+                    List<(uint Id, string Shown)> recent;
+                    lock (s_lock) {
+                        recent = [.. s_recent];
+                    }
+
+                    foreach (var (rid, rshown) in recent) {
+                        any = true;
+                        if (verb == Verb.Remove) {
+                            plan.Remove[rid] = rshown;
+                            plan.Add.RemoveAll(a => a.Id == rid);
+                            changes.Add($"{rshown} out");
+                        }
+                        else if (verb is Verb.Add or Verb.Only) {
+                            plan.Remove.Remove(rid);
+                            if (!plan.Add.Any(a => a.Id == rid)) {
+                                plan.Add.Add(new Named(rid, rshown, 1));
+                            }
+
+                            changes.Add(rshown);
+                        }
+                    }
+
+                    continue;
+                }
+
                 var (count, words) = CountOf(item);
                 words = Regex.Replace(s_filler.Replace(" " + words + " ", " "), @"\s+", " ").Trim();
                 if (words.Length == 0) {
@@ -387,6 +461,7 @@ internal static class TrueFormDeckPlan {
                     any = true;
                     if (verb == Verb.Remove) {
                         plan.Remove[entry.Id] = entry.Shown;
+                        mentioned.Add((entry.Id, entry.Shown));
                         plan.Add.RemoveAll(a => a.Id == entry.Id);
                         changes.Add($"{entry.Shown} out");
                     }
@@ -396,6 +471,7 @@ internal static class TrueFormDeckPlan {
                         plan.Add.RemoveAll(a => a.Id == entry.Id);
                         var copies = Math.Clamp(count ?? had?.Count ?? 1, 1, 10);
                         plan.Add.Add(new Named(entry.Id, entry.Shown, copies));
+                        mentioned.Add((entry.Id, entry.Shown));
                         changes.Add(copies > 1 ? $"{copies} {entry.Shown}" : entry.Shown);
                     }
 
@@ -463,6 +539,9 @@ internal static class TrueFormDeckPlan {
         lock (s_lock) {
             s_plan = plan;
             Save(plan);
+            if (mentioned.Count > 0) {
+                s_recent = mentioned;
+            }
         }
 
         healsOnly = plan.Only is { } o ? !o.Contains("attack") : plan.Never.Contains("attack");
@@ -484,6 +563,9 @@ internal static class TrueFormDeckPlan {
         var parts = new List<string>();
         if (plan.Only is { Count: > 0 } only) {
             parts.Add($"only {Join(only.Select(k => s_words[k]))}");
+        }
+        else if (plan.Only is { Count: 0 }) {
+            parts.Add("only the spells you name");
         }
 
         if (plan.Add.Count > 0) {

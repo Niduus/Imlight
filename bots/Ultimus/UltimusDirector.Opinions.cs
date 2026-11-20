@@ -340,7 +340,12 @@ internal sealed partial class UltimusDirectorActor {
                 return worn.Count == 0 ? "Just my starting clothes for now!" : $"I'm wearing {string.Join(", ", worn)}. I buy better gear when it's a real upgrade.";
             }
             case "deck": {
-                var spells = wizard.SpellbookBehavior?.LearnedSpellTemplateIds?.Select(id => Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate((uint) id))
+                // His battle deck's spells, never fishing or other cantrips from his spellbook (Niduus, 2026-11-20: "what's in
+                // your deck" was answered with fishing lures).
+                var deckList = wizard.EquipmentBehavior?.GetItemInSlot(Imlight.CoreLib.WizardData.Models.Player.EquipmentSlotType.Deck) is { } deckItem
+                               && Imlight.CoreLib.Shared.Resources.CoreObjectFactory.FindBehaviorInstance<Imcodec.ObjectProperty.TypeCache.DeckBehavior>(deckItem, out var deckBehavior)
+                    ? (deckBehavior.m_spellList ?? []).Where(sp => sp is not null).Select(sp => (ulong) sp.m_templateID).ToList() : [];
+                var spells = deckList.Select(id => Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate((uint) id))
                     .OfType<Imcodec.ObjectProperty.TypeCache.SpellTemplate>().Select(t => (string) t.m_displayName)
                     .Where(n => !string.IsNullOrWhiteSpace(n)).Select(n => n.Contains(' ') || !n.Contains('_') ? n : Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(n))
                     .Where(n => !string.IsNullOrWhiteSpace(n)).Distinct().Take(8).ToList() ?? [];
