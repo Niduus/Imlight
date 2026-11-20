@@ -260,16 +260,21 @@ public static class UltimusBrain {
                     expected = learned ? known.Seconds : Guess(request);
                 }
 
-                // A TCO7 member's first time at a quest: Ultimus's own time is the one to beat (Niduus, 2026-11-16: "read
-                // EVERYTHING he's done thus far and try to preform better").
-                var his = !learned && UltimusSeat.Current.IsTeamBot ? UltimusSeconds(code) : 0;
+                // A first time at a quest: the fastest time on the whole ladder (Ultimus, the TCO7, the Kitharas Family) is the one
+                // to beat (Niduus, 2026-11-16: "read EVERYTHING he's done thus far and try to preform better"; 2026-11-20: they all
+                // learn from each other, Ultimus too). Before the ladder knew it, a TCO7 member had Ultimus's time.
+                var (his, whose) = learned ? (0, "") : UltimusLadder.Best(code);
+                if (his <= 0 && !learned && UltimusSeat.Current.IsTeamBot && UltimusSeconds(code) is var ultimus and > 0) {
+                    (his, whose) = (ultimus, "Ultimus");
+                }
+
                 if (his > 0) {
                     expected = his;
                 }
 
                 QuestLog($"STARTED  {title} ({code}), {request.World}: {request.Steps} steps, {request.Fights} fights. " +
-                         $"Expected about {Minutes(expected)}{(learned ? " (how long it took last time)" : his > 0 ? " (Ultimus's time, the one to beat)" : " (a first guess)")}.");
-                Note(UltimusSeat.Current.Name, $"starts {title} ({code}); expected about {Minutes(expected)}{(his > 0 ? " (Ultimus's time: the one to beat)" : "")}.");
+                         $"Expected about {Minutes(expected)}{(learned ? " (how long it took last time)" : his > 0 ? $" ({whose}'s time, the best on the ladder: the one to beat)" : " (a first guess)")}.");
+                Note(UltimusSeat.Current.Name, $"starts {title} ({code}); expected about {Minutes(expected)}{(his > 0 ? $" ({whose}'s time: the one to beat)" : "")}.");
 
                 return new UltimusReply { Ok = true, Expected = expected, Learned = learned };
             }
@@ -296,10 +301,16 @@ public static class UltimusBrain {
 
                 // A TCO7 member against Ultimus's time for the same quest.
                 var against = "";
-                if (!partway && UltimusSeat.Current.IsTeamBot && UltimusSeconds(code) is var hisTime and > 0) {
+                // Against the best time on the ladder by anyone else (Ultimus's alone before the ladder knew one).
+                var (hisTime, who) = partway ? (0, "") : UltimusLadder.Best(code);
+                if (hisTime <= 0 && !partway && UltimusSeat.Current.IsTeamBot && UltimusSeconds(code) is var ultimusTime and > 0) {
+                    (hisTime, who) = (ultimusTime, "Ultimus");
+                }
+
+                if (hisTime > 0) {
                     against = request.Seconds <= hisTime
-                        ? $" (beat Ultimus's {Minutes(hisTime)} by {Minutes(hisTime - request.Seconds)})"
-                        : $" (Ultimus did it in {Minutes(hisTime)}, {Minutes(request.Seconds - hisTime)} faster)";
+                        ? $" (beat {who}'s {Minutes(hisTime)}, the best on the ladder, by {Minutes(hisTime - request.Seconds)})"
+                        : $" ({who} did it in {Minutes(hisTime)}, {Minutes(request.Seconds - hisTime)} faster)";
                 }
 
                 QuestLog($"FINISHED {title} ({code}) in {Minutes(request.Seconds)}{against}{(string.IsNullOrEmpty(request.Text) ? "" : ": " + request.Text)}.");

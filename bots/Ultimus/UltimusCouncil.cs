@@ -179,6 +179,10 @@ internal static class UltimusCouncil {
             facts.AddRange(f.Lessons.Take(3).Select(l => "What worked for them: " + UltimusText.Short(l, 200)));
         }
 
+        // The whole ladder's word on it too (Ultimus, the TCO7 and the Kitharas Family): the fastest finish, its lessons and
+        // what went wrong for anyone there (UltimusLadder.cs).
+        facts.AddRange(UltimusLadder.FactsFor(quest));
+
         return facts;
     }
 

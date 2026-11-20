@@ -98,7 +98,7 @@ internal static class UltimusFightStyles {
         var scores = Scores(kind);
         var style = Best(scores);
         var tried = false;
-        var why = style is null ? "" : $"my results for fights of this kind ({kind}) say \"{style}\" wins more";
+        var why = style is null ? "" : $"the ladder's results (mine and every other bot's) for fights of this kind ({kind}) say \"{style}\" wins more";
         if (style is null) {
             style = BUILD_UP;
             var few = new[] { BUILD_UP, HIT_NOW }.Where(st => (scores?.GetValueOrDefault(st)?.Fights ?? 0) < TRIES).ToList();
@@ -164,13 +164,126 @@ internal static class UltimusFightStyles {
         return (battle.Kind, battle.Style);
     }
 
+    // Every fight of this kind on the whole ladder (Niduus, 2026-11-20: "All combat logic is also to be logged and studied
+    // amongst the ladder. They are to ALL improve"): his own results, plus every other questing bot's (Ultimus, the TCO7,
+    // the Kitharas Family), so the style that wins for all of them is played by each, and nobody has to lose the same
+    // fights to learn what the others already know. His own fights are counted live; the others' are read every 5 minutes.
     private static Dictionary<string, Score> Scores(string kind) {
+        Dictionary<string, Score> mine;
         lock (s_lock) {
             s_scores ??= Read();
-
-            return s_scores.TryGetValue(kind, out var found) ? found.ToDictionary(k => k.Key, k => new Score {
+            mine = s_scores.TryGetValue(kind, out var found) ? found.ToDictionary(k => k.Key, k => new Score {
                 Fights = k.Value.Fights, Wins = k.Value.Wins, Rounds = k.Value.Rounds, HealthLost = k.Value.HealthLost,
             }) : null;
+        }
+
+        if (Ladder().GetValueOrDefault(kind) is not { } theirs) {
+            return mine;
+        }
+
+        mine ??= [];
+        foreach (var (style, score) in theirs) {
+            if (!mine.TryGetValue(style, out var sum)) {
+                mine[style] = sum = new Score();
+            }
+
+            sum.Fights += score.Fights;
+            sum.Wins += score.Wins;
+            sum.Rounds += score.Rounds;
+            sum.HealthLost += score.HealthLost;
+        }
+
+        return mine;
+    }
+
+    private static readonly object s_ladderLock = new();
+    private static readonly SeatLocal<(DateTime At, Dictionary<string, Dictionary<string, Score>> Scores)> s_ladderSeat = new();
+
+    /// <summary>The other questing bots' fight scores, by kind and style, added up (read again every 5 minutes).</summary>
+    private static Dictionary<string, Dictionary<string, Score>> Ladder() {
+        var (at, held) = s_ladderSeat.Value;
+        if (held is not null && DateTime.UtcNow - at < TimeSpan.FromMinutes(5)) {
+            return held;
+        }
+
+        var me = UltimusSeat.Current;
+        var sum = new Dictionary<string, Dictionary<string, Score>>();
+        lock (s_ladderLock) {
+            foreach (var seat in UltimusSeat.All.Where(s => s != me && (s.IsUltimus || s.IsTeamBot))) {
+                try {
+                    var path = Path.Combine(seat.Folder, DATA);
+                    if (!File.Exists(path) || UltimusWire.Read<Dictionary<string, Dictionary<string, Score>>>(File.ReadAllText(path)) is not { } theirs) {
+                        continue;
+                    }
+
+                    foreach (var (kind, styles) in theirs) {
+                        if (!sum.TryGetValue(kind, out var into)) {
+                            sum[kind] = into = [];
+                        }
+
+                        foreach (var (style, score) in styles) {
+                            if (!into.TryGetValue(style, out var total)) {
+                                into[style] = total = new Score();
+                            }
+
+                            total.Fights += score.Fights;
+                            total.Wins += score.Wins;
+                            total.Rounds += score.Rounds;
+                            total.HealthLost += score.HealthLost;
+                        }
+                    }
+                }
+                catch (Exception e) when (e is IOException or UnauthorizedAccessException or System.Text.Json.JsonException) {
+                    // A file being written: read again next time.
+                }
+            }
+        }
+
+        s_ladderSeat.Value = (DateTime.UtcNow, sum);
+        WriteLadderReport(me, sum);
+
+        return sum;
+    }
+
+    // ladder-fights.txt in Ultimus's folder: the whole ladder's results for each kind of fight and style (written by Ultimus's
+    // own read, so one copy, his and everyone's), for the Hive mind and for Niduus.
+    private static void WriteLadderReport(UltimusSeat me, Dictionary<string, Dictionary<string, Score>> others) {
+        if (!me.IsUltimus) {
+            return;
+        }
+
+        try {
+            Dictionary<string, Dictionary<string, Score>> all;
+            lock (s_lock) {
+                s_scores ??= Read();
+                all = s_scores.ToDictionary(k => k.Key, k => k.Value.ToDictionary(v => v.Key, v => new Score {
+                    Fights = v.Value.Fights, Wins = v.Value.Wins, Rounds = v.Value.Rounds, HealthLost = v.Value.HealthLost,
+                }));
+            }
+
+            foreach (var (kind, styles) in others) {
+                if (!all.TryGetValue(kind, out var into)) {
+                    all[kind] = into = [];
+                }
+
+                foreach (var (style, score) in styles) {
+                    if (!into.TryGetValue(style, out var total)) {
+                        into[style] = total = new Score();
+                    }
+
+                    total.Fights += score.Fights;
+                    total.Wins += score.Wins;
+                    total.Rounds += score.Rounds;
+                    total.HealthLost += score.HealthLost;
+                }
+            }
+
+            var text = "THE LADDER: FIGHTS (Ultimus, the TCO7 and the Kitharas Family together; every bot plays the style that wins for all)" +
+                       Environment.NewLine + Report(all, DateTime.Now);
+            File.WriteAllText(Path.Combine(UltimusWire.SharedFolder, "ladder-fights.txt"), text);
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+            // Written again next time.
         }
     }
 
