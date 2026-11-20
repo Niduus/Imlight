@@ -302,11 +302,11 @@ internal static class UltimusPlaybook {
         try {
             if (!File.Exists(path)) {
                 Directory.CreateDirectory(UltimusWire.Folder);
-                // A TCO7 member starts from Ultimus's own playbook (what Niduus set for him, and what he tuned himself):
+                // A TCO7 member (and a questing street bot) starts from Ultimus's own playbook (what Niduus set for him, and what he tuned himself):
                 // they do what he does, then tune their own copy (Niduus, 2026-11-16: "Anything he does, everything under
                 // him is expected to do the same, if not better").
                 var his = Path.Combine(UltimusWire.SharedFolder, FILE);
-                if (UltimusSeat.Current.IsTco7 && File.Exists(his)) {
+                if ((UltimusSeat.Current.IsTco7 || UltimusSeat.Current.IsStreet) && File.Exists(his)) {
                     File.Copy(his, path);
                 }
                 else {

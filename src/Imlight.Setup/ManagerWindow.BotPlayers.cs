@@ -24,7 +24,7 @@ internal sealed partial class ManagerWindow {
     // Niduus, 2026-11-19: the bots are one page with sub pages; the street Bot Players have their own tab there.
     private const string STREET_BOTS_TAB = "Street Bots";
 
-    private Control StreetBotsTab() => Page(BotPlayersCard());
+    private Control StreetBotsTab() => Page(BotPlayersCard(), StreetQuestCard());
     private const int BOT_LOG_SHOWN_LINES = 200;
 
     private readonly TextBlock _botState = new() { TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold };

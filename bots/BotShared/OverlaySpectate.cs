@@ -347,7 +347,7 @@ internal static class OverlaySpectate {
         try {
             foreach (var p in OnlinePlayerCollection.GetCachedOnlinePlayers().Where(p => p.CharacterId != 0)) {
                 var seat = Ultimus.UltimusSeat.OfCharacter(p.CharacterId);
-                var kind = seat is { IsUltimus: true } ? "Ultimus" : seat is not null ? "TCO7"
+                var kind = seat is { IsUltimus: true } ? "Ultimus" : seat is { IsStreet: true } ? "Street bot" : seat is { IsTrueForm: true } ? "True Form" : seat is not null ? "TCO7"
                     : QuestTeam.QuestTeamRoster.IsMember(p.CharacterId) ? "Quest Team" : "Player";
                 var name = PlayerCheats.LiveName(p.CharacterId) is { Length: > 0 } live ? live : p.WizardName ?? "?";
                 list.Add(new Someone(p.CharacterId, name, kind, seat?.Role ?? p.School ?? ""));

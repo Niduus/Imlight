@@ -72,12 +72,35 @@ internal sealed class UltimusSeat {
     /// </summary>
     internal static readonly UltimusSeat TrueForm = new("TrueForm", "True Form of Kitharas", "Myth", TRUE_FORM_FOLDER, "TrueForm-Ahziael", 8);
 
-    /// <summary>Every seat: Ultimus first, then the TCO7, then True Form.</summary>
-    internal static readonly UltimusSeat[] All = [Ultimus, .. Tco7, TrueForm];
+    /// <summary>Where the questing street bots keep their folders, inside the server's logs folder.</summary>
+    internal const string STREET_FOLDER = "logs/street-questers";
+
+    /// <summary>The most questing street bots there can be at once ([StreetQuest] Count is held to this).</summary>
+    internal const int STREET_MOST = 30;
+
+    // Seat numbers of the questing street bots start after this one (Ultimus 0, TCO7 1-7, True Form 8).
+    private const int STREET_BASE = 100;
+
+    // Their schools, taken in turn, so every school quests (bot 1 Ice, 2 Fire, ... 7 Balance, 8 Ice again).
+    private static readonly string[] s_streetSchools = ["Ice", "Fire", "Storm", "Myth", "Life", "Death", "Balance"];
+
+    /// <summary>
+    /// The questing street bots (Niduus, 2026-11-20: "an Ahziael update that will allow normal street bots to quest like TCO7.
+    /// I want to be able to swarm the server with bots to collect more accurate data so the bots have multiple success paths
+    /// instead of one single"). Each is one more seat of Ultimus's brain, exactly as a TCO7 member: the same quest rules, way
+    /// finder, battles and shared knowledge. They wear a plain random name from the game's own name lists (no custom names,
+    /// as every street bot), take the schools in turn, and play while [StreetQuest] Enabled is on and their number is within
+    /// [StreetQuest] Count (live: lowering it logs the extra ones out within seconds).
+    /// </summary>
+    internal static readonly UltimusSeat[] Street = [.. Enumerable.Range(1, STREET_MOST).Select(n => new UltimusSeat(
+        $"Street{n:00}", null, s_streetSchools[(n - 1) % s_streetSchools.Length], $"{STREET_FOLDER}/street{n:00}", $"Street-{n:00}", STREET_BASE + n))];
+
+    /// <summary>Every seat: Ultimus first, then the TCO7, then True Form, then the questing street bots.</summary>
+    internal static readonly UltimusSeat[] All = [Ultimus, .. Tco7, TrueForm, .. Street];
 
     private UltimusSeat(string key, string name, string role, string folder, string username, int index) {
         Key = key;
-        Name = name;
+        _name = name;
         Role = role;
         FolderName = folder;
         Username = username;
@@ -87,8 +110,50 @@ internal sealed class UltimusSeat {
     /// <summary>Its key (also its name): "Ultimus", "Tulkar", ...</summary>
     internal string Key { get; }
 
-    /// <summary>The wizard's name in the game.</summary>
-    internal string Name { get; }
+    private string _name;
+
+    /// <summary>
+    /// The wizard's name in the game. A questing street bot's comes from its wizard (a random name from the game's lists, made
+    /// with it and kept in name.txt in its folder); until it has one it is "Street bot 3".
+    /// </summary>
+    internal string Name {
+        get {
+            if (_name is not null) {
+                return _name;
+            }
+
+            try {
+                var file = Path.Combine(Folder, STREET_NAME_FILE);
+                if (File.Exists(file) && File.ReadAllText(file).Trim() is { Length: > 0 } saved) {
+                    return _name = saved;
+                }
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+                // Read again next time.
+            }
+
+            return $"Street bot {Number}";
+        }
+    }
+
+    // A questing street bot's own name, written when its wizard is made (UltimusRoster).
+    private const string STREET_NAME_FILE = "name.txt";
+
+    /// <summary>A questing street bot's wizard was made (or found) with this name: it goes by it from now on.</summary>
+    internal void NameStreetBot(string name) {
+        if (!IsStreet || string.IsNullOrWhiteSpace(name)) {
+            return;
+        }
+
+        _name = name.Trim();
+        try {
+            Directory.CreateDirectory(Folder);
+            File.WriteAllText(Path.Combine(Folder, STREET_NAME_FILE), _name);
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+            Logger.Warning("{0}: could not write its name: {1}", Logger.Args(LogName, e.Message));
+        }
+    }
 
     /// <summary>Its school, which is also its role in the team code ("Balance", "Ice", ...).</summary>
     internal string Role { get; }
@@ -109,6 +174,26 @@ internal sealed class UltimusSeat {
     /// <summary>True Form, the helper bot (bots/TrueForm).</summary>
     internal bool IsTrueForm => Index == 8;
 
+    /// <summary>A questing street bot (<see cref="Street"/>).</summary>
+    internal bool IsStreet => Index > STREET_BASE;
+
+    /// <summary>A questing street bot's number, 1 and up (0 for any other seat).</summary>
+    internal int Number => IsStreet ? Index - STREET_BASE : 0;
+
+    /// <summary>How many questing street bots may play now: [StreetQuest] Count while [StreetQuest] Enabled is on (live).</summary>
+    internal static int StreetCount => ConfigurationManager.GetValue("StreetQuest.Enabled", false)
+        ? Math.Clamp(ConfigurationManager.GetValue("StreetQuest.Count", 4), 0, STREET_MOST)
+        : 0;
+
+    /// <summary>
+    /// Two seats that count each other as fellow players (they join each other's street fights as two players do): two TCO7
+    /// members, or two questing street bots while [StreetQuest] HelpEachOther is on. Ultimus stays alone, and the TCO7 and
+    /// the street bots keep apart, so each one's data stays its own.
+    /// </summary>
+    internal bool IsFellow(UltimusSeat other)
+        => other is not null && other != this
+           && ((IsTco7 && other.IsTco7) || (IsStreet && other.IsStreet && ConfigurationManager.GetValue("StreetQuest.HelpEachOther", true)));
+
     /// <summary>The seat's school.</summary>
     internal MagicSchool School => Enum.TryParse<MagicSchool>(Role, true, out var school) ? school : MagicSchool.Balance;
 
@@ -116,7 +201,7 @@ internal sealed class UltimusSeat {
     internal string Folder => Path.GetFullPath(FolderName);
 
     /// <summary>"Ultimus" or "TCO7 member Tulkar", for the server log.</summary>
-    internal string LogName => IsUltimus ? "Ultimus" : IsTrueForm ? "True Form" : $"TCO7 {Name}";
+    internal string LogName => IsUltimus ? "Ultimus" : IsTrueForm ? "True Form" : IsStreet ? $"Street bot {Name}" : $"TCO7 {Name}";
 
     // "Ultimus" as a word of its own, not "[Ultimus]" (a settings section) and not part of a longer word.
     private static readonly System.Text.RegularExpressions.Regex s_ultimusWord = new(@"(?<![\[\w])Ultimus(?![\]\w])");
@@ -135,16 +220,23 @@ internal sealed class UltimusSeat {
         ? ConfigurationManager.GetValue("Ultimus.Enabled", false)
         // True Form: [TrueForm] Enabled, on unless turned off (Niduus asked for him to stand at his spot; live).
         : IsTrueForm ? ConfigurationManager.GetValue("TrueForm.Enabled", true)
+        // A questing street bot: [StreetQuest] Enabled, and its number within [StreetQuest] Count.
+        : IsStreet ? Number <= StreetCount
         : ConfigurationManager.GetValue("TCO7.Enabled", false) && ConfigurationManager.GetValue("TCO7." + Name, true)
           && ConfigurationManager.GetValue(Section + ".Enabled", true);
 
     /// <summary>Its own section in Imlight.ini: [Ultimus], or [TCO7-Tulkar] and so on (Ahziael's member page writes it).</summary>
-    internal string Section => IsUltimus ? "Ultimus" : IsTrueForm ? "TrueForm" : "TCO7-" + Name;
+    internal string Section => IsUltimus ? "Ultimus" : IsTrueForm ? "TrueForm" : IsStreet ? STREET_SECTION : "TCO7-" + Name;
+
+    /// <summary>The questing street bots' section in Imlight.ini (one for them all).</summary>
+    internal const string STREET_SECTION = "StreetQuest";
 
     /// <summary>The port of its mini server: Ultimus [Ultimus] Port (12373); the TCO7 [TCO7] Port (12381) and the next six.</summary>
     internal int Port => IsUltimus
         ? ConfigurationManager.GetValue("Ultimus.Port", 12373)
         : IsTrueForm ? Math.Clamp(ConfigurationManager.GetValue("TrueForm.Port", 12389), 1024, 65000)
+        // The questing street bots: [StreetQuest] Port (12601) and the next ones (clear of 12410, the game's remote port).
+        : IsStreet ? Math.Clamp(ConfigurationManager.GetValue(STREET_SECTION + ".Port", 12601), 1024, 64000) + Number - 1
         : Math.Clamp(ConfigurationManager.GetValue("TCO7.Port", 12381), 1024, 65000) + Index - 1;
 
     /// <summary>
@@ -155,7 +247,7 @@ internal sealed class UltimusSeat {
         var his = ConfigurationManager.GetValue("Ultimus." + key, fallback);
 
         return IsUltimus ? his
-            : IsTrueForm ? ConfigurationManager.GetValue(Section + "." + key, his)
+            : IsTrueForm || IsStreet ? ConfigurationManager.GetValue(Section + "." + key, his)
             : ConfigurationManager.GetValue(Section + "." + key, ConfigurationManager.GetValue("TCO7." + key, his));
     }
 
@@ -244,7 +336,7 @@ internal sealed class UltimusSeat {
     /// <summary>The seat whose wizard this game object is, or null.</summary>
     internal static UltimusSeat OfGlobal(ulong globalId) => globalId != 0 && s_byGlobal.TryGetValue(globalId, out var seat) ? seat : null;
 
-    /// <summary>Every character any seat plays (Ultimus and the TCO7).</summary>
+    /// <summary>Every character any seat plays (Ultimus, the TCO7, True Form and the questing street bots).</summary>
     internal static ICollection<ulong> Characters => s_byChar.Keys;
 
     // ---------------------------------------------------------------------

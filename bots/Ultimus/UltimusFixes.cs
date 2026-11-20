@@ -136,11 +136,37 @@ internal static class UltimusFixes {
                 fix = allowed.FirstOrDefault(f => f != FLAG) ?? FLAG;
             }
 
+            // A questing street bot sometimes tries another safe move first where one is already known, so the bots learn a
+            // second and third way past the same spot (Niduus, 2026-11-20: "so the bots have multiple success paths instead
+            // of one single"). One try: stuck again, the known move comes next. Every move is still one a player makes.
+            if (Explore(fix, flag, allowed) is { } other) {
+                flag.Lesson = $"Trying \"{other}\" instead of the known \"{fix}\", to learn another way past this spot.";
+                fix = other;
+            }
+
             flag.Tried.Add(fix);
             Save();
 
             return (fix, flag);
         }
+    }
+
+    /// <summary>
+    /// For a questing street bot, now and then ([StreetQuest] ExplorePercent, 25 by default): a move not yet tried at this spot
+    /// in place of the one already known to help (what worked here, what the watchdog book or the lessons say), or null.
+    /// </summary>
+    private static string Explore(string known, Flag flag, List<string> allowed) {
+        // Only when the pick came from what is known (a fresh pick in order is a new try already).
+        if (!UltimusSeat.Current.IsStreet || known == FLAG || !(flag.Worked == known || flag.Lesson.Length > 0)) {
+            return null;
+        }
+
+        var percent = Math.Clamp(ConfigurationManager.GetValue(UltimusSeat.STREET_SECTION + ".ExplorePercent", 25), 0, 100);
+        if (percent == 0 || Random.Shared.Next(100) >= percent) {
+            return null;
+        }
+
+        return allowed.FirstOrDefault(f => f != FLAG && f != known && !flag.Tried.Contains(f));
     }
 
     /// <summary>

@@ -69,6 +69,26 @@ internal static class HiveMind {
         public DateTime First { get; set; } = DateTime.MaxValue;
         public List<Done> Done { get; set; } = [];
         public List<Fix> Fixes { get; set; } = [];
+        /// <summary>What failed on this quest, so the bots know what to avoid (Niduus, 2026-11-20: "I don't want the Hive Mind to
+        /// only mark success, I want it to also note failures, so they know what to avoid").</summary>
+        public List<Miss> Misses { get; set; } = [];
+        public List<Trouble> Troubles { get; set; } = [];
+    }
+
+    /// <summary>A stuck move that failed at a quest's step at least once (with how often it worked there too).</summary>
+    internal sealed class Miss {
+        public string Step { get; set; } = "";
+        public string Place { get; set; } = "";
+        public string Move { get; set; } = "";
+        public int Worked { get; set; }
+        public int Failed { get; set; }
+    }
+
+    /// <summary>A problem a bot reported on a quest (lost a fight again and again, got stuck, took far too long), and who.</summary>
+    internal sealed class Trouble {
+        public string Text { get; set; } = "";
+        public int Times { get; set; }
+        public List<string> Bots { get; set; } = [];
     }
 
     /// <summary>One bot's clean finishes of one quest.</summary>
@@ -114,6 +134,23 @@ internal static class HiveMind {
         }
 
         yield return ("Quest Team", Path.Combine(logs, "quest-team"));
+
+        // The questing street bots (logs/street-questers/street01 and on), each by the name its wizard got (name.txt).
+        var street = Path.Combine(logs, "street-questers");
+        if (Directory.Exists(street)) {
+            foreach (var bot in Directory.GetDirectories(street).OrderBy(d => d, StringComparer.OrdinalIgnoreCase)) {
+                var name = "";
+                try {
+                    var file = Path.Combine(bot, "name.txt");
+                    name = File.Exists(file) ? File.ReadAllText(file).Trim() : "";
+                }
+                catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
+                    // The folder's own name below.
+                }
+
+                yield return ($"{(name.Length > 0 ? name : Path.GetFileName(bot))} (street bot)", bot);
+            }
+        }
     }
 
     /// <summary>Reads every bot's files in <paramref name="logs"/> (the server's logs folder) into one book.</summary>
@@ -132,7 +169,7 @@ internal static class HiveMind {
 
         ReadFixes(Path.Combine(logs, "ultimus", "stuck-solutions.json"), quests, book);
         book.Fights = ReadFights(BotFolders(logs).Select(b => Path.Combine(b.Folder, "fight-styles.json")));
-        book.Quests = quests.Values.Where(q => q.Done.Count > 0)
+        book.Quests = quests.Values.Where(q => q.Done.Count > 0 || q.Misses.Count > 0 || q.Troubles.Count > 0)
             .OrderBy(q => WorldOrder(q.World)).ThenBy(q => q.First).ThenBy(q => q.Code, StringComparer.OrdinalIgnoreCase).ToList();
 
         return book;
@@ -223,6 +260,25 @@ internal static class HiveMind {
                 case "ISSUE": {
                     if (s_title.Match(rest) is { Success: true } t && open.TryGetValue(t.Groups[1].Value, out var run)) {
                         run.Troubles++;
+                        // What went wrong is kept too, so the bots know what to avoid on this quest.
+                        var text = rest[t.Length..].TrimStart(':', ' ').Trim();
+                        if (text.Length > 0 && run.Code.Length > 0) {
+                            var key = OneForAllSchools(run.Code);
+                            if (!quests.TryGetValue(key, out var quest)) {
+                                quests[key] = quest = new Quest { Code = key, Title = run.Title.Trim('"').Trim(), World = WorldOf(run.Code), First = at };
+                            }
+
+                            text = text.Length > 240 ? text[..240].TrimEnd() + "..." : text;
+                            var same = TroubleKey(text);
+                            if (quest.Troubles.FirstOrDefault(x => TroubleKey(x.Text) == same) is not { } trouble) {
+                                quest.Troubles.Add(trouble = new Trouble { Text = text });
+                            }
+
+                            trouble.Times++;
+                            if (!trouble.Bots.Contains(bot)) {
+                                trouble.Bots.Add(bot);
+                            }
+                        }
                     }
 
                     break;
@@ -312,6 +368,11 @@ internal static class HiveMind {
             var failed = (int?) row["Failed"] ?? 0;
             if (code.Length == 0 || worked < 1 || failed > 0) {
                 book.FixesLeftOut++;
+                // A move that failed is not a sure fix, but it is worth knowing: the bots avoid it, or try it last.
+                if (code.Length > 0 && failed > 0) {
+                    AddMiss(quests, code, row, worked, failed);
+                }
+
                 continue;
             }
 
@@ -320,9 +381,7 @@ internal static class HiveMind {
                 quests[code] = quest = new Quest { Code = code, Title = code, World = WorldOf(code), First = DateTime.MaxValue };
             }
 
-            var step = ((string?) row["Step"] ?? "").Split('|').LastOrDefault(s => s.Trim().Length > 0) ?? "";
-            var zone = ((string?) row["Zone"] ?? "").Split('/', '\\').LastOrDefault(z => z.Length > 0) ?? "";
-            var move = MoveWords((string?) row["Move"] ?? "");
+            var (step, zone, move) = Where(row);
             // The same move at the same step and place, learned twice, is one line.
             if (quest.Fixes.FirstOrDefault(f => f.Step == step.Trim() && f.Place == zone && f.Move == move) is { } same) {
                 same.Worked += worked;
@@ -332,6 +391,31 @@ internal static class HiveMind {
             quest.Fixes.Add(new Fix { Step = step.Trim(), Place = zone, Move = move, Worked = worked, By = (string?) row["By"] ?? "" });
         }
     }
+
+    // The step, area and move of a stuck-solutions row, in plain words.
+    private static (string Step, string Zone, string Move) Where(JsonObject row)
+        => ((((string?) row["Step"] ?? "").Split('|').LastOrDefault(s => s.Trim().Length > 0) ?? "").Trim(),
+            ((string?) row["Zone"] ?? "").Split('/', '\\').LastOrDefault(z => z.Length > 0) ?? "",
+            MoveWords((string?) row["Move"] ?? ""));
+
+    private static void AddMiss(Dictionary<string, Quest> quests, string code, JsonObject row, int worked, int failed) {
+        code = OneForAllSchools(code);
+        if (!quests.TryGetValue(code, out var quest)) {
+            quests[code] = quest = new Quest { Code = code, Title = code, World = WorldOf(code), First = DateTime.MaxValue };
+        }
+
+        var (step, zone, move) = Where(row);
+        if (quest.Misses.FirstOrDefault(m => m.Step == step && m.Place == zone && m.Move == move) is { } same) {
+            same.Worked += worked;
+            same.Failed += failed;
+            return;
+        }
+
+        quest.Misses.Add(new Miss { Step = step, Place = zone, Move = move, Worked = worked, Failed = failed });
+    }
+
+    // Two reports of the same trouble differ only in their numbers ("lost 3 times", "lost 4 times").
+    private static string TroubleKey(string text) => Regex.Replace(text, @"[\d.,:]+", "#");
 
     internal static string MoveWords(string move) => move switch {
         "step_aside" => "stepped a little aside",
@@ -443,6 +527,13 @@ internal static class HiveMind {
     internal static string Line(Fix f) =>
         $"Got stuck at \"{f.Step}\" in {f.Place}: {Who(f.By)} {f.Move}, and that worked every time it was tried ({Plural(f.Worked, "time")}).";
 
+    internal static string Line(Miss m) => m.Worked == 0
+        ? $"Avoid at \"{m.Step}\" in {m.Place}: {m.Move} failed {Plural(m.Failed, "time")} and never worked there."
+        : $"Try last at \"{m.Step}\" in {m.Place}: {m.Move} worked {Plural(m.Worked, "time")} but failed {Plural(m.Failed, "time")}.";
+
+    internal static string Line(Trouble t) =>
+        $"Went wrong ({Plural(t.Times, "time")}, {string.Join(", ", t.Bots)}): {t.Text}";
+
     // Who found the move: the stuck-solutions file says "memory" (a move that worked there before) or "local AI" (thought it through).
     private static string Who(string by) => by switch {
         "memory" => "a bot remembered what worked there before and",
@@ -467,7 +558,7 @@ internal static class HiveMind {
             text.AppendLine($"# {world.Key}");
             text.AppendLine();
             text.AppendLine($"How the bots finished each quest of {world.Key}, from their own logs (collected {book.Made:MMMM d, yyyy}). " +
-                            "Only runs a bot did start to finish by itself are here.");
+                            "Only runs a bot did start to finish by itself count as done. What failed is listed too (Avoid, Try last, Went wrong), so the bots know what to stay away from.");
             foreach (var q in world) {
                 text.AppendLine();
                 text.AppendLine($"## {q.Title}");
@@ -477,6 +568,15 @@ internal static class HiveMind {
 
                 foreach (var f in q.Fixes) {
                     text.AppendLine($"- {Line(f)}");
+                }
+
+                // What failed, so it is avoided: the moves that did not help, then the problems the bots ran into.
+                foreach (var m in q.Misses.OrderBy(m => m.Worked).ThenByDescending(m => m.Failed)) {
+                    text.AppendLine($"- {Line(m)}");
+                }
+
+                foreach (var t in q.Troubles.OrderByDescending(t => t.Times).Take(8)) {
+                    text.AppendLine($"- {Line(t)}");
                 }
             }
 

@@ -306,8 +306,8 @@ public static class UltimusLink {
 
     /// <summary>Tells the brain what Ultimus did, for its log, without waiting.</summary>
     internal static void Note(string who, string text, string level = null) {
-        // A TCO7 member's own log says its own name where Ultimus's says his.
-        if (UltimusSeat.Current is { IsTco7: true } seat && (who is null || who == "Ultimus" || who == seat.Role)) {
+        // A TCO7 member's (or questing street bot's) own log says its own name where Ultimus's says his.
+        if (UltimusSeat.Current is { } seat && (seat.IsTco7 || seat.IsStreet) && (who is null || who == "Ultimus" || who == seat.Role)) {
             who = seat.Name;
         }
 
