@@ -91,6 +91,17 @@ internal static class TrueFormMaker {
             MakeMale(wizard);
             // His universal setup scores every piece, jewel and pet on what helps every school ("" = every school only).
             var statSchool = TrueForm.Universal ? "" : school.ToString();
+            // His weave school and the stats his commander asked for count in every pick below (TrueFormBuild).
+            BotGear.WeaveSchool = TrueFormBuild.Weave?.ToString();
+            BotGear.Pushes = [.. TrueFormBuild.Pushes.Select(p => (p.Kind, p.School))];
+            if (BotGear.WeaveSchool is { } weaving) {
+                Logger.Information("True Form: weaving {0} on top of {1}.", Logger.Args(weaving, school));
+            }
+
+            if (BotGear.Pushes.Count > 0) {
+                Logger.Information("True Form: asked for more {0}.", Logger.Args(string.Join(", ", TrueFormBuild.Pushes.Select(p => p.Words))));
+            }
+
             Dress(wizard, top, school.ToString(), style, statSchool);
             Stitch(wizard);
             GivePet(wizard, statSchool, style);
@@ -101,6 +112,10 @@ internal static class TrueFormMaker {
         }
         catch (Exception e) {
             Logger.Warning("True Form: could not make him ready: {0}", Logger.Args(e));
+        }
+        finally {
+            BotGear.WeaveSchool = null;
+            BotGear.Pushes = null;
         }
     }
 

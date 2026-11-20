@@ -311,13 +311,18 @@ internal sealed partial class UltimusDirectorActor {
             SendReply(heard, now == Shared.Behaviors.MagicSchool.Myth
                 ? "Myth is my own school. In a group you can switch me: \"go ice for me\", or \"go ice and tank for me\"."
                 : $"I'm {now} for this group. Myth is my own school, and I go back to it when the group ends.", "true form");
+            if (TrueFormBuild.Weave is { } weaving || TrueFormBuild.Pushes.Count > 0) {
+                SendReply(heard, (TrueFormBuild.Weave is { } w ? $"I'm weaving {w} too, and my school pips go to {w}. " : "")
+                                 + (TrueFormBuild.Pushes.Count > 0 ? $"You asked for more {string.Join(" and ", TrueFormBuild.Pushes.Select(p => p.Words))}." : ""), "true form");
+            }
+
             return true;
         }
 
         // What he can do: "what all options do you have", "what can you do", "commands".
         if (Has("options", "commands", "what can you do", "what do you do", "how do i use you", "how does this work", "what are you for", "abilities")) {
             SendReply(heard, "Group with me (\"join me\" or an invite) and I follow your lead at your level. Tell me \"attack\", \"defend\", \"support\" or \"auto\" for how I play, " +
-                             "\"go ice for me\" or \"go ice and tank for me\" to switch my school, \"use Dragonblade\" to keep a card in my hand, " +
+                             "\"go ice for me\" or \"go ice and tank for me\" to switch my school, \"go ice weave fire\" to play two schools, \"get more ice accuracy\" to push a stat, \"last build\" for your build from last time, \"use Dragonblade\" to keep a card in my hand, " +
                              "\"blade me\" or \"shield us\" in a battle, and \"leave\" when you're done.", "true form");
             return true;
         }
@@ -355,6 +360,18 @@ internal sealed partial class UltimusDirectorActor {
             else if (DateTime.UtcNow - TrueForm.SwapAfterJoinAt > TimeSpan.FromMinutes(3)) {
                 TrueForm.SwapAfterJoin = null;
             }
+        }
+
+        // A commander he has had before: offer their last build (Niduus, 2026-11-20: "TF will have memories of these builds for
+        // the next time they encounter that player as a commander and ask if they would like the last build").
+        if (group is not null && group.LeaderCharId != me.CharId && TrueForm.IsPlayer(group.LeaderCharId) && !me.Wizard?.IsInDuel == true
+            && TrueForm.Rejoining is null && TrueFormBuild.LastFor(group.LeaderCharId) is { } last && !TrueFormBuild.IsNow(last)
+            && (!_tfOfferedAt.TryGetValue(group.LeaderCharId, out var offered) || DateTime.UtcNow - offered > TimeSpan.FromHours(2))) {
+            _tfOfferedAt[group.LeaderCharId] = DateTime.UtcNow;
+            TrueFormBuild.Offered = Tuple.Create(group.LeaderCharId, last);
+            TrueFormBuild.OfferedAt = DateTime.UtcNow;
+            Note("Ultimus", $"True Form offers {group.LeaderCharId} their last build: {last.Words}.");
+            SayLater(group.LeaderCharId, true, $"Welcome back! Last time you had me as {last.Words}. Want that build again? Say \"yes\" or \"last build\", or tell me something new.", 2);
         }
 
         // He made the group for whoever called him: the lead is theirs, so his spells match them.
@@ -421,6 +438,12 @@ internal sealed partial class UltimusDirectorActor {
         // (Niduus, 2026-11-19: "TF interactions need to be looked at and fixed"; "What is in your deck?" got his fishing
         // cantrips, "What all options do you have?" got Ultimus's questing answer, "Do you need healing?" set him to support).
         if (TrueFormQuestion(heard, me, order)) {
+            return true;
+        }
+
+        // Weave school, stat asks and the commander's last build (TrueFormBuild). Said with a school or setup ("go ice weave
+        // fire"), the rest of the order is read below with the weave taken out.
+        if (TrueFormBuildOrder(heard, me, grouped, ref order)) {
             return true;
         }
 
@@ -497,7 +520,7 @@ internal sealed partial class UltimusDirectorActor {
 
             // Already in that setup: no school question again (Niduus, 2026-11-20: "go full healer" twice, then "life", got
             // "I'm already in my full healing setup as Life!" each time).
-            if (TrueForm.Kind == kind) {
+            if (TrueForm.Kind == kind && !TrueFormBuild.HasPending) {
                 var setupWords = kind == TrueForm.Setup.FullHeal ? "full healing" : kind == TrueForm.Setup.Immunity ? "Universal Immunity" : "full tank";
                 SendReply(heard, $"I'm already in my {setupWords} setup as {TrueForm.School}! Say another school, like \"go full {(kind == TrueForm.Setup.FullHeal ? "healer" : "tank")} as ice\", to change it.", "true form");
                 return true;
@@ -619,9 +642,136 @@ internal sealed partial class UltimusDirectorActor {
         return false;
     }
 
+    private readonly System.Collections.Generic.Dictionary<ulong, DateTime> _tfOfferedAt = [];
+
+    // "Go ice weave fire", "weave storm", "stop weaving", "get more ice accuracy", "reset stats", "last build", and the yes to
+    // an offered last build. True when the order was all that; a weave or stat ask said with a school or setup is kept for
+    // that switch, and the order left for it.
+    private bool TrueFormBuildOrder(UltimusVoice.Heard heard, UltimusMember.Status me, bool grouped, ref string order) {
+        var commander = heard.SpeakerCharId;
+        var said0 = order;
+        bool Is(string pattern) => System.Text.RegularExpressions.Regex.IsMatch(said0, pattern);
+
+        // The yes (or no) to his offer of their last build.
+        if (TrueFormBuild.Offered is { } offer && offer.Item1 == commander && DateTime.UtcNow - TrueFormBuild.OfferedAt < TimeSpan.FromMinutes(3)) {
+            if (Is(@"^(yes|yeah|yep|yup|sure|ok|okay|please|do it|go ahead|sounds good|y)\b") || Is(@"\b(last|same|previous|old)\s+(build|setup|one|time)\b")) {
+                TrueFormBuild.Offered = null;
+                return TrueFormUseBuild(heard, me, grouped, offer.Item2);
+            }
+
+            if (Is(@"^(no|nah|nope|no thanks|new build|something else|not now|n)\b")) {
+                TrueFormBuild.Offered = null;
+                SendReply(heard, "Okay, a fresh build then. Tell me a school (\"go ice\"), a weave (\"go ice weave fire\") or a stat (\"get more ice accuracy\").", "true form");
+                return true;
+            }
+        }
+
+        if (Is(@"\b(last|same|previous|old)\s+(build|setup)\b|\b(like|as)\s+last time\b")) {
+            if (TrueFormBuild.LastFor(commander) is { } last) {
+                return TrueFormUseBuild(heard, me, grouped, last);
+            }
+
+            SendReply(heard, "I don't have a build of yours yet. Tell me a school (\"go ice\"), a weave (\"go ice weave fire\") or a stat (\"get more ice accuracy\").", "true form");
+            return true;
+        }
+
+        if (TrueFormBuild.NoWeaveFrom(order)) {
+            TrueFormBuild.AskWeave(null);
+            return TrueFormRedress(heard, me, grouped, TrueFormBuild.Weave is { } had ? $"No more {had} weave: back to {TrueForm.School} only." : $"I'm not weaving now, just {TrueForm.School}.");
+        }
+
+        if (TrueFormBuild.NoPushesFrom(order)) {
+            TrueFormBuild.AskPushes([]);
+            return TrueFormRedress(heard, me, grouped, "Stat asks cleared: back to my build's own picks.");
+        }
+
+        var weave = TrueFormBuild.WeaveFrom(order, out var rest);
+        // Stat asks, not in a deck order ("focus on healing" is about his deck) or a battle order.
+        var pushVerb = System.Text.RegularExpressions.Regex.Match(rest, @"\b(more|extra|higher|boost|increase|raise|prioriti[sz]e|stack|maximi[sz]e)\b");
+        var pushes = pushVerb.Success && !System.Text.RegularExpressions.Regex.IsMatch(rest, @"\b(deck|spells?|cards?)\b")
+            ? TrueFormBuild.PushesFrom(rest[pushVerb.Index..]) : [];
+        if (weave is null && pushes.Count == 0) {
+            return false;
+        }
+
+        if (pushes.Count > 0) {
+            rest = rest[..pushVerb.Index].Trim();
+            rest = System.Text.RegularExpressions.Regex.Replace(rest, @"(\s*\b(and|also|plus|with|get|then|to|please)\b)+$", "").Trim();
+        }
+
+        if (weave is { } w) {
+            if (w == (SchoolNamed(rest) ?? TrueForm.School)) {
+                SendReply(heard, $"I can't weave {w} with {w} as my main school. Pick another, like \"go {w.ToString().ToLowerInvariant()} weave {(w == Shared.Behaviors.MagicSchool.Fire ? "ice" : "fire")}\".", "true form");
+                return true;
+            }
+
+            TrueFormBuild.AskWeave(w);
+        }
+
+        if (pushes.Count > 0) {
+            TrueFormBuild.AskPushes(TrueFormBuild.Pushes.Where(p => !pushes.Contains(p)).Concat(pushes));
+        }
+
+        var said = (weave is { } ws ? $"Weaving {ws}: my gear, jewels, pet and deck cover both schools, and my school pips go to {ws}." : "")
+                   + (pushes.Count > 0 ? $"{(weave is null ? "" : " ")}More {string.Join(" and ", pushes.Select(p => p.Words))}: I'll push that in my gear, jewels and pet while keeping my build." : "");
+        // Said with a school or setup: that switch takes them; the rest of the order is read as usual.
+        var swap = SchoolNamed(rest) is not null || TrueForm.FullGlassFrom(rest) || TrueForm.UniversalFrom(rest) || TrueForm.FullHealFrom(rest)
+                   || TrueForm.FullTankFrom(rest) || TrueForm.ImmunityFrom(rest) || TrueForm.DefensiveFrom(rest);
+        if (swap) {
+            Note("Ultimus", $"True Form: {heard.SpeakerName} asks for {(weave is null ? "" : $"a {weave} weave ")}{string.Join(", ", pushes.Select(p => p.Words))} with \"{rest}\".");
+            SendReply(heard, said, "true form");
+            order = rest;
+            return false;
+        }
+
+        return TrueFormRedress(heard, me, grouped, said);
+    }
+
+    // His school and setup as they are, made again with the weave or stat asks just given.
+    private bool TrueFormRedress(UltimusVoice.Heard heard, UltimusMember.Status me, bool grouped, string said) {
+        var school = TrueForm.School;
+        if (!grouped) {
+            TrueForm.SwapAfterJoin = new TrueForm.SwapAsk(school, TrueForm.Role, heard.SpeakerCharId, heard.SpeakerName, TrueForm.Kind);
+            TrueForm.SwapAfterJoinAt = DateTime.UtcNow;
+            TrueForm.Call(heard.SpeakerCharId, heard.SpeakerName);
+            SendReply(heard, $"{said} Let's group first, then I'll change.", "true form");
+            return true;
+        }
+
+        TrueForm.AskSwap(school, TrueForm.Role, heard.SpeakerCharId, heard.SpeakerName, TrueForm.Kind);
+        Note("Ultimus", $"True Form: {heard.SpeakerName}: {said}");
+        SendReply(heard, $"{said} I'll pop out {(me.Wizard?.IsInDuel == true ? "right after this battle " : "")}for a moment to change and be right back.", "true form");
+        return true;
+    }
+
+    // A commander's last build put back.
+    private bool TrueFormUseBuild(UltimusVoice.Heard heard, UltimusMember.Status me, bool grouped, TrueFormBuild.Saved build) {
+        TrueFormBuild.AskWeave(build.Weave);
+        TrueFormBuild.AskPushes(build.Pushes);
+        if (!grouped) {
+            TrueForm.SwapAfterJoin = new TrueForm.SwapAsk(build.School, build.Role, heard.SpeakerCharId, heard.SpeakerName, build.Kind);
+            TrueForm.SwapAfterJoinAt = DateTime.UtcNow;
+            TrueForm.Call(heard.SpeakerCharId, heard.SpeakerName);
+            SendReply(heard, $"Sure! Let's group first, then I'll go {build.Words} like last time.", "true form");
+            return true;
+        }
+
+        TrueForm.AskSwap(build.School, build.Role, heard.SpeakerCharId, heard.SpeakerName, build.Kind);
+        if (build.Role is { } role) {
+            TrueForm.SetMode(role);
+        }
+        else {
+            TrueForm.ResetMode();
+        }
+
+        Note("Ultimus", $"True Form: {heard.SpeakerName} takes their last build: {build.Words}.");
+        SendReply(heard, $"Your last build it is: {build.Words}. I'll pop out for a moment to change and be right back.", "true form");
+        return true;
+    }
+
     // A school switch with its build picked: balanced (no role) or leaning to the role said with it ("go ice and tank").
     private bool TrueFormSchoolSwap(UltimusVoice.Heard heard, UltimusMember.Status me, Shared.Behaviors.MagicSchool school, TrueForm.Mode? role) {
-        if (school == TrueForm.School && role == TrueForm.Role && !TrueForm.Special) {
+        if (school == TrueForm.School && role == TrueForm.Role && !TrueForm.Special && !TrueFormBuild.HasPending) {
             SendReply(heard, $"I'm already {school}{(role is { } same ? $", playing {TrueForm.Words(same).Split(':')[0]}" : "")}!", "true form");
             return true;
         }
@@ -653,7 +803,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         TrueForm.BuildPick = null;
-        if (building.School == TrueForm.School && TrueForm.Role is null && !TrueForm.Special) {
+        if (building.School == TrueForm.School && TrueForm.Role is null && !TrueForm.Special && !TrueFormBuild.HasPending) {
             Announce(SAY_PARTY, $"No build picked, so I'm staying in my balanced {building.School} setup.", urgent: true);
             return;
         }
@@ -701,7 +851,7 @@ internal sealed partial class UltimusDirectorActor {
             return true;
         }
 
-        if (TrueForm.Kind == kind && TrueForm.School == school) {
+        if (TrueForm.Kind == kind && TrueForm.School == school && !TrueFormBuild.HasPending) {
             SendReply(heard, $"I'm already in {words}!", "true form");
             return true;
         }

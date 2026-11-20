@@ -281,6 +281,8 @@ internal static class TrueForm {
         s_role = role?.ToString();
         s_setup = kind;
         Keep(school, role, headId, headName, kind);
+        // His weave school and stat asks, and this commander's build kept for next time (TrueFormBuild).
+        TrueFormBuild.OnBecome(school, role, headId, kind);
     }
 
     private static Setup s_setup = Kept()?.Kind ?? Setup.Own;

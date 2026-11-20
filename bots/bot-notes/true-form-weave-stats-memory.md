@@ -1,0 +1,4 @@
+Fixed: True Form can weave a second school, push a stat, and remember your build
+Say "go ice weave fire" and True Form plays Ice as his main school and Fire as his weave. His gear, jewels, pet and deck cover both schools, and his school pips go to Fire. "Stop weaving" drops it. Say "get more ice accuracy" (or more pierce, universal resist, health and so on) and he re-gears and re-jewels to push that stat while keeping his build; "reset stats" clears it. He remembers each commander's last build, and the next time that player leads him he asks if they want it again: "yes" or "last build" puts it back.
+Where: In game, grouped with True Form.
+Test: Group with him and say "go ice weave fire", pick a build, then check his gear and deck on the Ahziael True Form page. Leave, call him again: he offers your last build.

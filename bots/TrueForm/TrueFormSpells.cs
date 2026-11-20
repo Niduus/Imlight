@@ -119,6 +119,15 @@ internal static class TrueFormSpells {
             return;
         }
 
+        // His school pips go to his weave school (the deck's Archmastery school; 0 = his own).
+        var pipSchool = TrueFormBuild.Weave is { } weaveSchool ? (uint) weaveSchool : 0u;
+        if (deck.m_archmasterySchool != pipSchool) {
+            deck.m_archmasterySchool = pipSchool;
+            WizardItemCollection.SaveItemBehaviors(deckItem);
+            Logger.Information("True Form: his school pips go to {0}.", Logger.Args(pipSchool == 0 ? "his own school" : TrueFormBuild.Weave.ToString()));
+        }
+
+        var weave = TrueFormBuild.Weave?.ToString() ?? "";
         var myth = string.Equals((string) rules.m_primarySchoolName, school, StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty((string) rules.m_primarySchoolName);
         bool Fits(TrueFormPool.Entry e) {
             var own = e.School.Equals(school, StringComparison.OrdinalIgnoreCase);
@@ -126,7 +135,9 @@ internal static class TrueFormSpells {
             return most <= 0 || Rank(e.Id) <= most;
         }
 
-        int Order(TrueFormPool.Entry e) => e.School.Equals(school, StringComparison.OrdinalIgnoreCase) ? 0 : s_astral.Contains(e.School, StringComparer.OrdinalIgnoreCase) ? 1 : 2;
+        // His own and his weave school's spells first (Niduus, 2026-11-20: "Able to take up 2 classes at once").
+        int Order(TrueFormPool.Entry e) => e.School.Equals(school, StringComparison.OrdinalIgnoreCase)
+                                           || (weave.Length > 0 && e.School.Equals(weave, StringComparison.OrdinalIgnoreCase)) ? 0 : s_astral.Contains(e.School, StringComparer.OrdinalIgnoreCase) ? 1 : 2;
 
         var spells = Mixed(trained.Where(Fits).OrderBy(Order).ThenByDescending(e => Rank(e.Id)).ThenBy(e => e.Shown, StringComparer.OrdinalIgnoreCase).ToList(),
             Math.Max(0, (int) rules.m_maxSpells), style);

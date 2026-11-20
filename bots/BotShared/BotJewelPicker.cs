@@ -202,11 +202,15 @@ internal sealed class BotJewelPicker {
         => jewel is null ? 0 : BotGear.ScoreStats(Capped(Wanted(jewel.Stats).Where(Mine)), _school.Length > 0 ? _school : _ownSchool, BotStyle.Solo);
 
     // A stat for every school, his setup's school or his own school.
+    // His weave school (BotGear.WeaveSchool) and any stat his commander asked for (BotGear.Pushes) count too.
     private bool Mine(BotGear.Stat stat) => stat.School.Length == 0 || stat.School.Equals(_school, StringComparison.OrdinalIgnoreCase)
-                                            || stat.School.Equals(_ownSchool, StringComparison.OrdinalIgnoreCase);
+                                            || stat.School.Equals(_ownSchool, StringComparison.OrdinalIgnoreCase)
+                                            || (BotGear.WeaveSchool is { Length: > 0 } weave && stat.School.Equals(weave, StringComparison.OrdinalIgnoreCase))
+                                            || BotGear.Pushed(stat);
 
     // Power pip chance past 100% and his school's accuracy past 100% do nothing: only the part still missing counts.
-    private List<BotGear.Stat> Capped(IEnumerable<BotGear.Stat> stats) => stats.Select(s => !Counts(s) ? s
+    // A stat his commander asked for more of is not capped.
+    private List<BotGear.Stat> Capped(IEnumerable<BotGear.Stat> stats) => stats.Select(s => !Counts(s) || BotGear.Pushed(s) ? s
         : s.Kind == "PowerPips" ? s with { Value = (float) Math.Min(s.Value, Math.Max(0, 100 - _powerPips)) }
         : s.Kind == "Accuracy" && s.School.Length > 0 ? s with { Value = (float) Math.Min(s.Value, Math.Max(0, AccuracyGoal - _accuracy)) }
         : s).ToList();

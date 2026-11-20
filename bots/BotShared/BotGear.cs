@@ -472,6 +472,29 @@ internal static class BotGear {
     [ThreadStatic]
     internal static bool NoPips;
 
+    /// <summary>
+    /// While set, a second school whose hitting stats count nearly as much as his own school's (True Form's weave school,
+    /// Niduus, 2026-11-20: "Go ice weave fire ... Able to take up 2 classes at once").
+    /// </summary>
+    [ThreadStatic]
+    internal static string WeaveSchool;
+
+    /// <summary>
+    /// While set, stats his commander asked for more of (kind, school; "" = every school): they count double, and count even
+    /// when they are another school's (Niduus, 2026-11-20: "Get more Ice Accuracy will have TF make efforts to fit that").
+    /// </summary>
+    [ThreadStatic]
+    internal static IReadOnlyList<(string Kind, string School)> Pushes;
+
+    private static readonly HashSet<string> s_weaveKinds = new(StringComparer.Ordinal) {
+        "Damage", "FlatDamage", "ArmorPiercing", "Accuracy", "CriticalHit",
+    };
+
+    /// <summary>A stat his commander asked for more of.</summary>
+    internal static bool Pushed(Stat stat) => Pushes is { Count: > 0 } pushes && pushes.Any(p =>
+        (p.Kind == stat.Kind || stat.Kind.Contains(p.Kind, StringComparison.Ordinal))
+        && (p.School.Length == 0 ? stat.School.Length == 0 : stat.School.Length == 0 || stat.School.Equals(p.School, StringComparison.OrdinalIgnoreCase)));
+
     internal static double ScoreStats(IEnumerable<Stat> stats, string school, BotStyle style) {
         var score = 0.0;
         foreach (var stat in stats ?? []) {
@@ -480,6 +503,10 @@ internal static class BotGear {
             }
 
             var share = Share(stat, school, style);
+            if (Pushed(stat)) {
+                share = Math.Max(share, 0.8) * 2;
+            }
+
             if (share > 0) {
                 score += share * stat.Value * Weight(stat.Kind, style);
             }
@@ -537,6 +564,12 @@ internal static class BotGear {
             share = all ? 1.0
                 : SoloResistMix.TryGetValue(stat.School, out var metShare) ? Math.Clamp(metShare, 0.15, 0.9)
                 : 0.3;
+        }
+
+        // His weave school: its hitting stats count nearly as much as his own school's.
+        if (!own && style != BotStyle.Solo && WeaveSchool is { Length: > 0 } weave && stat.School.Equals(weave, StringComparison.OrdinalIgnoreCase)
+            && (s_weaveKinds.Contains(stat.Kind) || stat.Kind.Contains("PipConversion", StringComparison.Ordinal))) {
+            share = Math.Max(share, 0.9);
         }
 
         // Universal Immunity: only a resist to every school counts; one school's resist leaves the others open.
