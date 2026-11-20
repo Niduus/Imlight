@@ -256,10 +256,24 @@ internal sealed partial class ManagerWindow {
     // complete mirror of Ultimus' page"): the Ultimus pages show Ultimus, or the TCO7 member whose page is open.
     // ---------------------------------------------------------------------
 
-    /// <summary>One wizard Ultimus's brain plays: Ultimus or a TCO7 member, with its folder (under logs) and ini section.</summary>
-    private sealed record UltSeat(string Name, string School, string Folder, string Section) {
+    /// <summary>
+    /// One wizard Ultimus's brain plays: Ultimus, a TCO7 member or a Kitharas Family member, with its folder (under logs), ini
+    /// section, team ([TCO7] or [Kitharas]) and its switch's key in that team's section.
+    /// </summary>
+    private sealed record UltSeat(string Name, string School, string Folder, string Section, string Team = "TCO7", string? Key = null) {
+        /// <summary>A team member (TCO7 or Kitharas Family), not Ultimus himself.</summary>
         internal bool IsTco7 => Section != "Ultimus";
+
+        internal bool IsKitharas => Team == KITHARAS;
+
+        /// <summary>Its switch in its team's section: the TCO7's by name ("Tulkar"), the family's by key ("KitharasMoon").</summary>
+        internal string SwitchKey => Key ?? Name;
+
+        /// <summary>What its team is called on the pages.</summary>
+        internal string TeamName => IsKitharas ? "Kitharas Family" : "TCO7";
     }
+
+    private const string KITHARAS = "Kitharas";
 
     private static readonly UltSeat s_ultimusSeat = new("Ultimus", "Balance", ULTIMUS_FOLDER, "Ultimus");
 
@@ -270,6 +284,65 @@ internal sealed partial class ManagerWindow {
         new("Idunn", "Life", "tco7/idunn", "TCO7-Idunn"), new("Garm", "Death", "tco7/garm", "TCO7-Garm"),
         new("Ra", "Balance", "tco7/ra", "TCO7-Ra"),
     ];
+
+    /// <summary>
+    /// The Kitharas Family (Niduus, 2026-11-20): twenty more, each like a TCO7 member, schools picked at random once (in the
+    /// server's order; the key is its switch in [Kitharas] and its own section [Kitharas-&lt;Key&gt;]).
+    /// </summary>
+    private static readonly UltSeat[] s_kitharasSeats = [
+        Kin("KitharasMoon", "Kitharas Moon", "moon", "Ice"), Kin("KitharasHart", "Kitharas Hart", "hart", "Ice"),
+        Kin("KitharasRock", "Kitharas Rock", "rock", "Storm"), Kin("KitharasAndromeda", "Kitharas Andromeda", "andromeda", "Fire"),
+        Kin("KitharasHydra", "Kitharas Hydra", "hydra", "Ice"), Kin("KitharasJackle", "Kitharas Jackle", "jackle", "Balance"),
+        Kin("KitharasLamia", "Kitharas Lamia", "lamia", "Fire"), Kin("KitharasLibra", "Kitharas Libra", "libra", "Myth"),
+        Kin("KitharasShade", "Kitharas Shade", "shade", "Storm"), Kin("KitharasWraith", "Kitharas Wraith", "wraith", "Fire"),
+        Kin("LumeriaOfKitharas", "Lumeria of Kitharas", "lumeria", "Myth"), Kin("KitharasConsumer", "Kitharas Consumer", "consumer", "Balance"),
+        Kin("KitharasMordiael", "Kitharas Mordiael", "mordiael", "Storm"), Kin("KitharasDevourer", "Kitharas Devourer", "devourer", "Storm"),
+        Kin("KitharasHexation", "Kitharas Hexation", "hexation", "Myth"), Kin("KitharasSentence", "Kitharas Sentence", "sentence", "Balance"),
+        Kin("KitharasWasSilenced", "Kitharas Was Silenced", "silenced", "Storm"), Kin("CrimesAgainstKitharas", "Crimes Against Kitharas", "crimes", "Myth"),
+        Kin("KitharasUmbella", "Kitharas Umbella", "umbella", "Life"), Kin("AlchemiZistOfKitharas", "AlchemiZist of Kitharas", "alchemizist", "Fire"),
+    ];
+
+    private static UltSeat Kin(string key, string name, string word, string school)
+        => new(name, school, "kitharas/" + word, KITHARAS + "-" + key, KITHARAS, key);
+
+    /// <summary>Every member page: the TCO7, then the Kitharas Family.</summary>
+    private static IEnumerable<UltSeat> MemberSeats => s_tco7Seats.Concat(s_kitharasSeats);
+
+    /// <summary>
+    /// Why a team member is kept out though its own Enabled is on: its team is off, its switch on the team's page is off, or
+    /// (the Kitharas Family) it is past [Kitharas] Count. Empty when it may play; always empty for Ultimus.
+    /// </summary>
+    private string TeamOffWhy(UltSeat seat) {
+        if (!seat.IsTco7) {
+            return "";
+        }
+
+        bool On(UltSeat s) => !string.Equals(_manager.GetSetting(s.Team, s.SwitchKey)?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
+        if (!_manager.GetSwitch(seat.Team, "Enabled")) {
+            return $"the {seat.TeamName} {(seat.IsKitharas ? "is" : "are")} off";
+        }
+
+        if (!On(seat)) {
+            return $"{seat.Name} is switched off on the {seat.TeamName} page";
+        }
+
+        if (seat.IsKitharas) {
+            var count = KitharasCount();
+            var place = s_kitharasSeats.Where(s => On(s) && (s == seat || IsOwnOn(s))).ToList().IndexOf(seat);
+            if (place >= count) {
+                return $"only {count} of the Kitharas Family play at once (Count on the Kitharas Family page)";
+            }
+        }
+
+        return "";
+
+        bool IsOwnOn(UltSeat s) => !string.Equals(_manager.GetSetting(s.Section, "Enabled")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>[Kitharas] Count: how many of the family may play at once (5 unless set).</summary>
+    private int KitharasCount()
+        => int.TryParse(_manager.GetSetting(KITHARAS, "Count")?.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var n)
+            ? Math.Clamp(n, 0, s_kitharasSeats.Length) : 5;
 
     private UltSeat _ultSeat = s_ultimusSeat;
 
@@ -513,7 +586,7 @@ internal sealed partial class ManagerWindow {
 
         _manager.SaveSettings([new Setting(UltSection, "Enabled", on ? "true" : "false", "")]);
         _settings = [];
-        Say(on ? $"{UltName} is on. With the server running{(UltIsTco7 && !_manager.GetSwitch("TCO7", "Enabled") ? " and the TCO7 turned on (Bots > TCO7)" : "")}, it logs in within a few seconds and starts questing."
+        Say(on ? $"{UltName} is on. With the server running{(UltIsTco7 && !_manager.GetSwitch(_ultSeat.Team, "Enabled") ? $" and the {_ultSeat.TeamName} turned on (Bots > {_ultSeat.TeamName})" : "")}, it logs in within a few seconds and starts questing."
             : $"{UltName} is off. It logs out within a few seconds.");
         RefreshUltimus();
 
@@ -1583,13 +1656,14 @@ internal sealed partial class ManagerWindow {
             ? written.ToUniversalTime() : DateTime.MinValue;
         var live = status is not null && DateTime.UtcNow - at < TimeSpan.FromSeconds(30);
         var running = InstalledCommands.IsServerRunning(_manager.InstallFolder);
-        // A TCO7 member plays only while the TCO7 and its own switch on the TCO7 page are on too.
-        var teamOff = UltIsTco7 && (!_manager.GetSwitch("TCO7", "Enabled")
-                                    || string.Equals(_manager.GetSetting("TCO7", UltName)?.Trim(), "false", StringComparison.OrdinalIgnoreCase));
+        // A team member plays only while its team and its own switch on the team's page are on too (and, in the Kitharas
+        // Family, it is within Count).
+        var offWhy = TeamOffWhy(_ultSeat);
+        var teamOff = offWhy.Length > 0;
         var on = _ultEnabled.IsChecked == true && !teamOff;
 
         _ultState.Text = !running ? $"The server is not running, so {UltName} is not either."
-            : teamOff ? $"Off: {UltName} is switched off on the TCO7 page."
+            : teamOff ? $"Off: {Capital(offWhy)}."
             : !on ? $"Off: {UltName} is not playing."
             : live ? $"Playing. {Capital((string?) status!["why"] ?? "")}".TrimEnd()
             : $"Starting: the server starts {UltName} within a few seconds, then it logs in.";

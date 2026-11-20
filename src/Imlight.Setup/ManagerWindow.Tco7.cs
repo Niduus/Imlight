@@ -200,7 +200,13 @@ internal sealed partial class ManagerWindow {
             return;
         }
 
-        if (s_tco7Seats.FirstOrDefault(s => s.Name == page) is { } seat) {
+        if (page == KITHARAS_TAB) {
+            ShowKitharas();
+
+            return;
+        }
+
+        if (MemberSeats.FirstOrDefault(s => s.Name == page) is { } seat) {
             UseUltSeat(seat);
             PutUltimusPart(seat);
             ShowTco7MemberNote(seat);
@@ -231,13 +237,12 @@ internal sealed partial class ManagerWindow {
             return;
         }
 
-        var team = _manager.GetSwitch("TCO7", "Enabled");
-        var own = !string.Equals(_manager.GetSetting("TCO7", seat.Name)?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
-        note.Text = !team ? "The TCO7 are off. Turn them on with the switch on the TCO7 page; then this page shows " + seat.Name + " playing."
-            : !own ? $"{seat.Name} is switched off on the TCO7 page, so it stays logged out while the others play."
-            : $"Everything below is {seat.Name}'s own: its folder is logs\\tco7\\{seat.Name.ToLowerInvariant()}, and a setting left as Ultimus's follows his. " +
+        var why = TeamOffWhy(seat);
+        note.Text = why.Length > 0
+            ? $"{seat.Name} stays logged out: {why}. Change it on the {seat.TeamName} page; then this page shows {seat.Name} playing."
+            : $"Everything below is {seat.Name}'s own: its folder is logs\\{seat.Folder.Replace('/', '\\')}, and a setting left as Ultimus's follows his. " +
               "It reads all Ultimus has learned and tries to beat his quest times.";
-        note.Foreground = !team || !own ? WARN : MUTED;
+        note.Foreground = why.Length > 0 ? WARN : MUTED;
     }
 
     // ---------------------------------------------------------------------

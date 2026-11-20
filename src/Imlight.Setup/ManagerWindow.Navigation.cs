@@ -106,6 +106,8 @@ internal sealed partial class ManagerWindow {
     private static (string Name, string Icon, string[] Tabs)[] BotParts => [
         ("Ultimus", "user", [ULTIMUS_TAB, ULTIMUS_ISSUES_TAB, ULTIMUS_LOGS_TAB, ULTIMUS_AI_TAB]),
         ("TCO7", "users", Tco7TabNames),
+        // Niduus, 2026-11-20: "a Sub Menu in Ahziael for them to do what I already do with Ahziael, True Form and TCO7".
+        ("Kitharas Family", "users", KitharasTabNames),
         ("Quest Team", "users", [QUEST_TEAM_TAB, QUEST_TEAM_WIZARDS_TAB, QUEST_TEAM_ISSUES_TAB, QUEST_TEAM_LOGS_TAB]),
         ("True Form", "user", [TRUE_FORM_TAB]),
         ("Street bots", "users", [STREET_BOTS_TAB]),

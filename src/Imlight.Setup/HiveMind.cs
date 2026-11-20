@@ -113,8 +113,25 @@ internal static class HiveMind {
             }
         }
 
+        // The Kitharas Family (Niduus, 2026-11-20): logs\kitharas\<word>, each named by its full name ("Kitharas Moon").
+        var kitharas = Path.Combine(logs, "kitharas");
+        if (Directory.Exists(kitharas)) {
+            foreach (var member in Directory.GetDirectories(kitharas).OrderBy(d => d, StringComparer.OrdinalIgnoreCase)) {
+                var word = Path.GetFileName(member);
+                if (word.Length > 0) {
+                    yield return (s_kitharasNames.GetValueOrDefault(word, "Kitharas " + char.ToUpperInvariant(word[0]) + word[1..]), member);
+                }
+            }
+        }
+
         yield return ("Quest Team", Path.Combine(logs, "quest-team"));
     }
+
+    // The Kitharas Family's folder word and full name, for the ones whose name is not "Kitharas <Word>".
+    private static readonly Dictionary<string, string> s_kitharasNames = new(StringComparer.OrdinalIgnoreCase) {
+        ["lumeria"] = "Lumeria of Kitharas", ["silenced"] = "Kitharas Was Silenced", ["crimes"] = "Crimes Against Kitharas",
+        ["alchemizist"] = "AlchemiZist of Kitharas",
+    };
 
     /// <summary>Reads every bot's files in <paramref name="logs"/> (the server's logs folder) into one book.</summary>
     internal static Book Collect(string logs) {

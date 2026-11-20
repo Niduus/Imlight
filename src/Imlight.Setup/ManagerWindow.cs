@@ -453,7 +453,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab(STREET_BOTS_TAB, StreetBotsTab),
             Tab(TRUE_FORM_TAB, TrueFormTab),
             Tab(HIVE_MIND_TAB, HiveMindTab),
-        }.Concat(Tco7Tabs()).ToDictionary(t => (string) t.Tag!);
+        }.Concat(Tco7Tabs()).Concat(KitharasTabs()).ToDictionary(t => (string) t.Tag!);
         // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
         var nav = Navigation(tabs);
         AddHandler(KeyDownEvent, OnShortcutKey, Avalonia.Interactivity.RoutingStrategies.Tunnel);
@@ -3204,6 +3204,27 @@ internal sealed partial class ManagerWindow : Window {
         ["Idunn"] = ("user", "Idunn, the TCO7's Life wizard: the same page as Ultimus's, for Idunn."),
         ["Garm"] = ("user", "Garm, the TCO7's Death wizard: the same page as Ultimus's, for Garm."),
         ["Ra"] = ("user", "Ra, the TCO7's Balance wizard: the same page as Ultimus's, for Ra."),
+        [KITHARAS_TAB] = ("users", "The Kitharas Family: twenty wizards, each its own Ultimus like the TCO7. Turn them on, set how many play, let them talk and team up, and see each one."),
+        ["Kitharas Moon"] = ("user", "Kitharas Moon, the Kitharas Family's Ice wizard: the same page as Ultimus's, for Kitharas Moon."),
+        ["Kitharas Hart"] = ("user", "Kitharas Hart, the Kitharas Family's Ice wizard: the same page as Ultimus's, for Kitharas Hart."),
+        ["Kitharas Rock"] = ("user", "Kitharas Rock, the Kitharas Family's Storm wizard: the same page as Ultimus's, for Kitharas Rock."),
+        ["Kitharas Andromeda"] = ("user", "Kitharas Andromeda, the Kitharas Family's Fire wizard: the same page as Ultimus's, for Kitharas Andromeda."),
+        ["Kitharas Hydra"] = ("user", "Kitharas Hydra, the Kitharas Family's Ice wizard: the same page as Ultimus's, for Kitharas Hydra."),
+        ["Kitharas Jackle"] = ("user", "Kitharas Jackle, the Kitharas Family's Balance wizard: the same page as Ultimus's, for Kitharas Jackle."),
+        ["Kitharas Lamia"] = ("user", "Kitharas Lamia, the Kitharas Family's Fire wizard: the same page as Ultimus's, for Kitharas Lamia."),
+        ["Kitharas Libra"] = ("user", "Kitharas Libra, the Kitharas Family's Myth wizard: the same page as Ultimus's, for Kitharas Libra."),
+        ["Kitharas Shade"] = ("user", "Kitharas Shade, the Kitharas Family's Storm wizard: the same page as Ultimus's, for Kitharas Shade."),
+        ["Kitharas Wraith"] = ("user", "Kitharas Wraith, the Kitharas Family's Fire wizard: the same page as Ultimus's, for Kitharas Wraith."),
+        ["Lumeria of Kitharas"] = ("user", "Lumeria of Kitharas, the Kitharas Family's Myth wizard: the same page as Ultimus's, for Lumeria of Kitharas."),
+        ["Kitharas Consumer"] = ("user", "Kitharas Consumer, the Kitharas Family's Balance wizard: the same page as Ultimus's, for Kitharas Consumer."),
+        ["Kitharas Mordiael"] = ("user", "Kitharas Mordiael, the Kitharas Family's Storm wizard: the same page as Ultimus's, for Kitharas Mordiael."),
+        ["Kitharas Devourer"] = ("user", "Kitharas Devourer, the Kitharas Family's Storm wizard: the same page as Ultimus's, for Kitharas Devourer."),
+        ["Kitharas Hexation"] = ("user", "Kitharas Hexation, the Kitharas Family's Myth wizard: the same page as Ultimus's, for Kitharas Hexation."),
+        ["Kitharas Sentence"] = ("user", "Kitharas Sentence, the Kitharas Family's Balance wizard: the same page as Ultimus's, for Kitharas Sentence."),
+        ["Kitharas Was Silenced"] = ("user", "Kitharas Was Silenced, the Kitharas Family's Storm wizard: the same page as Ultimus's, for Kitharas Was Silenced."),
+        ["Crimes Against Kitharas"] = ("user", "Crimes Against Kitharas, the Kitharas Family's Myth wizard: the same page as Ultimus's, for Crimes Against Kitharas."),
+        ["Kitharas Umbella"] = ("user", "Kitharas Umbella, the Kitharas Family's Life wizard: the same page as Ultimus's, for Kitharas Umbella."),
+        ["AlchemiZist of Kitharas"] = ("user", "AlchemiZist of Kitharas, the Kitharas Family's Fire wizard: the same page as Ultimus's, for AlchemiZist of Kitharas."),
     };
 
     /// <summary>What a tab that could not be built shows instead: the reason, and where it was written down.</summary>
