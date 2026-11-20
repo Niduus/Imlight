@@ -123,7 +123,9 @@ internal sealed class BotJewelPicker {
             return 0;
         }
 
-        var stats = Wanted(jewel.Stats).ToList();
+        // Another school's stats count for nothing: his second ("weaving") school is the commander's to pick, not his
+        // (Niduus, 2026-11-20: a Fire pin in his Ice tank robe, "we hadn't even begun to choose his weaving school").
+        var stats = Wanted(jewel.Stats).Where(Mine).ToList();
         // A full healing or full tank setup puts every socket on its one stat (outgoing healing, resist).
         // Full glass and universal damage: every socket on damage, pierce or accuracy, none on resist or health.
         if (_style is BotStyle.UniversalHitter) {
@@ -197,7 +199,11 @@ internal sealed class BotJewelPicker {
     /// his own school's stats), as a bot that fights on its own values them, so no socket is left open.
     /// </summary>
     internal double Fallback(BotJewels.Jewel jewel)
-        => jewel is null ? 0 : BotGear.ScoreStats(Capped(Wanted(jewel.Stats)), _school.Length > 0 ? _school : _ownSchool, BotStyle.Solo);
+        => jewel is null ? 0 : BotGear.ScoreStats(Capped(Wanted(jewel.Stats).Where(Mine)), _school.Length > 0 ? _school : _ownSchool, BotStyle.Solo);
+
+    // A stat for every school, his setup's school or his own school.
+    private bool Mine(BotGear.Stat stat) => stat.School.Length == 0 || stat.School.Equals(_school, StringComparison.OrdinalIgnoreCase)
+                                            || stat.School.Equals(_ownSchool, StringComparison.OrdinalIgnoreCase);
 
     // Power pip chance past 100% and his school's accuracy past 100% do nothing: only the part still missing counts.
     private List<BotGear.Stat> Capped(IEnumerable<BotGear.Stat> stats) => stats.Select(s => !Counts(s) ? s
