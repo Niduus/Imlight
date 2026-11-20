@@ -67,6 +67,25 @@ internal sealed class BotJewelPicker {
             picker.Add(BotGear.StatsOf(ItemHelper.GetItemTemplate(item)));
         }
 
+        // His real power pip chance, from everything but the jewels about to be picked again: his level, set bonuses,
+        // pet talents and mount count too, which the gear alone misses (Niduus, 2026-11-20: True Form at 110% power pip,
+        // "he can trade up his 10% power pip for 7% universal accuracy or 16% myth accuracy").
+        try {
+            if (wizard?.GameStats is { } game) {
+                var real = (game.m_powerPipBase + game.m_powerPipBonusPercentAll) * 100.0;
+                foreach (var item in wizard.EquipmentBehavior?.EquippedItems ?? []) {
+                    foreach (var jewel in JewelSockets.GetSocketedJewels(item)) {
+                        real -= BotGear.StatsOf(jewel).Where(st => st.Kind == "PowerPips" && picker.Counts(st)).Sum(st => st.Value);
+                    }
+                }
+
+                picker._powerPips = Math.Max(picker._powerPips, real);
+            }
+        }
+        catch (Exception) {
+            // Gear alone, then.
+        }
+
         return picker;
     }
 
@@ -111,14 +130,14 @@ internal sealed class BotJewelPicker {
             // Universal: pierce first (Niduus, 2026-11-19: "jewels for Uni should be Pierce"). Nearly every pierce jewel
             // is a school's (the one his school can socket); it counts as pierce here, a little under an every-school one.
             // A school's critical or damage jewel does not count.
-            var uni = stats.Select(s => s.Kind == "ArmorPiercing" && s.School.Equals(_ownSchool, StringComparison.OrdinalIgnoreCase)
+            var uni = Capped(stats).Select(s => s.Kind == "ArmorPiercing" && s.School.Equals(_ownSchool, StringComparison.OrdinalIgnoreCase)
                 ? s with { School = "", Value = s.Value * 0.9f } : s).ToList();
             var score = BotGear.ScoreStats(uni, _school, _style);
             return shape == JewelSocketType.SOCKETTYPE_CIRCLE ? score + uni.Where(s => s.Kind == "ArmorPiercing" && s.School.Length == 0).Sum(s => s.Value * 10.0) : score;
         }
 
         if (_style is BotStyle.FullHealer or BotStyle.FullTank or BotStyle.GlassCannon) {
-            return BotGear.ScoreStats(stats, _school, _style);
+            return BotGear.ScoreStats(Capped(stats), _school, _style);
         }
 
         switch (shape) {
@@ -172,6 +191,12 @@ internal sealed class BotJewelPicker {
                 return BotGear.ScoreStats(stats, _school, _style);
         }
     }
+
+    // Power pip chance past 100% and his school's accuracy past 100% do nothing: only the part still missing counts.
+    private List<BotGear.Stat> Capped(IEnumerable<BotGear.Stat> stats) => stats.Select(s => !Counts(s) ? s
+        : s.Kind == "PowerPips" ? s with { Value = (float) Math.Min(s.Value, Math.Max(0, 100 - _powerPips)) }
+        : s.Kind == "Accuracy" && s.School.Length > 0 ? s with { Value = (float) Math.Min(s.Value, Math.Max(0, AccuracyGoal - _accuracy)) }
+        : s).ToList();
 
     private double Rest(IEnumerable<BotGear.Stat> stats, params string[] leaveOut)
         => BotGear.ScoreStats(stats.Where(s => leaveOut is null || !leaveOut.Contains(s.Kind)), _school, _style);
