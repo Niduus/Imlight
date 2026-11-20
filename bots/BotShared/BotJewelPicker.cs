@@ -54,6 +54,8 @@ internal sealed class BotJewelPicker {
     private double _pierce;
     private double _accuracy;
     private double _powerPips;
+    // Universal Immunity: how far each school still is from 100% resist, closed as jewels go in (BotGear.ImmunityGap).
+    private Dictionary<string, double> _gap;
 
     private BotJewelPicker(string school, BotStyle style) {
         _school = school ?? "";
@@ -63,6 +65,10 @@ internal sealed class BotJewelPicker {
     /// <summary>A picker for a wizard, counting the stats of the gear it wears (not its jewels: add them as they go in).</summary>
     internal static BotJewelPicker For(Wizard wizard, string school, BotStyle style) {
         var picker = new BotJewelPicker(school, style) { _ownSchool = wizard?.MagicSchoolBehavior?.MagicSchool.ToString() ?? "" };
+        if (style == BotStyle.Immunity && BotGear.ImmunityGap is { } gaps) {
+            picker._gap = gaps.ToDictionary(g => g.Key, g => (double) g.Value, StringComparer.OrdinalIgnoreCase);
+        }
+
         foreach (var item in wizard?.EquipmentBehavior?.EquippedItems ?? []) {
             picker.Add(BotGear.StatsOf(ItemHelper.GetItemTemplate(item)));
         }
@@ -94,6 +100,14 @@ internal sealed class BotJewelPicker {
 
     private void Add(IEnumerable<BotGear.Stat> stats) {
         foreach (var stat in stats ?? []) {
+            if (_gap is not null && stat.Kind == "ReduceDamage") {
+                foreach (var school in _gap.Keys.ToList()) {
+                    if (stat.School.Length == 0 || stat.School.Equals(school, StringComparison.OrdinalIgnoreCase)) {
+                        _gap[school] = Math.Max(0, _gap[school] - stat.Value);
+                    }
+                }
+            }
+
             if (!Counts(stat)) {
                 continue;
             }
@@ -136,6 +150,19 @@ internal sealed class BotJewelPicker {
                 ? s with { School = "", Value = s.Value * 0.9f } : s).ToList();
             var score = BotGear.ScoreStats(uni, _school, _style);
             return shape == JewelSocketType.SOCKETTYPE_CIRCLE ? score + uni.Where(s => s.Kind == "ArmorPiercing" && s.School.Length == 0).Sum(s => s.Value * 10.0) : score;
+        }
+
+        // Universal Immunity: a jewel is worth the resist it adds to the schools still short of 100%, any school's resist
+        // (a Fire resist jewel when Fire is the one short), so every socket closes what is left (Niduus, 2026-11-20: "what
+        // did I say was the amount to be immune?", True Form stopped at 94%).
+        if (_gap is not null && _gap.Values.Any(g => g > 0)) {
+            var closes = 0.0;
+            foreach (var (school, gap) in _gap) {
+                var adds = jewel.Stats.Where(st => st.Kind == "ReduceDamage" && (st.School.Length == 0 || st.School.Equals(school, StringComparison.OrdinalIgnoreCase))).Sum(st => st.Value);
+                closes += Math.Min(gap, adds);
+            }
+
+            return (closes * 1000) + BotGear.ScoreStats(Capped(stats), _school, _style) * 0.001;
         }
 
         if (_style is BotStyle.FullHealer or BotStyle.FullTank or BotStyle.GlassCannon or BotStyle.Immunity) {

@@ -107,16 +107,21 @@ internal static class TrueFormMaker {
             // Universal Immunity: every lever after his gear (pet talents, mount, jewels, pins) goes to the schools still short
             // of 100% resist (Niduus, 2026-11-20: "have him think about everything possible to achieve his goal").
             if (style == BotStyle.Immunity) {
-                BotGear.ImmunityGap = ImmunityGaps(WornResist(wizard, withPetTalents: false));
+                BotGear.ImmunityGap = ImmunityGaps(WornResist(wizard, withPetTalents: false, withJewels: false));
             }
 
             GivePet(wizard, statSchool, style);
             if (style == BotStyle.Immunity) {
-                BotGear.ImmunityGap = ImmunityGaps(WornResist(wizard));
+                BotGear.ImmunityGap = ImmunityGaps(WornResist(wizard, withJewels: false));
             }
 
             DropWeakMount(wizard, null);
             EnsureMount(wizard, statSchool, style);
+            // The jewels are picked again from empty sockets: each one closes what is still short (BotJewelPicker).
+            if (style == BotStyle.Immunity) {
+                BotGear.ImmunityGap = ImmunityGaps(WornResist(wizard, withJewels: false));
+            }
+
             TrueFormJewels.Fill(wizard, statSchool, style);
             if (style == BotStyle.Immunity) {
                 var final = WornResist(wizard);
@@ -191,7 +196,7 @@ internal static class TrueFormMaker {
     /// His resist to each school from everything he wears now: gear, set bonuses, the jewels in his sockets, his mount and his
     /// pet's talents. Immunity to a school is 100% or more (Niduus, 2026-11-20).
     /// </summary>
-    internal static System.Collections.Generic.Dictionary<string, float> WornResist(Wizard wizard, bool withPetTalents = true) {
+    internal static System.Collections.Generic.Dictionary<string, float> WornResist(Wizard wizard, bool withPetTalents = true, bool withJewels = true) {
         var stats = new System.Collections.Generic.List<BotGear.Stat>();
         var items = (wizard?.EquipmentBehavior?.EquippedItems ?? []).ToList();
         var jewels = BotJewels.All.ToDictionary(j => j.Id, j => j);
@@ -201,7 +206,7 @@ internal static class TrueFormMaker {
                 stats.AddRange(BotGear.StatsOf(template));
             }
 
-            foreach (var pair in JewelSockets.GetPairs(item).Where(p => p is not null && p.m_jewelTemplateID != 0)) {
+            foreach (var pair in JewelSockets.GetPairs(item).Where(p => withJewels && p is not null && p.m_jewelTemplateID != 0)) {
                 if (jewels.TryGetValue((uint) pair.m_jewelTemplateID, out var jewel)) {
                     stats.AddRange(jewel.Stats);
                 }
@@ -235,7 +240,7 @@ internal static class TrueFormMaker {
     // once every school is at 100%, the rest go to health and what keeps him up. Fifteen, best first: five on the pet, the
     // rest for its jewel.
     private static System.Collections.Generic.List<BotPetTalentStats.Info> ImmunityTalents(Wizard wizard) {
-        var resist = WornResist(wizard, withPetTalents: false);
+        var resist = WornResist(wizard, withPetTalents: false, withJewels: false);
         var picked = new System.Collections.Generic.List<BotPetTalentStats.Info>();
         var left = BotPetTalentStats.Real.ToList();
         static float Covered(System.Collections.Generic.Dictionary<string, float> r) => r.Values.Sum(v => Math.Min(100, v));
@@ -775,14 +780,23 @@ internal static class TrueFormMaker {
         // that for every school (Niduus, 2026-11-20). An outfit is worth the schools it makes him immune to first, then how
         // close the rest come, then health.
         static float Every(System.Collections.Generic.IEnumerable<BotGear.Stat> stats, string kind) => stats.Where(s => s.Kind == kind && s.School.Length == 0).Sum(s => s.Value);
+        // The most every-school resist a (non-pet) jewel of each socket shape gives: his sockets are filled after his gear.
+        var bestJewel = BotJewels.All.Where(j => j.Shape != JewelSocketType.SOCKETTYPE_PET).GroupBy(j => j.Shape)
+            .ToDictionary(g => g.Key, g => g.Max(j => j.Stats.Where(st => st.Kind == "ReduceDamage" && st.School.Length == 0).Sum(st => st.Value)));
+        float SocketResist(BotGear.Piece p) {
+            var sockets = JewelSockets.GetSockets(CoreObjectFactory.GetCoreTemplate(p.Id) as WizItemTemplate);
+            return sockets.Where(x => x is not null).Sum(x => bestJewel.TryGetValue(x.m_socketType, out var r) ? r : 0);
+        }
+
         static uint SetOf(BotGear.Piece p) => CoreObjectFactory.GetCoreTemplate(p.Id) is WizItemTemplate t ? (uint) t.m_itemSetBonusTemplateID : 0;
-        static (float Resist, float Health, System.Collections.Generic.Dictionary<string, float> Schools) Totals(System.Collections.Generic.Dictionary<EquipmentSlotType, BotGear.Piece> outfit) {
+        (float Resist, float Health, System.Collections.Generic.Dictionary<string, float> Schools) Totals(System.Collections.Generic.Dictionary<EquipmentSlotType, BotGear.Piece> outfit) {
             var stats = outfit.Values.SelectMany(p => p.Stats).ToList();
             foreach (var (_, _, tier) in TrueFormSetBonus.Reached(outfit.Values.Select(p => CoreObjectFactory.GetCoreTemplate(p.Id) as WizItemTemplate))) {
                 stats.AddRange(BotGear.StatsOfEffects(tier.m_equipEffectsGranted));
             }
 
-            var every = Every(stats, "ReduceDamage");
+            // His sockets count too: each one takes the most every-school resist a jewel of its shape gives (jewels go in after).
+            var every = Every(stats, "ReduceDamage") + outfit.Values.Sum(SocketResist);
             var schools = ImmunitySchools.ToDictionary(sc => sc, sc => every + stats.Where(st => st.Kind == "ReduceDamage" && st.School.Equals(sc, StringComparison.OrdinalIgnoreCase)).Sum(st => st.Value));
             return (schools.Values.Min(), Every(stats, "MaxHealth"), schools);
         }
@@ -806,6 +820,43 @@ internal static class TrueFormMaker {
                 chosenTotals = totals;
                 setName = Locale.GetEnglishName((string) (CoreObjectFactory.GetCoreTemplate(set.Key) as ItemSetBonusTemplate)?.m_displayName ?? "") ?? set.Key.ToString();
             }
+        }
+
+        // Then every slot is tried with every piece that has resist, keeping a swap whenever more schools reach 100% (or come
+        // closer), even at the cost of health or damage (Niduus, 2026-11-20: keep trading until every school is 100%).
+        var candidates = pool.Where(p => Enum.TryParse<EquipmentSlotType>(p.Slot, out _))
+            .Select(p => (Piece: p, Resist: p.Stats.Where(st => st.Kind == "ReduceDamage").Sum(st => st.School.Length == 0 ? st.Value * 7 : st.Value) + SocketResist(p) * 7))
+            .Where(x => x.Resist > 0 || SetOf(x.Piece) != 0)
+            .GroupBy(x => x.Piece.Slot)
+            .ToDictionary(g => Enum.Parse<EquipmentSlotType>(g.Key), g => g.OrderByDescending(x => x.Resist).Take(80).Select(x => x.Piece).ToList());
+        var swaps = 0;
+        for (var pass = 0; pass < 4; pass++) {
+            var better = false;
+            foreach (var (slot, pieces) in candidates) {
+                foreach (var piece in pieces) {
+                    if (chosen.TryGetValue(slot, out var on) && on.Id == piece.Id) {
+                        continue;
+                    }
+
+                    var tryOn = new System.Collections.Generic.Dictionary<EquipmentSlotType, BotGear.Piece>(chosen) { [slot] = piece };
+                    var totals = Totals(tryOn);
+                    if (Worth(totals) > Worth(chosenTotals)) {
+                        chosen = tryOn;
+                        chosenTotals = totals;
+                        better = true;
+                        swaps++;
+                    }
+                }
+            }
+
+            if (!better) {
+                break;
+            }
+        }
+
+        if (swaps > 0) {
+            Logger.Information("True Form: Universal Immunity traded {0} gear pieces for more resist: {1}.",
+                Logger.Args(swaps, string.Join(", ", chosen.OrderBy(c => c.Key).Select(c => $"{c.Key} {c.Value.Name}"))));
         }
 
         var immune = chosenTotals.Schools.Where(x => x.Value >= 100).Select(x => x.Key).ToList();

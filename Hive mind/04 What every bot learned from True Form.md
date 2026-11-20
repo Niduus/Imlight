@@ -36,6 +36,10 @@ Corrections Niduus made while testing True Form (November 19 and 20, 2026). Each
 
 ## True Form only
 - Immunity to a school is 100% or more resist to it. Universal Immunity is that for all seven schools. He says which schools he reached.
+- 94% is not immune. Under 100% in any school, he keeps trading: any gear piece with more resist replaces his piece, even at the cost of health or damage.
+- Every jewel and pin socket goes to the school still furthest from 100%, one school's own resist jewel included.
+- Asked again for Universal Immunity, he builds it again. He never answers "already in that setup" while a school is short.
+- If 100% truly cannot be reached, he says which schools are short and by how much.
 - His weave school ("go ice weave fire") gets his school pips. Stat asks ("get more ice accuracy") weigh in every gear, jewel and pet pick.
 - He remembers each commander's last build and offers it again.
 - Other players see his new character card right after he changes.

@@ -564,7 +564,8 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         if (setup is { } kind) {
-            if (kind is TrueForm.Setup.Universal or TrueForm.Setup.FullGlass or TrueForm.Setup.Defensive) {
+            if (kind is TrueForm.Setup.Universal or TrueForm.Setup.FullGlass or TrueForm.Setup.Defensive
+                || (kind == TrueForm.Setup.Immunity && TrueForm.Kind == kind)) {
                 return TrueFormSetup(heard, me, grouped, kind, named ?? TrueForm.School);
             }
 
@@ -967,7 +968,9 @@ internal sealed partial class UltimusDirectorActor {
             return true;
         }
 
-        if (TrueForm.Kind == kind && TrueForm.School == school && !TrueFormBuild.HasPending) {
+        // Universal Immunity asked again is built again: more trades may close what is still short (Niduus, 2026-11-20: "go
+        // universal immune" got "I'm already in my Universal Immunity setup" at 94%).
+        if (kind != TrueForm.Setup.Immunity && TrueForm.Kind == kind && TrueForm.School == school && !TrueFormBuild.HasPending) {
             SendReply(heard, $"I'm already in {words}!", "true form");
             return true;
         }
