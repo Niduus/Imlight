@@ -452,9 +452,17 @@ internal static class BotGear {
     }
 
     /// <summary>How good a list of stats is for a wizard of this school and style (a piece's, or a jewel's).</summary>
+    /// <summary>While set, power pip chance counts for nothing (the rest of the outfit already reaches 100%).</summary>
+    [ThreadStatic]
+    internal static bool NoPips;
+
     internal static double ScoreStats(IEnumerable<Stat> stats, string school, BotStyle style) {
         var score = 0.0;
         foreach (var stat in stats ?? []) {
+            if (NoPips && stat.Kind == "PowerPips") {
+                continue;
+            }
+
             var share = Share(stat, school, style);
             if (share > 0) {
                 score += share * stat.Value * Weight(stat.Kind, style);
@@ -531,7 +539,13 @@ internal static class BotGear {
         },
         // Everything on damage to every school (the stats are scored with no school, so only every-school ones count);
         // min-maxed, so nothing on resist or health.
-        BotStyle.UniversalHitter or BotStyle.GlassCannon => kind switch {
+        // Universal: every-school accuracy weighs more, so his other schools' spells land too (Niduus, 2026-11-20: "uni
+        // build missing damage and acc").
+        BotStyle.UniversalHitter => kind switch {
+            "Damage" => 10, "ArmorPiercing" => 4, "Accuracy" => 5, "PowerPips" => 2.5, "StartingPips" => 15, "FlatDamage" => 1,
+            "CriticalHit" => 0.3, _ => 0,
+        },
+        BotStyle.GlassCannon => kind switch {
             "Damage" => 10, "ArmorPiercing" => 4, "Accuracy" => 2, "PowerPips" => 2.5, "StartingPips" => 15, "FlatDamage" => 1,
             "CriticalHit" => 0.3, _ => 0,
         },

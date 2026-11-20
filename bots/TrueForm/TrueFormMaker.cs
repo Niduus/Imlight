@@ -622,9 +622,30 @@ internal static class TrueFormMaker {
             .GroupBy(p => p.Slot).ToDictionary(g => g.Key, g => g.Max(p => p.Level));
         // The universal setup takes the piece with the most every-school damage at any level: the level 190 pieces are each
         // school's own (Niduus, 2026-11-19, of the first universal setup: "This is Myth with uni pierce").
-        var anyLevel = statSchool.Length == 0;
+        // The same for his full healing, full tank and full glass setups: the piece with the most of that one stat can be
+        // from any level (Niduus, 2026-11-20: "He needs to know that not all the best gear is at level cap"; full healer
+        // stopped at 151% outgoing healing on level 190 pieces).
+        var anyLevel = statSchool.Length == 0 || style is BotStyle.FullHealer or BotStyle.FullTank or BotStyle.GlassCannon or BotStyle.UniversalHitter;
         var best = BotGear.BestFor(school, level, style, p => Allowed(p) && (anyLevel || !topOf.TryGetValue(p.Slot, out var least) || p.Level >= least),
             extra: top, scoreSchool: statSchool);
+        // Power pip chance past 100% does nothing (Niduus, 2026-11-20: "he can trade up his 10% power pip"): when the pieces
+        // already reach 100% without anything for pips, they are picked again with pips counting for nothing.
+        double Pips(System.Collections.Generic.Dictionary<EquipmentSlotType, BotGear.Piece> outfit) => outfit.Values.SelectMany(p => p.Stats)
+            .Where(s => s.Kind == "PowerPips" && (s.School.Length == 0 || s.School.Equals(school, StringComparison.OrdinalIgnoreCase))).Sum(s => s.Value);
+        if (Pips(best) > 100) {
+            BotGear.NoPips = true;
+            try {
+                var noPips = BotGear.BestFor(school, level, style, p => Allowed(p) && (anyLevel || !topOf.TryGetValue(p.Slot, out var least) || p.Level >= least),
+                    extra: top, scoreSchool: statSchool);
+                if (Pips(noPips) >= 100) {
+                    best = noPips;
+                }
+            }
+            finally {
+                BotGear.NoPips = false;
+            }
+        }
+
         var outfit = string.Join(",", best.OrderBy(b => b.Key).Select(b => b.Value.Id));
         var marker = Path.Combine(UltimusSeat.TrueForm.Folder, DRESSED_FILE);
         outfit = $"{school}{(statSchool.Length == 0 ? " universal" : "")} {style}: {outfit}";

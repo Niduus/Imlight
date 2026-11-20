@@ -92,6 +92,18 @@ internal static class TrueFormJewels {
                     var best = jewels.Where(j => j.Shape == shape.Value).Select(j => (Jewel: j, Score: Score(j, shape.Value, pet, need, petTalents, school, style)))
                         .Where(x => x.Score > 0).OrderByDescending(x => x.Score).ThenBy(x => x.Jewel.Id)
                         .FirstOrDefault(x => JewelSockets.CheckSocket(wizard, item, x.Jewel.Template, socket) is null);
+                    // Nothing for this setup fits (a universal or glass setup's tear and square sockets, which only take
+                    // health or resist): the socket still gets the jewel that helps him most overall, never left open
+                    // (Niduus, 2026-11-20: "open sockets that can clearly have jewels in to help his build, needs to be
+                    // looked into").
+                    if (best.Jewel is null && nowScore <= 0) {
+                        best = jewels.Where(j => j.Shape == shape.Value)
+                            .Select(j => (Jewel: j, Score: Score(j, shape.Value, pet, need, petTalents, school, style, fallback: true)))
+                            .Where(x => x.Score > 0).OrderByDescending(x => x.Score).ThenBy(x => x.Jewel.Id)
+                            .FirstOrDefault(x => JewelSockets.CheckSocket(wizard, item, x.Jewel.Template, socket) is null);
+                        nowScore = nowId == 0 ? double.MinValue : Score(now, shape.Value, pet, need, petTalents, school, style, fallback: true);
+                    }
+
                     if (best.Jewel is not null && best.Score > nowScore) {
                         JewelSockets.Socket(item, socket, best.Jewel.Id);
                         changed |= best.Jewel.Id != nowId;
@@ -139,13 +151,13 @@ internal static class TrueFormJewels {
     // How good a jewel is for him: its stats as his gear is scored; a pet jewel by what its talent really gives him
     // (BotPetTalentStats), only a talent his pet does not have yet, so the jewel is a real sixth.
     private static double Score(BotJewels.Jewel jewel, JewelSocketType shape, ClientPetItemBehavior pet, BotJewelPicker need,
-        List<BotPetTalentStats.Info> petTalents, string school, BotStyle style) {
+        List<BotPetTalentStats.Info> petTalents, string school, BotStyle style, bool fallback = false) {
         if (jewel is null) {
             return 0;
         }
 
         if (jewel.Shape != JewelSocketType.SOCKETTYPE_PET) {
-            return need.Score(jewel, shape);
+            return fallback ? need.Fallback(jewel) : need.Score(jewel, shape);
         }
 
         // Never a talent his pet has already, revealed or in his pool, by name or by what it gives (Niduus, 2026-11-19: a
@@ -162,7 +174,7 @@ internal static class TrueFormJewels {
                 continue;
             }
 
-            best = Math.Max(best, BotPetTalentStats.Score(info, school, style, need.AccuracyFull, need.PipsFull));
+            best = Math.Max(best, BotPetTalentStats.Score(info, school, fallback ? BotStyle.Solo : style, need.AccuracyFull, need.PipsFull));
         }
 
         return best;

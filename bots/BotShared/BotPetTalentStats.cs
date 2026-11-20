@@ -199,7 +199,7 @@ internal static class BotPetTalentStats {
             var percent = property.Name.Contains("Percent", StringComparison.Ordinal);
             var value = per * basis * (percent ? 100 : 1);
             // Rounded as the game shows it (half up: Pain-Giver's 6.5 shows as +7).
-            yield return new BotGear.Stat(kind, kind is "MaxHealth" or "CriticalHit" or "Block" ? "" : forSchool, MathF.Round(value, MidpointRounding.AwayFromZero));
+            yield return new BotGear.Stat(kind, kind is "MaxHealth" ? "" : forSchool, MathF.Round(value, MidpointRounding.AwayFromZero));
         }
     }
 

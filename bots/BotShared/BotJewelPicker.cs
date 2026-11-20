@@ -192,6 +192,13 @@ internal sealed class BotJewelPicker {
         }
     }
 
+    /// <summary>
+    /// A jewel's worth for a socket nothing of his setup fits: what keeps him going overall (every-school resist, health,
+    /// his own school's stats), as a bot that fights on its own values them, so no socket is left open.
+    /// </summary>
+    internal double Fallback(BotJewels.Jewel jewel)
+        => jewel is null ? 0 : BotGear.ScoreStats(Capped(Wanted(jewel.Stats)), _school.Length > 0 ? _school : _ownSchool, BotStyle.Solo);
+
     // Power pip chance past 100% and his school's accuracy past 100% do nothing: only the part still missing counts.
     private List<BotGear.Stat> Capped(IEnumerable<BotGear.Stat> stats) => stats.Select(s => !Counts(s) ? s
         : s.Kind == "PowerPips" ? s with { Value = (float) Math.Min(s.Value, Math.Max(0, 100 - _powerPips)) }
