@@ -85,6 +85,11 @@ internal sealed partial class UltimusDirectorActor {
         if (TrueForm.CardPush && me.Wizard is { GameObjectID: not 0 } cardWizard) {
             TrueForm.CardPush = false;
             TrueFormCardPush(cardWizard);
+            // Universal Immunity: which schools he is immune to now (Niduus, 2026-11-20: immunity = 100% or more resist).
+            if (TrueFormMaker.ImmunityReport is { } report && TrueForm.Head() is var head and not 0) {
+                TrueFormMaker.ImmunityReport = null;
+                SayLater(head, true, report, 2);
+            }
         }
 
         // Calls and "leave" are answered at once, in a battle too (a call waited for the battle's end and often ran out).

@@ -300,7 +300,12 @@ internal static class BotGear {
                 || objectName.StartsWith("GR_", StringComparison.OrdinalIgnoreCase) || objectName.StartsWith("Creature", StringComparison.OrdinalIgnoreCase)
                 || file.Contains("/Creature", StringComparison.OrdinalIgnoreCase) || file.Contains("/NPC", StringComparison.OrdinalIgnoreCase)
                 || file.Contains("/Polymorph", StringComparison.OrdinalIgnoreCase);
-            var tooStrong = StatsOf(template).Any(TooStrong);
+            // Stats added up per kind (Niduus, 2026-11-20: "Valiant Jouster's Sabatons", no level, +1198 max health five times,
+            // 5,990 health), and a stat line repeated three times or more, which no player's piece has.
+            var stats = StatsOf(template);
+            var tooStrong = stats.Any(TooStrong)
+                || stats.GroupBy(st => (st.Kind, st.School)).Any(g => TooStrong(new Stat(g.Key.Kind, g.Key.School, g.Sum(st => st.Value))))
+                || stats.GroupBy(st => (st.Kind, st.School, st.Value)).Any(g => g.Count() >= 3);
 
             return dev || deckathalon || creature || tooStrong;
         }
