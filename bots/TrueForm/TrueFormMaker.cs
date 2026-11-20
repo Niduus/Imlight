@@ -661,20 +661,31 @@ internal static class TrueFormMaker {
     // Universal Immunity (Niduus, 2026-11-20): 100% resist to every school, from pieces and their set bonuses (Ice reaches it
     // with the Road Warrior set). Each set his school can wear is tried in its own slots, the best set bonus counted; the
     // outfit nearest 100% (past it is no better), then the most health, wins.
+    private static readonly string[] ImmunitySchools = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance"];
+
+    /// <summary>After a Universal Immunity setup: which schools his gear makes him immune to (said to his group head).</summary>
+    internal static volatile string ImmunityReport;
+
     private static System.Collections.Generic.Dictionary<EquipmentSlotType, BotGear.Piece> ImmunityOutfit(
         System.Collections.Generic.Dictionary<EquipmentSlotType, BotGear.Piece> best, System.Collections.Generic.List<BotGear.Piece> pool) {
+        // Immunity to a school is 100% resist or more to it (its own resist plus every-school resist); Universal Immunity is
+        // that for every school (Niduus, 2026-11-20). An outfit is worth the schools it makes him immune to first, then how
+        // close the rest come, then health.
         static float Every(System.Collections.Generic.IEnumerable<BotGear.Stat> stats, string kind) => stats.Where(s => s.Kind == kind && s.School.Length == 0).Sum(s => s.Value);
         static uint SetOf(BotGear.Piece p) => CoreObjectFactory.GetCoreTemplate(p.Id) is WizItemTemplate t ? (uint) t.m_itemSetBonusTemplateID : 0;
-        static (float Resist, float Health) Totals(System.Collections.Generic.Dictionary<EquipmentSlotType, BotGear.Piece> outfit) {
+        static (float Resist, float Health, System.Collections.Generic.Dictionary<string, float> Schools) Totals(System.Collections.Generic.Dictionary<EquipmentSlotType, BotGear.Piece> outfit) {
             var stats = outfit.Values.SelectMany(p => p.Stats).ToList();
             foreach (var (_, _, tier) in TrueFormSetBonus.Reached(outfit.Values.Select(p => CoreObjectFactory.GetCoreTemplate(p.Id) as WizItemTemplate))) {
                 stats.AddRange(BotGear.StatsOfEffects(tier.m_equipEffectsGranted));
             }
 
-            return (Every(stats, "ReduceDamage"), Every(stats, "MaxHealth"));
+            var every = Every(stats, "ReduceDamage");
+            var schools = ImmunitySchools.ToDictionary(sc => sc, sc => every + stats.Where(st => st.Kind == "ReduceDamage" && st.School.Equals(sc, StringComparison.OrdinalIgnoreCase)).Sum(st => st.Value));
+            return (schools.Values.Min(), Every(stats, "MaxHealth"), schools);
         }
 
-        static double Worth((float Resist, float Health) t) => Math.Min(100, t.Resist) * 100000 + t.Health;
+        static double Worth((float Resist, float Health, System.Collections.Generic.Dictionary<string, float> Schools) t)
+            => t.Schools.Values.Count(v => v >= 100) * 1e9 + t.Schools.Values.Sum(v => Math.Min(100, v)) * 100000 + t.Health;
         var chosen = best;
         var chosenTotals = Totals(best);
         var setName = "";
@@ -694,8 +705,13 @@ internal static class TrueFormMaker {
             }
         }
 
-        Logger.Information("True Form: Universal Immunity outfit: {0:0}% resist to every school and {1:0} health from gear{2} (jewels and pet add more).",
-            Logger.Args(chosenTotals.Resist, chosenTotals.Health, setName.Length > 0 ? $", with the {setName} set" : ""));
+        var immune = chosenTotals.Schools.Where(x => x.Value >= 100).Select(x => x.Key).ToList();
+        var short_ = chosenTotals.Schools.Where(x => x.Value < 100).Select(x => $"{x.Key} {x.Value:0}%").ToList();
+        ImmunityReport = immune.Count == ImmunitySchools.Length
+            ? $"From my gear alone I'm immune to every school: 100% or more resist to all seven (lowest {chosenTotals.Resist:0}%)."
+            : $"From my gear I'm immune to {(immune.Count == 0 ? "no school yet" : string.Join(", ", immune))}; not yet {string.Join(", ", short_)}. My jewels and pet add more resist.";
+        Logger.Information("True Form: Universal Immunity outfit: {0} ({1:0} health from gear{2}).",
+            Logger.Args(string.Join(", ", chosenTotals.Schools.Select(x => $"{x.Key} {x.Value:0}%")), chosenTotals.Health, setName.Length > 0 ? $", with the {setName} set" : ""));
         return chosen;
     }
 
