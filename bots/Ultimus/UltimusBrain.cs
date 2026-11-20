@@ -262,7 +262,7 @@ public static class UltimusBrain {
 
                 // A TCO7 member's first time at a quest: Ultimus's own time is the one to beat (Niduus, 2026-11-16: "read
                 // EVERYTHING he's done thus far and try to preform better").
-                var his = !learned && UltimusSeat.Current.IsTco7 ? UltimusSeconds(code) : 0;
+                var his = !learned && (UltimusSeat.Current.IsTco7 || UltimusSeat.Current.IsStreet) ? UltimusSeconds(code) : 0;
                 if (his > 0) {
                     expected = his;
                 }
@@ -296,7 +296,7 @@ public static class UltimusBrain {
 
                 // A TCO7 member against Ultimus's time for the same quest.
                 var against = "";
-                if (!partway && UltimusSeat.Current.IsTco7 && UltimusSeconds(code) is var hisTime and > 0) {
+                if (!partway && (UltimusSeat.Current.IsTco7 || UltimusSeat.Current.IsStreet) && UltimusSeconds(code) is var hisTime and > 0) {
                     against = request.Seconds <= hisTime
                         ? $" (beat Ultimus's {Minutes(hisTime)} by {Minutes(hisTime - request.Seconds)})"
                         : $" (Ultimus did it in {Minutes(hisTime)}, {Minutes(request.Seconds - hisTime)} faster)";

@@ -158,7 +158,7 @@ internal sealed partial class DuelBots {
                 var me = UltimusSeat.Current;
                 var player = circles.FirstOrDefault(c => c is { Occupied: true, IsHumanPlayer: true, IsSummonedMinion: false }
                                                          && ((UltimusRole(c) is null && !IsBot(c))
-                                                             || (me.IsTco7 && UltimusSeat.OfGlobal(c.ParticipantObject?.m_globalID.Full ?? 0) is { IsTco7: true } other && other != me)));
+                                                             || me.IsFellow(UltimusSeat.OfGlobal(c.ParticipantObject?.m_globalID.Full ?? 0))));
                 var room = circles.Any(c => c is not null && !c.Occupied && c.SlotType == player?.SlotType);
                 if (player is null || !room) {
                     return false;

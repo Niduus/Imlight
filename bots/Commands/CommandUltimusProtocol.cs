@@ -45,19 +45,20 @@ internal class CommandUltimus : CommandProtocol {
     private void TeleportCommand([Remainder] string who = "") {
         who = (who ?? "").Trim();
         // Ultimus, or a TCO7 member named (Niduus, 2026-11-16: the TCO7 are each their own Ultimus): ".ultimus tp Tulkar".
-        var seat = UltimusSeat.All.FirstOrDefault(s => s.IsTco7 && who.Length > 0
+        var seat = UltimusSeat.All.FirstOrDefault(s => (s.IsTco7 || s.IsStreet) && who.Length > 0
                                                       && s.Name.Equals(who, StringComparison.OrdinalIgnoreCase))
                    ?? UltimusSeat.Ultimus;
         var members = UltimusDirector.MembersOf(seat);
         if (members.Count == 0) {
             InformSenderClient(seat.IsUltimus
                 ? "The Ultimus is not playing right now. Turn it on in Ahziael (Bots > Ultimus) with the server running."
+                : seat.IsStreet ? $"{seat.Name} (a questing street bot) is not playing right now. Turn them on with .streetbots on with the server running."
                 : $"{seat.Name} of the TCO7 is not playing right now. Turn the TCO7 on in Ahziael (Bots > TCO7) with the server running.");
 
             return;
         }
 
-        var member = who.Length == 0 || seat.IsTco7 ? members[0]
+        var member = who.Length == 0 || seat.IsTco7 || seat.IsStreet ? members[0]
             : members.FirstOrDefault(m => m.Role.Equals(who, StringComparison.OrdinalIgnoreCase))
               ?? members.FirstOrDefault(m => (m.Name ?? "").Contains(who, StringComparison.OrdinalIgnoreCase));
         if (member is null) {
@@ -114,6 +115,11 @@ internal class CommandUltimus : CommandProtocol {
 
         if (who.Equals("tco7", StringComparison.OrdinalIgnoreCase)) {
             return [.. UltimusSeat.Tco7];
+        }
+
+        // The questing street bots that may play now ([StreetQuest] Count).
+        if (who.Equals("street", StringComparison.OrdinalIgnoreCase) || who.Equals("streetbots", StringComparison.OrdinalIgnoreCase)) {
+            return [.. UltimusSeat.Street.Where(s => s.Enabled)];
         }
 
         var seat = who.Length == 0 || who.Equals("ultimus", StringComparison.OrdinalIgnoreCase) ? UltimusSeat.Ultimus

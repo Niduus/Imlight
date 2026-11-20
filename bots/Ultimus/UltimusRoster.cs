@@ -102,6 +102,13 @@ internal static class UltimusRoster {
 
     /// <summary>The wizard is named Ultimus (a custom name over its name keys), whatever the name lists gave it.</summary>
     internal static void NameIt(Wizard wizard) {
+        // A questing street bot keeps the plain name its name keys give (no custom names for street bots, Niduus 2026-11-12).
+        if (UltimusSeat.Current.IsStreet) {
+            UltimusSeat.Current.NameStreetBot(wizard?.PlayerNameBehavior?.GetWizardName());
+
+            return;
+        }
+
         try {
             if (wizard?.PlayerNameBehavior is not { } names || names.NameOverride == NAME) {
                 return;
