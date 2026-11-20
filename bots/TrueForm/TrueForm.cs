@@ -265,7 +265,7 @@ internal static class TrueForm {
     /// His setups beside his school's own: universal damage, full outgoing healing, full resist (Niduus, 2026-11-19: "make a
     /// full healing set where it's all outgoing and full tank set where it's full resist").
     /// </summary>
-    internal enum Setup { Own, Universal, FullHeal, FullTank, FullGlass, Defensive }
+    internal enum Setup { Own, Universal, FullHeal, FullTank, FullGlass, Defensive, Immunity }
 
     private static volatile SwapAsk s_swap;
 
@@ -298,6 +298,7 @@ internal static class TrueForm {
         Setup.FullTank => "my full tank setup",
         Setup.FullGlass => "my full glass setup",
         Setup.Defensive => "my defensive setup",
+        Setup.Immunity => "my Universal Immunity setup",
         _ => "my balanced setup",
     };
 
@@ -308,9 +309,14 @@ internal static class TrueForm {
         Setup.FullTank => BotShared.BotStyle.FullTank,
         Setup.FullGlass => BotShared.BotStyle.GlassCannon,
         Setup.Defensive => BotShared.BotStyle.Defensive,
+        Setup.Immunity => BotShared.BotStyle.Immunity,
         // "Go myth": the most balanced set; a role said with it ("go ice and tank") still leans to that role.
         _ => Role is null ? BotShared.BotStyle.Balanced : StyleFor(school, Role),
     };
+
+    /// <summary>"Universal Immunity", "uni immunity", "go immune", "immunity setup": 100% resist to every school.</summary>
+    internal static bool ImmunityFrom(string words) => System.Text.RegularExpressions.Regex.IsMatch((words ?? "").ToLowerInvariant(),
+        @"\b(uni|universal|full|total|all)\s+immun(e|ity)\b|\bimmun(e|ity)\s+(set|setup|set up|build|loadout|gear|mode)\b|\bgo\s+(\w+\s+)?immun(e|ity)\b");
 
     /// <summary>"Go defensive", "defensive set(up)", "defensive variant", "go ice defensive": the defensive setup asked for.</summary>
     internal static bool DefensiveFrom(string words) => System.Text.RegularExpressions.Regex.IsMatch((words ?? "").ToLowerInvariant(),
@@ -331,6 +337,7 @@ internal static class TrueForm {
     /// <summary>The schools for a setup, best first (healing: Life, Death...; tank: Ice, Balance...).</summary>
     internal static MagicSchool[] BestSchoolsFor(Setup kind) => kind switch {
         Setup.FullHeal => [MagicSchool.Life, MagicSchool.Death, MagicSchool.Balance, MagicSchool.Ice, MagicSchool.Myth, MagicSchool.Storm, MagicSchool.Fire],
+        Setup.Immunity => [MagicSchool.Ice, MagicSchool.Balance, MagicSchool.Death, MagicSchool.Life, MagicSchool.Myth, MagicSchool.Fire, MagicSchool.Storm],
         Setup.FullTank => [MagicSchool.Ice, MagicSchool.Balance, MagicSchool.Death, MagicSchool.Life, MagicSchool.Myth, MagicSchool.Fire, MagicSchool.Storm],
         _ => Schools,
     };
@@ -355,6 +362,10 @@ internal static class TrueForm {
         bool Is(string pattern) => System.Text.RegularExpressions.Regex.IsMatch(w, pattern);
         if (FullGlassFrom(w) || Is(@"\b(damage|dmg|glass|offensive|offense|offence|attack)\b")) {
             return Setup.FullGlass;
+        }
+
+        if (Is(@"\bimmun(e|ity)\b")) {
+            return Setup.Immunity;
         }
 
         if (FullHealFrom(w) || Is(@"\b(heal|heals|healing|healer)\b")) {

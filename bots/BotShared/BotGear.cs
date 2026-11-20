@@ -60,6 +60,9 @@ internal enum BotStyle {
     Balanced,
     // True Form's defensive set ("go defensive"): resist and health first, some damage kept.
     Defensive,
+    // True Form's Universal Immunity: 100% resist to every school (Niduus, 2026-11-20: "Apply term Universal Immunity. This
+    // is more efficient on Ice and does require the Road Warrior set"). Only every-school resist counts, then health.
+    Immunity,
 }
 
 /// <summary>
@@ -536,6 +539,11 @@ internal static class BotGear {
                 : 0.3;
         }
 
+        // Universal Immunity: only a resist to every school counts; one school's resist leaves the others open.
+        if (style == BotStyle.Immunity && stat.Kind.Contains("ReduceDamage", StringComparison.Ordinal)) {
+            share = all ? 1.0 : 0;
+        }
+
         return share;
     }
 
@@ -561,6 +569,11 @@ internal static class BotGear {
         BotStyle.GlassCannon => kind switch {
             "Damage" => 10, "ArmorPiercing" => 4, "Accuracy" => 2, "PowerPips" => 2.5, "StartingPips" => 15, "FlatDamage" => 1,
             "CriticalHit" => 0.3, _ => 0,
+        },
+        // Universal Immunity: every-school resist (Share counts no one school's), then health, block and healing taken.
+        BotStyle.Immunity => kind switch {
+            "ReduceDamage" => 10, "MaxHealth" => 0.1, "Block" => 0.3, "IncHealing" => 1.2, "FlatReduceDamage" => 1.5, "PowerPips" => 1.5,
+            "StartingPips" => 10, "Damage" => 0.2, "Healing" => 0.2, "MaxMana" => 0.02, _ => 0,
         },
         // Balanced: hits and staying up both count, nothing pushed to the top.
         BotStyle.Balanced => kind switch {

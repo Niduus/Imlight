@@ -138,7 +138,7 @@ internal sealed class BotJewelPicker {
             return shape == JewelSocketType.SOCKETTYPE_CIRCLE ? score + uni.Where(s => s.Kind == "ArmorPiercing" && s.School.Length == 0).Sum(s => s.Value * 10.0) : score;
         }
 
-        if (_style is BotStyle.FullHealer or BotStyle.FullTank or BotStyle.GlassCannon) {
+        if (_style is BotStyle.FullHealer or BotStyle.FullTank or BotStyle.GlassCannon or BotStyle.Immunity) {
             return BotGear.ScoreStats(Capped(stats), _school, _style);
         }
 

@@ -473,6 +473,7 @@ internal sealed partial class UltimusDirectorActor {
         var setup = TrueForm.FullGlassFrom(order) ? TrueForm.Setup.FullGlass
             : TrueForm.UniversalFrom(order) ? TrueForm.Setup.Universal
             : TrueForm.FullHealFrom(order) ? TrueForm.Setup.FullHeal
+            : TrueForm.ImmunityFrom(order) ? TrueForm.Setup.Immunity
             : TrueForm.FullTankFrom(order) ? TrueForm.Setup.FullTank
             : TrueForm.DefensiveFrom(order) ? TrueForm.Setup.Defensive
             : (TrueForm.Setup?) null;
@@ -497,7 +498,7 @@ internal sealed partial class UltimusDirectorActor {
             // Already in that setup: no school question again (Niduus, 2026-11-20: "go full healer" twice, then "life", got
             // "I'm already in my full healing setup as Life!" each time).
             if (TrueForm.Kind == kind) {
-                var setupWords = kind == TrueForm.Setup.FullHeal ? "full healing" : "full tank";
+                var setupWords = kind == TrueForm.Setup.FullHeal ? "full healing" : kind == TrueForm.Setup.Immunity ? "Universal Immunity" : "full tank";
                 SendReply(heard, $"I'm already in my {setupWords} setup as {TrueForm.School}! Say another school, like \"go full {(kind == TrueForm.Setup.FullHeal ? "healer" : "tank")} as ice\", to change it.", "true form");
                 return true;
             }
@@ -505,7 +506,7 @@ internal sealed partial class UltimusDirectorActor {
             var best = TrueForm.BestSchoolsFor(kind);
             TrueForm.PendingPick = new TrueForm.SwapAsk(best[0], null, heard.SpeakerCharId, heard.SpeakerName, kind);
             TrueForm.PendingPickAt = DateTime.UtcNow;
-            var what = kind == TrueForm.Setup.FullHeal ? "full healing" : "full tank";
+            var what = kind == TrueForm.Setup.FullHeal ? "full healing" : kind == TrueForm.Setup.Immunity ? "Universal Immunity" : "full tank";
             SendReply(heard, $"Which school for my {what} setup? Best first: {string.Join(", ", best)}. " +
                              $"Just say the school, like \"{best[0].ToString().ToLowerInvariant()}\".", "true form");
             return true;
@@ -595,7 +596,7 @@ internal sealed partial class UltimusDirectorActor {
                 TrueForm.BuildPick = new TrueForm.SwapAsk(school, null, heard.SpeakerCharId, heard.SpeakerName);
                 TrueForm.BuildPickAt = DateTime.UtcNow;
                 Note("Ultimus", $"True Form: {heard.SpeakerName} asks for {school}; asks which build (30 s, then balanced).");
-                SendReply(heard, $"Going {school}! Which build: balanced, full damage (glass cannon), defensive, or full healer? " +
+                SendReply(heard, $"Going {school}! Which build: balanced, full damage (glass cannon), defensive, full healer, or Universal Immunity? " +
                                  "Say it within 30 seconds, or I'll go balanced.", "true form");
                 return true;
             }
@@ -687,7 +688,7 @@ internal sealed partial class UltimusDirectorActor {
     private bool TrueFormSetup(UltimusVoice.Heard heard, UltimusMember.Status me, bool grouped, TrueForm.Setup kind, Shared.Behaviors.MagicSchool school) {
         var role = kind switch {
             TrueForm.Setup.FullHeal => TrueForm.Mode.Support,
-            TrueForm.Setup.FullTank => TrueForm.Mode.Defend,
+            TrueForm.Setup.FullTank or TrueForm.Setup.Immunity => TrueForm.Mode.Defend,
             TrueForm.Setup.Defensive => TrueForm.Mode.Auto,
             _ => TrueForm.Mode.Attack,
         };
@@ -715,11 +716,12 @@ internal sealed partial class UltimusDirectorActor {
         var what = kind switch {
             TrueForm.Setup.FullHeal => "every piece, jewel and pet talent on outgoing healing, and I'll play support",
             TrueForm.Setup.FullTank => "every piece, jewel and pet talent on resist, and I'll play defend",
+            TrueForm.Setup.Immunity => "every piece, set, jewel and pet talent on resist to every school, aiming for 100% (Universal Immunity), and I'll play defend",
             TrueForm.Setup.FullGlass => $"every piece, jewel and pet talent on {school} damage, pierce and accuracy, nothing on resist or health, and I'll play attack",
             TrueForm.Setup.Defensive => "resist and health first with some damage kept, and I pick attack, defend or support each round",
             _ => "every piece, jewel and pet talent on damage to all schools, and I'll play attack",
         };
-        var warn = kind is TrueForm.Setup.FullHeal or TrueForm.Setup.FullTank && TrueForm.BestSchoolsFor(kind).Take(2).All(b => b != school)
+        var warn = kind is TrueForm.Setup.FullHeal or TrueForm.Setup.FullTank or TrueForm.Setup.Immunity && TrueForm.BestSchoolsFor(kind).Take(2).All(b => b != school)
             ? $" Heads up: {school} is not the best school for this; {string.Join(" or ", TrueForm.BestSchoolsFor(kind).Take(2))} would do it better."
             : "";
         SendReply(heard, $"Switching to {words}: {what}. I'll pop out for a moment to change and be right back. " +

@@ -609,7 +609,7 @@ internal static class TrueFormMaker {
         // sockets are filled (TrueFormJewels). A slot with no piece at his level wears the highest level there is.
         // A full setup (healing, tank, glass, universal) takes crowns pieces too: the best for one stat is often one (Niduus,
         // 2026-11-20: "Sword of Kings (Life) literally gives 25").
-        var full = statSchool.Length == 0 || style is BotStyle.FullHealer or BotStyle.FullTank or BotStyle.GlassCannon or BotStyle.UniversalHitter;
+        var full = statSchool.Length == 0 || style is BotStyle.FullHealer or BotStyle.FullTank or BotStyle.GlassCannon or BotStyle.UniversalHitter or BotStyle.Immunity;
         bool Allowed(BotGear.Piece p) => (full || !p.CrownsOnly) && !p.Retired && !BotGear.Forbidden(p.Id) && !BotGear.PartlyRead(p.Id)
                                                 && !IsRental(CoreObjectFactory.GetCoreTemplate(p.Id) as WizItemTemplate);
         // The server's drop and shop lists have no Ahmarra gear yet, so the level 190 pieces come from the game's own files
@@ -642,6 +642,47 @@ internal static class TrueFormMaker {
         }
     }
 
+    // Universal Immunity (Niduus, 2026-11-20): 100% resist to every school, from pieces and their set bonuses (Ice reaches it
+    // with the Road Warrior set). Each set his school can wear is tried in its own slots, the best set bonus counted; the
+    // outfit nearest 100% (past it is no better), then the most health, wins.
+    private static System.Collections.Generic.Dictionary<EquipmentSlotType, BotGear.Piece> ImmunityOutfit(
+        System.Collections.Generic.Dictionary<EquipmentSlotType, BotGear.Piece> best, System.Collections.Generic.List<BotGear.Piece> pool) {
+        static float Every(System.Collections.Generic.IEnumerable<BotGear.Stat> stats, string kind) => stats.Where(s => s.Kind == kind && s.School.Length == 0).Sum(s => s.Value);
+        static uint SetOf(BotGear.Piece p) => CoreObjectFactory.GetCoreTemplate(p.Id) is WizItemTemplate t ? (uint) t.m_itemSetBonusTemplateID : 0;
+        static (float Resist, float Health) Totals(System.Collections.Generic.Dictionary<EquipmentSlotType, BotGear.Piece> outfit) {
+            var stats = outfit.Values.SelectMany(p => p.Stats).ToList();
+            foreach (var (_, _, tier) in TrueFormSetBonus.Reached(outfit.Values.Select(p => CoreObjectFactory.GetCoreTemplate(p.Id) as WizItemTemplate))) {
+                stats.AddRange(BotGear.StatsOfEffects(tier.m_equipEffectsGranted));
+            }
+
+            return (Every(stats, "ReduceDamage"), Every(stats, "MaxHealth"));
+        }
+
+        static double Worth((float Resist, float Health) t) => Math.Min(100, t.Resist) * 100000 + t.Health;
+        var chosen = best;
+        var chosenTotals = Totals(best);
+        var setName = "";
+        foreach (var set in pool.Select(p => (Piece: p, Set: SetOf(p))).Where(x => x.Set != 0).GroupBy(x => x.Set)) {
+            var outfit = new System.Collections.Generic.Dictionary<EquipmentSlotType, BotGear.Piece>(best);
+            foreach (var slot in set.GroupBy(x => x.Piece.Slot)) {
+                if (Enum.TryParse<EquipmentSlotType>(slot.Key, out var s)) {
+                    outfit[s] = slot.MaxBy(x => BotGear.Score(x.Piece, "", BotStyle.Immunity)).Piece;
+                }
+            }
+
+            var totals = Totals(outfit);
+            if (Worth(totals) > Worth(chosenTotals)) {
+                chosen = outfit;
+                chosenTotals = totals;
+                setName = Locale.GetEnglishName((string) (CoreObjectFactory.GetCoreTemplate(set.Key) as ItemSetBonusTemplate)?.m_displayName ?? "") ?? set.Key.ToString();
+            }
+        }
+
+        Logger.Information("True Form: Universal Immunity outfit: {0:0}% resist to every school and {1:0} health from gear{2} (jewels and pet add more).",
+            Logger.Args(chosenTotals.Resist, chosenTotals.Health, setName.Length > 0 ? $", with the {setName} set" : ""));
+        return chosen;
+    }
+
     private static void DressWith(Wizard wizard, int level, string school, BotStyle style, string statSchool,
         System.Collections.Generic.IReadOnlyList<BotGear.Piece> top, Func<BotGear.Piece, bool> Allowed) {
         var pool = BotGear.Catalog.Concat(top ?? []).DistinctBy(p => p.Id).ToList();
@@ -652,7 +693,7 @@ internal static class TrueFormMaker {
         // The same for his full healing, full tank and full glass setups: the piece with the most of that one stat can be
         // from any level (Niduus, 2026-11-20: "He needs to know that not all the best gear is at level cap"; full healer
         // stopped at 151% outgoing healing on level 190 pieces).
-        var anyLevel = statSchool.Length == 0 || style is BotStyle.FullHealer or BotStyle.FullTank or BotStyle.GlassCannon or BotStyle.UniversalHitter;
+        var anyLevel = statSchool.Length == 0 || style is BotStyle.FullHealer or BotStyle.FullTank or BotStyle.GlassCannon or BotStyle.UniversalHitter or BotStyle.Immunity;
         var best = BotGear.BestFor(school, level, style, p => Allowed(p) && (anyLevel || !topOf.TryGetValue(p.Slot, out var least) || p.Level >= least),
             extra: top, scoreSchool: statSchool);
         // Power pip chance past 100% does nothing (Niduus, 2026-11-20: "he can trade up his 10% power pip"): when the pieces
@@ -671,6 +712,10 @@ internal static class TrueFormMaker {
             finally {
                 BotGear.NoPips = false;
             }
+        }
+
+        if (style == BotStyle.Immunity) {
+            best = ImmunityOutfit(best, pool.Where(p => Allowed(p) && BotGear.CanWear(p, school, level)).ToList());
         }
 
         var outfit = string.Join(",", best.OrderBy(b => b.Key).Select(b => b.Value.Id));
