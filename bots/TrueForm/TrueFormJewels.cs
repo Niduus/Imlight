@@ -148,15 +148,17 @@ internal static class TrueFormJewels {
             return need.Score(jewel, shape);
         }
 
-        // Never a talent his pet has already, by name or by what it gives (Niduus, 2026-11-19: a Pain-Giver jewel on a
-        // pet with Pain-Giver: "2 Pain-Givers don't work like that").
-        var has = (pet?.m_expressedTalents ?? []).Select(id => PetData.GetTalent(id)?.m_talentName).Where(k => k is not null)
+        // Never a talent his pet has already, revealed or in his pool, by name or by what it gives (Niduus, 2026-11-19: a
+        // Pain-Giver jewel on a pet with Pain-Giver: "2 Pain-Givers don't work like that"; 2026-11-20: "Bot can NOT have
+        // jewel of pet talent that is already in pool and revealed"). A jewel talent that gives the same kind of stat for
+        // the same school as one of his talents (Spell-Defying +5 resist beside Spell-Proof +10 resist) counts as had too.
+        var ids = (pet?.m_expressedTalents ?? []).Concat(pet?.m_allTalents ?? []).ToHashSet();
+        var has = ids.Select(id => PetData.GetTalent(id)?.m_talentName).Where(k => k is not null)
             .Select(k => BotPetTalentStats.Of(k)).Where(i => i is not null).ToList();
         var best = 0.0;
         foreach (var key in jewel.TalentKeys) {
             var info = BotPetTalentStats.Of(key);
-            if (info is null || (pet is not null && pet.m_expressedTalents.Contains(PetData.TalentId(key)))
-                || has.Any(h => h.Shown == info.Shown || (h.Stats.Count > 0 && h.Stats.SequenceEqual(info.Stats)))) {
+            if (info is null || ids.Contains(PetData.TalentId(key)) || has.Any(h => SameTalent(h, info))) {
                 continue;
             }
 
@@ -165,5 +167,10 @@ internal static class TrueFormJewels {
 
         return best;
     }
+
+    // Same talent for the jewel rule: same shown name, or any stat of the same kind for the same school.
+    private static bool SameTalent(BotPetTalentStats.Info had, BotPetTalentStats.Info jewel) =>
+        had.Shown == jewel.Shown
+        || had.Stats.Any(h => jewel.Stats.Any(j => j.Kind == h.Kind && j.School == h.School));
 
 }
