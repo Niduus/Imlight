@@ -117,6 +117,8 @@ internal static class ManagerTheme {
         ["Quest Team"] = Color.FromRgb(120, 150, 235),
         ["Bots"] = Color.FromRgb(150, 125, 240),
         ["Street Bots"] = Color.FromRgb(120, 170, 220),
+        // Niduus, 2026-11-19: the Hive mind, honey gold.
+        ["Hive mind"] = Color.FromRgb(232, 176, 44),
         // Tabs.
         ["Play"] = Color.FromRgb(46, 170, 98),
         ["Commands"] = BLOCK_WHEN,
@@ -255,6 +257,8 @@ internal static class ManagerTheme {
         ["pips"] = (C(5, 12, 3) + " " + C(12, 12, 3) + " " + C(19, 12, 3), true),
         ["book"] = ("M3 5.5C5.5 4 8.5 4 12 6.2c3.5-2.2 6.5-2.2 9-.7V19c-2.5-1.5-5.5-1.5-9 .7-3.5-2.2-6.5-2.2-9-.7z M12 6.2v13.5", false),
         ["user"] = (C(12, 7.5, 4) + " M4 21c0-4.4 3.6-7.5 8-7.5s8 3.1 8 7.5z", true),
+        // Three honeycomb cells (the Hive mind).
+        ["hive"] = ("M8 3l4 2.3v4.6L8 12.2 4 9.9V5.3z M16 3l4 2.3v4.6l-4 2.3-4-2.3V5.3z M12 11.8l4 2.3v4.6L12 21l-4-2.3v-4.6z", false),
         ["users"] = (C(9, 8, 3.5) + " M2 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5z " + C(17, 7, 2.8) + " M17.5 12c2.6.2 4.5 2.4 4.5 5.5h-4.5", true),
         ["swap"] = ("M4 7h14l-3.5-3.5 M20 17H6l3.5 3.5", false),
         ["layers"] = ("M12 2l10 5-10 5L2 7z M2 12l10 5 10-5 M2 17l10 5 10-5", false),

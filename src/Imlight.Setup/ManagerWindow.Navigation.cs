@@ -83,6 +83,11 @@ internal sealed partial class ManagerWindow {
             "Every wizard the server plays by itself: Ultimus the Solo Quester, the seven of the TCO7, the four of the Quest Team, " +
             "and the Bot Players who fill the streets.",
             [.. BotParts.SelectMany(p => p.Tabs)]),
+        // Niduus, 2026-11-19: "Create a new tab in Ahziael called "Hive mind" ... tells the user how the bots complete each
+        // task" (ManagerWindow.HiveMind.cs).
+        ("Hive mind", "hive", "How the bots do it",
+            "How the bots get each quest done: pages from the Hive mind folder on GitHub, and what this server's bots did, collected when the server starts.",
+            [HIVE_MIND_TAB]),
         ("Server", "server", "Start, settings, accounts, logs",
             "Run the server and set it up: start and stop, every setting, who can log in, logs, game files, and Ahziael itself.",
             // Niduus, 2026-10-30: Ahziael on a server hosted on another PC, for its admins.

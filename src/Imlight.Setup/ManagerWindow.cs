@@ -452,6 +452,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab(BOT_UPDATES_TAB, BotUpdatesTab),
             Tab(STREET_BOTS_TAB, StreetBotsTab),
             Tab(TRUE_FORM_TAB, TrueFormTab),
+            Tab(HIVE_MIND_TAB, HiveMindTab),
         }.Concat(Tco7Tabs()).ToDictionary(t => (string) t.Tag!);
         // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
         var nav = Navigation(tabs);
@@ -1556,6 +1557,7 @@ internal sealed partial class ManagerWindow : Window {
         ManagerTheme.PaintBadge(_statusBadge, _statusText, _dot.Background);
         ShowHomeStatus(status);
         TickServerRestart(status.Running);
+        TickHiveMind(status);
         _startButton.IsEnabled = !status.Running && !IsRemote;
         _stopButton.IsEnabled = status.Running && !IsRemote;
         _restartButton.IsEnabled = status.Running && !IsRemote;
@@ -3193,6 +3195,7 @@ internal sealed partial class ManagerWindow : Window {
         [BOT_UPDATES_TAB] = ("download", "Which bots the server runs, every bot update with its notes, and live bot updates (the bots update without a new Ahziael)."),
         [ULTIMUS_AI_TAB] = ("user", "Optional AI chat for Ultimus on your own PC (Ollama or LM Studio): setup steps, model picks, PC scan and a test."),
         [ULTIMUS_LOGS_TAB] = ("log", "Ultimus's quest log and what it did, with odd things it noticed in pink."),
+        [HIVE_MIND_TAB] = ("hive", "How the bots get each quest done: pages from the Hive mind folder on GitHub, and what this server's bots did, collected when the server starts."),
         [TCO7_TAB] = ("users", "The Calling of 7: seven wizards, one of each school, each its own Ultimus. Turn them on, let them talk and team up, and see each one."),
         ["Tulkar"] = ("user", "Tulkar, the TCO7's Ice wizard: the same page as Ultimus's, for Tulkar."),
         ["Cyndr"] = ("user", "Cyndr, the TCO7's Fire wizard: the same page as Ultimus's, for Cyndr."),
