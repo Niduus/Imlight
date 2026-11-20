@@ -614,6 +614,23 @@ internal sealed partial class ServerManager(string installFolder) {
 
     private const string INSTANT_UPDATE_ON_FILE = "instant-update-on.txt";
 
+    /// <summary>
+    /// Whether the server is built for live patches (Niduus, 2026-11-20: a switch at the top of Ahziael, off by default;
+    /// off means updates work exactly as before). Saved on this PC like <see cref="AutoUpdate"/>; the build reads it
+    /// (SetupSteps.BuildServerAsync) and the server reads [LivePatches] Enabled.
+    /// </summary>
+    internal bool LivePatches {
+        get => File.Exists(Path.Combine(InstallFolder, LIVE_PATCHES_ON_FILE));
+        set => Remember(LIVE_PATCHES_ON_FILE, value,
+            "The server is built for live patches (fixes go in without a restart) while this file exists. " +
+            "The Live patches switch at the top of Ahziael changes it.");
+    }
+
+    internal const string LIVE_PATCHES_ON_FILE = "live-patches-on.txt";
+
+    /// <summary>How the installed server was built: "patchable" (live patches can go in), "fast", or "" when unknown.</summary>
+    internal string ServerBuildKind => InstalledCommands.LivePatchBuild(InstallFolder);
+
     /// <summary>Saves an on/off choice as a marker file in the install folder: there means on.</summary>
     private void Remember(string file, bool on, string text) {
         var path = Path.Combine(InstallFolder, file);

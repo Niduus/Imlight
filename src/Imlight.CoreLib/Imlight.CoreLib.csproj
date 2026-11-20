@@ -15,14 +15,53 @@
         <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
         <PackageReference Include="Ionic.Zlib.Core" Version="1.0.0" />
         <PackageReference Include="Nito.HashAlgorithms.CRC" Version="1.0.1" />
-        <!-- Builds a published bot update on the running server (Game/BotDoor/BotBuilder.cs). -->
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+        <!-- Builds a published bot update on the running server (Game/BotDoor/BotBuilder.cs), and makes live patches
+             (Game/LivePatches): Roslyn's own hot reload work-out, the one Visual Studio and dotnet watch use. -->
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.0.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup>
         <!-- The Manager's BROKEN / PARTLY check of spell cards, so the bots skip the same broken cards Ahziael marks. -->
         <Compile Include="..\Imlight.Setup\SpellSupport.cs" Link="Shared\SpellSupport.cs" />
     </ItemGroup>
+
+    <!--
+      Live patches (Niduus, 2026-11-20: fixes go into the running server without a restart; Ahziael's "Live patches" switch,
+      off by default, builds with -p:LivePatches=true). .NET can only change a part that was built without the compiler's
+      speed-ups, and the server needs the exact code it was built from to work out a patch, so a live patch build keeps a
+      copy of this part's code and how it was built (obj/live-patch-baseline, put next to the server by Imlight.Director).
+    -->
+    <PropertyGroup Condition="'$(LivePatches)' == 'true'">
+        <Optimize>false</Optimize>
+        <DebugType>portable</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
+
+    <Target Name="LivePatchBaseline" AfterTargets="CoreCompile" Condition="'$(LivePatches)' == 'true'">
+        <PropertyGroup>
+            <_LiveDir>$(MSBuildProjectDirectory)/obj/live-patch-baseline/</_LiveDir>
+        </PropertyGroup>
+        <ItemGroup>
+            <_LiveSource Include="@(Compile)" Rel="$([MSBuild]::MakeRelative('$(MSBuildProjectDirectory)/', '%(Compile.FullPath)'))" />
+            <!-- A linked file (..\Imlight.Setup\SpellSupport.cs) is kept inside the copy too. -->
+            <_LiveSource Update="@(_LiveSource)" Store="$([System.String]::Copy('%(Rel)').Replace('..', '__up'))" />
+            <_LiveLine Include="project|$(MSBuildProjectDirectory)" />
+            <_LiveLine Include="assembly|$(AssemblyName)" />
+            <_LiveLine Include="lang|$(LangVersion)" />
+            <_LiveLine Include="define|$(DefineConstants.Replace(';', ','))" />
+            <_LiveLine Include="nullable|$(Nullable)" />
+            <_LiveLine Include="unsafe|$(AllowUnsafeBlocks)" />
+            <_LiveLine Include="checked|$(CheckForOverflowUnderflow)" />
+            <_LiveLine Include="@(_LiveSource->'src|%(Rel)')" />
+            <_LiveLine Include="@(ReferencePathWithRefAssemblies->'ref|%(FullPath)')" />
+            <_LiveLine Include="@(Analyzer->'analyzer|%(FullPath)')" />
+        </ItemGroup>
+        <RemoveDir Directories="$(_LiveDir)" />
+        <Copy SourceFiles="@(_LiveSource)" DestinationFiles="@(_LiveSource->'$(_LiveDir)src/%(Store)')" />
+        <WriteLinesToFile File="$(_LiveDir)manifest.txt" Lines="@(_LiveLine)" Overwrite="true" Encoding="utf-8" />
+    </Target>
 
     <ItemGroup>
         <ProjectReference Include="..\Imlight.Common\Imlight.Common.csproj" />

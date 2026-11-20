@@ -45,6 +45,9 @@ internal static class BotUpdates {
     private const string CHECK_NOW_FILE = "check-now.txt";
 
     private static readonly HttpClient s_http = MakeClient();
+
+    /// <summary>The GitHub connection, shared with live patches.</summary>
+    internal static HttpClient Http => s_http;
     private static readonly List<string> s_notes = [];
     private static bool s_started;
     private static DateTime s_lastCheck;
@@ -54,7 +57,7 @@ internal static class BotUpdates {
     internal static bool On => ConfigurationManager.GetValue("Bots.LiveUpdates", true);
 
     /// <summary>The repository bot updates come from ([Bots] UpdateRepository).</summary>
-    private static string Repository => ConfigurationManager.GetValue("Bots.UpdateRepository", "Niduus/Imlight");
+    internal static string Repository => ConfigurationManager.GetValue("Bots.UpdateRepository", "Niduus/Imlight");
 
     private static HttpClient MakeClient() {
         var client = new HttpClient { Timeout = TimeSpan.FromMinutes(2) };
@@ -327,14 +330,14 @@ internal static class BotUpdates {
     }
 
     // How commit "to" stands against commit "from" on GitHub: "ahead" when it came after, "identical", "behind" or "diverged".
-    private static async Task<string> CompareAsync(string from, string to) {
+    internal static async Task<string> CompareAsync(string from, string to) {
         var json = await s_http.GetStringAsync($"https://api.github.com/repos/{Repository}/compare/{from}...{to}");
 
         return (string) JsonNode.Parse(json)?["status"] ?? "";
     }
 
     // The commit the server was built from (Ahziael writes it next to the server: "repo branch commit").
-    private static string ServerCommit() {
+    internal static string ServerCommit() {
         try {
             var path = Path.Combine(AppContext.BaseDirectory, "server-source-commit.txt");
             var parts = File.Exists(path) ? File.ReadAllText(path).Trim().Split(' ') : [];

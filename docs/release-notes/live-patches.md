@@ -1,0 +1,4 @@
+New: Live patches switch at the top of Ahziael
+With Live patches on, server fixes go into the running server without a restart, so nobody is disconnected. The server looks for a new live patch every 10 minutes and puts it in quietly; a fix that can't go in that way waits for the next full update. It is off by default, and off means updates work exactly as before. Turning it on builds the server for it once, and the server restarts one time when that build is ready.
+Where: The Live patches switch at the top of the window, next to Update Ahziael (hover it to see which live patch is in)
+Test: Turn Live patches on and let the server build and restart once. The server log then shows a "Speed:" line every 10 minutes, and after a live patch is published the log says it is in, with nobody disconnected.

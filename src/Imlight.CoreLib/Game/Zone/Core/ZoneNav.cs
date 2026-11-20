@@ -182,6 +182,18 @@ internal static class ZoneNav {
     public static List<Vector3> Route(string zonePath, Vector3 from, Vector3 to) => Graph(zonePath) is { } graph ? Route(graph, from, to) : null;
 
     internal static List<Vector3> Route(NavGraph graph, Vector3 from, Vector3 to, bool onFloors = false) {
+        // Timed for the log's speed line (ServerHealth): path finding is the server's busiest maths, so it shows best
+        // whether a server built for live patches runs slower.
+        var started = System.Diagnostics.Stopwatch.GetTimestamp();
+        try {
+            return RouteCore(graph, from, to, onFloors);
+        }
+        finally {
+            ServerHealth.CountRoute(System.Diagnostics.Stopwatch.GetTimestamp() - started);
+        }
+    }
+
+    private static List<Vector3> RouteCore(NavGraph graph, Vector3 from, Vector3 to, bool onFloors) {
         var starts = onFloors ? NearOnFloor(graph, from) : Near(graph, from);
         var goals = onFloors ? NearOnFloor(graph, to) : Near(graph, to);
         if (starts.Count == 0 || goals.Count == 0) {

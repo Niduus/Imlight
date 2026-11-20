@@ -103,6 +103,13 @@ internal static class Program {
         ConfigurationManager.Settings["Database.AdminAccountPassword"].AsString();
 
     private static void Main(string[] args) {
+        // The live patch check (the pull request check and the Publish live patch workflow): this program, built for live
+        // patches, tries to put newer code into itself and says whether it can go live (Game/LivePatches).
+        if (Array.IndexOf(args, "--live-patch-check") is var check and >= 0 && check + 1 < args.Length) {
+            ConfigurationManager.Initialize(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Imlight.ini"));
+            Environment.Exit(Imlight.CoreLib.Game.LivePatches.LivePatchUpdates.Check(args[check + 1]));
+        }
+
         // The Bazaar bot is this program started again with --bazaar by the game server (see BazaarLink): it reads the
         // settings and the game files, and nothing else of the server.
         if (Array.IndexOf(args, "--bazaar") >= 0) {
@@ -123,6 +130,8 @@ internal static class Program {
                 : Array.IndexOf(args, "--questteam") >= 0 ? "The Quest Team mini server" : "Ultimus's mini server";
             AppDomain.CurrentDomain.UnhandledException += (_, e) =>
                 Logger.Fatal(which + " stopped because of an error: {Exception}", Logger.Args(e.ExceptionObject));
+            // The live patches the game server put in reach the mini server too.
+            Imlight.CoreLib.Game.LivePatches.LivePatcher.FollowGameServer();
             Imlight.CoreLib.Game.BotLoader.RunMiniServer(args);
 
             return;
@@ -178,6 +187,9 @@ internal static class Program {
         // The bots (Ultimus, the TCO7, the Quest Team, the Bot Players) are their own build, put in before the game servers
         // start and swapped for a published bot update without a restart (Game/BotDoor).
         Imlight.CoreLib.Game.BotLoader.LoadAtStart();
+
+        // Live patches (Ahziael's switch at the top, off by default): fixes go into the running server without a restart.
+        Imlight.CoreLib.Game.LivePatches.LivePatchUpdates.Start();
 
         Imlight.CoreLib.Game.Commands.AgentBridge.Actors = s_imlightSystem;
         AgentScripting.Map();

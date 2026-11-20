@@ -179,7 +179,7 @@ internal sealed partial class ManagerWindow {
             Children = {
                 WithDock(new StackPanel {
                     Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(14, 0, 0, 0),
-                    Children = { Action(_updateButton, UpdateAsync), whatsNew },
+                    Children = { Action(_updateButton, UpdateAsync), whatsNew, LivePatchesSwitch() },
                 }, Dock.Right),
                 WithDock(WithMargin(ManagerTheme.Tile("download", ManagerTheme.Accent("What's New"), 28), new Thickness(0, 0, 10, 0)), Dock.Left),
                 updateWords,

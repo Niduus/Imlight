@@ -1,0 +1,130 @@
+# Publish live patch (Niduus, 2026-11-20: "have Imlight hotload changes/fixes from the repo instead of rebuilding each time
+# ... so we can put out patches more quietly instead of SERVER RESTART"; he picked "Yes, build all three steps").
+#
+# It publishes the server's own code (src/Imlight.CoreLib) at this commit as release live-v<next number> with
+# live-patch.zip attached. A server built with Ahziael's "Live patches" switch on (off by default) looks for one every
+# 10 minutes ([LivePatches] Enabled), works out on its own PC what changed since its build, and puts only that into the
+# running server: nobody is disconnected. A live patch that can't go into a running server (it deletes or renames
+# something, or needs a newer server part) is refused by the server before anything changes, and waits for the next full
+# update. The release is never marked "latest", so Ahziael's own update check never takes it for an app update.
+#
+# Run it from GitHub: Actions > Publish live patch > Run workflow (branch quality-assurance), the same way as bot updates
+# (one bundled live patch per round, unless a fix is critical). With the IMCODEC_GENERATOR_INPUTS secret it first checks,
+# on a server built from the last full release, that the patch really goes in live, and stops if it can't.
+name: Publish live patch
+
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: 'One plain-words line about this live patch (optional; the notes from docs/release-notes are added)'
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: live-patch-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    env:
+      GENERATOR_INPUTS: ${{ secrets.IMCODEC_GENERATOR_INPUTS }}
+    steps:
+      - name: Only from Niduus/Imlight
+        if: github.repository != 'Niduus/Imlight'
+        shell: pwsh
+        run: |
+          Write-Error "Live patches are published from Niduus/Imlight only."
+          exit 1
+
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.402'
+
+      - name: Anything new in the server's code?
+        id: changed
+        shell: pwsh
+        run: |
+          $numbers = @(git tag --list 'live-v*' | ForEach-Object { if ($_ -match '^live-v(\d+)$') { [int]$Matches[1] } })
+          $app = git describe --tags --abbrev=0 --match 'v[0-9]*' HEAD 2>$null
+          $last = if ($numbers.Count -gt 0) { "live-v$(($numbers | Measure-Object -Maximum).Maximum)" } else { '' }
+          $new = $true
+          foreach ($point in @($last, $app) | Where-Object { $_ }) {
+            git diff --quiet $point HEAD -- src/Imlight.CoreLib src/Imlight.Setup/SpellSupport.cs
+            if ($LASTEXITCODE -eq 0) { $new = $false }
+          }
+          "new=$($new.ToString().ToLower())" >> $env:GITHUB_OUTPUT
+          "app=$app" >> $env:GITHUB_OUTPUT
+          "from=$(if ($last) { $last } else { $app })" >> $env:GITHUB_OUTPUT
+          Write-Host "Server code new since $last / $app : $new"
+          if (-not $new) { Write-Host "::notice::Nothing in the server's code changed since the last live patch or full release, so nothing is published." }
+
+      - name: Generator inputs
+        if: env.GENERATOR_INPUTS != '' && steps.changed.outputs.new == 'true'
+        shell: pwsh
+        run: ./tools/live-patch-check/generator-inputs.ps1
+
+      - name: Check that it goes in live
+        if: env.GENERATOR_INPUTS != '' && steps.changed.outputs.new == 'true' && steps.changed.outputs.app != ''
+        shell: pwsh
+        run: |
+          ./tools/live-patch-check/check.ps1 -Base "${{ steps.changed.outputs.app }}" -Strict
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
+      - name: Work out the number
+        if: steps.changed.outputs.new == 'true'
+        id: number
+        shell: pwsh
+        run: |
+          $numbers = @(git tag --list 'live-v*' | ForEach-Object { if ($_ -match '^live-v(\d+)$') { [int]$Matches[1] } })
+          $last = if ($numbers.Count -gt 0) { ($numbers | Measure-Object -Maximum).Maximum } else { 0 }
+          $next = $last + 1
+          "number=$next" >> $env:GITHUB_OUTPUT
+          "tag=live-v$next" >> $env:GITHUB_OUTPUT
+
+      - name: Pack the server's code
+        if: steps.changed.outputs.new == 'true'
+        shell: pwsh
+        run: |
+          $stage = Join-Path $env:RUNNER_TEMP 'live-patch'
+          $root = (Resolve-Path .).Path
+          $files = @(Get-ChildItem src/Imlight.CoreLib -Recurse -File | Where-Object { $_.FullName -notmatch '[\\/](bin|obj)[\\/]' -and $_.Extension -eq '.cs' })
+          $files += Get-Item src/Imlight.Setup/SpellSupport.cs
+          foreach ($file in $files) {
+            $relative = [IO.Path]::GetRelativePath($root, $file.FullName)
+            $target = Join-Path $stage $relative
+            New-Item -ItemType Directory -Force (Split-Path $target) | Out-Null
+            Copy-Item $file.FullName $target
+          }
+          @{ number = [int]"${{ steps.number.outputs.number }}"; commit = "${{ github.sha }}"; made = (Get-Date).ToUniversalTime().ToString('o') } |
+            ConvertTo-Json | Set-Content (Join-Path $stage 'live-patch.json') -Encoding utf8NoBOM
+          New-Item -ItemType Directory -Force release | Out-Null
+          Compress-Archive -Path "$stage/*" -DestinationPath release/live-patch.zip
+
+      - name: Publish the live patch
+        if: steps.changed.outputs.new == 'true'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "${{ steps.number.outputs.tag }}"
+          $from = "${{ steps.changed.outputs.from }}"
+          $changes = if ($from) { @(& ./tools/release-notes.ps1 -From $from -To HEAD | Where-Object { $_ } | ForEach-Object { "- $_" }) } else { @() }
+          $line = "${{ inputs.note }}".Trim()
+          if ($line) { $changes = @("- $line") + $changes }
+          if (-not $changes) { $changes = @("- Server fixes.") }
+          $notes = "## Live patch changes`n" + ($changes -join "`n") + "`n`nServers with Live patches on take this within 10 minutes without a restart. Servers with it off get these fixes with the next full update."
+          $notesFile = Join-Path $env:RUNNER_TEMP 'live-notes.md'
+          Set-Content -Path $notesFile -Value $notes -Encoding utf8NoBOM
+          gh release create $tag release/live-patch.zip --title "Live patch ${{ steps.number.outputs.number }}" `
+            --notes-file $notesFile --target "${{ github.sha }}" --latest=false

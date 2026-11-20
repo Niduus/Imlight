@@ -685,6 +685,11 @@ internal sealed class SetupSteps : IDisposable {
         // Run from the source folder so its global.json picks the .NET 10 SDK even when a newer one is installed:
         // Imcodec builds an MSBuild task against the running SDK's own MSBuild, which only compiles on .NET 10.
         string[] publish = ["publish", project, "-c", "Release", "-r", RuntimeIdentifier(), "--self-contained", "true", "-o", staging, "-nologo"];
+        // Ahziael's Live patches switch (off by default): the server part is built so fixes can go into it while it runs.
+        if (File.Exists(Path.Combine(_options.InstallFolder, ServerManager.LIVE_PATCHES_ON_FILE))) {
+            SetupLog.Info("Live patches are on, so the server is built ready for fixes that go in without a restart.");
+            publish = [.. publish, "-p:LivePatches=true"];
+        }
         var exitCode = await ProcessRunner.RunAsync(dotnet, publish, showProgress: true, workingDirectory: SourceFolder);
         if (exitCode != 0 && reused) {
             // The last build's leftovers are never a reason for an update to fail: the whole server is built again.

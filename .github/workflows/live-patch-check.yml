@@ -1,0 +1,61 @@
+# Live patch check (Niduus, 2026-11-20): every pull request that changes the server's own code (src/Imlight.CoreLib) is
+# tried as a live patch on a server built from the last full release, so it says before merging whether the fix can go
+# into running servers without a restart ("can go live") or has to wait for a full update ("needs a full update", with
+# the reason, e.g. a deleted field: keep the old one instead and it goes live).
+#
+# It never blocks a merge: a fix that needs a full update is still a fine fix; it shows as a warning on the pull request.
+# It needs the IMCODEC_GENERATOR_INPUTS secret (the game's network message files) to build a server; without it, the cloud
+# threads run tools/live-patch-check/check.ps1 themselves before merging.
+name: Live patch check
+
+on:
+  pull_request:
+    branches: [quality-assurance]
+    paths:
+      - 'src/Imlight.CoreLib/**'
+      - 'src/Imlight.Setup/SpellSupport.cs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-patch-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Can it go live?
+    runs-on: windows-latest
+    env:
+      GENERATOR_INPUTS: ${{ secrets.IMCODEC_GENERATOR_INPUTS }}
+    steps:
+      - name: Without the generator inputs secret
+        if: env.GENERATOR_INPUTS == ''
+        shell: pwsh
+        run: Write-Host "::notice::IMCODEC_GENERATOR_INPUTS is not set, so the live patch check can't build a server here."
+
+      - uses: actions/checkout@v5
+        if: env.GENERATOR_INPUTS != ''
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v5
+        if: env.GENERATOR_INPUTS != ''
+        with:
+          dotnet-version: '10.0.402'
+
+      - name: Generator inputs
+        if: env.GENERATOR_INPUTS != ''
+        shell: pwsh
+        run: ./tools/live-patch-check/generator-inputs.ps1
+
+      - name: Try it as a live patch
+        if: env.GENERATOR_INPUTS != ''
+        shell: pwsh
+        run: |
+          $base = git describe --tags --abbrev=0 --match 'v[0-9]*' HEAD 2>$null
+          if (-not $base) { Write-Host "::notice::No full release to start from."; exit 0 }
+          ./tools/live-patch-check/check.ps1 -Base $base
+          exit 0

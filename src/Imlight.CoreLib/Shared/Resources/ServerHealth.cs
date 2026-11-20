@@ -18,6 +18,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Threading;
 using Imlight.Common;
 
@@ -41,12 +42,43 @@ public static class ServerHealth {
     private static int s_lastGen0, s_lastGen1, s_lastGen2;
     private static TimeSpan s_lastQuietLog = TimeSpan.Zero;
 
+    // The speed line (Niduus, 2026-11-20): every 10 minutes, the server's average CPU and how long path finding takes, with
+    // how the server was built ("patchable" for Live patches, else "fast"), so both builds can be compared on one PC.
+    private static readonly TimeSpan s_speedInterval = TimeSpan.FromMinutes(10);
+    private static readonly Stopwatch s_sinceSpeed = Stopwatch.StartNew();
+    private static TimeSpan s_speedCpu;
+    private static long s_routes;
+    private static long s_routeTicks;
+
+    /// <summary>One path search and how long it took (Stopwatch ticks).</summary>
+    internal static void CountRoute(long ticks) {
+        Interlocked.Increment(ref s_routes);
+        Interlocked.Add(ref s_routeTicks, ticks);
+    }
+
+    private static void SpeedLine(Process process) {
+        if (s_sinceSpeed.Elapsed < s_speedInterval) {
+            return;
+        }
+
+        var cpu = process.TotalProcessorTime;
+        var cpuPercent = (cpu - s_speedCpu).TotalMilliseconds / (s_sinceSpeed.Elapsed.TotalMilliseconds * Environment.ProcessorCount) * 100;
+        s_speedCpu = cpu;
+        s_sinceSpeed.Restart();
+        var routes = Interlocked.Exchange(ref s_routes, 0);
+        var ticks = Interlocked.Exchange(ref s_routeTicks, 0);
+        var build = typeof(ServerHealth).Assembly.GetCustomAttribute<DebuggableAttribute>() is { IsJITOptimizerDisabled: true } ? "patchable (Live patches)" : "fast";
+        Logger.Information("Speed: server built {0}; CPU {1:0.0}% of {2} cores over the last 10 minutes; {3} path searches, {4:0.00} ms each on average.",
+            Logger.Args(build, cpuPercent, Environment.ProcessorCount, routes, routes == 0 ? 0 : ticks * 1000.0 / Stopwatch.Frequency / routes));
+    }
+
     public static void Start() {
         if (s_timer is not null) {
             return;
         }
 
         s_lastCpu = Process.GetCurrentProcess().TotalProcessorTime;
+        s_speedCpu = s_lastCpu;
         s_timer = new Timer(_ => Sample(), null, s_interval, s_interval);
     }
 
@@ -82,6 +114,7 @@ public static class ServerHealth {
                         gc.HeapSizeBytes / 1048576, gc.FragmentedBytes / 1048576, gc.TotalCommittedBytes / 1048576));
             }
 
+            SpeedLine(process);
             s_lastGen0 = gen0;
             s_lastGen1 = gen1;
             s_lastGen2 = gen2;

@@ -54,7 +54,7 @@
     <PackageReference Include="Akka" Version="1.5.33" />
     <PackageReference Include="Akka.Logger.Serilog" Version="1.5.25" />
     <PackageReference Include="Akka.Remote" Version="1.5.33" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
     <PackageReference Include="Serilog" Version="2.12.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
   </ItemGroup>
@@ -71,6 +71,18 @@
     <Copy SourceFiles="@(BotsAssembly)" DestinationFolder="$(OutDir)bots" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(BotsAssembly->'%(RootDir)%(Directory)%(Filename).pdb')" DestinationFolder="$(OutDir)bots" SkipUnchangedFiles="true"
           Condition="Exists('@(BotsAssembly->'%(RootDir)%(Directory)%(Filename).pdb')')" />
+  </Target>
+
+  <!-- Live patches (Game/LivePatches): how this server was built, for Ahziael ("patchable" or "fast"; Ahziael starts a
+       patchable one ready for patches), and, for a patchable one, the server part's code it was built from. -->
+  <Target Name="LivePatchesToPublish" AfterTargets="Publish">
+    <WriteLinesToFile File="$(PublishDir)live-patches/build.txt" Lines="patchable" Overwrite="true" Condition="'$(LivePatches)' == 'true'" />
+    <WriteLinesToFile File="$(PublishDir)live-patches/build.txt" Lines="fast" Overwrite="true" Condition="'$(LivePatches)' != 'true'" />
+    <ItemGroup Condition="'$(LivePatches)' == 'true'">
+      <_LiveBaseline Include="..\Imlight.CoreLib\obj\live-patch-baseline\**\*" />
+    </ItemGroup>
+    <RemoveDir Directories="$(PublishDir)live-patches/baseline" Condition="'$(LivePatches)' == 'true'" />
+    <Copy SourceFiles="@(_LiveBaseline)" DestinationFiles="@(_LiveBaseline->'$(PublishDir)live-patches/baseline/%(RecursiveDir)%(Filename)%(Extension)')" Condition="'$(LivePatches)' == 'true'" />
   </Target>
 
   <Target Name="CopyBotsToPublish" AfterTargets="Publish">

@@ -48,6 +48,18 @@ internal static class InstalledCommands {
     internal static string ServerFolder(string installFolder)
         => RemoteSession.Current?.MirrorFolder ?? ServerSource.Load(installFolder).ServerFolder(installFolder);
 
+    /// <summary>How the server was built: "patchable" (Live patches on), "fast", or "" for a build from before live patches.</summary>
+    internal static string LivePatchBuild(string installFolder) {
+        try {
+            var path = Path.Combine(ServerFolder(installFolder), "live-patches", "build.txt");
+
+            return File.Exists(path) ? File.ReadAllText(path).Trim() : "";
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return "";
+        }
+    }
+
     internal static string ServerExe(string installFolder) => Path.Combine(ServerFolder(installFolder),
         RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Imlight.Director.exe" : "Imlight.Director");
 
@@ -79,6 +91,10 @@ internal static class InstalledCommands {
             WorkingDirectory = ServerFolder(installFolder),
             UseShellExecute = false,
         };
+        // A server built for live patches is started so .NET lets fixes into it while it runs (Game/LivePatches).
+        if (LivePatchBuild(installFolder) == "patchable") {
+            startInfo.Environment["DOTNET_MODIFIABLE_ASSEMBLIES"] = "debug";
+        }
         using var server = Process.Start(startInfo);
         if (server is null) {
             return Fail("The server could not be started.");
