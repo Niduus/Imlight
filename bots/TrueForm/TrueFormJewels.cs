@@ -170,11 +170,17 @@ internal static class TrueFormJewels {
         var best = 0.0;
         foreach (var key in jewel.TalentKeys) {
             var info = BotPetTalentStats.Of(key);
-            if (info is null || ids.Contains(PetData.TalentId(key)) || has.Any(h => SameTalent(h, info))) {
+            if (info is null) {
                 continue;
             }
 
-            best = Math.Max(best, BotPetTalentStats.Score(info, school, fallback ? BotStyle.Solo : style, need.AccuracyFull, need.PipsFull));
+            // A two-talent jewel (Lifesaver Jade: +4% outgoing and May Cast Pigsie) is out as a whole when either half repeats
+            // one of his talents (Niduus, 2026-11-20: "we really gotta make him spot the duo stat jewels next").
+            if (ids.Contains(PetData.TalentId(key)) || has.Any(h => SameTalent(h, info))) {
+                return 0;
+            }
+
+            best += BotPetTalentStats.Score(info, school, fallback ? BotStyle.Solo : style, need.AccuracyFull, need.PipsFull);
         }
 
         return best;

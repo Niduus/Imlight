@@ -443,6 +443,10 @@ internal static class BotGear {
             score += (piece.DeckSpells * 0.6) + (ownDeck ? piece.DeckSchoolCopies * 3 : 0);
         }
 
+        // What its sockets add once filled, while a setup counts them (True Form: a level 190 piece's sockets against an
+        // older piece's bigger stats).
+        score += SocketWorth?.Invoke(piece) ?? 0;
+
         // Its own school's piece wins a tie.
         if (piece.School.Equals(school, StringComparison.OrdinalIgnoreCase) || piece.SchoolNeeded.Equals(school, StringComparison.OrdinalIgnoreCase)) {
             score *= 1.05;
@@ -452,6 +456,10 @@ internal static class BotGear {
     }
 
     /// <summary>How good a list of stats is for a wizard of this school and style (a piece's, or a jewel's).</summary>
+    /// <summary>While set, what a piece's sockets add once filled with the best jewels.</summary>
+    [ThreadStatic]
+    internal static Func<Piece, double> SocketWorth;
+
     /// <summary>While set, power pip chance counts for nothing (the rest of the outfit already reaches 100%).</summary>
     [ThreadStatic]
     internal static bool NoPips;

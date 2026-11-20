@@ -607,7 +607,10 @@ internal static class TrueFormMaker {
         // Only the top level's gear in each slot (Niduus, 2026-11-19: "TF is using non-190 gear"): a lower piece with bigger
         // stats than a level 190 one used to win, as the 190 piece's sockets were empty. Now the 190 piece is worn and its
         // sockets are filled (TrueFormJewels). A slot with no piece at his level wears the highest level there is.
-        static bool Allowed(BotGear.Piece p) => !p.CrownsOnly && !p.Retired && !BotGear.Forbidden(p.Id) && !BotGear.PartlyRead(p.Id)
+        // A full setup (healing, tank, glass, universal) takes crowns pieces too: the best for one stat is often one (Niduus,
+        // 2026-11-20: "Sword of Kings (Life) literally gives 25").
+        var full = statSchool.Length == 0 || style is BotStyle.FullHealer or BotStyle.FullTank or BotStyle.GlassCannon or BotStyle.UniversalHitter;
+        bool Allowed(BotGear.Piece p) => (full || !p.CrownsOnly) && !p.Retired && !BotGear.Forbidden(p.Id) && !BotGear.PartlyRead(p.Id)
                                                 && !IsRental(CoreObjectFactory.GetCoreTemplate(p.Id) as WizItemTemplate);
         // The server's drop and shop lists have no Ahmarra gear yet, so the level 190 pieces come from the game's own files
         // (TrueFormTopGear; Niduus, 2026-11-19: "curious as to why not 190 gear"). Read once, up to a few minutes the first time.
@@ -617,6 +620,30 @@ internal static class TrueFormMaker {
             top = TrueFormTopGear.Pieces;
         }
 
+        // A piece counts with its sockets filled (Niduus, 2026-11-20: the full healer picked older pieces with no sockets,
+        // 21 sockets down to 9): each socket adds the best jewel of its shape for this setup.
+        var bestJewel = BotJewels.All.Where(j => j.Shape != JewelSocketType.SOCKETTYPE_PET).GroupBy(j => j.Shape)
+            .ToDictionary(g => g.Key, g => g.Max(j => Math.Max(0, BotGear.ScoreStats(j.Stats.Where(st => st.Kind != "FlatDamage"), statSchool, style))));
+        var socketWorth = new System.Collections.Generic.Dictionary<uint, double>();
+        BotGear.SocketWorth = p => {
+            if (!socketWorth.TryGetValue(p.Id, out var worth)) {
+                worth = JewelSockets.GetSockets(CoreObjectFactory.GetCoreTemplate(p.Id) as WizItemTemplate)
+                    .Sum(sk => sk is not null && bestJewel.TryGetValue(sk.m_socketType, out var w) ? w : 0);
+                socketWorth[p.Id] = worth;
+            }
+
+            return worth;
+        };
+        try {
+            DressWith(wizard, level, school, style, statSchool, top, Allowed);
+        }
+        finally {
+            BotGear.SocketWorth = null;
+        }
+    }
+
+    private static void DressWith(Wizard wizard, int level, string school, BotStyle style, string statSchool,
+        System.Collections.Generic.IReadOnlyList<BotGear.Piece> top, Func<BotGear.Piece, bool> Allowed) {
         var pool = BotGear.Catalog.Concat(top ?? []).DistinctBy(p => p.Id).ToList();
         var topOf = pool.Where(p => Allowed(p) && BotGear.CanWear(p, school, level) && BotGear.Score(p, statSchool, style) > 0)
             .GroupBy(p => p.Slot).ToDictionary(g => g.Key, g => g.Max(p => p.Level));

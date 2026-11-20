@@ -40,7 +40,9 @@ namespace Imlight.CoreLib.Game.Ultimus;
 internal static class TrueFormTopGear {
 
     private const string FILE = "top-gear.txt";
-    private const int FROM_LEVEL = 180;
+    // Every level (Niduus, 2026-11-20: "not all the best gear is at level cap"; "Sword of Kings (Life) literally gives 25"):
+    // his full setups pick from all of it; his own setup still keeps to the top level (TrueFormMaker.Dress).
+    private const int FROM_LEVEL = 0;
 
     private static volatile List<BotGear.Piece> s_pieces;
     private static volatile List<uint> s_jewels;
@@ -102,6 +104,18 @@ internal static class TrueFormTopGear {
         }
     }
 
+    // A piece a wizard dresses in (hat, robe, boots, wand, athame, amulet, ring, deck), with stats: only those are kept, as
+    // every level is read now.
+    private static bool IsGear(WizItemTemplate template) {
+        try {
+            return template is not ItemBundleTemplate && ItemHelper.GetItemSlot(template) is { } slot && BotGear.Slots.Contains(slot.SlotType)
+                   && (template.m_equipEffects?.Count ?? 0) > 0;
+        }
+        catch (Exception) {
+            return false;
+        }
+    }
+
     private static string CachePath => Path.Combine(UltimusSeat.TrueForm.Folder, FILE);
 
     private static void Read() {
@@ -115,7 +129,7 @@ internal static class TrueFormTopGear {
                 return;
             }
 
-            var stamp = $"templates {templates.Count} with jewels, sets and mounts";
+            var stamp = $"templates {templates.Count} with jewels, sets and mounts, all levels";
             List<uint> ids = null;
             List<uint> jewels = [];
             List<SetPiece> sets = [];
@@ -160,7 +174,7 @@ internal static class TrueFormTopGear {
                             if (JewelSockets.IsJewel(template)) {
                                 jewels.Add((uint) location.m_id);
                             }
-                            else if (BotGear.LevelNeeded(template) >= FROM_LEVEL) {
+                            else if (BotGear.LevelNeeded(template) >= FROM_LEVEL && IsGear(template)) {
                                 ids.Add((uint) location.m_id);
                             }
                         }
@@ -180,7 +194,7 @@ internal static class TrueFormTopGear {
                 }
             }
 
-            var pieces = ids.Select(BotGear.Read).Where(p => p is not null && !p.CrownsOnly && !p.Retired).ToList();
+            var pieces = ids.Select(BotGear.Read).Where(p => p is not null && !p.Retired).ToList();
             s_jewels = jewels;
             s_setPieces = sets;
             s_mounts = mounts;
