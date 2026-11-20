@@ -265,8 +265,14 @@ internal static class TrueFormMaker {
             resist = With(resist, next);
         }
 
-        Logger.Information("True Form: Universal Immunity pet talents: {0}; resist with them: {1}.",
-            Logger.Args(string.Join(", ", picked.Take(PET_TALENTS).Select(t => t.Shown)), string.Join(", ", resist.Select(x => $"{x.Key} {x.Value:0}%"))));
+        // What the five on his pet give (the log once showed all fifteen picks, 103% everywhere, while he reached 93%).
+        var onPet = WornResist(wizard, withPetTalents: false, withJewels: false);
+        foreach (var t in picked.Take(PET_TALENTS)) {
+            onPet = With(onPet, t);
+        }
+
+        Logger.Information("True Form: Universal Immunity pet talents: {0}; resist from gear and these five (before jewels): {1}.",
+            Logger.Args(string.Join(", ", picked.Take(PET_TALENTS).Select(t => t.Shown)), string.Join(", ", onPet.Select(x => $"{x.Key} {x.Value:0}%"))));
         return picked;
     }
 
