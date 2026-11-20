@@ -72,17 +72,72 @@ internal sealed class UltimusSeat {
     /// </summary>
     internal static readonly UltimusSeat TrueForm = new("TrueForm", "True Form of Kitharas", "Myth", TRUE_FORM_FOLDER, "TrueForm-Ahziael", 8);
 
-    /// <summary>Every seat: Ultimus first, then the TCO7, then True Form.</summary>
-    internal static readonly UltimusSeat[] All = [Ultimus, .. Tco7, TrueForm];
+    /// <summary>The team name of the TCO7: their settings section ([TCO7]) and what the bots call them.</summary>
+    internal const string TCO7_TEAM = "TCO7";
 
-    private UltimusSeat(string key, string name, string role, string folder, string username, int index) {
+    /// <summary>The Kitharas Family's team name: their settings section ([Kitharas]).</summary>
+    internal const string KITHARAS_TEAM = "Kitharas";
+
+    /// <summary>Where the Kitharas Family keep their folders, inside the server's logs folder.</summary>
+    internal const string KITHARAS_FOLDER = "logs/kitharas";
+
+    // Seat numbers of the Kitharas Family start after this one (Ultimus 0, TCO7 1-7, True Form 8; 51-70 are the family).
+    private const int KITHARAS_BASE = 50;
+
+    /// <summary>How many of the Kitharas Family may play at once when [Kitharas] Count is not set (PC load: 5 to start).</summary>
+    internal const int KITHARAS_DEFAULT_COUNT = 5;
+
+    /// <summary>
+    /// The Kitharas Family (Niduus, 2026-11-20: "New Bots: All function the same with the same purpose as TCO7", random
+    /// classes): twenty more seats of Ultimus's brain, each exactly as a TCO7 member. They read everything Ultimus and the Hive
+    /// mind know, talk with each other, team up when two are on the same quest or quest alone, and think for themselves. Their
+    /// schools were drawn at random once (2026-11-20) and stay with them. The short name is what a player says to call one
+    /// ("Moon, heal me"), since "Kitharas" alone would call all twenty.
+    /// </summary>
+    internal static readonly UltimusSeat[] Kitharas = [
+        Family("KitharasMoon", "Kitharas Moon", "Moon", "Ice", 1),
+        Family("KitharasHart", "Kitharas Hart", "Hart", "Ice", 2),
+        Family("KitharasRock", "Kitharas Rock", "Rock", "Storm", 3),
+        Family("KitharasAndromeda", "Kitharas Andromeda", "Andromeda", "Fire", 4),
+        Family("KitharasHydra", "Kitharas Hydra", "Hydra", "Ice", 5),
+        Family("KitharasJackle", "Kitharas Jackle", "Jackle", "Balance", 6),
+        Family("KitharasLamia", "Kitharas Lamia", "Lamia", "Fire", 7),
+        Family("KitharasLibra", "Kitharas Libra", "Libra", "Myth", 8),
+        Family("KitharasShade", "Kitharas Shade", "Shade", "Storm", 9),
+        Family("KitharasWraith", "Kitharas Wraith", "Wraith", "Fire", 10),
+        Family("LumeriaOfKitharas", "Lumeria of Kitharas", "Lumeria", "Myth", 11),
+        Family("KitharasConsumer", "Kitharas Consumer", "Consumer", "Balance", 12),
+        Family("KitharasMordiael", "Kitharas Mordiael", "Mordiael", "Storm", 13),
+        Family("KitharasDevourer", "Kitharas Devourer", "Devourer", "Storm", 14),
+        Family("KitharasHexation", "Kitharas Hexation", "Hexation", "Myth", 15),
+        Family("KitharasSentence", "Kitharas Sentence", "Sentence", "Balance", 16),
+        Family("KitharasWasSilenced", "Kitharas Was Silenced", "Silenced", "Storm", 17),
+        Family("CrimesAgainstKitharas", "Crimes Against Kitharas", "Crimes", "Myth", 18),
+        Family("KitharasUmbella", "Kitharas Umbella", "Umbella", "Life", 19),
+        Family("AlchemiZistOfKitharas", "AlchemiZist of Kitharas", "AlchemiZist", "Fire", 20),
+    ];
+
+    private static UltimusSeat Family(string key, string name, string call, string school, int n)
+        => new(key, name, school, $"{KITHARAS_FOLDER}/{call.ToLowerInvariant()}", "Kitharas-" + call, KITHARAS_BASE + n, call);
+
+    /// <summary>Every seat: Ultimus first, then the TCO7, then True Form, then the Kitharas Family.</summary>
+    internal static readonly UltimusSeat[] All = [Ultimus, .. Tco7, TrueForm, .. Kitharas];
+
+    private UltimusSeat(string key, string name, string role, string folder, string username, int index, string callName = null) {
         Key = key;
         Name = name;
         Role = role;
         FolderName = folder;
         Username = username;
         Index = index;
+        CallName = callName ?? name.Split(' ')[0];
     }
+
+    /// <summary>
+    /// The one word a player says to call this wizard: the first word of its name ("Tulkar"), or a Kitharas Family member's own
+    /// word ("Moon" for Kitharas Moon, "Crimes" for Crimes Against Kitharas).
+    /// </summary>
+    internal string CallName { get; }
 
     /// <summary>Its key (also its name): "Ultimus", "Tulkar", ...</summary>
     internal string Key { get; }
@@ -99,12 +154,47 @@ internal sealed class UltimusSeat {
     /// <summary>Its account's name (no password anyone knows).</summary>
     internal string Username { get; }
 
-    /// <summary>0 for Ultimus, 1-7 for the TCO7.</summary>
+    /// <summary>0 for Ultimus, 1-7 for the TCO7, 8 for True Form, 51-70 for the Kitharas Family.</summary>
     internal int Index { get; }
 
     internal bool IsUltimus => Index == 0;
 
     internal bool IsTco7 => Index is > 0 and <= 7;
+
+    /// <summary>A member of the Kitharas Family (<see cref="Kitharas"/>).</summary>
+    internal bool IsKitharas => Index is > KITHARAS_BASE and <= KITHARAS_BASE + 20;
+
+    /// <summary>A Kitharas Family member's number, 1 to 20 (0 for any other seat).</summary>
+    internal int Number => IsKitharas ? Index - KITHARAS_BASE : 0;
+
+    /// <summary>
+    /// Its team: "TCO7" or "Kitharas" (the [TCO7] or [Kitharas] settings section), null for Ultimus and True Form. A team
+    /// member talks with, teams up with and holds a council with its own team (the Kitharas Family work the same as the TCO7).
+    /// </summary>
+    internal string Team => IsTco7 ? TCO7_TEAM : IsKitharas ? KITHARAS_TEAM : null;
+
+    /// <summary>A member of a team (TCO7 or the Kitharas Family): plays as the TCO7 do on top of Ultimus.</summary>
+    internal bool IsTeamBot => Team is not null;
+
+    /// <summary>Its team's members, itself included (empty for Ultimus and True Form).</summary>
+    internal UltimusSeat[] Mates => IsTco7 ? Tco7 : IsKitharas ? Kitharas : [];
+
+    /// <summary>Another seat of the same team (two TCO7 members, or two of the Kitharas Family).</summary>
+    internal bool SameTeam(UltimusSeat other) => other is not null && other != this && Team is not null && Team == other.Team;
+
+    /// <summary>A team's members by its team name ("TCO7" or "Kitharas", any case), empty for any other.</summary>
+    internal static UltimusSeat[] TeamOf(string team)
+        => TCO7_TEAM.Equals(team, StringComparison.OrdinalIgnoreCase) ? Tco7
+            : KITHARAS_TEAM.Equals(team, StringComparison.OrdinalIgnoreCase) || "kf".Equals(team, StringComparison.OrdinalIgnoreCase)
+              || "family".Equals(team, StringComparison.OrdinalIgnoreCase) ? Kitharas : [];
+
+    /// <summary>
+    /// How many of the Kitharas Family may play now: [Kitharas] Count (5 unless set, so twenty wizards don't all start at once
+    /// on Niduus's PC), 0 while [Kitharas] Enabled is off. Live.
+    /// </summary>
+    internal static int KitharasCount => ConfigurationManager.GetValue(KITHARAS_TEAM + ".Enabled", false)
+        ? Math.Clamp(ConfigurationManager.GetValue(KITHARAS_TEAM + ".Count", KITHARAS_DEFAULT_COUNT), 0, Kitharas.Length)
+        : 0;
 
     /// <summary>True Form, the helper bot (bots/TrueForm).</summary>
     internal bool IsTrueForm => Index == 8;
@@ -116,7 +206,7 @@ internal sealed class UltimusSeat {
     internal string Folder => Path.GetFullPath(FolderName);
 
     /// <summary>"Ultimus" or "TCO7 member Tulkar", for the server log.</summary>
-    internal string LogName => IsUltimus ? "Ultimus" : IsTrueForm ? "True Form" : $"TCO7 {Name}";
+    internal string LogName => IsUltimus ? "Ultimus" : IsTrueForm ? "True Form" : IsKitharas ? Name : $"TCO7 {Name}";
 
     // "Ultimus" as a word of its own, not "[Ultimus]" (a settings section) and not part of a longer word.
     private static readonly System.Text.RegularExpressions.Regex s_ultimusWord = new(@"(?<![\[\w])Ultimus(?![\]\w])");
@@ -135,16 +225,28 @@ internal sealed class UltimusSeat {
         ? ConfigurationManager.GetValue("Ultimus.Enabled", false)
         // True Form: [TrueForm] Enabled, on unless turned off (Niduus asked for him to stand at his spot; live).
         : IsTrueForm ? ConfigurationManager.GetValue("TrueForm.Enabled", true)
+        // A Kitharas Family member: [Kitharas] Enabled, its own switches, and among the first [Kitharas] Count of those switched on.
+        : IsKitharas ? KitharasOn(this) && Kitharas.Where(KitharasOn).Take(KitharasCount).Contains(this)
         : ConfigurationManager.GetValue("TCO7.Enabled", false) && ConfigurationManager.GetValue("TCO7." + Name, true)
           && ConfigurationManager.GetValue(Section + ".Enabled", true);
 
-    /// <summary>Its own section in Imlight.ini: [Ultimus], or [TCO7-Tulkar] and so on (Ahziael's member page writes it).</summary>
-    internal string Section => IsUltimus ? "Ultimus" : IsTrueForm ? "TrueForm" : "TCO7-" + Name;
+    // A Kitharas Family member's own switches: [Kitharas] <Key> and [Kitharas-<Key>] Enabled, both on unless turned off.
+    private static bool KitharasOn(UltimusSeat seat)
+        => ConfigurationManager.GetValue(KITHARAS_TEAM + "." + seat.Key, true) && ConfigurationManager.GetValue(seat.Section + ".Enabled", true);
+
+    /// <summary>
+    /// Its own section in Imlight.ini: [Ultimus], [TCO7-Tulkar] and so on (Ahziael's member page writes it), or
+    /// [Kitharas-KitharasMoon] for the Kitharas Family.
+    /// </summary>
+    internal string Section => IsUltimus ? "Ultimus" : IsTrueForm ? "TrueForm" : IsKitharas ? KITHARAS_TEAM + "-" + Key : "TCO7-" + Name;
 
     /// <summary>The port of its mini server: Ultimus [Ultimus] Port (12373); the TCO7 [TCO7] Port (12381) and the next six.</summary>
     internal int Port => IsUltimus
         ? ConfigurationManager.GetValue("Ultimus.Port", 12373)
         : IsTrueForm ? Math.Clamp(ConfigurationManager.GetValue("TrueForm.Port", 12389), 1024, 65000)
+        // The Kitharas Family: [Kitharas] Port (12701) and the next nineteen (clear of the TCO7's, True Form's and 12410, the
+        // game's remote port).
+        : IsKitharas ? Math.Clamp(ConfigurationManager.GetValue(KITHARAS_TEAM + ".Port", 12701), 1024, 64000) + Number - 1
         : Math.Clamp(ConfigurationManager.GetValue("TCO7.Port", 12381), 1024, 65000) + Index - 1;
 
     /// <summary>
@@ -156,7 +258,7 @@ internal sealed class UltimusSeat {
 
         return IsUltimus ? his
             : IsTrueForm ? ConfigurationManager.GetValue(Section + "." + key, his)
-            : ConfigurationManager.GetValue(Section + "." + key, ConfigurationManager.GetValue("TCO7." + key, his));
+            : ConfigurationManager.GetValue(Section + "." + key, ConfigurationManager.GetValue(Team + "." + key, his));
     }
 
     public override string ToString() => Key;
@@ -178,7 +280,14 @@ internal sealed class UltimusSeat {
 
     /// <summary>The seat named (its key or name, any case), or null.</summary>
     internal static UltimusSeat ByKey(string key)
-        => string.IsNullOrWhiteSpace(key) ? null : All.FirstOrDefault(s => s.Key.Equals(key.Trim(), StringComparison.OrdinalIgnoreCase));
+        => string.IsNullOrWhiteSpace(key) ? null
+            : All.FirstOrDefault(s => s.Key.Equals(key.Trim(), StringComparison.OrdinalIgnoreCase))
+              ?? All.FirstOrDefault(s => s.Name.Equals(key.Trim(), StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>The seat a player names: its key, its full name or (a Kitharas Family member) its call word, any case; or null.</summary>
+    internal static UltimusSeat Named(string who)
+        => ByKey(who) ?? (string.IsNullOrWhiteSpace(who) ? null
+            : Kitharas.FirstOrDefault(s => s.CallName.Equals(who.Trim(), StringComparison.OrdinalIgnoreCase)));
 
     /// <summary>Works for <paramref name="seat"/> until the returned scope is disposed (then for the one before).</summary>
     internal static Scope Use(UltimusSeat seat) {
@@ -244,7 +353,7 @@ internal sealed class UltimusSeat {
     /// <summary>The seat whose wizard this game object is, or null.</summary>
     internal static UltimusSeat OfGlobal(ulong globalId) => globalId != 0 && s_byGlobal.TryGetValue(globalId, out var seat) ? seat : null;
 
-    /// <summary>Every character any seat plays (Ultimus and the TCO7).</summary>
+    /// <summary>Every character any seat plays (Ultimus, the TCO7, True Form and the Kitharas Family).</summary>
     internal static ICollection<ulong> Characters => s_byChar.Keys;
 
     // ---------------------------------------------------------------------

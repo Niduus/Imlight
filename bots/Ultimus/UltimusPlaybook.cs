@@ -306,7 +306,7 @@ internal static class UltimusPlaybook {
                 // they do what he does, then tune their own copy (Niduus, 2026-11-16: "Anything he does, everything under
                 // him is expected to do the same, if not better").
                 var his = Path.Combine(UltimusWire.SharedFolder, FILE);
-                if (UltimusSeat.Current.IsTco7 && File.Exists(his)) {
+                if (UltimusSeat.Current.IsTeamBot && File.Exists(his)) {
                     File.Copy(his, path);
                 }
                 else {

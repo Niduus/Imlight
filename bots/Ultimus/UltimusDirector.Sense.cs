@@ -347,7 +347,7 @@ internal sealed partial class UltimusDirectorActor {
         if (rivals.Count > 0) {
             text.AppendLine();
             // The creature book is shared by Ultimus and the TCO7, so a member's list is the whole team's (2026-11-16).
-            text.AppendLine(_seat.IsUltimus ? "RIVALS" : "RIVALS (the creature book Ultimus and the TCO7 share)");
+            text.AppendLine(_seat.IsUltimus ? "RIVALS" : "RIVALS (the creature book Ultimus and every bot under him share)");
             foreach (var rival in rivals) {
                 text.AppendLine("  " + rival.Describe());
             }

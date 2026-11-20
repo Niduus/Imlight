@@ -279,6 +279,11 @@ internal sealed partial class UltimusDirectorActor {
             names.Add(full.Split(' ')[0]);
         }
 
+        // A Kitharas Family member's own word ("Moon, heal me").
+        if (UltimusSeat.Current.IsKitharas) {
+            names.Add(UltimusSeat.Current.CallName);
+        }
+
         if (me.Name is { Length: > 0 } seatName) {
             names.Add(seatName);
         }

@@ -60,7 +60,7 @@ internal sealed partial class UltimusDirectorActor {
     /// </summary>
     private bool IsPartyMate(ulong charId)
         => charId != 0 && !QuestTeam.QuestTeamRoster.IsMember(charId)
-           && (!UltimusRoster.IsMember(charId) || (_seat.IsTco7 && UltimusSeat.OfCharacter(charId) is { IsTco7: true }));
+           && (!UltimusRoster.IsMember(charId) || _seat.SameTeam(UltimusSeat.OfCharacter(charId)));
 
     /// <summary>Whom he goes along with now (party mode), or "".</summary>
     private string PartyMateName => _partyMate == 0 ? "" : _partyMateName;
@@ -87,7 +87,7 @@ internal sealed partial class UltimusDirectorActor {
         // A TCO7 member's group mates may be other TCO7 members too (they team up, UltimusDirector.Tco7.cs). The one who
         // asked leads and plays his own story; the others go along with him as with a player.
         var players = group.Members.Where(m => m.CharId != leader.CharId && IsPartyMate(m.CharId)).ToList();
-        if (_seat.IsTco7 && group.LeaderCharId == leader.CharId && players.Count > 0 && players.All(m => UltimusRoster.IsMember(m.CharId))) {
+        if (_seat.IsTeamBot && group.LeaderCharId == leader.CharId && players.Count > 0 && players.All(m => UltimusRoster.IsMember(m.CharId))) {
             return Tco7Leading(leader, players);
         }
 

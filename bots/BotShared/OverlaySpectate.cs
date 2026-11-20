@@ -88,6 +88,7 @@ internal static class OverlaySpectate {
         using var seatScope = Ultimus.UltimusSeat.Use(seat);
         if (!Ultimus.UltimusWire.Enabled) {
             return RemoteAdminWire.Error(seat.IsUltimus ? "Ultimus is off on this server. Turn him on in Ahziael (Ultimus page) to watch him."
+                : seat.IsKitharas ? $"{seat.Name} is off on this server. Turn the Kitharas Family on with .kitharas on to watch them."
                 : $"{seat.Name} is off on this server. Turn the TCO7 on in Ahziael (TCO7 page) to watch them.");
         }
 
@@ -347,7 +348,7 @@ internal static class OverlaySpectate {
         try {
             foreach (var p in OnlinePlayerCollection.GetCachedOnlinePlayers().Where(p => p.CharacterId != 0)) {
                 var seat = Ultimus.UltimusSeat.OfCharacter(p.CharacterId);
-                var kind = seat is { IsUltimus: true } ? "Ultimus" : seat is not null ? "TCO7"
+                var kind = seat is { IsUltimus: true } ? "Ultimus" : seat is { IsKitharas: true } ? "Kitharas Family" : seat is not null ? "TCO7"
                     : QuestTeam.QuestTeamRoster.IsMember(p.CharacterId) ? "Quest Team" : "Player";
                 var name = PlayerCheats.LiveName(p.CharacterId) is { Length: > 0 } live ? live : p.WizardName ?? "?";
                 list.Add(new Someone(p.CharacterId, name, kind, seat?.Role ?? p.School ?? ""));
@@ -357,7 +358,7 @@ internal static class OverlaySpectate {
             // The list changed while read: read again next time.
         }
 
-        static int Order(Someone s) => s.Kind switch { "Ultimus" => 0, "TCO7" => 1, "Quest Team" => 2, _ => 3 };
+        static int Order(Someone s) => s.Kind switch { "Ultimus" => 0, "TCO7" => 1, "Kitharas Family" => 2, "Quest Team" => 3, _ => 4 };
         return [.. list.DistinctBy(s => s.Id).OrderBy(Order).ThenBy(s => Ultimus.UltimusSeat.OfCharacter(s.Id)?.Index ?? 0).ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase)];
     }
 

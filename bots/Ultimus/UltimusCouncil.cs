@@ -47,10 +47,23 @@ internal static class UltimusCouncil {
     /// <summary>A majority of the seven (Niduus: "4/7").</summary>
     internal const int MAJORITY = 4;
 
+    // The teams that hold a council: the TCO7, and the Kitharas Family (Niduus, 2026-11-20: they work the same as the TCO7),
+    // each from its own members' records into its own files (kitharas-council.txt, kitharas-council.json, kitharas-efficiency.txt).
+    private static readonly string[] s_teams = [UltimusSeat.TCO7_TEAM, UltimusSeat.KITHARAS_TEAM];
+
+    private static string FileOf(string team, string file)
+        => team == UltimusSeat.TCO7_TEAM ? file : file.Replace("tco7-", team.ToLowerInvariant() + "-", StringComparison.Ordinal);
+
+    // What a team calls itself in its council's words.
+    private static string TeamName(string team) => team == UltimusSeat.TCO7_TEAM ? "TCO7" : "Kitharas Family";
+
+    /// <summary>A majority of a team: 4 of the TCO7's 7 (Niduus: "4/7"), 11 of the Kitharas Family's 20.</summary>
+    private static int MajorityOf(string team) => team == UltimusSeat.TCO7_TEAM ? MAJORITY : UltimusSeat.TeamOf(team).Length / 2 + 1;
+
     private static readonly TimeSpan s_every = TimeSpan.FromMinutes(10);
     private static readonly object s_lock = new();
     private static DateTime s_next = DateTime.MinValue;
-    private static Dictionary<string, List<Finding>> s_byQuest = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly Dictionary<string, Dictionary<string, List<Finding>>> s_byTeam = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>One documented problem: a member completely stuck, or a problem the majority shares.</summary>
     internal sealed class Finding {
@@ -119,15 +132,17 @@ internal static class UltimusCouncil {
             s_next = DateTime.UtcNow + s_every;
         }
 
-        if (!ConfigurationManager.GetValue("TCO7.Enabled", false)) {
-            return;
-        }
+        foreach (var team in s_teams) {
+            if (!ConfigurationManager.GetValue(team + ".Enabled", false)) {
+                continue;
+            }
 
-        try {
-            Look();
-        }
-        catch (Exception e) when (e is IOException or UnauthorizedAccessException or JsonException) {
-            Logger.Warning("TCO7 council could not read the members' records: {0}", Logger.Args(e.Message));
+            try {
+                Look(team);
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException or JsonException) {
+                Logger.Warning("{0} council could not read the members' records: {1}", Logger.Args(TeamName(team), e.Message));
+            }
         }
     }
 
@@ -140,23 +155,27 @@ internal static class UltimusCouncil {
             return [];
         }
 
-        List<Finding> found;
+        // Every team's council counts for every seat (one book of knowledge for all; the seat's own team first).
+        var found = new List<(string Team, Finding F)>();
         lock (s_lock) {
-            if (s_byQuest.Count == 0) {
-                s_byQuest = Load();
-            }
+            foreach (var team in s_teams) {
+                if (!s_byTeam.TryGetValue(team, out var byQuest) || byQuest.Count == 0) {
+                    s_byTeam[team] = byQuest = Load(team);
+                }
 
-            found = s_byQuest.TryGetValue(quest, out var list) ? [.. list] : [];
+                found.AddRange((byQuest.TryGetValue(quest, out var list) ? list : []).Select(f => (team, f)));
+            }
         }
 
         var me = UltimusSeat.Current.Name;
+        var mine = UltimusSeat.Current.Team;
         var facts = new List<string>();
-        foreach (var f in found.OrderByDescending(f => f.Kind == "majority").Take(4)) {
+        foreach (var (team, f) in found.OrderByDescending(t => t.Team == mine).ThenByDescending(t => t.F.Kind == "majority").Take(4)) {
             var others = f.Had.Where(h => !h.Equals(me, StringComparison.OrdinalIgnoreCase)).ToList();
             facts.Add(f.Kind == "majority"
-                ? $"TCO7 council: {f.Had.Count} of 7 had this problem on this quest: {f.Problem}." +
+                ? $"{TeamName(team)} council: {f.Had.Count} of {UltimusSeat.TeamOf(team).Length} had this problem on this quest: {f.Problem}." +
                   (f.Past.Count > 0 ? $" Got past it: {string.Join(", ", f.Past)}." : " Nobody has got past it yet.")
-                : $"TCO7 council: {string.Join(", ", others.Count > 0 ? others : f.Had)} got completely stuck on this quest: {f.Problem}.");
+                : $"{TeamName(team)} council: {string.Join(", ", others.Count > 0 ? others : f.Had)} got completely stuck on this quest: {f.Problem}.");
             facts.AddRange(f.Lessons.Take(3).Select(l => "What worked for them: " + UltimusText.Short(l, 200)));
         }
 
@@ -165,11 +184,13 @@ internal static class UltimusCouncil {
 
     // ---------------------------------------------------------------------
 
-    private static void Look() {
+    private static void Look(string team) {
+        var members = UltimusSeat.TeamOf(team);
+        var size = members.Length;
         var issues = new Dictionary<string, List<IssueRow>>(StringComparer.OrdinalIgnoreCase);
         var times = new Dictionary<string, Dictionary<string, TimeRow>>(StringComparer.OrdinalIgnoreCase);
         var lessons = new Dictionary<string, List<(string Quest, string Lesson)>>(StringComparer.OrdinalIgnoreCase);
-        foreach (var seat in UltimusSeat.Tco7) {
+        foreach (var seat in members) {
             issues[seat.Name] = Read<List<IssueRow>>(Path.Combine(seat.Folder, UltimusWire.ISSUES_FILE)) ?? [];
             times[seat.Name] = new Dictionary<string, TimeRow>(Read<Dictionary<string, TimeRow>>(Path.Combine(seat.Folder, UltimusWire.QUEST_TIMES_FILE)) ?? [],
                 StringComparer.OrdinalIgnoreCase);
@@ -193,17 +214,17 @@ internal static class UltimusCouncil {
             var had = group.Select(r => r.Member).Distinct().OrderBy(Order).ToList();
             var title = group.Select(r => r.Issue.Title).FirstOrDefault(t => t.Length > 0) ?? quest;
             // The ones who got past it: they finished the quest and never had this problem on it.
-            var past = UltimusSeat.Tco7.Select(s => s.Name)
+            var past = members.Select(s => s.Name)
                 .Where(n => !had.Contains(n) && times[n].TryGetValue(quest, out var t) && t.Times > 0)
                 .Select(n => $"{n} ({Minutes(times[n][quest].Seconds)})").ToList();
-            var pastNames = UltimusSeat.Tco7.Select(s => s.Name).Where(n => past.Any(p => p.StartsWith(n + " ", StringComparison.Ordinal))).ToList();
+            var pastNames = members.Select(s => s.Name).Where(n => past.Any(p => p.StartsWith(n + " ", StringComparison.Ordinal))).ToList();
             var learned = pastNames.SelectMany(n => lessons[n].Where(l => l.Quest.Equals(quest, StringComparison.OrdinalIgnoreCase))
                     .Select(l => $"{n}: {l.Lesson}"))
                 .Distinct().TakeLast(5).ToList();
             var first = group.Min(r => r.Issue.At);
             var last = group.Max(r => r.Issue.At);
             var example = UltimusText.Short(group.OrderByDescending(r => r.Issue.At).First().Issue.Text, 300);
-            if (had.Count >= MAJORITY) {
+            if (had.Count >= MajorityOf(team)) {
                 findings.Add(new Finding {
                     Kind = "majority", Quest = quest, Title = title, Problem = group.Key.Problem, Had = had, Past = past, Lessons = learned,
                     Example = example, First = first, Last = last,
@@ -222,19 +243,19 @@ internal static class UltimusCouncil {
             .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
         List<Finding> before;
         lock (s_lock) {
-            before = s_byQuest.Count == 0 ? Load().Values.SelectMany(l => l).ToList() : s_byQuest.Values.SelectMany(l => l).ToList();
-            s_byQuest = byQuest;
+            before = (s_byTeam.TryGetValue(team, out var had) && had.Count > 0 ? had : Load(team)).Values.SelectMany(l => l).ToList();
+            s_byTeam[team] = byQuest;
         }
 
         Directory.CreateDirectory(UltimusWire.SharedFolder);
-        Write(Path.Combine(UltimusWire.SharedFolder, DATA_FILE), JsonSerializer.Serialize(findings, new JsonSerializerOptions { WriteIndented = true }));
-        Write(Path.Combine(UltimusWire.SharedFolder, FILE), Report(findings));
-        Write(Path.Combine(UltimusWire.SharedFolder, EFFICIENCY_FILE), Efficiency(times, his));
+        Write(Path.Combine(UltimusWire.SharedFolder, FileOf(team, DATA_FILE)), JsonSerializer.Serialize(findings, new JsonSerializerOptions { WriteIndented = true }));
+        Write(Path.Combine(UltimusWire.SharedFolder, FileOf(team, FILE)), Report(team, findings));
+        Write(Path.Combine(UltimusWire.SharedFolder, FileOf(team, EFFICIENCY_FILE)), Efficiency(team, times, his));
 
         // Each new finding is noted once in the server log, so it is in front of Niduus too.
         foreach (var f in findings.Where(f => !before.Any(b => b.Kind == f.Kind && b.Quest.Equals(f.Quest, StringComparison.OrdinalIgnoreCase) && b.Problem == f.Problem))) {
-            Logger.Information("TCO7 council: {0} on {1}: {2} ({3}){4}", Logger.Args(
-                f.Kind == "majority" ? $"{f.Had.Count} of 7 share a problem" : "completely stuck", f.Title, f.Problem, string.Join(", ", f.Had),
+            Logger.Information("{0} council: {1} on {2}: {3} ({4}){5}", Logger.Args(TeamName(team),
+                f.Kind == "majority" ? $"{f.Had.Count} of {size} share a problem" : "completely stuck", f.Title, f.Problem, string.Join(", ", f.Had),
                 f.Past.Count > 0 ? $"; got past it: {string.Join(", ", f.Past)}" : ""));
         }
     }
@@ -252,10 +273,12 @@ internal static class UltimusCouncil {
 
     private static int Order(string name) => UltimusSeat.ByKey(name)?.Index ?? 99;
 
-    private static string Report(List<Finding> findings) {
+    private static string Report(string team, List<Finding> findings) {
+        var name = TeamName(team);
+        var size = UltimusSeat.TeamOf(team).Length;
         var text = new StringBuilder();
-        text.AppendLine($"TCO7 COUNCIL  (written {DateTime.Now:yyyy-MM-dd HH:mm})");
-        text.AppendLine("What got the TCO7 completely stuck, and each problem 4 or more of the 7 share, with what the ones who got past it did.");
+        text.AppendLine($"{name.ToUpperInvariant()} COUNCIL  (written {DateTime.Now:yyyy-MM-dd HH:mm})");
+        text.AppendLine($"What got the {name} completely stuck, and each problem {MajorityOf(team)} or more of the {size} share, with what the ones who got past it did.");
         text.AppendLine("Ultimus and every member read these on that quest when they get stuck.");
         text.AppendLine();
         var majority = findings.Where(f => f.Kind == "majority").OrderByDescending(f => f.Last).ToList();
@@ -266,7 +289,7 @@ internal static class UltimusCouncil {
 
         foreach (var f in majority) {
             text.AppendLine($"  {f.Title}: {f.Problem}");
-            text.AppendLine($"    Had it ({f.Had.Count} of 7): {string.Join(", ", f.Had)}");
+            text.AppendLine($"    Had it ({f.Had.Count} of {size}): {string.Join(", ", f.Had)}");
             text.AppendLine($"    Got past it: {(f.Past.Count > 0 ? string.Join(", ", f.Past) : "nobody yet")}");
             foreach (var lesson in f.Lessons) {
                 text.AppendLine($"    What worked: {lesson}");
@@ -293,12 +316,13 @@ internal static class UltimusCouncil {
     }
 
     // Each member's pace, and each quest three or more of them finished, against Ultimus's time.
-    private static string Efficiency(Dictionary<string, Dictionary<string, TimeRow>> times, Dictionary<string, TimeRow> his) {
+    private static string Efficiency(string team, Dictionary<string, Dictionary<string, TimeRow>> times, Dictionary<string, TimeRow> his) {
+        var name = TeamName(team);
         var text = new StringBuilder();
-        text.AppendLine($"TCO7 EFFICIENCY  (written {DateTime.Now:yyyy-MM-dd HH:mm})");
+        text.AppendLine($"{name.ToUpperInvariant()} EFFICIENCY  (written {DateTime.Now:yyyy-MM-dd HH:mm})");
         text.AppendLine();
         text.AppendLine("EACH MEMBER (quests finished, average time a quest, quests faster than Ultimus / slower)");
-        foreach (var seat in UltimusSeat.Tco7) {
+        foreach (var seat in UltimusSeat.TeamOf(team)) {
             var mine = times[seat.Name].Where(t => t.Value.Times > 0 && t.Value.Seconds > 0).ToList();
             var faster = mine.Count(t => his.TryGetValue(t.Key, out var h) && h.Seconds > 0 && t.Value.Seconds < h.Seconds);
             var slower = mine.Count(t => his.TryGetValue(t.Key, out var h) && h.Seconds > 0 && t.Value.Seconds > h.Seconds);
@@ -314,14 +338,14 @@ internal static class UltimusCouncil {
                 Average: g.Average(r => r.Time.Seconds), His: his.TryGetValue(g.Key, out var h) ? h.Seconds : 0))
             .ToList();
         text.AppendLine();
-        text.AppendLine("WHERE THE TCO7 ARE CLEARLY FASTER THAN ULTIMUS (a quicker way exists)");
+        text.AppendLine($"WHERE THE {name.ToUpperInvariant()} ARE CLEARLY FASTER THAN ULTIMUS (a quicker way exists)");
         var quicker = quests.Where(q => q.His > 0 && q.Average < q.His * 0.75).OrderBy(q => q.Average / q.His).Take(25).ToList();
         if (quicker.Count == 0) {
             text.AppendLine("  None yet.");
         }
 
         foreach (var q in quicker) {
-            text.AppendLine($"  {Name(q.Title, q.Code)}: TCO7 {Minutes(q.Average)} on average, fastest {q.Rows[0].Member} {Minutes(q.Rows[0].Time.Seconds)}; Ultimus {Minutes(q.His)}");
+            text.AppendLine($"  {Name(q.Title, q.Code)}: {name} {Minutes(q.Average)} on average, fastest {q.Rows[0].Member} {Minutes(q.Rows[0].Time.Seconds)}; Ultimus {Minutes(q.His)}");
         }
 
         text.AppendLine();
@@ -397,8 +421,8 @@ internal static class UltimusCouncil {
         }
     }
 
-    private static Dictionary<string, List<Finding>> Load() {
-        var list = Read<List<Finding>>(Path.Combine(UltimusWire.SharedFolder, DATA_FILE)) ?? [];
+    private static Dictionary<string, List<Finding>> Load(string team) {
+        var list = Read<List<Finding>>(Path.Combine(UltimusWire.SharedFolder, FileOf(team, DATA_FILE))) ?? [];
 
         return list.GroupBy(f => f.Quest, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
     }
@@ -409,7 +433,7 @@ internal static class UltimusCouncil {
             File.Move(path + ".tmp", path, overwrite: true);
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
-            Logger.Warning("TCO7 council could not write {0}: {1}", Logger.Args(Path.GetFileName(path), e.Message));
+            Logger.Warning("A bot council could not write {0}: {1}", Logger.Args(Path.GetFileName(path), e.Message));
         }
     }
 

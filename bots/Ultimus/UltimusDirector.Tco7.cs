@@ -43,11 +43,14 @@ namespace Imlight.CoreLib.Game.Ultimus;
 /// </summary>
 internal static class UltimusTco7 {
 
-    /// <summary>[TCO7] Talk: they talk with each other when they meet. On unless turned off; live.</summary>
-    internal static bool Talk => ConfigurationManager.GetValue("TCO7.Talk", true);
+    /// <summary>
+    /// [TCO7] Talk (or [Kitharas] Talk for the Kitharas Family, who work the same): the working seat's team talk with each other
+    /// when they meet. On unless turned off; live.
+    /// </summary>
+    internal static bool Talk => ConfigurationManager.GetValue((UltimusSeat.Current.Team ?? UltimusSeat.TCO7_TEAM) + ".Talk", true);
 
-    /// <summary>[TCO7] TeamUp: two of them on the same story quest may team up. On unless turned off; live.</summary>
-    internal static bool TeamUp => ConfigurationManager.GetValue("TCO7.TeamUp", true);
+    /// <summary>[TCO7] TeamUp (or [Kitharas] TeamUp): two of the working seat's team on the same story quest may team up. Live.</summary>
+    internal static bool TeamUp => ConfigurationManager.GetValue((UltimusSeat.Current.Team ?? UltimusSeat.TCO7_TEAM) + ".TeamUp", true);
 
     /// <summary>What one member says to another: the words said in the game, and what they mean (so neither guesses).</summary>
     internal sealed record Line(UltimusSeat From, ulong FromCharId, string FromName, UltimusSeat To, string Kind, string Text, string Quest, DateTime At);
@@ -86,10 +89,21 @@ internal static class UltimusTco7 {
 
     // ---- The squad (Niduus, 2026-11-19): up to four of them quest together for good ----
 
-    // Set by ".ultimus squad" for this server run; null = [TCO7] Squad from Imlight.ini.
-    private static string s_squadOverride;
+    // Set by ".ultimus squad" for this server run, per team; none = [TCO7] Squad (or [Kitharas] Squad) from Imlight.ini.
+    private static readonly ConcurrentDictionary<string, string> s_squadOverride = new(StringComparer.OrdinalIgnoreCase);
 
-    internal static void SetSquadOverride(string names) => s_squadOverride = names;
+    /// <summary>The TCO7's squad for this server run (null = Imlight.ini's again).</summary>
+    internal static void SetSquadOverride(string names) => SetSquadOverride(UltimusSeat.TCO7_TEAM, names);
+
+    /// <summary>A team's squad for this server run ("TCO7" or "Kitharas"; null = Imlight.ini's again).</summary>
+    internal static void SetSquadOverride(string team, string names) {
+        if (names is null) {
+            s_squadOverride.TryRemove(team, out _);
+        }
+        else {
+            s_squadOverride[team] = names;
+        }
+    }
 
     /// <summary>
     /// [TCO7] Squad: up to four member names, with commas ("Tulkar, Cyndr, Kurrent, Mythis"); empty = no squad. The squad
@@ -97,25 +111,32 @@ internal static class UltimusTco7 {
     /// catch up to the same quest, then quest on together without splitting (also at a quest that branches, like the Three
     /// Streets). The rest quest at their own pace, and Ultimus always alone. Applies at once.
     /// </summary>
-    internal static List<UltimusSeat> Squad {
-        get {
-            var names = s_squadOverride ?? ConfigurationManager.GetValue("TCO7.Squad", "");
-            if (string.IsNullOrWhiteSpace(names) || names.Trim().Equals("off", StringComparison.OrdinalIgnoreCase)) {
-                return [];
-            }
+    internal static List<UltimusSeat> Squad => SquadOf(UltimusSeat.Current.Team ?? UltimusSeat.TCO7_TEAM);
 
-            return [.. names.Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries)
-                .Select(n => UltimusSeat.Tco7.FirstOrDefault(s => s.Name.Equals(n.Trim(), StringComparison.OrdinalIgnoreCase)))
-                .Where(s => s is not null).Distinct().Take(4)];
+    /// <summary>
+    /// A team's squad: [TCO7] Squad for the TCO7, [Kitharas] Squad for the Kitharas Family (names with commas; a Kitharas
+    /// member by its full name, key or call word, "Moon, Hart, Rock, Hydra"). Up to four, from that team only.
+    /// </summary>
+    internal static List<UltimusSeat> SquadOf(string team) {
+        var mates = UltimusSeat.TeamOf(team);
+        var names = s_squadOverride.TryGetValue(team ?? "", out var set) ? set : ConfigurationManager.GetValue(team + ".Squad", "");
+        if (mates.Length == 0 || string.IsNullOrWhiteSpace(names) || names.Trim().Equals("off", StringComparison.OrdinalIgnoreCase)) {
+            return [];
         }
+
+        // Commas part the names (a Kitharas name has spaces); without commas, each word is a name ("Tulkar Cyndr Kurrent").
+        var parts = names.Contains(',') || names.Contains(';') ? names.Split([',', ';'], StringSplitOptions.RemoveEmptyEntries)
+            : names.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        return [.. parts.Select(n => UltimusSeat.Named(n.Trim())).Where(s => s is not null && mates.Contains(s)).Distinct().Take(4)];
     }
 
-    internal static bool InSquad(UltimusSeat seat) => seat is { IsTco7: true } && Squad.Contains(seat);
+    internal static bool InSquad(UltimusSeat seat) => seat is { IsTeamBot: true } && SquadOf(seat.Team).Contains(seat);
 
     // How far each member is in the story (world number x 1000 + story quests done there), -1 unknown.
     private static readonly SeatLocal<int> s_score = new(() => -1);
     private static readonly object s_captainLock = new();
-    private static UltimusSeat s_captain;
+    private static readonly Dictionary<string, UltimusSeat> s_captain = new(StringComparer.OrdinalIgnoreCase);
 
     internal static void NoteScore(int score) => s_score.Value = score;
 
@@ -126,20 +147,23 @@ internal static class UltimusTco7 {
     /// It changes only when another member is two or more story quests further behind, so the group doesn't keep re-forming.
     /// Null when fewer than two squad members are playing.
     /// </summary>
-    internal static UltimusSeat Captain() {
-        var playing = Squad.Where(s => UltimusDirector.MembersOf(s) is { Count: > 0 } m && m[0].Wizard is not null && ScoreOf(s) >= 0).ToList();
+    internal static UltimusSeat Captain() => CaptainOf(UltimusSeat.Current.Team ?? UltimusSeat.TCO7_TEAM);
+
+    /// <summary>A team's squad leader (see <see cref="Captain"/>), each team its own.</summary>
+    internal static UltimusSeat CaptainOf(string team) {
+        var playing = SquadOf(team).Where(s => UltimusDirector.MembersOf(s) is { Count: > 0 } m && m[0].Wizard is not null && ScoreOf(s) >= 0).ToList();
         lock (s_captainLock) {
             if (playing.Count < 2) {
-                s_captain = null;
+                s_captain.Remove(team);
                 return null;
             }
 
             var lowest = playing.OrderBy(ScoreOf).ThenBy(s => s.Index).First();
-            if (s_captain is null || !playing.Contains(s_captain) || ScoreOf(s_captain) - ScoreOf(lowest) >= 2) {
-                s_captain = lowest;
+            if (!s_captain.TryGetValue(team, out var captain) || !playing.Contains(captain) || ScoreOf(captain) - ScoreOf(lowest) >= 2) {
+                s_captain[team] = captain = lowest;
             }
 
-            return s_captain;
+            return captain;
         }
     }
 
@@ -151,13 +175,13 @@ internal static class UltimusTco7 {
     /// <summary>Whether the seat working now said yes to teaming up with this inviter a moment ago.</summary>
     internal static bool MayAcceptInvite(ulong inviterCharId) {
         // The squad's leader's invitation is always taken by a squad member.
-        if (InSquad(UltimusSeat.Current) && UltimusSeat.OfCharacter(inviterCharId) is { IsTco7: true } from && InSquad(from) && Captain() == from) {
+        var me = UltimusSeat.Current;
+        if (InSquad(me) && UltimusSeat.OfCharacter(inviterCharId) is { } from && me.SameTeam(from) && InSquad(from) && Captain() == from) {
             return true;
         }
 
         var (charId, until) = s_accept.Value;
-        return charId != 0 && charId == inviterCharId && DateTime.UtcNow < until && UltimusSeat.Current.IsTco7
-               && UltimusSeat.OfCharacter(inviterCharId) is { IsTco7: true };
+        return charId != 0 && charId == inviterCharId && DateTime.UtcNow < until && me.SameTeam(UltimusSeat.OfCharacter(inviterCharId));
     }
 
 }
@@ -177,7 +201,7 @@ internal sealed partial class UltimusDirectorActor {
 
     /// <summary>The TCO7's own half second: what the others said to him, and a hello or a team-up when one is near.</summary>
     private void Tco7Tick(UltimusMember.Status me) {
-        if (!_seat.IsTco7 || me?.Wizard is null) {
+        if (!_seat.IsTeamBot || me?.Wizard is null) {
             return;
         }
 
@@ -198,7 +222,8 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         _tco7NextLook = DateTime.UtcNow.AddSeconds(5);
-        foreach (var other in UltimusSeat.Tco7.Where(s => s != _seat)) {
+        // His own team only: a TCO7 member with the TCO7, a Kitharas Family member with the family.
+        foreach (var other in _seat.Mates.Where(s => s != _seat)) {
             if (UltimusDirector.MembersOf(other) is not { Count: > 0 } them || them[0] is not { Wizard: not null } mate
                 || mate.ZoneActor is null || !mate.ZoneActor.Equals(me.ZoneActor)
                 || UltimusPlanner.Far(me.X, me.Y, mate.X, mate.Y) > UltimusPlaybook.Value("Chat.HearRadius")
@@ -216,6 +241,7 @@ internal sealed partial class UltimusDirectorActor {
                 Tco7Say(me, other, UltimusTco7.TEAM_ASK, $"{other.Name}, we're both on {UltimusText.Title(myQuest)}. Want to team up?", myQuest);
                 Think($"{other.Name} is right here and on {UltimusText.Title(myQuest)} too. Two of us finish it faster, so I ask to team up.",
                     "tco7-ask|" + other.Key + "|" + myQuest);
+                TalkedJustNow();
                 return;
             }
 
@@ -224,8 +250,17 @@ internal sealed partial class UltimusDirectorActor {
                 _tco7TalkedAt[other.Key] = DateTime.UtcNow;
                 var mine = myQuest.Length > 0 ? $" I'm on {UltimusText.Title(myQuest)}." : "";
                 Tco7Say(me, other, UltimusTco7.ASK_QUEST, $"Hey {other.Name}!{mine} What are you working on?", myQuest);
+                TalkedJustNow();
                 return;
             }
+        }
+    }
+
+    // Twenty of the Kitharas Family in one place (all new wizards start in the same spot) would fill the chat with hellos:
+    // each of them starts a talk at most once every 90 seconds (the TCO7 look again in 5).
+    private void TalkedJustNow() {
+        if (_seat.IsKitharas) {
+            _tco7NextLook = DateTime.UtcNow.AddSeconds(90);
         }
     }
 
@@ -237,7 +272,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         _actors[0].Tell(new UltimusMember.SayText(line));
-        Note(_seat.Name, $"TCO7 TALK to {to.Name}: \"{line}\"");
+        Note(_seat.Name, $"{_seat.Team} TALK to {to.Name}: \"{line}\"");
         UltimusTco7.Say(new UltimusTco7.Line(_seat, me.CharId, _seat.Name, to, kind, line, quest ?? "", DateTime.UtcNow));
     }
 
@@ -248,7 +283,7 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
-        Note(_seat.Name, $"TCO7 TALK from {line.FromName}: \"{line.Text}\"");
+        Note(_seat.Name, $"{_seat.Team} TALK from {line.FromName}: \"{line.Text}\"");
         var myQuest = _currentQuest ?? _target?.Quest ?? "";
         switch (line.Kind) {
             case UltimusTco7.ASK_QUEST: {
@@ -299,7 +334,7 @@ internal sealed partial class UltimusDirectorActor {
             case UltimusTco7.TEAM_YES:
                 // The one who asked sends the invitation, as a player does from the friends list.
                 if (!inBattle && _partyMate == 0 && UltimusDirector.MembersOf(line.From) is { Count: > 0 } them && _actors.Count > 0) {
-                    Note(_seat.Name, $"TCO7: invites {line.FromName} into his group for {UltimusText.Title(line.Quest)}.");
+                    Note(_seat.Name, $"{_seat.Team}: invites {line.FromName} into his group for {UltimusText.Title(line.Quest)}.");
                     UltimusJournal.Write(UltimusJournal.PARTY, $"Teamed up with {line.FromName} on {UltimusText.Title(line.Quest)}.",
                         WorldOf(me.Zone), UltimusText.Zone(me.Zone), line.FromName, 1);
                     _actors[0].Tell(new UltimusMember.Invite(them[0].CharId, them[0].GlobalId));
@@ -334,7 +369,7 @@ internal sealed partial class UltimusDirectorActor {
         if (_tco7LedMate != mate.CharId) {
             _tco7LedMate = mate.CharId;
             _tco7SplitSince = DateTime.MaxValue;
-            Note(_seat.Name, $"TCO7: leads a group with {name}: plays his own story, they come along.");
+            Note(_seat.Name, $"{_seat.Team}: leads a group with {name}: plays his own story, they come along.");
             Think($"{name} and I are a team now. I lead: my story goes on and they come along with me.", "tco7-lead|" + mate.CharId);
         }
 
@@ -353,7 +388,7 @@ internal sealed partial class UltimusDirectorActor {
         if (DateTime.UtcNow - _tco7SplitSince > s_tco7SplitAfter || !UltimusTco7.TeamUp) {
             _tco7SplitSince = DateTime.MaxValue;
             _tco7LedMate = 0;
-            Note(_seat.Name, $"TCO7: {name} is no longer on {UltimusText.Title(quest)}: our quests split, so he leaves the group.");
+            Note(_seat.Name, $"{_seat.Team}: {name} is no longer on {UltimusText.Title(quest)}: our quests split, so he leaves the group.");
             Think($"{name} and I aren't on the same quest any more, so the team has done its job. I thank them and go on alone.", "tco7-split|" + mate.CharId);
             if (_actors.Count > 0) {
                 _actors[0].Tell(new UltimusMember.SayText(BotShared.BotSocial.Scrub($"Our quests split here. Thanks for the help, {name}!")));

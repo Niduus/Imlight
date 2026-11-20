@@ -45,19 +45,20 @@ internal class CommandUltimus : CommandProtocol {
     private void TeleportCommand([Remainder] string who = "") {
         who = (who ?? "").Trim();
         // Ultimus, or a TCO7 member named (Niduus, 2026-11-16: the TCO7 are each their own Ultimus): ".ultimus tp Tulkar".
-        var seat = UltimusSeat.All.FirstOrDefault(s => s.IsTco7 && who.Length > 0
-                                                      && s.Name.Equals(who, StringComparison.OrdinalIgnoreCase))
+        // A Kitharas Family member by its name or its own word: ".ultimus tp Moon".
+        var seat = (who.Length > 0 && UltimusSeat.Named(who) is { IsTeamBot: true } named ? named : null)
                    ?? UltimusSeat.Ultimus;
         var members = UltimusDirector.MembersOf(seat);
         if (members.Count == 0) {
             InformSenderClient(seat.IsUltimus
                 ? "The Ultimus is not playing right now. Turn it on in Ahziael (Bots > Ultimus) with the server running."
+                : seat.IsKitharas ? $"{seat.Name} of the Kitharas Family is not playing right now. Turn the family on with .kitharas on with the server running."
                 : $"{seat.Name} of the TCO7 is not playing right now. Turn the TCO7 on in Ahziael (Bots > TCO7) with the server running.");
 
             return;
         }
 
-        var member = who.Length == 0 || seat.IsTco7 ? members[0]
+        var member = who.Length == 0 || seat.IsTeamBot ? members[0]
             : members.FirstOrDefault(m => m.Role.Equals(who, StringComparison.OrdinalIgnoreCase))
               ?? members.FirstOrDefault(m => (m.Name ?? "").Contains(who, StringComparison.OrdinalIgnoreCase));
         if (member is null) {
@@ -116,8 +117,14 @@ internal class CommandUltimus : CommandProtocol {
             return [.. UltimusSeat.Tco7];
         }
 
+        // The Kitharas Family members that may play now.
+        if (who.Equals("kitharas", StringComparison.OrdinalIgnoreCase) || who.Equals("family", StringComparison.OrdinalIgnoreCase)
+            || who.Equals("kf", StringComparison.OrdinalIgnoreCase)) {
+            return [.. UltimusSeat.Kitharas.Where(s => s.Enabled)];
+        }
+
         var seat = who.Length == 0 || who.Equals("ultimus", StringComparison.OrdinalIgnoreCase) ? UltimusSeat.Ultimus
-            : UltimusSeat.All.FirstOrDefault(s => s.Name.Equals(who, StringComparison.OrdinalIgnoreCase));
+            : UltimusSeat.Named(who);
 
         return seat is null ? [] : [seat];
     }
@@ -125,7 +132,7 @@ internal class CommandUltimus : CommandProtocol {
     private bool PickSeats(string who, out List<UltimusSeat> seats) {
         seats = Seats(who);
         if (seats.Count == 0) {
-            InformSenderClient($"No bot is called {who}. Use Ultimus, a TCO7 name (Tulkar, Cyndr, Kurrent, Mythis, Idunn, Garm, Ra), tco7 or all.");
+            InformSenderClient($"No bot is called {who}. Use Ultimus, a TCO7 name (Tulkar, Cyndr, Kurrent, Mythis, Idunn, Garm, Ra), a Kitharas Family name or word (Moon, Hart, ...), tco7, kitharas or all.");
             return false;
         }
 
@@ -136,10 +143,11 @@ internal class CommandUltimus : CommandProtocol {
     [Alias("commands")]
     [AuthRequired(AuthLevel.QualityAssurance)]
     private void HelpCommand() {
-        InformSenderClient("Bot commands (a name = Ultimus, a TCO7 name, tco7 or all; none = Ultimus):");
+        InformSenderClient("Bot commands (a name = Ultimus, a TCO7 name, a Kitharas Family name, tco7, kitharas or all; none = Ultimus):");
         InformSenderClient(".ultimus where | tp [name] | why [name] | pause [name] | resume [name]");
         InformSenderClient(".ultimus explain [name] (pause and write his whole plan) | story [name] (back to the story)");
         InformSenderClient(".ultimus squad Tulkar Cyndr Kurrent Mythis | squad off | squad (shows it) | watchdog [name]");
+        InformSenderClient("Kitharas Family: .kitharas (list) | on [count] | off | 10 (how many play) | off Moon / on Moon | squad Moon, Hart, Rock");
         InformSenderClient("Quest Team: .questteam where | tp | why | pause | resume");
     }
 
