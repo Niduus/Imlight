@@ -5,6 +5,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 ## Best way to beat each creature
 - Ronin Keyholder: won 2 time(s) (2 Solo, 0 Team), lost 21. Fastest: Ultimus in 9 rounds, deck for a boss (Ice), hitting with Ice, Fire, Life; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Sandstorm, Locust Swarm, Helping Hands, Gearhead Destroyer.
 - Otomo Courier: won 1 time(s) (1 Solo, 0 Team), lost 21. Fastest: Ultimus in 5 rounds, deck for a boss (Ice), hitting with Ice, Fire; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Sandstorm, Balance, Fairy.
+- Kakeda Spirit Slave: won 5 time(s) (5 Solo, 0 Team), lost 0. Fastest: Ultimus in 5 rounds, deck for Death enemies, hitting with Death, Fire, Myth (most of my fights lately had 2+ enemies), hits with Sandstorm, Scarab, Locust Swarm.
 - Infected Villager: won 2 time(s) (2 Solo, 0 Team), lost 1. Fastest: Ultimus in 7 rounds, deck for Balance enemies, hitting with Balance, Death, Ice (most of my fights lately had 2+ enemies), hits with Balance, Sandstorm, Banshee, Minor Crusade.
 - Otomo Spotter: won 3 time(s) (1 Solo, 2 Team), lost 0. Fastest: Ultimus in 3 rounds, deck for Myth enemies, hitting with Myth, Fire, Storm (many of my fights lately had 2+ enemies), hits with Minor Crusade.
 - Imitsu Defouler: won 3 time(s) (3 Solo, 0 Team), lost 0. Fastest: Ultimus in 6 rounds, deck for Myth enemies, hitting with Myth, Storm, Fire (most of my fights lately had 2+ enemies), hits with Gearhead Destroyer, Minor Crusade.
@@ -22,7 +23,6 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Walking Dead: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ultimus in 6 rounds, deck for Death enemies, hitting with Death, Fire, Myth (most of my fights lately had 2+ enemies), hits with Sandstorm, Minor Crusade, Gearhead Destroyer.
 - Oyotomi the Defiler: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ultimus in 9 rounds, deck for any fight (many of my fights lately had 2+ enemies), hits with Minor Crusade, Locust Swarm.
 - Tortured Kakeda Soul: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ultimus in 5 rounds, deck for Death enemies, hitting with Death, Fire, Myth (most of my fights lately had 2+ enemies), hits with Sandstorm, Minor Crusade, Gearhead Destroyer.
-- Kakeda Spirit Slave: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ultimus in 6 rounds, deck for Death enemies, hitting with Death, Fire, Myth (most of my fights lately had 2+ enemies), hits with Sandstorm, Gearhead Destroyer, Scarab.
 - Maito: never beaten yet, lost 1 time(s). Most common reason: it simply hit harder than I could heal.
 - Diseased Water Spirit: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 12 rounds, deck for Storm enemies, hitting with Storm, Death, Myth (most of my fights lately had 2+ enemies), hits with Seraph, Sandstorm, Storm Hound, Minor Crusade.
 - Plague Oni: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 25 rounds, deck for a boss (Balance), hitting with Balance, Death, Ice (most of my fights lately had 2+ enemies), hits with Balance, Sandstorm, Helping Hands, Vampire.
@@ -233,12 +233,15 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
   - Crimson Fields near (-5900, 21800) while Talk to Rikugun Mikawa ("Warlord Katsumori"): stuck 1 time(s) (Ultimus).
 
 ## Left Behind
+- Finished by Ultimus (15 min).
 - Avoid, places bots got stuck:
-  - Tree of Life near (100, 8300) while Go to MooShu,Tree of Life ("Left Behind"): stuck 9 time(s) (Ultimus); one bot tried every fix there.
-  - Tree of Life near (100, 8300) while a short break before trying "Go to MooShu,Tree of Life" again: stuck 3 time(s) (Ultimus).
+  - Tree of Life near (100, 8300) while Go to MooShu,Tree of Life ("Left Behind"): stuck 16 time(s) (Ultimus); one bot tried every fix there.
+  - Tree of Life near (100, 8300) while a short break before trying "Go to MooShu,Tree of Life" again: stuck 5 time(s) (Ultimus).
+  - Tree of Life near (500, 8400) while a short break before trying "Go to MooShu,Tree of Life" again: stuck 2 time(s) (Ultimus).
   - Tree of Life near (-400, 8400) while a short break before trying "Go to MooShu,Tree of Life" again: stuck 1 time(s) (Ultimus).
   - Tree of Life near (0, 7900) while a short break before trying "Go to MooShu,Tree of Life" again: stuck 1 time(s) (Ultimus).
   - Tree of Life near (1500, 9800) while a short break before trying "Go to MooShu,Tree of Life" again: stuck 1 time(s) (Ultimus).
+  - Tree of Life near (900, 6300) while a short break before trying "Go to MooShu,Tree of Life" again: stuck 1 time(s) (Ultimus).
 
 ## Spies Like Us
 - Finished by Ultimus (16 s).
@@ -539,3 +542,17 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
   It took 6 rounds, about 3 minutes.
   Deck made for Death enemies, hitting with Death, Fire, Myth (most of my fights lately had 2+ enemies).
   Spells that landed the hits: Sandstorm, Gearhead Destroyer, Scarab.
+- Won by Ultimus (Solo) against Kakeda Spirit Slave (rank 5, 675 health, Fire) on 2026-11-20 at 02:54:47.
+  It took 8 rounds, about 5 minutes.
+  Deck made for Death enemies, hitting with Death, Fire, Myth (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Sandstorm, Gearhead Destroyer.
+- Won by Ultimus (Solo) against Kakeda Spirit Slave (rank 5, 675 health, Fire) on 2026-11-20 at 03:28:11.
+  It took 5 rounds, about 3 minutes.
+  Deck made for Death enemies, hitting with Death, Fire, Myth (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Sandstorm, Scarab, Locust Swarm.
+
+## Question of Faith
+- Won by Ultimus (Solo) against Kakeda Spirit Slave (rank 5, 675 health, Fire) on 2026-11-20 at 03:59:39.
+  It took 9 rounds, about 5 minutes.
+  Deck made for any fight (many of my fights lately had 2+ enemies).
+  Spells that landed the hits: Locust Swarm x2, Helping Hands x2, Sandstorm, Heck Hound, Elemental Shield, Gearhead Destroyer.
