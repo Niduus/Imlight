@@ -139,23 +139,80 @@ internal static class TrueFormSpells {
         int Order(TrueFormPool.Entry e) => e.School.Equals(school, StringComparison.OrdinalIgnoreCase)
                                            || (weave.Length > 0 && e.School.Equals(weave, StringComparison.OrdinalIgnoreCase)) ? 0 : s_astral.Contains(e.School, StringComparer.OrdinalIgnoreCase) ? 1 : 2;
 
-        var spells = Mixed(trained.Where(Fits).OrderBy(Order).ThenByDescending(e => Rank(e.Id)).ThenBy(e => e.Shown, StringComparer.OrdinalIgnoreCase).ToList(),
-            Math.Max(0, (int) rules.m_maxSpells), style);
+        // His commander's deck plan (TrueFormDeckPlan): spells named go in first, as many copies as asked (up to the deck's
+        // rule); kinds left out or "only" kinds hold for the rest, for treasure cards too.
+        int MostCopies(uint id) {
+            var own = TrueFormPool.Of(id)?.School?.Equals(school, StringComparison.OrdinalIgnoreCase) == true && myth;
+            var most = own ? rules.m_schoolMaxInstances : rules.m_genericMaxInstances;
+            return most <= 0 ? 4 : most;
+        }
+
         var book = wizard.SpellbookBehavior;
+        var room = Math.Max(0, (int) rules.m_maxSpells);
         var cardRoom = Math.Max(0, (int) rules.m_maxTreasureCards);
+        var copies = new Dictionary<uint, int>();
+        var namedSpells = new List<uint>();
+        var namedCards = new List<uint>();
+        foreach (var named in TrueFormDeckPlan.Added) {
+            var entry = TrueFormPool.Of(named.Id) ?? trained.Concat(treasure).FirstOrDefault(e => e.Id == named.Id);
+            if (entry is null || SpellFactory.GetSpell(named.Id) is null) {
+                Logger.Information("True Form: {0} from his deck plan is not a spell he can have.", Logger.Args(named.Shown));
+                continue;
+            }
+
+            if (!Fits(entry)) {
+                Logger.Information("True Form: {0} is above what his deck {1} allows.", Logger.Args(named.Shown, (string) rules.m_primarySchoolName));
+                continue;
+            }
+
+            var n = Math.Clamp(named.Count, 1, MostCopies(named.Id));
+            if (entry.Treasure) {
+                var used = namedCards.Sum(id => copies[id]);
+                n = Math.Min(n, cardRoom - used);
+                if (n <= 0) {
+                    continue;
+                }
+
+                namedCards.Add(named.Id);
+                // A treasure card asked for by name is given to him if he has none (as he got one of each).
+                var have = book.TreasureCardTemplateIds?.Count(id => id == named.Id) ?? 0;
+                if (have < n) {
+                    book.TreasureCardTemplateIds ??= [];
+                    book.TreasureCardTemplateIds.AddRange(Enumerable.Repeat(named.Id, n - have));
+                }
+            }
+            else {
+                var used = namedSpells.Sum(id => copies[id]);
+                n = Math.Min(n, room - used);
+                if (n <= 0) {
+                    continue;
+                }
+
+                namedSpells.Add(named.Id);
+            }
+
+            copies[named.Id] = n;
+        }
+
+        var spellRoom = Math.Max(0, room - namedSpells.Sum(id => copies[id]));
+        var spells = namedSpells.Concat(Mixed(trained.Where(e => Fits(e) && !copies.ContainsKey(e.Id) && TrueFormDeckPlan.Allows(e.Id))
+                .OrderBy(Order).ThenByDescending(e => Rank(e.Id)).ThenBy(e => e.Shown, StringComparer.OrdinalIgnoreCase).ToList(), spellRoom, style)).ToList();
         var oldCards = (deck.m_spellList ?? []).Where(s => IsTreasure(s.m_templateID)).ToList();
-        var cards = treasure.OrderBy(Order).ThenByDescending(e => Rank(e.Id)).Select(e => e.Id).Distinct()
-            .Where(id => oldCards.Any(s => s.m_templateID == id) || (book.TreasureCardTemplateIds?.Contains(id) ?? false)).Take(cardRoom).ToList();
+        var cardsLeft = Math.Max(0, cardRoom - namedCards.Sum(id => copies[id]));
+        var cards = namedCards.Concat(treasure.Where(e => !copies.ContainsKey(e.Id) && TrueFormDeckPlan.Allows(e.Id)).OrderBy(Order).ThenByDescending(e => Rank(e.Id)).Select(e => e.Id).Distinct()
+            .Where(id => oldCards.Any(s => s.m_templateID == id) || (book.TreasureCardTemplateIds?.Contains(id) ?? false)).Take(cardsLeft)).ToList();
+        int CopiesOf(uint id) => copies.TryGetValue(id, out var c) ? c : 1;
 
         var want = spells.Concat(cards).ToList();
         var now = (deck.m_spellList ?? []).Select(s => (s.m_templateID, s.m_quantity)).OrderBy(s => s.m_templateID).ToList();
-        if (now.Count == want.Count && now.All(s => s.m_quantity == 1) && now.Select(s => s.m_templateID).ToHashSet().SetEquals(want)) {
+        if (now.Count == want.Count && now.All(s => s.m_quantity == CopiesOf(s.m_templateID)) && now.Select(s => s.m_templateID).ToHashSet().SetEquals(want)) {
             return;
         }
 
         // Treasure cards taken out of the deck go back to his book; the ones put in leave it.
-        var leaving = oldCards.Where(s => !cards.Contains(s.m_templateID) && !TrueFormPool.NotForPlayers(s.m_templateID)).SelectMany(s => Enumerable.Repeat(s.m_templateID, (int) s.m_quantity)).ToList();
-        var coming = cards.Where(id => !oldCards.Any(s => s.m_templateID == id)).ToList();
+        var leaving = oldCards.Where(s => !TrueFormPool.NotForPlayers(s.m_templateID))
+            .SelectMany(s => Enumerable.Repeat(s.m_templateID, Math.Max(0, (int) s.m_quantity - (cards.Contains(s.m_templateID) ? CopiesOf(s.m_templateID) : 0)))).ToList();
+        var coming = cards.SelectMany(id => Enumerable.Repeat(id, Math.Max(0, CopiesOf(id) - (int) (oldCards.FirstOrDefault(s => s.m_templateID == id)?.m_quantity ?? 0)))).ToList();
         book.TreasureCardTemplateIds ??= [];
         book.TreasureCardTemplateIds.AddRange(leaving);
         foreach (var id in coming) {
@@ -170,13 +227,14 @@ internal static class TrueFormSpells {
             }
         });
 
-        deck.m_spellList = [.. want.Select(id => new SpellData { m_templateID = id, m_enchantment = 0, m_quantity = 1 })];
+        deck.m_spellList = [.. want.Select(id => new SpellData { m_templateID = id, m_enchantment = 0, m_quantity = (uint) CopiesOf(id) })];
         if (book is Imlight.CoreLib.Shared.Behaviors.ServerWizSpellbookBehavior wiz) {
             wiz.EquipDeck(ItemHelper.GetItemTemplate(deckItem), deck);
         }
 
         WizardItemCollection.SaveItemBehaviors(deckItem);
-        Logger.Information("True Form: his deck holds {0} spells and {1} treasure cards.", Logger.Args(spells.Count, cards.Count));
+        Logger.Information("True Form: his deck holds {0} spells and {1} treasure cards{2}.", Logger.Args(spells.Sum(CopiesOf), cards.Sum(CopiesOf),
+            TrueFormDeckPlan.Any ? $" (deck plan: {TrueFormDeckPlan.Words()})" : ""));
     }
 
     // Hits and utility mixed by his role (Niduus, 2026-11-19: "TF's decks are more consistent with hits rather than utility.
@@ -188,7 +246,7 @@ internal static class TrueFormSpells {
         double hitShare = focus == TrueForm.DeckFocus.Heals ? 0 : focus == TrueForm.DeckFocus.Hits ? 0.8 : focus == TrueForm.DeckFocus.Shields ? 0.15 : style switch { BotStyle.GlassCannon => 0.6, BotStyle.Hitter or BotStyle.UniversalHitter => 0.5, BotStyle.Backup => 0.4, BotStyle.Tank => 0.3, BotStyle.FullTank or BotStyle.Immunity => 0.25, BotStyle.FullHealer => 0.15, BotStyle.Balanced => 0.45, BotStyle.Defensive => 0.3, _ => 0.25 };
         // A heals-only deck (Niduus, 2026-11-20: "No damage spells", "your job is to only blade or heal me"): heals and blades
         // for the team first, then what keeps it up; no hits.
-        string[] kinds = focus == TrueForm.DeckFocus.Heals ? ["heal", "blade", "shield", "charm removal", "other", "stun"]
+        string[] kinds = focus == TrueForm.DeckFocus.Heals ? ["heal", "blade", "shield"]
             : focus == TrueForm.DeckFocus.Shields ? ["shield", "heal", "weakness", "stun", "charm removal", "other", "trap", "blade"]
             : style switch {
             BotStyle.Healer or BotStyle.FullHealer => ["heal", "shield", "charm removal", "blade", "other", "stun", "trap", "weakness"],
@@ -196,6 +254,23 @@ internal static class TrueFormSpells {
             _ => ["blade", "trap", "other", "shield", "heal", "weakness", "charm removal", "stun"],
         };
         string KindOf(TrueFormPool.Entry e) => e.Card?.Kind ?? "other";
+        // "Only" kinds from his commander (TrueFormDeckPlan): those take turns, in the order said, and nothing else goes in.
+        if (TrueFormDeckPlan.Only is { Count: > 0 } only) {
+            var onlyPicked = new List<uint>();
+            var onlyQueues = only.Select(k => new Queue<TrueFormPool.Entry>(ordered.Where(e => TrueFormDeckPlan.Tags(e.Id).Contains(k)))).ToList();
+            var onlySeen = new HashSet<uint>();
+            while (onlyPicked.Count < room && onlyQueues.Any(q => q.Count > 0)) {
+                foreach (var queue in onlyQueues.Where(q => q.Count > 0)) {
+                    var e = queue.Dequeue();
+                    if (onlyPicked.Count < room && onlySeen.Add(e.Id)) {
+                        onlyPicked.Add(e.Id);
+                    }
+                }
+            }
+
+            return onlyPicked;
+        }
+
         var picked = new List<uint>();
         var seen = new HashSet<uint>();
         void Take(TrueFormPool.Entry e) {
@@ -215,7 +290,7 @@ internal static class TrueFormSpells {
             }
         }
 
-        foreach (var rest in ordered.Where(e => focus != TrueForm.DeckFocus.Heals || kinds.Contains(KindOf(e)))) {
+        foreach (var rest in ordered.Where(e => focus != TrueForm.DeckFocus.Heals || (kinds.Contains(KindOf(e)) && !TrueFormDeckPlan.Tags(e.Id).Overlaps(["attack", "minion", "polymorph"])))) {
             Take(rest);
         }
 

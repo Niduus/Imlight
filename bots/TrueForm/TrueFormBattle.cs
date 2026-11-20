@@ -160,6 +160,30 @@ internal static class TrueFormBattle {
 
         var mode = RoundMode(me, circles, round, out var why);
         var ids = Pick(me, circles, kinds, mode);
+        // His commander's deck plan rules his hand too (TrueFormDeckPlan; Niduus, 2026-11-20: a heals deck dealt him hits and
+        // minions): what it leaves out is never dealt (an order said in battle, below, still is), the spells it names come up
+        // when he has the pips, and room left is filled from the kinds it allows.
+        if (TrueFormDeckPlan.Any) {
+            ids.RemoveAll(id => !TrueFormDeckPlan.Allows(id));
+            var pipsNow = RewrittenAI.PipsOf(me);
+            foreach (var named in TrueFormDeckPlan.Added) {
+                if (ids.Count < HAND && !ids.Contains(named.Id) && RewrittenAI.ReadTemplate(named.Id) is { } namedCard && namedCard.Rank <= pipsNow
+                    && !WorseThanUp(me, named.Id, out _)) {
+                    ids.Add(named.Id);
+                }
+            }
+
+            if (TrueFormDeckPlan.Only is { Count: > 0 } only) {
+                foreach (var kind in only) {
+                    foreach (var e in kinds.All.Where(e => e.Card.Rank <= pipsNow && TrueFormDeckPlan.Tags(e.Id).Contains(kind) && TrueFormDeckPlan.Allows(e.Id))
+                                 .OrderByDescending(e => e.Card.HealAmount + e.Card.BladePercent + e.Card.TrapPercent + e.Card.BaseDamage).Take(2)) {
+                        if (ids.Count < HAND && !ids.Contains(e.Id)) {
+                            ids.Add(e.Id);
+                        }
+                    }
+                }
+            }
+        }
         // Never a weaker aura or global over a stronger one already up (Niduus, 2026-11-19: he put a 100% aura for 4 rounds
         // over a 666% one with 66 rounds left).
         var weaker = ids.Where(id => WorseThanUp(me, id, out _)).ToList();

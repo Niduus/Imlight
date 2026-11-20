@@ -299,7 +299,7 @@ internal static class BotGear {
                 || s_standIn.IsMatch(shown) || s_standIn.IsMatch(objectName)
                 || objectName.StartsWith("GR_", StringComparison.OrdinalIgnoreCase) || objectName.StartsWith("Creature", StringComparison.OrdinalIgnoreCase)
                 || file.Contains("/Creature", StringComparison.OrdinalIgnoreCase) || file.Contains("/NPC", StringComparison.OrdinalIgnoreCase)
-                || file.Contains("/Polymorph", StringComparison.OrdinalIgnoreCase) || file.Contains("/Mobs/", StringComparison.OrdinalIgnoreCase);
+                || file.Contains("/Polymorph", StringComparison.OrdinalIgnoreCase);
             var tooStrong = StatsOf(template).Any(TooStrong);
 
             return dev || deckathalon || creature || tooStrong;

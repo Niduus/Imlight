@@ -466,6 +466,27 @@ internal sealed partial class UltimusDirectorActor {
             return true;
         }
 
+        // A deck order, every part of it (TrueFormDeckPlan; Niduus, 2026-11-20: "I want him to listen to every detail including
+        // adding spells, specific ones too"): "only heals and blades, add Deathblade, no minions". Said back as understood.
+        if (!IsQuestion(order) && TrueFormDeckPlan.TryOrder(heard.Text, me.Wizard is { } planWizard ? BotGear.LevelOf(planWizard) : 190,
+                TrueForm.DeckFocusFrom(order), out var planReply, out var healsOnly)) {
+            if (healsOnly) {
+                TrueForm.SetFocus(TrueForm.DeckFocus.Heals);
+                TrueForm.SetMode(TrueForm.Mode.Support);
+            }
+            else if (TrueForm.Focus == TrueForm.DeckFocus.Heals && TrueFormDeckPlan.Only?.Contains("attack") != false) {
+                TrueForm.SetFocus(TrueForm.DeckFocus.Mixed);
+                TrueForm.ResetMode();
+            }
+            else {
+                TrueForm.DeckRebuild = true;
+            }
+
+            Note("Ultimus", $"True Form: {heard.SpeakerName}'s deck order (\"{UltimusText.Short(heard.Text, 80)}\"): {TrueFormDeckPlan.Words()}");
+            SendReply(heard, $"{planReply} Rebuilding my deck{(me.Wizard?.IsInDuel == true ? " right after this battle" : " now")}.", "true form");
+            return true;
+        }
+
         // A deck order ("setup your deck to focus on healing. No damage spells", "heals only"): his deck is built again
         // around it, and kept; he plays the matching mode too.
         if (!IsQuestion(order) && TrueForm.DeckFocusFrom(order) is { } focus) {
