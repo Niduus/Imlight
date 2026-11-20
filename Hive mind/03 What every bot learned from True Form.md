@@ -4,6 +4,7 @@ Corrections Niduus made while testing True Form (November 19 and 20, 2026). Each
 
 ## Gear
 - No bot ever wears developers', testers' or creature gear. That means QA and Dev pieces, creature stand-in hats, the "Stats Amulet", Polymorph rings, and any piece with stats no player's gear has, such as +100% critical chance on a level 1 hat.
+- Pieces whose stats add up past any real gear, or that repeat the same stat line three times or more, are fake. Example: "Valiant Jouster's Sabatons" with +1198 max health five times and no level.
 - Gear a bot already wears that breaks this rule comes off at once, and is thrown out of its backpack.
 - Real gear that creatures drop, such as the Sinek boots, is allowed.
 - Gear for a bot's level comes first. A full setup (full damage, full healing, full tank, universal) may use gear from any level when that piece has more of the one stat it is built on.
@@ -32,6 +33,7 @@ Corrections Niduus made while testing True Form (November 19 and 20, 2026). Each
 - The cards dealt in a battle follow the deck plan too, unless a spell is called out in that battle.
 
 ## True Form only
+- Immunity to a school is 100% or more resist to it. Universal Immunity is that for all seven schools. He says which schools he reached.
 - His weave school ("go ice weave fire") gets his school pips. Stat asks ("get more ice accuracy") weigh in every gear, jewel and pet pick.
 - He remembers each commander's last build and offers it again.
 - Other players see his new character card right after he changes.
