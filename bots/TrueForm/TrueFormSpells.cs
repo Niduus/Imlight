@@ -174,7 +174,7 @@ internal static class TrueFormSpells {
     // the rest: prisms, globals, auras, pips), the best of each first. Room left over is filled in the old order.
     private static List<uint> Mixed(List<TrueFormPool.Entry> ordered, int room, BotStyle style) {
         var focus = TrueForm.Focus;
-        double hitShare = focus == TrueForm.DeckFocus.Heals ? 0 : focus == TrueForm.DeckFocus.Hits ? 0.8 : focus == TrueForm.DeckFocus.Shields ? 0.15 : style switch { BotStyle.GlassCannon => 0.6, BotStyle.Hitter or BotStyle.UniversalHitter => 0.5, BotStyle.Backup => 0.4, BotStyle.Tank => 0.3, BotStyle.FullTank => 0.25, BotStyle.FullHealer => 0.15, _ => 0.25 };
+        double hitShare = focus == TrueForm.DeckFocus.Heals ? 0 : focus == TrueForm.DeckFocus.Hits ? 0.8 : focus == TrueForm.DeckFocus.Shields ? 0.15 : style switch { BotStyle.GlassCannon => 0.6, BotStyle.Hitter or BotStyle.UniversalHitter => 0.5, BotStyle.Backup => 0.4, BotStyle.Tank => 0.3, BotStyle.FullTank => 0.25, BotStyle.FullHealer => 0.15, BotStyle.Balanced => 0.45, BotStyle.Defensive => 0.3, _ => 0.25 };
         // A heals-only deck (Niduus, 2026-11-20: "No damage spells", "your job is to only blade or heal me"): heals and blades
         // for the team first, then what keeps it up; no hits.
         string[] kinds = focus == TrueForm.DeckFocus.Heals ? ["heal", "blade", "shield", "charm removal", "other", "stun"]

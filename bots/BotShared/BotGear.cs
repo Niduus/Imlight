@@ -55,6 +55,11 @@ internal enum BotStyle {
     // True Form's full glass setup: everything on damage, pierce and accuracy of his school, nothing on resist or health
     // (Niduus, 2026-11-19: "if he goes full glass, he is to go exactly that").
     GlassCannon,
+    // True Form's own school set ("go myth"): the most balanced set for it, damage, resist, health, accuracy and pierce
+    // all counted (Niduus, 2026-11-20: "When told to go a set (Go myth) it will go the most balanced set possible").
+    Balanced,
+    // True Form's defensive set ("go defensive"): resist and health first, some damage kept.
+    Defensive,
 }
 
 /// <summary>
@@ -556,6 +561,18 @@ internal static class BotGear {
         BotStyle.GlassCannon => kind switch {
             "Damage" => 10, "ArmorPiercing" => 4, "Accuracy" => 2, "PowerPips" => 2.5, "StartingPips" => 15, "FlatDamage" => 1,
             "CriticalHit" => 0.3, _ => 0,
+        },
+        // Balanced: hits and staying up both count, nothing pushed to the top.
+        BotStyle.Balanced => kind switch {
+            "Damage" => 4, "ReduceDamage" => 3.2, "MaxHealth" => 0.08, "Accuracy" => 2, "ArmorPiercing" => 2.5, "CriticalHit" => 0.25,
+            "Block" => 0.18, "PowerPips" => 2.5, "StartingPips" => 15, "Healing" => 0.6, "IncHealing" => 1.1, "FlatDamage" => 1.2,
+            "FlatReduceDamage" => 1.2, "MaxMana" => 0.02, _ => 0,
+        },
+        // Defensive: resist and health first, then block and healing taken; damage still counts a little.
+        BotStyle.Defensive => kind switch {
+            "ReduceDamage" => 5, "MaxHealth" => 0.12, "Block" => 0.3, "IncHealing" => 1.5, "FlatReduceDamage" => 2, "Damage" => 1.5,
+            "ArmorPiercing" => 1, "Accuracy" => 1, "CriticalHit" => 0.12, "PowerPips" => 2.5, "StartingPips" => 15, "Healing" => 0.6,
+            "FlatDamage" => 0.4, "MaxMana" => 0.02, _ => 0,
         },
         _ => BaseWeight(kind, style),
     };

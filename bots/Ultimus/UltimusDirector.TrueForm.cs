@@ -55,6 +55,8 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         AnswerPlayers();
+        TrueFormBuildPickTick(me);
+
         // A deck order: his deck built again, out of battle.
         if (TrueForm.DeckRebuild && me.Wizard is { } deckWizard && !deckWizard.IsInDuel) {
             TrueForm.DeckRebuild = false;
@@ -461,10 +463,18 @@ internal sealed partial class UltimusDirectorActor {
         // pick from, citing the more optimal of their desires first"). A full setup with no school named gets the schools
         // offered, best first; the asker's pick ("life") then switches him.
         // Full glass ("if he goes full glass, he is to go exactly that"): his school's damage, pierce and accuracy only.
+        // The build for a school just asked for ("go myth", then "full damage" / "defensive" / "balanced").
+        if (TrueForm.BuildPick is { } building && building.HeadId == heard.SpeakerCharId && DateTime.UtcNow - TrueForm.BuildPickAt < TrueForm.BuildPickWait
+            && TrueForm.BuildFrom(order) is { } build) {
+            TrueForm.BuildPick = null;
+            return build == TrueForm.Setup.Own ? TrueFormSchoolSwap(heard, me, building.School, null) : TrueFormSetup(heard, me, grouped, build, building.School);
+        }
+
         var setup = TrueForm.FullGlassFrom(order) ? TrueForm.Setup.FullGlass
             : TrueForm.UniversalFrom(order) ? TrueForm.Setup.Universal
             : TrueForm.FullHealFrom(order) ? TrueForm.Setup.FullHeal
             : TrueForm.FullTankFrom(order) ? TrueForm.Setup.FullTank
+            : TrueForm.DefensiveFrom(order) ? TrueForm.Setup.Defensive
             : (TrueForm.Setup?) null;
         var pending = TrueForm.PendingPick is { } waiting && waiting.HeadId == heard.SpeakerCharId
                       && DateTime.UtcNow - TrueForm.PendingPickAt < TimeSpan.FromMinutes(3) ? waiting : null;
@@ -476,7 +486,7 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         if (setup is { } kind) {
-            if (kind is TrueForm.Setup.Universal or TrueForm.Setup.FullGlass) {
+            if (kind is TrueForm.Setup.Universal or TrueForm.Setup.FullGlass or TrueForm.Setup.Defensive) {
                 return TrueFormSetup(heard, me, grouped, kind, named ?? TrueForm.School);
             }
 
@@ -580,29 +590,17 @@ internal sealed partial class UltimusDirectorActor {
         if (TrueForm.SchoolFrom(order) is { } school) {
             var rest = System.Text.RegularExpressions.Regex.Replace(order, @"\b(fire|ice|storm|myth|life|death|balance)\b", " ");
             var role = TrueForm.ModeFrom(rest) is { } r && r is not (TrueForm.Mode.Auto or TrueForm.Mode.Evil) ? r : (TrueForm.Mode?) null;
-            if (school == TrueForm.School && role == TrueForm.Role && !TrueForm.Special) {
-                SendReply(heard, $"I'm already {school}{(role is { } same ? $", playing {TrueForm.Words(same).Split(':')[0]}" : "")}!", "true form");
+            if (role is null) {
+                // Which build: the commander picks within 30 seconds, else balanced (TrueFormBuildPickTick).
+                TrueForm.BuildPick = new TrueForm.SwapAsk(school, null, heard.SpeakerCharId, heard.SpeakerName);
+                TrueForm.BuildPickAt = DateTime.UtcNow;
+                Note("Ultimus", $"True Form: {heard.SpeakerName} asks for {school}; asks which build (30 s, then balanced).");
+                SendReply(heard, $"Going {school}! Which build: balanced, full damage (glass cannon), defensive, or full healer? " +
+                                 "Say it within 30 seconds, or I'll go balanced.", "true form");
                 return true;
             }
 
-            if (me.Wizard?.IsInDuel == true) {
-                SendReply(heard, $"I'll switch to {school} right after this battle.", "true form");
-            }
-
-            TrueForm.AskSwap(school, role, heard.SpeakerCharId, heard.SpeakerName);
-            if (role is { } asked) {
-                TrueForm.SetMode(asked);
-            }
-            else {
-                TrueForm.ResetMode();
-            }
-
-            var plan = role is { } chosen ? $"and play {TrueForm.Words(chosen).Split(':')[0]}" : $"set up as {TrueForm.OwnRole(school)}";
-            var warn = TrueForm.Misfit(school, role) is { } misfit ? " Heads up: " + misfit : "";
-            Note("Ultimus", $"True Form: {heard.SpeakerName} asks for {school}{(role is null ? "" : " " + role)} (\"{UltimusText.Short(heard.Text, 60)}\").");
-            SendReply(heard, $"Switching to {school} {plan}. I'll pop out for a moment to change and be right back. " +
-                             "If I'm not back in the group in a minute, send me an invite." + warn, "true form");
-            return true;
+            return TrueFormSchoolSwap(heard, me, school, role);
         }
 
         // A mode, however it is said: "defend", "go attack", "play support", "be evil", "tank for us", "atack". A question
@@ -618,6 +616,51 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         return false;
+    }
+
+    // A school switch with its build picked: balanced (no role) or leaning to the role said with it ("go ice and tank").
+    private bool TrueFormSchoolSwap(UltimusVoice.Heard heard, UltimusMember.Status me, Shared.Behaviors.MagicSchool school, TrueForm.Mode? role) {
+        if (school == TrueForm.School && role == TrueForm.Role && !TrueForm.Special) {
+            SendReply(heard, $"I'm already {school}{(role is { } same ? $", playing {TrueForm.Words(same).Split(':')[0]}" : "")}!", "true form");
+            return true;
+        }
+
+        if (me.Wizard?.IsInDuel == true) {
+            SendReply(heard, $"I'll switch to {school} right after this battle.", "true form");
+        }
+
+        TrueForm.AskSwap(school, role, heard.SpeakerCharId, heard.SpeakerName);
+        if (role is { } asked) {
+            TrueForm.SetMode(asked);
+        }
+        else {
+            TrueForm.ResetMode();
+        }
+
+        var plan = role is { } chosen ? $"and play {TrueForm.Words(chosen).Split(':')[0]}" : $"set up as {TrueForm.OwnRole(school)}";
+        var warn = TrueForm.Misfit(school, role) is { } misfit ? " Heads up: " + misfit : "";
+        Note("Ultimus", $"True Form: {heard.SpeakerName} asks for {school}{(role is null ? "" : " " + role)} (\"{UltimusText.Short(heard.Text, 60)}\").");
+        SendReply(heard, $"Switching to {school} {plan}. I'll pop out for a moment to change and be right back. " +
+                         "If I'm not back in the group in a minute, send me an invite." + warn, "true form");
+        return true;
+    }
+
+    // No build picked in 30 seconds after "go <school>": balanced.
+    private void TrueFormBuildPickTick(UltimusMember.Status me) {
+        if (TrueForm.BuildPick is not { } building || DateTime.UtcNow - TrueForm.BuildPickAt < TrueForm.BuildPickWait) {
+            return;
+        }
+
+        TrueForm.BuildPick = null;
+        if (building.School == TrueForm.School && TrueForm.Role is null && !TrueForm.Special) {
+            Announce(SAY_PARTY, $"No build picked, so I'm staying in my balanced {building.School} setup.", urgent: true);
+            return;
+        }
+
+        TrueForm.AskSwap(building.School, null, building.HeadId, building.HeadName);
+        TrueForm.ResetMode();
+        Note("Ultimus", $"True Form: no build picked for {building.School} in 30 s: balanced.");
+        Announce(SAY_PARTY, $"No build picked, so I'm going balanced {building.School}. I'll pop out for a moment to change and be right back.", urgent: true);
     }
 
     // A line that names a card he can be dealt, or an order with someone to do it on ("heal me", "shield Mitsu", "kill them").
@@ -645,6 +688,7 @@ internal sealed partial class UltimusDirectorActor {
         var role = kind switch {
             TrueForm.Setup.FullHeal => TrueForm.Mode.Support,
             TrueForm.Setup.FullTank => TrueForm.Mode.Defend,
+            TrueForm.Setup.Defensive => TrueForm.Mode.Auto,
             _ => TrueForm.Mode.Attack,
         };
         var words = TrueForm.SetupWords(kind) + (kind == TrueForm.Setup.Universal ? "" : $" as {school}");
@@ -672,6 +716,7 @@ internal sealed partial class UltimusDirectorActor {
             TrueForm.Setup.FullHeal => "every piece, jewel and pet talent on outgoing healing, and I'll play support",
             TrueForm.Setup.FullTank => "every piece, jewel and pet talent on resist, and I'll play defend",
             TrueForm.Setup.FullGlass => $"every piece, jewel and pet talent on {school} damage, pierce and accuracy, nothing on resist or health, and I'll play attack",
+            TrueForm.Setup.Defensive => "resist and health first with some damage kept, and I pick attack, defend or support each round",
             _ => "every piece, jewel and pet talent on damage to all schools, and I'll play attack",
         };
         var warn = kind is TrueForm.Setup.FullHeal or TrueForm.Setup.FullTank && TrueForm.BestSchoolsFor(kind).Take(2).All(b => b != school)
