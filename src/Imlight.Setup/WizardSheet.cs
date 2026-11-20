@@ -581,7 +581,108 @@ internal sealed class WizardSheet {
             line.Opacity = 0.55;
         }
 
-        return line;
+        // Under the piece, its sockets (shape, jewel, what it gives) and under the pet its talents (Niduus, 2026-11-20: "we
+        // should put sub areas for the Pin/Jewel icons and pet for Talents.... Make it more in detail and nicer").
+        var jewels = (row["jewels"] as JsonArray)?.OfType<JsonObject>().ToList() ?? [];
+        var talents = (row["talents"] as JsonArray)?.OfType<JsonObject>().ToList() ?? [];
+        if (jewels.Count == 0 && talents.Count == 0) {
+            return line;
+        }
+
+        var under = new StackPanel { Spacing = 3 };
+        if (talents.Count > 0) {
+            under.Children.Add(SubTitle($"Talents ({talents.Count})"));
+            foreach (var talent in talents) {
+                var cast = S(talent, "cast");
+                under.Children.Add(SubLine(null, S(talent, "school"), S(talent, "name"), talent["stats"] as JsonArray,
+                    cast.Length > 0 ? $"may cast {cast}" : ""));
+            }
+        }
+
+        if (jewels.Count > 0) {
+            var filled = jewels.Count(j => S(j, "name").Length > 0);
+            under.Children.Add(SubTitle(slot == "Pet" ? "Jewel" : $"Sockets ({filled} of {jewels.Count} filled)"));
+            foreach (var jewel in jewels) {
+                var jewelName = S(jewel, "name");
+                var sub = SubLine(SocketIcon?.Invoke(S(jewel, "shape"), 16), S(jewel, "school"),
+                    jewelName.Length > 0 ? jewelName : $"Empty {S(jewel, "socket")} socket", jewel["stats"] as JsonArray, "");
+                if (jewelName.Length == 0) {
+                    sub.Opacity = 0.55;
+                }
+
+                ToolTip.SetTip(sub, $"{Or(S(jewel, "socket"), "jewel")} socket" + (jewelName.Length > 0 ? $": {jewelName}" : ": empty"));
+                under.Children.Add(sub);
+            }
+        }
+
+        return new StackPanel {
+            Spacing = 4,
+            Children = {
+                line,
+                new Border {
+                    Margin = new Thickness(15, 0, 0, 6), Padding = new Thickness(25, 2, 0, 2), BorderThickness = new Thickness(2, 0, 0, 0),
+                    BorderBrush = s_subEdge, Child = under,
+                },
+            },
+        };
+    }
+
+    private static readonly IBrush s_subEdge = new SolidColorBrush(Color.FromArgb(0x55, 0x80, 0x90, 0xB0));
+    private static readonly IBrush s_chip = new SolidColorBrush(Color.FromArgb(0x26, 0x90, 0x9C, 0xB4));
+
+    /// <summary>A socket's shape icon ("Square", "Circle", "Triangle", "Tear", "Star" for pets, "Power", "Shield", "Sword" pins) at a size.</summary>
+    internal Func<string, double, Control>? SocketIcon { get; set; }
+
+    private static TextBlock SubTitle(string text) => new() {
+        Text = text.ToUpperInvariant(), FontSize = 10, FontWeight = FontWeight.SemiBold, LetterSpacing = 0.6,
+        Foreground = ManagerTheme.MUTED_BRUSH, Margin = new Thickness(0, 4, 0, 0),
+    };
+
+    // One talent or jewel: its icon and school, its name, then what it gives as small chips with the game's stat icons.
+    private Control SubLine(Control? icon, string school, string name, JsonArray? stats, string extra) {
+        var head = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6 };
+        if (icon is not null) {
+            icon.VerticalAlignment = VerticalAlignment.Center;
+            head.Children.Add(icon);
+        }
+
+        if (school.Length > 0 && SchoolIcon is not null) {
+            var badge = SchoolIcon(school, 14);
+            badge.VerticalAlignment = VerticalAlignment.Center;
+            head.Children.Add(badge);
+        }
+
+        head.Children.Add(new TextBlock { Text = name, FontSize = 12.5, FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center });
+        var chips = new WrapPanel { Orientation = Orientation.Horizontal, ItemSpacing = 4, LineSpacing = 3 };
+        foreach (var stat in stats?.OfType<JsonObject>() ?? []) {
+            var words = S(stat, "text");
+            if (words.Length == 0 || words == name) {
+                continue;
+            }
+
+            var inside = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 3 };
+            if (S(stat, "icon") is { Length: > 0 } key && StatIcon is not null) {
+                inside.Children.Add(StatIcon(key, words, 14));
+            }
+
+            inside.Children.Add(new TextBlock { Text = words, FontSize = 11, VerticalAlignment = VerticalAlignment.Center });
+            chips.Children.Add(new Border { Background = s_chip, CornerRadius = new CornerRadius(8), Padding = new Thickness(6, 1), Child = inside });
+        }
+
+        if (extra.Length > 0) {
+            chips.Children.Add(new Border {
+                Background = s_chip, CornerRadius = new CornerRadius(8), Padding = new Thickness(6, 1),
+                Child = new TextBlock { Text = extra, FontSize = 11, FontStyle = FontStyle.Italic },
+            });
+        }
+
+        var panel = new StackPanel { Spacing = 2, Children = { head } };
+        if (chips.Children.Count > 0) {
+            chips.Margin = new Thickness(icon is null ? 0 : 22, 0, 0, 0);
+            panel.Children.Add(chips);
+        }
+
+        return panel;
     }
 
     // The game's deck window: tan slots with a gold edge in a blue frame, 8 to a row.

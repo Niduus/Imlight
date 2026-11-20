@@ -533,7 +533,7 @@ internal static class CardPainter {
 
         private void SchoolIcon() {
             if (book.SchoolIcon(card.School) is { } file && book.Image(file) is { } school) {
-                Fit(school, N(111), N(39), N(19));
+                FitVisible(school, N(111), N(39.5f), N(19));
             }
             else if ((_fancy ?? _normal) is { } font && card.School.Length > 0) {
                 Outlined(font, card.School[..1].ToUpperInvariant(), N(111), N(31.5f), N(14), 0xFFFFFFFF, center: true);
@@ -545,7 +545,7 @@ internal static class CardPainter {
                        ?? (s_typeIcons.TryGetValue(card.Type, out var other) ? book.Image(other) : null)
                        ?? (card.Minion ? book.Image("Icons_Minion.dds") : null);
             if (icon is not null) {
-                Fit(icon, N(111.5f), N(110.5f), N(20));
+                FitVisible(icon, N(111.5f), N(110.5f), N(20));
             }
             else if (_normal is not null && card.Type.Length > 0) {
                 var word = card.Type.Replace('_', ' ');
@@ -674,18 +674,23 @@ internal static class CardPainter {
                 return;
             }
 
-            // Pip cost in the triangle; school and shadow pips as small pips under it.
-            Outlined(_normal, card.XPips ? "X" : card.Pips.ToString(CultureInfo.InvariantCulture), N(16.5f), N(27), N(15), ACCURACY_COLOR,
+            // Pip cost in the triangle.
+            // Centred on the triangle's middle, a little right of and below its old spot (Niduus, 2026-11-20: "the top left
+            // where mana is (7) is not centered").
+            Outlined(_normal, card.XPips ? "X" : card.Pips.ToString(CultureInfo.InvariantCulture), N(17.2f), N(28.5f), N(15), ACCURACY_COLOR,
                 center: true);
-            var pipY = 54f;
+            // School and shadow pips beside it, to the right of the triangle, big enough to tell apart, as the game draws them
+            // (Niduus, 2026-11-20: "school pips are displayed like this. In the EXE they are tiny" / "Shadow pips go in the
+            // same side as my in-game example").
+            var pipX = 38f;
             foreach (var (pipSchool, pips) in card.SchoolPips) {
-                for (var i = 0; i < pips; i++, pipY += 9) {
-                    Pip(book.PipIcon(pipSchool), SchoolColor(pipSchool), pipY);
+                for (var i = 0; i < pips; i++, pipX += 16) {
+                    Pip(book.PipIcon(pipSchool), SchoolColor(pipSchool), pipX, 36, 18);
                 }
             }
 
-            for (var i = 0; i < card.ShadowPips; i++, pipY += 9) {
-                Pip("Icon_Shadow_Pip.dds", 0xFF3A2A50, pipY);
+            for (var i = 0; i < card.ShadowPips; i++, pipX += 16) {
+                Pip("Icon_Shadow_Pip.dds", 0xFF3A2A50, pipX, 36, 18);
             }
         }
 
@@ -696,8 +701,9 @@ internal static class CardPainter {
 
             // The spell's own accuracy, centred on the target in the bottom left, as the game shows it.
             var text = $"{card.Accuracy}%";
-            var height = N(11.5f);
-            var room = N(24);
+            // Bigger, to fill the target (Niduus, 2026-11-20: "the accuracy font is a bit small to fit").
+            var height = N(14f);
+            var room = N(27);
             if (_normal.Measure(text, height / _normal.CellHeight) > room) {
                 height = room / _normal.Measure(text, 1) * _normal.CellHeight;
             }
@@ -721,13 +727,13 @@ internal static class CardPainter {
             Outlined(font, number, x + widthX, N(71) - big * 0.5f, big, 0xFFFFFFFF, outline: 0.9f);
         }
 
-        private void Pip(string? icon, uint color, float y) {
+        private void Pip(string? icon, uint color, float x, float y, float size) {
             if (book.Image(icon) is { } image) {
-                Fit(image, N(9), N(y), N(9));
+                FitVisible(image, N(x), N(y), N(size), fill: true);
             }
             else {
-                _canvas.FillCircle(N(9), N(y), N(3.6f), 0xFF1E1208);
-                _canvas.FillCircle(N(9), N(y), N(3f), color);
+                _canvas.FillCircle(N(x), N(y), N(size * 0.44f), 0xFF1E1208);
+                _canvas.FillCircle(N(x), N(y), N(size * 0.38f), color);
             }
         }
 
@@ -762,6 +768,37 @@ internal static class CardPainter {
         }
 
         /// <summary>Draws a picture as big as fits in a square around a centre point.</summary>
+        // The part of a picture that is not see-through, found once per picture: icons in the game files often have more empty
+        // room on one side, so centring the whole picture left them off centre in their round or square socket (Niduus,
+        // 2026-11-20: "these icons are not centered to their area").
+        private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<GameImage, int[]> s_visible = new();
+
+        private static int[] Visible(GameImage image) => s_visible.GetValue(image, img => {
+            int left = img.Width, top = img.Height, right = -1, bottom = -1;
+            for (var y = 0; y < img.Height; y++) {
+                for (var x = 0; x < img.Width; x++) {
+                    if (img.Pixels[((y * img.Width) + x) * 4 + 3] > 24) {
+                        left = Math.Min(left, x);
+                        right = Math.Max(right, x);
+                        top = Math.Min(top, y);
+                        bottom = Math.Max(bottom, y);
+                    }
+                }
+            }
+
+            return right < 0 ? [0, 0, img.Width, img.Height] : [left, top, right - left + 1, bottom - top + 1];
+        });
+
+        /// <summary>Like Fit (same size), but its visible part's middle sits on the point.</summary>
+        /// <remarks>fill: its visible part (not the whole picture) is made <paramref name="size"/> across.</remarks>
+        private void FitVisible(GameImage image, float cx, float cy, float size, bool fill = false) {
+            var v = Visible(image);
+            var fit = size / (fill ? Math.Max(v[2], v[3]) : Math.Max(image.Width, image.Height));
+            var w = v[2] * fit;
+            var h = v[3] * fit;
+            _canvas.DrawImage(image, v[0], v[1], v[2], v[3], cx - w / 2, cy - h / 2, w, h);
+        }
+
         private void Fit(GameImage image, float cx, float cy, float size, float opacity = 1) {
             var fit = size / Math.Max(image.Width, image.Height);
             var w = image.Width * fit;

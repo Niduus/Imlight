@@ -1123,7 +1123,7 @@ internal sealed partial class ManagerWindow {
     }
 
     /// <summary>A socket's shape, drawn as the game outlines it.</summary>
-    private static Control SocketShape(string shape) {
+    private static Control SocketShape(string shape, double size = 18) {
         var data = shape switch {
             "Square" => "M3 3h14v14H3z",
             "Circle" => "M10 2a8 8 0 1 0 0.01 0z",
@@ -1135,11 +1135,11 @@ internal sealed partial class ManagerWindow {
         if (data.Length == 0) {
             var icon = shape switch { "Power" => "sparkle", "Shield" => "shield", "Sword" => "sword", _ => "square" };
 
-            return ManagerTheme.Icon(icon, 18, new SolidColorBrush(Color.FromRgb(236, 236, 236)));
+            return ManagerTheme.Icon(icon, size, new SolidColorBrush(Color.FromRgb(236, 236, 236)));
         }
 
         return new Avalonia.Controls.Shapes.Path {
-            Data = Geometry.Parse(data), Width = 18, Height = 18, Stretch = Stretch.Uniform,
+            Data = Geometry.Parse(data), Width = size, Height = size, Stretch = Stretch.Uniform,
             Stroke = Brushes.White, StrokeThickness = 1.6, Fill = new SolidColorBrush(Color.FromArgb(70, 255, 255, 255)),
         };
     }

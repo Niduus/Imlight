@@ -43,6 +43,7 @@ internal sealed partial class ManagerWindow {
     private readonly TextBlock _tfDetail = new() { TextWrapping = TextWrapping.Wrap };
     private readonly ToggleSwitch _tfEnabled = new() { OnContent = "On", OffContent = "Off" };
     private readonly ToggleSwitch _tfDevSpells = new() { OnContent = "On", OffContent = "Off" };
+    private readonly ToggleSwitch _tfLive = new() { OnContent = "On", OffContent = "Off" };
     private readonly ComboBox _tfMode = new() { Width = 200, ItemsSource = s_trueFormModes };
     private readonly TextBox _tfStitchAccount = new() { Width = 200, Watermark = "1234" };
     private readonly TextBox _tfStitchCharacter = new() { Width = 260, Watermark = "Myth Stitch" };
@@ -55,6 +56,11 @@ internal sealed partial class ManagerWindow {
     private readonly WizardSheet _tfSheet = new("True Form is not playing right now. Once he is, his stats, gear, deck and spells show here.") { Compact = true };
     private readonly DispatcherTimer _tfTimer = new() { Interval = TimeSpan.FromSeconds(3) };
     private bool _showingTrueForm;
+    // Stats, gear, jewels and deck are read when the page opens, on "Refresh now", or every tick with live updates on
+    // (Niduus, 2026-11-20: "have TF page update dynamically as changes are made to stats and deck" / "Also to be turned
+    // off by default").
+    private bool _tfWasVisible;
+    private bool _tfReadNow = true;
     private string _tfSheetText = "";
 
     private string TrueFormFolder => Path.Combine(_manager.LogFolder, "trueform");
@@ -70,6 +76,12 @@ internal sealed partial class ManagerWindow {
             if (!_showingTrueForm) {
                 await Guard(() => SaveTrueFormAsync("DevSpells", _tfDevSpells.IsChecked == true ? "true" : "false",
                     _tfDevSpells.IsChecked == true ? "True Form may use dev spells while grouped with a player (never ones that one-shot)." : "True Form uses the game's own spells only."));
+            }
+        };
+        _tfLive.IsCheckedChanged += async (_, _) => {
+            if (!_showingTrueForm) {
+                await Guard(() => SaveTrueFormAsync("LiveUpdates", _tfLive.IsChecked == true ? "true" : "false",
+                    _tfLive.IsChecked == true ? "Live updates on: his stats, gear, jewels and deck redraw here as they change." : "Live updates off: this page reads him when opened or when you click Refresh now."));
             }
         };
         _tfMode.SelectionChanged += async (_, _) => {
@@ -105,7 +117,16 @@ internal sealed partial class ManagerWindow {
                     return Open(TrueFormFolder);
                 }))),
             Fold("user", BOTS, "His stats, gear, deck and spells",
-                "As the game has him now: read every few seconds while the server runs.",
+                "As the game has him: read when this page opens and when you click Refresh now, or every few seconds with Live updates on. " +
+                "Under each piece: its sockets and the jewel in each; under his pet: its talents.",
+                SwitchRow("Live updates", _tfLive, "On: this page redraws his stats, gear, jewels and deck every few seconds as they change. Off (the default): only when opened or refreshed."),
+                Row(Action(Plain("Refresh now"), () => {
+                    _tfReadNow = true;
+                    RefreshTrueForm();
+                    Say("True Form's stats, gear, jewels and deck read again.");
+
+                    return Task.CompletedTask;
+                })),
                 _tfSheet.View),
             Fold("user", BOTS, "His gear and jewels",
                 "What he wears (the top level pieces for a Myth wizard who hits, shields and heals) and the jewel in every socket. " +
@@ -121,6 +142,7 @@ internal sealed partial class ManagerWindow {
         try {
             _tfEnabled.IsChecked = !string.Equals(_manager.GetSetting(TRUE_FORM_SECTION, "Enabled")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
             _tfDevSpells.IsChecked = !string.Equals(_manager.GetSetting(TRUE_FORM_SECTION, "DevSpells")?.Trim(), "false", StringComparison.OrdinalIgnoreCase);
+            _tfLive.IsChecked = string.Equals(_manager.GetSetting(TRUE_FORM_SECTION, "LiveUpdates")?.Trim(), "true", StringComparison.OrdinalIgnoreCase);
             var mode = _manager.GetSetting(TRUE_FORM_SECTION, "Mode")?.Trim() ?? "Auto";
             _tfMode.SelectedItem = s_trueFormModes.FirstOrDefault(m => m.Equals(mode, StringComparison.OrdinalIgnoreCase)) ?? "Auto";
             _tfStitchAccount.Text = _manager.GetSetting(TRUE_FORM_SECTION, "StitchAccount")?.Trim() ?? "";
@@ -166,8 +188,17 @@ internal sealed partial class ManagerWindow {
 
     private void RefreshTrueForm() {
         if (!_tfState.IsEffectivelyVisible) {
+            _tfWasVisible = false;
             return;
         }
+
+        // Coming back to the page reads him once; after that only live updates or Refresh now do.
+        if (!_tfWasVisible) {
+            _tfWasVisible = true;
+            _tfReadNow = true;
+        }
+
+        var readAll = _tfReadNow || _tfLive.IsChecked == true;
 
         var running = InstalledCommands.IsServerRunning(_manager.InstallFolder);
         var status = ReadTco7Status(TrueFormFolder);
@@ -190,6 +221,10 @@ internal sealed partial class ManagerWindow {
               ((tf["requested"] as JsonArray) is { Count: > 0 } kept ? $" Kept in his hand: {string.Join(", ", kept.Select(k => (string?) k))}." : "") +
               $" Health {(string?) me?["health"] ?? "?"}.";
 
+        if (!readAll) {
+            return;
+        }
+
         var gear = ReadAllOf(Path.Combine(TrueFormFolder, "gear.txt"), 64 * 1024).TrimEnd();
         gear = gear.Length > 0 ? gear : "Nothing yet: written when the server makes him ready.";
         if (_tfGear.Text != gear) {
@@ -203,6 +238,7 @@ internal sealed partial class ManagerWindow {
         }
 
         if (_tfSheet.View.IsEffectivelyVisible) {
+            _tfReadNow = false;
             var members = live ? me is null ? "" : status!["members"]!.ToJsonString() : "";
             if (members != _tfSheetText) {
                 _tfSheetText = members;

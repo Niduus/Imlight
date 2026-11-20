@@ -20,7 +20,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Nodes;
+using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.Spells;
+using Imlight.CoreLib.Shared.Items;
+using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.BotShared;
@@ -238,12 +241,149 @@ internal static class BotSheet {
             var id = item is null ? 0u : (uint) Math.Min((ulong) item.m_templateID, uint.MaxValue);
             var piece = id == 0 ? null : BotGear.Read(id);
             var shown = piece?.Name is { Length: > 0 } n ? n : id == 0 ? "" : Imlight.CoreLib.Game.Pet.PetWillCasts.ItemName(id);
-            rows.Add(new JsonObject {
+            var row = new JsonObject {
                 ["slot"] = name, ["id"] = id, ["name"] = shown ?? "", ["level"] = piece?.Level ?? 0,
+            };
+            // Each socket's jewel under its piece, and the pet's talents under the pet (Niduus, 2026-11-20: "we should put sub
+            // areas for the Pin/Jewel icons and pet for Talents.... Make it more in detail and nicer").
+            try {
+                if (item is not null && JewelRows(item) is { Count: > 0 } jewels) {
+                    row["jewels"] = jewels;
+                }
+
+                if (item is not null && slot == EquipmentSlotType.Pet && TalentRows(item) is { Count: > 0 } talents) {
+                    row["talents"] = talents;
+                }
+            }
+            catch (Exception) {
+                // A piece whose sockets or talents can't be read just shows without them.
+            }
+
+            rows.Add(row);
+        }
+
+        return rows;
+    }
+
+    // Every socket of a worn piece, in order: its shape as Ahziael draws it, the jewel in it (or none) and what that gives.
+    private static JsonArray JewelRows(WizClientObjectItem item) {
+        var rows = new JsonArray();
+        var template = ItemHelper.GetItemTemplate(item);
+        var sockets = JewelSockets.GetSockets(template);
+        var pairs = JewelSockets.GetPairs(item);
+        for (var socket = 0; socket < sockets.Count; socket++) {
+            if (sockets[socket]?.m_socketType is not { } type) {
+                continue;
+            }
+
+            var jewelId = pairs.FirstOrDefault(p => p?.m_socketNumber == socket)?.m_jewelTemplateID ?? 0;
+            var jewelTemplate = jewelId == 0 ? null : CoreObjectFactory.GetCoreTemplate((uint) jewelId) as WizItemTemplate;
+            var jewel = jewelId == 0 ? null : BotJewels.All.FirstOrDefault(j => j.Id == (uint) jewelId);
+            var stats = new JsonArray();
+            if (jewel is not null) {
+                foreach (var stat in jewel.Stats) {
+                    stats.Add(StatChip(stat));
+                }
+
+                if (jewel.TalentKeys.Count == 0) {
+                    foreach (var shownTalent in jewel.Talents) {
+                        stats.Add(new JsonObject { ["icon"] = "", ["text"] = shownTalent });
+                    }
+                }
+
+                foreach (var key in jewel.TalentKeys) {
+                    if (BotPetTalentStats.Of(key) is { } talent) {
+                        stats.Add(new JsonObject { ["icon"] = "", ["text"] = talent.Shown });
+                        foreach (var stat in talent.Stats) {
+                            stats.Add(StatChip(stat));
+                        }
+
+                        if (talent.MayCast is { Length: > 0 } cast) {
+                            stats.Add(new JsonObject { ["icon"] = "", ["text"] = $"may cast {cast}" });
+                        }
+                    }
+                }
+            }
+
+            rows.Add(new JsonObject {
+                ["shape"] = ShapeKey(type),
+                ["socket"] = JewelSockets.ShapeName(type),
+                ["name"] = jewelTemplate is null ? "" : BotJewels.NameOf(jewelTemplate),
+                ["school"] = jewel?.Stats.Select(st => st.School).FirstOrDefault(sc => sc.Length > 0) ?? "",
+                ["stats"] = stats,
             });
         }
 
         return rows;
+    }
+
+    // The pet's own talents (the ones it shows, not its derby ones), each with what it gives or may cast.
+    private static JsonArray TalentRows(WizClientObjectItem pet) {
+        var rows = new JsonArray();
+        var behavior = Imlight.CoreLib.Game.Pet.PetProgress.GetBehavior(pet);
+        foreach (var id in behavior?.m_expressedTalents ?? []) {
+            var key = (string) Imlight.CoreLib.Game.Pet.PetData.GetTalent(id)?.m_talentName ?? "";
+            var info = key.Length == 0 ? null : BotPetTalentStats.Of(key);
+            if (info is null) {
+                continue;
+            }
+
+            rows.Add(new JsonObject {
+                ["name"] = info.Shown,
+                ["cast"] = info.MayCast ?? "",
+                ["school"] = info.Stats.Select(st => st.School).FirstOrDefault(sc => sc.Length > 0) ?? "",
+                ["stats"] = new JsonArray([.. info.Stats.Select(StatChip)]),
+            });
+        }
+
+        return rows;
+    }
+
+    private static string ShapeKey(JewelSocketType type) => type switch {
+        JewelSocketType.SOCKETTYPE_SQUARE => "Square",
+        JewelSocketType.SOCKETTYPE_CIRCLE => "Circle",
+        JewelSocketType.SOCKETTYPE_TRIANGLE => "Triangle",
+        JewelSocketType.SOCKETTYPE_TEAR => "Tear",
+        JewelSocketType.SOCKETTYPE_PET => "Star",
+        JewelSocketType.SOCKETTYPE_PINSQUAREPIP => "Power",
+        JewelSocketType.SOCKETTYPE_PINSQUARESHIELD => "Shield",
+        JewelSocketType.SOCKETTYPE_PINSQUARESWORD => "Sword",
+        _ => type.ToString(),
+    };
+
+    // One stat as Ahziael shows it: the game's icon key and plain words ("+16% Myth Accuracy").
+    private static JsonObject StatChip(BotGear.Stat stat) {
+        var (icon, words, percent) = stat.Kind switch {
+            "Damage" => ("damage", "Damage", true),
+            "FlatDamage" => ("damageflat", "Flat Damage", false),
+            "Accuracy" => ("accuracy", "Accuracy", true),
+            "ArmorPiercing" => ("pierce", "Pierce", true),
+            "ReduceDamage" => ("resist", "Resist", true),
+            "FlatReduceDamage" => ("resistflat", "Flat Resist", false),
+            "Healing" => ("outgoing", "Outgoing Healing", true),
+            "IncHealing" => ("incoming", "Incoming Healing", true),
+            "MaxHealth" => ("health", "Health", false),
+            "MaxMana" => ("mana", "Mana", false),
+            "PowerPips" => ("powerpip", "Power Pip Chance", true),
+            "CriticalHit" => ("critical", "Critical Rating", false),
+            "Block" => ("block", "Block Rating", false),
+            "StartingPips" => ("pip", "Starting Pip", false),
+            var k when k.Contains("PipConversion", StringComparison.Ordinal) => ("pipconversion", "Pip Conversion", false),
+            var k when k.Contains("ShadowPip", StringComparison.Ordinal) => ("shadowpip", "Shadow Pip Rating", false),
+            var k when k.Contains("Archmastery", StringComparison.Ordinal) => ("archmastery", "Archmastery", false),
+            var k when k.Contains("Stun", StringComparison.Ordinal) => ("stunresist", "Stun Resist", true),
+            var k => ("", k, false),
+        };
+        var school = stat.School.Length == 0 ? "" : stat.School + " ";
+        if (stat.School.Length == 0 && icon is "damage" or "accuracy" or "pierce" or "resist" or "critical" or "damageflat" or "resistflat") {
+            school = "Universal ";
+        }
+
+        return new JsonObject {
+            ["icon"] = icon,
+            ["text"] = $"{(stat.Value >= 0 ? "+" : "")}{stat.Value:0.#}{(percent ? "%" : "")} {school}{words}",
+            ["school"] = stat.School,
+        };
     }
 
     // The worn pieces that give to one stat, as "Hat name: +5%", and what the rest comes from. Only the wizard's own stats:

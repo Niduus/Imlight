@@ -262,6 +262,7 @@ internal sealed partial class ManagerWindow {
         sheet.StatIcon ??= (key, tip, size) => GearIcon(key, tip, size);
         sheet.SchoolIcon ??= (school, size) => SchoolBadge(school, size);
         sheet.SlotIcon ??= SlotIcon;
+        sheet.SocketIcon ??= (shape, size) => SocketShape(shape, size);
         sheet.PicturesReady ??= () => _spellBook is not null;
         EnsureGameIcons(() => Avalonia.Threading.Dispatcher.UIThread.Post(sheet.Redraw));
     }
