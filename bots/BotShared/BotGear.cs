@@ -340,7 +340,34 @@ internal static class BotGear {
             school = "";
         }
 
-        return new Stat(kind, school, CanonicalStatEffects.GetCanonicalStatValue(info));
+        return new Stat(kind, school, InPoints(effect, CanonicalStatEffects.GetCanonicalStatValue(info)));
+    }
+
+    // The game's value in points, as its windows show it (+15% damage is 15). The server gives a percent stat as a
+    // fraction (0.15) unless its category is exactly "Damage", "Accuracy", "Piercing" or "ReduceDamage": "MythDamage",
+    // "AllDamage", "MythArmorPiercing", power pip and healing stats came as 0.15, so a +15% damage piece weighed less than a
+    // point of health, and a mount's +1% damage read as 0 (Niduus, 2026-11-19: True Form rode a mount for its looks).
+    private static readonly string[] s_alreadyPoints = ["Accuracy", "Damage", "Piercing", "ReduceDamage"];
+    private static readonly ConcurrentDictionary<string, bool> s_percentTables = new(StringComparer.Ordinal);
+
+    private static float InPoints(WizStatisticEffectTemplate effect, float value) {
+        var category = (string) effect.m_effectCategory ?? "";
+        var table = (string) effect.m_statTableName ?? "";
+        if (s_alreadyPoints.Contains(category) || effect.m_effectName.ToString().Contains("Flat", StringComparison.Ordinal) || table.Length == 0) {
+            return value;
+        }
+
+        var percent = s_percentTables.GetOrAdd(table, name => {
+            try {
+                // A percent table holds fractions (-1 ... 1.99); a rating or health table holds whole numbers.
+                return GameEffectRuleData.GetWizardStatTable(name)?.m_statVector is { Count: > 0 } vector && vector.Max(v => Math.Abs(v)) <= 10;
+            }
+            catch (Exception) {
+                return false;
+            }
+        });
+
+        return percent ? MathF.Round(value * 100f, 2) : value;
     }
 
     private static readonly string[] s_schools = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance", "Shadow", "Sun", "Moon", "Star", "All"];
@@ -651,8 +678,8 @@ internal static class BotGear {
         "Damage", "ArmorPiercing", "Accuracy", "ReduceDamage", "PowerPips",
     };
 
-    internal static double Percent(Stat stat) =>
-        s_percentKinds.Contains(stat.Kind) && Math.Abs(stat.Value) > 0 && Math.Abs(stat.Value) < 1.5 ? stat.Value * 100 : stat.Value;
+    // Stats are read in points now (ReadStat, InPoints), so a +1% stat is 1 here, not 100.
+    internal static double Percent(Stat stat) => s_percentKinds.Contains(stat.Kind) ? stat.Value : stat.Value;
 
     /// <summary>How good an outfit is for the goals: under a floor counts most, damage and pierce lead above them.</summary>
     internal static double Value(Totals t, Goals g) {
