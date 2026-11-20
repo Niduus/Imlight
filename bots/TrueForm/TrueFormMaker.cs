@@ -109,6 +109,7 @@ internal static class TrueFormMaker {
             EnsureMount(wizard, statSchool, style);
             TrueFormJewels.Fill(wizard, statSchool, style);
             TrueFormSpells.Give(wizard, top, school.ToString(), style);
+            TrueForm.CardPush = true;
         }
         catch (Exception e) {
             Logger.Warning("True Form: could not make him ready: {0}", Logger.Args(e));

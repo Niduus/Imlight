@@ -68,6 +68,12 @@ internal sealed partial class UltimusDirectorActor {
             TrueFormSetBonus.Ensure(setWizard);
         }
 
+        // After a change, every player's game gets his new character card at once (TrueFormCardPush).
+        if (TrueForm.CardPush && me.Wizard is { GameObjectID: not 0 } cardWizard) {
+            TrueForm.CardPush = false;
+            TrueFormCardPush(cardWizard);
+        }
+
         // Calls and "leave" are answered at once, in a battle too (a call waited for the battle's end and often ran out).
         TrueFormCalls(me);
         UltimusNow.Note(_doing, _lastReasoning, null);
@@ -643,6 +649,31 @@ internal sealed partial class UltimusDirectorActor {
     }
 
     private readonly System.Collections.Generic.Dictionary<ulong, DateTime> _tfOfferedAt = [];
+
+    // The game keeps another wizard's character card (stats, gear, pet and its talents) from the last time it asked, and does
+    // not ask again when he logs back in changed: his pet card showed the old talents (Niduus, 2026-11-20, "ugh...": the
+    // server last sent his card at 23:01:50, he changed to full healer at 23:02:31, and the game never asked again). So after
+    // each change his whole card is sent to every player online, as the game does for a wishlist change.
+    private void TrueFormCardPush(Wizard wizard) {
+        try {
+            var sent = 0;
+            foreach (var player in WizardData.Collections.OnlinePlayerCollection.GetOnlinePlayers()
+                         .Where(p => p.CharacterId != 0 && p.CharacterId != wizard.CharId && p.ActorPath is not null && TrueForm.IsPlayer(p.CharacterId))) {
+                var session = Context.System.ActorSelection(player.ActorPath);
+                foreach (var id in new[] { wizard.GameObjectID, wizard.CharId }) {
+                    var card = Shared.Character.BuddyStatsBuilder.Build(wizard, new Imcodec.MessageLayer.Generated.GAME_5_PROTOCOL.MSG_BUDDYSTATS { BuddyID = id }, 0);
+                    session.Tell(card);
+                }
+
+                sent++;
+            }
+
+            Note("Ultimus", $"True Form: his new character card (pet talents, gear, stats) sent to {sent} player(s).");
+        }
+        catch (Exception e) {
+            Imlight.Common.Logger.Warning("True Form: his character card could not be sent: {0}", Imlight.Common.Logger.Args(e.Message));
+        }
+    }
 
     // "Go ice weave fire", "weave storm", "stop weaving", "get more ice accuracy", "reset stats", "last build", and the yes to
     // an offered last build. True when the order was all that; a weave or stat ask said with a school or setup is kept for

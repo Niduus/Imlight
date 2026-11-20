@@ -250,6 +250,22 @@ internal static class BotGear {
     private static readonly System.Text.RegularExpressions.Regex s_devWord
         = new(@"(^|[^A-Za-z])((Dev|Debug|GM|Admin|QA|Test|Testing|Tester)([^a-z]|$)|(DEV|DEBUG|ADMIN|TEST|TESTING)([^A-Za-z]|$))");
 
+    // Names of items that only stand in for a creature's or a polymorph's stats.
+    private static readonly System.Text.RegularExpressions.Regex s_standIn
+        = new(@"(?i)(\bStats?\b|StatHat|StatRobe|StatBoots|StatWand|Polymorph|\bNPC\b|_NPC|NPC_|Placeholder|\bMonster\b|\bMob\b)");
+
+    // More than any piece a player can have gives (the best real pieces give about 30% damage, resist or healing, a few
+    // hundred critical or block rating, about 3,000 health).
+    private static bool TooStrong(Stat stat) => stat.Kind switch {
+        "Damage" or "Accuracy" or "ArmorPiercing" or "ReduceDamage" or "Healing" or "IncHealing" or "PowerPips" => stat.Value > 45,
+        "MaxHealth" => stat.Value > 4000,
+        "FlatDamage" or "FlatReduceDamage" => stat.Value > 150,
+        _ when stat.Kind.Contains("Critical", StringComparison.Ordinal) || stat.Kind.Contains("Block", StringComparison.Ordinal)
+               || stat.Kind.Contains("PipConversion", StringComparison.Ordinal) || stat.Kind.Contains("Archmastery", StringComparison.Ordinal)
+               || stat.Kind.Contains("ShadowPip", StringComparison.Ordinal) => stat.Value > 600,
+        _ => false,
+    };
+
     /// <summary>
     /// Whether the server's wizards may never wear this item: the developers' and testers' own gear (QA, Dev, Debug, GM,
     /// Admin or Test in its name or file, or in a Test or Dev folder) and every Deckathalon deck.
@@ -275,7 +291,18 @@ internal static class BotGear {
                 || objectName.StartsWith("Deck-DU", StringComparison.OrdinalIgnoreCase) || objectName.Contains("-DU-T", StringComparison.OrdinalIgnoreCase)
                 || file.Contains("Deckathalon", StringComparison.OrdinalIgnoreCase) || file.Contains("Deck-DU", StringComparison.OrdinalIgnoreCase);
 
-            return dev || deckathalon;
+            // Creature and stand-in gear in the game's files that players never get (Niduus, 2026-11-20: "all bots are banned
+            // from dev gear", True Form wore GR_AZ_Parasaur_Priest_C_StatHat, a level 1 hat with +100% critical chance and
+            // +88% outgoing healing, "Stats Amulet" and "NV Polymorph Stats Ring"): no English name, a creature (GR_) or
+            // polymorph or stat-holder name, or stats no player's piece has.
+            var creature = shown.Length == 0 || shown.Contains('_')
+                || s_standIn.IsMatch(shown) || s_standIn.IsMatch(objectName)
+                || objectName.StartsWith("GR_", StringComparison.OrdinalIgnoreCase) || objectName.StartsWith("Creature", StringComparison.OrdinalIgnoreCase)
+                || file.Contains("/Creature", StringComparison.OrdinalIgnoreCase) || file.Contains("/NPC", StringComparison.OrdinalIgnoreCase)
+                || file.Contains("/Polymorph", StringComparison.OrdinalIgnoreCase) || file.Contains("/Mobs/", StringComparison.OrdinalIgnoreCase);
+            var tooStrong = StatsOf(template).Any(TooStrong);
+
+            return dev || deckathalon || creature || tooStrong;
         }
         catch (Exception) {
             return false;
