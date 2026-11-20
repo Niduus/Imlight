@@ -739,7 +739,7 @@ internal static class TrueFormMaker {
         outfit = $"{school}{(statSchool.Length == 0 ? " universal" : "")} {style}: {outfit}";
         var worn = BotGear.Slots.Select(s => (Slot: s, Item: wizard.EquipmentBehavior?.GetItemInSlot(s))).ToList();
         var wearsIt = best.All(b => worn.FirstOrDefault(w => w.Slot == b.Key).Item is { } item && (uint) Math.Min((ulong) item.m_templateID, uint.MaxValue) == b.Value.Id);
-        if (wearsIt && File.Exists(marker) && File.ReadAllText(marker).Trim() == outfit) {
+        if (wearsIt && BotGear.ForbiddenWorn(wizard).Count == 0 && File.Exists(marker) && File.ReadAllText(marker).Trim() == outfit) {
             return;
         }
 
@@ -765,6 +765,30 @@ internal static class TrueFormMaker {
             }
             catch (Exception e) {
                 Logger.Warning("True Form: could not put on {0}: {1}", Logger.Args(piece.Name, e.Message));
+            }
+        }
+
+        // A banned piece left in a slot his new outfit has nothing for comes off and out of his backpack (Niduus, 2026-11-20:
+        // a level 1 creature hat stayed on after the ban, as no allowed hat replaced it).
+        foreach (var banned in BotGear.ForbiddenWorn(wizard)) {
+            try {
+                if (wizard.EquipmentToInventoryTransfer(banned.Item.m_globalID.Full, out _)) {
+                    wizard.RemoveItemFromInventory(banned.Item.m_globalID.Full, ItemRecordKind.Removed, "banned gear taken off True Form");
+                    Logger.Information("True Form: took off banned gear {0} ({1}).", Logger.Args(banned.Name, banned.Slot));
+                }
+            }
+            catch (Exception e) {
+                Logger.Warning("True Form: could not take off {0}: {1}", Logger.Args(banned.Name, e.Message));
+            }
+        }
+
+        // And none kept in his backpack for later.
+        foreach (var kept in (wizard.InventoryBehavior?.Items ?? []).Where(i => BotGear.Forbidden((uint) Math.Min((ulong) i.m_templateID, uint.MaxValue))).ToList()) {
+            try {
+                wizard.RemoveItemFromInventory(kept.m_globalID.Full, ItemRecordKind.Removed, "banned gear out of True Form's backpack");
+            }
+            catch (Exception e) {
+                Logger.Debug("True Form: could not drop banned item {0}: {1}", Logger.Args(kept.m_templateID, e.Message));
             }
         }
 

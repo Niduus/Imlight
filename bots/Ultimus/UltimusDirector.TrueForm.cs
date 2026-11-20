@@ -68,6 +68,19 @@ internal sealed partial class UltimusDirectorActor {
             TrueFormSetBonus.Ensure(setWizard);
         }
 
+        // Banned gear (developers', testers', creature stand-ins) comes off at once, whatever he is doing out of battle
+        // (Niduus, 2026-11-20: "HE'S NOT ALLOWED TO HAVE DEV GEAR. NONE OF THE BOTS ARE ALLOWED"): the gear pick skipped
+        // it, but a piece already worn stayed on until his next change.
+        if (me.Wizard is { IsInDuel: false } stripWizard && DateTime.UtcNow >= _tfNextStrip) {
+            _tfNextStrip = DateTime.UtcNow.AddSeconds(5);
+            foreach (var banned in BotGear.ForbiddenWorn(stripWizard)) {
+                Imlight.Common.Logger.Information("True Form: takes off banned gear {0} ({1}).", Imlight.Common.Logger.Args(banned.Name, banned.Slot));
+                Note("Ultimus", $"True Form takes off {banned.Name} ({banned.Slot}): developers' and creature gear is not for bots.");
+                _actors[0].Tell(new UltimusMember.Unequip(banned.Item.m_globalID, banned.Slot, banned.Name), Self);
+                TrueForm.CardPush = true;
+            }
+        }
+
         // After a change, every player's game gets his new character card at once (TrueFormCardPush).
         if (TrueForm.CardPush && me.Wizard is { GameObjectID: not 0 } cardWizard) {
             TrueForm.CardPush = false;
@@ -654,6 +667,8 @@ internal sealed partial class UltimusDirectorActor {
     // not ask again when he logs back in changed: his pet card showed the old talents (Niduus, 2026-11-20, "ugh...": the
     // server last sent his card at 23:01:50, he changed to full healer at 23:02:31, and the game never asked again). So after
     // each change his whole card is sent to every player online, as the game does for a wishlist change.
+    private DateTime _tfNextStrip;
+
     private void TrueFormCardPush(Wizard wizard) {
         try {
             var sent = 0;
