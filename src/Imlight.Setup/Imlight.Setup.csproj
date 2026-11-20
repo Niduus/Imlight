@@ -30,6 +30,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- The server's shipped settings, so Ahziael can add a setting this PC's Imlight.ini doesn't have yet (IniFile.FillFromShipped). -->
+    <EmbeddedResource Include="..\Imlight.Director\Config\Imlight.ini" LogicalName="Imlight.Defaults.ini" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Pictures the window shows, built into the exe so they show offline (read with avares://<assembly>/Assets/...). -->
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>

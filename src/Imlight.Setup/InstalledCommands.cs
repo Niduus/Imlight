@@ -63,7 +63,14 @@ internal static class InstalledCommands {
     internal static string ServerExe(string installFolder) => Path.Combine(ServerFolder(installFolder),
         RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Imlight.Director.exe" : "Imlight.Director");
 
-    internal static string ConfigFile(string installFolder) => Path.Combine(ServerFolder(installFolder), "Config", "Imlight.ini");
+    internal static string ConfigFile(string installFolder) {
+        var path = Path.Combine(ServerFolder(installFolder), "Config", "Imlight.ini");
+        // A setting newer than this PC's file (a new bot family, a new switch) is added with its shipped default the
+        // first time anything reads the file, so no page says "not a setting" while the server update still waits.
+        IniFile.FillFromShipped(path);
+
+        return path;
+    }
 
     // ---------------------------------------------------------------------
     // Start

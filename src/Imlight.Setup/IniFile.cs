@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Imlight.Setup;
 
@@ -25,6 +26,54 @@ namespace Imlight.Setup;
 /// Reads and edits values in Imlight.ini, keeping every comment and every other line as it was.
 /// </summary>
 internal static class IniFile {
+
+    private static readonly System.Threading.Lock s_fillLock = new();
+    private static readonly Dictionary<string, (DateTime Written, long Size)> s_filled = new(StringComparer.OrdinalIgnoreCase);
+    private static string[]? s_shipped;
+
+    /// <summary>
+    /// Adds every section and key the Imlight.ini built into Ahziael has that the file at <paramref name="path"/> lacks,
+    /// with its comments and shipped default. Values already there are never changed. It runs again only when the file
+    /// changed since the last look, and never fails a read: a file that is busy is tried again next time.
+    /// </summary>
+    internal static void FillFromShipped(string path) {
+        try {
+            var info = new System.IO.FileInfo(path);
+            if (!info.Exists) {
+                return;
+            }
+
+            lock (s_fillLock) {
+                var stamp = (info.LastWriteTimeUtc, info.Length);
+                if (s_filled.TryGetValue(path, out var seen) && seen == stamp) {
+                    return;
+                }
+
+                s_shipped ??= Shipped();
+                var lines = System.IO.File.ReadAllLines(path).ToList();
+                if (s_shipped.Length > 0 && AddMissing(lines, s_shipped) > 0) {
+                    System.IO.File.WriteAllLines(path, lines);
+                    info.Refresh();
+                    stamp = (info.LastWriteTimeUtc, info.Length);
+                }
+
+                s_filled[path] = stamp;
+            }
+        } catch (Exception e) when (e is System.IO.IOException or UnauthorizedAccessException) {
+            // Busy or read-only: the next read tries again.
+        }
+    }
+
+    private static string[] Shipped() {
+        using var stream = typeof(IniFile).Assembly.GetManifestResourceStream("Imlight.Defaults.ini");
+        if (stream is null) {
+            return [];
+        }
+
+        using var reader = new System.IO.StreamReader(stream);
+
+        return reader.ReadToEnd().ReplaceLineEndings("\n").Split('\n');
+    }
 
     /// <summary>
     /// Adds the sections and keys a newer default file has that the person's file lacks, with their comments,
