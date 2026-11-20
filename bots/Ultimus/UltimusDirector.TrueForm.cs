@@ -484,6 +484,14 @@ internal sealed partial class UltimusDirectorActor {
                 return TrueFormSetup(heard, me, grouped, kind, namedSchool);
             }
 
+            // Already in that setup: no school question again (Niduus, 2026-11-20: "go full healer" twice, then "life", got
+            // "I'm already in my full healing setup as Life!" each time).
+            if (TrueForm.Kind == kind) {
+                var setupWords = kind == TrueForm.Setup.FullHeal ? "full healing" : "full tank";
+                SendReply(heard, $"I'm already in my {setupWords} setup as {TrueForm.School}! Say another school, like \"go full {(kind == TrueForm.Setup.FullHeal ? "healer" : "tank")} as ice\", to change it.", "true form");
+                return true;
+            }
+
             var best = TrueForm.BestSchoolsFor(kind);
             TrueForm.PendingPick = new TrueForm.SwapAsk(best[0], null, heard.SpeakerCharId, heard.SpeakerName, kind);
             TrueForm.PendingPickAt = DateTime.UtcNow;

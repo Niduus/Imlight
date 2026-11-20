@@ -175,9 +175,9 @@ internal static class TrueFormSpells {
     private static List<uint> Mixed(List<TrueFormPool.Entry> ordered, int room, BotStyle style) {
         var focus = TrueForm.Focus;
         double hitShare = focus == TrueForm.DeckFocus.Heals ? 0 : focus == TrueForm.DeckFocus.Hits ? 0.8 : focus == TrueForm.DeckFocus.Shields ? 0.15 : style switch { BotStyle.GlassCannon => 0.6, BotStyle.Hitter or BotStyle.UniversalHitter => 0.5, BotStyle.Backup => 0.4, BotStyle.Tank => 0.3, BotStyle.FullTank => 0.25, BotStyle.FullHealer => 0.15, _ => 0.25 };
-        // A heals-only deck (Niduus, 2026-11-20: "No damage spells"): heals first, then what keeps the team up, no hits and
-        // nothing that only helps hits.
-        string[] kinds = focus == TrueForm.DeckFocus.Heals ? ["heal", "shield", "charm removal", "other", "stun"]
+        // A heals-only deck (Niduus, 2026-11-20: "No damage spells", "your job is to only blade or heal me"): heals and blades
+        // for the team first, then what keeps it up; no hits.
+        string[] kinds = focus == TrueForm.DeckFocus.Heals ? ["heal", "blade", "shield", "charm removal", "other", "stun"]
             : focus == TrueForm.DeckFocus.Shields ? ["shield", "heal", "weakness", "stun", "charm removal", "other", "trap", "blade"]
             : style switch {
             BotStyle.Healer or BotStyle.FullHealer => ["heal", "shield", "charm removal", "blade", "other", "stun", "trap", "weakness"],

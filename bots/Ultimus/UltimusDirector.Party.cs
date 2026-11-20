@@ -284,11 +284,13 @@ internal sealed partial class UltimusDirectorActor {
     }
 
     // The enemy to start a fight with, when told to go in: the nearest creature by his mate (a boss counts), free to fight.
+    // The nearest enemy within 1600 of the mate ("go in first" found none at 900 while one stood a little further; Niduus,
+    // 2026-11-20: "go in first", "go in the fight" got "I don't see an enemy near you", then "kill them" went in).
     private UltimusPlanner.Target EnterFightTarget(UltimusMember.Status leader, (float X, float Y) mateAt, string name) {
         var foe = Tools.MinimapIndex.In(leader.ZoneActor)
             .Where(m => m.Kind is Tools.MinimapIndex.MOB or Tools.MinimapIndex.BOSS && m.Object is not null
                         && BotShared.DudCreatures.Fightable(m.Object.m_globalID.Full)
-                        && UltimusPlanner.Far(mateAt.X, mateAt.Y, m.Object.m_location.X, m.Object.m_location.Y) < 900)
+                        && UltimusPlanner.Far(mateAt.X, mateAt.Y, m.Object.m_location.X, m.Object.m_location.Y) < 1600)
             .OrderBy(m => UltimusPlanner.Far(mateAt.X, mateAt.Y, m.Object.m_location.X, m.Object.m_location.Y)).FirstOrDefault();
         return foe is null ? null : new UltimusPlanner.Target(UltimusPlanner.FIGHT, foe.Object.m_location.X, foe.Object.m_location.Y,
             $"going into the fight with {foe.Name}, as {name} (my group leader) asked", Template: foe.Template, GlobalId: foe.Object.m_globalID.Full,

@@ -122,7 +122,7 @@ internal static class TrueForm {
         }
 
         // A typo in a mode word ("atack", "defned", "suport", "healler"): one letter off, for words of five letters or more.
-        foreach (var token in w.Split(' ', StringSplitOptions.RemoveEmptyEntries).Where(t => t.Length >= 5)) {
+        foreach (var token in w.Split(' ', StringSplitOptions.RemoveEmptyEntries).Where(t => t.Length >= 5 && !s_realWords.Contains(t))) {
             foreach (var (mode, names) in s_modeWords) {
                 if (names.Any(n => n.Length >= 5 && !n.Contains(' ') && OneOff(token, n))) {
                     return mode;
@@ -132,6 +132,10 @@ internal static class TrueForm {
 
         return null;
     }
+
+    // Real words one letter off a mode word, never read as its typo ("start a fight" was read as "smart", auto).
+    private static readonly System.Collections.Generic.HashSet<string> s_realWords = ["start", "stark", "smack", "heart", "heard", "hears",
+        "heals", "dealt", "tanks", "thank", "guards", "shied", "field", "yield", "buffs", "chase", "evils", "attach"];
 
     // "No damage spells", "don't attack", "without hits": what is said not to do is no order to do it (Niduus, 2026-11-20:
     // "setup your deck to focus on healing. No damage spells" was read as attack).
@@ -185,9 +189,15 @@ internal static class TrueForm {
     internal static DeckFocus? DeckFocusFrom(string words) {
         var w = (words ?? "").Trim().ToLowerInvariant();
         bool Is(string pattern) => System.Text.RegularExpressions.Regex.IsMatch(w, pattern);
-        var deck = Is(@"\b(deck|decks|cards|spells|spell list|kit)\b");
-        var noHits = Is(@"\b(no|not|without|don'?t|zero)\s+(any\s+|use\s+|using\s+)?(damage|attack|attacks|hits?|hitting|dmg|offensive)\b");
-        if (Is(@"\b(heals?|healing)\s+only\b") || Is(@"\bonly\s+(heals?|healing)\b") || (noHits && (deck || Is(@"\bheal")))
+        // "Pack", "bring", "carry", "load" are deck words too ("only pack heals and blades", "do not pack hits").
+        var deck = Is(@"\b(deck|decks|cards|spells|spell list|kit|pack|packs|packing|bring|carry|load)\b");
+        var noHits = Is(@"\b(no|not|without|don'?t|dont|zero|never)\s+(any\s+|use\s+|using\s+|pack\s+|packing\s+|bring\s+|carry\s+|cast\s+|casting\s+|do\s+)?(damage|attack|attacks|attacking|hits?|hitting|dmg|offensive)\b");
+        // Heals (and blades) only, however it is said: "heals only", "only blade or heal me", "your job is to only blade or
+        // heal", "blade or heal ONLY", "do not hit at all" (Niduus, 2026-11-20).
+        var healOnly = Is(@"\b(heals?|healing|blades?|blading)\s+(or|and|&)\s+(heals?|healing|blades?|blading)\s+only\b")
+                       || Is(@"\bonly\s+(pack\s+|bring\s+|use\s+|cast\s+|do\s+)?(heals?|healing|blades?|blade)\b(\s+(or|and|&)\s+(heals?|healing|blades?|blade))?")
+                       || Is(@"\b(heals?|healing)\s+only\b");
+        if (healOnly || noHits
             || (deck && Is(@"\b(heals?|healing|healer)\b") && Is(@"\b(focus|focused|set ?up|setup|build|make|fill|full|all|only|on|around|for)\b"))) {
             return DeckFocus.Heals;
         }
