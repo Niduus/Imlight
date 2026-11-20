@@ -497,6 +497,13 @@ internal static class BotGear {
 
     /// <summary>How good a list of stats is for a wizard of this school and style (a piece's, or a jewel's).</summary>
     /// <summary>While set, what a piece's sockets add once filled with the best jewels.</summary>
+    /// <summary>
+    /// While True Form builds his Universal Immunity: how far each school's resist is short of 100% (school name, case
+    /// ignored). A school's own resist counts only while that school is short.
+    /// </summary>
+    [ThreadStatic]
+    internal static Dictionary<string, float> ImmunityGap;
+
     [ThreadStatic]
     internal static Func<Piece, double> SocketWorth;
 
@@ -605,8 +612,11 @@ internal static class BotGear {
         }
 
         // Universal Immunity: only a resist to every school counts; one school's resist leaves the others open.
+        // A school still short of 100% (ImmunityGap, set while True Form builds it): that school's own resist counts too, as
+        // much as the share of the seven schools it closes (Niduus, 2026-11-20: "think about everything possible to achieve
+        // his goal").
         if (style == BotStyle.Immunity && stat.Kind.Contains("ReduceDamage", StringComparison.Ordinal)) {
-            share = all ? 1.0 : 0;
+            share = all ? 1.0 : ImmunityGap is { } gaps && gaps.TryGetValue(stat.School, out var gap) && gap > 0 ? 0.35 : 0;
         }
 
         return share;

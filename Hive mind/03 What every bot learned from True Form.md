@@ -18,6 +18,8 @@ Corrections Niduus made while testing True Form (November 19 and 20, 2026). Each
 - No power pip jewels or school accuracy past 100%.
 
 ## Pet talents
+- For a goal, every source counts: gear, set bonuses, jewels, pins, pet talents, the pet jewel and the mount. A setup is not done until each of them works toward the goal.
+- Full immune: the pet takes selfish resist talents, every-school resist first and then the resist of each school still short of 100%. No health or healing talents until every school is at 100%.
 - Talents are picked as players pick them, by their real effects (Dealer, Pain-Giver, Proof, Defy, Giver).
 - A pet jewel never repeats a talent the pet already has.
 - No one-school resist talents, and no repeated talents.

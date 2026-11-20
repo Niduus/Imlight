@@ -104,10 +104,29 @@ internal static class TrueFormMaker {
 
             Dress(wizard, top, school.ToString(), style, statSchool);
             Stitch(wizard);
+            // Universal Immunity: every lever after his gear (pet talents, mount, jewels, pins) goes to the schools still short
+            // of 100% resist (Niduus, 2026-11-20: "have him think about everything possible to achieve his goal").
+            if (style == BotStyle.Immunity) {
+                BotGear.ImmunityGap = ImmunityGaps(WornResist(wizard, withPetTalents: false));
+            }
+
             GivePet(wizard, statSchool, style);
+            if (style == BotStyle.Immunity) {
+                BotGear.ImmunityGap = ImmunityGaps(WornResist(wizard));
+            }
+
             DropWeakMount(wizard, null);
             EnsureMount(wizard, statSchool, style);
             TrueFormJewels.Fill(wizard, statSchool, style);
+            if (style == BotStyle.Immunity) {
+                var final = WornResist(wizard);
+                var immune = final.Where(x => x.Value >= 100).Select(x => x.Key).ToList();
+                var shortOf = final.Where(x => x.Value < 100).Select(x => $"{x.Key} {x.Value:0}%").ToList();
+                ImmunityReport = shortOf.Count == 0
+                    ? $"I'm immune to every school now: 100% or more resist to all seven ({string.Join(", ", final.Select(x => $"{x.Key} {x.Value:0}%"))})."
+                    : $"Immune to {(immune.Count == 0 ? "no school yet" : string.Join(", ", immune))}. Still short: {string.Join(", ", shortOf)}. That's the most my gear, sets, jewels, pins, pet talents and mount can reach.";
+                Logger.Information("True Form: Universal Immunity reached: {0}.", Logger.Args(string.Join(", ", final.Select(x => $"{x.Key} {x.Value:0}%"))));
+            }
             TrueFormSpells.Give(wizard, top, school.ToString(), style);
             TrueForm.CardPush = true;
         }
@@ -117,6 +136,7 @@ internal static class TrueFormMaker {
         finally {
             BotGear.WeaveSchool = null;
             BotGear.Pushes = null;
+            BotGear.ImmunityGap = null;
         }
     }
 
@@ -155,12 +175,95 @@ internal static class TrueFormMaker {
     // filled the gaps (Niduus, 2026-11-19: his Life healer's pet showed Myth damage talents; "still bugged not picking right
     // talents"). The rest, best first, are for his pet jewel (TrueFormJewels).
     internal static System.Collections.Generic.List<BotPetTalentStats.Info> PetTalents(Wizard wizard, string school, BotStyle style) {
+        // Universal Immunity: talents picked for the goal itself, every school to 100% resist (ImmunityTalents).
+        if (style == BotStyle.Immunity) {
+            return ImmunityTalents(wizard);
+        }
+
         // Accuracy or pips already too high from his gear: school accuracy and pip talents count for nothing.
         var need = BotJewelPicker.For(wizard, school, style);
         return BotPetTalentStats.Best(school, style, 15, need.AccuracyFull, need.PipsFull);
     }
 
     private const int PET_TALENTS = 5;
+
+    /// <summary>
+    /// His resist to each school from everything he wears now: gear, set bonuses, the jewels in his sockets, his mount and his
+    /// pet's talents. Immunity to a school is 100% or more (Niduus, 2026-11-20).
+    /// </summary>
+    internal static System.Collections.Generic.Dictionary<string, float> WornResist(Wizard wizard, bool withPetTalents = true) {
+        var stats = new System.Collections.Generic.List<BotGear.Stat>();
+        var items = (wizard?.EquipmentBehavior?.EquippedItems ?? []).ToList();
+        var jewels = BotJewels.All.ToDictionary(j => j.Id, j => j);
+        foreach (var item in items) {
+            var id = (uint) Math.Min((ulong) item.m_templateID, uint.MaxValue);
+            if (CoreObjectFactory.GetCoreTemplate(id) is WizItemTemplate template) {
+                stats.AddRange(BotGear.StatsOf(template));
+            }
+
+            foreach (var pair in JewelSockets.GetPairs(item).Where(p => p is not null && p.m_jewelTemplateID != 0)) {
+                if (jewels.TryGetValue((uint) pair.m_jewelTemplateID, out var jewel)) {
+                    stats.AddRange(jewel.Stats);
+                }
+            }
+
+            if (withPetTalents && PetProgress.GetBehavior(item) is { } pet) {
+                foreach (var talentId in pet.m_expressedTalents ?? []) {
+                    if (PetData.GetTalent(talentId) is { } talent && BotPetTalentStats.Of(talent.m_talentName) is { } info) {
+                        stats.AddRange(info.Stats);
+                    }
+                }
+            }
+        }
+
+        foreach (var (_, _, tier) in TrueFormSetBonus.Reached(items.Select(ItemHelper.GetItemTemplate))) {
+            stats.AddRange(BotGear.StatsOfEffects(tier.m_equipEffectsGranted));
+        }
+
+        var every = stats.Where(st => st.Kind == "ReduceDamage" && st.School.Length == 0).Sum(st => st.Value);
+        return ImmunitySchools.ToDictionary(sc => sc, sc => every + stats.Where(st => st.Kind == "ReduceDamage" && st.School.Equals(sc, StringComparison.OrdinalIgnoreCase)).Sum(st => st.Value),
+            StringComparer.OrdinalIgnoreCase);
+    }
+
+    /// <summary>How far each school is short of 100% resist (0 when immune).</summary>
+    internal static System.Collections.Generic.Dictionary<string, float> ImmunityGaps(System.Collections.Generic.Dictionary<string, float> resist)
+        => resist.ToDictionary(x => x.Key, x => Math.Max(0, 100 - x.Value), StringComparer.OrdinalIgnoreCase);
+
+    // Pet talents for Universal Immunity (Niduus, 2026-11-20: "Putting selfish traits on pets to achieve the MAXIMUM resist
+    // possible if told to go full immune"): from his gear's resist to each school, each pick is the talent that brings the
+    // most schools closest to 100% (an every-school resist talent, or one school's own resist where that school is short);
+    // once every school is at 100%, the rest go to health and what keeps him up. Fifteen, best first: five on the pet, the
+    // rest for its jewel.
+    private static System.Collections.Generic.List<BotPetTalentStats.Info> ImmunityTalents(Wizard wizard) {
+        var resist = WornResist(wizard, withPetTalents: false);
+        var picked = new System.Collections.Generic.List<BotPetTalentStats.Info>();
+        var left = BotPetTalentStats.Real.ToList();
+        static float Covered(System.Collections.Generic.Dictionary<string, float> r) => r.Values.Sum(v => Math.Min(100, v));
+        System.Collections.Generic.Dictionary<string, float> With(System.Collections.Generic.Dictionary<string, float> r, BotPetTalentStats.Info t) {
+            var every = t.Stats.Where(st => st.Kind == "ReduceDamage" && st.School.Length == 0).Sum(st => st.Value);
+            return r.ToDictionary(x => x.Key, x => x.Value + every + t.Stats.Where(st => st.Kind == "ReduceDamage" && st.School.Equals(x.Key, StringComparison.OrdinalIgnoreCase)).Sum(st => st.Value),
+                StringComparer.OrdinalIgnoreCase);
+        }
+
+        while (picked.Count < 15 && left.Count > 0) {
+            var before = Covered(resist);
+            var next = left.Select(t => (Talent: t, Gain: Covered(With(resist, t)) - before, Other: BotPetTalentStats.Score(t, "", BotStyle.Immunity)))
+                .Where(x => x.Gain > 0 || x.Other > 0)
+                .OrderByDescending(x => x.Gain).ThenByDescending(x => x.Other).ThenBy(x => x.Talent.Key, StringComparer.OrdinalIgnoreCase)
+                .Select(x => x.Talent).FirstOrDefault();
+            if (next is null) {
+                break;
+            }
+
+            left.RemoveAll(t => t.Shown == next.Shown);
+            picked.Add(next);
+            resist = With(resist, next);
+        }
+
+        Logger.Information("True Form: Universal Immunity pet talents: {0}; resist with them: {1}.",
+            Logger.Args(string.Join(", ", picked.Take(PET_TALENTS).Select(t => t.Shown)), string.Join(", ", resist.Select(x => $"{x.Key} {x.Value:0}%"))));
+        return picked;
+    }
 
     // A Myth pet (the one with the highest stats a player can get, not Crowns-only or retired), Ultra, its stats and
     // happiness at their maximum, with his role's talents. Put on when he has none, or when his is not at Ultra yet.
