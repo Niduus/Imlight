@@ -79,7 +79,7 @@ internal static class KioskHousePets {
     internal const string FILE = "pet.kiosk";
 
     // Raise when the builds change, so every server makes a new pet.kiosk.
-    private const int VERSION = 1;
+    private const int VERSION = 2;
 
     private const int MEGA = 6;
     private const int ADULT = 3;
@@ -225,7 +225,7 @@ internal static class KioskHousePets {
         var builds = Builds();
         var kinds = PetFactory.AllPetTemplates.Keys.OrderBy(id => id)
             .Select(id => (Id: id, Template: PetFactory.GetPetItemBehaviorTemplate(id)))
-            .Where(k => k.Template is { m_talents.Count: > 0 } && MaxLevel(k.Template) >= ADULT)
+            .Where(k => k.Template is { m_talents.Count: > 0 } && MaxLevel(k.Template) >= ADULT && !IsDevPet(k.Id))
             .ToList();
 
         foreach (var (id, template) in kinds) {
@@ -236,7 +236,7 @@ internal static class KioskHousePets {
             Add(file, id, template, "gunned to Mega", Shuffled(own, random), Math.Min(MEGA, top), random, statShare: 0.3 + random.NextDouble() * 0.5);
             // Raised a bit more: its own talents, any age from Adult up, stats mostly trained.
             Add(file, id, template, "raised", Shuffled(own, random), random.Next(ADULT, top + 1), random, statShare: 0.6 + random.NextDouble() * 0.4);
-            // A young pet, when the kiosk takes them ([HatchKiosk] MinAge under Adult).
+            // A young pet, when the kiosk shows them ([HatchKiosk] MinAge under Adult).
             if (age < ADULT) {
                 Add(file, id, template, "young", Shuffled(own, random), random.Next(Math.Max(1, age), ADULT), random, statShare: random.NextDouble() * 0.4);
             }
@@ -329,8 +329,8 @@ internal static class KioskHousePets {
         };
         PetFactory.AlignBehaviorsToTemplate(pet);
 
-        behavior.m_allTalents = [.. genes.Where(id => id != 0 && PetTalentRegistry.TryGetById(id, out _)).Distinct().Take(GENES)];
-        behavior.m_allDerbyTalents = PetProgression.RollGenes(template.m_guaranteedDerbyTalents, template.m_derbyTalents, random);
+        behavior.m_allTalents = [.. genes.Where(id => id != 0 && PetTalentRegistry.TryGetById(id, out _) && !IsDevTalent(id)).Distinct().Take(GENES)];
+        behavior.m_allDerbyTalents = [.. PetProgression.RollGenes(template.m_guaranteedDerbyTalents, template.m_derbyTalents, random).Where(id => !IsDevTalent(id))];
         behavior.m_expressedTalents = [.. behavior.m_allTalents.Take(behavior.m_level - 1)];
         behavior.m_expressedDerbyTalents = [.. behavior.m_allDerbyTalents.Take(behavior.m_level - 1)];
         behavior.m_maxStats = [.. (template.m_maxStats ?? []).Where(s => s is not null).Select(s => Stat(s.m_name, CappedMax(s)))];
@@ -355,7 +355,26 @@ internal static class KioskHousePets {
         => template?.m_Levels is { Count: > 0 } ? template.m_Levels.Max(info => info.m_level) : 0;
 
     private static List<uint> OwnPool(PetItemBehaviorTemplate template)
-        => PetProgression.RollGenes(template.m_guaranteedTalents, template.m_talents, Random.Shared);
+        => [.. PetProgression.RollGenes(template.m_guaranteedTalents, template.m_talents, Random.Shared).Where(id => !IsDevTalent(id))];
+
+    // Words that mark a developer's pet or talent (TestPet_FastHatch, Talent-PetPower-Test1), as a whole word so
+    // Tazmanian Devil and Devotion stay (Niduus, 2026-11-21: "so long as Dev pets/talents aren't in the pool").
+    private static readonly System.Text.RegularExpressions.Regex s_devWord = new(
+        @"(^|[^A-Za-z])(Test\w*|QA|Dev|Debug|GM|Admin|Cheat)([^a-z]|$)|^Test", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+    private static bool IsDevWord(string name) => !string.IsNullOrEmpty(name) && s_devWord.IsMatch(name);
+
+    /// <summary>
+    /// A developer's pet kind: test, QA, dev or debug in its file name or English name.
+    /// </summary>
+    internal static bool IsDevPet(uint templateId)
+        => CoreObjectFactory.GetCoreTemplate(templateId) is GameObjectTemplate template
+            && (IsDevWord(template.m_objectName.ToString()) || IsDevWord(PetHatching.KindName(templateId)));
+
+    /// <summary>
+    /// A developer's talent (Talent-PetPower-Test1 and the like).
+    /// </summary>
+    internal static bool IsDevTalent(uint id) => PetTalentRegistry.TryGetById(id, out var talent) && IsDevWord(talent.Name);
 
     private static List<uint> Shuffled(List<uint> ids, Random random) => [.. ids.OrderBy(_ => random.Next())];
 
@@ -366,7 +385,7 @@ internal static class KioskHousePets {
         => [.. PetTalentRegistry.All
             .Where(t => t.Kind != PetTalentKind.Derby && !t.Template.m_bRetired && !t.Template.m_unsearchable
                 && !t.Name.EndsWith("-Locked", StringComparison.OrdinalIgnoreCase)
-                && !t.Name.Contains("Test", StringComparison.OrdinalIgnoreCase))
+                && !IsDevWord(t.Name))
             .OrderBy(t => t.Name, StringComparer.Ordinal)];
 
     /// <summary>

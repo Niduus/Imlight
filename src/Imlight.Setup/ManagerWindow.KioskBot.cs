@@ -95,10 +95,10 @@ internal sealed partial class ManagerWindow {
             SwitchRow("Pets each player can put up", _kioskMaxPets,
                 "How many pets one player can have at the kiosk at once. The game's own limit is five. Bots have no limit."),
             SwitchRow("Youngest pets allowed", _kioskMinAge,
-                "The youngest age a player's pet can be to go up at the kiosk. The game's own rule is Adult. The kiosk's Offer Pets " +
-                "window only ever lists Adult and older pets, so players put a younger pet up by typing .kiosk and its name."),
+                "The youngest age of the pets at the kiosk. Below Adult, the kiosk's own pets include young ones too (the game's " +
+                "Offer Pets window only lets players put up Adult and older pets). Above Adult, players' younger pets are turned away."),
             SwitchRow("The kiosk's own pets", _kioskHousePets,
-                "Fills the kiosk with pets of every kind in the game (the file pet.kiosk next to the server, made from your game files " +
+                "Fills the kiosk with pets of every kind in the game, leaving out developers' test pets and talents (the file pet.kiosk next to the server, made from your game files " +
                 "the first time the kiosk is used): some raised any old way, some built for one job like damage for one, two or three " +
                 "schools. Every talent you can search for is shown by a few of them. Off shows only the pets players put up."),
             SwitchRow("Hatch Peppers per hatch", _kioskPeppers,
