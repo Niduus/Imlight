@@ -58,7 +58,7 @@ internal static class TrueFormKiosk {
                 HatchmakingListings.Add(new HatchmakingListing {
                     Parent = parent,
                     NameKeys = CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(pet, out var name) ? name.m_nameKeys : 0,
-                    ItemData = ItemSync.TrySerialize(pet, out var data) ? Convert.ToBase64String(data) : null,
+                    ItemData = ItemSync.TrySerializeForKiosk(pet, out var data) ? Convert.ToBase64String(data) : null,
                 });
                 listed++;
             }

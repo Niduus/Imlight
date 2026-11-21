@@ -66,6 +66,40 @@ internal static class ItemSync {
     internal static bool TrySerialize(WizClientObjectItem item, out ByteString serialized)
         => s_itemSerializer.Serialize(item, ItemSerializationFlags, out serialized);
 
+    // The Pet Hatching Kiosk's pet messages (MSG_REQUESTHATCHMAKINGPETDATA, MSG_REQUESTHATCHMAKINGHATCHEDPET) are read
+    // by WizardGraphicalClient.exe with the plain serializer (a 4-byte class hash first, as the kiosk's pet lists) and
+    // property mask 7, not the inventory's CoreObject header and Transmit mask. Sent the inventory way, the game read
+    // no pet, so the kiosk's browse and hatch windows stayed empty (Niduus, 2026-11-21).
+    private const uint KioskSerializationFlags =
+        (uint) (PropertyFlags.Prop_Save | PropertyFlags.Prop_Copy | PropertyFlags.Prop_Public);
+    private const uint WIZ_CLIENT_OBJECT_ITEM_HASH = 1653772158;
+
+    /// <summary>Serializes a pet the way the Pet Hatching Kiosk's windows read it.</summary>
+    internal static bool TrySerializeForKiosk(WizClientObjectItem item, out ByteString serialized)
+        => new ObjectSerializer(false, SerializerFlags.None).Serialize(item, KioskSerializationFlags, out serialized);
+
+    /// <summary>
+    /// A kiosk pet's saved item (base64) as the kiosk's windows read it. Pets put up before the kiosk saved them this way
+    /// were saved the inventory way, and are turned over here. Null when there is nothing to send.
+    /// </summary>
+    internal static byte[] KioskPetBytes(string itemData) {
+        if (string.IsNullOrEmpty(itemData)) {
+            return null;
+        }
+
+        var bytes = System.Convert.FromBase64String(itemData);
+        if (bytes.Length >= 4 && System.BitConverter.ToUInt32(bytes, 0) == WIZ_CLIENT_OBJECT_ITEM_HASH) {
+            return bytes;
+        }
+
+        if (new CoreObjectSerializer(behaviors: SerializerFlags.None).Deserialize<WizClientObjectItem>(bytes, ItemSerializationFlags, out var item)
+            && item is not null && TrySerializeForKiosk(item, out var kiosk)) {
+            return kiosk;
+        }
+
+        return null;
+    }
+
     /// <summary>
     /// Tells the client that an item entered the wizard's inventory.
     /// </summary>

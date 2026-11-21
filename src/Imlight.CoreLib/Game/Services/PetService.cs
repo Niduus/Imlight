@@ -661,7 +661,7 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
             var partner = new HatchedPartner {
                 Parent = message.ParentA,
                 NameKeys = mine is not null && CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(mine, out var name) ? name.m_nameKeys : 0,
-                ItemData = mine is not null && ItemSync.TrySerialize(mine, out var data) ? Convert.ToBase64String(data) : null,
+                ItemData = mine is not null && ItemSync.TrySerializeForKiosk(mine, out var data) ? Convert.ToBase64String(data) : null,
             };
             // The bots (True Form and the others) are never told; their pets still keep who hatched with them.
             var notice = Imlight.CoreLib.Game.Tools.OnlineList.IsBotWizard(message.ParentB.OwnerCharId) ? null : new KioskNotice {

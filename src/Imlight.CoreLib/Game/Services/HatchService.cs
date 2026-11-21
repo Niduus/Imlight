@@ -1906,12 +1906,12 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             var listing = own is null ? HatchmakingListings.Find(message.PetID) : null;
             ByteString data = default;
             uint templateId;
-            if (own is not null && ItemSync.TrySerialize(own, out var ownData)) {
+            if (own is not null && ItemSync.TrySerializeForKiosk(own, out var ownData)) {
                 data = ownData;
                 templateId = (uint) own.m_templateID;
             }
-            else if (listing?.ItemData is { Length: > 0 }) {
-                data = Convert.FromBase64String(listing.ItemData);
+            else if (ItemSync.KioskPetBytes(listing?.ItemData) is { } listed) {
+                data = listed;
                 templateId = listing.Parent.TemplateId;
             }
             else {
@@ -2105,7 +2105,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             var wizard = GetActiveWizard();
             var listing = PartnersOf(wizard, message.PetID, message.PetIndex);
             var partner = listing?.HatchedWith[(int) message.PetIndex];
-            if (partner?.ItemData is not { Length: > 0 }) {
+            var partnerData = ItemSync.KioskPetBytes(partner?.ItemData);
+            if (partnerData is null) {
                 Logger.Information("Hatching: no pet {0} hatched with {1}.", Logger.Args(message.PetIndex, message.PetID));
 
                 return;
@@ -2114,7 +2115,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             SendToSocket(new WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGHATCHEDPET {
                 PetID = message.PetID,
                 PetIndex = message.PetIndex,
-                PetData = Convert.FromBase64String(partner.ItemData),
+                PetData = partnerData,
                 IsInPetTome = (byte) (PetTome.Contains(wizard, partner.Parent.TemplateId) ? 1 : 0),
             });
         }
@@ -2243,7 +2244,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private static HatchmakingListing Listing(WizClientObjectItem item, PetParent pet) => new() {
         Parent = pet,
         NameKeys = CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(item, out var name) ? name.m_nameKeys : 0,
-        ItemData = ItemSync.TrySerialize(item, out var data) ? Convert.ToBase64String(data) : null,
+        ItemData = ItemSync.TrySerializeForKiosk(item, out var data) ? Convert.ToBase64String(data) : null,
     };
 
     private static HatchmakingPetsList PetsList(System.Collections.Generic.IEnumerable<HatchmakingListing> listings) => new() {
