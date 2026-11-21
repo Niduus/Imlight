@@ -39,6 +39,7 @@
  * Last Updated: 10/14/2026
  */
 
+using System.Linq;
 using Akka.Actor;
 using Imcodec.CoreObject;
 using Imcodec.IO;
@@ -66,39 +67,75 @@ internal static class ItemSync {
     internal static bool TrySerialize(WizClientObjectItem item, out ByteString serialized)
         => s_itemSerializer.Serialize(item, ItemSerializationFlags, out serialized);
 
-    // The Pet Hatching Kiosk's pet messages (MSG_REQUESTHATCHMAKINGPETDATA, MSG_REQUESTHATCHMAKINGHATCHEDPET) carry the
-    // pet the inventory way. 0.10.956 sent them with the plain serializer and mask 7 instead, and the game crashed
-    // ("DynamicCast failed to cast class WizClientObjectItem") when Browse Pets showed a pet (Niduus, 2026-11-21), so
-    // the inventory way is back, and pets saved the plain way in 956 are turned back over.
-    private const uint PlainKioskFlags =
+    // The Pet Hatching Kiosk keeps each pet the inventory way (TrySerializeForKiosk), and its pet messages
+    // (MSG_REQUESTHATCHMAKINGPETDATA, MSG_REQUESTHATCHMAKINGHATCHEDPET) carry only the pet's ClientPetItemBehavior,
+    // written with the plain serializer and property mask 7. Read from WizardGraphicalClient.exe: HatchmakingManager
+    // loads PetData with SerializerBinary (mask 7) and DynamicCasts it to ClientPetItemBehavior. A whole item sent the
+    // inventory way read as nothing (the hatch window never opened), and a whole item sent the plain way failed that
+    // cast and crashed the game (0.10.956, Niduus 2026-11-21).
+    private const uint KIOSK_PET_FLAGS =
         (uint) (PropertyFlags.Prop_Save | PropertyFlags.Prop_Copy | PropertyFlags.Prop_Public);
     private const uint WIZ_CLIENT_OBJECT_ITEM_HASH = 1653772158;
 
-    /// <summary>Serializes a pet for the Pet Hatching Kiosk's windows (the inventory way).</summary>
+    /// <summary>Serializes a pet the way the Pet Hatching Kiosk keeps it (the whole item, the inventory way).</summary>
     internal static bool TrySerializeForKiosk(WizClientObjectItem item, out ByteString serialized)
         => new CoreObjectSerializer(behaviors: SerializerFlags.None).Serialize(item, ItemSerializationFlags, out serialized);
 
     /// <summary>
-    /// A kiosk pet's saved item (base64) for the kiosk's windows. Pets saved by 0.10.956 the plain way are turned back
-    /// to the inventory way. Null when there is nothing safe to send (the game is then sent no pet rather than one it
-    /// cannot read).
+    /// The pet data the kiosk's windows read: the pet's ClientPetItemBehavior, plain, mask 7. Null when the item has
+    /// none or it cannot be written (the game is then sent nothing rather than something it cannot read).
+    /// </summary>
+    internal static byte[] KioskPetData(WizClientObjectItem item) {
+        var pet = item?.m_inactiveBehaviors?.OfType<ClientPetItemBehavior>().FirstOrDefault();
+        if (pet is null) {
+            return null;
+        }
+
+        // The kiosk windows read the pet's template from the field at m_hatchedTimeSecs (offset 0xa0: the IsInPetTome
+        // map and Browse Pets by Pedigree, which has no pet type of its own). A hatched pet does not use that time, so
+        // the copy sent carries the template there; the pet itself keeps its own value.
+        var hatched = pet.m_hatchedTimeSecs;
+        ByteString data;
+        bool written;
+        try {
+            pet.m_hatchedTimeSecs = (uint) item.m_templateID;
+            written = new ObjectSerializer(false, SerializerFlags.None).Serialize(pet, KIOSK_PET_FLAGS, out data);
+        }
+        finally {
+            pet.m_hatchedTimeSecs = hatched;
+        }
+
+        if (!written) {
+            return null;
+        }
+
+        byte[] bytes = data;
+
+        return bytes is { Length: > 4 } ? bytes : null;
+    }
+
+    /// <summary>
+    /// The pet data for a pet the kiosk keeps (base64 of the whole item, the inventory way, or the plain way pets were
+    /// kept in 0.10.956). Null when it cannot be read.
     /// </summary>
     internal static byte[] KioskPetBytes(string itemData) {
         if (string.IsNullOrEmpty(itemData)) {
             return null;
         }
 
-        var bytes = System.Convert.FromBase64String(itemData);
-        if (bytes.Length < 4 || System.BitConverter.ToUInt32(bytes, 0) != WIZ_CLIENT_OBJECT_ITEM_HASH) {
-            return bytes;
-        }
+        try {
+            var bytes = System.Convert.FromBase64String(itemData);
+            WizClientObjectItem item;
+            var read = bytes.Length >= 4 && System.BitConverter.ToUInt32(bytes, 0) == WIZ_CLIENT_OBJECT_ITEM_HASH
+                ? new ObjectSerializer(false, SerializerFlags.None).Deserialize(bytes, KIOSK_PET_FLAGS, out item)
+                : new CoreObjectSerializer(behaviors: SerializerFlags.None).Deserialize(bytes, ItemSerializationFlags, out item);
 
-        if (new ObjectSerializer(false, SerializerFlags.None).Deserialize<WizClientObjectItem>(bytes, PlainKioskFlags, out var item)
-            && item is not null && TrySerializeForKiosk(item, out var inventory)) {
-            return inventory;
+            return read ? KioskPetData(item) : null;
         }
-
-        return null;
+        catch (System.Exception ex) when (ex is System.FormatException or System.IO.EndOfStreamException or System.ArgumentException
+            or System.IndexOutOfRangeException or System.InvalidOperationException) {
+            return null;
+        }
     }
 
     /// <summary>

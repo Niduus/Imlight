@@ -1906,7 +1906,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             var listing = own is null ? HatchmakingListings.Find(message.PetID) : null;
             ByteString data = default;
             uint templateId;
-            if (own is not null && ItemSync.TrySerializeForKiosk(own, out var ownData)) {
+            if (own is not null && ItemSync.KioskPetData(own) is { } ownData) {
                 data = ownData;
                 templateId = (uint) own.m_templateID;
             }
