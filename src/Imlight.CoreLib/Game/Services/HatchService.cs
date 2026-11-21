@@ -69,7 +69,9 @@ using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
 using Imlight.CoreLib.Game.Pet;
+using Imlight.CoreLib.Game.DropTables;
 using Imlight.CoreLib.Game.Social;
+using Imlight.CoreLib.Game.Tools;
 using Imlight.CoreLib.Shared.Items;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -1728,11 +1730,53 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
         try {
             SendKioskInfo(message.KioskGID);
+            HandOutKioskNotices();
         }
         catch (Exception ex) {
             Logger.Error("Hatching: opening the kiosk failed. {0}", Logger.Args(ex));
         }
     }
+
+    /// <summary>
+    /// Someone hatched with one of this player's kiosk pets while they were online (sent by the hatcher's PetService).
+    /// </summary>
+    [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_KIOSKNOTICE))]
+    private void ReceiveKioskNotice(CHARACTER_103_PROTOCOL.MSG_KIOSKNOTICE message) {
+        try {
+            HandOutKioskNotices();
+        }
+        catch (Exception ex) {
+            Logger.Error("Hatching: handing out kiosk notices failed. {0}", Logger.Args(ex));
+        }
+    }
+
+    // The game's "Your pet has hatched with ..." message (MSG_HATCHMAKINGMESSAGE MessageType 1, read from
+    // WizardGraphicalClient.exe: GUI2_533/534, or 718/719 with Hatch Peppers) for each hatch the owner was not told
+    // about yet, with the Hatch Peppers that come with it.
+    private void HandOutKioskNotices() {
+        var wizard = GetActiveWizard();
+        if (wizard is null || OnlineList.IsBotWizard(wizard.CharId)) {
+            return;
+        }
+
+        var notices = HatchmakingListings.TakeNotices(wizard.CharId);
+        foreach (var notice in notices) {
+            var peppers = Math.Clamp(notice.Peppers, 0, byte.MaxValue);
+            var given = peppers > 0 ? LootGranter.GrantReagent(SessionActor.ActorRef, wizard, HATCH_PEPPER, peppers) : 0;
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGMESSAGE {
+                MessageType = 1,
+                MyPetTemplateID = notice.MyTemplateId,
+                MyPetName = notice.MyNameKeys,
+                TheirPetTemplateID = notice.TheirTemplateId,
+                HatchPepperCount = (byte) given,
+            });
+            Logger.Information("Hatching: told {0} that {1} hatched with their {2} at the kiosk ({3} Hatch Pepper(s)).",
+                Logger.Args(wizard.CharId, notice.TheirLabel, notice.MyLabel, given));
+        }
+    }
+
+    // Shop-HatchPepper-01: the reagent the owner of a kiosk pet gets when someone hatches with it.
+    private const ulong HATCH_PEPPER = 1441119;
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKING))]
     private void ReceiveRequestHatchmaking(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKING message) {
@@ -1771,9 +1815,20 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
                 return;
             }
 
+            var listed = HatchmakingListings.Of(wizard.CharId);
+            var most = Math.Clamp(ConfigurationManager.GetValue("HatchKiosk.MaxPets", 5), 1, 100);
+            if (!OnlineList.IsBotWizard(wizard.CharId) && listed.Count >= most && listed.All(l => l.Parent.ItemId != message.PetID)) {
+                InformGameClient($"You can't add any more pets to the Pet Hatching Kiosk ({most} at a time). Take one off first.");
+                SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = 1 });
+
+                return;
+            }
+
             HatchmakingListings.Add(Listing(item, pet));
             Logger.Information("Hatching: {0} listed {1} at the kiosk.", Logger.Args(wizard.CharId, PetHatching.Describe(pet)));
             SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = 0 });
+            // Status 0 shows nothing and does not refresh the window: the pet list is sent again so Manage Pets shows it.
+            SendKioskInfo(0);
             InformGameClient($"{pet.Label} is now at the hatchmaking kiosk.");
         }
         catch (Exception ex) {
@@ -1785,12 +1840,23 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private void ReceiveRemovePet(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGREMOVEPET message) {
         Logger.Information("Hatching: game sent MSG_REQUESTHATCHMAKINGREMOVEPET PetID={0}.", Logger.Args(message.PetID));
         KioskLink.Visit();
-        var listing = HatchmakingListings.Find(message.PetID);
-        if (listing is not null && listing.Parent.OwnerCharId == GetActiveWizard()?.CharId) {
-            HatchmakingListings.Remove(message.PetID);
-        }
+        try {
+            var listing = HatchmakingListings.Find(message.PetID);
+            if (listing is null || listing.Parent.OwnerCharId != GetActiveWizard()?.CharId) {
+                SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = 2 });
 
-        SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = 0 });
+                return;
+            }
+
+            HatchmakingListings.Remove(message.PetID);
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = 0 });
+            SendKioskInfo(0);
+            InformGameClient($"{listing.Parent.Label} was taken off the hatchmaking kiosk.");
+        }
+        catch (Exception ex) {
+            Logger.Error("Hatching: MSG_REQUESTHATCHMAKINGREMOVEPET failed. {0}", Logger.Args(ex));
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = 2 });
+        }
     }
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGPETTYPES))]
@@ -1907,8 +1973,15 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         Logger.Information("Hatching: game sent MSG_REQUESTHATCHMAKINGFRIENDPETS GlobalID={0} Data={1} InPerson={2}.",
             Logger.Args(message.GlobalID, Hex(message.Data), message.InPerson));
         KioskLink.Visit();
-        // Every listed pet for now, the player's own included. The game reads the same pet list as a search's answer.
-        if (TryWrite(PetGIDList(HatchmakingListings.All()), out var data)) {
+        // The pets the player's friends put up, and the bots' (they are everyone's friends). The game reads the same pet
+        // list as a search's answer, and says itself when there are none.
+        var me = GetActiveWizard()?.CharId ?? 0;
+        var friends = HatchmakingListings.All()
+            .Where(l => l.Parent.OwnerCharId != me
+                && (OnlineList.IsBotWizard(l.Parent.OwnerCharId) || BuddyRelationshipCollection.AreFriends(me, l.Parent.OwnerCharId)))
+            .ToList();
+        Logger.Information("Hatching: {0} friends' pets at the kiosk.", Logger.Args(friends.Count));
+        if (TryWrite(PetGIDList(friends), out var data)) {
             SendToSocket(new WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGFRIENDPETS {
                 GlobalID = message.GlobalID,
                 Data = data,
@@ -1976,13 +2049,79 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private void ReceiveKioskHatch2(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGHATCH2 message) {
         Logger.Information("Hatching: game sent MSG_REQUESTHATCHMAKINGHATCH2 PetID1={0} PetID2={1} PetIndex={2}.",
             Logger.Args(message.PetID1, message.PetID2, message.PetIndex));
-        KioskHatch(message.PetID1, message.PetID2);
+        if (!KioskOpen()) {
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = 1 });
+
+            return;
+        }
+
+        try {
+            // My Hatches: one of the player's kiosk pets and the pet at PetIndex of the ones that hatched with it. The
+            // player's pet for the hatch is the other id, or the kiosk pet itself.
+            var wizard = GetActiveWizard();
+            var listing = PartnersOf(wizard, message.PetID2, message.PetIndex) ?? PartnersOf(wizard, message.PetID1, message.PetIndex);
+            if (listing is null) {
+                // Not a My Hatches hatch after all: hatch the two pets as the plain hatch does.
+                KioskHatch(message.PetID1, message.PetID2);
+
+                return;
+            }
+
+            var mineId = listing.Parent.ItemId == message.PetID2 ? message.PetID1 : message.PetID2;
+            var mine = PetCare.FindPet(wizard, mineId) ?? PetCare.FindPet(wizard, listing.Parent.ItemId);
+            var parentA = PetHatching.Snapshot(mine, wizard.CharId);
+            var parentB = listing.HatchedWith[(int) message.PetIndex].Parent;
+            if (parentA is null || parentB is null) {
+                SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = 3 });
+
+                return;
+            }
+
+            Logger.Information("Hatching: My Hatches: {0} hatches {1} with {2} (hatched with kiosk pet {3}).",
+                Logger.Args(wizard.CharId, parentA.Label, parentB.Label, listing.Parent.ItemId));
+            TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_BREEDPETS { ParentA = parentA, ParentB = parentB, Source = HatchSource.Kiosk });
+        }
+        catch (Exception ex) {
+            Logger.Error("Hatching: My Hatches hatch failed. {0}", Logger.Args(ex));
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = 1 });
+        }
     }
 
+    // The player's kiosk pet with this id, when it has a pet that hatched with it at this index.
+    private static HatchmakingListing PartnersOf(Wizard wizard, ulong petId, uint index)
+        => wizard is not null && HatchmakingListings.Find(petId) is { } listing && listing.Parent.OwnerCharId == wizard.CharId
+            && index < (listing.HatchedWith?.Count ?? 0) ? listing : null;
+
+    /// <summary>
+    /// My Hatches asks for each pet that hatched with one of the player's kiosk pets, by index (read from
+    /// WizardGraphicalClient.exe: the answer's PetData is the pet item, and fires HatchmakingHatchedPetDataUpdated).
+    /// </summary>
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGHATCHEDPET))]
-    private void ReceiveHatchedPet(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGHATCHEDPET message)
-        => Logger.Information("Hatching: game sent MSG_REQUESTHATCHMAKINGHATCHEDPET PetID={0} PetIndex={1} PetData={2} IsInPetTome={3}. Not answered yet.",
+    private void ReceiveHatchedPet(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGHATCHEDPET message) {
+        Logger.Information("Hatching: game sent MSG_REQUESTHATCHMAKINGHATCHEDPET PetID={0} PetIndex={1} PetData={2} IsInPetTome={3}.",
             Logger.Args(message.PetID, message.PetIndex, Hex(message.PetData), message.IsInPetTome));
+        KioskLink.Visit();
+        try {
+            var wizard = GetActiveWizard();
+            var listing = PartnersOf(wizard, message.PetID, message.PetIndex);
+            var partner = listing?.HatchedWith[(int) message.PetIndex];
+            if (partner?.ItemData is not { Length: > 0 }) {
+                Logger.Information("Hatching: no pet {0} hatched with {1}.", Logger.Args(message.PetIndex, message.PetID));
+
+                return;
+            }
+
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGHATCHEDPET {
+                PetID = message.PetID,
+                PetIndex = message.PetIndex,
+                PetData = Convert.FromBase64String(partner.ItemData),
+                IsInPetTome = (byte) (PetTome.Contains(wizard, partner.Parent.TemplateId) ? 1 : 0),
+            });
+        }
+        catch (Exception ex) {
+            Logger.Error("Hatching: MSG_REQUESTHATCHMAKINGHATCHEDPET failed. {0}", Logger.Args(ex));
+        }
+    }
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGMESSAGE))]
     private void ReceiveHatchmakingMessage(WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGMESSAGE message)
@@ -2028,27 +2167,39 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             if (parentA is null || parentB is null) {
                 Logger.Information("Hatching: kiosk hatch of {0} and {1}: {2}.",
                     Logger.Args(petId1, petId2, parentA is null ? "neither pet is this player's" : "the second pet is not this player's or at the kiosk"));
-                InformGameClient("Could not find both pets for this hatch.");
-                SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = 1 });
+                // "That pet is no longer available"
+                SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = 3 });
 
                 return;
             }
 
-            if (mine2 is null) {
-                HatchmakingListings.CountHatch(petId2);
-            }
-
-            TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_BREEDPETS { ParentA = parentA, ParentB = parentB, Source = HatchSource.Kiosk });
+            // The kiosk counts the hatch, and keeps this player's pet for the owner's My Hatches, once the egg is made.
+            TellOtherServices(new CHARACTER_103_PROTOCOL.MSG_BREEDPETS {
+                ParentA = parentA,
+                ParentB = parentB,
+                Source = HatchSource.Kiosk,
+                KioskPetId = mine2 is null && parentB.OwnerCharId != wizard.CharId ? petId2 : 0,
+            });
         }
         catch (Exception ex) {
             Logger.Error("Hatching: kiosk hatch of {0} and {1} failed. {2}", Logger.Args(petId1, petId2, ex));
         }
     }
 
+    // The kiosk the player last used, for sending the pet list again after a pet is added or taken off.
+    private ulong m_kioskGid;
+
     private void SendKioskInfo(ulong globalId) {
         var wizard = GetActiveWizard();
         if (wizard is null) {
             return;
+        }
+
+        if (globalId != 0) {
+            m_kioskGid = globalId;
+        }
+        else {
+            globalId = m_kioskGid;
         }
 
         // The copies of this player's listed pets are brought up to date, and pets no longer owned are taken off.
@@ -2101,7 +2252,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             m_petItemGID = l.Parent.ItemId,
             m_petTemplateID = l.Parent.TemplateId,
             m_nameKey = l.NameKeys,
-            m_hatchCount = l.HatchCount,
+            // My Hatches asks for each pet that hatched with this one by index, so the count is the pets kept.
+            m_hatchCount = (uint) (l.HatchedWith?.Count ?? 0),
         })],
         m_disableKiosk = !PetHatching.Enabled || !KioskLink.Enabled,
         m_disableOffer = false,

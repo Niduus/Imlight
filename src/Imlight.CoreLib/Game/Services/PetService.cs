@@ -493,8 +493,9 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
     private void ReceiveBreedPets(CHARACTER_103_PROTOCOL.MSG_BREEDPETS message) {
         string problem;
         WizClientObjectItem egg = null;
+        var code = KioskCode.Failed;
         try {
-            problem = Breed(message, out egg);
+            problem = Breed(message, out egg, out code);
         }
         catch (Exception ex) {
             Logger.Error("Hatching: breeding {0} with {1} failed. {2}",
@@ -506,7 +507,7 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
             Logger.Information("Hatching ({0}) refused: {1}", Logger.Args(message.Source, problem));
         }
 
-        // What each window waits for. Both status codes are guesses (0 = it worked, as with trades).
+        // What each window waits for. The kiosk's codes are read from WizardGraphicalClient.exe (see KioskCode).
         switch (message.Source) {
             case HatchSource.InPerson:
                 SendToSocket(new WIZARD_12_PROTOCOL.MSG_PETHATCHRESULT {
@@ -515,7 +516,7 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
                 });
                 break;
             case HatchSource.Kiosk:
-                SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = problem is null ? 0u : 1u });
+                SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = problem is null ? 0u : (uint) code });
                 break;
             case HatchSource.Sigil:
                 // The HatchService sends the player back from the pet morph zone once the egg is made.
@@ -524,9 +525,16 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
         }
 
         if (problem is not null) {
-            InformGameClient(problem);
+            // The game says these itself, in its own words.
+            if (message.Source != HatchSource.Kiosk || code is not (KioskCode.NoGold or KioskCode.NoBackpackSpace)) {
+                InformGameClient(problem);
+            }
 
             return;
+        }
+
+        if (message.Source == HatchSource.Kiosk && message.KioskPetId != 0) {
+            RecordKioskHatch(message);
         }
 
         var kind = PetHatching.KindName((uint) egg.m_templateID) ?? egg.m_templateID.ToString();
@@ -535,8 +543,25 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
             + (left >= 3600 ? $"{left / 3600} h {left % 3600 / 60} min." : left >= 60 ? $"{left / 60} min." : $"{left} s."));
     }
 
-    private string Breed(CHARACTER_103_PROTOCOL.MSG_BREEDPETS message, out WizClientObjectItem egg) {
+    /// <summary>
+    /// MSG_HATCHMAKINGSTATUS ErrorCode, as WizardGraphicalClient.exe reads it: 0 shows nothing, and each of the others
+    /// shows its own line from the game (GUI2_506 to GUI2_566).
+    /// </summary>
+    internal enum KioskCode : uint {
+        Ok = 0,
+        // "Failed to add pet"
+        Failed = 1,
+        // "That pet is no longer available"
+        PetGone = 3,
+        // "You don't have enough gold"
+        NoGold = 4,
+        // "You don't have enough space in your backpack for an egg"
+        NoBackpackSpace = 6,
+    }
+
+    private string Breed(CHARACTER_103_PROTOCOL.MSG_BREEDPETS message, out WizClientObjectItem egg, out KioskCode code) {
         egg = null;
+        code = KioskCode.Failed;
         var wizard = GetActiveWizard();
         if (wizard is null) {
             return "No wizard is logged in.";
@@ -547,11 +572,15 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
 
         // The wizard's own parent has to still be there.
         if (message.ParentA is null || PetCare.FindPet(wizard, message.ParentA.ItemId) is null) {
+            code = KioskCode.PetGone;
+
             return "Your pet for the hatch is no longer in your backpack.";
         }
 
         var cost = PetHatching.GoldCost;
         if (cost > 0 && wizard.GameStats.m_currentGold < cost) {
+            code = KioskCode.NoGold;
+
             return $"Hatching costs {cost} gold.";
         }
 
@@ -562,6 +591,7 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
 
         if (!wizard.AddPetToInventory(egg)) {
             egg = null;
+            code = KioskCode.NoBackpackSpace;
 
             return "Your backpack has no room for the egg.";
         }
@@ -614,8 +644,43 @@ internal partial class PetService(SessionActor sessionActor) : MessageService(se
         }
 
         StartEggTimer(slot);
+        code = KioskCode.Ok;
 
         return null;
+    }
+
+    /// <summary>
+    /// This player hatched with a pet someone put up at the Pet Hatching Kiosk: the kiosk counts it, keeps a copy of this
+    /// player's pet for the owner's My Hatches (the owner can hatch with it in turn), and saves the owner a notice with
+    /// a Hatch Pepper, handed out right away when the owner is online and otherwise the next time they use a kiosk.
+    /// </summary>
+    private void RecordKioskHatch(CHARACTER_103_PROTOCOL.MSG_BREEDPETS message) {
+        try {
+            var wizard = GetActiveWizard();
+            var mine = PetCare.FindPet(wizard, message.ParentA.ItemId);
+            var partner = new HatchedPartner {
+                Parent = message.ParentA,
+                NameKeys = mine is not null && CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(mine, out var name) ? name.m_nameKeys : 0,
+                ItemData = mine is not null && ItemSync.TrySerialize(mine, out var data) ? Convert.ToBase64String(data) : null,
+            };
+            // The bots (True Form and the others) are never told; their pets still keep who hatched with them.
+            var notice = Imlight.CoreLib.Game.Tools.OnlineList.IsBotWizard(message.ParentB.OwnerCharId) ? null : new KioskNotice {
+                MyTemplateId = message.ParentB.TemplateId,
+                MyLabel = message.ParentB.Label,
+                TheirTemplateId = message.ParentA.TemplateId,
+                TheirLabel = message.ParentA.Label,
+                Peppers = Math.Clamp(ConfigurationManager.GetValue("HatchKiosk.HatchPeppers", 1), 0, 99),
+            };
+            var owner = HatchmakingListings.RecordHatch(message.KioskPetId, partner, notice);
+            Logger.Information("Hatching: {0} hatched with kiosk pet {1} of {2}; saved for its owner's My Hatches.",
+                Logger.Args(wizard?.CharId, message.KioskPetId, owner));
+            if (owner != 0 && TryGetOnlinePlayer(owner, out var ownerPlayer)) {
+                Context.ActorSelection(ownerPlayer.ActorPath).Tell(new CHARACTER_103_PROTOCOL.MSG_KIOSKNOTICE());
+            }
+        }
+        catch (Exception ex) {
+            Logger.Error("Hatching: could not record the kiosk hatch with pet {0}. {1}", Logger.Args(message.KioskPetId, ex));
+        }
     }
 
     private void InitializeEggs(Wizard wizard) {

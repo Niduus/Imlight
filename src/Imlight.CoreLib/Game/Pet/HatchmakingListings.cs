@@ -59,6 +59,27 @@ internal sealed class HatchmakingListing {
     public uint HatchCount { get; set; }
     /// <summary>The pet item as the game reads it (base64), sent when someone looks at the pet.</summary>
     public string ItemData { get; set; }
+    /// <summary>The pets that hatched with this one, newest last, for My Hatches (the owner can hatch with them).</summary>
+    public List<HatchedPartner> HatchedWith { get; set; } = [];
+    /// <summary>What the owner has not been told yet: someone hatched with this pet.</summary>
+    public List<KioskNotice> Notices { get; set; } = [];
+}
+
+/// <summary>A pet that hatched with a kiosk pet: a copy, so the kiosk pet's owner can hatch with it in turn.</summary>
+internal sealed class HatchedPartner {
+    public PetParent Parent { get; set; }
+    public uint NameKeys { get; set; }
+    public string ItemData { get; set; }
+}
+
+/// <summary>"Your pet has hatched with ..." for the owner of a kiosk pet, and the Hatch Peppers that come with it.</summary>
+internal sealed class KioskNotice {
+    public uint MyTemplateId { get; set; }
+    public uint MyNameKeys { get; set; }
+    public string MyLabel { get; set; }
+    public uint TheirTemplateId { get; set; }
+    public string TheirLabel { get; set; }
+    public int Peppers { get; set; }
 }
 
 /// <summary>
@@ -99,6 +120,21 @@ internal static class HatchmakingListings {
             HatchmakingStore.CountHatch(petItemId);
         }
     }
+
+    /// <summary>
+    /// Someone hatched with a kiosk pet: counts it, keeps a copy of their pet for the owner's My Hatches, and leaves the
+    /// owner a notice. The owner's character id, or 0 when the pet is no longer at the kiosk.
+    /// </summary>
+    internal static ulong RecordHatch(ulong petItemId, HatchedPartner partner, KioskNotice notice)
+        => KioskLink.Ask(new KioskRequest { Op = "hatched", Id = petItemId, Partner = partner, Notice = notice }) is { Ok: true } answer
+            ? answer.Owner
+            : HatchmakingStore.RecordHatch(petItemId, partner, notice);
+
+    /// <summary>Takes the notices left for an owner (they are told once).</summary>
+    internal static List<KioskNotice> TakeNotices(ulong ownerCharId)
+        => KioskLink.Ask(new KioskRequest { Op = "notices", Owner = ownerCharId }) is { Ok: true } answer
+            ? answer.Notices ?? []
+            : HatchmakingStore.TakeNotices(ownerCharId);
 
 }
 
@@ -154,6 +190,8 @@ internal static class HatchmakingStore {
             if (old >= 0) {
                 listing.HatchCount = listings[old].HatchCount;
                 listing.ListedAt = listings[old].ListedAt;
+                listing.HatchedWith = listings[old].HatchedWith ?? [];
+                listing.Notices = listings[old].Notices ?? [];
                 listings[old] = listing;
             }
             else {
@@ -183,6 +221,54 @@ internal static class HatchmakingStore {
                 listing.HatchCount++;
                 Save();
             }
+        }
+    }
+
+    // The most partners kept per kiosk pet for My Hatches.
+    private const int MAX_PARTNERS = 50;
+
+    internal static ulong RecordHatch(ulong petItemId, HatchedPartner partner, KioskNotice notice) {
+        lock (s_lock) {
+            var listing = Load().FirstOrDefault(l => l.Parent?.ItemId == petItemId);
+            if (listing is null) {
+                return 0;
+            }
+
+            listing.HatchCount++;
+            if (partner?.Parent is not null) {
+                listing.HatchedWith ??= [];
+                listing.HatchedWith.Add(partner);
+                if (listing.HatchedWith.Count > MAX_PARTNERS) {
+                    listing.HatchedWith.RemoveRange(0, listing.HatchedWith.Count - MAX_PARTNERS);
+                }
+            }
+
+            if (notice is not null) {
+                notice.MyTemplateId = listing.Parent.TemplateId;
+                notice.MyNameKeys = listing.NameKeys;
+                listing.Notices ??= [];
+                listing.Notices.Add(notice);
+            }
+
+            Save();
+
+            return listing.Parent.OwnerCharId;
+        }
+    }
+
+    internal static List<KioskNotice> TakeNotices(ulong ownerCharId) {
+        lock (s_lock) {
+            var taken = new List<KioskNotice>();
+            foreach (var listing in Load().Where(l => l.Parent?.OwnerCharId == ownerCharId && l.Notices is { Count: > 0 })) {
+                taken.AddRange(listing.Notices);
+                listing.Notices.Clear();
+            }
+
+            if (taken.Count > 0) {
+                Save();
+            }
+
+            return taken;
         }
     }
 

@@ -27,6 +27,8 @@ internal sealed partial class ManagerWindow {
     private readonly TextBlock _kioskBotState = new() { TextWrapping = TextWrapping.Wrap, FontWeight = FontWeight.SemiBold };
     private readonly ToggleSwitch _kioskEnabled = new() { OnContent = "On", OffContent = "Off" };
     private readonly NumericUpDown _kioskIdleMinutes = new() { Minimum = 1, Maximum = 1440, Increment = 1, FormatString = "0", Width = 140 };
+    private readonly NumericUpDown _kioskMaxPets = new() { Minimum = 1, Maximum = 100, Increment = 1, FormatString = "0", Width = 140 };
+    private readonly NumericUpDown _kioskPeppers = new() { Minimum = 0, Maximum = 99, Increment = 1, FormatString = "0", Width = 140 };
     private readonly ToggleSwitch _kioskOwnServer = new() { OnContent = "Own program", OffContent = "In the server" };
     private readonly DispatcherTimer _kioskTimer = new() { Interval = TimeSpan.FromSeconds(3) };
     private TextBox? _kioskLogBox;
@@ -51,6 +53,16 @@ internal sealed partial class ManagerWindow {
                 _ = Guard(() => SaveKioskNumberAsync("IdleMinutes", (int) value));
             }
         };
+        _kioskMaxPets.ValueChanged += (_, _) => {
+            if (!_showingKiosk && _kioskMaxPets.Value is { } value) {
+                _ = Guard(() => SaveKioskNumberAsync("MaxPets", (int) value));
+            }
+        };
+        _kioskPeppers.ValueChanged += (_, _) => {
+            if (!_showingKiosk && _kioskPeppers.Value is { } value) {
+                _ = Guard(() => SaveKioskNumberAsync("HatchPeppers", (int) value));
+            }
+        };
 
         LoadKioskSettings();
         _kioskTimer.Tick += (_, _) => RefreshKioskBot();
@@ -66,6 +78,10 @@ internal sealed partial class ManagerWindow {
                 "Off closes the kiosk: using one tells the player it is turned off. On wakes the kiosk bot when a player uses a kiosk."),
             SwitchRow("Sleep after (minutes)", _kioskIdleMinutes,
                 "How long the kiosk bot keeps running after the last time someone used a kiosk, before it goes to sleep."),
+            SwitchRow("Pets each player can put up", _kioskMaxPets,
+                "How many pets one player can have at the kiosk at once. The game's own limit is five. Bots have no limit."),
+            SwitchRow("Hatch Peppers per hatch", _kioskPeppers,
+                "Hatch Peppers the owner of a kiosk pet gets each time another player hatches with it. 0 gives none."),
             SwitchRow("Run the kiosk as its own program", _kioskOwnServer,
                 "Off has the server run the kiosk itself, as before."),
             Row(Action(Plain("Restart kiosk bot"), RestartKioskBotAsync), Action(Plain("Open its folder"), () => {
@@ -93,6 +109,8 @@ internal sealed partial class ManagerWindow {
         try {
             _kioskEnabled.IsChecked = !string.Equals(_manager.GetSetting("HatchKiosk", "Enabled"), "false", StringComparison.OrdinalIgnoreCase);
             _kioskIdleMinutes.Value = int.TryParse(_manager.GetSetting("HatchKiosk", "IdleMinutes"), NumberStyles.Integer, CultureInfo.InvariantCulture, out var idle) ? idle : 5;
+            _kioskMaxPets.Value = int.TryParse(_manager.GetSetting("HatchKiosk", "MaxPets"), NumberStyles.Integer, CultureInfo.InvariantCulture, out var most) ? most : 5;
+            _kioskPeppers.Value = int.TryParse(_manager.GetSetting("HatchKiosk", "HatchPeppers"), NumberStyles.Integer, CultureInfo.InvariantCulture, out var peppers) ? peppers : 1;
             _kioskOwnServer.IsChecked = !string.Equals(_manager.GetSetting("HatchKiosk", "OwnServer"), "false", StringComparison.OrdinalIgnoreCase);
         }
         finally {

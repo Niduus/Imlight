@@ -33,6 +33,8 @@ internal sealed class KioskRequest {
     public ulong Id { get; set; }
     public ulong Owner { get; set; }
     public HatchmakingListing Listing { get; set; }
+    public HatchedPartner Partner { get; set; }
+    public KioskNotice Notice { get; set; }
 }
 
 internal sealed class KioskReply {
@@ -41,6 +43,8 @@ internal sealed class KioskReply {
     public int Count { get; set; }
     public List<HatchmakingListing> Listings { get; set; }
     public HatchmakingListing Listing { get; set; }
+    public ulong Owner { get; set; }
+    public List<KioskNotice> Notices { get; set; }
     public string Error { get; set; }
 }
 

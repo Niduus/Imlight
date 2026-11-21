@@ -180,6 +180,14 @@ public static class KioskBot {
                 Logger.Information("Kiosk bot: someone hatched with pet {0}.", Logger.Args(request.Id));
 
                 return new KioskReply { Ok = true, Done = true };
+            case "hatched":
+                var owner = HatchmakingStore.RecordHatch(request.Id, request.Partner, request.Notice);
+                Logger.Information("Kiosk bot: {0} hatched with pet {1} (owner {2}).",
+                    Logger.Args(request.Partner?.Parent?.Label ?? "a pet", request.Id, owner));
+
+                return new KioskReply { Ok = true, Done = owner != 0, Owner = owner };
+            case "notices":
+                return new KioskReply { Ok = true, Notices = HatchmakingStore.TakeNotices(request.Owner) };
             default:
                 return new KioskReply { Ok = false, Error = $"Unknown question {request?.Op}." };
         }

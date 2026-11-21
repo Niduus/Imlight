@@ -612,6 +612,9 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         public HatchSource Source;
         // In person: the partner's game object id, for MSG_PETHATCHRESULT.
         public ulong PartnerGameObjectId;
+        // Kiosk: the item id of the pet put up at the Pet Hatching Kiosk (ParentB), so the kiosk can record the hatch
+        // for its owner once the egg is made. 0 when hatching two of one's own pets.
+        public ulong KioskPetId;
 
     }
 
@@ -909,6 +912,18 @@ public class CHARACTER_103_PROTOCOL : IServerProtocol {
         public byte ServiceID { get; } = 103;
 
         public bool? Lock;
+
+    }
+
+    /// <summary>
+    /// Sent by the PetService of a player who hatched with a pet at the Pet Hatching Kiosk to the session of that pet's
+    /// owner, when the owner is online: the owner's HatchService hands out what the kiosk saved for them (the game's
+    /// "your pet hatched with" message and a Hatch Pepper).
+    /// </summary>
+    internal sealed class MSG_KIOSKNOTICE : IServerMessage {
+
+        public byte MessageOrder { get; } = 157;
+        public byte ServiceID { get; } = 103;
 
     }
 
