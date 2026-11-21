@@ -84,7 +84,13 @@ public class ServerWizInventoryBehavior : IClientBehaviorProvider<ClientWizInven
     /// <see cref="MinimumLimit"/>.
     /// </summary>
     [JsonIgnore] public int BaseLimit
-        => Math.Max(MinimumLimit, ItemLimit > 0 ? ItemLimit : s_maxItemsAllowed);
+        => Math.Max(BotBackpack.SizeFor(Owner), Math.Max(MinimumLimit, ItemLimit > 0 ? ItemLimit : s_maxItemsAllowed));
+
+    /// <summary>
+    /// The wizard this backpack belongs to, set by <see cref="Imlight.CoreLib.WizardData.Models.Player.Wizard"/> when
+    /// it takes the backpack. Used to give the server's own bots their bigger backpack (<see cref="BotBackpack"/>).
+    /// </summary>
+    [JsonIgnore] public Imlight.CoreLib.WizardData.Models.Player.Wizard Owner { get; set; }
 
     /// <summary>
     /// How many items the backpack holds: the base size and the elixir slots.

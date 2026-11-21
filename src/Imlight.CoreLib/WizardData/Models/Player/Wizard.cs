@@ -143,7 +143,17 @@ public class Wizard {
     // The look the wizard had before its first Magic Mirror change (MagicMirror.Parts order), for `.mirror reset`.
     public int[] MirrorStartLook { get; set; }
     public ServerWizPlayerNameBehavior PlayerNameBehavior { get; set; }
-    public ServerWizInventoryBehavior InventoryBehavior { get; set; }
+    // The backpack knows its wizard, so the server's own bots get their bigger backpack (BotBackpack).
+    private ServerWizInventoryBehavior _inventoryBehavior;
+    public ServerWizInventoryBehavior InventoryBehavior {
+        get => _inventoryBehavior;
+        set {
+            _inventoryBehavior = value;
+            if (value is not null) {
+                value.Owner = this;
+            }
+        }
+    }
     public ServerWizStorageBehavior StorageBehavior { get; set; }
     public ServerWizEquipmentBehavior EquipmentBehavior { get; set; }
     public ServerMagicSchoolBehavior MagicSchoolBehavior { get; set; }
