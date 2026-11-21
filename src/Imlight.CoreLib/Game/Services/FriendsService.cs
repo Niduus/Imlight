@@ -119,7 +119,7 @@ using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Services;
 
-internal class FriendsService(SessionActor sessionActor) : MessageService(sessionActor) {
+internal partial class FriendsService(SessionActor sessionActor) : MessageService(sessionActor) {
 
     private const byte OFFLINE_STATUS_CODE = 1;
     private const byte ONLINE_STATUS_CODE = 4;
@@ -172,6 +172,9 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
                     Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), buddy.CharId));
             }
         }
+
+        // The server's own bots that are on now join the list as friendly players (FriendsService.Bots).
+        ShowBotFriends(wizard, buddies.Where(buddy => buddy != null).Select(buddy => buddy.CharId));
 
         SendBuddyListEnd(wizard);
         InformBuddiesOfStatusChange(true);
@@ -541,6 +544,9 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
             Logger.Warning("{0} removed character ID {1}, who is not a friend; clearing it from their list.",
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), buddyCharID));
 
+            // A bot shown as a friendly player stays off this list until the next login (FriendsService.Bots).
+            HideBotFriend(buddyCharID);
+
             // A stray entry (like a nameless one) has nothing saved, so only the client's list needs it gone.
             SendToSocket(new GAME_5_PROTOCOL.MSG_BUDDYDROP {
                 ListOwnerGID = wizard.GameObjectID,
@@ -622,8 +628,8 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
             return;
         }
 
-        // The friends list only offers Go To for friends.
-        if (!BuddyRelationshipCollection.AreFriends(wizard.CharId, targetID)) {
+        // The friends list only offers Go To for friends, and for the server's own bots it shows as friendly players.
+        if (!BuddyRelationshipCollection.AreFriends(wizard.CharId, targetID) && !IsShownBotFriend(targetID)) {
             Logger.Warning("Player {0} tried to teleport to character ID {1}, who is not a friend.",
                 Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), targetID));
 
