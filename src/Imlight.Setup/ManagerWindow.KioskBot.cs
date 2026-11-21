@@ -30,6 +30,9 @@ internal sealed partial class ManagerWindow {
     private readonly NumericUpDown _kioskMaxPets = new() { Minimum = 1, Maximum = 100, Increment = 1, FormatString = "0", Width = 140 };
     private readonly NumericUpDown _kioskPeppers = new() { Minimum = 0, Maximum = 99, Increment = 1, FormatString = "0", Width = 140 };
     private readonly ToggleSwitch _kioskOwnServer = new() { OnContent = "Own program", OffContent = "In the server" };
+    private static readonly string[] s_kioskAges = ["Baby", "Teen", "Adult", "Ancient", "Epic", "Mega", "Ultra"];
+    private readonly ComboBox _kioskMinAge = new() { MinWidth = 140, ItemsSource = s_kioskAges };
+    private readonly ToggleSwitch _kioskHousePets = new() { OnContent = "On", OffContent = "Off" };
     private readonly DispatcherTimer _kioskTimer = new() { Interval = TimeSpan.FromSeconds(3) };
     private TextBox? _kioskLogBox;
     private bool _showingKiosk;
@@ -64,6 +67,17 @@ internal sealed partial class ManagerWindow {
             }
         };
 
+        _kioskMinAge.SelectionChanged += (_, _) => {
+            if (!_showingKiosk && _kioskMinAge.SelectedIndex >= 0) {
+                _ = Guard(() => SaveKioskTextAsync("MinAge", s_kioskAges[_kioskMinAge.SelectedIndex]));
+            }
+        };
+        _kioskHousePets.IsCheckedChanged += async (_, _) => {
+            if (!_showingKiosk) {
+                await Guard(() => SetKioskSwitchAsync("HousePets", "The kiosk's own pets", _kioskHousePets.IsChecked == true));
+            }
+        };
+
         LoadKioskSettings();
         _kioskTimer.Tick += (_, _) => RefreshKioskBot();
         _kioskTimer.Start();
@@ -80,6 +94,13 @@ internal sealed partial class ManagerWindow {
                 "How long the kiosk bot keeps running after the last time someone used a kiosk, before it goes to sleep."),
             SwitchRow("Pets each player can put up", _kioskMaxPets,
                 "How many pets one player can have at the kiosk at once. The game's own limit is five. Bots have no limit."),
+            SwitchRow("Youngest pets allowed", _kioskMinAge,
+                "The youngest age a player's pet can be to go up at the kiosk. The game's own rule is Adult. The kiosk's Offer Pets " +
+                "window only ever lists Adult and older pets, so players put a younger pet up by typing .kiosk and its name."),
+            SwitchRow("The kiosk's own pets", _kioskHousePets,
+                "Fills the kiosk with pets of every kind in the game (the file pet.kiosk next to the server, made from your game files " +
+                "the first time the kiosk is used): some raised any old way, some built for one job like damage for one, two or three " +
+                "schools. Every talent you can search for is shown by a few of them. Off shows only the pets players put up."),
             SwitchRow("Hatch Peppers per hatch", _kioskPeppers,
                 "Hatch Peppers the owner of a kiosk pet gets each time another player hatches with it. 0 gives none."),
             SwitchRow("Run the kiosk as its own program", _kioskOwnServer,
@@ -112,6 +133,9 @@ internal sealed partial class ManagerWindow {
             _kioskMaxPets.Value = int.TryParse(_manager.GetSetting("HatchKiosk", "MaxPets"), NumberStyles.Integer, CultureInfo.InvariantCulture, out var most) ? most : 5;
             _kioskPeppers.Value = int.TryParse(_manager.GetSetting("HatchKiosk", "HatchPeppers"), NumberStyles.Integer, CultureInfo.InvariantCulture, out var peppers) ? peppers : 1;
             _kioskOwnServer.IsChecked = !string.Equals(_manager.GetSetting("HatchKiosk", "OwnServer"), "false", StringComparison.OrdinalIgnoreCase);
+            var age = Array.FindIndex(s_kioskAges, a => a.Equals(_manager.GetSetting("HatchKiosk", "MinAge") ?? "", StringComparison.OrdinalIgnoreCase));
+            _kioskMinAge.SelectedIndex = age >= 0 ? age : 2;
+            _kioskHousePets.IsChecked = !string.Equals(_manager.GetSetting("HatchKiosk", "HousePets"), "false", StringComparison.OrdinalIgnoreCase);
         }
         finally {
             _showingKiosk = false;
@@ -124,6 +148,22 @@ internal sealed partial class ManagerWindow {
         }
 
         return SetSwitchAsync("HatchKiosk", key, name, on);
+    }
+
+    private Task SaveKioskTextAsync(string key, string value) {
+        if (!_manager.HasSetting("HatchKiosk", key)) {
+            throw new PanelException("This server's Imlight.ini has no [HatchKiosk] " + key + " yet. Click \"Update Ahziael\" once, then try again.");
+        }
+
+        if (_manager.GetSetting("HatchKiosk", key) == value) {
+            return Task.CompletedTask;
+        }
+
+        _manager.SaveSettings([new Setting("HatchKiosk", key, value, "")]);
+        _settings = [];
+        Say("Saved. The kiosk uses it right away.");
+
+        return Task.CompletedTask;
     }
 
     private Task SaveKioskNumberAsync(string key, int value) {

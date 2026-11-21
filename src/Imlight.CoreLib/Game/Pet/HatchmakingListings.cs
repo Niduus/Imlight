@@ -45,7 +45,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Shared.Items;
+using Imlight.CoreLib.Shared.Resources;
 
 namespace Imlight.CoreLib.Game.Pet;
 
@@ -88,8 +91,26 @@ internal sealed class KioskNotice {
 /// </summary>
 internal static class HatchmakingListings {
 
+    /// <summary>
+    /// Every pet at the kiosk: the players' first, then the kiosk's own (pet.kiosk, KioskHousePets).
+    /// </summary>
     internal static List<HatchmakingListing> All()
+        => [.. Players(), .. KioskHousePets.Listings()];
+
+    /// <summary>
+    /// Only the pets players put up.
+    /// </summary>
+    internal static List<HatchmakingListing> Players()
         => KioskLink.Ask(new KioskRequest { Op = "all" }) is { Ok: true } answer ? answer.Listings ?? [] : HatchmakingStore.All();
+
+    /// <summary>
+    /// A listing for one of a player's pets: a copy of the pet as the game reads it.
+    /// </summary>
+    internal static HatchmakingListing For(WizClientObjectItem item, PetParent pet) => new() {
+        Parent = pet,
+        NameKeys = CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(item, out var name) ? name.m_nameKeys : 0,
+        ItemData = ItemSync.TrySerializeForKiosk(item, out var data) ? Convert.ToBase64String(data) : null,
+    };
 
     internal static List<HatchmakingListing> Of(ulong ownerCharId)
         => KioskLink.Ask(new KioskRequest { Op = "of", Owner = ownerCharId }) is { Ok: true } answer
@@ -97,6 +118,9 @@ internal static class HatchmakingListings {
             : HatchmakingStore.Of(ownerCharId);
 
     internal static HatchmakingListing Find(ulong petItemId)
+        => KioskHousePets.Find(petItemId) ?? FindPlayers(petItemId);
+
+    private static HatchmakingListing FindPlayers(ulong petItemId)
         => KioskLink.Ask(new KioskRequest { Op = "find", Id = petItemId }) is { Ok: true } answer
             ? answer.Listing
             : HatchmakingStore.Find(petItemId);

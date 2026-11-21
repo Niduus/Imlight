@@ -1787,6 +1787,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         }
 
         try {
+            // Starts loading (or making) the kiosk's own pets, so they are ready by the time the player browses.
+            _ = KioskHousePets.Listings();
             SendKioskInfo(message.GlobalID);
         }
         catch (Exception ex) {
@@ -1807,7 +1809,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             var wizard = GetActiveWizard();
             var item = PetCare.FindPet(wizard, message.PetID);
             var pet = PetHatching.Snapshot(item, wizard.CharId);
-            var problem = PetHatching.ParentProblem(pet);
+            var problem = PetHatching.ParentProblem(pet) ?? KioskHousePets.AgeProblem(pet);
             if (problem is not null) {
                 InformGameClient(problem);
                 SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = 1 });
@@ -1879,6 +1881,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         var listings = HatchmakingListings.All()
             .Where(l => message.PetTemplateID == 0 || l.Parent.TemplateId == message.PetTemplateID)
             .Skip((int) Math.Min(message.Skip, int.MaxValue))
+            .Take(KIOSK_MOST_SHOWN)
             .ToList();
         var list = new HatchmakingPetGIDList {
             m_skip = message.Skip,
@@ -1948,8 +1951,15 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         try {
             var wanted = SearchedTalents(message.Data);
             var everyOne = message.SearchType == 0;
+            // Players' pets first, then the kiosk's own that show the most of the wanted talents; a talent many kiosk
+            // pets show would make a list too long to send, so it is cut at KIOSK_MOST_SHOWN.
             var found = HatchmakingListings.All()
                 .Where(l => wanted.Count == 0 || HasTalents(l.Parent, wanted, everyOne))
+                .Select((l, i) => (Listing: l, Order: i, House: l.Parent.OwnerCharId == 0,
+                    Matches: wanted.Count(id => l.Parent.ExpressedTalents?.Contains(id) == true || l.Parent.ExpressedDerbyTalents?.Contains(id) == true)))
+                .OrderBy(x => x.House).ThenByDescending(x => x.Matches).ThenBy(x => x.Order)
+                .Take(KIOSK_MOST_SHOWN)
+                .Select(x => x.Listing)
                 .ToList();
             Logger.Information("Hatching: talent search ({0} of {1}) found {2} of {3} pets at the kiosk.",
                 Logger.Args(everyOne ? "all" : "any", string.Join(", ", wanted.Select(TalentName)), found.Count, HatchmakingListings.All().Count));
@@ -2182,7 +2192,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
                 ParentA = parentA,
                 ParentB = parentB,
                 Source = HatchSource.Kiosk,
-                KioskPetId = mine2 is null && parentB.OwnerCharId != wizard.CharId ? petId2 : 0,
+                // The kiosk's own pets (owner 0) belong to nobody, so no one keeps the hatch or gets told.
+                KioskPetId = mine2 is null && parentB.OwnerCharId != wizard.CharId && parentB.OwnerCharId != 0 ? petId2 : 0,
             });
         }
         catch (Exception ex) {
@@ -2244,11 +2255,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         return false;
     }
 
-    private static HatchmakingListing Listing(WizClientObjectItem item, PetParent pet) => new() {
-        Parent = pet,
-        NameKeys = CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(item, out var name) ? name.m_nameKeys : 0,
-        ItemData = ItemSync.TrySerializeForKiosk(item, out var data) ? Convert.ToBase64String(data) : null,
-    };
+    private static HatchmakingListing Listing(WizClientObjectItem item, PetParent pet) => HatchmakingListings.For(item, pet);
+
+    // The most pets one Browse Pets or Search Pet Talents answer lists; the kiosk's own pets alone are thousands.
+    private const int KIOSK_MOST_SHOWN = 100;
 
     private static HatchmakingPetsList PetsList(System.Collections.Generic.IEnumerable<HatchmakingListing> listings) => new() {
         m_hatchmakingPetsList = [.. listings.Select(l => new HatchmakingPet {
