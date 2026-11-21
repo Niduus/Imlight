@@ -66,21 +66,22 @@ internal static class ItemSync {
     internal static bool TrySerialize(WizClientObjectItem item, out ByteString serialized)
         => s_itemSerializer.Serialize(item, ItemSerializationFlags, out serialized);
 
-    // The Pet Hatching Kiosk's pet messages (MSG_REQUESTHATCHMAKINGPETDATA, MSG_REQUESTHATCHMAKINGHATCHEDPET) are read
-    // by WizardGraphicalClient.exe with the plain serializer (a 4-byte class hash first, as the kiosk's pet lists) and
-    // property mask 7, not the inventory's CoreObject header and Transmit mask. Sent the inventory way, the game read
-    // no pet, so the kiosk's browse and hatch windows stayed empty (Niduus, 2026-11-21).
-    private const uint KioskSerializationFlags =
+    // The Pet Hatching Kiosk's pet messages (MSG_REQUESTHATCHMAKINGPETDATA, MSG_REQUESTHATCHMAKINGHATCHEDPET) carry the
+    // pet the inventory way. 0.10.956 sent them with the plain serializer and mask 7 instead, and the game crashed
+    // ("DynamicCast failed to cast class WizClientObjectItem") when Browse Pets showed a pet (Niduus, 2026-11-21), so
+    // the inventory way is back, and pets saved the plain way in 956 are turned back over.
+    private const uint PlainKioskFlags =
         (uint) (PropertyFlags.Prop_Save | PropertyFlags.Prop_Copy | PropertyFlags.Prop_Public);
     private const uint WIZ_CLIENT_OBJECT_ITEM_HASH = 1653772158;
 
-    /// <summary>Serializes a pet the way the Pet Hatching Kiosk's windows read it.</summary>
+    /// <summary>Serializes a pet for the Pet Hatching Kiosk's windows (the inventory way).</summary>
     internal static bool TrySerializeForKiosk(WizClientObjectItem item, out ByteString serialized)
-        => new ObjectSerializer(false, SerializerFlags.None).Serialize(item, KioskSerializationFlags, out serialized);
+        => new CoreObjectSerializer(behaviors: SerializerFlags.None).Serialize(item, ItemSerializationFlags, out serialized);
 
     /// <summary>
-    /// A kiosk pet's saved item (base64) as the kiosk's windows read it. Pets put up before the kiosk saved them this way
-    /// were saved the inventory way, and are turned over here. Null when there is nothing to send.
+    /// A kiosk pet's saved item (base64) for the kiosk's windows. Pets saved by 0.10.956 the plain way are turned back
+    /// to the inventory way. Null when there is nothing safe to send (the game is then sent no pet rather than one it
+    /// cannot read).
     /// </summary>
     internal static byte[] KioskPetBytes(string itemData) {
         if (string.IsNullOrEmpty(itemData)) {
@@ -88,13 +89,13 @@ internal static class ItemSync {
         }
 
         var bytes = System.Convert.FromBase64String(itemData);
-        if (bytes.Length >= 4 && System.BitConverter.ToUInt32(bytes, 0) == WIZ_CLIENT_OBJECT_ITEM_HASH) {
+        if (bytes.Length < 4 || System.BitConverter.ToUInt32(bytes, 0) != WIZ_CLIENT_OBJECT_ITEM_HASH) {
             return bytes;
         }
 
-        if (new CoreObjectSerializer(behaviors: SerializerFlags.None).Deserialize<WizClientObjectItem>(bytes, ItemSerializationFlags, out var item)
-            && item is not null && TrySerializeForKiosk(item, out var kiosk)) {
-            return kiosk;
+        if (new ObjectSerializer(false, SerializerFlags.None).Deserialize<WizClientObjectItem>(bytes, PlainKioskFlags, out var item)
+            && item is not null && TrySerializeForKiosk(item, out var inventory)) {
+            return inventory;
         }
 
         return null;
