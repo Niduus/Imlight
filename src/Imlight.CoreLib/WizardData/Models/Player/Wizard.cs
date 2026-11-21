@@ -1137,7 +1137,19 @@ public class Wizard {
         return removed;
     }
 
+    // Equipping and the deck window's card moves run on different services of the session. Copying a deck's spells into a
+    // new deck sends the new deck's equip and then a card add for every spell at once: a card that came while the new deck
+    // was between the backpack and the deck slot found it in neither, and every copied card failed (Niduus, 2026-11-20:
+    // "copying spells to new deck doesn't work"). They now take turns.
+    private readonly object _deckMoveLock = new();
+
     public bool InventoryToEquipmentTransfer(ulong itemId, out List<GameEffectBase> equipEffects, out List<GameEffectBase> unequipEffects) {
+        lock (_deckMoveLock) {
+            return InventoryToEquipmentTransferNow(itemId, out equipEffects, out unequipEffects);
+        }
+    }
+
+    private bool InventoryToEquipmentTransferNow(ulong itemId, out List<GameEffectBase> equipEffects, out List<GameEffectBase> unequipEffects) {
         equipEffects = null;
         unequipEffects = null;
 
@@ -1870,6 +1882,12 @@ public class Wizard {
     }
 
     public bool AddSpellToDeck(uint spellTemplateId, ulong deckId) {
+        lock (_deckMoveLock) {
+            return AddSpellToDeckNow(spellTemplateId, deckId);
+        }
+    }
+
+    private bool AddSpellToDeckNow(uint spellTemplateId, ulong deckId) {
         if (!Imlight.CoreLib.Game.Spells.SpellFactory.CanGoInDeck(spellTemplateId)) {
             Logger.Debug("Spell {0} is not a battle spell and does not go in {1}'s deck.",
                 Logger.Args(spellTemplateId, PlayerNameBehavior.GetWizardName()));
@@ -1935,6 +1953,12 @@ public class Wizard {
     }
 
     public bool RemoveSpellFromDeck(uint spellTemplateId, ulong deckId) {
+        lock (_deckMoveLock) {
+            return RemoveSpellFromDeckNow(spellTemplateId, deckId);
+        }
+    }
+
+    private bool RemoveSpellFromDeckNow(uint spellTemplateId, ulong deckId) {
         // Find the actual item in the inventory.
         var item = InventoryBehavior.Items.FirstOrDefault(i => i.m_globalID == deckId);
         if (item is null) {

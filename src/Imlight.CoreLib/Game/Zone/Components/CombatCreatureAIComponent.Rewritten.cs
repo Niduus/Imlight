@@ -727,11 +727,21 @@ internal sealed partial class CombatCreatureAIComponent {
 
         // Hold back (smart only, never two rounds in a row): a much bigger hit is affordable next round.
         if (_determinedSmartThisTurn && !_heldBackLastRound && !turn.Tuning.Excludes(RewrittenAI.NO_HOLD_BACK) && best.Damage > 0) {
-            var bigger = turn.Hand.Where(c => c.Hit && !turn.Castable.Contains(c) && c.Rank <= turn.Pips + 1)
+            // Only a card it cannot cast now for want of pips, and that it may cast next round: a natural attack still cooling
+            // down next round, a card it never casts or one at the same-spell cap is no reason to wait. The Sea Lord saved
+            // up to 7 pips "for Natural Attack next round" while its natural attack was cooling down, then had no such card
+            // and cast Heck Hound (Mitsu's report, 2026-11-20).
+            bool Waitable(RewrittenAI.Card c)
+                => c.Spell is not null && !me.HasPipsForSpell(c.Spell)
+                   && !(c.Natural && _naturalAttackCooldownLeft > 0)
+                   && !turn.Tuning.NeverCast.Contains(c.Name) && !turn.Tuning.NeverCast.Contains(c.Shown)
+                   && !(_mustSkipRepeatThisTurn && c.Id == _lastCastSpellId);
+            var bigger = turn.Hand.Where(c => c.Hit && !turn.Castable.Contains(c) && c.Rank <= turn.Pips + 1 && Waitable(c))
                 .Select(c => (Card: c, Damage: RewrittenAI.Estimate(c, me, best.Target)))
                 // An X pip spell grows with the next round's pip: what it would hit for then (Niduus, 2026-11-19: "lack of
                 // logic for X pip spells").
-                .Concat(turn.Hand.Where(c => c.Hit && c.XPip && c.Spell is not null)
+                .Concat(turn.Hand.Where(c => c.Hit && c.XPip && c.Spell is not null
+                        && !(c.Natural && _naturalAttackCooldownLeft > 0))
                     .Select(c => (Card: c, Damage: RewrittenAI.Estimate(c, me, best.Target,
                         xPips: CombatActionResolver.GetXPipCost(c.Spell, me) + 1))))
                 .OrderByDescending(x => x.Damage).FirstOrDefault();

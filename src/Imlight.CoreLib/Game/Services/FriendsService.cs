@@ -114,6 +114,7 @@ using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Shared.Utilities;
 using Imlight.CoreLib.WizardData.Collections;
+using Imlight.CoreLib.WizardData.Models.Misc;
 using Imlight.CoreLib.WizardData.Models.Player;
 
 namespace Imlight.CoreLib.Game.Services;
@@ -250,8 +251,10 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
             return;
         }
 
-        // Check to see if the recipient is online. If not, there is naught we can do.
-        if (!TryGetOnlinePlayer(buddyCharID, out var onlinePlayer)) {
+        // Check to see if the recipient is online. If not, there is naught we can do. A wizard changing areas is off
+        // the online list for a moment (bots change areas often), so give them a few seconds to arrive first.
+        if (!TryGetOnlinePlayer(buddyCharID, out var onlinePlayer)
+            && !WaitForArrival(buddyCharID, out onlinePlayer)) {
             var wizardName = wizard.PlayerNameBehavior.GetWizardName();
             Logger.Warning("{0} tried to add character ID {1} as a friend, but the character is not online.",
                 Logger.Args(wizardName, buddyCharID));
@@ -284,6 +287,21 @@ internal class FriendsService(SessionActor sessionActor) : MessageService(sessio
 
         Logger.Debug("{0} has sent a friend request to character ID {1}.",
             Logger.Args(wizard.PlayerNameBehavior.GetWizardName(), buddyCharID));
+    }
+
+    // Up to 3 seconds for a wizard who is between areas to show up on the online list again (memory only).
+    private static bool WaitForArrival(ulong characterId, out OnlinePlayer onlinePlayer) {
+        for (var i = 0; i < 12; i++) {
+            System.Threading.Thread.Sleep(250);
+            onlinePlayer = OnlinePlayerCollection.GetCachedOnlinePlayer(characterId);
+            if (onlinePlayer is not null) {
+                return true;
+            }
+        }
+
+        onlinePlayer = null;
+
+        return false;
     }
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_BUDDYREQUESTADDFWD))]

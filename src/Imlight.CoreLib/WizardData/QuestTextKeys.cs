@@ -409,6 +409,16 @@ public static partial class QuestTextKeys {
                     titles++;
                 }
 
+                // A "Go to" step with no words at all showed "Go to" with nothing after it in the book and only "in" under
+                // the arrow (Bad Blood's Myth Tower step, 2026-11-20). Such a step gets the place it is in as its words.
+                if (goal is WaypointGoalTemplate && (goal.m_tallyCounter is null
+                        || string.IsNullOrWhiteSpace(goal.m_tallyCounter.m_descriptor))
+                    && PlaceName(goal) is { Length: > 0 } where) {
+                    goal.m_tallyCounter ??= new TallyCounterTemplate { m_percentChance = 1f, m_descriptor = "", m_descriptor2 = "", m_tallyResults = new ResultList() };
+                    goal.m_tallyCounter.m_descriptor = where;
+                    descriptors++;
+                }
+
                 if (goal.m_tallyCounter is not { } tally) {
                     continue;
                 }

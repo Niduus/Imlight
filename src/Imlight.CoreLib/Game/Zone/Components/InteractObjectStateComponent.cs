@@ -108,6 +108,21 @@ internal sealed class InteractObjectStateComponent(ZoneEntity entity)
     }
 
     /// <summary>
+    /// Whether one use now takes the wizard somewhere (its option has a teleport among its results), as the Dragonspyre
+    /// cathedral arches do (AcadPort1, LibraryPort1, NecroPort1: they light up and send the wizard through).
+    /// </summary>
+    internal bool UseTeleports(Wizard playerCharacter) {
+        try {
+            var chosen = ChooseOption(GetOfferedOptions(playerCharacter).ToList(), CurrentState());
+
+            return Results(chosen)?.m_results?.Any(r => r is ResTeleport) == true;
+        }
+        catch (Exception) {
+            return false;
+        }
+    }
+
+    /// <summary>
     /// The option one use applies. Options with requirements are the specific ones (the offered list already
     /// holds only those that pass), so they win over unconditional ones. Among several, the use steps to the option
     /// after the one matching the current state, wrapping around; an unmatched state starts at the first.

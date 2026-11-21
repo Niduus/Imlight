@@ -825,6 +825,14 @@ public class ZONE_102_PROTOCOL : IServerProtocol {
         public bool ResetInstance;
 
         /// <summary>
+        /// The player is going with a team into the copy of another wizard who entered the same pad a moment before them
+        /// (a dungeon sigil's team, a pet hatching partner). Such a transfer never starts a fresh copy, not even of a ride:
+        /// the copy was just made for the team, and dropping it threw the owner into an empty zone (his log, 2026-11-20:
+        /// two players boarding the Ironworks flight, the second boarding dropped the first one's ride mid-load).
+        /// </summary>
+        public bool JoiningTeam;
+
+        /// <summary>
         /// The ZoneObjects variant a new copy of the zone loads with (spiraldb-extra/ZoneObjects): its extra objects,
         /// encounters and exit. Empty for the zone as it is. Only a zone this transfer loads takes it.
         /// </summary>

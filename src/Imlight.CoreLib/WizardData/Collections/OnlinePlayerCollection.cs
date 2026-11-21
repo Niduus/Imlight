@@ -43,6 +43,7 @@ using Imlight.CoreLib.WizardData.Models.Misc;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Imlight.CoreLib.WizardData.Collections;
@@ -53,6 +54,10 @@ public static class OnlinePlayerCollection {
     private static readonly IDocumentStore s_store;
 
     private static readonly ConcurrentDictionary<ulong, OnlinePlayer> s_onlinePlayerCache = new();
+    // The same players by their wizard. The list above holds one entry per account, so a wizard whose entry was taken by
+    // another one (a newer entry of the same account, or a login screen entry) could no longer be found by its wizard,
+    // and "Add Friend" on a wizard standing right there said "Friends List Error. Cannot add friend." (2026-11-20).
+    private static readonly ConcurrentDictionary<ulong, OnlinePlayer> s_byCharacter = new();
     // The login names of accounts seen this run: a zone change drops the player and adds them back without it.
     private static readonly ConcurrentDictionary<ulong, string> s_accountNames = new();
     // Who played on each session, kept after the player is removed, so the line saying why they were disconnected
@@ -85,6 +90,9 @@ public static class OnlinePlayerCollection {
         }
 
         s_lastBySession[onlinePlayer.SessionId] = onlinePlayer;
+        if (onlinePlayer.CharacterId != 0) {
+            s_byCharacter[onlinePlayer.CharacterId] = onlinePlayer;
+        }
         s_onlinePlayerCache.AddOrUpdate(
             onlinePlayer.AccountId,
             onlinePlayer,
@@ -107,7 +115,9 @@ public static class OnlinePlayerCollection {
     /// <param name="accountId">The character ID of the online player to remove.</param>
     public static void RemoveOnlinePlayer(ulong accountId) {
         // Remove from the cache.
-        s_onlinePlayerCache.TryRemove(accountId, out _);
+        if (s_onlinePlayerCache.TryRemove(accountId, out var removed) && removed.CharacterId != 0) {
+            s_byCharacter.TryRemove(new KeyValuePair<ulong, OnlinePlayer>(removed.CharacterId, removed));
+        }
 
         using var session = s_store.OpenSession();
 
@@ -129,6 +139,11 @@ public static class OnlinePlayerCollection {
         foreach (var kvp in s_onlinePlayerCache) {
             if (kvp.Value.SessionId == sessionId) {
                 s_onlinePlayerCache.TryRemove(kvp.Key, out _);
+            }
+        }
+        foreach (var kvp in s_byCharacter) {
+            if (kvp.Value.SessionId == sessionId) {
+                s_byCharacter.TryRemove(kvp);
             }
         }
 
@@ -165,12 +180,20 @@ public static class OnlinePlayerCollection {
     /// </summary>
     public static OnlinePlayer[] GetCachedOnlinePlayers() => s_onlinePlayerCache.Values.ToArray();
 
+    /// <summary>The wizard's entry from memory only (never the database), or null.</summary>
+    public static OnlinePlayer GetCachedOnlinePlayer(ulong characterId)
+        => characterId != 0 && s_byCharacter.TryGetValue(characterId, out var player) ? player : null;
+
     /// <summary>
     /// Retrieves the online player with the specified character ID from the collection.
     /// </summary>
     /// <param name="characterId">The character ID of the online player to retrieve.</param>
     /// <returns>The online player with the specified character ID, or null if not found.</returns>
     public static OnlinePlayer GetOnlinePlayer(ulong characterId) {
+        if (characterId != 0 && s_byCharacter.TryGetValue(characterId, out var byCharacter)) {
+            return byCharacter;
+        }
+
         // Check the cache first.  Values snapshot is safe for concurrent reads.
         var cachedPlayer = s_onlinePlayerCache.Values
             .FirstOrDefault(x => x.CharacterId == characterId);
@@ -235,6 +258,7 @@ public static class OnlinePlayerCollection {
     public static void Clear() {
         // Clear the cache.
         s_onlinePlayerCache.Clear();
+        s_byCharacter.Clear();
 
         using var session = s_store.OpenSession();
 

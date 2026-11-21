@@ -413,8 +413,11 @@ public sealed class ZonePath : ZoneEntity {
 
         var spawnItemInfo = spawnItem.m_objectInfo;
 
-        // Get the node to spawn the creature at.
-        var spawnNode = GetRelevantNode(spawnItemInfo);
+        // Get the node to spawn the creature at. A reagent keeps clear of things players press X on (Firecat Alley's
+        // teleporter stone had a Mist Wood spot on it: X picked the reagent instead of teleporting).
+        var spawnNode = IsReagent(spawnItemInfo.m_templateID)
+            ? ClearNode(spawnItemInfo) ?? GetRelevantNode(spawnItemInfo)
+            : GetRelevantNode(spawnItemInfo);
 
         // If creatures are randomized, pick a random template ID. Wisps always stay wisps. The spawn data is
         // shared by every spawn of this spawner, so the swap must not stick to it or each spawn swaps the last swap.
@@ -652,6 +655,77 @@ public sealed class ZonePath : ZoneEntity {
 
     private void SetCreatureCount(SpawnObject spawnObject, int count)
         => _creatureCount[spawnObject] = (byte) count;
+
+    // How far (on the ground) a reagent stays from anything players press X on: both are reached from 300 away, so
+    // standing at the thing must not also put the reagent in reach.
+    private const float REAGENT_CLEAR = 450f;
+    private const float REAGENT_CLEAR_HEIGHT = 300f;
+    // Two reagents of one path are not put on the same spot.
+    private const float REAGENT_APART = 150f;
+
+    private List<Imcodec.Math.Vector3> _pressSpots;
+
+    private static bool IsReagent(GID templateId) {
+        try {
+            return CoreObjectFactory.GetCoreTemplate(templateId) is { } template
+                   && Imlight.CoreLib.Game.Zone.Components.InteractReagentComponent.ShouldAttachToEntity(template);
+        }
+        catch {
+            return false;
+        }
+    }
+
+    // Where the zone's own press-X things stand: teleporter stones, sigils, doors, people. Reagents are left out.
+    private List<Imcodec.Math.Vector3> PressSpots() {
+        if (_pressSpots is not null) {
+            return _pressSpots;
+        }
+
+        var spots = new List<Imcodec.Math.Vector3>();
+        try {
+            foreach (var o in Zone?.ZoneData?.m_objectList ?? []) {
+                if (o is null || o.m_templateID == 0) {
+                    continue;
+                }
+                if (CoreObjectFactory.GetCoreTemplate(o.m_templateID) is not GameObjectTemplate t
+                    || Imlight.CoreLib.Game.Zone.Components.InteractReagentComponent.ShouldAttachToEntity(t)) {
+                    continue;
+                }
+                if (o is CombatSigilObjectInfo
+                    || t.m_behaviors?.Any(b => b is InteractableBehaviorTemplate or NPCBehaviorTemplate) == true) {
+                    spots.Add(o.m_location);
+                }
+            }
+        }
+        catch (Exception e) {
+            Logger.Debug("Reagent spots: could not read the press-X things of path {0}: {1}", Logger.Args(_template?.m_name, e.Message));
+        }
+
+        return _pressSpots = spots;
+    }
+
+    // A node of this path away from press-X things and from the path's other living reagents; null when none is.
+    private NodeObject ClearNode(SpawnObjectInfo spawnInfo) {
+        if (_nodes.Count == 0 || spawnInfo.m_kStartNodeType is not (StartNodeType.SNT_RANDOM or StartNodeType.SNT_RANDOM_UNIQUE)) {
+            return null;
+        }
+
+        var press = PressSpots();
+        var taken = _living.Values.Where(l => l.Object is not null).Select(l => l.Object.m_location).ToList();
+        var clear = _nodes.Where(n => !press.Any(p => Near(p, n.m_location, REAGENT_CLEAR))
+                                      && !taken.Any(t => Near(t, n.m_location, REAGENT_APART))).ToList();
+        if (clear.Count == 0) {
+            clear = _nodes.Where(n => !press.Any(p => Near(p, n.m_location, REAGENT_CLEAR))).ToList();
+        }
+        return clear.Count == 0 ? null : clear[Random.Shared.Next(clear.Count)];
+    }
+
+    private static bool Near(Imcodec.Math.Vector3 a, Imcodec.Math.Vector3 b, float reach) {
+        var dx = a.X - b.X;
+        var dy = a.Y - b.Y;
+
+        return dx * dx + dy * dy < reach * reach && Math.Abs(a.Z - b.Z) <= REAGENT_CLEAR_HEIGHT;
+    }
 
     private NodeObject GetRelevantNode(SpawnObjectInfo spawnInfo) {
         switch (spawnInfo.m_kStartNodeType) {

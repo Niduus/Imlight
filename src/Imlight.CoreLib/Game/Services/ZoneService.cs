@@ -761,6 +761,7 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             IsPrivate = true,
             OwnerCharId = owner,
             ResetInstance = !entry.KeepInstance,
+            JoiningTeam = owner != wizard.CharId,
             Variant = entry.Variant,
         };
         ZoneVariants.Remember(wizard.CharId, entry.DestinationZone, entry.Variant);

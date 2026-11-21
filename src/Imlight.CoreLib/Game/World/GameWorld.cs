@@ -227,8 +227,9 @@ public class GameWorld : ReceiveProtocolDispatcher, IWithTimers {
 
         // A ride (the Krokotopia flying ship) is the player's own fresh copy every time they board (RideZones). Only the
         // boarding itself starts a new copy, not the game attaching to the copy just made for it, and not a group mate
-        // joining a wizard who is on board (that would drop the copy with the wizard still in it).
-        if (message.SendToClient && message.OwnerCharId != 0 && RideZones.IsKnownRide(message.DestinationZone)
+        // joining a wizard who is on board (that would drop the copy with the wizard still in it), and not a team mate
+        // boarding with the owner, who may still be loading into the copy (JoiningTeam).
+        if (message.SendToClient && message.OwnerCharId != 0 && !message.JoiningTeam && RideZones.IsKnownRide(message.DestinationZone)
             && !InstancedPlayers.Occupied(message.OwnerCharId, message.DestinationZone)) {
             message.ResetInstance = true;
         }

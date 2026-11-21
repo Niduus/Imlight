@@ -500,8 +500,19 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         _componentFirstOption.Clear();
         var allOptions = new List<ServiceOptionBase>();
         var componentsWithOptions = new List<IServiceComponent>();
+        // An object that is both a door and a lit-up-and-go object (the Dragonspyre cathedral arches) offered two "Interact"
+        // options, so pressing X opened a person's "What can I do for you?" menu (2026-11-20 report). It keeps one: the
+        // object's own use when that sends the wizard through (it plays the arch lighting up too), else the door.
+        var door = _serviceComponents.OfType<InteractDoorTeleportComponent>().FirstOrDefault();
+        var objectState = _serviceComponents.OfType<InteractObjectStateComponent>().FirstOrDefault();
+        IServiceComponent dropped = null;
+        if (door is not null && objectState is not null && playerCharacter is not null
+            && OptionsFor(door, playerCharacter).Count > 0 && OptionsFor(objectState, playerCharacter).Count > 0) {
+            dropped = objectState.UseTeleports(playerCharacter) ? door : objectState;
+        }
+
         foreach (var component in _serviceComponents) {
-            var componentOptions = OptionsFor(component, playerCharacter);
+            var componentOptions = component == dropped ? [] : OptionsFor(component, playerCharacter);
             if (componentOptions.Count > 0) {
                 componentsWithOptions.Add(component);
             }
