@@ -121,6 +121,17 @@ internal static class Program {
             return;
         }
 
+        // The Pet Hatching Kiosk's mini server is this program started again with --kiosk by the game server (see
+        // KioskLink) when a player uses a kiosk: it keeps the pets put up at the kiosk, and nothing else of the server.
+        if (Array.IndexOf(args, "--kiosk") >= 0) {
+            ConfigurationManager.Initialize(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Imlight.ini"));
+            AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+                Logger.Fatal("The kiosk bot stopped because of an error: {Exception}", Logger.Args(e.ExceptionObject));
+            Imlight.CoreLib.Game.Pet.KioskBot.Run(args);
+
+            return;
+        }
+
         // The bots' mini servers (Bot Players --bots, the Quest Team --questteam, Ultimus and the TCO7 --ultimus) are this
         // program started again by the game server (BotLink, QuestTeamLink, UltimusLink) while their switches are on. The
         // bots live in their own build (the bots folder, BotLoader), so the mini server runs the same bots as the game server.
@@ -266,6 +277,9 @@ internal static class Program {
 
         // The Bazaar runs as a program of its own, so its lists and stock never slow the game server down.
         Imlight.CoreLib.Game.Bazaar.BazaarLink.StartWatching();
+
+        // The Pet Hatching Kiosk likewise: its mini server wakes when a player uses a kiosk, and sleeps when nobody does.
+        Imlight.CoreLib.Game.Pet.KioskLink.StartWatching();
 
         // The bots (Bot Players, the Quest Team, Ultimus and the TCO7): their mini servers and wizards run only while their
         // switches are on ([BotPlayers], [QuestTeam], [Ultimus] Enabled), and are stopped when they are turned off.

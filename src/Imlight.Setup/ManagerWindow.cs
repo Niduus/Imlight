@@ -961,7 +961,7 @@ internal sealed partial class ManagerWindow : Window {
 
     private Control EventsTab() => Page(EventsCard());
 
-    private Control ShopsTab() => Page(CodesCard(), MemberBenefitsCard(), CrownShopCard(), LoyaltyStoreCard(), BazaarBotCard());
+    private Control ShopsTab() => Page(CodesCard(), MemberBenefitsCard(), CrownShopCard(), LoyaltyStoreCard(), BazaarBotCard(), KioskBotCard());
 
     private readonly List<TextBlock> _rulesWaitNotes = [];
 
@@ -1350,6 +1350,7 @@ internal sealed partial class ManagerWindow : Window {
                 LogWell(_logScroll),
                 Row(Action(Plain("Copy all"), CopyLogAsync), Action(Plain("Save log to desktop"), SaveLogAsync)))),
             BazaarBotLogCard(),
+            KioskBotLogCard(),
             BotPlayersLogCard(),
             Shut(Fold("log", "Logs", "Game log",
                 "The newest log Wizard101 wrote, updated every 2 seconds.",
@@ -3191,7 +3192,7 @@ internal sealed partial class ManagerWindow : Window {
         ["Teleport Rooms"] = ("sigil", "Pick which rooms of dungeons, towers and instances can be teleported into: like the game, open to friends, or closed."),
         ["Animations"] = ("clock", "Every spell's animation time in detail: how long a round waits for it, how that adds up, and your own times, with no restart."),
         ["Events"] = ("clock", "Run the game's own events, such as the Deckathalon, Side Activity and Monthly Gauntlets, one after another from a queue."),
-        ["Shops and Codes"] = ("bag", "Codes to redeem, member benefits, the Crown Shop, the Loyalty Store and the Bazaar bot."),
+        ["Shops and Codes"] = ("bag", "Codes to redeem, member benefits, the Crown Shop, the Loyalty Store, the Bazaar bot and the Pet Hatching Kiosk bot."),
         ["Announcements"] = ("chat", "Change the words of everything the server announces or tells a player, turn any of it off, and send your own."),
         ["Logs"] = ("log", "Ahziael's crashes and refusals, and what the server and the game are writing down, as it happens."),
         ["Settings"] = ("gear", "Every setting of the server, with what each one does."),
@@ -3396,7 +3397,7 @@ internal sealed partial class ManagerWindow : Window {
         "Jewels" or "April Fools" => ("sparkle", "Customs"),
         "Minigames" => ("dice", "Commands"),
         "Randomizer" => ("dice", "Customs"),
-        "Seamstress" or "CrownShop" or "Bazaar" or "HallVendors" or "Bank" => ("bag", "Game Files"),
+        "Seamstress" or "CrownShop" or "Bazaar" or "HatchKiosk" or "HallVendors" or "Bank" => ("bag", "Game Files"),
         "Trainers" or "TrainerHall" => ("school", "Lookup"),
         "Housing" => ("home", "Play"),
         "Instance" => ("layers", "Customs"),

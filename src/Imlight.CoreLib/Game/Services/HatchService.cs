@@ -1722,6 +1722,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_OPENHATCHKIOSK))]
     private void ReceiveOpenHatchKiosk(CHARACTER_103_PROTOCOL.MSG_OPENHATCHKIOSK message) {
         Logger.Information("Hatching: kiosk {0} used; sending MSG_REQUESTHATCHMAKING.", Logger.Args(message.KioskGID));
+        if (!KioskOpen()) {
+            return;
+        }
+
         try {
             SendKioskInfo(message.KioskGID);
         }
@@ -1734,6 +1738,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private void ReceiveRequestHatchmaking(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKING message) {
         Logger.Information("Hatching: game sent MSG_REQUESTHATCHMAKING GlobalID={0} PetData={1} CrownCost={2} HatchDayCode={3} NoInPersonHatching={4}.",
             Logger.Args(message.GlobalID, Hex(message.PetData), message.CrownCost, message.HatchDayCode, message.NoInPersonHatching));
+        if (!KioskOpen()) {
+            return;
+        }
+
         try {
             SendKioskInfo(message.GlobalID);
         }
@@ -1745,6 +1753,12 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGADDPET))]
     private void ReceiveAddPet(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGADDPET message) {
         Logger.Information("Hatching: game sent MSG_REQUESTHATCHMAKINGADDPET PetID={0}.", Logger.Args(message.PetID));
+        if (!KioskOpen()) {
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = 1 });
+
+            return;
+        }
+
         try {
             var wizard = GetActiveWizard();
             var item = PetCare.FindPet(wizard, message.PetID);
@@ -1770,6 +1784,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGREMOVEPET))]
     private void ReceiveRemovePet(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGREMOVEPET message) {
         Logger.Information("Hatching: game sent MSG_REQUESTHATCHMAKINGREMOVEPET PetID={0}.", Logger.Args(message.PetID));
+        KioskLink.Visit();
         var listing = HatchmakingListings.Find(message.PetID);
         if (listing is not null && listing.Parent.OwnerCharId == GetActiveWizard()?.CharId) {
             HatchmakingListings.Remove(message.PetID);
@@ -1781,6 +1796,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGPETTYPES))]
     private void ReceivePetTypes(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGPETTYPES message) {
         Logger.Information("Hatching: game sent MSG_REQUESTHATCHMAKINGPETTYPES PetData={0}.", Logger.Args(Hex(message.PetData)));
+        KioskLink.Visit();
         var types = new HatchmakingPetTypesList {
             m_hatchmakingPetTypesList = [.. HatchmakingListings.All().Select(l => l.Parent.TemplateId).Distinct()],
         };
@@ -1793,6 +1809,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private void ReceivePets(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGPETS message) {
         Logger.Information("Hatching: game sent MSG_REQUESTHATCHMAKINGPETS PetData={0} PetTemplateID={1} Skip={2}.",
             Logger.Args(Hex(message.PetData), message.PetTemplateID, message.Skip));
+        KioskLink.Visit();
         var listings = HatchmakingListings.All()
             .Where(l => message.PetTemplateID == 0 || l.Parent.TemplateId == message.PetTemplateID)
             .Skip((int) Math.Min(message.Skip, int.MaxValue))
@@ -1816,6 +1833,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private void ReceivePetData(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGPETDATA message) {
         Logger.Information("Hatching: game sent MSG_REQUESTHATCHMAKINGPETDATA PetData={0} PetID={1} IsInPetTome={2}.",
             Logger.Args(Hex(message.PetData), message.PetID, message.IsInPetTome));
+        KioskLink.Visit();
         try {
             var wizard = GetActiveWizard();
             var own = PetCare.FindPet(wizard, message.PetID);
@@ -1847,17 +1865,33 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         }
     }
 
+    /// <summary>
+    /// The Search Pet Talents window (Niduus, 2026-11-21: it stayed on "Please Wait - Searching Pets"). Read from
+    /// WizardGraphicalClient.exe: the window sends Data = u32 count + that many u32 talent ids (StringHash of the talent's
+    /// name, as in the pet's own talent lists), SearchType 0 for "Search for all talents" and 1 for "Search for any of
+    /// these talents". The game never handles this message coming back: its answer is MSG_HATCHMAKINGSEARCHRESULTS, whose
+    /// Data is a HatchmakingPetGIDList, like the friend pets answer (one handler, HatchmakingPetGIDListUpdated). The window
+    /// then asks for each pet with MSG_REQUESTHATCHMAKINGPETDATA.
+    /// </summary>
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGSEARCHPETS))]
     private void ReceiveSearchPets(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGSEARCHPETS message) {
         Logger.Information("Hatching: game sent MSG_REQUESTHATCHMAKINGSEARCHPETS GlobalID={0} Data={1} SearchType={2} InPerson={3}.",
             Logger.Args(message.GlobalID, Hex(message.Data), message.SearchType, message.InPerson));
-        if (TryWrite(PetsList(HatchmakingListings.All()), out var data)) {
-            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGSEARCHPETS {
-                GlobalID = message.GlobalID,
-                Data = data,
-                SearchType = message.SearchType,
-                InPerson = message.InPerson,
-            });
+        KioskLink.Visit();
+        try {
+            var wanted = SearchedTalents(message.Data);
+            var everyOne = message.SearchType == 0;
+            var found = HatchmakingListings.All()
+                .Where(l => wanted.Count == 0 || HasTalents(l.Parent, wanted, everyOne))
+                .ToList();
+            Logger.Information("Hatching: talent search ({0} of {1}) found {2} of {3} pets at the kiosk.",
+                Logger.Args(everyOne ? "all" : "any", string.Join(", ", wanted.Select(TalentName)), found.Count, HatchmakingListings.All().Count));
+            SendPetGIDs(found, message.InPerson);
+        }
+        catch (Exception ex) {
+            Logger.Error("Hatching: MSG_REQUESTHATCHMAKINGSEARCHPETS failed. {0}", Logger.Args(ex));
+            // An empty answer still closes the game's "Please Wait" box.
+            SendPetGIDs([], message.InPerson);
         }
     }
 
@@ -1865,8 +1899,9 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     private void ReceiveFriendPets(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGFRIENDPETS message) {
         Logger.Information("Hatching: game sent MSG_REQUESTHATCHMAKINGFRIENDPETS GlobalID={0} Data={1} InPerson={2}.",
             Logger.Args(message.GlobalID, Hex(message.Data), message.InPerson));
-        // Every listed pet for now, the player's own included.
-        if (TryWrite(PetsList(HatchmakingListings.All()), out var data)) {
+        KioskLink.Visit();
+        // Every listed pet for now, the player's own included. The game reads the same pet list as a search's answer.
+        if (TryWrite(PetGIDList(HatchmakingListings.All()), out var data)) {
             SendToSocket(new WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGFRIENDPETS {
                 GlobalID = message.GlobalID,
                 Data = data,
@@ -1874,6 +1909,55 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             });
         }
     }
+
+    // The talent ids the Search Pet Talents window sent: a count, then that many ids.
+    private static System.Collections.Generic.List<uint> SearchedTalents(ByteString data) {
+        byte[] bytes = data;
+        var talents = new System.Collections.Generic.List<uint>();
+        if (bytes is null || bytes.Length < 4) {
+            return talents;
+        }
+
+        var count = BitConverter.ToUInt32(bytes, 0);
+        for (var i = 0; i < count && 4 + (i + 1) * 4 <= bytes.Length; i++) {
+            talents.Add(BitConverter.ToUInt32(bytes, 4 + i * 4));
+        }
+
+        return talents;
+    }
+
+    // Whether a pet has every one (or any one) of the talents: the ones it can show and the ones it already shows, for
+    // pet battle and Pet Derby alike.
+    private static bool HasTalents(PetParent pet, System.Collections.Generic.List<uint> wanted, bool everyOne) {
+        if (pet is null) {
+            return false;
+        }
+
+        var has = new System.Collections.Generic.HashSet<uint>([
+            .. pet.Talents ?? [], .. pet.ExpressedTalents ?? [], .. pet.DerbyTalents ?? [], .. pet.ExpressedDerbyTalents ?? [],
+        ]);
+
+        return everyOne ? wanted.All(has.Contains) : wanted.Any(has.Contains);
+    }
+
+    private static string TalentName(uint id) => PetTalentRegistry.TryGetById(id, out var talent) ? talent.Name : id.ToString();
+
+    private void SendPetGIDs(System.Collections.Generic.List<HatchmakingListing> listings, sbyte inPerson) {
+        if (TryWrite(PetGIDList(listings), out var data)) {
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSEARCHRESULTS {
+                CharacterID = GetActiveWizard() is { } wizard ? Wizard.GetGameObjectId(wizard.CharId) : 0,
+                Data = data,
+                InPerson = inPerson,
+            });
+        }
+    }
+
+    private static HatchmakingPetGIDList PetGIDList(System.Collections.Generic.List<HatchmakingListing> listings) => new() {
+        m_skip = 0,
+        m_petTemplateID = 0,
+        m_hatchmakingPetGIDList = [.. listings.Select(l => (GID) l.Parent.ItemId)],
+        m_hatchmakingPlayerGIDList = [.. listings.Select(l => (GID) Wizard.GetGameObjectId(l.Parent.OwnerCharId))],
+    };
 
     [MessageHandler(typeof(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGHATCH))]
     private void ReceiveKioskHatch(WIZARD2_53_PROTOCOL.MSG_REQUESTHATCHMAKINGHATCH message) {
@@ -1915,6 +1999,12 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
     /// hatch two of their pets, Niduus 2026-10-20) or a pet someone listed at the kiosk.
     /// </summary>
     private void KioskHatch(ulong petId1, ulong petId2) {
+        if (!KioskOpen()) {
+            SendToSocket(new WIZARD2_53_PROTOCOL.MSG_HATCHMAKINGSTATUS { ErrorCode = 1 });
+
+            return;
+        }
+
         try {
             var wizard = GetActiveWizard();
             var mine1 = PetCare.FindPet(wizard, petId1);
@@ -1978,6 +2068,20 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         });
     }
 
+    /// <summary>
+    /// Someone uses the kiosk: wakes its mini server if it sleeps (Niduus, 2026-11-21: "only it activates the wake-up for
+    /// it once it's interacted with"). False, and the player is told, when the kiosk is turned off in Ahziael.
+    /// </summary>
+    private bool KioskOpen() {
+        if (KioskLink.Visit()) {
+            return true;
+        }
+
+        InformGameClient("The Pet Hatching Kiosk is turned off right now.");
+
+        return false;
+    }
+
     private static HatchmakingListing Listing(WizClientObjectItem item, PetParent pet) => new() {
         Parent = pet,
         NameKeys = CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(item, out var name) ? name.m_nameKeys : 0,
@@ -1992,7 +2096,7 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             m_nameKey = l.NameKeys,
             m_hatchCount = l.HatchCount,
         })],
-        m_disableKiosk = !PetHatching.Enabled,
+        m_disableKiosk = !PetHatching.Enabled || !KioskLink.Enabled,
         m_disableOffer = false,
         m_premiumPetExceptionCode = 0,
     };

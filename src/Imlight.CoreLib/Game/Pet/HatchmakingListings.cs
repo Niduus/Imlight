@@ -28,14 +28,16 @@
  *
  * NOTE:
  * A listing holds a copy of the pet (PetParent and the item as the game reads it), so the owner can be
- * offline when someone hatches with it. Listing again refreshes the copy.
+ * offline when someone hatches with it. Listing again refreshes the copy. While the kiosk's mini server
+ * (KioskBot, [HatchKiosk] OwnServer) runs, every question goes to it; otherwise the game server reads
+ * and writes the same file itself (HatchmakingStore), so nothing is lost when the mini server sleeps.
  *
  * TODO:
  * - Live listings age out and have a cooldown after each hatch; these stay until removed.
  *
  * Created by: Claude
  * Version: KALI 1.0
- * Last Updated: 10/20/2026
+ * Last Updated: 11/21/2026
  */
 
 using System;
@@ -59,12 +61,69 @@ internal sealed class HatchmakingListing {
     public string ItemData { get; set; }
 }
 
+/// <summary>
+/// The kiosk's listings, for the game server and the bots. Asks the kiosk's mini server when it is running (see
+/// <see cref="KioskLink"/>), and reads the listings file itself when it is asleep, starting, or turned off.
+/// </summary>
 internal static class HatchmakingListings {
 
-    private const string FILE = "hatchmaking-listings.json";
+    internal static List<HatchmakingListing> All()
+        => KioskLink.Ask(new KioskRequest { Op = "all" }) is { Ok: true } answer ? answer.Listings ?? [] : HatchmakingStore.All();
+
+    internal static List<HatchmakingListing> Of(ulong ownerCharId)
+        => KioskLink.Ask(new KioskRequest { Op = "of", Owner = ownerCharId }) is { Ok: true } answer
+            ? answer.Listings ?? []
+            : HatchmakingStore.Of(ownerCharId);
+
+    internal static HatchmakingListing Find(ulong petItemId)
+        => KioskLink.Ask(new KioskRequest { Op = "find", Id = petItemId }) is { Ok: true } answer
+            ? answer.Listing
+            : HatchmakingStore.Find(petItemId);
+
+    /// <summary>
+    /// Lists a pet, or refreshes its copy if it is listed already.
+    /// </summary>
+    internal static void Add(HatchmakingListing listing) {
+        if (KioskLink.Ask(new KioskRequest { Op = "add", Listing = listing }) is not { Ok: true }) {
+            HatchmakingStore.Add(listing);
+        }
+    }
+
+    internal static bool Remove(ulong petItemId)
+        => KioskLink.Ask(new KioskRequest { Op = "remove", Id = petItemId }) is { Ok: true } answer
+            ? answer.Done
+            : HatchmakingStore.Remove(petItemId);
+
+    internal static void CountHatch(ulong petItemId) {
+        if (KioskLink.Ask(new KioskRequest { Op = "count", Id = petItemId }) is not { Ok: true }) {
+            HatchmakingStore.CountHatch(petItemId);
+        }
+    }
+
+}
+
+/// <summary>
+/// The listings file itself, hatchmaking-listings.json next to the server. The kiosk's mini server and the game server
+/// both use it (one at a time: the game server only while the mini server is not answering), and each reads the file
+/// again when the other one changed it.
+/// </summary>
+internal static class HatchmakingStore {
+
+    internal const string FILE = "hatchmaking-listings.json";
 
     private static readonly object s_lock = new();
     private static List<HatchmakingListing> s_listings;
+    // The file as this program last read or wrote it, to see when the other program changed it.
+    private static DateTime s_fileTime;
+    private static long s_fileLength = -1;
+
+    internal static int Count {
+        get {
+            lock (s_lock) {
+                return Load().Count;
+            }
+        }
+    }
 
     internal static List<HatchmakingListing> All() {
         lock (s_lock) {
@@ -84,10 +143,11 @@ internal static class HatchmakingListings {
         }
     }
 
-    /// <summary>
-    /// Lists a pet, or refreshes its copy if it is listed already.
-    /// </summary>
     internal static void Add(HatchmakingListing listing) {
+        if (listing?.Parent is null) {
+            return;
+        }
+
         lock (s_lock) {
             var listings = Load();
             var old = listings.FindIndex(l => l.Parent?.ItemId == listing.Parent.ItemId);
@@ -127,7 +187,8 @@ internal static class HatchmakingListings {
     }
 
     private static List<HatchmakingListing> Load() {
-        if (s_listings is not null) {
+        var (time, length) = FileStamp();
+        if (s_listings is not null && time == s_fileTime && length == s_fileLength) {
             return s_listings;
         }
 
@@ -142,15 +203,40 @@ internal static class HatchmakingListings {
             Logger.Warning("Could not read {0}: {1}", Logger.Args(FILE, ex.Message));
         }
 
+        (s_fileTime, s_fileLength) = (time, length);
+
         return s_listings;
     }
 
     private static void Save() {
+        for (var attempt = 0; attempt < 3; attempt++) {
+            try {
+                // Written whole and then swapped in, so the other program never reads half a file.
+                File.WriteAllText(FILE + ".tmp", JsonSerializer.Serialize(s_listings));
+                File.Move(FILE + ".tmp", FILE, overwrite: true);
+                (s_fileTime, s_fileLength) = FileStamp();
+
+                return;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                if (attempt == 2) {
+                    Logger.Warning("Could not save {0}: {1}", Logger.Args(FILE, ex.Message));
+                }
+                else {
+                    System.Threading.Thread.Sleep(50);
+                }
+            }
+        }
+    }
+
+    private static (DateTime Time, long Length) FileStamp() {
         try {
-            File.WriteAllText(FILE, JsonSerializer.Serialize(s_listings));
+            var file = new FileInfo(FILE);
+
+            return file.Exists ? (file.LastWriteTimeUtc, file.Length) : (DateTime.MinValue, -1);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
-            Logger.Warning("Could not save {0}: {1}", Logger.Args(FILE, ex.Message));
+            return (s_fileTime, s_fileLength);
         }
     }
 

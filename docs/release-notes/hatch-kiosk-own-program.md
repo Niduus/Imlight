@@ -1,0 +1,4 @@
+Fixed: The Pet Hatching Kiosk runs as its own little program, like the Bazaar
+The Pet Hatching Kiosk now has its own little program next to the server, the kiosk bot, just like the Bazaar bot. It wakes up the moment a player uses a kiosk, and goes back to sleep when nobody has used one for a few minutes. While it wakes up the server keeps the kiosk itself, so players never wait, and every pet put up at the kiosk stays, including all of True Form's pets. It has the same switches as the Bazaar bot: on or off, how long before it sleeps, and whether it runs as its own program, and they all count right away with no restart.
+Where: Ahziael, Shops and Codes tab, the Pet Hatching Kiosk bot card. Its log is on the Logs tab.
+Test: Use a Pet Hatching Kiosk. Within a few seconds the card says Running and the log says the kiosk bot is open. Wait five minutes without using a kiosk and the card says Asleep. Turn the switch off and use a kiosk: you are told it is turned off.
