@@ -1,0 +1,4 @@
+Fixed: Bots show in the Friendly Players window, not in your friends list
+The last update put the bots in your friends list by mistake, so the Kitharas Family and the other bots showed up as friends. The Friendly Players window stayed empty, because the server never answered it. Now the bots are off the friends list again, and the Friendly Players window lists every bot that is on: Ultimus, the TCO7, True Form, the Quest Team and the Kitharas Family, each with its level, school and where it is. The bots were never saved as real friends, so they are gone from your friends list the next time you log in. Friends that players added themselves stay as they are.
+Where: In game, the Friendly Players window. No setting.
+Test: With some bots on, log in and open Friendly Players. The bots should be listed. Your friends list should show only your real friends.
