@@ -3,7 +3,7 @@
 What the bots did in MooShu, from the server log: every quest finished, every fight won (to copy), every fight lost and every place they got stuck (to avoid). Solo means the bot fought alone; Team means another of our bots won the same fight with it. Updated after each bots update.
 
 ## Best way to beat each creature
-- Haru: won 88 time(s) (17 Solo, 71 Team), lost 4. Fastest: Tulkar in 2 rounds, deck for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies), hits with Frostbite.
+- Haru: won 110 time(s) (17 Solo, 93 Team), lost 4. Fastest: Kurrent in 1 rounds, deck for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
 - Ronin Keyholder: won 11 time(s) (9 Solo, 2 Team), lost 26. Fastest: Cyndr in 4 rounds, plan "hit now", deck for a boss (Ice), hitting with Ice, Fire, Life; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Immolate.
 - Imitsu Defouler: won 31 time(s) (31 Solo, 0 Team), lost 2. Fastest: Cyndr in 4 rounds, plan "hit now", deck for Myth enemies, hitting with Myth, Storm, Fire (most of my fights lately had 2+ enemies), hits with Immolate.
 - Otomo Courier: won 8 time(s) (6 Solo, 2 Team), lost 21. Fastest: Ultimus in 5 rounds, deck for a boss (Ice), hitting with Ice, Fire; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Sandstorm, Balance, Fairy.
@@ -827,6 +827,78 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
   It took 9 rounds, about 6 minutes.
   Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
   Spells that landed the hits: Cyclops.
+- Won by Kurrent (Team with Cyndr, Kurrent, Mythis, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:18:59.
+  It took 2 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Tulkar (Team with Cyndr, Kurrent, Mythis, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:18:59.
+  It took 2 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Kurrent (Team with Kurrent, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:20:26.
+  It took 2 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Tulkar (Team with Kurrent, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:20:26.
+  It took 2 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Kurrent (Team with Cyndr, Kurrent, Mythis, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:21:47.
+  It took 1 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Tulkar (Team with Cyndr, Kurrent, Mythis, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:21:47.
+  It took 1 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Cyndr (Team with Kurrent, Mythis, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:22:19.
+  It took 6 rounds, about 3 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Minor Fire Scorch.
+- Won by Mythis (Team with Cyndr, Kurrent, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:22:19.
+  It took 6 rounds, about 3 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Tulkar (Team with Cyndr, Kurrent, Mythis, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:23:26.
+  It took 2 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Minor Nova.
+- Won by Kurrent (Team with Cyndr, Kurrent, Mythis, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:23:26.
+  It took 2 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Minor Surge.
+- Won by Tulkar (Team with Cyndr, Kurrent, Mythis, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:24:46.
+  It took 2 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Kurrent (Team with Cyndr, Kurrent, Mythis, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:24:46.
+  It took 2 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Kraken.
+- Won by Cyndr (Team with Kurrent, Mythis, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:25:03.
+  It took 4 rounds, about 2 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Mythis (Team with Cyndr, Kurrent, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:25:03.
+  It took 4 rounds, about 2 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Kurrent (Team with Cyndr, Mythis, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:26:17.
+  It took 2 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Storm Shark.
+- Won by Tulkar (Team with Cyndr, Kurrent, Mythis) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:26:18.
+  It took 2 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Kurrent (Team with Cyndr, Mythis, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:28:09.
+  It took 2 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Tulkar (Team with Cyndr, Kurrent, Mythis) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:28:10.
+  It took 2 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Mythis (Team with Cyndr, Kurrent, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:28:37.
+  It took 4 rounds, about 3 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Cyndr (Team with Kurrent, Mythis, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:28:37.
+  It took 4 rounds, about 3 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Kurrent (Team with Cyndr, Mythis, Tulkar) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:29:50.
+  It took 2 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Kraken.
+- Won by Tulkar (Team with Cyndr, Kurrent, Mythis) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 17:29:51.
+  It took 2 rounds, about 1 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
 - Avoid, fights lost:
   - Ideyoshi: lost 1 time(s) (Ultimus). Why: I went in at 80% health, the fight ran 7 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Ideyoshi: lost 1 time(s) (Ultimus). Why: I went in at 47% health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
