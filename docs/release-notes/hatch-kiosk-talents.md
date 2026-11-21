@@ -1,0 +1,4 @@
+Fixed: Kiosk pets show a full set of talents, and talent search only finds revealed talents
+When you look at another player's pet in the Pet Hatching Kiosk, its revealed talents come first and every slot that used to be blank now shows a random common selfish talent, such as a small Strength or Intellect boost. The same pet always shows the same talents, and hatching with it uses exactly the talents you saw, so you can hatch to bring those talents into your own pet's pool. Search Pet Talents now only lists pets that have the talent you searched for revealed, so a pet with that talent still hidden no longer shows up. Your own pets at the kiosk are not changed.
+Where: Pet Hatching Kiosk, Browse Pets, Search Pet Talents and hatching with a kiosk pet.
+Test: Search for Spell-Proof and check every pet listed shows Spell-Proof, then open any kiosk pet and check no talent slot is blank.

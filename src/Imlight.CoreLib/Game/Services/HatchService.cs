@@ -1910,7 +1910,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
                 data = ownData;
                 templateId = (uint) own.m_templateID;
             }
-            else if (ItemSync.KioskPetBytes(listing?.ItemData) is { } listed) {
+            else if (ItemSync.KioskPetBytes(listing?.ItemData,
+                         listing is not null && listing.Parent.OwnerCharId != wizard?.CharId ? PetHatching.KioskShownTalents(listing.Parent) : null) is { } listed) {
                 data = listed;
                 templateId = listing.Parent.TemplateId;
             }
@@ -2013,9 +2014,8 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             return false;
         }
 
-        var has = new System.Collections.Generic.HashSet<uint>([
-            .. pet.Talents ?? [], .. pet.ExpressedTalents ?? [], .. pet.DerbyTalents ?? [], .. pet.ExpressedDerbyTalents ?? [],
-        ]);
+        // Only revealed talents count: a pet whose searched talent is still hidden is not a match (Niduus, 2026-11-21).
+        var has = new System.Collections.Generic.HashSet<uint>([.. pet.ExpressedTalents ?? [], .. pet.ExpressedDerbyTalents ?? []]);
 
         return everyOne ? wanted.All(has.Contains) : wanted.Any(has.Contains);
     }
@@ -2164,7 +2164,10 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             }
 
             var parentA = PetHatching.Snapshot(mine1, wizard.CharId);
-            var parentB = mine2 is not null ? PetHatching.Snapshot(mine2, wizard.CharId) : HatchmakingListings.Find(petId2)?.Parent;
+            // Another player's kiosk pet hatches with the talents the hatch window showed (PetHatching.KioskShownTalents).
+            var listed = HatchmakingListings.Find(petId2)?.Parent;
+            var parentB = mine2 is not null ? PetHatching.Snapshot(mine2, wizard.CharId)
+                : listed is not null && listed.OwnerCharId != wizard.CharId ? PetHatching.KioskParent(listed) : listed;
             if (parentA is null || parentB is null) {
                 Logger.Information("Hatching: kiosk hatch of {0} and {1}: {2}.",
                     Logger.Args(petId1, petId2, parentA is null ? "neither pet is this player's" : "the second pet is not this player's or at the kiosk"));

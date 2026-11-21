@@ -326,6 +326,100 @@ internal static class PetHatching {
     }
 
     /// <summary>
+    /// How many talents another player's kiosk pet shows (and hatches with).
+    /// </summary>
+    internal const int KIOSK_SHOWN_TALENTS = 10;
+
+    private static List<uint> s_commonSelfish;
+
+    /// <summary>
+    /// The talents another player's kiosk pet shows in the hatch window: its revealed talents, then random common
+    /// selfish talents in the slots that would be blank, the same ones every time for the same pet. Hatching with the
+    /// pet uses these too, so what a player sees is what the egg can get (Niduus, 2026-11-21: "the blanks on the right
+    /// should be just random selfish common talents").
+    /// </summary>
+    internal static List<uint> KioskShownTalents(PetParent parent) {
+        var shown = new List<uint>(KIOSK_SHOWN_TALENTS);
+        if (parent is null) {
+            return shown;
+        }
+
+        foreach (var id in parent.ExpressedTalents ?? []) {
+            if (shown.Count < KIOSK_SHOWN_TALENTS && id != 0 && !shown.Contains(id) && PetTalentRegistry.TryGetById(id, out _)) {
+                shown.Add(id);
+            }
+        }
+
+        var pool = CommonSelfishTalents().Where(id => !shown.Contains(id)).ToList();
+        var random = new Random(unchecked((int) (parent.ItemId ^ (parent.ItemId >> 32))));
+        while (shown.Count < KIOSK_SHOWN_TALENTS && pool.Count > 0) {
+            var pick = random.Next(pool.Count);
+            shown.Add(pool[pick]);
+            pool.RemoveAt(pick);
+        }
+
+        return shown;
+    }
+
+    /// <summary>
+    /// A copy of another player's kiosk pet as it hatches: its shown talents (see KioskShownTalents) are its genes and
+    /// its revealed talents.
+    /// </summary>
+    internal static PetParent KioskParent(PetParent parent) {
+        if (parent is null) {
+            return null;
+        }
+
+        var shown = KioskShownTalents(parent);
+
+        return new PetParent {
+            ItemId = parent.ItemId,
+            OwnerCharId = parent.OwnerCharId,
+            TemplateId = parent.TemplateId,
+            Level = parent.Level,
+            Label = parent.Label,
+            Talents = [.. shown],
+            DerbyTalents = [.. parent.DerbyTalents ?? []],
+            ExpressedTalents = [.. shown],
+            ExpressedDerbyTalents = [.. parent.ExpressedDerbyTalents ?? []],
+            MaxStats = [.. parent.MaxStats ?? []],
+            PrimaryColor = parent.PrimaryColor,
+            SecondaryColor = parent.SecondaryColor,
+            Pattern = parent.Pattern,
+        };
+    }
+
+    /// <summary>
+    /// Selfish combat talents (ones that raise a pet's own maximum stats, like Mighty) of the lowest ranks: the lowest
+    /// rank first, then the next ranks until there are enough to fill a pet. Retired, unsearchable and locked ones are
+    /// left out.
+    /// </summary>
+    internal static List<uint> CommonSelfishTalents() {
+        if (s_commonSelfish is { Count: > 0 }) {
+            return s_commonSelfish;
+        }
+
+        var selfish = PetTalentRegistry.All
+            .Where(t => t.Kind == PetTalentKind.Combat && t.Template is PetTalentTemplate { m_maxStatList.Count: > 0 }
+                && !t.Template.m_bRetired && !t.Template.m_unsearchable
+                && !t.Name.EndsWith("-Locked", StringComparison.OrdinalIgnoreCase))
+            .OrderBy(t => t.Rank).ThenBy(t => t.Id)
+            .ToList();
+        var common = new List<uint>();
+        foreach (var rank in selfish.Select(t => t.Rank).Distinct()) {
+            if (common.Count >= KIOSK_SHOWN_TALENTS) {
+                break;
+            }
+
+            common.AddRange(selfish.Where(t => t.Rank == rank).Select(t => t.Id));
+        }
+
+        s_commonSelfish = common;
+
+        return common;
+    }
+
+    /// <summary>
     /// One line about a parent for the log: kind, level, genes and maximum stats.
     /// </summary>
     internal static string Describe(PetParent parent)

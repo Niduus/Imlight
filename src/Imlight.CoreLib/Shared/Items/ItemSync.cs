@@ -118,7 +118,10 @@ internal static class ItemSync {
     /// The pet data for a pet the kiosk keeps (base64 of the whole item, the inventory way, or the plain way pets were
     /// kept in 0.10.956). Null when it cannot be read.
     /// </summary>
-    internal static byte[] KioskPetBytes(string itemData) {
+    /// <param name="itemData">The kept item.</param>
+    /// <param name="shownTalents">When set, the copy sent shows these as the pet's talents, all revealed (another
+    /// player's kiosk pet, see PetHatching.KioskShownTalents). The kept item is not changed.</param>
+    internal static byte[] KioskPetBytes(string itemData, System.Collections.Generic.List<uint> shownTalents = null) {
         if (string.IsNullOrEmpty(itemData)) {
             return null;
         }
@@ -130,7 +133,19 @@ internal static class ItemSync {
                 ? new ObjectSerializer(false, SerializerFlags.None).Deserialize(bytes, KIOSK_PET_FLAGS, out item)
                 : new CoreObjectSerializer(behaviors: SerializerFlags.None).Deserialize(bytes, ItemSerializationFlags, out item);
 
-            return read ? KioskPetData(item) : null;
+            if (!read) {
+                return null;
+            }
+
+            if (shownTalents is { Count: > 0 } && item.m_inactiveBehaviors?.OfType<ClientPetItemBehavior>().FirstOrDefault() is { } pet) {
+                pet.m_allTalents = [.. shownTalents];
+                pet.m_expressedTalents = [.. shownTalents];
+                pet.m_allDerbyTalents ??= [];
+                pet.m_expressedDerbyTalents ??= [];
+                Imlight.CoreLib.Game.Pet.PetProgression.RefreshRatings(pet);
+            }
+
+            return KioskPetData(item);
         }
         catch (System.Exception ex) when (ex is System.FormatException or System.IO.EndOfStreamException or System.ArgumentException
             or System.IndexOutOfRangeException or System.InvalidOperationException) {

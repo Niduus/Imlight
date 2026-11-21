@@ -498,7 +498,7 @@ internal static class PetProgression {
         return changed;
     }
 
-    private static bool RefreshRatings(ClientPetItemBehavior behavior) {
+    internal static bool RefreshRatings(ClientPetItemBehavior behavior) {
         var talentRatings = BuildRatings(behavior.m_allTalents, behavior.m_expressedTalents);
         var powerRatings = BuildRatings(behavior.m_allDerbyTalents, behavior.m_expressedDerbyTalents);
         var overall = (uint) behavior.m_allTalents.Concat(behavior.m_allDerbyTalents).Sum(RankOf);
