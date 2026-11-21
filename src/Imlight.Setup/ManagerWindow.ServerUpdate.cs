@@ -59,10 +59,22 @@ internal sealed partial class ManagerWindow {
     private bool _restartOffered;
 
     /// <summary>Whether an update's server waits for the running server to restart.</summary>
-    private bool ServerUpdateWaits(bool running) => running && SetupSteps.ServerWaits(_manager.InstallFolder);
+    private bool ServerUpdateWaits(bool running) => running && ServerNeedsRestartForUpdate();
+
+    /// <summary>
+    /// Whether a server update waits for a restart: one that went into the running server as a live patch (LiveUpdate)
+    /// doesn't, and its files go in the next time the server starts on its own.
+    /// </summary>
+    private bool ServerNeedsRestartForUpdate()
+        => SetupSteps.ServerWaits(_manager.InstallFolder) && !LiveUpdate.WentIn(_manager.InstallFolder, _manager.ServerFolder);
 
     /// <summary>When the app opens with a server update waiting: plans the restart, or asks how to do it.</summary>
     private async Task OfferServerRestartAsync() {
+        if (_restartOffered) {
+            return;
+        }
+
+        await WaitForLiveUpdateAsync();
         if (_restartOffered || !ServerUpdateWaits(await Task.Run(() => InstalledCommands.IsServerRunning(_manager.InstallFolder)))) {
             return;
         }
@@ -75,6 +87,40 @@ internal sealed partial class ManagerWindow {
         }
 
         await ChooseServerRestartAsync();
+    }
+
+    /// <summary>
+    /// Live patches on: the update's server code was handed to the running server (LiveUpdate). Waits for its answer; when
+    /// it's in, nothing restarts. When the server can't take it, the restart is planned or asked about as before.
+    /// </summary>
+    private async Task WaitForLiveUpdateAsync() {
+        var install = _manager.InstallFolder;
+        var server = _manager.ServerFolder;
+        var look = await Task.Run(() => LiveUpdate.Look(install, server));
+        if (look.Stage == LiveUpdate.Stage.None) {
+            return;
+        }
+
+        if (look.Stage == LiveUpdate.Stage.Asked) {
+            Say("Live patches are on, so the update is going into the running server now. Nobody is disconnected. This takes up to a few minutes.");
+            while (look.Stage == LiveUpdate.Stage.Asked) {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                look = await Task.Run(() => LiveUpdate.Look(install, server));
+            }
+
+            if (look.Stage == LiveUpdate.Stage.In) {
+                if (look.Reload) {
+                    ServerUpdate.RequestReload(server);
+                }
+
+                Say("The update is in the running server: no restart, nobody was disconnected. Its files are swapped in the next " +
+                    "time the server starts on its own.");
+                ShowServerUpdateButton();
+            }
+            else {
+                Say($"The update couldn't go into the running server ({look.Why}), so the server restarts once for it, as before.");
+            }
+        }
     }
 
     /// <summary>Asks when to restart the server for the waiting update.</summary>
@@ -272,7 +318,7 @@ internal sealed partial class ManagerWindow {
             return;
         }
 
-        var waits = SetupSteps.ServerWaits(_manager.InstallFolder);
+        var waits = ServerNeedsRestartForUpdate();
         _updateButton.Content = waits ? SERVER_UPDATE_BUTTON : "Update Ahziael";
     }
 

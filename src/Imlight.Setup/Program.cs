@@ -318,8 +318,27 @@ internal static class Program {
             var sort = running ? steps.SortPendingServer() : null;
             if (sort is { NeedsRestart: true }) {
                 steps.LeavePendingServerForRestart();
-                SetupLog.Info($"The server keeps running for now: {sort.Describe()}. Ahziael restarts it when it is safe.");
                 SetupLog.Detail("Changed server program files: " + string.Join(", ", sort.Program.Take(20)));
+                // Live patches on: the update's server code goes into the running server instead (LiveUpdate).
+                var whyNotLive = LiveUpdate.WhyNot(options.InstallFolder, steps.PendingServerFolder, steps.ServerFolder, sort);
+                if (whyNotLive is null) {
+                    try {
+                        steps.InstallDataNow(sort);
+                        LiveUpdate.Ask(options.InstallFolder, steps.SourceFolder, steps.ServerFolder, SelfUpdate.CurrentVersion.ToString(), sort.LiveData.Count > 0);
+                        SetupLog.Info("The server keeps running: Live patches are on, so the update's server code goes into the running " +
+                            "server and nobody is disconnected. If the server can't take it, Ahziael restarts it when it is safe, as before.");
+                    }
+                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                        whyNotLive = $"its code could not be handed to the server ({ex.Message})";
+                    }
+                }
+
+                if (whyNotLive is not null) {
+                    SetupLog.Info($"The server keeps running for now: {sort.Describe()}. Ahziael restarts it when it is safe.");
+                    if (File.Exists(Path.Combine(options.InstallFolder, ServerManager.LIVE_PATCHES_ON_FILE))) {
+                        SetupLog.Info($"This update can't go in as a live patch: {whyNotLive}.");
+                    }
+                }
             }
             else {
                 steps.InstallPendingServer();

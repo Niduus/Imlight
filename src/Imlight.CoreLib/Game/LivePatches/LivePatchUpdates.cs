@@ -41,6 +41,12 @@ public static class LivePatchUpdates {
     private const string ASSET = "live-patch.zip";
     private const string STATE_FILE = "state.json";
     private const string CHECK_NOW_FILE = "check-now.txt";
+    // Ahziael installed a full update while the server ran (Niduus, 2026-11-21: "What's the point of Live Updates if having
+    // it on still requires the Update and restart method"): it names an "ahziael-0.10.937" folder under updates\ that holds
+    // the update's server code; the server puts it in like a live patch and answers in that folder's result.json.
+    private const string PUT_IN_FILE = "put-in.txt";
+    private const string RESULT_FILE = "result.json";
+    private const string AHZIAEL_PREFIX = "ahziael-";
 
     private static readonly List<string> s_notes = [];
     private static bool s_started;
@@ -99,6 +105,10 @@ public static class LivePatchUpdates {
                         File.Delete(nowFile);
                     }
 
+                    if (TakeRequest() is { } label) {
+                        await PutInFromAhziaelAsync(label);
+                    }
+
                     if (asked || (On && DateTime.UtcNow >= next)) {
                         next = DateTime.UtcNow.AddMinutes(10);
                         await CheckAsync();
@@ -127,6 +137,16 @@ public static class LivePatchUpdates {
 
         if (newest.Tag == s_active || newest.Tag == s_waiting) {
             s_lastCheckResult = newest.Tag == s_active ? $"{newest.Tag} is in" : $"{newest.Tag} waits for the next full update";
+            WriteState();
+
+            return;
+        }
+
+        // An update Ahziael put in holds every live patch published before it.
+        if (s_active.StartsWith(AHZIAEL_PREFIX, StringComparison.OrdinalIgnoreCase)
+            && DateTimeOffset.TryParse((string) Info(s_active)?["published"], out var putIn)
+            && new DateTimeOffset(newest.When.ToUniversalTime()) <= putIn) {
+            s_lastCheckResult = $"{newest.Tag} is older than the update that is in";
             WriteState();
 
             return;
@@ -164,12 +184,42 @@ public static class LivePatchUpdates {
         await PutInAsync(newest.Tag, "a newer live patch was published");
     }
 
-    private static async Task PutInAsync(string tag, string why) {
+    /// <summary>The update Ahziael asks the server to put in (put-in.txt), taken once; null when none.</summary>
+    private static string TakeRequest() {
+        var path = Path.Combine(LivePatcher.Folder, PUT_IN_FILE);
+        if (!File.Exists(path)) {
+            return null;
+        }
+
+        var label = File.ReadAllText(path).Trim();
+        File.Delete(path);
+
+        // Only a folder name under updates\.
+        return label.Length > 0 && label.IndexOfAny(['/', '\\', ':']) < 0 && !label.Contains("..") ? label : null;
+    }
+
+    private static async Task PutInFromAhziaelAsync(string label) {
+        var outcome = await PutInAsync(label, "Ahziael installed an update while the server ran");
+        try {
+            File.WriteAllText(Path.Combine(UpdatesFolder, label, RESULT_FILE), new JsonObject {
+                ["done"] = outcome?.Done == true,
+                ["methods"] = outcome?.Methods ?? 0,
+                ["problem"] = outcome is null ? "its code was not on this PC" : outcome.Problem ?? "",
+                ["module"] = LivePatcher.Target.ManifestModule.ModuleVersionId.ToString(),
+                ["at"] = DateTime.Now.ToString("o"),
+            }.ToJsonString());
+        }
+        catch (Exception e) {
+            Logger.Warning("Live patches: could not tell Ahziael how {0} went: {1}", Logger.Args(label, e.Message));
+        }
+    }
+
+    private static async Task<LivePatcher.Outcome> PutInAsync(string tag, string why) {
         var source = Path.Combine(UpdatesFolder, tag, "source");
         if (!Directory.Exists(source)) {
             Note($"{tag} is no longer on this PC");
 
-            return;
+            return null;
         }
 
         var started = DateTime.UtcNow;
@@ -196,6 +246,8 @@ public static class LivePatchUpdates {
         }
 
         WriteState();
+
+        return outcome;
     }
 
     private static async Task<Published> NewestPublishedAsync() {
@@ -348,6 +400,8 @@ public static class LivePatchUpdates {
                 ["lastCheck"] = s_lastCheck == default ? "" : s_lastCheck.ToString("yyyy-MM-dd HH:mm"),
                 ["lastCheckResult"] = s_lastCheckResult,
                 ["patches"] = patches,
+                // Ahziael may hand this server a full update to put in while it runs (put-in.txt).
+                ["takesUpdates"] = LivePatcher.WhyNot is null,
                 ["log"] = log,
             };
             Directory.CreateDirectory(LivePatcher.Folder);

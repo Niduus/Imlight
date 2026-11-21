@@ -83,6 +83,12 @@
     </ItemGroup>
     <RemoveDir Directories="$(PublishDir)live-patches/baseline" Condition="'$(LivePatches)' == 'true'" />
     <Copy SourceFiles="@(_LiveBaseline)" DestinationFiles="@(_LiveBaseline->'$(PublishDir)live-patches/baseline/%(RecursiveDir)%(Filename)%(Extension)')" Condition="'$(LivePatches)' == 'true'" />
+    <!-- This program's own code, so Ahziael can tell a rebuilt Imlight.Director.dll that only points at a newer server part
+         (same code) from one whose code changed (Setup LiveUpdate: only the first goes into a running server). -->
+    <GetFileHash Files="@(Compile);$(MSBuildProjectFullPath)" Algorithm="SHA256" Condition="'$(LivePatches)' == 'true'">
+      <Output TaskParameter="Items" ItemName="_LiveDirectorCode" />
+    </GetFileHash>
+    <WriteLinesToFile File="$(PublishDir)live-patches/director-code.txt" Lines="@(_LiveDirectorCode->'%(Filename)%(Extension) %(FileHash)')" Overwrite="true" Condition="'$(LivePatches)' == 'true'" />
   </Target>
 
   <Target Name="CopyBotsToPublish" AfterTargets="Publish">

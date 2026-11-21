@@ -1,0 +1,4 @@
+Fixed: Updates still restarted the server with Live patches on
+With Live patches on, an Ahziael update now goes into the running server instead of restarting it, so nobody is disconnected. The new server code is put in while everyone keeps playing, new game data is read again right away, and the update's files are swapped in quietly the next time the server starts on its own. An update that changes more than the server's own code and the bots, or one the running server can't take (for example a deleted setting in the code), still restarts the server once as before, and Ahziael says why.
+Where: Update Ahziael with the Live patches switch on at the top of the window (hover the switch to see which update is in)
+Test: With Live patches on and the server running, click Update Ahziael for the next update after this one. Ahziael says the update is going into the running server, then that it is in with no restart, and nobody in the game is disconnected.

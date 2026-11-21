@@ -160,27 +160,21 @@ public static class LivePatcher {
                     string.Join(" | ", errors.Select(Plain)) + ")", []);
             }
 
-            var (updates, notes) = await EmitAsync(next, cancel);
-            var blockers = notes.Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
-            if (blockers.Count > 0 || updates.Count == 0) {
-                var reason = blockers.Count > 0
-                    ? string.Join(" | ", blockers.Take(4).Select(Plain))
-                    : notes.Count > 0 ? string.Join(" | ", notes.Take(4).Select(Plain)) : "no change could be worked out";
+            var steps = await GoInAsync(s_current, next, label, 0, cancel);
+            if (steps.Problem is not null) {
+                if (steps.Reached != s_current) {
+                    // Part of it went in: what runs now is that part.
+                    s_current = steps.Reached;
+                    s_docs = DocsOf(steps.Reached);
+                }
 
-                return new Outcome(false, 0, "it can't go into a running server: " + reason, []);
-            }
-
-            var methods = 0;
-            foreach (var update in updates) {
-                methods += update.Methods;
-                MetadataUpdater.ApplyUpdate(Target, update.Metadata.AsSpan(), update.IL.AsSpan(), update.Pdb.AsSpan());
-                Keep(label, update);
+                return new Outcome(false, 0, steps.Problem, []);
             }
 
             s_current = next;
             s_docs = docs;
 
-            return new Outcome(true, methods, null, notes.Where(d => d.Id.StartsWith("ENC", StringComparison.Ordinal)).Select(Plain).Distinct().ToList());
+            return new Outcome(true, steps.Methods, null, steps.Notes.Distinct().ToList());
         }
         catch (Exception e) {
             Logger.Error("Live patches: {0} could not go in: {1}", Logger.Args(label, e));
@@ -315,6 +309,122 @@ public static class LivePatcher {
     }
 
     private sealed record Update(ImmutableArray<byte> Metadata, ImmutableArray<byte> IL, ImmutableArray<byte> Pdb, int Methods);
+
+    private sealed record Steps(int Methods, string Problem, List<string> Notes, Solution Reached);
+
+    private static Dictionary<string, DocumentId> DocsOf(Solution solution) {
+        var docs = new Dictionary<string, DocumentId>(StringComparer.OrdinalIgnoreCase);
+        foreach (var doc in solution.GetProject(s_project)!.Documents) {
+            var rel = Path.GetRelativePath(s_projectDir, doc.FilePath ?? "");
+            if (!IsBuildOutput(rel)) {
+                docs[rel] = doc.Id;
+            }
+        }
+
+        return docs;
+    }
+
+    /// <summary>
+    /// Works out the change from <paramref name="from"/> (what runs now) to <paramref name="to"/> and puts it into the
+    /// running server. Roslyn's own change finder can fail on some sets of edits made together (2026-11-21, the 0.10.936
+    /// update: two methods in one file whose bodies moved into new methods threw "An item with the same key has already been
+    /// added. Key: DeletedPEMethodDefinition"); such a change goes in as smaller steps, each a working server, ending at the
+    /// same code.
+    /// </summary>
+    private static async Task<Steps> GoInAsync(Solution from, Solution to, string label, int depth, CancellationToken cancel) {
+        List<Update> updates;
+        List<Diagnostic> notes;
+        try {
+            (updates, notes) = await EmitAsync(to, cancel);
+        }
+        catch (Exception e) when (e is not OperationCanceledException && depth < 10) {
+            var inner = e is TargetInvocationException { InnerException: { } real } ? real : e;
+            if (await SplitAsync(from, to, cancel) is not { } middle) {
+                return new Steps(0, $"it failed while going in ({inner.Message})", [], from);
+            }
+
+            Logger.Information("Live patches: {0} goes in as smaller steps ({1}).", Logger.Args(label, inner.Message));
+            var first = await GoInAsync(from, middle, label, depth + 1, cancel);
+            if (first.Problem is not null) {
+                return first;
+            }
+
+            var second = await GoInAsync(middle, to, label, depth + 1, cancel);
+
+            return second.Problem is not null
+                ? second with { Problem = second.Problem + " (part of it is already in; the rest waits for the next full update)" }
+                : new Steps(first.Methods + second.Methods, null, [.. first.Notes, .. second.Notes], to);
+        }
+
+        var blockers = notes.Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
+        if (blockers.Count > 0 || (updates.Count == 0 && from != to)) {
+            var reason = blockers.Count > 0
+                ? string.Join(" | ", blockers.Take(4).Select(Plain))
+                : notes.Count > 0 ? string.Join(" | ", notes.Take(4).Select(Plain)) : "no change could be worked out";
+
+            return new Steps(0, "it can't go into a running server: " + reason, [], from);
+        }
+
+        var methods = 0;
+        foreach (var update in updates) {
+            methods += update.Methods;
+            MetadataUpdater.ApplyUpdate(Target, update.Metadata.AsSpan(), update.IL.AsSpan(), update.Pdb.AsSpan());
+            Keep(label, update);
+        }
+
+        return new Steps(methods, null, notes.Where(d => d.Id.StartsWith("ENC", StringComparison.Ordinal)).Select(Plain).ToList(), to);
+    }
+
+    /// <summary>
+    /// A code between <paramref name="from"/> and <paramref name="to"/> that builds: part of the changed lines in, the rest
+    /// not yet. Null when none is found (a single change can't be split).
+    /// </summary>
+    private static async Task<Solution> SplitAsync(Solution from, Solution to, CancellationToken cancel) {
+        var oldProject = from.GetProject(s_project)!;
+        var newProject = to.GetProject(s_project)!;
+        var changes = new List<(DocumentId Doc, TextChange Change)>();
+        foreach (var id in newProject.DocumentIds.Where(oldProject.ContainsDocument)) {
+            var before = oldProject.GetDocument(id)!;
+            var after = newProject.GetDocument(id)!;
+            if (await before.GetTextAsync(cancel) is var oldText && await after.GetTextAsync(cancel) is var newText && oldText.ContentEquals(newText)) {
+                continue;
+            }
+
+            // Changed lines, the way a diff shows them.
+            changes.AddRange((await after.GetTextChangesAsync(before, cancel)).Select(c => (id, c)));
+        }
+
+        var added = newProject.DocumentIds.Where(id => !oldProject.ContainsDocument(id)).ToList();
+        if (changes.Count < 2) {
+            return null;
+        }
+
+        // The middle first; else nearer one end. Files added by the change come in with the first part.
+        foreach (var take in new[] { changes.Count / 2, changes.Count / 3, changes.Count * 2 / 3, 1, changes.Count - 1 }.Distinct()) {
+            if (take <= 0 || take >= changes.Count) {
+                continue;
+            }
+
+            var middle = from;
+            foreach (var id in added) {
+                var doc = newProject.GetDocument(id)!;
+                middle = middle.AddDocument(DocumentInfo.Create(id, doc.Name, doc.Folders, filePath: doc.FilePath,
+                    loader: TextLoader.From(TextAndVersion.Create(await doc.GetTextAsync(cancel), VersionStamp.Create(), doc.FilePath))));
+            }
+
+            foreach (var group in changes.Take(take).GroupBy(c => c.Doc)) {
+                var text = await middle.GetDocument(group.Key)!.GetTextAsync(cancel);
+                middle = middle.WithDocumentText(group.Key, text.WithChanges(group.Select(c => c.Change)));
+            }
+
+            var compilation = await middle.GetProject(s_project)!.GetCompilationAsync(cancel);
+            if (!compilation!.GetDiagnostics(cancel).Any(d => d.Severity == DiagnosticSeverity.Error)) {
+                return middle;
+            }
+        }
+
+        return null;
+    }
 
     private static async Task<(List<Update> Updates, List<Diagnostic> Notes)> EmitAsync(Solution solution, CancellationToken cancel) {
         var task = (Task) s_serviceType.GetMethod("EmitSolutionUpdateAsync")!.Invoke(s_service, [solution, true, cancel])!;

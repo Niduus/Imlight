@@ -688,7 +688,10 @@ internal sealed class SetupSteps : IDisposable {
         // Ahziael's Live patches switch (off by default): the server part is built so fixes can go into it while it runs.
         if (File.Exists(Path.Combine(_options.InstallFolder, ServerManager.LIVE_PATCHES_ON_FILE))) {
             SetupLog.Info("Live patches are on, so the server is built ready for fixes that go in without a restart.");
-            publish = [.. publish, "-p:LivePatches=true"];
+            // Without the repository's commit stamped in, a part whose code didn't change builds to the same file, so an
+            // update that only changes the server's own code can go into the running server (LiveUpdate).
+            publish = [.. publish, "-p:LivePatches=true", "-p:IncludeSourceRevisionInInformationalVersion=false", "-p:EnableSourceLink=false",
+                "-p:EnableSourceControlManagerQueries=false"];
         }
         var exitCode = await ProcessRunner.RunAsync(dotnet, publish, showProgress: true, workingDirectory: SourceFolder);
         if (exitCode != 0 && reused) {
@@ -779,6 +782,21 @@ internal sealed class SetupSteps : IDisposable {
         ClearUnfinishedMark(_options.InstallFolder);
         Directory.Delete(PendingServerFolder, recursive: true);
         File.Delete(Path.Combine(PendingFolder, ServerUpdate.WAITING_FILE));
+    }
+
+    /// <summary>
+    /// Copies in the game data of the server waiting in the Pending folder while the server runs (its program waits, or
+    /// goes in live: LiveUpdate). The same files are kept and skipped as at a full install.
+    /// </summary>
+    internal void InstallDataNow(ServerUpdateSort sort) {
+        var data = new HashSet<string>(sort.LiveData.Concat(sort.LaterData), StringComparer.OrdinalIgnoreCase);
+        if (RunsInPlace || data.Count == 0 || !Directory.Exists(PendingServerFolder)) {
+            return;
+        }
+
+        var shipped = ShippedExtraFiles.Load(ServerFolder);
+        CopyFolder(PendingServerFolder, ServerFolder, keepIfPresent: ["spiraldb-extra/DropOdds.json"], shipped, data.Contains);
+        shipped.Save(ServerFolder);
     }
 
     /// <summary>The version of Ahziael that built the server waiting in the Pending folder, or null when there is none.</summary>
@@ -917,10 +935,14 @@ internal sealed class SetupSteps : IDisposable {
         }
     }
 
-    private static void CopyFolder(string from, string to, string[] keepIfPresent, ShippedExtraFiles shipped) {
+    private static void CopyFolder(string from, string to, string[] keepIfPresent, ShippedExtraFiles shipped, Func<string, bool>? only = null) {
         var kept = 0;
         foreach (var file in Directory.EnumerateFiles(from, "*", SearchOption.AllDirectories)) {
             var relative = Path.GetRelativePath(from, file).Replace('\\', '/');
+            if (only is not null && !only(relative)) {
+                continue;
+            }
+
             var target = Path.Combine(to, relative);
             var covered = ShippedExtraFiles.Covers(relative);
             var keep = File.Exists(target) && keepIfPresent.Contains(relative, StringComparer.OrdinalIgnoreCase);

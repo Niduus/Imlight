@@ -109,8 +109,8 @@ internal sealed partial class ManagerWindow {
         var checkedAt = (string?) state["lastCheck"] ?? "";
         var lines = new[] {
             whyNot.Length > 0 ? $"Live patches can't go in right now: {whyNot}." : "",
-            active.Length > 0 ? $"In use: live patch {active[6..]}." : whyNot.Length == 0 ? "No live patch is in yet (this server has every fix up to its build)." : "",
-            waiting.Length > 0 ? $"Live patch {waiting[6..]} waits for the next full update: {waitingWhy}." : "",
+            active.Length > 0 ? $"In use: {PatchName(active)}." : whyNot.Length == 0 ? "No live patch is in yet (this server has every fix up to its build)." : "",
+            waiting.Length > 0 ? $"{Capital(PatchName(waiting))} waits for the next full update: {waitingWhy}." : "",
             checkedAt.Length > 0 ? $"Last looked at {checkedAt}." : "",
         }.Where(l => l.Length > 0);
         var notes = ((string?) state["patches"]?.AsArray().FirstOrDefault(p => (string?) p?["tag"] == active)?["notes"] ?? "")
@@ -119,6 +119,14 @@ internal sealed partial class ManagerWindow {
 
         return intro + "\n\n" + string.Join("\n", lines) + (notes.Count > 0 ? "\n\nWhat it fixed:\n" + string.Join("\n", notes) : "");
     }
+
+    // "live-v12" is live patch 12; "ahziael-0.10.937" is an Ahziael update put into the running server (LiveUpdate).
+    private static string PatchName(string tag)
+        => tag.StartsWith("live-v", StringComparison.OrdinalIgnoreCase) ? $"live patch {tag[6..]}"
+            : tag.StartsWith("ahziael-", StringComparison.OrdinalIgnoreCase) ? $"update {tag[8..]} (put in without a restart)"
+            : tag;
+
+    private static string Capital(string text) => text.Length == 0 ? text : char.ToUpperInvariant(text[0]) + text[1..];
 
     private async Task SetLivePatchesAsync(bool on) {
         _manager.LivePatches = on;
