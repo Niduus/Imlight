@@ -134,6 +134,7 @@ internal static class TrueFormMaker {
             }
             TrueFormSpells.Give(wizard, top, school.ToString(), style);
             TrueForm.CardPush = true;
+            TrueFormKiosk.Offer(wizard);
         }
         catch (Exception e) {
             Logger.Warning("True Form: could not make him ready: {0}", Logger.Args(e));
