@@ -177,11 +177,12 @@ internal class GroupService(SessionActor sessionActor) : MessageService(sessionA
 
     [MessageHandler(typeof(WIZARD_12_PROTOCOL.MSG_GOTOFRIENDLYPLAYER))]
     private void ReceiveGotoFriendlyPlayer(WIZARD_12_PROTOCOL.MSG_GOTOFRIENDLYPLAYER message) {
-        // The group window's "go to leader" and the summon prompt both land here.
+        // The group window's "go to leader" and the summon prompt both land here, and so does Go To in the Friendly
+        // Players window, which lists the server's own bots (FriendsService.FriendlyPlayers).
         var wizard = GetActiveWizard();
         var targetCharId = message.TargetCharacterID;
 
-        if (!GroupRegistry.AreGrouped(wizard.CharId, targetCharId)) {
+        if (!GroupRegistry.AreGrouped(wizard.CharId, targetCharId) && !Imlight.CoreLib.Game.Tools.OnlineList.IsBotWizard(targetCharId)) {
             RefuseGoTo("friend.busy.notgrouped");
 
             return;
