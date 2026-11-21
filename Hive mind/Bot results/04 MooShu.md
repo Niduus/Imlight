@@ -5,14 +5,14 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 ## Best way to beat each creature
 - Haru: won 79 time(s) (16 Solo, 63 Team), lost 2. Fastest: Tulkar in 2 rounds, deck for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies), hits with Frostbite.
 - Ronin Keyholder: won 11 time(s) (9 Solo, 2 Team), lost 26. Fastest: Cyndr in 4 rounds, plan "hit now", deck for a boss (Ice), hitting with Ice, Fire, Life; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Immolate.
-- Imitsu Defouler: won 30 time(s) (30 Solo, 0 Team), lost 2. Fastest: Cyndr in 4 rounds, plan "hit now", deck for Myth enemies, hitting with Myth, Storm, Fire (most of my fights lately had 2+ enemies), hits with Immolate.
+- Imitsu Defouler: won 31 time(s) (31 Solo, 0 Team), lost 2. Fastest: Cyndr in 4 rounds, plan "hit now", deck for Myth enemies, hitting with Myth, Storm, Fire (most of my fights lately had 2+ enemies), hits with Immolate.
 - Otomo Courier: won 8 time(s) (6 Solo, 2 Team), lost 21. Fastest: Ultimus in 5 rounds, deck for a boss (Ice), hitting with Ice, Fire; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Sandstorm, Balance, Fairy.
 - War Oni: won 8 time(s) (6 Solo, 2 Team), lost 20. Fastest: Cyndr in 7 rounds, deck for a boss (Fire), hitting with Fire, Myth; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Banshee, Heck Hound.
 - Maito: won 6 time(s) (6 Solo, 0 Team), lost 17. Fastest: Cyndr in 3 rounds, plan "hit now", deck for a boss (Ice), hitting with Ice, Fire, Life; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Sunbird, Immolate.
-- Shoji: won 17 time(s) (12 Solo, 5 Team), lost 1. Fastest: Mythis in 4 rounds, plan "hit now", deck for a boss (Balance), hitting with Balance, Life, Death (many of my fights lately had 2+ enemies), hits with Minor Heroic Hit, Cyclops, Banshee.
+- Shoji: won 20 time(s) (12 Solo, 8 Team), lost 1. Fastest: Mythis in 4 rounds, plan "hit now", deck for a boss (Balance), hitting with Balance, Life, Death (many of my fights lately had 2+ enemies), hits with Minor Heroic Hit, Cyclops, Banshee.
 - Otomo Supply Runner: won 14 time(s) (12 Solo, 2 Team), lost 4. Fastest: Ultimus in 4 rounds, deck for Fire enemies, hitting with Fire, Death, Myth (most of my fights lately had 2+ enemies), hits with Gearhead Destroyer, Locust Swarm.
+- Infected Villager: won 14 time(s) (14 Solo, 0 Team), lost 3. Fastest: Kurrent in 4 rounds, plan "hit now", deck for Balance enemies, hitting with Balance, Death, Ice; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Thunder Snake, Kraken, Storm Shark.
 - Kanago: won 8 time(s) (8 Solo, 0 Team), lost 7. Fastest: Mythis in 7 rounds, deck for a boss (Storm), hitting with Storm, Balance, Death; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Cyclops.
-- Infected Villager: won 12 time(s) (12 Solo, 0 Team), lost 3. Fastest: Garm in 5 rounds, plan "hit now", deck for Balance enemies, hitting with Balance, Death, Ice; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Minor Dark Blow, Poison, Dark Sprite, Banshee.
 - Sanzoku Outlaw: won 14 time(s) (10 Solo, 4 Team), lost 1. Fastest: Cyndr in 3 rounds, plan "hit now", deck for Balance enemies, hitting with Balance, Ice, Death; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Sunbird, Immolate.
 - Otomo Spotter: won 14 time(s) (12 Solo, 2 Team), lost 1. Fastest: Ultimus in 3 rounds, deck for Myth enemies, hitting with Myth, Fire, Storm (many of my fights lately had 2+ enemies), hits with Minor Crusade.
 - Katsumori: won 8 time(s) (8 Solo, 0 Team), lost 6. Fastest: Kurrent in 5 rounds, deck for a boss (Fire), hitting with Fire, Myth; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Frostbite.
@@ -401,6 +401,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Cyndr (8 min).
 - Finished by Tulkar (14 min).
 - Finished by Mythis (24 min).
+- Finished by Kurrent (8 min).
 - Won by Ultimus (Solo) against Infected Villager (rank 5, 675 health, Balance) on 2026-11-19 at 19:56:15.
   It took 7 rounds, about 4 minutes.
   Deck made for Balance enemies, hitting with Balance, Death, Ice (most of my fights lately had 2+ enemies).
@@ -455,6 +456,16 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
   It took 6 rounds, about 3 minutes.
   Deck made for Balance enemies, hitting with Balance, Death, Ice; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies).
   Spells that landed the hits: Cyclops, Vampire.
+- Won by Kurrent (Solo) against Infected Villager (rank 5, 675 health, Balance) on 2026-11-21 at 16:25:01.
+  It took 4 rounds, about 2 minutes.
+  Deck made for Balance enemies, hitting with Balance, Death, Ice; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Thunder Snake x2, Kraken, Storm Shark.
+- Won by Kurrent (Solo) against Infected Villager (rank 5, 675 health, Balance) on 2026-11-21 at 16:29:19.
+  It took 5 rounds, about 3 minutes.
+  Deck made for Balance enemies, hitting with Balance, Death, Ice; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Thunder Snake x2, Thermic Golem, Minor Surge, Storm Shark.
 - Avoid, fights lost:
   - Infected Villager: lost 1 time(s) (Ultimus). Why: I went in at 59% health, the fight ran 6 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Infected Villager: lost 1 time(s) (Ra). Why: I went in at 67% health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
@@ -1664,6 +1675,21 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
   It took 5 rounds, about 5 minutes.
   Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
   Spells that landed the hits: Meteor Strike.
+- Won by Tulkar (Team with Mythis) against Shoji (rank 6, 1,360 health, Balance, a boss) on 2026-11-21 at 16:21:48.
+  It took 13 rounds, about 7 minutes.
+  Deck made for a boss (Balance), hitting with Balance, Life, Death (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Frost Beetle x2, Evil Snowman, Blight Hound, Frostbite, Blizzard, Fairy, Minor Nova.
+- Won by Mythis (Team with Cyndr, Tulkar) against Shoji (rank 6, 1,360 health, Balance, a boss) on 2026-11-21 at 16:22:13.
+  It took 15 rounds, about 8 minutes.
+  Deck made for a boss (Balance), hitting with Balance, Life, Death (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Blood Bat x2, Kraken x2, Fairy x2, Cyclops x2, Minor Heroic Hit, Spirit Armor, Humongofrog.
+- Won by Cyndr (Team with Mythis) against Shoji (rank 6, 1,360 health, Balance, a boss) on 2026-11-21 at 16:23:31.
+  It took 12 rounds, about 6 minutes.
+  Deck made for a boss (Balance), hitting with Balance, Life, Death (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Heck Hound x3, Phoenix x3, Minor Fire Scorch x2, Fairy.
 - Avoid, fights lost:
   - Shoji: lost 1 time(s) (Cyndr). Why: it simply hit harder than I could heal. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Haru: lost 1 time(s) (Tulkar). Why: the fight ran 6 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
@@ -1842,6 +1868,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Cyndr (7 min).
 - Finished by Tulkar (9 min).
 - Finished by Mythis (13 min).
+- Finished by Kurrent (9 min).
 - Won by Ultimus (Solo) against Imitsu Defouler (rank 5, 675 health, Myth) on 2026-11-19 at 19:37:36.
   It took 9 rounds, about 5 minutes.
   Deck made for Myth enemies, hitting with Myth, Storm, Fire (many of my fights lately had 2+ enemies).
@@ -1911,6 +1938,11 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
   Deck made for Myth enemies, hitting with Myth, Storm, Fire (many of my fights lately had 2+ enemies).
   Plan: "hit now" (mine and every other bot's).
   Spells that landed the hits: Thunder Snake x2, Kraken, Minor Surge.
+- Won by Kurrent (Solo) against Imitsu Defouler (rank 5, 675 health, Myth) on 2026-11-21 at 16:21:42.
+  It took 9 rounds, about 6 minutes.
+  Deck made for Myth enemies, hitting with Myth, Storm, Fire (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Thunder Snake x3, Fairy, Ice Hound, Storm Shark.
 - Avoid, fights lost:
   - Imitsu Defouler: lost 1 time(s) (Mythis). Why: the fight ran 5 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 
