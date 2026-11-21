@@ -1887,11 +1887,18 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
             Logger.Information("Hatching: talent search ({0} of {1}) found {2} of {3} pets at the kiosk.",
                 Logger.Args(everyOne ? "all" : "any", string.Join(", ", wanted.Select(TalentName)), found.Count, HatchmakingListings.All().Count));
             SendPetGIDs(found, message.InPerson);
+            if (found.Count == 0) {
+                // The game shows an empty list without a word, so the player is told why (Niduus, 2026-11-21).
+                InformGameClient(wanted.Count == 1
+                    ? "No pets in the kiosk with this talent."
+                    : everyOne ? "No pets in the kiosk with all of these talents." : "No pets in the kiosk with any of these talents.");
+            }
         }
         catch (Exception ex) {
             Logger.Error("Hatching: MSG_REQUESTHATCHMAKINGSEARCHPETS failed. {0}", Logger.Args(ex));
             // An empty answer still closes the game's "Please Wait" box.
             SendPetGIDs([], message.InPerson);
+            InformGameClient("The kiosk could not search its pets just now. Please try again.");
         }
     }
 
