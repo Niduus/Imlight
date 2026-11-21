@@ -9,7 +9,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Otomo Courier: won 8 time(s) (6 Solo, 2 Team), lost 21. Fastest: Ultimus in 5 rounds, deck for a boss (Ice), hitting with Ice, Fire; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Sandstorm, Balance, Fairy.
 - War Oni: won 8 time(s) (6 Solo, 2 Team), lost 20. Fastest: Cyndr in 7 rounds, deck for a boss (Fire), hitting with Fire, Myth; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Banshee, Heck Hound.
 - Maito: won 6 time(s) (6 Solo, 0 Team), lost 17. Fastest: Cyndr in 3 rounds, plan "hit now", deck for a boss (Ice), hitting with Ice, Fire, Life; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Sunbird, Immolate.
-- Shoji: won 20 time(s) (12 Solo, 8 Team), lost 1. Fastest: Mythis in 4 rounds, plan "hit now", deck for a boss (Balance), hitting with Balance, Life, Death (many of my fights lately had 2+ enemies), hits with Minor Heroic Hit, Cyclops, Banshee.
+- Shoji: won 22 time(s) (12 Solo, 10 Team), lost 1. Fastest: Mythis in 4 rounds, plan "hit now", deck for a boss (Balance), hitting with Balance, Life, Death (many of my fights lately had 2+ enemies), hits with Minor Heroic Hit, Cyclops, Banshee.
 - Otomo Supply Runner: won 14 time(s) (12 Solo, 2 Team), lost 4. Fastest: Ultimus in 4 rounds, deck for Fire enemies, hitting with Fire, Death, Myth (most of my fights lately had 2+ enemies), hits with Gearhead Destroyer, Locust Swarm.
 - Infected Villager: won 14 time(s) (14 Solo, 0 Team), lost 3. Fastest: Kurrent in 4 rounds, plan "hit now", deck for Balance enemies, hitting with Balance, Death, Ice; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Thunder Snake, Kraken, Storm Shark.
 - Kanago: won 8 time(s) (8 Solo, 0 Team), lost 7. Fastest: Mythis in 7 rounds, deck for a boss (Storm), hitting with Storm, Balance, Death; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Cyclops.
@@ -805,6 +805,11 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Won by Cyndr (Solo) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 16:37:50.
   It took 6 rounds, about 3 minutes.
   Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Won by Mythis (Team with Tulkar) against Shoji (rank 6, 1,360 health, Balance, a boss) on 2026-11-21 at 16:50:45.
+  It took 4 rounds, about 3 minutes.
+  Deck made for a boss (Balance), hitting with Balance, Life, Death (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Humongofrog, Cyclops.
 - Avoid, fights lost:
   - Ideyoshi: lost 1 time(s) (Ultimus). Why: I went in at 80% health, the fight ran 7 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Ideyoshi: lost 1 time(s) (Ultimus). Why: I went in at 47% health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
@@ -1712,6 +1717,11 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
   It took 18 rounds, about 9 minutes.
   Deck made for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
   Spells that landed the hits: Humongofrog x2, Minor Heroic Hit, Fairy, Myth Shield, Vampire.
+- Won by Tulkar (Team with Mythis) against Shoji (rank 6, 1,360 health, Balance, a boss) on 2026-11-21 at 16:50:45.
+  It took 4 rounds, about 3 minutes.
+  Deck made for a boss (Balance), hitting with Balance, Life, Death (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Minor Nova, Frostbite.
 - Avoid, fights lost:
   - Shoji: lost 1 time(s) (Cyndr). Why: it simply hit harder than I could heal. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Haru: lost 1 time(s) (Tulkar). Why: the fight ran 6 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
@@ -1853,6 +1863,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Cyndr (5 min).
 - Finished by Tulkar (18 min).
 - Finished by Mythis (9 min).
+- Finished by Kurrent (2 min).
 - Won by Ultimus (Solo) against Kyuto (rank 6, 1,440 health, Ice, a boss) on 2026-11-19 at 20:29:17.
   It took 17 rounds, about 8 minutes.
   Deck made for a boss (Ice), hitting with Ice, Balance, Fire (many of my fights lately had 2+ enemies).
@@ -2413,6 +2424,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Cyndr (90 s).
 - Finished by Tulkar (2 min).
 - Finished by Mythis (2 min).
+- Finished by Kurrent (2 min).
 
 ## The Stuff of Epics
 - Finished by Ultimus (28 s).
@@ -2421,6 +2433,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Cyndr (14 s).
 - Finished by Tulkar (29 s).
 - Finished by Mythis (29 s).
+- Finished by Kurrent (31 s).
 
 ## Contemplation
 - Finished by Ultimus (19 s).
