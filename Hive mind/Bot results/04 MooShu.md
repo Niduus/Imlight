@@ -23,10 +23,10 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Otomo Quartermaster: won 7 time(s) (7 Solo, 0 Team), lost 3. Fastest: Garm in 4 rounds, deck for a boss (Fire), hitting with Fire, Myth, Death (most of my fights lately had 2+ enemies), hits with Dark Sprite.
 - Grum Foultooth: won 8 time(s) (8 Solo, 0 Team), lost 2. Fastest: Cyndr in 4 rounds, deck for a boss (Myth), hitting with Myth, Storm, Fire; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Immolate.
 - Walking Dead: won 8 time(s) (8 Solo, 0 Team), lost 2. Fastest: Ultimus in 6 rounds, deck for Death enemies, hitting with Death, Fire, Myth (most of my fights lately had 2+ enemies), hits with Sandstorm, Minor Crusade, Gearhead Destroyer.
+- Yochimo: won 10 time(s) (8 Solo, 2 Team), lost 0. Fastest: Cyndr in 1 rounds, deck for a boss (Storm), hitting with Storm, Life, Death (most of my fights lately had 2+ enemies), hits with Immolate.
 - Koto: won 7 time(s) (7 Solo, 0 Team), lost 2. Fastest: Cyndr in 4 rounds, plan "hit now", deck for a boss (Ice), hitting with Ice, Balance, Fire (most of my fights lately had 2+ enemies), hits with Fire Cat, Scald.
 - Jade Oni: won 3 time(s) (3 Solo, 0 Team), lost 6. Fastest: Garm in 12 rounds, deck for a boss (Life), hitting with Life, Fire, Storm; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Elemental Shield, Banshee.
 - Kyuto: won 7 time(s) (7 Solo, 0 Team), lost 2. Fastest: Cyndr in 5 rounds, deck for a boss (Ice), hitting with Ice, Balance, Fire; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Immolate.
-- Yochimo: won 9 time(s) (7 Solo, 2 Team), lost 0. Fastest: Cyndr in 1 rounds, deck for a boss (Storm), hitting with Storm, Life, Death (most of my fights lately had 2+ enemies), hits with Immolate.
 - Do-Daga: won 7 time(s) (5 Solo, 2 Team), lost 1. Fastest: Cyndr in 5 rounds, plan "hit now", deck for a boss (Ice), hitting with Ice, Fire, Death (many of my fights lately had 2+ enemies), hits with Minor Fire Scorch, Immolate, Sunbird.
 - Ronin Mutineer: won 7 time(s) (7 Solo, 0 Team), lost 1. Fastest: Kurrent in 5 rounds, plan "hit now", deck for Myth enemies, hitting with Myth, Storm, Fire (most of my fights lately had 2+ enemies), hits with Storm Shark, Thunder Snake, Minor Surge, Banshee.
 - Kakeda Spirit Slave: won 7 time(s) (7 Solo, 0 Team), lost 0. Fastest: Ultimus in 5 rounds, deck for Death enemies, hitting with Death, Fire, Myth (most of my fights lately had 2+ enemies), hits with Sandstorm, Scarab, Locust Swarm.
@@ -2645,6 +2645,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Tulkar (9 min).
 - Finished by Mythis (29 s).
 - Finished by Kurrent (27 s).
+- Finished by Idunn (26 s).
 - Avoid, places bots got stuck:
   - Jade Palace near (19300, 0) while to Throne Room (Talk to Jade Champion): stuck 9 time(s) (Tulkar).
   - Jade Palace near (19300, 0) while a short break before trying "to Throne Room (Talk to Jade Champion)" again: stuck 3 time(s) (Tulkar); one bot tried every fix there.
@@ -3150,6 +3151,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Tulkar (4 min).
 - Finished by Mythis (3 min).
 - Finished by Kurrent (5 min).
+- Finished by Idunn (5 min).
 - Won by Ra (Solo) against Yochimo (rank 5, 880 health, Storm, a boss) on 2026-11-20 at 17:56:31.
   It took 2 rounds, about 1 minutes.
   Deck made for a boss (Storm), hitting with Storm, Life, Death (most of my fights lately had 2+ enemies).
@@ -3174,6 +3176,10 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
   It took 8 rounds, about 4 minutes.
   Deck made for a boss (Storm), hitting with Storm, Life, Death (most of my fights lately had 2+ enemies).
   Spells that landed the hits: Fairy, Storm Shark.
+- Won by Idunn (Solo) against Yochimo (rank 5, 880 health, Storm, a boss) on 2026-11-21 at 21:04:28.
+  It took 3 rounds, about 2 minutes.
+  Deck made for a boss (Storm), hitting with Storm, Life, Death; my own fights say about 69% hits in my main deck (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Nature's Wrath.
 
 ## An Ailing Emperor
 - Finished by Ra (15 s).
@@ -3182,6 +3188,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Tulkar (25 s).
 - Finished by Mythis (29 s).
 - Finished by Kurrent (16 s).
+- Finished by Idunn (16 s).
 
 ## War Pigs
 - Finished by Ra (48 s).
@@ -3190,6 +3197,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Tulkar (69 s).
 - Finished by Mythis (2 min).
 - Finished by Kurrent (49 s).
+- Finished by Idunn (49 s).
 
 ## Counting Sheep
 - Finished by Ra (4 min).
