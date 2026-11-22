@@ -171,6 +171,14 @@ public static class LivePatcher {
                     string.Join(", ", started.Take(4)) + (started.Count > 4 ? ", ..." : "") + "), so it needs a restart", []);
             }
 
+            // A new answer to a game message: each session's list of which part answers what is made once, when the server
+            // starts, so a handler that comes in by a live patch is never called. v0.10.960 added the Friendly Players quest
+            // answer that way; the game kept getting "No Quest" (2026-11-21 20:39, "does not handle yet"). It waits for a restart.
+            if (before is not null && NewMessageHandlers(before, compilation) is { Count: > 0 } handlers) {
+                return new Outcome(false, 0, "it adds an answer to a game message that only a restart switches on (" +
+                    string.Join(", ", handlers.Take(4)) + (handlers.Count > 4 ? ", ..." : "") + "), so it needs a restart", []);
+            }
+
             var steps = await GoInAsync(s_current, next, label, 0, cancel);
             if (steps.Problem is not null) {
                 if (steps.Reached != s_current) {
@@ -249,6 +257,48 @@ public static class LivePatcher {
                     yield return t;
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Methods the new code marks as answering a message ([MessageHandler] or [InternalMessageHandler], "Type.Method") that
+    /// the old code did not: the services' message lists are read once at start, so these are only called after a restart.
+    /// </summary>
+    internal static List<string> NewMessageHandlers(Compilation before, Compilation after) {
+        var oldHandlers = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var (type, method) in Handlers(before)) {
+            oldHandlers.Add(type + "." + method);
+        }
+
+        return [.. Handlers(after).Select(h => h.Type + "." + h.Method).Where(h => !oldHandlers.Contains(h)).Distinct()];
+
+        static IEnumerable<(string Type, string Method)> Handlers(Compilation compilation) {
+            foreach (var tree in compilation.SyntaxTrees) {
+                var model = compilation.GetSemanticModel(tree);
+                foreach (var syntax in tree.GetRoot().DescendantNodes().OfType<MethodDeclarationSyntax>()) {
+                    if (!syntax.AttributeLists.SelectMany(l => l.Attributes).Any(IsHandlerName)) {
+                        continue;
+                    }
+
+                    if (model.GetDeclaredSymbol(syntax) is IMethodSymbol method && method.GetAttributes().Any(IsHandler)) {
+                        yield return (method.ContainingType.ToDisplayString(), method.Name + "(" + string.Join(",",
+                            method.Parameters.Select(p => p.Type.ToDisplayString())) + ")");
+                    }
+                }
+            }
+        }
+
+        static bool IsHandlerName(AttributeSyntax attribute)
+            => attribute.Name.ToString().Contains("MessageHandler", StringComparison.Ordinal);
+
+        static bool IsHandler(AttributeData attribute) {
+            for (var type = attribute.AttributeClass; type is not null; type = type.BaseType) {
+                if (type.Name == "MessageHandlerAttribute") {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 
