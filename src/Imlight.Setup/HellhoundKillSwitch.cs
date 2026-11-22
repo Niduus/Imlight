@@ -1,10 +1,14 @@
+#if HELLHOUND
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Globalization;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
 
-namespace Hellhound;
+namespace Imlight.Setup;
 
 /// <summary>
 /// The bots' kill switch (Niduus, 2026-11-22: "if its on (= true) then the bots all won't work. Even with the key"; "the
@@ -14,7 +18,7 @@ namespace Hellhound;
 /// same thing they will. The bots may play only when the file is signed by Niduus and unchanged, holds the switch, the switch
 /// says "on = false", and it was signed in the last 7 days. The app never reads GitHub.
 /// </summary>
-internal static class Killswitch {
+internal static class HellhoundKillSwitch {
 
     internal const string FILE_NAME = "hive-mind.ahzhive";
     private const string SIGNED_NAME = "killswitch.txt";
@@ -135,3 +139,4 @@ internal static class Killswitch {
         return false;
     }
 }
+#endif

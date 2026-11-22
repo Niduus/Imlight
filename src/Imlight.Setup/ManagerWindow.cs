@@ -389,6 +389,12 @@ internal sealed partial class ManagerWindow : Window {
         };
 
         var tabs = new List<TabItem> {
+#if HELLHOUND
+            // Hellhound holds only the bots' pages (Niduus, 2026-11-22: "ALL BOT RELATED CONTENT GOES TO HELLHOUND"), with its
+            // own Watch and Hellhound pages (ManagerWindow.Hellhound.cs).
+            Tab(WATCH_TAB, WatchTab),
+            Tab(HELLHOUND_TAB, HellhoundTab),
+#else
             Tab("Play", PlayTab),
             Tab("Commands", CommandsTab),
             Tab(OVERLAY, OverlayTab),
@@ -440,6 +446,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab(Edition.NAME, AhziaelTab),
             Tab("Remote", RemoteTab),
             Tab("Account Transfer", AccountTransferTab),
+#endif
             Tab(QUEST_TEAM_TAB, QuestTeamTab),
             Tab(QUEST_TEAM_ISSUES_TAB, QuestTeamIssuesTab),
             Tab(QUEST_TEAM_LOGS_TAB, QuestTeamLogsTab),
@@ -464,7 +471,11 @@ internal sealed partial class ManagerWindow : Window {
         _statusBadge = ManagerTheme.Badge(_dot, _statusText);
         ToolTip.SetTip(_statusBadge, "The server on this computer. Start and stop it on the Server tab, or on Home.");
         ManagerTheme.PaintBadge(_statusBadge, _statusText, MUTED);
+#if HELLHOUND
+        var header = HellhoundHeader();
+#else
         var header = Header();
+#endif
 
         _messageBar.Child = _message;
         _messageBar.BorderBrush = LINE;
@@ -503,6 +514,23 @@ internal sealed partial class ManagerWindow : Window {
         };
 
         _timer.Tick += (_, _) => Refresh();
+#if HELLHOUND
+        Opened += (_, _) => {
+            ManagerApp.WindowShown = true;
+            FitToScreen();
+            AppLogs.Opened(_manager.InstallFolder);
+            Refresh();
+            _timer.Start();
+            _shownPage = ShownPage();
+            HellhoundOpened();
+        };
+        Closed += (_, _) => {
+            _timer.Stop();
+            HellhoundClosed();
+        };
+        OverlayHost.LoadOnly(manager.InstallFolder);
+    }
+#else
         Opened += async (_, _) => {
             ManagerApp.WindowShown = true;
             FitToScreen();
@@ -565,6 +593,7 @@ internal sealed partial class ManagerWindow : Window {
             OverlayHost.Start(manager.InstallFolder);
         }
     }
+#endif
 
     // ---------------------------------------------------------------------
     // Tabs
@@ -1571,7 +1600,9 @@ internal sealed partial class ManagerWindow : Window {
 
         ManagerTheme.PaintBadge(_statusBadge, _statusText, _dot.Background);
         ShowHomeStatus(status);
+#if !HELLHOUND
         TickServerRestart(status.Running);
+#endif
         TickHiveMind(status);
         _startButton.IsEnabled = !status.Running && !IsRemote;
         _stopButton.IsEnabled = status.Running && !IsRemote;
@@ -3209,6 +3240,10 @@ internal sealed partial class ManagerWindow : Window {
         [QUEST_TEAM_LOGS_TAB] = ("log", "The Quest Team's quest log (each quest, its steps and how long it took) and what each wizard did."),
         [ULTIMUS_TAB] = ("user", "Ultimus, the Solo Quester: one Balance wizard the server plays through the Main Story alone. Its quest, stats, gear and deck."),
         [ULTIMUS_ISSUES_TAB] = ("flag", "Every quest Ultimus could not finish, with a debug report to fix it from."),
+#if HELLHOUND
+        [WATCH_TAB] = ("eye", "One bot at a time, live: its map as it moves, its quest, and its hand in battle."),
+        [HELLHOUND_TAB] = ("download", "Hellhound's own version and its updates from the private bots repo."),
+#endif
         [BOT_UPDATES_TAB] = ("download", "Which bots the server runs, every bot update with its notes, and live bot updates (the bots update without a new Ahziael)."),
         [ULTIMUS_AI_TAB] = ("user", "Optional AI chat for Ultimus on your own PC (Ollama or LM Studio): setup steps, model picks, PC scan and a test."),
         [ULTIMUS_LOGS_TAB] = ("log", "Ultimus's quest log and what it did, with odd things it noticed in pink."),

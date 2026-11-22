@@ -42,7 +42,19 @@ namespace Imlight.Setup;
 internal sealed partial class ManagerWindow {
 
     /// <summary>The side bar's pages after Home: name, icon, the short line under it, what it is for, and its tabs.</summary>
-    private static readonly (string Name, string Icon, string Line, string About, string[] Tabs)[] s_groups = [
+    private static readonly (string Name, string Icon, string Line, string About, string[] Tabs)[] s_groups =
+#if HELLHOUND
+    [
+        ("Watch", "eye", "One bot, live", "Watch one bot at a time as it plays: its map, its quest and its hand in battle.", [WATCH_TAB]),
+        (BOTS, "users", "Ultimus, TCO7, Kitharas, Zoom, True Form, Quest Team",
+            "Every bot the server plays: its stats, gear, jewels, pets, deck, treasure cards, spells, quests, issues and logs.",
+            [.. BotParts.SelectMany(p => p.Tabs)]),
+        ("Hive mind", "hive", "How the bots do it",
+            "How the bots get each quest done: pages from the Hive mind folder, and what this server's bots did.", [HIVE_MIND_TAB]),
+        (HELLHOUND_TAB, "download", "Version and updates", "Hellhound's own version, and its updates from the private bots repo.", [HELLHOUND_TAB]),
+    ];
+#else
+    [
         ("Play", "play", "Play and chat commands",
             // Niduus, 2026-11-11: the game overlay and its designer.
             "Play Wizard101, design the game overlay, and find every chat command.", ["Play", OVERLAY, "Commands"]),
@@ -99,6 +111,7 @@ internal sealed partial class ManagerWindow {
             // Niduus, 2026-11-09: "add credits to Ahziael".
             ["Guides", WHATS_NEW, CREDITS]),
     ];
+#endif
 
     private const string BOTS = "Bots";
 
@@ -147,7 +160,11 @@ internal sealed partial class ManagerWindow {
     /// <summary>The side bar: Home, then a page for each group with its tabs along the top.</summary>
     private TabControl Navigation(Dictionary<string, TabItem> tabs) {
         var items = new List<TabItem> {
+#if HELLHOUND
+            NavItem(HOME, "home", "Kill switch, every bot, pause, updates", HellhoundHome()),
+#else
             NavItem(HOME, "home", "Start here, search it all", HomePage()),
+#endif
         };
         if (AI_GUIDE_ON) {
             items.Add(NavItem(AI_GUIDE, "chat", "Ask about Ahziael, with your own key", AiGuidePage()));

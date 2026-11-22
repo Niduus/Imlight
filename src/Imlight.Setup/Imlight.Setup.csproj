@@ -21,6 +21,15 @@
     <DefineConstants>$(DefineConstants);MANAGER_EDITION</DefineConstants>
   </PropertyGroup>
 
+  <!-- dotnet publish -p:ImlightEdition=Hellhound builds Hellhound.exe: the bots' own app, Ahziael's bot pages in a window of
+       their own, with the kill switch, a live Watch page and updates from the private bots repo. It never runs the server. -->
+  <PropertyGroup Condition="'$(ImlightEdition)' == 'Hellhound'">
+    <AssemblyName>Hellhound</AssemblyName>
+    <DefineConstants>$(DefineConstants);MANAGER_EDITION;HELLHOUND</DefineConstants>
+    <ApplicationIcon>..\Hellhound\hellhound.ico</ApplicationIcon>
+    <OutputType>WinExe</OutputType>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Anthropic" Version="13.3.0" />
     <PackageReference Include="Avalonia" Version="11.3.22" />

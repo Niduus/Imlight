@@ -146,9 +146,9 @@ foreach ($record in ($log -split [char]0x1e)) {
     # Kept out of the app's notes (Niduus, 2026-11-22: "DO NOT MENTION ANY OF THESE CHANGES IN THE CHANGE LOG TO AHZIAEL.
     # ESPECIALLY THE DEPRECATION/KILLSWITCH"): Hellhound, the bots' own app (src/Hellhound, with the build files that only
     # build it), and any change whose message has a "No app notes" line.
-    $notApp = @($code | Where-Object { -not $_.StartsWith('src/Hellhound/') -and -not $_.StartsWith('bots/') -and
+    $notApp = @($code | Where-Object { -not $_.StartsWith('src/Hellhound/') -and $_ -notmatch '^src/Imlight\.Setup/(ManagerWindow\.)?Hellhound' -and -not $_.StartsWith('bots/') -and
         $_ -ne 'src/Imlight.sln' -and -not $_.StartsWith('.github/') })
-    $hellhound = @($code | Where-Object { $_.StartsWith('src/Hellhound/') }).Count -gt 0
+    $hellhound = @($code | Where-Object { $_.StartsWith('src/Hellhound/') -or $_ -match '^src/Imlight\.Setup/(ManagerWindow\.)?Hellhound' }).Count -gt 0
     if (-not $Bots -and $hellhound -and $notApp.Count -eq 0) { continue }
     # And out of the bot updates' public notes too (2026-11-22: bots-v165's notes named the bots' app): Hellhound and
     # anything marked "No app notes" stay out of every changelog.

@@ -25,7 +25,17 @@ namespace Imlight.Setup;
 /// </summary>
 internal static class Edition {
 
-#if MANAGER_EDITION
+#if HELLHOUND
+    // Hellhound, the bots' own app (Niduus, 2026-11-22): Ahziael's bot pages in a window of their own. It reads the server
+    // Ahziael installed, so the folder names are Ahziael's.
+    internal const bool IS_MANAGER = true;
+    internal const string NAME = "Hellhound";
+    internal static readonly string[] OLD_NAMES = [];
+    internal const string DEFAULT_REPOSITORY = "Niduus/Imlight";
+    internal const string INSTALL_FOLDER_NAME = "ImlightManager";
+    internal const string RELEASE_ASSET = "Hellhound.exe";
+    internal const string REGISTRY_KEY = "ImlightManager";
+#elif MANAGER_EDITION
     internal const bool IS_MANAGER = true;
     // The app's name everywhere it shows (Niduus, 2026-10-25: rename it from "Imlight Manager" to "Ahziael"). The exe,
     // install folder and Apps list key keep their old names, so updates and existing installs carry on as they were.

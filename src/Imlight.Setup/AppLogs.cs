@@ -147,7 +147,7 @@ internal static partial class AppLogs {
 
                 s_recent[key] = DateTime.UtcNow;
                 Directory.CreateDirectory(folder);
-                Append(Path.Combine(folder, $"ahziael-{DateTime.Now:yyyy-MM-dd}.txt"), Scrub(text.ToString()));
+                Append(Path.Combine(folder, $"{(Edition.NAME == "Hellhound" ? "hellhound" : "ahziael")}-{DateTime.Now:yyyy-MM-dd}.txt"), Scrub(text.ToString()));
                 var line = JsonSerializer.Serialize(new Event(DateTime.Now, kind, Scrub(what), Scrub(details), SelfUpdate.CurrentVersion.ToString()));
                 Append(Path.Combine(folder, $"{EVENTS}{DateTime.Now:yyyy-MM-dd}.jsonl"), line + "\n");
             }
@@ -255,7 +255,12 @@ internal static partial class AppLogs {
     // Opening safely
     // ---------------------------------------------------------------------
 
+#if HELLHOUND
+    // Hellhound keeps its own note, so it and Ahziael never put each other in safe start.
+    private const string OPENING = ".hellhound-opening";
+#else
     private const string OPENING = ".ahziael-opening";
+#endif
 
     /// <summary>
     /// Notes that Ahziael's window is being opened. If the app vanishes before <see cref="Opened"/> (a crash no error

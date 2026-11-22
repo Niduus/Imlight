@@ -1681,6 +1681,17 @@ internal static class OverlayHost {
             }
         }
 
+#if HELLHOUND
+        /// <summary>
+        /// Hellhound links to this PC's own server on its game port (the server tells the overlay and the game apart),
+        /// for the bots' maps, quests and battles. It writes no files: Ahziael's own overlay link is left as it is.
+        /// </summary>
+        internal static void Here(int port) {
+            SetTarget("127.0.0.1", port);
+            Start();
+        }
+
+#endif
         private static void SetTarget(string host, int port) {
             bool other;
             lock (s_lock) {

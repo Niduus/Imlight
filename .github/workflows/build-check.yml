@@ -55,7 +55,7 @@ jobs:
         run: dotnet build src/Imlight.Launcher/Imlight.Launcher.csproj -c Release
 
       - name: Build Hellhound (the bots app)
-        run: dotnet build src/Hellhound/Hellhound.csproj -c Release
+        run: dotnet build src/Imlight.Setup/Imlight.Setup.csproj -c Release -p:ImlightEdition=Hellhound
 
   server:
     name: Server build and Ultimus replay pack

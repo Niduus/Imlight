@@ -1,9 +1,16 @@
+#if HELLHOUND
+using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace Hellhound;
+namespace Imlight.Setup;
 
 /// <summary>
 /// Hellhound keeps itself up to date (Niduus, 2026-11-22: "Hellhound should auto update..."). It looks in the private bots
@@ -13,22 +20,34 @@ namespace Hellhound;
 /// window carries on by itself. The repo is private, so this needs a read-only GitHub key that Niduus pastes into
 /// Hellhound once; it is kept only in %LOCALAPPDATA%\Hellhound\github-key.txt and sent only to api.github.com.
 /// </summary>
-internal sealed class SelfUpdate(string[] args) {
+internal static class HellhoundUpdate {
+
+    /// <summary>What Hellhound was started with, passed on to the new copy.</summary>
+    internal static string[] Args { get; set; } = [];
+
+    /// <summary>Hellhound's own number, major.minor (Niduus: "0 is major, 2 is minor; updating bot logic doesn't qualify").</summary>
+    internal static string CurrentVersion {
+        get {
+            var v = typeof(HellhoundUpdate).Assembly.GetName().Version;
+            return v == null || (v.Major == 0 && v.Minor == 0) ? "dev" : "v" + v.Major + "." + v.Minor;
+        }
+    }
+
 
     private const string REPOSITORY = "Niduus/ahziael-bots";
     private static readonly TimeSpan s_every = TimeSpan.FromMinutes(30);
 
-    private readonly SemaphoreSlim _one = new(1, 1);
+    private static readonly SemaphoreSlim s_one = new(1, 1);
 
-    internal string State { get; private set; } = "Not looked yet.";
+    internal static string State { get; private set; } = "Not looked yet.";
 
-    internal string Latest { get; private set; } = "";
+    internal static string Latest { get; private set; } = "";
 
-    internal bool HasKey => Key() is not null;
+    internal static bool HasKey => Key() is not null;
 
-    private static string KeyFile => Path.Combine(AppWindow.DataFolder, "github-key.txt");
+    private static string KeyFile => Path.Combine(HellhoundStart.DataFolder, "github-key.txt");
 
-    internal void Start() => _ = Task.Run(async () => {
+    internal static void Start() => _ = Task.Run(async () => {
         await Task.Delay(TimeSpan.FromSeconds(20));
         while (true) {
             await CheckAsync();
@@ -37,7 +56,7 @@ internal sealed class SelfUpdate(string[] args) {
     });
 
     /// <summary>Saves the pasted key (after checking that it can read the bots repo) and looks for an update at once.</summary>
-    internal string SaveKey(string key) {
+    internal static string SaveKey(string key) {
         key = (key ?? "").Trim();
         if (key.Length is < 20 or > 400 || key.Any(char.IsWhiteSpace)) {
             return "That doesn't look like a GitHub key. Copy the whole key (it starts with github_pat_) and paste it again.";
@@ -54,15 +73,15 @@ internal sealed class SelfUpdate(string[] args) {
             return "Could not reach GitHub to check the key: " + e.Message;
         }
 
-        Directory.CreateDirectory(AppWindow.DataFolder);
+        Directory.CreateDirectory(HellhoundStart.DataFolder);
         File.WriteAllText(KeyFile, key);
         _ = Task.Run(CheckAsync);
 
         return "Key saved. Hellhound now keeps itself up to date.";
     }
 
-    internal async Task CheckAsync() {
-        if (!await _one.WaitAsync(0)) {
+    internal static async Task CheckAsync() {
+        if (!await s_one.WaitAsync(0)) {
             return;
         }
 
@@ -71,20 +90,20 @@ internal sealed class SelfUpdate(string[] args) {
         }
         catch (Exception e) {
             State = "Could not look for a Hellhound update: " + e.Message;
-            AppWindow.Log(State);
+            HellhoundStart.Log(State);
         }
         finally {
-            _one.Release();
+            s_one.Release();
         }
     }
 
-    private async Task CheckOnceAsync() {
+    private static async Task CheckOnceAsync() {
         if (Key() is not { } key) {
             State = "Off: Hellhound needs a GitHub key to read the private bots repo (see below).";
             return;
         }
 
-        var mine = Number(ServerFiles.AppVersion);
+        var mine = Number(CurrentVersion);
         using var http = Client(key);
         using var list = JsonDocument.Parse(await http.GetStringAsync($"https://api.github.com/repos/{REPOSITORY}/releases?per_page=30"));
         JsonElement? best = null;
@@ -139,7 +158,7 @@ internal sealed class SelfUpdate(string[] args) {
 
     // The running exe can be renamed but not overwritten: rename it, write the new one in its place, start it on the
     // same address and step aside.
-    private void Swap(byte[] bytes) {
+    private static void Swap(byte[] bytes) {
         var exe = Environment.ProcessPath ?? throw new InvalidOperationException("Hellhound does not know where it is.");
         var old = Path.Combine(Path.GetDirectoryName(exe)!, "Hellhound.old.exe");
         var fresh = exe + ".new";
@@ -150,16 +169,16 @@ internal sealed class SelfUpdate(string[] args) {
 
         File.Move(exe, old);
         File.Move(fresh, exe);
-        AppWindow.Log($"Updated itself to {Latest}; starting it.");
+        HellhoundStart.Log($"Updated itself to {Latest}; starting it.");
         State = $"Updated to {Latest}. Restarting...";
 
         var start = new ProcessStartInfo(exe) { UseShellExecute = false };
-        foreach (var arg in args.Where(a => a != "--after-update")) {
+        foreach (var arg in Args.Where(a => a != "--after-update")) {
             start.ArgumentList.Add(arg);
         }
 
         start.ArgumentList.Add("--after-update");
-        Program.LetGo();
+        HellhoundStart.LetGo();
         Process.Start(start)?.Dispose();
         Environment.Exit(0);
     }
@@ -199,3 +218,4 @@ internal sealed class SelfUpdate(string[] args) {
         return http;
     }
 }
+#endif

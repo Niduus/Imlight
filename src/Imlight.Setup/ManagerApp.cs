@@ -47,7 +47,13 @@ internal sealed class ManagerApp : Application {
     /// </summary>
     internal static int Run(string installFolder, bool startServer = false) {
         StartServerOnOpen = startServer;
+#if HELLHOUND
+        // Hellhound only watches and steers the bots: it never starts or stops the server (Ahziael does).
+        StartServerOnOpen = false;
+        KeepServerRunning = true;
+#else
         Console.Title = Edition.NAME;
+#endif
         // Written down from the very first step, so even a start that fails before the window shows leaves a reason
         // (Niduus, 2026-11-12: a player's Ahziael flashed in the taskbar and closed, with nothing to go on).
         AppLogs.Start(installFolder);

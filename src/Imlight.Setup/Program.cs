@@ -92,6 +92,16 @@ internal static class Program {
     }
 
     private static async Task<int> Main(string[] args) {
+#if HELLHOUND
+        // Hellhound.exe: the bots' own app, never the setup (HellhoundStart.cs).
+        await Task.CompletedTask;
+        return HellhoundStart.Run(args);
+#else
+        return await SetupMainAsync(args);
+#endif
+    }
+
+    private static async Task<int> SetupMainAsync(string[] args) {
         SetupOptions options;
         try {
             options = SetupOptions.Parse(args);

@@ -525,7 +525,13 @@ internal static class OverlayUltimusData {
 
             var watching = (string?) answer["watching"] ?? "";
             lock (s_lock) {
+#if HELLHOUND
+                // Hellhound keeps the bot picked even while it drops off the server's list for a moment (Niduus, 2026-11-22:
+                // the map "loses target focus and defaults to tulkar every so often").
+                if (s_anyoneId.Length == 0) {
+#else
                 if (s_anyoneId.Length == 0 || s_everyone.All(p => p.Id != s_anyoneId)) {
+#endif
                     s_anyoneId = watching;
                 }
                 else if (watching.Length > 0 && watching != s_anyoneId) {
