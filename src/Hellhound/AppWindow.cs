@@ -8,6 +8,11 @@ namespace Hellhound;
 /// name), with a profile folder of its own under %LOCALAPPDATA%\Hellhound, so the window is Hellhound's alone. Closing the
 /// window closes Hellhound. Without Edge or Chrome it falls back to the default browser and keeps running until the PC
 /// signs out or it is ended in Task Manager.
+///
+/// Never signed in, never synced (Niduus, 2026-11-22, on Edge's "we are now syncing your browsing data" popup: "I DO NOT
+/// WANT THIS"): Edge signs a new profile in with the Windows account by itself, so Hellhound opens Edge InPrivate (an
+/// InPrivate window is never signed in and never syncs), with sync and sign-in switched off as well, and removes the
+/// old "window" profile folder that Edge had signed in.
 /// </summary>
 internal static class AppWindow {
 
@@ -17,10 +22,19 @@ internal static class AppWindow {
     /// <summary>Opens the window and returns its process (null when only the default browser could open it).</summary>
     internal static Process? Open(string url) {
         if (Engine() is { } engine) {
+            ForgetSignedInProfile();
             var start = new ProcessStartInfo(engine) { UseShellExecute = false };
-            foreach (var arg in new[] {
-                         "--app=" + url, "--user-data-dir=" + Path.Combine(DataFolder, "window"), "--window-size=1240,940",
-                         "--no-first-run", "--no-default-browser-check", "--disable-features=Translate" }) {
+            var edge = Path.GetFileName(engine).Equals("msedge.exe", StringComparison.OrdinalIgnoreCase);
+            var args = new List<string> {
+                "--app=" + url, "--user-data-dir=" + Path.Combine(DataFolder, "private-window"), "--window-size=1240,940",
+                "--no-first-run", "--no-default-browser-check", "--disable-sync", "--disable-signin-promo",
+                "--disable-features=Translate,msImplicitSignin,msEdgeSync,msSigninPromo,EdgeSignin",
+            };
+            if (edge) {
+                args.Add("--inprivate");
+            }
+
+            foreach (var arg in args) {
                 start.ArgumentList.Add(arg);
             }
 
@@ -40,6 +54,20 @@ internal static class AppWindow {
         }
 
         return null;
+    }
+
+    // The first Hellhound window used %LOCALAPPDATA%\Hellhound\window, which Edge signed in to the Windows account.
+    private static void ForgetSignedInProfile() {
+        var old = Path.Combine(DataFolder, "window");
+        try {
+            if (Directory.Exists(old)) {
+                Directory.Delete(old, recursive: true);
+                Log("Removed the old window profile that Edge had signed in.");
+            }
+        }
+        catch (Exception e) {
+            Log("Could not remove the old window profile yet: " + e.Message);
+        }
     }
 
     // Edge first (on every Windows 10 and 11 PC), then Chrome.
