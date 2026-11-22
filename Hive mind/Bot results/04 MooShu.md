@@ -3,7 +3,7 @@
 What the bots did in MooShu, from the server log: every quest finished, every fight won (to copy), every fight lost and every place they got stuck (to avoid). Solo means the bot fought alone; Team means another of our bots won the same fight with it. Updated after each bots update.
 
 ## Best way to beat each creature
-- Haru: won 220 time(s) (29 Solo, 191 Team), lost 4. Fastest: Kurrent in 1 rounds, deck for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
+- Haru: won 224 time(s) (33 Solo, 191 Team), lost 4. Fastest: Kurrent in 1 rounds, deck for a boss (Myth), hitting with Myth, Balance, Storm (most of my fights lately had 2+ enemies).
 - Ronin Keyholder: won 11 time(s) (9 Solo, 2 Team), lost 26. Fastest: Cyndr in 4 rounds, plan "hit now", deck for a boss (Ice), hitting with Ice, Fire, Life; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Immolate.
 - Imitsu Defouler: won 31 time(s) (31 Solo, 0 Team), lost 2. Fastest: Cyndr in 4 rounds, plan "hit now", deck for Myth enemies, hitting with Myth, Storm, Fire (most of my fights lately had 2+ enemies), hits with Immolate.
 - Shoji: won 30 time(s) (14 Solo, 16 Team), lost 1. Fastest: Mythis in 4 rounds, plan "hit now", deck for a boss (Balance), hitting with Balance, Life, Death (many of my fights lately had 2+ enemies), hits with Minor Heroic Hit, Cyclops, Banshee.
@@ -1278,6 +1278,22 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
   It took 6 rounds, about 4 minutes.
   Deck made for a boss (Myth), hitting with Myth, Balance, Storm; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
   Spells that landed the hits: Heck Hound.
+- Won by Cyndr (Solo) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 20:22:01.
+  It took 5 rounds, about 3 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Sunbird.
+- Won by Cyndr (Solo) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 20:25:54.
+  It took 6 rounds, about 3 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Heck Hound, Elemental Shield.
+- Won by Cyndr (Solo) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 20:29:29.
+  It took 7 rounds, about 3 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Pixie.
+- Won by Cyndr (Solo) against Haru (rank 6, 1,480 health, Myth, a boss) on 2026-11-21 at 20:33:11.
+  It took 7 rounds, about 3 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Balance, Storm; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Fairy.
 - Avoid, fights lost:
   - Ideyoshi: lost 1 time(s) (Ultimus). Why: I went in at 80% health, the fight ran 7 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Ideyoshi: lost 1 time(s) (Ultimus). Why: I went in at 47% health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.

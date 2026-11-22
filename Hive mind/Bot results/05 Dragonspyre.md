@@ -3,7 +3,7 @@
 What the bots did in Dragonspyre, from the server log: every quest finished, every fight won (to copy), every fight lost and every place they got stuck (to avoid). Solo means the bot fought alone; Team means another of our bots won the same fight with it. Updated after each bots update.
 
 ## Best way to beat each creature
-- Loathsome Creeper: won 95 time(s) (66 Solo, 29 Team), lost 0. Fastest: Ra in 2 rounds, deck for any fight (many of my fights lately had 2+ enemies), hits with Judgement.
+- Loathsome Creeper: won 98 time(s) (67 Solo, 31 Team), lost 0. Fastest: Ra in 1 rounds, deck for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
 - Petrov Gloomstrider: won 52 time(s) (52 Solo, 0 Team), lost 1. Fastest: Ultimus in 5 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hits with Judgement, Elemental Shield, Gearhead Destroyer, Minor Crusade.
 - Sea Lord: never beaten yet, lost 29 time(s). Most common reason: its biggest hit took 90% of my health, the fight ran 6 minutes, so I ran out of good cards.
 - Earth Elemental: won 1 time(s) (1 Solo, 0 Team), lost 4. Fastest: Ultimus in 31 rounds, deck for a boss (Life), hitting with Life, Fire, Storm; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Helping Hands, Spirit Shield, Elemental Shield, Fairy.
@@ -804,11 +804,25 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
   Plan: "hit now" (mine and every other bot's).
   Spells that landed the hits: Banshee, Skeletal Pirate.
+- Won by Ra (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 20:22:22.
+  It took 12 rounds, about 3 minutes.
+  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Minor Crusade x4, Sandstorm x2, Judgement x2, Helping Hands x2, Spectral Blast, Ice Hound, Heck Hound, Gearhead Destroyer.
+- Won by Ra (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 20:23:12.
+  It took 1 rounds, about 1 minutes.
+  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
+- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 20:26:36.
+  It took 5 rounds, about 3 minutes.
+  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Spectral Blast x2, Minor Crusade x2, Judgement.
 - Avoid, places bots got stuck:
   - The Tower Archives near (12300, -7200) while Use Yellow Crystal here ("The Towering Crystal"): stuck 1 time(s) (Ultimus).
   - The Tower Archives near (6700, -1000) while Use Yellow Crystal here ("The Towering Crystal"): stuck 1 time(s) (Garm).
   - The Tower Archives near (7100, -1000) while Use Yellow Crystal here ("The Towering Crystal"): stuck 1 time(s) (Garm).
   - The Tower Archives near (12300, 19900) while in a battle: stuck 1 time(s) (Ra).
+  - The Basilica near (200, -500) while waiting to be in the game: stuck 1 time(s) (Ra).
 
 ## Bad Blood
 - Finished by Ultimus (12 min).
