@@ -330,6 +330,17 @@ internal static class PetHatching {
     /// </summary>
     internal const int KIOSK_SHOWN_TALENTS = 10;
 
+    /// <summary>
+    /// The most talents a pet shows revealed (Niduus, 2026-11-21: "only 5 talents can be revealed at a time").
+    /// </summary>
+    internal const int MOST_REVEALED = 5;
+
+    /// <summary>
+    /// The talents another player's kiosk pet shows revealed: its own revealed talents, at most MOST_REVEALED.
+    /// </summary>
+    internal static List<uint> KioskRevealedTalents(PetParent parent)
+        => [.. (parent?.ExpressedTalents ?? []).Where(id => id != 0 && PetTalentRegistry.TryGetById(id, out _)).Distinct().Take(MOST_REVEALED)];
+
     private static List<uint> s_commonSelfish;
 
     /// <summary>
@@ -344,11 +355,8 @@ internal static class PetHatching {
             return shown;
         }
 
-        foreach (var id in parent.ExpressedTalents ?? []) {
-            if (shown.Count < KIOSK_SHOWN_TALENTS && id != 0 && !shown.Contains(id) && PetTalentRegistry.TryGetById(id, out _)) {
-                shown.Add(id);
-            }
-        }
+        // Its revealed talents first; the other slots are still hidden and show only how rare they are.
+        shown.AddRange(KioskRevealedTalents(parent));
 
         var pool = CommonSelfishTalents().Where(id => !shown.Contains(id)).ToList();
         var random = new Random(unchecked((int) (parent.ItemId ^ (parent.ItemId >> 32))));
@@ -380,7 +388,7 @@ internal static class PetHatching {
             Label = parent.Label,
             Talents = [.. shown],
             DerbyTalents = [.. parent.DerbyTalents ?? []],
-            ExpressedTalents = [.. shown],
+            ExpressedTalents = KioskRevealedTalents(parent),
             ExpressedDerbyTalents = [.. parent.ExpressedDerbyTalents ?? []],
             MaxStats = [.. parent.MaxStats ?? []],
             PrimaryColor = parent.PrimaryColor,

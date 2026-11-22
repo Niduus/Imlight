@@ -1,0 +1,4 @@
+Fixed: Kiosk pets show 5 revealed talents, Browse Pets has no blank names, and the kiosk has far more pets
+Another player's pet at the Pet Hatching Kiosk now shows at most 5 revealed talents, like any pet, and its other slots show how rare they are instead of being revealed. Pet kinds the game has no name for are left out, so Browse Pets no longer starts with pages of blank names. The kiosk now makes about twenty thousand of its own pets, many with mixes of popular talents like Spell-Proof, Spell-Defying and Mighty, so searches for common combinations find thousands of pets. Search Pet Talents looks for at most 10 picked talents.
+Where: Any Pet Hatching Kiosk, Browse Pets and Search Pet Talents.
+Test: Open Browse Pets and check the first page has names, then search for Spell-Proof, Spell-Defying and Mighty and open a few pets to check each shows 5 or fewer revealed talents.

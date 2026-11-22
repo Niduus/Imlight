@@ -79,17 +79,20 @@ internal static class KioskHousePets {
     internal const string FILE = "pet.kiosk";
 
     // Raise when the builds change, so every server makes a new pet.kiosk.
-    private const int VERSION = 2;
+    private const int VERSION = 4;
 
     private const int MEGA = 6;
     private const int ADULT = 3;
     private const int GENES = 10;
 
     // How many kiosk pets show each searchable talent at least.
-    private const int PETS_PER_TALENT = 3;
+    private const int PETS_PER_TALENT = 10;
 
     // How many built-for-a-job pets each pet kind gets.
-    private const int BUILDS_PER_KIND = 2;
+    private const int BUILDS_PER_KIND = 4;
+
+    // How many pets of each kind carry a random mix of popular talents (damage, defense and selfish stats).
+    private const int MIXES_PER_KIND = 6;
 
     private static readonly string[] s_schools = ["Fire", "Ice", "Storm", "Myth", "Life", "Death", "Balance"];
 
@@ -219,13 +222,15 @@ internal static class KioskHousePets {
         _ = PetTalentRegistry.Instance;
         _ = CoreObjectFactory.Instance;
         _ = WizardNameBank.Instance;
+        _ = Locale.Instance;
         var started = DateTime.UtcNow;
         var file = new KioskHouseFile { Version = VERSION, MinAge = age, MadeAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
         var random = new Random(20261121);
         var builds = Builds();
+        var mixes = new Mixes();
         var kinds = PetFactory.AllPetTemplates.Keys.OrderBy(id => id)
             .Select(id => (Id: id, Template: PetFactory.GetPetItemBehaviorTemplate(id)))
-            .Where(k => k.Template is { m_talents.Count: > 0 } && MaxLevel(k.Template) >= ADULT && !IsDevPet(k.Id))
+            .Where(k => k.Template is { m_talents.Count: > 0 } && MaxLevel(k.Template) >= ADULT && !IsDevPet(k.Id) && HasName(k.Id))
             .ToList();
 
         foreach (var (id, template) in kinds) {
@@ -241,9 +246,20 @@ internal static class KioskHousePets {
                 Add(file, id, template, "young", Shuffled(own, random), random.Next(Math.Max(1, age), ADULT), random, statShare: random.NextDouble() * 0.4);
             }
 
+            // Another one raised any old way, so every kind has a few players' pets.
+            Add(file, id, template, "raised", Shuffled(own, random), random.Next(ADULT, top + 1), random, statShare: 0.4 + random.NextDouble() * 0.6);
+
             // Built for a job: the job's talents first, so they are the ones shown, then its own pool.
             foreach (var (name, talents) in builds.OrderBy(_ => random.Next()).Take(BUILDS_PER_KIND)) {
                 Add(file, id, template, name, [.. talents, .. Shuffled(own, random)], top, random, statShare: 1);
+            }
+
+            // A mix of popular talents, the way players hatch for them (Spell-Proof, Spell-Defy, Mighty, Pain-Giver and the
+            // like), so searches for common combinations find many pets (Niduus, 2026-11-21: "more pets, more combos").
+            for (var i = 0; i < MIXES_PER_KIND; i++) {
+                var (name, talents) = mixes.Mix(random);
+                Add(file, id, template, name, [.. talents, .. Shuffled(own, random)], Math.Max(MEGA, Math.Min(top, MEGA + random.Next(2))),
+                    random, statShare: 0.8 + random.NextDouble() * 0.2);
             }
         }
 
@@ -331,8 +347,9 @@ internal static class KioskHousePets {
 
         behavior.m_allTalents = [.. genes.Where(id => id != 0 && PetTalentRegistry.TryGetById(id, out _) && !IsDevTalent(id)).Distinct().Take(GENES)];
         behavior.m_allDerbyTalents = [.. PetProgression.RollGenes(template.m_guaranteedDerbyTalents, template.m_derbyTalents, random).Where(id => !IsDevTalent(id))];
-        behavior.m_expressedTalents = [.. behavior.m_allTalents.Take(behavior.m_level - 1)];
-        behavior.m_expressedDerbyTalents = [.. behavior.m_allDerbyTalents.Take(behavior.m_level - 1)];
+        var revealed = Math.Min(behavior.m_level - 1, PetHatching.MOST_REVEALED);
+        behavior.m_expressedTalents = [.. behavior.m_allTalents.Take(revealed)];
+        behavior.m_expressedDerbyTalents = [.. behavior.m_allDerbyTalents.Take(revealed)];
         behavior.m_maxStats = [.. (template.m_maxStats ?? []).Where(s => s is not null).Select(s => Stat(s.m_name, CappedMax(s)))];
         behavior.m_currentStats = [.. behavior.m_maxStats.Select(s => Stat(s.m_name,
             Math.Max(1, (int) Math.Round(s.m_value * Math.Clamp(statShare, 0, 1)))))];
@@ -370,6 +387,15 @@ internal static class KioskHousePets {
     internal static bool IsDevPet(uint templateId)
         => CoreObjectFactory.GetCoreTemplate(templateId) is GameObjectTemplate template
             && (IsDevWord(template.m_objectName.ToString()) || IsDevWord(PetHatching.KindName(templateId)));
+
+    /// <summary>
+    /// A pet kind the game has an English name for. Kinds without one showed as blank rows at the top of Browse Pets
+    /// (Niduus, 2026-11-21); the game never gives them to players.
+    /// </summary>
+    private static bool HasName(uint templateId)
+        => CoreObjectFactory.GetCoreTemplate(templateId) is GameObjectTemplate template
+            && template.m_displayName.ToString() is { Length: > 0 } key
+            && !string.IsNullOrWhiteSpace(Locale.GetEnglishName(key));
 
     /// <summary>
     /// A developer's talent (Talent-PetPower-Test1 and the like).
@@ -430,6 +456,56 @@ internal static class KioskHousePets {
         Build("selfish stats", Best("Stat01-Str", 1), Best("Stat01-Int", 1), Best("Stat01-Agi", 1), Best("Stat01-Will", 1), Best("Stat01-Pwr", 1));
 
         return builds;
+    }
+
+    /// <summary>
+    /// Popular talents by what they do, for random mixes: damage (one school or every school, critical, pierce, accuracy,
+    /// pips), defense (resist, health, block, stun resist, healing) and selfish stats.
+    /// </summary>
+    private sealed class Mixes {
+
+        private readonly Dictionary<string, List<uint>> _damageBySchool = [];
+        private readonly List<uint> _damageAll;
+        private readonly List<uint> _defense;
+        private readonly List<uint> _selfish;
+
+        internal Mixes() {
+            _damageAll = [.. Best("Damage-All"), .. Best("CriticalHit-All", 1), .. Best("ArmorPiercing-All"), .. Best("Accuracy-All", 1),
+                .. Best("Pips", 1), .. Best("PipConversion-All", 1)];
+            foreach (var school in s_schools) {
+                _damageBySchool[school] = [.. Best("Damage-" + school), .. Best("CriticalHit-" + school, 1), .. Best("Accuracy-" + school, 1)];
+            }
+
+            _defense = [.. Best("Resist-All"), .. Best("Resist-All"), .. Best("Health"), .. Best("Block-All", 1), .. Best("StunResistance", 1),
+                .. Best("LifeHealing", 1), .. Best("IncHealing", 1)];
+            _selfish = [.. Best("Stat01-Str"), .. Best("Stat01-Int"), .. Best("Stat01-Agi"), .. Best("Stat01-Will"), .. Best("Stat01-Pwr"),
+                .. Searchable().Where(t => t.Name.StartsWith("Talent-Stat02-", StringComparison.Ordinal)).OrderByDescending(t => t.Rank).Take(10).Select(t => t.Id)];
+        }
+
+        internal (string Name, List<uint> Talents) Mix(Random random) {
+            var school = s_schools[random.Next(s_schools.Length)];
+            var damage = _damageBySchool[school].Concat(_damageAll).ToList();
+            var picks = new List<uint>();
+
+            void Take(List<uint> from, int count) {
+                for (var i = 0; i < count && from.Count > 0; i++) {
+                    var id = from[random.Next(from.Count)];
+                    if (!picks.Contains(id)) {
+                        picks.Add(id);
+                    }
+                }
+            }
+
+            var hits = 1 + random.Next(3);
+            var guards = 1 + random.Next(3);
+            Take(damage, hits);
+            Take(_defense, guards);
+            Take(_selfish, Math.Max(1, PetHatching.MOST_REVEALED - picks.Count));
+            Take(_defense, PetHatching.MOST_REVEALED - picks.Count);
+
+            return ($"{school} mix", [.. picks.OrderBy(_ => random.Next())]);
+        }
+
     }
 
     /// <summary>

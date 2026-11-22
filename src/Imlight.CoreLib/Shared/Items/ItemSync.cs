@@ -119,8 +119,8 @@ internal static class ItemSync {
     /// kept in 0.10.956). Null when it cannot be read.
     /// </summary>
     /// <param name="itemData">The kept item.</param>
-    /// <param name="shownTalents">When set, the copy sent shows these as the pet's talents, all revealed (another
-    /// player's kiosk pet, see PetHatching.KioskShownTalents). The kept item is not changed.</param>
+    /// <param name="shownTalents">When set, the copy sent has these as the pet's talents, with only its own revealed ones
+    /// revealed (another player's kiosk pet, see PetHatching.KioskShownTalents). The kept item is not changed.</param>
     internal static byte[] KioskPetBytes(string itemData, System.Collections.Generic.List<uint> shownTalents = null) {
         if (string.IsNullOrEmpty(itemData)) {
             return null;
@@ -138,10 +138,12 @@ internal static class ItemSync {
             }
 
             if (shownTalents is { Count: > 0 } && item.m_inactiveBehaviors?.OfType<ClientPetItemBehavior>().FirstOrDefault() is { } pet) {
+                // Only the pet's own revealed talents stay revealed, five at most; the rest show as hidden slots.
+                var revealed = pet.m_expressedTalents ?? [];
                 pet.m_allTalents = [.. shownTalents];
-                pet.m_expressedTalents = [.. shownTalents];
+                pet.m_expressedTalents = [.. shownTalents.Where(revealed.Contains).Take(Imlight.CoreLib.Game.Pet.PetHatching.MOST_REVEALED)];
                 pet.m_allDerbyTalents ??= [];
-                pet.m_expressedDerbyTalents ??= [];
+                pet.m_expressedDerbyTalents = [.. (pet.m_expressedDerbyTalents ?? []).Take(Imlight.CoreLib.Game.Pet.PetHatching.MOST_REVEALED)];
                 Imlight.CoreLib.Game.Pet.PetProgression.RefreshRatings(pet);
             }
 

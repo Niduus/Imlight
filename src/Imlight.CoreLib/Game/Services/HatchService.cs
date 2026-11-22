@@ -1950,6 +1950,13 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
         KioskLink.Visit();
         try {
             var wanted = SearchedTalents(message.Data);
+            // At most ten talents count in one search (Niduus, 2026-11-21: "cap this to 10 talents"); the game's list
+            // lets a player pick more, so the rest are left out and the player is told.
+            if (wanted.Count > KIOSK_MOST_SEARCHED) {
+                InformGameClient($"Only the first {KIOSK_MOST_SEARCHED} talents you picked are searched for.");
+                wanted = [.. wanted.Take(KIOSK_MOST_SEARCHED)];
+            }
+
             var everyOne = message.SearchType == 0;
             // Players' pets first, then the kiosk's own that show the most of the wanted talents; a talent many kiosk
             // pets show would make a list too long to send, so it is cut at KIOSK_MOST_SHOWN.
@@ -2259,6 +2266,9 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
 
     // The most pets one Browse Pets or Search Pet Talents answer lists; the kiosk's own pets alone are thousands.
     private const int KIOSK_MOST_SHOWN = 100;
+
+    // The most talents one Search Pet Talents looks for.
+    private const int KIOSK_MOST_SEARCHED = 10;
 
     private static HatchmakingPetsList PetsList(System.Collections.Generic.IEnumerable<HatchmakingListing> listings) => new() {
         m_hatchmakingPetsList = [.. listings.Select(l => new HatchmakingPet {
