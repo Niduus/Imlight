@@ -10,24 +10,24 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Sysiphan: won 5 time(s) (5 Solo, 0 Team), lost 5. Fastest: Ra in 6 rounds, plan "stack up", deck for a boss (Ice), hitting with Ice, Fire, Death; alone, so single hits only; my own fights say about 61% hits in my main deck (most of my fights lately had 2+ enemies), hits with Gearhead Destroyer, Judgement.
 - Wandering Wizard: won 8 time(s) (6 Solo, 2 Team), lost 0. Fastest: Ultimus in 2 rounds, deck for Life enemies, hitting with Life, Fire, Storm (most of my fights lately had 2+ enemies).
 - Earth Elemental: won 2 time(s) (2 Solo, 0 Team), lost 4. Fastest: Ra in 18 rounds, plan "stack up", deck for a boss (Life), hitting with Life, Fire, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement, Helping Hands, Spectral Blast.
+- Silver Servant: won 3 time(s) (3 Solo, 0 Team), lost 1. Fastest: Ultimus in 6 rounds, deck for Balance enemies, hitting with Balance, Myth, Death (most of my fights lately had 2+ enemies), hits with Balance, Banshee.
 - Mavra Flamewing: won 2 time(s) (2 Solo, 0 Team), lost 2. Fastest: Ultimus in 15 rounds, deck for a boss (Storm), hitting with Storm, Fire, Ice (many of my fights lately had 2+ enemies), hits with Balance, Helping Hands, Sandstorm, Vampire.
 - Vasek Ashweaver: won 1 time(s) (1 Solo, 0 Team), lost 3. Fastest: Ultimus in 16 rounds, plan "stack up", deck for a boss (Death), hitting with Death, Ice, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Dryad, Flowering Dryad, Satyr, Judgement.
-- Silver Servant: won 2 time(s) (2 Solo, 0 Team), lost 1. Fastest: Ultimus in 6 rounds, deck for Balance enemies, hitting with Balance, Myth, Death (most of my fights lately had 2+ enemies), hits with Balance, Banshee.
+- Burning Hate: won 3 time(s) (3 Solo, 0 Team), lost 0. Fastest: Ra in 5 rounds, deck for Fire enemies, hitting with Fire, Death, Myth; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies), hits with Minor Crusade, Judgement.
+- Irate Banshee: won 3 time(s) (3 Solo, 0 Team), lost 0. Fastest: Ra in 7 rounds, plan "hit now", deck for Death enemies, hitting with Death, Myth, Fire; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement, Minor Crusade, Spectral Blast.
+- Clockwork Defender: won 2 time(s) (2 Solo, 0 Team), lost 1. Fastest: Ultimus in 4 rounds, deck for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Minor Crusade.
 - Sandor Spearcaller: won 2 time(s) (2 Solo, 0 Team), lost 1. Fastest: Ra in 6 rounds, deck for a boss (Ice), hitting with Ice, Balance, Death; alone, so single hits only; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies), hits with Locust Swarm.
-- Burning Hate: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ra in 5 rounds, deck for Fire enemies, hitting with Fire, Death, Myth; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies), hits with Minor Crusade, Judgement.
-- Irate Banshee: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ra in 7 rounds, plan "hit now", deck for Death enemies, hitting with Death, Myth, Fire; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement, Minor Crusade, Spectral Blast.
+- Terrorwing Warlock: won 3 time(s) (3 Solo, 0 Team), lost 0. Fastest: Ultimus in 7 rounds, plan "hit now", deck for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement, Minor Crusade, Gearhead Destroyer.
 - Beghastion Crowcaller: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ultimus in 5 rounds, deck for Death enemies, hitting with Death, Ice, Storm (many of my fights lately had 2+ enemies), hits with Helping Hands, Spirit Shield, Gearhead Destroyer.
-- Clockwork Defender: won 1 time(s) (1 Solo, 0 Team), lost 1. Fastest: Ultimus in 4 rounds, deck for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Minor Crusade.
+- Ash Spider: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ultimus in 3 rounds, deck for Life enemies, hitting with Life, Fire, Storm; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement, Sandstorm.
+- Fire Avenger: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ra in 6 rounds, plan "hit now", deck for Fire enemies, hitting with Fire, Myth; my own fights say about 64% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement, Minor Crusade, Gearhead Destroyer.
 - Crystal Crawler: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ra in 6 rounds, plan "hit now", deck for any fight; my own fights say about 64% hits in my main deck (many of my fights lately had 2+ enemies), hits with Spectral Blast, Minor Crusade, Elemental Shield, Locust Swarm.
-- Ash Spider: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 3 rounds, deck for Life enemies, hitting with Life, Fire, Storm; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement, Sandstorm.
-- Fire Avenger: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 8 rounds, plan "hit now", deck for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement, Gearhead Destroyer, Locust Swarm.
 - Erratic Servator: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 2 rounds, deck for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement.
 - General Firetusk: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 15 rounds, plan "stack up", deck for a boss (Fire), hitting with Fire, Myth; alone, so single hits only; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement, Sun Shield, Satyr.
 - Bone Warrior: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 6 rounds, plan "hit now", deck for Balance enemies, hitting with Balance, Death, Ice; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Spectral Blast, Minor Crusade, Locust Swarm.
 - Beghastion Fieldburner: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 6 rounds, deck for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Balance, Sandstorm, Locust Swarm, Minor Crusade.
 - Ghost of Sylvia Drake: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 8 rounds, plan "stack up", deck for a boss (Life), hitting with Life, Fire, Death; alone, so single hits only; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement.
 - Tamauji: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Kurrent in 7 rounds, deck for a boss (Myth), hitting with Myth, Death, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies), hits with Thermic Golem, Moon Shield, Fairy.
-- Terrorwing Warlock: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 11 rounds, plan "hit now", deck for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Minor Crusade, Gearhead Destroyer, Sandstorm, Satyr.
 
 ## Wizard and Crystal
 - Finished by Ultimus (19 min).
@@ -450,6 +450,20 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   It took 7 rounds, about 1 minutes.
   Deck made for Death enemies, hitting with Death, Ice, Storm; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies).
   Spells that landed the hits: Sandstorm, Locust Swarm, Fairy, Judgement.
+- Won by Garm (Solo) against Burning Hate (rank 6, 670 health, Fire) on 2026-11-22 at 02:32:15.
+  It took 7 rounds, about 5 minutes.
+  Deck made for Fire enemies, hitting with Fire, Death, Myth; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies).
+  Spells that landed the hits: Poison, Dark Sprite.
+- Won by Garm (Solo) against Irate Banshee (rank 6, 785 health, Death) on 2026-11-22 at 02:37:15.
+  It took 10 rounds, about 5 minutes.
+  Deck made for Death enemies, hitting with Death, Myth, Fire; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Leprechaun x2, Evil Snowman x2, Banshee.
+- Won by Garm (Solo) against Silver Servant (rank 7, 810 health, Balance) on 2026-11-22 at 02:41:42.
+  It took 7 rounds, about 4 minutes.
+  Deck made for Balance enemies, hitting with Balance, Myth, Death; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Skeletal Pirate, Dark Sprite, Poison, Banshee.
 - Avoid, fights lost:
   - Silver Servant: lost 1 time(s) (Ultimus). Why: I went in at 63% health, the fight ran 5 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 - Avoid, places bots got stuck:
@@ -567,6 +581,20 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   It took 2 rounds, about 1 minutes.
   Deck made for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
   Spells that landed the hits: Judgement.
+- Won by Ra (Solo) against Clockwork Defender (rank 7, 760 health, Storm) on 2026-11-22 at 02:37:13.
+  It took 11 rounds, about 8 minutes.
+  Deck made for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 64% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Judgement x3, Helping Hands x2, Locust Swarm, Minor Crusade, Spectral Blast.
+- Won by Ra (Solo) against Ash Spider (rank 7, 685 health, Life) on 2026-11-22 at 02:39:45.
+  It took 3 rounds, about 2 minutes.
+  Deck made for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 64% hits in my main deck (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Judgement x2, Sandstorm.
+- Won by Ra (Solo) against Fire Avenger (rank 8, 765 health, Fire) on 2026-11-22 at 02:44:00.
+  It took 6 rounds, about 4 minutes.
+  Deck made for Fire enemies, hitting with Fire, Myth; my own fights say about 64% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Judgement x3, Minor Crusade x2, Gearhead Destroyer.
 - Avoid, fights lost:
   - Clockwork Defender: lost 1 time(s) (Ultimus). Why: I went in at 38% health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 
@@ -1332,15 +1360,37 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 ## Welcome to the Academy
 - Finished by Ultimus (19 s).
 
-## Torchure
-- Won by Kurrent (Solo) against Tamauji (rank 6, 1,480 health, Myth, a boss) on 2026-11-22 at 00:39:40.
-  It took 7 rounds, about 5 minutes.
-  Deck made for a boss (Myth), hitting with Myth, Death, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Thermic Golem x2, Moon Shield, Fairy.
-
 ## Textbook Example
+- Finished by Ultimus (21 min).
 - Won by Ultimus (Solo) against Terrorwing Warlock (rank 8, 765 health, Fire) on 2026-11-22 at 02:27:26.
   It took 11 rounds, about 6 minutes.
   Deck made for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
   Plan: "hit now" (mine and every other bot's).
   Spells that landed the hits: Minor Crusade x3, Gearhead Destroyer x3, Sandstorm x2, Satyr x2, Judgement, Fairy, Elemental Shield.
+- Won by Ultimus (Solo) against Terrorwing Warlock (rank 8, 765 health, Fire) on 2026-11-22 at 02:31:39.
+  It took 7 rounds, about 4 minutes.
+  Deck made for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Judgement x4, Minor Crusade, Gearhead Destroyer.
+- Won by Ultimus (Solo) against Terrorwing Warlock (rank 8, 765 health, Fire) on 2026-11-22 at 02:36:33.
+  It took 7 rounds, about 5 minutes.
+  Deck made for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
+  Spells that landed the hits: Minor Crusade, Fairy, Judgement.
+
+## Et tu, Statue?
+- Finished by Ultimus (3 min).
+
+## Enter the Dragon Rider
+- Finished by Ultimus (33 s).
+
+## The Drakester
+- Finished by Ultimus (6 s).
+
+## The Good Old Days
+- Finished by Ultimus (32 s).
+
+## Torchure
+- Won by Kurrent (Solo) against Tamauji (rank 6, 1,480 health, Myth, a boss) on 2026-11-22 at 00:39:40.
+  It took 7 rounds, about 5 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Death, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies).
+  Spells that landed the hits: Thermic Golem x2, Moon Shield, Fairy.
