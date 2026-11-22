@@ -28,6 +28,8 @@
 
   <ItemGroup>
     <EmbeddedResource Include="page.html" LogicalName="page.html" />
+    <!-- The game's picture reader (DDS and TGA), shared with Ahziael. -->
+    <Compile Include="..\Imlight.Setup\GameImage.cs" Link="GameImage.cs" />
   </ItemGroup>
 
 </Project>

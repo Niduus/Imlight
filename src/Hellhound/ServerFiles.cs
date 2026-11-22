@@ -114,6 +114,19 @@ internal sealed class ServerFiles(string serverFolder) {
         json.WriteEndObject();
     }
 
+    /// <summary>One seat's status.json as it is (stats, gear, deck), only for a seat id the page lists, or null.</summary>
+    internal string? SeatStatus(string id) {
+        foreach (var (_, _, folder, _) in Bots) {
+            foreach (var seat in Seats(Path.Combine(Logs, folder))) {
+                if (Path.GetRelativePath(Logs, seat).Replace('\\', '/') == id) {
+                    return ReadJson(Path.Combine(seat, "status.json"))?.ToJsonString();
+                }
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>A bot's seats: its own folder, then a family member's folders (logs\tco7\tulkar), each with a status or pause file.</summary>
     internal static List<string> Seats(string folder) {
         var seats = new List<string>();

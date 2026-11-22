@@ -24,6 +24,7 @@ internal static class Program {
         var folder = ServerFiles.DefaultFolder;
         var once = false;
         var openBrowser = true;
+        string? game = null;
         for (var i = 0; i < args.Length; i++) {
             switch (args[i]) {
                 case "--server" when i + 1 < args.Length:
@@ -31,6 +32,9 @@ internal static class Program {
                     break;
                 case "--once":
                     once = true;
+                    break;
+                case "--game" when i + 1 < args.Length:
+                    game = args[++i];
                     break;
                 case "--no-browser":
                     openBrowser = false;
@@ -82,9 +86,11 @@ internal static class Program {
 
         var page = ReadPage();
         var spectator = new Spectator(files);
+        var pictures = new GamePictures(files.Folder, game);
+        pictures.Warm();
         while (true) {
             var client = listener.AcceptTcpClient();
-            _ = Task.Run(() => Answer(client, files, spectator, page, port));
+            _ = Task.Run(() => Answer(client, files, spectator, pictures, page, port));
         }
     }
 
@@ -98,7 +104,7 @@ internal static class Program {
 
     // One request per connection: GET / (the page), GET /api/status (the bots, as JSON), or one of the POST actions below.
     // Anything else is refused.
-    private static void Answer(TcpClient client, ServerFiles files, Spectator spectator, byte[] page, int port) {
+    private static void Answer(TcpClient client, ServerFiles files, Spectator spectator, GamePictures pictures, byte[] page, int port) {
         using (client) {
             try {
                 client.ReceiveTimeout = 5000;
@@ -133,6 +139,32 @@ internal static class Program {
                     var query = Query(parts[1]);
                     var json = spectator.WatchAsync(query.GetValueOrDefault("who") ?? "", query.GetValueOrDefault("ground") ?? "").GetAwaiter().GetResult();
                     Send(stream, "200 OK", "application/json; charset=utf-8", Encoding.UTF8.GetBytes(json));
+                }
+                else if (parts[1].StartsWith("/api/sheet?", StringComparison.Ordinal)) {
+                    // One seat's whole status.json (its stats, gear and deck), only for a seat the page lists.
+                    var sheet = files.SeatStatus(Query(parts[1]).GetValueOrDefault("seat") ?? "");
+                    Send(stream, sheet is null ? "404 Not Found" : "200 OK", "application/json; charset=utf-8", Encoding.UTF8.GetBytes(sheet ?? "{}"));
+                }
+                else if (parts[1].StartsWith("/api/pic?", StringComparison.Ordinal) || parts[1].StartsWith("/api/stat?", StringComparison.Ordinal)
+                         || parts[1].StartsWith("/api/card?", StringComparison.Ordinal)) {
+                    // The game's own pictures: any by file name, a stat's icon, or a card's frame with its art.
+                    var query = Query(parts[1]);
+                    var png = parts[1].StartsWith("/api/pic?", StringComparison.Ordinal) ? pictures.Picture(query.GetValueOrDefault("name") ?? "")
+                        : parts[1].StartsWith("/api/stat?", StringComparison.Ordinal) ? pictures.StatIcon(query.GetValueOrDefault("key") ?? "")
+                        : pictures.Card(query.GetValueOrDefault("img") ?? "", query.GetValueOrDefault("school") ?? "",
+                            query.GetValueOrDefault("front") ?? "", query.GetValueOrDefault("kind") ?? "");
+                    if (png is null) {
+                        Send(stream, "404 Not Found", "text/plain", "No picture."u8.ToArray());
+                    }
+                    else {
+                        Send(stream, "200 OK", "image/png", png, cache: true);
+                    }
+                }
+                else if (parts[1] == "/api/pictures") {
+                    Send(stream, "200 OK", "application/json; charset=utf-8",
+                        Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(new Dictionary<string, string> {
+                            ["ready"] = pictures.Ready ? "yes" : "no", ["folder"] = pictures.Folder,
+                        }, HellhoundJson.Default.DictionaryStringString)));
                 }
                 else if (parts[1] == "/api/status") {
                     Send(stream, "200 OK", "application/json; charset=utf-8", Encoding.UTF8.GetBytes(files.ToJson()));
@@ -192,10 +224,13 @@ internal static class Program {
         return Encoding.ASCII.GetString(bytes.ToArray());
     }
 
-    private static void Send(NetworkStream stream, string status, string type, byte[] body) {
-        var head = $"HTTP/1.1 {status}\r\nContent-Type: {type}\r\nContent-Length: {body.Length}\r\nCache-Control: no-store\r\n" +
+    private static void Send(NetworkStream stream, string status, string type, byte[] body, bool cache = false) {
+        var head = $"HTTP/1.1 {status}\r\nContent-Type: {type}\r\nContent-Length: {body.Length}\r\nCache-Control: {(cache ? "max-age=86400" : "no-store")}\r\n" +
                    "X-Content-Type-Options: nosniff\r\nConnection: close\r\n\r\n";
         stream.Write(Encoding.ASCII.GetBytes(head));
         stream.Write(body);
     }
 }
+
+[System.Text.Json.Serialization.JsonSerializable(typeof(Dictionary<string, string>))]
+internal sealed partial class HellhoundJson : System.Text.Json.Serialization.JsonSerializerContext;

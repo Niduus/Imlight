@@ -63,10 +63,47 @@
   .card-s { border:1px solid var(--line); border-left-width:4px; border-radius:7px; padding:5px 9px; font-size:13px; background:var(--card2); }
   .card-s.no { opacity:.45; } .card-s.pick { box-shadow:0 0 0 2px var(--warn); }
   .bar { height:6px; background:#2c2636; border-radius:3px; overflow:hidden; margin:3px 0 8px; } .bar i { display:block; height:100%; }
+  .watch-below { margin-top:16px; }
+  .battle-top { display:flex; flex-wrap:wrap; gap:8px 22px; align-items:baseline; margin-bottom:10px; }
+  .battle-cols { display:grid; grid-template-columns:1fr 280px; gap:18px; }
+  .cards { display:flex; flex-wrap:wrap; gap:10px; }
+  .gc { position:relative; width:var(--w, 92px); aspect-ratio:128/196; border-radius:7px; flex:none; overflow:hidden;
+        background:linear-gradient(160deg, var(--sc, #555), #1b1520 75%); box-shadow:0 3px 10px rgba(0,0,0,.45); cursor:default; }
+  .gc img { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .gc .t { position:absolute; left:4%; right:4%; top:2.2%; height:9.5%; display:flex; align-items:center; justify-content:center; text-align:center;
+           font-weight:800; text-transform:uppercase; color:#fffbea; font-size:calc(var(--w, 92px) * .078); line-height:1; letter-spacing:.02em;
+           text-shadow:0 0 2px #1e1208, 0 0 2px #1e1208, 0 1px 2px #000; overflow:hidden; }
+  .gc .p { position:absolute; left:13.4%; top:14.5%; transform:translate(-50%, -50%); font-weight:900; color:#ffe45a;
+           font-size:calc(var(--w, 92px) * .13); text-shadow:0 0 2px #1e1208, 0 0 3px #000; }
+  .gc .k { position:absolute; right:5%; bottom:4%; font-weight:800; font-size:calc(var(--w, 92px) * .13); color:#fff; background:rgba(0,0,0,.6);
+           border-radius:6px; padding:0 5px; }
+  .gc .bare { position:absolute; left:6%; right:6%; top:16%; bottom:40%; border-radius:4px; background:radial-gradient(circle, rgba(255,255,255,.18), transparent 70%); }
+  .gc.no { opacity:.4; filter:grayscale(.6); } .gc.pick { box-shadow:0 0 0 3px var(--warn), 0 0 18px var(--warn); }
+  .gc.off::after { content:""; position:absolute; inset:0; background:linear-gradient(to top right, transparent 48%, rgba(242,113,107,.9) 49%, rgba(242,113,107,.9) 51%, transparent 52%); }
+  .seat .who b.link { cursor:pointer; } .seat .who b.link:hover { color:var(--ember); text-decoration:underline; }
+  #sheet { position:fixed; inset:0; background:rgba(5,3,8,.6); display:none; z-index:5; }
+  #sheet.show { display:block; }
+  #sheet .panel { position:absolute; top:0; right:0; bottom:0; width:min(980px, 100%); background:var(--bg); border-left:1px solid var(--line);
+                  overflow:auto; padding:22px 26px 40px; box-shadow:-20px 0 50px rgba(0,0,0,.5); }
+  .sheet-head { display:flex; gap:16px; align-items:center; }
+  .sheet-head .school { width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--card2); border:2px solid var(--sc, var(--line)); flex:none; overflow:hidden; }
+  .sheet-head .school img { width:40px; height:40px; }
+  .tabs { display:flex; gap:6px; margin:18px 0 14px; flex-wrap:wrap; }
+  .tabs button { font:inherit; color:var(--dim); background:var(--card); border:1px solid var(--line); border-radius:99px; padding:5px 14px; cursor:pointer; }
+  .tabs button.on { color:#1a0d05; background:var(--ember); border-color:var(--ember); font-weight:600; }
+  .statrow { display:flex; align-items:center; gap:10px; padding:7px 0; border-top:1px solid var(--line); } .statrow:first-child { border-top:0; }
+  .statrow img, .ico { width:26px; height:26px; object-fit:contain; flex:none; }
+  .statrow .w { flex:1; } .statrow .v { font-weight:700; font-variant-numeric:tabular-nums; }
+  .gear { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:12px; }
+  .piece { display:flex; gap:12px; } .piece .pic { width:58px; height:58px; border-radius:10px; background:var(--card2); border:1px solid var(--line); flex:none; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .piece .pic img { width:54px; height:54px; object-fit:contain; }
+  .chip { display:inline-flex; align-items:center; gap:4px; font-size:12px; background:var(--card2); border:1px solid var(--line); border-radius:99px; padding:1px 8px 1px 3px; margin:2px 4px 0 0; }
+  .chip img { width:16px; height:16px; }
+  .xp { height:8px; background:#2c2636; border-radius:4px; overflow:hidden; margin-top:6px; } .xp i { display:block; height:100%; background:linear-gradient(90deg, #8a5cff, #c9a2ff); }
   #toast { position:fixed; right:24px; bottom:24px; max-width:420px; background:var(--card2); border:1px solid var(--ember); border-radius:10px;
            padding:12px 16px; box-shadow:0 10px 30px rgba(0,0,0,.5); opacity:0; transform:translateY(10px); transition:all .2s; pointer-events:none; }
   #toast.show { opacity:1; transform:none; }
-  @media (max-width:760px) { aside { width:64px; } .brand span, nav button span, .side-foot { display:none; } .watch { grid-template-columns:1fr; } main { padding:18px; } }
+  @media (max-width:760px) { aside { width:64px; } .brand span, nav button span, .side-foot { display:none; } .watch, .battle-cols { grid-template-columns:1fr; } main { padding:18px; } }
 </style>
 </head>
 <body>
@@ -97,7 +134,9 @@
       <select id="who" onchange="watchNow()"><option value="">Waiting for the server...</option></select>
       <span id="watchSaid" class="dim"></span>
     </div>
-    <div class="watch"><canvas id="map" width="520" height="520"></canvas><div id="info" class="card"></div></div>
+    <div class="watch"><canvas id="map" width="1040" height="1040"></canvas><div><div id="info" class="card"></div>
+      <div style="margin-top:12px"><button class="btn main" id="sheetBtn" onclick="openSheetFor(watchName)" hidden>Stats, gear and deck</button></div></div></div>
+    <div class="card watch-below" id="battle"><span class="dim">Not in a battle right now. When it fights, its hand shows here.</span></div>
   </section>
   <section id="updates">
     <h1>Bot updates</h1><p class="sub">The server looks for bot updates by itself every 10 minutes and swaps them in without a restart.</p>
@@ -106,6 +145,7 @@
   </section>
 </main>
 <div id="toast"></div>
+<div id="sheet" onclick="if (event.target === this) closeSheet()"><div class="panel" id="sheetPanel"></div></div>
 <script>
 let current = "overview";
 document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
@@ -135,9 +175,10 @@ function ago(at) {
   return m < 1 ? "just now" : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`;
 }
 const SCHOOL_OF = { Ultimus:"Balance", Zoom:"Myth", Savitar:"Fire", "True Form":"Myth", TCO7:"Storm", "Kitharas Family":"Death", "Quest Team":"Ice", "Street Bot Players":"Life" };
+let lastStatus = null;
 async function refresh() {
   let s;
-  try { s = await (await fetch("/api/status", { cache: "no-store" })).json(); }
+  try { s = await (await fetch("/api/status", { cache: "no-store" })).json(); lastStatus = s; }
   catch { document.getElementById("serverLine").textContent = "Hellhound isn't answering."; return; }
   document.getElementById("serverLine").innerHTML = !s.folderFound ? `<span class="bad">No server found</span>`
     : `<span class="dot ${s.serverRunning ? "ok" : "warn"}"></span> Server ${s.serverRunning ? "running" : "not running"}`;
@@ -170,10 +211,11 @@ async function refresh() {
     const rows = b.seats.map(x => {
       const lvl = x.paused ? "warn" : isOn ? "ok" : "";
       const what = [x.quest && "Quest: " + x.quest, x.doing].filter(Boolean).join(" · ");
-      return `<div class="seat"><span class="dot ${lvl}"></span><div class="who"><div><b>${esc(x.name)}</b>${x.at ? ` <span class="dim small">${esc(ago(x.at))}</span>` : ""}</div>` +
+      return `<div class="seat"><span class="dot ${lvl}"></span><div class="who"><div><b class="link" title="Stats, gear and deck" onclick="openSheet('${encodeURIComponent(x.id)}')">${esc(x.name)}</b>${x.at ? ` <span class="dim small">${esc(ago(x.at))}</span>` : ""}</div>` +
         `<div class="dim small">${esc(what || "No news yet")}</div>` +
         (x.note ? `<div class="small warn">${esc(x.note)}</div>` : "") + `</div>` +
         (x.paused ? `<span class="tag warn">paused</span>` : "") +
+        `<button class="btn" onclick="openSheet('${encodeURIComponent(x.id)}')">Details</button>` +
         `<button class="btn" onclick="act('/api/pause?seat=${encodeURIComponent(x.id)}')">${x.paused ? "Resume" : "Pause"}</button></div>`;
     }).join("");
     return `<div class="bot" style="border-top:3px solid ${color}"><div class="bot-head"><div class="name">${esc(b.name)}` +
@@ -194,16 +236,22 @@ refresh();
 setInterval(refresh, 5000);
 
 // ---- Watch: the wizard's own minimap and, in a battle, its hand (the overlay's Spectate Anyone feed) ----
+// Niduus, 2026-11-22: "Minimap to update in real time, not some choppy shit show". The server is asked several times a
+// second, and between answers the view glides to the newest place, so the arrow and the map move smoothly.
 const SCHOOL = { Fire:"#f26b3a", Ice:"#7cc7ff", Storm:"#b884ff", Myth:"#f2d14b", Life:"#6fdc7a", Death:"#a7a7b8", Balance:"#e0a75e",
                  Sun:"#ffd66b", Moon:"#c9b6ff", Star:"#9fd6ff", Shadow:"#8b6fbf" };
 const GROUND = { 9:"#2a2a33", 3:"#1f4a73", 2:"#2f5b34", 1:"#7a6a52", 7:"#2f5b34", 6:"#7a6a52", 8:"#7b5a3a", 4:"#c9c3d6" };
+const MARK = { npc:"#f2d14b", door:"#7cc7ff", sigil:"#b884ff", mob:"#f07a7a", boss:"#ff4d4d", chest:"#e0a75e", battle:"#ff8c3a",
+               "wisp-health":"#ff6b8b", "wisp-mana":"#6bb6ff", wizard:"#ffffff", team:"#5fd39a" };
 const grounds = {};
-let watching = "", lastGround = "", busy = false;
+let watching = "", watchName = "", lastGround = "", busy = false;
+let target = null, view = null, marks = [], lastFrame = 0;
 function readGround(g) {
-  const out = { tri:{}, lines:{}, rounds:[] };
+  const out = { tri:{}, lines:{}, rounds:[], minX:Infinity, minY:Infinity, maxX:-Infinity, maxY:-Infinity };
   if (!g || !g.shapes) return out;
   const bin = atob(g.shapes), data = new DataView(new Uint8Array([...bin].map(c => c.charCodeAt(0))).buffer);
   const L = g.left, B = g.bottom, U = g.unit, X = i => L + data.getUint16(i, true) * U, Y = i => B + data.getUint16(i, true) * U;
+  const grow = (x, y) => { if (x < out.minX) out.minX = x; if (x > out.maxX) out.maxX = x; if (y < out.minY) out.minY = y; if (y > out.maxY) out.maxY = y; };
   let at = 0;
   while (at + 5 <= data.byteLength) {
     const kind = data.getUint8(at), count = Math.min(data.getUint32(at + 1, true), 2000000); at += 5;
@@ -211,7 +259,7 @@ function readGround(g) {
       for (let n = 0; n < count && at + 2 <= data.byteLength; n++) {
         const pts = data.getUint16(at, true); at += 2;
         if (at + pts * 4 > data.byteLength) { at = data.byteLength; break; }
-        const line = []; for (let p = 0; p < pts; p++, at += 4) line.push(X(at), Y(at + 2));
+        const line = []; for (let p = 0; p < pts; p++, at += 4) { line.push(X(at), Y(at + 2)); grow(X(at), Y(at + 2)); }
         if (pts >= 3) (out.lines[kind - 16] ??= []).push(line);
       }
       continue;
@@ -219,96 +267,249 @@ function readGround(g) {
     const each = kind === 5 ? 6 : 12;
     if (kind < 1 || kind > 9 || at + count * each > data.byteLength) break;
     for (let n = 0; n < count; n++, at += each) {
-      if (kind === 5) out.rounds.push(X(at), Y(at + 2), data.getUint16(at + 4, true) * U);
-      else { const t = (out.tri[kind] ??= []); for (let p = 0; p < 3; p++) t.push(X(at + p * 4), Y(at + p * 4 + 2)); }
+      if (kind === 5) { out.rounds.push(X(at), Y(at + 2), data.getUint16(at + 4, true) * U); grow(X(at), Y(at + 2)); }
+      else { const t = (out.tri[kind] ??= []); for (let p = 0; p < 3; p++) { t.push(X(at + p * 4), Y(at + p * 4 + 2)); grow(X(at + p * 4), Y(at + p * 4 + 2)); } }
     }
   }
   return out;
 }
-function drawMap(map) {
+// The whole ground drawn once into a picture of its own, so each frame only slides that picture.
+function groundPicture(ground, k) {
+  if (ground.pic && ground.pic.k === k) return ground.pic;
+  if (!isFinite(ground.minX)) return null;
+  const pad = 20, scale = Math.min(k, 4096 / Math.max(1, ground.maxX - ground.minX), 4096 / Math.max(1, ground.maxY - ground.minY));
+  const c = document.createElement("canvas");
+  c.width = Math.ceil((ground.maxX - ground.minX) * scale) + pad * 2; c.height = Math.ceil((ground.maxY - ground.minY) * scale) + pad * 2;
+  const g = c.getContext("2d"), sx = x => pad + (x - ground.minX) * scale, sy = y => c.height - pad - (y - ground.minY) * scale;
+  for (const kind of [9, 3, 2, 1, 7, 6, 8, 4]) {
+    g.fillStyle = GROUND[kind];
+    const t = ground.tri[kind] || [];
+    g.beginPath();
+    for (let i = 0; i < t.length; i += 6) { g.moveTo(sx(t[i]), sy(t[i+1])); g.lineTo(sx(t[i+2]), sy(t[i+3])); g.lineTo(sx(t[i+4]), sy(t[i+5])); g.closePath(); }
+    g.fill();
+    for (const line of ground.lines[kind] || []) {
+      g.beginPath(); g.moveTo(sx(line[0]), sy(line[1]));
+      for (let i = 2; i < line.length; i += 2) g.lineTo(sx(line[i]), sy(line[i+1]));
+      g.closePath(); g.fill();
+    }
+  }
+  g.fillStyle = "#c9c3d6";
+  for (let i = 0; i < ground.rounds.length; i += 3) { g.beginPath(); g.arc(sx(ground.rounds[i]), sy(ground.rounds[i+1]), Math.max(1, ground.rounds[i+2] * scale), 0, 7); g.fill(); }
+  ground.pic = { k, canvas: c, scale, pad };
+  return ground.pic;
+}
+function angleTo(from, to) { let d = (to - from) % (Math.PI * 2); if (d > Math.PI) d -= Math.PI * 2; if (d < -Math.PI) d += Math.PI * 2; return d; }
+function frame(now) {
+  requestAnimationFrame(frame);
+  if (current !== "watch") return;
+  const dt = Math.min(0.1, (now - lastFrame) / 1000 || 0); lastFrame = now;
   const c = document.getElementById("map"), g = c.getContext("2d"), W = c.width, H = c.height;
   g.fillStyle = "#0b0a10"; g.fillRect(0, 0, W, H);
-    if (!map) return;
-  const range = Math.max(map.range || 1500, 300), k = (W / 2) / range;
-  const sx = x => W / 2 + (x - map.x) * k, sy = y => H / 2 - (y - map.y) * k;
+  if (!target) return;
+  if (!view || Math.hypot(target.x - view.x, target.y - view.y) > 4000) view = { ...target };
+  const ease = 1 - Math.exp(-dt * 9);
+  view.x += (target.x - view.x) * ease; view.y += (target.y - view.y) * ease;
+  view.yaw += angleTo(view.yaw, target.yaw) * ease; view.range += (target.range - view.range) * ease;
+  const k = (W / 2) / Math.max(view.range, 300);
+  const sx = x => W / 2 + (x - view.x) * k, sy = y => H / 2 - (y - view.y) * k;
   const ground = grounds[lastGround];
-  if (ground) {
-    for (const kind of [9, 3, 2, 1, 7, 6, 8, 4]) {
-      g.fillStyle = GROUND[kind];
-      const t = ground.tri[kind] || [];
-      g.beginPath();
-      for (let i = 0; i < t.length; i += 6) { g.moveTo(sx(t[i]), sy(t[i+1])); g.lineTo(sx(t[i+2]), sy(t[i+3])); g.lineTo(sx(t[i+4]), sy(t[i+5])); g.closePath(); }
-      g.fill();
-      for (const line of ground.lines[kind] || []) {
-        g.beginPath(); g.moveTo(sx(line[0]), sy(line[1]));
-        for (let i = 2; i < line.length; i += 2) g.lineTo(sx(line[i]), sy(line[i+1]));
-        g.closePath(); g.fill();
-      }
-    }
-    g.fillStyle = "#c9c3d6";
-    for (let i = 0; i < ground.rounds.length; i += 3) { g.beginPath(); g.arc(sx(ground.rounds[i]), sy(ground.rounds[i+1]), Math.max(1, ground.rounds[i+2] * k), 0, 7); g.fill(); }
+  const pic = ground && groundPicture(ground, Math.round(k * 1000) / 1000);
+  if (pic) {
+    const f = k / pic.scale;
+    g.imageSmoothingEnabled = true;
+    g.drawImage(pic.canvas, sx(ground.minX) - pic.pad * f, sy(ground.minY) - (pic.canvas.height - pic.pad) * f, pic.canvas.width * f, pic.canvas.height * f);
   }
-  const color = { npc:"#f2d14b", door:"#7cc7ff", sigil:"#b884ff", mob:"#f07a7a", boss:"#ff4d4d", chest:"#e0a75e", battle:"#ff8c3a",
-                  "wisp-health":"#ff6b8b", "wisp-mana":"#6bb6ff", wizard:"#ffffff", team:"#5fd39a" };
-  g.font = "11px system-ui";
-  for (const m of map.marks || []) {
+  g.font = "22px system-ui";
+  for (const m of marks) {
+    m.x += (m.tx - m.x) * ease; m.y += (m.ty - m.y) * ease;
     const x = sx(m.x), y = sy(m.y);
-    if (x < -10 || y < -10 || x > W + 10 || y > H + 10) continue;
-    g.fillStyle = color[m.k] || "#a39cb5";
-    g.beginPath(); g.arc(x, y, m.k === "boss" || m.k === "battle" ? 5 : 3, 0, 7); g.fill();
-    if (m.n && ["team", "wizard", "boss", "sigil", "door"].includes(m.k)) { g.fillText(m.n, x + 6, y - 4); }
+    if (x < -20 || y < -20 || x > W + 20 || y > H + 20) continue;
+    g.fillStyle = MARK[m.k] || "#a39cb5";
+    g.beginPath(); g.arc(x, y, m.k === "boss" || m.k === "battle" ? 10 : 6, 0, 7); g.fill();
+    if (m.n && ["team", "wizard", "boss", "sigil", "door"].includes(m.k)) { g.fillText(m.n, x + 12, y - 8); }
   }
   // The wizard: an arrow pointing where it faces.
-  const yaw = map.yaw || 0;
-  g.save(); g.translate(W / 2, H / 2); g.rotate(Math.PI + yaw);
-  g.fillStyle = "#ff8c3a"; g.strokeStyle = "#000"; g.beginPath(); g.moveTo(0, -9); g.lineTo(6, 7); g.lineTo(0, 3); g.lineTo(-6, 7); g.closePath(); g.fill(); g.stroke();
+  g.save(); g.translate(W / 2, H / 2); g.rotate(Math.PI + view.yaw);
+  g.fillStyle = "#ff8c3a"; g.strokeStyle = "#000"; g.lineWidth = 2;
+  g.beginPath(); g.moveTo(0, -18); g.lineTo(12, 14); g.lineTo(0, 6); g.lineTo(-12, 14); g.closePath(); g.fill(); g.stroke();
   g.restore();
+}
+requestAnimationFrame(frame);
+function newMarks(list) {
+  const old = {}; for (const m of marks) (old[m.k + "|" + (m.n || "")] ??= []).push(m);
+  marks = (list || []).map(m => {
+    const near = (old[m.k + "|" + (m.n || "")] || []).sort((a, b) => Math.hypot(a.tx - m.x, a.ty - m.y) - Math.hypot(b.tx - m.x, b.ty - m.y)).shift();
+    return near && Math.hypot(near.tx - m.x, near.ty - m.y) < 600 ? { ...near, tx: m.x, ty: m.y } : { k: m.k, n: m.n, x: m.x, y: m.y, tx: m.x, ty: m.y };
+  });
+}
+// Which bot a wizard belongs to, by Hellhound's own list of bots (True Form, Zoom and Savitar are never TCO7; Niduus,
+// 2026-11-22: "True Form is NOT part of TCO7"). Older bot updates call them TCO7, so the seats decide.
+function groupOf(e) {
+  const n = String(e.name || "").toLowerCase();
+  if (lastStatus) for (const b of lastStatus.bots) for (const x of b.seats) {
+    if (x.name.toLowerCase() === n || (x.members || []).some(m => (m.name || "").toLowerCase() === n)) return b.name;
+  }
+  if (/^true form\b/.test(n)) return "True Form";
+  if (/^zoom\b/.test(n)) return "Zoom";
+  if (/^savitar\b/.test(n)) return "Savitar";
+  return e.kind === "Player" ? e.school : e.kind;
 }
 function bar(hp, max) { const p = max > 0 ? Math.max(0, Math.min(100, hp * 100 / max)) : 0; return `<div class="bar"><i style="width:${p}%;background:${p < 30 ? "var(--bad)" : p < 60 ? "var(--warn)" : "var(--ok)"}"></i></div>`; }
 function drawInfo(u) {
   if (!u) { document.getElementById("info").innerHTML = ""; return; }
-  let html = `<b>${esc(u.name)}</b> <span class="dim">level ${esc(u.level)}${u.school ? " · " + esc(u.school) : ""}</span>` +
+  document.getElementById("info").innerHTML = `<b>${esc(u.name)}</b> <span class="dim">level ${esc(u.level)}${u.school ? " · " + esc(u.school) : ""}</span>` +
     `<div class="dim">${esc(u.hp)} / ${esc(u.max)} health</div>${bar(u.hp, u.max)}` +
     `<div>${esc(u.place || "")}${u.world ? ` <span class="dim">(${esc(u.world)})</span>` : ""}</div>` +
     (u.doing ? `<div class="dim">${esc(u.doing)}</div>` : "") +
     (u.questTitle ? `<div style="margin-top:6px">Quest: <b>${esc(u.questTitle)}</b></div>` : "") +
     (u.step ? `<div class="dim">${esc(u.step)}</div>` : "");
-  const b = u.battle;
-  if (b && b.hand) {
-    html += `<h2 style="margin-top:14px">Battle · round ${esc(b.round)}</h2>` +
-      `<div class="dim">${esc(b.hp)} / ${esc(b.max)} health · pips ${esc(b.pips)} · power ${esc(b.power)}${b.shadow ? " · shadow " + esc(b.shadow) : ""}</div>` +
-      `<div class="hand">${b.hand.map(c => `<span class="card-s${c.ok ? "" : " no"}${c.pick ? " pick" : ""}" style="border-color:${SCHOOL[c.s] || "var(--line)"}">${esc(c.n)} <span class="dim">${esc(c.r)}</span></span>`).join("") || '<span class="dim">no hand yet</span>'}</div>` +
-      (b.pick ? `<div>Picks: <b>${esc(b.pick)}</b></div>` : "") + (b.why ? `<div class="dim">${esc(b.why)}</div>` : "") +
-      (b.discards && b.discards.length ? `<div class="dim">Threw away: ${b.discards.map(esc).join(", ")}</div>` : "") +
-      ((b.enemies || []).length ? `<div style="margin-top:8px"><b>Foes</b>${b.enemies.map(e => `<div class="dim">${esc(e.n)} ${esc(e.hp)} / ${esc(e.max)}</div>${bar(e.hp, e.max)}`).join("")}</div>` : "") +
-      ((b.allies || []).length ? `<div><b>Allies</b>${b.allies.map(e => `<div class="dim">${esc(e.n)} ${esc(e.hp)} / ${esc(e.max)}</div>`).join("")}</div>` : "") +
-      ((b.casts || []).length ? `<div style="margin-top:8px"><b>Casts</b>${b.casts.slice(0, 6).map(c => `<div class="dim">${esc(c)}</div>`).join("")}</div>` : "");
-  }
-  document.getElementById("info").innerHTML = html;
+}
+// The battle under the minimap (Niduus, 2026-11-22: "battle hand here"), with the game's card pictures.
+function drawBattle(u) {
+  const box = document.getElementById("battle"), b = u && u.battle;
+  if (!b || !b.hand) { box.innerHTML = `<span class="dim">Not in a battle right now. When it fights, its hand shows here.</span>`; return; }
+  const hand = b.hand.map(c => cardHtml(lookByName(c.n, c.s), { name: c.n, school: c.s, pips: c.r, cls: (c.ok ? "" : " no") + (c.pick ? " pick" : ""), w: 104 })).join("");
+  const html = `<div class="battle-top"><b style="font-size:16px">Battle · round ${esc(b.round)}</b>` +
+      `<span>${esc(b.hp)} / ${esc(b.max)} health</span><span>pips ${esc(b.pips)} · power ${esc(b.power)}${b.shadow ? " · shadow " + esc(b.shadow) : ""}</span></div>` +
+    `<div class="battle-cols"><div><div class="cards">${hand || '<span class="dim">No hand yet</span>'}</div>` +
+      (b.pick ? `<div style="margin-top:10px">Picks: <b>${esc(b.pick)}</b>${b.why ? ` <span class="dim">· ${esc(b.why)}</span>` : ""}</div>` : "") +
+      (b.discards && b.discards.length ? `<div class="dim">Threw away: ${b.discards.map(esc).join(", ")}</div>` : "") + `</div>` +
+    `<div>` + ((b.enemies || []).length ? `<b>Foes</b>${b.enemies.map(e => `<div class="dim">${esc(e.n)} ${esc(e.hp)} / ${esc(e.max)}</div>${bar(e.hp, e.max)}`).join("")}` : "") +
+      ((b.allies || []).length ? `<div style="margin-top:6px"><b>Allies</b>${b.allies.map(e => `<div class="dim">${esc(e.n)} ${esc(e.hp)} / ${esc(e.max)}</div>${bar(e.hp, e.max)}`).join("")}</div>` : "") +
+      ((b.casts || []).length ? `<div style="margin-top:8px"><b>Casts</b>${b.casts.slice(0, 6).map(c => `<div class="dim small">${esc(c)}</div>`).join("")}</div>` : "") +
+    `</div></div>`;
+  if (box.dataset.last !== html) { box.innerHTML = html; box.dataset.last = html; }
 }
 async function watchNow() {
   if (busy) return;
   busy = true;
   try {
     const pick = document.getElementById("who").value;
-    if (pick !== watching) { watching = pick; }
+    if (pick !== watching) { watching = pick; target = null; view = null; marks = []; }
     const a = await (await fetch(`/api/watch?who=${encodeURIComponent(watching)}&ground=${encodeURIComponent(lastGround)}`, { cache: "no-store" })).json();
     const said = document.getElementById("watchSaid");
     if (a.everyone) {
       const sel = document.getElementById("who"), now = a.watching || "";
-      const opts = a.everyone.map(e => `<option value="${esc(e.id)}"${e.id === now ? " selected" : ""}>${esc(e.name)} (${esc(e.kind === "Player" ? e.school : e.kind)})</option>`).join("");
+      const opts = a.everyone.map(e => `<option value="${esc(e.id)}"${e.id === now ? " selected" : ""}>${esc(e.name)} (${esc(groupOf(e))})</option>`).join("");
       if (sel.dataset.opts !== opts) { sel.innerHTML = opts; sel.dataset.opts = opts; }
       if (!watching) watching = now;
+      const me = a.everyone.find(e => e.id === (watching || now));
+      watchName = me ? me.name : "";
+      document.getElementById("sheetBtn").hidden = !seatOf(watchName);
+      if (watchName) loadLooks(seatOf(watchName));
     }
     if (!a.ok) { if (a.error !== "busy") said.textContent = a.error || ""; return; }
     said.textContent = "";
     const map = a.map;
     if (map && map.ground) { grounds[map.ground.key] = readGround(map.ground); lastGround = map.ground.key; }
-    drawMap(map); drawInfo(a.ultimus);
+    if (map) { target = { x: map.x, y: map.y, yaw: map.yaw || 0, range: Math.max(map.range || 1500, 300) }; newMarks(map.marks); }
+    drawInfo(a.ultimus); drawBattle(a.ultimus);
   } catch { document.getElementById("watchSaid").textContent = "Lost the app: is its window still open?"; }
   finally { busy = false; }
 }
-setInterval(() => { if (current === "watch") watchNow(); }, 1500);
+setInterval(() => { if (current === "watch") watchNow(); }, 300);
+
+// ---- Cards and the bot sheet (Niduus, 2026-11-22: "Clicking on a bot shows it's stats and deck and shit like in Ahziael
+// WITH PICTURES!"). The bots write what each card looks like; Hellhound reads the pictures from the game files. ----
+const looks = {}, looksByName = {}, looksLoaded = {};
+function learnLooks(member) {
+  for (const [id, c] of Object.entries(member.cards || {})) { looks[id] = c; if (c.name) looksByName[c.name.toLowerCase()] = c; }
+  for (const c of (member.spellGrid || []).concat(member.otherGrid || [])) {
+    if (!c.name) continue;
+    looks[c.id] ??= { name: c.name, school: c.school };
+    looksByName[c.name.toLowerCase()] ??= looks[c.id];
+  }
+}
+function lookByName(name, school) { return looksByName[String(name || "").toLowerCase()] || { name, school }; }
+function seatOf(name) {
+  if (!lastStatus || !name) return null;
+  const n = name.toLowerCase();
+  for (const b of lastStatus.bots) for (const x of b.seats) {
+    if (x.name.toLowerCase() === n || (x.members || []).some(m => (m.name || "").toLowerCase() === n)) return x.id;
+  }
+  return null;
+}
+async function loadLooks(seat) {
+  if (!seat || (looksLoaded[seat] && Date.now() - looksLoaded[seat] < 60000)) return;
+  looksLoaded[seat] = Date.now();
+  try { const st = await (await fetch(`/api/sheet?seat=${encodeURIComponent(seat)}`, { cache: "no-store" })).json(); (st.members || []).forEach(learnLooks); } catch {}
+}
+function cardUrl(c, kind) {
+  return `/api/card?img=${encodeURIComponent(c.img || "")}&school=${encodeURIComponent(c.school || "")}&front=${encodeURIComponent(c.front || "")}&kind=${kind || (c.tc ? "tc" : "")}`;
+}
+// One card as the game shows it: its frame and art from the game files, its name and pips written over them.
+function cardHtml(c, o = {}) {
+  c = c || {};
+  const name = o.name || c.name || "Card", school = c.school || o.school || "";
+  const pips = o.pips !== undefined && o.pips !== "" ? o.pips : c.x ? "X" : c.pips;
+  const tip = [name, school, pips !== undefined ? pips + " pips" : "", c.acc ? c.acc + "%" : "", c.type].filter(Boolean).join(" · ");
+  return `<div class="gc${o.cls || ""}" title="${esc(tip)}" style="--w:${o.w || 92}px;--sc:${SCHOOL[school] || "#555"}">` +
+    `<span class="bare"></span><img src="${cardUrl(c, o.kind)}" alt="" loading="lazy" onerror="this.remove()">` +
+    `<span class="t">${esc(name)}</span>${pips !== undefined && pips !== "" ? `<span class="p">${esc(pips)}</span>` : ""}` +
+    (o.count ? `<span class="k">×${esc(o.count)}</span>` : "") + `</div>`;
+}
+const pic = (name, cls = "ico") => name ? `<img class="${cls}" src="/api/pic?name=${encodeURIComponent(name)}" alt="" onerror="this.style.visibility='hidden'">` : "";
+const statPic = key => `<img src="/api/stat?key=${encodeURIComponent(key)}" alt="" onerror="this.style.visibility='hidden'">`;
+let sheetSeat = "", sheetData = null, sheetMember = 0, sheetTab = "stats";
+async function openSheet(seat) {
+  sheetSeat = decodeURIComponent(seat); sheetMember = 0;
+  document.getElementById("sheet").classList.add("show");
+  document.getElementById("sheetPanel").innerHTML = `<div class="dim">Reading...</div>`;
+  await reloadSheet();
+}
+function openSheetFor(name) { const seat = seatOf(name); if (seat) openSheet(encodeURIComponent(seat)); }
+function closeSheet() { document.getElementById("sheet").classList.remove("show"); sheetSeat = ""; }
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+async function reloadSheet() {
+  if (!sheetSeat) return;
+  try { sheetData = await (await fetch(`/api/sheet?seat=${encodeURIComponent(sheetSeat)}`, { cache: "no-store" })).json(); }
+  catch { sheetData = null; }
+  (sheetData?.members || []).forEach(learnLooks);
+  drawSheet();
+}
+setInterval(() => { if (sheetSeat) reloadSheet(); }, 10000);
+function grid(list, kind, w = 92) {
+  return `<div class="cards">${(list || []).map(c => cardHtml(looks[c.id] || { name: c.name, school: c.school }, { count: c.n > 1 ? c.n : 0, kind, w, cls: c.off ? " off" : "" })).join("") || '<span class="dim">None</span>'}</div>`;
+}
+function drawSheet() {
+  const panel = document.getElementById("sheetPanel");
+  const members = sheetData?.members || [];
+  if (!members.length) { panel.innerHTML = `<button class="btn" style="float:right" onclick="closeSheet()">Close</button><div class="dim">No sheet yet: this bot writes one once it plays.</div>`; return; }
+  const m = members[Math.min(sheetMember, members.length - 1)];
+  const sc = SCHOOL[m.school] || "var(--line)";
+  const [hp, hpMax] = String(m.health || "").split("/"), [mp, mpMax] = String(m.mana || "").split("/");
+  const tabs = [["stats", "Stats"], ["gear", "Gear"], ["deck", `Deck (${m.deckSize ?? 0}${m.deckMax ? "/" + m.deckMax : ""})`],
+                ["treasure", `Treasure cards (${m.treasureStockCount ?? m.treasureCount ?? 0})`], ["spells", "Trained spells"]];
+  let body = "";
+  if (sheetTab === "stats") {
+    body = `<div class="card">${(m.statRows || []).map(r => `<div class="statrow">${(r.icons || []).slice(0, 1).map(statPic).join("") || '<span class="ico"></span>'}` +
+      `<span class="w">${esc(r.words)}${r.school ? ` <span class="dim">(${esc(r.school)})</span>` : ""}</span><span class="v" style="color:${SCHOOL[r.school] || "inherit"}">${esc(r.value)}${esc(r.after || "")}</span></div>`).join("")
+      || (m.stats || []).map(l => `<div class="statrow">${esc(l)}</div>`).join("") || '<span class="dim">No stats yet</span>'}</div>`;
+  } else if (sheetTab === "gear") {
+    body = `<div class="gear">${(m.gearRows || []).map(r => `<div class="card piece"><div class="pic">${pic(r.icon)}</div><div style="min-width:0">` +
+      `<div class="dim small">${esc(r.slot)}${r.level ? " · level " + esc(r.level) : ""}</div><b>${esc(r.name || "Nothing worn")}</b>` +
+      `${(r.jewels || []).map(j => `<div class="small" style="margin-top:4px">${esc(j.name || "Empty " + (j.socket || "socket"))}<br>${(j.stats || []).map(st => `<span class="chip">${st.icon ? statPic(st.icon) : ""}${esc(st.text)}</span>`).join("")}</div>`).join("")}` +
+      `${(r.talents || []).map(t => `<div class="small" style="margin-top:4px">${esc(t.name)}${t.cast ? ` <span class="dim">(may cast ${esc(t.cast)})</span>` : ""}<br>${(t.stats || []).map(st => `<span class="chip">${st.icon ? statPic(st.icon) : ""}${esc(st.text)}</span>`).join("")}</div>`).join("")}` +
+      `</div></div>`).join("") || '<span class="dim">No gear yet</span>'}</div>`;
+  } else if (sheetTab === "deck") {
+    body = `<h3>Spells in the deck${m.deckFor ? ` <span class="dim">· built for ${esc(m.deckFor)}</span>` : ""}</h3>${grid(m.deckGrid)}` +
+      `<h3>Item cards from gear (${m.itemCount ?? 0})</h3>${grid(m.itemGrid, "item", 78)}` +
+      `<h3>Treasure cards in the deck (${m.treasureCount ?? 0})</h3>${grid(m.treasureGrid, "tc", 78)}`;
+  } else if (sheetTab === "treasure") {
+    body = `<h3>Every treasure card it owns</h3>${grid(m.treasureStockGrid, "tc", 84)}`;
+  } else {
+    body = `<h3>Cards it can put in a deck (number in the deck now)</h3>${grid((m.spellGrid || []).map(c => ({ ...c, n: c.n })), "", 84)}` +
+      ((m.otherGrid || []).length ? `<h3>Other spells</h3>${grid(m.otherGrid, "", 70)}` : "");
+  }
+  panel.innerHTML = `<button class="btn" style="float:right" onclick="closeSheet()">Close</button>` +
+    (members.length > 1 ? `<div class="tabs" style="margin-top:0">${members.map((x, i) => `<button class="${i === sheetMember ? "on" : ""}" onclick="sheetMember=${i};drawSheet()">${esc(x.name)}</button>`).join("")}</div>` : "") +
+    `<div class="sheet-head"><div class="school" style="--sc:${sc}">${pic(`Icon_${m.school}.dds`, "")}</div><div style="flex:1">` +
+      `<div style="font-size:20px;font-weight:700">${esc(m.name)}</div><div class="dim">Level ${esc(m.level)} ${esc(m.school || "")}${m.zone ? " · " + esc(m.zone) : ""}${m.gold !== undefined ? " · " + esc(m.gold) + " gold" : ""}</div>` +
+      (m.xpMax ? `<div class="xp" title="${esc(m.xp)} / ${esc(m.xpMax)} XP"><i style="width:${Math.min(100, (m.xp || 0) * 100 / m.xpMax)}%"></i></div>` : "") +
+    `</div><div style="min-width:180px">${hpMax ? `<div class="small">${esc(m.health)} health</div>${bar(+hp, +hpMax)}` : ""}${mpMax ? `<div class="small">${esc(m.mana)} mana</div><div class="bar"><i style="width:${Math.min(100, +mp * 100 / +mpMax)}%;background:#3d86f2"></i></div>` : ""}</div></div>` +
+    (m.questNow ? `<div style="margin-top:10px">Quest: <b>${esc(m.questNow)}</b>${m.stepNow ? ` <span class="dim">· ${esc(m.stepNow)}</span>` : ""}</div>` : "") +
+    `<div class="tabs">${tabs.map(([k, t]) => `<button class="${k === sheetTab ? "on" : ""}" onclick="sheetTab='${k}';drawSheet()">${esc(t)}</button>`).join("")}</div>` + body;
+}
 </script>
 </body>
 </html>
