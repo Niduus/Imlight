@@ -199,6 +199,7 @@ Every correction the bots were given for a quest, a dungeon or a puzzle, grouped
 - v0.10.950 went in by live patch at 6:44 AM; the first fresh run it reset was Katzenstein's Lab at 6:45 AM ("its quests start over"). Cyndr was still in his old Shirataki Temple copy at 6:45 AM; his next way out and back in should give him River Temple from the gate key. (2026-11-21 6:45 AM Bot Update)
 - River Temple (7:15 AM): Cyndr walked out and got a fresh copy at 7:12 AM (its quests started over, PR #1483 working), and is now on Defeat and Collect Shoji.
 
+- Shoji, follow-up (3:45 AM, 22 November): on v160 Idunn still went back and forth between Shoji and the way out about 140 times, because the #1649 skip only matched the creature she stood on and the step's target never matched it. Fix #1668 (bots): a creature that starts no battle now leaves its step alone for 10 minutes. It ships after the kill-switch check, together with #1667.
 ## MooShu, Jade Palace Throne Room (An Imperial Cure)
 - 2026-11-21 8:00 round: Ra lost to Jade Oni at 07:26, 07:44 and 07:57 (1 win, 7 losses overall), going back in at 57% health each time; every loss said "1 time(s) at this step", so the repeat-loss remedies never start. Bot fault, being fixed.
 - 2026-11-21 9:00 AM: SOLVED. Ra beat Jade Oni and finished An Imperial Cure at 08:47 (20 min), then The Key at Last at 08:50. Not a quest fault: the earlier losses were a hard fight, and he won once he went in better prepared.

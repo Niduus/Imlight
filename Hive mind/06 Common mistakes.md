@@ -4,7 +4,7 @@ Rebuilt every Bot Update round from the shared mistakes book (shared/now/mistake
 places the bots made it most, how often, what got them out, and the rule to prevent it. Every bot reads the
 same book, so a lesson here is a lesson for all of them.
 
-## stuck (8855 times, 405 places)
+## stuck (8856 times, 405 places)
 
 - **1258x** a few steps back from the puzzle piece "DynaTrigger_MB_Plaque_Sun instance" (now Off, needs On) (it offers its pull agai (Marleybone/MB_ScotlandYard/MB_KatzLab; last 2026-11-22T08:33, KitharasAndromeda, solo)
   - What worked: walk well away and come back another way
@@ -42,7 +42,7 @@ same book, so a lesson here is a lesson for all of them.
   - What worked: walk well away and come back another way
   - Prevent it: Walk round this spot; the way finder bends round it now.
 
-## surprise (2832 times, 258 places)
+## surprise (2838 times, 258 places)
 
 - **467x** to Nightside (training) (WizardCity/WC_Hub; last 2026-11-22T08:46, Kurrent, solo)
   - Prevent it: This way goes to Merle Ambrose's Tower, not Nightside: plan from where it really goes.
@@ -58,7 +58,7 @@ same book, so a lesson here is a lesson for all of them.
   - Prevent it: The book's landing spot or the game's needs a look.
 - **57x** Krokotopia/KT_Hub (Krokotopia/KT_Hub; last 2026-11-21T12:07, KitharasUmbella, solo)
   - Prevent it: The book's landing spot or the game's needs a look.
-- **56x** MooShu/MS_Hub (MooShu/MS_Hub; last 2026-11-22T09:23, Mythis, solo)
+- **57x** MooShu/MS_Hub (MooShu/MS_Hub; last 2026-11-22T09:40, Mythis, solo)
   - Prevent it: The book's landing spot or the game's needs a look.
 - **55x** Gearhead, the creatures of the room's battle circle "InitiateCombat-Room3" (the floor's fight comes before the teleporte (Marleybone/MB_BigBen/MB_BigBen; last 2026-11-22T09:27, KitharasDevourer, solo)
   - Prevent it: Gearhead is stronger than it looks: go in at full health with a deck made for it, or level up first.
@@ -69,7 +69,7 @@ same book, so a lesson here is a lesson for all of them.
 - **45x** Krokotopia/KT_Tomb/KT_WellOfSpirits (Krokotopia/KT_Tomb/KT_WellOfSpirits; last 2026-11-21T23:37, KitharasWasSilenced, solo)
   - Prevent it: The book's landing spot or the game's needs a look.
 
-## no way on the map (2513 times, 148 places)
+## no way on the map (2515 times, 148 places)
 
 - **576x** going along with Kitharas Lamia (my group) (Marleybone/MB_ScotlandYard/MB_KatzLab; last 2026-11-22T03:36, CrimesAgainstKitharas, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
@@ -83,7 +83,7 @@ same book, so a lesson here is a lesson for all of them.
   - Prevent it: The way finder or the step's spot needs a look here.
 - **91x** walks through the doorway to Krokosphinx (leaving The Oasis: a side dungeon, my story is in Krokosphinx) (Krokotopia/KT_HubFlyingShip_ToIsland; last 2026-11-21T19:55, KitharasJackle, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
-- **62x** walks out of the exit and in again through another part of it (WizardCity/WC_Streets/Interiors/WC_OldeTown_AuctionHouse; last 2026-11-22T08:49, Kurrent, solo)
+- **63x** walks out of the exit and in again through another part of it (WizardCity/WC_Streets/Interiors/WC_OldeTown_AuctionHouse; last 2026-11-22T09:39, Cyndr, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
 - **60x** to Scotland Yard Roof (Talk to Watson) (Marleybone/Interiors/MB_ScotlandYard; last 2026-11-21T23:14, KitharasMordiael, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
@@ -123,7 +123,7 @@ same book, so a lesson here is a lesson for all of them.
 - **7x** Use Lever here (WizardCity/WC_Streets/WC_Triton; last 2026-11-20T12:49, LumeriaOfKitharas, solo)
   - Prevent it: Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.
 
-## lost fight (826 times, 49 places)
+## lost fight (829 times, 49 places)
 
 - **152x** Bellows (Marleybone/MB_Hub; last 2026-11-22T09:00, KitharasDevourer, solo)
   - Prevent it: Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.
@@ -137,7 +137,7 @@ same book, so a lesson here is a lesson for all of them.
   - Prevent it: Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.
 - **35x** Firegut (Marleybone/MB_Hub; last 2026-11-22T04:18, KitharasLibra, solo)
   - Prevent it: Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.
-- **34x** Gear Spinner (Marleybone/MB_Hub; last 2026-11-22T09:29, KitharasHexation, solo)
+- **35x** Gear Spinner (Marleybone/MB_Hub; last 2026-11-22T09:41, AlchemiZistOfKitharas, solo)
   - Prevent it: Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.
 - **30x** O'Leary Conniver (Marleybone/MB_Hub; last 2026-11-22T08:12, KitharasHexation, solo)
   - Prevent it: Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.
