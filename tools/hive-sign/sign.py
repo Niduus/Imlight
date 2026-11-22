@@ -41,6 +41,9 @@ BRAIN = [
     "ultimus/quest-tree.json", "ultimus/npc-book.json", "ultimus/zone-transfers.json", "ultimus/pads.json",
     "ultimus/deck-mix.json", "ultimus/learned.jsonl", "ultimus/foes.json", "ultimus/drop-memory.json",
     "ultimus/abnormal-fixes.json", "ultimus/guided-runs.json", "ultimus/playbook.txt",
+    "ultimus/story-extras.json", "ultimus/worlds.json", "ultimus/training-pins.json", "ultimus/player-tips.json",
+    "ultimus/watchdog-book.json", "ultimus/stuck-days.json", "ultimus/cause-days.json", "ultimus/time-waste.json",
+    "ultimus/tco7-council.json", "routes/learned-routes.json",
 ]
 
 
@@ -54,7 +57,7 @@ def sha256(data: bytes) -> str:
 
 
 # Niduus/ahziael-bots keeps the same files elsewhere: shared/now = logs/bots, bots/ultimus/now = logs/ultimus.
-REPO_FOLDERS = {"bots": "shared/now", "ultimus": "bots/ultimus/now"}
+REPO_FOLDERS = {"bots": "shared/now", "ultimus": "bots/ultimus/now", "routes": "shared/routes"}
 
 
 def locate(source: str, rel: str, repo: bool) -> str:
@@ -68,10 +71,11 @@ def build(source: str, key_path: str, out: str, repo: bool = False) -> int:
     with open(key_path, "rb") as f:
         key = serialization.load_pem_private_key(f.read(), password=None)
 
-    files, blobs = [], {}
+    files, blobs, missing = [], {}, []
     for rel in BRAIN:
         path = locate(source, rel, repo)
         if not os.path.isfile(path):
+            missing.append(rel)
             continue
         with open(path, "rb") as f:
             data = f.read()
@@ -116,6 +120,8 @@ def build(source: str, key_path: str, out: str, repo: bool = False) -> int:
             z.writestr("brain/" + rel, data)
     os.replace(tmp, out)
     extra = 1 + (AHZIAEL_SWITCH in blobs)
+    if missing:
+        print(f"Not found, so not signed in ({len(missing)}): {', '.join(missing)}")
     print(f"Signed {len(files) - extra} brain file(s), the kill switch{' and the Ahziael switch' if extra == 2 else ''} into {out}.")
     return 0
 
