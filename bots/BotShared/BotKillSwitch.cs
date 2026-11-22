@@ -101,7 +101,7 @@ internal static class BotKillSwitch {
             var on = Parse(text);
             try {
                 Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-                File.WriteAllText(path, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} on = {(on ? "true" : "false")}{Environment.NewLine}");
+                File.WriteAllText(path, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} on = {(on ? "true" : "false")} (read from {URL}){Environment.NewLine}");
             }
             catch (Exception) {
                 // Only the memory of it is lost.
