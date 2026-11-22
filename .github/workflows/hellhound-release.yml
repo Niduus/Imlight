@@ -1,6 +1,10 @@
 # Publish Hellhound (Niduus, 2026-11-22: "Make the EXE ... this one will just be called Hellhound. Everything bot related
 # goes in this"). Builds src/Hellhound as one native Windows exe (Native AOT, no .NET needed on the PC) and publishes it as
-# release hellhound-v<next number> with Hellhound.exe attached.
+# release hellhound-v<major>.<minor> with Hellhound.exe attached.
+#
+# Version rule (Niduus, 2026-11-22: "Hellhound v0.2 / 2 is minor / 0 is major / Updating bot logic doesn't qualify"):
+# Hellhound has its own major.minor number. Only changes to Hellhound itself bump it. Bot logic updates go out as
+# bot updates and never change Hellhound's number.
 #
 # Run by hand only, after Niduus says "go": Actions > Publish Hellhound > Run workflow (branch quality-assurance).
 # The release is never marked "latest", and its tag doesn't read as a version, so Ahziael's and the launcher's own update
@@ -10,6 +14,9 @@ name: Publish Hellhound
 on:
   workflow_dispatch:
     inputs:
+      version:
+        description: 'Hellhound version, major.minor (for example 0.2). Bot logic updates never bump it.'
+        required: true
       note:
         description: 'One plain-words line about this Hellhound version (optional)'
         required: false
@@ -42,18 +49,21 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Next number
+      - name: Check version
         id: number
         shell: pwsh
+        env:
+          WANTED: ${{ inputs.version }}
         run: |
-          $numbers = @(git tag --list 'hellhound-v*' | ForEach-Object { ($_ -replace '^hellhound-v', '') -as [int] } | Where-Object { $_ })
-          $next = if ($numbers.Count) { ($numbers | Measure-Object -Maximum).Maximum + 1 } else { 1 }
-          "number=$next" >> $env:GITHUB_OUTPUT
+          $v = "$env:WANTED".Trim().TrimStart('v')
+          if ($v -notmatch '^\d+\.\d+$') { Write-Error "Version must be major.minor, like 0.2 (got '$v')."; exit 1 }
+          if (git tag --list "hellhound-v$v") { Write-Error "hellhound-v$v already exists."; exit 1 }
+          "version=$v" >> $env:GITHUB_OUTPUT
 
       - name: Build Hellhound.exe
         shell: pwsh
         run: |
-          dotnet publish src/Hellhound/Hellhound.csproj -c Release -r win-x64 -o release -p:Version=1.0.${{ steps.number.outputs.number }}
+          dotnet publish src/Hellhound/Hellhound.csproj -c Release -r win-x64 -o release -p:Version=${{ steps.number.outputs.version }}.0
           if (-not (Test-Path release/Hellhound.exe)) { Write-Error "Hellhound.exe was not built."; exit 1 }
           Get-ChildItem release | Where-Object { $_.Name -ne 'Hellhound.exe' } | Remove-Item -Recurse -Force
 
@@ -61,12 +71,14 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.number.outputs.version }}
+          NOTE: ${{ inputs.note }}
         run: |
-          $tag = "hellhound-v${{ steps.number.outputs.number }}"
-          $line = "${{ inputs.note }}".Trim()
-          $notes = "Hellhound ${{ steps.number.outputs.number }}: the bots' own app.`n`n" + $(if ($line) { "- $line`n`n" } else { "" }) +
-                   "Download Hellhound.exe and open it on the PC that runs the server. Its page opens in your browser."
+          $tag = "hellhound-v$env:VERSION"
+          $line = "$env:NOTE".Trim()
+          $notes = "Hellhound v$($env:VERSION): the bots' own app.`n`n" + $(if ($line) { "- $line`n`n" } else { "" }) +
+                   "Download Hellhound.exe and open it on the PC that runs the server. It opens in its own window."
           $notesFile = Join-Path $env:RUNNER_TEMP 'hellhound-notes.md'
           Set-Content -Path $notesFile -Value $notes -Encoding utf8NoBOM
-          gh release create $tag release/Hellhound.exe --title "Hellhound ${{ steps.number.outputs.number }}" `
+          gh release create $tag release/Hellhound.exe --title "Hellhound v$env:VERSION" `
             --notes-file $notesFile --target "${{ github.sha }}" --latest=false

@@ -6,117 +6,189 @@
 <title>Hellhound</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E %3Cdefs%3E %3ClinearGradient id='bg' x1='0' y1='0' x2='0' y2='1'%3E %3Cstop offset='0' stop-color='%231c0b10'/%3E%3Cstop offset='1' stop-color='%23090608'/%3E %3C/linearGradient%3E %3ClinearGradient id='fire' x1='0' y1='1' x2='0' y2='0'%3E %3Cstop offset='0' stop-color='%23b3150b'/%3E%3Cstop offset='.45' stop-color='%23ff6a14'/%3E%3Cstop offset='1' stop-color='%23ffd24a'/%3E %3C/linearGradient%3E %3ClinearGradient id='body' x1='.2' y1='0' x2='.75' y2='1'%3E %3Cstop offset='0' stop-color='%2317101a'/%3E%3Cstop offset='.55' stop-color='%231a0f14'/%3E%3Cstop offset='.8' stop-color='%235a1410'/%3E%3Cstop offset='1' stop-color='%23d4380f'/%3E %3C/linearGradient%3E %3CradialGradient id='glow' cx='.6' cy='.6' r='.6'%3E %3Cstop offset='0' stop-color='%23ff4a12' stop-opacity='.6'/%3E%3Cstop offset='1' stop-color='%23ff4a12' stop-opacity='0'/%3E %3C/radialGradient%3E %3Cfilter id='soft' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeGaussianBlur stdDeviation='6'/%3E%3C/filter%3E %3Cfilter id='soft2' x='-50%25' y='-50%25' width='200%25' height='200%25'%3E%3CfeGaussianBlur stdDeviation='2.2'/%3E%3C/filter%3E %3CclipPath id='tile'%3E%3Crect x='8' y='8' width='240' height='240' rx='52'/%3E%3C/clipPath%3E %3Cpath id='head' d='M120 190 C108 180 100 170 96 160 L66 162 C58 162 54 158 56 152 L62 146 L102 138 L56 130 C44 129 34 123 34 115 C34 108 40 103 48 102 L84 92 C94 86 102 80 110 72 L118 26 L134 62 L148 34 L160 72 C176 82 188 98 192 118 C196 136 190 146 180 152 C186 170 194 200 206 256 L96 256 C100 224 108 204 120 190 Z'/%3E %3C/defs%3E %3Crect x='8' y='8' width='240' height='240' rx='52' fill='url%28%23bg%29'/%3E %3Cg clip-path='url%28%23tile%29'%3E %3Ccircle cx='150' cy='150' r='130' fill='url%28%23glow%29'/%3E %3C%21-- flames behind, soft --%3E %3Cpath filter='url%28%23soft%29' fill='%23ff5a14' opacity='.8' d='M90 256 C70 214 84 176 110 150 C112 176 122 182 130 184 C124 146 146 104 176 80 C172 106 182 122 196 128 C198 100 214 80 236 70 C228 104 242 130 240 160 C252 146 256 130 258 118 C270 170 262 220 244 256 Z'/%3E %3Cpath fill='url%28%23fire%29' d='M104 256 C88 220 98 190 116 168 C116 186 124 192 132 194 C126 160 144 122 170 98 C168 122 176 138 190 144 C190 116 204 94 226 82 C220 112 232 136 230 162 C240 150 246 136 248 124 C258 170 252 216 236 256 Z'/%3E %3C%21-- the hound --%3E %3Cuse href='%23head' fill='url%28%23body%29'/%3E %3C%21-- flames licking up over the neck so body and fire blend --%3E %3Cpath fill='url%28%23fire%29' opacity='.9' d='M110 256 C108 236 116 222 126 214 C124 228 130 234 136 236 C134 218 144 204 156 196 C154 210 160 220 168 222 C168 204 176 190 188 184 C184 200 192 214 196 222 C200 210 204 200 210 194 C212 216 212 238 208 256 Z'/%3E %3Cpath fill='%23ffd24a' opacity='.55' filter='url%28%23soft2%29' d='M128 256 C128 244 134 236 140 232 C140 242 146 246 150 246 C150 236 158 226 166 222 C166 234 172 240 178 242 C180 234 186 228 190 226 C192 238 192 248 190 256 Z'/%3E %3C%21-- ember rim light on the back of the head and ears --%3E %3Cpath fill='none' stroke='%23ff7a1e' stroke-width='3' stroke-linecap='round' filter='url%28%23soft2%29' d='M160 72 C176 82 188 98 192 118 C196 136 190 146 180 152 C186 170 194 200 206 256'/%3E %3Cpath fill='none' stroke='%23ff9a3a' stroke-width='1.6' stroke-linecap='round' opacity='.85' d='M134 62 L148 34 L160 72 C176 82 188 98 192 118'/%3E %3C%21-- faint glow on the front ear and the top of the muzzle --%3E %3Cpath fill='none' stroke='%23c2461a' stroke-width='1.6' stroke-linecap='round' opacity='.75' d='M110 72 L118 26 L134 62'/%3E %3Cpath fill='none' stroke='%238a2a14' stroke-width='1.6' stroke-linecap='round' opacity='.7' d='M48 102 L84 92 C94 86 102 80 110 72'/%3E %3C%21-- subtle fur --%3E %3Cg fill='none' stroke='%233b2630' stroke-width='2' stroke-linecap='round' opacity='.7'%3E %3Cpath d='M150 120 C160 126 170 128 178 126'/%3E%3Cpath d='M144 138 C156 146 166 148 176 146'/%3E %3Cpath d='M140 158 C150 166 160 170 172 170'/%3E %3C/g%3E %3C%21-- mouth --%3E %3Cpath fill='%233a0608' d='M62 146 L102 138 L100 150 C88 153 76 156 66 158 Z'/%3E %3Cpath fill='%23ff4a12' opacity='.55' filter='url%28%23soft2%29' d='M70 150 C80 146 92 144 100 145 L98 151 C88 154 78 156 70 156 Z'/%3E %3Cpath fill='%23efe4d4' d='M50 129 L57 129 L53.5 142 Z M66 131 L71 131 L68.5 139 Z M86 134 L90 134 L88 140 Z'/%3E %3Cpath fill='%23efe4d4' d='M62 161 L67 161 L64.5 150 Z M82 158 L86 158 L84 151 Z'/%3E %3C%21-- nose --%3E %3Cpath fill='%23050304' d='M32 110 C32 104 38 100 46 101 C51 102 53 107 51 112 C48 117 39 118 34 115 Z'/%3E %3C%21-- brow ridge %28angry%29 and eye --%3E %3Cpath fill='%230b070a' d='M94 90 C106 84 120 84 132 90 L128 94 C118 90 106 90 96 94 Z'/%3E %3Cpath fill='%23ff7a14' filter='url%28%23soft2%29' d='M102 99 C110 93 120 91 130 92 C124 99 114 102 102 99 Z'/%3E %3Cpath fill='%23ffe27a' d='M104 98 C111 94 120 92 128 93 C123 98 114 100 104 98 Z'/%3E %3Cpath fill='%23fffbe0' d='M114 95 C118 94 122 93 125 93 C122 96 118 97 114 95 Z'/%3E %3C/g%3E %3C/svg%3E">
 <style>
-  :root { --bg:#14121a; --card:#1e1b27; --line:#2f2a3d; --text:#ece8f4; --dim:#a39cb5; --ok:#5fd39a; --warn:#f0c062; --bad:#f07a7a; }
+  :root { --bg:#0f0d13; --side:#15121b; --card:#1b1722; --card2:#221d2b; --line:#2c2636; --text:#efeaf6; --dim:#9c94ad;
+          --ember:#ff7a1e; --ok:#4fd08f; --warn:#f2bf55; --bad:#f2716b; }
   * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.45 system-ui, "Segoe UI", sans-serif; }
-  header { padding:18px 24px; border-bottom:1px solid var(--line); display:flex; gap:16px; align-items:baseline; flex-wrap:wrap; }
-  h1 { font-size:20px; margin:0; }
-  h2 { font-size:15px; margin:0 0 10px; color:var(--dim); font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
-  main { padding:20px 24px; display:grid; gap:20px; max-width:1100px; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; }
-  .dim { color:var(--dim); font-size:13px; }
-  .row { display:flex; gap:10px; padding:7px 0; border-top:1px solid var(--line); }
-  .row:first-of-type { border-top:0; }
-  .row b { min-width:190px; }
-  .pill { font-size:12px; padding:1px 8px; border-radius:99px; border:1px solid currentColor; }
+  html, body { height:100%; }
+  body { margin:0; background:var(--bg); color:var(--text); font:14px/1.45 "Segoe UI", system-ui, sans-serif; display:flex; overflow:hidden; }
+  aside { width:220px; flex:none; background:var(--side); border-right:1px solid var(--line); display:flex; flex-direction:column; padding:18px 12px; }
+  .brand { display:flex; align-items:center; gap:10px; padding:0 8px 18px; font-size:19px; font-weight:700; letter-spacing:.02em; }
+  .brand img { width:36px; height:36px; }
+  nav button { display:flex; align-items:center; gap:10px; width:100%; text-align:left; background:none; border:0; color:var(--dim);
+               font:inherit; font-size:14px; padding:9px 12px; border-radius:8px; cursor:pointer; margin-bottom:2px; }
+  nav button:hover { background:var(--card); color:var(--text); }
+  nav button.on { background:linear-gradient(90deg, rgba(255,122,30,.18), rgba(255,122,30,.04)); color:var(--text); box-shadow:inset 3px 0 0 var(--ember); }
+  nav svg { width:18px; height:18px; flex:none; }
+  .side-foot .dot { margin-right:6px; }
+  .side-foot { margin-top:auto; padding:10px 8px 0; font-size:12px; color:var(--dim); border-top:1px solid var(--line); }
+  main { flex:1; overflow:auto; padding:26px 30px 40px; }
+  section { display:none; max-width:1150px; } section.on { display:block; }
+  h1 { font-size:22px; margin:0 0 4px; } .sub { color:var(--dim); margin:0 0 20px; }
+  h3 { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--dim); margin:22px 0 10px; font-weight:600; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; }
+  .dim { color:var(--dim); } .small { font-size:12px; }
+  .dot { width:9px; height:9px; border-radius:50%; display:inline-block; flex:none; background:var(--dim); }
+  .dot.ok { background:var(--ok); box-shadow:0 0 8px var(--ok); } .dot.warn { background:var(--warn); box-shadow:0 0 8px var(--warn); }
+  .dot.bad { background:var(--bad); box-shadow:0 0 8px var(--bad); }
   .ok { color:var(--ok); } .warn { color:var(--warn); } .bad { color:var(--bad); }
-  .bot { margin-top:12px; } .bot:first-child { margin-top:0; }
-  .seat { margin:6px 0 0 16px; font-size:14px; }
-  .seat .dim { margin-left:6px; }
-  button { font:inherit; font-size:13px; color:var(--text); background:#2b2638; border:1px solid var(--line); border-radius:6px; padding:2px 10px; cursor:pointer; margin-left:8px; }
-  button:hover { border-color:var(--dim); }
-  select { font:inherit; color:var(--text); background:#2b2638; border:1px solid var(--line); border-radius:6px; padding:3px 8px; }
-  .watch { display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start; }
-  #map { background:#0d0c12; border:1px solid var(--line); border-radius:8px; width:460px; max-width:100%; }
-  #info { flex:1; min-width:260px; font-size:14px; }
+  .banner { display:flex; align-items:center; gap:16px; padding:20px; border-radius:14px; border:1px solid var(--line);
+            background:linear-gradient(120deg, var(--card2), var(--card)); }
+  .banner .big { font-size:20px; font-weight:700; } .banner .dot { width:16px; height:16px; }
+  .grid { display:grid; gap:14px; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); }
+  .check { display:flex; gap:12px; align-items:flex-start; } .check .dot { margin-top:5px; }
+  .check b { display:block; margin-bottom:2px; }
+  .stat { font-size:28px; font-weight:700; } 
+  .bots { display:grid; gap:14px; grid-template-columns:repeat(auto-fill, minmax(330px, 1fr)); }
+  .bot { background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  .bot-head { display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid var(--line); }
+  .bot-head .name { font-weight:700; font-size:15px; flex:1; } .bot-head .small { font-weight:400; }
+  .seats { max-height:260px; overflow:auto; }
+  .seat { display:flex; align-items:center; gap:10px; padding:9px 16px; border-top:1px solid #241f2d; }
+  .seat:first-child { border-top:0; }
+  .seat .who { flex:1; min-width:0; } .seat .who div { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .empty { padding:12px 16px; color:var(--dim); font-size:13px; }
+  .tag { font-size:11px; padding:1px 7px; border-radius:99px; border:1px solid currentColor; white-space:nowrap; }
+  .switch { position:relative; width:42px; height:24px; border-radius:99px; border:0; background:#3a3346; cursor:pointer; flex:none; }
+  .switch::after { content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#cfc8dc; transition:left .15s; }
+  .switch.on { background:var(--ember); } .switch.on::after { left:21px; background:#fff; }
+  .btn { font:inherit; font-size:12px; color:var(--text); background:var(--card2); border:1px solid var(--line); border-radius:7px; padding:4px 11px; cursor:pointer; white-space:nowrap; }
+  .btn:hover { border-color:var(--ember); } .btn.main { background:var(--ember); border-color:var(--ember); color:#1a0d05; font-weight:600; padding:7px 16px; font-size:13px; }
+  .rows .row { display:flex; gap:16px; padding:10px 0; border-top:1px solid var(--line); } .rows .row:first-child { border-top:0; }
+  .rows .row b { width:200px; flex:none; font-weight:600; color:var(--dim); }
+  select { font:inherit; color:var(--text); background:var(--card2); border:1px solid var(--line); border-radius:8px; padding:6px 10px; min-width:260px; }
+  .watch { display:grid; grid-template-columns:minmax(300px, 520px) 1fr; gap:16px; align-items:start; }
+  #map { width:100%; aspect-ratio:1; border-radius:12px; border:1px solid var(--line); background:#0b0a10; display:block; }
+  #info b { font-size:15px; } #info h2 { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--dim); margin:16px 0 6px; }
   .hand { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
-  .card-s { border:1px solid var(--line); border-radius:6px; padding:4px 8px; font-size:13px; background:#25212f; }
-  .card-s.no { opacity:.45; } .card-s.pick { outline:2px solid var(--warn); }
-  .bar { height:6px; background:#2f2a3d; border-radius:3px; overflow:hidden; margin:2px 0 6px; }
-  .bar i { display:block; height:100%; background:var(--ok); }
-  #said { position:sticky; top:0; background:#2b2638; border-bottom:1px solid var(--line); padding:8px 24px; display:none; }
+  .card-s { border:1px solid var(--line); border-left-width:4px; border-radius:7px; padding:5px 9px; font-size:13px; background:var(--card2); }
+  .card-s.no { opacity:.45; } .card-s.pick { box-shadow:0 0 0 2px var(--warn); }
+  .bar { height:6px; background:#2c2636; border-radius:3px; overflow:hidden; margin:3px 0 8px; } .bar i { display:block; height:100%; }
+  #toast { position:fixed; right:24px; bottom:24px; max-width:420px; background:var(--card2); border:1px solid var(--ember); border-radius:10px;
+           padding:12px 16px; box-shadow:0 10px 30px rgba(0,0,0,.5); opacity:0; transform:translateY(10px); transition:all .2s; pointer-events:none; }
+  #toast.show { opacity:1; transform:none; }
+  @media (max-width:760px) { aside { width:64px; } .brand span, nav button span, .side-foot { display:none; } .watch { grid-template-columns:1fr; } main { padding:18px; } }
 </style>
 </head>
 <body>
-<header>
-  <h1 style="display:flex;align-items:center;gap:10px"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E %3Cdefs%3E %3ClinearGradient id='bg' x1='0' y1='0' x2='0' y2='1'%3E %3Cstop offset='0' stop-color='%231c0b10'/%3E%3Cstop offset='1' stop-color='%23090608'/%3E %3C/linearGradient%3E %3ClinearGradient id='fire' x1='0' y1='1' x2='0' y2='0'%3E %3Cstop offset='0' stop-color='%23b3150b'/%3E%3Cstop offset='.45' stop-color='%23ff6a14'/%3E%3Cstop offset='1' stop-color='%23ffd24a'/%3E %3C/linearGradient%3E %3ClinearGradient id='body' x1='.2' y1='0' x2='.75' y2='1'%3E %3Cstop offset='0' stop-color='%2317101a'/%3E%3Cstop offset='.55' stop-color='%231a0f14'/%3E%3Cstop offset='.8' stop-color='%235a1410'/%3E%3Cstop offset='1' stop-color='%23d4380f'/%3E %3C/linearGradient%3E %3CradialGradient id='glow' cx='.6' cy='.6' r='.6'%3E %3Cstop offset='0' stop-color='%23ff4a12' stop-opacity='.6'/%3E%3Cstop offset='1' stop-color='%23ff4a12' stop-opacity='0'/%3E %3C/radialGradient%3E %3Cfilter id='soft' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeGaussianBlur stdDeviation='6'/%3E%3C/filter%3E %3Cfilter id='soft2' x='-50%25' y='-50%25' width='200%25' height='200%25'%3E%3CfeGaussianBlur stdDeviation='2.2'/%3E%3C/filter%3E %3CclipPath id='tile'%3E%3Crect x='8' y='8' width='240' height='240' rx='52'/%3E%3C/clipPath%3E %3Cpath id='head' d='M120 190 C108 180 100 170 96 160 L66 162 C58 162 54 158 56 152 L62 146 L102 138 L56 130 C44 129 34 123 34 115 C34 108 40 103 48 102 L84 92 C94 86 102 80 110 72 L118 26 L134 62 L148 34 L160 72 C176 82 188 98 192 118 C196 136 190 146 180 152 C186 170 194 200 206 256 L96 256 C100 224 108 204 120 190 Z'/%3E %3C/defs%3E %3Crect x='8' y='8' width='240' height='240' rx='52' fill='url%28%23bg%29'/%3E %3Cg clip-path='url%28%23tile%29'%3E %3Ccircle cx='150' cy='150' r='130' fill='url%28%23glow%29'/%3E %3C%21-- flames behind, soft --%3E %3Cpath filter='url%28%23soft%29' fill='%23ff5a14' opacity='.8' d='M90 256 C70 214 84 176 110 150 C112 176 122 182 130 184 C124 146 146 104 176 80 C172 106 182 122 196 128 C198 100 214 80 236 70 C228 104 242 130 240 160 C252 146 256 130 258 118 C270 170 262 220 244 256 Z'/%3E %3Cpath fill='url%28%23fire%29' d='M104 256 C88 220 98 190 116 168 C116 186 124 192 132 194 C126 160 144 122 170 98 C168 122 176 138 190 144 C190 116 204 94 226 82 C220 112 232 136 230 162 C240 150 246 136 248 124 C258 170 252 216 236 256 Z'/%3E %3C%21-- the hound --%3E %3Cuse href='%23head' fill='url%28%23body%29'/%3E %3C%21-- flames licking up over the neck so body and fire blend --%3E %3Cpath fill='url%28%23fire%29' opacity='.9' d='M110 256 C108 236 116 222 126 214 C124 228 130 234 136 236 C134 218 144 204 156 196 C154 210 160 220 168 222 C168 204 176 190 188 184 C184 200 192 214 196 222 C200 210 204 200 210 194 C212 216 212 238 208 256 Z'/%3E %3Cpath fill='%23ffd24a' opacity='.55' filter='url%28%23soft2%29' d='M128 256 C128 244 134 236 140 232 C140 242 146 246 150 246 C150 236 158 226 166 222 C166 234 172 240 178 242 C180 234 186 228 190 226 C192 238 192 248 190 256 Z'/%3E %3C%21-- ember rim light on the back of the head and ears --%3E %3Cpath fill='none' stroke='%23ff7a1e' stroke-width='3' stroke-linecap='round' filter='url%28%23soft2%29' d='M160 72 C176 82 188 98 192 118 C196 136 190 146 180 152 C186 170 194 200 206 256'/%3E %3Cpath fill='none' stroke='%23ff9a3a' stroke-width='1.6' stroke-linecap='round' opacity='.85' d='M134 62 L148 34 L160 72 C176 82 188 98 192 118'/%3E %3C%21-- faint glow on the front ear and the top of the muzzle --%3E %3Cpath fill='none' stroke='%23c2461a' stroke-width='1.6' stroke-linecap='round' opacity='.75' d='M110 72 L118 26 L134 62'/%3E %3Cpath fill='none' stroke='%238a2a14' stroke-width='1.6' stroke-linecap='round' opacity='.7' d='M48 102 L84 92 C94 86 102 80 110 72'/%3E %3C%21-- subtle fur --%3E %3Cg fill='none' stroke='%233b2630' stroke-width='2' stroke-linecap='round' opacity='.7'%3E %3Cpath d='M150 120 C160 126 170 128 178 126'/%3E%3Cpath d='M144 138 C156 146 166 148 176 146'/%3E %3Cpath d='M140 158 C150 166 160 170 172 170'/%3E %3C/g%3E %3C%21-- mouth --%3E %3Cpath fill='%233a0608' d='M62 146 L102 138 L100 150 C88 153 76 156 66 158 Z'/%3E %3Cpath fill='%23ff4a12' opacity='.55' filter='url%28%23soft2%29' d='M70 150 C80 146 92 144 100 145 L98 151 C88 154 78 156 70 156 Z'/%3E %3Cpath fill='%23efe4d4' d='M50 129 L57 129 L53.5 142 Z M66 131 L71 131 L68.5 139 Z M86 134 L90 134 L88 140 Z'/%3E %3Cpath fill='%23efe4d4' d='M62 161 L67 161 L64.5 150 Z M82 158 L86 158 L84 151 Z'/%3E %3C%21-- nose --%3E %3Cpath fill='%23050304' d='M32 110 C32 104 38 100 46 101 C51 102 53 107 51 112 C48 117 39 118 34 115 Z'/%3E %3C%21-- brow ridge %28angry%29 and eye --%3E %3Cpath fill='%230b070a' d='M94 90 C106 84 120 84 132 90 L128 94 C118 90 106 90 96 94 Z'/%3E %3Cpath fill='%23ff7a14' filter='url%28%23soft2%29' d='M102 99 C110 93 120 91 130 92 C124 99 114 102 102 99 Z'/%3E %3Cpath fill='%23ffe27a' d='M104 98 C111 94 120 92 128 93 C123 98 114 100 104 98 Z'/%3E %3Cpath fill='%23fffbe0' d='M114 95 C118 94 122 93 125 93 C122 96 118 97 114 95 Z'/%3E %3C/g%3E %3C/svg%3E" width="30" height="30" alt="">Hellhound</h1>
-  <span id="server" class="dim">Reading...</span>
-</header>
-<div id="said"></div>
+<aside>
+  <div class="brand"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E %3Cdefs%3E %3ClinearGradient id='bg' x1='0' y1='0' x2='0' y2='1'%3E %3Cstop offset='0' stop-color='%231c0b10'/%3E%3Cstop offset='1' stop-color='%23090608'/%3E %3C/linearGradient%3E %3ClinearGradient id='fire' x1='0' y1='1' x2='0' y2='0'%3E %3Cstop offset='0' stop-color='%23b3150b'/%3E%3Cstop offset='.45' stop-color='%23ff6a14'/%3E%3Cstop offset='1' stop-color='%23ffd24a'/%3E %3C/linearGradient%3E %3ClinearGradient id='body' x1='.2' y1='0' x2='.75' y2='1'%3E %3Cstop offset='0' stop-color='%2317101a'/%3E%3Cstop offset='.55' stop-color='%231a0f14'/%3E%3Cstop offset='.8' stop-color='%235a1410'/%3E%3Cstop offset='1' stop-color='%23d4380f'/%3E %3C/linearGradient%3E %3CradialGradient id='glow' cx='.6' cy='.6' r='.6'%3E %3Cstop offset='0' stop-color='%23ff4a12' stop-opacity='.6'/%3E%3Cstop offset='1' stop-color='%23ff4a12' stop-opacity='0'/%3E %3C/radialGradient%3E %3Cfilter id='soft' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeGaussianBlur stdDeviation='6'/%3E%3C/filter%3E %3Cfilter id='soft2' x='-50%25' y='-50%25' width='200%25' height='200%25'%3E%3CfeGaussianBlur stdDeviation='2.2'/%3E%3C/filter%3E %3CclipPath id='tile'%3E%3Crect x='8' y='8' width='240' height='240' rx='52'/%3E%3C/clipPath%3E %3Cpath id='head' d='M120 190 C108 180 100 170 96 160 L66 162 C58 162 54 158 56 152 L62 146 L102 138 L56 130 C44 129 34 123 34 115 C34 108 40 103 48 102 L84 92 C94 86 102 80 110 72 L118 26 L134 62 L148 34 L160 72 C176 82 188 98 192 118 C196 136 190 146 180 152 C186 170 194 200 206 256 L96 256 C100 224 108 204 120 190 Z'/%3E %3C/defs%3E %3Crect x='8' y='8' width='240' height='240' rx='52' fill='url%28%23bg%29'/%3E %3Cg clip-path='url%28%23tile%29'%3E %3Ccircle cx='150' cy='150' r='130' fill='url%28%23glow%29'/%3E %3C%21-- flames behind, soft --%3E %3Cpath filter='url%28%23soft%29' fill='%23ff5a14' opacity='.8' d='M90 256 C70 214 84 176 110 150 C112 176 122 182 130 184 C124 146 146 104 176 80 C172 106 182 122 196 128 C198 100 214 80 236 70 C228 104 242 130 240 160 C252 146 256 130 258 118 C270 170 262 220 244 256 Z'/%3E %3Cpath fill='url%28%23fire%29' d='M104 256 C88 220 98 190 116 168 C116 186 124 192 132 194 C126 160 144 122 170 98 C168 122 176 138 190 144 C190 116 204 94 226 82 C220 112 232 136 230 162 C240 150 246 136 248 124 C258 170 252 216 236 256 Z'/%3E %3C%21-- the hound --%3E %3Cuse href='%23head' fill='url%28%23body%29'/%3E %3C%21-- flames licking up over the neck so body and fire blend --%3E %3Cpath fill='url%28%23fire%29' opacity='.9' d='M110 256 C108 236 116 222 126 214 C124 228 130 234 136 236 C134 218 144 204 156 196 C154 210 160 220 168 222 C168 204 176 190 188 184 C184 200 192 214 196 222 C200 210 204 200 210 194 C212 216 212 238 208 256 Z'/%3E %3Cpath fill='%23ffd24a' opacity='.55' filter='url%28%23soft2%29' d='M128 256 C128 244 134 236 140 232 C140 242 146 246 150 246 C150 236 158 226 166 222 C166 234 172 240 178 242 C180 234 186 228 190 226 C192 238 192 248 190 256 Z'/%3E %3C%21-- ember rim light on the back of the head and ears --%3E %3Cpath fill='none' stroke='%23ff7a1e' stroke-width='3' stroke-linecap='round' filter='url%28%23soft2%29' d='M160 72 C176 82 188 98 192 118 C196 136 190 146 180 152 C186 170 194 200 206 256'/%3E %3Cpath fill='none' stroke='%23ff9a3a' stroke-width='1.6' stroke-linecap='round' opacity='.85' d='M134 62 L148 34 L160 72 C176 82 188 98 192 118'/%3E %3C%21-- faint glow on the front ear and the top of the muzzle --%3E %3Cpath fill='none' stroke='%23c2461a' stroke-width='1.6' stroke-linecap='round' opacity='.75' d='M110 72 L118 26 L134 62'/%3E %3Cpath fill='none' stroke='%238a2a14' stroke-width='1.6' stroke-linecap='round' opacity='.7' d='M48 102 L84 92 C94 86 102 80 110 72'/%3E %3C%21-- subtle fur --%3E %3Cg fill='none' stroke='%233b2630' stroke-width='2' stroke-linecap='round' opacity='.7'%3E %3Cpath d='M150 120 C160 126 170 128 178 126'/%3E%3Cpath d='M144 138 C156 146 166 148 176 146'/%3E %3Cpath d='M140 158 C150 166 160 170 172 170'/%3E %3C/g%3E %3C%21-- mouth --%3E %3Cpath fill='%233a0608' d='M62 146 L102 138 L100 150 C88 153 76 156 66 158 Z'/%3E %3Cpath fill='%23ff4a12' opacity='.55' filter='url%28%23soft2%29' d='M70 150 C80 146 92 144 100 145 L98 151 C88 154 78 156 70 156 Z'/%3E %3Cpath fill='%23efe4d4' d='M50 129 L57 129 L53.5 142 Z M66 131 L71 131 L68.5 139 Z M86 134 L90 134 L88 140 Z'/%3E %3Cpath fill='%23efe4d4' d='M62 161 L67 161 L64.5 150 Z M82 158 L86 158 L84 151 Z'/%3E %3C%21-- nose --%3E %3Cpath fill='%23050304' d='M32 110 C32 104 38 100 46 101 C51 102 53 107 51 112 C48 117 39 118 34 115 Z'/%3E %3C%21-- brow ridge %28angry%29 and eye --%3E %3Cpath fill='%230b070a' d='M94 90 C106 84 120 84 132 90 L128 94 C118 90 106 90 96 94 Z'/%3E %3Cpath fill='%23ff7a14' filter='url%28%23soft2%29' d='M102 99 C110 93 120 91 130 92 C124 99 114 102 102 99 Z'/%3E %3Cpath fill='%23ffe27a' d='M104 98 C111 94 120 92 128 93 C123 98 114 100 104 98 Z'/%3E %3Cpath fill='%23fffbe0' d='M114 95 C118 94 122 93 125 93 C122 96 118 97 114 95 Z'/%3E %3C/g%3E %3C/svg%3E" alt=""><span>Hellhound</span></div>
+  <nav>
+    <button data-go="overview" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-8 9 8M5 10v10h14V10"/></svg><span>Overview</span></button>
+    <button data-go="bots"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4M9 13h.01M15 13h.01"/></svg><span>Bots</span></button>
+    <button data-go="watch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span>Watch</span></button>
+    <button data-go="updates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span>Bot updates</span></button>
+  </nav>
+  <div class="side-foot"><div id="serverLine">Reading...</div><div id="readAt"></div><div id="appVersion"></div></div>
+</aside>
 <main>
-  <section class="card"><h2>Can the bots play?</h2><div id="locks"></div></section>
-  <section class="card"><h2>Bots</h2><div id="bots"></div></section>
-  <section class="card"><h2>Watch</h2>
-    <div class="row" style="border:0;align-items:center;flex-wrap:wrap">
+  <section id="overview" class="on">
+    <h1>Overview</h1><p class="sub">Whether the bots can play, and what they're up to.</p>
+    <div class="banner" id="banner"></div>
+    <h3>Checks</h3><div class="grid" id="checks"></div>
+    <h3>At a glance</h3><div class="grid" id="glance"></div>
+  </section>
+  <section id="bots">
+    <h1>Bots</h1><p class="sub">Turn each bot on or off, and pause any one of them. Changes reach the server within seconds.</p>
+    <div class="bots" id="botList"></div>
+  </section>
+  <section id="watch">
+    <h1>Watch</h1><p class="sub">Follow any bot on its own minimap. In a battle you see its hand and every pick.</p>
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
       <select id="who" onchange="watchNow()"><option value="">Waiting for the server...</option></select>
       <span id="watchSaid" class="dim"></span>
     </div>
-    <div class="watch">
-      <canvas id="map" width="460" height="460"></canvas>
-      <div id="info"></div>
-    </div>
+    <div class="watch"><canvas id="map" width="520" height="520"></canvas><div id="info" class="card"></div></div>
   </section>
-  <section class="card"><h2>Bot updates</h2><div id="updates"></div></section>
-  <p class="dim">Hellhound is the bots' own app. Ahziael's bot pages still work while they are retired step by step.</p>
+  <section id="updates">
+    <h1>Bot updates</h1><p class="sub">The server looks for bot updates by itself every 10 minutes and swaps them in without a restart.</p>
+    <div class="card rows" id="updateRows"></div>
+    <div style="margin-top:14px"><button class="btn main" onclick="act('/api/check-updates')">Look for a bot update now</button></div>
+  </section>
 </main>
+<div id="toast"></div>
 <script>
+let current = "overview";
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
+  current = b.dataset.go;
+  document.querySelectorAll("nav button").forEach(x => x.classList.toggle("on", x === b));
+  document.querySelectorAll("section").forEach(s => s.classList.toggle("on", s.id === current));
+  if (current === "watch") watchNow();
+});
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let toastTimer;
 async function act(path) {
   let text;
-  try {
-    const r = await fetch(path, { method: "POST", headers: { "X-Hellhound": "1" } });
-    text = await r.text();
-  } catch { text = "Lost the app: is its window still open?"; }
-  const said = document.getElementById("said");
-  said.textContent = text; said.style.display = "block";
+  try { text = await (await fetch(path, { method: "POST", headers: { "X-Hellhound": "1" } })).text(); }
+  catch { text = "Hellhound isn't answering. Is it still running?"; }
+  const t = document.getElementById("toast"); t.textContent = text; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 5000);
   refresh();
 }
-const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const row = (name, html) => `<div class="row"><b>${esc(name)}</b><span>${html}</span></div>`;
-function lockClass(text) {
-  if (/bots OFF/.test(text)) return "bad";
-  if (/may play/.test(text)) return "ok";
-  if (/LOCKED|NOT heard|NOT VALID|invalid|missing/i.test(text)) return "bad";
-  if (/OK|heard|home/i.test(text)) return "ok";
+function level(text) {
+  if (/bots OFF|LOCKED|NOT heard|NOT VALID|invalid|missing/i.test(text)) return "bad";
+  if (/may play|OK|heard|home/i.test(text)) return "ok";
   return "warn";
 }
+function ago(at) {
+  const t = Date.parse(at); if (!t) return "";
+  const m = Math.round((Date.now() - t) / 60000);
+  return m < 1 ? "just now" : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`;
+}
+const SCHOOL_OF = { Ultimus:"Balance", Zoom:"Myth", Savitar:"Fire", "True Form":"Myth", TCO7:"Storm", "Kitharas Family":"Death", "Quest Team":"Ice", "Street Bot Players":"Life" };
 async function refresh() {
   let s;
   try { s = await (await fetch("/api/status", { cache: "no-store" })).json(); }
-  catch { document.getElementById("server").textContent = "Lost the app: is its window still open?"; return; }
-  document.getElementById("server").innerHTML =
-    (s.folderFound ? "" : `<span class="bad">No server folder at ${esc(s.folder)}</span> · `) +
-    `Server <span class="pill ${s.serverRunning ? "ok" : "warn"}">${s.serverRunning ? "running" : "not running"}</span>` +
-    ` · read ${esc(s.readAt)}`;
+  catch { document.getElementById("serverLine").textContent = "Hellhound isn't answering."; return; }
+  document.getElementById("serverLine").innerHTML = !s.folderFound ? `<span class="bad">No server found</span>`
+    : `<span class="dot ${s.serverRunning ? "ok" : "warn"}"></span> Server ${s.serverRunning ? "running" : "not running"}`;
+  document.getElementById("readAt").textContent = "Updated " + s.readAt.slice(11, 16);
+  document.getElementById("appVersion").textContent = "Hellhound " + (s.version || "");
+
   const k = s.killswitch;
-  document.getElementById("locks").innerHTML =
-    row("Kill switch (signed file now)", `<span class="${k.stop ? "bad" : "ok"}">${
-      k.stop ? "Bots OFF" : "Bots may play"}</span> <span class="dim">${esc(k.text)}</span>`) +
-    s.locks.map(l =>
-    row(l.name, `<span class="${l.written ? lockClass(l.text) : "dim"}">${esc(l.text)}</span>`)).join("");
-  document.getElementById("bots").innerHTML = s.bots.map(b => {
-    const on = `<span class="pill ${b.on === "on" ? "ok" : "dim"}">${esc(b.on)}</span>` + (b.count ? ` <span class="dim">${esc(b.count)} play at once</span>` : "") +
-      `<button onclick="act('/api/switch?bot=${encodeURIComponent(b.section)}&on=${b.on === "on" ? "false" : "true"}')">${b.on === "on" ? "Turn off" : "Turn on"}</button>`;
-    const seats = b.seats.map(seat => {
-      const members = seat.members.map(m => `${esc(m.name)}: ${esc(m.state)}${m.zone ? " in " + esc(m.zone) : ""}`).join("; ");
-      return `<div class="seat">${esc(seat.name)}` +
-        (seat.paused ? ` <span class="pill warn">paused: ${esc(seat.paused)}</span>` : "") +
-        (seat.quest ? `<span class="dim">quest: ${esc(seat.quest)}</span>` : "") +
-        (seat.doing ? `<span class="dim">${esc(seat.doing)}</span>` : "") +
-        (seat.note ? ` <span class="pill warn">${esc(seat.note)}</span>` : "") +
-        (members ? `<span class="dim">${members}</span>` : "") +
-        (seat.at ? `<span class="dim">(as of ${esc(seat.at)})</span>` : "") +
-        `<button onclick="act('/api/pause?seat=${encodeURIComponent(seat.id)}')">${seat.paused ? "Resume" : "Pause"}</button></div>`;
+  const locks = s.locks.filter(l => l.written);
+  const blocked = k.stop || locks.some(l => level(l.text) === "bad");
+  document.getElementById("banner").innerHTML = `<span class="dot ${blocked ? "bad" : "ok"}"></span><div>
+    <div class="big">${blocked ? "The bots are stopped" : "The bots can play"}</div>
+    <div class="dim">${esc(k.stop ? "Kill switch: " + k.text : blocked ? "A check below says no." : "Every check passes.")}</div></div>`;
+  const checks = [{ name: "Kill switch", text: k.stop ? "Bots OFF: " + k.text : "Off, so the bots may play (" + k.text + ")", lvl: k.stop ? "bad" : "ok" }]
+    .concat(s.locks.filter(l => !/^Kill switch/.test(l.name)).map(l => ({ name: l.name, text: l.text, lvl: l.written ? level(l.text) : "" })));
+  document.getElementById("checks").innerHTML = checks.map(c =>
+    `<div class="card check"><span class="dot ${c.lvl}"></span><div><b>${esc(c.name)}</b><span class="dim small">${esc(c.text)}</span></div></div>`).join("");
+
+  const on = s.bots.filter(b => b.on === "on");
+  const seats = s.bots.flatMap(b => b.seats);
+  const paused = seats.filter(x => x.paused).length;
+  document.getElementById("glance").innerHTML =
+    `<div class="card"><div class="stat">${on.length}<span class="dim small"> / ${s.bots.length}</span></div><div class="dim">bot groups on</div></div>` +
+    `<div class="card"><div class="stat">${seats.length}</div><div class="dim">bots with a status</div></div>` +
+    `<div class="card"><div class="stat ${paused ? "warn" : ""}">${paused}</div><div class="dim">paused</div></div>` +
+    `<div class="card"><div class="stat small" style="font-size:18px">${esc(s.updates.running || "not yet")}</div><div class="dim">bot update running</div></div>`;
+
+  document.getElementById("botList").innerHTML = s.bots.map(b => {
+    const isOn = b.on === "on";
+    const color = { Balance:"#e0a75e", Myth:"#f2d14b", Fire:"#f26b3a", Storm:"#b884ff", Death:"#a7a7b8", Ice:"#7cc7ff", Life:"#6fdc7a" }[SCHOOL_OF[b.name]] || "var(--ember)";
+    const rows = b.seats.map(x => {
+      const lvl = x.paused ? "warn" : isOn ? "ok" : "";
+      const what = [x.quest && "Quest: " + x.quest, x.doing].filter(Boolean).join(" · ");
+      return `<div class="seat"><span class="dot ${lvl}"></span><div class="who"><div><b>${esc(x.name)}</b>${x.at ? ` <span class="dim small">${esc(ago(x.at))}</span>` : ""}</div>` +
+        `<div class="dim small">${esc(what || "No news yet")}</div>` +
+        (x.note ? `<div class="small warn">${esc(x.note)}</div>` : "") + `</div>` +
+        (x.paused ? `<span class="tag warn">paused</span>` : "") +
+        `<button class="btn" onclick="act('/api/pause?seat=${encodeURIComponent(x.id)}')">${x.paused ? "Resume" : "Pause"}</button></div>`;
     }).join("");
-    return `<div class="bot"><b>${esc(b.name)}</b> ${on}${seats}</div>`;
+    return `<div class="bot" style="border-top:3px solid ${color}"><div class="bot-head"><div class="name">${esc(b.name)}` +
+      `<div class="dim small">${isOn ? "On" : "Off"}${b.count ? ` · ${esc(b.count)} play at once` : ""}${b.seats.length ? ` · ${b.seats.length} with a status` : ""}</div></div>` +
+      `<button class="switch ${isOn ? "on" : ""}" title="${isOn ? "Turn off" : "Turn on"}" onclick="act('/api/switch?bot=${encodeURIComponent(b.section)}&on=${isOn ? "false" : "true"}')"></button></div>` +
+      `<div class="seats">${rows || `<div class="empty">Nothing to show yet: it writes its status once it plays.</div>`}</div></div>`;
   }).join("");
+
   const u = s.updates;
-  document.getElementById("updates").innerHTML =
-    row("Running", esc(u.running || "the server hasn't said yet")) +
-    row("Wanted", esc(u.wanted)) +
-    row("Updates by themselves", esc(u.liveUpdates)) +
-    row("Last looked", esc(u.lastCheck ? `${u.lastCheck} ${u.lastCheckResult}` : "not yet")) +
-    (u.problem ? row("Problem", `<span class="bad">${esc(u.problem)}</span>`) : "") +
-    row("", `<button onclick="act('/api/check-updates')">Look for a bot update now</button>`);
+  document.getElementById("updateRows").innerHTML =
+    `<div class="row"><b>Running now</b><span>${esc(u.running || "The server hasn't said yet")}</span></div>` +
+    `<div class="row"><b>Picked</b><span>${esc(u.wanted)}</span></div>` +
+    `<div class="row"><b>Updates by themselves</b><span>${u.liveUpdates === "false" ? '<span class="warn">Off</span>' : '<span class="ok">On</span>'}</span></div>` +
+    `<div class="row"><b>Last looked</b><span>${esc(u.lastCheck ? `${u.lastCheck} (${u.lastCheckResult})` : "Not yet")}</span></div>` +
+    (u.problem ? `<div class="row"><b>Problem</b><span class="bad">${esc(u.problem)}</span></div>` : "");
 }
 refresh();
 setInterval(refresh, 5000);
@@ -155,8 +227,8 @@ function readGround(g) {
 }
 function drawMap(map) {
   const c = document.getElementById("map"), g = c.getContext("2d"), W = c.width, H = c.height;
-  g.clearRect(0, 0, W, H);
-  if (!map) return;
+  g.fillStyle = "#0b0a10"; g.fillRect(0, 0, W, H);
+    if (!map) return;
   const range = Math.max(map.range || 1500, 300), k = (W / 2) / range;
   const sx = x => W / 2 + (x - map.x) * k, sy = y => H / 2 - (y - map.y) * k;
   const ground = grounds[lastGround];
@@ -236,8 +308,7 @@ async function watchNow() {
   } catch { document.getElementById("watchSaid").textContent = "Lost the app: is its window still open?"; }
   finally { busy = false; }
 }
-watchNow();
-setInterval(watchNow, 1500);
+setInterval(() => { if (current === "watch") watchNow(); }, 1500);
 </script>
 </body>
 </html>

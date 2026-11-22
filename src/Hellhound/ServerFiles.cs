@@ -45,6 +45,14 @@ internal sealed class ServerFiles(string serverFolder) {
     ];
 
     /// <summary>The whole picture as JSON, for the page.</summary>
+    // Hellhound's own number, major.minor (Niduus: "0 is major, 2 is minor; updating bot logic doesn't qualify").
+    internal static string AppVersion {
+        get {
+            var v = typeof(ServerFiles).Assembly.GetName().Version;
+            return v == null || (v.Major == 0 && v.Minor == 0) ? "dev" : "v" + v.Major + "." + v.Minor;
+        }
+    }
+
     internal string ToJson() {
         using var stream = new MemoryStream();
         using (var json = new Utf8JsonWriter(stream)) {
@@ -53,6 +61,7 @@ internal sealed class ServerFiles(string serverFolder) {
             json.WriteBoolean("folderFound", Directory.Exists(Folder));
             json.WriteBoolean("serverRunning", ServerRunning());
             json.WriteString("readAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            json.WriteString("version", AppVersion);
 
             json.WriteStartArray("locks");
             foreach (var (name, file, missing) in s_locks) {
