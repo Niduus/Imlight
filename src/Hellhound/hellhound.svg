@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a1420"/><stop offset="1" stop-color="#0e0a12"/>
+    </linearGradient>
+    <linearGradient id="fire" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#ff3d1f"/><stop offset=".55" stop-color="#ff8a1f"/><stop offset="1" stop-color="#ffd54a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".55" r=".5">
+      <stop offset="0" stop-color="#ff5a1f" stop-opacity=".45"/><stop offset="1" stop-color="#ff5a1f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="url(#bg)"/>
+  <circle cx="128" cy="140" r="110" fill="url(#glow)"/>
+  <!-- flame mane behind the head -->
+  <path fill="url(#fire)" d="M70 214 C40 180 44 140 64 112 C62 132 70 142 78 146 C72 116 84 84 108 64 C104 88 112 100 122 106
+    C122 78 138 52 164 40 C154 66 160 84 172 96 C176 82 188 72 200 68 C192 88 198 108 196 128 C206 120 212 108 214 98
+    C226 132 220 176 190 214 Z"/>
+  <!-- hound head, facing left -->
+  <path fill="#120c14" d="M86 214 C82 190 86 170 96 156 L66 150 C54 148 44 140 42 130 C41 124 46 120 52 120 L92 118
+    C100 106 112 98 126 94 L136 70 L150 92 L160 66 L170 96 C188 106 198 126 198 150 C198 180 186 202 172 214 Z"/>
+  <!-- jaw line and fang -->
+  <path fill="none" stroke="#3a2230" stroke-width="4" stroke-linecap="round" d="M52 128 C70 134 86 136 100 134"/>
+  <path fill="#f4e9da" d="M66 133 L72 133 L69 144 Z"/>
+  <path fill="#f4e9da" d="M84 135 L90 135 L87 145 Z"/>
+  <!-- nose -->
+  <ellipse cx="46" cy="124" rx="6" ry="5" fill="#2b1a24"/>
+  <!-- ember eye -->
+  <path fill="#ffcf3a" d="M118 116 L142 110 L136 122 Z"/>
+  <circle cx="134" cy="115" r="3" fill="#fff6c8"/>
+</svg>

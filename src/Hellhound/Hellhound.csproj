@@ -21,6 +21,8 @@
     <StackTraceSupport>false</StackTraceSupport>
     <UseSystemResourceKeys>true</UseSystemResourceKeys>
     <DebugType Condition="'$(Configuration)' == 'Release'">none</DebugType>
+    <!-- Its own icon (Niduus, 2026-11-22: "give Hellhound a image for it's icon"); hellhound.svg is the source. -->
+    <ApplicationIcon>hellhound.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
